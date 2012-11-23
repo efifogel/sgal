@@ -1,0 +1,232 @@
+// Copyright (c) 2007 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// $Id: Arrangement_on_sphere_geo.cpp 7802 2009-07-19 13:37:01Z efif $
+// $Revision: 7802 $
+//
+// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#if defined(_WIN32)
+#pragma warning( disable : 4146 )
+#pragma warning( disable : 4244 )
+#pragma warning( disable : 4390 )
+#pragma warning( disable : 4503 )
+#pragma warning( disable : 4800 )
+#pragma warning( disable : 4996 )
+#endif
+
+/*! \file
+ * A geometry container that represents an arrangement induced by arcs of
+ * great circles embeded on a sphere
+ */
+
+#include <boost/lexical_cast.hpp>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Arr_overlay_2.h>
+
+#include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
+#include "SGAL/Container_factory.hpp"
+#include "SGAL/Container_proto.hpp"
+#include "SGAL/Element.hpp"
+#include "SGAL/Utilities.hpp"
+#include "SGAL/Gl_wrapper.hpp"
+
+#include "SCGAL/Arrangement_on_sphere_geo.hpp"
+#include "SCGAL/Arrangement_on_surface_geo_overlay.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+std::string Arrangement_on_sphere_geo::s_tag = "ArrangementOnSphere";
+Container_proto * Arrangement_on_sphere_geo::s_prototype = NULL;
+
+REGISTER_TO_FACTORY(Arrangement_on_sphere_geo, "Arrangement_on_sphere_geo");
+
+/*! Constructor */
+Arrangement_on_sphere_geo::Arrangement_on_sphere_geo(Boolean proto) :
+  Arrangement_on_sphere_base_geo(proto),
+  m_own_aos(SGAL_FALSE),
+  m_aos(NULL)
+{
+  if (!proto) create_renderers();
+}
+
+/*! Destructor */
+Arrangement_on_sphere_geo::~Arrangement_on_sphere_geo()
+{
+  clear();
+  if (m_aos && m_own_aos) delete m_aos;
+}
+
+/*! \brief initializes the container prototype */
+void Arrangement_on_sphere_geo::init_prototype()
+{
+  if (s_prototype) return;
+  s_prototype =
+    new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
+}
+
+/*! \brief deletes the container prototype */
+void Arrangement_on_sphere_geo::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
+
+/*! \brief obtains the container prototype */
+Container_proto * Arrangement_on_sphere_geo::get_prototype()
+{
+  if (!s_prototype) Arrangement_on_sphere_geo::init_prototype();
+  return s_prototype;
+}
+
+/*! \brief sets the ellpsoid attributes */
+void Arrangement_on_sphere_geo::set_attributes(Element * elem)
+{
+  Arrangement_on_sphere_base_geo::set_attributes(elem);
+
+  typedef Element::Cont_attr_iter       Cont_attr_iter;
+  for (Cont_attr_iter cai = elem->cont_attrs_begin();
+       cai != elem->cont_attrs_end(); cai++)
+  {
+    const std::string & name = elem->get_name(cai);
+    Container * cont = elem->get_value(cai);
+    if (name == "overlay") {
+      Arrangement_on_sphere_geo * aos_geo =
+        dynamic_cast<Arrangement_on_sphere_geo*>(cont);
+      if (aos_geo) add_aos_geo(aos_geo);
+      elem->mark_delete(cai);
+      continue;
+    }
+  }
+
+  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
+  typedef Element::Cont_list              Cont_list;
+  typedef Element::Cont_iter              Cont_iter;
+
+  // Sets the multi-container attributes of this node:
+  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); mcai++)
+  {
+    const std::string & name = elem->get_name(mcai);
+    Cont_list & cont_list = elem->get_value(mcai);
+    if (name == "overlay") {
+      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+        Container * cont = *ci;
+        Arrangement_on_sphere_geo * aos_geo =
+          dynamic_cast<Arrangement_on_sphere_geo*>(cont);
+        if (aos_geo) add_aos_geo(aos_geo);
+      }
+      elem->mark_delete(mcai);
+    }
+    continue;
+  }
+  
+  // Remove all the deleted attributes:
+  elem->delete_marked();
+}
+
+/*! \brief cleans the representation */
+void Arrangement_on_sphere_geo::clean()
+{
+  m_dirty = false;
+  if (!m_aos) {
+    m_aos = new Arrangement_on_sphere;
+    m_own_aos = SGAL_TRUE;
+  }
+  insert_all(m_aos);
+  overlay_all(m_aoses.begin(), m_aoses.end(),
+              std::distance(m_aoses.begin(), m_aoses.end()), this);
+}
+
+/*! \brief clears the internal representation and auxiliary data structures */
+void Arrangement_on_sphere_geo::clear()
+{
+  if (m_aos) m_aos->clear();
+  m_dirty = true;
+}
+
+/*! \brief creates the renderers */
+void Arrangement_on_sphere_geo::create_renderers()
+{
+  m_edges_renderer = new Sphere_edges_renderer(*this);
+  m_vertices_renderer = new Sphere_vertices_renderer(*this);
+  m_isolated_vertices_renderer = new Sphere_isolated_vertices_renderer(*this);
+  m_colored_edges_renderer = new Sphere_colored_edges_renderer(*this);
+  m_colored_vertices_renderer = new Sphere_colored_vertices_renderer(*this);
+  m_colored_isolated_vertices_renderer =
+    new Sphere_colored_isolated_vertices_renderer(*this);
+
+  m_line_colored_edges_renderer =
+    new Sphere_line_colored_edges_renderer(*this);
+  m_point_colored_vertices_renderer =
+    new Sphere_point_colored_vertices_renderer(*this);
+  m_ring_colored_vertices_renderer =
+    new Sphere_ring_colored_vertices_renderer(*this);
+  m_point_colored_isolated_vertices_renderer =
+    new Sphere_point_colored_isolated_vertices_renderer(*this);
+  m_ring_colored_isolated_vertices_renderer =
+    new Sphere_ring_colored_isolated_vertices_renderer(*this);
+
+  m_inflated_line_edges_renderer =
+    new Sphere_inflated_line_edges_renderer(*this);
+  m_inflated_strip_edges_renderer =
+    new Sphere_inflated_strip_edges_renderer(*this);
+  m_inflated_tube_edges_renderer =
+    new Sphere_inflated_tube_edges_renderer(*this);
+}
+
+/*! \brief destroys the renderers */
+void Arrangement_on_sphere_geo::destroy_renderers()
+{
+  if (m_edges_renderer) delete m_edges_renderer;
+  if (m_vertices_renderer) delete m_vertices_renderer;
+  if (m_isolated_vertices_renderer) delete m_isolated_vertices_renderer;
+  if (m_colored_edges_renderer) delete m_colored_edges_renderer;
+  if (m_colored_vertices_renderer) delete m_colored_vertices_renderer;
+  if (m_colored_isolated_vertices_renderer)
+    delete m_colored_isolated_vertices_renderer;
+  if (m_line_colored_edges_renderer) delete m_line_colored_edges_renderer;
+  if (m_point_colored_vertices_renderer)
+    delete m_point_colored_vertices_renderer;
+  if (m_ring_colored_vertices_renderer)
+    delete m_ring_colored_vertices_renderer;
+  if (m_point_colored_isolated_vertices_renderer)
+    delete m_point_colored_isolated_vertices_renderer;
+  if (m_ring_colored_isolated_vertices_renderer)
+    delete m_ring_colored_isolated_vertices_renderer;
+  if (m_inflated_line_edges_renderer) delete m_inflated_line_edges_renderer;
+  if (m_inflated_strip_edges_renderer) delete m_inflated_strip_edges_renderer;
+  if (m_inflated_tube_edges_renderer) delete m_inflated_tube_edges_renderer;
+}
+
+/*! \brief obrains the arrangement */
+Arrangement_on_sphere * Arrangement_on_sphere_geo::get_aos()
+{
+  if (m_dirty) clean();
+  return m_aos;
+}
+
+/*! \brief sets the arrangement */
+void Arrangement_on_sphere_geo::set_aos(Arrangement_on_sphere * aos)
+{
+  m_dirty = false;
+  m_aos = aos;
+}
+  
+SGAL_END_NAMESPACE

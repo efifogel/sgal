@@ -1,0 +1,19 @@
+include $(ROOT)/make/comdef.mak
+SUBDIRS =
+ifeq ($(DE), msvc)
+ifeq ($(COMPILER_VER), 1200)
+# SUBDIRS+= STLport
+endif
+# SUBDIRS+= getopt
+SUBDIRS+= flex
+SUBDIRS+= GL
+endif
+SUBDIRS+= gl2ps
+SUBDIRS+= SGAL
+ifeq ($(USE_GLUT), 1)
+SUBDIRS+= SGLUT
+endif
+ifeq ($(USE_CGAL), 1)
+SUBDIRS+= SCGAL
+endif
+include $(MAKEDIR)/subdirs.mak

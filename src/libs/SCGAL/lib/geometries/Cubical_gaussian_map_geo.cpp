@@ -1,0 +1,1861 @@
+// Copyright (c) 2004 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// $Id: Cubical_gaussian_map_geo.cpp 14183 2012-11-21 22:58:50Z efif $
+// $Revision: 14183 $
+//
+// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#if defined(_WIN32)
+#pragma warning ( disable : 4146 )
+#pragma warning ( disable : 4244 )
+#pragma warning ( disable : 4503 )
+#pragma warning ( disable : 4800 )
+#endif
+
+#include <time.h>
+#include <boost/lexical_cast.hpp>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Point_3.h>
+
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+#include "SCGAL/Cubical_gaussian_map_geo.hpp"
+#include "SCGAL/Exact_coord_array.hpp"
+
+#include "SGAL/Vector3f.hpp"
+#include "SGAL/Rotation.hpp"
+#include "SGAL/Transform.hpp"
+#include "SGAL/Coord_array.hpp"
+#include "SGAL/Sphere.hpp"
+#include "SGAL/Cylinder.hpp"
+#include "SGAL/Trace.hpp"
+#include "SGAL/Draw_action.hpp"
+#include "SGAL/Isect_action.hpp"
+#include "SGAL/Container_factory.hpp"
+#include "SGAL/Element.hpp"
+#include "SGAL/Container_proto.hpp"
+#include "SGAL/Gfx.hpp"
+#include "SGAL/Field_infos.hpp"
+#include "SGAL/Utilities.hpp"
+#include "SGAL/Context.hpp"
+#include "SGAL/Field.hpp"
+#include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Extrusion.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+std::string Cubical_gaussian_map_geo::s_tag = "sgalCubicalGaussianMap";
+SGAL::Container_proto* Cubical_gaussian_map_geo::s_prototype = 0;
+
+const bool Cubical_gaussian_map_geo::s_def_draw_aos(false);
+const bool Cubical_gaussian_map_geo::s_def_draw_aos_opaque(false);
+const bool Cubical_gaussian_map_geo::s_def_draw_aos_haloed(true);
+const bool Cubical_gaussian_map_geo::s_def_draw_aos_unfolded(false);
+
+const bool Cubical_gaussian_map_geo::s_def_draw_aos_surface(true);
+const Vector3f
+Cubical_gaussian_map_geo::s_def_aos_surface_color(0.3f, 0.3f, 0.3f);
+
+// Dual vertex attributes:
+const Cubical_gaussian_map_geo::Vertex_style
+  Cubical_gaussian_map_geo::s_def_aos_vertex_style(Vertex_shape::DISC);
+const Float Cubical_gaussian_map_geo::s_def_aos_vertex_radius(0.06f);
+const Float Cubical_gaussian_map_geo::s_def_aos_vertex_point_size(2);
+const Vector3f Cubical_gaussian_map_geo::s_def_aos_vertex_color(0.5f, 0, 0);
+
+// Dual nonreal vertex attributes:
+const Cubical_gaussian_map_geo::Vertex_style
+  Cubical_gaussian_map_geo::
+  s_def_aos_nonreal_vertex_style(Vertex_shape::DISC);
+const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_vertex_radius(0.03f);
+const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_vertex_point_size(1);
+const Vector3f Cubical_gaussian_map_geo::
+s_def_aos_nonreal_vertex_color(0, 0, 0);
+
+// Dual dual edge attributes:
+const Boolean Cubical_gaussian_map_geo::s_def_aos_edge_enabled(true);
+const Cubical_gaussian_map_geo::Edge_style
+  Cubical_gaussian_map_geo::s_def_aos_edge_style(Edge_shape::TUBE);
+const Int Cubical_gaussian_map_geo::s_def_aos_edge_count(1);
+const Boolean Cubical_gaussian_map_geo::s_def_aos_edge_directed(false);
+const Float Cubical_gaussian_map_geo::s_def_aos_edge_radius(.03f);
+const Float Cubical_gaussian_map_geo::s_def_aos_edge_line_width(1);
+const Vector3f Cubical_gaussian_map_geo::s_def_aos_edge_color(1, 1, 1);
+
+// Dual nonreal-edge attributes:
+const Boolean Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_enabled(true);
+const Cubical_gaussian_map_geo::Edge_style
+  Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_style(Edge_shape::TUBE);
+const Int Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_count(1);
+const Boolean Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_directed(false);
+const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_radius(.015);
+const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_line_width(1);
+const Vector3f Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_color(0, 0, 0);
+
+//
+const Float Cubical_gaussian_map_geo::s_def_aos_delta_angle(0.1f);
+
+const float Cubical_gaussian_map_geo::s_def_marked_vertex_radius(0.1f);
+const float Cubical_gaussian_map_geo::s_def_marked_edge_radius(0.1f);
+
+const Cubical_gaussian_map_geo::Vertex_style
+  Cubical_gaussian_map_geo::
+  s_def_aos_marked_vertex_style(Vertex_shape::DISC);
+const Float Cubical_gaussian_map_geo::s_def_aos_marked_vertex_radius(0.03);
+const Float Cubical_gaussian_map_geo::s_def_aos_marked_vertex_point_size(1);
+
+const bool Cubical_gaussian_map_geo::s_def_draw_marked_vertex(false);
+const bool Cubical_gaussian_map_geo::s_def_draw_marked_edge(false);
+const bool Cubical_gaussian_map_geo::s_def_draw_marked_facet(false);
+const Vector3f Cubical_gaussian_map_geo::s_def_marked_vertex_color(0.5f, 0, 0);
+const Vector3f Cubical_gaussian_map_geo::s_def_marked_edge_color(0, 0.5f, 0);
+const Vector3f Cubical_gaussian_map_geo::s_def_marked_facet_color(0, 0, 0.5f);
+
+REGISTER_TO_FACTORY(Cubical_gaussian_map_geo, "Cubical_gaussian_map_geo");
+
+/*! Constructor */
+Cubical_gaussian_map_geo::Cubical_gaussian_map_geo(Boolean proto) :
+  Mesh_set(proto),
+  m_draw_aos(s_def_draw_aos), m_draw_primal(!s_def_draw_aos),
+  m_draw_aos_opaque(s_def_draw_aos_opaque),
+  m_draw_aos_haloed(s_def_draw_aos_haloed),
+  m_draw_aos_unfolded(s_def_draw_aos_unfolded),
+  m_draw_aos_surface(s_def_draw_aos_surface),
+  m_aos_surface_color(s_def_aos_surface_color),
+  m_aos_vertex_style(s_def_aos_vertex_style),
+  m_aos_vertex_radius(s_def_aos_vertex_radius),
+  m_aos_vertex_point_size(s_def_aos_vertex_point_size),
+  m_aos_vertex_color(s_def_aos_vertex_color),
+  m_aos_nonreal_vertex_style(s_def_aos_nonreal_vertex_style),
+  m_aos_nonreal_vertex_radius(s_def_aos_nonreal_vertex_radius),
+  m_aos_nonreal_vertex_point_size(s_def_aos_nonreal_vertex_point_size),
+  m_aos_nonreal_vertex_color(s_def_aos_nonreal_vertex_color),
+  // Edge
+  m_aos_edge_enabled(s_def_aos_edge_enabled),
+  m_aos_edge_style(s_def_aos_edge_style),
+  m_aos_edge_count(s_def_aos_edge_count),
+  m_aos_edge_directed(s_def_aos_edge_directed),
+  m_aos_edge_radius(s_def_aos_edge_radius),
+  m_aos_edge_line_width(s_def_aos_edge_line_width),
+  // Nonreal edge
+  m_aos_nonreal_edge_enabled(s_def_aos_nonreal_edge_enabled),
+  m_aos_nonreal_edge_style(s_def_aos_nonreal_edge_style),
+  m_aos_nonreal_edge_count(s_def_aos_nonreal_edge_count),
+  m_aos_nonreal_edge_directed(s_def_aos_nonreal_edge_directed),
+  m_aos_nonreal_edge_radius(s_def_aos_nonreal_edge_radius),
+  m_aos_nonreal_edge_line_width(s_def_aos_nonreal_edge_line_width),
+  m_aos_nonreal_edge_color(s_def_aos_nonreal_edge_color),
+  m_aos_delta_angle(s_def_aos_delta_angle),
+  m_aos_marked_vertex_style(s_def_aos_marked_vertex_style),
+  m_aos_marked_vertex_radius(s_def_aos_marked_vertex_radius),
+  m_aos_marked_vertex_point_size(s_def_aos_marked_vertex_point_size),
+  m_draw_marked_vertex(s_def_draw_marked_vertex),
+  m_draw_marked_edge(s_def_draw_marked_edge),
+  m_draw_marked_facet(s_def_draw_marked_facet),
+  m_marked_vertex_color(s_def_marked_vertex_color),
+  m_marked_edge_color(s_def_marked_edge_color),
+  m_marked_facet_color(s_def_marked_facet_color),
+  m_translated(false),
+  m_rotated(false),
+  m_minkowski_sum(false),
+  m_vertex_geom(NULL),
+  m_edge_geom(NULL),
+  m_marked_vertex_radius(s_def_marked_vertex_radius),
+  m_marked_edge_radius(s_def_marked_edge_radius),
+  m_marked_vertex_index(0),
+  m_marked_edge_index(0),
+  m_marked_facet_index(0),
+  m_renderer_dirty(true),
+  m_surface_renderer(NULL),
+  m_colored_surface_renderer(NULL),
+  m_stencil_surface_renderer(NULL),
+  m_vertices_renderer(NULL),
+  m_colored_vertices_renderer(NULL),
+  m_nonreal_vertices_renderer(NULL),
+  m_colored_nonreal_vertices_renderer(NULL),
+  m_marked_vertices_renderer(NULL),
+  m_colored_marked_vertices_renderer(NULL),
+  m_edges_renderer(NULL),
+  m_colored_edges_renderer(NULL),
+  m_inflated_line_edges_renderer(NULL),
+  m_inflated_strip_edges_renderer(NULL),
+  m_inflated_tube_edges_renderer(NULL)
+{
+  if (!proto) {
+    create_renderers();
+    m_aos_edge_color[0] = m_aos_edge_color[1] = s_def_aos_edge_color;
+  }
+}
+
+/*! Copy Constructor */
+Cubical_gaussian_map_geo::
+Cubical_gaussian_map_geo(const Cubical_gaussian_map_geo & gaussian_map)
+{
+  // Not implemented yet!
+  SGAL_assertion(0);
+}
+
+/*! Destructor */
+Cubical_gaussian_map_geo::~Cubical_gaussian_map_geo()
+{
+  m_cgm_nodes.clear();
+  clear();
+  if (m_vertex_geom) {
+    delete m_vertex_geom;
+    m_vertex_geom = NULL;
+  }
+  if (m_edge_geom) {
+    delete m_edge_geom;
+    m_edge_geom = NULL;
+  }
+}
+
+/*! Clean the data structure */
+void Cubical_gaussian_map_geo::clean()
+{
+  if (m_minkowski_sum) {
+    Cgm_node_iter ni;
+    for (ni = m_cgm_nodes.begin(); ni != m_cgm_nodes.end(); ++ni) {
+      Cubical_gaussian_map_geo* cgm_node = *ni;
+      if (cgm_node->is_dirty()) cgm_node->clean();
+    }
+    clock_t start_time = clock();
+    m_cgm.minkowski_sum<Cgm_iter>(Cgm_iter(m_cgm_nodes.begin()),
+                                  Cgm_iter(m_cgm_nodes.end()));
+    clock_t end_time = clock();
+    m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
+  } else {
+    clock_t start_time = clock();
+    CGAL::Polyhedral_cgm_initializer<Cgm> cgm_initializer(m_cgm);
+    Cgm_geo_initializer_visitor visitor;
+    cgm_initializer.set_marked_vertex_index(m_marked_vertex_index);
+    cgm_initializer.set_marked_edge_index(m_marked_edge_index);
+    cgm_initializer.set_marked_facet_index(m_marked_facet_index);
+
+    Exact_coord_array* exact_coord_array =
+      dynamic_cast<Exact_coord_array *>(m_coord_array);
+    if (exact_coord_array && (exact_coord_array->size() > 0)) {
+      // std::cout << "Cubical_gaussian_map_geo::exact" << std::endl;
+      cgm_initializer(exact_coord_array->begin(),
+                      exact_coord_array->end(),
+                      exact_coord_array->size(),
+                      m_coord_indices.begin(), m_coord_indices.end(),
+                      m_num_primitives, &visitor);
+    } else {
+      // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
+      cgm_initializer(m_coord_array->begin(), m_coord_array->end(),
+                      m_coord_array->size(),
+                      m_coord_indices.begin(), m_coord_indices.end(),
+                      m_num_primitives, &visitor);
+    }
+    clock_t end_time = clock();
+    m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
+  }
+
+  // Update the normals of all facets in the corresponding dual vertices
+  process_facets();
+
+#if 0
+  // Mark one vertex in the corresponding dual faces
+  m_cgm.reset_faces();                // reset the "visited" flag
+  Arrangement& arr = m_cgm.arrangement(0);
+  Arr_face_iterator fi = arr.faces_begin();
+  fi++;                         // skip the unbounded face
+  m_cgm.process_boundary_faces(fi, Face_set_marked_op());
+#endif
+
+  Uint num_vertices = m_cgm.number_of_vertices();
+  Uint num_edges = m_cgm.number_of_edges();
+  Uint num_facets = m_cgm.number_of_facets();
+  if (m_marked_vertex_index >= num_vertices)
+    m_marked_vertex_index = num_vertices;
+  if (m_marked_edge_index >= num_edges) m_marked_edge_index = num_edges;
+  if (m_marked_facet_index >= num_facets) m_marked_facet_index = num_facets;
+
+  if (Mesh_set::is_dirty()) Mesh_set::clean();
+}
+
+/*! Clear the internal representation and auxiliary data structures */
+void Cubical_gaussian_map_geo::clear()
+{
+  Mesh_set::clear();
+  m_cgm.clear();
+  process_content_changed();
+}
+
+/*! */
+void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& cull_context) {}
+
+/*! */
+void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
+{
+  Context* context = action->get_context();
+  if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
+
+  isect_primary();
+    
+  if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
+}
+
+/*! Calculate the bounding sphere */
+bool Cubical_gaussian_map_geo::calculate_sphere_bound()
+{
+#define SQRT_3          1.732f
+
+  if (!m_is_sphere_bound_dirty) return false;
+  if (is_dirty()) clean();
+  if (m_bb_is_pre_set) return true;
+
+  if (m_draw_aos) {
+    if (!m_draw_aos_unfolded) {
+      m_sphere_bound.set_center(Vector3f(0, 0, 0));
+      m_sphere_bound.set_radius(SQRT_3);
+    } else {
+      m_sphere_bound.set_center(Vector3f(5, 4, 0));
+      m_sphere_bound.set_radius(4);
+    }
+  } else if (!m_bb_is_pre_set) {
+    Approximate_sphere_vector spheres;
+
+    //! \todo this should change with dual-face iterator
+    Uint points_size = 0;
+    for (Uint i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
+      const Arrangement & arr = m_cgm.arrangement(i);
+      Uint num_faces = arr.number_of_faces();
+      points_size += num_faces - 1;
+    }
+    spheres.resize(points_size);
+    Extract_dual_approximate_sphere extract;
+    Uint j = 0;
+    for (Uint i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
+      const Arrangement & arr = m_cgm.arrangement(i);
+      Uint num_faces = arr.number_of_faces();
+      Arr_face_const_iterator fi = arr.faces_begin();
+      fi++;           // skip the unbounded face
+      std::transform(fi, arr.faces_end(), &spheres[j], extract);
+      j += num_faces - 1;
+    }
+
+    if (!spheres.empty()) {
+      Min_sphere min_sphere(spheres.begin(), spheres.end());
+      Vector3f center_vec;
+      std::copy(min_sphere.center_cartesian_begin(),
+                min_sphere.center_cartesian_end(),
+                &center_vec[0]);
+      m_sphere_bound.set_center(center_vec);
+      m_sphere_bound.set_radius(min_sphere.radius());
+    }
+  }
+  m_is_sphere_bound_dirty = false;
+
+  return true;
+}
+
+/*! Sets the attributes of the object extracted from the VRML or X3D file.
+ * \param elem contains lists of attribute names and values
+ * \param sg a pointer to the scene graph
+ */
+void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
+{
+  Mesh_set::set_attributes(elem);
+
+  typedef SGAL::Element::Str_attr_iter          Str_attr_iter;
+
+  for (Str_attr_iter ai = elem->str_attrs_begin();
+       ai != elem->str_attrs_end(); ai++)
+  {
+    const std::string & name = elem->get_name(ai);
+    const std::string & value = elem->get_value(ai);
+    if (name == "drawDual") {
+      m_draw_aos = compare_to_true(value);
+      m_draw_primal = !m_draw_aos;
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "drawDualOpaque") {
+      m_draw_aos_opaque = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "drawDualHaloed") {
+      m_draw_aos_haloed = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "drawDualUnfolded") {
+      m_draw_aos_unfolded = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "drawDualCube") {
+      m_draw_aos_surface = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualCubeColor") {
+      Vector3f col(value);
+      set_aos_surface_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+
+    // Dual vertex attributes:
+    if (name == "dualVertexStyle") {
+      m_aos_vertex_style = Vertex_shape::style(strip_double_quotes(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualVertexRadius") {
+      m_aos_vertex_radius = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualVertexPointSize") {
+      m_aos_vertex_point_size = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualVertexColor") {
+      Vector3f col(value);
+      set_aos_vertex_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+
+    // Dual nonreal vertex attributes:
+    if (name == "dualNonrealVertexStyle") {
+      m_aos_nonreal_vertex_style =
+        Vertex_shape::style(strip_double_quotes(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualNonrealVertexRadius") {
+      m_aos_nonreal_vertex_radius = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualNonrealVertexPointSize") {
+      m_aos_nonreal_vertex_point_size = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualNonrealVertexColor") {
+      Vector3f col(value);
+      set_aos_nonreal_vertex_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+    
+    // Edge attributes:
+    if (name == "aosEdgeEnabled") {
+      m_aos_edge_enabled = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "aosEdgeStyle") {
+      m_aos_edge_style = Edge_shape::style(strip_double_quotes(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "aosEdgeCount") {
+      m_aos_edge_count = boost::lexical_cast<Int>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "aosEdgeDirected") {
+      m_aos_edge_directed = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualLineWidth") {
+      sscanf(value.c_str(), "%f", &m_aos_edge_line_width);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualLineColor") {
+      Vector3f col(value);
+      set_aos_edge_color(col, 0);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualLineColor1") {
+      Vector3f col(value);
+      set_aos_edge_color(col, 0);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualLineColor2") {
+      Vector3f col(value);
+      set_aos_edge_color(col, 1);
+      elem->mark_delete(ai);
+      continue;
+    }
+    
+    // Dual marked Vertex attributes:
+    if (name == "dualMarkedVertexStyle") {
+      m_aos_marked_vertex_style =
+        Vertex_shape::style(strip_double_quotes(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualMarkedVertexRadius") {
+      m_aos_marked_vertex_radius = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualMarkedVertexPointSize") {
+      m_aos_marked_vertex_point_size = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+
+    // Marked primal features:
+    if (name == "drawMarkedVertex") {
+      m_draw_marked_vertex = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "drawMarkedEdge") {
+      m_draw_marked_edge = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "drawMarkedFacet") {
+      m_draw_marked_facet = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedVertexColor") {
+      Vector3f col(value);
+      set_marked_vertex_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedEdgeColor") {
+      Vector3f col(value);
+      set_marked_edge_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedFaceColor") {
+      Vector3f col(value);
+      set_marked_facet_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedVertexIndex") {
+      set_marked_vertex_index(atoi(value.c_str()));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedEdgeIndex") {
+      set_marked_edge_index(atoi(value.c_str()));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedFacetIndex") {
+      set_marked_facet_index(atoi(value.c_str()));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "dualVertexRadius") {
+      m_aos_vertex_radius = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedVertexRadius") {
+      m_marked_vertex_radius = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "markedEdgeRadius") {
+      m_marked_edge_radius = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
+  typedef Element::Cont_list              Cont_list;
+  typedef Element::Cont_iter              Cont_iter;
+
+  // Sets the multi-container attributes of this node:
+  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); mcai++)
+  {
+    const std::string & name = elem->get_name(mcai);
+    Cont_list & cont_list = elem->get_value(mcai);
+    if (name == "geometries") {
+      set_minkowski_sum(true);
+      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+        Container* cont = *ci;
+        Cubical_gaussian_map_geo* cgm =
+          dynamic_cast<Cubical_gaussian_map_geo*>(cont);
+        if (cgm) insert_cgm(cgm);
+        else {
+          std::cerr << "Invalid " << s_tag << " geometry nodes!"
+                    << std::endl;
+        }
+      }
+      elem->mark_delete(mcai);
+    }
+    continue;
+  }
+  
+  // Remove all the deleted attributes:
+  elem->delete_marked();
+}
+
+/*! */
+void Cubical_gaussian_map_geo::init_prototype()
+{
+  if (s_prototype) return;
+  s_prototype = new SGAL::Container_proto(Mesh_set::get_prototype());
+
+  //! Container execution function
+  typedef void (SGAL::Container::* Execution_function)(SGAL::Field_info*);
+
+  // Add the object fields to the prototype
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Cubical_gaussian_map_geo::draw_changed);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL, "drawDual",
+                                          get_member_offset(&m_draw_aos),
+                                          exec_func));
+ 
+  s_prototype->
+    add_field_info(new SF_bool(DRAW_DUAL_UNFOLDED, "drawDualUnfolded",
+                               get_member_offset(&m_draw_aos_unfolded),
+                               exec_func));
+
+  s_prototype->
+    add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
+                               get_member_offset(&m_draw_aos_opaque)));
+  
+  s_prototype->
+    add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
+                               get_member_offset(&m_draw_aos_haloed)));
+
+  s_prototype->
+    add_field_info(new SF_bool(DRAW_DUAL_CUBE, "drawDualCube",
+                               get_member_offset(&m_draw_aos_surface)));
+  
+  s_prototype->
+    add_field_info(new SF_float(DUAL_EDGE_LINE_WIDTH, "dualLineWidth",
+                               get_member_offset(&m_aos_edge_line_width)));
+
+  exec_func = static_cast<Execution_function>(&SGAL::Mesh_set::coord_changed);
+  s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
+                                          get_member_offset(&m_translated),
+                                          exec_func));
+  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
+                                          get_member_offset(&m_rotated),
+                                          exec_func));  
+
+  s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
+                                          get_member_offset(&m_draw_primal)));
+
+ s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL, "trueDrawDual",
+                                         get_member_offset(&m_draw_aos)));
+
+ s_prototype->
+   add_field_info(new SF_bool(TRUE_DRAW_DUAL_UNFOLDED,
+                              "trueDrawDualUnfolded",
+                              get_member_offset(&m_draw_aos_unfolded)));
+
+  exec_func =
+    static_cast<Execution_function>(&Cubical_gaussian_map_geo::output);
+  s_prototype->add_field_info(new SF_bool(EXPORT, "export",
+                                          get_member_offset(&m_export),
+                                          exec_func));
+
+  exec_func =
+    static_cast<Execution_function>(&Cubical_gaussian_map_geo::
+                                    increase_vertex_index);
+  s_prototype->
+    add_field_info(new SF_bool(INCREASE_VERTEX_INDEX, "increaseVertexIndex",
+                               get_member_offset(&m_increase_vertex_index),
+                               exec_func));
+  exec_func =
+    static_cast<Execution_function>(&Cubical_gaussian_map_geo::
+                                    increase_edge_index);
+  s_prototype->
+    add_field_info(new SF_bool(INCREASE_EDGE_INDEX, "increaseEdgeIndex",
+                               get_member_offset(&m_increase_edge_index),
+                               exec_func));
+  exec_func =
+    static_cast<Execution_function>(&Cubical_gaussian_map_geo::
+                                    increase_facet_index);
+  s_prototype->
+    add_field_info(new SF_bool(INCREASE_FACET_INDEX, "increaseFacetIndex",
+                               get_member_offset(&m_increase_facet_index),
+                               exec_func));
+
+  s_prototype->
+    add_field_info(new SF_vector3f(DUAL_EDGE_COLOR1, "dualLineColor1",
+                                   get_member_offset(&m_aos_edge_color[0])));
+  s_prototype->
+    add_field_info(new SF_vector3f(DUAL_EDGE_COLOR2, "dualLineColor2",
+                                   get_member_offset(&m_aos_edge_color[1])));
+
+  MF_container* field = new MF_container(GEOMETRIES, "geometries",
+                                         get_member_offset(&m_cgm_nodes));
+  s_prototype->add_field_info(field);
+}
+
+/*! */
+void Cubical_gaussian_map_geo::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
+
+/*! */
+SGAL::Container_proto* Cubical_gaussian_map_geo::get_prototype() 
+{  
+  if (!s_prototype) Cubical_gaussian_map_geo::init_prototype();
+  return s_prototype;
+}
+
+/*! Raise the flag that indicates that the sphere bound changed
+ */
+void Cubical_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
+{
+  m_draw_primal = !m_draw_aos;
+  m_is_sphere_bound_dirty = true;
+
+  if (m_draw_aos) {
+    Field* field = get_field(TRUE_DRAW_DUAL);
+    if (field) field->cascade();
+
+    if (m_draw_aos_unfolded) {
+      Field* field = get_field(TRUE_DRAW_DUAL_UNFOLDED);    
+      if (field) field->cascade();
+    }
+  } else {
+    Field* field = get_field(TRUE_DRAW_PRIMAL);
+    if (field) field->cascade();
+  }
+}
+
+/*! Draws the internal representation */
+void Cubical_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
+{
+  if (!m_draw_aos) {
+    draw_primal(action);
+    return;
+  }
+
+  if (m_draw_aos_unfolded) {
+    draw_aos_unfolded(action);
+    return;
+  }
+  
+  if (m_renderer_dirty) clean_renderer();
+  if (m_draw_aos_opaque) draw_aos_opaque(action);
+  else m_renderer(action);
+}
+
+/*! Draw the polyhedron directly from the gaussian map representation */
+void Cubical_gaussian_map_geo::draw_primal(Draw_action* action)
+{
+  TRACE_MSG(SGAL::Trace::GAUSSIAN_MAP, "draw_primal()\n");
+
+  Context* context = action->get_context();
+  glColor3fv((float*)&m_marked_facet_color);
+  
+  glFrontFace((is_ccw()) ? GL_CW : GL_CCW);
+
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+    const Arrangement& arr = m_cgm.arrangement(i);
+    Arr_vertex_const_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+      if (!vit->is_real()) continue;
+
+      if (m_draw_marked_facet && vit->marked())
+        context->draw_material_mode_enable(SGAL::Gfx::COLOR_MATERIAL);
+          
+      glBegin(GL_POLYGON);
+      const Vector3f & normal = vit->get_normal();
+      glNormal3fv((float*)&normal);
+
+      Halfedge_around_vertex_const_circulator hec(vit->incident_halfedges());
+      Halfedge_around_vertex_const_circulator begin_hec = hec;
+      Point_to_vector3f convert;
+      do {
+        const Point_3 & p = (*hec).face()->point();
+        Vector3f vec = convert(p);
+        glVertex3fv((float*)&vec);
+        ++hec;
+      } while (hec != begin_hec);
+      glEnd();
+
+      if (m_draw_marked_facet && vit->marked())
+        context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
+    }
+  }
+  glFrontFace(GL_CCW);
+  glColor3f(1.0f, 1.0f, 1.0f);
+
+  if (m_draw_marked_vertex) draw_primal_marked_vertex(action);
+  if (m_draw_marked_edge) draw_primal_marked_edge(action);
+}
+
+/*! Draw the primal marked vertex */
+void Cubical_gaussian_map_geo::draw_primal_marked_vertex(Draw_action* action)
+{
+  if (!m_vertex_geom) m_vertex_geom = new Sphere();
+  m_vertex_geom->set_radius(m_marked_vertex_radius);
+
+  Context* context = action->get_context();
+  
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+    const Arrangement& arr = m_cgm.arrangement(i);
+    Arr_face_const_iterator fi = arr.faces_begin();
+    // Skip the unbounded face
+    for (++fi; fi != arr.faces_end(); ++fi) {
+      if (fi->marked()) {
+        const Point_3& p = fi->point();
+        Point_to_vector3f convert;
+        Vector3f vec = convert(p);
+
+        glPushMatrix();
+        glTranslatef(vec[0], vec[1], vec[2]);
+        glColor3fv((float*)&m_marked_vertex_color);
+        context->draw_material_mode_enable(SGAL::Gfx::COLOR_MATERIAL);
+        m_vertex_geom->draw(action);
+        context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
+        glPopMatrix();
+        return;
+      }
+    }
+  }
+}
+
+/*! Draw the primal marked edge */
+void Cubical_gaussian_map_geo::draw_primal_marked_edge(Draw_action* action)
+{
+  if (!m_edge_geom) m_edge_geom = new Cylinder();
+  m_edge_geom->set_radius(m_marked_edge_radius);
+
+  Context* context = action->get_context();
+  
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+    const Arrangement& arr = m_cgm.arrangement(i);
+    Arr_halfedge_const_iterator hi;
+    for (hi = arr.halfedges_begin(); hi != arr.halfedges_end(); ++hi) {
+      if (hi->marked()) {
+        Arr_face_const_handle face1 = hi->face();
+        Arr_face_const_handle face2 = hi->twin()->face();
+
+        const Point_3& point1 = face1->point();
+        const Point_3& point2 = face2->point();
+
+        Point_to_vector3f convert;
+        Vector3f vec1 = convert(point1);
+        Vector3f vec2 = convert(point2);
+
+        Vector3f dst;
+        dst.sub(vec2, vec1);
+        Vector3f src(0,1,0);
+        Rotation rot;
+        rot.make(src, dst);
+
+        Vector3f translation;
+        translation.add(vec1, vec2);
+        translation.scale(0.5f);
+        
+        float dist = vec1.distance(vec2);
+        m_edge_geom->set_height(dist);
+
+        Transform trans;
+        trans.set_translation(translation);
+        trans.set_rotation(rot);
+        Matrix4f mat;
+        trans.get_matrix(mat);
+        
+        glPushMatrix();
+        glMultMatrixf((float*)&mat);
+        glColor3fv((float*)&m_marked_edge_color);
+        context->draw_material_mode_enable(SGAL::Gfx::COLOR_MATERIAL);
+        m_edge_geom->draw(action);
+        context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
+        glPopMatrix();
+        return;
+      }
+    }
+  }
+}
+
+/*! */
+void Cubical_gaussian_map_geo::isect_primary()
+{
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+    const Arrangement& arr = m_cgm.arrangement(i);
+    Arr_vertex_const_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+      if (!vit->is_real()) continue;
+
+      glBegin(GL_POLYGON);
+      Halfedge_around_vertex_const_circulator hec(vit->incident_halfedges());
+      Arr_halfedge_around_vertex_const_circulator begin_hec = hec;
+      Point_to_vector3f convert;
+      do {
+        const Point_3& p = (*hec).face()->point();
+        Vector3f vec = convert(p);
+        glVertex3fv((float*)&vec);
+        ++hec;
+      } while (hec != begin_hec);
+      glEnd();
+    }
+  }
+}
+
+/*! Draw the dual representation opaque */
+void Cubical_gaussian_map_geo::draw_aos_opaque(Draw_action* action)
+{
+  SGAL::Context* context = action->get_context();
+
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+    // Draw without updating the depth buffer:
+    context->draw_material_mode_enable(SGAL::Gfx::COLOR_MATERIAL);
+    context->draw_depth_mask(false);
+    glColor3fv((float*)&m_aos_surface_color);
+    draw_cube_face(i);
+    if (m_draw_marked_vertex) {
+      glColor3fv((float*)&m_marked_vertex_color);
+      draw_aos_marked_face(i);
+    }
+
+    if (m_draw_marked_edge) {
+      glColor3fv((float*)&m_marked_edge_color);
+      draw_aos_marked_edge(i);
+    }
+
+    if (m_draw_marked_facet) {
+      glColor3fv((float*)&m_marked_facet_color);
+      draw_aos_marked_vertex(i);
+    }
+    
+    // Draw the projection:
+    context->draw_light_enable(false);
+    glColor3fv((float*)&m_aos_edge_color[0]);
+    draw_projection(action, i, m_aos_edge_line_width);
+
+    // Update the depth buffer only:
+    context->draw_depth_mask(true);
+    context->draw_color_mask(Vector4ub(0x0, 0x0, 0x0, 0x0));
+    draw_cube_face(i);
+    context->draw_light_enable(true);
+    context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));
+  }
+
+  context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  context->draw_line_width(1.0f);
+}
+
+/*! \brief draws the dual marked vertex */
+void Cubical_gaussian_map_geo::draw_aos_marked_vertex(unsigned int id)
+{
+  float radius = m_aos_marked_vertex_radius;
+  const Arrangement & arr = m_cgm.arrangement(id);
+  Arr_vertex_const_iterator vi;
+  // Skip the unbounded face
+  for (vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi) {
+    if (!vi->marked()) continue;
+
+    const Point_2 & point = vi->point();
+    float x = (float) CGAL::to_double(point.x());
+    float y = (float) CGAL::to_double(point.y());
+    
+    unsigned int i = (id + 0) % 3;
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;
+    if (id >= 3) std::swap(j, k);
+
+    // draw a disk:
+    Vector3f normal;
+    normal[i] = (id < 3) ? -1.0f : 1.0f;
+    normal[j] = normal[k] = 0;
+
+    Vector3f vec;
+    vec[i] = normal[i];
+
+    glBegin(GL_POLYGON);
+    glNormal3fv((float*)&normal);
+    float angle = 0;
+    float delta = SGAL_TWO_PI / 16;
+    for (unsigned int i = 0; i < 16; ++i) {
+      vec[k] = x + radius * cosf(angle);
+      vec[j] = y + radius * sinf(angle);
+      angle += delta;
+      glVertex3fv((float*)&vec);
+    }
+      
+    glEnd();
+  }
+}
+
+/*! Draw the dual representation of the polyhedron in 2D */
+void Cubical_gaussian_map_geo::draw_aos_unfolded(SGAL::Draw_action* action)
+{
+  if (is_dirty()) clean();
+
+  SGAL::Context* context = action->get_context();
+
+  context->draw_depth_enable(false);
+  context->draw_light_enable(false);
+
+  // SGAL::Vector2f trans[] = {{1,1}, {2,0}, {0,-2}, {2,2}, {2,0}, {-4,2}};
+  SGAL::Vector2f trans[6];
+  trans[0] = Vector2f(1, 3);
+  trans[1] = Vector2f(3, 3);
+  trans[2] = Vector2f(3, 5);
+  trans[3] = Vector2f(5, 3);
+  trans[4] = Vector2f(7, 3);
+  trans[5] = Vector2f(3, 1);
+
+  SGAL::Vector2f scale[6];
+  scale[0] = Vector2f(-1, -1);
+  scale[1] = Vector2f(1, -1);
+  scale[2] = Vector2f(1, 1);
+  scale[3] = Vector2f(1, -1);
+  scale[4] = Vector2f(-1, -1);
+  scale[5] = Vector2f(1, -1);
+
+#if 0
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
+#endif
+  
+  float edge_line_width = m_aos_edge_line_width * 2;
+
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+    const Arrangement& arr = m_cgm.arrangement(i);
+    
+    glPushMatrix();
+    glTranslatef(trans[i][0], trans[i][1], 0);
+
+    // Draw the background:
+    if (m_draw_aos_surface) {
+      glColor3fv((float*)&m_aos_surface_color);
+      glBegin(GL_POLYGON);
+      Vector2f vec(-1, -1);
+      glVertex2fv((float*)&vec);
+      vec[0] = 1;  glVertex2fv((float*)&vec);
+      vec[1] = 1;  glVertex2fv((float*)&vec);
+      vec[0] = -1; glVertex2fv((float*)&vec);
+      glEnd();
+    }
+    
+    // Draw the curves:
+    glScalef(scale[i][0], scale[i][1], 1);
+    Vector2f src;
+    Vector2f trg;
+
+    Arr_edge_const_iterator hei;
+    for (hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
+      float line_width = (hei->is_real()) ?
+        edge_line_width : m_aos_edge_line_width;
+      context->draw_line_width(line_width);
+        
+      unsigned int j = ((i == 0) || (i == 2) || (i == 4)) ? 1 : 0;
+      unsigned int k = ((i == 0) || (i == 2) || (i == 4)) ? 0 : 1;
+      
+      const X_monotone_curve_2 & curve = hei->curve();
+      const Point_2& source = curve.source();
+      const Point_2& target = curve.target();
+
+      src[j] = (float) CGAL::to_double(source.x());
+      src[k] = (float) CGAL::to_double(source.y());
+
+      trg[j] = (float) CGAL::to_double(target.x());
+      trg[k] = (float) CGAL::to_double(target.y());
+
+      glBegin(GL_LINES);
+      Uint num = 0;
+      Vector3f color;
+      for (Uint id = 0; id < 2; ++id) {
+        if (hei->is_arr(id)) {
+          color.add(m_aos_edge_color[id]);
+          ++num;
+        }
+      }
+      if (num != 0) color.scale(1.0f / num);
+      else color = m_aos_edge_color[0];
+      glColor3fv((float*) &color);
+      glVertex2fv((float*)&src);
+      glVertex2fv((float*)&trg);
+      glEnd();
+    }
+               
+    // Restore the modelview matrix:
+    glPopMatrix();
+  }
+  
+  // Restore default:
+  context->draw_light_enable(true);
+  context->draw_depth_enable(true);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  context->draw_line_width(1.0f);
+}
+
+/*! Draw the face of the unit cube */
+void Cubical_gaussian_map_geo::draw_cube_face(unsigned int id)
+{
+  unsigned int i = (id + 0) % 3;
+  unsigned int j = (id + 1) % 3;
+  unsigned int k = (id + 2) % 3;
+  if (id >= 3) std::swap(j, k);
+  glBegin(GL_POLYGON);
+  Vector3f normal;
+  normal[i] = (id < 3) ? -1.0f : 1.0f;
+  normal[j] = normal[k] = 0;
+  glNormal3fv((float*)&normal);
+  Vector3f vec;
+  vec[i] = normal[i];
+  vec[j] = vec[k] = -1;
+  glVertex3fv((float*)&vec);
+  vec[k] = 1;  glVertex3fv((float*)&vec);
+  vec[j] = 1;  glVertex3fv((float*)&vec);
+  vec[k] = -1; glVertex3fv((float*)&vec);
+  glEnd();
+}
+
+/*! Draw the dual marked face */
+void Cubical_gaussian_map_geo::draw_aos_marked_face(unsigned int id)
+{
+  const Arrangement& arr = m_cgm.arrangement(id);
+  Arr_face_const_iterator fi = arr.faces_begin();
+  // Skip the unbounded face
+  for (++fi; fi != arr.faces_end(); ++fi) {
+    if (!fi->marked()) continue;
+
+    unsigned int i = (id + 0) % 3;
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;
+    if (id >= 3) std::swap(j, k);
+    glBegin(GL_POLYGON);
+    Vector3f normal;
+    normal[i] = (id < 3) ? -1.0f : 1.0f;
+    normal[j] = normal[k] = 0;
+    glNormal3fv((float*)&normal);
+    Vector3f vec;
+    vec[i] = normal[i];
+    Arr_ccb_halfedge_const_circulator hec = fi->outer_ccb();
+    Arr_ccb_halfedge_const_circulator hec_begin = hec;
+    do {
+      const Point_2 & p = hec->source()->point();
+      vec[k] = (float) CGAL::to_double(p.x());
+      vec[j] = (float) CGAL::to_double(p.y());
+      glVertex3fv((float*)&vec);
+      hec++;
+    } while(hec != hec_begin);
+    glEnd();
+  }
+}
+
+/*! Draw the dual marked edge */
+void Cubical_gaussian_map_geo::draw_aos_marked_edge(unsigned int id)
+{
+  float radius = m_aos_edge_radius;
+  unsigned int i = (id + 0) % 3;
+  unsigned int j = (id + 1) % 3;
+  unsigned int k = (id + 2) % 3;
+  if (id < 3) std::swap(j, k);
+  Vector3f src;
+  Vector3f trg;
+  src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
+  const Arrangement & arr = m_cgm.arrangement(id);
+  Arr_edge_const_iterator ei;
+  for (ei = arr.edges_begin(); ei != arr.edges_end(); ++ei) {
+    if (!ei->marked()) continue;
+
+    Arr_vertex_const_handle source_vertex = ei->source();
+    Arr_vertex_const_handle target_vertex = ei->target();
+    
+    const Point_2 & source_point = source_vertex->point();
+    const Point_2 & target_point = target_vertex->point();
+
+    src[j] = (float) CGAL::to_double(source_point.x());
+    src[k] = (float) CGAL::to_double(source_point.y());
+
+    trg[j] = (float) CGAL::to_double(target_point.x());
+    trg[k] = (float) CGAL::to_double(target_point.y());
+
+    Vector3f normal;
+    normal[i] = (id < 3) ? -1.0f : 1.0f;
+    normal[j] = normal[k] = 0;
+
+    Vector3f dir;
+    dir.sub(trg, src);
+    dir.normalize();
+    
+    Vector3f perp;
+    perp.cross(dir, normal);
+
+    Vector3f ext(perp);
+    ext.scale(radius);
+        
+    Vector3f vec0(src), vec1(trg), vec2(trg), vec3(src);
+    if (true || source_vertex->get_location() == Arr_vertex::Interior) {
+      vec0.add(ext);
+      vec3.sub(ext);
+    } else if (source_vertex->get_location() == Arr_vertex::Corner) {
+      Vector3f par0;
+      par0[j] = -src[k];
+      float a0 = radius / par0.dot(perp);
+      vec0[j] -= a0 * src[k];
+
+      Vector3f par3;
+      par3[k] = -src[j];
+      float a3 = radius / par3.dot(perp);
+      vec3[k] -= a3 * src[j];
+    } else {
+      if (src[j] == 1 || src[j] == -1) std::swap(j, k);
+      Vector3f par;
+      par[j] = -src[k];
+      float a = radius / par.dot(perp);
+      vec0[j] -= a * src[k];
+      vec3[j] += a * src[k];
+    }
+
+    if (true || target_vertex->get_location() == Arr_vertex::Interior) {
+      vec1.add(ext);
+      vec2.sub(ext);
+    } else if (target_vertex->get_location() == Arr_vertex::Corner) {
+      Vector3f par1;
+      par1[j] = -src[k];
+      float a1 = radius / par1.dot(perp);
+      vec1[j] -= a1 * src[k];
+
+      Vector3f par2;
+      par2[k] = -src[j];
+      float a2 = radius / par2.dot(perp);
+      vec2[k] -= a2 * src[j];
+    } else {
+      if (trg[j] == 1 || trg[j] == -1) std::swap(j, k);
+      Vector3f par;
+      par[j] = -trg[k];
+      float a = radius / par.dot(perp);
+      vec1[j] -= a * trg[k];
+      vec2[j] += a * trg[k];
+    }
+    glBegin(GL_QUADS);
+    glNormal3fv((float*)&normal);
+    glVertex3fv((float*)&vec0);
+    glVertex3fv((float*)&vec1);
+    glVertex3fv((float*)&vec2);
+    glVertex3fv((float*)&vec3);
+    glEnd();
+  }
+}
+
+/*! \brief draws a dual vertex */
+void Cubical_gaussian_map_geo::draw_aos_vertex(Draw_action* action,
+                                               const Vector3f& center,
+                                               const Vector3f& normal)
+{
+  draw_vertex_on_cube(action, center, normal,
+                      m_aos_vertex_style, m_aos_vertex_radius,
+                      m_aos_delta_angle);
+}
+
+/*! \brief draws a dual nonreal vertex */
+void Cubical_gaussian_map_geo::draw_aos_nonreal_vertex(Draw_action* action,
+                                                       const Vector3f& center,
+                                                       const Vector3f& normal)
+{
+  draw_vertex_on_cube(action, center, normal,
+                      m_aos_nonreal_vertex_style, m_aos_nonreal_vertex_radius,
+                      m_aos_delta_angle);
+}
+
+/*! \brief draws a dual marked_vertex */
+void Cubical_gaussian_map_geo::draw_aos_marked_vertex(Draw_action* action,
+                                                      const Vector3f& center,
+                                                      const Vector3f& normal)
+{
+  draw_vertex_on_cube(action, center, normal,
+                      m_aos_marked_vertex_style, m_aos_marked_vertex_radius,
+                      m_aos_delta_angle);
+}
+
+/*! \brief draws a dual edge */
+void Cubical_gaussian_map_geo::draw_aos_edge(Draw_action* action,
+                                             const Vector3f& src,
+                                             const Vector3f& trg,
+                                             const Vector3f& normal)
+{
+  draw_edge_on_cube(action, src, trg, normal, m_aos_edge_style,
+                    m_aos_edge_radius);
+}
+
+/*! \brief draws a dual nonreal-edge */
+void Cubical_gaussian_map_geo::draw_aos_nonreal_edge(Draw_action* action,
+                                                     const Vector3f& src,
+                                                     const Vector3f& trg,
+                                                     const Vector3f& normal)
+{
+  draw_edge_on_cube(action, src, trg, normal, m_aos_nonreal_edge_style,
+                    m_aos_nonreal_edge_radius);
+}
+
+/*! \brief draws the dual vertices */
+void Cubical_gaussian_map_geo::draw_aos_vertices(Draw_action* action)
+{
+  for (unsigned int id = 0; id < Polyhedral_cgm::NUM_FACES; ++id) {
+    unsigned int i = (id + 0) % 3;
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;
+    if (id < 3) std::swap(j, k);
+
+    Vector3f normal;
+    normal[i] = (id < 3) ? -1.0f : 1.0f;
+    normal[j] = normal[k] = 0;
+
+    Vector3f center;
+    center[i] = (id < 3) ? -1.0f : 1.0f;
+    
+    const Arrangement & arr = m_cgm.arrangement(id);
+    Arr_vertex_const_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+      if (!vit->is_real() || vit->marked()) continue;
+
+      const Point_2 & point = vit->point();
+      center[j] = static_cast<float>(CGAL::to_double(point.x()));
+      center[k] = static_cast<float>(CGAL::to_double(point.y()));
+      
+      draw_aos_vertex(action, center, normal);
+    }
+  }
+}
+
+/*! \brief draws the dual nonreal vertices */
+void Cubical_gaussian_map_geo::draw_aos_nonreal_vertices(Draw_action* action)
+{
+  for (unsigned int id = 0; id < Polyhedral_cgm::NUM_FACES; ++id) {
+    unsigned int i = (id + 0) % 3;
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;
+    if (id < 3) std::swap(j, k);
+
+    Vector3f normal;
+    normal[i] = (id < 3) ? -1.0f : 1.0f;
+    normal[j] = normal[k] = 0;
+
+    Vector3f center;
+    center[i] = (id < 3) ? -1.0f : 1.0f;
+    
+    const Arrangement& arr = m_cgm.arrangement(id);
+    Arr_vertex_const_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+      if (vit->is_real()) continue;
+
+      const Point_2& point = vit->point();
+      center[j] = static_cast<float>(CGAL::to_double(point.x()));
+      center[k] = static_cast<float>(CGAL::to_double(point.y()));
+      
+      draw_aos_nonreal_vertex(action, center, normal);
+    }
+  }
+}
+
+/*! \brief draws the dual marked vertices */
+void Cubical_gaussian_map_geo::draw_aos_marked_vertices(Draw_action* action)
+{
+  for (unsigned int id = 0; id < Polyhedral_cgm::NUM_FACES; ++id) {
+    unsigned int i = (id + 0) % 3;
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;
+    if (id < 3) std::swap(j, k);
+
+    Vector3f normal;
+    normal[i] = (id < 3) ? -1.0f : 1.0f;
+    normal[j] = normal[k] = 0;
+
+    Vector3f center;
+    center[i] = (id < 3) ? -1.0f : 1.0f;
+    
+    const Arrangement& arr = m_cgm.arrangement(id);
+    Arr_vertex_const_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+      if (!vit->marked()) continue;
+
+      const Point_2& point = vit->point();
+      center[j] = (float) CGAL::to_double(point.x());
+      center[k] = (float) CGAL::to_double(point.y());
+      
+      // if (!vit->is_real()) continue;
+      draw_aos_marked_vertex(action, center, normal);
+    }
+  }
+}
+
+/*! \brief draws the dual edges */
+void Cubical_gaussian_map_geo::draw_aos_edges(Draw_action* action)
+{
+  for (unsigned int id = 0; id < Polyhedral_cgm::NUM_FACES; ++id) {
+    unsigned int i = (id + 0) % 3;
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;
+    if (id < 3) std::swap(j, k);
+    Vector3f src;
+    Vector3f trg;
+    src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
+    const Arrangement & arr = m_cgm.arrangement(id);
+    Arr_edge_const_iterator hei;
+    for (hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
+      const X_monotone_curve_2 & curve = hei->curve();
+      const Point_2 & source = curve.source();
+      const Point_2 & target = curve.target();
+
+      src[j] = (float) CGAL::to_double(source.x());
+      src[k] = (float) CGAL::to_double(source.y());
+
+      trg[j] = (float) CGAL::to_double(target.x());
+      trg[k] = (float) CGAL::to_double(target.y());
+
+      Vector3f normal;
+      normal[i] = (id < 3) ? -1.0f : 1.0f;
+      normal[j] = normal[k] = 0;
+
+      draw_aos_edge(action, src, trg, normal);
+      if (hei->is_real())
+        draw_aos_edge(action, src, trg, normal);        
+      else
+        draw_aos_nonreal_edge(action, src, trg, normal);
+    }
+  }
+}
+
+/*! Draw the planar map associated with a face of the unit cube */
+void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
+                                               unsigned int id,
+                                               float non_edge_line_width)
+{
+  SGAL::Context* context = action->get_context();
+  float edge_line_width = m_aos_edge_line_width;
+  unsigned int i = (id + 0) % 3;
+  unsigned int j = (id + 1) % 3;
+  unsigned int k = (id + 2) % 3;
+  if (id < 3) std::swap(j, k);
+  Vector3f src;
+  Vector3f trg;
+  src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
+  const Arrangement& arr = m_cgm.arrangement(id);
+  for (Arr_edge_const_iterator hei = arr.edges_begin(); hei != arr.edges_end();
+       ++hei)
+  {
+    if (m_draw_marked_edge && hei->marked()) continue;
+    
+    const X_monotone_curve_2 & curve = hei->curve();
+    const Point_2 & source = curve.source();
+    const Point_2 & target = curve.target();
+
+    src[j] = (float) CGAL::to_double(source.x());
+    src[k] = (float) CGAL::to_double(source.y());
+
+    trg[j] = (float) CGAL::to_double(target.x());
+    trg[k] = (float) CGAL::to_double(target.y());
+
+    float line_width = (hei->is_real()) ?
+      edge_line_width :  non_edge_line_width;
+    context->draw_line_width(line_width);
+
+    if (m_minkowski_sum) {
+      Uint num = 0;
+      Vector3f color;
+      for (Uint id = 0; id < 2; ++id) {
+        if (hei->is_arr(id)) {
+          color.add(m_aos_edge_color[id]);
+          ++num;
+        }
+      }
+      SGAL_assertion(num != 0);
+      color.scale(1.0f / num);
+      glColor3fv((float*) &color);
+    }
+    
+    glBegin(GL_LINES);
+    glVertex3fv((float*)&src);
+    glVertex3fv((float*)&trg);
+    glEnd();
+  }
+}
+
+/*! Reverse the coordinate indices */
+void Cubical_gaussian_map_geo::
+set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
+{
+  m_coord_indices.resize(indices.size());
+  Uint i = 0;
+  const Uint* ii = indices.end() - 2;
+  for (; ii >= indices.begin(); --ii) {
+    m_coord_indices[i++] = *ii;
+  }
+  m_coord_indices[i++] = (Uint) -1;
+}
+
+/*! Print statistics */
+void Cubical_gaussian_map_geo::print_stat()
+{
+  std::cout << "Information for " << get_name() << ":\n";
+  if (is_dirty()) clean();
+
+  if (m_minkowski_sum)
+    std::cout << "Minkowski sum took " << m_time << " seconds.\n";
+  else
+    std::cout << "Construction took " << m_time << " seconds." << std::endl;
+  m_cgm.print_stat();
+}
+
+/*! Compute the planes and the normals of the dual facets and store them at the
+ * vertices of the planar map
+ */
+void Cubical_gaussian_map_geo::process_facets()
+{
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+    Arrangement& arr = m_cgm.arrangement(i);
+    Arr_vertex_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+      if (!vit->is_real()) continue;
+      Vector_3 exact_normal = m_cgm.calculate_normal(i, vit->point());
+      float x = (float) CGAL::to_double(exact_normal.x());
+      float y = (float) CGAL::to_double(exact_normal.y());
+      float z = (float) CGAL::to_double(exact_normal.z());
+      SGAL::Vector3f normal(x,y,z);
+      normal.normalize();
+      vit->set_normal(normal);
+    }
+  }
+}
+
+/*! Set the source gausian maps of the minkowski sum */
+void Cubical_gaussian_map_geo::insert_cgm(Cubical_gaussian_map_geo* cgm)
+{
+  m_cgm_nodes.push_back(cgm);
+  Observer observer(this, get_field_info(GEOMETRIES));
+  cgm->register_observer(observer);
+  m_is_sphere_bound_dirty = true;
+}
+
+/*! \biref processes change of points */
+void Cubical_gaussian_map_geo::field_changed(Field_info* field_info)
+{ clear(); }
+
+/*! Increas the vertex index */
+void Cubical_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
+{
+  m_marked_vertex_index++;
+  if (m_marked_vertex_index == m_cgm.number_of_vertices())
+    m_marked_vertex_index = 0;
+  clear();
+}
+
+/*! Increas the face index */
+void Cubical_gaussian_map_geo::increase_edge_index(Field_info* field_info)
+{
+  m_marked_edge_index++;
+  if (m_marked_edge_index == m_cgm.number_of_edges())
+    m_marked_edge_index = 0;
+  clear();
+}
+
+/*! Increas the face index */
+void Cubical_gaussian_map_geo::increase_facet_index(Field_info* field_info)
+{
+  m_marked_facet_index++;
+  if (m_marked_facet_index == m_cgm.number_of_facets())
+    m_marked_facet_index = 0;
+  clear();
+}
+
+/*! \brief creates the renderers */
+void Cubical_gaussian_map_geo::create_renderers()
+{
+  m_aos_marked_face_renderer = new Marked_face_renderer(*this);
+  
+  m_surface_renderer = new Surface_renderer();
+  Vector4f color;
+  color[0] = m_aos_surface_color[0];
+  color[1] = m_aos_surface_color[1];
+  color[2] = m_aos_surface_color[2];
+  color[3] = 0.5f;
+  m_colored_surface_renderer = new Colored_surface_renderer(color);
+  m_stencil_surface_renderer = new Stencil_surface_renderer();
+
+  m_vertices_renderer = new Cgm_vertices_renderer(*this);
+  m_colored_vertices_renderer = new Colored_vertices_renderer(*this);
+  m_nonreal_vertices_renderer = new Nonreal_vertices_renderer(*this);
+  m_colored_nonreal_vertices_renderer =
+    new Colored_nonreal_vertices_renderer(*this);
+  m_marked_vertices_renderer = new Marked_vertices_renderer(*this);
+  m_colored_marked_vertices_renderer =
+    new Colored_marked_vertices_renderer(*this);  
+  
+  m_edges_renderer = new Cgm_edges_renderer(*this);
+  m_inflated_line_edges_renderer = new Cgm_inflated_line_edges_renderer(*this);
+  m_inflated_strip_edges_renderer = new Cgm_inflated_strip_edges_renderer(*this);
+  m_inflated_tube_edges_renderer = new Cgm_inflated_tube_edges_renderer(*this);
+  m_colored_edges_renderer = new Colored_edges_renderer(*this);
+}
+
+/*! \brief destroys the renderers */
+void Cubical_gaussian_map_geo::destroy_renderers()
+{
+  if (m_aos_marked_face_renderer) delete m_aos_marked_face_renderer;
+  if (m_surface_renderer) delete m_surface_renderer;
+  if (m_colored_surface_renderer) delete m_colored_surface_renderer;
+  if (m_stencil_surface_renderer) delete m_stencil_surface_renderer;
+
+  if (m_vertices_renderer) delete m_vertices_renderer;
+  if (m_colored_vertices_renderer) delete m_colored_vertices_renderer;
+
+  if (m_nonreal_vertices_renderer) delete m_nonreal_vertices_renderer;
+  if (m_colored_nonreal_vertices_renderer)
+    delete m_colored_nonreal_vertices_renderer;
+  if (m_marked_vertices_renderer) delete m_marked_vertices_renderer;
+  if (m_colored_marked_vertices_renderer)
+    delete m_colored_marked_vertices_renderer;
+  
+  if (m_edges_renderer) delete m_edges_renderer;
+  if (m_inflated_line_edges_renderer) delete m_inflated_line_edges_renderer;
+  if (m_inflated_strip_edges_renderer) delete m_inflated_strip_edges_renderer;
+  if (m_inflated_tube_edges_renderer) delete m_inflated_tube_edges_renderer;
+  if (m_colored_edges_renderer) delete m_colored_edges_renderer;
+}
+
+/*! \brief cleans the renderer */
+void Cubical_gaussian_map_geo::clean_renderer()
+{
+  if (m_draw_marked_vertex)
+    m_renderer.push_back(m_aos_marked_face_renderer,
+                         Arrangement_renderer::SURFACE);
+  if (get_draw_aos_surface())
+    m_renderer.push_back(m_colored_surface_renderer,
+                         Arrangement_renderer::SURFACE);
+  else m_renderer.push_back(m_stencil_surface_renderer,
+                            Arrangement_renderer::SURFACE);
+
+  if (m_draw_aos_haloed) {
+    if (get_aos_edge_style() == Edge_shape::LINE)
+      m_renderer.push_back(m_inflated_line_edges_renderer,
+                           Arrangement_renderer::INFLATED);
+    else if (get_aos_edge_style() == Edge_shape::STRIP)
+      m_renderer.push_back(m_inflated_strip_edges_renderer,
+                           Arrangement_renderer::INFLATED);
+    else if (get_aos_edge_style() == Edge_shape::TUBE)
+      m_renderer.push_back(m_inflated_tube_edges_renderer,
+                           Arrangement_renderer::INFLATED);
+  }
+
+  if (get_aos_edge_style() == Edge_shape::STRIP) {
+    m_renderer.push_back(m_colored_edges_renderer,
+                         Arrangement_renderer::BACKFACING);
+    m_renderer.push_back(m_colored_edges_renderer,
+                         Arrangement_renderer::FRONTFACING);
+  } else {
+    m_renderer.push_back(m_colored_edges_renderer,
+                         Arrangement_renderer::OTHER);
+  }
+
+  switch (get_aos_vertex_style()) {
+   case Vertex_shape::DISC:
+    m_renderer.push_back(m_colored_vertices_renderer,
+                         Arrangement_renderer::BACKFACING);
+    m_renderer.push_back(m_colored_vertices_renderer,
+                         Arrangement_renderer::FRONTFACING);
+    break;
+    
+   case Vertex_shape::POINT:
+   case Vertex_shape::RING:
+   case Vertex_shape::BALL:
+    m_renderer.push_back(m_colored_vertices_renderer,
+                         Arrangement_renderer::OTHER);
+    break;
+    
+   default:
+    break;
+  }
+
+  switch (get_aos_nonreal_vertex_style()) {
+   case Vertex_shape::DISC:
+    m_renderer.push_back(m_colored_nonreal_vertices_renderer,
+                         Arrangement_renderer::BACKFACING);
+    m_renderer.push_back(m_colored_nonreal_vertices_renderer,
+                         Arrangement_renderer::FRONTFACING);
+    break;
+    
+   case Vertex_shape::POINT:
+   case Vertex_shape::RING:
+   case Vertex_shape::BALL:
+    m_renderer.push_back(m_colored_nonreal_vertices_renderer,
+                         Arrangement_renderer::OTHER);
+    break;
+    
+   default:
+    break;
+  }
+  
+  switch (get_aos_marked_vertex_style()) {
+   case Vertex_shape::DISC:
+    m_renderer.push_back(m_colored_marked_vertices_renderer,
+                         Arrangement_renderer::BACKFACING);
+    m_renderer.push_back(m_colored_marked_vertices_renderer,
+                         Arrangement_renderer::FRONTFACING);
+    break;
+    
+   case Vertex_shape::POINT:
+   case Vertex_shape::RING:
+   case Vertex_shape::BALL:
+    m_renderer.push_back(m_colored_marked_vertices_renderer,
+                         Arrangement_renderer::OTHER);
+    break;
+    
+   default:
+    break;
+  }
+  
+  if (get_draw_aos_surface())
+    m_renderer.push_back(m_surface_renderer, Arrangement_renderer::DEPTH);
+  if (is_aos_edge_enabled())
+    m_renderer.push_back(m_edges_renderer, Arrangement_renderer::DEPTH);
+  if (get_aos_vertex_style() != Vertex_shape::NONE)
+    m_renderer.push_back(m_vertices_renderer, Arrangement_renderer::DEPTH);
+  if (get_aos_nonreal_vertex_style() != Vertex_shape::NONE)
+    m_renderer.push_back(m_nonreal_vertices_renderer,
+                         Arrangement_renderer::DEPTH);
+  if (get_aos_marked_vertex_style() != Vertex_shape::NONE)
+    m_renderer.push_back(m_marked_vertices_renderer,
+                         Arrangement_renderer::DEPTH);
+
+  m_renderer_dirty = false;
+}
+
+/*! \brief renders the vertices with color */
+void Cubical_gaussian_map_geo::Colored_vertices_renderer::
+operator()(Draw_action* action)
+{
+  glColor3fv((float*)&m_geo.get_aos_vertex_color());
+  Base::operator()(action);
+}
+
+/*! \brief renders the marked vertices */
+void Cubical_gaussian_map_geo::Marked_vertices_renderer::
+operator()(Draw_action* action)
+{
+  m_geo.draw_aos_marked_vertices(action);
+}
+
+/*! \brief renders the marked vertices with color */
+void Cubical_gaussian_map_geo::Colored_marked_vertices_renderer::
+operator()(Draw_action* action)
+{
+  glColor3fv((float*)&m_geo.m_marked_facet_color);
+  Marked_vertices_renderer::operator()(action);
+}
+
+/*! \brief renders the nonreal vertices */
+void Cubical_gaussian_map_geo::Nonreal_vertices_renderer::
+operator()(Draw_action* action)
+{
+  m_geo.draw_aos_nonreal_vertices(action);
+}
+
+/*! \brief renders the nonreal vertices with color */
+void Cubical_gaussian_map_geo::Colored_nonreal_vertices_renderer::
+operator()(Draw_action* action)
+{
+  glColor3fv((float*)&m_geo.m_aos_nonreal_vertex_color);
+  Nonreal_vertices_renderer::operator()(action);
+}
+
+/*! \brief renders the edges with color */
+void Cubical_gaussian_map_geo::Colored_edges_renderer::
+operator()(Draw_action* action)
+{
+  for (unsigned int id = 0; id < Polyhedral_cgm::NUM_FACES; ++id) {
+    unsigned int i = (id + 0) % 3;
+    unsigned int j = (id + 1) % 3;
+    unsigned int k = (id + 2) % 3;
+    if (id < 3) std::swap(j, k);
+
+    Vector3f normal;
+    normal[i] = (id < 3) ? -1.0f : 1.0f;
+    normal[j] = normal[k] = 0;
+
+    Vector3f src;
+    Vector3f trg;
+    src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
+    const Arrangement & arr = m_geo.m_cgm.arrangement(id);
+    Arr_edge_const_iterator hei;
+    for (hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
+      const X_monotone_curve_2 & curve = hei->curve();
+      const Point_2 & source = curve.source();
+      const Point_2 & target = curve.target();
+
+      src[j] = (float) CGAL::to_double(source.x());
+      src[k] = (float) CGAL::to_double(source.y());
+
+      trg[j] = (float) CGAL::to_double(target.x());
+      trg[k] = (float) CGAL::to_double(target.y());
+
+      if (!hei->is_real()) {
+        glColor3fv((float*) &m_geo.get_aos_nonreal_edge_color());
+        m_geo.draw_aos_nonreal_edge(action, src, trg, normal);
+        continue;
+      }
+      
+      if (m_geo.m_minkowski_sum) {
+        Uint num = 0;
+        Vector3f color;
+        for (Uint id = 0; id < 2; ++id) {
+          if (hei->is_arr(id)) {
+            color.add(m_geo.get_aos_edge_color(id));
+            ++num;
+          }
+        }
+        SGAL_assertion(num != 0);
+        color.scale(1.0f / num);
+        glColor3fv((float*) &color);
+      }
+      else if (hei->marked()) glColor3fv((float*) &m_geo.m_marked_edge_color);
+      else glColor3fv((float*) &m_geo.get_aos_edge_color());
+
+      m_geo.draw_aos_edge(action, src, trg, normal);
+    }
+  }
+}
+
+/*! \brief renders the marked primal vertex */
+void Cubical_gaussian_map_geo::Marked_face_renderer::
+operator()(Draw_action* action)
+{
+  const Vector3f& color = m_geo.get_marked_vertex_color();
+  glColor4f(color[0], color[1], color[2], 0.6);
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i)
+    m_geo.draw_aos_marked_face(i);
+}
+
+SGAL_END_NAMESPACE

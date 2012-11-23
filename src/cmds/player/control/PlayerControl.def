@@ -1,0 +1,9 @@
+; PlayerControl.def : Declares the module parameters.
+
+LIBRARY      "PlayerControl.OCX"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE

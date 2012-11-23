@@ -1,0 +1,21 @@
+include $(ROOT)/make/comdef.mak
+
+FILES = Color_array.hpp
+FILES+= Coord_array.hpp
+FILES+= Coord_minkowski.hpp
+FILES+= Coord_transformer.hpp
+FILES+= Extrusion.hpp
+FILES+= Geometry.hpp
+FILES+= Geo_set.hpp
+FILES+= Indexed_face_set.hpp
+FILES+= Indexed_line_set.hpp
+FILES+= Indexed_face_set_geometry.hpp
+FILES+= Indexed_face_set_mask.hpp
+FILES+= Mesh_set.hpp
+FILES+= Normal_array.hpp
+FILES+= Piece.hpp
+FILES+= Tex_coord_array.hpp
+FILES+= Text.hpp
+
+INSTALLDIR =$(INCDIR)/SGAL
+include $(MAKEDIR)/files.mak

@@ -1,0 +1,196 @@
+// Copyright (c) 2010 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// $Id: Lines_through_segments_geo.hpp 10975 2011-03-29 15:56:20Z efif $
+// $Revision: 10975 $
+//
+// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+/*! \file
+ * A geometry container that represents all lines that intersect tupples
+ * of 4 segments, given a container of segments
+ */
+
+#ifndef SGAL_LINES_THROUGH_SEGMENTS_HPP
+#define SGAL_LINES_THROUGH_SEGMENTS_HPP
+
+#if (defined _MSC_VER)
+#include <windows.h>
+#endif
+#include <list>
+#include <string>
+#include <vector>
+#include <boost/type_traits.hpp>
+
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Lines_through_segments_3.h>
+#include <CGAL/Lines_through_segments_traits_3.h>
+
+#include "SGAL/basic.hpp"
+#include "SGAL/Geometry.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+class Container_proto;
+class Element;
+class Cull_context;
+class Indexed_line_set;
+
+/*! A geometry container that represents all lines that intersect tupples
+ * of 4 segments, given a container of segments
+ */
+class SGAL_CLASSDEF Lines_through_segments_geo : public Geometry {
+public:
+  typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
+  typedef Nt_traits::Algebraic                          Algebraic;
+  typedef Nt_traits::Rational                           Rational;
+
+  typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
+  typedef CGAL::Cartesian<Rational>                     Rat_kernel;
+  typedef Rat_kernel::Line_3                            Rat_line_3;
+  typedef Rat_kernel::Segment_3                         Rat_segment_3;
+  typedef Rat_kernel::Point_3                           Rat_point_3;
+  typedef Rat_kernel::FT                                Rat_number_type;
+
+  typedef CGAL::Lines_through_segments_traits_3<Alg_kernel, Rat_kernel>
+    Lines_through_segments_traits_3;
+
+  typedef boost::true_type With_segments;
+  typedef CGAL::Lines_through_segments_3<Lines_through_segments_traits_3,
+                                         With_segments>
+    Lines_through_segments_3;
+  typedef Lines_through_segments_3::Transversal_with_segments
+    Transversal_with_segments;
+  
+  enum {
+    FIRST = Geometry::LAST - 1,
+    SEGMENTS,
+    LAST
+  };
+
+  /*! Constructor */
+  Lines_through_segments_geo(Boolean proto = false);
+
+  /*! Destructor */
+  virtual ~Lines_through_segments_geo();
+
+  /* Construct the prototype */
+  static Lines_through_segments_geo* prototype()
+  { return new Lines_through_segments_geo(true); }
+
+  /*! Clone */
+  virtual Container* clone() { return new Lines_through_segments_geo(); }
+
+  /*! Initialize the container prototype */
+  virtual void init_prototype();
+
+  /*! Delete the container prototype */
+  virtual void delete_prototype(); 
+
+  /*! Obtain the container prototype */
+  virtual Container_proto* get_prototype();
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Clean the representation */
+  virtual void clean();
+
+  /*! */
+  virtual void cull(Cull_context& cull_context);
+
+  /*! */
+  virtual void isect(Isect_action* action);
+
+  /*! */
+  virtual Boolean calculate_sphere_bound();
+
+  /*! Determine whether the geometry has color (as opposed to material)
+   */
+  virtual Boolean has_color() const { return false; }  
+
+  /*! Draw the geometry */
+  virtual void draw(Draw_action* action);
+
+  /*! Clear the internal representation and auxiliary data structures
+   */
+  virtual void clear();
+
+  /*! Determine whether the representation hasn't been updated
+   */
+  virtual Boolean is_dirty() const { return m_dirty; }
+  
+  /*! Is the representation empty ?
+   */
+  virtual Boolean is_empty();
+
+  /*! Set the segments.
+   * \param segments the segments.
+   */
+  void set_segments(Indexed_line_set* segments) { m_segments = segments; }
+
+  /*! Obtain the segments.
+   * \return the segments.
+   */
+  const Indexed_line_set* get_segments() const { return m_segments; }
+
+protected:
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const { return s_tag; }
+
+  /*! Indicates whether the lines-through-segments data member is owned,
+   * and thus should be deleted.
+   */
+  Boolean m_own_lts;
+  
+  /* The internal Lines Through Segments data structutre */
+  Lines_through_segments_3* m_lts;
+  
+  /*! The segments */
+  Indexed_line_set* m_segments;
+
+  /*! Indicates whether the data structure must be cleaned */
+  Boolean m_dirty;
+
+private:
+  /*! The tag that identifies this container type */
+  static std::string s_tag;
+
+  /*! The container prototype */
+  static Container_proto* s_prototype;
+
+  /*! The exact segments */
+  std::vector<Rat_segment_3> m_in_segments;
+
+  /*! Indicates whether the rational segments must be cleaned */
+  bool m_in_segments_dirty;
+
+  /*! The output list of lines */
+  std::list<Transversal_with_segments> m_out_lines;
+
+  Alg_kernel m_alg_kernel;
+  Rat_kernel m_rat_kernel;
+
+  /*! Default values */
+};
+
+SGAL_END_NAMESPACE
+
+#endif

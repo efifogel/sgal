@@ -1,0 +1,351 @@
+// Copyright (c) 2004 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// $Source$
+// $Revision: 12384 $
+//
+// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#if (defined _MSC_VER)
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#include <algorithm>
+
+#include "SGAL/basic.hpp"
+#include "SGAL/Material.hpp"
+#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Appearance.hpp"
+#include "SGAL/Field_infos.hpp"
+#include "SGAL/Scene_graph_int.hpp"
+#include "SGAL/Container_factory.hpp"
+#include "SGAL/Element.hpp"
+#include "SGAL/Container_proto.hpp"
+#include "SGAL/Trace.hpp"
+#include "SGAL/Execution_function.hpp"
+#include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Formatter.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+std::string Material::s_tag = "Material";
+Container_proto * Material::s_prototype = 0;
+
+// Default values:
+Float Material::m_def_ambient_intensity = 0.2f;
+Vector3f Material::m_def_diffuse_color(0.8f, 0.8f,0.8f);
+Vector3f Material::m_def_emissive_color(0, 0, 0);
+Float Material::m_def_shininess = 0.2f;
+Vector3f Material::m_def_specular_color(0, 0, 0);
+Float Material::m_def_transparency = 0;
+
+REGISTER_TO_FACTORY(Material, "Material");
+
+/*! Constructor */
+Material::Material(Boolean proto) :
+  Container(proto),
+  m_ambient_intensity(m_def_ambient_intensity),
+  m_diffuse_color(m_def_diffuse_color),
+  m_specular_color(m_def_specular_color),
+  m_emissive_color(m_def_emissive_color),
+  m_shininess(m_def_shininess),
+  m_transparency(m_def_transparency),
+  m_changed(true)
+{}
+
+/*! Destructor */
+Material::~Material() {}
+
+/*! */
+Boolean Material::is_changed()
+{
+  Boolean changed = m_changed;
+  m_changed = false;
+  return changed;
+}
+
+/*! sets the diffuse color */
+void Material::set_diffuse_color(float v0, float v1, float v2)
+{
+  m_diffuse_color[0] = v0;
+  m_diffuse_color[1] = v1;
+  m_diffuse_color[2] = v2;
+}
+
+/*! sets the specular color */
+void Material::set_specular_color(float v0, float v1, float v2)
+{
+  m_specular_color[0] = v0;
+  m_specular_color[1] = v1;
+  m_specular_color[2] = v2;
+}
+
+/*! sets the amissive color */
+void Material::set_emissive_color(float v0, float v1, float v2)
+{
+  m_emissive_color[0] = v0;
+  m_emissive_color[1] = v1;
+  m_emissive_color[2] = v2;
+}
+
+/*! sets the shininess factor */
+void Material::set_shininess(Float shininess)
+{
+  if (shininess > 1) m_shininess = 1; 
+  else m_shininess = shininess;
+}
+
+/*! calls the ogl calls to set the current material.
+ * we assume that if this method is called, all 
+ * material parameters need to be set.
+ */
+void Material::draw(Face which_face, Context* /* context */)
+{
+  static GLenum s_face_tokens[] = {GL_FRONT, GL_BACK, GL_FRONT_AND_BACK};
+  GLenum face = s_face_tokens[which_face];
+
+  Vector4f diffuse(m_diffuse_color);
+  Vector4f specular(m_specular_color);
+  Vector4f emissive(m_emissive_color);
+  Vector4f ambient;
+
+  ambient.scale(m_ambient_intensity, m_diffuse_color);
+
+  ambient[3] = diffuse[3] = specular[3] = emissive[3] = 1.0f - m_transparency;
+
+  glMaterialfv(face, GL_AMBIENT, (float *)&ambient);
+  glMaterialfv(face, GL_DIFFUSE, (float *)&diffuse);
+  glMaterialfv(face, GL_SPECULAR, (float *)&specular);
+  glMaterialfv(face, GL_EMISSION, (float *)&emissive);
+  glMaterialf(face, GL_SHININESS, 128 * m_shininess);
+}
+
+/*! Callback, called when field change, rise changed flag and forward call to
+ * set_rendering_required.
+ */
+void Material::material_changed(Field_info * field_info)
+{
+  m_changed = true;
+  Container::set_rendering_required(field_info);
+}
+
+/*! initilalizes the prototype of this node
+ */
+void Material::init_prototype()
+{
+  if (s_prototype) return;
+
+  // Allocate a prototype instance
+  //! \todo s_prototype = new Container_proto(Geometry::get_prototype());
+  s_prototype = new Container_proto();
+
+  // Add the object fields to the prototype
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Material::material_changed);
+  s_prototype->add_field_info
+    (new SF_float(AMBIENT_INTENSITY, "ambientIntensity",
+                  get_member_offset(&m_ambient_intensity),
+                  exec_func));
+
+  exec_func = static_cast<Execution_function>(&Material::material_changed);
+  s_prototype->
+    add_field_info(new SF_vector3f(DIFFUSE_COLOR, "diffuseColor",
+                                   get_member_offset(&m_diffuse_color),
+                                   exec_func));
+
+  exec_func = static_cast<Execution_function>(&Material::material_changed);
+  s_prototype->add_field_info
+    (new SF_vector3f(SPECULAR_COLOR, "specularColor",
+                     get_member_offset(&m_specular_color),
+                     exec_func));
+
+  exec_func = static_cast<Execution_function>(&Material::material_changed);
+  s_prototype->
+    add_field_info(new SF_vector3f(EMISSIVE_COLOR, "emissiveColor",
+                                   get_member_offset(&m_emissive_color),
+                                   exec_func));
+
+  exec_func = static_cast<Execution_function>(&Material::material_changed);
+  s_prototype->add_field_info(new SF_float(SHININESS, "shininess",
+                                           get_member_offset(&m_shininess),
+                                           exec_func));
+
+  exec_func = static_cast<Execution_function>(&Material::material_changed);
+  s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
+                                           get_member_offset(&m_transparency),
+                                           exec_func));
+}
+
+/*! deletes the prototype node
+ */
+void Material::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = 0;
+}
+
+/*! obtains the prototype. Initialize as nessary.
+ */
+Container_proto * Material::get_prototype() 
+{  
+  if (!s_prototype) init_prototype();
+  return s_prototype;
+}
+
+/*! Sets the attributes of the object extracted from the VRML or X3D file.
+ * \param elem contains lists of attribute names and values
+ * \param sg a pointer to the scene graph
+ */
+void Material::set_attributes(Element * elem) 
+{
+  typedef Element::Str_attr_iter                Str_attr_iter;
+
+  Container::set_attributes(elem);
+  for (Str_attr_iter ai = elem->str_attrs_begin();
+       ai != elem->str_attrs_end(); ai++)
+  {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
+    if (name == "ambientIntensity") {
+      set_ambient_intensity((float) atof(value.c_str()));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "diffuseColor") {
+      Vector3f col(value);
+      set_diffuse_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "specularColor") {
+      Vector3f col(value);
+      set_specular_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "emissiveColor") {
+      Vector3f col(value);
+      set_emissive_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "shininess") {
+      set_shininess((float) atof(value.c_str()));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "transparency") {
+      set_transparency((float) atof(value.c_str()));
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  // Remove all the deleted attributes:
+  elem->delete_marked();
+}
+
+/*! Write this container */
+void Material::write(Formatter * formatter)
+{
+  formatter->container_begin(get_tag());
+  formatter->single_vector3f("diffuseColor",
+                             m_diffuse_color, m_def_diffuse_color);
+  formatter->container_end();  
+}
+
+#if 0
+/*! Get the attributes of the box */
+Attribute_list Material::get_attributes() 
+{ 
+  Attribute_list attribs; 
+  Attribue attrib;
+  char buf[32];
+  Vector3f col;
+
+  attribs = Container::get_attributes();
+
+  if (m_ambient_intensity != m_def_ambient_intensity) {
+    attrib.first = "ambientIntensity";
+    sprintf(buf, "%g",   get_ambient_intensity());
+    attrib.second = buf;
+    attribs.push_back(attrib);
+  }
+  if (m_diffuse_color != m_def_diffuse_color) {
+    attrib.first = "diffuseColor";
+    get_diffuse_color(col);
+    attrib.second = col.get_text();
+    attribs.push_back(attrib);
+  }
+  if (m_specular_color != m_def_specular_color) {
+    attrib.first = "specularColor";
+    get_specular_color(col);
+    attrib.second = col.get_text();
+    attribs.push_back(attrib);
+  }
+  if (m_emissive_color != m_def_emissive_color) {
+    attrib.first = "emissiveColor";
+    get_emissive_color(col);
+    attrib.second = col.get_text();
+    attribs.push_back(attrib);
+  }
+  if (m_shininess != m_def_shininess) {
+    attrib.first = "shininess";
+    sprintf(buf, "%g", (float)get_shininess());
+    attrib.second = buf;
+    attribs.push_back(attrib);
+  }
+  if (m_transparency != m_def_transparency) {
+    attrib.first = "transparency";
+    sprintf(buf, "%f", (float)get_transparency());
+    attrib.second = buf;
+    attribs.push_back(attrib);
+  }
+
+  return attribs; 
+}
+
+/*! add a material to the material pool. connect the material to
+ * its parent appearance.
+ */
+void Material::add_to_scene(Scene_graph * sg, XML_entity * parent)
+{ 
+  Container::add_to_scene(sg, parent);
+  sg->add_container(this);
+
+  if (parent->get_name() == g_navigation_root_name) {
+    return;
+  }
+
+  Appearance * appearance = dynamic_cast<Appearance *>(parent);
+  //ASSERT(appearance);
+  if (appearance) { 
+    appearance->set_material(this);
+    // Set the back material only if it hasn't been set yet.
+    // The back material could be set through an extension!
+    if (!appearance->get_back_material())
+      appearance->set_back_material(this);
+  
+    // FIX - this code should be moved to somewhere else
+    if (m_transparency != 0.0f) {
+      appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+      appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+    }
+  }
+}
+#endif
+
+SGAL_END_NAMESPACE

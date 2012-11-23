@@ -1,0 +1,156 @@
+// Copyright (c) 2004 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// $Id: Interpolator.cpp 7204 2009-01-24 21:43:15Z efif $
+// $Revision: 7204 $
+//
+// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+/*! \file
+ * Pure interpolator engine
+ */
+
+#include "SGAL/Interpolator.hpp"
+#include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
+#include "SGAL/Container_proto.hpp"
+#include "SGAL/Trace.hpp"
+#include "SGAL/Container_factory.hpp"
+#include "SGAL/Element.hpp"
+#include "SGAL/Utilities.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+Container_proto * Interpolator::s_prototype = NULL;
+
+REGISTER_TO_FACTORY(Interpolator, "Interpolator");
+
+/*! Constructor
+*/
+Interpolator::Interpolator(Boolean interpolate_flag,
+                           Boolean proto) :
+  Node(proto),
+  m_fraction(0),
+  m_interpolate_flag(interpolate_flag)
+{}
+
+/*! Destructor */ 
+Interpolator::~Interpolator()
+{
+  m_keys.clear();
+}
+
+/*! Initializes the container prototype */
+void Interpolator::init_prototype()
+{
+  //! Container execution function
+  typedef void (Container::* Execution_function)(Field_info*);
+
+  if (s_prototype) return;
+  s_prototype = new Container_proto(Node::get_prototype());
+  
+  // Add the field-info records to the prototype:
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Interpolator::execute);
+  s_prototype->add_field_info(new SF_float(FRACTION, "set_fraction",
+                                           get_member_offset(&m_fraction),
+                                           exec_func));
+}
+
+/*! Delete the container prototype */
+void Interpolator::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
+
+/*! Obtain the container prototype */
+Container_proto * Interpolator::get_prototype() 
+{  
+  if (!s_prototype) Interpolator::init_prototype();
+  return s_prototype;
+}
+
+
+/*! \brief sets the attributes of the object extracted from the input file. */
+void Interpolator::set_attributes(Element * elem) 
+{ 
+  Node::set_attributes(elem);
+
+  typedef Element::Str_attr_iter          Str_attr_iter;
+  typedef Element::Cont_attr_iter         Cont_attr_iter;
+
+  for (Str_attr_iter ai = elem->str_attrs_begin();
+       ai != elem->str_attrs_end(); ai++)
+  {
+    const std::string & name = elem->get_name(ai);
+    const std::string & value = elem->get_value(ai);
+    if ( name == "key" ) 
+    {
+      Uint size = get_num_tokens(value);
+      m_keys.resize(size);
+      std::istringstream svalue(value, std::istringstream::in);
+      for (Uint i = 0; i < size; ++i) svalue >> m_keys[i];
+      elem->mark_delete(ai);
+      continue;
+    }
+    if ( name == "interpolateFlag" )
+    {
+      m_interpolate_flag = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  // Remove all the deleted attributes:
+  elem->delete_marked();
+}
+
+#if 0
+/*! Get a list of attributes in this object. This method is called only 
+ * from the Builder side. 
+ *
+ * \return a list of attributes 
+ */
+Attribute_list Vector3f_interpolator::get_attributes()
+{ 
+  Attribute_list attribs; 
+  Attribue attrib;
+
+  attribs = Node::get_attributes();
+
+  // Set the keys array
+  attrib.first = "key";
+  String key("");
+  char buf[30];
+
+  for (int i=0;i<m_num_keys;i++) {
+    sprintf(buf, "%g ", m_keys[i]);
+    key = key + String(buf);
+  }
+  attrib.second = key;
+  attribs.push_back(attrib);
+
+  // Set the interpolate flag
+  attrib.first = "interpolateFlag";
+  attrib.second = (m_interpolate_flag) ? TRUE_STR : FALSE_STR;
+  attribs.push_back(attrib);
+
+  return attribs;
+}
+#endif
+
+SGAL_END_NAMESPACE
