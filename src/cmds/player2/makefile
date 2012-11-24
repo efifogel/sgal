@@ -46,7 +46,9 @@ CPPSOURCES+= Player2_option_parser.cpp
 LCPPINCS = -I$(BASEDIR)
 LCPPINCS = -I$(BASEDIR)/../player
 
+ifeq ($(USE_CGM), 1)
 LCPPDEFS+= -DUSE_CGM
+endif
 
 ifeq ($(USE_SGM), 1)
 LCPPDEFS+= -DUSE_SGM

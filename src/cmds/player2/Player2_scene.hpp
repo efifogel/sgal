@@ -32,7 +32,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(USE_CGM)
 class Cubical_gaussian_map_geo;
+#endif
+
 class Spherical_gaussian_map_base_geo;
 class Switch;
 
@@ -62,8 +65,10 @@ public:
 private:
   Player2_option_parser * m_option_parser;
   
+#if defined(USE_CGM)
   /*! The CGM geometry */
   SGAL::Cubical_gaussian_map_geo * m_cgm_geo;
+#endif
 
   /*! The SGM geometry */
   SGAL::Spherical_gaussian_map_base_geo * m_sgm_geo;

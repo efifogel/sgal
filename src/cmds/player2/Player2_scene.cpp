@@ -37,7 +37,10 @@
 #include <fstream>
 #include <string>
 
+#if defined(USE_CGM)
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
+#endif
+
 #include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
 
 #include "SGAL/Camera.hpp"
@@ -70,7 +73,9 @@
 Player2_scene::Player2_scene(Player2_option_parser * option_parser) :
   Player_scene(option_parser),
   m_option_parser(option_parser),
+#if defined(USE_CGM)
   m_cgm_geo(NULL),
+#endif
   m_sgm_geo(NULL)
 {}
 
@@ -82,8 +87,10 @@ void Player2_scene::init_scene()
 {
   Player_scene::init_scene();
 
+#if defined(USE_CGM)
   m_cgm_geo = dynamic_cast<SGAL::Cubical_gaussian_map_geo*>
     (m_scene_graph->get_container("GEOM"));
+#endif
 
   m_sgm_geo = dynamic_cast<SGAL::Spherical_gaussian_map_base_geo*>
     (m_scene_graph->get_container("GEOM"));
@@ -136,7 +143,9 @@ void Player2_scene::draw_window(SGAL::Window_item * window_item,
   if (acc) acc->set_enabled(false);
   m_context->set_viewport(-x + margin, -y, sw, sh);
   camera->init(m_context);
+#if defined(USE_CGM)
   if (m_cgm_geo) m_cgm_geo->set_draw_aos(false);
+#endif
   if (m_sgm_geo) m_sgm_geo->set_draw_aos(false);
   m_scene_graph->draw(&draw_action);
 
@@ -144,7 +153,9 @@ void Player2_scene::draw_window(SGAL::Window_item * window_item,
   if (acc) acc->set_enabled(enabled);
   m_context->set_viewport(hwidth - x - margin, -y, sw, sh);  
   camera->init(m_context);
+#if defined(USE_CGM)
   if (m_cgm_geo) m_cgm_geo->set_draw_aos(true);
+#endif
   if (m_sgm_geo) m_sgm_geo->set_draw_aos(true);
   m_scene_graph->draw(&draw_action);
 
