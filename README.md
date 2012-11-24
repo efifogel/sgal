@@ -16,6 +16,10 @@ It provide the ability to read VRML files.
 
 ## Compiling - current instructions
 
+You need to compile:
+1) Libs: SGAL, SCGAL, and gl2ps.
+2) Cmds: player2
+
 Set the following env. variables:
 
    PLATFORM=linux # Options are linux, windows, cygwin, console
@@ -30,11 +34,11 @@ Set the following env. variables:
    USE_LTS=0  # Lines Through Segments
    USE_CORE=1 # link with the CORE library
    USE_AOS=1  # Arrangement On Surface
-   USE_VOS=1  # Voronoi On Sphere
+   USE_VOS=0  # Voronoi On Sphere
    USE_CGAL=1 # CGAL
    USE_SGM=1  # Spherical Gaussian Map
    USE_NEF=1  # Nef
-   USE_CGM=1  # Cubical Gaussian Map
+   USE_CGM=0  # Cubical Gaussian Map
    USE_GMP=1  # Link with GMP & MPFR
 
    USE_LTS=1 requires origin/Lines_through_segments-pmoeller
@@ -52,3 +56,7 @@ It is suggested that before you build (your) ego, build a fresh version of CGAL 
 
 Dependencies: Boost, CGAL, Gmp, Mpfr, Imagemagic, Qt4, and some X libraries that are not installed by default (forgot the name, but you'll get an error message during link if they are not installed).
 
+### List of Ubuntu 12.04 packages I needed to install
+* libmagick++-dev
+* libgl2ps-dev
+* libxxf86vm-dev
