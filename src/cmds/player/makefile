@@ -96,6 +96,10 @@ ifeq ($(USE_NEF), 1)
 LCPPDEFS+= -DUSE_NEF
 endif
 
+ifeq ($(USE_EGO), 1)
+LCPPDEFS+= -DUSE_EGO
+endif
+
 # Include:
 ifeq ($(USE_CGM), 1)
 LCPPINCS+= -I$(CGM_3_WORKDIR)/include
@@ -188,6 +192,9 @@ endif
 ifeq ($(USE_CGAL), 1)
 LLDLIBS+= SCGAL.lib
 endif
+ifeq ($(USE_EGO), 1)
+LLDLIBS+= SEGO.lib
+endif
 LLDLIBS+= SGAL.lib gl2ps.lib
 ifeq ($(DEBUG), 1)
 LLDLIBS+= CORE_DB_Magick++_.lib
@@ -232,6 +239,9 @@ LIBS+= $(LIBDIR)/gl2ps.lib
 ifeq ($(USE_CGAL), 1)
 LIBS+= $(LIBDIR)/SCGAL.lib
 endif
+ifeq ($(USE_EGO), 1)
+LIBS+= $(LIBDIR)/SEGO.lib
+endif
 endif
 
 ifeq ($(DE), gnu)
@@ -246,6 +256,10 @@ LLDLIBS+= $(CGALLDLIBS)
 ifeq ($(USE_QUADRIC), 1)
 LLDLIBS+= -lQdX -lNiX -lSoX
 endif
+endif
+
+ifeq ($(USE_EGO), 1)
+LLDLIBS+= -lSEGO
 endif
 
 ifeq ($(USE_GMP), 1)
@@ -267,6 +281,7 @@ LIBS = $(LIBDIR)/libSGAL.a
 LIBS+= $(LIBDIR)/libgl2ps.a
 ifeq ($(USE_CGAL), 1)
 LIBS+= $(LIBDIR)/libSCGAL.a
+LIBS+= $(LIBDIR)/libSEGO.a
 endif
 endif
 

@@ -16,4 +16,7 @@ endif
 ifeq ($(USE_CGAL), 1)
 SUBDIRS+= SCGAL
 endif
+ifeq ($(USE_EGO), 1)
+SUBDIRS+= SEGO
+endif
 include $(MAKEDIR)/subdirs.mak

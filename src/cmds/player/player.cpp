@@ -40,12 +40,22 @@ extern void scgal_init();
 SGAL_END_NAMESPACE
 #endif
 
+#if (defined USE_CGAL)
+SGAL_BEGIN_NAMESPACE
+extern void sego_init();
+SGAL_END_NAMESPACE
+#endif
+
 /*! Main entry */
 int main(int argc, char * argv[])
 {
   // SGAL::initialize(argc, argv);
 #if (defined USE_CGAL)
   SGAL::scgal_init();
+#endif
+
+#if (defined USE_EGO)
+  SGAL::sego_init();
 #endif
 
   // Create a window manager:
