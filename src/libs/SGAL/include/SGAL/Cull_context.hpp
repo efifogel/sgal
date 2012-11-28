@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 10810 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -46,37 +46,37 @@ class SGAL_CLASSDEF Cull_context {
 public:
   class Render_node {
   public:
-    Shape * node;
+    Shape* node;
     float priority;
     Matrix4f wtm;       // Object to World space transformation.
     int lod;            // Level of detail for node.
   };
   class Light_node {
   public:
-    Light * light;
+    Light* light;
     Matrix4f wtm;       // Object to World space transformation.
   };
 
   Cull_context(Scene_graph * sg);
   virtual ~Cull_context();
 
-  virtual void cull(Node * node, Camera * camera);
-  virtual void draw(Draw_action * draw_action);
+  virtual void cull(Node* node, Camera* camera);
+  virtual void draw(Draw_action* draw_action);
 
-  void add_shape(Shape * shape);
-  void add_light(Light * light);
+  void add_shape(Shape* shape);
+  void add_light(Light* light);
 
-  void push_matrix(const Matrix4f &tm);
+  void push_matrix(const Matrix4f& mat);
   void pop_matrix();
 
-  Camera * get_camera() const { return m_camera; };
-  void get_current_matrix(Matrix4f &tm);
+  Camera* get_camera() const { return m_camera; };
+  const Matrix4f& get_current_wtm() { return m_world_tm; }
 
   void set_current_lod(int lod) { m_current_lod = lod; };
   int get_current_lod() const { return m_current_lod; };
 
 protected:
-  void draw_node(Draw_action * draw_action, const Render_node & rn);
+  void draw_node(Draw_action* draw_action, const Render_node& rn);
 
   typedef std::vector<Render_node>      Render_node_vector;
   typedef Render_node_vector::iterator  Render_node_iter;
@@ -92,9 +92,9 @@ private:
   Render_node_vector m_nodes;
   Render_node_vector m_2ndpass;
   Light_vector m_lights;
-  Camera * m_camera;
-  Scene_graph * m_sg;
-  Light * m_head_light;
+  Camera* m_camera;
+  Scene_graph* m_sg;
+  Light* m_head_light;
 
   // Matrix stack (similar to opengl).
   Matrix_stack m_matrix_stack;

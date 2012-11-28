@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source: $
-// $Revision: 4971 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -38,7 +38,7 @@ void Matrix4f::make_identity()
 /*! sets this matrix to be m1 * m2, assuming m1 and m2 are both affine
  * transformation matrices, that is, the last column is 0,0,0,1,
  */
-void Matrix4f::mult(const Matrix4f & m1, const Matrix4f & m2)
+void Matrix4f::mult(const Matrix4f& m1, const Matrix4f& m2)
 {
   Matrix4f tmp;
   tmp[0][0] = m1[0][0]*m2[0][0] + m1[1][0]*m2[0][1] + m1[2][0]*m2[0][2];
@@ -69,7 +69,7 @@ void Matrix4f::mult(const Matrix4f & m1, const Matrix4f & m2)
 
 /*! this =  m * this
  */
-void Matrix4f::pre_mult(const Matrix4f & m)
+void Matrix4f::pre_mult(const Matrix4f& m)
 {
   Matrix4f tmp;
   for (int i = 0; i < 4; i++) {
@@ -88,7 +88,7 @@ void Matrix4f::pre_mult(const Matrix4f & m)
 //
 // this = this* m
 // =======================================================================
-void Matrix4f::post_mult(const Matrix4f & m)
+void Matrix4f::post_mult(const Matrix4f& m)
 {
   Matrix4f tmp;
   for (int i = 0; i < 4; i++) {
@@ -105,9 +105,7 @@ void Matrix4f::post_mult(const Matrix4f & m)
 // =======================================================================
 // Matrix4f::Transpose
 // =======================================================================
-// why m is not declared const ? (in the cosmo hpp  ?)
-
-void Matrix4f::transpose(Matrix4f & m)
+void Matrix4f::transpose(const Matrix4f& m)
 {
   Matrix4f tmp;
   for (int i = 0; i < 4; i++) {
@@ -173,7 +171,7 @@ void Matrix4f::make_rot(const Vector3f &v, float radians)
 
 /*! this = Rotation(x,y,z,radians) * m
  */
-void Matrix4f::pre_rot(float x, float y, float z, float radians, Matrix4f & m)
+void Matrix4f::pre_rot(float x, float y, float z, float radians, Matrix4f& m)
 {
   Matrix4f rot_mat;
   rot_mat.make_rot(x, y, z, radians);
@@ -185,7 +183,7 @@ void Matrix4f::pre_rot(float x, float y, float z, float radians, Matrix4f & m)
 //
 // this = m * Rotation(x,y,z,radians)
 // =======================================================================
-void Matrix4f::post_rot(const Matrix4f & m, float x, float y, float z,
+void Matrix4f::post_rot(const Matrix4f& m, float x, float y, float z,
                        float radians)
 {
   Matrix4f rot_mat;
@@ -221,14 +219,14 @@ void Matrix4f::make_trans(float x, float y, float z)
 
 /*! sets this matrix to be the translation matrix which translates by v.
  */
-void Matrix4f::make_trans(const Vector3f & v)
+void Matrix4f::make_trans(const Vector3f& v)
 {
   make_trans(v[0], v[1], v[2]);
 }
 
 /*! this = translationMatrix(x,y,z) * m
  */
-void Matrix4f::pre_trans(float x, float y, float z, Matrix4f &  m)
+void Matrix4f::pre_trans(float x, float y, float z, Matrix4f& m)
 {
   Matrix4f trans_mat;
   trans_mat.make_trans(x, y, z);
@@ -237,7 +235,7 @@ void Matrix4f::pre_trans(float x, float y, float z, Matrix4f &  m)
 
 /*! this = m * translationMatrix(x,y,z)
  */
-void Matrix4f::post_trans(const Matrix4f &  m, float x, float y, float z)
+void Matrix4f::post_trans(const Matrix4f& m, float x, float y, float z)
 {
   Matrix4f trans_mat;
   trans_mat.make_trans(x, y, z);
@@ -271,14 +269,14 @@ void Matrix4f::make_scale(float x, float y, float z)
 
 /*!
  */
-void Matrix4f::make_scale(const Vector3f & v)
+void Matrix4f::make_scale(const Vector3f& v)
 {
   make_scale(v[0], v[1], v[2]);
 }
  
 /*! this = scaleMatrix(xs ,ys, zs) * m
  */
-void Matrix4f::pre_scale(float xs, float ys, float zs, Matrix4f &  m)
+void Matrix4f::pre_scale(float xs, float ys, float zs, Matrix4f& m)
 {
   Matrix4f scale_mat;
   scale_mat.make_scale(xs, ys, zs);
@@ -287,7 +285,7 @@ void Matrix4f::pre_scale(float xs, float ys, float zs, Matrix4f &  m)
 
 /*! this = m * scaleMatrix(xs ,ys, zs)
  */
-void Matrix4f::post_scale(const Matrix4f &  m, float xs, float ys, float zs)
+void Matrix4f::post_scale(const Matrix4f& m, float xs, float ys, float zs)
 {
   Matrix4f scale_mat;
   scale_mat.make_scale(xs, ys, zs);
@@ -296,7 +294,7 @@ void Matrix4f::post_scale(const Matrix4f &  m, float xs, float ys, float zs)
 
 /*! sets this matrix to be the inverse of m.
  */
-int Matrix4f::invert_full(Matrix4f & /* m */)
+int Matrix4f::invert_full(Matrix4f& /* m */)
 {
   assert(0);
   return 0;
@@ -311,7 +309,7 @@ int Matrix4f::invert_full(Matrix4f & /* m */)
  *      | C 1 |   | -CA   1 |
  *
  */
-void Matrix4f::invert_affine(const Matrix4f & m)
+void Matrix4f::invert_affine(const Matrix4f& m)
 {
   // Save in temporary veriable:
   Matrix4f tmp;
@@ -356,7 +354,7 @@ void Matrix4f::invert_affine(const Matrix4f & m)
  * the top left 3x3 submatrix is an orthogonal matrix (the columns
  * are orthogonal to each other, but each column may not be unit vector).
  */
-void Matrix4f::invert_ortho(const Matrix4f & /* m */)
+void Matrix4f::invert_ortho(const Matrix4f& /* m */)
 {
   assert(0);
 }
@@ -365,7 +363,7 @@ void Matrix4f::invert_ortho(const Matrix4f & /* m */)
  * top left 3x3 submatrix is an orthonormal matrix (the columns are
  * orthogonal to each other, and each column is a unit vector).
  */
-void Matrix4f::invert_ortho_norm(Matrix4f & /* m */)
+void Matrix4f::invert_ortho_norm(Matrix4f& /* m */)
 {
   assert(0);
 }

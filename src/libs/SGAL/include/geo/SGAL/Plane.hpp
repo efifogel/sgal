@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 11018 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -38,14 +38,14 @@ class Sphere_bound;
 class Seg;
 class Line;
 
-class SGAL_CLASSDEF Plane // : public Bound
-{
+class SGAL_CLASSDEF Plane { // : public Bound
 public:
   // set/Get
   void set_normal(Float x, Float y, Float z) { m_normal.set(x,y,z); }
   void set_normal(const Vector3f& n) { m_normal.set(n); }
   void get_normal(Vector3f& n) const { m_normal.get(n); }
-
+  const Vector3f& get_normal() const { return m_normal; }
+  
   void set_offset(float o) { m_offset = o; }
   Float get_offset() const { return m_offset; }
 
@@ -66,9 +66,9 @@ public:
   // Containment/intersection
 
   // (See Bound::contains().)
-  Uint contains(const Box_bound* box) const;
-  Uint contains(const Sphere_bound* sph) const;
-  Uint contains(const Vector3f& pt) const;
+  float contains(const Box_bound* box) const;
+  float contains(const Sphere_bound* sph) const;
+  float contains(const Vector3f& pt) const;
 
   /*! Compute the intersection of the plane with a given line.
    * \param line the line
@@ -94,15 +94,9 @@ public:
 
 public:
   Vector3f m_normal;            // Normal to the plane.
-  Float m_offset;               // Offset in the plane equation
+  float m_offset;               // Offset in the plane equation
                                 // pt dot normal = offset
 };
-
-inline Uint Plane::contains(const Vector3f& pt) const
-{
-  // Test if point pt on positive side of plane p
-  return (pt.dot(m_normal) <= m_offset);
-}
 
 SGAL_END_NAMESPACE
 

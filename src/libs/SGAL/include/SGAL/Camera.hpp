@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 11016 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -107,7 +107,7 @@ public:
 
   const Frustum& get_base_frust() const { return m_base_frust;}
   
-  void get_view_mat(Matrix4f& m);
+  const Matrix4f& get_view_mat();
 
   void update_matrix_requiered(Field_info* info);
 

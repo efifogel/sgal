@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 12554 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -272,10 +272,10 @@ Container_proto* Camera::get_prototype()
 
 /*!
  */
-void Camera::get_view_mat(Matrix4f& mat)
+const Matrix4f& Camera::get_view_mat()
 {
   if (m_dirty_matrix) clean_matrix();
-  m_view_mat.get(mat);
+  return m_view_mat;
 }
 
 /*!

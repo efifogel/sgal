@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source: $
-// $Revision: 11019 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -30,16 +30,21 @@ SGAL_BEGIN_NAMESPACE
 
 /*!
  */
-Uint Plane::contains(const Box_bound * box) const
+float Plane::contains(const Box_bound* box) const
 {
   (void) box;
   SGAL_assertion(0);
   return 0;
 }
 
+/* Tests whether a given point is on the positive side of the plane
+ */
+float Plane::contains(const Vector3f& pt) const
+{ return (pt.dot(m_normal) - m_offset); }
+
 /*!
  */
-Uint Plane::contains(const Sphere_bound *) const
+float Plane::contains(const Sphere_bound*) const
 {
   SGAL_assertion(0);
   return 0;
@@ -47,7 +52,7 @@ Uint Plane::contains(const Sphere_bound *) const
 
 /*!
  */
-Uint Plane::isect(const Seg *, Float *) const
+Uint Plane::isect(const Seg*, Float*) const
 {
   SGAL_assertion(0);
   return 0;
@@ -64,7 +69,7 @@ Uint Plane::isect(const Seg *, Float *, float *) const
 /*! Stores in this half space the result of transforming <pln> by the
  * ortho transform <m>.
  */
-void Plane::ortho_xform(const Plane *, const Matrix4f &)
+void Plane::ortho_xform(const Plane*, const Matrix4f&)
 {
   SGAL_assertion(0);
 }
@@ -72,8 +77,8 @@ void Plane::ortho_xform(const Plane *, const Matrix4f &)
 /*! Constructs a plane from the three points <p1> <p2>, and <p3>,
  * assuming they form a counter-clockwise triangle viewed from the front.
  */
-void Plane::make_pts(const Vector3f & p1, const Vector3f & p2,
-                     const Vector3f & p3)
+void Plane::make_pts(const Vector3f& p1, const Vector3f& p2,
+                     const Vector3f& p3)
 {
   Vector3f t1;
   Vector3f t2;
@@ -86,7 +91,7 @@ void Plane::make_pts(const Vector3f & p1, const Vector3f & p2,
 
 /*! Stores the normal-point representation of the plane in norm and point.
  */
-void Plane::make_norm_pt(const Vector3f & norm, const Vector3f & pos)
+void Plane::make_norm_pt(const Vector3f& norm, const Vector3f& pos)
 {
   m_normal.set(norm);
   m_normal.normalize();
@@ -95,7 +100,7 @@ void Plane::make_norm_pt(const Vector3f & norm, const Vector3f & pos)
 
 /*! Stores in <dst> the point on this plane closest to <pt>.
  */
-void Plane::closest_pt_on(const Vector3f & pt, Vector3f & dst) const
+void Plane::closest_pt_on(const Vector3f& pt, Vector3f& dst) const
 {
   float scale = -m_normal.dot(pt) - m_offset;
   dst.add_scaled(pt, scale, m_normal);

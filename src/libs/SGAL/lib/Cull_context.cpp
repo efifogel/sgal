@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 10802 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -41,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
-Cull_context::Cull_context(Scene_graph * sg) :
+Cull_context::Cull_context(Scene_graph* sg) :
   m_camera(0),
   m_sg(sg),
   m_head_light(0),
@@ -55,15 +55,15 @@ Cull_context::Cull_context(Scene_graph * sg) :
 Cull_context::~Cull_context() {}
 
 /*! used to sort nodes by their distance fromt he camera */
-inline bool compare_render_nodes(const Cull_context::Render_node & n1,
-                                 const Cull_context::Render_node & n2)
+inline bool compare_render_nodes(const Cull_context::Render_node& n1,
+                                 const Cull_context::Render_node& n2)
 {
   return n1.priority > n2.priority;
 }
 
 /*!
  */
-void Cull_context::add_shape(Shape * node)
+void Cull_context::add_shape(Shape* node)
 {
   Render_node rn;
   rn.node = node;
@@ -77,7 +77,7 @@ void Cull_context::add_shape(Shape * node)
 /*!
  * @param light a pointer to the Light.
  */
-void Cull_context::add_light(Light * light)
+void Cull_context::add_light(Light* light)
 {
   if (light != m_head_light) {
     Light_node ln;
@@ -91,7 +91,7 @@ void Cull_context::add_light(Light * light)
  * them to draw list.
  * @param node a pointer to the node to draw
  */
-void Cull_context::cull(Node * node, Camera * camera)
+void Cull_context::cull(Node* node, Camera* camera)
 {
   m_sort = false;
   m_nodes.clear();
@@ -102,11 +102,12 @@ void Cull_context::cull(Node * node, Camera * camera)
   node->cull(*this);
 }
 
-void Cull_context::draw_node(Draw_action * draw_action, const Render_node & rn)
+void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
 {
   glPushMatrix();
   glMultMatrixf((float*)&(rn.wtm));
   draw_action->set_current_lod(rn.lod);
+  draw_action->set_current_wtm(&(rn.wtm));
   rn.node->draw(draw_action);
   glPopMatrix();
 }
@@ -116,7 +117,7 @@ void Cull_context::draw_node(Draw_action * draw_action, const Render_node & rn)
 float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 {
   // Get world position of node.
-  const Sphere_bound & sphere_bound = rn.node->get_sphere_bound();
+  const Sphere_bound& sphere_bound = rn.node->get_sphere_bound();
 
   // the center of the sphere bound in world coordinate system
   Vector3f w_center; 
@@ -169,7 +170,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 
 /*!
  */
-void Cull_context::draw(Draw_action * draw_action)
+void Cull_context::draw(Draw_action* draw_action)
 {
   glMatrixMode(GL_MODELVIEW);
 
@@ -183,7 +184,7 @@ void Cull_context::draw(Draw_action * draw_action)
   
   // Draw lights.
   for (Light_iter lit = m_lights.begin(); lit != m_lights.end(); ++lit) {
-    Light_node &ln = *lit;
+    Light_node& ln = *lit;
     glPushMatrix();
     glMultMatrixf((GLfloat*)&(ln.wtm));
     ln.light->draw(draw_action);
@@ -198,7 +199,7 @@ void Cull_context::draw(Draw_action * draw_action)
   
   // Draw nodes in first pass.
   for (Render_node_iter nit = m_nodes.begin(); nit != m_nodes.end(); ++nit) {
-    Render_node & rn = *nit;
+    Render_node& rn = *nit;
     draw_node(draw_action, rn);
     if (draw_action->is_second_pass_required()) {
       draw_action->set_second_pass_required(false);
@@ -225,7 +226,7 @@ void Cull_context::draw(Draw_action * draw_action)
     for (Render_node_iter nit = m_2ndpass.begin();
          nit != m_2ndpass.end(); ++nit) 
     {
-      Render_node & rn = *nit;
+      Render_node& rn = *nit;
       draw_node(draw_action, rn);
     }
   }
@@ -233,7 +234,7 @@ void Cull_context::draw(Draw_action * draw_action)
 
 /*!
  */
-void Cull_context::push_matrix(const Matrix4f &tm)
+void Cull_context::push_matrix(const Matrix4f& mat)
 {
   m_matrix_stack.push_back(m_world_tm);
 
@@ -241,7 +242,7 @@ void Cull_context::push_matrix(const Matrix4f &tm)
   if (!m_matrix_stack.empty()) {
     wtm = m_matrix_stack.back();
   }
-  m_world_tm.mult(wtm,tm);
+  m_world_tm.mult(wtm, mat);
 }
   
 /*!
@@ -251,13 +252,6 @@ void Cull_context::pop_matrix()
   SGAL_assertion((!m_matrix_stack.empty()));
   m_world_tm = m_matrix_stack.back();
   m_matrix_stack.pop_back();
-}
-
-/*!
- */
-void Cull_context::get_current_matrix(Matrix4f &tm)
-{
-  tm = m_world_tm;
 }
 
 SGAL_END_NAMESPACE

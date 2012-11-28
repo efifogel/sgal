@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lines_through_segments_geo.cpp 11155 2011-05-25 15:30:08Z efif $
-// $Revision: 11155 $
+// $Id: Lines_through_segments_geo.cpp 14212 2012-11-26 16:47:07Z efif $
+// $Revision: 14212 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -133,7 +133,7 @@ Boolean Lines_through_segments_geo::is_empty() { return true; }
 /*! \brief clean the representation */
 void Lines_through_segments_geo::clean()
 {
-  std::cout << "Lines_through_segments_geo::clean()" << std::endl;
+  // std::cout << "Lines_through_segments_geo::clean()" << std::endl;
   if (!m_lts) {
     m_lts = new Lines_through_segments_3(m_alg_kernel, m_rat_kernel);
     m_own_lts = true;
@@ -163,7 +163,7 @@ void Lines_through_segments_geo::clean()
     
   }
   (*m_lts)(m_in_segments.begin(), m_in_segments.end(),
-           std::back_inserter(m_out_lines), false, true);
+           std::back_inserter(m_out_lines));
   m_dirty = false;
   std::cout << "# output lines: " <<  m_out_lines.size() << std::endl;
 
@@ -184,7 +184,6 @@ void Lines_through_segments_geo::clean()
     typedef Lines_through_segments_3::Mapped_general_polygon_2
       Mapped_general_polygon_2;
     typedef Lines_through_segments_3::Mapped_point_2      Mapped_point_2;
-    typedef Lines_through_segments_3::Mapped_rat_point_2  Mapped_rat_point_2;
  
     typedef Lines_through_segments_3::Through_point_3     Through_point_3;
     typedef Lines_through_segments_3::Through_point_3_segment_3
@@ -206,31 +205,23 @@ void Lines_through_segments_geo::clean()
       Mapped_x_monotone_curve_2* curve_obj;
       Mapped_general_polygon_2* polygon_obj;
       Mapped_point_2* point_obj;
-      Mapped_rat_point_2* rat_point_obj;
 
-      if ((rat_point_obj =
-                boost::get<Mapped_rat_point_2>(&mapped_transversal)))
+      if ((curve_obj =
+           boost::get<Mapped_x_monotone_curve_2>(&mapped_transversal)))
       {
-        Line_3 line = mapped_obj->rational_line();
-        std::cout << "line = " << line << std::endl;
-      } else {
-        if ((curve_obj =
-             boost::get<Mapped_x_monotone_curve_2>(&mapped_transversal)))
-        {
-          std::cout << "Mapped_x_monotone_curve_2 = " << *curve_obj << ", ";
-        }
-        else if ((polygon_obj =
-                  boost::get<Mapped_general_polygon_2>(&mapped_transversal)))
-        {
-          std::cout << "Mapped_general_polygon_2 = " << *polygon_obj << ", ";
-        }
-        else if ((point_obj = boost::get<Mapped_point_2>(&mapped_transversal))) {
-          std::cout << "Mapped_point_2 = " << *point_obj << ", ";
-        }
-
-        Mapped_2::Mapped_line_3 line = mapped_obj->line();
-        std::cout << "Line = " << line << std::endl;
+        std::cout << "Mapped_x_monotone_curve_2 = " << *curve_obj << ", ";
       }
+      else if ((polygon_obj =
+                boost::get<Mapped_general_polygon_2>(&mapped_transversal)))
+      {
+        std::cout << "Mapped_general_polygon_2 = " << *polygon_obj << ", ";
+      }
+      else if ((point_obj = boost::get<Mapped_point_2>(&mapped_transversal))) {
+        std::cout << "Mapped_point_2 = " << *point_obj << ", ";
+      }
+
+      Mapped_2::Mapped_line_3 line = mapped_obj->line();
+      std::cout << "Line = " << line << std::endl;
     }
     else if ((through_obj = boost::get<Through_3>(&transversal))) {
       Through_transversal through_transversal =
@@ -281,10 +272,10 @@ void Lines_through_segments_geo::draw(Draw_action* action)
   float near_clip;
   float far_clip;
   frustum.get_corners(left, right, bottom, top, near_clip, far_clip);
-  std::cout <<  "left: " << left << ", right: " << right
-            << ", bottom: " << bottom << ", top: " << top
-            << ", near: " << near_clip << ", far: " << far_clip
-            << std::endl;
+  // std::cout <<  "left: " << left << ", right: " << right
+  //           << ", bottom: " << bottom << ", top: " << top
+  //           << ", near: " << near_clip << ", far: " << far_clip
+  //           << std::endl;
   Plane* planes = frustum.get_facets();
   
   std::list<Transversal_with_segments>::const_iterator it;
@@ -337,27 +328,33 @@ void Lines_through_segments_geo::draw(Draw_action* action)
       xp2.xform_pt(p2, view_mat);
       
       Line line(xp1, xp2);
+      std::vector<Vector3f> points;
       Vector3f p;
-      if (planes[Frustum::LEFT_PLANE].intersect(line, p)) {
-        std::cout << "(left) intersection point: " << p << std::endl;
-      }
-      if (planes[Frustum::RIGHT_PLANE].intersect(line, p)) {
-        std::cout << "(right) intersection point: " << p << std::endl;
-      }
-      if (planes[Frustum::NEAR_PLANE].intersect(line, p)) {
-        std::cout << "(near) intersection point: " << p << std::endl;
-      }
-      if (planes[Frustum::FAR_PLANE].intersect(line, p)) {
-        std::cout << "(far) intersection point: " << p << std::endl;
-      }
-      if (planes[Frustum::BOTTOM_PLANE].intersect(line, p)) {
-        std::cout << "(bottom) intersection point: " << p << std::endl;
-      }
-      if (planes[Frustum::TOP_PLANE].intersect(line, p)) {
-        std::cout << "(top) intersection point: " << p << std::endl;
-      }
+      if (planes[Frustum::LEFT_PLANE].intersect(line, p)) points.push_back(p);
+      if (planes[Frustum::RIGHT_PLANE].intersect(line, p)) points.push_back(p);
+      if (planes[Frustum::NEAR_PLANE].intersect(line, p)) points.push_back(p);
+      if (planes[Frustum::FAR_PLANE].intersect(line, p)) points.push_back(p);
+      if (planes[Frustum::BOTTOM_PLANE].intersect(line, p)) points.push_back(p);
+      if (planes[Frustum::TOP_PLANE].intersect(line, p)) points.push_back(p);
+      SGAL_assertion(points.size() >= 2);
+
+      xp1.xform_pt(points[0], view_mat_inv);
+      xp2.xform_pt(points[1], view_mat_inv);
+      
+      context->draw_light_enable(false);
+      context->draw_line_width(2);
+      glDepthRange(0.05f, 1);
+      glBegin(GL_LINES);
+      glColor3f(1.0f, 1.0f, 1.0f);
+      glVertex3fv((float*)&xp1);
+      //std::cout << xp1 << std::endl;
+      glVertex3fv((float*)&xp2);
+      //std::cout << xp2 << std::endl;
+      glEnd();
+      context->draw_line_width(1.0f);
+      context->draw_light_enable(true);
+      glDepthRange(0, 1);
     }
-#if 0
     else if ((mapped_obj = boost::get<Mapped_2>(&transversal))) {
       Mapped_transversal mapped_transversal = mapped_obj->mapped_transversal();
       Mapped_2::Mapped_line_3 line = mapped_obj->line();
@@ -369,17 +366,17 @@ void Lines_through_segments_geo::draw(Draw_action* action)
       if ((curve_obj =
            boost::get<Mapped_x_monotone_curve_2>(&mapped_transversal)))
       {
-        std::cout << "Mapped_x_monotone_curve_2 = " << *curve_obj << ", ";
+        // std::cout << "Mapped_x_monotone_curve_2 = " << *curve_obj << ", ";
       }
       else if ((polygon_obj =
                 boost::get<Mapped_general_polygon_2>(&mapped_transversal)))
       {
-        std::cout << "Mapped_general_polygon_2 = " << *polygon_obj << ", ";
+        // std::cout << "Mapped_general_polygon_2 = " << *polygon_obj << ", ";
       }
       else if ((point_obj = boost::get<Mapped_point_2>(&mapped_transversal))) {
-        std::cout << "Mapped_point_2 = " << *point_obj << ", ";
+        // std::cout << "Mapped_point_2 = " << *point_obj << ", ";
       }
-      std::cout << "Line = " << line << std::endl;
+      // std::cout << "Line = " << line << std::endl;
     }
     else if ((through_obj = boost::get<Through_3>(&transversal))) {
       Through_transversal through_transversal =
@@ -392,19 +389,18 @@ void Lines_through_segments_geo::draw(Draw_action* action)
       if ((arc_obj =
            boost::get<Through_point_3_segment_3>(&through_transversal)))
       {
-        std::cout << "Through_point_3_segment_3 = (" << arc_obj->first << ","
-                  << arc_obj->second << ")" << std::endl;
+        // std::cout << "Through_point_3_segment_3 = (" << arc_obj->first << ","
+        //           << arc_obj->second << ")" << std::endl;
       }
       else if ((seg_obj = boost::get<Through_segment_3>(&through_transversal)))
       {
-        std::cout << "Through_segment_3 = " << *seg_obj << std::endl;
+        // std::cout << "Through_segment_3 = " << *seg_obj << std::endl;
       }
       else if ((point_obj = boost::get<Through_point_3>(&through_transversal)))
       {
-        std::cout << "Through_point_3 = " << *point_obj << std::endl;
+        // std::cout << "Through_point_3 = " << *point_obj << std::endl;
       }
     }
-#endif
   }
 }
 

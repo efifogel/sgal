@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Assembly.cpp 14197 2012-11-22 22:46:58Z efif $
-// $Revision: 14197 $
+// $Id: Assembly.cpp 14211 2012-11-26 16:46:31Z efif $
+// $Revision: 14211 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -25,8 +25,6 @@
 #pragma warning ( disable : 4800 )
 
 #endif
-
-#include <stdio.h> // Workaround for CGAL 4.1 using EOF.
 
 #include <time.h>
 #include <string>
@@ -1033,8 +1031,8 @@ void Assembly::compute_part_projections()
       Aos_list& aoss = m_projection_lists[key];
       Aos_mark* aos = new Aos_mark;
       m_part_projections[key] = aos;
-      // std::cout << "compute_part_projections ("
-      //           << i << "," << j << ")" << std::endl;
+      std::cout << "compute_part_projections ("
+                << i << "," << j << ")" << std::endl;
       compute_part_projections(aoss, aos);
       remove_marked_edges(aos);
     }
@@ -1095,7 +1093,7 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
 void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
 {
   // SGAL_assertion(begin != end);
-  // std::cout << "compute_part_projections: " << aoss.size() << std::endl;
+  std::cout << "compute_part_projections: " << aoss.size() << std::endl;
 
   Arrangement_marked_overlay_traits<Aos_mark> overlay_traits;
   Aos_iter it = aoss.begin();
@@ -1120,7 +1118,11 @@ void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
     //   //<< CGAL::is_valid(*aos2)
     //           << std::endl << *aos2;
     CGAL::overlay(*aos1, *aos2, tmp_aos1, overlay_traits);
-    // std::cout << "compute_part_projections: 1a " << std::endl;
+    // std::cout << "compute_part_projections: 1a "
+    //           << tmp_aos1.number_of_vertices() << ", "
+    //           << tmp_aos1.number_of_halfedges() << ", "
+    //           << tmp_aos1.number_of_faces() << ", "
+    //           << std::endl;
     aos1 = &tmp_aos1;
     aos2 = *it++;
 
@@ -1134,7 +1136,12 @@ void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
     //   //<< CGAL::is_valid(*aos2)
     //           << std::endl << *aos2;
     CGAL::overlay(*aos1, *aos2, tmp_aos2, overlay_traits);
-    // std::cout << "compute_part_projections: 2a " << std::endl;
+    // std::cout << "compute_part_projections: 2a "
+    //           << tmp_aos2.number_of_vertices() << ", "
+    //           << tmp_aos2.number_of_halfedges() << ", "
+    //           << tmp_aos2.number_of_faces() << ", "
+    //           << std::endl;
+    if (tmp_aos2.number_of_halfedges() > 64) remove_marked_edges(&tmp_aos2);
     aos1 = &tmp_aos2;
     aos2 = *it++;
   }

@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source: $
-// $Revision: 6147 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -125,11 +125,10 @@ bool View_sensor::update()
   m_navigation_root->get_matrix(view_matrix);
 
   // Get the current camera matrix
-  EMatrix4f camera_matrix;
-  camera->get_view_mat(camera_matrix);
+  const Matrix4f& camera_mat = camera->get_view_mat();
 
   // Multiply the navigation root and camera matrices
-  view_matrix.mult(camera_matrix, view_matrix);
+  view_matrix.mult(camera_mat, view_matrix);
 
   // Inverse the matrix
   view_matrix.invert_affine(view_matrix);

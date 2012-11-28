@@ -15,11 +15,12 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 7628 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
+#include <iterator>
 #include <stdio.h>
 #include <assert.h>
 
@@ -41,7 +42,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! The frustum types (prespective, orthogonal, etc) */
-const char * Frustum::s_type_strings[] = {"SIMPLE", "ORTHOGONAL", "PERSPECTIVE"};
+const char* Frustum::s_type_strings[] = {"SIMPLE", "ORTHOGONAL", "PERSPECTIVE"};
 
 /*!
  */
@@ -69,7 +70,7 @@ Frustum::Frustum() :
 Frustum::~Frustum() {}
 
 /*! Clone */
-void Frustum::copy(const Frustum * src)
+void Frustum::copy(const Frustum* src)
 {
   m_type = src->m_type;
   m_near_dist = src->m_near_dist;
@@ -108,7 +109,7 @@ void Frustum::set_near(Float near_dist)
 
 /*! Sets the distance from the origin to the far plane.
  */
-void Frustum::get_near_far(Float & near_dist, Float & far_dist)
+void Frustum::get_near_far(Float& near_dist, Float& far_dist)
 {
   if (m_dirty_corners) clean_corners(); 
   near_dist = m_near_dist; 
@@ -243,8 +244,8 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
 
 /*! Get the corners of the near plane.
  */
-void Frustum::get_near(Vector3f & ll, Vector3f & lr,
-                       Vector3f & ul, Vector3f & ur)
+void Frustum::get_near(Vector3f& ll, Vector3f& lr,
+                       Vector3f& ul, Vector3f& ur)
 {
   if (m_dirty_corners) clean_corners(); 
   ll = m_corners[Frustum::NEAR_LL];
@@ -255,8 +256,8 @@ void Frustum::get_near(Vector3f & ll, Vector3f & lr,
 
 /*! Get the corners of the far plane.
  */
-void Frustum::get_far(Vector3f & ll, Vector3f & lr,
-                      Vector3f & ul, Vector3f & ur)
+void Frustum::get_far(Vector3f& ll, Vector3f& lr,
+                      Vector3f& ul, Vector3f& ur)
 {
   if (m_dirty_corners) clean_corners(); 
   ll = m_corners[Frustum::FAR_LL];
@@ -268,8 +269,8 @@ void Frustum::get_far(Vector3f & ll, Vector3f & lr,
 /*! Obtain the six coordinates defining the two diagonal corners of the frustum.
  * The two corners are (left, bottom, near) and (right, top, far).
  */
-void Frustum::get_diag_corners(float & left, float & right, float & bottom,
-                               float & top, float & near_dist, float & far_dist)
+void Frustum::get_diag_corners(float& left, float& right, float& bottom,
+                               float& top, float& near_dist, float& far_dist)
 {
   if (m_dirty_corners) clean_corners(); 
   left = m_corners[Frustum::NEAR_LL][0];
@@ -284,7 +285,7 @@ void Frustum::get_diag_corners(float & left, float & right, float & bottom,
 /*! Calculates a matrix suitable for use as the GL_PROJECTION matrix
  * in OpenGL, projecting the contents of the frustum onto the near plane.
  */
-void Frustum::get_gl_proj_mat(Matrix4f & mat)
+void Frustum::get_gl_proj_mat(Matrix4f& mat)
 {
   if (m_dirty_corners) clean_corners(); 
   float left = m_corners[Frustum::NEAR_LL][0];
@@ -315,9 +316,9 @@ void Frustum::get_gl_proj_mat(Matrix4f & mat)
 
 /*!
  */
-void Frustum::get_corners(float & left, float & right,
-                          float & bottom, float & top,
-                          float & near_dist, float & far_dist)
+void Frustum::get_corners(float& left, float& right,
+                          float& bottom, float& top,
+                          float& near_dist, float& far_dist)
 {
   if (m_dirty_corners) clean_corners(); 
   left = m_corners[Frustum::NEAR_LL][0];
@@ -328,7 +329,7 @@ void Frustum::get_corners(float & left, float & right,
   far_dist  = m_far_dist;
 }
 
-Plane * Frustum::get_facets() 
+Plane* Frustum::get_facets() 
 {
   if (m_dirty_planes) clean_planes();
   return m_facets;
@@ -402,39 +403,40 @@ void Frustum::clean_corners()
     top *= ratio;
     bottom *= ratio;
   }
-      
+
+  // -m_far_dist specifies the location of the far clipping plane.
   m_corners[Frustum::FAR_LL][0] = left;
   m_corners[Frustum::FAR_LL][1] = bottom;
-  m_corners[Frustum::FAR_LL][2] = m_far_dist;
+  m_corners[Frustum::FAR_LL][2] = -m_far_dist;
         
   m_corners[Frustum::FAR_LR][0] = right;
   m_corners[Frustum::FAR_LR][1] = bottom;
-  m_corners[Frustum::FAR_LR][2] = m_far_dist;
+  m_corners[Frustum::FAR_LR][2] = -m_far_dist;
         
   m_corners[Frustum::FAR_UL][0] = left;
   m_corners[Frustum::FAR_UL][1] = top;
-  m_corners[Frustum::FAR_UL][2] = m_far_dist;
+  m_corners[Frustum::FAR_UL][2] = -m_far_dist;
         
   m_corners[Frustum::FAR_UR][0] = right;
   m_corners[Frustum::FAR_UR][1] = top;
-  m_corners[Frustum::FAR_UR][2] = m_far_dist;
+  m_corners[Frustum::FAR_UR][2] = -m_far_dist;
 
   m_dirty_corners = false;
 }
 
-Uint Frustum::contains(const Vector3f & /* pt */) const
+Uint Frustum::contains(const Vector3f& /* pt */) const
 {
   assert(0);
   return 0;
 }
 
-Uint Frustum::contains(const Sphere_bound * /* sphere */) const
+Uint Frustum::contains(const Sphere_bound* /* sphere */) const
 {
   assert(0);
   return 0;
 }
 
-Uint Frustum::contains(const Box_bound * /* box */) const
+Uint Frustum::contains(const Box_bound* /* box */) const
 {
   assert(0);
   return 0;
@@ -466,7 +468,6 @@ void Frustum::apply()
   }
 }
 
-
 void Frustum::clean_planes()
 {
   if (m_dirty_corners) clean_corners(); 
@@ -474,6 +475,7 @@ void Frustum::clean_planes()
   Vector3f origin;
   origin.set(0.0f, 0.0f, 0.0f);
 
+  // EFEF: The order looks flipped.
   if (m_type == Frustum::ORTHOGONAL) {
     m_facets[Frustum::LEFT_PLANE].make_pts(m_corners[Frustum::NEAR_LL],
                                            m_corners[Frustum::FAR_LL],
@@ -515,6 +517,24 @@ void Frustum::clean_planes()
                                           m_corners[Frustum::FAR_LL]);
   }
 
+  // std::cout << "near: normal: " << m_facets[Frustum::NEAR_PLANE].get_normal()
+  //           << ", offset: " << m_facets[Frustum::NEAR_PLANE].get_offset()
+  //           << std::endl;
+  // std::cout << "far: normal: " << m_facets[Frustum::FAR_PLANE].get_normal()
+  //           << ", offset: " << m_facets[Frustum::FAR_PLANE].get_offset()
+  //           << std::endl;
+  // std::cout << "left: normal: " << m_facets[Frustum::LEFT_PLANE].get_normal()
+  //           << ", offset: " << m_facets[Frustum::LEFT_PLANE].get_offset()
+  //           << std::endl;
+  // std::cout << "right: normal: " << m_facets[Frustum::RIGHT_PLANE].get_normal()
+  //           << ", offset: " << m_facets[Frustum::RIGHT_PLANE].get_offset()
+  //           << std::endl;
+  // std::cout << "top: normal: " << m_facets[Frustum::TOP_PLANE].get_normal()
+  //           << ", offset: " << m_facets[Frustum::TOP_PLANE].get_offset()
+  //           << std::endl;
+  // std::cout << "bottom: normal: " << m_facets[Frustum::BOTTOM_PLANE].get_normal()
+  //           << ", offset: " << m_facets[Frustum::BOTTOM_PLANE].get_offset()
+  //           << std::endl;
   m_dirty_planes = false;
 }
 
@@ -531,14 +551,14 @@ void Frustum::set_type(Frustum_type type)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Frustum::set_attributes(Element * elem)
+void Frustum::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
   {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "type") {
       parse_type(value);
       elem->mark_delete(ai);
@@ -588,7 +608,7 @@ void Frustum::set_attributes(Element * elem)
 /*! Parse the type string-attribute
  * \todo move to utilities
  */
-int Frustum::parse_type(const std::string & type)
+int Frustum::parse_type(const std::string& type)
 {
   unsigned int i;
   // Skip white space:
@@ -604,7 +624,7 @@ int Frustum::parse_type(const std::string & type)
   // Compare with supported types:
   unsigned int j;
   for (j = 0; j < NUM_TYPES; ++j) {
-    const char * frustum_type = s_type_strings[j];
+    const char* frustum_type = s_type_strings[j];
     if (type.compare(i, strlen(frustum_type), frustum_type) == 0) {
       m_type = (Frustum_type) j;
       break;

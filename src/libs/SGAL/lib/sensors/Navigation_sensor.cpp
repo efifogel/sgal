@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 12369 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -352,8 +352,7 @@ void Navigation_sensor::track_ball(const Vector2sh& from,
   Vector3f rot_axis;
   rot_axis.cross(Vector3f(0, 0, 1), p0p1);
   
-  Matrix4f camera_mat;
-  camera->get_view_mat(camera_mat);
+  const Matrix4f& camera_mat = camera->get_view_mat();
   Matrix4f inv_camera_mat;
   // The camera matrix consists of pure rotation (no scale or shear),
   // Therefore, transpose inverts the matrix:
@@ -398,8 +397,7 @@ void Navigation_sensor::translate(const Vector3f & distance, float speed)
   Camera* camera = context->get_active_camera();
   if (!camera) return;
 
-  Matrix4f camera_mat;
-  camera->get_view_mat(camera_mat);
+  const Matrix4f& camera_mat = camera->get_view_mat();
   Matrix4f inv_camera_mat;
 
   // The camera matrix consists of pure rotation (no scale or shear),
@@ -439,11 +437,10 @@ bool Navigation_sensor::allow_zoom_in(const Vector3f & trans)
 
   // get the direction the camera looks in
   Vector3f view_dir(0, 0, -1);
-  Matrix4f cam_view_mat;
   Context* context = m_scene_graph->get_context();
   Camera* camera = context->get_active_camera();
-  camera->get_view_mat(cam_view_mat);
-  view_dir.xform_vec(view_dir, cam_view_mat);
+  const Matrix4f& camera_mat = camera->get_view_mat();
+  view_dir.xform_vec(view_dir, camera_mat);
 
   // get the angle between the looking direction and the 
   // vector connecting the camera position and the center 

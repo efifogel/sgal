@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 7204 $
+// $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -32,6 +32,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Isect_action.hpp"
+#include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,12 +41,12 @@ class Configuration;
 class SGAL_CLASSDEF Draw_action : public Isect_action {
 public:
   /*! Constructor */
-  Draw_action(Configuration * configuration = NULL); 
+  Draw_action(Configuration* configuration = NULL); 
 
   /*! Destructor */
   virtual ~Draw_action();
 
-  virtual Trav_directive apply(Node * node);
+  virtual Trav_directive apply(Node* node);
 
   Boolean is_second_pass_required();
   void set_second_pass_required(Boolean flag);
@@ -58,6 +59,9 @@ public:
   void set_current_lod( int lod ) { m_current_lod = lod; };
   int get_current_lod() const { return m_current_lod; };
 
+  void set_current_wtm(const Matrix4f* wtm) { m_current_wtm = wtm; };
+  const Matrix4f* get_current_wtm() const { return m_current_wtm; };
+  
   void set_snap_from_front(Boolean flag) { m_snap_from_front = flag; }
   Boolean is_snap_from_front() const { return m_snap_from_front; }
 
@@ -71,10 +75,10 @@ public:
   Boolean get_apply_camera() const { return m_apply_camera; }
 
   /*! Set the configuration container */
-  void set_configuration(Configuration * conf) { m_configuration = conf; }
+  void set_configuration(Configuration* conf) { m_configuration = conf; }
 
   /*! Obtain the configuration container */
-  Configuration * get_configuration() const { return m_configuration; }
+  Configuration* get_configuration() const { return m_configuration; }
   
 private:
   /*! Indicates which pass is being rendered, 0 being the first pass. */
@@ -86,6 +90,9 @@ private:
   /*! Indicates current level of detail for shapes. */
   Int m_current_lod;
 
+  /*! The world transformation matrix */
+  const Matrix4f* m_current_wtm;
+    
   /*! indicates for the snapshot from which buffer to take the image from */
   Boolean m_snap_from_front;
 
@@ -99,7 +106,7 @@ private:
   Boolean m_apply_camera;
 
   /*! Configuration \todo move to action? */
-  Configuration * m_configuration;
+  Configuration* m_configuration;
 };
 
 SGAL_END_NAMESPACE
