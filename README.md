@@ -17,8 +17,8 @@ It provide the ability to read VRML files.
 ## Compiling - current instructions
 
 You need to compile:
-1) Libs: SGAL, SCGAL, and gl2ps.
-2) Cmds: player2
+1) Libs: gl2ps, SGAL, SCGAL, and SEGO
+2) Cmds: player
 
 Set the following env. variables:
 
@@ -46,6 +46,8 @@ Set the following env. variables:
    USE_VOS=1 requires remotes/origin/Envelope_voronoi_2-ophirset
    USE_AOS=1 requires origin/Aos_2-remove_opt-efif
 
+   USE_EGO=1  #  Ego
+   
 It is suggested that before you build (your) ego, build a fresh version of CGAL that combines the branches above and based on 'master'. (This is what I did.)
 
   git checkout -b combined origin/master
