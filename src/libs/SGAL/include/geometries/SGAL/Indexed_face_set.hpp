@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 14184 $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -366,6 +366,9 @@ public:
   
   /*! Process change of points */
   virtual void point_changed();
+
+  /*! Process change of field */
+  virtual void field_changed(Field_info* field_info);
   
 protected:
   /*! The maximal rank of vertices in the graph */
@@ -405,7 +408,7 @@ protected:
 
   /*! The id of the tex. coord array */
   Uint m_vertex_tex_coord_id;
-  
+
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Configuration::Geometry_drawing_mode m_drawing_mode;
 

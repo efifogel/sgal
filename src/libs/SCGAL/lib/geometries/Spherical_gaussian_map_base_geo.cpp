@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_base_geo.cpp 7805 2009-07-19 22:21:38Z efif $
-// $Revision: 7805 $
+// $Id: Spherical_gaussian_map_base_geo.cpp 14223 2012-11-29 22:33:55Z efif $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -65,7 +65,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Spherical_gaussian_map_base_geo::s_prototype = NULL;
+Container_proto* Spherical_gaussian_map_base_geo::s_prototype = NULL;
 
 /*! Default values */
 const Boolean Spherical_gaussian_map_base_geo::s_def_draw_aos(false);
@@ -156,7 +156,7 @@ Spherical_gaussian_map_base_geo(Boolean proto) :
 
 /*! Copy Constructor */
 Spherical_gaussian_map_base_geo::
-Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo & gm)
+Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& gm)
 {
   // Not implemented yet!
   SGAL_assertion(0);
@@ -174,12 +174,12 @@ void Spherical_gaussian_map_base_geo::clear()
 }
 
 /*! */
-void Spherical_gaussian_map_base_geo::cull(Cull_context & cull_context) {}
+void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
 
 /*! */
-void Spherical_gaussian_map_base_geo::isect(Isect_action * action)
+void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
 
   isect_primary();
@@ -216,7 +216,7 @@ bool Spherical_gaussian_map_base_geo::calculate_sphere_bound()
 }
 
 /*! \brief sets the attributes of the object extracted from an input file */
-void Spherical_gaussian_map_base_geo::set_attributes(Element * elem)
+void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
 {
   Mesh_set::set_attributes(elem);
 
@@ -225,8 +225,8 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element * elem)
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
   {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "drawAos") {
       m_draw_aos = compare_to_true(value);
       m_draw_primal = !m_draw_aos;
@@ -436,7 +436,7 @@ void Spherical_gaussian_map_base_geo::delete_prototype()
 }
 
 /*! */
-Container_proto * Spherical_gaussian_map_base_geo::get_prototype() 
+Container_proto* Spherical_gaussian_map_base_geo::get_prototype() 
 {  
   if (!s_prototype) Spherical_gaussian_map_base_geo::init_prototype();
   return s_prototype;
@@ -445,22 +445,22 @@ Container_proto * Spherical_gaussian_map_base_geo::get_prototype()
 /*! Raise the flag that indicates that the sphere bound changed
  */
 void Spherical_gaussian_map_base_geo::
-draw_changed(Field_info * /* field_info */)
+draw_changed(Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_aos;
   m_is_sphere_bound_dirty = true;
 
   if (m_draw_aos) {
-    Field * field = get_field(TRUE_DRAW_AOS);
+    Field* field = get_field(TRUE_DRAW_AOS);
     if (field) field->cascade();
   } else {
-    Field * field = get_field(TRUE_DRAW_PRIMAL);
+    Field* field = get_field(TRUE_DRAW_PRIMAL);
     if (field) field->cascade();
   }
 }
 
 /*! Draws the internal representation */
-void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action * action)
+void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action* action)
 {  
   if (!m_draw_aos) {
     draw_primal(action);
@@ -478,11 +478,11 @@ void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action * action)
 
 /*! Reverse the coordinate indices */
 void Spherical_gaussian_map_base_geo::
-set_reverse_coord_indices(const SGAL::Array<Uint> & indices)
+set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
 {
   m_coord_indices.resize(indices.size());
   Uint i = 0;
-  const Uint * ii = indices.end() - 2;
+  const Uint* ii = indices.end() - 2;
   for (; ii >= indices.begin(); --ii) {
     m_coord_indices[i++] = *ii;
   }
@@ -490,8 +490,11 @@ set_reverse_coord_indices(const SGAL::Array<Uint> & indices)
 }
 
 /*! \biref processes change of points */
-void Spherical_gaussian_map_base_geo::field_changed(Field_info * field_info)
-{ clear(); }
+void Spherical_gaussian_map_base_geo::field_changed(Field_info* field_info)
+{
+  Container::field_changed(field_info);
+  clear();
+}
 
 /*! \brief creates the renderers */
 void Spherical_gaussian_map_base_geo::create_renderers()
@@ -532,8 +535,8 @@ void Spherical_gaussian_map_base_geo::clean_renderer()
 }
 
 /*! \brief draws an arrangement on sphere vertex */
-void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action * action,
-                                                      Vector3f & center)
+void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action* action,
+                                                      Vector3f& center)
 {
   draw_vertex_on_sphere(action, center,
                         m_aos_vertex_style,
@@ -543,16 +546,16 @@ void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action * action,
   
 /*! \brief Draw an arrangement on surface boundary_vertex */
 void Spherical_gaussian_map_base_geo::
-draw_aos_boundary_vertex(Draw_action * action, Vector3f & center)
+draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
 {
   draw_vertex_on_sphere(action, center, m_aos_boundary_vertex_style,
                         m_aos_boundary_vertex_radius, m_aos_delta_angle);
 }
 
 /*! \brief draws an arrangement on sphere edge */
-void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action * action,
-                                                    Vector3f & source,
-                                                    Vector3f & target)
+void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
+                                                    Vector3f& source,
+                                                    Vector3f& target)
 {
   draw_edge_on_sphere(action, source, target,
                       m_aos_edge_style,

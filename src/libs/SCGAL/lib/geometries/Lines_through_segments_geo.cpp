@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lines_through_segments_geo.cpp 14212 2012-11-26 16:47:07Z efif $
-// $Revision: 14212 $
+// $Id: Lines_through_segments_geo.cpp 14223 2012-11-29 22:33:55Z efif $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -47,6 +47,10 @@
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Matrix4f.hpp"
+#include "SGAL/Sphere.hpp"
+#include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 
 #include "SCGAL/Lines_through_segments_geo.hpp"
 
@@ -81,6 +85,7 @@ void Lines_through_segments_geo::clear()
 {
   m_in_segments.clear();
   m_in_segments_dirty = true;
+  m_is_sphere_bound_dirty = true;
   m_out_lines.clear();
   m_dirty = true;
 }
@@ -90,6 +95,10 @@ void Lines_through_segments_geo::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
+
+  SF_container* field =
+    new SF_container(SEGMENTS, "segments", get_member_offset(&m_segments));
+  s_prototype->add_field_info(field);
 }
 
 /*! \brief deletes the container prototype */
@@ -160,7 +169,6 @@ void Lines_through_segments_geo::clean()
 
     copy(m_in_segments.begin(), m_in_segments.end(),
          std::ostream_iterator<Rat_segment_3>(std::cout, "\n"));
-    
   }
   (*m_lts)(m_in_segments.begin(), m_in_segments.end(),
            std::back_inserter(m_out_lines));
@@ -249,36 +257,184 @@ void Lines_through_segments_geo::clean()
   }
 }
 
-/*! \brief draws the geometry */
-void Lines_through_segments_geo::draw(Draw_action* action)
+/*! \brief Draws a single line */
+template <typename Line_type>
+void Lines_through_segments_geo::draw_line(Draw_action* action,
+                                           Line_type& line_obj,
+                                           const Matrix4f& view_mat,
+                                           const Matrix4f& view_mat_inv)
 {
-  if (m_dirty) clean();
-  if (m_dirty) return;
-
-  // Draw the output
   Context* context = action->get_context();
   Camera* camera = context->get_active_camera();
 
-  Matrix4f view_mat;
-  camera->get_view_mat(view_mat);
-  Matrix4f view_mat_inv;
-  view_mat_inv.invert_affine(view_mat);
-
   Frustum& frustum = camera->get_base_frust();
-  float left;
-  float right;
-  float bottom;
-  float top;
-  float near_clip;
-  float far_clip;
-  frustum.get_corners(left, right, bottom, top, near_clip, far_clip);
+  // float left;
+  // float right;
+  // float bottom;
+  // float top;
+  // float near_clip;
+  // float far_clip;
+  // frustum.get_corners(left, right, bottom, top, near_clip, far_clip);
   // std::cout <<  "left: " << left << ", right: " << right
   //           << ", bottom: " << bottom << ", top: " << top
   //           << ", near: " << near_clip << ", far: " << far_clip
   //           << std::endl;
   Plane* planes = frustum.get_facets();
+  const Plane& left_plane = planes[Frustum::LEFT_PLANE];
+  const Plane& right_plane = planes[Frustum::RIGHT_PLANE];
+  const Plane& near_plane = planes[Frustum::NEAR_PLANE];
+  const Plane& far_plane = planes[Frustum::FAR_PLANE];
+  const Plane& bottom_plane = planes[Frustum::BOTTOM_PLANE];
+  const Plane& top_plane = planes[Frustum::TOP_PLANE];
+
+  // std::cout << "near:m_normal: " << near_plane.get_normal() << std::endl;
+  // std::cout << "near:m_offset: " << near_plane.get_offset() << std::endl;
+  // std::cout << "far:m_normal: " << far_plane.get_normal() << std::endl;
+  // std::cout << "far:m_offset: " << far_plane.get_offset() << std::endl;
   
+  //Rat_point_3 ep1 = line_obj.point(0);
+  //Rat_point_3 ep2 = line_obj.point(1);
+  float x = CGAL::to_double(line_obj.point(0).x());
+  float y = CGAL::to_double(line_obj.point(0).y());
+  float z = CGAL::to_double(line_obj.point(0).z());
+  Vector3f p1(x, y, z);
+  // std::cout << p1 << std::endl;
+
+  x = CGAL::to_double(line_obj.point(1).x());
+  y = CGAL::to_double(line_obj.point(1).y());
+  z = CGAL::to_double(line_obj.point(1).z());
+  Vector3f p2(x, y, z);
+  // std::cout << p2 << std::endl;
+
+  Vector3f xp1;
+  xp1.xform_pt(p1, view_mat);
+  //std::cout << xp1 << std::endl;
+
+  Vector3f xp2;
+  xp2.xform_pt(p2, view_mat);
+  //std::cout << xp2 << std::endl;
+      
+  Line line(xp1, xp2);
+  std::list<Vector3f> points;
+  Vector3f p;
+  if (left_plane.intersect(line, p)) {
+    //std::cout << "Intersection with left: " << p << std::endl;
+    if ((near_plane.contains(p) >= 0) &&
+        (far_plane.contains(p) >= 0) &&
+        (bottom_plane.contains(p) >= 0) &&
+        (top_plane.contains(p) >= 0))
+    {
+      //std::cout << "pushing left isect" << std::endl;
+      points.push_back(p);
+    }
+  }
+  if (right_plane.intersect(line, p)) {
+    //std::cout << "Intersection with right: " << p << std::endl;
+    if ((near_plane.contains(p) >= 0) &&
+        (far_plane.contains(p) >= 0) &&
+        (bottom_plane.contains(p) >= 0) &&
+        (top_plane.contains(p) >= 0))
+    {
+      //std::cout << "pushing right isect" << std::endl;
+      points.push_back(p);
+    }
+  }
+  if (bottom_plane.intersect(line, p)) {
+    //std::cout << "Intersection with bottom: " << p << std::endl;
+    if ((left_plane.contains(p) >= 0) &&
+        (right_plane.contains(p) >= 0) &&
+        (near_plane.contains(p) >= 0) &&
+        (far_plane.contains(p) >= 0))
+    {
+      //std::cout << "pushing bottom isect" << std::endl;
+      points.push_back(p);
+    }
+  }
+  if (top_plane.intersect(line, p)) {
+    //std::cout << "Intersection with top: " << p << std::endl;
+    if ((left_plane.contains(p) >= 0) &&
+        (right_plane.contains(p) >= 0) &&
+        (near_plane.contains(p) >= 0) &&
+        (far_plane.contains(p) >= 0))
+    {
+      //std::cout << "pushing top isect" << std::endl;
+      points.push_back(p);
+    }
+  }
+  if (near_plane.intersect(line, p)) {
+    //std::cout << "Intersection with near: " << p << std::endl;
+    if ((left_plane.contains(p) >= 0) &&
+        (right_plane.contains(p) >= 0) &&
+        (bottom_plane.contains(p) >= 0) &&
+        (top_plane.contains(p) >= 0))
+    {
+      //std::cout << "pushing near isect" << std::endl;
+      points.push_back(p);
+    }
+  }
+  if (far_plane.intersect(line, p)) {
+    //std::cout << "Intersection with far: " << p << std::endl;
+    if ((left_plane.contains(p) >= 0) &&
+        (right_plane.contains(p) >= 0) &&
+        (bottom_plane.contains(p) >= 0) &&
+        (top_plane.contains(p) >= 0))
+    {
+      std::cout << "pushing far isect" << std::endl;
+      points.push_back(p);
+    }
+  }
+
+  //std::cout << "# points: " << points.size() << std::endl;
+  SGAL_assertion(points.size() >= 2);
+
+  std::list<Vector3f>::const_iterator cit = points.begin();
+  xp1.xform_pt(*cit++, view_mat_inv);
+  xp2.xform_pt(*cit, view_mat_inv);
+  points.clear();
+      
+  // Vector3f center;
+  // center.add(xp1, xp2);
+  // center.scale(0.5f);
+  // Sphere sphere;
+  // sphere.set_center(center);
+  // sphere.draw(action);
+      
+  glBegin(GL_LINES);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  glVertex3fv((float*)&xp1);
+  // std::cout << xp1 << std::endl;
+  glVertex3fv((float*)&xp2);
+  // std::cout << xp2 << std::endl;
+  glEnd();
+}
+
+/*! \brief Draws the geometry */
+void Lines_through_segments_geo::draw(Draw_action* action)
+{
+  // Draw the input:
+  
+  if (m_dirty) clean();
+  if (m_dirty) return;
+
+  // Draw the output:
+  Context* context = action->get_context();
+  Camera* camera = context->get_active_camera();
+
+  const Matrix4f& camera_mat = camera->get_view_mat();
+  const Matrix4f* world_mat = action->get_current_wtm();
+  Matrix4f view_mat;
+  view_mat.mult(camera_mat, *world_mat);
+  
+  Matrix4f view_mat_inv;
+  view_mat_inv.invert_affine(view_mat);
+
   std::list<Transversal_with_segments>::const_iterator it;
+
+  // Set graphics state for line rendering
+  context->draw_light_enable(false);
+  context->draw_line_width(2);
+  // glDepthRange(0.05f, 1);
+  
   for (it = m_out_lines.begin(); it != m_out_lines.end(); ++it) {
 
     typedef Lines_through_segments_3::Transversal         Transversal;
@@ -308,56 +464,12 @@ void Lines_through_segments_geo::draw(Draw_action* action)
     Through_3* through_obj;
 
     if ((line_obj = boost::get<Line_3>(&transversal))) {
-      Rat_point_3 ep1 = line_obj->point(0);
-      Rat_point_3 ep2 = line_obj->point(1);
-      float x = CGAL::to_double(ep1.x());
-      float y = CGAL::to_double(ep1.y());
-      float z = CGAL::to_double(ep1.z());
-      Vector3f p1(x, y, z);
-      std::cout << p1 << std::endl;
-
-      x = CGAL::to_double(ep2.x());
-      y = CGAL::to_double(ep2.y());
-      z = CGAL::to_double(ep2.z());
-      Vector3f p2(x, y, z);
-      std::cout << p2 << std::endl;
-
-      Vector3f xp1;
-      xp1.xform_pt(p1, view_mat);
-      Vector3f xp2;
-      xp2.xform_pt(p2, view_mat);
-      
-      Line line(xp1, xp2);
-      std::vector<Vector3f> points;
-      Vector3f p;
-      if (planes[Frustum::LEFT_PLANE].intersect(line, p)) points.push_back(p);
-      if (planes[Frustum::RIGHT_PLANE].intersect(line, p)) points.push_back(p);
-      if (planes[Frustum::NEAR_PLANE].intersect(line, p)) points.push_back(p);
-      if (planes[Frustum::FAR_PLANE].intersect(line, p)) points.push_back(p);
-      if (planes[Frustum::BOTTOM_PLANE].intersect(line, p)) points.push_back(p);
-      if (planes[Frustum::TOP_PLANE].intersect(line, p)) points.push_back(p);
-      SGAL_assertion(points.size() >= 2);
-
-      xp1.xform_pt(points[0], view_mat_inv);
-      xp2.xform_pt(points[1], view_mat_inv);
-      
-      context->draw_light_enable(false);
-      context->draw_line_width(2);
-      glDepthRange(0.05f, 1);
-      glBegin(GL_LINES);
-      glColor3f(1.0f, 1.0f, 1.0f);
-      glVertex3fv((float*)&xp1);
-      //std::cout << xp1 << std::endl;
-      glVertex3fv((float*)&xp2);
-      //std::cout << xp2 << std::endl;
-      glEnd();
-      context->draw_line_width(1.0f);
-      context->draw_light_enable(true);
-      glDepthRange(0, 1);
+      draw_line(action, *line_obj, view_mat, view_mat_inv);
     }
     else if ((mapped_obj = boost::get<Mapped_2>(&transversal))) {
       Mapped_transversal mapped_transversal = mapped_obj->mapped_transversal();
       Mapped_2::Mapped_line_3 line = mapped_obj->line();
+      draw_line(action, line, view_mat, view_mat_inv);
 
       Mapped_x_monotone_curve_2* curve_obj;
       Mapped_general_polygon_2* polygon_obj;
@@ -402,6 +514,11 @@ void Lines_through_segments_geo::draw(Draw_action* action)
       }
     }
   }
+
+  // Restore graphics state to default values:
+  context->draw_line_width(1.0f);
+  context->draw_light_enable(true);
+  // glDepthRange(0, 1);
 }
 
 /*! \brief */
@@ -418,7 +535,29 @@ void Lines_through_segments_geo::isect(Isect_action* action)
 /*! \brief */
 Boolean Lines_through_segments_geo::calculate_sphere_bound()
 {
+  if (!m_is_sphere_bound_dirty) return false;
+  if (is_dirty()) clean();
+
+  // TODO: calculate the sphere bound
+  
+  m_is_sphere_bound_dirty = false;
   return true;
+}
+
+/*! \biref Set the segments. */
+void Lines_through_segments_geo::set_segments(Indexed_line_set* segments)
+{
+  clear();
+  m_segments = segments;
+  Observer observer(this, get_field_info(SEGMENTS));
+  segments->register_observer(observer);
+}
+
+/*! \biref Processes change of points */
+void Lines_through_segments_geo::field_changed(Field_info* field_info)
+{
+  Container::field_changed(field_info);
+  clear();
 }
 
 SGAL_END_NAMESPACE
