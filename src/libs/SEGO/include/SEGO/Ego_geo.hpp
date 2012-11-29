@@ -42,6 +42,7 @@ public:
   enum {
     FIRST = Geometry::LAST - 1,
     MODEL,
+    PARTS,
     LAST
   };
 
@@ -120,6 +121,8 @@ protected:
 
   /*! The segments */
   Exact_polyhedron_geo* m_model;
+
+  std::vector<Ego_part_geo> m_parts;
 
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty;

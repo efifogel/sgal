@@ -281,6 +281,8 @@ LIBS = $(LIBDIR)/libSGAL.a
 LIBS+= $(LIBDIR)/libgl2ps.a
 ifeq ($(USE_CGAL), 1)
 LIBS+= $(LIBDIR)/libSCGAL.a
+endif
+ifeq ($(USE_EGO), 1)
 LIBS+= $(LIBDIR)/libSEGO.a
 endif
 endif

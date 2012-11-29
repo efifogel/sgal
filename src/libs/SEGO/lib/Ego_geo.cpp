@@ -95,12 +95,38 @@ Container_proto* Ego_geo::get_prototype()
 /*! \brief sets the attributes of this node */
 void Ego_geo::set_attributes(Element* elem)
 {
+  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
+  typedef Element::Cont_list              Cont_list;
+  typedef Element::Cont_iter              Cont_iter;
+
+  // Sets the multi-container attributes of this node:
+  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); mcai++)
+  {
+    const std::string& name = elem->get_name(mcai);
+    Cont_list& cont_list = elem->get_value(mcai);
+    if (name == "parts") {
+      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+        Container* cont = *ci;
+        // Spherical_gaussian_map_geo* sgm =
+        //   dynamic_cast<Spherical_gaussian_map_geo*>(cont);
+        // if (sgm) insert_sgm(sgm);
+        else {
+          std::cerr << "Invalid " << s_tag << " geometry nodes!"
+                    << std::endl;
+        }
+      }
+      elem->mark_delete(mcai);
+    }
+    continue;
+  }
+  
   typedef Element::Cont_attr_iter         Cont_attr_iter;
   for (Cont_attr_iter cai = elem->cont_attrs_begin();
        cai != elem->cont_attrs_end(); cai++)
   {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+    const std::string& name = elem->get_name(cai);
+    Container* cont = elem->get_value(cai);
     if (name == "model") {
       Exact_polyhedron_geo* model = dynamic_cast<Exact_polyhedron_geo*>(cont);
       set_model(model);
