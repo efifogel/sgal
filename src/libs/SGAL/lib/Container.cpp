@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 12384 $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -141,10 +141,7 @@ Attribute_list Container::get_attributes()
   return attribs;
 }
 
-/*! Add a child object to the scene
- * \param sg (in) a reference to the scene graph
- * \param parent (in) the name of the parent object.
- */
+/*! \brief Add a child object to the scene */
 void Container::add_to_scene(Scene_graph* sg, XML_entity* parent) 
 { 
   m_execution_coordinator = sg->get_execution_coordinator();
@@ -166,7 +163,7 @@ Field* Container::get_source_field(const std::string& src_field_name)
   }
 
   //! \todo handle errors properly!
-  std::cerr << "Failed to find filed " << src_field_name
+  std::cerr << "Failed to find field " << src_field_name
             << " in source node" << std::endl;
   return NULL;
 }
@@ -184,7 +181,7 @@ Field* Container::get_destination_field(const std::string& dst_field_name)
   }
 
   //! \todo handle errors properly!
-  std::cerr << "Failed to find filed " << dst_field_name
+  std::cerr << "Failed to find field " << dst_field_name
             << " in destination node" << std::endl;
   return NULL;
 }
@@ -205,6 +202,12 @@ void Container::process_content_changed()
     Field_info* field_info = (*it).second;
     observer->field_changed(field_info);
   }
+}
+
+/*! \brief Processes change of field */
+void Container::field_changed(Field_info* field_info)
+{
+  process_content_changed();
 }
 
 SGAL_END_NAMESPACE

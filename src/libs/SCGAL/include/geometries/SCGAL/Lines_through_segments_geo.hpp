@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lines_through_segments_geo.hpp 10975 2011-03-29 15:56:20Z efif $
-// $Revision: 10975 $
+// $Id: Lines_through_segments_geo.hpp 14223 2012-11-29 22:33:55Z efif $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -50,6 +50,7 @@ class Container_proto;
 class Element;
 class Cull_context;
 class Indexed_line_set;
+class Field_info;
 
 /*! A geometry container that represents all lines that intersect tupples
  * of 4 segments, given a container of segments
@@ -141,10 +142,13 @@ public:
    */
   virtual Boolean is_empty();
 
+  /*! Process change of content */
+  virtual void field_changed(Field_info* field_info);
+
   /*! Set the segments.
    * \param segments the segments.
    */
-  void set_segments(Indexed_line_set* segments) { m_segments = segments; }
+  void set_segments(Indexed_line_set* segments);
 
   /*! Obtain the segments.
    * \return the segments.
@@ -169,6 +173,12 @@ protected:
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty;
 
+  /*! Draw a single line */
+  template <typename Line_type>
+  void draw_line(Draw_action* action,
+                 Line_type& line,
+                 const Matrix4f& view_mat, const Matrix4f& view_mat_inv);
+  
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;

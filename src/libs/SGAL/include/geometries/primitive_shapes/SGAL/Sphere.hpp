@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 6147 $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -64,16 +64,16 @@ public:
   virtual ~Sphere();
 
   /* Construct the prototype */
-  static Sphere * prototype() { return new Sphere(SGAL_TRUE); }
+  static Sphere* prototype() { return new Sphere(SGAL_TRUE); }
 
   /*! Clone */
-  virtual Container * clone() { return new Sphere(); }
+  virtual Container* clone() { return new Sphere(); }
 
   /*! Set the sphere center */
-  void set_center(const Vector3f & center) { m_center = center; }
+  void set_center(const Vector3f& center) { m_center = center; }
 
   /*! Obtain the sphere center */
-  const Vector3f & get_center() const { return m_center; }
+  const Vector3f& get_center() const { return m_center; }
   
   /*! Set the sphere radius */
   void set_radius(Float radius) { m_radius = radius; }
@@ -94,10 +94,10 @@ public:
   Uint get_slices() const { return m_slices; }
 
   /*! Draw the sphere */
-  virtual void draw(Draw_action * action); 
+  virtual void draw(Draw_action* action); 
 
   /*! Draw the sphere in selection mode */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! Calculare the sphere bound of the sphere */
   virtual Boolean calculate_sphere_bound();
@@ -109,12 +109,10 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
     
-  // virtual void field_changed(short field_id);
-
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
@@ -129,7 +127,7 @@ protected:
   Boolean m_dirty;
   
   /*! The utility instance */
-  GLUquadricObj * m_sphere;
+  GLUquadricObj* m_sphere;
 
   /*! The sphere center */
   Vector3f m_center;
@@ -147,14 +145,14 @@ protected:
   void init();
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
   
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default values */
   static const Vector3f s_def_center;

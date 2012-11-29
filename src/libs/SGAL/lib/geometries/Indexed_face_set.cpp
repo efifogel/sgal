@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source: $
-// $Revision: 14184 $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -1201,7 +1201,7 @@ void Indexed_face_set::create_vertex_buffer_object()
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
       Uint size = m_coord_array->size()* sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_coord_array->get_vector();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_STATIC_DRAW_ARB);
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
   
@@ -1216,7 +1216,7 @@ void Indexed_face_set::create_vertex_buffer_object()
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
       Uint size = m_normal_array->size()* sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_normal_array->get_vector();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_STATIC_DRAW_ARB);
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
 
@@ -1231,7 +1231,7 @@ void Indexed_face_set::create_vertex_buffer_object()
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
       Uint size = m_color_array->size()* sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_color_array->get_vector();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_STATIC_DRAW_ARB);
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
 
@@ -1246,7 +1246,7 @@ void Indexed_face_set::create_vertex_buffer_object()
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
       Uint size = m_tex_coord_array->size()* sizeof(Vector2f);
       GLfloat* data = (GLfloat*) m_tex_coord_array->get_vector();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_STATIC_DRAW_ARB);
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
   
@@ -1385,6 +1385,65 @@ void Indexed_face_set::coord_changed(SGAL::Field_info* /* field_info */)
   destroy_display_list();
   destroy_vertex_buffer_object();
   Mesh_set::clear();
+}
+
+/*! \brief Process change of field */
+void Indexed_face_set::field_changed(Field_info* field_info)
+{
+  switch (field_info->get_id()) {
+   case COORD_ARRAY:
+#if defined(GL_ARB_vertex_buffer_object)
+    if (!m_vertex_buffer_object_created) break;
+    if (m_vertex_coord_id == 0) break;
+    {
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
+      Uint size = m_coord_array->size()* sizeof(Vector3f);
+      GLfloat* data = (GLfloat*) m_coord_array->get_vector();
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+    }
+#endif
+    break;
+
+   case NORMAL_ARRAY:
+#if defined(GL_ARB_vertex_buffer_object)
+    if (!m_vertex_buffer_object_created) break;
+    if (m_vertex_normal_id == 0) break;
+    {
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
+      Uint size = m_normal_array->size()* sizeof(Vector3f);
+      GLfloat* data = (GLfloat*) m_normal_array->get_vector();
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+    }
+#endif
+    break;
+
+   case COLOR_ARRAY:
+#if defined(GL_ARB_vertex_buffer_object)
+    if (!m_vertex_buffer_object_created) break;
+    if (m_vertex_color_id == 0) break;
+    {
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
+      Uint size = m_color_array->size()* sizeof(Vector3f);
+      GLfloat* data = (GLfloat*) m_color_array->get_vector();
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+    }
+#endif
+    break;
+
+   case TEX_COORD_ARRAY:
+#if defined(GL_ARB_vertex_buffer_object)
+    if (!m_vertex_buffer_object_created) break;
+    if (m_vertex_tex_coord_id == 0) break;
+    {
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
+      Uint size = m_tex_coord_array->size()* sizeof(Vector3f);
+      GLfloat* data = (GLfloat*) m_tex_coord_array->get_vector();
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+    }
+#endif
+    break;
+  }
+  Container::field_changed(field_info);
 }
 
 /*! \brief processes change of coordinates */

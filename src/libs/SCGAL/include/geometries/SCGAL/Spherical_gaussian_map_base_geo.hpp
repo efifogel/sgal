@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_base_geo.hpp 9188 2010-05-25 14:40:57Z efif $
-// $Revision: 9188 $
+// $Id: Spherical_gaussian_map_base_geo.hpp 14223 2012-11-29 22:33:55Z efif $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -94,7 +94,7 @@ public:
 
 private:
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default values */
   static const Boolean s_def_draw_aos;
@@ -132,7 +132,7 @@ protected:
     typedef typename Sgm::Face                          Sgm_face;
     
     /*! */
-    Approximate_sphere_3 operator()(const Sgm_face & face) const
+    Approximate_sphere_3 operator()(const Sgm_face& face) const
     {
       SGAL_assertion(!face.is_unbounded());
       return to_approximate_sphere(face.point());
@@ -145,7 +145,7 @@ protected:
     typedef typename Sgm::Face                          Sgm_face;
 
     /*! */
-    Vector3f operator()(const Sgm_face & face) const
+    Vector3f operator()(const Sgm_face& face) const
     {
       SGAL_assertion(!face.is_unbounded());
       return to_vector3f(face.point());
@@ -157,7 +157,7 @@ protected:
    * \param spheres (o) the transformed coordinates
    */
   template <typename Sgm>
-  void transform_primal_coords(Sgm * sgm, Approximate_sphere_vector & spheres)
+  void transform_primal_coords(Sgm* sgm, Approximate_sphere_vector& spheres)
   {
     spheres.resize(sgm->number_of_faces());
     std::transform(sgm->faces_begin(), sgm->faces_end(), &spheres[0],
@@ -168,7 +168,7 @@ protected:
    * the vertices of the planar map
    */
   template <typename Sgm>
-  void update_facets(Sgm * sgm)
+  void update_facets(Sgm* sgm)
   {
     typename Sgm::Vertex_iterator vit;
     for (vit = sgm->vertices_begin(); vit != sgm->vertices_end(); ++vit) {
@@ -190,10 +190,10 @@ protected:
     
   public:
     typedef typename Iterator::iterator_category iterator_category;
-    typedef Sgm *                                value_type;
+    typedef Sgm*                                 value_type;
     typedef typename Iterator::difference_type   difference_type;
-    typedef Sgm **                               pointer;
-    typedef Sgm *&                               reference;
+    typedef Sgm**                                pointer;
+    typedef Sgm*&                                reference;
     
   public:
     // Default constructor.
@@ -205,18 +205,18 @@ protected:
     // operator*
     const value_type operator*() const
     {
-      Iterator & base = m_it;
+      Iterator& base = m_it;
       return (*base)->get_sgm();
     }
     
     value_type operator*()
     {
-      Iterator & base = m_it;
+      Iterator& base = m_it;
       return (*base)->get_sgm();
     }
 
     /*! Operator pre ++ */
-    Sgm_iterator & operator++()
+    Sgm_iterator& operator++()
     {
       ++m_it;
       return *this;
@@ -233,13 +233,13 @@ protected:
     // operator->
     pointer operator->()
     {
-      Iterator & base = m_it;
+      Iterator& base = m_it;
       return &((*base)->get_sgm());
     }
     
     const pointer operator->() const
     {
-      Iterator & base = m_it;
+      Iterator& base = m_it;
       return &((*base)->get_sgm());
     }
   };
@@ -358,13 +358,13 @@ protected:
   Arrangement_renderer m_renderer;
 
   /*! The surface renderer */
-  Arrangement_renderer::Renderer * m_surface_renderer;
+  Arrangement_renderer::Renderer* m_surface_renderer;
 
   /*! The surface renderer */
-  Colored_surface_renderer * m_colored_surface_renderer;
+  Colored_surface_renderer* m_colored_surface_renderer;
 
   /*! The surface renderer */
-  Arrangement_renderer::Renderer * m_stencil_surface_renderer;
+  Arrangement_renderer::Renderer* m_stencil_surface_renderer;
   
   /*! Create the renderers */
   void create_renderers();
@@ -375,38 +375,37 @@ protected:
   /*! Transform the coordinates of the SGM into spheres
    * \param spheres (o) the transformed coordinates
    */
-  virtual void transform_coords(Approximate_sphere_vector & spheres) {}
+  virtual void transform_coords(Approximate_sphere_vector& spheres) {}
 
   /*! Draw the primal representation of the polyhedron */
-  virtual void draw_primal(Draw_action * action) {}
+  virtual void draw_primal(Draw_action* action) {}
 
-  virtual void draw_aos_opaque(Draw_action * action) {}
+  virtual void draw_aos_opaque(Draw_action* action) {}
   
   /*! Draw an arrangement on sphere vertex
    * param action
    * param center the vertex center
    */
-  void draw_aos_vertex(Draw_action * action, Vector3f & center);
+  void draw_aos_vertex(Draw_action* action, Vector3f& center);
 
   /*! Draw an arrangement on surface boundary_vertex
    * \param action
    * \param center the vertex center
    */
-  void draw_aos_boundary_vertex(Draw_action * action, Vector3f & center);
+  void draw_aos_boundary_vertex(Draw_action* action, Vector3f& center);
 
   /*! Draw an arrangement on sphere edge
    * \param action
    * \param source the edge source point
    * \param target the edge target point
    */
-  void draw_aos_edge(Draw_action * action,
-                     Vector3f & source, Vector3f & target);
+  void draw_aos_edge(Draw_action* action, Vector3f& source, Vector3f& target);
     
   virtual void isect_primary() {}
 
   /*! Export the planar maps associated with the faces of the unit sphere
    */
-  void output(Field_info * field_info)
+  void output(Field_info* field_info)
   {
     SGAL_assertion_msg(0, "Not implemented yet!");
     // std::cout << m_sgm << std::endl;
@@ -426,16 +425,16 @@ public:
   Spherical_gaussian_map_base_geo(Boolean proto = SGAL_FALSE);
 
   /*! Copy constructor */
-  Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo & sgm);
+  Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& sgm);
   
   /*! Destructor */
   virtual ~Spherical_gaussian_map_base_geo();
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! Calculate the bounding sphere
    * \return a Boolean flag that indicates whether the sphere bound changed
@@ -445,7 +444,7 @@ public:
   /*! Set the attributes of this node
    * \param elem contains lists of attribute names and values
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -454,10 +453,10 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Draw the internal representation */
-  virtual void draw_geometry(Draw_action * action);
+  virtual void draw_geometry(Draw_action* action);
     
   /*! Clear the internal representation and auxiliary data structures
    */
@@ -467,29 +466,29 @@ public:
   virtual void clean_renderer();
 
   /*! Process change of content */
-  virtual void field_changed(Field_info * field_info);
+  virtual void field_changed(Field_info* field_info);
 
   /*! Raise the flag that indicates that the sphere bound changed */
-  void draw_changed(Field_info * field_info = NULL);
+  void draw_changed(Field_info* field_info = NULL);
   
   /*! Draw the arrangement on sphere vertices
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action) {}
+  virtual void draw_aos_vertices(Draw_action* action) {}
 
   /*! Draw the arrangement on sphere edges
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action) {}
+  virtual void draw_aos_edges(Draw_action* action) {}
 
   /*! Reverse the coordinate indices */
-  void set_reverse_coord_indices(const SGAL::Array<Uint> & indices);
+  void set_reverse_coord_indices(const SGAL::Array<Uint>& indices);
   
   /*! Obtain the aos surface color */
-  const Vector3f & get_aos_surface_color(void) const;
+  const Vector3f& get_aos_surface_color(void) const;
 
   /*! Set the aos surface color */
-  void set_aos_surface_color(const Vector3f & color);
+  void set_aos_surface_color(const Vector3f& color);
 
   // Vertex attributes:
   
@@ -506,10 +505,10 @@ public:
   Float get_aos_vertex_radius() const { return m_aos_vertex_radius; }
   
   /*! Obtain the aos vertex color */
-  const Vector3f & get_aos_vertex_color() const { return m_aos_vertex_color; }
+  const Vector3f& get_aos_vertex_color() const { return m_aos_vertex_color; }
 
   /*! Set the vertex color */
-  void set_aos_vertex_color(const Vector3f & color);
+  void set_aos_vertex_color(const Vector3f& color);
 
   // Aos boundary vertex attributes:
   
@@ -528,7 +527,7 @@ public:
   /*! Obtain the aos boundary vertex color
    * \return the boundary vertex color
    */
-  const Vector3f & get_aos_boundary_vertex_color() const
+  const Vector3f& get_aos_boundary_vertex_color() const
   { return m_aos_boundary_vertex_color; }
   
   // Edge attributes:
@@ -573,10 +572,10 @@ public:
   Float get_aos_edge_line_width() const;
   
   /*! Set the line color */
-  void set_aos_edge_color(const Vector3f & color, unsigned int id = 0);
+  void set_aos_edge_color(const Vector3f& color, unsigned int id = 0);
 
   /*! Obtain the line color */
-  const Vector3f & get_aos_edge_color(unsigned int id = 0);
+  const Vector3f& get_aos_edge_color(unsigned int id = 0);
 
   /*! Obtain the angle of a trangle fan */
   Float get_aos_delta_angle() const { return m_aos_delta_angle; }
@@ -601,18 +600,18 @@ public:
 /*! brief sets the curve color */
 inline void
 Spherical_gaussian_map_base_geo::
-set_aos_edge_color(const Vector3f & color, Uint id)
+set_aos_edge_color(const Vector3f& color, Uint id)
 { m_aos_edge_colors[id] = color; }
 
 /*! \brief obtains the curve color */
-inline const Vector3f & Spherical_gaussian_map_base_geo::
+inline const Vector3f& Spherical_gaussian_map_base_geo::
 get_aos_edge_color(Uint id)
 { return m_aos_edge_colors[id]; }
 
 /*! \brief sets the aos sphere color */
 inline
 void Spherical_gaussian_map_base_geo::
-set_aos_surface_color(const Vector3f & color)
+set_aos_surface_color(const Vector3f& color)
 {
   m_aos_surface_color = color;
   if (m_colored_surface_renderer) m_colored_surface_renderer->set_color(color);
@@ -621,7 +620,7 @@ set_aos_surface_color(const Vector3f & color)
 /*! \brief sets the aos vertex color */
 inline
 void Spherical_gaussian_map_base_geo::
-set_aos_vertex_color(const Vector3f & color)
+set_aos_vertex_color(const Vector3f& color)
 { m_aos_vertex_color = color; }
 
 /*! \brief sets the flag that indicates whether to draw the surface sphere */
@@ -640,7 +639,7 @@ inline Float Spherical_gaussian_map_base_geo::get_aos_edge_line_width() const
 
 /*! \brief obtains the aos surface color */
 inline
-const Vector3f &
+const Vector3f&
 Spherical_gaussian_map_base_geo::get_aos_surface_color(void) const
 { return m_aos_surface_color; }
 

@@ -15,7 +15,7 @@
 // PARTICULAR PURPOSE.
 //
 // $Source$
-// $Revision: 11857 $
+// $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -23,37 +23,32 @@
 #define SGAL_CONTAINER_HPP
 
 /*! \file
- * \brief Manages fields and node to node field connections.
+ * Manages fields and node to node field connections.
  *
  * Maintains a list of fields that are connected to or connected from fields
  * in other containers.
-
-  What should be done to connect to fields - 
-  example with the navigation sensor which inherites from Container:
-  ------------------------------------------------------------------------------
-  Lets say that navSensor is Navigation_sensor* and pointing to the
-  navigation sensor instance in the scene graph.
-  So
-  navSensor->add_field(Navigation_sensor::POSITION);
-  navSensor->add_field(Navigation_sensor::rotation);
-  Field* pos_field = nav_sensor->get_field(Navigation_sensor::POSITION);
-  Field* orient_field = nav_sensor->get_field(Navigation_sensor::rotation);
-
-  Now lets say that in the same way transformPosField and transformOrientField
-  are also Field* and pointing to the fields we want to connect to.
-
-  So
-  posField->Connect(transformPosField);
-  orientField->Connect(transformOrientField);
-
-  that should connect the fields
-
-  now from the event filter mechanism
-  posField->Cascade();
-  and
-  orientField->Cascade();
-
-  should be activated for every update of m_position and m_rotation
+ *
+ * The following explains what should be done to connect two fields. 
+ * by example with the navigation sensor, which inherites from Container.
+ * Assume that navSensor is of type Navigation_sensor* and pointing to the
+ * navigation sensor instance in the scene graph.
+ * 
+ * navSensor->add_field(Navigation_sensor::POSITION);
+ * navSensor->add_field(Navigation_sensor::rotation);
+ * Field* pos_field = nav_sensor->get_field(Navigation_sensor::POSITION);
+ * Field* orient_field = nav_sensor->get_field(Navigation_sensor::rotation);
+ *
+ * Assume that in the same way transform_pos_field and transform_orient_field
+ * are of type Field* and are pointing to the corresponding fields we want to
+ * connect to.
+ *
+ * pos_field->connect(transform_pos_field);
+ * orient_field->connect(transform_orient_field);
+ *
+ * that should connect the fields
+ *
+ * pos_field->Cascade();
+ * orient_field->Cascade();
  */
 
 #if (defined _MSC_VER)
@@ -96,7 +91,7 @@ public:
   };
 
   /*! Constructor */
-  Container(Boolean proto = SGAL_FALSE);
+  Container(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Container();
@@ -182,10 +177,10 @@ public:
    * \param field_info the requested field info
    * \return The obtained field pointer
    */
-  Field * get_field(Field_info * field_info);
+  Field* get_field(Field_info* field_info);
 
   /*! Calculate the pointer of a data member according to a given offset */
-  void * get_member_pointer(Ulong offset)
+  void* get_member_pointer(Ulong offset)
   { return (void*)((Ulong)(&m_base) + offset); }
 
   /*! Force re-rendering */
@@ -195,18 +190,26 @@ public:
       m_execution_coordinator->set_rendering_required();
   }
 
-  virtual Boolean attach_context(Context* /* context */) { return SGAL_FALSE; }
+  virtual Boolean attach_context(Context* /* context */) { return false; }
   virtual Boolean detach_context(Context* /* context */ = 0)
-  { return SGAL_FALSE; }
+  { return false; }
 
+  /*! Process change of field
+   * \param field_info
+   */
+  virtual void field_changed(Field_info* field_info);
+
+  /* Sets the execution coordinator
+   * \param ec
+   */
   void set_execution_coordinator(Execution_coordinator* ec)
   { m_execution_coordinator = ec; }
 
   /*! Obtain a source field with a given name */
-  Field * get_source_field(const std::string& src_field_name);
+  Field* get_source_field(const std::string& src_field_name);
 
   /*! Obtain a destination field with a given name */
-  Field * get_destination_field(const std::string& dst_field_name);
+  Field* get_destination_field(const std::string& dst_field_name);
 
   /*! Register an observer */
   void register_observer(Observer& observer)
@@ -226,7 +229,7 @@ protected:
   /*! Calculate and obtain the ofsset of a data member */
   Member_offset_type get_member_offset(void* data_member)
   { return (Member_offset_type)data_member - (Member_offset_type)&(m_base); }
-
+  
 private:
   typedef std::map<Field_info*,Field*>                  Field_map;
   typedef Field_map::iterator                           Field_iter;
@@ -240,7 +243,7 @@ private:
    * \param field_info the suitable field info for the field
    * \return the added field
    */
-  Field * add_field(Field_info * field_info);
+  Field* add_field(Field_info* field_info);
 
   // A search structure to find Field_info's for fields */
   Field_map m_fields;
