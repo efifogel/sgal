@@ -381,19 +381,19 @@ void Frustum::clean_corners()
   
   m_corners[Frustum::NEAR_LL][0] = left;
   m_corners[Frustum::NEAR_LL][1] = bottom;
-  m_corners[Frustum::NEAR_LL][2] = m_near_dist;
+  m_corners[Frustum::NEAR_LL][2] = -m_near_dist;
 
   m_corners[Frustum::NEAR_LR][0] = right;
   m_corners[Frustum::NEAR_LR][1] = bottom;
-  m_corners[Frustum::NEAR_LR][2] = m_near_dist;
+  m_corners[Frustum::NEAR_LR][2] = -m_near_dist;
 
   m_corners[Frustum::NEAR_UL][0] = left;
   m_corners[Frustum::NEAR_UL][1] = top;
-  m_corners[Frustum::NEAR_UL][2] = m_near_dist;
+  m_corners[Frustum::NEAR_UL][2] = -m_near_dist;
         
   m_corners[Frustum::NEAR_UR][0] = right;
   m_corners[Frustum::NEAR_UR][1] = top;
-  m_corners[Frustum::NEAR_UR][2] = m_near_dist;
+  m_corners[Frustum::NEAR_UR][2] = -m_near_dist;
 
   // Set far corners:
   if (m_type != Frustum::ORTHOGONAL) {
