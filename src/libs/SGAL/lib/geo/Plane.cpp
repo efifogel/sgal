@@ -115,7 +115,7 @@ bool Plane::intersect(const Line& line, Vector3f& point) const
   if (abs_lt(denominator, SGAL_EPSILON)) return false;
   const Vector3f& lpoint = line.get_point();
   Vector3f p;
-  p.scale(-m_offset, m_normal);
+  p.scale(m_offset, m_normal);
   p.sub(lpoint);
   float d = p.dot(m_normal) / denominator;
   point.add_scaled(lpoint, d, ldirection);
