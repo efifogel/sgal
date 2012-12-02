@@ -323,10 +323,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
         (far_plane.contains(p) >= 0) &&
         (bottom_plane.contains(p) >= 0) &&
         (top_plane.contains(p) >= 0))
-    {
-      //std::cout << "pushing left isect" << std::endl;
       points.push_back(p);
-    }
   }
   if (right_plane.intersect(line, p)) {
     //std::cout << "Intersection with right: " << p << std::endl;
@@ -334,54 +331,39 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
         (far_plane.contains(p) >= 0) &&
         (bottom_plane.contains(p) >= 0) &&
         (top_plane.contains(p) >= 0))
-    {
-      //std::cout << "pushing right isect" << std::endl;
       points.push_back(p);
-    }
   }
-  if (bottom_plane.intersect(line, p)) {
+  if ((points.size() < 2) && (bottom_plane.intersect(line, p))) {
     //std::cout << "Intersection with bottom: " << p << std::endl;
     if ((left_plane.contains(p) >= 0) &&
         (right_plane.contains(p) >= 0) &&
         (near_plane.contains(p) >= 0) &&
         (far_plane.contains(p) >= 0))
-    {
-      //std::cout << "pushing bottom isect" << std::endl;
       points.push_back(p);
-    }
   }
-  if (top_plane.intersect(line, p)) {
+  if ((points.size() < 2) && (top_plane.intersect(line, p))) {
     //std::cout << "Intersection with top: " << p << std::endl;
     if ((left_plane.contains(p) >= 0) &&
         (right_plane.contains(p) >= 0) &&
         (near_plane.contains(p) >= 0) &&
         (far_plane.contains(p) >= 0))
-    {
-      //std::cout << "pushing top isect" << std::endl;
       points.push_back(p);
-    }
   }
-  if (near_plane.intersect(line, p)) {
+  if ((points.size() < 2) && (near_plane.intersect(line, p))) {
     //std::cout << "Intersection with near: " << p << std::endl;
     if ((left_plane.contains(p) >= 0) &&
         (right_plane.contains(p) >= 0) &&
         (bottom_plane.contains(p) >= 0) &&
         (top_plane.contains(p) >= 0))
-    {
-      //std::cout << "pushing near isect" << std::endl;
       points.push_back(p);
-    }
   }
-  if (far_plane.intersect(line, p)) {
+  if ((points.size() < 2) && (far_plane.intersect(line, p))) {
     //std::cout << "Intersection with far: " << p << std::endl;
     if ((left_plane.contains(p) >= 0) &&
         (right_plane.contains(p) >= 0) &&
         (bottom_plane.contains(p) >= 0) &&
         (top_plane.contains(p) >= 0))
-    {
-      std::cout << "pushing far isect" << std::endl;
       points.push_back(p);
-    }
   }
 
   //std::cout << "# points: " << points.size() << std::endl;
