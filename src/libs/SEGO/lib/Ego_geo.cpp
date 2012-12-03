@@ -42,6 +42,7 @@
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 #include "SEGO/Ego_geo.hpp"
+#include "SEGO/Ego_voxelizer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -120,6 +121,10 @@ Boolean Ego_geo::is_empty() { return true; }
 void Ego_geo::clean()
 {
   m_dirty = false;
+  
+  // Ego_voxelizer::Voxels voxels;
+  // Ego_voxelizer voxelize (0.1, 0.1, 0.1);
+  // voxelize(this->get_model()->get_polyhedron(), &voxels);
 }
 
 /*! \brief draws the geometry */
