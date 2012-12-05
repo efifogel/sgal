@@ -12,7 +12,8 @@
 include $(ROOT)/make/comdef.mak
 
 FILES = Ego_geo.hpp
-FILES += Ego_voxelizer.hpp
+FILES+= Ego_brick.hpp
+FILES+= Ego_voxelizer.hpp
 
 INSTALLDIR =$(INCDIR)/SEGO
 include $(MAKEDIR)/files.mak

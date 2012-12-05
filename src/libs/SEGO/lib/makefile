@@ -23,6 +23,7 @@ BASEINSTALLDIR =$(ROOT)
 
 CPPSOURCES =
 CPPSOURCES+= Ego_geo.cpp
+CPPSOURCES+= Ego_brick.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Ego_voxelizer.cpp
 
