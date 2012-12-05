@@ -6,6 +6,7 @@ FILES+= Matrix4f.hpp
 FILES+= Plane.hpp
 FILES+= Rotation.hpp
 FILES+= Vector2f.hpp
+FILES+= Vector2u.hpp
 FILES+= Vector2sh.hpp
 FILES+= Vector3f.hpp
 FILES+= Vector3sh.hpp
