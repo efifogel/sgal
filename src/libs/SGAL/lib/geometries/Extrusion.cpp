@@ -35,19 +35,18 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Math_defs.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 std::string Extrusion::s_tag = "Extrusion";
-Container_proto * Extrusion::s_prototype = NULL;
+Container_proto* Extrusion::s_prototype = NULL;
 
 // Default values:
-const Boolean Extrusion::s_def_begin_cap(SGAL_TRUE);
-const Boolean Extrusion::s_def_end_cap(SGAL_TRUE);
-const Boolean Extrusion::s_def_loop(SGAL_FALSE);
+const Boolean Extrusion::s_def_begin_cap(true);
+const Boolean Extrusion::s_def_end_cap(true);
+const Boolean Extrusion::s_def_loop(false);
 const Float Extrusion::s_def_cross_section_radius(0.1f);
 const Uint Extrusion::s_def_cross_section_slices(32);
 
@@ -314,7 +313,7 @@ void Extrusion::clean()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Extrusion::set_attributes(Element * elem)
+void Extrusion::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
 
@@ -324,8 +323,8 @@ void Extrusion::set_attributes(Element * elem)
   typedef Element::Str_attr_iter          Str_attr_iter;
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "beginCap") {
       set_begin_cap(compare_to_true(value));
       elem->mark_delete(ai);
@@ -476,7 +475,7 @@ void Extrusion::delete_prototype()
 }
 
 /*! Obtain the container prototype */
-Container_proto * Extrusion::get_prototype() 
+Container_proto* Extrusion::get_prototype() 
 {  
   if (!s_prototype) Extrusion::init_prototype();
   return s_prototype;
