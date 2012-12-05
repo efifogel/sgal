@@ -59,7 +59,7 @@ LCPPINCS+= $(CGALCPPINCS)
 
 ifeq ($(DE), gnu)
 LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
-LCPPOPTS+= -Wall
+LCPPOPTS+= -Wall -Werror
 LCPPOPTS+= -frounding-math
 # LCPPOPTS+= -pedantic
 endif

@@ -25,13 +25,10 @@
 #include <list>
 #include <vector>
 #include <string>
-#if (defined _MSC_VER)
-#include <hash_set>
-#else
-#include <ext/hash_set>
-#endif
 #include <iostream>
 #include <string.h>
+
+#include <boost/unordered_set.hpp>
 
 #include "SGAL/Types.hpp"
 #include "SGAL/Scene.hpp"
@@ -268,13 +265,7 @@ private:
   /*! The hash_multiset's key equality function object */
   class Hash_comparer {
   public:
-#if (defined _MSC_VER)
-    static const size_t bucket_size = 4;
-    static const size_t min_buckets = 8;
-    Hash_comparer() {}
-    inline size_t operator()(const Piece_state * state) const
-    { return Knot_scene::my_hash(state); }
-#endif
+
     /*! \brief compares 2 hash keys */
     inline bool operator( )(const Piece_state * key1, const Piece_state * key2)
       const;
@@ -283,15 +274,12 @@ private:
   /*! Stores all visited states. Used to prevent visiting the same state
    * more than once
    */
-#if (defined _MSC_VER)
-  stdext::hash_multiset<Piece_state *, Hash_comparer> m_visited;
-#else
   struct Hasher {
     inline size_t operator()(const Piece_state * state) const
     { return Knot_scene::my_hash(state); }
   };
-  __gnu_cxx::hash_multiset<Piece_state *, Hasher, Hash_comparer> m_visited;
-#endif
+
+  boost::unordered_multiset<Piece_state *, Hasher, Hash_comparer> m_visited;
 
   typedef std::pair<Uint,Uint>                  Step;
   typedef std::list<Step>                       Solution;
@@ -433,11 +421,7 @@ inline bool Knot_scene::Hash_comparer::operator()(const Piece_state * key1,
                                                   const Piece_state * key2)
   const
 {
-#if (defined _MSC_VER)
-  return (compare(key1, key2) < 0);
-#else
   return (compare(key1, key2) == 0);
-#endif
 }
 
 /*! Hash a given state --- map to size_t */
