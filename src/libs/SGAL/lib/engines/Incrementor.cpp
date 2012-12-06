@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Incrementor.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
+// $Id: $
+// $Revision: $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -38,10 +38,9 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Incrementor::s_tag = "Incrementor";
-Container_proto * Incrementor::s_prototype = NULL;
+Container_proto* Incrementor::s_prototype = NULL;
 
-// Defaults values:
-  // Default values:
+// Default values:
 const Int Incrementor::s_def_min_value(0);
 const Int Incrementor::s_def_max_value(1);
 
@@ -84,14 +83,14 @@ void Incrementor::delete_prototype()
 }
 
 /*! \brief obtains the container prototype */
-Container_proto * Incrementor::get_prototype()
+Container_proto* Incrementor::get_prototype()
 {
   if (!s_prototype) Incrementor::init_prototype();
   return s_prototype;
 }
   
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Incrementor::set_attributes(Element * elem)
+void Incrementor::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
@@ -130,11 +129,11 @@ void Incrementor::set_attributes(Element * elem)
 }
 
 /*! \brief executes the engine */
-void Incrementor::execute(Field_info * /*! field_info */)
+void Incrementor::execute(Field_info* /*! field_info */)
 {
   if (m_value == m_max_value) m_value = m_min_value;
   else ++m_value;
-  Field * value_field = get_field(VALUE);
+  Field* value_field = get_field(VALUE);
   if (value_field != NULL) value_field->cascade();
 }
 
