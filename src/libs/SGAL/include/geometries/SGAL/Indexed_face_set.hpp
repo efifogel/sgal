@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 14223 $
+// $Id: $
+// $Revision: $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -364,9 +364,6 @@ public:
   /*! Process change of coordinates */
   virtual void coord_changed(SGAL::Field_info* field_info);
   
-  /*! Process change of points */
-  virtual void point_changed();
-
   /*! Process change of field */
   virtual void field_changed(Field_info* field_info);
   
