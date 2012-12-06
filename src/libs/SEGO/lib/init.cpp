@@ -1,4 +1,4 @@
-// Copyright (c) 2004 Israel.
+// Copyright (c) 2012 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -28,12 +28,14 @@
 #include "SGAL/Container_factory.hpp"
 
 #include "SEGO/Ego_geo.hpp"
+#include "SEGO/Ego_brick.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 void sego_init()
 {
   Container_factory::get_instance()->doregister(Ego_geo::prototype());
+  Container_factory::get_instance()->doregister(Ego_brick::prototype());
 }
 
 SGAL_END_NAMESPACE
