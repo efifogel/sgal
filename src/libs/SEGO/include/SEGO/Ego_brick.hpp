@@ -35,7 +35,6 @@
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Vector2f.hpp"
-#include "SGAL/Vector2u.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -48,7 +47,8 @@ class SGAL_CLASSDEF Ego_brick : public Indexed_face_set {
 public:
   enum {
     FIRST = Indexed_face_set::LAST - 1,
-    SIZE,
+    NUMBER_OF_KNOBS1,
+    NUMBER_OF_KNOBS2,
     PITCH,
     HEIGHT,
     KNOB_RADIUS,
@@ -65,16 +65,22 @@ public:
   virtual ~Ego_brick();
 
   /* Construct the prototype */
-  static Ego_brick* prototype() { return new Ego_brick(SGAL_TRUE); }
+  static Ego_brick* prototype() { return new Ego_brick(true); }
 
   /*! Clone */
   virtual Container* clone() { return new Ego_brick(); }
 
-  /*! Set the 2D size of the brick */
-  void set_size(Vector2u& size) { m_size = size; }
+  /*! Set the number_of_knobs along the 1st dimension */
+  void set_number_of_knobs1(Uint number) { m_number_of_knobs1 = number; }
 
-  /*! Obtain the 2D size of the brick */
-  const Vector2u& get_size() const { return m_size; }
+  /*! Obtain the number_of_knobs along the 1st dimension */
+  Uint get_number_of_knobs1() const { return m_number_of_knobs1; }
+  
+  /*! Set the number_of_knobs along the 2nd dimension */
+  void set_number_of_knobs2(Uint number) { m_number_of_knobs2 = number; }
+
+  /*! Obtain the number_of_knobs along the 2nd dimension */
+  Uint get_number_of_knobs2() const { return m_number_of_knobs2; }
   
   /*! Set the horizontal pitch of the brick */
   void set_pitch(Float pitch) { m_pitch = pitch; }
@@ -128,8 +134,11 @@ public:
   virtual void clean();
   
 protected:
-  /*! The 2D size of the brick */
-  Vector2u m_size;
+  /*! The number of knobs along the 1st dimension */
+  Uint m_number_of_knobs1;
+
+  /*! The number of knobs along the 2nd dimension */
+  Uint m_number_of_knobs2;
 
   /*! The horizontal pitch, or distance between knobs */
   Float m_pitch;
@@ -152,9 +161,6 @@ protected:
   /*! The number of slices of a knob */
   Uint m_knob_slices;
 
-  /*! A 2D cross section of the knob */
-  Vector2f m_knob_cross_section;
-  
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -166,7 +172,8 @@ private:
   static Container_proto* s_prototype;
 
   /*! default values for Ego_brick.  */
-  static const Vector2u s_def_size;
+  static const Uint s_def_number_of_knobs1;
+  static const Uint s_def_number_of_knobs2;
   static const Float s_def_pitch;
   static const Float s_def_height;
   static const Float s_def_knob_radius;
