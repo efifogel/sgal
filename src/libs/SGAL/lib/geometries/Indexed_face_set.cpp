@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Source$
 // $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -718,6 +718,8 @@ void Indexed_face_set::clean_normals()
 /*! \brief calculates a single normal per vertex for all vertices */
 void Indexed_face_set::calculate_normals_per_vertex()
 {
+  m_normal_array->resize(m_coord_array->size());
+
   // Initialize the weights:
 
   // For each vertex we compute the weighted normal based on the normals of
@@ -728,7 +730,7 @@ void Indexed_face_set::calculate_normals_per_vertex()
   typedef std::list<Weight_normal_pair> Vertex_info;
   typedef Vertex_info::const_iterator   Vertex_const_iter;
   typedef std::vector<Vertex_info>      Vertices_info;
-
+    
   Vertices_info vertices_info;
   vertices_info.resize(m_coord_array->size());
   
@@ -809,6 +811,8 @@ void Indexed_face_set::calculate_normals_per_vertex()
 /*! \brief calculates a single normal per polygon for all polygons */
 void Indexed_face_set::calculate_normals_per_polygon()
 {
+  m_normal_array->resize(m_num_primitives);
+
   Uint j = 0;
   for (Uint i = 0 ; i < m_num_primitives ; i++) {
     Vector3f& v1 = (*m_coord_array)[m_coord_indices[j]];
@@ -911,7 +915,7 @@ void Indexed_face_set::draw(Draw_action* action)
  * @param action action.
  */
 void Indexed_face_set::draw_geometry(Draw_action* action)
-{  
+{
   switch (m_drawing_mode) {
    case Configuration::GDM_DISPLAY_LIST:
     if (m_display_list_id != 0) {
@@ -1334,6 +1338,7 @@ void Indexed_face_set::destroy_vertex_index_arrays()
 /*! \brief clears the representation */
 void Indexed_face_set::clear()
 {
+  std::cout << "Indexed_face_set::clear()" << std::endl;
   clear_vertex_arrays();
   destroy_vertex_index_arrays();
   destroy_display_list();
@@ -1356,40 +1361,33 @@ Boolean Indexed_face_set::is_empty() const
   return Geo_set::is_empty();
 }
 
-/*! \brief processes change of coordinates */
+/*! \brief processes change of coordinates
+ * EFEF: It is not absolutely necessary to destroy the vertex buffer.
+ *       Instead, we can simply update it as done in field_changed().
+ *       In any case, this is not the place to do it. We should mark
+ *       the change needed here, and apply it in the appropriate *clean()
+ *       function (which is invoked from the drawing routine.
+ */
 void Indexed_face_set::coord_changed(SGAL::Field_info* /* field_info */)
 {
-  if (m_own_normal_array) {
-    m_dirty_normals = true;
-    if (m_normal_array) {
-      Uint size =
-        (m_crease_angle > 0) ? m_coord_array->size() : m_num_primitives;
-      if (size != m_normal_array->size()) {
-        delete m_normal_array;
-        m_normal_array = NULL;
-        m_own_normal_array = false;
-      }
-    }
-  }
-  if (m_own_tex_coord_array) {
-    m_dirty_tex_coords = true;
-    if (m_tex_coord_array) {
-      Uint size = m_coord_array->size();
-      if (size != m_tex_coord_array->size()) {
-        delete m_tex_coord_array;
-        m_tex_coord_array = NULL;
-        m_own_tex_coord_array = false;
-      }
-    }
-  }
+  if (m_own_normal_array) m_dirty_normals = true;
+  if (m_own_tex_coord_array) m_dirty_tex_coords = true;
   destroy_display_list();
   destroy_vertex_buffer_object();
   Mesh_set::clear();
 }
 
-/*! \brief Process change of field */
+/*! \brief Process change of field
+ * EFEF: This is wrong for two reasons:
+ *       1. A change to the coord_array may imply a change in the normal, 
+ *       color, or text_coord arrays.
+ *       2. This is not the place to update the arrays. We should mark
+ *       the change needed here, and apply it in the appropriate *clean()
+ *       function (which is invoked from the drawing routine.
+ */
 void Indexed_face_set::field_changed(Field_info* field_info)
 {
+  std::cout << "Indexed_face_set::field_changed()" << std::endl;
   switch (field_info->get_id()) {
    case COORD_ARRAY:
 #if defined(GL_ARB_vertex_buffer_object)
@@ -1444,16 +1442,6 @@ void Indexed_face_set::field_changed(Field_info* field_info)
     break;
   }
   Container::field_changed(field_info);
-}
-
-/*! \brief processes change of coordinates */
-void Indexed_face_set::point_changed()
-{
-  if (m_own_normal_array) m_dirty_normals = true;
-  if (m_own_tex_coord_array) m_dirty_tex_coords = true;
-  destroy_display_list();
-  destroy_vertex_buffer_object();
-  Mesh_set::clear();
 }
 
 SGAL_END_NAMESPACE
