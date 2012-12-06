@@ -14,6 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
+// $Id: $
+// $Revision: $
+//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -155,13 +158,16 @@ void Ego_brick::clean()
       }
     }
   }
+  knob_cross_section.clear();
   
   // Generates coordinate indices:
 
   // Box
   Uint num_box_primitives = 6 * 2;
   Uint primitives_per_knob = n * 3;
+  // m_primitive_type = PT_TRIANGLES;
   m_num_primitives = num_box_primitives + primitives_per_knob * num_knobs;
+  m_are_indices_flat = false;
   k = 0;
   Uint num_indices = m_num_primitives * 4;
   m_coord_indices.resize(num_indices);
@@ -337,6 +343,9 @@ void Ego_brick::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Mesh_set::coord_changed);
 
+  // We use SF_int (instead of SF_uint) to allow connecting the value
+  // field of an Incrementor, which is of int type (and not Uint) to this
+  // field.
   s_prototype->add_field_info(new SF_int(NUMBER_OF_KNOBS1, "numberOfKnobs1",
                                          get_member_offset(&m_number_of_knobs1),
                                          exec_func));
