@@ -44,7 +44,9 @@ Transform {
   children [
     Shape {
       appearance Appearance {
-	material Material {}
+	material Material {
+	  diffuseColor 0.7 0.1 0.1
+	}
       }
       geometry DEF BRICK EgoBrick {
 	# creaseAngle 0.5
