@@ -31,7 +31,7 @@ Transform {
   #bboxSize 1.5 1.5 1.5
   children [
     Switch {
-      whichChoice -1
+      whichChoice 0
       children [
 	Shape {
 	  appearance Appearance {
@@ -56,26 +56,26 @@ Transform {
     }
     Group {
       children [
-	Shape {
-	  appearance Appearance {
-	    material Material {}
-	  }
-	  geometry DEF PART0 Part {
-	    type "brick" # "plate"
-	    length 4
-	    width 2
-	  }
-	}
-	Shape {
-	  appearance Appearance {
-	    material Material {}
-	  }
-	  geometry DEF PART1 Part {
-	    type "brick" # "plate"
-	    length 2
-	    width 2
-	  }
-	}
+	# Shape {
+	#   appearance Appearance {
+	#     material Material {}
+	#   }
+	#   geometry DEF PART0 EgoBrick {
+	#     #type "brick" # "plate"
+	#     #length 4
+	#     #width 2
+	#   }
+	# }
+	# Shape {
+	#   appearance Appearance {
+	#     material Material {}
+	#   }
+	#   geometry DEF PART1 EgoBrick {
+	#     #type "brick" # "plate"
+	#     numberOfKnobs1 2
+	#     numberOfKnobs2 4
+	#   }
+	# }
        ]
     }
     Shape {
@@ -84,12 +84,12 @@ Transform {
       }
       geometry DEF GEOM Ego {
 	model USE MODEL
-	parts {
-	  children [
-	    USE PART0
-	    USE PART1
-	   ]
-	}
+	# parts {
+	#   children [
+	#     USE PART0
+	#     USE PART1
+	#    ]
+	# }
       }
     }
 
