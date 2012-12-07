@@ -45,7 +45,6 @@
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 #include "SEGO/Ego_geo.hpp"
-#include "SEGO/Ego_voxelizer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -111,14 +110,14 @@ void Ego_geo::set_attributes(Element* elem)
     Cont_list& cont_list = elem->get_value(mcai);
     if (name == "parts") {
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
+        // Container* cont = *ci;
         // Spherical_gaussian_map_geo* sgm =
         //   dynamic_cast<Spherical_gaussian_map_geo*>(cont);
         // if (sgm) insert_sgm(sgm);
-        else {
-          std::cerr << "Invalid " << s_tag << " geometry nodes!"
-                    << std::endl;
-        }
+        // else {
+        //   std::cerr << "Invalid " << s_tag << " geometry nodes!"
+        //             << std::endl;
+        // }
       }
       elem->mark_delete(mcai);
     }
@@ -149,6 +148,14 @@ Boolean Ego_geo::is_empty() { return true; }
 /*! \brief clean the representation */
 void Ego_geo::clean()
 {
+  // This is temp code until we have something that can visualize it better.
+  const double dx = 0.1;
+  const double dy = 0.1;
+  const double dz = 0.1;
+
+  Ego_voxelizer voxelize (dx, dy, dz);
+  voxelize(this->get_model()->get_polyhedron(), &m_voxels);
+  
   m_dirty = false;
 }
 
@@ -156,25 +163,20 @@ void Ego_geo::clean()
 void Ego_geo::draw(Draw_action* action)
 {
   if (m_dirty) clean();
-  
-  // This is temp code until we have something that can visualize it better.
+
   const double dx = 0.1;
   const double dy = 0.1;
   const double dz = 0.1;
-
-  Ego_voxelizer::Voxels voxels;
-  Ego_voxelizer voxelize (dx, dy, dz);
-  voxelize(this->get_model()->get_polyhedron(), &voxels);
-
-  for (std::size_t i = 0; i < voxels.voxels.size(); ++i) {
-    for (std::size_t j = 0; j < voxels.voxels[0].size(); ++j) {
-      for (std::size_t k = 0; k < voxels.voxels[0][0].size(); ++k) {
-        if (voxels.voxels[i][j][k] == false)
+  
+  for (std::size_t i = 0; i < m_voxels.voxels.size(); ++i) {
+    for (std::size_t j = 0; j < m_voxels.voxels[0].size(); ++j) {
+      for (std::size_t k = 0; k < m_voxels.voxels[0][0].size(); ++k) {
+        if (m_voxels.voxels[i][j][k] == false)
           continue;
 
-        double x = CGAL::to_double(voxels.origin.x()) + i*dx;
-        double y = CGAL::to_double(voxels.origin.y()) + j*dy;
-        double z = CGAL::to_double(voxels.origin.z()) + k*dz;
+        double x = CGAL::to_double(m_voxels.origin.x()) + i*dx;
+        double y = CGAL::to_double(m_voxels.origin.y()) + j*dy;
+        double z = CGAL::to_double(m_voxels.origin.z()) + k*dz;
 
         float p0[] = { x, y, z };
         float p1[] = {  x+dx, y, z };
@@ -190,55 +192,50 @@ void Ego_geo::draw(Draw_action* action)
         //! \todo handle different modal combinations
         // front
         glNormal3f(0, 0, -1);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(p0);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(p1);
+        glVertex3fv(p0);
+        glVertex3fv(p3);
+        glVertex3fv(p2);
+        glVertex3fv(p1);
 
         // right
         glNormal3f(1, 0, 0);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(p2);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
+        glVertex3fv(p1);
+        glVertex3fv(p2);
+        glVertex3fv(p6);
+        glVertex3fv(p5);
 
         // back
         glNormal3f(0, 0, 1);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(p5);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(p6);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(p7);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(p4);
+        glVertex3fv(p5);
+        glVertex3fv(p6);
+        glVertex3fv(p7);
+        glVertex3fv(p4);
 
         // left
         glNormal3f(-1, 0, 0);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(p3);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(p0);
+        glVertex3fv(p4);
+        glVertex3fv(p7);
+        glVertex3fv(p3);
+        glVertex3fv(p0);
 
         //top
         glNormal3f(0, 1,0);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(p3);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(p2);
+        glVertex3fv(p3);
+        glVertex3fv(p7);
+        glVertex3fv(p6);
+        glVertex3fv(p2);
 
         // bottom
         glNormal3f(0, -1, 0);
-        glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-        glTexCoord2f(1.0f, 1.0f); glVertex3fv(p0);
-        glTexCoord2f(0.0f, 1.0f); glVertex3fv(p1);
-        glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
+        glVertex3fv(p4);
+        glVertex3fv(p0);
+        glVertex3fv(p1);
+        glVertex3fv(p5);
   
         glEnd();
-
-        glDisable(GL_NORMALIZE);
       }
     }
-  }
-  
-  if (m_dirty) return;
-  
+  }  
 
   // Draw the output
   //Context* context = action->get_context();

@@ -30,6 +30,9 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"
 
+#include "SEGO/Ego_brick.hpp"
+#include "SEGO/Ego_voxelizer.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
@@ -122,8 +125,10 @@ protected:
   /*! The segments */
   Exact_polyhedron_geo* m_model;
 
-  std::vector<Ego_part_geo> m_parts;
+  std::vector<Ego_brick> m_parts;
 
+  Ego_voxelizer::Voxels m_voxels;
+  
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty;
 
