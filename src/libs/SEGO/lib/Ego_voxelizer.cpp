@@ -47,17 +47,28 @@ Ego_voxelizer::Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& v
 
 void Ego_voxelizer::operator() (const Polyhedron& polyhedron, Voxels* out_voxels) const {
   
+  // Later we might assume only convexity.
+  SGAL_assertion(polyhedron.is_pure_triangle());
+  
+  Triangles triangles = create_triangles_from_polyhedron(polyhedron);
+  return operator() (triangles, out_voxels);
+}
+
+void Ego_voxelizer::operator() (const Geo_set& geo_set,
+                                Voxels* out_voxels) const {
+  Triangles triangles = create_triangles_from_geo_set(geo_set);
+  return operator() (triangles, out_voxels);
+}
+
+void Ego_voxelizer::operator() (const Triangles& triangles,
+                                Voxels* out_voxels) const {
   SGAL_assertion(out_voxels != NULL);
   
-  // Actually, we might assum only convexity. But currently we have only this
-  // assertion.
-  SGAL_assertion(polyhedron.is_pure_triangle());
+  create_voxels_from_triangles(triangles, out_voxels);
 
-  create_voxels_from_polyhedron(polyhedron, out_voxels);
-
-  for (Polyhedron::Facet_const_iterator it = polyhedron.facets_begin();
-       it != polyhedron.facets_end(); ++it) {
-    mark_facet(*it, out_voxels);
+  for (Triangles::const_iterator it = triangles.begin();
+       it != triangles.end(); ++it) {
+    mark_triangle(*it, out_voxels);
   }
 
   fill_inside_of_polyhedron(out_voxels);
@@ -67,11 +78,69 @@ void Ego_voxelizer::operator() (const Polyhedron& polyhedron, Voxels* out_voxels
 #endif
 }
 
-void Ego_voxelizer::create_voxels_from_polyhedron(const Polyhedron& polyhedron,
-                                                  Voxels* out_voxels) const {
+Ego_voxelizer::Triangles
+Ego_voxelizer::create_triangles_from_polyhedron
+(const Polyhedron& polyhedron) const {
+  Triangles ret;
 
-  Iso_cuboid_3 bbox = CGAL::bounding_box(polyhedron.points_begin(),
-                                         polyhedron.points_end());
+  for (Polyhedron::Facet_const_iterator it = polyhedron.facets_begin();
+       it != polyhedron.facets_end(); ++it) {
+    
+    Polyhedron::Halfedge_around_facet_const_circulator cit = it->facet_begin();
+    Point_3 points[3];
+    points[0] = cit->vertex()->point(); cit++;
+    points[1] = cit->vertex()->point(); cit++;
+    points[2] = cit->vertex()->point(); cit++;
+
+    Triangle_3 triangle(points[0], points[1], points[2]);
+    ret.push_back(triangle);
+  }
+
+  return ret;
+}
+
+Ego_voxelizer::Triangles
+Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set) const {
+
+  Triangles res;
+  
+  const SGAL::Array<Uint>& coord_ind = geo_set.get_coord_indices();
+  Coord_array& coords = *(geo_set.get_coord_array());
+
+  Point_3 triangle[3];
+  long j = 0;
+  for (SGAL::Array<Uint>::const_iterator it = coord_ind.begin();
+       it != coord_ind.end(); ++it, ++j) {
+
+    if (j == 3)
+      j = 0;
+
+    SGAL_assertion(*it < coords.size());
+
+    triangle[j] = Point_3(Kernel::FT(coords[*it][0]),
+                          Kernel::FT(coords[*it][1]),
+                          Kernel::FT(coords[*it][2]));
+    if (j == 2)
+      res.push_back(Triangle_3(triangle[0], triangle[1], triangle[2]));
+  }
+  
+  return res;
+}
+
+
+void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
+                                                 Voxels* out_voxels) const {
+  
+  std::vector<Point_3> vertices;
+  
+  for (Triangles::const_iterator it = triangles.begin();
+       it != triangles.end(); ++it) {
+    vertices.push_back(it->vertex(0));
+    vertices.push_back(it->vertex(1));
+    vertices.push_back(it->vertex(2));
+  }
+  
+  Iso_cuboid_3 bbox = CGAL::bounding_box(vertices.begin(), vertices.end());
 
   // make the length, width, and height integers that contain the 
   // mesh.
@@ -111,23 +180,24 @@ void Ego_voxelizer::create_voxels_from_polyhedron(const Polyhedron& polyhedron,
   // out_voxels->origin = Kernel::Point_3(origin_x, origin_y, origin_z);
 }
 
-void Ego_voxelizer::mark_facet(const Facet& facet, Voxels* out_voxels) const {
-  mark_facet_vertices(facet, out_voxels);
+void Ego_voxelizer::mark_triangle(const Triangle_3& triangle,
+                                  Voxels* out_voxels) const {
+  mark_triangle_vertices(triangle, out_voxels);
 
-  SlicingSegments segments = create_slicing_segments(facet, out_voxels->origin);
+  SlicingSegments segments =
+    create_slicing_segments(triangle, out_voxels->origin);
 
   for (SlicingSegments::iterator it = segments.begin();
        it != segments.end(); ++it)
     mark_segment(*it, out_voxels);
 }
 
-void Ego_voxelizer::mark_facet_vertices(const Facet& facet,
+void Ego_voxelizer::mark_triangle_vertices(const Triangle_3& triangle,
                                         Voxels* out_voxels) const {
-  Halfedge_around_facet_const_circulator cit = facet.facet_begin();
-  Halfedge_around_facet_const_circulator endit = cit;
-  do {
-    mark_point(cit->vertex()->point(), out_voxels);
-  } while (++cit != endit);
+
+  mark_point(triangle[0], out_voxels);
+  mark_point(triangle[1], out_voxels);
+  mark_point(triangle[2], out_voxels);
 }
 
 void Ego_voxelizer::mark_segment(const Segment_3& segment,
@@ -198,31 +268,28 @@ Ego_voxelizer::mark_point(const Point_3& point, Voxels* out_voxels) const {
 }
 
 Ego_voxelizer::SlicingSegments
-Ego_voxelizer::create_slicing_segments(const Facet& facet,
+Ego_voxelizer::create_slicing_segments(const Triangle_3& triangle,
                                        const Point_3& origin) const {
   
   // We assume here that the facet is convex.
   // We create here segments in all 3 direction, though I am quite sure
   // this can be reduced.
   SlicingSegments out_slicing;
-  create_slicing_segments(0, facet, origin, &out_slicing);
-  create_slicing_segments(1, facet, origin, &out_slicing);
-  create_slicing_segments(2, facet, origin, &out_slicing);
+  create_slicing_segments(0, triangle, origin, &out_slicing);
+  create_slicing_segments(1, triangle, origin, &out_slicing);
+  create_slicing_segments(2, triangle, origin, &out_slicing);
   
   return out_slicing;
 }
 
-void Ego_voxelizer::create_slicing_segments(long dim, const Facet& facet,
+void Ego_voxelizer::create_slicing_segments(long dim,
+                                            const Triangle_3& triangle,
                                             const Point_3& origin,
                                             SlicingSegments* out_slicing) const {
-  // Assume triangles.
-  // This can be done by a walk, but this is easier.
-
-  Halfedge_around_facet_const_circulator cit = facet.facet_begin();
   Point_3 points[3];
-  points[0] = cit->vertex()->point(); cit++;
-  points[1] = cit->vertex()->point(); cit++;
-  points[2] = cit->vertex()->point(); cit++;
+  points[0] = triangle[0];
+  points[1] = triangle[1];
+  points[2] = triangle[2];
 
   Point_3* pmax = std::max_element(points, points + 3,
                                    SEGO_internal::Compare_point_by_axis<Point_3>(dim));
@@ -232,7 +299,6 @@ void Ego_voxelizer::create_slicing_segments(long dim, const Facet& facet,
   std::vector<Plane_3> planes;
   create_parallel_planes(*pmin, *pmax, dim, origin, &planes);
   
-  Triangle_3 triangle(points[0], points[1], points[2]);
   intersect_triangle_with_planes(triangle, planes, out_slicing);
 }
 

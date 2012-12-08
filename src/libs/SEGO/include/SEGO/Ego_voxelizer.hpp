@@ -73,12 +73,10 @@ class SGAL_CLASSDEF Ego_voxelizer {
   Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& voxel_width,
                 const Kernel::FT& voxel_height);
   void operator() (const Polyhedron& polyhedron, Voxels* out_voxels) const;
+  void operator() (const Geo_set& geo_set, Voxels* out_voxels) const;
   
  private:
-  typedef Polyhedron::Vertex                            Vertex;
-  typedef Polyhedron::Facet                             Facet;
-  typedef Polyhedron::Halfedge_around_facet_const_circulator
-    Halfedge_around_facet_const_circulator;
+
   typedef Kernel::Iso_cuboid_3                          Iso_cuboid_3;
   typedef Kernel::Segment_3                             Segment_3;  
   typedef Kernel::Point_3                               Point_3;  
@@ -88,17 +86,27 @@ class SGAL_CLASSDEF Ego_voxelizer {
   typedef Kernel::Vector_3                              Vector_3;  
   
   typedef std::list<Segment_3>                          SlicingSegments;
+  typedef std::list<Triangle_3>                         Triangles;
 
-  void create_voxels_from_polyhedron(const Polyhedron& polyhedron,
-                                     Voxels* out_voxels) const;
-  void mark_facet(const Facet& facet, Voxels* out_voxels) const;
-  void mark_facet_vertices(const Facet& facet, Voxels* out_voxels) const;
+  void operator() (const Triangles& triangles, Voxels* out_voxels) const;
+
+  Triangles create_triangles_from_polyhedron(const Polyhedron& polyhedron)
+    const;
+  Triangles create_triangles_from_geo_set(const Geo_set& polyhedron) const;
+  
+  void create_voxels_from_triangles(const Triangles& polyhedron,
+                                    Voxels* out_voxels) const;
+  void mark_triangle(const Triangle_3& triangle, Voxels* out_voxels) const;
+  void mark_triangle_vertices(const Triangle_3& triangle,
+                              Voxels* out_voxels) const;
   void mark_segment(const Segment_3& segment, Voxels* out_voxels) const;
   long most_steep_direction(const Segment_3& segment) const;
   void mark_point(const Point_3& point, Voxels* out_voxels) const;
-  SlicingSegments create_slicing_segments(const Facet& facet,
+  SlicingSegments create_slicing_segments(const Triangle_3& triangle,
                                           const Point_3& origin) const;
-  void create_slicing_segments(long dim, const Facet& facet, const Point_3& origin,
+  void create_slicing_segments(long dim,
+                               const Triangle_3& triangle,
+                               const Point_3& origin,
                                SlicingSegments* out_slicing) const;
   void create_parallel_planes(const Point_3& pmin, const Point_3& pmax,
                               long dim, const Point_3& origin,

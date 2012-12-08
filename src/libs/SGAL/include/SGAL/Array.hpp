@@ -114,6 +114,9 @@ public:
     m_size = 0;
   }
 
+  typedef Attribute* iterator;
+  typedef const Attribute* const_iterator;
+
   /*! The iterator to the first element */
   Attribute * begin() { return m_vector; }
   const Attribute * begin() const { return m_vector; }

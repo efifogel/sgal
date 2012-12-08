@@ -33,6 +33,8 @@
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
 
+#include <boost/variant.hpp>
+
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
@@ -108,22 +110,35 @@ public:
    */
   virtual Boolean is_empty();
 
+  /*! Get the type of the model.
+   * \return true if this is the type of the model.
+   */
+  bool is_model_polyhedron() const {
+    return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL);
+  }
+
+  bool is_model_geo_set() const {
+    return (boost::get<Geo_set*> (&m_model) != NULL);
+  }
+
   /*! Set the model.
    * \param model the model.
    */
   void set_model(Exact_polyhedron_geo* model) { m_model = model; }
+  void set_model(Geo_set* model) { m_model = model; }
 
   /*! Obtain the model.
    * \return the model.
    */
-  const Exact_polyhedron_geo* get_model() const { return m_model; }
+  const Exact_polyhedron_geo* get_polyhedron_model() const;
+  const Geo_set* get_geo_set_model() const;
 
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
   /*! The segments */
-  Exact_polyhedron_geo* m_model;
+  boost::variant<Exact_polyhedron_geo*, Geo_set*> m_model;
 
   std::vector<Ego_brick> m_parts;
 

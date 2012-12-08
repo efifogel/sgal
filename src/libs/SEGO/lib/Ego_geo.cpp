@@ -56,7 +56,6 @@ REGISTER_TO_FACTORY(Ego_geo, "Ego_geo");
 /*! Constructor */
 Ego_geo::Ego_geo(Boolean proto) :
   Geometry(proto),
-  m_model(NULL),
   m_dirty(true)
 {
 }
@@ -131,10 +130,17 @@ void Ego_geo::set_attributes(Element* elem)
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "model") {
-      Exact_polyhedron_geo* model = dynamic_cast<Exact_polyhedron_geo*>(cont);
-      set_model(model);
-      elem->mark_delete(cai);
-      continue;
+      Exact_polyhedron_geo* poly = dynamic_cast<Exact_polyhedron_geo*>(cont);
+      if (poly != NULL) {
+        set_model(poly);
+        elem->mark_delete(cai);
+        continue;
+      } else {
+        Geo_set* ifs = dynamic_cast<Geo_set*>(cont);
+        set_model(ifs);
+        elem->mark_delete(cai);
+        continue;
+      }
     }
   }
 
@@ -145,6 +151,17 @@ void Ego_geo::set_attributes(Element* elem)
 /*! \brief determines whether the representation empty */
 Boolean Ego_geo::is_empty() { return true; }
 
+/*! Obtain the model.
+ * \return the model.
+ */
+const Exact_polyhedron_geo* Ego_geo::get_polyhedron_model() const {
+  return boost::get<Exact_polyhedron_geo*>(m_model);
+}
+
+const Geo_set* Ego_geo::get_geo_set_model() const {
+  return boost::get<Geo_set*>(m_model);
+}
+
 /*! \brief clean the representation */
 void Ego_geo::clean()
 {
@@ -154,7 +171,11 @@ void Ego_geo::clean()
   const double dz = 0.1;
 
   Ego_voxelizer voxelize (dx, dy, dz);
-  voxelize(this->get_model()->get_polyhedron(), &m_voxels);
+
+  if (this->is_model_polyhedron())
+    voxelize(this->get_polyhedron_model()->get_polyhedron(), &m_voxels);
+  else if (this->is_model_geo_set())
+    voxelize(*(this->get_geo_set_model()), &m_voxels);
   
   m_dirty = false;
 }
