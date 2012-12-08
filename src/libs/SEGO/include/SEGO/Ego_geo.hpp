@@ -133,6 +133,11 @@ public:
   const Exact_polyhedron_geo* get_polyhedron_model() const;
   const Geo_set* get_geo_set_model() const;
 
+  /*! Set the scale.
+   * \param scale the scale.
+   */
+  void set_scale(Float scale) { m_scale = scale; }
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -147,6 +152,9 @@ protected:
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty;
 
+  /*! Scale of the model compared to the ego bricks. */
+  Float m_scale;
+  
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
@@ -154,7 +162,8 @@ private:
   /*! The container prototype */
   static Container_proto* s_prototype;
 
-  /*! Default values */  
+  /*! Default values */
+  static const Float s_def_scale;
 };
 
 SGAL_END_NAMESPACE

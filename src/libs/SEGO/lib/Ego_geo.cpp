@@ -31,7 +31,9 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+
 #include <boost/variant.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -51,12 +53,15 @@ SGAL_BEGIN_NAMESPACE
 std::string Ego_geo::s_tag = "Ego";
 Container_proto* Ego_geo::s_prototype = NULL;
 
+const Float Ego_geo::s_def_scale(1);
+
 REGISTER_TO_FACTORY(Ego_geo, "Ego_geo");
 
 /*! Constructor */
 Ego_geo::Ego_geo(Boolean proto) :
   Geometry(proto),
-  m_dirty(true)
+  m_dirty(true),
+  m_scale(s_def_scale)
 {
 }
 
@@ -78,6 +83,7 @@ void Ego_geo::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
+
 }
 
 /*! \brief deletes the container prototype */
@@ -144,6 +150,18 @@ void Ego_geo::set_attributes(Element* elem)
     }
   }
 
+  typedef Element::Str_attr_iter Str_attr_iter;
+  for (Str_attr_iter ai = elem->str_attrs_begin();
+       ai != elem->str_attrs_end(); ai++) {
+    const std::string & name = elem->get_name(ai);
+    const std::string & value = elem->get_value(ai);
+    if (name == "scale") {
+      set_scale(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -166,9 +184,9 @@ const Geo_set* Ego_geo::get_geo_set_model() const {
 void Ego_geo::clean()
 {
   // This is temp code until we have something that can visualize it better.
-  const double dx = 0.1;
-  const double dy = 0.1;
-  const double dz = 0.1;
+  const double dx = 0.1 / m_scale;
+  const double dy = 0.1 / m_scale;
+  const double dz = 0.1 / m_scale;
 
   Ego_voxelizer voxelize (dx, dy, dz);
 
@@ -185,9 +203,9 @@ void Ego_geo::draw(Draw_action* action)
 {
   if (m_dirty) clean();
 
-  const double dx = 0.1;
-  const double dy = 0.1;
-  const double dz = 0.1;
+  const double dx = 0.1 / m_scale;
+  const double dy = 0.1 / m_scale;
+  const double dz = 0.1 / m_scale;
   
   for (std::size_t i = 0; i < m_voxels.voxels.size(); ++i) {
     for (std::size_t j = 0; j < m_voxels.voxels[0].size(); ++j) {

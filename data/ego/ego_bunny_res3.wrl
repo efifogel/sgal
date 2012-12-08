@@ -5817,6 +5817,7 @@ Transform {
 	material Material {}
       }
       geometry DEF GEOM Ego {
+        scale 13
 	model USE MODEL
 	# parts {
 	#   children [
