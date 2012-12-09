@@ -25,8 +25,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/intersections.h>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <boost/foreach.hpp>
 
 #include <functional>
