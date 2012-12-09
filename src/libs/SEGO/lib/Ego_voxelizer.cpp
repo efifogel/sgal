@@ -211,8 +211,16 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
 
   long dim = most_steep_direction(segment);
 
+  SEGO_internal::Compare_point_by_axis<Point_3> comp(dim);
+  Point_3 pmin, pmax;
+  if (comp(segment.source(), segment.target())) {
+    pmin = segment.source(); pmax = segment.target();
+  } else {
+    pmin = segment.target(); pmax = segment.source();
+  }
+
   std::vector<Plane_3> planes;
-  create_parallel_planes(segment.min(), segment.max(), dim, out_voxels->origin, &planes);
+  create_parallel_planes(pmin, pmax, dim, out_voxels->origin, &planes);
   
   std::vector<Point_3> points;
   intersect_segment_with_planes(segment, planes, &points);
@@ -220,7 +228,7 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
   BOOST_FOREACH(Point_3 p, points) {
     mark_point(p, out_voxels);
   }
-
+  
   // It could be that one of those is not needed.
   mark_point(segment.source(), out_voxels);
   mark_point(segment.target(), out_voxels);
@@ -306,6 +314,9 @@ void Ego_voxelizer::create_parallel_planes(const Point_3& pmin,
                                            const Point_3& pmax,
                                            long dim, const Point_3& origin,
                                            std::vector<Plane_3> *out_planes) const {
+
+  SGAL_assertion(pmin[dim] <= pmax[dim]);
+
   Kernel::FT dir_ft[3] = {0, 0, 0};
   dir_ft[dim] = 1;
   Direction_3 dir(dir_ft[0], dir_ft[1], dir_ft[2]);
@@ -322,9 +333,10 @@ void Ego_voxelizer::create_parallel_planes(const Point_3& pmin,
   }
 }
 
-Ego_voxelizer::Point_3 Ego_voxelizer::get_first_point_for_segment(const Point_3& psegment,
-                                                                  const Point_3& porigin,
-                                                                  long dim) const {
+Ego_voxelizer::Point_3
+Ego_voxelizer::get_first_point_for_segment(const Point_3& psegment,
+                                           const Point_3& porigin,
+                                           long dim) const {
 
   typedef CGAL::Fraction_traits<Kernel::FT>            Fraction_traits;
   typedef Fraction_traits::Numerator_type              Numerator_type;
@@ -345,7 +357,7 @@ Ego_voxelizer::Point_3 Ego_voxelizer::get_first_point_for_segment(const Point_3&
   div(nume, denom, div_res, mod_res);
 
   if (mod_res != 0)
-    div_res = div_res + 1 * CGAL::sign(nume) * CGAL::sign(denom);
+    div_res = div_res + 1;
 
   SGAL_assertion(porigin[dim] + div_res * m_voxel_dimensions[dim] >= psegment[dim]);
 
@@ -424,10 +436,14 @@ Ego_voxelizer::get_voxels_coords(const Kernel::FT& ft) const {
   // How do we convert Gmpz to long?
   decompose(ft, nume, denom);
   div(nume, denom, div_res, mod_res);
-  out_vec.push_back(CGAL::to_double(div_res));
-  if (mod_res == 0 && div_res > 0) {
+  
+  long res = long(CGAL::to_double(div_res));
+  SGAL_assertion(res == div_res);
+
+  out_vec.push_back(res);
+  if (mod_res == 0 && res > 0) {
     // We are on a border.
-    out_vec.push_back(CGAL::to_double(div_res - 1));
+    out_vec.push_back(res - 1);
   }
 
   return out_vec;
