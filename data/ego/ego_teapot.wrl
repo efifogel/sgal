@@ -37,7 +37,7 @@ Transform {
 	  appearance Appearance {
 	    material Material {}
 	  }
-	  geometry DEF MODEL ExactPolyhedron {
+	  geometry DEF MODEL sgalIndexedFaceSet {
 	    coord Coordinate {
 	      point [
 				-1.162270 0.786910 0.141630,
