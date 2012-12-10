@@ -35,6 +35,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Ego_voxels;
+
 namespace SEGO_internal{
   
   template <class Point>
@@ -56,24 +58,10 @@ class SGAL_CLASSDEF Ego_voxelizer {
   typedef Exact_polyhedron_geo::Polyhedron              Polyhedron;
   typedef Polyhedron::Traits::Kernel                    Kernel;
 
-  // Temp until we decide the true voxels.
-  // Each bool represents a voxel.
-  class Voxels {
-  public:
-    void initialize_container(long length, long width, long height);
-    void mark(size_t x, size_t y, size_t z);
-    void print() const;
-
-    typedef std::vector<std::vector<std::vector<bool> > > Container;
-    
-    Kernel::Point_3 origin;
-    Container       voxels;
-  };
-    
   Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& voxel_width,
                 const Kernel::FT& voxel_height);
-  void operator() (const Polyhedron& polyhedron, Voxels* out_voxels) const;
-  void operator() (const Geo_set& geo_set, Voxels* out_voxels) const;
+  void operator() (const Polyhedron& polyhedron, Ego_voxels* out_voxels) const;
+  void operator() (const Geo_set& geo_set, Ego_voxels* out_voxels) const;
   
  private:
 
@@ -88,20 +76,20 @@ class SGAL_CLASSDEF Ego_voxelizer {
   typedef std::list<Segment_3>                          SlicingSegments;
   typedef std::list<Triangle_3>                         Triangles;
 
-  void operator() (const Triangles& triangles, Voxels* out_voxels) const;
+  void operator() (const Triangles& triangles, Ego_voxels* out_voxels) const;
 
   Triangles create_triangles_from_polyhedron(const Polyhedron& polyhedron)
     const;
   Triangles create_triangles_from_geo_set(const Geo_set& polyhedron) const;
   
   void create_voxels_from_triangles(const Triangles& polyhedron,
-                                    Voxels* out_voxels) const;
-  void mark_triangle(const Triangle_3& triangle, Voxels* out_voxels) const;
+                                    Ego_voxels* out_voxels) const;
+  void mark_triangle(const Triangle_3& triangle, Ego_voxels* out_voxels) const;
   void mark_triangle_vertices(const Triangle_3& triangle,
-                              Voxels* out_voxels) const;
-  void mark_segment(const Segment_3& segment, Voxels* out_voxels) const;
+                              Ego_voxels* out_voxels) const;
+  void mark_segment(const Segment_3& segment, Ego_voxels* out_voxels) const;
   long most_steep_direction(const Segment_3& segment) const;
-  void mark_point(const Point_3& point, Voxels* out_voxels) const;
+  void mark_point(const Point_3& point, Ego_voxels* out_voxels) const;
   SlicingSegments create_slicing_segments(const Triangle_3& triangle,
                                           const Point_3& origin) const;
   void create_slicing_segments(long dim,
@@ -120,7 +108,6 @@ class SGAL_CLASSDEF Ego_voxelizer {
   void intersect_segment_with_planes(const Segment_3& segment,
                                      const std::vector<Plane_3>&planes,
                                      std::vector<Point_3>* out_points) const;
-  void fill_inside_of_polyhedron(Voxels* out_voxels) const;
   std::vector<long> get_voxels_coords(const Kernel::FT& ft) const;  
 
   Kernel::FT m_voxel_dimensions[3];

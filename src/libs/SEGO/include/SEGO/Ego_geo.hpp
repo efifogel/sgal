@@ -32,6 +32,7 @@
 
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
+#include "SEGO/Ego_voxels.hpp"
 
 #include <boost/variant.hpp>
 
@@ -147,7 +148,7 @@ protected:
 
   std::vector<Ego_brick> m_parts;
 
-  Ego_voxelizer::Voxels m_voxels;
+  Ego_voxels m_voxels;
   
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty;

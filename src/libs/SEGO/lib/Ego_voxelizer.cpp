@@ -17,6 +17,7 @@
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
 #include "SEGO/Ego_voxelizer.hpp"
+#include "SEGO/Ego_voxels.hpp"
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/squared_distance_3.h> 
@@ -43,7 +44,8 @@ Ego_voxelizer::Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& v
   m_voxel_dimensions[2] = voxel_height;
 }
 
-void Ego_voxelizer::operator() (const Polyhedron& polyhedron, Voxels* out_voxels) const {
+void Ego_voxelizer::operator() (const Polyhedron& polyhedron,
+                                Ego_voxels* out_voxels) const {
   
   // Later we might assume only convexity.
   SGAL_assertion(polyhedron.is_pure_triangle());
@@ -53,13 +55,13 @@ void Ego_voxelizer::operator() (const Polyhedron& polyhedron, Voxels* out_voxels
 }
 
 void Ego_voxelizer::operator() (const Geo_set& geo_set,
-                                Voxels* out_voxels) const {
+                                Ego_voxels* out_voxels) const {
   Triangles triangles = create_triangles_from_geo_set(geo_set);
   return operator() (triangles, out_voxels);
 }
 
 void Ego_voxelizer::operator() (const Triangles& triangles,
-                                Voxels* out_voxels) const {
+                                Ego_voxels* out_voxels) const {
   SGAL_assertion(out_voxels != NULL);
   
   create_voxels_from_triangles(triangles, out_voxels);
@@ -68,8 +70,6 @@ void Ego_voxelizer::operator() (const Triangles& triangles,
        it != triangles.end(); ++it) {
     mark_triangle(*it, out_voxels);
   }
-
-  fill_inside_of_polyhedron(out_voxels);
 
 #ifdef EGO_VOXELIZER_VERBOSE
   out_voxels->print();
@@ -127,7 +127,7 @@ Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set) const {
 
 
 void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
-                                                 Voxels* out_voxels) const {
+                                                 Ego_voxels* out_voxels) const {
   
   std::vector<Point_3> vertices;
   
@@ -179,7 +179,7 @@ void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
 }
 
 void Ego_voxelizer::mark_triangle(const Triangle_3& triangle,
-                                  Voxels* out_voxels) const {
+                                  Ego_voxels* out_voxels) const {
   mark_triangle_vertices(triangle, out_voxels);
 
   SlicingSegments segments =
@@ -191,7 +191,7 @@ void Ego_voxelizer::mark_triangle(const Triangle_3& triangle,
 }
 
 void Ego_voxelizer::mark_triangle_vertices(const Triangle_3& triangle,
-                                        Voxels* out_voxels) const {
+                                        Ego_voxels* out_voxels) const {
 
   mark_point(triangle[0], out_voxels);
   mark_point(triangle[1], out_voxels);
@@ -199,7 +199,7 @@ void Ego_voxelizer::mark_triangle_vertices(const Triangle_3& triangle,
 }
 
 void Ego_voxelizer::mark_segment(const Segment_3& segment,
-                                 Voxels* out_voxels) const {
+                                 Ego_voxels* out_voxels) const {
 
   // This can be done with a walk. Currenly we do simple geometric 
   // stuff (that already exist). If you want optimizing, consider walk.
@@ -249,7 +249,8 @@ long Ego_voxelizer::most_steep_direction(const Segment_3& segment) const {
 }
 
 void
-Ego_voxelizer::mark_point(const Point_3& point, Voxels* out_voxels) const {
+Ego_voxelizer::mark_point(const Point_3& point,
+                          Ego_voxels* out_voxels) const {
 
   Point_3 in_voxel = CGAL::ORIGIN + (point - out_voxels->origin);
 
@@ -402,15 +403,6 @@ Ego_voxelizer::intersect_segment_with_planes(const Segment_3& segment,
   }
 }
 
-/** 
- * Currently does nothing, but generally should fill the inside of the
- * model with voxel.
- * 
- * @param out_voxels 
- */
-void Ego_voxelizer::fill_inside_of_polyhedron(Voxels* out_voxels) const {
-}
-
 std::vector<long>
 Ego_voxelizer::get_voxels_coords(const Kernel::FT& ft) const {
 
@@ -446,51 +438,5 @@ Ego_voxelizer::get_voxels_coords(const Kernel::FT& ft) const {
 
   return out_vec;
 }
-
-void
-Ego_voxelizer::Voxels::initialize_container(long length,
-                                            long width,
-                                            long height) {
-  voxels.resize(length);
-  for (long i = 0; i < length; ++i) {
-    voxels[i].resize(width);
-    for (long j = 0; j < width; ++j) {
-      voxels[i][j].resize(height);
-      for (long k = 0; k < height; ++k)
-        voxels[i][j][k] = false;
-    }
-  }
-}
-
-void Ego_voxelizer::Voxels::mark(size_t x, size_t y, size_t z) {
-  // We can also get boundary coordinates...
-
-  if (x == voxels.size()) --x;
-  if (y == voxels[0].size()) --y;
-  if (z == voxels[0][0].size()) --z;
-
-  SGAL_assertion(x < voxels.size());
-  SGAL_assertion(y < voxels[0].size());
-  SGAL_assertion(z < voxels[0][0].size());
-  
-  voxels[x][y][z] = true;    
-}
-
-void Ego_voxelizer::Voxels::print() const {
-
-  for (std::size_t i = 0; i < voxels.size(); ++i) {
-    for (std::size_t j = 0; j < voxels[0].size(); ++j) {
-      for (std::size_t k = 0; k < voxels[0][0].size(); ++k) {
-        if (voxels[i][j][k] == true)
-          std::cout << "*";
-        else
-          std::cout << "-";
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
-  }
-}
-
 
 SGAL_END_NAMESPACE
