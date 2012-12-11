@@ -19,7 +19,18 @@
 #ifndef SGAL_EGO_VOXELS_FILLER_HPP
 #define SGAL_EGO_VOXELS_FILLER_HPP
 
+#include "SGAL/config.hpp"
+#include "SGAL/SGAL_defs.hpp"
 
+SGAL_BEGIN_NAMESPACE
 
+class Ego_voxels;
+
+class SGAL_CLASSDEF Ego_voxels_filler {
+ public:
+  void operator() (Ego_voxels* voxels) const;
+};
+
+SGAL_END_NAMESPACE
 
 #endif // SGAL_EGO_VOXELS_FILLER_HPP
