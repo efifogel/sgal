@@ -203,22 +203,19 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
 
   // This can be done with a walk. Currenly we do simple geometric 
   // stuff (that already exist). If you want optimizing, consider walk.
-  // We use the most steep dimention to intersect the segment. If you
-  // use the most steep direction it is enough. (steep with respect to
-  // the shape of the voxels.
-
-  long dim = most_steep_direction(segment);
-
-  SEGO_internal::Compare_point_by_axis<Point_3> comp(dim);
-  Point_3 pmin, pmax;
-  if (comp(segment.source(), segment.target())) {
-    pmin = segment.source(); pmax = segment.target();
-  } else {
-    pmin = segment.target(); pmax = segment.source();
-  }
 
   std::vector<Plane_3> planes;
-  create_parallel_planes(pmin, pmax, dim, out_voxels->origin, &planes);
+  for (long dim = 0; dim < 3; ++dim) {
+    SEGO_internal::Compare_point_by_axis<Point_3> comp(dim);
+    Point_3 pmin, pmax;
+    if (comp(segment.source(), segment.target())) {
+      pmin = segment.source(); pmax = segment.target();
+    } else {
+      pmin = segment.target(); pmax = segment.source();
+    }
+    
+    create_parallel_planes(pmin, pmax, dim, out_voxels->origin, &planes);
+  }
   
   std::vector<Point_3> points;
   intersect_segment_with_planes(segment, planes, &points);
@@ -230,22 +227,6 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
   // It could be that one of those is not needed.
   mark_point(segment.source(), out_voxels);
   mark_point(segment.target(), out_voxels);
-}
-
-long Ego_voxelizer::most_steep_direction(const Segment_3& segment) const {
-
-  // We have to take into account voxels shapes which are not square.
-  Kernel::FT x = CGAL::abs(segment.to_vector().x()) / m_voxel_dimensions[0];
-  Kernel::FT y = CGAL::abs(segment.to_vector().y()) / m_voxel_dimensions[1];
-  Kernel::FT z = CGAL::abs(segment.to_vector().z()) / m_voxel_dimensions[2];
-
-  if (x >= y && x >= z)
-    return 0;
-  
-  if (y >= z)
-    return 1;
-
-  return 2;
 }
 
 void
