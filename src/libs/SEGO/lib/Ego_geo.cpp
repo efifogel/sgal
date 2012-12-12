@@ -47,6 +47,7 @@
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 #include "SEGO/Ego_geo.hpp"
+#include "SEGO/Ego_voxels_filler.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -189,12 +190,15 @@ void Ego_geo::clean()
   const double dz = 0.1 / m_scale;
 
   Ego_voxelizer voxelize (dx, dy, dz);
+  Ego_voxels_filler fill;
 
   if (this->is_model_polyhedron())
     voxelize(this->get_polyhedron_model()->get_polyhedron(), &m_voxels);
   else if (this->is_model_geo_set())
     voxelize(*(this->get_geo_set_model()), &m_voxels);
-  
+
+  fill(&m_voxels);
+
   m_dirty = false;
 }
 

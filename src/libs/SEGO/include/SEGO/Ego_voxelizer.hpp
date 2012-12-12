@@ -88,7 +88,6 @@ class SGAL_CLASSDEF Ego_voxelizer {
   void mark_triangle_vertices(const Triangle_3& triangle,
                               Ego_voxels* out_voxels) const;
   void mark_segment(const Segment_3& segment, Ego_voxels* out_voxels) const;
-  long most_steep_direction(const Segment_3& segment) const;
   void mark_point(const Point_3& point, Ego_voxels* out_voxels) const;
   SlicingSegments create_slicing_segments(const Triangle_3& triangle,
                                           const Point_3& origin) const;

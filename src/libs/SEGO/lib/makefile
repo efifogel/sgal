@@ -27,6 +27,7 @@ CPPSOURCES+= Ego_brick.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Ego_voxelizer.cpp
 CPPSOURCES+= Ego_voxels_filler.cpp
+CPPSOURCES+= Ego_voxels_filler_graph.cpp
 CPPSOURCES+= Ego_voxels.cpp
 
 LCPPDEFS+= -DSGAL_LIB
