@@ -26,6 +26,8 @@
 
 #endif
 
+#include <stdio.h> // Workaround for CGAL 4.1 using EOF.
+
 #include <time.h>
 #include <string>
 #include <iostream>
