@@ -1338,7 +1338,6 @@ void Indexed_face_set::destroy_vertex_index_arrays()
 /*! \brief clears the representation */
 void Indexed_face_set::clear()
 {
-  std::cout << "Indexed_face_set::clear()" << std::endl;
   clear_vertex_arrays();
   destroy_vertex_index_arrays();
   destroy_display_list();
