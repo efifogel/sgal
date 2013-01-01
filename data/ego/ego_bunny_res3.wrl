@@ -16,6 +16,7 @@ Viewpoint {
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF AOS_MODEL_VISIBLE_KEY SingleKeySensor { key "m" }
 
 DEF SNAP Snapshot {
   image Image { }
@@ -30,7 +31,7 @@ Transform {
   #bboxCenter 0 0 0
   #bboxSize 1.5 1.5 1.5
   children [
-    Switch {
+    DEF SWITCH_MODEL Switch {
       whichChoice 0
       children [
 	Shape {
@@ -5881,5 +5882,15 @@ Transform {
     # }
    ]
 }
+
+# Model visible toggle
+DEF INC_MODEL_VISIBLE Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_MODEL_VISIBLE_KEY.state TO INC_MODEL_VISIBLE.trigger
+ROUTE INC_MODEL_VISIBLE.value TO SWITCH_MODEL.whichChoice
 
 ROUTE SNAP_KEY.state TO SNAP.trigger
