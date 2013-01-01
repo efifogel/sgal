@@ -117,7 +117,13 @@ public:
 
   /*! Obtain the knob slices number */
   Uint get_knob_slices() const { return m_knob_slices; }
+
+  /*! Set the flag that indicates whether the knos are visible */
+  void set_knobs_visible(Boolean flag) { m_are_knobs_visible = flag; }
   
+  /* Obtain the flag that indicates whether the knos are visible */
+  Boolean are_knobs_visible() const { return m_are_knobs_visible; }
+    
   /*! Initialize the container prototype */
   virtual void init_prototype();
 
@@ -161,6 +167,9 @@ protected:
   /*! The number of slices of a knob */
   Uint m_knob_slices;
 
+  /*! Are the knobs visible */
+  bool m_are_knobs_visible;
+  
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -180,6 +189,7 @@ private:
   static const Float s_def_knob_height;
   static const Float s_def_tolerance;
   static const Uint s_def_knob_slices;
+  static const Boolean s_def_are_knobs_visible;
 };
 
 SGAL_END_NAMESPACE

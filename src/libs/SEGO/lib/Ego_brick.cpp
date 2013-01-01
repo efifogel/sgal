@@ -57,6 +57,7 @@ const Float Ego_brick::s_def_knob_radius(2.4);
 const Float Ego_brick::s_def_knob_height(1.8);
 const Float Ego_brick::s_def_tolerance(0.1);
 const Uint Ego_brick::s_def_knob_slices(32);
+const Boolean Ego_brick::s_def_are_knobs_visible(true);
 
 REGISTER_TO_FACTORY(Ego_brick, "Ego_brick");
 
@@ -70,7 +71,8 @@ Ego_brick::Ego_brick(Boolean proto) :
   m_knob_radius(s_def_knob_radius),
   m_knob_height(s_def_knob_height),
   m_tolerance(s_def_tolerance),
-  m_knob_slices(s_def_knob_slices)
+  m_knob_slices(s_def_knob_slices),
+  m_are_knobs_visible(s_def_are_knobs_visible)
 {
 }
 
@@ -89,24 +91,20 @@ void Ego_brick::clean()
   // Clear internal representation:
   if (!m_coord_array) m_coord_array = new Coord_array;
 
-  // Generate cross section:
-  Float delta = SGAL_TWO_PI / m_knob_slices;
-  Float angle = 0;
-  /*! A 2D cross section of the knob */
-  std::vector<Vector2f> knob_cross_section(m_knob_slices);
-  std::vector<Vector2f>::iterator it;
-  for (it = knob_cross_section.begin(); it != knob_cross_section.end(); ++it) {
-    Float x = m_knob_radius * cosf(angle);
-    Float y = m_knob_radius * sinf(angle);
-    angle += delta;
-    it->set(x, y);
-  }
-  Uint n = knob_cross_section.size();
-  
+  //m_primitive_type = PT_TRIANGLES;
+
   // Generate points:
-  Uint points_per_knob = 1 + n * 2;
-  Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
-  Uint size = 8 + points_per_knob * num_knobs;
+  Uint size = 8;
+  m_num_primitives = 6 * 2;
+  
+  if (m_are_knobs_visible) {  
+    Uint points_per_knob = 1 + m_knob_slices * 2;
+    Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
+    size += points_per_knob * num_knobs;
+
+    Uint primitives_per_knob = m_knob_slices * 3;
+    m_num_primitives += primitives_per_knob * num_knobs;
+  }
   m_coord_array->resize(size);
 
   // Corner points:
@@ -132,41 +130,53 @@ void Ego_brick::clean()
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
   // Knobs:
-  base_x += m_pitch * 0.5;
-  base_y += m_pitch * 0.5;
-  float z = base_z + m_height;
-  Uint i;
-  Uint j;
-  for (j = 0; j < m_number_of_knobs2; ++j) {
-    float center_y = base_y + j * m_pitch;
-    for (i = 0; i < m_number_of_knobs1; ++i) {
-      float center_x = base_x + i * m_pitch;
-      (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
-      for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
-           it != knob_cross_section.end(); ++it)
-      {
-        float x = center_x + (*it)[0];
-        float y = center_y + (*it)[1];
-        (*m_coord_array)[k++].set(x, y, z);
-      }
-      for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
-           it != knob_cross_section.end(); ++it)
-      {
-        float x = center_x + (*it)[0];
-        float y = center_y + (*it)[1];
-        (*m_coord_array)[k++].set(x, y, z + m_knob_height);
+  if (m_are_knobs_visible) {
+    // Generate cross section:
+    Float delta = SGAL_TWO_PI / m_knob_slices;
+    Float angle = 0;
+    /*! A 2D cross section of the knob */
+    std::vector<Vector2f> knob_cross_section(m_knob_slices);
+    std::vector<Vector2f>::iterator it;
+    for (it = knob_cross_section.begin(); it != knob_cross_section.end(); ++it)
+    {
+      Float x = m_knob_radius * cosf(angle);
+      Float y = m_knob_radius * sinf(angle);
+      angle += delta;
+      it->set(x, y);
+    }
+
+    base_x += m_pitch * 0.5;
+    base_y += m_pitch * 0.5;
+    float z = base_z + m_height;
+    Uint i;
+    Uint j;
+    for (j = 0; j < m_number_of_knobs2; ++j) {
+      float center_y = base_y + j * m_pitch;
+      for (i = 0; i < m_number_of_knobs1; ++i) {
+        float center_x = base_x + i * m_pitch;
+        (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
+        for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
+             it != knob_cross_section.end(); ++it)
+        {
+          float x = center_x + (*it)[0];
+          float y = center_y + (*it)[1];
+          (*m_coord_array)[k++].set(x, y, z);
+        }
+        for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
+             it != knob_cross_section.end(); ++it)
+        {
+          float x = center_x + (*it)[0];
+          float y = center_y + (*it)[1];
+          (*m_coord_array)[k++].set(x, y, z + m_knob_height);
+        }
       }
     }
+    knob_cross_section.clear();
   }
-  knob_cross_section.clear();
   
   // Generates coordinate indices:
 
   // Box
-  Uint num_box_primitives = 6 * 2;
-  Uint primitives_per_knob = n * 3;
-  // m_primitive_type = PT_TRIANGLES;
-  m_num_primitives = num_box_primitives + primitives_per_knob * num_knobs;
   m_are_indices_flat = false;
   k = 0;
   Uint num_indices = m_num_primitives * 4;
@@ -233,33 +243,38 @@ void Ego_brick::clean()
   m_coord_indices[k++] = static_cast<Uint>(-1);
 
   // Knobs:
-  Uint base = 8;
-  for (j = 0; j < m_number_of_knobs2; ++j) {
-    for (i = 0; i < m_number_of_knobs1; ++i) {
-      Uint l;
-      for (l = 0; l < n; ++l) {
-        Uint a = base + 1 + l;
-        Uint b = base + 1 + ((l+1) % n);
-        Uint c = b + n;
-        Uint d = a + n;
-        m_coord_indices[k++] = a;
-        m_coord_indices[k++] = b;
-        m_coord_indices[k++] = c;
-        m_coord_indices[k++] = static_cast<Uint>(-1);
-        m_coord_indices[k++] = a;
-        m_coord_indices[k++] = c;
-        m_coord_indices[k++] = d;
-        m_coord_indices[k++] = static_cast<Uint>(-1);
-      }
+  if (m_are_knobs_visible) {
+    Uint i;
+    Uint j;
+    Uint base = 8;
+    for (j = 0; j < m_number_of_knobs2; ++j) {
+      for (i = 0; i < m_number_of_knobs1; ++i) {
+        Uint l;
+        for (l = 0; l < m_knob_slices; ++l) {
+          Uint a = base + 1 + l;
+          Uint b = base + 1 + ((l+1) % m_knob_slices);
+          Uint c = b + m_knob_slices;
+          Uint d = a + m_knob_slices;
+          m_coord_indices[k++] = a;
+          m_coord_indices[k++] = b;
+          m_coord_indices[k++] = c;
+          m_coord_indices[k++] = static_cast<Uint>(-1);
+          m_coord_indices[k++] = a;
+          m_coord_indices[k++] = c;
+          m_coord_indices[k++] = d;
+          m_coord_indices[k++] = static_cast<Uint>(-1);
+        }
 
-      // Top
-      for (l = 0; l < n; ++l) {
-        m_coord_indices[k++] = base;
-        m_coord_indices[k++] = base + 1 + n + l;
-        m_coord_indices[k++] = base + 1 + n + ((l+1) % n);
-        m_coord_indices[k++] = static_cast<Uint>(-1);
+        // Top
+        for (l = 0; l < m_knob_slices; ++l) {
+          m_coord_indices[k++] = base;
+          Uint tmp = base + 1 + m_knob_slices;
+          m_coord_indices[k++] = tmp + l;
+          m_coord_indices[k++] = tmp + ((l+1) % m_knob_slices);
+          m_coord_indices[k++] = static_cast<Uint>(-1);
+        }
+        base += 1 + m_knob_slices * 2;
       }
-      base += 1 + n * 2;
     }
   }
 
@@ -389,7 +404,7 @@ void Ego_brick::delete_prototype()
 
 /*! Obtain the container prototype */
 Container_proto * Ego_brick::get_prototype() 
-{  
+{
   if (!s_prototype) Ego_brick::init_prototype();
   return s_prototype;
 } 

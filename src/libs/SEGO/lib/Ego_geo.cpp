@@ -48,6 +48,7 @@
 
 #include "SEGO/Ego_geo.hpp"
 #include "SEGO/Ego_voxels_filler.hpp"
+#include "SEGO/Ego_brick.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -189,6 +190,25 @@ void Ego_geo::clean()
   const double dy = 0.1 / m_scale;
   const double dz = 0.1 / m_scale;
 
+  m_ego_brick.set_number_of_knobs1(1);
+  m_ego_brick.set_number_of_knobs2(1);
+
+  m_ego_brick.set_pitch(dx - 0.2 * dx);
+  m_ego_brick.set_height(dz - 0.01 * dz);
+  m_ego_brick.set_knob_radius(0.25 * dx);
+  m_ego_brick.set_knob_height(0.25 * dx);
+  m_ego_brick.set_tolerance(0.1 * dx);
+
+  m_ego_brick_without_knobs.set_number_of_knobs1(1);
+  m_ego_brick_without_knobs.set_number_of_knobs2(1);
+
+  m_ego_brick_without_knobs.set_pitch(dx - 0.2 * dx);
+  m_ego_brick_without_knobs.set_height(dz - 0.01 * dz);
+  m_ego_brick_without_knobs.set_knob_radius(0.25 * dx);
+  m_ego_brick_without_knobs.set_knob_height(0.25 * dx);
+  m_ego_brick_without_knobs.set_tolerance(0.1 * dx);
+  m_ego_brick_without_knobs.set_knobs_visible(false);
+  
   Ego_voxelizer voxelize (dx, dy, dz);
   Ego_voxels_filler fill;
 
@@ -221,61 +241,70 @@ void Ego_geo::draw(Draw_action* action)
         double y = CGAL::to_double(m_voxels.origin.y()) + j*dy;
         double z = CGAL::to_double(m_voxels.origin.z()) + k*dz;
 
-        float p0[] = { x, y, z };
-        float p1[] = {  x+dx, y, z };
-        float p2[] = {  x+dx ,  y+dy, z };
-        float p3[] = { x,  y+dy, z };
-        float p4[] = { x, y,  z+dz };
-        float p5[] = {  x+dx, y,  z+dz };
-        float p6[] = {  x+dx,  y+dy,  z+dz };
-        float p7[] = { x,  y+dy,  z+dz };
+        glPushMatrix();
+        glTranslatef(x+dx/2, y+dy/2, z+dz/2);
+        if ((k == m_voxels.voxels[0][0].size() - 1) ||
+            (!m_voxels.voxels[i][j][k+1]))
+          m_ego_brick.draw(action);
+        else
+          m_ego_brick_without_knobs.draw(action);
+        glPopMatrix();
 
-        glBegin(GL_QUADS);
+        // float p0[] = { x, y, z };
+        // float p1[] = {  x+dx, y, z };
+        // float p2[] = {  x+dx ,  y+dy, z };
+        // float p3[] = { x,  y+dy, z };
+        // float p4[] = { x, y,  z+dz };
+        // float p5[] = {  x+dx, y,  z+dz };
+        // float p6[] = {  x+dx,  y+dy,  z+dz };
+        // float p7[] = { x,  y+dy,  z+dz };
 
-        //! \todo handle different modal combinations
-        // front
-        glNormal3f(0, 0, -1);
-        glVertex3fv(p0);
-        glVertex3fv(p3);
-        glVertex3fv(p2);
-        glVertex3fv(p1);
+        // glBegin(GL_QUADS);
 
-        // right
-        glNormal3f(1, 0, 0);
-        glVertex3fv(p1);
-        glVertex3fv(p2);
-        glVertex3fv(p6);
-        glVertex3fv(p5);
+        // //! \todo handle different modal combinations
+        // // front
+        // glNormal3f(0, 0, -1);
+        // glVertex3fv(p0);
+        // glVertex3fv(p3);
+        // glVertex3fv(p2);
+        // glVertex3fv(p1);
 
-        // back
-        glNormal3f(0, 0, 1);
-        glVertex3fv(p5);
-        glVertex3fv(p6);
-        glVertex3fv(p7);
-        glVertex3fv(p4);
+        // // right
+        // glNormal3f(1, 0, 0);
+        // glVertex3fv(p1);
+        // glVertex3fv(p2);
+        // glVertex3fv(p6);
+        // glVertex3fv(p5);
 
-        // left
-        glNormal3f(-1, 0, 0);
-        glVertex3fv(p4);
-        glVertex3fv(p7);
-        glVertex3fv(p3);
-        glVertex3fv(p0);
+        // // back
+        // glNormal3f(0, 0, 1);
+        // glVertex3fv(p5);
+        // glVertex3fv(p6);
+        // glVertex3fv(p7);
+        // glVertex3fv(p4);
 
-        //top
-        glNormal3f(0, 1,0);
-        glVertex3fv(p3);
-        glVertex3fv(p7);
-        glVertex3fv(p6);
-        glVertex3fv(p2);
+        // // left
+        // glNormal3f(-1, 0, 0);
+        // glVertex3fv(p4);
+        // glVertex3fv(p7);
+        // glVertex3fv(p3);
+        // glVertex3fv(p0);
 
-        // bottom
-        glNormal3f(0, -1, 0);
-        glVertex3fv(p4);
-        glVertex3fv(p0);
-        glVertex3fv(p1);
-        glVertex3fv(p5);
+        // //top
+        // glNormal3f(0, 1,0);
+        // glVertex3fv(p3);
+        // glVertex3fv(p7);
+        // glVertex3fv(p6);
+        // glVertex3fv(p2);
+
+        // // bottom
+        // glNormal3f(0, -1, 0);
+        // glVertex3fv(p4);
+        // glVertex3fv(p0);
+        // glVertex3fv(p1);
+        // glVertex3fv(p5);
   
-        glEnd();
+        // glEnd();
       }
     }
   }  

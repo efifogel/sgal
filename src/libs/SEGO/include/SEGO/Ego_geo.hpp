@@ -155,6 +155,10 @@ protected:
 
   /*! Scale of the model compared to the ego bricks. */
   Float m_scale;
+
+  /*! These are temporary members used to expedite rendering */
+  Ego_brick m_ego_brick;
+  Ego_brick m_ego_brick_without_knobs;
   
 private:
   /*! The tag that identifies this container type */
