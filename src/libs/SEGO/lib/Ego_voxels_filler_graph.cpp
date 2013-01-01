@@ -41,8 +41,7 @@ Ego_voxels_filler_graph::vertices() const {
 
 Ego_voxels_filler_graph::vertices_size_type
 Ego_voxels_filler_graph::num_vertices() const {
-  std::pair<vertex_iterator, vertex_iterator> vertices = 
-    this->vertices();
+  // std::pair<vertex_iterator, vertex_iterator> vertices = this->vertices();
   
   vertices_size_type ret = m_voxels.voxels.size() *
     m_voxels.voxels[0].size() * m_voxels.voxels[0][0].size();
