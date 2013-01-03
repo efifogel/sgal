@@ -29,17 +29,27 @@ SGAL_BEGIN_NAMESPACE
 // Each bool represents a voxel.
 class Ego_voxels {
 public:
-  void initialize_container(long length, long width, long height);
-  void mark(std::size_t x, std::size_t y, std::size_t z);
-  void print() const;
-
-  typedef std::vector<std::vector<std::vector<bool> > > Container;
-    
   typedef Exact_polyhedron_geo::Polyhedron              Polyhedron;
   typedef Polyhedron::Traits::Kernel                    Kernel;
+  typedef boost::tuple<
+    std::size_t, std::size_t, std::size_t>              size_type;
+
+  void initialize_container(long length, long width, long height);
+  void fill(std::size_t x, std::size_t y, std::size_t z);
+  bool is_filled(std::size_t x, std::size_t y, std::size_t z) const;
+  bool is_filled(const size_type& coord) const;
+  void print() const;
   
-  Kernel::Point_3 origin;
-  Container       voxels;
+  Kernel::Point_3 origin() const;
+  void set_origin(const Kernel::Point_3& point);
+
+  size_type size() const;
+
+private:
+  typedef std::vector<std::vector<std::vector<bool> > > Container;
+    
+  Kernel::Point_3 m_origin;
+  Container       m_voxels;
 };
 
 SGAL_END_NAMESPACE

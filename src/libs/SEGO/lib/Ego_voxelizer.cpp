@@ -160,8 +160,8 @@ void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
   std::cout << VAR(iheight) << std::endl;
 #endif
 
-  out_voxels->origin = Kernel::Point_3(bbox.min_coord(0), bbox.min_coord(1),
-                                       bbox.min_coord(2));
+  out_voxels->set_origin(Kernel::Point_3(bbox.min_coord(0), bbox.min_coord(1),
+                                         bbox.min_coord(2)));
   
 
   // TODO: Do you want to uncomment this?
@@ -183,7 +183,7 @@ void Ego_voxelizer::mark_triangle(const Triangle_3& triangle,
   mark_triangle_vertices(triangle, out_voxels);
 
   SlicingSegments segments =
-    create_slicing_segments(triangle, out_voxels->origin);
+    create_slicing_segments(triangle, out_voxels->origin());
 
   for (SlicingSegments::iterator it = segments.begin();
        it != segments.end(); ++it)
@@ -214,7 +214,7 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
       pmin = segment.target(); pmax = segment.source();
     }
     
-    create_parallel_planes(pmin, pmax, dim, out_voxels->origin, &planes);
+    create_parallel_planes(pmin, pmax, dim, out_voxels->origin(), &planes);
   }
   
   std::vector<Point_3> points;
@@ -233,7 +233,7 @@ void
 Ego_voxelizer::mark_point(const Point_3& point,
                           Ego_voxels* out_voxels) const {
 
-  Point_3 in_voxel = CGAL::ORIGIN + (point - out_voxels->origin);
+  Point_3 in_voxel = CGAL::ORIGIN + (point - out_voxels->origin());
 
   Kernel::FT ft_x = in_voxel.x() / m_voxel_dimensions[0];
   Kernel::FT ft_y = in_voxel.y() / m_voxel_dimensions[1];
@@ -252,7 +252,7 @@ Ego_voxelizer::mark_point(const Point_3& point,
          jt != y_coord.end(); ++jt)
       for (std::vector<long>::iterator kt = z_coord.begin();
            kt != z_coord.end(); ++kt)
-        out_voxels->mark(*it, *jt, *kt);
+        out_voxels->fill(*it, *jt, *kt);
 }
 
 Ego_voxelizer::SlicingSegments

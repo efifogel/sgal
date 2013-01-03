@@ -24,37 +24,45 @@ void
 Ego_voxels::initialize_container(long length,
                                  long width,
                                  long height) {
-  voxels.resize(length);
+  m_voxels.resize(length);
   for (long i = 0; i < length; ++i) {
-    voxels[i].resize(width);
+    m_voxels[i].resize(width);
     for (long j = 0; j < width; ++j) {
-      voxels[i][j].resize(height);
+      m_voxels[i][j].resize(height);
       for (long k = 0; k < height; ++k)
-        voxels[i][j][k] = false;
+        m_voxels[i][j][k] = false;
     }
   }
 }
 
-void Ego_voxels::mark(size_t x, size_t y, size_t z) {
+void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   // We can also get boundary coordinates...
 
-  if (x == voxels.size()) --x;
-  if (y == voxels[0].size()) --y;
-  if (z == voxels[0][0].size()) --z;
+  if (x == m_voxels.size()) --x;
+  if (y == m_voxels[0].size()) --y;
+  if (z == m_voxels[0][0].size()) --z;
 
   SGAL_assertion(x < voxels.size());
   SGAL_assertion(y < voxels[0].size());
   SGAL_assertion(z < voxels[0][0].size());
   
-  voxels[x][y][z] = true;    
+  m_voxels[x][y][z] = true;    
 }
 
+bool Ego_voxels::is_filled(std::size_t x, std::size_t y, std::size_t z) const {
+  return m_voxels[x][y][z];
+}
+
+bool Ego_voxels::is_filled(const size_type& coord) const {
+  return is_filled(coord.get<0>(), coord.get<1>(), coord.get<2>());
+}
+  
 void Ego_voxels::print() const {
 
-  for (std::size_t i = 0; i < voxels.size(); ++i) {
-    for (std::size_t j = 0; j < voxels[0].size(); ++j) {
-      for (std::size_t k = 0; k < voxels[0][0].size(); ++k) {
-        if (voxels[i][j][k] == true)
+  for (std::size_t i = 0; i < m_voxels.size(); ++i) {
+    for (std::size_t j = 0; j < m_voxels[0].size(); ++j) {
+      for (std::size_t k = 0; k < m_voxels[0][0].size(); ++k) {
+        if (m_voxels[i][j][k] == true)
           std::cout << "*";
         else
           std::cout << "-";
@@ -63,6 +71,20 @@ void Ego_voxels::print() const {
     }
     std::cout << std::endl;
   }
+}
+
+Ego_voxels::Kernel::Point_3 Ego_voxels::origin() const {
+  return m_origin;
+}
+
+void Ego_voxels::set_origin(const Kernel::Point_3& point) {
+  m_origin = point;
+}
+
+Ego_voxels::size_type Ego_voxels::size() const {
+  return size_type(m_voxels.size(),
+                   m_voxels[0].size(),
+                   m_voxels[0][0].size());
 }
 
 SGAL_END_NAMESPACE

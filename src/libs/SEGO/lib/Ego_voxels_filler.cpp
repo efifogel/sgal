@@ -75,9 +75,8 @@ void Ego_voxels_filler::operator() (Ego_voxels* voxels) const {
   // get connected components of the boundary.
   boost::unordered_set<vertices_size_type> bound_connected_components;
 
-  size_t x_max = voxels->voxels.size();
-  size_t y_max = voxels->voxels[0].size();
-  size_t z_max = voxels->voxels[0][0].size();
+  size_t x_max, y_max, z_max;
+  boost::tie(x_max, y_max, z_max) = voxels->size();
 
   // These are the boundary faces
   /// TODO: make boundary_vertices_iterator or something.
@@ -92,10 +91,10 @@ void Ego_voxels_filler::operator() (Ego_voxels* voxels) const {
     for (size_t i = face[f][0][0]; i < face[f][0][1]; ++i) {
       for (size_t j = face[f][1][0]; j < face[f][1][1]; ++j) {
         for (size_t k = face[f][2][0]; k < face[f][2][1]; ++k) {
-          if (voxels->voxels[i][j][k] == false) {
-            SGAL_assertion (i < voxels->voxels.size());
-            SGAL_assertion (j < voxels->voxels[0].size());
-            SGAL_assertion (k < voxels->voxels[0][0].size());
+          if (voxels->is_filled(i, j, k) == false) {
+            SGAL_assertion (i < x_max);
+            SGAL_assertion (j < y_max);
+            SGAL_assertion (k < z_max);
 
             bound_connected_components.
               insert(component_map[vertex_descriptor(i, j, k)]);
@@ -122,10 +121,10 @@ void Ego_voxels_filler::operator() (Ego_voxels* voxels) const {
     SGAL_assertion (k < voxels->voxels[0][0].size());
     
     // If it is not filled and it is not a boundary
-    if (voxels->voxels[i][j][k] == false) {
+    if (voxels->is_filled(i, j, k) == false) {
       if (bound_connected_components.find(component_map[*it]) ==
           bound_connected_components.end()) {        
-        voxels->voxels[i][j][k] = true;
+        voxels->fill(i, j, k);
         ++filled;
       }
     }

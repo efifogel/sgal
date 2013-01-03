@@ -29,9 +29,8 @@ Ego_voxels_filler_graph::null_vertex() {
 std::pair<Ego_voxels_filler_graph::vertex_iterator,
           Ego_voxels_filler_graph::vertex_iterator>
 Ego_voxels_filler_graph::vertices() const {
-  size_t x = m_voxels.voxels.size();
-  size_t y = m_voxels.voxels[0].size();
-  size_t z = m_voxels.voxels[0][0].size();
+  size_t x, y, z;
+  boost::tie(x, y, z) = m_voxels.size();
   
   vertex_iterator begin(0, x, 0, y, 0, z);
   vertex_iterator end(x, x, y, y, z, z);
@@ -43,8 +42,9 @@ Ego_voxels_filler_graph::vertices_size_type
 Ego_voxels_filler_graph::num_vertices() const {
   // std::pair<vertex_iterator, vertex_iterator> vertices = this->vertices();
   
-  vertices_size_type ret = m_voxels.voxels.size() *
-    m_voxels.voxels[0].size() * m_voxels.voxels[0][0].size();
+  size_t x, y, z;
+  boost::tie(x, y, z) = m_voxels.size();
+  vertices_size_type ret = x * y * z;
   SGAL_assertion(ret == std::distance(vertices.first, vertices.second));
   return ret;
 }
@@ -54,8 +54,7 @@ std::pair<Ego_voxels_filler_graph::out_edge_iterator,
 Ego_voxels_filler_graph::out_edges(const vertex_descriptor& u) const {
   
   boost::tuple<std::size_t, std::size_t, std::size_t>
-    dim(m_voxels.voxels.size(), m_voxels.voxels[0].size(),
-        m_voxels.voxels[0][0].size());
+    dim = m_voxels.size();
   
   orthogonal_edges_no_filter unfiltered_begin(u);
   Is_inside_voxels pred1(dim);
@@ -151,18 +150,15 @@ void Ego_voxels_filler_graph::orthogonal_edges_no_filter::increment() {
 
 bool Ego_voxels_filler_graph::Is_unique_color::operator()
   (const edge_descriptor& edge) const {
-  typedef Ego_voxels::Container::value_type::value_type::value_type
-    Value;
-  Value a = m_voxels->voxels[edge.first.get<0>()]
-    [edge.first.get<1>()][edge.first.get<2>()];
-  Value b = m_voxels->voxels[edge.second.get<0>()]
-    [edge.second.get<1>()][edge.second.get<2>()];
-  return (a == b);
+  
+  return (m_voxels->is_filled(edge.first) ==
+          m_voxels->is_filled(edge.second));
 }
 
 std::size_t Ego_graph_vertex_index_map::operator[] (const vertex_descriptor& v) const {
-  size_t face_length = m_voxels.voxels.size();
-  size_t face_width = m_voxels.voxels[0].size();
+  Ego_voxels::size_type size = m_voxels.size();
+  size_t face_length = size.get<0>();
+  size_t face_width = size.get<1>();
   size_t face_size = face_length * face_width;
   
   return (v.get<0>() + (v.get<1>() * face_length) + 
@@ -170,8 +166,9 @@ std::size_t Ego_graph_vertex_index_map::operator[] (const vertex_descriptor& v) 
 }
 
 std::size_t Ego_graph_vertex_index_map::max_index() const {
-  return m_voxels.voxels.size() * m_voxels.voxels[0].size() *
-    m_voxels.voxels[0][0].size();
+  Ego_voxels::size_type size = m_voxels.size();
+
+  return size.get<0>() * size.get<1>() * size.get<2>();
 }
 
 SGAL_END_NAMESPACE

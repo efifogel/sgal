@@ -230,81 +230,27 @@ void Ego_geo::draw(Draw_action* action)
   const double dx = 0.1 / m_scale;
   const double dy = 0.1 / m_scale;
   const double dz = 0.1 / m_scale;
-  
-  for (std::size_t i = 0; i < m_voxels.voxels.size(); ++i) {
-    for (std::size_t j = 0; j < m_voxels.voxels[0].size(); ++j) {
-      for (std::size_t k = 0; k < m_voxels.voxels[0][0].size(); ++k) {
-        if (m_voxels.voxels[i][j][k] == false)
-          continue;
 
-        double x = CGAL::to_double(m_voxels.origin.x()) + i*dx;
-        double y = CGAL::to_double(m_voxels.origin.y()) + j*dy;
-        double z = CGAL::to_double(m_voxels.origin.z()) + k*dz;
+  Ego_voxels::size_type size = m_voxels.size();
+
+  for (std::size_t i = 0; i < size.get<0>(); ++i) {
+    for (std::size_t j = 0; j < size.get<1>(); ++j) {
+      for (std::size_t k = 0; k < size.get<2>(); ++k) {
+        if (m_voxels.is_filled(i, j, k) == false)
+          continue;
+        
+        double x = CGAL::to_double(m_voxels.origin().x()) + i*dx;
+        double y = CGAL::to_double(m_voxels.origin().y()) + j*dy;
+        double z = CGAL::to_double(m_voxels.origin().z()) + k*dz;
 
         glPushMatrix();
         glTranslatef(x+dx/2, y+dy/2, z+dz/2);
-        if ((k == m_voxels.voxels[0][0].size() - 1) ||
-            (!m_voxels.voxels[i][j][k+1]))
+        if ((k == size.get<2>() - 1) ||
+            (!m_voxels.is_filled(i, j, k+1)))
           m_ego_brick.draw(action);
         else
           m_ego_brick_without_knobs.draw(action);
         glPopMatrix();
-
-        // float p0[] = { x, y, z };
-        // float p1[] = {  x+dx, y, z };
-        // float p2[] = {  x+dx ,  y+dy, z };
-        // float p3[] = { x,  y+dy, z };
-        // float p4[] = { x, y,  z+dz };
-        // float p5[] = {  x+dx, y,  z+dz };
-        // float p6[] = {  x+dx,  y+dy,  z+dz };
-        // float p7[] = { x,  y+dy,  z+dz };
-
-        // glBegin(GL_QUADS);
-
-        // //! \todo handle different modal combinations
-        // // front
-        // glNormal3f(0, 0, -1);
-        // glVertex3fv(p0);
-        // glVertex3fv(p3);
-        // glVertex3fv(p2);
-        // glVertex3fv(p1);
-
-        // // right
-        // glNormal3f(1, 0, 0);
-        // glVertex3fv(p1);
-        // glVertex3fv(p2);
-        // glVertex3fv(p6);
-        // glVertex3fv(p5);
-
-        // // back
-        // glNormal3f(0, 0, 1);
-        // glVertex3fv(p5);
-        // glVertex3fv(p6);
-        // glVertex3fv(p7);
-        // glVertex3fv(p4);
-
-        // // left
-        // glNormal3f(-1, 0, 0);
-        // glVertex3fv(p4);
-        // glVertex3fv(p7);
-        // glVertex3fv(p3);
-        // glVertex3fv(p0);
-
-        // //top
-        // glNormal3f(0, 1,0);
-        // glVertex3fv(p3);
-        // glVertex3fv(p7);
-        // glVertex3fv(p6);
-        // glVertex3fv(p2);
-
-        // // bottom
-        // glNormal3f(0, -1, 0);
-        // glVertex3fv(p4);
-        // glVertex3fv(p0);
-        // glVertex3fv(p1);
-        // glVertex3fv(p5);
-  
-        // glEnd();
       }
     }
   }  
