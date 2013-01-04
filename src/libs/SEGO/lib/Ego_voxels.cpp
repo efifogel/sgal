@@ -29,8 +29,6 @@ Ego_voxels::initialize_container(long length,
     m_voxels[i].resize(width);
     for (long j = 0; j < width; ++j) {
       m_voxels[i][j].resize(height);
-      for (long k = 0; k < height; ++k)
-        m_voxels[i][j][k] = false;
     }
   }
 }
@@ -46,11 +44,11 @@ void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   SGAL_assertion(y < voxels[0].size());
   SGAL_assertion(z < voxels[0][0].size());
   
-  m_voxels[x][y][z] = true;    
+  m_voxels[x][y][z].brick_location = boost::make_tuple(x, y, z);
 }
 
 bool Ego_voxels::is_filled(std::size_t x, std::size_t y, std::size_t z) const {
-  return m_voxels[x][y][z];
+  return m_voxels[x][y][z].brick_location;
 }
 
 bool Ego_voxels::is_filled(const size_type& coord) const {
@@ -62,7 +60,7 @@ void Ego_voxels::print() const {
   for (std::size_t i = 0; i < m_voxels.size(); ++i) {
     for (std::size_t j = 0; j < m_voxels[0].size(); ++j) {
       for (std::size_t k = 0; k < m_voxels[0][0].size(); ++k) {
-        if (m_voxels[i][j][k] == true)
+        if (is_filled(i, j, k))
           std::cout << "*";
         else
           std::cout << "-";

@@ -25,6 +25,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
+
 // Temp until we decide the true voxels.
 // Each bool represents a voxel.
 class Ego_voxels {
@@ -45,8 +46,20 @@ public:
 
   size_type size() const;
 
-private:
-  typedef std::vector<std::vector<std::vector<bool> > > Container;
+private:  
+
+  // Each voxel is covered by one brick, but one brick can cover many
+  // voxels. A voxel contains the position of its brick (where the
+  // term "position of its brick" is defined to be the voxel with
+  // the smallest coordinate that it covers.
+  // This voxel also contains the size of the brick.
+  
+  class Voxel {
+  public:
+    boost::optional<size_type> brick_location;
+    boost::optional<size_type> brick_size;
+  };
+  typedef std::vector<std::vector<std::vector<Voxel> > > Container;
     
   Kernel::Point_3 m_origin;
   Container       m_voxels;

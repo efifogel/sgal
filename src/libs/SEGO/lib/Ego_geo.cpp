@@ -219,6 +219,8 @@ void Ego_geo::clean()
 
   fill(&m_voxels);
 
+  
+
   m_dirty = false;
 }
 
