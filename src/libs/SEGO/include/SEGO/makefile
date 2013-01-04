@@ -18,6 +18,7 @@ FILES+= Ego_voxels_filler.hpp
 FILES+= Ego_voxels.hpp
 FILES+= multi_iterator.hpp
 FILES+= Ego_voxels_filler_graph.hpp
+FILES+= Ego_voxels_tiler.hpp
 
 INSTALLDIR =$(INCDIR)/SEGO
 include $(MAKEDIR)/files.mak

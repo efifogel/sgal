@@ -49,6 +49,7 @@
 #include "SEGO/Ego_geo.hpp"
 #include "SEGO/Ego_voxels_filler.hpp"
 #include "SEGO/Ego_brick.hpp"
+#include "SEGO/Ego_voxels_tiler.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -190,8 +191,8 @@ void Ego_geo::clean()
   const double dy = 0.1 / m_scale;
   const double dz = 0.1 / m_scale;
 
-  m_ego_brick.set_number_of_knobs1(1);
-  m_ego_brick.set_number_of_knobs2(1);
+  m_ego_brick.set_number_of_knobs1(2);
+  m_ego_brick.set_number_of_knobs2(2);
 
   m_ego_brick.set_pitch(dx - 0.2 * dx);
   m_ego_brick.set_height(dz - 0.01 * dz);
@@ -199,8 +200,8 @@ void Ego_geo::clean()
   m_ego_brick.set_knob_height(0.25 * dx);
   m_ego_brick.set_tolerance(0.1 * dx);
 
-  m_ego_brick_without_knobs.set_number_of_knobs1(1);
-  m_ego_brick_without_knobs.set_number_of_knobs2(1);
+  m_ego_brick_without_knobs.set_number_of_knobs1(2);
+  m_ego_brick_without_knobs.set_number_of_knobs2(2);
 
   m_ego_brick_without_knobs.set_pitch(dx - 0.2 * dx);
   m_ego_brick_without_knobs.set_height(dz - 0.01 * dz);
@@ -213,13 +214,22 @@ void Ego_geo::clean()
   Ego_voxels_filler fill;
 
   if (this->is_model_polyhedron())
-    voxelize(this->get_polyhedron_model()->get_polyhedron(), &m_voxels);
+    m_voxels_origin = 
+      voxelize(this->get_polyhedron_model()->get_polyhedron(), &m_voxels);
   else if (this->is_model_geo_set())
-    voxelize(*(this->get_geo_set_model()), &m_voxels);
+    m_voxels_origin = 
+      voxelize(*(this->get_geo_set_model()), &m_voxels);
 
   fill(&m_voxels);
-
   
+  
+  adjust_voxels_for_tiling();
+  Ego_voxels_tiler::First_tile_placement first_tile =
+    Ego_voxels_tiler::FIRST00;
+  Ego_voxels_tiler::Strategy strategy =
+    Ego_voxels_tiler::NONGRID;
+  Ego_voxels_tiler tile(first_tile, strategy);
+  tile(&m_voxels);
 
   m_dirty = false;
 }
@@ -241,17 +251,29 @@ void Ego_geo::draw(Draw_action* action)
         if (m_voxels.is_filled(i, j, k) == false)
           continue;
         
-        double x = CGAL::to_double(m_voxels.origin().x()) + i*dx;
-        double y = CGAL::to_double(m_voxels.origin().y()) + j*dy;
-        double z = CGAL::to_double(m_voxels.origin().z()) + k*dz;
+        double x = CGAL::to_double(m_voxels_origin.x()) + i*dx;
+        double y = CGAL::to_double(m_voxels_origin.y()) + j*dy;
+        double z = CGAL::to_double(m_voxels_origin.z()) + k*dz;
 
         glPushMatrix();
         glTranslatef(x+dx/2, y+dy/2, z+dz/2);
-        if ((k == size.get<2>() - 1) ||
-            (!m_voxels.is_filled(i, j, k+1)))
-          m_ego_brick.draw(action);
-        else
+
+        // I don't know what is the best way to check.
+        // Draw alwyas without knobs as this is heavy.
+        boost::optional<Ego_voxels::size_type> brick =
+          m_voxels.get_brick(i, j, k);
+
+        if (brick) {
+          SGAL_assertion(brick->get<0>() == 2 && brick->get<1>() == 2);
           m_ego_brick_without_knobs.draw(action);
+        }
+        
+        // if ((k == size.get<2>() - 1) ||
+        //     (!m_voxels.is_filled(i, j, k+1)))
+        //   m_ego_brick.draw(action);
+        // else
+        //   m_ego_brick_without_knobs.draw(action);
+
         glPopMatrix();
       }
     }
@@ -278,6 +300,24 @@ void Ego_geo::isect(Isect_action* action)
 Boolean Ego_geo::calculate_sphere_bound()
 {
   return true;
+}
+
+void Ego_geo::adjust_voxels_for_tiling() {
+
+  // The current tiling uses 2x2 bricks and covers all the voxels.
+  // This means that the tiling can go about one square off the current
+  // voxels.
+  // Therefore we need to "offset" the voxels sturcture in 1 square in
+  // the xy-plane.
+  
+  // First, we move the origin. Don't touch z.
+  const double dx = 0.1 / m_scale;
+  const double dy = 0.1 / m_scale;
+  Exact_polyhedron_geo::Kernel::Vector_3 diff(-dx, -dy, 0);
+  m_voxels_origin = m_voxels_origin + diff;
+  
+  // Now offset the voxels.
+  m_voxels.offset_xy_layers(1);
 }
 
 SGAL_END_NAMESPACE

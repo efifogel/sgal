@@ -143,12 +143,15 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
+  void adjust_voxels_for_tiling();
+
   /*! The segments */
   boost::variant<Exact_polyhedron_geo*, Geo_set*> m_model;
 
   std::vector<Ego_brick> m_parts;
 
   Ego_voxels m_voxels;
+  Exact_polyhedron_geo::Kernel::Point_3 m_voxels_origin;
   
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty;

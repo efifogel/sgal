@@ -19,7 +19,10 @@
 #ifndef SGAL_EGO_VOXELS_HPP
 #define SGAL_EGO_VOXELS_HPP
 
-#include "SCGAL/Exact_polyhedron_geo.hpp"
+#include "SGAL/basic.hpp"
+
+#include <boost/tuple/tuple.hpp>
+#include <boost/optional.hpp>
 
 #include <vector>
 
@@ -30,21 +33,23 @@ SGAL_BEGIN_NAMESPACE
 // Each bool represents a voxel.
 class Ego_voxels {
 public:
-  typedef Exact_polyhedron_geo::Polyhedron              Polyhedron;
-  typedef Polyhedron::Traits::Kernel                    Kernel;
   typedef boost::tuple<
     std::size_t, std::size_t, std::size_t>              size_type;
 
   void initialize_container(long length, long width, long height);
+  size_type size() const;
+
   void fill(std::size_t x, std::size_t y, std::size_t z);
   bool is_filled(std::size_t x, std::size_t y, std::size_t z) const;
   bool is_filled(const size_type& coord) const;
-  void print() const;
-  
-  Kernel::Point_3 origin() const;
-  void set_origin(const Kernel::Point_3& point);
 
-  size_type size() const;
+  void place(const size_type& coord, const size_type& size);
+  boost::optional<size_type>
+  get_brick(std::size_t x, std::size_t y, std::size_t z);
+
+  void offset_xy_layers(size_t offset_value);
+
+  void print() const;
 
 private:  
 
@@ -59,9 +64,9 @@ private:
     boost::optional<size_type> brick_location;
     boost::optional<size_type> brick_size;
   };
+
   typedef std::vector<std::vector<std::vector<Voxel> > > Container;
     
-  Kernel::Point_3 m_origin;
   Container       m_voxels;
 };
 

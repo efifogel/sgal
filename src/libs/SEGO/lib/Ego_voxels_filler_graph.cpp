@@ -19,6 +19,8 @@
 #include "SEGO/Ego_voxels_filler_graph.hpp"
 #include "SEGO/Ego_voxels.hpp"
 
+#include <boost/tuple/tuple_comparison.hpp>
+
 SGAL_BEGIN_NAMESPACE
 
 Ego_voxels_filler_graph::vertex_descriptor

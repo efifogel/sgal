@@ -33,6 +33,12 @@ Ego_voxels::initialize_container(long length,
   }
 }
 
+Ego_voxels::size_type Ego_voxels::size() const {
+  return size_type(m_voxels.size(),
+                   m_voxels[0].size(),
+                   m_voxels[0][0].size());
+}
+
 void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   // We can also get boundary coordinates...
 
@@ -40,9 +46,9 @@ void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   if (y == m_voxels[0].size()) --y;
   if (z == m_voxels[0][0].size()) --z;
 
-  SGAL_assertion(x < voxels.size());
-  SGAL_assertion(y < voxels[0].size());
-  SGAL_assertion(z < voxels[0][0].size());
+  SGAL_assertion(x < m_voxels.size());
+  SGAL_assertion(y < m_voxels[0].size());
+  SGAL_assertion(z < m_voxels[0][0].size());
   
   m_voxels[x][y][z].brick_location = boost::make_tuple(x, y, z);
 }
@@ -55,6 +61,64 @@ bool Ego_voxels::is_filled(const size_type& coord) const {
   return is_filled(coord.get<0>(), coord.get<1>(), coord.get<2>());
 }
   
+void Ego_voxels::place(const size_type& coord, const size_type& size) {
+
+  size_t x, y, z;
+  boost::tie(x, y, z) = coord;
+
+  for (size_t i = 0; i < size.get<0>(); ++i) {
+    for (size_t j = 0; j < size.get<1>(); ++j) {
+      for (size_t k = 0; k < size.get<2>(); ++k) {
+        m_voxels[x+i][y+j][z+k].brick_location = coord;
+      }
+    }
+  }
+  
+  // first brick to contain the brick:
+  m_voxels[x][y][z].brick_size = size;
+}
+
+boost::optional<Ego_voxels::size_type>
+Ego_voxels::get_brick(std::size_t x, std::size_t y, std::size_t z) {
+  return m_voxels[x][y][z].brick_size;
+}
+
+
+/** 
+ * Extend each xy layer by offset_value.
+ * 
+ * @param offset_value Number of voxels to offset in.
+ */
+void Ego_voxels::offset_xy_layers(size_t offset_value) {
+  typedef std::vector<Voxel>               Row;
+  typedef std::vector<Row>                 Layer;
+
+  // Maybe it is a good idea to move to boost multi array
+  // or what ever.
+
+  // first offset in x.
+  m_voxels.insert(m_voxels.begin(), Layer());  
+  m_voxels.front().resize(m_voxels[1].size());
+  for (size_t j = 0; j < m_voxels[0].size(); ++j) {
+    m_voxels.front()[j].resize(m_voxels[1][0].size());
+  }
+  
+  m_voxels.insert(m_voxels.end(), Layer());
+  m_voxels.back().resize(m_voxels[1].size());
+  for (size_t j = 0; j < m_voxels[0].size(); ++j) {
+    m_voxels.back()[j].resize(m_voxels[1][0].size());
+  }
+
+  // Now, offset in y.
+  for (size_t xitr = 0; xitr < m_voxels.size(); ++xitr) {
+    m_voxels[xitr].insert(m_voxels[xitr].begin(), Row());
+    m_voxels[xitr].front().resize(m_voxels[xitr][1].size());
+
+    m_voxels[xitr].insert(m_voxels[xitr].end(), Row());
+    m_voxels[xitr].back().resize(m_voxels[xitr][1].size());
+  }
+}
+
 void Ego_voxels::print() const {
 
   for (std::size_t i = 0; i < m_voxels.size(); ++i) {
@@ -71,19 +135,4 @@ void Ego_voxels::print() const {
   }
 }
 
-Ego_voxels::Kernel::Point_3 Ego_voxels::origin() const {
-  return m_origin;
-}
-
-void Ego_voxels::set_origin(const Kernel::Point_3& point) {
-  m_origin = point;
-}
-
-Ego_voxels::size_type Ego_voxels::size() const {
-  return size_type(m_voxels.size(),
-                   m_voxels[0].size(),
-                   m_voxels[0][0].size());
-}
-
 SGAL_END_NAMESPACE
-

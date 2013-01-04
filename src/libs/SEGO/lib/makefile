@@ -29,6 +29,7 @@ CPPSOURCES+= Ego_voxelizer.cpp
 CPPSOURCES+= Ego_voxels_filler.cpp
 CPPSOURCES+= Ego_voxels_filler_graph.cpp
 CPPSOURCES+= Ego_voxels.cpp
+CPPSOURCES+= Ego_voxels_tiler.cpp
 
 LCPPDEFS+= -DSGAL_LIB
 LCPPDEFS+= -DSCGAL_NT=$(SCGAL_NT)

@@ -44,8 +44,12 @@ Ego_voxelizer::Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& v
   m_voxel_dimensions[2] = voxel_height;
 }
 
-void Ego_voxelizer::operator() (const Polyhedron& polyhedron,
-                                Ego_voxels* out_voxels) const {
+/** 
+ * @return The origin of the voxels structure.
+ */
+Ego_voxelizer::Point_3
+Ego_voxelizer::operator() (const Polyhedron& polyhedron,
+                           Ego_voxels* out_voxels) const {
   
   // Later we might assume only convexity.
   SGAL_assertion(polyhedron.is_pure_triangle());
@@ -54,26 +58,33 @@ void Ego_voxelizer::operator() (const Polyhedron& polyhedron,
   return operator() (triangles, out_voxels);
 }
 
-void Ego_voxelizer::operator() (const Geo_set& geo_set,
-                                Ego_voxels* out_voxels) const {
+/** 
+ * @return The origin of the voxels structure.
+ */
+Ego_voxelizer::Point_3
+Ego_voxelizer::operator() (const Geo_set& geo_set,
+                           Ego_voxels* out_voxels) const {
   Triangles triangles = create_triangles_from_geo_set(geo_set);
   return operator() (triangles, out_voxels);
 }
 
-void Ego_voxelizer::operator() (const Triangles& triangles,
+Ego_voxelizer::Point_3
+Ego_voxelizer::operator() (const Triangles& triangles,
                                 Ego_voxels* out_voxels) const {
   SGAL_assertion(out_voxels != NULL);
   
-  create_voxels_from_triangles(triangles, out_voxels);
+  Point_3 origin = create_voxels_from_triangles(triangles, out_voxels);
 
   for (Triangles::const_iterator it = triangles.begin();
        it != triangles.end(); ++it) {
-    mark_triangle(*it, out_voxels);
+    mark_triangle(*it, origin, out_voxels);
   }
 
 #ifdef EGO_VOXELIZER_VERBOSE
   out_voxels->print();
 #endif
+
+  return origin;
 }
 
 Ego_voxelizer::Triangles
@@ -126,8 +137,9 @@ Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set) const {
 }
 
 
-void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
-                                                 Ego_voxels* out_voxels) const {
+Ego_voxelizer::Point_3
+Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
+                                            Ego_voxels* out_voxels) const {
   
   std::vector<Point_3> vertices;
   
@@ -160,9 +172,9 @@ void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
   std::cout << VAR(iheight) << std::endl;
 #endif
 
-  out_voxels->set_origin(Kernel::Point_3(bbox.min_coord(0), bbox.min_coord(1),
-                                         bbox.min_coord(2)));
-  
+  return Point_3(bbox.min_coord(0),
+                 bbox.min_coord(1),
+                 bbox.min_coord(2));
 
   // TODO: Do you want to uncomment this?
   // // We guess that putting the mesh exactly in the middle of the voxels
@@ -179,26 +191,29 @@ void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
 }
 
 void Ego_voxelizer::mark_triangle(const Triangle_3& triangle,
+                                  const Point_3& origin,
                                   Ego_voxels* out_voxels) const {
-  mark_triangle_vertices(triangle, out_voxels);
+  mark_triangle_vertices(triangle, origin, out_voxels);
 
   SlicingSegments segments =
-    create_slicing_segments(triangle, out_voxels->origin());
+    create_slicing_segments(triangle, origin);
 
   for (SlicingSegments::iterator it = segments.begin();
        it != segments.end(); ++it)
-    mark_segment(*it, out_voxels);
+    mark_segment(*it, origin, out_voxels);
 }
 
 void Ego_voxelizer::mark_triangle_vertices(const Triangle_3& triangle,
-                                        Ego_voxels* out_voxels) const {
+                                           const Point_3& origin,
+                                           Ego_voxels* out_voxels) const {
 
-  mark_point(triangle[0], out_voxels);
-  mark_point(triangle[1], out_voxels);
-  mark_point(triangle[2], out_voxels);
+  mark_point(triangle[0], origin, out_voxels);
+  mark_point(triangle[1], origin, out_voxels);
+  mark_point(triangle[2], origin, out_voxels);
 }
 
 void Ego_voxelizer::mark_segment(const Segment_3& segment,
+                                 const Point_3& origin,
                                  Ego_voxels* out_voxels) const {
 
   // This can be done with a walk. Currenly we do simple geometric 
@@ -214,26 +229,27 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
       pmin = segment.target(); pmax = segment.source();
     }
     
-    create_parallel_planes(pmin, pmax, dim, out_voxels->origin(), &planes);
+    create_parallel_planes(pmin, pmax, dim, origin, &planes);
   }
   
   std::vector<Point_3> points;
   intersect_segment_with_planes(segment, planes, &points);
   
   BOOST_FOREACH(Point_3 p, points) {
-    mark_point(p, out_voxels);
+    mark_point(p, origin, out_voxels);
   }
   
   // It could be that one of those is not needed.
-  mark_point(segment.source(), out_voxels);
-  mark_point(segment.target(), out_voxels);
+  mark_point(segment.source(), origin, out_voxels);
+  mark_point(segment.target(), origin, out_voxels);
 }
 
 void
 Ego_voxelizer::mark_point(const Point_3& point,
+                          const Point_3& origin,
                           Ego_voxels* out_voxels) const {
 
-  Point_3 in_voxel = CGAL::ORIGIN + (point - out_voxels->origin());
+  Point_3 in_voxel = CGAL::ORIGIN + (point - origin);
 
   Kernel::FT ft_x = in_voxel.x() / m_voxel_dimensions[0];
   Kernel::FT ft_y = in_voxel.y() / m_voxel_dimensions[1];

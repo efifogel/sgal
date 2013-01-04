@@ -20,11 +20,13 @@
 #include "SEGO/Ego_voxels.hpp"
 #include "SEGO/Ego_voxels_filler_graph.hpp"
 
-#include <boost/property_map/vector_property_map.hpp>
+#include <boost/tuple/tuple_comparison.hpp>
+
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/connected_components.hpp>
 
+#include <boost/property_map/vector_property_map.hpp>
 #include <boost/unordered_set.hpp>
 
 // #define EGO_VOXELIZER_FILLER_VERBOSE

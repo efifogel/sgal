@@ -60,8 +60,10 @@ class SGAL_CLASSDEF Ego_voxelizer {
 
   Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& voxel_width,
                 const Kernel::FT& voxel_height);
-  void operator() (const Polyhedron& polyhedron, Ego_voxels* out_voxels) const;
-  void operator() (const Geo_set& geo_set, Ego_voxels* out_voxels) const;
+  Kernel::Point_3 operator() (const Polyhedron& polyhedron,
+                         Ego_voxels* out_voxels) const;
+  Kernel::Point_3 operator() (const Geo_set& geo_set,
+                         Ego_voxels* out_voxels) const;
   
  private:
 
@@ -76,19 +78,27 @@ class SGAL_CLASSDEF Ego_voxelizer {
   typedef std::list<Segment_3>                          SlicingSegments;
   typedef std::list<Triangle_3>                         Triangles;
 
-  void operator() (const Triangles& triangles, Ego_voxels* out_voxels) const;
+  Point_3 operator() (const Triangles& triangles,
+                      Ego_voxels* out_voxels) const;
 
   Triangles create_triangles_from_polyhedron(const Polyhedron& polyhedron)
     const;
   Triangles create_triangles_from_geo_set(const Geo_set& polyhedron) const;
   
-  void create_voxels_from_triangles(const Triangles& polyhedron,
-                                    Ego_voxels* out_voxels) const;
-  void mark_triangle(const Triangle_3& triangle, Ego_voxels* out_voxels) const;
+  Point_3 create_voxels_from_triangles(const Triangles& polyhedron,
+                                       Ego_voxels* out_voxels) const;
+  void mark_triangle(const Triangle_3& triangle,
+                     const Point_3& origin,
+                     Ego_voxels* out_voxels) const;
   void mark_triangle_vertices(const Triangle_3& triangle,
+                              const Point_3& origin,
                               Ego_voxels* out_voxels) const;
-  void mark_segment(const Segment_3& segment, Ego_voxels* out_voxels) const;
-  void mark_point(const Point_3& point, Ego_voxels* out_voxels) const;
+  void mark_segment(const Segment_3& segment,
+                    const Point_3& origin,
+                    Ego_voxels* out_voxels) const;
+  void mark_point(const Point_3& point,
+                  const Point_3& origin,
+                  Ego_voxels* out_voxels) const;
   SlicingSegments create_slicing_segments(const Triangle_3& triangle,
                                           const Point_3& origin) const;
   void create_slicing_segments(long dim,
