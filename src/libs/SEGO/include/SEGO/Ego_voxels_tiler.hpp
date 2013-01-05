@@ -30,17 +30,21 @@ public:
   // TODO: Missing if rows are x or y.
   enum First_tile_placement {FIRST00, FIRST01, FIRST10, FIRST11};
   enum Strategy {GRID, NONGRID};
+  enum Tiling_rows {XROWS, YROWS};
 
-  Ego_voxels_tiler(First_tile_placement first_tile, Strategy strategy);
+  Ego_voxels_tiler(First_tile_placement first_tile,
+                   Strategy strategy,
+                   Tiling_rows rows);
   
   void operator() (Ego_voxels* out_voxels);
 
 private:
   void tile_layer(size_t layer, Ego_voxels* out_voxels);
 
-  size_t first_brick_x_offset;
-  size_t first_brick_y_offset;
-  size_t offset_between_rows;
+  size_t m_first_brick_x_offset;
+  size_t m_first_brick_y_offset;
+  size_t m_offset_between_rows;
+  Tiling_rows m_tiling_rows;
 };
 
 SGAL_END_NAMESPACE

@@ -23,33 +23,36 @@
 
 SGAL_BEGIN_NAMESPACE
 
+// Tiling_rows are relevant only for non-grid.
 Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
-                                   Strategy strategy) {
+                                   Strategy strategy,
+                                   Tiling_rows rows)
+    : m_tiling_rows(rows) {
   switch (first_tile) {
   case FIRST00:
-    first_brick_x_offset = 0;
-    first_brick_y_offset = 0;
+    m_first_brick_x_offset = 0;
+    m_first_brick_y_offset = 0;
     break;
   case FIRST01:
-    first_brick_x_offset = 0;
-    first_brick_y_offset = 1;
+    m_first_brick_x_offset = 0;
+    m_first_brick_y_offset = 1;
     break;
   case FIRST10:
-    first_brick_x_offset = 1;
-    first_brick_y_offset = 0;
+    m_first_brick_x_offset = 1;
+    m_first_brick_y_offset = 0;
     break;
   case FIRST11:
-    first_brick_x_offset = 1;
-    first_brick_y_offset = 1;
+    m_first_brick_x_offset = 1;
+    m_first_brick_y_offset = 1;
     break;
   }
 
   switch (strategy) {
   case GRID:
-    offset_between_rows = 0;
+    m_offset_between_rows = 0;
     break;
   case NONGRID:
-    offset_between_rows = 1;
+    m_offset_between_rows = 1;
     break;
   }
 }
@@ -73,23 +76,29 @@ void Ego_voxels_tiler::operator() (Ego_voxels* out_voxels) {
 void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
 
   size_t xmax, ymax;
-  boost::tie(xmax, ymax, boost::tuples::ignore) = out_voxels->size();
+  if (m_tiling_rows == XROWS)
+    boost::tie(xmax, ymax, boost::tuples::ignore) = out_voxels->size();
+  else
+    boost::tie(ymax, xmax, boost::tuples::ignore) = out_voxels->size();
   
-  size_t x = (layer + first_brick_x_offset) % 2;
+  size_t x = (layer + m_first_brick_x_offset) % 2;
   for (; x + 1 < xmax; x += 2) {
 
-    size_t y = (layer + first_brick_y_offset + (x/2) * offset_between_rows) % 2;
+    size_t y = (layer + m_first_brick_y_offset + (x/2) * m_offset_between_rows) % 2;
     for (; y + 1 < ymax; y += 2) {
+
+      size_t row = (m_tiling_rows == XROWS) ? x : y;
+      size_t column = (m_tiling_rows == XROWS) ? y : x;
 
       // now, if there is a voxel which is filled here, place a 2x2 brick.
       bool place = false;
-      place = place || out_voxels->is_filled(x, y, layer);
-      place = place || out_voxels->is_filled(x+1, y, layer);
-      place = place || out_voxels->is_filled(x, y+1, layer);
-      place = place || out_voxels->is_filled(x+1, y+1, layer);
+      place = place || out_voxels->is_filled(row, column, layer);
+      place = place || out_voxels->is_filled(row+1, column, layer);
+      place = place || out_voxels->is_filled(row, column+1, layer);
+      place = place || out_voxels->is_filled(row+1, column+1, layer);
 
       if (place)
-        out_voxels->place(boost::make_tuple(x, y, layer),
+        out_voxels->place(boost::make_tuple(row, column, layer),
                           boost::make_tuple(2, 2, 1));
     }
   }

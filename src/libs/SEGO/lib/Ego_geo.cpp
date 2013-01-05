@@ -224,11 +224,10 @@ void Ego_geo::clean()
   
   
   adjust_voxels_for_tiling();
-  Ego_voxels_tiler::First_tile_placement first_tile =
-    Ego_voxels_tiler::FIRST00;
-  Ego_voxels_tiler::Strategy strategy =
-    Ego_voxels_tiler::GRID;
-  Ego_voxels_tiler tile(first_tile, strategy);
+  Ego_voxels_tiler::First_tile_placement first_tile = Ego_voxels_tiler::FIRST00;
+  Ego_voxels_tiler::Strategy strategy = Ego_voxels_tiler::NONGRID;
+  Ego_voxels_tiler::Tiling_rows tiling_rows = Ego_voxels_tiler::YROWS;
+  Ego_voxels_tiler tile(first_tile, strategy, tiling_rows);
   tile(&m_voxels);
 
   m_dirty = false;
