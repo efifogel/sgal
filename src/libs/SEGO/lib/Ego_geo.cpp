@@ -227,7 +227,7 @@ void Ego_geo::clean()
   Ego_voxels_tiler::First_tile_placement first_tile =
     Ego_voxels_tiler::FIRST00;
   Ego_voxels_tiler::Strategy strategy =
-    Ego_voxels_tiler::NONGRID;
+    Ego_voxels_tiler::GRID;
   Ego_voxels_tiler tile(first_tile, strategy);
   tile(&m_voxels);
 

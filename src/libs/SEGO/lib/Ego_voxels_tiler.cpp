@@ -47,8 +47,10 @@ Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
   switch (strategy) {
   case GRID:
     offset_between_rows = 0;
+    break;
   case NONGRID:
     offset_between_rows = 1;
+    break;
   }
 }
 
@@ -78,7 +80,7 @@ void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
 
     size_t y = (layer + first_brick_y_offset + (x/2) * offset_between_rows) % 2;
     for (; y + 1 < ymax; y += 2) {
-      
+
       // now, if there is a voxel which is filled here, place a 2x2 brick.
       bool place = false;
       place = place || out_voxels->is_filled(x, y, layer);
