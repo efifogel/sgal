@@ -264,14 +264,22 @@ void Ego_geo::draw(Draw_action* action)
 
         if (brick) {
           SGAL_assertion(brick->get<0>() == 2 && brick->get<1>() == 2);
-          m_ego_brick_without_knobs.draw(action);
+          
+          bool should_draw_knobs = false;
+          
+          for (size_t s = 0; s < brick->get<0>(); ++s) {
+            for (size_t t = 0; t < brick->get<1>(); ++t) {
+              if ((k == size.get<2>() - 1) ||
+                  (!m_voxels.is_filled(i+s, j+t, k+1)))
+                should_draw_knobs = true;
+            }
+          }
+          
+          if (should_draw_knobs)
+            m_ego_brick.draw(action);
+          else
+            m_ego_brick_without_knobs.draw(action);
         }
-        
-        // if ((k == size.get<2>() - 1) ||
-        //     (!m_voxels.is_filled(i, j, k+1)))
-        //   m_ego_brick.draw(action);
-        // else
-        //   m_ego_brick_without_knobs.draw(action);
 
         glPopMatrix();
       }
