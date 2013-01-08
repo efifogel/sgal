@@ -33,6 +33,7 @@
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
 #include "SEGO/Ego_voxels.hpp"
+#include "SEGO/Ego_voxels_tiler.hpp"
 
 #include <boost/variant.hpp>
 
@@ -49,6 +50,9 @@ public:
     FIRST = Geometry::LAST - 1,
     MODEL,
     PARTS,
+    FIRST_TILE_PLACEMENT,
+    TILING_STRATEGY,
+    TILING_ROWS_DIRECTION,
     LAST
   };
 
@@ -139,6 +143,20 @@ public:
    */
   void set_scale(Float scale) { m_scale = scale; }
 
+  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p) {
+    m_first_tile_placement = p;
+  }
+
+  void set_tiling_strategy(Ego_voxels_tiler::Strategy s) {
+    m_tiling_strategy = s;
+  }
+  
+  void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r) {
+    m_tiling_rows_direction = r;
+  }
+
+  void tiling_changed(Field_info * field_info = NULL);
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -151,10 +169,18 @@ protected:
   std::vector<Ego_brick> m_parts;
 
   Ego_voxels m_voxels;
-  Exact_polyhedron_geo::Kernel::Point_3 m_voxels_origin;
+  Ego_voxels m_tiled_voxels;
+  Exact_polyhedron_geo::Kernel::Point_3 m_tiled_voxels_origin;
+  
+  /// Enums to control tiling.
+  Ego_voxels_tiler::First_tile_placement m_first_tile_placement;
+  Ego_voxels_tiler::Strategy m_tiling_strategy;
+  Ego_voxels_tiler::Tiling_rows m_tiling_rows_direction;
   
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty;
+  Boolean m_voxels_dirty;
+  Boolean m_tiling_dirty;
 
   /*! Scale of the model compared to the ego bricks. */
   Float m_scale;
@@ -162,6 +188,7 @@ protected:
   /*! These are temporary members used to expedite rendering */
   Ego_brick m_ego_brick;
   Ego_brick m_ego_brick_without_knobs;
+
   
 private:
   /*! The tag that identifies this container type */
@@ -172,6 +199,10 @@ private:
 
   /*! Default values */
   static const Float s_def_scale;
+  static const Ego_voxels_tiler::First_tile_placement s_def_first_tile_placement;
+  static const Ego_voxels_tiler::Strategy s_def_tiling_strategy;
+  static const Ego_voxels_tiler::Tiling_rows s_def_tiling_rows_direction;
+
 };
 
 SGAL_END_NAMESPACE
