@@ -36,7 +36,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Cylinder::s_tag = "Cylinder";
-Container_proto * Cylinder::s_prototype = 0;
+Container_proto* Cylinder::s_prototype = 0;
 
 // default values:
 const Float Cylinder::s_def_radius(1);
@@ -73,7 +73,7 @@ Cylinder::~Cylinder()
 }
 
 /*! \brief draws the cylinder */
-void Cylinder::draw(Draw_action * action) 
+void Cylinder::draw(Draw_action* action) 
 {
   if (is_dirty()) clean();
 
@@ -118,7 +118,7 @@ void Cylinder::draw(Draw_action * action)
 }
 
 /*! \brief draws the cylinder in selection mode */
-void Cylinder::isect(Isect_action * action) 
+void Cylinder::isect(Isect_action* action) 
 {
   if (m_dirty) clean();
 
@@ -182,7 +182,7 @@ Boolean Cylinder::calculate_sphere_bound()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Cylinder::set_attributes(Element * elem)
+void Cylinder::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
@@ -190,8 +190,8 @@ void Cylinder::set_attributes(Element * elem)
 
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "radius") {
       set_radius(atoff(value.c_str()));
       elem->mark_delete(ai);
@@ -212,17 +212,17 @@ void Cylinder::set_attributes(Element * elem)
       elem->mark_delete(ai);
       continue;
     } 
-    if (name == "bottom") {
+    if (name == "bottomVisible") {
       set_is_bottom_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     } 
-    if (name == "side") {
+    if (name == "sideVisible") {
       set_is_body_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     } 
-    if (name == "top") {
+    if (name == "topVisible") {
       set_is_top_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
@@ -360,7 +360,7 @@ void Cylinder::delete_prototype()
 }
 
 /*! */
-Container_proto * Cylinder::get_prototype() 
+Container_proto* Cylinder::get_prototype() 
 {  
   if (!s_prototype) Cylinder::init_prototype();
   return s_prototype;
