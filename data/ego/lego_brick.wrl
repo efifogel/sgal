@@ -31,10 +31,9 @@ DEF INC_KEY2 SingleKeySensor { key "j" }
 DEF SNAP Snapshot {
   image Image { }
   fileFormat "jpg"
-  quality 98
   sequence FALSE
   dirName "."
-  fileName "lts"
+  fileName "lego_brick"
 }
 
 Transform {
@@ -46,13 +45,14 @@ Transform {
       appearance Appearance {
 	material Material {
 	  diffuseColor 0.7 0.1 0.1
-	  transparency 0.5
+	  transparency 0
 	}
       }
       geometry DEF BRICK EgoBrick {
-	# creaseAngle 0.5
+	# knobsVisible FALSE
 	numberOfKnobs1 1
 	numberOfKnobs2 1
+	knobSlices 32
       }
     }
 
@@ -132,8 +132,8 @@ Transform {
 		  appearance USE CS_APP
 		  geometry DEF CS_CYLINDER Cylinder {
 		    radius 0.1
-		    set_is_bottom_visible FALSE
-		    set_is_top_visible FALSE
+		    bottom FALSE
+		    top FALSE
 		  }
 		}
 		Transform {
