@@ -1,4 +1,4 @@
- // Copyright (c) 2004 Israel.
+// Copyright (c) 2004 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -1303,7 +1303,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FINO_FAPV_TENO_MOPO_VAYE                                   \
@@ -1311,7 +1311,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FIYE_FAPV_TENO_MOPO_VAYE                                   \
@@ -1319,7 +1319,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FIYE_FAPV_TENO_MOPO_VAYE                                   \
@@ -1327,7 +1327,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FINO_FAPT_TENO_MOPO_VAYE                                   \
@@ -1335,7 +1335,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FINO_FAPT_TENO_MOPO_VAYE                                   \
@@ -1343,7 +1343,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FIYE_FAPT_TENO_MOPO_VAYE                                   \
@@ -1351,7 +1351,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FIYE_FAPT_TENO_MOPO_VAYE                                   \
@@ -1359,7 +1359,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FINO_FAPM_TENO_MOPO_VAYE                                   \
@@ -1367,7 +1367,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FINO_FAPM_TENO_MOPO_VAYE                                   \
@@ -1375,7 +1375,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FIYE_FAPM_TENO_MOPO_VAYE                                   \
@@ -1383,7 +1383,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FIYE_FAPM_TENO_MOPO_VAYE                                   \
@@ -1391,7 +1391,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                            \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,     \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 // Texture enabled:
@@ -1403,7 +1403,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FINO_FAPV_TEYE_TINO_MOPO_VAYE                              \
@@ -1412,7 +1412,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VAYE                              \
@@ -1421,7 +1421,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VAYE                              \
@@ -1430,7 +1430,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FINO_FAPT_TEYE_TINO_MOPO_VAYE                              \
@@ -1439,7 +1439,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FINO_FAPT_TEYE_TINO_MOPO_VAYE                              \
@@ -1448,7 +1448,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VAYE                              \
@@ -1457,7 +1457,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VAYE                              \
@@ -1466,7 +1466,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FINO_FAPM_TEYE_TINO_MOPO_VAYE                              \
@@ -1475,7 +1475,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FINO_FAPM_TEYE_TINO_MOPO_VAYE                              \
@@ -1484,7 +1484,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FIYE_FAPM_TEYE_TINO_MOPO_VAYE                              \
@@ -1493,7 +1493,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VAYE                              \
@@ -1502,7 +1502,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,0,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 // Texture indexed
@@ -1512,7 +1512,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VAYE                              \
@@ -1521,7 +1521,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VAYE                              \
@@ -1530,7 +1530,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VAYE                              \
@@ -1539,7 +1539,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VAYE                              \
@@ -1548,7 +1548,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VAYE                              \
@@ -1557,7 +1557,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VAYE                              \
@@ -1566,7 +1566,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VAYE                              \
@@ -1575,7 +1575,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VAYE                              \
@@ -1584,7 +1584,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VAYE                              \
@@ -1593,7 +1593,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSNO_FIYE_FAPM_TEYE_TIYE_MOPO_VAYE                              \
@@ -1602,7 +1602,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 #define FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VAYE                              \
@@ -1611,7 +1611,7 @@
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,1,                 \
                     SET(TEXTURE_INDEXED,TEXTURE_INDEXED_,1,             \
-                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS,                        \
+                        SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_POLYGONS, \
                             SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0)))))))
 
 // Triangles
@@ -1621,7 +1621,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FINO_FAPV_TENO_MOTR_VAYE                                   \
@@ -1629,7 +1629,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FIYE_FAPV_TENO_MOTR_VAYE                                   \
@@ -1637,7 +1637,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FIYE_FAPV_TENO_MOTR_VAYE                                   \
@@ -1645,7 +1645,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_VERTEX,    \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FINO_FAPT_TENO_MOTR_VAYE                                   \
@@ -1653,7 +1653,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FINO_FAPT_TENO_MOTR_VAYE                                   \
@@ -1661,7 +1661,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FIYE_FAPT_TENO_MOTR_VAYE                                   \
@@ -1669,7 +1669,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FIYE_FAPT_TENO_MOTR_VAYE                                   \
@@ -1677,7 +1677,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_PRIMITIVE, \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FINO_FAPM_TENO_MOTR_VAYE                                   \
@@ -1685,7 +1685,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FINO_FAPM_TENO_MOTR_VAYE                                   \
@@ -1693,7 +1693,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,0,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSNO_FIYE_FAPM_TENO_MOTR_VAYE                                   \
@@ -1701,7 +1701,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 #define FSCO_FIYE_FAPM_TENO_MOTR_VAYE                                   \
@@ -1709,7 +1709,7 @@
         SET(FRAGMENT_INDEXED,FRAGMENT_INDEXED_,1,                       \
             SET(FRAGMENT_ATTACHMENT,FRAGMENT_ATTACHMENT_,PER_MESH,      \
                 SET(TEXTURE_ENABLED,TEXTURE_ENABLED_,0,                 \
-                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,                           \
+                    SET(PRIMITIVE_TYPE,PRIMITIVE_TYPE_,PT_TRIANGLES,    \
                         SET(VERTEX_ARRAY,VERTEX_ARRAY_,1,0x0))))))
 
 // Texture enabled:

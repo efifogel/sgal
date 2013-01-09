@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 14223 $
+// $Id: $
+// $Revision: $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -696,101 +696,221 @@ void Indexed_face_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/*! \brief allocates the normal array in case it is not present */
-void Indexed_face_set::allocate_normals()
-{
-  SGAL_assertion(!m_normal_array);
-  SGAL_assertion(m_coord_array);
-  Uint size = (m_crease_angle > 0) ? m_coord_array->size() : m_num_primitives;
-  m_normal_array = new Normal_array(size);
-  m_own_normal_array = true;
-}
-
 /*! \brief claculates the normals in case they are invalidated */
 void Indexed_face_set::clean_normals()
 {
-  SGAL_assertion(m_normal_array);
-  if (m_crease_angle > 0) calculate_normals_per_vertex();
-  else calculate_normals_per_polygon();
+  if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
+  else if (m_crease_angle > 0) calculate_multiple_normals_per_vertex();
+  else calculate_normal_per_polygon();
   m_dirty_normals = false;
 }
 
-/*! \brief calculates a single normal per vertex for all vertices */
-void Indexed_face_set::calculate_normals_per_vertex()
+/*! \brief Compute the normal to a facet from 3 points lying on the facet */
+void Indexed_face_set::compute_normal(const Vector3f& v1, const Vector3f& v2,
+                                      const Vector3f& v3, Vector3f& normal)
+  const
 {
-  m_normal_array->resize(m_coord_array->size());
+  Vector3f l1, l2;
+  l1.sub(v2, v1);
+  l2.sub(v3, v2);
+  if (m_is_ccw) normal.cross(l1, l2); 
+  else normal.cross(l2, l1);
+  normal.normalize();
+}
+
+/*! \brief computes the normalized normal to a triangle. */
+void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& normal) const
+{
+  Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
+  Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
+  Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+2]];
+  SGAL_assertion(!v0.collinear(v0, v1, v2));
+  compute_normal(v0, v1, v2, normal);
+}
+
+/*! \brief computes the center point of a triangle. */
+void Indexed_face_set::compute_triangle_center(Uint j, Vector3f& center) const
+{
+  center.add((*m_coord_array)[m_coord_indices[j+0]]);
+  center.add((*m_coord_array)[m_coord_indices[j+1]]);
+  center.add((*m_coord_array)[m_coord_indices[j+2]]);
+  center.scale(1.0f / 3);
+}
+
+/*! \brief computes the vertex information for the three vertices of a
+ * triangule
+ */
+void Indexed_face_set::
+compute_triangle_vertex_info(Uint j, Uint facet_index,
+                             const Vector3f& center,
+                             Vertices_info& vertices_info) const
+{
+  Uint vertex_index = m_coord_indices[j+0];
+  compute_vertex_info(vertex_index, facet_index, center,
+                      std::back_inserter(vertices_info[vertex_index]));
+  vertex_index = m_coord_indices[j+1];
+  compute_vertex_info(vertex_index, facet_index, center,
+                      std::back_inserter(vertices_info[vertex_index]));
+  vertex_index = m_coord_indices[j+2];
+  compute_vertex_info(vertex_index, facet_index, center,
+                      std::back_inserter(vertices_info[vertex_index]));
+}
+
+/*! \brief computes the normalized normal to a quadrilateral.
+ * This implementation assumes that 3 (out of the 4) vertices might be
+ * collinear.
+ */
+void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& normal) const
+{
+  Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
+  Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
+  Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+2]];
+  if (!v0.collinear(v0, v1, v2)) {
+    compute_normal(v0, v1, v2, normal);
+    return;
+  }
+  Vector3f& v3 = (*m_coord_array)[m_coord_indices[j+3]];
+  SGAL_assertion(!v0.collinear(v0, v1, v3));
+  compute_normal(v0, v1, v3, normal);
+}
+
+/*! \brief computes the center point of a quadrilateral. */
+void Indexed_face_set::compute_quad_center(Uint j, Vector3f& center) const
+{
+  center.add((*m_coord_array)[m_coord_indices[j+0]]);
+  center.add((*m_coord_array)[m_coord_indices[j+1]]);
+  center.add((*m_coord_array)[m_coord_indices[j+2]]);
+  center.add((*m_coord_array)[m_coord_indices[j+3]]);
+  center.scale(1.0f / 4);
+}
+  
+/*! \brief computes the vertex information for the four vertices of a
+ * quadrilateral
+ */
+void
+Indexed_face_set::compute_quad_vertex_info(Uint j, Uint facet_index,
+                                           const Vector3f& center,
+                                           Vertices_info& vertices_info) const
+{
+  Uint vertex_index = m_coord_indices[j+0];
+  compute_vertex_info(vertex_index, facet_index, center,
+                      std::back_inserter(vertices_info[vertex_index]));
+  vertex_index = m_coord_indices[j+1];
+  compute_vertex_info(vertex_index, facet_index, center, 
+                      std::back_inserter(vertices_info[vertex_index]));
+  vertex_index = m_coord_indices[j+2];
+  compute_vertex_info(vertex_index, facet_index, center, 
+                      std::back_inserter(vertices_info[vertex_index]));
+  vertex_index = m_coord_indices[j+3];
+  compute_vertex_info(vertex_index, facet_index, center, 
+                      std::back_inserter(vertices_info[vertex_index]));
+}
+
+/*! \brief computes the normalized normal to a polygon.
+ * This implementation assumes that consecuitive vertices might be collinear.
+ */
+void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& normal) const
+{
+  Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
+  Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
+  for (Uint k = 2; m_coord_indices[j+k] != (Uint) -1; ++k) {
+    Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+k]];
+    if (v0.collinear(v0, v1, v2)) continue;
+    compute_normal(v0, v1, v2, normal);
+    return;
+  }
+  SGAL_assertion_msg(0, "All vertices are collinear!");
+}
+
+/*! \brief computes the center point of a polygon. */
+Uint Indexed_face_set::compute_polygon_center(Uint j, Vector3f& center) const
+{
+  Uint k;
+  for (k = 0; m_coord_indices[j+k] != (Uint) -1; ++k)
+    center.add((*m_coord_array)[m_coord_indices[j+k]]);
+  center.scale(1.0f / k);
+  return k;
+}
+
+/*! \brief computes the vertex information for the all vertices of a polygon */
+void Indexed_face_set::
+compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
+                            const Vector3f& center,
+                            Vertices_info& vertices_info) const
+{
+  for (Uint l = 0; l < k; ++l) {
+    Uint vertex_index = m_coord_indices[j+l];
+    compute_vertex_info(vertex_index, facet_index, center,
+                        back_inserter(vertices_info[vertex_index]));
+  }
+}
+
+/*! \brief calculates a single normal per vertex for all vertices */
+void Indexed_face_set::calculate_single_normal_per_vertex()
+{
+  m_normal_array = new Normal_array;
+  m_own_normal_array = true;
+    
+  // Calculate the normals of all facets.
+  Normal_array normal_array;
+  calculate_normal_per_polygon(&normal_array);
 
   // Initialize the weights:
-
-  // For each vertex we compute the weighted normal based on the normals of
-  // the vertex incident facets and the receiprocal of the square distance
-  // from the facet center to the vertex (an alternative could be the facet
-  // area).
-  typedef std::pair<Float, Vector3f>    Weight_normal_pair;
-  typedef std::list<Weight_normal_pair> Vertex_info;
-  typedef Vertex_info::const_iterator   Vertex_const_iter;
-  typedef std::vector<Vertex_info>      Vertices_info;
-    
   Vertices_info vertices_info;
   vertices_info.resize(m_coord_array->size());
   
-  Uint k, i, j = 0;
-  for (i = 0; i < m_num_primitives; ++i) {
-    // Assume that the facet is planar, and compute its normal:
-    Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
-    Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
-    Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+2]];
-
-    Vector3f l1, l2;
-    l1.sub(v1, v0);
-    l2.sub(v2, v1);
-    Vector3f n;
-    if (m_is_ccw) {
-      n.cross(l1, l2); 
-    } else {
-      n.cross(l2, l1);
+  Uint i, j = 0;
+  // Assume that the facet is planar, and compute its normal:
+  switch (m_primitive_type) {
+   case PT_TRIANGLES:
+    for (i = 0; i < m_num_primitives; ++i) {
+      Vector3f normal;
+      Vector3f center;
+      compute_triangle_center(j, center);
+      compute_triangle_vertex_info(j, i, center, vertices_info);
+      j += 3;
     }
-    n.normalize();
-
-    Vector3f center;
-
-    switch (m_primitive_type) {
-     case PT_TRIANGLES:
-     case PT_QUADS:
-     case PT_POLYGONS:
-      // Compute the receiprocal of the square distance from the facet center
-      for (k = 0; m_coord_indices[j+k] != (Uint) -1; ++k) {
-        if ((m_primitive_type == PT_TRIANGLES) && (k == 3)) break;
-        if ((m_primitive_type == PT_QUADS) && (k == 4)) break;
-        center.add((*m_coord_array)[m_coord_indices[j+k]]);
-      }
-      center.scale(1.0f / k);
-
-      // Assign the value:
-      for (; k > 0; --k, ++j) {
-        Uint vertex_index = m_coord_indices[j];
-        Vector3f& v = (*m_coord_array)[vertex_index];
-        Float weight = 1.0f / v.sqr_distance(center);
-        vertices_info[vertex_index].push_back(Weight_normal_pair(weight, n));
-      }
-      if (m_primitive_type == PT_POLYGONS) ++j; // skip the end-of-face marker
-      break;
+    break;
       
-     case PT_TRIANGLE_STRIP: break;
-     case PT_TRIANGLE_FAN: break;
-     case PT_QUAD_STRIP:
-     default: SGAL_assertion(0); break;
+   case PT_QUADS:
+    for (i = 0; i < m_num_primitives; ++i) {
+      Vector3f normal;
+      Vector3f center;
+      compute_quad_center(j, center);
+      compute_quad_vertex_info(j, i, center, vertices_info);
+      j += 4;
     }
+    break;
+      
+   case PT_POLYGONS:
+    for (i = 0; i < m_num_primitives; ++i) {
+      Vector3f normal;
+      Vector3f center;
+      compute_polygon_normal(j, normal);
+      Uint k = compute_polygon_center(j, center);
+      compute_polygon_vertex_info(j, i, k, center, vertices_info);
+      j += k + 1;       // skip the end-of-face marker
+    }
+    break;
+      
+   case PT_TRIANGLE_STRIP: 
+   case PT_TRIANGLE_FAN: 
+   case PT_QUAD_STRIP:
+   default: SGAL_assertion(0); break;
   }
+
+  // Initialize the normal array.
+  m_normal_array->resize(m_coord_array->size());
 
   // Calculate the weighted normals:
   for (j = 0; j < vertices_info.size(); ++j) {
     Float weight_sum = 0;
-    Vertex_const_iter it;
+    Vertex_info_const_iter it;
     Vector3f n;
     for (it = vertices_info[j].begin(); it != vertices_info[j].end(); ++it) {
-      Float weight = it->first;
-      const Vector3f& normal = it->second;
+      Uint facet_index = it->first;
+      Float weight = it->second;
+      const Vector3f& normal = normal_array[facet_index];
 
       weight_sum += weight;                     // accumulate the weight
       Vector3f tmp;
@@ -808,35 +928,41 @@ void Indexed_face_set::calculate_normals_per_vertex()
   set_normal_per_vertex(true);
 }
 
-/*! \brief calculates a single normal per polygon for all polygons */
-void Indexed_face_set::calculate_normals_per_polygon()
+Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
+                                    const Vector3f& normal2) const
 {
-  m_normal_array->resize(m_num_primitives);
+  float angle = acosf(normal1.dot(normal2));
+  return (angle > m_crease_angle);
+}
+
+/*! \brief calculates multiple normals per vertex for all vertices */
+void Indexed_face_set::calculate_multiple_normals_per_vertex()
+{
+  calculate_single_normal_per_vertex();
+}
+
+/*! \brief calculates a single normal per polygon for all polygons */
+void Indexed_face_set::calculate_normal_per_polygon(Normal_array* normal_array)
+{
+  normal_array->resize(m_num_primitives);
 
   Uint j = 0;
   for (Uint i = 0 ; i < m_num_primitives ; i++) {
-    Vector3f& v1 = (*m_coord_array)[m_coord_indices[j]];
-    Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+1]];
-    Vector3f& v3 = (*m_coord_array)[m_coord_indices[j+2]];
+    Vector3f normal;
 
-    Vector3f l1, l2;
-    l1.sub(v2, v1);
-    l2.sub(v3, v2);
-    Vector3f n;
-    if (m_is_ccw) {
-      n.cross(l1, l2); 
-    } else {
-      n.cross(l2, l1); 
-    }
-    n.normalize();
-    (*m_normal_array)[i] = n;
-
-    // Advance to next primitive:
     switch (m_primitive_type) {
-     case PT_TRIANGLES: j += 3; break;
-     case PT_QUADS: j += 4; break;
+     case PT_TRIANGLES:
+      compute_triangle_normal(j, (*normal_array)[i]);
+      j += 3;
+      break;
+
+     case PT_QUADS:
+      compute_quad_normal(j, (*normal_array)[i]);
+      j += 4;
+      break;
 
      case PT_POLYGONS:
+      compute_polygon_normal(j, (*normal_array)[i]);
       for (; m_coord_indices[j] != (Uint) -1; ++j);     // advance to end
       ++j;                                      // skip the end-of-face marker
       break;
@@ -847,6 +973,14 @@ void Indexed_face_set::calculate_normals_per_polygon()
      default: SGAL_assertion(0); break;
     }
   }
+}
+
+/*! \brief calculates a single normal per polygon for all polygons */
+void Indexed_face_set::calculate_normal_per_polygon()
+{
+  m_normal_array = new Normal_array;
+  m_own_normal_array = true;
+  calculate_normal_per_polygon(m_normal_array);
   set_normal_per_vertex(false);
 }
 
@@ -891,10 +1025,8 @@ void Indexed_face_set::draw(Draw_action* action)
   if (is_empty()) return;
   
   // Clean the normals:
-  if ((resolve_fragment_source() == FS_NORMAL) && m_dirty_normals) {
-    if (!m_normal_array) allocate_normals();
+  if ((resolve_fragment_source() == FS_NORMAL) && m_dirty_normals)
     clean_normals();
-  }
 
   // Clean the tex coordinates:
   //! add vertex buffer object for the tex-coords
@@ -953,7 +1085,7 @@ void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
     ((m_color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE);
   Boolean texture_enbaled = m_tex_coord_array ? true : false;
   Boolean texture_indexed = m_tex_coord_indices.size() ? true : false;
-  Boolean va = m_drawing_mode == Configuration::GDM_VERTEX_ARRAY;
+  Boolean va = use_vertex_array();
 
   Uint mask =
     SET(FRAGMENT_SOURCE,FRAGMENT_SOURCE_,fragment_source,
@@ -1188,6 +1320,8 @@ Container_proto* Indexed_face_set::get_prototype()
 /*! Create the data structure of the vertex buffer object */
 void Indexed_face_set::create_vertex_buffer_object()
 {
+  std::cout << "create_vertex_buffer_object" << std::endl;
+  
 #if defined(GL_ARB_vertex_buffer_object)
   std::cout << "Using vertex buffer object extension!" << std::endl;
   
