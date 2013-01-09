@@ -47,7 +47,7 @@ Ego_voxels_filler_graph::num_vertices() const {
   size_t x, y, z;
   boost::tie(x, y, z) = m_voxels.size();
   vertices_size_type ret = x * y * z;
-  SGAL_assertion(ret == std::distance(vertices.first, vertices.second));
+  // SGAL_assertion(ret == std::distance(vertices.first, vertices.second));
   return ret;
 }
 

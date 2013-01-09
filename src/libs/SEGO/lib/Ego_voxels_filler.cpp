@@ -118,9 +118,9 @@ void Ego_voxels_filler::operator() (Ego_voxels* voxels) const {
     size_t j = (*it).get<1>();
     size_t k = (*it).get<2>();
 
-    SGAL_assertion (i < voxels->voxels.size());
-    SGAL_assertion (j < voxels->voxels[0].size());
-    SGAL_assertion (k < voxels->voxels[0][0].size());
+    // SGAL_assertion (i < voxels->voxels.size());
+    // SGAL_assertion (j < voxels->voxels[0].size());
+    // SGAL_assertion (k < voxels->voxels[0][0].size());
     
     // If it is not filled and it is not a boundary
     if (voxels->is_filled(i, j, k) == false) {
