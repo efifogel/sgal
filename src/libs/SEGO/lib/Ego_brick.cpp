@@ -40,6 +40,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Utilities.hpp"
 
 #include "SEGO/Ego_brick.hpp"
 
@@ -91,8 +92,9 @@ void Ego_brick::clean()
   // Clear internal representation:
   if (!m_coord_array) m_coord_array = new Coord_array;
 
-  //m_primitive_type = PT_TRIANGLES;
-
+  m_primitive_type = PT_TRIANGLES;
+  m_crease_angle = 0;
+  
   // Generate points:
   Uint size = 8;
   m_num_primitives = 6 * 2;
@@ -177,70 +179,58 @@ void Ego_brick::clean()
   // Generates coordinate indices:
 
   // Box
-  m_are_indices_flat = false;
+  m_are_indices_flat = true;
   k = 0;
-  Uint num_indices = m_num_primitives * 4;
+  Uint num_indices = m_num_primitives * 3;
   m_coord_indices.resize(num_indices);
 
   // Bottom
   m_coord_indices[k++] = 0;
   m_coord_indices[k++] = 2;
   m_coord_indices[k++] = 1;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
   m_coord_indices[k++] = 0;
   m_coord_indices[k++] = 3;
   m_coord_indices[k++] = 2;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
 
   // top
   m_coord_indices[k++] = 4;
   m_coord_indices[k++] = 5;
   m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
   m_coord_indices[k++] = 4;
   m_coord_indices[k++] = 6;
   m_coord_indices[k++] = 7;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
 
   // left
   m_coord_indices[k++] = 0;
   m_coord_indices[k++] = 4;
   m_coord_indices[k++] = 7;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
   m_coord_indices[k++] = 0;
   m_coord_indices[k++] = 7;
   m_coord_indices[k++] = 3;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
 
   // Right
   m_coord_indices[k++] = 1;
   m_coord_indices[k++] = 2;
   m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
   m_coord_indices[k++] = 1;
   m_coord_indices[k++] = 6;
   m_coord_indices[k++] = 5;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
 
   // Near
   m_coord_indices[k++] = 0;
   m_coord_indices[k++] = 1;
   m_coord_indices[k++] = 5;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
   m_coord_indices[k++] = 0;
   m_coord_indices[k++] = 5;
   m_coord_indices[k++] = 4;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
 
   // Far
   m_coord_indices[k++] = 2;
   m_coord_indices[k++] = 3;
   m_coord_indices[k++] = 7;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
   m_coord_indices[k++] = 2;
   m_coord_indices[k++] = 7;
   m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
 
   // Knobs:
   if (m_are_knobs_visible) {
@@ -258,11 +248,9 @@ void Ego_brick::clean()
           m_coord_indices[k++] = a;
           m_coord_indices[k++] = b;
           m_coord_indices[k++] = c;
-          m_coord_indices[k++] = static_cast<Uint>(-1);
           m_coord_indices[k++] = a;
           m_coord_indices[k++] = c;
           m_coord_indices[k++] = d;
-          m_coord_indices[k++] = static_cast<Uint>(-1);
         }
 
         // Top
@@ -271,7 +259,6 @@ void Ego_brick::clean()
           Uint tmp = base + 1 + m_knob_slices;
           m_coord_indices[k++] = tmp + l;
           m_coord_indices[k++] = tmp + ((l+1) % m_knob_slices);
-          m_coord_indices[k++] = static_cast<Uint>(-1);
         }
         base += 1 + m_knob_slices * 2;
       }
@@ -297,8 +284,8 @@ void Ego_brick::set_attributes(Element * elem)
   typedef Element::Str_attr_iter Str_attr_iter;
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "numberOfKnobs1") {
       set_number_of_knobs1(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
@@ -339,6 +326,11 @@ void Ego_brick::set_attributes(Element * elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "knobsVisible") {
+      set_knobs_visible(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    } 
   }
   
   // Remove all the deleted attributes:
