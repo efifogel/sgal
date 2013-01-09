@@ -43,6 +43,7 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Field_infos.hpp"
 
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
@@ -57,13 +58,25 @@ std::string Ego_geo::s_tag = "Ego";
 Container_proto* Ego_geo::s_prototype = NULL;
 
 const Float Ego_geo::s_def_scale(1);
+const Ego_voxels_tiler::First_tile_placement 
+Ego_geo::s_def_first_tile_placement(Ego_voxels_tiler::FIRST00);
+const Ego_voxels_tiler::Strategy
+Ego_geo::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
+const Ego_voxels_tiler::Tiling_rows
+Ego_geo::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
+
 
 REGISTER_TO_FACTORY(Ego_geo, "Ego_geo");
 
 /*! Constructor */
 Ego_geo::Ego_geo(Boolean proto) :
   Geometry(proto),
+  m_first_tile_placement(s_def_first_tile_placement),
+  m_tiling_strategy(s_def_tiling_strategy),
+  m_tiling_rows_direction(s_def_tiling_rows_direction),
   m_dirty(true),
+  m_voxels_dirty(true),
+  m_tiling_dirty(true),
   m_scale(s_def_scale)
 {
 }
@@ -84,9 +97,34 @@ void Ego_geo::clear()
 /*! \brief initializes the container prototype */
 void Ego_geo::init_prototype()
 {
+    //! Container execution function
+  typedef void (Container::* Execution_function)(Field_info*);
+  
+  // Add the field-info records to the prototype:
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Ego_geo::tiling_changed);
+
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
+  // We use SF_int (instead of SF_uint) to allow connecting the value
+  // field of an Incrementor, which is of int type (and not Uint) to this
+  // field.
+  s_prototype->add_field_info(new SF_int(FIRST_TILE_PLACEMENT,
+                                         "firstTilePlacement",
+                                         get_member_offset(&m_first_tile_placement),
+                                         exec_func));
+  
+  s_prototype->add_field_info(new SF_int(TILING_STRATEGY,
+                                         "tilingStrategy",
+                                         get_member_offset(&m_tiling_strategy),
+                                         exec_func));
+  
+  s_prototype->add_field_info(new SF_int(TILING_ROWS_DIRECTION,
+                                         "tilingRowsDirection",
+                                         get_member_offset(&m_tiling_rows_direction),
+                                         exec_func));
+  
 }
 
 /*! \brief deletes the container prototype */
@@ -163,6 +201,25 @@ void Ego_geo::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "firstTilePlacement") {
+      size_t val = boost::lexical_cast<size_t>(value);
+      set_first_tile_placement(static_cast<Ego_voxels_tiler::First_tile_placement>(val));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "tilingStrategy") {
+      size_t val = boost::lexical_cast<size_t>(value);
+      set_tiling_strategy(static_cast<Ego_voxels_tiler::Strategy>(val));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "tilingRowsDirection") {
+      size_t val = boost::lexical_cast<size_t>(value);
+      set_tiling_rows_direction(static_cast<Ego_voxels_tiler::Tiling_rows>(val));
+      elem->mark_delete(ai);
+      continue;
+    }
+
   }
 
   // Remove all the deleted attributes:
@@ -186,6 +243,8 @@ const Geo_set* Ego_geo::get_geo_set_model() const {
 /*! \brief clean the representation */
 void Ego_geo::clean()
 {
+  m_dirty = false;
+
   // This is temp code until we have something that can visualize it better.
   const double dx = 0.1 / m_scale;
   const double dy = 0.1 / m_scale;
@@ -209,28 +268,35 @@ void Ego_geo::clean()
   m_ego_brick_without_knobs.set_knob_height(0.25 * dx);
   m_ego_brick_without_knobs.set_tolerance(0.1 * dx);
   m_ego_brick_without_knobs.set_knobs_visible(false);
-  
-  Ego_voxelizer voxelize (dx, dy, dz);
-  Ego_voxels_filler fill;
 
-  if (this->is_model_polyhedron())
-    m_voxels_origin = 
-      voxelize(this->get_polyhedron_model()->get_polyhedron(), &m_voxels);
-  else if (this->is_model_geo_set())
-    m_voxels_origin = 
-      voxelize(*(this->get_geo_set_model()), &m_voxels);
+  if (m_voxels_dirty) {
+    m_voxels_dirty = false;
+    m_tiling_dirty = true;
+    
+    Ego_voxelizer voxelize (dx, dy, dz);
+    Ego_voxels_filler fill;
 
-  fill(&m_voxels);
-  
-  
-  adjust_voxels_for_tiling();
-  Ego_voxels_tiler::First_tile_placement first_tile = Ego_voxels_tiler::FIRST00;
-  Ego_voxels_tiler::Strategy strategy = Ego_voxels_tiler::NONGRID;
-  Ego_voxels_tiler::Tiling_rows tiling_rows = Ego_voxels_tiler::YROWS;
-  Ego_voxels_tiler tile(first_tile, strategy, tiling_rows);
-  tile(&m_voxels);
+    m_voxels = Ego_voxels(); // Clear - should we make a func?
+    if (this->is_model_polyhedron())
+      m_tiled_voxels_origin = 
+        voxelize(this->get_polyhedron_model()->get_polyhedron(), &m_voxels);
+    else if (this->is_model_geo_set())
+      m_tiled_voxels_origin = 
+        voxelize(*(this->get_geo_set_model()), &m_voxels);
+    
+    fill(&m_voxels);
+    adjust_voxels_for_tiling();
+  }
 
-  m_dirty = false;
+  if (m_tiling_dirty) {
+    m_tiling_dirty = false;
+    
+    m_tiled_voxels = m_voxels;
+    Ego_voxels_tiler tile(m_first_tile_placement,
+                          m_tiling_strategy,
+                          m_tiling_rows_direction);
+    tile(&m_tiled_voxels);
+  }
 }
 
 /*! \brief draws the geometry */
@@ -242,17 +308,17 @@ void Ego_geo::draw(Draw_action* action)
   const double dy = 0.1 / m_scale;
   const double dz = 0.1 / m_scale;
 
-  Ego_voxels::size_type size = m_voxels.size();
+  Ego_voxels::size_type size = m_tiled_voxels.size();
 
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
-        if (m_voxels.is_filled(i, j, k) == false)
+        if (m_tiled_voxels.is_filled(i, j, k) == false)
           continue;
         
-        double x = CGAL::to_double(m_voxels_origin.x()) + i*dx;
-        double y = CGAL::to_double(m_voxels_origin.y()) + j*dy;
-        double z = CGAL::to_double(m_voxels_origin.z()) + k*dz;
+        double x = CGAL::to_double(m_tiled_voxels_origin.x()) + i*dx;
+        double y = CGAL::to_double(m_tiled_voxels_origin.y()) + j*dy;
+        double z = CGAL::to_double(m_tiled_voxels_origin.z()) + k*dz;
 
         glPushMatrix();
         glTranslatef(x+dx/2, y+dy/2, z+dz/2);
@@ -260,7 +326,7 @@ void Ego_geo::draw(Draw_action* action)
         // I don't know what is the best way to check.
         // Draw alwyas without knobs as this is heavy.
         boost::optional<Ego_voxels::size_type> brick =
-          m_voxels.get_brick(i, j, k);
+          m_tiled_voxels.get_brick(i, j, k);
 
         if (brick) {
           SGAL_assertion(brick->get<0>() == 2 && brick->get<1>() == 2);
@@ -270,7 +336,7 @@ void Ego_geo::draw(Draw_action* action)
           for (size_t s = 0; s < brick->get<0>(); ++s) {
             for (size_t t = 0; t < brick->get<1>(); ++t) {
               if ((k == size.get<2>() - 1) ||
-                  (!m_voxels.is_filled(i+s, j+t, k+1)))
+                  (!m_tiled_voxels.is_filled(i+s, j+t, k+1)))
                 should_draw_knobs = true;
             }
           }
@@ -291,6 +357,15 @@ void Ego_geo::draw(Draw_action* action)
   //Camera* camera = context->get_active_camera();
 
 }
+
+void Ego_geo::tiling_changed(Field_info * ) {
+  // We should do an optimization so we won't compute all the voxels each
+  // time. For now, we do.
+  
+  m_dirty = true;
+  m_tiling_dirty = true;
+}
+
 
 /*! \brief */
 void Ego_geo::cull(Cull_context& cull_context)
@@ -321,7 +396,7 @@ void Ego_geo::adjust_voxels_for_tiling() {
   const double dx = 0.1 / m_scale;
   const double dy = 0.1 / m_scale;
   Exact_polyhedron_geo::Kernel::Vector_3 diff(-dx, -dy, 0);
-  m_voxels_origin = m_voxels_origin + diff;
+  m_tiled_voxels_origin = m_tiled_voxels_origin + diff;
   
   // Now offset the voxels.
   m_voxels.offset_xy_layers(1);

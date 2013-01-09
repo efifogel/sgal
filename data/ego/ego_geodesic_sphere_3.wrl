@@ -13,6 +13,28 @@ Viewpoint {
   radiusScale 0.7
 }
 
+DEF INC_FIRST_TILE_KEY SingleKeySensor { key "q" }
+DEF INC_FIRST_TILE Incrementor {
+  minValue 0
+  maxValue 3
+  value 1
+}
+
+DEF INC_TILING_STRATEGY_KEY SingleKeySensor { key "w" }
+DEF INC_TILING_STRATEGY Incrementor {
+  minValue 0
+  maxValue 1
+  value 1
+}
+
+DEF INC_TILING_ROW_KEY SingleKeySensor { key "e" }
+DEF INC_TILING_ROW Incrementor {
+  minValue 0
+  maxValue 1
+  value 1
+}
+
+
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
@@ -635,5 +657,14 @@ ROUTE AOS_MODEL_VISIBLE_KEY.state TO INC_MODEL_VISIBLE.trigger
 ROUTE INC_MODEL_VISIBLE.value TO SWITCH_MODEL.whichChoice
 
 ROUTE SNAP_KEY.state TO SNAP.trigger
+
+ROUTE INC_FIRST_TILE_KEY.state TO INC_FIRST_TILE.trigger
+ROUTE INC_FIRST_TILE.value TO GEOM.firstTilePlacement
+
+ROUTE INC_TILING_STRATEGY_KEY.state TO INC_TILING_STRATEGY.trigger
+ROUTE INC_TILING_STRATEGY.value TO GEOM.tilingStrategy
+
+ROUTE INC_TILING_ROW_KEY.state TO INC_TILING_ROW.trigger
+ROUTE INC_TILING_ROW.value TO GEOM.tilingRowsDirection
 
 # ROUTE EXPORT_KEY.press TO GEOM.export
