@@ -51,10 +51,10 @@ float Vector3f::get_max_comp()
  */
 void Vector3f::normalize1()
 {
-  float length_reciprocal = length_reciprocal1();
-  m_vector[0] *= length_reciprocal;
-  m_vector[1] *= length_reciprocal;
-  m_vector[2] *= length_reciprocal;
+  float lr = length_reciprocal();
+  m_vector[0] *= lr;
+  m_vector[1] *= lr;
+  m_vector[2] *= lr;
 }
 
 /*! Sets this vector to be v, thought of as a row vector, times the 3X3
@@ -111,6 +111,21 @@ void Vector3f::full_xform_pt(const Vector3f & v, const Matrix4f & m)
   m_vector[0] = (t[0]*m[0][0] + t[1]*m[1][0] + t[2]*m[2][0] + m[3][0]) / w;
   m_vector[1] = (t[0]*m[0][1] + t[1]*m[1][1] + t[2]*m[2][1] + m[3][1]) / w;
   m_vector[2] = (t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2] + m[3][2]) / w;
+}
+
+/*! \brief Are three given points collinear? */
+bool Vector3f::collinear(const Vector3f& v1, const Vector3f& v2,
+                         const Vector3f& v3)
+{
+  float x1 = v2[0] - v1[0];
+  float y1 = v2[1] - v1[1];
+  float z1 = v2[2] - v1[2];
+  float x2 = v3[0] - v2[0];
+  float y2 = v3[1] - v2[1];
+  float z2 = v3[2] - v2[2];
+  return (((x1 * y2) == (x2 * y1)) &&
+          ((y1 * z2) == (y2 * z1)) &&
+          ((z1 * x2) == (z2 * x1)));
 }
 
 SGAL_END_NAMESPACE
