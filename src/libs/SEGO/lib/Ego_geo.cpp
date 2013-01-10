@@ -45,18 +45,23 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Field_infos.hpp"
 
+#include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 #include "SEGO/Ego_geo.hpp"
 #include "SEGO/Ego_voxels_filler.hpp"
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxels_tiler.hpp"
+#include "SEGO/Ego_voxelizer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 std::string Ego_geo::s_tag = "Ego";
 Container_proto* Ego_geo::s_prototype = NULL;
 
+const Float Ego_geo::s_def_voxel_width(8.2);
+const Float Ego_geo::s_def_voxel_length(8.2);
+const Float Ego_geo::s_def_voxel_height(9.6);
 const Float Ego_geo::s_def_scale(1);
 const Ego_voxels_tiler::First_tile_placement 
 Ego_geo::s_def_first_tile_placement(Ego_voxels_tiler::FIRST00);
@@ -71,6 +76,9 @@ REGISTER_TO_FACTORY(Ego_geo, "Ego_geo");
 /*! Constructor */
 Ego_geo::Ego_geo(Boolean proto) :
   Geometry(proto),
+  m_voxel_width(s_def_voxel_width),
+  m_voxel_lebgth(s_def_voxel_length),
+  m_voxel_height(s_def_voxel_height),  
   m_first_tile_placement(s_def_first_tile_placement),
   m_tiling_strategy(s_def_tiling_strategy),
   m_tiling_rows_direction(s_def_tiling_rows_direction),
@@ -110,6 +118,18 @@ void Ego_geo::init_prototype()
   // We use SF_int (instead of SF_uint) to allow connecting the value
   // field of an Incrementor, which is of int type (and not Uint) to this
   // field.
+  s_prototype->add_field_info(new SF_float(VOXEL_WIDTH, "voxelWidth",
+                                           get_member_offset(&m_voxel_width),
+                                           exec_func));
+
+  s_prototype->add_field_info(new SF_float(VOXEL_LENGTH, "voxelLength",
+                                           get_member_offset(&m_voxel_length),
+                                           exec_func));
+
+  s_prototype->add_field_info(new SF_float(VOXEL_HEIGHT, "voxelHeight",
+                                           get_member_offset(&m_voxel_height),
+                                           exec_func));
+
   s_prototype->add_field_info(new SF_int(FIRST_TILE_PLACEMENT,
                                          "firstTilePlacement",
                                          get_member_offset(&m_first_tile_placement),
@@ -177,17 +197,22 @@ void Ego_geo::set_attributes(Element* elem)
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "model") {
-      Exact_polyhedron_geo* poly = dynamic_cast<Exact_polyhedron_geo*>(cont);
+      Exact_polyhedron_geo* epoly = dynamic_cast<Exact_polyhedron_geo*>(cont);
+      if (epoly != NULL) {
+        set_model(epoly);
+        elem->mark_delete(cai);
+        continue;
+      }
+      Polyhedron_geo* poly = dynamic_cast<Polyhedron_geo*>(cont);
       if (poly != NULL) {
         set_model(poly);
         elem->mark_delete(cai);
         continue;
-      } else {
-        Geo_set* ifs = dynamic_cast<Geo_set*>(cont);
-        set_model(ifs);
-        elem->mark_delete(cai);
-        continue;
       }
+      Geo_set* ifs = dynamic_cast<Geo_set*>(cont);
+      set_model(ifs);
+      elem->mark_delete(cai);
+      continue;
     }
   }
 
@@ -196,6 +221,21 @@ void Ego_geo::set_attributes(Element* elem)
        ai != elem->str_attrs_end(); ai++) {
     const std::string & name = elem->get_name(ai);
     const std::string & value = elem->get_value(ai);
+    if (name == "voxelWidth") {
+      set_voxel_width(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "voxelLength") {
+      set_voxel_length(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+     if (name == "voxelheight") {
+      set_voxel_height(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
     if (name == "scale") {
       set_scale(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -232,7 +272,11 @@ Boolean Ego_geo::is_empty() { return true; }
 /*! Obtain the model.
  * \return the model.
  */
-const Exact_polyhedron_geo* Ego_geo::get_polyhedron_model() const {
+const Polyhedron_geo* Ego_geo::get_polyhedron_model() const {
+  return boost::get<Polyhedron_geo*>(m_model);
+}
+
+const Exact_polyhedron_geo* Ego_geo::get_exact_polyhedron_model() const {
   return boost::get<Exact_polyhedron_geo*>(m_model);
 }
 
@@ -246,28 +290,15 @@ void Ego_geo::clean()
   m_dirty = false;
 
   // This is temp code until we have something that can visualize it better.
-  const double dx = 0.1 / m_scale;
-  const double dy = 0.1 / m_scale;
-  const double dz = 0.1 / m_scale;
+  const double dx = m_voxel_length;
+  const double dy = m_voxel_width;
+  const double dz = m_voxel_height;
 
   m_ego_brick.set_number_of_knobs1(2);
   m_ego_brick.set_number_of_knobs2(2);
 
-  m_ego_brick.set_pitch(dx - 0.2 * dx);
-  m_ego_brick.set_height(dz - 0.01 * dz);
-  m_ego_brick.set_knob_radius(0.25 * dx);
-  m_ego_brick.set_knob_height(0.25 * dx);
-  m_ego_brick.set_tolerance(0.1 * dx);
-
   m_ego_brick_without_knobs.set_number_of_knobs1(2);
   m_ego_brick_without_knobs.set_number_of_knobs2(2);
-
-  m_ego_brick_without_knobs.set_pitch(dx - 0.2 * dx);
-  m_ego_brick_without_knobs.set_height(dz - 0.01 * dz);
-  m_ego_brick_without_knobs.set_knob_radius(0.25 * dx);
-  m_ego_brick_without_knobs.set_knob_height(0.25 * dx);
-  m_ego_brick_without_knobs.set_tolerance(0.1 * dx);
-  m_ego_brick_without_knobs.set_knobs_visible(false);
 
   if (m_voxels_dirty) {
     m_voxels_dirty = false;
@@ -279,10 +310,15 @@ void Ego_geo::clean()
     m_voxels = Ego_voxels(); // Clear - should we make a func?
     if (this->is_model_polyhedron())
       m_tiled_voxels_origin = 
-        voxelize(this->get_polyhedron_model()->get_polyhedron(), &m_voxels);
+        voxelize(this->get_polyhedron_model()->get_polyhedron(),
+                 m_scale, &m_voxels);
+    if (this->is_model_exact_polyhedron())
+      m_tiled_voxels_origin = 
+        voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
+                 m_scale, &m_voxels);
     else if (this->is_model_geo_set())
       m_tiled_voxels_origin = 
-        voxelize(*(this->get_geo_set_model()), &m_voxels);
+        voxelize(*(this->get_geo_set_model()), m_scale, &m_voxels);
     
     fill(&m_voxels);
     adjust_voxels_for_tiling();
@@ -304,9 +340,9 @@ void Ego_geo::draw(Draw_action* action)
 {
   if (m_dirty) clean();
 
-  const double dx = 0.1 / m_scale;
-  const double dy = 0.1 / m_scale;
-  const double dz = 0.1 / m_scale;
+  const double dx = m_voxel_length;
+  const double dy = m_voxel_width;
+  const double dz = m_voxel_height;
 
   Ego_voxels::size_type size = m_tiled_voxels.size();
 
@@ -378,9 +414,26 @@ void Ego_geo::isect(Isect_action* action)
   //! \todo isect with a sphere
 }
 
-/*! \brief */
+/*! \brief calculate sphere bound of the node */
 Boolean Ego_geo::calculate_sphere_bound()
 {
+  if (!m_is_sphere_bound_dirty) return false;
+
+  if (m_dirty) clean();
+
+  Ego_voxels::size_type size = m_tiled_voxels.size();
+  Vector3f offset(m_voxel_length * size.get<0>() / 2,
+                  m_voxel_width * size.get<1>() / 2,
+                  m_voxel_height * size.get<2>() / 2);
+  Vector3f center(CGAL::to_double(m_tiled_voxels_origin.x()),
+                  CGAL::to_double(m_tiled_voxels_origin.y()),
+                  CGAL::to_double(m_tiled_voxels_origin.z()));
+  center.add(offset);
+  float radius = offset.length();
+
+  m_sphere_bound.set_center(center);
+  m_sphere_bound.set_radius(radius);
+  m_is_sphere_bound_dirty = false;
   return true;
 }
 
@@ -393,8 +446,8 @@ void Ego_geo::adjust_voxels_for_tiling() {
   // the xy-plane.
   
   // First, we move the origin. Don't touch z.
-  const double dx = 0.1 / m_scale;
-  const double dy = 0.1 / m_scale;
+  const double dx = m_voxel_length;
+  const double dy = m_voxel_width;
   Exact_polyhedron_geo::Kernel::Vector_3 diff(-dx, -dy, 0);
   m_tiled_voxels_origin = m_tiled_voxels_origin + diff;
   

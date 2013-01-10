@@ -37,40 +37,45 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Ego_voxelizer::Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& voxel_width,
+Ego_voxelizer::Ego_voxelizer(const Kernel::FT& voxel_length,
+                             const Kernel::FT& voxel_width,
                              const Kernel::FT& voxel_height) {
   m_voxel_dimensions[0] = voxel_length;
   m_voxel_dimensions[1] = voxel_width;
   m_voxel_dimensions[2] = voxel_height;
 }
 
-/** 
- * @return The origin of the voxels structure.
- */
+/*! \brief voxelize */
 Ego_voxelizer::Point_3
-Ego_voxelizer::operator() (const Polyhedron& polyhedron,
-                           Ego_voxels* out_voxels) const {
-  
-  // Later we might assume only convexity.
+Ego_voxelizer::operator()(const Polyhedron& polyhedron, float scale,
+                          Ego_voxels* out_voxels) const {
   SGAL_assertion(polyhedron.is_pure_triangle());
   
-  Triangles triangles = create_triangles_from_polyhedron(polyhedron);
+  Triangles triangles = create_triangles_from_polyhedron(polyhedron, scale);
   return operator() (triangles, out_voxels);
 }
 
-/** 
- * @return The origin of the voxels structure.
- */
+/*! \brief voxelize */
 Ego_voxelizer::Point_3
-Ego_voxelizer::operator() (const Geo_set& geo_set,
+Ego_voxelizer::operator() (const Exact_polyhedron& polyhedron, float scale,
                            Ego_voxels* out_voxels) const {
-  Triangles triangles = create_triangles_from_geo_set(geo_set);
+  // Later we might assume only convexity.
+  SGAL_assertion(polyhedron.is_pure_triangle());
+  Triangles triangles = create_triangles_from_polyhedron(polyhedron, scale);
+  return operator() (triangles, out_voxels);
+}
+
+/*! \brief voxelize */
+Ego_voxelizer::Point_3
+Ego_voxelizer::operator() (const Geo_set& geo_set, float scale,
+                           Ego_voxels* out_voxels) const {
+  Triangles triangles = create_triangles_from_geo_set(geo_set, scale);
   return operator() (triangles, out_voxels);
 }
 
 Ego_voxelizer::Point_3
 Ego_voxelizer::operator() (const Triangles& triangles,
-                                Ego_voxels* out_voxels) const {
+                           Ego_voxels* out_voxels) const {
   SGAL_assertion(out_voxels != NULL);
   
   Point_3 origin = create_voxels_from_triangles(triangles, out_voxels);
@@ -87,15 +92,51 @@ Ego_voxelizer::operator() (const Triangles& triangles,
   return origin;
 }
 
+/*! \brief */
 Ego_voxelizer::Triangles
-Ego_voxelizer::create_triangles_from_polyhedron
-(const Polyhedron& polyhedron) const {
+Ego_voxelizer::
+create_triangles_from_polyhedron(const Polyhedron& polyhedron, float scale)
+  const
+{
   Triangles ret;
 
   for (Polyhedron::Facet_const_iterator it = polyhedron.facets_begin();
+       it != polyhedron.facets_end(); ++it)
+  {
+    Polyhedron::Halfedge_around_facet_const_circulator cit = it->facet_begin();
+    Point_3 points[3];
+    points[0] = Point_3(Kernel::FT(cit->vertex()->point().x() * scale),
+            Kernel::FT(cit->vertex()->point().y() * scale),
+            Kernel::FT(cit->vertex()->point().z() * scale));
+    cit++;
+    points[1] = Point_3(Kernel::FT(cit->vertex()->point().x() * scale),
+            Kernel::FT(cit->vertex()->point().y() * scale),
+            Kernel::FT(cit->vertex()->point().z() * scale));
+    cit++;
+    points[2] = Point_3(Kernel::FT(cit->vertex()->point().x() * scale),
+            Kernel::FT(cit->vertex()->point().y() * scale),
+            Kernel::FT(cit->vertex()->point().z() * scale));
+    cit++;
+    Triangle_3 triangle(points[0], points[1], points[2]);
+    ret.push_back(triangle);
+  }
+
+  return ret;
+}
+
+/*! \brief */
+Ego_voxelizer::Triangles
+Ego_voxelizer::
+create_triangles_from_polyhedron(const Exact_polyhedron& polyhedron,
+                                 float scale) const
+{
+  Triangles ret;
+
+  for (Exact_polyhedron::Facet_const_iterator it = polyhedron.facets_begin();
        it != polyhedron.facets_end(); ++it) {
     
-    Polyhedron::Halfedge_around_facet_const_circulator cit = it->facet_begin();
+    Exact_polyhedron::Halfedge_around_facet_const_circulator cit =
+      it->facet_begin();
     Point_3 points[3];
     points[0] = cit->vertex()->point(); cit++;
     points[1] = cit->vertex()->point(); cit++;
@@ -108,8 +149,10 @@ Ego_voxelizer::create_triangles_from_polyhedron
   return ret;
 }
 
+/*! \brief */
 Ego_voxelizer::Triangles
-Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set) const {
+Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set,
+                                             float scale) const {
 
   Triangles res;
   
@@ -126,16 +169,15 @@ Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set) const {
 
     SGAL_assertion(*it < coords.size());
 
-    triangle[j] = Point_3(Kernel::FT(coords[*it][0]),
-                          Kernel::FT(coords[*it][1]),
-                          Kernel::FT(coords[*it][2]));
+    triangle[j] = Point_3(Kernel::FT(coords[*it][0] * scale),
+                          Kernel::FT(coords[*it][1] * scale),
+                          Kernel::FT(coords[*it][2] * scale));
     if (j == 2)
       res.push_back(Triangle_3(triangle[0], triangle[1], triangle[2]));
   }
   
   return res;
 }
-
 
 Ego_voxelizer::Point_3
 Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
@@ -363,7 +405,6 @@ Ego_voxelizer::get_first_point_for_segment(const Point_3& psegment,
 
   return res;
 }
-
 
 void Ego_voxelizer::intersect_triangle_with_planes(const Triangle_3& triangle,
                                                    const std::vector<Plane_3>& planes,

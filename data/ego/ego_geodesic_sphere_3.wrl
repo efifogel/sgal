@@ -60,7 +60,7 @@ Transform {
           appearance Appearance {
             material Material {}
           }
-          geometry DEF MODEL ExactPolyhedron {
+          geometry DEF MODEL Polyhedron {
             coord Coordinate {
               point [
                  .2764 -.4472 .8507,
@@ -582,6 +582,7 @@ Transform {
         material Material {}
       }
       geometry DEF GEOM Ego {
+	scale 100
         model USE MODEL
         # parts {
         #   children [

@@ -30,8 +30,10 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"
 
+#include "SCGAL/Polyhedron_geo.hpp"
+#include "SCGAL/Exact_polyhedron_geo.hpp"
+
 #include "SEGO/Ego_brick.hpp"
-#include "SEGO/Ego_voxelizer.hpp"
 #include "SEGO/Ego_voxels.hpp"
 #include "SEGO/Ego_voxels_tiler.hpp"
 
@@ -42,6 +44,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 class Cull_context;
+class Polyhedron_geo;
 class Exact_polyhedron_geo;
 
 class SGAL_CLASSDEF Ego_geo : public Geometry {
@@ -50,6 +53,9 @@ public:
     FIRST = Geometry::LAST - 1,
     MODEL,
     PARTS,
+    VOXEL_WIDTH,
+    VOXEL_LENGTH,
+    VOXEL_HEIGHT,
     FIRST_TILE_PLACEMENT,
     TILING_STRATEGY,
     TILING_ROWS_DIRECTION,
@@ -93,7 +99,7 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! */
+  /*! Calculate sphere bound of the node */
   virtual Boolean calculate_sphere_bound();
 
   /*! Determine whether the geometry has color (as opposed to material)
@@ -119,6 +125,10 @@ public:
    * \return true if this is the type of the model.
    */
   bool is_model_polyhedron() const {
+    return (boost::get<Polyhedron_geo*> (&m_model) != NULL);
+  }
+
+  bool is_model_exact_polyhedron() const {
     return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL);
   }
 
@@ -129,15 +139,35 @@ public:
   /*! Set the model.
    * \param model the model.
    */
+  void set_model(Polyhedron_geo* model) { m_model = model; }
   void set_model(Exact_polyhedron_geo* model) { m_model = model; }
   void set_model(Geo_set* model) { m_model = model; }
 
   /*! Obtain the model.
    * \return the model.
    */
-  const Exact_polyhedron_geo* get_polyhedron_model() const;
+  const Polyhedron_geo* get_polyhedron_model() const;
+  const Exact_polyhedron_geo* get_exact_polyhedron_model() const;
   const Geo_set* get_geo_set_model() const;
 
+  /*! Set the horizontal width of the voxel */
+  void set_voxel_width(Float voxel_width) { m_voxel_width = voxel_width; }
+
+  /*! Obtain the horizontal width of the voxel */
+  Float get_voxel_width() const { return m_voxel_width; }
+
+  /*! Set the horizontal length of the voxel */
+  void set_voxel_length(Float voxel_length) { m_voxel_length = voxel_length; }
+
+  /*! Obtain the horizontal length of the voxel */
+  Float get_voxel_length() const { return m_voxel_length; }
+
+  /*! Set the height of the voxel */
+  void set_voxel_height(Float voxel_height) { m_voxel_height = voxel_height; }
+
+  /*! Obtain the height of the voxel */
+  Float get_voxel_height() const { return m_voxel_height; }
+  
   /*! Set the scale.
    * \param scale the scale.
    */
@@ -164,7 +194,16 @@ protected:
   void adjust_voxels_for_tiling();
 
   /*! The segments */
-  boost::variant<Exact_polyhedron_geo*, Geo_set*> m_model;
+  boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
+
+  /*! The horizontal voxel width */
+  Float m_voxel_width;
+
+  /*! The horizontal voxel length */
+  Float m_voxel_length;
+
+  /*! The voxel height */
+  Float m_voxel_height;
 
   std::vector<Ego_brick> m_parts;
 
@@ -189,7 +228,6 @@ protected:
   Ego_brick m_ego_brick;
   Ego_brick m_ego_brick_without_knobs;
 
-  
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
@@ -202,7 +240,9 @@ private:
   static const Ego_voxels_tiler::First_tile_placement s_def_first_tile_placement;
   static const Ego_voxels_tiler::Strategy s_def_tiling_strategy;
   static const Ego_voxels_tiler::Tiling_rows s_def_tiling_rows_direction;
-
+  static const Float s_def_voxel_width;
+  static const Float s_def_voxel_length;
+  static const Float s_def_voxel_height;
 };
 
 SGAL_END_NAMESPACE

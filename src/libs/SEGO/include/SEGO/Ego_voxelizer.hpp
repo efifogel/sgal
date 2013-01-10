@@ -29,8 +29,8 @@
  * 
  */
 
-
 #include "SGAL/config.hpp"
+#include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -55,15 +55,33 @@ namespace SEGO_internal{
 class SGAL_CLASSDEF Ego_voxelizer {
  public:
   
-  typedef Exact_polyhedron_geo::Polyhedron              Polyhedron;
-  typedef Polyhedron::Traits::Kernel                    Kernel;
+  typedef Polyhedron_geo::Polyhedron                    Polyhedron;
+  typedef Exact_polyhedron_geo::Polyhedron              Exact_polyhedron;
+  typedef Exact_polyhedron::Traits::Kernel              Kernel;
 
+  /*! Constructor
+   *
+   */
   Ego_voxelizer(const Kernel::FT& voxel_length, const Kernel::FT& voxel_width,
                 const Kernel::FT& voxel_height);
+
+  /*!
+   * @return The origin of the voxels structure.
+   */
   Kernel::Point_3 operator() (const Polyhedron& polyhedron,
-                         Ego_voxels* out_voxels) const;
+                              float scale, Ego_voxels* out_voxels) const;
+
+  /*!
+   * @return The origin of the voxels structure.
+   */
+  Kernel::Point_3 operator() (const Exact_polyhedron& polyhedron,
+                              float scale, Ego_voxels* out_voxels) const;
+
+  /*!
+   * @return The origin of the voxels structure.
+   */
   Kernel::Point_3 operator() (const Geo_set& geo_set,
-                         Ego_voxels* out_voxels) const;
+                              float scale, Ego_voxels* out_voxels) const;
   
  private:
 
@@ -78,12 +96,14 @@ class SGAL_CLASSDEF Ego_voxelizer {
   typedef std::list<Segment_3>                          SlicingSegments;
   typedef std::list<Triangle_3>                         Triangles;
 
-  Point_3 operator() (const Triangles& triangles,
-                      Ego_voxels* out_voxels) const;
+  Point_3 operator() (const Triangles& triangles, Ego_voxels* out_voxels) const;
 
-  Triangles create_triangles_from_polyhedron(const Polyhedron& polyhedron)
-    const;
-  Triangles create_triangles_from_geo_set(const Geo_set& polyhedron) const;
+  Triangles create_triangles_from_polyhedron(const Polyhedron& polyhedron,
+                                             float scale) const;
+  Triangles create_triangles_from_polyhedron(const Exact_polyhedron& polyhedron,
+                                             float scale) const;
+  Triangles create_triangles_from_geo_set(const Geo_set& polyhedron,
+                                          float scale) const;
   
   Point_3 create_voxels_from_triangles(const Triangles& polyhedron,
                                        Ego_voxels* out_voxels) const;

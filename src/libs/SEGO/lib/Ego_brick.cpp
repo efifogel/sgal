@@ -198,8 +198,8 @@ void Ego_brick::clean()
     std::vector<Vector2f>::iterator it;
     for (it = knob_cross_section.begin(); it != knob_cross_section.end(); ++it)
     {
-      Float x = m_knob_radius * cosf(angle);
-      Float y = m_knob_radius * sinf(angle);
+      Float x = cosf(angle);
+      Float y = sinf(angle);
       angle += delta;
       it->set(x, y);
     }
@@ -216,17 +216,17 @@ void Ego_brick::clean()
         for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
              it != knob_cross_section.end(); ++it)
         {
-          float x = center_x + (*it)[0];
-          float y = center_y + (*it)[1];
-          (*m_normal_array)[k].set(x, y, 0);
+          float x = center_x + (*it)[0] * m_knob_radius;
+          float y = center_y + (*it)[1] * m_knob_radius;
+          (*m_normal_array)[k].set((*it)[0], (*it)[1], 0);
           (*m_coord_array)[k++].set(x, y, z);
         }
         for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
              it != knob_cross_section.end(); ++it)
         {
-          float x = center_x + (*it)[0];
-          float y = center_y + (*it)[1];
-          (*m_normal_array)[k].set(x, y, 0);
+          float x = center_x + (*it)[0] * m_knob_radius;
+          float y = center_y + (*it)[1] * m_knob_radius;
+          (*m_normal_array)[k].set((*it)[0], (*it)[1], 0);
           (*m_coord_array)[k].set(x, y, z + m_knob_height);
           (*m_coord_array)[k+m_knob_slices].set(x, y, z + m_knob_height);
           ++k;
@@ -346,9 +346,6 @@ void Ego_brick::clean()
 void Ego_brick::set_attributes(Element * elem)
 {
   Indexed_face_set::set_attributes(elem);
-
-  std::string name;
-  std::string value;
 
   typedef Element::Str_attr_iter Str_attr_iter;
   for (Str_attr_iter ai = elem->str_attrs_begin();

@@ -21,10 +21,9 @@ DEF AOS_MODEL_VISIBLE_KEY SingleKeySensor { key "m" }
 DEF SNAP Snapshot {
   image Image { }
   fileFormat "jpg"
-  quality 98
   sequence FALSE
   dirName "."
-  fileName "lts"
+  fileName "ego_teapot"
 }
 
 Transform {
@@ -38,7 +37,7 @@ Transform {
 	  appearance Appearance {
 	    material Material {}
 	  }
-	  geometry DEF MODEL sgalIndexedFaceSet {
+	  geometry DEF MODEL IndexedFaceSet {
 	    coord Coordinate {
 	      point [
 		     -1.162270 0.786910 0.141630,
@@ -5805,6 +5804,7 @@ Transform {
 	material Material {}
       }
       geometry DEF GEOM Ego {
+	scale 100
 	model USE MODEL
 	# parts {
 	#   children [

@@ -22,10 +22,9 @@ DEF AOS_EGO_VISIBLE_KEY SingleKeySensor { key "e" }
 DEF SNAP Snapshot {
   image Image { }
   fileFormat "jpg"
-  quality 98
   sequence FALSE
   dirName "."
-  fileName "lts"
+  fileName "ego_tetrahedron"
 }
 
 Transform {
@@ -39,7 +38,7 @@ Transform {
 	  appearance Appearance {
 	    material Material {}
 	  }
-	  geometry DEF MODEL ExactPolyhedron {
+	  geometry DEF MODEL Polyhedron {
 	    coord Coordinate {
 	      point [0 0 1.732051,
 		     1.632993 0 -0.5773503,
@@ -88,6 +87,7 @@ Transform {
 	    material Material {}
 	  }
 	  geometry DEF GEOM Ego {
+	    scale 100
 	    model USE MODEL
 	    # parts {
 	    #   children [
