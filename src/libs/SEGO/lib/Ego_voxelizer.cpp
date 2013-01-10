@@ -138,10 +138,38 @@ create_triangles_from_polyhedron(const Exact_polyhedron& polyhedron,
     Exact_polyhedron::Halfedge_around_facet_const_circulator cit =
       it->facet_begin();
     Point_3 points[3];
-    points[0] = cit->vertex()->point(); cit++;
-    points[1] = cit->vertex()->point(); cit++;
-    points[2] = cit->vertex()->point(); cit++;
+    if (scale != 1) {
+      // EFEF: avoid construction of the kernel. Obtain it from somewhere. 
+      Kernel kernel;
+      Kernel::Construct_scaled_vector_3 ctr_scale = 
+        kernel.construct_scaled_vector_3_object();
+      Kernel::Construct_vector_3 ctr_vector = 
+        kernel.construct_vector_3_object();
+      Kernel::Construct_translated_point_3 ctr_point =
+        kernel.construct_translated_point_3_object();
 
+      Kernel::RT escale = Kernel::FT(scale);
+      Kernel::Vector_3 vec = ctr_vector(cit->vertex()->point(), CGAL::ORIGIN);
+      Kernel::Vector_3 scaled_vec = ctr_scale(vec, escale);
+
+      vec = ctr_vector(cit->vertex()->point(), CGAL::ORIGIN);
+      scaled_vec = ctr_scale(vec, escale);
+      points[0] = ctr_point(CGAL::ORIGIN, scaled_vec);
+      cit++;
+      vec = ctr_vector(cit->vertex()->point(), CGAL::ORIGIN);
+      scaled_vec = ctr_scale(vec, escale);
+      points[1] = ctr_point(CGAL::ORIGIN, scaled_vec);
+      cit++;
+      vec = ctr_vector(cit->vertex()->point(), CGAL::ORIGIN);
+      scaled_vec = ctr_scale(vec, escale);
+      points[2] = ctr_point(CGAL::ORIGIN, scaled_vec);
+      cit++;
+    } else {
+      points[0] = cit->vertex()->point(); cit++;
+      points[1] = cit->vertex()->point(); cit++;
+      points[2] = cit->vertex()->point(); cit++;
+    }
+    
     Triangle_3 triangle(points[0], points[1], points[2]);
     ret.push_back(triangle);
   }
