@@ -77,7 +77,7 @@ REGISTER_TO_FACTORY(Ego_geo, "Ego_geo");
 Ego_geo::Ego_geo(Boolean proto) :
   Geometry(proto),
   m_voxel_width(s_def_voxel_width),
-  m_voxel_lebgth(s_def_voxel_length),
+  m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),  
   m_first_tile_placement(s_def_first_tile_placement),
   m_tiling_strategy(s_def_tiling_strategy),
