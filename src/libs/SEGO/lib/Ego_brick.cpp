@@ -84,6 +84,10 @@ Ego_brick::~Ego_brick()
     delete m_coord_array;
     m_coord_array = NULL;
   }
+  if (m_normal_array) {
+    delete m_normal_array;
+    m_normal_array = NULL;
+  }
 }
 
 /*! Clean the ellipsoid internal representation */
@@ -91,16 +95,17 @@ void Ego_brick::clean()
 {
   // Clear internal representation:
   if (!m_coord_array) m_coord_array = new Coord_array;
-
-  m_primitive_type = PT_TRIANGLES;
-  m_crease_angle = 0;
+  if (!m_normal_array) m_normal_array = new Normal_array;
+  m_dirty_normals = false;
+  
+  set_primitive_type(PT_TRIANGLES);
   
   // Generate points:
-  Uint size = 8;
+  Uint size = 4 * 6;
   m_num_primitives = 6 * 2;
   
   if (m_are_knobs_visible) {  
-    Uint points_per_knob = 1 + m_knob_slices * 2;
+    Uint points_per_knob = 1 + m_knob_slices * 3;
     Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
     size += points_per_knob * num_knobs;
 
@@ -108,6 +113,7 @@ void Ego_brick::clean()
     m_num_primitives += primitives_per_knob * num_knobs;
   }
   m_coord_array->resize(size);
+  m_normal_array->resize(size);
 
   // Corner points:
   float width = m_pitch * m_number_of_knobs1;
@@ -122,13 +128,64 @@ void Ego_brick::clean()
   Uint k = 0;
 
   // Box
-  (*m_coord_array)[k++].set(base_x, base_y, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+  // Left
+  (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+  (*m_normal_array)[k].set(-1, 0, 0);
+  (*m_coord_array)[k++].set(base_x, base_y, base_z);
+  (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+  (*m_normal_array)[k].set(-1, 0, 0);
+  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+
+  // Right
+  (*m_normal_array)[k].set(1, 0, 0);
+  (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+  (*m_normal_array)[k].set(1, 0, 0);
+  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+  (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+  (*m_normal_array)[k].set(1, 0, 0);
+  (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+
+  // Near
+  (*m_normal_array)[k].set(0, -1, 0);
+  (*m_coord_array)[k++].set(base_x, base_y, base_z);
+  (*m_normal_array)[k].set(0, -1, 0);
+  (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+  (*m_normal_array)[k].set(0, -1, 0);
+  (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+  (*m_normal_array)[k].set(0, -1, 0);
+  (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+
+  // Far
+  (*m_normal_array)[k].set(0, 1, 0);
+  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+  (*m_normal_array)[k].set(0, 1, 0);
+  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+  (*m_normal_array)[k].set(0, 1, 0);
+  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+  (*m_normal_array)[k].set(0, 1, 0);
+  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+
+  // Bottom
+  (*m_normal_array)[k].set(0, 0, -1);
+  (*m_coord_array)[k++].set(base_x, base_y, base_z);
+  (*m_normal_array)[k].set(0, 0, -1);
+  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+  (*m_normal_array)[k].set(0, 0, -1);
+  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+  (*m_normal_array)[k].set(0, 0, -1);
+  (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+
+  // Top
+  (*m_normal_array)[k].set(0, 0, 1);
+  (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+  (*m_normal_array)[k].set(0, 0, 1);
+  (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+  (*m_normal_array)[k].set(0, 0, 1);
+  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+  (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
   // Knobs:
@@ -156,12 +213,12 @@ void Ego_brick::clean()
       float center_y = base_y + j * m_pitch;
       for (i = 0; i < m_number_of_knobs1; ++i) {
         float center_x = base_x + i * m_pitch;
-        (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
         for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
              it != knob_cross_section.end(); ++it)
         {
           float x = center_x + (*it)[0];
           float y = center_y + (*it)[1];
+          (*m_normal_array)[k].set(x, y, 0);
           (*m_coord_array)[k++].set(x, y, z);
         }
         for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
@@ -169,8 +226,19 @@ void Ego_brick::clean()
         {
           float x = center_x + (*it)[0];
           float y = center_y + (*it)[1];
-          (*m_coord_array)[k++].set(x, y, z + m_knob_height);
+          (*m_normal_array)[k].set(x, y, 0);
+          (*m_coord_array)[k].set(x, y, z + m_knob_height);
+          (*m_coord_array)[k+m_knob_slices].set(x, y, z + m_knob_height);
+          ++k;
         }
+        for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
+             it != knob_cross_section.end(); ++it)
+        {
+          // Here we increment the index k!
+          (*m_normal_array)[k++].set(0, 0, 1);
+        }
+        (*m_normal_array)[k].set(0, 0, 1);
+        (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
       }
     }
     knob_cross_section.clear();
@@ -184,65 +252,65 @@ void Ego_brick::clean()
   Uint num_indices = m_num_primitives * 3;
   m_coord_indices.resize(num_indices);
 
-  // Bottom
+  // Left
   m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 2;
   m_coord_indices[k++] = 1;
-  m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 3;
   m_coord_indices[k++] = 2;
-
-  // top
-  m_coord_indices[k++] = 4;
-  m_coord_indices[k++] = 5;
-  m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = 4;
-  m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = 7;
-
-  // left
   m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 4;
-  m_coord_indices[k++] = 7;
-  m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 7;
+  m_coord_indices[k++] = 2;
   m_coord_indices[k++] = 3;
 
   // Right
-  m_coord_indices[k++] = 1;
-  m_coord_indices[k++] = 2;
-  m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = 1;
-  m_coord_indices[k++] = 6;
+  m_coord_indices[k++] = 4;
   m_coord_indices[k++] = 5;
+  m_coord_indices[k++] = 6;
+  m_coord_indices[k++] = 4;
+  m_coord_indices[k++] = 6;
+  m_coord_indices[k++] = 7;
 
   // Near
-  m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 1;
-  m_coord_indices[k++] = 5;
-  m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 5;
-  m_coord_indices[k++] = 4;
+  m_coord_indices[k++] = 8;
+  m_coord_indices[k++] = 9;
+  m_coord_indices[k++] = 10;
+  m_coord_indices[k++] = 8;
+  m_coord_indices[k++] = 10;
+  m_coord_indices[k++] = 11;
 
   // Far
-  m_coord_indices[k++] = 2;
-  m_coord_indices[k++] = 3;
-  m_coord_indices[k++] = 7;
-  m_coord_indices[k++] = 2;
-  m_coord_indices[k++] = 7;
-  m_coord_indices[k++] = 6;
+  m_coord_indices[k++] = 12;
+  m_coord_indices[k++] = 13;
+  m_coord_indices[k++] = 14;
+  m_coord_indices[k++] = 12;
+  m_coord_indices[k++] = 14;
+  m_coord_indices[k++] = 15;
+
+  // Bottom
+  m_coord_indices[k++] = 16;
+  m_coord_indices[k++] = 17;
+  m_coord_indices[k++] = 18;
+  m_coord_indices[k++] = 16;
+  m_coord_indices[k++] = 18;
+  m_coord_indices[k++] = 19;
+
+  // top
+  m_coord_indices[k++] = 20;
+  m_coord_indices[k++] = 21;
+  m_coord_indices[k++] = 22;
+  m_coord_indices[k++] = 20;
+  m_coord_indices[k++] = 22;
+  m_coord_indices[k++] = 23;
 
   // Knobs:
   if (m_are_knobs_visible) {
     Uint i;
     Uint j;
-    Uint base = 8;
+    Uint base = 6 * 4;
     for (j = 0; j < m_number_of_knobs2; ++j) {
       for (i = 0; i < m_number_of_knobs1; ++i) {
         Uint l;
         for (l = 0; l < m_knob_slices; ++l) {
-          Uint a = base + 1 + l;
-          Uint b = base + 1 + ((l+1) % m_knob_slices);
+          Uint a = base + l;
+          Uint b = base + ((l+1) % m_knob_slices);
           Uint c = b + m_knob_slices;
           Uint d = a + m_knob_slices;
           m_coord_indices[k++] = a;
@@ -254,13 +322,14 @@ void Ego_brick::clean()
         }
 
         // Top
+        Uint top_base = base + m_knob_slices * 2;
         for (l = 0; l < m_knob_slices; ++l) {
-          m_coord_indices[k++] = base;
-          Uint tmp = base + 1 + m_knob_slices;
+          m_coord_indices[k++] = top_base + m_knob_slices;
+          Uint tmp = top_base;
           m_coord_indices[k++] = tmp + l;
           m_coord_indices[k++] = tmp + ((l+1) % m_knob_slices);
         }
-        base += 1 + m_knob_slices * 2;
+        base += m_knob_slices * 3 + 1;
       }
     }
   }

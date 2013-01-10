@@ -52,7 +52,7 @@ Transform {
 	# knobsVisible FALSE
 	numberOfKnobs1 1
 	numberOfKnobs2 1
-	knobSlices 32
+	knobSlices 16
       }
     }
 
