@@ -213,16 +213,13 @@ Boolean Group::does_have_touch_sensor()
  */
 void Group::set_has_touch_sensor(unsigned int id)
 {
-  m_has_touch_sensor = SGAL_TRUE;
+  m_has_touch_sensor = true;
   m_selection_id = id;
 }
 
 /*! Sets a flag indicating that the group has a light source
  */
-void Group::set_has_light()
-{
-  m_has_light = SGAL_TRUE;
-}
+void Group::set_has_light() { m_has_light = true; }
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
@@ -293,7 +290,7 @@ Attribute_list Group::get_attributes()
   attrs = Node::get_attributes();
   Attribue attrib;
 
-  if (m_is_visible != SGAL_TRUE) {
+  if (m_is_visible != true) {
     attrib.first = "sgalVisible";
     attrib.second = "FALSE";
     attrs.push_back(attrib);
