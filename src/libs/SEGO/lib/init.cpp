@@ -34,7 +34,7 @@ SGAL_BEGIN_NAMESPACE
 
 void sego_init()
 {
-  Container_factory::get_instance()->doregister(Ego_geo::prototype());
+  Container_factory::get_instance()->doregister(Ego::prototype());
   Container_factory::get_instance()->doregister(Ego_brick::prototype());
 }
 

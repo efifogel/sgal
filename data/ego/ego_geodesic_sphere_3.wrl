@@ -553,8 +553,8 @@ Transform {
         }
        ]
     }
-    Group {
-      children [
+    #Group {
+      #children [
         # Shape {
         #   appearance Appearance {
         #     material Material {}
@@ -575,22 +575,17 @@ Transform {
         #     numberOfKnobs2 4
         #   }
         # }
-       ]
-    }
-    Shape {
-      appearance Appearance {
-        material Material {}
-      }
-      geometry DEF GEOM Ego {
-	scale 100
-        model USE MODEL
-        # parts {
-        #   children [
-        #     USE PART0
-        #     USE PART1
-        #    ]
-        # }
-      }
+       #]
+    #}
+    DEF EGO Ego {
+      scale 100
+      model USE MODEL
+      # parts {
+      #   children [
+      #     USE PART0
+      #     USE PART1
+      #    ]
+      # }
     }
 
     # The axes:
@@ -660,12 +655,12 @@ ROUTE INC_MODEL_VISIBLE.value TO SWITCH_MODEL.whichChoice
 ROUTE SNAP_KEY.state TO SNAP.trigger
 
 ROUTE INC_FIRST_TILE_KEY.state TO INC_FIRST_TILE.trigger
-ROUTE INC_FIRST_TILE.value TO GEOM.firstTilePlacement
+ROUTE INC_FIRST_TILE.value TO EGO.firstTilePlacement
 
 ROUTE INC_TILING_STRATEGY_KEY.state TO INC_TILING_STRATEGY.trigger
-ROUTE INC_TILING_STRATEGY.value TO GEOM.tilingStrategy
+ROUTE INC_TILING_STRATEGY.value TO EGO.tilingStrategy
 
 ROUTE INC_TILING_ROW_KEY.state TO INC_TILING_ROW.trigger
-ROUTE INC_TILING_ROW.value TO GEOM.tilingRowsDirection
+ROUTE INC_TILING_ROW.value TO EGO.tilingRowsDirection
 
-# ROUTE EXPORT_KEY.press TO GEOM.export
+# ROUTE EXPORT_KEY.press TO EGO.export

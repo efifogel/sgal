@@ -27,8 +27,13 @@
 #include <windows.h>
 #endif
 
+#include <unordered_map>
+#include <boost/variant.hpp>
+
 #include "SGAL/basic.hpp"
-#include "SGAL/Geometry.hpp"
+#include "SGAL/Group.hpp"
+#include "SGAL/Appearance.hpp"
+#include "SGAL/Material.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -36,8 +41,6 @@
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxels.hpp"
 #include "SEGO/Ego_voxels_tiler.hpp"
-
-#include <boost/variant.hpp>
 
 SGAL_BEGIN_NAMESPACE
 
@@ -47,33 +50,33 @@ class Cull_context;
 class Polyhedron_geo;
 class Exact_polyhedron_geo;
 
-class SGAL_CLASSDEF Ego_geo : public Geometry {
+class SGAL_CLASSDEF Ego : public Group {
 public:
   enum {
-    FIRST = Geometry::LAST - 1,
+    FIRST = Group::LAST - 1,
     MODEL,
-    PARTS,
+    SCALE,
     VOXEL_WIDTH,
     VOXEL_LENGTH,
     VOXEL_HEIGHT,
     FIRST_TILE_PLACEMENT,
     TILING_STRATEGY,
     TILING_ROWS_DIRECTION,
+    PARTS,
     LAST
   };
 
   /*! Constructor */
-  Ego_geo(Boolean proto = false);
+  Ego(Boolean proto = false);
 
   /*! Destructor */
-  virtual ~Ego_geo();
+  virtual ~Ego();
 
   /* Construct the prototype */
-  static Ego_geo* prototype()
-  { return new Ego_geo(true); }
+  static Ego* prototype() { return new Ego(true); }
 
   /*! Clone */
-  virtual Container* clone() { return new Ego_geo(); }
+  virtual Container* clone() { return new Ego(); }
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -90,8 +93,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
-  virtual void clean();
+  /*! Draw the geometry */
+  virtual Action::Trav_directive draw(Draw_action* action);
 
   /*! */
   virtual void cull(Cull_context& cull_context);
@@ -102,24 +105,29 @@ public:
   /*! Calculate sphere bound of the node */
   virtual Boolean calculate_sphere_bound();
 
-  /*! Determine whether the geometry has color (as opposed to material)
-   */
-  virtual Boolean has_color() const { return false; }  
+  /*! Obtain the sphere bound */
+  const Sphere_bound& get_sphere_bound();
 
-  /*! Draw the geometry */
-  virtual void draw(Draw_action* action);
+  /*! Clean the voxels */
+  void clean_voxels();
 
+  /*! Clean the tiling */
+  void clean_tiling();
+
+  /*! (Re)generate the parts. */
+  void clean_parts();
+  
   /*! Clear the internal representation and auxiliary data structures
    */
-  virtual void clear();
+  void clear();
 
-  /*! Determine whether the representation hasn't been updated
+  /*! Clear the parts
    */
-  virtual Boolean is_dirty() const { return m_dirty; }
+  void clear_parts();
   
   /*! Is the representation empty ?
    */
-  virtual Boolean is_empty();
+  Boolean is_empty();
 
   /*! Get the type of the model.
    * \return true if this is the type of the model.
@@ -177,15 +185,20 @@ public:
     m_first_tile_placement = p;
   }
 
-  void set_tiling_strategy(Ego_voxels_tiler::Strategy s) {
-    m_tiling_strategy = s;
-  }
+  void set_tiling_strategy(Ego_voxels_tiler::Strategy s)
+  { m_tiling_strategy = s; }
   
-  void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r) {
-    m_tiling_rows_direction = r;
-  }
+  void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)
+  { m_tiling_rows_direction = r; }
 
-  void tiling_changed(Field_info * field_info = NULL);
+  /*! Notify about a change in the scale */
+  void scale_changed(Field_info* field_info = NULL);
+
+  /*! Notify about a change in the voxels */
+  void voxels_changed(Field_info* field_info = NULL);
+
+  /*! Notify about a change in the tiling */
+  void tiling_changed(Field_info* field_info = NULL);
 
 protected:
   /*! Obtain the tag (type) of the container */
@@ -193,8 +206,15 @@ protected:
 
   void adjust_voxels_for_tiling();
 
+  /*! EFEF: move out! */
+  void hsv2rgb(Float hue, Float saturation, Float falue,
+               Float& red, Float& green, Float& blue);
+
   /*! The segments */
   boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
+
+  /*! Scale of the model compared to the ego bricks. */
+  Float m_scale;
 
   /*! The horizontal voxel width */
   Float m_voxel_width;
@@ -204,8 +224,6 @@ protected:
 
   /*! The voxel height */
   Float m_voxel_height;
-
-  std::vector<Ego_brick> m_parts;
 
   Ego_voxels m_voxels;
   Ego_voxels m_tiled_voxels;
@@ -217,17 +235,25 @@ protected:
   Ego_voxels_tiler::Tiling_rows m_tiling_rows_direction;
   
   /*! Indicates whether the data structure must be cleaned */
-  Boolean m_dirty;
-  Boolean m_voxels_dirty;
-  Boolean m_tiling_dirty;
+  Boolean m_dirty_voxels;
+  Boolean m_dirty_tiling;
+  Boolean m_dirty_parts;
+  Boolean m_dirty_sphere_bound;
 
-  /*! Scale of the model compared to the ego bricks. */
-  Float m_scale;
-
+  /*! Indicates whether the parts are "owned" (allocated) by this node. */
+  Boolean m_own_parts;
+  
   /*! These are temporary members used to expedite rendering */
   Ego_brick m_ego_brick;
   Ego_brick m_ego_brick_without_knobs;
 
+  typedef std::unordered_map<Uint, Appearance*>         Appearance_map;
+  typedef Appearance_map::iterator                      Appearance_iter;
+  typedef std::list<Material>                           Material_list;
+  typedef Material_list::iterator                       Material_iter;
+  Appearance_map m_appearances;
+  Material_list m_materials;
+  
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
