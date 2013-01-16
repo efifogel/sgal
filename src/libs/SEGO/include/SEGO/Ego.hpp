@@ -206,10 +206,6 @@ protected:
 
   void adjust_voxels_for_tiling();
 
-  /*! EFEF: move out! */
-  void hsv2rgb(Float hue, Float saturation, Float falue,
-               Float& red, Float& green, Float& blue);
-
   /*! The segments */
   boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
 

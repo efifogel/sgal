@@ -27,7 +27,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
 
-#include "SEGO/Ego_geo.hpp"
+#include "SEGO/Ego.hpp"
 #include "SEGO/Ego_brick.hpp"
 
 SGAL_BEGIN_NAMESPACE

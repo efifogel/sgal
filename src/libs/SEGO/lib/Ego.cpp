@@ -36,6 +36,8 @@
 #include <boost/variant.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <Magick++.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -51,7 +53,7 @@
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
-#include "SEGO/Ego_geo.hpp"
+#include "SEGO/Ego.hpp"
 #include "SEGO/Ego_voxels_filler.hpp"
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxels_tiler.hpp"
@@ -407,8 +409,10 @@ void Ego::clean_parts()
 
         Uint hue_key = std::rand() % 256;
         Uint saturation_key = std::rand() % 256;
-        Uint value_key = std::rand() % 256;
-        Uint color_key = (((hue_key << 8) | saturation_key) << 8) | value_key;
+        // Uint luminosity_key = std::rand() % 256;
+        Uint luminosity_key = 128;
+        Uint color_key =
+          (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
         Appearance* app;
         Appearance_iter ait = m_appearances.find(color_key);
         if (ait == m_appearances.end()) {
@@ -417,9 +421,12 @@ void Ego::clean_parts()
           app->set_material(mat);
           Float hue = (Float) hue_key / 255.0;
           Float saturation = (Float) saturation_key / 255.0;
-          Float value = (Float) value_key / 255.0;
-          float red, green, blue;
-          hsv2rgb(hue, saturation, value, red, green, blue);
+          Float luminosity = (Float) luminosity_key / 255.0;
+          Magick::ColorHSL color_hsl(hue, saturation, luminosity);
+          Magick::ColorRGB color_rgb(color_hsl);
+          Float red = color_rgb.red();
+          Float green = color_rgb.green();
+          Float blue = color_rgb.blue();
           mat->set_diffuse_color(red, green, blue);
           m_appearances[color_key] = app;
         }
@@ -444,71 +451,6 @@ void Ego::clean_parts()
   }  
 }
 
-void Ego::hsv2rgb(Float hue, Float saturation, Float value,
-                  Float& red, Float& green, Float& blue)
-{
-  if (saturation <= 0.0) {      // < is bogus, just shuts up warnings
-    if (isnan(hue)) {           // hue == NAN
-      red = value;
-      green = value;
-      blue = value;
-      return;
-    }
-    // error - should never happen
-    red = 0.0;
-    green = 0.0;
-    blue = 0.0;
-    return;
-  }
-  Float hh = hue;
-  if (hh >= 360.0) hh = 0.0;
-  hh /= 60.0;
-  long i = (long)hh;
-  Float ff = hh - i;
-  Float p = value * (1.0 - saturation);
-  Float q = value * (1.0 - (saturation * ff));
-  Float t = value * (1.0 - (saturation * (1.0 - ff)));
-
-  switch(i) {
-   case 0:
-    red = value;
-    green = t;
-    blue = p;
-    break;
-
-   case 1:
-    red = q;
-    green = value;
-    blue = p;
-    break;
-
-   case 2:
-    red = p;
-    green = value;
-    blue = t;
-    break;
-
-   case 3:
-    red = p;
-    green = q;
-    blue = value;
-    break;
-
-   case 4:
-    red = t;
-    green = p;
-    blue = value;
-    break;
-
-   case 5:
-    default:
-     red = value;
-     green = p;
-     blue = q;
-     break;
-  }
-}
-  
 /*! \brief draws the geometry */
 Action::Trav_directive Ego::draw(Draw_action* action)
 {
