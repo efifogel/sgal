@@ -14,10 +14,13 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#include <boost/cstdint.hpp>
+#include <boost/static_assert.hpp>
 
 #include "SGAL/Math_defs.hpp"
 
@@ -25,10 +28,28 @@ SGAL_BEGIN_NAMESPACE
 
 unsigned char Math::m_isqrt[TABLE_SIZE];
 
-float FASTCALL Math::sqrt_reciprocalf(float /* x */)
+float FASTCALL Math::sqrt_reciprocalf(float number)
 {
-  //! \todo sqrt_reciprocalf
-  return 0;
+  typedef boost::uint32_t Bits32;
+  BOOST_STATIC_ASSERT(sizeof(float) == sizeof(Bits32));
+  
+  union Turner {
+    float m_float;
+    Bits32 m_bits;
+  } turner;
+
+  const float threehalfs = 1.5F;
+  float x2 = number * 0.5F;
+  float y = number;
+
+  turner.m_float = y;
+  Bits32 i = turner.m_bits;             // evil floating point bit level hacking
+  i = 0x5f3759df - (i >> 1);            // what the fuck?
+  turner.m_bits = i;
+  y = turner.m_float;
+  y = y * (threehalfs - (x2 * y * y));  // 1st iteration
+  // y  = y * (threehalfs - (x2 * y * y)); // 2nd iteration, this can be removed
+  return y;  
 }
 
 void Math::make_inverse_sqrt_lookup_table(void)

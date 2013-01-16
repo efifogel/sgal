@@ -22,7 +22,7 @@ BASETARGET =SEGO
 BASEINSTALLDIR =$(ROOT)
 
 CPPSOURCES =
-CPPSOURCES+= Ego_geo.cpp
+CPPSOURCES+= Ego.cpp
 CPPSOURCES+= Ego_brick.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Ego_voxelizer.cpp
@@ -95,7 +95,12 @@ LMAKEDEPENDFLAGS+= -DBOOST_RANDOM_UNIFORM_INT_HPP
 LMAKEDEPENDFLAGS+= -D_MACHINE__DEFAULT_TYPES_H
 endif
 
-LDIRT = parse.output
+ifeq ($(DE), gnu)
+LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
+LCPPOPTS = -Wall -Werror
+# LCPPOPTS+= -pedantic
+LCPPOPTS+=`Magick++-config --cxxflags --cppflags`
+endif
 
 include $(MAKEDIR)/basedir.mak
 include $(MAKEDIR)/comrul.mak

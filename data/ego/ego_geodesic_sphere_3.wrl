@@ -13,6 +13,28 @@ Viewpoint {
   radiusScale 0.7
 }
 
+DEF INC_FIRST_TILE_KEY SingleKeySensor { key "q" }
+DEF INC_FIRST_TILE Incrementor {
+  minValue 0
+  maxValue 3
+  value 1
+}
+
+DEF INC_TILING_STRATEGY_KEY SingleKeySensor { key "w" }
+DEF INC_TILING_STRATEGY Incrementor {
+  minValue 0
+  maxValue 1
+  value 1
+}
+
+DEF INC_TILING_ROW_KEY SingleKeySensor { key "e" }
+DEF INC_TILING_ROW Incrementor {
+  minValue 0
+  maxValue 1
+  value 1
+}
+
+
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
@@ -28,6 +50,7 @@ DEF SNAP Snapshot {
 }
 
 Transform {
+  rotation 1 0 0 -1.5707
   #bboxCenter 0 0 0
   #bboxSize 1.5 1.5 1.5
   children [
@@ -38,7 +61,7 @@ Transform {
           appearance Appearance {
             material Material {}
           }
-          geometry DEF MODEL ExactPolyhedron {
+          geometry DEF MODEL Polyhedron {
             coord Coordinate {
               point [
                  .2764 -.4472 .8507,
@@ -531,8 +554,8 @@ Transform {
         }
        ]
     }
-    Group {
-      children [
+    #Group {
+      #children [
         # Shape {
         #   appearance Appearance {
         #     material Material {}
@@ -553,21 +576,17 @@ Transform {
         #     numberOfKnobs2 4
         #   }
         # }
-       ]
-    }
-    Shape {
-      appearance Appearance {
-        material Material {}
-      }
-      geometry DEF GEOM Ego {
-        model USE MODEL
-        # parts {
-        #   children [
-        #     USE PART0
-        #     USE PART1
-        #    ]
-        # }
-      }
+       #]
+    #}
+    DEF EGO Ego {
+      scale 100 100 100
+      model USE MODEL
+      # parts {
+      #   children [
+      #     USE PART0
+      #     USE PART1
+      #    ]
+      # }
     }
 
     # The axes:
@@ -636,4 +655,13 @@ ROUTE INC_MODEL_VISIBLE.value TO SWITCH_MODEL.whichChoice
 
 ROUTE SNAP_KEY.state TO SNAP.trigger
 
-# ROUTE EXPORT_KEY.press TO GEOM.export
+ROUTE INC_FIRST_TILE_KEY.state TO INC_FIRST_TILE.trigger
+ROUTE INC_FIRST_TILE.value TO EGO.firstTilePlacement
+
+ROUTE INC_TILING_STRATEGY_KEY.state TO INC_TILING_STRATEGY.trigger
+ROUTE INC_TILING_STRATEGY.value TO EGO.tilingStrategy
+
+ROUTE INC_TILING_ROW_KEY.state TO INC_TILING_ROW.trigger
+ROUTE INC_TILING_ROW.value TO EGO.tilingRowsDirection
+
+# ROUTE EXPORT_KEY.press TO EGO.export

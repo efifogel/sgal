@@ -43,7 +43,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Transform::s_prototype = NULL;
+Container_proto* Transform::s_prototype = NULL;
 std::string Transform::s_tag = "Transform";
 
 Vector3f Transform::s_def_translation(0, 0, 0);
@@ -296,7 +296,7 @@ void Transform::init()
 }
 
 /*! \brief sets the translation. */
-void Transform::get_translation(float * v0, float * v1, float * v2)
+void Transform::get_translation(float* v0, float* v1, float* v2)
 {
   if (m_dirty_parts) {
     *v0 = m_matrix[3][0];
@@ -339,24 +339,18 @@ void Transform::set_scale(float s0, float s1, float s2)
 
 /*! \brief sets the translation. */
 void Transform::set_translation(const Vector3f & translation)
-{
-  set_translation(translation[0], translation[1], translation[2]);
-}
+{ set_translation(translation[0], translation[1], translation[2]); }
 
 /*! \brief sets the translation. */
 void Transform::get_translation(Vector3f & translation)
-{
-  get_translation(&translation[0], &translation[1], &translation[2]);
-}
+{ get_translation(&translation[0], &translation[1], &translation[2]); }
 
 /*! \brief sets the rotation. */
 void Transform::set_rotation(const Rotation & rotation)
-{
-  set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle());
-}
+{ set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle()); }
 
 /*! \brief obtains the rotation. */
-void Transform::get_rotation(float * v0, float * v1, float * v2, float * v3)
+void Transform::get_rotation(float* v0, float* v1, float* v2, float* v3)
 {
   if (m_dirty_parts) init();
   m_rotation.get(v0,v1,v2,v3);
@@ -370,7 +364,7 @@ void Transform::get_rotation(Rotation & rotation)
 }
 
 /*! \brief obtains the scale factors. */
-void Transform::get_scale(float * v0, float * v1, float * v2)
+void Transform::get_scale(float* v0, float* v1, float* v2)
 {
   if (m_dirty_parts) init();
   *v0 = m_scale[0];
@@ -380,15 +374,11 @@ void Transform::get_scale(float * v0, float * v1, float * v2)
 
 /*! \brief sets the scale factors. */
 void Transform::set_scale(const Vector3f & scale)
-{
-  set_scale(scale[0], scale[1], scale[2]);
-}
+{ set_scale(scale[0], scale[1], scale[2]); }
 
 /*! \brief sets the scale factors. */
 void Transform::get_scale(Vector3f & scale)
-{
-  get_scale(&scale[0], &scale[1], &scale[2]);
-}
+{ get_scale(&scale[0], &scale[1], &scale[2]); }
 
 /*! \brief sets the scale-orientation. */
 void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
@@ -400,8 +390,8 @@ void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
 }
 
 /*! \brief obtains the scale-orientation. */
-void Transform::get_scale_orientation(float * v0, float * v1, float * v2,
-                                      float * v3)
+void
+Transform::get_scale_orientation(float* v0, float* v1, float* v2, float* v3)
 {
   if (m_dirty_parts) init();
   m_scale_orientation.get(v0,v1,v2,v3);
@@ -435,7 +425,7 @@ void Transform::set_center(float v0, float v1, float v2)
 }
 
 /*! \brief obtains the center of rotation. */
-void Transform::get_center(float * v0, float * v1, float * v2)
+void Transform::get_center(float* v0, float* v1, float* v2)
 {
   if (m_dirty_parts) init();
   *v0 = m_center[0];
@@ -471,10 +461,10 @@ void Transform::set_dirty_matrix(Field_info* /* field_info */)
  */
 void Transform::cull(Cull_context & cull_context)
 {
+  if (! is_visible()) return;
   if (m_dirty_matrix) clean_matrix();
-
   cull_context.push_matrix(m_matrix);
-  if (is_visible()) Group::cull(cull_context);
+  Group::cull(cull_context);
   cull_context.pop_matrix();
 }
 
@@ -483,8 +473,8 @@ void Transform::cull(Cull_context & cull_context)
  */
 void Transform::isect(Isect_action * isect_action) 
 {
+  if (!is_visible()) return;
   if (m_dirty_matrix) clean_matrix();
-
   glPushMatrix();
   glMultMatrixf((float *)&m_matrix);
   Group::isect(isect_action);

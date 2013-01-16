@@ -74,7 +74,8 @@ public:
   void make_scale(const Vector3f& v);
   void make_vec_rot_vec(const Vector3f& v1, const Vector3f& v2);
 
-  bool equal(const Matrix4f& m) const;
+  Boolean is_identity() const;
+  Boolean equal(const Matrix4f& m) const;
   void transpose(const Matrix4f& m);
   void transpose();
   void mult(const Matrix4f& m1, const Matrix4f& m2);
@@ -95,8 +96,8 @@ public:
 
   float * operator [](int i);
   const float * operator [](int i) const;
-  bool operator == (const Matrix4f& m) const;
-  bool operator != (const Matrix4f& m) const;
+  Boolean operator == (const Matrix4f& m) const;
+  Boolean operator != (const Matrix4f& m) const;
 
   Matrix4f& operator =(const Matrix4f& m);
   Matrix4f& operator *=(const Matrix4f& m);
@@ -121,7 +122,7 @@ private:
 
   // Returns true if this matrix is equal to m within tolerance of tol.
   // Returns false otherwise.
-  bool almost_equal(const Matrix4f& m2, float tol) const;
+  Boolean almost_equal(const Matrix4f& m2, float tol) const;
 
   int lu_decomp_mat(int index[4]);
 
@@ -242,7 +243,7 @@ inline void Matrix4f::get(Matrix4f& v) const
 
 /*!
  */
-inline bool Matrix4f::equal(const Matrix4f& v) const
+inline Boolean Matrix4f::equal(const Matrix4f& v) const
 {
   for (int i = 0; i < 16; i++)
     if (((float*)m_matrix)[i] != ((float*)v.m_matrix)[i]) return false;
@@ -251,17 +252,13 @@ inline bool Matrix4f::equal(const Matrix4f& v) const
 
 /*!
  */
-inline bool Matrix4f::operator==(const Matrix4f& m) const
-{
-  return equal(m);
-}
+inline Boolean Matrix4f::operator==(const Matrix4f& m) const
+{ return equal(m); }
 
 /*!
  */
-inline bool Matrix4f::operator!=(const Matrix4f& m) const
-{
-  return !equal(m);
-}
+inline Boolean Matrix4f::operator!=(const Matrix4f& m) const
+{ return !equal(m); }
 
 /*!
  */
@@ -281,17 +278,11 @@ inline Matrix4f& Matrix4f::operator*=(const Matrix4f& m)
 
 /*!
  */
-inline Matrix4f::Matrix4f()
-{
-  this->make_identity();
-}
+inline Matrix4f::Matrix4f() { this->make_identity(); }
 
 /*!
  */
-inline Matrix4f::Matrix4f(const Matrix4f& m)
-{
-  set(m);
-}
+inline Matrix4f::Matrix4f(const Matrix4f& m) { set(m); }
 
 /*!
  */

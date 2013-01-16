@@ -56,34 +56,19 @@ public:
   {}
 
   /*! Constructor */
-  Array(Uint n) :
-    m_size(0),
-    m_capacity(0),
-    m_vector(NULL)  
-  {
-    resize(n);
-  }
+  Array(Uint n) : m_size(0), m_capacity(0), m_vector(NULL)  { resize(n); }
 
   /*! Copy Constructor */
-  Array(const Array & other) :
-    m_size(0),
-    m_capacity(0),
-    m_vector(NULL)  
-  {
-    set(other);
-  }
+  Array(const Array& other) : m_size(0), m_capacity(0), m_vector(NULL)  
+  { set(other); }
 
   /*! assignment operator */
   Array& operator=(const Array& other)
-    {
-      // using the copy constructor and placement new.
-      if (this != &other)
-      {
-        set(other);
-      }
-      return *this;
-    }
-  
+  {
+    // using the copy constructor and placement new.
+    if (this != &other) set(other);
+    return *this;
+  }
   
   /*! Destructor */
   virtual ~Array() { clear(); }
@@ -94,12 +79,14 @@ public:
   /*! Resize the capacity */
   void resize(Uint n) {
     if (n > m_capacity) {
-      if (m_vector) delete [] m_vector;
-      m_vector = new Attribute[n];
+      m_capacity = 2 * n;
+      Attribute* new_vector = new Attribute[m_capacity];
+      memcpy(new_vector, m_vector, m_size * sizeof(Attribute));
 #ifdef _DEBUG
-      memset(m_vector, 0, n * sizeof(Attribute));
+      memset(&new_vector[m_size], 0, (m_capacity - m_size) * sizeof(Attribute));
 #endif
-      m_capacity = n;
+      if (m_vector) delete [] m_vector;
+      m_vector = new_vector;
     }
     m_size = n;
   }
@@ -118,45 +105,44 @@ public:
   typedef const Attribute* const_iterator;
 
   /*! The iterator to the first element */
-  Attribute * begin() { return m_vector; }
-  const Attribute * begin() const { return m_vector; }
+  Attribute* begin() { return m_vector; }
+  const Attribute* begin() const { return m_vector; }
 
   /*! The iterator to the past-the-end element */
-  Attribute * end() { return begin() + m_size; }
-  const Attribute * end() const { return begin() + m_size; }
+  Attribute* end() { return begin() + m_size; }
+  const Attribute* end() const { return begin() + m_size; }
   
   /*! Obtain the vector */
-  Attribute * get_vector() { return m_vector; }
-  const Attribute * get_vector() const { return m_vector; }
+  Attribute* get_vector() { return m_vector; }
+  const Attribute* get_vector() const { return m_vector; }
 
   /*! Indexing operator */
-  Attribute & operator[](Uint n) { return *(begin() + n); }
-  const Attribute & operator[](Uint n) const { return *(begin() + n); }
+  Attribute& operator[](Uint n) { return *(begin() + n); }
+  const Attribute& operator[](Uint n) const { return *(begin() + n); }
   
   // virtual void FieldChanged(short fieldId);
   //! \todo virtual Attribute_list get_attributes();
 
 private:
-  
   /*! uses by copy-constructor and assignment operator to change the contents
    * of the array
    */
-  void set (const Array& other)
-    {
-      resize(other.size());
+  void set(const Array& other)
+  {
+    resize(other.size());
       
-      // std::copy already uses MEMMOVE (ranges can overlap) whenever possible.
-      std::copy(other.m_vector, other.m_vector + m_size, m_vector);
-    }
+    // std::copy already uses MEMMOVE (ranges can overlap) whenever possible.
+    std::copy(other.m_vector, other.m_vector + m_size, m_vector);
+  }
 
-  /*! The number of coordinate */
+  /*! The number of elements in the vector */
   Uint m_size;
 
   /*! The capacity of the vector */
   Uint m_capacity;
   
   /*! The coordinates */
-  Attribute * m_vector;
+  Attribute* m_vector;
 };
 
 SGAL_END_NAMESPACE

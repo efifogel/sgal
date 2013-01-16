@@ -29,6 +29,8 @@
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Indexed_face_set_geometry.hpp"
 #include "SGAL/Configuration.hpp"
+#include "SGAL/Coord_array.hpp"
+#include "SGAL/Normal_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -96,18 +98,28 @@ public:
 #define VERTEX_ARRAY            0x00000200
 #define NUM_DRAWS               0x400
 
-  /*! Calculate a single normal per vertex for all vertices */
-  void calculate_normals_per_vertex();
+  /*! Calculate a single normal per vertex for all vertices.
+   * For each vertex compute the weighted normal based on the normals of
+   * the vertex incident facets and the receiprocal of the square distance
+   * from the facet center to the vertex. (An alternative could be the facet
+   * area.)
+   */
+  void calculate_single_normal_per_vertex();
+
+  /*! Calculate multiple normals per vertex for all vertices.
+   * If the angle between the geometric normals of two adjacent faces is less
+   * than the crease angle, calculate the normals so that the facets are
+   * smooth-shaded across the edge. Otherwise, calculate the normals so that
+   * the facets are faceted.
+   */
+  void calculate_multiple_normals_per_vertex();
 
   /*! Calculate a single normal per polygon for all polygons */
-  void calculate_normals_per_polygon();
-  
-  /*! Allocate the normal array in case it is not present.
-   * If the creaseAngle field is greater than 0, a normal is allocated per
-   * vertes. Otherwise a normal is allocated per polygon.
-   */
-  void allocate_normals();
+  void calculate_normal_per_polygon();
 
+  /*! Calculate a single normal per polygon for all polygons */
+  void calculate_normal_per_polygon(Normal_array* normal_array);
+  
   /*! Calculate the normals in case they are invalidated.
    * If the creaseAngle field is greater than 0, a normal is calculated per
    * vertes. Otherwise a normal is calculated per polygon.
@@ -368,6 +380,14 @@ public:
   virtual void field_changed(Field_info* field_info);
   
 protected:
+  // weight, facet-index
+  typedef std::pair<Uint, Float>                Vertex_facet_info;
+  
+  typedef std::list<Vertex_facet_info>          Vertex_info;
+  typedef Vertex_info::const_iterator           Vertex_info_const_iter;
+  typedef std::vector<Vertex_info>              Vertices_info;
+  typedef Vertices_info::const_iterator         Vertices_info_const_iter;
+
   /*! The maximal rank of vertices in the graph */
   Uint m_max_rank;
   
@@ -461,9 +481,115 @@ protected:
   /*! Do the conditions allow for the use of openGl vertex array? */
   Boolean use_vertex_array() const;
 
+  /*! Compute the normalized normal to a facet from 3 points lying on the
+   * facet.
+   */
+  void compute_normal(const Vector3f& v1, const Vector3f& v2,
+                      const Vector3f& v3, Vector3f& normal) const;
+
+  /*! Compute the normalized normal to a triangle.
+   * \param j The starting index of the triangular facet in the coord indices
+   *     array.
+   * \param normal The resulting normal.
+   */
+  void compute_triangle_normal(Uint j, Vector3f& normal) const;
+
+  /*! Compute the center point of a triangle.
+   * \param j The starting index of the triangular facet in the coord indices
+   *     array.
+   * \param center The resulting center.
+   */
+  void compute_triangle_center(Uint j, Vector3f& center) const;
+  
+  /*! Compute the vertex information for the three vertices of a triangule
+   * \param j The starting index of the triangular facet in the coord
+   *     indices array.
+   * \param center The triangle center.
+   * \param normal The triangle normal.
+   * \param vertices_info The vertex information array.
+   */
+  void compute_triangle_vertex_info(Uint j, Uint facet_index,
+                                    const Vector3f& center,
+                                    Vertices_info& vertices_info) const;
+
+  /*! Compute the normalized normal to a quadrilateral.
+   * \param j The starting index of the quadrilateral facet in the coord
+   *     indices array.
+   * \param normal The resulting normal
+   */
+  void compute_quad_normal(Uint j, Vector3f& normal) const;
+
+  /*! Compute the center point of a quadrilateral.
+   * \param j The starting index of the quadrilateral facet in the coord
+   *     indices array.
+   * \param center The resulting center
+   */
+  void compute_quad_center(Uint j, Vector3f& center) const;
+  
+  /*! Compute the vertex information for the four vertices of a quadrilateral
+   * \param j The starting index of the quadrilateral facet in the coord
+   *     indices array.
+   * \param center The triangle center.
+   * \param normal The triangle normal.
+   * \param vertices_info The vertex information array.
+   */
+  void compute_quad_vertex_info(Uint j, Uint facet_index,
+                                const Vector3f& center,
+                                Vertices_info& vertices_info) const;
+  
+  /*! Compute the normalized normal to a polygon.
+   * \param j The starting index of the polygonal facet in the coord indices
+   *     array.
+   * \param normal The resulting normal
+   */
+  void compute_polygon_normal(Uint j, Vector3f& normal) const;
+
+  /*! Compute the center point of a polygon.
+   * \param j The starting index of the polygonal facet in the coord indices
+   *    array.
+   * \param center the resulting center
+   * \return the number of vertices of the polygon
+   */
+  Uint compute_polygon_center(Uint j, Vector3f& center) const;
+  
+  /*! Compute the vertex information for the all vertices of a polygon
+   * \param j The starting index of the polygonal facet in the coord
+   *     indices array.
+   * \param k The number of vertices of the polygon
+   * \param center The polygon center.
+   * \param normal The polygon normal.
+   * \param vertices_info The vertex information array.
+   */
+  void compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
+                                   const Vector3f& center,
+                                   Vertices_info& vertices_info) const;
+
+  /*! Compute the vertex information for a facet vertex
+   * \param vertex_index The vertex index
+   * \param venter The facet center
+   * \param normal The facet normal
+   * \param info The output iterator associated with the vertex info container
+   */
+  template <typename OutputIterator>
+  OutputIterator compute_vertex_info(Uint vertex_index,
+                                     Uint facet_index,
+                                     const Vector3f& center,
+                                     OutputIterator info) const
+  {
+    // Compute the receiprocal of the square distance from the facet center
+    Vector3f& v = (*m_coord_array)[vertex_index];
+    Float weight = 1.0f / v.sqr_distance(center);
+    *info++ = Vertex_facet_info(facet_index, weight);
+    return info;
+  }
+
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
+  /*! Is the angle between two given vectors smooth?
+   */
+  Boolean is_smooth(const Vector3f& normal1, const Vector3f& normal2) const;
+  
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;

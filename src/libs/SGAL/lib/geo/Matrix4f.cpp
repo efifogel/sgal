@@ -35,6 +35,20 @@ void Matrix4f::make_identity()
   m_matrix[3][0] = m_matrix[3][1] = m_matrix[3][2] = 0.0f;
 }
 
+Boolean Matrix4f::is_identity() const
+{
+  return ((m_matrix[0][0] == 1.0f) && (m_matrix[1][1] == 1.0f) &&
+          (m_matrix[2][2] == 1.0f) && (m_matrix[3][3] == 1.0f) &&
+          (m_matrix[0][1] == 0.0f) && (m_matrix[0][2] == 0.0f) &&
+          (m_matrix[0][3] == 0.0f) &&
+          (m_matrix[1][0] == 0.0f) && (m_matrix[1][2] == 0.0f) &&
+          (m_matrix[1][3] == 0.0f) &&
+          (m_matrix[2][0] == 0.0f) && (m_matrix[2][1] == 0.0f) &&
+          (m_matrix[2][3] == 0.0f) &&
+          (m_matrix[3][0] == 0.0f) && (m_matrix[3][1] == 0.0f) &&
+          (m_matrix[3][2] == 0.0f));
+}
+
 /*! sets this matrix to be m1 * m2, assuming m1 and m2 are both affine
  * transformation matrices, that is, the last column is 0,0,0,1,
  */

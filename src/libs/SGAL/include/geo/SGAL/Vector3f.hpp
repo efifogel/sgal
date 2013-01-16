@@ -74,6 +74,7 @@ public:
   float dot(const Vector3f &  v) const;
   void xform_vec(const Vector3f & v, const Matrix4f & m);
   float length() const;
+  float length_reciprocal() const;
   void add_scaled(const Vector3f & v1, float s, const Vector3f & v2);
   void mul(const Vector3f & v1, const Vector3f & v2);
   void mul(const Vector3sh & v1, const Vector3f & v2);
@@ -97,8 +98,9 @@ public:
   bool operator==(const Vector3f & v) const;
   bool operator!=(const Vector3f & v) const;
 
-private:
-  float length_reciprocal1() const;
+  /*! Are three given points collinear?
+   */
+  bool collinear(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
 };
 
 /*!
@@ -406,10 +408,8 @@ inline void Vector3f::round()
 
 /*!
  */
-inline float Vector3f::length_reciprocal1() const
-{
-  return Math::sqrt_reciprocalf(dot(*this));
-}
+inline float Vector3f::length_reciprocal() const
+{ return Math::sqrt_reciprocalf(dot(*this)); }
 
 /*!
  */

@@ -69,7 +69,7 @@ Group::Group(const Group& group) :
 }
 
 /*! Destructor */
-Group::~Group() {}
+Group::~Group() { m_childs.clear(); }
 
 /*! Return the number of children the object has.
  * \return number of children in the group.
@@ -134,16 +134,12 @@ void Group::remove_child(Node* node)
  */
 Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
-  if (!is_visible() || draw_action == 0 || draw_action->get_context() == 0)
+  if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
     return Action::TRAV_CONT;
-  if (m_has_light) {
-    draw_action->get_context()->push_lights();
-  }
-  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni) {
+  if (m_has_light) draw_action->get_context()->push_lights();
+  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni)
     draw_action->apply(*ni);
-  }
-  if (m_has_light)
-      draw_action->get_context()->pop_lights();
+  if (m_has_light) draw_action->get_context()->pop_lights();
   return Action::TRAV_CONT;
 }
 
@@ -217,16 +213,13 @@ Boolean Group::does_have_touch_sensor()
  */
 void Group::set_has_touch_sensor(unsigned int id)
 {
-  m_has_touch_sensor = SGAL_TRUE;
+  m_has_touch_sensor = true;
   m_selection_id = id;
 }
 
 /*! Sets a flag indicating that the group has a light source
  */
-void Group::set_has_light()
-{
-  m_has_light = SGAL_TRUE;
-}
+void Group::set_has_light() { m_has_light = true; }
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
@@ -297,7 +290,7 @@ Attribute_list Group::get_attributes()
   attrs = Node::get_attributes();
   Attribue attrib;
 
-  if (m_is_visible != SGAL_TRUE) {
+  if (m_is_visible != true) {
     attrib.first = "sgalVisible";
     attrib.second = "FALSE";
     attrs.push_back(attrib);

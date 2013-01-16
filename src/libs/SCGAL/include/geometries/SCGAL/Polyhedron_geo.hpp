@@ -195,7 +195,7 @@ public:
   /*! Destructor */
   ~Polyhedron_geo();
 
-  /*! Construct the prototype */
+  /*! Constructs the prototype */
   static Polyhedron_geo* prototype() { return new Polyhedron_geo(SGAL_TRUE); }
 
   /*! Clone */
@@ -214,26 +214,30 @@ public:
   /*! Delete the node prototype */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtain the node prototype */
   virtual SGAL::Container_proto* get_prototype();
 
+  /*! Obtain the polyhedron data-structure */
+  const Polyhedron& get_polyhedron() const { return m_polyhedron; }
+  Polyhedron& get_polyhedron() { return m_polyhedron; }
+  
 protected:
   /*! The actual polyhedron object */
   Polyhedron m_polyhedron;
 
-  /*! \brief cleans the representation */
+  /*! Clean the representation */
   virtual void clean();
 
-  /*! \brief clears the internal representation */
+  /*! Clear the internal representation */
   virtual void clear();
 
-  /*! \brief returns true if the internal representation is empty */
+  /*! Is the internal representation is empty? */
   virtual bool is_empty() const { return m_polyhedron.empty(); }
 
-  /*! \brief draws the internal representation */
+  /*! Draw the internal representation */
   virtual void draw_geometry(SGAL::Draw_action* action);
 
-  /*! obtains the tag (type) of the container */
+  /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:

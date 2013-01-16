@@ -91,7 +91,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOPO_VANO()
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
 {
   TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOPO_VANO\n");
-
+  
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
     glBegin(GL_POLYGON);
@@ -650,10 +650,15 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
 {
   TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTR_VANO\n");
+  // std::cout << "FSNO_FIYE_FAPV_TENO_MOTR_VANO" << std::endl;
 
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
+    // std::cout << *((Vector3f*)(get_by_ni(*m_normal_array, j+0))) << ", "
+    //           << *((Vector3f*)(get_by_ni(*m_normal_array, j+1))) << ", "
+    //           << *((Vector3f*)(get_by_ni(*m_normal_array, j+2))) << std::endl;
+
     glNormal3fv(get_by_ni(*m_normal_array, j));
     glVertex3fv(get_by_ci(*m_coord_array, j++));
     glNormal3fv(get_by_ni(*m_normal_array, j));
@@ -2604,6 +2609,8 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 // Texture disabled:
 void Indexed_face_set::draw_FAPV_VAYE()
 {
+  // std::cout << "FAPV_VAYE" << std::endl;
+  
   TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPV_VAYE\n");
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -2636,38 +2643,38 @@ void Indexed_face_set::draw_FAPV_VAYE()
     glVertexPointer(3, GL_FLOAT, 0, BUFFER_OFFSET(0));
   } else {
     if (resolve_fragment_source() == FS_NORMAL) {
-      glNormalPointer(GL_FLOAT, 0, (GLfloat *)(m_normal_array->get_vector()));
+      glNormalPointer(GL_FLOAT, 0, (GLfloat*)(m_normal_array->get_vector()));
       glEnableClientState(GL_NORMAL_ARRAY);
     } else {
-      glColorPointer(3, GL_FLOAT, 0, (GLfloat *)(m_color_array->get_vector()));
+      glColorPointer(3, GL_FLOAT, 0, (GLfloat*)(m_color_array->get_vector()));
       glEnableClientState(GL_COLOR_ARRAY);
     }
     if (m_tex_coord_array != NULL) {
       glTexCoordPointer(2, GL_FLOAT, 0,
-                        (GLfloat *)(m_tex_coord_array->get_vector()));
+                        (GLfloat*)(m_tex_coord_array->get_vector()));
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
     glVertexPointer(3, GL_FLOAT, 0, m_coord_array->get_vector());
   }
 #else
   if (resolve_fragment_source() == FS_NORMAL) {
-    glNormalPointer(GL_FLOAT, 0, (GLfloat *)(m_normal_array->get_vector()));
+    glNormalPointer(GL_FLOAT, 0, (GLfloat*)(m_normal_array->get_vector()));
     glEnableClientState(GL_NORMAL_ARRAY);
   } else {
-    glColorPointer(3, GL_FLOAT, 0, (GLfloat *)(m_color_array->get_vector()));
+    glColorPointer(3, GL_FLOAT, 0, (GLfloat*)(m_color_array->get_vector()));
     glEnableClientState(GL_COLOR_ARRAY);
   }
   if (m_tex_coord_array != NULL) {
     glTexCoordPointer(2, GL_FLOAT, 0,
-                      (GLfloat *)(m_tex_coord_array->get_vector()));
+                      (GLfloat*)(m_tex_coord_array->get_vector()));
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   }
-  glVertexPointer(3, GL_FLOAT, 0, (GLfloat *)(m_coord_array->get_vector()));
+  glVertexPointer(3, GL_FLOAT, 0, (GLfloat*)(m_coord_array->get_vector()));
 #endif
   
   glEnableClientState(GL_VERTEX_ARRAY);
 
-  const GLvoid * indices = (GLvoid *) m_coord_indices.get_vector();
+  const GLvoid* indices = (GLvoid*) m_coord_indices.get_vector();
   SGAL_assertion(m_primitive_type == PT_TRIANGLES ||
                  m_primitive_type == PT_QUADS);
   Uint count = m_num_primitives * ((m_primitive_type == PT_TRIANGLES) ? 3 : 4);

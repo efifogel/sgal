@@ -212,6 +212,10 @@ public:
 #endif
 
   Math() { make_inverse_sqrt_lookup_table(); }
+
+  /*!
+   * See http://en.wikipedia.org/wiki/Fast_inverse_square_root
+   */
   static float FASTCALL sqrt_reciprocalf(float x);
 
 private:
