@@ -5812,20 +5812,15 @@ Transform {
 	# }
        ]
     }
-    Shape {
-      appearance Appearance {
-	material Material {}
-      }
-      geometry DEF GEOM Ego {
-        scale 2000
-	model USE MODEL
-	# parts {
-	#   children [
-	#     USE PART0
-	#     USE PART1
-	#    ]
-	# }
-      }
+    DEF GEOM Ego {
+      scale 2000
+      model USE MODEL
+      # parts {
+      #   children [
+      #     USE PART0
+      #     USE PART1
+      #    ]
+      # }
     }
 
     # # The axes:
