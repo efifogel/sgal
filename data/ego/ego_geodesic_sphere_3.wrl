@@ -50,6 +50,7 @@ DEF SNAP Snapshot {
 }
 
 Transform {
+  rotation 1 0 0 -1.5707
   #bboxCenter 0 0 0
   #bboxSize 1.5 1.5 1.5
   children [
@@ -578,7 +579,7 @@ Transform {
        #]
     #}
     DEF EGO Ego {
-      scale 100
+      scale 100 100 100
       model USE MODEL
       # parts {
       #   children [

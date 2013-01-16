@@ -36,6 +36,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
+class Matrix4f;
 
 namespace SEGO_internal{
   
@@ -68,20 +69,23 @@ class SGAL_CLASSDEF Ego_voxelizer {
   /*!
    * @return The origin of the voxels structure.
    */
-  Kernel::Point_3 operator() (const Polyhedron& polyhedron,
-                              float scale, Ego_voxels* out_voxels) const;
+  Kernel::Point_3 operator()(const Polyhedron& polyhedron,
+                             const Matrix4f& matrix, Ego_voxels* out_voxels)
+    const;
 
   /*!
    * @return The origin of the voxels structure.
    */
-  Kernel::Point_3 operator() (const Exact_polyhedron& polyhedron,
-                              float scale, Ego_voxels* out_voxels) const;
+  Kernel::Point_3 operator()(const Exact_polyhedron& polyhedron,
+                             const Matrix4f& matrix, Ego_voxels* out_voxels)
+    const;
 
   /*!
    * @return The origin of the voxels structure.
    */
-  Kernel::Point_3 operator() (const Geo_set& geo_set,
-                              float scale, Ego_voxels* out_voxels) const;
+  Kernel::Point_3 operator()(const Geo_set& geo_set,
+                             const Matrix4f& matrix, Ego_voxels* out_voxels)
+    const;
   
  private:
 
@@ -99,11 +103,11 @@ class SGAL_CLASSDEF Ego_voxelizer {
   Point_3 operator() (const Triangles& triangles, Ego_voxels* out_voxels) const;
 
   Triangles create_triangles_from_polyhedron(const Polyhedron& polyhedron,
-                                             float scale) const;
+                                             const Matrix4f& matrix) const;
   Triangles create_triangles_from_polyhedron(const Exact_polyhedron& polyhedron,
-                                             float scale) const;
+                                             const Matrix4f& matrix) const;
   Triangles create_triangles_from_geo_set(const Geo_set& polyhedron,
-                                          float scale) const;
+                                          const Matrix4f& matrix) const;
   
   Point_3 create_voxels_from_triangles(const Triangles& polyhedron,
                                        Ego_voxels* out_voxels) const;

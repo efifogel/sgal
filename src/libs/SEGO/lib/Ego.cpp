@@ -67,7 +67,6 @@ Container_proto* Ego::s_prototype = NULL;
 const Float Ego::s_def_voxel_width(8.2);
 const Float Ego::s_def_voxel_length(8.2);
 const Float Ego::s_def_voxel_height(9.6);
-const Float Ego::s_def_scale(1);
 const Ego_voxels_tiler::First_tile_placement 
 Ego::s_def_first_tile_placement(Ego_voxels_tiler::FIRST00);
 const Ego_voxels_tiler::Strategy
@@ -79,8 +78,7 @@ REGISTER_TO_FACTORY(Ego, "Ego");
 
 /*! Constructor */
 Ego::Ego(Boolean proto) :
-  Group(proto),
-  m_scale(s_def_scale),
+  Transform(proto),
   m_voxel_width(s_def_voxel_width),
   m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),  
@@ -146,17 +144,14 @@ void Ego::init_prototype()
   typedef void (Container::* Execution_function)(Field_info*);
   
   if (s_prototype) return;
-  s_prototype = new Container_proto(Group::get_prototype());
+  s_prototype = new Container_proto(Transform::get_prototype());
 
   // We use SF_int (instead of SF_uint) to allow connecting the value
   // field of an Incrementor, which is of int type (and not Uint) to this
   // field.
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Ego::scale_changed);
-  s_prototype->add_field_info(new SF_float(SCALE, "scale",
-                                           get_member_offset(&m_scale),
-                                           exec_func));
+    static_cast<Execution_function>(&Ego::model_changed);
 
   exec_func = static_cast<Execution_function>(&Ego::voxels_changed);  
   s_prototype->add_field_info(new SF_float(VOXEL_WIDTH, "voxelWidth",
@@ -205,6 +200,8 @@ Container_proto* Ego::get_prototype()
 /*! \brief sets the attributes of this node */
 void Ego::set_attributes(Element* elem)
 {
+  Transform::set_attributes(elem);
+  
   typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
   typedef Element::Cont_list              Cont_list;
   typedef Element::Cont_iter              Cont_iter;
@@ -277,14 +274,10 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "scale") {
-      set_scale(boost::lexical_cast<Float>(value));
-      elem->mark_delete(ai);
-      continue;
-    }
     if (name == "firstTilePlacement") {
       size_t val = boost::lexical_cast<size_t>(value);
-      set_first_tile_placement(static_cast<Ego_voxels_tiler::First_tile_placement>(val));
+      set_first_tile_placement
+        (static_cast<Ego_voxels_tiler::First_tile_placement>(val));
       elem->mark_delete(ai);
       continue;
     }
@@ -296,11 +289,11 @@ void Ego::set_attributes(Element* elem)
     }
     if (name == "tilingRowsDirection") {
       size_t val = boost::lexical_cast<size_t>(value);
-      set_tiling_rows_direction(static_cast<Ego_voxels_tiler::Tiling_rows>(val));
+      set_tiling_rows_direction
+        (static_cast<Ego_voxels_tiler::Tiling_rows>(val));
       elem->mark_delete(ai);
       continue;
     }
-
   }
 
   // Remove all the deleted attributes:
@@ -343,14 +336,14 @@ void Ego::clean_voxels()
     if (this->is_model_polyhedron())
       m_tiled_voxels_origin = 
         voxelize(this->get_polyhedron_model()->get_polyhedron(),
-                 m_scale, &m_voxels);
+                 get_matrix(), &m_voxels);
     if (this->is_model_exact_polyhedron())
       m_tiled_voxels_origin = 
         voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
-                 m_scale, &m_voxels);
+                 get_matrix(), &m_voxels);
     else if (this->is_model_geo_set())
       m_tiled_voxels_origin = 
-        voxelize(*(this->get_geo_set_model()), m_scale, &m_voxels);
+        voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
     
     fill(&m_voxels);
     adjust_voxels_for_tiling();
@@ -468,6 +461,8 @@ void Ego::cull(Cull_context& cull_context)
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
 
+  // We deliberately call the cull() member of the Group and of the Transform
+  // to avoid duplicate application of the transformations.
   Group::cull(cull_context);
 }
 
@@ -478,10 +473,10 @@ void Ego::isect(Isect_action* action)
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
 
-  Group::isect(action);
+  Transform::isect(action);
 }
 
-void Ego::scale_changed(Field_info* field_info)
+void Ego::model_changed(Field_info* field_info)
 {
   m_dirty_sphere_bound = true;
   voxels_changed(field_info);

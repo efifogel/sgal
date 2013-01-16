@@ -31,7 +31,7 @@
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Group.hpp"
+#include "SGAL/Transform.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 
@@ -50,12 +50,11 @@ class Cull_context;
 class Polyhedron_geo;
 class Exact_polyhedron_geo;
 
-class SGAL_CLASSDEF Ego : public Group {
+class SGAL_CLASSDEF Ego : public Transform {
 public:
   enum {
-    FIRST = Group::LAST - 1,
+    FIRST = Transform::LAST - 1,
     MODEL,
-    SCALE,
     VOXEL_WIDTH,
     VOXEL_LENGTH,
     VOXEL_HEIGHT,
@@ -117,12 +116,10 @@ public:
   /*! (Re)generate the parts. */
   void clean_parts();
   
-  /*! Clear the internal representation and auxiliary data structures
-   */
+  /*! Clear the internal representation and auxiliary data structures */
   void clear();
 
-  /*! Clear the parts
-   */
+  /*! Clear the parts */
   void clear_parts();
   
   /*! Is the representation empty ?
@@ -176,14 +173,8 @@ public:
   /*! Obtain the height of the voxel */
   Float get_voxel_height() const { return m_voxel_height; }
   
-  /*! Set the scale.
-   * \param scale the scale.
-   */
-  void set_scale(Float scale) { m_scale = scale; }
-
-  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p) {
-    m_first_tile_placement = p;
-  }
+  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p)
+  { m_first_tile_placement = p; }
 
   void set_tiling_strategy(Ego_voxels_tiler::Strategy s)
   { m_tiling_strategy = s; }
@@ -191,8 +182,8 @@ public:
   void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)
   { m_tiling_rows_direction = r; }
 
-  /*! Notify about a change in the scale */
-  void scale_changed(Field_info* field_info = NULL);
+  /*! Notify about a change in the model */
+  void model_changed(Field_info* field_info = NULL);
 
   /*! Notify about a change in the voxels */
   void voxels_changed(Field_info* field_info = NULL);
@@ -208,9 +199,6 @@ protected:
 
   /*! The segments */
   boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
-
-  /*! Scale of the model compared to the ego bricks. */
-  Float m_scale;
 
   /*! The horizontal voxel width */
   Float m_voxel_width;
@@ -258,8 +246,8 @@ private:
   static Container_proto* s_prototype;
 
   /*! Default values */
-  static const Float s_def_scale;
-  static const Ego_voxels_tiler::First_tile_placement s_def_first_tile_placement;
+  static const Ego_voxels_tiler::First_tile_placement
+    s_def_first_tile_placement;
   static const Ego_voxels_tiler::Strategy s_def_tiling_strategy;
   static const Ego_voxels_tiler::Tiling_rows s_def_tiling_rows_direction;
   static const Float s_def_voxel_width;
