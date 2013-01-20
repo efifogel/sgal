@@ -336,7 +336,6 @@ void Ego_brick::clean()
 
   // Attributes
   set_solid(true);
-  Indexed_face_set::clean();
 }
 
 /*! Set the attributes of the object extracted from the VRML or X3D file.
