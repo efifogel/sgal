@@ -186,13 +186,7 @@ void Mesh_set::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "convex",
                                           get_member_offset(&m_crease_angle),
-                                          exec_func));
-
-  exec_func = static_cast<Execution_function>(&SGAL::Mesh_set::coord_changed);
-  s_prototype->add_field_info(new SF_bool(INVALIDATE, "invalidate",
-                                          get_member_offset(&m_dirty),
                                           exec_func));  
-  
 }
 
 /*! \brief deletes the container prototype. */

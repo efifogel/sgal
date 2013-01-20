@@ -37,7 +37,6 @@ public:
     SOLID,
     CONVEX,
     CREASE_ANGLE,
-    INVALIDATE,
     LAST
   };
 
