@@ -70,8 +70,8 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
 /*! Destructor */
 Indexed_line_set::~Indexed_line_set() {}
 
-/* Set the flag that indicates whether normals are bound per vertex or per face.
- * @param normal_per_vertex true if normals are bound per vertex
+/* \brief sets the flag that indicates whether normals are bound per vertex
+ * or per line.
  */
 void Indexed_line_set::set_normal_per_vertex(Boolean normal_per_vertex)
 {
@@ -79,8 +79,8 @@ void Indexed_line_set::set_normal_per_vertex(Boolean normal_per_vertex)
   m_normal_attachment = (normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/* Set the flag that indicates whether colors are bound per vertex or per face.
- * @param color_per_vertex true if normals are bound per vertex
+/* \brief sets the flag that indicates whether colors are bound per vertex or
+ * per line.
  */
 void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
 {
@@ -103,27 +103,21 @@ void Indexed_line_set::set_coord_array(Coord_array* coord_array)
  * \param coord_array (in) a pointer to a coord set
 */ 
 void Indexed_line_set::set_normal_array(Normal_array* normal_array)
-{
-  m_normal_array = normal_array;
-}
+{ m_normal_array = normal_array; }
 
 /*! Set the texture coordinate set. Pass the pointer to the geometry object 
  * used by the decoder as well.
  * \param tex_coord_array (in) a pointer to a coord set
  */
 void Indexed_line_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
-{
-  m_tex_coord_array = tex_coord_array;
-}
+{ m_tex_coord_array = tex_coord_array; }
 
 /*! Set the color set. Pass the pointer to the geometry object 
  * used by the decoder as well.
  * \param color_array (in) a pointer to a color set
  */
 void Indexed_line_set::set_color_array(Color_array* color_array)
-{
-  m_color_array = color_array;
-}
+{ m_color_array = color_array; }
 
 /*! Draws the geometry.
  * For efficiency reasons, differenrt methods were written to 
@@ -132,8 +126,6 @@ void Indexed_line_set::set_color_array(Color_array* color_array)
  */
 void Indexed_line_set::draw(Draw_action* action)
 {
-  if (Geo_set::is_dirty()) Geo_set::clean();
-  
   Context* context = action->get_context();
   if (!m_elliminate_hiden) {
     context->draw_depth_mask(false);
@@ -289,7 +281,7 @@ void Indexed_line_set::delete_prototype()
 /*! */
 Container_proto* Indexed_line_set::get_prototype() 
 {  
-  if (!s_prototype) init_prototype();
+  if (!s_prototype) Indexed_line_set::init_prototype();
   return s_prototype;
 }
 

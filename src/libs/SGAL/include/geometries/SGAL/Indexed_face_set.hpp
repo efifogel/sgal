@@ -38,7 +38,7 @@ class Element;
 class Container_proto;
 class Scene_graph;
 
-/*! This class describes a general mesh made of facets */
+/*! This class describes a general mesh made of facets. */
 class SGAL_CLASSDEF Indexed_face_set : public Mesh_set {
 public:
   enum {
@@ -54,23 +54,26 @@ public:
   /*! Destructor */
   virtual ~Indexed_face_set();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Indexed_face_set* prototype()
   { return new Indexed_face_set(true); }
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone() { return new Indexed_face_set(); }
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */  
+  /*! Obtain the node prototype. */  
   virtual Container_proto* get_prototype();
   
-  /*! Sets the attributes of this node */
+  /*! Sets the attributes of this node extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -114,10 +117,10 @@ public:
    */
   void calculate_multiple_normals_per_vertex();
 
-  /*! Calculate a single normal per polygon for all polygons */
+  /*! Calculate a single normal per polygon for all polygons. */
   void calculate_normal_per_polygon();
 
-  /*! Calculate a single normal per polygon for all polygons */
+  /*! Calculate a single normal per polygon for all polygons. */
   void calculate_normal_per_polygon(Normal_array* normal_array);
   
   /*! Calculate the normals in case they are invalidated.
@@ -126,43 +129,54 @@ public:
    */
   void clean_normals();
 
-  /*! Clear the representation of the normals */
+  /*! Clear the representation of the normals. */
   virtual void clear_normals() { m_dirty_normals = true; }
   
-  /*! Determine whether the representation of the normals hasn't been updated */
+  /*! Determine whether the representation of the normals hasn't been
+   * cleaned.
+   */
   Boolean is_dirty_normals() const { return m_dirty_normals; }
   
-  /*! Allocate the texture coordinate array in case it is not present */
-  void allocate_tex_coords();
-  
-  /*! Calculate the texture coordinates in case they are invalidated */
+  /*! Calculate the texture coordinates in case they are invalidated. */
   void clean_tex_coords();
 
-  /*! Clear the representation of the normals */
+  /*! Clear the representation of the normals. */
   void clear_tex_coords() { m_dirty_tex_coords = true; }
   
-  /*! Determine whether the representation of the normals hasn't been updated */
+  /*! Determine whether the representation of the normals hasn't been
+   * cleaned.
+   */
   Boolean is_dirty_tex_coords() const { return m_dirty_tex_coords; }
 
+  /* Set the flag that indicates whether normals are bound per vertex or per
+   * face.
+   * \param normal_per_vertex true if normals are bound per vertex
+   */
   void set_normal_per_vertex(Boolean normal_per_vertex);
   Boolean get_normal_per_vertex() { return m_normal_per_vertex; }
 
+  /* Set the flag that indicates whether colors are bound per vertex or per
+   * face.
+   * @param color_per_vertex true if normals are bound per vertex
+   */
   void set_color_per_vertex(Boolean color_per_vertex);
   Boolean get_color_per_vertex() { return m_color_per_vertex; }
   
   virtual void isect(Isect_action* action); 
   virtual int create_display_list(Draw_action* action);
 
-  /*! Clear the representation */
+  /*! Clear the representation. */
   virtual void clear();
   
-  /*! Return true if the representation is empty */
+  /*! Return true if the representation is empty. */
   virtual Boolean is_empty() const;
 
-  /*! Draw the mesh conditionaly */
+  /*! Draw the mesh conditionaly. */
   virtual void draw(Draw_action* action);
 
-  /*! Draw the representation */
+  /*! Draw the representation.
+   * \param action action.
+   */
   virtual void draw_geometry(Draw_action* action);
   
   // Drawing:

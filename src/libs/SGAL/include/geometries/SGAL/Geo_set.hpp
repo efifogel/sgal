@@ -102,10 +102,10 @@ public:
   /*! Destructor */
   virtual ~Geo_set();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
   /*! Obtain the node prototype
@@ -113,238 +113,217 @@ public:
    */
   virtual Container_proto* get_prototype();
 
-  /*! Set the attributes of the object */
+  /*! Set the attributes of the object extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   */
   virtual void set_attributes(Element* elem);
 
-  /*! Calculate the sphere bound */
+  /*! Calculate the sphere bound.
+   * \return true if the BS has changed since lst time this was called.
+   */
   virtual Boolean calculate_sphere_bound();
   
-  /*! */
+  /*! Set the coordinate array.
+   * \param coord_array (in) a pointer to a coordinate array
+   */
   void set_coord_array(Coord_array* coord_array);
 
-  /*! Obtain the coordinate array */
+  /*! Obtain the coordinate array. */
   Coord_array* get_coord_array() const { return m_coord_array; }
 
-  /*! */
+  /*! Set the normal array.
+   * \param coord_array (in) a pointer to a normal array
+   */
   void set_normal_array(Normal_array* normal_array);
 
-  /*! Obtain the normal array */
+  /*! Obtain the normal array. */
   Normal_array* get_normal_array() const { return m_normal_array; }
 
-  /*! */
+  /*! Set the texture-coordinate array.
+   * \param tex_coord_array (in) a pointer to a texture-coordinate array
+   */
   void set_tex_coord_array(Tex_coord_array* tex_coord_array);
 
-  /*! Obtain the texture-coordinate array */
+  /*! Obtain the texture-coordinate array. */
   Tex_coord_array* get_tex_coord_array() const { return m_tex_coord_array; }
 
-  /*! Set the color field */
+  /*! Set the color field.
+   * \param color_array (in) a pointer to a color array
+   */
   void set_color_array(Color_array* color_array);
 
-  /*! Obtain the normal array */
+  /*! Obtain the normal array. */
   Color_array* get_color_array() const { return m_color_array; }
 
-  /*! Obtain the coord-index array */
+  /*! Obtain the coord-index array. */
   const SGAL::Array<Uint>& get_coord_indices() const;
 
-  /*! Obtain the color-index array */
+  /*! Obtain the color-index array. */
   const SGAL::Array<Uint>& get_color_indices() const;
 
-  /*! Obtain the normal-index array */
+  /*! Obtain the normal-index array. */
   const SGAL::Array<Uint>& get_normal_indices() const;
 
-  /*! Obtain the texture-coord-index array */
+  /*! Obtain the texture-coord-index array. */
   const SGAL::Array<Uint>& get_tex_coord_indices() const;
 
-  /*! Obtain the coord-index array */
+  /*! Obtain the coord-index array. */
   const Uint* get_coord_indices_vector() const;
   
-  /*! Obtain the color-index array */
+  /*! Obtain the color-index array. */
   const Uint* get_color_indices_vector() const;
 
-  /*! Obtain the normal-index array */
+  /*! Obtain the normal-index array. */
   const Uint* get_normal_indices_vector() const;
 
-  /*! Obtain the texture-coord-index array */
+  /*! Obtain the texture-coord-index array. */
   const Uint* get_tex_coord_indices_vector() const;
 
-  /*! Obtain the i-th coord index */
+  /*! Obtain the i-th coord index. */
   Uint get_coord_index(Uint i) const { return m_coord_indices[i]; }
   
-  /*! Set the representation mode */
+  /*! Set the representation mode. */
   void set_primitive_type(Primitive_type type) { m_primitive_type = type; }
 
-  /*! Obtain the representation mode */
+  /*! Obtain the representation mode. */
   Primitive_type get_primitive_type() const { return m_primitive_type; }
   
-  /*! Determine whether the representation is empty */
+  /*! Determine whether the representation is empty. */
   Boolean is_empty() const;
 
-  /*! Determine whether the geometry has color (as opposed to material) */
+  /*! Determine whether the geometry has color (as opposed to material). */
   virtual Boolean has_color() const { return m_color_array != NULL; }  
   
-  /*! Draw the geometry */
+  /*! Draw the geometry. */
   virtual void draw(Draw_action* action) = 0;
 
-  /*! Clean the representation */
-  virtual void clean();
+  /*! Process change of coordinates. */
+  virtual void coord_changed(Field_info* /* field_info. */) {}
 
-  /*! Determine whether the representation hasn't been cleaned */
-  virtual Boolean is_dirty() const { return m_dirty; }
-  
-  /*! Obtain a pointer to an element directly */
+  /*! Obtain a pointer to an element directly. */
   template <class T_Vector>
   GLfloat* get(T_Vector& array, Uint i) const
   { return ((GLfloat *) &(array)[i]); }
 
-  /*! Obtain a pointer to an element through the coord indices */
+  /*! Obtain a pointer to an element through the coord indices. */
   template <class T_Vector>
   GLfloat* get_by_ci(T_Vector& array, Uint i) const
   { return ((GLfloat *) &(array)[m_coord_indices[i]]); }
 
-  /*! Obtain apointer to an element through the normal indices */
+  /*! Obtain apointer to an element through the normal indices. */
   template <class T_Vector>
   GLfloat* get_by_ni(T_Vector& array, Uint i) const
   { return ((GLfloat *) &(array)[m_normal_indices[i]]); }
   
-  /*! Obtain apointer to an element through the color indices */
+  /*! Obtain apointer to an element through the color indices. */
   template <class T_Vector>
   GLfloat* get_by_color_index(T_Vector& array, Uint i) const
   { return ((GLfloat *) &(array)[m_color_indices[i]]); }
 
-  /*! Obtain a pointer to an element through the tex. coord indices */
+  /*! Obtain a pointer to an element through the tex. coord indices. */
   template <class T_Vector>
   GLfloat* get_by_ti(T_Vector & array, Uint i) const
   { return ((GLfloat *) &(array)[m_tex_coord_indices[i]]); }
 
-  /*! Obtain the number of primitives */
+  /*! Obtain the number of primitives. */
   Uint get_num_primitives() const { return m_num_primitives; }
 
-  /*! Set the number of primitives */
+  /*! Set the number of primitives. */
   void set_num_primitives(Uint num) { m_num_primitives = num; }
 
-  /*! Process change of coordinates */
-  virtual void coord_changed(Field_info* /* field_info */) {}
-
-  /*! Process change of points */
-  virtual void point_changed() {}
-  
 protected:
-  /*! Indicates whether the mesh must be cleaned */
-  Boolean m_dirty;
-
-  /*! The number of primitives in this Geo_set */
+  /*! The number of primitives in this Geo_set. */
   Uint m_num_primitives;
 
-  /*! Indicates how normals are bound */
+  /*! Indicates how normals are bound. */
   Attachment m_normal_attachment;
 
-  /*! Indicates how normals are bound */
+  /*! Indicates how normals are bound. */
   Attachment m_color_attachment;
 
-  /*! An array of vertex ccordinates */
+  /*! An array of vertex ccordinates. */
   Coord_array* m_coord_array;
 
-  /*! An array if vertex normals */
+  /*! An array if vertex normals. */
   Normal_array* m_normal_array;
 
-  /*! An array of vertex texture-ccordinates */
+  /*! An array of vertex texture-ccordinates. */
   Tex_coord_array* m_tex_coord_array;
 
-  /*! An array if vertex colors */
+  /*! An array if vertex colors. */
   Color_array* m_color_array;
   
-  /*! An array of indices into the vertex-coordinate array */
+  /*! An array of indices into the vertex-coordinate array. */
   SGAL::Array<Uint> m_coord_indices;
 
-  /*! An array of indices into the vertex-normal array */
+  /*! An array of indices into the vertex-normal array. */
   SGAL::Array<Uint> m_tex_coord_indices;
 
-  /*! An array of indices into the vertex-texture-coordinate array */
+  /*! An array of indices into the vertex-texture-coordinate array. */
   SGAL::Array<Uint> m_normal_indices;
 
-  /*! An array of indices into the vertex-color array */
+  /*! An array of indices into the vertex-color array. */
   SGAL::Array<Uint> m_color_indices;
 
-  /*! Indicates the geometry mode (triangles, quads, or general polygons) */
+  /*! Indicates the geometry mode (triangles, quads, or general polygons). */
   Primitive_type m_primitive_type;
 
-  /*! Indicates whether to remove the -1 end-of-face markers in case of
-   * triangles and quads.
-   */
-  Boolean m_flatten_indices;
-
-  /*! Indicates whether the indices structure is "flat". In a "flat"
-   * representation, in case of triangles and quads, the no -1 end-of-face
-   * markers are not present. The number of indices is (m_num_primitives * 3)
-   * or (m_num_primitives * 4) respectively. It is illegal to have a mixture
-   * of flat and non-flat index arrays. Either all indices are flat or none is.
-   */
-  Boolean m_are_indices_flat;
-  
-  /*! Proces the indices */
-  void flatten_indices();
-
-  /*! Resolve the conflict between normal and colors */
+  /*! Resolve the conflict between normal and colors. */
   Fragment_source resolve_fragment_source() const;
 
 private:
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! The name of the representation modes */
+  /*! The name of the representation modes. */
   static const Char* s_primitive_type_names[];
 
-  /*! The name of the attachments */
+  /*! The name of the attachments. */
   static const Char* s_attachment_names[];
   
   static const Primitive_type s_def_primitive_type;
 
-  /*! Intialize */
+  /*! Intialize. */
   void init();
-
-  /*! Proces the indices */
-  void flatten_indices(Uint* src, Uint* dst, Uint num);
 };
 
-/*! Obtain the color-index array */
+/*! \brief obtains the color-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_coord_indices() const
 { return m_coord_indices; }
 
-/*! Obtain the color-index array */
+/*! \brief obtains the color-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_color_indices() const
 { return m_color_indices; }
 
-/*! Obtain the normal-index array */
+/*! \brief obtains the normal-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_normal_indices() const
 { return m_normal_indices; }
 
-/*! Obtain the texture-coord-index array */
+/*! \brief obtains the texture-coord-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_tex_coord_indices() const
 { return m_tex_coord_indices; }
 
-/*! Obtain the coord-index array */
+/*! \brief obtains the coord-index array. */
 inline const Uint* Geo_set::get_coord_indices_vector() const
 { return m_coord_indices.get_vector(); }
 
-/*! Obtain the color-index array */
+/*! \brief obtains the color-index array. */
 inline const Uint* Geo_set::get_color_indices_vector() const
 { return m_color_indices.get_vector(); }
 
-/*! Obtain the normal-index array */
+/*! \brief obtains the normal-index array. */
 inline const Uint* Geo_set::get_normal_indices_vector() const
 { return m_normal_indices.get_vector(); }
 
-/*! Obtain the texture-coord-index array */
+/*! \brief obtains the texture-coord-index array. */
 inline const Uint* Geo_set::get_tex_coord_indices_vector() const
 { return m_tex_coord_indices.get_vector(); }
 
-/*! Resolves the conflict between normal and colors. If the color array is
- * present, we use colors as source (disable lighting, etc.).
+/*! \brief resolvess the conflict between normal and colors. If the color
+ * array is present, we use colors as source (disable lighting, etc.).
  */
 inline Geo_set::Fragment_source Geo_set::resolve_fragment_source() const
-{
-  return (m_color_array && m_color_array->size()) ? FS_COLOR : FS_NORMAL;
-}
+{ return (m_color_array && m_color_array->size()) ? FS_COLOR : FS_NORMAL; }
   
 SGAL_END_NAMESPACE
 

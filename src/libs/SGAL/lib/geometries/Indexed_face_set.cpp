@@ -674,12 +674,20 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 Indexed_face_set::~Indexed_face_set()
 {
   clear();
-  if (m_own_normal_array && m_normal_array) delete m_normal_array;
-  if (m_own_tex_coord_array && m_tex_coord_array) delete m_tex_coord_array;
+  if (m_own_normal_array && m_normal_array) {
+    delete m_normal_array;
+    m_normal_array = NULL;
+    m_own_normal_array = false;
+  }
+  if (m_own_tex_coord_array && m_tex_coord_array) {
+    delete m_tex_coord_array;
+    m_tex_coord_array = NULL;
+    m_own_tex_coord_array = false;
+  }
 }
 
-/* Set the flag that indicates whether normals are bound per vertex or per face.
- * @param normal_per_vertex true if normals are bound per vertex
+/* \brief sets the flag that indicates whether normals are bound per vertex or
+ * per face.
  */
 void Indexed_face_set::set_normal_per_vertex(Boolean normal_per_vertex)
 {
@@ -687,8 +695,8 @@ void Indexed_face_set::set_normal_per_vertex(Boolean normal_per_vertex)
   m_normal_attachment = (normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/* Set the flag that indicates whether colors are bound per vertex or per face.
- * @param color_per_vertex true if normals are bound per vertex
+/* \brief sets the flag that indicates whether colors are bound per vertex or
+ * per face.
  */
 void Indexed_face_set::set_color_per_vertex(Boolean color_per_vertex)
 {
@@ -696,7 +704,7 @@ void Indexed_face_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/*! \brief claculates the normals in case they are invalidated */
+/*! \brief claculates the normals in case they are invalidated. */
 void Indexed_face_set::clean_normals()
 {
   if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
@@ -705,7 +713,7 @@ void Indexed_face_set::clean_normals()
   m_dirty_normals = false;
 }
 
-/*! \brief Compute the normal to a facet from 3 points lying on the facet */
+/*! \brief Compute the normal to a facet from 3 points lying on the facet. */
 void Indexed_face_set::compute_normal(const Vector3f& v1, const Vector3f& v2,
                                       const Vector3f& v3, Vector3f& normal)
   const
@@ -738,7 +746,7 @@ void Indexed_face_set::compute_triangle_center(Uint j, Vector3f& center) const
 }
 
 /*! \brief computes the vertex information for the three vertices of a
- * triangule
+ * triangule.
  */
 void Indexed_face_set::
 compute_triangle_vertex_info(Uint j, Uint facet_index,
@@ -785,7 +793,7 @@ void Indexed_face_set::compute_quad_center(Uint j, Vector3f& center) const
 }
   
 /*! \brief computes the vertex information for the four vertices of a
- * quadrilateral
+ * quadrilateral.
  */
 void
 Indexed_face_set::compute_quad_vertex_info(Uint j, Uint facet_index,
@@ -832,7 +840,7 @@ Uint Indexed_face_set::compute_polygon_center(Uint j, Vector3f& center) const
   return k;
 }
 
-/*! \brief computes the vertex information for the all vertices of a polygon */
+/*! \brief computes the vertex information for the all vertices of a polygon. */
 void Indexed_face_set::
 compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
                             const Vector3f& center,
@@ -845,12 +853,16 @@ compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
   }
 }
 
-/*! \brief calculates a single normal per vertex for all vertices */
+/*! \brief calculates a single normal per vertex for all vertices. */
 void Indexed_face_set::calculate_single_normal_per_vertex()
 {
-  m_normal_array = new Normal_array;
-  m_own_normal_array = true;
-    
+  SGAL_assertion(m_coord_array);
+
+  if (!m_normal_array) {
+    m_normal_array = new Normal_array;
+    m_own_normal_array = true;
+  }
+  
   // Calculate the normals of all facets.
   Normal_array normal_array;
   calculate_normal_per_polygon(&normal_array);
@@ -935,13 +947,11 @@ Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
   return (angle > m_crease_angle);
 }
 
-/*! \brief calculates multiple normals per vertex for all vertices */
+/*! \brief calculates multiple normals per vertex for all vertices. */
 void Indexed_face_set::calculate_multiple_normals_per_vertex()
-{
-  calculate_single_normal_per_vertex();
-}
+{ calculate_single_normal_per_vertex(); }
 
-/*! \brief calculates a single normal per polygon for all polygons */
+/*! \brief calculates a single normal per polygon for all polygons. */
 void Indexed_face_set::calculate_normal_per_polygon(Normal_array* normal_array)
 {
   normal_array->resize(m_num_primitives);
@@ -975,31 +985,33 @@ void Indexed_face_set::calculate_normal_per_polygon(Normal_array* normal_array)
   }
 }
 
-/*! \brief calculates a single normal per polygon for all polygons */
+/*! \brief calculates a single normal per polygon for all polygons. */
 void Indexed_face_set::calculate_normal_per_polygon()
 {
-  m_normal_array = new Normal_array;
-  m_own_normal_array = true;
+  SGAL_assertion(m_coord_array);
+
+  if (!m_normal_array) {
+    m_normal_array = new Normal_array;
+    m_own_normal_array = true;
+  }
+  
   calculate_normal_per_polygon(m_normal_array);
   set_normal_per_vertex(false);
 }
 
-/*! Allocate the texture coordinate mapping in case it is not present */
-void Indexed_face_set::allocate_tex_coords()
-{
-  SGAL_assertion(!m_tex_coord_array);
-  SGAL_assertion(m_coord_array);
-  m_tex_coord_array = new Tex_coord_array(m_coord_array->size());
-  m_own_tex_coord_array = true;
-}
-
-/*! Calculate the default texture coordinate mapping in case it is not present,
- *  using the shape bounding-box.
+/*! \brief calculates the default texture coordinate mapping in case it is
+ * not present, using the shape bounding-box.
  */
 void Indexed_face_set::clean_tex_coords()
 {
-  SGAL_assertion(m_tex_coord_array);
   SGAL_assertion(m_coord_array);
+
+  if (!m_tex_coord_array) {
+    m_tex_coord_array = new Tex_coord_array(m_coord_array->size());
+    m_own_tex_coord_array = true;
+  }
+  
+  SGAL_assertion(m_tex_coord_array);
 
   Uint num_coords = m_coord_array->size();
 
@@ -1018,7 +1030,7 @@ void Indexed_face_set::clean_tex_coords()
   m_dirty_tex_coords = false;
 }
 
-/*! \brief draws the mesh conditionaly */
+/*! \brief draws the mesh conditionaly. */
 void Indexed_face_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
@@ -1033,18 +1045,14 @@ void Indexed_face_set::draw(Draw_action* action)
   Context* context = action->get_context();
   if (context->get_tex_enable() && !(context->get_tex_gen()) &&
       m_dirty_tex_coords)
-  {
-    if (!m_tex_coord_array) allocate_tex_coords();
     clean_tex_coords();
-  }
 
   draw_mesh(action);
 }
 
-/*! draw() draws the geometry.
+/*! \brief draws the geometry.
  * For efficiency reasons, differenrt methods were written to 
  * draw geometries with different kinds of data (texture/normal/color).
- * @param action action.
  */
 void Indexed_face_set::draw_geometry(Draw_action* action)
 {
@@ -1069,7 +1077,7 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
   }
 }
 
-/*! Dispatch the appropriate drawing routine */
+/*! \brief dispatches the appropriate drawing routine. */
 void Indexed_face_set::draw_dispatch(Draw_action* /* action */) 
 {
   // When using vertex array, the index arrays must be flat:
@@ -1099,7 +1107,7 @@ void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
   (this->*draws[mask])();
 }
 
-/*! Isect direct drawing-mode */
+/*! \brief isects direct drawing-mode. */
 void Indexed_face_set::isect_direct()
 {
   Uint i, j;
@@ -1192,7 +1200,7 @@ void Indexed_face_set::isect(Isect_action* action)
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-/*! Create a new display list. This is called after each update */
+/*! \brief creates a new display list. This is called after each update. */
 int Indexed_face_set::create_display_list(Draw_action* action)
 {
   int id = glGenLists(1);
@@ -1202,10 +1210,7 @@ int Indexed_face_set::create_display_list(Draw_action* action)
   return id;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the object. */
 void Indexed_face_set::set_attributes(Element* elem) 
 { 
   Mesh_set::set_attributes(elem);
@@ -1240,7 +1245,7 @@ void Indexed_face_set::set_attributes(Element* elem)
   // in case normalPerVertex or colorPerVertex is false resp.
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene. */  
 void Indexed_face_set::add_to_scene(Scene_graph* sg)
 {
   Configuration* config = sg->get_configuration();
@@ -1280,7 +1285,7 @@ Attribute_list Indexed_face_set::get_attributes()
 
 #endif
 
-/*! Initialize the container prototype */
+/*! \brief initializes the container prototype. */
 void Indexed_face_set::init_prototype()
 {
   if (s_prototype) return;
@@ -1303,21 +1308,21 @@ void Indexed_face_set::init_prototype()
                                exec_func));
 }
 
-/*! Delete the container prototype */
+/*! \brief deletes the container prototype. */
 void Indexed_face_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the container prototype */
+/*! \brief obtains the container prototype. */
 Container_proto* Indexed_face_set::get_prototype() 
 {  
   if (s_prototype == NULL) Indexed_face_set::init_prototype();
   return s_prototype;
 }
 
-/*! Create the data structure of the vertex buffer object */
+/*! \brief creates the data structure of the vertex buffer object. */
 void Indexed_face_set::create_vertex_buffer_object()
 {
   std::cout << "create_vertex_buffer_object" << std::endl;
@@ -1328,7 +1333,7 @@ void Indexed_face_set::create_vertex_buffer_object()
   destroy_vertex_buffer_object();
   Boolean error_occured = false;
   
-  // Create the vertex coord buffer context */
+  // Create the vertex coord buffer context. */
   if (m_coord_array) {
     glGenBuffersARB(1, &m_vertex_coord_id);
     if (m_vertex_coord_id == 0) {
@@ -1343,7 +1348,7 @@ void Indexed_face_set::create_vertex_buffer_object()
     }
   }
   
-  // Create the vertex normal buffer context */
+  // Create the vertex normal buffer context. */
   if (!error_occured && m_normal_array) {
     glGenBuffersARB(1, &m_vertex_normal_id);
     if (m_vertex_normal_id == 0) {
@@ -1358,7 +1363,7 @@ void Indexed_face_set::create_vertex_buffer_object()
     }
   }
 
-  // Create the vertex color buffer context */
+  // Create the vertex color buffer context. */
   if (!error_occured && m_color_array) {
     glGenBuffersARB(1, &m_vertex_color_id);
     if (m_vertex_color_id == 0) {
@@ -1373,7 +1378,7 @@ void Indexed_face_set::create_vertex_buffer_object()
     }
   }
 
-  // Create the vertex texture-coordinate buffer context */
+  // Create the vertex texture-coordinate buffer context. */
   if (!error_occured && m_tex_coord_array) {
     glGenBuffersARB(1, &m_vertex_tex_coord_id);
     if (m_vertex_tex_coord_id == 0) {
@@ -1416,7 +1421,7 @@ void Indexed_face_set::create_vertex_buffer_object()
   m_vertex_buffer_object_created = true;
 }
 
-/*! Destroy the data structure of the vertex buffer object */
+/*! \brief destroys the data structure of the vertex buffer object. */
 void Indexed_face_set::destroy_vertex_buffer_object()
 {
 #if defined(GL_ARB_vertex_buffer_object)
@@ -1442,7 +1447,7 @@ void Indexed_face_set::destroy_vertex_buffer_object()
 #endif
 }
 
-/*! Destroy the data structure of the display_list */
+/*! \brief destroys the data structure of the display_list. */
 void Indexed_face_set::destroy_display_list()
 {
   if (m_display_list_id != 0) {
@@ -1451,7 +1456,7 @@ void Indexed_face_set::destroy_display_list()
   }
 }
 
-/*! Destroy the vertex arrays */
+/*! \brief destroys the vertex arrays. */
 void Indexed_face_set::clear_vertex_arrays()
 {
   if (m_coord_array) m_coord_array->clear();
@@ -1460,7 +1465,7 @@ void Indexed_face_set::clear_vertex_arrays()
   if (m_color_array) m_color_array->clear();
 }
 
-/*! Destroy the vertex-index arrays */
+/*! \brief destroys the vertex-index arrays. */
 void Indexed_face_set::destroy_vertex_index_arrays()
 {
   m_coord_indices.clear();
@@ -1469,7 +1474,7 @@ void Indexed_face_set::destroy_vertex_index_arrays()
   m_color_indices.clear();
 }
 
-/*! \brief clears the representation */
+/*! \brief clears the representation. */
 void Indexed_face_set::clear()
 {
   clear_vertex_arrays();
@@ -1480,7 +1485,7 @@ void Indexed_face_set::clear()
   Mesh_set::clear();
 }
   
-/*! Return true if the representation is empty */
+/*! \brief returns true if the representation is empty. */
 Boolean Indexed_face_set::is_empty() const
 {
   if (m_drawing_mode == Configuration::GDM_DISPLAY_LIST)
@@ -1494,7 +1499,7 @@ Boolean Indexed_face_set::is_empty() const
   return Geo_set::is_empty();
 }
 
-/*! \brief processes change of coordinates
+/*! \brief processes change of coordinates.
  * EFEF: It is not absolutely necessary to destroy the vertex buffer.
  *       Instead, we can simply update it as done in field_changed().
  *       In any case, this is not the place to do it. We should mark
@@ -1510,7 +1515,7 @@ void Indexed_face_set::coord_changed(SGAL::Field_info* /* field_info */)
   Mesh_set::clear();
 }
 
-/*! \brief Process change of field
+/*! \brief Process change of field.
  * EFEF: This is wrong for two reasons:
  *       1. A change to the coord_array may imply a change in the normal, 
  *       color, or text_coord arrays.
@@ -1520,7 +1525,6 @@ void Indexed_face_set::coord_changed(SGAL::Field_info* /* field_info */)
  */
 void Indexed_face_set::field_changed(Field_info* field_info)
 {
-  std::cout << "Indexed_face_set::field_changed()" << std::endl;
   switch (field_info->get_id()) {
    case COORD_ARRAY:
 #if defined(GL_ARB_vertex_buffer_object)

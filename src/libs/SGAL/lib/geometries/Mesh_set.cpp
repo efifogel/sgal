@@ -52,9 +52,11 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_is_solid(s_def_is_solid),
   m_is_convex(s_def_is_convex),
   m_crease_angle(s_def_crease_angle),
-  m_polygon_offset_factor(s_def_polygon_offset_factor)
-{
-}
+  m_polygon_offset_factor(s_def_polygon_offset_factor),
+  m_dirty_indices(true),
+  m_flatten_indices(false),
+  m_are_indices_flat(false)
+{}
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
@@ -102,7 +104,7 @@ void Mesh_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief draws the mesh conditionaly */
+/*! \brief draws the mesh conditionaly. */
 void Mesh_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
@@ -111,7 +113,7 @@ void Mesh_set::draw(Draw_action* action)
   draw_mesh(action);
 }
 
-/*! \brief draws the mesh */
+/*! \brief draws the mesh. */
 void Mesh_set::draw_mesh(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -145,14 +147,14 @@ void Mesh_set::draw_mesh(Draw_action* action)
   glDisable(GL_NORMALIZE);
 }
 
-/*! Calculate the sphere bound */
+/*! \brief calculates the sphere bound. */
 Boolean Mesh_set::calculate_sphere_bound()
 {
   if (is_dirty()) clean();
   return Geo_set::calculate_sphere_bound();
 }
 
-/*! sets the attributes of this node */
+/*! \brief sets the attributes of this node. */
 void Mesh_set::init_prototype()
 {
   if (s_prototype) return;
@@ -193,25 +195,90 @@ void Mesh_set::init_prototype()
   
 }
 
-/*! */
+/*! \brief deletes the container prototype. */
 void Mesh_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = 0;
 }
 
-/*! */
+/*! \brief obtains the container prototype. */
 Container_proto* Mesh_set::get_prototype() 
 {  
   if (!s_prototype) Mesh_set::init_prototype();
   return s_prototype;
 }
 
-/*! Clean the representation */
+/*! \brief cleans the representation. */
 void Mesh_set::clean()
 {
-  if (Geo_set::is_dirty()) Geo_set::clean();
+  if (is_dirty_indices()) clean_indices();
   m_dirty = false;
+}
+
+void Mesh_set::clean_indices()
+{
+  if (!m_are_indices_flat && m_flatten_indices) flatten_indices();
+  m_dirty_indices = false;
+}
+
+/*! \brief proceses the indices (in places). */
+void Mesh_set::flatten_indices(Uint* src, Uint* dst, Uint num)
+{
+  if (m_primitive_type == PT_TRIANGLES) {
+    Uint i, j, k;
+    for (j = 0, i = 0, k = 0; j < num; ++j) {
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      k++;
+    }
+  }
+  if (m_primitive_type == PT_QUADS) {
+    Uint i, j, k;
+    for (j = 0, i = 0, k = 0; j < num; ++j) {
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      k++;
+    }
+  }
+}
+
+/*! \brief processes the indices.
+ * In case of triangles or quads remove the '-1' end-of-polygon indication
+ * from the index buffers. This operation changes the the structure of the
+ * index buffers, and must be reflected in the drawing routines.
+ */
+void Mesh_set::flatten_indices()
+{
+  Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
+    (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
+  if (!size) return;
+
+  Uint* indices = m_coord_indices.get_vector();
+  flatten_indices(indices, indices, m_num_primitives);
+  m_coord_indices.resize(size);
+
+  if (m_tex_coord_indices.size()) {
+    Uint* indices = m_tex_coord_indices.get_vector();
+    flatten_indices(indices, indices, m_num_primitives);
+    m_tex_coord_indices.resize(size);
+  }
+
+  if (m_normal_indices.size() && m_normal_attachment == PER_VERTEX) {
+    Uint* indices = m_normal_indices.get_vector();
+    flatten_indices(indices, indices, m_num_primitives);
+    m_normal_indices.resize(size);
+  }
+
+  if (m_color_indices.size() && m_color_attachment == PER_VERTEX) {
+    Uint* indices = m_color_indices.get_vector();
+    flatten_indices(indices, indices, m_num_primitives);
+    m_color_indices.resize(size);
+  }
+  m_are_indices_flat = true;
 }
 
 SGAL_END_NAMESPACE

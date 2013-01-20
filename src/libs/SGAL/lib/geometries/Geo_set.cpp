@@ -53,7 +53,6 @@ Geo_set::Primitive_type Geo_set::s_def_primitive_type(Geo_set::PT_POLYGONS);
 /*! Constructor */
 Geo_set::Geo_set(Boolean proto) :
   Geometry(proto),
-  m_dirty(true),
   m_num_primitives(0),
   m_normal_attachment(PER_VERTEX),
   m_color_attachment(PER_VERTEX),
@@ -65,16 +64,13 @@ Geo_set::Geo_set(Boolean proto) :
   m_tex_coord_indices(),
   m_normal_indices(),
   m_color_indices(),
-  m_primitive_type(s_def_primitive_type),
-  m_flatten_indices(false),
-  m_are_indices_flat(false)
-{
-}
+  m_primitive_type(s_def_primitive_type)
+{}
 
 /*! Destructor */
 Geo_set::~Geo_set() {}
 
-/*! sets the attributes of this node */
+/*! \brief sets the attributes of this node. */
 void Geo_set::init_prototype()
 {
   if (s_prototype) return;
@@ -93,23 +89,21 @@ void Geo_set::init_prototype()
   s_prototype->add_field_info(field);
 }
 
-/*! */
+/*! \brief deletes the container prototype. */
 void Geo_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtains the container prototype. */
 Container_proto* Geo_set::get_prototype() 
 {  
   if (s_prototype == NULL) Geo_set::init_prototype();
   return s_prototype;
 }
 
-/*! Set the coordinate array
- * \param coord_array (in) a pointer to a coordinate array
- */
+/*! \brief sets the coordinate array. */
 void Geo_set::set_coord_array(Coord_array* coord_array)
 {
   Observer observer(this, get_field_info(COORD_ARRAY));
@@ -119,33 +113,23 @@ void Geo_set::set_coord_array(Coord_array* coord_array)
   m_is_sphere_bound_dirty = true;
 }
 
-/*! Set the normal array
- * \param coord_array (in) a pointer to a normal array
- */
+/*! \brief sets the normal array. */
 void Geo_set::set_normal_array(Normal_array* normal_array)
 { m_normal_array = normal_array; }
 
-/*! Set the texture-coordinate array
- * \param tex_coord_array (in) a pointer to a texture-coordinate array
- */
+/*! \brief sets the texture-coordinate array. */
 void Geo_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
 { m_tex_coord_array = tex_coord_array; }
 
-/*! Set the color array
- * \param color_array (in) a pointer to a color array
- */
+/*! \brief sets the color array. */
 void Geo_set::set_color_array(Color_array* color_array)
 { m_color_array = color_array; }
 
-/*! Return true if the representation is empty */
+/*! \brief returns true if the representation is empty. */
 Boolean Geo_set::is_empty() const
-{
-  return (!m_coord_array || (m_coord_array->size() == 0) );
-}
+{ return (!m_coord_array || (m_coord_array->size() == 0) ); }
 
-/*! Calculate the sphere bound of the geometry set. Returns true if the BS has
- * changed since lst time this was called.
- */
+/*! \brief calculates the sphere bound of the geometry set. */
 Boolean Geo_set::calculate_sphere_bound()
 {
   if (!m_is_sphere_bound_dirty) return false;
@@ -156,68 +140,7 @@ Boolean Geo_set::calculate_sphere_bound()
   return true;
 }
 
-/*! Proces the indices (in places) */
-void Geo_set::flatten_indices(Uint* src, Uint* dst, Uint num)
-{
-  if (m_primitive_type == PT_TRIANGLES) {
-    Uint i, j, k;
-    for (j = 0, i = 0, k = 0; j < num; ++j) {
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      k++;
-    }
-  }
-  if (m_primitive_type == PT_QUADS) {
-    Uint i, j, k;
-    for (j = 0, i = 0, k = 0; j < num; ++j) {
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      k++;
-    }
-  }
-}
-
-/*! Process the indices
- * In case of triangles or quads remove the '-1' end-of-polygon indication
- * from the index buffers. This operation changes the the structure of the
- * index buffers, and must be reflected in the drawing routines.
- */
-void Geo_set::flatten_indices()
-{
-  Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
-    (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-  if (!size) return;
-
-  Uint* indices = m_coord_indices.get_vector();
-  flatten_indices(indices, indices, m_num_primitives);
-  m_coord_indices.resize(size);
-
-  if (m_tex_coord_indices.size()) {
-    Uint* indices = m_tex_coord_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_tex_coord_indices.resize(size);
-  }
-
-  if (m_normal_indices.size() && m_normal_attachment == PER_VERTEX) {
-    Uint* indices = m_normal_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_normal_indices.resize(size);
-  }
-
-  if (m_color_indices.size() && m_color_attachment == PER_VERTEX) {
-    Uint* indices = m_color_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_color_indices.resize(size);
-  }
-  m_are_indices_flat = true;
-}
-
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- */
+/*! \brief sets the attributes of the object. */
 void Geo_set::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -376,12 +299,6 @@ void Geo_set::set_attributes(Element* elem)
 
   // Remove all the deleted attributes:
   elem->delete_marked();
-}
-
-void Geo_set::clean()
-{
-  if (!m_are_indices_flat && m_flatten_indices) flatten_indices();
-  m_dirty = false;
 }
 
 SGAL_END_NAMESPACE

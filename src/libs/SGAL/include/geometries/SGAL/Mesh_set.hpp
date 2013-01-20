@@ -47,65 +47,77 @@ public:
   /*! Destructor */
   virtual ~Mesh_set() {}
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */  
+  /*! Obtain the node prototype. */  
   virtual Container_proto* get_prototype();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
-  /*! Draw the mesh conditionaly */
+  /*! Draw the mesh conditionaly. */
   virtual void draw(Draw_action* action);
 
-  /*! Draw the mesh (unconditionaly) */
+  /*! Draw the mesh (unconditionaly). */
   virtual void draw_mesh(Draw_action* action);
   
-  /*! Calculate the sphere bound */
+  /*! Calculate the sphere bound. */
   virtual Boolean calculate_sphere_bound();
   
-  /*! Draw the representation */
+  /*! Draw the representation. */
   virtual void draw_geometry(Draw_action* action) = 0;
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! Clear the representation */
+  /*! Clear the representation. */
   virtual void clear() { m_dirty = true; }
   
-  /*! Determine whether the representation hasn't been cleaned */
+  /*! Determine whether the representation hasn't been cleaned. */
   virtual Boolean is_dirty() const { return m_dirty; }
 
-  /*! Determine whether the representation is empty */
+  /*! Determine whether the representation is empty. */
   virtual Boolean is_empty() const = 0;
 
-  /*! Set the counter-clockwise flag */
+  /*! Set the counter-clockwise flag. */
   void set_ccw(Boolean ccw);
 
-  /*! Determine whether the surface polygons are counter-clockwise */
+  /*! Determine whether the surface polygons are counter-clockwise. */
   Boolean is_ccw() const;
 
+  /*! Set the flag that indicates whether the mesh represents is solid
+   * (water-proof) polytope. In case the mesh represents a solid polytope,
+   * the back faces can be culled out during rendering, and the front faces
+   * can be rendered single sided.
+   */
   void set_solid(Boolean solid);
+
+  /*! Determines whether the mesh represents a solid (water-proof) polytope. */
   Boolean is_solid() const;
 
+  /*! Set the flag that indicates whether the mesh represents a convex
+   * polytope.
+   */
   void set_convex(Boolean convex);
+
+  /*! Determines whether the mesh represents a convex polytope. */
   Boolean is_convex() const;
 
+  /*! Set the crease angle. */
   void set_crease_angle(Float crease_angle);
+
+  /*! Obtain the creas_angle. */
   Float get_crease_angle() const;
 
-  /*! Process change of coordinates */
+  /*! Process change of coordinates. */
   virtual void coord_changed(SGAL::Field_info* /* field_info */) {}
 
-  /*! Process change of points */
-  virtual void point_changed() {}
-
 protected:
-  /*! Indicates whether the mesh must be cleaned */
+  /*! Indicates whether the mesh must be cleaned. */
   Boolean m_dirty;
 
   /*! Indicates the direction of the vertices in a face. The default is
@@ -118,20 +130,48 @@ protected:
    */
   Boolean m_is_solid;
 
-  /*! Indicates whether all faces are convex */
+  /*! Indicates whether all faces are convex. */
   Boolean m_is_convex;
 
-  /*! The crease angle */
+  /*! The crease angle. */
   Float m_crease_angle;
 
-  /*! The polygon offset factor */
+  /*! The polygon offset factor. */
   Float m_polygon_offset_factor;
   
+  /*! Indicates whether the mesh must be cleaned. */
+  Boolean m_dirty_indices;
+
+  /*! Indicates whether to remove the -1 end-of-face markers in case of
+   * triangles and quads.
+   */
+  Boolean m_flatten_indices;
+
+  /*! Indicates whether the indices structure is "flat". In a "flat"
+   * representation, in case of triangles and quads, the no -1 end-of-face
+   * markers are not present. The number of indices is (m_num_primitives * 3)
+   * or (m_num_primitives * 4) respectively. It is illegal to have a mixture
+   * of flat and non-flat index arrays. Either all indices are flat or none is.
+   */
+  Boolean m_are_indices_flat;
+  
+  /*! Proces the indices. */
+  void flatten_indices();
+
+  /*! Clean the indices. */
+  void clean_indices();
+
+  /*! Determine whether the indices hasn't been cleaned. */
+  Boolean is_dirty_indices() const { return m_dirty_indices; }
+  
+  /*! Proces the indices. */
+  void flatten_indices(Uint* src, Uint* dst, Uint num);
+
 private:
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto * s_prototype;
 
-  /*! Default value */
+  /*! Default value. */
   static const Boolean s_def_is_ccw;
   static const Boolean s_def_is_solid;
   static const Boolean s_def_is_convex;
@@ -139,29 +179,29 @@ private:
   static const Float s_def_polygon_offset_factor;
 };
 
-/*! Sets the counter-clockwise flag */
+/*! \brief sets the counter-clockwise flag. */
 inline void Mesh_set::set_ccw(Boolean ccw) { m_is_ccw = ccw; }
 
-/*! Returns true if the surface polygons are counter-clockwise */
+/*! \brief returns true if the surface polygons are counter-clockwise. */
 inline Boolean Mesh_set::is_ccw() const { return m_is_ccw; }
 
-/*! sets the solid flag */
+/*! \brief sets the solid flag. */
 inline void Mesh_set::set_solid(Boolean solid) { m_is_solid = solid; }
 
-/*! returns true if the polyhedron is solid, and false otherwise */
+/*! \brief returns true if the polyhedron is solid, and false otherwise. */
 inline Boolean Mesh_set::is_solid() const { return m_is_solid; }
 
-/*! sets the convex flag */
+/*! \brief sets the convex flag. */
 inline void Mesh_set::set_convex(Boolean convex) { m_is_convex = convex; }
 
-/*! returns true if all faces of the polyhedron are convex */
+/*! \brief returns true if all faces of the polyhedron are convex. */
 inline Boolean Mesh_set::is_convex() const { return m_is_convex; }
 
-/*! sets the crease angle of the polyhedron.*/
+/*! \brief sets the crease angle of the polyhedron.*/
 inline void Mesh_set::set_crease_angle(Float crease_angle)
 { m_crease_angle = crease_angle; }
 
-/*! obtains the creas_angle */
+/*! \brief obtains the creas_angle. */
 inline Float Mesh_set::get_crease_angle() const { return m_crease_angle; }
 
 SGAL_END_NAMESPACE

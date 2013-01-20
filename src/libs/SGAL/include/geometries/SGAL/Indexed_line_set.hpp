@@ -52,23 +52,23 @@ public:
   /*! Destructor */
   virtual ~Indexed_line_set();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Indexed_line_set * prototype() { return new Indexed_line_set(true); }
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container * clone() { return new Indexed_line_set(); }
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element * elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
   virtual void delete_prototype();
   virtual Container_proto * get_prototype(); 
   
-  /*! Draw the geometry */
+  /*! Draw the geometry. */
   virtual void draw(Draw_action * action);
   virtual void isect(Isect_action * action); 
   virtual bool calculate_sphere_bound();
@@ -85,22 +85,22 @@ public:
   Boolean get_color_per_vertex() { return m_color_per_vertex; }
   
 protected:
-  /*! Indicates whether a single color is specified per vertex */
+  /*! Indicates whether a single color is specified per vertex. */
   Boolean m_color_per_vertex;
   
-  /*! Indicates whether a single normal is specified per vertex */
+  /*! Indicates whether a single normal is specified per vertex. */
   Boolean m_normal_per_vertex;
 
-  /*! The width of the dual lines */
+  /*! The width of the dual lines. */
   Float m_line_width;
 
-  /*! Indicates whether to elliminate hiden lines using depth test */
+  /*! Indicates whether to elliminate hiden lines using depth test. */
   Boolean m_elliminate_hiden;
   
-  /*! Indicates whether the mesh is textured */
+  /*! Indicates whether the mesh is textured. */
   Boolean m_has_texture;
 
-  /* Indicates that the bbox is set externally */
+  /* Indicates that the bbox is set externally. */
   Boolean m_bb_is_pre_set;
 
   /*! */
@@ -109,17 +109,17 @@ protected:
   /*! */
   Int m_display_list_id;
 
-  /*! obtains the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string & get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto * s_prototype;
 
-  /*! Default value */
+  /*! Default value. */
   static const Boolean m_def_color_per_vertex;
   static const Boolean m_def_normal_per_vertex;
   static const Float s_def_line_width;
