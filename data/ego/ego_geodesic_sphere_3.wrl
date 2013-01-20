@@ -39,6 +39,7 @@ DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 DEF AOS_MODEL_VISIBLE_KEY SingleKeySensor { key "m" }
+DEF AOS_EGO_VISIBLE_KEY SingleKeySensor { key "b" }
 
 DEF SNAP Snapshot {
   image Image { }
@@ -554,39 +555,15 @@ Transform {
         }
        ]
     }
-    #Group {
-      #children [
-        # Shape {
-        #   appearance Appearance {
-        #     material Material {}
-        #   }
-        #   geometry DEF PART0 EgoBrick {
-        #     #type "brick" # "plate"
-        #     #length 4
-        #     #width 2
-        #   }
-        # }
-        # Shape {
-        #   appearance Appearance {
-        #     material Material {}
-        #   }
-        #   geometry DEF PART1 EgoBrick {
-        #     #type "brick" # "plate"
-        #     numberOfKnobs1 2
-        #     numberOfKnobs2 4
-        #   }
-        # }
-       #]
-    #}
-    DEF EGO Ego {
-      scale 100 100 100
-      model USE MODEL
-      # parts {
-      #   children [
-      #     USE PART0
-      #     USE PART1
-      #    ]
-      # }
+
+    DEF SWITCH_EGO Switch {
+      whichChoice 0
+      children [
+	DEF EGO Ego {
+	  scale 100 100 100
+	  model USE MODEL
+	}
+       ]
     }
 
     # The axes:
@@ -650,8 +627,18 @@ DEF INC_MODEL_VISIBLE Incrementor {
   value 0
 }
 
+# Model Ego toggle
+DEF INC_EGO_VISIBLE Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
 ROUTE AOS_MODEL_VISIBLE_KEY.state TO INC_MODEL_VISIBLE.trigger
 ROUTE INC_MODEL_VISIBLE.value TO SWITCH_MODEL.whichChoice
+
+ROUTE AOS_EGO_VISIBLE_KEY.state TO INC_EGO_VISIBLE.trigger
+ROUTE INC_EGO_VISIBLE.value TO SWITCH_EGO.whichChoice
 
 ROUTE SNAP_KEY.state TO SNAP.trigger
 

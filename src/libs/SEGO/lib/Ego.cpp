@@ -107,18 +107,23 @@ Ego::~Ego() { clear(); }
 /*! \brief clear the parts */
 void Ego::clear_parts()
 {
+  static Uint cnt = 0;
   m_dirty_parts = true;
   Node_iterator it1 = m_childs.begin();
   while (it1 != m_childs.end()) {
+    Node* transform_node = *it1++;
     // Remove the transform (translation):
-    Transform* transform = static_cast<Transform*>(*it1++);
+    Transform* transform = static_cast<Transform*>(transform_node);
     Node_iterator it2 = transform->children_begin();
     while (it2 != transform->children_end()) {
+      Node* shape_node = *it2++;
       // Remove the brick (Shape):
-      Shape* brick = static_cast<Shape*>(*it2);
+      Shape* brick = static_cast<Shape*>(shape_node);
       delete brick;
+      transform->remove_child(shape_node);
     }
     delete transform;
+    remove_child(transform_node);
   }
   m_own_parts = false;
 }
@@ -354,7 +359,7 @@ void Ego::clean_voxels()
 void Ego::clean_tiling()
 {
   m_dirty_tiling = false;
-  m_dirty_parts = true;
+  clear_parts();
     
   m_tiled_voxels = m_voxels;
   Ego_voxels_tiler tile(m_first_tile_placement,
