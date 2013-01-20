@@ -27,7 +27,7 @@
 #include <windows.h>
 #endif
 
-#include <unordered_map>
+#include <boost/unordered_map.hpp>
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
@@ -231,7 +231,7 @@ protected:
   Ego_brick m_ego_brick;
   Ego_brick m_ego_brick_without_knobs;
 
-  typedef std::unordered_map<Uint, Appearance*>         Appearance_map;
+  typedef boost::unordered_map<Uint, Appearance*>       Appearance_map;
   typedef Appearance_map::iterator                      Appearance_iter;
   typedef std::list<Material>                           Material_list;
   typedef Material_list::iterator                       Material_iter;
