@@ -107,7 +107,6 @@ Ego::~Ego() { clear(); }
 /*! \brief clear the parts */
 void Ego::clear_parts()
 {
-  static Uint cnt = 0;
   m_dirty_parts = true;
   Node_iterator it1 = m_childs.begin();
   while (it1 != m_childs.end()) {
