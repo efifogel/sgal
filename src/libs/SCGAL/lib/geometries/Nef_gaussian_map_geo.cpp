@@ -617,7 +617,6 @@ void Nef_gaussian_map_geo::isect(SGAL::Isect_action * action)
 /*! Calculate the bounding sphere */
 Boolean Nef_gaussian_map_geo::clean_sphere_bound()
 {
-  if (!m_sphere_bound_dirty) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
   
@@ -638,7 +637,7 @@ Boolean Nef_gaussian_map_geo::clean_sphere_bound()
     m_sphere_bound.set_center(center_vec);
     m_sphere_bound.set_radius(min_sphere.radius());
   }
-  m_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
   return true;
 }
 
@@ -865,7 +864,7 @@ void Nef_gaussian_map_geo::print_stat()
 void Nef_gaussian_map_geo::draw_changed(Field_info * /* field_info */)
 {
   m_draw_primal = !m_draw_dual;
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 
   if (m_draw_dual) {
     Field * field = get_field(TRUE_DRAW_DUAL);
