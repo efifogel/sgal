@@ -102,7 +102,7 @@ public:
   virtual void isect(Isect_action* action);
 
   /*! Calculate sphere bound of the node */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
   /*! Obtain the sphere bound */
   const Sphere_bound& get_sphere_bound();
@@ -222,7 +222,6 @@ protected:
   Boolean m_dirty_voxels;
   Boolean m_dirty_tiling;
   Boolean m_dirty_parts;
-  Boolean m_dirty_sphere_bound;
 
   /*! Indicates whether the parts are "owned" (allocated) by this node. */
   Boolean m_own_parts;

@@ -88,7 +88,6 @@ Ego::Ego(Boolean proto) :
   m_dirty_voxels(true),
   m_dirty_tiling(true),
   m_dirty_parts(true),
-  m_dirty_sphere_bound(true),
   m_own_parts(false)
 {
   // This is temp code until we have something that can visualize it better.  
@@ -495,12 +494,11 @@ void Ego::voxels_changed(Field_info* field_info)
 void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
 
 /*! \brief calculate sphere bound of the node */
-Boolean Ego::calculate_sphere_bound()
+Boolean Ego::clean_sphere_bound()
 {
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  if (!m_dirty_sphere_bound) return false;
 
   Ego_voxels::size_type size = m_tiled_voxels.size();
   Vector3f offset(m_voxel_length * size.get<0>() / 2,
