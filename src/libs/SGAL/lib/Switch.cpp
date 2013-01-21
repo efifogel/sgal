@@ -33,7 +33,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Switch::s_tag = "Switch";
-Container_proto * Switch::s_prototype = 0;
+Container_proto* Switch::s_prototype = 0;
 
 REGISTER_TO_FACTORY(Switch, "Switch");
 
@@ -47,7 +47,7 @@ Switch::Switch(Boolean proto) :
 Switch::~Switch() {}
 
 /*! Return the node to traverse */
-Node * Switch::get_choice()
+Node* Switch::get_choice()
 {
   return (m_which_choice < m_childs.size()) ?
     get_child(m_which_choice) : NULL;
@@ -61,17 +61,17 @@ void Switch::cull(Cull_context & cull_context)
 {
   if (!is_visible())  return;
 
-  Node * node = get_choice();
+  Node* node = get_choice();
   if (node) node->cull(cull_context);
 }
 
 /*! Draw choosen node.
  * @param draw_action
  */
-Action::Trav_directive Switch::draw(Draw_action * draw_action)
+Action::Trav_directive Switch::draw(Draw_action* draw_action)
 {
   if (!is_visible())  return Action::TRAV_CONT;
-  Node * node = get_choice();
+  Node* node = get_choice();
   
   if (node) draw_action->apply(node);
   return Action::TRAV_CONT;
@@ -80,12 +80,12 @@ Action::Trav_directive Switch::draw(Draw_action * draw_action)
 /*! Traverses the choosen node for selections.
  * @param isect_action
  */
-void Switch::isect(Isect_action * isect_action) 
+void Switch::isect(Isect_action* isect_action) 
 {
   if (!is_visible())  return;
   if (get_selection_id() != 0) isect_action->set_id(get_selection_id());
   
-  Node * node = get_choice();
+  Node* node = get_choice();
   if (node) isect_action->apply(node);
   isect_action->set_id(0);
 }
@@ -93,18 +93,20 @@ void Switch::isect(Isect_action * isect_action)
 /*! Calculate the sphere bound of the group based on all child objects.
  * \return true iff the bounding sphere has changed since last call.
  */
-Boolean Switch::calculate_sphere_bound()
+Boolean Switch::clean_sphere_bound()
 {
+  m_dirty_sphere_bound = false;
+  
   if (!is_visible()) {
     if (m_sphere_bound.get_radius() == 0) return false;
     m_sphere_bound.set_radius(0);
     return true;
   }
 
-  Node * node = get_choice();
+  Node* node = get_choice();
   if (!node) return false;
   Sphere_bound_vector_const spheres;
-  Boolean bb_changed = node->calculate_sphere_bound();
+  Boolean bb_changed = node->clean_sphere_bound();
   const Sphere_bound & sb = node->get_sphere_bound();
   if (sb.get_radius() != 0) spheres.push_back(&sb);
 
@@ -126,7 +128,7 @@ void Switch::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
+    static_cast<Execution_function>(&Node::sphere_bound_changed);
   s_prototype->add_field_info(new SF_int(WHICH_CHOICE, "whichChoice",
                                          get_member_offset(&m_which_choice),
                                          exec_func));
@@ -136,10 +138,11 @@ void Switch::init_prototype()
 void Switch::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */
-Container_proto * Switch::get_prototype() 
+Container_proto* Switch::get_prototype() 
 {  
   if (!s_prototype) init_prototype();
   return s_prototype;
@@ -150,16 +153,16 @@ Container_proto * Switch::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Switch::set_attributes(Element * elem) 
+void Switch::set_attributes(Element* elem) 
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
+  typedef Element::Str_attr_iter Str_attr_iter;
 
   Group::set_attributes(elem);
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
   {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "whichChoice") {
       m_which_choice = strtoul(value.c_str(), NULL, 10);
       elem->mark_delete(ai);
@@ -171,8 +174,7 @@ void Switch::set_attributes(Element * elem)
 }
 
 #if 0
-/*!
- */
+/*! */
 Attribute_list Switch::get_attributes() 
 {
   Attribute_list attribs; 

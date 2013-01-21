@@ -43,7 +43,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Sphere_bound;
+class SGAL_CLASSDEF Sphere_bound;
 typedef std::vector<Sphere_bound *>             Sphere_bound_vector;
 typedef std::vector<const Sphere_bound *>       Sphere_bound_vector_const;
 
@@ -53,18 +53,18 @@ public:
   Sphere_bound();
 
   /*! Copy constructor */
-  Sphere_bound(const Sphere_bound & sb);
+  Sphere_bound(const Sphere_bound& sb);
 
   /*! Destructor */
   virtual ~Sphere_bound();
 
-  const Vector3f & get_center() const { return m_center; } 
+  const Vector3f& get_center() const { return m_center; } 
   float get_radius() const { return m_radius; }
 
   Boolean does_contain(const Sphere_bound * sphere) const;
-  Boolean does_contain(const Vector3f & point) const;
+  Boolean does_contain(const Vector3f& point) const;
 
-  void set_around(const Sphere_bound_vector_const & spheres);
+  void set_around(const Sphere_bound_vector_const& spheres);
 
   template <class Vector3f_iterator>
   void set_around(Vector3f_iterator begin, Vector3f_iterator end)
@@ -110,20 +110,22 @@ public:
   }
   
   void set_radius(float radius) { m_radius = radius; }
-  void set_center(const Vector3f & center) { m_center = center; }
-  
-  Sphere_bound & operator=(const Sphere_bound & s);
+
+  void set_center(const Vector3f& center) { m_center = center; }
+
+  /*! Assignment operator */
+  Sphere_bound& operator=(const Sphere_bound& s);
 
 private:
-  /*! The center point of the sphere */
+  /*! The center point of the sphere. */
   Vector3f m_center;
 
-  /*! The radius of the sphere */
+  /*! The radius of the sphere. */
   float m_radius;
 };
 
 /*! */
-inline Sphere_bound & Sphere_bound::operator=(const Sphere_bound & s)
+inline Sphere_bound& Sphere_bound::operator=(const Sphere_bound& s)
 {
   m_center = s.get_center();
   m_radius = s.get_radius();
@@ -132,7 +134,7 @@ inline Sphere_bound & Sphere_bound::operator=(const Sphere_bound & s)
 
 /*!
  */
-inline std::ostream & operator<<(std::ostream & os, const Sphere_bound & sb)
+inline std::ostream& operator<<(std::ostream& os, const Sphere_bound& sb)
 {
   os << sb.get_center() << ", " << sb.get_radius();
   return os;

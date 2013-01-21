@@ -55,46 +55,46 @@ public:
   };
 
   /*! Constructor */
-  Ellipsoid(Boolean proto = SGAL_FALSE);
+  Ellipsoid(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Ellipsoid();
 
   /* Construct the prototype */
-  static Ellipsoid * prototype() { return new Ellipsoid(SGAL_TRUE); }
+  static Ellipsoid* prototype();
 
   /*! Clone */
-  virtual Container * clone() { return new Ellipsoid(); }
+  virtual Container* clone();
 
   /*! Set the width of the ellipsoid */
-  void set_width(Float width) { m_width = width; }
+  void set_width(Float width);
 
   /*! Obtain the width of the ellipsoid */
-  Float get_width() const { return m_width; }
+  Float get_width() const;
 
   /*! Set the height of the ellipsoid */
-  void set_height(Float height) { m_height = height; }
+  void set_height(Float height);
 
   /*! Obtain the height of the ellipsoid */
-  Float get_height() const { return m_height; }
+  Float get_height() const;
 
   /*! Set the depth of the ellipsoid */
-  void set_depth(Float depth) { m_depth = depth; }
+  void set_depth(Float depth);
 
   /*! Obtain the depth of the ellipsoid */
-  Float get_depth() const { return m_depth; }
+  Float get_depth() const;
 
   /*! Set the number of slices (horizontal) longitudes */
-  void set_slices(Uint slices) { m_slices = slices; }
+  void set_slices(Uint slices);
 
   /*! Obtain the number of slices (horizontal) longitudes */
-  Uint get_slices() const { return m_slices; }
+  Uint get_slices() const;
 
   /*! Set the number of stacks (vertical) latitudes */
-  void set_stacks(Uint stacks) { m_stacks = stacks; }
+  void set_stacks(Uint stacks);
 
   /*! Obtain the number of stacks (vertical) latitudes */
-  Uint get_stacks() const { return m_stacks; }
+  Uint get_stacks() const;
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -103,10 +103,10 @@ public:
   virtual void delete_prototype(); 
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
@@ -130,14 +130,14 @@ protected:
   Uint m_stacks;
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string & get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The container prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! default values for Ellipsoid.  */
   static const Float s_def_width;
@@ -146,6 +146,57 @@ private:
   static const Uint s_def_slices;
   static const Uint s_def_stacks;
 };
+
+/*! \brief constructs the prototype. */
+inline Ellipsoid* Ellipsoid::prototype() { return new Ellipsoid(true); }
+
+/*! \brief clones. */
+inline Container* Ellipsoid::clone() { return new Ellipsoid(); }
+
+/*! \brief sets the width of the ellipsoid. */
+inline void Ellipsoid::set_width(Float width)
+{
+  m_width = width;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the width of the ellipsoid. */
+inline Float Ellipsoid::get_width() const { return m_width; }
+
+/*! \brief sets the height of the ellipsoid. */
+inline void Ellipsoid::set_height(Float height)
+{
+  m_height = height;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the height of the ellipsoid. */
+inline Float Ellipsoid::get_height() const { return m_height; }
+
+/*! \brief sets the depth of the ellipsoid. */
+inline void Ellipsoid::set_depth(Float depth)
+{
+  m_depth = depth;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the depth of the ellipsoid. */
+inline Float Ellipsoid::get_depth() const { return m_depth; }
+
+/*! \brief sets the number of slices (horizontal) longitudes. */
+inline void Ellipsoid::set_slices(Uint slices) { m_slices = slices; }
+
+/*! \brief obtains the number of slices (horizontal) longitudes. */
+inline Uint Ellipsoid::get_slices() const { return m_slices; }
+
+/*! \brief sets the number of stacks (vertical) latitudes. */
+inline void Ellipsoid::set_stacks(Uint stacks) { m_stacks = stacks; }
+
+/*! \brief obtains the number of stacks (vertical) latitudes. */
+inline Uint Ellipsoid::get_stacks() const { return m_stacks; }
+
+/*! \brief obtainss the tag (type) of the container. */
+inline const std::string& Ellipsoid::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

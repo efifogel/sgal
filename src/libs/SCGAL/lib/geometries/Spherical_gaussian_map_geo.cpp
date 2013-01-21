@@ -490,24 +490,24 @@ void Spherical_gaussian_map_geo::clean_renderer()
     m_renderer.push_back(m_vertices_renderer, Arrangement_renderer::DEPTH);
 }
 
-/*! Set the source gausian maps of the minkowski sum */
+/*! \brief sets the source gausian maps of the minkowski sum. */
 void Spherical_gaussian_map_geo::
 insert_sgm(Spherical_gaussian_map_geo* sgm)
 {
   m_sgm_nodes.push_back(sgm);
   Observer observer(this, get_field_info(GEOMETRIES));
   sgm->register_observer(observer);
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 }
 
-/*! \brief obrains the Gaussian map */
+/*! \brief obrains the Gaussian map. */
 Spherical_gaussian_map* Spherical_gaussian_map_geo::get_sgm()
 {
   if (m_dirty) clean();
   return m_sgm;
 }
 
-/*! \brief sets the Gaussian map */
+/*! \brief sets the Gaussian map. */
 void Spherical_gaussian_map_geo::set_sgm(Spherical_gaussian_map* sgm)
 {
   m_dirty = false;

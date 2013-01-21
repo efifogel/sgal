@@ -134,24 +134,24 @@ public:
   };
 
   /*! Constructor */
-  Exact_polyhedron_geo(Boolean proto = SGAL_FALSE);
+  Exact_polyhedron_geo(Boolean proto = false);
 
   /*! Destructor */
   ~Exact_polyhedron_geo();
 
   /*! Construct the prototype */
-  static Exact_polyhedron_geo * prototype()
-  { return new Exact_polyhedron_geo(SGAL_TRUE); }
+  static Exact_polyhedron_geo* prototype()
+  { return new Exact_polyhedron_geo(true); }
 
   /*! Clone */
   virtual SGAL::Container* clone() { return new Exact_polyhedron_geo(); }
 
-  virtual void cull(SGAL::Cull_context & cull_context);
-  virtual void isect(SGAL::Isect_action * action);
-  virtual bool calculate_sphere_bound();
+  virtual void cull(SGAL::Cull_context& cull_context);
+  virtual void isect(SGAL::Isect_action* action);
+  virtual bool clean_sphere_bound();
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(SGAL::Element * elem);
+  virtual void set_attributes(SGAL::Element* elem);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -177,7 +177,7 @@ public:
   void set_convex_hull(bool flag) { m_convex_hull = flag; }  
 
   /*! Computes the orientation of a point relative to the polyhedron */
-  CGAL::Oriented_side oriented_side(const Point_3 & p);
+  CGAL::Oriented_side oriented_side(const Point_3& p);
   
   /*! Prints statistics */
   void print_stat();

@@ -40,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Torus::s_tag = "Torus";
-Container_proto * Torus::s_prototype = NULL;
+Container_proto* Torus::s_prototype = NULL;
 
 // Default values:
 const Float Torus::s_def_cross_section_radius(1); // Override Extrusion def.
@@ -95,7 +95,7 @@ void Torus::clean()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Torus::set_attributes(Element * elem)
+void Torus::set_attributes(Element* elem)
 {
   Extrusion::set_attributes(elem);
 
@@ -105,8 +105,8 @@ void Torus::set_attributes(Element * elem)
   typedef Element::Str_attr_iter          Str_attr_iter;
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "spineRadius") {
       set_spine_radius(atoff(value.c_str()));
       elem->mark_delete(ai);
@@ -141,10 +141,13 @@ void Torus::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Mesh_set::coord_changed);
 
-  s_prototype->add_field_info(new SF_float(END_CAP, "spineRadius",
+  s_prototype->add_field_info(new SF_float(SPINE_RADIUS, "spineRadius",
                                            get_member_offset(&m_spine_radius),
                                            exec_func));
 
+  // Rendering required
+  exec_func =
+    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           get_member_offset(&m_stacks),
                                           exec_func));
@@ -154,15 +157,15 @@ void Torus::init_prototype()
                                           exec_func));
 }
 
-/*! Delete the container prototype */
+/*! \brief deletes the container prototype. */
 void Torus::delete_prototype() 
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the container prototype */
-Container_proto * Torus::get_prototype() 
+/*! \brief obtains the container prototype. */
+Container_proto* Torus::get_prototype() 
 {  
   if (!s_prototype) Torus::init_prototype();
   return s_prototype;

@@ -76,7 +76,7 @@ public:
   /*! Draw the geometry */
   virtual void draw(Draw_action * action);
   virtual void isect(Isect_action * action); 
-  virtual bool calculate_sphere_bound();
+  virtual bool clean_sphere_bound();
 
   virtual void set_color_array(Color_array * color_array);
   virtual void set_coord_array(Coord_array * coord_array);

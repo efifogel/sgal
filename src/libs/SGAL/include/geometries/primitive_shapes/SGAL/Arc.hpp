@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7263 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -58,77 +58,77 @@ public:
   };
 
   /*! Constructor */
-  Arc(Boolean proto = SGAL_FALSE);
+  Arc(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Arc();
 
   /* Construct the prototype */
-  static Arc * prototype() {  return new Arc(SGAL_TRUE); }
+  static Arc* prototype();
 
   /*! Clone */
-  virtual Container * clone() { return new Arc(); }
+  virtual Container* clone();
   
   /*! Set the arc radius
    * \param radius the new radius
    */
-  void set_radius(Float radius) { m_radius = radius; }
+  void set_radius(Float radius);
 
   /*! Obtain the arc radius
    * \return the arc radius
    */
-  Float get_radius() const { return m_radius; }
+  Float get_radius() const;
 
   /*! Set the number of stacks
    * \param stacks the new number of stacks
    */
-  void set_stacks(Uint stacks) { m_stacks = stacks; }
+  void set_stacks(Uint stacks);
 
   /*! Obtain the number of stacks
    * \return the number of stacks
    */
-  Uint get_stacks() const { return m_stacks; }
+  Uint get_stacks() const;
 
   /*! Set the number of slices
    * \param  the new number of slices
    */
-  void set_slices(Uint slices) { m_slices = slices; }
+  void set_slices(Uint slices);
   
   /*! Obtain the number of slices
    * \return the number of slices
    */
-  Uint get_slices() const { return m_slices; }
+  Uint get_slices() const;
 
   /*! Set the lower left corner (X and Z coordinates.
    * The lower left corner is the intersection of the sphere and a vector. The
    * vector is defined by 2 angles.
    * \param the angle between the vector and the Z axis in the XZ plane.
    */
-  void set_alpha(Float alpha) { m_alpha = alpha; }
+  void set_alpha(Float alpha);
 
   /*! Obtain */
-  Float get_alpha() const { return m_alpha; }
+  Float get_alpha() const;
 
   /*! Set */
-  void set_beta(Float beta) { m_beta = beta; }
+  void set_beta(Float beta);
 
   /*! Obtain */
-  Float get_beta() const { return m_beta; }
+  Float get_beta() const;
 
   /*! Set */
-  void set_gamma(Float gamma) { m_gamma = gamma; }
+  void set_gamma(Float gamma);
 
   /*! Obtain */
-  Float get_gamma() const { return m_gamma; }
+  Float get_gamma() const;
 
   /*! Set */
-  void set_delta(Float delta) { m_delta = delta; }
+  void set_delta(Float delta);
 
   /*! Obtain */
-  Float get_delta() const { return m_delta; }
+  Float get_delta() const;
 
   /*! Set */
-  void set_solid(Boolean solid) { m_is_solid = solid; }
+  void set_solid(Boolean solid);
 
   /*! Obtain */
   Boolean is_solid() const;
@@ -136,15 +136,15 @@ public:
   /*! Draw the arc
    * \param action the draw action
    */
-  virtual void draw(Draw_action * action); 
+  virtual void draw(Draw_action* action); 
 
   /*! Draw the arc in selection mode 
    * \param action the draw action
    */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! Calculare the sphere bound of the arc */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
   
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -155,27 +155,23 @@ public:
   /*! Obtain the node prototype
    * \return the node prototype
    */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   // virtual void FieldChanged(short fieldId);
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! Determine whether the geometry has color (as opposed to normal) */
-  virtual Boolean has_color() const { return SGAL_FALSE; }
-
-  /*! Is dirty? */
-  // Boolean is_dirty() const { return m_dirty; }
+  virtual Boolean has_color() const;
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   /*! Halftone stipple pattern for backfacing elements */
   static Ubyte s_halftone[];
@@ -185,7 +181,7 @@ private:
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The radius of the arc sphere */
   Float m_radius;
@@ -204,12 +200,11 @@ private:
 
   Float m_delta;
 
-  /*! Indicates wether the object is a solid. If it is not a solid we need
-   * to draw both sides of the polygons. 
+  /*! Indicates wether the object is a solid (water-proof) polytope.
+   * When rendering a solid polytope, back-facing facets cann be culled out,
+   * and front-facing facets can be rendered one-sided.
    */
   Boolean m_is_solid;
-
-  void clean();
 
 private:
   /*! default values of arc */
@@ -222,6 +217,70 @@ private:
   static const Float s_def_delta;
   static const Boolean s_def_is_solid;
 };
+
+/* \brief constructs the prototype. */
+inline Arc* Arc::prototype() { return new Arc(true); }
+
+/*! \brief clones. */
+inline Container* Arc::clone() { return new Arc(); }
+  
+/*! \brief sets the arc radius.*/
+inline void Arc::set_radius(Float radius)
+{
+  m_radius = radius;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the arc radius. */
+inline Float Arc::get_radius() const { return m_radius; }
+
+/*! \brief sets the number of stacks. */
+inline void Arc::set_stacks(Uint stacks) { m_stacks = stacks; }
+
+/*! \brief obtains the number of stacks. */
+inline Uint Arc::get_stacks() const { return m_stacks; }
+
+/*! \brief sets the number of slices. */
+inline void Arc::set_slices(Uint slices) { m_slices = slices; }
+  
+/*! \brief obtains the number of slices */
+inline Uint Arc::get_slices() const { return m_slices; }
+
+/*! \brief sets the lower left corner. */
+inline void Arc::set_alpha(Float alpha) { m_alpha = alpha; }
+
+/*! \brief obtains */
+inline Float Arc::get_alpha() const { return m_alpha; }
+
+/*! \brief sets */
+inline void Arc::set_beta(Float beta) { m_beta = beta; }
+
+/*! \brief obtains */
+inline Float Arc::get_beta() const { return m_beta; }
+
+/*! \brief sets */
+inline void Arc::set_gamma(Float gamma) { m_gamma = gamma; }
+
+/*! \brief obtains */
+inline Float Arc::get_gamma() const { return m_gamma; }
+
+/*! \brief sets */
+inline void Arc::set_delta(Float delta) { m_delta = delta; }
+
+/*! \brief obtains */
+inline Float Arc::get_delta() const { return m_delta; }
+
+/*! \brief sets */
+inline void Arc::set_solid(Boolean solid) { m_is_solid = solid; }
+
+/*! \brief obtain */
+inline Boolean Arc::is_solid() const { return m_is_solid; }
+
+/*! \brief determines whether the geometry has color (as opposed to normal) */
+inline Boolean Arc::has_color() const { return false; }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Arc::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

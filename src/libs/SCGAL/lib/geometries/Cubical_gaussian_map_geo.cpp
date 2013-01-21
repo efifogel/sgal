@@ -318,11 +318,10 @@ void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
 }
 
 /*! Calculate the bounding sphere */
-bool Cubical_gaussian_map_geo::calculate_sphere_bound()
+bool Cubical_gaussian_map_geo::clean_sphere_bound()
 {
 #define SQRT_3          1.732f
 
-  if (!m_is_sphere_bound_dirty) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
 
@@ -366,7 +365,7 @@ bool Cubical_gaussian_map_geo::calculate_sphere_bound()
       m_sphere_bound.set_radius(min_sphere.radius());
     }
   }
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
 
   return true;
 }
@@ -741,7 +740,7 @@ SGAL::Container_proto* Cubical_gaussian_map_geo::get_prototype()
 void Cubical_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_aos;
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 
   if (m_draw_aos) {
     Field* field = get_field(TRUE_DRAW_DUAL);
@@ -1557,7 +1556,7 @@ void Cubical_gaussian_map_geo::insert_cgm(Cubical_gaussian_map_geo* cgm)
   m_cgm_nodes.push_back(cgm);
   Observer observer(this, get_field_info(GEOMETRIES));
   cgm->register_observer(observer);
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 }
 
 /*! \biref processes change of points */

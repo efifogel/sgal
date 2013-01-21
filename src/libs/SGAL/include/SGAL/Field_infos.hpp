@@ -39,6 +39,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
+#include "SGAL/Sphere_bound.hpp"
 #include "SGAL/Field_types_enum.hpp"
 #include "SGAL/Field_info_template.hpp"
 #include "SGAL/Execution_function.hpp"
@@ -59,6 +60,7 @@ typedef Field_info_template<Vector3f,SFVEC3F>            SF_vector3f;
 typedef Field_info_template<Vector3f,SFCOLOR>            SF_color;
 typedef Field_info_template<Vector4f,SFVEC4F>            SF_vector4f;
 typedef Field_info_template<Rotation,SFROTATION>         SF_rotation;
+typedef Field_info_template<Sphere_bound,SFSB>           SF_sphere_bound;
 typedef Field_info_template<std::string,SFSTRING>        SF_string;
 typedef Field_info_template<Container*,SFCONTAINER>      SF_container;
 
@@ -71,6 +73,7 @@ typedef SGAL::Array<Vector3f>                            Vector3f_array;
 typedef SGAL::Array<Vector3f>                            Vector3f_array;
 typedef SGAL::Array<Vector4f>                            Vector4f_array;
 typedef SGAL::Array<Rotation>                            Rotation_array;
+typedef SGAL::Array<Sphere_bound>                        Sphere_bound_array;
 typedef SGAL::Array<std::string>                         String_array;
 typedef SGAL::Array<Container*>                          Container_array;
 
@@ -83,6 +86,7 @@ typedef Field_info_template<Vector3f_array,MFVEC3F>      MF_vector3f;
 typedef Field_info_template<Vector3f_array,MFCOLOR>      MF_color;
 typedef Field_info_template<Vector4f_array,MFVEC4F>      MF_vector4f;
 typedef Field_info_template<Rotation_array,MFROTATION>   MF_rotation;
+typedef Field_info_template<Sphere_bound_array,MFSB>     MF_sphere_bound;
 typedef Field_info_template<String_array,MFSTRING>       MF_string;
 typedef Field_info_template<Container_array,MFCONTAINER> MF_container;
 
@@ -91,9 +95,9 @@ class Field_info_utils {
 public:
   /*! */
   static Field_info * allocate_field_info(Uint id, 
-                                          const std::string & name,
-                                          const std::string & type,
-                                          const std::string & value, 
+                                          const std::string& name,
+                                          const std::string& type,
+                                          const std::string& value, 
                                           Ulong offset,
                                           Execution_function execution = NULL)
   {
@@ -122,6 +126,9 @@ public:
     else if (type_enum == SFROTATION)
       return new SF_rotation(id, name, offset, execution, false, true,
                              Rotation(value));
+    else if (type_enum == SFSB)
+      return new SF_sphere_bound(id, name, offset, execution, false, true,
+                                 Sphere_bound(value));
     else if (type_enum == SFVEC4F)
       return new SF_vector4f(id, name, offset, execution, false, true,
                              Vector4f(value));

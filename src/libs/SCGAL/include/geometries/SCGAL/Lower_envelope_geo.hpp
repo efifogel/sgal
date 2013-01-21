@@ -78,7 +78,7 @@ public:
   virtual Boolean has_color() const { return false; }
   
   /*! Calculate the sphere bound of this geometry containter */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(SGAL::Element * elem);

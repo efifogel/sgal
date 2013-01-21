@@ -32,7 +32,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Ellipsoid::s_tag = "Ellipsoid";
-Container_proto * Ellipsoid::s_prototype = NULL;
+Container_proto* Ellipsoid::s_prototype = NULL;
 
 // Default values:
 const Float Ellipsoid::s_def_width(1);
@@ -51,8 +51,7 @@ Ellipsoid::Ellipsoid(Boolean proto) :
   m_depth(s_def_depth),
   m_slices(s_def_slices),
   m_stacks(s_def_stacks)
-{
-}
+{}
 
 /*! Destructor */
 Ellipsoid::~Ellipsoid(){}
@@ -151,7 +150,7 @@ void Ellipsoid::clean()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Ellipsoid::set_attributes(Element * elem)
+void Ellipsoid::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
 
@@ -281,7 +280,7 @@ void Ellipsoid::delete_prototype()
 }
 
 /*! Obtain the container prototype */
-Container_proto * Ellipsoid::get_prototype() 
+Container_proto* Ellipsoid::get_prototype() 
 {  
   if (!s_prototype) Ellipsoid::init_prototype();
   return s_prototype;

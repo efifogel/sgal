@@ -41,7 +41,7 @@ public:
   };
 
   /*! Constructor */
-  Mesh_set(Boolean proto = SGAL_FALSE);
+  Mesh_set(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Mesh_set() {}
@@ -65,7 +65,7 @@ public:
   virtual void draw_mesh(Draw_action* action);
   
   /*! Calculate the sphere bound. */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
   
   /*! Draw the representation. */
   virtual void draw_geometry(Draw_action* action) = 0;
@@ -74,10 +74,10 @@ public:
   virtual void clean();
 
   /*! Clear the representation. */
-  virtual void clear() { m_dirty = true; }
+  virtual void clear();
   
   /*! Determine whether the representation hasn't been cleaned. */
-  virtual Boolean is_dirty() const { return m_dirty; }
+  virtual Boolean is_dirty() const;
 
   /*! Determine whether the representation is empty. */
   virtual Boolean is_empty() const = 0;
@@ -113,7 +113,7 @@ public:
   Float get_crease_angle() const;
 
   /*! Process change of coordinates. */
-  virtual void coord_changed(SGAL::Field_info* /* field_info */) {}
+  virtual void coord_changed(SGAL::Field_info* field_info);
 
 protected:
   /*! Indicates whether the mesh must be cleaned. */
@@ -161,14 +161,14 @@ protected:
   void clean_indices();
 
   /*! Determine whether the indices hasn't been cleaned. */
-  Boolean is_dirty_indices() const { return m_dirty_indices; }
+  Boolean is_dirty_indices() const;
   
   /*! Proces the indices. */
   void flatten_indices(Uint* src, Uint* dst, Uint num);
 
 private:
   /*! The node prototype. */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default value. */
   static const Boolean s_def_is_ccw;
@@ -177,6 +177,19 @@ private:
   static const Float s_def_crease_angle;
   static const Float s_def_polygon_offset_factor;
 };
+
+/*! \brief determines whether the indices hasn't been cleaned. */
+inline Boolean Mesh_set::is_dirty_indices() const { return m_dirty_indices; }
+
+/*! \brief clears the representation. */
+inline void Mesh_set::clear() { m_dirty = true; }
+  
+/*! \brief determines whether the representation hasn't been cleaned. */
+inline Boolean Mesh_set::is_dirty() const { return m_dirty; }
+
+/*! \brief processes change of coordinates. */
+inline void Mesh_set::coord_changed(SGAL::Field_info* /* field_info */)
+{ m_dirty_sphere_bound = true; }
 
 /*! \brief sets the counter-clockwise flag. */
 inline void Mesh_set::set_ccw(Boolean ccw) { m_is_ccw = ccw; }

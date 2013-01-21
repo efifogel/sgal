@@ -51,72 +51,93 @@ public:
   };
 
   /*! Constructor */
-  Box(Boolean proto = SGAL_FALSE);
+  Box(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Box();
 
-  /* Construct the prototype */
-  static Box * prototype() { return new Box(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Box* prototype();
 
-  /*! clones a new instance */
-  virtual Container * clone() { return new Box(); }
+  /*! clones a new instance. */
+  virtual Container* clone();
 
-  /* sets the size of the box */
-  void set_size(const Vector3f & size) { m_size = size; }
+  /* sets the size of the box. */
+  void set_size(const Vector3f& size);
 
-  /* gets the size of the box */
-  void get_size(Vector3f & size) const { size = m_size; }
+  /* gets the size of the box. */
+  void get_size(Vector3f& size) const;
 
-  /* gets the size of the box */
-  Vector3f get_size() const { return m_size; }
+  /* gets the size of the box. */
+  Vector3f get_size() const;
 
   /*! */
-  virtual void draw(Draw_action * action); 
+  virtual void draw(Draw_action* action); 
 
   /*! */
   virtual void isect(Isect_action* action);
 
   /*! */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the box prototype. */
   virtual void init_prototype();
-  virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void delete_prototype();
+
+  virtual Container_proto* get_prototype();
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return SGAL_FALSE; }
+  /*! Return true if the geometry has color (as opposed to material). */
+  virtual Boolean has_color() const { return false; }
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! obtains the tag (type) of the container. */
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! The size of the box */
   Vector3f m_size;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
-  /*! Initialize the display list used to draw the box */
+  /*! Initialize the display list used to draw the box. */
   void init();
 
-  /*! Draw the box */
+  /*! Draw the box. */
   void draw_box();
 
 private:
-  /*! the default size of the box */
+  /*! the default size of the box. */
   static const Vector3f m_def_size;
 };
+
+/*! \brief constructs the prototype.. */
+inline Box* Box::prototype() { return new Box(true); }
+
+/*! \brief clones a new instance. */
+inline Container* Box::clone() { return new Box(); }
+
+/*! \brief sets the size of the box. */
+inline void Box::set_size(const Vector3f& size)
+{
+  m_size = size;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief gets the size of the box. */
+inline void Box::get_size(Vector3f& size) const { size = m_size; }
+
+/*! \brief gets the size of the box. */
+inline Vector3f Box::get_size() const { return m_size; }
 
 SGAL_END_NAMESPACE
 

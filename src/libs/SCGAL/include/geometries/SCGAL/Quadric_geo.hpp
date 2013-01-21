@@ -109,7 +109,7 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
   virtual void isect(Isect_action * action);
 
   /*! */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
   /*! Determine whether the geometry has color (as opposed to material)
    */

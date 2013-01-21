@@ -53,78 +53,109 @@ public:
   };
 
   /*! Constructor */
-  Torus(Boolean proto = SGAL_FALSE);
+  Torus(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Torus();
 
-  /* Construct the prototype */
-  static Torus * prototype() { return new Torus(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Torus* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Torus(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Set the spine radius of the ellipsoid */
-  void set_spine_radius(Float spine_radius) { m_spine_radius = spine_radius; }
+  /*! Set the spine radius of the ellipsoid. */
+  void set_spine_radius(Float spine_radius);
 
-  /*! Obtain the spine radius of the ellipsoid */
-  Float get_spine_radius() const { return m_spine_radius; }
+  /*! Obtain the spine radius of the ellipsoid. */
+  Float get_spine_radius() const;
 
-  /*! Set the number of slices (horizontal) longitudes */
-  void set_slices(Uint slices) { m_slices = slices; }
+  /*! Set the number of slices (horizontal) longitudes. */
+  void set_slices(Uint slices);
 
-  /*! Obtain the number of slices (horizontal) longitudes */
-  Uint get_slices() const { return m_slices; }
+  /*! Obtain the number of slices (horizontal) longitudes. */
+  Uint get_slices() const;
 
-  /*! Set the number of stacks (vertical) latitudes */
-  void set_stacks(Uint stacks) { m_stacks = stacks; }
+  /*! Set the number of stacks (vertical) latitudes. */
+  void set_stacks(Uint stacks);
 
-  /*! Obtain the number of stacks (vertical) latitudes */
-  Uint get_stacks() const { return m_stacks; }
+  /*! Obtain the number of stacks (vertical) latitudes. */
+  Uint get_stacks() const;
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the container prototype. */
+  virtual Container_proto* get_prototype();
 
   /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
   
 protected:
-  /*! The spine_height of the ellipsoid */
+  /*! The spine_height of the ellipsoid. */
   Float m_spine_radius;
 
-  /*! The number of vertical slices (horizontal) longitudes */
+  /*! The number of vertical slices (horizontal) longitudes. */
   Uint m_slices;
 
-  /*! The number of horizontal stacks (vertical) latitudes */
+  /*! The number of horizontal stacks (vertical) latitudes. */
   Uint m_stacks;
 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! obtains the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The container prototype */
-  static Container_proto * s_prototype;
+  /*! The container prototype. */
+  static Container_proto* s_prototype;
 
-  /*! default values for Torus */
+  /*! Default values for Torus. */
   static const Float s_def_cross_section_radius; // Override Extrusion def.
   static const Float s_def_spine_radius;
   static const Uint s_def_slices;
   static const Uint s_def_stacks;
 };
+
+/* \brief constructs the prototype. */
+inline Torus* Torus::prototype() { return new Torus(true); }
+
+/*! \brief clones. */
+inline Container* Torus::clone() { return new Torus(); }
+
+/*! \brief sets the spine radius of the ellipsoid. */
+inline void Torus::set_spine_radius(Float spine_radius)
+{
+  m_spine_radius = spine_radius;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the spine radius of the ellipsoid. */
+inline Float Torus::get_spine_radius() const { return m_spine_radius; }
+
+/*! \brief sets the number of slices (horizontal) longitudes. */
+inline void Torus::set_slices(Uint slices) { m_slices = slices; }
+
+/*! \brief obtains the number of slices (horizontal) longitudes. */
+inline Uint Torus::get_slices() const { return m_slices; }
+
+/*! \brief sets the number of stacks (vertical) latitudes. */
+inline void Torus::set_stacks(Uint stacks) { m_stacks = stacks; }
+
+/*! \brief obtains the number of stacks (vertical) latitudes. */
+inline Uint Torus::get_stacks() const { return m_stacks; }
+
+  /*! obtains the tag (type) of the container. */
+inline const std::string& Torus::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

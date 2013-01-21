@@ -58,22 +58,26 @@ public:
   };
 
   /*! Constructor */
-  Cylindrical_patch(Boolean proto = SGAL_FALSE);
+  Cylindrical_patch(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Cylindrical_patch();
 
   /* Construct the prototype */
-  static Cylindrical_patch * prototype()
-  { return new Cylindrical_patch(SGAL_TRUE); }
+  static Cylindrical_patch* prototype()
+  { return new Cylindrical_patch(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Cylindrical_patch(); }
+  virtual Container* clone() { return new Cylindrical_patch(); }
 
   /*! Set the radius of the underlying cylinder
    * \param radius the radius of the underlying cylinder
    */
-  void set_radius(Float radius) { m_radius = radius; }
+  void set_radius(Float radius)
+  {
+    m_radius = radius;
+    m_dirty_sphere_bound = true;
+  }
 
   /*! Obtain the radius of the underlying cylinder
    * \return the radius of the underlying cylinder
@@ -83,7 +87,11 @@ public:
   /*! Set the height of the underlying cylinder
    * \param height the height of the underlying cylinder
    */  
-  void set_height(Float height) { m_height = height; }
+  void set_height(Float height)
+  {
+    m_height = height;
+    m_dirty_sphere_bound = true;
+  }
 
   /*! Obtain the height of the underlying cylinder
    * \return the height of the underlying cylinder
@@ -127,15 +135,15 @@ public:
   /*! Draw the cylindrical patch
    * \param action the draw action
    */
-  virtual void draw(Draw_action * action); 
+  virtual void draw(Draw_action* action); 
   
   /*! Draw the cylindrical patch in selection mode 
    * \param action the draw action
    */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! Calculare the sphere bound of the cylindrical patch */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
     
   /*! Initializes the container prototype */
   virtual void init_prototype();
@@ -146,18 +154,18 @@ public:
   /*! Obtain the container prototype
    * \return the container prototype
    */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Sets the attributes of the object extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
    * \param sg a pointer to the scene graph
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return SGAL_FALSE; }
+  virtual Boolean has_color() const { return false; }
 
   /*! Is dirty? */
   /* Boolean is_dirty() const { return m_dirty; } */
@@ -193,7 +201,7 @@ private:
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default values */
   static const Float s_def_radius;

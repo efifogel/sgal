@@ -62,8 +62,7 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Mesh_set(proto),
   m_convex_hull(false),
   m_time(0)
-{
-}
+{}
 
 /*! Destructor */
 Exact_polyhedron_geo::~Exact_polyhedron_geo() {}
@@ -201,11 +200,10 @@ void Exact_polyhedron_geo::isect(SGAL::Isect_action * action)
 
 /*!
  */
-Boolean Exact_polyhedron_geo::calculate_sphere_bound()
+Boolean Exact_polyhedron_geo::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return SGAL_FALSE;
   if (is_dirty()) clean();
-  if (m_bb_is_pre_set) return SGAL_TRUE;
+  if (m_bb_is_pre_set) return true;
   
   Approximate_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
@@ -223,8 +221,8 @@ Boolean Exact_polyhedron_geo::calculate_sphere_bound()
     m_sphere_bound.set_center(center_vec);
     m_sphere_bound.set_radius(min_sphere.radius());
   }
-  m_is_sphere_bound_dirty = SGAL_FALSE;
-  return SGAL_TRUE;
+  m_dirty_sphere_bound = false;
+  return true;
 }
 
 /*! Set the attributes of the object extracted from the VRML or X3D file.

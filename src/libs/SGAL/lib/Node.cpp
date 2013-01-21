@@ -21,47 +21,69 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+Container_proto* Node::s_prototype = NULL;
 
 /*! Constructor */
 Node::Node(Boolean proto) :
   Container(proto),
-  m_sphere_bound_dirty(SGAL_TRUE),
-  m_sphere_bound_locked(SGAL_FALSE)
+  m_dirty_sphere_bound(true),
+  m_locked_sphere_bound(false)
 {}
 
-/*! Set the flag to calculate bounding sphere and rendering modfied */
-void Node::set_sphere_bound_modified(Field_info* /* field_info */)
+/*! \brief sets the attributes of this node. */
+void Node::init_prototype()
 {
-  m_sphere_bound_dirty = true;
-#if 0
-  m_execution_coordinator->set_rendering_required();
-  m_execution_coordinator->set_bounding_sphere_modified(SGAL_TRUE);
-#endif
+  if (s_prototype) return;
+  s_prototype = new Container_proto();
+
+  // Add the field-info records to the prototype:
+  // Execution_function exec_func;
+  SF_sphere_bound* sphere_bound_fi;
+
+  // exec_func = static_cast<Execution_function>(&Transform::parts_changed);
+  sphere_bound_fi = new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
+                                        get_member_offset(&m_sphere_bound));
+  s_prototype->add_field_info(sphere_bound_fi);
 }
 
-/*! Obtain the sphere bound */
+/*! */
+void Node::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
+
+/*! */
+Container_proto* Node::get_prototype() 
+{  
+  if (!s_prototype) Node::init_prototype();
+  return s_prototype;
+}
+
+/*! \brief sets the flag that indicates that the sphere bound should be
+ * cleaned.
+ */
+void Node::sphere_bound_changed(Field_info* /* field_info */)
+{ m_dirty_sphere_bound = true; }
+
+/*! \brief obtains the sphere bound. */
 const Sphere_bound& Node::get_sphere_bound()
 {
-  calculate_sphere_bound();
+  if (m_dirty_sphere_bound) clean_sphere_bound();
   return m_sphere_bound;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Node::set_attributes(Element * elem)
-{
-  Container::set_attributes(elem);
-}
+/*! \brief sets the attributes of the node. */
+void Node::set_attributes(Element* elem) { Container::set_attributes(elem); }
 
 #if 0
-/*! Get the attributes of the box
- */
+/*! \brief gets the attributes of the node. */
 Attribute_list Node::get_attributes() 
 { 
   Attribute_list attribs; 

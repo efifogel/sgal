@@ -909,7 +909,7 @@ public:
   /*! Calculate the bounding sphere
    * \return a Boolean flag that indicates whether the sphere bound changed
    */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);

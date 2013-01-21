@@ -56,63 +56,69 @@ public:
   };
 
   /*! Constructor */
-  Switch(Boolean proto = SGAL_FALSE);
+  Switch(Boolean proto = false);
 
   /*! Desstructor */
   virtual ~Switch();
   
   /*! Construct the prototype */
-  static Switch * prototype() { return new Switch(SGAL_TRUE); }
+  static Switch* prototype() { return new Switch(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Switch(); }
+  virtual Container* clone() { return new Switch(); }
 
   /*! Set the index of the child to traverse */
   void set_which_choice(Uint which_choice);
 
   /*! Obtain the index of the child to traverse */
-  Uint  get_which_choice() const;
+  Uint get_which_choice() const;
 
   /*! Return the node to traverse */
-  virtual Node * get_choice();
+  virtual Node* get_choice();
   
   /*! Draw the node while traversing the scene graph */
-  virtual Action::Trav_directive draw(Draw_action * action);
+  virtual Action::Trav_directive draw(Draw_action* action);
 
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
-  virtual void isect(Isect_action * isect_action);
+  virtual void isect(Isect_action* isect_action);
 
   /*! Calculate the sphere bound of the group */
-  virtual bool calculate_sphere_bound();
+  virtual bool clean_sphere_bound();
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype(); 
+
+  virtual Container_proto* get_prototype(); 
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that represents the container */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Specifies the index of the child to traverse */
   Uint m_which_choice;
 };
 
 /*! Set the index of the child to traverse */
-inline void Switch::set_which_choice(Uint index) { m_which_choice = index; }
+inline void Switch::set_which_choice(Uint index)
+{
+  m_which_choice = index;
+  m_dirty_sphere_bound = true;
+}
   
 /*! Obtain the index of the child to traverse */
 inline Uint Switch::get_which_choice() const { return m_which_choice; }

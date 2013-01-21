@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -22,11 +22,10 @@
 /*!
  * An implementation of the cone geometry.
  *
- *  A geometry of type Cone. The Cone is specified by its
- *  radius and height. It is assumed to be centered at (0, 0, 0), has
- * a radius of 1 and a height of 2.
+ * The Cone is specified by its radius and height.
+ * The cone is centered at (0, 0, 0), has radius 1, and height 2.
  *
- *  Inherits from Geometry.
+ * Inherits from Geometry.
  */
 
 #ifndef SGAL_CONE_HPP
@@ -62,87 +61,97 @@ public:
   };
 
   /*! Constructor */
-  Cone(Boolean proto = SGAL_FALSE);
+  Cone(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Cone();
 
   /* Construct the prototype */
-  static Cone* prototype() { return new Cone(SGAL_TRUE); }
+  static Cone* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Cone(); }
+  virtual Container* clone();
 
   /*! Set the radius of the bottom disk */
-  void set_bottom_radius(Float radius) { m_bottom_radius = radius; }
+  void set_bottom_radius(Float radius);
 
   /*! Obtain the radius of the bottom disk */
-  Float get_bottom_radius() const { return m_bottom_radius; }
+  Float get_bottom_radius() const;
 
   /*! Set the height */
-  void set_height(Float height) { m_height = height; }
+  void set_height(Float height);
 
   /*! Obtain the height */
-  Float GetHeight() const { return m_height; }
+  Float get_height() const;
 
-  void set_stacks(Uint stacks) { m_stacks = stacks; }
-  Uint get_stacks() const { return m_stacks; }
-  void set_slices(Uint slices) { m_slices = slices; }
-  Uint get_slices() const { return m_slices; }
+  void set_stacks(Uint stacks);
 
-  void set_is_bottom_visible(Boolean flag) { m_is_bottom_visible = flag; }
-  Boolean get_is_bottom_visible() const { return m_is_bottom_visible; }
-  void set_is_side_visible(Boolean flag) { m_is_side_visible = flag; }
-  Boolean get_is_side_visible() const { return m_is_side_visible; }
+  Uint get_stacks() const;
+
+  void set_slices(Uint slices);
+
+  Uint get_slices() const;
+
+  void set_is_bottom_visible(Boolean flag);
+
+  Boolean is_bottom_visible() const;
+
+  void set_is_side_visible(Boolean flag);
+
+  Boolean is_side_visible() const;
   
   virtual void draw(Draw_action* action); 
-  virtual void isect(Isect_action* action);
-  virtual Boolean calculate_sphere_bound();
 
-  /*! Initialize the node prototype */
+  virtual void isect(Isect_action* action);
+
+  virtual Boolean clean_sphere_bound();
+
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
+
   virtual void delete_prototype(); 
+
   virtual Container_proto* get_prototype();
 
   virtual void set_attributes(Element* elem);
   // virtual Attribute_list get_attributes();
 
-  /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return SGAL_FALSE; }
+  /*! Determine whether the geometry has color (as opposed to material). */
+  virtual Boolean has_color() const;
   
-  /*! Is dirty? */
-  Boolean is_dirty() const { return m_dirty; }
+  /*! Determine whether the geometry is dirty. */
+  Boolean is_dirty() const;
 
 protected:
-  /*! Indicates whether the sphere has been initialized */
+  /*! Indicates whether the sphere has been initialized. */
   Boolean m_dirty;
 
-  /*! Radius of cone's base */
+  /*! Radius of cone's base. */
   Float m_bottom_radius;
 
-  /*! Height of cone from center of the base to the apex */
+  /*! Height of cone from center of the base to the apex. */
   Float m_height;
 
-  /*! The number of horizontal stacks used in rendering */
+  /*! The number of horizontal stacks used in rendering. */
   Int m_stacks;
 
-  /*! The number of vertical slices used in rendering */
+  /*! The number of vertical slices used in rendering. */
   Int m_slices;
 
-  /*! SGAL_TRUE if sides of cone are created */
-  Boolean m_is_side_visible;
+  /*! Determines whether the sides of cone are visible. */
+  Boolean m_side_visible;
 
-  /*! SGAL_TRUE if bottom cap of the cone is created */
-  Boolean m_is_bottom_visible;
+  /*! tDetermines whether the bottom cap of the cone is visible. */
+  Boolean m_bottom_visible;
 
-  /*! the OpenGL object used to draw sides of the cone */
+  /*! The OpenGL object used to draw sides of the cone. */
   GLUquadricObj* m_cone;
 
-  /*! the OpenGL object used to draw base of the cone */
+  /*! The OpenGL object used to draw base of the cone. */
   GLUquadricObj* m_cone_base;
 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -156,14 +165,68 @@ private:
   static const Float s_def_height;
   static const Uint s_def_stacks;
   static const Uint s_def_slices;
-  static const Boolean s_def_is_side_visible;
-  static const Boolean s_def_is_bottom_visible;
+  static const Boolean s_def_side_visible;
+  static const Boolean s_def_bottom_visible;
 
-  /*! Intialize */
-  void init();
+  /*! Clean the cone. */
+  void clean();
 
-  Cone(const Cone& /* con */) {}
+  Cone(const Cone& /* cone */) {}
 };
+
+/* \brief constructs the prototype. */
+inline Cone* Cone::prototype() { return new Cone(true); }
+
+/*! \brief clones. */
+inline Container* Cone::clone() { return new Cone(); }
+
+/*! \brief sets the radius of the bottom disk. */
+inline void Cone::set_bottom_radius(Float radius)
+{
+  m_bottom_radius = radius;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the radius of the bottom disk. */
+inline Float Cone::get_bottom_radius() const { return m_bottom_radius; }
+
+/*! \brief sets the height. */
+inline void Cone::set_height(Float height)
+{
+  m_height = height;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the height. */
+inline Float Cone::get_height() const { return m_height; }
+
+inline void Cone::set_stacks(Uint stacks) { m_stacks = stacks; }
+
+/*! \brief obtains the stacks. */
+inline Uint Cone::get_stacks() const { return m_stacks; }
+
+inline void Cone::set_slices(Uint slices) { m_slices = slices; }
+
+/*! \brief obtains the slices. */
+inline Uint Cone::get_slices() const { return m_slices; }
+
+inline void Cone::set_is_bottom_visible(Boolean flag)
+{ m_bottom_visible = flag; }
+
+inline Boolean Cone::is_bottom_visible() const { return m_bottom_visible; }
+
+inline void Cone::set_is_side_visible(Boolean flag) { m_side_visible = flag; }
+
+inline Boolean Cone::is_side_visible() const { return m_side_visible; }
+
+/*! \brief determines whether the geometry has color. */
+inline Boolean Cone::has_color() const { return false; }
+  
+/*! \brief determines whether the geometry is dirty. */
+inline Boolean Cone::is_dirty() const { return m_dirty; }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Cone::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

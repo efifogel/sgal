@@ -67,9 +67,7 @@ Exact_nef_polyhedron::Exact_nef_polyhedron(Boolean proto) :
 }
 
 /*! Destructor */
-Exact_nef_polyhedron::~Exact_nef_polyhedron()
-{
-}
+Exact_nef_polyhedron::~Exact_nef_polyhedron() {}
 
 /*! Update the polyhedron data structure */
 void Exact_nef_polyhedron::clean_polyhedron()
@@ -229,9 +227,8 @@ void Exact_nef_polyhedron::isect(SGAL::Isect_action * action)
 
 /*!
  */
-bool Exact_nef_polyhedron::calculate_sphere_bound_polyhedron()
+bool Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
 {
-  if (!m_is_sphere_bound_dirty) return false;
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_bb_is_pre_set) return true;
 
@@ -251,15 +248,14 @@ bool Exact_nef_polyhedron::calculate_sphere_bound_polyhedron()
     m_sphere_bound.set_center(center_vec);
     m_sphere_bound.set_radius(min_sphere.radius());
   }
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
   return true;
 }
   
 /*!
  */
-bool Exact_nef_polyhedron::calculate_sphere_bound()
+bool Exact_nef_polyhedron::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
   
@@ -280,7 +276,7 @@ bool Exact_nef_polyhedron::calculate_sphere_bound()
     m_sphere_bound.set_center(center_vec);
     m_sphere_bound.set_radius(min_sphere.radius());
   }
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
   return true;
 }
 

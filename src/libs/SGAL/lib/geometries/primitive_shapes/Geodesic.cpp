@@ -31,7 +31,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Node.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Utilities.hpp"
@@ -50,8 +49,8 @@ const Vector2f Geodesic::s_def_start(0.0,0.0);
 const Vector2f Geodesic::s_def_end(0.0,0.0);
 const Uint Geodesic::s_def_stacks(4);
 const Uint Geodesic::s_def_breaks(4);
-const Boolean Geodesic::s_def_is_solid(SGAL_FALSE);
-const Boolean Geodesic::s_def_is_complement(SGAL_FALSE);
+const Boolean Geodesic::s_def_is_solid(false);
+const Boolean Geodesic::s_def_is_complement(false);
 
 REGISTER_TO_FACTORY(Geodesic, "Geodesic");
 
@@ -65,16 +64,15 @@ Geodesic::Geodesic(Boolean proto) :
   m_breaks(s_def_breaks),
   m_is_solid(s_def_is_solid),
   m_is_complement(s_def_is_complement)
-{
-}
+{}
 
 /*! Destructor */
 Geodesic::~Geodesic(){}
 
-/*! Clean the arc internal representation */
-void Geodesic::clean() { /* m_dirty = SGAL_FALSE; */ }
+/*! \brief cleans the geodesic arc internal representation. */
+void Geodesic::clean() { /* m_dirty = false; */ }
 
-/*! \brief draws the arc */
+/*! \brief draws the arc. */
 void Geodesic::draw(Draw_action * action) 
 {
   // if (!is_dirty()) clean();
@@ -296,14 +294,11 @@ void Geodesic::isect(Isect_action * action)
 }
 
 /*! \brief calculares the sphere bound of the sphere */
-Boolean Geodesic::calculate_sphere_bound()
+Boolean Geodesic::clean_sphere_bound()
 {
-  if ( m_is_sphere_bound_dirty) {
-    m_sphere_bound.set_radius(m_radius); 
-    m_sphere_bound.set_center(Vector3f(0, 0, 0));
-    return SGAL_TRUE;
-  }
-  return SGAL_FALSE;
+  m_sphere_bound.set_radius(m_radius); 
+  m_sphere_bound.set_center(Vector3f(0, 0, 0));
+  return true;
 }
 
 /*! \brief sets the attributes of the object extracted from the input file */
@@ -311,13 +306,11 @@ void Geodesic::set_attributes(Element * elem)
 {
   Geometry::set_attributes(elem);
   
-  typedef Element::Str_attr_iter        Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  typedef Element::Str_attr_iter Str_attr_iter;
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
 
 	if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
@@ -419,7 +412,7 @@ Attribute_list Geodesic::get_attributes()
 }
 #endif
 
-/*! \brief initializes the node prototype */
+/*! \brief initializes the geodesic prototype. */
 void Geodesic::init_prototype()
 {
   if (s_prototype) return;
@@ -427,19 +420,15 @@ void Geodesic::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
+    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func)); 
   
-  exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
   s_prototype->add_field_info(new SF_vector2f(START, "start",
                                            get_member_offset(&m_start),
                                            exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
   s_prototype->add_field_info(new SF_vector2f(END, "end",
                                            get_member_offset(&m_end),
                                            exec_func));
@@ -464,11 +453,15 @@ void Geodesic::init_prototype()
 
 }
 
-/*! \brief deletes the node prototype */
-void Geodesic::delete_prototype() { delete s_prototype; }
+/*! \brief deletes the geodesic prototype */
+void Geodesic::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
 
-/*! \brief obtains the node prototype */
-Container_proto * Geodesic::get_prototype() 
+/*! \brief obtains the geodesic prototype */
+Container_proto* Geodesic::get_prototype() 
 {  
   if (!s_prototype) Geodesic::init_prototype();
   return s_prototype;

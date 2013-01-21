@@ -317,9 +317,6 @@ void Extrusion::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
 
-  std::string name;
-  std::string value;
-
   typedef Element::Str_attr_iter          Str_attr_iter;
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {

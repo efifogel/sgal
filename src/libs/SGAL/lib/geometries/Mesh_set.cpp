@@ -148,10 +148,10 @@ void Mesh_set::draw_mesh(Draw_action* action)
 }
 
 /*! \brief calculates the sphere bound. */
-Boolean Mesh_set::calculate_sphere_bound()
+Boolean Mesh_set::clean_sphere_bound()
 {
   if (is_dirty()) clean();
-  return Geo_set::calculate_sphere_bound();
+  return Geo_set::clean_sphere_bound();
 }
 
 /*! \brief sets the attributes of this node. */
@@ -193,7 +193,7 @@ void Mesh_set::init_prototype()
 void Mesh_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief obtains the container prototype. */

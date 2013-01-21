@@ -39,7 +39,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Text::s_tag = "Text";
-Container_proto * Text::s_prototype = NULL;
+Container_proto* Text::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Text, "Text");
 
@@ -63,9 +63,9 @@ Text::~Text()
 /*! Draw choosen node
  * \param draw_action
  */
-void Text::draw(Draw_action * draw_action)
+void Text::draw(Draw_action* draw_action)
 {
-  Context * context = draw_action->get_context();
+  Context* context = draw_action->get_context();
   if (!context) return;
 
   if (m_string.empty()) return;
@@ -108,11 +108,12 @@ void Text::init_prototype()
 void Text::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*!
  */
-Container_proto * Text::get_prototype() 
+Container_proto* Text::get_prototype() 
 {  
   if (!s_prototype) Text::init_prototype();
   return s_prototype;
@@ -122,7 +123,7 @@ Container_proto * Text::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Text::set_attributes(Element * elem) 
+void Text::set_attributes(Element* elem) 
 {
   Geometry::set_attributes(elem);
 
@@ -131,8 +132,8 @@ void Text::set_attributes(Element * elem)
 
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "string") {
       m_string = strip_double_quotes(value);
       elem->mark_delete(ai);
@@ -143,10 +144,10 @@ void Text::set_attributes(Element * elem)
   for (Cont_attr_iter cai = elem->cont_attrs_begin();
        cai != elem->cont_attrs_end(); cai++)
   {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+    const std::string& name = elem->get_name(cai);
+    Container* cont = elem->get_value(cai);
     if (name == "fontStyle") {
-      Font_style * font_style = dynamic_cast<Font_style*>(cont); 
+      Font_style* font_style = dynamic_cast<Font_style*>(cont); 
       set_font_style(font_style);
       elem->mark_delete(cai);
       continue;
@@ -179,19 +180,17 @@ Attribute_list Text::get_attributes()
 #endif
 
 /*! Set the font style */
-void Text::set_font_style(Font_style * font_style)
+void Text::set_font_style(Font_style* font_style)
 {
   m_font_style = font_style;
-  m_is_sphere_bound_dirty = SGAL_TRUE;
+  m_dirty_sphere_bound = true;
 }
 
 /*! Calculate the sphere bound of the text. Returns true if the BS has
  * changed since lst time this was called.
  */
-Boolean Text::calculate_sphere_bound()
+Boolean Text::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return SGAL_FALSE;
-
   if (!m_font_style) {
     m_default_font_style = new Font_style();
     set_font_style(m_default_font_style);
@@ -204,8 +203,8 @@ Boolean Text::calculate_sphere_bound()
   Vector3f center(0,0,0);
   m_sphere_bound.set_center(center);
   m_sphere_bound.set_radius(radius);
-  m_is_sphere_bound_dirty = SGAL_FALSE;
-  return SGAL_TRUE;
+  m_dirty_sphere_bound = false;
+  return true;
 }
 
 SGAL_END_NAMESPACE

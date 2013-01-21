@@ -31,7 +31,6 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Node.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -109,14 +108,11 @@ void Sphere::init()
 /*! Calculare the sphere bound of the sphere. In this case, the sphere
  * bound is identical to the sphere itself.
  */
-Boolean Sphere::calculate_sphere_bound()
+Boolean Sphere::clean_sphere_bound()
 {
-  if (m_is_sphere_bound_dirty) {
-    m_sphere_bound.set_radius(m_radius);
-    m_sphere_bound.set_center(m_center);
-    return SGAL_TRUE;
-  }
-  return SGAL_FALSE;
+  m_sphere_bound.set_radius(m_radius);
+  m_sphere_bound.set_center(m_center);
+  return true;
 }
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
@@ -134,7 +130,7 @@ void Sphere::set_attributes(Element * elem)
     const std::string & value = elem->get_value(ai);
     if (name == "center") {
       Vector3f center(value);
-      m_center = center;
+      set_center(center);
       elem->mark_delete(ai);
       continue;
     }
@@ -158,7 +154,7 @@ void Sphere::set_attributes(Element * elem)
   // Remove all the deleted attributes:
   elem->delete_marked();
 
-  calculate_sphere_bound();
+  // calculate_sphere_bound();
 }
 
 #if 0
@@ -202,7 +198,7 @@ Attribute_list Sphere::get_attributes()
 }
 #endif
 
-/*! initilalizes the prototype object in the class */
+/*! \brief initilalizes the prototype object in the class. */
 void Sphere::init_prototype()
 {
   if (s_prototype) return;
@@ -212,32 +208,33 @@ void Sphere::init_prototype()
   typedef void (Container::* Execution_function)(Field_info*);
 
   // Add the field-info records to the prototype:
+
+  // Bounding sphere changed
   Execution_function exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
+    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func));
-   
+
+  // Rendering required
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          get_member_offset(&m_stacks),
-                                          exec_func));
+                                          get_member_offset(&m_stacks)));
 
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          get_member_offset(&m_slices),
-                                          exec_func));
+                                          get_member_offset(&m_slices)));
 }
 
-/*! Delete the node prototype */
+/*! \brief deletes the sphere prototype. */
 void Sphere::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
-Container_proto * Sphere::get_prototype() 
+/*! \brief obtains the sphere prototype. */
+Container_proto* Sphere::get_prototype() 
 {  
   if (s_prototype == NULL) Sphere::init_prototype();
   return s_prototype;

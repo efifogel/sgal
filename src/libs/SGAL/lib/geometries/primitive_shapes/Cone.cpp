@@ -35,15 +35,15 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Cone::s_tag = "Cone";
-Container_proto * Cone::s_prototype = NULL;
+Container_proto* Cone::s_prototype = NULL;
 
 // Default values:
 const Float Cone::s_def_bottom_radius(1);
 const Float Cone::s_def_height(2);
 const Uint  Cone::s_def_stacks(1);
 const Uint  Cone::s_def_slices(20);
-const Boolean  Cone::s_def_is_bottom_visible(SGAL_TRUE);
-const Boolean  Cone::s_def_is_side_visible(SGAL_TRUE);
+const Boolean  Cone::s_def_bottom_visible(true);
+const Boolean  Cone::s_def_side_visible(true);
 
 REGISTER_TO_FACTORY(Cone, "Cone");
 
@@ -55,8 +55,8 @@ Cone::Cone(Boolean proto) :
   m_height(s_def_height),
   m_stacks(s_def_stacks),
   m_slices(s_def_slices),
-  m_is_side_visible(s_def_is_side_visible),
-  m_is_bottom_visible(s_def_is_bottom_visible),
+  m_side_visible(s_def_side_visible),
+  m_bottom_visible(s_def_bottom_visible),
   m_cone(0),
   m_cone_base(0)
 {
@@ -73,16 +73,16 @@ Cone::~Cone()
  * Draws the Cone. 
  * @param draw_action the draw action
  */
-void Cone::draw(Draw_action * action)
+void Cone::draw(Draw_action* action)
 {
-  if (is_dirty()) init();
+  if (is_dirty()) clean();
 
   if (has_scale()) glEnable(GL_NORMALIZE);
 
   glPushMatrix();
   glRotatef(90, 1, 0, 0);
 
-  if (m_is_side_visible) {
+  if (m_side_visible) {
     // draw the cone. (cylinder with up radius = 0)
     glPushMatrix();
     glTranslatef(0, 0, -m_height/2);
@@ -91,7 +91,7 @@ void Cone::draw(Draw_action * action)
     glPopMatrix();
   }
 
-  if (m_is_bottom_visible) {
+  if (m_bottom_visible) {
     glTranslatef(0, 0, m_height/2);
     gluQuadricTexture(m_cone_base, GL_TRUE);
     gluDisk(m_cone_base, 0, m_bottom_radius, m_slices, 1);
@@ -106,14 +106,14 @@ void Cone::draw(Draw_action * action)
  * Draws the object in selection mode 
  * @param action
  */
-void Cone::isect(Isect_action * action) 
+void Cone::isect(Isect_action* action) 
 {
-  if (is_dirty()) init();
+  if (is_dirty()) clean();
 
   glPushMatrix();
   glRotatef(90, 1, 0, 0);
 
-  if (m_is_side_visible) {
+  if (m_side_visible) {
     // draw the cone. (cylinder with up radius = 0)
     glPushMatrix();
     glTranslatef(0, 0, -m_height/2);
@@ -121,7 +121,7 @@ void Cone::isect(Isect_action * action)
     glPopMatrix();
   }
 
-  if (m_is_bottom_visible) {
+  if (m_bottom_visible) {
     glTranslatef(0, 0, m_height/2);
     gluDisk(m_cone_base, 0, m_bottom_radius, m_slices, m_slices);
   }
@@ -129,21 +129,18 @@ void Cone::isect(Isect_action * action)
   glPopMatrix();
 }
 
-/**
- * Calculate the sphere bound of the Cone. 
- */
-Boolean Cone::calculate_sphere_bound()
+/*! \brief calculates the sphere bound of the cone. */
+Boolean Cone::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return SGAL_FALSE;
   float radius = (m_height * m_height + m_bottom_radius * m_bottom_radius) /
     (2 * m_height);
   m_sphere_bound.set_radius(radius);
   m_sphere_bound.set_center(Vector3f(0, m_height / 2 - radius, 0));
-  return SGAL_TRUE;
+  return true;
 }
 
-/*! Initialize the quadric object */
-void Cone::init()
+/*! \brief initializes the quadric object. */
+void Cone::clean()
 {
   m_cone = gluNewQuadric();
   gluQuadricOrientation(m_cone, GLU_OUTSIDE);
@@ -155,25 +152,23 @@ void Cone::init()
   gluQuadricNormals(m_cone_base, GLU_SMOOTH); 
   gluQuadricDrawStyle(m_cone_base, GLU_FILL); 
 
-  m_dirty = SGAL_FALSE;
+  m_dirty = false;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
+/*! \brief sets the attributes of the object extracted from the VRML or X3D
+ * file.
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Cone::set_attributes(Element * elem)
+void Cone::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  std::string name;
-  std::string value;
-
-  typedef Element::Str_attr_iter          Str_attr_iter;
+  typedef Element::Str_attr_iter Str_attr_iter;
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "bottomRadius") {
       set_bottom_radius(atoff(value.c_str()));
       elem->mark_delete(ai);
@@ -209,7 +204,7 @@ void Cone::set_attributes(Element * elem)
   // Remove all the deleted attributes:
   elem->delete_marked();
 
-  calculate_sphere_bound();
+  // calculate_sphere_bound();
 }
 
 #if 0
@@ -273,9 +268,7 @@ Attribute_list Cone::get_attributes()
 }
 #endif
 
-/**
- * Initilaliza the prototype object in the class.
- */
+/*! \brief initilalizes the prototype object in the class. */
 void Cone::init_prototype()
 {
   if (s_prototype) return;
@@ -285,53 +278,49 @@ void Cone::init_prototype()
   typedef void (Container::* Execution_function)(Field_info*);
 
   // Add the field-info records to the prototype:
+
+  // Bounding sphere changed
   Execution_function exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
+    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(BOTTOM_RADIUS, "bottom_radius",
                                            get_member_offset(&m_bottom_radius),
                                            exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            get_member_offset(&m_height),
                                            exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
     add_field_info(new SF_bool(SIDE, "side",
-                               get_member_offset(&m_is_side_visible),
+                               get_member_offset(&m_side_visible),
                                exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
     add_field_info(new SF_bool(BOTTOM, "bottom",
-                               get_member_offset(&m_is_bottom_visible),
+                               get_member_offset(&m_bottom_visible),
                                exec_func));
 
+  // Only rendering
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_int(SLICES, "slices",
                                          get_member_offset(&m_slices),
                                          exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_int(STACKS, "stacks",
                                          get_member_offset(&m_stacks),
                                          exec_func));
 }
 
 /*! */
-void Cone::delete_prototype() 
+void Cone::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */
-Container_proto * Cone::get_prototype() 
+Container_proto* Cone::get_prototype() 
 {  
   if (!s_prototype) Cone::init_prototype();
   return s_prototype;

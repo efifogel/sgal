@@ -187,7 +187,7 @@ public:
   virtual void isect(Isect_action * action);
 
   /*! */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
   /*! Clear the internal representation and auxiliary data structures
    */

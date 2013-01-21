@@ -168,7 +168,7 @@ public:
   virtual void isect(Isect_action * action) {}
 
   /*! */
-  virtual Boolean calculate_sphere_bound() { return false; }
+  virtual Boolean clean_sphere_bound() { return false; }
 
   /*! Determine whether the geometry has color (as opposed to material)
    */

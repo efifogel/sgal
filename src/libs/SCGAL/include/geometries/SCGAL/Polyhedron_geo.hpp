@@ -203,7 +203,7 @@ public:
 
   virtual void cull(SGAL::Cull_context& cull_context);
   virtual void isect(SGAL::Isect_action* action);
-  virtual bool calculate_sphere_bound();
+  virtual bool clean_sphere_bound();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(SGAL::Element* elem);

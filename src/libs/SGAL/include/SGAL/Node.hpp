@@ -53,6 +53,7 @@ class Cull_context;
 class Draw_action;
 class Isect_action;
 class Element;
+class Container_proto;
 
 class SGAL_CLASSDEF Node : public Container {
 public:
@@ -62,51 +63,93 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Node(Boolean proto = SGAL_FALSE);
-
-  /*! Destructor */
-  virtual ~Node() {}
-
   enum Bound_mode {
     STATIC,
     DYNAMIC
   };
 
-  /*! Implement this to draw the object. */
-  virtual Action::Trav_directive draw(Draw_action* /* draw_action */)
-  { return Action::TRAV_CONT; }
-    
-  /*! Implement this for culling drawable nodes. */
-  virtual void cull(Cull_context& /* cull_context */) {}
+  /*! Constructor */
+  Node(Boolean proto = false);
 
-  /*! Implement this to calculate intersaction with the object */
-  virtual void isect(Isect_action* /* isect_action */) {}
+  /*! Destructor */
+  virtual ~Node() {}
+
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
   
-  /*! Implement this to calculate the bounding sphere. */
-  virtual Boolean calculate_sphere_bound() { return false; }
+  /*! Draw the object. */
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
+    
+  /*! Cull the node if invisible and prepare for rendering. */
+  virtual void cull(Cull_context& cull_context);
 
-  /*! Obtain the sphere bound */
+  /*! Prepare the node for selection.
+   * \param isect_action
+   */
+  virtual void isect(Isect_action* isect_action);
+  
+  /*! Clean the bounding sphere of the node.
+   * \return true iff the bounding sphere has changed during the clean.
+   */
+  virtual Boolean clean_sphere_bound();
+
+  /*! Determines whether the bounding sphere of the node must be recomputed.
+   * \return true iff the bounding sphere must be recomputed.
+   */
+  virtual Boolean is_dirty_sphere_bound();
+  
+  /*! Obtain the sphere bound. */
   const Sphere_bound& get_sphere_bound();
 
-  /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Sets the attributes of this node extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
   
-  /*! */
-  void set_sphere_bound_modified(Field_info* field_info = NULL);
+  /*! Set the flag that indicates that the sphere bound should be cleaned.*/
+  void sphere_bound_changed(Field_info* field_info = NULL);
   
 protected:
   /*! The sphere bound of the node. */
   Sphere_bound m_sphere_bound;
 
   /*! A flag that indicatres whether the bounding sphere is valid */
-  Boolean m_sphere_bound_dirty;
+  Boolean m_dirty_sphere_bound;
 
   /*! Indicates whether the bounding sphere is locked */
-  Boolean m_sphere_bound_locked;
+  Boolean m_locked_sphere_bound;
+
+private:
+  /*! The container prototype. */
+  static Container_proto* s_prototype;
 };
+
+/*! \brief draws the object. */
+inline Action::Trav_directive Node::draw(Draw_action* /* draw_action */)
+{ return Action::TRAV_CONT; }
+
+/*! \brief culls the node if invisible and prepare for rendering. */
+inline void Node::cull(Cull_context& /* cull_context */) {}
+
+/*! \brief prepares the node for selection. */
+inline void Node::isect(Isect_action* /* isect_action */) {}
+  
+/*! \brief cleans the bounding sphere. */
+inline Boolean Node::clean_sphere_bound() { return false; }
+
+/*! \brief determines whether the bounding sphere of the node must be
+ * recomputed.
+ */
+inline Boolean Node::is_dirty_sphere_bound() { return m_dirty_sphere_bound; }
 
 SGAL_END_NAMESPACE
 

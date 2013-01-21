@@ -136,9 +136,8 @@ void Polyhedron_geo::isect(SGAL::Isect_action* action)
 }
 
 /*! */
-Boolean Polyhedron_geo::calculate_sphere_bound()
+Boolean Polyhedron_geo::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return SGAL_FALSE;
   if (is_dirty()) clean();
   if (!m_bb_is_pre_set && !m_polyhedron.empty()) {
     Vector3f center_vec;
@@ -167,8 +166,8 @@ Boolean Polyhedron_geo::calculate_sphere_bound()
 
     m_sphere_bound.set_center(center_vec);
   }
-  m_is_sphere_bound_dirty = SGAL_FALSE;
-  return SGAL_TRUE;
+  m_dirty_sphere_bound = false;
+  return true;
 }
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.

@@ -74,10 +74,7 @@ Group::~Group() { m_childs.clear(); }
 /*! Return the number of children the object has.
  * \return number of children in the group.
  */
-unsigned int Group::get_child_count()
-{
-  return m_childs.size();
-}
+unsigned int Group::get_child_count() { return m_childs.size(); }
 
 /*! Get a child according to its position in the child list.
  * \param index the index of the child.
@@ -87,7 +84,7 @@ Node* Group::get_child(unsigned int index)
 {
   if (index >= m_childs.size()) return 0;
   Node_iterator ni = m_childs.begin();
-  for (unsigned int i = 0 ; i < index ; i++) ++ni;
+  for (unsigned int i = 0; i < index; ++i) ++ni;
   return *ni;
 }
 
@@ -115,6 +112,10 @@ void Group::add_child(Node* node)
     set_has_touch_sensor(id);
   }
   m_childs.push_back(node);
+  m_dirty_sphere_bound = true;
+
+  Observer observer(this, get_field_info(SPHERE_BOUND));
+  node->register_observer(observer);
 }
 
 /*! Remove a given child 
@@ -123,15 +124,14 @@ void Group::add_child(Node* node)
  */
 void Group::remove_child(Node* node)
 {
-  Node_iterator ni;
-  for (ni = m_childs.begin(); ni != m_childs.end(); ++ni)
-    if (*ni == node) break;
-  if (ni != m_childs.end()) m_childs.erase(ni);
+  m_childs.remove(node);
+  m_dirty_sphere_bound = true;
+
+  Observer observer(this, get_field_info(SPHERE_BOUND));
+  node->register_observer(observer);
 }
 
-/*! The draw method for a group is basically going over all of its 
- * children and drawing them. 
- */
+/*! \brief draws the group; go over all of its children and draw each. */
 Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
   if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
@@ -143,9 +143,7 @@ Action::Trav_directive Group::draw(Draw_action* draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! The cull method for a group is going over all of its 
- * children and calling cull on them. 
- */
+/*! \brief culls the node if invisible and prepare for rendering. */
 void Group::cull(Cull_context& cull_context)
 {
   if (!is_visible()) return;
@@ -154,9 +152,7 @@ void Group::cull(Cull_context& cull_context)
     (*it)->cull(cull_context);
 }
 
-/*! Traverses the tree of the group for selections.
- * \param isect_action
- */
+/*! \brief prepare the node for selection. */
 void Group::isect(Isect_action* isect_action) 
 {
   if (!is_visible()) return;
@@ -167,11 +163,14 @@ void Group::isect(Isect_action* isect_action)
   isect_action->set_id(0);
 }
 
-/*! Calculate the sphere bound of the group based on all child objects.
- * \return true iff the bounding sphere has changed since last call.
+/*! \brief cleans the bounding sphere of the group.
+ * Computes the sphere that bounds all bounding spheres of all child nodes.
  */
-Boolean Group::calculate_sphere_bound()
+Boolean Group::clean_sphere_bound()
 {
+  if (m_locked_sphere_bound) return false;
+  m_dirty_sphere_bound = false;
+  
   if (!is_visible()) {
     if (m_sphere_bound.get_radius() == 0) return false;
     m_sphere_bound.set_radius(0);
@@ -179,17 +178,18 @@ Boolean Group::calculate_sphere_bound()
   }
 
   Sphere_bound_vector_const spheres;
-  Boolean changed = false;
   Boolean bb_changed = false;
   for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni) {
-    changed = (*ni)->calculate_sphere_bound();
+    Boolean changed = false;
+    if ((*ni)->is_dirty_sphere_bound())
+      changed = (*ni)->clean_sphere_bound();
     const Sphere_bound& sb = (*ni)->get_sphere_bound();
     if (sb.get_radius() == 0) continue;
     spheres.push_back(&sb);
     bb_changed = bb_changed || changed;
   }
 
-  // If the bb was changed in the childobjects, or if the radius is 0
+  // If the bb was changed in the child objects, or if the radius is 0
   // (which means that the object was invisible but not anymore)
   if (bb_changed || (m_sphere_bound.get_radius() == 0)) {
     m_sphere_bound.set_around(spheres);
@@ -199,12 +199,8 @@ Boolean Group::calculate_sphere_bound()
   return false;
 }
 
-/* Return
- */
-Boolean Group::does_have_touch_sensor()
-{
-  return m_has_touch_sensor;
-}
+/* */
+Boolean Group::does_have_touch_sensor() { return m_has_touch_sensor; }
 
 /*! Sets a flag indicating that the group has a touch sensor
  * and sets the selection id. The selection id is used as a 
@@ -217,14 +213,10 @@ void Group::set_has_touch_sensor(unsigned int id)
   m_selection_id = id;
 }
 
-/*! Sets a flag indicating that the group has a light source
- */
+/*! \brief sets a flag indicating whether the group has a light source. */
 void Group::set_has_light() { m_has_light = true; }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the group. */
 void Group::set_attributes(Element* elem) 
 {
   Node::set_attributes(elem);
@@ -235,7 +227,7 @@ void Group::set_attributes(Element* elem)
   {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-    if (name == "sgalVisible") {
+    if (name == "visible") {
       if (!compare_to_true(value))
         set_invisible();
       elem->mark_delete(ai);
@@ -282,8 +274,7 @@ void Group::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get the attributes of the object. Currently this returns an empty list.
- */
+/*! \brief gets the attributes of the object. */
 Attribute_list Group::get_attributes() 
 { 
   Attribute_list attrs;
@@ -291,7 +282,7 @@ Attribute_list Group::get_attributes()
   Attribue attrib;
 
   if (m_is_visible != true) {
-    attrib.first = "sgalVisible";
+    attrib.first = "visible";
     attrib.second = "FALSE";
     attrs.push_back(attrib);
   }
@@ -300,39 +291,38 @@ Attribute_list Group::get_attributes()
 }
 #endif
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Group::init_prototype()
 {
   if (s_prototype) return;
 
-  // Allocate a prototype instance
-  s_prototype = new Container_proto();
+  // Allocate a prototype instance.
+  s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the object fields to the prototype
   Execution_function exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
-  SF_bool* field_info = new SF_bool(ISVISIBLE, "sgalVisible",
+    static_cast<Execution_function>(&Node::sphere_bound_changed);
+  SF_bool* field_info = new SF_bool(ISVISIBLE, "visible",
                                     get_member_offset(&m_is_visible),
                                     exec_func);
   s_prototype->add_field_info(field_info);
 }
 
-/*! Deletes the node prototype */
+/*! \brief deletes the node prototype */
 void Group::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief obtains the node prototype. */
 Container_proto* Group::get_prototype() 
 {  
   if (!s_prototype) Group::init_prototype();
   return s_prototype;
 }
 
-/*!
- */
+/*! */
 Boolean Group::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
@@ -342,8 +332,7 @@ Boolean Group::attach_context(Context* context)
   return result;
 }
 
-/*!
- */
+/*! */
 Boolean Group::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
@@ -353,7 +342,7 @@ Boolean Group::detach_context(Context* context)
   return result;
 }
 
-/*! Writes this container */
+/*! \brief writes this container. */
 void Group::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
@@ -361,7 +350,7 @@ void Group::write(Formatter* formatter)
   formatter->container_end();
 }
 
-/*! Write the children */
+/*! \brief writes the children. */
 void Group::write_children(Formatter* formatter)
 {
   formatter->multi_container_begin("children");
@@ -370,6 +359,22 @@ void Group::write_children(Formatter* formatter)
     formatter->write(node);
   }
   formatter->multi_container_end();
+}
+
+void Group::set_visible()
+{
+  if (!m_is_visible) {
+    m_is_visible = true;
+    m_dirty_sphere_bound = true;
+  }
+}
+
+void Group::set_invisible()
+{
+  if (m_is_visible) {
+    m_is_visible = false;
+    m_dirty_sphere_bound = true;
+  }
 }
 
 SGAL_END_NAMESPACE

@@ -49,13 +49,13 @@ public:
   };
 
   /*! Constructor */
-  Text(Boolean proto = SGAL_FALSE);
+  Text(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Text();
   
   /* Construct the prototype */
-  static Text * prototype() { return new Text(SGAL_TRUE); }
+  static Text* prototype() { return new Text(true); }
 
   /*! Clone */
   virtual Container* clone() { return new Text(); }
@@ -66,7 +66,7 @@ public:
   virtual Container_proto* get_prototype();
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
@@ -77,7 +77,7 @@ public:
   virtual void isect(Isect_action* /* isect_action */) {}
 
   /*! Calculate the sphere bound */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
   /*! Set the font style */
   void set_font_style(Font_style* font_style);

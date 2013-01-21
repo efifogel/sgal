@@ -53,35 +53,44 @@ public:
   virtual ~Indexed_line_set();
 
   /* Construct the prototype. */
-  static Indexed_line_set * prototype() { return new Indexed_line_set(true); }
+  static Indexed_line_set* prototype() { return new Indexed_line_set(true); }
 
   /*! Clone. */
-  virtual Container * clone() { return new Indexed_line_set(); }
+  virtual Container* clone() { return new Indexed_line_set(); }
 
   /*! Set the attributes of this node. */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
+
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype(); 
+
+  virtual Container_proto* get_prototype(); 
   
   /*! Draw the geometry. */
-  virtual void draw(Draw_action * action);
-  virtual void isect(Isect_action * action); 
-  virtual bool calculate_sphere_bound();
+  virtual void draw(Draw_action* action);
 
-  virtual void set_color_array(Color_array * color_array);
-  virtual void set_coord_array(Coord_array * coord_array);
-  virtual void set_normal_array(Normal_array * normal_array);
-  virtual void set_tex_coord_array(Tex_coord_array * tex_coord_array);
+  virtual void isect(Isect_action* action); 
+
+  virtual bool clean_sphere_bound();
+
+  virtual void set_color_array(Color_array* color_array);
+
+  virtual void set_coord_array(Coord_array* coord_array);
+
+  virtual void set_normal_array(Normal_array* normal_array);
+
+  virtual void set_tex_coord_array(Tex_coord_array* tex_coord_array);
 
   void set_normal_per_vertex(Boolean normal_per_vertex);
+
   Boolean get_normal_per_vertex() { return m_normal_per_vertex; }
 
   void set_color_per_vertex(Boolean color_per_vertex);
+
   Boolean get_color_per_vertex() { return m_color_per_vertex; }
   
 protected:
@@ -110,14 +119,14 @@ protected:
   Int m_display_list_id;
 
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype. */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default value. */
   static const Boolean m_def_color_per_vertex;

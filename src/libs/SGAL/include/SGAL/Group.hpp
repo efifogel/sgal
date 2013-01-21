@@ -80,53 +80,65 @@ public:
   /*! Destructor */
   virtual ~Group();
 
-  /*! Construct the prototype */
+  /*! Construct the prototype. */
   static Group* prototype() { return new Group(true); }
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone() { return new Group(); }
   
-  /*! Obtain the number of children */
+  /*! Obtain the number of children. */
   unsigned int get_child_count();
 
-  /*! Obtain the ith child */
+  /*! Obtain the ith child. */
   Node* get_child(unsigned int i);
 
-  /*! Obtain the beginning iterator of the children */
+  /*! Obtain the beginning iterator of the children. */
   Node_iterator children_begin() { return m_childs.begin(); }
  
-  /*! Obtain the pass-the-end iterator of the children */
+  /*! Obtain the pass-the-end iterator of the children. */
   Node_iterator children_end() { return m_childs.end(); }
  
-  void set_visible() { m_is_visible = true; }
-  void set_invisible() { m_is_visible = false; }
-  Boolean is_visible() const { return m_is_visible; }
+  void set_visible();
 
-  /* Add a child to the group */
+  void set_invisible();
+
+  /*! Determine whether the group is visible */
+  Boolean is_visible() const;
+
+  /* Add a child to the group. */
   void add_child(Node* node);
 
-  /* Remove a child from the group */
+  /* Remove a child from the group. */
   void remove_child(Node* node);
 
-  /*! Draw the node while traversing the scene graph */
+  /*! Draw the node while traversing the scene graph. */
   virtual Action::Trav_directive draw(Draw_action* draw_action); 
 
+  /*! Cull the node if invisible and prepare for rendering. */
   virtual void cull(Cull_context& cull_context);
 
+  /*! Prepare the node for selection.
+   * \param isect_action
+   */
   virtual void isect(Isect_action* isect_action);
 
-  /*! Calculate the sphere bound of the group */
-  virtual bool calculate_sphere_bound();
+  /*! Clean the bounding sphere of the group.
+   * \return true iff the bounding sphere has changed during the clean.
+   */
+  virtual Boolean clean_sphere_bound();
 
   bool does_have_touch_sensor();
   void set_has_touch_sensor(unsigned int id);
 
   /*! Obtain the selection id of the attached touch sensor if exists */
-  unsigned int get_selection_id() { return m_selection_id; }
+  unsigned int get_selection_id() const;
 
   void set_has_light();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of the group  extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -140,13 +152,13 @@ public:
   /// \name Protoype handling
   //@{
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
   //@}
@@ -157,31 +169,40 @@ public:
   bool is_dynamic_loaded() { return false; }
 
 protected:
-  /*! Indicates whether the shape is visible and should be rendered */
+  /*! Indicates whether the shape is visible and should be rendered. */
   Boolean m_is_visible;
 
-  /*! The list of child objects */
+  /*! The list of child objects. */
   Node_list m_childs;
 
-  /*! The unique id used when doing picking with the colour buffer */
+  /*! The unique id used when doing picking with the colour buffer. */
   Uint m_selection_id;
 
-  /*! Indicates whether the group has a touch sensor */
+  /*! Indicates whether the group has a touch sensor. */
   Boolean m_has_touch_sensor;
 
-  /*! Indicates whether the group has a light source */
+  /*! Indicates whether the group has a light source. */
   Boolean m_has_light;
     
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that represents the container */
+  /*! The tag that represents the container. */
   static std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+/*! \brief obtains the selection id of the attached touch sensor if exists. */
+inline Uint Group::get_selection_id() const { return m_selection_id; }
+
+/*! \brief determines whether the group is visible */
+inline Boolean Group::is_visible() const { return m_is_visible; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Group::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

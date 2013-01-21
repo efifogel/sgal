@@ -188,9 +188,8 @@ void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 }
 
 /*! Calculate the bounding sphere */
-bool Spherical_gaussian_map_base_geo::calculate_sphere_bound()
+bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
 
@@ -210,7 +209,7 @@ bool Spherical_gaussian_map_base_geo::calculate_sphere_bound()
       m_sphere_bound.set_radius(min_sphere.radius());
     }
   }
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
 
   return true;
 }
@@ -442,24 +441,24 @@ Container_proto* Spherical_gaussian_map_base_geo::get_prototype()
   return s_prototype;
 }
 
-/*! Raise the flag that indicates that the sphere bound changed
- */
+/*! \brief raises the flag that indicates that the sphere bound changed. */
 void Spherical_gaussian_map_base_geo::
 draw_changed(Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_aos;
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 
   if (m_draw_aos) {
     Field* field = get_field(TRUE_DRAW_AOS);
     if (field) field->cascade();
-  } else {
+  }
+  else {
     Field* field = get_field(TRUE_DRAW_PRIMAL);
     if (field) field->cascade();
   }
 }
 
-/*! Draws the internal representation */
+/*! \brief drawss the internal representation. */
 void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action* action)
 {  
   if (!m_draw_aos) {
@@ -476,7 +475,7 @@ void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action* action)
   m_renderer(action);
 }
 
-/*! Reverse the coordinate indices */
+/*! \brief reverses the coordinate indices. */
 void Spherical_gaussian_map_base_geo::
 set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
 {
@@ -489,14 +488,14 @@ set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
   m_coord_indices[i++] = (Uint) -1;
 }
 
-/*! \biref processes change of points */
+/*! \biref processes change of points. */
 void Spherical_gaussian_map_base_geo::field_changed(Field_info* field_info)
 {
   Container::field_changed(field_info);
   clear();
 }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Spherical_gaussian_map_base_geo::create_renderers()
 {
   m_surface_renderer = new Surface_renderer();
@@ -509,7 +508,7 @@ void Spherical_gaussian_map_base_geo::create_renderers()
   m_stencil_surface_renderer = new Stencil_surface_renderer();
 }
 
-/*! \brief destroys the renderers */
+/*! \brief destroys the renderers. */
 void Spherical_gaussian_map_base_geo::destroy_renderers()
 {
   if (m_surface_renderer) delete m_surface_renderer;
@@ -517,7 +516,7 @@ void Spherical_gaussian_map_base_geo::destroy_renderers()
   if (m_stencil_surface_renderer) delete m_stencil_surface_renderer;
 }
 
-/*! \brief cleans the renderer */
+/*! \brief cleans the renderer. */
 void Spherical_gaussian_map_base_geo::clean_renderer()
 {
   // Surface and faces:
@@ -534,7 +533,7 @@ void Spherical_gaussian_map_base_geo::clean_renderer()
   m_renderer_dirty = false;
 }
 
-/*! \brief draws an arrangement on sphere vertex */
+/*! \brief draws an arrangement on sphere vertex. */
 void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action* action,
                                                       Vector3f& center)
 {
@@ -544,7 +543,7 @@ void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action* action,
                         m_aos_delta_angle);
 }
   
-/*! \brief Draw an arrangement on surface boundary_vertex */
+/*! \brief Draw an arrangement on surface boundary_vertex. */
 void Spherical_gaussian_map_base_geo::
 draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
 {
@@ -552,7 +551,7 @@ draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
                         m_aos_boundary_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief draws an arrangement on sphere edge */
+/*! \brief draws an arrangement on sphere edge. */
 void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
                                                     Vector3f& source,
                                                     Vector3f& target)

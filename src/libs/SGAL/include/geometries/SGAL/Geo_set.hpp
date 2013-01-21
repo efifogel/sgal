@@ -121,7 +121,7 @@ public:
   /*! Calculate the sphere bound.
    * \return true if the BS has changed since lst time this was called.
    */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
   
   /*! Set the coordinate array.
    * \param coord_array (in) a pointer to a coordinate array

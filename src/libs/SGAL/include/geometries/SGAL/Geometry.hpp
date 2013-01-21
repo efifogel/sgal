@@ -51,7 +51,7 @@ class SGAL_CLASSDEF Geometry : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
-    BOX_BOUND,
+    SPHERE_BOUND,
     BOUND_MODE,
     LAST
   };
@@ -62,7 +62,7 @@ public:
   };
 
   /*! Constructor */
-  Geometry(Boolean proto = SGAL_FALSE);
+  Geometry(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Geometry() {}
@@ -74,26 +74,32 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
   
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
   
   //void set_box_bound(const Box_bound & box_bound);
   //void get_box_bound(Box_bound & box_bound);
 
-  virtual void draw(Draw_action * action) = 0;
-  virtual void isect(Isect_action * action) = 0;
+  virtual void draw(Draw_action* action) = 0;
 
-  virtual Boolean calculate_sphere_bound() = 0;
-  virtual const Sphere_bound * get_sphere_bound(bool & changed);
-  const Sphere_bound * get_sphere_bound() {
+  virtual void isect(Isect_action* action) = 0;
+
+  virtual Boolean clean_sphere_bound() = 0;
+
+  virtual const Sphere_bound* get_sphere_bound(bool& changed);
+
+  const Sphere_bound* get_sphere_bound() {
     bool dummy;
     return get_sphere_bound(dummy);
   }
 
+  /*! Set the flag that indicates that the sphere bound should be cleaned.*/
+  void sphere_bound_changed(Field_info* field_info = NULL);
+  
   /*! Return true if the current matrix contains scaling
    * \todo has_scale() doesn't belong to Geometry!
    */
@@ -107,14 +113,14 @@ protected:
   Sphere_bound m_sphere_bound;
 
   /*! Indicatres whether the bounding sphere is valid */
-  Boolean m_is_sphere_bound_dirty;
+  Boolean m_dirty_sphere_bound;
 
   /*! Indicates whether the bounding box is pewviously set */
   Boolean m_bb_is_pre_set;
 
 private:
   /*! The prototype of this node */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE

@@ -251,7 +251,7 @@ void Arrangement_on_quadric_geo::isect(Isect_action * action)
 }
 
 /*! \brief */
-Boolean Arrangement_on_quadric_geo::calculate_sphere_bound()
+Boolean Arrangement_on_quadric_geo::clean_sphere_bound()
 {
   Boolean changed = false;
   if (m_base_quadric)

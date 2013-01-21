@@ -64,107 +64,106 @@ public:
   virtual ~Transform();
 
   /* Construct the prototype */
-  static Transform * prototype() { return new Transform(SGAL_TRUE); }
+  static Transform* prototype() { return new Transform(SGAL_TRUE); }
 
   /*! Clone */
-  virtual Container * clone() { return new Transform(); }
+  virtual Container* clone() { return new Transform(); }
 
-  void set_translation(const Vector3f & translation);
-  void get_translation(Vector3f & translation);
-  void set_rotation(const Rotation & rotation);
-  void get_rotation(Rotation & rotation);
-  void set_scale(const Vector3f & scale);
-  void get_scale(Vector3f & scale);
-  void set_scale_orientation(const Rotation & scaleOrientation);
-  void get_scale_orientation(Rotation & scaleOrientation);
-  void set_center(const Vector3f & center);
-  void get_center(Vector3f & center);
+  void set_translation(const Vector3f& translation);
+  void get_translation(Vector3f& translation);
+  void set_rotation(const Rotation& rotation);
+  void get_rotation(Rotation& rotation);
+  void set_scale(const Vector3f& scale);
+  void get_scale(Vector3f& scale);
+  void set_scale_orientation(const Rotation& scaleOrientation);
+  void get_scale_orientation(Rotation& scaleOrientation);
+  void set_center(const Vector3f& center);
+  void get_center(Vector3f& center);
 
-  void set_matrix(const Matrix4f & matrix);
+  void set_matrix(const Matrix4f& matrix);
 
   /*! Obtain (a copy of) the matrix */
-  void get_matrix(Matrix4f & matrix);
+  void get_matrix(Matrix4f& matrix);
 
   /*! Obtain (a const reference of) the matrix */  
-  const Matrix4f & get_matrix();
+  const Matrix4f& get_matrix();
   
   void set_translation(Float v0, Float v1, Float v2);
-  void get_translation(Float * v0, Float * v1, Float * v2);
+  void get_translation(Float* v0, Float* v1, Float* v2);
   void set_rotation(Float v0, Float v1, Float v2, Float v3);
-  void get_rotation(Float * v0, Float * v1, Float * v2, Float * v3);
+  void get_rotation(Float* v0, Float* v1, Float* v2, Float* v3);
   void set_scale(Float v0, Float v1, Float v2);
-  void get_scale(Float * v0, Float * v1, Float * v2);
+  void get_scale(Float* v0, Float* v1, Float* v2);
   void set_scale_orientation(Float v0, Float v1, Float v2, Float v3);
-  void get_scale_orientation(Float * v0, Float * v1, Float * v2, Float * v3);
+  void get_scale_orientation(Float* v0, Float* v1, Float* v2, Float* v3);
   void set_center(Float v0, Float v1, Float v2);
-  void get_center(Float * v0, Float * v1, Float * v2);
+  void get_center(Float* v0, Float* v1, Float* v2);
 
-  void set_dirty_matrix(Field_info * field_info = NULL);
+  void parts_changed(Field_info* field_info = NULL);
 
-  virtual void cull(Cull_context & cull_context);
-  virtual void isect(Isect_action * isect_action);
+  virtual void cull(Cull_context& cull_context);
+  virtual void isect(Isect_action* isect_action);
 
-  /*! Calculate the sphere bound of all children */
-  virtual Boolean calculate_sphere_bound();
+  /*! Clean the bounding sphere of the transformation node. */
+  virtual Boolean clean_sphere_bound();
 
-  Boolean is_bounding_sphere_modified();
-
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! \bried writes this container */
-  virtual void write(Formatter * formatter);
+  /*! \bried writes this container. */
+  virtual void write(Formatter* formatter);
   
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
   
 protected:
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
-  /*! The translation vector */
+  /*! The translation vector. */
   Vector3f m_translation;
 
-  /*! The rotation vector */
+  /*! The rotation vector. */
   Rotation m_rotation;
 
-  /*! The scale vector */
+  /*! The scale vector. */
   Vector3f m_scale;
 
-  /*! The scale oriantation vector */
+  /*! The scale oriantation vector. */
   Rotation m_scale_orientation;
 
-  /*! The center of the transform */
+  /*! The center of the transform. */
   Vector3f m_center;
 
-  /*! The matrix representing of the transformation */
+  /*! The matrix representing of the transformation. */
   Matrix4f m_matrix;
 
-  /*! The inverse of the matrix representing the transformation */
+  /*! The inverse of the matrix representing the transformation. */
   Matrix4f m_inverse_matrix;
 
-  /*! Indicates whether the matrix is not up-to-date */
+  /*! Indicates whether the matrix is not up-to-date. */
   Boolean m_dirty_matrix;
 
-  /*! Indicates whether the transform should be reset */
+  /*! Indicates whether the transform should be reset. */
   bool m_reset;
   
   Boolean m_dirty_inverse;
+
   Boolean m_dirty_parts;
 
   /*! Default values */
@@ -176,15 +175,13 @@ private:
   static Vector3f s_def_bbox_center;
   static Vector3f s_def_bbox_size;
 
-  void init();
+  void clean_parts();
 
   void calc_matrix();
 
   void clean_matrix();
 
-  void clean_parts();
-
-  void reset(Field_info * field_info);
+  void reset(Field_info* field_info);
 };
 
 SGAL_END_NAMESPACE

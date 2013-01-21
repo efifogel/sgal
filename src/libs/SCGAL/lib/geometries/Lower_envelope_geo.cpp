@@ -78,7 +78,7 @@ Lower_envelope_geo::Lower_envelope_geo(Boolean proto) :
 Lower_envelope_geo::~Lower_envelope_geo() { clear(); }
 
 /*! \brief draws the envelope */
-void Lower_envelope_geo::draw_envelope(Draw_action * action)
+void Lower_envelope_geo::draw_envelope(Draw_action* action)
 {
   draw_envelope_faces(action);
   draw_envelope_edges(action);
@@ -86,7 +86,7 @@ void Lower_envelope_geo::draw_envelope(Draw_action * action)
 }
 
 /*! \brief draws the geometry of the Mesh */
-void Lower_envelope_geo::draw(Draw_action * action)
+void Lower_envelope_geo::draw(Draw_action* action)
 {
   if (m_dirty) clean();
   if (is_empty()) return;
@@ -94,11 +94,11 @@ void Lower_envelope_geo::draw(Draw_action * action)
 }
 
 /*! \brief calculates the bounding sphere */
-bool Lower_envelope_geo::calculate_sphere_bound()
+bool Lower_envelope_geo::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return SGAL_FALSE;
+  if (!m_sphere_bound_dirty) return false;
   if (m_dirty) clean();
-  if (is_empty()) return SGAL_FALSE;
+  if (is_empty()) return false;
 
   Approximate_sphere_vector spheres;
   transform_coords(spheres);
@@ -112,12 +112,12 @@ bool Lower_envelope_geo::calculate_sphere_bound()
     m_sphere_bound.set_radius(min_sphere.radius());
   }
     
-  m_is_sphere_bound_dirty = SGAL_FALSE;
-  return SGAL_TRUE;
+  m_sphere_bound_dirty = false;
+  return true;
 }
 
 /*! \brief sets the attributes of the object extracted from an input file */
-void Lower_envelope_geo::set_attributes(SGAL::Element * elem)
+void Lower_envelope_geo::set_attributes(SGAL::Element* elem)
 {
   Geometry::set_attributes(elem);
 
@@ -125,8 +125,8 @@ void Lower_envelope_geo::set_attributes(SGAL::Element * elem)
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
   {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "vertexRadius") {
       m_vertex_radius = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
@@ -144,7 +144,7 @@ void Lower_envelope_geo::set_attributes(SGAL::Element * elem)
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
+  typedef Element::Cont_attr_iter Cont_attr_iter;
   for (Cont_attr_iter cai = elem->cont_attrs_begin();
        cai != elem->cont_attrs_end(); cai++)
   {
@@ -213,7 +213,7 @@ void Lower_envelope_geo::delete_prototype()
 }
 
 /*! \brief obtains the prototype of this container */
-Container_proto * Lower_envelope_geo::get_prototype() 
+Container_proto* Lower_envelope_geo::get_prototype() 
 {  
   if (!s_prototype) Lower_envelope_geo::init_prototype();
   return s_prototype;

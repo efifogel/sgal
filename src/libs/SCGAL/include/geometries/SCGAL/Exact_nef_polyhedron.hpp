@@ -213,7 +213,7 @@ public:
   
   virtual void cull(SGAL::Cull_context& cull_context);
   virtual void isect(SGAL::Isect_action* action);
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(SGAL::Element * elem);
@@ -403,7 +403,7 @@ protected:
   void clean_polyhedron();
 
   /*! Calculate the polyhedron spere-bound */
-  Boolean calculate_sphere_bound_polyhedron();
+  Boolean clean_sphere_bound_polyhedron();
   
   /*! Draw the intermediate polyhedron (for debugging purpose) */
   void draw_polyhedron(Draw_action* action);  

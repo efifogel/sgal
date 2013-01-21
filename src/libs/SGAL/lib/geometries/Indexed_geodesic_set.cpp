@@ -95,7 +95,7 @@ void Indexed_geodesic_set::set_color_per_vertex(Boolean color_per_vertex)
 void Indexed_geodesic_set::set_coord_array(Coord_array* coord_array)
 {
   m_coord_array = coord_array;
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 }
 
 /*! Set the normal set. Pass the pointer to the geometry object 
@@ -254,20 +254,16 @@ void Indexed_geodesic_set::draw(Draw_action* action)
 
 /*!
  */
-void Indexed_geodesic_set::isect(Isect_action* /* action */)
-{
-}
+void Indexed_geodesic_set::isect(Isect_action* /* action */) {}
 
 /*! Calculate the sphere bound of the mesh. Returns true if the BS has
  * changed since lst time this was called.
  */
-bool Indexed_geodesic_set::calculate_sphere_bound()
+bool Indexed_geodesic_set::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return false;
-
   if (!m_bb_is_pre_set && m_coord_array)
     m_sphere_bound.set_around(m_coord_array->begin(), m_coord_array->end());
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
   return true;
 }
 
@@ -279,17 +275,14 @@ void Indexed_geodesic_set::set_attributes(Element* elem)
 { 
   Geo_set::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
+  typedef Element::Str_attr_iter Str_attr_iter;
+  typedef Element::Cont_attr_iter Cont_attr_iter;
 
   std::string normal_indices_string;
-
-  //! \todo sg->get_stats().add_num_mesh();
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "colorPerVertex") {
       set_color_per_vertex(compare_to_true(value));
       elem->mark_delete(ai);
@@ -330,7 +323,7 @@ void Indexed_geodesic_set::init_prototype()
 void Indexed_geodesic_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! */

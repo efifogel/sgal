@@ -32,7 +32,6 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Node.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -119,18 +118,15 @@ void Box::isect(Isect_action * action)
 
 /*! Calculate the bounding sphere of the box.
  */
-Boolean Box::calculate_sphere_bound()
+Boolean Box::clean_sphere_bound()
 {
-  if (m_is_sphere_bound_dirty) {
-    float radius = sqrtf(m_size[0] * m_size[0] * 0.25f +
-                         m_size[1] * m_size[1] * 0.25f +
-                         m_size[2] * m_size[2] * 0.25f);
-    m_sphere_bound.set_radius(radius);
-    Vector3f vect(0, 0, 0);
-    m_sphere_bound.set_center(vect);
-    return SGAL_TRUE;
-  }
-  return SGAL_FALSE;
+  float radius = sqrtf(m_size[0] * m_size[0] * 0.25f +
+                       m_size[1] * m_size[1] * 0.25f +
+                       m_size[2] * m_size[2] * 0.25f);
+  m_sphere_bound.set_radius(radius);
+  Vector3f vect(0, 0, 0);
+  m_sphere_bound.set_center(vect);
+  return true;
 }
 
 /*! Initialize the display list that is used to draw the box */
@@ -240,7 +236,7 @@ void Box::set_attributes(Element * elem)
   // Remove all the deleted attributes:
   elem->delete_marked();
 
-  calculate_sphere_bound();
+  // calculate_sphere_bound();
 }
 
 #if 0
@@ -262,7 +258,7 @@ Attribute_list Box::get_attributes()
 }
 #endif
 
-/*! initializes the node prototype */
+/*! initializes the box prototype */
 void Box::init_prototype()
 {
   if (s_prototype) return;
@@ -273,7 +269,7 @@ void Box::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
+    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_vector3f(SIZE, "size",
                                               get_member_offset(&m_size),
                                               exec_func));
@@ -283,6 +279,7 @@ void Box::init_prototype()
 void Box::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */

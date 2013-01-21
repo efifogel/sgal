@@ -45,7 +45,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Cylindrical_patch::s_tag = "CylindricalPatch";
-Container_proto * Cylindrical_patch::s_prototype = 0;
+Container_proto* Cylindrical_patch::s_prototype = 0;
 
 // default values:
 const Float Cylindrical_patch::s_def_radius(1);
@@ -106,11 +106,11 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
 /*! Draw the cylindrical patch
  * \param draw_action the draw action
  */
-void Cylindrical_patch::draw(Draw_action * action) 
+void Cylindrical_patch::draw(Draw_action* action) 
 {
   if (has_scale()) glEnable(GL_NORMALIZE);
 
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   if (context) {
     context->draw_cull_face(Gfx::NO_CULL);
     context->draw_light_model_sides(Gfx::TWO_SIDE);
@@ -142,7 +142,7 @@ void Cylindrical_patch::draw(Draw_action * action)
 /*! Draw the cylindrical patch in selection mode 
  * \param action
  */
-void Cylindrical_patch::isect(Isect_action * action) 
+void Cylindrical_patch::isect(Isect_action* action) 
 {
   Float top = m_height / 2;
   Float bottom = -top;
@@ -179,28 +179,25 @@ void Cylindrical_patch::isect(Isect_action * action)
 }
 
 /* \brief calculares the sphere bound of the cylindrical patch */
-Boolean Cylindrical_patch::calculate_sphere_bound()
+Boolean Cylindrical_patch::clean_sphere_bound()
 {
-  if (m_is_sphere_bound_dirty) {
-    float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
-    m_sphere_bound.set_radius(radius);
-    m_sphere_bound.set_center(Vector3f(0, 0, 0));
-    return SGAL_TRUE;
-  }
-  return SGAL_FALSE;
+  float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
+  m_sphere_bound.set_radius(radius);
+  m_sphere_bound.set_center(Vector3f(0, 0, 0));
+  return true;
 }
 
 /*! \brief sets the container attributes */
-void Cylindrical_patch::set_attributes(Element * elem)
+void Cylindrical_patch::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
+  typedef Element::Str_attr_iter Str_attr_iter;
 
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -231,7 +228,7 @@ void Cylindrical_patch::set_attributes(Element * elem)
   // Remove all the deleted attributes:
   elem->delete_marked();
 
-  calculate_sphere_bound();
+  // calculate_sphere_bound();
 }
 
 #if 0
@@ -279,7 +276,7 @@ Attribute_list Cylindrical_patch::get_attributes()
 }
 #endif
 
-/*! \brief initializes the node prototype */
+/*! \brief initializes the cylindrical patch prototype. */
 void Cylindrical_patch::init_prototype()
 {
   if (s_prototype) return;
@@ -289,18 +286,19 @@ void Cylindrical_patch::init_prototype()
   typedef void (Container::* Execution_function)(Field_info*);
 
   // Add the field-info records to the prototype:
+
+  // Sphere bound changed
   Execution_function exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
+    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            get_member_offset(&m_height),
                                            exec_func));
 
+  // Rendering required
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
@@ -323,10 +321,11 @@ void Cylindrical_patch::init_prototype()
 void Cylindrical_patch::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! \brief obtains the prototype */
-Container_proto * Cylindrical_patch::get_prototype() 
+Container_proto* Cylindrical_patch::get_prototype() 
 {  
   if (!s_prototype) Cylindrical_patch::init_prototype();
   return s_prototype;

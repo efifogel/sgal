@@ -110,7 +110,7 @@ void Geo_set::set_coord_array(Coord_array* coord_array)
   if (m_coord_array) m_coord_array->unregister_observer(observer);
   m_coord_array = coord_array;
   m_coord_array->register_observer(observer);
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 }
 
 /*! \brief sets the normal array. */
@@ -130,13 +130,13 @@ Boolean Geo_set::is_empty() const
 { return (!m_coord_array || (m_coord_array->size() == 0) ); }
 
 /*! \brief calculates the sphere bound of the geometry set. */
-Boolean Geo_set::calculate_sphere_bound()
+Boolean Geo_set::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return false;
+  if (!m_dirty_sphere_bound) return false;
 
   if (!m_bb_is_pre_set && m_coord_array)
     m_sphere_bound.set_around(m_coord_array->begin(), m_coord_array->end());
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
   return true;
 }
 

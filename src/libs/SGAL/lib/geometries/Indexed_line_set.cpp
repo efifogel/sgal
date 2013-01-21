@@ -95,7 +95,7 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
 void Indexed_line_set::set_coord_array(Coord_array* coord_array)
 {
   m_coord_array = coord_array;
-  m_is_sphere_bound_dirty = true;
+  m_dirty_sphere_bound = true;
 }
 
 /*! Set the normal set. Pass the pointer to the geometry object 
@@ -206,13 +206,11 @@ void Indexed_line_set::isect(Isect_action* /* action */)
 /*! Calculate the sphere bound of the mesh. Returns true if the BS has
  * changed since lst time this was called.
  */
-bool Indexed_line_set::calculate_sphere_bound()
+bool Indexed_line_set::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return false;
-
   if (!m_bb_is_pre_set && m_coord_array)
     m_sphere_bound.set_around(m_coord_array->begin(), m_coord_array->end());
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
   return true;
 }
 
@@ -275,7 +273,7 @@ void Indexed_line_set::init_prototype()
 void Indexed_line_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! */

@@ -116,7 +116,10 @@ void Shape::set_appearance(Appearance* app)
  */
 void Shape::set_geometry(Geometry* geometry)
 {
+  Observer observer(this, get_field_info(SPHERE_BOUND));
+  if (m_geometry) m_geometry->unregister_observer(observer);
   m_geometry = geometry;
+  m_geometry->register_observer(observer);
 
   //! \todo
 #if 0
@@ -133,7 +136,7 @@ void Shape::set_geometry(Geometry* geometry)
 /*! The function calculates the bounding sphere of all geometries in the shape.
  * \return true if the BS has changed since last call.
  */
-Boolean Shape::calculate_sphere_bound()
+Boolean Shape::clean_sphere_bound()
 {
   if (!is_visible()) {
     if (m_sphere_bound.get_radius() == 0) return false;
@@ -279,12 +282,8 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
   return Action::TRAV_CONT;
 }
 
-/*!
- */
-void Shape::cull(Cull_context& cull_context)
-{
-  cull_context.add_shape(this);
-}
+/*! \brief culls the node if invisible and prepare for rendering. */
+void Shape::cull(Cull_context& cull_context) { cull_context.add_shape(this); }
 
 /*!
  */
@@ -592,7 +591,7 @@ void Shape::init_prototype()
 
   // Add the object fields to the prototype:
   Execution_function exec_func = 
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
+    static_cast<Execution_function>(&Node::sphere_bound_changed);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE, "sgalVisible",
                                           get_member_offset(&m_is_visible),
                                           exec_func));    

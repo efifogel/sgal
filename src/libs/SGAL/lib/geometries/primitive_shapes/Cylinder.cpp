@@ -62,8 +62,7 @@ Cylinder::Cylinder(Boolean proto) :
   m_is_body_visible(s_def_is_body_visible),
   m_cylinder(NULL),
   m_cylinder_base(NULL)
-{
-}
+{}
 
 /*! Destructor */
 Cylinder::~Cylinder()
@@ -72,7 +71,7 @@ Cylinder::~Cylinder()
   gluDeleteQuadric(m_cylinder_base);
 }
 
-/*! \brief draws the cylinder */
+/*! \brief draws the cylinder. */
 void Cylinder::draw(Draw_action* action) 
 {
   if (is_dirty()) clean();
@@ -117,7 +116,7 @@ void Cylinder::draw(Draw_action* action)
   glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the cylinder in selection mode */
+/*! \brief draws the cylinder in selection mode. */
 void Cylinder::isect(Isect_action* action) 
 {
   if (m_dirty) clean();
@@ -150,7 +149,7 @@ void Cylinder::isect(Isect_action* action)
   glPopMatrix();
 }
 
-/*! \brief cleans the cylinder */
+/*! \brief cleans (regenerate the coordinates of) the cylinder. */
 void Cylinder::clean()
 {
   m_cylinder = gluNewQuadric();
@@ -163,25 +162,19 @@ void Cylinder::clean()
   gluQuadricNormals(m_cylinder_base, GLU_SMOOTH); 
   gluQuadricDrawStyle(m_cylinder_base, GLU_FILL); 
 
-  m_dirty = SGAL_FALSE;
+  m_dirty = false;
 }
 
-/*! \brief calculares the sphere bound of the cylinder */
-Boolean Cylinder::calculate_sphere_bound()
+/*! \brief cleans (recompute) the bounding sphere of the cylinder. */
+Boolean Cylinder::clean_sphere_bound()
 {
-  if (m_is_sphere_bound_dirty) {
-    float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
-    m_sphere_bound.set_radius(radius);
-    m_sphere_bound.set_center(Vector3f(0, 0, 0));
-    return SGAL_TRUE;
-  }
-  return SGAL_FALSE;
+  float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
+  m_sphere_bound.set_radius(radius);
+  m_sphere_bound.set_center(Vector3f(0, 0, 0));
+  return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the cylinder. */
 void Cylinder::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -231,8 +224,6 @@ void Cylinder::set_attributes(Element* elem)
 
   // Remove all the deleted attributes:
   elem->delete_marked();
-
-  calculate_sphere_bound();
 }
 
 #if 0
@@ -299,7 +290,7 @@ Attribute_list Cylinder::get_attributes()
 }
 #endif
 
-/*! initializes the node prototype */
+/*! initializes the cylinder prototype */
 void Cylinder::init_prototype()
 {
   if (s_prototype) return;
@@ -310,30 +301,25 @@ void Cylinder::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
+    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            get_member_offset(&m_height),
                                            exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(SIDE, "side",
                                           get_member_offset(&m_is_body_visible),
                                           exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
     add_field_info(new SF_bool(BOTTOM, "bottom",
                                get_member_offset(&m_is_bottom_visible),
                                exec_func));
 
+  // Rendering required
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(TOP, "top",
@@ -357,6 +343,7 @@ void Cylinder::init_prototype()
 void Cylinder::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */

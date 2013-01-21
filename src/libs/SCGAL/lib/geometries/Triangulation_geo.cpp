@@ -238,9 +238,8 @@ void Triangulation_geo::isect(SGAL::Isect_action* action) {}
 
 /*!
  */
-Boolean Triangulation_geo::calculate_sphere_bound()
+Boolean Triangulation_geo::clean_sphere_bound()
 {
-  if (!m_is_sphere_bound_dirty) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
   
@@ -261,7 +260,7 @@ Boolean Triangulation_geo::calculate_sphere_bound()
     m_sphere_bound.set_center(center_vec);
     m_sphere_bound.set_radius(min_sphere.radius());
   }
-  m_is_sphere_bound_dirty = false;
+  m_dirty_sphere_bound = false;
   return true;
 }
 

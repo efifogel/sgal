@@ -54,77 +54,75 @@ public:
   };
 
   /*! Constructor */
-  Geodesic(Boolean proto = SGAL_FALSE);
+  Geodesic(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Geodesic();
 
   /* Construct the prototype */
-  static Geodesic * prototype() {  return new Geodesic(SGAL_TRUE); }
+  static Geodesic* prototype();
 
   /*! Clone */
-  virtual Container * clone() { return new Geodesic(); }
+  virtual Container* clone();
+
   /*! Set the arc radius
    * \param radius the new radius
    */
-  void set_radius(Float radius) { m_radius = radius; }
+  void set_radius(Float radius);
 
   /*! Obtain the arc radius
    * \return the arc radius
    */
-  Float get_radius() const { return m_radius; }
+  Float get_radius() const;
 
-  /*! Set the number of stacks
-   * \param stacks the new number of stacks
-   */
   /*! Set the start point
-       * \param point the new start point
-      */
-  void set_start(Vector2f start) { m_start = start; }
+   * \param point the new start point
+   */
+  void set_start(Vector2f start);
 
   /*! Obtain the start point of the geodesic
    * \return the start point
    */
-  Vector2f get_start() const { return m_start; }
+  Vector2f get_start() const;
 
-    /*! Set the end point
-       * \param point the new end point
-      */
-  void set_end(Vector2f end) { m_end = end; }
+  /*! Set the end point
+   * \param point the new end point
+   */
+  void set_end(Vector2f end);
 
   /*! Obtain the end point of the geodesic
    * \return the end point
    */
-  Vector2f get_end() const { return m_end; }
+  Vector2f get_end() const;
 
   /*! Set the number of stacks
    * \param stacks the new number of stacks
    */
-  void set_stacks(Uint stacks) { m_stacks = stacks; }
+  void set_stacks(Uint stacks);
 
   /*! Obtain the number of stacks
    * \return the number of stacks
    */
-  Uint get_stacks() const { return m_stacks; }
+  Uint get_stacks() const;
 
   /*! Set the number of breaks
    * \param  the new number of breaks
    */
-  void set_breaks(Uint breaks) { m_breaks = breaks; }
+  void set_breaks(Uint breaks);
   
   /*! Obtain the number of breaks
    * \return the number of breaks
    */
-  Uint get_breaks() const { return m_breaks; }
+  Uint get_breaks() const;
 
    /*! Set */
-  void set_solid(Boolean solid) { m_is_solid = solid; }
+  void set_solid(Boolean solid);
 
   /*! Obtain */
   Boolean is_solid() const;
   
    /*! Set */
-  void set_complement(Boolean complement) { m_is_complement = complement; }
+  void set_complement(Boolean complement);
 
   /*! Obtain */
   Boolean is_complement() const;
@@ -132,15 +130,15 @@ public:
   /*! Draw the geodesic
    * \param action the draw action
    */
-  virtual void draw(Draw_action * action); 
+  virtual void draw(Draw_action* action); 
 
   /*! Draw the geodesic in selection mode 
    * \param action the draw action
    */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! Calculare the sphere bound of the geodesic */
-  virtual Boolean calculate_sphere_bound();
+  virtual Boolean clean_sphere_bound();
   
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -151,7 +149,7 @@ public:
   /*! Obtain the node prototype
    * \return the node prototype
    */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   // virtual void FieldChanged(short fieldId);
 
@@ -159,22 +157,21 @@ public:
    * \param elem contains lists of attribute names and values
    * \param sg a pointer to the scene graph
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
     /*! Determine whether the geometry has color (as opposed to normal) */
-  virtual Boolean has_color() const { return SGAL_FALSE; }
-
+  virtual Boolean has_color() const { return false; }
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The radius of the arc sphere */
   Float m_radius;
@@ -209,8 +206,74 @@ private:
   static const Uint s_def_breaks;
   static const Boolean s_def_is_solid;
   static const Boolean s_def_is_complement;
-
 };
+
+/*! \brief constructs the prototype. */
+inline Geodesic* Geodesic::prototype() {  return new Geodesic(true); }
+
+/*! \brief  clones. */
+inline Container* Geodesic::clone() { return new Geodesic(); }
+
+/*! \brief sets the arc radius. */
+inline void Geodesic::set_radius(Float radius)
+{
+  m_radius = radius;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the arc radius. */
+inline Float Geodesic::get_radius() const { return m_radius; }
+
+/*! \brief sets the start point. */
+inline void Geodesic::set_start(Vector2f start)
+{
+  m_start = start;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the start point of the geodesic. */
+inline Vector2f Geodesic::get_start() const { return m_start; }
+
+/*! \brief sets the end point. */
+inline void Geodesic::set_end(Vector2f end)
+{
+  m_end = end;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains the end point of the geodesic. */
+inline Vector2f Geodesic::get_end() const { return m_end; }
+
+/*! \brief sets the number of stacks. */
+inline void Geodesic::set_stacks(Uint stacks) { m_stacks = stacks; }
+
+/*! \brief obtains the number of stacks. */
+inline Uint Geodesic::get_stacks() const { return m_stacks; }
+
+/*! \brief sets the number of breaks. */
+inline void Geodesic::set_breaks(Uint breaks) { m_breaks = breaks; }
+  
+/*! \brief obtains the number of breaks. */
+inline Uint Geodesic::get_breaks() const { return m_breaks; }
+
+/*! \brief sets. */
+inline void Geodesic::set_solid(Boolean solid) { m_is_solid = solid; }
+
+/*! \brief obtains. */
+inline Boolean Geodesic::is_solid() const { return m_is_solid; }
+  
+/*! \brief sets. */
+inline void Geodesic::set_complement(Boolean complement)
+{
+  m_is_complement = complement;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief obtains */
+inline Boolean Geodesic::is_complement() const { return m_is_complement; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Geodesic::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

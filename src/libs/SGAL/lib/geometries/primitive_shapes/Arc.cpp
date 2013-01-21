@@ -31,7 +31,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Node.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Utilities.hpp"
@@ -42,7 +41,7 @@ SGAL_BEGIN_NAMESPACE
 typedef void (Container::* Execution_function)(Field_info*);
 
 std::string Arc::s_tag = "Arc";
-Container_proto * Arc::s_prototype = NULL;
+Container_proto* Arc::s_prototype = NULL;
 
 // Default values:
 const Float Arc::s_def_radius(1.0f);
@@ -52,7 +51,7 @@ const Float Arc::s_def_alpha(0.0f);
 const Float Arc::s_def_beta(0.0f);
 const Float Arc::s_def_gamma(SGAL_TWO_PI);
 const Float Arc::s_def_delta(SGAL_PI);
-const Boolean Arc::s_def_is_solid(SGAL_FALSE);
+const Boolean Arc::s_def_is_solid(false);
 
 /*! Halftone stipple pattern for backfacing elements */
 Ubyte Arc::s_halftone[] = {
@@ -93,24 +92,20 @@ gamma 3.14 #Arc length in radians
 delta 0.01 #thickness
 */
   m_is_solid(s_def_is_solid)
-{
-}
+{}
 
 /*! Destructor */
-Arc::~Arc(){}
-
-/*! Clean the arc internal representation */
-void Arc::clean() { /* m_dirty = SGAL_FALSE; */ }
+Arc::~Arc() {}
 
 /*! \brief draws the arc */
-void Arc::draw(Draw_action * action) 
+void Arc::draw(Draw_action* action) 
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   if (!context) return;
   
   Uint pass_no = action->get_pass_no();
   if (pass_no == 0) {
-    action->set_second_pass_required(SGAL_TRUE);
+    action->set_second_pass_required(true);
 
     // Backfacing:
     context->draw_cull_face(Gfx::FRONT_CULL);
@@ -119,8 +114,6 @@ void Arc::draw(Draw_action * action)
     glPolygonStipple(s_halftone);
   }
   
-  // if (!is_dirty()) clean();
-
   if (has_scale()) glEnable(GL_NORMALIZE);
 //   if (!m_is_solid) {
 //     context->draw_cull_face(Gfx::NO_CULL);
@@ -218,10 +211,8 @@ void Arc::draw(Draw_action * action)
 }
 
 /*! \brief draws the object in selection mode */
-void Arc::isect(Isect_action * action) 
+void Arc::isect(Isect_action* action) 
 {
-  // if (!is_dirty()) clean();
-
   // Calculate lower left vertex:
   Vector3f vbl, vtl, vtr, vbr;
 
@@ -288,28 +279,25 @@ void Arc::isect(Isect_action * action)
 }
 
 /*! \brief calculares the sphere bound of the sphere */
-Boolean Arc::calculate_sphere_bound()
+Boolean Arc::clean_sphere_bound()
 {
-  if ( m_is_sphere_bound_dirty) {
-    m_sphere_bound.set_radius(m_radius);
-    m_sphere_bound.set_center(Vector3f(0, 0, 0));
-    return SGAL_TRUE;
-  }
-  return SGAL_FALSE;
+  m_sphere_bound.set_radius(m_radius);
+  m_sphere_bound.set_center(Vector3f(0, 0, 0));
+  return true;
 }
 
 /*! \brief sets the attributes of the object extracted from the input file */
-void Arc::set_attributes(Element * elem)
+void Arc::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
   
-  typedef Element::Str_attr_iter        Str_attr_iter;
+  typedef Element::Str_attr_iter Str_attr_iter;
 
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
   {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
 
     if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
@@ -424,7 +412,7 @@ Attribute_list Arc::get_attributes()
 }
 #endif
 
-/*! \brief initializes the node prototype */
+/*! \brief initializes the arc prototype */
 void Arc::init_prototype()
 {
   if (s_prototype) return;
@@ -432,7 +420,7 @@ void Arc::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Node::set_sphere_bound_modified);
+    static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func));
@@ -474,11 +462,15 @@ void Arc::init_prototype()
                                            exec_func));
 }
 
-/*! \brief deletes the node prototype */
-void Arc::delete_prototype() { delete s_prototype; }
+/*! \brief deletes the arc prototype. */
+void Arc::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
 
-/*! \brief obtains the node prototype */
-Container_proto * Arc::get_prototype() 
+/*! \brief obtains the arc prototype, */
+Container_proto* Arc::get_prototype() 
 {  
   if (!s_prototype) Arc::init_prototype();
   return s_prototype;

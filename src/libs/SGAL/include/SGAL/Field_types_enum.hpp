@@ -36,9 +36,10 @@
  * field has zero values, the value is empty but still represented.
  */
 
-#include "SGAL/basic.hpp"
 #include <assert.h>
 #include <string>
+
+#include "SGAL/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -53,9 +54,10 @@ enum Field_type_enum {
   SFCOLOR     = 8,
   SFVEC4F     = 9,
   SFROTATION  = 10,
-  SFIMAGE     = 11,
-  SFSTRING    = 12,
-  SFCONTAINER = 13,
+  SFSB        = 11,
+  SFIMAGE     = 12,
+  SFSTRING    = 13,
+  SFCONTAINER = 14,
   MFFLOAT     = 22,
   MFUINT32    = 23,
   MFINT32     = 24,
@@ -65,13 +67,14 @@ enum Field_type_enum {
   MFCOLOR     = 28,
   MFVEC4F     = 29,
   MFROTATION  = 30,
+  MFSB        = 31,
   MFSTRING    = 32,
   MFCONTAINER = 33
 };
 
 class Field_types_utils {
 public:
-  static Field_type_enum get_field_type(const std::string & type)
+  static Field_type_enum get_field_type(const std::string& type)
   {
     if (type == "SFBool" || type == "Boolean") return SFBOOL;
     else if (type == "SFColor" || type == "Color") return SFCOLOR;
@@ -80,6 +83,7 @@ public:
     else if (type == "SFInt32" || type == "Integer") return SFINT32;
     else if (type == "SFNode" || type == "Container") return SFCONTAINER;
     else if (type == "SFRotation" || type == "Rotation") return SFROTATION;
+    else if (type == "SFSphereBound" || type == "SphereBound") return SFSB;
     else if (type == "SFString" || type == "String") return SFSTRING;
     else if (type == "SFTime" || type == "Time") return SFTIME;
     else if (type == "SFVec2f" || type == "Vector2Float") return SFVEC2F;
@@ -90,6 +94,7 @@ public:
     else if (type == "MFInt32" || type == "Integers") return MFINT32;
     else if (type == "MFNode" || type == "Containers") return MFCONTAINER;
     else if (type == "MFRotation" || type == "Rotations") return MFROTATION;
+    else if (type == "MFSphereBound" || type == "SphereBounds") return MFSB;
     else if (type == "MFString" || type == "Strings") return MFSTRING;
     else if (type == "MFTime" || type == "Times") return MFTIME;
     else if (type == "MFVec2F" || type == "Vector2Floats") return MFVEC2F;

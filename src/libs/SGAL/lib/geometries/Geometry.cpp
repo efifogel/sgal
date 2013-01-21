@@ -26,56 +26,55 @@
 #endif
 #include <GL/gl.h>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"
-#include "SGAL/Node.hpp"
-#include "SGAL/Shape.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Geometry::s_prototype = 0;
+Container_proto* Geometry::s_prototype = 0;
 
 /*! Constructor */
 Geometry::Geometry(Boolean proto) :
   Container(proto),
-  m_is_sphere_bound_dirty(SGAL_TRUE),
-  m_bb_is_pre_set(SGAL_FALSE)
-{
-}
+  m_dirty_sphere_bound(true),
+  m_bb_is_pre_set(false)
+{}
 
-/*! sets the attributes of this node */
+/*! \brief sets the attributes of this node. */
 void Geometry::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto();
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // Execution_function exec_func;
+  SF_sphere_bound* sphere_bound_fi;
+
+  // exec_func = static_cast<Execution_function>(&Transform::parts_changed);
+  sphere_bound_fi = new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
+                                        get_member_offset(&m_sphere_bound));
+  s_prototype->add_field_info(sphere_bound_fi);
 }
 
 /*! */
 void Geometry::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! */
-Container_proto * Geometry::get_prototype() 
+Container_proto* Geometry::get_prototype() 
 {  
   if (!s_prototype) Geometry::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Geometry::set_attributes(Element * elem)
+/*! \brief sets the attributes of the geometric object. */
+void Geometry::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
@@ -83,11 +82,10 @@ void Geometry::set_attributes(Element * elem)
 
   Container::set_attributes(elem);
 
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "bboxCenter") {
       m_sphere_bound.set_center(value);
       elem->mark_delete(ai);
@@ -107,21 +105,28 @@ void Geometry::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
+/*! \brief sets the flag that indicates that the sphere bound should be
+ * cleaned.
+ */
+void Geometry::sphere_bound_changed(Field_info* /* field_info */)
+{ m_dirty_sphere_bound = true; }
+
+
 /*! Returns a pointer to the sphere bound. 
  * changed is true if the BS has changed since last call.
  */
-const Sphere_bound * Geometry::get_sphere_bound(bool & changed)
+const Sphere_bound* Geometry::get_sphere_bound(bool& changed)
 {
   changed = false;
-  if (m_is_sphere_bound_dirty) {
-    calculate_sphere_bound();
+  if (m_dirty_sphere_bound) {
+    clean_sphere_bound();
     changed = true;
   }
   return &m_sphere_bound;
 }
 
 #if 0
-/*! Get the attributes of the box */
+/*! \brief obtains the attributes of the box */
 Attribute_list Geometry::get_attributes() 
 { 
   Attribute_list attribs; 
@@ -129,11 +134,12 @@ Attribute_list Geometry::get_attributes()
   return attribs;
 }
 
-/*! Get the parent node from the scene graph and add the geometry to it.
+/*! \brief obtains the parent node from the scene graph and add the geometry
+ * to it.
  * \param sg a pointer to the scene graph.
  * \param parentName the name of the parent object.
  */
-void Geometry::add_to_scene(Scene_graph * sg, XML_entity * parent) 
+void Geometry::add_to_scene(Scene_graph* sg, XML_entity* parent) 
 { 
   Container::add_to_scene(sg, parent);
   Shape *shape = dynamic_cast<Shape *>(parent);
@@ -145,10 +151,10 @@ void Geometry::add_to_scene(Scene_graph * sg, XML_entity * parent)
 }
 #endif
 
-/*! Returns true if the current matrix contains scaling.
+/*! \brief returns true if the current matrix contains scaling.
  * We get the current matrix from the matrix stack, multiply it
  * by a unit vector and check its length after the transformation.
- */  
+ */
 Boolean Geometry::has_scale()
 {
   Vector4f v1(0.5773502f, 0.5773502f, 0.5773502f, 0.0f);
