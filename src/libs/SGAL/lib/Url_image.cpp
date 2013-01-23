@@ -44,47 +44,42 @@ Url_image::Url_image(Boolean proto) :
   Image(proto),
   m_dirty(true),
   m_current_image(NULL),
-  m_flip(SGAL_TRUE)
-{
-  m_current_image = &m_images[0];
-}
+  m_flip(true)
+{ m_current_image = &m_images[0]; }
   
 /*! Destructor */
-Url_image::~Url_image()
-{
-  deallocate();
-}
+Url_image::~Url_image() { deallocate(); }
 
-/*! Obtain the image width */
+/*! \brief obtains the image width. */
 Uint Url_image::get_width()
 {
-  if (m_dirty) update();
+  if (m_dirty) clean();
   return m_current_image->get_width();
 }
 
-/*! Obtain the image height */
+/*! \brief obtains the image height. */
 Uint Url_image::get_height()
 {
-  if (m_dirty) update();
+  if (m_dirty) clean();
   return m_current_image->get_height();
 }
 
-/*! Obtain the image format */
+/*! \brief obtains the image format. */
 Image::Format Url_image::get_format()
 {
-  if (m_dirty) update();
+  if (m_dirty) clean();
   return m_current_image->get_format();
 }
 
-/*! Obtain the image pixel data */
+/*! \brief obtains the image pixel data. */
 void* Url_image::get_pixels()
 {
-  if (m_dirty) update();
+  if (m_dirty) clean();
   return m_current_image->get_pixels();
 }
 
-/*! Update the image */
-void Url_image::update()
+/*! \brief cleans the image. */
+void Url_image::clean()
 {
   std::string fullname;
   
@@ -99,7 +94,8 @@ void Url_image::update()
 #else
     if (fi::exists(file_path)) fullname = file_path.native_file_string();
 #endif
-  } else {
+  }
+  else {
     for (Path_iter pi = m_dirs.begin(); pi != m_dirs.end(); ++pi) {
       fi::path full_file_path = *pi / file_path;
       if (!fi::exists(full_file_path)) continue;
@@ -155,22 +151,22 @@ void Url_image::update()
   m_dirty = false;
 }
 
-/*! Allocate memory to hold the image */
+/*! \brief allocates memory that holds the image. */
 void Url_image::allocate(Uint size)
 {
   void* pixels = new char[size];
   m_current_image->set_pixels(pixels);
 }
 
-/*! Deallocate the memory that holds the image */
+/*! \brief deallocates the memory that holds the image. */
 void Url_image::deallocate()
 {
   void* pixels = m_current_image->get_pixels();
   if (pixels) delete [] (char*) pixels;
 }
 
-/*! Swap between the image buffer being decoded and the image buffer being
- * output. Retun true on success and false otherwise.
+/*! \brief swaps between the image buffer being decoded and the image buffer
+ * being output. Retun true on success and false otherwise.
  */
 Boolean Url_image::swap_image()
 {

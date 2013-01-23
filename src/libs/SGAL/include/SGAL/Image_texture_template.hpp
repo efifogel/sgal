@@ -52,66 +52,107 @@ public:
   typedef Url_image::Path_list                          Path_list;
   
   /*! Constructor */
-  Image_texture_template(Boolean proto = SGAL_FALSE) : T_Texture(proto)
+  Image_texture_template(Boolean proto = false) : T_Texture(proto)
   { this->m_image = &m_url_image; }
 
   /*! Destructor */
   virtual ~Image_texture_template() {}
 
-  /*! Construct the prototype */
-  static Image_texture_template * prototype()
-  { return new Image_texture_template(SGAL_TRUE); }
+  /*! Construct the prototype. */
+  static Image_texture_template* prototype()
+  { return new Image_texture_template(true); }
 
-  /*! Clone */
-  virtual Container * clone() { return new Image_texture_template(); }
+  /*! Clone. */
+  virtual Container* clone() { return new Image_texture_template(); }
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this image textute extracted from the VRML or X3D
+   * file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Add the container to a given scene
+  /*! Add the container to a given scene.
    * \param scene_graph the given scene
    */  
-  virtual void add_to_scene(Scene_graph * scene_graph);
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Deletes the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
 
-  /*! Set the URL */
-  void set_url(const std::string & url) { m_url_image.set_url(url); }
+  /*! Set the URL. */
+  void set_url(const std::string& url);
 
-  /*! Obtain the URL */
-  const std::string get_url() const { return m_url_image.get_url(); }
+  /*! Obtain the URL. */
+  const std::string get_url() const;
 
-  /*! Set the directory-search structure */
-  void set_dirs(const Path_list & dirs) { m_url_image.set_dirs(dirs); }
+  /*! Set the flag that indicates whether to reflect the image. */
+  void set_flip(Boolean flag);
 
-  /*! Obtain the directory-search structure */
-  const Path_list & get_dirs() const { return m_url_image.get_dirs(); }
+  /*! Obtain the flag that indicates whether to reflect the image. */
+  Boolean get_flip() const;
+  
+  /*! Set the directory-search structure. */
+  void set_dirs(const Path_list& dirs);
+
+  /*! Obtain the directory-search structure. */
+  const Path_list& get_dirs() const;
   
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
   
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
-  /*! The image */
+  /*! The image. */
   Url_image m_url_image;
 };
 
-/*! Initializes the node prototype */
+/*! \brief sets the URL. */
+template <class T_Texture>
+void Image_texture_template<T_Texture>::set_url(const std::string& url)
+{ m_url_image.set_url(url); }
+
+/*! \brief obtains the URL. */
+template <class T_Texture>
+const std::string Image_texture_template<T_Texture>::get_url() const
+{ return m_url_image.get_url(); }
+
+/*! \brief sets the flag that indicates whether to reflect the image. */
+template <class T_Texture>
+void Image_texture_template<T_Texture>::set_flip(Boolean flag)
+{ m_url_image.set_flip(flag); }
+
+/*! \brief obtains the flag that indicates whether to reflect the image. */
+template <class T_Texture>
+Boolean Image_texture_template<T_Texture>::get_flip() const
+{ return m_url_image.get_flip(); }
+ 
+/*! \brief sets the directory-search structure. */
+template <class T_Texture>
+void
+Image_texture_template<T_Texture>::set_dirs(const Url_image::Path_list& dirs)
+{ m_url_image.set_dirs(dirs); }
+
+/*! \brief obtains the directory-search structure. */
+template <class T_Texture>
+const Url_image::Path_list& Image_texture_template<T_Texture>::get_dirs() const
+{ return m_url_image.get_dirs(); }
+
+/*! \brief initializes the node prototype. */
 template <class T_Texture>
 void Image_texture_template<T_Texture>::init_prototype()
 {
@@ -119,7 +160,7 @@ void Image_texture_template<T_Texture>::init_prototype()
   s_prototype = new Container_proto(T_Texture::get_prototype());
 }
 
-/*! */
+/*! \brief deletes the node prototype. */
 template <class T_Texture>
 void Image_texture_template<T_Texture>::delete_prototype()
 {
@@ -127,38 +168,34 @@ void Image_texture_template<T_Texture>::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtains the node prototype. */
 template <class T_Texture>
-Container_proto * Image_texture_template<T_Texture>::get_prototype() 
+Container_proto* Image_texture_template<T_Texture>::get_prototype() 
 {  
   if (!s_prototype) Image_texture_template<T_Texture>::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the image texture. */
 template <class T_Texture>
-void Image_texture_template<T_Texture>::set_attributes(Element * elem) 
+void Image_texture_template<T_Texture>::set_attributes(Element* elem) 
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
+  typedef Element::Str_attr_iter        Str_attr_iter;
 
   T_Texture::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "url") {
       std::string url = strip_double_quotes(value);
-      m_url_image.set_url(url);
+      set_url(url);
       url.clear();
       elem->mark_delete(ai);
       continue;
     }
     if (name == "flip") {
-      m_url_image.set_flip(compare_to_true(value));
+      set_flip(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -193,16 +230,18 @@ void Image_texture_template<T_Texture>::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
+/*! \brief obtains the tag (type) of the container. */
+template <class T_Texture>
+const std::string& Image_texture_template<T_Texture>::get_tag() const
+{ return s_tag; }
+
 /*! \brief adds the container to a given scene */  
 template <class T_Texture>
-void Image_texture_template<T_Texture>::add_to_scene(Scene_graph * sg)
-{
-  m_url_image.set_dirs(sg->get_data_dirs());
-}
+void Image_texture_template<T_Texture>::add_to_scene(Scene_graph* sg)
+{ m_url_image.set_dirs(sg->get_data_dirs()); }
 
 #if 0
-/*!
- */
+/*! \brief */
 template <class T_Texture>
 Attribute_list Image_texture_template<T_Texture>::get_attributes() 
 { 
