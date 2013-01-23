@@ -49,6 +49,7 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
+#include "SGAL/Image_texture.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -88,7 +89,8 @@ Ego::Ego(Boolean proto) :
   m_dirty_voxels(true),
   m_dirty_tiling(true),
   m_dirty_parts(true),
-  m_own_parts(false)
+  m_own_parts(false),
+  m_scene_graph(NULL)
 {
   // This is temp code until we have something that can visualize it better.  
   m_ego_brick.set_number_of_knobs1(2);
@@ -379,6 +381,10 @@ void Ego::clean_parts()
 
   Ego_voxels::size_type size = m_tiled_voxels.size();
 
+  Image_texture* texture = new Image_texture;
+  texture->set_url("earth-cubemap-0.jpg");
+  texture->add_to_scene(m_scene_graph);
+  
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
@@ -415,6 +421,8 @@ void Ego::clean_parts()
           app = new Appearance;
           Material* mat = new Material;
           app->set_material(mat);
+          //app->set_texture(texture);
+          //app->set_default_texture_attributes();
           Float hue = (Float) hue_key / 255.0;
           Float saturation = (Float) saturation_key / 255.0;
           Float luminosity = (Float) luminosity_key / 255.0;
@@ -533,5 +541,8 @@ void Ego::adjust_voxels_for_tiling() {
   // Now offset the voxels.
   m_voxels.offset_xy_layers(1);
 }
+
+/*! \brief adds the container to a given scene */  
+void Ego::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
 SGAL_END_NAMESPACE

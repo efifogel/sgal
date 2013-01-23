@@ -49,6 +49,7 @@ class Element;
 class Cull_context;
 class Polyhedron_geo;
 class Exact_polyhedron_geo;
+class Scene_graph;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
@@ -90,6 +91,11 @@ public:
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene
+   */  
+  virtual void add_to_scene(Scene_graph* scene_graph);
+  
   // virtual Attribute_list get_attributes();
 
   /*! Draw the geometry */
@@ -210,7 +216,9 @@ protected:
   Float m_voxel_height;
 
   Ego_voxels m_voxels;
+
   Ego_voxels m_tiled_voxels;
+
   Exact_polyhedron_geo::Kernel::Point_3 m_tiled_voxels_origin;
   
   /// Enums to control tiling.
@@ -235,8 +243,12 @@ protected:
   typedef std::list<Material>                           Material_list;
   typedef Material_list::iterator                       Material_iter;
   Appearance_map m_appearances;
+
   Material_list m_materials;
-  
+
+  /*! The Scene_graph */
+  Scene_graph* m_scene_graph;
+    
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
