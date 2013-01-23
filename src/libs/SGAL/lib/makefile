@@ -71,6 +71,7 @@ CPPSOURCES+= Color_array.cpp
 CPPSOURCES+= Coord_array.cpp
 CPPSOURCES+= Coord_transformer.cpp
 CPPSOURCES+= Coord_minkowski.cpp
+CPPSOURCES+= Cube_environment.cpp
 CPPSOURCES+= Cull_context.cpp
 CPPSOURCES+= Cylinder.cpp
 CPPSOURCES+= Cylindrical_patch.cpp

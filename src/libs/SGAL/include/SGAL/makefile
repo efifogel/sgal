@@ -21,6 +21,7 @@ FILES+= Container_factory.hpp
 FILES+= Container_observer.hpp
 FILES+= Container_proto.hpp
 FILES+= Context.hpp
+FILES+= Cube_environment.hpp
 FILES+= Cull_context.hpp
 FILES+= Default_event_filter.hpp
 FILES+= Draw_action.hpp
