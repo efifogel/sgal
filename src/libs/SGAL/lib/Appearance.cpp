@@ -733,28 +733,32 @@ void Appearance::set_attributes(Element* elem)
   }
 
   // Set the textute related modes:
-  if (m_texture) {
-    set_tex_enable(true);
-    Gfx::Tex_env tex_env = Gfx::MODULATE_TENV;
-    Uint color_control = GL_SEPARATE_SPECULAR_COLOR;
-    if (m_material) {
-      const Vector3f& diffuse_color = m_material->get_diffuse_color();
-      if (diffuse_color[0] == 0 && diffuse_color[1] == 0 &&
-          diffuse_color[2] == 0 &&
-          (m_material->get_ambient_intensity() == 0))
-        tex_env = Gfx::DECAL_TENV;
-      const Vector3f& specular_color = m_material->get_specular_color();
-      if (specular_color[0] == 0 && specular_color[1] == 0 &&
-          specular_color[2])
-        color_control = GL_SINGLE_COLOR;
-    }
-    set_tex_env(tex_env);
-    //! \todo move to Gfx:
-    glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, color_control);
-  }
+  if (m_texture) set_default_texture_attributes();
 
   // Remove all the deleted attributes:
   elem->delete_marked();
+}
+
+/*! \brief sets default attributes for texture mapping. */
+void Appearance::set_default_texture_attributes()
+{
+  set_tex_enable(true);
+  Gfx::Tex_env tex_env = Gfx::MODULATE_TENV;
+  Uint color_control = GL_SEPARATE_SPECULAR_COLOR;
+  if (m_material) {
+    const Vector3f& diffuse_color = m_material->get_diffuse_color();
+    if ((diffuse_color[0] == 0) && (diffuse_color[1] == 0) &&
+        (diffuse_color[2] == 0) && (m_material->get_ambient_intensity() == 0))
+      tex_env = Gfx::DECAL_TENV;
+    const Vector3f& specular_color = m_material->get_specular_color();
+    if ((specular_color[0] == 0) && (specular_color[1] == 0) &&
+        (specular_color[2] == 0))
+      color_control = GL_SINGLE_COLOR;
+  }
+  set_tex_env(tex_env);
+
+  //! \todo move to Gfx:
+  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, color_control);
 }
 
 /*! Clean the node before drawing */
