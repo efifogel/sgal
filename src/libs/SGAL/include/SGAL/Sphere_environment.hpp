@@ -14,16 +14,13 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * A node that represents a reflection map. At firts we only implement 
- * sperical reflection map.
- *
- * Inherits from Container
+ * A node that represents a reflection spherical map.
  */
 
 #ifndef SGAL_SPHERE_ENVIRONMENT_HPP
@@ -36,8 +33,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Draw_action;
-class Texture;
 class Execution_coordinator;
 class Container_proto;
 class Element;
@@ -51,17 +46,16 @@ public:
   };
 
   /*! Constructor */
-  Sphere_environment(Boolean proto = SGAL_FALSE);
+  Sphere_environment(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Sphere_environment();
 
   /*! Construct the prototype */
-  static Sphere_environment* prototype()
-  { return new Sphere_environment(SGAL_TRUE); }
+  static Sphere_environment* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Sphere_environment(); }
+  virtual Container* clone();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
@@ -78,33 +72,31 @@ public:
   virtual Container_proto* get_prototype();
 
   /*! Set the alpha value */
-  void set_alpha(float alpha) { m_alpha = alpha; }
+  void set_alpha(float alpha);
 
   /*! Obtain the alpha value */
-  float get_alpha() const { return m_alpha; }
+  float get_alpha() const;
 
   /*! Set the quality */
-  void set_quality(bool flag) { m_quality = flag; }
+  void set_quality(bool flag);
 
   /*! Obtain the quality */
-  bool get_quality() const { return m_quality; }
+  bool get_quality() const;
 
   /*! Set the texture */
-  void set_texture(Texture* texture) { m_texture = texture; }
+  void set_texture(Texture* texture);
 
   /*! Obtain the texture */
-  Texture* get_texture() { return m_texture; }
+  Texture* get_texture();
 
-  // this method is used when an appearance is created by the environment
-  // object it should not be called in any other case (FIX)
-  Execution_coordinator* get_execution_coordinator() const
-  {
-    return m_execution_coordinator;
-  }
+  // // this method is used when an appearance is created by the environment
+  // // object it should not be called in any other case (FIX)
+  // Execution_coordinator* get_execution_coordinator() const
+  // { return m_execution_coordinator; }
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -123,14 +115,42 @@ private:
   bool m_quality;
 
   /*! Default values */
-  static float m_def_alpha;
-  static bool m_def_quality;
+  static const Float m_def_alpha;
+  static const Boolean m_def_quality;
 
   /*! Copy constructor */
-  Sphere_environment(const Sphere_environment& se) :
-    Texture(se)
-  {} 
+  Sphere_environment(const Sphere_environment& se) : Texture(se) {} 
 };
+
+/*! \brief constructs the prototype. */
+inline Sphere_environment* Sphere_environment::prototype()
+{ return new Sphere_environment(true); }
+
+/*! \brief clones. */
+inline Container* Sphere_environment::clone()
+{ return new Sphere_environment(); }
+
+/*! \brief sets the alpha value. */
+inline void Sphere_environment::set_alpha(float alpha) { m_alpha = alpha; }
+
+/*! \brief obtains the alpha value. */
+inline float Sphere_environment::get_alpha() const { return m_alpha; }
+
+/*! \brief sets the quality. */
+inline void Sphere_environment::set_quality(bool flag) { m_quality = flag; }
+
+/*! \brief obtains the quality. */
+inline bool Sphere_environment::get_quality() const { return m_quality; }
+
+/*! \brief sets the texture. */
+inline void Sphere_environment::set_texture(Texture* texture)
+{ m_texture = texture; }
+
+/*! \brief obtain the texture. */
+inline Texture* Sphere_environment::get_texture() { return m_texture; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Sphere_environment::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

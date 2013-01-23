@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -36,7 +36,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-static Texture_font * s_default_font = NULL;
+static Texture_font* s_default_font = NULL;
 
 static const Int FIRST_CHAR = 32;
 static const Int LAST_CHAR = 128;
@@ -79,15 +79,14 @@ Texture_font::~Texture_font()
 #endif
 }
 
-/*! \brief initializes the font
- */
+/*! \brief initializes the font. */
 void Texture_font::init()
 {
   load_font(m_name, m_size);
   create_texture();
 }
 
-/*! \brief loads the texture with the font bitmap */
+/*! \brief loads the texture with the font bitmap. */
 void Texture_font::load_font(const std::string& /* name */, Uint /* size */)
 {
 #if 0
@@ -141,25 +140,25 @@ void Texture_font::load_font(const std::string& /* name */, Uint /* size */)
 /*! \breif creates a default texture font named "fixedsys".
  * \todo keep a static structure of fonts
  */
-Texture_font * Texture_font::get_default()
+Texture_font* Texture_font::get_default()
 {
   if (!s_default_font) s_default_font = new Texture_font("fixedsys");
   return s_default_font;
 }
 
-/*! \breif obtains the character given by its ascii code */
+/*! \breif obtains the character given by its ascii code. */
 const Texture_font::Char & Texture_font::get_char(int c)
 {
   SGAL_assertion(c >= 0 && c < (int) m_chars.size());
   return m_chars[c];
 }
 
-/*! \breif creates the texture */
+/*! \breif creates the texture. */
 void Texture_font::create_texture()
 {
   calc_bitmap_size();
   calc_chars_dimensions();
-  void * pixels = create_bitmap();
+  void* pixels = create_bitmap();
   draw_chars();
   create_image_texture(pixels);
   release_bitmap();
@@ -172,7 +171,7 @@ void Texture_font::create_texture()
 #endif
 }
 
-/*! \brief calculates the dimensions of all characters */
+/*! \brief calculates the dimensions of all characters. */
 void Texture_font::calc_chars_dimensions()
 {
   Uint x = 0, y = 0;
@@ -193,8 +192,7 @@ void Texture_font::calc_chars_dimensions()
   }
 }
 
-/*!
- */
+/*! \brief */
 void Texture_font::draw_chars()
 {
 #if 0
@@ -225,7 +223,7 @@ void Texture_font::draw_chars()
 #endif
 }
 
-/*! \brief obtains the bitmap dimension */
+/*! \brief obtains the bitmap dimension. */
 void Texture_font::get_bitmap_size(Uint& x, Uint& y)
 {
   x = m_bitmap_width;
@@ -248,7 +246,7 @@ void Texture_font::set_appearance(Appearance* app) {
 }
 
 /*! \brief calculates minimal possible dimensions (width & height)
- * for bitmap of cached characters (bitmap dimensions 
+ * for bitmap of cached characters (bitmap dimensions.
  * must be 2 to the power of 3 to 8).
  */
 void  Texture_font::calc_bitmap_size()
@@ -339,7 +337,7 @@ void  Texture_font::calc_bitmap_size()
 /*! \brief creates the texture.
  * First, create a bitmap using the calculated dimensions.
  */
-void * Texture_font::create_bitmap()
+void* Texture_font::create_bitmap()
 {
 #if 0
 #if (defined _MSC_VER)
@@ -359,7 +357,7 @@ void * Texture_font::create_bitmap()
   bi.bmiHeader.biClrImportant  = 0;
 
   // Create GDI bitmap
-  void * data;
+  void* data;
   HBITMAP bmp = CreateDIBSection((HDC)m_hdc, &bi, DIB_RGB_COLORS, &data, 0, 0);
   SelectObject((HDC)m_hdc, bmp);
   SelectObject((HDC)m_hdc,(HFONT)m_hfont);
@@ -373,6 +371,7 @@ void * Texture_font::create_bitmap()
   return NULL;
 }
 
+/*! \brief */
 void Texture_font::release_bitmap()
 {
 #if 0
@@ -386,7 +385,8 @@ void Texture_font::release_bitmap()
 #endif
 }
 
-void Texture_font::create_image_texture(void * pixels)
+/*! \brief */
+void Texture_font::create_image_texture(void* pixels)
 {
   if (!m_appearance) return;
 
@@ -400,7 +400,7 @@ void Texture_font::create_image_texture(void * pixels)
 
   if (m_texture) delete m_texture;
   m_texture = new Image_texture;
-  Image * image = new Image;
+  Image* image = new Image;
 
   image->set_width(m_bitmap_width);
   image->set_height(m_bitmap_height);
@@ -408,13 +408,13 @@ void Texture_font::create_image_texture(void * pixels)
 
   //! \todo Move to Image.cpp
   Uint size = Image::get_size(m_bitmap_width, m_bitmap_height, image->get_format());
-  void * new_pixels = new char[size];
+  void* new_pixels = new char[size];
   image->set_pixels(new_pixels);
   
 #if 0
   // Instantiate a new surface for the texture object
   {
-    Uint * src = (Uint*)data;
+    Uint* src = (Uint*)data;
     
     int sz = srf->sizeY*srf->sizeX;
     for (int i = 0; i < sz; i++, src++, buf++) 
@@ -422,8 +422,8 @@ void Texture_font::create_image_texture(void * pixels)
   }
 #endif
   
-  Uint * src = (Uint *) pixels;
-  Uint * trg = (Uint *) new_pixels;
+  Uint* src = (Uint *) pixels;
+  Uint* trg = (Uint *) new_pixels;
   for (Uint i = 0; i < m_bitmap_width * m_bitmap_height; i++) {
     //trg[i] = 0xFF000000 + src[i];
     //pi[i] = (((*src >> 4) & 0xF) << 24) | 0xFFF;
@@ -431,12 +431,12 @@ void Texture_font::create_image_texture(void * pixels)
 //    trg[i] = 0xFFFFFF | 0xFF000000;
   }
 
-  m_texture->update();
+  m_texture->clean();
   m_appearance->set_texture(m_texture);
   m_appearance->set_tex_enable(SGAL_TRUE);
 }
 
-/*! \brief obtains the width and height of the string */
+/*! \brief obtains the width and height of the string. */
 void Texture_font::get_string_size(const std::string& /* str */,
                                    Uint& /* width */, Uint& /* height */)
 {
@@ -452,27 +452,27 @@ void Texture_font::get_string_size(const std::string& /* str */,
 #endif
 };
 
-/*! */
+/*! \brief */
 void Texture_font::set_scale(Float x, Float y)
 {
   m_scalex = x;
   m_scaley = y;
 }
   
-/*! */
+/*! \brief */
 void Texture_font::get_scale(Float & x, Float & y)
 {
   x = m_scalex;
   y = m_scaley;
 }
 
-/*! */
-void Texture_font::draw_appearance(Draw_action * draw_action)
+/*! \brief */
+void Texture_font::draw_appearance(Draw_action* draw_action)
 {
   m_appearance->draw(draw_action);
 }
 
-/*! */
+/*! \brief */
 void Texture_font::draw_char(float x, float y, int ch) const
 {
   x = ceilf(x);
@@ -487,7 +487,7 @@ void Texture_font::draw_char(float x, float y, int ch) const
 
   // Texel offset.
   Vector3f color;
-  Material * mat = m_appearance->get_material();
+  Material* mat = m_appearance->get_material();
   if (mat) mat->get_diffuse_color(color);
   glColor3f(color[0], color[1], color[2]);
   glBegin(GL_QUADS);
@@ -499,7 +499,7 @@ void Texture_font::draw_char(float x, float y, int ch) const
   glEnd();
 }
 
-/*! \brief draws one string*/
+/*! \brief draws one string. */
 void Texture_font::draw_string(Context* /* context */,
                                const std::string& text, Float /* size */)
 {
@@ -525,7 +525,7 @@ void Texture_font::draw_string(Context* /* context */,
 #endif
 #endif
   Uint len = text.size();
-  const char * str = text.c_str();
+  const char* str = text.c_str();
 
   float px = x;
   float py = y;

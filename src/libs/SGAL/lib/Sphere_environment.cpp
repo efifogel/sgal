@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,8 +40,8 @@ std::string Sphere_environment::s_tag = "sgalSphericalEnvironmentMap";
 Container_proto * Sphere_environment::s_prototype = NULL;
 
 // Default values:
-float Sphere_environment::m_def_alpha = 0.5f;
-Boolean Sphere_environment::m_def_quality = SGAL_FALSE;
+const Float Sphere_environment::m_def_alpha(0.5f);
+const Boolean Sphere_environment::m_def_quality(false);
 
 /*! Constructor */
 Sphere_environment::Sphere_environment(Boolean proto) :
@@ -53,10 +53,7 @@ Sphere_environment::Sphere_environment(Boolean proto) :
 /*! Destructor */
 Sphere_environment::~Sphere_environment() {}
 
-/*! prototype initialization function - initializes the prototype for 
- * all the node instances of Appearance in the scene graph.
- * Creates and adds a field info for each potential field.
- */
+/*! \brief initializes the prototype. */
 void Sphere_environment::init_prototype()
 {
   // The prototype shuold be allocated only once for all instances
@@ -72,14 +69,14 @@ void Sphere_environment::init_prototype()
                                            exec_func));
 }
 
-/*! Delete the prototype */
+/*! \brief deletes the prototype. */
 void Sphere_environment::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the prototype */
+/*! \brief obtains the prototype. */
 Container_proto * Sphere_environment::get_prototype() 
 {  
   if (s_prototype == NULL) Sphere_environment::init_prototype();
@@ -90,17 +87,16 @@ Container_proto * Sphere_environment::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Sphere_environment::set_attributes(Element * elem)
+void Sphere_environment::set_attributes(Element* elem)
 {
   Texture::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
 
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "alpha") {
       set_alpha(atoff(value.c_str()));
       elem->mark_delete(ai);

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -43,6 +43,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Element;
+class Container_proto;
 
 class SGAL_CLASSDEF Image : public Container {
 public: 
@@ -56,21 +57,23 @@ public:
   };
 
   /*! Constructor */
-  Image(Boolean proto = SGAL_FALSE);
+  Image(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Image();
 
-  /*! Construct the prototype */
-  static Image * prototype() { return new Image(SGAL_TRUE); }
+  /*! Construct the prototype. */
+  static Image* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Image(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
+
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+
+  virtual Container_proto* get_prototype();
 
   enum Format {
     kIllegal = 0,
@@ -191,133 +194,200 @@ public:
   };
 
 public:
-  /*! Set the image width */
-  void set_width(Uint width) { m_width = width; }
+  /*! Set the image width. */
+  void set_width(Uint width);
 
-  /*! Obtain the image width */
-  virtual Uint get_width() { return m_width; }
+  /*! Obtain the image width. */
+  virtual Uint get_width();
 
-  /*! Set the image height */
-  void set_height(Uint height) { m_height = height; }
+  /*! Set the image height. */
+  void set_height(Uint height);
 
-  /*! Obtain the image height */
-  virtual Uint get_height() { return m_height; }
+  /*! Obtain the image height. */
+  virtual Uint get_height();
 
-  /*! Set the image format */
-  void set_format(Format format) { m_format = format; }
+  /*! Set the image format. */
+  void set_format(Format format);
 
-  /*! Obtain the image format */
-  virtual Format get_format() { return m_format; }
+  /*! Obtain the image format. */
+  virtual Format get_format();
 
-  /*! Set the number of pixels in a row */
-  void set_pack_row_length(Uint length) { m_pack_row_length = length; }
+  /*! Set the number of pixels in a row. */
+  void set_pack_row_length(Uint length);
 
-  /*! Obtain the number of pixels in a row */
-  Uint get_pack_row_length() const { return m_pack_row_length; }
+  /*! Obtain the number of pixels in a row. */
+  Uint get_pack_row_length() const;
   
-  /*! Set the image pixel data */
-  void set_pixels(void * pixels) { m_pixels = pixels; }
+  /*! Set the image pixel data. */
+  void set_pixels(void* pixels);
 
-  /*! Obtain the image pixel data */
-  virtual void * get_pixels() { return m_pixels; }
+  /*! Obtain the image pixel data. */
+  virtual void* get_pixels();
 
-  /*! Return true if image hasn't been updated yet and false otherwise */
-  virtual Boolean is_dirty() { return false; }
+  /*! Return true if image hasn't been updated yet and false otherwise. */
+  virtual Boolean is_dirty();
 
-  /*! Update the image in case it is dirty */
-  virtual void update() {}
+  /*! Clean the image in case it is dirty. */
+  virtual void clean();
 
-  /*! Obtain the memory that is used by the image (in bytes) */
+  /*! Obtain the memory that is used by the image (in bytes). */
   Uint get_size() const;
   
   /*! Obtain the memory that is used by an image (in bytes) with the given
-   * attributes
+   * attributes.
    */
-  static Uint get_size(Uint width, Uint height, Format format)
-  {
-    return width * height * bits2bytes(s_format_sizes[format]);
-  }
+  static Uint get_size(Uint width, Uint height, Format format);
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes()
   // { assert(0); Attribute_list a; return a; }
 
-  /*! Obtain the number of bits */
-  static Uint get_format_size(Format format)
-  { return s_format_sizes[format]; }
+  /*! Obtain the number of bits. */
+  static Uint get_format_size(Format format);
 
-  /*! Obtain the openGl format */
-  static GLenum get_format_format(Format format)
-  { return s_format_formats[format]; }
+  /*! Obtain the openGl format. */
+  static GLenum get_format_format(Format format);
 
-  /*! Obtain the storage type of component */
-  static GLenum get_format_type(Format format)
-  { return s_format_types[format]; }
+  /*! Obtain the storage type of component. */
+  static GLenum get_format_type(Format format);
 
-  /*! Obtain the number of components */
-  static Uint get_format_components(Format format)
-  { return s_format_components[format]; }
+  /*! Obtain the number of components. */
+  static Uint get_format_components(Format format);
 
-  /*! Obtain the openGl internal format */
-  static GLenum get_format_internal_format(Format format)
-  { return s_format_internal_formats[format]; }
+  /*! Obtain the openGl internal format. */
+  static GLenum get_format_internal_format(Format format);
 
-  /*! Obtain the format name (string) */
-  static const char * get_format_name(Format format)
-  { return s_format_names[format]; }
+  /*! Obtain the format name (string). */
+  static const char* get_format_name(Format format);
   
-  /*! Draw the image */
+  /*! Draw the image. */
   void draw();
   
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
-  /*! A map from format to number of bits */
+  /*! A map from format to number of bits. */
   static Uint s_format_sizes[];
 
-  /*! A map from format to openGl format */
+  /*! A map from format to openGl format. */
   static GLenum s_format_formats[];
 
-  /*! A map from format to storage type of component */
+  /*! A map from format to storage type of component. */
   static GLenum s_format_types[];
 
-  /*! A map from format to number of components */
+  /*! A map from format to number of components. */
   static Uint s_format_components[];
 
-  /*! A map from format to OpenGl internal format */
+  /*! A map from format to OpenGl internal format. */
   static GLenum s_format_internal_formats[];
   
-  /*! A map from format to format names */
-  static const char * s_format_names[];
+  /*! A map from format to format names. */
+  static const char* s_format_names[];
   
-  /*! The image width */
+  /*! The image width. */
   Uint m_width;
 
-  /*! The image height */
+  /*! The image height. */
   Uint m_height;
 
-  /*! The image format */
+  /*! The image format. */
   Format m_format;
 
-  /*! The image pixel-data */
-  void * m_pixels;
+  /*! The image pixel-data. */
+  void* m_pixels;
 
-  /*! Defines the number of pixels in a row */
+  /*! Defines the number of pixels in a row. */
   Uint m_pack_row_length;
   
-  /*! Default value */
+  /*! Default value. */
   static Format s_def_format;
 };
+
+/*! \brief constructs the prototype. */
+inline Image* Image::prototype() { return new Image(true); }
+
+/*! \brief clones. */
+inline Container* Image::clone() { return new Image(); }
+
+/*! \brief sets the image width. */
+inline void Image::set_width(Uint width) { m_width = width; }
+
+/*! \brief obtains the image width. */
+inline Uint Image::get_width() { return m_width; }
+
+/*! \brief sets the image height. */
+inline void Image::set_height(Uint height) { m_height = height; }
+
+/*! \brief obtains the image height. */
+inline Uint Image::get_height() { return m_height; }
+
+/*! \brief sets the image format. */
+inline void Image::set_format(Format format) { m_format = format; }
+
+/*! \brief obtains the image format. */
+inline Image::Format Image::get_format() { return m_format; }
+
+/*! \brief sets the number of pixels in a row. */
+inline void Image::set_pack_row_length(Uint length)
+{ m_pack_row_length = length; }
+
+/*! \brief obtains the number of pixels in a row. */
+inline Uint Image::get_pack_row_length() const { return m_pack_row_length; }
+  
+/*! \brief sets the image pixel data. */
+inline void Image::set_pixels(void* pixels) { m_pixels = pixels; }
+
+/*! \brief obtains the image pixel data. */
+inline void* Image::get_pixels() { return m_pixels; }
+
+/*! \brief returns true if image hasn't been updated yet and false otherwise. */
+inline Boolean Image::is_dirty() { return false; }
+
+/*! \brief cleans the image in case it is dirty. */
+inline void Image::clean() {}
+
+/*! \brief obtains the memory that is used by an image (in bytes) with the given
+ * attributes.
+ */
+inline Uint Image::get_size(Uint width, Uint height, Format format)
+{ return width * height * bits2bytes(s_format_sizes[format]); }
+
+/*! \brief obtains the number of bits. */
+inline Uint Image::get_format_size(Format format)
+{ return s_format_sizes[format]; }
+
+/*! \brief obtains the openGl format. */
+inline GLenum Image::get_format_format(Format format)
+{ return s_format_formats[format]; }
+
+/*! \brief obtains the storage type of component. */
+inline GLenum Image::get_format_type(Format format)
+{ return s_format_types[format]; }
+
+/*! \brief obtains the number of components. */
+inline Uint Image::get_format_components(Format format)
+{ return s_format_components[format]; }
+
+/*! \brief obtains the openGl internal format. */
+inline GLenum Image::get_format_internal_format(Format format)
+{ return s_format_internal_formats[format]; }
+
+/*! \brief obtains the format name (string). */
+inline const char* Image::get_format_name(Format format)
+{ return s_format_names[format]; }
+  
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Image::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

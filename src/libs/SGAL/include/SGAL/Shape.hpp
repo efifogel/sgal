@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -109,10 +109,15 @@ public:
   /*! Write this container. */
   virtual void write(Formatter* formatter);
   
-  /*! Obtain the appearance.
+  /*! Obtain the (const) appearance.
    * \return the appearance.
    */
-  Appearance* get_appearance() { return m_appearance; }
+  const Appearance* get_appearance() const;
+
+  /*! Obtain the (non-const) appearance.
+   * \return the appearance.
+   */
+  Appearance* get_appearance();
 
   /*! Set an appearance.
    * \param appearance the new appearance.
@@ -132,68 +137,70 @@ public:
   /*! Obtain the flag that indicates whether to draw into the depth buffer.
    * \return true iff drawing into the depth buffer is enbaled.
    */
-  Boolean get_draw_depth() const { return m_draw_depth; }
+  Boolean get_draw_depth() const;
 
   /*! Set the flag that indicates whether to draw into the depth buffer.
    * \param draw_depth indicates whether to draw into the depth buffer.
    */
-  void set_draw_depth(Boolean draw_depth) { m_draw_depth = draw_depth; }
+  void set_draw_depth(Boolean draw_depth);
   
   /*! Obtain the flag that indicates whether to test the depth buffer.
    * \return true iff testing the depth buffer is enabled.
    */
-  Boolean get_test_depth() const { return m_test_depth; }
+  Boolean get_test_depth() const;
 
   /*! Set the flag that indicates whether to test the depth buffer.
    * \param test_depth indicates whether to test the depth buffer.
    */
-  void set_test_depth(Boolean test_depth) { m_test_depth = test_depth; }
+  void set_test_depth(Boolean test_depth);
   
   /*! Obtain the depth function.
    * \return the depth function.
    */
-  Gfx::Depth_func get_depth_function() const { return m_depth_function; }
+  Gfx::Depth_func get_depth_function() const;
 
   /*! Set the depth function.
    * \param depth_function the depth function.
    */
-  void set_depth_function(Gfx::Depth_func depth_function)
-  { m_depth_function = depth_function; }
+  void set_depth_function(Gfx::Depth_func depth_function);
 
   /*! Obtain the color mask.
    * \return the color mask.
    */
-  Vector4ub get_color_mask() const { return m_color_mask; }
+  Vector4ub get_color_mask() const;
 
   /*! Set the color mask.
    * \param color_mask the color mask.
    */
-  void set_color_mask(Vector4ub color_mask) { m_color_mask = color_mask; }
+  void set_color_mask(Vector4ub color_mask);
 
   /*! Obtain the cull-face mode.
    * \return the cull-face mode.
    */
-  Gfx::Cull_face get_cull_face() const { return m_cull_face; }
+  Gfx::Cull_face get_cull_face() const;
 
   /*! Set the cull-face mode.
    * \param cull_face the cull-face mode.
    */
-  void set_cull_face(Gfx::Cull_face cull_face) { m_cull_face = cull_face; }
+  void set_cull_face(Gfx::Cull_face cull_face);
 
-  void set_visible() { m_is_visible = SGAL_TRUE; }
-  void set_invisible() { m_is_visible = SGAL_FALSE; }
-  Boolean is_visible() const { return m_is_visible; }
+  void set_visible();
 
-  Boolean is_background() const { return m_is_background; }
-  void set_background(Boolean flag) { m_is_background = flag; }
+  void set_invisible();
+
+  Boolean is_visible() const;
+
+  Boolean is_background() const;
+
+  void set_background(Boolean flag);
 
   Boolean is_text_object();
 
   /*! Obtain the rendering priority. */
-  Float get_priority() const { return m_priority; }
+  Float get_priority() const;
 
   /*! Set the rendering priority. */
-  void set_priority(Float priority) { m_priority = priority; }
+  void set_priority(Float priority);
 
   /*! \todo rename to clean and m_dirty. */
   void init();
@@ -203,7 +210,7 @@ public:
 
 protected:
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   /*! Indicates whether to draw into the depth buffer. */
   Boolean m_draw_depth;
@@ -253,7 +260,7 @@ protected:
   Boolean m_is_initialized;
 
   /*! Indicates whether the appearance node has been constructed by default. */
-  Boolean m_is_default_appearance;
+  Boolean m_own_appearance;
 
   /*! this is true when the geometry is a text object. */
   Boolean m_is_text_object;
@@ -283,6 +290,73 @@ inline Shape* Shape::prototype() { return new Shape(true); }
 /*! \brief clones. */
 inline Container* Shape::clone() { return new Shape(); }
 
+/*! \brief obtains the (const) appearance. */
+inline const Appearance* Shape::get_appearance() const { return m_appearance; }
+
+/*! \brief obtains the (non-const) appearance. */
+inline Appearance* Shape::get_appearance() { return m_appearance; }
+
+/*! \brief obtains the flag that indicates whether to draw into the depth
+ * buffer.
+ */
+inline Boolean Shape::get_draw_depth() const { return m_draw_depth; }
+
+/*! \brief sets the flag that indicates whether to draw into the depth buffer. */
+inline void Shape::set_draw_depth(Boolean draw_depth)
+{ m_draw_depth = draw_depth; }
+  
+/*! \brief obtains the flag that indicates whether to test the depth buffer. */
+inline Boolean Shape::get_test_depth() const { return m_test_depth; }
+
+/*! \brief sets the flag that indicates whether to test the depth buffer. */
+inline void Shape::set_test_depth(Boolean test_depth)
+{ m_test_depth = test_depth; }
+  
+/*! \brief obtains the depth function. */
+inline Gfx::Depth_func Shape::get_depth_function() const
+{ return m_depth_function; }
+
+/*! \brief sets the depth function. */
+inline void Shape::set_depth_function(Gfx::Depth_func depth_function)
+{ m_depth_function = depth_function; }
+
+/*! \brief obtains the color mask. */
+inline Vector4ub Shape::get_color_mask() const { return m_color_mask; }
+
+/*! \brief sets the color mask. */
+inline void Shape::set_color_mask(Vector4ub color_mask)
+{ m_color_mask = color_mask; }
+
+/*! \brief obtains the cull-face mode. */
+inline Gfx::Cull_face Shape::get_cull_face() const { return m_cull_face; }
+
+/*! \brief sets the cull-face mode. */
+inline void Shape::set_cull_face(Gfx::Cull_face cull_face)
+{ m_cull_face = cull_face; }
+
+/*! \brief */
+inline void Shape::set_visible() { m_is_visible = true; }
+
+/*! \brief */
+inline void Shape::set_invisible() { m_is_visible = false; }
+
+/*! \brief */
+inline Boolean Shape::is_visible() const { return m_is_visible; }
+
+/*! \brief */
+inline Boolean Shape::is_background() const { return m_is_background; }
+
+/*! \brief */
+inline void Shape::set_background(Boolean flag) { m_is_background = flag; }
+
+/*! \brief Obtain the rendering priority. */
+inline Float Shape::get_priority() const { return m_priority; }
+
+/*! \brief Set the rendering priority. */
+inline void Shape::set_priority(Float priority) { m_priority = priority; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Shape::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

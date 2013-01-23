@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -38,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 
 const std::string Box::s_tag = "Box";
 
-Container_proto * Box::s_prototype = 0;
+Container_proto* Box::s_prototype = 0;
 
 // Default values:
 const Vector3f Box::m_def_size(2, 2, 2);
@@ -52,15 +52,12 @@ Box::Box(Boolean proto) : Geometry(proto), m_size(m_def_size) {}
 Box::~Box() {}
 
 /* draw the box by calling the display list */
-void Box::draw(Draw_action * action) 
-{
-  draw_box();
-}
+void Box::draw(Draw_action* action) { draw_box(); }
 
 /*! Draw the box for selection
  * *param isect_action
  */
-void Box::isect(Isect_action * action) 
+void Box::isect(Isect_action* action) 
 {
   float w = m_size[0] * 0.5f;
   float h = m_size[1] * 0.5f;
@@ -213,19 +210,15 @@ void Box::draw_box()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Box::set_attributes(Element * elem)
+void Box::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
 
   Geometry::set_attributes(elem);
-
-  std::string name;
-  std::string value;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "size") {
       set_size(Vector3f(value));
       elem->mark_delete(ai);
@@ -283,7 +276,7 @@ void Box::delete_prototype()
 }
 
 /*! */
-Container_proto * Box::get_prototype() 
+Container_proto* Box::get_prototype() 
 {  
   if (!s_prototype) init_prototype();
   return s_prototype;

@@ -361,12 +361,12 @@ private:
   /*! Indicates whether a material node has been newly created, (as the user
    * hasn't provided one,) and should be deleted when the node is destructed
    */
-  Boolean m_is_default_material;
+  Boolean m_own_material;
 
   /*! Indicates whether a tex_gen node has been newly created, (as the user
    * hasn't provided one,) and should be deleted when the node is destructed
    */
-  Boolean m_is_default_tex_gen;
+  Boolean m_own_tex_gen;
 
   /*! The default halftone pattern */
   static Ubyte s_def_halftone[];

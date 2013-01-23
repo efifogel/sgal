@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -53,10 +53,10 @@ const Texture::Mag_filter Texture::m_def_mag_filter = Texture::LINEAR_MAG;
 const Texture::Wrap Texture::m_def_wraps = Texture::REPEAT;
 const Texture::Wrap Texture::m_def_wrapt = Texture::REPEAT;
 
-Container_proto * Texture::s_prototype = NULL;
+Container_proto* Texture::s_prototype = NULL;
 std::string Texture::s_tag = "Texture";
 
-const char * Texture::m_min_filter_names[] = {
+const char* Texture::m_min_filter_names[] = {
   "nearest",                  // NEAREST_MIN, 
   "linear",                   // LINEAR_MIN,
   "mipmapNearest",            // NEAREST_MIPMAP_NEAREST, 
@@ -64,12 +64,12 @@ const char * Texture::m_min_filter_names[] = {
   "linearMipmapLinear"        // LINEAR_MIPMAP_LINEAR
 };
 
-const char * Texture::m_mag_filter_names[] = {
+const char* Texture::m_mag_filter_names[] = {
   "nearest",                  // NEAREST_MAG, 
   "linear"                    // LINEAR_MAG
 };
 
-const char * Texture::m_wrap_names[] = {
+const char* Texture::m_wrap_names[] = {
   "clamp",                    // CLAMP, 
   "repeat",                   // REPEAT,
   "clampToEdge"               // CLAMP_TO_EDGE
@@ -89,14 +89,12 @@ Texture::Texture(Boolean proto) :
   m_height_field(false),
   m_scale(m_def_scale),
   m_text(0)
-{
-  for (int i = 0; i < SGAL_MAX_LEVELS; i++) m_normal_maps[i] = 0;
-}
+{ for (int i = 0; i < SGAL_MAX_LEVELS; i++) m_normal_maps[i] = 0; }
 
 /*! Destructor */
 Texture::~Texture() {}
 
-/*! Set the wrapping factor on the S */
+/*! \brief sets the wrapping factor on the S. */
 void Texture::wraps_changed(Field_info* /* field_info */)
 {
   set_wraps(m_repeats);
@@ -104,7 +102,7 @@ void Texture::wraps_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! sets the wrapping factor on the T */
+/*! \brief sets the wrapping factor on the T. */
 void Texture::wrapt_changed(Field_info* /* field_info */)
 {
   set_wrapt(m_repeatt);
@@ -112,18 +110,17 @@ void Texture::wrapt_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! sets the min_filter */
+/*! \brief sets the minimization filter. */
 void Texture::set_min_filter(const std::string& value)
 {
   unsigned int i;
-  for (i = 0; i < sizeof(m_min_filter_names)/sizeof(char *); i++) {
+  for (i = 0; i < sizeof(m_min_filter_names)/sizeof(char *); ++i)
     if (value == m_min_filter_names[i]) break;
-  }
   if (i < sizeof(m_min_filter_names)/sizeof(char *))
     set_min_filter((Min_filter) i);
 }
 
-/*! sets the min_filter */
+/*! \brief notifies that the minimization filter has changed. */
 void Texture::min_filter_changed(Field_info* /* field_info */)
 {
   set_min_filter(m_min_filter_str);
@@ -131,18 +128,17 @@ void Texture::min_filter_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! Set the mag_filter */
-void Texture::set_mag_filter(const std::string & value)
+/*! \brief sets the magnification filter. */
+void Texture::set_mag_filter(const std::string& value)
 {
   unsigned int i;
-  for ( i = 0; i < sizeof(m_mag_filter_names)/sizeof(char *); i++) {
+  for ( i = 0; i < sizeof(m_mag_filter_names)/sizeof(char *); ++i)
     if (value == m_mag_filter_names[i]) break;
-  }
   if (i < sizeof(m_mag_filter_names)/sizeof(char *))
     set_mag_filter((Mag_filter) i);
 }
 
-/*! Set the mag_filter */
+/*! \brief notifies that the magnification filter has changed. */
 void Texture::mag_filter_changed(Field_info* /* field_info */)
 {
   set_mag_filter(m_mag_filter_str);
@@ -150,23 +146,23 @@ void Texture::mag_filter_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! Draw the texture */
-void Texture::draw(Context * ctx)
+/*! \brief draws the texture. */
+void Texture::draw(Context* ctx)
 {
   if (m_text) m_text->draw(ctx);
 
   if (m_dirty) {
-    update();
+    clean();
     return;
   }
   glBindTexture(GL_TEXTURE_2D, m_id);
 }
 
-/*! Transmit the texture to the graphics pipe:
- */
+/*! \brief transmits the texture to the graphics pipe. */
 void Texture::load_color_map()
 {
   Uint width = m_image->get_width();
+  std::cout << "width: " << width << std::endl;
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();
   
@@ -188,21 +184,15 @@ void Texture::load_color_map()
   if (m_min_filter >= NEAREST_MIPMAP_NEAREST) {
     int rc = gluBuild2DMipmaps(GL_TEXTURE_2D, internal_format, width, height,
                                req_format, req_type, m_image->get_pixels());
-    if (rc != 0) return;
+    (void) rc;
+    return;
     //! \todo download images
-  } else {
-    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, border,
-                 req_format, req_type, m_image->get_pixels());
   }
+  glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, border,
+               req_format, req_type, m_image->get_pixels());
 }
 
-/*! Convert the supplied height-field image into a normal map (a normalized
- * vector compressed to the [0,1] range in RGB and A=1.0).  Load the
- * base texture level, then recursively downsample and load successive
- * normal map levels (being careful to expand, average, renormalize,
- * and unexpand each RGB value an also accumulate the average vector
- * shortening in alpha).
- */
+/*! \brief converts the supplied height-field image into a normal map. */
 void Texture::load_height_map()
 {
   Uint width = m_image->get_width();
@@ -252,11 +242,7 @@ void Texture::load_height_map()
   }
 }
 
-/*! Given a normal map, create a downsampled version of the normal map
- * at half the width and height.  Use a 2x2 box filter to create each
- * downsample.  gluBuild2DMipmaps is not suitable because each downsampled
- * texel must also be renormalized
- */
+/*! \brief creates a downsampled version of the normal map. */
 void Texture::down_sample_normal_map(int src_id, int dst_id,
                                      int w2, int h2, int w, int /* h */)
 {
@@ -267,8 +253,8 @@ void Texture::down_sample_normal_map(int src_id, int dst_id,
   float mag00, mag01, mag10, mag11;
   int ii, jj;
 
-  Normal_map * src = m_normal_maps[src_id];
-  Normal_map * dst = m_normal_maps[dst_id];
+  Normal_map* src = m_normal_maps[src_id];
+  Normal_map* dst = m_normal_maps[dst_id];
   for (int i = 0; i < h2; i += 2) {
     for (int j = 0; j < w2; j += 2) {
       // The "%w2" and "%h2" modulo arithmetic makes sure that
@@ -335,16 +321,13 @@ void Texture::down_sample_normal_map(int src_id, int dst_id,
   }
 }
 
-/*! Convert a height field image into a normal map.  This involves
- * differencing each texel with its right and upper neighboor, then
- * normalizing the cross product of the two difference vectors.
- */
+/*! \brief converts a height field image into a normal map. */
 void Texture::convert_height_field_to_normal_map(Uint level, Uint w, Uint h,
                                                  Uint wr, Uint hr, Float scale)
 {
   const float one_over_255 = 1.0f/255.0f;
 
-  GLubyte * pixels = (GLubyte *) m_image->get_pixels();
+  GLubyte* pixels = (GLubyte *) m_image->get_pixels();
   for (Uint i = 0; i < h; i++) {
     for (Uint j = 0; j < w; j++) {
       // Expand [0,255] texel values to the [0,1] range:
@@ -437,10 +420,11 @@ void Texture::allocate_memory()
 }
 #endif
 
-/*! Update the object using the new decoded data */
-void Texture::update() 
+/*! \brief cleans the object using the new decoded data. */
+void Texture::clean() 
 {
-  if (m_image->is_dirty()) m_image->update();
+  std::cout << "m_image->is_dirty(): " << m_image->is_dirty() << std::endl;
+  if (m_image->is_dirty()) m_image->clean();
       
   glGenTextures(1, &m_id);
 
@@ -465,13 +449,12 @@ void Texture::update()
 
   (m_height_field) ? load_height_map() : load_color_map();
 
-  if (m_text) m_text->update();
+  if (m_text) m_text->clean();
   m_dirty = false;
 }
 
-/*
- */
-Boolean Texture::is_equal(const Texture * t) const
+/* \brief */
+Boolean Texture::is_equal(const Texture* t) const
 {
   if (m_wraps != t->m_wraps) return false;
   if (m_wrapt != t->m_wrapt) return false;
@@ -488,27 +471,22 @@ Boolean Texture::is_equal(const Texture * t) const
   return true;
 }
 
-/*
- */
+/* \brief */
 Boolean Texture::empty()
 {
   return ((get_width() == 0) || (get_height() == 0) || (get_pixels() == NULL));
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Texture::set_attributes(Element * elem) 
+/*! \brief sets the attributes of the texture. */
+void Texture::set_attributes(Element* elem) 
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
   
   Container::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "repeatS") {
       set_wraps(compare_to_true(value));
       elem->mark_delete(ai);
@@ -519,17 +497,17 @@ void Texture::set_attributes(Element * elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "sgalScale") {
+    if (name == "Scale") {
       m_scale = atoff(value.c_str());
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "sgalMinFilter") {
+    if (name == "minFilter") {
       set_min_filter(value);
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "sgalMagFilter") {
+    if (name == "magFilter") {
       set_mag_filter(value);
       elem->mark_delete(ai);
       continue;
@@ -603,7 +581,7 @@ void Texture::AddToScene(Scene_graph* sg, XML_entity* parent)
     }
 
     /*
-    Bump * bump = dynamic_cast<Bump *>(parent);
+    Bump* bump = dynamic_cast<Bump *>(parent);
     if (bump) {
         bump->set_Texture(this);
         m_heightField = true;
@@ -624,7 +602,7 @@ void Texture::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Texture::min_filter_changed);
   SF_string* min_filter_field_info =
-    new SF_string(MIN_FILTER, "sgalMinFilter",
+    new SF_string(MIN_FILTER, "minFilter",
                   get_member_offset(&m_min_filter_str),
                   exec_func);
   s_prototype->add_field_info(min_filter_field_info);
@@ -632,7 +610,7 @@ void Texture::init_prototype()
   exec_func =
     static_cast<Execution_function>(&Texture::mag_filter_changed);
   SF_string* mag_filter_field_info =
-    new SF_string(MAG_FILTER, "sgalMagFilter",
+    new SF_string(MAG_FILTER, "magFilter",
                   get_member_offset(&m_mag_filter_str),
                   exec_func);  
   s_prototype->add_field_info(mag_filter_field_info);
@@ -656,7 +634,7 @@ void Texture::delete_prototype()
 }
 
 /*! */
-Container_proto * Texture::get_prototype() 
+Container_proto* Texture::get_prototype() 
 {  
   if (!s_prototype) Texture::init_prototype();
   return s_prototype;

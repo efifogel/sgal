@@ -163,7 +163,7 @@ Ubyte* Halftone::get_pattern()
 {
   if (m_dirty_pattern) {
     if (m_image) {
-      if (m_image->is_dirty()) m_image->update();
+      if (m_image->is_dirty()) m_image->clean();
       m_pattern = static_cast<Ubyte*>(m_image->get_pixels());
     }
   }

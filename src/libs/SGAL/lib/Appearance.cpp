@@ -42,6 +42,7 @@
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Sphere_environment.hpp"
+#include "SGAL/Cube_environment.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Utilities.hpp"
@@ -63,11 +64,9 @@ Appearance::Appearance(Boolean proto) :
   Container(proto),
   m_tex_env(m_def_tex_env),
   m_dirty(true),
-  m_is_default_material(false),
-  m_is_default_tex_gen(false)
-{
-  init();
-}
+  m_own_material(false),
+  m_own_tex_gen(false)
+{ init(); }
 
 /*! Destructor */
 Appearance::~Appearance()
@@ -75,14 +74,18 @@ Appearance::~Appearance()
   TRACE_MSG(Trace::DESTRUCTOR, "~Appearance ...");
   // we do not delete the object that the appearance is pointing to since other
   // appearance can point ot them as well.
-  if (m_is_default_material) {
-    //! \todo DELETE_OBJECT(m_material);
+  if (m_own_material) {
+    if (m_material) {
+      delete m_material;
+      m_material = NULL;
+    }
+    m_own_material = false;
   }
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
-/*! The function Copies the content of the specified apperance to the current
- * appearance. All pointers are copied as pointers!
+/*! \brief assigns the appearance with the content of another appearance;
+ * performs a shallow copy.
  */
 void Appearance::set(Appearance* app)
 {
@@ -121,8 +124,7 @@ void Appearance::set(Appearance* app)
   m_override = app->m_override;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::init()
 {
   m_texture                = 0;
@@ -269,8 +271,7 @@ void Appearance::set_tex_gen(Tex_gen* tex_gen)
   m_override.on_bit(Gfx::TEX_GEN);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 {
   m_pending.on_bit(Gfx::TEX_GEN_ENABLE);
@@ -278,31 +279,30 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
   m_tex_gen_enable = tex_gen_enable;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_material(Material* material)
 {
-  if (m_is_default_material) {
-    //! \todo DELETE_OBJECT(m_material);
+  if (m_own_material) {
+    if (m_material) {
+      delete m_material;
+      m_material = NULL;
+    }
+    m_own_material = false;
   }
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
   m_material = material;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::material_changed(Field_info* /* field_info */)
 {
-  if (m_is_default_material) {
-    //! \todo DELETE_OBJECT(m_material);
-  }
+  //! \todo what if m_own_material is set?
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_back_material(Material* material)
 {
   m_pending.on_bit(Gfx::BACK_MATERIAL);
@@ -310,8 +310,7 @@ void Appearance::set_back_material(Material* material)
   m_back_material = material;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_light_enable(Boolean light_enable)
 {
   m_pending.on_bit(Gfx::LIGHT_ENABLE);
@@ -319,8 +318,7 @@ void Appearance::set_light_enable(Boolean light_enable)
   m_light_enable = light_enable;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_shade_model(Gfx::Shade_model shade_model)
 {
   m_pending.on_bit(Gfx::SHADE_MODEL);
@@ -328,8 +326,7 @@ void Appearance::set_shade_model(Gfx::Shade_model shade_model)
   m_shade_model = shade_model;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_transp_enable(Boolean transp_enable)
 {
   m_pending.on_bit(Gfx::TRANSP_ENABLE);
@@ -337,8 +334,7 @@ void Appearance::set_transp_enable(Boolean transp_enable)
   m_transp_enable = transp_enable;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_transp_mode(Gfx::Transparency_mode transp_mode)
 {
   m_pending.on_bit(Gfx::TRANSP_MODE);
@@ -346,8 +342,7 @@ void Appearance::set_transp_mode(Gfx::Transparency_mode transp_mode)
   m_transp_mode = transp_mode;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_alpha_func(Gfx::Alpha_func alpha_func)
 {
   m_pending.on_bit(Gfx::ALPHA_FUNC);
@@ -355,8 +350,7 @@ void Appearance::set_alpha_func(Gfx::Alpha_func alpha_func)
   m_alpha_func = alpha_func;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_alpha_ref(Float alpha_ref)
 {
   m_pending.on_bit(Gfx::ALPHA_REF);
@@ -364,16 +358,14 @@ void Appearance::set_alpha_ref(Float alpha_ref)
   m_alpha_ref = alpha_ref;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_blend_color(const Vector4f& blend_color)
 {
   set_blend_color(blend_color[0], blend_color[1],
                   blend_color[2], blend_color[3]);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_blend_color(Float v0, Float v1, Float v2, Float v3)
 {
   m_pending.on_bit(Gfx::BLEND_COLOR);
@@ -381,8 +373,7 @@ void Appearance::set_blend_color(Float v0, Float v1, Float v2, Float v3)
   m_blend_color.set(v0, v1, v2, v3);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_src_blend_func(Gfx::Src_blend_func src_blend_func)
 {
   m_pending.on_bit(Gfx::SRC_BLEND_FUNC);
@@ -390,8 +381,7 @@ void Appearance::set_src_blend_func(Gfx::Src_blend_func src_blend_func)
   m_src_blend_func = src_blend_func;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
 {
   m_pending.on_bit(Gfx::DST_BLEND_FUNC);
@@ -399,15 +389,11 @@ void Appearance::set_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
   m_dst_blend_func = dst_blend_func;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_color_mask(const Vector4ub& color_mask)
-{
-  set_color_mask(color_mask[0], color_mask[1], color_mask[2], color_mask[3]);
-}
+{ set_color_mask(color_mask[0], color_mask[1], color_mask[2], color_mask[3]); }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3)
 {
   m_pending.on_bit(Gfx::COLOR_MASK);
@@ -415,8 +401,7 @@ void Appearance::set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3)
   m_color_mask.set(v0, v1, v2, v3);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_depth_enable(Boolean depth_enable)
 {
   m_pending.on_bit(Gfx::DEPTH_ENABLE);
@@ -424,8 +409,7 @@ void Appearance::set_depth_enable(Boolean depth_enable)
   m_depth_enable = depth_enable;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_depth_func(Gfx::Depth_func depth_func)
 {
   m_pending.on_bit(Gfx::DEPTH_FUNC);
@@ -433,8 +417,7 @@ void Appearance::set_depth_func(Gfx::Depth_func depth_func)
   m_depth_func = depth_func;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_depth_mask(Boolean depth_mask)
 {
   m_pending.on_bit(Gfx::DEPTH_MASK);
@@ -442,8 +425,7 @@ void Appearance::set_depth_mask(Boolean depth_mask)
   m_depth_mask = depth_mask;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_fog_enable(Boolean fog_enable)
 {
   m_pending.on_bit(Gfx::FOG_ENABLE);
@@ -459,8 +441,7 @@ void Appearance::set_polygon_stipple_enable(Boolean enable)
   m_polygon_stipple_enable = enable;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_material_mode_enable(Gfx::Material_mode enable)
 {
   m_pending.on_bit(Gfx::MATERIAL_MODE_ENABLE);
@@ -468,8 +449,7 @@ void Appearance::set_material_mode_enable(Gfx::Material_mode enable)
   m_material_mode_enable = enable;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_poly_mode(Gfx::Poly_mode poly_mode)
 {
   m_pending.on_bit(Gfx::POLY_MODE);
@@ -477,8 +457,7 @@ void Appearance::set_poly_mode(Gfx::Poly_mode poly_mode)
   m_poly_mode = poly_mode;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_line_stipple_pattern(Uint pattern)
 {
   m_pending.on_bit(Gfx::LINE_STIPPLE_PATTERN);
@@ -486,8 +465,7 @@ void Appearance::set_line_stipple_pattern(Uint pattern)
   m_line_stipple_pattern = pattern;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_line_stipple_factor(Uint factor)
 {
   m_pending.on_bit(Gfx::LINE_STIPPLE_FACTOR);
@@ -495,8 +473,7 @@ void Appearance::set_line_stipple_factor(Uint factor)
   m_line_stipple_factor = factor;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_transform(const Matrix4f& tex_transform)
 {
   m_pending.on_bit(Gfx::TEX_TRANSFORM);
@@ -504,16 +481,13 @@ void Appearance::set_tex_transform(const Matrix4f& tex_transform)
   m_tex_transform = tex_transform;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_inherit(const Bit_mask& inherit) { m_pending = inherit; }
 
-/*!
- */
+/*! \brief */
 void Appearance::get_inherit(Bit_mask& inherit) const { inherit = m_pending; }
 
-/*!
- */
+/*! \brief */
 void Appearance::draw(Draw_action* action)
 {
   if (m_dirty) clean();
@@ -538,7 +512,7 @@ void Appearance::draw(Draw_action* action)
     context->draw_tex_enable(false);
 }
 
-/*! Returns true if the material is transparent. If no material specified
+/*! \brief returns true if the material is transparent. If no material specified
  * return false.
  * @return true if the material is transparent.
  */
@@ -556,8 +530,7 @@ Boolean Appearance::is_transparent() const
   return false;
 }
 
-// this is called in case the pointer to the texture has been 
-// modified through the SAI
+/*! \brief notifies that the texture has been changed. */
 void Appearance::texture_changed(Field_info* /* field_info */)
 {
   // this is to indicate that the texture has changed and 
@@ -566,8 +539,7 @@ void Appearance::texture_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-// this is called in case the pointer to the halftone has been 
-// modified through the SAI
+/*! \brief notifies that halftone has been changed. */
 void Appearance::halftone_changed(Field_info* /* field_info */)
 {
   // this is to indicate that the texture has changed and 
@@ -576,8 +548,7 @@ void Appearance::halftone_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*!
- */
+/*! \brief */
 Boolean Appearance::attach_context(Context* context)
 {
   Boolean result = Container::attach_context(context);
@@ -588,8 +559,7 @@ Boolean Appearance::attach_context(Context* context)
   return result;
 }
 
-/*!
- */
+/*! \brief */
 Boolean Appearance::detach_context(Context* context)
 {
   Boolean result = Container::detach_context(context);
@@ -600,7 +570,7 @@ Boolean Appearance::detach_context(Context* context)
   return result;
 }
 
-/*! The function initializes the node prototype */
+/*! \brief initializes the appearance prototype. */
 void Appearance::init_prototype()
 {
   if (s_prototype) return;
@@ -625,57 +595,44 @@ void Appearance::init_prototype()
                                                exec_func));
 }
 
-/*!
- */
+/*! \brief deletes the appearance prototype. */
 void Appearance::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief obtains the appearance prototype. */
 Container_proto* Appearance::get_prototype() 
 {  
   if (s_prototype == NULL) init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the appearance. */
 void Appearance::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-    if (name == "sgalPolyFillMode") {
-      if (value == "point") {
-        set_poly_mode(Gfx::POINT_PMODE);
-      } else if (value == "line") {
-        set_poly_mode(Gfx::LINE_PMODE);
-      } else {
-        set_poly_mode(Gfx::FILL_PMODE);
-      }
+    if (name == "polyFillMode") {
+      if (value == "point") set_poly_mode(Gfx::POINT_PMODE);
+      else if (value == "line") set_poly_mode(Gfx::LINE_PMODE);
+      else set_poly_mode(Gfx::FILL_PMODE);
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "sgalShadeModel") {
-      if (value == "flat") {
-        set_shade_model(Gfx::FLAT_SHADE);
-      } else {
-        set_shade_model(Gfx::SMOOTH_SHADE);
-      }
+    if (name == "shadeModel") {
+      if (value == "flat") set_shade_model(Gfx::FLAT_SHADE);
+      else set_shade_model(Gfx::SMOOTH_SHADE);
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "sgalTexEnv") {
+    if (name == "texEnv") {
       if (value.compare("MODULATE") == 0) {
         set_tex_env(Gfx::MODULATE_TENV);
       } else if (value.compare("DECAL") == 0) {
@@ -761,13 +718,13 @@ void Appearance::set_default_texture_attributes()
   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, color_control);
 }
 
-/*! Clean the node before drawing */
+/*! \brief cleans the node before drawing. */
 void Appearance::clean()
 {
   // Construct a default material
   if (!m_material) {
     m_material = new Material();
-    m_is_default_material = true;
+    m_own_material = true;
   }
 
   // Setup sphere environment map if requested:
@@ -776,7 +733,7 @@ void Appearance::clean()
   if (sphere_env) {
     set_tex_enable(true);
     Tex_gen* tex_gen = new Tex_gen();
-    m_is_default_tex_gen = true;
+    m_own_tex_gen = true;
     tex_gen->set_modes(Tex_gen::SPHERE_MAP);
     tex_gen->set_modet(Tex_gen::SPHERE_MAP);
     set_tex_gen(tex_gen);
@@ -786,7 +743,7 @@ void Appearance::clean()
   m_dirty = false;
 }
 
-/*! Write this container */
+/*! \brief writes this container. */
 void Appearance::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
@@ -797,8 +754,7 @@ void Appearance::write(Formatter* formatter)
 }
 
 #if 0
-/*!
- */
+/*! \brief */
 Attribute_list Appearance::get_attributes() 
 { 
   Attribute_list attrs; 
@@ -807,7 +763,7 @@ Attribute_list Appearance::get_attributes()
   attrs = Container::get_attributes();
 
   if (m_poly_mode != m_def_poly_mode) {
-    attrib.first = "sgalPolyFillMode";
+    attrib.first = "polyFillMode";
     switch (get_poly_mode()) {
      case Gfx::LINE_PMODE: attrib.second = "line"; break;
      case Gfx::POINT_PMODE: attrib.second = "point"; break;
@@ -818,13 +774,13 @@ Attribute_list Appearance::get_attributes()
 
   if (m_shade_model != m_def_shade_model)
   {
-    attrib.first = "sgalShadeModel";
+    attrib.first = "shadeModel";
     attrib.second = "flat";
     attrs.push_back(attrib);
   }
 
   if (m_tex_env != m_def_tex_env) {
-    attrib.first = "enbTexEnv";
+    attrib.first = "texEnv";
     if (m_tex_env == Gfx::MODULATE_TENV) {
       attrib.second = "MODULATE";
     } else if (m_tex_env == Gfx::DECAL_TENV) {
@@ -858,11 +814,8 @@ Attribute_list Appearance::get_attributes()
 void Appearance::add_to_scene(Scene_graph* sg, XML_entity* parent) 
 {
   Container::add_to_scene(sg, parent);
-  if (sg)
-    sg->add_container(this);
-
-  if (parent && (parent->get_name() == g_navigation_root_name))
-    return;
+  if (sg) sg->add_container(this);
+  if (parent && (parent->get_name() == g_navigation_root_name)) return;
 
   // an apperance can appear either in a shape or in an image background...
   Shape* shape = dynamic_cast<Shape*>(parent);

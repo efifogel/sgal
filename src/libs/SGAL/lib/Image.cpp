@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -571,7 +571,7 @@ Image::Image(Boolean proto) :
 /*! Destructor */
 Image::~Image() {}
 
-/*! Initializes the node prototype */
+/*! \brief initializess the node prototype. */
 void Image::init_prototype()
 {
   if (s_prototype)  return;
@@ -587,23 +587,21 @@ void Image::init_prototype()
                                          get_member_offset(&m_format)));
 }
 
-/*!
- */
+/*! \brief */
 void Image::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief */
 Container_proto * Image::get_prototype() 
 {  
   if (!s_prototype) Image::init_prototype();
   return s_prototype;
 }
 
-/*! Set the attributes of this node */
+/*! \brief sets the attributes of the image. */
 void Image::set_attributes(Element * elem)
 {
   Container::set_attributes(elem);
@@ -642,7 +640,7 @@ void Image::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! Draw the image */
+/*! \brief draws the image. */
 void Image::draw()
 {
   if ((m_format <= kIllegal) || (m_format >= kNumFormats)) {
@@ -667,7 +665,7 @@ void Image::draw()
                (GLvoid *) m_pixels);
 }
 
-/*! Obtain the memory that is used by the image (in bytes) */
+/*! \brief obtains the memory that is used by the image (in bytes). */
 Uint Image::get_size() const
 {
   if (m_pack_row_length == 0) return get_size(m_width, m_height, m_format);

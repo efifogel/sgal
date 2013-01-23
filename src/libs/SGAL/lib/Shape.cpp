@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12554 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -81,37 +81,43 @@ Shape::Shape(Boolean proto) :
   m_appearance(0),
   m_alt_appearance(0),
   m_geometry(0),
-  m_is_visible(SGAL_TRUE),
-  m_is_background(SGAL_FALSE),
-  m_is_initialized(SGAL_FALSE),
-  m_is_default_appearance(SGAL_FALSE),
-  m_is_text_object(SGAL_FALSE),
+  m_is_visible(true),
+  m_is_background(false),
+  m_is_initialized(false),
+  m_own_appearance(false),
+  m_is_text_object(false),
   m_priority(0),
-  m_draw_backface(SGAL_FALSE)
+  m_draw_backface(false)
 {}
 
-/*! The destructor.
- * The apperance and geometries should not be deleted here.
- */
+/*! Destructor */
 Shape::~Shape()
 {
-  if (m_is_default_appearance) {
-    //! \todo DELETE_OBJECT(m_appearance);
+  if (m_own_appearance) {
+    if (m_appearance) {
+      delete m_appearance;
+      m_appearance = NULL;
+    }
+    m_own_appearance = false;
   }
 }
 
-/*! The function sets the appearance of the object.
+/*! \brief sets the appearance of the object.
  * @param app the appearance
  */
 void Shape::set_appearance(Appearance* app)
 {
-  if (m_is_default_appearance) {
-    //! \todo DELETE_OBJECT(m_appearance);
+  if (m_own_appearance) {
+    if (m_appearance) {
+      delete m_appearance;
+      m_appearance = NULL;
+    }
+    m_own_appearance = false;
   }
   m_appearance = app;
 }
 
-/*! The function adds a geometry to the shape at the end of the list.
+/*! \brief adds a geometry to the shape at the end of the list.
  * @param geometry a pointer to the geomety added.
  */
 void Shape::set_geometry(Geometry* geometry)
@@ -133,7 +139,7 @@ void Shape::set_geometry(Geometry* geometry)
 #endif
 }
 
-/*! The function calculates the bounding sphere of all geometries in the shape.
+/*! \brief calculates the bounding sphere of all geometries in the shape.
  * \return true if the BS has changed since last call.
  */
 Boolean Shape::clean_sphere_bound()
@@ -156,19 +162,12 @@ Boolean Shape::clean_sphere_bound()
  * @return a pointer to a gepmetry. If i is greater than the number
  *  of geometries, returns 0.
  */
-Geometry* Shape::get_geometry()
-{
-  return m_geometry;
-}
+Geometry* Shape::get_geometry() { return m_geometry; }
 
-/*!
- */
-Boolean Shape::is_text_object()
-{
-  return m_is_text_object;
-}
+/*! \brief */
+Boolean Shape::is_text_object() { return m_is_text_object; }
 
-/*! The function draws the appearance and then all the geometries 
+/*! \brief draws the appearance and then all the geometries 
  * @param draw_action
  */
 Action::Trav_directive Shape::draw(Draw_action* draw_action)
@@ -188,7 +187,7 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
   }
 
   if (!m_draw_backface && is_transparent && (pass_no == 0)) {
-    draw_action->set_second_pass_required(SGAL_TRUE);
+    draw_action->set_second_pass_required(true);
     return Action::TRAV_CONT;
   }
 
@@ -285,14 +284,13 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
 /*! \brief culls the node if invisible and prepare for rendering. */
 void Shape::cull(Cull_context& cull_context) { cull_context.add_shape(this); }
 
-/*!
- */
+/*! \brief */
 void Shape::draw_geometries(Draw_action* action) 
 {
   if (m_geometry) {
     Context* context = action->get_context();
-    if (!m_draw_depth) context->draw_depth_mask(SGAL_FALSE);
-    if (!m_test_depth) context->draw_depth_enable(SGAL_FALSE);
+    if (!m_draw_depth) context->draw_depth_mask(false);
+    if (!m_test_depth) context->draw_depth_enable(false);
     if (m_depth_range != s_def_depth_range)
       glDepthRange(m_depth_range[0], m_depth_range[1]);
     if (m_depth_function != s_def_depth_function)
@@ -312,11 +310,11 @@ void Shape::draw_geometries(Draw_action* action)
       context->draw_depth_func(s_def_depth_function);
     if (m_depth_range != s_def_depth_range)
       glDepthRange(s_def_depth_range[0], s_def_depth_range[1]);
-    if (!m_test_depth) context->draw_depth_enable(SGAL_TRUE);
-    if (!m_draw_depth) context->draw_depth_mask(SGAL_TRUE);  }
+    if (!m_test_depth) context->draw_depth_enable(true);
+    if (!m_draw_depth) context->draw_depth_mask(true);  }
 }
 
-/*! Draws the shape in a compact way that includes only rendering the 
+/*! \brief draws the shape in a compact way that includes only rendering the 
  * geometry and not the appearance. The color used is an identifier
  * of the touch sensor that is attaced to the shape. We assume there are 
  * no more than 256 touch sensors and we use the 4 most significant bits 
@@ -340,8 +338,8 @@ void Shape::isect(Isect_action* isect_action)
   m_geometry->isect(isect_action);
 }
 
-/*! Initialize the apperances in the shape according to whether texture and
- * environment mapping is to be applied on the shape.
+/*! \brief initializes the apperances in the shape according to whether texture
+ * and environment mapping is to be applied on the shape.
  * There 3 cases:
  * # the object has no environment map. In this case, we do nothing. In the
  * render we call draw on the apperance and nothing else.
@@ -358,7 +356,7 @@ void Shape::isect(Isect_action* isect_action)
  */
 void Shape::init()
 {
-  m_is_initialized = SGAL_TRUE;
+  m_is_initialized = true;
 #if 0
   if (!m_env_map) return;
 
@@ -370,12 +368,12 @@ void Shape::init()
     m_alt_appearance = new Appearance();
     m_alt_appearance->set(m_appearance);
     m_alt_appearance->set_texture(m_env_map->get_texture());
-    m_alt_appearance->set_tex_enable(SGAL_TRUE);
+    m_alt_appearance->set_tex_enable(true);
     Tex_gen* tex_gen = new Tex_gen();
     tex_gen->set_modes(Tex_gen::SPHERE_MAP);
     tex_gen->set_modet(Tex_gen::SPHERE_MAP);
     m_alt_appearance->set_tex_gen(tex_gen);
-    m_alt_appearance->set_tex_gen_enable(SGAL_TRUE);
+    m_alt_appearance->set_tex_gen_enable(true);
   } else {
     Tex_gen* tex_gen = new Tex_gen();
     tex_gen->set_modes(Tex_gen::SPHERE_MAP);
@@ -383,10 +381,10 @@ void Shape::init()
 
     m_alt_appearance = new Appearance();
     m_alt_appearance->set_tex_gen(tex_gen);
-    m_alt_appearance->set_tex_gen_enable(SGAL_TRUE);
+    m_alt_appearance->set_tex_gen_enable(true);
     m_alt_appearance->set_depth_func(Gfx::LEQUAL_DFUNC);
     m_alt_appearance->set_texture(m_env_map->get_texture());
-    m_alt_appearance->set_tex_enable(SGAL_TRUE);
+    m_alt_appearance->set_tex_enable(true);
     m_alt_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
     m_alt_appearance->set_dst_blend_func(Gfx::ONE_DBLEND);
 
@@ -397,7 +395,7 @@ void Shape::init()
     m_alt_appearance->set_material(mat);
     m_alt_appearance->set_back_material(mat);
     m_alt_appearance->set_tex_env(Gfx::DECAL_TENV);
-    m_alt_appearance->set_light_enable(SGAL_FALSE);
+    m_alt_appearance->set_light_enable(false);
   }
 
   if (m_alt_appearance) {
@@ -425,13 +423,12 @@ void Shape::init()
 #endif
 }
 
-/*!
- */
+/*! \brief */
 void Shape::create_default_appearance() 
 {
   m_appearance = new Appearance();
-  m_is_default_appearance = SGAL_TRUE;
-  m_is_initialized = SGAL_TRUE;
+  m_own_appearance = true;
+  m_is_initialized = true;
 
   //! \todo
 #if 0
@@ -441,17 +438,13 @@ void Shape::create_default_appearance()
 #endif
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the shape */
 void Shape::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "cullFace") {
@@ -518,9 +511,8 @@ void Shape::set_attributes(Element* elem)
   }
 
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "appearance") {
@@ -542,14 +534,14 @@ void Shape::set_attributes(Element* elem)
 }
 
 #if 0
-/*! get a list of attributes (called in the save process) */
+/*! \brief Obtain a list of attributes (called in the save process). */
 Attribute_list Shape::get_attributes() 
 { 
   Attribute_list attrs;
   attrs = Node::get_attributes();
   Attribue attrib;
 
-  if (m_is_visible != SGAL_TRUE) {
+  if (m_is_visible != true) {
     attrib.first = "visible";
     attrib.second = "FALSE";
     attrs.push_back(attrib);
@@ -565,7 +557,7 @@ Attribute_list Shape::get_attributes()
 }
 #endif
 
-/*! Write this container */
+/*! \brief writes this container. */
 void Shape::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
@@ -581,7 +573,7 @@ void Shape::write(Formatter* formatter)
   formatter->container_end();
 }
 
-/*! Initialize the node prototype */
+/*! \brief initializes the node prototype. */
 void Shape::init_prototype()
 {
   if (s_prototype) return;
@@ -592,27 +584,26 @@ void Shape::init_prototype()
   // Add the object fields to the prototype:
   Execution_function exec_func = 
     static_cast<Execution_function>(&Node::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_bool(ISVISIBLE, "sgalVisible",
+  s_prototype->add_field_info(new SF_bool(ISVISIBLE, "visible",
                                           get_member_offset(&m_is_visible),
                                           exec_func));    
 }
 
-/*! Delete the node prototype */
+/*! \brief deletes the node prototype */
 void Shape::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
+/*! \brief obtains the node prototype. */
 Container_proto* Shape::get_prototype() 
 {  
   if (s_prototype == NULL) Shape::init_prototype();
   return s_prototype;
 }
 
-/*!
- */
+/*! \brief */
 Boolean Shape::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
@@ -621,8 +612,7 @@ Boolean Shape::attach_context(Context* context)
   return result;
 }
 
-/*!
- */
+/*! \brief */
 Boolean Shape::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
