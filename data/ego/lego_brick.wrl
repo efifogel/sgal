@@ -44,11 +44,11 @@ Transform {
     Shape {
       appearance Appearance {
 	material Material {
-	  diffuseColor 0.7 0.1 0.1
-	  # ambientIntensity 3
+	  diffuseColor 0.7 0.7 0.7
+	  ambientIntensity 0.2
 	  transparency 0
 	}
-	# texture ImageTexture {url ["earth-cubemap-0.jpg"]}
+	texture ImageTexture {url ["posx.jpg"]}
       }
       geometry DEF BRICK EgoBrick {
 	# knobsVisible FALSE
