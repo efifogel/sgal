@@ -23,9 +23,7 @@
 #define SGAL_TEXTURE_HPP
 
 /*! \file
- * A class that implements a texture.
- *
- * Inherits from Container
+ * Base class for texture mapping.
  */
 
 #if (defined _MSC_VER)
@@ -126,7 +124,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   enum Min_filter {
-    NEAREST_MIN, 
+    NEAREST_MIN = 0, 
     LINEAR_MIN,
     NEAREST_MIPMAP_NEAREST, 
     NEAREST_MIPMAP_LINEAR, 
@@ -134,16 +132,36 @@ public:
   };
 
   enum Mag_filter {
-    NEAREST_MAG, 
+    NEAREST_MAG = 0, 
     LINEAR_MAG
   };
 
   enum Wrap {
-    CLAMP, 
+    CLAMP = 0, 
     REPEAT,
     CLAMP_TO_EDGE
   };
 
+  enum Target {
+    TEXTURE_1D = 0,
+    TEXTURE_2D,
+    TEXTURE_3D,
+    TEXTURE_1D_ARRAY,
+    TEXTURE_2D_ARRAY,
+    TEXTURE_RECTANGLE,
+    TEXTURE_CUBE_MAP,
+    TEXTURE_CUBE_MAP_ARRAY,
+    TEXTURE_BUFFER,
+    TEXTURE_2D_MULTISAMPLE,
+    TEXTURE_2D_MULTISAMPLE_ARRAY
+  };
+
+  /*! Set the texture target. */
+  void set_target(Uint taregt);
+
+  /*! Obtain the texture target. */
+  Uint get_target() const;
+  
   /*! Obtain the texture image. */
   Image* get_image() const;
 
@@ -240,26 +258,34 @@ public:
   void print_info();
 
 protected:
+
+  /*! The texture target index. */
+  Uint m_target;
+  
   /*! a unique id for the texture (used in OpenGL for texture binding) */
   Uint m_id;
 
   /*! The texture pixels */
   Image* m_image;
   
-  /*! repeating in S parameter */
+  /*! Repeating in S parameter */
   Wrap m_wraps;
+
   Boolean m_repeats;
 
-  /*! repeating in T parameter */
+  /*! Repeating in T parameter */
   Wrap m_wrapt;
+
   Boolean m_repeatt;
 
-  /*! the minification filtering method */
+  /*! The minification filtering method */
   Min_filter m_min_filter;
+
   std::string m_min_filter_str;
 
-  /*! the magnification filtering method */
+  /*! The magnification filtering method */
   Mag_filter m_mag_filter;
+
   std::string m_mag_filter_str;
 
 #define SGAL_MAX_LEVELS 10
@@ -288,10 +314,20 @@ protected:
   static const Wrap m_def_wraps;
   static const Wrap m_def_wrapt;
 
-  static const char* m_min_filter_names[5];
-  static const char* m_mag_filter_names[2];
-  static const char* m_wrap_names[3];
+  static const GLenum s_targets[];
+
+  static const char* s_min_filter_names[5];
+
+  static const char* s_mag_filter_names[2];
+
+  static const char* s_wrap_names[3];
   
+  static const GLenum s_min_filter_tokens[];
+
+  static const GLenum s_mag_filter_tokens[];
+
+  static const GLenum s_wrap_tokens[];
+
   /*! */
   void load_color_map();
 
@@ -335,8 +371,14 @@ inline Texture* Texture::prototype() { return new Texture(true); }
 /*! \brief clones. */
 inline Container* Texture::clone() { return new Texture(); }
 
+/*! \brief sets the texture target. */
+inline void Texture::set_target(Uint target) { m_target = target; }
+
+/*! \brief obtains the texture target. */
+inline Uint Texture::get_target() const { return m_target; }
+
 /*! \brief obtains the texture image. */
-inline  Image* Texture::get_image() const { return m_image; }
+inline Image* Texture::get_image() const { return m_image; }
 
 /*! \brief sets the texture image. */
 inline  void Texture::set_image(Image* image) { m_image = image; }

@@ -56,7 +56,7 @@ const Texture::Wrap Texture::m_def_wrapt = Texture::REPEAT;
 Container_proto* Texture::s_prototype = NULL;
 std::string Texture::s_tag = "Texture";
 
-const char* Texture::m_min_filter_names[] = {
+const char* Texture::s_min_filter_names[] = {
   "nearest",                  // NEAREST_MIN, 
   "linear",                   // LINEAR_MIN,
   "mipmapNearest",            // NEAREST_MIPMAP_NEAREST, 
@@ -64,20 +64,52 @@ const char* Texture::m_min_filter_names[] = {
   "linearMipmapLinear"        // LINEAR_MIPMAP_LINEAR
 };
 
-const char* Texture::m_mag_filter_names[] = {
+const char* Texture::s_mag_filter_names[] = {
   "nearest",                  // NEAREST_MAG, 
   "linear"                    // LINEAR_MAG
 };
 
-const char* Texture::m_wrap_names[] = {
+const char* Texture::s_wrap_names[] = {
   "clamp",                    // CLAMP, 
   "repeat",                   // REPEAT,
   "clampToEdge"               // CLAMP_TO_EDGE
 };
-    
+
+const GLenum Texture::s_targets[] = {
+  GL_TEXTURE_1D,
+  GL_TEXTURE_2D,
+  GL_TEXTURE_3D,
+  GL_TEXTURE_1D_ARRAY,
+  GL_TEXTURE_2D_ARRAY,
+  GL_TEXTURE_RECTANGLE,
+  GL_TEXTURE_CUBE_MAP,
+  GL_TEXTURE_CUBE_MAP_ARRAY,
+  GL_TEXTURE_BUFFER,
+  GL_TEXTURE_2D_MULTISAMPLE,
+  GL_TEXTURE_2D_MULTISAMPLE_ARRAY
+};
+
+const GLenum Texture::s_wrap_tokens[] = {
+  GL_CLAMP,
+  GL_REPEAT,
+  GL_CLAMP_TO_EDGE
+};
+
+const GLenum Texture::s_min_filter_tokens[] = {
+  GL_NEAREST,
+  GL_LINEAR,
+  GL_NEAREST_MIPMAP_NEAREST,
+  GL_LINEAR_MIPMAP_NEAREST,
+  GL_NEAREST_MIPMAP_LINEAR,
+  GL_LINEAR_MIPMAP_LINEAR
+};
+
+const GLenum Texture::s_mag_filter_tokens[] = {GL_NEAREST, GL_LINEAR};
+
 /*! Constructor */
 Texture::Texture(Boolean proto) :
   Container(proto),
+  m_target(TEXTURE_2D),
   m_id(0xffffffff),
   m_image(NULL),
   m_wraps(m_def_wraps),
@@ -89,7 +121,7 @@ Texture::Texture(Boolean proto) :
   m_height_field(false),
   m_scale(m_def_scale),
   m_text(0)
-{ for (int i = 0; i < SGAL_MAX_LEVELS; i++) m_normal_maps[i] = 0; }
+{ for (int i = 0; i < SGAL_MAX_LEVELS; ++i) m_normal_maps[i] = 0; }
 
 /*! Destructor */
 Texture::~Texture() {}
@@ -114,9 +146,9 @@ void Texture::wrapt_changed(Field_info* /* field_info */)
 void Texture::set_min_filter(const std::string& value)
 {
   unsigned int i;
-  for (i = 0; i < sizeof(m_min_filter_names)/sizeof(char *); ++i)
-    if (value == m_min_filter_names[i]) break;
-  if (i < sizeof(m_min_filter_names)/sizeof(char *))
+  for (i = 0; i < sizeof(s_min_filter_names)/sizeof(char *); ++i)
+    if (value == s_min_filter_names[i]) break;
+  if (i < sizeof(s_min_filter_names)/sizeof(char *))
     set_min_filter((Min_filter) i);
 }
 
@@ -132,9 +164,9 @@ void Texture::min_filter_changed(Field_info* /* field_info */)
 void Texture::set_mag_filter(const std::string& value)
 {
   unsigned int i;
-  for ( i = 0; i < sizeof(m_mag_filter_names)/sizeof(char *); ++i)
-    if (value == m_mag_filter_names[i]) break;
-  if (i < sizeof(m_mag_filter_names)/sizeof(char *))
+  for ( i = 0; i < sizeof(s_mag_filter_names)/sizeof(char *); ++i)
+    if (value == s_mag_filter_names[i]) break;
+  if (i < sizeof(s_mag_filter_names)/sizeof(char *))
     set_mag_filter((Mag_filter) i);
 }
 
@@ -155,14 +187,13 @@ void Texture::draw(Context* ctx)
     clean();
     return;
   }
-  glBindTexture(GL_TEXTURE_2D, m_id);
+  glBindTexture(s_targets[m_target], m_id);
 }
 
 /*! \brief transmits the texture to the graphics pipe. */
 void Texture::load_color_map()
 {
   Uint width = m_image->get_width();
-  std::cout << "width: " << width << std::endl;
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();
   
@@ -182,13 +213,14 @@ void Texture::load_color_map()
   GLenum internal_format = Image::get_format_internal_format(format);
   
   if (m_min_filter >= NEAREST_MIPMAP_NEAREST) {
-    int rc = gluBuild2DMipmaps(GL_TEXTURE_2D, internal_format, width, height,
+    int rc = gluBuild2DMipmaps(s_targets[m_target], internal_format,
+                               width, height,
                                req_format, req_type, m_image->get_pixels());
     (void) rc;
     return;
     //! \todo download images
   }
-  glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, border,
+  glTexImage2D(s_targets[m_target], 0, internal_format, width, height, border,
                req_format, req_type, m_image->get_pixels());
 }
 
@@ -197,18 +229,18 @@ void Texture::load_height_map()
 {
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
-  int widthBorder = (width & (width - 1)) ?
+  int width_border = (width & (width - 1)) ?
     (((width - 1) & (width - 2)) ? -1: 1) : 0;
-  if (widthBorder == -1) {
+  if (width_border == -1) {
     ;
   }
-  int heightBorder = (height & (height - 1)) ?
+  int height_border = (height & (height - 1)) ?
     (((height - 1) & (height - 2)) ? -1: 1) : 0;
-  if (heightBorder == -1) {
+  if (height_border == -1) {
     ;
   }
-  Uint new_width = width - widthBorder;
-  Uint new_height = height - heightBorder;
+  Uint new_width = width - width_border;
+  Uint new_height = height - height_border;
   int level = 0;
   convert_height_field_to_normal_map(level, new_width, new_height,
                                      width, height, m_scale);
@@ -216,7 +248,8 @@ void Texture::load_height_map()
   // Load original maximum resolution normal map:
 
   // The BGRA color component ordering is fastest for NVIDIA:
-  glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA8, new_width, new_height, level,
+  glTexImage2D(s_targets[m_target], level, GL_RGBA8,
+               new_width, new_height, level,
                GL_BGRA_EXT, GL_UNSIGNED_BYTE, &m_normal_maps[level]->nz);
 
   if (m_min_filter <= NEAREST_MIPMAP_NEAREST) return;
@@ -233,7 +266,7 @@ void Texture::load_height_map()
 
     down_sample_normal_map(level-1, level, new_width, new_height, nw, nh);
 
-    glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA8, nw, nh, 0,
+    glTexImage2D(s_targets[m_target], level, GL_RGBA8, nw, nh, 0,
                  GL_BGRA_EXT, GL_UNSIGNED_BYTE, &m_normal_maps[level]->nz);
 
     // Make the new width and height the old width and height:
@@ -421,30 +454,20 @@ void Texture::allocate_memory()
 #endif
 
 /*! \brief cleans the object using the new decoded data. */
-void Texture::clean() 
+void Texture::clean()
 {
-  std::cout << "m_image->is_dirty(): " << m_image->is_dirty() << std::endl;
   if (m_image->is_dirty()) m_image->clean();
       
   glGenTextures(1, &m_id);
 
-  glBindTexture(GL_TEXTURE_2D, m_id);
-
-  static GLenum s_wrap_tokens[] = {GL_CLAMP, GL_REPEAT, GL_CLAMP_TO_EDGE};
-  static GLenum s_min_filter_tokens[] = {
-    GL_NEAREST, GL_LINEAR,
-    GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST,
-    GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR
-  };
-  static GLenum sMagFilterTokens[] = {GL_NEAREST, GL_LINEAR};
-    
+  GLenum target = s_targets[m_target];
+  glBindTexture(s_targets[m_target], m_id);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, s_wrap_tokens[m_wraps]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, s_wrap_tokens[m_wrapt]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                  sMagFilterTokens[m_mag_filter]);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, s_wrap_tokens[m_wraps]);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, s_wrap_tokens[m_wrapt]);
+  glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
+                  s_mag_filter_tokens[m_mag_filter]);
+  glTexParameteri(target, GL_TEXTURE_MIN_FILTER,
                   s_min_filter_tokens[m_min_filter]);
 
   (m_height_field) ? load_height_map() : load_color_map();
@@ -497,7 +520,7 @@ void Texture::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "Scale") {
+    if (name == "scale") {
       m_scale = atoff(value.c_str());
       elem->mark_delete(ai);
       continue;
