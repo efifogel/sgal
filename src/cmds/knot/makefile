@@ -104,6 +104,7 @@ LCPPOPTS = -Wall
 # LCPPOPTS+= -pedantic
 LLDOPTS+= -L/usr/X11R6/lib
 LLDLIBS+= -lSGAL -lgl2ps
+LLDLIBS+= -lMagick++
 LLDLIBS+= -lboost_program_options$(BOOST_LIBNAME_SUFFIX)
 LLDLIBS+= -lboost_filesystem$(BOOST_LIBNAME_SUFFIX)
 LLDLIBS+= -lboost_system$(BOOST_LIBNAME_SUFFIX)
