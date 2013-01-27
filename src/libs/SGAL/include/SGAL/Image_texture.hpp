@@ -35,7 +35,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Texture.hpp"
-#include "SGAL/Url_image.hpp"
+#include "SGAL/Image.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -49,7 +49,7 @@ class Scene_graph;
 
 class SGAL_CLASSDEF Image_texture : public Texture {
 public:
-  typedef Url_image::Path_list                          Path_list;
+  typedef Image::Path_list                          Path_list;
   
   /*! Constructor */
   Image_texture(Boolean proto = false);
@@ -116,7 +116,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! The image. */
-  Url_image m_url_image;
+  Image m_image;
 };
 
 /*! \brief constructs the prototype. */
@@ -128,31 +128,31 @@ inline Container* Image_texture::clone() { return new Image_texture(); }
 
 /*! \brief sets the URL. */
 inline void Image_texture::set_url(const std::string& url)
-{ m_url_image.set_url(url); }
+{ m_image.set_url(url); }
 
 /*! \brief obtains the URL. */
 inline const std::string Image_texture::get_url() const
-{ return m_url_image.get_url(); }
+{ return m_image.get_url(); }
 
 /*! \brief sets the flag that indicates whether to reflect the image. */
 inline void Image_texture::set_flip(Boolean flag)
-{ m_url_image.set_flip(flag); }
+{ m_image.set_flip(flag); }
 
 /*! \brief obtains the flag that indicates whether to reflect the image. */
 inline Boolean Image_texture::get_flip() const
-{ return m_url_image.get_flip(); }
+{ return m_image.get_flip(); }
  
 /*! \brief sets the directory-search structure. */
-inline void Image_texture::set_dirs(const Url_image::Path_list& dirs)
-{ m_url_image.set_dirs(dirs); }
+inline void Image_texture::set_dirs(const Image::Path_list& dirs)
+{ m_image.set_dirs(dirs); }
 
 /*! \brief obtains the directory-search structure. */
-inline const Url_image::Path_list& Image_texture::get_dirs() const
-{ return m_url_image.get_dirs(); }
+inline const Image::Path_list& Image_texture::get_dirs() const
+{ return m_image.get_dirs(); }
 
 /*! \brief adds the container to a given scene */  
 inline void Image_texture::add_to_scene(Scene_graph* sg)
-{ m_url_image.set_dirs(sg->get_data_dirs()); }
+{ m_image.set_dirs(sg->get_data_dirs()); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Image_texture::get_tag() const { return s_tag; }

@@ -29,29 +29,31 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Collision.hpp"
-#include "SGAL/Shape.hpp"
-#include "SGAL/Transform.hpp"
-#include "SGAL/Sphere_environment.hpp"
-#include "SGAL/Sphere_plane_intersection.hpp"
+#include "SGAL/Configuration.hpp"
+#include "SGAL/Cube_environment.hpp"
 #include "SGAL/Group.hpp"
+#include "SGAL/Font_style.hpp"
 #include "SGAL/Halftone.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Image_texture.hpp"
 #include "SGAL/Image_sphere_environment.hpp"
 // #include "SGAL/Image_texture_WT.hpp"
 #include "SGAL/Incrementor.hpp"
+#include "SGAL/Navigation_info.hpp"
 // #include "SGAL/Text_texture.hpp"
 #include "SGAL/Material.hpp"
 #include "SGAL/Multisample.hpp"
+#include "SGAL/Route.hpp"
+#include "SGAL/Shape.hpp"
+#include "SGAL/Sphere_environment.hpp"
+#include "SGAL/Sphere_plane_intersection.hpp"
 #include "SGAL/Switch.hpp"
 // #include "SGAL/Lod.hpp"
-#include "SGAL/Text.hpp"
-#include "SGAL/Texture_transform.hpp"
-#include "SGAL/Font_style.hpp"
-#include "SGAL/Route.hpp"
-#include "SGAL/Configuration.hpp"
 #include "SGAL/Tex_gen.hpp"
-#include "SGAL/Navigation_info.hpp"
+#include "SGAL/Text.hpp"
+#include "SGAL/Texture.hpp"
+#include "SGAL/Texture_transform.hpp"
+#include "SGAL/Transform.hpp"
 #include "SGAL/World_info.hpp"
 
 #include "SGAL/Coord_transformer.hpp"
@@ -176,6 +178,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Cone);
   REGISTER_OBJECT(Coord_minkowski);
   REGISTER_OBJECT(Coord_transformer);
+  REGISTER_OBJECT(Cube_environment);
   REGISTER_OBJECT(Cylinder);
   REGISTER_OBJECT(Cylindrical_patch);
   REGISTER_OBJECT(Directional_light);
@@ -219,6 +222,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Tex_coord_array);
   REGISTER_OBJECT(Tex_gen);
   REGISTER_OBJECT(Text);
+  REGISTER_OBJECT(Texture);
   REGISTER_OBJECT(Texture_transform);
   REGISTER_OBJECT(Time_sensor);
   REGISTER_OBJECT(Touch_sensor);

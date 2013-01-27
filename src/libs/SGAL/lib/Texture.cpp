@@ -27,7 +27,6 @@
 #include <stdlib.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Appearance.hpp"
@@ -35,6 +34,7 @@
 #include "SGAL/Text_texture.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gfx_conf.hpp"
@@ -44,8 +44,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
+const std::string Texture::s_tag = "Texture";
 Container_proto* Texture::s_prototype = NULL;
-std::string Texture::s_tag = "Texture";
+
+REGISTER_TO_FACTORY(Texture, "Texture");
 
 /*! Constructor */
 Texture::Texture(Boolean proto) :
@@ -63,6 +65,7 @@ Texture::~Texture() {}
 /*! \brief draws the texture. */
 void Texture::draw(Context* context)
 {
+  std::cout << "Texture::draw" << std::endl;
   if (m_text) m_text->draw(context);
   Texture_base::draw(context);
 }
@@ -70,6 +73,7 @@ void Texture::draw(Context* context)
 /*! \brief cleans the object using the new decoded data. */
 void Texture::clean()
 {
+  std::cout << "Texture::clean" << std::endl;
   if (m_image->is_dirty()) m_image->clean();
   if (Texture_base::is_dirty()) Texture_base::clean();
   (m_height_field) ? load_height_map() : load_color_map();
@@ -80,6 +84,7 @@ void Texture::clean()
 /*! \brief transmits the texture to the graphics pipe. */
 void Texture::load_color_map()
 {
+  std::cout << "Texture::load_color_map()" << std::endl;
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();
@@ -353,7 +358,7 @@ void Texture::set_attributes(Element* elem)
 void Texture::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto();
+  s_prototype = new Container_proto(Texture_base::get_prototype());
 }
 
 /*! \brief deletes the node prototype. */

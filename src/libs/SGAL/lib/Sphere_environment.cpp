@@ -25,7 +25,7 @@
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Texture.hpp"
+#include "SGAL/Texture_base.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -36,8 +36,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Sphere_environment::s_tag = "sgalSphericalEnvironmentMap";
-Container_proto * Sphere_environment::s_prototype = NULL;
+std::string Sphere_environment::s_tag = "sphericalEnvironmentMap";
+Container_proto* Sphere_environment::s_prototype = NULL;
 
 // Default values:
 const Float Sphere_environment::m_def_alpha(0.5f);
@@ -45,7 +45,7 @@ const Boolean Sphere_environment::m_def_quality(false);
 
 /*! Constructor */
 Sphere_environment::Sphere_environment(Boolean proto) :
-  Texture(proto),
+  Texture_base(proto),
   m_alpha(m_def_alpha),
   m_quality(m_def_quality)
 {}
@@ -60,7 +60,7 @@ void Sphere_environment::init_prototype()
   if (s_prototype != NULL) return;
 
   // Allocate a prototype instance
-  s_prototype = new Container_proto(Texture::get_prototype());
+  s_prototype = new Container_proto(Texture_base::get_prototype());
 
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
@@ -89,7 +89,7 @@ Container_proto * Sphere_environment::get_prototype()
  */
 void Sphere_environment::set_attributes(Element* elem)
 {
-  Texture::set_attributes(elem);
+  Texture_base::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
 
@@ -121,7 +121,7 @@ Attribute_list Sphere_environment::get_attributes()
   Attribue attrib;
   char buf[32];
 
-  attribs = Texture::get_attributes();
+  attribs = Texture_base::get_attributes();
 
   if (m_alpha != m_def_alpha) {
     attrib.first = "alpha";

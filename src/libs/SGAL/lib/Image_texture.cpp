@@ -33,7 +33,7 @@ REGISTER_TO_FACTORY(Image_texture, "Image_texture");
 
 /*! Constructor */
 Image_texture::Image_texture(Boolean proto) : Texture(proto)
-{ Texture::set_image(&m_url_image); }
+{ Texture::set_image(&m_image); }
 
 /*! \brief initializes the node prototype. */
 void Image_texture::init_prototype()

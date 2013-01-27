@@ -45,7 +45,7 @@ SGAL_BEGIN_NAMESPACE
 REGISTER_TO_FACTORY(Snapshot, "Snapshot");
 
 std::string Snapshot::s_tag = "Snapshot";
-Container_proto * Snapshot::s_prototype = NULL;
+Container_proto* Snapshot::s_prototype = NULL;
 
 // Default values
 const std::string Snapshot::s_def_dir_name = ".";
@@ -54,7 +54,7 @@ const Snapshot::File_format Snapshot::s_def_file_format = Snapshot::FF_ppm;
 const Int Snapshot::s_def_quality = 50;
 
 /*! File format names */
-const char * Snapshot::s_file_format_names[] =
+const char* Snapshot::s_file_format_names[] =
   { "", "jpg", "png", "gif", "tiff", "bmp", "ppm", "pgm", "pbm" };
 
 /*! Constructor */
@@ -77,7 +77,7 @@ Snapshot::Snapshot(Boolean proto) :
 /*! Destructor */
 Snapshot::~Snapshot()
 {
-  Uchar * pixels = (Uchar *) m_image->get_pixels();
+  Uchar* pixels = (Uchar *) m_image->get_pixels();
   if (pixels) delete [] pixels;
   m_image->set_pixels(NULL);
   m_image->set_width(0);
@@ -87,7 +87,7 @@ Snapshot::~Snapshot()
 
 /*! Take a snapshot and write to a file if triggered
  */
-Action::Trav_directive Snapshot::draw(Draw_action * draw_action) 
+Action::Trav_directive Snapshot::draw(Draw_action* draw_action) 
 {
   if (!m_triggered) return Action::TRAV_CONT;
   m_triggered = SGAL_FALSE;
@@ -100,14 +100,14 @@ Action::Trav_directive Snapshot::draw(Draw_action * draw_action)
 }
 
 /*! Allocate space for the image */
-Boolean Snapshot::allocate_space(Draw_action * action)
+Boolean Snapshot::allocate_space(Draw_action* action)
 {
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();
 
   if ((width == 0) || (height == 0)) {
-    Context * context = action->get_context();
+    Context* context = action->get_context();
     if (!context) return SGAL_FALSE;
     Uint x0 = 0, y0 = 0;
     Uint tw, th;
@@ -125,7 +125,7 @@ Boolean Snapshot::allocate_space(Draw_action * action)
   if (width == 0 || height == 0) return SGAL_FALSE;
   Uint size = Image::get_size(width, height, format);
   if (size > m_size) {
-    Uchar * pixels = (Uchar *) m_image->get_pixels();
+    Uchar* pixels = (Uchar *) m_image->get_pixels();
     if (pixels) delete [] pixels;
     pixels = new Uchar[size];
     if (!pixels) return SGAL_FALSE;
@@ -141,7 +141,7 @@ void Snapshot::take_snapshot()
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();
-  void * pixels = m_image->get_pixels();
+  void* pixels = m_image->get_pixels();
   GLenum gl_format = m_image->get_format_format(format);
   GLenum gl_type = m_image->get_format_type(format);
 
@@ -166,7 +166,7 @@ void Snapshot::write_image()
 
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
-  Uchar * pixels = static_cast<Uchar *>(m_image->get_pixels());
+  Uchar* pixels = static_cast<Uchar *>(m_image->get_pixels());
   Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
   if (m_flip) image.flip();
   image.magick(s_file_format_names[m_file_format]);
@@ -200,7 +200,7 @@ void Snapshot::delete_prototype()
 }
 
 /*! Obtain the container prototype */
-Container_proto * Snapshot::get_prototype() 
+Container_proto* Snapshot::get_prototype() 
 {  
   if (!s_prototype) Snapshot::init_prototype();
   return s_prototype;
@@ -210,17 +210,16 @@ Container_proto * Snapshot::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Snapshot::set_attributes(Element * elem)
+void Snapshot::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "dirName") {
       m_dir_name = strip_double_quotes(value);
       if (m_dir_name.empty()) m_dir_name = s_def_dir_name;
@@ -262,11 +261,10 @@ void Snapshot::set_attributes(Element * elem)
     }
   }
 
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Container* cont = elem->get_value(cai);
     if (name == "image") {
       m_image = dynamic_cast<Image*>(cont);
       elem->mark_delete(cai);
@@ -279,10 +277,7 @@ void Snapshot::set_attributes(Element * elem)
 }
 
 /*! \brief adds the container to a given scene */  
-void Snapshot::add_to_scene(Scene_graph * sg)
-{
-  sg->add_snaphot(this);
-}
+void Snapshot::add_to_scene(Scene_graph* sg) { sg->add_snaphot(this); }
 
 #if 0
 /*!

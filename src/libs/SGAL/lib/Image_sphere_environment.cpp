@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -22,14 +22,52 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Image_sphere_environment.hpp"
 #include "SGAL/Container_factory.hpp"
+#include "SGAL/Container_proto.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-template <> Container_proto * Image_sphere_environment::s_prototype = NULL;
-template <> std::string Image_sphere_environment::s_tag =
+Container_proto* Image_sphere_environment::s_prototype(NULL);
+const std::string Image_sphere_environment::s_tag =
   "ImageSphereEnvironment";
 
-REGISTER_TO_FACTORY(Image_texture_template<Sphere_environment>,
-                    "Image_sphere_environment");
+REGISTER_TO_FACTORY(Image_sphere_environment, "Image_sphere_environment");
+
+/*! Constructor */
+Image_sphere_environment::Image_sphere_environment(Boolean proto) :
+  Sphere_environment(proto)
+{}
+
+/*! Destructor */
+Image_sphere_environment::~Image_sphere_environment() {}
+
+/*! \brief sets the attributes of this object. */
+void Image_sphere_environment::set_attributes(Element* elem)
+{
+  Sphere_environment::set_attributes(elem);
+}
+
+/*! \brief initializes the node prototype. */
+void Image_sphere_environment::init_prototype()
+{
+  // The prototype shuold be allocated only once for all instances
+  if (s_prototype != NULL) return;
+
+  // Allocate a prototype instance
+  s_prototype = new Container_proto(Sphere_environment::get_prototype());
+}
+
+/*! \brief deletes the node prototype. */
+void Image_sphere_environment::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
+
+/*! \brief obtains the node prototype. */
+Container_proto* Image_sphere_environment::get_prototype()
+{
+  if (s_prototype == NULL) Image_sphere_environment::init_prototype();
+  return s_prototype;
+}
 
 SGAL_END_NAMESPACE

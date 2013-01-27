@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -54,16 +54,16 @@ public:
   };
 
   /*! Constructor */
-  Snapshot(Boolean proto = SGAL_FALSE);
+  Snapshot(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Snapshot();
 
   /*! Construct the prototype */
-  static Snapshot * prototype() { return new Snapshot(SGAL_TRUE); }
+  static Snapshot* prototype() { return new Snapshot(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Snapshot(); }
+  virtual Container* clone() { return new Snapshot(); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -72,18 +72,18 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
    */  
-  virtual void add_to_scene(Scene_graph * scene_graph);
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Trigger the snapshot */
-  void trigger() { m_triggered = SGAL_TRUE; }
+  void trigger() { m_triggered = true; }
 
   // virtual Attribute_list get_attributes();
 
@@ -101,8 +101,8 @@ public:
     FF_num
   };
   
-  void set_trigger(Field_info * field_info = NULL  );
-  virtual Action::Trav_directive draw(Draw_action * draw_action);
+  void set_trigger(Field_info* field_info = NULL  );
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
 
   /* Set the name of the dir where the snapshot is written to */
   void set_dir_name(std::string dir_name) { m_dir_name = dir_name; }
@@ -111,10 +111,10 @@ public:
   std::string get_dir_name() { return m_dir_name; }
 
   /* Set the name of the file where the snapshot is written to */
-  void set_file_name(std::string & file_name) { m_file_name = file_name; }
+  void set_file_name(std::string& file_name) { m_file_name = file_name; }
 
   /* Obtain the name of the file where the snapshot is written to */
-  const std::string & get_file_name() { return m_file_name; }
+  const std::string& get_file_name() { return m_file_name; }
 
   /*! Set the file format */
   void set_file_format(File_format format) { m_file_format = format; }
@@ -123,17 +123,17 @@ public:
   File_format get_file_format() const { return m_file_format; }
 
   /*! Set the image */
-  void set_image(Image * image) { m_image = image; }
+  void set_image(Image* image) { m_image = image; }
   
   /*! Obtain the image */
-  Image * get_image() const { return m_image; }
+  Image* get_image() const { return m_image; }
   
 protected: 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! A place holder for the image */
-  Image * m_image;
+  Image* m_image;
 
   /*! The directory to save the image at */
   std::string m_dir_name;
@@ -155,14 +155,14 @@ protected:
   
 protected:
   /*! File format names */
-  static const char * s_file_format_names[];
+  static const char* s_file_format_names[];
   
 private: 
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   Boolean m_triggered;
 
@@ -180,7 +180,7 @@ private:
   const static Int s_def_quality;
 
   /*! Allocate space for the image */
-  Boolean allocate_space(Draw_action * action);
+  Boolean allocate_space(Draw_action* action);
   
   /*! Take a snapshot of the window */
   void take_snapshot();

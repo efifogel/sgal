@@ -28,7 +28,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
-#include "SGAL/Texture.hpp"
+#include "SGAL/Texture_base.hpp"
 #include "SGAL/Action.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -37,10 +37,10 @@ class Execution_coordinator;
 class Container_proto;
 class Element;
 
-class SGAL_CLASSDEF Sphere_environment : public Texture {
+class SGAL_CLASSDEF Sphere_environment : public Texture_base {
 public:
   enum {
-    FIRST = Texture::LAST - 1,
+    FIRST = Texture_base::LAST - 1,
     ALPHA,
     LAST
   };
@@ -83,17 +83,6 @@ public:
   /*! Obtain the quality */
   bool get_quality() const;
 
-  /*! Set the texture */
-  void set_texture(Texture* texture);
-
-  /*! Obtain the texture */
-  Texture* get_texture();
-
-  // // this method is used when an appearance is created by the environment
-  // // object it should not be called in any other case (FIX)
-  // Execution_coordinator* get_execution_coordinator() const
-  // { return m_execution_coordinator; }
-
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
@@ -105,9 +94,6 @@ private:
   /*! the node prototype */
   static Container_proto* s_prototype;
 
-  /*! the texture object */
-  Texture* m_texture;
-
   /*! the alpha value to use in blending in the second pass */
   float m_alpha;
 
@@ -117,9 +103,6 @@ private:
   /*! Default values */
   static const Float m_def_alpha;
   static const Boolean m_def_quality;
-
-  /*! Copy constructor */
-  Sphere_environment(const Sphere_environment& se) : Texture(se) {} 
 };
 
 /*! \brief constructs the prototype. */
@@ -141,13 +124,6 @@ inline void Sphere_environment::set_quality(bool flag) { m_quality = flag; }
 
 /*! \brief obtains the quality. */
 inline bool Sphere_environment::get_quality() const { return m_quality; }
-
-/*! \brief sets the texture. */
-inline void Sphere_environment::set_texture(Texture* texture)
-{ m_texture = texture; }
-
-/*! \brief obtain the texture. */
-inline Texture* Sphere_environment::get_texture() { return m_texture; }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Sphere_environment::get_tag() const { return s_tag; }
