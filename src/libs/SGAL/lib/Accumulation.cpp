@@ -42,7 +42,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Accumulation::s_tag = "Accumulation";
-Container_proto * Accumulation::s_prototype = NULL;
+Container_proto* Accumulation::s_prototype = NULL;
 
 /* jitter point arrays for 2,3,4,8,15,24 and 66 jitters.
  * The arrays are named j2, j3, etc.
@@ -220,11 +220,11 @@ Accumulation::Jitter_pair Accumulation::s_sizes[] = {
 };
 
 // Default values:
-Boolean Accumulation::s_def_enabled = SGAL_TRUE;
-Uint Accumulation::s_def_delay = 800;
-Accumulation::Quality Accumulation::s_def_quality = Accumulation::Q_HIGH;
+const Boolean Accumulation::s_def_enabled = true;
+const Uint Accumulation::s_def_delay = 800;
+const Accumulation::Quality Accumulation::s_def_quality = Accumulation::Q_HIGH;
 
-const Char * Accumulation::s_quality_names[] = {"high", "low"};
+const Char* Accumulation::s_quality_names[] = {"high", "low"};
 
 const Uint Accumulation::s_def_red_bits(16);
 const Uint Accumulation::s_def_green_bits(16);
@@ -240,7 +240,7 @@ Accumulation::Accumulation(Boolean proto) :
   m_delay(s_def_delay),
   m_quality(s_def_quality),
   m_num_iters(),
-  m_active(SGAL_FALSE),
+  m_active(false),
   m_accumulate(0),
   m_iteration_no(0),
   m_show(false),
@@ -248,12 +248,9 @@ Accumulation::Accumulation(Boolean proto) :
   m_green_bits(s_def_green_bits),
   m_blue_bits(s_def_blue_bits),
   m_alpha_bits(s_def_alpha_bits)
-  
-{
-  set_num_iters(8);
-}
+{ set_num_iters(8); }
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Accumulation::init_prototype()
 {
   if (s_prototype) return;
@@ -277,44 +274,39 @@ void Accumulation::init_prototype()
 
 }
 
-/*! Delete the node prototype */
+/*! \brief deletes the node prototype. */
 void Accumulation::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
-Container_proto * Accumulation::get_prototype() 
+/*! \brief obtains the node prototype. */
+Container_proto* Accumulation::get_prototype() 
 {  
   if (!s_prototype) Accumulation::init_prototype();
   return s_prototype;
 }
 
-/*! Set defualt values */
-void Accumulation::set_default(Boolean def_enabled, Uint def_delay,
-                               Quality def_quality)
+/*! \brief sets defualt values. */
+void Accumulation::reset(Boolean def_enabled, Uint def_delay,
+                         Quality def_quality)
 {
   m_enabled = def_enabled;
   m_delay = def_delay;
   m_quality = def_quality;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Accumulation::set_attributes(Element * elem)
+/*! \brief sets the attributes of the object. */
+void Accumulation::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
       set_enabled(compare_to_true(value));
       elem->mark_delete(ai);
@@ -341,8 +333,7 @@ void Accumulation::set_attributes(Element * elem)
 }
 
 #if 0
-/*!
- */
+/*! \brief */
 Attribute_list Accumulation::get_attributes()
 {  
   Attribute_list attrs; 
@@ -370,7 +361,7 @@ Attribute_list Accumulation::get_attributes()
 }
 #endif
 
-/*! Set the total number of iterations */
+/*! \brief sets the total number of iterations. */
 void Accumulation::set_num_iters(Uint num_iters)
 {
   Uint num_jitter_arrays = sizeof(s_sizes) / sizeof(Jitter_pair);
@@ -389,8 +380,8 @@ void Accumulation::set_num_iters(Uint num_iters)
   m_contribution = 1 / (Float) m_num_iters;
 }
 
-/*! Apply Actions when accumulation starts */
-void Accumulation::pre_render(Draw_action * draw_action)
+/*! \brief applies Actions when accumulation starts. */
+void Accumulation::pre_render(Draw_action* draw_action)
 {
   if (m_iteration_no == 0) {  
     glClearAccum(0, 0, 0, 0);
@@ -398,8 +389,8 @@ void Accumulation::pre_render(Draw_action * draw_action)
   }
 }
 
-/*! Apply actions when accumulation ends */
-void Accumulation::post_render(Draw_action * draw_action)
+/*! \brief applies actions when accumulation ends. */
+void Accumulation::post_render(Draw_action* draw_action)
 {
   Boolean blendMode = (glIsEnabled(GL_BLEND) == GL_TRUE);
   glDisable(GL_BLEND);
@@ -416,33 +407,28 @@ void Accumulation::post_render(Draw_action * draw_action)
   if (blendMode) glEnable(GL_BLEND);
 }
 
-/*! \brief resets the delay start time to the current time */
-void Accumulation::reset_delay_time()
-{
-}
+/*! \brief resets the delay start time to the current time. */
+void Accumulation::reset_delay_time() {}
 
-/*! Enactivate accumulation */
+/*! \brief enactivates accumulation. */
 void Accumulation::enactivate()
 {
-  m_active = SGAL_TRUE;
+  m_active = true;
   m_iteration_no = 0;
   m_accumulate = 0;
 }
 
-/*! Return ture if accumulation is done */
-Boolean Accumulation::is_done()
-{
-  return (m_iteration_no == m_num_iters);
-}
+/*! \brief returns ture if accumulation is done. */
+Boolean Accumulation::is_done() { return (m_iteration_no == m_num_iters); }
 
-/*! Obtains the jitter value of the current iteration */
-void Accumulation::get_jitter(float & x, float & y)
+/*! \brief obtains the jitter value of the current iteration. */
+void Accumulation::get_jitter(float& x, float& y)
 {
   x = m_jitters[m_iteration_no].x;
   y = m_jitters[m_iteration_no].y;
 }
 
-/*! \brief sets the number of RGBA bits stored in the accumulation buffer */
+/*! \brief sets the number of RGBA bits stored in the accumulation buffer. */
 void Accumulation::set_number_of_bits(Uint red_bits, Uint green_bits,
                                       Uint blue_bits, Uint alpha_bits)
 {
@@ -452,9 +438,9 @@ void Accumulation::set_number_of_bits(Uint red_bits, Uint green_bits,
   m_alpha_bits = alpha_bits;
 }
 
-/*! \brief obtains the number of RGBA bits stored in the accumulation buffer */
-void Accumulation::get_number_of_bits(Uint & red_bits, Uint & green_bits,
-                                      Uint & blue_bits, Uint & alpha_bits) const
+/*! \brief obtains the number of RGBA bits stored in the accumulation buffer. */
+void Accumulation::get_number_of_bits(Uint& red_bits, Uint& green_bits,
+                                      Uint& blue_bits, Uint& alpha_bits) const
 {
   red_bits = m_red_bits;
   green_bits = m_green_bits;

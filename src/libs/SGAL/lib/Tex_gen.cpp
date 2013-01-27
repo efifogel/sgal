@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,34 +40,16 @@ std::string Tex_gen::s_tag = "TexGen";
 /*! Parameter-less constructor */
 Tex_gen::Tex_gen(Boolean proto) :
   Container(proto),
-  m_modes(OFF),
-  m_modet(OFF),
-  m_moder(OFF),
-  m_modeq(OFF)
-{
-}
+  m_mode_s(OFF),
+  m_mode_t(OFF),
+  m_mode_r(OFF),
+  m_mode_q(OFF)
+{}
 
 /*! Destructor */
 Tex_gen::~Tex_gen() {}
 
-/*!
- */
-void Tex_gen::set_modes(Mode modes) { m_modes = modes; }
-
-/*!
- */
-void Tex_gen::set_modet(Mode modet) { m_modet = modet; }
-
-/*!
- */
-void Tex_gen::set_moder(Mode moder) { m_moder = moder; }
-
-/*!
- */
-void Tex_gen::set_modeq(Mode modeq) { m_modeq = modeq; }
-
-/*! Call the texture generation calls
- */
+/*! \brief applies the texture generation attribute. */
 void Tex_gen::draw(Context* /* context */) 
 {
   // glTexGenfv(GL_S, GL_SPHERE_MAP, 0);
@@ -76,13 +58,31 @@ void Tex_gen::draw(Context* /* context */)
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 };
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Tex_gen::set_attributes(Element* /* elem */)
-{
-  SGAL_assertion(0);
-}
+/*! \brief sets the attributes of the texture generation attribute. */
+void Tex_gen::set_attributes(Element* /* elem */) { SGAL_assertion(0); }
+
+/*! \brief sets the s-texture coordinate generation function. */
+void Tex_gen::set_mode_s(Mode mode) { m_mode_s = mode; }
+
+/*! \brief sets the t-texture coordinate generation function. */
+void Tex_gen::set_mode_t(Mode mode) { m_mode_t = mode; }
+
+/*! \brief sets the r-texture coordinate generation function. */
+void Tex_gen::set_mode_r(Mode mode) { m_mode_r = mode; }
+
+/*! \brief sets the q-texture coordinate generation function. */
+void Tex_gen::set_mode_q(Mode mode) { m_mode_q = mode; }
+
+/*! \brief sets the s-texture coordinate generation reference-plane. */
+void Tex_gen::set_plane_s(const Plane& plane) { m_plane_s.set(plane); }
+
+/*! \brief sets the t-texture coordinate generation reference-plane. */
+void Tex_gen::set_plane_t(const Plane& plane) { m_plane_t.set(plane); }
+
+/*! \brief sets the r-texture coordinate generation reference-plane. */
+void Tex_gen::set_plane_r(const Plane& plane) { m_plane_r.set(plane); }
+
+/*! \brief sets the q-texture coordinate generation reference-plane. */
+void Tex_gen::set_plane_q(const Plane& plane) { m_plane_q.set(plane); }
 
 SGAL_END_NAMESPACE

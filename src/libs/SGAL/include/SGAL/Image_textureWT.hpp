@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -43,16 +43,16 @@ class Element;
 class SGAL_CLASSDEF Image_texture_wt : public Texture {
 public: 
   /*! Constructor */
-  Image_texture_wt(Boolean proto = SGAL_FALSE);
+  Image_texture_wt(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Image_texture_wt();
 
   /* Construct the prototype */
-  static Image_texture_wt * prototype() { return new Image_texture_wt(SGAL_TRUE); }
+  static Image_texture_wt* prototype() { return new Image_texture_wt(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Image_texture_wt(); }
+  virtual Container* clone() { return new Image_texture_wt(); }
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element * elem);

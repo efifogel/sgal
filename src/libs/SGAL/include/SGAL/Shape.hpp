@@ -122,12 +122,12 @@ public:
   /*! Set an appearance.
    * \param appearance the new appearance.
    */
-  void set_appearance(Appearance* appearance);
+  void set_appearance(Appearance* appearance, Boolean owned = false);
 
   /*! Obtain the geometry.
    * \retrun the geometry.
    */
-  Geometry* get_geometry();
+  Geometry* get_geometry() const;
 
   /*! Set a geometry
    * \param geometry the new geometry.
@@ -206,6 +206,7 @@ public:
   void init();
 
   virtual Boolean attach_context(Context* context); 
+
   virtual Boolean detach_context(Context* context = 0); 
 
 protected:
@@ -260,7 +261,7 @@ protected:
   Boolean m_is_initialized;
 
   /*! Indicates whether the appearance node has been constructed by default. */
-  Boolean m_own_appearance;
+  Boolean m_owned_appearance;
 
   /*! this is true when the geometry is a text object. */
   Boolean m_is_text_object;
@@ -270,7 +271,7 @@ protected:
 
   /* A flag that indicates whether backface drawing is required. */
   Boolean m_draw_backface;
-    
+  
   void draw_geometries(Draw_action* draw_action);
   void create_default_appearance();
 
@@ -357,6 +358,9 @@ inline void Shape::set_priority(Float priority) { m_priority = priority; }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Shape::get_tag() const { return s_tag; }
+
+/*! \brief obtains the gepmetry. */
+inline Geometry* Shape::get_geometry() const { return m_geometry; }
 
 SGAL_END_NAMESPACE
 

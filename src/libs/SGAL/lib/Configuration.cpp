@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11860 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,17 +40,17 @@ const std::string Configuration::s_tag = "sgalConfiguration";
 Container_proto* Configuration::s_prototype = NULL;
 
 // Default values:
-Configuration::Geometry_drawing_mode
+const Configuration::Geometry_drawing_mode
   Configuration::s_def_geometry_drawing_mode = Configuration::GDM_VERTEX_ARRAY;
-Boolean Configuration::s_def_are_global_lights_stationary = SGAL_FALSE;
-Boolean Configuration::s_def_texture_map = SGAL_TRUE;
-Boolean Configuration::s_def_is_fixed_head_light = SGAL_TRUE;
-Float Configuration::s_def_min_frame_rate = 15;
-Gfx::Poly_mode Configuration::s_def_poly_mode = Gfx::FILL_PMODE;
-Boolean Configuration::s_def_display_fps = SGAL_FALSE;
-Float Configuration::s_def_min_zoom_distance = 0;
-float Configuration::s_def_speed_factor = 100;
-Uint Configuration::s_def_verbose_level = 0;
+const Boolean Configuration::s_def_are_global_lights_stationary = false;
+const Boolean Configuration::s_def_texture_map = true;
+const Boolean Configuration::s_def_is_fixed_head_light = true;
+const Float Configuration::s_def_min_frame_rate = 15;
+const Gfx::Poly_mode Configuration::s_def_poly_mode = Gfx::FILL_PMODE;
+const Boolean Configuration::s_def_display_fps = false;
+const Float Configuration::s_def_min_zoom_distance = 0;
+const float Configuration::s_def_speed_factor = 100;
+const Uint Configuration::s_def_verbose_level = 0;
 
 const Char* Configuration::s_geometry_drawing_mode_names[] =
   { "direct", "displayList", "vertexArray" };
@@ -72,31 +72,30 @@ Configuration::Configuration(Boolean proto) :
   m_min_zoom_distance(s_def_min_zoom_distance),
   m_speed_factor(s_def_speed_factor),
   m_verbosity_level(s_def_verbose_level),
-  m_is_default_accumulation(SGAL_FALSE)
-{
-}
+  m_owned_accumulation(false)
+{}
 
-/*! Set defualt values */
-void Configuration::set_default(Geometry_drawing_mode def_geometry_drawing_mode,
-                               Boolean def_are_global_lights_stationary,
-                               Boolean def_is_fixed_head_light,
-                               Float def_min_frame_rate,
-                               Gfx::Poly_mode def_poly_mode,
-                               Boolean def_display_fps,
-                               Float def_min_zoom_distance)
+/*! \brief sets defualt values. */
+void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
+                          Boolean def_are_global_lights_stationary,
+                          Boolean def_is_fixed_head_light,
+                          Float def_min_frame_rate,
+                          Gfx::Poly_mode def_poly_mode,
+                          Boolean def_display_fps,
+                          Float def_min_zoom_distance)
 {
-  if (m_accumulation) m_accumulation->set_default();
+  if (m_accumulation) m_accumulation->reset();
   
   m_geometry_drawing_mode = def_geometry_drawing_mode;
-  m_are_global_lights_stationary  = def_are_global_lights_stationary;
-  m_is_fixed_head_light  = def_is_fixed_head_light;
-  m_min_frame_rate  = def_min_frame_rate;
-  m_poly_mode  = def_poly_mode;
+  m_are_global_lights_stationary = def_are_global_lights_stationary;
+  m_is_fixed_head_light = def_is_fixed_head_light;
+  m_min_frame_rate = def_min_frame_rate;
+  m_poly_mode = def_poly_mode;
   m_display_fps = def_display_fps;
   m_min_zoom_distance = def_min_zoom_distance;
 }
 
-/*! Initializes the node prototype */
+/*! \brief initializess the node prototype. */
 void Configuration::init_prototype()
 {
   if (s_prototype) return;
@@ -145,35 +144,30 @@ void Configuration::init_prototype()
   s_prototype->add_field_info(uint_field);
 }
 
-/*! Delete the node prototype */
+/*! \brief deletes the node prototype */
 void Configuration::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
+/*! \brief obtains the node prototype. */
 Container_proto* Configuration::get_prototype() 
 {  
   if (!s_prototype) Configuration::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the object. */
 void Configuration::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "minFrameRate") {
       set_min_frame_rate(atoff(value.c_str()));
       elem->mark_delete(ai);
@@ -187,8 +181,8 @@ void Configuration::set_attributes(Element* elem)
     if (name == "geometryDrawingMode") {
       Uint num = sizeof(s_geometry_drawing_mode_names) / sizeof(char *);
       const char** found = std::find(s_geometry_drawing_mode_names,
-                                      &s_geometry_drawing_mode_names[num],
-                                      strip_double_quotes(value));
+                                     &s_geometry_drawing_mode_names[num],
+                                     strip_double_quotes(value));
       Uint index = found - s_geometry_drawing_mode_names;
       if (index < num)
         m_geometry_drawing_mode = static_cast<Geometry_drawing_mode>(index);
@@ -202,14 +196,10 @@ void Configuration::set_attributes(Element* elem)
     }
     if (name == "polyMode") {
       std::string tmp = strip_double_quotes(value);
-      if (tmp == "line") {
-        set_poly_mode(Gfx::LINE_PMODE);
-      } else if (tmp == "point") {
-        set_poly_mode(Gfx::POINT_PMODE);
-      } else {
-        std::cerr << "Unrecognized polygon mode \"" << tmp << "\"!"
-                  << std::endl;
-      }
+      if (tmp == "line") set_poly_mode(Gfx::LINE_PMODE);
+      else if (tmp == "point") set_poly_mode(Gfx::POINT_PMODE);
+      else std::cerr << "Unrecognized polygon mode \"" << tmp << "\"!"
+                     << std::endl;
       elem->mark_delete(ai);
       continue;
     }
@@ -241,11 +231,10 @@ void Configuration::set_attributes(Element* elem)
   }
 
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+    Container* cont = elem->get_value(cai);
     if (name == "accumulation") {
       Accumulation* acc = dynamic_cast<Accumulation*>(cont);
       set_accumulation(acc);
@@ -264,13 +253,11 @@ void Configuration::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene. */  
 void Configuration::add_to_scene(Scene_graph* sg)
-{
-  sg->set_configuration(this);
-}
+{ sg->set_configuration(this); }
 
-/*! Set the verbosity level */
+/*! \brief sets the verbosity level. */
 void Configuration::set_verbosity_level(Uint level)
 {
   m_verbosity_level = level;
@@ -279,8 +266,7 @@ void Configuration::set_verbosity_level(Uint level)
 }
 
 #if 0
-/*!
- */
+/*! \brief */
 Attribute_list Configuration::get_attributes()
 {  
   Attribute_list attrs; 

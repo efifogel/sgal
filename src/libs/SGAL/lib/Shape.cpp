@@ -84,7 +84,7 @@ Shape::Shape(Boolean proto) :
   m_is_visible(true),
   m_is_background(false),
   m_is_initialized(false),
-  m_own_appearance(false),
+  m_owned_appearance(false),
   m_is_text_object(false),
   m_priority(0),
   m_draw_backface(false)
@@ -93,28 +93,28 @@ Shape::Shape(Boolean proto) :
 /*! Destructor */
 Shape::~Shape()
 {
-  if (m_own_appearance) {
+  if (m_owned_appearance) {
     if (m_appearance) {
       delete m_appearance;
       m_appearance = NULL;
     }
-    m_own_appearance = false;
+    m_owned_appearance = false;
   }
 }
 
 /*! \brief sets the appearance of the object.
  * @param app the appearance
  */
-void Shape::set_appearance(Appearance* app)
+void Shape::set_appearance(Appearance* app, Boolean owned)
 {
-  if (m_own_appearance) {
+  if (m_owned_appearance) {
     if (m_appearance) {
       delete m_appearance;
       m_appearance = NULL;
     }
-    m_own_appearance = false;
   }
   m_appearance = app;
+  m_owned_appearance = owned;
 }
 
 /*! \brief adds a geometry to the shape at the end of the list.
@@ -156,13 +156,6 @@ Boolean Shape::clean_sphere_bound()
 
   return changed;
 }
-
-/*! The function returns the i-th  geometry in the list
- * @param i (in) which geometry to return
- * @return a pointer to a gepmetry. If i is greater than the number
- *  of geometries, returns 0.
- */
-Geometry* Shape::get_geometry() { return m_geometry; }
 
 /*! \brief */
 Boolean Shape::is_text_object() { return m_is_text_object; }
@@ -423,11 +416,12 @@ void Shape::init()
 #endif
 }
 
-/*! \brief */
+/*! \brief creates the default appearance. */
 void Shape::create_default_appearance() 
 {
-  m_appearance = new Appearance();
-  m_own_appearance = true;
+  Appearance* app = new Appearance();
+  SGAL_assertion(app);
+  set_appearance(app, true);
   m_is_initialized = true;
 
   //! \todo
@@ -589,7 +583,7 @@ void Shape::init_prototype()
                                           exec_func));    
 }
 
-/*! \brief deletes the node prototype */
+/*! \brief deletes the node prototype. */
 void Shape::delete_prototype()
 {
   delete s_prototype;

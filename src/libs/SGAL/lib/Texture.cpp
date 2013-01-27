@@ -44,150 +44,37 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const Image::Format Texture::m_def_format = Image::kRGB8_8_8;
-const Float Texture::m_def_scale = 1.0f;
-
-const Texture::Min_filter Texture::m_def_min_filter = Texture::LINEAR_MIN;
-const Texture::Mag_filter Texture::m_def_mag_filter = Texture::LINEAR_MAG;
-
-const Texture::Wrap Texture::m_def_wraps = Texture::REPEAT;
-const Texture::Wrap Texture::m_def_wrapt = Texture::REPEAT;
-
 Container_proto* Texture::s_prototype = NULL;
 std::string Texture::s_tag = "Texture";
 
-const char* Texture::s_min_filter_names[] = {
-  "nearest",                  // NEAREST_MIN, 
-  "linear",                   // LINEAR_MIN,
-  "mipmapNearest",            // NEAREST_MIPMAP_NEAREST, 
-  "mipmapLinear",             // NEAREST_MIPMAP_LINEAR, 
-  "linearMipmapLinear"        // LINEAR_MIPMAP_LINEAR
-};
-
-const char* Texture::s_mag_filter_names[] = {
-  "nearest",                  // NEAREST_MAG, 
-  "linear"                    // LINEAR_MAG
-};
-
-const char* Texture::s_wrap_names[] = {
-  "clamp",                    // CLAMP, 
-  "repeat",                   // REPEAT,
-  "clampToEdge"               // CLAMP_TO_EDGE
-};
-
-const GLenum Texture::s_targets[] = {
-  GL_TEXTURE_1D,
-  GL_TEXTURE_2D,
-  GL_TEXTURE_3D,
-  GL_TEXTURE_1D_ARRAY,
-  GL_TEXTURE_2D_ARRAY,
-  GL_TEXTURE_RECTANGLE,
-  GL_TEXTURE_CUBE_MAP,
-  GL_TEXTURE_CUBE_MAP_ARRAY,
-  GL_TEXTURE_BUFFER,
-  GL_TEXTURE_2D_MULTISAMPLE,
-  GL_TEXTURE_2D_MULTISAMPLE_ARRAY
-};
-
-const GLenum Texture::s_wrap_tokens[] = {
-  GL_CLAMP,
-  GL_REPEAT,
-  GL_CLAMP_TO_EDGE
-};
-
-const GLenum Texture::s_min_filter_tokens[] = {
-  GL_NEAREST,
-  GL_LINEAR,
-  GL_NEAREST_MIPMAP_NEAREST,
-  GL_LINEAR_MIPMAP_NEAREST,
-  GL_NEAREST_MIPMAP_LINEAR,
-  GL_LINEAR_MIPMAP_LINEAR
-};
-
-const GLenum Texture::s_mag_filter_tokens[] = {GL_NEAREST, GL_LINEAR};
-
 /*! Constructor */
 Texture::Texture(Boolean proto) :
-  Container(proto),
-  m_target(TEXTURE_2D),
-  m_id(0xffffffff),
+  Texture_base(proto),
   m_image(NULL),
-  m_wraps(m_def_wraps),
-  m_wrapt(m_def_wrapt),
-  m_min_filter(m_def_min_filter),
-  m_mag_filter(m_def_mag_filter),
   m_map_levels(0),
   m_dirty(true),
   m_height_field(false),
-  m_scale(m_def_scale),
   m_text(0)
 { for (int i = 0; i < SGAL_MAX_LEVELS; ++i) m_normal_maps[i] = 0; }
 
 /*! Destructor */
 Texture::~Texture() {}
 
-/*! \brief sets the wrapping factor on the S. */
-void Texture::wraps_changed(Field_info* /* field_info */)
-{
-  set_wraps(m_repeats);
-  m_dirty = true;
-  set_rendering_required();
-}
-
-/*! \brief sets the wrapping factor on the T. */
-void Texture::wrapt_changed(Field_info* /* field_info */)
-{
-  set_wrapt(m_repeatt);
-  m_dirty = true;
-  set_rendering_required();
-}
-
-/*! \brief sets the minimization filter. */
-void Texture::set_min_filter(const std::string& value)
-{
-  unsigned int i;
-  for (i = 0; i < sizeof(s_min_filter_names)/sizeof(char *); ++i)
-    if (value == s_min_filter_names[i]) break;
-  if (i < sizeof(s_min_filter_names)/sizeof(char *))
-    set_min_filter((Min_filter) i);
-}
-
-/*! \brief notifies that the minimization filter has changed. */
-void Texture::min_filter_changed(Field_info* /* field_info */)
-{
-  set_min_filter(m_min_filter_str);
-  m_dirty = true;
-  set_rendering_required();
-}
-
-/*! \brief sets the magnification filter. */
-void Texture::set_mag_filter(const std::string& value)
-{
-  unsigned int i;
-  for ( i = 0; i < sizeof(s_mag_filter_names)/sizeof(char *); ++i)
-    if (value == s_mag_filter_names[i]) break;
-  if (i < sizeof(s_mag_filter_names)/sizeof(char *))
-    set_mag_filter((Mag_filter) i);
-}
-
-/*! \brief notifies that the magnification filter has changed. */
-void Texture::mag_filter_changed(Field_info* /* field_info */)
-{
-  set_mag_filter(m_mag_filter_str);
-  m_dirty = true;
-  set_rendering_required();
-}
-
 /*! \brief draws the texture. */
-void Texture::draw(Context* ctx)
+void Texture::draw(Context* context)
 {
-  if (m_text) m_text->draw(ctx);
+  if (m_text) m_text->draw(context);
+  Texture_base::draw(context);
+}
 
-  if (m_dirty) {
-    clean();
-    return;
-  }
-  glBindTexture(s_targets[m_target], m_id);
+/*! \brief cleans the object using the new decoded data. */
+void Texture::clean()
+{
+  if (m_image->is_dirty()) m_image->clean();
+  if (Texture_base::is_dirty()) Texture_base::clean();
+  (m_height_field) ? load_height_map() : load_color_map();
+  if (m_text) m_text->clean();
+  m_dirty = false;
 }
 
 /*! \brief transmits the texture to the graphics pipe. */
@@ -399,9 +286,8 @@ void Texture::destroy_data()
 {
   m_image_buffers[m_current_buffer]->delete_pixels();
 
-  for (int i = 0; i < SGAL_MAX_LEVELS; i++) {
+  for (int i = 0; i < SGAL_MAX_LEVELS; ++i)
     if (m_normal_maps[i]) delete m_normal_maps[i];
-  }
 
   m_current_buffer = 0;
   m_dirty = false;
@@ -453,47 +339,6 @@ void Texture::allocate_memory()
 }
 #endif
 
-/*! \brief cleans the object using the new decoded data. */
-void Texture::clean()
-{
-  if (m_image->is_dirty()) m_image->clean();
-      
-  glGenTextures(1, &m_id);
-
-  GLenum target = s_targets[m_target];
-  glBindTexture(s_targets[m_target], m_id);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glTexParameteri(target, GL_TEXTURE_WRAP_S, s_wrap_tokens[m_wraps]);
-  glTexParameteri(target, GL_TEXTURE_WRAP_T, s_wrap_tokens[m_wrapt]);
-  glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
-                  s_mag_filter_tokens[m_mag_filter]);
-  glTexParameteri(target, GL_TEXTURE_MIN_FILTER,
-                  s_min_filter_tokens[m_min_filter]);
-
-  (m_height_field) ? load_height_map() : load_color_map();
-
-  if (m_text) m_text->clean();
-  m_dirty = false;
-}
-
-/* \brief */
-Boolean Texture::is_equal(const Texture* t) const
-{
-  if (m_wraps != t->m_wraps) return false;
-  if (m_wrapt != t->m_wrapt) return false;
-  if (m_min_filter != t->m_min_filter) return false;
-  if (m_mag_filter != t->m_mag_filter) return false;
-
-#if 0
-  if ((m_text && !t->m_text) || (!m_text && t->m_text)) return false;
-  if (m_text)
-    if (!m_text->is_equal(t->m_text)) 
-      return true;
-#endif
-  
-  return true;
-}
-
 /* \brief */
 Boolean Texture::empty()
 {
@@ -502,186 +347,30 @@ Boolean Texture::empty()
 
 /*! \brief sets the attributes of the texture. */
 void Texture::set_attributes(Element* elem) 
-{
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  
-  Container::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
-    if (name == "repeatS") {
-      set_wraps(compare_to_true(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "repeatT") {
-      set_wrapt(compare_to_true(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "scale") {
-      m_scale = atoff(value.c_str());
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "minFilter") {
-      set_min_filter(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "magFilter") {
-      set_mag_filter(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-  }
-  // Remove all the marked attributes:
-  elem->delete_marked();
-}
+{ Texture_base::set_attributes(elem); }
 
-#if 0
-/*!
- */
-Attribute_list Texture::get_attributes() 
-{ 
-  Attribute_list attrs; 
-  Attribue attrib;
-  char buf[32];
-
-  attrs = Container::get_attributes();
-
-  if (m_wrapS != m_defWrapS) {
-    attrib.first = "repeatS";
-    attrib.second = (m_wrapS == CLAMP) ? "FALSE" : "TRUE";
-    attrs.push_back(attrib);
-  }
-  if (m_wrapT != m_defWrapT) {
-    attrib.first = "repeatT";
-    attrib.second = (m_wrapT == CLAMP) ? "FALSE" : "TRUE";
-    attrs.push_back(attrib);
-  }
-  if (m_scale != m_defScale) {
-    attrib.first = "sgalScale";
-    sprintf(buf, "%.2f", m_scale);
-    attrib.second = buf;
-    attrs.push_back(attrib);
-  }
-  if (m_min_filter != m_defMinFilter) {
-    attrib.first = "sgalMinFilter";
-    sprintf(buf, "%s", m_min_filterNames[m_min_filter]);
-    attrib.second = buf;
-    attrs.push_back(attrib);
-  }
-  if (m_mag_filter != m_defMagFilter) {
-    attrib.first = "sgalMagFilter";
-    sprintf(buf, "%s", m_mag_filterNames[m_mag_filter]);
-    attrib.second = buf;
-    attrs.push_back(attrib);
-  }
-
-  return attrs; 
-}
-
-/*! add a material to the material pool. connect the material to
- * its parent appearance.
- */
-void Texture::AddToScene(Scene_graph* sg, XML_entity* parent)
-{
-    Container::AddToScene(sg, parent);
-    sg->AddContainer(this);
-    Appearance* appearance = dynamic_cast<Appearance *>(parent);
-    if (appearance) {
-      // set the texture but do not set the bits yet
-      appearance->set_Texture(this);
-      appearance->set_TexEnable(true);
-    }
-
-    Environment_Map* env = dynamic_cast<Environment_Map *>(parent);
-    if (env) {
-        env->set_Texture(this);
-        return;
-    }
-
-    /*
-    Bump* bump = dynamic_cast<Bump *>(parent);
-    if (bump) {
-        bump->set_Texture(this);
-        m_heightField = true;
-        return;
-    }
-    */
-}
-#endif
-
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Texture::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto();
-
-  // Add the field-info records to the prototype:
-  //! \todo why use the _str and not the attribute itself?
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Texture::min_filter_changed);
-  SF_string* min_filter_field_info =
-    new SF_string(MIN_FILTER, "minFilter",
-                  get_member_offset(&m_min_filter_str),
-                  exec_func);
-  s_prototype->add_field_info(min_filter_field_info);
-
-  exec_func =
-    static_cast<Execution_function>(&Texture::mag_filter_changed);
-  SF_string* mag_filter_field_info =
-    new SF_string(MAG_FILTER, "magFilter",
-                  get_member_offset(&m_mag_filter_str),
-                  exec_func);  
-  s_prototype->add_field_info(mag_filter_field_info);
-
-  exec_func = static_cast<Execution_function>(&Texture::wraps_changed);
-  s_prototype->add_field_info(new SF_bool(REPEAT_S, "repeatS",
-                                          get_member_offset(&m_repeats),
-                                          exec_func));
-
-  exec_func = static_cast<Execution_function>(&Texture::wrapt_changed);
-  s_prototype->add_field_info(new SF_bool(REPEAT_T, "repeatT",
-                                          get_member_offset(&m_repeatt),
-                                          exec_func));
 }
 
-/*! */
+/*! \brief deletes the node prototype. */
 void Texture::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtains the node prototype. */
 Container_proto* Texture::get_prototype() 
 {  
   if (!s_prototype) Texture::init_prototype();
   return s_prototype;
 }
 
-/*!
- */
-Boolean Texture::attach_context(Context* context)
-{
-  Boolean result = Container::attach_context (context);
-  return result;
-}
-
-/*!
- */
-Boolean Texture::detach_context(Context* context)
-{
-  Boolean result = Container::detach_context(context);
-  // next draw with another context - recreate the texture
-  m_dirty = true;
-  return result;
-}
-
-/*! Print texture information */
+/*! \brief prints texture information. */
 void Texture::print_info()
 {
   int width = get_width();

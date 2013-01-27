@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 10977 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -23,9 +23,7 @@
 #define SGAL_APPEARANCE_HPP
 
 /*! \file
- * \brief The appearance container represents the appearance of a shape
- *              
- * Inherits from Container.
+ * Represents the appearance of a shape.
  */
 
 #if (defined _MSC_VER)
@@ -118,8 +116,13 @@ public:
   /*! Obtain the texture environment attribute. */
   Gfx::Tex_env get_tex_env() const;
 
-  /*! Set the texture-generation attribute. */
-  void set_tex_gen(Tex_gen* tex_gen);
+  /*! Set the texture-generation attribute.
+   * \param tex_gen (in) the texture-generation attribute.
+   * \param owned (in) indicates whether the texture-generation attribute is
+   *              owned. If it is owned, the normal array  is constructed and
+   *              destructed by the construct.
+   */
+  void set_tex_gen(Tex_gen* tex_gen, Boolean owned = false);
 
   /*! Obtain the texture-generation attribute. */
   Tex_gen* get_tex_gen() const;
@@ -130,8 +133,9 @@ public:
   /*! Obtain the the texture-generation enable flag. */
   Boolean get_tex_gen_enable() const;
 
-  /*! Set the material attribute. */
-  void set_material(Material* material);
+  /*! Set the material attribute.
+   */
+  void set_material(Material* material, Boolean owned = false);
 
   /*! Obtain the material attribute. */
   Material* get_material() const;
@@ -287,7 +291,9 @@ public:
   /*! Set the state specified by the appearance. */
   virtual void draw(Draw_action* action);
 
-  /*! Determine whether appearance is translucent. */
+  /*! Determine whether the appearance is translucent.
+   * \return true if the material is transparent and false otherwise.
+   */
   Boolean is_transparent() const;
 
   /*! Notify that the material has changed. */
@@ -343,9 +349,9 @@ private:
   Bit_mask m_dirty_flags;
 
   /*! Default value */
-  static Gfx::Poly_mode m_def_poly_mode;
-  static Gfx::Shade_model m_def_shade_model;
-  static Gfx::Tex_env m_def_tex_env;
+  static const Gfx::Poly_mode s_def_poly_mode;
+  static const Gfx::Shade_model s_def_shade_model;
+  static const Gfx::Tex_env s_def_tex_env;
 
   // for each field, the corresponding bit is being set when the filed is 
   // set to a new value. it is then turned off after the drawing is performed
@@ -361,20 +367,20 @@ private:
   /*! Indicates whether a material node has been newly created, (as the user
    * hasn't provided one,) and should be deleted when the node is destructed
    */
-  Boolean m_own_material;
+  Boolean m_owned_material;
 
   /*! Indicates whether a tex_gen node has been newly created, (as the user
    * hasn't provided one,) and should be deleted when the node is destructed
    */
-  Boolean m_own_tex_gen;
+  Boolean m_owned_tex_gen;
 
-  /*! The default halftone pattern */
+  /*! The default halftone pattern. */
   static Ubyte s_def_halftone[];
 
-  /*! Initialize the node upon construction */
+  /*! Initialize the node upon construction. */
   void init();
 
-  /*! Clean the node before drawing */
+  /*! Clean the node before drawing. */
   void clean();
   
   friend class Context;

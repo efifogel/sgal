@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14184 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -129,23 +129,31 @@ public:
   void set_coord_array(Coord_array* coord_array);
 
   /*! Obtain the coordinate array. */
-  Coord_array* get_coord_array() const { return m_coord_array; }
+  Coord_array* get_coord_array() const;
 
   /*! Set the normal array.
-   * \param coord_array (in) a pointer to a normal array
+   * \param normal_array (in) the normal array.
+   * \param owned (in) Indicates whether the normal array is owned.
+   *        If it is owned, the normal array  is constructed and destructed by 
+   *        the construct.
    */
-  void set_normal_array(Normal_array* normal_array);
+  void set_normal_array(Normal_array* normal_array, Boolean owned = false);
 
   /*! Obtain the normal array. */
-  Normal_array* get_normal_array() const { return m_normal_array; }
+  Normal_array* get_normal_array() const;
 
   /*! Set the texture-coordinate array.
-   * \param tex_coord_array (in) a pointer to a texture-coordinate array
+   * \param tex_coord_array (in) the texture coordinate array.
+   * \param owned (in) Indicates whether the texture coordinate array is owned.
+   *              If it is owned, the texture coordinate array is constructed
+   *              and destructed by the construct.
    */
-  void set_tex_coord_array(Tex_coord_array* tex_coord_array);
+  void set_tex_coord_array(Tex_coord_array* tex_coord_array,
+                           Boolean owned = false);
+
 
   /*! Obtain the texture-coordinate array. */
-  Tex_coord_array* get_tex_coord_array() const { return m_tex_coord_array; }
+  Tex_coord_array* get_tex_coord_array() const;
 
   /*! Set the color field.
    * \param color_array (in) a pointer to a color array
@@ -153,7 +161,7 @@ public:
   void set_color_array(Color_array* color_array);
 
   /*! Obtain the normal array. */
-  Color_array* get_color_array() const { return m_color_array; }
+  Color_array* get_color_array() const;
 
   /*! Obtain the coord-index array. */
   const SGAL::Array<Uint>& get_coord_indices() const;
@@ -180,16 +188,42 @@ public:
   const Uint* get_tex_coord_indices_vector() const;
 
   /*! Obtain the i-th coord index. */
-  Uint get_coord_index(Uint i) const { return m_coord_indices[i]; }
-  
-  /*! Set the representation mode. */
-  void set_primitive_type(Primitive_type type) { m_primitive_type = type; }
-
-  /*! Obtain the representation mode. */
-  Primitive_type get_primitive_type() const { return m_primitive_type; }
+  Uint get_coord_index(Uint i) const;
   
   /*! Determine whether the representation is empty. */
   Boolean is_empty() const;
+
+  /*! Obtain a pointer to an element directly. */
+  template <typename T_Vector>
+  GLfloat* get(T_Vector& array, Uint i) const;
+
+  /*! Obtain a pointer to an element through the coord indices. */
+  template <typename T_Vector>
+  GLfloat* get_by_coord_index(T_Vector& array, Uint i) const;
+
+  /*! Obtain apointer to an element through the normal indices. */
+  template <typename T_Vector>
+  GLfloat* get_by_normal_index(T_Vector& array, Uint i) const;
+  
+  /*! Obtain a pointer to an element through the color indices. */
+  template <typename T_Vector>
+  GLfloat* get_by_color_index(T_Vector& array, Uint i) const;
+
+  /*! Obtain a pointer to an element through the tex. coord indices. */
+  template <typename T_Vector>
+  GLfloat* get_by_tex_coord_index(T_Vector & array, Uint i) const;
+
+  /*! Set the representation mode. */
+  void set_primitive_type(Primitive_type type);
+
+  /*! Obtain the representation mode. */
+  Primitive_type get_primitive_type() const;
+  
+  /*! Obtain the number of primitives. */
+  Uint get_num_primitives() const;
+
+  /*! Set the number of primitives. */
+  void set_num_primitives(Uint num);
 
   /*! Determine whether the geometry has color (as opposed to material). */
   virtual Boolean has_color() const { return m_color_array != NULL; }  
@@ -199,37 +233,6 @@ public:
 
   /*! Process change of coordinates. */
   virtual void coord_changed(Field_info* /* field_info. */) {}
-
-  /*! Obtain a pointer to an element directly. */
-  template <class T_Vector>
-  GLfloat* get(T_Vector& array, Uint i) const
-  { return ((GLfloat *) &(array)[i]); }
-
-  /*! Obtain a pointer to an element through the coord indices. */
-  template <class T_Vector>
-  GLfloat* get_by_ci(T_Vector& array, Uint i) const
-  { return ((GLfloat *) &(array)[m_coord_indices[i]]); }
-
-  /*! Obtain apointer to an element through the normal indices. */
-  template <class T_Vector>
-  GLfloat* get_by_ni(T_Vector& array, Uint i) const
-  { return ((GLfloat *) &(array)[m_normal_indices[i]]); }
-  
-  /*! Obtain apointer to an element through the color indices. */
-  template <class T_Vector>
-  GLfloat* get_by_color_index(T_Vector& array, Uint i) const
-  { return ((GLfloat *) &(array)[m_color_indices[i]]); }
-
-  /*! Obtain a pointer to an element through the tex. coord indices. */
-  template <class T_Vector>
-  GLfloat* get_by_ti(T_Vector & array, Uint i) const
-  { return ((GLfloat *) &(array)[m_tex_coord_indices[i]]); }
-
-  /*! Obtain the number of primitives. */
-  Uint get_num_primitives() const { return m_num_primitives; }
-
-  /*! Set the number of primitives. */
-  void set_num_primitives(Uint num) { m_num_primitives = num; }
 
 protected:
   /*! The number of primitives in this Geo_set. */
@@ -244,12 +247,24 @@ protected:
   /*! An array of vertex ccordinates. */
   Coord_array* m_coord_array;
 
-  /*! An array if vertex normals. */
+  /*! An array of normals. */
   Normal_array* m_normal_array;
+
+  /*! Indicates whether the normal array is owned by the construct.
+   * If it is owned, the normal array is constructed and destructed by the
+   * construct.
+   */
+  Boolean m_owned_normal_array;  
 
   /*! An array of vertex texture-ccordinates. */
   Tex_coord_array* m_tex_coord_array;
 
+  /*! Indicates whether the texture coordinate array is owned by the construct.
+   * If it is owned, the texture coordinate array is constructed and destructed
+   * by the construct.
+   */
+  Boolean m_owned_tex_coord_array;  
+  
   /*! An array if vertex colors. */
   Color_array* m_color_array;
   
@@ -319,12 +334,67 @@ inline const Uint* Geo_set::get_normal_indices_vector() const
 inline const Uint* Geo_set::get_tex_coord_indices_vector() const
 { return m_tex_coord_indices.get_vector(); }
 
+/*! \brief Obtain the i-th coord index. */
+inline Uint Geo_set::get_coord_index(Uint i) const { return m_coord_indices[i]; }
+  
 /*! \brief resolvess the conflict between normal and colors. If the color
  * array is present, we use colors as source (disable lighting, etc.).
  */
 inline Geo_set::Fragment_source Geo_set::resolve_fragment_source() const
 { return (m_color_array && m_color_array->size()) ? FS_COLOR : FS_NORMAL; }
+
+/*! \brief obtains the coordinate array. */
+inline Coord_array* Geo_set::get_coord_array() const { return m_coord_array; }
+
+/*! \brief obtains the normal array. */
+inline Normal_array* Geo_set::get_normal_array() const { return m_normal_array; }
+
+/*! \brief obtains the texture-coordinate array. */
+inline Tex_coord_array* Geo_set::get_tex_coord_array() const
+{ return m_tex_coord_array; }
+
+/*! \brief obtains the normal array. */
+inline Color_array* Geo_set::get_color_array() const { return m_color_array; }
+
+/*! \brief obtains a pointer to an element directly. */
+template <typename T_Vector>
+inline GLfloat* Geo_set::get(T_Vector& array, Uint i) const
+{ return ((GLfloat *) &(array)[i]); }
+
+/*! \brief obtains a pointer to an element through the coord indices. */
+template <typename T_Vector>
+inline GLfloat* Geo_set::get_by_coord_index(T_Vector& array, Uint i) const
+{ return ((GLfloat *) &(array)[m_coord_indices[i]]); }
+
+/*! \brief obtains a pointer to an element through the normal indices. */
+template <typename T_Vector>
+inline GLfloat* Geo_set::get_by_normal_index(T_Vector& array, Uint i) const
+{ return ((GLfloat *) &(array)[m_normal_indices[i]]); }
   
+/*! \brief obtains a pointer to an element through the color indices. */
+template <typename T_Vector>
+inline GLfloat* Geo_set::get_by_color_index(T_Vector& array, Uint i) const
+{ return ((GLfloat *) &(array)[m_color_indices[i]]); }
+
+/*! \brief obtains a pointer to an element through the tex. coord indices. */
+template <typename T_Vector>
+inline GLfloat* Geo_set::get_by_tex_coord_index(T_Vector & array, Uint i) const
+{ return ((GLfloat *) &(array)[m_tex_coord_indices[i]]); }
+
+/*! \brief Set the representation mode. */
+inline void Geo_set::set_primitive_type(Primitive_type type)
+{ m_primitive_type = type; }
+
+/*! \brief Obtain the representation mode. */
+inline Geo_set::Primitive_type Geo_set::get_primitive_type() const
+{ return m_primitive_type; }
+
+/*! \brief obtains the number of primitives. */
+inline Uint Geo_set::get_num_primitives() const { return m_num_primitives; }
+
+/*! \brief sets the number of primitives. */
+inline void Geo_set::set_num_primitives(Uint num) { m_num_primitives = num; }
+
 SGAL_END_NAMESPACE
 
 #endif

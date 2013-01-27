@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -52,7 +52,7 @@ const Float Indexed_geodesic_set::s_def_line_width(1);
 
 REGISTER_TO_FACTORY(Indexed_geodesic_set, "Indexed_geodesic_set");
 
-/*! A parameter-less constructor */
+/*! \brief A parameter-less constructor */
 Indexed_geodesic_set::Indexed_geodesic_set(Boolean proto) :
   Geo_set(proto),
   m_color_per_vertex(m_def_color_per_vertex),
@@ -67,11 +67,12 @@ Indexed_geodesic_set::Indexed_geodesic_set(Boolean proto) :
   m_primitive_type = PT_LINES;
 }
 
-/*! Destructor */
+/*! \brief Destructor */
 Indexed_geodesic_set::~Indexed_geodesic_set() {}
 
-/* Set the flag that indicates whether normals are bound per vertex or per face.
- * @param normal_per_vertex true if normals are bound per vertex
+/* \brief set the flag that indicates whether normals are bound per vertex or
+ * per face.
+ * \param normal_per_vertex true if normals are bound per vertex
  */
 void Indexed_geodesic_set::set_normal_per_vertex(Boolean normal_per_vertex)
 {
@@ -79,8 +80,9 @@ void Indexed_geodesic_set::set_normal_per_vertex(Boolean normal_per_vertex)
   m_normal_attachment = (normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/* Set the flag that indicates whether colors are bound per vertex or per face.
- * @param color_per_vertex true if normals are bound per vertex
+/* \brief sets the flag that indicates whether colors are bound per vertex or
+ * per face.
+ * \param color_per_vertex true if normals are bound per vertex
  */
 void Indexed_geodesic_set::set_color_per_vertex(Boolean color_per_vertex)
 {
@@ -88,7 +90,7 @@ void Indexed_geodesic_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/*! Set the coordinate set. Pass the pointer to the geometry object 
+/*! \brief sets the coordinate set. Pass the pointer to the geometry object 
  * used by the decoder as well.
  * \param coord_array (in) a pointer to a coord set
  */
@@ -98,37 +100,31 @@ void Indexed_geodesic_set::set_coord_array(Coord_array* coord_array)
   m_dirty_sphere_bound = true;
 }
 
-/*! Set the normal set. Pass the pointer to the geometry object 
+/*! \brief sets the normal set. Pass the pointer to the geometry object 
  * used by the decoder as well.
  * \param coord_array (in) a pointer to a coord set
  */ 
 void Indexed_geodesic_set::set_normal_array(Normal_array* normal_array)
-{
-  m_normal_array = normal_array;
-}
+{ m_normal_array = normal_array; }
 
-/*! Set the texture coordinate set. Pass the pointer to the geometry object 
- * used by the decoder as well.
+/*! \brief sets the texture coordinate set. Pass the pointer to the geometry
+ * object used by the decoder as well.
  * \param tex_coord_array (in) a pointer to a coord set
  */
 void Indexed_geodesic_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
-{
-  m_tex_coord_array = tex_coord_array;
-}
+{ m_tex_coord_array = tex_coord_array; }
 
-/*! Set the color set. Pass the pointer to the geometry object 
+/*! \brief sets the color set. Pass the pointer to the geometry object 
  * used by the decoder as well.
  * \param color_array (in) a pointer to a color set
  */
 void Indexed_geodesic_set::set_color_array(Color_array* color_array)
-{
-  m_color_array = color_array;
-}
+{ m_color_array = color_array; }
 
-/*! Draws the geometry.
+/*! \brief draws the geometry.
  * For efficiency reasons, differenrt methods were written to 
  * draw geometries with different kinds of data (texture/normal/color).
- * @param action action.
+ * \param action action.
  */
 void Indexed_geodesic_set::draw(Draw_action* action)
 {
@@ -154,39 +150,45 @@ void Indexed_geodesic_set::draw(Draw_action* action)
 	
     glBegin(GL_LINES);
 
-    for (Uint i = 0; i < m_num_primitives; i++) {
+    for (Uint i = 0; i < m_num_primitives; ++i) {
       if ((fragment_attached == PER_VERTEX) ||
           ((fragment_attached == PER_PRIMITIVE) && ((j & 0x1) == 0x0)))
       {
         if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_ci(*m_color_array, k));
-        } else {
-          if (m_normal_array) glNormal3fv(get_by_ci(*m_normal_array, k));
+          if (m_color_array) glColor3fv(get_by_coord_index(*m_color_array, k));
+        }
+        else {
+          if (m_normal_array)
+            glNormal3fv(get_by_coord_index(*m_normal_array, k));
         }
         ++k;
       }
-      glVertex3fv(get_by_ci(*m_coord_array, j));
-      glVertex3fv(get_by_ci(*m_coord_array, j+1));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j+1));
       j += 2;
     }
     glEnd();
-  } else if (m_primitive_type == PT_LINE_STRIPS) {
+  }
+  else if (m_primitive_type == PT_LINE_STRIPS) {
     Uint j = 0;
     Uint k = 0;
     int m_radius = 1;
-    for (Uint i = 0; i < m_num_primitives; i++) {
+    for (Uint i = 0; i < m_num_primitives; ++i) {
       if (fragment_attached == PER_PRIMITIVE) {
         if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_ci(*m_color_array, k));
-        } else {
-          if (m_normal_array) glNormal3fv(get_by_ci(*m_normal_array, k));
+          if (m_color_array) glColor3fv(get_by_coord_index(*m_color_array, k));
+        }
+        else {
+          if (m_normal_array)
+            glNormal3fv(get_by_coord_index(*m_normal_array, k));
         }
         ++k;
       }
 	  
       glBegin(GL_LINE_STRIP);
       
-      // std::cout << m_coord_indices[j] << " * " << m_coord_indices[j+1] << std::endl;
+      // std::cout << m_coord_indices[j] << " * " << m_coord_indices[j+1]
+      //           << std::endl;
       Vector3f first_coord = (*m_coord_array)[m_coord_indices[j]];
       Vector3f second_coord = (*m_coord_array)[m_coord_indices[j+1]];
       j += 2;
@@ -235,7 +237,7 @@ void Indexed_geodesic_set::draw(Draw_action* action)
           nextIter++;
         }
       }
-      for (iter = points.begin(); iter!= points.end(); iter++) {
+      for (iter = points.begin(); iter!= points.end(); ++iter) {
         Vector3f temp = *iter;
         glVertex3fv((float*)&temp);
       }
@@ -252,11 +254,10 @@ void Indexed_geodesic_set::draw(Draw_action* action)
   if (fragment_source) context->draw_light_enable(true);
 }
 
-/*!
- */
+/*! \brief */
 void Indexed_geodesic_set::isect(Isect_action* /* action */) {}
 
-/*! Calculate the sphere bound of the mesh. Returns true if the BS has
+/*! \brief calculates the sphere bound of the mesh. Returns true if the BS has
  * changed since lst time this was called.
  */
 bool Indexed_geodesic_set::clean_sphere_bound()
@@ -267,10 +268,7 @@ bool Indexed_geodesic_set::clean_sphere_bound()
   return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the object. */
 void Indexed_geodesic_set::set_attributes(Element* elem) 
 { 
   Geo_set::set_attributes(elem);
@@ -309,7 +307,7 @@ void Indexed_geodesic_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! sets the attributes of this node */
+/*! \brief initializes the prototype. */
 void Indexed_geodesic_set::init_prototype()
 {
   if (s_prototype) return;
@@ -319,17 +317,17 @@ void Indexed_geodesic_set::init_prototype()
                                            get_member_offset(&m_line_width)));
 }
 
-/*! */
+/*! \brief deletes the prototype. */
 void Indexed_geodesic_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
-Container_proto * Indexed_geodesic_set::get_prototype() 
+/*! \brief obtains the prototype. */
+Container_proto* Indexed_geodesic_set::get_prototype() 
 {  
-  if (!s_prototype) init_prototype();
+  if (!s_prototype) Indexed_geodesic_set::init_prototype();
   return s_prototype;
 }
 

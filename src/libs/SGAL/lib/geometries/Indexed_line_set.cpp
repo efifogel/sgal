@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 14184 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -42,7 +42,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Indexed_line_set::s_tag = "sgalIndexedLineSet";
+std::string Indexed_line_set::s_tag = "indexedLineSet";
 Container_proto* Indexed_line_set::s_prototype = 0;
 
 // Default values:
@@ -88,7 +88,7 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/*! Set the coordinate set. Pass the pointer to the geometry object 
+/*! \brief sets the coordinate set. Pass the pointer to the geometry object 
  * used by the decoder as well.
  * \param coord_array (in) a pointer to a coord set
  */
@@ -98,31 +98,28 @@ void Indexed_line_set::set_coord_array(Coord_array* coord_array)
   m_dirty_sphere_bound = true;
 }
 
-/*! Set the normal set. Pass the pointer to the geometry object 
- * used by the decoder as well.
+/*! \brief sets the normal set.
  * \param coord_array (in) a pointer to a coord set
 */ 
 void Indexed_line_set::set_normal_array(Normal_array* normal_array)
 { m_normal_array = normal_array; }
 
-/*! Set the texture coordinate set. Pass the pointer to the geometry object 
- * used by the decoder as well.
+/*! \brief sets the texture coordinate set.
  * \param tex_coord_array (in) a pointer to a coord set
  */
 void Indexed_line_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
 { m_tex_coord_array = tex_coord_array; }
 
-/*! Set the color set. Pass the pointer to the geometry object 
- * used by the decoder as well.
+/*! \brief sets the color set.
  * \param color_array (in) a pointer to a color set
  */
 void Indexed_line_set::set_color_array(Color_array* color_array)
 { m_color_array = color_array; }
 
-/*! Draws the geometry.
+/*! \brief draws the geometry.
  * For efficiency reasons, differenrt methods were written to 
  * draw geometries with different kinds of data (texture/normal/color).
- * @param action action.
+ * \param action action.
  */
 void Indexed_line_set::draw(Draw_action* action)
 {
@@ -147,41 +144,45 @@ void Indexed_line_set::draw(Draw_action* action)
     Uint k = 0;
     glBegin(GL_LINES);
 
-    for (Uint i = 0; i < m_num_primitives; i++) {
+    for (Uint i = 0; i < m_num_primitives; ++i) {
       if ((fragment_attached == PER_VERTEX) ||
           ((fragment_attached == PER_PRIMITIVE) && ((j & 0x1) == 0x0)))
       {
         if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_ci(*m_color_array, k));
-        } else {
-          if (m_normal_array) glNormal3fv(get_by_ci(*m_normal_array, k));
+          if (m_color_array) glColor3fv(get_by_coord_index(*m_color_array, k));
+        }
+        else {
+          if (m_normal_array)
+            glNormal3fv(get_by_coord_index(*m_normal_array, k));
         }
         ++k;
       }
-      glVertex3fv(get_by_ci(*m_coord_array, j));
-      glVertex3fv(get_by_ci(*m_coord_array, j+1));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j+1));
       j += 2;
     }
     glEnd();
   } else if (m_primitive_type == PT_LINE_STRIPS) {
     Uint j = 0;
     Uint k = 0;
-    for (Uint i = 0; i < m_num_primitives; i++) {
+    for (Uint i = 0; i < m_num_primitives; ++i) {
       if (fragment_attached == PER_PRIMITIVE) {
         if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_ci(*m_color_array, k));
-        } else {
-          if (m_normal_array) glNormal3fv(get_by_ci(*m_normal_array, k));
+          if (m_color_array) glColor3fv(get_by_coord_index(*m_color_array, k));
+        }
+        else {
+          if (m_normal_array)
+            glNormal3fv(get_by_coord_index(*m_normal_array, k));
         }
         ++k;
       }
       glBegin(GL_LINE_STRIP);
       for (; m_coord_indices[j] != (Uint) -1; ++j) {
-        glVertex3fv(get_by_ci(*m_coord_array, j));
+        glVertex3fv(get_by_coord_index(*m_coord_array, j));
         if (fragment_attached == PER_VERTEX) {
           if (fragment_source == FS_COLOR)
-            glColor3fv(get_by_ci(*m_color_array, k));
-          else glNormal3fv(get_by_ci(*m_normal_array, k));
+            glColor3fv(get_by_coord_index(*m_color_array, k));
+          else glNormal3fv(get_by_coord_index(*m_normal_array, k));
           ++k;
         }
       }
@@ -197,13 +198,10 @@ void Indexed_line_set::draw(Draw_action* action)
   if (fragment_source) context->draw_light_enable(true);
 }
 
-/*!
- */
-void Indexed_line_set::isect(Isect_action* /* action */)
-{
-}
+/*! \brief */
+void Indexed_line_set::isect(Isect_action* /* action */) { }
 
-/*! Calculate the sphere bound of the mesh. Returns true if the BS has
+/*! \brief calculates the sphere bound of the mesh. Returns true if the BS has
  * changed since lst time this was called.
  */
 bool Indexed_line_set::clean_sphere_bound()
@@ -214,23 +212,15 @@ bool Indexed_line_set::clean_sphere_bound()
   return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief setss the attributes of the geometry object. */
 void Indexed_line_set::set_attributes(Element* elem) 
 { 
   Geo_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-
   std::string normal_indices_string;
-
-  //! \todo sg->get_stats().add_num_mesh();
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "colorPerVertex") {
@@ -259,7 +249,7 @@ void Indexed_line_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! sets the attributes of this node */
+/*! \brief sets the attributes of this node */
 void Indexed_line_set::init_prototype()
 {
   if (s_prototype) return;
@@ -269,14 +259,14 @@ void Indexed_line_set::init_prototype()
                                            get_member_offset(&m_line_width)));
 }
 
-/*! */
+/*! \brief deletes the prototype. */
 void Indexed_line_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtains the prototype. */
 Container_proto* Indexed_line_set::get_prototype() 
 {  
   if (!s_prototype) Indexed_line_set::init_prototype();

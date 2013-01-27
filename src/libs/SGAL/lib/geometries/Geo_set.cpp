@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14198 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -58,7 +58,9 @@ Geo_set::Geo_set(Boolean proto) :
   m_color_attachment(PER_VERTEX),
   m_coord_array(NULL),
   m_normal_array(NULL),
+  m_owned_normal_array(false),
   m_tex_coord_array(NULL),
+  m_owned_tex_coord_array(false),
   m_color_array(NULL),
   m_coord_indices(),
   m_tex_coord_indices(),
@@ -68,7 +70,23 @@ Geo_set::Geo_set(Boolean proto) :
 {}
 
 /*! Destructor */
-Geo_set::~Geo_set() {}
+Geo_set::~Geo_set()
+{
+  if (m_owned_normal_array) {
+    if (m_normal_array) {
+      delete m_normal_array;
+      m_normal_array = NULL;
+    }
+    m_owned_normal_array = false;
+  }
+  if (m_owned_tex_coord_array) {
+    if (m_tex_coord_array) {
+      delete m_tex_coord_array;
+      m_tex_coord_array = NULL;
+    }
+    m_owned_tex_coord_array = false;
+  }
+}
 
 /*! \brief sets the attributes of this node. */
 void Geo_set::init_prototype()
@@ -114,12 +132,31 @@ void Geo_set::set_coord_array(Coord_array* coord_array)
 }
 
 /*! \brief sets the normal array. */
-void Geo_set::set_normal_array(Normal_array* normal_array)
-{ m_normal_array = normal_array; }
+void Geo_set::set_normal_array(Normal_array* normal_array, Boolean owned)
+{
+  if (m_owned_normal_array) {
+    if (m_normal_array) {
+      delete m_normal_array;
+      m_normal_array = NULL;
+    }
+  }
+  m_normal_array = normal_array;
+  m_owned_normal_array = owned;
+}
 
 /*! \brief sets the texture-coordinate array. */
-void Geo_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
-{ m_tex_coord_array = tex_coord_array; }
+void Geo_set::set_tex_coord_array(Tex_coord_array* tex_coord_array,
+                                  Boolean owned)
+{
+  if (m_owned_tex_coord_array) {
+    if (m_tex_coord_array) {
+      delete m_tex_coord_array;
+      m_tex_coord_array = NULL;
+    }
+  }
+  m_tex_coord_array = tex_coord_array;
+  m_owned_tex_coord_array = owned;
+}
 
 /*! \brief sets the color array. */
 void Geo_set::set_color_array(Color_array* color_array)
@@ -266,9 +303,8 @@ void Geo_set::set_attributes(Element* elem)
     }
   }
 
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "coord") {

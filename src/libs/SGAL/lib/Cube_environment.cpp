@@ -23,7 +23,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Cube_environment.hpp"
-#include "SGAL/Texture.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
@@ -40,8 +39,8 @@ Container_proto* Cube_environment::s_prototype = NULL;
 
 /*! Constructor */
 Cube_environment::Cube_environment(Boolean proto) :
-  Texture(proto)
-{}
+  Texture_base(proto)
+{ this->set_target(s_targets[TEXTURE_CUBE_MAP]); }
 
 /*! Destructor */
 Cube_environment::~Cube_environment() {}
@@ -53,7 +52,7 @@ void Cube_environment::init_prototype()
   if (s_prototype != NULL) return;
 
   // Allocate a prototype instance
-  s_prototype = new Container_proto(Texture::get_prototype());
+  s_prototype = new Container_proto(Texture_base::get_prototype());
 }
 
 /*! \brief deletes the prototype. */
@@ -73,17 +72,142 @@ Container_proto* Cube_environment::get_prototype()
 /*! \brief sets the attributes of the cubical environment map. */
 void Cube_environment::set_attributes(Element* elem)
 {
-  Texture::set_attributes(elem);
+  Texture_base::set_attributes(elem);
 
-  typedef Element::Str_attr_iter                Str_attr_iter;
+  // typedef Element::Str_attr_iter          Str_attr_iter;
+  // Str_attr_iter ai;
+  // for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  //   const std::string& name = elem->get_name(ai);
+  //   const std::string& value = elem->get_value(ai);
+  // }
 
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    // const std::string& name = elem->get_name(ai);
-    // const std::string& value = elem->get_value(ai);
+  typedef Element::Cont_attr_iter         Cont_attr_iter;
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Container* cont = elem->get_value(cai);
+    if (name == "leftImage") {
+      Image* image = dynamic_cast<Image*>(cont);
+      set_left_image(image);
+      elem->mark_delete(cai);
+      continue;
+    }
+    if (name == "rightImage") {
+      Image* image = dynamic_cast<Image*>(cont);
+      set_right_image(image);
+      elem->mark_delete(cai);
+      continue;
+    }
+    if (name == "frontImage") {
+      Image* image = dynamic_cast<Image*>(cont);
+      set_front_image(image);
+      elem->mark_delete(cai);
+      continue;
+    }
+    if (name == "backImage") {
+      Image* image = dynamic_cast<Image*>(cont);
+      set_back_image(image);
+      elem->mark_delete(cai);
+      continue;
+    }
+    if (name == "bottomImage") {
+      Image* image = dynamic_cast<Image*>(cont);
+      set_bottom_image(image);
+      elem->mark_delete(cai);
+      continue;
+    }
+    if (name == "topImage") {
+      Image* image = dynamic_cast<Image*>(cont);
+      set_top_image(image);
+      elem->mark_delete(cai);
+      continue;
+    }
   }
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
+
+/*! \brief cleans the objec. */
+void Cube_environment::clean()
+{
+}
+
+/*! \brief sets the left image. */
+void Cube_environment::set_left_image(Image* image, Boolean owned)
+{
+  if (m_images[LEFT_IMAGE].second) {
+    if (m_images[LEFT_IMAGE].first) {
+      delete m_images[LEFT_IMAGE].first;
+      m_images[LEFT_IMAGE].first = NULL;
+    }
+  }
+  m_images[LEFT_IMAGE].first = image;
+  m_images[LEFT_IMAGE].second = owned; 
+}  
+
+/*! \brief sets the right image. */
+void Cube_environment::set_right_image(Image* image, Boolean owned)
+{
+  if (m_images[RIGHT_IMAGE].second) {
+    if (m_images[RIGHT_IMAGE].first) {
+      delete m_images[RIGHT_IMAGE].first;
+      m_images[RIGHT_IMAGE].first = NULL;
+    }
+  }
+  m_images[RIGHT_IMAGE].first = image;
+  m_images[RIGHT_IMAGE].second = owned; 
+}  
+
+/*! \brief sets the front image. */
+void Cube_environment::set_front_image(Image* image, Boolean owned)
+{
+  if (m_images[FRONT_IMAGE].second) {
+    if (m_images[FRONT_IMAGE].first) {
+      delete m_images[FRONT_IMAGE].first;
+      m_images[FRONT_IMAGE].first = NULL;
+    }
+  }
+  m_images[FRONT_IMAGE].first = image;
+  m_images[FRONT_IMAGE].second = owned; 
+}  
+
+/*! \brief sets the back image. */
+void Cube_environment::set_back_image(Image* image, Boolean owned)
+{
+  if (m_images[BACK_IMAGE].second) {
+    if (m_images[BACK_IMAGE].first) {
+      delete m_images[BACK_IMAGE].first;
+      m_images[BACK_IMAGE].first = NULL;
+    }
+  }
+  m_images[BACK_IMAGE].first = image;
+  m_images[BACK_IMAGE].second = owned; 
+}  
+
+/*! \brief sets the bottom image. */
+void Cube_environment::set_bottom_image(Image* image, Boolean owned)
+{
+  if (m_images[BOTTOM_IMAGE].second) {
+    if (m_images[BOTTOM_IMAGE].first) {
+      delete m_images[BOTTOM_IMAGE].first;
+      m_images[BOTTOM_IMAGE].first = NULL;
+    }
+  }
+  m_images[BOTTOM_IMAGE].first = image;
+  m_images[BOTTOM_IMAGE].second = owned; 
+}  
+
+/*! \brief sets the top image. */
+void Cube_environment::set_top_image(Image* image, Boolean owned)
+{
+  if (m_images[TOP_IMAGE].second) {
+    if (m_images[TOP_IMAGE].first) {
+      delete m_images[TOP_IMAGE].first;
+      m_images[TOP_IMAGE].first = NULL;
+    }
+  }
+  m_images[TOP_IMAGE].first = image;
+  m_images[TOP_IMAGE].second = owned; 
+}  
 
 SGAL_END_NAMESPACE

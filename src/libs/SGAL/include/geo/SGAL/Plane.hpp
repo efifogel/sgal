@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -23,7 +23,7 @@
 #define SGAL_PLANE_HPP
 
 /*! \file
- *
+ * An oriented plane.
  */
 
 #include "SGAL/basic.hpp"
@@ -38,16 +38,28 @@ class Sphere_bound;
 class Seg;
 class Line;
 
-class SGAL_CLASSDEF Plane { // : public Bound
+class SGAL_CLASSDEF Plane {
 public:
-  // set/Get
-  void set_normal(Float x, Float y, Float z) { m_normal.set(x,y,z); }
-  void set_normal(const Vector3f& n) { m_normal.set(n); }
-  void get_normal(Vector3f& n) const { m_normal.get(n); }
-  const Vector3f& get_normal() const { return m_normal; }
+  /*! Set the plane with the content of another plane. */
+  void set(const Plane& plane);
+
+  /*! Set the normal of the plane. */
+  void set_normal(Float x, Float y, Float z);
+
+  /*! Set the normal of the plane. */
+  void set_normal(const Vector3f& n);
+
+  /*! Obtain the normal of the plane. */
+  void get_normal(Vector3f& n) const;
+
+  /*! Obtain the normal of the plane. */
+  const Vector3f& get_normal() const;
   
-  void set_offset(float o) { m_offset = o; }
-  Float get_offset() const { return m_offset; }
+  /*! Set the offset of the plane. */
+  void set_offset(float o);
+
+  /*! Obtain the offset of the plane. */
+  Float get_offset() const;
 
 public:
   // Configuration
@@ -59,15 +71,14 @@ public:
   // Stores the normal-point representation of the plane in norm and point.
   void make_norm_pt(const Vector3f& norm, const Vector3f& pos);
 
-  void copy(const Plane& p)
-  { m_normal.set(p.m_normal); m_offset = p.m_offset; }
-
 public:
   // Containment/intersection
 
   // (See Bound::contains().)
   float contains(const Box_bound* box) const;
+
   float contains(const Sphere_bound* sph) const;
+
   float contains(const Vector3f& pt) const;
 
   /*! Compute the intersection of the plane with a given line.
@@ -94,9 +105,28 @@ public:
 
 public:
   Vector3f m_normal;            // Normal to the plane.
+
   float m_offset;               // Offset in the plane equation
                                 // pt dot normal = offset
 };
+
+/*! \brief sets the normal of the plane. */
+inline void Plane::set_normal(Float x, Float y, Float z) { m_normal.set(x,y,z); }
+
+/*! \brief sets the normal of the plane. */
+inline void Plane::set_normal(const Vector3f& n) { m_normal.set(n); }
+
+/*! \brief obtains the normal of the plane. */
+inline void Plane::get_normal(Vector3f& n) const { m_normal.get(n); }
+
+/*! \brief obtains the normal of the plane. */
+inline const Vector3f& Plane::get_normal() const { return m_normal; }
+  
+/*! \brief sets the offset of the plane. */
+inline void Plane::set_offset(float o) { m_offset = o; }
+
+/*! \brief obtains the offset of the plane. */
+inline Float Plane::get_offset() const { return m_offset; }
 
 SGAL_END_NAMESPACE
 

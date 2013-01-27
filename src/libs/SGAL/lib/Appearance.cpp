@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -43,6 +43,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Cube_environment.hpp"
+#include "SGAL/Cube_environment.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Utilities.hpp"
@@ -53,34 +54,42 @@ std::string Appearance::s_tag = "sgalAppearance";
 Container_proto* Appearance::s_prototype = NULL;
 
 // Default values:
-Gfx::Poly_mode Appearance::m_def_poly_mode(Gfx::FILL_PMODE);
-Gfx::Shade_model Appearance::m_def_shade_model(Gfx::SMOOTH_SHADE);
-Gfx::Tex_env Appearance::m_def_tex_env(Gfx::MODULATE_TENV);
+const Gfx::Poly_mode Appearance::s_def_poly_mode(Gfx::FILL_PMODE);
+const Gfx::Shade_model Appearance::s_def_shade_model(Gfx::SMOOTH_SHADE);
+const Gfx::Tex_env Appearance::s_def_tex_env(Gfx::MODULATE_TENV);
 
 REGISTER_TO_FACTORY(Appearance, "Appearance");
 
 /*! The parameter-less constructor */
 Appearance::Appearance(Boolean proto) :
   Container(proto),
-  m_tex_env(m_def_tex_env),
+  m_tex_env(s_def_tex_env),
   m_dirty(true),
-  m_own_material(false),
-  m_own_tex_gen(false)
+  m_owned_material(false),
+  m_owned_tex_gen(false)
 { init(); }
 
 /*! Destructor */
 Appearance::~Appearance()
 {
   TRACE_MSG(Trace::DESTRUCTOR, "~Appearance ...");
-  // we do not delete the object that the appearance is pointing to since other
-  // appearance can point ot them as well.
-  if (m_own_material) {
+
+  if (m_owned_material) {
     if (m_material) {
       delete m_material;
       m_material = NULL;
     }
-    m_own_material = false;
+    m_owned_material = false;
   }
+
+  if (m_owned_tex_gen) {
+    if (m_tex_gen) {
+      delete m_tex_gen;
+      m_tex_gen = NULL;
+    }
+    m_owned_tex_gen = false;
+  }
+  
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
@@ -150,7 +159,7 @@ void Appearance::init()
   m_depth_func             = Gfx::LESS_DFUNC;
   m_depth_mask             = true;
   m_fog_enable             = false;
-  m_poly_mode              = m_def_poly_mode;
+  m_poly_mode              = s_def_poly_mode;
   m_line_stipple_factor    = 1;
   m_line_stipple_pattern   = 0xffff;
   m_tex_transform.make_identity();
@@ -162,8 +171,7 @@ void Appearance::init()
   m_override.off();
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_texture(Texture* texture)
 {
   m_texture = texture;
@@ -175,8 +183,7 @@ void Appearance::set_texture(Texture* texture)
   m_dirty_flags.on_bit(Gfx::TEX_ENV);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_halftone(Halftone* halftone)
 {
   m_halftone = halftone;
@@ -186,8 +193,7 @@ void Appearance::set_halftone(Halftone* halftone)
   m_dirty_flags.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_enable(Boolean tex_enable)
 {
   m_pending.on_bit(Gfx::TEX_ENABLE);
@@ -195,8 +201,7 @@ void Appearance::set_tex_enable(Boolean tex_enable)
   m_tex_enable = tex_enable;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_mode(Gfx::Tex_mode tex_mode)
 {
   m_pending.on_bit(Gfx::TEX_MODE);
@@ -204,16 +209,14 @@ void Appearance::set_tex_mode(Gfx::Tex_mode tex_mode)
   m_tex_mode = tex_mode;
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_blend_color(const Vector4f& tex_blend_color)
 {
   set_tex_blend_color(tex_blend_color[0], tex_blend_color[1],
                       tex_blend_color[2], tex_blend_color[3]);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_blend_color(Float v0, Float v1, Float v2, Float v3)
 {
   m_pending.on_bit(Gfx::TEX_BLEND_COLOR);
@@ -221,8 +224,7 @@ void Appearance::set_tex_blend_color(Float v0, Float v1, Float v2, Float v3)
   m_tex_blend_color.set(v0, v1, v2, v3);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_blend(float* blend_color)
 {
   if (m_tex_env == Gfx::REPLACE_TENV || m_tex_env == Gfx::BLEND_TENV) {
@@ -253,8 +255,7 @@ void Appearance::set_tex_blend(float* blend_color)
   set_tex_env(m_tex_env);
 }
 
-/*!
- */
+/*! \brief */
 void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 {
   m_pending.on_bit(Gfx::TEX_ENV);
@@ -262,11 +263,17 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
   m_tex_env = tex_env;
 }
 
-/*!
- */
-void Appearance::set_tex_gen(Tex_gen* tex_gen)
+/*! \brief */
+void Appearance::set_tex_gen(Tex_gen* tex_gen, Boolean owned)
 {
+  if (m_owned_tex_gen) {
+    if (m_tex_gen) {
+      delete m_tex_gen;
+      m_tex_gen = NULL;
+    }
+  }
   m_tex_gen = tex_gen;
+  m_owned_tex_gen = owned;
   m_pending.on_bit(Gfx::TEX_GEN);
   m_override.on_bit(Gfx::TEX_GEN);
 }
@@ -280,24 +287,24 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 }
 
 /*! \brief */
-void Appearance::set_material(Material* material)
+void Appearance::set_material(Material* material, Boolean owned)
 {
-  if (m_own_material) {
+  if (m_owned_material) {
     if (m_material) {
       delete m_material;
       m_material = NULL;
     }
-    m_own_material = false;
   }
+  m_material = material;
+  m_owned_material = owned;
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
-  m_material = material;
 }
 
 /*! \brief */
 void Appearance::material_changed(Field_info* /* field_info */)
 {
-  //! \todo what if m_own_material is set?
+  //! \todo what if m_owned_material is set?
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
 }
@@ -433,7 +440,7 @@ void Appearance::set_fog_enable(Boolean fog_enable)
   m_fog_enable = fog_enable;
 }
 
-/*! Set the polygon-stipple enable flag */
+/*! \brief sets the polygon-stipple enable flag. */
 void Appearance::set_polygon_stipple_enable(Boolean enable)
 {
   m_pending.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
@@ -495,8 +502,7 @@ void Appearance::draw(Draw_action* action)
   // Obtain the configuration if exists:
   SGAL::Configuration* conf = action->get_configuration();
   
-  if (m_dirty_flags.get_bit(Gfx::TEX_ENV) && m_texture && !m_texture->empty())
-  {
+  if (m_dirty_flags.get_bit(Gfx::TEX_ENV) && m_texture && !m_texture->empty()) {
     set_tex_blend();
     m_dirty_flags.off_bit(Gfx::TEX_ENV);
   }
@@ -507,25 +513,20 @@ void Appearance::draw(Draw_action* action)
   context->draw_app(this);
 
   // disable the texture in case the image is not loaded yet
-  if ((m_texture && m_texture->empty()) ||
-      (conf && !conf->is_texture_map()))
+  if ((m_texture && m_texture->empty()) || (conf && !conf->is_texture_map()))
     context->draw_tex_enable(false);
 }
 
-/*! \brief returns true if the material is transparent. If no material specified
- * return false.
- * @return true if the material is transparent.
- */
+/*! \brief determines whether the appearance is translucent. */
 Boolean Appearance::is_transparent() const
 {
   if (!m_material) return false;
 
   if (m_material->get_transparency() != 0) return true;
 
-  if (m_src_blend_func != Gfx::ONE_SBLEND ||
-    m_dst_blend_func != Gfx::ZERO_DBLEND) {
+  if ((m_src_blend_func != Gfx::ONE_SBLEND) ||
+      (m_dst_blend_func != Gfx::ZERO_DBLEND))
     return true;
-  }
 
   return false;
 }
@@ -552,10 +553,8 @@ void Appearance::halftone_changed(Field_info* /* field_info */)
 Boolean Appearance::attach_context(Context* context)
 {
   Boolean result = Container::attach_context(context);
-    Texture * texture = get_texture();
-  if (texture)
-    result &= texture->attach_context(context);
-
+  Texture* texture = get_texture();
+  if (texture) result &= texture->attach_context(context);
   return result;
 }
 
@@ -563,10 +562,8 @@ Boolean Appearance::attach_context(Context* context)
 Boolean Appearance::detach_context(Context* context)
 {
   Boolean result = Container::detach_context(context);
-    Texture* texture = get_texture();
-  if (texture)
-    result &= texture->detach_context(context);
-
+  Texture* texture = get_texture();
+  if (texture) result &= texture->detach_context(context);
   return result;
 }
 
@@ -633,9 +630,9 @@ void Appearance::set_attributes(Element* elem)
       continue;
     }
     if (name == "texEnv") {
-      if (value.compare("MODULATE") == 0) {
+      if (value.compare("MODULATE") == 0)
         set_tex_env(Gfx::MODULATE_TENV);
-      } else if (value.compare("DECAL") == 0) {
+      else if (value.compare("DECAL") == 0)
         set_tex_env(Gfx::DECAL_TENV);
       //} else if (value.equal("BLEND")) {
       //  m_tex_env = Gfx::BLEND_TENV;
@@ -643,7 +640,6 @@ void Appearance::set_attributes(Element* elem)
       //  m_tex_env = Gfx::REPLACE_TENV;
       //} else if (value.equal("ADD")) {
       //  m_tex_env = Gfx::ADD_TENV;
-      }
       elem->mark_delete(ai);
       continue;
     }
@@ -655,9 +651,8 @@ void Appearance::set_attributes(Element* elem)
   }
 
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "material") {
@@ -722,21 +717,30 @@ void Appearance::set_default_texture_attributes()
 void Appearance::clean()
 {
   // Construct a default material
-  if (!m_material) {
-    m_material = new Material();
-    m_own_material = true;
-  }
-
+  if (!m_material) set_material(new Material(), true);
+  
   // Setup sphere environment map if requested:
   Sphere_environment* sphere_env =
     dynamic_cast<Sphere_environment*>(get_texture());
   if (sphere_env) {
     set_tex_enable(true);
     Tex_gen* tex_gen = new Tex_gen();
-    m_own_tex_gen = true;
-    tex_gen->set_modes(Tex_gen::SPHERE_MAP);
-    tex_gen->set_modet(Tex_gen::SPHERE_MAP);
-    set_tex_gen(tex_gen);
+    m_owned_tex_gen = true;
+    tex_gen->set_mode_s(Tex_gen::SPHERE_MAP);
+    tex_gen->set_mode_t(Tex_gen::SPHERE_MAP);
+    set_tex_gen(tex_gen, true);
+    set_tex_gen_enable(true);
+  }
+
+  // Setup cube environment map if requested:
+  Cube_environment* cube_env = dynamic_cast<Cube_environment*>(get_texture());
+  if (cube_env) {
+    set_tex_enable(true);
+    Tex_gen* tex_gen = new Tex_gen();
+    tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
+    tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
+    tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
+    set_tex_gen(tex_gen, true);
     set_tex_gen_enable(true);
   }
   
@@ -762,7 +766,7 @@ Attribute_list Appearance::get_attributes()
 
   attrs = Container::get_attributes();
 
-  if (m_poly_mode != m_def_poly_mode) {
+  if (m_poly_mode != s_def_poly_mode) {
     attrib.first = "polyFillMode";
     switch (get_poly_mode()) {
      case Gfx::LINE_PMODE: attrib.second = "line"; break;
@@ -772,18 +776,18 @@ Attribute_list Appearance::get_attributes()
     attrs.push_back(attrib);
   }
 
-  if (m_shade_model != m_def_shade_model)
-  {
+  if (m_shade_model != s_def_shade_model) {
     attrib.first = "shadeModel";
     attrib.second = "flat";
     attrs.push_back(attrib);
   }
 
-  if (m_tex_env != m_def_tex_env) {
+  if (m_tex_env != s_def_tex_env) {
     attrib.first = "texEnv";
     if (m_tex_env == Gfx::MODULATE_TENV) {
       attrib.second = "MODULATE";
-    } else if (m_tex_env == Gfx::DECAL_TENV) {
+    }
+    else if (m_tex_env == Gfx::DECAL_TENV) {
       attrib.second = "DECAL";
     //} else if (m_tex_env == Gfx::BLEND_TENV) {
     //  attrib.second = "BLEND";

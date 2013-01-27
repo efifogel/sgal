@@ -83,8 +83,6 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_drawing_mode(Configuration::s_def_geometry_drawing_mode),
   m_bb_is_pre_set(false),
   m_is_progressive(false),
-  m_own_normal_array(false),
-  m_own_tex_coord_array(false),
   m_dirty_normals(true),
   m_dirty_tex_coords(true),
   m_vertex_buffer_object_created(false)
@@ -671,20 +669,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 }
 
 /*! Destructor */
-Indexed_face_set::~Indexed_face_set()
-{
-  clear();
-  if (m_own_normal_array && m_normal_array) {
-    delete m_normal_array;
-    m_normal_array = NULL;
-    m_own_normal_array = false;
-  }
-  if (m_own_tex_coord_array && m_tex_coord_array) {
-    delete m_tex_coord_array;
-    m_tex_coord_array = NULL;
-    m_own_tex_coord_array = false;
-  }
-}
+Indexed_face_set::~Indexed_face_set() { clear(); }
 
 /* \brief sets the flag that indicates whether normals are bound per vertex or
  * per face.
@@ -858,11 +843,6 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
 {
   SGAL_assertion(m_coord_array);
 
-  if (!m_normal_array) {
-    m_normal_array = new Normal_array;
-    m_own_normal_array = true;
-  }
-  
   // Calculate the normals of all facets.
   Normal_array normal_array;
   calculate_normal_per_polygon(&normal_array);
@@ -912,7 +892,11 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
   }
 
   // Initialize the normal array.
-  m_normal_array->resize(m_coord_array->size());
+  if (!m_normal_array) {
+    Normal_array* na = new Normal_array(m_coord_array->size());
+    SGAL_assertion(na);
+    set_normal_array(na, true);
+  }
 
   // Calculate the weighted normals:
   for (j = 0; j < vertices_info.size(); ++j) {
@@ -940,6 +924,7 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
   set_normal_per_vertex(true);
 }
 
+/*! \brief determines whether the surface is smooth. */
 Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
                                     const Vector3f& normal2) const
 {
@@ -991,8 +976,9 @@ void Indexed_face_set::calculate_normal_per_polygon()
   SGAL_assertion(m_coord_array);
 
   if (!m_normal_array) {
-    m_normal_array = new Normal_array;
-    m_own_normal_array = true;
+    Normal_array* na = new Normal_array();
+    SGAL_assertion(na);
+    set_normal_array(na, true);
   }
   
   calculate_normal_per_polygon(m_normal_array);
@@ -1007,12 +993,12 @@ void Indexed_face_set::clean_tex_coords()
   SGAL_assertion(m_coord_array);
 
   if (!m_tex_coord_array) {
-    m_tex_coord_array = new Tex_coord_array(m_coord_array->size());
-    m_own_tex_coord_array = true;
+    Tex_coord_array* tex_coord_array =
+      new Tex_coord_array(m_coord_array->size());
+    SGAL_assertion(tex_coord_array);
+    set_tex_coord_array(tex_coord_array, true);
   }
   
-  SGAL_assertion(m_tex_coord_array);
-
   Uint num_coords = m_coord_array->size();
 
   //! \todo do the right thing!
@@ -1133,9 +1119,9 @@ void Indexed_face_set::isect_direct()
    case PT_TRIANGLES:
     glBegin(GL_TRIANGLES);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_ci(*m_coord_array, j++));
-      glVertex3fv(get_by_ci(*m_coord_array, j++));
-      glVertex3fv(get_by_ci(*m_coord_array, j++));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
     }
     glEnd();
     return;
@@ -1143,10 +1129,10 @@ void Indexed_face_set::isect_direct()
    case PT_QUADS:
     glBegin(GL_QUADS);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_ci(*m_coord_array, j++));
-      glVertex3fv(get_by_ci(*m_coord_array, j++));
-      glVertex3fv(get_by_ci(*m_coord_array, j++));
-      glVertex3fv(get_by_ci(*m_coord_array, j++));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
     }
     glEnd();
     return;
@@ -1155,7 +1141,7 @@ void Indexed_face_set::isect_direct()
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
       glBegin(GL_POLYGON);
       for (; m_coord_indices[j] != (Uint) -1; ++j) {
-        glVertex3fv(get_by_ci(*m_coord_array, j));
+        glVertex3fv(get_by_coord_index(*m_coord_array, j));
       }
       glEnd();
       ++j;
@@ -1171,8 +1157,7 @@ void Indexed_face_set::isect_direct()
   }
 }
 
-/*!
- */
+/*! \brief */
 void Indexed_face_set::isect(Isect_action* action)
 {
   if (is_empty()) return;
@@ -1216,12 +1201,9 @@ void Indexed_face_set::set_attributes(Element* elem)
 { 
   Mesh_set::set_attributes(elem);
 
-  //! \todo sg->get_stats().add_num_mesh();
-
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "normalPerVertex") {
@@ -1260,7 +1242,7 @@ void Indexed_face_set::add_to_scene(Scene_graph* sg)
  * and therefore any information regarding compressed data is not 
  * written out (e.g., coordIndex).
  *
- * @return a list of attributes 
+ * \return a list of attributes 
  */
 Attribute_list Indexed_face_set::get_attributes()
 { 
@@ -1271,12 +1253,12 @@ Attribute_list Indexed_face_set::get_attributes()
 
   attribs = Geometry::get_attributes();
 
-  if(m_normal_per_vertex != s_def_normal_per_vertex) {
+  if (m_normal_per_vertex != s_def_normal_per_vertex) {
     attrib.first = "normalPerVertex";
     attrib.second = get_normal_per_vertex() ? "TRUE" : "FALSE";
     attribs.push_back(attrib);
   }
-  if(m_normal_per_vertex != s_def_color_per_vertex) {
+  if (m_normal_per_vertex != s_def_color_per_vertex) {
     attrib.first = "colorPerVertex";
     attrib.second = get_color_per_vertex() ? "TRUE" : "FALSE";
     attribs.push_back(attrib);
@@ -1509,8 +1491,8 @@ Boolean Indexed_face_set::is_empty() const
  */
 void Indexed_face_set::coord_changed(SGAL::Field_info* /* field_info */)
 {
-  if (m_own_normal_array) m_dirty_normals = true;
-  if (m_own_tex_coord_array) m_dirty_tex_coords = true;
+  if (m_owned_normal_array) m_dirty_normals = true;
+  if (m_owned_tex_coord_array) m_dirty_tex_coords = true;
   destroy_display_list();
   destroy_vertex_buffer_object();
   Mesh_set::clear();

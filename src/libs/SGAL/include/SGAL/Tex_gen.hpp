@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*!
- *
+/*! \file
+ * Control the generation of texture coordinates.
  */
 
 #ifndef SGAL_TEX_GEN_HPP
@@ -28,7 +28,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Vector4f.hpp"
+#include "SGAL/Plane.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -50,154 +50,195 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Tex_gen(Boolean proto = SGAL_FALSE);
-
-  /*! Destructor */
-  virtual ~Tex_gen();
-
-  /*! Construct the prototype */
-  static Tex_gen* prototype() { return new Tex_gen(SGAL_TRUE); }
-
-  /*! Clone */
-  virtual Container* clone() { return new Tex_gen(); }
-
   enum Mode {
     OFF,
     EYE_LINEAR,
     EYE_LINEAR_IDENT,
     OBJECT_LINEAR,
-    SPHERE_MAP
+    SPHERE_MAP,
+    NORMAL_MAP,
+    REFLECTION_MAP
   };
 
-  void set_modes(Mode modes);
-  Mode get_modes();
+  /*! Constructor */
+  Tex_gen(Boolean proto = false);
 
-  void set_modet(Mode modet);
-  Mode get_modeT();
+  /*! Destructor */
+  virtual ~Tex_gen();
 
-  void set_moder(Mode moder);
-  Mode get_modeR();
+  /*! Construct the prototype. */
+  static Tex_gen* prototype();
 
-  void set_modeq(Mode modeq);
-  Mode get_modeQ();
+  /*! Clone. */
+  virtual Container* clone();
 
-  void set_planes(const Vector4f& planes);
-  void get_planes(Vector4f& planes);
-  void set_planes(Float v0, Float v1, Float v2, Float v3);
-  void get_planes(Float* v0, Float* v1, Float* v2, Float* v3);
-  
-  void set_planet(const Vector4f& planet);
-  void get_planet(Vector4f& planet);
-  void set_planet(Float v0, Float v1, Float v2, Float v3);
-  void get_planet(Float* v0, Float* v1, Float* v2, Float* v3);
-
-  void set_planer(const Vector4f& planer);
-  void get_planer(Vector4f& planer);
-  void set_planer(Float v0, Float v1, Float v2, Float v3);
-  void get_planer(Float* v0, Float* v1, Float* v2, Float* v3);
-
-  void set_planeq(const Vector4f& planeq);
-  void get_planeq(Vector4f& planeq);
-  void set_planeq(Float v0, Float v1, Float v2, Float v3);
-  void get_planeq(Float* v0, Float* v1, Float* v2, Float* v3);
-
-  bool is_changed() { return false; }
-
+  /*! Applies the texture generation attribute. */
   virtual void draw(Context * ctx);
 
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
+
+  /*! Set the s-texture coordinate generation function. */
+  void set_mode_s(Mode mode_s);
+
+  /*! Obtain the s-texture coordinate generation function. */
+  Mode get_mode_s() const;
+
+  /*! Set the t-texture coordinate generation function. */
+  void set_mode_t(Mode mode_t);
+
+  /*! Obtain the t-texture coordinate generation function. */
+  Mode get_mode_t() const;
+
+  /*! Set the r-texture coordinate generation function. */
+  void set_mode_r(Mode mode_r);
+
+  /*! Obtain the r-texture coordinate generation function. */
+  Mode get_mode_r() const;
+
+  /*! Set the q-texture coordinate generation function. */
+  void set_mode_q(Mode mode_q);
+
+  /*! Obtain the q-texture coordinate generation function. */
+  Mode get_mode_q() const;
+
+  /*! Set the s-texture coordinate generation reference-plane. */
+  void set_plane_s(const Plane& plane_s);
+
+  /*! Obtain the (non const) s-texture coordinate generation reference-plane. */
+  Plane& get_plane_s();
+
+  /*! Obtain the (const) s-texture coordinate generation reference-plane. */
+  const Plane& get_plane_s() const;
   
+  /*! Set the t-texture coordinate generation reference-plane. */
+  void set_plane_t(const Plane& plane_t);
+
+  /*! Obtain the (non const) t-texture coordinate generation reference-plane. */
+  Plane& get_plane_t();
+
+  /*! Obtain the (const) t-texture coordinate generation reference-plane. */
+  const Plane& get_plane_t() const;
+  
+  /*! Set the r-texture coordinate generation reference-plane. */
+  void set_plane_r(const Plane& plane_r);
+
+  /*! Obtain the (non const) r-texture coordinate generation reference-plane. */
+  Plane& get_plane_r();
+
+  /*! Obtain the (const) r-texture coordinate generation reference-plane. */
+  const Plane& get_plane_r() const;
+  
+  /*! Set the q-texture coordinate generation reference-plane. */
+  void set_plane_q(const Plane& plane_q);
+
+  /*! Obtain the (non const) q-texture coordinate generation reference-plane. */
+  Plane& get_plane_q();
+
+  /*! Obtain the (const) q-texture coordinate generation reference-plane. */
+  const Plane& get_plane_q() const;
+  
+  bool is_changed();
+
 protected: 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   Int m_dirty_id;
+
   Int m_dirty_count;
 
   friend class Context;
 
-  // Fields
-  Int m_modes;
-  Int m_modet;
-  Int m_moder;
-  Int m_modeq;
-  Vector4f m_planes;
-  Vector4f m_planet;
-  Vector4f m_planer;
-  Vector4f m_planeq;
+  /*! The s-texture coordinate generation function. */
+  Mode m_mode_s;
+
+  /*! The t-texture coordinate generation function. */
+  Mode m_mode_t;
+
+  /*! The r-texture coordinate generation function. */
+  Mode m_mode_r;
+
+  /*! The q-texture coordinate generation function. */
+  Mode m_mode_q;
+
+  /*! The s-texture coordinate generation reference-plane. */
+  Plane m_plane_s;
+
+  /*! The t-texture coordinate generation reference-plane. */
+  Plane m_plane_t;
+
+  /*! The r-texture coordinate generation reference-plane. */
+  Plane m_plane_r;
+
+  /*! The q-texture coordinate generation reference-plane. */
+  Plane m_plane_q;
 
 private:
-  // Efi: Why is it (preventing copy construction) here?
-  Tex_gen(const Tex_gen& tex_gen) :
-    Container(tex_gen)
-  {}
-  
   void init();
 };
 
-/*!
- */
-inline void Tex_gen::set_planes(const Vector4f& planes)
-{
-  set_planes(planes.get(0), planes.get(1), planes.get(2), planes.get(3));
-}
+/*! \brief constructs the prototype. */
+inline Tex_gen* Tex_gen::prototype() { return new Tex_gen(true); }
 
-/*!
- */
-inline void Tex_gen::get_planes(Vector4f& planes)
-{
-  get_planes(&planes[0], &planes[1], &planes[2], &planes[3]);
-}
+/*! \brief clones. */
+inline Container* Tex_gen::clone() { return new Tex_gen(); }
 
-/*!
- */
-inline void Tex_gen::set_planet(const Vector4f& planet)
-{
-  set_planet(planet.get(0), planet.get(1), planet.get(2), planet.get(3));
-}
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Tex_gen::get_tag() const { return s_tag; }
 
-/*!
- */
-inline void Tex_gen::get_planet(Vector4f& planet)
-{
-  get_planet(&planet[0], &planet[1], &planet[2], &planet[3]);
-}
+/*! \brief obtains the s-texture coordinate generation function. */
+inline Tex_gen::Mode Tex_gen::get_mode_s() const { return m_mode_s; }
 
-/*!
- */
-inline void Tex_gen::set_planer(const Vector4f& planer)
-{
-  set_planer(planer.get(0), planer.get(1), planer.get(2), planer.get(3));
-}
+/*! \brief obtains the t-texture coordinate generation function. */
+inline Tex_gen::Mode Tex_gen::get_mode_t() const { return m_mode_t; }
 
-/*!
- */
-inline void Tex_gen::get_planer(Vector4f& planer)
-{
-  get_planer(&planer[0], &planer[1], &planer[2], &planer[3]);
-}
+/*! \brief obtains the r-texture coordinate generation function. */
+inline Tex_gen::Mode Tex_gen::get_mode_r() const { return m_mode_r; }
 
-/*!
- */
-inline void Tex_gen::set_planeq(const Vector4f& planeq)
-{
-  set_planeq(planeq.get(0), planeq.get(1), planeq.get(2), planeq.get(3));
-}
+/*! \brief obtains the q-texture coordinate generation function. */
+inline Tex_gen::Mode Tex_gen::get_mode_q() const { return m_mode_q; }
 
-/*!
+/*! \brief obtains the (non const) s-texture coordinate generation
+ * reference-plane.
  */
-inline void Tex_gen::get_planeq(Vector4f& planeq)
-{
-  get_planeq(&planeq[0], &planeq[1], &planeq[2], &planeq[3]);
-}
+inline Plane& Tex_gen::get_plane_s() { return m_plane_s; }
+
+/*! \brief Obtain the (const) s-texture coordinate generation reference-plane. */
+inline const Plane& Tex_gen::get_plane_s() const { return m_plane_s; }
+  
+/*! \brief obtains the (non const) t-texture coordinate generation
+ * reference-plane.
+ */
+inline Plane& Tex_gen::get_plane_t() { return m_plane_t; }
+
+/*! \brief Obtain the (const) t-texture coordinate generation reference-plane. */
+inline const Plane& Tex_gen::get_plane_t() const { return m_plane_t; }
+  
+/*! \brief obtains the (non const) r-texture coordinate generation
+ * reference-plane.
+ */
+inline Plane& Tex_gen::get_plane_r() { return m_plane_r; }
+
+/*! \brief Obtain the (const) r-texture coordinate generation reference-plane. */
+inline const Plane& Tex_gen::get_plane_r() const { return m_plane_r; }
+  
+/*! \brief obtains the (non const) q-texture coordinate generation
+ * reference-plane.
+ */
+inline Plane& Tex_gen::get_plane_q() { return m_plane_q; }
+
+/*! \brief Obtain the (const) s-texture coordinate generation reference-plane. */
+inline const Plane& Tex_gen::get_plane_q() const { return m_plane_q; }
+  
+/*! \brief */
+inline bool Tex_gen::is_changed() { return false; }
 
 SGAL_END_NAMESPACE
 
