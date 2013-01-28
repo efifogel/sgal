@@ -42,7 +42,7 @@ private:
   typedef Name_map::const_iterator      Name_const_iter;
   
   /*! The singletone */
-  static Gl_wrapper * s_instance;
+  static Gl_wrapper* s_instance;
 
   /*! The search data structure */
   Name_map m_gl_token_names;
@@ -51,17 +51,17 @@ private:
   Gl_wrapper();
 
   /*! Find the name of a token */
-  const char * find_name(GLenum num);
+  const char* find_name(GLenum num);
 
 public:
   /*! Obtain the singletone */
-  static Gl_wrapper * get_instance();
+  static Gl_wrapper* get_instance();
 
   /*! Destructor */
   ~Gl_wrapper();
 
   /*! Find the name of a token */
-  static const char * find(GLenum num)
+  static const char* find(GLenum num)
   { return get_instance()->find_name(num); }
 };
 
@@ -84,8 +84,8 @@ inline void glAlphaFunc(GLenum func, GLclampf ref) {
 }
 
 /*! glAreTexturesResident wrapper */
-inline GLboolean glAreTexturesResident(GLsizei n, const GLuint * textures,
-                                    GLboolean * residences) {
+inline GLboolean glAreTexturesResident(GLsizei n, const GLuint* textures,
+                                    GLboolean* residences) {
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glAreTexturesResident(" << n
              << ");"
              << std::endl;);
@@ -118,7 +118,7 @@ inline void glBindTexture(GLenum target, GLuint texture) {
 /*! glBitmap wrapper */
 inline void glBitmap(GLsizei width, GLsizei height, GLfloat xorig,
                      GLfloat yorig, GLfloat xmove, GLfloat ymove,
-                     const GLubyte * bitmap) {
+                     const GLubyte* bitmap) {
   ::glBitmap(width, height, xorig, yorig, xmove, ymove, bitmap);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glBitmap("
              << width << ", " << height << ", " << xorig << ", " << yorig
@@ -142,7 +142,7 @@ inline void glCallList(GLuint list) {
 }
 
 /*! glCallLists wrapper */
-inline void glCallLists(GLsizei n, GLenum type, const GLvoid * lists) {
+inline void glCallLists(GLsizei n, GLenum type, const GLvoid* lists) {
   ::glCallLists(n, type, lists);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glCallLists(" << n << ", " 
              << Gl_wrapper::find(type) << ");"
@@ -197,7 +197,7 @@ inline void glClearStencil(GLint s) {
 }
 
 /*! glClipPlane wrapper */
-inline void glClipPlane(GLenum plane, const GLdouble * equation) {
+inline void glClipPlane(GLenum plane, const GLdouble* equation) {
   ::glClipPlane(plane, equation);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glClipPlane("
              << Gl_wrapper::find(plane) << ");"
@@ -213,7 +213,7 @@ inline void glColor3b(GLbyte red, GLbyte green, GLbyte blue) {
 }
 
 /*! glColor3bv wrapper */
-inline void glColor3bv(const GLbyte * v) {
+inline void glColor3bv(const GLbyte* v) {
   ::glColor3bv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3bv(" << ");"
              << std::endl;);
@@ -228,7 +228,7 @@ inline void glColor3d(GLdouble red, GLdouble green, GLdouble blue) {
 }
 
 /*! glColor3dv wrapper */
-inline void glColor3dv(const GLdouble * v) {
+inline void glColor3dv(const GLdouble* v) {
   ::glColor3dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3dv(" << ");"
              << std::endl;);
@@ -243,7 +243,7 @@ inline void glColor3f(GLfloat red, GLfloat green, GLfloat blue) {
 }
 
 /*! color wrapper */
-inline void glColor3fv(const GLfloat * v) {
+inline void glColor3fv(const GLfloat* v) {
   ::glColor3fv(v);
   TRACE_CODE(Trace::GRAPHICS,
              std::cout << "glColor3fv(" << *((Vector3f *) v) << ");"
@@ -259,7 +259,7 @@ inline void glColor3i(GLint red, GLint green, GLint blue) {
 }
 
 /*! glColor3iv wrapper */
-inline void glColor3iv(const GLint * v) {
+inline void glColor3iv(const GLint* v) {
   ::glColor3iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3iv(" << ");"
              << std::endl;);
@@ -274,7 +274,7 @@ inline void glColor3s(GLshort red, GLshort green, GLshort blue) {
 }
 
 /*! glColor3sv wrapper */
-inline void glColor3sv(const GLshort * v) {
+inline void glColor3sv(const GLshort* v) {
   ::glColor3sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3sv(" << ");"
              << std::endl;);
@@ -289,7 +289,7 @@ inline void glColor3ub(GLubyte red, GLubyte green, GLubyte blue) {
 }
 
 /*! glColor3ubv wrapper */
-inline void glColor3ubv(const GLubyte * v) {
+inline void glColor3ubv(const GLubyte* v) {
   ::glColor3ubv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3ubv(" << ");"
              << std::endl;);
@@ -304,7 +304,7 @@ inline void glColor3ui(GLuint red, GLuint green, GLuint blue) {
 }
 
 /*! glColor3uiv wrapper */
-inline void glColor3uiv(const GLuint * v) {
+inline void glColor3uiv(const GLuint* v) {
   ::glColor3uiv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3uiv(" << ");"
              << std::endl;);
@@ -319,7 +319,7 @@ inline void glColor3us(GLushort red, GLushort green, GLushort blue) {
 }
 
 /*! glColor3usv wrapper */
-inline void glColor3usv(const GLushort * v) {
+inline void glColor3usv(const GLushort* v) {
   ::glColor3usv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3usv(" << ");"
              << std::endl;);
@@ -334,7 +334,7 @@ inline void glColor4b(GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha) {
 }
 
 /*! glColor4bv wrapper */
-inline void glColor4bv(const GLbyte * v) {
+inline void glColor4bv(const GLbyte* v) {
   ::glColor4bv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4bv(" << ");"
              << std::endl;);
@@ -350,7 +350,7 @@ inline void glColor4d(GLdouble red, GLdouble green, GLdouble blue,
 }
 
 /*! glColor4dv wrapper */
-inline void glColor4dv(const GLdouble * v) {
+inline void glColor4dv(const GLdouble* v) {
   ::glColor4dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4dv(" << ");"
              << std::endl;);
@@ -366,7 +366,7 @@ inline void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 }
 
 /*! glColor4fv wrapper */
-inline void glColor4fv(const GLfloat * v) {
+inline void glColor4fv(const GLfloat* v) {
   ::glColor4fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4fv(" << ");"
              << std::endl;);
@@ -381,7 +381,7 @@ inline void glColor4i(GLint red, GLint green, GLint blue, GLint alpha) {
 }
 
 /*! glColor4iv wrapper */
-inline void glColor4iv(const GLint * v) {
+inline void glColor4iv(const GLint* v) {
   ::glColor4iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4iv(" << ");"
              << std::endl;);
@@ -397,7 +397,7 @@ inline void glColor4s(GLshort red, GLshort green, GLshort blue, GLshort alpha)
 }
 
 /*! glColor4sv wrapper */
-inline void glColor4sv(const GLshort * v) {
+inline void glColor4sv(const GLshort* v) {
   ::glColor4sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4sv(" << ");"
              << std::endl;);
@@ -413,7 +413,7 @@ inline void glColor4ub(GLubyte red, GLubyte green, GLubyte blue,
 }
 
 /*! glColor4ubv wrapper */
-inline void glColor4ubv(const GLubyte * v) {
+inline void glColor4ubv(const GLubyte* v) {
   ::glColor4ubv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4ubv(" << ");"
              << std::endl;);
@@ -428,7 +428,7 @@ inline void glColor4ui(GLuint red, GLuint green, GLuint blue, GLuint alpha) {
 }
 
 /*! glColor4uiv wrapper */
-inline void glColor4uiv(const GLuint * v) {
+inline void glColor4uiv(const GLuint* v) {
   ::glColor4uiv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4uiv(" << ");"
              << std::endl;);
@@ -444,7 +444,7 @@ inline void glColor4us(GLushort red, GLushort green, GLushort blue,
 }
 
 /*! glColor4usv wrapper */
-inline void glColor4usv(const GLushort * v) {
+inline void glColor4usv(const GLushort* v) {
   ::glColor4usv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4usv(" << ");"
              << std::endl;);
@@ -468,7 +468,7 @@ inline void glColorMaterial(GLenum face, GLenum mode) {
 
 /*! glColorPointer wrapper */
 inline void glColorPointer(GLint size, GLenum type, GLsizei stride,
-                           const GLvoid * pointer) {
+                           const GLvoid* pointer) {
   ::glColorPointer(size, type, stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glColorPointer(" << size << ", "
              << Gl_wrapper::find(type) << ", " << stride << ");"
@@ -546,7 +546,7 @@ inline void glDeleteLists(GLuint list, GLsizei range) {
 }
 
 /*! glDeleteTextures wrapper */
-inline void glDeleteTextures(GLsizei n, const GLuint * textures) {
+inline void glDeleteTextures(GLsizei n, const GLuint* textures) {
   ::glDeleteTextures(n, textures);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glDeleteTextures(" << n << ");"
              << std::endl;);
@@ -608,7 +608,7 @@ inline void glDrawBuffer(GLenum mode) {
 
 /*! glDrawElements wrapper */
 inline void glDrawElements(GLenum mode, GLsizei count, GLenum type,
-                           const GLvoid * indices) {
+                           const GLvoid* indices) {
   ::glDrawElements(mode, count, type, indices);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glDrawElements("
              << Gl_wrapper::find(mode)
@@ -620,7 +620,7 @@ inline void glDrawElements(GLenum mode, GLsizei count, GLenum type,
 
 /*! glDrawPixels wrapper */
 inline void glDrawPixels(GLsizei width, GLsizei height, GLenum format,
-                         GLenum type, const GLvoid * pixels) {
+                         GLenum type, const GLvoid* pixels) {
   ::glDrawPixels(width, height, format, type, pixels);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glDrawPixels("
              << width << ", " << height << ","
@@ -637,14 +637,14 @@ inline void glEdgeFlag(GLboolean flag) {
 }
 
 /*! glEdgeFlagPointer wrapper */
-inline void glEdgeFlagPointer(GLsizei stride, const GLvoid * pointer) {
+inline void glEdgeFlagPointer(GLsizei stride, const GLvoid* pointer) {
   ::glEdgeFlagPointer(stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glEdgeFlagPointer(" << ");"
              << std::endl;);
 }
 
 /*! glEdgeFlagv wrapper */
-inline void glEdgeFlagv(const GLboolean * flag) {
+inline void glEdgeFlagv(const GLboolean* flag) {
   ::glEdgeFlagv(flag);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glEdgeFlagv(" << flag << ");"
              << std::endl;);
@@ -687,7 +687,7 @@ inline void glEvalCoord1d(GLdouble u) {
 }
 
 /*! glEvalCoord1dv wrapper */
-inline void glEvalCoord1dv(const GLdouble * u) {
+inline void glEvalCoord1dv(const GLdouble* u) {
   ::glEvalCoord1dv(u);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glEvalCoord1dv(" << ");"
              << std::endl;);
@@ -701,7 +701,7 @@ inline void glEvalCoord1f(GLfloat u) {
 }
 
 /*! glEvalCoord1fv wrapper */
-inline void glEvalCoord1fv(const GLfloat * u) {
+inline void glEvalCoord1fv(const GLfloat* u) {
   ::glEvalCoord1fv(u);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glEvalCoord1fv(" << ");"
              << std::endl;);
@@ -716,7 +716,7 @@ inline void glEvalCoord2d(GLdouble u, GLdouble v) {
 }
 
 /*! glEvalCoord2dv wrapper */
-inline void glEvalCoord2dv(const GLdouble * u) {
+inline void glEvalCoord2dv(const GLdouble* u) {
   ::glEvalCoord2dv(u);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glEvalCoord2dv(" << ");"
              << std::endl;);
@@ -731,7 +731,7 @@ inline void glEvalCoord2f(GLfloat u, GLfloat v) {
 }
 
 /*! glEvalCoord2fv wrapper */
-inline void glEvalCoord2fv(const GLfloat * u) {
+inline void glEvalCoord2fv(const GLfloat* u) {
   ::glEvalCoord2fv(u);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glEvalCoord2fv(" << ");"
              << std::endl;);
@@ -770,7 +770,7 @@ inline void glEvalPoint2(GLint i, GLint j) {
 }
 
 /*! glFeedbackBuffer wrapper */
-inline void glFeedbackBuffer(GLsizei size, GLenum type, GLfloat * buffer) {
+inline void glFeedbackBuffer(GLsizei size, GLenum type, GLfloat* buffer) {
   ::glFeedbackBuffer(size, type, buffer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glFeedbackBuffer(" << size << ", "
              << Gl_wrapper::find(type) << ");"
@@ -800,7 +800,7 @@ inline void glFogf(GLenum pname, GLfloat param) {
 }
 
 /*! glFogfv wrapper */
-inline void glFogfv(GLenum pname, const GLfloat * params) {
+inline void glFogfv(GLenum pname, const GLfloat* params) {
   ::glFogfv(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glFogfv("
              << Gl_wrapper::find(pname) << ");"
@@ -817,7 +817,7 @@ inline void glFogi(GLenum pname, GLint param) {
 }
 
 /*! glFogiv wrapper */
-inline void glFogiv(GLenum pname, const GLint * params) {
+inline void glFogiv(GLenum pname, const GLint* params) {
   ::glFogiv(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glFogiv("
              << Gl_wrapper::find(pname) << ");"
@@ -851,14 +851,14 @@ inline GLuint glGenLists(GLsizei range) {
 }
 
 /*! glGenTextures wrapper */
-inline void glGenTextures(GLsizei n, GLuint * textures) {
+inline void glGenTextures(GLsizei n, GLuint* textures) {
   ::glGenTextures(n, textures);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenTextures(" << n << ");"
              << std::endl;);
 }
 
 /*! glGetBooleanv wrapper */
-inline void glGetBooleanv(GLenum pname, GLboolean * params) {
+inline void glGetBooleanv(GLenum pname, GLboolean* params) {
   ::glGetBooleanv(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetBooleanv("
              << Gl_wrapper::find(pname) << ");"
@@ -866,14 +866,14 @@ inline void glGetBooleanv(GLenum pname, GLboolean * params) {
 }
 
 /*! glGetClipPlane wrapper */
-inline void glGetClipPlane(GLenum plane, GLdouble * equation) {
+inline void glGetClipPlane(GLenum plane, GLdouble* equation) {
   ::glGetClipPlane(plane, equation);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetClipPlane(" << ");"
              << std::endl;);
 }
 
 /*! glGetDoublev wrapper */
-inline void glGetDoublev(GLenum pname, GLdouble * params) {
+inline void glGetDoublev(GLenum pname, GLdouble* params) {
   ::glGetDoublev(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetDoublev("
              << Gl_wrapper::find(pname) << ");"
@@ -888,7 +888,7 @@ inline GLenum glGetError(void) {
 }
 
 /*! glGetFloatv wrapper */
-inline void glGetFloatv(GLenum pname, GLfloat * params) {
+inline void glGetFloatv(GLenum pname, GLfloat* params) {
   ::glGetFloatv(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetFloatv("
              << Gl_wrapper::find(pname) << ", params);"
@@ -896,7 +896,7 @@ inline void glGetFloatv(GLenum pname, GLfloat * params) {
 }
 
 /*! glGetIntegerv wrapper */
-inline void glGetIntegerv(GLenum pname, GLint * params) {
+inline void glGetIntegerv(GLenum pname, GLint* params) {
   ::glGetIntegerv(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetIntegerv("
              << Gl_wrapper::find(pname) << ", params);"
@@ -904,7 +904,7 @@ inline void glGetIntegerv(GLenum pname, GLint * params) {
 }
 
 /*! glGetLightfv wrapper */
-inline void glGetLightfv(GLenum light, GLenum pname, GLfloat * params) {
+inline void glGetLightfv(GLenum light, GLenum pname, GLfloat* params) {
   ::glGetLightfv(light, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetLightfv("
              << Gl_wrapper::find(pname) << ");"
@@ -912,7 +912,7 @@ inline void glGetLightfv(GLenum light, GLenum pname, GLfloat * params) {
 }
 
 /*! glGetLightiv wrapper */
-inline void glGetLightiv(GLenum light, GLenum pname, GLint * params) {
+inline void glGetLightiv(GLenum light, GLenum pname, GLint* params) {
   ::glGetLightiv(light, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetLightiv("
              << Gl_wrapper::find(pname) << ", params);"
@@ -920,7 +920,7 @@ inline void glGetLightiv(GLenum light, GLenum pname, GLint * params) {
 }
 
 /*! glGetMapdv wrapper */
-inline void glGetMapdv(GLenum target, GLenum query, GLdouble * v) {
+inline void glGetMapdv(GLenum target, GLenum query, GLdouble* v) {
   ::glGetMapdv(target, query, v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetMapdv("
              << Gl_wrapper::find(target) << ", "
@@ -929,7 +929,7 @@ inline void glGetMapdv(GLenum target, GLenum query, GLdouble * v) {
 }
 
 /*! glGetMapfv wrapper */
-inline void glGetMapfv(GLenum target, GLenum query, GLfloat * v) {
+inline void glGetMapfv(GLenum target, GLenum query, GLfloat* v) {
   ::glGetMapfv(target, query, v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetMapfv("
              << Gl_wrapper::find(target) << ", " << query << ");"
@@ -937,7 +937,7 @@ inline void glGetMapfv(GLenum target, GLenum query, GLfloat * v) {
 }
 
 /*! glGetMapiv wrapper */
-inline void glGetMapiv(GLenum target, GLenum query, GLint * v) {
+inline void glGetMapiv(GLenum target, GLenum query, GLint* v) {
   ::glGetMapiv(target, query, v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetMapiv("
              << Gl_wrapper::find(target) << ", " << query << ");"
@@ -945,7 +945,7 @@ inline void glGetMapiv(GLenum target, GLenum query, GLint * v) {
 }
 
 /*! glGetMaterialfv wrapper */
-inline void glGetMaterialfv(GLenum face, GLenum pname, GLfloat * params) {
+inline void glGetMaterialfv(GLenum face, GLenum pname, GLfloat* params) {
   ::glGetMaterialfv(face, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetMaterialfv("
              << Gl_wrapper::find(pname) << ");"
@@ -953,7 +953,7 @@ inline void glGetMaterialfv(GLenum face, GLenum pname, GLfloat * params) {
 }
 
 /*! glGetMaterialiv wrapper */
-inline void glGetMaterialiv(GLenum face, GLenum pname, GLint * params) {
+inline void glGetMaterialiv(GLenum face, GLenum pname, GLint* params) {
   ::glGetMaterialiv(face, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetMaterialiv("
              << Gl_wrapper::find(pname) << ");"
@@ -961,21 +961,21 @@ inline void glGetMaterialiv(GLenum face, GLenum pname, GLint * params) {
 }
 
 /*! glGetPixelMapfv wrapper */
-inline void glGetPixelMapfv(GLenum map, GLfloat * values) {
+inline void glGetPixelMapfv(GLenum map, GLfloat* values) {
   ::glGetPixelMapfv(map, values);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetPixelMapfv(" << ");"
              << std::endl;);
 }
 
 /*! glGetPixelMapuiv wrapper */
-inline void glGetPixelMapuiv(GLenum map, GLuint * values) {
+inline void glGetPixelMapuiv(GLenum map, GLuint* values) {
   ::glGetPixelMapuiv(map, values);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetPixelMapuiv(" << ");"
              << std::endl;);
 }
 
 /*! glGetPixelMapusv wrapper */
-inline void glGetPixelMapusv(GLenum map, GLushort * values) {
+inline void glGetPixelMapusv(GLenum map, GLushort* values) {
   ::glGetPixelMapusv(map, values);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetPixelMapusv(" << ");"
              << std::endl;);
@@ -990,21 +990,21 @@ inline void glGetPointerv(GLenum pname, GLvoid ** params) {
 }
 
 /*! glGetPolygonStipple wrapper */
-inline void glGetPolygonStipple(GLubyte * mask) {
+inline void glGetPolygonStipple(GLubyte* mask) {
   ::glGetPolygonStipple(mask);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetPolygonStipple(" << ");"
              << std::endl;);
 }
 
 /*! GLubyte wrapper */
-inline const GLubyte * glGetString(GLenum name) {
+inline const GLubyte* glGetString(GLenum name) {
   TRACE_CODE(Trace::GRAPHICS, std::cout << "GLubyte(" << ");"
              << std::endl;);
   return ::glGetString(name);
 }
 
 /*! glGetTexEnvfv wrapper */
-inline void glGetTexEnvfv(GLenum target, GLenum pname, GLfloat * params) {
+inline void glGetTexEnvfv(GLenum target, GLenum pname, GLfloat* params) {
   ::glGetTexEnvfv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexEnvfv("
              << Gl_wrapper::find(target) << ", "
@@ -1013,7 +1013,7 @@ inline void glGetTexEnvfv(GLenum target, GLenum pname, GLfloat * params) {
 }
 
 /*! glGetTexEnviv wrapper */
-inline void glGetTexEnviv(GLenum target, GLenum pname, GLint * params) {
+inline void glGetTexEnviv(GLenum target, GLenum pname, GLint* params) {
   ::glGetTexEnviv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexEnviv("
              << Gl_wrapper::find(target) << ", "
@@ -1022,7 +1022,7 @@ inline void glGetTexEnviv(GLenum target, GLenum pname, GLint * params) {
 }
 
 /*! glGetTexGendv wrapper */
-inline void glGetTexGendv(GLenum coord, GLenum pname, GLdouble * params) {
+inline void glGetTexGendv(GLenum coord, GLenum pname, GLdouble* params) {
   ::glGetTexGendv(coord, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexGendv("
              << Gl_wrapper::find(pname) << ");"
@@ -1030,7 +1030,7 @@ inline void glGetTexGendv(GLenum coord, GLenum pname, GLdouble * params) {
 }
 
 /*! glGetTexGenfv wrapper */
-inline void glGetTexGenfv(GLenum coord, GLenum pname, GLfloat * params) {
+inline void glGetTexGenfv(GLenum coord, GLenum pname, GLfloat* params) {
   ::glGetTexGenfv(coord, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexGenfv("
              << Gl_wrapper::find(pname) << ");"
@@ -1038,7 +1038,7 @@ inline void glGetTexGenfv(GLenum coord, GLenum pname, GLfloat * params) {
 }
 
 /*! glGetTexGeniv wrapper */
-inline void glGetTexGeniv(GLenum coord, GLenum pname, GLint * params) {
+inline void glGetTexGeniv(GLenum coord, GLenum pname, GLint* params) {
   ::glGetTexGeniv(coord, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexGeniv("
              << Gl_wrapper::find(pname) << ");"
@@ -1047,7 +1047,7 @@ inline void glGetTexGeniv(GLenum coord, GLenum pname, GLint * params) {
 
 /*! glGetTexImage wrapper */
 inline void glGetTexImage(GLenum target, GLint level, GLenum format,
-                          GLenum type, GLvoid * pixels) {
+                          GLenum type, GLvoid* pixels) {
   ::glGetTexImage(target, level, format, type, pixels);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexImage("
              << Gl_wrapper::find(target) << ", " << level << ");"
@@ -1056,7 +1056,7 @@ inline void glGetTexImage(GLenum target, GLint level, GLenum format,
 
 /*! glGetTexLevelParameterfv wrapper */
 inline void glGetTexLevelParameterfv(GLenum target, GLint level, GLenum pname,
-                                     GLfloat * params) {
+                                     GLfloat* params) {
   ::glGetTexLevelParameterfv(target, level, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexLevelParameterfv("
              << Gl_wrapper::find(target) << ", "
@@ -1066,7 +1066,7 @@ inline void glGetTexLevelParameterfv(GLenum target, GLint level, GLenum pname,
 
 /*! glGetTexLevelParameteriv wrapper */
 inline void glGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname,
-                                     GLint * params) {
+                                     GLint* params) {
   ::glGetTexLevelParameteriv(target, level, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexLevelParameteriv("
              << Gl_wrapper::find(target) << ", "
@@ -1075,7 +1075,7 @@ inline void glGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname,
 }
 
 /*! glGetTexParameterfv wrapper */
-inline void glGetTexParameterfv(GLenum target, GLenum pname, GLfloat * params)
+inline void glGetTexParameterfv(GLenum target, GLenum pname, GLfloat* params)
 {
   ::glGetTexParameterfv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexParameterfv("
@@ -1085,7 +1085,7 @@ inline void glGetTexParameterfv(GLenum target, GLenum pname, GLfloat * params)
 }
 
 /*! glGetTexParameteriv wrapper */
-inline void glGetTexParameteriv(GLenum target, GLenum pname, GLint * params) {
+inline void glGetTexParameteriv(GLenum target, GLenum pname, GLint* params) {
   ::glGetTexParameteriv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetTexParameteriv("
              << Gl_wrapper::find(target) << ", "
@@ -1110,7 +1110,7 @@ inline void glIndexMask(GLuint mask) {
 
 /*! glIndexPointer wrapper */
 inline void glIndexPointer(GLenum type, GLsizei stride,
-                           const GLvoid * pointer) {
+                           const GLvoid* pointer) {
   ::glIndexPointer(type, stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glIndexPointer(" << ");"
              << std::endl;);
@@ -1124,7 +1124,7 @@ inline void glIndexd(GLdouble c) {
 }
 
 /*! glIndexdv wrapper */
-inline void glIndexdv(const GLdouble * c) {
+inline void glIndexdv(const GLdouble* c) {
   ::glIndexdv(c);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glIndexdv(" << ");"
              << std::endl;);
@@ -1138,7 +1138,7 @@ inline void glIndexf(GLfloat c) {
 }
 
 /*! glIndexfv wrapper */
-inline void glIndexfv(const GLfloat * c) {
+inline void glIndexfv(const GLfloat* c) {
   ::glIndexfv(c);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glIndexfv(" << ");"
              << std::endl;);
@@ -1152,7 +1152,7 @@ inline void glIndexi(GLint c) {
 }
 
 /*! glIndexiv wrapper */
-inline void glIndexiv(const GLint * c) {
+inline void glIndexiv(const GLint* c) {
   ::glIndexiv(c);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glIndexiv(" << ");"
              << std::endl;);
@@ -1166,7 +1166,7 @@ inline void glIndexs(GLshort c) {
 }
 
 /*! glIndexsv wrapper */
-inline void glIndexsv(const GLshort * c) {
+inline void glIndexsv(const GLshort* c) {
   ::glIndexsv(c);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glIndexsv(" << ");"
              << std::endl;);
@@ -1180,7 +1180,7 @@ inline void glIndexub(GLubyte c) {
 }
 
 /*! glIndexubv wrapper */
-inline void glIndexubv(const GLubyte * c) {
+inline void glIndexubv(const GLubyte* c) {
   ::glIndexubv(c);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glIndexubv(" << ");"
              << std::endl;);
@@ -1195,7 +1195,7 @@ inline void glInitNames(void) {
 
 /*! glInterleavedArrays wrapper */
 inline void glInterleavedArrays(GLenum format, GLsizei stride,
-                                const GLvoid * pointer) {
+                                const GLvoid* pointer) {
   ::glInterleavedArrays(format, stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glInterleavedArrays(" << ");"
              << std::endl;);
@@ -1231,7 +1231,7 @@ inline void glLightModelf(GLenum pname, GLfloat param) {
 }
 
 /*! glLightModelfv wrapper */
-inline void glLightModelfv(GLenum pname, const GLfloat * params) {
+inline void glLightModelfv(GLenum pname, const GLfloat* params) {
   ::glLightModelfv(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightModelfv("
              << Gl_wrapper::find(pname) << ", params);"
@@ -1247,7 +1247,7 @@ inline void glLightModeli(GLenum pname, GLint param) {
 }
 
 /*! glLightModeliv wrapper */
-inline void glLightModeliv(GLenum pname, const GLint * params) {
+inline void glLightModeliv(GLenum pname, const GLint* params) {
   ::glLightModeliv(pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightModeliv("
              << Gl_wrapper::find(pname) << ");"
@@ -1263,7 +1263,7 @@ inline void glLightf(GLenum light, GLenum pname, GLfloat param) {
 }
 
 /*! glLightfv wrapper */
-inline void glLightfv(GLenum light, GLenum pname, const GLfloat * params) {
+inline void glLightfv(GLenum light, GLenum pname, const GLfloat* params) {
   ::glLightfv(light, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightfv("
              << Gl_wrapper::find(pname) << ");"
@@ -1279,7 +1279,7 @@ inline void glLighti(GLenum light, GLenum pname, GLint param) {
 }
 
 /*! glLightiv wrapper */
-inline void glLightiv(GLenum light, GLenum pname, const GLint * params) {
+inline void glLightiv(GLenum light, GLenum pname, const GLint* params) {
   ::glLightiv(light, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightiv("
              << Gl_wrapper::find(pname) << ");"
@@ -1314,14 +1314,14 @@ inline void glLoadIdentity() {
 }
 
 /*! glLoadMatrixd wrapper */
-inline void glLoadMatrixd(const GLdouble * m) {
+inline void glLoadMatrixd(const GLdouble* m) {
   ::glLoadMatrixd(m);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glLoadMatrixd(" << ");"
              << std::endl;);
 }
 
 /*! glLoadMatrixf wrapper */
-inline void glLoadMatrixf(const GLfloat * m) {
+inline void glLoadMatrixf(const GLfloat* m) {
   ::glLoadMatrixf(m);
 #if !defined(NDEBUG)
   if(SGAL::TRACE(Trace::GRAPHICS)) {
@@ -1353,7 +1353,7 @@ inline void glLogicOp(GLenum opcode) {
 
 /*! glMap1d wrapper */
 inline void glMap1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride,
-                    GLint order, const GLdouble * points) {
+                    GLint order, const GLdouble* points) {
   ::glMap1d(target, u1, u2, stride, order, points);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMap1d("
              << Gl_wrapper::find(target) << ", " << u1 << ", " << u2 << ", "
@@ -1363,7 +1363,7 @@ inline void glMap1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride,
 
 /*! glMap1f wrapper */
 inline void glMap1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride,
-                    GLint order, const GLfloat * points) {
+                    GLint order, const GLfloat* points) {
   ::glMap1f(target, u1, u2, stride, order, points);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMap1f("
              << Gl_wrapper::find(target) << ", " << u1 << ", " << u2 << ", "
@@ -1374,7 +1374,7 @@ inline void glMap1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride,
 /*! glMap2d wrapper */
 inline void glMap2d(GLenum target, GLdouble u1, GLdouble u2, GLint ustride,
                     GLint uorder, GLdouble v1, GLdouble v2, GLint vstride,
-                    GLint vorder, const GLdouble * points) {
+                    GLint vorder, const GLdouble* points) {
   ::glMap2d(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMap2d("
              << Gl_wrapper::find(target) << ", " << u1 << ", " << u2 << ", "
@@ -1386,7 +1386,7 @@ inline void glMap2d(GLenum target, GLdouble u1, GLdouble u2, GLint ustride,
 /*! glMap2f wrapper */
 inline void glMap2f(GLenum target, GLfloat u1, GLfloat u2, GLint ustride,
                     GLint uorder, GLfloat v1, GLfloat v2, GLint vstride,
-                    GLint vorder, const GLfloat * points) {
+                    GLint vorder, const GLfloat* points) {
   ::glMap2f(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMap2f("
              << Gl_wrapper::find(target) << ", " << u1 << ", " << u2 << ", "
@@ -1441,7 +1441,7 @@ inline void glMaterialf(GLenum face, GLenum pname, GLfloat param) {
 }
 
 /*! glMaterialfv wrapper */
-inline void glMaterialfv(GLenum face, GLenum pname, const GLfloat * params) {
+inline void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params) {
   ::glMaterialfv(face, pname, params);
   TRACE_CODE(Trace::GRAPHICS,
              std::cout << "float params[] = {" << std::endl << "  ";
@@ -1479,7 +1479,7 @@ inline void glMateriali(GLenum face, GLenum pname, GLint param) {
 }
 
 /*! glMaterialiv wrapper */
-inline void glMaterialiv(GLenum face, GLenum pname, const GLint * params) {
+inline void glMaterialiv(GLenum face, GLenum pname, const GLint* params) {
   ::glMaterialiv(face, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMaterialiv("
              << Gl_wrapper::find(face) << ", "
@@ -1496,14 +1496,14 @@ inline void glMatrixMode(GLenum mode) {
 }
 
 /*! glMultMatrixd wrapper */
-inline void glMultMatrixd(const GLdouble * m) {
+inline void glMultMatrixd(const GLdouble* m) {
   ::glMultMatrixd(m);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMultMatrixd(" << ");"
              << std::endl;);
 }
 
 /*! glMultMatrixf wrapper */
-inline void glMultMatrixf(const GLfloat * m) {
+inline void glMultMatrixf(const GLfloat* m) {
   ::glMultMatrixf(m);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMultMatrixf(" << ");"
              << std::endl;);
@@ -1524,7 +1524,7 @@ inline void glNormal3b(GLbyte nx, GLbyte ny, GLbyte nz) {
 }
 
 /*! glNormal3bv wrapper */
-inline void glNormal3bv(const GLbyte * v) {
+inline void glNormal3bv(const GLbyte* v) {
   ::glNormal3bv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glNormal3bv(" << ");"
              << std::endl;);
@@ -1539,7 +1539,7 @@ inline void glNormal3d(GLdouble nx, GLdouble ny, GLdouble nz) {
 }
 
 /*! glNormal3dv wrapper */
-inline void glNormal3dv(const GLdouble * v) {
+inline void glNormal3dv(const GLdouble* v) {
   ::glNormal3dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glNormal3dv(" << ");"
              << std::endl;);
@@ -1554,7 +1554,7 @@ inline void glNormal3f(GLfloat nx, GLfloat ny, GLfloat nz) {
 }
 
 /*! normal wrapper */
-inline void glNormal3fv(const GLfloat * v) {
+inline void glNormal3fv(const GLfloat* v) {
   ::glNormal3fv(v);
   TRACE_CODE(Trace::GRAPHICS,
              std::cout << "glNormal3fv(" << *((Vector3f *) v) << ");"
@@ -1571,7 +1571,7 @@ inline void glNormal3i(GLint nx, GLint ny, GLint nz) {
 }
 
 /*! glNormal3iv wrapper */
-inline void glNormal3iv(const GLint * v) {
+inline void glNormal3iv(const GLint* v) {
   ::glNormal3iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glNormal3iv(" << ");"
              << std::endl;);
@@ -1586,7 +1586,7 @@ inline void glNormal3s(GLshort nx, GLshort ny, GLshort nz) {
 }
 
 /*! glNormal3sv wrapper */
-inline void glNormal3sv(const GLshort * v) {
+inline void glNormal3sv(const GLshort* v) {
   ::glNormal3sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glNormal3sv(" << ");"
              << std::endl;);
@@ -1594,7 +1594,7 @@ inline void glNormal3sv(const GLshort * v) {
 
 /*! glNormalPointer wrapper */
 inline void glNormalPointer(GLenum type, GLsizei stride,
-                            const GLvoid * pointer) {
+                            const GLvoid* pointer) {
   ::glNormalPointer(type, stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glNormalPointer("
              << Gl_wrapper::find(type) << ", "
@@ -1621,14 +1621,14 @@ inline void glPassThrough(GLfloat token) {
 }
 
 /*! glPixelMapfv wrapper */
-inline void glPixelMapfv(GLenum map, GLsizei mapsize, const GLfloat * values) {
+inline void glPixelMapfv(GLenum map, GLsizei mapsize, const GLfloat* values) {
   ::glPixelMapfv(map, mapsize, values);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glPixelMapfv(" << ");"
              << std::endl;);
 }
 
 /*! glPixelMapuiv wrapper */
-inline void glPixelMapuiv(GLenum map, GLsizei mapsize, const GLuint * values) {
+inline void glPixelMapuiv(GLenum map, GLsizei mapsize, const GLuint* values) {
   ::glPixelMapuiv(map, mapsize, values);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glPixelMapuiv(" << ");"
              << std::endl;);
@@ -1636,7 +1636,7 @@ inline void glPixelMapuiv(GLenum map, GLsizei mapsize, const GLuint * values) {
 
 /*! glPixelMapusv wrapper */
 inline void glPixelMapusv(GLenum map, GLsizei mapsize,
-                          const GLushort * values) {
+                          const GLushort* values) {
   ::glPixelMapusv(map, mapsize, values);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glPixelMapusv(" << ");"
              << std::endl;);
@@ -1703,7 +1703,7 @@ inline void glPolygonOffset(GLfloat factor, GLfloat units) {
 }
 
 /*! glPolygonStipple wrapper */
-inline void glPolygonStipple(const GLubyte * mask) {
+inline void glPolygonStipple(const GLubyte* mask) {
   ::glPolygonStipple(mask);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glPolygonStipple(" << ");"
              << std::endl;);
@@ -1738,8 +1738,8 @@ inline void glPopName(void) {
 }
 
 /*! glPrioritizeTextures wrapper */
-inline void glPrioritizeTextures(GLsizei n, const GLuint * textures,
-                                 const GLclampf * priorities) {
+inline void glPrioritizeTextures(GLsizei n, const GLuint* textures,
+                                 const GLclampf* priorities) {
   ::glPrioritizeTextures(n, textures, priorities);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glPrioritizeTextures(" << ");"
              << std::endl;);
@@ -1781,7 +1781,7 @@ inline void glRasterPos2d(GLdouble x, GLdouble y) {
 }
 
 /*! glRasterPos2dv wrapper */
-inline void glRasterPos2dv(const GLdouble * v) {
+inline void glRasterPos2dv(const GLdouble* v) {
   ::glRasterPos2dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos2dv(" << ");"
              << std::endl;);
@@ -1796,7 +1796,7 @@ inline void glRasterPos2f(GLfloat x, GLfloat y) {
 }
 
 /*! glRasterPos2fv wrapper */
-inline void glRasterPos2fv(const GLfloat * v) {
+inline void glRasterPos2fv(const GLfloat* v) {
   ::glRasterPos2fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos2fv(" << ");"
              << std::endl;);
@@ -1811,7 +1811,7 @@ inline void glRasterPos2i(GLint x, GLint y) {
 }
 
 /*! glRasterPos2iv wrapper */
-inline void glRasterPos2iv(const GLint * v) {
+inline void glRasterPos2iv(const GLint* v) {
   ::glRasterPos2iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos2iv(" << ");"
              << std::endl;);
@@ -1826,7 +1826,7 @@ inline void glRasterPos2s(GLshort x, GLshort y) {
 }
 
 /*! glRasterPos2sv wrapper */
-inline void glRasterPos2sv(const GLshort * v) {
+inline void glRasterPos2sv(const GLshort* v) {
   ::glRasterPos2sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos2sv(" << ");"
              << std::endl;);
@@ -1841,7 +1841,7 @@ inline void glRasterPos3d(GLdouble x, GLdouble y, GLdouble z) {
 }
 
 /*! glRasterPos3dv wrapper */
-inline void glRasterPos3dv(const GLdouble * v) {
+inline void glRasterPos3dv(const GLdouble* v) {
   ::glRasterPos3dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos3dv(" << ");"
              << std::endl;);
@@ -1856,7 +1856,7 @@ inline void glRasterPos3f(GLfloat x, GLfloat y, GLfloat z) {
 }
 
 /*! glRasterPos3fv wrapper */
-inline void glRasterPos3fv(const GLfloat * v) {
+inline void glRasterPos3fv(const GLfloat* v) {
   ::glRasterPos3fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos3fv(" << ");"
              << std::endl;);
@@ -1871,7 +1871,7 @@ inline void glRasterPos3i(GLint x, GLint y, GLint z) {
 }
 
 /*! glRasterPos3iv wrapper */
-inline void glRasterPos3iv(const GLint * v) {
+inline void glRasterPos3iv(const GLint* v) {
   ::glRasterPos3iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos3iv(" << ");"
              << std::endl;);
@@ -1886,7 +1886,7 @@ inline void glRasterPos3s(GLshort x, GLshort y, GLshort z) {
 }
 
 /*! glRasterPos3sv wrapper */
-inline void glRasterPos3sv(const GLshort * v) {
+inline void glRasterPos3sv(const GLshort* v) {
   ::glRasterPos3sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos3sv(" << ");"
              << std::endl;);
@@ -1901,7 +1901,7 @@ inline void glRasterPos4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w) {
 }
 
 /*! glRasterPos4dv wrapper */
-inline void glRasterPos4dv(const GLdouble * v) {
+inline void glRasterPos4dv(const GLdouble* v) {
   ::glRasterPos4dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos4dv(" << ");"
              << std::endl;);
@@ -1916,7 +1916,7 @@ inline void glRasterPos4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w) {
 }
 
 /*! glRasterPos4fv wrapper */
-inline void glRasterPos4fv(const GLfloat * v) {
+inline void glRasterPos4fv(const GLfloat* v) {
   ::glRasterPos4fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos4fv(" << ");"
              << std::endl;);
@@ -1931,7 +1931,7 @@ inline void glRasterPos4i(GLint x, GLint y, GLint z, GLint w) {
 }
 
 /*! glRasterPos4iv wrapper */
-inline void glRasterPos4iv(const GLint * v) {
+inline void glRasterPos4iv(const GLint* v) {
   ::glRasterPos4iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos4iv(" << ");"
              << std::endl;);
@@ -1946,7 +1946,7 @@ inline void glRasterPos4s(GLshort x, GLshort y, GLshort z, GLshort w) {
 }
 
 /*! glRasterPos4sv wrapper */
-inline void glRasterPos4sv(const GLshort * v) {
+inline void glRasterPos4sv(const GLshort* v) {
   ::glRasterPos4sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRasterPos4sv(" << ");"
              << std::endl;);
@@ -1961,7 +1961,7 @@ inline void glReadBuffer(GLenum mode) {
 
 /*! glReadPixels wrapper */
 inline void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height,
-                         GLenum format, GLenum type, GLvoid * pixels) {
+                         GLenum format, GLenum type, GLvoid* pixels) {
   ::glReadPixels(x, y, width, height, format, type, pixels);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glReadPixels("
              << x << ", " << y << ", " << width << ", " << height << ", "
@@ -1979,7 +1979,7 @@ inline void glRectd(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2) {
 }
 
 /*! glRectdv wrapper */
-inline void glRectdv(const GLdouble * v1, const GLdouble * v2) {
+inline void glRectdv(const GLdouble* v1, const GLdouble* v2) {
   ::glRectdv(v1, v2);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRectdv(" << ");"
              << std::endl;);
@@ -1994,7 +1994,7 @@ inline void glRectf(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2) {
 }
 
 /*! glRectfv wrapper */
-inline void glRectfv(const GLfloat * v1, const GLfloat * v2) {
+inline void glRectfv(const GLfloat* v1, const GLfloat* v2) {
   ::glRectfv(v1, v2);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRectfv(" << ");"
              << std::endl;);
@@ -2009,7 +2009,7 @@ inline void glRecti(GLint x1, GLint y1, GLint x2, GLint y2) {
 }
 
 /*! glRectiv wrapper */
-inline void glRectiv(const GLint * v1, const GLint * v2) {
+inline void glRectiv(const GLint* v1, const GLint* v2) {
   ::glRectiv(v1, v2);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRectiv(" << ");"
              << std::endl;);
@@ -2024,7 +2024,7 @@ inline void glRects(GLshort x1, GLshort y1, GLshort x2, GLshort y2) {
 }
 
 /*! glRectsv wrapper */
-inline void glRectsv(const GLshort * v1, const GLshort * v2) {
+inline void glRectsv(const GLshort* v1, const GLshort* v2) {
   ::glRectsv(v1, v2);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glRectsv(" << ");"
              << std::endl;);
@@ -2077,7 +2077,7 @@ inline void glScissor(GLint x, GLint y, GLsizei width, GLsizei height) {
 }
 
 /*! glSelectBuffer wrapper */
-inline void glSelectBuffer(GLsizei size, GLuint * buffer) {
+inline void glSelectBuffer(GLsizei size, GLuint* buffer) {
   ::glSelectBuffer(size, buffer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glSelectBuffer(" << ");"
              << std::endl;);
@@ -2119,7 +2119,7 @@ inline void glTexCoord1d(GLdouble s) {
 }
 
 /*! glTexCoord1dv wrapper */
-inline void glTexCoord1dv(const GLdouble * v) {
+inline void glTexCoord1dv(const GLdouble* v) {
   ::glTexCoord1dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord1dv(" << ");"
              << std::endl;);
@@ -2133,7 +2133,7 @@ inline void glTexCoord1f(GLfloat s) {
 }
 
 /*! glTexCoord1fv wrapper */
-inline void glTexCoord1fv(const GLfloat * v) {
+inline void glTexCoord1fv(const GLfloat* v) {
   ::glTexCoord1fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord1fv(" << ");"
              << std::endl;);
@@ -2147,7 +2147,7 @@ inline void glTexCoord1i(GLint s) {
 }
 
 /*! glTexCoord1iv wrapper */
-inline void glTexCoord1iv(const GLint * v) {
+inline void glTexCoord1iv(const GLint* v) {
   ::glTexCoord1iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord1iv(" << ");"
              << std::endl;);
@@ -2161,7 +2161,7 @@ inline void glTexCoord1s(GLshort s) {
 }
 
 /*! glTexCoord1sv wrapper */
-inline void glTexCoord1sv(const GLshort * v) {
+inline void glTexCoord1sv(const GLshort* v) {
   ::glTexCoord1sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord1sv(" << ");"
              << std::endl;);
@@ -2176,7 +2176,7 @@ inline void glTexCoord2d(GLdouble s, GLdouble t) {
 }
 
 /*! glTexCoord2dv wrapper */
-inline void glTexCoord2dv(const GLdouble * v) {
+inline void glTexCoord2dv(const GLdouble* v) {
   ::glTexCoord2dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord2dv(" << ");"
              << std::endl;);
@@ -2191,7 +2191,7 @@ inline void glTexCoord2f(const GLfloat v1, const GLfloat v2) {
 }
 
 /*! tex-coord wrapper */
-inline void glTexCoord2fv(const GLfloat * v) {
+inline void glTexCoord2fv(const GLfloat* v) {
   ::glTexCoord2fv(v);
   TRACE_CODE(Trace::GRAPHICS,
              std::cout << "glTexCoord2fv(" << *((Vector2f *) v) << ");"
@@ -2207,7 +2207,7 @@ inline void glTexCoord2i(GLint s, GLint t) {
 }
 
 /*! glTexCoord2iv wrapper */
-inline void glTexCoord2iv(const GLint * v) {
+inline void glTexCoord2iv(const GLint* v) {
   ::glTexCoord2iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord2iv(" << ");"
              << std::endl;);
@@ -2221,7 +2221,7 @@ inline void glTexCoord2s(GLshort s, GLshort t) {
 }
 
 /*! glTexCoord2sv wrapper */
-inline void glTexCoord2sv(const GLshort * v) {
+inline void glTexCoord2sv(const GLshort* v) {
   ::glTexCoord2sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord2sv(" << ");"
              << std::endl;);
@@ -2236,7 +2236,7 @@ inline void glTexCoord3d(GLdouble s, GLdouble t, GLdouble r) {
 }
 
 /*! glTexCoord3dv wrapper */
-inline void glTexCoord3dv(const GLdouble * v) {
+inline void glTexCoord3dv(const GLdouble* v) {
   ::glTexCoord3dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord3dv(" << ");"
              << std::endl;);
@@ -2251,7 +2251,7 @@ inline void glTexCoord3f(GLfloat s, GLfloat t, GLfloat r) {
 }
 
 /*! glTexCoord3fv wrapper */
-inline void glTexCoord3fv(const GLfloat * v) {
+inline void glTexCoord3fv(const GLfloat* v) {
   ::glTexCoord3fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord3fv(" << ");"
              << std::endl;);
@@ -2266,7 +2266,7 @@ inline void glTexCoord3i(GLint s, GLint t, GLint r) {
 }
 
 /*! glTexCoord3iv wrapper */
-inline void glTexCoord3iv(const GLint * v) {
+inline void glTexCoord3iv(const GLint* v) {
   ::glTexCoord3iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord3iv(" << ");"
              << std::endl;);
@@ -2281,7 +2281,7 @@ inline void glTexCoord3s(GLshort s, GLshort t, GLshort r) {
 }
 
 /*! glTexCoord3sv wrapper */
-inline void glTexCoord3sv(const GLshort * v) {
+inline void glTexCoord3sv(const GLshort* v) {
   ::glTexCoord3sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord3sv(" << ");"
              << std::endl;);
@@ -2296,7 +2296,7 @@ inline void glTexCoord4d(GLdouble s, GLdouble t, GLdouble r, GLdouble q) {
 }
 
 /*! glTexCoord4dv wrapper */
-inline void glTexCoord4dv(const GLdouble * v) {
+inline void glTexCoord4dv(const GLdouble* v) {
   ::glTexCoord4dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord4dv(" << ");"
              << std::endl;);
@@ -2311,7 +2311,7 @@ inline void glTexCoord4f(GLfloat s, GLfloat t, GLfloat r, GLfloat q) {
 }
 
 /*! glTexCoord4fv wrapper */
-inline void glTexCoord4fv(const GLfloat * v) {
+inline void glTexCoord4fv(const GLfloat* v) {
   ::glTexCoord4fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord4fv(" << ");"
              << std::endl;);
@@ -2326,7 +2326,7 @@ inline void glTexCoord4i(GLint s, GLint t, GLint r, GLint q) {
 }
 
 /*! glTexCoord4iv wrapper */
-inline void glTexCoord4iv(const GLint * v) {
+inline void glTexCoord4iv(const GLint* v) {
   ::glTexCoord4iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord4iv(" << ");"
              << std::endl;);
@@ -2341,7 +2341,7 @@ inline void glTexCoord4s(GLshort s, GLshort t, GLshort r, GLshort q) {
 }
 
 /*! glTexCoord4sv wrapper */
-inline void glTexCoord4sv(const GLshort * v) {
+inline void glTexCoord4sv(const GLshort* v) {
   ::glTexCoord4sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord4sv(" << ");"
              << std::endl;);
@@ -2349,7 +2349,7 @@ inline void glTexCoord4sv(const GLshort * v) {
 
 /*! glTexCoordPointer wrapper */
 inline void glTexCoordPointer(GLint size, GLenum type, GLsizei stride,
-                              const GLvoid * pointer) {
+                              const GLvoid* pointer) {
   ::glTexCoordPointer(size, type, stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoordPointer(" << ");"
              << std::endl;);
@@ -2365,7 +2365,7 @@ inline void glTexEnvf(GLenum target, GLenum pname, GLfloat param) {
 }
 
 /*! glTexEnvfv wrapper */
-inline void glTexEnvfv(GLenum target, GLenum pname, const GLfloat * params) {
+inline void glTexEnvfv(GLenum target, GLenum pname, const GLfloat* params) {
   ::glTexEnvfv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexEnvfv("
              << Gl_wrapper::find(target) << ", "
@@ -2385,11 +2385,12 @@ inline void glTexEnvi(GLenum target, GLenum pname, GLint param)
 }
 
 /*! glTexEnviv wrapper */
-inline void glTexEnviv(GLenum target, GLenum pname, const GLint * params) {
+inline void glTexEnviv(GLenum target, GLenum pname, const GLint* params) {
   ::glTexEnviv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "GLenum("
              << Gl_wrapper::find(target) << ", "
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(pname) << ", "
+             << Gl_wrapper::find(*params) << ");"
              << std::endl;);
 }
 
@@ -2397,15 +2398,19 @@ inline void glTexEnviv(GLenum target, GLenum pname, const GLint * params) {
 inline void glTexGend(GLenum coord, GLenum pname, GLdouble param) {
   ::glTexGend(coord, pname, param);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGend("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(coord) << ", "
+             << Gl_wrapper::find(pname) << ", "
+             << Gl_wrapper::find(param) << ");"
              << std::endl;);
 }
 
 /*! glTexGendv wrapper */
-inline void glTexGendv(GLenum coord, GLenum pname, const GLdouble * params) {
+inline void glTexGendv(GLenum coord, GLenum pname, const GLdouble* params) {
   ::glTexGendv(coord, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGendv("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(coord) << ", "
+             << Gl_wrapper::find(pname) << ", "
+             << Gl_wrapper::find(*params) << ");"
              << std::endl;);
 }
 
@@ -2413,15 +2418,19 @@ inline void glTexGendv(GLenum coord, GLenum pname, const GLdouble * params) {
 inline void glTexGenf(GLenum coord, GLenum pname, GLfloat param) {
   ::glTexGenf(coord, pname, param);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGenf("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(coord) << ", "
+             << Gl_wrapper::find(pname) << ", "
+             << Gl_wrapper::find(param) << ");"
              << std::endl;);
 }
 
 /*! glTexGenfv wrapper */
-inline void glTexGenfv(GLenum coord, GLenum pname, const GLfloat * params) {
+inline void glTexGenfv(GLenum coord, GLenum pname, const GLfloat* params) {
   ::glTexGenfv(coord, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGenfv("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(coord) << ", "
+             << Gl_wrapper::find(*params) << ", "
+             << ");"
              << std::endl;);
 }
 
@@ -2429,22 +2438,26 @@ inline void glTexGenfv(GLenum coord, GLenum pname, const GLfloat * params) {
 inline void glTexGeni(GLenum coord, GLenum pname, GLint param) {
   ::glTexGeni(coord, pname, param);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGeni("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(coord) << ", "
+             << Gl_wrapper::find(pname) << ", "
+             << Gl_wrapper::find(param) << ");"
              << std::endl;);
 }
 
 /*! glTexGeniv wrapper */
-inline void glTexGeniv(GLenum coord, GLenum pname, const GLint * params) {
+inline void glTexGeniv(GLenum coord, GLenum pname, const GLint* params) {
   ::glTexGeniv(coord, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGeniv("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(coord) << ", "
+             << Gl_wrapper::find(pname) << ", "
+             << Gl_wrapper::find(*params) << ");"
              << std::endl;);
 }
 
 /*! glTexImage1D wrapper */
 inline void glTexImage1D(GLenum target, GLint level, GLint internalformat,
                          GLsizei width, GLint border, GLenum format,
-                         GLenum type, const GLvoid * pixels) {
+                         GLenum type, const GLvoid* pixels) {
   ::glTexImage1D(target, level, internalformat, width, border, format,  type,
                  pixels);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexImage1D("
@@ -2455,7 +2468,7 @@ inline void glTexImage1D(GLenum target, GLint level, GLint internalformat,
 /*! glTexImage2D wrapper */
 inline void glTexImage2D(GLenum target, GLint level, GLint internalformat,
                          GLsizei width, GLsizei height, GLint border,
-                         GLenum format, GLenum type, const GLvoid * pixels) {
+                         GLenum format, GLenum type, const GLvoid* pixels) {
   ::glTexImage2D(target, level, internalformat, width, height, border, format,
                  type, pixels);
   // Is the internal format the number of components?
@@ -2489,7 +2502,7 @@ inline void glTexParameterf(GLenum target, GLenum pname, GLfloat param) {
 
 /*! glTexParameterfv wrapper */
 inline void glTexParameterfv(GLenum target, GLenum pname,
-                             const GLfloat * params) {
+                             const GLfloat* params) {
   ::glTexParameterfv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexParameterfv("
              << Gl_wrapper::find(target) << ", "
@@ -2509,7 +2522,7 @@ inline void glTexParameteri(GLenum target, GLenum pname, GLint param) {
 
 /*! glTexParameteriv wrapper */
 inline void glTexParameteriv(GLenum target, GLenum pname,
-                             const GLint * params) {
+                             const GLint* params) {
   ::glTexParameteriv(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexParameteriv("
              << Gl_wrapper::find(target) << ", "
@@ -2520,7 +2533,7 @@ inline void glTexParameteriv(GLenum target, GLenum pname,
 /*! glTexSubImage1D wrapper */
 inline void glTexSubImage1D(GLenum target, GLint level, GLint xoffset,
                             GLsizei width, GLenum format, GLenum type,
-                            const GLvoid * pixels) {
+                            const GLvoid* pixels) {
   ::glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexSubImage1D("
              << Gl_wrapper::find(target) << ", " << level << ");"
@@ -2530,7 +2543,7 @@ inline void glTexSubImage1D(GLenum target, GLint level, GLint xoffset,
 /*! glTexSubImage2D wrapper */
 inline void glTexSubImage2D(GLenum target, GLint level, GLint xoffset,
                             GLint yoffset, GLsizei width, GLsizei height,
-                            GLenum format, GLenum type, const GLvoid * pixels)
+                            GLenum format, GLenum type, const GLvoid* pixels)
 {
   ::glTexSubImage2D(target, level, xoffset, yoffset, width, height, format,
                     type, pixels);
@@ -2564,7 +2577,7 @@ inline void glVertex2d(GLdouble x, GLdouble y) {
 }
 
 /*! glVertex2dv wrapper */
-inline void glVertex2dv(const GLdouble * v) {
+inline void glVertex2dv(const GLdouble* v) {
   ::glVertex2dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex2dv(" << ");"
              << std::endl;);
@@ -2579,7 +2592,7 @@ inline void glVertex2f(const GLfloat v1, const GLfloat v2) {
 }
 
 /*! glVertex2fv wrapper */
-inline void glVertex2fv(const GLfloat * v) {
+inline void glVertex2fv(const GLfloat* v) {
   ::glVertex2fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "GLfloat(" << ");"
              << std::endl;);
@@ -2594,7 +2607,7 @@ inline void glVertex2i(GLint x, GLint y) {
 }
 
 /*! glVertex2iv wrapper */
-inline void glVertex2iv(const GLint * v) {
+inline void glVertex2iv(const GLint* v) {
   ::glVertex2iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex2iv(" << ");"
              << std::endl;);
@@ -2609,7 +2622,7 @@ inline void glVertex2s(GLshort x, GLshort y) {
 }
 
 /*! glVertex2sv wrapper */
-inline void glVertex2sv(const GLshort * v) {
+inline void glVertex2sv(const GLshort* v) {
   ::glVertex2sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex2sv(" << ");"
              << std::endl;);
@@ -2624,7 +2637,7 @@ inline void glVertex3d(GLdouble x, GLdouble y, GLdouble z) {
 }
 
 /*! glVertex3dv wrapper */
-inline void glVertex3dv(const GLdouble * v) {
+inline void glVertex3dv(const GLdouble* v) {
   ::glVertex3dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex3dv(" << ");"
              << std::endl;);
@@ -2639,7 +2652,7 @@ inline void glVertex3f(GLfloat x, GLfloat y, GLfloat z) {
 }
 
 /*! vertex wrapper */
-inline void glVertex3fv(const GLfloat * v) {
+inline void glVertex3fv(const GLfloat* v) {
   ::glVertex3fv(v);
   TRACE_CODE(Trace::GRAPHICS,
              std::cout << "glVertex3fv(" << *((Vector3f *) v) << ");"
@@ -2655,7 +2668,7 @@ inline void glVertex3i(GLint x, GLint y, GLint z) {
 }
 
 /*! glVertex3iv wrapper */
-inline void glVertex3iv(const GLint * v) {
+inline void glVertex3iv(const GLint* v) {
   ::glVertex3iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex3iv(" << ");"
              << std::endl;);
@@ -2670,7 +2683,7 @@ inline void glVertex3s(GLshort x, GLshort y, GLshort z) {
 }
 
 /*! glVertex3sv wrapper */
-inline void glVertex3sv(const GLshort * v) {
+inline void glVertex3sv(const GLshort* v) {
   ::glVertex3sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex3sv(" << ");"
              << std::endl;);
@@ -2685,7 +2698,7 @@ inline void glVertex4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w) {
 }
 
 /*! glVertex4dv wrapper */
-inline void glVertex4dv(const GLdouble * v) {
+inline void glVertex4dv(const GLdouble* v) {
   ::glVertex4dv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex4dv(" << ");"
              << std::endl;);
@@ -2700,7 +2713,7 @@ inline void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w) {
 }
 
 /*! glVertex4fv wrapper */
-inline void glVertex4fv(const GLfloat * v) {
+inline void glVertex4fv(const GLfloat* v) {
   ::glVertex4fv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex4fv(" << ");"
              << std::endl;);
@@ -2715,7 +2728,7 @@ inline void glVertex4i(GLint x, GLint y, GLint z, GLint w) {
 }
 
 /*! glVertex4iv wrapper */
-inline void glVertex4iv(const GLint * v) {
+inline void glVertex4iv(const GLint* v) {
   ::glVertex4iv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex4iv(" << ");"
              << std::endl;);
@@ -2730,7 +2743,7 @@ inline void glVertex4s(GLshort x, GLshort y, GLshort z, GLshort w) {
 }
 
 /*! glVertex4sv wrapper */
-inline void glVertex4sv(const GLshort * v) {
+inline void glVertex4sv(const GLshort* v) {
   ::glVertex4sv(v);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertex4sv(" << ");"
              << std::endl;);
@@ -2738,7 +2751,7 @@ inline void glVertex4sv(const GLshort * v) {
 
 /*! glVertexPointer wrapper */
 inline void glVertexPointer(GLint size, GLenum type, GLsizei stride,
-                            const GLvoid * pointer) {
+                            const GLvoid* pointer) {
   ::glVertexPointer(size, type, stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glVertexPointer("
              << size
@@ -2765,14 +2778,14 @@ inline void glBindBufferARB(GLenum target, GLuint buffer) {
              << std::endl;);
 }
 
-inline void glDeleteBuffersARB(GLsizei n, GLuint * buffers) {
+inline void glDeleteBuffersARB(GLsizei n, GLuint* buffers) {
   ::glDeleteBuffersARB(n, buffers);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glDeleteBuffersARB("
              << n << ", " << "buffers" << ");"
              << std::endl;);
 }
 
-inline void glGenBuffersARB(GLsizei n, GLuint * buffers) {
+inline void glGenBuffersARB(GLsizei n, GLuint* buffers) {
   ::glGenBuffersARB(n, buffers);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGenBuffersARB("
              << n << ", " << "buffers" << ");"
@@ -2786,7 +2799,7 @@ inline GLboolean glIsBufferARB(GLuint buffer) {
              << std::endl;);
 }
 
-inline void glBufferDataARB(GLenum target, GLsizei size, GLvoid * data,
+inline void glBufferDataARB(GLenum target, GLsizei size, GLvoid* data,
                             GLenum usage) {
   ::glBufferDataARB(target, size, data, usage);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glBufferDataARB("
@@ -2797,7 +2810,7 @@ inline void glBufferDataARB(GLenum target, GLsizei size, GLvoid * data,
 }
 
 inline void glBufferSubDataARB(GLenum target, GLint offset, GLsizei size,
-                               GLvoid * data) {
+                               GLvoid* data) {
   ::glBufferSubDataARB(target, offset, size, data);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glBufferSubDataARB("
              << Gl_wrapper::find(target) << ", " << offset << ", "
@@ -2806,7 +2819,7 @@ inline void glBufferSubDataARB(GLenum target, GLint offset, GLsizei size,
 }
 
 inline void glGetBufferSubDataARB(GLenum target, GLint offset, GLsizei size,
-                                  GLvoid * data) {
+                                  GLvoid* data) {
   ::glGetBufferSubDataARB(target, offset, size, data);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetBufferSubDataARB("
              << Gl_wrapper::find(target) << ", " << offset << ", "
@@ -2814,7 +2827,7 @@ inline void glGetBufferSubDataARB(GLenum target, GLint offset, GLsizei size,
              << std::endl;);
 }
 
-inline GLvoid * glMapBufferARB(GLenum target, GLenum access) {
+inline GLvoid* glMapBufferARB(GLenum target, GLenum access) {
   return ::glMapBufferARB(target, access);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glMapBufferARB("
              << Gl_wrapper::find(target) << ", " << Gl_wrapper::find(access)
@@ -2830,7 +2843,7 @@ inline GLboolean glUnmapBufferARB(GLenum target) {
 }
 
 inline void glGetBufferParameterivARB(GLenum target, GLenum pname,
-                                      GLint * params) {
+                                      GLint* params) {
   ::glGetBufferParameterivARB(target, pname, params);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glGetBufferParameterivARB("
              << Gl_wrapper::find(target) << ", " <<
@@ -2854,25 +2867,25 @@ inline void glGetBufferPointervARB(GLenum target, GLenum pname,
 typedef void glARRAYELEMENTEXTPROC(GLint i);
 typedef void glDRAWARRAYSEXTPROC(GLenum mode, GLint first, GLsizei count);
 typedef void glVERTEXPOINTEREXTPROC(GLint size, GLenum type, GLsizei stride,
-                                    GLsizei count, const GLvoid * pointer);
+                                    GLsizei count, const GLvoid* pointer);
 typedef void glNORMALPOINTEREXTPROC(GLenum type, GLsizei stride,
-                                    GLsizei count, const GLvoid * pointer);
+                                    GLsizei count, const GLvoid* pointer);
 typedef void glCOLORPOINTEREXTPROC(GLint size, GLenum type, GLsizei stride,
-                                   GLsizei count, const GLvoid * pointer);
+                                   GLsizei count, const GLvoid* pointer);
 typedef void glINDEXPOINTEREXTPROC(GLenum type, GLsizei stride, GLsizei count,
-                                   const GLvoid * pointer);
+                                   const GLvoid* pointer);
 typedef void glTEXCOORDPOINTEREXTPROC(GLint size, GLenum type, GLsizei stride,
-                                      GLsizei count, const GLvoid * pointer);
+                                      GLsizei count, const GLvoid* pointer);
 typedef void glEDGEFLAGPOINTEREXTPROC(GLsizei stride, GLsizei count,
-                                      const GLboolean * pointer);
+                                      const GLboolean* pointer);
 typedef void glGETPOINTERVEXTPROC(GLenum pname, GLvoid ** params);
 typedef void glARRAYELEMENTARRAYEXTPROC(GLenum mode, GLsizei count,
-                                        const GLvoid * pi);
+                                        const GLvoid* pi);
 
 /* WIN_draw_range_elements */
 typedef void glDRAWRANGEELEMENTSWINPROC(GLenum mode, GLuint start, GLuint end,
                                         GLsizei count, GLenum type,
-                                        const GLvoid * indices);
+                                        const GLvoid* indices);
 
 /* WIN_swap_hint */
 typedef void glADDSWAPHINTRECTWINPROC(GLint x, GLint y, GLsizei width,
@@ -2881,16 +2894,16 @@ typedef void glADDSWAPHINTRECTWINPROC(GLint x, GLint y, GLsizei width,
 /* EXT_paletted_texture */
 typedef void glCOLORTABLEEXTPROC(GLenum target, GLenum internalFormat,
                                  GLsizei width, GLenum format,
-                                 GLenum type, const GLvoid * data);
+                                 GLenum type, const GLvoid* data);
 typedef void glCOLORSUBTABLEEXTPROC(GLenum target, GLsizei start,
                                     GLsizei count, GLenum format,
-                                    GLenum type, const GLvoid * data);
+                                    GLenum type, const GLvoid* data);
 typedef void glGETCOLORTABLEEXTPROC(GLenum target, GLenum format, GLenum type,
-                                    GLvoid * data);
+                                    GLvoid* data);
 typedef void glGETCOLORTABLEPARAMETERIVEXTPROC(GLenum target, GLenum pname,
-                                               GLint * params);
+                                               GLint* params);
 typedef void glGETCOLORTABLEPARAMETERFVEXTPROC(GLenum target, GLenum pname,
-                                               GLfloat * params);
+                                               GLfloat* params);
 
 #endif
 

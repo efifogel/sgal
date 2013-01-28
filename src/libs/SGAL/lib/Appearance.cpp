@@ -726,6 +726,9 @@ void Appearance::clean()
   if (cube_env) {
     set_tex_enable(true);
     Tex_gen* tex_gen = new Tex_gen();
+    // tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
+    // tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
+    // tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
     tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
     tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
     tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);

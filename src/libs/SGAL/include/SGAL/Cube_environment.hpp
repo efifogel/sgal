@@ -50,22 +50,22 @@ class SGAL_CLASSDEF Cube_environment : public Texture {
 public:
   enum {
     FIRST = Texture::LAST - 1,
-    LEFT,
     RIGHT,
-    FRONT,
+    LEFT,
     BACK,
-    BOTTOM,
+    FRONT,
     TOP,
+    BOTTOM,
     LAST
   };
 
   enum Images {
-    LEFT_IMAGE = 0,
-    RIGHT_IMAGE,
-    FRONT_IMAGE,
+    RIGHT_IMAGE = 0,
+    LEFT_IMAGE,
     BACK_IMAGE,
-    BOTTOM_IMAGE,
+    FRONT_IMAGE,
     TOP_IMAGE,
+    BOTTOM_IMAGE,
     NUM_IMAGES
   };
   

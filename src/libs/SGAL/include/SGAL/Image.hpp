@@ -43,6 +43,7 @@ public:
   enum {
     FIRST = Image_base::LAST - 1,
     URL,
+    FLIP,
     LAST
   };
 

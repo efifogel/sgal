@@ -901,7 +901,23 @@ Gl_wrapper::Gl_wrapper()
   m_gl_token_names[GL_EYE_LINEAR] = "GL_EYE_LINEAR";
   m_gl_token_names[GL_OBJECT_LINEAR] = "GL_OBJECT_LINEAR";
   m_gl_token_names[GL_SPHERE_MAP] = "GL_SPHERE_MAP";
+  m_gl_token_names[GL_NORMAL_MAP] = "GL_NORMAL_MAP";
+  m_gl_token_names[GL_REFLECTION_MAP] = "GL_REFLECTION_MAP";
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP] = "GL_TEXTURE_CUBE_MAP";
 
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP_POSITIVE_X] =
+    "GL_TEXTURE_CUBE_MAP_POSITIVE_X";
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP_NEGATIVE_X] =
+    "GL_TEXTURE_CUBE_MAP_NEGATIVE_X";
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP_POSITIVE_Y] =
+    "GL_TEXTURE_CUBE_MAP_POSITIVE_Y";
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP_NEGATIVE_Y] =
+    "GL_TEXTURE_CUBE_MAP_NEGATIVE_Y";
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP_POSITIVE_Z] =
+    "GL_TEXTURE_CUBE_MAP_POSITIVE_Z";
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP_NEGATIVE_Z] =
+    "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z";
+  
   /* TextureGenParameter */
   m_gl_token_names[GL_TEXTURE_GEN_MODE] = "GL_TEXTURE_GEN_MODE";
   m_gl_token_names[GL_OBJECT_PLANE] = "GL_OBJECT_PLANE";

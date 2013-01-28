@@ -32,6 +32,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/GL_error.hpp"
+#include "SGAL/Gl_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -59,8 +60,11 @@ void Tex_gen::draw(Context* /* context */)
     GL_NORMAL_MAP,
     GL_REFLECTION_MAP
   };
+  SGAL_assertion(m_mode_s != OFF);
   glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, params[m_mode_s]);
+  SGAL_assertion(m_mode_t != OFF);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, params[m_mode_t]);
+  SGAL_assertion(m_mode_r != OFF);
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, params[m_mode_r]);
 };
 

@@ -1,6 +1,7 @@
 #VRML V2.0 utf8
 Configuration {
   accumulation Accumulation { enabled TRUE }
+  # geometryDrawingMode "direct"
 }
 ColorBackground {
   color 0.5 0.5 0.5 0
@@ -50,12 +51,12 @@ Transform {
 	}
 	# texture ImageTexture { url ["negx.jpg"] }
 	texture CubeEnvironment {
-	  leftImage Image { url ["negx.jpg"] }
-	  rightImage Image { url ["posx.jpg"] }
-	  frontImage Image { url ["negy.jpg"] }
-	  backImage Image { url ["posy.jpg"] }
-	  bottomImage Image { url ["negz.jpg"] }
-	  topImage Image { url ["posz.jpg"] }
+	  rightImage Image { flip FALSE url ["posx.jpg"] }
+	  leftImage Image { flip FALSE url ["negx.jpg"] }
+	  backImage Image { flip FALSE url ["posy.jpg"] }
+	  frontImage Image { flip FALSE url ["negy.jpg"] }
+	  topImage Image { flip FALSE url ["posz.jpg"] }
+	  bottomImage Image { flip FALSE url ["negz.jpg"] }
 	}
       }
       geometry DEF BRICK EgoBrick {

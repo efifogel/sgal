@@ -52,6 +52,7 @@ public:
   enum {
     FIRST = Texture_2d::LAST - 1,
     URL,
+    FLIP,
     LAST
   };
 

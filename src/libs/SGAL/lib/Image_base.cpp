@@ -253,7 +253,7 @@ GLenum Image_base::s_format_internal_formats[] = {
   GL_RGB4,                      // kRGB4_4_4
   (Uint) -1,                    // kRGB5_5_5
   GL_RGB5,                      // kRGB5_6_5
-  3,                            // kRGB8_8_8, 
+  GL_RGB8,                      // kRGB8_8_8, 
   GL_RGB10,                     // kRGB10_10_10
   GL_RGB12,                     // kRGB12_12_12
   GL_RGB16,                     // kRGB16_16_16
@@ -270,7 +270,7 @@ GLenum Image_base::s_format_internal_formats[] = {
   GL_RGBA4,                     // kRGBA4_4_4_4
   (Uint) -1,                    // kRGBA3_3_2_8
   GL_RGB5_A1,                   // kRGBA5_5_5_1
-  4,                            // kRGBA8_8_8_8, works better than GL_RGBA8
+  GL_RGBA8,                     // kRGBA8_8_8_8, works better than GL_RGBA8 ?
   GL_RGB10_A2,                  // kRGBA10_10_10_2
   GL_RGBA12,                    // kRGBA12_12_12_12
   GL_RGBA16,                    // kRGBA16_16_16_16

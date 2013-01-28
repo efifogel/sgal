@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -33,6 +33,7 @@
 #include "SGAL/Override_geo_prop.hpp"
 #include "SGAL/Light.hpp"
 #include "SGAL/Texture.hpp"
+#include "SGAL/Cube_environment.hpp"
 #include "SGAL/Halftone.hpp"
 #include "SGAL/Gfx_conf.hpp"
 #include "SGAL/Gfx.hpp"
@@ -342,7 +343,12 @@ void Context::draw_tex_enable(Boolean tex_enable)
 {
   if (m_current_state->m_tex_enable == tex_enable) return;
   m_current_state->m_tex_enable = tex_enable;
-  if (tex_enable) glEnable(GL_TEXTURE_2D);
+  if (tex_enable) {
+    Cube_environment* cube_environment =
+      dynamic_cast<Cube_environment*>(m_current_state->m_texture);
+    if (cube_environment) glEnable(GL_TEXTURE_CUBE_MAP);
+    else glEnable(GL_TEXTURE_2D);
+  }
   else glDisable(GL_TEXTURE_2D);
 }
 
@@ -440,12 +446,13 @@ void Context::draw_tex_gen_enable(Boolean tex_gen_enable)
       if (tgen->get_mode_r() != Tex_gen::OFF) glEnable(GL_TEXTURE_GEN_R);
       if (tgen->get_mode_q() != Tex_gen::OFF) glEnable(GL_TEXTURE_GEN_Q);
     }
-  } else {
-    glDisable(GL_TEXTURE_GEN_S);
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_GEN_R);
-    glDisable(GL_TEXTURE_GEN_Q);
+    return;
   }
+
+  glDisable(GL_TEXTURE_GEN_S);
+  glDisable(GL_TEXTURE_GEN_T);
+  glDisable(GL_TEXTURE_GEN_R);
+  glDisable(GL_TEXTURE_GEN_Q);
 }
 
 /*! \brief */

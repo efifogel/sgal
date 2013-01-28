@@ -97,6 +97,11 @@ void Image::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "flip") {
+      set_flip(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the marked attributes:
