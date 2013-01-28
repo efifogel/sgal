@@ -193,9 +193,9 @@ void Image::clean()
               << ") in file " << fullname.c_str() << "!" << std::endl;
   }
 
-  Image_base::set_width(width);
-  Image_base::set_height(height);
-  Image_base::set_format(format);
+  m_width = width;
+  m_height = height;
+  m_format = format;
   Uint size = Image_base::get_size(width, height, format);
   allocate(size);
   image.write(0, 0, width, height, magick_map, magick_type, m_pixels);
