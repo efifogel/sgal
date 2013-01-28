@@ -219,8 +219,12 @@ public:
   /*! Obtain the number of pixels in a row. */
   Uint get_pack_row_length() const;
   
-  /*! Set the image pixel data. */
-  void set_pixels(void* pixels);
+  /*! Set the image pixel space.
+   * \param pixels the image pixel space.
+   * \param owned indicates whether the image pixel space is owned. If it is
+   *        owned it should be destructed when the image is destructed.
+   */
+  void set_pixels(void* pixels, Boolean owned = false);
 
   /*! Obtain the image pixel data. */
   virtual void* get_pixels();
@@ -297,16 +301,10 @@ protected:
   /*! Indicates whether the image is dirty and should be cleaned. */
   Boolean m_dirty;
   
-  /*! Indicates whether the pixels space is owned. If it is owned it should be
-   * destructed when the image is destructed.
+  /*! Indicates whether the image pixel space is owned. If it is owned it
+   * should be destructed when the image is destructed.
    */
   Boolean m_owned_pixels;
-
-  /*! Allocate memory to hold the image. */
-  void allocate(Uint size);
-
-  /*! Deallocate the memory that holds the image. */
-  void deallocate();
 
 private:
   /*! The node prototype. */

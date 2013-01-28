@@ -568,7 +568,12 @@ Image_base::Image_base(Boolean proto) :
 {}
 
 /*! Destructor */
-Image_base::~Image_base() { if (m_owned_pixels) deallocate(); }
+Image_base::~Image_base()
+{
+  if (m_owned_pixels && m_pixels) delete [] (char*) m_pixels;
+  m_pixels = NULL;
+  m_owned_pixels = false;
+}
 
 /*! \brief initializess the node prototype. */
 void Image_base::init_prototype()
@@ -671,29 +676,12 @@ Uint Image_base::get_size() const
 }
 
 /*! \brief sets the image pixel data. */
-void Image_base::set_pixels(void* pixels)
+void Image_base::set_pixels(void* pixels, Boolean owned)
 {
-  if (m_owned_pixels) deallocate();
+  if (m_owned_pixels && m_pixels) delete [] (char*) m_pixels;
   m_pixels = pixels;
+  m_owned_pixels = owned;
   m_dirty = false;
-}
-
-/*! \brief allocates memory that holds the image. */
-void Image_base::allocate(Uint size)
-{
-  m_pixels = new char[size];
-  SGAL_assertion(m_pixels);
-  m_owned_pixels = true;
-}
-
-/*! \brief deallocates the memory that holds the image. */
-void Image_base::deallocate()
-{
-  if (m_pixels) {
-    delete [] (char*) m_pixels;
-    m_pixels = NULL;
-  }
-  m_owned_pixels = false;
 }
 
 SGAL_END_NAMESPACE

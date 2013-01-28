@@ -401,13 +401,12 @@ void Texture_font::create_image_texture(void* pixels)
   if (m_texture) delete m_texture;
   m_texture = new Image_texture;
   Image* image = new Image;
-
   image->set_width(m_bitmap_width);
   image->set_height(m_bitmap_height);
-  // Use default format kRGB8_8_8
-
+  image->set_format(Image_base::kRGB8_8_8);     // default format
   //! \todo Move to Image.cpp
-  Uint size = Image::get_size(m_bitmap_width, m_bitmap_height, image->get_format());
+  Uint size =
+    Image::get_size(m_bitmap_width, m_bitmap_height, Image_base::kRGB8_8_8);
   void* new_pixels = new char[size];
   image->set_pixels(new_pixels);
   

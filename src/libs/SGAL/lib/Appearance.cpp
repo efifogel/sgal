@@ -266,12 +266,7 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 /*! \brief */
 void Appearance::set_tex_gen(Tex_gen* tex_gen, Boolean owned)
 {
-  if (m_owned_tex_gen) {
-    if (m_tex_gen) {
-      delete m_tex_gen;
-      m_tex_gen = NULL;
-    }
-  }
+  if (m_owned_tex_gen && m_tex_gen) delete m_tex_gen;
   m_tex_gen = tex_gen;
   m_owned_tex_gen = owned;
   m_pending.on_bit(Gfx::TEX_GEN);
@@ -289,12 +284,7 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 /*! \brief */
 void Appearance::set_material(Material* material, Boolean owned)
 {
-  if (m_owned_material) {
-    if (m_material) {
-      delete m_material;
-      m_material = NULL;
-    }
-  }
+  if (m_owned_material && m_material) delete m_material;
   m_material = material;
   m_owned_material = owned;
   m_pending.on_bit(Gfx::MATERIAL);
