@@ -77,7 +77,7 @@ Boolean Material::is_changed()
   return changed;
 }
 
-/*! sets the diffuse color */
+/*! \brief sets the diffuse color. */
 void Material::set_diffuse_color(float v0, float v1, float v2)
 {
   m_diffuse_color[0] = v0;
@@ -85,7 +85,7 @@ void Material::set_diffuse_color(float v0, float v1, float v2)
   m_diffuse_color[2] = v2;
 }
 
-/*! sets the specular color */
+/*! \brief sets the specular color. */
 void Material::set_specular_color(float v0, float v1, float v2)
 {
   m_specular_color[0] = v0;
@@ -93,7 +93,7 @@ void Material::set_specular_color(float v0, float v1, float v2)
   m_specular_color[2] = v2;
 }
 
-/*! sets the amissive color */
+/*! \brief sets the amissive color. */
 void Material::set_emissive_color(float v0, float v1, float v2)
 {
   m_emissive_color[0] = v0;
@@ -101,14 +101,14 @@ void Material::set_emissive_color(float v0, float v1, float v2)
   m_emissive_color[2] = v2;
 }
 
-/*! sets the shininess factor */
+/*! \brief sets the shininess factor. */
 void Material::set_shininess(Float shininess)
 {
   if (shininess > 1) m_shininess = 1; 
   else m_shininess = shininess;
 }
 
-/*! calls the ogl calls to set the current material.
+/*! \brief calls the ogl calls to set the current material.
  * we assume that if this method is called, all 
  * material parameters need to be set.
  */
@@ -142,8 +142,7 @@ void Material::material_changed(Field_info * field_info)
   Container::set_rendering_required(field_info);
 }
 
-/*! initilalizes the prototype of this node
- */
+/*! \brief initilalizes the prototype of this node. */
 void Material::init_prototype()
 {
   if (s_prototype) return;
@@ -189,34 +188,27 @@ void Material::init_prototype()
                                            exec_func));
 }
 
-/*! deletes the prototype node
- */
+/*! deletes the prototype node. */
 void Material::delete_prototype()
 {
   delete s_prototype;
   s_prototype = 0;
 }
 
-/*! obtains the prototype. Initialize as nessary.
- */
+/*! \brief obtains the prototype. Initialize as nessary. */
 Container_proto * Material::get_prototype() 
 {  
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this object. */
 void Material::set_attributes(Element * elem) 
 {
-  typedef Element::Str_attr_iter                Str_attr_iter;
-
   Container::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  typedef Element::Str_attr_iter                Str_attr_iter;
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "ambientIntensity") {
@@ -258,7 +250,7 @@ void Material::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! Write this container */
+/*! \brief writes this container. */
 void Material::write(Formatter * formatter)
 {
   formatter->container_begin(get_tag());

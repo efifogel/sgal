@@ -68,7 +68,7 @@ Transform {
 
     # The axes:
     Switch {
-      whichChoice 0
+      whichChoice -1
       children [
 	Transform {
 	  scale 0.7 0.7 0.7

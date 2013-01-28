@@ -40,7 +40,7 @@ Container_proto* Cube_environment::s_prototype = NULL;
 /*! Constructor */
 Cube_environment::Cube_environment(Boolean proto) :
   Texture_base(proto)
-{ this->set_target(s_targets[TEXTURE_CUBE_MAP]); }
+{ set_target(TEXTURE_CUBE_MAP); }
 
 /*! Destructor */
 Cube_environment::~Cube_environment() {}
@@ -127,10 +127,23 @@ void Cube_environment::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief cleans the objec. */
+/*! \brief cleans the cube environment object. */
 void Cube_environment::clean()
 {
-  Texture_base::clean();
+  static GLenum targets[6] = {
+    GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+    GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+    GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+    GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+    GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+  };
+  if (Texture_base::is_dirty()) Texture_base::clean();
+  for (Uint i = 0; i < NUM_IMAGES; ++i) {
+    if (m_images[i].first->is_dirty()) m_images[i].first->clean();
+    load_color_map(m_images[i].first, targets[i]);
+  }
+  m_dirty = false;
 }
 
 /*! \brief sets the left image. */

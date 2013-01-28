@@ -43,7 +43,6 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Cube_environment.hpp"
-#include "SGAL/Cube_environment.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Utilities.hpp"

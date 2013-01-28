@@ -65,14 +65,13 @@ Snapshot::Snapshot(Boolean proto) :
   m_file_name(s_def_file_name),
   m_file_format(s_def_file_format),
   m_quality(s_def_quality),
-  m_sequence(SGAL_FALSE),
+  m_sequence(false),
   m_count(0),
-  m_triggered(SGAL_FALSE),
-  m_use_front_buffer(SGAL_TRUE),
+  m_triggered(false),
+  m_use_front_buffer(true),
   m_size(0),
-  m_flip(SGAL_TRUE)
-{
-}
+  m_flip(true)
+{}
 
 /*! Destructor */
 Snapshot::~Snapshot()
@@ -85,12 +84,11 @@ Snapshot::~Snapshot()
   m_size = 0;
 }
 
-/*! Take a snapshot and write to a file if triggered
- */
+/*! \brief takes a snapshot and write to a file if triggered. */
 Action::Trav_directive Snapshot::draw(Draw_action* draw_action) 
 {
   if (!m_triggered) return Action::TRAV_CONT;
-  m_triggered = SGAL_FALSE;
+  m_triggered = false;
 
   m_use_front_buffer = draw_action->is_snap_from_front();
   if (!allocate_space(draw_action)) return Action::TRAV_CONT;
@@ -99,7 +97,7 @@ Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
   return Action::TRAV_CONT; 
 }
 
-/*! Allocate space for the image */
+/*! \brief allocates space for the image. */
 Boolean Snapshot::allocate_space(Draw_action* action)
 {
   Uint width = m_image->get_width();
@@ -108,7 +106,7 @@ Boolean Snapshot::allocate_space(Draw_action* action)
 
   if ((width == 0) || (height == 0)) {
     Context* context = action->get_context();
-    if (!context) return SGAL_FALSE;
+    if (!context) return false;
     Uint x0 = 0, y0 = 0;
     Uint tw, th;
     context->get_viewport(x0, y0, tw, th);
@@ -122,20 +120,20 @@ Boolean Snapshot::allocate_space(Draw_action* action)
     }
   }
 
-  if (width == 0 || height == 0) return SGAL_FALSE;
+  if (width == 0 || height == 0) return false;
   Uint size = Image::get_size(width, height, format);
   if (size > m_size) {
     Uchar* pixels = (Uchar *) m_image->get_pixels();
     if (pixels) delete [] pixels;
     pixels = new Uchar[size];
-    if (!pixels) return SGAL_FALSE;
+    if (!pixels) return false;
     m_image->set_pixels(pixels);
     m_size = size;
   }
-  return SGAL_TRUE;
+  return true;
 }
 
-/*! Take a snapshot of the window */
+/*! \brief takes a snapshot of the window. */
 void Snapshot::take_snapshot()
 {
   Uint width = m_image->get_width();
@@ -153,7 +151,7 @@ void Snapshot::take_snapshot()
   glReadBuffer(read_buffer_mode);
 }
 
-/*! Write the image into a file */
+/*! \brief writes the image into a file. */
 void Snapshot::write_image()
 {
   std::string file_name = m_dir_name + "/" + m_file_name;
@@ -173,7 +171,7 @@ void Snapshot::write_image()
   image.write(file_name); 
 }
 
-/*! Initialize the container prototype */
+/*! \brief initializes the container prototype. */
 void Snapshot::init_prototype()
 {
   if (s_prototype)  return;
@@ -192,24 +190,21 @@ void Snapshot::init_prototype()
                                          get_member_offset(&m_file_format)));
 }
 
-/*! Delete the container prototype */
+/*! \brief deletes the container prototype. */
 void Snapshot::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the container prototype */
+/*! \brief obtains the container prototype. */
 Container_proto* Snapshot::get_prototype() 
 {  
   if (!s_prototype) Snapshot::init_prototype();
   return s_prototype;
 }
 
-/*! Set the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the object. */
 void Snapshot::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -280,8 +275,7 @@ void Snapshot::set_attributes(Element* elem)
 void Snapshot::add_to_scene(Scene_graph* sg) { sg->add_snaphot(this); }
 
 #if 0
-/*!
- */
+/*! \brief */
 Attribute_list Snapshot::get_attributes()
 {
   Attribute_list attribs; 

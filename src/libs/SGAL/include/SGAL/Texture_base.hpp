@@ -39,12 +39,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Image;
+
 class SGAL_CLASSDEF Texture_base : public Container {
 public: 
   enum {
     FIRST = Container::LAST - 1,
     REPEAT_S,
     REPEAT_T,
+    REPEAT_R,
     MIN_FILTER,
     MAG_FILTER,
     LAST
@@ -107,10 +110,10 @@ public:
   };
 
   /*! Set the texture target. */
-  void set_target(Uint taregt);
+  void set_target(Target taregt);
 
   /*! Obtain the texture target. */
-  Uint get_target() const;
+  Target get_target() const;
   
   /*! Set the wrapping factor on the S. */
   void set_wrap_s(Texture_base::Wrap wrap);
@@ -183,7 +186,7 @@ public:
 
 protected:
   /*! The texture target index. */
-  Uint m_target;
+  Target m_target;
   
   /*! A unique id for the texture (used in OpenGL for texture binding) */
   Uint m_id;
@@ -264,16 +267,19 @@ protected:
   /*! An array of wrap tokens. */
   static const GLenum s_wrap_tokens[];
 
+  /*! Download the image as a 2D color map to the graphics pipe. */
+  void load_color_map(Image* image, GLenum target);
+  
 private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
 
 /*! \brief sets the texture target. */
-inline void Texture_base::set_target(Uint target) { m_target = target; }
+inline void Texture_base::set_target(Target target) { m_target = target; }
 
 /*! \brief obtains the texture target. */
-inline Uint Texture_base::get_target() const { return m_target; }
+inline Texture_base::Target Texture_base::get_target() const { return m_target; }
 
 /*! \brief sets the wrapping factor on the S. */
 inline void Texture_base::set_wrap_s(Texture_base::Wrap wrap)

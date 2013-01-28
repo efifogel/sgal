@@ -51,10 +51,9 @@ public:
   };
 
   enum Mode {
-    OFF,
-    EYE_LINEAR,
-    EYE_LINEAR_IDENT,
+    OFF = -1,
     OBJECT_LINEAR,
+    EYE_LINEAR,
     SPHERE_MAP,
     NORMAL_MAP,
     REFLECTION_MAP

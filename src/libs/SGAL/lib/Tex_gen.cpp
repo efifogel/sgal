@@ -52,10 +52,16 @@ Tex_gen::~Tex_gen() {}
 /*! \brief applies the texture generation attribute. */
 void Tex_gen::draw(Context* /* context */) 
 {
-  // glTexGenfv(GL_S, GL_SPHERE_MAP, 0);
-  // glTexGenfv(GL_T, GL_SPHERE_MAP, 0);
-  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-  glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+  GLint params[] = {
+    GL_OBJECT_LINEAR,
+    GL_EYE_LINEAR,
+    GL_SPHERE_MAP,
+    GL_NORMAL_MAP,
+    GL_REFLECTION_MAP
+  };
+  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, params[m_mode_s]);
+  glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, params[m_mode_t]);
+  glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, params[m_mode_r]);
 };
 
 /*! \brief sets the attributes of the texture generation attribute. */

@@ -202,10 +202,24 @@ void Texture_base::clean()
                   s_mag_filter_tokens[m_mag_filter]);
   glTexParameteri(target, GL_TEXTURE_MIN_FILTER,
                   s_min_filter_tokens[m_min_filter]);
-  // EFEF: issue appropriate commands according to the texture dimension.
-  glTexParameteri(target, GL_TEXTURE_WRAP_S, s_wrap_tokens[m_wrap_s]);
-  glTexParameteri(target, GL_TEXTURE_WRAP_T, s_wrap_tokens[m_wrap_t]);
-  glTexParameteri(target, GL_TEXTURE_WRAP_R, s_wrap_tokens[m_wrap_r]);
+  switch (m_target) {
+   case TEXTURE_3D:
+   case TEXTURE_CUBE_MAP:
+   case TEXTURE_CUBE_MAP_ARRAY:
+   case TEXTURE_BUFFER:
+    glTexParameteri(target, GL_TEXTURE_WRAP_R, s_wrap_tokens[m_wrap_r]);
+
+   case TEXTURE_2D:
+   case TEXTURE_2D_ARRAY:
+   case TEXTURE_RECTANGLE:
+   case TEXTURE_2D_MULTISAMPLE:
+   case TEXTURE_2D_MULTISAMPLE_ARRAY:
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, s_wrap_tokens[m_wrap_t]);
+
+   case TEXTURE_1D:
+   case TEXTURE_1D_ARRAY:
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, s_wrap_tokens[m_wrap_s]);
+  }
   m_dirty = false;
 }
 
@@ -312,28 +326,25 @@ void Texture_base::AddToScene(Scene_graph* sg, XML_entity* parent)
 }
 #endif
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Texture_base::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto();
 
   // Add the field-info records to the prototype:
-  //! \todo why use the _str and not the attribute itself?
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Texture_base::min_filter_changed);
-  SF_string* min_filter_field_info =
-    new SF_string(MIN_FILTER, "minFilter",
-                  get_member_offset(&m_min_filter_str),
-                  exec_func);
+  Execution_function exec_func;
+  
+  exec_func = static_cast<Execution_function>(&Texture_base::min_filter_changed);
+  SF_int* min_filter_field_info = new SF_int(MIN_FILTER, "minFilter",
+                                             get_member_offset(&m_min_filter),
+                                             exec_func);
   s_prototype->add_field_info(min_filter_field_info);
 
-  exec_func =
-    static_cast<Execution_function>(&Texture_base::mag_filter_changed);
-  SF_string* mag_filter_field_info =
-    new SF_string(MAG_FILTER, "magFilter",
-                  get_member_offset(&m_mag_filter_str),
-                  exec_func);  
+  exec_func = static_cast<Execution_function>(&Texture_base::mag_filter_changed);
+  SF_int* mag_filter_field_info = new SF_int(MAG_FILTER, "magFilter",
+                                             get_member_offset(&m_mag_filter),
+                                             exec_func);  
   s_prototype->add_field_info(mag_filter_field_info);
 
   exec_func = static_cast<Execution_function>(&Texture_base::wrap_s_changed);
@@ -347,18 +358,51 @@ void Texture_base::init_prototype()
                                           exec_func));
 }
 
-/*! */
+/*! \brief deletes the prototype. */
 void Texture_base::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtains the prototype. */
 Container_proto* Texture_base::get_prototype() 
 {  
   if (!s_prototype) Texture_base::init_prototype();
   return s_prototype;
+}
+
+/*! \brief downloads the image as a 2D color map to the graphics pipe. */
+void Texture_base::load_color_map(Image* image, GLenum target)
+{
+  Uint width = image->get_width();
+  Uint height = image->get_height();
+  Image::Format format = image->get_format();
+  
+  GLint req_format = Image::get_format_format(format);
+  GLint req_type = Image::get_format_type(format);
+
+  // Uint components = Image::get_format_components(format);
+  int border = (width & (width - 1)) ?
+    (((width - 2) & (width - 3)) ? -1: 1) : 0;
+  int height_border = (height & (height - 1)) ?
+    (((height - 2) & (height - 3)) ? -1: 1) : 0;
+
+  if (border == -1 || border != height_border) {
+    ;
+  }
+
+  GLenum internal_format = Image::get_format_internal_format(format);
+  
+  if (m_min_filter >= NEAREST_MIPMAP_NEAREST) {
+    int rc = gluBuild2DMipmaps(target, internal_format, width, height,
+                               req_format, req_type, image->get_pixels());
+    (void) rc;
+    return;
+    //! \todo download images
+  }
+  glTexImage2D(target, 0, internal_format, width, height, border,
+               req_format, req_type, image->get_pixels());
 }
 
 SGAL_END_NAMESPACE
