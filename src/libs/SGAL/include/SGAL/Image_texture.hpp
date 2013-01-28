@@ -34,23 +34,27 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
-#include "SGAL/Texture.hpp"
+#include "SGAL/Texture_2d.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
-#include "SGAL/Scene_graph.hpp"
-#include "SGAL/Texture.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Scene_graph;
 
-class SGAL_CLASSDEF Image_texture : public Texture {
+class SGAL_CLASSDEF Image_texture : public Texture_2d {
 public:
   typedef Image::Path_list                          Path_list;
   
+  enum {
+    FIRST = Texture_2d::LAST - 1,
+    URL,
+    LAST
+  };
+
   /*! Constructor */
   Image_texture(Boolean proto = false);
 
@@ -73,7 +77,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Add the container to a given scene.
-   * \param scene_graph the given scene
+   * \param scene_graph the given scene.
    */  
   virtual void add_to_scene(Scene_graph* scene_graph);
 
@@ -149,10 +153,6 @@ inline void Image_texture::set_dirs(const Image::Path_list& dirs)
 /*! \brief obtains the directory-search structure. */
 inline const Image::Path_list& Image_texture::get_dirs() const
 { return m_image.get_dirs(); }
-
-/*! \brief adds the container to a given scene */  
-inline void Image_texture::add_to_scene(Scene_graph* sg)
-{ m_image.set_dirs(sg->get_data_dirs()); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Image_texture::get_tag() const { return s_tag; }

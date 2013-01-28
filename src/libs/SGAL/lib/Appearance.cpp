@@ -234,7 +234,7 @@ void Appearance::set_tex_blend(float* blend_color)
                           blend_color[2], blend_color[3]);
     }
   } else {
-    if (m_tex_env != Gfx::DECAL_TENV && m_texture &&
+    if ((m_tex_env != Gfx::DECAL_TENV) && m_texture &&
         m_texture->get_component_count() == 4)
     {
       //Timur[24/6/2001] 

@@ -32,14 +32,14 @@ const std::string Image_texture::s_tag = "ImageTexture";
 REGISTER_TO_FACTORY(Image_texture, "Image_texture");
 
 /*! Constructor */
-Image_texture::Image_texture(Boolean proto) : Texture(proto)
-{ Texture::set_image(&m_image); }
+Image_texture::Image_texture(Boolean proto) : Texture_2d(proto)
+{ Texture_2d::set_image(&m_image); }
 
 /*! \brief initializes the node prototype. */
 void Image_texture::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto(Texture::get_prototype());
+  s_prototype = new Container_proto(Texture_2d::get_prototype());
 }
 
 /*! \brief deletes the node prototype. */
@@ -61,7 +61,7 @@ void Image_texture::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
 
-  Texture::set_attributes(elem);
+  Texture_2d::set_attributes(elem);
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
@@ -116,7 +116,7 @@ Attribute_list Image_texture::get_attributes()
   Attribute_list attribs; 
   Attribue attrib;
 
-  attribs = Texture::get_attributes();
+  attribs = Texture_2d::get_attributes();
 
   attrib.first = "url";
   attrib.second = get_fileName();
@@ -125,5 +125,9 @@ Attribute_list Image_texture::get_attributes()
   return attribs; 
 }
 #endif
+
+/*! \brief adds the container to a given scene */  
+void Image_texture::add_to_scene(Scene_graph* scene_graph)
+{ Texture_2d::add_to_scene(scene_graph); }
 
 SGAL_END_NAMESPACE

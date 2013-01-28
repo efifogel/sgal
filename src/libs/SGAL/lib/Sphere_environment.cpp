@@ -25,7 +25,8 @@
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Texture_base.hpp"
+#include "SGAL/Image.hpp"
+#include "SGAL/Texture.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -45,7 +46,7 @@ const Boolean Sphere_environment::m_def_quality(false);
 
 /*! Constructor */
 Sphere_environment::Sphere_environment(Boolean proto) :
-  Texture_base(proto),
+  Texture(proto),
   m_alpha(m_def_alpha),
   m_quality(m_def_quality)
 {}
@@ -60,7 +61,7 @@ void Sphere_environment::init_prototype()
   if (s_prototype != NULL) return;
 
   // Allocate a prototype instance
-  s_prototype = new Container_proto(Texture_base::get_prototype());
+  s_prototype = new Container_proto(Texture::get_prototype());
 
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
@@ -89,7 +90,7 @@ Container_proto * Sphere_environment::get_prototype()
  */
 void Sphere_environment::set_attributes(Element* elem)
 {
-  Texture_base::set_attributes(elem);
+  Texture::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
 
@@ -121,7 +122,7 @@ Attribute_list Sphere_environment::get_attributes()
   Attribue attrib;
   char buf[32];
 
-  attribs = Texture_base::get_attributes();
+  attribs = Texture::get_attributes();
 
   if (m_alpha != m_def_alpha) {
     attrib.first = "alpha";
@@ -169,4 +170,34 @@ void Sphere_environment::add_to_scene(Scene_graph * sg,
 }
 #endif
 
+/*! \brief cleans the object in case it is dirty. */
+void Sphere_environment::clean()
+{
+  //! \todo implement
+}
+
+/*! \brief determines whether the texture ios empty. */
+Boolean Sphere_environment::empty()
+{
+  if (!m_images[0].first || !m_images[1].first) return true;
+  if (m_images[0].first->is_dirty()) m_images[0].first->clean();
+  if (m_images[1].first->is_dirty()) m_images[1].first->clean();
+  return (m_images[0].first->empty() || m_images[1].first->empty());
+}
+
+/*! \brief obtains the texture number of components. */
+Uint Sphere_environment::get_component_count() const
+{
+  if (!m_images[0].first) return 0;
+  if (m_images[0].first->is_dirty()) m_images[0].first->clean();
+  return m_images[0].first->get_component_count();
+}
+
+/*! \brief adds the container to a given scene. */  
+void Sphere_environment::add_to_scene(Scene_graph* scene_graph)
+{
+  if (!m_images[0].first || !m_images[1].first) return;
+  m_images[0].first->set_dirs(scene_graph->get_data_dirs());
+  m_images[1].first->set_dirs(scene_graph->get_data_dirs());
+}
 SGAL_END_NAMESPACE

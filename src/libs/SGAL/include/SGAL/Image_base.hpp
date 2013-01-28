@@ -235,6 +235,12 @@ public:
   /*! Clean the image in case it is dirty. */
   virtual void clean();
 
+  /*! Determines whether the image is empty. */
+  Boolean empty();
+
+  /*! Obtain the texture number of components. */
+  Uint get_component_count();
+
   /*! Obtain the memory that is used by the image (in bytes). */
   Uint get_size() const;
   

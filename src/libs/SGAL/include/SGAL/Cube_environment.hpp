@@ -38,17 +38,18 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
-#include "SGAL/Texture_base.hpp"
-#include "SGAL/Image.hpp"
+#include "SGAL/Texture.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
+class Scene_graph;
+class Image;
 
-class SGAL_CLASSDEF Cube_environment : public Texture_base {
+class SGAL_CLASSDEF Cube_environment : public Texture {
 public:
   enum {
-    FIRST = Texture_base::LAST - 1,
+    FIRST = Texture::LAST - 1,
     LEFT,
     RIGHT,
     FRONT,
@@ -83,6 +84,11 @@ public:
   /*! Set the attributes of the cubical environment map. */
   virtual void set_attributes(Element* elem);
   
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
+   */  
+  virtual void add_to_scene(Scene_graph* scene_graph);
+
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -94,6 +100,12 @@ public:
 
   /*! Clean the object using the new decoded data. */
   virtual void clean();
+
+  /*! Determines whether the texture is empty. */
+  virtual Boolean empty();
+
+  /*! Obtain the texture number of components. */
+  virtual Uint get_component_count() const;
 
   /*! Set the left image.
    * \param image (in) the image.

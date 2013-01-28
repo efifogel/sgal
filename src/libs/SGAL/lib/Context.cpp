@@ -303,12 +303,10 @@ void Context::set_texture(Texture* texture)
 /*! \brief */
 void Context::draw_texture(Texture* texture)
 {
-  std::cout << "Context::draw_texture" << texture << std::endl;
   if ((m_current_state->m_texture == texture) &&
       (!texture || !texture->is_dirty()))
     return;
 
-  std::cout << "Context::draw_texture 2" << texture << std::endl;
   m_current_state->m_texture = texture;
   if (texture) texture->draw(this);
 }

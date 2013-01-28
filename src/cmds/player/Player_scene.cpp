@@ -88,7 +88,7 @@
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Multisample.hpp"
-#include "SGAL/Texture.hpp"
+#include "SGAL/Texture_2d.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Context.hpp"
 
@@ -314,7 +314,7 @@ void Player_scene::indulge_user()
          ci != m_scene_graph->containers_end(); ++ci)
     {
       SGAL::Container* cont = *ci;
-      SGAL::Texture* texture = dynamic_cast<SGAL::Texture*>(cont);
+      SGAL::Texture_2d* texture = dynamic_cast<SGAL::Texture_2d*>(cont);
       if (texture) texture->print_info();
     }
     
@@ -324,7 +324,7 @@ void Player_scene::indulge_user()
          ii != m_scene_graph->instances_end(); ++ii)
     {
       SGAL::Container* cont = (*ii).second;
-      SGAL::Texture* texture = dynamic_cast<SGAL::Texture*>(cont);
+      SGAL::Texture_2d* texture = dynamic_cast<SGAL::Texture_2d*>(cont);
       if (texture) texture->print_info();
     }
   }

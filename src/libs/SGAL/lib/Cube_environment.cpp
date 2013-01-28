@@ -29,6 +29,8 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Image.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -39,7 +41,7 @@ Container_proto* Cube_environment::s_prototype = NULL;
 
 /*! Constructor */
 Cube_environment::Cube_environment(Boolean proto) :
-  Texture_base(proto)
+  Texture(proto)
 { set_target(TEXTURE_CUBE_MAP); }
 
 /*! Destructor */
@@ -52,7 +54,7 @@ void Cube_environment::init_prototype()
   if (s_prototype != NULL) return;
 
   // Allocate a prototype instance
-  s_prototype = new Container_proto(Texture_base::get_prototype());
+  s_prototype = new Container_proto(Texture::get_prototype());
 }
 
 /*! \brief deletes the prototype. */
@@ -72,7 +74,7 @@ Container_proto* Cube_environment::get_prototype()
 /*! \brief sets the attributes of the cubical environment map. */
 void Cube_environment::set_attributes(Element* elem)
 {
-  Texture_base::set_attributes(elem);
+  Texture::set_attributes(elem);
 
   // typedef Element::Str_attr_iter          Str_attr_iter;
   // Str_attr_iter ai;
@@ -127,6 +129,15 @@ void Cube_environment::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
+/*! \brief adds the container to a given scene. */  
+void Cube_environment::add_to_scene(Scene_graph* scene_graph)
+{
+  for (Uint i = 0; i < NUM_IMAGES; ++i) {
+    if (!m_images[i].first) return;
+    m_images[i].first->set_dirs(scene_graph->get_data_dirs());
+  }
+}
+
 /*! \brief cleans the cube environment object. */
 void Cube_environment::clean()
 {
@@ -138,12 +149,31 @@ void Cube_environment::clean()
     GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
     GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
   };
-  if (Texture_base::is_dirty()) Texture_base::clean();
+  if (Texture::is_dirty()) Texture::clean();
   for (Uint i = 0; i < NUM_IMAGES; ++i) {
     if (m_images[i].first->is_dirty()) m_images[i].first->clean();
     load_color_map(m_images[i].first, targets[i]);
   }
   m_dirty = false;
+}
+
+/*! \brief determines whether the texture ios empty. */
+Boolean Cube_environment::empty()
+{
+  for (Uint i = 0; i < NUM_IMAGES; ++i) {
+    if (!m_images[i].first) return true;
+    if (m_images[i].first->is_dirty()) m_images[i].first->clean();
+    if (m_images[i].first->empty()) return true;
+  }
+  return false;
+}
+
+/*! \brief obtains the texture number of components. */
+Uint Cube_environment::get_component_count() const
+{
+  if (!m_images[0].first) return 0;
+  if (m_images[0].first->is_dirty()) m_images[0].first->clean();
+  return m_images[0].first->get_component_count();
 }
 
 /*! \brief sets the left image. */

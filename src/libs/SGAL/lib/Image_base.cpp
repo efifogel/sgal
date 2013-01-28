@@ -684,4 +684,15 @@ void Image_base::set_pixels(void* pixels, Boolean owned)
   m_dirty = false;
 }
 
+/*! \brief determines whether the image is empty. */
+Boolean Image_base::empty()
+{
+  return ((get_width() == 0) || (get_height() == 0) || (get_pixels() == NULL));
+}
+
+/*! \brief obtain the texture number of components. */
+Uint Image_base::get_component_count()
+{ return Image_base::get_format_components(get_format()); }
+
+
 SGAL_END_NAMESPACE

@@ -28,7 +28,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
-#include "SGAL/Texture_base.hpp"
+#include "SGAL/Texture.hpp"
 #include "SGAL/Action.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -36,13 +36,22 @@ SGAL_BEGIN_NAMESPACE
 class Execution_coordinator;
 class Container_proto;
 class Element;
+class Image;
+class Scene_graph;
 
-class SGAL_CLASSDEF Sphere_environment : public Texture_base {
+class SGAL_CLASSDEF Sphere_environment : public Texture {
 public:
   enum {
-    FIRST = Texture_base::LAST - 1,
+    FIRST = Texture::LAST - 1,
+    IMAGE,
     ALPHA,
     LAST
+  };
+
+  enum Images {
+    IMAGE0 = 0,
+    IMAGE1,
+    NUM_IMAGES
   };
 
   /*! Constructor */
@@ -62,6 +71,11 @@ public:
 
   // virtual Attribute_list get_attributes();
 
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
+   */  
+  virtual void add_to_scene(Scene_graph* scene_graph);
+
   /*! Initialize the node prototype */
   virtual void init_prototype();
 
@@ -71,6 +85,15 @@ public:
   /*! Obtain the node prototype */
   virtual Container_proto* get_prototype();
 
+  /*! Clean the object in case it is dirty. */
+  virtual void clean();
+
+  /*! Determines whether the texture is empty. */
+  virtual Boolean empty();
+
+  /*! Obtain the texture number of components. */
+  virtual Uint get_component_count() const;
+  
   /*! Set the alpha value */
   void set_alpha(float alpha);
 
@@ -84,6 +107,9 @@ public:
   bool get_quality() const;
 
 protected:
+  /*! The texture images and a flag that indicates that the image is owned. */
+  std::pair<Image*,Boolean> m_images[NUM_IMAGES];
+  
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 

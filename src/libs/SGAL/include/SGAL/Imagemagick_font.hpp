@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5647 $
 //
 // Author(s)     : Ophir Setter      <ophir.setter@gmail.com>
@@ -30,16 +30,15 @@
 #include <Magick++.h>
 
 #include "SGAL/Font.hpp"
-#include "SGAL/Texture.hpp"
+#include "SGAL/Texture_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Imagemagick_font : public Font {
 public:
   /*! Constructor */
-  Imagemagick_font(const std::string & name, Boolean antialias = SGAL_TRUE,
-                   Boolean left_to_right = SGAL_TRUE,
-                   Boolean top_to_bottom = SGAL_TRUE);                   
+  Imagemagick_font(const std::string& name, Boolean antialias = true,
+                   Boolean left_to_right = true, Boolean top_to_bottom = true);
 
   /*! Destructor */
   virtual ~Imagemagick_font();
@@ -48,12 +47,12 @@ public:
    * \param str the string
    * \param size the nominal height, in the local coordinate system
    */
-  virtual void draw_string(Context * context, const std::string & str,
+  virtual void draw_string(Context* context, const std::string& str,
                            Float size);
 
   /*! Obtain the width and height of the string */
-  virtual void get_string_size(const std::string & str,
-                               Uint & width, Uint & height);
+  virtual void get_string_size(const std::string& str,
+                               Uint& width, Uint& height);
 
   /*! Initialize the font */
   virtual void init();
@@ -72,7 +71,7 @@ private:
   Uint m_point_size;
 
   /*! */
-  Texture m_texture;
+  Texture_2d m_texture;
 
   /*! */
   Image m_image;
