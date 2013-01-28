@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -103,35 +103,29 @@ void Text::init_prototype()
                                             exec_func));
 }
 
-/*!
- */
+/*! \brief deletes the prototype. */
 void Text::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief obtains the prototype. */
 Container_proto* Text::get_prototype() 
 {  
   if (!s_prototype) Text::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this object. */
 void Text::set_attributes(Element* elem) 
 {
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "string") {
@@ -141,9 +135,8 @@ void Text::set_attributes(Element* elem)
     }
   }
 
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "fontStyle") {
@@ -179,14 +172,14 @@ Attribute_list Text::get_attributes()
 }
 #endif
 
-/*! Set the font style */
+/*! \brief sets the font style. */
 void Text::set_font_style(Font_style* font_style)
 {
   m_font_style = font_style;
   m_dirty_sphere_bound = true;
 }
 
-/*! Calculate the sphere bound of the text. Returns true if the BS has
+/*! \brief calculates the sphere bound of the text. Returns true if the BS has
  * changed since lst time this was called.
  */
 Boolean Text::clean_sphere_bound()

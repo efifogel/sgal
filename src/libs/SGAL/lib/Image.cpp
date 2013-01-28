@@ -53,12 +53,11 @@ REGISTER_TO_FACTORY(Image, "Image");
 /*! Constructor */
 Image::Image(Boolean proto) :
   Image_base(proto),
-  m_dirty(true),
   m_flip(true)
 {}
   
 /*! Destructor */
-Image::~Image() { deallocate(); }
+Image::~Image() {}
 
 /*! \brief initializess the node prototype. */
 void Image::init_prototype()
@@ -135,7 +134,6 @@ void* Image::get_pixels()
 /*! \brief cleans the image. */
 void Image::clean()
 {
-  std::cout << "Image 0: " << std::endl;
   std::string fullname;
   
 #if BOOST_VERSION >= 103400
@@ -192,34 +190,24 @@ void Image::clean()
     break;
    default:
     std::cerr << "Unsupported color space (" << color_space
-                      << ") in file " << fullname.c_str() << "!" << std::endl;
+              << ") in file " << fullname.c_str() << "!" << std::endl;
   }
 
-  std::cout << "Image 1: " << width << "," << height << std::endl;
   Image_base::set_width(width);
   Image_base::set_height(height);
   Image_base::set_format(format);
   Uint size = Image_base::get_size(width, height, format);
   allocate(size);
-  void* pixels = get_pixels();
-  image.write(0, 0, width, height, magick_map, magick_type, pixels);
-  std::cout << "Image 2" << std::endl;
+  image.write(0, 0, width, height, magick_map, magick_type, m_pixels);
   
   m_dirty = false;
 }
 
-/*! \brief allocates memory that holds the image. */
-void Image::allocate(Uint size)
+/*! \brief sets the URL. */
+void Image::set_url(const std::string& url)
 {
-  void* pixels = new char[size];
-  set_pixels(pixels);
-}
-
-/*! \brief deallocates the memory that holds the image. */
-void Image::deallocate()
-{
-  void* pixels = get_pixels();
-  if (pixels) delete [] (char*) pixels;
+  m_url = url;
+  m_dirty = true;
 }
 
 SGAL_END_NAMESPACE

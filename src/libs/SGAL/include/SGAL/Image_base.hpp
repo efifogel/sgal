@@ -294,12 +294,26 @@ protected:
   /*! Defines the number of pixels in a row. */
   Uint m_pack_row_length;
 
- private:
+  /*! Indicates whether the image is dirty and should be cleaned. */
+  Boolean m_dirty;
+  
+  /*! Indicates whether the pixels space is owned. If it is owned it should be
+   * destructed when the image is destructed.
+   */
+  Boolean m_owned_pixels;
+
+  /*! Allocate memory to hold the image. */
+  void allocate(Uint size);
+
+  /*! Deallocate the memory that holds the image. */
+  void deallocate();
+
+private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
   
   /*! Default value. */
-  static Format s_def_format;
+  static const Format s_def_format;
 };
 
 /*! \brief sets the image width. */
@@ -325,16 +339,14 @@ inline void Image_base::set_pack_row_length(Uint length)
 { m_pack_row_length = length; }
 
 /*! \brief obtains the number of pixels in a row. */
-inline Uint Image_base::get_pack_row_length() const { return m_pack_row_length; }
+inline Uint Image_base::get_pack_row_length() const
+{ return m_pack_row_length; }
   
-/*! \brief sets the image pixel data. */
-inline void Image_base::set_pixels(void* pixels) { m_pixels = pixels; }
-
 /*! \brief obtains the image pixel data. */
 inline void* Image_base::get_pixels() { return m_pixels; }
 
 /*! \brief returns true if image hasn't been updated yet and false otherwise. */
-inline Boolean Image_base::is_dirty() { return false; }
+inline Boolean Image_base::is_dirty() { return m_dirty; }
 
 /*! \brief cleans the image in case it is dirty. */
 inline void Image_base::clean() {}

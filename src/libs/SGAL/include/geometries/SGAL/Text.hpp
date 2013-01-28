@@ -23,7 +23,7 @@
 #define SGAL_TEXT_HPP
 
 /*! \file
- * A node in the scene graph that render text.
+ * A node in the scene graph that renders text.
  */
 
 #include <string>
@@ -54,15 +54,19 @@ public:
   /*! Destructor */
   virtual ~Text();
   
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Text* prototype() { return new Text(true); }
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone() { return new Text(); }
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
+
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
   /*! Set the attributes of this node */
@@ -86,7 +90,7 @@ public:
   Font_style* get_font_style() const { return m_font_style; }
 
   /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return SGAL_FALSE; }
+  virtual Boolean has_color() const { return false; }
   
 protected:
   /*! obtains the tag (type) of the container */

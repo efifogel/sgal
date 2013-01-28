@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5647 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -38,56 +38,56 @@ class Context;
 class Font {
 public:
   /*! Constructor */
-  Font(const std::string & name, Boolean antialias = SGAL_TRUE,
-       Boolean left_to_right = SGAL_TRUE,
-       Boolean top_to_bottom = SGAL_TRUE);
+  Font(const std::string& name, Boolean antialias = true,
+       Boolean left_to_right = true,
+       Boolean top_to_bottom = true);
   
   /*! Destructor */
   virtual ~Font() {}
 
-  /*! Initialize the representation */
-  virtual void init()  = 0;
+  /*! Initialize the representation. */
+  virtual void init() = 0;
   
-  /*! Clear the font */
+  /*! Clear the font. */
   virtual void clear() {}
 
-  /*! Draw one string
-   * \param str the string
-   * \param size the nominal height, in the local coordinate system
+  /*! Draw one string.
+   * \param str the string.
+   * \param size the nominal height, in the local coordinate system.
    */
-  virtual void draw_string(Context * context, const std::string & str,
+  virtual void draw_string(Context* context, const std::string& str,
                            Float size) = 0;
 
-  /*! Obtain the width and height of the string */
-  virtual void get_string_size(const std::string & str,
-                               Uint & width, Uint & height) = 0;
+  /*! Obtain the width and height of the string. */
+  virtual void get_string_size(const std::string& str,
+                               Uint& width, Uint& height) = 0;
 
-  /*! Obtain the flag that indicates whether the font is antialiased
-   * \return the flag that indicates whether the font is antialiased
+  /*! Obtain the flag that indicates whether the font is antialiased.
+   * \return the flag that indicates whether the font is antialiased.
    */
   Boolean get_antialias() const { return m_antialias; }
 
-  /*! Obtain the flag that indicates the text horizontal direction
-   * \return the flag that indicates the text horizontal direction
+  /*! Obtain the flag that indicates the text horizontal direction.
+   * \return the flag that indicates the text horizontal direction.
    */
   Boolean get_left_to_right() const { return m_left_to_right; }
 
-  /*! Obtain the flag that indicates the text vertical direction
-   * \return the flag that indicates the text vertical direction
+  /*! Obtain the flag that indicates the text vertical direction.
+   * \return the flag that indicates the text vertical direction.
    */
   Boolean get_top_to_bottom() const { return m_top_to_bottom; }
   
 protected:
-  /*! The font name */ 
+  /*! The font name. */ 
   std::string m_name;
 
-  /*! Indicates whether the font is antialiased */
+  /*! Indicates whether the font is antialiased. */
   Boolean m_antialias;
 
-  /*! Indicates the horizontal direction of the text */
+  /*! Indicates the horizontal direction of the text. */
   Boolean m_left_to_right;
 
-  /*! Indicates the vertical direction of the text */
+  /*! Indicates the vertical direction of the text. */
   Boolean m_top_to_bottom;
 };
 

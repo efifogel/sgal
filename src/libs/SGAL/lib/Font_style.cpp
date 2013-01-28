@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 13560 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -46,15 +46,15 @@ REGISTER_TO_FACTORY(Font_style, "Font_style");
 Font_style::Font_style(Boolean proto) :
   Node(proto),
   m_family("fixedsys"),
-  m_horizontal(SGAL_TRUE),
+  m_horizontal(true),
   m_justify("PLAIN"),
   m_language(""),
-  m_left_to_right(SGAL_TRUE),
+  m_left_to_right(true),
   m_size(1),
   m_spacing(1),
   m_style("PLAIN"),
-  m_top_to_bottom(SGAL_TRUE),
-  m_dirty(SGAL_TRUE),
+  m_top_to_bottom(true),
+  m_dirty(true),
   m_font(NULL)
 {
   //m_family = "MS Serif"; // SERIF
@@ -73,7 +73,7 @@ Font_style::~Font_style()
 void Font_style::set_bold(Boolean b)
 {
   m_bold = b;
-  m_dirty = SGAL_TRUE;
+  m_dirty = true;
 }
 
 /*! \brief set the flag that indicates whether the font is italicized
@@ -82,37 +82,30 @@ void Font_style::set_bold(Boolean b)
 void Font_style::set_italic(Boolean i)
 {
   m_italic = i;
-  m_dirty = SGAL_TRUE;
+  m_dirty = true;
 }
   
 /*! \brief sets the flag that indicates whether the font is antialiased font */
 void Font_style::set_antialias(Boolean a)
 {
   m_antialias = a;
-  m_dirty = SGAL_TRUE;
+  m_dirty = true;
 }
 
 /*! \breif sets the flag that indicates the horizontal text direction */
-void Font_style::set_left_to_right(Boolean l2r)
-{
-  m_left_to_right = l2r;
-}
+void Font_style::set_left_to_right(Boolean l2r) { m_left_to_right = l2r; }
 
 /*! \breif sets the flag that indicates the vertical text direction */
-void Font_style::set_top_to_bottom(Boolean t2b)
-{
-  m_top_to_bottom = t2b;
-}
+void Font_style::set_top_to_bottom(Boolean t2b) { m_top_to_bottom = t2b; }
 
-/*!
- */
+/*! \breif */
 void Font_style::on_field_change(Field_info* /* field_info */)
 {
-  m_dirty = SGAL_TRUE;
+  m_dirty = true;
   set_rendering_required();
 }
 
-/*! init_prototype() initializes the node prototype */
+/*! \breif initializes the prototype. */
 void Font_style::init_prototype()
 {
   // The prototype shuold be allocated only once for all instances
@@ -161,34 +154,28 @@ void Font_style::init_prototype()
                                           exec_func));
 }
 
-/*!
- */
+/*! \brief deletes the prototype. */
 void Font_style::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief obtains the prototype. */
 Container_proto* Font_style::get_prototype() 
 {  
   if (!s_prototype)  Font_style::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this object. */
 void Font_style::set_attributes(Element* elem) 
 {
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "family") {
@@ -198,11 +185,11 @@ void Font_style::set_attributes(Element* elem)
     }
     if (name == "style") {
       m_style = value;
-      if (m_style == "BOLD") m_bold = SGAL_TRUE;
-      if (m_style == "ITALIC") m_italic = SGAL_TRUE;
+      if (m_style == "BOLD") m_bold = true;
+      if (m_style == "ITALIC") m_italic = true;
       if (m_style == "BOLDITALIC") {
-        m_bold = SGAL_TRUE;
-        m_italic = SGAL_TRUE;
+        m_bold = true;
+        m_italic = true;
       }
       elem->mark_delete(ai);
       continue;
@@ -326,7 +313,7 @@ void Font_style::create_font()
   m_font = new Imagemagick_font(m_font_name, m_antialias,
                                 m_left_to_right, m_top_to_bottom);
   m_font->init();
-  m_dirty = SGAL_FALSE;
+  m_dirty = false;
 }
 
 /*! Draw one string */

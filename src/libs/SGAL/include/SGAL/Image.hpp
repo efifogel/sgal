@@ -97,9 +97,6 @@ public:
   /*! Obtain the image pixel data. */
   virtual void* get_pixels();
 
-  /*! Determine whether the image should be cleaned. */
-  virtual Boolean is_dirty();
-
   /*! Clean the image in case it is dirty. */
   virtual void clean();
 
@@ -123,20 +120,11 @@ private:
   /*! the name of the file that the image was read from. */
   std::string m_url;
 
-  /*! Is the image dirty */
-  Boolean m_dirty;
-  
   /*! A collection of directories to search files in. */
   Path_list m_dirs;
 
   /*! Indicates whether the image should be reflected when read from file. */
   Boolean m_flip;
-  
-  /*! Allocate memory to hold the image. */
-  void allocate(Uint size);
-
-  /*! Deallocate the memory that holds the image. */
-  void deallocate();
 };
 
 /*! \brief constructs the prototype. */
@@ -147,9 +135,6 @@ inline Container* Image::clone() { return new Image(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Image::get_tag() const { return s_tag; }
-
-/*! \brief sets the URL. */
-inline void Image::set_url(const std::string& url) { m_url = url; }
 
 /*! \brief obtains the URL. */
 inline const std::string Image::get_url() const { return m_url; }
@@ -163,10 +148,8 @@ inline void Image::set_dirs(const Image::Path_list& dirs) { m_dirs = dirs; }
 /*! \brief obtains the directory-search structure. */
 inline const Image::Path_list& Image::get_dirs() const { return m_dirs; }
 
-/*! \brief determines whether the image should be cleaned. */
-inline Boolean Image::is_dirty() { return m_dirty; }
-
-/*! \brief sets the flag that indicates whether the image should be reflected. */
+/*! \brief sets the flag that indicates whether the image should be reflected.
+ */
 inline void Image::set_flip(Boolean flag) { m_flip = flag; }
 
 /*! \brief obtains the flag that indicates whether the image should be

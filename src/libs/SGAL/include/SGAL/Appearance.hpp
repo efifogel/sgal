@@ -119,8 +119,8 @@ public:
   /*! Set the texture-generation attribute.
    * \param tex_gen (in) the texture-generation attribute.
    * \param owned (in) indicates whether the texture-generation attribute is
-   *              owned. If it is owned, the normal array  is constructed and
-   *              destructed by the construct.
+   *              owned. If it is owned, the texture-generation attribute is
+   *              constructed and destructed by the construct.
    */
   void set_tex_gen(Tex_gen* tex_gen, Boolean owned = false);
 
@@ -134,6 +134,10 @@ public:
   Boolean get_tex_gen_enable() const;
 
   /*! Set the material attribute.
+   * \param material (in) the material attribute.
+   * \param owned (in) indicates whether the material attribute is owned.
+   *              If it is owned, the material attribute is constructed and
+   *              destructed by the construct.
    */
   void set_material(Material* material, Boolean owned = false);
 
@@ -364,13 +368,15 @@ private:
 
   //Gfx::Tex_env m_blend_func;
 
-  /*! Indicates whether a material node has been newly created, (as the user
-   * hasn't provided one,) and should be deleted when the node is destructed
+  /*! Indicates whether the material attribute is owned. If it is owned (as
+   * the user hasn't provided one) the material attribute should be
+   * destructed when the appearance is destructed.
    */
   Boolean m_owned_material;
 
-  /*! Indicates whether a tex_gen node has been newly created, (as the user
-   * hasn't provided one,) and should be deleted when the node is destructed
+  /*! Indicates whether the texture-generation attribute is owned. If it is
+   * owned  (as the user hasn't provided one) the texture-generation attribute
+   * should be destructed when the appearance is destructed.
    */
   Boolean m_owned_tex_gen;
 

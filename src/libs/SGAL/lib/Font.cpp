@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5647 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -24,13 +24,12 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
-Font::Font(const std::string & name, Boolean antialias,
+Font::Font(const std::string& name, Boolean antialias,
            Boolean left_to_right, Boolean top_to_bottom) :
   m_name(name),
   m_antialias(antialias),
   m_left_to_right(left_to_right),
   m_top_to_bottom(top_to_bottom)
-{
-}
+{}
 
 SGAL_END_NAMESPACE

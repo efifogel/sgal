@@ -65,7 +65,6 @@ Texture::~Texture() {}
 /*! \brief draws the texture. */
 void Texture::draw(Context* context)
 {
-  std::cout << "Texture::draw" << std::endl;
   if (m_text) m_text->draw(context);
   Texture_base::draw(context);
 }
@@ -73,7 +72,6 @@ void Texture::draw(Context* context)
 /*! \brief cleans the object using the new decoded data. */
 void Texture::clean()
 {
-  std::cout << "Texture::clean" << std::endl;
   if (m_image->is_dirty()) m_image->clean();
   if (Texture_base::is_dirty()) Texture_base::clean();
   (m_height_field) ? load_height_map() : load_color_map();
@@ -84,7 +82,6 @@ void Texture::clean()
 /*! \brief transmits the texture to the graphics pipe. */
 void Texture::load_color_map()
 {
-  std::cout << "Texture::load_color_map()" << std::endl;
   Uint width = m_image->get_width();
   Uint height = m_image->get_height();
   Image::Format format = m_image->get_format();

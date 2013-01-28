@@ -33,10 +33,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Element::Str_attr_iter          Str_attr_iter;
-
-std::string Transform::s_tag = "sgalTextTexture";
-Container_proto * Text_texture::s_prototype = 0;
+std::string Transform::s_tag = "TextTexture";
+Container_proto* Text_texture::s_prototype = 0;
 
 REGISTER_TO_FACTORY(Text_texture, "Text_texture");
 
@@ -51,9 +49,7 @@ Text_texture::Text_texture(Boolean proto) :
   m_update_texture(true),
   m_original_image(0),
   m_parent(0)
-{
-  m_color.set(1, 1, 1);
-}
+{ m_color.set(1, 1, 1); }
 
 /*! Destructor */
 Text_texture::~Text_texture()
@@ -63,19 +59,19 @@ Text_texture::~Text_texture()
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
-/*! */
-void Text_texture::draw(Context * ctx)
+/*! \brief */
+void Text_texture::draw(Context* ctx)
 {
   if (m_update_texture) {
-    void * bmpData = 0;
+    void* bmpData = 0;
     
-    Image_data & img = m_parent->get_image_data();
+    Image_data& img = m_parent->get_image_data();
     int width = atoi(img.get_value(Image_data::WIDTH));
     int height = atoi(img.get_value(Image_data::HEIGHT));
     if (width == 0 || height == 0 || img.get_pixels() == 0) return;
     //if (m_parent->get_componentCount() != 3) return;
 
-    const Image * current_image = m_parent->get_image();
+    const Image* current_image = m_parent->get_image();
 
     // if the new created image has a different size, we recreate the 
     // text texture to adjust the size
@@ -86,8 +82,7 @@ void Text_texture::draw(Context * ctx)
       m_original_image->delete_pixels();
       //! \todo DELETE_OBJECT(m_original_image);
     }
-    if (!m_original_image) 
-    {
+    if (!m_original_image) {
       m_original_image = new Image;
       m_original_image->set_width(current_image->get_width());
       m_original_image->set_height(current_image->get_height());
@@ -143,11 +138,11 @@ void Text_texture::draw(Context * ctx)
       char *bmpDataC = (char *)bmpData;
       int i = 0;
 
-      for (i = 0 ; i < bmpSize/4 ; i++) {
+      for (i = 0; i < bmpSize/4; ++i) {
         memcpy(bmpDataC+i*3, originalPixels+i*4, 3);
       }
       DrawText(hdc,m_text,width,height);
-      for (i = 0 ; i < bmpSize/4 ; i++) {
+      for (i = 0; i < bmpSize/4; ++i) {
         memcpy(currentPixels+i*4, bmpDataC+i*3, 3);
       }
 
@@ -157,12 +152,9 @@ void Text_texture::draw(Context * ctx)
       m_color[0] = 1.0; m_color[1] = m_color[2] = 0.0;
       DrawText(hdc,m_text,width,height);
       m_color = oldColor;
-      for (i = 0 ; i < bmpSize/4 ; i++) {
-        if (bmpDataC[i*3] != 0) {
-          currentPixels[i*4+3] = (char)255;
-        } else {
-          currentPixels[i*4+3] = originalPixels[i*4+3];
-        }
+      for (i = 0 ; i < bmpSize/4 ; ++i) {
+        if (bmpDataC[i*3] != 0) currentPixels[i*4+3] = (char)255;
+        else currentPixels[i*4+3] = originalPixels[i*4+3];
       }
     } else {
       ASSERT(0);
@@ -243,7 +235,7 @@ void Text_texture::Draw_text(HDC hdc,const String &text,int width,int height)
 }
 */
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Text_texture::init_prototype()
 {
   if (s_prototype) return;
@@ -270,7 +262,7 @@ void Text_texture::init_prototype()
   
   exec_func =
     static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new ESFInt(FONTSIZE,"font_size",
+  s_prototype->add_field_info(new ESFInt(FONTSIZE,"fontSize",
                                          get_member_offset(&m_font_size),
                                          exec_func));
 
@@ -293,72 +285,83 @@ void Text_texture::init_prototype()
                                           exec_func));
 }
 
-/*! */
+/*! \brief */
 void Text_texture::delete_prototype()
 {
   delete s_prototype;
   s_prototype = 0;
 }
 
-/*! */
-Container_proto * Text_texture::get_prototype() 
+/*! \brief */
+Container_proto* Text_texture::get_prototype() 
 {  
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 #endif
 
-void Text_texture::OnFieldChanged(Field_info * field_info)
+/*! \brief */
+void Text_texture::OnFieldChanged(Field_info* field_info)
 {
   m_parent->set_dirty_texture();
   m_update_texture = true;
   m_execution_coordinator->set_rendering_required();
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Text_texture::set_attributes(Element * elem)
+/*! \brief sets the attributes of this. */
+void Text_texture::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const Attribute * attr = *ai;
-    const std::string * name = elem->get_name(ai);
-    const std::string * value = elem->get_value(ai);
+
+  typedef Element::Str_attr_iter          Str_attr_iter;
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const Attribute* attr = *ai;
+    const std::string* name = elem->get_name(ai);
+    const std::string* value = elem->get_value(ai);
     bool do_delete = false;
     if (name == "text") {
       m_text = value;
       elem->mark_delete(ai);
-    } else if (name == "color") {
+      continue;
+    }
+    if (name == "color") {
       Vector3f col(value);
       m_color = col;
       elem->mark_delete(ai);
-    } else if (name == "font") {
+      continue;
+    }
+    if (name == "font") {
       m_font = value;
       elem->mark_delete(ai);
-    } else if (name == "font_size") {
+      continue;
+    }
+    if (name == "fontSize") {
       m_font_size = atoi(value.c_str());
       elem->mark_delete(ai);
-    } else if (name == "bold") {
+      continue;
+    }
+    if (name == "bold") {
       m_bold = compare_to_true(value);
       elem->mark_delete(ai);
-    } else if (name == "italic") {
+      continue;
+    }
+    if (name == "italic") {
       m_italic = compare_to_true(value);
       elem->mark_delete(ai);
-    } else if (name == "antialias") {
+      continue;
+    }
+    if (name == "antialias") {
       m_antialias = compare_to_true(value);
       elem->mark_delete(ai);
+      continue;
     }
   }
   // Remove all the marked attributes:
   elem->delete_marked();
 }
 
-/*!
- */
+/*! \brief */
 Attribute_list Text_texture::get_attributes() 
 { 
   Attribute_list attribs; 
@@ -405,12 +408,11 @@ Attribute_list Text_texture::get_attributes()
   return attribs; 
 }
 
-/*!
- */
-void Text_texture::add_to_scene(Scene_graph * sg, XML_entity * parent)
+/*! */
+void Text_texture::add_to_scene(Scene_graph* sg, XML_entity* parent)
 {
   Container::add_to_scene(sg, parent);
-  Texture * t = dynamic_cast<Texture *>(parent);
+  Texture* t = dynamic_cast<Texture *>(parent);
   if (t) {
     t->SetText(this);
     m_parent = t;

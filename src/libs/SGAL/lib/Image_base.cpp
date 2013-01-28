@@ -553,7 +553,7 @@ const char* Image_base::s_format_names[] = {
 };
 
 /*! Default value */
-Image_base::Format Image_base::s_def_format = Image_base::kRGB8_8_8;
+const Image_base::Format Image_base::s_def_format = Image_base::kRGB8_8_8;
 
 /*! Constructor */
 Image_base::Image_base(Boolean proto) :
@@ -562,11 +562,13 @@ Image_base::Image_base(Boolean proto) :
   m_height(0), 
   m_format(s_def_format),
   m_pixels(NULL),
-  m_pack_row_length(0)
+  m_pack_row_length(0),
+  m_dirty(true),
+  m_owned_pixels(false)
 {}
 
 /*! Destructor */
-Image_base::~Image_base() {}
+Image_base::~Image_base() { if (m_owned_pixels) deallocate(); }
 
 /*! \brief initializess the node prototype. */
 void Image_base::init_prototype()
@@ -666,6 +668,32 @@ Uint Image_base::get_size() const
 {
   if (m_pack_row_length == 0) return get_size(m_width, m_height, m_format);
   else return m_pack_row_length * m_height;
+}
+
+/*! \brief sets the image pixel data. */
+void Image_base::set_pixels(void* pixels)
+{
+  if (m_owned_pixels) deallocate();
+  m_pixels = pixels;
+  m_dirty = false;
+}
+
+/*! \brief allocates memory that holds the image. */
+void Image_base::allocate(Uint size)
+{
+  m_pixels = new char[size];
+  SGAL_assertion(m_pixels);
+  m_owned_pixels = true;
+}
+
+/*! \brief deallocates the memory that holds the image. */
+void Image_base::deallocate()
+{
+  if (m_pixels) {
+    delete [] (char*) m_pixels;
+    m_pixels = NULL;
+  }
+  m_owned_pixels = false;
 }
 
 SGAL_END_NAMESPACE
