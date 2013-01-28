@@ -49,8 +49,9 @@ const Texture_base::Min_filter Texture_base::m_def_min_filter =
 const Texture_base::Mag_filter Texture_base::m_def_mag_filter =
   Texture_base::LINEAR_MAG;
 
-const Texture_base::Wrap Texture_base::m_def_wraps = Texture_base::REPEAT;
-const Texture_base::Wrap Texture_base::m_def_wrapt = Texture_base::REPEAT;
+const Texture_base::Wrap Texture_base::m_def_wrap_s = Texture_base::REPEAT;
+const Texture_base::Wrap Texture_base::m_def_wrap_t = Texture_base::REPEAT;
+const Texture_base::Wrap Texture_base::m_def_wrap_r = Texture_base::REPEAT;
 
 Container_proto* Texture_base::s_prototype = NULL;
 
@@ -109,8 +110,9 @@ Texture_base::Texture_base(Boolean proto) :
   Container(proto),
   m_target(TEXTURE_2D),
   m_id(0xffffffff),
-  m_wraps(m_def_wraps),
-  m_wrapt(m_def_wrapt),
+  m_wrap_s(m_def_wrap_s),
+  m_wrap_t(m_def_wrap_t),
+  m_wrap_r(m_def_wrap_r),
   m_min_filter(m_def_min_filter),
   m_mag_filter(m_def_mag_filter),
   m_dirty(true)
@@ -120,17 +122,25 @@ Texture_base::Texture_base(Boolean proto) :
 Texture_base::~Texture_base() {}
 
 /*! \brief sets the wrapping factor on the S. */
-void Texture_base::wraps_changed(Field_info* /* field_info */)
+void Texture_base::wrap_s_changed(Field_info* /* field_info */)
 {
-  set_wraps(m_repeats);
+  set_wrap_s(m_repeat_s);
   m_dirty = true;
   set_rendering_required();
 }
 
 /*! \brief sets the wrapping factor on the T. */
-void Texture_base::wrapt_changed(Field_info* /* field_info */)
+void Texture_base::wrap_t_changed(Field_info* /* field_info */)
 {
-  set_wrapt(m_repeatt);
+  set_wrap_t(m_repeat_t);
+  m_dirty = true;
+  set_rendering_required();
+}
+
+/*! \brief sets the wrapping factor on the Q. */
+void Texture_base::wrap_r_changed(Field_info* /* field_info */)
+{
+  set_wrap_r(m_repeat_r);
   m_dirty = true;
   set_rendering_required();
 }
@@ -188,12 +198,14 @@ void Texture_base::clean()
   GLenum target = s_targets[m_target];
   glBindTexture(s_targets[m_target], m_id);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glTexParameteri(target, GL_TEXTURE_WRAP_S, s_wrap_tokens[m_wraps]);
-  glTexParameteri(target, GL_TEXTURE_WRAP_T, s_wrap_tokens[m_wrapt]);
   glTexParameteri(target, GL_TEXTURE_MAG_FILTER,
                   s_mag_filter_tokens[m_mag_filter]);
   glTexParameteri(target, GL_TEXTURE_MIN_FILTER,
                   s_min_filter_tokens[m_min_filter]);
+  // EFEF: issue appropriate commands according to the texture dimension.
+  glTexParameteri(target, GL_TEXTURE_WRAP_S, s_wrap_tokens[m_wrap_s]);
+  glTexParameteri(target, GL_TEXTURE_WRAP_T, s_wrap_tokens[m_wrap_t]);
+  glTexParameteri(target, GL_TEXTURE_WRAP_R, s_wrap_tokens[m_wrap_r]);
   m_dirty = false;
 }
 
@@ -208,12 +220,12 @@ void Texture_base::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "repeatS") {
-      set_wraps(compare_to_true(value));
+      set_wrap_s(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "repeatT") {
-      set_wrapt(compare_to_true(value));
+      set_wrap_t(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -243,14 +255,14 @@ Attribute_list Texture_base::get_attributes()
 
   attrs = Container::get_attributes();
 
-  if (m_wrapS != m_defWrapS) {
+  if (m_wrap_s != s_def_wrap_s) {
     attrib.first = "repeatS";
-    attrib.second = (m_wrapS == CLAMP) ? "FALSE" : "TRUE";
+    attrib.second = (m_wrap_s == CLAMP) ? "FALSE" : "TRUE";
     attrs.push_back(attrib);
   }
-  if (m_wrapT != m_defWrapT) {
+  if (m_wrap_t != s_def_wrap_t) {
     attrib.first = "repeatT";
-    attrib.second = (m_wrapT == CLAMP) ? "FALSE" : "TRUE";
+    attrib.second = (m_wrap_t == CLAMP) ? "FALSE" : "TRUE";
     attrs.push_back(attrib);
   }
   if (m_min_filter != m_defMinFilter) {
@@ -324,14 +336,14 @@ void Texture_base::init_prototype()
                   exec_func);  
   s_prototype->add_field_info(mag_filter_field_info);
 
-  exec_func = static_cast<Execution_function>(&Texture_base::wraps_changed);
+  exec_func = static_cast<Execution_function>(&Texture_base::wrap_s_changed);
   s_prototype->add_field_info(new SF_bool(REPEAT_S, "repeatS",
-                                          get_member_offset(&m_repeats),
+                                          get_member_offset(&m_repeat_s),
                                           exec_func));
 
-  exec_func = static_cast<Execution_function>(&Texture_base::wrapt_changed);
+  exec_func = static_cast<Execution_function>(&Texture_base::wrap_t_changed);
   s_prototype->add_field_info(new SF_bool(REPEAT_T, "repeatT",
-                                          get_member_offset(&m_repeatt),
+                                          get_member_offset(&m_repeat_t),
                                           exec_func));
 }
 

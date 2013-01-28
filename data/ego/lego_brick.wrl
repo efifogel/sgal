@@ -48,7 +48,15 @@ Transform {
 	  ambientIntensity 0.2
 	  transparency 0
 	}
-	texture ImageTexture {url ["posx.jpg"]}
+	# texture ImageTexture { url ["negx.jpg"] }
+	texture CubeEnvironment {
+	  leftImage Image { url ["negx.jpg"] }
+	  rightImage Image { url ["posx.jpg"] }
+	  frontImage Image { url ["negy.jpg"] }
+	  backImage Image { url ["posy.jpg"] }
+	  bottomImage Image { url ["negz.jpg"] }
+	  topImage Image { url ["posz.jpg"] }
+	}
       }
       geometry DEF BRICK EgoBrick {
 	# knobsVisible FALSE

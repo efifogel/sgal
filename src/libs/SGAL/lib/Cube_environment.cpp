@@ -130,6 +130,7 @@ void Cube_environment::set_attributes(Element* elem)
 /*! \brief cleans the objec. */
 void Cube_environment::clean()
 {
+  Texture_base::clean();
 }
 
 /*! \brief sets the left image. */

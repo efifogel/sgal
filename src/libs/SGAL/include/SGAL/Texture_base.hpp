@@ -113,29 +113,41 @@ public:
   Uint get_target() const;
   
   /*! Set the wrapping factor on the S. */
-  void set_wraps(Texture_base::Wrap wraps);
+  void set_wrap_s(Texture_base::Wrap wrap);
 
   /*! Set the wrapping factor on the S. */
-  void set_wraps(Boolean flag);
-
-  /*! Notify that the wrapping factor on the S changed. */
-  void wraps_changed(Field_info* field_info);
+  void set_wrap_s(Boolean flag);
 
   /*! Obtain the wrapping factor on the S. */
-  Texture_base::Wrap get_wraps() const;
+  Texture_base::Wrap get_wrap_s() const;
+
+  /*! Notify that the wrapping factor on the S changed. */
+  void wrap_s_changed(Field_info* field_info);
 
   /*! Set the wrapping factor on the T. */
-  void set_wrapt(Texture_base::Wrap wrapt);
+  void set_wrap_t(Texture_base::Wrap wrap);
   
   /*! Set the wrapping factor on the T. */
-  void set_wrapt(Boolean flag);
-  
-  /*! Notify that the wrapping factor on the T changed. */  
-  void wrapt_changed(Field_info* field_info);
+  void set_wrap_t(Boolean flag);
   
   /*! Obtain the wrapping factor on the T. */
-  Texture_base::Wrap get_wrapt() const;
+  Texture_base::Wrap get_wrap_t() const;
 
+  /*! Notify that the wrapping factor on the T changed. */  
+  void wrap_t_changed(Field_info* field_info);
+  
+  /*! Set the wrapping factor on the R. */
+  void set_wrap_r(Texture_base::Wrap wrap);
+  
+  /*! Set the wrapping factor on the R. */
+  void set_wrap_r(Boolean flag);
+  
+  /*! Obtain the wrapping factor on the R. */
+  Texture_base::Wrap get_wrap_r() const;
+  
+  /*! Notify that the wrapping factor on the R changed. */  
+  void wrap_r_changed(Field_info* field_info);
+  
   /*! Set the minimization filter. */
   void set_min_filter(Texture_base::Min_filter min_filter);
 
@@ -176,27 +188,38 @@ protected:
   /*! A unique id for the texture (used in OpenGL for texture binding) */
   Uint m_id;
 
-  /*! Repeating in S parameter */
-  Wrap m_wraps;
+  /*! Repeating in the S direction. */
+  Wrap m_wrap_s;
 
-  /*! Specify how the texture wraps in the S direction. If repeats is true
+  /*! Specify how the texture wrap in the S direction. If repeat_s is true
    * (the default), the texture map is repeated outside the [0.0, 1.0] texture
-   * coordinate range in the S direction so that it fills the shape. If repeats
-   * is false, the texture coordinates are clamped in the S direction to lie
-   * within the [0.0, 1.0] range.
+   * coordinate range in the S direction so that it fills the shape. If 
+   * repeat_s is false, the texture coordinates are clamped in the S direction
+   * to lie within the [0.0, 1.0] range.
    */
-  Boolean m_repeats;
+  Boolean m_repeat_s;
 
-  /*! Repeating in T parameter */
-  Wrap m_wrapt;
+  /*! Repeating in the T direction. */
+  Wrap m_wrap_t;
 
-  /*! Specify how the texture wraps in the T direction. If repeatt is true
+  /*! Specify how the texture wrap in the T direction. If repeat_t is true
    * (the default), the texture map is repeated outside the [0.0, 1.0] texture
-   * coordinate range in the S direction so that it fills the shape. If repeatt
-   * is false, the texture coordinates are clamped in the T direction to lie
-   * within the [0.0, 1.0] range.
+   * coordinate range in the T direction so that it fills the shape. If
+   * repeat_t is false, the texture coordinates are clamped in the T direction
+   * to lie within the [0.0, 1.0] range.
    */
-  Boolean m_repeatt;
+  Boolean m_repeat_t;
+
+  /*! Repeating in the R parameter. */
+  Wrap m_wrap_r;
+
+  /*! Specify how the texture wrap in the R direction. If repeat_r is true
+   * (the default), the texture map is repeated outside the [0.0, 1.0] texture
+   * coordinate range in the R direction so that it fills the shape. If 
+   * repeat_r is false, the texture coordinates are clamped in the R direction 
+   * to lie within the [0.0, 1.0] range.
+   */
+  Boolean m_repeat_r;
 
   /*! The minification filtering method. */
   Min_filter m_min_filter;
@@ -216,8 +239,9 @@ protected:
   // Default values:
   static const Min_filter m_def_min_filter;
   static const Mag_filter m_def_mag_filter;
-  static const Wrap m_def_wraps;
-  static const Wrap m_def_wrapt;
+  static const Wrap m_def_wrap_s;
+  static const Wrap m_def_wrap_t;
+  static const Wrap m_def_wrap_r;
 
   /*! An array of possible texture targets tokens. */
   static const GLenum s_targets[];
@@ -252,26 +276,37 @@ inline void Texture_base::set_target(Uint target) { m_target = target; }
 inline Uint Texture_base::get_target() const { return m_target; }
 
 /*! \brief sets the wrapping factor on the S. */
-inline void Texture_base::set_wraps(Texture_base::Wrap wraps)
-{ m_wraps = wraps; }
+inline void Texture_base::set_wrap_s(Texture_base::Wrap wrap)
+{ m_wrap_s = wrap; }
 
 /*! \brief sets the wrapping factor on the S. */
-inline void Texture_base::set_wraps(Boolean flag)
-{ flag ? set_wraps(REPEAT) : set_wraps(CLAMP); }
+inline void Texture_base::set_wrap_s(Boolean flag)
+{ flag ? set_wrap_s(REPEAT) : set_wrap_s(CLAMP); }
 
 /*! \brief obtains the wrapping factor on the S. */
-inline Texture_base::Wrap Texture_base::get_wraps() const { return m_wraps; }
+inline Texture_base::Wrap Texture_base::get_wrap_s() const { return m_wrap_s; }
 
 /*! \brief sets the wrapping factor on the T. */
-inline void Texture_base::set_wrapt(Texture_base::Wrap wrapt)
-{ m_wrapt = wrapt; }
+inline void Texture_base::set_wrap_t(Texture_base::Wrap wrap)
+{ m_wrap_t = wrap; }
   
 /*! \brief sets the wrapping factor on the T. */
-inline void Texture_base::set_wrapt(Boolean flag)
-{ flag ? set_wrapt(REPEAT) : set_wrapt(CLAMP); }
+inline void Texture_base::set_wrap_t(Boolean flag)
+{ flag ? set_wrap_t(REPEAT) : set_wrap_t(CLAMP); }
   
 /*! \brief obtains the wrapping factor on the T. */
-inline Texture_base::Wrap Texture_base::get_wrapt() const { return m_wrapt; }
+inline Texture_base::Wrap Texture_base::get_wrap_t() const { return m_wrap_t; }
+
+/*! \brief sets the wrapping factor on the R. */
+inline void Texture_base::set_wrap_r(Texture_base::Wrap wrap)
+{ m_wrap_r = wrap; }
+  
+/*! \brief sets the wrapping factor on the R. */
+inline void Texture_base::set_wrap_r(Boolean flag)
+{ flag ? set_wrap_r(REPEAT) : set_wrap_r(CLAMP); }
+  
+/*! \brief obtains the wrapping factor on the R. */
+inline Texture_base::Wrap Texture_base::get_wrap_r() const { return m_wrap_r; }
 
 /*! \brief sets the minimization filter. */
 inline void Texture_base::set_min_filter(Texture_base::Min_filter min_filter)
