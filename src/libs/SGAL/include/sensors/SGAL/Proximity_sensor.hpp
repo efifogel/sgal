@@ -42,7 +42,7 @@ class Passive_motion_event;
 class SGAL_CLASSDEF Proximity_sensor : public Agent, public Node {
 public:
   enum {
-    FIRST = Container::LAST - 1,
+    FIRST = Node::LAST - 1,
     ENABLED,
     POSITION,
     ORIENTATION,

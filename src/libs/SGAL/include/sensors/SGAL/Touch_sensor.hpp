@@ -60,7 +60,7 @@ class SGAL_CLASSDEF Touch_sensor : public Agent, public Drag_sensor,
 {
 public:
   enum {
-    FIRST = Container::LAST - 1,
+    FIRST = Node::LAST - 1,
     ENABLED,
     HITNORMAL,
     HITPOINT,

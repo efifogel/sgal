@@ -43,7 +43,7 @@ class Scene_graph;
 class Key_sensor : public Agent, public Node {
 public:
   enum {
-    FIRST = Container::LAST - 1,
+    FIRST = Node::LAST - 1,
     KEY_PRESS,
     KEY_RELEASE,
     ACTION_KEY_PRESS,
