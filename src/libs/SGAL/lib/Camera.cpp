@@ -172,17 +172,15 @@ void Camera::update_field_of_view(Field_info* /* info */)
   set_rendering_required();
 }
 
-/*!
- */
+/*! \brief */
 void Camera::get_clipping_planes(float& near_plane, float& far_plane)
-{
-  m_base_frust.get_near_far(near_plane, far_plane);
-}
+{ m_base_frust.get_near_far(near_plane, far_plane); }
 
-/*! Initialize some camera parameters. Cannot be called from the constructor,
- * but does not require a scene graph nor a context. In particular, initialize
- * the nearest clipping plane based on the accelerator type. This is a work
- * around a bug in some of the old accelerators
+/*! \brief initialize some camera parameters. Cannot be called from the
+ * constructor, but does not require a scene graph nor a context. In
+ * particular, initialize the nearest clipping plane based on the
+ * accelerator type. This is a work around a bug in some of the old
+ * accelerators
  */
 void Camera::utilize()
 {
@@ -254,32 +252,28 @@ void Camera::init_prototype()
                                            get_member_offset(&m_radius_scale)));
 }
 
-/*!
- */
+/*! \brief deletes the camera prototype. */
 void Camera::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief obtains the camera prototype. */
 Container_proto* Camera::get_prototype() 
 {  
   if (s_prototype == NULL) Camera::init_prototype();
   return s_prototype;
 }
 
-/*!
- */
+/*! \brief obtain the camera viewing matrix. */
 const Matrix4f& Camera::get_view_mat()
 {
   if (m_dirty_matrix) clean_matrix();
   return m_view_mat;
 }
 
-/*!
- */
+/*! \brief cleans the camera viewing matrix. */
 void Camera::clean_matrix()
 {
 #if 1
@@ -359,7 +353,7 @@ void Camera::clean_matrix()
   m_dirty_matrix = false;
 }  
 
-/*! Apply the camera */
+/*! \brief applies the camera. */
 void Camera::draw(Draw_action* action)
 {
   Configuration* conf = action->get_configuration();
@@ -379,10 +373,10 @@ void Camera::draw(Draw_action* action)
   draw();
 }
 
-/*! Apply the camera */
+/*!  \brief applies the camera. */
 void Camera::draw(Isect_action* /* action */) { draw(); }
 
-/*! Apply the camera */
+/*!  \brief applies the camera. */
 void Camera::draw()
 {
   m_base_frust.apply();
@@ -504,27 +498,22 @@ Attribute_list Camera::get_attributes()
   return attribs;
 }
 
-/*!
- */
+/*! \brief */
 void Camera::add_to_scene(Scene_graph* sg, XML_entity* parent)
 {
   Container::add_to_scene(sg, parent);
   m_camera_pool = sg->get_camera_pool();
 
-  if (m_camera_pool)
-    m_camera_pool->add_camera(this);
-  if (sg)
-    init(sg->get_context());
+  if (m_camera_pool) m_camera_pool->add_camera(this);
+  if (sg) init(sg->get_context());
 }
 #endif
 
-/*! Obtains the bindable stack */
+/*! \brief obtains the bindable stack. */
 Bindable_stack* Camera::get_stack()
-{
-  return m_scene_graph->get_camera_stack();
-}
+{ return m_scene_graph->get_camera_stack(); }
 
-/*! \bried enable the camera - called when the camera is bound */
+/*! \brief enables the camera---called when the camera is bound */
 void Camera::enable()
 {
   utilize();
@@ -532,7 +521,7 @@ void Camera::enable()
   init(context);
 }
 
-/*! Initialize the camera based on the current context */
+/*! \brief initializes the camera based on the current context. */
 void Camera::init(const Context* context)
 {
   set_aspect_ratio(context);

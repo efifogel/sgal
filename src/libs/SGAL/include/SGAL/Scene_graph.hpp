@@ -136,110 +136,137 @@ public:
   /*! Desctructor */
   virtual ~Scene_graph();
 
-  // Scene_graph_int Methods:
-  Context * create_context(/*! \todo Window_handle * win_handle */);
+  /*! Attach the graphics state context. */
+  Context* attach_context(Context* context);
 
-  /*! Initializ the scene graph with the context */
-  void init_context(Context * context);
+  /*! Initialize the graphics state context. */
+  void init_context();
   
+  /*! Release the graphics state context. */
   void release_context();
 
-  /*! */
-  void destroy_context(Context * context);
-  
-  //! \todo void add_node(XML_entity * parent, XML_entity * node);
+  //! \todo void add_node(XML_entity* parent, XML_entity* node);
 
   /*! Obtain the context */
-  Context * get_context() const { return m_context; }
+  Context* get_context() const { return m_context; }
 
-  void init_creation();
-
-  /*! Create the default nodes and routes necessary to operate */
+  /*! Create default nodes and route them appropriately.
+   * The set of such nodes consists of a navigation sensor node, a 
+   * configuration node, a camera node, and a light node. Also, connect 
+   * navigation sensor node to the navigation root node.
+   */
   void create_defaults();
 
+  /*! Destroy default (owned) nodes */
+  void destroy_defaults();
+  
   /*! Bind the bindable nodes */
   void bind();
 
-  /*! Draw the scene graph */
-  void draw(Draw_action * draw_action);
+  /*! Render the scene graph.
+   * The scene is rendered only if the scene graph is complete and it has been 
+   * modified since the last render. 
+   * If a background node exits, we first render it. Otherwise we clear the 
+   * buffers. Then we render the camera and then we start rendering the scene
+   * graph from the root. At the end we swap the buffers.
+   * \param draw_action (in)
+   */
+  void draw(Draw_action* draw_action);
 
   void isect(Uint x, Uint y);
-  //! \todo void record();
 
-  //! \todo Event_filter * get_navigation_sensor() { return m_navigation_sensor; }
+  //! \todo Event_filter* get_navigation_sensor() { return m_navigation_sensor; }
 
-  /*! Process all snapshot nodes */
-  void process_snapshots(Draw_action * action);
+  /*! Process all snapshot nodes. */
+  void process_snapshots(Draw_action* action);
 
-  /*! Start simulation */
+  /*! Start simulation. */
   void start_simulation();
   
   void create_execution_coordinator();
-  Execution_coordinator * get_execution_coordinator();
+  Execution_coordinator* get_execution_coordinator();
 
-  void set_default_event_filter(Event_filter * ef)
-  {
-    m_default_event_filter = ef;
-  }
+  void set_default_event_filter(Event_filter* ef)
+  { m_default_event_filter = ef; }
 
-  /*! Add a container to the name-less container-pool */
-  void add_container(Container * container);
+  /*! Add a container to the name-less container-pool.
+   * The name-lss container pool is maintained so that the name-less containers
+   * can be deleted during distruction.
+   */
+  void add_container(Container* container);
 
-  /*! Add a container to the instance container-pool */
-  void add_container(Container * container, const std::string & name);
+  /*! Add a container to the instance container-pool.
+   * In this pool every container has a name by which it can be retrieved.
+   */
+  void add_container(Container* container, const std::string & name);
 
-  /*! Obtain a container by its instance name */
-  Container * get_container(const std::string & name);
+  /*! Obtain a container by its instance name. If the node does not
+   * exists, returns 0.
+   * \param name (in) the name of the container.
+   * \return a pointer to the container.
+   */
+  Container* get_container(const std::string & name);
 
-  /*! Add a touch sensor node to the scene graph */
-  Uint add_touch_sensor(Touch_sensor * touch_Sensor);
+  /*! Add a touch sensor node to the scene graph.
+   * This pushes the touch sensor to the back of the list. It returns a
+   * unique selection id.
+   * \param touch_sensor a pointer to the touch sensor object
+   * \return a unique selection id.
+   */
+  Uint add_touch_sensor(Touch_sensor* touch_Sensor);
 
-  /*! Add a time sensor node to the scene graph */
-  void add_time_sensor(Time_sensor * time_Sensor);
+  /*! Add a time sensor node to the scene graph. */
+  void add_time_sensor(Time_sensor* time_Sensor);
 
-  /*! Return true iff time sensors are present */
+  /*! Return true iff time sensors are present. */
   Boolean has_time_sensors() const { return m_time_sensors.size() > 0; }
 
-  /*! Add a snapshot node to the list of snapshots nodes */
-  void add_snaphot(Snapshot * snapshot);
+  /*! Add a snapshot node to the list of snapshots nodes. */
+  void add_snaphot(Snapshot* snapshot);
 
-  /*! Add a Simulation node to the list of Simulation's */
-  void add_simulation(Simulation * simulation);
+  /*! Add a Simulation node to the list of Simulation nodes. */
+  void add_simulation(Simulation* simulation);
 
-  /*! Bindable node manipulations */
+  /*! Bindable node manipulations. */
 
-  /*! Obtain the navigation info binable stack */
-  Bindable_stack * get_navigation_info_stack();
+  /*! Obtain the navigation info binable stack. */
+  Bindable_stack* get_navigation_info_stack();
 
-  /*! Obtain the background binable stack */
-  Bindable_stack * get_background_stack();
+  /*! Obtain the background binable stack. */
+  Bindable_stack* get_background_stack();
 
-  /*! Obtain the camera stack */
-  Bindable_stack * get_camera_stack();
+  /*! Obtain the camera stack. */
+  Bindable_stack* get_camera_stack();
 
-  /*! Route the Navigation_info node properly */
-  void route_navigation_info(Navigation_info * nav,
-                             SGAL::Navigation_info_type type);
+  /*! Route the Navigation_info node properly. */
+  void route_navigation_info(Navigation_info* nav, Navigation_info_type type);
 
-  void set_context(Context * context) { m_context = context; }
+  /*! Set the context. */
+  void set_context(Context* context);
 
-  /*! \breif sets the Configuration node */
-  void set_configuration(Configuration * sconfig);
+  /*! \breif sets the Configuration node. */
+  void set_configuration(Configuration* sconfig);
 
-  /*! \breif obtains the Configuration node */
-  Configuration * get_configuration() const;
+  /*! \breif obtains the Configuration node. */
+  Configuration* get_configuration() const;
 
-  /*! Obtain the active camera */
-  Camera * get_active_camera();
+  /*! Obtain the active camera. */
+  Camera* get_active_camera();
 
-  /*! Obtain the active background */
-  Background * get_active_background();
+  /*! Obtain the active background. */
+  Background* get_active_background();
 
-  /*! Obtain the scene's root */
-  Group * get_root() const { return m_root; }
+  /*! Obtain the root of the scene graph.
+   * \return the root of the scene graph.
+   */
+  Group* get_root() const { return m_root; }
 
-  /*! Set the scene's root */
-  void set_root(Group * root);
+  /*! Set the root of the scene graph.
+   * The root of the Scene_graph is of type Group and contains the default light
+   * source that is created in case there are no lights in the scene.
+   * \param root (in) a pointer to the root node.
+   */
+  void set_root(Group* root);
 
   /*! Return the begin pointer of the containers */
   Container_vector_iter containers_begin() { return m_containers.begin(); }
@@ -256,12 +283,18 @@ public:
   Container_vector get_root_containers();
 
   /*! Obtain the navigation root. It's a node of type Transform */
-  Transform * get_navigation_root() { return m_navigation_root; }
+  Transform* get_navigation_root() { return m_navigation_root; }
 
-  void set_navigation_root(Transform * nr);
+  /*! Set the navigation root. The navigation root node is a child
+   * of the root of the scene graph. It is a node of type Transform.
+   * \param nav_root (in) a pointer to the navigation root node
+   */
+  void set_navigation_root(Transform* nr);
 
+  /*! Perform pre cascade activity. */
   void signal_cascade_start();
 
+  /*! Perform post cascade activity. */
   void signal_cascade_end();
 
   /*! Returns true if the scene creation is complete */
@@ -281,14 +314,14 @@ public:
   Float get_fps() { return m_fps; }
 
   /*! \breif sets the active key-sensor */
-  void set_active_key_sensor(Key_sensor * se) { m_active_key_sensor = se; }
+  void set_active_key_sensor(Key_sensor* se) { m_active_key_sensor = se; }
 
   /*! \breif obtains the active key-sensor */
-  Key_sensor * get_active_key_sensor() const { return m_active_key_sensor; }
+  Key_sensor* get_active_key_sensor() const { return m_active_key_sensor; }
 
   /*! todo sai
-  JSW_engine_int * get_jsw_engine();
-  SAI * get_scripts_sai();
+  JSW_engine_int* get_jsw_engine();
+  SAI* get_scripts_sai();
   */
   
   // Text screen operations.
@@ -297,7 +330,7 @@ public:
   void put_text_string(int line,const std::string & str);
   void add_text_string(const std::string & str);
   
-  Point_light * get_head_light() const { return m_head_light; };
+  Point_light* get_head_light() const { return m_head_light; };
 
   /*! \bried computes the speed factor required by the sensors */
   float compute_speed_factor() const;
@@ -307,12 +340,12 @@ public:
              const std::string & src_field_str,
              const std::string & dts_node_str,
              const std::string & dst_field_str,
-             Route * route);
+             Route* route);
 
   /*! Route the connection */
-  bool route(Container * src_node, const char * src_field_str,
-             Container * dts_node, const char * dst_field_str,
-             Route * route);
+  bool route(Container* src_node, const char* src_field_str,
+             Container* dts_node, const char* dst_field_str,
+             Route* route);
   
   /*! Enable the scene graph sensors */
   void enable_sensors();
@@ -337,12 +370,12 @@ public:
   {
     Container_vector_iter ci;
     for (ci = containers_begin(); ci != containers_end(); ++ci) {
-      T * tmp = dynamic_cast<T*>(*ci);
+      T* tmp = dynamic_cast<T*>(*ci);
       if (tmp) *oi++ = tmp;
     }
     Container_map_iter ii;
     for (ii = instances_begin(); ii != instances_end(); ++ii) {
-      T * tmp = dynamic_cast<T*>((*ii).second);
+      T* tmp = dynamic_cast<T*>((*ii).second);
       if (tmp) *oi++ = tmp;
     }
     return oi;
@@ -367,22 +400,22 @@ private:
   Bindable_stack m_background_stack;
 
   /*! The root of the scene graph */
-  Group * m_root;
+  Group* m_root;
 
   /*! the default light. */
-  Point_light * m_head_light;
+  Point_light* m_head_light;
 
   /*! The default camera */
-  Camera * m_camera;
+  Camera* m_camera;
   
   /*! The default navigation info */
-  Navigation_info * m_navigation_info;
+  Navigation_info* m_navigation_info;
   
   /*! a list of objects that are children of the root of the scene */
   Container_vector m_root_objects;
 
   /*! the navigation transfor (a child of the root) */
-  Transform * m_navigation_root;
+  Transform* m_navigation_root;
 
   /*! the list of all containers. Used mainly for deletion */
   Container_vector m_containers;
@@ -391,7 +424,7 @@ private:
   Container_map m_instances;
 
   /*! the current context */
-  Context * m_context;
+  Context* m_context;
 
   /*! indicates whether the scene is ready for rendering */
   Boolean m_is_scene_done;
@@ -399,15 +432,13 @@ private:
   /*! indicates whether there were lights specified in the scene */
   Boolean m_does_have_lights;
 
-  /*! an index for the last used light id. It is used to generate unique light
-   * ids
-   */
+  /*! An index for the last used light. Used to generate unique light ids. */
   Int m_current_light_id;
 
   /*! an action used to intersect the scene graph with a given (x,y) point
    * on the screen
    */
-  Isect_action * m_isect_action;
+  Isect_action* m_isect_action;
 
   /*! A vector of touch-sensor pointers */
   Touch_sensor_vector m_touch_sensors;
@@ -428,20 +459,20 @@ private:
 
   /*! the execution coordinator responsible for holding status information
       about rendering. */
-  Execution_coordinator * m_execution_coordinator;
+  Execution_coordinator* m_execution_coordinator;
 
   /*! an event filter that catches all events that are specific
       to the context, such as resize. */
-  Event_filter * m_default_event_filter;
+  Event_filter* m_default_event_filter;
 
   /*! a pointer to the configuration object */
-  Configuration * m_configuration;
+  Configuration* m_configuration;
 
   /*! a pointer to the view sensor object */
-  View_sensor * m_view_sensor;
+  View_sensor* m_view_sensor;
 
   /*! The active key sensor */
-  Key_sensor * m_active_key_sensor;
+  Key_sensor* m_active_key_sensor;
   
   /*! the rendering frames per second */
   float m_fps;
@@ -457,13 +488,13 @@ private:
   //! \todo Model_stats m_statistics;
 
   /*! a pointer to the JScript Interpreter engine */
-  JSW_engine_int * m_jsw_engine;
+  JSW_engine_int* m_jsw_engine;
 
   /*! a pointer to SAI that serves the script nodes */
-  SAI * m_scripts_sai;
+  SAI* m_scripts_sai;
 
   /*! an object that is used to display the FPS on the screen */
-  Text_screen * m_text_screen;
+  Text_screen* m_text_screen;
   
   /*! */
   //! \todo SG_JS_err_reporter m_js_error_reporter;
@@ -481,43 +512,54 @@ private:
 
   /*! A collection of directories to search files in */
   Path_list m_data_dirs;
+
+  /*! Indicates whether the configuration node is owned. */
+  Boolean m_owned_configuration;
+
+  /*! Indicates whether the navigation info node is owned. */
+  Boolean m_owned_navigation_info;
+
+  /*! Indicates whether the camera node is owned. */
+  Boolean m_owned_camera;
+
+  /*! Indicates whether the head light node is owned. */
+  Boolean m_owned_head_light;
   
   /*! Copy constructor */
   Scene_graph(const Scene_graph &) {}
 
-  void set_head_light(Configuration * config);
+  void set_head_light(Configuration* config);
 
-  void initialize_rendering(Draw_action * draw_action);
+  /*! Set the camera and draws the background. Any other rendering 
+   * calls that should not me done for each pass of the anti aliasing 
+   * should go in this method.
+   */
+  void initialize_rendering(Draw_action* draw_action);
 
-  void render_scene_graph(Draw_action * draw_action);
+  /*! Render the scene graph (all passes). All rendering that should be
+   * done for each anti alias pass should go in this method.
+   */
+  void render_scene_graph(Draw_action* draw_action);
 
-  /*! Obtain the active navigation-info node */
-  Navigation_info * get_active_navigation_info();
+  /*! Obtain the active navigation-info node. */
+  Navigation_info* get_active_navigation_info();
 };
 
-/*! Obtains the scene configuration container */
-inline Configuration * Scene_graph::get_configuration() const
-{
-  return m_configuration;
-}
+/*! \brief obtains the scene configuration container. */
+inline Configuration* Scene_graph::get_configuration() const
+{ return m_configuration; }
 
 /*! Obtain the navigation info bindable stack */
-inline Bindable_stack * Scene_graph::get_navigation_info_stack()
-{
-  return &m_navigation_info_stack;
-}
+inline Bindable_stack* Scene_graph::get_navigation_info_stack()
+{ return &m_navigation_info_stack; }
 
 /*! Obtain the background bindable stack */
-inline Bindable_stack * Scene_graph::get_background_stack()
-{
-  return &m_background_stack;
-}
+inline Bindable_stack* Scene_graph::get_background_stack()
+{ return &m_background_stack; }
 
 /*! Obtain the camera bindable stack */
-inline Bindable_stack * Scene_graph::get_camera_stack()
-{
-  return &m_camera_stack;
-}
+inline Bindable_stack* Scene_graph::get_camera_stack()
+{ return &m_camera_stack; }
 
 SGAL_END_NAMESPACE
 

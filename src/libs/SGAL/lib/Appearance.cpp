@@ -712,7 +712,6 @@ void Appearance::clean()
   Sphere_environment* sphere_env =
     dynamic_cast<Sphere_environment*>(get_texture());
   if (sphere_env) {
-    set_tex_enable(true);
     Tex_gen* tex_gen = new Tex_gen();
     m_owned_tex_gen = true;
     tex_gen->set_mode_s(Tex_gen::SPHERE_MAP);
@@ -724,7 +723,6 @@ void Appearance::clean()
   // Setup cube environment map if requested:
   Cube_environment* cube_env = dynamic_cast<Cube_environment*>(get_texture());
   if (cube_env) {
-    set_tex_enable(true);
     Tex_gen* tex_gen = new Tex_gen();
     // tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
     // tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);

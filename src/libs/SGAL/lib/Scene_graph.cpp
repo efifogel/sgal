@@ -82,11 +82,13 @@ unsigned int Scene_graph::s_min_redraw_period = 500;
  */
 Scene_graph::Scene_graph(bool syncronize) : 
   m_root(0), 
-  m_head_light(NULL), m_camera(NULL), m_navigation_info(NULL),
+  m_head_light(NULL),
+  m_camera(NULL),
+  m_navigation_info(NULL),
   m_navigation_root(NULL),
-  m_context(0),
+  m_context(NULL),
   m_is_scene_done(!syncronize), 
-  m_does_have_lights(SGAL_FALSE),
+  m_does_have_lights(false),
   m_current_light_id(0),
   m_isect_action(NULL),
   m_num_selection_ids(1),
@@ -103,7 +105,11 @@ Scene_graph::Scene_graph(bool syncronize) :
   //! \todo m_scripts_sai(0),
   //! \todo m_text_screen(0),
   m_is_isect_required(true),
-  m_is_camera_in_focus(false)
+  m_is_camera_in_focus(false),
+  m_owned_configuration(false),
+  m_owned_navigation_info(false),
+  m_owned_camera(false),
+  m_owned_head_light(false)
 {
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
@@ -117,7 +123,7 @@ Scene_graph::Scene_graph(bool syncronize) :
    * method of the factory explicitly, in case allocation is desired to be
    * concentrated elsewhere.
    *
-   * Container_factory * factory = Container_factory::get_instance();
+   * Container_factory* factory = Container_factory::get_instance();
    * factory->initialize();
    */
 }
@@ -126,26 +132,19 @@ Scene_graph::Scene_graph(bool syncronize) :
 Scene_graph::~Scene_graph()
 {
   TRACE_MSG(Trace::DESTRUCTOR, "~Scene_graph ...");
-  /*! \todo sai
-  if (m_scripts_sai != NULL)
-    delete m_scripts_sai;
-  */
+  // \todo sai
+  // if (m_scripts_sai != NULL) delete m_scripts_sai;
   
-  for (unsigned int i = 0 ; i < m_containers.size() ; i++) {
+  for (unsigned int i = 0 ; i < m_containers.size(); ++i)
     delete m_containers[i];
-  }
   m_containers.clear();
-  
-  for (Container_map_iter iter = m_instances.begin(); 
-       iter != m_instances.end(); ++iter)
-  {
+
+  Container_map_iter iter;
+  for (iter = m_instances.begin(); iter != m_instances.end(); ++iter) {
     Container* c = iter->second;
     delete c;
   }
   m_instances.clear();
-
-  delete m_context;
-  m_context = 0;
 
   delete m_isect_action;
   delete m_execution_coordinator;
@@ -158,167 +157,80 @@ Scene_graph::~Scene_graph()
   Navigation_info* nav = get_active_navigation_info();
   if (nav) nav->unregister_events();
 
+  destroy_defaults();
+  
   //! \todo destroy stacks
-
-  // Destruct default nodes:
-  if (m_camera) {
-    delete m_camera;
-    m_camera = NULL;
-  }
-
-  if (m_navigation_info) {
-    delete m_navigation_info;
-    m_navigation_info = NULL;
-  }
 }
 
-/*! 
- * Returns a pointer to the JScript Interpreter engine.
+/*! \brief obtains a pointer to the JScript Interpreter engine.
  * If needed - creates the engine (if it is the first call first time).
  */
-/*! \todo sai
-JSW_engine_int * Scene_graph::get_jsw_engine()
-{
-#ifdef JAVA_SCRIPT
-  if (m_jsw_engine == NULL) {
-    m_jsw_engine = JSW_engine_int::create(&m_js_error_reporter);
-  }
-#endif
-  return m_jsw_engine;
-}
-*/
+//! \todo sai
+// JSW_engine_int* Scene_graph::get_jsw_engine()
+// {
+// #ifdef JAVA_SCRIPT
+//   if (m_jsw_engine == NULL)
+//     m_jsw_engine = JSW_engine_int::create(&m_js_error_reporter);
+// #endif
+//   return m_jsw_engine;
+// }
 
-/*! Returns a pointer to the SAI serving the script nodes
+/*! \brief obtains a pointer to the SAI serving the script nodes
  * If needed - allocate a new instance
  */
-/*! \todo sai
-SAI * Scene_graph::get_scripts_sai()
-{
-  if (m_scripts_sai == 0)
-    m_scripts_SAI = new SAI(this);
-  return m_scripts_SAI;
-}
-*/
+//! \todo sai
+// SAI * Scene_graph::get_scripts_sai()
+// {
+//   if (m_scripts_sai == 0) m_scripts_SAI = new SAI(this);
+//   return m_scripts_SAI;
+// }
 
-/*! The function creates the context object and the graphic context.
- * @param winHandle (in) the widow handler.
+/*! \brief sets the context in the scene graph and in all relevant
+ * nodes accessible from the scene graph.
  */
-Context * Scene_graph::create_context(/*! \todo Window_handle * win_handle */)
-{
-  //! \todo Auto_lock lock(&s_render_cs);
-
-  Context* context = new Context();
-  //! \todo m_context->set_win_handle(win_handle);
-  context->set_depth_enable(true);
-  context->set_cull_face(Gfx::BACK_CULL);
-  context->draw_app(0);
-  glReadBuffer(GL_BACK);
-  return context;
-}
-
-/*! Initializes the context in the scene grpha and in all relevant nodes
- * accessible from the scene graph
- */
-void Scene_graph::init_context(Context* context)
+void Scene_graph::set_context(Context* context)
 {
   m_context = context;
+  if (m_isect_action) m_isect_action->set_context(context);
+}
 
-  if (m_isect_action) m_isect_action->set_context(m_context);
+/*! \brief intializes the context in the scene grpha and in all relevant
+ * nodes accessible from the scene graph.
+ */
+void Scene_graph::init_context()
+{
+  m_context->set_depth_enable(true);
+  m_context->set_cull_face(Gfx::BACK_CULL);
+  m_context->draw_app(0);
+  glReadBuffer(GL_BACK);
 
-  //! \todo it seems that the root_objects exists to keep the
-  // g_navigationRootName
+  // Activate seamless cube map if supported.
+  // \todo The GL_TEXTURE_CUBE_MAP_SEAMLESS state should be handled by the
+  //       context.
+  SGAL_assertion(m_configuration);
+  if (Gfx_conf::get_instance()->is_seamless_cube_map_supported() &&
+      m_configuration->is_seamless_cube_map())
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
 #if 0
-  Container_vector root_objects = get_root_containers();
-  for (Container_vector::iterator ci = root_objects.begin() ; 
-       ci != root_objects.end() ; ++ci) 
-  {
-    if (*ci)
-      (*ci)->attach_context(m_context);
-  }
+  Container_vector_iter ci;
+  for (ci = containers_begin(); ci != containers_end(); ++ci)
+    if (*ci) (*ci)->attach_context(m_context);
 #endif
 }
 
-/*!
- */
-void Scene_graph::destroy_context(Context* /* context */)
-{
-  if (m_context) m_context->delete_context();
-  delete m_context;
-}
-
-/*!
- */
+/*! \brief releases the context. */
 void Scene_graph::release_context()
 {
 #if 0
-  //! \todo Auto_lock lock(&s_render_cs);
-
-  //! \todo it seems that the root_objects exists to keep the
-  // g_navigationRootName
-  Container_vector root_objects = get_root_containers();
-  for (Container_vector::iterator it = root_objects.begin() ; 
-       it != root_objects.end() ; ++it) 
-  {
-    if (*it)
-      (*it)->detach_context (m_context);
-  }
-#endif
-
-  m_context = 0;
-
-  if (m_isect_action) m_isect_action->set_context(0);
-}
-
-#if 0
-/*! Add a node to the scene graph. This is called by the add_to_scene methods of
- * various nodes such as Container, Group, etc..
- * @param parentName (in) the name of the parent object
- * @param node (in) a pointer to the node being added
- */
-void Scene_graph::add_node(XML_entity * parent, XML_entity * node)
-{
-  Container * c = dynamic_cast<Container *>(node);
-  Node * n = dynamic_cast<Node *>(node);
-  Group * group = dynamic_cast<Group *>(parent);
-  if (group)
-    group->add_child(n);
-  add_container(c);
-}
-#endif
-
-/*! The function creates all nodes that are required prior to the scene
- * creation:
- * Execution coordinator
- * FlowSensor
- */
-void Scene_graph::init_creation()
-{
-#if 0
-  create_execution_coordinator();
-
-  // create the flow sensor
-  Container * tmp =
-    Container_factory::get_instance()->create("sgalFlowSensor");
-  Flow_sensor * fs = dynamic_cast<Flow_sensor *>(tmp);
-  if (fs) {
-    //! \todo fs->set_name("sgalFlowSensor"); // hard coded name!!!
-    //! \todo fs->add_to_scene(this, 0);
-    if (m_execution_coordinator) {
-      m_execution_coordinator->set_flow_sensor(fs);
-    }
-  }
+  Container_vector_iter it;
+  for (it = containers_begin(); it != containers_end(); ++it)
+    if (*it) (*it)->detach_context(m_context);
 #endif
 }
 
-/*! The function renders the scene graph.
- * The scene is rendered only if the scene graph is complete and it has been 
- * modified since the last render. 
- * <P>If a background exits, we first render it. Otherwise we clear the 
- * buffers. Then we render the camera and then we start rendering the scene
- * graph from the root. At the end we swap the buffers.
- * @param draw_action (in)
- */
-void Scene_graph::draw(Draw_action * draw_action) 
+/*! \brief renders the scene graph. */
+void Scene_graph::draw(Draw_action* draw_action) 
 {
   //! \todo Auto_lock lock(&s_render_CS);
   if (!m_context) return;
@@ -379,20 +291,20 @@ void Scene_graph::draw(Draw_action * draw_action)
 
   if (accumulation_enabled) {   
     if (acc->is_done() && draw_action->get_snap()) {
-      draw_action->set_snap_from_front(SGAL_FALSE);
+      draw_action->set_snap_from_front(false);
       process_snapshots(draw_action);
     }
-  } else if (draw_action->get_snap()) {
-    draw_action->set_snap_from_front(SGAL_FALSE);
+  }
+  else if (draw_action->get_snap()) {
+    draw_action->set_snap_from_front(false);
     process_snapshots(draw_action);
   }
   
   if (acc && !acc->is_active()) acc->reset_delay_time();
   
   // temporary code to get FPS
-  if (m_fps_counter == 0) {
-    m_fps_start_time = clock();
-  } else if (m_fps_counter == 20) {
+  if (m_fps_counter == 0) m_fps_start_time = clock();
+  else if (m_fps_counter == 20) {
     time_t t2 = clock();
     float elapsed = (float)(t2-m_fps_start_time); 
     if (elapsed != 0) {
@@ -406,9 +318,8 @@ void Scene_graph::draw(Draw_action * draw_action)
       std::ostringstream stream_fps;
       stream_fps << m_fps;
       put_text_string(0, stream_fps.str());
-    } else {
-      clear_text_screen();
     }
+    else clear_text_screen();
   }
     
   ++m_fps_counter;
@@ -417,9 +328,7 @@ void Scene_graph::draw(Draw_action * draw_action)
   m_is_isect_required = true;
 }
 
-/*! Sets the camera and draws the background. Any other rendering 
- * calls that should not me done for each pass of the anti aliasing 
- * should go in this method.
+/*! \brief sets the camera and draws the background.
  * \todo make it so that it is not called for each pass of the accumulation!
  */
 void Scene_graph::initialize_rendering(Draw_action* draw_action) 
@@ -435,7 +344,7 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
 #if 0
   // Set the clipping planes around the bounding sphere. 
   if (!m_is_camera_in_focus && camera->get_is_dynamic()) {
-    const Sphere_bound & sb = m_navigation_root->get_sphere_bound();
+    const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
     camera->set_dynamic_clipping_planes(sb.get_center(), sb.get_radius());
     m_is_camera_in_focus = true;
   }
@@ -444,7 +353,7 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
   set_head_light(draw_action->get_configuration());
 
   if (draw_action->get_clear()) {
-    Background * bg = get_active_background();
+    Background* bg = get_active_background();
     if (bg) bg->draw(draw_action);
     else m_context->clear(draw_action->get_clear());
   }
@@ -452,17 +361,14 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
   if (draw_action->get_apply_camera()) camera->draw(draw_action);
 
   /*! \todo move to Context! */
-  Configuration * config = draw_action->get_configuration();
+  Configuration* config = draw_action->get_configuration();
   if (config) {
-    Multisample * ms = config->get_multisample();
+    Multisample* ms = config->get_multisample();
     if (ms && ms->is_enabled()) glEnable(GL_MULTISAMPLE);
   }
 }
 
-/*! The function renders the scene graph (all passes).
- * All rendering that should be done for each anti alias pass should go in this
- * method.
- */
+/*! \brief renders the scene graph (all passes). */
 void Scene_graph::render_scene_graph(Draw_action* draw_action) 
 {
   /*
@@ -502,7 +408,7 @@ void Scene_graph::isect(Uint x, Uint y)
   m_is_isect_required = false;
   if (!m_is_scene_done || !m_context) return;
   
-  Camera * act_camera = get_active_camera();
+  Camera* act_camera = get_active_camera();
   /*! \todo this is all wrong!
    * Instead of the scene graph calling Camera::draw(Isect_action) , the
    * following public functions entry points should be implemented to apply
@@ -556,27 +462,6 @@ void Scene_graph::isect(Uint x, Uint y)
   }
 }
 
-#if 0
-/*! called in each frame while a movie recorder is enabled */
-void Scene_graph::record()
-{
-  if (m_is_scene_done) {
-    glPushAttrib(GL_ENABLE_BIT | GL_POLYGON_BIT | GL_LIGHTING_BIT);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_NORMALIZE);
-    glDisable(GL_DITHER);
-    glShadeModel(GL_FLAT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    m_context->clear_color_depth_buffer();
-    Record_action action;
-    m_navigation_root->isect(&action);
-    glPopAttrib();
-  }
-}
-#endif
-
 /*! Process all snapshot nodes */
 void Scene_graph::process_snapshots(Draw_action* action) 
 {
@@ -586,24 +471,22 @@ void Scene_graph::process_snapshots(Draw_action* action)
   }
 }
 
-/*! Add a Simulation node to the list of Simulation's */
+/*! \brief adds a Simulation node to the list of Simulation nodes. */
 void Scene_graph::add_simulation(Simulation* simulation)
-{
-  m_simulations.push_back(simulation);
-}
+{ m_simulations.push_back(simulation); }
 
 /*! Start simulation */
 void Scene_graph::start_simulation()
 {
   Simulation_iter i;
   for (i = m_simulations.begin(); i != m_simulations.end(); ++i) {
-    Simulation * simulation = *i;
+    Simulation* simulation = *i;
     simulation->start();
   }
 }
 
-/*! The function creates the execution coordinator for this scene graph. It is 
- * later passed on to each node.
+/*! \brief creates the execution coordinator for this scene graph. It is later
+ * passed on to each node.
  */
 void Scene_graph::create_execution_coordinator()
 {
@@ -615,19 +498,14 @@ void Scene_graph::create_execution_coordinator()
   */
 }
 
-/*! The function adds a container to the name-less container-pool.
- * The name-lss container pool is maintained so that the name-less containers
- * can be deleted during distruction.
- */
+/*! \brief adds a container to the name-less container-pool. */
 void Scene_graph::add_container(Container* container)
 {
   if (!container) return;
   m_containers.push_back(container);
 }
 
-/*! The function adds a container to the instance container-pool. In this pool
- * every container has a name by which it can be retrieved.
- */
+/*! \brief adds a container to the instance container-pool. */
 void Scene_graph::add_container(Container* container, const std::string& name)
 {
   if (!container) return;
@@ -635,11 +513,7 @@ void Scene_graph::add_container(Container* container, const std::string& name)
   m_instances[name] = container;
 }
 
-/*! Add a touch sensor to the scene graph. This inserts the touch sensor next
- * in the list. It returns a unique selection id for the object.
- * \param touch_sensor a pointer to the touch sensor object
- * \return a unique selection id
- */
+/*! \brief adds a touch sensor to the scene graph. */
 Uint Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor) 
 {
   m_touch_sensors.push_back(touch_sensor);
@@ -648,19 +522,15 @@ Uint Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor)
   return start_ids;
 }
 
-/*! Add a time sensor node to the scene graph */
+/*! \brief adds a time sensor node to the scene graph. */
 void Scene_graph::add_time_sensor(Time_sensor* time_sensor)
-{
-  m_time_sensors.push_back(time_sensor);
-} 
+{ m_time_sensors.push_back(time_sensor); } 
 
-/*! Add a snapshot node to the list of snapshots nodes */
+/*! \brief adds a snapshot node to the list of snapshots nodes. */
 void Scene_graph::add_snaphot(Snapshot* snapshot)
-{
-  m_snapshots.push_back(snapshot);
-}
+{ m_snapshots.push_back(snapshot); }
 
-/*! Routes the Navigation_info node properly */
+/*! \brief routes the Navigation_info node properly. */
 void Scene_graph::route_navigation_info(Navigation_info* nav,
                                         Navigation_info_type type)
 {
@@ -698,18 +568,18 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
   }
 }
 
-/*! Sets the scene configuration container */
-void Scene_graph::set_configuration(Configuration* sconfig) 
+/*! \brief sets the scene configuration container. */
+void Scene_graph::set_configuration(Configuration* config) 
 {
-  m_configuration = sconfig;
+  if (m_owned_configuration) {
+    if (m_configuration) delete m_configuration;
+    m_owned_configuration = false;
+  }
+  m_configuration = config;
   //! \todo m_execution_coordinator->set_min_frame_rate(sconfig->get_min_frame_rate());
 }
 
-/*! The function returns a reference to a container in the scene graph by its
- * name. If the node does not exists, returns 0.
- * @param name (in) the name of the container.
- * @return a pointer to the container.
- */
+/*! \brief obtains a container by its instance name. */
 Container* Scene_graph::get_container(const std::string& name)
 {
   Container_map_iter ni = m_instances.find(name);
@@ -717,19 +587,8 @@ Container* Scene_graph::get_container(const std::string& name)
   return 0;
 }
 
-/*! The function returns a list of objects that were defined in the root of the
- * scene 
- */
-Scene_graph::Container_vector Scene_graph::get_root_containers()
-{
-  return m_root_objects;
-}
-
-/*! \todo Model_stats & Scene_graph::get_stats()
-{
-  return m_statistics;
-}
-*/
+/*! \todo Model_stats& Scene_graph::get_stats() */
+// { return m_statistics; }
 
 /*! Return a pointer to the execution executor
  * @return a pointer to the execution coordinator.
@@ -741,21 +600,15 @@ Execution_coordinator* Scene_graph::get_execution_coordinator()
  * specified in the input file.
  * @param flag true if a light source was specified.
  */
-void Scene_graph::set_have_lights(Boolean flag) 
-{ 
-  m_does_have_lights = flag; 
-}
+void Scene_graph::set_have_lights(Boolean flag) { m_does_have_lights = flag; }
 
-/*! The function returns a flag that indicates whether a light source was
+/*! \brief returns a flag that indicates whether a light source was
  * specified in the input file.
  * @return true if a light source was specified.
  */
-Boolean Scene_graph::does_have_lights() 
-{ 
-  return m_does_have_lights; 
-}
+Boolean Scene_graph::does_have_lights() { return m_does_have_lights; }
 
-/*! The function returns a unique id (0-7) for a light source. We are assuming
+/*! \brief returns a unique id (0-7) for a light source. We are assuming
  * that there will not be more than 8 light sources in the scene and that light
  * sources can not be reused.
  * @return a uniqu id for light.
@@ -763,25 +616,14 @@ Boolean Scene_graph::does_have_lights()
 Int Scene_graph::get_unique_light_id()
 {
   int tmp = m_current_light_id;
-  m_current_light_id++;
+  ++m_current_light_id;
   return tmp;
 }
 
-/*! The function sets the root of the scene graph.
- * The root of the Scene_graph is of type Group and contains the default light
- * source that is created in case there are no lights in the scene.
- * @param root (in) a pointer to the root node.
- */
-void Scene_graph::set_root(Group* root)
-{
-  m_root = root;
-  //! \todo add_container(m_root);
-}
+/*! \brief sets the root of the scene graph. */
+void Scene_graph::set_root(Group* root) { m_root = root; }
 
-/*! Sets the navigation root. The navigation root node is a child
- * of the root of the scene graph. It is a node of type Transform.
- * @param nav_root (in) a pointer to the navigation root node
- */
+/*! \brief sets the navigation root. */
 void Scene_graph::set_navigation_root(Transform* nav_root)
 {
   SGAL_assertion(nav_root);
@@ -792,8 +634,7 @@ void Scene_graph::set_navigation_root(Transform* nav_root)
   nav_root->add_field(Transform::ROTATION);
 }
 
-/*!
- */
+/*! \brief */
 void Scene_graph::set_head_light(Configuration* config)
 {
   if (!m_head_light || (config && !config->is_fixed_head_light())) return;
@@ -820,18 +661,15 @@ void Scene_graph::set_head_light(Configuration* config)
   */
 }
 
-/*! The function performs pre cascade activity.
- */
+/*! \brief performs pre cascade activity. */
 void Scene_graph::signal_cascade_start()
 {
   /*! \todo if (m_scripts_sai != NULL)
-    m_scripts_sai->signal_cascade_start();
-  */
+   * m_scripts_sai->signal_cascade_start();
+   */
 }
-
-
-/*! The function  performs post cascade activity.
- */
+ 
+/*! \brief performs post cascade activity. */
 void Scene_graph::signal_cascade_end()
 {
   if (m_view_sensor != NULL)
@@ -841,19 +679,58 @@ void Scene_graph::signal_cascade_end()
     m_scripts_sai->signal_cascade_end();
   */
 }
+ 
+/* \brief destroys default (owned) nodes. */
+void Scene_graph::destroy_defaults()
+{
+  if (m_owned_configuration) {
+    if (m_configuration) {
+      delete m_configuration;
+      m_configuration = NULL;
+    }
+    m_owned_configuration = false;
+  }
 
-/*! The function creates defaults to objects that have not been specified in
- * the input. The objects to look for are: camera, light.
- * Also create the navigation sensor and connect it to the navigation root
- * node.
- */
+  if (m_owned_navigation_info) {
+    if (m_navigation_info) {
+      delete m_navigation_info;
+      m_navigation_info = NULL;
+    }
+    m_owned_navigation_info = false;
+  }
+
+  if (m_owned_camera) {
+    if (m_camera) {
+      delete m_camera;
+      m_camera = NULL;
+    }
+    m_owned_camera = false;
+  }
+
+  if (m_owned_head_light) {
+    if (m_head_light) {
+      delete m_head_light;
+      m_head_light = NULL;
+    }
+    m_owned_head_light = false;
+  }
+}
+ 
+/*! \brief creates default nodes and route them appropriately. */
 void Scene_graph::create_defaults()
 {
-  //! \todo m_antialiasing.set_quality(m_configuration->get_antialias_quality());
+  // The default Configuration container:
+  if (!m_configuration) {
+    m_configuration = new Configuration();
+    SGAL_assertion(m_configuration);
+    m_owned_configuration = true;
+  }
 
   // The default navaigation info:
   if (!get_active_navigation_info()) {
     m_navigation_info = new Navigation_info;
+    SGAL_assertion(m_navigation_info);
+    m_owned_navigation_info = true;
     m_navigation_info->set_scene_graph(this);
     m_navigation_info_stack.insert(m_navigation_info);
     route_navigation_info(m_navigation_info, EXAMINE);
@@ -862,30 +739,28 @@ void Scene_graph::create_defaults()
   // The default camera:
   if (!get_active_camera()) {
     m_camera = new Camera;
+    SGAL_assertion(m_camera);
+    m_owned_camera = true;
     m_camera->set_scene_graph(this);
-    m_camera->utilize();
     m_camera_stack.insert(m_camera);
   }
-
-  // The default Configuration container:
-  if (!m_configuration) m_configuration = new SGAL::Configuration();
 
   // The default light:
   if (!does_have_lights()) {
     m_head_light = new Point_light();
+    SGAL_assertion(m_head_light);
+    m_owned_head_light = true;
     set_head_light(m_configuration);
     m_head_light->set_ambient_intensity(1);
     get_root()->add_child(m_head_light);
     set_have_lights(true);
-    //! \todo need to add to pool of containers
   }
 
   // Zoom distance:
   Field* sc_mzd_field =
-    m_configuration->get_field(SGAL::Configuration::MIN_ZOOM_DISTANCE);
+    m_configuration->get_field(Configuration::MIN_ZOOM_DISTANCE);
   if (!sc_mzd_field)
-    sc_mzd_field =
-      m_configuration->add_field(SGAL::Configuration::MIN_ZOOM_DISTANCE);
+    sc_mzd_field = m_configuration->add_field(Configuration::MIN_ZOOM_DISTANCE);
 
   // Connect the Configuration fields:
   Field* sg_mzd_field =
@@ -899,7 +774,7 @@ void Scene_graph::create_defaults()
   m_navigation_root->set_center(sb.get_center());
   
 #if 0
-  //! \todo Execution_coordinator * ec = get_execution_coordinator();
+  //! \todo Execution_coordinator* ec = get_execution_coordinator();
   if (ec) {
     const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
     ec->set_scene_bounding_sphere_radius(sb.get_radius());
@@ -907,8 +782,7 @@ void Scene_graph::create_defaults()
 #endif
 }
 
-/*! Bind the bindable nodes and activate the key_sensor
- */
+/*! \brief binds the bindable nodes and activate the key_sensor. */
 void Scene_graph::bind()
 {
   m_navigation_info_stack.bind_top();
@@ -917,8 +791,7 @@ void Scene_graph::bind()
   if (m_active_key_sensor != NULL) m_active_key_sensor->activate();
 }
 
-/*!
- */
+/*! \brief */
 void Scene_graph::clear_text_screen()
 {
 #if 0
@@ -928,8 +801,7 @@ void Scene_graph::clear_text_screen()
 #endif
 }
 
-/*!
- */
+/*! \brief */
 void Scene_graph::put_text_string(int /* line */, const std::string& /* str */)
 {
 #if 0
@@ -943,8 +815,7 @@ void Scene_graph::put_text_string(int /* line */, const std::string& /* str */)
 #endif
 }
 	
-/*!
- */
+/*! \brief */
 void Scene_graph::add_text_string(const std::string& /* str */)
 {
 #if 0
@@ -958,13 +829,13 @@ void Scene_graph::add_text_string(const std::string& /* str */)
 float Scene_graph::compute_speed_factor() const
 {
   SGAL_assertion(m_navigation_root);
-  const Sphere_bound & sb = m_navigation_root->get_sphere_bound();
+  const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
   SGAL_assertion(m_configuration);
   float speed_factor = m_configuration->get_speed_factor();
   return (sb.get_radius() / speed_factor);
 }
 
-/*! Routes the connection */
+/*! \brief routes the connection. */
 bool Scene_graph::route(const std::string& src_node_str,
                         const std::string& src_field_name,
                         const std::string& dst_node_str,
@@ -990,7 +861,7 @@ bool Scene_graph::route(const std::string& src_node_str,
   return true;
 }
 
-/*! Route the connection */
+/*! \brief routes the connection. */
 bool Scene_graph::route(Container* src_node, const char* src_field_name,
                         Container* dst_node, const char* dst_field_name,
                         Route* route)
@@ -1010,7 +881,7 @@ bool Scene_graph::route(Container* src_node, const char* src_field_name,
   return true;
 }
 
-/*! Enable the scene graph sensors */
+/*! \brief enables the scene graph sensors. */
 void Scene_graph::enable_sensors()
 {
   Navigation_info* nav = get_active_navigation_info();
@@ -1029,7 +900,7 @@ void Scene_graph::enable_sensors()
   }
 }
 
-/*! Disable the scene graph sensors */
+/*! \brief disables the scene graph sensors. */
 void Scene_graph::disable_sensors()
 {
   Navigation_info* nav = get_active_navigation_info();
@@ -1048,23 +919,16 @@ void Scene_graph::disable_sensors()
   }
 }
 
-/*! Obtains the active navigation-info node */
+/*! \brief obtains the active navigation-info node. */
 Navigation_info* Scene_graph::get_active_navigation_info()
-{
-  return static_cast<Navigation_info*>(m_navigation_info_stack.top());
-}
+{ return static_cast<Navigation_info*>(m_navigation_info_stack.top()); }
 
-
-/*! Obtains the active camera */
+/*! \brief obtains the active camera. */
 Camera* Scene_graph::get_active_camera()
-{
-  return static_cast<Camera*>(m_camera_stack.top());
-}
+{ return static_cast<Camera*>(m_camera_stack.top()); }
 
-/*! Obtains the active background */
+/*! \brief obtains the active background. */
 Background* Scene_graph::get_active_background()
-{
-  return static_cast<Background*>(m_background_stack.top());
-}
+{ return static_cast<Background*>(m_background_stack.top()); }
 
 SGAL_END_NAMESPACE

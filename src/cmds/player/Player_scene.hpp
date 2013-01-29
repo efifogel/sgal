@@ -55,6 +55,7 @@ class Tick_event;
 class Draw_event;
 class Reshape_event;
 class Context;
+class Configuration;
 class Indexed_face_set;
 class Box;
 
@@ -99,150 +100,148 @@ public:
 #endif
 
   /*! Constructor */
-  Player_scene(Player_option_parser * option_parser);
+  Player_scene(Player_option_parser* option_parser);
 
   /*! Constructor */
   Player_scene();
 
-  /*! Init function */
+  /*! Initialize */
   void init();
 
   /*! Destructor */
   virtual ~Player_scene(void);
 
-  /*! Create the scene */
+  /*! Create the scene. */
   virtual void create_scene();
 
-  /*! Destroy the scene */
+  /*! Destroy the scene. */
   virtual void destroy_scene();
   
-  /*! Initialize the secene */
+  /*! Initialize the secene. */
   virtual void init_scene();
 
-  /*! Check if the scene is initialized */
+  /*! Check if the scene is initialized. */
   virtual bool is_scene_initiated() { return m_window_item != NULL; }
 
   /*! Clear the scene */  
   virtual void clear_scene();
   
-  /*! Reshape the viewport of a window of the scene
-   * It is assumed that the window context is the current context
+  /*! Reshape the viewport of a window of the scene.
+   * It is assumed that the window context is the current context.
    * \param window_item the window to reshape
    * \param width the new width of the window
    * \param height the new height of the window
    */
-  virtual void reshape_window(SGAL::Window_item * window_item,
+  virtual void reshape_window(SGAL::Window_item* window_item,
                               SGAL::Uint width, SGAL::Uint height);
 
-  /*! Draw into a window of the scene
-   * It is assumed that the window context is the current context
+  /*! Draw into a window of the scene.
+   * It is assumed that the window context is the current context.
    * \param window_item the window to draw
    * \param dont_accumulate indicates that no accumulation should be performed
    */
-  virtual void draw_window(SGAL::Window_item * window_item,
+  virtual void draw_window(SGAL::Window_item* window_item,
                            SGAL::Boolean dont_accumulate);
 
-  /*! Handle a reshape event */
-  virtual void handle(SGAL::Reshape_event * event);
+  /*! Handle a reshape event. */
+  virtual void handle(SGAL::Reshape_event* event);
   
-  /*! Handle a draw event */
-  virtual void handle(SGAL::Draw_event * event);
+  /*! Handle a draw event. */
+  virtual void handle(SGAL::Draw_event* event);
     
-  /*! Handle a tick event */
-  virtual void handle(SGAL::Tick_event * event);
+  /*! Handle a tick event. */
+  virtual void handle(SGAL::Tick_event* event);
 
-  /*! Print out the name of this agent (for debugging purposes) */
+  /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify(void);
 
-  /*! Set the window manager */
+  /*! Set the window manager. */
   template <typename Window_manager>
-  void set_window_manager(Window_manager * manager)
+  void set_window_manager(Window_manager* manager)
   { m_window_manager = manager; }
   
-  /*! Set the option parser */
+  /*! Set the option parser. */
   void set_option_parser(Player_option_parser *option_parser)
-  {
-	  m_option_parser = option_parser;
-  }
+  { m_option_parser = option_parser; }
 
-  /*! Obtain the scene scene-graph */
-  SGAL::Scene_graph * get_scene_graph() { return m_scene_graph; }
+  /*! Obtain the scene scene-graph. */
+  SGAL::Scene_graph* get_scene_graph() { return m_scene_graph; }
 
-  /*! Returns true iff the scene does simulate something */
+  /*! Determine whether the scene does simulate something. */
   SGAL::Boolean is_simulating(void);
 
 protected:
-  /*! The window manager */
-  Window_manager * m_window_manager;
+  /*! The window manager. */
+  Window_manager* m_window_manager;
 
-  /*! The window item */
-  Window_item * m_window_item;
+  /*! The window item. */
+  Window_item* m_window_item;
   
-  /*! The width of the window */
+  /*! The width of the window. */
   SGAL::Uint m_win_width;
 
-  /* The height of the window */
+  /* The height of the window. */
   SGAL::Uint m_win_height;
 
-  /*! Work space scene graph */
-  SGAL::Scene_graph * m_scene_graph;
+  /*! Work space scene graph. */
+  SGAL::Scene_graph* m_scene_graph;
 
-  /*! The context */
-  SGAL::Context * m_context;  
+  /*! The context. */
+  SGAL::Context* m_context;  
 
-  /*! Option parser */
-  Player_option_parser * m_option_parser;
+  /*! Option parser. */
+  Player_option_parser* m_option_parser;
 
   SGAL::Boolean m_simulate;
   
-  /*! \brief draws guides that separate the window into 4x5 rectangles */
+  /*! \brief draws guides that separate the window into 4x5 rectangles. */
   void draw_grid();
 
-  /*! \brief prints statistic information */
+  /*! \brief prints statistic information. */
   void print_stat();
 
-  /*! \brief updates directory search */
+  /*! \brief updates directory search. */
   void update_data_dirs();
 
-  /*! \brief indulges user requests from the command line */
+  /*! \brief indulges user requests from the command line. */
   void indulge_user();
 
-  /*! \brief print geometry information of Index_face_set */
-  void print_geometry_info(SGAL::Indexed_face_set * ifs);
+  /*! \brief print geometry information of Index_face_set. */
+  void print_geometry_info(SGAL::Indexed_face_set* ifs);
 
-  /*! \brief print geometry information of Box */
-  void print_geometry_info(SGAL::Box * box);
+  /*! \brief print geometry information of Box. */
+  void print_geometry_info(SGAL::Box* box);
 
 private:
   typedef std::list<fi::path>                                   Path_list;
   typedef Path_list::iterator                                   Path_iter;
     
   struct Add_dir {
-    Path_list & m_dirs;
-    Add_dir(Path_list & dirs) : m_dirs(dirs) {}
-    void operator()(const std::string & dir) { m_dirs.push_back(dir); }
+    Path_list& m_dirs;
+    Add_dir(Path_list& dirs) : m_dirs(dirs) {}
+    void operator()(const std::string& dir) { m_dirs.push_back(dir); }
   };
 
   enum Error_id { FILE_NOT_FOUND, ILLEGAL_EXTENSION, UNABLE_TO_LOAD };
   struct Illegal_input : public std::logic_error {
-    Illegal_input(Error_id err, const std::string & msg,
-                  const std::string & filename) :
+    Illegal_input(Error_id err, const std::string& msg,
+                  const std::string& filename) :
       std::logic_error(std::string(msg).append(" (").append(filename).append(")!"))       
     {}
   };
 
   struct Input_file_missing_error : public std::logic_error {
-    Input_file_missing_error(std::string & str) : std::logic_error(str) {}
+    Input_file_missing_error(std::string& str) : std::logic_error(str) {}
   };
   
-  /*! The input file full-name */
+  /*! The input file full-name. */
   std::string m_fullname;
   
-  /*! A collection of directories to search files in */
+  /*! A collection of directories to search files in. */
   Path_list m_dirs;
   
   /*! Valid file format names */
-  static const char * s_file_format_names[];
+  static const char* s_file_format_names[];
 };
 
 #endif

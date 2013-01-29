@@ -49,8 +49,9 @@ const Float Configuration::s_def_min_frame_rate = 15;
 const Gfx::Poly_mode Configuration::s_def_poly_mode = Gfx::FILL_PMODE;
 const Boolean Configuration::s_def_display_fps = false;
 const Float Configuration::s_def_min_zoom_distance = 0;
-const float Configuration::s_def_speed_factor = 100;
+const Float Configuration::s_def_speed_factor = 100;
 const Uint Configuration::s_def_verbose_level = 0;
+const Boolean Configuration::s_def_seamless_cube_map = true;
 
 const Char* Configuration::s_geometry_drawing_mode_names[] =
   { "direct", "displayList", "vertexArray" };
@@ -72,17 +73,21 @@ Configuration::Configuration(Boolean proto) :
   m_min_zoom_distance(s_def_min_zoom_distance),
   m_speed_factor(s_def_speed_factor),
   m_verbosity_level(s_def_verbose_level),
+  m_seamless_cube_map(s_def_seamless_cube_map),
   m_owned_accumulation(false)
 {}
 
 /*! \brief sets defualt values. */
 void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
                           Boolean def_are_global_lights_stationary,
+                          Boolean def_texture_map,
                           Boolean def_is_fixed_head_light,
                           Float def_min_frame_rate,
                           Gfx::Poly_mode def_poly_mode,
                           Boolean def_display_fps,
-                          Float def_min_zoom_distance)
+                          Float def_min_zoom_distance,
+                          Float def_speed_factor,
+                          Boolean def_seamless_cube_map)
 {
   if (m_accumulation) m_accumulation->reset();
   
@@ -93,6 +98,7 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
   m_poly_mode = def_poly_mode;
   m_display_fps = def_display_fps;
   m_min_zoom_distance = def_min_zoom_distance;
+  m_seamless_cube_map = def_seamless_cube_map;
 }
 
 /*! \brief initializess the node prototype. */
@@ -103,21 +109,17 @@ void Configuration::init_prototype()
 
   // Add the object fields to the prototype
   Execution_function exec_func;
-
+  
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_int(POLY_MODE, "polyMode",
                                          get_member_offset(&m_poly_mode),
                                          exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(DISPLAY_FPS, "displayFPS",
                                           get_member_offset(&m_display_fps),
                                           exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
     add_field_info(new SF_bool(FIXED_HEADLIGHT, "fixedHeadLight",
                                get_member_offset(&m_is_fixed_head_light),
@@ -135,13 +137,18 @@ void Configuration::init_prototype()
     add_field_info(new SF_float(SPEED_FACTOR, "speedFacotr",
                                 get_member_offset(&m_speed_factor)));
 
-  SF_bool* field = new SGAL::SF_bool(TEXTURE_MAP, "textureMap",
-                                      get_member_offset(&m_texture_map));
-  s_prototype->add_field_info(field);
+  s_prototype->
+    add_field_info(new SGAL::SF_bool(TEXTURE_MAP, "textureMap",
+                                     get_member_offset(&m_texture_map)));
 
-  SF_uint* uint_field = new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
-                                     get_member_offset(&m_verbosity_level));
-  s_prototype->add_field_info(uint_field);
+  s_prototype->
+    add_field_info(new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
+                               get_member_offset(&m_verbosity_level)));
+
+  s_prototype->
+    add_field_info(new SGAL::SF_bool(SEAMLESS_CUBE_MAP, "seamlessCubeMap",
+                                     get_member_offset(&m_seamless_cube_map)));
+  
 }
 
 /*! \brief deletes the node prototype */
@@ -225,6 +232,11 @@ void Configuration::set_attributes(Element* elem)
     }
     if (name == "verbosityLevel") {
       set_verbosity_level(strtoul(value.c_str(), NULL, 10));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "seamlessCubeMap") {
+      set_seamless_cube_map(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }

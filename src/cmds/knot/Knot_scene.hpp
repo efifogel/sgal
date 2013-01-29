@@ -107,12 +107,13 @@ public:
   enum Error_id { FILE_NOT_FOUND, FILE_CANNOT_OPEN, ILLEGAL_EXTENSION };
   class Illegal_input : public std::exception {
   public:
-    Illegal_input(Error_id err, const std::string & msg,
-                  const std::string & filename) throw() :
+    Illegal_input(Error_id err, const std::string& msg,
+                  const std::string& filename) throw() :
       m_error(err),
       m_msg(msg),
       m_filename(filename)
     {}
+
     // This declaration is not useless:
     // http://gcc.gnu.org/onlinedocs/gcc-3.0.2/gcc_6.html#SEC118
     virtual ~Illegal_input() throw()
@@ -120,7 +121,8 @@ public:
       m_msg.clear();
       m_filename.clear();
     }
-    virtual const char * what () const throw ()
+
+    virtual const char* what () const throw ()
     {
       std::string tmp(m_msg + " (" + m_filename + ")!");
       return tmp.c_str();
@@ -131,7 +133,7 @@ public:
   };
 
   /*! Constructor */
-  Knot_scene(Knot_option_parser & option_parser);
+  Knot_scene(Knot_option_parser& option_parser);
 
   /*! Destructor */
   virtual ~Knot_scene(void);
@@ -154,30 +156,30 @@ public:
    * \param width the new width of the window
    * \param height the new height of the window
    */
-  virtual void reshape_window(SGAL::Window_item * window_item,
+  virtual void reshape_window(SGAL::Window_item* window_item,
                               SGAL::Uint width, SGAL::Uint height);
 
-  /*! Draw into a window of the scene
-   * It is assumed that the window context is the current context
-   * \param window_item the window to draw
-   * \param dont_accumulate indicates that no accumulation should be performed
+  /*! Draw the scene into a window.
+   * It is assumed that the window context is the current context.
+   * \param window_item the window to draw.
+   * \param dont_accumulate indicates that no accumulation should be performed.
    */
-  virtual void draw_window(SGAL::Window_item * window_item,
+  virtual void draw_window(SGAL::Window_item* window_item,
                            SGAL::Boolean dont_accumulate);
 
-  /*! \brief prints out the name of this agent (for debugging purposes) */
+  /*! Print out the name of this agent (for debugging purposes) */
   virtual void identify(void);
 
-  /*! \brief handles tick events */
-  virtual void handle(SGAL::Tick_event * tick_event);
+  /*! Handle tick events */
+  virtual void handle(SGAL::Tick_event* tick_event);
 
   /*! Set the window manager */
   template <typename Window_manager>
-  void set_window_manager(Window_manager * manager)
+  void set_window_manager(Window_manager* manager)
   { m_window_manager = manager; }
 
   /*! \brief obtains the scene scene-graph */
-  SGAL::Scene_graph * get_scene_graph() { return m_scene_graph; }
+  SGAL::Scene_graph* get_scene_graph() { return m_scene_graph; }
 
   /*! \brief returns true iff the scene does simulate something */
   Boolean is_simulating(void) const { return true; }
@@ -186,7 +188,7 @@ public:
   void clear();
 
   /*! Obtain the name of a given color */
-  static const char * get_color_name(Uint color) { return s_color_names[color]; }
+  static const char* get_color_name(Uint color) { return s_color_names[color]; }
   
 private:
   typedef SGAL::Array<SGAL::Vector3f>   Vector3f_array;
@@ -194,37 +196,37 @@ private:
   typedef SGAL::Array<Uint>             Uint_array;
   
   /*! The window manager */
-  Window_manager * m_window_manager;
+  Window_manager* m_window_manager;
 
   /*! The window item */
-  Window_item * m_window_item;
+  Window_item* m_window_item;
   
   /*! The scene graph */
-  SGAL::Scene_graph * m_scene_graph;
+  SGAL::Scene_graph* m_scene_graph;
 
   /*! The root of the scene graph */
-  SGAL::Group * m_root;
+  SGAL::Group* m_root;
 
   /*! The scene navigation root */
-  SGAL::Transform * m_navigation;
+  SGAL::Transform* m_navigation;
   
   /*! The context of the scene */
-  SGAL::Context * m_context;
+  SGAL::Context* m_context;
   
   /*! Option parser */
-  Knot_option_parser & m_option_parser;
+  Knot_option_parser& m_option_parser;
 
   /*! A vector of directions to move the pieces while attempting to solve */
   static Piece_position s_directions[NUMBER_OF_DIRECTIONS] ;
 
   /*! COlor names for debuggin */
-  static const char * s_color_names[NUMBER_OF_COLORS];
+  static const char* s_color_names[NUMBER_OF_COLORS];
 
   /*! Pointers to the piece geometries */
-  SGAL::Piece * m_pieces[NUMBER_OF_COLORS];
+  SGAL::Piece* m_pieces[NUMBER_OF_COLORS];
 
   /*! Pointers to the piece transforms */
-  SGAL::Transform * m_transforms[NUMBER_OF_COLORS];
+  SGAL::Transform* m_transforms[NUMBER_OF_COLORS];
   
   /*! The width of the volume where all the pieces reside */
   Uint m_volume_width;
@@ -254,10 +256,10 @@ private:
   Uint m_tail_pad_z;
   
   /*! The volume transform */
-  SGAL::Transform * m_volume_trans;
+  SGAL::Transform* m_volume_trans;
 
   /*! The volume piece */
-  SGAL::Piece * m_volume;
+  SGAL::Piece* m_volume;
 
   /*! \brief hashes a given state --- map to size_t */
   static inline size_t my_hash(const State state);
@@ -267,7 +269,7 @@ private:
   public:
 
     /*! \brief compares 2 hash keys */
-    inline bool operator( )(const Piece_state * key1, const Piece_state * key2)
+    inline bool operator( )(const Piece_state* key1, const Piece_state* key2)
       const;
   };
   
@@ -275,7 +277,7 @@ private:
    * more than once
    */
   struct Hasher {
-    inline size_t operator()(const Piece_state * state) const
+    inline size_t operator()(const Piece_state* state) const
     { return Knot_scene::my_hash(state); }
   };
 
@@ -303,7 +305,7 @@ private:
   Uint m_next_free_state_index;
   
   /*! Next free state block */
-  State * m_next_free_state_block;
+  State* m_next_free_state_block;
   
   /*! Number of times solve() is invoked */
   Uint m_num_invocations;
@@ -312,27 +314,27 @@ private:
   Uint m_max_level;
 
   /*! The time sensors to trigger the interpolations respectively. */
-  SGAL::Time_sensor * m_time_sensors[3];
+  SGAL::Time_sensor* m_time_sensors[3];
 
   /*! The position interpolators to animate the solution */
-  SGAL::Position_interpolator * m_pos_interpolators[3];
+  SGAL::Position_interpolator* m_pos_interpolators[3];
 
   /*! The time sensor routers */
-  SGAL::Route * m_time_routers[3];
+  SGAL::Route* m_time_routers[3];
 
   /*! The position interpolator routers */
-  SGAL::Route * m_pos_interpolator_routers[3];
+  SGAL::Route* m_pos_interpolator_routers[3];
 
   /*! Encode 1 color */
   Uint encode(Uint color1) const { return color1+1; }
 
   /*! Encode 2 colors */
   Uint encode(Uint color1, Uint color2) const
-  { return (color2+1) + (NUMBER_OF_COLORS+1) * encode(color1); }
+  { return (color2+1) + (NUMBER_OF_COLORS+1)* encode(color1); }
 
   /*! Encode 3 colors */
   Uint encode(Uint color1, Uint color2, Uint color3) const
-  { return (color3+1) + (NUMBER_OF_COLORS+1) * encode(color1, color2); }
+  { return (color3+1) + (NUMBER_OF_COLORS+1)* encode(color1, color2); }
   
   /*! \brief indulges user requests from the command line */
   void indulge_user();
@@ -347,15 +349,15 @@ private:
   Boolean reduce(State state);
 
   /*! \brief advances one piece (one step), if possible */
-  Boolean advance1(State state, Uint color, Uint dir, State & next_state);
+  Boolean advance1(State state, Uint color, Uint dir, State& next_state);
 
   /*! \brief advances two pieces (one step), if possible */
   Boolean advance2(State state, Uint color1, Uint color2, Uint dir,
-                   State & next_state);
+                   State& next_state);
 
   /*! \brief advances three pieces (one step), if possible */
   Boolean advance3(State state, Uint color1, Uint color2, Uint color3,
-                   Uint dir, State & next_state);
+                   Uint dir, State& next_state);
   
   /*! \brief does the expected move cause a conflict? */
   Boolean conflict(State state, Uint color, Uint dir);
@@ -371,7 +373,7 @@ private:
 
   /*! \brief finds the minimum coordinate values */
   static void find_min(const State state,
-                       Uint & min_x, Uint & min_y, Uint & min_z);
+                       Uint& min_x, Uint& min_y, Uint& min_z);
 
   /*! \brief compares lexicographically two states */
   static Int compare(const State state1, const State state2);
@@ -384,7 +386,7 @@ private:
 };
 
 /*! Exporter */
-inline std::ostream & operator<<(std::ostream & os,
+inline std::ostream& operator<<(std::ostream& os,
                                  const Knot_scene::State state)
 {
   Knot_scene::Uint color;
@@ -410,15 +412,15 @@ inline std::ostream & operator<<(std::ostream & os,
 }
 
 /*! Indenter */
-inline std::ostream & operator<<(std::ostream & os, Knot_scene::indent const & in)
+inline std::ostream& operator<<(std::ostream& os, Knot_scene::indent const& in)
 {
   for (Knot_scene::Uint i = 0; i != in.m_depth; ++i) os << " ";
   return os;
 }
 
 /*! Compare 2 hash keys */
-inline bool Knot_scene::Hash_comparer::operator()(const Piece_state * key1,
-                                                  const Piece_state * key2)
+inline bool Knot_scene::Hash_comparer::operator()(const Piece_state* key1,
+                                                  const Piece_state* key2)
   const
 {
   return (compare(key1, key2) == 0);

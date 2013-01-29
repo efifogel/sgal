@@ -46,12 +46,6 @@ SGAL_BEGIN_NAMESPACE
 
 #define GL2PS
 
-#if defined(NO_PLUGIN)
-Pointer_array* Context::s_contexts = NULL;
-#else
-Context* Context::s_context = NULL;
-#endif
-
 Context* Context::s_current_context = NULL;
 
 // NextId, must start at 1 so we don't clobber GL default targets of 0.
@@ -187,22 +181,10 @@ void Context::init()
   // Populate configuration:
   init_context_attributes();
 
-  // Remember this context:
-#if defined(NO_PLUGIN)
-  for (size_t i = 0; i < s_contexts->get_count(); i++) {
-    if (s_contexts->get(i) != 0) {
-      break;
-    }
-  }
-  s_contexts->set(i, this);
-#else
-  s_context = this;
-#endif
-    
-    // Make sure all the lights are initially undefined
+  // Make sure all the lights are initially undefined
   Light_target* lights = m_light_stack[m_light_stack_depth];
 
-  for (int i = 0; i < SGAL_MAX_LIGHTS; i++) {
+  for (int i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     lights[i].m_set = false;
     lights[i].m_enabled = false;
     lights[i].m_defined = 0;
@@ -211,14 +193,14 @@ void Context::init()
   // Make the default color white
   glColor4f(1, 1, 1, 1);
 
-  // initialize the viewport
+  // Initialize the viewport
   m_viewport[0] = 0;
   m_viewport[1] = 0;
   m_viewport[2] = 0;
   m_viewport[3] = 0;
 }
 
-/*! \brief */
+/*! \brief initializes the context attributes. */
 void Context::init_context_attributes()
 {
   int tmp;
@@ -238,20 +220,9 @@ void Context::init_context_attributes()
 Context::~Context()
 {
   //! \todo delete m_gfx_handle;
-
-#if defined(NO_PLUGIN)
-  for (size_t i = 0; i < s_contexts->get_count(); i++) {
-    if (s_contexts->get(i) == this) {
-      s_contexts->set(i, 0);
-      break;
-    }
-  }
-#else
-  s_context = 0;
-#endif
 }
 
-/*! \brief */
+/*! \brief sets the viewport. */
 void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
 {
   if (static_cast<Uint>(m_viewport[0]) != x ||
@@ -267,7 +238,7 @@ void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
   }
 }
 
-/*! \brief */
+/*! \brief Obtain the viewport. */
 void Context::get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const
 {
   x = (Uint) m_viewport[0];
@@ -1246,7 +1217,7 @@ void Context::clear_color_depth_stencil_buffer(const Vector4f& color,
 /*! \brief */
 void Context::push_lights()
 {
-  Int s = m_light_stack_depth + 1;
+  Uint s = m_light_stack_depth + 1;
 
   // Push light stack
   // !!! Should lazily push lights since this isn't cheap !!!
@@ -1256,10 +1227,10 @@ void Context::push_lights()
   // We've taken a reference to these lights so ref'm
   Light_target* current_lights = m_light_stack[m_light_stack_depth];
 
-  for (int i = 0; i < SGAL_MAX_LIGHTS; i++)
-    if (current_lights[i].m_defined != 0) {
+  for (int i = 0; i < SGAL_MAX_LIGHTS; i++) {
+    if (current_lights[i].m_defined != 0)
       current_lights[i].m_defined->ref();
-    }
+  }
   
   // Push the stack pointer
   m_light_stack_depth = s;
@@ -1268,7 +1239,7 @@ void Context::push_lights()
 /*! \brief */
 void Context::push_state()
 {
-  Int s = m_stack_depth + 1;
+  Uint s = m_stack_depth + 1;
 
   push_lights();
   // PushFog(0);
@@ -1331,12 +1302,12 @@ void Context::pop_lights()
   Light_target* prev_lights = m_light_stack[m_light_stack_depth];
   Light_target* current_lights = m_light_stack[m_light_stack_depth-1];
 
-  for (i = 0; i < SGAL_MAX_LIGHTS; i++) {
+  for (i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     if (prev_lights[i].m_defined != 0) {
       if (prev_lights[i].m_enabled) {
         int found = -1;
 
-        for (j = 0; j < SGAL_MAX_LIGHTS && found == -1; j++) {
+        for (j = 0; j < SGAL_MAX_LIGHTS && found == -1; ++j) {
           if (prev_lights[i].m_defined == current_lights[j].m_defined)
             found = j;
         }
@@ -1736,263 +1707,211 @@ void Context::draw_app(Appearance* app)
       // Loop through all the state element bits copying the appropriate
       // inherited appearance:
       // TEXTURE:
-      if (override_inherit_mask.get_bit(Gfx::TEXTURE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TEXTURE) == 0)
         local_app->set_texture(override_app->get_texture());
-      } else if (app_inherit_mask.get_bit(Gfx::TEXTURE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TEXTURE) == 0)
         local_app->set_texture(app->get_texture());
-      }
 
       // HALFTONE:
-      if (override_inherit_mask.get_bit(Gfx::HALFTONE_PATTERN) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::HALFTONE_PATTERN) == 0)
         local_app->set_halftone(override_app->get_halftone());
-      } else if (app_inherit_mask.get_bit(Gfx::HALFTONE_PATTERN) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::HALFTONE_PATTERN) == 0)
         local_app->set_halftone(app->get_halftone());
-      }
       
       // TEX_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::TEX_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TEX_ENABLE) == 0)
         local_app->set_tex_enable(override_app->get_tex_enable());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::TEX_ENABLE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TEX_ENABLE) == 0)
         local_app->set_tex_enable(app->get_tex_enable());
-      }
 
       // TEX_MODE:
-      if (override_inherit_mask.get_bit(Gfx::TEX_MODE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TEX_MODE) == 0)
         local_app->set_tex_mode(override_app->get_tex_mode());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::TEX_MODE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TEX_MODE) == 0)
         local_app->set_tex_mode(app->get_tex_mode());
-      }
 
       // TEX_BLEND_COLOR:
       if (override_inherit_mask.get_bit(Gfx::TEX_BLEND_COLOR) == 0) {
         override_app->get_tex_blend_color(&r, &g, &b, &t);
         local_app->set_tex_blend_color(r,  g,  b,  t);
-      } else {
-        if (app_inherit_mask.get_bit(Gfx::TEX_BLEND_COLOR) == 0) {
-          app->get_tex_blend_color(&r, &g, &b, &t);
-          local_app->set_tex_blend_color(r, g, b, t);
-        }
+      }
+      else if (app_inherit_mask.get_bit(Gfx::TEX_BLEND_COLOR) == 0) {
+        app->get_tex_blend_color(&r, &g, &b, &t);
+        local_app->set_tex_blend_color(r, g, b, t);
       }
 
       // TEX_ENV:
-      if (override_inherit_mask.get_bit(Gfx::TEX_ENV) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TEX_ENV) == 0)
         local_app->set_tex_env(override_app->get_tex_env());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::TEX_ENV) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TEX_ENV) == 0)
         local_app->set_tex_env(app->get_tex_env());
-      }
 
       // TEX_GEN:
-      if (override_inherit_mask.get_bit(Gfx::TEX_GEN) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TEX_GEN) == 0)
         local_app->set_tex_gen(override_app->get_tex_gen());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::TEX_GEN) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TEX_GEN) == 0)
         local_app->set_tex_gen(app->get_tex_gen());
-      }
 
       // TEX_GEN_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::TEX_GEN_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TEX_GEN_ENABLE) == 0)
         local_app->set_tex_gen_enable(override_app->get_tex_gen_enable());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::TEX_GEN_ENABLE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TEX_GEN_ENABLE) == 0)
         local_app->set_tex_gen_enable(app->get_tex_gen_enable());
-      }
 
       // LIGHT_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::LIGHT_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::LIGHT_ENABLE) == 0)
         local_app->set_light_enable(override_app->get_light_enable());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::LIGHT_ENABLE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::LIGHT_ENABLE) == 0)
         local_app->set_light_enable(app->get_light_enable());
-      }
 
       // SHADE_MODEL:
-      if (override_inherit_mask.get_bit(Gfx::SHADE_MODEL) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::SHADE_MODEL) == 0)
         local_app->set_shade_model(override_app->get_shade_model());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::SHADE_MODEL) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::SHADE_MODEL) == 0)
         local_app->set_shade_model(app->get_shade_model());
-      }
             
       // TRANSP_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::TRANSP_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TRANSP_ENABLE) == 0)
         local_app->set_transp_enable(override_app->get_transp_enable());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::TRANSP_ENABLE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TRANSP_ENABLE) == 0)
         local_app->set_transp_enable(app->get_transp_enable());
-      }
 
       // TRANSP_MODE:
-      if (override_inherit_mask.get_bit(Gfx::TRANSP_MODE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TRANSP_MODE) == 0)
         local_app->set_transp_mode(override_app->get_transp_mode());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::TRANSP_MODE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TRANSP_MODE) == 0)
         local_app->set_transp_mode(app->get_transp_mode());
-      }
 
       // ALPHA_FUNC:
-      if (override_inherit_mask.get_bit(Gfx::ALPHA_FUNC) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::ALPHA_FUNC) == 0)
         local_app->set_alpha_func(override_app->get_alpha_func());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::ALPHA_FUNC) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::ALPHA_FUNC) == 0)
         local_app->set_alpha_func(app->get_alpha_func());
-      }
             
       // ALPHA_REF:
-      if (override_inherit_mask.get_bit(Gfx::ALPHA_REF) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::ALPHA_REF) == 0)
         local_app->set_alpha_ref(override_app->get_alpha_ref());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::ALPHA_REF) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::ALPHA_REF) == 0)
         local_app->set_alpha_ref(app->get_alpha_ref());
-      }
 
       // BLEND_COLOR:
       if (override_inherit_mask.get_bit(Gfx::BLEND_COLOR) == 0) {
         override_app->get_blend_color(&r, &g, &b, &t);
         local_app->set_blend_color(r, g, b, t);
-      } else {
-        if (app_inherit_mask.get_bit(Gfx::BLEND_COLOR) == 0) {
-          app->get_blend_color(&r, &g, &b, &t);
-          local_app->set_blend_color(r, g, b, t);
-        }
+      }
+      else if (app_inherit_mask.get_bit(Gfx::BLEND_COLOR) == 0) {
+        app->get_blend_color(&r, &g, &b, &t);
+        local_app->set_blend_color(r, g, b, t);
       }
 
       // SRC_BLEND_FUNC:
-      if (override_inherit_mask.get_bit(Gfx::SRC_BLEND_FUNC) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::SRC_BLEND_FUNC) == 0)
         local_app->set_src_blend_func(override_app->get_src_blend_func());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::SRC_BLEND_FUNC) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::SRC_BLEND_FUNC) == 0)
         local_app->set_src_blend_func(app->get_src_blend_func());
-      }
 
       // DST_BLEND_FUNC:
-      if (override_inherit_mask.get_bit(Gfx::DST_BLEND_FUNC) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::DST_BLEND_FUNC) == 0)
         local_app->set_dst_blend_func(override_app->get_dst_blend_func());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::DST_BLEND_FUNC) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::DST_BLEND_FUNC) == 0)
         local_app->set_dst_blend_func(app->get_dst_blend_func());
-      }
 
       // COLOR_MASK:
       if (override_inherit_mask.get_bit(Gfx::COLOR_MASK) == 0) {
         override_app->get_color_mask(&v0, &v1, &v2, &v3);
         local_app->set_color_mask(v0, v1, v2, v3); 
-      } else {
-        if (app_inherit_mask.get_bit(Gfx::COLOR_MASK) == 0) {
-          app->get_color_mask(&v0,  &v1,  &v2,  &v3);
-          local_app->set_color_mask(v0, v1, v2, v3); 
-        }
+      }
+      else if (app_inherit_mask.get_bit(Gfx::COLOR_MASK) == 0) {
+        app->get_color_mask(&v0,  &v1,  &v2,  &v3);
+        local_app->set_color_mask(v0, v1, v2, v3); 
       }
 
       // DEPTH_FUNC:
-      if (override_inherit_mask.get_bit(Gfx::DEPTH_FUNC) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::DEPTH_FUNC) == 0)
         local_app->set_depth_func(override_app->get_depth_func());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::DEPTH_FUNC) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::DEPTH_FUNC) == 0)
         local_app->set_depth_func(app->get_depth_func());
-      }
 
       // DEPTH_MASK:
-      if (override_inherit_mask.get_bit(Gfx::DEPTH_MASK) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::DEPTH_MASK) == 0)
         local_app->set_depth_mask(override_app->get_depth_mask());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::DEPTH_MASK) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::DEPTH_MASK) == 0)
         local_app->set_depth_mask(app->get_depth_mask());
-      }
 
       // FOG_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::FOG_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::FOG_ENABLE) == 0)
         local_app->set_fog_enable(override_app->get_fog_enable());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::FOG_ENABLE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::FOG_ENABLE) == 0)
         local_app->set_fog_enable(app->get_fog_enable());
-      }
 
       // POLYGON_STIPPLE_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::POLYGON_STIPPLE_ENABLE) == 0) {
-        local_app->
-          set_polygon_stipple_enable(override_app->get_polygon_stipple_enable());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::POLYGON_STIPPLE_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::POLYGON_STIPPLE_ENABLE) == 0)
+        local_app->set_polygon_stipple_enable
+          (override_app->get_polygon_stipple_enable());
+      else if (app_inherit_mask.get_bit(Gfx::POLYGON_STIPPLE_ENABLE) == 0)
         local_app->
           set_polygon_stipple_enable(app->get_polygon_stipple_enable());
-      }
       
       // POLY_MODE:
-      if (override_inherit_mask.get_bit(Gfx::POLY_MODE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::POLY_MODE) == 0)
         local_app->set_poly_mode(override_app->get_poly_mode());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::POLY_MODE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::POLY_MODE) == 0)
         local_app->set_poly_mode(app->get_poly_mode());
-      }
 
       // LINE_STIPPLE_PATTERN:
-      if (override_inherit_mask.get_bit(Gfx::LINE_STIPPLE_PATTERN) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::LINE_STIPPLE_PATTERN) == 0)
         local_app->
           set_line_stipple_pattern(override_app->get_line_stipple_pattern());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::LINE_STIPPLE_PATTERN) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::LINE_STIPPLE_PATTERN) == 0)
         local_app->set_line_stipple_pattern(app->get_line_stipple_pattern());
-      }
 
       // LINE_STIPPLE_FACTOR:
-      if (override_inherit_mask.get_bit(Gfx::LINE_STIPPLE_FACTOR) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::LINE_STIPPLE_FACTOR) == 0)
         local_app->
           set_line_stipple_factor(override_app->get_line_stipple_factor());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::LINE_STIPPLE_FACTOR) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::LINE_STIPPLE_FACTOR) == 0)
         local_app->set_line_stipple_factor(app->get_line_stipple_factor());
-      }
 
       // TEX_TRANSFORM:
-      if (override_inherit_mask.get_bit(Gfx::TEX_TRANSFORM) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::TEX_TRANSFORM) == 0)
         local_app->set_tex_transform(override_app->get_tex_transform());
-      } else {
-        if (app_inherit_mask.get_bit(Gfx::TEX_TRANSFORM) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::TEX_TRANSFORM) == 0)
           local_app->set_tex_transform(app->get_tex_transform());
-        }
-      }
 
       // MATERIAL:
-      if (override_inherit_mask.get_bit(Gfx::MATERIAL) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::MATERIAL) == 0)
         local_app->set_material(override_app->get_material());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::MATERIAL) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::MATERIAL) == 0)
         local_app->set_material(app->get_material());
-      }
 
       // BACK_MATERIAL:
-      if (override_inherit_mask.get_bit(Gfx::BACK_MATERIAL) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::BACK_MATERIAL) == 0)
         local_app->set_back_material(override_app->get_back_material());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::BACK_MATERIAL) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::BACK_MATERIAL) == 0)
         local_app->set_back_material(app->get_back_material());
-      }
 
       // DEPTH_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::DEPTH_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::DEPTH_ENABLE) == 0)
         local_app->set_depth_enable(override_app->get_depth_enable());
-      } else if (app_inherit_mask.get_bit(Gfx::DEPTH_ENABLE) == 0) {
+      else if (app_inherit_mask.get_bit(Gfx::DEPTH_ENABLE) == 0)
         local_app->set_depth_enable(app->get_depth_enable());
-      }
 
       // MATERIAL_MODE_ENABLE:
-      if (override_inherit_mask.get_bit(Gfx::MATERIAL_MODE_ENABLE) == 0) {
-        local_app->set_material_mode_enable(override_app->get_material_mode_enable());
-      }
-      else if (app_inherit_mask.get_bit(Gfx::MATERIAL_MODE_ENABLE) == 0) {
+      if (override_inherit_mask.get_bit(Gfx::MATERIAL_MODE_ENABLE) == 0)
+        local_app->set_material_mode_enable
+          (override_app->get_material_mode_enable());
+      else if (app_inherit_mask.get_bit(Gfx::MATERIAL_MODE_ENABLE) == 0)
         local_app->set_material_mode_enable(app->get_material_mode_enable());
-      }
 
       new_app = local_app;
-    } else {
+    }
+    else {
       // app == 0
       local_app = 0;
       new_app  = override_app;
     }
-  } else {
+  }
+  else {
     // m_override_app_stack_top == -1
     local_app = 0;
     new_app = app;
@@ -2046,15 +1965,15 @@ void Context::draw_app(Appearance* app)
   }
 }
 
-/*!
- */
+/*! \brief obtains a light source. */
 Light* Context::get_light(const Int i) const
 {
   return (0 <= i && i < SGAL_MAX_LIGHTS) ?
     m_light_stack[m_light_stack_depth][i].m_defined : 0;
 }
 
-/*! Returns the index of the light associated with the given viewing matrix.
+/*! \brief obtains the index of the light associated with the given viewing
+ * matrix.
  */
 Int Context::get_light_target(Light* light, const Matrix4f& mat, 
                               Int& already_defined)
@@ -2087,16 +2006,14 @@ Int Context::get_light_target(Light* light, const Matrix4f& mat,
   }
 
   // The light hasn't been defined yet. Find a free spot:
-  for (i = 0 ; i < SGAL_MAX_LIGHTS ; i++) {
+  for (i = 0; i < SGAL_MAX_LIGHTS; ++i)
     if (lights[i].m_defined == 0) goto l1;
-  }
 
   /* There are no empty spots left. Reuse a defined light that is currently
    * disabled:
    */
-  for (i = SGAL_MAX_LIGHTS-1; i >= 0; i--) {
+  for (i = SGAL_MAX_LIGHTS-1; i >= 0; --i)
     if (!lights[i].m_enabled) goto l0;
-  }
 
  l0:
   // If we're going to reuse a light-slot make sure we unref
@@ -2126,10 +2043,8 @@ Int Context::get_light_target(Light* light, const Matrix4f& mat,
 /*! \brief */
 void Context::disable_light_targets()
 {
-  Light_target* lights;
-  lights = m_light_stack[m_light_stack_depth];
-
-  for (int i = 0; i < SGAL_MAX_LIGHTS; i++) {
+  Light_target* lights = m_light_stack[m_light_stack_depth];
+  for (int i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     if (lights[i].m_enabled == true) {
       lights[i].m_enabled = false;
       glDisable(GL_LIGHT0 + i);
@@ -2137,24 +2052,14 @@ void Context::disable_light_targets()
   }
 }
 
-/*! \brief */
+/*! \brief disables a light source. */
 void Context::disable_light(Light* light)
 {
-#if defined(NO_PLUGIN)
-  for (size_t i = 0; i < s_contexts->get_count(); i++) {
-    Context* ctx = (Context*) s_contexts->get(i);
-    if (ctx == 0) continue;
-    Light_target* lights = ctx->m_light_stack[ctx->m_light_stack_depth];
-#else
-  {
-    Light_target* lights =
-      s_context->m_light_stack[s_context->m_light_stack_depth];
-#endif
-    for (int j = 0; j < SGAL_MAX_LIGHTS; j++) {
-      if (lights[j].m_defined == light && lights[j].m_enabled == true) {
-        lights[j].m_enabled = false;
-        glDisable(GL_LIGHT0 + j);
-      }
+  Light_target* lights = m_light_stack[m_light_stack_depth];
+  for (int j = 0; j < SGAL_MAX_LIGHTS; ++j) {
+    if ((lights[j].m_defined == light) && lights[j].m_enabled) {
+      lights[j].m_enabled = false;
+      glDisable(GL_LIGHT0 + j);
     }
   }
 }
@@ -2166,173 +2071,34 @@ float Context::get_aspect_ratio() const
   return ((float) m_viewport[2] / (float) m_viewport[3]);
 }
  
-/*! \brief */
+/*! \brief obtains the number of red bits. */
 Uint Context::get_red_bits() const { return m_red_bits; }
+
+/*! \brief obtains the number of green bits. */
 Uint Context::get_green_bits() const { return m_green_bits; }
+
+/*! \brief obtains the number of blue bits. */
 Uint Context::get_blue_bits() const { return m_blue_bits; }
+
+/*! \brief obtains the number of alpha bits. */
 Uint Context::get_alpha_bits() const { return m_alpha_bits; }
 
+/*! \brief obtains the number of accumulation red bits. */
 Uint Context::get_accum_red_bits() const { return m_accum_red_bits; }
+
+/*! \brief obtains the number of accumulation green bits. */
 Uint Context::get_accum_green_bits() const { return m_accum_green_bits; }
+
+/*! \brief obtains the number of accumulation blue bits. */
 Uint Context::get_accum_blue_bits() const { return m_accum_blue_bits; }
+
+/*! \brief obtains the number of accumulation alpha bits. */
 Uint Context::get_accum_alpha_bits() const { return m_accum_alpha_bits; }
 
+/*! \brief obtains the number of depth bits. */
 Uint Context::get_depth_bits() const { return m_depth_bits; }
+
+/*! \brief obtains the number of stencil bits. */
 Uint Context::get_stencil_bits() const { return m_stencil_bits; }
-
-///////////////////////  NOT USED  /////////////////////////////
-
-#if defined(NO_PLUGIN) && !defined(NO_AUDIO)
-void Context::init_class()
-{
-#if defined(NO_PLUGIN)
-  s_context_list = new Ref_array(4);
-#endif
-
-#if !defined(NO_AUDIO)
-  s_sounds_array = new Ref_array(16);
-  s_sound_players_array = new Ref_array(8);
-  s_sound_initialized = false;
-#endif
-}
-#endif
-
-#if !defined(NO_AUDIO)
-/*! \brief InitSound */
-void Context::init_sound()
-{
-  int i, n = Sound_player::get_num_available_sound_players();
-  for (i = 0; i < n; i++) {
-    Sound_player* sp = new SoundPlayer;
-    if (sp->open_audio_port() == -1)
-      warn("Failed to open AudioPort for Audio Resource\n");
-    else
-      s_sound_Players_Array->append(sp);
-  }
-  s_sound_initialized = true;
-}
-#endif
-
-/*
-Context* Context::get_current()
-{
-#if defined(NO_PLUGIN)
-    return EPrivate::get_context();
-#else
-    return s_context;
-#endif
-}
-*/
-
-#if 0
-Boolean Context::sync_fog_state(Fog* fog)
-{
-  if (m_default_state->m_fog_enable == false) {
-    return false;
-  }
-  draw_fog_enable(fog->get_on());
-  return (fog->geton());
-}
-
-/*! \brief */
-void Context::push_fog(Fog* fog)
-{
-  // If there is no fog to push (i.e. in pushState), replicate top of stack
-  if (fog == 0) {
-    fog = m_fogStack[m_fog_stack_depth];
-  }
-
-  // Push fog stack
-  m_fog_stack[++m_fog_stack_depth] = fog;
-  fog->push();
-  
-  // We've taken a reference to this fog
-  // fog->ref();
-}
-
-/*! \brief */
-void Context::pop_fog()
-{
-  // Pop fog stack
-  Fog* fog = m_fog_stack[m_fog_stack_depth--];
-
-  // Restore previous fog state if necessary
-  //m_fogStack[m_fogStackDepth]->Pop(fog, this);
-  m_fog_stack[m_fog_stack_depth]->pop(fog);
-
-  // Release reference to this fog
-  // fog->unref();
-}
-#endif
-
-#if 0
-/*! \brief */
-int Context::new_id(Int block)
-{
-  int id;
-
-  if (block == 1 && s_free_id_array->get_count() > 0) {
-    id = s_free_id_array->get(0);
-    s_free_id_array->remove_index(0);
-    return id;
-  } else {
-    int tmp = s_nextId;
-    s_nextId += block;
-    return tmp;
-  }
-}
-#endif
-
-#if 0
-/*! \brief */
-void Context::free_id(Int id, Int block)
-{
-  int j;
-  // Make sure we release the resource associated with this id in all
-  // contexts
-#if defined(NO_PLUGIN)
-  for (size_t i = 0; i < s_contexts->get_count(); i++) {
-    Context* ctx = (Context*) s_contexts->get(i);
-    if (ctx == 0) continue;
-    Int_array& darray = ctx->m_dirty_array;
-#else
-    {
-      Int_array& darray = s_context->m_dirty_array;
-#endif
-      for (j = 0; j < block; j++) {
-        if (id+j >= (int) darray.get_size()) {
-          int new_size = (int) darray.get_size() * 2;
-          while (id+j >= new_size) new_size *= 2;
-          darray.set_Size((size_t) new_size);
-          darray.set((size_t) id + j, 0);
-        } else darray.set((size_t) id + j, 0);
-      }
-    }
-    for (j = 0; j < block; j++) s_free_id_array->append((size_t) id + j);
-  }
-#endif
-
-#if 0
-/*! \brief */
-Boolean Context::is_dirty(Int id, Int count)
-{
-  Int_array& darray = m_dirty_array;
-
-  if (id >= (int) darray.get_size()) {
-    int new_size = (int) darray.get_size() * 2;
-    while (id >= new_size) newSize *= 2;
-    darray.set_size((size_t) newSize);
-    darray.set((size_t) id, count);
-    return true;
-    }
-  if (count <= darray.get((size_t) id)) {
-    return false;
-  } else {
-    darray.set((size_t) id, count);
-    return true;
-  }
-}
-
-#endif
 
 SGAL_END_NAMESPACE

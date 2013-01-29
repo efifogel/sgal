@@ -58,6 +58,7 @@ public:
     GEOMETRY_DRAWING_MODE,
     TEXTURE_MAP,
     VERBOSITY_LEVEL,
+    SEAMLESS_CUBE_MAP,
     LAST
   };
 
@@ -83,36 +84,41 @@ public:
   void set_global_lights_stationary(Boolean flag)
   { m_are_global_lights_stationary = flag; }
 
+  Boolean are_global_lights_stationary ()
+  { return m_are_global_lights_stationary; }
+
   void set_fixed_head_light( Boolean flag ) { m_is_fixed_head_light = flag; }
+
+  Boolean is_fixed_head_light() { return m_is_fixed_head_light; }
 
   void set_min_frame_rate(float rate) { m_min_frame_rate = rate; }
 
+  Float get_min_frame_rate() const { return m_min_frame_rate; }
+
   void set_min_zoom_distance(Float val) { m_min_zoom_distance = val; }
+
+  Float get_min_zoom_distance() const { return m_min_zoom_distance; }
 
   void set_max_model_name(const std::string & name)
   { m_max_model_name = name; }
 
-  Boolean are_global_lights_stationary ()
-  { return m_are_global_lights_stationary; }
-
-  Boolean is_fixed_head_light() { return m_is_fixed_head_light; }
-
-  Float get_min_frame_rate() const { return m_min_frame_rate; }
-
-  Boolean is_display_fps() const { return m_display_fps; }
-
-  Float get_min_zoom_distance() const { return m_min_zoom_distance; }
-
   std::string get_max_model_name() const { return m_max_model_name; }
+
+  /*! Set the flag that indicates whether to display the number of frames per
+   * second (fps).
+   */
+  void set_display_fps(Boolean flag) { m_display_fps = flag; }
+
+  /*! Indicates whether the number of frames per second (fps) should be
+   * displayed.
+   */
+  Boolean is_display_fps() const { return m_display_fps; }
 
   /*! Set the polygon mode. */
   void set_poly_mode(Gfx::Poly_mode mode) { m_poly_mode = mode; }
   
   /*! Obtain the polygon mode. */
   Gfx::Poly_mode get_poly_mode () const { return m_poly_mode; }
-
-  /*! Set the display-fps flag. */
-  void set_display_fps(Boolean flag) { m_display_fps = flag; }
 
   /*! Is texture-map enabled? */
   Boolean is_texture_map() const { return m_texture_map; }
@@ -146,15 +152,31 @@ public:
 
   /*! Obtain the verbosity level. */
   Uint get_verbosity_level() const { return m_verbosity_level; }
+
+  /*! Set the flag that indicates whether to apply filtering across faces of
+   * the cubemap resulting in a seamless transition.
+   */
+  void set_seamless_cube_map(Boolean flag) { m_seamless_cube_map = flag; }
+
+  /*! Detemine whether to apply filtering across faces of the cubemap
+   * resulting in a seamless transition.
+   */
+  Boolean is_seamless_cube_map() const { return m_seamless_cube_map; }
   
   /*! Set defualt values. */
-  void reset(Geometry_drawing_mode def_geometry_drawing_mode = GDM_DIRECT,
-             Boolean def_are_global_lights_stationary = false,
-             Boolean def_is_fixed_head_Light = true,
-             Float def_min_frame_Rate = 15,
-             Gfx::Poly_mode def_poly_mode = Gfx::FILL_PMODE,
-             Boolean def_display_fps = false,
-             Float def_min_zoom_distance = 0);
+  void reset(Geometry_drawing_mode def_geometry_drawing_mode =
+               s_def_geometry_drawing_mode,
+             Boolean def_are_global_lights_stationary =
+               s_def_are_global_lights_stationary,
+             Boolean def_texture_map = s_def_texture_map,
+             Boolean def_is_fixed_head_Light =
+               s_def_is_fixed_head_light,
+             Float def_min_frame_Rate = s_def_min_frame_rate,
+             Gfx::Poly_mode def_poly_mode = s_def_poly_mode,
+             Boolean def_display_fps = s_def_display_fps,
+             Float def_min_zoom_distance = s_def_min_zoom_distance,
+             Float def_speed_factor = s_def_speed_factor,
+             Boolean def_seamless_cube_map = s_def_seamless_cube_map);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -221,6 +243,13 @@ private:
   /*! The verbosity level. */
   Uint m_verbosity_level;
 
+  /*! Detemines whether to apply filtering across faces of the cubemap
+   * resulting in a seamless transition. This was a hardware limitation in
+   * the past, but modern hardware is capable of interpolating across a
+   * cube face boundary. 
+   */
+  Boolean m_seamless_cube_map;
+  
   /*! Indicates whether the accumulation is owned. If the accumulation is
    * owned, it is constructed and destructed by this construct.
    */
@@ -237,6 +266,7 @@ private:
   static const Float s_def_min_zoom_distance;
   static const Float s_def_speed_factor;
   static const Uint s_def_verbose_level;
+  static const Boolean s_def_seamless_cube_map;
 
   static const Char* s_geometry_drawing_mode_names[];
 };

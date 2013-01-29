@@ -76,7 +76,7 @@
 #include "Knot_option_parser.hpp"
 
 /*! COlor names for debugging */
-const char * Knot_scene::s_color_names[] = {
+const char* Knot_scene::s_color_names[] = {
   "Orange", "Blue", "Red", "Yellow", "Purple", "Green"
 };
 
@@ -100,7 +100,7 @@ struct My_piece {
 };
 
 struct Puzzle {
-  My_piece * m_pieces[Knot_scene::NUMBER_OF_COLORS];
+  My_piece* m_pieces[Knot_scene::NUMBER_OF_COLORS];
 };
 
 My_piece orange = {
@@ -184,7 +184,7 @@ My_piece green = {
 Puzzle puzzle;
 
 /*! Constructor */
-Knot_scene::Knot_scene(Knot_option_parser & option_parser) :
+Knot_scene::Knot_scene(Knot_option_parser& option_parser) :
   m_window_manager(NULL),
   m_window_item(NULL),
   m_scene_graph(NULL),
@@ -220,20 +220,31 @@ Knot_scene::Knot_scene(Knot_option_parser & option_parser) :
 }
 
 /*! Destructor */
-Knot_scene::~Knot_scene(void)
-{
-}
+Knot_scene::~Knot_scene(void) {}
 
-/*! Destroy the scene */
+/*! \brie destroys the scene. */
 void Knot_scene::destroy_scene()
 {
-  delete m_scene_graph;
-  m_scene_graph = NULL;
-  delete m_root;
-  m_root = NULL;
-  delete m_navigation;
-  m_navigation = NULL;
+  if (m_context) {
+    delete m_context;
+    m_context = NULL;
+  }
 
+  if (m_scene_graph) {
+    delete m_scene_graph;
+    m_scene_graph = NULL;
+  }
+
+  if (m_root) {
+    delete m_root;
+    m_root = NULL;
+  }
+
+  if (m_navigation) {
+    delete m_navigation;
+    m_navigation = NULL;
+  }
+  
   m_solution.clear();
 
   Uint i;
@@ -245,7 +256,7 @@ void Knot_scene::destroy_scene()
   }
 }
   
-/*! Create the scene */
+/*! \brie creates the scene. */
 void Knot_scene::create_scene()
 {
   puzzle.m_pieces[ORANGE] = &orange;
@@ -306,7 +317,7 @@ void Knot_scene::create_scene()
   m_volume_depth = m_head_pad_z + max_size + m_tail_pad_z;
 
   for (n = 0; n < NUMBER_OF_COLORS; ++n) {
-    SGAL::Transform * transform = new SGAL::Transform;
+    SGAL::Transform* transform = new SGAL::Transform;
     m_transforms[n] = transform;
     transform->
       set_translation(static_cast<float>(puzzle.m_pieces[n]->m_position[0]),
@@ -314,23 +325,23 @@ void Knot_scene::create_scene()
                       static_cast<float>(puzzle.m_pieces[n]->m_position[2]));
     m_navigation->add_child(transform);
 
-    SGAL::Touch_sensor * touch_sensor = new SGAL::Touch_sensor;
+    SGAL::Touch_sensor* touch_sensor = new SGAL::Touch_sensor;
     transform->add_child(touch_sensor);
     touch_sensor->set_scene_graph(m_scene_graph);
     Uint id = m_scene_graph->add_touch_sensor(touch_sensor);
     touch_sensor->set_start_selection_ids(id);
     
-    SGAL::Shape * shape = new SGAL::Shape;
+    SGAL::Shape* shape = new SGAL::Shape;
     transform->add_child(shape);
-    SGAL::Appearance * app = new SGAL::Appearance;
+    SGAL::Appearance* app = new SGAL::Appearance;
     shape->set_appearance(app);
-    SGAL::Material * mat = new SGAL::Material;
+    SGAL::Material* mat = new SGAL::Material;
     app->set_material(mat);
     mat->set_diffuse_color(colors[n]);
-    SGAL::Piece * piece = new SGAL::Piece;
+    SGAL::Piece* piece = new SGAL::Piece;
     m_pieces[n] = piece;
     Uint size = WIDTH * HEIGHT * DEPTH;
-    SGAL::Array<Uint> & composition = piece->get_composition();
+    SGAL::Array<Uint>& composition = piece->get_composition();
     composition.resize(size);
 
     Uint i, j, k;
@@ -339,11 +350,13 @@ void Knot_scene::create_scene()
       width = WIDTH;
       height = HEIGHT;
       depth = DEPTH;
-    } else if (n < 4) {
+    }
+    else if (n < 4) {
       width = HEIGHT;
       height = DEPTH;
       depth = WIDTH;
-    } else {
+    }
+    else {
       width = DEPTH;
       height = WIDTH;
       depth = HEIGHT;
@@ -373,25 +386,25 @@ void Knot_scene::create_scene()
   }
 
   if (m_option_parser.solve()) {
-    SGAL::Shape * shape = new SGAL::Shape;
+    SGAL::Shape* shape = new SGAL::Shape;
 #if 0
     // Add the volume to the scene graph:
-    SGAL::Transform * transform = new SGAL::Transform;
+    SGAL::Transform* transform = new SGAL::Transform;
     m_volume_trans = transform;
     transform->set_translation(10,0,0);
     m_navigation->add_child(transform);
     transform->add_child(shape);
 #endif
-    SGAL::Appearance * app = new SGAL::Appearance;
+    SGAL::Appearance* app = new SGAL::Appearance;
     shape->set_appearance(app);
-    SGAL::Material * mat = new SGAL::Material;
+    SGAL::Material* mat = new SGAL::Material;
     app->set_material(mat);
     mat->set_diffuse_color(0.5, 0.5, 0.5);
     m_volume = new SGAL::Piece;
-    Uint_array & composition = m_volume->get_composition();
+    Uint_array& composition = m_volume->get_composition();
     Uint size = m_volume_width * m_volume_height * m_volume_depth;
     composition.resize(size);
-    Uint * volume_vec = composition.get_vector();
+    Uint* volume_vec = composition.get_vector();
     memset(volume_vec, 0, size * sizeof(Uint));
     m_volume->set_width(m_volume_width);
     m_volume->set_height(m_volume_height);
@@ -447,7 +460,7 @@ void Knot_scene::create_scene()
   }
 }
 
-/*! Initialize the nodes required for animations */
+/*! \brie initializes the nodes required for animations. */
 void Knot_scene::init_animation()
 {
   Uint i;
@@ -462,8 +475,8 @@ void Knot_scene::init_animation()
     // Construct a position interpolator and add to the scene graph:
     m_pos_interpolators[i] = new SGAL::Position_interpolator;
     m_root->add_child(m_pos_interpolators[i]);
-    Float_array & keys = m_pos_interpolators[i]->get_keys();
-    Vector3f_array & values = m_pos_interpolators[i]->get_values();
+    Float_array& keys = m_pos_interpolators[i]->get_keys();
+    Vector3f_array& values = m_pos_interpolators[i]->get_values();
     keys.resize(2);
     values.resize(2);
     keys[0] = 0;
@@ -481,18 +494,18 @@ void Knot_scene::init_animation()
   }
 }
 
-/*! Update the volume */
+/*! \brie updates the volume. */
 void Knot_scene::update(const State state)
 {
   m_volume->clear();
-  Uint_array & volume_composition = m_volume->get_composition();
-  Uint * volume_vec = volume_composition.get_vector();
+  Uint_array& volume_composition = m_volume->get_composition();
+  Uint* volume_vec = volume_composition.get_vector();
   memset(volume_vec, 0, volume_composition.size() * sizeof(Uint));
   Uint color;
   for (color = 0; color < NUMBER_OF_COLORS; ++color) {
     if (!state[color].m_active) continue;
-    SGAL::Piece * piece = m_pieces[color];
-    Uint_array & composition = piece->get_composition();
+    SGAL::Piece* piece = m_pieces[color];
+    Uint_array& composition = piece->get_composition();
     Uint width = piece->get_width();
     Uint height = piece->get_height();
     Uint depth = piece->get_depth();
@@ -514,20 +527,20 @@ void Knot_scene::update(const State state)
   }
 }
 
-/*! Reduce the number of pieces if possible */
+/*! \brie reduces the number of pieces if possible. */
 Knot_scene::Boolean Knot_scene::reduce(State state)
 {
   update(state);
   
   // Check whether any piece is apart from the rest
   Boolean ret_value = false;
-  Uint_array & volume_composition = m_volume->get_composition();
+  Uint_array& volume_composition = m_volume->get_composition();
   Uint color;
   for (color = 0; color < NUMBER_OF_COLORS; ++color) {
     if (!state[color].m_active) continue;
     bool free = true;
-    SGAL::Piece * piece = m_pieces[color];
-    Uint_array & composition = piece->get_composition();
+    SGAL::Piece* piece = m_pieces[color];
+    Uint_array& composition = piece->get_composition();
     Uint width = piece->get_width();
     Uint height = piece->get_height();
     Uint depth = piece->get_depth();
@@ -558,12 +571,12 @@ Knot_scene::Boolean Knot_scene::reduce(State state)
   return ret_value;
 }
 
-/*! Does the expected move cause a conflict? */
+/*! \brief determines whether the expected move cause a conflict. */
 SGAL::Boolean Knot_scene::conflict(State state, Uint color, Uint dir)
 {
-  Uint_array & volume_composition = m_volume->get_composition();
-  SGAL::Piece * piece = m_pieces[color];
-  Uint_array & composition = piece->get_composition();
+  Uint_array& volume_composition = m_volume->get_composition();
+  SGAL::Piece* piece = m_pieces[color];
+  Uint_array& composition = piece->get_composition();
   Uint width = piece->get_width();
   Uint height = piece->get_height();
   Uint depth = piece->get_depth();
@@ -588,9 +601,9 @@ SGAL::Boolean Knot_scene::conflict(State state, Uint color, Uint dir)
   return false;
 }
 
-/*! Advance 1 piece 1 step if possible */
+/*! \brie advances 1 piece 1 step if possible. */
 SGAL::Boolean Knot_scene::advance1(State state, Uint color, Uint dir,
-                                   State & next_state)
+                                   State& next_state)
 {
   SGAL_assertion(state[color].m_active);
 
@@ -614,9 +627,9 @@ SGAL::Boolean Knot_scene::advance1(State state, Uint color, Uint dir,
   return true;
 }
 
-/*! Advance 2 pieces 1 step if possible */
+/*! \brie advance 2 pieces 1 step if possible. */
 SGAL::Boolean Knot_scene::advance2(State state, Uint color1, Uint color2, 
-                                   Uint dir, State & next_state)
+                                   Uint dir, State& next_state)
 {
   SGAL_assertion(state[color1].m_active);
   SGAL_assertion(state[color2].m_active);
@@ -647,9 +660,9 @@ SGAL::Boolean Knot_scene::advance2(State state, Uint color1, Uint color2,
   return true;
 }
 
-/*! Advance 2 pieces 1 step if possible */
+/*! \brie advances 2 pieces 1 step if possible. */
 SGAL::Boolean Knot_scene::advance3(State state, Uint color1, Uint color2,
-                                   Uint color3, Uint dir, State & next_state)
+                                   Uint color3, Uint dir, State& next_state)
 {
   SGAL_assertion(state[color1].m_active);
   SGAL_assertion(state[color2].m_active);
@@ -686,7 +699,7 @@ SGAL::Boolean Knot_scene::advance3(State state, Uint color1, Uint color2,
   return true;
 }
 
-/*! Check whether the state is empty */
+/*! \brie checks whether the state is empty. */
 SGAL::Boolean Knot_scene::empty(State state) const
 {
   Uint color;
@@ -695,7 +708,7 @@ SGAL::Boolean Knot_scene::empty(State state) const
   return true;
 }
 
-/*! Solve the puzzle */
+/*! \brie solves the puzzle. */
 SGAL::Boolean Knot_scene::solve(State state, Uint level)
 {
   // std::cout << m_num_invocations << ": " << state << std::endl;
@@ -747,18 +760,19 @@ SGAL::Boolean Knot_scene::solve(State state, Uint level)
   return false;
 }
 
-/*! Initializes the secene */
+/*! \brie initializes the secene. */
 void Knot_scene::init_scene()
 {
   m_window_item = m_window_manager->create_window_item();
   m_window_item->set_title("Knot");
   m_window_manager->create_window(m_window_item);
   
+  m_scene_graph->create_defaults();
   indulge_user();
 
-  m_context = m_scene_graph->create_context();
-  m_scene_graph->init_context(m_context);
-  m_scene_graph->create_defaults();
+  m_context = new SGAL::Context();
+  m_scene_graph->set_context(m_context);
+  m_scene_graph->init_context();
   m_scene_graph->start_simulation();
   m_scene_graph->bind();
 
@@ -773,40 +787,28 @@ void Knot_scene::init_scene()
   m_window_item->show();
 }
 
-/*! Indulge user requests from the command line */
+/*! \brief indulges user requests from the command line. */
 void Knot_scene::indulge_user()
-{
-  m_option_parser.configure(m_scene_graph);
-}
+{ m_option_parser.configure(m_scene_graph); }
 
-/*! \brief clears the scene
- */
+/*! \brief clears the scene. */
 void Knot_scene::clear_scene()
 {
   if (m_option_parser.solve()) SGAL::Tick_event::unregister(this);
-  m_scene_graph->destroy_context(m_context);
   m_scene_graph->release_context();
-  //! \todo m_scene_graph->destroy_defaults();
+  m_scene_graph->destroy_defaults();
 }
 
-/*! */
+/*! \brief identifies the agent. */
 void Knot_scene::identify(void)
 { std::cout << "Agent: Knot_scene" << std::endl; }
 
-/*! Draw the scene
- * \param swap_buffer (out) indicates that there is no need to swap buffer
- * \param accumulating (out) indicating that accumulation is active, and the
- * simulation, if there is any, should not advance
- * \param dont_accumulate (in) indicates that accumulation should not be
- * applied.
- * \todo The 3rd parameter should be eliminated. Accumulation should be
- * applied only if no changes that required re-rendering were made.
- */
-void Knot_scene::draw_window(SGAL::Window_item * window_item,
+/*! \brief draws the scene. */
+void Knot_scene::draw_window(SGAL::Window_item* window_item,
                              SGAL::Boolean dont_accumulate)
 {
   SGAL_assertion(m_scene_graph);
-  SGAL::Configuration * conf = m_scene_graph->get_configuration();
+  SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL::Draw_action draw_action(conf);
   draw_action.set_context(m_context);
   draw_action.set_snap(false);
@@ -816,18 +818,19 @@ void Knot_scene::draw_window(SGAL::Window_item * window_item,
   window_item->swap_buffers();
 }
 
-/*! Reshape the viewport */
-void Knot_scene::reshape_window(SGAL::Window_item * window_item,
+/*! \brief reshapes the viewport. */
+void Knot_scene::reshape_window(SGAL::Window_item* window_item,
                                 SGAL::Uint width, SGAL::Uint height)
 {
-  SGAL::Context * context = m_scene_graph->get_context();
+  SGAL::Context* context = m_scene_graph->get_context();
   context->set_viewport(0, 0, width, height);
-  SGAL::Camera * camera = m_scene_graph->get_active_camera();
+  SGAL::Camera* camera = m_scene_graph->get_active_camera();
   SGAL_assertion(camera);
   camera->init(context);
 }
 
-/*! Mark a given state as visited (insert into the hash data structure) */
+/*! \brief marks a given state as visited (insert into the hash data structure)
+ */
 void Knot_scene::mark(State state)
 {
   if (!m_next_free_state_block) {
@@ -835,15 +838,15 @@ void Knot_scene::mark(State state)
     m_next_free_state_block = new State[BLOCK_SIZE];
     m_state_blocks.push_back(m_next_free_state_block);
   }
-  Piece_state * new_state = m_next_free_state_block[m_next_free_state_index++];
+  Piece_state* new_state = m_next_free_state_block[m_next_free_state_index++];
   if (m_next_free_state_index == BLOCK_SIZE) m_next_free_state_block = NULL;
   memcpy(new_state, state, sizeof(State));
   m_visited.insert(&new_state[0]);
 }
 
-/*! Find the minimum coordinate values */
+/*! \brief finds the minimum coordinate values. */
 void Knot_scene::find_min(const State state,
-                          Uint & min_x, Uint & min_y, Uint & min_z)
+                          Uint& min_x, Uint& min_y, Uint& min_z)
 {
   min_x = min_y = min_z = UINT_MAX;
   Uint color;
@@ -858,7 +861,7 @@ void Knot_scene::find_min(const State state,
   }
 }
 
-/*! Compare lexicographically two states */
+/*! \brief compares lexicographically two states. */
 Knot_scene::Int Knot_scene::compare(const State state1, const State state2)
 {
   Uint min_x1, min_y1, min_z1;
@@ -889,7 +892,7 @@ Knot_scene::Int Knot_scene::compare(const State state1, const State state2)
   return 0;
 }
 
-/*! Mark a given state and its equivalent states as visited */
+/*! \brief marks a given state and its equivalent states as visited. */
 void Knot_scene::mark_all(State state)
 {
   Uint min_x, min_y, min_z;
@@ -907,7 +910,7 @@ void Knot_scene::mark_all(State state)
   for (k = 0; k < m_volume_depth; ++k) {
     for (color = 0; color < NUMBER_OF_COLORS; ++color) {
       if (!state[color].m_active) continue;
-      SGAL::Piece * piece = m_pieces[color];
+      SGAL::Piece* piece = m_pieces[color];
       Uint depth = piece->get_depth();
       Uint z = state[color].m_position[2] - min_z + k;
       if (z + depth >= m_volume_depth) {
@@ -922,7 +925,7 @@ void Knot_scene::mark_all(State state)
     for (j = 0; j < m_volume_height; ++j) {
       for (color = 0; color < NUMBER_OF_COLORS; ++color) {
         if (!state[color].m_active) continue;
-        SGAL::Piece * piece = m_pieces[color];
+        SGAL::Piece* piece = m_pieces[color];
         Uint height = piece->get_height();
         Uint y = state[color].m_position[1] - min_y + j;
         if (y + height >= m_volume_height) {
@@ -937,7 +940,7 @@ void Knot_scene::mark_all(State state)
       for (i = 0; i < m_volume_width; ++i) {
         for (color = 0; color < NUMBER_OF_COLORS; ++color) {
           if (!state[color].m_active) continue;
-          SGAL::Piece * piece = m_pieces[color];
+          SGAL::Piece* piece = m_pieces[color];
           Uint width = piece->get_width();
           Uint x = state[color].m_position[0] - min_x + i;
           if (x + width >= m_volume_width) {
@@ -954,8 +957,8 @@ void Knot_scene::mark_all(State state)
   }
 }
 
-/*! Handle tick events */
-void Knot_scene::handle(SGAL::Tick_event * event)
+/*! \brief handles tick events. */
+void Knot_scene::handle(SGAL::Tick_event* event)
 {
   if (m_solution_iterator == m_solution.end()) {
     // \todo disable the time sensor, and unregister the tick event
@@ -976,11 +979,11 @@ void Knot_scene::handle(SGAL::Tick_event * event)
   }
 }
 
-/*! Animate */
+/*! \brief animates. */
 void Knot_scene::animate(Scene_time cur_time, Uint color, Uint dir, Uint route)
 {
   // Setup the interpolator:
-  Vector3f_array & values = m_pos_interpolators[route]->get_values();
+  Vector3f_array& values = m_pos_interpolators[route]->get_values();
   Uint x = puzzle.m_pieces[color]->m_position[0];
   Uint y = puzzle.m_pieces[color]->m_position[1];
   Uint z = puzzle.m_pieces[color]->m_position[2];

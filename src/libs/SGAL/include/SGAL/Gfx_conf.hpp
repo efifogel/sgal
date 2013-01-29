@@ -125,7 +125,7 @@ public:
   };
 
   /*! Obtain the pointer to the singleton instance */
-  static Gfx_conf * get_instance();
+  static Gfx_conf* get_instance();
 
   /*! Destructor */
   ~Gfx_conf();
@@ -156,12 +156,12 @@ public:
   /*! Obtain the vendor name
    * \return the vendor name.
    */
-  const char * get_vendor_name() const;
+  const char* get_vendor_name() const;
 
   /*! Obtain the renderer name.
    * \return the renderer name
    */
-  const char * get_renderer_name() const;
+  const char* get_renderer_name() const;
   
   /*! Is bump_map_ extension supported?
    * \return true iff bump_map_ extension is supported.
@@ -182,7 +182,10 @@ public:
    * \return true iff multisample extension is supported.
    */
   inline Boolean is_multisample_supported() const;
-  
+
+  /*! Determine whether seamless cube map is supported. */
+  inline Boolean is_seamless_cube_map_supported() const;
+
   /*! Disable vertex-buffer support */
   void disable_vertex_buffer_object_support();
   
@@ -204,17 +207,20 @@ private:
 
   /*! Indicates whether multisample is supported */
   Boolean m_multisample_supported;
+
+  /*! Indicates whether seamless cube map is supported. */
+  Boolean m_seamless_cube_map_supported;
   
-  static Gfx_conf * m_instance;
+  static Gfx_conf* m_instance;
 
   /*! The vendor names */
-  static const char * s_vendors[];
+  static const char* s_vendors[];
 
   /*! The renderer names */
-  static const char * s_renderers[];
+  static const char* s_renderers[];
 
   /*! The OpenGL versions */
-  static const char * s_versions[];
+  static const char* s_versions[];
 
   // this is related to singleton distruction
   //! \todo typedef Singleton_destroyer<Gfx_conf> Gfx_conf_destroyer;    
@@ -226,8 +232,8 @@ private:
   Gfx_conf();
 
   /*! Is the the extension given by a name supported? */
-  Boolean is_extension_supported(const Uchar * extensions,
-                              const char * target_extension);
+  Boolean is_extension_supported(const Uchar* extensions,
+                                 const char* target_extension);
 };
 
 /*! \brief returns true iff bump_map_ extension is supported */
@@ -248,18 +254,20 @@ inline Boolean Gfx_conf::is_multisample_supported() const
 
 /*! \brief disables vertex-buffer support */
 inline void Gfx_conf::disable_vertex_buffer_object_support()
-{
-  m_vertex_buffer_object_supported = SGAL_FALSE;
-}
+{ m_vertex_buffer_object_supported = false; }
 
 inline Gfx_conf::Vendor Gfx_conf::get_vendor() const { return m_vendor; }
 inline Gfx_conf::Renderer Gfx_conf::get_renderer() const { return m_renderer; }
 
-inline const char * Gfx_conf::get_vendor_name() const
+inline const char* Gfx_conf::get_vendor_name() const
 { return s_vendors[m_vendor]; }
 
-inline const char * Gfx_conf::get_renderer_name() const
+inline const char* Gfx_conf::get_renderer_name() const
 { return s_renderers[m_renderer]; }
+
+/*! \brief determines whether seamless cube map is supported. */
+inline Boolean Gfx_conf::is_seamless_cube_map_supported() const
+{ return m_seamless_cube_map_supported; }
 
 SGAL_END_NAMESPACE
 

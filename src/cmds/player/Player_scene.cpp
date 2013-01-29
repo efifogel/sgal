@@ -119,25 +119,23 @@ Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_window_manager(NULL),
   m_window_item(NULL),
   m_win_width(0), m_win_height(0),
-  m_scene_graph(NULL), m_context(NULL),
+  m_scene_graph(NULL),
+  m_context(NULL),
   m_option_parser(option_parser),
   m_simulate(false)  
-{
-  init();
-}
+{ init(); }
 
 /*! Constructor */
 Player_scene::Player_scene() :
   m_window_manager(NULL),
   m_window_item(NULL),
   m_win_width(0), m_win_height(0),
-  m_scene_graph(NULL), m_context(NULL),
+  m_scene_graph(NULL),
+  m_context(NULL),
   m_simulate(false)  
-{
-  init();
-}
+{ init(); }
 
-/*! Init function */
+/*! \brief initializes. */
 void Player_scene::init()
 {
   m_dirs.push_front(".");
@@ -177,7 +175,7 @@ Player_scene::~Player_scene(void)
   m_fullname.clear();
 }
 
-/*! Create the scene */
+/*! \brief creates the scene. */
 void Player_scene::create_scene()
 {
   std::string filename;
@@ -229,21 +227,29 @@ void Player_scene::create_scene()
 
   // Construct a Scene_graph:
   m_scene_graph = new SGAL::Scene_graph;
-  if (!m_scene_graph) return;
+  SGAL_assertion(m_scene_graph);
   
   update_data_dirs();
 }
 
-/*! Destroy the scene */
+/*! \brief destroys the scene. */
 void Player_scene::destroy_scene()
 {
-  delete m_scene_graph;
-  m_scene_graph = NULL;
+  if (m_context) {
+    delete m_context;
+    m_context = NULL;
+  }
+
+  if (m_scene_graph) {
+    delete m_scene_graph;
+    m_scene_graph = NULL;
+  }
 }
   
-/*! Initializes the secene */
+/*! \brief initializes the secene. */
 void Player_scene::init_scene()
 {
+  // Obtain the input file full name.
   std::string filename;
   if (!m_option_parser->get_file_name(filename) || filename.empty()) {
     std::string str("input file missing!");
@@ -251,56 +257,60 @@ void Player_scene::init_scene()
     return;
   }
 
-  // Construct a Loader:
+  // Load the input file.
   SGAL::Loader loader;
   int rc = loader.load(m_fullname.c_str(), m_scene_graph);
-  if (rc < 0)
-  {
+  if (rc < 0) {
     throw Illegal_input(UNABLE_TO_LOAD, "Cannot load file", filename);
     return;
   }
   print_stat();
 
+  // Create the missing nodes.
+  m_scene_graph->create_defaults();
+    
+  // Construct the context.
+  m_context = new SGAL::Context();
+  SGAL_assertion(m_context);
+  m_scene_graph->set_context(m_context);
+
+  // Prepare the window item.
   m_window_item = m_window_manager->create_window_item();
   m_window_item->set_title(filename);
   m_window_item->set_number_of_stencil_bits(1);
+
+  // Update the configuration node.
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
-  if (conf) {
-    SGAL::Accumulation* acc = conf->get_accumulation();
-    if (acc) {
-      SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
-      acc->get_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
-      m_window_item->set_number_of_accumulation_bits(red_bits, green_bits,
-                                                     blue_bits, alpha_bits);
-    }
-    SGAL::Multisample* ms = conf->get_multisample();
-    if (ms) m_window_item->set_number_of_samples(ms->get_number_of_samples());
+  SGAL_assertion(conf);
+  SGAL::Accumulation* acc = conf->get_accumulation();
+  SGAL::Multisample* ms = conf->get_multisample();
+
+  if (acc) {
+    SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
+    acc->get_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
+    m_window_item->set_number_of_accumulation_bits(red_bits, green_bits,
+                                                   blue_bits, alpha_bits);
   }
+  if (ms) m_window_item->set_number_of_samples(ms->get_number_of_samples());
 
   m_window_manager->create_window(m_window_item);
-  if (conf) {
-    SGAL::Multisample* ms = conf->get_multisample();
-    if (ms) ms->set_number_of_samples(m_window_item->get_number_of_samples());
-    SGAL::Accumulation* acc = conf->get_accumulation();
-    if (acc) {
-      SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
-      m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
-                                                     blue_bits, alpha_bits);
-      acc->set_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
-    }
+  if (ms) ms->set_number_of_samples(m_window_item->get_number_of_samples());
+  if (acc) {
+    SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
+    m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
+                                                   blue_bits, alpha_bits);
+    acc->set_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
   }  
 
   indulge_user();
-  
-  m_context = m_scene_graph->create_context();
-  m_scene_graph->init_context(m_context);
-  m_scene_graph->create_defaults();
+
+  m_scene_graph->init_context();
   m_scene_graph->start_simulation();
   m_scene_graph->bind();
   m_window_item->show();
 }
 
-/*! Indulge user requests from the command line */
+/*! \brief indulges user requests from the command line. */
 void Player_scene::indulge_user()
 {
   m_option_parser->configure(m_scene_graph);
@@ -330,7 +340,6 @@ void Player_scene::indulge_user()
   }
 
   if (m_option_parser->get_display_geometry_info()) {
-    SGAL_assertion(m_scene_graph);
     // Look for non instance containers:
     SGAL::Scene_graph::Container_vector_iter ci;
     for (ci = m_scene_graph->containers_begin();
@@ -400,7 +409,7 @@ void Player_scene::print_geometry_info(SGAL::Box* box)
   std::cout << "Geometry: Box" << std::endl;  
 }
 
-/*! Print texture information of Index_face_set */
+/*! \brief prints texture information of Index_face_set. */
 void Player_scene::print_geometry_info(SGAL::Indexed_face_set* ifs)
 {
   static const char* primitive_types[] = {
@@ -418,7 +427,7 @@ void Player_scene::print_geometry_info(SGAL::Indexed_face_set* ifs)
             << std::endl;
 }
 
-/*! Update directory search */
+/*! \brief updates directory search. */
 void Player_scene::update_data_dirs()
 {
   // Add directories to search list
@@ -445,7 +454,7 @@ void Player_scene::update_data_dirs()
   }
 }
 
-/*! Print statistic information */
+/*! \brief prints statistic information. */
 void Player_scene::print_stat()
 {
 #if defined(USE_CGAL)
@@ -490,24 +499,21 @@ void Player_scene::print_stat()
 #endif
 }
 
-/*! Clear the scene */
+/*! \brief clears the scene. */
 void Player_scene::clear_scene()
 {
-  m_scene_graph->destroy_context(m_context);
   m_scene_graph->release_context();
-  //! \todo m_scene_graph->destroy_defaults();
-
+  m_scene_graph->destroy_defaults();
   m_window_item->hide();
   m_window_manager->destroy_window(m_window_item);
   m_window_manager->destroy_window_item(m_window_item);
 }
 
-/*!
- */
+/*! \brief identifies the agent. */
 void Player_scene::identify(void)
 { std::cout << "Agent: Player_scene" << std::endl; }
 
-/*! Handles a tick event */
+/*! \brief handless a tick event. */
 void Player_scene::handle(SGAL::Tick_event* tick_event)
 {
   if (m_option_parser->get_verbosity_level() >= 2)
@@ -516,7 +522,7 @@ void Player_scene::handle(SGAL::Tick_event* tick_event)
               << tick_event->get_sim_time() << std::endl;
 }
 
-/*! \brief handles a reshape event */
+/*! \brief handles a reshape event. */
 void Player_scene::handle(SGAL::Reshape_event* event)
 {
   SGAL::Window_item* window_item = event->get_window_item();
@@ -533,9 +539,7 @@ void Player_scene::handle(SGAL::Draw_event* event)
   draw_window(window_item, dont_accumulate);
 }
 
-/*! \brief draws into a window of the scene
- * It is assumed that the window context is the current context
- */
+/*! \brief draws into a window of the scene. */
 void Player_scene::draw_window(SGAL::Window_item* window_item,
                                SGAL::Boolean dont_accumulate)
 {
@@ -581,7 +585,7 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   if (acc->do_show()) window_item->swap_buffers();
 }
 
-/*! Draw guides that separate the window into 4x5 rectangles: */
+/*! \brief draws guides that separate the window into 4x5 rectangles. */
 void Player_scene::draw_grid()
 {
   m_context->draw_light_enable(false);
@@ -610,9 +614,7 @@ void Player_scene::draw_grid()
   m_context->draw_light_enable(true);
 }
 
-/*! \brief reshapes the viewport of a window of the scene
- * It is assumed that the window context is the current context
- */
+/*! \brief reshapes the viewport of a window of the scene. */
 void Player_scene::reshape_window(SGAL::Window_item* window_item,
                                   SGAL::Uint width, SGAL::Uint height)
 {

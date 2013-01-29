@@ -105,13 +105,12 @@ Gfx_conf * Gfx_conf::get_instance()
 Gfx_conf::Gfx_conf() :
   m_vendor(veUnknown), 
   m_renderer(reUnknown), 
-  m_bump_map_supported(SGAL_FALSE),
-  m_vertex_buffer_object_supported(SGAL_FALSE),
-  m_packed_depth_stencil_supported(SGAL_FALSE),
-  m_multisample_supported(SGAL_FALSE)
-{
-  init();
-}
+  m_bump_map_supported(true),
+  m_vertex_buffer_object_supported(true),
+  m_packed_depth_stencil_supported(true),
+  m_multisample_supported(true),
+  m_seamless_cube_map_supported(true)
+{ init(); }
 
 /*! Destructor */
 Gfx_conf::~Gfx_conf() {}
@@ -152,22 +151,22 @@ void Gfx_conf::init()
   search_path(NULL, "opengl32.dll", NULL, 1000, temp, &dummy);
 #endif
 
-  const Uchar * extensions = glGetString(GL_EXTENSIONS);
+  const Uchar* extensions = glGetString(GL_EXTENSIONS);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "Extensions: " << extensions
              << std::endl;);
 
-  m_bump_map_supported = SGAL_TRUE;          // Start optimistic
+  m_bump_map_supported = true;          // Start optimistic
 
   if (!is_extension_supported(extensions, "GL_EXT_bgra"))
-    m_bump_map_supported = SGAL_FALSE;
+    m_bump_map_supported = false;
   else if (!is_extension_supported(extensions, "GL_ARB_multitexture"))
-    m_bump_map_supported = SGAL_FALSE;
+    m_bump_map_supported = false;
   else if (!is_extension_supported(extensions, "GL_NV_register_combiners"))
-    m_bump_map_supported = SGAL_FALSE;
+    m_bump_map_supported = false;
   else if (!is_extension_supported(extensions, "GL_EXT_texture_cube_map"))
-    m_bump_map_supported = SGAL_FALSE;
+    m_bump_map_supported = false;
   else if (!is_extension_supported(extensions, "WGL_EXT_swap_control"))
-    m_bump_map_supported = SGAL_FALSE;
+    m_bump_map_supported = false;
 
   m_vertex_buffer_object_supported =
     is_extension_supported(extensions, "GL_ARB_vertex_buffer_object");
@@ -177,39 +176,42 @@ void Gfx_conf::init()
 
   m_multisample_supported =
     is_extension_supported(extensions, "GL_ARB_multisample");
+
+  m_seamless_cube_map_supported =
+    is_extension_supported(extensions, "GL_ARB_seamless_cube_map");
   
 #if defined(_WIN32)
-  glBindBufferARB           =
+  glBindBufferARB =
     (PFNGLBINDBUFFERARBPROC)wglGetProcAddress("glBindBufferARB");
-  glDeleteBuffersARB        =
+  glDeleteBuffersARB =
     (PFNGLDELETEBUFFERSARBPROC)wglGetProcAddress("glDeleteBuffersARB");
-  glGenBuffersARB           =
+  glGenBuffersARB =
     (PFNGLGENBUFFERSARBPROC)wglGetProcAddress("glGenBuffersARB");
-  glIsBufferARB             =
+  glIsBufferARB =
     (PFNGLISBUFFERARBPROC)wglGetProcAddress("glIsBufferARB");
-  glBufferDataARB           =
+  glBufferDataARB =
     (PFNGLBUFFERDATAARBPROC)wglGetProcAddress("glBufferDataARB");
-  glBufferSubDataARB        =
+  glBufferSubDataARB =
     (PFNGLBUFFERSUBDATAARBPROC)wglGetProcAddress("glBufferSubDataARB");
-  glGetBufferSubDataARB     =
+  glGetBufferSubDataARB =
     (PFNGLGETBUFFERSUBDATAARBPROC)wglGetProcAddress("glGetBufferSubDataARB");
-  glMapBufferARB            =
+  glMapBufferARB =
     (PFNGLMAPBUFFERARBPROC)wglGetProcAddress("glMapBufferARB");
-  glUnmapBufferARB          =
+  glUnmapBufferARB =
     (PFNGLUNMAPBUFFERARBPROC)wglGetProcAddress("glUnmapBufferARB");
   glGetBufferParameterivARB =
     (PFNGLGETBUFFERPARAMETERIVARBPROC)wglGetProcAddress("glGetBufferParameterivARB");
-  glGetBufferPointervARB    =
+  glGetBufferPointervARB =
     (PFNGLGETBUFFERPOINTERVARBPROC)wglGetProcAddress("glGetBufferPointervARB");
     
   // Try To Use wglGetExtensionStringARB On Current DC, If Possible
   PROC wglGetExtString = wglGetProcAddress("wglGetExtensionsStringARB");
-  const Uchar * wgl_extensions =
+  const Uchar* wgl_extensions =
     ((Uchar*(__stdcall*)(HDC))wglGetExtString)(wglGetCurrentDC());
 
   if (!m_multisample_supported) {
     if (is_extension_supported(wgl_extensions, "WGL_ARB_multisample"))
-      m_multisample_supported = SGAL_TRUE;
+      m_multisample_supported = true;
   }
   if (m_multisample_supported) {
     wglChoosePixelFormatARB =
@@ -218,7 +220,7 @@ void Gfx_conf::init()
     wglGetPixelFormatAttribivARB =
       (PFNWGLGETPIXELFORMATATTRIBIVARBPROC)
       wglGetProcAddress("wglGetPixelFormatAttribivARB");
-    if (!wglChoosePixelFormatARB) m_multisample_supported = SGAL_FALSE;
+    if (!wglChoosePixelFormatARB) m_multisample_supported = false;
   }
   std::cout << "m_multisample_supported: "
             << m_multisample_supported << std::endl;
@@ -227,11 +229,10 @@ void Gfx_conf::init()
       !glIsBufferARB || !glBufferDataARB || !glBufferSubDataARB || 
       !glGetBufferSubDataARB || !glMapBufferARB || !glUnmapBufferARB || 
       !glGetBufferParameterivARB || !glGetBufferPointervARB)
-    m_vertex_buffer_object_supported = SGAL_FALSE;
+    m_vertex_buffer_object_supported = false;
 
-    std::cout << "m_vertex_buffer_object_supported: "
-              << m_vertex_buffer_object_supported << std::endl;
-
+  std::cout << "m_vertex_buffer_object_supported: "
+            << m_vertex_buffer_object_supported << std::endl;
 #endif
 }
 
@@ -241,7 +242,7 @@ Boolean Gfx_conf::is_extension_supported(const Uchar * extensions,
 {
   // Extension names should not have spaces
   const Uchar * where = (Uchar *) strchr(target_extension, ' ');
-  if (where || *target_extension == '\0') return SGAL_FALSE;
+  if (where || *target_extension == '\0') return false;
 
   // Search The Extensions String For An Exact Copy
   const Uchar * start = extensions;
@@ -250,10 +251,10 @@ Boolean Gfx_conf::is_extension_supported(const Uchar * extensions,
     if (!where) break;
     const Uchar * terminator = where + strlen(target_extension);
     if (where == start || *(where - 1) == ' ')
-      if (*terminator == ' ' || *terminator == '\0') return SGAL_TRUE;
+      if (*terminator == ' ' || *terminator == '\0') return true;
     start = terminator;
   }
-  return SGAL_FALSE;
+  return false;
 }
 
 SGAL_END_NAMESPACE
