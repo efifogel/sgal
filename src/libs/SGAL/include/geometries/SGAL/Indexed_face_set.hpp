@@ -454,11 +454,6 @@ protected:
 
   Boolean m_is_progressive;
 
-  /*! Indicates whether space was allocated to accomodate default texture
-   * coordinates
-   */
-  Boolean m_owned_tex_coord_array;
-
   /*! Indicates that the normal array has been invalidated */
   Boolean m_dirty_normals;
 

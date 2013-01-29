@@ -199,8 +199,11 @@ private:
   /*! The node prototype */
   static Container_proto * s_prototype;
 
-  /*! Indicates whther this node owns (allocated) the sgm data structure */
-  Boolean m_own_sgm;
+  /*! Indicates whther the sgm data structure is owned, i.e., allocated
+   * explicitly). If it is owned, the sgm data structure should be destructed
+   * when the this node is destructed.
+   */
+  Boolean m_owned_sgm;
 
   /*! The cubical Gaussian map representation */
   Sgm * m_sgm;

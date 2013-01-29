@@ -71,7 +71,7 @@ REGISTER_TO_FACTORY(Spherical_gaussian_map_geo,
 /*! Constructor */
 Spherical_gaussian_map_geo::Spherical_gaussian_map_geo(Boolean proto) :
   Spherical_gaussian_map_base_geo(proto),
-  m_own_sgm(false),
+  m_owned_sgm(false),
   m_sgm(NULL),
   m_minkowski_sum(false),
   m_vertices_renderer(NULL),
@@ -94,7 +94,13 @@ Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo & gm)
 Spherical_gaussian_map_geo::~Spherical_gaussian_map_geo()
 {
   m_sgm_nodes.clear();
-  if (m_sgm && m_own_sgm) delete m_sgm;
+  if (m_owned_sgm) {
+    if (m_sgm) {
+      delete m_sgm;
+      m_sgm = NULL;
+    }
+    m_owned_sgm = false;
+  }
 }
 
 /*! Clean the data structure */
@@ -102,7 +108,8 @@ void Spherical_gaussian_map_geo::clean()
 {
   if (!m_sgm) {
     m_sgm = new Sgm;
-    m_own_sgm = true;
+    SGAL_assertion(m_sgm);
+    m_owned_sgm = true;
   }
   if (Mesh_set::is_dirty()) Mesh_set::clean();
   if (m_minkowski_sum) {

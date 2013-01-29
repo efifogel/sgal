@@ -107,7 +107,7 @@ REGISTER_TO_FACTORY(Arrangement_on_sphere_marked_geo,
 Arrangement_on_sphere_marked_geo::
 Arrangement_on_sphere_marked_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
-  m_own_aos(SGAL_FALSE),
+  m_owned_aos(false),
   m_aos(NULL),
   m_aos_marked_vertex_style(s_def_aos_marked_vertex_style),
   m_aos_marked_vertex_radius(s_def_aos_marked_vertex_radius),
@@ -131,7 +131,13 @@ Arrangement_on_sphere_marked_geo(Boolean proto) :
 Arrangement_on_sphere_marked_geo::~Arrangement_on_sphere_marked_geo()
 {
   clear();
-  if (m_aos && m_own_aos) delete m_aos;
+  if (m_owned_aos) {
+    if (m_aos) {
+      delete m_aos;
+      m_aos = NULL;
+    }
+    m_owned_aos = false;
+  }
 }
 
 /*! \brief initializes the container prototype */
@@ -363,7 +369,8 @@ void Arrangement_on_sphere_marked_geo::clean()
   m_dirty = false;
   if (!m_aos) {
     m_aos = new Aos_marked;
-    m_own_aos = SGAL_TRUE;
+    SGAL_assertion(m_aos);
+    m_owned_aos = true;
   }
   insert_all(m_aos);
   overlay_all(m_aoses.begin(), m_aoses.end(),

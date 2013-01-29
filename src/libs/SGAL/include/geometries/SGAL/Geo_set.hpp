@@ -133,23 +133,16 @@ public:
 
   /*! Set the normal array.
    * \param normal_array (in) the normal array.
-   * \param owned (in) Indicates whether the normal array is owned.
-   *        If it is owned, the normal array  is constructed and destructed by 
-   *        the construct.
    */
-  void set_normal_array(Normal_array* normal_array, Boolean owned = false);
+  void set_normal_array(Normal_array* normal_array);
 
   /*! Obtain the normal array. */
   Normal_array* get_normal_array() const;
 
   /*! Set the texture-coordinate array.
    * \param tex_coord_array (in) the texture coordinate array.
-   * \param owned (in) Indicates whether the texture coordinate array is owned.
-   *              If it is owned, the texture coordinate array is constructed
-   *              and destructed by the construct.
    */
-  void set_tex_coord_array(Tex_coord_array* tex_coord_array,
-                           Boolean owned = false);
+  void set_tex_coord_array(Tex_coord_array* tex_coord_array);
 
 
   /*! Obtain the texture-coordinate array. */
@@ -259,9 +252,9 @@ protected:
   /*! An array of vertex texture-ccordinates. */
   Tex_coord_array* m_tex_coord_array;
 
-  /*! Indicates whether the texture coordinate array is owned by the construct.
-   * If it is owned, the texture coordinate array is constructed and destructed
-   * by the construct.
+  /*! Indicates whether the texture coordinate array is owned. If it is owned,
+   * the texture coordinate array is constructed and destructed by the
+   * construct.
    */
   Boolean m_owned_tex_coord_array;  
   

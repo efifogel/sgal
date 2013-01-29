@@ -132,30 +132,23 @@ void Geo_set::set_coord_array(Coord_array* coord_array)
 }
 
 /*! \brief sets the normal array. */
-void Geo_set::set_normal_array(Normal_array* normal_array, Boolean owned)
+void Geo_set::set_normal_array(Normal_array* normal_array)
 {
   if (m_owned_normal_array) {
-    if (m_normal_array) {
-      delete m_normal_array;
-      m_normal_array = NULL;
-    }
+    if (m_normal_array) delete m_normal_array;
+    m_owned_normal_array = false;
   }
   m_normal_array = normal_array;
-  m_owned_normal_array = owned;
 }
 
 /*! \brief sets the texture-coordinate array. */
-void Geo_set::set_tex_coord_array(Tex_coord_array* tex_coord_array,
-                                  Boolean owned)
+void Geo_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
 {
   if (m_owned_tex_coord_array) {
-    if (m_tex_coord_array) {
-      delete m_tex_coord_array;
-      m_tex_coord_array = NULL;
-    }
+    if (m_tex_coord_array) delete m_tex_coord_array;
+    m_owned_tex_coord_array = false;
   }
   m_tex_coord_array = tex_coord_array;
-  m_owned_tex_coord_array = owned;
 }
 
 /*! \brief sets the color array. */

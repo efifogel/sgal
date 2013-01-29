@@ -231,8 +231,11 @@ protected:
   Boolean m_dirty_tiling;
   Boolean m_dirty_parts;
 
-  /*! Indicates whether the parts are "owned" (allocated) by this node. */
-  Boolean m_own_parts;
+  /*! Indicates whether the parts are "owned". If they are owned (as
+   * the user hasn't provided one) the parts should be destructed when
+   * Ego is destructed.
+   */
+  Boolean m_owned_parts;
   
   /*! These are temporary members used to expedite rendering */
   Ego_brick m_ego_brick;

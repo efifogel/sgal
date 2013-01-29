@@ -160,8 +160,11 @@ public:
   /*! Clean the renderer */
   virtual void clean_renderer();
 
-  /*! Indicates whther this node owns (allocated) the aos data structure */
-  Boolean m_own_vos;
+  /*! Indicates whether the vos data structure is owned, i.e., explicitly
+   * allocated. If the vos data structure is owned, it should be destructed
+   * when this geometry node is destructed.
+   */
+  Boolean m_owned_vos;
 
   /*! Obrain the Voronoi diagram */
   Voronoi_on_sphere * get_vos() { return m_vos; }

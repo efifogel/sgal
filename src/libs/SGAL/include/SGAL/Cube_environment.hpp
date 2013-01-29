@@ -109,10 +109,8 @@ public:
 
   /*! Set the left image.
    * \param image (in) the image.
-   * \param owned (in) indicates whether the image is owned. If it is owned,
-   *        a default image is constructed and destructed by the construct.
    */
-  void set_left_image(Image* image, Boolean owned = false);
+  void set_left_image(Image* image);
 
   /*! Obtain the (non const) left image. */
   Image* get_left_image();
@@ -122,10 +120,8 @@ public:
 
   /*! Set the right image.
    * \param image (in) the image.
-   * \param owned (in) indicates whether the image is owned. If it is owned, 
-   *        a default image is constructed and destructed by the construct.
    */
-  void set_right_image(Image* image, Boolean owned = false);
+  void set_right_image(Image* image);
 
   /*! Obtain the (non const) right image. */
   Image* get_right_image();
@@ -135,10 +131,8 @@ public:
 
   /*! Set the bottom image.
    * \param image (in) the image.
-   * \param owned (in) indicates whether the image is owned. If it is owned, 
-   *        a default image is constructed and destructed by the construct.
    */
-  void set_front_image(Image* image, Boolean owned = false);
+  void set_front_image(Image* image);
 
   /*! Obtain the (non const) front image. */
   Image* get_front_image();
@@ -148,10 +142,8 @@ public:
 
   /*! Set the top image.
    * \param image (in) the image.
-   * \param owned (in) indicates whether the image is owned. If is it owned, 
-   *        a default image is constructed and destructed by the construct.
    */
-  void set_back_image(Image* image, Boolean owned = false);
+  void set_back_image(Image* image);
 
   /*! Obtain the (non const) back image. */
   Image* get_back_image();
@@ -161,10 +153,8 @@ public:
   
   /*! Set the back image.
    * \param image (in) the image.
-   * \param owned (in) indicates whether the image is owned. If it is owned, 
-   *        a default image is constructed and destructed by the construct.
    */
-  void set_bottom_image(Image* image, Boolean owned = false);
+  void set_bottom_image(Image* image);
 
   /*! Obtain the (non const) bottom image. */
   Image* get_bottom_image();
@@ -174,10 +164,8 @@ public:
   
   /*! Set the front image.
    * \param image (in) the image.
-   * \param owned (in) indicates whether the image is owned. If it is owned, 
-   *        a default image is constructed and destructed by the construct.
    */
-  void set_top_image(Image* image, Boolean owned = false);
+  void set_top_image(Image* image);
 
   /*! Obtain the (non const) top image. */
   Image* get_top_image();

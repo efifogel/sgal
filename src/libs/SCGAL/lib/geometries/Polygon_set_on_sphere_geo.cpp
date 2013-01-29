@@ -54,13 +54,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Polygon_set_on_sphere_geo::s_tag =
-  "PolygonSetOnSphere";
-std::string Polygon_set_on_sphere_geo::s_operation_types[] = {"complement", 
-                                                              "intersection", 
-                                                              "union", 
-                                                              "difference", 
-                                                              "symmetric_difference"};
+std::string Polygon_set_on_sphere_geo::s_tag = "PolygonSetOnSphere";
+
+std::string Polygon_set_on_sphere_geo::s_operation_types[] = {
+  "complement", 
+  "intersection", 
+  "union", 
+  "difference", 
+  "symmetric_difference"
+};
 
 Container_proto * Polygon_set_on_sphere_geo::s_prototype = NULL;
 
@@ -75,14 +77,11 @@ Polygon_set_on_sphere_geo(Boolean proto) :
   Arrangement_on_sphere_marked_geo(proto), m_operation_type(NUM_OF_OPERATIONS)
 {
   m_aos = &m_polygon_set.arrangement();
-  m_own_aos = SGAL_FALSE;
+  m_owned_aos = false;
 }
 
 /*! Destructor */
-Polygon_set_on_sphere_geo::~Polygon_set_on_sphere_geo()
-{
-  clear();
-}
+Polygon_set_on_sphere_geo::~Polygon_set_on_sphere_geo() { clear(); }
 
 /*! \brief initializes the container prototype */
 void Polygon_set_on_sphere_geo::init_prototype()

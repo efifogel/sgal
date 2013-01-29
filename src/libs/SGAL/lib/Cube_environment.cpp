@@ -177,57 +177,63 @@ Uint Cube_environment::get_component_count() const
 }
 
 /*! \brief sets the left image. */
-void Cube_environment::set_left_image(Image* image, Boolean owned)
+void Cube_environment::set_left_image(Image* image)
 {
-  if (m_images[LEFT_IMAGE].second && m_images[LEFT_IMAGE].first)
-    delete m_images[LEFT_IMAGE].first;
+  if (m_images[LEFT_IMAGE].second) {
+    if (m_images[LEFT_IMAGE].first) delete m_images[LEFT_IMAGE].first;
+    m_images[LEFT_IMAGE].second = false; 
+  }
   m_images[LEFT_IMAGE].first = image;
-  m_images[LEFT_IMAGE].second = owned; 
 }  
 
 /*! \brief sets the right image. */
-void Cube_environment::set_right_image(Image* image, Boolean owned)
+void Cube_environment::set_right_image(Image* image)
 {
-  if (m_images[RIGHT_IMAGE].second && m_images[RIGHT_IMAGE].first)
-    delete m_images[RIGHT_IMAGE].first;
+  if (m_images[RIGHT_IMAGE].second) {
+    if (m_images[RIGHT_IMAGE].first) delete m_images[RIGHT_IMAGE].first;
+    m_images[RIGHT_IMAGE].second = false; 
+  }
   m_images[RIGHT_IMAGE].first = image;
-  m_images[RIGHT_IMAGE].second = owned; 
 }  
 
 /*! \brief sets the front image. */
-void Cube_environment::set_front_image(Image* image, Boolean owned)
+void Cube_environment::set_front_image(Image* image)
 {
-  if (m_images[FRONT_IMAGE].second && m_images[FRONT_IMAGE].first)
-    delete m_images[FRONT_IMAGE].first;
+  if (m_images[FRONT_IMAGE].second) {
+    if (m_images[FRONT_IMAGE].first) delete m_images[FRONT_IMAGE].first;
+    m_images[FRONT_IMAGE].second = false; 
+  }
   m_images[FRONT_IMAGE].first = image;
-  m_images[FRONT_IMAGE].second = owned; 
 }  
 
 /*! \brief sets the back image. */
-void Cube_environment::set_back_image(Image* image, Boolean owned)
+void Cube_environment::set_back_image(Image* image)
 {
-  if (m_images[BACK_IMAGE].second && m_images[BACK_IMAGE].first)
-    delete m_images[BACK_IMAGE].first;
+  if (m_images[BACK_IMAGE].second) {
+    if (m_images[BACK_IMAGE].first) delete m_images[BACK_IMAGE].first;
+    m_images[BACK_IMAGE].second = false; 
+  }
   m_images[BACK_IMAGE].first = image;
-  m_images[BACK_IMAGE].second = owned; 
 }  
 
 /*! \brief sets the bottom image. */
-void Cube_environment::set_bottom_image(Image* image, Boolean owned)
+void Cube_environment::set_bottom_image(Image* image)
 {
-  if (m_images[BOTTOM_IMAGE].second && m_images[BOTTOM_IMAGE].first)
-    delete m_images[BOTTOM_IMAGE].first;
+  if (m_images[BOTTOM_IMAGE].second) {
+    if (m_images[BOTTOM_IMAGE].first) delete m_images[BOTTOM_IMAGE].first;
+    m_images[BOTTOM_IMAGE].second = false; 
+  }
   m_images[BOTTOM_IMAGE].first = image;
-  m_images[BOTTOM_IMAGE].second = owned; 
 }  
 
 /*! \brief sets the top image. */
-void Cube_environment::set_top_image(Image* image, Boolean owned)
+void Cube_environment::set_top_image(Image* image)
 {
-  if (m_images[TOP_IMAGE].second && m_images[TOP_IMAGE].first)
-    delete m_images[TOP_IMAGE].first;
+  if (m_images[TOP_IMAGE].second) {
+    if (m_images[TOP_IMAGE].first) delete m_images[TOP_IMAGE].first;
+    m_images[TOP_IMAGE].second = false; 
+  }
   m_images[TOP_IMAGE].first = image;
-  m_images[TOP_IMAGE].second = owned; 
 }  
 
 SGAL_END_NAMESPACE

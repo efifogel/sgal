@@ -62,17 +62,21 @@ REGISTER_TO_FACTORY(Arrangement_on_sphere_graph_geo,
 Arrangement_on_sphere_graph_geo::
 Arrangement_on_sphere_graph_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
-  m_own_aos(SGAL_FALSE),
+  m_owned_aos(false),
   m_aos(NULL)
-{
-  if (!proto) create_renderers();
-}
+{ if (!proto) create_renderers(); }
 
 /*! Destructor */
 Arrangement_on_sphere_graph_geo::~Arrangement_on_sphere_graph_geo()
 {
   clear();
-  if (m_aos && m_own_aos) delete m_aos;
+  if (m_owned_aos) {
+    if (m_aos) {
+      delete m_aos;
+      m_aos = NULL;
+    }
+    m_owned_aos = false;
+  }
 }
 
 /*! \brief initializes the container prototype */
@@ -149,7 +153,8 @@ void Arrangement_on_sphere_graph_geo::clean()
   m_dirty = false;
   if (!m_aos) {
     m_aos = new Aos_graph;
-    m_own_aos = SGAL_TRUE;
+    SGAL_assertion(m_aos);
+    m_owned_aos = true;
   }
   insert_all(m_aos);
 #if 0

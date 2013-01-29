@@ -130,8 +130,11 @@ private:
   /*! The node prototype */
   static Container_proto * s_prototype;
 
-  /*! Indicates whther this node owns (allocated) the envelope data structure */
-  Boolean m_own_envelope;
+  /*! Indicates whether the envelope data structure is owned, i.e., explicitly
+   * allocated. If the envelope data structure is owned, it should be 
+   * destructed when this geometry node is destructed.
+   */
+  Boolean m_owned_envelope;
 
   /*! The lower envelope data structure */
   Envelope_diagram_2 * m_envelope;

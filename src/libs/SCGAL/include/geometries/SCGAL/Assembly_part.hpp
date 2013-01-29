@@ -128,18 +128,20 @@ private:
   /*! The list of Sgm geometries */
   Sgm_geo_list m_sgm_geos;
 
-  /*! A list of flags that indicates whether the corresponding geomtery
-   * was allocated explicitly, and should be explicitly freed.
+  /*! A list of flags that indicates whether the corresponding geomtery is 
+   * owned, i.e., allocated explicitly. If it is owned it should be explicitly
+   * deallocated.
    */
-  Boolean_list m_own_sgm_geos;
+  Boolean_list m_owned_sgm_geos;
 
   /*! The list of Sgm appearances */
   Appearance_list m_sgm_apps;
 
-  /*! A list of flags that indicates whether the corresponding appearance
-   * was allocated explicitly, and should be explicitly freed.
+  /*! A list of flags that indicates whether the corresponding appearance is
+   * owned, i.e., allocated explicitly. If it is owned it should be explicitly
+   * deallocated.
    */
-  Boolean_list m_own_sgm_aps;
+  Boolean_list m_owned_sgm_aps;
   
 };
 

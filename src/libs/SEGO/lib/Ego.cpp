@@ -89,7 +89,7 @@ Ego::Ego(Boolean proto) :
   m_dirty_voxels(true),
   m_dirty_tiling(true),
   m_dirty_parts(true),
-  m_own_parts(false),
+  m_owned_parts(false),
   m_scene_graph(NULL)
 {
   // This is temp code until we have something that can visualize it better.  
@@ -125,14 +125,14 @@ void Ego::clear_parts()
     delete transform;
     remove_child(transform_node);
   }
-  m_own_parts = false;
+  m_owned_parts = false;
 }
 
 /*! \brief clear the internal representation and auxiliary data structures
  */
 void Ego::clear()
 {
-  if (m_own_parts) clear_parts();
+  if (m_owned_parts) clear_parts();
   
   m_dirty_sphere_bound = true;
   m_dirty_voxels = true;
@@ -373,7 +373,7 @@ void Ego::clean_parts()
 {
   m_dirty_parts = false;
   m_dirty_sphere_bound = true;
-  m_own_parts = true;
+  m_owned_parts = true;
 
   const double dx = m_voxel_length;
   const double dy = m_voxel_width;

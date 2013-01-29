@@ -159,10 +159,11 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  /*! Indicates whether the lines-through-segments data member is owned,
-   * and thus should be deleted.
+  /*! Indicates whether the lts data structure is owned, i.e., explicitly
+   * allocated. If the lts data structure is owned, it should be destructed
+   * when this geometry node is destructed.
    */
-  Boolean m_own_lts;
+  Boolean m_owned_lts;
   
   /* The internal Lines Through Segments data structutre */
   Lines_through_segments_3* m_lts;

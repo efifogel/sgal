@@ -280,8 +280,6 @@ public:
   /*! Return the past-the-end pointer of the containers */  
   Container_map_iter instances_end() { return m_instances.end(); }
   
-  Container_vector get_root_containers();
-
   /*! Obtain the navigation root. It's a node of type Transform */
   Transform* get_navigation_root() { return m_navigation_root; }
 

@@ -122,7 +122,7 @@ public:
   /*! Set an appearance.
    * \param appearance the new appearance.
    */
-  void set_appearance(Appearance* appearance, Boolean owned = false);
+  void set_appearance(Appearance* appearance);
 
   /*! Obtain the geometry.
    * \retrun the geometry.

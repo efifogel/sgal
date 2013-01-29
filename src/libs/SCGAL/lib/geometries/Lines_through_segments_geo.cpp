@@ -64,7 +64,7 @@ REGISTER_TO_FACTORY(Lines_through_segments_geo, "Lines_through_segments_geo");
 /*! Constructor */
 Lines_through_segments_geo::Lines_through_segments_geo(Boolean proto) :
   Geometry(proto),
-  m_own_lts(false),
+  m_owned_lts(false),
   m_lts(NULL),
   m_segments(NULL),
   m_dirty(true),
@@ -76,7 +76,13 @@ Lines_through_segments_geo::Lines_through_segments_geo(Boolean proto) :
 Lines_through_segments_geo::~Lines_through_segments_geo()
 {
   clear();
-  if (m_lts && m_own_lts) delete m_lts;
+  if (m_owned_lts) {
+    if (m_lts) {
+      delete m_lts;
+      m_lts = NULL;
+    }
+    m_owned_lts = false;
+  }
 }
 
 /*! \brief clear the internal representation and auxiliary data structures
@@ -145,7 +151,8 @@ void Lines_through_segments_geo::clean()
   // std::cout << "Lines_through_segments_geo::clean()" << std::endl;
   if (!m_lts) {
     m_lts = new Lines_through_segments_3(m_alg_kernel, m_rat_kernel);
-    m_own_lts = true;
+    SGAL_assertion(m_lts);
+    m_owned_lts = true;
   }
   
   if (m_in_segments_dirty) {

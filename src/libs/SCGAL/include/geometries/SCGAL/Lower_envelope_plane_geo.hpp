@@ -175,8 +175,11 @@ private:
   /*! The node prototype */
   static Container_proto * s_prototype;
 
-  /*! Indicates whther this node owns (allocated) the envelope data structure */
-  Boolean m_own_envelope;
+  /*! Indicates whether the envelope data structure is owned, i.e., explicitly
+   * allocated. If the envelope data structure is owned, it should be 
+   * destructed when this geometry node is destructed.
+   */
+  Boolean m_owned_envelope;
 
   /*! The lower envelope data structure */
   Envelope_diagram_2 * m_envelope;
@@ -187,8 +190,11 @@ private:
   /*! The color array */
   Color_array * m_color_array;
   
-  /*! Indicates whther this node owns (allocated) the bounding polygon */
-  Boolean m_own_bounding_polygon;
+  /*! Indicates whether the bounding polygon is owned, i.e., explicitly
+   * allocated. If the bounding polygon is owned, it should be destructed
+   * when this geometry node is destructed.
+   */
+  Boolean m_owned_bounding_polygon;
   
   /*! The bounding polygon of the lower envelope */
   Exact_coord2_array * m_bounding_polygon;

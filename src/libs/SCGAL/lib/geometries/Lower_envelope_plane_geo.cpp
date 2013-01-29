@@ -64,18 +64,26 @@ REGISTER_TO_FACTORY(Lower_envelope_plane_geo, "Lower_envelope_plane_geo");
 /*! Constructor */
 Lower_envelope_plane_geo::Lower_envelope_plane_geo(Boolean proto) :
   Lower_envelope_geo(proto),
-  m_own_envelope(SGAL_FALSE),
+  m_owned_envelope(false),
   m_envelope(NULL),
   m_plane_array(NULL),
   m_color_array(NULL),
-  m_own_bounding_polygon(SGAL_FALSE),
+  m_owned_bounding_polygon(false),
   m_bounding_polygon(NULL),
   m_draw_patches(s_def_draw_patches)
 {}
 
 /*! Destructor */
 Lower_envelope_plane_geo::~Lower_envelope_plane_geo()
-{ if (m_envelope && m_own_envelope) delete m_envelope; }
+{
+  if (m_owned_envelope) {
+    if (m_envelope) {
+      delete m_envelope;
+      envelope = NULL;
+    }
+    m_owned_envelope = false;
+  }
+}
 
 /*! \brief cleans the polyhedron data structure */
 void Lower_envelope_plane_geo::clean()
@@ -84,7 +92,8 @@ void Lower_envelope_plane_geo::clean()
 
   if (!m_envelope) {
     m_envelope = new Envelope_diagram_2;
-    m_own_envelope = SGAL_TRUE;
+    SGAL_assertion(m_envelope);
+    m_owned_envelope = true;
   }
 
   std::list<Plane_3> planes;

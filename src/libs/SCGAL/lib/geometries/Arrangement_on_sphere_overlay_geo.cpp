@@ -64,7 +64,7 @@ REGISTER_TO_FACTORY(Arrangement_on_sphere_overlay_geo,
 Arrangement_on_sphere_overlay_geo::
 Arrangement_on_sphere_overlay_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
-  m_own_aos(SGAL_FALSE),
+  m_owned_aos(false),
   m_aos(NULL)
 {
   if (!proto) create_renderers();
@@ -74,7 +74,13 @@ Arrangement_on_sphere_overlay_geo(Boolean proto) :
 Arrangement_on_sphere_overlay_geo::~Arrangement_on_sphere_overlay_geo()
 {
   clear();
-  if (m_aos && m_own_aos) delete m_aos;
+  if (m_owned_aos) {
+    if (m_aos) {
+      delete m_aos;
+      m_aos = NULL;
+    }
+    m_owned_aos = false;
+  }
 }
 
 /*! \brief initializes the container prototype */
@@ -151,7 +157,8 @@ void Arrangement_on_sphere_overlay_geo::clean()
   m_dirty = false;
   if (!m_aos) {
     m_aos = new Aos_overlay;
-    m_own_aos = SGAL_TRUE;
+    SGAL_assertion(m_aos);
+    m_owned_aos = true;
   }
   insert_all(m_aos);
   Aos_overlay::Halfedge_iterator hei;

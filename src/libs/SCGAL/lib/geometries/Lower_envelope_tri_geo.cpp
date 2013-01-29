@@ -62,7 +62,7 @@ REGISTER_TO_FACTORY(Lower_envelope_tri_geo, "Lower_envelope_tri_geo");
 /*! Constructor */
 Lower_envelope_tri_geo::Lower_envelope_tri_geo(Boolean proto) :
   Lower_envelope_geo(proto),
-  m_own_envelope(SGAL_FALSE),
+  m_owned_envelope(false),
   m_envelope(NULL)
 {}
 
@@ -77,7 +77,8 @@ void Lower_envelope_tri_geo::clean()
 
   if (!m_envelope) {
     m_envelope = new Envelope_diagram_2;
-    m_own_envelope = SGAL_TRUE;
+    SGAL_assertion(m_envelope);
+    m_owned_envelope = true;
   }
 
   std::list<Triangle_3> triangles;

@@ -75,7 +75,7 @@ REGISTER_TO_FACTORY(Spherical_gaussian_map_colored_geo,
 Spherical_gaussian_map_colored_geo::
 Spherical_gaussian_map_colored_geo(Boolean proto) :
   Spherical_gaussian_map_base_geo(proto),
-  m_own_sgm(false),
+  m_owned_sgm(false),
   m_sgm(NULL),
   m_polyhedron(NULL),
   m_minkowski_sum(false),
@@ -102,7 +102,13 @@ Spherical_gaussian_map_colored_geo(const Spherical_gaussian_map_colored_geo & gm
 Spherical_gaussian_map_colored_geo::~Spherical_gaussian_map_colored_geo()
 {
   m_sgm_nodes.clear();
-  if (m_sgm && m_own_sgm) delete m_sgm;
+  if (m_owned_sgm) {
+    if (m_sgm) {
+      delete m_sgm;
+      m_sgm = NULL;
+    }
+    m_owned_sgm = false;
+  }
 }
 
 /*! Clean the data structure */
@@ -110,7 +116,8 @@ void Spherical_gaussian_map_colored_geo::clean()
 {
   if (!m_sgm) {
     m_sgm = new Sgm;
-    m_own_sgm = SGAL_TRUE;
+    SGAL_assertion(m_sgm);
+    m_owned_sgm = true;
   }
   Mesh_set::clean();
   if (m_minkowski_sum) {

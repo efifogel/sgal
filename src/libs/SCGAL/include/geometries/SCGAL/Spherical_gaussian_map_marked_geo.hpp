@@ -310,8 +310,11 @@ private:
   static const Float s_def_marked_vertex_radius;
   static const Float s_def_marked_edge_radius;
 
-  /*! Indicates whther this node owns (allocated) the sgm data structure */
-  Boolean m_own_sgm;
+  /*! Indicates whether the sgm data structure is owned, i.e., explicitly
+   * allocated. If the sgm data structure is owned, it should be destructed
+   * when this geometry node is destructed.
+   */
+  Boolean m_owned_sgm;
 
   /*! The cubical Gaussian map representation */
   Sgm * m_sgm;

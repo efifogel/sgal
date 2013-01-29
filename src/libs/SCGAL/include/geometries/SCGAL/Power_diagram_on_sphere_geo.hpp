@@ -128,11 +128,11 @@ public:
   virtual ~Power_diagram_on_sphere_geo();
 
   /* Construct the prototype */
-  static Power_diagram_on_sphere_geo * prototype()
+  static Power_diagram_on_sphere_geo* prototype()
   { return new Power_diagram_on_sphere_geo(SGAL_TRUE); }
 
   /*! Clone */
-  virtual Container * clone()
+  virtual Container* clone()
   { return new Power_diagram_on_sphere_geo(); }
 
   /*! Initialize the container prototype */
@@ -142,15 +142,15 @@ public:
   virtual void delete_prototype(); 
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the node attributes */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! Is the representation empty ? */
   virtual Boolean is_empty() const { return m_vos->is_empty(); }
@@ -165,13 +165,13 @@ public:
   virtual void clean_renderer();
   
   /*! Set the coordinate array */
-  void set_coeff_array(Coeff_array * coeff_array);
+  void set_coeff_array(Coeff_array* coeff_array);
 
   /*! Obtain the coordinate array */
-  Coeff_array * get_coeff_array() const;
+  Coeff_array* get_coeff_array() const;
 
   /*! Obrain the power diagram */
-  Voronoi_on_sphere * get_vos() { return m_vos; }
+  Voronoi_on_sphere* get_vos() { return m_vos; }
 
   /*! Obtain the flag that indicates whether to draw the sites */
   Boolean get_draw_sites() const { return m_draw_sites; }
@@ -241,61 +241,64 @@ protected:
   class Inflated_site_renderer : public Arrangement_renderer::Renderer {
   private:
     /*! The arrangement geometry */
-    Power_diagram_on_sphere_geo & m_geo;
+    Power_diagram_on_sphere_geo& m_geo;
     
   public:
     /*! Constructor */
-    Inflated_site_renderer(Power_diagram_on_sphere_geo & geo) : m_geo(geo) {}
+    Inflated_site_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
     /*! Drawer operator */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
 
   /*! A functor that draws the sites */
   class Site_renderer : public Arrangement_renderer::Renderer {
   private:
     /*! The arrangement geometry */
-    Power_diagram_on_sphere_geo & m_geo;
+    Power_diagram_on_sphere_geo& m_geo;
     
   public:
     /*! Constructor */
-    Site_renderer(Power_diagram_on_sphere_geo & geo) : m_geo(geo) {}
+    Site_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
     /*! Draw the sites */
-    virtual void operator()(Draw_action * action) { m_geo.draw_sites(action); }
+    virtual void operator()(Draw_action* action) { m_geo.draw_sites(action); }
   };
 
   class Site_other_renderer : public Arrangement_renderer::Renderer {
   private:
     /*! The arrangement geometry */
-    Power_diagram_on_sphere_geo & m_geo;
+    Power_diagram_on_sphere_geo& m_geo;
     
   public:
     /*! Constructor */
-    Site_other_renderer(Power_diagram_on_sphere_geo & geo) : m_geo(geo) {}
+    Site_other_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
     /*! Drawer operator */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
     
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The container prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
-  /*! Indicates whther this node owns (allocated) the aos data structure */
-  Boolean m_own_vos;
+  /*! Indicates whether the vos data structure is owned, i.e., explicitly
+   * allocated. If the vos data structure is owned, it should be destructed
+   * when this geometry node is destructed.
+   */
+  Boolean m_owned_vos;
 
   /*! The arrangement of great-circle arcs on a sphere */
-  Voronoi_on_sphere * m_vos;
+  Voronoi_on_sphere* m_vos;
 
   /*! An array of direction ccordinates */
-  Coeff_array * m_coeff_array;
+  Coeff_array* m_coeff_array;
 
   /*! Indicates whether the rendering of edges is enabled or not */
   Boolean m_site_enabled;
@@ -319,13 +322,13 @@ private:
   Float m_site_delta_angle;
   
   /*! The site renderer */
-  Inflated_site_renderer * m_inflated_site_renderer;
+  Inflated_site_renderer* m_inflated_site_renderer;
 
   /*! The site renderer */
-  Site_renderer * m_site_renderer;
+  Site_renderer* m_site_renderer;
   
   /*! The non-flat site renderer */
-  Site_other_renderer * m_site_other_renderer;
+  Site_other_renderer* m_site_other_renderer;
   
   /*! Default values */
   static const Boolean s_def_site_enabled;
@@ -339,28 +342,28 @@ private:
   /*! Draw the power diagram on sphere opaque
    * \param action
    */
-  virtual void draw_opaque(Draw_action * action);
+  virtual void draw_opaque(Draw_action* action);
 
   /*! Draw the sites
    * \param action
    */
-  void draw_sites(Draw_action * action);
+  void draw_sites(Draw_action* action);
   
   /*! Draw a site
    * \param action
    * \param point
    */
-  void draw_site(Draw_action * action, Exact_plane_3 & plane);
+  void draw_site(Draw_action* action, Exact_plane_3& plane);
 
   /*! Draw the arrangement vertices
    * \param action
    */
-  void draw_aos_vertices(Draw_action * action);
+  void draw_aos_vertices(Draw_action* action);
   
   /*! Draw the arrangement edges
    * \param action
    */
-  void draw_aos_edges(Draw_action * action);
+  void draw_aos_edges(Draw_action* action);
 
   /*! Create the renderers */
   void create_renderers();

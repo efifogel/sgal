@@ -59,11 +59,11 @@ REGISTER_TO_FACTORY(Arrangement_on_sphere_sim_geo,
 
 /*! Default values */
 const Boolean
-Arrangement_on_sphere_sim_geo::s_def_draw_labeled_vertex(SGAL_FALSE);
+Arrangement_on_sphere_sim_geo::s_def_draw_labeled_vertex(false);
 const Boolean
-Arrangement_on_sphere_sim_geo::s_def_draw_labeled_edge(SGAL_FALSE);
+Arrangement_on_sphere_sim_geo::s_def_draw_labeled_edge(false);
 const Boolean
-Arrangement_on_sphere_sim_geo::s_def_draw_labeled_face(SGAL_FALSE);
+Arrangement_on_sphere_sim_geo::s_def_draw_labeled_face(false);
 
 const Vector3f
 Arrangement_on_sphere_sim_geo::s_def_labeled_vertex_color(0.5f, 0, 0);
@@ -76,11 +76,11 @@ Arrangement_on_sphere_sim_geo::s_def_labeled_face_color(0, 0, 0.5f);
 Arrangement_on_sphere_sim_geo::
 Arrangement_on_sphere_sim_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
-  m_own_aos(SGAL_FALSE),
+  m_owned_aos(false),
   m_aos(NULL),
   m_time(0),
-  m_resume(SGAL_FALSE),
-  m_suspend(SGAL_FALSE),
+  m_resume(false),
+  m_suspend(false),
   m_draw_labeled_vertex(s_def_draw_labeled_vertex),
   m_draw_labeled_edge(s_def_draw_labeled_edge),
   m_draw_labeled_face(s_def_draw_labeled_face),
@@ -100,7 +100,14 @@ Arrangement_on_sphere_sim_geo::~Arrangement_on_sphere_sim_geo()
 {
   Tick_event::unregister(this);
   clear();
-  if (m_aos && m_own_aos) delete m_aos;
+
+  if (m_owned_aos) {
+    if (m_aos) {
+      delete m_aos;
+      m_aos = NULL;
+    }
+    m_owned_aos = false;
+  }
 }
 
 /*! \brief initializes the container prototype */
@@ -243,8 +250,9 @@ void Arrangement_on_sphere_sim_geo::clean()
   m_dirty = false;
   if (!m_aos) {
     m_aos = new Aos_labeled;
+    SGAL_assertion(m_aos);
     m_observer.attach(*m_aos);
-    m_own_aos = SGAL_TRUE;
+    m_owned_aos = true;
   }
   insert_all(m_aos);
   m_num_labels = m_aos->number_of_vertices() + m_aos->number_of_edges();

@@ -893,9 +893,9 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
 
   // Initialize the normal array.
   if (!m_normal_array) {
-    Normal_array* na = new Normal_array(m_coord_array->size());
-    SGAL_assertion(na);
-    set_normal_array(na, true);
+    m_normal_array = new Normal_array(m_coord_array->size());
+    SGAL_assertion(m_normal_array);
+    m_owned_normal_array = true;
   }
 
   // Calculate the weighted normals:
@@ -976,9 +976,9 @@ void Indexed_face_set::calculate_normal_per_polygon()
   SGAL_assertion(m_coord_array);
 
   if (!m_normal_array) {
-    Normal_array* na = new Normal_array();
-    SGAL_assertion(na);
-    set_normal_array(na, true);
+    m_normal_array = new Normal_array();
+    SGAL_assertion(m_normal_array);
+    m_owned_normal_array = true;
   }
   
   calculate_normal_per_polygon(m_normal_array);
@@ -993,10 +993,9 @@ void Indexed_face_set::clean_tex_coords()
   SGAL_assertion(m_coord_array);
 
   if (!m_tex_coord_array) {
-    Tex_coord_array* tex_coord_array =
-      new Tex_coord_array(m_coord_array->size());
-    SGAL_assertion(tex_coord_array);
-    set_tex_coord_array(tex_coord_array, true);
+    m_tex_coord_array = new Tex_coord_array(m_coord_array->size());
+    SGAL_assertion(m_tex_coord_array);
+    m_owned_tex_coord_array = true;
   }
   
   Uint num_coords = m_coord_array->size();

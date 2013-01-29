@@ -102,11 +102,11 @@ void Assembly_part::print_info(std::ostream& out)
 void Assembly_part::clear()
 {
   Sgm_geo_iter is;
-  std::list<Boolean>::iterator ib = m_own_sgm_geos.begin();
+  std::list<Boolean>::iterator ib = m_owned_sgm_geos.begin();
   for (is = m_sgm_geos.begin(); is != m_sgm_geos.end(); ++is, ++ib) {
     if (*ib) delete (*is);
   }
-  m_own_sgm_geos.clear();
+  m_owned_sgm_geos.clear();
   m_sgm_geos.clear();
   m_sgm_apps.clear();
   
@@ -154,7 +154,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
     Sgm_geo* sgm_geo = dynamic_cast<Sgm_geo*>(shape->get_geometry());
     if (sgm_geo) {
       m_sgm_geos.push_back(sgm_geo);
-      m_own_sgm_geos.push_back(false);
+      m_owned_sgm_geos.push_back(false);
       m_sgm_apps.push_back(app);
       return;
     }
@@ -190,7 +190,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
         // We need to clean, because the Polyhedron is local
         sgm_geo->clean();
         m_sgm_geos.push_back(sgm_geo);
-        m_own_sgm_geos.push_back(true);
+        m_owned_sgm_geos.push_back(true);
         m_sgm_apps.push_back(app);
       }
       std::cout << "# pieces: " << m_sgm_apps.size() << std::endl;
@@ -213,7 +213,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
         // We need to clean, because the Polyhedron is local
         sgm_geo->clean();
         m_sgm_geos.push_back(sgm_geo);
-        m_own_sgm_geos.push_back(true);
+        m_owned_sgm_geos.push_back(true);
         m_sgm_apps.push_back(app);
       }
       return;

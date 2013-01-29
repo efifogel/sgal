@@ -89,7 +89,7 @@ const Float Power_diagram_on_sphere_geo::s_def_site_delta_angle(.1f);
 Power_diagram_on_sphere_geo::
 Power_diagram_on_sphere_geo(Boolean proto) :
   Geodesic_voronoi_on_sphere_geo(proto),
-  m_own_vos(SGAL_FALSE),
+  m_owned_vos(false),
   m_vos(NULL),
   m_site_enabled(s_def_site_enabled),
   m_site_style(s_def_site_style),
@@ -109,7 +109,13 @@ Power_diagram_on_sphere_geo::~Power_diagram_on_sphere_geo()
   if (m_inflated_site_renderer) delete m_inflated_site_renderer;
   if (m_site_renderer) delete m_site_renderer;
   if (m_site_other_renderer) delete m_site_other_renderer;
-  if (m_vos && m_own_vos) delete m_vos;
+  if (m_owned_vos) {
+    if (m_vos) {
+      delete m_vos;
+      m_vos = NULL;
+    }
+    m_owned_vos = false;
+  }
 }
 
 /*! \brief initializes the container prototype */
@@ -233,7 +239,8 @@ void Power_diagram_on_sphere_geo::clean()
 
   if (!m_vos) {
     m_vos = new Voronoi_on_sphere;
-    m_own_vos = SGAL_TRUE;
+    SGAL_assertion(m_vos);
+    m_owned_vos = true;
   }
   
   Exact_kernel kernel;

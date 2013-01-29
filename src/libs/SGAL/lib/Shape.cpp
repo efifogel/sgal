@@ -105,16 +105,13 @@ Shape::~Shape()
 /*! \brief sets the appearance of the object.
  * @param app the appearance
  */
-void Shape::set_appearance(Appearance* app, Boolean owned)
+void Shape::set_appearance(Appearance* app)
 {
   if (m_owned_appearance) {
-    if (m_appearance) {
-      delete m_appearance;
-      m_appearance = NULL;
-    }
+    if (m_appearance) delete m_appearance;
+    m_owned_appearance = false;
   }
   m_appearance = app;
-  m_owned_appearance = owned;
 }
 
 /*! \brief adds a geometry to the shape at the end of the list.
@@ -419,16 +416,15 @@ void Shape::init()
 /*! \brief creates the default appearance. */
 void Shape::create_default_appearance() 
 {
-  Appearance* app = new Appearance();
-  SGAL_assertion(app);
-  set_appearance(app, true);
+  m_appearance = new Appearance();
+  SGAL_assertion(m_appearance);
+  m_owned_appearance = true;
   m_is_initialized = true;
 
   //! \todo
 #if 0
   Text* text = dynamic_cast<Text*>(m_geometry);
-  if (text)
-    text->set_appearance(m_appearance);
+  if (text) text->set_appearance(m_appearance);
 #endif
 }
 

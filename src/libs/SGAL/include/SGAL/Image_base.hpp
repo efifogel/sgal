@@ -221,10 +221,8 @@ public:
   
   /*! Set the image pixel space.
    * \param pixels the image pixel space.
-   * \param owned indicates whether the image pixel space is owned. If it is
-   *        owned it should be destructed when the image is destructed.
    */
-  void set_pixels(void* pixels, Boolean owned = false);
+  void set_pixels(void* pixels);
 
   /*! Obtain the image pixel data. */
   virtual void* get_pixels();

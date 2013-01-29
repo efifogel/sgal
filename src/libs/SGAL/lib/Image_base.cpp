@@ -570,9 +570,13 @@ Image_base::Image_base(Boolean proto) :
 /*! Destructor */
 Image_base::~Image_base()
 {
-  if (m_owned_pixels && m_pixels) delete [] (char*) m_pixels;
-  m_pixels = NULL;
-  m_owned_pixels = false;
+  if (m_owned_pixels) {
+    if (m_pixels) {
+      delete [] (char*) m_pixels;
+      m_pixels = NULL;
+    }
+    m_owned_pixels = false;
+  }
 }
 
 /*! \brief initializess the node prototype. */
@@ -676,11 +680,13 @@ Uint Image_base::get_size() const
 }
 
 /*! \brief sets the image pixel data. */
-void Image_base::set_pixels(void* pixels, Boolean owned)
+void Image_base::set_pixels(void* pixels)
 {
-  if (m_owned_pixels && m_pixels) delete [] (char*) m_pixels;
+  if (m_owned_pixels) {
+    if (m_pixels) delete [] (char*) m_pixels;
+    m_owned_pixels = false;
+  }
   m_pixels = pixels;
-  m_owned_pixels = owned;
   m_dirty = false;
 }
 

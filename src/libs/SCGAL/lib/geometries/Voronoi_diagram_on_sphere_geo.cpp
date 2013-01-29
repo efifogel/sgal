@@ -64,7 +64,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Voronoi_diagram_on_sphere_geo::s_tag = "VoronoiDiagramOnSphere";
-Container_proto * Voronoi_diagram_on_sphere_geo::s_prototype = NULL;
+Container_proto* Voronoi_diagram_on_sphere_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Voronoi_diagram_on_sphere_geo,
                     "Voronoi_diagram_on_sphere_geo");
@@ -80,15 +80,13 @@ const Float Voronoi_diagram_on_sphere_geo::s_def_site_delta_angle(0.1f);
 Voronoi_diagram_on_sphere_geo::
 Voronoi_diagram_on_sphere_geo(Boolean proto) :
   Geodesic_voronoi_on_sphere_geo(proto),
-  m_own_vos(SGAL_FALSE),
+  m_owned_vos(false),
   m_vos(NULL),
   m_site_style(s_def_site_style),
   m_site_radius(s_def_site_radius),
   m_site_point_size(s_def_site_point_size),
   m_site_delta_angle(s_def_site_delta_angle)
-{
-  if (!proto) create_renderers();
-}
+{ if (!proto) create_renderers(); }
 
 /*! Destructor */
 Voronoi_diagram_on_sphere_geo::~Voronoi_diagram_on_sphere_geo()
@@ -96,7 +94,13 @@ Voronoi_diagram_on_sphere_geo::~Voronoi_diagram_on_sphere_geo()
   clear();
   if (m_site_renderer) delete m_site_renderer;
   if (m_site_other_renderer) delete m_site_other_renderer;
-  if (m_vos && m_own_vos) delete m_vos;
+  if (m_owned_vos) {
+    if (m_vos) {
+      delete m_vos;
+      m_vos = NULL;
+    }
+    m_owned_vos = false;
+  }
 }
 
 /*! \brief initializes the container prototype */
@@ -188,7 +192,8 @@ void Voronoi_diagram_on_sphere_geo::clean()
 
   if (!m_vos) {
     m_vos = new Voronoi_on_sphere;
-    m_own_vos = SGAL_TRUE;
+    SGAL_assertion(m_vos);
+    m_owned_vos = true;
   }
   Exact_coord_array * exact_coord_array =
     dynamic_cast<Exact_coord_array *>(m_coord_array);

@@ -167,10 +167,10 @@ public:
   virtual void draw_window(SGAL::Window_item* window_item,
                            SGAL::Boolean dont_accumulate);
 
-  /*! Print out the name of this agent (for debugging purposes) */
+  /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify(void);
 
-  /*! Handle tick events */
+  /*! Handle tick events. */
   virtual void handle(SGAL::Tick_event* tick_event);
 
   /*! Set the window manager */

@@ -202,9 +202,9 @@ void Image::clean()
   m_height = height;
   m_format = format;
   Uint size = Image_base::get_size(width, height, format);
-  char* pixels = new char[size];
-  SGAL_assertion(pixels);
-  set_pixels(pixels, true);
+  m_pixels = new char[size];
+  SGAL_assertion(m_pixels);
+  m_owned_pixels = true;
   image.write(0, 0, width, height, magick_map, magick_type, m_pixels);
   
   m_dirty = false;

@@ -198,8 +198,11 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string & get_tag() const { return s_tag; }
 
-  /*! Indicates whther this node owns (allocated) the aos data structure */
-  Boolean m_own_aos;
+  /*! Indicates whether the aos data structure is owned, i.e., explicitly
+   * allocated. If the aos data structure is owned, it should be destructed
+   * when this geometry node is destructed.
+   */
+  Boolean m_owned_aos;
   
   /*! The arrangement of great-circle arcs on a sphere */
   Aos_overlay * m_aos;

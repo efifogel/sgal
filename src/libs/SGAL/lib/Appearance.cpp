@@ -263,11 +263,13 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 }
 
 /*! \brief */
-void Appearance::set_tex_gen(Tex_gen* tex_gen, Boolean owned)
+void Appearance::set_tex_gen(Tex_gen* tex_gen)
 {
-  if (m_owned_tex_gen && m_tex_gen) delete m_tex_gen;
+  if (m_owned_tex_gen) {
+    if (m_tex_gen) delete m_tex_gen;
+    m_owned_tex_gen = false;
+  }
   m_tex_gen = tex_gen;
-  m_owned_tex_gen = owned;
   m_pending.on_bit(Gfx::TEX_GEN);
   m_override.on_bit(Gfx::TEX_GEN);
 }
@@ -281,11 +283,13 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 }
 
 /*! \brief */
-void Appearance::set_material(Material* material, Boolean owned)
+void Appearance::set_material(Material* material)
 {
-  if (m_owned_material && m_material) delete m_material;
+  if (m_owned_material) {
+    if (m_material) delete m_material;
+    m_owned_material = false;
+  }
   m_material = material;
-  m_owned_material = owned;
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
 }
@@ -706,31 +710,40 @@ void Appearance::set_default_texture_attributes()
 void Appearance::clean()
 {
   // Construct a default material
-  if (!m_material) set_material(new Material(), true);
+  if (!m_material) {
+    m_material = new Material();
+    SGAL_assertion(m_material);
+    m_owned_material = true;
+  }
   
   // Setup sphere environment map if requested:
   Sphere_environment* sphere_env =
     dynamic_cast<Sphere_environment*>(get_texture());
   if (sphere_env) {
-    Tex_gen* tex_gen = new Tex_gen();
-    m_owned_tex_gen = true;
-    tex_gen->set_mode_s(Tex_gen::SPHERE_MAP);
-    tex_gen->set_mode_t(Tex_gen::SPHERE_MAP);
-    set_tex_gen(tex_gen, true);
+    if (!m_tex_gen) {
+      m_tex_gen = new Tex_gen();
+      SGAL_assertion(m_tex_gen);
+      m_owned_tex_gen = true;
+    }
+    m_tex_gen->set_mode_s(Tex_gen::SPHERE_MAP);
+    m_tex_gen->set_mode_t(Tex_gen::SPHERE_MAP);
     set_tex_gen_enable(true);
   }
 
   // Setup cube environment map if requested:
   Cube_environment* cube_env = dynamic_cast<Cube_environment*>(get_texture());
   if (cube_env) {
-    Tex_gen* tex_gen = new Tex_gen();
-    // tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
-    // tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
-    // tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
-    tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
-    tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
-    tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
-    set_tex_gen(tex_gen, true);
+    if (!m_tex_gen) {
+      m_tex_gen = new Tex_gen();
+      SGAL_assertion(m_tex_gen);
+      m_owned_tex_gen = true;
+    }
+    // m_tex_gen->set_mode_s(Tex_gen::NORMAL_MAP);
+    // m_tex_gen->set_mode_t(Tex_gen::NORMAL_MAP);
+    // m_tex_gen->set_mode_r(Tex_gen::NORMAL_MAP);
+    m_tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
+    m_tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
+    m_tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
     set_tex_gen_enable(true);
   }
   
