@@ -904,6 +904,8 @@ Gl_wrapper::Gl_wrapper()
   m_gl_token_names[GL_NORMAL_MAP] = "GL_NORMAL_MAP";
   m_gl_token_names[GL_REFLECTION_MAP] = "GL_REFLECTION_MAP";
   m_gl_token_names[GL_TEXTURE_CUBE_MAP] = "GL_TEXTURE_CUBE_MAP";
+  m_gl_token_names[GL_TEXTURE_CUBE_MAP_SEAMLESS] =
+    "GL_TEXTURE_CUBE_MAP_SEAMLESS";
 
   m_gl_token_names[GL_TEXTURE_CUBE_MAP_POSITIVE_X] =
     "GL_TEXTURE_CUBE_MAP_POSITIVE_X";

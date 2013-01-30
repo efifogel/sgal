@@ -42,7 +42,12 @@ Container_proto* Cube_environment::s_prototype = NULL;
 /*! Constructor */
 Cube_environment::Cube_environment(Boolean proto) :
   Texture(proto)
-{ set_target(TEXTURE_CUBE_MAP); }
+{
+  set_target(TEXTURE_CUBE_MAP);
+  set_wrap_s(CLAMP_TO_EDGE);
+  set_wrap_t(CLAMP_TO_EDGE);
+  set_wrap_r(CLAMP_TO_EDGE);
+}
 
 /*! Destructor */
 Cube_environment::~Cube_environment() {}
