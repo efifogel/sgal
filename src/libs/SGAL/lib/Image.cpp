@@ -139,6 +139,8 @@ void* Image::get_pixels()
 /*! \brief cleans the image. */
 void Image::clean()
 {
+  if (m_url.empty()) return;
+  
   std::string fullname;
   
 #if BOOST_VERSION >= 103400
