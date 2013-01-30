@@ -70,7 +70,6 @@ public:
   
   /*! Set the attributes of the texture extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph.
    */
   virtual void set_attributes(Element* elem);
 
