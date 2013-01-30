@@ -42,7 +42,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Indexed_line_set::s_tag = "indexedLineSet";
+std::string Indexed_line_set::s_tag = "IndexedLineSet";
 Container_proto* Indexed_line_set::s_prototype = 0;
 
 // Default values:
