@@ -262,13 +262,11 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
   m_tex_env = tex_env;
 }
 
-/*! \brief */
-void Appearance::set_tex_gen(Tex_gen* tex_gen)
+/*! \brief sets the texture-generation attribute. */
+void Appearance::set_tex_gen(Tex_gen* tex_gen, Boolean owned)
 {
-  if (m_owned_tex_gen) {
-    if (m_tex_gen) delete m_tex_gen;
-    m_owned_tex_gen = false;
-  }
+  if (m_owned_tex_gen && m_tex_gen) delete m_tex_gen;
+  m_owned_tex_gen = owned;
   m_tex_gen = tex_gen;
   m_pending.on_bit(Gfx::TEX_GEN);
   m_override.on_bit(Gfx::TEX_GEN);
@@ -282,13 +280,11 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
   m_tex_gen_enable = tex_gen_enable;
 }
 
-/*! \brief */
-void Appearance::set_material(Material* material)
+/*! \brief sets the material attribute. */
+void Appearance::set_material(Material* material, Boolean owned)
 {
-  if (m_owned_material) {
-    if (m_material) delete m_material;
-    m_owned_material = false;
-  }
+  if (m_owned_material && m_material) delete m_material;
+  m_owned_material = owned;
   m_material = material;
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);

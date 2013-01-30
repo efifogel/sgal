@@ -122,7 +122,7 @@ public:
    *              owned. If it is owned, the texture-generation attribute is
    *              constructed and destructed by the construct.
    */
-  void set_tex_gen(Tex_gen* tex_gen);
+  void set_tex_gen(Tex_gen* tex_gen, Boolean owned = false);
 
   /*! Obtain the texture-generation attribute. */
   Tex_gen* get_tex_gen() const;
@@ -139,7 +139,7 @@ public:
    *              If it is owned, the material attribute is constructed and
    *              destructed by the construct.
    */
-  void set_material(Material* material);
+  void set_material(Material* material, Boolean owned = false);
 
   /*! Obtain the material attribute. */
   Material* get_material() const;
