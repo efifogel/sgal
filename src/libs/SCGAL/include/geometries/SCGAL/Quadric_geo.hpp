@@ -111,9 +111,11 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
   /*! */
   virtual Boolean clean_sphere_bound();
 
-  /*! Determine whether the geometry has color (as opposed to material)
-   */
-  virtual Boolean has_color() const { return false; }  
+  /*! Determine whether the geometry has a color array. */
+  virtual Boolean has_color() const { return m_color_array != NULL; }  
+  
+  /*! Determine whether the geometry has a textture coordinate array. */
+  virtual Boolean has_tex_coord() const { return m_tex_coord_array != NULL; }  
 
   /*! Draw the geometry
    * \param action

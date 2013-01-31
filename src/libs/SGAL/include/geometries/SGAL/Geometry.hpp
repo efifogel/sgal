@@ -105,9 +105,12 @@ public:
    */
   virtual Boolean has_scale();
 
-  /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const = 0;
-  
+  /*! Determine whether the geometry has a color array. */
+  virtual Boolean has_color() const { return false; }
+
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const { return false; }
+
 protected:
   /*! The sphere bound of the node. */
   Sphere_bound m_sphere_bound;

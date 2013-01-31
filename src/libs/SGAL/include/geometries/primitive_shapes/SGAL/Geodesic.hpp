@@ -159,9 +159,6 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-    /*! Determine whether the geometry has color (as opposed to normal) */
-  virtual Boolean has_color() const { return false; }
-
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;

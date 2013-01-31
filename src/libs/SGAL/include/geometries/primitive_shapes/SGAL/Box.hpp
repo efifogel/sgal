@@ -92,12 +92,12 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Return true if the geometry has color (as opposed to material). */
-  virtual Boolean has_color() const { return false; }
-
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const;
+  
 protected:
-  /*! obtains the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
   /*! The size of the box */
   Vector3f m_size;
@@ -126,6 +126,9 @@ inline Box* Box::prototype() { return new Box(true); }
 /*! \brief clones a new instance. */
 inline Container* Box::clone() { return new Box(); }
 
+/*! \brief determines whether the geometry has a texture coordinate array. */
+inline Boolean Box::has_tex_coord() const { return true; }
+
 /*! \brief sets the size of the box. */
 inline void Box::set_size(const Vector3f& size)
 {
@@ -138,6 +141,9 @@ inline void Box::get_size(Vector3f& size) const { size = m_size; }
 
 /*! \brief gets the size of the box. */
 inline Vector3f Box::get_size() const { return m_size; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Box::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

@@ -40,6 +40,8 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Normal_array.hpp"
+#include "SGAL/Tex_coord_array_3d.hpp"
 #include "SGAL/Utilities.hpp"
 
 #include "SEGO/Ego_brick.hpp"
@@ -74,8 +76,7 @@ Ego_brick::Ego_brick(Boolean proto) :
   m_tolerance(s_def_tolerance),
   m_knob_slices(s_def_knob_slices),
   m_are_knobs_visible(s_def_are_knobs_visible)
-{
-}
+{}
 
 /*! Destructor */
 Ego_brick::~Ego_brick()
@@ -88,16 +89,32 @@ Ego_brick::~Ego_brick()
     delete m_normal_array;
     m_normal_array = NULL;
   }
+  if (m_tex_coord_array) {
+    delete m_tex_coord_array;
+    m_tex_coord_array = NULL;
+  }
 }
 
 /*! Clean the ellipsoid internal representation */
 void Ego_brick::clean()
 {
   // Clear internal representation:
-  if (!m_coord_array) m_coord_array = new Coord_array;
-  if (!m_normal_array) m_normal_array = new Normal_array;
+  SGAL_assertion(!m_coord_array);
+  m_coord_array = new Coord_array;
+  SGAL_assertion(m_coord_array);
+
+  SGAL_assertion(!m_normal_array);
+  m_normal_array = new Normal_array;
+  SGAL_assertion(m_normal_array);
+
+  // Initialize the texture coordinate array.
+  SGAL_assertion(!m_tex_coord_array);
+  Tex_coord_array_3d* tex_coord_array = new Tex_coord_array_3d;
+  SGAL_assertion(tex_coord_array);
+  m_tex_coord_array = tex_coord_array;
+
   m_dirty_normals = false;
-  
+  m_dirty_tex_coords = false;  
   set_primitive_type(PT_TRIANGLES);
   
   // Generate points:
@@ -114,6 +131,7 @@ void Ego_brick::clean()
   }
   m_coord_array->resize(size);
   m_normal_array->resize(size);
+  tex_coord_array->resize(size);
 
   // Corner points:
   float width = m_pitch * m_number_of_knobs1;
@@ -129,62 +147,87 @@ void Ego_brick::clean()
 
   // Box
   // Left
+  (*tex_coord_array)[k].set(-1, 1, -1);
   (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+  (*tex_coord_array)[k].set(-1, -1, -1);
   (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z);
+  (*tex_coord_array)[k].set(-1, -1, 1);
   (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+  (*tex_coord_array)[k].set(-1, 1, 1);
   (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
   // Right
+  (*tex_coord_array)[k].set(1, -1, -1);
   (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+  (*tex_coord_array)[k].set(1, 1, -1);
   (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+  (*tex_coord_array)[k].set(1, 1, 1);
   (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+  (*tex_coord_array)[k].set(1, -1, 1);
   (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
 
   // Near
+  (*tex_coord_array)[k].set(-1, -1, -1);
   (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z);
+  (*tex_coord_array)[k].set(1, -1, -1);
   (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+  (*tex_coord_array)[k].set(1, -1, 1);
   (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+  (*tex_coord_array)[k].set(-1, -1, 1);
   (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
 
   // Far
+  (*tex_coord_array)[k].set(1, 1, -1);
   (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+  (*tex_coord_array)[k].set(-1, 1, -1);
   (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+  (*tex_coord_array)[k].set(-1, 1, 1);
   (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+  (*tex_coord_array)[k].set(1, 1, 1);
   (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+  (*tex_coord_array)[k].set(1, 1, 1);
 
   // Bottom
+  (*tex_coord_array)[k].set(-1, -1, -1);
   (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x, base_y, base_z);
+  (*tex_coord_array)[k].set(-1, 1, -1);
   (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+  (*tex_coord_array)[k].set(1, 1, -1);
   (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+  (*tex_coord_array)[k].set(1, -1, -1);
   (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
 
   // Top
+  (*tex_coord_array)[k].set(-1, -1, 1);
   (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+  (*tex_coord_array)[k].set(1, -1, 1);
   (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+  (*tex_coord_array)[k].set(1, 1, 1);
   (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+  (*tex_coord_array)[k].set(-1, 1, 1);
   (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
@@ -219,6 +262,7 @@ void Ego_brick::clean()
           float x = center_x + (*it)[0] * m_knob_radius;
           float y = center_y + (*it)[1] * m_knob_radius;
           (*m_normal_array)[k].set((*it)[0], (*it)[1], 0);
+          (*tex_coord_array)[k].set((*it)[0], (*it)[1], 0);
           (*m_coord_array)[k++].set(x, y, z);
         }
         for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
@@ -226,6 +270,7 @@ void Ego_brick::clean()
         {
           float x = center_x + (*it)[0] * m_knob_radius;
           float y = center_y + (*it)[1] * m_knob_radius;
+          (*tex_coord_array)[k].set((*it)[0], (*it)[1], 1);
           (*m_normal_array)[k].set((*it)[0], (*it)[1], 0);
           (*m_coord_array)[k].set(x, y, z + m_knob_height);
           (*m_coord_array)[k+m_knob_slices].set(x, y, z + m_knob_height);
@@ -235,8 +280,10 @@ void Ego_brick::clean()
              it != knob_cross_section.end(); ++it)
         {
           // Here we increment the index k!
+          (*tex_coord_array)[k].set(0, 0, 1);
           (*m_normal_array)[k++].set(0, 0, 1);
         }
+        (*tex_coord_array)[k].set(0, 0, 1);
         (*m_normal_array)[k].set(0, 0, 1);
         (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
       }
@@ -339,10 +386,9 @@ void Ego_brick::clean()
 }
 
 /*! Set the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
+ * \param elem contains lists of attribute names and values.
  */
-void Ego_brick::set_attributes(Element * elem)
+void Ego_brick::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
 
@@ -460,7 +506,7 @@ void Ego_brick::delete_prototype()
 }
 
 /*! Obtain the container prototype */
-Container_proto * Ego_brick::get_prototype() 
+Container_proto* Ego_brick::get_prototype() 
 {
   if (!s_prototype) Ego_brick::init_prototype();
   return s_prototype;

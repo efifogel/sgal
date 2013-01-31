@@ -140,8 +140,11 @@ public:
   /*! \brief prints statistics */
   void print_stat();
 
-  /*! \brief returns true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return m_color_array != NULL; }
+  /*! Determine whether the geometry has a color array. */
+  virtual Boolean has_color() const { return m_color_array != NULL; }  
+  
+  /*! Determine whether the geometry has a textture coordinate array. */
+  virtual Boolean has_tex_coord() const { return false; }  
 
 private:
   /*! Extracts the approximate point from a polyhedron vertex */

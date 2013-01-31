@@ -66,7 +66,8 @@
 #include "SGAL/Indexed_geodesic_set.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Piece.hpp"
-#include "SGAL/Tex_coord_array.hpp"
+#include "SGAL/Tex_coord_array_2d.hpp"
+#include "SGAL/Tex_coord_array_3d.hpp"
 
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Cylinder.hpp"
@@ -219,7 +220,8 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Sphere_plane_intersection);
   REGISTER_OBJECT(Spot_light);
   REGISTER_OBJECT(Switch);
-  REGISTER_OBJECT(Tex_coord_array);
+  REGISTER_OBJECT(Tex_coord_array_2d);
+  REGISTER_OBJECT(Tex_coord_array_3d);
   REGISTER_OBJECT(Tex_gen);
   REGISTER_OBJECT(Text);
   REGISTER_OBJECT(Texture_2d);

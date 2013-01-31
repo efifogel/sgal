@@ -144,7 +144,6 @@ public:
    */
   void set_tex_coord_array(Tex_coord_array* tex_coord_array);
 
-
   /*! Obtain the texture-coordinate array. */
   Tex_coord_array* get_tex_coord_array() const;
 
@@ -218,9 +217,12 @@ public:
   /*! Set the number of primitives. */
   void set_num_primitives(Uint num);
 
-  /*! Determine whether the geometry has color (as opposed to material). */
+  /*! Determine whether the geometry has a color array. */
   virtual Boolean has_color() const { return m_color_array != NULL; }  
   
+  /*! Determine whether the geometry has a textture coordinate array. */
+  virtual Boolean has_tex_coord() const { return m_tex_coord_array != NULL; }  
+
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action) = 0;
 

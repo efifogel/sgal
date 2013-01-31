@@ -48,6 +48,8 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Sphere_environment.hpp"
+#include "SGAL/Cube_environment.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -83,11 +85,17 @@ Shape::Shape(Boolean proto) :
   m_geometry(0),
   m_is_visible(true),
   m_is_background(false),
-  m_is_initialized(false),
+  m_dirty(true),
   m_owned_appearance(false),
+  m_owned_tex_gen(false),
   m_is_text_object(false),
   m_priority(0),
-  m_draw_backface(false)
+  m_draw_backface(false),
+  m_light_enable_save(false),
+  m_src_blend_func_save(Gfx::ONE_SBLEND),
+  m_dst_blend_func_save(Gfx::ZERO_DBLEND),
+  m_tex_gen_save(NULL),
+  m_tex_gen_enable_save(false)
 {}
 
 /*! Destructor */
@@ -112,6 +120,12 @@ void Shape::set_appearance(Appearance* app)
     m_owned_appearance = false;
   }
   m_appearance = app;
+
+  m_light_enable_save = m_appearance->get_light_enable();
+  m_src_blend_func_save = m_appearance->get_src_blend_func();
+  m_dst_blend_func_save = m_appearance->get_dst_blend_func();
+  m_tex_gen_save = m_appearance->get_tex_gen();
+  m_tex_gen_enable_save = m_appearance->get_tex_gen_enable();
 }
 
 /*! \brief adds a geometry to the shape at the end of the list.
@@ -124,8 +138,8 @@ void Shape::set_geometry(Geometry* geometry)
   m_geometry = geometry;
   m_geometry->register_observer(observer);
 
-  //! \todo
 #if 0
+  //! \todo
   // the text object needs to pass a pointer to the appearance 
   // for the FontTexture object
   Text* text = dynamic_cast<Text*>(geometry);
@@ -157,117 +171,23 @@ Boolean Shape::clean_sphere_bound()
 /*! \brief */
 Boolean Shape::is_text_object() { return m_is_text_object; }
 
-/*! \brief draws the appearance and then all the geometries 
- * @param draw_action
- */
+/*! \brief draws the appearance and then all the geometries. */
 Action::Trav_directive Shape::draw(Draw_action* draw_action)
 {
-  if (!is_visible()) return Action::TRAV_CONT;
+  if (!m_geometry || !is_visible()) return Action::TRAV_CONT;
   if (!m_appearance) create_default_appearance();
-  if (!m_is_initialized) init();
+  if (m_dirty) clean();
 
-  // Boolean to_draw = false;
-  Boolean is_transparent = false;
-  // Boolean has_texture = false;
   int pass_no = draw_action->get_pass_no();
-
-  if (m_appearance) {
-    is_transparent = m_appearance->is_transparent() || is_text_object();
-    // has_texture = (m_appearance->get_texture() != 0 );
-  }
-
+  Boolean is_transparent = m_appearance->is_transparent() || is_text_object();
   if (!m_draw_backface && is_transparent && (pass_no == 0)) {
     draw_action->set_second_pass_required(true);
     return Action::TRAV_CONT;
   }
-
-  if (m_geometry && m_appearance && !m_geometry->has_color())
-    m_appearance->set_light_enable(true);
-
-  // if ((!is_transparent && pass_no == 0) || (is_transparent && pass_no == 1))
-  // {
-
-  if (m_appearance) {
-    if (is_transparent) {
-      m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-      m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-    } else {
-      m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
-      m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
-    }
-    m_appearance->draw(draw_action);
-  }
+  
+  m_appearance->draw(draw_action);
   draw_geometries(draw_action);
 
-#if 0
-  if (!m_env_map) {
-    if (m_appearance) {
-      if (is_transparent) {
-        m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-        m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-      } else {
-        m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
-        m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
-      }
-
-      m_appearance->draw(draw_action);
-    }
-    draw_geometries(draw_action);
-  } else {
-    if (has_texture || m_env_map->is_quality()) {
-      if (is_transparent) {
-        m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-        m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-        m_alt_appearance->get_material()->
-          set_transparency(m_env_map->get_alpha()*
-                           (1-m_appearance->get_material()->
-                            get_transparency()));
-      } else {
-        m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
-        m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
-        m_alt_appearance->get_material()->
-          set_transparency(m_env_map->get_alpha());
-      }
-      // double pass implementation using the stencil buffer (slower)
-      // this is currently not used
-      /*
-      glClear(GL_STENCIL_BUFFER_BIT);
-      glEnable(GL_STENCIL_TEST);
-      glStencilFunc(GL_ALWAYS, 1, 1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  
-      m_appearance->draw(draw_action);
-      draw_geometries(draw_action);
-      glStencilFunc(GL_EQUAL, 1, 1);
-      glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-      glColor4f(0, 0, 0, m_alt_appearance->get_material()->get_transparency());
-      m_alt_appearance->draw(draw_action);
-      draw_geometries(draw_action);
-      glDisable(GL_STENCIL_TEST);
-      */
-      // double pass implementation using the depth buffer (faster)
-      m_appearance->draw(draw_action);
-      GLint depthFunc;
-      glGetIntegerv(GL_DEPTH_FUNC, &depthFunc);
-      draw_geometries(draw_action);
-      glDepthFunc(GL_EQUAL);
-      glColor4f(0, 0, 0, m_alt_appearance->get_material()->get_transparency());
-      m_alt_appearance->draw(draw_action);
-      draw_geometries(draw_action);
-      glDepthFunc(depthFunc);
-    } else {
-      if (is_transparent) {
-        m_alt_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-        m_alt_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-      } else {
-        m_alt_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
-        m_alt_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
-      }
-      m_alt_appearance->draw(draw_action);
-      draw_geometries(draw_action);
-    }
-  }
-#endif
-  
   return Action::TRAV_CONT;
 }
 
@@ -344,73 +264,71 @@ void Shape::isect(Isect_action* isect_action)
  * object. In the render we first render with the original appearance and then
  * we render a second time with the newly created appearance.
  */
-void Shape::init()
+void Shape::clean()
 {
-  m_is_initialized = true;
+  SGAL_assertion(m_appearance);
+  SGAL_assertion(m_geometry);
+
+  m_dirty = false;
+
+  // If the geometry has no color coordinates, enabled the light by default.
+  if (!m_geometry->has_color()) m_appearance->set_light_enable(true);
+  else m_appearance->set_light_enable(m_light_enable_save);
+
+  /*! Text geometry are transparent by default. */
+  Boolean is_transparent = m_appearance->is_transparent() || is_text_object();
+  if (is_transparent) {
+    m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+    m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+  }
+  else {
+    m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
+    m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
+  }
+
+  // Create a texture generation attribute if the appearance has a texture
+  // attribute and the geometry does not have a texture coordinate array.
+  const Texture* texture = m_appearance->get_texture();
+  if (texture && !m_appearance->get_tex_gen() && !m_geometry->has_tex_coord())
+    create_tex_gen();
+  else {
+    m_appearance->set_tex_gen(m_tex_gen_save);
+    m_appearance->set_tex_gen_enable(m_tex_gen_enable_save);
+  }
+}
+
+/*! \brief creates a texture generation function. */
+void Shape::create_tex_gen()
+{
+  Texture* texture = m_appearance->get_texture();
+
+  // Setup sphere environment map if requested:
+  if (dynamic_cast<Sphere_environment*>(texture)) {
+    Tex_gen* tex_gen = new Tex_gen();
+    SGAL_assertion(tex_gen);
+    tex_gen->set_mode_s(Tex_gen::SPHERE_MAP);
+    tex_gen->set_mode_t(Tex_gen::SPHERE_MAP);
+    m_appearance->set_tex_gen(tex_gen);
+    m_appearance->set_tex_gen_enable(true);
+    return;
+  }
+
+  // Setup cube environment map if requested:
+  if (dynamic_cast<Cube_environment*>(texture)) {
+    Tex_gen* tex_gen = new Tex_gen();
+    SGAL_assertion(tex_gen);
 #if 0
-  if (!m_env_map) return;
-
-  Boolean has_texture = false;
-  if (m_appearance)
-    has_texture = (m_appearance->get_texture() != 0);
-
-  if (!has_texture && !m_env_map->is_quality()) {
-    m_alt_appearance = new Appearance();
-    m_alt_appearance->set(m_appearance);
-    m_alt_appearance->set_texture(m_env_map->get_texture());
-    m_alt_appearance->set_tex_enable(true);
-    Tex_gen* tex_gen = new Tex_gen();
-    tex_gen->set_modes(Tex_gen::SPHERE_MAP);
-    tex_gen->set_modet(Tex_gen::SPHERE_MAP);
-    m_alt_appearance->set_tex_gen(tex_gen);
-    m_alt_appearance->set_tex_gen_enable(true);
-  } else {
-    Tex_gen* tex_gen = new Tex_gen();
-    tex_gen->set_modes(Tex_gen::SPHERE_MAP);
-    tex_gen->set_modet(Tex_gen::SPHERE_MAP);
-
-    m_alt_appearance = new Appearance();
-    m_alt_appearance->set_tex_gen(tex_gen);
-    m_alt_appearance->set_tex_gen_enable(true);
-    m_alt_appearance->set_depth_func(Gfx::LEQUAL_DFUNC);
-    m_alt_appearance->set_texture(m_env_map->get_texture());
-    m_alt_appearance->set_tex_enable(true);
-    m_alt_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-    m_alt_appearance->set_dst_blend_func(Gfx::ONE_DBLEND);
-
-    Material* mat = new Material();
-    mat->set_diffuse_color(1, 1, 1);
-    mat->set_transparency(m_env_map->get_alpha());
-    mat->set_execution_coordinator(m_execution_coordinator);
-    m_alt_appearance->set_material(mat);
-    m_alt_appearance->set_back_material(mat);
-    m_alt_appearance->set_tex_env(Gfx::DECAL_TENV);
-    m_alt_appearance->set_light_enable(false);
-  }
-
-  if (m_alt_appearance) {
-    m_alt_appearance->set_execution_coordinator(m_execution_coordinator);
-  }
-
-  if (m_env_map && m_alt_appearance) {
-    /*
-    Field* src = m_env_map->add_field(Environment_map::TEXTURE);
-    Field* dst = m_alt_appearance->add_field(Appearance::TEXTURE);
-    ASSERT(src);
-    ASSERT(dst);
-    if (src && dst) {
-      src->connect(dst);
-    }
-    src = m_env_map->add_field(Environment_map::ALPHA);
-    dst = m_alt_appearance->get_material()->add_field(Material::TRANSPARENCY);
-    ASSERT(src);
-    ASSERT(dst);
-    if (src && dst) {
-      src->connect(dst);
-    }
-    */
-  }
+    tex_gen->set_mode_s(Tex_gen::NORMAL_MAP);
+    tex_gen->set_mode_t(Tex_gen::NORMAL_MAP);
+    tex_gen->set_mode_r(Tex_gen::NORMAL_MAP);
+#else
+    tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
+    tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
+    tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
 #endif
+    m_appearance->set_tex_gen(tex_gen);
+    m_appearance->set_tex_gen_enable(true);
+  }
 }
 
 /*! \brief creates the default appearance. */
@@ -419,7 +337,6 @@ void Shape::create_default_appearance()
   m_appearance = new Appearance();
   SGAL_assertion(m_appearance);
   m_owned_appearance = true;
-  m_is_initialized = true;
 
   //! \todo
 #if 0
@@ -571,12 +488,21 @@ void Shape::init_prototype()
   // Allocate a prototype instance:
   s_prototype = new Container_proto(Node::get_prototype());
 
-  // Add the object fields to the prototype:
   Execution_function exec_func = 
     static_cast<Execution_function>(&Node::sphere_bound_changed);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE, "visible",
                                           get_member_offset(&m_is_visible),
                                           exec_func));    
+
+  exec_func = static_cast<Execution_function>(&Shape::geometry_changed);
+  s_prototype->add_field_info(new SF_container(GEOMETRY, "geometry",
+                                               get_member_offset(&m_geometry),
+                                               exec_func));    
+
+  exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
+  s_prototype->add_field_info(new SF_container(APPEARANCE, "appearance",
+                                               get_member_offset(&m_appearance),
+                                               exec_func));    
 }
 
 /*! \brief deletes the node prototype. */
@@ -609,6 +535,57 @@ Boolean Shape::detach_context(Context* context)
   Appearance* app = get_appearance();
   if (app) result &= app->detach_context(context);
   return result;
+}
+
+/*! \brief processes change of appearance. */
+void Shape::appearance_changed(Field_info* /* field_info. */)
+{
+  m_light_enable_save = m_appearance->get_light_enable();
+  m_src_blend_func_save = m_appearance->get_src_blend_func();
+  m_dst_blend_func_save = m_appearance->get_dst_blend_func();
+  m_tex_gen_save = m_appearance->get_tex_gen();
+  m_tex_gen_enable_save = m_appearance->get_tex_gen_enable();
+}
+
+/*! \brief processes change of geometry. */
+void Shape::geometry_changed(Field_info* /* field_info. */)
+{
+  // Record the old value of the appearance light-enable flag:
+  // If the geometry has no color coordinates, enabled the light by default.
+  m_appearance->set_light_enable(m_light_enable_save);
+  if (!m_geometry->has_color()) m_appearance->set_light_enable(true);
+
+#if 0
+  //! \todo
+  // the text object needs to pass a pointer to the appearance 
+  // for the FontTexture object
+  Text* text = dynamic_cast<Text*>(geometry);
+  if (text) {
+    text->set_appearance(m_appearance);
+    m_is_text_object = true;
+  }
+#endif
+
+  /*! Text geometry are transparent by default. */
+  Boolean is_transparent = m_appearance->is_transparent() || is_text_object();
+  if (is_transparent) {
+    m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+    m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+  }
+  else {
+    m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
+    m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
+  }
+  
+  // Create a texture generation attribute if the appearance has a texture
+  // attribute and the geometry does not have a texture coordinate array.
+  const Texture* texture = m_appearance->get_texture();
+  if (texture && !m_appearance->get_tex_gen() && !m_geometry->has_tex_coord())
+    create_tex_gen();
+  else {
+    m_appearance->set_tex_gen(m_tex_gen_save);
+    m_appearance->set_tex_gen_enable(m_tex_gen_enable_save);
+  }
 }
 
 SGAL_END_NAMESPACE

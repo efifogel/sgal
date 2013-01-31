@@ -33,7 +33,8 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Color_array.hpp"
-#include "SGAL/Tex_coord_array.hpp"
+#include "SGAL/Tex_coord_array_2d.hpp"
+#include "SGAL/Tex_coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Draw_action.hpp"
@@ -838,17 +839,11 @@ compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
   }
 }
 
-/*! \brief calculates a single normal per vertex for all vertices. */
-void Indexed_face_set::calculate_single_normal_per_vertex()
+/*! \brief calculates vertex information. */
+void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
 {
   SGAL_assertion(m_coord_array);
 
-  // Calculate the normals of all facets.
-  Normal_array normal_array;
-  calculate_normal_per_polygon(&normal_array);
-
-  // Initialize the weights:
-  Vertices_info vertices_info;
   vertices_info.resize(m_coord_array->size());
   
   Uint i, j = 0;
@@ -856,7 +851,6 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
   switch (m_primitive_type) {
    case PT_TRIANGLES:
     for (i = 0; i < m_num_primitives; ++i) {
-      Vector3f normal;
       Vector3f center;
       compute_triangle_center(j, center);
       compute_triangle_vertex_info(j, i, center, vertices_info);
@@ -866,7 +860,6 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
       
    case PT_QUADS:
     for (i = 0; i < m_num_primitives; ++i) {
-      Vector3f normal;
       Vector3f center;
       compute_quad_center(j, center);
       compute_quad_vertex_info(j, i, center, vertices_info);
@@ -876,9 +869,7 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
       
    case PT_POLYGONS:
     for (i = 0; i < m_num_primitives; ++i) {
-      Vector3f normal;
       Vector3f center;
-      compute_polygon_normal(j, normal);
       Uint k = compute_polygon_center(j, center);
       compute_polygon_vertex_info(j, i, k, center, vertices_info);
       j += k + 1;       // skip the end-of-face marker
@@ -890,6 +881,12 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
    case PT_QUAD_STRIP:
    default: SGAL_assertion(0); break;
   }
+}
+
+/*! \brief calculates a single normal per vertex for all vertices. */
+void Indexed_face_set::calculate_single_normal_per_vertex()
+{
+  SGAL_assertion(m_coord_array);
 
   // Initialize the normal array.
   if (!m_normal_array) {
@@ -898,29 +895,8 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
     m_owned_normal_array = true;
   }
 
-  // Calculate the weighted normals:
-  for (j = 0; j < vertices_info.size(); ++j) {
-    Float weight_sum = 0;
-    Vertex_info_const_iter it;
-    Vector3f n;
-    for (it = vertices_info[j].begin(); it != vertices_info[j].end(); ++it) {
-      Uint facet_index = it->first;
-      Float weight = it->second;
-      const Vector3f& normal = normal_array[facet_index];
-
-      weight_sum += weight;                     // accumulate the weight
-      Vector3f tmp;
-      tmp.scale(weight, normal);
-      n.add(tmp);
-    }
-    n.scale(1.0f / weight_sum);
-    n.normalize();
-    (*m_normal_array)[j] = n;
-  }
+  calculate_single_normal_per_vertex(m_normal_array);
   
-  for (j = 0; j < vertices_info.size(); j++) vertices_info[j].clear();
-  vertices_info.clear();
-
   set_normal_per_vertex(true);
 }
 
@@ -991,12 +967,12 @@ void Indexed_face_set::calculate_normal_per_polygon()
 void Indexed_face_set::clean_tex_coords()
 {
   SGAL_assertion(m_coord_array);
-
-  if (!m_tex_coord_array) {
-    m_tex_coord_array = new Tex_coord_array(m_coord_array->size());
-    SGAL_assertion(m_tex_coord_array);
-    m_owned_tex_coord_array = true;
-  }
+  SGAL_assertion(!tex_coord_array);
+  Tex_coord_array_2d* tex_coord_array =
+    new Tex_coord_array_2d(m_coord_array->size());
+  SGAL_assertion(tex_coord_array);
+  m_tex_coord_array = tex_coord_array;
+  m_owned_tex_coord_array = true;
   
   Uint num_coords = m_coord_array->size();
 
@@ -1009,7 +985,7 @@ void Indexed_face_set::clean_tex_coords()
     Uint mask = i & 0x3;
     const Vector2f& t =
       (mask == 0x0) ? t0 : (mask == 0x1) ? t1 : (mask == 0x2) ? t2 : t3;
-    (*m_tex_coord_array)[i] = t;
+    (*tex_coord_array)[i] = t;
   }
 
   m_dirty_tex_coords = false;
@@ -1028,7 +1004,6 @@ void Indexed_face_set::draw(Draw_action* action)
   // Clean the tex coordinates:
   //! add vertex buffer object for the tex-coords
   Context* context = action->get_context();
-
   if (context->get_tex_enable() && !(context->get_tex_gen()) &&
       m_dirty_tex_coords)
     clean_tex_coords();
@@ -1308,7 +1283,7 @@ Container_proto* Indexed_face_set::get_prototype()
 void Indexed_face_set::create_vertex_buffer_object()
 {
   std::cout << "create_vertex_buffer_object" << std::endl;
-  
+
 #if defined(GL_ARB_vertex_buffer_object)
   std::cout << "Using vertex buffer object extension!" << std::endl;
   
@@ -1322,7 +1297,8 @@ void Indexed_face_set::create_vertex_buffer_object()
       std::cerr << "glGenBuffersARB failed to generate vertex coord buffer!"
                 << std::endl;
       error_occured = true;
-    } else {
+    }
+    else {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
       Uint size = m_coord_array->size()* sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_coord_array->get_vector();
@@ -1337,7 +1313,8 @@ void Indexed_face_set::create_vertex_buffer_object()
       std::cerr << "glGenBuffersARB failed to generate vertex normal buffer!"
                 << std::endl;
       error_occured = true;
-    } else {
+    }
+    else {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
       Uint size = m_normal_array->size()* sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_normal_array->get_vector();
@@ -1352,7 +1329,8 @@ void Indexed_face_set::create_vertex_buffer_object()
       std::cerr << "glGenBuffersARB failed to generate vertex color buffer!"
                 << std::endl;
       error_occured = true;
-    } else {
+    }
+    else {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
       Uint size = m_color_array->size()* sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_color_array->get_vector();
@@ -1367,10 +1345,17 @@ void Indexed_face_set::create_vertex_buffer_object()
       std::cerr << "glGenBuffersARB failed to generate vertex tex_coord buffer!"
                 << std::endl;
       error_occured = true;
-    } else {
+    }
+    else {
+      Uint tcoords = 0;
+      if (dynamic_cast<Tex_coord_array_2d*>(m_tex_coord_array))
+        tcoords = sizeof(Vector2f);
+      else if (dynamic_cast<Tex_coord_array_3d*>(m_tex_coord_array))
+        tcoords = sizeof(Vector3f);
+      SGAL_assertion(tcoords != 0);
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
-      Uint size = m_tex_coord_array->size()* sizeof(Vector2f);
-      GLfloat* data = (GLfloat*) m_tex_coord_array->get_vector();
+      Uint size = m_tex_coord_array->size() * tcoords;
+      GLfloat* data = m_tex_coord_array->get_gl_data();
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
@@ -1390,17 +1375,18 @@ void Indexed_face_set::create_vertex_buffer_object()
   }
 
   // Leave clean state:
-  if (!error_occured) {
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    /*! \todo add a flag the user can set to indicate that the vertex arrays
-     * can be cleared. It cannot be determined automatically.
-     */
-    // clear_vertex_arrays();
-  } else {
+  if (error_occured) {
     destroy_vertex_buffer_object();
+    return;
   }
-#endif
+  
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  /*! \todo add a flag the user can set to indicate that the vertex arrays
+   * can be cleared. It cannot be determined automatically.
+   */
+  // clear_vertex_arrays();
   m_vertex_buffer_object_created = true;
+#endif
 }
 
 /*! \brief destroys the data structure of the vertex buffer object. */
@@ -1552,9 +1538,15 @@ void Indexed_face_set::field_changed(Field_info* field_info)
     if (!m_vertex_buffer_object_created) break;
     if (m_vertex_tex_coord_id == 0) break;
     {
+      Uint tcoords = 0;
+      if (dynamic_cast<Tex_coord_array_2d*>(m_tex_coord_array))
+        tcoords = sizeof(Vector2f);
+      else if (dynamic_cast<Tex_coord_array_3d*>(m_tex_coord_array))
+        tcoords = sizeof(Vector3f);
+      SGAL_assertion(tcoords != 0);
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
-      Uint size = m_tex_coord_array->size()* sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) m_tex_coord_array->get_vector();
+      Uint size = m_tex_coord_array->size() * tcoords;
+      GLfloat* data = m_tex_coord_array->get_gl_data();
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
 #endif

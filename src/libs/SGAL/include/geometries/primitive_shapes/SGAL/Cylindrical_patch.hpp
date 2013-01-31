@@ -164,8 +164,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return false; }
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const;
 
   /*! Is dirty? */
   /* Boolean is_dirty() const { return m_dirty; } */
@@ -223,6 +223,9 @@ private:
   void draw_quad(Float cos_left, Float sin_left,
                  Float cos_right, Float sin_right);
 };
+
+/*! \brief determines whether the geometry has a texture coordinate array. */
+inline Boolean Cylindrical_patch::has_tex_coord() const { return true; }
 
 SGAL_END_NAMESPACE
 

@@ -170,10 +170,6 @@ public:
   /*! */
   virtual Boolean clean_sphere_bound() { return false; }
 
-  /*! Determine whether the geometry has color (as opposed to material)
-   */
-  virtual Boolean has_color() const { return false; }  
-
   /*! Draw the geometry */
   virtual void draw(Draw_action * action);
 

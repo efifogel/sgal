@@ -74,9 +74,12 @@ public:
 
   virtual void isect(Isect_action * action) {}
 
-  /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return false; }
+  /*! Determine whether the geometry has a color array. */
+  virtual Boolean has_color() const { return m_color_array != NULL; }  
   
+  /*! Determine whether the geometry has a textture coordinate array. */
+  virtual Boolean has_tex_coord() const { return m_tex_coord_array != NULL; }  
+
   /*! Calculate the sphere bound of this geometry containter */
   virtual Boolean clean_sphere_bound();
 

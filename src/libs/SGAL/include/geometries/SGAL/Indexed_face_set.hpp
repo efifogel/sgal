@@ -592,9 +592,19 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  /*! Is the angle between two given vectors smooth?
+  /*! Determines whether the angle between two given vectors is smooth.
    */
   Boolean is_smooth(const Vector3f& normal1, const Vector3f& normal2) const;
+
+  /*! Calculate a single normal per vertex for all vertices.
+   * For each vertex compute the weighted normal based on the normals of
+   * the vertex incident facets and the receiprocal of the square distance
+   * from the facet center to the vertex. (An alternative could be the facet
+   * area.)
+   * \param array (out) the array of the resulting normals.
+   */
+  template <typename Array_T>
+  void calculate_single_normal_per_vertex(Array_T* array);
   
 private:
   /*! The tag that identifies this container type */
@@ -606,7 +616,49 @@ private:
   /*! Default value */
   static const Boolean s_def_normal_per_vertex;
   static const Boolean s_def_color_per_vertex;
+
+  /*! Calculate vertex information. Used to compute a single normal per vertex.
+   * \param vertices_info (out) the container of the resulting information.
+   */
+  void calculate_vertices_info(Vertices_info& vertices_info);
 };
+
+/*! \brief Calculate a single normal per vertex for all vertices. */
+template <typename Array_T>
+void Indexed_face_set::calculate_single_normal_per_vertex(Array_T* array)
+{
+  // Calculate the normals of all facets.
+  Normal_array normal_array;
+  calculate_normal_per_polygon(&normal_array);
+
+  // Initialize the weights:
+  Vertices_info vertices_info;
+  calculate_vertices_info(vertices_info);
+  
+  // Calculate the weighted normals:
+  Uint j;
+  for (j = 0; j < vertices_info.size(); ++j) {
+    Float weight_sum = 0;
+    Vertex_info_const_iter it;
+    Vector3f n;
+    for (it = vertices_info[j].begin(); it != vertices_info[j].end(); ++it) {
+      Uint facet_index = it->first;
+      Float weight = it->second;
+      const Vector3f& normal = normal_array[facet_index];
+
+      weight_sum += weight;                     // accumulate the weight
+      Vector3f tmp;
+      tmp.scale(weight, normal);
+      n.add(tmp);
+    }
+    n.scale(1.0f / weight_sum);
+    n.normalize();
+    (*array)[j] = n;
+  }
+
+  for (j = 0; j < vertices_info.size(); j++) vertices_info[j].clear();
+  vertices_info.clear();
+}
 
 /*! Do the conditions allow for the use of openGl vertex array?
  * Configuration specifies VERTEX_ARRAY, and

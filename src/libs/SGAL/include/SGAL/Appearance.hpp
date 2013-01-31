@@ -118,11 +118,8 @@ public:
 
   /*! Set the texture-generation attribute.
    * \param tex_gen (in) the texture-generation attribute.
-   * \param owned (in) indicates whether the texture-generation attribute is
-   *              owned. If it is owned, the texture-generation attribute is
-   *              constructed and destructed by the construct.
    */
-  void set_tex_gen(Tex_gen* tex_gen, Boolean owned = false);
+  void set_tex_gen(Tex_gen* tex_gen);
 
   /*! Obtain the texture-generation attribute. */
   Tex_gen* get_tex_gen() const;
@@ -373,12 +370,6 @@ private:
    * destructed when the appearance is destructed.
    */
   Boolean m_owned_material;
-
-  /*! Indicates whether the texture-generation attribute is owned. If it is
-   * owned  (as the user hasn't provided one) the texture-generation attribute
-   * should be destructed when the appearance is destructed.
-   */
-  Boolean m_owned_tex_gen;
 
   /*! The default halftone pattern. */
   static Ubyte s_def_halftone[];

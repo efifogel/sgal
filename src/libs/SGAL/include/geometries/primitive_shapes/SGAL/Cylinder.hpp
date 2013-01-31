@@ -137,8 +137,8 @@ public:
   virtual void set_attributes(Element* elem);
   // virtual Attribute_list get_attributes();
 
-  /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return false; }
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const;
 
   /*! Determine whether the cylinder is dirty. */
   Boolean is_dirty() const { return m_dirty; }
@@ -204,6 +204,9 @@ inline Cylinder* Cylinder::prototype() { return new Cylinder(true); }
 
 /*! \brief clones. */
 inline Container* Cylinder::clone() { return new Cylinder(); }
+
+/*! \brief determines whether the geometry has a texture coordinate array. */
+inline Boolean Cylinder::has_tex_coord() const { return true; }
 
 /*! \brief sets the radius of the cylinder. */
 inline void Cylinder::set_radius(Float radius)

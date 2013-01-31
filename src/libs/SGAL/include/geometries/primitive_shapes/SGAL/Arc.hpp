@@ -166,8 +166,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Determine whether the geometry has color (as opposed to normal) */
-  virtual Boolean has_color() const;
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const;
 
 protected:
   /*! obtains the tag (type) of the container */
@@ -224,6 +224,9 @@ inline Arc* Arc::prototype() { return new Arc(true); }
 /*! \brief clones. */
 inline Container* Arc::clone() { return new Arc(); }
   
+/*! \brief determines whether the geometry has a texture coordinate array. */
+inline Boolean Arc::has_tex_coord() const { return true; }
+
 /*! \brief sets the arc radius.*/
 inline void Arc::set_radius(Float radius)
 {
@@ -275,9 +278,6 @@ inline void Arc::set_solid(Boolean solid) { m_is_solid = solid; }
 
 /*! \brief obtain */
 inline Boolean Arc::is_solid() const { return m_is_solid; }
-
-/*! \brief determines whether the geometry has color (as opposed to normal) */
-inline Boolean Arc::has_color() const { return false; }
 
 /*! \brief obtains the tag (type) of the container */
 inline const std::string& Arc::get_tag() const { return s_tag; }

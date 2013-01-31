@@ -158,8 +158,11 @@ public:
   virtual void delete_prototype();
   virtual SGAL::Container_proto* get_prototype();
 
-  /*! returns true if the geometry is colored, and false otherwise */
-  virtual Boolean has_color() const { return m_color_array != NULL; }
+  /*! Determine whether the geometry has a color array. */
+  virtual Boolean has_color() const { return m_color_array != NULL; }  
+  
+  /*! Determine whether the geometry has a textture coordinate array. */
+  virtual Boolean has_tex_coord() const { return m_tex_coord_array != NULL; }  
 
   /*! Obtains the polyhedron data-structure
    */

@@ -116,9 +116,9 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Return true if the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const;
-
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const;
+  
   /*! Is dirty? */
   Boolean is_dirty() const;
   
@@ -200,7 +200,7 @@ inline void Sphere::set_slices(Uint slices) { m_slices = slices; }
 inline Uint Sphere::get_slices() const { return m_slices; }
 
 /*! \brief returns true if the geometry has color (as opposed to material). */
-inline Boolean Sphere::has_color() const { return false; }
+inline Boolean Sphere::has_tex_coord() const { return true; }
 
 /*! \brief determines whether the sphere is dirty. */
 inline Boolean Sphere::is_dirty() const { return m_dirty; }

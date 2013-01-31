@@ -89,8 +89,11 @@ public:
   /*! Obtain the font style */
   Font_style* get_font_style() const { return m_font_style; }
 
-  /*! Return true if the geometry has color (as opposed to material) */
+  /*! Determine whether the geometry has a color array. */
   virtual Boolean has_color() const { return false; }
+
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const { return true; }
   
 protected:
   /*! obtains the tag (type) of the container */

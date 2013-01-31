@@ -116,9 +116,9 @@ public:
   virtual void set_attributes(Element* elem);
   // virtual Attribute_list get_attributes();
 
-  /*! Determine whether the geometry has color (as opposed to material). */
-  virtual Boolean has_color() const;
-  
+  /*! Determine whether the geometry has a texture coordinate array. */
+  virtual Boolean has_tex_coord() const;
+
   /*! Determine whether the geometry is dirty. */
   Boolean is_dirty() const;
 
@@ -180,6 +180,9 @@ inline Cone* Cone::prototype() { return new Cone(true); }
 /*! \brief clones. */
 inline Container* Cone::clone() { return new Cone(); }
 
+/*! \brief determines whether the geometry has a texture coordinate array. */
+inline Boolean Cone::has_tex_coord() const { return true; }
+
 /*! \brief sets the radius of the bottom disk. */
 inline void Cone::set_bottom_radius(Float radius)
 {
@@ -219,9 +222,6 @@ inline void Cone::set_is_side_visible(Boolean flag) { m_side_visible = flag; }
 
 inline Boolean Cone::is_side_visible() const { return m_side_visible; }
 
-/*! \brief determines whether the geometry has color. */
-inline Boolean Cone::has_color() const { return false; }
-  
 /*! \brief determines whether the geometry is dirty. */
 inline Boolean Cone::is_dirty() const { return m_dirty; }
 

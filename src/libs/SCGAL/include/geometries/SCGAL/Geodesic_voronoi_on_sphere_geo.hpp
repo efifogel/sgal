@@ -78,7 +78,7 @@ public:
   
 public:
   /*! Constructor */
-  Geodesic_voronoi_on_sphere_geo(Boolean proto = SGAL_FALSE);
+  Geodesic_voronoi_on_sphere_geo(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Geodesic_voronoi_on_sphere_geo();
@@ -102,9 +102,6 @@ public:
 
   /*! */
   virtual void cull(Cull_context & cull_context);
-
-  /*! Determine whether the geometry has color (as opposed to material) */
-  virtual Boolean has_color() const { return false; }  
 
   /*! Obtain the point index array */
   const std::vector<Uint> & get_site_indices() const;

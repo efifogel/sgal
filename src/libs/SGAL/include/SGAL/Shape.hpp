@@ -202,8 +202,14 @@ public:
   /*! Set the rendering priority. */
   void set_priority(Float priority);
 
-  /*! \todo rename to clean and m_dirty. */
-  void init();
+  /*! Clean the node before drawing. */
+  void clean();
+
+  /*! Process change of appearance. */
+  void appearance_changed(Field_info* /* field_info. */);
+
+  /*! Process change of geometry. */
+  void geometry_changed(Field_info* /* field_info. */);
 
   virtual Boolean attach_context(Context* context); 
 
@@ -233,7 +239,7 @@ protected:
   /*! The cull-face mode of the shape. */
   Gfx::Cull_face m_cull_face;
 
- private:
+private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -257,11 +263,17 @@ protected:
   /*! a flag that indicates whether this is a background object. */
   Boolean m_is_background;
 
-  /*! a flag that indicates if the object has been initialized. */
-  Boolean m_is_initialized;
+  /*! Indicates whether the shape is dirty, and thus needs cleaning. */
+  Boolean m_dirty;
 
   /*! Indicates whether the appearance node has been constructed by default. */
   Boolean m_owned_appearance;
+
+  /*! Indicates whether the texture-generation attribute is owned. If it is
+   * owned  (as the user hasn't provided one) the texture-generation attribute
+   * should be destructed when the appearance is destructed.
+   */
+  Boolean m_owned_tex_gen;
 
   /*! this is true when the geometry is a text object. */
   Boolean m_is_text_object;
@@ -271,10 +283,29 @@ protected:
 
   /* A flag that indicates whether backface drawing is required. */
   Boolean m_draw_backface;
-  
+
+  /*! Stores the old value of the appearance light-enable flag. */
+  Boolean m_light_enable_save;
+
+  /*! Stores the old value of the source blend function. */
+  Gfx::Src_blend_func m_src_blend_func_save;
+
+  /*! Stores the old value of the source blend function. */
+  Gfx::Dst_blend_func m_dst_blend_func_save;
+
+  /*! Stores the old value of the texture generation attribute. */
+  Tex_gen* m_tex_gen_save;
+
+  /*! Stores the old value of the texture generation enable flag. */
+  Boolean m_tex_gen_enable_save;
+    
   void draw_geometries(Draw_action* draw_action);
+
   void create_default_appearance();
 
+  /*! Create a texture generation function. */
+  void create_tex_gen();
+  
   static const Boolean s_def_is_background;
   static const Vector2f s_def_depth_range;
   static const Vector4ub s_def_color_mask;

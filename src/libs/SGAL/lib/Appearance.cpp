@@ -41,8 +41,6 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Sphere_environment.hpp"
-#include "SGAL/Cube_environment.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Utilities.hpp"
@@ -64,8 +62,7 @@ Appearance::Appearance(Boolean proto) :
   Container(proto),
   m_tex_env(s_def_tex_env),
   m_dirty(true),
-  m_owned_material(false),
-  m_owned_tex_gen(false)
+  m_owned_material(false)
 { init(); }
 
 /*! Destructor */
@@ -81,14 +78,6 @@ Appearance::~Appearance()
     m_owned_material = false;
   }
 
-  if (m_owned_tex_gen) {
-    if (m_tex_gen) {
-      delete m_tex_gen;
-      m_tex_gen = NULL;
-    }
-    m_owned_tex_gen = false;
-  }
-  
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
@@ -263,10 +252,8 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 }
 
 /*! \brief sets the texture-generation attribute. */
-void Appearance::set_tex_gen(Tex_gen* tex_gen, Boolean owned)
+void Appearance::set_tex_gen(Tex_gen* tex_gen)
 {
-  if (m_owned_tex_gen && m_tex_gen) delete m_tex_gen;
-  m_owned_tex_gen = owned;
   m_tex_gen = tex_gen;
   m_pending.on_bit(Gfx::TEX_GEN);
   m_override.on_bit(Gfx::TEX_GEN);
@@ -710,40 +697,6 @@ void Appearance::clean()
     Material* material = new Material();
     SGAL_assertion(material);
     set_material(material, true);
-  }
-  
-  // Setup sphere environment map if requested:
-  Sphere_environment* sphere_env =
-    dynamic_cast<Sphere_environment*>(get_texture());
-  if (sphere_env) {
-    if (!m_tex_gen) {
-      Tex_gen* tex_gen = new Tex_gen();
-      SGAL_assertion(tex_gen);
-      set_tex_gen(tex_gen, true);
-      m_tex_gen->set_mode_s(Tex_gen::SPHERE_MAP);
-      m_tex_gen->set_mode_t(Tex_gen::SPHERE_MAP);
-    }
-    set_tex_gen_enable(true);
-  }
-
-  // Setup cube environment map if requested:
-  Cube_environment* cube_env = dynamic_cast<Cube_environment*>(get_texture());
-  if (cube_env) {
-    if (!m_tex_gen) {
-      Tex_gen* tex_gen = new Tex_gen();
-      SGAL_assertion(tex_gen);
-      set_tex_gen(tex_gen, true);
-#if 0
-      m_tex_gen->set_mode_s(Tex_gen::NORMAL_MAP);
-      m_tex_gen->set_mode_t(Tex_gen::NORMAL_MAP);
-      m_tex_gen->set_mode_r(Tex_gen::NORMAL_MAP);
-#else
-      m_tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
-      m_tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
-      m_tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
-#endif
-    }
-    set_tex_gen_enable(true);
   }
   
   m_dirty = false;

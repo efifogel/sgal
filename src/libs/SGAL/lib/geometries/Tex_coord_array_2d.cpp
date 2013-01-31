@@ -22,8 +22,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Geo_set.hpp"
+#include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -33,53 +32,58 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Tex_coord_array::s_tag = "TextureCoordinate";
+std::string const Tex_coord_array_2d::s_tag = "TextureCoordinate";
+
+/*! Register to the container factory. This will enable automatic creation
+ * through the name provided as a parameter.
+ */
+REGISTER_TO_FACTORY(Tex_coord_array_2d, "Tex_coord_array_2d");
 
 /*! The node prototype */
-Container_proto * Tex_coord_array::s_prototype = NULL;
+Container_proto* Tex_coord_array_2d::s_prototype = NULL;
 
-typedef Element::Str_attr_iter          Str_attr_iter;
+/*! \brief Constructor */
+Tex_coord_array_2d::Tex_coord_array_2d(Boolean proto) : Tex_coord_array(proto){}
 
-/*! Initialize the node prototype */
-void Tex_coord_array::init_prototype()
+/*! \brief Constructor */
+Tex_coord_array_2d::Tex_coord_array_2d(Uint n) { m_array.resize(n); }
+  
+/*! \brief Destructor */
+Tex_coord_array_2d::~Tex_coord_array_2d() {}
+
+/*! \brief initializes the node prototype. */
+void Tex_coord_array_2d::init_prototype()
 {
   if (s_prototype) return;
 
   // Allocate a prototype instance:
-  s_prototype = new Container_proto(Container::get_prototype());
+  s_prototype = new Container_proto(Tex_coord_array::get_prototype());
 }
 
-/*! Delete the node prototype */
-void Tex_coord_array::delete_prototype()
+/*! \brief deletes the node prototype. */
+void Tex_coord_array_2d::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */  
-Container_proto * Tex_coord_array::get_prototype()
+/*! \brief obtains the node prototype. */  
+Container_proto* Tex_coord_array_2d::get_prototype()
 {
-  if (s_prototype == NULL) Tex_coord_array::init_prototype();
+  if (s_prototype == NULL) Tex_coord_array_2d::init_prototype();
   return s_prototype;
 }
   
-/*! Register to the container factory. This will enable automatic creation
- * through the name provided as a parameter.
- */
-REGISTER_TO_FACTORY(Tex_coord_array, "Tex_coord_array");
-
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Tex_coord_array::set_attributes(Element * elem)
+/*! \brief sets the attributes of the object. */
+void Tex_coord_array_2d::set_attributes(Element* elem)
 {
-  Container::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin(); ai != elem->str_attrs_end();
-       ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Tex_coord_array::set_attributes(elem);
+
+  typedef Element::Str_attr_iter          Str_attr_iter;
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "point") {
       Uint num_values = get_num_tokens(value);
       Uint size = num_values / 2;
@@ -97,12 +101,11 @@ void Tex_coord_array::set_attributes(Element * elem)
 }
 
 #if 0
-/*!
- */
-Attribute_list Tex_coord_array::get_attributes()
+/*! */
+Attribute_list Tex_coord_array_2d::get_attributes()
 { 
   Attribute_list attribs;
-  attribs = Container::get_attributes();
+  attribs = Tex_coord_array::get_attributes();
   return attribs;
 }
 #endif
