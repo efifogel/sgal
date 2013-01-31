@@ -72,6 +72,12 @@ public:
   /*! Determines whether the shader is empty. */
   virtual Boolean empty();
 
+  /*! Set the URL. */
+  void set_url(const std::string& url);
+
+  /*! Obtain the URL. */
+  const std::string get_url() const;
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
@@ -82,7 +88,25 @@ private:
 
   /*! The node prototype */
   static Container_proto* s_prototype;
+
+  /*! The uniform resource locator (url) that refers to the (Internet)
+   * resource that contains the shader code.
+   */
+  std::string m_url;
 };
+
+/*! \brief constructs the prototype. */
+inline Fragment_shader* Fragment_shader::prototype()
+{ return new Fragment_shader(true); }
+
+/*! \brief clones. */
+inline Container* Fragment_shader::clone() { return new Fragment_shader(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Fragment_shader::get_tag() const { return s_tag; }
+
+/*! \brief obtains the URL. */
+inline const std::string Fragment_shader::get_url() const { return m_url; }
 
 SGAL_END_NAMESPACE
 

@@ -14,6 +14,7 @@ FILES+= Camera.hpp
 FILES+= Collision.hpp
 FILES+= Color_background.hpp
 FILES+= Color_map.hpp
+FILES+= Composed_shader.hpp
 FILES+= config.hpp
 FILES+= Configuration.hpp
 FILES+= Container.hpp

@@ -34,18 +34,25 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 
-class SGAL_CLASSDEF Shader : public Container {
+class SGAL_CLASSDEF Composed_shader : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
+    LANGUAGE,
     LAST
   };
 
   /*! Constructor */
-  Shader(Boolean proto = false);
+  Composed_shader(Boolean proto = false);
 
   /*! Destructor */
-  virtual ~Shader();
+  virtual ~Composed_shader();
+
+  /*! Construct the prototype. */
+  static Composed_shader* prototype();
+
+  /*! Clone. */
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -66,25 +73,56 @@ public:
   /*! Apply the shader. */
   virtual void draw(Context* context);
 
-  /*! Determine whether the object is dirty, and thus needs cleaning. */
-  Boolean is_dirty() const;
-
-  /*! Clean the object. */
+  /*! Clean the shader. */
   virtual void clean();
 
-  /*! Determines whether the shader is empty. */
-  virtual Boolean empty() = 0;
+  // /*! Determines whether the shader is empty. */
+  // virtual Boolean empty();
+
+  // /*! Determine whether the object is dirty, and thus needs cleaning. */
+  // virtual Boolean is_dirty() const;
+
+  /*! Set the language. */
+  void set_language(const std::string& language);
+
+  /*! Obtain the language. */
+  const std::string get_language() const;
 
 protected:
-  /*! Determine whether the shader is dirty, and thus needs cleaning. */
-  Boolean m_dirty;
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
 
   // Default values:
 
 private:
+  /*! The tag that identifies this container type */
+  static const std::string s_tag;
+
   /*! The node prototype */
   static Container_proto* s_prototype;
+
+  /*! The uniform resource locator (url) that refers to the (Internet)
+   * resource that contains the shader language.
+   */
+  std::string m_language;
+
+  /*! Determine whether the shader is dirty, and thus needs cleaning. */
+  Boolean m_dirty;
 };
+
+/*! \brief constructs the prototype. */
+inline Composed_shader* Composed_shader::prototype()
+{ return new Composed_shader(true); }
+
+/*! \brief clones. */
+inline Container* Composed_shader::clone() { return new Composed_shader(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Composed_shader::get_tag() const { return s_tag; }
+
+/*! \brief obtains the language. */
+inline const std::string Composed_shader::get_language() const
+{ return m_language; }
 
 SGAL_END_NAMESPACE
 
