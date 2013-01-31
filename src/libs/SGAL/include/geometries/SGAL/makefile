@@ -15,6 +15,8 @@ FILES+= Mesh_set.hpp
 FILES+= Normal_array.hpp
 FILES+= Piece.hpp
 FILES+= Tex_coord_array.hpp
+FILES+= Tex_coord_array_2d.hpp
+FILES+= Tex_coord_array_3d.hpp
 FILES+= Text.hpp
 
 INSTALLDIR =$(INCDIR)/SGAL

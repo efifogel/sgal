@@ -1,4 +1,4 @@
-// Copyright (c) 2004 Israel.
+// Copyright (c) 2013 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -14,18 +14,21 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 6147 $
+// $Id: $
+// $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TEX_COORD_ARRAY_HPP
 #define SGAL_TEX_COORD_ARRAY_HPP
 
+#if (defined _MSC_VER)
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Array.hpp"
-#include "SGAL/Vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -33,28 +36,18 @@ class Element;
 class Container_proto;
 
 /*! This class maintains an array of vertex-texture-coordinates pairs */
-class Tex_coord_array : public Container {
+class SGAL_CLASSDEF Tex_coord_array : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
-    POINT,
     LAST
   };
 
   /*! Constructor */
-  Tex_coord_array(Boolean proto = SGAL_FALSE) : Container(proto) {}
+  Tex_coord_array(Boolean proto = false) : Container(proto) {}
 
-  /*! Constructor */
-  Tex_coord_array(Uint n) { m_array.resize(n); }
-  
   /*! Destructor */
   virtual ~Tex_coord_array() {}
-
-  /* Construct the prototype */
-  static Tex_coord_array * prototype() { return new Tex_coord_array(SGAL_TRUE); }
-
-  /*! Clone */
-  virtual Container * clone() { return new Tex_coord_array(); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -63,53 +56,25 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
   
   /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
-  // virtual void FieldChanged(short fieldId);
-  //! \todo virtual Attribute_list get_attributes();
+  /*! Obtain the array size. */
+  virtual Uint size() const = 0;
 
-  /*! Obtain the array size */
-  Uint size() const { return m_array.size(); }
+  /*! Resize the array capacity. */
+  virtual void resize(Uint n) = 0;
 
-  /*! Resize the array capacity */
-  void resize(Uint n) { m_array.resize(n); }
+  /*! Clear the array. */
+  virtual void clear() = 0;
 
-  /*! Clear the array */
-  void clear() { m_array.clear(); }
-
-  /*! The iterator to the Array first element */
-  Vector2f * begin() { return m_array.begin(); }
-  const Vector2f * begin() const { return m_array.begin(); }
-
-  /*! The iterator to the Array past-the-end element */
-  Vector2f * end() { return m_array.end(); }
-  const Vector2f * end() const { return m_array.end(); }
+  /*! Obtain the GL data. */
+  virtual GLfloat* get_gl_data() = 0;
   
-  /*! Array indexing operator */
-  Vector2f & operator[](Uint n) { return m_array[n]; }
-
-  /*! Array indexing operator */
-  const Vector2f & operator[](Uint n) const { return m_array[n]; }
-  
-  /*! Obtain the vector */
-  Vector2f * get_vector() { return m_array.get_vector(); }
-
-protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
-
-private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
-
-  /*! The node prototype */
-  static Container_proto * s_prototype;
-
-  /*! The normal array */
-  SGAL::Array<Vector2f> m_array;
+private:  /*! The node prototype */
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE
