@@ -40,13 +40,14 @@
 #include "SGAL/Image.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_infos.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Image::s_tag = "Image";
 Container_proto* Image::s_prototype(NULL);
+const std::string Image::s_tag = "Image";
 
 REGISTER_TO_FACTORY(Image, "Image");
 
@@ -62,8 +63,18 @@ Image::~Image() {}
 /*! \brief initializess the node prototype. */
 void Image::init_prototype()
 {
-  if (s_prototype)  return;
+  if (s_prototype) return;
   s_prototype = new Container_proto(Image_base::get_prototype());
+
+  // Add the field-info records to the prototype:
+  //! \todo set and use the exec_func
+  // Execution_function exec_func;
+
+  s_prototype->add_field_info(new SF_string(URL, "url",
+                                            get_member_offset(&m_url)));
+
+  s_prototype->add_field_info(new SF_bool(FLIP, "flip",
+                                          get_member_offset(&m_flip)));
 }
 
 /*! \brief deletes the prototype. */

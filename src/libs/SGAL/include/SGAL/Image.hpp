@@ -112,13 +112,15 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type. */
-  static std::string s_tag;
-
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! the name of the file that the image was read from. */
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
+
+  /*! The uniform resource locator (url) that refers to the (Internet)
+   * resource that contains the image.
+   */
   std::string m_url;
 
   /*! A collection of directories to search files in. */
