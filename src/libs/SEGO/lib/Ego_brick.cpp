@@ -113,8 +113,11 @@ void Ego_brick::clean()
   SGAL_assertion(tex_coord_array);
   m_tex_coord_array = tex_coord_array;
 
+  m_dirty_indices = false;
   m_dirty_normals = false;
   m_dirty_tex_coords = false;  
+  m_dirty = false;
+
   set_primitive_type(PT_TRIANGLES);
   
   // Generate points:
