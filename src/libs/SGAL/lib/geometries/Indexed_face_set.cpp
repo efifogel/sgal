@@ -967,7 +967,7 @@ void Indexed_face_set::calculate_normal_per_polygon()
 void Indexed_face_set::clean_tex_coords()
 {
   SGAL_assertion(m_coord_array);
-  SGAL_assertion(!tex_coord_array);
+  SGAL_assertion(!m_tex_coord_array);
   Tex_coord_array_2d* tex_coord_array =
     new Tex_coord_array_2d(m_coord_array->size());
   SGAL_assertion(tex_coord_array);
