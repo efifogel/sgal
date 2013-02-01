@@ -59,7 +59,7 @@ public:
   };
 
   /*! Constructor */
-  Ego_brick(Boolean proto = SGAL_FALSE);
+  Ego_brick(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Ego_brick();
