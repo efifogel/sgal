@@ -57,7 +57,6 @@ const std::string Shape::s_tag = "Shape";
 Container_proto* Shape::s_prototype = 0;
 
 // Default values:
-const Boolean Shape::s_def_is_background(false);
 const Vector2f Shape::s_def_depth_range(0, 1);
 const Vector4ub Shape::s_def_color_mask(0xff, 0xff, 0xff, 0xff);
 const Gfx::Depth_func Shape::s_def_depth_function(Gfx::LESS_DFUNC);
@@ -81,10 +80,8 @@ Shape::Shape(Boolean proto) :
   m_color_mask(s_def_color_mask),
   m_cull_face(s_def_cull_face),
   m_appearance(0),
-  m_alt_appearance(0),
   m_geometry(0),
   m_is_visible(true),
-  m_is_background(false),
   m_dirty(true),
   m_owned_appearance(false),
   m_owned_tex_gen(false),
@@ -381,10 +378,6 @@ void Shape::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "backgroundObject") {
-      set_background(compare_to_true(value));
-      elem->mark_delete(ai);
-    }
     if (name == "drawDepth") {
       m_draw_depth = compare_to_true(value);
       elem->mark_delete(ai);
@@ -451,12 +444,6 @@ Attribute_list Shape::get_attributes()
   if (m_is_visible != true) {
     attrib.first = "visible";
     attrib.second = "FALSE";
-    attrs.push_back(attrib);
-  }
-
-  if (m_is_background != s_def_is_background) {
-    attrib.first = "backgroundObject";
-    attrib.second = (m_is_background ? "TRUE" : "FLASE");
     attrs.push_back(attrib);
   }
 

@@ -190,10 +190,6 @@ public:
 
   Boolean is_visible() const;
 
-  Boolean is_background() const;
-
-  void set_background(Boolean flag);
-
   Boolean is_text_object();
 
   /*! Obtain the rendering priority. */
@@ -249,19 +245,11 @@ private:
   /*! The apperance attribute. */
   Appearance* m_appearance;
 
-  /*! The alternative apperance attribute used when both texture and reflection
-   * map are to be applied.
-   */
-  Appearance* m_alt_appearance;
-
   /*! The list of geometries. */
   Geometry* m_geometry;
 
   /*! if false the shape is not rendered. */
   Boolean m_is_visible;
-
-  /*! a flag that indicates whether this is a background object. */
-  Boolean m_is_background;
 
   /*! Indicates whether the shape is dirty, and thus needs cleaning. */
   Boolean m_dirty;
@@ -306,7 +294,6 @@ private:
   /*! Create a texture generation function. */
   void create_tex_gen();
   
-  static const Boolean s_def_is_background;
   static const Vector2f s_def_depth_range;
   static const Vector4ub s_def_color_mask;
   static const Gfx::Depth_func s_def_depth_function;
@@ -374,12 +361,6 @@ inline void Shape::set_invisible() { m_is_visible = false; }
 
 /*! \brief */
 inline Boolean Shape::is_visible() const { return m_is_visible; }
-
-/*! \brief */
-inline Boolean Shape::is_background() const { return m_is_background; }
-
-/*! \brief */
-inline void Shape::set_background(Boolean flag) { m_is_background = flag; }
 
 /*! \brief Obtain the rendering priority. */
 inline Float Shape::get_priority() const { return m_priority; }
