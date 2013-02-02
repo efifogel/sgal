@@ -52,6 +52,9 @@ const Float Configuration::s_def_min_zoom_distance = 0;
 const Float Configuration::s_def_speed_factor = 100;
 const Uint Configuration::s_def_verbose_level = 0;
 const Boolean Configuration::s_def_seamless_cube_map = true;
+const Boolean Configuration::s_def_override_light_enable(true);
+const Boolean Configuration::s_def_override_blend_func(true);
+const Boolean Configuration::s_def_override_tex_gen(true);
 
 const Char* Configuration::s_geometry_drawing_mode_names[] =
   { "direct", "displayList", "vertexArray" };

@@ -50,6 +50,8 @@
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Cube_environment.hpp"
+#include "SGAL/Texture_2d.hpp"
+#include "SGAL/Configuration.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -79,20 +81,22 @@ Shape::Shape(Boolean proto) :
   m_depth_function(s_def_depth_function),
   m_color_mask(s_def_color_mask),
   m_cull_face(s_def_cull_face),
-  m_appearance(0),
-  m_geometry(0),
+  m_appearance(NULL),
+  m_geometry(NULL),
   m_is_visible(true),
-  m_dirty(true),
-  m_owned_appearance(false),
   m_owned_tex_gen(false),
   m_is_text_object(false),
   m_priority(0),
   m_draw_backface(false),
-  m_light_enable_save(false),
-  m_src_blend_func_save(Gfx::ONE_SBLEND),
-  m_dst_blend_func_save(Gfx::ZERO_DBLEND),
-  m_tex_gen_save(NULL),
-  m_tex_gen_enable_save(false)
+  m_owned_appearance(false),
+  m_dirty(true),
+  m_dirty_appearance(true),
+  m_dirty_geometry(true),
+  m_appearance_prev(NULL),
+  m_geometry_prev(NULL),
+  m_override_light_enable(Configuration::s_def_override_light_enable),
+  m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_tex_gen(Configuration::s_def_override_tex_gen)
 {}
 
 /*! Destructor */
@@ -112,17 +116,9 @@ Shape::~Shape()
  */
 void Shape::set_appearance(Appearance* app)
 {
-  if (m_owned_appearance) {
-    if (m_appearance) delete m_appearance;
-    m_owned_appearance = false;
-  }
   m_appearance = app;
-
-  m_light_enable_save = m_appearance->get_light_enable();
-  m_src_blend_func_save = m_appearance->get_src_blend_func();
-  m_dst_blend_func_save = m_appearance->get_dst_blend_func();
-  m_tex_gen_save = m_appearance->get_tex_gen();
-  m_tex_gen_enable_save = m_appearance->get_tex_gen_enable();
+  m_dirty = true;
+  m_dirty_appearance = true;
 }
 
 /*! \brief adds a geometry to the shape at the end of the list.
@@ -130,11 +126,10 @@ void Shape::set_appearance(Appearance* app)
  */
 void Shape::set_geometry(Geometry* geometry)
 {
-  Observer observer(this, get_field_info(SPHERE_BOUND));
-  if (m_geometry) m_geometry->unregister_observer(observer);
   m_geometry = geometry;
-  m_geometry->register_observer(observer);
-
+  m_dirty = true;
+  m_dirty_geometry = true;
+  
 #if 0
   //! \todo
   // the text object needs to pass a pointer to the appearance 
@@ -148,7 +143,7 @@ void Shape::set_geometry(Geometry* geometry)
 }
 
 /*! \brief calculates the bounding sphere of all geometries in the shape.
- * \return true if the BS has changed since last call.
+ * \return true if the bounding sphere has changed since last call.
  */
 Boolean Shape::clean_sphere_bound()
 {
@@ -165,14 +160,13 @@ Boolean Shape::clean_sphere_bound()
   return changed;
 }
 
-/*! \brief */
+/*! \brief determines whether the geometry is text. */
 Boolean Shape::is_text_object() { return m_is_text_object; }
 
 /*! \brief draws the appearance and then all the geometries. */
 Action::Trav_directive Shape::draw(Draw_action* draw_action)
 {
   if (!m_geometry || !is_visible()) return Action::TRAV_CONT;
-  if (!m_appearance) create_default_appearance();
   if (m_dirty) clean();
 
   int pass_no = draw_action->get_pass_no();
@@ -183,7 +177,7 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
   }
   
   m_appearance->draw(draw_action);
-  draw_geometries(draw_action);
+  draw_geometry(draw_action);
 
   return Action::TRAV_CONT;
 }
@@ -191,8 +185,8 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
 /*! \brief culls the node if invisible and prepare for rendering. */
 void Shape::cull(Cull_context& cull_context) { cull_context.add_shape(this); }
 
-/*! \brief */
-void Shape::draw_geometries(Draw_action* action) 
+/*! \brief draws the geometry. */
+void Shape::draw_geometry(Draw_action* action) 
 {
   if (m_geometry) {
     Context* context = action->get_context();
@@ -245,101 +239,143 @@ void Shape::isect(Isect_action* isect_action)
   m_geometry->isect(isect_action);
 }
 
-/*! \brief initializes the apperances in the shape according to whether texture
- * and environment mapping is to be applied on the shape.
- * There 3 cases:
- * # the object has no environment map. In this case, we do nothing. In the
- * render we call draw on the apperance and nothing else.
- * # the object has an environment mapping but no texture. In this case we
- * duplicate the original apperance. We set the texture to be the one of the
- * reflection and we make all the settings related to reflection. In the render
- * we use the new created apperance.
- * # the object has both environment mapping and texture. In this case we
- * create a new apperance that contains the texture of the environment and all
- * additional settings of the texture generation. In addition, we set the
- * blending functions according to the alpha value specified in the environment
- * object. In the render we first render with the original appearance and then
- * we render a second time with the newly created appearance.
- */
+/*! \brief cleans the apperances. */
 void Shape::clean()
 {
-  SGAL_assertion(m_appearance);
-  SGAL_assertion(m_geometry);
-
-  m_dirty = false;
-
-  // If the geometry has no color coordinates, enabled the light by default.
-  if (!m_geometry->has_color()) m_appearance->set_light_enable(true);
-  else m_appearance->set_light_enable(m_light_enable_save);
-
-  /*! Text geometry are transparent by default. */
-  Boolean is_transparent = m_appearance->is_transparent() || is_text_object();
-  if (is_transparent) {
-    m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-    m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-  }
-  else {
-    m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
-    m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
-  }
-
-  // Create a texture generation attribute if the appearance has a texture
-  // attribute and the geometry does not have a texture coordinate array.
-  const Texture* texture = m_appearance->get_texture();
-  if (texture && !m_appearance->get_tex_gen() && !m_geometry->has_tex_coord())
-    create_tex_gen();
-  else {
-    m_appearance->set_tex_gen(m_tex_gen_save);
-    m_appearance->set_tex_gen_enable(m_tex_gen_enable_save);
-  }
-}
-
-/*! \brief creates a texture generation function. */
-void Shape::create_tex_gen()
-{
-  Texture* texture = m_appearance->get_texture();
-
-  // Setup sphere environment map if requested:
-  if (dynamic_cast<Sphere_environment*>(texture)) {
-    Tex_gen* tex_gen = new Tex_gen();
-    SGAL_assertion(tex_gen);
-    tex_gen->set_mode_s(Tex_gen::SPHERE_MAP);
-    tex_gen->set_mode_t(Tex_gen::SPHERE_MAP);
-    m_appearance->set_tex_gen(tex_gen);
-    m_appearance->set_tex_gen_enable(true);
+  if (!m_dirty_appearance && !m_dirty_geometry) {
+    m_dirty = false;
     return;
   }
 
-  // Setup cube environment map if requested:
-  if (dynamic_cast<Cube_environment*>(texture)) {
-    Tex_gen* tex_gen = new Tex_gen();
-    SGAL_assertion(tex_gen);
+  if (m_dirty_appearance) clean_appearance();
+
+  // If the geometry has no color coordinates, enabled the light by default.
+  if (m_override_light_enable)
+    if (!m_geometry->are_generated_color())
+      m_appearance->set_light_enable(true);
+
+  if (m_override_blend_func) {
+    /*! Text geometry are transparent by default. */
+    Boolean is_transparent =
+      m_appearance->is_transparent() || is_text_object();
+    if (is_transparent) {
+      m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+      m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+    }
+    else {
+      m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
+      m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
+    }
+  }
+
+  if (m_override_tex_gen) {
+    // Enable texture generation if texture is enabled, and the geometry does
+    // not have a texture-coordinate array.
+    if (m_appearance->get_tex_enable() &&
+        !m_geometry->are_generated_tex_coord())
+    {
+      m_appearance->set_tex_gen_enable(true);
+      clean_tex_gen();
+    }
+  }
+  
+  if (m_dirty_appearance) {
+    m_appearance_prev = m_appearance;
+    m_dirty_appearance = false;
+  }
+  
+  if (m_dirty_geometry) {
+    Observer observer(this, get_field_info(SPHERE_BOUND));
+    if (m_geometry_prev) m_geometry_prev->unregister_observer(observer);
+    if (m_geometry) m_geometry->register_observer(observer);
+    m_geometry_prev = m_geometry;
+    m_dirty_geometry = false;
+  }
+    
 #if 0
-    tex_gen->set_mode_s(Tex_gen::NORMAL_MAP);
-    tex_gen->set_mode_t(Tex_gen::NORMAL_MAP);
-    tex_gen->set_mode_r(Tex_gen::NORMAL_MAP);
-#else
-    tex_gen->set_mode_s(Tex_gen::REFLECTION_MAP);
-    tex_gen->set_mode_t(Tex_gen::REFLECTION_MAP);
-    tex_gen->set_mode_r(Tex_gen::REFLECTION_MAP);
+  //! \todo
+  Text* text = dynamic_cast<Text*>(m_geometry);
+  if (text) {
+    text->set_appearance(m_appearance);
+    m_is_text_object = true;
+  }
 #endif
-    m_appearance->set_tex_gen(tex_gen);
-    m_appearance->set_tex_gen_enable(true);
+  
+  m_dirty = false;
+}
+
+/*! breif cleans the apperance. */
+void Shape::clean_appearance()
+{
+  // First construct a new owned appearance if needed, and delete the
+  // previously constructed owned appearance if not needed any more.
+  if (m_owned_appearance) {
+    if (!m_appearance) m_appearance = m_appearance_prev;
+    else {
+      delete m_appearance_prev;
+      m_appearance_prev = NULL;
+      m_owned_appearance = false;
+    }
+  }
+  else {
+    if (!m_appearance) {
+      m_appearance = new Appearance;
+      SGAL_assertion(m_appearance);
+      m_owned_appearance = true;
+    }
   }
 }
 
-/*! \brief creates the default appearance. */
-void Shape::create_default_appearance() 
+/*! \brief cleans the texture generation attribute. */
+void Shape::clean_tex_gen()
 {
-  m_appearance = new Appearance();
+  // Construct a new owned texture generation attribute if needed, and delete
+  // the previously constructed owned texture generation attribute if not
+  // needed any more.
   SGAL_assertion(m_appearance);
-  m_owned_appearance = true;
+  if (m_owned_tex_gen) {
+    SGAL_assertion(m_appearance_prev);
+    Tex_gen* tex_gen_prev = m_appearance_prev->get_tex_gen();
+    if (!m_appearance->get_tex_gen()) m_appearance->set_tex_gen(tex_gen_prev);
+    else {
+      delete tex_gen_prev;
+      m_appearance_prev->set_tex_gen(NULL);
+      m_owned_tex_gen = false;
+    }
+  }
+  else {
+    if (!m_appearance->get_tex_gen()) {
+      Tex_gen* tex_gen = new Tex_gen();
+      SGAL_assertion(tex_gen);
+      m_appearance->set_tex_gen(tex_gen);
+      m_owned_tex_gen = true;
+    }
+  }
 
-  //! \todo
+  // Setup the textute-generation functions.
+  Texture* texture = m_appearance->get_texture();
+  if (dynamic_cast<Texture_2d*>(texture)) {
+    // Setup standard texture map if requested:
+    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::OBJECT_LINEAR);
+    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::OBJECT_LINEAR);
+  }
+  else if (dynamic_cast<Sphere_environment*>(texture)) {
+    // Setup sphere environment map if requested:
+    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::SPHERE_MAP);
+    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::SPHERE_MAP);
+  }
+  else if (dynamic_cast<Cube_environment*>(texture)) {
+    // Setup cube environment map if requested:
 #if 0
-  Text* text = dynamic_cast<Text*>(m_geometry);
-  if (text) text->set_appearance(m_appearance);
+    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::NORMAL_MAP);
+    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::NORMAL_MAP);
+    m_appearance->get_tex_gen()->set_mode_r(Tex_gen::NORMAL_MAP);
+#else
+    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::REFLECTION_MAP);
+    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::REFLECTION_MAP);
+    m_appearance->get_tex_gen()->set_mode_r(Tex_gen::REFLECTION_MAP);
 #endif
+  }
 }
 
 /*! \brief sets the attributes of the shape */
@@ -527,52 +563,15 @@ Boolean Shape::detach_context(Context* context)
 /*! \brief processes change of appearance. */
 void Shape::appearance_changed(Field_info* /* field_info. */)
 {
-  m_light_enable_save = m_appearance->get_light_enable();
-  m_src_blend_func_save = m_appearance->get_src_blend_func();
-  m_dst_blend_func_save = m_appearance->get_dst_blend_func();
-  m_tex_gen_save = m_appearance->get_tex_gen();
-  m_tex_gen_enable_save = m_appearance->get_tex_gen_enable();
+  m_dirty = true;
+  m_dirty_appearance = true;
 }
 
 /*! \brief processes change of geometry. */
 void Shape::geometry_changed(Field_info* /* field_info. */)
 {
-  // Record the old value of the appearance light-enable flag:
-  // If the geometry has no color coordinates, enabled the light by default.
-  m_appearance->set_light_enable(m_light_enable_save);
-  if (!m_geometry->has_color()) m_appearance->set_light_enable(true);
-
-#if 0
-  //! \todo
-  // the text object needs to pass a pointer to the appearance 
-  // for the FontTexture object
-  Text* text = dynamic_cast<Text*>(geometry);
-  if (text) {
-    text->set_appearance(m_appearance);
-    m_is_text_object = true;
-  }
-#endif
-
-  /*! Text geometry are transparent by default. */
-  Boolean is_transparent = m_appearance->is_transparent() || is_text_object();
-  if (is_transparent) {
-    m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-    m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-  }
-  else {
-    m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
-    m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
-  }
-  
-  // Create a texture generation attribute if the appearance has a texture
-  // attribute and the geometry does not have a texture coordinate array.
-  const Texture* texture = m_appearance->get_texture();
-  if (texture && !m_appearance->get_tex_gen() && !m_geometry->has_tex_coord())
-    create_tex_gen();
-  else {
-    m_appearance->set_tex_gen(m_tex_gen_save);
-    m_appearance->set_tex_gen_enable(m_tex_gen_enable_save);
-  }
+  m_dirty = true;
+  m_dirty_geometry = true;
 }
 
 SGAL_END_NAMESPACE

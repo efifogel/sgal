@@ -43,6 +43,7 @@ class Multisample;
 
 class Configuration : public Container {
   friend class Indexed_face_set;
+  friend class Shape;
   //dirty patch for accessing defauly flags 
   //(particullary - using display lists) from Indexed_face_set
 
@@ -59,6 +60,7 @@ public:
     TEXTURE_MAP,
     VERBOSITY_LEVEL,
     SEAMLESS_CUBE_MAP,
+    OVERRIDE_LIGHT_ENABLE,
     LAST
   };
 
@@ -163,7 +165,24 @@ public:
    */
   Boolean is_seamless_cube_map() const { return m_seamless_cube_map; }
   
-  /*! Set defualt values. */
+  /*! Set the flag that indicates whether to override the appearance
+   * light-enable flag. If this flag is on, the (appearance) light is enabled
+   * if the corresponding geometry does not have color.
+   * Notice than When the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  void set_override_light_enable(Boolean flag)
+  { m_override_light_enable = flag; }
+
+  /*! Detemine whether to to override the appearance
+   * light-enable flag. If this flag is on, the (appearance) light is enabled
+   * if the corresponding geometry does not have color.
+   * Notice than When the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean is_override_light_enable() const { return m_override_light_enable; }
+  
+   /*! Set defualt values. */
   void reset(Geometry_drawing_mode def_geometry_drawing_mode =
                s_def_geometry_drawing_mode,
              Boolean def_are_global_lights_stationary =
@@ -250,6 +269,14 @@ private:
    */
   Boolean m_seamless_cube_map;
   
+  /*! Indicates whether to override the appearance light-enable flag. If this
+   * flag is on, the (appearance) light is enabled if the corresponding
+   * geometry does not have color.
+   * Notice than When the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_light_enable;
+  
   /*! Indicates whether the accumulation is owned. If the accumulation is
    * owned, it is constructed and destructed by this construct.
    */
@@ -267,7 +294,10 @@ private:
   static const Float s_def_speed_factor;
   static const Uint s_def_verbose_level;
   static const Boolean s_def_seamless_cube_map;
-
+  static const Boolean s_def_override_light_enable;
+  static const Boolean s_def_override_blend_func;
+  static const Boolean s_def_override_tex_gen;
+  
   static const Char* s_geometry_drawing_mode_names[];
 };
 

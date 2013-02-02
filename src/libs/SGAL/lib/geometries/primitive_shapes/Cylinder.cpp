@@ -85,7 +85,7 @@ void Cylinder::draw(Draw_action* action)
     // draw the cylinder
     glPushMatrix();
     glTranslatef(0, 0, -m_height / 2);
-    gluQuadricTexture(m_cylinder, GL_TRUE);
+    gluQuadricTexture(m_cylinder, (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
     gluCylinder(m_cylinder, m_radius, m_radius, m_height, m_slices, m_stacks);
     glPopMatrix();
   }
@@ -94,7 +94,8 @@ void Cylinder::draw(Draw_action* action)
   if (m_is_top_visible) {
     glPushMatrix();
     glTranslatef(0, 0, m_height/2);
-    gluQuadricTexture(m_cylinder_base, GL_TRUE);
+    gluQuadricTexture(m_cylinder_base,
+                      (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
     gluDisk(m_cylinder_base, 0, m_radius, m_slices, 1);
     glPopMatrix();
   }
@@ -104,7 +105,8 @@ void Cylinder::draw(Draw_action* action)
     glTranslatef(0, 0, -m_height/2);
     //glRotatef(180, 1, 0, 0);
     //glRotatef(180, 0, 1, 0);
-    gluQuadricTexture(m_cylinder_base, GL_TRUE);
+    gluQuadricTexture(m_cylinder_base,
+                      (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
     gluQuadricOrientation(m_cylinder_base,GLU_INSIDE);
     gluDisk(m_cylinder_base, 0, m_radius, m_slices, 1);
     gluQuadricOrientation(m_cylinder_base,GLU_OUTSIDE);

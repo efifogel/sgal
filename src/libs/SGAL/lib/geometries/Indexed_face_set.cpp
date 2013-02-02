@@ -1004,7 +1004,7 @@ void Indexed_face_set::draw(Draw_action* action)
   // Clean the tex coordinates:
   //! add vertex buffer object for the tex-coords
   Context* context = action->get_context();
-  if (context->get_tex_enable() && !(context->get_tex_gen()) &&
+  if (context->get_tex_enable() && !(context->get_tex_gen_enable()) &&
       m_dirty_tex_coords)
     clean_tex_coords();
 

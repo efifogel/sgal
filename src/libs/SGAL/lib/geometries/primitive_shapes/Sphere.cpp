@@ -58,14 +58,9 @@ Sphere::Sphere(Boolean proto) :
 }
 
 /*! Destructor */
-Sphere::~Sphere()
-{
-  gluDeleteQuadric(m_sphere);
-}
+Sphere::~Sphere() { gluDeleteQuadric(m_sphere); }
 
-/*! Draws the sphere
- * @param draw_action the draw action
- */
+/*! \brief drawss the sphere. */
 void Sphere::draw(Draw_action* /* action */) 
 {
   if (is_dirty()) init();
@@ -75,17 +70,14 @@ void Sphere::draw(Draw_action* /* action */)
   glPushMatrix();
   glTranslatef(m_center[0], m_center[1], m_center[2]);
   // glRotatef(-90, 1, 0, 0);
-
-  gluQuadricTexture(m_sphere, GL_TRUE);
+  gluQuadricTexture(m_sphere, (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
   gluSphere(m_sphere, m_radius, m_slices, m_stacks);
   glPopMatrix();
 
   glDisable(GL_NORMALIZE);
 }
 
-/*! Draws the object in selection mode 
- * @param action
- */
+/*! \brief draws the object in selection mode. */
 void Sphere::isect(Isect_action* /* action */) 
 {
   if (is_dirty()) init();
@@ -148,7 +140,7 @@ void Sphere::set_attributes(Element * elem)
       set_slices(atoi(value.c_str()));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
   }
 
   // Remove all the deleted attributes:

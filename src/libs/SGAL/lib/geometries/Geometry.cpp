@@ -31,6 +31,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -43,7 +44,7 @@ Geometry::Geometry(Boolean proto) :
   m_bb_is_pre_set(false)
 {}
 
-/*! \brief sets the attributes of this node. */
+/*! \brief initializes the geometry prototype. */
 void Geometry::init_prototype()
 {
   if (s_prototype) return;
@@ -52,21 +53,26 @@ void Geometry::init_prototype()
   // Add the field-info records to the prototype:
   // Execution_function exec_func;
   SF_sphere_bound* sphere_bound_fi;
-
+  SF_bool* bool_field;
+  
   // exec_func = static_cast<Execution_function>(&Transform::parts_changed);
   sphere_bound_fi = new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
                                         get_member_offset(&m_sphere_bound));
   s_prototype->add_field_info(sphere_bound_fi);
+
+  bool_field = new SF_bool(GENERATED_TEX_COORD, "generatedTexCoord",
+                           get_member_offset(&m_generated_tex_coord));
+  s_prototype->add_field_info(bool_field);
 }
 
-/*! */
+/*! \brief deletes the geometry prototype. */
 void Geometry::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtains the geometry prototype. */
 Container_proto* Geometry::get_prototype() 
 {  
   if (!s_prototype) Geometry::init_prototype();
@@ -96,6 +102,11 @@ void Geometry::set_attributes(Element* elem)
       float radius = vec.length();
       m_sphere_bound.set_radius(radius);
       m_bb_is_pre_set = SGAL_TRUE;
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "generatedTexCoord") {
+      set_generated_tex_coord(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }

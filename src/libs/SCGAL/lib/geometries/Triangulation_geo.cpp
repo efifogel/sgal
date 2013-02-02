@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $id: $
 // $Revision: 13463 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -54,7 +54,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Triangulation_geo::s_tag = "sgalTriangulation";
+std::string Triangulation_geo::s_tag = "Triangulation";
 SGAL::Container_proto* Triangulation_geo::s_prototype = 0;
 
 const Float Triangulation_geo::s_def_line_width(1.0f);
@@ -75,9 +75,7 @@ Triangulation_geo::Triangulation_geo(Boolean proto) :
 {}
 
 /*! Destructor */
-Triangulation_geo::~Triangulation_geo()
-{
-}
+Triangulation_geo::~Triangulation_geo() {}
 
 /*! Clean the polyhedron data structure */
 void Triangulation_geo::clean()
@@ -99,7 +97,7 @@ void Triangulation_geo::clean()
   typedef Index_map::const_iterator                     Index_iter;
   
   Index_map point_index;
-  if (has_color()) {
+  if (are_generated_color()) {
     SGAL_assertion_msg(m_coord_array->size() <= m_color_array->size(),
                        "color size must at least as large as point size!");
     Uint index = 0;
@@ -119,7 +117,7 @@ void Triangulation_geo::clean()
     float z = static_cast<float>(CGAL::to_double(p.z()));
     vd.set_coord(x, y, z);
 
-    if (has_color()) {
+    if (are_generated_color()) {
       Index_iter ii = point_index.find(&p);
       SGAL_assertion(ii != point_index.end());
       Uint i = (*ii).second;
@@ -142,12 +140,10 @@ void Triangulation_geo::clear()
   m_dirty = true;
 }
 
-/*!
- */
+/*! \brief */
 void Triangulation_geo::cull(SGAL::Cull_context& cull_context) {}
 
-/*!
- */
+/*! \brief */
 void Triangulation_geo::draw(SGAL::Draw_action* action)
 {
   if (is_dirty()) clean();
@@ -175,12 +171,11 @@ void Triangulation_geo::draw(SGAL::Draw_action* action)
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-/*!
- */
+/*! \brief */
 void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 {
   SGAL::Context* context = action->get_context();
-  if (has_color()) context->draw_light_enable(false);
+  if (are_generated_color()) context->draw_light_enable(false);
   glBegin(GL_LINES);
   TRACE_MSG(SGAL::Trace::GRAPHICS, "glBegin(GL_LINES);\n");
   for (Finite_edges_iterator fei = m_triangulation.finite_edges_begin();
@@ -197,7 +192,7 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
     
     const Vertex_data& vd1 = v1->info();
 
-    if (has_color()) {
+    if (are_generated_color()) {
       const Vector3f& c1 = vd1.get_color();
       glColor3fv((float*)&c1);
       TRACE_CODE(SGAL::Trace::GRAPHICS,
@@ -211,7 +206,7 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 
     const Vertex_data& vd2 = v2->info();
 
-    if (has_color()) {
+    if (are_generated_color()) {
       const Vector3f& c2 = vd2.get_color();
       glColor3fv((float*)&c2);
       TRACE_CODE(SGAL::Trace::GRAPHICS,
@@ -226,18 +221,16 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
   glEnd();
   TRACE_MSG(SGAL::Trace::GRAPHICS, "glEnd();\n");
 
-  if (has_color()) {
+  if (are_generated_color()) {
     glColor3f(1.0f, 1.0f, 1.0f);
     context->draw_light_enable(true);
   }
 }
 
-/*!
- */
+/*! \brief */
 void Triangulation_geo::isect(SGAL::Isect_action* action) {}
 
-/*!
- */
+/*! \brief */
 Boolean Triangulation_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
@@ -264,22 +257,15 @@ Boolean Triangulation_geo::clean_sphere_bound()
   return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of the object. */
 void Triangulation_geo::set_attributes(SGAL::Element* elem)
 {
   SGAL::Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-
-  std::string name;
-  std::string value;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
 
@@ -295,9 +281,8 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
     }
   }
 
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "coord") {
@@ -354,24 +339,21 @@ void Triangulation_geo::init_prototype()
 
 }
 
-/*!
- */
+/*! \brief deletes the prototype. */
 void Triangulation_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = 0;
 }
 
-/*!
- */
+/*! \brief obtains the prototype. */
 SGAL::Container_proto* Triangulation_geo::get_prototype() 
 {  
   if (!s_prototype) Triangulation_geo::init_prototype();
   return s_prototype;
 }
 
-/*! Print statistics
- */
+/*! \brief prints statistics. */
 void Triangulation_geo::print_stat()
 {
   if (is_dirty()) clean();

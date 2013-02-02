@@ -161,45 +161,45 @@ void Box::draw_box()
   //! \todo handle different modal combinations
   // front
   glNormal3f(0, 0, -1);
-  glTexCoord2f(1.0f, 0.0f); glVertex3fv(p0);
-  glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
-  glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
-  glTexCoord2f(0.0f, 0.0f); glVertex3fv(p1);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p0);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p1);
 
   // right
   glNormal3f(1, 0, 0);
-  glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
-  glTexCoord2f(1.0f, 1.0f); glVertex3fv(p2);
-  glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
-  glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p2);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
 
   // back
   glNormal3f(0, 0, 1);
-  glTexCoord2f(1.0f, 0.0f); glVertex3fv(p5);
-  glTexCoord2f(1.0f, 1.0f); glVertex3fv(p6);
-  glTexCoord2f(0.0f, 1.0f); glVertex3fv(p7);
-  glTexCoord2f(0.0f, 0.0f); glVertex3fv(p4);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p5);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p6);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p7);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p4);
 
   // left
   glNormal3f(-1, 0, 0);
-  glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-  glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
-  glTexCoord2f(0.0f, 1.0f); glVertex3fv(p3);
-  glTexCoord2f(0.0f, 0.0f); glVertex3fv(p0);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p3);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p0);
 
   //top
   glNormal3f(0, 1,0);
-  glTexCoord2f(1.0f, 0.0f); glVertex3fv(p3);
-  glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
-  glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
-  glTexCoord2f(0.0f, 0.0f); glVertex3fv(p2);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p3);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p2);
 
   // bottom
   glNormal3f(0, -1, 0);
-  glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-  glTexCoord2f(1.0f, 1.0f); glVertex3fv(p0);
-  glTexCoord2f(0.0f, 1.0f); glVertex3fv(p1);
-  glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
+  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p0);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p1);
+  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
   
   glEnd();
 

@@ -123,12 +123,6 @@ public:
   /*! */
   virtual Boolean clean_sphere_bound();
 
-  /*! Determine whether the geometry has a color array. */
-  virtual Boolean has_color() const { return false; }  
-  
-  /*! Determine whether the geometry has a textture coordinate array. */
-  virtual Boolean has_tex_coord() const { return false; }  
-
   /*! Draw the geometry */
   virtual void draw(Draw_action* action);
 

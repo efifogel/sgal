@@ -251,12 +251,6 @@ private:
   /*! if false the shape is not rendered. */
   Boolean m_is_visible;
 
-  /*! Indicates whether the shape is dirty, and thus needs cleaning. */
-  Boolean m_dirty;
-
-  /*! Indicates whether the appearance node has been constructed by default. */
-  Boolean m_owned_appearance;
-
   /*! Indicates whether the texture-generation attribute is owned. If it is
    * owned  (as the user hasn't provided one) the texture-generation attribute
    * should be destructed when the appearance is destructed.
@@ -272,27 +266,63 @@ private:
   /* A flag that indicates whether backface drawing is required. */
   Boolean m_draw_backface;
 
-  /*! Stores the old value of the appearance light-enable flag. */
-  Boolean m_light_enable_save;
+  /*! Indicates whether the appearance node has been constructed by default. */
+  Boolean m_owned_appearance;
 
-  /*! Stores the old value of the source blend function. */
-  Gfx::Src_blend_func m_src_blend_func_save;
+  /*! Indicates whether the shape is dirty, and thus needs cleaning. */
+  Boolean m_dirty;
 
-  /*! Stores the old value of the source blend function. */
-  Gfx::Dst_blend_func m_dst_blend_func_save;
+  /*! Indicates whether the shape appearance is dirty, and thus needs
+   * cleaning.
+   */
+  Boolean m_dirty_appearance;
 
-  /*! Stores the old value of the texture generation attribute. */
-  Tex_gen* m_tex_gen_save;
+  /*! Indicates whether the shape geometry is dirty, and thus needs cleaning. */
+  Boolean m_dirty_geometry;
 
-  /*! Stores the old value of the texture generation enable flag. */
-  Boolean m_tex_gen_enable_save;
-    
-  void draw_geometries(Draw_action* draw_action);
+  /*! Stores the pervious appearance. */
+  Appearance* m_appearance_prev;
 
-  void create_default_appearance();
+  /*! Stores the pervious geometry. */
+  Geometry* m_geometry_prev;
 
-  /*! Create a texture generation function. */
-  void create_tex_gen();
+  /*! Indicates whether to override the appearance light-enable flag. If this
+   * flag is on, the (appearance) light is enabled if the corresponding
+   * geometry does not have color.
+   * Notice than when the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_light_enable;
+
+  /*! Indicates whether to override the appearance blend functions. If this
+   * flag is on, the (appearance) blend functions are set according to the
+   * appearance transparency and whether the geometry is text.
+   * Notice than when the appearance chages, the blend functions of the
+   * previous appearance are not restored to their original values.
+   */
+  Boolean m_override_blend_func;
+
+  /*! Indicates whether to override the appearance texture-generation flag and
+   * construct the appearance texture-generation attribute when missing. If
+   * this flag is on, (appearance) texture-generation is enabled (appearance)
+   * texture is enabled, and the corresponding geometry does not have a
+   * texture-coordinate array.
+   * Notice than when the appearance chages, the texture-generation flag (and
+   * possibly attribute) of the previous appearance are not restored to their
+   * original values.
+   */
+  Boolean m_override_tex_gen;
+
+  /*! Draw the geometry. */
+  void draw_geometry(Draw_action* draw_action);
+
+  /*! Cleane the appearance. */
+  void clean_appearance();
+
+  /*! Cleane the texture generation attributes of the (current) appearance
+   * and the previous appearance if exists.
+   */
+  void clean_tex_gen();
   
   static const Vector2f s_def_depth_range;
   static const Vector4ub s_def_color_mask;
