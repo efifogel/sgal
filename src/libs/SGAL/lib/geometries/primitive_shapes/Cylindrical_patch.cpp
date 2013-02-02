@@ -64,8 +64,7 @@ Cylindrical_patch::Cylindrical_patch(Boolean proto) :
   m_alpha(s_def_alpha),
   m_beta(s_def_beta),
   m_slices(s_def_slices)
-{
-}
+{}
 
 /*! Destructor */
 Cylindrical_patch::~Cylindrical_patch(){}
@@ -87,19 +86,19 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
   Float n_right_z = -sin_right;
 
   glNormal3f(n_left_x, 0, n_left_z);
-  glTexCoord2f(0, 0);
+  if (m_generated_tex_coord) glTexCoord2f(0, 0);
   glVertex3f(v_left_x, bottom, v_left_z);
 
   glNormal3f(n_right_x, 0, n_right_z);
-  glTexCoord2f(0, 1);
+  if (m_generated_tex_coord) glTexCoord2f(0, 1);
   glVertex3f(v_right_x, bottom, v_right_z);
 
   glNormal3f(n_right_x, 0, n_right_z);
-  glTexCoord2f(1, 1);
+  if (m_generated_tex_coord) glTexCoord2f(1, 1);
   glVertex3f(v_right_x, top, v_right_z);
     
   glNormal3f(n_left_x, 0, n_left_z);
-  glTexCoord2f(1, 0);
+  if (m_generated_tex_coord) glTexCoord2f(1, 0);
   glVertex3f(v_left_x, top, v_left_z);
 }
 

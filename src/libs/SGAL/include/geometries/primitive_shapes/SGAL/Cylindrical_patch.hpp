@@ -228,7 +228,7 @@ private:
  * geometry.
  */
 inline Boolean Cylindrical_patch::are_generated_tex_coord() const
-{ return true; }
+{ return m_generated_tex_coord; }
 
 SGAL_END_NAMESPACE
 
