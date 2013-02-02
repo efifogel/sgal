@@ -356,8 +356,13 @@ void Shape::clean_tex_gen()
   Texture* texture = m_appearance->get_texture();
   if (dynamic_cast<Texture_2d*>(texture)) {
     // Setup standard texture map if requested:
+#if 0
+    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::EYE_LINEAR);
+    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::EYE_LINEAR);
+#else
     m_appearance->get_tex_gen()->set_mode_s(Tex_gen::OBJECT_LINEAR);
     m_appearance->get_tex_gen()->set_mode_t(Tex_gen::OBJECT_LINEAR);
+#endif
   }
   else if (dynamic_cast<Sphere_environment*>(texture)) {
     // Setup sphere environment map if requested:

@@ -54,7 +54,6 @@ REGISTER_TO_FACTORY(Texture_2d, "Texture_2d");
 Texture_2d::Texture_2d(Boolean proto) :
   Texture(proto),
   m_image(NULL),
-  m_dirty(true),
   m_text(0)
 { set_target(TEXTURE_2D); }
 
@@ -71,11 +70,10 @@ void Texture_2d::draw(Context* context)
 /*! \brief cleans the object using the new decoded data. */
 void Texture_2d::clean()
 {
-  if (Texture::is_dirty()) Texture::clean();
+  Texture::clean();
   if (m_image->is_dirty()) m_image->clean();
   load_color_map(m_image, s_targets[m_target]);
   if (m_text) m_text->clean();
-  m_dirty = false;
 }
 
 /* \brief determines whether texture image is empty. */

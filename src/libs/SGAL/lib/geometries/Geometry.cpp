@@ -41,7 +41,8 @@ Container_proto* Geometry::s_prototype = 0;
 Geometry::Geometry(Boolean proto) :
   Container(proto),
   m_dirty_sphere_bound(true),
-  m_bb_is_pre_set(false)
+  m_bb_is_pre_set(false),
+  m_generated_tex_coord(true)
 {}
 
 /*! \brief initializes the geometry prototype. */

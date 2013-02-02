@@ -112,9 +112,6 @@ public:
   /*! Draw the texture. */
   virtual void draw(Context* ctx);
 
-  /*! Determine whether the object is dirty, and thus needs cleaning. */
-  Boolean is_dirty() const;
-
   /*! Clean the object using the new decoded data. */
   virtual void clean();
 
@@ -134,9 +131,6 @@ public:
 protected:
   /*! The texture pixels. */
   Image* m_image;
-
-  /*! true after a call to clean. */
-  Boolean m_dirty;
 
   /*! */
   Text_texture* m_text;
@@ -177,9 +171,6 @@ inline Int Texture_2d::get_height() const { return m_image->get_height(); }
 /*! \brief obtains the texture pixel-data. */
 inline void* Texture_2d::get_pixels() const { return m_image->get_pixels(); }
   
-/*! \brief */
-inline Boolean Texture_2d::is_dirty() const { return m_dirty; }
-
 /*! \brief */
 inline void Texture_2d::set_text(Text_texture* text) { m_text = text; }
 
