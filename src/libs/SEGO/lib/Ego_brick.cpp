@@ -95,31 +95,41 @@ Ego_brick::~Ego_brick()
   }
 }
 
-/*! Clean the ellipsoid internal representation */
+/*! \brief cleans the internal represenation. */
 void Ego_brick::clean()
 {
-  // Clear internal representation:
-  SGAL_assertion(!m_coord_array);
-  m_coord_array = new Coord_array;
-  SGAL_assertion(m_coord_array);
-
-  SGAL_assertion(!m_normal_array);
-  m_normal_array = new Normal_array;
-  SGAL_assertion(m_normal_array);
-
-  // Initialize the texture coordinate array.
-  SGAL_assertion(!m_tex_coord_array);
-  Tex_coord_array_3d* tex_coord_array = new Tex_coord_array_3d;
-  SGAL_assertion(tex_coord_array);
-  m_tex_coord_array = tex_coord_array;
-
-  m_dirty_indices = false;
-  m_dirty_normals = false;
-  m_dirty_tex_coords = false;  
-  m_dirty = false;
-
+  if (m_are_knobs_visible) clean_knob_cross_section();
+  clean_coords();
+  if (m_dirty_normals) clean_normals();
+  if (m_dirty_tex_coords) clean_tex_coords();
   set_primitive_type(PT_TRIANGLES);
+  clean_indices();
+  if (m_are_knobs_visible) m_knob_cross_section.clear();
+  set_solid(true);
+  m_dirty = false;
+}
+
+/*! \brief generates the knob_cross_section. */
+void Ego_brick::clean_knob_cross_section()
+{
+  if (!m_knob_cross_section.empty()) return;
   
+  Float delta = SGAL_TWO_PI / m_knob_slices;
+  Float angle = 0;
+  m_knob_cross_section.resize(m_knob_slices);
+  std::vector<Vector2f>::iterator it;
+  for (it = m_knob_cross_section.begin(); it != m_knob_cross_section.end(); ++it)
+  {
+    Float x = cosf(angle);
+    Float y = sinf(angle);
+    angle += delta;
+    it->set(x, y);
+  }
+}
+
+/*! \brief cleans the coordinates. */
+void Ego_brick::clean_coords()
+{
   // Generate points:
   Uint size = 4 * 6;
   m_num_primitives = 6 * 2;
@@ -132,9 +142,9 @@ void Ego_brick::clean()
     Uint primitives_per_knob = m_knob_slices * 3;
     m_num_primitives += primitives_per_knob * num_knobs;
   }
-  m_coord_array->resize(size);
-  m_normal_array->resize(size);
-  tex_coord_array->resize(size);
+  SGAL_assertion(!m_coord_array);
+  m_coord_array = new Coord_array(size);
+  SGAL_assertion(m_coord_array);
 
   // Corner points:
   float width = m_pitch * m_number_of_knobs1;
@@ -150,213 +160,122 @@ void Ego_brick::clean()
 
   // Box
   // Left
-  (*tex_coord_array)[k].set(-1, 1, -1);
-  (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
-  (*tex_coord_array)[k].set(-1, -1, -1);
-  (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z);
-  (*tex_coord_array)[k].set(-1, -1, 1);
-  (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
-  (*tex_coord_array)[k].set(-1, 1, 1);
-  (*m_normal_array)[k].set(-1, 0, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
   // Right
-  (*tex_coord_array)[k].set(1, -1, -1);
-  (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
-  (*tex_coord_array)[k].set(1, 1, -1);
-  (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
-  (*tex_coord_array)[k].set(1, 1, 1);
-  (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
-  (*tex_coord_array)[k].set(1, -1, 1);
-  (*m_normal_array)[k].set(1, 0, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
 
   // Near
-  (*tex_coord_array)[k].set(-1, -1, -1);
-  (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z);
-  (*tex_coord_array)[k].set(1, -1, -1);
-  (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
-  (*tex_coord_array)[k].set(1, -1, 1);
-  (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
-  (*tex_coord_array)[k].set(-1, -1, 1);
-  (*m_normal_array)[k].set(0, -1, 0);
   (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
 
   // Far
-  (*tex_coord_array)[k].set(1, 1, -1);
-  (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
-  (*tex_coord_array)[k].set(-1, 1, -1);
-  (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
-  (*tex_coord_array)[k].set(-1, 1, 1);
-  (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
-  (*tex_coord_array)[k].set(1, 1, 1);
-  (*m_normal_array)[k].set(0, 1, 0);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
-  (*tex_coord_array)[k].set(1, 1, 1);
 
   // Bottom
-  (*tex_coord_array)[k].set(-1, -1, -1);
-  (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x, base_y, base_z);
-  (*tex_coord_array)[k].set(-1, 1, -1);
-  (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
-  (*tex_coord_array)[k].set(1, 1, -1);
-  (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
-  (*tex_coord_array)[k].set(1, -1, -1);
-  (*m_normal_array)[k].set(0, 0, -1);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
 
   // Top
-  (*tex_coord_array)[k].set(-1, -1, 1);
-  (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
-  (*tex_coord_array)[k].set(1, -1, 1);
-  (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
-  (*tex_coord_array)[k].set(1, 1, 1);
-  (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
-  (*tex_coord_array)[k].set(-1, 1, 1);
-  (*m_normal_array)[k].set(0, 0, 1);
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
   // Knobs:
   if (m_are_knobs_visible) {
-    // Generate cross section:
-    Float delta = SGAL_TWO_PI / m_knob_slices;
-    Float angle = 0;
-    /*! A 2D cross section of the knob */
-    std::vector<Vector2f> knob_cross_section(m_knob_slices);
-    std::vector<Vector2f>::iterator it;
-    for (it = knob_cross_section.begin(); it != knob_cross_section.end(); ++it)
-    {
-      Float x = cosf(angle);
-      Float y = sinf(angle);
-      angle += delta;
-      it->set(x, y);
-    }
+    SGAL_assertion(!m_knob_cross_section.empty());
 
     base_x += m_pitch * 0.5;
     base_y += m_pitch * 0.5;
-    float z = base_z + m_height;
-    Uint i;
-    Uint j;
-    for (j = 0; j < m_number_of_knobs2; ++j) {
-      float center_y = base_y + j * m_pitch;
-      for (i = 0; i < m_number_of_knobs1; ++i) {
-        float center_x = base_x + i * m_pitch;
-        for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
-             it != knob_cross_section.end(); ++it)
+    Float z = base_z + m_height;
+    for (Uint j = 0; j < m_number_of_knobs2; ++j) {
+      Float center_y = base_y + j * m_pitch;
+      for (Uint i = 0; i < m_number_of_knobs1; ++i) {
+        Float center_x = base_x + i * m_pitch;
+        std::vector<Vector2f>::iterator it;
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
         {
           float x = center_x + (*it)[0] * m_knob_radius;
           float y = center_y + (*it)[1] * m_knob_radius;
-          (*m_normal_array)[k].set((*it)[0], (*it)[1], 0);
-          (*tex_coord_array)[k].set((*it)[0], (*it)[1], 0);
           (*m_coord_array)[k++].set(x, y, z);
         }
-        for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
-             it != knob_cross_section.end(); ++it)
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
         {
           float x = center_x + (*it)[0] * m_knob_radius;
           float y = center_y + (*it)[1] * m_knob_radius;
-          (*tex_coord_array)[k].set((*it)[0], (*it)[1], 1);
-          (*m_normal_array)[k].set((*it)[0], (*it)[1], 0);
           (*m_coord_array)[k].set(x, y, z + m_knob_height);
           (*m_coord_array)[k+m_knob_slices].set(x, y, z + m_knob_height);
           ++k;
         }
-        for (std::vector<Vector2f>::iterator it = knob_cross_section.begin();
-             it != knob_cross_section.end(); ++it)
-        {
-          // Here we increment the index k!
-          (*tex_coord_array)[k].set(0, 0, 1);
-          (*m_normal_array)[k++].set(0, 0, 1);
-        }
-        (*tex_coord_array)[k].set(0, 0, 1);
-        (*m_normal_array)[k].set(0, 0, 1);
         (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
       }
     }
-    knob_cross_section.clear();
   }
+}
+
+/*! \brief cleans the texture indices. */
+void Ego_brick::clean_indices()
+{
+  m_dirty_indices = false;
   
-  // Generates coordinate indices:
+  m_are_indices_flat = true;
 
   // Box
-  m_are_indices_flat = true;
-  k = 0;
+  Uint k = 0;
   Uint num_indices = m_num_primitives * 3;
   m_coord_indices.resize(num_indices);
 
   // Left
-  m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 1;
-  m_coord_indices[k++] = 2;
-  m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 2;
-  m_coord_indices[k++] = 3;
+  m_coord_indices[k++] = 0;  m_coord_indices[k++] = 1;
+  m_coord_indices[k++] = 2;  m_coord_indices[k++] = 0;
+  m_coord_indices[k++] = 2;  m_coord_indices[k++] = 3;
 
   // Right
-  m_coord_indices[k++] = 4;
-  m_coord_indices[k++] = 5;
-  m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = 4;
-  m_coord_indices[k++] = 6;
-  m_coord_indices[k++] = 7;
+  m_coord_indices[k++] = 4;  m_coord_indices[k++] = 5;
+  m_coord_indices[k++] = 6;  m_coord_indices[k++] = 4;
+  m_coord_indices[k++] = 6;  m_coord_indices[k++] = 7;
 
   // Near
-  m_coord_indices[k++] = 8;
-  m_coord_indices[k++] = 9;
-  m_coord_indices[k++] = 10;
-  m_coord_indices[k++] = 8;
-  m_coord_indices[k++] = 10;
-  m_coord_indices[k++] = 11;
+  m_coord_indices[k++] = 8;  m_coord_indices[k++] = 9;
+  m_coord_indices[k++] = 10; m_coord_indices[k++] = 8;
+  m_coord_indices[k++] = 10; m_coord_indices[k++] = 11;
 
   // Far
-  m_coord_indices[k++] = 12;
-  m_coord_indices[k++] = 13;
-  m_coord_indices[k++] = 14;
-  m_coord_indices[k++] = 12;
-  m_coord_indices[k++] = 14;
-  m_coord_indices[k++] = 15;
+  m_coord_indices[k++] = 12; m_coord_indices[k++] = 13;
+  m_coord_indices[k++] = 14; m_coord_indices[k++] = 12;
+  m_coord_indices[k++] = 14; m_coord_indices[k++] = 15;
 
   // Bottom
-  m_coord_indices[k++] = 16;
-  m_coord_indices[k++] = 17;
-  m_coord_indices[k++] = 18;
-  m_coord_indices[k++] = 16;
-  m_coord_indices[k++] = 18;
-  m_coord_indices[k++] = 19;
+  m_coord_indices[k++] = 16; m_coord_indices[k++] = 17;
+  m_coord_indices[k++] = 18; m_coord_indices[k++] = 16;
+  m_coord_indices[k++] = 18; m_coord_indices[k++] = 19;
 
   // top
-  m_coord_indices[k++] = 20;
-  m_coord_indices[k++] = 21;
-  m_coord_indices[k++] = 22;
-  m_coord_indices[k++] = 20;
-  m_coord_indices[k++] = 22;
-  m_coord_indices[k++] = 23;
+  m_coord_indices[k++] = 20; m_coord_indices[k++] = 21;
+  m_coord_indices[k++] = 22; m_coord_indices[k++] = 20;
+  m_coord_indices[k++] = 22; m_coord_indices[k++] = 23;
 
   // Knobs:
   if (m_are_knobs_visible) {
-    Uint i;
-    Uint j;
     Uint base = 6 * 4;
-    for (j = 0; j < m_number_of_knobs2; ++j) {
-      for (i = 0; i < m_number_of_knobs1; ++i) {
+    for (Uint j = 0; j < m_number_of_knobs2; ++j) {
+      for (Uint i = 0; i < m_number_of_knobs1; ++i) {
         Uint l;
         for (l = 0; l < m_knob_slices; ++l) {
           Uint a = base + l;
@@ -383,9 +302,174 @@ void Ego_brick::clean()
       }
     }
   }
+}
 
-  // Attributes
-  set_solid(true);
+/*! \brief cleans the normals. */
+void Ego_brick::clean_normals()
+{
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(!m_normal_array);
+  m_normal_array = new Normal_array(m_coord_array->size());
+  SGAL_assertion(m_normal_array);
+
+  m_dirty_normals = false;
+  
+  Uint k = 0;
+
+  // Box
+  // Left
+  (*m_normal_array)[k++].set(-1, 0, 0);
+  (*m_normal_array)[k++].set(-1, 0, 0);
+  (*m_normal_array)[k++].set(-1, 0, 0);
+  (*m_normal_array)[k++].set(-1, 0, 0);
+
+  // Right
+  (*m_normal_array)[k++].set(1, 0, 0);
+  (*m_normal_array)[k++].set(1, 0, 0);
+  (*m_normal_array)[k++].set(1, 0, 0);
+  (*m_normal_array)[k++].set(1, 0, 0);
+
+  // Near
+  (*m_normal_array)[k++].set(0, -1, 0);
+  (*m_normal_array)[k++].set(0, -1, 0);
+  (*m_normal_array)[k++].set(0, -1, 0);
+  (*m_normal_array)[k++].set(0, -1, 0);
+
+  // Far
+  (*m_normal_array)[k++].set(0, 1, 0);
+  (*m_normal_array)[k++].set(0, 1, 0);
+  (*m_normal_array)[k++].set(0, 1, 0);
+  (*m_normal_array)[k++].set(0, 1, 0);
+
+  // Bottom
+  (*m_normal_array)[k++].set(0, 0, -1);
+  (*m_normal_array)[k++].set(0, 0, -1);
+  (*m_normal_array)[k++].set(0, 0, -1);
+  (*m_normal_array)[k++].set(0, 0, -1);
+
+  // Top
+  (*m_normal_array)[k++].set(0, 0, 1);
+  (*m_normal_array)[k++].set(0, 0, 1);
+  (*m_normal_array)[k++].set(0, 0, 1);
+  (*m_normal_array)[k++].set(0, 0, 1);
+
+  // Knobs:
+  if (m_are_knobs_visible) {
+    for (Uint j = 0; j < m_number_of_knobs2; ++j) {
+      for (Uint i = 0; i < m_number_of_knobs1; ++i) {
+        std::vector<Vector2f>::iterator it;
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
+          (*m_normal_array)[k++].set((*it)[0], (*it)[1], 0);
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
+          (*m_normal_array)[k++].set((*it)[0], (*it)[1], 0);
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
+          (*m_normal_array)[k++].set(0, 0, 1);
+        (*m_normal_array)[k++].set(0, 0, 1);
+      }
+    }
+  }
+}
+
+/*! \brief cleans the texture_coordinates. */
+void Ego_brick::clean_tex_coords()
+{
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(!m_tex_coord_array);
+  Tex_coord_array_3d* tex_coord_array =
+    new Tex_coord_array_3d(m_coord_array->size());
+  SGAL_assertion(tex_coord_array);
+  m_tex_coord_array = tex_coord_array;
+
+  m_dirty_tex_coords = false;  
+
+  // Corner points:
+  // float width = m_pitch * m_number_of_knobs1;
+  // float depth = m_pitch * m_number_of_knobs2;
+  // float center_x = width * 0.5f;
+  // float center_y = depth * 0.5f;
+  // float center_z = m_height * 0.5f;
+  // float base_x = -center_x;
+  // float base_y = -center_y;
+  // float base_z = -center_z;
+
+  Uint k = 0;
+
+  // Box
+  // Left
+  (*tex_coord_array)[k].set(-1, 1, -1);
+  (*tex_coord_array)[k].set(-1, -1, -1);
+  (*tex_coord_array)[k].set(-1, -1, 1);
+  (*tex_coord_array)[k].set(-1, 1, 1);
+
+  // Right
+  (*tex_coord_array)[k].set(1, -1, -1);
+  (*tex_coord_array)[k].set(1, 1, -1);
+  (*tex_coord_array)[k].set(1, 1, 1);
+  (*tex_coord_array)[k].set(1, -1, 1);
+
+  // Near
+  (*tex_coord_array)[k].set(-1, -1, -1);
+  (*tex_coord_array)[k].set(1, -1, -1);
+  (*tex_coord_array)[k].set(1, -1, 1);
+  (*tex_coord_array)[k].set(-1, -1, 1);
+
+  // Far
+  (*tex_coord_array)[k].set(1, 1, -1);
+  (*tex_coord_array)[k].set(-1, 1, -1);
+  (*tex_coord_array)[k].set(-1, 1, 1);
+  (*tex_coord_array)[k].set(1, 1, 1);
+
+  // Bottom
+  (*tex_coord_array)[k].set(-1, -1, -1);
+  (*tex_coord_array)[k].set(-1, 1, -1);
+  (*tex_coord_array)[k].set(1, 1, -1);
+  (*tex_coord_array)[k].set(1, -1, -1);
+
+  // Top
+  (*tex_coord_array)[k].set(-1, -1, 1);
+  (*tex_coord_array)[k].set(1, -1, 1);
+  (*tex_coord_array)[k].set(1, 1, 1);
+  (*tex_coord_array)[k].set(-1, 1, 1);
+
+  // Knobs:
+  if (m_are_knobs_visible) {
+    // base_x += m_pitch * 0.5;
+    // base_y += m_pitch * 0.5;
+    // float z = base_z + m_height;
+    for (Uint j = 0; j < m_number_of_knobs2; ++j) {
+      // float center_y = base_y + j * m_pitch;
+      for (Uint i = 0; i < m_number_of_knobs1; ++i) {
+        // float center_x = base_x + i * m_pitch;
+        std::vector<Vector2f>::iterator it;
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
+        {
+          // float x = center_x + (*it)[0] * m_knob_radius;
+          // float y = center_y + (*it)[1] * m_knob_radius;
+          // (*m_coord_array)[k++].set(x, y, z);
+          (*tex_coord_array)[k++].set((*it)[0], (*it)[1], 0);
+        }
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
+        {
+          // float x = center_x + (*it)[0] * m_knob_radius;
+          // float y = center_y + (*it)[1] * m_knob_radius;
+          // (*m_coord_array)[k].set(x, y, z + m_knob_height);
+          // (*m_coord_array)[k+m_knob_slices].set(x, y, z + m_knob_height);
+          (*tex_coord_array)[k++].set((*it)[0], (*it)[1], 1);
+        }
+        for (it = m_knob_cross_section.begin();
+             it != m_knob_cross_section.end(); ++it)
+        {
+          (*tex_coord_array)[k++].set(0, 0, 1);
+        }
+        (*tex_coord_array)[k++].set(0, 0, 1);
+      }
+    }
+  }
 }
 
 /*! Set the attributes of the object extracted from the VRML or X3D file.
