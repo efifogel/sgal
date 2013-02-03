@@ -174,19 +174,19 @@ void Arc::draw(Draw_action* action)
       // Render:
       glBegin(GL_QUADS);
       glNormal3f(vbl[0], cos_beta_bottom, vbl[2]);
-      glTexCoord2f(0.0f, 0.0f);
+      if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f);
       glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
 
       glNormal3f(vtl[0], cos_beta_top, vtl[2]);
-      glTexCoord2f(0.0f, 1.0f);
+      if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f);
       glVertex3f(m_radius * vtl[0], top, m_radius * vtl[2]);
 
       glNormal3f(vtr[0], cos_beta_top, vtr[2]);
-      glTexCoord2f(1.0f, 1.0f);
+      if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f);
       glVertex3f(m_radius * vtr[0], top, m_radius * vtr[2]);
 
       glNormal3f(vbr[0], cos_beta_bottom, vbr[2]);
-      glTexCoord2f(1.0f, 0.0f);
+      if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f);
       glVertex3f(m_radius * vbr[0], bottom, m_radius * vbr[2]);
 
       glEnd();

@@ -561,6 +561,23 @@ Transform {
       whichChoice 0
       children [
 	DEF EGO Ego {
+	  appearance Appearance {
+	    material Material {
+	      diffuseColor 0.7 0.7 0.7
+	      ambientIntensity 0.2
+	      transparency 0
+	    }
+	    # texture ImageTexture { url ["negx.jpg"] }
+	    texture CubeEnvironment {
+	      rightImage Image { flip FALSE url ["posx.jpg"] }
+	      leftImage Image { flip FALSE url ["negx.jpg"] }
+	      backImage Image { flip FALSE url ["posy.jpg"] }
+	      frontImage Image { flip FALSE url ["negy.jpg"] }
+	      topImage Image { flip FALSE url ["posz.jpg"] }
+	      bottomImage Image { flip FALSE url ["negz.jpg"] }
+	    }
+	  }
+	  style "appearance"
 	  scale 100 100 100
 	  model USE MODEL
 	}
@@ -568,53 +585,58 @@ Transform {
     }
 
     # The axes:
-    DEF AXES Transform {
-      # scale 0.1 0.1 0.1
+    Switch {
+      whichChoice -1
       children [
-        Shape {
-          appearance DEF AXES_APP Appearance {
-            material Material {
-              # ambientIntensity 1
-              diffuseColor 0.4 0.4 0.4
-              # specularColor 0.3 0.3 0.3
-              # transparency 0.0001
-            }
-          }
-          geometry Sphere { radius 0.1 }
-        }
-        DEF CS_AXIS Transform {
-          translation 0 1.5 0
-          children [
-            Shape {
-              appearance USE AXES_APP
-              geometry Cylinder {
-                radius 0.1
-                height 3
-                set_is_bottom_visible FALSE
-                set_is_top_visible FALSE
-              }
-            }
-            Transform {
-              translation 0 1.7 0
-              children [
-                Shape {
-                  appearance USE AXES_APP
-                  geometry Cone {
-                    bottomRadius 0.2
-                    height 0.4
-                  }
-                }
-               ]
-            }
-           ]
-        }
-        Transform {
-          rotation 0 0 -1 1.57
-          children [ USE CS_AXIS ]
-        }
-        Transform {
-          rotation 1 0 0 1.57
-          children [ USE CS_AXIS ]
+	DEF AXES Transform {
+	  # scale 0.1 0.1 0.1
+	  children [
+	    Shape {
+	      appearance DEF AXES_APP Appearance {
+		material Material {
+		  # ambientIntensity 1
+		  diffuseColor 0.4 0.4 0.4
+		  # specularColor 0.3 0.3 0.3
+		  # transparency 0.0001
+		}
+	      }
+	      geometry Sphere { radius 0.1 }
+	    }
+	    DEF CS_AXIS Transform {
+	      translation 0 1.5 0
+	      children [
+		Shape {
+		  appearance USE AXES_APP
+		  geometry Cylinder {
+		    radius 0.1
+		    height 3
+		    set_is_bottom_visible FALSE
+		    set_is_top_visible FALSE
+		  }
+		}
+		Transform {
+		  translation 0 1.7 0
+		  children [
+		    Shape {
+		      appearance USE AXES_APP
+		      geometry Cone {
+			bottomRadius 0.2
+			height 0.4
+		      }
+		    }
+		   ]
+		}
+	       ]
+	    }
+	    Transform {
+	      rotation 0 0 -1 1.57
+	      children [ USE CS_AXIS ]
+	    }
+	    Transform {
+	      rotation 1 0 0 1.57
+	      children [ USE CS_AXIS ]
+	    }
+	   ]
 	}
        ]
     }

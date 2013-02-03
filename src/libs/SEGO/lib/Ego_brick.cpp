@@ -119,6 +119,7 @@ void Ego_brick::clean()
   m_dirty = false;
 
   set_primitive_type(PT_TRIANGLES);
+  set_generated_tex_coord(true);
   
   // Generate points:
   Uint size = 4 * 6;

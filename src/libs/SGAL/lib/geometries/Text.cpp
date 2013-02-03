@@ -48,8 +48,7 @@ Text::Text(Boolean proto) :
   Geometry(proto),
   m_font_style(NULL),
   m_default_font_style(NULL)
-{
-}
+{}
 
 /*! Destructor */
 Text::~Text()

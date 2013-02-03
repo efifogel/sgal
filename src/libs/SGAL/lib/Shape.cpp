@@ -307,8 +307,8 @@ void Shape::clean()
 /*! breif cleans the apperance. */
 void Shape::clean_appearance()
 {
-  // First construct a new owned appearance if needed, and delete the
-  // previously constructed owned appearance if not needed any more.
+  // Construct a new owned appearance if needed, and delete the previously
+  // constructed owned appearance if not needed any more.
   if (m_owned_appearance) {
     if (!m_appearance) m_appearance = m_appearance_prev;
     else {

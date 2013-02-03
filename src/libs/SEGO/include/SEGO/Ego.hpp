@@ -50,6 +50,7 @@ class Cull_context;
 class Polyhedron_geo;
 class Exact_polyhedron_geo;
 class Scene_graph;
+class Appearance;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
@@ -63,9 +64,13 @@ public:
     TILING_STRATEGY,
     TILING_ROWS_DIRECTION,
     PARTS,
+    STYLE,
+    APPEARANCE,
     LAST
   };
 
+  enum Style { STYLE_RANDOM_COLORS, STYLE_APPEARANCE };
+  
   /*! Constructor */
   Ego(Boolean proto = false);
 
@@ -113,10 +118,16 @@ public:
   /*! Obtain the sphere bound */
   const Sphere_bound& get_sphere_bound();
 
-  /*! Clean the voxels */
+  /*! Cleane the appearance. */
+  void clean_appearance();
+
+  /*! Create a random appearance. */
+  Appearance* create_random_appearance();
+  
+  /*! Clean the voxels. */
   void clean_voxels();
 
-  /*! Clean the tiling */
+  /*! Clean the tiling. */
   void clean_tiling();
 
   /*! (Re)generate the parts. */
@@ -197,7 +208,31 @@ public:
   /*! Notify about a change in the tiling */
   void tiling_changed(Field_info* field_info = NULL);
 
-protected:
+  /*! Obtain the (const) appearance.
+   * \return the appearance.
+   */
+  const Appearance* get_appearance() const;
+
+  /*! Obtain the (non-const) appearance.
+   * \return the appearance.
+   */
+  Appearance* get_appearance();
+
+  /*! Set an appearance.
+   * \param appearance the new appearance.
+   */
+  void set_appearance(Appearance* appearance);
+
+  /*! Process change of appearance. */
+  void appearance_changed(Field_info* /* field_info. */);
+
+  /*! Obtain the style. */
+  Style get_style() const;
+
+  /*! Set the style. */
+  void set_style(Style style);
+
+ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -221,11 +256,25 @@ protected:
 
   Exact_polyhedron_geo::Kernel::Point_3 m_tiled_voxels_origin;
   
+  /*! The style */
+  Style m_style;
+
+  /*! The apperance attribute. */
+  Appearance* m_appearance;
+
+  /*! Stores the pervious appearance. */
+  Appearance* m_appearance_prev;
+
   /// Enums to control tiling.
   Ego_voxels_tiler::First_tile_placement m_first_tile_placement;
   Ego_voxels_tiler::Strategy m_tiling_strategy;
   Ego_voxels_tiler::Tiling_rows m_tiling_rows_direction;
   
+  /*! Indicates whether the shape appearance is dirty, and thus needs
+   * cleaning.
+   */
+  Boolean m_dirty_appearance;
+
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty_voxels;
   Boolean m_dirty_tiling;
@@ -251,7 +300,10 @@ protected:
 
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
-    
+
+  /*! The array of style names. */
+  static const char* s_style_names[];
+  
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
@@ -267,7 +319,22 @@ private:
   static const Float s_def_voxel_width;
   static const Float s_def_voxel_length;
   static const Float s_def_voxel_height;
+  static const Style s_def_style;
+
+  Boolean m_owned_appearance;
 };
+
+/*! \brief obtains the (const) appearance. */
+inline const Appearance* Ego::get_appearance() const { return m_appearance; }
+
+/*! \brief obtains the (non-const) appearance. */
+inline Appearance* Ego::get_appearance() { return m_appearance; }
+
+/*! \brief obtains the style. */
+inline Ego::Style Ego::get_style() const { return m_style; }
+
+/*! \brief sets the style. */
+inline void Ego::set_style(Style style) { m_style = style; }
 
 SGAL_END_NAMESPACE
 

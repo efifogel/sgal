@@ -50,6 +50,7 @@
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Image_texture.hpp"
+#include "SGAL/Appearance.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -74,6 +75,10 @@ const Ego_voxels_tiler::Strategy
 Ego::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
 const Ego_voxels_tiler::Tiling_rows
 Ego::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
+const Ego::Style Ego::s_def_style(Ego::STYLE_APPEARANCE);
+
+/*! Styles */
+const char* Ego::s_style_names[] = { "randomColors", "appearance" };
 
 REGISTER_TO_FACTORY(Ego, "Ego");
 
@@ -82,15 +87,20 @@ Ego::Ego(Boolean proto) :
   Transform(proto),
   m_voxel_width(s_def_voxel_width),
   m_voxel_length(s_def_voxel_length),
-  m_voxel_height(s_def_voxel_height),  
+  m_voxel_height(s_def_voxel_height),
+  m_style(s_def_style),  
+  m_appearance(NULL),
+  m_appearance_prev(NULL),
   m_first_tile_placement(s_def_first_tile_placement),
   m_tiling_strategy(s_def_tiling_strategy),
   m_tiling_rows_direction(s_def_tiling_rows_direction),
+  m_dirty_appearance(true),
   m_dirty_voxels(true),
   m_dirty_tiling(true),
   m_dirty_parts(true),
   m_owned_parts(false),
-  m_scene_graph(NULL)
+  m_scene_graph(NULL),
+  m_owned_appearance(false)
 {
   // This is temp code until we have something that can visualize it better.  
   m_ego_brick.set_number_of_knobs1(2);
@@ -140,6 +150,14 @@ void Ego::clear()
 
   m_appearances.clear();
   m_materials.clear();
+
+  if (m_owned_appearance) {
+    if (m_appearance) {
+      delete m_appearance;
+      m_appearance = NULL;
+    }
+    m_owned_appearance = false;
+  }
 }
 
 /*! \brief initializes the container prototype */
@@ -186,6 +204,10 @@ void Ego::init_prototype()
                       get_member_offset(&m_tiling_rows_direction), exec_func);
   s_prototype->add_field_info(sf_int);
   
+  exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
+  s_prototype->add_field_info(new SF_container(APPEARANCE, "appearance",
+                                               get_member_offset(&m_appearance),
+                                               exec_func));    
 }
 
 /*! \brief deletes the container prototype */
@@ -212,8 +234,9 @@ void Ego::set_attributes(Element* elem)
   typedef Element::Cont_iter              Cont_iter;
 
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
+  Multi_cont_attr_iter mcai;
+  for (mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
     const std::string& name = elem->get_name(mcai);
     Cont_list& cont_list = elem->get_value(mcai);
@@ -234,9 +257,8 @@ void Ego::set_attributes(Element* elem)
   }
   
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "model") {
@@ -257,11 +279,17 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(cai);
       continue;
     }
+    if (name == "appearance") {
+      Appearance* app = dynamic_cast<Appearance*>(cont);
+      set_appearance(app);
+      elem->mark_delete(cai);
+      continue;
+    }
   }
 
   typedef Element::Str_attr_iter Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "voxelWidth") {
@@ -299,6 +327,16 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "style") {
+      Uint num = sizeof(s_style_names) / sizeof(char *);
+      const char** found = std::find(s_style_names,
+                                     &s_style_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_style_names;
+      if (index < num) m_style = static_cast<Style>(index);
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the deleted attributes:
@@ -311,17 +349,14 @@ Boolean Ego::is_empty() { return true; }
 /*! Obtain the model.
  * \return the model.
  */
-const Polyhedron_geo* Ego::get_polyhedron_model() const {
-  return boost::get<Polyhedron_geo*>(m_model);
-}
+const Polyhedron_geo* Ego::get_polyhedron_model() const
+{ return boost::get<Polyhedron_geo*>(m_model); }
 
-const Exact_polyhedron_geo* Ego::get_exact_polyhedron_model() const {
-  return boost::get<Exact_polyhedron_geo*>(m_model);
-}
+const Exact_polyhedron_geo* Ego::get_exact_polyhedron_model() const
+{ return boost::get<Exact_polyhedron_geo*>(m_model); }
 
-const Geo_set* Ego::get_geo_set_model() const {
-  return boost::get<Geo_set*>(m_model);
-}
+const Geo_set* Ego::get_geo_set_model() const
+{ return boost::get<Geo_set*>(m_model); }
 
 /*! \brief clean the voxels */
 void Ego::clean_voxels()
@@ -355,7 +390,7 @@ void Ego::clean_voxels()
   }
 }
 
-/*! \brief clean the tiling */
+/*! \brief clean the tiling. */
 void Ego::clean_tiling()
 {
   m_dirty_tiling = false;
@@ -409,34 +444,12 @@ void Ego::clean_parts()
         Shape* shape = new Shape;
         transform->add_child(shape);
 
-        Uint hue_key = std::rand() % 256;
-        Uint saturation_key = std::rand() % 256;
-        // Uint luminosity_key = std::rand() % 256;
-        Uint luminosity_key = 128;
-        Uint color_key =
-          (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
-        Appearance* app;
-        Appearance_iter ait = m_appearances.find(color_key);
-        if (ait == m_appearances.end()) {
-          app = new Appearance;
-          Material* mat = new Material;
-          app->set_material(mat);
-          //app->set_texture(texture);
-          //app->set_default_texture_attributes();
-          Float hue = (Float) hue_key / 255.0;
-          Float saturation = (Float) saturation_key / 255.0;
-          Float luminosity = (Float) luminosity_key / 255.0;
-          Magick::ColorHSL color_hsl(hue, saturation, luminosity);
-          Magick::ColorRGB color_rgb(color_hsl);
-          Float red = color_rgb.red();
-          Float green = color_rgb.green();
-          Float blue = color_rgb.blue();
-          mat->set_diffuse_color(red, green, blue);
-          m_appearances[color_key] = app;
+        Appearance* app = NULL;
+        switch (m_style) {
+         case STYLE_APPEARANCE: app = m_appearance; break;
+         case STYLE_RANDOM_COLORS: app = create_random_appearance(); break;
+         default: std::cerr << "Invalid style!" << std::endl;
         }
-        else 
-          app = ait->second;
-        
         shape->set_appearance(app);
         
         bool should_draw_knobs = false;
@@ -455,9 +468,10 @@ void Ego::clean_parts()
   }  
 }
 
-/*! \brief draws the geometry */
+/*! \brief draws the geometry. */
 Action::Trav_directive Ego::draw(Draw_action* action)
 {
+  if (m_dirty_appearance) clean_appearance();
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
@@ -468,6 +482,7 @@ Action::Trav_directive Ego::draw(Draw_action* action)
 /*! \brief */
 void Ego::cull(Cull_context& cull_context)
 {
+  if (m_dirty_appearance) clean_appearance();
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
@@ -501,7 +516,7 @@ void Ego::voxels_changed(Field_info* field_info)
 
 void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
 
-/*! \brief calculate sphere bound of the node */
+/*! \brief calculate sphere bound of the node. */
 Boolean Ego::clean_sphere_bound()
 {
   if (m_dirty_voxels) clean_voxels();
@@ -544,5 +559,74 @@ void Ego::adjust_voxels_for_tiling() {
 
 /*! \brief adds the container to a given scene */  
 void Ego::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
+
+/*! \brief sets the appearance of the object. */
+void Ego::set_appearance(Appearance* app)
+{
+  m_appearance = app;
+  m_dirty_appearance = true;
+}
+
+/*! \brief processes change of appearance. */
+void Ego::appearance_changed(Field_info* /* field_info. */)
+{ m_dirty_appearance = true; }
+
+/*! breif cleans the apperance. */
+void Ego::clean_appearance()
+{
+  // Construct a new owned appearance if needed, and delete the previously
+  // constructed owned appearance if not needed any more.
+  if (m_owned_appearance) {
+    if (!m_appearance) m_appearance = m_appearance_prev;
+    else {
+      delete m_appearance_prev;
+      m_appearance_prev = NULL;
+      m_owned_appearance = false;
+    }
+  }
+  else {
+    if (!m_appearance) {
+      m_appearance = new Appearance;
+      SGAL_assertion(m_appearance);
+      m_owned_appearance = true;
+    }
+  }
+  m_appearance_prev = m_appearance;
+  m_dirty_appearance = true;
+}
+
+/*! \brief creates a random appearance. */
+Appearance* Ego::create_random_appearance()
+{
+  Uint hue_key = std::rand() % 256;
+  Uint saturation_key = std::rand() % 256;
+  // Uint luminosity_key = std::rand() % 256;
+  Uint luminosity_key = 128;
+  Uint color_key =
+    (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
+  Appearance* app;
+  Appearance_iter ait = m_appearances.find(color_key);
+  if (ait == m_appearances.end()) {
+    app = new Appearance;
+    Material* mat = new Material;
+    app->set_material(mat);
+    //app->set_texture(texture);
+    //app->set_default_texture_attributes();
+    Float hue = (Float) hue_key / 255.0;
+    Float saturation = (Float) saturation_key / 255.0;
+    Float luminosity = (Float) luminosity_key / 255.0;
+    Magick::ColorHSL color_hsl(hue, saturation, luminosity);
+    Magick::ColorRGB color_rgb(color_hsl);
+    Float red = color_rgb.red();
+    Float green = color_rgb.green();
+    Float blue = color_rgb.blue();
+    mat->set_diffuse_color(red, green, blue);
+    m_appearances[color_key] = app;
+  }
+  else 
+    app = ait->second;
+
+  return app;
+}
 
 SGAL_END_NAMESPACE

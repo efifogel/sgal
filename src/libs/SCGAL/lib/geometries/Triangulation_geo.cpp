@@ -72,7 +72,7 @@ Triangulation_geo::Triangulation_geo(Boolean proto) :
   m_draw_haloed(s_def_draw_haloed),
   m_bb_is_pre_set(false),
   m_time(0)
-{}
+{ set_generated_tex_coord(false); }
 
 /*! Destructor */
 Triangulation_geo::~Triangulation_geo() {}

@@ -253,7 +253,7 @@ private:
 
   /*! Indicates whether the texture-generation attribute is owned. If it is
    * owned  (as the user hasn't provided one) the texture-generation attribute
-   * should be destructed when the appearance is destructed.
+   * should be destructed when the texture-generation attribute is destructed.
    */
   Boolean m_owned_tex_gen;
 
@@ -266,7 +266,9 @@ private:
   /* A flag that indicates whether backface drawing is required. */
   Boolean m_draw_backface;
 
-  /*! Indicates whether the appearance node has been constructed by default. */
+  /*! Indicates whether the texture-generation field has been constructed
+   * by default.
+   */
   Boolean m_owned_appearance;
 
   /*! Indicates whether the shape is dirty, and thus needs cleaning. */

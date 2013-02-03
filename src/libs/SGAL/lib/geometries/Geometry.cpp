@@ -42,6 +42,7 @@ Geometry::Geometry(Boolean proto) :
   Container(proto),
   m_dirty_sphere_bound(true),
   m_bb_is_pre_set(false),
+  m_generated_color(false),
   m_generated_tex_coord(true)
 {}
 
