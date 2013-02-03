@@ -20,7 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
- * A geometry container that represents an extrusion
+ * A geometry container that represents an Ego brick.
  */
 
 #ifndef SGAL_EGO_BRICK_HPP

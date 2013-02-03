@@ -218,8 +218,7 @@ public:
   virtual SGAL::Container_proto* get_prototype();
 
   /*! Obtain the polyhedron data-structure */
-  const Polyhedron& get_polyhedron() const { return m_polyhedron; }
-  Polyhedron& get_polyhedron() { return m_polyhedron; }
+  Polyhedron& get_polyhedron();
   
 protected:
   /*! The actual polyhedron object */

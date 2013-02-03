@@ -111,9 +111,7 @@ Shape::~Shape()
   }
 }
 
-/*! \brief sets the appearance of the object.
- * @param app the appearance
- */
+/*! \brief sets the appearance of the object. */
 void Shape::set_appearance(Appearance* app)
 {
   m_appearance = app;
@@ -121,9 +119,7 @@ void Shape::set_appearance(Appearance* app)
   m_dirty_appearance = true;
 }
 
-/*! \brief adds a geometry to the shape at the end of the list.
- * @param geometry a pointer to the geomety added.
- */
+/*! \brief adds a geometry to the shape at the end of the list. */
 void Shape::set_geometry(Geometry* geometry)
 {
   m_geometry = geometry;
@@ -311,7 +307,7 @@ void Shape::clean_appearance()
   // constructed owned appearance if not needed any more.
   if (m_owned_appearance) {
     if (!m_appearance) m_appearance = m_appearance_prev;
-    else {
+    else if (m_appearance != m_appearance_prev) {
       delete m_appearance_prev;
       m_appearance_prev = NULL;
       m_owned_appearance = false;
@@ -336,8 +332,9 @@ void Shape::clean_tex_gen()
   if (m_owned_tex_gen) {
     SGAL_assertion(m_appearance_prev);
     Tex_gen* tex_gen_prev = m_appearance_prev->get_tex_gen();
-    if (!m_appearance->get_tex_gen()) m_appearance->set_tex_gen(tex_gen_prev);
-    else {
+    Tex_gen* tex_gen = m_appearance->get_tex_gen();
+    if (!tex_gen) m_appearance->set_tex_gen(tex_gen_prev);
+    else if (tex_gen != tex_gen_prev) {
       delete tex_gen_prev;
       m_appearance_prev->set_tex_gen(NULL);
       m_owned_tex_gen = false;

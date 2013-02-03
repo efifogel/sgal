@@ -95,7 +95,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_draws_initialized = true;
     
   // Initialize static draws[] array:
-  for (int i = 0; i < NUM_DRAWS; i++)
+  for (int i = 0; i < NUM_DRAWS; ++i)
     draws[i] = &Indexed_face_set::draw_invalid;
 
   // Standard (no vertex array):
@@ -1131,7 +1131,7 @@ void Indexed_face_set::isect_direct()
   }
 }
 
-/*! \brief */
+/*! \brief draws the sphere in selection mode. */
 void Indexed_face_set::isect(Isect_action* action)
 {
   if (is_empty()) return;
@@ -1282,8 +1282,6 @@ Container_proto* Indexed_face_set::get_prototype()
 /*! \brief creates the data structure of the vertex buffer object. */
 void Indexed_face_set::create_vertex_buffer_object()
 {
-  std::cout << "create_vertex_buffer_object" << std::endl;
-
 #if defined(GL_ARB_vertex_buffer_object)
   std::cout << "Using vertex buffer object extension!" << std::endl;
   

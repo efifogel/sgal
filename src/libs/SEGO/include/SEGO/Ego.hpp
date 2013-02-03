@@ -165,12 +165,35 @@ public:
   void set_model(Exact_polyhedron_geo* model) { m_model = model; }
   void set_model(Geo_set* model) { m_model = model; }
 
-  /*! Obtain the model.
+  /*! Obtain the (const) polyhedron model.
    * \return the model.
    */
   const Polyhedron_geo* get_polyhedron_model() const;
+
+  /*! Obtain the (non-const) polyhedron model.
+   * \return the model.
+   */
+  Polyhedron_geo* get_polyhedron_model();
+  
+  /*! Obtain the (const) exact polyhedron model.
+   * \return the model.
+   */
   const Exact_polyhedron_geo* get_exact_polyhedron_model() const;
+
+  /*! Obtain the (non-const) exact polyhedron model.
+   * \return the model.
+   */
+  Exact_polyhedron_geo* get_exact_polyhedron_model();
+
+  /*! Obtain the (const) geometry-set model.
+   * \return the model.
+   */
   const Geo_set* get_geo_set_model() const;
+
+  /*! Obtain the (non-const) geometry-set model.
+   * \return the model.
+   */
+  Geo_set* get_geo_set_model();
 
   /*! Set the horizontal width of the voxel */
   void set_voxel_width(Float voxel_width) { m_voxel_width = voxel_width; }
@@ -332,9 +355,6 @@ inline Appearance* Ego::get_appearance() { return m_appearance; }
 
 /*! \brief obtains the style. */
 inline Ego::Style Ego::get_style() const { return m_style; }
-
-/*! \brief sets the style. */
-inline void Ego::set_style(Style style) { m_style = style; }
 
 SGAL_END_NAMESPACE
 

@@ -75,7 +75,7 @@ const Ego_voxels_tiler::Strategy
 Ego::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
 const Ego_voxels_tiler::Tiling_rows
 Ego::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
-const Ego::Style Ego::s_def_style(Ego::STYLE_APPEARANCE);
+const Ego::Style Ego::s_def_style(Ego::STYLE_RANDOM_COLORS);
 
 /*! Styles */
 const char* Ego::s_style_names[] = { "randomColors", "appearance" };
@@ -110,10 +110,36 @@ Ego::Ego(Boolean proto) :
   m_ego_brick_without_knobs.set_number_of_knobs1(2);
   m_ego_brick_without_knobs.set_number_of_knobs2(2);
   m_ego_brick_without_knobs.set_knobs_visible(false);
+
+  if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false;  
 }
 
 /*! Destructor */
 Ego::~Ego() { clear(); }
+
+/*! \brief obtains the (const) polyhedron model. */
+const Polyhedron_geo* Ego::get_polyhedron_model() const
+{ return boost::get<Polyhedron_geo*>(m_model); }
+
+/*! \brief obtains the (const) exact polyhedron model. */
+const Exact_polyhedron_geo* Ego::get_exact_polyhedron_model() const
+{ return boost::get<Exact_polyhedron_geo*>(m_model); }
+
+/*! \brief obtains the (const) geometry set model. */
+const Geo_set* Ego::get_geo_set_model() const
+{ return boost::get<Geo_set*>(m_model); }
+
+/*! \brief obtains the (non-const) polyhedron model. */
+Polyhedron_geo* Ego::get_polyhedron_model()
+{ return boost::get<Polyhedron_geo*>(m_model); }
+
+/*! \brief obtains the (non-const) exact polyhedron model. */
+Exact_polyhedron_geo* Ego::get_exact_polyhedron_model()
+{ return boost::get<Exact_polyhedron_geo*>(m_model); }
+
+/*! \brief obtains the (non-const) geometry set model. */
+Geo_set* Ego::get_geo_set_model()
+{ return boost::get<Geo_set*>(m_model); }
 
 /*! \brief clear the parts */
 void Ego::clear_parts()
@@ -333,7 +359,7 @@ void Ego::set_attributes(Element* elem)
                                      &s_style_names[num],
                                      strip_double_quotes(value));
       Uint index = found - s_style_names;
-      if (index < num) m_style = static_cast<Style>(index);
+      if (index < num) set_style(static_cast<Style>(index));
       elem->mark_delete(ai);
       continue;
     }
@@ -345,18 +371,6 @@ void Ego::set_attributes(Element* elem)
 
 /*! \brief determines whether the representation empty */
 Boolean Ego::is_empty() { return true; }
-
-/*! Obtain the model.
- * \return the model.
- */
-const Polyhedron_geo* Ego::get_polyhedron_model() const
-{ return boost::get<Polyhedron_geo*>(m_model); }
-
-const Exact_polyhedron_geo* Ego::get_exact_polyhedron_model() const
-{ return boost::get<Exact_polyhedron_geo*>(m_model); }
-
-const Geo_set* Ego::get_geo_set_model() const
-{ return boost::get<Geo_set*>(m_model); }
 
 /*! \brief clean the voxels */
 void Ego::clean_voxels()
@@ -377,7 +391,7 @@ void Ego::clean_voxels()
       m_tiled_voxels_origin = 
         voxelize(this->get_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
-    if (this->is_model_exact_polyhedron())
+    else if (this->is_model_exact_polyhedron())
       m_tiled_voxels_origin = 
         voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
@@ -492,7 +506,7 @@ void Ego::cull(Cull_context& cull_context)
   Group::cull(cull_context);
 }
 
-/*! \brief */
+/*! \brief draws the sphere in selection mode. */
 void Ego::isect(Isect_action* action)
 {
   if (m_dirty_voxels) clean_voxels();
@@ -564,12 +578,12 @@ void Ego::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 void Ego::set_appearance(Appearance* app)
 {
   m_appearance = app;
-  m_dirty_appearance = true;
+  if (m_style != STYLE_RANDOM_COLORS) m_dirty_appearance = true;
 }
 
 /*! \brief processes change of appearance. */
 void Ego::appearance_changed(Field_info* /* field_info. */)
-{ m_dirty_appearance = true; }
+{ if (m_style != STYLE_RANDOM_COLORS) m_dirty_appearance = true; }
 
 /*! breif cleans the apperance. */
 void Ego::clean_appearance()
@@ -578,7 +592,7 @@ void Ego::clean_appearance()
   // constructed owned appearance if not needed any more.
   if (m_owned_appearance) {
     if (!m_appearance) m_appearance = m_appearance_prev;
-    else {
+    else if (m_appearance != m_appearance_prev) {
       delete m_appearance_prev;
       m_appearance_prev = NULL;
       m_owned_appearance = false;
@@ -592,7 +606,7 @@ void Ego::clean_appearance()
     }
   }
   m_appearance_prev = m_appearance;
-  m_dirty_appearance = true;
+  m_dirty_appearance = false;
 }
 
 /*! \brief creates a random appearance. */
@@ -610,8 +624,6 @@ Appearance* Ego::create_random_appearance()
     app = new Appearance;
     Material* mat = new Material;
     app->set_material(mat);
-    //app->set_texture(texture);
-    //app->set_default_texture_attributes();
     Float hue = (Float) hue_key / 255.0;
     Float saturation = (Float) saturation_key / 255.0;
     Float luminosity = (Float) luminosity_key / 255.0;
@@ -627,6 +639,13 @@ Appearance* Ego::create_random_appearance()
     app = ait->second;
 
   return app;
+}
+
+/*! \brief sets the style. */
+void Ego::set_style(Style style)
+{
+  m_style = style;
+  if (m_style == STYLE_APPEARANCE) m_dirty_appearance = true;
 }
 
 SGAL_END_NAMESPACE

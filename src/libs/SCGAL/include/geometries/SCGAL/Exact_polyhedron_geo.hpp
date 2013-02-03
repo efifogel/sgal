@@ -162,10 +162,9 @@ public:
   /*! Obtain the node prototype. */
   virtual SGAL::Container_proto* get_prototype();
 
- /*! Obtain the polyhedron data-structure.
+  /*! Obtain the polyhedron data-structure.
    */
-  const Polyhedron& get_polyhedron() const { return m_polyhedron; }
-  Polyhedron& get_polyhedron() { return m_polyhedron; }
+  Polyhedron& get_polyhedron();
 
   /*! Obtains the flag that indicates whether to compute the convex hull
    * of the coordinate set.

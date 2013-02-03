@@ -61,6 +61,7 @@ Transform {
 	}
       }
       geometry DEF BRICK EgoBrick {
+	# generatedTexCoord FALSE
 	# knobsVisible FALSE
 	numberOfKnobs1 1
 	numberOfKnobs2 1

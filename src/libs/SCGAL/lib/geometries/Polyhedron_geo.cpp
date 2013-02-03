@@ -188,18 +188,25 @@ void Polyhedron_geo::init_prototype()
   typedef void (SGAL::Container::* Execution_function)(SGAL::Field_info*);
 }
 
-/*! */
+/*! \brief deletes the prototype. */
 void Polyhedron_geo::delete_prototype()
 {
   delete m_prototype;
   m_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtaisn the prototype. */
 SGAL::Container_proto* Polyhedron_geo::get_prototype() 
 {  
   if (!m_prototype) Polyhedron_geo::init_prototype();
   return m_prototype;
+}
+
+/*! \brief obtains the polyhedron data-structure. */
+Polyhedron_geo::Polyhedron& Polyhedron_geo::get_polyhedron()
+{
+  if (is_dirty()) clean();
+  return m_polyhedron;
 }
 
 SGAL_END_NAMESPACE

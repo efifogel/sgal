@@ -306,4 +306,11 @@ void Exact_polyhedron_geo::print_stat()
             << std::endl;
 }
 
+/*! \brief obtains the polyhedron data-structure. */
+Exact_polyhedron_geo::Polyhedron& Exact_polyhedron_geo::get_polyhedron()
+{
+  if (is_dirty()) clean();
+  return m_polyhedron;
+}
+
 SGAL_END_NAMESPACE

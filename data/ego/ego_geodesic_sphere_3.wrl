@@ -564,7 +564,7 @@ Transform {
 	  appearance Appearance {
 	    material Material {
 	      diffuseColor 0.7 0.7 0.7
-	      ambientIntensity 0.2
+	      ambientIntensity 0.8
 	      transparency 0
 	    }
 	    # texture ImageTexture { url ["negx.jpg"] }
@@ -577,7 +577,7 @@ Transform {
 	      bottomImage Image { flip FALSE url ["negz.jpg"] }
 	    }
 	  }
-	  style "appearance"
+	  # style "appearance"
 	  scale 100 100 100
 	  model USE MODEL
 	}
@@ -586,7 +586,7 @@ Transform {
 
     # The axes:
     Switch {
-      whichChoice -1
+      whichChoice 0
       children [
 	DEF AXES Transform {
 	  # scale 0.1 0.1 0.1

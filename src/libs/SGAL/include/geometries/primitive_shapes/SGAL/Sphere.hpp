@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -63,89 +63,89 @@ public:
   /*! Destructor */
   virtual ~Sphere();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Sphere* prototype();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone();
 
-  /*! Set the sphere center */
+  /*! Set the sphere center. */
   void set_center(const Vector3f& center);
 
-  /*! Obtain the sphere center */
+  /*! Obtain the sphere center. */
   const Vector3f& get_center() const;
   
-  /*! Set the sphere radius */
+  /*! Set the sphere radius. */
   void set_radius(Float radius);
 
-  /*! Obtain the sphere radius */
+  /*! Obtain the sphere radius. */
   Float get_radius() const;
 
-  /*! set the number of stacks that the sphere is made of */
+  /*! set the number of stacks that the sphere is made of. */
   void set_stacks(Uint stacks);
 
-  /*! Obtain the number of stacks that the sphere is made of */
+  /*! Obtain the number of stacks that the sphere is made of. */
   Uint get_stacks() const;
 
-  /*! Set the number of slices that the sphere is made of */
+  /*! Set the number of slices that the sphere is made of. */
   void set_slices(Uint slices);
 
-  /*! Obtain the number of slices that the sphere is made of */
+  /*! Obtain the number of slices that the sphere is made of. */
   Uint get_slices() const;
 
-  /*! Draw the sphere */
+  /*! Draw the sphere. */
   virtual void draw(Draw_action* action); 
 
-  /*! Draw the sphere in selection mode */
+  /*! Draw the sphere in selection mode. */
   virtual void isect(Isect_action* action);
 
   /*! Calculare the sphere bound of the sphere */
   virtual Boolean clean_sphere_bound();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
     
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Is dirty? */
+  /*! Determine whether the is dirty and thus needs cleaning. */
   Boolean is_dirty() const;
   
 protected:
   /*! Indicates whether the sphere has been initialized */
   Boolean m_dirty;
   
-  /*! The utility instance */
+  /*! The utility instance. */
   GLUquadricObj* m_sphere;
 
-  /*! The sphere center */
+  /*! The sphere center. */
   Vector3f m_center;
   
-  /*! The sphere radius */
+  /*! The sphere radius. */
   Float m_radius;
 
-  /*! The number of stacks */
+  /*! The number of stacks. */
   Uint m_stacks;
 
-  /*! The number of slices */
+  /*! The number of slices. */
   Uint m_slices;
 
-  /*! Initialize the utility instance */
+  /*! Initialize the utility instance. */
   void init();
 
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
   
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
   /*! The node prototype */
