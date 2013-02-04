@@ -1283,7 +1283,7 @@ Container_proto* Indexed_face_set::get_prototype()
 void Indexed_face_set::create_vertex_buffer_object()
 {
 #if defined(GL_ARB_vertex_buffer_object)
-  std::cout << "Using vertex buffer object extension!" << std::endl;
+  // std::cout << "Using vertex buffer object extension!" << std::endl;
   
   destroy_vertex_buffer_object();
   Boolean error_occured = false;
