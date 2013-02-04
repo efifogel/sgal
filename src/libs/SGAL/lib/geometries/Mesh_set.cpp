@@ -55,7 +55,7 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_polygon_offset_factor(s_def_polygon_offset_factor),
   m_dirty_indices(true),
   m_flatten_indices(false),
-  m_are_indices_flat(false)
+  m_indices_flat(false)
 {}
 
 /*! \brief sets the attributes of this object. */
@@ -222,7 +222,7 @@ void Mesh_set::clean()
 
 void Mesh_set::clean_indices()
 {
-  if (!m_are_indices_flat && m_flatten_indices) flatten_indices();
+  if (!m_indices_flat && m_flatten_indices) flatten_indices();
   m_dirty_indices = false;
 }
 
@@ -282,7 +282,14 @@ void Mesh_set::flatten_indices()
     flatten_indices(indices, indices, m_num_primitives);
     m_color_indices.resize(size);
   }
-  m_are_indices_flat = true;
+  m_indices_flat = true;
+}
+
+/*! \brief processes change of coordinates. */
+void Mesh_set::coord_changed(Field_info* /* field_info */)
+{
+  m_dirty = true;
+  m_dirty_sphere_bound = true;
 }
 
 SGAL_END_NAMESPACE

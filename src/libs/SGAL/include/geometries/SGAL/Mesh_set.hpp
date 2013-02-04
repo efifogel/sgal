@@ -28,6 +28,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class Draw_action;
+class Field_info;
 
 class Mesh_set : public Geo_set {
 public:
@@ -121,6 +122,14 @@ public:
   /*! Process change of coordinates. */
   virtual void coord_changed(SGAL::Field_info* field_info);
 
+  /*! Set the flag that indicates whether the indices structure is "flat".
+   */
+  void set_indices_flat(Boolean flag);
+
+  /*! Determine whether the indices structure is "flat".
+   */
+  Boolean are_indices_flat() const;
+
 protected:
   /*! Indicates whether the mesh must be cleaned. */
   Boolean m_dirty;
@@ -158,7 +167,7 @@ protected:
    * or (m_num_primitives * 4) respectively. It is illegal to have a mixture
    * of flat and non-flat index arrays. Either all indices are flat or none is.
    */
-  Boolean m_are_indices_flat;
+  Boolean m_indices_flat;
   
   /*! Proces the indices. */
   void flatten_indices();
@@ -166,7 +175,12 @@ protected:
   /*! Clean the indices. */
   void clean_indices();
 
-  /*! Determine whether the indices hasn't been cleaned. */
+  /*! Set the flag that indicates whether the indices are dirty and thus needs
+   * cleaning.
+   */
+  void set_dirty_indices(Boolean flag);
+
+  /*! Determine whether the indices are dirty and thus should be cleaned. */
   Boolean is_dirty_indices() const;
   
   /*! Proces the indices. */
@@ -184,6 +198,11 @@ private:
   static const Float s_def_polygon_offset_factor;
 };
 
+/*! \brief set the flag that indicates whether the indices are dirty and thus
+ * needs cleaning.
+ */
+inline void Mesh_set::set_dirty_indices(Boolean flag) { m_dirty_indices = flag; }
+
 /*! \brief determines whether the indices hasn't been cleaned. */
 inline Boolean Mesh_set::is_dirty_indices() const { return m_dirty_indices; }
 
@@ -192,10 +211,6 @@ inline void Mesh_set::clear() { m_dirty = true; }
   
 /*! \brief determines whether the representation hasn't been cleaned. */
 inline Boolean Mesh_set::is_dirty() const { return m_dirty; }
-
-/*! \brief processes change of coordinates. */
-inline void Mesh_set::coord_changed(SGAL::Field_info* /* field_info */)
-{ m_dirty_sphere_bound = true; }
 
 /*! \brief sets the counter-clockwise flag. */
 inline void Mesh_set::set_ccw(Boolean ccw) { m_is_ccw = ccw; }
@@ -221,6 +236,15 @@ inline void Mesh_set::set_crease_angle(Float crease_angle)
 
 /*! \brief obtains the creas_angle. */
 inline Float Mesh_set::get_crease_angle() const { return m_crease_angle; }
+
+/*! \brief sets the flag that indicates whether the indices structure is "flat".
+ */
+inline void Mesh_set::set_indices_flat(Boolean flag)
+{ m_indices_flat = flag; }
+
+/*! \brief determines whether the indices structure is "flat".
+ */
+inline Boolean Mesh_set::are_indices_flat() const { return m_indices_flat; }
 
 SGAL_END_NAMESPACE
 
