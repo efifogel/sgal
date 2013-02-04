@@ -320,7 +320,11 @@ void Context::draw_tex_enable(Boolean tex_enable)
     if (cube_environment) glEnable(GL_TEXTURE_CUBE_MAP);
     else glEnable(GL_TEXTURE_2D);
   }
-  else glDisable(GL_TEXTURE_2D);
+  else {
+    //! \todo disable only the appropriate state. */
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_CUBE_MAP);
+  }
 }
 
 /*! \brief */

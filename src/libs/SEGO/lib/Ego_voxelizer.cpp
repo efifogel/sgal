@@ -26,8 +26,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/intersections.h>
 
-#include <boost/foreach.hpp>
-
 #include <functional>
 
 // #define EGO_VOXELIZER_VERBOSE
@@ -83,9 +81,8 @@ Ego_voxelizer::operator()(const Triangles& triangles, Ego_voxels* out_voxels)
   
   Point_3 origin = create_voxels_from_triangles(triangles, out_voxels);
 
-  for (Triangles::const_iterator it = triangles.begin();
-       it != triangles.end(); ++it) {
-    mark_triangle(*it, origin, out_voxels);
+  for (auto triangle : triangles) {
+    mark_triangle(triangle, origin, out_voxels);
   }
 
 #ifdef EGO_VOXELIZER_VERBOSE
@@ -102,7 +99,7 @@ Ego_voxelizer::create_triangles_from_polyhedron(const Polyhedron& polyhedron,
 {
   Triangles ret;
 
-  for (Polyhedron::Facet_const_iterator it = polyhedron.facets_begin();
+  for (auto it = polyhedron.facets_begin();
        it != polyhedron.facets_end(); ++it)
   {
     Polyhedron::Halfedge_around_facet_const_circulator cit = it->facet_begin();
@@ -193,12 +190,12 @@ Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set,
 {
   Triangles res;
   
-  const SGAL::Array<Uint>& coord_ind = geo_set.get_coord_indices();
-  Coord_array& coords = *(geo_set.get_coord_array());
+  const auto coord_ind = geo_set.get_coord_indices();
+  const Coord_array& coords = *(geo_set.get_coord_array());
 
   Point_3 triangle[3];
   long j = 0;
-  for (SGAL::Array<Uint>::const_iterator it = coord_ind.begin();
+  for (auto it = coord_ind.begin();
        it != coord_ind.end(); ++it, ++j) {
 
     if (j == 3)
@@ -224,11 +221,10 @@ Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
   
   std::vector<Point_3> vertices;
   
-  for (Triangles::const_iterator it = triangles.begin();
-       it != triangles.end(); ++it) {
-    vertices.push_back(it->vertex(0));
-    vertices.push_back(it->vertex(1));
-    vertices.push_back(it->vertex(2));
+  for (auto triangle : triangles) {
+    vertices.push_back(triangle.vertex(0));
+    vertices.push_back(triangle.vertex(1));
+    vertices.push_back(triangle.vertex(2));
   }
   
   Iso_cuboid_3 bbox = CGAL::bounding_box(vertices.begin(), vertices.end());
@@ -279,9 +275,8 @@ void Ego_voxelizer::mark_triangle(const Triangle_3& triangle,
   SlicingSegments segments =
     create_slicing_segments(triangle, origin);
 
-  for (SlicingSegments::iterator it = segments.begin();
-       it != segments.end(); ++it)
-    mark_segment(*it, origin, out_voxels);
+  for (auto segment : segments)
+    mark_segment(segment, origin, out_voxels);
 }
 
 void Ego_voxelizer::mark_triangle_vertices(const Triangle_3& triangle,
@@ -316,7 +311,7 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
   std::vector<Point_3> points;
   intersect_segment_with_planes(segment, planes, &points);
   
-  BOOST_FOREACH(Point_3 p, points) {
+  for (auto p : points) {
     mark_point(p, origin, out_voxels);
   }
   
@@ -343,13 +338,10 @@ Ego_voxelizer::mark_point(const Point_3& point,
   std::vector<long> z_coord = get_voxels_coords(ft_z);
 
   // We mark upto 8 voxels.
-  for (std::vector<long>::iterator it = x_coord.begin();
-       it != x_coord.end(); ++it)
-    for (std::vector<long>::iterator jt = y_coord.begin();
-         jt != y_coord.end(); ++jt)
-      for (std::vector<long>::iterator kt = z_coord.begin();
-           kt != z_coord.end(); ++kt)
-        out_voxels->fill(*it, *jt, *kt);
+  for (auto x : x_coord)
+    for (auto y : y_coord)
+      for (auto z : z_coord)
+        out_voxels->fill(x, y, z);
 }
 
 Ego_voxelizer::SlicingSegments
@@ -449,7 +441,7 @@ void Ego_voxelizer::intersect_triangle_with_planes(const Triangle_3& triangle,
                                                    const std::vector<Plane_3>& planes,
                                                    SlicingSegments *out_segments) const {
 
-  BOOST_FOREACH(Plane_3 plane, planes) {
+  for (auto plane : planes) {
     CGAL::Object obj = CGAL::intersection(triangle, plane);
     
     const Segment_3* seg = CGAL::object_cast<Segment_3> (&obj);
@@ -469,7 +461,7 @@ Ego_voxelizer::intersect_segment_with_planes(const Segment_3& segment,
                                              const std::vector<Plane_3>& planes,
                                              std::vector<Point_3>* out_points) const {
 
-  BOOST_FOREACH(Plane_3 plane, planes) {
+  for (auto plane : planes) {
     CGAL::Object obj = CGAL::intersection(segment, plane);
     const Point_3* p = CGAL::object_cast<Point_3> (&obj);
 

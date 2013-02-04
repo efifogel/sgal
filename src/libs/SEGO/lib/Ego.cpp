@@ -100,6 +100,7 @@ Ego::Ego(Boolean proto) :
   m_dirty_parts(true),
   m_owned_parts(false),
   m_scene_graph(NULL),
+  m_knob_slices(Ego_brick::s_def_knob_slices),
   m_owned_appearance(false)
 {
   // This is temp code until we have something that can visualize it better.  
@@ -174,7 +175,14 @@ void Ego::clear()
   m_dirty_voxels = true;
   m_dirty_tiling = true;
 
+  Appearance_iter ait;
+  for (ait = m_appearances.begin(); ait != m_appearances.end(); ++ait)
+    delete ait->second;
   m_appearances.clear();
+
+  Material_iter mit;
+  for (mit = m_materials.begin(); mit != m_materials.end(); ++mit)
+    delete *mit;
   m_materials.clear();
 
   if (m_owned_appearance) {
@@ -363,6 +371,11 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "knobSlices") {
+      set_knob_slices(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the deleted attributes:
@@ -429,10 +442,9 @@ void Ego::clean_parts()
   const double dz = m_voxel_height;
 
   Ego_voxels::size_type size = m_tiled_voxels.size();
-
-  Image_texture* texture = new Image_texture;
-  texture->set_url("earth-cubemap-0.jpg");
-  texture->add_to_scene(m_scene_graph);
+  Vector3f center(size.get<0>() * dx * 0.5f,
+                  size.get<1>() * dy * 0.5f,
+                  size.get<2>() * dz * 0.5f);
   
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
@@ -449,23 +461,16 @@ void Ego::clean_parts()
 
         Transform* transform = new Transform;
         add_child(transform);
-        
+
         double x = CGAL::to_double(m_tiled_voxels_origin.x()) + i*dx;
         double y = CGAL::to_double(m_tiled_voxels_origin.y()) + j*dy;
         double z = CGAL::to_double(m_tiled_voxels_origin.z()) + k*dz;
-        transform->set_translation(x+dx/2, y+dy/2, z+dz/2);
+        Vector3f brick_center(x+dx/2, y+dy/2, z+dz/2);
+        transform->set_translation(brick_center);
 
         Shape* shape = new Shape;
         transform->add_child(shape);
 
-        Appearance* app = NULL;
-        switch (m_style) {
-         case STYLE_APPEARANCE: app = m_appearance; break;
-         case STYLE_RANDOM_COLORS: app = create_random_appearance(); break;
-         default: std::cerr << "Invalid style!" << std::endl;
-        }
-        shape->set_appearance(app);
-        
         bool should_draw_knobs = false;
         for (size_t s = 0; s < brick->get<0>(); ++s) {
           for (size_t t = 0; t < brick->get<1>(); ++t) {
@@ -474,12 +479,59 @@ void Ego::clean_parts()
               should_draw_knobs = true;
           }
         }
-        Ego_brick* ego_brick = (should_draw_knobs) ?
-          &m_ego_brick : &m_ego_brick_without_knobs;
+        Appearance* app = NULL;
+        Geometry* ego_brick = NULL;
+        Vector3f tmp;
+        switch (m_style) {
+         case STYLE_APPEARANCE:
+          app = m_appearance;
+          tmp.sub(center, brick_center);
+          ego_brick = create_geometry(should_draw_knobs, tmp);
+          break;
+
+         case STYLE_RANDOM_COLORS:
+          app = create_random_appearance();
+          ego_brick = (should_draw_knobs) ?
+            &m_ego_brick : &m_ego_brick_without_knobs;
+          break;
+
+         default: std::cerr << "Invalid style!" << std::endl;
+        }
+        shape->set_appearance(app);
         shape->set_geometry(ego_brick);
       }
     }
   }  
+}
+
+/*! \brief creates the geometry of a brick. */
+Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
+{
+  Ego_brick* ego_brick = new Ego_brick;
+  m_bricks.push_back(ego_brick);
+  Coord_array* coord_array;
+  Normal_array* normal_array;
+  if (draw_knobs) {
+    coord_array = m_ego_brick.get_coord_array();
+    normal_array = m_ego_brick.get_normal_array();
+  }
+  else {
+    coord_array = m_ego_brick_without_knobs.get_coord_array();
+    normal_array = m_ego_brick_without_knobs.get_normal_array();
+  }
+  const Array<Uint>& indices = (draw_knobs) ?
+    m_ego_brick.get_coord_indices() :
+    m_ego_brick_without_knobs.get_coord_indices();
+  
+  ego_brick->set_coord_array(coord_array);
+  ego_brick->set_normal_array(normal_array);
+  ego_brick->set_indices_flat(true);
+  ego_brick->set_center(center);
+  ego_brick->set_coord_indices(indices);
+  ego_brick->set_knob_slices(m_knob_slices);
+  ego_brick->set_number_of_knobs1(2);
+  ego_brick->set_number_of_knobs2(2);
+  return ego_brick;
 }
 
 /*! \brief draws the geometry. */
@@ -623,6 +675,7 @@ Appearance* Ego::create_random_appearance()
   if (ait == m_appearances.end()) {
     app = new Appearance;
     Material* mat = new Material;
+    m_materials.push_back(mat);
     app->set_material(mat);
     Float hue = (Float) hue_key / 255.0;
     Float saturation = (Float) saturation_key / 255.0;
@@ -646,6 +699,14 @@ void Ego::set_style(Style style)
 {
   m_style = style;
   if (m_style == STYLE_APPEARANCE) m_dirty_appearance = true;
+}
+
+/*! \brief sets the knob slicess number. */
+void Ego::set_knob_slices(Uint slices)
+{
+  m_knob_slices = slices;
+  m_ego_brick.set_knob_slices(m_knob_slices);
+  m_ego_brick_without_knobs.set_knob_slices(m_knob_slices);
 }
 
 SGAL_END_NAMESPACE

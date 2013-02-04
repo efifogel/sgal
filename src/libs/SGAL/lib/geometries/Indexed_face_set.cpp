@@ -1043,7 +1043,7 @@ void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
 {
   // When using vertex array, the index arrays must be flat:
   SGAL_assertion_code(Boolean uva = use_vertex_array(););
-  SGAL_assertion(!uva || (uva && m_are_indices_flat));
+  SGAL_assertion(!uva || (uva && m_indices_flat));
   
   Fragment_source fragment_source = resolve_fragment_source();
   Boolean fragment_indexed = (fragment_source == FS_NORMAL) ?
@@ -1472,13 +1472,13 @@ Boolean Indexed_face_set::is_empty() const
  *       the change needed here, and apply it in the appropriate *clean()
  *       function (which is invoked from the drawing routine.
  */
-void Indexed_face_set::coord_changed(SGAL::Field_info* /* field_info */)
+void Indexed_face_set::coord_changed(Field_info* field_info)
 {
   if (m_owned_normal_array) m_dirty_normals = true;
   if (m_owned_tex_coord_array) m_dirty_tex_coords = true;
   destroy_display_list();
   destroy_vertex_buffer_object();
-  Mesh_set::clear();
+  Mesh_set::coord_changed(field_info);
 }
 
 /*! \brief Process change of field.
