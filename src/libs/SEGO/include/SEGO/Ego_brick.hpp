@@ -36,6 +36,7 @@
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Vector2f.hpp"
+#include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -43,6 +44,10 @@ class Draw_action;
 class Isec_action;
 class Container_proto;
 class Element;
+class Coord_array;
+class Normal_array;
+class Tex_coord_array;
+class Field_info;
 
 class SGAL_CLASSDEF Ego_brick : public Indexed_face_set {
 public:
@@ -139,8 +144,40 @@ public:
 
   /*! Clean the representation. */
   virtual void clean();
+
+  /*! Set the center of the Ego brick. */
+  void set_center(Vector3f& center);
+
+  /*! Obtain the center of the Ego brick. */
+  Vector3f& get_center();
   
+  /*! Set the coordinates. */
+  void set_coord_array(Coord_array* coord_array);
+
+  /*! Set the normals. */
+  void set_normal_array(Normal_array* normal_array);
+  
+  /*! Set the texture coordinates. */
+  void set_tex_coord_array(Tex_coord_array* tex_coord_array);
+
+  /*! Set the texture indices. */
+  void set_coord_indices(const Array<Uint>& indices);
+  
+  /*! Obtain the coordinate array. */
+  Coord_array* get_coord_array();
+
+  /*! Obtain the normal array. */
+  Normal_array* get_normal_array();
+
+  /*! Obtain the texture-coordinate array. */
+  Tex_coord_array* get_tex_coord_array();
+
+  /*! Obtain the coord-index array. */
+  Array<Uint>& get_coord_indices();
+
 protected:
+  friend class Ego;
+  
   /*! The number of knobs along the 1st dimension. */
   Uint m_number_of_knobs1;
 
@@ -169,7 +206,13 @@ protected:
   Uint m_knob_slices;
 
   /*! Are the knobs visible. */
-  bool m_are_knobs_visible;
+  Boolean m_are_knobs_visible;
+
+  /*! Indicates whether the center is dirty and thus needs cleaning. */
+  Boolean m_dirty_center;
+
+  /*! Indicates whether the coordinate array is dirty and thus needs cleaning. */
+  Boolean m_dirty_coords;
   
   /*! obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -189,6 +232,12 @@ protected:
   /*! Clean the texture indices. */
   void clean_indices();
 
+  /*! Clean the center of the Ego brick. */
+  void clean_center();
+  
+  /*! Process change of coordinates. */
+  void coord_changed(Field_info* /* field_info */);
+
 private:
   /*! The tag that identifies this container type. */
   static std::string s_tag;
@@ -198,6 +247,9 @@ private:
 
   /*! A 2D cross section of the knob */
   std::vector<Vector2f> m_knob_cross_section;
+
+  /*! The center of the Ego brick. */
+  Vector3f m_center;
   
   /*! default values for Ego_brick.  */
   static const Uint s_def_number_of_knobs1;

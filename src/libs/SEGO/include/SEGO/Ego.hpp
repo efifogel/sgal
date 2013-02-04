@@ -26,7 +26,7 @@
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
-
+#include <list>
 #include <boost/unordered_map.hpp>
 #include <boost/variant.hpp>
 
@@ -51,6 +51,9 @@ class Polyhedron_geo;
 class Exact_polyhedron_geo;
 class Scene_graph;
 class Appearance;
+class Coord_array;
+class Normal_array;
+class Tex_coord_array;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
@@ -123,6 +126,9 @@ public:
 
   /*! Create a random appearance. */
   Appearance* create_random_appearance();
+
+  /*! Create the geometry of a brick. */
+  Geometry* create_geometry(Boolean draw_knobs, Vector3f& center);
   
   /*! Clean the voxels. */
   void clean_voxels();
@@ -255,7 +261,13 @@ public:
   /*! Set the style. */
   void set_style(Style style);
 
- protected:
+  /*! Set the knob slicess number. */
+  void set_knob_slices(Uint slices);
+
+  /*! Obtain the knob slices number. */
+  Uint get_knob_slices() const;
+
+protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -315,25 +327,46 @@ public:
 
   typedef boost::unordered_map<Uint, Appearance*>       Appearance_map;
   typedef Appearance_map::iterator                      Appearance_iter;
-  typedef std::list<Material>                           Material_list;
-  typedef Material_list::iterator                       Material_iter;
   Appearance_map m_appearances;
 
+  typedef std::list<Material*>                          Material_list;
+  typedef Material_list::iterator                       Material_iter;
   Material_list m_materials;
 
+  typedef std::list<Ego_brick*>                         Ego_brick_list;
+  typedef Ego_brick_list::iterator                      Ego_brick_iter;
+  Ego_brick_list m_bricks;
+  
+  typedef std::list<Coord_array*>                       Coord_array_list;
+  typedef Coord_array_list::iterator                    Coord_array_iter;
+  Coord_array_list m_coord_arrays;
+
+  typedef std::list<Normal_array*>                      Normal_array_list;
+  typedef Normal_array_list::iterator                   Normal_array_iter;
+  Normal_array_list m_normal_arrays;
+
+  typedef std::list<Tex_coord_array*>                   Tex_coord_array_list;
+  typedef Tex_coord_array_list::iterator                Tex_coord_array_iter;
+  Tex_coord_array_list m_tex_coord_arrays;
+  
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
 
-  /*! The array of style names. */
-  static const char* s_style_names[];
-  
+  /*! The number of slices of a knob. */
+  Uint m_knob_slices;
+
 private:
+  Boolean m_owned_appearance;
+
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The container prototype */
   static Container_proto* s_prototype;
 
+  /*! The array of style names. */
+  static const char* s_style_names[];
+  
   /*! Default values */
   static const Ego_voxels_tiler::First_tile_placement
     s_def_first_tile_placement;
@@ -343,8 +376,6 @@ private:
   static const Float s_def_voxel_length;
   static const Float s_def_voxel_height;
   static const Style s_def_style;
-
-  Boolean m_owned_appearance;
 };
 
 /*! \brief obtains the (const) appearance. */
@@ -355,6 +386,9 @@ inline Appearance* Ego::get_appearance() { return m_appearance; }
 
 /*! \brief obtains the style. */
 inline Ego::Style Ego::get_style() const { return m_style; }
+
+/*! \brief obtains the knob slices number. */
+inline Uint Ego::get_knob_slices() const { return m_knob_slices; }
 
 SGAL_END_NAMESPACE
 

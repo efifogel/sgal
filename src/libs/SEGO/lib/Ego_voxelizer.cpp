@@ -191,7 +191,7 @@ Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set,
   Triangles res;
   
   const auto coord_ind = geo_set.get_coord_indices();
-  Coord_array& coords = *(geo_set.get_coord_array());
+  const Coord_array& coords = *(geo_set.get_coord_array());
 
   Point_3 triangle[3];
   long j = 0;
