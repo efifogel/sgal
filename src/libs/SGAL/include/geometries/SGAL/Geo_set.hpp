@@ -134,58 +134,163 @@ public:
    */
   void set_coord_array(Coord_array* coord_array);
 
-  /*! Obtain the coordinate array. */
-  Coord_array* get_coord_array() const;
+  /*! Obtain the (const) coordinate array.
+   * \return the coordinate array.
+   */
+  const Coord_array* get_coord_array() const;
+
+  /*! Obtain the (non-const) coordinate array.
+   * \return the coordinate array.
+   */
+  Coord_array* get_coord_array();
 
   /*! Set the normal array.
    * \param normal_array (in) the normal array.
    */
   void set_normal_array(Normal_array* normal_array);
 
-  /*! Obtain the normal array. */
-  Normal_array* get_normal_array() const;
+  /*! Obtain the (const) normal array.
+   * \return the normal array.
+   */
+  const Normal_array* get_normal_array() const;
+
+  /*! Obtain the (non-const) normal array.
+   * \return the normal array.
+   */
+  Normal_array* get_normal_array();
 
   /*! Set the texture-coordinate array.
    * \param tex_coord_array (in) the texture coordinate array.
    */
   void set_tex_coord_array(Tex_coord_array* tex_coord_array);
 
-  /*! Obtain the texture-coordinate array. */
-  Tex_coord_array* get_tex_coord_array() const;
+  /*! Obtain the (const) texture-coordinate array.
+   * \return the texture-coordinate array.
+   */
+  const Tex_coord_array* get_tex_coord_array() const;
+
+  /*! Obtain the (non-const) texture-coordinate array.
+   * \return the texture-coordinate array.
+   */
+  Tex_coord_array* get_tex_coord_array();
 
   /*! Set the color field.
    * \param color_array (in) a pointer to a color array
    */
   void set_color_array(Color_array* color_array);
 
-  /*! Obtain the normal array. */
-  Color_array* get_color_array() const;
+  /*! Obtain the (const) normal array.
+   * \return the color array.
+   */
+  const Color_array* get_color_array() const;
 
-  /*! Obtain the coord-index array. */
-  const SGAL::Array<Uint>& get_coord_indices() const;
+  /*! Obtain the (non-const) normal array.
+   * \return the color array.
+   */
+  Color_array* get_color_array();
 
-  /*! Obtain the color-index array. */
-  const SGAL::Array<Uint>& get_color_indices() const;
+  /*! Set the coordinate-index array.
+   * \param indices (in)
+   */
+  void set_coord_indices(const Array<Uint>& indices);
 
-  /*! Obtain the normal-index array. */
-  const SGAL::Array<Uint>& get_normal_indices() const;
+  /*! Obtain the (const) coordinate-index array.
+   * \return the coordinate-index array.
+   */
+  const Array<Uint>& get_coord_indices() const;
 
-  /*! Obtain the texture-coord-index array. */
-  const SGAL::Array<Uint>& get_tex_coord_indices() const;
+  /*! Obtain the (non-const) coordinate-index array.
+   * \return the coordinate-index array.
+   */
+  Array<Uint>& get_coord_indices();
 
-  /*! Obtain the coord-index array. */
+  /*! Set the color-index array.
+   * \param indices (in)
+   */
+  void set_color_indices(const Array<Uint>& indices);
+
+  /*! Obtain the (const) color-index array.
+   * \return the color-index array.
+   */
+  const Array<Uint>& get_color_indices() const;
+
+  /*! Obtain the (non-const) color-index array.
+   * \return the color-index array.
+   */
+  Array<Uint>& get_color_indices();
+
+  /*! Set the normal-index array.
+   * \param indices (in)
+   */
+  void set_normal_indices(const Array<Uint>& indices);
+
+  /*! Obtain the (const) normal-index array.
+   * \return the normal-index array.
+   */
+  const Array<Uint>& get_normal_indices() const;
+
+  /*! Obtain the (non-const) normal-index array.
+   * \return the normal-index array.
+   */
+  Array<Uint>& get_normal_indices();
+
+  /*! Set the texture_coordinate-index array.
+   * \param indices (in)
+   */
+  void set_tex_coord_indices(const Array<Uint>& indices);
+
+  /*! Obtain the (const) texture-coordinate-index array.
+   * \return the texture-coordinate-index array.
+   */
+  const Array<Uint>& get_tex_coord_indices() const;
+
+  /*! Obtain the (non-const) texture-coordinate-index array.
+   * \return the texture-coordinate-index array.
+   */
+  Array<Uint>& get_tex_coord_indices();
+
+  /*! Obtain the (const) coordinate-index vector.
+   * \return the coordinate-index array.
+   */
   const Uint* get_coord_indices_vector() const;
+
+  /*! Obtain the (non-const) coordinate-index vector.
+   * \return the coordinate-index array.
+   */
+  Uint* get_coord_indices_vector();
   
-  /*! Obtain the color-index array. */
+  /*! Obtain the (const) color-index vector.
+   * \return the color-index array.
+   */
   const Uint* get_color_indices_vector() const;
 
-  /*! Obtain the normal-index array. */
+  /*! Obtain the (non-const) color-index vector.
+   * \return the color-index array.
+   */
+  Uint* get_color_indices_vector();
+
+  /*! Obtain the (const) normal-index vector.
+   * \return the normal-index array.
+   */
   const Uint* get_normal_indices_vector() const;
 
-  /*! Obtain the texture-coord-index array. */
+  /*! Obtain the (non-const) normal-index vector.
+   * \return the normal-index array.
+   */
+  Uint* get_normal_indices_vector();
+
+  /*! Obtain the (const) texture-coordinate-index vector.
+   * \return the texture-coordinate-index array.
+   */
   const Uint* get_tex_coord_indices_vector() const;
 
-  /*! Obtain the i-th coord index. */
+  /*! Obtain the (non-const) texture-coordinate-index vector.
+   * \return the texture-coordinate-index array.
+   */
+  Uint* get_tex_coord_indices_vector();
+
+  /*! Obtain the i-th coord index.
+   */
   Uint get_coord_index(Uint i) const;
   
   /*! Determine whether the representation is empty. */
@@ -306,36 +411,84 @@ inline Boolean Geo_set::are_generated_color()
 inline Boolean Geo_set::are_generated_tex_coord()
 { return (m_generated_tex_coord && (m_tex_coord_array != NULL)); }  
 
-/*! \brief obtains the color-index array. */
+/*! \brief sets the coordinate-index array. */
+inline void Geo_set::set_coord_indices(const Array<Uint>& indices)
+{ m_coord_indices = indices; }
+
+/*! \brief obtains the (const) coordinate-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_coord_indices() const
 { return m_coord_indices; }
 
-/*! \brief obtains the color-index array. */
+/*! \brief obtains the (non-const) coordinate-index array. */
+inline SGAL::Array<Uint>& Geo_set::get_coord_indices()
+{ return m_coord_indices; }
+
+/*! \brief sets the color-index array. */
+inline void Geo_set::set_color_indices(const Array<Uint>& indices)
+{ m_color_indices = indices; }
+
+/*! \brief obtains the (const) color-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_color_indices() const
 { return m_color_indices; }
 
-/*! \brief obtains the normal-index array. */
+/*! \brief obtains the (non-const) color-index array. */
+inline SGAL::Array<Uint>& Geo_set::get_color_indices()
+{ return m_color_indices; }
+
+/*! \brief sets the normal-index array. */
+inline void Geo_set::set_normal_indices(const Array<Uint>& indices)
+{ m_normal_indices = indices; }
+
+/*! \brief obtains the (const) normal-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_normal_indices() const
 { return m_normal_indices; }
 
-/*! \brief obtains the texture-coord-index array. */
+/*! \brief obtains the (non-const) normal-index array. */
+inline SGAL::Array<Uint>& Geo_set::get_normal_indices()
+{ return m_normal_indices; }
+
+/*! \brief sets the texture-coordinate-index array. */
+inline void Geo_set::set_tex_coord_indices(const Array<Uint>& indices)
+{ m_tex_coord_indices = indices; }
+
+/*! \brief obtains the (const) texture-coordinate-index array. */
 inline const SGAL::Array<Uint>& Geo_set::get_tex_coord_indices() const
 { return m_tex_coord_indices; }
 
-/*! \brief obtains the coord-index array. */
+/*! \brief obtains the (non-const) texture-coordinate-index array. */
+inline SGAL::Array<Uint>& Geo_set::get_tex_coord_indices()
+{ return m_tex_coord_indices; }
+
+/*! \brief obtains the (const) coordinate-index vector. */
 inline const Uint* Geo_set::get_coord_indices_vector() const
 { return m_coord_indices.get_vector(); }
 
-/*! \brief obtains the color-index array. */
+/*! \brief obtains the (non-const) coordinate-index vector. */
+inline Uint* Geo_set::get_coord_indices_vector()
+{ return m_coord_indices.get_vector(); }
+
+/*! \brief obtains the (const) color-index vector. */
 inline const Uint* Geo_set::get_color_indices_vector() const
 { return m_color_indices.get_vector(); }
 
-/*! \brief obtains the normal-index array. */
+/*! \brief obtains the (non-const) color-index vector. */
+inline Uint* Geo_set::get_color_indices_vector()
+{ return m_color_indices.get_vector(); }
+
+/*! \brief obtains the (const) normal-index vector. */
 inline const Uint* Geo_set::get_normal_indices_vector() const
 { return m_normal_indices.get_vector(); }
 
-/*! \brief obtains the texture-coord-index array. */
+/*! \brief obtains the (non-const) normal-index vector. */
+inline Uint* Geo_set::get_normal_indices_vector()
+{ return m_normal_indices.get_vector(); }
+
+/*! \brief obtains the (const) texture-coordinate-index vector. */
 inline const Uint* Geo_set::get_tex_coord_indices_vector() const
+{ return m_tex_coord_indices.get_vector(); }
+
+/*! \brief obtains the (non-const) texture-coordinate-index vector. */
+inline Uint* Geo_set::get_tex_coord_indices_vector()
 { return m_tex_coord_indices.get_vector(); }
 
 /*! \brief Obtain the i-th coord index. */
@@ -347,18 +500,34 @@ inline Uint Geo_set::get_coord_index(Uint i) const { return m_coord_indices[i]; 
 inline Geo_set::Fragment_source Geo_set::resolve_fragment_source() const
 { return (m_color_array && m_color_array->size()) ? FS_COLOR : FS_NORMAL; }
 
-/*! \brief obtains the coordinate array. */
-inline Coord_array* Geo_set::get_coord_array() const { return m_coord_array; }
+/*! \brief obtains the (const) coordinate array. */
+inline const Coord_array* Geo_set::get_coord_array() const
+{ return m_coord_array; }
 
-/*! \brief obtains the normal array. */
-inline Normal_array* Geo_set::get_normal_array() const { return m_normal_array; }
+/*! \brief obtains the (non-const) coordinate array. */
+inline Coord_array* Geo_set::get_coord_array() { return m_coord_array; }
 
-/*! \brief obtains the texture-coordinate array. */
-inline Tex_coord_array* Geo_set::get_tex_coord_array() const
+/*! \brief obtains the (const) normal array. */
+inline const Normal_array* Geo_set::get_normal_array() const
+{ return m_normal_array; }
+
+/*! \brief obtains the (non-const) normal array. */
+inline Normal_array* Geo_set::get_normal_array() { return m_normal_array; }
+
+/*! \brief obtains the (const) texture-coordinate array. */
+inline const Tex_coord_array* Geo_set::get_tex_coord_array() const
 { return m_tex_coord_array; }
 
-/*! \brief obtains the normal array. */
-inline Color_array* Geo_set::get_color_array() const { return m_color_array; }
+/*! \brief obtains the (non-const) texture-coordinate array. */
+inline Tex_coord_array* Geo_set::get_tex_coord_array()
+{ return m_tex_coord_array; }
+
+/*! \brief obtains the (const) normal array. */
+inline const Color_array* Geo_set::get_color_array() const
+{ return m_color_array; }
+
+/*! \brief obtains the (non-const) normal array. */
+inline Color_array* Geo_set::get_color_array() { return m_color_array; }
 
 /*! \brief obtains a pointer to an element directly. */
 template <typename T_Vector>
