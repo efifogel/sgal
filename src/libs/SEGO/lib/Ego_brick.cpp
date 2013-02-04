@@ -77,23 +77,35 @@ Ego_brick::Ego_brick(Boolean proto) :
   m_knob_slices(s_def_knob_slices),
   m_are_knobs_visible(s_def_are_knobs_visible),
   m_dirty_center(true),
-  m_dirty_coords(true)
+  m_dirty_coords(true),
+  m_owned_coord_array(false),
+  m_owned_normal_array(false),
+  m_owned_tex_coord_array(false)
 {}
 
 /*! Destructor */
 Ego_brick::~Ego_brick()
 {
-  if (m_coord_array) {
-    delete m_coord_array;
-    m_coord_array = NULL;
+  if (m_owned_coord_array) {
+    if (m_coord_array) {
+      delete m_coord_array;
+      m_coord_array = NULL;
+    }
+    m_owned_coord_array = false;
   }
-  if (m_normal_array) {
-    delete m_normal_array;
-    m_normal_array = NULL;
+  if (m_owned_normal_array) {
+    if (m_normal_array) {
+      delete m_normal_array;
+      m_normal_array = NULL;
+    }
+    m_owned_normal_array = false;
   }
-  if (m_tex_coord_array) {
-    delete m_tex_coord_array;
-    m_tex_coord_array = NULL;
+  if (m_owned_tex_coord_array) {
+    if (m_tex_coord_array) {
+      delete m_tex_coord_array;
+      m_tex_coord_array = NULL;
+    }
+    m_owned_tex_coord_array = false;
   }
 }
 
@@ -160,7 +172,8 @@ void Ego_brick::clean_coords()
   SGAL_assertion(!m_coord_array);
   m_coord_array = new Coord_array(size);
   SGAL_assertion(m_coord_array);
-
+  m_owned_coord_array = true;
+  
   // Corner points:
   float width = m_pitch * m_number_of_knobs1;
   float depth = m_pitch * m_number_of_knobs2;
@@ -324,6 +337,7 @@ void Ego_brick::clean_normals()
   SGAL_assertion(!m_normal_array);
   m_normal_array = new Normal_array(m_coord_array->size());
   SGAL_assertion(m_normal_array);
+  m_owned_normal_array = true;
 
   m_dirty_normals = false;
   
@@ -383,6 +397,7 @@ void Ego_brick::clean_tex_coords()
     new Tex_coord_array_3d(m_coord_array->size());
   SGAL_assertion(tex_coord_array);
   m_tex_coord_array = tex_coord_array;
+  m_owned_tex_coord_array = true;
 
   m_dirty_tex_coords = false;  
 

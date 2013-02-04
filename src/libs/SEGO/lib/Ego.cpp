@@ -155,13 +155,32 @@ void Ego::clear_parts()
     while (it2 != transform->children_end()) {
       Node* shape_node = *it2++;
       // Remove the brick (Shape):
-      Shape* brick = static_cast<Shape*>(shape_node);
-      delete brick;
+      Shape* brick_shape = static_cast<Shape*>(shape_node);
+      delete brick_shape;
       transform->remove_child(shape_node);
     }
     delete transform;
     remove_child(transform_node);
   }
+
+  // Delete all appearances:
+  Appearance_iter ait;
+  for (ait = m_appearances.begin(); ait != m_appearances.end(); ++ait)
+    delete ait->second;
+  m_appearances.clear();
+
+  // Delete all materials:
+  Material_iter mit;
+  for (mit = m_materials.begin(); mit != m_materials.end(); ++mit)
+    delete *mit;
+  m_materials.clear();
+
+  // Delete all Ego bricks:
+  Ego_brick_iter bit;
+  for (bit = m_bricks.begin(); bit != m_bricks.end(); ++bit)
+    delete *bit;
+  m_bricks.clear();
+
   m_owned_parts = false;
 }
 
@@ -174,16 +193,6 @@ void Ego::clear()
   m_dirty_sphere_bound = true;
   m_dirty_voxels = true;
   m_dirty_tiling = true;
-
-  Appearance_iter ait;
-  for (ait = m_appearances.begin(); ait != m_appearances.end(); ++ait)
-    delete ait->second;
-  m_appearances.clear();
-
-  Material_iter mit;
-  for (mit = m_materials.begin(); mit != m_materials.end(); ++mit)
-    delete *mit;
-  m_materials.clear();
 
   if (m_owned_appearance) {
     if (m_appearance) {
@@ -437,14 +446,18 @@ void Ego::clean_parts()
   m_dirty_sphere_bound = true;
   m_owned_parts = true;
 
+  Vector3f origin(CGAL::to_double(m_tiled_voxels_origin.x()),
+                  CGAL::to_double(m_tiled_voxels_origin.y()),
+                  CGAL::to_double(m_tiled_voxels_origin.z()));
+  
   const double dx = m_voxel_length;
   const double dy = m_voxel_width;
   const double dz = m_voxel_height;
 
   Ego_voxels::size_type size = m_tiled_voxels.size();
-  Vector3f center(size.get<0>() * dx * 0.5f,
-                  size.get<1>() * dy * 0.5f,
-                  size.get<2>() * dz * 0.5f);
+  Vector3f offset(dx * 0.5f, dy * 0.5f, dz * 0.5f);
+  Vector3f center(size.get<0>(), size.get<1>(), size.get<2>());
+  center.add(offset);
   
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
@@ -462,10 +475,10 @@ void Ego::clean_parts()
         Transform* transform = new Transform;
         add_child(transform);
 
-        double x = CGAL::to_double(m_tiled_voxels_origin.x()) + i*dx;
-        double y = CGAL::to_double(m_tiled_voxels_origin.y()) + j*dy;
-        double z = CGAL::to_double(m_tiled_voxels_origin.z()) + k*dz;
-        Vector3f brick_center(x+dx/2, y+dy/2, z+dz/2);
+        Vector3f displacement(i*dx, j*dy, k*dz);
+        Vector3f brick_center(origin);
+        brick_center.add(displacement);
+        brick_center.add(offset);
         transform->set_translation(brick_center);
 
         Shape* shape = new Shape;

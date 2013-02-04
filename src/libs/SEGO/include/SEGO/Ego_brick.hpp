@@ -252,6 +252,24 @@ private:
 
   /*! The center of the Ego brick. */
   Vector3f m_center;
+
+  /*! Indicates whether the coordinate array is "owned". If it is owned (as
+   * the user hasn't provided one) the coordinate array should be destructed
+   * when Ego is destructed.
+   */
+  Boolean m_owned_coord_array;
+
+  /*! Indicates whether the normal array is "owned". If it is owned (as
+   * the user hasn't provided one) the normal array should be destructed
+   * when Ego is destructed.
+   */
+  Boolean m_owned_normal_array;
+
+  /*! Indicates whether the texture coordinate array is "owned". If it is
+   * owned (as the user hasn't provided one) the texture coordinate array
+   * should be destructed when Ego is destructed.
+   */
+  Boolean m_owned_tex_coord_array;
   
   /*! default values for Ego_brick.  */
   static const Uint s_def_number_of_knobs1;

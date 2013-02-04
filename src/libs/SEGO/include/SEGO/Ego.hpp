@@ -316,7 +316,7 @@ protected:
   Boolean m_dirty_parts;
 
   /*! Indicates whether the parts are "owned". If they are owned (as
-   * the user hasn't provided one) the parts should be destructed when
+   * the user hasn't provided any) the parts should be destructed when
    * Ego is destructed.
    */
   Boolean m_owned_parts;
@@ -337,18 +337,6 @@ protected:
   typedef Ego_brick_list::iterator                      Ego_brick_iter;
   Ego_brick_list m_bricks;
   
-  typedef std::list<Coord_array*>                       Coord_array_list;
-  typedef Coord_array_list::iterator                    Coord_array_iter;
-  Coord_array_list m_coord_arrays;
-
-  typedef std::list<Normal_array*>                      Normal_array_list;
-  typedef Normal_array_list::iterator                   Normal_array_iter;
-  Normal_array_list m_normal_arrays;
-
-  typedef std::list<Tex_coord_array*>                   Tex_coord_array_list;
-  typedef Tex_coord_array_list::iterator                Tex_coord_array_iter;
-  Tex_coord_array_list m_tex_coord_arrays;
-  
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
 
@@ -356,6 +344,10 @@ protected:
   Uint m_knob_slices;
 
 private:
+  /*! Indicates whether the appearance is "owned". If it is owned (as the
+   * user hasn't provided one) the appearance should be destructed when Ego
+   * is destructed.
+   */
   Boolean m_owned_appearance;
 
   /*! The tag that identifies this container type */
