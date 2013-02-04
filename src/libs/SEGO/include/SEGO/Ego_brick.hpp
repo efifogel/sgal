@@ -35,6 +35,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Indexed_face_set.hpp"
+#include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -140,6 +141,20 @@ public:
   /*! Clean the representation. */
   virtual void clean();
   
+  // void set_coords(Coord_array* coord_array);
+
+  // void set_normals(Normal_array* normal_array);
+
+  // void set_tex_coords(Tex_coord_array* tex_coord_array);
+
+  // void set_indices(SGAL::Array<Uint>& indices);
+
+  /*! Set the center of the brick. */
+  void set_center(Vector3f& center);
+
+  /*! Obtain the center of the brick. */
+  const Vector3f& get_center() const;
+  
 protected:
   /*! The number of knobs along the 1st dimension. */
   Uint m_number_of_knobs1;
@@ -171,8 +186,11 @@ protected:
   /*! Are the knobs visible. */
   bool m_are_knobs_visible;
   
-  /*! obtains the tag (type) of the container. */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
+
+  /*! Clean the center of the brick. */
+  void clean_center();
 
   /*! Generate the knob_cross_section. */
   void clean_knob_cross_section();
@@ -198,6 +216,14 @@ private:
 
   /*! A 2D cross section of the knob */
   std::vector<Vector2f> m_knob_cross_section;
+
+  /*! The center of the brick. */
+  Vector3f m_center;
+  
+  // Boolean m_dirty_coords;
+  // Boolean m_dirty_normals;
+  // Boolean m_dirty_tex_coords;
+  // Boolean m_dirty_indices;
   
   /*! default values for Ego_brick.  */
   static const Uint s_def_number_of_knobs1;
@@ -211,6 +237,12 @@ private:
   static const Boolean s_def_are_knobs_visible;
 };
 
+/*! \brief sets the center of the brick. */
+inline void Ego_brick::set_center(Vector3f& center) { m_center = center; }
+
+/*! \brief obtains the center of the brick. */
+inline const Vector3f& Ego_brick::get_center() const { return m_center; }
+  
 SGAL_END_NAMESPACE
 
 #endif
