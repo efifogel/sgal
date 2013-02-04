@@ -1505,7 +1505,8 @@ inline void glMultMatrixd(const GLdouble* m) {
 /*! glMultMatrixf wrapper */
 inline void glMultMatrixf(const GLfloat* m) {
   ::glMultMatrixf(m);
-  TRACE_CODE(Trace::GRAPHICS, std::cout << "glMultMatrixf(" << ");"
+  TRACE_CODE(Trace::GRAPHICS, std::cout << "glMultMatrixf("
+             << "matrix" << ");"
              << std::endl;);
 }
 
@@ -1598,8 +1599,7 @@ inline void glNormalPointer(GLenum type, GLsizei stride,
   ::glNormalPointer(type, stride, pointer);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glNormalPointer("
              << Gl_wrapper::find(type) << ", "
-             << Gl_wrapper::find(stride) << ", "
-             << "pointer);"
+             << stride << ", " << "normals);"
              << std::endl;);
 }
 
@@ -2351,8 +2351,11 @@ inline void glTexCoord4sv(const GLshort* v) {
 inline void glTexCoordPointer(GLint size, GLenum type, GLsizei stride,
                               const GLvoid* pointer) {
   ::glTexCoordPointer(size, type, stride, pointer);
-  TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoordPointer(" << ");"
-             << std::endl;);
+  TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoordPointer("
+             << size << ", "
+             << Gl_wrapper::find(type) << ", "
+             << stride << ", "
+             << "tex_coords" << ");" << std::endl;);
 }
 
 /*! glTexEnvf wrapper */
@@ -2757,7 +2760,7 @@ inline void glVertexPointer(GLint size, GLenum type, GLsizei stride,
              << size
              << "," << Gl_wrapper::find(type)
              << "," << stride
-             << "," << "pointer" << ");"
+             << "," << "vertices" << ");"
              << std::endl;);
 }
 
