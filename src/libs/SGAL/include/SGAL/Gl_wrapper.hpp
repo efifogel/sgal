@@ -130,7 +130,8 @@ inline void glBitmap(GLsizei width, GLsizei height, GLfloat xorig,
 inline void glBlendFunc(GLenum sfactor, GLenum dfactor) {
   ::glBlendFunc(sfactor, dfactor);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glBlendFunc("
-             << Gl_wrapper::find(sfactor) << Gl_wrapper::find(dfactor) << ");"
+             << Gl_wrapper::find(sfactor) << ", "
+             << Gl_wrapper::find(dfactor) << ");"
              << std::endl;);
 }
 
@@ -2381,7 +2382,8 @@ inline void glTexEnvi(GLenum target, GLenum pname, GLint param)
 {
   ::glTexEnvi(target, pname, param);
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexEnvi("
-             << Gl_wrapper::find(target) << Gl_wrapper::find(pname)
+             << Gl_wrapper::find(target) << ", "
+             << Gl_wrapper::find(pname) << ", "
              << Gl_wrapper::find(param) << ");"
              << std::endl;);
   

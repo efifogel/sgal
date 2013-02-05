@@ -85,8 +85,8 @@ Gl_wrapper::Gl_wrapper()
   m_gl_token_names[GL_POLYGON] = "GL_POLYGON";
 
   /* BlendingFactorDest */
-  /*      GL_ZERO */
-  /*!     GL_ONE */
+  // m_gl_token_names[GL_ZERO] = "GL_ZERO";     // GL_FALSE
+  // m_gl_token_names[GL_ONE] = "GL_ONE";       // GL_ONE
   m_gl_token_names[GL_SRC_COLOR] = "GL_SRC_COLOR";
   m_gl_token_names[GL_ONE_MINUS_SRC_COLOR] = "GL_ONE_MINUS_SRC_COLOR";
   m_gl_token_names[GL_SRC_ALPHA] = "GL_SRC_ALPHA";
