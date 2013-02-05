@@ -60,23 +60,13 @@ REGISTER_TO_FACTORY(Appearance, "Appearance");
 /*! The parameter-less constructor */
 Appearance::Appearance(Boolean proto) :
   Container(proto),
-  m_tex_env(s_def_tex_env),
-  m_dirty(true),
-  m_owned_material(false)
+  m_tex_env(s_def_tex_env)
 { init(); }
 
 /*! Destructor */
 Appearance::~Appearance()
 {
   TRACE_MSG(Trace::DESTRUCTOR, "~Appearance ...");
-
-  if (m_owned_material) {
-    if (m_material) {
-      delete m_material;
-      m_material = NULL;
-    }
-    m_owned_material = false;
-  }
 
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
@@ -268,19 +258,29 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 }
 
 /*! \brief sets the material attribute. */
-void Appearance::set_material(Material* material, Boolean owned)
+void Appearance::set_material(Material* material)
 {
-  if (m_owned_material && m_material) delete m_material;
-  m_owned_material = owned;
+  SGAL_assertion(material);
   m_material = material;
+
+  if (material->get_transparency() != 0.0f) {
+    set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+    set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+  }
+  
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
 }
 
-/*! \brief */
+/*! \brief processes change of material. */
 void Appearance::material_changed(Field_info* /* field_info */)
 {
-  //! \todo what if m_owned_material is set?
+  //! \todo what if material is set?
+  if (m_material->get_transparency() != 0.0f) {
+    set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+    set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+  }
+
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
 }
@@ -456,7 +456,7 @@ void Appearance::set_line_stipple_factor(Uint factor)
   m_line_stipple_factor = factor;
 }
 
-/*! \brief */
+/*! \brief sets the texture transformation. */
 void Appearance::set_tex_transform(const Matrix4f& tex_transform)
 {
   m_pending.on_bit(Gfx::TEX_TRANSFORM);
@@ -470,11 +470,9 @@ void Appearance::set_inherit(const Bit_mask& inherit) { m_pending = inherit; }
 /*! \brief */
 void Appearance::get_inherit(Bit_mask& inherit) const { inherit = m_pending; }
 
-/*! \brief */
+/*! \brief applies the appearance. */
 void Appearance::draw(Draw_action* action)
 {
-  if (m_dirty) clean();
-  
   // Obtain the configuration if exists:
   SGAL::Configuration* conf = action->get_configuration();
   
@@ -485,7 +483,6 @@ void Appearance::draw(Draw_action* action)
 
   Context* context = action->get_context();
   if (context == NULL) return;
-
   context->draw_app(this);
 
   // disable the texture in case the image is not loaded yet
@@ -496,24 +493,19 @@ void Appearance::draw(Draw_action* action)
 /*! \brief determines whether the appearance is translucent. */
 Boolean Appearance::is_transparent() const
 {
-  if (!m_material) return false;
-
-  if (m_material->get_transparency() != 0) return true;
-
-  if ((m_src_blend_func != Gfx::ONE_SBLEND) ||
-      (m_dst_blend_func != Gfx::ZERO_DBLEND))
-    return true;
-
-  return false;
+  return ((m_src_blend_func != Gfx::ONE_SBLEND) ||
+          (m_dst_blend_func != Gfx::ZERO_DBLEND));
 }
 
 /*! \brief notifies that the texture has been changed. */
 void Appearance::texture_changed(Field_info* /* field_info */)
 {
+  m_pending.on_bit(Gfx::TEXTURE);
+  m_override.on_bit(Gfx::TEXTURE);
+
   // this is to indicate that the texture has changed and 
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::TEX_ENV);
-  set_rendering_required();
 }
 
 /*! \brief notifies that halftone has been changed. */
@@ -687,19 +679,6 @@ void Appearance::set_default_texture_attributes()
 
   //! \todo move to Gfx:
   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, color_control);
-}
-
-/*! \brief cleans the node before drawing. */
-void Appearance::clean()
-{
-  // Construct a default material
-  if (!m_material) {
-    Material* material = new Material();
-    SGAL_assertion(material);
-    set_material(material, true);
-  }
-  
-  m_dirty = false;
 }
 
 /*! \brief writes this container. */

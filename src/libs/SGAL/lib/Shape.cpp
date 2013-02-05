@@ -84,8 +84,8 @@ Shape::Shape(Boolean proto) :
   m_appearance(NULL),
   m_geometry(NULL),
   m_is_visible(true),
+  m_owned_material(false),
   m_owned_tex_gen(false),
-  m_is_text_object(false),
   m_priority(0),
   m_draw_backface(false),
   m_owned_appearance(false),
@@ -95,13 +95,34 @@ Shape::Shape(Boolean proto) :
   m_appearance_prev(NULL),
   m_geometry_prev(NULL),
   m_override_light_enable(Configuration::s_def_override_light_enable),
-  m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_material(Configuration::s_def_override_material),
   m_override_tex_gen(Configuration::s_def_override_tex_gen)
 {}
 
 /*! Destructor */
 Shape::~Shape()
 {
+  // delete the owned material attribute if present
+  if (m_owned_material) {
+    Material* material = m_appearance->get_material();
+    if (material) {
+      delete material;
+      m_appearance->set_material(NULL);
+    }
+    m_owned_material = false;
+  }
+
+  // delete the owned texture-generation attribute if present
+  if (m_owned_tex_gen) {
+    Tex_gen* tex_gen = m_appearance->get_tex_gen();
+    if (tex_gen) {
+      delete tex_gen;
+      m_appearance->set_tex_gen(NULL);
+    }
+    m_owned_tex_gen = false;
+  }
+  
+  // delete the owned appearance if present
   if (m_owned_appearance) {
     if (m_appearance) {
       delete m_appearance;
@@ -156,9 +177,6 @@ Boolean Shape::clean_sphere_bound()
   return changed;
 }
 
-/*! \brief determines whether the geometry is text. */
-Boolean Shape::is_text_object() { return m_is_text_object; }
-
 /*! \brief draws the appearance and then all the geometries. */
 Action::Trav_directive Shape::draw(Draw_action* draw_action)
 {
@@ -166,8 +184,7 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
   if (m_dirty) clean();
 
   int pass_no = draw_action->get_pass_no();
-  Boolean is_transparent = m_appearance->is_transparent() || is_text_object();
-  if (!m_draw_backface && is_transparent && (pass_no == 0)) {
+  if (!m_draw_backface && m_appearance->is_transparent() && (pass_no == 0)) {
     draw_action->set_second_pass_required(true);
     return Action::TRAV_CONT;
   }
@@ -245,24 +262,12 @@ void Shape::clean()
 
   if (m_dirty_appearance) clean_appearance();
 
+  if (m_override_material) clean_material();
+  
   // If the geometry has no color coordinates, enabled the light by default.
   if (m_override_light_enable)
     if (!m_geometry->are_generated_color())
       m_appearance->set_light_enable(true);
-
-  if (m_override_blend_func) {
-    /*! Text geometry are transparent by default. */
-    Boolean is_transparent =
-      m_appearance->is_transparent() || is_text_object();
-    if (is_transparent) {
-      m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-      m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-    }
-    else {
-      m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
-      m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
-    }
-  }
 
   if (m_override_tex_gen) {
     // Enable texture generation if texture is enabled, and the geometry does
@@ -318,6 +323,34 @@ void Shape::clean_appearance()
       m_appearance = new Appearance;
       SGAL_assertion(m_appearance);
       m_owned_appearance = true;
+    }
+  }
+}
+
+/*! \brief cleans the material attribute. */
+void Shape::clean_material()
+{
+  // Construct a new owned texture generation attribute if needed, and delete
+  // the previously constructed owned texture generation attribute if not
+  // needed any more.
+  SGAL_assertion(m_appearance);
+  if (m_owned_material) {
+    SGAL_assertion(m_appearance_prev);
+    Material* material_prev = m_appearance_prev->get_material();
+    Material* material = m_appearance->get_material();
+    if (!material) m_appearance->set_material(material_prev);
+    else if (material != material_prev) {
+      delete material_prev;
+      m_appearance_prev->set_material(NULL);
+      m_owned_material = false;
+    }
+  }
+  else {
+    if (!m_appearance->get_material()) {
+      Material* material = new Material();
+      SGAL_assertion(material);
+      m_appearance->set_material(material);
+      m_owned_material = true;
     }
   }
 }

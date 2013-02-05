@@ -61,6 +61,8 @@ public:
     VERBOSITY_LEVEL,
     SEAMLESS_CUBE_MAP,
     OVERRIDE_LIGHT_ENABLE,
+    OVERRIDE_MATERIAL,
+    OVERRIDE_TEX_GEN,
     LAST
   };
 
@@ -295,7 +297,7 @@ private:
   static const Uint s_def_verbose_level;
   static const Boolean s_def_seamless_cube_map;
   static const Boolean s_def_override_light_enable;
-  static const Boolean s_def_override_blend_func;
+  static const Boolean s_def_override_material;
   static const Boolean s_def_override_tex_gen;
   
   static const Char* s_geometry_drawing_mode_names[];

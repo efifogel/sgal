@@ -190,8 +190,6 @@ public:
 
   Boolean is_visible() const;
 
-  Boolean is_text_object();
-
   /*! Obtain the rendering priority. */
   Float get_priority() const;
 
@@ -251,14 +249,17 @@ private:
   /*! if false the shape is not rendered. */
   Boolean m_is_visible;
 
+  /*! Indicates whether the material attribute is owned. If it is owned (as
+   * the user hasn't provided one) the material attribute should be
+   * destructed when the shape is destructed.
+   */
+  Boolean m_owned_material;
+
   /*! Indicates whether the texture-generation attribute is owned. If it is
    * owned  (as the user hasn't provided one) the texture-generation attribute
-   * should be destructed when the texture-generation attribute is destructed.
+   * should be destructed when the shape is destructed.
    */
   Boolean m_owned_tex_gen;
-
-  /*! this is true when the geometry is a text object. */
-  Boolean m_is_text_object;
 
   /*! The rendering priority. */
   Float m_priority;
@@ -296,13 +297,12 @@ private:
    */
   Boolean m_override_light_enable;
 
-  /*! Indicates whether to override the appearance blend functions. If this
-   * flag is on, the (appearance) blend functions are set according to the
-   * appearance transparency and whether the geometry is text.
-   * Notice than when the appearance chages, the blend functions of the
-   * previous appearance are not restored to their original values.
+  /*! Indicates whether to construct the appearance material attribute when
+   * missing.
+   * Notice than when the appearance chages, the material attribute of the
+   * previous appearance is not restored to its original value.
    */
-  Boolean m_override_blend_func;
+  Boolean m_override_material;
 
   /*! Indicates whether to override the appearance texture-generation flag and
    * construct the appearance texture-generation attribute when missing. If
@@ -321,7 +321,12 @@ private:
   /*! Cleane the appearance. */
   void clean_appearance();
 
-  /*! Cleane the texture generation attributes of the (current) appearance
+  /*! Clean the material attribute of the (current) appearance and the
+   * previous appearance if exists.
+   */
+  void clean_material();
+
+  /*! Clean the texture generation attribute of the (current) appearance
    * and the previous appearance if exists.
    */
   void clean_tex_gen();

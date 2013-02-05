@@ -132,11 +132,8 @@ public:
 
   /*! Set the material attribute.
    * \param material (in) the material attribute.
-   * \param owned (in) indicates whether the material attribute is owned.
-   *              If it is owned, the material attribute is constructed and
-   *              destructed by the construct.
    */
-  void set_material(Material* material, Boolean owned = false);
+  void set_material(Material* material);
 
   /*! Obtain the material attribute. */
   Material* get_material() const;
@@ -345,8 +342,6 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  Boolean m_dirty;
-  
   Bit_mask m_dirty_flags;
 
   /*! Default value */
@@ -365,21 +360,12 @@ private:
 
   //Gfx::Tex_env m_blend_func;
 
-  /*! Indicates whether the material attribute is owned. If it is owned (as
-   * the user hasn't provided one) the material attribute should be
-   * destructed when the appearance is destructed.
-   */
-  Boolean m_owned_material;
-
   /*! The default halftone pattern. */
   static Ubyte s_def_halftone[];
 
   /*! Initialize the node upon construction. */
   void init();
 
-  /*! Clean the node before drawing. */
-  void clean();
-  
   friend class Context;
 };
 

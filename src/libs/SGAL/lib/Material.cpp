@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -42,7 +42,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Material::s_tag = "Material";
-Container_proto * Material::s_prototype = 0;
+Container_proto* Material::s_prototype = 0;
 
 // Default values:
 Float Material::m_def_ambient_intensity = 0.2f;
@@ -136,7 +136,7 @@ void Material::draw(Face which_face, Context* /* context */)
 /*! Callback, called when field change, rise changed flag and forward call to
  * set_rendering_required.
  */
-void Material::material_changed(Field_info * field_info)
+void Material::material_changed(Field_info* field_info)
 {
   m_changed = true;
   Container::set_rendering_required(field_info);
@@ -196,14 +196,14 @@ void Material::delete_prototype()
 }
 
 /*! \brief obtains the prototype. Initialize as nessary. */
-Container_proto * Material::get_prototype() 
+Container_proto* Material::get_prototype() 
 {  
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of this object. */
-void Material::set_attributes(Element * elem) 
+void Material::set_attributes(Element* elem) 
 {
   Container::set_attributes(elem);
   typedef Element::Str_attr_iter                Str_attr_iter;
@@ -251,7 +251,7 @@ void Material::set_attributes(Element * elem)
 }
 
 /*! \brief writes this container. */
-void Material::write(Formatter * formatter)
+void Material::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
   formatter->single_vector3f("diffuseColor",
@@ -310,34 +310,6 @@ Attribute_list Material::get_attributes()
   return attribs; 
 }
 
-/*! add a material to the material pool. connect the material to
- * its parent appearance.
- */
-void Material::add_to_scene(Scene_graph * sg, XML_entity * parent)
-{ 
-  Container::add_to_scene(sg, parent);
-  sg->add_container(this);
-
-  if (parent->get_name() == g_navigation_root_name) {
-    return;
-  }
-
-  Appearance * appearance = dynamic_cast<Appearance *>(parent);
-  //ASSERT(appearance);
-  if (appearance) { 
-    appearance->set_material(this);
-    // Set the back material only if it hasn't been set yet.
-    // The back material could be set through an extension!
-    if (!appearance->get_back_material())
-      appearance->set_back_material(this);
-  
-    // FIX - this code should be moved to somewhere else
-    if (m_transparency != 0.0f) {
-      appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-      appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-    }
-  }
-}
 #endif
 
 SGAL_END_NAMESPACE

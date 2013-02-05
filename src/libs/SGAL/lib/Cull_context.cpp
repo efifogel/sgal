@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -207,11 +207,8 @@ void Cull_context::draw(Draw_action* draw_action)
       // This node must be rendered in second pass.
       m_2ndpass.push_back(rn);
 
-      // Text nodes are assigned the highest priority
-      if (rn.node->is_text_object())
-        rn.priority = 0;
-      else if (rn.priority == 0)
-        rn.priority = compute_distance(rn);      
+      //! \todo Should Text nodes be assigned the highest priority?
+      if (rn.priority == 0) rn.priority = compute_distance(rn);      
     }
   }
 
