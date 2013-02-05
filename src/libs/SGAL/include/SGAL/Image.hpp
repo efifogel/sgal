@@ -44,6 +44,7 @@ public:
     FIRST = Image_base::LAST - 1,
     URL,
     FLIP,
+    ROTATION,
     LAST
   };
 
@@ -107,6 +108,12 @@ public:
   /*! Obtain the flag that indicates whether the image should be reflected. */
   Boolean get_flip() const;
   
+  /*! Set the rotation angle. */
+  void set_rotation(Float rotation);
+
+  /*! Obtain the rotation angle. */
+  Float get_rotation() const;
+  
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -128,6 +135,9 @@ private:
 
   /*! Indicates whether the image should be reflected when read from file. */
   Boolean m_flip;
+
+  /*! The rotation angle. */
+  Float m_rotation;
 };
 
 /*! \brief constructs the prototype. */
@@ -159,6 +169,12 @@ inline void Image::set_flip(Boolean flag) { m_flip = flag; }
  * reflected.
  */
 inline Boolean Image::get_flip() const { return m_flip; }
+  
+/*! \brief sets the rotation angle. */
+inline void Image::set_rotation(Float rotation) { m_rotation = rotation; }
+
+/*! \brief obtains the rotation angle. */
+inline Float Image::get_rotation() const { return m_rotation; }
   
 SGAL_END_NAMESPACE
 

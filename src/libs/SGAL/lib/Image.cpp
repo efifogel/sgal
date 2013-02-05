@@ -32,10 +32,12 @@
 #define __WIN32__
 #endif
 
+#include <boost/lexical_cast.hpp>
 #include <Magick++.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/errors.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -54,7 +56,8 @@ REGISTER_TO_FACTORY(Image, "Image");
 /*! Constructor */
 Image::Image(Boolean proto) :
   Image_base(proto),
-  m_flip(true)
+  m_flip(true),
+  m_rotation(0)
 {}
   
 /*! Destructor */
@@ -75,6 +78,9 @@ void Image::init_prototype()
 
   s_prototype->add_field_info(new SF_bool(FLIP, "flip",
                                           get_member_offset(&m_flip)));
+
+  s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
+                                           get_member_offset(&m_rotation)));
 }
 
 /*! \brief deletes the prototype. */
@@ -110,6 +116,11 @@ void Image::set_attributes(Element* elem)
     }
     if (name == "flip") {
       set_flip(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "rotation") {
+      set_rotation(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -184,33 +195,48 @@ void Image::clean()
   Magick::Image image;
   image.read(fullname);
   if (m_flip) image.flip();
-  Uint width = image.columns();
-  Uint height = image.rows();
-  Magick::ColorspaceType color_space = image.colorSpace();
+  if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
+  image.matte(true);
+  image.opacity(MaxRGB / 2);
+  image.colorSpace(Magick::TransparentColorspace);
   Image_base::Format format = kIllegal;
   std::string magick_map;
   Magick::StorageType magick_type;
-  switch (color_space) {
-   case Magick::RGBColorspace:
-    format = Image_base::kRGB8_8_8;
-    magick_map = "RGB";
-    magick_type = Magick::CharPixel;
-    break;
-   case Magick::GRAYColorspace:
+  Magick::ImageType type = image.type();
+  switch (type) {
+   case Magick::GrayscaleType:       // Grayscale img
     format = Image_base::kIntensity8;
     magick_map = "A";
     magick_type = Magick::CharPixel;
     break;
-   case Magick::TransparentColorspace:
+
+   case Magick::TrueColorType:       // Truecolor img
+    format = Image_base::kRGB8_8_8;
+    magick_map = "RGB";
+    magick_type = Magick::CharPixel;
+    break;
+
+   case Magick::TrueColorMatteType:  // Truecolor img + opacity
     format = Image_base::kRGBA8_8_8_8;
     magick_map = "RGBA";
     magick_type = Magick::CharPixel;
     break;
-   default:
-    std::cerr << "Unsupported color space (" << color_space
-              << ") in file " << fullname.c_str() << "!" << std::endl;
-  }
 
+   case Magick::UndefinedType:       // Unset type
+   case Magick::BilevelType:         // Monochrome img
+   case Magick::GrayscaleMatteType:  // Grayscale img + opacity
+   case Magick::PaletteType:         // Indexed color (palette) img
+   case Magick::PaletteMatteType:    // Indexed color (palette) img + opacity
+   case Magick::ColorSeparationType: // Cyan/Yellow/Magenta/Black (CYMK) img
+   case Magick::ColorSeparationMatteType:
+   case Magick::OptimizeType:
+   default:
+    std::cerr << "Unsupported image type (" << type
+              << ") in file " << fullname.c_str() << "!" << std::endl;
+    break;
+  }
+  Uint width = image.columns();
+  Uint height = image.rows();
   m_width = width;
   m_height = height;
   m_format = format;
