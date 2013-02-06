@@ -250,7 +250,9 @@ private:
   /*! A 2D cross section of the knob */
   std::vector<Vector2f> m_knob_cross_section;
 
-  /*! The center of the Ego brick. */
+  /*! The center of the Ego structure. The generated texture coordinate of a
+   * vertex v is the displacement of v relative to m_center (v - m_center).
+   */
   Vector3f m_center;
 
   /*! Indicates whether the coordinate array is "owned". If it is owned (as

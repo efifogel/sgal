@@ -598,7 +598,7 @@ Transform {
 	      }		# 180
 	    }
 	  }
-	  style "appearance"
+	  # style "appearance"
 	  scale 100 100 100
 	  model USE MODEL
 	  knobSlices 16

@@ -130,6 +130,9 @@ public:
   /*! Create the geometry of a brick. */
   Geometry* create_geometry(Boolean draw_knobs, Vector3f& center);
   
+  /*! Create the geometry of a brick. */
+  Geometry* create_geometry(Boolean draw_knobs);
+
   /*! Clean the voxels. */
   void clean_voxels();
 
@@ -321,10 +324,6 @@ protected:
    */
   Boolean m_owned_parts;
   
-  /*! These are temporary members used to expedite rendering */
-  Ego_brick m_ego_brick;
-  Ego_brick m_ego_brick_without_knobs;
-
   typedef boost::unordered_map<Uint, Appearance*>       Appearance_map;
   typedef Appearance_map::iterator                      Appearance_iter;
   Appearance_map m_appearances;
@@ -336,6 +335,7 @@ protected:
   typedef std::list<Ego_brick*>                         Ego_brick_list;
   typedef Ego_brick_list::iterator                      Ego_brick_iter;
   Ego_brick_list m_bricks;
+  Ego_brick_list m_knobless_bricks;
   
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;

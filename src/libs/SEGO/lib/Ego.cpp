@@ -102,23 +102,7 @@ Ego::Ego(Boolean proto) :
   m_scene_graph(NULL),
   m_knob_slices(Ego_brick::s_def_knob_slices),
   m_owned_appearance(false)
-{
-  // This is temp code until we have something that can visualize it better.  
-  m_ego_brick.set_number_of_knobs1(2);
-  m_ego_brick.set_number_of_knobs2(2);
-  m_ego_brick.set_knobs_visible(true);
-
-  m_ego_brick_without_knobs.set_number_of_knobs1(2);
-  m_ego_brick_without_knobs.set_number_of_knobs2(2);
-  m_ego_brick_without_knobs.set_knobs_visible(false);
-
-  std::string s1("brick with");
-  m_ego_brick.set_name(s1);
-  std::string s2("brick without");
-  m_ego_brick_without_knobs.set_name(s2);
-  
-  if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false;  
-}
+{ if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
 
 /*! Destructor */
 Ego::~Ego() { clear(); }
@@ -185,6 +169,9 @@ void Ego::clear_parts()
   for (bit = m_bricks.begin(); bit != m_bricks.end(); ++bit)
     delete *bit;
   m_bricks.clear();
+  for (bit = m_knobless_bricks.begin(); bit != m_knobless_bricks.end(); ++bit)
+    delete *bit;
+  m_knobless_bricks.clear();
 
   m_owned_parts = false;
 }
@@ -509,8 +496,7 @@ void Ego::clean_parts()
 
          case STYLE_RANDOM_COLORS:
           app = create_random_appearance();
-          ego_brick = (should_draw_knobs) ?
-            &m_ego_brick : &m_ego_brick_without_knobs;
+          ego_brick = create_geometry(should_draw_knobs);
           break;
 
          default: std::cerr << "Invalid style!" << std::endl;
@@ -524,33 +510,75 @@ void Ego::clean_parts()
 }
 
 /*! \brief creates the geometry of a brick. */
+Geometry* Ego::create_geometry(Boolean draw_knobs)
+{
+  Ego_brick* ego_brick;
+  if (draw_knobs) {
+    if (m_bricks.empty()) {
+      ego_brick = new Ego_brick;
+      ego_brick->set_knob_slices(m_knob_slices);
+      ego_brick->set_number_of_knobs1(2);
+      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_knobs_visible(true);
+      m_bricks.push_back(ego_brick);
+    }
+    else ego_brick = m_bricks.front();
+  }
+  else {
+    if (m_knobless_bricks.empty()) {
+      ego_brick = new Ego_brick;
+      ego_brick->set_knob_slices(m_knob_slices);
+      ego_brick->set_number_of_knobs1(2);
+      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_knobs_visible(false);
+      m_knobless_bricks.push_back(ego_brick);
+    }
+    else ego_brick = m_knobless_bricks.front();
+  }
+
+  return ego_brick;
+}
+
+/*! \brief creates the geometry of a brick. */
 Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
 {
   Ego_brick* ego_brick = new Ego_brick;
-  m_bricks.push_back(ego_brick);
-  Coord_array* coord_array;
-  Normal_array* normal_array;
-  if (draw_knobs) {
-    coord_array = m_ego_brick.get_coord_array();
-    normal_array = m_ego_brick.get_normal_array();
-  }
-  else {
-    coord_array = m_ego_brick_without_knobs.get_coord_array();
-    normal_array = m_ego_brick_without_knobs.get_normal_array();
-    ego_brick->set_knobs_visible(false);
-  }
-  const Array<Uint>& indices = (draw_knobs) ?
-    m_ego_brick.get_coord_indices() :
-    m_ego_brick_without_knobs.get_coord_indices();
-  
-  ego_brick->set_coord_array(coord_array);
-  ego_brick->set_normal_array(normal_array);
-  ego_brick->set_indices_flat(true);
-  ego_brick->set_center(center);
-  ego_brick->set_coord_indices(indices);
   ego_brick->set_knob_slices(m_knob_slices);
   ego_brick->set_number_of_knobs1(2);
   ego_brick->set_number_of_knobs2(2);
+  ego_brick->set_center(center);
+
+  if (draw_knobs) {
+    if (m_bricks.empty()) {
+      ego_brick->set_number_of_knobs1(2);
+      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_knobs_visible(true);
+    }
+    else {
+      Ego_brick* ref_ego_brick = m_bricks.front();
+      ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
+      ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
+      ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
+      ego_brick->set_indices_flat(true);
+    }
+    m_bricks.push_back(ego_brick);
+  }
+  else {
+    if (m_knobless_bricks.empty()) {
+      ego_brick->set_number_of_knobs1(2);
+      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_knobs_visible(false);
+    }
+    else {
+      Ego_brick* ref_ego_brick = m_knobless_bricks.front();
+      ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
+      ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
+      ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
+      ego_brick->set_indices_flat(true);
+    }
+    m_knobless_bricks.push_back(ego_brick);
+  }
+
   return ego_brick;
 }
 
@@ -722,11 +750,6 @@ void Ego::set_style(Style style)
 }
 
 /*! \brief sets the knob slicess number. */
-void Ego::set_knob_slices(Uint slices)
-{
-  m_knob_slices = slices;
-  m_ego_brick.set_knob_slices(m_knob_slices);
-  m_ego_brick_without_knobs.set_knob_slices(m_knob_slices);
-}
+void Ego::set_knob_slices(Uint slices) { m_knob_slices = slices; }
 
 SGAL_END_NAMESPACE
