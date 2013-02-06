@@ -448,8 +448,10 @@ void Ego::clean_parts()
 
   Ego_voxels::size_type size = m_tiled_voxels.size();
   Vector3f offset(dx * 0.5f, dy * 0.5f, dz * 0.5f);
-  Vector3f center(size.get<0>(), size.get<1>(), size.get<2>());
-  center.add(offset);
+  Vector3f center(dx * size.get<0>() * 0.5f,
+                  dy * size.get<1>() * 0.5f,
+                  dz * size.get<2>() * 0.5f);
+  center.add(origin);
   
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
@@ -512,6 +514,7 @@ void Ego::clean_parts()
 /*! \brief creates the geometry of a brick. */
 Geometry* Ego::create_geometry(Boolean draw_knobs)
 {
+  draw_knobs = false;
   Ego_brick* ego_brick;
   if (draw_knobs) {
     if (m_bricks.empty()) {
@@ -549,12 +552,8 @@ Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
   ego_brick->set_center(center);
 
   if (draw_knobs) {
-    if (m_bricks.empty()) {
-      ego_brick->set_number_of_knobs1(2);
-      ego_brick->set_number_of_knobs2(2);
-      ego_brick->set_knobs_visible(true);
-    }
-    else {
+    ego_brick->set_knobs_visible(true);
+    if (!m_bricks.empty()) {
       Ego_brick* ref_ego_brick = m_bricks.front();
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
@@ -564,12 +563,8 @@ Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
     m_bricks.push_back(ego_brick);
   }
   else {
-    if (m_knobless_bricks.empty()) {
-      ego_brick->set_number_of_knobs1(2);
-      ego_brick->set_number_of_knobs2(2);
-      ego_brick->set_knobs_visible(false);
-    }
-    else {
+    ego_brick->set_knobs_visible(false);
+    if (!m_knobless_bricks.empty()) {
       Ego_brick* ref_ego_brick = m_knobless_bricks.front();
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
