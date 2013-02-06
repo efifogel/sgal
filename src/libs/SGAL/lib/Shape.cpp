@@ -48,10 +48,8 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Formatter.hpp"
-#include "SGAL/Sphere_environment.hpp"
-#include "SGAL/Cube_environment.hpp"
-#include "SGAL/Texture_2d.hpp"
 #include "SGAL/Configuration.hpp"
+#include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -84,8 +82,6 @@ Shape::Shape(Boolean proto) :
   m_appearance(NULL),
   m_geometry(NULL),
   m_is_visible(true),
-  m_owned_material(false),
-  m_owned_tex_gen(false),
   m_priority(0),
   m_draw_backface(false),
   m_owned_appearance(false),
@@ -94,34 +90,17 @@ Shape::Shape(Boolean proto) :
   m_dirty_geometry(true),
   m_appearance_prev(NULL),
   m_geometry_prev(NULL),
-  m_override_light_enable(Configuration::s_def_override_light_enable),
+  m_texture_map(Configuration::s_def_texture_map),
   m_override_material(Configuration::s_def_override_material),
-  m_override_tex_gen(Configuration::s_def_override_tex_gen)
+  m_override_tex_env(Configuration::s_def_override_tex_env),
+  m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_tex_gen(Configuration::s_def_override_tex_gen),
+  m_override_light_enable(Configuration::s_def_override_light_enable)
 {}
 
 /*! Destructor */
 Shape::~Shape()
 {
-  // delete the owned material attribute if present
-  if (m_owned_material) {
-    Material* material = m_appearance->get_material();
-    if (material) {
-      delete material;
-      m_appearance->set_material(NULL);
-    }
-    m_owned_material = false;
-  }
-
-  // delete the owned texture-generation attribute if present
-  if (m_owned_tex_gen) {
-    Tex_gen* tex_gen = m_appearance->get_tex_gen();
-    if (tex_gen) {
-      delete tex_gen;
-      m_appearance->set_tex_gen(NULL);
-    }
-    m_owned_tex_gen = false;
-  }
-  
   // delete the owned appearance if present
   if (m_owned_appearance) {
     if (m_appearance) {
@@ -262,7 +241,13 @@ void Shape::clean()
 
   if (m_dirty_appearance) clean_appearance();
 
-  if (m_override_material) clean_material();
+  // Disable the texture.
+  // \todo in case the image is not loaded yet?
+  if (!m_texture_map) m_appearance->set_tex_enable(false);
+
+  if (m_override_material) m_appearance->clean_material();
+  if (m_override_tex_env) m_appearance->clean_tex_env();
+  if (m_override_blend_func) m_appearance->clean_blend_func();
   
   // If the geometry has no color coordinates, enabled the light by default.
   if (m_override_light_enable)
@@ -274,10 +259,7 @@ void Shape::clean()
     // not have a texture-coordinate array.
     if (m_appearance->get_tex_enable() &&
         !m_geometry->are_generated_tex_coord())
-    {
-      m_appearance->set_tex_gen_enable(true);
-      clean_tex_gen();
-    }
+      m_appearance->clean_tex_gen();
   }
   
   if (m_dirty_appearance) {
@@ -324,92 +306,6 @@ void Shape::clean_appearance()
       SGAL_assertion(m_appearance);
       m_owned_appearance = true;
     }
-  }
-}
-
-/*! \brief cleans the material attribute. */
-void Shape::clean_material()
-{
-  // Construct a new owned texture generation attribute if needed, and delete
-  // the previously constructed owned texture generation attribute if not
-  // needed any more.
-  SGAL_assertion(m_appearance);
-  if (m_owned_material) {
-    SGAL_assertion(m_appearance_prev);
-    Material* material_prev = m_appearance_prev->get_material();
-    Material* material = m_appearance->get_material();
-    if (!material) m_appearance->set_material(material_prev);
-    else if (material != material_prev) {
-      delete material_prev;
-      m_appearance_prev->set_material(NULL);
-      m_owned_material = false;
-    }
-  }
-  else {
-    if (!m_appearance->get_material()) {
-      Material* material = new Material();
-      SGAL_assertion(material);
-      m_appearance->set_material(material);
-      m_owned_material = true;
-    }
-  }
-}
-
-/*! \brief cleans the texture generation attribute. */
-void Shape::clean_tex_gen()
-{
-  // Construct a new owned texture generation attribute if needed, and delete
-  // the previously constructed owned texture generation attribute if not
-  // needed any more.
-  SGAL_assertion(m_appearance);
-  if (m_owned_tex_gen) {
-    SGAL_assertion(m_appearance_prev);
-    Tex_gen* tex_gen_prev = m_appearance_prev->get_tex_gen();
-    Tex_gen* tex_gen = m_appearance->get_tex_gen();
-    if (!tex_gen) m_appearance->set_tex_gen(tex_gen_prev);
-    else if (tex_gen != tex_gen_prev) {
-      delete tex_gen_prev;
-      m_appearance_prev->set_tex_gen(NULL);
-      m_owned_tex_gen = false;
-    }
-  }
-  else {
-    if (!m_appearance->get_tex_gen()) {
-      Tex_gen* tex_gen = new Tex_gen();
-      SGAL_assertion(tex_gen);
-      m_appearance->set_tex_gen(tex_gen);
-      m_owned_tex_gen = true;
-    }
-  }
-
-  // Setup the textute-generation functions.
-  Texture* texture = m_appearance->get_texture();
-  if (dynamic_cast<Texture_2d*>(texture)) {
-    // Setup standard texture map if requested:
-#if 0
-    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::EYE_LINEAR);
-    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::EYE_LINEAR);
-#else
-    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::OBJECT_LINEAR);
-    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::OBJECT_LINEAR);
-#endif
-  }
-  else if (dynamic_cast<Sphere_environment*>(texture)) {
-    // Setup sphere environment map if requested:
-    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::SPHERE_MAP);
-    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::SPHERE_MAP);
-  }
-  else if (dynamic_cast<Cube_environment*>(texture)) {
-    // Setup cube environment map if requested:
-#if 0
-    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::NORMAL_MAP);
-    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::NORMAL_MAP);
-    m_appearance->get_tex_gen()->set_mode_r(Tex_gen::NORMAL_MAP);
-#else
-    m_appearance->get_tex_gen()->set_mode_s(Tex_gen::REFLECTION_MAP);
-    m_appearance->get_tex_gen()->set_mode_t(Tex_gen::REFLECTION_MAP);
-    m_appearance->get_tex_gen()->set_mode_r(Tex_gen::REFLECTION_MAP);
-#endif
   }
 }
 
@@ -575,6 +471,13 @@ Container_proto* Shape::get_prototype()
 {  
   if (s_prototype == NULL) Shape::init_prototype();
   return s_prototype;
+}
+
+/*! \brief adds the container to the given scene. */  
+void Shape::add_to_scene(Scene_graph* sg)
+{
+  Configuration* config = sg->get_configuration();
+  if (config) m_texture_map = config->is_texture_map();
 }
 
 /*! \brief */

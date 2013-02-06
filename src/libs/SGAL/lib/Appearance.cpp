@@ -29,7 +29,6 @@
 #include "SGAL/Material.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Scene_graph.hpp"
-#include "SGAL/Shape.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -44,6 +43,9 @@
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Utilities.hpp"
+#include "SGAL/Sphere_environment.hpp"
+#include "SGAL/Cube_environment.hpp"
+#include "SGAL/Texture_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -60,7 +62,10 @@ REGISTER_TO_FACTORY(Appearance, "Appearance");
 /*! The parameter-less constructor */
 Appearance::Appearance(Boolean proto) :
   Container(proto),
-  m_tex_env(s_def_tex_env)
+  m_owned_material(false),
+  m_owned_tex_gen(false),
+  m_material_prev(NULL),
+  m_tex_gen_prev(NULL)
 { init(); }
 
 /*! Destructor */
@@ -68,6 +73,22 @@ Appearance::~Appearance()
 {
   TRACE_MSG(Trace::DESTRUCTOR, "~Appearance ...");
 
+  // delete the owned material attribute if present
+  if (m_owned_material) {
+    SGAL_assertion(m_material_prev);
+    delete m_material_prev;
+    m_material_prev = NULL;
+    m_owned_material = false;
+  }
+
+  // delete the owned texture-generation attribute if present
+  if (m_owned_tex_gen) {
+    SGAL_assertion(m_tex_gen_prev);
+    delete m_tex_gen_prev;
+    m_tex_gen_prev = NULL;
+    m_owned_tex_gen = false;
+  }
+  
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
@@ -202,38 +223,7 @@ void Appearance::set_tex_blend_color(Float v0, Float v1, Float v2, Float v3)
   m_tex_blend_color.set(v0, v1, v2, v3);
 }
 
-/*! \brief */
-void Appearance::set_tex_blend(float* blend_color)
-{
-  if (m_tex_env == Gfx::REPLACE_TENV || m_tex_env == Gfx::BLEND_TENV) {
-    set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-    set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-    if (blend_color && m_tex_env == Gfx::BLEND_TENV) {
-      set_tex_blend_color(blend_color[0], blend_color[1],
-                          blend_color[2], blend_color[3]);
-    }
-  } else {
-    if ((m_tex_env != Gfx::DECAL_TENV) && m_texture &&
-        m_texture->get_component_count() == 4)
-    {
-      //Timur[24/6/2001] 
-      // Texture include alpha channel.
-      // Must set blend functions.
-      if (m_tex_env == Gfx::MODULATE_TENV) {
-        set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
-        set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
-      }
-    }
-    if (m_tex_env == Gfx::ADD_TENV) {
-      m_tex_env = Gfx::MODULATE_TENV;
-      set_src_blend_func(Gfx::ONE_SBLEND);
-      set_dst_blend_func(Gfx::ONE_DBLEND);
-    }
-  }
-  set_tex_env(m_tex_env);
-}
-
-/*! \brief */
+/*! \brief sets the texture environment attribute. */
 void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 {
   m_pending.on_bit(Gfx::TEX_ENV);
@@ -473,21 +463,9 @@ void Appearance::get_inherit(Bit_mask& inherit) const { inherit = m_pending; }
 /*! \brief applies the appearance. */
 void Appearance::draw(Draw_action* action)
 {
-  // Obtain the configuration if exists:
-  SGAL::Configuration* conf = action->get_configuration();
-  
-  if (m_dirty_flags.get_bit(Gfx::TEX_ENV) && m_texture && !m_texture->empty()) {
-    set_tex_blend();
-    m_dirty_flags.off_bit(Gfx::TEX_ENV);
-  }
-
   Context* context = action->get_context();
   if (context == NULL) return;
   context->draw_app(this);
-
-  // disable the texture in case the image is not loaded yet
-  if ((m_texture && m_texture->empty()) || (conf && !conf->is_texture_map()))
-    context->draw_tex_enable(false);
 }
 
 /*! \brief determines whether the appearance is translucent. */
@@ -662,20 +640,15 @@ void Appearance::set_attributes(Element* elem)
 /*! \brief sets default attributes for texture mapping. */
 void Appearance::set_default_texture_attributes()
 {
+  //! \move to clean()
   set_tex_enable(true);
-  Gfx::Tex_env tex_env = Gfx::MODULATE_TENV;
   Uint color_control = GL_SEPARATE_SPECULAR_COLOR;
   if (m_material) {
-    const Vector3f& diffuse_color = m_material->get_diffuse_color();
-    if ((diffuse_color[0] == 0) && (diffuse_color[1] == 0) &&
-        (diffuse_color[2] == 0) && (m_material->get_ambient_intensity() == 0))
-      tex_env = Gfx::DECAL_TENV;
     const Vector3f& specular_color = m_material->get_specular_color();
     if ((specular_color[0] == 0) && (specular_color[1] == 0) &&
         (specular_color[2] == 0))
       color_control = GL_SINGLE_COLOR;
   }
-  set_tex_env(tex_env);
 
   //! \todo move to Gfx:
   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, color_control);
@@ -736,38 +709,123 @@ Attribute_list Appearance::get_attributes()
   return attrs;
 }
 
-/*! Add the appearance into the scene graph. 
- * There are three ways an appearance can be added.
- * -# the apperance is defined as a child of a Shape object. In this case
- * we set the apperance on the shape to point to this.
- * -# the apperance is defined as a chile of an Image_background object. In
- * this case we set the apperance on the Imagebackground.
- * -# the apperance is decalred at the top level of the scene graph. In this
- * case no object is assigned with this apperance.
- *
- * @param sg a pointer to the scene graph
- * @param parent a pointer to the parent object. NULL if the apperance
- *       is defined in the top level.
- */
-void Appearance::add_to_scene(Scene_graph* sg, XML_entity* parent) 
-{
-  Container::add_to_scene(sg, parent);
-  if (sg) sg->add_container(this);
-  if (parent && (parent->get_name() == g_navigation_root_name)) return;
+#endif
 
-  // an apperance can appear either in a shape or in an image background...
-  Shape* shape = dynamic_cast<Shape*>(parent);
-  if (shape) {
-    shape->set_appearance(this);
-    return;
-  } 
-  
-  Image_background* bg = dynamic_cast<Image_background*>(parent);
-  if (bg) {
-    bg->set_appearance(this);
-    return;
+/*! \brief cleans the texture environment attribute. */
+void Appearance::clean_tex_env()
+{
+  if (!m_tex_enable || !m_texture || m_texture->empty()) return;
+
+  SGAL_assertion(material);
+  Uint num_compnents = m_texture->get_component_count();
+  const Vector3f& diffuse_color = m_material->get_diffuse_color();
+  if (((diffuse_color[0] == 0) && (diffuse_color[1] == 0) &&
+       (diffuse_color[2] == 0) && (m_material->get_ambient_intensity() == 0)) ||
+      num_compnents == 4)
+    set_tex_env(Gfx::DECAL_TENV);
+}
+
+/*! \brief cleans the blend functions. */
+void Appearance::clean_blend_func()
+{
+  // If texture is enabled and texture is either 2 components or 4 components,
+  // and the texture environment is either MODULATE, BLEND, or ADD, override
+  // the blend functions.
+  if (!m_tex_enable || !m_texture || m_texture->empty()) return;
+
+  Uint num_compnents = m_texture->get_component_count();
+  if ((num_compnents == 2) || (num_compnents == 4)) {
+    if ((m_tex_env == Gfx::BLEND_TENV) || (m_tex_env == Gfx::MODULATE_TENV)) {
+      set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+      set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+    }
+    else if (m_tex_env == Gfx::ADD_TENV) {
+      set_src_blend_func(Gfx::ONE_SBLEND);
+      set_dst_blend_func(Gfx::ONE_DBLEND);
+    }
   }
 }
+
+/*! \brief cleans the material attribute. */
+void Appearance::clean_material()
+{
+  // Construct a new owned texture generation attribute if needed, and delete
+  // the previously constructed owned texture generation attribute if not
+  // needed any more.
+  if (m_owned_material) {
+    SGAL_assertion(m_material_prev);
+    if (!m_material) set_material(m_material_prev);
+    else if (m_material != m_material_prev) {
+      delete m_material_prev;
+      m_material_prev = NULL;
+      m_owned_material = false;
+    }
+  }
+  else {
+    if (!m_material) {
+      Material* material = new Material();
+      SGAL_assertion(material);
+      set_material(material);
+      m_owned_material = true;
+    }
+  }
+}
+
+/*! \brief cleans the texture generation attribute. */
+void Appearance::clean_tex_gen()
+{
+  // Construct a new owned texture generation attribute if needed, and delete
+  // the previously constructed owned texture generation attribute if not
+  // needed any more.
+  SGAL_assertion(m_appearance);
+  set_tex_gen_enable(true);
+  if (m_owned_tex_gen) {
+    SGAL_assertion(m_tex_gen_prev);
+    if (!m_tex_gen) set_tex_gen(m_tex_gen_prev);
+    else if (m_tex_gen != m_tex_gen_prev) {
+      delete m_tex_gen_prev;
+      m_tex_gen_prev = NULL;
+      m_owned_tex_gen = false;
+    }
+  }
+  else {
+    if (!m_tex_gen) {
+      Tex_gen* tex_gen = new Tex_gen();
+      SGAL_assertion(tex_gen);
+      set_tex_gen(tex_gen);
+      m_owned_tex_gen = true;
+    }
+  }
+
+  // Setup the textute-generation functions.
+  Texture* texture = get_texture();
+  if (dynamic_cast<Texture_2d*>(texture)) {
+    // Setup standard texture map if requested:
+#if 0
+    get_tex_gen()->set_mode_s(Tex_gen::EYE_LINEAR);
+    get_tex_gen()->set_mode_t(Tex_gen::EYE_LINEAR);
+#else
+    get_tex_gen()->set_mode_s(Tex_gen::OBJECT_LINEAR);
+    get_tex_gen()->set_mode_t(Tex_gen::OBJECT_LINEAR);
 #endif
+  }
+  else if (dynamic_cast<Sphere_environment*>(texture)) {
+    // Setup sphere environment map if requested:
+    get_tex_gen()->set_mode_s(Tex_gen::SPHERE_MAP);
+    get_tex_gen()->set_mode_t(Tex_gen::SPHERE_MAP);
+  }
+  else if (dynamic_cast<Cube_environment*>(texture)) {
+    // Setup cube environment map if requested:
+#if 0
+    get_tex_gen()->set_mode_s(Tex_gen::NORMAL_MAP);
+    get_tex_gen()->set_mode_t(Tex_gen::NORMAL_MAP);
+    get_tex_gen()->set_mode_r(Tex_gen::NORMAL_MAP);
+#else
+    get_tex_gen()->set_mode_s(Tex_gen::REFLECTION_MAP);
+    get_tex_gen()->set_mode_t(Tex_gen::REFLECTION_MAP);
+    get_tex_gen()->set_mode_r(Tex_gen::REFLECTION_MAP);
+#endif
+  }
+}
 
 SGAL_END_NAMESPACE

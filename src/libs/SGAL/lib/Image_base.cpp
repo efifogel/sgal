@@ -24,6 +24,8 @@
 #endif
 #include <GL/gl.h>
 
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Image_base.hpp"
@@ -564,6 +566,10 @@ Image_base::Image_base(Boolean proto) :
   m_pixels(NULL),
   m_pack_row_length(0),
   m_dirty(true),
+  m_flip(true),
+  m_rotation(0),
+  m_alpha(false),
+  m_transparency(1),
   m_owned_pixels(false)
 {}
 
@@ -593,6 +599,18 @@ void Image_base::init_prototype()
 
   s_prototype->add_field_info(new SF_int(FORMAT, "format",
                                          get_member_offset(&m_format)));
+
+  s_prototype->add_field_info(new SF_bool(FLIP, "flip",
+                                          get_member_offset(&m_flip)));
+
+  s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
+                                           get_member_offset(&m_rotation)));
+
+  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
+                                          get_member_offset(&m_alpha)));
+
+  s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
+                                           get_member_offset(&m_transparency)));
 }
 
 /*! \brief deletes the prototype. */
@@ -632,12 +650,32 @@ void Image_base::set_attributes(Element* elem)
       continue;
     }
     if (name == "width") {
-      set_width(atoi(value.c_str()));
+      set_width(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "height") {
-      set_height(atoi(value.c_str()));
+      set_height(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "flip") {
+      set_flip(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "rotation") {
+      set_rotation(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "alpha") {
+      set_alpha(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "transparency") {
+      set_transparency(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }

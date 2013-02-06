@@ -112,6 +112,11 @@ Ego::Ego(Boolean proto) :
   m_ego_brick_without_knobs.set_number_of_knobs2(2);
   m_ego_brick_without_knobs.set_knobs_visible(false);
 
+  std::string s1("brick with");
+  m_ego_brick.set_name(s1);
+  std::string s2("brick without");
+  m_ego_brick_without_knobs.set_name(s2);
+  
   if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false;  
 }
 
@@ -510,16 +515,18 @@ void Ego::clean_parts()
 
          default: std::cerr << "Invalid style!" << std::endl;
         }
+        shape->set_override_blend_func(false);
         shape->set_appearance(app);
         shape->set_geometry(ego_brick);
       }
     }
-  }  
+  }
 }
 
 /*! \brief creates the geometry of a brick. */
 Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
 {
+  draw_knobs = true;
   Ego_brick* ego_brick = new Ego_brick;
   m_bricks.push_back(ego_brick);
   Coord_array* coord_array;

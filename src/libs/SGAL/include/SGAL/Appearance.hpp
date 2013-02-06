@@ -107,9 +107,6 @@ public:
   /*! Obtain the texture blend-color attribute. */
   void get_tex_blend_color(Float* v0, Float* v1, Float* v2, Float* v3) const;
   
-  /*! Set the texture blend-color attribute. */
-  void set_tex_blend(Float* blend_color = NULL);
-
   /*! Set the texture environment attribute. */
   void set_tex_env(Gfx::Tex_env tex_env);
 
@@ -329,6 +326,18 @@ public:
   /*! Set default attributes for texture mapping. */
   void set_default_texture_attributes();
   
+  /*! Clean the material attribute. */
+  void clean_material();
+
+  /*! Clean the texture generation attribute. */
+  void clean_tex_gen();
+
+  /*! Clean the texture environment attribute. */
+  void clean_tex_env();
+
+  /*! Clean the blend functions. */
+  void clean_blend_func();
+  
 protected:
   SGAL_GFX_STRUCT;
 
@@ -358,8 +367,24 @@ private:
   Bit_mask m_override;
   Boolean m_skip_refer;
 
-  //Gfx::Tex_env m_blend_func;
+  /*! Indicates whether the material attribute is owned. If it is owned (as
+   * the user hasn't provided one) the material attribute should be
+   * destructed when the shape is destructed.
+   */
+  Boolean m_owned_material;
 
+  /*! Indicates whether the texture-generation attribute is owned. If it is
+   * owned  (as the user hasn't provided one) the texture-generation attribute
+   * should be destructed when the shape is destructed.
+   */
+  Boolean m_owned_tex_gen;
+
+  /*! The previous appearance attribute if existed. */
+  Material* m_material_prev;
+
+  /*! The previous texture-generation attribute if existed. */
+  Tex_gen* m_tex_gen_prev;
+  
   /*! The default halftone pattern. */
   static Ubyte s_def_halftone[];
 

@@ -60,9 +60,11 @@ public:
     TEXTURE_MAP,
     VERBOSITY_LEVEL,
     SEAMLESS_CUBE_MAP,
-    OVERRIDE_LIGHT_ENABLE,
     OVERRIDE_MATERIAL,
+    OVERRIDE_TEX_ENV,
+    OVERRIDE_BLEND_FUNC,
     OVERRIDE_TEX_GEN,
+    OVERRIDE_LIGHT_ENABLE,
     LAST
   };
 
@@ -124,7 +126,7 @@ public:
   /*! Obtain the polygon mode. */
   Gfx::Poly_mode get_poly_mode () const { return m_poly_mode; }
 
-  /*! Is texture-map enabled? */
+  /*! Determines whether texture-maping is enabled. */
   Boolean is_texture_map() const { return m_texture_map; }
 
   /*! Set the texture-map flag. */
@@ -240,8 +242,8 @@ private:
 
   Boolean m_are_global_lights_stationary;
 
-  /*! Indicate whether to apply texture mapping. */
-  Boolean m_texture_map;;
+  /*! Indicates whether to apply texture mapping. */
+  Boolean m_texture_map;
 
   Boolean m_is_fixed_head_light;
 
@@ -271,6 +273,38 @@ private:
    */
   Boolean m_seamless_cube_map;
   
+  /*! Indicates whether to construct the appearance material attribute when
+   * missing.
+   * Notice that when the appearance chages, the material attribute of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_material;
+
+  /*! Indicates whether to override the appearance texture environment. If
+   * this flag is on, the (appearance) texture environment may be overriden.
+   * Notice than when the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_tex_env;
+
+  /*! Indicates whether to override the appearance blend functions. If
+   * this flag is on, the (appearance) blend functions may be overriden.
+   * Notice than when the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_blend_func;
+
+  /*! Indicates whether to override the appearance texture-generation flag and
+   * construct the appearance texture-generation attribute when missing. If
+   * this flag is on and the corresponding geometry does not generate
+   * texture coordinates, the (appearance) texture-generation is enabled and
+   * the (appearance) texture generation is created if missing.
+   * Notice than when the appearance chages, the texture-generation flag (and
+   * possibly attribute) of the previous appearance are not restored to their
+   * original values.
+   */
+  Boolean m_override_tex_gen;
+
   /*! Indicates whether to override the appearance light-enable flag. If this
    * flag is on, the (appearance) light is enabled if the corresponding
    * geometry does not have color.
@@ -278,7 +312,7 @@ private:
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_light_enable;
-  
+
   /*! Indicates whether the accumulation is owned. If the accumulation is
    * owned, it is constructed and destructed by this construct.
    */
@@ -296,9 +330,11 @@ private:
   static const Float s_def_speed_factor;
   static const Uint s_def_verbose_level;
   static const Boolean s_def_seamless_cube_map;
-  static const Boolean s_def_override_light_enable;
   static const Boolean s_def_override_material;
+  static const Boolean s_def_override_tex_env;
+  static const Boolean s_def_override_blend_func;
   static const Boolean s_def_override_tex_gen;
+  static const Boolean s_def_override_light_enable;
   
   static const Char* s_geometry_drawing_mode_names[];
 };

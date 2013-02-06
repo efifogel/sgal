@@ -366,7 +366,7 @@ void Context::set_tex_env(Gfx::Tex_env tex_env)
   // DrawTexEnv(tex_env);
 }
 
-/*! \brief */
+/*! \brief applies texture environment. */
 void Context::draw_tex_env(Gfx::Tex_env tex_env)
 {
   if (m_current_state->m_tex_env == tex_env) return;

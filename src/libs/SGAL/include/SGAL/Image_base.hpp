@@ -53,6 +53,10 @@ public:
     HEIGHT,
     FORMAT,
     PIXELS,
+    FLIP,
+    ROTATION,
+    ALPHA,
+    TRANSPARENCY,
     LAST
   };
 
@@ -268,6 +272,32 @@ public:
   /*! Draw the image. */
   void draw();
   
+  /*! Set the flag that indicates whether the image should be reflected. */
+  void set_flip(Boolean flag);
+
+  /*! Obtain the flag that indicates whether the image should be reflected. */
+  Boolean get_flip() const;
+  
+  /*! Set the rotation angle. */
+  void set_rotation(Float rotation);
+
+  /*! Obtain the rotation angle. */
+  Float get_rotation() const;
+  
+  /*! Set the flag that determine whether to add (or retain) the alpha
+   * channel, or remove it when present.
+   */
+  void set_alpha(Boolean flag);
+
+  /*! Determine whether to add (or retain) the alpha channel or remove it. */
+  Boolean get_alpha() const;
+
+  /*! Set the transparency of the image. */ 
+  void set_transparency(Float transparency);
+
+  /*! Obtain the transparency of the image. */ 
+  Float get_transparency() const;
+  
 protected:
   /*! A map from format to number of bits. */
   static Uint s_format_sizes[];
@@ -304,6 +334,20 @@ protected:
 
   /*! Indicates whether the image is dirty and should be cleaned. */
   Boolean m_dirty;
+  
+  /*! Indicates whether the image should be reflected when read from file. */
+  Boolean m_flip;
+
+  /*! The rotation angle. */
+  Float m_rotation;
+
+  /*! Indicates whether to add (or retain) the alpha channel or remove it
+   * when present.
+   */
+  Boolean m_alpha;
+
+  /*! The transparency of the image. */ 
+  Float m_transparency;
   
   /*! Indicates whether the image pixel space is owned. If it is owned it
    * should be destructed when the image is destructed.
@@ -382,6 +426,37 @@ inline GLenum Image_base::get_format_internal_format(Format format)
 /*! \brief obtains the format name (string). */
 inline const char* Image_base::get_format_name(Format format)
 { return s_format_names[format]; }
+  
+/*! \brief sets the flag that indicates whether the image should be reflected.
+ */
+inline void Image_base::set_flip(Boolean flag) { m_flip = flag; }
+
+/*! \brief obtains the flag that indicates whether the image should be
+ * reflected.
+ */
+inline Boolean Image_base::get_flip() const { return m_flip; }
+  
+/*! \brief sets the rotation angle. */
+inline void Image_base::set_rotation(Float rotation) { m_rotation = rotation; }
+
+/*! \brief obtains the rotation angle. */
+inline Float Image_base::get_rotation() const { return m_rotation; }
+  
+/*! \brief sets the flag that indicates whether to add (or retain) the alpha
+ * channel or remove it.
+ */
+inline void Image_base::set_alpha(Boolean flag) { m_alpha = flag; }
+
+/*! \brief determines whether to add (or retain) the alpha channel or remove it.
+ */
+inline Boolean Image_base::get_alpha() const { return m_alpha; }
+
+/*! \brief set the transparency of the image. */ 
+inline void Image_base::set_transparency(Float transparency)
+{ m_transparency = transparency; }
+
+/*! \brief obtain the transparency of the image. */ 
+inline Float Image_base::get_transparency() const { return m_transparency; }
   
 SGAL_END_NAMESPACE
 

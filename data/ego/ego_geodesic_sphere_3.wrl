@@ -1,10 +1,10 @@
 #VRML V2.0 utf8
 Configuration {
-  # accumulation Accumulation { enabled TRUE }
+  accumulation Accumulation { enabled TRUE }
   displayFPS TRUE
 }
 ColorBackground {
-  color 0.5 0.5 0.5 0
+  color 0.5 0.5 0.5 1
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
@@ -564,6 +564,7 @@ Transform {
 	  appearance Appearance {
 	    material Material {
 	      diffuseColor 0.9 0.9 0.9
+	      specularColor 0.5 0.5 0.5
 	      ambientIntensity 0.4
 	      transparency 0
 	    }
@@ -577,16 +578,28 @@ Transform {
 	    #   bottomImage Image { flip FALSE url ["negz.jpg"] }
 	    # }
 	    texture CubeEnvironment {
-	      rightImage Image { flip FALSE url ["right.jpg"] } 	# -90
-	      leftImage Image { flip FALSE url ["left.jpg"] }   	#  90
-	      backImage Image { flip FALSE url ["back.jpg"] }   	# 180
-	      frontImage Image { flip FALSE url ["front.jpg"] }
-	      topImage Image { flip FALSE url ["top.jpg"] }
-	      bottomImage Image { flip FALSE url ["bottom.jpg"] }	# 180
+	      rightImage Image {
+		flip FALSE alpha TRUE transparency 0.2 url ["right.jpg"]
+	      } 	# -90
+	      leftImage Image { 
+		flip FALSE alpha TRUE transparency 0.2 url ["left.jpg"]
+	      }   	#  90
+	      backImage Image { 
+		flip FALSE alpha TRUE transparency 0.2 url ["back.jpg"]
+	      }   	# 180
+	      frontImage Image { 
+		flip FALSE alpha TRUE transparency 0.2 url ["front.jpg"]
+	      }
+	      topImage Image { 
+		flip FALSE alpha TRUE transparency 0.2 url ["top.jpg"]
+	      }
+	      bottomImage Image { 
+		flip FALSE alpha TRUE transparency 0.2 url ["bottom.jpg"]
+	      }		# 180
 	    }
 	  }
 	  style "appearance"
-	  scale 200 200 200
+	  scale 100 100 100
 	  model USE MODEL
 	  knobSlices 16
 	}

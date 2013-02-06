@@ -36,25 +36,27 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Configuration::s_tag = "sgalConfiguration";
+const std::string Configuration::s_tag = "Configuration";
 Container_proto* Configuration::s_prototype = NULL;
 
 // Default values:
 const Configuration::Geometry_drawing_mode
-  Configuration::s_def_geometry_drawing_mode = Configuration::GDM_VERTEX_ARRAY;
-const Boolean Configuration::s_def_are_global_lights_stationary = false;
-const Boolean Configuration::s_def_texture_map = true;
-const Boolean Configuration::s_def_is_fixed_head_light = true;
-const Float Configuration::s_def_min_frame_rate = 15;
-const Gfx::Poly_mode Configuration::s_def_poly_mode = Gfx::FILL_PMODE;
-const Boolean Configuration::s_def_display_fps = false;
-const Float Configuration::s_def_min_zoom_distance = 0;
-const Float Configuration::s_def_speed_factor = 100;
-const Uint Configuration::s_def_verbose_level = 0;
-const Boolean Configuration::s_def_seamless_cube_map = true;
-const Boolean Configuration::s_def_override_light_enable(true);
+Configuration::s_def_geometry_drawing_mode(Configuration::GDM_VERTEX_ARRAY);
+const Boolean Configuration::s_def_are_global_lights_stationary(false);
+const Boolean Configuration::s_def_texture_map(true);
+const Boolean Configuration::s_def_is_fixed_head_light(true);
+const Float Configuration::s_def_min_frame_rate(15);
+const Gfx::Poly_mode Configuration::s_def_poly_mode(Gfx::FILL_PMODE);
+const Boolean Configuration::s_def_display_fps(false);
+const Float Configuration::s_def_min_zoom_distance(0);
+const Float Configuration::s_def_speed_factor(100);
+const Uint Configuration::s_def_verbose_level(0);
+const Boolean Configuration::s_def_seamless_cube_map(true);
 const Boolean Configuration::s_def_override_material(true);
+const Boolean Configuration::s_def_override_tex_env(true);
+const Boolean Configuration::s_def_override_blend_func(true);
 const Boolean Configuration::s_def_override_tex_gen(true);
+const Boolean Configuration::s_def_override_light_enable(true);
 
 const Char* Configuration::s_geometry_drawing_mode_names[] =
   { "direct", "displayList", "vertexArray" };
@@ -77,6 +79,11 @@ Configuration::Configuration(Boolean proto) :
   m_speed_factor(s_def_speed_factor),
   m_verbosity_level(s_def_verbose_level),
   m_seamless_cube_map(s_def_seamless_cube_map),
+  m_override_material(Configuration::s_def_override_material),
+  m_override_tex_env(Configuration::s_def_override_tex_env),
+  m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_tex_gen(Configuration::s_def_override_tex_gen),
+  m_override_light_enable(Configuration::s_def_override_light_enable),
   m_owned_accumulation(false)
 {}
 
@@ -240,6 +247,31 @@ void Configuration::set_attributes(Element* elem)
     }
     if (name == "seamlessCubeMap") {
       set_seamless_cube_map(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "overrideMaterial") {
+      m_override_material = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "overrideTexEnv") {
+      m_override_tex_env = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "overrideBlendFunc") {
+      m_override_blend_func = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "overrideTexGen") {
+      m_override_tex_gen = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "overrideLightEnable") {
+      m_override_light_enable = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
     }

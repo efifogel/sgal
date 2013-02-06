@@ -32,7 +32,6 @@
 #define __WIN32__
 #endif
 
-#include <boost/lexical_cast.hpp>
 #include <Magick++.h>
 
 #include "SGAL/basic.hpp"
@@ -54,11 +53,7 @@ const std::string Image::s_tag = "Image";
 REGISTER_TO_FACTORY(Image, "Image");
 
 /*! Constructor */
-Image::Image(Boolean proto) :
-  Image_base(proto),
-  m_flip(true),
-  m_rotation(0)
-{}
+Image::Image(Boolean proto) : Image_base(proto) {}
   
 /*! Destructor */
 Image::~Image() {}
@@ -75,12 +70,6 @@ void Image::init_prototype()
 
   s_prototype->add_field_info(new SF_string(URL, "url",
                                             get_member_offset(&m_url)));
-
-  s_prototype->add_field_info(new SF_bool(FLIP, "flip",
-                                          get_member_offset(&m_flip)));
-
-  s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
-                                           get_member_offset(&m_rotation)));
 }
 
 /*! \brief deletes the prototype. */
@@ -111,16 +100,6 @@ void Image::set_attributes(Element* elem)
       std::string url = strip_double_quotes(value);
       set_url(url);
       url.clear();
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "flip") {
-      set_flip(compare_to_true(value));
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "rotation") {
-      set_rotation(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -196,9 +175,9 @@ void Image::clean()
   image.read(fullname);
   if (m_flip) image.flip();
   if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
-  image.matte(true);
-  image.opacity(MaxRGB / 2);
-  image.colorSpace(Magick::TransparentColorspace);
+  image.matte(m_alpha);
+  image.opacity(MaxRGB * m_transparency);
+  if (m_alpha) image.colorSpace(Magick::TransparentColorspace);
   Image_base::Format format = kIllegal;
   std::string magick_map;
   Magick::StorageType magick_type;

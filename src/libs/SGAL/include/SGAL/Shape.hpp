@@ -52,6 +52,7 @@ class Container_proto;
 class Element;
 class Geometry;
 class Formatter;
+class Scene_graph;
 
 /*! \brief A representation of a shape node */
 class SGAL_CLASSDEF Shape : public Node {
@@ -109,6 +110,9 @@ public:
   /*! Write this container. */
   virtual void write(Formatter* formatter);
   
+  /*! Add the container to the given scene. */  
+  void add_to_scene(Scene_graph* sg);
+
   /*! Obtain the (const) appearance.
    * \return the appearance.
    */
@@ -209,6 +213,32 @@ public:
 
   virtual Boolean detach_context(Context* context = 0); 
 
+  /*! Sets the flag that indicates whether to construct the appearance
+   * material attribute when missing.
+   */
+  void set_override_material(Boolean flag);
+
+  /*! Sets the flag that indicates whether to override the appearance texture
+   * environment. 
+   */
+  void set_override_tex_env(Boolean flag);
+  
+  /*! Sets the flag that indicates whether to override the appearance blend
+   * functions. 
+   */
+  void set_override_blend_func(Boolean flag);
+  
+  /*! Sets the flag that indicates whether to override the appearance
+   * texture-generation flag and construct the appearance texture-generation
+   * attribute when missing.
+   */
+  void set_override_tex_gen(Boolean flag);
+
+  /*! Sets the flag that indicates whether to override the appearance
+   * light-enable flag.
+   */
+  void set_override_light_enable(Boolean flag);
+  
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -249,18 +279,6 @@ private:
   /*! if false the shape is not rendered. */
   Boolean m_is_visible;
 
-  /*! Indicates whether the material attribute is owned. If it is owned (as
-   * the user hasn't provided one) the material attribute should be
-   * destructed when the shape is destructed.
-   */
-  Boolean m_owned_material;
-
-  /*! Indicates whether the texture-generation attribute is owned. If it is
-   * owned  (as the user hasn't provided one) the texture-generation attribute
-   * should be destructed when the shape is destructed.
-   */
-  Boolean m_owned_tex_gen;
-
   /*! The rendering priority. */
   Float m_priority;
 
@@ -289,6 +307,41 @@ private:
   /*! Stores the pervious geometry. */
   Geometry* m_geometry_prev;
 
+  /*! Indicates whether to apply texture mapping. */
+  Boolean m_texture_map;
+  
+  /*! Indicates whether to construct the appearance material attribute when
+   * missing.
+   * Notice that when the appearance chages, the material attribute of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_material;
+
+  /*! Indicates whether to override the appearance texture environment. If
+   * this flag is on, the (appearance) texture environment may be overriden.
+   * Notice than when the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_tex_env;
+  
+  /*! Indicates whether to override the appearance blend functions. If
+   * this flag is on, the (appearance) blend functions may be overriden.
+   * Notice than when the appearance chages, the light-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_blend_func;
+  
+  /*! Indicates whether to override the appearance texture-generation flag and
+   * construct the appearance texture-generation attribute when missing. If
+   * this flag is on and the corresponding geometry does not generate
+   * texture coordinates, the (appearance) texture-generation is enabled and
+   * the (appearance) texture generation is created if missing.
+   * Notice than when the appearance chages, the texture-generation flag (and
+   * possibly attribute) of the previous appearance are not restored to their
+   * original values.
+   */
+  Boolean m_override_tex_gen;
+
   /*! Indicates whether to override the appearance light-enable flag. If this
    * flag is on, the (appearance) light is enabled if the corresponding
    * geometry does not have color.
@@ -297,40 +350,12 @@ private:
    */
   Boolean m_override_light_enable;
 
-  /*! Indicates whether to construct the appearance material attribute when
-   * missing.
-   * Notice than when the appearance chages, the material attribute of the
-   * previous appearance is not restored to its original value.
-   */
-  Boolean m_override_material;
-
-  /*! Indicates whether to override the appearance texture-generation flag and
-   * construct the appearance texture-generation attribute when missing. If
-   * this flag is on, (appearance) texture-generation is enabled (appearance)
-   * texture is enabled, and the corresponding geometry does not have a
-   * texture-coordinate array.
-   * Notice than when the appearance chages, the texture-generation flag (and
-   * possibly attribute) of the previous appearance are not restored to their
-   * original values.
-   */
-  Boolean m_override_tex_gen;
-
   /*! Draw the geometry. */
   void draw_geometry(Draw_action* draw_action);
 
   /*! Cleane the appearance. */
   void clean_appearance();
 
-  /*! Clean the material attribute of the (current) appearance and the
-   * previous appearance if exists.
-   */
-  void clean_material();
-
-  /*! Clean the texture generation attribute of the (current) appearance
-   * and the previous appearance if exists.
-   */
-  void clean_tex_gen();
-  
   static const Vector2f s_def_depth_range;
   static const Vector4ub s_def_color_mask;
   static const Gfx::Depth_func s_def_depth_function;
@@ -410,6 +435,37 @@ inline const std::string& Shape::get_tag() const { return s_tag; }
 
 /*! \brief obtains the gepmetry. */
 inline Geometry* Shape::get_geometry() const { return m_geometry; }
+
+/*! \brief sets the flag that indicates whether to construct the appearance
+ * material attribute when missing.
+ */
+inline void Shape::set_override_material(Boolean flag)
+{ m_override_material = flag; }
+
+/*! \brief sets the flag that indicates whether to override the appearance 
+ * texture environment. 
+ */
+inline void Shape::set_override_tex_env(Boolean flag)
+{ m_override_tex_env = flag; }
+  
+/*! \brief sets the flag that indicates whether to override the appearance 
+ * blend functions. 
+ */
+inline void Shape::set_override_blend_func(Boolean flag)
+{ m_override_blend_func = flag; }
+  
+/*! \brief sets the flag that indicates whether to override the appearance
+ * texture-generation flag and construct the appearance texture-generation
+ * attribute when missing.
+ */
+inline void Shape::set_override_tex_gen(Boolean flag)
+{ m_override_tex_gen = flag; }
+
+/*! \brief sets the flag that indicates whether to override the appearance
+ * light-enable flag.
+ */
+inline void Shape::set_override_light_enable(Boolean flag)
+{ m_override_light_enable = flag; }
 
 SGAL_END_NAMESPACE
 
