@@ -716,7 +716,7 @@ void Appearance::clean_tex_env()
 {
   if (!m_tex_enable || !m_texture || m_texture->empty()) return;
 
-  SGAL_assertion(material);
+  SGAL_assertion(m_material);
   Uint num_compnents = m_texture->get_component_count();
   const Vector3f& diffuse_color = m_material->get_diffuse_color();
   if (((diffuse_color[0] == 0) && (diffuse_color[1] == 0) &&
@@ -777,7 +777,6 @@ void Appearance::clean_tex_gen()
   // Construct a new owned texture generation attribute if needed, and delete
   // the previously constructed owned texture generation attribute if not
   // needed any more.
-  SGAL_assertion(m_appearance);
   set_tex_gen_enable(true);
   if (m_owned_tex_gen) {
     SGAL_assertion(m_tex_gen_prev);

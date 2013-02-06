@@ -60,13 +60,25 @@ Transform {
 	#   bottomImage Image { flip FALSE url ["negz.jpg"] }
 	# }
 	texture CubeEnvironment {
-	  rightImage Image { flip FALSE url ["right.jpg"] } 	# -90
-	  leftImage Image { flip FALSE url ["left.jpg"] }   	#  90
-	  backImage Image { flip FALSE url ["back.jpg"] }   	# 180
-	  frontImage Image { flip FALSE url ["front.jpg"] }
-	  topImage Image { flip FALSE url ["top.jpg"] }
-	  bottomImage Image { flip FALSE url ["bottom.jpg"] }	# 180
-	}
+	  rightImage Image {
+	    flip FALSE alpha TRUE transparency 0.2 url ["right.jpg"]
+	  } 	# -90
+	  leftImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["left.jpg"]
+	  }   	#  90
+	  backImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["back.jpg"]
+	  }   	# 180
+	  frontImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["front.jpg"]
+	  }
+	  topImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["top.jpg"]
+	  }
+	  bottomImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["bottom.jpg"]
+	  }		# 180
+	}	
       }
       geometry DEF BRICK EgoBrick {
 	# generatedTexCoord FALSE

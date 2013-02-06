@@ -60,7 +60,7 @@ const Float Ego_brick::s_def_knob_radius(2.4);
 const Float Ego_brick::s_def_knob_height(1.8);
 const Float Ego_brick::s_def_tolerance(0.1);
 const Uint Ego_brick::s_def_knob_slices(32);
-const Boolean Ego_brick::s_def_are_knobs_visible(true);
+const Boolean Ego_brick::s_def_knobs_visible(true);
 
 REGISTER_TO_FACTORY(Ego_brick, "Ego_brick");
 
@@ -75,7 +75,7 @@ Ego_brick::Ego_brick(Boolean proto) :
   m_knob_height(s_def_knob_height),
   m_tolerance(s_def_tolerance),
   m_knob_slices(s_def_knob_slices),
-  m_are_knobs_visible(s_def_are_knobs_visible),
+  m_knobs_visible(s_def_knobs_visible),
   m_dirty_center(true),
   m_dirty_coords(true),
   m_owned_coord_array(false),
@@ -114,21 +114,21 @@ void Ego_brick::clean()
 {
   // Compute number of primitives:
   m_num_primitives = 6 * 2;
-  if (m_are_knobs_visible) {  
+  if (m_knobs_visible) {  
     Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
     Uint primitives_per_knob = m_knob_slices * 3;
     m_num_primitives += primitives_per_knob * num_knobs;
   }
 
   // Clean
-  if (m_are_knobs_visible && (m_dirty_coords || m_dirty_normals))
+  if (m_knobs_visible && (m_dirty_coords || m_dirty_normals))
     clean_knob_cross_section();
   if (m_dirty_center) clean_center();
   if (m_dirty_coords) clean_coords();
   if (m_dirty_normals) clean_normals();
   if (m_dirty_tex_coords) clean_tex_coords();
   if (m_dirty_indices) clean_indices();
-  if (m_are_knobs_visible) m_knob_cross_section.clear();
+  if (m_knobs_visible) m_knob_cross_section.clear();
   set_primitive_type(PT_TRIANGLES);
   set_solid(true);
   m_dirty = false;
@@ -163,7 +163,7 @@ void Ego_brick::clean_coords()
   
   // Compute size:
   Uint size = 4 * 6;
-  if (m_are_knobs_visible) {  
+  if (m_knobs_visible) {  
     Uint points_per_knob = 1 + m_knob_slices * 3;
     Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
     size += points_per_knob * num_knobs;
@@ -222,36 +222,36 @@ void Ego_brick::clean_coords()
   (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
   // Knobs:
-  if (m_are_knobs_visible) {
-    SGAL_assertion(!m_knob_cross_section.empty());
+  if (!m_knobs_visible) return;
 
-    base_x += m_pitch * 0.5;
-    base_y += m_pitch * 0.5;
-    Float z = base_z + m_height;
-    for (Uint j = 0; j < m_number_of_knobs2; ++j) {
-      Float center_y = base_y + j * m_pitch;
-      for (Uint i = 0; i < m_number_of_knobs1; ++i) {
-        Float center_x = base_x + i * m_pitch;
-        std::vector<Vector2f>::iterator it;
-        for (it = m_knob_cross_section.begin();
-             it != m_knob_cross_section.end(); ++it)
-        {
-          Float x = center_x + (*it)[0] * m_knob_radius;
-          Float y = center_y + (*it)[1] * m_knob_radius;
-          (*m_coord_array)[k++].set(x, y, z);
-        }
-        for (it = m_knob_cross_section.begin();
-             it != m_knob_cross_section.end(); ++it)
-        {
-          Float x = center_x + (*it)[0] * m_knob_radius;
-          Float y = center_y + (*it)[1] * m_knob_radius;
-          (*m_coord_array)[k].set(x, y, z + m_knob_height);
-          (*m_coord_array)[k+m_knob_slices].set(x, y, z + m_knob_height);
-          ++k;
-        }
-        k += m_knob_slices;
-        (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
+  SGAL_assertion(!m_knob_cross_section.empty());
+
+  base_x += m_pitch * 0.5;
+  base_y += m_pitch * 0.5;
+  Float z = base_z + m_height;
+  for (Uint j = 0; j < m_number_of_knobs2; ++j) {
+    Float center_y = base_y + j * m_pitch;
+    for (Uint i = 0; i < m_number_of_knobs1; ++i) {
+      Float center_x = base_x + i * m_pitch;
+      std::vector<Vector2f>::iterator it;
+      for (it = m_knob_cross_section.begin();
+           it != m_knob_cross_section.end(); ++it)
+      {
+        Float x = center_x + (*it)[0] * m_knob_radius;
+        Float y = center_y + (*it)[1] * m_knob_radius;
+        (*m_coord_array)[k++].set(x, y, z);
       }
+      for (it = m_knob_cross_section.begin();
+           it != m_knob_cross_section.end(); ++it)
+      {
+        Float x = center_x + (*it)[0] * m_knob_radius;
+        Float y = center_y + (*it)[1] * m_knob_radius;
+        (*m_coord_array)[k].set(x, y, z + m_knob_height);
+        (*m_coord_array)[k+m_knob_slices].set(x, y, z + m_knob_height);
+        ++k;
+      }
+      k += m_knob_slices;
+      (*m_coord_array)[k++].set(center_x, center_y, z + m_knob_height);
     }
   }
 }
@@ -298,36 +298,40 @@ void Ego_brick::clean_indices()
   m_coord_indices[k++] = 22; m_coord_indices[k++] = 23;
 
   // Knobs:
-  if (m_are_knobs_visible) {
-    Uint base = 6 * 4;
-    for (Uint j = 0; j < m_number_of_knobs2; ++j) {
-      for (Uint i = 0; i < m_number_of_knobs1; ++i) {
-        Uint l;
-        for (l = 0; l < m_knob_slices; ++l) {
-          Uint a = base + l;
-          Uint b = base + ((l+1) % m_knob_slices);
-          Uint c = b + m_knob_slices;
-          Uint d = a + m_knob_slices;
-          m_coord_indices[k++] = a;
-          m_coord_indices[k++] = b;
-          m_coord_indices[k++] = c;
-          m_coord_indices[k++] = a;
-          m_coord_indices[k++] = c;
-          m_coord_indices[k++] = d;
-        }
+  if (!m_knobs_visible) {
+    SGAL_assertion(num_indices = k);
+    return;
+  }
 
-        // Top
-        Uint top_base = base + m_knob_slices * 2;
-        for (l = 0; l < m_knob_slices; ++l) {
-          m_coord_indices[k++] = top_base + m_knob_slices;
-          Uint tmp = top_base;
-          m_coord_indices[k++] = tmp + l;
-          m_coord_indices[k++] = tmp + ((l+1) % m_knob_slices);
-        }
-        base += m_knob_slices * 3 + 1;
+  Uint base = 6 * 4;
+  for (Uint j = 0; j < m_number_of_knobs2; ++j) {
+    for (Uint i = 0; i < m_number_of_knobs1; ++i) {
+      Uint l;
+      for (l = 0; l < m_knob_slices; ++l) {
+        Uint a = base + l;
+        Uint b = base + ((l+1) % m_knob_slices);
+        Uint c = b + m_knob_slices;
+        Uint d = a + m_knob_slices;
+        m_coord_indices[k++] = a;
+        m_coord_indices[k++] = b;
+        m_coord_indices[k++] = c;
+        m_coord_indices[k++] = a;
+        m_coord_indices[k++] = c;
+        m_coord_indices[k++] = d;
       }
+
+      // Top
+      Uint top_base = base + m_knob_slices * 2;
+      for (l = 0; l < m_knob_slices; ++l) {
+        m_coord_indices[k++] = top_base + m_knob_slices;
+        Uint tmp = top_base;
+        m_coord_indices[k++] = tmp + l;
+        m_coord_indices[k++] = tmp + ((l+1) % m_knob_slices);
+      }
+      base += m_knob_slices * 3 + 1;
     }
   }
+  SGAL_assertion(num_indices = k);
 }
 
 /*! \brief cleans the normals. */
@@ -369,21 +373,21 @@ void Ego_brick::clean_normals()
   (*m_normal_array)[k++].set(0, 0, 1); (*m_normal_array)[k++].set(0, 0, 1);
 
   // Knobs:
-  if (m_are_knobs_visible) {
-    for (Uint j = 0; j < m_number_of_knobs2; ++j) {
-      for (Uint i = 0; i < m_number_of_knobs1; ++i) {
-        std::vector<Vector2f>::iterator it;
-        for (it = m_knob_cross_section.begin();
-             it != m_knob_cross_section.end(); ++it)
-          (*m_normal_array)[k++].set((*it)[0], (*it)[1], 0);
-        for (it = m_knob_cross_section.begin();
-             it != m_knob_cross_section.end(); ++it)
-          (*m_normal_array)[k++].set((*it)[0], (*it)[1], 0);
-        for (it = m_knob_cross_section.begin();
-             it != m_knob_cross_section.end(); ++it)
-          (*m_normal_array)[k++].set(0, 0, 1);
+  if (!m_knobs_visible) return;
+  
+  for (Uint j = 0; j < m_number_of_knobs2; ++j) {
+    for (Uint i = 0; i < m_number_of_knobs1; ++i) {
+      std::vector<Vector2f>::iterator it;
+      for (it = m_knob_cross_section.begin();
+           it != m_knob_cross_section.end(); ++it)
+        (*m_normal_array)[k++].set((*it)[0], (*it)[1], 0);
+      for (it = m_knob_cross_section.begin();
+           it != m_knob_cross_section.end(); ++it)
+        (*m_normal_array)[k++].set((*it)[0], (*it)[1], 0);
+      for (it = m_knob_cross_section.begin();
+           it != m_knob_cross_section.end(); ++it)
         (*m_normal_array)[k++].set(0, 0, 1);
-      }
+      (*m_normal_array)[k++].set(0, 0, 1);
     }
   }
 }

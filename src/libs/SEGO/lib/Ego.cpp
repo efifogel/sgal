@@ -526,7 +526,6 @@ void Ego::clean_parts()
 /*! \brief creates the geometry of a brick. */
 Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
 {
-  draw_knobs = true;
   Ego_brick* ego_brick = new Ego_brick;
   m_bricks.push_back(ego_brick);
   Coord_array* coord_array;
@@ -538,6 +537,7 @@ Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
   else {
     coord_array = m_ego_brick_without_knobs.get_coord_array();
     normal_array = m_ego_brick_without_knobs.get_normal_array();
+    ego_brick->set_knobs_visible(false);
   }
   const Array<Uint>& indices = (draw_knobs) ?
     m_ego_brick.get_coord_indices() :

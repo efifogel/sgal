@@ -126,10 +126,10 @@ public:
   Uint get_knob_slices() const { return m_knob_slices; }
 
   /*! Set the flag that indicates whether the knos are visible. */
-  void set_knobs_visible(Boolean flag) { m_are_knobs_visible = flag; }
+  void set_knobs_visible(Boolean flag) { m_knobs_visible = flag; }
   
   /* Obtain the flag that indicates whether the knos are visible. */
-  Boolean are_knobs_visible() const { return m_are_knobs_visible; }
+  Boolean are_knobs_visible() const { return m_knobs_visible; }
     
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -207,7 +207,7 @@ protected:
   Uint m_knob_slices;
 
   /*! Are the knobs visible. */
-  Boolean m_are_knobs_visible;
+  Boolean m_knobs_visible;
 
   /*! Indicates whether the center is dirty and thus needs cleaning. */
   Boolean m_dirty_center;
@@ -280,7 +280,7 @@ private:
   static const Float s_def_knob_height;
   static const Float s_def_tolerance;
   static const Uint s_def_knob_slices;
-  static const Boolean s_def_are_knobs_visible;
+  static const Boolean s_def_knobs_visible;
 };
 
 SGAL_END_NAMESPACE
