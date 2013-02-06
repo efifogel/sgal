@@ -121,11 +121,11 @@ output_operatior=>
 endif
 %.d : %.cpp %.o
 	@echo Generating dependency for $<
-	$(MAKEDEPENDF) -std=c++0x $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
+	$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
 
 %.d : %.C %.o
 	@echo Generating dependency for $<
-	$(MAKEDEPENDF) -std=c++0x $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
+	$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
 
 %.d : %.c %.o
 	@echo Generating dependency for $<
