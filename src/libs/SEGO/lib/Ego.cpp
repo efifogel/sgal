@@ -514,7 +514,6 @@ void Ego::clean_parts()
 /*! \brief creates the geometry of a brick. */
 Geometry* Ego::create_geometry(Boolean draw_knobs)
 {
-  draw_knobs = false;
   Ego_brick* ego_brick;
   if (draw_knobs) {
     if (m_bricks.empty()) {
