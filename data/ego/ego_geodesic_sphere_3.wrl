@@ -598,7 +598,7 @@ Transform {
 	      }		# 180
 	    }
 	  }
-	  # style "appearance"
+	  style "appearance"
 	  scale 100 100 100
 	  model USE MODEL
 	  knobSlices 16
@@ -608,7 +608,7 @@ Transform {
 
     # The axes:
     Switch {
-      whichChoice -1
+      whichChoice 0
       children [
 	DEF AXES Transform {
 	  # scale 0.1 0.1 0.1
