@@ -139,7 +139,7 @@ void Mesh_set::draw_mesh(Draw_action* action)
     context->draw_light_model_sides(Gfx::ONE_SIDE);
   }
 
-  glDisable(GL_NORMALIZE);
+  if (has_scale()) glDisable(GL_NORMALIZE);
 }
 
 /*! \brief calculates the sphere bound. */
