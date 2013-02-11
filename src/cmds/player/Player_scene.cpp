@@ -269,11 +269,6 @@ void Player_scene::init_scene()
   // Create the missing nodes.
   m_scene_graph->create_defaults();
     
-  // Construct the context.
-  m_context = new SGAL::Context();
-  SGAL_assertion(m_context);
-  m_scene_graph->set_context(m_context);
-
   // Prepare the window item.
   m_window_item = m_window_manager->create_window_item();
   m_window_item->set_title(filename);
@@ -304,6 +299,10 @@ void Player_scene::init_scene()
 
   indulge_user();
 
+  // Construct the context.
+  m_context = new SGAL::Context();
+  SGAL_assertion(m_context);
+  m_scene_graph->set_context(m_context);
   m_scene_graph->init_context();
   m_scene_graph->start_simulation();
   m_scene_graph->bind();
