@@ -1308,4 +1308,15 @@ const char * Gl_wrapper::find_name(GLenum num)
   else return (*it).second;
 }
 
+/*! \brief checks whether openGl errors have occured. */ 
+void Gl_wrapper::check_error()
+{
+  GLenum err = glGetError();
+  while (err != GL_NO_ERROR) {
+    std::cerr << "OpenGL Error: " << gluErrorString(err) << std::endl;
+    break;
+    err = glGetError();
+  } 
+}
+
 SGAL_END_NAMESPACE

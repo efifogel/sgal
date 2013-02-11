@@ -54,15 +54,8 @@ private:
   /*! Find the name of a token */
   const char* find_name(GLenum num);
 
-  void check_error()
-  {
-    GLenum err;
-    do {
-      err = glGetError();
-      if (err != GL_NO_ERROR)
-        std::cerr << "OpenGL Error: " << gluErrorString(err) << std::endl;
-    } while (err != GL_NO_ERROR);
-  }
+  /*! Check whether openGl errors have occured. */ 
+  void check_error();
   
 public:
   /*! Obtain the singletone */
