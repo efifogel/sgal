@@ -50,7 +50,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Coord_array.hpp"
