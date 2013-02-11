@@ -64,6 +64,10 @@ public: // Set/Get
   void set_light_model_sides(Gfx::Light_model_sides light_model_sides);
   Gfx::Light_model_sides get_light_model_sides() { return Gfx::ONE_SIDE; }
 
+  void set_light_model_color_control(Gfx::Light_model_color_control model);
+  Gfx::Light_model_color_control get_light_model_color_control()
+  { return Gfx::SINGLE_COLOR; }
+  
   void set_line_width(Float line_width);
   Float get_line_width() { return 0; }
 
@@ -81,6 +85,7 @@ private:
   Float m_point_size;
   Gfx::Cull_face m_cull_face;
   Gfx::Light_model_sides m_light_model_sides;
+  Gfx::Light_model_color_control m_light_model_color_control;
 
 private: // Private
   void Init();

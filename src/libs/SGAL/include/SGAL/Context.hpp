@@ -312,10 +312,36 @@ public:
   Gfx::Cull_face get_cull_face() const;
   void draw_cull_face(Gfx::Cull_face cull_face);
 
+  /*! Set the attribute that indicates whether one- or two-sided lighting
+   * calculations are done for polygons.
+   */
   void set_light_model_sides(Gfx::Light_model_sides light_model);
+
+  /*! Obtain the attribute that indicates whether one- or two-sided lighting
+   * calculations are done for polygons.
+   */
   Gfx::Light_model_sides get_light_model_sides() const;
+
+  /*! Apply the attribute that indicates whether one- or two-sided lighting
+   * calculations are done for polygons.
+   */
   void draw_light_model_sides(Gfx::Light_model_sides light_model);
 
+  /*! Set the attribute that specifies whether a single color should be
+   * generated from the lighting computation for a vertex.
+   */
+  void set_light_model_color_control(Gfx::Light_model_color_control model);
+
+  /*! Obtain the attribute that specifies whether a single color should be
+   * generated from the lighting computation for a vertex.
+   */
+  Gfx::Light_model_color_control get_light_model_color_control() const;
+
+  /*! Apply the attribute that specifies whether a single color should be
+   * generated from the lighting computation for a vertex.
+   */
+  void draw_light_model_color_control(Gfx::Light_model_color_control model);
+  
   void set_line_width(Float line_width);
   Float get_line_width() const;
 
@@ -627,9 +653,18 @@ inline Gfx::Poly_mode Context::get_poly_mode() const
 inline Gfx::Cull_face Context::get_cull_face() const
 { return m_current_state->m_cull_face; }
 
-/*! \brief */
+/*! \brief obtains the attribute that indicates whether one- or two-sided 
+ * lighting calculations are done for polygons.
+ */
 inline Gfx::Light_model_sides Context::get_light_model_sides() const
 { return m_current_state->m_light_model_sides; }
+
+/*! \brief obtains the attribute that specifies whether a single color should
+ * be generated from the lighting computation for a vertex.
+ */
+inline Gfx::Light_model_color_control Context::get_light_model_color_control()
+  const
+{ return m_current_state->m_light_model_color_control; }
 
 /*! \brief */
 inline Float Context::get_line_width() const

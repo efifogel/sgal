@@ -277,6 +277,16 @@ public:
   /*! Obtain the texture transformation attribute. */
   const Matrix4f& get_tex_transform() const;
 
+  /*! Set the attribute that specifies whether a single color should be
+   * generated from the lighting computation for a vertex.
+   */
+  void set_light_model_color_control(Gfx::Light_model_color_control model);
+
+  /*! Obtain the attribute that specifies whether a single color should be
+   * generated from the lighting computation for a vertex.
+   */
+  Gfx::Light_model_color_control get_light_model_color_control() const;
+    
   /*! Set the inheritance mask. */
   void set_inherit(const Bit_mask& inherit);
 
@@ -357,6 +367,7 @@ private:
   static const Gfx::Poly_mode s_def_poly_mode;
   static const Gfx::Shade_model s_def_shade_model;
   static const Gfx::Tex_env s_def_tex_env;
+  static const Gfx::Light_model_color_control s_def_light_model_color_control;
 
   // for each field, the corresponding bit is being set when the filed is 
   // set to a new value. it is then turned off after the drawing is performed
@@ -529,6 +540,13 @@ inline Uint Appearance::get_line_stipple_factor() const
 /*! \brief obtains the texture transformation attribute. */
 inline const Matrix4f& Appearance::get_tex_transform() const
 { return m_tex_transform; }
+
+/*! \brief obtains the attribute that specifies whether a single color should
+ * be generated from the lighting computation for a vertex.
+ */
+inline Gfx::Light_model_color_control
+Appearance:: get_light_model_color_control() const
+{ return m_light_model_color_control; }
 
 /*! \brief obtain the tag (type) of the container */
 inline const std::string& Appearance::get_tag() const { return s_tag; }

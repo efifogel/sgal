@@ -145,6 +145,7 @@ void Context::init()
   m_current_state->m_poly_mode             = Gfx::FILL_PMODE;
   m_current_state->m_cull_face             = Gfx::NO_CULL;
   m_current_state->m_light_model_sides     = Gfx::ONE_SIDE;
+  m_current_state->m_light_model_color_control = Gfx::SINGLE_COLOR;
   m_current_state->m_line_width            = 1.0f;
   m_current_state->m_point_size            = 1.0f;
   m_current_state->m_line_stipple_factor   = 1;
@@ -842,14 +843,10 @@ void Context::draw_material_mode_enable(Gfx::Material_mode material_mode_enable)
   }
   else {
     glDisable(GL_COLOR_MATERIAL);
-
-    if (m_current_state->m_material) {
+    if (m_current_state->m_material)
       m_current_state->m_material->draw(Material::FRONT, this);
-    }
-
-    if (m_current_state->m_back_material) {
+    if (m_current_state->m_back_material)
       m_current_state->m_back_material->draw(Material::BACK, this);
-    }
   }
 }
 
@@ -897,25 +894,29 @@ void Context::draw_cull_face(Gfx::Cull_face cull_face)
   if (m_current_state->m_cull_face == cull_face) return;
 
   m_current_state->m_cull_face = cull_face;
-  static GLenum sCull_faceTokens[] = {
+  static GLenum s_cull_face_tokens[] = {
     GL_FALSE, GL_FRONT, GL_BACK, GL_FRONT_AND_BACK
   };
   if (cull_face == Gfx::NO_CULL) glDisable(GL_CULL_FACE);
   else {
     glEnable(GL_CULL_FACE);
-    glCullFace(sCull_faceTokens[cull_face]);
+    glCullFace(s_cull_face_tokens[cull_face]);
   }
 }
 
+/*! \brief sets the attribute that indicates whether one- or two-sided lighting
+ * calculations are done for polygons.
+ */
 void Context::set_light_model_sides(Gfx::Light_model_sides light_model_sides)
 {
   m_default_state->m_light_model_sides = light_model_sides;
   m_default_state->m_pending.on_bit(Gfx::LIGHT_MODEL_SIDES);
-  // DrawLight_model_sides(light_model_sides);
 }
 
-/*! \brief */
-void Context::draw_light_model_sides(Gfx::Light_model_sides light_model_sides)
+/*! \brief applies the attribute that indicates whether one- or two-sided 
+ * lighting calculations are done for polygons.
+ */
+void Context::draw_light_model_sides(Gfx::Light_model_sides model)
 {
   // Use override value if one has been set
   if (m_override_geo_prop_stack_top != -1) {
@@ -924,19 +925,56 @@ void Context::draw_light_model_sides(Gfx::Light_model_sides light_model_sides)
       get_override(geo_override);
 
     if (geo_override.get_bit(Gfx::LIGHT_MODEL_SIDES)) {
-      light_model_sides =
-        m_override_geo_prop_stack[m_override_geo_prop_stack_top]->
+      model = m_override_geo_prop_stack[m_override_geo_prop_stack_top]->
         get_light_model_sides();
     }
   }
 
-  if (m_current_state->m_light_model_sides == light_model_sides) return;
-  m_current_state->m_light_model_sides = light_model_sides;
+  if (m_current_state->m_light_model_sides == model) return;
+  m_current_state->m_light_model_sides = model;
 
-  if (light_model_sides == Gfx::ONE_SIDE)
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, false);
-  else
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, true);
+  static GLint s_light_model_sides[] = {0, 1};
+  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, s_light_model_sides[model]);
+}
+
+/*! \brief sets the attribute that specifies whether a single color should be
+ * generated from the lighting computation for a vertex.
+ */
+void
+Context::set_light_model_color_control(Gfx::Light_model_color_control model)
+{
+  m_default_state->m_light_model_color_control = model;
+  m_default_state->m_pending.on_bit(Gfx::LIGHT_MODEL_COLOR_CONTROL);
+}
+
+/*! \brief applies the attribute that specifies whether a single color should
+ * be generated from the lighting computation for a vertex.
+ */
+void
+Context::draw_light_model_color_control(Gfx::Light_model_color_control model)
+{
+  std::cout << "Context::draw_light_model_color_control: "
+            << model
+            << std::endl;
+  // Use override value if one has been set
+  if (m_override_geo_prop_stack_top != -1) {
+    Bit_mask geo_override;
+    m_override_geo_prop_stack[m_override_geo_prop_stack_top]->
+      get_override(geo_override);
+
+    if (geo_override.get_bit(Gfx::LIGHT_MODEL_COLOR_CONTROL)) {
+      model = m_override_geo_prop_stack[m_override_geo_prop_stack_top]->
+        get_light_model_color_control();
+    }
+  }
+
+  if (m_current_state->m_light_model_color_control == model) return;
+  m_current_state->m_light_model_color_control = model;
+
+  static GLint s_light_model_color_control[] =
+    {GL_SEPARATE_SPECULAR_COLOR, GL_SINGLE_COLOR};
+  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL,
+                s_light_model_color_control[model]);
 }
 
 /*! \brief */
@@ -1462,6 +1500,8 @@ Override_geo_prop* Context::pop_override_geo_prop()
   // make sure these are evaluated in next call to set:
   m_current_state->m_cull_face = (Gfx::Cull_face) -1;
   m_current_state->m_light_model_sides = (Gfx::Light_model_sides) -1 ;
+  m_current_state->m_light_model_color_control =
+    (Gfx::Light_model_color_control) -1 ;
   m_current_state->m_line_width = -1.0f;
   m_current_state->m_point_size = -1.0f;
 
@@ -1571,6 +1611,8 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
      case Gfx::CULL_FACE: draw_cull_face(gfx->m_cull_face); break;
      case Gfx::LIGHT_MODEL_SIDES:
       draw_light_model_sides(gfx->m_light_model_sides); break;
+     case Gfx::LIGHT_MODEL_COLOR_CONTROL:
+      draw_light_model_color_control(gfx->m_light_model_color_control); break;
      case Gfx::LINE_WIDTH: draw_line_width(gfx->m_line_width); break;
      case Gfx::POINT_SIZE: draw_point_size(gfx->m_point_size); break;
 
@@ -1653,6 +1695,7 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
       // These are geoset-specific, not in appearance but in context
      case Gfx::CULL_FACE: break;
      case Gfx::LIGHT_MODEL_SIDES: break;
+     case Gfx::LIGHT_MODEL_COLOR_CONTROL: break;
      case Gfx::LINE_WIDTH: break;
      case Gfx::POINT_SIZE: break;
 
@@ -1907,6 +1950,14 @@ void Context::draw_app(Appearance* app)
       else if (app_inherit_mask.get_bit(Gfx::MATERIAL_MODE_ENABLE) == 0)
         local_app->set_material_mode_enable(app->get_material_mode_enable());
 
+      // LIGHT_MODEL_COLOR_CONTROL:
+      if (override_inherit_mask.get_bit(Gfx::LIGHT_MODEL_COLOR_CONTROL) == 0)
+        local_app->set_light_model_color_control
+          (override_app->get_light_model_color_control());
+      else if (app_inherit_mask.get_bit(Gfx::LIGHT_MODEL_COLOR_CONTROL) == 0)
+        local_app->set_light_model_color_control
+          (app->get_light_model_color_control());
+      
       new_app = local_app;
     }
     else {

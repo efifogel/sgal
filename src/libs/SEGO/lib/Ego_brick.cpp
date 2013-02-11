@@ -131,7 +131,8 @@ void Ego_brick::clean()
   if (m_knobs_visible) m_knob_cross_section.clear();
   set_primitive_type(PT_TRIANGLES);
   set_solid(true);
-  m_dirty = false;
+
+  Indexed_face_set::clean();
 }
 
 /*! \brief generates the knob_cross_section. */

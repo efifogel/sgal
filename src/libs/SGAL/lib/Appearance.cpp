@@ -53,6 +53,8 @@ std::string Appearance::s_tag = "sgalAppearance";
 Container_proto* Appearance::s_prototype = NULL;
 
 // Default values:
+const Gfx::Light_model_color_control
+  Appearance::s_def_light_model_color_control(Gfx::SINGLE_COLOR);
 const Gfx::Poly_mode Appearance::s_def_poly_mode(Gfx::FILL_PMODE);
 const Gfx::Shade_model Appearance::s_def_shade_model(Gfx::SMOOTH_SHADE);
 const Gfx::Tex_env Appearance::s_def_tex_env(Gfx::MODULATE_TENV);
@@ -97,36 +99,37 @@ Appearance::~Appearance()
  */
 void Appearance::set(Appearance* app)
 {
-  m_texture                = app->m_texture;
-  m_tex_enable             = app->m_tex_enable;
-  m_tex_mode               = app->m_tex_mode;
-  m_tex_blend_color        = app->m_tex_blend_color;
-  m_tex_env                = app->m_tex_env;
-  m_tex_gen                = app->m_tex_gen;
-  m_tex_gen_enable         = app->m_tex_gen_enable;
-  m_material               = app->m_material;
-  m_material_mode_enable   = app->m_material_mode_enable;
-  m_light_enable           = app->m_light_enable;
-  m_shade_model            = app->m_shade_model;
-  m_transp_enable          = app->m_transp_enable;
-  m_transp_mode            = app->m_transp_mode;
-  m_alpha_func             = app->m_alpha_func;
-  m_alpha_ref              = app->m_alpha_ref;
-  m_blend_color            = app->m_blend_color;
-  m_src_blend_func         = app->m_src_blend_func;
-  m_dst_blend_func         = app->m_dst_blend_func;
-  m_color_mask             = app->m_color_mask;
-  m_depth_enable           = app->m_depth_enable;
-  m_depth_func             = app->m_depth_func;
-  m_depth_mask             = app->m_depth_mask;
-  m_fog_enable             = app->m_fog_enable;
-  m_poly_mode              = app->m_poly_mode;
-  m_line_stipple_factor    = app->m_line_stipple_factor;
-  m_line_stipple_pattern   = app->m_line_stipple_pattern;
-  m_tex_transform          = app->m_tex_transform;
-  m_back_material          = app->m_back_material;
-  m_polygon_stipple_enable = app->m_polygon_stipple_enable;
-  m_halftone               = app->m_halftone;
+  m_texture                     = app->m_texture;
+  m_tex_enable                  = app->m_tex_enable;
+  m_tex_mode                    = app->m_tex_mode;
+  m_tex_blend_color             = app->m_tex_blend_color;
+  m_tex_env                     = app->m_tex_env;
+  m_tex_gen                     = app->m_tex_gen;
+  m_tex_gen_enable              = app->m_tex_gen_enable;
+  m_material                    = app->m_material;
+  m_material_mode_enable        = app->m_material_mode_enable;
+  m_light_enable                = app->m_light_enable;
+  m_shade_model                 = app->m_shade_model;
+  m_transp_enable               = app->m_transp_enable;
+  m_transp_mode                 = app->m_transp_mode;
+  m_alpha_func                  = app->m_alpha_func;
+  m_alpha_ref                   = app->m_alpha_ref;
+  m_blend_color                 = app->m_blend_color;
+  m_src_blend_func              = app->m_src_blend_func;
+  m_dst_blend_func              = app->m_dst_blend_func;
+  m_color_mask                  = app->m_color_mask;
+  m_depth_enable                = app->m_depth_enable;
+  m_depth_func                  = app->m_depth_func;
+  m_depth_mask                  = app->m_depth_mask;
+  m_fog_enable                  = app->m_fog_enable;
+  m_poly_mode                   = app->m_poly_mode;
+  m_line_stipple_factor         = app->m_line_stipple_factor;
+  m_line_stipple_pattern        = app->m_line_stipple_pattern;
+  m_tex_transform               = app->m_tex_transform;
+  m_back_material               = app->m_back_material;
+  m_polygon_stipple_enable      = app->m_polygon_stipple_enable;
+  m_halftone                    = app->m_halftone;
+  m_light_model_color_control   = app->m_light_model_color_control;
 
   m_pending = app->m_pending;
   m_override = app->m_override;
@@ -135,36 +138,37 @@ void Appearance::set(Appearance* app)
 /*! \brief */
 void Appearance::init()
 {
-  m_texture                = 0;
-  m_tex_enable             = false;
-  m_tex_mode               = Gfx::FAST_TEX;
+  m_texture                   = 0;
+  m_tex_enable                = false;
+  m_tex_mode                  = Gfx::FAST_TEX;
   m_tex_blend_color.set(0.0f, 0.0f, 0.0f, 0.0f);
-  m_tex_env                = Gfx::MODULATE_TENV;
-  m_tex_gen                = 0;
-  m_tex_gen_enable         = false;
-  m_material               = 0;
-  m_material_mode_enable   = Gfx::NO_COLOR_MATERIAL;
-  m_light_enable           = 0;
-  m_shade_model            = Gfx::SMOOTH_SHADE;
-  m_transp_enable          = false;
-  m_transp_mode            = Gfx::BLEND_TRANSP;
-  m_alpha_func             = Gfx::ALWAYS_AFUNC;
-  m_alpha_ref              = 0.0f;
+  m_tex_env                   = Gfx::MODULATE_TENV;
+  m_tex_gen                   = 0;
+  m_tex_gen_enable            = false;
+  m_material                  = 0;
+  m_material_mode_enable      = Gfx::NO_COLOR_MATERIAL;
+  m_light_enable              = 0;
+  m_shade_model               = Gfx::SMOOTH_SHADE;
+  m_transp_enable             = false;
+  m_transp_mode               = Gfx::BLEND_TRANSP;
+  m_alpha_func                = Gfx::ALWAYS_AFUNC;
+  m_alpha_ref                 = 0.0f;
   m_blend_color.set(0.0f, 0.0f, 0.0f, 0.0f);
-  m_src_blend_func         = Gfx::ONE_SBLEND;
-  m_dst_blend_func         = Gfx::ZERO_DBLEND;
+  m_src_blend_func            = Gfx::ONE_SBLEND;
+  m_dst_blend_func            = Gfx::ZERO_DBLEND;
   m_color_mask.set(0xff, 0xff, 0xff, 0xff);
-  m_depth_enable           = false;
-  m_depth_func             = Gfx::LESS_DFUNC;
-  m_depth_mask             = true;
-  m_fog_enable             = false;
-  m_poly_mode              = s_def_poly_mode;
-  m_line_stipple_factor    = 1;
-  m_line_stipple_pattern   = 0xffff;
+  m_depth_enable              = false;
+  m_depth_func                = Gfx::LESS_DFUNC;
+  m_depth_mask                = true;
+  m_fog_enable                = false;
+  m_poly_mode                 = s_def_poly_mode;
+  m_line_stipple_factor       = 1;
+  m_line_stipple_pattern      = 0xffff;
   m_tex_transform.make_identity();
-  m_back_material          = 0;
-  m_polygon_stipple_enable = false;
-  m_halftone               = 0;
+  m_back_material             = 0;
+  m_polygon_stipple_enable    = false;
+  m_halftone                  = 0;
+  m_light_model_color_control = s_def_light_model_color_control;
 
   m_pending.off();
   m_override.off();
@@ -454,6 +458,17 @@ void Appearance::set_tex_transform(const Matrix4f& tex_transform)
   m_tex_transform = tex_transform;
 }
 
+/*! \brief sets the attribute that specifies whether a single color should be
+ * generated from the lighting computation for a vertex.
+ */
+void
+Appearance::set_light_model_color_control(Gfx::Light_model_color_control model)
+{
+  m_pending.on_bit(Gfx::LIGHT_MODEL_COLOR_CONTROL);
+  m_override.on_bit(Gfx::LIGHT_MODEL_COLOR_CONTROL);
+  m_light_model_color_control = model;
+}
+
 /*! \brief */
 void Appearance::set_inherit(const Bit_mask& inherit) { m_pending = inherit; }
 
@@ -637,21 +652,22 @@ void Appearance::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief sets default attributes for texture mapping. */
+/*! \brief sets default attributes for texture mapping.
+ * \todo move to Shape::clean()
+ */
 void Appearance::set_default_texture_attributes()
 {
-  //! \move to clean()
   set_tex_enable(true);
-  Uint color_control = GL_SEPARATE_SPECULAR_COLOR;
+  Gfx::Light_model_color_control color_control = Gfx::SEPARATE_SPECULAR_COLOR;
   if (m_material) {
     const Vector3f& specular_color = m_material->get_specular_color();
     if ((specular_color[0] == 0) && (specular_color[1] == 0) &&
         (specular_color[2] == 0))
-      color_control = GL_SINGLE_COLOR;
+      color_control = Gfx::SINGLE_COLOR;
   }
-
-  //! \todo move to Gfx:
-  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, color_control);
+  set_light_model_color_control(color_control);
+  std::cout << "Appearance::set_default_texture_attributes: " << color_control
+            << std::endl;
 }
 
 /*! \brief writes this container. */
