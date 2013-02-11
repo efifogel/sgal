@@ -61,8 +61,10 @@ public:
     VERBOSITY_LEVEL,
     SEAMLESS_CUBE_MAP,
     OVERRIDE_MATERIAL,
+    OVERRIDE_TEX_ENABLE,
     OVERRIDE_TEX_ENV,
     OVERRIDE_BLEND_FUNC,
+    OVERRIDE_LIGHT_MODEL,
     OVERRIDE_TEX_GEN,
     OVERRIDE_LIGHT_ENABLE,
     LAST
@@ -280,19 +282,33 @@ private:
    */
   Boolean m_override_material;
 
+  /*! Indicates whether to override the appearance texture enable flag. If
+   * this flag is on, the (appearance) texture enable flag may be overriden.
+   * Notice than when the appearance chages, the texture enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_tex_enable;
+
   /*! Indicates whether to override the appearance texture environment. If
    * this flag is on, the (appearance) texture environment may be overriden.
-   * Notice than when the appearance chages, the light-enable flag of the
+   * Notice than when the appearance chages, the texture environment of the
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_tex_env;
 
   /*! Indicates whether to override the appearance blend functions. If
    * this flag is on, the (appearance) blend functions may be overriden.
-   * Notice than when the appearance chages, the light-enable flag of the
+   * Notice than when the appearance chages, the blend functions of the
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_blend_func;
+
+  /*! Indicates whether to override the appearance light_model. If
+   * this flag is on, the (appearance) blend functions may be overriden.
+   * Notice than when the appearance chages, the light model of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_light_model;
 
   /*! Indicates whether to override the appearance texture-generation flag and
    * construct the appearance texture-generation attribute when missing. If
@@ -331,8 +347,10 @@ private:
   static const Uint s_def_verbose_level;
   static const Boolean s_def_seamless_cube_map;
   static const Boolean s_def_override_material;
+  static const Boolean s_def_override_tex_enable;
   static const Boolean s_def_override_tex_env;
   static const Boolean s_def_override_blend_func;
+  static const Boolean s_def_override_light_model;
   static const Boolean s_def_override_tex_gen;
   static const Boolean s_def_override_light_enable;
   

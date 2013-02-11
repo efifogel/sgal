@@ -53,8 +53,10 @@ const Float Configuration::s_def_speed_factor(100);
 const Uint Configuration::s_def_verbose_level(0);
 const Boolean Configuration::s_def_seamless_cube_map(true);
 const Boolean Configuration::s_def_override_material(true);
+const Boolean Configuration::s_def_override_tex_enable(true);
 const Boolean Configuration::s_def_override_tex_env(true);
 const Boolean Configuration::s_def_override_blend_func(true);
+const Boolean Configuration::s_def_override_light_model(true);
 const Boolean Configuration::s_def_override_tex_gen(true);
 const Boolean Configuration::s_def_override_light_enable(true);
 
@@ -80,8 +82,10 @@ Configuration::Configuration(Boolean proto) :
   m_verbosity_level(s_def_verbose_level),
   m_seamless_cube_map(s_def_seamless_cube_map),
   m_override_material(Configuration::s_def_override_material),
+  m_override_tex_enable(Configuration::s_def_override_tex_enable),
   m_override_tex_env(Configuration::s_def_override_tex_env),
   m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_light_model(Configuration::s_def_override_light_model),
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
   m_override_light_enable(Configuration::s_def_override_light_enable),
   m_owned_accumulation(false)
@@ -255,6 +259,11 @@ void Configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "overrideTexEnable") {
+      m_override_tex_enable = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
     if (name == "overrideTexEnv") {
       m_override_tex_env = compare_to_true(value);
       elem->mark_delete(ai);
@@ -262,6 +271,11 @@ void Configuration::set_attributes(Element* elem)
     }
     if (name == "overrideBlendFunc") {
       m_override_blend_func = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "overrideLightModel") {
+      m_override_light_model = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
     }

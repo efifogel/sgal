@@ -8,11 +8,10 @@ ColorBackground {
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
-Viewpoint {
-  # type "ORTHOGONAL"
-  # fieldOfView 3.04
-  radiusScale 0.7
-}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 3.04
+# }
 
 DEF INC_FIRST_TILE_KEY SingleKeySensor { key "q" }
 DEF INC_FIRST_TILE Incrementor {
@@ -45,10 +44,9 @@ DEF AOS_EGO_VISIBLE_KEY SingleKeySensor { key "b" }
 DEF SNAP Snapshot {
   image Image { }
   fileFormat "jpg"
-  quality 98
   sequence FALSE
   dirName "."
-  fileName "lts"
+  fileName "ego_geodesic_sphere_3"
 }
 
 Transform {
@@ -563,10 +561,10 @@ Transform {
 	DEF EGO Ego {
 	  appearance Appearance {
 	    material Material {
-	      diffuseColor 0.9 0.9 0.9
-	      specularColor 0.5 0.5 0.5
-	      ambientIntensity 0.4
-	      transparency 0
+	      diffuseColor 0.8 0.8 0.8
+	      specularColor 0.2 0.2 0.2
+	      ambientIntensity 0.2
+	      # transparency 0
 	    }
 	    # texture ImageTexture { url ["negx.jpg"] }
 	    # texture CubeEnvironment {

@@ -953,9 +953,6 @@ Context::set_light_model_color_control(Gfx::Light_model_color_control model)
 void
 Context::draw_light_model_color_control(Gfx::Light_model_color_control model)
 {
-  std::cout << "Context::draw_light_model_color_control: "
-            << model
-            << std::endl;
   // Use override value if one has been set
   if (m_override_geo_prop_stack_top != -1) {
     Bit_mask geo_override;
@@ -1692,10 +1689,12 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
      case Gfx::BACK_MATERIAL:
       draw_back_material(app->m_material, app->m_back_material); break;
             
+     case Gfx::LIGHT_MODEL_COLOR_CONTROL:
+      draw_light_model_color_control(app->m_light_model_color_control); break;
+      
       // These are geoset-specific, not in appearance but in context
      case Gfx::CULL_FACE: break;
      case Gfx::LIGHT_MODEL_SIDES: break;
-     case Gfx::LIGHT_MODEL_COLOR_CONTROL: break;
      case Gfx::LINE_WIDTH: break;
      case Gfx::POINT_SIZE: break;
 

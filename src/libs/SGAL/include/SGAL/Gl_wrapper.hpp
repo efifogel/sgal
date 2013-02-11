@@ -1526,7 +1526,7 @@ inline GLboolean glIsTexture(GLuint texture)
 inline void glLightModelf(GLenum pname, GLfloat param)
 {
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightModelf("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(pname) << ", " << param << ");"
              << std::endl;);
   ::glLightModelf(pname, param);
   Gl_wrapper::check();
@@ -1545,8 +1545,21 @@ inline void glLightModelfv(GLenum pname, const GLfloat* params)
 /*! glLightModeli wrapper */
 inline void glLightModeli(GLenum pname, GLint param)
 {
+#if !defined(NDEBUG)
+  if (pname == GL_LIGHT_MODEL_COLOR_CONTROL) {
+    TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightModeli("
+               << Gl_wrapper::find(pname) << ", "
+               << Gl_wrapper::find(param) << ");"
+               << std::endl;);
+  }
+  else {
+    TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightModeli("
+               << Gl_wrapper::find(pname) << ", " << param << ");"
+               << std::endl;);
+  }
+#endif
   TRACE_CODE(Trace::GRAPHICS, std::cout << "glLightModeli("
-             << Gl_wrapper::find(pname) << ");"
+             << Gl_wrapper::find(pname) << ", " << param << ");"
              << std::endl;);
   ::glLightModeli(pname, param);
   Gl_wrapper::check();

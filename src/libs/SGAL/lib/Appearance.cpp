@@ -645,29 +645,8 @@ void Appearance::set_attributes(Element* elem)
     }
   }
 
-  // Set the textute related modes:
-  if (m_texture) set_default_texture_attributes();
-
   // Remove all the deleted attributes:
   elem->delete_marked();
-}
-
-/*! \brief sets default attributes for texture mapping.
- * \todo move to Shape::clean()
- */
-void Appearance::set_default_texture_attributes()
-{
-  set_tex_enable(true);
-  Gfx::Light_model_color_control color_control = Gfx::SEPARATE_SPECULAR_COLOR;
-  if (m_material) {
-    const Vector3f& specular_color = m_material->get_specular_color();
-    if ((specular_color[0] == 0) && (specular_color[1] == 0) &&
-        (specular_color[2] == 0))
-      color_control = Gfx::SINGLE_COLOR;
-  }
-  set_light_model_color_control(color_control);
-  std::cout << "Appearance::set_default_texture_attributes: " << color_control
-            << std::endl;
 }
 
 /*! \brief writes this container. */
@@ -727,11 +706,16 @@ Attribute_list Appearance::get_attributes()
 
 #endif
 
+/*! \brief cleans the texture enable flag. */
+void Appearance::clean_tex_enable()
+{ if (m_texture && !m_texture->empty()) set_tex_enable(true); }
+
 /*! \brief cleans the texture environment attribute. */
 void Appearance::clean_tex_env()
 {
-  if (!m_tex_enable || !m_texture || m_texture->empty()) return;
+  if (!m_tex_enable) return;
 
+  SGAL_assertion(m_texture);
   SGAL_assertion(m_material);
   Uint num_compnents = m_texture->get_component_count();
   const Vector3f& diffuse_color = m_material->get_diffuse_color();
@@ -747,8 +731,9 @@ void Appearance::clean_blend_func()
   // If texture is enabled and texture is either 2 components or 4 components,
   // and the texture environment is either MODULATE, BLEND, or ADD, override
   // the blend functions.
-  if (!m_tex_enable || !m_texture || m_texture->empty()) return;
+  if (!m_tex_enable) return;
 
+  SGAL_assertion(m_texture);
   Uint num_compnents = m_texture->get_component_count();
   if ((num_compnents == 2) || (num_compnents == 4)) {
     if ((m_tex_env == Gfx::BLEND_TENV) || (m_tex_env == Gfx::MODULATE_TENV)) {
@@ -760,6 +745,22 @@ void Appearance::clean_blend_func()
       set_dst_blend_func(Gfx::ONE_DBLEND);
     }
   }
+}
+
+/*! \brief cleans the light model. */
+void Appearance::clean_light_model()
+{
+  if (!m_tex_enable) return;
+
+  SGAL_assertion(m_material);
+  Gfx::Light_model_color_control color_control = Gfx::SEPARATE_SPECULAR_COLOR;
+  if (m_material) {
+    const Vector3f& specular_color = m_material->get_specular_color();
+    if ((specular_color[0] == 0) && (specular_color[1] == 0) &&
+        (specular_color[2] == 0))
+      color_control = Gfx::SINGLE_COLOR;
+  }
+  set_light_model_color_control(color_control);
 }
 
 /*! \brief cleans the material attribute. */

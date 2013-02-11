@@ -219,6 +219,11 @@ public:
   void set_override_material(Boolean flag);
 
   /*! Sets the flag that indicates whether to override the appearance texture
+   * enable flag. 
+   */
+  void set_override_tex_enable(Boolean flag);
+
+  /*! Sets the flag that indicates whether to override the appearance texture
    * environment. 
    */
   void set_override_tex_env(Boolean flag);
@@ -228,6 +233,10 @@ public:
    */
   void set_override_blend_func(Boolean flag);
   
+  /*! Sets the flag that indicates whether to override the light model
+   */
+  void set_override_light_model(Boolean flag);
+
   /*! Sets the flag that indicates whether to override the appearance
    * texture-generation flag and construct the appearance texture-generation
    * attribute when missing.
@@ -317,20 +326,34 @@ private:
    */
   Boolean m_override_material;
 
+  /*! Indicates whether to override the appearance texture enebale flag. If
+   * this flag is on, the (appearance) texture enable may be overriden.
+   * Notice than when the appearance chages, the texture-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_tex_enable;
+
   /*! Indicates whether to override the appearance texture environment. If
    * this flag is on, the (appearance) texture environment may be overriden.
-   * Notice than when the appearance chages, the light-enable flag of the
+   * Notice than when the appearance chages, the texture environment of the
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_tex_env;
   
   /*! Indicates whether to override the appearance blend functions. If
    * this flag is on, the (appearance) blend functions may be overriden.
-   * Notice than when the appearance chages, the light-enable flag of the
+   * Notice than when the appearance chages, the blend functions of the
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_blend_func;
   
+  /*! Indicates whether to override the appearance light model. If
+   * this flag is on, the (appearance) light model may be overriden.
+   * Notice than when the appearance chages, the light model of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_light_model;
+
   /*! Indicates whether to override the appearance texture-generation flag and
    * construct the appearance texture-generation attribute when missing. If
    * this flag is on and the corresponding geometry does not generate
@@ -443,6 +466,12 @@ inline void Shape::set_override_material(Boolean flag)
 { m_override_material = flag; }
 
 /*! \brief sets the flag that indicates whether to override the appearance 
+ * texture enable flag. 
+ */
+inline void Shape::set_override_tex_enable(Boolean flag)
+{ m_override_tex_enable = flag; }
+
+/*! \brief sets the flag that indicates whether to override the appearance 
  * texture environment. 
  */
 inline void Shape::set_override_tex_env(Boolean flag)
@@ -454,6 +483,12 @@ inline void Shape::set_override_tex_env(Boolean flag)
 inline void Shape::set_override_blend_func(Boolean flag)
 { m_override_blend_func = flag; }
   
+/*! \brief sets the flag that indicates whether to override the appearance 
+ * light model. 
+ */
+inline void Shape::set_override_light_model(Boolean flag)
+{ m_override_light_model = flag; }
+
 /*! \brief sets the flag that indicates whether to override the appearance
  * texture-generation flag and construct the appearance texture-generation
  * attribute when missing.

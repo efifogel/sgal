@@ -92,8 +92,10 @@ Shape::Shape(Boolean proto) :
   m_geometry_prev(NULL),
   m_texture_map(Configuration::s_def_texture_map),
   m_override_material(Configuration::s_def_override_material),
+  m_override_tex_enable(Configuration::s_def_override_tex_enable),
   m_override_tex_env(Configuration::s_def_override_tex_env),
   m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_light_model(Configuration::s_def_override_light_model),
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
   m_override_light_enable(Configuration::s_def_override_light_enable)
 {}
@@ -239,16 +241,19 @@ void Shape::clean()
     return;
   }
 
+  // Create an appearance if missing:
   if (m_dirty_appearance) clean_appearance();
-
-  // Disable the texture.
-  // \todo in case the image is not loaded yet?
-  if (!m_texture_map) m_appearance->set_tex_enable(false);
-
+  // Create a material if missing:
   if (m_override_material) m_appearance->clean_material();
+  // Enable texture if texture exists and not empty:
+  if (m_override_tex_enable) m_appearance->clean_tex_enable();
+  // Disable the texture if texture mapping is not desired:
+  if (!m_texture_map) m_appearance->set_tex_enable(false);
+  
   if (m_override_tex_env) m_appearance->clean_tex_env();
   if (m_override_blend_func) m_appearance->clean_blend_func();
-  
+  if (m_override_light_model) m_appearance->clean_light_model();
+    
   // If the geometry has no color coordinates, enabled the light by default.
   if (m_override_light_enable)
     if (!m_geometry->are_generated_color())
@@ -287,7 +292,7 @@ void Shape::clean()
   m_dirty = false;
 }
 
-/*! breif cleans the apperance. */
+/*! \brief cleans the apperance. */
 void Shape::clean_appearance()
 {
   // Construct a new owned appearance if needed, and delete the previously

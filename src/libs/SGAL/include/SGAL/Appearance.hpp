@@ -333,21 +333,24 @@ public:
   /*! Write this container. */
   virtual void write(Formatter* formatter);
 
-  /*! Set default attributes for texture mapping. */
-  void set_default_texture_attributes();
-  
   /*! Clean the material attribute. */
   void clean_material();
 
   /*! Clean the texture generation attribute. */
   void clean_tex_gen();
 
+  /*! Clean the texture enable flag. */
+  void clean_tex_enable();
+    
   /*! Clean the texture environment attribute. */
   void clean_tex_env();
 
   /*! Clean the blend functions. */
   void clean_blend_func();
   
+  /*! Clean the light model. */
+  void clean_light_model();
+
 protected:
   SGAL_GFX_STRUCT;
 
