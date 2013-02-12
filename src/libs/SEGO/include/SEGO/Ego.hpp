@@ -54,6 +54,7 @@ class Appearance;
 class Coord_array;
 class Normal_array;
 class Tex_coord_array;
+class Geo_set;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:

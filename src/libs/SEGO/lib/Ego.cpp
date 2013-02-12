@@ -45,12 +45,12 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Context.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Image_texture.hpp"
 #include "SGAL/Appearance.hpp"
+#include "SGAL/Utilities.hpp"
+#include "SGAL/Mesh_set.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -309,8 +309,9 @@ void Ego::set_attributes(Element* elem)
         elem->mark_delete(cai);
         continue;
       }
-      Geo_set* ifs = dynamic_cast<Geo_set*>(cont);
-      set_model(ifs);
+      Mesh_set* mesh = dynamic_cast<Mesh_set*>(cont);
+      if (mesh->is_dirty()) mesh->clean();
+      set_model(mesh);
       elem->mark_delete(cai);
       continue;
     }
