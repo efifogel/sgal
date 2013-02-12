@@ -213,6 +213,13 @@ inline Boolean Mesh_set::are_generated_tex_coord()
   return (m_generated_tex_coord && (m_tex_coord_array != NULL));
 }  
 
+/*! \brief obtains the coord-index array. */
+Array<Uint>& Mesh_set::get_coord_indices()
+{
+  if (is_dirty_indices()) clean_indices();
+  return Geo_set::get_coord_indices();
+}
+
 /*! \brief cleans the representation. */
 void Mesh_set::clean()
 {
