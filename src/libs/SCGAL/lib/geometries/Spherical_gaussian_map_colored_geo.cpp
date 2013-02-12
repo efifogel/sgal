@@ -261,7 +261,7 @@ Container_proto * Spherical_gaussian_map_colored_geo::get_prototype()
 /*! Draw the polyhedron directly from the gaussian map representation */
 void Spherical_gaussian_map_colored_geo::draw_primal(Draw_action * action)
 {
-  TRACE_MSG(Trace::GAUSSIAN_MAP, "draw_primal()\n");
+  SGAL_TRACE_MSG(Trace::GAUSSIAN_MAP, "draw_primal()\n");
 
 #if 0
   {
@@ -581,5 +581,4 @@ set_sgm(Spherical_gaussian_map_colored * sgm)
   m_sgm = sgm;
 }
   
-
 SGAL_END_NAMESPACE

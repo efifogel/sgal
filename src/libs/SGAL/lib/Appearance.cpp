@@ -73,8 +73,6 @@ Appearance::Appearance(Boolean proto) :
 /*! Destructor */
 Appearance::~Appearance()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Appearance ...");
-
   // delete the owned material attribute if present
   if (m_owned_material) {
     SGAL_assertion(m_material_prev);
@@ -90,8 +88,6 @@ Appearance::~Appearance()
     m_tex_gen_prev = NULL;
     m_owned_tex_gen = false;
   }
-  
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
 /*! \brief assigns the appearance with the content of another appearance;

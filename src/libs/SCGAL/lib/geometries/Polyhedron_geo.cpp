@@ -69,7 +69,7 @@ Polyhedron_geo::~Polyhedron_geo()
 /*! Clean the data structure */
 void Polyhedron_geo::clean()
 {
-  TRACE_MSG(SGAL::Trace::POLYHEDRON, "Polyhedron_geo::clean() start\n");
+  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "Polyhedron_geo::clean() start\n");
   m_polyhedron.delegate(m_surface);
 #if 0
   if (!m_polyhedron.normalized_border_is_valid()) {
@@ -84,16 +84,13 @@ void Polyhedron_geo::clean()
   if (Mesh_set::is_dirty()) Mesh_set::clean();
 }
 
-/*! Clear the internal representation */
-void Polyhedron_geo::clear()
-{
-  Mesh_set::clear();
-}
+/*! \brief clears the internal representation. */
+void Polyhedron_geo::clear() { Mesh_set::clear(); }
 
-/*! */
+/*! \brief */
 void Polyhedron_geo::cull(SGAL::Cull_context& cull_context) {}
 
-/*! */
+/*! \brief */
 void Polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
 {
   for (Facet_iterator i = m_polyhedron.facets_begin();
@@ -111,10 +108,10 @@ void Polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
     } while (++j != i->facet_begin());
     glEnd();
   }
-  TRACE_MSG(SGAL::Trace::POLYHEDRON, "completed\n");
+  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "completed\n");
 }
 
-/*! */
+/*! \brief */
 void Polyhedron_geo::isect(SGAL::Isect_action* action)
 {
   if (is_dirty()) clean();
@@ -135,7 +132,7 @@ void Polyhedron_geo::isect(SGAL::Isect_action* action)
   }
 }
 
-/*! */
+/*! \brief */
 Boolean Polyhedron_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
@@ -170,9 +167,7 @@ Boolean Polyhedron_geo::clean_sphere_bound()
   return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- */
+/*! \brief sets the attributes of this object. */
 void Polyhedron_geo::set_attributes(SGAL::Element* elem)
 {
   SGAL::Mesh_set::set_attributes(elem);

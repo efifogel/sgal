@@ -295,7 +295,7 @@ void Cubical_gaussian_map_geo::clean()
   if (Mesh_set::is_dirty()) Mesh_set::clean();
 }
 
-/*! Clear the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Cubical_gaussian_map_geo::clear()
 {
   Mesh_set::clear();
@@ -303,10 +303,10 @@ void Cubical_gaussian_map_geo::clear()
   process_content_changed();
 }
 
-/*! */
+/*! \brief */
 void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& cull_context) {}
 
-/*! */
+/*! \brief */
 void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
 {
   Context* context = action->get_context();
@@ -317,7 +317,7 @@ void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-/*! Calculate the bounding sphere */
+/*! \brief calculates the bounding sphere. */
 bool Cubical_gaussian_map_geo::clean_sphere_bound()
 {
 #define SQRT_3          1.732f
@@ -370,19 +370,14 @@ bool Cubical_gaussian_map_geo::clean_sphere_bound()
   return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this object. */
 void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
 {
   Mesh_set::set_attributes(elem);
 
   typedef SGAL::Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "drawDual") {
@@ -625,7 +620,7 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
   elem->delete_marked();
 }
 
-/*! */
+/*! \brief */
 void Cubical_gaussian_map_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -721,22 +716,21 @@ void Cubical_gaussian_map_geo::init_prototype()
   s_prototype->add_field_info(field);
 }
 
-/*! */
+/*! \brief */
 void Cubical_gaussian_map_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief */
 SGAL::Container_proto* Cubical_gaussian_map_geo::get_prototype() 
 {  
   if (!s_prototype) Cubical_gaussian_map_geo::init_prototype();
   return s_prototype;
 }
 
-/*! Raise the flag that indicates that the sphere bound changed
- */
+/*! \brief raises the flag that indicates that the sphere bound changed. */
 void Cubical_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_aos;
@@ -756,7 +750,7 @@ void Cubical_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
   }
 }
 
-/*! Draws the internal representation */
+/*! \brief draws the internal representation. */
 void Cubical_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
 {
   if (!m_draw_aos) {
@@ -774,17 +768,19 @@ void Cubical_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
   else m_renderer(action);
 }
 
-/*! Draw the polyhedron directly from the gaussian map representation */
+/*! \brief draws the polyhedron directly from the gaussian map
+ * representation.
+ */
 void Cubical_gaussian_map_geo::draw_primal(Draw_action* action)
 {
-  TRACE_MSG(SGAL::Trace::GAUSSIAN_MAP, "draw_primal()\n");
+  SGAL_TRACE_MSG(SGAL::Trace::GAUSSIAN_MAP, "draw_primal()\n");
 
   Context* context = action->get_context();
   glColor3fv((float*)&m_marked_facet_color);
   
   glFrontFace((is_ccw()) ? GL_CW : GL_CCW);
 
-  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
     const Arrangement& arr = m_cgm.arrangement(i);
     Arr_vertex_const_iterator vit;
     for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
@@ -819,7 +815,7 @@ void Cubical_gaussian_map_geo::draw_primal(Draw_action* action)
   if (m_draw_marked_edge) draw_primal_marked_edge(action);
 }
 
-/*! Draw the primal marked vertex */
+/*! \brief draws the primal marked vertex. */
 void Cubical_gaussian_map_geo::draw_primal_marked_vertex(Draw_action* action)
 {
   if (!m_vertex_geom) m_vertex_geom = new Sphere();
@@ -850,7 +846,7 @@ void Cubical_gaussian_map_geo::draw_primal_marked_vertex(Draw_action* action)
   }
 }
 
-/*! Draw the primal marked edge */
+/*! \brief draws the primal marked edge. */
 void Cubical_gaussian_map_geo::draw_primal_marked_edge(Draw_action* action)
 {
   if (!m_edge_geom) m_edge_geom = new Cylinder();
@@ -905,7 +901,7 @@ void Cubical_gaussian_map_geo::draw_primal_marked_edge(Draw_action* action)
   }
 }
 
-/*! */
+/*! \brief */
 void Cubical_gaussian_map_geo::isect_primary()
 {
   for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
@@ -929,7 +925,7 @@ void Cubical_gaussian_map_geo::isect_primary()
   }
 }
 
-/*! Draw the dual representation opaque */
+/*! \brief draws the dual representation opaque. */
 void Cubical_gaussian_map_geo::draw_aos_opaque(Draw_action* action)
 {
   SGAL::Context* context = action->get_context();
@@ -1015,7 +1011,7 @@ void Cubical_gaussian_map_geo::draw_aos_marked_vertex(unsigned int id)
   }
 }
 
-/*! Draw the dual representation of the polyhedron in 2D */
+/*! \brief draws the dual representation of the polyhedron in 2D. */
 void Cubical_gaussian_map_geo::draw_aos_unfolded(SGAL::Draw_action* action)
 {
   if (is_dirty()) clean();
@@ -1119,7 +1115,7 @@ void Cubical_gaussian_map_geo::draw_aos_unfolded(SGAL::Draw_action* action)
   context->draw_line_width(1.0f);
 }
 
-/*! Draw the face of the unit cube */
+/*! \brief draws the face of the unit cube. */
 void Cubical_gaussian_map_geo::draw_cube_face(unsigned int id)
 {
   unsigned int i = (id + 0) % 3;
@@ -1141,7 +1137,7 @@ void Cubical_gaussian_map_geo::draw_cube_face(unsigned int id)
   glEnd();
 }
 
-/*! Draw the dual marked face */
+/*! \brief draws the dual marked face. */
 void Cubical_gaussian_map_geo::draw_aos_marked_face(unsigned int id)
 {
   const Arrangement& arr = m_cgm.arrangement(id);
@@ -1174,7 +1170,7 @@ void Cubical_gaussian_map_geo::draw_aos_marked_face(unsigned int id)
   }
 }
 
-/*! Draw the dual marked edge */
+/*! \brief draws the dual marked edge. */
 void Cubical_gaussian_map_geo::draw_aos_marked_edge(unsigned int id)
 {
   float radius = m_aos_edge_radius;
@@ -1448,7 +1444,7 @@ void Cubical_gaussian_map_geo::draw_aos_edges(Draw_action* action)
   }
 }
 
-/*! Draw the planar map associated with a face of the unit cube */
+/*! \brief draws the planar map associated with a face of the unit cube. */
 void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
                                                unsigned int id,
                                                float non_edge_line_width)
@@ -1503,7 +1499,7 @@ void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
   }
 }
 
-/*! Reverse the coordinate indices */
+/*! \brief reverses the coordinate indices. */
 void Cubical_gaussian_map_geo::
 set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
 {
@@ -1529,12 +1525,12 @@ void Cubical_gaussian_map_geo::print_stat()
   m_cgm.print_stat();
 }
 
-/*! Compute the planes and the normals of the dual facets and store them at the
- * vertices of the planar map
+/*! \brief computes the planes and the normals of the dual facets and store
+ * them at the vertices of the planar map.
  */
 void Cubical_gaussian_map_geo::process_facets()
 {
-  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
+  for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
     Arrangement& arr = m_cgm.arrangement(i);
     Arr_vertex_iterator vit;
     for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
@@ -1550,7 +1546,7 @@ void Cubical_gaussian_map_geo::process_facets()
   }
 }
 
-/*! Set the source gausian maps of the minkowski sum */
+/*! \brief sets the source gausian maps of the minkowski sum. */
 void Cubical_gaussian_map_geo::insert_cgm(Cubical_gaussian_map_geo* cgm)
 {
   m_cgm_nodes.push_back(cgm);
@@ -1559,14 +1555,14 @@ void Cubical_gaussian_map_geo::insert_cgm(Cubical_gaussian_map_geo* cgm)
   m_dirty_sphere_bound = true;
 }
 
-/*! \biref processes change of points */
+/*! \brief processes change of points. */
 void Cubical_gaussian_map_geo::field_changed(Field_info* field_info)
 {
   Container::field_changed(field_info);
   clear();
 }
 
-/*! Increas the vertex index */
+/*! \brief increases the vertex index. */
 void Cubical_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
 {
   m_marked_vertex_index++;
@@ -1575,7 +1571,7 @@ void Cubical_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
   clear();
 }
 
-/*! Increas the face index */
+/*! \brief increases the face index. */
 void Cubical_gaussian_map_geo::increase_edge_index(Field_info* field_info)
 {
   m_marked_edge_index++;
@@ -1584,7 +1580,7 @@ void Cubical_gaussian_map_geo::increase_edge_index(Field_info* field_info)
   clear();
 }
 
-/*! Increas the face index */
+/*! \brief increases the face index. */
 void Cubical_gaussian_map_geo::increase_facet_index(Field_info* field_info)
 {
   m_marked_facet_index++;
@@ -1593,7 +1589,7 @@ void Cubical_gaussian_map_geo::increase_facet_index(Field_info* field_info)
   clear();
 }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Cubical_gaussian_map_geo::create_renderers()
 {
   m_aos_marked_face_renderer = new Marked_face_renderer(*this);
@@ -1623,7 +1619,7 @@ void Cubical_gaussian_map_geo::create_renderers()
   m_colored_edges_renderer = new Colored_edges_renderer(*this);
 }
 
-/*! \brief destroys the renderers */
+/*! \brief destroys the renderers. */
 void Cubical_gaussian_map_geo::destroy_renderers()
 {
   if (m_aos_marked_face_renderer) delete m_aos_marked_face_renderer;
@@ -1648,7 +1644,7 @@ void Cubical_gaussian_map_geo::destroy_renderers()
   if (m_colored_edges_renderer) delete m_colored_edges_renderer;
 }
 
-/*! \brief cleans the renderer */
+/*! \brief cleans the renderer. */
 void Cubical_gaussian_map_geo::clean_renderer()
 {
   if (m_draw_marked_vertex)
@@ -1755,7 +1751,7 @@ void Cubical_gaussian_map_geo::clean_renderer()
   m_renderer_dirty = false;
 }
 
-/*! \brief renders the vertices with color */
+/*! \brief renders the vertices with color. */
 void Cubical_gaussian_map_geo::Colored_vertices_renderer::
 operator()(Draw_action* action)
 {
@@ -1763,14 +1759,12 @@ operator()(Draw_action* action)
   Base::operator()(action);
 }
 
-/*! \brief renders the marked vertices */
+/*! \brief renders the marked vertices. */
 void Cubical_gaussian_map_geo::Marked_vertices_renderer::
 operator()(Draw_action* action)
-{
-  m_geo.draw_aos_marked_vertices(action);
-}
+{ m_geo.draw_aos_marked_vertices(action); }
 
-/*! \brief renders the marked vertices with color */
+/*! \brief renders the marked vertices with color. */
 void Cubical_gaussian_map_geo::Colored_marked_vertices_renderer::
 operator()(Draw_action* action)
 {
@@ -1778,14 +1772,12 @@ operator()(Draw_action* action)
   Marked_vertices_renderer::operator()(action);
 }
 
-/*! \brief renders the nonreal vertices */
+/*! \brief renders the nonreal vertices. */
 void Cubical_gaussian_map_geo::Nonreal_vertices_renderer::
 operator()(Draw_action* action)
-{
-  m_geo.draw_aos_nonreal_vertices(action);
-}
+{ m_geo.draw_aos_nonreal_vertices(action); }
 
-/*! \brief renders the nonreal vertices with color */
+/*! \brief renders the nonreal vertices with color. */
 void Cubical_gaussian_map_geo::Colored_nonreal_vertices_renderer::
 operator()(Draw_action* action)
 {
@@ -1793,7 +1785,7 @@ operator()(Draw_action* action)
   Nonreal_vertices_renderer::operator()(action);
 }
 
-/*! \brief renders the edges with color */
+/*! \brief renders the edges with color. */
 void Cubical_gaussian_map_geo::Colored_edges_renderer::
 operator()(Draw_action* action)
 {
@@ -1850,7 +1842,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief renders the marked primal vertex */
+/*! \brief renders the marked primal vertex. */
 void Cubical_gaussian_map_geo::Marked_face_renderer::
 operator()(Draw_action* action)
 {

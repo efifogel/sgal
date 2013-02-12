@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -26,7 +26,7 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Trace.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
 Isect_action::Isect_action() :
@@ -38,44 +38,38 @@ Isect_action::Isect_action() :
 /*! Destructor */
 Isect_action::~Isect_action() 
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Isect_action ...");
   //! \todo DELETE_OBJECT(m_color_map);
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
-/*! Apply the draw action on a given node. For now this means calling
+/*! \brief applies the draw action on a given node. For now this means calling
  * the draw method on the Node.
  * @param node a pointer to the node to draw
  */
-Action::Trav_directive Isect_action::apply(Node * node)
+Action::Trav_directive Isect_action::apply(Node* node)
 {  
   node->isect(this); 
   return Action::TRAV_CONT;
 }
 
-/*! Set the context in the action. Also create the colormap used for assigning
- * a unique color for each id (0-n)
+/*! \brief sets the context in the action. Also creates the colormap used
+ * for assigning a unique color for each id (0-n)
  */
-void Isect_action::set_context(Context * context)
+void Isect_action::set_context(Context* context)
 {
   Action::set_context(context);
   //! \todo DELETE_OBJECT (m_color_map);
   m_color_map = new Color_map(context);
 }
 
-/*!
- */
-int Isect_action::get_index(Uint * rgb) const
+/*! \brief */
+int Isect_action::get_index(Uint* rgb) const
 {
   if (m_color_map) return m_color_map->get_index(rgb);
   return 0;
 }
 
-/*!
- */
-void Isect_action::get_color(unsigned int index, Uint * rgb) const
-{
-  if (m_color_map) m_color_map->get_color(index, rgb);
-}
+/*! \brief */
+void Isect_action::get_color(unsigned int index, Uint* rgb) const
+{ if (m_color_map) m_color_map->get_color(index, rgb); }
 
-
+SGAL_END_NAMESPACE

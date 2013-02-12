@@ -40,9 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 void Indexed_face_set::draw_invalid()
-{
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "invalid\n");
-}
+{ SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "invalid\n"); }
 
 /****************      Polygons      ****************/
 
@@ -55,7 +53,7 @@ void Indexed_face_set::draw_invalid()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOPO_VANO\n");
   
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
@@ -78,7 +76,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -91,7 +89,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOPO_VANO\n");
   
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
@@ -114,7 +112,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOPO_VANO\n");
 }
 
 /*!
@@ -126,7 +124,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOPO_VANO\n");
 
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
@@ -148,7 +146,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOPO_VANO\n");
 }
 
 /*!
@@ -160,7 +158,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOPO_VANO\n");
 
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
@@ -183,7 +181,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOPO_VANO\n");
 
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
@@ -206,7 +204,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
  */
  void Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOPO_VANO\n");
 
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
@@ -228,7 +226,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOPO_VANO\n");
 }
 
 // void draw_FSNO_FIYE_FAPM_TENO_MOPO_VANO();         invalid
@@ -244,7 +242,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -271,7 +269,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
 }
 
 /*!
@@ -287,7 +285,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
 
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
 
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
@@ -312,7 +310,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -326,7 +324,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -354,7 +352,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -368,7 +366,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -396,7 +394,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -409,7 +407,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -422,7 +420,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
 */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -439,7 +437,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -467,7 +465,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -480,7 +478,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -508,7 +506,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -521,7 +519,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -549,7 +547,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -563,7 +561,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -591,7 +589,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -605,7 +603,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -619,7 +617,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -636,7 +634,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTR_VANO\n");
 
   Uint j = 0;
   glBegin(GL_TRIANGLES);
@@ -660,7 +658,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -673,7 +671,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTR_VANO\n");
   // std::cout << "FSNO_FIYE_FAPV_TENO_MOTR_VANO" << std::endl;
 
   Uint j = 0;
@@ -702,7 +700,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -715,7 +713,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_normal_array);
   
@@ -739,7 +737,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTR_VANO\n");
 
   SGAL_assertion(m_color_array);
   
@@ -763,7 +761,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTR_VANO\n");
 
   Uint j = 0;
   glBegin(GL_TRIANGLES);
@@ -785,7 +783,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTR_VANO\n");
 
   Uint j = 0;
   glBegin(GL_TRIANGLES);
@@ -807,7 +805,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
  */
  void Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOTR_VANO\n");
 
   Uint j = 0;
   glBegin(GL_TRIANGLES);
@@ -828,7 +826,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -845,7 +843,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -876,7 +874,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -890,7 +888,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -921,7 +919,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -935,7 +933,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -965,7 +963,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -979,7 +977,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1009,7 +1007,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1023,7 +1021,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1037,7 +1035,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1054,7 +1052,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1085,7 +1083,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1099,7 +1097,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1130,7 +1128,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1144,7 +1142,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1174,7 +1172,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1188,7 +1186,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1218,7 +1216,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1232,7 +1230,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1246,7 +1244,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO\n");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1264,7 +1262,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOQU_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOQU_VANO\n");
 
   Uint j = 0;
   glBegin(GL_QUADS);
@@ -1290,7 +1288,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOQU_VANO");
 }
 
 /*!
@@ -1302,7 +1300,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOQU_VANO");
 
   Uint j = 0;
   glBegin(GL_QUADS);
@@ -1328,7 +1326,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1341,7 +1339,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOQU_VANO");
 
   Uint j = 0;
   glBegin(GL_QUADS);
@@ -1365,7 +1363,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1378,7 +1376,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOQU_VANO");
 
   Uint j = 0;
   glBegin(GL_QUADS);
@@ -1402,7 +1400,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1415,7 +1413,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOQU_VANO()
  */
  void Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOQU_VANO");
 
   Uint j = 0;
   glBegin(GL_QUADS);
@@ -1437,7 +1435,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1454,7 +1452,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1488,7 +1486,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1502,7 +1500,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1536,7 +1534,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1550,7 +1548,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1582,7 +1580,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1596,7 +1594,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1628,7 +1626,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1642,7 +1640,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1656,7 +1654,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1673,7 +1671,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1707,7 +1705,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1721,7 +1719,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1755,7 +1753,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1769,7 +1767,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1801,7 +1799,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1815,7 +1813,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -1847,7 +1845,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1861,7 +1859,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1875,7 +1873,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1893,7 +1891,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
       !m_tri_strip_lengths)
@@ -1923,7 +1921,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -1936,7 +1934,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
       !m_tri_strip_lengths)
@@ -1991,7 +1989,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2003,7 +2001,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
       !m_tri_strip_lengths)
@@ -2053,7 +2051,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2066,7 +2064,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
  */
  void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTS_VANO");
 
   if (!m_coord_array->size() || !m_normal_array->size() ||
       !m_tri_strip_lengths)
@@ -2107,7 +2105,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2120,7 +2118,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2133,7 +2131,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2151,7 +2149,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2187,7 +2185,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2201,7 +2199,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2270,7 +2268,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2284,7 +2282,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2349,7 +2347,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2363,7 +2361,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2411,7 +2409,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2425,7 +2423,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2439,7 +2437,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2456,7 +2454,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2492,7 +2490,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2505,7 +2503,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2541,7 +2539,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2555,7 +2553,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2603,7 +2601,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2617,7 +2615,7 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
 
   Tex_coord_array_2d* tex_coord_array =
     static_cast<Tex_coord_array_2d*>(m_tex_coord_array);
@@ -2666,7 +2664,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2679,7 +2677,7 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2693,7 +2691,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
  */
 void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
@@ -2707,7 +2705,7 @@ void Indexed_face_set::draw_FAPV_VAYE()
 {
   // std::cout << "FAPV_VAYE" << std::endl;
   
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPV_VAYE\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPV_VAYE\n");
 
   Uint tcoords = 0;
   if (m_tex_coord_array) {
@@ -2802,13 +2800,13 @@ void Indexed_face_set::draw_FAPV_VAYE()
 
 void Indexed_face_set::draw_FAPT_VAYE()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPT_VAYE");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPT_VAYE");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 
 void Indexed_face_set::draw_FAPM_VAYE()
 {
-  TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPM_VAYE");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPM_VAYE");
   SGAL_assertion_msg(0, "Not implemented yet!");
 }
 

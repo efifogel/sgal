@@ -177,7 +177,6 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
   SGAL::Context* context = action->get_context();
   if (are_generated_color()) context->draw_light_enable(false);
   glBegin(GL_LINES);
-  TRACE_MSG(SGAL::Trace::GRAPHICS, "glBegin(GL_LINES);\n");
   for (Finite_edges_iterator fei = m_triangulation.finite_edges_begin();
        fei != m_triangulation.finite_edges_end(); ++fei)
   {
@@ -195,31 +194,22 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
     if (are_generated_color()) {
       const Vector3f& c1 = vd1.get_color();
       glColor3fv((float*)&c1);
-      TRACE_CODE(SGAL::Trace::GRAPHICS,
-                 std::cout << "glColor3f(" << c1 << ");" << std::endl;);
     }
     
     const Vector3f& p1 = vd1.get_coord();
     glVertex3fv((float*)&p1);
-    TRACE_CODE(SGAL::Trace::GRAPHICS,
-               std::cout << "glVertex3f(" << p1 << ");" << std::endl;);
 
     const Vertex_data& vd2 = v2->info();
 
     if (are_generated_color()) {
       const Vector3f& c2 = vd2.get_color();
       glColor3fv((float*)&c2);
-      TRACE_CODE(SGAL::Trace::GRAPHICS,
-                 std::cout << "glColor3f(" << c2 << ");" << std::endl;);
     }
     
     const Vector3f& p2 = vd2.get_coord();
     glVertex3fv((float*)&p2);
-    TRACE_CODE(SGAL::Trace::GRAPHICS,
-               std::cout << "glVertex3f(" << p2 << ");" << std::endl;);
   }
   glEnd();
-  TRACE_MSG(SGAL::Trace::GRAPHICS, "glEnd();\n");
 
   if (are_generated_color()) {
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -302,19 +292,16 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
   elem->delete_marked();
 }
 
-/*! updates the internal representation in a cascade chain */
+/*! \brief updates the internal representation in a cascade chain. */
 void Triangulation_geo::coord_changed(SGAL::Field_info* field_info)
 {
-  TRACE_CODE(SGAL::Trace::POLYHEDRON,
-    for (Uint i = 0; i < m_coord_array->size(); ++i)
-      std::cout << (*m_coord_array)[i] << std::endl;
-             );
-  
+  SGAL_TRACE_CODE(SGAL::Trace::POLYHEDRON,
+                  for (Uint i = 0; i < m_coord_array->size(); ++i)
+                    std::cout << (*m_coord_array)[i] << std::endl;);
   clear();
 }
 
-/*! sets the attributes of this node
- */
+/*! \brief sets the attributes of this node. */
 void Triangulation_geo::init_prototype()
 {
   //! Container execution function

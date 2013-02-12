@@ -131,7 +131,6 @@ Scene_graph::Scene_graph(bool syncronize) :
 /*! Destructor */
 Scene_graph::~Scene_graph()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Scene_graph ...");
   // \todo sai
   // if (m_scripts_sai != NULL) delete m_scripts_sai;
   

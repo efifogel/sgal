@@ -7,17 +7,15 @@ ColorBackground {
   color 0.5 0.5 0.5 0
   clearStencil TRUE
 }
-# NavigationInfo { type [ "EXAMINE" "ANY" ] }
+NavigationInfo { type [ "EXAMINE" "ANY" ] }
 # Viewpoint {
 #   type "ORTHOGONAL"
 #   fieldOfView 3.1405
 # }
-
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
 DEF AOS_MODEL_VISIBLE_KEY SingleKeySensor { key "m" }
-
 DEF SNAP Snapshot {
   image Image { }
   fileFormat "jpg"
@@ -25,14 +23,13 @@ DEF SNAP Snapshot {
   dirName "."
   fileName "ego_bunny_res3"
 }
-
 Transform {
   rotation 1 0 0 -1.5707
   #bboxCenter 0 0 0
   #bboxSize 1.5 1.5 1.5
   children [
     DEF SWITCH_MODEL Switch {
-      whichChoice -1
+      whichChoice 0
       children [
 	Shape {
 	  appearance Appearance {
@@ -5790,15 +5787,38 @@ Transform {
        ]
     }
     DEF GEOM Ego {
+      appearance Appearance {
+	material Material {
+	  diffuseColor 0.8 0.8 0.8
+	  specularColor 0.2 0.2 0.2
+	  ambientIntensity 0.2
+	  # transparency 0
+	}
+	texture CubeEnvironment {
+	  rightImage Image {
+	    flip FALSE alpha TRUE transparency 0.2 url ["right.jpg"]
+	  } 	# -90
+	  leftImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["left.jpg"]
+	  }   	#  90
+	  backImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["back.jpg"]
+	  }   	# 180
+	  frontImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["front.jpg"]
+	  }
+	  topImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["top.jpg"]
+	  }
+	  bottomImage Image { 
+	    flip FALSE alpha TRUE transparency 0.2 url ["bottom.jpg"]
+	  }		# 180
+	}
+      }
+      style "appearance"
       scale 2000 2000 2000
       rotation 1 0 0 1.5707
       model USE MODEL
-      # parts {
-      #   children [
-      #     USE PART0
-      #     USE PART1
-      #    ]
-      # }
     }
 
     # # The axes:

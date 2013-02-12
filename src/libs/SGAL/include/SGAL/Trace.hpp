@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12554 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -53,7 +53,7 @@ public:
   };
 
   /*! Obtain the trace singleton */
-  static Trace * get_instance();  
+  static Trace* get_instance();  
 
   /*! Enable the trace for the given code */
   void enable(Code code) { enable(signature(code)); }
@@ -76,7 +76,7 @@ private:
   Trace() : m_signature(0x0) {}
 
   /*! The singleton */
-  static Trace * s_instance;
+  static Trace* s_instance;
 
   /*! return the signature of the given trace-code */
   Uint signature(Code code) { return 0x1 << code; }
@@ -85,17 +85,16 @@ private:
   Uint m_signature;
 };
 
+/*! \brief */
 inline Boolean TRACE(Trace::Code code)
-{
-  return Trace::get_instance()->is_enabled(code);
-}
+{ return Trace::get_instance()->is_enabled(code); }
 
 #if defined(NDEBUG)
-#define TRACE_MSG(key, msg)
-#define TRACE_CODE(key, code)
+#define SGAL_TRACE_MSG(key, msg)
+#define SGAL_TRACE_CODE(key, code)
 #else
-#define TRACE_MSG(key, msg)     if (SGAL::TRACE(key)) std::cout << msg
-#define TRACE_CODE(key, code)   if (SGAL::TRACE(key)) { code } else {}
+#define SGAL_TRACE_MSG(key, msg)     if (SGAL::TRACE(key)) std::cout << msg
+#define SGAL_TRACE_CODE(key, code)   if (SGAL::TRACE(key)) { code } else {}
 #endif
 
 SGAL_END_NAMESPACE

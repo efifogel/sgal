@@ -468,24 +468,26 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
   s_prototype->add_field_info(bool_field);
 }
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_marked_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief */
 Container_proto* Spherical_gaussian_map_marked_geo::get_prototype() 
 {  
   if (!s_prototype) Spherical_gaussian_map_marked_geo::init_prototype();
   return s_prototype;
 }
 
-/*! Draw the polyhedron directly from the gaussian map representation */
+/*! \brief draws the polyhedron directly from the gaussian map
+ * representation.
+ */
 void Spherical_gaussian_map_marked_geo::draw_primal(Draw_action* action)
 {
-  TRACE_MSG(Trace::GAUSSIAN_MAP, "draw_primal()\n");
+  SGAL_TRACE_MSG(Trace::GAUSSIAN_MAP, "draw_primal()\n");
 
 #if 0
   {
@@ -582,7 +584,7 @@ draw_primal_marked_vertex(Draw_action* action)
   }
 }
 
-/*! Draw the primal marked edge */
+/*! \brief draws the primal marked edge. */
 void Spherical_gaussian_map_marked_geo::
 draw_primal_marked_edge(Draw_action* action)
 {
@@ -631,7 +633,7 @@ draw_primal_marked_edge(Draw_action* action)
   }
 }
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_marked_geo::isect_primary()
 {
   Sgm_vertex_const_iterator vit;
@@ -651,7 +653,7 @@ void Spherical_gaussian_map_marked_geo::isect_primary()
   }
 }
 
-/*! Print statistics. */
+/*! \brief prints statistics. */
 void Spherical_gaussian_map_marked_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";

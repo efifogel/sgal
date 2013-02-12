@@ -1446,7 +1446,7 @@ void Context::delete_context()
 void Context::swap_buffers()
 {
   //! \todo m_gfx_handle->swap_buffers();
-  TRACE_MSG(Trace::GRAPHICS, "Context::swap_buffers()\n");
+  SGAL_TRACE_MSG(Trace::GRAPHICS, "Context::swap_buffers()\n");
 }
 
 /*! \brief */

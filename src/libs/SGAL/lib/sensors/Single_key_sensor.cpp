@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,12 +40,12 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Single_key_sensor::s_tag = "sgalSingleKeySensor";
-Container_proto * Single_key_sensor::s_prototype = NULL;
+std::string Single_key_sensor::s_tag = "SingleKeySensor";
+Container_proto* Single_key_sensor::s_prototype = NULL;
 
 /*! Default Values */
 Uint Single_key_sensor::s_def_num_states = 2;
-Boolean Single_key_sensor::s_def_trigger_on_release(SGAL_TRUE);
+Boolean Single_key_sensor::s_def_trigger_on_release(true);
 
 REGISTER_TO_FACTORY(Single_key_sensor, "Single_key_sensor");
 
@@ -59,26 +59,21 @@ Single_key_sensor::Single_key_sensor(Boolean proto) :
   m_int_state(0),
   m_num_states(s_def_num_states),
   m_trigger_on_release(s_def_trigger_on_release)
-{
-}
+{}
 
-/*! This function constructs a new instance. */
-Container * Single_key_sensor::clone()
+/*! \brief constructs a new instance. */
+Container* Single_key_sensor::clone()
 {
-  Single_key_sensor * sensor =  new Single_key_sensor();
+  Single_key_sensor* sensor =  new Single_key_sensor();
   sensor->register_events();
   return sensor;
 }
 
 /*! The destructor */
 Single_key_sensor::~Single_key_sensor()
-{
-  TRACE_MSG(Trace::DESTRUCTOR, "~Single_key_sensor ...");
-  unregister_events();
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
-};
+{ unregister_events(); }
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Single_key_sensor::init_prototype()
 {
   // The prototype shuold be allocated only once for all instances
@@ -100,39 +95,34 @@ void Single_key_sensor::init_prototype()
                                           get_member_offset(&m_num_states)));
 }
 
-/*! Deletes the node prototype */
+/*! \brief deletes the node prototype. */
 void Single_key_sensor::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
-/*! Obtains the node prototype */
-Container_proto * Single_key_sensor::get_prototype()
+/*! \brief obtains the node prototype. */
+Container_proto* Single_key_sensor::get_prototype()
 {
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! Registers the keyboard event for this agent */
+/*! \brief registers the keyboard event for this agent. */
 void Single_key_sensor::register_events()
-{
-  Keyboard_event::doregister(this);
-}
+{ Keyboard_event::doregister(this); }
 
-/*! Unregisters the keyboard event for this agent */
+/*! \brief unregisters the keyboard event for this agent. */
 void Single_key_sensor::unregister_events()
-{
-  Keyboard_event::unregister(this);
-}
+{ Keyboard_event::unregister(this); }
   
-/*! Prints out the name of this agent (for debugging purposes) */
+/*! \brief prints out the name of this agent (for debugging purposes). */
 void Single_key_sensor::identify()
-{
-  std::cout << "Agent: Single_key_sensor" << std::endl;
-}
+{ std::cout << "Agent: Single_key_sensor" << std::endl; }
 
 /*! Handles keyboard events */
-void Single_key_sensor::handle(Keyboard_event * event)
+void Single_key_sensor::handle(Keyboard_event* event)
 {
   if (event->get_key() != m_key) return;
   m_press = event->get_pressed();
@@ -140,7 +130,7 @@ void Single_key_sensor::handle(Keyboard_event * event)
   if (!m_trigger_on_release && !m_press) return;
 
   // m_time = m_execution_coordinator->get_scene_time();
-  Field * field = get_field(PRESS);
+  Field* field = get_field(PRESS);
   if (field) field->cascade();
 
   field = get_field(TIME);
@@ -159,20 +149,16 @@ void Single_key_sensor::handle(Keyboard_event * event)
   if (field) field->cascade();
 }
   
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Single_key_sensor::set_attributes(Element * elem)
+/*! \brief sets the attributes of this object. */
+void Single_key_sensor::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
 
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "key") {
       m_key = value[1];
       elem->mark_delete(ai);
