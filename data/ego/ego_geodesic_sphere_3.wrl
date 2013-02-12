@@ -34,7 +34,6 @@ DEF INC_TILING_ROW Incrementor {
   value 1
 }
 
-
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
@@ -596,7 +595,7 @@ Transform {
 	      }		# 180
 	    }
 	  }
-	  style "appearance"
+	  # style "appearance"
 	  scale 100 100 100
 	  model USE MODEL
 	  knobSlices 16

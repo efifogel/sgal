@@ -1,17 +1,17 @@
 #VRML V2.0 utf8
 Configuration {
   accumulation Accumulation { enabled TRUE }
+  displayFPS TRUE
 }
 ColorBackground {
   color 0.5 0.5 0.5 0
   clearStencil TRUE
 }
-NavigationInfo { type [ "EXAMINE" "ANY" ] }
-Viewpoint {
-  # type "ORTHOGONAL"
-  # fieldOfView 3.04
-  radiusScale 0.7
-}
+# NavigationInfo { type [ "EXAMINE" "ANY" ] }
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 3.1405
+# }
 
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
@@ -32,7 +32,7 @@ Transform {
   #bboxSize 1.5 1.5 1.5
   children [
     DEF SWITCH_MODEL Switch {
-      whichChoice 0
+      whichChoice -1
       children [
 	Shape {
 	  appearance Appearance {
@@ -5787,30 +5787,6 @@ Transform {
 		       ]
 	  }
 	}
-       ]
-    }
-    Group {
-      children [
-	# Shape {
-	#   appearance Appearance {
-	#     material Material {}
-	#   }
-	#   geometry DEF PART0 EgoBrick {
-	#     #type "brick" # "plate"
-	#     #length 4
-	#     #width 2
-	#   }
-	# }
-	# Shape {
-	#   appearance Appearance {
-	#     material Material {}
-	#   }
-	#   geometry DEF PART1 EgoBrick {
-	#     #type "brick" # "plate"
-	#     numberOfKnobs1 2
-	#     numberOfKnobs2 4
-	#   }
-	# }
        ]
     }
     DEF GEOM Ego {
