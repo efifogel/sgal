@@ -70,6 +70,8 @@ public:
     PARTS,
     STYLE,
     APPEARANCE,
+    KNOB_SLICES,
+    SPACE_FILLING,
     LAST
   };
 
@@ -271,6 +273,12 @@ public:
   /*! Obtain the knob slices number. */
   Uint get_knob_slices() const;
 
+  /*! Determine whether the parts are space filling. */
+  Boolean is_space_filling() const;
+
+  /*! Set the flag that indicates whether the parts are space filling. */
+  void set_space_filling(Boolean flag);
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -300,6 +308,9 @@ protected:
 
   /*! The apperance attribute. */
   Appearance* m_appearance;
+
+  /*! Indicates whether the parts are space filling. */
+  Boolean m_space_filling;
 
   /*! Stores the pervious appearance. */
   Appearance* m_appearance_prev;
@@ -369,6 +380,7 @@ private:
   static const Float s_def_voxel_length;
   static const Float s_def_voxel_height;
   static const Style s_def_style;
+  static const Boolean s_def_space_filling;
 };
 
 /*! \brief obtains the (const) appearance. */
@@ -379,6 +391,9 @@ inline Appearance* Ego::get_appearance() { return m_appearance; }
 
 /*! \brief obtains the style. */
 inline Ego::Style Ego::get_style() const { return m_style; }
+
+/*! \brief determines whether the parts are space filling. */
+inline Boolean Ego::is_space_filling() const { return m_space_filling; }
 
 /*! \brief obtains the knob slices number. */
 inline Uint Ego::get_knob_slices() const { return m_knob_slices; }

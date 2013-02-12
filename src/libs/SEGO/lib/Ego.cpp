@@ -76,6 +76,7 @@ Ego::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
 const Ego_voxels_tiler::Tiling_rows
 Ego::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
 const Ego::Style Ego::s_def_style(Ego::STYLE_RANDOM_COLORS);
+const Boolean Ego::s_def_space_filling(false);
 
 /*! Styles */
 const char* Ego::s_style_names[] = { "randomColors", "appearance" };
@@ -88,9 +89,10 @@ Ego::Ego(Boolean proto) :
   m_voxel_width(s_def_voxel_width),
   m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),
-  m_style(s_def_style),  
+  m_style(s_def_style),
   m_appearance(NULL),
   m_appearance_prev(NULL),
+  m_space_filling(s_def_space_filling),
   m_first_tile_placement(s_def_first_tile_placement),
   m_tiling_strategy(s_def_tiling_strategy),
   m_tiling_rows_direction(s_def_tiling_rows_direction),
@@ -459,14 +461,60 @@ void Ego::clean_parts()
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
         if (m_tiled_voxels.is_filled(i, j, k) == false)
           continue;
-        
+
         boost::optional<Ego_voxels::size_type> brick =
           m_tiled_voxels.get_brick(i, j, k);
 
         if (!brick) continue;
 
-        SGAL_assertion(brick->get<0>() == 2 && brick->get<1>() == 2);
+        // continue, if the brick is completely obscured:
+        std::size_t num0(brick->get<0>());
+        std::size_t num1(brick->get<1>());
+        SGAL_assertion((num0 == 2) && (num1 == 2));
 
+        //! \todo In the following we chack whether the brick is apparent.
+        // A brick is not apparent if it is obscured from all directions
+        // by opaque bricks. Currently we assume that all bricks are opaque. 
+        Boolean apparent = false;
+        if ((i == 0) || (j == 0) || (k == 0) ||
+            (i >= size.get<0>()-num0) || (j >= size.get<1>()-num1) ||
+            (k == size.get<2>()-1))
+          apparent = true;
+        if (!apparent) {
+          for (std::size_t t0 = 0; t0 < num0; ++t0) {
+            for (std::size_t t1 = 0; t1 < num1; ++t1) {
+              if (!m_tiled_voxels.is_filled(i+t0, j+t1, k-1) ||
+                  !m_tiled_voxels.is_filled(i+t0, j+t1, k+1))
+              {
+                apparent = true;
+                break;
+              }
+            }
+            if (apparent) break;
+          }
+        }
+        if (!apparent) {
+          for (std::size_t t0 = 0; t0 < num0; ++t0) {
+            if (!m_tiled_voxels.is_filled(i+t0, j-1, k) ||
+                !m_tiled_voxels.is_filled(i+t0, j+num1, k))
+            {
+              apparent = true;
+              break;
+            }
+          }
+        }
+        if (!apparent) {
+          for (std::size_t t1 = 0; t1 < num1; ++t1) {
+            if (!m_tiled_voxels.is_filled(i-1, j+t1, k) ||
+                !m_tiled_voxels.is_filled(i+num0, j+t1, k))
+            {
+              apparent = true;
+              break;
+            }
+          }
+        }
+        if (!m_space_filling && !apparent) continue;
+        
         Transform* transform = new Transform;
         add_child(transform);
 
@@ -510,6 +558,7 @@ void Ego::clean_parts()
       }
     }
   }
+  std::cout << "# of children: " << get_child_count() << std::endl;
 }
 
 /*! \brief creates the geometry of a brick. */
@@ -746,5 +795,8 @@ void Ego::set_style(Style style)
 
 /*! \brief sets the knob slicess number. */
 void Ego::set_knob_slices(Uint slices) { m_knob_slices = slices; }
+
+/*! \brief sets the flag that indicates whether the parts are space filling. */
+void Ego::set_space_filling(Boolean flag) { m_space_filling = flag; }
 
 SGAL_END_NAMESPACE
