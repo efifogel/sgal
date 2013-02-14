@@ -75,7 +75,7 @@ public:
     LAST
   };
 
-  enum Style { STYLE_RANDOM_COLORS, STYLE_APPEARANCE };
+  enum Style { STYLE_RANDOM_COLORS, STYLE_APPEARANCE, STYLE_DISCRETE_CUBE_MAP };
   
   /*! Constructor */
   Ego(Boolean proto = false);
@@ -84,15 +84,14 @@ public:
   virtual ~Ego();
 
   /* Construct the prototype */
-  static Ego* prototype() { return new Ego(true); }
+  static Ego* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Ego(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
   
-
   /*! Delete the container prototype */
   virtual void delete_prototype(); 
 
@@ -144,6 +143,9 @@ public:
 
   /*! (Re)generate the parts. */
   void clean_parts();
+
+  /*! (Re)generate the part colors. */
+  void clean_colors(Draw_action* action);
   
   /*! Clear the internal representation and auxiliary data structures */
   void clear();
@@ -155,27 +157,27 @@ public:
    */
   Boolean is_empty();
 
-  /*! Get the type of the model.
-   * \return true if this is the type of the model.
+  /*! Determine whether the type of the model is 'Polyhedron'.
+   * \return true if the type of the model is 'Polyhedron'.
    */
-  bool is_model_polyhedron() const {
-    return (boost::get<Polyhedron_geo*> (&m_model) != NULL);
-  }
+  Boolean is_model_polyhedron() const;
 
-  bool is_model_exact_polyhedron() const {
-    return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL);
-  }
+  /*! Determine whether the type of the model is 'Exact_polyhedron'.
+   * \return true if the type of the model is 'Exact_polyhedron'.
+   */
+  Boolean is_model_exact_polyhedron() const;
 
-  bool is_model_geo_set() const {
-    return (boost::get<Geo_set*> (&m_model) != NULL);
-  }
+  /*! Determine whether the base type of the model is 'Get_set'.
+   * \return true if the base type of the model is 'Get_set'.
+   */
+  Boolean is_model_geo_set() const;
 
   /*! Set the model.
    * \param model the model.
    */
-  void set_model(Polyhedron_geo* model) { m_model = model; }
-  void set_model(Exact_polyhedron_geo* model) { m_model = model; }
-  void set_model(Geo_set* model) { m_model = model; }
+  void set_model(Polyhedron_geo* model);
+  void set_model(Exact_polyhedron_geo* model);
+  void set_model(Geo_set* model);
 
   /*! Obtain the (const) polyhedron model.
    * \return the model.
@@ -329,6 +331,7 @@ protected:
   Boolean m_dirty_voxels;
   Boolean m_dirty_tiling;
   Boolean m_dirty_parts;
+  Boolean m_dirty_colors;
 
   /*! Indicates whether the parts are "owned". If they are owned (as
    * the user hasn't provided any) the parts should be destructed when
@@ -362,6 +365,12 @@ private:
    */
   Boolean m_owned_appearance;
 
+  /*! Indicates whether cleaning the color parts is in progress. 
+   * Upon invocation of clean_parts(), if this flag is on, the function
+   * immediately returns.
+   */
+  Boolean m_clean_colors_in_progress;
+  
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
@@ -382,6 +391,29 @@ private:
   static const Style s_def_style;
   static const Boolean s_def_space_filling;
 };
+
+/* \brief constructs the prototype. */
+inline Ego* Ego::prototype() { return new Ego(true); }
+
+/*! \brief clones. */
+inline Container* Ego::clone() { return new Ego(); }
+
+/*! \brief determines whether the type of the model is 'Polyhedron'. */
+inline Boolean Ego::is_model_polyhedron() const
+{  return (boost::get<Polyhedron_geo*> (&m_model) != NULL); }
+
+/*! \brief determines whether the type of the model is 'Exact_polyhedron'. */
+inline Boolean Ego::is_model_exact_polyhedron() const
+{ return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL); }
+
+/*! \brief determines whether the base type of the model is 'Get_set'. */
+inline Boolean Ego::is_model_geo_set() const
+{ return (boost::get<Geo_set*> (&m_model) != NULL); }
+
+/*! \brief sets the model. */
+inline void Ego::set_model(Polyhedron_geo* model) { m_model = model; }
+inline void Ego::set_model(Exact_polyhedron_geo* model) { m_model = model; }
+inline void Ego::set_model(Geo_set* model) { m_model = model; }
 
 /*! \brief obtains the (const) appearance. */
 inline const Appearance* Ego::get_appearance() const { return m_appearance; }

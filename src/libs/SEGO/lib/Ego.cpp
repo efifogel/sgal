@@ -51,6 +51,9 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Mesh_set.hpp"
+#include "SGAL/Image_base.hpp"
+#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Context.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -63,6 +66,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class Configuration;
+  
 std::string Ego::s_tag = "Ego";
 Container_proto* Ego::s_prototype = NULL;
 
@@ -79,7 +84,8 @@ const Ego::Style Ego::s_def_style(Ego::STYLE_RANDOM_COLORS);
 const Boolean Ego::s_def_space_filling(false);
 
 /*! Styles */
-const char* Ego::s_style_names[] = { "randomColors", "appearance" };
+const char* Ego::s_style_names[] =
+  { "randomColors", "appearance", "discreteCubeMap" };
 
 REGISTER_TO_FACTORY(Ego, "Ego");
 
@@ -100,10 +106,12 @@ Ego::Ego(Boolean proto) :
   m_dirty_voxels(true),
   m_dirty_tiling(true),
   m_dirty_parts(true),
+  m_dirty_colors(true),
   m_owned_parts(false),
   m_scene_graph(NULL),
   m_knob_slices(Ego_brick::s_def_knob_slices),
-  m_owned_appearance(false)
+  m_owned_appearance(false),
+  m_clean_colors_in_progress(false)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
 
 /*! Destructor */
@@ -437,8 +445,6 @@ void Ego::clean_tiling()
 /*! \brief (re)generate the parts. */
 void Ego::clean_parts()
 {
-  m_dirty_parts = false;
-  m_dirty_sphere_bound = true;
   m_owned_parts = true;
 
   Vector3f origin(CGAL::to_double(m_tiled_voxels_origin.x()),
@@ -550,6 +556,12 @@ void Ego::clean_parts()
           ego_brick = create_geometry(should_draw_knobs);
           break;
 
+         case STYLE_DISCRETE_CUBE_MAP:
+          app = m_appearance;
+          tmp.sub(center, brick_center);
+          ego_brick = create_geometry(should_draw_knobs, tmp);
+          break;
+          
          default: std::cerr << "Invalid style!" << std::endl;
         }
         shape->set_override_blend_func(false);
@@ -559,6 +571,62 @@ void Ego::clean_parts()
     }
   }
   std::cout << "# of children: " << get_child_count() << std::endl;
+
+  m_dirty_parts = false;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief */
+void Ego::clean_colors(Draw_action* action)
+{
+  if (m_clean_colors_in_progress) return;
+
+  Context* context = action->get_context();
+  Uint x0 = 0, y0 = 0, width = 0, height = 0;
+  context->get_viewport(x0, y0, width, height);
+
+  // Prepare draw action:
+  Configuration* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  SGAL::Draw_action draw_action(conf);
+  draw_action.set_context(context);
+  draw_action.set_snap(false);
+  
+  // Prepare Image:
+  Image_base::Format format = Image_base::kRGB8_8_8;
+  GLenum gl_format = Image_base::get_format_format(format);
+  GLenum gl_type = Image_base::get_format_type(format);
+  Uint size = Image_base::get_size(width, height, format);
+  Uchar* pixels = new Uchar[size];
+
+  // Store and reset read-buffer
+  GLint val;
+  glGetIntegerv(GL_READ_BUFFER, &val);
+  GLenum read_buffer_mode = (GLenum)val;
+  glReadBuffer(GL_BACK);
+
+  // Create the camera:
+  // Camera camera;
+  
+  // Draw
+  m_clean_colors_in_progress = true;
+  for (Uint i = 0; i < 6; ++ i) {
+    // set the camera
+    m_scene_graph->draw(&draw_action);
+    glReadPixels(0, 0, width, height, gl_format, gl_type, pixels);
+    // m_scene_graph->draw(&isect_action);
+    // glReadPixels(0, 0, width, height, gl_format, gl_type, selections);
+    /// process pixels & selections
+  }
+  m_clean_colors_in_progress = false;
+
+  // Clean & Recover read-buffer
+  glReadBuffer(read_buffer_mode);
+  delete [] pixels;
+
+  // Update the colors:
+  
+  m_dirty_colors = false;
 }
 
 /*! \brief creates the geometry of a brick. */
@@ -633,6 +701,7 @@ Action::Trav_directive Ego::draw(Draw_action* action)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
+  if (m_dirty_colors) clean_colors(action);
 
   return Group::draw(action);
 }
@@ -715,7 +784,7 @@ void Ego::adjust_voxels_for_tiling() {
   m_voxels.offset_xy_layers(1);
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene. */  
 void Ego::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
 /*! \brief sets the appearance of the object. */
