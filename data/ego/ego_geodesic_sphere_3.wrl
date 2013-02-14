@@ -596,6 +596,7 @@ Transform {
 	    }
 	  }
 	  # style "appearance"
+	  style "discreteCubeMap"
 	  scale 100 100 100
 	  model USE MODEL
 	  knobSlices 16
