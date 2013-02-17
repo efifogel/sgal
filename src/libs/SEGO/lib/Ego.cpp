@@ -655,57 +655,61 @@ void Ego::clean_colors()
   // Create the cameras:
   Camera cameras[6];
   Ego_voxels::size_type voxel_size = m_tiled_voxels.size();
-  // Vector3f offset(dx * 0.5f, dy * 0.5f, dz * 0.5f);
+  Vector3f offset(m_voxel_length * 0.5f, m_voxel_width * 0.5f,
+                  m_voxel_height * 0.5f);
   Vector3f origin(CGAL::to_double(m_tiled_voxels_origin.x()),
                   CGAL::to_double(m_tiled_voxels_origin.y()),
                   CGAL::to_double(m_tiled_voxels_origin.z()));
-  Vector3f disp(m_voxel_length * voxel_size.get<0>() * 0.5f,
-                m_voxel_width * voxel_size.get<1>() * 0.5f,
-                m_voxel_height * voxel_size.get<2>() * 0.5f);
+  Vector3f box(m_voxel_length * voxel_size.get<0>(),
+               m_voxel_width * voxel_size.get<1>(),
+               m_voxel_height * voxel_size.get<2>());
+  Vector3f disp(box);
+  disp.scale(0.5);
   Vector3f center;
   center.add(origin, disp);
+  center.add(offset);
   
   // -1,0,0
-  cameras[0].set_position(center[0]-disp[0], center[1], center[2]);
+  cameras[0].set_position(center[0]-disp[0]-0.2, center[1], center[2]);
   cameras[0].set_orientation(-1, 0, 0, 0);
   cameras[0].get_base_frust().make_ortho(center[1]+disp[1], center[1]-disp[1],
                                          center[2]-disp[2], center[2]+disp[2],
-                                         center[0]-disp[0], center[0]+disp[0]);
+                                         0.1, box[0]+0.4);
 
   // +1,0,0
-  cameras[1].set_position(center[0]+disp[0], center[1], center[2]);
+  cameras[1].set_position(center[0]+disp[0]+0.2, center[1], center[2]);
   cameras[1].set_orientation(1, 0, 0, 0);
   cameras[1].get_base_frust().make_ortho(center[1]-disp[1], center[1]+disp[1],
                                          center[2]-disp[2], center[2]+disp[2],
-                                         center[0]+disp[0], center[0]-disp[0]);
+                                         0.1, box[0]+0.4);
   
   // 0,-1,0
-  cameras[2].set_position(center[0], center[1]-disp[1], center[2]);
+  cameras[2].set_position(center[0], center[1]-disp[1]-0.2, center[2]);
   cameras[2].set_orientation(0, -1, 0, 0);
   cameras[2].get_base_frust().make_ortho(center[2]+disp[2], center[2]-disp[2],
                                          center[0]-disp[0], center[0]+disp[0],
-                                         center[1]-disp[1], center[1]+disp[1]);
+                                         0.1, box[1]+0.4);
 
   // 0,+1,0
-  cameras[3].set_position(center[0], center[1]+disp[1], center[2]);
+  cameras[3].set_position(center[0], center[1]+disp[1]+0.2, center[2]);
   cameras[3].set_orientation(0, 1, 0, 0);
   cameras[3].get_base_frust().make_ortho(center[2]-disp[2], center[2]+disp[2],
                                          center[0]-disp[0], center[0]+disp[0],
-                                         center[1]+disp[1], center[1]-disp[1]);
+                                         0.1, box[1]+0.4);
 
   // 0,0,-1
-  cameras[4].set_position(center[0], center[1], center[2]-disp[2]);
+  cameras[4].set_position(center[0], center[1], center[2]-disp[2]-0.2);
   cameras[4].set_orientation(0, 0, -1, 0);
   cameras[4].get_base_frust().make_ortho(center[0]+disp[0], center[0]-disp[0],
                                          center[1]-disp[1], center[1]+disp[1],
-                                         center[2]-disp[2], center[2]+disp[2]);
+                                         0.1, box[2]+0.4);
 
   // 0,0,+1
-  cameras[5].set_position(center[0], center[1], center[2]+disp[2]);
+  cameras[5].set_position(center[0], center[1], center[2]+disp[2]+0.2);
   cameras[5].set_orientation(0, 0, 1, 0);
   cameras[5].get_base_frust().make_ortho(center[0]-disp[0], center[0]+disp[0],
                                          center[1]-disp[1], center[1]+disp[1],
-                                         center[2]+disp[2], center[2]-disp[2]);
+                                         0.1, box[2]+0.4);
 
   // Draw
   m_clean_colors_in_progress = true;
@@ -725,6 +729,7 @@ void Ego::clean_colors()
       oss << i;
       file_name += "_" + oss.str() + ".jpg";
       Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
+      image.flip();
       image.magick("jpg");
       image.write(file_name);
     }

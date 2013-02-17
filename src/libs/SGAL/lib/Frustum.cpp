@@ -126,8 +126,7 @@ void Frustum::get_near_far(Float& near_dist, Float& far_dist)
 /*! \brief sets the aspect recalculation mode. */
 void Frustum::set_aspect_mode(Frustum::Aspect_mode mode)
 {
-  if (m_aspect_mode == mode)
-    return;
+  if (m_aspect_mode == mode) return;
   m_aspect_mode = mode;
   m_dirty_corners = true;
   m_dirty_planes = true;
@@ -211,6 +210,7 @@ void Frustum::set_bottom(Float bottom)
 /*! \brief makes this frustum orthogonal. */
 void Frustum::make_ortho(float left, float right, float bottom, float top)
 {
+  set_aspect_mode(CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
@@ -224,6 +224,7 @@ void Frustum::make_ortho(float left, float right, float bottom, float top)
 void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
                          Float near_dist, Float far_dist)
 {
+  set_aspect_mode(CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
@@ -238,6 +239,7 @@ void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
 /*! \brief makes this frustum perspective. */
 void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
 {
+  set_aspect_mode(CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
@@ -251,6 +253,7 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
 void Frustum::make_persp(Float left, Float right, Float bottom, Float top,
                          Float near_dist, Float far_dist)
 {
+  set_aspect_mode(CALC_NONE);
   m_left = left;
   m_right = right;
   m_top = top;
