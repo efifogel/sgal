@@ -145,7 +145,7 @@ public:
   void clean_parts();
 
   /*! (Re)generate the part colors. */
-  void clean_colors(Draw_action* action);
+  void clean_colors();
   
   /*! Clear the internal representation and auxiliary data structures */
   void clear();

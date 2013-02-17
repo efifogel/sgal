@@ -56,6 +56,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Camera.hpp"
+#include "SGAL/Gl_wrapper.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -548,17 +549,26 @@ void Ego::clean_parts()
         Vector3f tmp;
         switch (m_style) {
          case STYLE_APPEARANCE:
+          m_dirty_colors = false;
           app = m_appearance;
           tmp.sub(center, brick_center);
           ego_brick = create_geometry(should_draw_knobs, tmp);
           break;
 
          case STYLE_RANDOM_COLORS:
+          m_dirty_colors = false;
           app = create_random_appearance();
           ego_brick = create_geometry(should_draw_knobs);
           break;
 
          case STYLE_DISCRETE_CUBE_MAP:
+          shape->set_override_tex_enable(false);
+          shape->set_override_tex_env(false);
+          shape->set_override_blend_func(false);
+          shape->set_override_light_model(false);
+          shape->set_override_tex_gen(false);
+          shape->set_override_light_enable(false);
+          m_dirty_colors = true;
           app = m_appearance;
           tmp.sub(center, brick_center);
           ego_brick = create_geometry(should_draw_knobs, tmp);
@@ -579,12 +589,13 @@ void Ego::clean_parts()
 }
 
 /*! \brief */
-void Ego::clean_colors(Draw_action* action)
+void Ego::clean_colors()
 {
   if (m_clean_colors_in_progress) return;
-
+  
   //! \todo create a new context? and remove the (action) argument.
-  Context* context = action->get_context();
+  Context* context = m_scene_graph->get_context();
+  SGAL_assertion(context);
   Uint x0 = 0, y0 = 0, width = 0, height = 0;
   context->get_viewport(x0, y0, width, height);
 
@@ -614,57 +625,113 @@ void Ego::clean_colors(Draw_action* action)
   Uint size_select= Image_base::get_size(width, height, format_select);
   Uchar* selections = new Uchar[size_select];
   
-  // Store and reset read-buffer
+  // Set the clear color:
+  Vector4f color(0, 0, 0, 0);
+
+  // Prepare the openGl state
+  // - Adjust texture environment
+  // - Disable lighting
+  // - Set read and draw buffers
+  m_appearance->set_tex_env(Gfx::REPLACE_TENV);
+  m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
+  m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
+  m_appearance->set_light_enable(false);
+  m_appearance->set_poly_mode(Gfx::FILL_PMODE);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
   GLint val;
   glGetIntegerv(GL_READ_BUFFER, &val);
   GLenum read_buffer_mode = (GLenum)val;
-  glReadBuffer(GL_BACK);
+  glReadBuffer(GL_FRONT);
+  glGetIntegerv(GL_DRAW_BUFFER, &val);
+  GLenum draw_buffer_mode = (GLenum)val;
+  glDrawBuffer(GL_FRONT);
 
   // Create the cameras:
   Camera cameras[6];
   Ego_voxels::size_type voxel_size = m_tiled_voxels.size();
-  Float x_offset = m_voxel_length * voxel_size.get<0>() / 2;
-  Float y_offset = m_voxel_width * voxel_size.get<1>() / 2;
-  Float z_offset = m_voxel_height * voxel_size.get<2>() / 2;
-  Float x_origin = CGAL::to_double(m_tiled_voxels_origin.x());
-  Float y_origin = CGAL::to_double(m_tiled_voxels_origin.y());
-  Float z_origin = CGAL::to_double(m_tiled_voxels_origin.z());
+  // Vector3f offset(dx * 0.5f, dy * 0.5f, dz * 0.5f);
+  Vector3f origin(CGAL::to_double(m_tiled_voxels_origin.x()),
+                  CGAL::to_double(m_tiled_voxels_origin.y()),
+                  CGAL::to_double(m_tiled_voxels_origin.z()));
+  Vector3f disp(m_voxel_length * voxel_size.get<0>() * 0.5f,
+                m_voxel_width * voxel_size.get<1>() * 0.5f,
+                m_voxel_height * voxel_size.get<2>() * 0.5f);
+  Vector3f center;
+  center.add(origin, disp);
+  
   // -1,0,0
-  cameras[0].get_base_frust().make_ortho(y_origin+y_offset, y_origin-y_offset,
-                                         z_origin-z_offset, z_origin+z_offset,
-                                         x_origin-x_offset, x_origin+x_offset);
+  cameras[0].set_position(center[0]-disp[0], center[1], center[2]);
+  cameras[0].set_orientation(-1, 0, 0, 0);
+  cameras[0].get_base_frust().make_ortho(center[1]+disp[1], center[1]-disp[1],
+                                         center[2]-disp[2], center[2]+disp[2],
+                                         center[0]-disp[0], center[0]+disp[0]);
 
   // +1,0,0
-  cameras[1].get_base_frust().make_ortho(y_origin-y_offset, y_origin+y_offset,
-                                         z_origin-z_offset, z_origin+z_offset,
-                                         x_origin+x_offset, x_origin-x_offset);
+  cameras[1].set_position(center[0]+disp[0], center[1], center[2]);
+  cameras[1].set_orientation(1, 0, 0, 0);
+  cameras[1].get_base_frust().make_ortho(center[1]-disp[1], center[1]+disp[1],
+                                         center[2]-disp[2], center[2]+disp[2],
+                                         center[0]+disp[0], center[0]-disp[0]);
   
   // 0,-1,0
-  cameras[2].get_base_frust().make_ortho(z_origin+z_offset, z_origin-z_offset,
-                                         x_origin-x_offset, x_origin+x_offset,
-                                         y_origin-y_offset, y_origin+y_offset);
+  cameras[2].set_position(center[0], center[1]-disp[1], center[2]);
+  cameras[2].set_orientation(0, -1, 0, 0);
+  cameras[2].get_base_frust().make_ortho(center[2]+disp[2], center[2]-disp[2],
+                                         center[0]-disp[0], center[0]+disp[0],
+                                         center[1]-disp[1], center[1]+disp[1]);
 
   // 0,+1,0
-  cameras[3].get_base_frust().make_ortho(z_origin-z_offset, z_origin+z_offset,
-                                         x_origin-x_offset, x_origin+x_offset,
-                                         y_origin+y_offset, y_origin-y_offset);
+  cameras[3].set_position(center[0], center[1]+disp[1], center[2]);
+  cameras[3].set_orientation(0, 1, 0, 0);
+  cameras[3].get_base_frust().make_ortho(center[2]-disp[2], center[2]+disp[2],
+                                         center[0]-disp[0], center[0]+disp[0],
+                                         center[1]+disp[1], center[1]-disp[1]);
 
   // 0,0,-1
-  cameras[4].get_base_frust().make_ortho(x_origin+x_offset, x_origin-x_offset,
-                                         y_origin-y_offset, y_origin+y_offset,
-                                         z_origin+z_offset, z_origin-z_offset);
+  cameras[4].set_position(center[0], center[1], center[2]-disp[2]);
+  cameras[4].set_orientation(0, 0, -1, 0);
+  cameras[4].get_base_frust().make_ortho(center[0]+disp[0], center[0]-disp[0],
+                                         center[1]-disp[1], center[1]+disp[1],
+                                         center[2]-disp[2], center[2]+disp[2]);
 
-  // 0,0,-1
-  cameras[5].get_base_frust().make_ortho(x_origin-x_offset, x_origin+x_offset,
-                                         y_origin-y_offset, y_origin+y_offset,
-                                         z_origin-z_offset, z_origin+z_offset);
+  // 0,0,+1
+  cameras[5].set_position(center[0], center[1], center[2]+disp[2]);
+  cameras[5].set_orientation(0, 0, 1, 0);
+  cameras[5].get_base_frust().make_ortho(center[0]-disp[0], center[0]+disp[0],
+                                         center[1]-disp[1], center[1]+disp[1],
+                                         center[2]+disp[2], center[2]-disp[2]);
 
   // Draw
   m_clean_colors_in_progress = true;
   for (Uint i = 0; i < 6; ++ i) {
+    m_appearance->set_tex_enable(true);
+    m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
+    context->clear_color_depth_buffer(color);
     cameras[i].draw(&draw_action);
-    draw(&draw_action);
+
+    Cull_context cull_context;
+    cull_context.cull(this, &cameras[i]);
+    cull_context.draw(&draw_action);
     glReadPixels(0, 0, width, height, gl_format, gl_type, pixels);
+    {
+      std::string file_name = "snaphsot";
+      std::ostringstream oss;
+      oss << i;
+      file_name += "_" + oss.str() + ".jpg";
+      Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
+      image.magick("jpg");
+      image.write(file_name);
+    }
+    
+    m_appearance->set_shade_model(Gfx::FLAT_SHADE);
+    m_appearance->set_tex_enable(false);
+    context->clear_color_depth_buffer(color);
     isect(&isect_action);
     glReadPixels(0, 0, width, height, gl_format_select, gl_type_select,
                  selections);
@@ -673,7 +740,26 @@ void Ego::clean_colors(Draw_action* action)
   m_clean_colors_in_progress = false;
 
   // Clean & Recover read-buffer
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  //! \todo traverse the shapes and reset the overrid_* flags and turn on the
+  // dirty-appearance flag instead of the following. The first 3 should not
+  // even be set, cause we are using the material and not the texture!
+  m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
+  m_appearance->clean_tex_enable();
+  if (!conf->is_texture_map()) m_appearance->set_tex_enable(false);
+  m_appearance->clean_tex_env();
+  m_appearance->clean_blend_func();
+  m_appearance->clean_light_model();
+  m_appearance->set_light_enable(true);
+
   glReadBuffer(read_buffer_mode);
+  glDrawBuffer(draw_buffer_mode);
+
+  // Clear space:
   delete [] pixels;
   delete [] selections;
 
@@ -754,8 +840,7 @@ Action::Trav_directive Ego::draw(Draw_action* action)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  if (m_dirty_colors) clean_colors(action);
-
+  if (m_dirty_colors) clean_colors();
   return Group::draw(action);
 }
 
@@ -766,6 +851,7 @@ void Ego::cull(Cull_context& cull_context)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
+  if (m_dirty_colors) clean_colors();
 
   // We deliberately call the cull() member of the Group and of the Transform
   // to avoid duplicate application of the transformations.
@@ -778,7 +864,6 @@ void Ego::isect(Isect_action* action)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-
   Transform::isect(action);
 }
 

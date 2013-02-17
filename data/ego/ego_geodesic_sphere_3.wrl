@@ -1,6 +1,6 @@
 #VRML V2.0 utf8
 Configuration {
-  accumulation Accumulation { enabled TRUE }
+  # accumulation Accumulation { enabled TRUE }
   displayFPS TRUE
 }
 ColorBackground {
@@ -8,32 +8,28 @@ ColorBackground {
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
-# Viewpoint {
-#   type "ORTHOGONAL"
-#   fieldOfView 3.04
-# }
-
+Viewpoint {
+  type "ORTHOGONAL"
+  fieldOfView 3.14
+}
 DEF INC_FIRST_TILE_KEY SingleKeySensor { key "q" }
 DEF INC_FIRST_TILE Incrementor {
   minValue 0
   maxValue 3
   value 1
 }
-
 DEF INC_TILING_STRATEGY_KEY SingleKeySensor { key "w" }
 DEF INC_TILING_STRATEGY Incrementor {
   minValue 0
   maxValue 1
   value 1
 }
-
 DEF INC_TILING_ROW_KEY SingleKeySensor { key "e" }
 DEF INC_TILING_ROW Incrementor {
   minValue 0
   maxValue 1
   value 1
 }
-
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
@@ -54,7 +50,7 @@ Transform {
   #bboxSize 1.5 1.5 1.5
   children [
     DEF SWITCH_MODEL Switch {
-      whichChoice 0
+      whichChoice -1
       children [
         Shape {
           appearance Appearance {
@@ -606,7 +602,7 @@ Transform {
 
     # The axes:
     Switch {
-      whichChoice 0
+      whichChoice -1
       children [
 	DEF AXES Transform {
 	  # scale 0.1 0.1 0.1
