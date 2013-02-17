@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,6 +35,7 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Matrix4f.hpp"
@@ -70,13 +71,13 @@ public:
   };
 
   /*! Constructor */
-  Camera(Boolean proto = SGAL_FALSE);
+  Camera(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Camera();
   
   /*! Construct the prototype */
-  static Camera* prototype() { return new Camera(SGAL_TRUE); }
+  static Camera* prototype() { return new Camera(true); }
 
   /*! Clone */
   virtual Container* clone() { return new Camera(); }
@@ -84,6 +85,9 @@ public:
   /*! Set the camera position */
   void set_position(const Vector3f& position);
 
+  /*! Set the camera position */
+  void set_position(Float x, Float y, Float z);
+  
   /*! Obtain the camera position */
   const Vector3f& get_position() const { return m_position; }
 
@@ -94,13 +98,14 @@ public:
   const Rotation& get_orientation() const { return m_orientation; }
 
   void set_field_of_view( float fov );
+
   float get_field_of_view();
+
   void update_field_of_view(Field_info* info);
 
   void set_description(const std::string& description)
-  {
-    m_description = description;
-  }
+  { m_description = description; }
+  
   const std::string& get_description(){ return m_description; }
 
   Frustum& get_base_frust() { return m_base_frust;}
@@ -138,7 +143,9 @@ public:
   
   /*! Protoype handling */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual Container_proto* get_prototype();
 
   /*! Set the attributes of this container */
@@ -163,12 +170,15 @@ public:
   void set_scene_graph(Scene_graph* sg) { m_scene_graph = sg; }
 
   void set_is_dynamic(bool flag) { m_is_dynamic = flag; }
+
   bool get_is_dynamic() const { return m_is_dynamic; }
 
   void set_radius_scale(float scale) { m_radius_scale = scale; }
+
   float get_radius_scale() const { return m_radius_scale; }
 
   void set_far_plane_scale(float scale) { m_far_plane_scale = scale; }
+
   float get_far_plane_scale() const { return m_far_plane_scale; }
 
 protected:
@@ -230,6 +240,10 @@ private:
 
   // static Isect_action * m_picker;
 };
+
+/*! \brief sets the camera position. */
+inline void Camera::set_position(Float x, Float y, Float z)
+{ set_position(Vector3f(x, y, z)); }
 
 SGAL_END_NAMESPACE
 
