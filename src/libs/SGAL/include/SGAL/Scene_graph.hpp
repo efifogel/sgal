@@ -208,13 +208,16 @@ public:
   Container* get_container(const std::string & name);
 
   /*! Add a touch sensor node to the scene graph.
-   * This pushes the touch sensor to the back of the list. It returns a
-   * unique selection id.
+   * Pushes the touch sensor to the back of the list. It returns a
    * \param touch_sensor a pointer to the touch sensor object
+   * unique selection id.
    * \return a unique selection id.
    */
-  Uint add_touch_sensor(Touch_sensor* touch_Sensor);
+  void add_touch_sensor(Touch_sensor* touch_Sensor);
 
+  /*! Reserve selection ids. */
+  Uint reserve_selection_ids(Uint num_selection_ids);
+  
   /*! Add a time sensor node to the scene graph. */
   void add_time_sensor(Time_sensor* time_Sensor);
 

@@ -45,6 +45,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Draw_action.hpp"
+#include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
@@ -54,6 +55,7 @@
 #include "SGAL/Image_base.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Camera.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -478,7 +480,7 @@ void Ego::clean_parts()
         std::size_t num1(brick->get<1>());
         SGAL_assertion((num0 == 2) && (num1 == 2));
 
-        //! \todo In the following we chack whether the brick is apparent.
+        //! \todo In the following we check whether the brick is apparent.
         // A brick is not apparent if it is obscured from all directions
         // by opaque bricks. Currently we assume that all bricks are opaque. 
         Boolean apparent = false;
@@ -581,6 +583,7 @@ void Ego::clean_colors(Draw_action* action)
 {
   if (m_clean_colors_in_progress) return;
 
+  //! \todo create a new context? and remove the (action) argument.
   Context* context = action->get_context();
   Uint x0 = 0, y0 = 0, width = 0, height = 0;
   context->get_viewport(x0, y0, width, height);
@@ -591,31 +594,80 @@ void Ego::clean_colors(Draw_action* action)
   SGAL::Draw_action draw_action(conf);
   draw_action.set_context(context);
   draw_action.set_snap(false);
+
+  // Prepare isect action:
+  SGAL::Isect_action isect_action;
+  isect_action.set_context(context);
+  m_selection_id = m_scene_graph->reserve_selection_ids(get_child_count());
   
-  // Prepare Image:
+  // Prepare color image:
   Image_base::Format format = Image_base::kRGB8_8_8;
   GLenum gl_format = Image_base::get_format_format(format);
   GLenum gl_type = Image_base::get_format_type(format);
   Uint size = Image_base::get_size(width, height, format);
   Uchar* pixels = new Uchar[size];
 
+  // Prepare selection image:
+  Image_base::Format format_select = Image_base::kRGB8_8_8;
+  GLenum gl_format_select = Image_base::get_format_format(format_select);
+  GLenum gl_type_select = Image_base::get_format_type(format_select);
+  Uint size_select= Image_base::get_size(width, height, format_select);
+  Uchar* selections = new Uchar[size_select];
+  
   // Store and reset read-buffer
   GLint val;
   glGetIntegerv(GL_READ_BUFFER, &val);
   GLenum read_buffer_mode = (GLenum)val;
   glReadBuffer(GL_BACK);
 
-  // Create the camera:
-  // Camera camera;
+  // Create the cameras:
+  Camera cameras[6];
+  Ego_voxels::size_type voxel_size = m_tiled_voxels.size();
+  Float x_offset = m_voxel_length * voxel_size.get<0>() / 2;
+  Float y_offset = m_voxel_width * voxel_size.get<1>() / 2;
+  Float z_offset = m_voxel_height * voxel_size.get<2>() / 2;
+  Float x_origin = CGAL::to_double(m_tiled_voxels_origin.x());
+  Float y_origin = CGAL::to_double(m_tiled_voxels_origin.y());
+  Float z_origin = CGAL::to_double(m_tiled_voxels_origin.z());
+  // -1,0,0
+  cameras[0].get_base_frust().make_ortho(y_origin+y_offset, y_origin-y_offset,
+                                         z_origin-z_offset, z_origin+z_offset,
+                                         x_origin-x_offset, x_origin+x_offset);
+
+  // +1,0,0
+  cameras[1].get_base_frust().make_ortho(y_origin-y_offset, y_origin+y_offset,
+                                         z_origin-z_offset, z_origin+z_offset,
+                                         x_origin+x_offset, x_origin-x_offset);
   
+  // 0,-1,0
+  cameras[2].get_base_frust().make_ortho(z_origin+z_offset, z_origin-z_offset,
+                                         x_origin-x_offset, x_origin+x_offset,
+                                         y_origin-y_offset, y_origin+y_offset);
+
+  // 0,+1,0
+  cameras[3].get_base_frust().make_ortho(z_origin-z_offset, z_origin+z_offset,
+                                         x_origin-x_offset, x_origin+x_offset,
+                                         y_origin+y_offset, y_origin-y_offset);
+
+  // 0,0,-1
+  cameras[4].get_base_frust().make_ortho(x_origin+x_offset, x_origin-x_offset,
+                                         y_origin-y_offset, y_origin+y_offset,
+                                         z_origin+z_offset, z_origin-z_offset);
+
+  // 0,0,-1
+  cameras[5].get_base_frust().make_ortho(x_origin-x_offset, x_origin+x_offset,
+                                         y_origin-y_offset, y_origin+y_offset,
+                                         z_origin-z_offset, z_origin+z_offset);
+
   // Draw
   m_clean_colors_in_progress = true;
   for (Uint i = 0; i < 6; ++ i) {
-    // set the camera
-    m_scene_graph->draw(&draw_action);
+    cameras[i].draw(&draw_action);
+    draw(&draw_action);
     glReadPixels(0, 0, width, height, gl_format, gl_type, pixels);
-    // m_scene_graph->draw(&isect_action);
-    // glReadPixels(0, 0, width, height, gl_format, gl_type, selections);
+    isect(&isect_action);
+    glReadPixels(0, 0, width, height, gl_format_select, gl_type_select,
+                 selections);
     /// process pixels & selections
   }
   m_clean_colors_in_progress = false;
@@ -623,6 +675,7 @@ void Ego::clean_colors(Draw_action* action)
   // Clean & Recover read-buffer
   glReadBuffer(read_buffer_mode);
   delete [] pixels;
+  delete [] selections;
 
   // Update the colors:
   
