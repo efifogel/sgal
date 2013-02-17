@@ -327,9 +327,7 @@ void Knot_scene::create_scene()
 
     SGAL::Touch_sensor* touch_sensor = new SGAL::Touch_sensor;
     transform->add_child(touch_sensor);
-    touch_sensor->set_scene_graph(m_scene_graph);
-    Uint id = m_scene_graph->add_touch_sensor(touch_sensor);
-    touch_sensor->set_start_selection_ids(id);
+    touch_sensor->add_to_scene(m_scene_graph);
     
     SGAL::Shape* shape = new SGAL::Shape;
     transform->add_child(shape);
