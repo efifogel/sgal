@@ -513,11 +513,14 @@ void Scene_graph::add_container(Container* container, const std::string& name)
 }
 
 /*! \brief adds a touch sensor to the scene graph. */
-Uint Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor) 
+void Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor) 
+{ m_touch_sensors.push_back(touch_sensor); }
+
+/*! \brief reserve selection ids. */
+Uint Scene_graph::reserve_selection_ids(Uint num_selection_ids)
 {
-  m_touch_sensors.push_back(touch_sensor);
   Uint start_ids = m_num_selection_ids;
-  m_num_selection_ids += touch_sensor->get_num_selection_ids();
+  m_num_selection_ids += num_selection_ids;
   return start_ids;
 }
 

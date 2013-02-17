@@ -312,10 +312,11 @@ void Touch_sensor::set_attributes(Element * elem)
 }
 
 /*! \brief adds the container to a given scene */  
-void Touch_sensor::add_to_scene(Scene_graph * sg)
+void Touch_sensor::add_to_scene(Scene_graph* sg)
 {
   m_scene_graph = sg;
-  m_first_selection_id = sg->add_touch_sensor(this);
+  sg->add_touch_sensor(this);
+  m_first_selection_id = sg->reserve_selection_ids(get_num_selection_ids());
 }
 
 /*! \brief writes this container */
