@@ -41,28 +41,24 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
-Cull_context::Cull_context(Scene_graph* sg) :
+Cull_context::Cull_context() :
   m_camera(0),
-  m_sg(sg),
   m_head_light(0),
   m_current_lod(-1),
   m_sort(false)
-{
-  m_head_light = sg->get_head_light();
-}
+{}
 
 /*! Destructor */
 Cull_context::~Cull_context() {}
 
-/*! used to sort nodes by their distance fromt he camera */
+/*! \brief Compare node priority.
+ * Used to sort nodes by their distance fromt he camera.
+ */
 inline bool compare_render_nodes(const Cull_context::Render_node& n1,
                                  const Cull_context::Render_node& n2)
-{
-  return n1.priority > n2.priority;
-}
+{ return n1.priority > n2.priority; }
 
-/*!
- */
+/*! \brief adds a shape node. */
 void Cull_context::add_shape(Shape* node)
 {
   Render_node rn;
@@ -74,9 +70,7 @@ void Cull_context::add_shape(Shape* node)
   m_nodes.push_back(rn);
 }
 
-/*!
- * @param light a pointer to the Light.
- */
+/*! \brief adds a light node. */
 void Cull_context::add_light(Light* light)
 {
   if (light != m_head_light) {
@@ -87,9 +81,7 @@ void Cull_context::add_light(Light* light)
   }
 }
 
-/*! Traverse node hierarchy seacrhing for transform nodes and adding
- * them to draw list.
- * @param node a pointer to the node to draw
+/*! \brief traverses node hierarchy and adds each node to the appropriate list.
  */
 void Cull_context::cull(Node* node, Camera* camera)
 {
@@ -102,6 +94,7 @@ void Cull_context::cull(Node* node, Camera* camera)
   node->cull(*this);
 }
 
+/*! \brief draws a single node. */
 void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
 {
   glPushMatrix();
@@ -112,8 +105,7 @@ void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
   glPopMatrix();
 }
 
-/*!
- */
+/*! \brief */
 float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 {
   // Get world position of node.
@@ -168,8 +160,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   return (p.length() - radius);
 }
 
-/*!
- */
+/*! \brief draws. */
 void Cull_context::draw(Draw_action* draw_action)
 {
   glMatrixMode(GL_MODELVIEW);
@@ -229,8 +220,7 @@ void Cull_context::draw(Draw_action* draw_action)
   }
 }
 
-/*!
- */
+/*! \brief pushes the transform matrix. */
 void Cull_context::push_matrix(const Matrix4f& mat)
 {
   m_matrix_stack.push_back(m_world_tm);
@@ -242,13 +232,15 @@ void Cull_context::push_matrix(const Matrix4f& mat)
   m_world_tm.mult(wtm, mat);
 }
   
-/*!
- */
+/*! \brief pops the transform matrix. */
 void Cull_context::pop_matrix()
 {
   SGAL_assertion((!m_matrix_stack.empty()));
   m_world_tm = m_matrix_stack.back();
   m_matrix_stack.pop_back();
 }
+
+/*! \brief sets the head light. */
+void Cull_context::set_head_light(Light* light) { m_head_light = light; }
 
 SGAL_END_NAMESPACE
