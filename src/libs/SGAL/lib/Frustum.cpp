@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,6 +37,7 @@
 #include "SGAL/Plane.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Element.hpp"
+#include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -44,8 +45,7 @@ SGAL_BEGIN_NAMESPACE
 /*! The frustum types (prespective, orthogonal, etc) */
 const char* Frustum::s_type_strings[] = {"SIMPLE", "ORTHOGONAL", "PERSPECTIVE"};
 
-/*!
- */
+/*! Constructor */
 Frustum::Frustum() :
   m_type(Frustum::SIMPLE),
   m_near_dist(0.1f), 
@@ -63,13 +63,12 @@ Frustum::Frustum() :
   m_dirty_corners(true),
   m_dirty_planes(true),
   m_x_perturbation_scale(0), m_y_perturbation_scale(0)
-{
-}
+{}
 
 /*! Destructor */
 Frustum::~Frustum() {}
 
-/*! Clone */
+/*! \brief clones. */
 void Frustum::copy(const Frustum* src)
 {
   m_type = src->m_type;
@@ -96,9 +95,7 @@ void Frustum::copy(const Frustum* src)
   }
 }
 
-/*! Sets the distance from the origin to the near plane.
- * \param near_dist the distance from the near plane
- */
+/*! \brief sets the distance from the origin to the near plane. */
 void Frustum::set_near(Float near_dist)
 {
   if (m_near_dist == near_dist) return;
@@ -107,18 +104,7 @@ void Frustum::set_near(Float near_dist)
   m_dirty_planes = true;
 }
 
-/*! Sets the distance from the origin to the far plane.
- */
-void Frustum::get_near_far(Float& near_dist, Float& far_dist)
-{
-  if (m_dirty_corners) clean_corners(); 
-  near_dist = m_near_dist; 
-  far_dist = m_far_dist; 
-}
-
-/*! Sets the distance from the origin to the far plane
- * \param far_dist the distance
- */
+/*! \brief sets the distance from the origin to the far plane. */
 void Frustum::set_far(Float far_dist)
 {
   if (m_far_dist == far_dist) return;
@@ -127,14 +113,17 @@ void Frustum::set_far(Float far_dist)
   m_dirty_planes = true;
 }
 
-/*! Sets the aspect recalculation mode to mode. The mode can be
- * SGAL_FRUST_CALC_NONE, which means that whatever the application sets
- * for the frustum dimensions is honored, or either ENB_FRUST_CALC_VERT
- * or ENB_FRUST_CALC_HORIZ, meaning that the vertical or horizontal
- * frustum dimensions, respectively, should be calculated from the
- * horizontal or vertical dimensions using aspect_ratio. Causes the frustum
- * dimensions to be recalculated immediately if necessary.
+/*! \brief obtains the distances from the origin to the near plane and to
+ * the far plane.
  */
+void Frustum::get_near_far(Float& near_dist, Float& far_dist)
+{
+  if (m_dirty_corners) clean_corners(); 
+  near_dist = m_near_dist; 
+  far_dist = m_far_dist; 
+}
+
+/*! \brief sets the aspect recalculation mode. */
 void Frustum::set_aspect_mode(Frustum::Aspect_mode mode)
 {
   if (m_aspect_mode == mode)
@@ -144,8 +133,7 @@ void Frustum::set_aspect_mode(Frustum::Aspect_mode mode)
   m_dirty_planes = true;
 }
 
-/*! Sets the aspect ratio of the frustum dimensions
- */
+/*! \brief sets the aspect ratio of the frustum dimensions. */
 void Frustum::set_aspect_ratio(float ratio)
 {
   if (m_aspect_ratio == ratio) return;
@@ -154,6 +142,7 @@ void Frustum::set_aspect_ratio(float ratio)
   m_dirty_planes = true;
 }
 
+/*! \brief */
 void Frustum::set_fov(float fov)
 {
   set_vert_fov(fov);
@@ -162,14 +151,14 @@ void Frustum::set_fov(float fov)
 //  set_vert_fov(fov / m_aspect_ratio);
 }
 
+/*! \brief */
 Float Frustum::get_fov()
 {
   // FIX - what to do here?
   return m_horiz_fov;
 }
 
-/*!
- */
+/*! \brief */
 void Frustum::set_horiz_fov(Float horiz_fov)
 {
   if (m_horiz_fov == horiz_fov) return;
@@ -178,8 +167,7 @@ void Frustum::set_horiz_fov(Float horiz_fov)
   m_dirty_planes = true;
 }
 
-/*!
- */
+/*! \brief */
 void Frustum::set_vert_fov(Float vert_fov)
 {
   if (m_vert_fov == vert_fov) return;
@@ -188,8 +176,7 @@ void Frustum::set_vert_fov(Float vert_fov)
   m_dirty_planes = true;
 }
 
-/*!
- */
+/*! \brief */
 void Frustum::set_right(Float right)
 {
   m_right = right;
@@ -197,6 +184,7 @@ void Frustum::set_right(Float right)
   m_dirty_planes = true;
 }
 
+/*! \brief */
 void Frustum::set_left(Float left)
 {
   m_left = left;
@@ -204,6 +192,7 @@ void Frustum::set_left(Float left)
   m_dirty_planes = true;
 }
 
+/*! \brief */
 void Frustum::set_top(Float top)
 {
   m_top = top;
@@ -211,6 +200,7 @@ void Frustum::set_top(Float top)
   m_dirty_planes = true;
 }
 
+/*! \brief */
 void Frustum::set_bottom(Float bottom)
 {
   m_bottom = bottom;
@@ -272,10 +262,8 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top,
   m_dirty_planes = true;
 }
 
-/*! Get the corners of the near plane.
- */
-void Frustum::get_near(Vector3f& ll, Vector3f& lr,
-                       Vector3f& ul, Vector3f& ur)
+/*! \brief gets the corners of the near plane. */
+void Frustum::get_near(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur)
 {
   if (m_dirty_corners) clean_corners(); 
   ll = m_corners[Frustum::NEAR_LL];
@@ -284,10 +272,8 @@ void Frustum::get_near(Vector3f& ll, Vector3f& lr,
   ur = m_corners[Frustum::NEAR_UR];
 }
 
-/*! Get the corners of the far plane.
- */
-void Frustum::get_far(Vector3f& ll, Vector3f& lr,
-                      Vector3f& ul, Vector3f& ur)
+/*! \brief gets the corners of the far plane. */
+void Frustum::get_far(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur)
 {
   if (m_dirty_corners) clean_corners(); 
   ll = m_corners[Frustum::FAR_LL];
@@ -296,8 +282,8 @@ void Frustum::get_far(Vector3f& ll, Vector3f& lr,
   ur = m_corners[Frustum::FAR_UR];
 }
 
-/*! Obtain the six coordinates defining the two diagonal corners of the frustum.
- * The two corners are (left, bottom, near) and (right, top, far).
+/*! \brief obtains the six coordinates defining the two diagonal corners of
+ * the frustum. The two corners are (left, bottom, near) and (right, top, far).
  */
 void Frustum::get_diag_corners(float& left, float& right, float& bottom,
                                float& top, float& near_dist, float& far_dist)
@@ -312,7 +298,7 @@ void Frustum::get_diag_corners(float& left, float& right, float& bottom,
   far_dist = m_corners[Frustum::FAR_UR][2];
 }
 
-/*! Calculates a matrix suitable for use as the GL_PROJECTION matrix
+/*! \brief calculates a matrix suitable for use as the GL_PROJECTION matrix
  * in OpenGL, projecting the contents of the frustum onto the near plane.
  */
 void Frustum::get_gl_proj_mat(Matrix4f& mat)
@@ -344,8 +330,7 @@ void Frustum::get_gl_proj_mat(Matrix4f& mat)
   mat[3][3] = 0.0f;
 }
 
-/*!
- */
+/*! \brief */
 void Frustum::get_corners(float& left, float& right,
                           float& bottom, float& top,
                           float& near_dist, float& far_dist)
@@ -359,12 +344,14 @@ void Frustum::get_corners(float& left, float& right,
   far_dist  = m_far_dist;
 }
 
+/*! \brief */
 Plane* Frustum::get_facets() 
 {
   if (m_dirty_planes) clean_planes();
   return m_facets;
 }
 
+/*! \brief */
 void Frustum::clean_corners() 
 {
   /* in case the near and far clipping planes are the same, nothing is to be
@@ -454,24 +441,28 @@ void Frustum::clean_corners()
   m_dirty_corners = false;
 }
 
+/*! \brief */
 Uint Frustum::contains(const Vector3f& /* pt */) const
 {
   assert(0);
   return 0;
 }
 
+/*! \brief */
 Uint Frustum::contains(const Sphere_bound* /* sphere */) const
 {
   assert(0);
   return 0;
 }
 
+/*! \brief */
 Uint Frustum::contains(const Box_bound* /* box */) const
 {
   assert(0);
   return 0;
 }
 
+/*! \brief */
 void Frustum::apply()
 {
   glMatrixMode(GL_PROJECTION);
@@ -498,6 +489,7 @@ void Frustum::apply()
   }
 }
 
+/*! \brief */
 void Frustum::clean_planes()
 {
   if (m_dirty_corners) clean_corners(); 
@@ -568,8 +560,7 @@ void Frustum::clean_planes()
   m_dirty_planes = false;
 }
 
-/*! Set the frustum type (orthogonal, perspective, etc)
- */
+/*! \brief sets the frustum type (orthogonal, perspective, etc). */
 void Frustum::set_type(Frustum_type type)
 {
   m_type = type;
@@ -577,10 +568,7 @@ void Frustum::set_type(Frustum_type type)
   m_dirty_planes = true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this object. */
 void Frustum::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -590,7 +578,12 @@ void Frustum::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "type") {
-      parse_type(value);
+      Uint num = sizeof(s_type_strings) / sizeof(char*);
+      const char** found = std::find(s_type_strings, &s_type_strings[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_type_strings;
+      if (index < num)
+        m_type = static_cast<Frustum_type>(index);
       elem->mark_delete(ai);
       continue;
     }
@@ -635,39 +628,4 @@ void Frustum::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! Parse the type string-attribute
- * \todo move to utilities
- */
-int Frustum::parse_type(const std::string& type)
-{
-  unsigned int i;
-  // Skip white space:
-  for (i = 0; i < type.size() && type[i] == ' '; ++i);
-  if (i == type.size()) return 0;
-
-  // Match open double-quote (")
-  if (type[i++] != '\"') {
-    std::cerr << "Invalid type field!" << std::endl;
-    return -1;
-  }
-
-  // Compare with supported types:
-  unsigned int j;
-  for (j = 0; j < NUM_TYPES; ++j) {
-    const char* frustum_type = s_type_strings[j];
-    if (type.compare(i, strlen(frustum_type), frustum_type) == 0) {
-      m_type = (Frustum_type) j;
-      break;
-    }
-  }
-
-  // Advance to close double-quote (")
-  while (i < type.size() && type[i] != '\"') i++;
-  if (i == type.size()) {
-    std::cerr << "Invalid type field!" << std::endl;
-    return -1;
-  }
-
-  return 0;
-}
 SGAL_END_NAMESPACE

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7628 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -92,37 +92,57 @@ public:
   /*! Obtain the frustum type (orthogonal, perspective, etc) */
   Frustum_type get_type() const { return m_type; }
 
-  void set_near(float near_dist);
-  void set_far(float far_dist);
-  void get_near_far(float& near_dist, float& far_dist);
+  /*! Set the distance from the origin to the near plane.
+   * \param near_dist the distance from the near plane.
+   */
+  void set_near(Float near_dist);
+
+  /*! Sets the distance from the origin to the far plane.
+   * \param far_dist the distance.
+   */
+  void set_far(Float far_dist);
+
+  /*! Obtain the distances from the origin to the near plane and to
+   * the far plane.
+   */
+  void get_near_far(Float& near_dist, Float& far_dist);
     
-  void set_fov(float fov);
-  float get_fov();
-  void set_horiz_fov(float horiz_fov);
-  void set_vert_fov(float vert_fov);
-  void set_right(float right);
-  void set_left(float left);
-  void set_top(float top);
-  void set_bottom(float bottom);
+  void set_fov(Float fov);
+  Float get_fov();
+  void set_horiz_fov(Float horiz_fov);
+  void set_vert_fov(Float vert_fov);
+  void set_right(Float right);
+  void set_left(Float left);
+  void set_top(Float top);
+  void set_bottom(Float bottom);
 
   void get_near(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur);
   void get_far(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur);
 
-  /*! Obtain the six coordinates defining the two diagonal corners */
-  void get_diag_corners(float& left, float& right, float& bottom,
-                        float& top, float& near_dist, float& far_dist);
+  /*! Obtain the six coordinates defining the two diagonal corners. */
+  void get_diag_corners(Float& left, Float& right, Float& bottom,
+                        Float& top, Float& near_dist, Float& far_dist);
   
-  void get_corners(float& left, float& right, float& bottom, float& top,
-                   float& near_clip, float& far_clip);
+  void get_corners(Float& left, Float& right, Float& bottom, Float& top,
+                   Float& near_clip, Float& far_clip);
 
+  /*! Sets the aspect recalculation mode. The mode can be
+   * SGAL_FRUST_CALC_NONE, which means that whatever the application sets
+   * for the frustum dimensions is honored, or either FRUST_CALC_VERT
+   * or FRUST_CALC_HORIZ, meaning that the vertical or horizontal
+   * frustum dimensions, respectively, should be calculated from the
+   * horizontal or vertical dimensions using aspect_ratio. Causes the frustum
+   * dimensions to be recalculated immediately if necessary.
+   */
   void set_aspect_mode(Frustum::Aspect_mode mode);
+
   Frustum::Aspect_mode get_aspect_mode() const;
 
-  /*! Set the aspect ratio of the frustum dimensions */
-  void set_aspect_ratio(float ratio);
+  /*! Set the aspect ratio of the frustum dimensions. */
+  void set_aspect_ratio(Float ratio);
 
-  /*! Obtain the aspect ratio of the frustum dimensions */
-  float get_aspect_ratio() const { return m_aspect_ratio; }
+  /*! Obtain the aspect ratio of the frustum dimensions. */
+  Float get_aspect_ratio() const { return m_aspect_ratio; }
 
   void get_gl_proj_mat(Matrix4f& mat);
 
@@ -148,8 +168,8 @@ public:
 
   void apply();
 
-  /*! Set the perturbation distances for accumulation AA*/
-  void set_perturbation_scale(float xpert, float ypert);
+  /*! Set the perturbation distances for accumulation AA. */
+  void set_perturbation_scale(Float xpert, Float ypert);
   
 protected:
   // void calc(Frustum::Aspect_mode aspect_mode);
@@ -157,54 +177,51 @@ protected:
   void clean_planes();  
 
 private:
-  /*! The frustum types (prespective, orthogonal, etc) */
+  /*! The frustum types (prespective, orthogonal, etc). */
   static const char* s_type_strings[];
   
   Frustum::Frustum_type m_type;
 
-  float m_near_dist;
+  Float m_near_dist;
 
-  float m_far_dist;
+  Float m_far_dist;
 
-  float m_left;
+  Float m_left;
 
-  float m_right;
+  Float m_right;
 
-  float m_top;
+  Float m_top;
 
-  float m_bottom;
+  Float m_bottom;
 
-  float m_horiz_fov;
+  Float m_horiz_fov;
 
-  float m_vert_fov;
+  Float m_vert_fov;
 
-  float m_xcenter;
+  Float m_xcenter;
 
-  float m_ycenter;
+  Float m_ycenter;
 
   Frustum::Aspect_mode m_aspect_mode;
 
-  float m_aspect_ratio;
+  Float m_aspect_ratio;
 
   Vector3f m_corners[Frustum::NUM_CORNERS];
 
   Plane m_facets[Frustum::NUM_PLANES];
 
-  bool m_dirty_corners;
-  bool m_dirty_planes;
+  Boolean m_dirty_corners;
+  Boolean m_dirty_planes;
 
-  /*! The perturbation scale along the x axis for accumulation AA */
-  float m_x_perturbation_scale;
+  /*! The perturbation scale along the x axis for accumulation AA. */
+  Float m_x_perturbation_scale;
 
-  /*! The perturbation scale along the y axis for accumulation AA */
-  float m_y_perturbation_scale;
-
-  /*! Parse the type string-attribute */
-  int parse_type(const std::string& type);
+  /*! The perturbation scale along the y axis for accumulation AA. */
+  Float m_y_perturbation_scale;
 };
 
-/*! \brief set the perturbation scales for accumulation AA*/
-inline void Frustum::set_perturbation_scale(float xpert, float ypert)
+/*! \brief set the perturbation scales for accumulation AA. */
+inline void Frustum::set_perturbation_scale(Float xpert, Float ypert)
 {
   m_x_perturbation_scale = xpert;
   m_y_perturbation_scale = ypert;
