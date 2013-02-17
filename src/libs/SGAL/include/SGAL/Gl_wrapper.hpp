@@ -2132,7 +2132,9 @@ inline void glPointSize(GLfloat size)
 /*! glPolygonMode wrapper */
 inline void glPolygonMode(GLenum face, GLenum mode)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glPolygonMode(" << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glPolygonMode("
+                  << Gl_wrapper::find(face) << ", "
+                  << Gl_wrapper::find(mode) << ");"
                   << std::endl;);
   ::glPolygonMode(face, mode);
   SGAL_CHECK_GL();
@@ -2467,7 +2469,8 @@ inline void glRasterPos4sv(const GLshort* v)
 /*! glReadBuffer wrapper */
 inline void glReadBuffer(GLenum mode)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glReadBuffer(" << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glReadBuffer("
+                  << Gl_wrapper::find(mode) << ");"
                   << std::endl;);
   ::glReadBuffer(mode);
   SGAL_CHECK_GL();
@@ -2633,7 +2636,8 @@ inline void glSelectBuffer(GLsizei size, GLuint* buffer)
 /*! glShadeModel wrapper */
 inline void glShadeModel(GLenum mode)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glShadeModel(" << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glShadeModel("
+                  << Gl_wrapper::find(mode) << ");"
                   << std::endl;);
   ::glShadeModel(mode);
   SGAL_CHECK_GL();
