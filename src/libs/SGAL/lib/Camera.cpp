@@ -90,8 +90,7 @@ void Camera::set_position(const Vector3f& position)
   m_dirty_matrix = true;
 }
 
-/*! Set the camera orientation
- */
+/*! \brief sets the camera orientation. */
 void Camera::set_orientation(const Rotation& orientation)
 {
   m_orientation = orientation;

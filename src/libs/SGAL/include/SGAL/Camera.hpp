@@ -76,25 +76,28 @@ public:
   /*! Destructor */
   virtual ~Camera();
   
-  /*! Construct the prototype */
+  /*! Construct the prototype. */
   static Camera* prototype() { return new Camera(true); }
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone() { return new Camera(); }
 
-  /*! Set the camera position */
+  /*! Set the camera position. */
   void set_position(const Vector3f& position);
 
-  /*! Set the camera position */
+  /*! Set the camera position. */
   void set_position(Float x, Float y, Float z);
   
-  /*! Obtain the camera position */
+  /*! Obtain the camera position. */
   const Vector3f& get_position() const { return m_position; }
 
-  /*! Set the camera orientation */
+  /*! Set the camera orientation. */
   void set_orientation(const Rotation& orientation);
 
-  /*! Obtain the camera orientation */
+  /*! Set the camera orientation. */
+  void set_orientation(Float v0, Float v1, Float v2, Float v3);
+  
+  /*! Obtain the camera orientation. */
   const Rotation& get_orientation() const { return m_orientation; }
 
   void set_field_of_view( float fov );
@@ -125,48 +128,48 @@ public:
   void set_dynamic_clipping_planes();
 
   /*! Initialize some camera parameters. Cannot be called from
-   * the constructor, but does not require a scene graph nor a context
+   * the constructor, but does not require a scene graph nor a context.
    */
   void utilize();
 
-  /*! Update the aspect ratio based on the context */
+  /*! Update the aspect ratio based on the context. */
   void set_aspect_ratio(const Context* context);
 
-  /*! Initialize the camera based on the given context */
+  /*! Initialize the camera based on the given context. */
   void init(const Context* context);
 
-  /*! Apply the camera */
+  /*! Apply the camera. */
   virtual void draw(Draw_action* action); 
 
-  /*! Apply the camera */
+  /*! Apply the camera. */
   virtual void draw(Isect_action* action); 
   
-  /*! Protoype handling */
+  /*! Protoype handling. */
   virtual void init_prototype();
 
   virtual void delete_prototype();
 
   virtual Container_proto* get_prototype();
 
-  /*! Set the attributes of this container */
+  /*! Set the attributes of this container. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
   
-  /*! Add the container to a given scene
-   * \param scene_graph the given scene
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
    */  
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   //! \todo what for? static const std::string m_static_tag;
 
-  /*! Obtain the bindable stack */
+  /*! Obtain the bindable stack. */
   virtual Bindable_stack* get_stack();
   
-  /*! Enable the bindable node */
+  /*! Enable the bindable node. */
   virtual void enable();
 
-  /*! Set the scene graph */
+  /*! Set the scene graph. */
   void set_scene_graph(Scene_graph* sg) { m_scene_graph = sg; }
 
   void set_is_dynamic(bool flag) { m_is_dynamic = flag; }
@@ -182,10 +185,10 @@ public:
   float get_far_plane_scale() const { return m_far_plane_scale; }
 
 protected:
-  /*! The Scene_graph */
+  /*! The Scene_graph. */
   Scene_graph* m_scene_graph;
 
-  /*! Indicates whether the cliping planes are set dynamically */
+  /*! Indicates whether the cliping planes are set dynamically. */
   bool m_is_dynamic;
   
   Vector3f m_position;
@@ -204,22 +207,22 @@ protected:
 
   float m_nearest_clipping_plane;
 
-  /*! The scale factor the radius of the bounding sphere is extended by */
+  /*! The scale factor the radius of the bounding sphere is extended by. */
   float m_radius_scale;
 
-  /*! The scale value the far plane is extended by */
+  /*! The scale value the far plane is extended by. */
   float m_far_plane_scale;
   
-  /*! The translational vector to adjust the initial position */
+  /*! The translational vector to adjust the initial position. */
   Vector3f m_position_translation;
   
   std::string m_description;
 
-  /*! obtains the tag (type) of the container */
+  /*! obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
   static Container_proto* s_prototype;
@@ -235,7 +238,7 @@ private:
 
   void clean_matrix();
 
-  /*! Apply the camera */
+  /*! Apply the camera. */
   void draw(); 
 
   // static Isect_action * m_picker;
@@ -244,6 +247,10 @@ private:
 /*! \brief sets the camera position. */
 inline void Camera::set_position(Float x, Float y, Float z)
 { set_position(Vector3f(x, y, z)); }
+
+/*! \brief sets the camera orientation. */
+inline void Camera::set_orientation(Float v0, Float v1, Float v2, Float v3)
+{ set_orientation(Rotation(v0, v1, v2, v3)); }
 
 SGAL_END_NAMESPACE
 
