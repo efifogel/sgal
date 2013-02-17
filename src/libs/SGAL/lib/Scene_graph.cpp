@@ -381,7 +381,8 @@ void Scene_graph::render_scene_graph(Draw_action* draw_action)
   
   //! \todo m_execution_coordinator->inc_frame_counter();
   Camera* act_camera = get_active_camera();
-  Cull_context cull_context(this);
+  Cull_context cull_context;
+  cull_context.set_head_light(get_head_light());
   cull_context.cull(m_root, act_camera);
   cull_context.draw(draw_action);
   
