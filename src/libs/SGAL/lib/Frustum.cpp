@@ -218,8 +218,7 @@ void Frustum::set_bottom(Float bottom)
   m_dirty_planes = true;
 }
 
-/*! Make it an orthogonal frustum
- */
+/*! \brief makes this frustum orthogonal. */
 void Frustum::make_ortho(float left, float right, float bottom, float top)
 {
   m_left = left;
@@ -231,12 +230,43 @@ void Frustum::make_ortho(float left, float right, float bottom, float top)
   m_dirty_planes = true;
 }
 
+/*! \brief makes this frustum orthogonal. */
+void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
+                         Float near_dist, Float far_dist)
+{
+  m_left = left;
+  m_right = right;
+  m_top = top;
+  m_bottom = bottom;
+  m_near_dist = near_dist;
+  m_far_dist = far_dist;
+  m_type = Frustum::ORTHOGONAL;
+  m_dirty_corners = true;
+  m_dirty_planes = true;
+}
+
+/*! \brief makes this frustum perspective. */
 void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
 {
   m_left = left;
   m_right = right;
   m_top = top;
   m_bottom = bottom;
+  m_type = Frustum::PERSPECTIVE;
+  m_dirty_corners = true;
+  m_dirty_planes = true;
+}
+
+/*! \brief makes this frustum perspective. */
+void Frustum::make_persp(Float left, Float right, Float bottom, Float top,
+                         Float near_dist, Float far_dist)
+{
+  m_left = left;
+  m_right = right;
+  m_top = top;
+  m_bottom = bottom;
+  m_near_dist = near_dist;
+  m_far_dist = far_dist;
   m_type = Frustum::PERSPECTIVE;
   m_dirty_corners = true;
   m_dirty_planes = true;

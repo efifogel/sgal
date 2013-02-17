@@ -83,7 +83,7 @@ public:
     
 public:
   // virtual functions
-  virtual void copy(const Frustum * src);
+  virtual void copy(const Frustum* src);
 
 public:
   /*! Set the frustum type (orthogonal, perspective, etc) */
@@ -94,7 +94,7 @@ public:
 
   void set_near(float near_dist);
   void set_far(float far_dist);
-  void get_near_far(float & near_dist, float & far_dist);
+  void get_near_far(float& near_dist, float& far_dist);
     
   void set_fov(float fov);
   float get_fov();
@@ -105,15 +105,15 @@ public:
   void set_top(float top);
   void set_bottom(float bottom);
 
-  void get_near(Vector3f & ll, Vector3f & lr, Vector3f & ul, Vector3f & ur);
-  void get_far(Vector3f & ll, Vector3f & lr, Vector3f & ul, Vector3f & ur);
+  void get_near(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur);
+  void get_far(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur);
 
   /*! Obtain the six coordinates defining the two diagonal corners */
-  void get_diag_corners(float & left, float & right, float & bottom,
-                        float & top, float & near_dist, float & far_dist);
+  void get_diag_corners(float& left, float& right, float& bottom,
+                        float& top, float& near_dist, float& far_dist);
   
-  void get_corners(float & left, float & right, float & bottom, float & top,
-                   float & near_clip, float & far_clip);
+  void get_corners(float& left, float& right, float& bottom, float& top,
+                   float& near_clip, float& far_clip);
 
   void set_aspect_mode(Frustum::Aspect_mode mode);
   Frustum::Aspect_mode get_aspect_mode() const;
@@ -124,21 +124,27 @@ public:
   /*! Obtain the aspect ratio of the frustum dimensions */
   float get_aspect_ratio() const { return m_aspect_ratio; }
 
-  void get_gl_proj_mat(Matrix4f & mat);
+  void get_gl_proj_mat(Matrix4f& mat);
 
-  Plane * get_facets();
+  Plane* get_facets();
 
 public:
-  /*! Set the attributes of this container */
-  void set_attributes(Element * elem);
+  /*! Set the attributes of this container. */
+  void set_attributes(Element* elem);
 
-  // exposed functions
-  void make_persp(float left, float right, float bot, float top);
-  void make_ortho(float left, float right, float bot, float top);
+  /*! Make this frustum perspective. */
+  void make_ortho(Float left, Float right, Float bottom, Float top);
+  void make_ortho(Float left, Float right, Float bottom, Float top,
+                  Float near_dist, Float far_dist);
 
-  unsigned int contains(const Vector3f & pt) const;
-  unsigned int contains(const Sphere_bound * sphere) const;
-  unsigned int contains(const Box_bound * box) const;
+  /*! Make this frustum orthonormal. */
+  void make_persp(Float left, Float right, Float bottom, Float top);
+  void make_persp(Float left, Float right, Float bottom, Float top,
+                  Float near_dist, Float far_dist);
+
+  unsigned int contains(const Vector3f& pt) const;
+  unsigned int contains(const Sphere_bound* sphere) const;
+  unsigned int contains(const Box_bound* box) const;
 
   void apply();
 
@@ -152,7 +158,7 @@ protected:
 
 private:
   /*! The frustum types (prespective, orthogonal, etc) */
-  static const char * s_type_strings[];
+  static const char* s_type_strings[];
   
   Frustum::Frustum_type m_type;
 
@@ -194,7 +200,7 @@ private:
   float m_y_perturbation_scale;
 
   /*! Parse the type string-attribute */
-  int parse_type(const std::string & type);
+  int parse_type(const std::string& type);
 };
 
 /*! \brief set the perturbation scales for accumulation AA*/
