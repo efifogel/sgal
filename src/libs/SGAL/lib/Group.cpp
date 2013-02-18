@@ -157,10 +157,14 @@ void Group::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
 
-  if (get_selection_id() != 0) isect_action->set_id(get_selection_id());
-  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni)
+  Uint base_selection_id = get_selection_id();
+  // Apply the current Group selection ids only if selection ids have been
+  // reserved for this Group. A base selection id that is equal to zero
+  // indicates that no selection ids have been reserved.
+  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni) {
+    if (base_selection_id != 0) isect_action->set_id(base_selection_id++);
     isect_action->apply(*ni);
-  isect_action->set_id(0);
+  }
 }
 
 /*! \brief cleans the bounding sphere of the group.
@@ -222,9 +226,8 @@ void Group::set_attributes(Element* elem)
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "visible") {
@@ -235,9 +238,8 @@ void Group::set_attributes(Element* elem)
   }
 
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "children") {

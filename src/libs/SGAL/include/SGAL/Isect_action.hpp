@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -56,17 +56,21 @@ public:
   virtual ~Isect_action();
 
   virtual Trav_directive apply(Node* node);
+
   virtual void begin(Node* /* node */){};
+
   virtual void end(Node* /* node */){};
+
   virtual void set_context(Context* context);
 
-  /*! Obtain the current color id */
-  Uint get_id() const { return m_current_id; }
+  /*! Obtain the current color id. */
+  Uint get_id() const;
 
-  /*! Set the current color id */
-  void set_id(Uint id) { m_current_id = id; }
+  /*! Set the current color id. */
+  void set_id(Uint id);
 
   int get_index(unsigned int* rgb) const;
+
   void get_color(unsigned int index, unsigned int* rgb) const;
 
 protected:
@@ -76,8 +80,14 @@ protected:
   /*! A color map used to map an index (0-n) to a unique color. This is used
    * in picking.
    */
-  Color_map * m_color_map;
+  Color_map* m_color_map;
 };
+
+/*! \brief obtains the current color id. */
+inline Uint Isect_action::get_id() const { return m_current_id; }
+
+/*! \brief sets the current color id. */
+inline void Isect_action::set_id(Uint id) { m_current_id = id; }
 
 SGAL_END_NAMESPACE
 
