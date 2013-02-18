@@ -702,6 +702,10 @@ void Ego::clean_colors()
 
   // Draw
   m_clean_colors_in_progress = true;
+  typedef std::pair<Vector3f,Uint>              Weighted_color;
+  std::vector<Weighted_color> colors(get_child_count());
+  std::fill(colors.begin(), colors.end(), Weighted_color(Vector3f(),0));
+  std::vector<Uint> number_of_pixels(get_child_count());
   for (Uint i = 0; i < 6; ++ i) {
     m_appearance->set_tex_enable(true);
     m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
@@ -713,7 +717,7 @@ void Ego::clean_colors()
     cull_context.draw(&draw_action);
     glReadPixels(0, 0, width, height, gl_format, gl_type, pixels);
     {
-      std::string file_name = "snaphsot";
+      std::string file_name = "pixels";
       std::ostringstream oss;
       oss << i;
       file_name += "_" + oss.str() + ".jpg";
@@ -723,13 +727,43 @@ void Ego::clean_colors()
       image.write(file_name);
     }
     
-    m_appearance->set_shade_model(Gfx::FLAT_SHADE);
-    m_appearance->set_tex_enable(false);
+    context->draw_shade_model(Gfx::FLAT_SHADE);
+    context->draw_tex_enable(false);
     context->clear_color_depth_buffer(color);
     isect(&isect_action);
     glReadPixels(0, 0, width, height, gl_format_select, gl_type_select,
                  selections);
-    /// process pixels & selections
+    {
+      std::string file_name = "selections";
+      std::ostringstream oss;
+      oss << i;
+      file_name += "_" + oss.str() + ".jpg";
+      Magick::Image image(width, height, "RGB", Magick::CharPixel, selections);
+      image.flip();
+      image.magick("jpg");
+      image.write(file_name);
+    }
+
+    // process pixels & selections
+    std::fill(number_of_pixels.begin(), number_of_pixels.end(), 0);
+
+    // Pass 1:
+//     for (Uint j = 0; j < height; ++j) {
+//       for (Uint k = 0; k < width; ++k) {
+//         Uint pixel_id = j * width + k;
+//         SGAL_assertion(pixel_id < size);
+//         Uint color = (reinterpret_cast<Uint*>(selections))[pixel_id];
+//         Uint rgb[3];
+//         rgb[0] = color & 0xff;
+//         rgb[1] = (color >> 8) & 0xff;
+//         rgb[2] = (color >> 16) & 0xff;
+//         Uint brick_id = isect_action.get_index(rgb);
+//         if (brick_id == 0) continue;
+//         brick_id -= get_selection_id();
+//         SGAL_assertion(brick_id < get_child_count());
+//         ++(number_of_pixels[brick_id]);
+//       }
+//     }
   }
   m_clean_colors_in_progress = false;
 
@@ -858,7 +892,7 @@ void Ego::isect(Isect_action* action)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  Transform::isect(action);
+  Group::isect(action);
 }
 
 void Ego::model_changed(Field_info* field_info)
