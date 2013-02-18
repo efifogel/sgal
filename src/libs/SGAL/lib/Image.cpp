@@ -176,8 +176,10 @@ void Image::clean()
   if (m_flip) image.flip();
   if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
   image.matte(m_alpha);
-  image.opacity(MaxRGB * m_transparency);
-  if (m_alpha) image.colorSpace(Magick::TransparentColorspace);
+  if (m_alpha) {
+    image.opacity(MaxRGB * m_transparency);
+    image.colorSpace(Magick::TransparentColorspace);
+  }
   Image_base::Format format = kIllegal;
   std::string magick_map;
   Magick::StorageType magick_type;
