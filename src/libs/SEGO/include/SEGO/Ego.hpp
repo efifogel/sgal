@@ -303,7 +303,7 @@ protected:
 
   Ego_voxels m_tiled_voxels;
 
-  Exact_polyhedron_geo::Kernel::Point_3 m_tiled_voxels_origin;
+  Exact_polyhedron_geo::Kernel::Point_3 m_tiled_voxels_center;
   
   /*! The style */
   Style m_style;

@@ -176,12 +176,12 @@ void Ego_brick::clean_coords()
   m_owned_coord_array = true;
   
   // Corner points:
-  float width = m_pitch * m_number_of_knobs1;
-  float depth = m_pitch * m_number_of_knobs2;
-  float height = m_height + m_knob_height;
-  float base_x = width * -0.5f;
-  float base_y = depth * -0.5f;
-  float base_z = height * -0.5f;
+  Float width = m_pitch * m_number_of_knobs1;
+  Float depth = m_pitch * m_number_of_knobs2;
+  Float height = m_height + m_knob_height;
+  Float base_x = width * -0.5f;
+  Float base_y = depth * -0.5f;
+  Float base_z = height * -0.5f;
 
   Uint k = 0;
 

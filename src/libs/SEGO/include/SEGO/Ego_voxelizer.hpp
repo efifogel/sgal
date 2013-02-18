@@ -100,6 +100,9 @@ class SGAL_CLASSDEF Ego_voxelizer {
   typedef std::list<Segment_3>                          SlicingSegments;
   typedef std::list<Triangle_3>                         Triangles;
 
+  /*! Voxelize.
+   * \return the center.
+   */
   Point_3 operator() (const Triangles& triangles, Ego_voxels* out_voxels) const;
 
   Triangles create_triangles_from_polyhedron(const Polyhedron& polyhedron,
@@ -108,9 +111,16 @@ class SGAL_CLASSDEF Ego_voxelizer {
                                              const Matrix4f& matrix) const;
   Triangles create_triangles_from_geo_set(const Geo_set& polyhedron,
                                           const Matrix4f& matrix) const;
+
+  /*! Creates the voxels.
+   * \param polyhedron (in)
+   * \param voxels (out)
+   * \param bbox (out) the bounding box of the input polyhedron.
+   */
+  void create_voxels_from_triangles(const Triangles& polyhedron,
+                                    Ego_voxels* voxels,
+                                    Iso_cuboid_3& bbox) const;
   
-  Point_3 create_voxels_from_triangles(const Triangles& polyhedron,
-                                       Ego_voxels* out_voxels) const;
   void mark_triangle(const Triangle_3& triangle,
                      const Point_3& origin,
                      Ego_voxels* out_voxels) const;

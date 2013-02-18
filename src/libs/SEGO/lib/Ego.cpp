@@ -74,9 +74,9 @@ class Configuration;
 std::string Ego::s_tag = "Ego";
 Container_proto* Ego::s_prototype = NULL;
 
-const Float Ego::s_def_voxel_width(8.2);
-const Float Ego::s_def_voxel_length(8.2);
-const Float Ego::s_def_voxel_height(9.6);
+const Float Ego::s_def_voxel_width(8.2f);
+const Float Ego::s_def_voxel_length(8.2f);
+const Float Ego::s_def_voxel_height(9.6f);
 const Ego_voxels_tiler::First_tile_placement 
 Ego::s_def_first_tile_placement(Ego_voxels_tiler::FIRST00);
 const Ego_voxels_tiler::Strategy
@@ -407,26 +407,22 @@ void Ego::clean_voxels()
     m_dirty_voxels = false;
     m_dirty_tiling = true;
 
-    const double dx = m_voxel_length;
-    const double dy = m_voxel_width;
-    const double dz = m_voxel_height;
-
-    Ego_voxelizer voxelize (dx, dy, dz);
+    Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
     Ego_voxels_filler fill;
 
     m_voxels = Ego_voxels(); // Clear - should we make a func?
     if (this->is_model_polyhedron())
-      m_tiled_voxels_origin = 
+      m_tiled_voxels_center = 
         voxelize(this->get_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
     else if (this->is_model_exact_polyhedron())
-      m_tiled_voxels_origin = 
+      m_tiled_voxels_center = 
         voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
     else if (this->is_model_geo_set())
-      m_tiled_voxels_origin = 
+      m_tiled_voxels_center = 
         voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
-    
+
     fill(&m_voxels);
     adjust_voxels_for_tiling();
   }
@@ -450,20 +446,17 @@ void Ego::clean_parts()
 {
   m_owned_parts = true;
 
-  Vector3f origin(CGAL::to_double(m_tiled_voxels_origin.x()),
-                  CGAL::to_double(m_tiled_voxels_origin.y()),
-                  CGAL::to_double(m_tiled_voxels_origin.z()));
-  
-  const double dx = m_voxel_length;
-  const double dy = m_voxel_width;
-  const double dz = m_voxel_height;
-
+  Vector3f center(CGAL::to_double(m_tiled_voxels_center.x()),
+                  CGAL::to_double(m_tiled_voxels_center.y()),
+                  CGAL::to_double(m_tiled_voxels_center.z()));
   Ego_voxels::size_type size = m_tiled_voxels.size();
-  Vector3f offset(dx * 0.5f, dy * 0.5f, dz * 0.5f);
-  Vector3f center(dx * size.get<0>() * 0.5f,
-                  dy * size.get<1>() * 0.5f,
-                  dz * size.get<2>() * 0.5f);
-  center.add(origin);
+  // The offset is a full voxel, cause we use 2x2 bricks
+  Vector3f offset(m_voxel_length, m_voxel_width, m_voxel_height);
+  Vector3f box(m_voxel_length * size.get<0>(),
+               m_voxel_width * size.get<1>(),
+               m_voxel_height * size.get<2>());
+  Vector3f origin;
+  origin.add_scaled(center, -0.5f, box);
   
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
@@ -527,7 +520,8 @@ void Ego::clean_parts()
         Transform* transform = new Transform;
         add_child(transform);
 
-        Vector3f displacement(i*dx, j*dy, k*dz);
+        Vector3f displacement(i*m_voxel_length, j*m_voxel_width,
+                              k*m_voxel_height);
         Vector3f brick_center(origin);
         brick_center.add(displacement);
         brick_center.add(offset);
@@ -550,6 +544,7 @@ void Ego::clean_parts()
         switch (m_style) {
          case STYLE_APPEARANCE:
           m_dirty_colors = false;
+          shape->set_override_blend_func(false);
           app = m_appearance;
           tmp.sub(center, brick_center);
           ego_brick = create_geometry(should_draw_knobs, tmp);
@@ -576,7 +571,6 @@ void Ego::clean_parts()
           
          default: std::cerr << "Invalid style!" << std::endl;
         }
-        shape->set_override_blend_func(false);
         shape->set_appearance(app);
         shape->set_geometry(ego_brick);
       }
@@ -655,61 +649,56 @@ void Ego::clean_colors()
   // Create the cameras:
   Camera cameras[6];
   Ego_voxels::size_type voxel_size = m_tiled_voxels.size();
-  Vector3f offset(m_voxel_length * 0.5f, m_voxel_width * 0.5f,
-                  m_voxel_height * 0.5f);
-  Vector3f origin(CGAL::to_double(m_tiled_voxels_origin.x()),
-                  CGAL::to_double(m_tiled_voxels_origin.y()),
-                  CGAL::to_double(m_tiled_voxels_origin.z()));
+  Vector3f center(CGAL::to_double(m_tiled_voxels_center.x()),
+                  CGAL::to_double(m_tiled_voxels_center.y()),
+                  CGAL::to_double(m_tiled_voxels_center.z()));
   Vector3f box(m_voxel_length * voxel_size.get<0>(),
                m_voxel_width * voxel_size.get<1>(),
                m_voxel_height * voxel_size.get<2>());
   Vector3f disp(box);
   disp.scale(0.5);
-  Vector3f center;
-  center.add(origin, disp);
-  center.add(offset);
   
   // -1,0,0
-  cameras[0].set_position(center[0]-disp[0]-0.2, center[1], center[2]);
+  cameras[0].set_position(center[0]-box[0], center[1], center[2]);
   cameras[0].set_orientation(-1, 0, 0, 0);
-  cameras[0].get_base_frust().make_ortho(center[1]+disp[1], center[1]-disp[1],
-                                         center[2]-disp[2], center[2]+disp[2],
-                                         0.1, box[0]+0.4);
+  cameras[0].get_frustum().make_ortho(center[2]-disp[2], center[2]+disp[2],
+                                      center[1]-disp[1], center[1]+disp[1],
+                                      0.1, box[0]+0.4);
 
   // +1,0,0
-  cameras[1].set_position(center[0]+disp[0]+0.2, center[1], center[2]);
+  cameras[1].set_position(center[0]+box[0], center[1], center[2]);
   cameras[1].set_orientation(1, 0, 0, 0);
-  cameras[1].get_base_frust().make_ortho(center[1]-disp[1], center[1]+disp[1],
-                                         center[2]-disp[2], center[2]+disp[2],
-                                         0.1, box[0]+0.4);
+  cameras[1].get_frustum().make_ortho(center[1]-disp[1], center[1]+disp[1],
+                                      center[2]-disp[2], center[2]+disp[2],
+                                      0.1, box[0]+0.4);
   
   // 0,-1,0
-  cameras[2].set_position(center[0], center[1]-disp[1]-0.2, center[2]);
+  cameras[2].set_position(center[0], center[1]-box[1], center[2]);
   cameras[2].set_orientation(0, -1, 0, 0);
-  cameras[2].get_base_frust().make_ortho(center[2]+disp[2], center[2]-disp[2],
-                                         center[0]-disp[0], center[0]+disp[0],
-                                         0.1, box[1]+0.4);
+  cameras[2].get_frustum().make_ortho(center[0]-disp[0], center[0]+disp[0],
+                                      center[2]-disp[2], center[2]+disp[2],
+                                      0.1, box[1]+0.4);
 
   // 0,+1,0
-  cameras[3].set_position(center[0], center[1]+disp[1]+0.2, center[2]);
+  cameras[3].set_position(center[0], center[1]+box[1], center[2]);
   cameras[3].set_orientation(0, 1, 0, 0);
-  cameras[3].get_base_frust().make_ortho(center[2]-disp[2], center[2]+disp[2],
-                                         center[0]-disp[0], center[0]+disp[0],
-                                         0.1, box[1]+0.4);
+  cameras[3].get_frustum().make_ortho(center[2]-disp[2], center[2]+disp[2],
+                                      center[0]-disp[0], center[0]+disp[0],
+                                      0.1, box[1]+0.4);
 
   // 0,0,-1
-  cameras[4].set_position(center[0], center[1], center[2]-disp[2]-0.2);
+  cameras[4].set_position(center[0], center[1], center[2]-box[2]);
   cameras[4].set_orientation(0, 0, -1, 0);
-  cameras[4].get_base_frust().make_ortho(center[0]+disp[0], center[0]-disp[0],
-                                         center[1]-disp[1], center[1]+disp[1],
-                                         0.1, box[2]+0.4);
+  cameras[4].get_frustum().make_ortho(center[1]-disp[1], center[1]+disp[1],
+                                      center[0]-disp[0], center[0]+disp[0],
+                                      0.1, box[2]+0.4);
 
   // 0,0,+1
-  cameras[5].set_position(center[0], center[1], center[2]+disp[2]+0.2);
+  cameras[5].set_position(center[0], center[1], center[2]+box[2]);
   cameras[5].set_orientation(0, 0, 1, 0);
-  cameras[5].get_base_frust().make_ortho(center[0]-disp[0], center[0]+disp[0],
-                                         center[1]-disp[1], center[1]+disp[1],
-                                         0.1, box[2]+0.4);
+  cameras[5].get_frustum().make_ortho(center[0]-disp[0], center[0]+disp[0],
+                                      center[1]-disp[1], center[1]+disp[1],
+                                      0.1, box[2]+0.4);
 
   // Draw
   m_clean_colors_in_progress = true;
@@ -894,36 +883,26 @@ Boolean Ego::clean_sphere_bound()
   if (m_dirty_parts) clean_parts();
 
   Ego_voxels::size_type size = m_tiled_voxels.size();
-  Vector3f offset(m_voxel_length * size.get<0>() / 2,
-                  m_voxel_width * size.get<1>() / 2,
-                  m_voxel_height * size.get<2>() / 2);
-  Vector3f center(CGAL::to_double(m_tiled_voxels_origin.x()),
-                  CGAL::to_double(m_tiled_voxels_origin.y()),
-                  CGAL::to_double(m_tiled_voxels_origin.z()));
-  center.add(offset);
-  float radius = offset.length();
-
+  Vector3f box(m_voxel_length * size.get<0>(),
+               m_voxel_width * size.get<1>(),
+               m_voxel_height * size.get<2>());
+  Vector3f center(CGAL::to_double(m_tiled_voxels_center.x()),
+                  CGAL::to_double(m_tiled_voxels_center.y()),
+                  CGAL::to_double(m_tiled_voxels_center.z()));
+  float radius = box.length() * 0.5f;
   m_sphere_bound.set_center(center);
   m_sphere_bound.set_radius(radius);
   m_dirty_sphere_bound = false;
   return true;
 }
 
-void Ego::adjust_voxels_for_tiling() {
-
+void Ego::adjust_voxels_for_tiling()
+{
   // The current tiling uses 2x2 bricks and covers all the voxels.
   // This means that the tiling can go about one square off the current
   // voxels.
   // Therefore we need to "offset" the voxels sturcture in 1 square in
   // the xy-plane.
-  
-  // First, we move the origin. Don't touch z.
-  const double dx = m_voxel_length;
-  const double dy = m_voxel_width;
-  Exact_polyhedron_geo::Kernel::Vector_3 diff(-dx, -dy, 0);
-  m_tiled_voxels_origin = m_tiled_voxels_origin + diff;
-  
-  // Now offset the voxels.
   m_voxels.offset_xy_layers(1);
 }
 
@@ -980,7 +959,6 @@ Appearance* Ego::create_random_appearance()
     app = new Appearance;
     Material* mat = new Material;
     m_materials.push_back(mat);
-    app->set_material(mat);
     Float hue = (Float) hue_key / 255.0;
     Float saturation = (Float) saturation_key / 255.0;
     Float luminosity = (Float) luminosity_key / 255.0;
@@ -990,6 +968,8 @@ Appearance* Ego::create_random_appearance()
     Float green = color_rgb.green();
     Float blue = color_rgb.blue();
     mat->set_diffuse_color(red, green, blue);
+    mat->set_transparency(m_appearance->get_material()->get_transparency());
+    app->set_material(mat);
     m_appearances[color_key] = app;
   }
   else 
