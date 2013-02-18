@@ -36,17 +36,14 @@ Isect_action::Isect_action() :
 {}
 
 /*! Destructor */
-Isect_action::~Isect_action() 
-{
-  //! \todo DELETE_OBJECT(m_color_map);
-}
+Isect_action::~Isect_action() {}
 
 /*! \brief applies the draw action on a given node. For now this means calling
  * the draw method on the Node.
  * @param node a pointer to the node to draw
  */
 Action::Trav_directive Isect_action::apply(Node* node)
-{  
+{
   node->isect(this); 
   return Action::TRAV_CONT;
 }
