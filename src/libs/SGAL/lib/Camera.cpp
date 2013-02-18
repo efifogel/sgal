@@ -53,7 +53,7 @@ Container_proto* Camera::s_prototype = 0;
 const Vector3f Camera::s_def_position(0, 0, 10);
 const Rotation Camera::s_def_orientation(0, 0, 1, 0);
 const float Camera::s_def_field_of_view = 0.785398f;    // 45 degrees
-Frustum Camera::s_def_base_frust;
+Frustum Camera::s_def_frustum;
 const std::string Camera::s_def_description("");
 const Float Camera::s_def_radius_scale = 1.1f;
 const Float Camera::s_def_far_plane_scale = 64;
@@ -68,7 +68,7 @@ Camera::Camera(Boolean proto) :
   m_position(s_def_position),
   m_orientation(s_def_orientation),
   m_view_mat(),
-  m_base_frust(s_def_base_frust),
+  m_frustum(s_def_frustum),
   m_field_of_view(s_def_field_of_view),
   m_dirty_matrix(true),
   m_nearest_clipping_plane(0.1f),
@@ -76,14 +76,12 @@ Camera::Camera(Boolean proto) :
   m_far_plane_scale(s_def_far_plane_scale),
   m_position_translation(0,0,0),
   m_description("")
-{
-}
+{}
 
 /*! Destructor */
 Camera::~Camera() {}
 
-/*! Set the camera position
- */
+/*! \brief sets the camera position. */
 void Camera::set_position(const Vector3f& position)
 {
   m_position = position;
@@ -97,15 +95,15 @@ void Camera::set_orientation(const Rotation& orientation)
   m_dirty_matrix = true;
 }
 
-/*!
- */
+/*! \brief */
 void Camera::set_clipping_planes(float near_plane, float far_plane)
 {
-  m_base_frust.set_near(near_plane);
-  m_base_frust.set_far(far_plane); 
+  m_frustum.set_near(near_plane);
+  m_frustum.set_far(far_plane); 
 }
 
-/*! Set the clipping planes so that the frustum contains the bounding-sphere
+/*! \brief sets the clipping planes so that the frustum contains the
+ * bounding-sphere.
  * \param bb_center the center of the bounding sphere
  * \param bb_radius the radius of the bounding sphere
  */
@@ -131,12 +129,12 @@ void Camera::set_clipping_planes(const Vector3f& bb_center, Float bb_radius)
   m_position.add(bb_center, los);
   m_position.add(m_position_translation);
   
-  m_base_frust.set_near(near_plane);
-  m_base_frust.set_far(far_plane);
+  m_frustum.set_near(near_plane);
+  m_frustum.set_far(far_plane);
 }
 
-/*! Set the cliping plane so the the frustum contains the bounding-sphere
- * of the current scene, if the dynamic flag is raised
+/*! \brief sets the cliping plane so the the frustum contains the 
+ * bounding-sphere of the current scene, if the dynamic flag is raised
  */
 void Camera::set_dynamic_clipping_planes()
 {
@@ -152,28 +150,22 @@ void Camera::set_dynamic_clipping_planes()
 void Camera::set_field_of_view(float fov)
 {
   m_field_of_view = fov;
-  m_base_frust.set_fov(m_field_of_view);
+  m_frustum.set_fov(m_field_of_view);
 }
 
-/*!
- */
-float Camera::get_field_of_view()
-{
-  return m_field_of_view;
-}
+/*! \brief */
+float Camera::get_field_of_view() { return m_field_of_view; }
 
-
-/*!
- */
+/*! \brief */
 void Camera::update_field_of_view(Field_info* /* info */)
 {
-  m_base_frust.set_fov(m_field_of_view);
+  m_frustum.set_fov(m_field_of_view);
   set_rendering_required();
 }
 
 /*! \brief */
 void Camera::get_clipping_planes(float& near_plane, float& far_plane)
-{ m_base_frust.get_near_far(near_plane, far_plane); }
+{ m_frustum.get_near_far(near_plane, far_plane); }
 
 /*! \brief initialize some camera parameters. Cannot be called from the
  * constructor, but does not require a scene graph nor a context. In
@@ -198,17 +190,16 @@ void Camera::utilize()
   }
 }
 
-/*! Update the aspect ratio based on the context */
+/*! \brief updates the aspect ratio based on the context. */
 void Camera::set_aspect_ratio(const Context* context)
 {
   if (context) {
     float ratio = context->get_aspect_ratio();
-    m_base_frust.set_aspect_ratio(ratio);
+    m_frustum.set_aspect_ratio(ratio);
   }
 }
 
-/*!
- */
+/*! \brief */
 void Camera::update_matrix_requiered(Field_info* /* info */)
 {
 #if 0
@@ -219,8 +210,7 @@ void Camera::update_matrix_requiered(Field_info* /* info */)
 #endif
 }
 
-/*!
- */
+/*! \brief */
 void Camera::init_prototype()
 {
   if (s_prototype) return;
@@ -275,57 +265,46 @@ const Matrix4f& Camera::get_view_mat()
 /*! \brief cleans the camera viewing matrix. */
 void Camera::clean_matrix()
 {
-#if 1
-  Vector3f axis;
-  m_orientation.get_axis(axis);
-  float angle = m_orientation.get_angle();
-  m_view_mat.make_rot(axis, 2 * SGAL_PI - angle);
-  Vector3f new_pos;
-  new_pos.scale(-1.0f, m_position);
-  new_pos.xform_pt(new_pos, m_view_mat);
-  m_view_mat.set_row(3, new_pos);
-#else
   Vector3f newz;
-  m_orientation.get_axis(newz);      // asured normalized
-
   Vector3f newx;
   Vector3f newy;
 
+  m_orientation.get_axis(newz);      // asured normalized
   float angle = m_orientation.get_angle();
-
   if (newz[0] == 1.0f) {
-    // the camera points twards the X axis:
+    // The camera points twards the -X axis:
     newx.set(0.0f, 0.0f, -1.0f);
-    newy.set(0.0f, -1.0f, 0.0f);
-    newz[0] = -1.0f;
-  } else if (newz[0] == -1.0f) {
-    // the camera points twards the -X axis:
-    newx.set(0.0f, 0.0f, 1.0f);
-    newy.set(0.0f, -1.0f, 0.0f);
-    newz[0] = 1.0f;
-  } else if (newz[1] == 1.0f) {
-    // the camera points twards the Y axis:
-    newx.set(-1.0f, 0.0f, 0.0f);
-    newy.set(0.0f, 0.0f, -1.0f);
-    newz[1] = -1.0f;
-  } else if (newz[1] == -1.0f) {
-    // the camera points twards the -Y axis:
-    newx.set(-1.0f, 0.0f, 0.0f);
-    newy.set(0.0f, 0.0f, 1.0f);
-    newz[1] = 1.0f;
-  } else if (newz[2] == 1.0f) {
-    // the camera points twards the Z axis:
-    newx.set(-1.0f, 0.0f, 0.0f);
     newy.set(0.0f, 1.0f, 0.0f);
-    newz[2] = -1.0f;
-  } else if (newz[2] == -1.0f) {
-    // the camera points twards the -Z axis:
+  }
+  else if (newz[0] == -1.0f) {
+    // The camera points twards the X axis:
+    newx.set(0.0f, 0.0f, 1.0f);
+    newy.set(0.0f, 1.0f, 0.0f);
+  }
+  else if (newz[1] == 1.0f) {
+    // The camera points twards the -Y axis:
+    newx.set(1.0f, 0.0f, 0.0f);
+    newy.set(0.0f, 0.0f, -1.0f);
+  }
+  else if (newz[1] == -1.0f) {
+    // The camera points twards the Y axis:
+    newx.set(1.0f, 0.0f, 0.0f);
+    newy.set(0.0f, 0.0f, 1.0f);
+  }
+  else
+    if (newz[2] == 1.0f) {
+    // The camera points twards the -Z axis:
     newx.set(1.0f, 0.0f, 0.0f);
     newy.set(0.0f, 1.0f, 0.0f);
-    newz[2] = 1.0f;
-  } else {
+  }
+  else if (newz[2] == -1.0f) {
+    // The camera points twards the Z axis:
+    newx.set(-1.0f, 0.0f, 0.0f);
+    newy.set(0.0f, 1.0f, 0.0f);
+  }
+  else {
     Vector3f up(0.0f, 1.0f, 0.0f);
-    newz.scale(-1.0f, newz);
+    // newz.scale(-1.0f, newz);
     newx.cross(up, newz);
     newx.normalize();
 
@@ -335,20 +314,19 @@ void Camera::clean_matrix()
   }
 
   m_view_mat.make_identity();
-
   m_view_mat.set_col(0, newx);
   m_view_mat.set_col(1, newy);
   m_view_mat.set_col(2, newz);
 
   // rotation:
+  // m_view_mat.post_rot(m_view_mat, 0, 0, 1, SGAL_TWO_PI - angle);
   m_view_mat.post_rot(m_view_mat, 0, 0, 1, angle);
 
-  // position:
   Vector3f new_pos;
   new_pos.scale(-1.0f, m_position);
   new_pos.xform_pt(new_pos, m_view_mat);
   m_view_mat.set_row(3, new_pos);
-#endif
+
   m_dirty_matrix = false;
 }  
 
@@ -366,7 +344,7 @@ void Camera::draw(Draw_action* action)
     acc->get_jitter(xjitter, yjitter);
     float xpert = xjitter / viewport[2];
     float ypert = yjitter / viewport[3];
-    m_base_frust.set_perturbation_scale(xpert, ypert);
+    m_frustum.set_perturbation_scale(xpert, ypert);
   }
   
   draw();
@@ -378,7 +356,7 @@ void Camera::draw(Isect_action* /* action */) { draw(); }
 /*!  \brief applies the camera. */
 void Camera::draw()
 {
-  m_base_frust.apply();
+  m_frustum.apply();
   if (m_dirty_matrix) clean_matrix();
   
   glMatrixMode(GL_MODELVIEW);
@@ -398,13 +376,11 @@ void Camera::draw()
 void Camera::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);  
-  m_base_frust.set_attributes(elem);
+  m_frustum.set_attributes(elem);
   
   typedef Element::Str_attr_iter                Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "fieldOfView") {

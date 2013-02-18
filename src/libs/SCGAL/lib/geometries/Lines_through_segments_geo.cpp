@@ -274,7 +274,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
   Context* context = action->get_context();
   Camera* camera = context->get_active_camera();
 
-  Frustum& frustum = camera->get_base_frust();
+  Frustum& frustum = camera->get_frustum();
   // float left;
   // float right;
   // float bottom;

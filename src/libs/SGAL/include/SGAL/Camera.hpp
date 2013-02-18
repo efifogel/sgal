@@ -77,10 +77,10 @@ public:
   virtual ~Camera();
   
   /*! Construct the prototype. */
-  static Camera* prototype() { return new Camera(true); }
+  static Camera* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Camera(); }
+  virtual Container* clone();
 
   /*! Set the camera position. */
   void set_position(const Vector3f& position);
@@ -89,7 +89,7 @@ public:
   void set_position(Float x, Float y, Float z);
   
   /*! Obtain the camera position. */
-  const Vector3f& get_position() const { return m_position; }
+  const Vector3f& get_position() const;
 
   /*! Set the camera orientation. */
   void set_orientation(const Rotation& orientation);
@@ -98,22 +98,27 @@ public:
   void set_orientation(Float v0, Float v1, Float v2, Float v3);
   
   /*! Obtain the camera orientation. */
-  const Rotation& get_orientation() const { return m_orientation; }
+  const Rotation& get_orientation() const;
 
+  /*! Set the fiewd-of-view of the camera. */
   void set_field_of_view( float fov );
 
+  /*! Obtain the fiewd-of-view of the camera. */
   float get_field_of_view();
 
   void update_field_of_view(Field_info* info);
 
-  void set_description(const std::string& description)
-  { m_description = description; }
+  /*! Set the textual description of the camera. */
+  void set_description(const std::string& description);
   
-  const std::string& get_description(){ return m_description; }
+  /*! Obtain the textual description of the camera. */
+  const std::string& get_description() const;
 
-  Frustum& get_base_frust() { return m_base_frust;}
+  /*! Obtain the (non-const) frustum. */
+  Frustum& get_frustum();
 
-  const Frustum& get_base_frust() const { return m_base_frust;}
+  /*! Obtain the (const) frustum. */
+  const Frustum& get_frustum() const;
   
   const Matrix4f& get_view_mat();
 
@@ -197,7 +202,7 @@ protected:
 
   Matrix4f m_view_mat;
 
-  Frustum m_base_frust;
+  Frustum m_frustum;
 
   float m_field_of_view;
 
@@ -216,9 +221,10 @@ protected:
   /*! The translational vector to adjust the initial position. */
   Vector3f m_position_translation;
   
+  /*! The textual description of the camera. (Used by VRML.) */
   std::string m_description;
 
-  /*! obtains the tag (type) of the container. */
+  /*! Obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
@@ -231,7 +237,7 @@ private:
   static const Vector3f s_def_position;
   static const Rotation s_def_orientation;
   static const float s_def_field_of_view;
-  static Frustum s_def_base_frust;
+  static Frustum s_def_frustum;
   static const std::string s_def_description;
   static const float s_def_radius_scale;
   static const float s_def_far_plane_scale;
@@ -244,6 +250,12 @@ private:
   // static Isect_action * m_picker;
 };
 
+/*! \brief constructs the prototype. */
+inline Camera* Camera::prototype() { return new Camera(true); }
+
+/*! \brief clones. */
+inline Container* Camera::clone() { return new Camera(); }
+
 /*! \brief sets the camera position. */
 inline void Camera::set_position(Float x, Float y, Float z)
 { set_position(Vector3f(x, y, z)); }
@@ -252,6 +264,26 @@ inline void Camera::set_position(Float x, Float y, Float z)
 inline void Camera::set_orientation(Float v0, Float v1, Float v2, Float v3)
 { set_orientation(Rotation(v0, v1, v2, v3)); }
 
+/*! \brief obtains the camera position. */
+inline const Vector3f& Camera::get_position() const { return m_position; }
+
+/*! \brief obtains the camera orientation. */
+inline const Rotation& Camera::get_orientation() const { return m_orientation; }
+
+/*! \brief sets the textual description of the camera. */
+inline void Camera::set_description(const std::string& description)
+{ m_description = description; }
+  
+/*! \brief obtains the textual description of the camera. */
+inline const std::string& Camera::get_description() const
+{ return m_description; }
+
+/*! \brief obtains the (non-const) frustum. */
+inline Frustum& Camera::get_frustum() { return m_frustum; }
+
+/*! \brief obtains the (const) frustum. */
+inline const Frustum& Camera::get_frustum() const { return m_frustum; }
+  
 SGAL_END_NAMESPACE
 
 #endif

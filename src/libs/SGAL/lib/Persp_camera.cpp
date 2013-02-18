@@ -47,11 +47,11 @@ void Persp_camera::init()
   m_far_clip = 32768.0f;
   m_aspect_mode = Frustum::CALC_VERT;
 
-  m_base_frust.set_near(m_near_clip);
-  m_base_frust.SetFar(m_far_clip);
-  m_base_frust.set_aspect_ratio(m_aspect_ratio);
-  m_base_frust.set_horiz_fov(m_horiz_fov);
-  m_base_frust.set_aspect_mode(m_aspect_mode);
+  m_frustum.set_near(m_near_clip);
+  m_frustum.SetFar(m_far_clip);
+  m_frustum.set_aspect_ratio(m_aspect_ratio);
+  m_frustum.set_horiz_fov(m_horiz_fov);
+  m_frustum.set_aspect_mode(m_aspect_mode);
 }
 
 /*!
@@ -59,7 +59,7 @@ void Persp_camera::init()
 void Persp_camera::set_horiz_fov(Float horiz_fov)
 {
   m_horiz_fov = horiz_fov;
-  m_base_frust.set_horiz_fov(horiz_fov);
+  m_frustum.set_horiz_fov(horiz_fov);
 }
 
 /*!
@@ -67,7 +67,7 @@ void Persp_camera::set_horiz_fov(Float horiz_fov)
 void Persp_camera::set_vert_fov(Float vert_fov)
 {
   m_vert_fov = vert_fov;
-  m_base_frust.set_vert_fov(vert_fov);
+  m_frustum.set_vert_fov(vert_fov);
 }
 
 /*!
@@ -91,7 +91,7 @@ void Persp_camera::set_vert_fov_off(Float vert_fov_off)
 void Persp_camera::set_near_clip(Float near_clip)
 {
   m_near_clip = near_clip;
-  m_base_frust.set_near(near_clip);
+  m_frustum.set_near(near_clip);
 }
 
 /*!
@@ -99,7 +99,7 @@ void Persp_camera::set_near_clip(Float near_clip)
 void Persp_camera::set_far_clip(Float far_clip)
 {
   m_far_clip = far_clip;
-  m_base_frust.set_far(far_clip);
+  m_frustum.set_far(far_clip);
 }
 
 /*!
@@ -107,7 +107,7 @@ void Persp_camera::set_far_clip(Float far_clip)
 void Persp_camera::set_aspect_mode(Frustum::Aspect_mode mode)
 {
   m_aspect_mode = mode;
-  m_base_frust.set_aspect_mode(mode);
+  m_frustum.set_aspect_mode(mode);
 }
 
 /*!
@@ -115,6 +115,6 @@ void Persp_camera::set_aspect_mode(Frustum::Aspect_mode mode)
 void Persp_camera::set_aspect_ratio(float aspect)
 {
   m_aspect_ratio = aspect;
-  m_base_frust.set_aspect_ratio(aspect);
+  m_frustum.set_aspect_ratio(aspect);
 }
 
