@@ -450,15 +450,14 @@ void Scene_graph::isect(Uint x, Uint y)
   m_navigation_root->isect(m_isect_action);
   glPopAttrib();
 
-  GLuint pixel[3];
-  pixel[0] = pixel[1] = pixel[2] = 0;
-  glReadPixels(x, y, 1, 1, GL_RGB, GL_UNSIGNED_INT, &pixel);
-  unsigned int ts_index = m_isect_action->get_index(pixel);
+  Uint pixel(0);
+  glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+  Uint index = m_isect_action->get_index(pixel);
 
-  for (unsigned int i = 0; i < m_touch_sensors.size(); ++i) {
-    Boolean is_over = m_touch_sensors[i]->is_in_range(ts_index);
+  for (Uint i = 0; i < m_touch_sensors.size(); ++i) {
+    Boolean is_over = m_touch_sensors[i]->is_in_range(index);
     m_touch_sensors[i]->set_is_over(is_over);
-    if (is_over) m_touch_sensors[i]->set_selection_id(ts_index);
+    if (is_over) m_touch_sensors[i]->set_selection_id(index);
   }
 }
 

@@ -72,6 +72,8 @@ void X11_window_item::create(Display * display, int screen)
   attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
   attributes[index++] = GLX_BLUE_SIZE;
   attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
+  attributes[index++] = GLX_ALPHA_SIZE;
+  attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
   attributes[index++] = GLX_DEPTH_SIZE;
   attributes[index++] = SGAL_DEF_WINDOW_DEPTH_BITS;
   if (m_stencil_bits > 0) {

@@ -10,7 +10,7 @@ ColorBackground {
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
 Viewpoint {
   type "ORTHOGONAL"
-  fieldOfView 3.14
+  fieldOfView 3.1408
 }
 DEF INC_FIRST_TILE_KEY SingleKeySensor { key "q" }
 DEF INC_FIRST_TILE Incrementor {
@@ -586,9 +586,9 @@ Transform {
 	      }		# 180
 	    }
 	  }
-	  style "appearance"
+	  # style "appearance"
 	  style "discreteCubeMap"
-	  scale 100 100 100
+	  scale 200 200 200
 	  model USE MODEL
 	  knobSlices 16
 	}

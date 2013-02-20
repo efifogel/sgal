@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -36,30 +36,33 @@ class Context;
 
 class Color_map {
 public:
-  /*! Constructor */
-  Color_map(Context * context);
+  /*! Initialize the color map. */
+  void init(Context* context);
 
-  /*! Destructor */
-  virtual ~Color_map() {}
+  /*! Convert the pixel color into an index. */
+  Uint get_index(Uint pixel) const;
 
-  unsigned int get_index(Uint * rgb) const;
-  void get_color(unsigned int index, Uint * rgb) const;
+  /*! Convert the pixel color into an index. */
+  Uint get_index(const Uchar* pixel) const;
+
+  /*! Convert the index into a color. */
+  void get_color(Uint index, Uchar* pixel) const;
 
 private:
-  int m_red_bits;
-  int m_green_bits;
-  int m_blue_bits;
+  Uint m_red_bits;
+  Uint m_green_bits;
+  Uint m_blue_bits;
+  Uint m_alpha_bits;
 
   Uint m_red_mask;
   Uint m_green_mask;
   Uint m_blue_mask;
+  Uint m_alpha_mask;
 
-  int m_red_shift;
-  int m_green_shift;
-  int m_blue_shift;
-
-  Color_map() {}
-  Color_map(const Color_map &) {}
+  Uint m_red_shift;
+  Uint m_green_shift;
+  Uint m_blue_shift;
+  Uint m_alpha_shift;
 };
 
 SGAL_END_NAMESPACE

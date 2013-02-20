@@ -222,14 +222,9 @@ void Shape::isect(Isect_action* isect_action)
   if (!m_geometry) return;
 
   Uint id = isect_action->get_id();
-  if (id != 0) {
-    Uint rgb[3];
-    isect_action->get_color(id, rgb);
-    glColor3ui(rgb[0], rgb[1], rgb[2]);
-  } else {
-    glColor3ui(0, 0, 0);
-  }
-
+  Uchar pixel[] = {0, 0, 0, 0};
+  if (id != 0) isect_action->get_color(id, pixel);
+  glColor4ub(pixel[0], pixel[1], pixel[2], pixel[3]);
   m_geometry->isect(isect_action);
 }
 

@@ -129,6 +129,10 @@ public:
   /*! Create a random appearance. */
   Appearance* create_random_appearance();
 
+  /*! Create an appearance. */
+  Appearance* create_appearance(Uint hue_key, Uint saturation_key,
+                                Uint luminosity_key);
+  
   /*! Create the geometry of a brick. */
   Geometry* create_geometry(Boolean draw_knobs, Vector3f& center);
   

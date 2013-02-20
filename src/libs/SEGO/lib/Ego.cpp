@@ -67,6 +67,11 @@
 #include "SEGO/Ego_voxels_tiler.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
 
+#define SGAL_EGO_VERBOSE 1
+#ifdef SGAL_EGO_VERBOSE
+#define SGAL_EGO_VAR(x) #x << " " << x
+#endif
+
 SGAL_BEGIN_NAMESPACE
 
 class Configuration;
@@ -610,13 +615,25 @@ void Ego::clean_colors()
   GLenum gl_format = Image_base::get_format_format(format);
   GLenum gl_type = Image_base::get_format_type(format);
   Uint size = Image_base::get_size(width, height, format);
+  Uint num_components = Image_base::get_format_components(format);
   Uchar* pixels = new Uchar[size];
 
   // Prepare selection image:
-  Image_base::Format format_select = Image_base::kRGB8_8_8;
+// #if !defined(NDEBUG)
+//   Uint red_bits = context->get_red_bits();
+//   Uint green_bits = context->get_green_bits();
+//   Uint blue_bits = context->get_blue_bits();
+//   SGAL_assertion((red_bits == 8) && (green_bits == 8) && (blue_bits == 8));
+// #endif
+//   Uint alpha_bits = context->get_alpha_bits();
+  
+//   Image_base::Format format_select = (alpha_bits == 8) ?
+//     Image_base::kRGBA8_8_8_8 : Image_base::kRGB8_8_8;
+  Image_base::Format format_select = Image_base::kRGBA8_8_8_8;
   GLenum gl_format_select = Image_base::get_format_format(format_select);
   GLenum gl_type_select = Image_base::get_format_type(format_select);
-  Uint size_select= Image_base::get_size(width, height, format_select);
+  Uint size_select = Image_base::get_size(width, height, format_select);
+  Uint num_components_select = Image_base::get_format_components(format_select);
   Uchar* selections = new Uchar[size_select];
   
   // Set the clear color:
@@ -703,9 +720,13 @@ void Ego::clean_colors()
   // Draw
   m_clean_colors_in_progress = true;
   typedef std::pair<Vector3f,Uint>              Weighted_color;
-  std::vector<Weighted_color> colors(get_child_count());
-  std::fill(colors.begin(), colors.end(), Weighted_color(Vector3f(),0));
-  std::vector<Uint> number_of_pixels(get_child_count());
+  typedef std::vector<Weighted_color>           Weighted_color_vector;
+  typedef Weighted_color_vector::iterator       Weighted_color_iter;
+  Weighted_color_vector colors(get_child_count());
+  std::fill(colors.begin(), colors.end(), Weighted_color(Vector3f(), 0));
+  typedef std::vector<Uint>                     Weight_vector;
+  typedef Weight_vector::iterator               Weight_iter;
+  Weight_vector weights(get_child_count());
   for (Uint i = 0; i < 6; ++ i) {
     m_appearance->set_tex_enable(true);
     m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
@@ -716,6 +737,8 @@ void Ego::clean_colors()
     cull_context.cull(this, &cameras[i]);
     cull_context.draw(&draw_action);
     glReadPixels(0, 0, width, height, gl_format, gl_type, pixels);
+
+#if defined(EGO_VERBOSE)
     {
       std::string file_name = "pixels";
       std::ostringstream oss;
@@ -726,6 +749,7 @@ void Ego::clean_colors()
       image.magick("jpg");
       image.write(file_name);
     }
+#endif
     
     context->draw_shade_model(Gfx::FLAT_SHADE);
     context->draw_tex_enable(false);
@@ -733,41 +757,76 @@ void Ego::clean_colors()
     isect(&isect_action);
     glReadPixels(0, 0, width, height, gl_format_select, gl_type_select,
                  selections);
+
+#if defined(EGO_VERBOSE)
     {
       std::string file_name = "selections";
       std::ostringstream oss;
       oss << i;
       file_name += "_" + oss.str() + ".jpg";
-      Magick::Image image(width, height, "RGB", Magick::CharPixel, selections);
+      Magick::Image image(width, height, "RGBA", Magick::CharPixel, selections);
       image.flip();
       image.magick("jpg");
       image.write(file_name);
     }
-
+#endif
+    
     // process pixels & selections
-    std::fill(number_of_pixels.begin(), number_of_pixels.end(), 0);
-
+    std::fill(weights.begin(), weights.end(), 0);
+    Uint j;
+    
     // Pass 1:
-//     for (Uint j = 0; j < height; ++j) {
-//       for (Uint k = 0; k < width; ++k) {
-//         Uint pixel_id = j * width + k;
-//         SGAL_assertion(pixel_id < size);
-//         Uint color = (reinterpret_cast<Uint*>(selections))[pixel_id];
-//         Uint rgb[3];
-//         rgb[0] = color & 0xff;
-//         rgb[1] = (color >> 8) & 0xff;
-//         rgb[2] = (color >> 16) & 0xff;
-//         Uint brick_id = isect_action.get_index(rgb);
-//         if (brick_id == 0) continue;
-//         brick_id -= get_selection_id();
-//         SGAL_assertion(brick_id < get_child_count());
-//         ++(number_of_pixels[brick_id]);
-//       }
-//     }
+    for (j = 0; j < height; ++j) {
+      for (Uint k = 0; k < width; ++k) {
+        Uint pixel_id = j * width + k;
+        Uint component_id = pixel_id * num_components_select;
+        SGAL_assertion(component_id < size_select);
+        Uint brick_id = isect_action.get_index(&selections[component_id]);
+        if (brick_id == 0) continue;
+        brick_id -= get_selection_id();
+        SGAL_assertion(brick_id < get_child_count());
+        ++(weights[brick_id]);
+      }
+    }
+
+    // Pass 2:
+    Weighted_color_iter cit;
+    Weight_iter wit = weights.begin();
+    for (cit = colors.begin(); cit < colors.end(); ++cit, ++wit) {
+      if ((*wit == 0) || (cit->second == 0)) continue;
+      Float factor = weights[j] / (cit->second + *wit);
+      cit->first.scale(factor);
+    }
+    
+    // Pass 3:
+    for (j = 0; j < height; ++j) {
+      for (Uint k = 0; k < width; ++k) {
+        Uint pixel_id = j * width + k;
+        Uint component_id = pixel_id * num_components_select;
+        SGAL_assertion(component_id < size_select);
+        Uint brick_id = isect_action.get_index(&selections[component_id]);
+        if (brick_id == 0) continue;
+        brick_id -= get_selection_id();
+        SGAL_assertion(brick_id < get_child_count());
+        component_id = pixel_id * num_components;
+        SGAL_assertion(component_id < size);
+        Vector3f new_color(((Float) pixels[component_id]) / 255.0f,
+                           ((Float) pixels[component_id+1]) / 255.0f,
+                           ((Float) pixels[component_id+2]) / 255.0f);
+        SGAL_assertion(weights[brick_id] != 0);
+        Float factor = 1.0f / weights[brick_id];
+        colors[brick_id].first.add_scaled(factor, new_color);
+      }
+    }
+
+    // Pass 4:
+    wit = weights.begin();
+    for (cit = colors.begin(); cit < colors.end(); ++cit, ++wit)
+      cit->second += *wit;
   }
   m_clean_colors_in_progress = false;
 
-  // Clean & Recover read-buffer
+  // Clean & Recover 
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
@@ -790,9 +849,41 @@ void Ego::clean_colors()
   // Clear space:
   delete [] pixels;
   delete [] selections;
+  weights.clear();
 
   // Update the colors:
-  
+  Node_iterator nit;
+  Weighted_color_iter cit = colors.begin();
+  for (nit = m_childs.begin(); nit != m_childs.end(); ++nit, ++cit) {
+    Transform* transform = dynamic_cast<Transform*>(*nit);
+    SGAL_assertion(transform);
+    Shape* shape = dynamic_cast<Shape*>(*(transform->children_begin()));
+    shape->set_override_tex_enable(true);
+    shape->set_override_tex_env(true);
+    shape->set_override_blend_func(true);
+    shape->set_override_light_model(true);
+    shape->set_override_tex_gen(true);
+    shape->set_override_light_enable(true);
+    SGAL_assertion(shape);
+
+#ifdef SGAL_EGO_VERBOSE
+    std::cout << SGAL_EGO_VAR(cit->first) << std::endl;
+#endif
+
+    Magick::ColorRGB color_rgb(cit->first[0], cit->first[1], cit->first[2]);
+    Magick::ColorHSL color_hsl(color_rgb);
+    Float hue = color_hsl.hue();
+    Float saturation = color_hsl.saturation();
+    Float luminosity = color_hsl.luminosity();
+
+    Uint hue_key = (Uint) (hue * 255.0f);
+    Uint saturation_key = (Uint) (saturation * 255.0f);
+    Uint luminosity_key = (Uint) (luminosity * 255.0f);
+    
+    Appearance* app = create_appearance(hue_key, saturation_key, luminosity_key);
+    shape->set_appearance(app);
+  }
+  colors.clear();
   m_dirty_colors = false;
 }
 
@@ -978,6 +1069,36 @@ void Ego::clean_appearance()
   m_dirty_appearance = false;
 }
 
+/*! \brief creates an appearance. */
+Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
+                                   Uint luminosity_key)
+{
+  Uint color_key =
+    (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
+  Appearance* app;
+  Appearance_iter ait = m_appearances.find(color_key);
+  if (ait != m_appearances.end()) return ait->second;
+
+  Float hue = (Float) hue_key / 255.0f;
+  Float saturation = (Float) saturation_key / 255.0f;
+  Float luminosity = (Float) luminosity_key / 255.0f;
+
+  app = new Appearance;
+  Material* mat = new Material;
+  m_materials.push_back(mat);
+  Magick::ColorHSL color_hsl(hue, saturation, luminosity);
+  Magick::ColorRGB color_rgb(color_hsl);
+  Float red = color_rgb.red();
+  Float green = color_rgb.green();
+  Float blue = color_rgb.blue();
+  mat->set_diffuse_color(red, green, blue);
+  mat->set_transparency(m_appearance->get_material()->get_transparency());
+  app->set_material(mat);
+  m_appearances[color_key] = app;
+
+  return app;
+}
+
 /*! \brief creates a random appearance. */
 Appearance* Ego::create_random_appearance()
 {
@@ -985,31 +1106,7 @@ Appearance* Ego::create_random_appearance()
   Uint saturation_key = std::rand() % 256;
   // Uint luminosity_key = std::rand() % 256;
   Uint luminosity_key = 128;
-  Uint color_key =
-    (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
-  Appearance* app;
-  Appearance_iter ait = m_appearances.find(color_key);
-  if (ait == m_appearances.end()) {
-    app = new Appearance;
-    Material* mat = new Material;
-    m_materials.push_back(mat);
-    Float hue = (Float) hue_key / 255.0;
-    Float saturation = (Float) saturation_key / 255.0;
-    Float luminosity = (Float) luminosity_key / 255.0;
-    Magick::ColorHSL color_hsl(hue, saturation, luminosity);
-    Magick::ColorRGB color_rgb(color_hsl);
-    Float red = color_rgb.red();
-    Float green = color_rgb.green();
-    Float blue = color_rgb.blue();
-    mat->set_diffuse_color(red, green, blue);
-    mat->set_transparency(m_appearance->get_material()->get_transparency());
-    app->set_material(mat);
-    m_appearances[color_key] = app;
-  }
-  else 
-    app = ait->second;
-
-  return app;
+  return create_appearance(hue_key, saturation_key, luminosity_key);
 }
 
 /*! \brief sets the style. */
