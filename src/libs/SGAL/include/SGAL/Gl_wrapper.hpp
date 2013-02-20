@@ -493,8 +493,8 @@ inline void glColor4iv(const GLint* v)
 inline void glColor4s(GLshort red, GLshort green, GLshort blue, GLshort alpha)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4s("
-                  << red << ", " << green << ", " << blue << ", "
-                  << alpha << ");"
+                  << red << ", " << green << ", "
+                  << blue << ", " << alpha << ");"
                   << std::endl;);
   ::glColor4s(red, green, blue, alpha);
   // Cannot check for errors between glBegin() and glEnd()
@@ -514,8 +514,8 @@ inline void glColor4ub(GLubyte red, GLubyte green, GLubyte blue,
                        GLubyte alpha)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor4ub("
-                  << red << ", " << green << ", " << blue << ", "
-                  << alpha << ");"
+                  << (Uint) red << ", " << (Uint) green << ", "
+                  << (Uint) blue << ", " << (Uint) alpha << ");"
                   << std::endl;);
   ::glColor4ub(red, green, blue, alpha);
   // Cannot check for errors between glBegin() and glEnd()
