@@ -40,13 +40,10 @@ public:
   void init(Context* context);
 
   /*! Convert the pixel color into an index. */
-  Uint get_index(Uint pixel) const;
-
-  /*! Convert the pixel color into an index. */
-  Uint get_index(const Uchar* pixel) const;
+  Uint get_index(const Uchar* color, Uint size = 3) const;
 
   /*! Convert the index into a color. */
-  void get_color(Uint index, Uchar* pixel) const;
+  void get_color(Uint index, Uchar* color, Uint size = 3) const;
 
 private:
   Uint m_red_bits;

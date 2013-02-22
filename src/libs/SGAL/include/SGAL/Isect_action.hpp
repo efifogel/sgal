@@ -74,14 +74,11 @@ public:
   /*! Set the current color id. */
   void set_id(Uint id);
 
-  /*! Convert the color into an index. */
-  Uint get_index(Uint pixel) const;
-
   /*! Convert the pixel color into an index. */
-  Uint get_index(const Uchar* pixel) const;
+  Uint get_index(const Uchar* color) const;
   
   /*! Convert the index into a color. */
-  void get_color(Uint index, Uchar* rgb) const;
+  void get_color(Uint index, Uchar* color) const;
 
 protected:
   /*! The current group color */

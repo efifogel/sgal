@@ -71,30 +71,24 @@ void Color_map::init(Context* context)
 }
 
 /*! \brief converts the pixel color into an index. */
-Uint Color_map::get_index(Uint pixel) const
-{ 
-  Uint mask = m_red_mask | m_green_mask | m_blue_mask | m_alpha_mask;
-  return pixel & mask;
-}
-
-/*! \brief converts the pixel color into an index. */
-Uint Color_map::get_index(const Uchar* pixel) const
+Uint Color_map::get_index(const Uchar* color, Uint size) const
 {
-  Uint r = (pixel[0] << m_red_shift) & m_red_mask;
-  Uint g = (pixel[1] << m_green_shift) & m_green_mask;
-  Uint b = (pixel[2] << m_blue_shift) & m_blue_mask;
-  Uint a = (pixel[3] << m_alpha_shift) & m_alpha_mask;
-  Uint index = r | g | b | a;
-  return index;
+  Uint r = (color[0] << m_red_shift) & m_red_mask;
+  Uint g = (color[1] << m_green_shift) & m_green_mask;
+  Uint b = (color[2] << m_blue_shift) & m_blue_mask;
+  if (size == 3) return (r | g | b);
+  Uint a = (color[3] << m_alpha_shift) & m_alpha_mask;
+  return (r | g | b | a);
 }
 
 /*! \brief converts the index into a pixel color. */
-void Color_map::get_color(Uint index, Uchar* pixel) const 
+void Color_map::get_color(Uint index, Uchar* color, Uint size) const 
 {
-  pixel[0] = ((index & m_red_mask) >> m_red_shift);
-  pixel[1] = ((index & m_green_mask) >> m_green_shift);
-  pixel[2] = ((index & m_blue_mask) >> m_blue_shift);
-  pixel[3] = ((index & m_alpha_mask) >> m_alpha_shift);
+  color[0] = ((index & m_red_mask) >> m_red_shift);
+  color[1] = ((index & m_green_mask) >> m_green_shift);
+  color[2] = ((index & m_blue_mask) >> m_blue_shift);
+  if (size == 3) return;
+  color[3] = ((index & m_alpha_mask) >> m_alpha_shift);
 }
 
 SGAL_END_NAMESPACE

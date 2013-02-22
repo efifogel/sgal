@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -215,8 +215,14 @@ public:
    */
   void add_touch_sensor(Touch_sensor* touch_Sensor);
 
-  /*! Reserve selection ids. */
+  /*! Reserve selection ids.
+   * \param num_selection_ids (in) the number of selection ids to reserve.
+   * \return the number of selection ids reserved so far.
+   */
   Uint reserve_selection_ids(Uint num_selection_ids);
+
+  /*! Obtain the number of selection ids used so far. */
+  Uint get_num_selection_ids() const;
   
   /*! Add a time sensor node to the scene graph. */
   void add_time_sensor(Time_sensor* time_Sensor);
@@ -444,7 +450,7 @@ private:
   /*! A vector of touch-sensor pointers */
   Touch_sensor_vector m_touch_sensors;
 
-  /*! The number of selection ids used so far */
+  /*! The number of selection ids reserved so far. The initial value is 1. */
   Uint m_num_selection_ids;
   
   /*! A list of time sensors */
@@ -561,6 +567,10 @@ inline Bindable_stack* Scene_graph::get_background_stack()
 /*! Obtain the camera bindable stack */
 inline Bindable_stack* Scene_graph::get_camera_stack()
 { return &m_camera_stack; }
+
+/*! \brief obtains the number of selection ids used so far. */
+inline Uint Scene_graph::get_num_selection_ids() const
+{ return m_num_selection_ids; }
 
 SGAL_END_NAMESPACE
 

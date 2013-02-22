@@ -52,10 +52,6 @@ void Isect_action::set_context(Context* context)
   m_color_map.init(context);
 }
 
-/*! \brief converts the color into an index. */
-Uint Isect_action::get_index(Uint pixel) const
-{ return m_color_map.get_index(pixel); }
-
 /*! \brief converts the pixel color into an index. */
 Uint Isect_action::get_index(const Uchar* pixel) const
 { return m_color_map.get_index(pixel); }

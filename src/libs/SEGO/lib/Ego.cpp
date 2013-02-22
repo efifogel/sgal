@@ -67,7 +67,7 @@
 #include "SEGO/Ego_voxels_tiler.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
 
-#define SGAL_EGO_VERBOSE 1
+// #define SGAL_EGO_VERBOSE 1
 #ifdef SGAL_EGO_VERBOSE
 #define SGAL_EGO_VAR(x) #x << " " << x
 #endif
@@ -619,25 +619,17 @@ void Ego::clean_colors()
   Uchar* pixels = new Uchar[size];
 
   // Prepare selection image:
-// #if !defined(NDEBUG)
-//   Uint red_bits = context->get_red_bits();
-//   Uint green_bits = context->get_green_bits();
-//   Uint blue_bits = context->get_blue_bits();
-//   SGAL_assertion((red_bits == 8) && (green_bits == 8) && (blue_bits == 8));
-// #endif
-//   Uint alpha_bits = context->get_alpha_bits();
-  
-//   Image_base::Format format_select = (alpha_bits == 8) ?
-//     Image_base::kRGBA8_8_8_8 : Image_base::kRGB8_8_8;
-  Image_base::Format format_select = Image_base::kRGBA8_8_8_8;
+  Image_base::Format format_select = Image_base::kRGB8_8_8;
   GLenum gl_format_select = Image_base::get_format_format(format_select);
   GLenum gl_type_select = Image_base::get_format_type(format_select);
   Uint size_select = Image_base::get_size(width, height, format_select);
   Uint num_components_select = Image_base::get_format_components(format_select);
+  SGAL_assertion_code(Uint bits = Image_base::get_format_size(format_select));
+  SGAL_assertion(m_scene_graph->get_num_selection_ids() < (0x1 << bits));
   Uchar* selections = new Uchar[size_select];
   
   // Set the clear color:
-  Vector4f color(0, 0, 0, 0);
+  Vector4f color(0, 0, 0);
 
   // Prepare the openGl state
   // - Adjust texture environment
@@ -740,13 +732,13 @@ void Ego::clean_colors()
 
 #if defined(EGO_VERBOSE)
     {
-      std::string file_name = "pixels";
+      std::string ext = ".jpg";
       std::ostringstream oss;
       oss << i;
-      file_name += "_" + oss.str() + ".jpg";
+      std::string file_name = "pixels_" + oss.str() + ext;
       Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
       image.flip();
-      image.magick("jpg");
+      image.magick(ext);
       image.write(file_name);
     }
 #endif
@@ -760,13 +752,14 @@ void Ego::clean_colors()
 
 #if defined(EGO_VERBOSE)
     {
-      std::string file_name = "selections";
+      std::string ext = ".png";
       std::ostringstream oss;
       oss << i;
-      file_name += "_" + oss.str() + ".jpg";
-      Magick::Image image(width, height, "RGBA", Magick::CharPixel, selections);
+      std::string file_name = "selections_" + oss.str() + ext;
+      const char* type = (num_components_select = 3) ? "RGB" : "RGBA";
+      Magick::Image image(width, height, type, Magick::CharPixel, selections);
       image.flip();
-      image.magick("jpg");
+      image.magick(ext);
       image.write(file_name);
     }
 #endif

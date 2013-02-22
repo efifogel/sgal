@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -450,8 +450,14 @@ void Scene_graph::isect(Uint x, Uint y)
   m_navigation_root->isect(m_isect_action);
   glPopAttrib();
 
-  Uint pixel(0);
-  glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+  Image_base::Format format = Image_base::kRGB8_8_8;
+  GLenum gl_format = Image_base::get_format_format(format);
+  GLenum gl_type = Image_base::get_format_type(format);
+  Uint num_components = Image_base::get_format_components(format);
+  SGAL_assertion_code(Uint bits = Image_base::get_format_size(format));
+  SGAL_assertion(get_num_selection_ids() < (0x1 << bits));
+  Uchar pixel[num_components];
+  glReadPixels(x, y, 1, 1, gl_format, gl_type, pixel);
   Uint index = m_isect_action->get_index(pixel);
 
   for (Uint i = 0; i < m_touch_sensors.size(); ++i) {
