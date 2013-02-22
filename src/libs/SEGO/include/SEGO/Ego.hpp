@@ -72,9 +72,12 @@ public:
     APPEARANCE,
     KNOB_SLICES,
     SPACE_FILLING,
+    COLOR_SPACE,
     LAST
   };
 
+  enum Color_space {COLOR_SPACE_RGB, COLOR_SPACE_HSL};
+  
   enum Style { STYLE_RANDOM_COLORS, STYLE_APPEARANCE, STYLE_DISCRETE_CUBE_MAP };
   
   /*! Constructor */
@@ -214,31 +217,31 @@ public:
   Geo_set* get_geo_set_model();
 
   /*! Set the horizontal width of the voxel */
-  void set_voxel_width(Float voxel_width) { m_voxel_width = voxel_width; }
+  void set_voxel_width(Float voxel_width);
 
   /*! Obtain the horizontal width of the voxel */
-  Float get_voxel_width() const { return m_voxel_width; }
+  Float get_voxel_width() const;
 
   /*! Set the horizontal length of the voxel */
-  void set_voxel_length(Float voxel_length) { m_voxel_length = voxel_length; }
+  void set_voxel_length(Float voxel_length);
 
   /*! Obtain the horizontal length of the voxel */
-  Float get_voxel_length() const { return m_voxel_length; }
+  Float get_voxel_length() const;
 
   /*! Set the height of the voxel */
-  void set_voxel_height(Float voxel_height) { m_voxel_height = voxel_height; }
+  void set_voxel_height(Float voxel_height);
 
   /*! Obtain the height of the voxel */
-  Float get_voxel_height() const { return m_voxel_height; }
-  
-  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p)
-  { m_first_tile_placement = p; }
+  Float get_voxel_height() const;
 
-  void set_tiling_strategy(Ego_voxels_tiler::Strategy s)
-  { m_tiling_strategy = s; }
+  /*! */
+  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p);
+
+  /*! */
+  void set_tiling_strategy(Ego_voxels_tiler::Strategy s);
   
-  void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)
-  { m_tiling_rows_direction = r; }
+  /*! */
+  void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r);
 
   /*! Notify about a change in the model */
   void model_changed(Field_info* field_info = NULL);
@@ -285,9 +288,15 @@ public:
   /*! Set the flag that indicates whether the parts are space filling. */
   void set_space_filling(Boolean flag);
 
+  /*! Obtain the color space. */
+  Color_space get_color_space() const;
+
+  /*! Set the style. */
+  void set_color_space(Color_space color_space);
+  
 protected:
   /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   void adjust_voxels_for_tiling();
 
@@ -362,6 +371,9 @@ protected:
   /*! The number of slices of a knob. */
   Uint m_knob_slices;
 
+  /*! Indicate which color space to use to average color. */
+  Color_space m_color_space;
+
 private:
   /*! Indicates whether the appearance is "owned". If it is owned (as the
    * user hasn't provided one) the appearance should be destructed when Ego
@@ -383,6 +395,9 @@ private:
 
   /*! The array of style names. */
   static const char* s_style_names[];
+
+  /*! The array of style names. */
+  static const char* s_color_space_names[];
   
   /*! Default values */
   static const Ego_voxels_tiler::First_tile_placement
@@ -394,6 +409,7 @@ private:
   static const Float s_def_voxel_height;
   static const Style s_def_style;
   static const Boolean s_def_space_filling;
+  static const Color_space s_def_color_space;
 };
 
 /* \brief constructs the prototype. */
@@ -428,11 +444,51 @@ inline Appearance* Ego::get_appearance() { return m_appearance; }
 /*! \brief obtains the style. */
 inline Ego::Style Ego::get_style() const { return m_style; }
 
+/*! \brief obtains the color space. */
+inline Ego::Color_space Ego::get_color_space() const { return m_color_space; }
+
 /*! \brief determines whether the parts are space filling. */
 inline Boolean Ego::is_space_filling() const { return m_space_filling; }
 
 /*! \brief obtains the knob slices number. */
 inline Uint Ego::get_knob_slices() const { return m_knob_slices; }
+
+/*! \brief sets the horizontal width of the voxel. */
+inline void Ego::set_voxel_width(Float voxel_width)
+{ m_voxel_width = voxel_width; }
+
+/*! \brief obtains the horizontal width of the voxel. */
+inline Float Ego::get_voxel_width() const { return m_voxel_width; }
+
+/*! \brief sets the horizontal length of the voxel. */
+inline void Ego::set_voxel_length(Float voxel_length)
+{ m_voxel_length = voxel_length; }
+
+/*! \brief obtains the horizontal length of the voxel. */
+inline Float Ego::get_voxel_length() const { return m_voxel_length; }
+
+/*! \brief sets the height of the voxel. */
+inline void Ego::set_voxel_height(Float voxel_height)
+{ m_voxel_height = voxel_height; }
+
+/*! \brief obtains the height of the voxel. */
+inline Float Ego::get_voxel_height() const { return m_voxel_height; }
+
+/*! \brief  */
+inline
+void Ego::set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p)
+{ m_first_tile_placement = p; }
+
+/*! \brief  */
+inline void Ego::set_tiling_strategy(Ego_voxels_tiler::Strategy s)
+{ m_tiling_strategy = s; }
+  
+/*! \brief  */
+inline void Ego::set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)
+{ m_tiling_rows_direction = r; }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Ego::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

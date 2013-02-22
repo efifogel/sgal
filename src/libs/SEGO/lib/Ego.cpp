@@ -88,12 +88,16 @@ const Ego_voxels_tiler::Strategy
 Ego::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
 const Ego_voxels_tiler::Tiling_rows
 Ego::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
-const Ego::Style Ego::s_def_style(Ego::STYLE_RANDOM_COLORS);
+const Ego::Style Ego::s_def_style(STYLE_RANDOM_COLORS);
+const Ego::Color_space Ego::s_def_color_space(COLOR_SPACE_RGB);
 const Boolean Ego::s_def_space_filling(false);
 
-/*! Styles */
+/*! Style names */
 const char* Ego::s_style_names[] =
   { "randomColors", "appearance", "discreteCubeMap" };
+
+/*! Color space names */
+const char* Ego::s_color_space_names[] = {"RGB", "HSL"}
 
 REGISTER_TO_FACTORY(Ego, "Ego");
 
@@ -118,6 +122,7 @@ Ego::Ego(Boolean proto) :
   m_owned_parts(false),
   m_scene_graph(NULL),
   m_knob_slices(Ego_brick::s_def_knob_slices),
+  m_color_space(s_def_color_space),
   m_owned_appearance(false),
   m_clean_colors_in_progress(false)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
@@ -396,6 +401,16 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "colorSpace") {
+      Uint num = sizeof(s_color_space_names) / sizeof(char *);
+      const char** found = std::find(s_color_space_names,
+                                     &s_color_space_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_color_space_names;
+      if (index < num) set_color_space(static_cast<Color_space>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   // Remove all the deleted attributes:
@@ -629,7 +644,7 @@ void Ego::clean_colors()
   Uchar* selections = new Uchar[size_select];
   
   // Set the clear color:
-  Vector4f color(0, 0, 0);
+  Vector3f color(0, 0, 0);
 
   // Prepare the openGl state
   // - Adjust texture environment
@@ -803,9 +818,19 @@ void Ego::clean_colors()
         SGAL_assertion(brick_id < get_child_count());
         component_id = pixel_id * num_components;
         SGAL_assertion(component_id < size);
-        Vector3f new_color(((Float) pixels[component_id]) / 255.0f,
-                           ((Float) pixels[component_id+1]) / 255.0f,
-                           ((Float) pixels[component_id+2]) / 255.0f);
+        Vector3f new_color;
+        if (m_color_space == COLOR_SPACE_HSL) {
+          Magick::ColorRGB color_rgb(((Float) pixels[component_id]) / 255.0f,
+                                     ((Float) pixels[component_id+1]) / 255.0f,
+                                     ((Float) pixels[component_id+2]) / 255.0f);
+          Magick::ColorHSL color_hsl(color_rgb);
+          new_color.set(color_hsl.hue(), color_hsl.saturation(),
+                        color_hsl.luminosity());
+        }
+        else
+          new_color.set(((Float) pixels[component_id]) / 255.0f,
+                        ((Float) pixels[component_id+1]) / 255.0f,
+                        ((Float) pixels[component_id+2]) / 255.0f);
         SGAL_assertion(weights[brick_id] != 0);
         Float factor = 1.0f / weights[brick_id];
         colors[brick_id].first.add_scaled(factor, new_color);
@@ -863,17 +888,18 @@ void Ego::clean_colors()
     std::cout << SGAL_EGO_VAR(cit->first) << std::endl;
 #endif
 
-    Magick::ColorRGB color_rgb(cit->first[0], cit->first[1], cit->first[2]);
-    Magick::ColorHSL color_hsl(color_rgb);
-    Float hue = color_hsl.hue();
-    Float saturation = color_hsl.saturation();
-    Float luminosity = color_hsl.luminosity();
-
-    Uint hue_key = (Uint) (hue * 255.0f);
-    Uint saturation_key = (Uint) (saturation * 255.0f);
-    Uint luminosity_key = (Uint) (luminosity * 255.0f);
-    
-    Appearance* app = create_appearance(hue_key, saturation_key, luminosity_key);
+    Appearance* app;
+    if (m_color_space == COLOR_SPACE_HSL)
+      app = create_appearance((Uint) (cit->first[0] * 255.0f),
+                              (Uint) (cit->first[1] * 255.0f),
+                              (Uint) (cit->first[2] * 255.0f));
+    else {
+      Magick::ColorRGB color_rgb(cit->first[0], cit->first[1], cit->first[2]);
+      Magick::ColorHSL color_hsl(color_rgb);
+      app = create_appearance((Uint) (color_hsl.hue() * 255.0f),
+                              (Uint) (color_hsl.saturation() * 255.0f),
+                              (Uint) (color_hsl.luminosity() * 255.0f));
+    }
     shape->set_appearance(app);
   }
   colors.clear();
@@ -1109,6 +1135,13 @@ void Ego::set_style(Style style)
   if (m_style == STYLE_APPEARANCE) m_dirty_appearance = true;
 }
 
+/*! \brief sets the color space. */
+void Ego::set_color_space(Color_space color_space)
+{
+  m_color_space = color_space;
+  // set something to clean.
+}
+  
 /*! \brief sets the knob slicess number. */
 void Ego::set_knob_slices(Uint slices) { m_knob_slices = slices; }
 

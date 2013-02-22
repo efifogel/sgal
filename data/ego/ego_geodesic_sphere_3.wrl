@@ -1,6 +1,6 @@
 #VRML V2.0 utf8
 Configuration {
-  # accumulation Accumulation { enabled TRUE }
+  accumulation Accumulation { enabled TRUE }
   displayFPS TRUE
 }
 ColorBackground {
@@ -588,6 +588,7 @@ Transform {
 	  }
 	  # style "appearance"
 	  style "discreteCubeMap"
+	  colorSpace "HSL"
 	  scale 200 200 200
 	  model USE MODEL
 	  knobSlices 16
