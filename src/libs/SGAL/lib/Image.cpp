@@ -177,7 +177,13 @@ void Image::clean()
   if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
   image.matte(m_alpha);
   if (m_alpha) {
-    image.opacity(MaxRGB * m_transparency);
+    Float quantum_range;
+    // Workaround a bug in ImageMagick.
+    {
+      using namespace Magick;
+      quantum_range = QuantumRange;
+    }
+    image.opacity(quantum_range * m_transparency);
     image.colorSpace(Magick::TransparentColorspace);
   }
   Image_base::Format format = kIllegal;
