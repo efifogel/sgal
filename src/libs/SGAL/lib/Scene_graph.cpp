@@ -453,13 +453,15 @@ void Scene_graph::isect(Uint x, Uint y)
   Image_base::Format format = Image_base::kRGB8_8_8;
   GLenum gl_format = Image_base::get_format_format(format);
   GLenum gl_type = Image_base::get_format_type(format);
-  Uint num_components = Image_base::get_format_components(format);
   SGAL_assertion_code(Uint bits = Image_base::get_format_size(format));
   SGAL_assertion(get_num_selection_ids() < (0x1 << bits));
-  Uchar pixel[num_components];
+  // Ideally, we would declare pixel[] as an array of size
+  // Image_base::get_format_components(format) (Uchar pixel[num_components]).
+  // Unfortunately, MSVC does not allow defining an array of non-constant
+  // size, so we define it to be of the maximum (of 3 and 4).
+  Uchar pixel[4];
   glReadPixels(x, y, 1, 1, gl_format, gl_type, pixel);
   Uint index = m_isect_action->get_index(pixel);
-
   for (Uint i = 0; i < m_touch_sensors.size(); ++i) {
     Boolean is_over = m_touch_sensors[i]->is_in_range(index);
     m_touch_sensors[i]->set_is_over(is_over);
