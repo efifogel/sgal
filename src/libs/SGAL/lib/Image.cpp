@@ -21,7 +21,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <setjmp.h>
 #include <string.h>
 
 #include <boost/version.hpp>
@@ -172,67 +171,74 @@ void Image::clean()
   }
   
   Magick::Image image;
-  image.read(fullname);
-  if (m_flip) image.flip();
-  if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
-  image.matte(m_alpha);
-  if (m_alpha) {
-    Float quantum_range;
-    // Workaround a bug in ImageMagick.
-    {
-      using namespace Magick;
-      quantum_range = QuantumRange;
+  try {
+    std::cout << "before" << std::endl;
+    image.read(fullname.c_str());
+    std::cout << "after" << std::endl;
+    if (m_flip) image.flip();
+    if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
+    image.matte(m_alpha);
+    if (m_alpha) {
+      Float quantum_range;
+      // Workaround a bug in ImageMagick.
+      {
+        using namespace Magick;
+        quantum_range = QuantumRange;
+      }
+      image.opacity(quantum_range * m_transparency);
+      image.colorSpace(Magick::TransparentColorspace);
     }
-    image.opacity(quantum_range * m_transparency);
-    image.colorSpace(Magick::TransparentColorspace);
+    Image_base::Format format = kIllegal;
+    std::string magick_map;
+    Magick::StorageType magick_type;
+    Magick::ImageType type = image.type();
+    switch (type) {
+     case Magick::GrayscaleType:       // Grayscale img
+      format = Image_base::kIntensity8;
+      magick_map = "A";
+      magick_type = Magick::CharPixel;
+      break;
+
+     case Magick::TrueColorType:       // Truecolor img
+      format = Image_base::kRGB8_8_8;
+      magick_map = "RGB";
+      magick_type = Magick::CharPixel;
+      break;
+
+     case Magick::TrueColorMatteType:  // Truecolor img + opacity
+      format = Image_base::kRGBA8_8_8_8;
+      magick_map = "RGBA";
+      magick_type = Magick::CharPixel;
+      break;
+
+     case Magick::UndefinedType:       // Unset type
+     case Magick::BilevelType:         // Monochrome img
+     case Magick::GrayscaleMatteType:  // Grayscale img + opacity
+     case Magick::PaletteType:         // Indexed color (palette) img
+     case Magick::PaletteMatteType:    // Indexed color (palette) img + opacity
+     case Magick::ColorSeparationType: // Cyan/Yellow/Magenta/Black (CYMK) img
+     case Magick::ColorSeparationMatteType:
+     case Magick::OptimizeType:
+     default:
+      std::cerr << "Unsupported image type (" << type
+                << ") in file " << fullname.c_str() << "!" << std::endl;
+      break;
+    }
+    Uint width = image.columns();
+    Uint height = image.rows();
+    m_width = width;
+    m_height = height;
+    m_format = format;
+    Uint size = Image_base::get_size(width, height, format);
+    m_pixels = new char[size];
+    SGAL_assertion(m_pixels);
+    m_owned_pixels = true;
+    image.write(0, 0, width, height, magick_map, magick_type, m_pixels);
   }
-  Image_base::Format format = kIllegal;
-  std::string magick_map;
-  Magick::StorageType magick_type;
-  Magick::ImageType type = image.type();
-  switch (type) {
-   case Magick::GrayscaleType:       // Grayscale img
-    format = Image_base::kIntensity8;
-    magick_map = "A";
-    magick_type = Magick::CharPixel;
-    break;
-
-   case Magick::TrueColorType:       // Truecolor img
-    format = Image_base::kRGB8_8_8;
-    magick_map = "RGB";
-    magick_type = Magick::CharPixel;
-    break;
-
-   case Magick::TrueColorMatteType:  // Truecolor img + opacity
-    format = Image_base::kRGBA8_8_8_8;
-    magick_map = "RGBA";
-    magick_type = Magick::CharPixel;
-    break;
-
-   case Magick::UndefinedType:       // Unset type
-   case Magick::BilevelType:         // Monochrome img
-   case Magick::GrayscaleMatteType:  // Grayscale img + opacity
-   case Magick::PaletteType:         // Indexed color (palette) img
-   case Magick::PaletteMatteType:    // Indexed color (palette) img + opacity
-   case Magick::ColorSeparationType: // Cyan/Yellow/Magenta/Black (CYMK) img
-   case Magick::ColorSeparationMatteType:
-   case Magick::OptimizeType:
-   default:
-    std::cerr << "Unsupported image type (" << type
-              << ") in file " << fullname.c_str() << "!" << std::endl;
-    break;
-  }
-  Uint width = image.columns();
-  Uint height = image.rows();
-  m_width = width;
-  m_height = height;
-  m_format = format;
-  Uint size = Image_base::get_size(width, height, format);
-  m_pixels = new char[size];
-  SGAL_assertion(m_pixels);
-  m_owned_pixels = true;
-  image.write(0, 0, width, height, magick_map, magick_type, m_pixels);
-  
+  catch (Magick::Exception &error_) { 
+    std::cerr << "Caught exception: " << error_.what() << std::endl; 
+    return; 
+  } 
   m_dirty = false;
 }
 
