@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $SId: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -24,6 +24,7 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Context.hpp"
@@ -145,8 +146,7 @@ void Camera::set_dynamic_clipping_planes()
   set_clipping_planes(sb.get_center(), sb.get_radius());
 }
 
-/*!
- */
+/*! \brief */
 void Camera::set_field_of_view(float fov)
 {
   m_field_of_view = fov;

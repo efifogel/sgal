@@ -39,9 +39,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "SCGAL/Cubical_gaussian_map_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
-
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Transform.hpp"
@@ -62,9 +61,12 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
 
+#include "SCGAL/Cubical_gaussian_map_geo.hpp"
+#include "SCGAL/Exact_coord_array.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
-std::string Cubical_gaussian_map_geo::s_tag = "sgalCubicalGaussianMap";
+std::string Cubical_gaussian_map_geo::s_tag = "CubicalGaussianMap";
 SGAL::Container_proto* Cubical_gaussian_map_geo::s_prototype = 0;
 
 const bool Cubical_gaussian_map_geo::s_def_draw_aos(false);
@@ -230,7 +232,7 @@ Cubical_gaussian_map_geo::~Cubical_gaussian_map_geo()
   }
 }
 
-/*! Clean the data structure */
+/*! \brief cleans the data structure. */
 void Cubical_gaussian_map_geo::clean()
 {
   if (m_minkowski_sum) {

@@ -30,6 +30,7 @@
 #include <GL/gl.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Types.hpp"

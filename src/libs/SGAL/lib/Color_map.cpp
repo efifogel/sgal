@@ -20,6 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Color_map.hpp"
 #include "SGAL/Context.hpp"
 

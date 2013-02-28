@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -54,11 +54,11 @@ public:
   void set_row(int r, const Vector3f& v);
   void set_row(int r, float x, float y, float z, float w);
   void get_row(int r, Vector3f& dst) const;
-  void get_row(int r, float * x, float * y, float * z, float * w) const;
+  void get_row(int r, float* x, float* y, float* z, float* w) const;
   void set_col(int c, const Vector3f& v);
   void set_col(int c, float x, float y, float z, float w);
   void get_col(int c, Vector3f& dst) const;
-  void get_col(int c, float * x, float * y, float * z, float * w) const;
+  void get_col(int c, float* x, float* y, float* z, float* w) const;
   void set(const Matrix4f& v);
 
   /*! Obtain (a copy of) the matrix */
@@ -94,8 +94,8 @@ public:
   void pre_scale(float xs, float ys, float zs, Matrix4f&  m);
   void post_scale(const Matrix4f&  m, float xs, float ys, float zs);
 
-  float * operator [](int i);
-  const float * operator [](int i) const;
+  float* operator [](int i);
+  const float* operator [](int i) const;
   Boolean operator == (const Matrix4f& m) const;
   Boolean operator != (const Matrix4f& m) const;
 
@@ -130,162 +130,115 @@ private:
 #endif
 };
 
-/*!
- */
-inline void Matrix4f::set(const float * m)
-{
-  ::memcpy(m_matrix, m, sizeof(float) * 16);
-}
+/*! \brief */
+inline void Matrix4f::set(const float* m)
+{ ::memcpy(m_matrix, m, sizeof(float) * 16); }
 
-/*!
- */
-inline float * Matrix4f::operator[](int i)
-{
-  return m_matrix[i];
-}
+/*! \brief */
+inline float* Matrix4f::operator[](int i) { return m_matrix[i]; }
 
-/*!
- */
-inline const float * Matrix4f::operator[](int i) const
-{
-  return m_matrix[i];
-}
+/*! \brief */
+inline const float* Matrix4f::operator[](int i) const { return m_matrix[i]; }
 
-/*!
- */
+/*! \brief */
 inline float Matrix4f::get(int row, int col) const
-{
-  return m_matrix[row][col];
-}
+{ return m_matrix[row][col]; }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::set(int row, int col, float val)
-{
-  m_matrix[row][col] = val;
-}
+{ m_matrix[row][col] = val; }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::set_row(int r, float x, float y, float z, float w)
 {
   m_matrix[r][0] = x; m_matrix[r][1] = y;
   m_matrix[r][2] = z; m_matrix[r][3] = w;
 }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::set_row(int r, const Vector3f& v)
-{
-  m_matrix[r][0] = v[0]; m_matrix[r][1] = v[1]; m_matrix[r][2] = v[2];
-}
+{ m_matrix[r][0] = v[0]; m_matrix[r][1] = v[1]; m_matrix[r][2] = v[2]; }
 
-/*!
- */
-inline void Matrix4f::get_row(int r, float * x, float * y, float * z,
-                              float * w) const
+/*! \brief */
+inline void Matrix4f::get_row(int r, float* x, float* y, float* z, float* w)
+  const
 {
   *x = m_matrix[r][0]; *y = m_matrix[r][1];
   *z = m_matrix[r][2]; *w = m_matrix[r][3];
 }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::get_row(int r, Vector3f& v) const
-{
-  v[0] = m_matrix[r][0]; v[1] = m_matrix[r][1]; v[2] = m_matrix[r][2];
-}
+{ v[0] = m_matrix[r][0]; v[1] = m_matrix[r][1]; v[2] = m_matrix[r][2]; }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::set_col(int c, float x, float y, float z, float w)
 {
   m_matrix[0][c] = x; m_matrix[1][c] = y;
   m_matrix[2][c] = z; m_matrix[3][c] = w;
 }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::set_col(int c, const Vector3f& v)
-{
-  m_matrix[0][c] = v[0]; m_matrix[1][c] = v[1]; m_matrix[2][c] = v[2];
-}
+{ m_matrix[0][c] = v[0]; m_matrix[1][c] = v[1]; m_matrix[2][c] = v[2]; }
 
-/*!
- */
-inline void Matrix4f::get_col(int c, float * x, float * y, float * z,
-                              float * w) const
+/*! \brief */
+inline void Matrix4f::get_col(int c, float* x, float* y, float* z, float* w)
+  const
 {
   *x = m_matrix[0][c]; *y = m_matrix[1][c];
   *z = m_matrix[2][c]; *w = m_matrix[3][c];
 }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::get_col(int c, Vector3f& v) const
-{
-  v[0] = m_matrix[0][c]; v[1] = m_matrix[1][c]; v[2] = m_matrix[2][c];
-}
+{ v[0] = m_matrix[0][c]; v[1] = m_matrix[1][c]; v[2] = m_matrix[2][c]; }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::set(const Matrix4f& v)
-{
-  ::memcpy(m_matrix, v.m_matrix, sizeof(float) * 16);
-}
+{ ::memcpy(m_matrix, v.m_matrix, sizeof(float) * 16); }
 
-/*!
- */
+/*! \brief */
 inline void Matrix4f::get(Matrix4f& v) const
-{
-  ::memcpy(v.m_matrix, m_matrix, sizeof(float) * 16);
-}
+{ ::memcpy(v.m_matrix, m_matrix, sizeof(float) * 16); }
 
-/*!
- */
+/*! \brief */
 inline Boolean Matrix4f::equal(const Matrix4f& v) const
 {
-  for (int i = 0; i < 16; i++)
+  for (Uint i = 0; i < 16; ++i)
     if (((float*)m_matrix)[i] != ((float*)v.m_matrix)[i]) return false;
   return true;
 }
 
-/*!
- */
+/*! \brief */
 inline Boolean Matrix4f::operator==(const Matrix4f& m) const
 { return equal(m); }
 
-/*!
- */
+/*! \brief */
 inline Boolean Matrix4f::operator!=(const Matrix4f& m) const
 { return !equal(m); }
 
-/*!
- */
+/*! \brief */
 inline Matrix4f& Matrix4f::operator=(const Matrix4f& m)
 {
   set(m);
   return *this;
 }
 
-/*!
- */
+/*! \brief */
 inline Matrix4f& Matrix4f::operator*=(const Matrix4f& m)
 {
   post_mult(m);
   return * this;
 }
 
-/*!
- */
+/*! \brief */
 inline Matrix4f::Matrix4f() { this->make_identity(); }
 
-/*!
- */
+/*! \brief */
 inline Matrix4f::Matrix4f(const Matrix4f& m) { set(m); }
 
-/*!
- */
+/*! \brief */
 inline std::ostream& operator<<(std::ostream& os, const Matrix4f& mat)
 {
   os << mat[0][0] << ", " << mat[0][1] << ", "

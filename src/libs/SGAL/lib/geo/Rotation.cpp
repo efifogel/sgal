@@ -14,17 +14,20 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $SId: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
+/*! \brief */
 std::string Rotation::get_text()
 {
   char buf[64];
@@ -33,6 +36,7 @@ std::string Rotation::get_text()
   return str;
 }
 
+/*! \brief */
 void Rotation::make_quaternion(Vector4f& q) const
 {
   float angle = m_angle * 0.5f;
@@ -44,6 +48,7 @@ void Rotation::make_quaternion(Vector4f& q) const
   q[3] = myCos;
 }
 
+/*! \brief */
 void Rotation::set_quaternion(const Vector4f& q)
 {
   float angle = (q[3] > 1) ? 0 : arccosf(q[3]);
@@ -65,8 +70,7 @@ void Rotation::set_quaternion(const Vector4f& q)
   */
 }
 
-// this = q1 * q2. This is a quaternion multiplication. Or you can think
-// of it as Rotation matrix multiplication.
+/*! \brief this = q1 * q2. This is a quaternion multiplication. */
 void Rotation::mult(const Rotation& r1, const Rotation& r2)
 {
   Vector4f q1;
@@ -84,13 +88,13 @@ void Rotation::mult(const Rotation& r1, const Rotation& r2)
   set_quaternion(q);
 }
 
-// Sets this to be the reverse Rotation of q1.
+/*! \brief sets this rotation to be the reverse of the given rotation. */
 void Rotation::invert(const Rotation& /* q1 */)
 {
   m_axis.negate();
 }
 
-// Spherical interpolation for quaternions.
+/*! \brief Spherical interpolation for quaternions. */
 void Rotation::slerp(Float t, const Rotation& r1, const Rotation& r2)
 {
   Vector4f q1, q2, qr;
@@ -116,7 +120,8 @@ void Rotation::slerp(Float t, const Rotation& r1, const Rotation& r2)
   set_quaternion(qr);
 }
 
-/*! Set this to be the Rotation that rotates src unit vector to dst unit vector
+/*! \brief sets this rotation to be the rotation that rotates a given
+ * source unit vector to a given destination unit vector.
  */
 void Rotation::make(const Vector3f& src, const Vector3f& dst)
 {
@@ -127,7 +132,8 @@ void Rotation::make(const Vector3f& src, const Vector3f& dst)
   if (size == 0.0f) {
     Vector3f tmp ;
     tmp.scale(-1.0,dst)  ;
-    // assuming src and dst are equal or so close - so we can define zero Rotation.
+    // assuming src and dst are equal or so close - so we can define zero
+    // Rotation.
     m_axis[0] = 1 ;
     m_axis[1] = 0 ;
     m_axis[2] = 0 ;
@@ -137,7 +143,7 @@ void Rotation::make(const Vector3f& src, const Vector3f& dst)
   }
 }
 
-// Rotate src with this Rotation. Place result in dst
+/*! \brief rotates the given source vector using this rotation. */
 void Rotation::rotate(const Vector3f& src, Vector3f& dst) const
 {
   Matrix4f mat;

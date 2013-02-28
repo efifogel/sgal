@@ -31,7 +31,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
-#include "SGAL/Math_defs.hpp"
 #include "SGAL/Vector3sh.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -296,14 +295,6 @@ inline void Vector3f::add_scaled(Float s, const Vector3f& v2)
 }
 
 /*! \brief */
-inline Float Vector3f::length() const
-{
-  return squarerootf(m_vector[0] * m_vector[0] +
-                     m_vector[1] * m_vector[1] +
-                     m_vector[2] * m_vector[2]);
-}
-
-/*! \brief */
 inline Float Vector3f::normalize()
 {
   Float my_length = length();
@@ -365,10 +356,6 @@ inline void Vector3f::round()
 }
 
 /*! \brief */
-inline Float Vector3f::length_reciprocal() const
-{ return Math::sqrt_reciprocalf(dot(*this)); }
-
-/*! \brief */
 inline bool Vector3f::less(const Vector3f& v) const
 {
   if (m_vector[0] != v[0]) return(m_vector[0] < v[0]);
@@ -397,13 +384,6 @@ inline void Vector3f::combine(Float a, const Vector3f& v1, Float b,
   m_vector[0] = a * v1[0] + b * v2[0];
   m_vector[1] = a * v1[1] + b * v2[1];
   m_vector[2] = a * v1[2] + b * v2[2];
-}
-
-/*! \brief */
-inline Float sqr_distance_pt3(Vector3f p1, Vector3f p2)
-{
-  return ((square(p1[0] - p2[0]) + square(p1[1] - p2[1]) + 
-           square(p1[2] - p2[2])));
 }
 
 #if defined(SOLARIS_251)

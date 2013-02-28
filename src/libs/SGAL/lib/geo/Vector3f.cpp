@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 4966 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -22,13 +22,13 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-/*!
- */
+/*! \brief */
 std::string Vector3f::get_text() 
 {
   char buf[64];
@@ -37,8 +37,7 @@ std::string Vector3f::get_text()
   return str;
 }
 
-/*!
- */
+/*! \brief */
 float Vector3f::get_max_comp()
 {
   float max = (m_vector[0] > m_vector[1] ? m_vector[0] : m_vector[1]);
@@ -46,9 +45,7 @@ float Vector3f::get_max_comp()
   return max;
 }
 
-/*! Normalize1
- * 1 iteration of precision
- */
+/*! \brief normalizes with one iteration of precision. */
 void Vector3f::normalize1()
 {
   float lr = length_reciprocal();
@@ -57,7 +54,7 @@ void Vector3f::normalize1()
   m_vector[2] *= lr;
 }
 
-/*! Sets this vector to be v, thought of as a row vector, times the 3X3
+/*! \brief sets this vector to be v, thought of as a row vector, times the 3X3
  * submatrix formed by the first 3 rows and first three columns of m.
  */
 void Vector3f::xform_vec(const Vector3f & v, const Matrix4f & m)
@@ -69,8 +66,7 @@ void Vector3f::xform_vec(const Vector3f & v, const Matrix4f & m)
   m_vector[2] = t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2];
 }
 
-/*! Cross -  Sets this vector to be the cross product of v1 and v2.
- */
+/*! \brief sets this vector to be the cross product of v1 and v2. */
 void Vector3f::cross(const Vector3f & v1, const Vector3f & v2)
 {
     m_vector[0] = v1[1] * v2[2] - v1[2] * v2[1];
@@ -78,8 +74,8 @@ void Vector3f::cross(const Vector3f & v1, const Vector3f & v2)
     m_vector[2] = v1[0] * v2[1] - v1[1] * v2[0];
 }
 
-/*! Sets this vector to be the first three components of (v,1) * m where v
- * is treated as a row vector.
+/*! \brief sets this vector to be the first three components of (v,1) * m where
+ * v is treated as a row vector.
  */
 void Vector3f::xform_pt(const Vector3f & v, const Matrix4f & m)
 {
@@ -90,8 +86,7 @@ void Vector3f::xform_pt(const Vector3f & v, const Matrix4f & m)
   m_vector[2] = t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2] + m[3][2];
 }
 
-/*!
- */
+/*! \brief */
 void Vector3f::clamp(const Vector3f & v,
                      const Vector3f & min, const Vector3f & max)
 {
@@ -100,8 +95,8 @@ void Vector3f::clamp(const Vector3f & v,
   m_vector[2] = (v[2] < min[2]) ? min[2] : (max[2] < v[2]) ? max[2] : v[2];
 }
 
-/*!  Sets this vector to be the inhomogeneous coordinates (that, divided by w) 
- * of (v,1) * m where v is treated as a row vector. 
+/*! \brief sets this vector to be the inhomogeneous coordinates (that, divided
+ * by w) of (v,1) * m where v is treated as a row vector. 
  */
 void Vector3f::full_xform_pt(const Vector3f & v, const Matrix4f & m)
 {
@@ -113,7 +108,7 @@ void Vector3f::full_xform_pt(const Vector3f & v, const Matrix4f & m)
   m_vector[2] = (t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2] + m[3][2]) / w;
 }
 
-/*! \brief Are three given points collinear? */
+/*! \brief determines whether ther three given points are collinear. */
 bool Vector3f::collinear(const Vector3f& v1, const Vector3f& v2,
                          const Vector3f& v3)
 {
@@ -126,6 +121,24 @@ bool Vector3f::collinear(const Vector3f& v1, const Vector3f& v2,
   return (((x1 * y2) == (x2 * y1)) &&
           ((y1 * z2) == (y2 * z1)) &&
           ((z1 * x2) == (z2 * x1)));
+}
+
+/*! \brief computes the reciprocal of the length of the vector.
+ * DO NOT MAKE INLINE! (Do not move to Vector3f.hp.) to avoid inclusion
+ * of Math_depth.hpp in Vector3f.hpp. 
+ */
+Float Vector3f::length_reciprocal() const
+{ return Math::sqrt_reciprocalf(dot(*this)); }
+
+/*! \brief computes the length of the vector.
+ * DO NOT MAKE INLINE! (Do not move to Vector3f.hp.) to avoid inclusion
+ * of Math_depth.hpp in Vector3f.hpp. 
+ */
+Float Vector3f::length() const
+{
+  return squarerootf(m_vector[0] * m_vector[0] +
+                     m_vector[1] * m_vector[1] +
+                     m_vector[2] * m_vector[2]);
 }
 
 SGAL_END_NAMESPACE

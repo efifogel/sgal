@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -27,6 +27,8 @@
 #include <stdlib.h>
 #include <algorithm>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
@@ -50,10 +52,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Boolean Touch_sensor::s_def_enabled = SGAL_TRUE;
+Boolean Touch_sensor::s_def_enabled(true);
 
-std::string Touch_sensor::s_tag = "sgalTouchSensor";
-Container_proto * Touch_sensor::s_prototype = NULL;
+std::string Touch_sensor::s_tag = "TouchSensor";
+Container_proto* Touch_sensor::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Touch_sensor, "Touch_sensor");
 
@@ -78,20 +80,12 @@ Touch_sensor::Touch_sensor(Boolean enabled, Boolean proto) :
   m_last_is_over(false),
   m_drag_locked(false),
   m_routed_node(0)
-{
-  if (!proto && m_enabled) register_events();
-}
+{ if (!proto && m_enabled) register_events(); }
 
 /*! Destructor */
-Touch_sensor::~Touch_sensor()
-{
-  if (m_enabled) unregister_events();
-}
+Touch_sensor::~Touch_sensor() { if (m_enabled) unregister_events(); }
 
-/*! prototype initialization function - initializes the prototype for 
- * all the node instances of Touch_sensor in the scene graph.
- * Creates and adds a field info for each potential field.
- */
+/*! \brief initializes the prototype. */
 void Touch_sensor::init_prototype()
 {
   //! Container execution function
@@ -133,7 +127,7 @@ void Touch_sensor::init_prototype()
                                           get_member_offset(&m_touch_time)));
   exec_func =
     static_cast<Execution_function>(&Touch_sensor::set_rendering_required);
-  SF_container * field;
+  SF_container* field;
   field = new SF_container(ROUTEDNODE, "enbRoutedNode",
                            get_member_offset(&m_routed_node), exec_func);
   s_prototype->add_field_info(field);
@@ -145,21 +139,21 @@ void Touch_sensor::init_prototype()
                                          get_member_offset(&m_selection_id)));
 }
 
-/*! Delete the prototype */
+/*! \brief deletes the prototype. */
 void Touch_sensor::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the prototype */
-Container_proto * Touch_sensor::get_prototype() 
+/*! \brief obtains the prototype. */
+Container_proto* Touch_sensor::get_prototype() 
 {
   if (!s_prototype) Touch_sensor::init_prototype();
   return s_prototype;
 }
 
-/*! Enable or disable the sensor */
+/*! \brief enables or disables the sensor. */
 void Touch_sensor::set_enabled(bool enabled)
 {
   m_enabled = enabled;
@@ -177,22 +171,23 @@ void Touch_sensor::external_activate(Field_info *)
   set_rendering_required();
   
   // Cascafe the m_routed_node field
-  Field * routed_node_field = get_field(ROUTEDNODE);
+  Field* routed_node_field = get_field(ROUTEDNODE);
   if (routed_node_field) routed_node_field->cascade();
 
   // Update and cascade the m_touch_time field
   //!\todo m_touch_time = m_execution_coordinator->get_scene_time();
-  Field * is_touch_time_field = get_field(TOUCHTIME);
+  Field* is_touch_time_field = get_field(TOUCHTIME);
   if (is_touch_time_field) is_touch_time_field->cascade();
 }
 
-void Touch_sensor::set_normal(const Vector3f & normal)
+/*! \brief */
+void Touch_sensor::set_normal(const Vector3f& normal)
 {
   m_last_normal = m_hit_normal;
   m_hit_normal = normal;
 }
 
-void Touch_sensor::set_point(const Vector3f & point)
+void Touch_sensor::set_point(const Vector3f& point)
 {
   m_last_point = m_hit_point;
   m_hit_point = point;
@@ -204,7 +199,7 @@ void Touch_sensor::set_tex_coord(const Vector2f& tex_coord)
   m_hit_tex_coord = tex_coord;
 }
 
-/*! Sets m_is_over
+/*! \brief sets m_is_over
  * \param over (in) the given value
  */
 void Touch_sensor::set_is_over(const Boolean over)
@@ -212,7 +207,7 @@ void Touch_sensor::set_is_over(const Boolean over)
   m_is_over = over;
 }
 
-/*! Activated when dragging is started
+/*! \brief activated when dragging is started
  * Locks the dragging for the current sensor if possible (if not returns).
  * Updates and cascades the m_is_active field
  * @param point (in) not used for now
@@ -234,17 +229,17 @@ void Touch_sensor::start_dragging(const Vector2sh& /* point */)
   // Update and cascade the m_is_active field
   m_is_active = true;
 
-  Field * is_active_field = get_field(ISACTIVE);
+  Field* is_active_field = get_field(ISACTIVE);
   if (is_active_field) is_active_field->cascade();
 }
 
-/*! Activated when dragging is stoped.
+/*! \brief activated when dragging is stoped.
  * Updates and cascades the m_is_active field.
  * Updates and cascades the m_touch_time field.
  * Unlockes the dragging in the execution coordinator.
  * @param point (in) not used for now
  */
-void Touch_sensor::dragging_done(const Vector2sh & point)
+void Touch_sensor::dragging_done(const Vector2sh& point)
 {
   if (!m_enabled) return;
 
@@ -263,16 +258,16 @@ void Touch_sensor::dragging_done(const Vector2sh & point)
   if (m_last_is_over) {
     // Update and cascade the m_is_active field
     m_is_active = false;
-    Field * is_active_field = get_field(ISACTIVE);
+    Field* is_active_field = get_field(ISACTIVE);
     if (is_active_field) is_active_field->cascade();
 
         // Cascafe the m_routed_node field
-    Field * routed_node_field = get_field(ROUTEDNODE);
+    Field* routed_node_field = get_field(ROUTEDNODE);
     if (routed_node_field) routed_node_field->cascade();
 
       // Update and cascade the m_touch_time field
     //! \todo m_touch_time = m_execution_coordinator->get_scene_time();
-    Field * is_touch_time_field = get_field(TOUCHTIME);
+    Field* is_touch_time_field = get_field(TOUCHTIME);
     if (is_touch_time_field) is_touch_time_field->cascade();
   }
   /*! \todo 
@@ -285,17 +280,16 @@ void Touch_sensor::dragging_done(const Vector2sh & point)
   //! \todo m_execution_coordinator->unlock_dragging();
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
-void Touch_sensor::set_attributes(Element * elem)
+/*! \brief sets the attributes of the object extracted from the input file. */
+void Touch_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
       set_enabled(compare_to_true(value));
       elem->mark_delete(ai);
@@ -311,7 +305,7 @@ void Touch_sensor::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene. */  
 void Touch_sensor::add_to_scene(Scene_graph* sg)
 {
   m_scene_graph = sg;
@@ -319,8 +313,8 @@ void Touch_sensor::add_to_scene(Scene_graph* sg)
   m_first_selection_id = sg->reserve_selection_ids(get_num_selection_ids());
 }
 
-/*! \brief writes this container */
-void Touch_sensor::write(Formatter * formatter)
+/*! \brief writes this container. */
+void Touch_sensor::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
   formatter->single_boolean("enabled", m_enabled, s_def_enabled);
@@ -328,8 +322,8 @@ void Touch_sensor::write(Formatter * formatter)
 }
 
 #if 0
-/*! Get a list of atributes in this object. This method is called only 
- * from the Builder side.
+/*! \brief obtains a list of atributes in this object.
+ * This method is called only from the Builder side.
  *
  * @return a list of attributes 
  */
@@ -349,29 +343,25 @@ Attribute_list Touch_sensor::get_attributes()
   return attribs; 
 };
 
-/*! Add a touch sensor object to the scene.
+/*! \brief adds a touch sensor object to the scene.
  * This includes adding it to the array of touch sensors in the
  * scene graph and setting a flag in the group indicating it has
  * a touch sensor.
  * @param sg (in) a reference to the scene graph
  * @param parent (in) a pointer to the parent object.
  */
-void Touch_sensor::add_to_scene(Scene_graph * sg, XML_entity * parent) 
+void Touch_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent) 
 { 
   Node::add_to_scene(sg, parent);
-
   char id = sg->AddTouchSensor(this);
-
-  Group * group = dynamic_cast<Group *>(parent);
+  Group* group = dynamic_cast<Group *>(parent);
   ASSERT(group);
-  if (group) {
-    group->set_has_touch_sensor(id);
-  }
+  if (group) group->set_has_touch_sensor(id);
   m_scene_graph = sg;
 }
 #endif
 
-/*! registers the mouse and mostion events */
+/*! \brief registers the mouse and mostion events. */
 void Touch_sensor::register_events()
 {
   Mouse_event::doregister(this);
@@ -390,44 +380,39 @@ void Touch_sensor::unregister_events()
 }
 
 /*! handles mouse events */
-void Touch_sensor::handle(Mouse_event * event)
+void Touch_sensor::handle(Mouse_event* event)
 {
   switch (event->get_button()) {
    case Mouse_event::LEFT_BUTTON:
-    if (event->get_state() ==  Mouse_event::DOWN) {
+    if (event->get_state() ==  Mouse_event::DOWN)
       left_button_down(event->get_x(), event->get_y());
-    } else {
+    else
       left_button_up(event->get_x(), event->get_y());
-    }
     break;
 
    case Mouse_event::MIDDLE_BUTTON:
-    if (event->get_state() ==  Mouse_event::DOWN) {
-    } else {
-    }
+    // if (event->get_state() ==  Mouse_event::DOWN) {
+    // } else {
+    // }
     break;
 
    case Mouse_event::RIGHT_BUTTON:
-    if (event->get_state() ==  Mouse_event::DOWN) {
+    if (event->get_state() ==  Mouse_event::DOWN)
       right_button_down(event->get_x(), event->get_y());
-    } else {
+    else
       right_button_up(event->get_x(), event->get_y());
-    }
     break;
   }
 }
   
-/*! handle motion events
- */
-void Touch_sensor::handle(Motion_event * event)
-{
-  mouse_move(event->get_x(), event->get_y());
-}
+/*! \brief handles motion events. */
+void Touch_sensor::handle(Motion_event* event)
+{ mouse_move(event->get_x(), event->get_y()); }
 
-/*! handle passive motion events
+/*! \brief handles passive motion events.
  * Updates and cascades the m_is_over field if needed.
  */
-void Touch_sensor::handle(Passive_motion_event * event)
+void Touch_sensor::handle(Passive_motion_event* event)
 {
   if (!m_enabled) return;
 
@@ -437,7 +422,7 @@ void Touch_sensor::handle(Passive_motion_event * event)
   //! \todo if (m_execution_coordinator->is_dragging_locked() && (!m_drag_locked))
   // If m_is_over has changed - update and cascade the m_is_over field
   if (m_last_is_over != m_is_over) {
-    Field * is_over_field = get_field(ISOVER);
+    Field* is_over_field = get_field(ISOVER);
     if (is_over_field) is_over_field->cascade();
     m_last_is_over = m_is_over;
   }
@@ -463,17 +448,13 @@ void Touch_sensor::handle(Passive_motion_event * event)
 #endif
 }
 
-/*! prints an identification message
- */
+/*! \brief prints an identification message. */
 void Touch_sensor::identify()
-{
-  std::cout << "Agent: Touch_sensor" << std::endl;
-}
+{ std::cout << "Agent: Touch_sensor" << std::endl; }
 
 #if 0
-/*!
- */
-bool Touch_sensor::update_cursor(const Mouse_event_data & data)
+/*! \brief */
+bool Touch_sensor::update_cursor(const Mouse_event_data& data)
 {
   if (!m_enabled) return true;
 
@@ -496,16 +477,14 @@ bool Touch_sensor::update_cursor(const Mouse_event_data & data)
   return true;
 }
 
-/*!
- */
-bool Touch_sensor::update_cursor(const Mouse_wheel_data & data)
+/*! \brief */
+bool Touch_sensor::update_cursor(const Mouse_wheel_data& data)
 {
   return true;
 }
 
-/*!
- */
-bool Touch_sensor::update_cursor(const Key_event_data & data)
+/*! \brief */
+bool Touch_sensor::update_cursor(const Key_event_data& data)
 {
   if (!m_enabled) return true;
 
@@ -527,20 +506,14 @@ bool Touch_sensor::update_cursor(const Key_event_data & data)
 }
 #endif
 
-/*! Sets the routed node pointer */
-void Touch_sensor::set_routed_node(Container * node)
-{
-  m_routed_node = node;
-}
+/*! \brief sets the routed node pointer. */
+void Touch_sensor::set_routed_node(Container* node) { m_routed_node = node; }
 
-/*! Gets the routed node pointer */
-Container * Touch_sensor::get_routed_node() const
-{
-  return m_routed_node;
-}
+/*! \brief gets the routed node pointer. */
+Container* Touch_sensor::get_routed_node() const { return m_routed_node; }
 
-/*! Handle tick events */
-void Touch_sensor::handle(Tick_event * event)
+/*! \brief handles tick events. */
+void Touch_sensor::handle(Tick_event* event)
 {
   clock_t sim_time = event->get_sim_time();
   m_touch_time = (Scene_time) sim_time / CLOCKS_PER_SEC;

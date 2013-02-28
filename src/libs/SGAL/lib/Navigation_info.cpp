@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7773 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Navigation_info.hpp"
 #include "SGAL/Navigation_info_types.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -33,8 +34,8 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Navigation_info::s_tag = "NavigationInfo";
-Container_proto * Navigation_info::s_prototype = 0;
-const char * Navigation_info::s_type_strings[] =
+Container_proto* Navigation_info::s_prototype = 0;
+const char* Navigation_info::s_type_strings[] =
   {"NONE", "EXAMINE", "FLY", "WALK", "TRANSFORM"};
 
 REGISTER_TO_FACTORY(Navigation_info, "Navigation_info");
@@ -49,11 +50,10 @@ Navigation_info::Navigation_info(Boolean proto) :
 /*! Destructor */
 Navigation_info::~Navigation_info() {}
 
-/*! Parses the type string-attribute
- */
-int Navigation_info::parse_type(const std::string & type)
+/*! \brief parses the type string-attribute. */
+int Navigation_info::parse_type(const std::string& type)
 {
-  unsigned int i;
+  Uint i;
   for (i = 0; i < type.size(); ++i) {
     // Skip white space:
     while (i < type.size() && type[i] == ' ') i++;
@@ -70,7 +70,7 @@ int Navigation_info::parse_type(const std::string & type)
     Boolean found = false;
     
     for (j = 0; j < SGAL::NUM_TYPES; ++j) {
-      const char * nav_type = s_type_strings[j];
+      const char* nav_type = s_type_strings[j];
       if (type.compare(i, strlen(nav_type), nav_type) == 0) {
         m_type = (SGAL::Navigation_info_type) j;
         found = true;
@@ -80,7 +80,7 @@ int Navigation_info::parse_type(const std::string & type)
 
     // Compare with "ANY":
     if (!found && !m_any) {
-      const char * nav_type = "ANY";
+      const char* nav_type = "ANY";
       if (type.compare(i, strlen(nav_type), nav_type) == 0) m_any = true;
     }
 
@@ -97,17 +97,16 @@ int Navigation_info::parse_type(const std::string & type)
   return 0;
 }
 
-/*! Sets the attributes of this node */
-void Navigation_info::set_attributes(Element * elem) 
+/*! \brief sets the attributes of this node. */
+void Navigation_info::set_attributes(Element* elem) 
 {
   Navigation_sensor::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "type") {
       parse_type(value);
       elem->mark_delete(ai);
@@ -120,7 +119,7 @@ void Navigation_info::set_attributes(Element * elem)
 }
 
 /*! \brief adds the container to a given scene */  
-void Navigation_info::add_to_scene(Scene_graph * sg)
+void Navigation_info::add_to_scene(Scene_graph* sg)
 {
   Navigation_sensor::add_to_scene(sg);
   
@@ -131,25 +130,22 @@ void Navigation_info::add_to_scene(Scene_graph * sg)
   sg->route_navigation_info(this, m_type);
 }
 
-/*! Initialize the node prototype
- */
+/*! \brief initializes the node prototype. */
 void Navigation_info::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Navigation_sensor::get_prototype());
 }
 
-/*!  Delete the prototype
- */
+/*! \brief deletes the prototype. */
 void Navigation_info::delete_prototype()
 {
   delete s_prototype;
   s_prototype = 0;
 }
 
-/*! Initialize the prototype unless intialized already and return it
- */
-Container_proto * Navigation_info::get_prototype()
+/*! \brief Obtains the prototype. */
+Container_proto* Navigation_info::get_prototype()
 {
   if (!s_prototype) init_prototype();
   return s_prototype;

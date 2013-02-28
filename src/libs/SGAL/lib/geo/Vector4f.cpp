@@ -14,20 +14,21 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 4966 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Vector4f.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
-/*!
- */
+/*! \brief */
 std::string Vector4f::get_text() 
 {
   char buf[64];
@@ -37,9 +38,8 @@ std::string Vector4f::get_text()
   return str;
 }
 
-/*! Sets this vector to be v * m where v is treated as a row vector.
- */
-void Vector4f::xform(const Vector4f & v, const Matrix4f & m)
+/*! \brief sets this vector to be v * m where v is treated as a row vector. */
+void Vector4f::xform(const Vector4f& v, const Matrix4f& m)
 {
   Vector4f t;
   t.set(v);
@@ -48,3 +48,12 @@ void Vector4f::xform(const Vector4f & v, const Matrix4f & m)
   m_vector[2] = t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2] + t[3]*m[3][2];
   m_vector[3] = t[0]*m[0][3] + t[1]*m[1][3] + t[2]*m[2][3] + t[3]*m[3][3];
 }
+
+/*! \brief computes the length of the vector.
+ * DO NOT MAKE INLINE! (Do not move to Vector4f.hp.) to avoid inclusion
+ * of Math_depth.hpp in Vector4f.hpp. 
+ */
+float Vector4f::length() const
+{ return squarerootf(dot(*this)); }
+
+SGAL_END_NAMESPACE

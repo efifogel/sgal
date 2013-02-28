@@ -40,9 +40,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "SCGAL/Spherical_gaussian_map_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
-
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Trace.hpp"
@@ -57,6 +56,9 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+
+#include "SCGAL/Spherical_gaussian_map_geo.hpp"
+#include "SCGAL/Exact_coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -87,7 +89,7 @@ Spherical_gaussian_map_geo::Spherical_gaussian_map_geo(Boolean proto) :
 
 /*! Copy Constructor */
 Spherical_gaussian_map_geo::
-Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo & gm)
+Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo& gm)
 { SGAL_assertion(0); }
 
 /*! Destructor */
@@ -103,7 +105,7 @@ Spherical_gaussian_map_geo::~Spherical_gaussian_map_geo()
   }
 }
 
-/*! Clean the data structure */
+/*! \brief cleans the data structure. */
 void Spherical_gaussian_map_geo::clean()
 {
   if (!m_sgm) {
@@ -146,28 +148,26 @@ void Spherical_gaussian_map_geo::clean()
   update_facets();
 }
 
-/*! Clear the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Spherical_gaussian_map_geo::clear()
 {
   Spherical_gaussian_map_base_geo::clear();
   if (m_sgm) m_sgm->clear();
 }
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_geo::cull(Cull_context& cull_context) {}
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_geo::isect(Isect_action* action)
 {
   Context* context = action->get_context();
   if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
-
   isect_primary();
-    
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-/*! \brief sets the attributes of the object extracted from an input file */
+/*! \brief sets the attributes of the object extracted from an input file. */
 void Spherical_gaussian_map_geo::set_attributes(Element* elem)
 {
   Spherical_gaussian_map_base_geo::set_attributes(elem);
@@ -177,7 +177,8 @@ void Spherical_gaussian_map_geo::set_attributes(Element* elem)
   typedef Element::Cont_iter              Cont_iter;
 
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+  Multi_cont_attr_iter mcai;
+  for (mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); mcai++)
   {
     const std::string& name = elem->get_name(mcai);
@@ -203,7 +204,7 @@ void Spherical_gaussian_map_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -214,21 +215,22 @@ void Spherical_gaussian_map_geo::init_prototype()
   s_prototype->add_field_info(field);
 }
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief */
 Container_proto* Spherical_gaussian_map_geo::get_prototype() 
 {  
   if (!s_prototype) Spherical_gaussian_map_geo::init_prototype();
   return s_prototype;
 }
 
-/*! Draw the polyhedron directly from the gaussian map representation */
+/*! \brief draws the polyhedron directly from the gaussian map representation.
+ */
 void Spherical_gaussian_map_geo::draw_primal(Draw_action* action)
 {
   SGAL_TRACE_MSG(Trace::GAUSSIAN_MAP, "draw_primal()\n");
@@ -273,7 +275,7 @@ void Spherical_gaussian_map_geo::draw_primal(Draw_action* action)
     // Vertices with boundary conditions may have degree 2. Skip them:
     if (vit->degree() < 3) continue;
     glBegin(GL_POLYGON);
-    const Vector3f & normal = vit->get_rendered_normal();
+    const Vector3f& normal = vit->get_rendered_normal();
     glNormal3fv((float*)&normal);
 
     Sgm_halfedge_around_vertex_const_circulator hec(vit->incident_halfedges());
@@ -289,7 +291,7 @@ void Spherical_gaussian_map_geo::draw_primal(Draw_action* action)
   glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_geo::isect_primary()
 {
   Sgm_vertex_const_iterator vit;
@@ -309,7 +311,7 @@ void Spherical_gaussian_map_geo::isect_primary()
   }
 }
 
-/*! Print statistics */
+/*! \brief prints statistics. */
 void Spherical_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
@@ -399,7 +401,7 @@ void Spherical_gaussian_map_geo::draw_aos_edges(Draw_action* action)
 {
   Sgm_edge_const_iterator hei;
   for (hei = m_sgm->edges_begin(); hei != m_sgm->edges_end(); ++hei) {
-    const Sgm_x_monotone_curve_2 & curve = hei->curve();
+    const Sgm_x_monotone_curve_2& curve = hei->curve();
     Vector3f src = to_vector3f(curve.source());
     Vector3f trg = to_vector3f(curve.target());
     src.normalize();
@@ -408,7 +410,7 @@ void Spherical_gaussian_map_geo::draw_aos_edges(Draw_action* action)
   }
 }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Spherical_gaussian_map_geo::create_renderers()
 {
   m_vertices_renderer = new Vertices_renderer(*this);
@@ -422,7 +424,7 @@ void Spherical_gaussian_map_geo::create_renderers()
   m_inflated_tube_edges_renderer = new Inflated_tube_edges_renderer(*this);
 }
 
-/*! \brief destroys the renderers */
+/*! \brief destroys the renderers. */
 void Spherical_gaussian_map_geo::destroy_renderers()
 {
   if (m_vertices_renderer) delete m_vertices_renderer;
@@ -436,7 +438,7 @@ void Spherical_gaussian_map_geo::destroy_renderers()
   if (m_inflated_tube_edges_renderer) delete m_inflated_tube_edges_renderer;
 }
 
-/*! \brief cleans the renderer */
+/*! \brief cleans the renderer. */
 void Spherical_gaussian_map_geo::clean_renderer()
 {
   Spherical_gaussian_map_base_geo::clean_renderer();

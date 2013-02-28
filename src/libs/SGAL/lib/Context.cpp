@@ -24,6 +24,7 @@
 #include "gl2ps.h"
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Context.hpp"

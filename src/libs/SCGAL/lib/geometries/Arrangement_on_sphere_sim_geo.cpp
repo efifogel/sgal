@@ -37,6 +37,8 @@
 
 #include <CGAL/Cartesian.h>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"

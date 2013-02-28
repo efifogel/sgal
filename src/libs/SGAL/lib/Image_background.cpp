@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -26,6 +26,7 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Image_background.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Appearance.hpp"
@@ -37,8 +38,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Image_background::s_tag = "sgalImageBackground";
-Container_proto * Image_background::s_prototype = NULL;
+std::string Image_background::s_tag = "ImageBackground";
+Container_proto* Image_background::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Image_background, "Image_background");
 
@@ -46,7 +47,7 @@ REGISTER_TO_FACTORY(Image_background, "Image_background");
 Image_background::Image_background(Boolean proto) :
   Background(proto),
   m_appearance(NULL),
-  m_is_default_appearance(SGAL_FALSE)
+  m_is_default_appearance(false)
 {}
 
 /*! Destructor */
@@ -58,23 +59,18 @@ Image_background::~Image_background()
   }
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Image_background::set_attributes(Element * elem) 
+/*! \brief sets the attributes of this object. */
+void Image_background::set_attributes(Element* elem) 
 {
   Background::set_attributes(elem);
 
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Container* cont = elem->get_value(cai);
     if (name == "appearance") {
-      Appearance * app = dynamic_cast<Appearance*>(cont);
+      Appearance* app = dynamic_cast<Appearance*>(cont);
       set_appearance(app);
       elem->mark_delete(cai);
       continue;
@@ -85,8 +81,7 @@ void Image_background::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*!
- */
+/*! \brief */
 void Image_background::init_prototype()
 {
   if (s_prototype) return;
@@ -95,41 +90,39 @@ void Image_background::init_prototype()
   s_prototype = new Container_proto(Background::get_prototype());
 }
 
-/*!
- */
+/*! \brief */
 void Image_background::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
-Container_proto * Image_background::get_prototype() 
+/*! \brief */
+Container_proto* Image_background::get_prototype() 
 {  
   if (s_prototype == NULL) Image_background::init_prototype();
   return s_prototype;
 }
 
-/*! Set the appearance of the object 
+/*! \brief sets the appearance of the object.
  * @param app the appearance
  */
 void Image_background::set_appearance(Appearance *app) 
 {
   m_appearance = app;
-  m_appearance->set_light_enable(SGAL_FALSE);
-  m_appearance->set_depth_enable(SGAL_FALSE);
+  m_appearance->set_light_enable(false);
+  m_appearance->set_depth_enable(false);
   m_appearance->set_poly_mode(Gfx::FILL_PMODE);
 }
 
-/*! Draws the appearance and then all the geometries 
+/*! \brief draws the appearance and then all the geometries.
  * @param draw_action
  */
-void Image_background::draw(Draw_action * draw_action)
+void Image_background::draw(Draw_action* draw_action)
 {
   if (!m_appearance) return;
 
-  Context * context = draw_action->get_context();
+  Context* context = draw_action->get_context();
   if (!context) return;
   context->clear_depth_buffer();
 

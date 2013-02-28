@@ -27,6 +27,7 @@
 #include <assert.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Node.hpp"
@@ -51,11 +52,11 @@ Cull_context::Cull_context() :
 /*! Destructor */
 Cull_context::~Cull_context() {}
 
-/*! \brief Compare node priority.
+/*! \brief compares node priority.
  * Used to sort nodes by their distance fromt he camera.
  */
-inline bool compare_render_nodes(const Cull_context::Render_node& n1,
-                                 const Cull_context::Render_node& n2)
+bool compare_render_nodes(const Cull_context::Render_node& n1,
+                          const Cull_context::Render_node& n2)
 { return n1.priority > n2.priority; }
 
 /*! \brief adds a shape node. */

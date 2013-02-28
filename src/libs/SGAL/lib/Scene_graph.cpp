@@ -459,7 +459,11 @@ void Scene_graph::isect(Uint x, Uint y)
   // Image_base::get_format_components(format) (Uchar pixel[num_components]).
   // Unfortunately, MSVC does not allow defining an array of non-constant
   // size, so we define it to be of the maximum (of 3 and 4).
+#if (_MSC_VER <= 1600)
   Uchar pixel[4];
+#else
+  Uchar pixel[Image_base::get_format_components(format)];
+#endif
   glReadPixels(x, y, 1, 1, gl_format, gl_type, pixel);
   Uint index = m_isect_action->get_index(pixel);
   for (Uint i = 0; i < m_touch_sensors.size(); ++i) {
@@ -469,7 +473,7 @@ void Scene_graph::isect(Uint x, Uint y)
   }
 }
 
-/*! Process all snapshot nodes */
+/*! \brief processes all snapshot nodes. */
 void Scene_graph::process_snapshots(Draw_action* action) 
 {
   for (Snapshot_iter i = m_snapshots.begin(); i != m_snapshots.end(); ++i) {
