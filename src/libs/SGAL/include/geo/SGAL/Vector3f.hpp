@@ -333,13 +333,6 @@ inline Float Vector3f::sqr_distance(const Vector3f& v) const
 }
 
 /*! \brief */
-inline Float Vector3f::distance(const Vector3f& v) const
-{
-  Float sqr_dist = sqr_distance(v);
-  return sqrtf(sqr_dist);
-}
-
-/*! \brief */
 inline void Vector3f::div(Float c, const Vector3f& v)
 {
   m_vector[0] = c / v[0];

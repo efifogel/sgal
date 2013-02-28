@@ -141,4 +141,14 @@ Float Vector3f::length() const
                      m_vector[2] * m_vector[2]);
 }
 
+/*! \brief computes the distance from a given point.
+ * DO NOT MAKE INLINE! (Do not move to Vector3f.hp.) to avoid inclusion
+ * of Math_depth.hpp in Vector3f.hpp. 
+ */
+Float Vector3f::distance(const Vector3f& v) const
+{
+  Float sqr_dist = sqr_distance(v);
+  return sqrtf(sqr_dist);
+}
+
 SGAL_END_NAMESPACE
