@@ -172,9 +172,7 @@ void Image::clean()
   
   Magick::Image image;
   try {
-    std::cout << "before" << std::endl;
     image.read(fullname.c_str());
-    std::cout << "after" << std::endl;
     if (m_flip) image.flip();
     if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
     image.matte(m_alpha);

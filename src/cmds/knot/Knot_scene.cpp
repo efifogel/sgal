@@ -40,6 +40,7 @@
 #include <limits.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Draw_action.hpp"

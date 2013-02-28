@@ -35,27 +35,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
 
-#if defined(USE_CGAL)
-#include "CGAL/basic.h"
-
-#include "SCGAL/Exact_polyhedron_geo.hpp"
-#if defined(USE_CGM)
-#include "SCGAL/Cubical_gaussian_map_geo.hpp"
-#endif
-#if defined(USE_SGM)
-#include "SCGAL/Spherical_gaussian_map_geo.hpp"
-#endif
-#if defined(USE_AOS)
-#include "SCGAL/Arrangement_on_sphere_geo.hpp"
-#endif
-#if defined(USE_EOS)
-#include "SCGAL/Envelope_on_sphere_geo.hpp"
-#endif
-#if defined(USE_NEF) && defined(USE_NGM)
-#include "SCGAL/Nef_gaussian_map_geo.hpp"
-#endif
-#endif
-
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
@@ -106,6 +85,27 @@
 #else
 #include "SGAL/X11_window_item.hpp"
 #include "SGAL/X11_window_manager.hpp"
+#endif
+
+#if defined(USE_CGAL)
+#include "CGAL/basic.h"
+
+#include "SCGAL/Exact_polyhedron_geo.hpp"
+#if defined(USE_CGM)
+#include "SCGAL/Cubical_gaussian_map_geo.hpp"
+#endif
+#if defined(USE_SGM)
+#include "SCGAL/Spherical_gaussian_map_geo.hpp"
+#endif
+#if defined(USE_AOS)
+#include "SCGAL/Arrangement_on_sphere_geo.hpp"
+#endif
+#if defined(USE_EOS)
+#include "SCGAL/Envelope_on_sphere_geo.hpp"
+#endif
+#if defined(USE_NEF) && defined(USE_NGM)
+#include "SCGAL/Nef_gaussian_map_geo.hpp"
+#endif
 #endif
 
 #include "Player_scene.hpp"
