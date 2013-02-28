@@ -35,6 +35,7 @@
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Plane.hpp"
 #include "SGAL/Line.hpp"
 #include "SGAL/Camera.hpp"
