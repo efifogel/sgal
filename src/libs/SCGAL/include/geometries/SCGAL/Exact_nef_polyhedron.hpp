@@ -360,7 +360,7 @@ private:
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));
       Inexact_point_3 inexact_point(x,y,z);
-      return Inexact_sphere_3(inexact_point, 0.0);
+      return Inexact_sphere_3(inexact_point, 0.0f);
     }
 
     Inexact_sphere_3 operator()(const Polyhedron::Vertex& vertex) const
@@ -370,7 +370,7 @@ private:
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));
       Inexact_point_3 inexact_point(x,y,z);
-      return Inexact_sphere_3(inexact_point, 0.0);
+      return Inexact_sphere_3(inexact_point, 0.0f);
     }
   };
 
