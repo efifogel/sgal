@@ -33,8 +33,9 @@
 #include <iostream>
 #include <list>
 #include <vector>
-#include <boost/graph/graph_utility.hpp>
+#include <boost/config.hpp>
 #include <boost/graph/strong_components.hpp>
+#include <boost/graph/adjacency_matrix.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_spherical_gaussian_map_3.h>
@@ -1274,7 +1275,18 @@ void Assembly::process_aos_graph()
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+
+#if defined(_MSC_VER)    
+    int num_comp =
+      boost::strong_components
+      (*graph,
+       boost::make_iterator_property_map(component.begin(),
+                                         boost::get(boost::vertex_index,
+                                                    *graph),
+                                         component[0]));
+#else
     int num_comp = boost::strong_components(*graph, &component[0]);
+#endif
     if (num_comp > 1) {
       std::cout << "Num components in face " << i << ": " << num_comp
                 << std::endl;
@@ -1291,7 +1303,17 @@ void Assembly::process_aos_graph()
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+#if defined(_MSC_VER)
+    int num_comp =
+      boost::strong_components
+      (*graph,
+       boost::make_iterator_property_map(component.begin(),
+                                         boost::get(boost::vertex_index,
+                                                    *graph),
+                                         component[0]));
+#else
     int num_comp = boost::strong_components(*graph, &component[0]);
+#endif
     if (num_comp > 1) {
       std::cout << "Num components in edge " << eit->curve() << ": "
                 << num_comp << std::endl;
@@ -1308,7 +1330,17 @@ void Assembly::process_aos_graph()
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+#if defined(_MSC_VER)
+    int num_comp =
+      boost::strong_components
+      (*graph,
+       boost::make_iterator_property_map(component.begin(),
+                                         boost::get(boost::vertex_index,
+                                                    *graph),
+                                         component[0]));
+#else
     int num_comp = boost::strong_components(*graph, &component[0]);
+#endif
     if (num_comp > 1) {
       std::cout << "Num components in vertex " << vit->point() << ": "
                 << num_comp << std::endl;
