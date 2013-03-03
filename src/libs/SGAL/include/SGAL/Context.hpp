@@ -445,6 +445,8 @@ public:
   Uint get_depth_bits() const;
   Uint get_stencil_bits() const;
 
+  Uint get_number_of_samples() const;
+  
 private:
   int m_mat_stack_depth;
 
@@ -504,6 +506,8 @@ private:
 
   Uint m_depth_bits;
   Uint m_stencil_bits;
+
+  Uint m_number_of_samples;
   
   void draw_state_elements(const Bit_mask& set_mask, const Gfx* gfx);
   void draw_state_elements(const Bit_mask& set_mask, const Appearance* app);

@@ -107,7 +107,7 @@ public:
   struct Extract_sphere {
     /*! */
     Sphere_3 operator()(const Point & point) const
-    { return Sphere_3(point, 0); }
+    { return Sphere_3(point, 0.0f); }
   };
   
 private:

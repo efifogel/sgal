@@ -205,17 +205,46 @@ void Context::init()
 /*! \brief initializes the context attributes. */
 void Context::init_context_attributes()
 {
-  int tmp;
+  GLint tmp;
   glGetIntegerv(GL_RED_BITS, &tmp); m_red_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Red bits: " << m_red_bits << std::endl;);
   glGetIntegerv(GL_GREEN_BITS, &tmp); m_green_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Green bits: " << m_green_bits << std::endl;);
   glGetIntegerv(GL_BLUE_BITS, &tmp); m_blue_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Blue bits: " << m_blue_bits << std::endl;);
   glGetIntegerv(GL_ALPHA_BITS, &tmp); m_alpha_bits = tmp;
-  glGetIntegerv(GL_DEPTH_BITS, &tmp); m_depth_bits = tmp;
-  glGetIntegerv(GL_STENCIL_BITS, &tmp); m_stencil_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Alpha bits: " << m_alpha_bits << std::endl;);
   glGetIntegerv(GL_ACCUM_RED_BITS, &tmp); m_accum_red_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Accum red bits: " << m_accum_red_bits
+                            << std::endl;);
   glGetIntegerv(GL_ACCUM_GREEN_BITS, &tmp); m_accum_green_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Accum green bits: " << m_accum_green_bits
+                            << std::endl;);
   glGetIntegerv(GL_ACCUM_BLUE_BITS, &tmp); m_accum_blue_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Accum blue bits: " << m_accum_blue_bits
+                            << std::endl;);
   glGetIntegerv(GL_ACCUM_ALPHA_BITS, &tmp); m_accum_alpha_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Accum alpha bits: " << m_accum_alpha_bits
+                            << std::endl;);
+  glGetIntegerv(GL_DEPTH_BITS, &tmp); m_depth_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Depth bits: " << m_depth_bits << std::endl;);
+  glGetIntegerv(GL_STENCIL_BITS, &tmp); m_stencil_bits = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Stencil bits: " << m_stencil_bits
+                            << std::endl;);
+  glGetIntegerv(GL_SAMPLES, &tmp); m_number_of_samples = tmp;
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Samples: " << m_number_of_samples
+                            << std::endl;);
 }
 
 /*! Destructor */
@@ -2155,5 +2184,8 @@ Uint Context::get_depth_bits() const { return m_depth_bits; }
 
 /*! \brief obtains the number of stencil bits. */
 Uint Context::get_stencil_bits() const { return m_stencil_bits; }
+
+/*! \brief obtains the number of samples. */
+Uint Context::get_number_of_samples() const { return m_number_of_samples; }
 
 SGAL_END_NAMESPACE

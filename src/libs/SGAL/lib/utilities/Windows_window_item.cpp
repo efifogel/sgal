@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12531 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -32,40 +32,28 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Is it the first window? */
-Boolean Windows_window_item::s_first(SGAL_TRUE);
+Boolean Windows_window_item::s_first(true);
 
 /*! \brief shows the window. Make the window current if it is not already. */
-void Windows_window_item::show()
-{
-  ShowWindow(m_hWnd, SW_SHOW);
-}
+void Windows_window_item::show() { ShowWindow(m_hWnd, SW_SHOW); }
 
 /*! \brief hides the window. Make the window current if it is not already. */
-void Windows_window_item::hide()
-{
-  ShowWindow(m_hWnd, SW_HIDE);
-}
+void Windows_window_item::hide() { ShowWindow(m_hWnd, SW_HIDE); }
 
 /*! \brief swaps the window frame-buffer */
 void Windows_window_item::swap_buffers()
-{
-  if (m_double_buffer) SwapBuffers(m_hDC);
-}
+{ if (m_double_buffer) SwapBuffers(m_hDC); }
 
 /*! \brief makes the context of the window item the current rendering context
  * of the calling thread
  */
 void Windows_window_item::make_current()
-{
-  wglMakeCurrent(m_hDC, m_hRC);
-}
+{ wglMakeCurrent(m_hDC, m_hRC); }
 
 /*! \brief queries the multisample frequencies */
-Boolean Windows_window_item::init_multisample(HINSTANCE & hInstance)
+Boolean Windows_window_item::init_multisample(HINSTANCE& hInstance)
 {
-  if (!Gfx_conf::get_instance()->is_multisample_supported())
-    return SGAL_FALSE;
-
+  if (!Gfx_conf::get_instance()->is_multisample_supported()) return false;
   float fAttributes[] = {0,0};
 
   // These Attributes Are The Bits We Want To Test For In Our Sample
@@ -78,7 +66,7 @@ Boolean Windows_window_item::init_multisample(HINSTANCE & hInstance)
     WGL_SUPPORT_OPENGL_ARB,             GL_TRUE,
     WGL_ACCELERATION_ARB,               WGL_FULL_ACCELERATION_ARB,
     WGL_COLOR_BITS_ARB,                 24,
-    WGL_ALPHA_BITS_ARB,                 8,
+    WGL_ALPHA_BITS_ARB,                 0,
     WGL_DEPTH_BITS_ARB,                 24,
     WGL_STENCIL_BITS_ARB,               m_stencil_bits,
     WGL_DOUBLE_BUFFER_ARB,              GL_TRUE,
@@ -94,47 +82,46 @@ Boolean Windows_window_item::init_multisample(HINSTANCE & hInstance)
                                       &m_arb_multisample_format, &num_formats);
  
   // If We Returned True, And Our Format Count Is Greater Than 1
-  if (valid && num_formats >= 1) return SGAL_TRUE;
+  if (valid && (num_formats >= 1)) return true;
  
-  return SGAL_FALSE;
+  return false;
 }
 
 /*! \brief creates the window (or uses an existing window handle) */
-void Windows_window_item::create_base(HINSTANCE & hInstance, char * wc_name, HWND hWnd)
+void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
+                                      HWND hWnd)
 {
-	if (hWnd == NULL)
-	{
-		m_bOwnWnd = true;
+  if (hWnd == NULL) {
+    m_bOwnWnd = true;
 
-		// Create a window:
-		DWORD dw_style = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;   // window style
-		DWORD dw_ex_style = WS_EX_APPWINDOW;                  // window ext. style
-		RECT rect = {0, 0, m_width, m_height};                // window rectangle
-		if (m_full_screen) {
-			dw_ex_style = WS_EX_TOPMOST;                        // cover everything
-			dw_style |= WS_POPUP;
-		} else {
-			dw_ex_style |= WS_EX_WINDOWEDGE;
-			dw_style |= WS_OVERLAPPEDWINDOW;
-			AdjustWindowRectEx(&rect, dw_style, FALSE, dw_ex_style);
-		}
-		m_hWnd = CreateWindowEx(dw_ex_style,
-			wc_name,                      // window class name
-			m_title.c_str(),              // title (caption)
-			dw_style,                     // style
-			m_x, m_y,                     // origin
-			rect.right - rect.left,       // window width
-			rect.bottom - rect.top,       // window height
-			HWND_DESKTOP,                 // desktop is parent
-			0,                            // no menu
-			hInstance,                    // instance
-			this);                        // pass to WM_CREATE
-	}
-	else
-	{
-		m_bOwnWnd = false;
-		m_hWnd = hWnd;
-	}
+    // Create a window:
+    DWORD dw_style = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;   // window style
+    DWORD dw_ex_style = WS_EX_APPWINDOW;                  // window ext. style
+    RECT rect = {0, 0, m_width, m_height};                // window rectangle
+    if (m_full_screen) {
+      dw_ex_style = WS_EX_TOPMOST;                        // cover everything
+      dw_style |= WS_POPUP;
+    } else {
+      dw_ex_style |= WS_EX_WINDOWEDGE;
+      dw_style |= WS_OVERLAPPEDWINDOW;
+      AdjustWindowRectEx(&rect, dw_style, FALSE, dw_ex_style);
+    }
+    m_hWnd = CreateWindowEx(dw_ex_style,
+                            wc_name,                      // window class name
+                            m_title.c_str(),              // title (caption)
+                            dw_style,                     // style
+                            m_x, m_y,                     // origin
+                            rect.right - rect.left,       // window width
+                            rect.bottom - rect.top,       // window height
+                            HWND_DESKTOP,                 // desktop is parent
+                            0,                            // no menu
+                            hInstance,                    // instance
+                            this);                        // pass to WM_CREATE
+  }
+  else {
+    m_bOwnWnd = false;
+    m_hWnd = hWnd;
+  }
 
   // Make sure we got a window:
   if (m_hWnd == NULL) {
@@ -143,16 +130,18 @@ void Windows_window_item::create_base(HINSTANCE & hInstance, char * wc_name, HWN
     return;
   }
 
-  m_hDC = GetDC(m_hWnd);                // grab the device context
-  if (m_hDC == 0) {                     // did we get a device context?
-	  if (m_bOwnWnd)
-		  DestroyWindow(m_hWnd);              // Destroy The Window
-	  m_hWnd = 0;                         // Zero The Window Handle
-	  return;                             // Return failure
+  m_hDC = GetDC(m_hWnd);                        // grab the device context
+  if (m_hDC == 0) {                             // did we get a device context?
+    if (m_bOwnWnd) DestroyWindow(m_hWnd);       // Destroy The Window
+    m_hWnd = 0;                                 // Zero The Window Handle
+    return;                                     // Return failure
   }
 
   // Fill in the pixel format descriptor:
   PIXELFORMATDESCRIPTOR pfd;
+  // Uint color_bits = m_red_bits + m_green_bits + m_blue_bits;
+  Uint accum_bits = m_accum_red_bits + m_accum_green_bits +
+    m_accum_blue_bits + m_accum_alpha_bits;
   pfd.nSize           = sizeof(PIXELFORMATDESCRIPTOR);
   pfd.nVersion        = 1;                   // version number (should be 1)
   pfd.dwFlags         = PFD_DRAW_TO_WINDOW | // draw to window (not bitmap)
@@ -160,15 +149,22 @@ void Windows_window_item::create_base(HINSTANCE & hInstance, char * wc_name, HWN
                         PFD_DOUBLEBUFFER;    // double buffered
   pfd.iPixelType      = PFD_TYPE_RGBA;  // PFD_TYPE_RGBA or COLORINDEX
   pfd.cColorBits      = 24;             // color bitplanes excluding alpha
-  pfd.cAlphaBits      = 8;              // alpha bitplanes
-  pfd.cStencilBits    = m_stencil_bits; // stencil bitplanes
-  // pfd.cAccumBits   = 64;             // total accumulation bitplanes
-  pfd.cAccumRedBits   = m_accum_red_bits;
-  pfd.cAccumGreenBits = m_accum_green_bits;
-  pfd.cAccumBlueBits  = m_accum_blue_bits;
-  pfd.cAccumAlphaBits = m_accum_alpha_bits;
-  pfd.cDepthBits      = 24;             // depth bitplanes
-  // PFD_MAIN_PLANE???  // main drawing layer
+  pfd.cRedBits        = 0;                   // ignored
+  pfd.cRedShift       = 0;                   // ignored
+  pfd.cGreenBits      = 0;                   // ignored
+  pfd.cGreenShift     = 0;                   // ignored
+  pfd.cBlueBits       = 0;                   // ignored
+  pfd.cBlueShift      = 0;                   // ignored
+  pfd.cAlphaBits      = 0;                   // alpha bitplanes
+  pfd.cAccumBits      = accum_bits;          // total accumulation bitplanes
+  pfd.cAccumRedBits   = m_accum_red_bits;    // ignored
+  pfd.cAccumGreenBits = m_accum_green_bits;  // ignored
+  pfd.cAccumBlueBits  = m_accum_blue_bits;   // ignored
+  pfd.cAccumAlphaBits = m_accum_alpha_bits;  // ignored
+  pfd.cDepthBits      = 24;                  // depth bitplanes
+  pfd.cStencilBits    = m_stencil_bits;      // stencil bitplanes
+  pfd.cAuxBuffers     = 0;
+  pfd.iLayerType      = PFD_MAIN_PLANE;      // main drawing layer
 
   /*! If multisample is not required, continue as usual.
    * if multisample is required, but it's the first window, also create
@@ -178,15 +174,14 @@ void Windows_window_item::create_base(HINSTANCE & hInstance, char * wc_name, HWN
   if (s_first || (m_number_of_samples == 0)) {
     // Find A Compatible Pixel Format
     m_pixel_format = ChoosePixelFormat(m_hDC, &pfd);
-    if (m_pixel_format == 0) {          // found a compatible format?
+    if (m_pixel_format == 0) {                  // found a compatible format?
       std::cerr << "ChoosePixelFormat() failed:  Cannot find format specified!"
                 << std::endl;
-      ReleaseDC(m_hWnd, m_hDC);         // release the device context
-      m_hDC = 0;                        // zero the device context
-	  if (m_bOwnWnd)
-		  DestroyWindow(m_hWnd);        // destroy the window
-      m_hWnd = 0;                       // zero the window handle
-      return;                           // return failure
+      ReleaseDC(m_hWnd, m_hDC);                 // release the device context
+      m_hDC = 0;                                // zero the device context
+	  if (m_bOwnWnd) DestroyWindow(m_hWnd);     // destroy the window
+      m_hWnd = 0;                               // zero the window handle
+      return;                                   // return failure
     }
   }
   else {
@@ -196,49 +191,45 @@ void Windows_window_item::create_base(HINSTANCE & hInstance, char * wc_name, HWN
   if (SetPixelFormat(m_hDC, m_pixel_format, &pfd) == FALSE) {
     std::cerr << "SetPixelFormat() failed:  Cannot set format specified!"
               << std::endl;
-    ReleaseDC(m_hWnd, m_hDC);         // release the device context
-    m_hDC = 0;                          // zero the device context
-	if (m_bOwnWnd)
-		DestroyWindow(m_hWnd);          // destroy the window
-    m_hWnd = 0;                         // zero the window handle
-    return;                             // return failure
+    ReleaseDC(m_hWnd, m_hDC);                   // release the device context
+    m_hDC = 0;                                  // zero the device context
+	if (m_bOwnWnd) DestroyWindow(m_hWnd);       // destroy the window
+    m_hWnd = 0;                                 // zero the window handle
+    return;                                     // return failure
   }
 
   // Create an OpenGL context:
   m_hRC = wglCreateContext(m_hDC);
-  if (m_hRC == 0) {                     // did we get a rendering context?
+  if (m_hRC == 0) {                         // did we get a rendering context?
     std::cerr << "wglCreateContext() failed: Cannot create context!"
               << std::endl;
-    ReleaseDC(m_hWnd, m_hDC);           // release the device context
-    m_hDC = 0;                          // zero the device context
-	if (m_bOwnWnd)
-		DestroyWindow(m_hWnd);          // destroy the window
-    m_hWnd = 0;                         // zero the window handle
-    return;                             // return failure
+    ReleaseDC(m_hWnd, m_hDC);                   // release the device context
+    m_hDC = 0;                                  // zero the device context
+	if (m_bOwnWnd) DestroyWindow(m_hWnd);       // destroy the window
+    m_hWnd = 0;                                 // zero the window handle
+    return;                                     // return failure
   }
 
   // Make the rendering context the current rendering context:
   if (wglMakeCurrent(m_hDC, m_hRC) == FALSE) {
-    std::cerr << "wglMakeCurrent() failed: Cannot make current!"
-              << std::endl;
-    wglDeleteContext(m_hRC);            // delete the rendering context
-    m_hRC = 0;                          // zero the rendering context
-    ReleaseDC(m_hWnd, m_hDC);           // release the device context
-    m_hDC = 0;                          // zero the device context
-	if (m_bOwnWnd)
-		DestroyWindow(m_hWnd);          // destroy the window
-    m_hWnd = 0;                         // zero the window handle
-    return;                             // return failure
+    std::cerr << "wglMakeCurrent() failed: Cannot make current!" << std::endl;
+    wglDeleteContext(m_hRC);                    // delete the rendering context
+    m_hRC = 0;                                  // zero the rendering context
+    ReleaseDC(m_hWnd, m_hDC);                   // release the device context
+    m_hDC = 0;                                  // zero the device context
+	if (m_bOwnWnd) DestroyWindow(m_hWnd);       // destroy the window
+    m_hWnd = 0;                                 // zero the window handle
+    return;                                     // return failure
   }
 }
 
 /*! \brief creates the window */
-void Windows_window_item::create(HINSTANCE & hInstance, char * wc_name,
+void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
                                  HWND hWnd)
 {
   create_base(hInstance, wc_name, hWnd);
   if (s_first) {
-    s_first = SGAL_FALSE;
+    s_first = false;
     if (m_number_of_samples > 0) {
       if (init_multisample(hInstance)) {
         destroy();
@@ -259,6 +250,7 @@ void Windows_window_item::create(HINSTANCE & hInstance, char * wc_name,
   m_accum_green_bits = pfd.cAccumGreenBits; 
   m_accum_blue_bits = pfd.cAccumBlueBits; 
   m_accum_alpha_bits = pfd.cAccumAlphaBits;
+  m_depth_bits = pfd.cDepthBits; 
   m_stencil_bits = pfd.cStencilBits; 
 
   if (Gfx_conf::get_instance()->is_multisample_supported()) {
