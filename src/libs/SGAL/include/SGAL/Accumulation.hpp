@@ -160,24 +160,9 @@ public:
    * \param alpha_bits the number of alpha bits stored in the accumulation
    *                   buffer.
    */
-  virtual void get_number_of_bits(Uint& red_bits, Uint& green_bits,
-                                  Uint& blue_bits, Uint& alpha_bits) const;
+  void get_number_of_bits(Uint& red_bits, Uint& green_bits,
+                          Uint& blue_bits, Uint& alpha_bits) const;
 
-  /*! Set the number of red bits stored in the accumulation buffer.
-   * \param bits the number of red bits stored in the accumulation buffer.
-   */
-  void set_number_of_red_bits(Uint bits);
-
-  /*! Set the number of green bits stored in the accumulation buffer.
-   * \param bits the number of green bits stored in the accumulation buffer.
-   */
-  void set_number_of_green_bits(Uint bits);
-
-  /*! Set the number of blue bits stored in the accumulation buffer.
-   * \param bits the number of blue bits stored in the accumulation buffer.
-   */
-  void set_number_of_blue_bits(Uint bits);
-  
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -298,18 +283,6 @@ inline Boolean Accumulation::is_active() const { return m_active; }
 
 /*! \brief returns ture if the frame buffer showld be shown. */
 inline Boolean Accumulation::do_show() const { return m_show; }
-
-/*! \brief sets the number of red bits stored in the accumulation buffer. */
-inline void Accumulation::set_number_of_red_bits(Uint bits)
-{ m_red_bits = bits; }
-
-/*! \brief sets the number of green bits stored in the accumulation buffer. */
-inline void Accumulation::set_number_of_green_bits(Uint bits)
-{ m_green_bits = bits; }
-
-/*! \brief sets the number of blue bits stored in the accumulation buffer. */
-inline void Accumulation::set_number_of_blue_bits(Uint bits)
-{ m_blue_bits = bits; }
 
 SGAL_END_NAMESPACE
 

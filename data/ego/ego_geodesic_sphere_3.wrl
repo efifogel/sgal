@@ -1,6 +1,9 @@
 #VRML V2.0 utf8
 Configuration {
-  accumulation Accumulation { enabled TRUE }
+  accumulation Accumulation {
+    enabled TRUE
+    # accumBits 0
+  }
   displayFPS TRUE
 }
 ColorBackground {

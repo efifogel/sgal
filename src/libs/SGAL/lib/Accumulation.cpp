@@ -329,18 +329,9 @@ void Accumulation::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "redBits") {
-      set_number_of_red_bits(boost::lexical_cast<Float>(value));    
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "greenBits") {
-      set_number_of_green_bits(boost::lexical_cast<Float>(value));    
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "blueBits") {
-      set_number_of_blue_bits(boost::lexical_cast<Float>(value));    
+    if (name == "accumBits") {
+      Uint bits = boost::lexical_cast<Float>(value);
+      set_number_of_bits(bits, bits, bits, bits);    
       elem->mark_delete(ai);
       continue;
     }
