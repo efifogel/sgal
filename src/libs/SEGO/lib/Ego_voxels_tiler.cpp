@@ -21,6 +21,11 @@
 
 #include <boost/tuple/tuple.hpp>
 
+// #define EGO_VOXELIZER_TILER_VERBOSE
+#ifdef EGO_VOXELIZER_TILER_VERBOSE
+#include <boost/tuple/tuple_io.hpp>
+#endif
+
 SGAL_BEGIN_NAMESPACE
 
 // Tiling_rows are relevant only for non-grid.
@@ -55,6 +60,15 @@ Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
     m_offset_between_rows = 1;
     break;
   }
+
+  // We currently use only 4x2, 2x2, 2x1, and 1x1 bricks.
+  // Order of insertion determines preference.
+  m_available_bricks.push_back(Lego(2, 4, 1));
+  m_available_bricks.push_back(Lego(4, 2, 1));
+  m_available_bricks.push_back(Lego(2, 2, 1));
+  m_available_bricks.push_back(Lego(2, 1, 1));
+  m_available_bricks.push_back(Lego(1, 2, 1));
+  m_available_bricks.push_back(Lego(1, 1, 1));
 }
 
 /** 
@@ -76,7 +90,8 @@ void Ego_voxels_tiler::operator() (Ego_voxels* out_voxels) {
 void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
 
   size_t xmax, ymax;
-  if (m_tiling_rows == XROWS)
+  bool horizontal = (m_tiling_rows == XROWS);
+  if (horizontal)
     boost::tie(xmax, ymax, boost::tuples::ignore) = out_voxels->size();
   else
     boost::tie(ymax, xmax, boost::tuples::ignore) = out_voxels->size();
@@ -87,21 +102,91 @@ void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
     size_t y = (layer + m_first_brick_y_offset + (x/2) * m_offset_between_rows) % 2;
     for (; y + 1 < ymax; y += 2) {
 
-      size_t row = (m_tiling_rows == XROWS) ? x : y;
-      size_t column = (m_tiling_rows == XROWS) ? y : x;
+      size_t row = (horizontal) ? x : y;
+      size_t column = (horizontal) ? y : x;
+      size_t width = (horizontal) ? 2 : 4;
+      size_t height = (horizontal) ? 4 : 2;
 
-      // now, if there is a voxel which is filled here, place a 2x2 brick.
-      bool place = false;
-      place = place || out_voxels->is_filled(row, column, layer);
-      place = place || out_voxels->is_filled(row+1, column, layer);
-      place = place || out_voxels->is_filled(row, column+1, layer);
-      place = place || out_voxels->is_filled(row+1, column+1, layer);
-
-      if (place)
-        out_voxels->place(boost::make_tuple(row, column, layer),
-                          boost::make_tuple(2, 2, 1));
+      this->tile_cell(layer, row, column, width, height, out_voxels);
     }
   }
+}
+
+void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
+                                 size_t width, size_t height, Ego_voxels* out_voxels) {
+  
+#ifdef EGO_VOXELIZER_TILER_VERBOSE
+  std::cout << "Row: " << row << " Column: " << column << std::endl;
+#endif
+
+  for (size_t i = 0; i < width; ++i) {
+    for (size_t j = 0; j < height; ++j) {
+
+      for (Legos::iterator it = m_available_bricks.begin();
+           it != m_available_bricks.end(); ++it) {
+
+#ifdef EGO_VOXELIZER_TILER_VERBOSE
+        std::cout << "Location: " << row + i << " " << column + j << std::endl;
+        std::cout << "Checking brick " << *it << std::endl;
+        std::cout << "Width " << width << " Height " << height << std::endl;
+#endif
+        // Check that the lego brick is in the proper size.
+        if (it->get<0>() > width - i)
+          continue;
+        if (it->get<1>() > height - j)
+          continue;
+
+        // Can these be united?
+        // 1) All are legal and filled.
+        // 2) All are not containing bricks.
+        bool place = true;
+        for (size_t n = row + i; n < row + i + it->get<0>(); ++n) {
+          for (size_t m = column + j; m < column + j + it->get<1>(); ++m) {
+#ifdef EGO_VOXELIZER_TILER_VERBOSE
+            std::cout << n << " " << m << " is " << is_tiled(out_voxels, n, m, layer)
+                      << std::endl;
+#endif
+            if (is_tiled(out_voxels, n, m, layer)) {
+              place = false;
+              break;
+            }
+          }
+          // instead of goto.
+          if (place == false)
+            break;
+        }
+         
+        if (place) {
+#ifdef EGO_VOXELIZER_TILER_VERBOSE
+          std::cout << "Placing " << *it << std::endl;
+          if (it->get<0>() == 4 || it->get<1>() == 4)
+            std::cout << *it << std::endl;
+#endif
+          
+          out_voxels->place(boost::make_tuple(row + i, column + j, layer),
+                            *it);
+          break;
+        }
+      }
+    }
+  }
+}
+
+// If not legal - returns as if it is already tiled.
+bool Ego_voxels_tiler::is_tiled(Ego_voxels* out_voxels, size_t x, size_t y, size_t z) {
+  
+  if (out_voxels->is_in_limits(x, y, z) == false)
+    return true;
+
+  // If this cell should not be filled.
+  if (out_voxels->is_filled(x, y, z) == false)
+    return true;
+
+  // If this cell is already filled.
+  if (out_voxels->is_placed(x, y, z))
+    return true;
+
+  return false;
 }
 
 

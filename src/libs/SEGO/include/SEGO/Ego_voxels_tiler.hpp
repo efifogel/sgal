@@ -20,6 +20,8 @@
 #define SGAL_EGO_VOXELS_TILER_HPP
 
 #include "SGAL/config.hpp"
+#include <boost/tuple/tuple.hpp>
+#include <vector>
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,11 +42,19 @@ public:
 
 private:
   void tile_layer(size_t layer, Ego_voxels* out_voxels);
+  void tile_cell(size_t layer, size_t row, size_t column,
+                 size_t width, size_t height, Ego_voxels* out_voxels);
+
+  bool is_tiled(Ego_voxels* out_voxels, size_t x, size_t y, size_t z);
 
   size_t m_first_brick_x_offset;
   size_t m_first_brick_y_offset;
   size_t m_offset_between_rows;
   Tiling_rows m_tiling_rows;
+
+  typedef boost::tuple<size_t, size_t, size_t>  Lego;
+  typedef std::vector<Lego>                     Legos;
+  Legos m_available_bricks;
 };
 
 SGAL_END_NAMESPACE
