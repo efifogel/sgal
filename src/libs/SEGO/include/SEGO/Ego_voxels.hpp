@@ -39,11 +39,14 @@ public:
   void initialize_container(long length, long width, long height);
   size_type size() const;
 
+  bool is_in_limits(size_t, size_t, size_t) const;
+
   void fill(std::size_t x, std::size_t y, std::size_t z);
   bool is_filled(std::size_t x, std::size_t y, std::size_t z) const;
   bool is_filled(const size_type& coord) const;
 
   void place(const size_type& coord, const size_type& size);
+  bool is_placed(std::size_t x, std::size_t y, std::size_t z);
   boost::optional<size_type>
   get_brick(std::size_t x, std::size_t y, std::size_t z);
 

@@ -39,6 +39,19 @@ Ego_voxels::size_type Ego_voxels::size() const {
                    m_voxels[0][0].size());
 }
 
+bool Ego_voxels::is_in_limits(size_t x, size_t y, size_t z) const {
+  if (x >= m_voxels.size())
+    return false;
+  
+  if (y >= m_voxels[x].size())
+    return false;
+
+  if (z >= m_voxels[x][y].size()) 
+    return false;
+  
+  return true;
+}
+
 void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   // We can also get boundary coordinates...
 
@@ -54,6 +67,8 @@ void Ego_voxels::fill(size_t x, size_t y, size_t z) {
 }
 
 bool Ego_voxels::is_filled(std::size_t x, std::size_t y, std::size_t z) const {
+  SGAL_assertion(is_in_limits(x, y, z) == true);
+  
   return m_voxels[x][y][z].brick_location;
 }
 
@@ -69,6 +84,7 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
   for (size_t i = 0; i < size.get<0>(); ++i) {
     for (size_t j = 0; j < size.get<1>(); ++j) {
       for (size_t k = 0; k < size.get<2>(); ++k) {
+        SGAL_assertion(is_in_limits(x+i, y+j, z+k) == true);
         m_voxels[x+i][y+j][z+k].brick_location = coord;
       }
     }
@@ -77,6 +93,19 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
   // first brick to contain the brick:
   m_voxels[x][y][z].brick_size = size;
 }
+
+// A brick was placed in this place if there is a brick in the coords location.
+bool Ego_voxels::is_placed(std::size_t x, std::size_t y, std::size_t z) {
+  SGAL_assertion(is_filled(x, y, z) == true);
+  SGAL_assertion(m_voxels[x][y][z].brick_location);
+
+  std::size_t p_x = m_voxels[x][y][z].brick_location->get<0>();
+  std::size_t p_y = m_voxels[x][y][z].brick_location->get<1>();
+  std::size_t p_z = m_voxels[x][y][z].brick_location->get<2>();
+  
+  return m_voxels[p_x][p_y][p_z].brick_size;
+}
+
 
 boost::optional<Ego_voxels::size_type>
 Ego_voxels::get_brick(std::size_t x, std::size_t y, std::size_t z) {
