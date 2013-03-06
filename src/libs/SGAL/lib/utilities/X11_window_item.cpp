@@ -47,7 +47,7 @@ X11_window_item::X11_window_item() :
 }
 
 /*! \brief creates a window */
-void X11_window_item::create(Display * display, int screen)
+void X11_window_item::create(Display* display, int screen)
 {
   int rc = 0;
   bool brc;
@@ -67,19 +67,18 @@ void X11_window_item::create(Display * display, int screen)
   attributes[index++] = GLX_RGBA;
   if (m_double_buffer) attributes[index++] = GLX_DOUBLEBUFFER;
   attributes[index++] = GLX_RED_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
+  attributes[index++] = m_red_bits;
   attributes[index++] = GLX_GREEN_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
+  attributes[index++] = m_green_bits;
   attributes[index++] = GLX_BLUE_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
-  // Do not allocate alpha for now.
-  // attributes[index++] = GLX_ALPHA_SIZE;
-  // attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
+  attributes[index++] = m_blue_bits;
+  attributes[index++] = GLX_ALPHA_SIZE;
+  attributes[index++] = m_alpha_bits;
   attributes[index++] = GLX_DEPTH_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_DEPTH_BITS;
+  attributes[index++] = m_depth_bits;
   if (m_stencil_bits > 0) {
     attributes[index++] = GLX_STENCIL_SIZE;
-    attributes[index++] = SGAL_DEF_WINDOW_STENCIL_BITS;
+    attributes[index++] = m_stencil_bits;
   }
   if (m_number_of_samples > 0) {
     attributes[index++] = GLX_SAMPLE_BUFFERS;
@@ -105,7 +104,7 @@ void X11_window_item::create(Display * display, int screen)
   }
   attributes[index++] = None;
 
-  XVisualInfo * vi = glXChooseVisual(display, screen, attributes);
+  XVisualInfo* vi = glXChooseVisual(display, screen, attributes);
   if (vi == NULL) {
     std::cerr << "Failed to choose visual!" << std::endl;
     return;

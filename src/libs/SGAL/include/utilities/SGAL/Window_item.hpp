@@ -43,7 +43,7 @@ SGAL_BEGIN_NAMESPACE
 #define SGAL_DEF_WINDOW_COLOR_BITS              8
 #define SGAL_DEF_WINDOW_ALPHA_BITS              0
 #define SGAL_DEF_WINDOW_ACCUM_COLOR_BITS        16
-#define SGAL_DEF_WINDOW_DEPTH_BITS              32
+#define SGAL_DEF_WINDOW_DEPTH_BITS              24
 #define SGAL_DEF_WINDOW_STENCIL_BITS            0
 
 class Window_item {
