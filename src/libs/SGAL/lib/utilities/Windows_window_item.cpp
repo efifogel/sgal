@@ -61,16 +61,19 @@ Boolean Windows_window_item::init_multisample(HINSTANCE& hInstance)
   // Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
   // These Two Are Going To Do The Main Testing For Whether Or Not
   // We Support Multisampling On This Hardware.
+  Uint color_bits = m_red_bits + m_green_bits + m_blue_bits;
+  Uint accum_bits = m_accum_red_bits + m_accum_green_bits +
+    m_accum_blue_bits + m_accum_alpha_bits;
   int iAttributes[] = {
     WGL_DRAW_TO_WINDOW_ARB,             GL_TRUE,
     WGL_SUPPORT_OPENGL_ARB,             GL_TRUE,
-    WGL_ACCELERATION_ARB,               WGL_FULL_ACCELERATION_ARB,
-    WGL_COLOR_BITS_ARB,                 24,
-    WGL_ALPHA_BITS_ARB,                 0,
-    WGL_DEPTH_BITS_ARB,                 24,
-    WGL_STENCIL_BITS_ARB,               m_stencil_bits,
     WGL_DOUBLE_BUFFER_ARB,              GL_TRUE,
-    WGL_ACCUM_BITS_ARB,                 0,
+    WGL_ACCELERATION_ARB,               WGL_FULL_ACCELERATION_ARB,
+    WGL_COLOR_BITS_ARB,                 color_bits,
+    WGL_ACCUM_BITS_ARB,                 accum_bits,
+    WGL_ALPHA_BITS_ARB,                 m_alpha_bits,
+    WGL_DEPTH_BITS_ARB,                 m_depth_bits,
+    WGL_STENCIL_BITS_ARB,               m_stencil_bits,
     WGL_SAMPLE_BUFFERS_ARB,             GL_TRUE,
     WGL_SAMPLES_ARB,                    m_number_of_samples,
     0,0
@@ -139,7 +142,7 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
 
   // Fill in the pixel format descriptor:
   PIXELFORMATDESCRIPTOR pfd;
-  // Uint color_bits = m_red_bits + m_green_bits + m_blue_bits;
+  Uint color_bits = m_red_bits + m_green_bits + m_blue_bits;
   Uint accum_bits = m_accum_red_bits + m_accum_green_bits +
     m_accum_blue_bits + m_accum_alpha_bits;
   pfd.nSize           = sizeof(PIXELFORMATDESCRIPTOR);
@@ -147,21 +150,21 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
   pfd.dwFlags         = PFD_DRAW_TO_WINDOW | // draw to window (not bitmap)
                         PFD_SUPPORT_OPENGL | // draw using opengl
                         PFD_DOUBLEBUFFER;    // double buffered
-  pfd.iPixelType      = PFD_TYPE_RGBA;  // PFD_TYPE_RGBA or COLORINDEX
-  pfd.cColorBits      = 24;             // color bitplanes excluding alpha
-  pfd.cRedBits        = 0;                   // ignored
+  pfd.iPixelType      = PFD_TYPE_RGBA;       // PFD_TYPE_RGBA or COLORINDEX
+  pfd.cColorBits      = color_bits;          // color bitplanes excluding alpha
+  pfd.cRedBits        = m_red_bits;          // ignored
   pfd.cRedShift       = 0;                   // ignored
-  pfd.cGreenBits      = 0;                   // ignored
+  pfd.cGreenBits      = m_green_bits;        // ignored
   pfd.cGreenShift     = 0;                   // ignored
-  pfd.cBlueBits       = 0;                   // ignored
+  pfd.cBlueBits       = m_blue_bits;         // ignored
   pfd.cBlueShift      = 0;                   // ignored
-  pfd.cAlphaBits      = 0;                   // alpha bitplanes
+  pfd.cAlphaBits      = m_alpha_bits;        // alpha bitplanes
   pfd.cAccumBits      = accum_bits;          // total accumulation bitplanes
   pfd.cAccumRedBits   = m_accum_red_bits;    // ignored
   pfd.cAccumGreenBits = m_accum_green_bits;  // ignored
   pfd.cAccumBlueBits  = m_accum_blue_bits;   // ignored
   pfd.cAccumAlphaBits = m_accum_alpha_bits;  // ignored
-  pfd.cDepthBits      = 24;                  // depth bitplanes
+  pfd.cDepthBits      = m_depth_bits;        // depth bitplanes
   pfd.cStencilBits    = m_stencil_bits;      // stencil bitplanes
   pfd.cAuxBuffers     = 0;
   pfd.iLayerType      = PFD_MAIN_PLANE;      // main drawing layer

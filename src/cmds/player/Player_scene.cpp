@@ -287,7 +287,8 @@ void Player_scene::init_scene()
                                                    blue_bits, alpha_bits);
   }
   if (ms) m_window_item->set_number_of_samples(ms->get_number_of_samples());
-
+  m_window_item->set_number_of_stencil_bits(conf->get_number_of_stencil_bits());
+  m_window_item->set_number_of_depth_bits(conf->get_number_of_depth_bits());
   m_window_manager->create_window(m_window_item);
   if (ms) ms->set_number_of_samples(m_window_item->get_number_of_samples());
   if (acc) {
@@ -295,7 +296,7 @@ void Player_scene::init_scene()
     m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
                                                    blue_bits, alpha_bits);
     acc->set_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
-  }  
+  }
 
   indulge_user();
 
