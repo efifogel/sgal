@@ -31,6 +31,14 @@ Ego_voxels::initialize_container(long length,
       m_voxels[i][j].resize(height);
     }
   }
+
+  for (long i = 0; i < length; ++i) {
+    for (long j = 0; i < width; ++i) {
+      for (long k = 0; i < height; ++i) {
+        m_voxels[i][j][k].filled = false;
+      }
+    }
+  }
 }
 
 Ego_voxels::size_type Ego_voxels::size() const {
@@ -63,13 +71,13 @@ void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   SGAL_assertion(y < m_voxels[0].size());
   SGAL_assertion(z < m_voxels[0][0].size());
   
-  m_voxels[x][y][z].brick_location = boost::make_tuple(x, y, z);
+  m_voxels[x][y][z].filled = true;
 }
 
 bool Ego_voxels::is_filled(std::size_t x, std::size_t y, std::size_t z) const {
   SGAL_assertion(is_in_limits(x, y, z) == true);
   
-  return m_voxels[x][y][z].brick_location;
+  return m_voxels[x][y][z].filled;
 }
 
 bool Ego_voxels::is_filled(const size_type& coord) const {
@@ -85,6 +93,7 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
     for (size_t j = 0; j < size.get<1>(); ++j) {
       for (size_t k = 0; k < size.get<2>(); ++k) {
         SGAL_assertion(is_in_limits(x+i, y+j, z+k) == true);
+        SGAL_assertion(is_filled(x+i, y+j, z+k) == true);
         m_voxels[x+i][y+j][z+k].brick_location = coord;
       }
     }
@@ -97,13 +106,8 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
 // A brick was placed in this place if there is a brick in the coords location.
 bool Ego_voxels::is_placed(std::size_t x, std::size_t y, std::size_t z) {
   SGAL_assertion(is_filled(x, y, z) == true);
-  SGAL_assertion(m_voxels[x][y][z].brick_location);
 
-  std::size_t p_x = m_voxels[x][y][z].brick_location->get<0>();
-  std::size_t p_y = m_voxels[x][y][z].brick_location->get<1>();
-  std::size_t p_z = m_voxels[x][y][z].brick_location->get<2>();
-  
-  return m_voxels[p_x][p_y][p_z].brick_size;
+  return m_voxels[x][y][z].brick_location;
 }
 
 
@@ -128,23 +132,31 @@ void Ego_voxels::offset_xy_layers(size_t offset_value) {
   // first offset in x.
   m_voxels.insert(m_voxels.begin(), Layer());  
   m_voxels.front().resize(m_voxels[1].size());
-  for (size_t j = 0; j < m_voxels[0].size(); ++j) {
-    m_voxels.front()[j].resize(m_voxels[1][0].size());
+  for (size_t i = 0; i < m_voxels[0].size(); ++i) {
+    m_voxels.front()[i].resize(m_voxels[1][0].size());
+    for (size_t j = 0; j < m_voxels.front()[i].size(); ++j)
+      m_voxels.front()[i][j].filled = false;
   }
   
   m_voxels.insert(m_voxels.end(), Layer());
   m_voxels.back().resize(m_voxels[1].size());
-  for (size_t j = 0; j < m_voxels[0].size(); ++j) {
-    m_voxels.back()[j].resize(m_voxels[1][0].size());
+  for (size_t i = 0; i < m_voxels[0].size(); ++i) {
+    m_voxels.back()[i].resize(m_voxels[1][0].size());
+    for (size_t j = 0; j < m_voxels.back()[i].size(); ++j)
+      m_voxels.back()[i][j].filled = false;
   }
 
   // Now, offset in y.
   for (size_t xitr = 0; xitr < m_voxels.size(); ++xitr) {
     m_voxels[xitr].insert(m_voxels[xitr].begin(), Row());
     m_voxels[xitr].front().resize(m_voxels[xitr][1].size());
-
+    for (size_t i = 0; i < m_voxels[xitr].front().size(); ++i)
+      m_voxels[xitr].front()[i].filled = false;
+    
     m_voxels[xitr].insert(m_voxels[xitr].end(), Row());
     m_voxels[xitr].back().resize(m_voxels[xitr][1].size());
+    for (size_t i = 0; i < m_voxels[xitr].back().size(); ++i)
+      m_voxels[xitr].back()[i].filled = false;
   }
 }
 

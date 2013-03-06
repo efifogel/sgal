@@ -76,15 +76,15 @@ Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
  * number of filled voxels.
  * It uses only 2x2 bricks and tries to tile them in a "strong" way.
  */
-void Ego_voxels_tiler::operator() (Ego_voxels* out_voxels) {
-
+void Ego_voxels_tiler::operator() (Ego_voxels* out_voxels)
+{
   size_t z;
   boost::tie(boost::tuples::ignore, boost::tuples::ignore, z) =
     out_voxels->size();
   
   for (size_t i = 0; i < z; ++i) {
     tile_layer(i, out_voxels);
-  }
+  }    
 }
 
 void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
@@ -113,14 +113,15 @@ void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
 }
 
 void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
-                                 size_t width, size_t height, Ego_voxels* out_voxels) {
+                                 size_t width, size_t height,
+                                 Ego_voxels* out_voxels) {
   
 #ifdef EGO_VOXELIZER_TILER_VERBOSE
   std::cout << "Row: " << row << " Column: " << column << std::endl;
 #endif
 
-  for (size_t i = 0; i < width; ++i) {
-    for (size_t j = 0; j < height; ++j) {
+  for (size_t i = 0; i < 2; ++i) {
+    for (size_t j = 0; j < 2; ++j) {
 
       for (Legos::iterator it = m_available_bricks.begin();
            it != m_available_bricks.end(); ++it) {
@@ -136,12 +137,13 @@ void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
         if (it->get<1>() > height - j)
           continue;
 
-        // Can these be united?
         // 1) All are legal and filled.
         // 2) All are not containing bricks.
         bool place = true;
-        for (size_t n = row + i; n < row + i + it->get<0>(); ++n) {
-          for (size_t m = column + j; m < column + j + it->get<1>(); ++m) {
+        size_t place_x = row + i;
+        size_t place_y = column + j;
+        for (size_t n = place_x; n < place_x + it->get<0>(); ++n) {
+          for (size_t m = place_y; m < place_y + it->get<1>(); ++m) {
 #ifdef EGO_VOXELIZER_TILER_VERBOSE
             std::cout << n << " " << m << " is " << is_tiled(out_voxels, n, m, layer)
                       << std::endl;
@@ -162,9 +164,7 @@ void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
           if (it->get<0>() == 4 || it->get<1>() == 4)
             std::cout << *it << std::endl;
 #endif
-          
-          out_voxels->place(boost::make_tuple(row + i, column + j, layer),
-                            *it);
+          out_voxels->place(boost::make_tuple(place_x, place_y, layer), *it);
           break;
         }
       }

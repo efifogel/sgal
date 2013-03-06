@@ -54,7 +54,7 @@ public:
 
   void print() const;
 
-private:  
+private:
 
   // Each voxel is covered by one brick, but one brick can cover many
   // voxels. A voxel contains the position of its brick (where the
@@ -64,6 +64,7 @@ private:
   
   class Voxel {
   public:
+    bool filled;
     boost::optional<size_type> brick_location;
     boost::optional<size_type> brick_size;
   };

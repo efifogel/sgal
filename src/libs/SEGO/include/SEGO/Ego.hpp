@@ -27,6 +27,7 @@
 #include <windows.h>
 #endif
 #include <list>
+#include <map>
 #include <boost/unordered_map.hpp>
 #include <boost/variant.hpp>
 
@@ -137,10 +138,11 @@ public:
                                 Uint luminosity_key);
   
   /*! Create the geometry of a brick. */
-  Geometry* create_geometry(Boolean draw_knobs, Vector3f& center);
+  Geometry* create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
+                            Vector3f& center);
   
   /*! Create the geometry of a brick. */
-  Geometry* create_geometry(Boolean draw_knobs);
+  Geometry* create_geometry(Uint num0, Uint num1, Boolean draw_knobs);
 
   /*! Clean the voxels. */
   void clean_voxels();
@@ -360,10 +362,11 @@ protected:
   typedef Material_list::iterator                       Material_iter;
   Material_list m_materials;
 
-  typedef std::list<Ego_brick*>                         Ego_brick_list;
-  typedef Ego_brick_list::iterator                      Ego_brick_iter;
-  Ego_brick_list m_bricks;
-  Ego_brick_list m_knobless_bricks;
+  typedef std::pair<Uint, Uint>                         Ego_brick_key;
+  typedef std::multimap<Ego_brick_key, Ego_brick*>      Ego_brick_map;
+  typedef Ego_brick_map::iterator                       Ego_brick_iter;
+  Ego_brick_map m_bricks;
+  Ego_brick_map m_knobless_bricks;
   
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;

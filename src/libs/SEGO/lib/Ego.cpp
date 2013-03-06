@@ -67,6 +67,8 @@
 #include "SEGO/Ego_voxels_tiler.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
 
+// #include <boost/tuple/tuple_io.hpp>
+
 // #define SGAL_EGO_VERBOSE 1
 #ifdef SGAL_EGO_VERBOSE
 #define SGAL_EGO_VAR(x) #x << " " << x
@@ -190,10 +192,10 @@ void Ego::clear_parts()
   // Delete all Ego bricks:
   Ego_brick_iter bit;
   for (bit = m_bricks.begin(); bit != m_bricks.end(); ++bit)
-    delete *bit;
+    delete (*bit).second;
   m_bricks.clear();
   for (bit = m_knobless_bricks.begin(); bit != m_knobless_bricks.end(); ++bit)
-    delete *bit;
+    delete (*bit).second;
   m_knobless_bricks.clear();
 
   m_owned_parts = false;
@@ -351,6 +353,11 @@ void Ego::set_attributes(Element* elem)
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
+    if (name == "spaceFilling") {
+      set_space_filling(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    } 
     if (name == "voxelWidth") {
       set_voxel_width(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -470,8 +477,6 @@ void Ego::clean_parts()
                   CGAL::to_double(m_tiled_voxels_center.y()),
                   CGAL::to_double(m_tiled_voxels_center.z()));
   Ego_voxels::size_type size = m_tiled_voxels.size();
-  // The offset is a full voxel, cause we use 2x2 bricks
-  Vector3f offset(m_voxel_length, m_voxel_width, m_voxel_height);
   Vector3f box(m_voxel_length * size.get<0>(),
                m_voxel_width * size.get<1>(),
                m_voxel_height * size.get<2>());
@@ -486,13 +491,11 @@ void Ego::clean_parts()
 
         boost::optional<Ego_voxels::size_type> brick =
           m_tiled_voxels.get_brick(i, j, k);
-
         if (!brick) continue;
 
         // continue, if the brick is completely obscured:
         std::size_t num0(brick->get<0>());
         std::size_t num1(brick->get<1>());
-        SGAL_assertion((num0 == 2) && (num1 == 2));
 
         //! \todo In the following we check whether the brick is apparent.
         // A brick is not apparent if it is obscured from all directions
@@ -536,7 +539,7 @@ void Ego::clean_parts()
           }
         }
         if (!m_space_filling && !apparent) continue;
-        
+
         Transform* transform = new Transform;
         add_child(transform);
 
@@ -544,6 +547,11 @@ void Ego::clean_parts()
                               k*m_voxel_height);
         Vector3f brick_center(origin);
         brick_center.add(displacement);
+
+        // The offset is half a voxel for each knob.
+        Vector3f offset(m_voxel_length * 0.5f * num0,
+                        m_voxel_width * 0.5f * num1, m_voxel_height);
+
         brick_center.add(offset);
         transform->set_translation(brick_center);
 
@@ -554,7 +562,8 @@ void Ego::clean_parts()
         for (size_t s = 0; s < brick->get<0>(); ++s) {
           for (size_t t = 0; t < brick->get<1>(); ++t) {
             if ((k == size.get<2>() - 1) ||
-                (!m_tiled_voxels.is_filled(i+s, j+t, k+1)))
+                (!m_tiled_voxels.is_filled(i+s, j+t, k+1)) ||
+                (!m_tiled_voxels.is_placed(i+s, j+t, k+1)))
               should_draw_knobs = true;
           }
         }
@@ -567,13 +576,13 @@ void Ego::clean_parts()
           shape->set_override_blend_func(false);
           app = m_appearance;
           tmp.sub(center, brick_center);
-          ego_brick = create_geometry(should_draw_knobs, tmp);
+          ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
           break;
 
          case STYLE_RANDOM_COLORS:
           m_dirty_colors = false;
           app = create_random_appearance();
-          ego_brick = create_geometry(should_draw_knobs);
+          ego_brick = create_geometry(num0, num1, should_draw_knobs);
           break;
 
          case STYLE_DISCRETE_CUBE_MAP:
@@ -586,7 +595,7 @@ void Ego::clean_parts()
           m_dirty_colors = true;
           app = m_appearance;
           tmp.sub(center, brick_center);
-          ego_brick = create_geometry(should_draw_knobs, tmp);
+          ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
           break;
           
          default: std::cerr << "Invalid style!" << std::endl;
@@ -907,65 +916,72 @@ void Ego::clean_colors()
 }
 
 /*! \brief creates the geometry of a brick. */
-Geometry* Ego::create_geometry(Boolean draw_knobs)
+Geometry* Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs)
 {
   Ego_brick* ego_brick;
   if (draw_knobs) {
-    if (m_bricks.empty()) {
+    Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
+    if (it == m_bricks.end()) {
       ego_brick = new Ego_brick;
       ego_brick->set_knob_slices(m_knob_slices);
-      ego_brick->set_number_of_knobs1(2);
-      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_number_of_knobs1(num0);
+      ego_brick->set_number_of_knobs2(num1);
       ego_brick->set_knobs_visible(true);
-      m_bricks.push_back(ego_brick);
+      m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
     }
-    else ego_brick = m_bricks.front();
+    else ego_brick = (*it).second;
   }
   else {
-    if (m_knobless_bricks.empty()) {
+    Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
+    if (it == m_knobless_bricks.end()) {
       ego_brick = new Ego_brick;
       ego_brick->set_knob_slices(m_knob_slices);
-      ego_brick->set_number_of_knobs1(2);
-      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_number_of_knobs1(num0);
+      ego_brick->set_number_of_knobs2(num1);
       ego_brick->set_knobs_visible(false);
-      m_knobless_bricks.push_back(ego_brick);
+      m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
+                                              ego_brick));
     }
-    else ego_brick = m_knobless_bricks.front();
+    else ego_brick = (*it).second;
   }
 
   return ego_brick;
 }
 
 /*! \brief creates the geometry of a brick. */
-Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
+Geometry* Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
+                               Vector3f& center)
 {
   Ego_brick* ego_brick = new Ego_brick;
   ego_brick->set_knob_slices(m_knob_slices);
-  ego_brick->set_number_of_knobs1(2);
-  ego_brick->set_number_of_knobs2(2);
+  ego_brick->set_number_of_knobs1(num0);
+  ego_brick->set_number_of_knobs2(num1);
   ego_brick->set_center(center);
 
   if (draw_knobs) {
     ego_brick->set_knobs_visible(true);
-    if (!m_bricks.empty()) {
-      Ego_brick* ref_ego_brick = m_bricks.front();
+    Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
+    if (it != m_bricks.end()) {
+      Ego_brick* ref_ego_brick = (*it).second;
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
       ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
       ego_brick->set_indices_flat(true);
     }
-    m_bricks.push_back(ego_brick);
+    m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
   }
   else {
+    Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
     ego_brick->set_knobs_visible(false);
-    if (!m_knobless_bricks.empty()) {
-      Ego_brick* ref_ego_brick = m_knobless_bricks.front();
+    if (it != m_knobless_bricks.end()) {
+      Ego_brick* ref_ego_brick = (*it).second;
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
       ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
       ego_brick->set_indices_flat(true);
     }
-    m_knobless_bricks.push_back(ego_brick);
+    m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
+                                            ego_brick));
   }
 
   return ego_brick;
