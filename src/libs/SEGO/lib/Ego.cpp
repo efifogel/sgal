@@ -1110,7 +1110,6 @@ Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
 {
   Uint color_key =
     (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
-  Appearance* app;
   Appearance_iter ait = m_appearances.find(color_key);
   if (ait != m_appearances.end()) return ait->second;
 
@@ -1118,7 +1117,7 @@ Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
   Float saturation = (Float) saturation_key / 255.0f;
   Float luminosity = (Float) luminosity_key / 255.0f;
 
-  app = new Appearance;
+  Appearance* app = new Appearance;
   Material* mat = new Material;
   m_materials.push_back(mat);
   Magick::ColorHSL color_hsl(hue, saturation, luminosity);
@@ -1127,7 +1126,8 @@ Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
   Float green = color_rgb.green();
   Float blue = color_rgb.blue();
   mat->set_diffuse_color(red, green, blue);
-  mat->set_transparency(m_appearance->get_material()->get_transparency());
+  if (m_appearance && m_appearance->get_material())
+    mat->set_transparency(m_appearance->get_material()->get_transparency());
   app->set_material(mat);
   m_appearances[color_key] = app;
 
