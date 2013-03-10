@@ -14,8 +14,8 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: init.cpp 14071 2012-10-28 19:39:56Z efif $
-// $Revision: 14071 $
+// $Id: init.cpp 14416 2013-01-02 15:55:09Z efif $
+// $Revision: 14416 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
@@ -33,6 +33,7 @@
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_coord_array.hpp"
 #include "SCGAL/Exact_coord2_array.hpp"
+#include "SCGAL/Exact_normal_array.hpp"
 #include "SCGAL/Exact_plane_array.hpp"
 #include "SCGAL/Exact_coord_minkowski.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -82,6 +83,7 @@ void scgal_init()
   Container_factory::get_instance()->doregister(Polyhedron_geo::prototype());
   Container_factory::get_instance()->doregister(Exact_coord_array::prototype());
   Container_factory::get_instance()->doregister(Exact_coord2_array::prototype());
+  Container_factory::get_instance()->doregister(Exact_normal_array::prototype());
   Container_factory::get_instance()->doregister(Exact_plane_array::prototype());
   Container_factory::get_instance()->doregister(Exact_coord_minkowski::prototype());
   Container_factory::get_instance()->doregister(Exact_polyhedron_geo::prototype());
