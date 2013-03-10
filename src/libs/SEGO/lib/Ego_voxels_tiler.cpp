@@ -21,6 +21,8 @@
 
 #include <boost/tuple/tuple.hpp>
 
+#include <limits>
+
 // #define EGO_VOXELIZER_TILER_VERBOSE
 #ifdef EGO_VOXELIZER_TILER_VERBOSE
 #include <boost/tuple/tuple_io.hpp>
@@ -104,8 +106,8 @@ void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
 
       size_t row = (horizontal) ? x : y;
       size_t column = (horizontal) ? y : x;
-      size_t width = (horizontal) ? 2 : 4;
-      size_t height = (horizontal) ? 4 : 2;
+      size_t width = (horizontal) ? 2 : std::numeric_limits<size_t>::max();
+      size_t height = (horizontal) ? std::numeric_limits<size_t>::max() : 2;
 
       this->tile_cell(layer, row, column, width, height, out_voxels);
     }
