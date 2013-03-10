@@ -78,7 +78,7 @@ protected:
   Sgm_node_list m_sgm_nodes;
 
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
   
   /*! Create the renderers */
   void create_renderers();
@@ -91,7 +91,7 @@ private:
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default values */
 
@@ -102,7 +102,7 @@ private:
   Boolean m_owned_sgm;
   
   /*! The cubical Gaussian map representation */
-  Sgm * m_sgm;
+  Sgm* m_sgm;
 
   /*! Indicates whether to compute the minkowski sum */
   Boolean m_minkowski_sum;
@@ -111,69 +111,69 @@ private:
   float m_time;
 
   /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_vertices_renderer;
+  Arrangement_renderer::Renderer* m_vertices_renderer;
 
   /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_colored_vertices_renderer;
+  Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
   /*! The edges renderer */
-  Arrangement_renderer::Renderer * m_edges_renderer;
+  Arrangement_renderer::Renderer* m_edges_renderer;
 
   /*! The colored edges renderer */
-  Arrangement_renderer::Renderer * m_colored_edges_renderer;
+  Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
   /*! The inflated line edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_line_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
   /*! The inflated strip edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_strip_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
   
   /*! The inflated tube edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_tube_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
    
   /*! Transform the coordinates of the SGM into spheres
    * \param spheres (o) the transformed coordinates
    */
-  virtual void transform_coords(Approximate_sphere_vector & spheres)
+  virtual void transform_coords(Approximate_sphere_vector& spheres)
   { transform_primal_coords(m_sgm, spheres); }
 
   /*! Draw the primal representation of the polyhedron */
-  virtual void draw_primal(Draw_action * action);
+  virtual void draw_primal(Draw_action* action);
 
   /*! Draw the arrangement on sphere opaque
    * \param action
    */
-  virtual void draw_aos_opaque(Draw_action * action);
+  virtual void draw_aos_opaque(Draw_action* action);
 
   virtual void isect_primary();
   
 public:
   /*! Constructor */
-  Spherical_gaussian_map_geo(Boolean proto = SGAL_FALSE);
+  Spherical_gaussian_map_geo(Boolean proto = false);
 
   /*! Copy constructor */
-  Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo & gm);
+  Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo& gm);
   
   /*! Destructor */
   virtual ~Spherical_gaussian_map_geo();
 
   /*! Construct the prototype */
-  static Spherical_gaussian_map_geo * prototype()
-  { return new Spherical_gaussian_map_geo(SGAL_TRUE); }
+  static Spherical_gaussian_map_geo* prototype()
+  { return new Spherical_gaussian_map_geo(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Spherical_gaussian_map_geo(); }
+  virtual Container* clone() { return new Spherical_gaussian_map_geo(); }
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! Set the attributes of this node
    * \param elem contains lists of attribute names and values
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -182,7 +182,7 @@ public:
   virtual void delete_prototype();
 
   /*! \brief obtains the prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! \brief cleans the representation */
   virtual void clean();
@@ -197,12 +197,12 @@ public:
   /*! Draw the arrangement on sphere vertices
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action);
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement on sphere edges
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action);
+  virtual void draw_aos_edges(Draw_action* action);
   
   /*! Clean the renderer */
   virtual void clean_renderer();
@@ -211,13 +211,13 @@ public:
   virtual void print_stat();
 
   /*! Set the source gausian maps of the minkowski sum */
-  void insert_sgm(Spherical_gaussian_map_geo * sgm);
+  void insert_sgm(Spherical_gaussian_map_geo* sgm);
 
   /*! Obrain the Gaussian map */
-  Sgm * get_sgm();
+  Sgm* get_sgm();
 
   /*! Set the Gaussian map */
-  void set_sgm(Sgm * sgm);
+  void set_sgm(Sgm* sgm);
   
   /*! Set the flag that indicates whether to compute the minkowski sum */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }

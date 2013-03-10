@@ -172,14 +172,14 @@ protected:
     typedef Spherical_gaussian_map_marked_geo          Geometry;
 
     /*! Constructor */
-    Colored_edges_renderer(Geometry & geo) : m_geo(geo) {}
+    Colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
     
     /*! Render the face */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
 
   protected:
     /*! The arrangement geometry */
-    Geometry & m_geo;
+    Geometry& m_geo;
   };
 
   /*! A function object that renders the marked vertices with color */
@@ -188,14 +188,14 @@ protected:
     typedef Spherical_gaussian_map_marked_geo          Geometry;
 
     /*! Constructor */
-    Marked_vertices_renderer(Geometry & geo) : m_geo(geo) {}
+    Marked_vertices_renderer(Geometry& geo) : m_geo(geo) {}
     
     /*! Render the vertex */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
 
   protected:
     /*! The arrangement geometry */
-    Geometry & m_geo;
+    Geometry& m_geo;
   };
   
   /*! A function object that renders the marked vertices with color */
@@ -204,11 +204,11 @@ protected:
     typedef Spherical_gaussian_map_marked_geo          Geometry;
 
     /*! Constructor */
-    Colored_marked_vertices_renderer(Geometry & geo) :
+    Colored_marked_vertices_renderer(Geometry& geo) :
       Marked_vertices_renderer(geo) {}
     
     /*! Render the vertex */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
   
   /*! A function object that renders the marked edges */
@@ -217,14 +217,14 @@ protected:
     typedef Spherical_gaussian_map_marked_geo          Geometry;
 
     /*! Constructor */
-    Marked_edges_renderer(Geometry & geo) : m_geo(geo) {}
+    Marked_edges_renderer(Geometry& geo) : m_geo(geo) {}
     
     /*! Render the vertex */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
 
   protected:
     /*! The arrangement geometry */
-    Geometry & m_geo;
+    Geometry& m_geo;
   };
   
   /*! A function object that renders the marked edges with color */
@@ -233,11 +233,11 @@ protected:
     typedef Spherical_gaussian_map_marked_geo          Geometry;
 
     /*! Constructor */
-    Colored_marked_edges_renderer(Geometry & geo) :
+    Colored_marked_edges_renderer(Geometry& geo) :
       Marked_edges_renderer(geo) {}
     
     /*! Render the vertex */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
   
   /*! A function object that renders the marked primal vertex */
@@ -246,20 +246,20 @@ protected:
     typedef Spherical_gaussian_map_marked_geo          Geometry;
 
     /*! Constructor */
-    Marked_face_renderer(Geometry & geo) : m_geo(geo) {}
+    Marked_face_renderer(Geometry& geo) : m_geo(geo) {}
     
     /*! Render the face */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
 
   protected:
     /*! The arrangement geometry */
-    Geometry & m_geo;
+    Geometry& m_geo;
   };
   
   /*! A functor with an operator that sets the "marked" flag */
   class Face_set_marked_op {
   public:
-    void operator()(Sgm_face_handle fh) { fh->set_marked(SGAL_TRUE); }
+    void operator()(Sgm_face_handle fh) { fh->set_marked(true); }
   };
 
   // List of pointers to Spherical_gaussian_map_marked_geo objects */
@@ -270,7 +270,7 @@ protected:
   Sgm_node_list m_sgm_nodes;
 
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
   
   /*! Create the renderers */
   void create_renderers();
@@ -283,7 +283,7 @@ private:
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default values */
   static const Vertex_style s_def_aos_marked_vertex_style;
@@ -317,7 +317,7 @@ private:
   Boolean m_owned_sgm;
 
   /*! The cubical Gaussian map representation */
-  Sgm * m_sgm;
+  Sgm* m_sgm;
 
   /*! Indicates whether to compute the minkowski sum */
   Boolean m_minkowski_sum;
@@ -410,110 +410,112 @@ private:
   Boolean m_increase_facet_index;
 
   /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_vertices_renderer;
+  Arrangement_renderer::Renderer* m_vertices_renderer;
 
   /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_colored_vertices_renderer;
+  Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
   /*! The edges renderer */
-  Arrangement_renderer::Renderer * m_edges_renderer;
+  Arrangement_renderer::Renderer* m_edges_renderer;
 
   /*! The colored edges renderer */
-  Arrangement_renderer::Renderer * m_colored_edges_renderer;
+  Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
   /*! The inflated line edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_line_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
   /*! The inflated strip edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_strip_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
   
   /*! The inflated tube edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_tube_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
    
   /*! The marked primal vertex renderer */
-  Arrangement_renderer::Renderer * m_marked_face_renderer;
+  Arrangement_renderer::Renderer* m_marked_face_renderer;
   
   /*! The marked vertices renderer */
-  Arrangement_renderer::Renderer * m_marked_vertices_renderer;
+  Arrangement_renderer::Renderer* m_marked_vertices_renderer;
 
   /*! The colored marked vertices renderer */
-  Arrangement_renderer::Renderer * m_colored_marked_vertices_renderer;
+  Arrangement_renderer::Renderer* m_colored_marked_vertices_renderer;
 
   /*! The marked edges renderer */
-  Arrangement_renderer::Renderer * m_marked_edges_renderer;
+  Arrangement_renderer::Renderer* m_marked_edges_renderer;
 
   /*! The colored marked edges renderer */
-  Arrangement_renderer::Renderer * m_colored_marked_edges_renderer;
+  Arrangement_renderer::Renderer* m_colored_marked_edges_renderer;
 
   /*! Transform the coordinates of the SGM into spheres
    * \param spheres (o) the transformed coordinates
    */
-  virtual void transform_coords(Approximate_sphere_vector & spheres)
+  virtual void transform_coords(Approximate_sphere_vector& spheres)
   { transform_primal_coords(m_sgm, spheres); }
 
   /*! Draw the primal representation of the polyhedron */
-  virtual void draw_primal(Draw_action * action);
+  virtual void draw_primal(Draw_action* action);
 
   /*! Draw the arrangement on sphere opaque
    * \param action
    */
-  virtual void draw_aos_opaque(Draw_action * action);
+  virtual void draw_aos_opaque(Draw_action* action);
 
   virtual void isect_primary();
   
   /*! Draw the primal marked vertex */
-  void draw_primal_marked_vertex(Draw_action * action);
+  void draw_primal_marked_vertex(Draw_action* action);
 
   /*! Draw the primal marked edge */
-  void draw_primal_marked_edge(Draw_action * action);
+  void draw_primal_marked_edge(Draw_action* action);
 
   /*! Draw an arrangement on sphere marked vertex
    * param action
    * param center the vertex center
    */
-  void draw_aos_marked_vertex(Draw_action * action, Vector3f & center);
+  void draw_aos_marked_vertex(Draw_action* action, Vector3f& center);
   
   /*! Draw an arrangement on sphere marked edge
    * \param action
    * \param source the edge source point
    * \param target the edge target point
+   * \param normal the normal to the plane containing the edge
    */
-  void draw_aos_marked_edge(Draw_action * action,
-                            Vector3f & source, Vector3f & target);
+  void draw_aos_marked_edge(Draw_action* action,
+                            Vector3f& source, Vector3f& target,
+                            Vector3f& normal);
 
   /*! Draw the marked face (primal vertex)
    * \param action
    */
-  void draw_aos_marked_face(Draw_action * action);
+  void draw_aos_marked_face(Draw_action* action);
 
 public:
   /*! Constructor */
-  Spherical_gaussian_map_marked_geo(Boolean proto = SGAL_FALSE);
+  Spherical_gaussian_map_marked_geo(Boolean proto = false);
 
   /*! Copy constructor */
-  Spherical_gaussian_map_marked_geo(const Spherical_gaussian_map_marked_geo & gm);
+  Spherical_gaussian_map_marked_geo(const Spherical_gaussian_map_marked_geo& gm);
   
   /*! Destructor */
   virtual ~Spherical_gaussian_map_marked_geo();
 
   /*! Construct the prototype */
-  static Spherical_gaussian_map_marked_geo * prototype()
-  { return new Spherical_gaussian_map_marked_geo(SGAL_TRUE); }
+  static Spherical_gaussian_map_marked_geo* prototype()
+  { return new Spherical_gaussian_map_marked_geo(true); }
 
   /*! Clone */
-  virtual Container * clone()
+  virtual Container* clone()
   { return new Spherical_gaussian_map_marked_geo(); }
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! Set the attributes of this node
    * \param elem contains lists of attribute names and values
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -522,7 +524,7 @@ public:
   virtual void delete_prototype();
 
   /*! \brief obtains the prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! \brief cleans the representation */
   virtual void clean();
@@ -537,12 +539,12 @@ public:
   /*! Draw the arrangement on sphere vertices
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action);
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement on sphere edges
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action);
+  virtual void draw_aos_edges(Draw_action* action);
   
   /*! Clean the renderer */
   virtual void clean_renderer();
@@ -564,10 +566,10 @@ public:
   // Aos marked edge attributes:
   
   /*! Enable marked edge rendering */
-  void enable_aos_marked_edge() { m_aos_marked_edge_enabled = SGAL_TRUE; }
+  void enable_aos_marked_edge() { m_aos_marked_edge_enabled = true; }
 
   /*! Disable marked edge rendering */
-  void disable_aos_marked_edge() { m_aos_marked_edge_enabled = SGAL_FALSE; }
+  void disable_aos_marked_edge() { m_aos_marked_edge_enabled = false; }
 
   /*! Determine whether marked edge rendering is enabled */
   Boolean is_aos_marked_edge_enabled() const
@@ -648,25 +650,25 @@ public:
   const Vector3f get_marked_vertex_color() const;
 
   /*! Set the color of the marked vertex */
-  void set_marked_vertex_color(const Vector3f & color);
+  void set_marked_vertex_color(const Vector3f& color);
 
   /*! Set the color of the marked edge */
-  void set_marked_edge_color(const Vector3f & color);
+  void set_marked_edge_color(const Vector3f& color);
 
   /*! Set the color of the marked facet */
-  void set_marked_facet_color(const Vector3f & color);
+  void set_marked_facet_color(const Vector3f& color);
   
   /*! \brief prints statistics */
   virtual void print_stat();
 
   /*! Set the source gausian maps of the minkowski sum */
-  void insert_sgm(Spherical_gaussian_map_marked_geo * sgm);
+  void insert_sgm(Spherical_gaussian_map_marked_geo* sgm);
 
   /*! Obrain a reference to the cubical Gaussian map */
-  Sgm * get_sgm();
+  Sgm* get_sgm();
 
   /*! Set the Gaussian map */
-  void set_sgm(Sgm * sgm);
+  void set_sgm(Sgm* sgm);
   
   /*! Set the flag that indicates whether to compute the minkowski sum */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
@@ -678,13 +680,13 @@ public:
   { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 
   /*! Increase the vertex index */
-  void increase_vertex_index(Field_info * field_info = NULL);
+  void increase_vertex_index(Field_info* field_info = NULL);
 
   /*! Increase the edge index */
-  void increase_edge_index(Field_info * field_info = NULL);
+  void increase_edge_index(Field_info* field_info = NULL);
 
   /*! Increase the face index */
-  void increase_facet_index(Field_info * field_info = NULL);
+  void increase_facet_index(Field_info* field_info = NULL);
 };
 
 /*! \brief obtains the color of the marked vertex */
@@ -696,19 +698,19 @@ get_marked_vertex_color() const
 /*! \brief sets the color of the marked vertex */
 inline void
 Spherical_gaussian_map_marked_geo::
-set_marked_vertex_color(const Vector3f & color)
+set_marked_vertex_color(const Vector3f& color)
 { m_marked_vertex_color = color; }
 
 /*! \brief sets the color of the marked edge */
 inline void
 Spherical_gaussian_map_marked_geo::
-set_marked_edge_color(const Vector3f & color)
+set_marked_edge_color(const Vector3f& color)
 { m_marked_edge_color = color; }
 
 /*! \brief sets the color of the marked facet */
 inline void
 Spherical_gaussian_map_marked_geo::
-set_marked_facet_color(const Vector3f & color)
+set_marked_facet_color(const Vector3f& color)
 { m_marked_facet_color = color; }
 
 SGAL_END_NAMESPACE

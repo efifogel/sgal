@@ -53,31 +53,31 @@ Sphere_renderer::Sphere_renderer()
 }
 
 /*! \brief draws the sphere */
-void Sphere_renderer::operator()(Draw_action * action)
+void Sphere_renderer::operator()(Draw_action* action)
 { m_sphere.draw(action); }
 
 /*! Constructor */
 Colored_sphere_renderer::
-Colored_sphere_renderer(const Vector4f & color) : m_color(color) {}
+Colored_sphere_renderer(const Vector4f& color) : m_color(color) {}
 
 /*! \brief draws the sphere */
-void Colored_sphere_renderer::operator()(Draw_action * action)
+void Colored_sphere_renderer::operator()(Draw_action* action)
 {
   glColor4fv((float*)&m_color);
   Sphere_renderer::operator()(action);
 }
 
 /*! \brief draws the sphere */
-void Stencil_sphere_renderer::operator()(Draw_action * action)
+void Stencil_sphere_renderer::operator()(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   context->draw_color_mask(Vector4ub(0x0, 0x0, 0x0, 0x0));
   Sphere_renderer::operator()(action);
   context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));
 }
 
 /*! \brief draws an arrangement on sphere vertex as a disc */
-void draw_disc_vertex_on_sphere(Draw_action * action, Vector3f & center,
+void draw_disc_vertex_on_sphere(Draw_action* action, Vector3f& center,
                                 Float radius, Float delta_angle)
 {
   glBegin(GL_TRIANGLE_FAN);
@@ -108,7 +108,7 @@ void draw_disc_vertex_on_sphere(Draw_action * action, Vector3f & center,
 }
 
 /*! \brief draws an arrangement on sphere vertex */
-void draw_vertex_on_sphere(Draw_action * action, Vector3f & center,
+void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
                            Arrangement_renderer::Vertex_shape::Style style,
                            Float radius, Float delta_angle)
 {
@@ -167,23 +167,30 @@ void draw_vertex_on_sphere(Draw_action * action, Vector3f & center,
 }
 
 /*! \brief draws an arrangement on sphere edge as a strip */
-void draw_strip_edge_on_sphere(Draw_action * action,
-                               Vector3f & src, Vector3f & trg,
+void draw_strip_edge_on_sphere(Draw_action* action,
+                               Vector3f& source, Vector3f& target,
+                               Vector3f& normal,
                                Float radius, Float delta_angle)
 {
   Rotation rot;
-  rot.make(src, trg);
+  Vector3f diff;
+  diff.add(target, source);
+  if ((abs(diff[0]) < SGAL_EPSILON) && (abs(diff[1]) < SGAL_EPSILON) &&
+      (abs(diff[2]) < SGAL_EPSILON))
+    rot.set(normal, SGAL_PI);
+  else
+    rot.make(source, target);
   float angle = rot.get_angle();
   
   glBegin(GL_QUAD_STRIP);
-  Vector3f vec1 = src;
+  Vector3f vec1 = source;
   Vector3f dif;
   for (float tmp_angle = delta_angle; tmp_angle < angle;
        tmp_angle += delta_angle)
   {
     rot.set_angle(tmp_angle);
     Vector3f vec2;
-    rot.rotate(src, vec2);
+    rot.rotate(source, vec2);
     dif.sub(vec2, vec1);
     Vector3f vec3;
     vec3.cross(vec1, dif);
@@ -200,7 +207,7 @@ void draw_strip_edge_on_sphere(Draw_action * action,
     glVertex3fv((float*)&c2);
     vec1 = vec2;
   }
-  dif.sub(trg, vec1);
+  dif.sub(target, vec1);
   Vector3f vec3;
   vec3.cross(vec1, dif);
   vec3.normalize();
@@ -215,10 +222,10 @@ void draw_strip_edge_on_sphere(Draw_action * action,
   glVertex3fv((float*)&c2);
 
   c1.scale(radius, vec3);
-  c1.add(trg);
+  c1.add(target);
   c2.scale(-radius, vec3);
-  c2.add(trg);
-  glNormal3fv((float*)&trg);
+  c2.add(target);
+  glNormal3fv((float*)&target);
   glVertex3fv((float*)&c1);
   glVertex3fv((float*)&c2);
   
@@ -226,17 +233,23 @@ void draw_strip_edge_on_sphere(Draw_action * action,
 }
 
 /*! \brief draws an arrangement on sphere edge */
-void draw_edge_on_sphere(Draw_action * action,
-                         Vector3f & source, Vector3f & target,
+void draw_edge_on_sphere(Draw_action* action,
+                         Vector3f& source, Vector3f& target, Vector3f& normal,
                          Arrangement_renderer::Edge_shape::Style style,
                          Uint count, Boolean directed, Float radius,
                          Float delta_angle,
-                         Float src_vertex_radius, Float trg_vertex_radius)
+                         Float source_vertex_radius, Float target_vertex_radius)
 {
   typedef Arrangement_renderer::Edge_shape              Edge_shape;
   
   Rotation rot;
-  rot.make(source, target);
+  Vector3f diff;
+  diff.add(target, source);
+  if ((abs(diff[0]) < SGAL_EPSILON) && (abs(diff[1]) < SGAL_EPSILON) &&
+      (abs(diff[2]) < SGAL_EPSILON))
+    rot.set(normal, SGAL_PI);
+  else
+    rot.make(source, target);
   float angle = rot.get_angle();
 
   switch (style) {
@@ -256,17 +269,16 @@ void draw_edge_on_sphere(Draw_action * action,
     break;
 
    case Edge_shape::STRIP:
-    draw_strip_edge_on_sphere(action, source, target, 
-                              count, directed, radius,
-                              delta_angle,
-                              src_vertex_radius, trg_vertex_radius);
+    draw_strip_edge_on_sphere(action, source, target, normal,
+                              count, directed, radius, delta_angle,
+                              source_vertex_radius, target_vertex_radius);
     break;
       
    case Edge_shape::TUBE:
     {
      Extrusion tube;
      tube.set_cross_section_radius(radius);
-     SGAL::Array<Vector3f> & spine = tube.get_spine();
+     SGAL::Array<Vector3f>& spine = tube.get_spine();
      spine.resize(static_cast<Uint>(ceil(angle / delta_angle)) + 1);
      unsigned int i = 0;
      spine[i++] = source;
@@ -288,69 +300,71 @@ void draw_edge_on_sphere(Draw_action * action,
 }
 
 /*! \brief draws an arrangement on sphere edge */
-void draw_strip_edge_on_sphere(Draw_action * action,
-                               Vector3f & src, Vector3f & trg,
+void draw_strip_edge_on_sphere(Draw_action* action,
+                               Vector3f& source, Vector3f& target,
+                               Vector3f& normal,
                                Uint count, Boolean directed, Float radius,
                                Float delta_angle,
-                               Float src_vertex_radius,
-                               Float trg_vertex_radius)
+                               Float source_vertex_radius,
+                               Float target_vertex_radius)
 {
-  Vector3f dif, vec, start_vec, start_src, start_trg;
-  dif.sub(trg, src);
+  Vector3f dif, vec, start_vec, start_source, start_target;
+  dif.sub(target, source);
   dif.normalize();
-  vec.cross(src, dif);
+  vec.cross(source, dif);
   vec.normalize();
  
   Float new_radius = radius / (2 * count - 1);
   start_vec.scale(new_radius * 2 * (1 - count), vec);
-  start_src.add(src, start_vec);
-  start_trg.add(trg, start_vec);
+  start_source.add(source, start_vec);
+  start_target.add(target, start_vec);
 
-  Vector3f new_vec, new_src, new_trg;
+  Vector3f new_vec, new_source, new_target;
   unsigned int i;
   for (i = 0; i < count; ++i) {
     new_vec.scale(i * 4 * new_radius, vec);
-    new_src.add(start_src, new_vec);
-    new_trg.add(start_trg, new_vec);
-    draw_strip_edge_on_sphere(action, new_src, new_trg, new_radius, delta_angle);
+    new_source.add(start_source, new_vec);
+    new_target.add(start_target, new_vec);
+    draw_strip_edge_on_sphere(action, new_source, new_target, normal,
+                              new_radius, delta_angle);
   }
 
   if (directed) {
     glBegin(GL_TRIANGLES);
     Vector3f a, b, c;
-    Vector3f hor_start_src, hor_src, start_ver_src, ver_src;
-    hor_start_src.scale(-radius, vec);
-    hor_src.scale(-radius * 3, vec);
-    start_ver_src.scale(src_vertex_radius, dif);
-    ver_src.scale(radius * 6, dif);
-    a.add(src, hor_start_src);
-    a.add(start_ver_src);
+    Vector3f hor_start_source, hor_source, start_ver_source, ver_source;
+    hor_start_source.scale(-radius, vec);
+    hor_source.scale(-radius * 3, vec);
+    start_ver_source.scale(source_vertex_radius, dif);
+    ver_source.scale(radius * 6, dif);
+    a.add(source, hor_start_source);
+    a.add(start_ver_source);
     a.normalize();
-    b.add(a, ver_src);
+    b.add(a, ver_source);
     b.normalize();
-    c.add(b, hor_src);
+    c.add(b, hor_source);
     c.normalize();
     draw_triangular_patch(a, c, b, 4);
 
-    Vector3f hor_start_trg, hor_trg, start_ver_trg, ver_trg;
-    hor_start_trg.scale(radius, vec);
-    hor_trg.scale(radius * 3, vec);
-    start_ver_trg.scale(-trg_vertex_radius, dif);
-    ver_trg.scale(radius * -6, dif);
-    a.add(trg, hor_start_trg);
-    a.add(start_ver_trg);
+    Vector3f hor_start_target, hor_target, start_ver_target, ver_target;
+    hor_start_target.scale(radius, vec);
+    hor_target.scale(radius * 3, vec);
+    start_ver_target.scale(-target_vertex_radius, dif);
+    ver_target.scale(radius * -6, dif);
+    a.add(target, hor_start_target);
+    a.add(start_ver_target);
     a.normalize();
-    b.add(a, ver_trg);
+    b.add(a, ver_target);
     b.normalize();
-    c.add(b, hor_trg);
+    c.add(b, hor_target);
     c.normalize();
     draw_triangular_patch(a, c, b, 4);
     glEnd();
   }
 }
 
-void draw_triangular_patch(const Vector3f & vec1, const Vector3f & vec2,
-                           const Vector3f & vec3, Uint level)
+void draw_triangular_patch(const Vector3f& vec1, const Vector3f& vec2,
+                           const Vector3f& vec3, Uint level)
 {
   if (level == 0) {
     glNormal3fv((float*)&vec1);
@@ -385,10 +399,10 @@ void draw_triangular_patch(const Vector3f & vec1, const Vector3f & vec2,
 }
 
 /*! \brief draws an arrangement on sphere face */
-void draw_aos_convex_face(Draw_action * action,
+void draw_aos_convex_face(Draw_action* action,
                    std::list<Vector3f>::const_iterator begin,
                    std::list<Vector3f>::const_iterator end,
-                   const Vector3f & mid)
+                   const Vector3f& mid)
 {
   glBegin(GL_TRIANGLES);
   std::list<Vector3f>::const_iterator it1 = begin;
@@ -396,8 +410,8 @@ void draw_aos_convex_face(Draw_action * action,
   while (it1 != end) {
     ++next;
     std::list<Vector3f>::const_iterator it2 = (next == end) ? begin : next;
-    const Vector3f & vec1 = (*it1);
-    const Vector3f & vec2 = (*it2);
+    const Vector3f& vec1 = (*it1);
+    const Vector3f& vec2 = (*it2);
     draw_triangular_patch(vec1, vec2, mid, 4);
     it1 = next;
   }
@@ -405,7 +419,7 @@ void draw_aos_convex_face(Draw_action * action,
 }
 
 /*! \brief draws an arrangement on sphere face */
-void draw_aos_convex_face(Draw_action * action,
+void draw_aos_convex_face(Draw_action* action,
                    std::list<Vector3f>::const_iterator begin,
                    std::list<Vector3f>::const_iterator end)
 
@@ -415,7 +429,7 @@ void draw_aos_convex_face(Draw_action * action,
   std::list<Vector3f>::const_iterator it;
   Vector3f v0, v1, d0, normal;
   for (it = begin; it != end; ++it) {
-    const Vector3f & vec = (*it);
+    const Vector3f& vec = (*it);
     mid.add(vec);
   }
   SGAL_assertion(std::distance(begin, end) != 0);

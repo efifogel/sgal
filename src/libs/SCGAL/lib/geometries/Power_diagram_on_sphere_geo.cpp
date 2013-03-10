@@ -71,7 +71,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Power_diagram_on_sphere_geo::s_tag = "PowerDiagramOnSphere";
-Container_proto * Power_diagram_on_sphere_geo::s_prototype = NULL;
+Container_proto* Power_diagram_on_sphere_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Power_diagram_on_sphere_geo, "Power_diagram_on_sphere_geo");
 
@@ -161,27 +161,24 @@ void Power_diagram_on_sphere_geo::delete_prototype()
 }
 
 /*! \brief obtains the container prototype */
-Container_proto * Power_diagram_on_sphere_geo::get_prototype()
+Container_proto* Power_diagram_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Power_diagram_on_sphere_geo::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the ellpsoid attributes */
- void Power_diagram_on_sphere_geo::set_attributes(Element * elem)
+ void Power_diagram_on_sphere_geo::set_attributes(Element* elem)
 {
   Geodesic_voronoi_on_sphere_geo::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
-
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "siteEnabled") {
       m_site_enabled = compare_to_true(value);
       elem->mark_delete(ai);
@@ -215,13 +212,12 @@ Container_proto * Power_diagram_on_sphere_geo::get_prototype()
   }
 
   typedef Element::Cont_attr_iter       Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Container* cont = elem->get_value(cai);
     if (name == "plane") {
-      Coeff_array * coeff_array = dynamic_cast<Coeff_array*>(cont);
+      Coeff_array* coeff_array = dynamic_cast<Coeff_array*>(cont);
       set_coeff_array(coeff_array);
       elem->mark_delete(cai);
       continue;
@@ -246,7 +242,7 @@ void Power_diagram_on_sphere_geo::clean()
   Exact_kernel kernel;
   Exact_point_3 origin = kernel.construct_point_3_object() (CGAL::ORIGIN);
 
-  Exact_plane_array * exact_coeff_array =
+  Exact_plane_array* exact_coeff_array =
     dynamic_cast<Exact_plane_array *>(m_coeff_array);
   if (exact_coeff_array && (exact_coeff_array->size() > 0)) {
 
@@ -279,29 +275,26 @@ void Power_diagram_on_sphere_geo::clear()
 }
 
 /*! \brief */
-void Power_diagram_on_sphere_geo::
-cull(Cull_context & cull_context)
-{
-}
+void Power_diagram_on_sphere_geo::cull(Cull_context& cull_context) {}
 
 /*! \brief sets the plane coefficients array */
 inline void
-Power_diagram_on_sphere_geo::set_coeff_array(Coeff_array * coeff_array)
+Power_diagram_on_sphere_geo::set_coeff_array(Coeff_array* coeff_array)
 {
   m_coeff_array = coeff_array;
   // No need to recalculate the sphere bound
 }
 
 /*! \brief draws the arrangement on sphere opaque */
-void Power_diagram_on_sphere_geo::draw_opaque(Draw_action * action)
+void Power_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
 {
   Arrangement_on_sphere_base_geo::draw_opaque(action);
   if (m_draw_sites) draw_sites(action);
 }
 
 /*! \brief draws a site */
-void Power_diagram_on_sphere_geo::draw_site(Draw_action * action,
-                                            Exact_plane_3 & plane)
+void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
+                                            Exact_plane_3& plane)
 {
   float a = static_cast<float>(CGAL::to_double(plane.a()));
   float b = static_cast<float>(CGAL::to_double(plane.b()));
@@ -392,25 +385,25 @@ void Power_diagram_on_sphere_geo::draw_site(Draw_action * action,
 }
 
 /*! \brief draws the sites */
-void Power_diagram_on_sphere_geo::draw_sites(Draw_action * action)
+void Power_diagram_on_sphere_geo::draw_sites(Draw_action* action)
 {
   glColor3fv((float*)&m_site_color[0]);
 
-  Exact_plane_array * exact_coeff_array =
+  Exact_plane_array* exact_coeff_array =
     dynamic_cast<Exact_plane_array *>(m_coeff_array);
   if (exact_coeff_array && (exact_coeff_array->size() > 0)) {
     std::vector<Uint>::iterator it;
     for (it = this->m_site_indices.begin();
          it != this->m_site_indices.end(); ++it)
     {
-      Exact_plane_3 & plane = (*exact_coeff_array)[*it];
+      Exact_plane_3& plane = (*exact_coeff_array)[*it];
       draw_site(action, plane);
     }
   }
 }
 
 /*! \brief draws the arrangement vertices */
-void Power_diagram_on_sphere_geo::draw_aos_vertices(Draw_action * action)
+void Power_diagram_on_sphere_geo::draw_aos_vertices(Draw_action* action)
 {
   Vos_vertex_const_iterator vi;
   for (vi = m_vos->vertices_begin(); vi != m_vos->vertices_end(); ++vi) {
@@ -421,18 +414,17 @@ void Power_diagram_on_sphere_geo::draw_aos_vertices(Draw_action * action)
 }
 
 /*! \brief draws the arrangement edges */
-void Power_diagram_on_sphere_geo::draw_aos_edges(Draw_action * action)
+void Power_diagram_on_sphere_geo::draw_aos_edges(Draw_action* action)
 {
-  Vector3f src;
-  Vector3f trg;
   Vos_edge_const_iterator hei;
   for (hei = m_vos->edges_begin(); hei != m_vos->edges_end(); ++hei) {
-    const X_monotone_curve & curve = hei->curve();
-    src = to_vector3f(curve.source());
-    trg = to_vector3f(curve.target());
+    const X_monotone_curve& curve = hei->curve();
+    Vector3f src = to_vector3f(curve.source());
+    Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
-    draw_aos_edge(action, src, trg);
+    draw_aos_edge(action, src, trg, normal);
   }
 }
 
@@ -510,9 +502,9 @@ void Power_diagram_on_sphere_geo::clean_renderer()
 
 /*! \brief draws the sites */
 void Power_diagram_on_sphere_geo::Inflated_site_renderer::
-operator()(Draw_action * action)
+operator()(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
 
   float saved_edge_radius = 0;
   Boolean tube_edge_style = false;
@@ -537,9 +529,9 @@ operator()(Draw_action * action)
 
 /*! \brief draws the sites */
 void Power_diagram_on_sphere_geo::Site_other_renderer::
-operator()(Draw_action * action)
+operator()(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   if (m_geo.get_site_style() == Edge_shape::LINE) {
     context->draw_light_enable(false);  
     context->draw_line_width(m_geo.get_site_line_width());

@@ -177,9 +177,8 @@ void Spherical_gaussian_map_geo::set_attributes(Element* elem)
   typedef Element::Cont_iter              Cont_iter;
 
   // Sets the multi-container attributes of this node:
-  Multi_cont_attr_iter mcai;
-  for (mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
+  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
     const std::string& name = elem->get_name(mcai);
     Cont_list& cont_list = elem->get_value(mcai);
@@ -404,9 +403,10 @@ void Spherical_gaussian_map_geo::draw_aos_edges(Draw_action* action)
     const Sgm_x_monotone_curve_2& curve = hei->curve();
     Vector3f src = to_vector3f(curve.source());
     Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.target());
     src.normalize();
     trg.normalize();
-    draw_aos_edge(action, src, trg);
+    draw_aos_edge(action, src, trg, normal);
   }
 }
 

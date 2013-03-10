@@ -183,13 +183,10 @@ void Arrangement_on_sphere_sim_geo::set_attributes(Element * elem)
   typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
-
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "label") {
       m_label = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
@@ -335,15 +332,15 @@ operator()(Draw_action * action)
       (vi->label() > m_geo.m_label) || (m_geo.m_label == 0xffffffff) ? 0.2f :
       ((vi->label() == m_geo.m_label) ? 1.0f : 0.8f);
     if (vi->point().is_no_boundary()) {
-      const Vector3f & color = m_geo.get_aos_vertex_color();
+      const Vector3f& color = m_geo.get_aos_vertex_color();
       glColor4f(color[0], color[1], color[2], transparency);
       m_geo.draw_aos_vertex(action, center);
     } else {
       if (m_geo.m_vertex_label == vi->label()) {
-        const Vector3f & color = m_geo.get_aos_isolated_vertex_color();
+        const Vector3f& color = m_geo.get_aos_isolated_vertex_color();
         glColor4f(color[0], color[1], color[2], transparency);
       } else {
-        const Vector3f & color = m_geo.get_aos_boundary_vertex_color();
+        const Vector3f& color = m_geo.get_aos_boundary_vertex_color();
         glColor4f(color[0], color[1], color[2], transparency);
       }
       m_geo.draw_aos_boundary_vertex(action, center);
@@ -359,28 +356,27 @@ operator()(Draw_action * action)
   Context * context = action->get_context();
   context->draw_transp_enable(true);
 
-  Vector3f src;
-  Vector3f trg;
   Aos_labeled::Edge_iterator hei;
   for (hei = m_geo.m_aos->edges_begin(); hei != m_geo.m_aos->edges_end(); ++hei)
   {
-    const Geometry_traits::X_monotone_curve_2 & curve = hei->curve();
-    src = to_vector3f(curve.source());
-    trg = to_vector3f(curve.target());
+    const Geometry_traits::X_monotone_curve_2& curve = hei->curve();
+    Vector3f src = to_vector3f(curve.source());
+    Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     float transparency =
       (hei->label() > m_geo.m_label) || (m_geo.m_label == 0xffffffff) ? 0.2f :
       ((hei->label() == m_geo.m_label) ? 1.0f : 0.8f);
-    const Vector3f & color = m_geo.get_aos_edge_color();
+    const Vector3f& color = m_geo.get_aos_edge_color();
     glColor4f(color[0], color[1], color[2], transparency);
-    m_geo.draw_aos_edge(action, src, trg);
+    m_geo.draw_aos_edge(action, src, trg, normal);
     
     if (hei->label() == m_geo.m_label) {
-      const Geometry_traits::Point_2 & src = hei->source()->point();
+      const Geometry_traits::Point_2& src = hei->source()->point();
       if (!(src.is_no_boundary()))
         m_geo.m_vertex_label = hei->source()->label();
-      const Geometry_traits::Point_2 & trg = hei->target()->point();
+      const Geometry_traits::Point_2& trg = hei->target()->point();
       if (!(trg.is_no_boundary()))
         m_geo.m_vertex_label = hei->target()->label();
     }

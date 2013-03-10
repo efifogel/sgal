@@ -138,7 +138,7 @@ void Spherical_gaussian_map_colored_geo::clean()
     // TBD: Use an existing kernel.
     Exact_kernel kernel;
 
-    compute_planes(*m_polyhedron, Polyhedron_has_plane());
+    compute_planes(kernel, *m_polyhedron, Polyhedron_has_plane());
     merge_coplanar_facets(kernel, *m_polyhedron, Polyhedron_has_plane());
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
@@ -435,9 +435,10 @@ void Spherical_gaussian_map_colored_geo::draw_aos_edges(Draw_action* action)
     const X_monotone_curve_2& curve = hei->curve();
     Vector3f src = to_vector3f(curve.source());
     Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
-    draw_aos_edge(action, src, trg);
+    draw_aos_edge(action, src, trg, normal);
   }
 }
 
@@ -445,19 +446,18 @@ void Spherical_gaussian_map_colored_geo::draw_aos_edges(Draw_action* action)
 void Spherical_gaussian_map_colored_geo::Colored_edges_renderer::
 operator()(Draw_action* action)
 {
-  Vector3f src;
-  Vector3f trg;
   Sgm_edge_const_iterator hei;
   for (hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end(); ++hei)
   {
     const X_monotone_curve_2& curve = hei->curve();
-    src = to_vector3f(curve.source());
-    trg = to_vector3f(curve.target());
+    Vector3f src = to_vector3f(curve.source());
+    Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     const Vector3f& color = hei->color();
     glColor3fv((float*)&color);
-    m_geo.draw_aos_edge(action, src, trg);
+    m_geo.draw_aos_edge(action, src, trg, normal);
   }
 }
 

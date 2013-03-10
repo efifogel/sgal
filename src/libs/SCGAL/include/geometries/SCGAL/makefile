@@ -30,6 +30,7 @@ FILES+= Assembly_part.hpp
 FILES+= compute_planes.hpp
 FILES+= Cubical_gaussian_map_geo.hpp
 FILES+= Exact_coord_array.hpp
+FILES+= Exact_normal_array.hpp
 FILES+= Exact_coord2_array.hpp
 FILES+= Exact_coord_minkowski.hpp
 FILES+= Exact_plane_array.hpp

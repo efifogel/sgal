@@ -398,8 +398,10 @@ protected:
    * \param action
    * \param source the edge source point
    * \param target the edge target point
+   * \param normal the normal to the plane containing the edge
    */
-  void draw_aos_edge(Draw_action* action, Vector3f& source, Vector3f& target);
+  void draw_aos_edge(Draw_action* action, Vector3f& source, Vector3f& target,
+                     Vector3f& normal);
     
   virtual void isect_primary() {}
 
@@ -422,7 +424,7 @@ protected:
   
 public:
   /*! Constructor */
-  Spherical_gaussian_map_base_geo(Boolean proto = SGAL_FALSE);
+  Spherical_gaussian_map_base_geo(Boolean proto = false);
 
   /*! Copy constructor */
   Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& sgm);
@@ -533,10 +535,10 @@ public:
   // Edge attributes:
   
   /*! Enable edge rendering */
-  void enable_aos_edge() { m_aos_edge_enabled = SGAL_TRUE; }
+  void enable_aos_edge() { m_aos_edge_enabled = true; }
 
   /*! Disable edge rendering */
-  void disable_aos_edge() { m_aos_edge_enabled = SGAL_FALSE; }
+  void disable_aos_edge() { m_aos_edge_enabled = false; }
 
   /*! Determine whether edge rendering is enabled */
   Boolean is_aos_edge_enabled() const { return m_aos_edge_enabled; }

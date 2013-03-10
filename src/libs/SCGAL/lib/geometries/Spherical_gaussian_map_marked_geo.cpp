@@ -824,9 +824,10 @@ void Spherical_gaussian_map_marked_geo::draw_aos_edges(Draw_action* action)
     const X_monotone_curve_2& curve = hei->curve();
     Vector3f src = to_vector3f(curve.source());
     Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
-    draw_aos_edge(action, src, trg);
+    draw_aos_edge(action, src, trg, normal);
   }
 }
 
@@ -888,16 +889,15 @@ operator()(Draw_action* action)
 void Spherical_gaussian_map_marked_geo::Colored_edges_renderer::
 operator()(Draw_action* action)
 {
-  Vector3f src;
-  Vector3f trg;
   Sgm_edge_const_iterator hei;
   for (hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end(); ++hei)
   {
     if (m_geo.get_draw_marked_edge() && hei->marked()) continue;
     
     const X_monotone_curve_2& curve = hei->curve();
-    src = to_vector3f(curve.source());
-    trg = to_vector3f(curve.target());
+    Vector3f src = to_vector3f(curve.source());
+    Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     if (m_geo.m_minkowski_sum) {
@@ -914,7 +914,7 @@ operator()(Draw_action* action)
       glColor3fv((float*) &color);
     }
     else glColor3fv((float*) &m_geo.m_aos_edge_colors[0]);
-    m_geo.draw_aos_edge(action, src, trg);
+    m_geo.draw_aos_edge(action, src, trg, normal);
   }
 }
 
@@ -922,18 +922,17 @@ operator()(Draw_action* action)
 void Spherical_gaussian_map_marked_geo::Marked_edges_renderer::
 operator()(Draw_action* action)
 {
-  Vector3f src;
-  Vector3f trg;
   Sgm_edge_const_iterator hei;
   for (hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end(); ++hei)
   {
     if (!hei->marked()) continue;
     const X_monotone_curve_2& curve = hei->curve();
-    src = to_vector3f(curve.source());
-    trg = to_vector3f(curve.target());
+    Vector3f src = to_vector3f(curve.source());
+    Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
-    m_geo.draw_aos_marked_edge(action, src, trg);
+    m_geo.draw_aos_marked_edge(action, src, trg, normal);
   }
 }
 
@@ -1127,9 +1126,9 @@ draw_aos_marked_vertex(Draw_action* action, Vector3f& center)
 /*! \brief draws an arrangement on sphere marked edge. */
 void Spherical_gaussian_map_marked_geo::
 draw_aos_marked_edge(Draw_action* action,
-                     Vector3f& source, Vector3f& target)
+                     Vector3f& source, Vector3f& target, Vector3f& normal)
 {
-  draw_edge_on_sphere(action, source, target,
+  draw_edge_on_sphere(action, source, target, normal,
                       m_aos_marked_edge_style,
                       m_aos_marked_edge_count,
                       m_aos_marked_edge_directed,

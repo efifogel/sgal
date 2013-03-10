@@ -27,6 +27,7 @@
  * A group of assembly parts that comprise an assembly.
  */
 
+#include <time.h>
 #include <string>
 #include <boost/type_traits.hpp>
 
@@ -38,6 +39,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Sphere_bound.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
@@ -88,15 +90,11 @@ Container_proto* Assembly_part::get_prototype()
 
 /*! \brief sets the attributes of the object extracted from the input file */
 void Assembly_part::set_attributes(Element* elem) 
-{
-  Group::set_attributes(elem);
-}
+{ Group::set_attributes(elem); }
 
 /*! \brief prints information to an output stream */
 void Assembly_part::print_info(std::ostream& out)
-{
-  out << "Part id[" << m_id << "]" << std::endl;
-}
+{ out << "Part id[" << m_id << "]" << std::endl; }
 
 /*! \brief clears the representation */
 void Assembly_part::clear()
@@ -148,6 +146,10 @@ void Assembly_part::clean_sgm_geos(Group* group)
 /*! \brief constructs all the SGM's that comprise this part */
 void Assembly_part::clean_sgm_geos(Node* node)
 {
+  static float total_duration_time = 0;
+  static Uint total_number_of_vertices = 0;
+  static Uint total_number_of_edges = 0;
+  static Uint total_number_of_facets = 0;
   Shape* shape = dynamic_cast<Shape*>(node);
   if (shape) {
     Appearance* app = shape->get_appearance();
@@ -167,12 +169,20 @@ void Assembly_part::clean_sgm_geos(Node* node)
                                                         Nef_polyhedron;
       typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
       
+      clock_t start_time = clock();
       Polyhedron& polyhedron = polyhedron_geo->get_polyhedron();
       Nef_polyhedron nef_polyhedron = Nef_polyhedron(polyhedron);
       CGAL::convex_decomposition_3(nef_polyhedron);
+      clock_t end_time = clock();
+      float duration_time =
+        static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
+      total_duration_time += duration_time;
       // The first volume is the outer volume, which is ignored in the
       // decomposition
       Volume_const_iterator ci = ++nef_polyhedron.volumes_begin();      
+      Uint number_of_vertices = 0;
+      Uint number_of_edges = 0;
+      Uint number_of_facets = 0;
       for (; ci != nef_polyhedron.volumes_end(); ++ci) {
         if (!ci->mark()) continue;
         Sgm_geo::Polyhedron p;
@@ -182,8 +192,12 @@ void Assembly_part::clean_sgm_geos(Node* node)
           Polyhedron_has_plane;
         // TBD: Use an existing kernel.
         Exact_kernel kernel;
-        compute_planes(p, Polyhedron_has_plane());
+        compute_planes(kernel, p, Polyhedron_has_plane());
         merge_coplanar_facets(kernel, p, Polyhedron_has_plane());
+        number_of_vertices += p.size_of_vertices();
+        number_of_edges += p.size_of_halfedges()/2;
+        number_of_facets += p.size_of_facets();
+        // std::cout << p << std::endl;
         Sgm_geo* sgm_geo = new Sgm_geo;
         sgm_geo->set_polyhedron(&p);
         sgm_geo->set_aos_edge_color(app->get_material()->get_diffuse_color());
@@ -193,7 +207,18 @@ void Assembly_part::clean_sgm_geos(Node* node)
         m_owned_sgm_geos.push_back(true);
         m_sgm_apps.push_back(app);
       }
-      std::cout << "# pieces: " << m_sgm_apps.size() << std::endl;
+      total_number_of_vertices += number_of_vertices;
+      total_number_of_edges += number_of_edges;
+      total_number_of_facets += number_of_facets;
+      std::cout << "# pieces: " << m_sgm_apps.size()
+                << " <" << number_of_vertices 
+                << ", " << number_of_edges 
+                << ", " << number_of_facets << ">"
+                << " (<" << total_number_of_vertices 
+                << ", " << total_number_of_edges 
+                << ", " << total_number_of_facets << ">)" 
+                << ", " << duration_time << " (" << total_duration_time << ")"
+                << std::endl;
       return;
     }
 

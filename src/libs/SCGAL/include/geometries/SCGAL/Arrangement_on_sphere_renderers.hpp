@@ -49,7 +49,7 @@ public:
   Sphere_renderer();
     
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action);
+  virtual void operator()(Draw_action* action);
 
 protected:
   /*! The arrangement geometry */
@@ -60,12 +60,12 @@ protected:
 class Colored_sphere_renderer : public Sphere_renderer {
 public:
   /*! Constructor */
-  Colored_sphere_renderer(const Vector4f & color);
+  Colored_sphere_renderer(const Vector4f& color);
 
   /*! Set the color
    * \param color the new color
    */
-  void set_color(const Vector3f & color)
+  void set_color(const Vector3f& color)
   {
     m_color[0] = color[0];
     m_color[1] = color[1];
@@ -79,7 +79,7 @@ public:
   { m_color[3] = 1.0f - transparency; }
 
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action);
+  virtual void operator()(Draw_action* action);
 
 protected:
   /*! The arrangement geometry */
@@ -92,7 +92,7 @@ protected:
 class Stencil_sphere_renderer : public Sphere_renderer {
 public:
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action);
+  virtual void operator()(Draw_action* action);
 };
   
 /*! Draw an arrangement on sphere vertex as a disc
@@ -100,7 +100,7 @@ public:
  * \param center the vertex center
  * \param radius the vertex radius
  */
-void draw_disc_vertex_on_sphere(Draw_action * action, Vector3f & center,
+void draw_disc_vertex_on_sphere(Draw_action* action, Vector3f& center,
                                 Float radius, Float delta_angle);
 
 /*! Draw an arrangement on sphere vertex
@@ -110,30 +110,32 @@ void draw_disc_vertex_on_sphere(Draw_action * action, Vector3f & center,
  * \param radius the vertex radius
  * \param delta_angle
  */
-void draw_vertex_on_sphere(Draw_action * action, Vector3f & center,
+void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
                            Arrangement_renderer::Vertex_shape::Style style,
                            Float radius, Float delta_angle);
 
 /*! Draw an arrangement on sphere edge as a strip
  * \param action
  * \param source the edge source
- * \param source the edge target
+ * \param target the edge target
+ * \param normal the normal to the plane containing the edge
  * \param radius the edge radius
  */
-void draw_strip_edge_on_sphere(Draw_action * action,
-                               Vector3f & src, Vector3f & trg,
+void draw_strip_edge_on_sphere(Draw_action* action,
+                               Vector3f& src, Vector3f& trg, Vector3f& normal,
                                Float radius, Float delta_angle);
 
 /*! Draw an arrangement on sphere edge as a strip
  * \param action
  * \param source the edge source
- * \param source the edge target
+ * \param target the edge target
+ * \param normal the normal to the plane containing the edge
  * \param count the number of parallel graphs
  * \param directed indicated whether the edge is drawn with arrows
  * \param radius the edge radius
  */
-void draw_strip_edge_on_sphere(Draw_action * action,
-                               Vector3f & src, Vector3f & trg,
+void draw_strip_edge_on_sphere(Draw_action* action,
+                               Vector3f& src, Vector3f& trg, Vector3f& normal,
                                Uint count, Boolean directed, Float radius,
                                Float delta_angle,
                                Float src_vertex_radius,
@@ -142,13 +144,14 @@ void draw_strip_edge_on_sphere(Draw_action * action,
 /*! Draw an arrangement on sphere edge
  * \param action
  * \param source the edge source
- * \param source the edge target
+ * \param target the edge target
+ * \param normal the normal to the plane containing the edge
  * \param shape the edge shape
  * \param radius the edge radius
  * \param delta_angle
  */
-void draw_edge_on_sphere(Draw_action * action,
-                         Vector3f & source, Vector3f & target,
+void draw_edge_on_sphere(Draw_action* action,
+                         Vector3f& source, Vector3f& target, Vector3f& normal,
                          Arrangement_renderer::Edge_shape::Style style,
                          Uint count, Boolean directed, Float radius,
                          Float delta_angle,
@@ -160,28 +163,28 @@ void draw_edge_on_sphere(Draw_action * action,
  * \param vec3
  * \param level
  */
-void draw_triangular_patch(const Vector3f & vec1, const Vector3f & vec2,
-                           const Vector3f & vec3, Uint level);
+void draw_triangular_patch(const Vector3f& vec1, const Vector3f& vec2,
+                           const Vector3f& vec3, Uint level);
 
 /*! Draw an arrangement on sphere face
  * \param action
  * \param begin the begining iterator of a range of points on the boundary.
  * \param end the past-beyond iterator of a range of points on the boundary.
  */
-void draw_aos_convex_face(Draw_action * action,
+void draw_aos_convex_face(Draw_action* action,
                           std::list<Vector3f>::const_iterator begin,
                           std::list<Vector3f>::const_iterator end,
-                          const Vector3f & mid);
+                          const Vector3f& mid);
 
 /*! Draw an arrangement on sphere face
  * \param action
  * \param begin the begining iterator of a range of points on the boundary.
  * \param end the past-beyond iterator of a range of points on the boundary.
  */
-void draw_aos_convex_face(Draw_action * action,
+void draw_aos_convex_face(Draw_action* action,
                           std::list<Vector3f>::const_iterator begin,
                           std::list<Vector3f>::const_iterator end);
-  
+
 SGAL_END_NAMESPACE
 
 #endif
