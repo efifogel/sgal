@@ -11,10 +11,10 @@ ColorBackground {
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
-Viewpoint {
-  type "ORTHOGONAL"
-  fieldOfView 3.1408
-}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 3.1408
+# }
 DEF INC_FIRST_TILE_KEY SingleKeySensor { key "q" }
 DEF INC_FIRST_TILE Incrementor {
   minValue 0
@@ -591,7 +591,7 @@ Transform {
 	  }
 	  # style "appearance"
 	  style "discreteCubeMap"
-	  colorSpace "HSL"
+	  colorSpace "RGB"
 	  scale 200 200 200
 	  model USE MODEL
 	  knobSlices 16
