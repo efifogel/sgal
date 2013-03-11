@@ -145,9 +145,10 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_DESTROY:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_DESTROY" << std::endl;);
-    current_window = (Windows_window_item*)(creation->lpCreateParams);
-    wm->set_current_window(NULL);
+    current_window =
+      (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->remove_window(current_window);
+    wm->set_current_window(NULL);
     break;
 
    case WM_SIZE:
@@ -209,7 +210,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
      process_key:
       keyboard_event = new Keyboard_event;
       keyboard_event->set_window_item(current_window);
-      keyboard_event->set_key((s_capital) ? wParam : wParam + 32);
+      keyboard_event->set_key((s_capital) ? (wParam + 32) : wParam);
       keyboard_event->set_x(LOWORD(lParam));
       keyboard_event->set_y(current_window->m_height - (HIWORD(lParam)));
       keyboard_event->set_pressed(pressed);
@@ -476,7 +477,6 @@ void Windows_window_manager::event_loop(Boolean simulating)
       }
     }
   } while (!done);
-  
   // return msg.wParam;
 }
 
