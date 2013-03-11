@@ -46,6 +46,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Event_handler.hpp"
 #include "SGAL/Tick_event.hpp"
+#include "SGAL/Keyboard_event.hpp"
 #include "SGAL/Reshape_event.hpp"
 #include "SGAL/Draw_event.hpp"
 #include "SGAL/Simulate_event.hpp"
@@ -162,6 +163,7 @@ void Player_scene::init()
   }
 
   SGAL::Tick_event::doregister(this);
+  SGAL::Keyboard_event::doregister(this);
   SGAL::Draw_event::doregister(this);
   SGAL::Reshape_event::doregister(this);
 }
@@ -171,6 +173,7 @@ Player_scene::~Player_scene(void)
 {
   SGAL::Reshape_event::unregister(this);
   SGAL::Draw_event::unregister(this);
+  SGAL::Keyboard_event::unregister(this);
   SGAL::Tick_event::unregister(this);
   m_fullname.clear();
 }
@@ -270,7 +273,7 @@ void Player_scene::init_scene()
   m_scene_graph->create_defaults();
     
   // Prepare the window item.
-  m_window_item = m_window_manager->create_window_item();
+  m_window_item = new Window_item;
   m_window_item->set_title(filename);
   m_window_item->set_number_of_stencil_bits(1);
 
@@ -504,14 +507,21 @@ void Player_scene::clear_scene()
 {
   m_scene_graph->release_context();
   m_scene_graph->destroy_defaults();
-  m_window_item->hide();
-  m_window_manager->destroy_window(m_window_item);
-  m_window_manager->destroy_window_item(m_window_item);
+  delete m_window_item;
+  m_window_item = NULL;
 }
 
 /*! \brief identifies the agent. */
 void Player_scene::identify(void)
 { std::cout << "Agent: Player_scene" << std::endl; }
+
+/*! \brief handless a keyboard event. */
+void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
+{
+  if (keyboard_event->get_pressed()) return;
+  SGAL::Uint key = keyboard_event->get_key();
+  if (key == 0x3b) m_window_manager->destroy_window(m_window_item); // escape
+}
 
 /*! \brief handless a tick event. */
 void Player_scene::handle(SGAL::Tick_event* tick_event)

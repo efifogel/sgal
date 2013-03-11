@@ -40,9 +40,9 @@ class Agent;
 class Window_item;
 
 /*! The keyboard event. Holds data related to the event of pressing or
- * releasing a key by the user
+ * releasing a key by the user.
  */
-class Keyboard_event: public Event {
+class Keyboard_event : public Event {
 public:
   enum Modifier {
     SHIFT_KEY = 0x1,
@@ -51,81 +51,131 @@ public:
   };
 
 private:
-  /*! A set of agents registered to process this type of event */
-  static std::set<Agent *> s_set;
+  /*! A set of agents registered to process this type of event. */
+  static std::set<Agent*> s_set;
 
-  /*! The window where the event took place */
-  Window_item * m_window_item;
+  /*! The window where the event took place. */
+  Window_item* m_window_item;
 
-  /*! The key pressed or released */
+  /*! The key pressed or released. */
   Uint m_key;
 
-  /*! The x-coordinate of the cursor at the time of the event */
+  /*! The x-coordinate of the cursor at the time of the event. */
   Int m_x;
 
-  /*! The y-coordinate of the cursor at the time of the event */
+  /*! The y-coordinate of the cursor at the time of the event. */
   Int m_y;
 
-  /*! Indicates whether the key is pressed or released */
+  /*! Indicates whether the key is pressed or released. */
   Boolean m_pressed;
   
 protected:
-  /*! Handle any agent */
-  virtual void handle(Agent * agent);
+  /*! Handle any agent. */
+  virtual void handle(Agent* agent);
   
-  /*! Obtain set of agents registered to process this type of event */
-  virtual const std::set<Agent *> & get_set(void) const { return s_set; }
+  /*! Obtain set of agents registered to process this type of event. */
+  virtual const std::set<Agent*>& get_set(void) const;
 
 public:
-  /*! Register this event for a particular agent */
-  static void doregister(Agent * agent) { s_set.insert(agent); }
+  /*! Register this event for a particular agent. */
+  static void doregister(Agent* agent);
 
-  /*! Unregisters this event for a particular agent */
-  static void unregister(Agent * agent) { s_set.erase(agent); }
+  /*! Unregister this event for a particular agent. */
+  static void unregister(Agent* agent);
 
   /*! Constructor */
-  Keyboard_event(void) :
-    Event(),
-    m_window_item(NULL),
-    m_key('\0'), m_x(0), m_y(0), m_pressed(SGAL_FALSE)
-  {}
+  Keyboard_event(void);
 
   /*! Destructor */
-  virtual ~Keyboard_event(void) {}
+  virtual ~Keyboard_event(void);
 
-  /*! Identify the event (for debugging purposes) */
+  /*! Identify the event (for debugging purposes). */
   virtual void identify(void);
 
-  /*! Set the window where the event took place */
-  void set_window_item(Window_item * item) { m_window_item = item; }
+  /*! Set the window where the event took place. */
+  void set_window_item(Window_item* item);
 
-  /*! Obtain the window where the event took place */
-  Window_item * get_window_item() const { return m_window_item; }
+  /*! Obtain the window where the event took place. */
+  Window_item* get_window_item() const;
   
-  /*! Set the key pressed or released */
-  void set_key(Uint key) { m_key = key; }
+  /*! Set the key pressed or released. */
+  void set_key(Uint key);
 
-  /*! Obtain the key pressed or released */
-  Uint get_key() const { return m_key; }
+  /*! Obtain the key pressed or released. */
+  Uint get_key() const;
 
-  /*! Set the x-coordinate of the cursor at the time of the event  */
-  void set_x(Int x) { m_x = x; }
+  /*! Set the x-coordinate of the cursor at the time of the event. */
+  void set_x(Int x);
 
-  /*! Obtains the x-coordinate of the cursor at the time of the event  */
-  Int get_x() const { return m_x; }
+  /*! Obtain the x-coordinate of the cursor at the time of the event. */
+  Int get_x() const;
 
-  /*! Sets the y-coordinate of the cursor at the time of the event  */
-  void set_y(Int y) { m_y = y; }
+  /*! Set the y-coordinate of the cursor at the time of the event. */
+  void set_y(Int y);
 
-  /*! Obtains the y-coordinate of the cursoor at the time of the event */
-  Int get_y() const { return m_y; }
+  /*! Obtain the y-coordinate of the cursoor at the time of the event. */
+  Int get_y() const;
 
-  /*! Set the flag that indicates whether the key is pressed or released */
-  void set_pressed(Boolean pressed) { m_pressed = pressed; }
+  /*! Set the flag that indicates whether the key is pressed or released. */
+  void set_pressed(Boolean pressed);
 
-  /*! Return true if the key is pressed, and false if the key is released */
-  Boolean get_pressed() const { return m_pressed; }
+  /*! Determine whether the key is pressed or released. */
+  Boolean get_pressed() const;
 };
+
+/*! \brief constructor */
+inline Keyboard_event::Keyboard_event(void) :
+  Event(),
+  m_window_item(NULL),
+  m_key('\0'), m_x(0), m_y(0), m_pressed(false)
+{}
+
+/*! \brief destructor */
+inline Keyboard_event::~Keyboard_event(void) {}
+
+/*! \brief obtains set of agents registered to process this type of event. */
+inline const std::set<Agent*>& Keyboard_event::get_set(void) const
+{ return s_set; }
+
+/*! \brief registers this event for a particular agent. */
+inline void Keyboard_event::doregister(Agent* agent) { s_set.insert(agent); }
+
+/*! \brief unregisters this event for a particular agent. */
+inline void Keyboard_event::unregister(Agent* agent) { s_set.erase(agent); }
+
+/*! \brief sets the window where the event took place. */
+inline void Keyboard_event::set_window_item(Window_item* item)
+{ m_window_item = item; }
+
+/*! \brief obtains the window where the event took place. */
+inline Window_item* Keyboard_event::get_window_item() const
+{ return m_window_item; }
+  
+/*! \brief sets the key pressed or released. */
+inline void Keyboard_event::set_key(Uint key) { m_key = key; }
+
+/*! \brief obtains the key pressed or released. */
+inline Uint Keyboard_event::get_key() const { return m_key; }
+
+/*! \brief sets the x-coordinate of the cursor at the time of the event. */
+inline void Keyboard_event::set_x(Int x) { m_x = x; }
+
+/*! \brief obtains the x-coordinate of the cursor at the time of the event. */
+inline Int Keyboard_event::get_x() const { return m_x; }
+
+/*! \brief sets the y-coordinate of the cursor at the time of the event. */
+inline void Keyboard_event::set_y(Int y) { m_y = y; }
+
+/*! \brief obtains the y-coordinate of the cursoor at the time of the event. */
+inline Int Keyboard_event::get_y() const { return m_y; }
+
+/*! \brief sets the flag that indicates whether the key is pressed or released.
+ */
+inline void Keyboard_event::set_pressed(Boolean pressed)
+{ m_pressed = pressed; }
+
+/*! \brief determines whether the key is pressed or released. */
+inline Boolean Keyboard_event::get_pressed() const { return m_pressed; }
 
 SGAL_END_NAMESPACE
 

@@ -56,21 +56,20 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! The single instance of a window manager */
-X11_window_manager * X11_window_manager::s_instance = NULL;
+X11_window_manager* X11_window_manager::s_instance = NULL;
 
 /*! Constructor */
 X11_window_manager::X11_window_manager() :
   m_display(NULL),
   m_screen(0),
-  m_created(SGAL_FALSE)
-{
-}
+  m_created(false)
+{}
 
 /*! Destructor */
 X11_window_manager::~X11_window_manager() { clear(); }
 
 /*! \brief obtains a pointer to the manager */
-X11_window_manager * X11_window_manager::instance() 
+X11_window_manager* X11_window_manager::instance() 
 {
   if (!s_instance) {
     s_instance = new X11_window_manager();
@@ -119,7 +118,7 @@ void X11_window_manager::destroy_window(X11_window_item* window_item)
 /*! \brief runs the main event loop */
 void X11_window_manager::event_loop(Boolean simulating)
 {
-  Boolean done = SGAL_FALSE;
+  Boolean done = false;
 
   // Handle events while not done:
   do {
@@ -132,16 +131,16 @@ void X11_window_manager::event_loop(Boolean simulating)
       // Slow down if necessary:
       if (sleep_time > 0) {
         // Draw all visibile windows:
-        std::list<X11_window_item *>::iterator it;
-        for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
-          X11_window_item * window_item = *it;
-          window_item->set_redraw(SGAL_TRUE);
+        Windows_iter it;
+        for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+          X11_window_item* window_item = *it;
+          window_item->set_redraw(true);
         }
       } else {
         // If any window is being accumulated, do not advance in the time line.
         bool accumulating = false;
-        std::list<X11_window_item *>::iterator it;
-        for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+        Windows_iter it;
+        for (it = this->begin_windows(); it != this->end_windows(); ++it) {
           X11_window_item* window_item = *it;
           if (window_item->is_accumulating()) {
             accumulating = true;
@@ -161,11 +160,10 @@ void X11_window_manager::event_loop(Boolean simulating)
           /*! \todo Do not force the redraw globally. Instead set the redraw
            * only when really needed.
            */
-          std::list<X11_window_item *>::iterator it;
-          for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it)
-          {
+          Windows_iter it;
+          for (it = this->begin_windows(); it != this->end_windows(); ++it) {
             X11_window_item* window_item = *it;
-            window_item->set_redraw(SGAL_TRUE);
+            window_item->set_redraw(true);
           }
         }
       }
@@ -176,14 +174,14 @@ void X11_window_manager::event_loop(Boolean simulating)
      * 2. none of the windows has to be redrawn, then
      * wait for an X event:
      */
-    Boolean wait_for_xevent = SGAL_FALSE;
+    Boolean wait_for_xevent = false;
     if (m_event_handler.is_empty()) {
-      wait_for_xevent = SGAL_TRUE;
-      std::list<X11_window_item *>::iterator it;
-      for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+      wait_for_xevent = true;
+      Windows_iter it;
+      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->do_redraw()) {
-          wait_for_xevent = SGAL_FALSE;
+          wait_for_xevent = false;
           break;
         }
       }
@@ -194,8 +192,8 @@ void X11_window_manager::event_loop(Boolean simulating)
       XNextEvent(m_display, &event);
       
       process_xevent(event);
-      if (m_created && (m_number_of_windows == 0)) {
-        done = SGAL_TRUE;
+      if (m_created && (this->size_windows() == 0)) {
+        done = true;
       }
     }
 
@@ -204,8 +202,8 @@ void X11_window_manager::event_loop(Boolean simulating)
       XEvent event;
       XNextEvent(m_display, &event);
       process_xevent(event);
-      if (m_created && (m_number_of_windows == 0)) {
-        done = SGAL_TRUE;
+      if (m_created && (this->size_windows() == 0)) {
+        done = true;
         break;
       }
     }
@@ -213,12 +211,12 @@ void X11_window_manager::event_loop(Boolean simulating)
     m_event_handler.process();
 
     // Draw all windows that need to be drawn:
-    std::list<X11_window_item *>::iterator it;
-    for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
-      Window_item * window_item = *it;
+    Windows_iter it;
+    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+      Window_item* window_item = *it;
       if (window_item->do_redraw() && window_item->is_visible()) {
         // Reset the redraw flag, so that the user can re-set it:
-        window_item->set_redraw(SGAL_FALSE);
+        window_item->set_redraw(false);
         window_item->make_current();
         m_scene->draw_window(window_item, m_button_state != 0);
       }
@@ -240,7 +238,7 @@ void X11_window_manager::process_xevent(XEvent& event)
   XKeyboardControl kc_values;
   Boolean pressed;
   XComposeStatus status_in_out;
-  std::list<X11_window_item *>::iterator it;
+  Windows_iter it;
 
   kc_values.key = -1;         // ALL keys
   
@@ -249,13 +247,13 @@ void X11_window_manager::process_xevent(XEvent& event)
    case Expose:
     // Draw only if the number of Expose events that are to follow vanishes:
     if (event.xexpose.count != 0) break;
-    for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xexpose.window) {
 #if 0
-        window_item->set_redraw(SGAL_TRUE);
+        window_item->set_redraw(true);
 #else
-        window_item->set_redraw(SGAL_FALSE);
+        window_item->set_redraw(false);
         window_item->make_current();
         m_scene->draw_window(window_item, m_button_state != 0);
 #endif
@@ -265,7 +263,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ConfigureNotify:
-    for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xconfigure.window) {
         // Reshape only if the window-size changed:
@@ -278,7 +276,7 @@ void X11_window_manager::process_xevent(XEvent& event)
         {
           window_item->set_size(width, height);
 #if 0
-          window_item->set_reshape(SGAL_TRUE);
+          window_item->set_reshape(true);
 #else
           window_item->make_current();
           m_scene->reshape_window(window_item, width, height);
@@ -302,7 +300,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     mouse_event->set_x(event.xbutton.x);
     mouse_event->set_y(m_current_window->m_height - event.xbutton.y);
     m_event_handler.issue(mouse_event);
-    m_current_window->set_redraw(SGAL_TRUE);
+    m_current_window->set_redraw(true);
     break;
 
    case ButtonRelease:
@@ -318,7 +316,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     mouse_event->set_x(event.xbutton.x);
     mouse_event->set_y(m_current_window->m_height - event.xbutton.y);
     m_event_handler.issue(mouse_event);
-    m_current_window->set_redraw(SGAL_TRUE);
+    m_current_window->set_redraw(true);
     break;
         
    case KeyPress:
@@ -330,7 +328,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     if (!m_current_window) break;
 
     XLookupString(&event.xkey, buffer, 30, &keysym, &status_in_out);
-    pressed = SGAL_TRUE;
+    pressed = true;
   process_key:
     
     keyboard_event = new Keyboard_event;
@@ -340,7 +338,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     keyboard_event->set_y(m_current_window->m_height - event.xkey.y);
     keyboard_event->set_pressed(pressed);
     m_event_handler.issue(keyboard_event);
-    m_current_window->set_redraw(SGAL_TRUE);
+    m_current_window->set_redraw(true);
     break;
 
    case KeyRelease:
@@ -359,7 +357,7 @@ void X11_window_manager::process_xevent(XEvent& event)
       create_window(m_current_window);
       break;
      default:
-      pressed = SGAL_FALSE;
+      pressed = false;
       goto process_key;
       break;
     }
@@ -367,7 +365,7 @@ void X11_window_manager::process_xevent(XEvent& event)
 
    case MotionNotify:
     if (!m_current_window) {
-      for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->m_window == event.xfocus.window) {
           m_current_window = window_item;
@@ -393,14 +391,14 @@ void X11_window_manager::process_xevent(XEvent& event)
       passive_motion_event->set_y(m_current_window->m_height - event.xbutton.y);
       m_event_handler.issue(passive_motion_event);
     }
-    m_current_window->set_redraw(SGAL_TRUE);
+    m_current_window->set_redraw(true);
     break;
     
    case ClientMessage:
     if (event.xclient.window == RootWindow(m_display, m_screen)) break;
     if (*XGetAtomName(m_display, event.xclient.message_type) == *"WM_PROTOCOLS")
     {
-      --m_number_of_windows;
+      this->remove_window(m_current_window);
       kc_values.auto_repeat_mode = 1;
       XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
       // Set current window to null?
@@ -411,7 +409,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     kc_values.auto_repeat_mode = 0;
     XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
     
-    for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xfocus.window) {
         m_current_window = window_item;
@@ -428,14 +426,14 @@ void X11_window_manager::process_xevent(XEvent& event)
 
    case CreateNotify:
     if (event.xcreatewindow.override_redirect) break;
-    m_created = SGAL_TRUE;
-    ++m_number_of_windows;    
+    m_created = true;
+    this->insert_window(m_current_window);
     // std::cout << "CreateNotify: " << m_number_of_windows << std::endl;
     break;
     
    case DestroyNotify:
     // if (event.xdestroywindow.event != event.xdestroywindow.window) break;
-    --m_number_of_windows;
+    this->remove_window(m_current_window);
     kc_values.auto_repeat_mode = 1;
     XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
     //std::cout << "DestroyNotify: " << m_number_of_windows << std::endl;
@@ -444,7 +442,7 @@ void X11_window_manager::process_xevent(XEvent& event)
    case MapNotify:
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
-      for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->m_window == event.xmap.window) {
           m_current_window = window_item;
@@ -454,13 +452,13 @@ void X11_window_manager::process_xevent(XEvent& event)
     }
     // std::cout << "MapNotify: " << m_current_window << std::endl;
     if (!m_current_window) break;
-    m_current_window->set_visible(SGAL_TRUE);
+    m_current_window->set_visible(true);
     break;
     
    case UnmapNotify:
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
-      for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
+      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->m_window == event.xunmap.window) {
           m_current_window = window_item;
@@ -469,7 +467,7 @@ void X11_window_manager::process_xevent(XEvent& event)
       }
     }
     if (!m_current_window) break;
-    m_current_window->set_visible(SGAL_FALSE);
+    m_current_window->set_visible(false);
     break;
     
    default:

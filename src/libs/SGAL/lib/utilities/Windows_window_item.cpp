@@ -280,6 +280,8 @@ void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
 /*! \brief destroys the window */
 void Windows_window_item::destroy()
 {
+  std::cout << "Windows_window_item::destroy()" << std::endl;
+  
   if (m_hWnd != NULL) {
     if (m_hDC != 0) {
       wglMakeCurrent(m_hDC, NULL);      // make our context 'un-'current
