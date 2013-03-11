@@ -90,8 +90,13 @@ public:
    */
   virtual void make_current();
 
+  void reset_window();
+  
   friend class X11_window_manager;
 };
+
+/*! \brief reset the window identifier. */
+inline void X11_window_item::reset_window() { m_window = 0; }
 
 SGAL_END_NAMESPACE
 

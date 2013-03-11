@@ -43,13 +43,13 @@ class Scene;
 class X11_window_manager : public Native_window_manager<X11_window_item> {
 private:
   /*! The window-manager singleton */
-  static X11_window_manager * s_instance;
+  static X11_window_manager* s_instance;
 
   /*! The event handler */
   Event_handler m_event_handler;
   
   /* Information about the X server communicated with */
-  Display * m_display;
+  Display* m_display;
 
   /*! The screen */
   Int m_screen;
@@ -63,11 +63,11 @@ private:
   /*! Process a single X event
    * \param event the X event
    */
-  void process_xevent(XEvent & event);
+  void process_xevent(XEvent& event);
   
 public:
   /*! Obtain the window-manager singleton */
-  static X11_window_manager * instance();  
+  static X11_window_manager* instance();  
   
   /*! Constructor */
   X11_window_manager();
@@ -76,7 +76,7 @@ public:
    * \param argc the number of arguments
    * \param argv the array of ASCII arrguments
    */
-  void init(Uint argc, char * argv[]);
+  void init(Uint argc, char* argv[]);
 
   /*! Clear the window manager */
   void clear();
@@ -87,12 +87,12 @@ public:
   /*! Create a new window
    * \param window_item the window item that holds the window to create 
    */
-  virtual void create_window(X11_window_item * window_item);
+  virtual void create_window(X11_window_item* window_item);
 
   /*! Destroy an existing window
    * \param window_item the window item that holds the window to destroy
    */
-  virtual void destroy_window(X11_window_item * window_item);
+  virtual void destroy_window(X11_window_item* window_item);
 
   /*! Run the main event loop
    * \param simulating indicates whether the application is simulating

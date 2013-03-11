@@ -61,6 +61,7 @@
 #include "SGAL/Position_interpolator.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Tick_event.hpp"
+#include "SGAL/Keyboard_event.hpp"
 
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -762,7 +763,7 @@ SGAL::Boolean Knot_scene::solve(State state, Uint level)
 /*! \brie initializes the secene. */
 void Knot_scene::init_scene()
 {
-  m_window_item = m_window_manager->create_window_item();
+  m_window_item = new Window_item;
   m_window_item->set_title("Knot");
   m_window_manager->create_window(m_window_item);
   
@@ -782,6 +783,7 @@ void Knot_scene::init_scene()
   }
 
   if (m_option_parser.solve()) SGAL::Tick_event::doregister(this);
+  SGAL::Keyboard_event::doregister(this);
 
   m_window_item->show();
 }
@@ -794,8 +796,11 @@ void Knot_scene::indulge_user()
 void Knot_scene::clear_scene()
 {
   if (m_option_parser.solve()) SGAL::Tick_event::unregister(this);
+  SGAL::Keyboard_event::unregister(this);
   m_scene_graph->release_context();
   m_scene_graph->destroy_defaults();
+  delete m_window_item;
+  m_window_item = NULL;
 }
 
 /*! \brief identifies the agent. */
@@ -954,6 +959,14 @@ void Knot_scene::mark_all(State state)
       }
     }
   }
+}
+
+/*! \brief handles a keyboard event. */
+void Knot_scene::handle(SGAL::Keyboard_event* keyboard_event)
+{
+  if (keyboard_event->get_pressed()) return;
+  SGAL::Uint key = keyboard_event->get_key();
+  if (key == 0x3b) m_window_manager->destroy_window(m_window_item); // escape
 }
 
 /*! \brief handles tick events. */

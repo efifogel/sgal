@@ -520,7 +520,7 @@ void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
 {
   if (keyboard_event->get_pressed()) return;
   SGAL::Uint key = keyboard_event->get_key();
-  if (key == 0x3b) m_window_manager->destroy_window(m_window_item); // escape
+  if (key == 0x1b) m_window_manager->destroy_window(m_window_item); // escape
 }
 
 /*! \brief handless a tick event. */

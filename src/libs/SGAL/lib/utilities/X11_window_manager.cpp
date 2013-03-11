@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12533 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -50,6 +50,7 @@
 #include "SGAL/Passive_motion_event.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Scene.hpp"
+#include "SGAL/Trace.hpp"
 
 // #include "X11_event_names.hpp"
 
@@ -71,10 +72,7 @@ X11_window_manager::~X11_window_manager() { clear(); }
 /*! \brief obtains a pointer to the manager */
 X11_window_manager* X11_window_manager::instance() 
 {
-  if (!s_instance) {
-    s_instance = new X11_window_manager();
-    //! \todo m_destroyer.set_singleton(s_instance);
-  }
+  if (!s_instance) s_instance = new X11_window_manager();
   return s_instance;
 }
 
@@ -112,7 +110,6 @@ void X11_window_manager::destroy_window(X11_window_item* window_item)
     XF86VidModeSwitchToMode(m_display, m_screen, &m_desktop_mode);
     XF86VidModeSetViewPort(m_display, m_screen, 0, 0);
   }
-  if (window_item == m_current_window) m_current_window = NULL;
 }
 
 /*! \brief runs the main event loop */
@@ -245,6 +242,8 @@ void X11_window_manager::process_xevent(XEvent& event)
   // std::cout << "event type: " << event_names[event.type] << std::endl;
   switch (event.type) {
    case Expose:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "Expose" << std::endl;);
     // Draw only if the number of Expose events that are to follow vanishes:
     if (event.xexpose.count != 0) break;
     for (it = this->begin_windows(); it != this->end_windows(); ++it) {
@@ -263,6 +262,8 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ConfigureNotify:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "ConfigureNotify" << std::endl;);
     for (it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xconfigure.window) {
@@ -288,6 +289,8 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ButtonPress:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "ButtonPress" << std::endl;);
     button_id = (event.xbutton.button == Button1) ? 0 :
       (event.xbutton.button == Button2) ? 1 :
       (event.xbutton.button == Button3) ? 2 : 3;
@@ -304,6 +307,8 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case ButtonRelease:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "ButtonRelease" << std::endl;);
     button_id = (event.xbutton.button == Button1) ? 0 :
       (event.xbutton.button == Button2) ? 1 :
       (event.xbutton.button == Button3) ? 2 : 3;
@@ -320,13 +325,14 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
         
    case KeyPress:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "KeyPress" << std::endl;);
     /* Break out if the window has been destroyed. This is possible, for
      * example, if auto-repeat for the key is on. In this case alternating
      * KeyPress and KeyRelease events are generated while the key is still
      * pressed:
      */
     if (!m_current_window) break;
-
     XLookupString(&event.xkey, buffer, 30, &keysym, &status_in_out);
     pressed = true;
   process_key:
@@ -342,14 +348,15 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case KeyRelease:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "KeyRelease" << std::endl;);
     // Break out if the window has been destroyed:
     if (!m_current_window) break;
-
     XLookupString(&event.xkey, buffer, 30, &keysym, &status_in_out);
     switch(keysym) {
-     case XK_Escape:
-      destroy_window(m_current_window);
-      break;
+      // case XK_Escape:
+      // destroy_window(m_current_window);
+      // break;
 
      case XK_F1:            // toggle full screen
       destroy_window(m_current_window);
@@ -364,6 +371,8 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case MotionNotify:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "MotionNotify" << std::endl;);
     if (!m_current_window) {
       for (it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
@@ -376,7 +385,6 @@ void X11_window_manager::process_xevent(XEvent& event)
 
     // Break out if the window has been destroyed:
     if (!m_current_window) break;
-
     SGAL_assertion(m_current_window);
     if (m_button_state) {
       motion_event = new Motion_event;
@@ -395,20 +403,22 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
     
    case ClientMessage:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "ClientMessage" << std::endl;);
     if (event.xclient.window == RootWindow(m_display, m_screen)) break;
     if (*XGetAtomName(m_display, event.xclient.message_type) == *"WM_PROTOCOLS")
     {
       this->remove_window(m_current_window);
       kc_values.auto_repeat_mode = 1;
       XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
-      // Set current window to null?
     }
     break;
 
    case FocusIn:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "FocusIn" << std::endl;);
     kc_values.auto_repeat_mode = 0;
     XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
-    
     for (it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xfocus.window) {
@@ -419,6 +429,8 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case FocusOut:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "FocusOut" << std::endl;);
     m_current_window = NULL;
     kc_values.auto_repeat_mode = 1;
     XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
@@ -428,18 +440,32 @@ void X11_window_manager::process_xevent(XEvent& event)
     if (event.xcreatewindow.override_redirect) break;
     m_created = true;
     this->insert_window(m_current_window);
-    // std::cout << "CreateNotify: " << m_number_of_windows << std::endl;
     break;
     
    case DestroyNotify:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "DestroyNotify" << std::endl;);
     // if (event.xdestroywindow.event != event.xdestroywindow.window) break;
+    if (!m_current_window) {
+      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+        X11_window_item* window_item = *it;
+        if (window_item->m_window == event.xfocus.window) {
+          m_current_window = window_item;
+          break;
+        }
+      }
+    }
+    if (!m_current_window) break;
+    m_current_window->reset_window();
     this->remove_window(m_current_window);
     kc_values.auto_repeat_mode = 1;
     XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
-    //std::cout << "DestroyNotify: " << m_number_of_windows << std::endl;
+    m_current_window = NULL;
     break;
 
    case MapNotify:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "MapNotify" << std::endl;);
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
       for (it = this->begin_windows(); it != this->end_windows(); ++it) {
@@ -450,12 +476,13 @@ void X11_window_manager::process_xevent(XEvent& event)
         }
       }
     }
-    // std::cout << "MapNotify: " << m_current_window << std::endl;
     if (!m_current_window) break;
     m_current_window->set_visible(true);
     break;
     
    case UnmapNotify:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "UnmapNotify" << std::endl;);
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
       for (it = this->begin_windows(); it != this->end_windows(); ++it) {
@@ -471,6 +498,8 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
     
    default:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "default" << std::endl;);
     break;
   }
 }
