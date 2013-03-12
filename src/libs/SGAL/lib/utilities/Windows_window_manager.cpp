@@ -129,6 +129,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
   Motion_event* motion_event;
   Passive_motion_event* passive_motion_event;
   CREATESTRUCT* creation;
+  Uint key;
   
   switch (uMsg) {
    case WM_CREATE:
@@ -202,15 +203,18 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     switch (wParam) {
-     case VK_SHIFT: s_capital = !s_capital; break;
-     case VK_CAPITAL: s_capital = true; break;
+     case VK_SHIFT: s_capital = true; break;
+      // case VK_CAPITAL: s_capital = !s_capital; break;
      default:
       pressed = true;
 
      process_key:
       keyboard_event = new Keyboard_event;
       keyboard_event->set_window_item(current_window);
-      keyboard_event->set_key((s_capital) ? (wParam + 32) : wParam);
+      key = wParam;
+      if ((0x41 <= wParam) && (wParam <= 0x5a))
+        key = (s_capital) ? wParam : (wParam + 0x20);
+      keyboard_event->set_key(key);
       keyboard_event->set_x(LOWORD(lParam));
       keyboard_event->set_y(current_window->m_height - (HIWORD(lParam)));
       keyboard_event->set_pressed(pressed);
@@ -230,8 +234,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
       //  Windows_window_manager::instance()->destroy_window(current_window);
       //  break;
 
-     case VK_SHIFT: s_capital = !s_capital; break;
-     case VK_CAPITAL: s_capital = false; break;
+     case VK_SHIFT: s_capital = false; break;
+     case VK_CAPITAL: s_capital = !s_capital; break;
      default:
       pressed = false;
       goto process_key;
@@ -355,6 +359,7 @@ void Windows_window_manager::destroy_window(Windows_window_item* window_item)
 {
   window_item->destroy();
   if (window_item == m_current_window) m_current_window = NULL;
+  if (this->size_windows() == 0) PostQuitMessage(0);
 }
 
 /*! \brief performs the main event loop */

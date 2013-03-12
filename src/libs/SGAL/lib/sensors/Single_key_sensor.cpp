@@ -44,7 +44,7 @@ std::string Single_key_sensor::s_tag = "SingleKeySensor";
 Container_proto* Single_key_sensor::s_prototype = NULL;
 
 /*! Default Values */
-Uint Single_key_sensor::s_def_num_states = 2;
+Uint Single_key_sensor::s_def_num_states = 1;
 Boolean Single_key_sensor::s_def_trigger_on_release(true);
 
 REGISTER_TO_FACTORY(Single_key_sensor, "Single_key_sensor");
@@ -54,8 +54,8 @@ Single_key_sensor::Single_key_sensor(Boolean proto) :
   Node(proto),
   m_press(false),
   m_time(0.0),
-  m_boolean(true),
-  m_state(false),
+  m_boolean(false),
+  m_state(true),
   m_int_state(0),
   m_num_states(s_def_num_states),
   m_trigger_on_release(s_def_trigger_on_release)
@@ -136,12 +136,9 @@ void Single_key_sensor::handle(Keyboard_event* event)
   field = get_field(TIME);
   if (field) field->cascade();
 
-  if (m_boolean) {
-    m_state = !m_state;
-    field = get_field(STATE);
-    if (field) field->cascade();
-    return;
-  }
+  if (m_boolean) m_state = !m_state;
+  field = get_field(STATE);
+  if (field) field->cascade();
 
   m_int_state++;
   m_int_state %= m_num_states;
