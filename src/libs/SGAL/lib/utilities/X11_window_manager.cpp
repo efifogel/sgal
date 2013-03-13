@@ -23,6 +23,7 @@
  * X11 window system component of the window manager
  */
 
+#include <string.h>
 #include <time.h>
 /* default header and core functionallity */
 #include <X11/Xlib.h>
@@ -189,9 +190,7 @@ void X11_window_manager::event_loop(Boolean simulating)
       XNextEvent(m_display, &event);
       
       process_xevent(event);
-      if (m_created && (this->size_windows() == 0)) {
-        done = true;
-      }
+      if (m_created && (this->size_windows() == 0)) done = true;
     }
 
     // Process events from the X queue if there are any:
@@ -236,7 +235,7 @@ void X11_window_manager::process_xevent(XEvent& event)
   Boolean pressed;
   XComposeStatus status_in_out;
   Windows_iter it;
-
+  
   kc_values.key = -1;         // ALL keys
   
   // std::cout << "event type: " << event_names[event.type] << std::endl;
@@ -392,7 +391,8 @@ void X11_window_manager::process_xevent(XEvent& event)
       motion_event->set_x(event.xbutton.x);
       motion_event->set_y(m_current_window->m_height - event.xbutton.y);
       m_event_handler.issue(motion_event);
-    } else {
+    }
+    else {
       passive_motion_event = new Passive_motion_event;
       passive_motion_event->set_window_item(m_current_window);
       passive_motion_event->set_x(event.xbutton.x);
@@ -406,7 +406,9 @@ void X11_window_manager::process_xevent(XEvent& event)
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "ClientMessage" << std::endl;);
     if (event.xclient.window == RootWindow(m_display, m_screen)) break;
-    if (*XGetAtomName(m_display, event.xclient.message_type) == *"WM_PROTOCOLS")
+    if (!m_current_window) break;
+    if (static_cast<Atom>(event.xclient.data.l[0]) ==
+        m_current_window->m_wm_delete)
     {
       this->remove_window(m_current_window);
       kc_values.auto_repeat_mode = 1;

@@ -231,7 +231,8 @@ void X11_window_item::create(Display* display, int screen)
                   CurrentTime);
     XGrabPointer(display, m_window, True, ButtonPressMask,
                  GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
-  } else {
+  }
+  else {
     // Create a window in window mode:
     m_win_attr.event_mask = 
       ExposureMask |
@@ -246,8 +247,8 @@ void X11_window_item::create(Display* display, int screen)
                              CWBorderPixel | CWColormap | CWEventMask,
                              &m_win_attr);
     /* only set window title and handle wm_delete_events if in windowed mode */
-    Atom wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", True);
-    XSetWMProtocols(display, m_window, &wm_delete, 1);
+    m_wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(display, m_window, &m_wm_delete, 1);
     XSetStandardProperties(display, m_window,
                            m_title.c_str(), m_title.c_str(),
                            None, NULL, 0, NULL);
