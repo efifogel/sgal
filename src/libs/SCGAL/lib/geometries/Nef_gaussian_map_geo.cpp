@@ -616,6 +616,7 @@ void Nef_gaussian_map_geo::isect(SGAL::Isect_action * action)
 /*! Calculate the bounding sphere */
 Boolean Nef_gaussian_map_geo::clean_sphere_bound()
 {
+  if (!m_dirty_sphere_bound) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
   

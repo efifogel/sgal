@@ -525,6 +525,7 @@ void Lines_through_segments_geo::isect(Isect_action* action)
 /*! \brief */
 Boolean Lines_through_segments_geo::clean_sphere_bound()
 {
+  if (!m_dirty_sphere_bound) return false;
   if (is_dirty()) clean();
 
   // TODO: calculate the sphere bound
