@@ -102,7 +102,7 @@ ifeq ($(USE_NEF), 1)
 LCPPDEFS+= -DUSE_NEF
 endif
 
-# LCPPINCS+= -I$(CGAL_WORKDIR)/trunk/Arrangement_2/include
+LCPPINCS+= -I$(CGAL_WORKDIR)/Arrangement_on_surface_2/include
 LCPPINCS+= -I$(CGM_3_WORKDIR)/include
 ifeq ($(USE_NEF), 1)
 # LCPPINCS+= -I$(CGAL_WORKDIR)/Nef_2/include
