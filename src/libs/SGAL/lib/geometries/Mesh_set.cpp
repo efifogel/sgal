@@ -179,7 +179,7 @@ void Mesh_set::init_prototype()
 
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "convex",
+  s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
                                           get_member_offset(&m_crease_angle),
                                           exec_func));  
 }
