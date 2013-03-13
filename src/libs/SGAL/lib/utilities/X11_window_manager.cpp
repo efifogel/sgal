@@ -439,7 +439,11 @@ void X11_window_manager::process_xevent(XEvent& event)
     break;
 
    case CreateNotify:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "CreateNotify" << std::endl;);
     if (event.xcreatewindow.override_redirect) break;
+    // Check whether the event is associated with our window.
+    if (!m_current_window) break;
     m_created = true;
     this->insert_window(m_current_window);
     break;
