@@ -1078,6 +1078,13 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
   Aos_mark::Vertex_iterator vit;
   for (vit = aos->vertices_begin(); vit != aos->vertices_end(); ++vit) {
     if (!vit->mark()) continue;
+    if (vit->degree() == 0) {
+      // A marked isolated vertex can be the result of overlaying an
+      // a non-marked isolated vertex from one arrangement and a marked
+      // face from another.
+      aos->remove_isolated_vertex(vit);
+      continue;
+    }
     CGAL_assertion(vit->degree() == 2);
     Aos_mark::Halfedge_around_vertex_circulator eit = vit->incident_halfedges();
     const Aos_mark::Geometry_traits_2* traits = aos->geometry_traits();
