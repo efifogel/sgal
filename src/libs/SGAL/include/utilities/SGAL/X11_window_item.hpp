@@ -56,6 +56,9 @@ private:
 
   /*! The original video mode. */
   XF86VidModeModeInfo m_desk_mode;
+
+  /*! The delete atom. */
+  Atom m_wm_delete;
   
   /*! Create the window.
    * \param display.
