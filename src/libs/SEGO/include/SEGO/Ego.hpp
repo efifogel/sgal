@@ -77,6 +77,7 @@ public:
     LAYER_X_VISIBILITY,
     LAYER_Y_VISIBILITY,
     LAYER_Z_VISIBILITY,
+    BRICK_TYPES,
     LAST
   };
 
@@ -347,6 +348,7 @@ protected:
   virtual const std::string& get_tag() const;
 
   void adjust_voxels_for_tiling();
+  Ego_voxels_tiler::Brick_types convert_types(const SGAL::Array<Vector3sh> &types);
 
   /*! Determine whether a given brick is visible with respect to a specific
    * layer.
@@ -446,6 +448,11 @@ protected:
   /*! Indicates the layer-z visibility scheme. */
   Layer_visibility m_layer_z_visibility;
   
+  /*! Pieces with which it is OK to tile. */
+  // I am not using Vector3u because there is none, and I don't have
+  // the energy to create the right templates so it won't be repeatative.
+  SGAL::Array<Vector3sh> m_brick_types;
+
 private:
   /*! Indicates whether the appearance is "owned". If it is owned (as the
    * user hasn't provided one) the appearance should be destructed when Ego

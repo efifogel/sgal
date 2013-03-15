@@ -33,8 +33,9 @@ SGAL_BEGIN_NAMESPACE
 // Tiling_rows are relevant only for non-grid.
 Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
                                    Strategy strategy,
-                                   Tiling_rows rows)
-    : m_tiling_rows(rows) {
+                                   Tiling_rows rows,
+                                   const Brick_types& available_types)
+    : m_tiling_rows(rows), m_available_types(available_types) {
   switch (first_tile) {
   case FIRST00:
     m_first_brick_x_offset = 0;
@@ -62,15 +63,6 @@ Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
     m_offset_between_rows = 1;
     break;
   }
-
-  // We currently use only 4x2, 2x2, 2x1, and 1x1 bricks.
-  // Order of insertion determines preference.
-  m_available_bricks.push_back(Lego(2, 4, 1));
-  m_available_bricks.push_back(Lego(4, 2, 1));
-  m_available_bricks.push_back(Lego(2, 2, 1));
-  m_available_bricks.push_back(Lego(2, 1, 1));
-  m_available_bricks.push_back(Lego(1, 2, 1));
-  m_available_bricks.push_back(Lego(1, 1, 1));
 }
 
 /** 
@@ -125,8 +117,8 @@ void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
   for (size_t i = 0; i < 2; ++i) {
     for (size_t j = 0; j < 2; ++j) {
 
-      for (Legos::iterator it = m_available_bricks.begin();
-           it != m_available_bricks.end(); ++it) {
+      for (Brick_types::iterator it = m_available_types.begin();
+           it != m_available_types.end(); ++it) {
 
 #ifdef EGO_VOXELIZER_TILER_VERBOSE
         std::cout << "Location: " << row + i << " " << column + j << std::endl;

@@ -79,6 +79,15 @@ Transform {
 	  # style "appearance"
 	  scale 100 100 100
 	  model USE MODEL
+	  brickTypes [
+	    2, 4, 1, 
+	    4, 2, 1,
+	    2, 2, 1,
+	    2, 1, 1,
+	    1, 2, 1,
+	    1, 1, 1
+          ]
+
 	  # parts {
 	  #   children [
 	  #     USE PART0

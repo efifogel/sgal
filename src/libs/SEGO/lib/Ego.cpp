@@ -35,6 +35,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
 
 #include <Magick++.h>
 
@@ -288,7 +289,6 @@ void Ego::init_prototype()
   s_prototype->add_field_info(new SF_container(APPEARANCE, "appearance",
                                                get_member_offset(&m_appearance),
                                                exec_func));
-
   exec_func = static_cast<Execution_function>(&Ego::visibility_changed);
   sf_int = new SF_int(LAYER_X_VISIBILITY, "layerXVisibility",
                       get_member_offset(&m_layer_x_visibility), exec_func);
@@ -499,6 +499,17 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "brickTypes") {
+      Uint num_values = get_num_tokens(value);
+      Uint size = num_values / 3;
+      m_brick_types.resize(size);
+
+      std::istringstream svalue(value, std::istringstream::in);
+      for (Uint i = 0 ; i < size ; i++) {
+        svalue >> m_brick_types[i][0] >> m_brick_types[i][1] >> m_brick_types[i][2];
+      }
+      elem->mark_delete(ai);
+    }
   }
 
   // Remove all the deleted attributes:
@@ -545,7 +556,8 @@ void Ego::clean_tiling()
   m_tiled_voxels = m_voxels;
   Ego_voxels_tiler tile(m_first_tile_placement,
                         m_tiling_strategy,
-                        m_tiling_rows_direction);
+                        m_tiling_rows_direction,
+                        convert_types(m_brick_types));
   tile(&m_tiled_voxels);
 }
 
@@ -1172,6 +1184,16 @@ void Ego::adjust_voxels_for_tiling()
   // Therefore we need to "offset" the voxels sturcture in 1 square in
   // the xy-plane.
   m_voxels.offset_xy_layers(1);
+}
+
+/*! \brief converts m_brick_types to the input received by Ego_voxels_tiler. */  
+Ego_voxels_tiler::Brick_types Ego::convert_types(const SGAL::Array<Vector3sh>& types) {
+
+  Ego_voxels_tiler::Brick_types ret;
+  BOOST_FOREACH(const Vector3sh& vec, types) {
+    ret.push_back(boost::make_tuple(vec[0], vec[1], vec[2]));
+  }
+  return ret;
 }
 
 /*! \brief adds the container to a given scene. */  

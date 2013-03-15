@@ -29,6 +29,9 @@ class Ego_voxels;
 
 class Ego_voxels_tiler {
 public:
+  typedef boost::tuple<size_t, size_t, size_t>  Brick_type;
+  typedef std::vector<Brick_type>                     Brick_types;
+
   // TODO: Missing if rows are x or y.
   enum First_tile_placement {FIRST00, FIRST01, FIRST10, FIRST11};
   enum Strategy {GRID, NONGRID};
@@ -36,7 +39,8 @@ public:
 
   Ego_voxels_tiler(First_tile_placement first_tile,
                    Strategy strategy,
-                   Tiling_rows rows);
+                   Tiling_rows rows,
+                   const Brick_types &available_types);
   
   void operator() (Ego_voxels* out_voxels);
 
@@ -52,9 +56,7 @@ private:
   size_t m_offset_between_rows;
   Tiling_rows m_tiling_rows;
 
-  typedef boost::tuple<size_t, size_t, size_t>  Lego;
-  typedef std::vector<Lego>                     Legos;
-  Legos m_available_bricks;
+  Brick_types m_available_types;
 };
 
 SGAL_END_NAMESPACE
