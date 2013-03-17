@@ -467,7 +467,7 @@ private:
   static const char* s_color_space_names[];
 
   /*! The Layer visibility names */
-  static const char* Ego::s_layer_visibility_names[];
+  static const char* s_layer_visibility_names[];
   
   /*! Default values */
   static const Ego_voxels_tiler::First_tile_placement
