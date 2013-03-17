@@ -348,6 +348,11 @@ protected:
 
   void adjust_voxels_for_tiling();
 
+  /*! Determine whether a given brick is visible with respect to a specific
+   * layer.
+   */
+  Boolean is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index);
+  
   /*! The segments */
   boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
 

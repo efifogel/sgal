@@ -56,6 +56,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Camera.hpp"
+#include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
@@ -181,11 +182,16 @@ void Ego::clear_parts()
     Transform* transform = static_cast<Transform*>(transform_node);
     Node_iterator it2 = transform->children_begin();
     while (it2 != transform->children_end()) {
-      Node* shape_node = *it2++;
+      Node* node = *it2++;
       // Remove the brick (Shape):
-      Shape* brick_shape = static_cast<Shape*>(shape_node);
-      delete brick_shape;
-      transform->remove_child(shape_node);
+      Shape* brick_shape = static_cast<Shape*>(node);
+      if (brick_shape) delete brick_shape;
+
+      // Remove the touch sensor:
+      Touch_sensor* touch_sensor = static_cast<Touch_sensor*>(node);
+      if (touch_sensor) delete touch_sensor;
+
+      transform->remove_child(node);
     }
     delete transform;
     remove_child(transform_node);
@@ -632,9 +638,18 @@ void Ego::clean_parts()
         brick_center.add(offset);
         transform->set_translation(brick_center);
 
+        Touch_sensor* touch_sensor = new Touch_sensor;
+        transform->add_child(touch_sensor);
+        
         Shape* shape = new Shape;
         transform->add_child(shape);
 
+        // Determine whether to draw the brick:
+        transform->set_visible(is_visible(m_layer_x_visibility, m_layer_x, i) &&
+                               is_visible(m_layer_y_visibility, m_layer_y, j) &&
+                               is_visible(m_layer_z_visibility, m_layer_z, k));
+        
+        // Determine whether to draw the knobs:
         bool should_draw_knobs = false;
         for (size_t s = 0; s < brick->get<0>(); ++s) {
           for (size_t t = 0; t < brick->get<1>(); ++t) {
@@ -1116,7 +1131,17 @@ void Ego::voxels_changed(Field_info* field_info)
 void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
 
 /*! \brief Process change of visibility scheme. */
-void Ego::visibility_changed(Field_info* /* field_info. */) {}
+void Ego::visibility_changed(Field_info* /* field_info. */)
+{
+  // Node_iterator it1 = m_childs.begin();
+  // while (it1 != m_childs.end()) {
+  //   Node* transform_node = *it1++;
+  //   Transform* transform = static_cast<Transform*>(transform_node);
+  //   transform->set_visible(is_visible(m_layer_x_visibility, m_layer_x, i) &&
+  //                          is_visible(m_layer_y_visibility, m_layer_y, j) &&
+  //                          is_visible(m_layer_z_visibility, m_layer_z, k));
+  // }
+}
 
 /*! \brief calculate sphere bound of the node. */
 Boolean Ego::clean_sphere_bound()
@@ -1246,5 +1271,23 @@ void Ego::set_knob_slices(Uint slices) { m_knob_slices = slices; }
 
 /*! \brief sets the flag that indicates whether the parts are space filling. */
 void Ego::set_space_filling(Boolean flag) { m_space_filling = flag; }
+
+/*! \brief determines whether a given brick is visible with respect to a 
+ * specific layer.
+ */
+Boolean Ego::is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index)
+{
+  switch (lv) {
+   case LV_ALL: return true;
+   case LV_ABOVE: return (brick_index > layer_index);
+   case LV_NOT_ABOVE: return (brick_index <= layer_index);
+   case LV_BELOW: return (brick_index < layer_index);
+   case LV_NOT_BELOW: return (brick_index >= layer_index);
+   case LV_ONLY: return (brick_index == layer_index);
+   case LV_NOT_ONLY: return (brick_index != layer_index);
+  }
+  SGAL_error();
+  return false;
+}
 
 SGAL_END_NAMESPACE
