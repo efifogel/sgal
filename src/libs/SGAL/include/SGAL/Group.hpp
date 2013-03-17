@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12512 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -81,34 +81,52 @@ public:
   virtual ~Group();
 
   /*! Construct the prototype. */
-  static Group* prototype() { return new Group(true); }
+  static Group* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Group(); }
+  virtual Container* clone();
   
-  /*! Obtain the number of children. */
+  /*! Obtain the number of children.
+ * \return number of children in the group.
+   */
   unsigned int get_child_count();
 
-  /*! Obtain the ith child. */
-  Node* get_child(unsigned int i);
+  /*! Obtain a child according to its position in the children sequence.
+   * \param index the index of the child.
+   * \return a pointer to the child object.
+   */
+  Node* get_child(unsigned int index);
 
   /*! Obtain the beginning iterator of the children. */
-  Node_iterator children_begin() { return m_childs.begin(); }
+  Node_iterator children_begin();
  
   /*! Obtain the pass-the-end iterator of the children. */
-  Node_iterator children_end() { return m_childs.end(); }
+  Node_iterator children_end();
  
+  /*! Turn on the flag that indicates whether the shape should be rendered. */
   void set_visible();
 
+  /*! Turn off the flag that indicates whether the shape should be rendered. */
   void set_invisible();
+
+  /*! Set the flag that indicates whether the shape should be rendered. */
+  void set_visible(Boolean flag);
 
   /*! Determine whether the group is visible */
   Boolean is_visible() const;
 
-  /* Add a child to the group. */
+  /* Add a child to the sequence of children of the group.
+   * In the process of adding child objects to a group, we sort the child objects
+   * in such way that the lights always appear at the begining of the list and
+   * all other children appear afterwards.
+   * \param node (in) the child object
+   */
   void add_child(Node* node);
 
-  /* Remove a child from the group. */
+  /* Remove a given child from the sequence of children of the group.
+   * \param node (in) the child object
+   * \todo need to update has_lights and has_touch_sensor
+   */
   void remove_child(Node* node);
 
   /*! Draw the node while traversing the scene graph. */
@@ -128,6 +146,7 @@ public:
   virtual Boolean clean_sphere_bound();
 
   bool does_have_touch_sensor();
+
   void set_has_touch_sensor(unsigned int id);
 
   /*! Obtain the selection id of the attached touch sensor if exists */
@@ -164,12 +183,13 @@ public:
   //@}
   
   virtual Boolean attach_context(Context* context ); 
+
   virtual Boolean detach_context(Context* context = 0); 
 
   bool is_dynamic_loaded() { return false; }
 
 protected:
-  /*! Indicates whether the shape is visible and should be rendered. */
+  /*! Indicates whether the group is visible and thus should be rendered. */
   Boolean m_is_visible;
 
   /*! The list of child objects. */
@@ -194,6 +214,18 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+/*! \brief constructs the prototype. */
+inline Group* Group::prototype() { return new Group(true); }
+
+/*! \brief clone. */
+inline Container* Group::clone() { return new Group(); }
+  
+/*! \brief obtains the beginning iterator of the children. */
+inline Group::Node_iterator Group::children_begin() { return m_childs.begin(); }
+ 
+/*! \brief obtains the pass-the-end iterator of the children. */
+inline Group::Node_iterator Group::children_end() { return m_childs.end(); }
 
 /*! \brief obtains the selection id of the attached touch sensor if exists. */
 inline Uint Group::get_selection_id() const { return m_selection_id; }

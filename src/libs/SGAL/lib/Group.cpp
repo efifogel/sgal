@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -71,15 +71,10 @@ Group::Group(const Group& group) :
 /*! Destructor */
 Group::~Group() { m_childs.clear(); }
 
-/*! Return the number of children the object has.
- * \return number of children in the group.
- */
+/*! \brief obtains the number of children of the group. */
 unsigned int Group::get_child_count() { return m_childs.size(); }
 
-/*! Get a child according to its position in the child list.
- * \param index the index of the child.
- * \return a pointer to the child object.
- */
+/*! \brief obtains a child according to its position in the children sequence. */
 Node* Group::get_child(unsigned int index)
 {
   if (index >= m_childs.size()) return 0;
@@ -88,12 +83,7 @@ Node* Group::get_child(unsigned int index)
   return *ni;
 }
 
-/*! Add a child to the list of children. 
- * In the process of adding child objects to a group, we sort the child objects
- * in such way that the lights always appear at the begining of the list and
- * all other child objects appear afterwards.
- * \param node (in) the child object
- */
+/*! \brief adds a child to the sequence of children of the group. */
 void Group::add_child(Node* node)
 {
   // if the child is a light, we need to add it at the beginning of the list
@@ -118,10 +108,7 @@ void Group::add_child(Node* node)
   node->register_observer(observer);
 }
 
-/*! Remove a given child 
- * \param node (in) the child object
- * \todo need to update has_lights and has_touch_sensor
- */
+/*! \brief removes a given child from the sequence of children of the group. */
 void Group::remove_child(Node* node)
 {
   m_childs.remove(node);
@@ -203,10 +190,10 @@ Boolean Group::clean_sphere_bound()
   return false;
 }
 
-/* */
+/* \brief */
 Boolean Group::does_have_touch_sensor() { return m_has_touch_sensor; }
 
-/*! Sets a flag indicating that the group has a touch sensor
+/*! \brief sets a flag indicating that the group has a touch sensor
  * and sets the selection id. The selection id is used as a 
  * color to draw the object in selection mode.
  * @param id the selection id.
@@ -363,6 +350,9 @@ void Group::write_children(Formatter* formatter)
   formatter->multi_container_end();
 }
 
+/*! \brief turns on the flag that indicates whether the shape should be
+ * rendered.
+ */
 void Group::set_visible()
 {
   if (!m_is_visible) {
@@ -371,10 +361,22 @@ void Group::set_visible()
   }
 }
 
+/*! \brief turns off the flag that indicates whether the shape should be
+ * rendered.
+ */
 void Group::set_invisible()
 {
   if (m_is_visible) {
     m_is_visible = false;
+    m_dirty_sphere_bound = true;
+  }
+}
+
+/*! \brief sets the flag that indicates whether the shape should be rendered. */
+void Group::set_visible(Boolean flag)
+{
+  if (flag != m_is_visible) {
+    m_is_visible = flag;
     m_dirty_sphere_bound = true;
   }
 }

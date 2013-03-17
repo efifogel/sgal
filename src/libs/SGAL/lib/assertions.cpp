@@ -43,9 +43,9 @@ static Failure_behaviour _warning_behaviour = CONTINUE;
 
 // standard error handlers
 // -----------------------
-static void _standard_error_handler(const char * what, const char * expr,
-                                    const char * file, int line,
-                                    const char * msg)
+static void _standard_error_handler(const char* what, const char* expr,
+                                    const char* file, int line,
+                                    const char* msg)
 {
   std::cerr << "SGAL error: " << what << " violation!" << std::endl
             << "Expr: " << expr << std::endl
@@ -57,9 +57,9 @@ static void _standard_error_handler(const char * what, const char * expr,
 
 // standard warning handler
 // ------------------------
-static void _standard_warning_handler(const char *, const char * expr,
-                                      const char * file, int line,
-                                      const char * msg)
+static void _standard_warning_handler(const char*, const char* expr,
+                                      const char* file, int line,
+                                      const char* msg)
 {
   std::cerr << "SGAL warning: check violation!" << std::endl
             << "Expr: " << expr << std::endl
@@ -77,8 +77,8 @@ static Failure_function _warning_handler = _standard_warning_handler;
 
 // failure functions
 // -----------------
-void assertion_fail(const char * expr, const char * file, int line,
-                    const char * msg)
+void assertion_fail(const char* expr, const char* file, int line,
+                    const char* msg)
 {
   (*_error_handler)("assertion", expr, file, line, msg);
   switch (_error_behaviour) {
@@ -89,8 +89,8 @@ void assertion_fail(const char * expr, const char * file, int line,
   }
 }
 
-void precondition_fail(const char * expr, const char * file, int line,
-                       const char * msg)
+void precondition_fail(const char* expr, const char* file, int line,
+                       const char* msg)
 {
   (*_error_handler)("precondition", expr, file, line, msg);
   switch (_error_behaviour) {
@@ -101,8 +101,8 @@ void precondition_fail(const char * expr, const char * file, int line,
   }
 }
 
-void postcondition_fail(const char * expr, const char * file, int line,
-                        const char * msg)
+void postcondition_fail(const char* expr, const char* file, int line,
+                        const char* msg)
 {
   (*_error_handler)("postcondition", expr, file, line, msg);
   switch (_error_behaviour) {
@@ -115,8 +115,8 @@ void postcondition_fail(const char * expr, const char * file, int line,
 
 // warning function
 // ----------------
-void warning_fail(const char * expr, const char * file, int line,
-                  const char * msg)
+void warning_fail(const char* expr, const char* file, int line,
+                  const char* msg)
 {
   (*_warning_handler)("warning", expr, file, line, msg);
   switch (_warning_behaviour) {

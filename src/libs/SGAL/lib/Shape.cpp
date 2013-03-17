@@ -140,9 +140,7 @@ void Shape::set_geometry(Geometry* geometry)
 #endif
 }
 
-/*! \brief calculates the bounding sphere of all geometries in the shape.
- * \return true if the bounding sphere has changed since last call.
- */
+/*! \brief calculates the bounding sphere of all geometries in the shape. */
 Boolean Shape::clean_sphere_bound()
 {
   if (!is_visible()) {
@@ -209,13 +207,7 @@ void Shape::draw_geometry(Draw_action* action)
     if (!m_draw_depth) context->draw_depth_mask(true);  }
 }
 
-/*! \brief draws the shape in a compact way that includes only rendering the 
- * geometry and not the appearance. The color used is an identifier
- * of the touch sensor that is attaced to the shape. We assume there are 
- * no more than 256 touch sensors and we use the 4 most significant bits 
- * of the red and green to set the color.
- * @param isect_action
- */
+/*! \brief draws the shape for selection. */
 void Shape::isect(Isect_action* isect_action)
 {  
   if (!is_visible()) return;
@@ -309,7 +301,7 @@ void Shape::clean_appearance()
   }
 }
 
-/*! \brief sets the attributes of the shape */
+/*! \brief sets the attributes of the shape. */
 void Shape::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -401,7 +393,7 @@ void Shape::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief Obtain a list of attributes (called in the save process). */
+/*! \brief obtains a list of attributes (called in the save process). */
 Attribute_list Shape::get_attributes() 
 { 
   Attribute_list attrs;
@@ -510,6 +502,37 @@ void Shape::geometry_changed(Field_info* /* field_info. */)
 {
   m_dirty = true;
   m_dirty_geometry = true;
+}
+
+/*! \brief turns on the flag that indicates whether the shape should be
+ * rendered.
+ */
+void Shape::set_visible()
+{
+  if (!m_is_visible) {
+    m_is_visible = true;
+    m_dirty_sphere_bound = true;
+  }
+}
+
+/*! \brief turns off the flag that indicates whether the shape should be
+ * rendered.
+ */
+void Shape::set_invisible()
+{
+  if (m_is_visible) {
+    m_is_visible = false;
+    m_dirty_sphere_bound = true;
+  }
+}
+
+/*! \brief set the flag that indicates whether the shape should be rendered. */
+void Shape::set_visible(Boolean flag)
+{
+  if (flag != m_is_visible) {
+    m_is_visible = flag;
+    m_dirty_sphere_bound = true;
+  }
 }
 
 SGAL_END_NAMESPACE

@@ -97,7 +97,9 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the bounding sphere of the shape. */
+  /*! Clean the bounding sphere of the shape.
+   * \return true if the bounding sphere has changed since last call.
+   */
   virtual Boolean clean_sphere_bound();
 
   virtual void cull(Cull_context& cull_context);
@@ -105,6 +107,10 @@ public:
   /*! Draw the node while traversing the scene graph. */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
+  /*! \brief draws the shape for selection ignoring the appearance and using
+   * a unique number that identifies the shape instead. The identifier is
+   * encoded as color in the frame buffer.
+   */
   virtual void isect(Isect_action* isect_action);
 
   /*! Write this container. */
@@ -188,10 +194,16 @@ public:
    */
   void set_cull_face(Gfx::Cull_face cull_face);
 
+  /*! Turn on the flag that indicates whether the shape should be rendered. */
   void set_visible();
 
+  /*! Turn off the flag that indicates whether the shape should be rendered. */
   void set_invisible();
 
+  /*! Set the flag that indicates whether the shape should be rendered. */
+  void set_visible(Boolean flag);
+
+  /*! Determine whether the shape should be rendered. */
   Boolean is_visible() const;
 
   /*! Obtain the rendering priority. */
@@ -285,7 +297,7 @@ private:
   /*! The list of geometries. */
   Geometry* m_geometry;
 
-  /*! if false the shape is not rendered. */
+  /*! Indicates whether the shape is visible and thus should be rendered. */
   Boolean m_is_visible;
 
   /*! The rendering priority. */
@@ -438,19 +450,13 @@ inline Gfx::Cull_face Shape::get_cull_face() const { return m_cull_face; }
 inline void Shape::set_cull_face(Gfx::Cull_face cull_face)
 { m_cull_face = cull_face; }
 
-/*! \brief */
-inline void Shape::set_visible() { m_is_visible = true; }
-
-/*! \brief */
-inline void Shape::set_invisible() { m_is_visible = false; }
-
-/*! \brief */
+/*! \brief determines whether the shape should be rendered. */
 inline Boolean Shape::is_visible() const { return m_is_visible; }
 
-/*! \brief Obtain the rendering priority. */
+/*! \brief obtains the rendering priority. */
 inline Float Shape::get_priority() const { return m_priority; }
 
-/*! \brief Set the rendering priority. */
+/*! \brief sets the rendering priority. */
 inline void Shape::set_priority(Float priority) { m_priority = priority; }
 
 /*! \brief obtains the tag (type) of the container. */
