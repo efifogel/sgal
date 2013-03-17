@@ -93,13 +93,21 @@ Ego::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
 const Ego::Style Ego::s_def_style(STYLE_RANDOM_COLORS);
 const Ego::Color_space Ego::s_def_color_space(COLOR_SPACE_RGB);
 const Boolean Ego::s_def_space_filling(false);
+const Ego::Layer_visibility Ego::s_layer_x_visibility(LV_ALL);
+const Ego::Layer_visibility Ego::s_layer_y_visibility(LV_ALL);
+const Ego::Layer_visibility Ego::s_layer_z_visibility(LV_ALL);
 
 /*! Style names */
 const char* Ego::s_style_names[] =
   { "randomColors", "appearance", "discreteCubeMap" };
 
 /*! Color space names */
-const char* Ego::s_color_space_names[] = {"RGB", "HSL"}
+const char* Ego::s_color_space_names[] = {"RGB", "HSL"};
+
+/*! Layer visibility names */
+const char* Ego::s_layer_visibility_names[] = {
+  "all", "above", "notAbove", "below", "notBelow", "only", "notOnly"
+};
 
 REGISTER_TO_FACTORY(Ego, "Ego");
 
@@ -125,6 +133,12 @@ Ego::Ego(Boolean proto) :
   m_scene_graph(NULL),
   m_knob_slices(Ego_brick::s_def_knob_slices),
   m_color_space(s_def_color_space),
+  m_layer_x(0),
+  m_layer_y(0),
+  m_layer_z(0),
+  m_layer_x_visibility(LV_ALL),
+  m_layer_y_visibility(LV_ALL),
+  m_layer_z_visibility(LV_ALL),
   m_owned_appearance(false),
   m_clean_colors_in_progress(false)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
@@ -267,7 +281,20 @@ void Ego::init_prototype()
   exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
   s_prototype->add_field_info(new SF_container(APPEARANCE, "appearance",
                                                get_member_offset(&m_appearance),
-                                               exec_func));    
+                                               exec_func));
+
+  exec_func = static_cast<Execution_function>(&Ego::visibility_changed);
+  sf_int = new SF_int(LAYER_X_VISIBILITY, "layerXVisibility",
+                      get_member_offset(&m_layer_x_visibility), exec_func);
+  s_prototype->add_field_info(sf_int);
+
+  sf_int = new SF_int(LAYER_Y_VISIBILITY, "layerYVisibility",
+                      get_member_offset(&m_layer_y_visibility), exec_func);
+  s_prototype->add_field_info(sf_int);
+
+  sf_int = new SF_int(LAYER_Z_VISIBILITY, "layerZVisibility",
+                      get_member_offset(&m_layer_z_visibility), exec_func);
+  s_prototype->add_field_info(sf_int);  
 }
 
 /*! \brief deletes the container prototype */
@@ -394,7 +421,7 @@ void Ego::set_attributes(Element* elem)
       continue;
     }
     if (name == "style") {
-      Uint num = sizeof(s_style_names) / sizeof(char *);
+      Uint num = sizeof(s_style_names) / sizeof(char*);
       const char** found = std::find(s_style_names,
                                      &s_style_names[num],
                                      strip_double_quotes(value));
@@ -409,12 +436,60 @@ void Ego::set_attributes(Element* elem)
       continue;
     }
     if (name == "colorSpace") {
-      Uint num = sizeof(s_color_space_names) / sizeof(char *);
+      Uint num = sizeof(s_color_space_names) / sizeof(char*);
       const char** found = std::find(s_color_space_names,
                                      &s_color_space_names[num],
                                      strip_double_quotes(value));
       Uint index = found - s_color_space_names;
       if (index < num) set_color_space(static_cast<Color_space>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerX") {
+      set_layer_x(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerY") {
+      set_layer_y(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerZ") {
+      set_layer_z(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerXVisibility") {
+      Uint num = sizeof(s_layer_visibility_names) / sizeof(char*);
+      const char** found = std::find(s_layer_visibility_names,
+                                     &s_layer_visibility_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_layer_visibility_names;
+      if (index < num)
+        set_layer_x_visibility(static_cast<Layer_visibility>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerYVisibility") {
+      Uint num = sizeof(s_layer_visibility_names) / sizeof(char*);
+      const char** found = std::find(s_layer_visibility_names,
+                                     &s_layer_visibility_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_layer_visibility_names;
+      if (index < num)
+        set_layer_y_visibility(static_cast<Layer_visibility>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerZVisibility") {
+      Uint num = sizeof(s_layer_visibility_names) / sizeof(char*);
+      const char** found = std::find(s_layer_visibility_names,
+                                     &s_layer_visibility_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_layer_visibility_names;
+      if (index < num)
+        set_layer_z_visibility(static_cast<Layer_visibility>(index));
       elem->mark_delete(ai);
       continue;
     }
@@ -493,7 +568,9 @@ void Ego::clean_parts()
           m_tiled_voxels.get_brick(i, j, k);
         if (!brick) continue;
 
-        // continue, if the brick is completely obscured:
+        // Continue, if the visibility scheme implies invisibility:
+        
+        // Continue, if the brick is completely obscured:
         std::size_t num0(brick->get<0>());
         std::size_t num1(brick->get<1>());
 
@@ -1021,19 +1098,25 @@ void Ego::isect(Isect_action* action)
   Group::isect(action);
 }
 
+/*! \brief */
 void Ego::model_changed(Field_info* field_info)
 {
   m_dirty_sphere_bound = true;
   voxels_changed(field_info);
 }
 
+/*! \brief */
 void Ego::voxels_changed(Field_info* field_info)
 {
   m_dirty_voxels = true;
   tiling_changed(field_info);
 }
 
+/*! \brief */
 void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
+
+/*! \brief Process change of visibility scheme. */
+void Ego::visibility_changed(Field_info* /* field_info. */) {}
 
 /*! \brief calculate sphere bound of the node. */
 Boolean Ego::clean_sphere_bound()
