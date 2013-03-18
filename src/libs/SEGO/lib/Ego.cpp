@@ -179,16 +179,16 @@ void Ego::clear_parts()
   while (it1 != m_childs.end()) {
     Node* transform_node = *it1++;
     // Remove the transform (translation):
-    Transform* transform = static_cast<Transform*>(transform_node);
+    Transform* transform = dynamic_cast<Transform*>(transform_node);
     Node_iterator it2 = transform->children_begin();
     while (it2 != transform->children_end()) {
       Node* node = *it2++;
       // Remove the brick (Shape):
-      Shape* brick_shape = static_cast<Shape*>(node);
+      Shape* brick_shape = dynamic_cast<Shape*>(node);
       if (brick_shape) delete brick_shape;
 
       // Remove the touch sensor:
-      Touch_sensor* touch_sensor = static_cast<Touch_sensor*>(node);
+      Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node);
       if (touch_sensor) delete touch_sensor;
 
       transform->remove_child(node);
