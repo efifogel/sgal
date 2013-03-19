@@ -77,7 +77,7 @@ Touch_sensor::Touch_sensor(Boolean enabled, Boolean proto) :
   m_last_normal(0, 0, 0),
   m_last_point(0, 0, 0),
   m_last_tex_coord(0, 0),
-  m_last_is_over(false),
+  m_last_selection_id(0),
   m_drag_locked(false),
   m_routed_node(0)
 { if (!proto && m_enabled) register_events(); }
@@ -207,17 +207,13 @@ void Touch_sensor::set_is_over(const Boolean over)
   m_is_over = over;
 }
 
-/*! \brief activated when dragging is started
- * Locks the dragging for the current sensor if possible (if not returns).
- * Updates and cascades the m_is_active field
- * @param point (in) not used for now
- */
+/*! \brief invoked when dragging starts. */
 void Touch_sensor::start_dragging(const Vector2sh& /* point */)
 {
   if (!m_enabled) return;
 
   // if the mouse is not over the sensor geometry - return
-  if (!m_last_is_over) return;
+  if (m_last_selection_id == 0) return;
 
   // if dragging is locked by another sensor - return
   //! \todo if (m_execution_coordinator->is_dragging_locked()) return;
@@ -233,12 +229,7 @@ void Touch_sensor::start_dragging(const Vector2sh& /* point */)
   if (is_active_field) is_active_field->cascade();
 }
 
-/*! \brief activated when dragging is stoped.
- * Updates and cascades the m_is_active field.
- * Updates and cascades the m_touch_time field.
- * Unlockes the dragging in the execution coordinator.
- * @param point (in) not used for now
- */
+/*! \brief invoked when dragging stops. */
 void Touch_sensor::dragging_done(const Vector2sh& point)
 {
   if (!m_enabled) return;
@@ -246,16 +237,16 @@ void Touch_sensor::dragging_done(const Vector2sh& point)
   // If the dragging is not locked for this sensor - return
   if (!m_drag_locked) return;
 
-  // Patch:  When mouse is released not over the clicked 
-  //      object the animation is NOT activated
-  set_is_over(SGAL_FALSE);
+  // Patch: When mouse is released not over the clicked 
+  //        object the animation is NOT activated
+  set_is_over(false);
   if (m_scene_graph) m_scene_graph->isect(point[0], point[1]);
   /*! \todo the function set_cursor was replaced by handle passive events
    * set_cursor(Cursor_data());
    */
   // End of patch
 
-  if (m_last_is_over) {
+  if (m_last_selection_id > 0) {
     // Update and cascade the m_is_active field
     m_is_active = false;
     Field* is_active_field = get_field(ISACTIVE);
@@ -305,7 +296,7 @@ void Touch_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the touch sensor to a given scene. */  
 void Touch_sensor::add_to_scene(Scene_graph* sg)
 {
   m_scene_graph = sg;
@@ -322,11 +313,7 @@ void Touch_sensor::write(Formatter* formatter)
 }
 
 #if 0
-/*! \brief obtains a list of atributes in this object.
- * This method is called only from the Builder side.
- *
- * @return a list of attributes 
- */
+/*! \brief obtains the list of atributes of this object. */
 Attribute_list Touch_sensor::get_attributes()
 { 
   Attribute_list attribs; 
@@ -343,13 +330,7 @@ Attribute_list Touch_sensor::get_attributes()
   return attribs; 
 };
 
-/*! \brief adds a touch sensor object to the scene.
- * This includes adding it to the array of touch sensors in the
- * scene graph and setting a flag in the group indicating it has
- * a touch sensor.
- * @param sg (in) a reference to the scene graph
- * @param parent (in) a pointer to the parent object.
- */
+/*! \brief adds a touch sensor object to the scene. */
 void Touch_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent) 
 { 
   Node::add_to_scene(sg, parent);
@@ -370,7 +351,7 @@ void Touch_sensor::register_events()
   Tick_event::doregister(this);
 }
 
-/*! registers the mouse and mostion events */
+/*! registers the mouse and mostion events. */
 void Touch_sensor::unregister_events()
 {
   Mouse_event::unregister(this);
@@ -379,7 +360,7 @@ void Touch_sensor::unregister_events()
   Tick_event::unregister(this);
 }
 
-/*! handles mouse events */
+/*! \brief handles mouse events. */
 void Touch_sensor::handle(Mouse_event* event)
 {
   switch (event->get_button()) {
@@ -420,11 +401,11 @@ void Touch_sensor::handle(Passive_motion_event* event)
 
   // If dragging is locked by another sensor return
   //! \todo if (m_execution_coordinator->is_dragging_locked() && (!m_drag_locked))
-  // If m_is_over has changed - update and cascade the m_is_over field
-  if (m_last_is_over != m_is_over) {
+  // If m_is_over has changed, update and cascade the m_is_over field.
+  if (m_last_selection_id != m_selection_id) {
     Field* is_over_field = get_field(ISOVER);
     if (is_over_field) is_over_field->cascade();
-    m_last_is_over = m_is_over;
+    m_last_selection_id = m_selection_id;
   }
 
 #if 0
@@ -460,15 +441,14 @@ bool Touch_sensor::update_cursor(const Mouse_event_data& data)
 
   // Change the cursor type only if the mouse is not over any other
   // touch sensor
-  if (!m_execution_coordinator->is_mouse_over())
-  {
-    if (m_last_is_over)
+  if (!m_execution_coordinator->is_mouse_over()) {
+    if (m_last_selection_id > 0)
       // If the cursor is over this sensor's geometry - change the cursor type
       m_execution_coordinator->set_mouse_over();
-    if (m_last_is_over &&
+    if ((m_last_selection_id > 0) &&
         (data.is_left_button_down() || data.is_right_button_down()))
       m_execution_coordinator->set_cursor_type(ctGRABHAND);
-    else if (m_last_is_over) 
+    else if (m_last_selection_id > 0) 
       m_execution_coordinator->set_cursor_type(ctHAND);
     else
       m_execution_coordinator->set_cursor_type(ctARROW);
@@ -491,12 +471,13 @@ bool Touch_sensor::update_cursor(const Key_event_data& data)
   // Change the cursor type only if the mouse is not over any other
   // touch sensor
   if (!m_execution_coordinator->is_mouse_over()) {
-    if (m_last_is_over)
+    if (m_last_selection_id > 0)
       // If the cursor is over this sensor's geometry - change the cursor type
       m_execution_coordinator->set_mouse_over();
-    if (m_last_is_over && (is_left_mouse_down() || is_right_mouse_down()))
+    if ((m_last_selection_id > 0) &&
+        (is_left_mouse_down() || is_right_mouse_down()))
       m_execution_coordinator->set_cursor_type(ctGRABHAND);
-    else if (m_last_is_over) 
+    else if (m_last_selection_id > 0) 
       m_execution_coordinator->set_cursor_type(ctHAND);
     else
       m_execution_coordinator->set_cursor_type(ctARROW);

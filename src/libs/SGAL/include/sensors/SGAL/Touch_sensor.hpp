@@ -55,8 +55,7 @@ class Passive_motion_event;
 class Tick_event;
 class Formatter;
 
-class SGAL_CLASSDEF Touch_sensor : public Agent, public Drag_sensor,
-                                   public Node
+class SGAL_CLASSDEF Touch_sensor : public Agent, public Drag_sensor, public Node
 {
 public:
   enum {
@@ -77,40 +76,45 @@ public:
   };
 
   /*! Constructor */
-  Touch_sensor(Boolean enabled = true, Boolean proto = SGAL_FALSE);
+  Touch_sensor(Boolean enabled = true, Boolean proto = false);
 
   /*! Destructor */
   virtual ~Touch_sensor();
 
-  /*! Construct the prototype */
-  static Touch_sensor* prototype()
-  { return new Touch_sensor(SGAL_FALSE, SGAL_TRUE); }
+  /*! Construct the prototype. */
+  static Touch_sensor* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Touch_sensor(); }
+  /*! Clone. */
+  virtual Container* clone();
 
   // attributes mutators - used by the scene graph picking mechanism
   void set_normal(const Vector3f& normal);
+
   void set_point(const Vector3f& point);
+
   void set_tex_coord(const Vector2f& tex_coord);
+
   void set_is_over(const Boolean over);
 
-  // Sets the routed node pointer
+  /* Sets the routed node pointer. */
   void set_routed_node(Container* node);
+
   Container* get_routed_node() const;
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
   virtual void delete_prototype();
   virtual Container_proto* get_prototype();
   
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Add the container to a given scene
-   * \param scene_graph the given scene
+  /*! Add the touch sensor object to a given scene.
+   * This includes adding it to the container of touch sensors in the
+   * scene graph and setting the base selection id.
+   * \param scene_graph the given scene.
    */  
   virtual void add_to_scene(Scene_graph* scene_graph);
   
@@ -120,84 +124,87 @@ public:
   /*! Draw the node while traversing the scene graph */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Register the mouse and mostion events */
+  /*! Register the mouse and mostion events. */
   void register_events();
 
-  /*! Register the mouse and mostion events */
+  /*! Register the mouse and mostion events. */
   void unregister_events();
   
-  /*! Print out the name of this agent (for debugging purposes) */
+  /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();
 
-  /*! Handle mouse events */
+  /*! Handle mouse events. */
   virtual void handle(Mouse_event* event);
   
-  /*! Handle motion events */
+  /*! Handle motion events. */
   virtual void handle(Motion_event* event);
 
-  /*! Handle mouse events */
+  /*! Handle mouse events. */
   virtual void handle(Passive_motion_event* event);
   
-  /*! Handle tick events */
+  /*! Handle tick events. */
   virtual void handle(Tick_event* event);
 
   // This function is executed when the exActivate field is cascaded from
-  // another field
+  // another field.
   virtual void external_activate(Field_info*);
 
   // Returns the priority of the touch sensor - is higher than the priority
-  // of the navigation sensor
+  // of the navigation sensor.
   /*! \todo Ulong filter_priority() const { return MEDIUM_PRIORITY; } */
 
-  /*! Obtain the first id of a unique range of color ids used for picking */
-  Uint get_first_selection_id() const { return m_first_selection_id; }
+  /*! Obtain the first id of a unique range of color ids used for picking. */
+  Uint get_first_selection_id() const;
 
-  /*! Set the first id of a unique range of color ids used for picking */
-  void set_start_selection_ids(Uint first_id)
-  { m_first_selection_id = first_id; }
+  /*! Set the first id of a unique range of color ids used for picking. */
+  void set_start_selection_ids(Uint first_id);
 
-  /*! Obtain the number of ids in a unique range of color ids used for picking
+  /*! Obtain the number of ids in a unique range of color ids used for picking.
    */
-  Uint get_num_selection_ids() const { return m_num_selection_ids; }
+  Uint get_num_selection_ids() const;
 
-  /*! Set the number of ids in a unique range of color ids used for picking */
-  void set_num_selection_ids(Uint num_ids)
-  { m_num_selection_ids = num_ids; }
+  /*! Set the number of ids in a unique range of color ids used for picking. */
+  void set_num_selection_ids(Uint num_ids);
 
-  /*! Obtain the currently picked color id */
-  Uint get_selection_id() const { return m_selection_id; }
+  /*! Obtain the currently picked color id. */
+  Uint get_selection_id() const;
 
-  /*! Set the currently picked color id */
-  void set_selection_id(Uint id) { m_selection_id = id; }
+  /*! Set the currently picked color id. */
+  void set_selection_id(Uint id);
   
-  /*! Is the given id in the range of color ids */
-  Boolean is_in_range(Uint id)
-  {
-    return ((m_first_selection_id <= id) &&
-            (id < (m_first_selection_id + m_num_selection_ids)));
-  }
+  /*! Is the given id in the range of color ids. */
+  Boolean is_in_range(Uint id);
 
-  /*! Enable or disable the touch sensor */
+  /*! Enable or disable the touch sensor. */
   void set_enabled(Boolean enabled);
 
-  /*! Is the touch sensor enabled? */
-  Boolean get_enabled() const { return m_enabled; }
+  /*! Determine whether the touch sensor is enabled. */
+  Boolean get_enabled() const;
 
-  /*! Set the scene-graph pointer */
-  void set_scene_graph(Scene_graph* sg) { m_scene_graph = sg; }
+  /*! Set the scene-graph pointer. */
+  void set_scene_graph(Scene_graph* sg);
 
-  /*! Obtain the scene-graph pointer */
-  Scene_graph* get_scene_graph() const { return m_scene_graph; }
+  /*! Obtain the scene-graph pointer. */
+  Scene_graph* get_scene_graph() const;
   
-protected :
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+protected:
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
-  // Functions the implement the empty functions of EDragSensor
-  // Used to calculate and activate the touch sensor events by
-  // cascading the suitable fields
-  virtual void start_dragging(const Vector2sh & point);
-  virtual void dragging_done(const Vector2sh & point); 
+  /*! Invoked when dragging starts.
+   * Locks the dragging for the current sensor if possible (if not returns).
+   * Updates and cascades the m_is_active field
+   * @param point (in) not used for now
+   */
+  virtual void start_dragging(const Vector2sh& point);
+
+  /*! \brief Invoked when dragging stops.
+   * Updates and cascades the m_is_active field.
+   * Updates and cascades the m_touch_time field.
+   * Unlockes the dragging in the execution coordinator.
+   * @param point (in) not used for now
+   */
+  virtual void dragging_done(const Vector2sh& point); 
 
 private:
   /*! The tag that identifies this container type */
@@ -230,7 +237,7 @@ private:
   Vector3f m_last_normal;
   Vector3f m_last_point;
   Vector2f m_last_tex_coord;
-  Boolean m_last_is_over;
+  Uint m_last_selection_id;
   Boolean m_drag_locked;
 
   Container* m_routed_node;
@@ -239,12 +246,64 @@ private:
   static bool s_def_enabled;
 };
 
-/*! Draws the node while traversing the scene graph
- */
+/*! \brief constructs the prototype. */
+inline Touch_sensor* Touch_sensor::prototype()
+{ return new Touch_sensor(false, true); }
+
+/*! \brief clones. */
+inline Container* Touch_sensor::clone() { return new Touch_sensor(); }
+
+/*! \brief draws the node while traversing the scene graph. */
 inline Action::Trav_directive Touch_sensor::draw(Draw_action* /* draw_action */)
+{ return Action::TRAV_CONT; }
+
+/*! \brief obtains the first id of a unique range of color ids used for picking.
+ */
+inline Uint Touch_sensor::get_first_selection_id() const
+{ return m_first_selection_id; }
+
+/*! \brief sets the first id of a unique range of color ids used for picking. */
+inline void Touch_sensor::set_start_selection_ids(Uint first_id)
+{ m_first_selection_id = first_id; }
+
+/*! \brief obtains the number of ids in a unique range of color ids used for
+ * picking.
+ */
+inline Uint Touch_sensor::get_num_selection_ids() const
+{ return m_num_selection_ids; }
+
+/*! \brief sets the number of ids in a unique range of color ids used for
+ * picking.
+ */
+inline void Touch_sensor::set_num_selection_ids(Uint num_ids)
+{ m_num_selection_ids = num_ids; }
+
+/*! \brief obtains the currently picked color id. */
+inline Uint Touch_sensor::get_selection_id() const { return m_selection_id; }
+
+/*! \brief sets the currently picked color id. */
+inline void Touch_sensor::set_selection_id(Uint id) { m_selection_id = id; }
+  
+/*! \brief determines whether the given id in the range of color ids. */
+inline Boolean Touch_sensor::is_in_range(Uint id)
 {
-  return Action::TRAV_CONT;
+  return ((m_first_selection_id <= id) &&
+          (id < (m_first_selection_id + m_num_selection_ids)));
 }
+
+/*! \brief determines whether the touch sensor is enabled. */
+inline Boolean Touch_sensor::get_enabled() const { return m_enabled; }
+
+/*! \brief sets the scene-graph pointer. */
+inline void Touch_sensor::set_scene_graph(Scene_graph* sg)
+{ m_scene_graph = sg; }
+
+/*! \brief obtains the scene-graph pointer. */
+inline Scene_graph* Touch_sensor::get_scene_graph() const
+{ return m_scene_graph; }
+  
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Touch_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 
