@@ -56,6 +56,7 @@ class Coord_array;
 class Normal_array;
 class Tex_coord_array;
 class Geo_set;
+class Touch_sensor;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
@@ -78,6 +79,7 @@ public:
     LAYER_Y_VISIBILITY,
     LAYER_Z_VISIBILITY,
     BRICK_TYPES,
+    SELECTED,
     LAST
   };
 
@@ -126,7 +128,7 @@ public:
   /*! */
   virtual void cull(Cull_context& cull_context);
 
-  /*! */
+  /*! Draw the Ego object in selection mode. */
   virtual void isect(Isect_action* action);
 
   /*! Calculate sphere bound of the node */
@@ -161,6 +163,12 @@ public:
   /*! (Re)generate the parts. */
   void clean_parts();
 
+  /*! Set the part visibility flags. */
+  void clean_visibility();
+
+  /*! Reset the part visibility flags. */
+  void reset_visibility();
+  
   /*! (Re)generate the part colors. */
   void clean_colors();
   
@@ -282,6 +290,9 @@ public:
 
   /*! Process change of visibility scheme. */
   void visibility_changed(Field_info* /* field_info. */);
+
+  /*! Process change of selected brick. */
+  void selected_changed(Field_info* /* field_info. */);
   
   /*! Obtain the style. */
   Style get_style() const;
@@ -373,6 +384,9 @@ protected:
   /*! The style */
   Style m_style;
 
+  /*! The touch sensor used to select a brick. */
+  Touch_sensor* m_touch_sensor;
+  
   /*! The apperance attribute. */
   Appearance* m_appearance;
 
@@ -397,6 +411,7 @@ protected:
   Boolean m_dirty_tiling;
   Boolean m_dirty_parts;
   Boolean m_dirty_colors;
+  Boolean m_dirty_visibility;
 
   /*! Indicates whether the parts are "owned". If they are owned (as
    * the user hasn't provided any) the parts should be destructed when
@@ -417,6 +432,11 @@ protected:
   typedef Ego_brick_map::iterator                       Ego_brick_iter;
   Ego_brick_map m_bricks;
   Ego_brick_map m_knobless_bricks;
+
+  typedef boost::tuple<std::size_t, std::size_t, std::size_t>
+                                                        Voxel_signature;
+  typedef std::vector<Voxel_signature>                  Voxel_signatures;
+  typedef Voxel_signatures::iterator                    Voxel_signatures_iter;
   
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
@@ -449,6 +469,12 @@ protected:
   // I am not using Vector3u because there is none, and I don't have
   // the energy to create the right templates so it won't be repeatative.
   SGAL::Array<Vector3sh> m_brick_types;
+
+  /*! A flag raised when the touch sensor senses a change. */
+  Boolean m_selected;
+  
+  /*! A sorted vector of voxel signatures. */
+  Voxel_signatures m_voxel_signatures;
 
 private:
   /*! Indicates whether the appearance is "owned". If it is owned (as the

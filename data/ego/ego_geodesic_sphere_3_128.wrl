@@ -4,7 +4,7 @@ Configuration {
     enabled TRUE
     # accumBits 0
   }
-  displayFPS TRUE
+  # displayFPS TRUE
 }
 ColorBackground {
   color 0.5 0.5 0.5 1
@@ -590,18 +590,21 @@ Transform {
 	    }
 	  }
 	  # style "appearance"
-	  style "discreteCubeMap"
+	  # style "discreteCubeMap"
 	  colorSpace "HSL"
 	  scale 200 200 200
 	  model USE MODEL
 	  knobSlices 16
+	  # layerXVisibility "notAbove"
+	  # layerYVisibility "notAbove"
+	  # layerZVisibility "notAbove"
 	  brickTypes [
-	  2, 4, 1, 
-	  4, 2, 1,
-	  2, 2, 1,
-	  2, 1, 1,
-	  1, 2, 1,
-	  1, 1, 1
+	    2, 4, 1, 
+	    4, 2, 1,
+	    2, 2, 1,
+	    2, 1, 1,
+	    1, 2, 1,
+	    1, 1, 1
           ]
 	}
        ]

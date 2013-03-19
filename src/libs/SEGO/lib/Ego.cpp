@@ -48,6 +48,7 @@
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Appearance.hpp"
@@ -58,6 +59,9 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Touch_sensor.hpp"
+#include "SGAL/Route.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -119,6 +123,7 @@ Ego::Ego(Boolean proto) :
   m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),
   m_style(s_def_style),
+  m_touch_sensor(NULL),
   m_appearance(NULL),
   m_space_filling(s_def_space_filling),
   m_appearance_prev(NULL),
@@ -130,6 +135,7 @@ Ego::Ego(Boolean proto) :
   m_dirty_tiling(true),
   m_dirty_parts(true),
   m_dirty_colors(true),
+  m_dirty_visibility(true),
   m_owned_parts(false),
   m_scene_graph(NULL),
   m_knob_slices(Ego_brick::s_def_knob_slices),
@@ -140,6 +146,7 @@ Ego::Ego(Boolean proto) :
   m_layer_x_visibility(LV_ALL),
   m_layer_y_visibility(LV_ALL),
   m_layer_z_visibility(LV_ALL),
+  m_selected(false),
   m_owned_appearance(false),
   m_clean_colors_in_progress(false)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
@@ -177,20 +184,22 @@ void Ego::clear_parts()
   m_dirty_parts = true;
   Node_iterator it1 = m_childs.begin();
   while (it1 != m_childs.end()) {
-    Node* transform_node = *it1++;
-    // Remove the transform (translation):
-    Transform* transform = dynamic_cast<Transform*>(transform_node);
-    Node_iterator it2 = transform->children_begin();
-    while (it2 != transform->children_end()) {
-      Node* node = *it2++;
-      // Remove the brick (Shape):
-      Shape* brick_shape = dynamic_cast<Shape*>(node);
-      if (brick_shape) delete brick_shape;
-
-      transform->remove_child(node);
+    Node* node1 = *it1++;
+    // Free the transform:
+    Transform* transform = dynamic_cast<Transform*>(node1);
+    if (transform) {
+      Node_iterator it2 = transform->children_begin();
+      while (it2 != transform->children_end()) {
+        Node* node2 = *it2++;
+        // Remove the brick (Shape):
+        Shape* brick_shape = dynamic_cast<Shape*>(node2);
+        if (brick_shape) delete brick_shape;
+        transform->remove_child(node2);
+      }
     }
-    delete transform;
-    remove_child(transform_node);
+
+    delete node1;
+    remove_child(node1);
   }
 
   // Delete all appearances:
@@ -214,6 +223,9 @@ void Ego::clear_parts()
     delete (*bit).second;
   m_knobless_bricks.clear();
 
+  // Clean the voxel signature array. */
+  m_voxel_signatures.clear();
+
   m_owned_parts = false;
 }
 
@@ -226,7 +238,8 @@ void Ego::clear()
   m_dirty_sphere_bound = true;
   m_dirty_voxels = true;
   m_dirty_tiling = true;
-
+  m_dirty_visibility = true;
+  
   if (m_owned_appearance) {
     if (m_appearance) {
       delete m_appearance;
@@ -296,6 +309,11 @@ void Ego::init_prototype()
   sf_int = new SF_int(LAYER_Z_VISIBILITY, "layerZVisibility",
                       get_member_offset(&m_layer_z_visibility), exec_func);
   s_prototype->add_field_info(sf_int);  
+
+  exec_func = static_cast<Execution_function>(&Ego::selected_changed);
+  s_prototype->add_field_info(new SF_bool(SELECTED, "selected",
+                                          get_member_offset(&m_selected),
+                                          exec_func));  
 }
 
 /*! \brief deletes the container prototype */
@@ -559,6 +577,7 @@ void Ego::clean_parts()
 {
   m_owned_parts = true;
 
+  // Add the parts:
   Vector3f center(CGAL::to_double(m_voxels_center.x()),
                   CGAL::to_double(m_voxels_center.y()),
                   CGAL::to_double(m_voxels_center.z()));
@@ -568,7 +587,7 @@ void Ego::clean_parts()
                m_voxel_height * size.get<2>());
   Vector3f origin;
   origin.add_scaled(center, -0.5f, box);
-  
+
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
@@ -628,6 +647,7 @@ void Ego::clean_parts()
         }
         if (!m_space_filling && !apparent) continue;
 
+        m_voxel_signatures.push_back(boost::make_tuple(i, j, k));
         Transform* transform = new Transform;
         add_child(transform);
 
@@ -646,12 +666,7 @@ void Ego::clean_parts()
         Shape* shape = new Shape;
         transform->add_child(shape);
 
-        // Determine whether to draw the brick:
-        transform->set_visible(is_visible(m_layer_x_visibility, m_layer_x, i) &&
-                               is_visible(m_layer_y_visibility, m_layer_y, j) &&
-                               is_visible(m_layer_z_visibility, m_layer_z, k));
-        
-        // Determine whether to draw the knobs:
+       // Determine whether to draw the knobs:
         bool should_draw_knobs = false;
         for (size_t s = 0; s < brick->get<0>(); ++s) {
           for (size_t t = 0; t < brick->get<1>(); ++t) {
@@ -699,9 +714,25 @@ void Ego::clean_parts()
       }
     }
   }
-  std::cout << "# of children: " << get_child_count() << std::endl;
+  Uint num_childs = get_child_count();
+  std::cout << "# of children: " << num_childs << std::endl;
+
+  // Add a touch sensor:
+  m_touch_sensor = new Touch_sensor;
+  m_touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
+                              (m_layer_y_visibility != LV_ALL) ||
+                              (m_layer_z_visibility != LV_ALL));
+  m_touch_sensor->set_num_selection_ids(num_childs);
+  m_touch_sensor->add_to_scene(m_scene_graph);
+  Field* src_field = m_touch_sensor->add_field(Touch_sensor::ISOVER);
+  SGAL_assertion(src_field);
+  Field* dst_field = add_field(SELECTED);
+  SGAL_assertion(dst_field);
+  src_field->connect(dst_field);
+  add_child(m_touch_sensor);
 
   m_dirty_parts = false;
+  m_dirty_visibility = true;
   m_dirty_sphere_bound = true;
 }
 
@@ -977,7 +1008,8 @@ void Ego::clean_colors()
   Weighted_color_iter cit = colors.begin();
   for (nit = m_childs.begin(); nit != m_childs.end(); ++nit, ++cit) {
     Transform* transform = dynamic_cast<Transform*>(*nit);
-    SGAL_assertion(transform);
+    if (!transform) continue;
+
     Shape* shape = dynamic_cast<Shape*>(*(transform->children_begin()));
     shape->set_override_tex_enable(true);
     shape->set_override_tex_env(true);
@@ -1089,6 +1121,7 @@ Action::Trav_directive Ego::draw(Draw_action* action)
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
   if (m_dirty_colors) clean_colors();
+  if (m_dirty_visibility) clean_visibility();
   return Group::draw(action);
 }
 
@@ -1100,18 +1133,20 @@ void Ego::cull(Cull_context& cull_context)
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
   if (m_dirty_colors) clean_colors();
+  if (m_dirty_visibility) clean_visibility();
 
-  // We deliberately call the cull() member of the Group and of the Transform
-  // to avoid duplicate application of the transformations.
+  // We deliberately call the cull() member of the Group and not of the
+  // Transform to avoid duplicate application of the transformations.
   Group::cull(cull_context);
 }
 
-/*! \brief draws the sphere in selection mode. */
+/*! \brief draws the Ego object in selection mode. */
 void Ego::isect(Isect_action* action)
 {
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
+  reset_visibility();
   Group::isect(action);
 }
 
@@ -1129,20 +1164,47 @@ void Ego::voxels_changed(Field_info* field_info)
   tiling_changed(field_info);
 }
 
-/*! \brief */
+/*! \brief Process change of tiling scheme. */
 void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
 
 /*! \brief Process change of visibility scheme. */
-void Ego::visibility_changed(Field_info* /* field_info. */)
+void Ego::visibility_changed(Field_info*)
 {
-  // Node_iterator it1 = m_childs.begin();
-  // while (it1 != m_childs.end()) {
-  //   Node* transform_node = *it1++;
-  //   Transform* transform = static_cast<Transform*>(transform_node);
-  //   transform->set_visible(is_visible(m_layer_x_visibility, m_layer_x, i) &&
-  //                          is_visible(m_layer_y_visibility, m_layer_y, j) &&
-  //                          is_visible(m_layer_z_visibility, m_layer_z, k));
-  // }
+  m_touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
+                              (m_layer_y_visibility != LV_ALL) ||
+                              (m_layer_z_visibility != LV_ALL));
+  m_dirty_visibility = true;
+}
+
+/*! \brief Process change of visibility scheme. */
+void Ego::clean_visibility()
+{
+  std::size_t index = 0;
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    Transform* transform = dynamic_cast<Transform*>(node);
+    if (!transform) break;
+    std::size_t i, j, k;
+    boost::tie(i, j, k) = m_voxel_signatures[index++];
+    transform->set_visible(is_visible(m_layer_x_visibility, m_layer_x, i) &&
+                           is_visible(m_layer_y_visibility, m_layer_y, j) &&
+                           is_visible(m_layer_z_visibility, m_layer_z, k));
+  }
+  m_dirty_visibility = false;
+}
+
+/*! \brief Process change of visibility scheme. */
+void Ego::reset_visibility()
+{
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    Transform* transform = dynamic_cast<Transform*>(node);
+    if (!transform) break;
+    transform->set_visible(true);
+  }
+  m_dirty_visibility = true;
 }
 
 /*! \brief calculate sphere bound of the node. */
@@ -1151,6 +1213,7 @@ Boolean Ego::clean_sphere_bound()
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
+  if (m_dirty_visibility) clean_visibility();
 
   Ego_voxels::size_type size = m_voxels.size();
   Vector3f box(m_voxel_length * size.get<0>(),
@@ -1167,8 +1230,9 @@ Boolean Ego::clean_sphere_bound()
 }
 
 /*! \brief converts m_brick_types to the input received by Ego_voxels_tiler. */  
-Ego_voxels_tiler::Brick_types Ego::convert_types(const SGAL::Array<Vector3sh>& types) {
-
+Ego_voxels_tiler::Brick_types
+Ego::convert_types(const SGAL::Array<Vector3sh>& types)
+{
   Ego_voxels_tiler::Brick_types ret;
   BOOST_FOREACH(const Vector3sh& vec, types) {
     ret.push_back(boost::make_tuple(vec[0], vec[1], vec[2]));
@@ -1249,7 +1313,6 @@ Appearance* Ego::create_random_appearance()
 {
   Uint hue_key = std::rand() % 256;
   Uint saturation_key = std::rand() % 256;
-  // Uint luminosity_key = std::rand() % 256;
   Uint luminosity_key = 128;
   return create_appearance(hue_key, saturation_key, luminosity_key);
 }
@@ -1290,6 +1353,17 @@ Boolean Ego::is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index)
   }
   SGAL_error();
   return false;
+}
+
+/*! \brief processes change of selected brick. */
+void Ego::selected_changed(Field_info* /* field_info. */)
+{
+  Uint id = m_touch_sensor->get_selection_id();
+  if (id == 0) return;
+  id -= m_touch_sensor->get_first_selection_id();
+  SGAL_assertion(id < m_voxel_signatures.size());
+  boost::tie(m_layer_x, m_layer_y, m_layer_z) = m_voxel_signatures[id];
+  m_dirty_visibility = true;
 }
 
 SGAL_END_NAMESPACE
