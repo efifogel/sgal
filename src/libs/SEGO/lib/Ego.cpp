@@ -57,7 +57,6 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Camera.hpp"
-#include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
@@ -187,10 +186,6 @@ void Ego::clear_parts()
       // Remove the brick (Shape):
       Shape* brick_shape = dynamic_cast<Shape*>(node);
       if (brick_shape) delete brick_shape;
-
-      // Remove the touch sensor:
-      Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node);
-      if (touch_sensor) delete touch_sensor;
 
       transform->remove_child(node);
     }
@@ -648,9 +643,6 @@ void Ego::clean_parts()
         brick_center.add(offset);
         transform->set_translation(brick_center);
 
-        Touch_sensor* touch_sensor = new Touch_sensor;
-        transform->add_child(touch_sensor);
-        
         Shape* shape = new Shape;
         transform->add_child(shape);
 
