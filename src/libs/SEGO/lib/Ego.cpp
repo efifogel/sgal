@@ -531,19 +531,18 @@ void Ego::clean_voxels()
 
     m_voxels = Ego_voxels(); // Clear - should we make a func?
     if (this->is_model_polyhedron())
-      m_tiled_voxels_center = 
+      m_voxels_center = 
         voxelize(this->get_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
     else if (this->is_model_exact_polyhedron())
-      m_tiled_voxels_center = 
+      m_voxels_center = 
         voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
     else if (this->is_model_geo_set())
-      m_tiled_voxels_center = 
+      m_voxels_center = 
         voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
 
     fill(&m_voxels);
-    adjust_voxels_for_tiling();
   }
 }
 
@@ -553,12 +552,11 @@ void Ego::clean_tiling()
   m_dirty_tiling = false;
   clear_parts();
     
-  m_tiled_voxels = m_voxels;
   Ego_voxels_tiler tile(m_first_tile_placement,
                         m_tiling_strategy,
                         m_tiling_rows_direction,
                         convert_types(m_brick_types));
-  tile(&m_tiled_voxels);
+  tile(&m_voxels);
 }
 
 /*! \brief (re)generate the parts. */
@@ -566,10 +564,10 @@ void Ego::clean_parts()
 {
   m_owned_parts = true;
 
-  Vector3f center(CGAL::to_double(m_tiled_voxels_center.x()),
-                  CGAL::to_double(m_tiled_voxels_center.y()),
-                  CGAL::to_double(m_tiled_voxels_center.z()));
-  Ego_voxels::size_type size = m_tiled_voxels.size();
+  Vector3f center(CGAL::to_double(m_voxels_center.x()),
+                  CGAL::to_double(m_voxels_center.y()),
+                  CGAL::to_double(m_voxels_center.z()));
+  Ego_voxels::size_type size = m_voxels.size();
   Vector3f box(m_voxel_length * size.get<0>(),
                m_voxel_width * size.get<1>(),
                m_voxel_height * size.get<2>());
@@ -579,11 +577,11 @@ void Ego::clean_parts()
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
-        if (m_tiled_voxels.is_filled(i, j, k) == false)
+        if (m_voxels.is_filled(i, j, k) == false)
           continue;
 
         boost::optional<Ego_voxels::size_type> brick =
-          m_tiled_voxels.get_brick(i, j, k);
+          m_voxels.get_brick(i, j, k);
         if (!brick) continue;
 
         // Continue, if the visibility scheme implies invisibility:
@@ -603,8 +601,8 @@ void Ego::clean_parts()
         if (!apparent) {
           for (std::size_t t0 = 0; t0 < num0; ++t0) {
             for (std::size_t t1 = 0; t1 < num1; ++t1) {
-              if (!m_tiled_voxels.is_filled(i+t0, j+t1, k-1) ||
-                  !m_tiled_voxels.is_filled(i+t0, j+t1, k+1))
+              if (!m_voxels.is_filled(i+t0, j+t1, k-1) ||
+                  !m_voxels.is_filled(i+t0, j+t1, k+1))
               {
                 apparent = true;
                 break;
@@ -615,8 +613,8 @@ void Ego::clean_parts()
         }
         if (!apparent) {
           for (std::size_t t0 = 0; t0 < num0; ++t0) {
-            if (!m_tiled_voxels.is_filled(i+t0, j-1, k) ||
-                !m_tiled_voxels.is_filled(i+t0, j+num1, k))
+            if (!m_voxels.is_filled(i+t0, j-1, k) ||
+                !m_voxels.is_filled(i+t0, j+num1, k))
             {
               apparent = true;
               break;
@@ -625,8 +623,8 @@ void Ego::clean_parts()
         }
         if (!apparent) {
           for (std::size_t t1 = 0; t1 < num1; ++t1) {
-            if (!m_tiled_voxels.is_filled(i-1, j+t1, k) ||
-                !m_tiled_voxels.is_filled(i+num0, j+t1, k))
+            if (!m_voxels.is_filled(i-1, j+t1, k) ||
+                !m_voxels.is_filled(i+num0, j+t1, k))
             {
               apparent = true;
               break;
@@ -666,8 +664,8 @@ void Ego::clean_parts()
         for (size_t s = 0; s < brick->get<0>(); ++s) {
           for (size_t t = 0; t < brick->get<1>(); ++t) {
             if ((k == size.get<2>() - 1) ||
-                (!m_tiled_voxels.is_filled(i+s, j+t, k+1)) ||
-                (!m_tiled_voxels.is_placed(i+s, j+t, k+1)))
+                (!m_voxels.is_filled(i+s, j+t, k+1)) ||
+                (!m_voxels.is_placed(i+s, j+t, k+1)))
               should_draw_knobs = true;
           }
         }
@@ -785,10 +783,10 @@ void Ego::clean_colors()
 
   // Create the cameras:
   Camera cameras[6];
-  Ego_voxels::size_type voxel_size = m_tiled_voxels.size();
-  Vector3f center(CGAL::to_double(m_tiled_voxels_center.x()),
-                  CGAL::to_double(m_tiled_voxels_center.y()),
-                  CGAL::to_double(m_tiled_voxels_center.z()));
+  Ego_voxels::size_type voxel_size = m_voxels.size();
+  Vector3f center(CGAL::to_double(m_voxels_center.x()),
+                  CGAL::to_double(m_voxels_center.y()),
+                  CGAL::to_double(m_voxels_center.z()));
   Vector3f box(m_voxel_length * voxel_size.get<0>(),
                m_voxel_width * voxel_size.get<1>(),
                m_voxel_height * voxel_size.get<2>());
@@ -1162,28 +1160,18 @@ Boolean Ego::clean_sphere_bound()
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
 
-  Ego_voxels::size_type size = m_tiled_voxels.size();
+  Ego_voxels::size_type size = m_voxels.size();
   Vector3f box(m_voxel_length * size.get<0>(),
                m_voxel_width * size.get<1>(),
                m_voxel_height * size.get<2>());
-  Vector3f center(CGAL::to_double(m_tiled_voxels_center.x()),
-                  CGAL::to_double(m_tiled_voxels_center.y()),
-                  CGAL::to_double(m_tiled_voxels_center.z()));
+  Vector3f center(CGAL::to_double(m_voxels_center.x()),
+                  CGAL::to_double(m_voxels_center.y()),
+                  CGAL::to_double(m_voxels_center.z()));
   float radius = box.length() * 0.5f;
   m_sphere_bound.set_center(center);
   m_sphere_bound.set_radius(radius);
   m_dirty_sphere_bound = false;
   return true;
-}
-
-void Ego::adjust_voxels_for_tiling()
-{
-  // The current tiling uses 2x2 bricks and covers all the voxels.
-  // This means that the tiling can go about one square off the current
-  // voxels.
-  // Therefore we need to "offset" the voxels sturcture in 1 square in
-  // the xy-plane.
-  m_voxels.offset_xy_layers(1);
 }
 
 /*! \brief converts m_brick_types to the input received by Ego_voxels_tiler. */  

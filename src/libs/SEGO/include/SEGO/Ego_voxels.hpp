@@ -50,8 +50,6 @@ public:
   boost::optional<size_type>
   get_brick(std::size_t x, std::size_t y, std::size_t z);
 
-  void offset_xy_layers(size_t offset_value);
-
   void print() const;
 
 private:

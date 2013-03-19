@@ -79,6 +79,7 @@ Transform {
 	  # style "appearance"
 	  scale 100 100 100
 	  model USE MODEL
+	  # spaceFilling TRUE
 	  brickTypes [
 	    2, 4, 1, 
 	    4, 2, 1,

@@ -347,7 +347,6 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
-  void adjust_voxels_for_tiling();
   Ego_voxels_tiler::Brick_types convert_types(const SGAL::Array<Vector3sh> &types);
 
   /*! Determine whether a given brick is visible with respect to a specific
@@ -369,9 +368,7 @@ protected:
 
   Ego_voxels m_voxels;
 
-  Ego_voxels m_tiled_voxels;
-
-  Exact_polyhedron_geo::Kernel::Point_3 m_tiled_voxels_center;
+  Exact_polyhedron_geo::Kernel::Point_3 m_voxels_center;
   
   /*! The style */
   Style m_style;

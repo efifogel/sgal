@@ -117,49 +117,6 @@ Ego_voxels::get_brick(std::size_t x, std::size_t y, std::size_t z) {
 }
 
 
-/** 
- * Extend each xy layer by offset_value.
- * 
- * @param offset_value Number of voxels to offset in.
- */
-void Ego_voxels::offset_xy_layers(size_t offset_value) {
-  typedef std::vector<Voxel>               Row;
-  typedef std::vector<Row>                 Layer;
-
-  // Maybe it is a good idea to move to boost multi array
-  // or what ever.
-
-  // first offset in x.
-  m_voxels.insert(m_voxels.begin(), Layer());  
-  m_voxels.front().resize(m_voxels[1].size());
-  for (size_t i = 0; i < m_voxels[0].size(); ++i) {
-    m_voxels.front()[i].resize(m_voxels[1][0].size());
-    for (size_t j = 0; j < m_voxels.front()[i].size(); ++j)
-      m_voxels.front()[i][j].filled = false;
-  }
-  
-  m_voxels.insert(m_voxels.end(), Layer());
-  m_voxels.back().resize(m_voxels[1].size());
-  for (size_t i = 0; i < m_voxels[0].size(); ++i) {
-    m_voxels.back()[i].resize(m_voxels[1][0].size());
-    for (size_t j = 0; j < m_voxels.back()[i].size(); ++j)
-      m_voxels.back()[i][j].filled = false;
-  }
-
-  // Now, offset in y.
-  for (size_t xitr = 0; xitr < m_voxels.size(); ++xitr) {
-    m_voxels[xitr].insert(m_voxels[xitr].begin(), Row());
-    m_voxels[xitr].front().resize(m_voxels[xitr][1].size());
-    for (size_t i = 0; i < m_voxels[xitr].front().size(); ++i)
-      m_voxels[xitr].front()[i].filled = false;
-    
-    m_voxels[xitr].insert(m_voxels[xitr].end(), Row());
-    m_voxels[xitr].back().resize(m_voxels[xitr][1].size());
-    for (size_t i = 0; i < m_voxels[xitr].back().size(); ++i)
-      m_voxels[xitr].back()[i].filled = false;
-  }
-}
-
 void Ego_voxels::print() const {
 
   for (std::size_t i = 0; i < m_voxels.size(); ++i) {
