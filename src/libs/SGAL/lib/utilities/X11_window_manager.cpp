@@ -53,6 +53,15 @@
 #include "SGAL/Scene.hpp"
 #include "SGAL/Trace.hpp"
 
+#ifdef SGAL_TRACE_MSG
+#undef SGAL_TRACE_MSG
+#endif
+#ifdef SGAL_TRACE_CODE
+#undef SGAL_TRACE_CODE
+#endif
+#define SGAL_TRACE_MSG(key, msg)     std::cout << msg
+#define SGAL_TRACE_CODE(key, code)   { code }
+
 // #include "X11_event_names.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -451,22 +460,18 @@ void X11_window_manager::process_xevent(XEvent& event)
    case DestroyNotify:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "DestroyNotify" << std::endl;);
-    // if (event.xdestroywindow.event != event.xdestroywindow.window) break;
-    if (!m_current_window) {
-      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
-        X11_window_item* window_item = *it;
-        if (window_item->m_window == event.xfocus.window) {
-          m_current_window = window_item;
-          break;
-        }
+    if (event.xdestroywindow.event != event.xdestroywindow.window) break;
+    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+      X11_window_item* window_item = *it;
+      if (window_item->m_window == event.xdestroywindow.window) {
+        window_item->reset_window();
+        this->remove_window(window_item);
+        m_current_window = NULL;
+        kc_values.auto_repeat_mode = 1;
+        XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
+        break;
       }
     }
-    if (!m_current_window) break;
-    m_current_window->reset_window();
-    this->remove_window(m_current_window);
-    kc_values.auto_repeat_mode = 1;
-    XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
-    m_current_window = NULL;
     break;
 
    case MapNotify:
