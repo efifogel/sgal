@@ -79,7 +79,7 @@ public:
     LAYER_Y_VISIBILITY,
     LAYER_Z_VISIBILITY,
     BRICK_TYPES,
-    SELECTED,
+    SELECTION_ID,
     LAST
   };
 
@@ -292,7 +292,7 @@ public:
   void visibility_changed(Field_info* /* field_info. */);
 
   /*! Process change of selected brick. */
-  void selected_changed(Field_info* /* field_info. */);
+  void selection_id_changed(Field_info* /* field_info. */);
   
   /*! Obtain the style. */
   Style get_style() const;
@@ -471,7 +471,7 @@ protected:
   SGAL::Array<Vector3sh> m_brick_types;
 
   /*! A flag raised when the touch sensor senses a change. */
-  Boolean m_selected;
+  Uint m_selection_id;
   
   /*! A sorted vector of voxel signatures. */
   Voxel_signatures m_voxel_signatures;

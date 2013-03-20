@@ -146,7 +146,7 @@ Ego::Ego(Boolean proto) :
   m_layer_x_visibility(LV_ALL),
   m_layer_y_visibility(LV_ALL),
   m_layer_z_visibility(LV_ALL),
-  m_selected(false),
+  m_selection_id(0),
   m_owned_appearance(false),
   m_clean_colors_in_progress(false)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
@@ -310,10 +310,10 @@ void Ego::init_prototype()
                       get_member_offset(&m_layer_z_visibility), exec_func);
   s_prototype->add_field_info(sf_int);  
 
-  exec_func = static_cast<Execution_function>(&Ego::selected_changed);
-  s_prototype->add_field_info(new SF_bool(SELECTED, "selected",
-                                          get_member_offset(&m_selected),
-                                          exec_func));  
+  exec_func = static_cast<Execution_function>(&Ego::selection_id_changed);
+  s_prototype->add_field_info(new SF_int(SELECTION_ID, "selectionId",
+                                         get_member_offset(&m_selection_id),
+                                         exec_func));  
 }
 
 /*! \brief deletes the container prototype */
@@ -724,9 +724,10 @@ void Ego::clean_parts()
                               (m_layer_z_visibility != LV_ALL));
   m_touch_sensor->set_num_selection_ids(num_childs);
   m_touch_sensor->add_to_scene(m_scene_graph);
-  Field* src_field = m_touch_sensor->add_field(Touch_sensor::ISOVER);
+  Field* src_field =
+    m_touch_sensor->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
   SGAL_assertion(src_field);
-  Field* dst_field = add_field(SELECTED);
+  Field* dst_field = add_field(SELECTION_ID);
   SGAL_assertion(dst_field);
   src_field->connect(dst_field);
   add_child(m_touch_sensor);
@@ -1356,13 +1357,11 @@ Boolean Ego::is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index)
 }
 
 /*! \brief processes change of selected brick. */
-void Ego::selected_changed(Field_info* /* field_info. */)
+void Ego::selection_id_changed(Field_info* /* field_info. */)
 {
-  Uint id = m_touch_sensor->get_selection_id();
-  if (id == 0) return;
-  id -= m_touch_sensor->get_first_selection_id();
-  SGAL_assertion(id < m_voxel_signatures.size());
-  boost::tie(m_layer_x, m_layer_y, m_layer_z) = m_voxel_signatures[id];
+  SGAL_assertion(m_selection_id < m_voxel_signatures.size());
+  boost::tie(m_layer_x, m_layer_y, m_layer_z) =
+    m_voxel_signatures[m_selection_id];
   m_dirty_visibility = true;
 }
 

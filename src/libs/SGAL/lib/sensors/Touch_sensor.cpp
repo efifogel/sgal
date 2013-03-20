@@ -66,6 +66,8 @@ Touch_sensor::Touch_sensor(Boolean enabled, Boolean proto) :
   m_first_selection_id(0),
   m_num_selection_ids(1),
   m_selection_id(0),
+  m_over_selection_id(0),
+  m_active_selection_id(0),
   m_enabled(enabled),
   m_hit_normal(0, 0, 0),
   m_hit_point(0, 0, 0),
@@ -112,7 +114,7 @@ void Touch_sensor::init_prototype()
   s_prototype->
     add_field_info(new SF_vector2f(HITTEXCOORD, "hitTexCoord",
                                    get_member_offset(&m_hit_tex_coord)));
-  s_prototype->add_field_info(new SF_bool(ISACTIVE, "isActive",
+  s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive",
                                           get_member_offset(&m_is_active)));
 
   exec_func = static_cast<Execution_function>(&Touch_sensor::external_activate);
@@ -120,10 +122,10 @@ void Touch_sensor::init_prototype()
     add_field_info(new SF_bool(EXACTIVATE, "ex_activate",
                                get_member_offset(&m_ex_activate), exec_func));
 
-  s_prototype->add_field_info(new SF_bool(ISOVER, "isOver",
+  s_prototype->add_field_info(new SF_bool(IS_OVER, "isOver",
                                           get_member_offset(&m_is_over)));
 
-  s_prototype->add_field_info(new SF_time(TOUCHTIME, "touchTime",
+  s_prototype->add_field_info(new SF_time(TOUCH_TIME, "touchTime",
                                           get_member_offset(&m_touch_time)));
   exec_func =
     static_cast<Execution_function>(&Touch_sensor::set_rendering_required);
@@ -135,8 +137,12 @@ void Touch_sensor::init_prototype()
   s_prototype->
     add_field_info(new SF_int(NUMBER_OF_SELECTION_IDS, "numberOfSelectionIds",
                               get_member_offset(&m_num_selection_ids)));
-  s_prototype->add_field_info(new SF_int(SELECTION_ID, "SelectionId",
-                                         get_member_offset(&m_selection_id)));
+  s_prototype->
+    add_field_info(new SF_int(OVER_SELECTION_ID, "overSelectionId",
+                              get_member_offset(&m_over_selection_id)));
+  s_prototype->
+    add_field_info(new SF_int(ACTIVE_SELECTION_ID, "activeSelectionId",
+                              get_member_offset(&m_active_selection_id)));
 }
 
 /*! \brief deletes the prototype. */
@@ -176,7 +182,7 @@ void Touch_sensor::external_activate(Field_info *)
 
   // Update and cascade the m_touch_time field
   //!\todo m_touch_time = m_execution_coordinator->get_scene_time();
-  Field* is_touch_time_field = get_field(TOUCHTIME);
+  Field* is_touch_time_field = get_field(TOUCH_TIME);
   if (is_touch_time_field) is_touch_time_field->cascade();
 }
 
@@ -199,12 +205,24 @@ void Touch_sensor::set_tex_coord(const Vector2f& tex_coord)
   m_hit_tex_coord = tex_coord;
 }
 
-/*! \brief sets m_is_over
- * \param over (in) the given value
+/*! \brief sets the flag that indicates whether the cursor hoovers above a
+ * selected geometry.
  */
 void Touch_sensor::set_is_over(const Boolean over)
 {
   m_is_over = over;
+  Field* field = get_field(IS_OVER);
+  if (field) field->cascade();
+}
+
+/*! \brief sets the flag that indicates whether the mouse is pressed when the
+ * cursor is above a selected geometry.
+ */
+void Touch_sensor::set_is_active(const Boolean active)
+{
+  m_is_active = active;
+  Field* field = get_field(IS_ACTIVE);
+  if (field) field->cascade();
 }
 
 /*! \brief invoked when dragging starts. */
@@ -213,7 +231,7 @@ void Touch_sensor::start_dragging(const Vector2sh& /* point */)
   if (!m_enabled) return;
 
   // if the mouse is not over the sensor geometry - return
-  if (m_last_selection_id == 0) return;
+  if (m_selection_id == 0) return;
 
   // if dragging is locked by another sensor - return
   //! \todo if (m_execution_coordinator->is_dragging_locked()) return;
@@ -223,10 +241,8 @@ void Touch_sensor::start_dragging(const Vector2sh& /* point */)
   m_drag_locked = true;
 
   // Update and cascade the m_is_active field
-  m_is_active = true;
-
-  Field* is_active_field = get_field(ISACTIVE);
-  if (is_active_field) is_active_field->cascade();
+  set_is_active(true);
+  set_active_selection_id(m_selection_id - m_first_selection_id);
 }
 
 /*! \brief invoked when dragging stops. */
@@ -248,9 +264,7 @@ void Touch_sensor::dragging_done(const Vector2sh& point)
 
   if (m_last_selection_id > 0) {
     // Update and cascade the m_is_active field
-    m_is_active = false;
-    Field* is_active_field = get_field(ISACTIVE);
-    if (is_active_field) is_active_field->cascade();
+    set_is_active(false);
 
         // Cascafe the m_routed_node field
     Field* routed_node_field = get_field(ROUTEDNODE);
@@ -258,7 +272,7 @@ void Touch_sensor::dragging_done(const Vector2sh& point)
 
       // Update and cascade the m_touch_time field
     //! \todo m_touch_time = m_execution_coordinator->get_scene_time();
-    Field* is_touch_time_field = get_field(TOUCHTIME);
+    Field* is_touch_time_field = get_field(TOUCH_TIME);
     if (is_touch_time_field) is_touch_time_field->cascade();
   }
   /*! \todo 
@@ -399,12 +413,13 @@ void Touch_sensor::handle(Passive_motion_event* event)
 
   if (m_scene_graph) m_scene_graph->isect(event->get_x(), event->get_y());
 
-  // If dragging is locked by another sensor return
-  //! \todo if (m_execution_coordinator->is_dragging_locked() && (!m_drag_locked))
-  // If m_is_over has changed, update and cascade the m_is_over field.
+  // \todo If dragging is locked by another sensor return
+  // if (m_execution_coordinator->is_dragging_locked() && (!m_drag_locked))
+
+  // If selection changed, update and cascade the appropriate fields:
   if (m_last_selection_id != m_selection_id) {
-    Field* is_over_field = get_field(ISOVER);
-    if (is_over_field) is_over_field->cascade();
+    set_is_over(m_selection_id != 0);
+    set_over_selection_id(m_selection_id - m_first_selection_id);
     m_last_selection_id = m_selection_id;
   }
 
@@ -498,6 +513,26 @@ void Touch_sensor::handle(Tick_event* event)
 {
   clock_t sim_time = event->get_sim_time();
   m_touch_time = (Scene_time) sim_time / CLOCKS_PER_SEC;
+}
+
+/*! \brief sets the (normalized) id of the geometry, which the cursor is
+ * hoovering above.
+ */
+void Touch_sensor::set_over_selection_id(Uint id)
+{
+  m_over_selection_id = id;
+  Field* field = get_field(OVER_SELECTION_ID);
+  if (field) field->cascade();
+}
+
+/*! \brief sets the (normalized) id of the geometry, which the cursor was above
+ * when dragging started.
+ */
+inline void Touch_sensor::set_active_selection_id(Uint id)
+{
+  m_active_selection_id = id;
+  Field* field = get_field(ACTIVE_SELECTION_ID);
+  if (field) field->cascade();
 }
 
 SGAL_END_NAMESPACE

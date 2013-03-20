@@ -468,8 +468,7 @@ void Scene_graph::isect(Uint x, Uint y)
   Uint index = m_isect_action->get_index(pixel);
   for (Uint i = 0; i < m_touch_sensors.size(); ++i) {
     Boolean is_over = m_touch_sensors[i]->is_in_range(index);
-    m_touch_sensors[i]->set_is_over(is_over);
-    if (is_over) m_touch_sensors[i]->set_selection_id(index);
+    m_touch_sensors[i]->set_selection_id(is_over ? index : 0);
   }
 }
 

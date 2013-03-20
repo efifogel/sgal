@@ -64,14 +64,15 @@ public:
     HITNORMAL,
     HITPOINT,
     HITTEXCOORD,
-    ISACTIVE,
-    ISOVER,
+    IS_ACTIVE,
+    IS_OVER,
     EXACTIVATE,
-    TOUCHTIME,
+    TOUCH_TIME,
     ROUTEDNODE,
     NUMBER_OF_SELECTION_IDS,
     FIRST_SELECTION_ID,
-    SELECTION_ID,
+    OVER_SELECTION_ID,
+    ACTIVE_SELECTION_ID,
     LAST
   };
 
@@ -94,16 +95,30 @@ public:
 
   void set_tex_coord(const Vector2f& tex_coord);
 
+  /*! Set the flag that indicates whether the cursor hoovers above a selected
+   * geometry.
+   * \param over (in) the flag.
+   */
   void set_is_over(const Boolean over);
 
+  /*! Set the flag that indicates whether the mouse is pressed when the cursor
+   * is above a selected geometry.
+   * \param active (in) the flag.
+   */
+  void set_is_active(const Boolean active);
+  
   /* Sets the routed node pointer. */
   void set_routed_node(Container* node);
 
   Container* get_routed_node() const;
 
-  /*! Initialize the node prototype. */
+  /*! Initialize the object prototype. */
   virtual void init_prototype();
+
+  /*! Delete the object prototype. */
   virtual void delete_prototype();
+
+  /*! Obtain the object prototype. */
   virtual Container_proto* get_prototype();
   
   /*! Set the attributes of this node. */
@@ -166,12 +181,32 @@ public:
   /*! Set the number of ids in a unique range of color ids used for picking. */
   void set_num_selection_ids(Uint num_ids);
 
-  /*! Obtain the currently picked color id. */
+  /*! Obtain the raw id of the geometry, which the cursor is hoovering above. */
   Uint get_selection_id() const;
 
-  /*! Set the currently picked color id. */
+  /*! Set the raw id of the geometry, which the cursor is hoovering above. */
   void set_selection_id(Uint id);
   
+  /*! Obtain the (normalized) id of the geometry, which the cursor is hoovering
+   * above.
+   */
+  Uint get_over_selection_id() const;
+
+  /*! Set the (normalized) id of the geometry, which the cursor is hoovering
+   * above.
+   */
+  void set_over_selection_id(Uint id);
+  
+  /*! Obtain the (normalized) id of the geometry, which the cursor was above
+   * when dragging started.
+   */
+  Uint get_active_selection_id() const;
+
+  /*! Set the (normalized) id of the geometry, which the cursor was above when
+   * dragging started.
+   */
+  void set_active_selection_id(Uint id);
+
   /*! Is the given id in the range of color ids. */
   Boolean is_in_range(Uint id);
 
@@ -222,16 +257,37 @@ private:
   /*! The number of ids of a unique range of color ids used for picking */
   Uint m_num_selection_ids;
 
-  /*! The id currently selected */
+  /*! The raw id of the geometry, which the cursor is hoovering above. */
   Uint m_selection_id;
-  
+
+  /*! The (normalized) id of the geometry, which the cursor is hoovering above.
+   */
+  Uint m_over_selection_id;
+
+  /*! The (normalized) id of the geometry, which the cursor was above when
+   * dragging started.
+   */
+  Uint m_active_selection_id;
+
+  /*! Indicates whether the touch sensor is enabled. */
   Boolean m_enabled;
+  
   Vector3f m_hit_normal;
+
   Vector3f m_hit_point;
+
   Vector2f m_hit_tex_coord;
+
+  /*! Indicates whether the mouse is pressed when the cursor is above a selected
+   * geometry.
+   */
   Boolean m_is_active;
+
   Boolean m_ex_activate;
+
+  /*! Indicates whether the cursor hoovers above a selected geometry. */
   Boolean m_is_over;
+
   Scene_time m_touch_time;
 
   Vector3f m_last_normal;
@@ -278,12 +334,25 @@ inline Uint Touch_sensor::get_num_selection_ids() const
 inline void Touch_sensor::set_num_selection_ids(Uint num_ids)
 { m_num_selection_ids = num_ids; }
 
-/*! \brief obtains the currently picked color id. */
+/*! \brief obtains the id of the geometry, which the cursor is hoovering above.
+ */
 inline Uint Touch_sensor::get_selection_id() const { return m_selection_id; }
 
-/*! \brief sets the currently picked color id. */
+/*! \brief sets the id of the geometry, which the cursor is hoovering above. */
 inline void Touch_sensor::set_selection_id(Uint id) { m_selection_id = id; }
-  
+
+/*! \brief obtains the (normalized) id of the geometry, which the cursor is
+ * hoovering above.
+ */
+inline Uint Touch_sensor::get_over_selection_id() const
+{ return m_over_selection_id; }
+
+/*! \brief obtains the (normalized) id of the geometry, which the cursor was
+ * above when dragging started.
+ */
+inline Uint Touch_sensor::get_active_selection_id() const
+{ return m_active_selection_id; }
+
 /*! \brief determines whether the given id in the range of color ids. */
 inline Boolean Touch_sensor::is_in_range(Uint id)
 {
