@@ -53,15 +53,6 @@
 #include "SGAL/Scene.hpp"
 #include "SGAL/Trace.hpp"
 
-#ifdef SGAL_TRACE_MSG
-#undef SGAL_TRACE_MSG
-#endif
-#ifdef SGAL_TRACE_CODE
-#undef SGAL_TRACE_CODE
-#endif
-#define SGAL_TRACE_MSG(key, msg)     std::cout << msg
-#define SGAL_TRACE_CODE(key, code)   { code }
-
 // #include "X11_event_names.hpp"
 
 SGAL_BEGIN_NAMESPACE
