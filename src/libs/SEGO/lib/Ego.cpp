@@ -1122,7 +1122,12 @@ Action::Trav_directive Ego::draw(Draw_action* action)
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
   if (m_dirty_colors) clean_colors();
-  if (m_dirty_visibility) clean_visibility();
+  if (m_clean_colors_in_progress) {
+    if (!m_dirty_visibility) reset_visibility();
+  }
+  else {
+    if (m_dirty_visibility) clean_visibility();
+  }
   return Group::draw(action);
 }
 
@@ -1134,8 +1139,13 @@ void Ego::cull(Cull_context& cull_context)
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
   if (m_dirty_colors) clean_colors();
-  if (m_dirty_visibility) clean_visibility();
-
+  if (m_clean_colors_in_progress) {
+    if (!m_dirty_visibility) reset_visibility();
+  }
+  else {
+    if (m_dirty_visibility) clean_visibility();
+  }
+  
   // We deliberately call the cull() member of the Group and not of the
   // Transform to avoid duplicate application of the transformations.
   Group::cull(cull_context);
@@ -1147,7 +1157,7 @@ void Ego::isect(Isect_action* action)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  reset_visibility();
+  if (!m_dirty_visibility) reset_visibility();
   Group::isect(action);
 }
 
@@ -1214,7 +1224,12 @@ Boolean Ego::clean_sphere_bound()
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  if (m_dirty_visibility) clean_visibility();
+  if (m_clean_colors_in_progress) {
+    if (!m_dirty_visibility) reset_visibility();
+  }
+  else {
+    if (m_dirty_visibility) clean_visibility();
+  }
 
   Ego_voxels::size_type size = m_voxels.size();
   Vector3f box(m_voxel_length * size.get<0>(),
