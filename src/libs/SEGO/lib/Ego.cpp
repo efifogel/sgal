@@ -123,7 +123,6 @@ Ego::Ego(Boolean proto) :
   m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),
   m_style(s_def_style),
-  m_touch_sensor(NULL),
   m_appearance(NULL),
   m_space_filling(s_def_space_filling),
   m_appearance_prev(NULL),
@@ -137,6 +136,7 @@ Ego::Ego(Boolean proto) :
   m_dirty_colors(true),
   m_dirty_visibility(true),
   m_owned_parts(false),
+  m_owned_touch_sensor(false),
   m_scene_graph(NULL),
   m_knob_slices(Ego_brick::s_def_knob_slices),
   m_color_space(s_def_color_space),
@@ -195,10 +195,18 @@ void Ego::clear_parts()
         Shape* brick_shape = dynamic_cast<Shape*>(node2);
         if (brick_shape) delete brick_shape;
         transform->remove_child(node2);
+        delete transform;
       }
     }
 
-    delete node1;
+    Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node1);
+    if (touch_sensor) {
+      if (m_owned_touch_sensor) {
+        delete touch_sensor;
+        m_owned_touch_sensor = false;
+      }
+    }
+    
     remove_child(node1);
   }
 
@@ -717,20 +725,29 @@ void Ego::clean_parts()
   Uint num_childs = get_child_count();
   std::cout << "# of children: " << num_childs << std::endl;
 
-  // Add a touch sensor:
-  m_touch_sensor = new Touch_sensor;
-  m_touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
-                              (m_layer_y_visibility != LV_ALL) ||
-                              (m_layer_z_visibility != LV_ALL));
-  m_touch_sensor->set_num_selection_ids(num_childs);
-  m_touch_sensor->add_to_scene(m_scene_graph);
-  Field* src_field =
-    m_touch_sensor->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
+  // Add a touch sensor if such a node does not exist:
+  Touch_sensor* touch_sensor = NULL;
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    touch_sensor = dynamic_cast<Touch_sensor*>(node);
+    if (touch_sensor) break;
+  }
+  if (!touch_sensor) {
+    touch_sensor = new Touch_sensor;
+    touch_sensor->add_to_scene(m_scene_graph);
+    m_owned_touch_sensor = true;
+    add_child(touch_sensor);
+  }
+  touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
+                            (m_layer_y_visibility != LV_ALL) ||
+                            (m_layer_z_visibility != LV_ALL));
+  touch_sensor->set_num_selection_ids(num_childs);
+  Field* src_field = touch_sensor->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
   SGAL_assertion(src_field);
   Field* dst_field = add_field(SELECTION_ID);
   SGAL_assertion(dst_field);
   src_field->connect(dst_field);
-  add_child(m_touch_sensor);
 
   m_dirty_parts = false;
   m_dirty_visibility = true;
@@ -1181,10 +1198,19 @@ void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
 /*! \brief Process change of visibility scheme. */
 void Ego::visibility_changed(Field_info*)
 {
-  m_touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
-                              (m_layer_y_visibility != LV_ALL) ||
-                              (m_layer_z_visibility != LV_ALL));
-  m_dirty_visibility = true;
+  Touch_sensor* touch_sensor = NULL;
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    touch_sensor = dynamic_cast<Touch_sensor*>(node);
+    if (touch_sensor) {
+      touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
+                                (m_layer_y_visibility != LV_ALL) ||
+                                (m_layer_z_visibility != LV_ALL));
+      m_dirty_visibility = true;
+      break;
+    }
+  }
 }
 
 /*! \brief Process change of visibility scheme. */

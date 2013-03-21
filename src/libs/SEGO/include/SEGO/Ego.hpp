@@ -384,9 +384,6 @@ protected:
   /*! The style */
   Style m_style;
 
-  /*! The touch sensor used to select a brick. */
-  Touch_sensor* m_touch_sensor;
-  
   /*! The apperance attribute. */
   Appearance* m_appearance;
 
@@ -418,7 +415,12 @@ protected:
    * Ego is destructed.
    */
   Boolean m_owned_parts;
-  
+
+  /*! Indicates whether the touch sensor is "owned". If it is owned (as
+   * the user hasn't provided any) the touch sensor should be destructed when
+   * Ego is destructed.
+   */
+  Boolean m_owned_touch_sensor;
   typedef boost::unordered_map<Uint, Appearance*>       Appearance_map;
   typedef Appearance_map::iterator                      Appearance_iter;
   Appearance_map m_appearances;
