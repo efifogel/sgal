@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -243,7 +243,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

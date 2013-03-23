@@ -40,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 Container_proto* Group::s_prototype = 0;
-std::string Group::s_tag = "sgalGroup";
+const std::string Group::s_tag = "Group";
 
 REGISTER_TO_FACTORY(Group, "Group");
 
@@ -50,9 +50,8 @@ Group::Group(Boolean proto) :
   m_is_visible(true),
   m_selection_id(0), 
   m_has_touch_sensor(false), 
-  m_has_light(false)
-{
-}
+  m_num_lights(0)
+{}
 
 /*! Copy constructor */
 Group::Group(const Group& group) :
@@ -60,7 +59,7 @@ Group::Group(const Group& group) :
   m_is_visible(group.m_is_visible),
   m_selection_id(group.m_selection_id), 
   m_has_touch_sensor(m_has_touch_sensor), 
-  m_has_light(group.m_has_light)
+  m_num_lights(group.m_num_lights)
 {
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
     Node* node = *it;
@@ -86,24 +85,21 @@ Node* Group::get_child(unsigned int index)
 /*! \brief adds a child to the sequence of children of the group. */
 void Group::add_child(Node* node)
 {
-  // if the child is a light, we need to add it at the beginning of the list
-  // FIX - when engines are also implemented, we need to make sure they
-  // apppera after the lights and before the other nodes.
+  // Lights are inserted at the begining of the sequence, the engines, and
+  // then all the rest.
   Light* light = dynamic_cast<Light*>(node);
   if (light) {
-    m_childs.push_front(node);
-    set_has_light();
+    add_light(light);
     return;
   }
   Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node);
   if (touch_sensor) {
-    //! \todo it is more natural to keep the id only at the touch sensor itself
-    Uint id = touch_sensor->get_first_selection_id();
-    set_has_touch_sensor(id);
+    add_touch_sensor(touch_sensor);
+    return;
   }
+
   m_childs.push_back(node);
   m_dirty_sphere_bound = true;
-
   Observer observer(this, get_field_info(SPHERE_BOUND));
   node->register_observer(observer);
 }
@@ -111,9 +107,19 @@ void Group::add_child(Node* node)
 /*! \brief removes a given child from the sequence of children of the group. */
 void Group::remove_child(Node* node)
 {
-  m_childs.remove(node);
-  m_dirty_sphere_bound = true;
+  Light* light = dynamic_cast<Light*>(node);
+  if (light) {
+    remove_light(light);
+    return;
+  }
 
+  Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node);
+  if (touch_sensor) {
+    remove_touch_sensor(touch_sensor);
+    return;
+  }
+  
+  m_dirty_sphere_bound = true;
   Observer observer(this, get_field_info(SPHERE_BOUND));
   node->register_observer(observer);
 }
@@ -123,10 +129,10 @@ Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
   if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
     return Action::TRAV_CONT;
-  if (m_has_light) draw_action->get_context()->push_lights();
+  if (has_lights()) draw_action->get_context()->push_lights();
   for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni)
     draw_action->apply(*ni);
-  if (m_has_light) draw_action->get_context()->pop_lights();
+  if (has_lights()) draw_action->get_context()->pop_lights();
   return Action::TRAV_CONT;
 }
 
@@ -189,23 +195,6 @@ Boolean Group::clean_sphere_bound()
 
   return false;
 }
-
-/* \brief */
-Boolean Group::does_have_touch_sensor() { return m_has_touch_sensor; }
-
-/*! \brief sets a flag indicating that the group has a touch sensor
- * and sets the selection id. The selection id is used as a 
- * color to draw the object in selection mode.
- * @param id the selection id.
- */
-void Group::set_has_touch_sensor(unsigned int id)
-{
-  m_has_touch_sensor = true;
-  m_selection_id = id;
-}
-
-/*! \brief sets a flag indicating whether the group has a light source. */
-void Group::set_has_light() { m_has_light = true; }
 
 /*! \brief sets the attributes of the group. */
 void Group::set_attributes(Element* elem) 
@@ -379,6 +368,39 @@ void Group::set_visible(Boolean flag)
     m_is_visible = flag;
     m_dirty_sphere_bound = true;
   }
+}
+
+/*! \brief adds a light source to the group. */
+void Group::add_light(Light* light)
+{
+  m_childs.push_front(light);
+  ++m_num_lights;
+}
+
+/*! \brief removes a light source from the group. */
+void Group::remove_light(Light* light)
+{
+  m_childs.remove(light);
+  --m_num_lights;
+}
+
+/*! \brief adds a touch sensor to the group. */
+void Group::add_touch_sensor(Touch_sensor* touch_sensor)
+{
+  m_selection_id = touch_sensor->get_first_selection_id();
+  if (m_has_touch_sensor) {
+    std::cerr << "The Group already has a touch sensor!" << std::endl;
+    return;
+  }
+  m_has_touch_sensor = true;
+  m_childs.push_back(touch_sensor);
+}
+
+/*! \brief removes a touch sensor from the group. */
+void Group::remove_touch_sensor(Touch_sensor* touch_sensor)
+{
+  m_has_touch_sensor = false;
+  m_childs.remove(touch_sensor);
 }
 
 SGAL_END_NAMESPACE

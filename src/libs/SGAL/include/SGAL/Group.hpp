@@ -57,6 +57,8 @@ class Isect_action;
 class Container_proto;
 class Element;
 class Formatter;
+class Touch_sensor;
+class Light;
 
 class SGAL_CLASSDEF Group : public Node {
 public:
@@ -116,16 +118,13 @@ public:
   Boolean is_visible() const;
 
   /* Add a child to the sequence of children of the group.
-   * In the process of adding child objects to a group, we sort the child objects
-   * in such way that the lights always appear at the begining of the list and
-   * all other children appear afterwards.
+   * Lights appear in front of the sequence followed by all the rest.
    * \param node (in) the child object
    */
   void add_child(Node* node);
 
   /* Remove a given child from the sequence of children of the group.
    * \param node (in) the child object
-   * \todo need to update has_lights and has_touch_sensor
    */
   void remove_child(Node* node);
 
@@ -145,15 +144,29 @@ public:
    */
   virtual Boolean clean_sphere_bound();
 
-  bool does_have_touch_sensor();
+  /*! Add a touch sensor to the group. Also, set the selection id.
+   * The selection id is used as a color to draw the object in selection mode.
+   */
+  void add_touch_sensor(Touch_sensor* touch_sensor);
 
-  void set_has_touch_sensor(unsigned int id);
+  /*! Remove a touch sensor from the group. */
+  void remove_touch_sensor(Touch_sensor* touch_sensor);
+
+  /*! Determine whether the group has a touch sensor. */
+  Boolean has_touch_sensor() const;
 
   /*! Obtain the selection id of the attached touch sensor if exists */
   unsigned int get_selection_id() const;
 
-  void set_has_light();
+  /*! Add a light source to the group. */
+  void add_light(Light* light);
 
+  /*! Remove a light source from the group. */
+  void remove_light(Light* light);
+
+  /*! Determine whether the group has light sources. */
+  Boolean has_lights() const;
+  
   /*! Set the attributes of the group  extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
    * \param sg a pointer to the scene graph
@@ -201,15 +214,15 @@ protected:
   /*! Indicates whether the group has a touch sensor. */
   Boolean m_has_touch_sensor;
 
-  /*! Indicates whether the group has a light source. */
-  Boolean m_has_light;
+  /*! The number of light sources in the group. */
+  Uint m_num_lights;
     
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that represents the container. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
@@ -232,6 +245,12 @@ inline Uint Group::get_selection_id() const { return m_selection_id; }
 
 /*! \brief determines whether the group is visible */
 inline Boolean Group::is_visible() const { return m_is_visible; }
+
+/*! \brief determines whether the group has light sources. */
+inline Boolean Group::has_lights() const { return (m_num_lights != 0); } 
+
+/*! \brief determines whether the group has a touch sensor. */
+inline Boolean Group::has_touch_sensor() const { return m_has_touch_sensor; } 
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Group::get_tag() const { return s_tag; }

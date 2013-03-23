@@ -737,12 +737,12 @@ void Ego::clean_parts()
     touch_sensor = new Touch_sensor;
     touch_sensor->add_to_scene(m_scene_graph);
     m_owned_touch_sensor = true;
+    touch_sensor->set_num_selection_ids(num_childs);
     add_child(touch_sensor);
   }
   touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
                             (m_layer_y_visibility != LV_ALL) ||
                             (m_layer_z_visibility != LV_ALL));
-  touch_sensor->set_num_selection_ids(num_childs);
   Field* src_field = touch_sensor->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
   SGAL_assertion(src_field);
   Field* dst_field = add_field(SELECTION_ID);

@@ -54,7 +54,7 @@ SGAL_BEGIN_NAMESPACE
 
 Boolean Touch_sensor::s_def_enabled(true);
 
-std::string Touch_sensor::s_tag = "TouchSensor";
+const std::string Touch_sensor::s_tag = "TouchSensor";
 Container_proto* Touch_sensor::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Touch_sensor, "Touch_sensor");
@@ -300,11 +300,6 @@ void Touch_sensor::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "numberOfSelectionIds") {
-      m_num_selection_ids = strtoul(value.c_str(), NULL, 10);
-      elem->mark_delete(ai);
-    }
-    
   }
   // Remove all the deleted attributes:
   elem->delete_marked();
@@ -343,17 +338,6 @@ Attribute_list Touch_sensor::get_attributes()
 
   return attribs; 
 };
-
-/*! \brief adds a touch sensor object to the scene. */
-void Touch_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent) 
-{ 
-  Node::add_to_scene(sg, parent);
-  char id = sg->AddTouchSensor(this);
-  Group* group = dynamic_cast<Group *>(parent);
-  ASSERT(group);
-  if (group) group->set_has_touch_sensor(id);
-  m_scene_graph = sg;
-}
 #endif
 
 /*! \brief registers the mouse and mostion events. */
