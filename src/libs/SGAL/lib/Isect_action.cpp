@@ -34,7 +34,7 @@ Isect_action::Isect_action() : m_current_id(0) {}
 /*! Destructor */
 Isect_action::~Isect_action() {}
 
-/*! \brief applies the draw action on a given node. 
+/*! \brief applies the draw action for selection on a given node. 
  * \param node (in) a pointer to the node to draw in selection mode.
  */
 Action::Trav_directive Isect_action::apply(Node* node)
