@@ -64,13 +64,13 @@ Dependencies: Boost, CGAL, Gmp, Mpfr, Imagemagic, Qt4, and some X libraries that
 * libxxf86vm-dev
 
 
-## List of selected packages in cygwin
+## List of selected packages in cygwin (PLATFORM=windows)
 * ImageMagick
 * ImageMagick devel
 * pkg-config
 * g++
 * flex
 * bison
-
+Don't forget to set the BOOST_INC_DIR to the path of the boost include.
 
 

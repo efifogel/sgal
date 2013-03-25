@@ -44,10 +44,10 @@ endif
 # Define GMP directories:
 ifdef GMP_DIR
 ifndef GMP_INC_DIR
-GMP_INC_DIR=$(GMP_DIR)/include
+GMP_INC_DIR="$(GMP_DIR)/include"
 endif
 ifndef GMP_LIB_DIR
-GMP_LIB_DIR=$(GMP_DIR)/lib
+GMP_LIB_DIR="$(GMP_DIR)/lib"
 endif
 endif
 
@@ -57,7 +57,7 @@ GCPPINCS+= -I$(STD_ROOT)/include
 
 # If GMP_INC_DIR is defined, add it to the list of include directories
 ifdef GMP_INC_DIR
-GCPPINCS+= -I$(GMP_INC_DIR)
+GCPPINCS+= -I"$(GMP_INC_DIR)"
 endif
 
 UNICODE_DEFS = -D_MBCS
@@ -296,10 +296,10 @@ LIBDIRPREFIX = -libpath:
 
 GLIBPATHOPTS = -libpath:$(STD_ROOT)/lib
 ifdef BOOST_LIB_DIR
-GLIBPATHOPTS+= -libpath:$(BOOST_LIB_DIR)
+GLIBPATHOPTS+= -libpath:"$(BOOST_LIB_DIR)"
 endif
 ifdef GMP_LIB_DIR
-GLIBPATHOPTS+= -libpath:$(GMP_LIB_DIR)
+GLIBPATHOPTS+= -libpath:"$(GMP_LIB_DIR)"
 endif
 
 LDDLLLIBS =
