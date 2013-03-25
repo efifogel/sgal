@@ -590,8 +590,8 @@ Transform {
 	    }
 	  }
 	  # style "appearance"
-	  # style "discreteCubeMap"
-	  colorSpace "HSL"
+	  style "discreteCubeMap"
+	  colorSpace "RGB"
 	  scale 200 200 200
 	  model USE MODEL
 	  knobSlices 16
@@ -599,8 +599,8 @@ Transform {
 	  # layerYVisibility "notAbove"
 	  # layerZVisibility "notAbove"
 	  brickTypes [
-	    2, 4, 1, 
-	    4, 2, 1,
+	    # 2, 4, 1, 
+	    # 4, 2, 1,
 	    2, 2, 1,
 	    2, 1, 1,
 	    1, 2, 1,
