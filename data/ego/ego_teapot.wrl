@@ -5804,6 +5804,9 @@ Transform {
       scale 100 100 100
       rotation 1 0 0 1.5707
       model USE MODEL
+      # layerXVisibility "notAbove"
+      # layerYVisibility "notAbove"
+      # layerZVisibility "notAbove"
       # parts {
       #   children [
       #     USE PART0
