@@ -23,6 +23,7 @@ You need to compile:
 Set the following env. variables:
 
    PLATFORM=linux # Options are linux, windows, cygwin, console
+   COMPILER_VER=1600 # automatic in linux; 1600 for VC 10.0
 
    # I set ROOT to ..../linux_ego (and not just .../ego) just in case the windows root and the linux root end up in the same disk:
    ROOT=/home/[user]/roots/linux_ego
@@ -72,5 +73,5 @@ Dependencies: Boost, CGAL, Gmp, Mpfr, Imagemagic, Qt4, and some X libraries that
 * flex
 * bison
 Don't forget to set the BOOST_INC_DIR to the path of the boost include.
-
+Don't forget to set the MAGICK_DIR
 
