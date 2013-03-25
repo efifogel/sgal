@@ -225,11 +225,11 @@ LCPPINCS+= -I$(SGAL_INC_DIR)/primitives
 
 # Add BOOST and Magick include directory:
 ifdef BOOST_INC_DIR
-LCPPINCS+= -I$(BOOST_INC_DIR)
+LCPPINCS+= -I"$(BOOST_INC_DIR)"
 endif
 
 ifdef MAGICK_INC_DIR
-LCPPINCS+= -I$(MAGICK_INC_DIR)
+LCPPINCS+= -I"$(MAGICK_INC_DIR)"
 endif
 
 LCPPDEFS+= -DSGAL_LIB
