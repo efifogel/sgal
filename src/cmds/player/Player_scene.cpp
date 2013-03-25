@@ -35,27 +35,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
 
-#if defined(USE_CGAL)
-#include "CGAL/basic.h"
-
-#include "SCGAL/Exact_polyhedron_geo.hpp"
-#if defined(USE_CGM)
-#include "SCGAL/Cubical_gaussian_map_geo.hpp"
-#endif
-#if defined(USE_SGM)
-#include "SCGAL/Spherical_gaussian_map_geo.hpp"
-#endif
-#if defined(USE_AOS)
-#include "SCGAL/Arrangement_on_sphere_geo.hpp"
-#endif
-#if defined(USE_EOS)
-#include "SCGAL/Envelope_on_sphere_geo.hpp"
-#endif
-#if defined(USE_NEF) && defined(USE_NGM)
-#include "SCGAL/Nef_gaussian_map_geo.hpp"
-#endif
-#endif
-
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
@@ -67,6 +46,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Event_handler.hpp"
 #include "SGAL/Tick_event.hpp"
+#include "SGAL/Keyboard_event.hpp"
 #include "SGAL/Reshape_event.hpp"
 #include "SGAL/Draw_event.hpp"
 #include "SGAL/Simulate_event.hpp"
@@ -106,6 +86,27 @@
 #else
 #include "SGAL/X11_window_item.hpp"
 #include "SGAL/X11_window_manager.hpp"
+#endif
+
+#if defined(USE_CGAL)
+#include "CGAL/basic.h"
+
+#include "SCGAL/Exact_polyhedron_geo.hpp"
+#if defined(USE_CGM)
+#include "SCGAL/Cubical_gaussian_map_geo.hpp"
+#endif
+#if defined(USE_SGM)
+#include "SCGAL/Spherical_gaussian_map_geo.hpp"
+#endif
+#if defined(USE_AOS)
+#include "SCGAL/Arrangement_on_sphere_geo.hpp"
+#endif
+#if defined(USE_EOS)
+#include "SCGAL/Envelope_on_sphere_geo.hpp"
+#endif
+#if defined(USE_NEF) && defined(USE_NGM)
+#include "SCGAL/Nef_gaussian_map_geo.hpp"
+#endif
 #endif
 
 #include "Player_scene.hpp"
@@ -162,6 +163,7 @@ void Player_scene::init()
   }
 
   SGAL::Tick_event::doregister(this);
+  SGAL::Keyboard_event::doregister(this);
   SGAL::Draw_event::doregister(this);
   SGAL::Reshape_event::doregister(this);
 }
@@ -171,6 +173,7 @@ Player_scene::~Player_scene(void)
 {
   SGAL::Reshape_event::unregister(this);
   SGAL::Draw_event::unregister(this);
+  SGAL::Keyboard_event::unregister(this);
   SGAL::Tick_event::unregister(this);
   m_fullname.clear();
 }
@@ -269,13 +272,8 @@ void Player_scene::init_scene()
   // Create the missing nodes.
   m_scene_graph->create_defaults();
     
-  // Construct the context.
-  m_context = new SGAL::Context();
-  SGAL_assertion(m_context);
-  m_scene_graph->set_context(m_context);
-
   // Prepare the window item.
-  m_window_item = m_window_manager->create_window_item();
+  m_window_item = new Window_item;
   m_window_item->set_title(filename);
   m_window_item->set_number_of_stencil_bits(1);
 
@@ -292,7 +290,8 @@ void Player_scene::init_scene()
                                                    blue_bits, alpha_bits);
   }
   if (ms) m_window_item->set_number_of_samples(ms->get_number_of_samples());
-
+  m_window_item->set_number_of_stencil_bits(conf->get_number_of_stencil_bits());
+  m_window_item->set_number_of_depth_bits(conf->get_number_of_depth_bits());
   m_window_manager->create_window(m_window_item);
   if (ms) ms->set_number_of_samples(m_window_item->get_number_of_samples());
   if (acc) {
@@ -300,10 +299,14 @@ void Player_scene::init_scene()
     m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
                                                    blue_bits, alpha_bits);
     acc->set_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);
-  }  
+  }
 
   indulge_user();
 
+  // Construct the context.
+  m_context = new SGAL::Context();
+  SGAL_assertion(m_context);
+  m_scene_graph->set_context(m_context);
   m_scene_graph->init_context();
   m_scene_graph->start_simulation();
   m_scene_graph->bind();
@@ -504,14 +507,21 @@ void Player_scene::clear_scene()
 {
   m_scene_graph->release_context();
   m_scene_graph->destroy_defaults();
-  m_window_item->hide();
-  m_window_manager->destroy_window(m_window_item);
-  m_window_manager->destroy_window_item(m_window_item);
+  delete m_window_item;
+  m_window_item = NULL;
 }
 
 /*! \brief identifies the agent. */
 void Player_scene::identify(void)
 { std::cout << "Agent: Player_scene" << std::endl; }
+
+/*! \brief handless a keyboard event. */
+void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
+{
+  if (keyboard_event->get_pressed()) return;
+  SGAL::Uint key = keyboard_event->get_key();
+  if (key == 0x1b) m_window_manager->destroy_window(m_window_item); // escape
+}
 
 /*! \brief handless a tick event. */
 void Player_scene::handle(SGAL::Tick_event* tick_event)

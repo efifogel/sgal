@@ -37,12 +37,8 @@
 #include <fstream>
 #include <string>
 
-#if defined(USE_CGM)
-#include "SCGAL/Cubical_gaussian_map_geo.hpp"
-#endif
-
-#include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
-
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Tick_event.hpp"
@@ -64,6 +60,11 @@
 #else
 #include "SGAL/X11_window_item.hpp"
 #include "SGAL/X11_window_manager.hpp"
+#endif
+
+#include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
+#if defined(USE_CGM)
+#include "SCGAL/Cubical_gaussian_map_geo.hpp"
 #endif
 
 #include "Player2_scene.hpp"

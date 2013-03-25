@@ -54,6 +54,7 @@ class Scene_graph;
 class Tick_event;
 class Draw_event;
 class Reshape_event;
+class Keyboard_event;
 class Context;
 class Configuration;
 class Indexed_face_set;
@@ -152,6 +153,9 @@ public:
   /*! Handle a tick event. */
   virtual void handle(SGAL::Tick_event* event);
 
+  /*! Handle a keyboard event. */
+  virtual void handle(SGAL::Keyboard_event* event);
+  
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify(void);
 

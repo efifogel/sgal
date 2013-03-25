@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -24,9 +24,10 @@
  */
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Sphere_bound.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
 /*! Parameterless constructor */
 Sphere_bound::Sphere_bound() : m_radius(0.0f) {}
@@ -41,7 +42,7 @@ Sphere_bound::Sphere_bound(const Sphere_bound& s)
 /*! Destructor */
 Sphere_bound::~Sphere_bound() {}
 
-/*! Checks whether the sphere contains another sphere.
+/*! \brief checks whether the sphere contains another sphere.
  * @return true iff it contains the sphere.
  */
 bool Sphere_bound::does_contain(const Sphere_bound* sphere) const
@@ -51,15 +52,13 @@ bool Sphere_bound::does_contain(const Sphere_bound* sphere) const
   return (distance < m_radius);
 }
 
-/*! Checks whether the sphere contains a point.
+/*! \brief checks whether the sphere contains a point.
  * @return true iff it contains the point.
  */
 bool Sphere_bound::does_contain(const Vector3f& point) const
-{
-  return (m_center.sqr_distance(point) < (m_radius* m_radius));
-}
+{ return (m_center.sqr_distance(point) < (m_radius* m_radius)); }
 
-/*! Set the bounding sphere to contains all specified spheres.
+/*! \brief sets the bounding sphere to contains all specified spheres.
  * If only one sphere is given, it becomes the bounding sphere.
  * Otherwise we do the following:
  *  
@@ -97,17 +96,14 @@ void Sphere_bound::set_around(const Sphere_bound_vector_const& spheres)
   Sphere_bound current(*spheres[0]);
 
   Vector3f c1, c2;
-  float r1=0, r2=0;
-  float d=0;      // the distance between the two centers
-  float R = 0;    // the radius of the new sphere
-  Vector3f v;    // the vector pointing from one center point to another
-  Vector3f center;  // the center of the new sphere
+  float r1 = 0, r2 = 0;
+  float d = 0;          // the distance between the two centers
+  float R = 0;          // the radius of the new sphere
+  Vector3f v;           // the vector pointing from one center point to another
+  Vector3f center;      // the center of the new sphere
   int num = spheres.size();
-  for (int i = 1 ; i < num ; i++)
-  {
-    if (current.does_contain(spheres[i])) {
-      continue;
-    }
+  for (int i = 1 ; i < num ; ++i) {
+    if (current.does_contain(spheres[i])) continue;
     if (spheres[i]->does_contain(&current)) {
       current = *spheres[i];
       continue;
@@ -133,3 +129,5 @@ void Sphere_bound::set_around(const Sphere_bound_vector_const& spheres)
   m_radius = current.get_radius();
   m_center = current.get_center();
 }
+
+SGAL_END_NAMESPACE

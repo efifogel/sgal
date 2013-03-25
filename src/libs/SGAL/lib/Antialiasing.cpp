@@ -118,7 +118,7 @@ void Antialiasing::pre_render(Draw_action * draw_action)
     Camera *camera = context->get_active_camera();
     if (!camera)
       return;
-    Frustum frust = camera->get_base_frust();
+    Frustum frust = camera->get_frustum();
     float nearClip = 0;
     float farClip = 0;
     float left = 0;

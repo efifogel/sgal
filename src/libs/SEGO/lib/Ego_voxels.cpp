@@ -31,12 +31,33 @@ Ego_voxels::initialize_container(long length,
       m_voxels[i][j].resize(height);
     }
   }
+
+  for (long i = 0; i < length; ++i) {
+    for (long j = 0; i < width; ++i) {
+      for (long k = 0; i < height; ++i) {
+        m_voxels[i][j][k].filled = false;
+      }
+    }
+  }
 }
 
 Ego_voxels::size_type Ego_voxels::size() const {
   return size_type(m_voxels.size(),
                    m_voxels[0].size(),
                    m_voxels[0][0].size());
+}
+
+bool Ego_voxels::is_in_limits(size_t x, size_t y, size_t z) const {
+  if (x >= m_voxels.size())
+    return false;
+  
+  if (y >= m_voxels[x].size())
+    return false;
+
+  if (z >= m_voxels[x][y].size()) 
+    return false;
+  
+  return true;
 }
 
 void Ego_voxels::fill(size_t x, size_t y, size_t z) {
@@ -50,11 +71,13 @@ void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   SGAL_assertion(y < m_voxels[0].size());
   SGAL_assertion(z < m_voxels[0][0].size());
   
-  m_voxels[x][y][z].brick_location = boost::make_tuple(x, y, z);
+  m_voxels[x][y][z].filled = true;
 }
 
 bool Ego_voxels::is_filled(std::size_t x, std::size_t y, std::size_t z) const {
-  return m_voxels[x][y][z].brick_location;
+  SGAL_assertion(is_in_limits(x, y, z) == true);
+  
+  return m_voxels[x][y][z].filled;
 }
 
 bool Ego_voxels::is_filled(const size_type& coord) const {
@@ -69,6 +92,8 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
   for (size_t i = 0; i < size.get<0>(); ++i) {
     for (size_t j = 0; j < size.get<1>(); ++j) {
       for (size_t k = 0; k < size.get<2>(); ++k) {
+        SGAL_assertion(is_in_limits(x+i, y+j, z+k) == true);
+        SGAL_assertion(is_filled(x+i, y+j, z+k) == true);
         m_voxels[x+i][y+j][z+k].brick_location = coord;
       }
     }
@@ -78,46 +103,19 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
   m_voxels[x][y][z].brick_size = size;
 }
 
+// A brick was placed in this place if there is a brick in the coords location.
+bool Ego_voxels::is_placed(std::size_t x, std::size_t y, std::size_t z) {
+  SGAL_assertion(is_filled(x, y, z) == true);
+
+  return m_voxels[x][y][z].brick_location;
+}
+
+
 boost::optional<Ego_voxels::size_type>
 Ego_voxels::get_brick(std::size_t x, std::size_t y, std::size_t z) {
   return m_voxels[x][y][z].brick_size;
 }
 
-
-/** 
- * Extend each xy layer by offset_value.
- * 
- * @param offset_value Number of voxels to offset in.
- */
-void Ego_voxels::offset_xy_layers(size_t offset_value) {
-  typedef std::vector<Voxel>               Row;
-  typedef std::vector<Row>                 Layer;
-
-  // Maybe it is a good idea to move to boost multi array
-  // or what ever.
-
-  // first offset in x.
-  m_voxels.insert(m_voxels.begin(), Layer());  
-  m_voxels.front().resize(m_voxels[1].size());
-  for (size_t j = 0; j < m_voxels[0].size(); ++j) {
-    m_voxels.front()[j].resize(m_voxels[1][0].size());
-  }
-  
-  m_voxels.insert(m_voxels.end(), Layer());
-  m_voxels.back().resize(m_voxels[1].size());
-  for (size_t j = 0; j < m_voxels[0].size(); ++j) {
-    m_voxels.back()[j].resize(m_voxels[1][0].size());
-  }
-
-  // Now, offset in y.
-  for (size_t xitr = 0; xitr < m_voxels.size(); ++xitr) {
-    m_voxels[xitr].insert(m_voxels[xitr].begin(), Row());
-    m_voxels[xitr].front().resize(m_voxels[xitr][1].size());
-
-    m_voxels[xitr].insert(m_voxels[xitr].end(), Row());
-    m_voxels[xitr].back().resize(m_voxels[xitr][1].size());
-  }
-}
 
 void Ego_voxels::print() const {
 

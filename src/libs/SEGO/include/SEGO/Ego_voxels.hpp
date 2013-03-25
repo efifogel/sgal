@@ -39,19 +39,20 @@ public:
   void initialize_container(long length, long width, long height);
   size_type size() const;
 
+  bool is_in_limits(size_t, size_t, size_t) const;
+
   void fill(std::size_t x, std::size_t y, std::size_t z);
   bool is_filled(std::size_t x, std::size_t y, std::size_t z) const;
   bool is_filled(const size_type& coord) const;
 
   void place(const size_type& coord, const size_type& size);
+  bool is_placed(std::size_t x, std::size_t y, std::size_t z);
   boost::optional<size_type>
   get_brick(std::size_t x, std::size_t y, std::size_t z);
 
-  void offset_xy_layers(size_t offset_value);
-
   void print() const;
 
-private:  
+private:
 
   // Each voxel is covered by one brick, but one brick can cover many
   // voxels. A voxel contains the position of its brick (where the
@@ -61,6 +62,7 @@ private:
   
   class Voxel {
   public:
+    bool filled;
     boost::optional<size_type> brick_location;
     boost::optional<size_type> brick_size;
   };

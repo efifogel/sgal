@@ -172,7 +172,7 @@ protected:
     Colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
     
     /*! Render the face */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
 
   protected:
     /*! The arrangement geometry */
@@ -197,7 +197,7 @@ private:
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Indicates whther the sgm data structure is owned, i.e., allocated
    * explicitly). If it is owned, the sgm data structure should be destructed
@@ -206,10 +206,10 @@ private:
   Boolean m_owned_sgm;
 
   /*! The cubical Gaussian map representation */
-  Sgm * m_sgm;
+  Sgm* m_sgm;
 
   /*! An intermediate polyhedron */
-  Polyhedron * m_polyhedron;
+  Polyhedron* m_polyhedron;
 
   /*! The minkowski sum operands */
   Sgm_node_list m_sgm_nodes;
@@ -221,25 +221,25 @@ private:
   float m_time;
 
   /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_vertices_renderer;
+  Arrangement_renderer::Renderer* m_vertices_renderer;
 
   /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_colored_vertices_renderer;
+  Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
   /*! The edges renderer */
-  Arrangement_renderer::Renderer * m_edges_renderer;
+  Arrangement_renderer::Renderer* m_edges_renderer;
 
   /*! The colored edges renderer */
-  Arrangement_renderer::Renderer * m_colored_edges_renderer;
+  Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
   /*! The inflated line edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_line_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
   /*! The inflated strip edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_strip_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
   
   /*! The inflated tube edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_tube_edges_renderer;
+  Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
    
   /*! Default values */
 
@@ -271,7 +271,7 @@ public:
   virtual ~Spherical_gaussian_map_colored_geo();
 
   /*! Construct the prototype */
-  static Spherical_gaussian_map_colored_geo * prototype()
+  static Spherical_gaussian_map_colored_geo* prototype()
   { return new Spherical_gaussian_map_colored_geo(true); }
 
   /*! Clone */
@@ -310,12 +310,12 @@ public:
   /*! Draw the arrangement on sphere vertices
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action);
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement on sphere edges
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action);
+  virtual void draw_aos_edges(Draw_action* action);
   
   /*! Clean the renderer */
   virtual void clean_renderer();
@@ -324,13 +324,13 @@ public:
   virtual void print_stat();
 
   /*! Set the source gausian maps of the minkowski sum */
-  void insert_sgm(Spherical_gaussian_map_colored_geo * sgm);
+  void insert_sgm(Spherical_gaussian_map_colored_geo* sgm);
 
   /*! Obrain a reference to the cubical Gaussian map */
-  Sgm * get_sgm();
+  Sgm* get_sgm();
 
   /*! Set the Gaussian map */
-  void set_sgm(Sgm * sgm);
+  void set_sgm(Sgm* sgm);
   
   /*! Set the flag that indicates whether to compute the minkowski sum */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
@@ -342,10 +342,10 @@ public:
   { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 
   /*! Obtain an intermediate polyhedron */
-  Polyhedron * get_polyhedron() { return m_polyhedron; }
+  Polyhedron* get_polyhedron() { return m_polyhedron; }
 
   /*! Set an intermediate polyhedron */
-  void set_polyhedron(Polyhedron * polyhedron);
+  void set_polyhedron(Polyhedron* polyhedron);
 };
 
 SGAL_END_NAMESPACE

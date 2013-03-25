@@ -522,6 +522,7 @@ Gl_wrapper::Gl_wrapper()
   m_gl_token_names[GL_ACCUM_GREEN_BITS] = "GL_ACCUM_GREEN_BITS";
   m_gl_token_names[GL_ACCUM_BLUE_BITS] = "GL_ACCUM_BLUE_BITS";
   m_gl_token_names[GL_ACCUM_ALPHA_BITS] = "GL_ACCUM_ALPHA_BITS";
+  m_gl_token_names[GL_SAMPLES] = "GL_SAMPLES";
   m_gl_token_names[GL_NAME_STACK_DEPTH] = "GL_NAME_STACK_DEPTH";
   m_gl_token_names[GL_AUTO_NORMAL] = "GL_AUTO_NORMAL";
   m_gl_token_names[GL_MAP1_COLOR_4] = "GL_MAP1_COLOR_4";
@@ -1306,6 +1307,17 @@ const char * Gl_wrapper::find_name(GLenum num)
   Name_const_iter it = m_gl_token_names.find(num);
   if (it == m_gl_token_names.end()) return "";
   else return (*it).second;
+}
+
+/*! \brief checks whether openGl errors have occured. */ 
+void Gl_wrapper::check_error()
+{
+  GLenum err = glGetError();
+  while (err != GL_NO_ERROR) {
+    std::cerr << "OpenGL Error: " << gluErrorString(err) << std::endl;
+    break;
+    err = glGetError();
+  } 
 }
 
 SGAL_END_NAMESPACE

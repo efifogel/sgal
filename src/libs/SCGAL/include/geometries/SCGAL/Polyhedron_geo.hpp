@@ -107,7 +107,7 @@ public:
   struct Extract_sphere {
     /*! */
     Sphere_3 operator()(const Point & point) const
-    { return Sphere_3(point, 0); }
+    { return Sphere_3(point, 0.0f); }
   };
   
 private:
@@ -138,7 +138,8 @@ private:
 
     /*! builds the polyhedron */
     void operator()(HDS& hds) {
-      TRACE_MSG(SGAL::Trace::POLYHEDRON, "Build_surface::operator() start\n");
+      SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
+                     "Build_surface::operator() start\n");
       // Postcondition: `hds' is a valid polyhedral surface.
       CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
       typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
@@ -146,9 +147,9 @@ private:
       const Coord_array* coord_array = m_polyhedron->get_coord_array();
       size_type coord_array_size = coord_array->size();
       unsigned int num_facets = m_polyhedron->get_num_primitives();
-      TRACE_CODE(SGAL::Trace::POLYHEDRON,
-                 std::cout << "Vertices: " << coord_array_size
-                           << ", Faces: " << num_facets << std::endl;);
+      SGAL_TRACE_CODE(SGAL::Trace::POLYHEDRON,
+                      std::cout << "Vertices: " << coord_array_size
+                      << ", Faces: " << num_facets << std::endl;);
       B.begin_surface(coord_array_size, num_facets);
       typedef typename HDS::Vertex Vertex;
       typedef typename Vertex::Point Point;
@@ -170,7 +171,8 @@ private:
         B.end_facet();
       }
       B.end_surface();
-      TRACE_MSG(SGAL::Trace::POLYHEDRON, "Build_surface::operator() end\n");
+      SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
+                     "Build_surface::operator() end\n");
     }
 
     /*! sets a pointer to the geometry */

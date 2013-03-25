@@ -54,6 +54,7 @@
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Normal_array.hpp"
 
 #include "SCGAL/Arrangement_on_sphere_base_geo.hpp"
 
@@ -65,7 +66,8 @@ Container_proto* Arrangement_on_sphere_base_geo::s_prototype = NULL;
 Arrangement_on_sphere_base_geo::
 Arrangement_on_sphere_base_geo(Boolean proto) :
   Arrangement_on_surface_geo(proto),
-  m_coord_array(NULL)
+  m_coord_array(NULL),
+  m_normal_array(NULL)
 {
   if (!proto) create_renderers();
 }
@@ -108,12 +110,10 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
   typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "pointLocationIndex") {
       tokenizer tokens(value, sep);      
       Uint size = std::distance(tokens.begin(), tokens.end());
@@ -156,7 +156,7 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     if (name == "curveIndex") {
       tokenizer tokens(value, sep);      
       Uint size = std::distance(tokens.begin(), tokens.end());
-      if (size == 0 || size & 0x1) {
+      if ((size == 0) || (size & 0x1)) {
         m_curve_indices.clear();
         std::cerr << "Error!" << std::endl;
         //! todo issue an error        
@@ -191,6 +191,17 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
       }
       continue;
     }
+
+    if (name == "normalIndex") {
+      tokenizer tokens(value, sep);      
+      Uint size = std::distance(tokens.begin(), tokens.end());
+      m_normal_indices.resize(size);
+      Uint i = 0;
+      for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+        m_normal_indices[i++] = static_cast<Uint>(boost::lexical_cast<int>(*it));
+      }
+      continue;
+    }
   }
 
   typedef Element::Cont_attr_iter       Cont_attr_iter;
@@ -205,6 +216,12 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
       elem->mark_delete(cai);
       continue;
     }
+    if (name == "normal") {
+      Normal_array* normal_array = dynamic_cast<Normal_array*>(cont);
+      set_normal_array(normal_array);
+      elem->mark_delete(cai);
+      continue;
+    }
   }
     
   // Remove all the deleted attributes:
@@ -212,7 +229,7 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
 }
 
 /*! \brief */
-void Arrangement_on_sphere_base_geo::cull(Cull_context & cull_context)
+void Arrangement_on_sphere_base_geo::cull(Cull_context& cull_context)
 {
 }
 
@@ -241,6 +258,10 @@ void Arrangement_on_sphere_base_geo::set_coord_array(Coord_array* coord_array)
   m_dirty_sphere_bound = true;
 }
 
+/*! \brief sets the coordinate array */
+void Arrangement_on_sphere_base_geo::set_normal_array(Normal_array* normal_array)
+{ m_normal_array = normal_array; }
+
 /*! \brief creates the renderers */
 void Arrangement_on_sphere_base_geo::create_renderers()
 {
@@ -264,7 +285,7 @@ void Arrangement_on_sphere_base_geo::draw_aos_vertex(Draw_action* action,
 
 /*! \brief draws an arrangement on surface isolated vertex */
 void Arrangement_on_sphere_base_geo::
-draw_aos_isolated_vertex(Draw_action* action, Vector3f & center)
+draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
 {
   draw_vertex_on_sphere(action, center, m_aos_isolated_vertex_style,
                         m_aos_isolated_vertex_radius, m_aos_delta_angle);
@@ -272,7 +293,7 @@ draw_aos_isolated_vertex(Draw_action* action, Vector3f & center)
 
 /*! \brief Draw an arrangement on surface boundary_vertex */
 void Arrangement_on_sphere_base_geo::
-draw_aos_boundary_vertex(Draw_action* action, Vector3f & center)
+draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
 {
   draw_vertex_on_sphere(action, center, m_aos_boundary_vertex_style,
                         m_aos_boundary_vertex_radius, m_aos_delta_angle);
@@ -281,9 +302,11 @@ draw_aos_boundary_vertex(Draw_action* action, Vector3f & center)
 /*! \brief draws an arrangement on surface edge */
 void Arrangement_on_sphere_base_geo::draw_aos_edge(Draw_action* action,
                                                    Vector3f& src,
-                                                   Vector3f& trg)
+                                                   Vector3f& trg,
+                                                   Vector3f& normal)
 {
-  draw_edge_on_sphere(action, src, trg, m_aos_edge_style, m_aos_edge_count,
+  draw_edge_on_sphere(action, src, trg, normal,
+                      m_aos_edge_style, m_aos_edge_count,
                       m_aos_edge_directed, m_aos_edge_radius,
                       m_aos_delta_angle,
                       m_aos_vertex_radius, m_aos_vertex_radius);

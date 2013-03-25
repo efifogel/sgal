@@ -99,7 +99,8 @@ void Exact_polyhedron_geo::convex_hull()
 /*! Clean the data structure */
 void Exact_polyhedron_geo::clean()
 {
-  TRACE_MSG(SGAL::Trace::POLYHEDRON, "Exact_polyhedron_geo::clean() start\n");
+  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
+                 "Exact_polyhedron_geo::clean() start\n");
   clock_t start_time = clock();
   if (m_convex_hull) convex_hull();
   else {
@@ -145,7 +146,8 @@ void Exact_polyhedron_geo::clean()
 /*! Clear the internal representation */
 void Exact_polyhedron_geo::clear()
 {
-  TRACE_MSG(SGAL::Trace::POLYHEDRON, "Exact_polyhedron_geo::clear() start\n");
+  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
+                 "Exact_polyhedron_geo::clear() start\n");
   m_polyhedron.clear();
   Mesh_set::clear();
 }
@@ -157,7 +159,7 @@ void Exact_polyhedron_geo::cull(SGAL::Cull_context& cull_context) {}
 /*! Draw the internal representation */
 void Exact_polyhedron_geo::draw_geometry(SGAL::Draw_action * /* action */)
 {
-  TRACE_MSG(SGAL::Trace::POLYHEDRON, "Exact_polyhedron_geo::draw ... ");
+  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "Exact_polyhedron_geo::draw ... ");
   for (Facet_iterator i = m_polyhedron.facets_begin();
        i != m_polyhedron.facets_end(); ++i)
   {
@@ -173,7 +175,7 @@ void Exact_polyhedron_geo::draw_geometry(SGAL::Draw_action * /* action */)
     } while (++j != i->facet_begin());
     glEnd();
   }
-  TRACE_MSG(SGAL::Trace::POLYHEDRON, "completed\n");
+  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "completed\n");
 }
 
 /*!

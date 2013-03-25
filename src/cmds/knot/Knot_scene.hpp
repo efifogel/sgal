@@ -53,6 +53,7 @@ class Position_interpolator;
 class Time_sensor;
 class Route;
 class Tick_event;
+class Keyboard_event;
 
 #if (defined USE_GLUT)
 class Glut_window_manager;
@@ -173,6 +174,9 @@ public:
   /*! Handle tick events. */
   virtual void handle(SGAL::Tick_event* tick_event);
 
+  /*! Handle a keyboard event. */
+  virtual void handle(SGAL::Keyboard_event* event);
+   
   /*! Set the window manager */
   template <typename Window_manager>
   void set_window_manager(Window_manager* manager)

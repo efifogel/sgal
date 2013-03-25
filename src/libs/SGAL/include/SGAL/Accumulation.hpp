@@ -143,22 +143,26 @@ public:
 
   /*! Set the number of RGBA bits stored in the accumulation buffer.
    * \param red_bits the number of red bits stored in the accumulation buffer.
-   * \param green_bits the number of red bits stored in the accumulation buffer.
-   * \param blue_bits the number of red bits stored in the accumulation buffer.
-   * \param alpha_bits the number of red bits stored in the accumulation buffer.
+   * \param green_bits the number of green bits stored in the accumulation
+   *                   buffer.
+   * \param blue_bits the number of blue bits stored in the accumulation buffer.
+   * \param alpha_bits the number of alpha bits stored in the accumulation
+   *                   buffer.
    */
-  virtual void set_number_of_bits(Uint red_bits, Uint green_bits,
-                                  Uint blue_bits, Uint alpha_bits);
+  void set_number_of_bits(Uint red_bits, Uint green_bits,
+                          Uint blue_bits, Uint alpha_bits);
 
   /*! Obtain the number of RGBA bits stored in the accumulation buffer.
    * \param red_bits the number of red bits stored in the accumulation buffer.
-   * \param green_bits the number of red bits stored in the accumulation buffer.
-   * \param blue_bits the number of red bits stored in the accumulation buffer.
-   * \param alpha_bits the number of red bits stored in the accumulation buffer.
+   * \param green_bits the number of green bits stored in the accumulation
+   *                   buffer.
+   * \param blue_bits the number of blue bits stored in the accumulation buffer.
+   * \param alpha_bits the number of alpha bits stored in the accumulation
+   *                   buffer.
    */
-  virtual void get_number_of_bits(Uint& red_bits, Uint& green_bits,
-                                  Uint& blue_bits, Uint& alpha_bits) const;
-  
+  void get_number_of_bits(Uint& red_bits, Uint& green_bits,
+                          Uint& blue_bits, Uint& alpha_bits) const;
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -243,7 +247,8 @@ private:
 };
 
 /*! \brief constructs the prototype. */
-inline Accumulation* Accumulation::prototype() { return new Accumulation(true); }
+inline Accumulation* Accumulation::prototype()
+{ return new Accumulation(true); }
 
 /*! \brief clones. */
 inline Container* Accumulation::clone() { return new Accumulation(); }

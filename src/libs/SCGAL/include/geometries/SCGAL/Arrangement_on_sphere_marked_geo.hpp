@@ -81,6 +81,7 @@ public:
   typedef SGAL::Arrangement_on_sphere_marked        Arrangement_on_surface;
   typedef Arrangement_on_surface::Geometry_traits_2 Aos_geom_traits;
   typedef Arrangement_on_surface::Topology_traits   Aos_topol_traits;
+
 protected:
   typedef Arrangement_on_surface                   Aos_marked;
   
@@ -89,17 +90,17 @@ protected:
 
 public:
   /*! Constructor */
-  Arrangement_on_sphere_marked_geo(Boolean proto = SGAL_FALSE);
+  Arrangement_on_sphere_marked_geo(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Arrangement_on_sphere_marked_geo();
 
   /* Construct the prototype */
-  static Arrangement_on_sphere_marked_geo * prototype()
-  { return new Arrangement_on_sphere_marked_geo(SGAL_TRUE); }
+  static Arrangement_on_sphere_marked_geo* prototype()
+  { return new Arrangement_on_sphere_marked_geo(true); }
 
   /*! Clone */
-  virtual Container * clone()
+  virtual Container* clone()
   { return new Arrangement_on_sphere_marked_geo(); }
 
   /*! Initialize the container prototype */
@@ -109,10 +110,10 @@ public:
   virtual void delete_prototype(); 
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
@@ -120,7 +121,7 @@ public:
   virtual void clean();
 
   /*! */
-  virtual void cull(Cull_context & cull_context) {}
+  virtual void cull(Cull_context& cull_context) {}
 
   /*! Clear the internal representation and auxiliary data structures */
   virtual void clear();
@@ -129,24 +130,24 @@ public:
   virtual Boolean is_empty() const { return m_aos->is_empty(); }
 
   /*! Obrain the arrangement */
-  Aos_marked * get_aos();
+  Aos_marked* get_aos();
 
   /*! Set the arrangement */
-  void set_aos(Aos_marked * aos);
+  void set_aos(Aos_marked* aos);
   
   /*! Add a geometry container that represents an arrangement on a
    * sphere to the list of such geometry containers.
    */
-  void add_aos_geo(Arrangement_on_sphere_marked_geo * aos_geo)
+  void add_aos_geo(Arrangement_on_sphere_marked_geo* aos_geo)
   { m_aoses.push_back(aos_geo); }
 
   /*! Obtain the overlay traits (const version) */
-  const Arrangement_marked_overlay_traits<Aos_marked> & get_overlay_traits()
+  const Arrangement_marked_overlay_traits<Aos_marked>& get_overlay_traits()
     const
   { return m_overlay_traits; }
 
   /*! Obtain the overlay traits (non-const version) */
-  Arrangement_marked_overlay_traits<Aos_marked> & get_overlay_traits()
+  Arrangement_marked_overlay_traits<Aos_marked>& get_overlay_traits()
   { return m_overlay_traits; }
 
   // Marked vertex attributes:
@@ -176,16 +177,16 @@ public:
   { m_aos_marked_vertex_radius = radius; }
 
   /*! Obtain the marked vertex color */
-  const Vector3f & get_aos_marked_vertex_color() const
+  const Vector3f&get_aos_marked_vertex_color() const
   { return m_aos_marked_vertex_color; }
 
   // Marked edge attributes:
 
   /*! Enable marked edge rendering */
-  void enable_aos_marked_edge() { m_aos_marked_edge_enabled = SGAL_TRUE; }
+  void enable_aos_marked_edge() { m_aos_marked_edge_enabled = true; }
 
   /*! Disable marked edge rendering */
-  void disable_aos_marked_edge() { m_aos_marked_edge_enabled = SGAL_FALSE; }
+  void disable_aos_marked_edge() { m_aos_marked_edge_enabled = false; }
 
   /*! Determine whether marked edge rendering is enabled */
   Boolean is_aos_marked_edge_enabled() const
@@ -231,11 +232,11 @@ public:
   { m_aos_marked_edge_line_width = width; }
 
   /*! Obtain the marked edge color */
-  const Vector3f & get_aos_marked_edge_color() const
+  const Vector3f&get_aos_marked_edge_color() const
   { return m_aos_marked_edge_color; }
 
   /*! Obtain the marked face color */
-  const Vector3f & get_aos_marked_face_color() const
+  const Vector3f&get_aos_marked_face_color() const
   { return m_aos_marked_face_color; }
 
   // Aos marked face attributes:
@@ -252,16 +253,16 @@ protected:
   {
   public:
     /*! The arrangement geometry */
-    Arrangement_on_sphere_marked_geo & m_geo;
+    Arrangement_on_sphere_marked_geo&m_geo;
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
   
     /*! Constructor */
-    Sphere_marked_colored_vertices_renderer(Geometry & geo) : m_geo(geo) {}
+    Sphere_marked_colored_vertices_renderer(Geometry&geo) : m_geo(geo) {}
     
     /*! Render the edges */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
   
   /*! A function object that renders the isolated vertices with color */
@@ -270,17 +271,17 @@ protected:
   {
   public:
     /*! The arrangement geometry */
-    Arrangement_on_sphere_marked_geo & m_geo;
+    Arrangement_on_sphere_marked_geo&m_geo;
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
   
     /*! Constructor */
-    Sphere_marked_colored_isolated_vertices_renderer(Geometry & geo) :
+    Sphere_marked_colored_isolated_vertices_renderer(Geometry&geo) :
       m_geo(geo) {}
     
     /*! Render the edges */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
 
   /*! A function object that renders the edges with color */
@@ -289,16 +290,16 @@ protected:
   {
   public:
     /*! The arrangement geometry */
-    Arrangement_on_sphere_marked_geo & m_geo;
+    Arrangement_on_sphere_marked_geo&m_geo;
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
   
     /*! Constructor */
-    Sphere_marked_colored_edges_renderer(Geometry & geo) : m_geo(geo) {}
+    Sphere_marked_colored_edges_renderer(Geometry&geo) : m_geo(geo) {}
     
     /*! Render the edges */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
 
   /*! A function object that renders the marked primal vertex */
@@ -307,14 +308,14 @@ protected:
     typedef Arrangement_on_sphere_marked_geo    Geometry;
 
     /*! Constructor */
-    Marked_face_renderer(Geometry & geo) : m_geo(geo) {}
+    Marked_face_renderer(Geometry&geo) : m_geo(geo) {}
     
     /*! Render the face */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
 
   protected:
     /*! The arrangement geometry */
-    Geometry & m_geo;
+    Geometry&m_geo;
   };
     
   typedef SGAL::Line_colored_edges_renderer
@@ -348,7 +349,7 @@ protected:
     Sphere_marked_inflated_tube_edges_renderer;
   
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string&get_tag() const { return s_tag; }
 
   /*! Indicates whether the aos data structure is owned, i.e., explicitly
    * allocated. If the aos data structure is owned, it should be destructed
@@ -357,7 +358,7 @@ protected:
   Boolean m_owned_aos;
   
   /*! The arrangement of great-circle arcs on a sphere */
-  Aos_marked * m_aos;
+  Aos_marked* m_aos;
 
   typedef std::vector<unsigned int>                         Uint_vector;
 
@@ -426,7 +427,7 @@ protected:
   Float m_aos_marked_face_transparency;  
 
   /*! The marked primal vertex renderer */
-  Arrangement_renderer::Renderer * m_marked_face_renderer;
+  Arrangement_renderer::Renderer* m_marked_face_renderer;
   
 private:
   typedef Arrangement_on_sphere_marked_geo                      Self;
@@ -435,7 +436,7 @@ private:
   static std::string s_tag;
 
   /*! The container prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default values */
   static const Vertex_style s_def_aos_marked_vertex_style;
@@ -462,37 +463,39 @@ private:
    * \param action
    * \param center the point center
    */
-  void draw_aos_marked_vertex(Draw_action * action, Vector3f & center);
+  void draw_aos_marked_vertex(Draw_action* action, Vector3f&center);
 
   /*! Draw an arrangement on sphere marked edge
    * \param action
    * \param source the edge source point
    * \param target the edge target point
+   * \param normal the normal to the plane containing the edge
    */
-  void draw_aos_marked_edge(Draw_action * action,
-                            Vector3f & source, Vector3f & target);
+  void draw_aos_marked_edge(Draw_action* action,
+                            Vector3f& source, Vector3f& target,
+                            Vector3f& normal);
 
   /*! Draw an arrangement on sphere marked face
    * \param action
    */
-  void draw_aos_marked_face(Draw_action * action);
+  void draw_aos_marked_face(Draw_action* action);
 
   /*! Draw the arrangement vertices
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action)
+  virtual void draw_aos_vertices(Draw_action* action)
   { my_draw_aos_vertices(m_aos, action); }
 
   /*! Draw the arrangement isolated vertices
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action * action)
+  virtual void draw_aos_isolated_vertices(Draw_action* action)
   { my_draw_aos_isolated_vertices(m_aos, action); }
 
   /*! Draw the arrangement edges
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action)
+  virtual void draw_aos_edges(Draw_action* action)
   { my_draw_aos_edges(m_aos, action); }
 
   /*! Clean the renderer */

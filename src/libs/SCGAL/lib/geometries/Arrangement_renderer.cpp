@@ -25,22 +25,24 @@
 
 #include <cmath>
 
-#include "SCGAL/Arrangement_renderer.hpp"
-
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Rotation.hpp"
 
+#include "SCGAL/Arrangement_renderer.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 /*! Vertex shape styles */
-const char * Arrangement_renderer::Vertex_shape::s_styles[] = {
+const char* Arrangement_renderer::Vertex_shape::s_styles[] = {
   "none", "point", "disc", "ring", "ball"
 };
 
 /*! Edge shape styles */
-const char * Arrangement_renderer::Edge_shape::s_styles[] = {
+const char* Arrangement_renderer::Edge_shape::s_styles[] = {
   "line", "strip", "tube"
 };
 
@@ -81,7 +83,7 @@ void Arrangement_renderer::clear()
   m_depth_renderers.clear();
 }
 
-/*! \brief clears a given renderer list */
+/*! \brief clears a given renderer list. */
 void Arrangement_renderer::clear(Renderer_type type)
 {
   switch (type) {
@@ -94,8 +96,8 @@ void Arrangement_renderer::clear(Renderer_type type)
   }
 }
 
-/*! \brief inserts a renderer to the back a given renderer list */
-void Arrangement_renderer::push_back(Renderer * renderer, Renderer_type type)
+/*! \brief inserts a renderer to the back a given renderer list. */
+void Arrangement_renderer::push_back(Renderer* renderer, Renderer_type type)
 {
   switch (type) {
    case SURFACE: m_surface_renderers.push_back(renderer); break;
@@ -107,8 +109,8 @@ void Arrangement_renderer::push_back(Renderer * renderer, Renderer_type type)
   }
 }
 
-/*! \brief inserts a renderer to the front a given renderer list */
-void Arrangement_renderer::push_front(Renderer * renderer, Renderer_type type)
+/*! \brief inserts a renderer to the front a given renderer list. */
+void Arrangement_renderer::push_front(Renderer* renderer, Renderer_type type)
 {
   switch (type) {
    case SURFACE: m_surface_renderers.push_front(renderer); break;
@@ -120,10 +122,10 @@ void Arrangement_renderer::push_front(Renderer * renderer, Renderer_type type)
   }
 }
 
-/*! \brief renders all */
-void Arrangement_renderer::operator()(Draw_action * action)
+/*! \brief renders all. */
+void Arrangement_renderer::operator()(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
   Renderer_iter it;
   
@@ -207,7 +209,7 @@ void Arrangement_renderer::operator()(Draw_action * action)
   glColor4f(1, 1, 1, 1);
 }
 
-/*! \brief translates the vertex shape string to an enumeration */
+/*! \brief translates the vertex shape string to an enumeration. */
 Arrangement_renderer::Vertex_shape::Style
 Arrangement_renderer::Vertex_shape::style(const std::string & style)
 {
@@ -218,7 +220,7 @@ Arrangement_renderer::Vertex_shape::style(const std::string & style)
   return BALL;
 }
 
-/*! \brief translates the edge shape style string to an enumeration */
+/*! \brief translates the edge shape style string to an enumeration. */
 Arrangement_renderer::Edge_shape::Style
 Arrangement_renderer::Edge_shape::style(const std::string & style)
 {

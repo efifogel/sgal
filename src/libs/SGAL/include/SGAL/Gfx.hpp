@@ -62,6 +62,7 @@ class Material;
   Gfx::Poly_mode m_poly_mode; \
   Gfx::Cull_face m_cull_face; \
   Gfx::Light_model_sides m_light_model_sides; \
+  Gfx::Light_model_color_control m_light_model_color_control; \
   Gfx::Material_mode m_material_mode_enable; \
   Uint m_line_stipple_pattern; \
   Uint m_line_stipple_factor; \
@@ -114,12 +115,15 @@ public:
   TEX_TRANSFORM, \
   MATERIAL, \
   BACK_MATERIAL, \
-  HALFTONE_PATTERN
+  HALFTONE_PATTERN, \
+  LIGHT_MODEL_COLOR_CONTROL
 
 #define SGAL_STATE_ELEMENTS \
   SGAL_STATE_ELEMENTS_OTHER, \
   SGAL_STATE_ELEMENTS_ENABLE
 
+  // We use a bit-mask of size 64 bits. The bit mask accomodates the state
+  // elements. Currently, there are 36 state elements.
   enum {
     BEGIN_STATE_ELEMENTS = -1,
     SGAL_STATE_ELEMENTS,
@@ -127,7 +131,8 @@ public:
     LIGHT_MODEL_SIDES,
     LINE_WIDTH,
     POINT_SIZE,
-    INHERIT 
+    INHERIT,
+    NUM_STATE_ELEMENTS
   };
 
   enum Tex_mode {
@@ -220,6 +225,11 @@ public:
     TWO_SIDE
   };
 
+  enum Light_model_color_control {
+    SEPARATE_SPECULAR_COLOR,
+    SINGLE_COLOR
+  };
+  
   enum Clear_bits {
     COLOR_CLEAR = 0x1, 
     DEPTH_CLEAR = 0x2,

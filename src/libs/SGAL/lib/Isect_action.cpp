@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -26,56 +26,38 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Trace.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
-Isect_action::Isect_action() :
-  Action(), 
-  m_current_id(0),
-  m_color_map(0)
-{}
+Isect_action::Isect_action() : m_current_id(0) {}
 
 /*! Destructor */
-Isect_action::~Isect_action() 
-{
-  TRACE_MSG(Trace::DESTRUCTOR, "~Isect_action ...");
-  //! \todo DELETE_OBJECT(m_color_map);
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
-}
+Isect_action::~Isect_action() {}
 
-/*! Apply the draw action on a given node. For now this means calling
- * the draw method on the Node.
- * @param node a pointer to the node to draw
+/*! \brief applies the draw action for selection on a given node. 
+ * \param node (in) a pointer to the node to draw in selection mode.
  */
-Action::Trav_directive Isect_action::apply(Node * node)
-{  
+Action::Trav_directive Isect_action::apply(Node* node)
+{
   node->isect(this); 
   return Action::TRAV_CONT;
 }
 
-/*! Set the context in the action. Also create the colormap used for assigning
- * a unique color for each id (0-n)
+/*! \brief sets the context in the action and initializes the colormap used
+ * for mapping unique ids to unique colors.
  */
-void Isect_action::set_context(Context * context)
+void Isect_action::set_context(Context* context)
 {
   Action::set_context(context);
-  //! \todo DELETE_OBJECT (m_color_map);
-  m_color_map = new Color_map(context);
+  m_color_map.init(context);
 }
 
-/*!
- */
-int Isect_action::get_index(Uint * rgb) const
-{
-  if (m_color_map) return m_color_map->get_index(rgb);
-  return 0;
-}
+/*! \brief converts the pixel color into an index. */
+Uint Isect_action::get_index(const Uchar* pixel) const
+{ return m_color_map.get_index(pixel); }
 
-/*!
- */
-void Isect_action::get_color(unsigned int index, Uint * rgb) const
-{
-  if (m_color_map) m_color_map->get_color(index, rgb);
-}
+/*! \brief converts the index into a color. */
+void Isect_action::get_color(Uint index, Uchar* rgb) const
+{ m_color_map.get_color(index, rgb); }
 
-
+SGAL_END_NAMESPACE

@@ -97,7 +97,9 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the bounding sphere of the shape. */
+  /*! Clean the bounding sphere of the shape.
+   * \return true if the bounding sphere has changed since last call.
+   */
   virtual Boolean clean_sphere_bound();
 
   virtual void cull(Cull_context& cull_context);
@@ -105,6 +107,10 @@ public:
   /*! Draw the node while traversing the scene graph. */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
+  /*! \brief draws the shape for selection ignoring the appearance and using
+   * a unique number that identifies the shape instead. The identifier is
+   * encoded as color in the frame buffer.
+   */
   virtual void isect(Isect_action* isect_action);
 
   /*! Write this container. */
@@ -188,10 +194,16 @@ public:
    */
   void set_cull_face(Gfx::Cull_face cull_face);
 
+  /*! Turn on the flag that indicates whether the shape should be rendered. */
   void set_visible();
 
+  /*! Turn off the flag that indicates whether the shape should be rendered. */
   void set_invisible();
 
+  /*! Set the flag that indicates whether the shape should be rendered. */
+  void set_visible(Boolean flag);
+
+  /*! Determine whether the shape should be rendered. */
   Boolean is_visible() const;
 
   /*! Obtain the rendering priority. */
@@ -219,6 +231,11 @@ public:
   void set_override_material(Boolean flag);
 
   /*! Sets the flag that indicates whether to override the appearance texture
+   * enable flag. 
+   */
+  void set_override_tex_enable(Boolean flag);
+
+  /*! Sets the flag that indicates whether to override the appearance texture
    * environment. 
    */
   void set_override_tex_env(Boolean flag);
@@ -228,6 +245,10 @@ public:
    */
   void set_override_blend_func(Boolean flag);
   
+  /*! Sets the flag that indicates whether to override the light model
+   */
+  void set_override_light_model(Boolean flag);
+
   /*! Sets the flag that indicates whether to override the appearance
    * texture-generation flag and construct the appearance texture-generation
    * attribute when missing.
@@ -276,7 +297,7 @@ private:
   /*! The list of geometries. */
   Geometry* m_geometry;
 
-  /*! if false the shape is not rendered. */
+  /*! Indicates whether the shape is visible and thus should be rendered. */
   Boolean m_is_visible;
 
   /*! The rendering priority. */
@@ -317,20 +338,34 @@ private:
    */
   Boolean m_override_material;
 
+  /*! Indicates whether to override the appearance texture enebale flag. If
+   * this flag is on, the (appearance) texture enable may be overriden.
+   * Notice than when the appearance chages, the texture-enable flag of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_tex_enable;
+
   /*! Indicates whether to override the appearance texture environment. If
    * this flag is on, the (appearance) texture environment may be overriden.
-   * Notice than when the appearance chages, the light-enable flag of the
+   * Notice than when the appearance chages, the texture environment of the
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_tex_env;
   
   /*! Indicates whether to override the appearance blend functions. If
    * this flag is on, the (appearance) blend functions may be overriden.
-   * Notice than when the appearance chages, the light-enable flag of the
+   * Notice than when the appearance chages, the blend functions of the
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_blend_func;
   
+  /*! Indicates whether to override the appearance light model. If
+   * this flag is on, the (appearance) light model may be overriden.
+   * Notice than when the appearance chages, the light model of the
+   * previous appearance is not restored to its original value.
+   */
+  Boolean m_override_light_model;
+
   /*! Indicates whether to override the appearance texture-generation flag and
    * construct the appearance texture-generation attribute when missing. If
    * this flag is on and the corresponding geometry does not generate
@@ -415,19 +450,13 @@ inline Gfx::Cull_face Shape::get_cull_face() const { return m_cull_face; }
 inline void Shape::set_cull_face(Gfx::Cull_face cull_face)
 { m_cull_face = cull_face; }
 
-/*! \brief */
-inline void Shape::set_visible() { m_is_visible = true; }
-
-/*! \brief */
-inline void Shape::set_invisible() { m_is_visible = false; }
-
-/*! \brief */
+/*! \brief determines whether the shape should be rendered. */
 inline Boolean Shape::is_visible() const { return m_is_visible; }
 
-/*! \brief Obtain the rendering priority. */
+/*! \brief obtains the rendering priority. */
 inline Float Shape::get_priority() const { return m_priority; }
 
-/*! \brief Set the rendering priority. */
+/*! \brief sets the rendering priority. */
 inline void Shape::set_priority(Float priority) { m_priority = priority; }
 
 /*! \brief obtains the tag (type) of the container. */
@@ -443,6 +472,12 @@ inline void Shape::set_override_material(Boolean flag)
 { m_override_material = flag; }
 
 /*! \brief sets the flag that indicates whether to override the appearance 
+ * texture enable flag. 
+ */
+inline void Shape::set_override_tex_enable(Boolean flag)
+{ m_override_tex_enable = flag; }
+
+/*! \brief sets the flag that indicates whether to override the appearance 
  * texture environment. 
  */
 inline void Shape::set_override_tex_env(Boolean flag)
@@ -454,6 +489,12 @@ inline void Shape::set_override_tex_env(Boolean flag)
 inline void Shape::set_override_blend_func(Boolean flag)
 { m_override_blend_func = flag; }
   
+/*! \brief sets the flag that indicates whether to override the appearance 
+ * light model. 
+ */
+inline void Shape::set_override_light_model(Boolean flag)
+{ m_override_light_model = flag; }
+
 /*! \brief sets the flag that indicates whether to override the appearance
  * texture-generation flag and construct the appearance texture-generation
  * attribute when missing.

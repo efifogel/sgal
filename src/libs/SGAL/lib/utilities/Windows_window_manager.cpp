@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,6 +35,7 @@
 #include "SGAL/Passive_motion_event.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Scene.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -42,7 +43,7 @@ SGAL_BEGIN_NAMESPACE
 Boolean Windows_window_manager::s_capital(false);
 
 /*! The single instance of a window manager */
-Windows_window_manager * Windows_window_manager::s_instance = NULL;
+Windows_window_manager* Windows_window_manager::s_instance = NULL;
 
 /*! The event handler */
 Event_handler Windows_window_manager::s_event_handler;
@@ -53,12 +54,9 @@ Windows_window_manager::Windows_window_manager() :
 {}
 
 /*! \brief obtains a pointer to the manager */
-Windows_window_manager * Windows_window_manager::instance() 
+Windows_window_manager* Windows_window_manager::instance() 
 {
-  if (!s_instance) {
-    s_instance = new Windows_window_manager();
-    //! \todo m_destroyer.set_singleton(s_instance);
-  }
+  if (!s_instance) s_instance = new Windows_window_manager();
   return s_instance;
 }
 
@@ -91,7 +89,7 @@ void Windows_window_manager::register_window_class()
 }
 
 /*! \brief initializes the window manager */
-void Windows_window_manager::init(Uint argc, char * argv[])
+void Windows_window_manager::init(Uint argc, char* argv[])
 {
   // Get this module instance:
   m_hInstance = GetModuleHandle(NULL);
@@ -114,51 +112,62 @@ LRESULT CALLBACK
 Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
                                    WPARAM wParam, LPARAM lParam)
 {
+  SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                  std::cout << "WindowProc()" << std::endl;);
+    
   // Get The Window Context
-  Windows_window_manager * wm = Windows_window_manager::instance();
-  Windows_window_item * current_window;
+  Windows_window_manager* wm = Windows_window_manager::instance();
+  Windows_window_item* current_window;
   
   LONG lRet = 1;
   PAINTSTRUCT ps;
   Mouse_event::Mouse_button button;
   Mouse_event::Press state;
   Boolean pressed;
-  Mouse_event * mouse_event;
-  Keyboard_event * keyboard_event;
-  Motion_event * motion_event;
-  Passive_motion_event * passive_motion_event;
-  CREATESTRUCT * creation;
+  Mouse_event* mouse_event;
+  Keyboard_event* keyboard_event;
+  Motion_event* motion_event;
+  Passive_motion_event* passive_motion_event;
+  CREATESTRUCT* creation;
+  Uint key;
   
   switch (uMsg) {
    case WM_CREATE:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_CREATE" << std::endl;);
     // Store Window Structure Pointer:
     creation = (CREATESTRUCT*)(lParam);
     current_window = (Windows_window_item*)(creation->lpCreateParams);
     SetWindowLong(hWnd, GWL_USERDATA,(LONG)(current_window));
-    ++(Windows_window_manager::instance()->m_number_of_windows);
     wm->set_current_window(current_window);
+    wm->insert_window(current_window);
     break;
 
    case WM_DESTROY:
-    current_window = NULL;
-    wm->set_current_window(current_window);
-    --(Windows_window_manager::instance()->m_number_of_windows);
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_DESTROY" << std::endl;);
+    current_window =
+      (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    wm->remove_window(current_window);
+    wm->set_current_window(NULL);
     break;
 
    case WM_SIZE:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_SIZE" << std::endl;);
     current_window =
       (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     switch (wParam) {                   // Evaluate Size Action
      case SIZE_MINIMIZED:               // Was Window Minimized?
-      current_window->set_visible(SGAL_FALSE);
+      current_window->set_visible(false);
       break;
      case SIZE_MAXIMIZED:               // Was Window Maximized?
     process_size:
-      current_window->set_visible(SGAL_TRUE);
+      current_window->set_visible(true);
       // Don't delay the reshape:
 #if 0
-      current_window->set_reshape(SGAL_TRUE);
+      current_window->set_reshape(true);
 #else
       current_window->make_current();
       wm->m_scene->reshape_window(current_window,
@@ -172,14 +181,16 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
     
    case WM_PAINT:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_PAINT" << std::endl;);
     BeginPaint(hWnd, &ps);
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     // Don't delay the redraw:
 #if 0
-    current_window->set_redraw(SGAL_TRUE);
+    current_window->set_redraw(true);
 #else
-    current_window->set_redraw(SGAL_FALSE);
+    current_window->set_redraw(false);
     current_window->make_current();
     wm->m_scene->draw_window(current_window, wm->m_button_state != 0);
 #endif
@@ -187,45 +198,53 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     break;
 
    case WM_KEYDOWN:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_KEYDOWN" << std::endl;);
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     switch (wParam) {
-     case VK_SHIFT: s_capital = !s_capital; break;
-     case VK_CAPITAL: s_capital = true; break;
+     case VK_SHIFT: s_capital = true; break;
+      // case VK_CAPITAL: s_capital = !s_capital; break;
      default:
-      pressed = SGAL_TRUE;
+      pressed = true;
 
      process_key:
       keyboard_event = new Keyboard_event;
       keyboard_event->set_window_item(current_window);
-      keyboard_event->set_key((s_capital) ? wParam : wParam + 32);
+      key = wParam;
+      if ((0x41 <= wParam) && (wParam <= 0x5a))
+        key = (s_capital) ? wParam : (wParam + 0x20);
+      keyboard_event->set_key(key);
       keyboard_event->set_x(LOWORD(lParam));
       keyboard_event->set_y(current_window->m_height - (HIWORD(lParam)));
       keyboard_event->set_pressed(pressed);
       s_event_handler.issue(keyboard_event);
-      current_window->set_redraw(SGAL_TRUE);
+      current_window->set_redraw(true);
       break;
     }
     break;
 
    case WM_KEYUP:
-    current_window =
-      (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_KEYUP" << std::endl;);
+    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     switch (wParam) {
-     case VK_ESCAPE:
-      Windows_window_manager::instance()->destroy_window(current_window);
-      break;
+      // case VK_ESCAPE:
+      //  Windows_window_manager::instance()->destroy_window(current_window);
+      //  break;
 
-     case VK_SHIFT: s_capital = !s_capital; break;
-     case VK_CAPITAL: s_capital = false; break;
+     case VK_SHIFT: s_capital = false; break;
+     case VK_CAPITAL: s_capital = !s_capital; break;
      default:
-      pressed = SGAL_FALSE;
+      pressed = false;
       goto process_key;
     }
     break;
 
    case WM_LBUTTONDOWN:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_LBUTTONDOWN" << std::endl;);
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::LEFT_BUTTON;
@@ -233,7 +252,6 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     wm->m_button_state |= (0x1 << 1);
 
   process_mouse:
-    
     mouse_event = new Mouse_event;
     mouse_event->set_window_item(current_window);
     mouse_event->set_x(LOWORD(lParam));
@@ -241,12 +259,13 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     mouse_event->set_button(button);
     mouse_event->set_state(state);
     s_event_handler.issue(mouse_event);
-    current_window->set_redraw(SGAL_TRUE);
+    current_window->set_redraw(true);
     break;
 
    case WM_LBUTTONUP:
-    current_window =
-      (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_LBUTTONUP" << std::endl;);
+    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::LEFT_BUTTON;
     state = Mouse_event::UP;
@@ -254,6 +273,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
     
    case WM_MBUTTONDOWN:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_MBUTTONDOWN" << std::endl;);
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::MIDDLE_BUTTON;
@@ -262,6 +283,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_MBUTTONUP:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_MBUTTONUP" << std::endl;);
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::MIDDLE_BUTTON;
@@ -278,6 +301,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_RBUTTONUP:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_RBUTTONUP" << std::endl;);
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::RIGHT_BUTTON;
@@ -286,6 +311,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_MOUSEMOVE:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_MOUSEMOVE" << std::endl;);
     current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
     wm->set_current_window(current_window);
     if (wm->m_button_state == 0) {
@@ -301,16 +328,19 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
       motion_event->set_y(current_window->m_height - (HIWORD(lParam)));
       s_event_handler.issue(motion_event);
     }
-    current_window->set_redraw(SGAL_TRUE);
+    current_window->set_redraw(true);
     break;
 
    case WM_CAPTURECHANGED:
-    // std::cout << "recieved WM_CAPTURECHANGED" << std::endl;
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "WM_CAPTURECHANGED" << std::endl;)
     break;
     
    default:
+    SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
+                    std::cout << "default" << std::endl;)
     // Pass it on if unproccessed:
-    lRet = DefWindowProc (hWnd, uMsg, wParam, lParam); 
+    lRet = DefWindowProc(hWnd, uMsg, wParam, lParam); 
     break; 
   }
 
@@ -318,23 +348,24 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
 } 
 
 /*! \brief creates a new window */
-void Windows_window_manager::create_window(Windows_window_item * window_item)
+void Windows_window_manager::create_window(Windows_window_item* window_item)
 {
   window_item->create(m_hInstance, m_window_class_name);
   m_current_window = window_item;
 }
 
 /*! \brief destroys an existing window */
-void Windows_window_manager::destroy_window(Windows_window_item * window_item)
+void Windows_window_manager::destroy_window(Windows_window_item* window_item)
 {
   window_item->destroy();
   if (window_item == m_current_window) m_current_window = NULL;
+  if (this->size_windows() == 0) PostQuitMessage(0);
 }
 
 /*! \brief performs the main event loop */
 void Windows_window_manager::event_loop(Boolean simulating)
 {
-  Boolean done = SGAL_FALSE;
+  Boolean done = false;
   
   // Handle events while not done:
   do {
@@ -349,17 +380,17 @@ void Windows_window_manager::event_loop(Boolean simulating)
       // Slow down if necessary:
       if (sleep_time > 0) {
         // Draw all visibile windows:
-        std::list<Windows_window_item *>::iterator it;
-        for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
-          Windows_window_item * window_item = *it;
-          window_item->set_redraw(SGAL_TRUE);
+        Windows_iter it;
+        for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+          Windows_window_item* window_item = *it;
+          window_item->set_redraw(true);
         }
       } else {
         // If any window is being accumulated, do not advance in the time line.
         bool accumulating = false;
-        std::list<Windows_window_item *>::iterator it;
-        for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
-          Windows_window_item * window_item = *it;
+        Windows_iter it;
+        for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+          Windows_window_item* window_item = *it;
           if (window_item->is_accumulating()) {
             accumulating = true;
             break;
@@ -369,7 +400,7 @@ void Windows_window_manager::event_loop(Boolean simulating)
           // Continue along the time line - issue a tick event:
           m_start_tick_time = end_tick_time;
           m_sim_time += tick_duration;
-          SGAL::Tick_event * event = new SGAL::Tick_event;
+          SGAL::Tick_event* event = new SGAL::Tick_event;
           event->set_est_tick_duration(m_est_tick_duration);
           event->set_sim_time(m_sim_time);
           s_event_handler.issue(event);
@@ -378,11 +409,10 @@ void Windows_window_manager::event_loop(Boolean simulating)
           /*! \todo Do not force the redraw globally. Instead set the redraw
            * only when really needed.
            */
-          std::list<Windows_window_item *>::iterator it;
-          for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it)
-          {
-            Windows_window_item * window_item = *it;
-            window_item->set_redraw(SGAL_TRUE);
+          Windows_iter it;
+          for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+            Windows_window_item* window_item = *it;
+            window_item->set_redraw(true);
           }
         }
       }
@@ -395,14 +425,14 @@ void Windows_window_manager::event_loop(Boolean simulating)
      * 2. none of the windows has to be redrawn, then
      * wait for an Windows event:
      */
-    Boolean wait_for_event = SGAL_FALSE;
+    Boolean wait_for_event = false;
     if (s_event_handler.is_empty()) {
-      wait_for_event = SGAL_TRUE;
-      std::list<Windows_window_item *>::iterator it;
-      for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
-        Windows_window_item * window_item = *it;
+      wait_for_event = true;
+      Windows_iter it;
+      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+        Windows_window_item* window_item = *it;
         if (window_item->do_redraw()) {
-          wait_for_event = SGAL_FALSE;
+          wait_for_event = false;
           break;
         }
       }
@@ -430,29 +460,28 @@ void Windows_window_manager::event_loop(Boolean simulating)
     MSG msg;
     while (PeekMessage(&msg, NULL, 0, 0, TRUE) != 0) {
       if (msg.message == WM_QUIT) {
-        done = SGAL_TRUE;
+        done = true;
         break;
       }
       TranslateMessage(&msg);
       DispatchMessage(&msg);
-      if (m_number_of_windows == 0) PostQuitMessage(0);
+      if (this->size_windows() == 0) PostQuitMessage(0);
     }
     if (!s_event_handler.is_empty()) s_event_handler.process();
 
     // Stage 3 - Draw all windows that require drawing:
 
-    std::list<Windows_window_item *>::iterator it;
-    for (it = this->m_windows.begin(); it != this->m_windows.end(); ++it) {
-      Window_item * window_item = *it;
+    Windows_iter it;
+    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+      Window_item* window_item = *it;
       if (window_item->do_redraw() && window_item->is_visible()) {
         // Reset the redraw flag, so that the user can re-set it:
-        window_item->set_redraw(SGAL_FALSE);
+        window_item->set_redraw(false);
         window_item->make_current();
         m_scene->draw_window(window_item, m_button_state != 0);
       }
     }
   } while (!done);
-  
   // return msg.wParam;
 }
 

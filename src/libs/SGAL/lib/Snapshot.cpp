@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -94,7 +94,7 @@ Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
   if (!allocate_space(draw_action)) return Action::TRAV_CONT;
   take_snapshot();
   write_image();
-  return Action::TRAV_CONT; 
+  return Action::TRAV_CONT;
 }
 
 /*! \brief allocates space for the image. */

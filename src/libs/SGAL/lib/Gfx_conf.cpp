@@ -50,7 +50,7 @@ PFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB = NULL;
 
 SGAL_BEGIN_NAMESPACE
 
-Gfx_conf * Gfx_conf::m_instance = 0;
+Gfx_conf* Gfx_conf::m_instance = 0;
 //! \todo Gfx_conf::Gfx_Conf_destroyer Gfx_conf::m_Gfx_conf_destroyer;
 
 // !!!! NOTE !!!!
@@ -58,7 +58,7 @@ Gfx_conf * Gfx_conf::m_instance = 0;
 // enums in the Gfx_conf class. The enums and the arrays must be syncronized.
 // !!!! NOTE !!!!
 
-const char * Gfx_conf::s_vendors[] = {
+const char* Gfx_conf::s_vendors[] = {
   "Unknown",
   "NVIDIA Corporation",
   "ATI",
@@ -67,7 +67,7 @@ const char * Gfx_conf::s_vendors[] = {
   "Microsoft Corporation"
 };
 
-const char * Gfx_conf::s_renderers[] = {
+const char* Gfx_conf::s_renderers[] = {
   "Unknown",
   "GeForce2 GTS/AGP/SSE",
   "GeForce4 420 Go/AGP/SSE2",
@@ -84,7 +84,7 @@ const char * Gfx_conf::s_renderers[] = {
   "GDI Generic",
 };
 
-const char * Gfx_conf::s_versions[] = {
+const char* Gfx_conf::s_versions[] = {
   "Unknown",
   "1.2.0",
   "1.1.1334 Win2000 Release",
@@ -93,7 +93,7 @@ const char * Gfx_conf::s_versions[] = {
   "1.1.0"
 };
 
-Gfx_conf * Gfx_conf::get_instance() 
+Gfx_conf* Gfx_conf::get_instance() 
 {
   if (!m_instance) {
     m_instance = new Gfx_conf();
@@ -119,41 +119,40 @@ void Gfx_conf::init()
 {
   int i;
     
-  const Uchar * vendor = glGetString(GL_VENDOR);
+  const Uchar* vendor = glGetString(GL_VENDOR);
   for (i = 0; i < veNum; ++i) {
     if (strncmp(s_vendors[i], reinterpret_cast<const char *>(vendor),
                 strlen(s_vendors[i])) == 0)
       break;
   }
   if (i != veNum) m_vendor = static_cast<Vendor>(i);  
-  TRACE_CODE(Trace::GRAPHICS,
-    std::cout << "Vendor: " << vendor << " (" << m_vendor << ")"
-              << std::endl;
-             );
-  const Uchar * renderer = glGetString(GL_RENDERER);
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Vendor: " << vendor << " (" << m_vendor << ")"
+                  << std::endl;);
+  const Uchar* renderer = glGetString(GL_RENDERER);
   for (i = 0; i < reNum; ++i) {
     if (strncmp(s_renderers[i], reinterpret_cast<const char *>(renderer),
                 strlen(s_renderers[i])) == 0)
       break;
   }
   if (i != reNum) m_renderer = static_cast<Renderer>(i);  
-  TRACE_CODE(Trace::GRAPHICS,
-    std::cout << "Renderer: " << renderer << " (" << m_renderer << ")"
-              << std::endl;);
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  std::cout << "Renderer: " << renderer << " ("
+                  << m_renderer << ")"
+                  << std::endl;);
 
-  TRACE_CODE(Trace::GRAPHICS,
-    const Uchar * version = glGetString(GL_VERSION);
-    std::cout << "Version: " << version << std::endl;
-  );
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
+                  const Uchar* version = glGetString(GL_VERSION);
+                  std::cout << "Version: " << version << std::endl;);
 
 #if 0
-  char * dummy;
+  char* dummy;
   search_path(NULL, "opengl32.dll", NULL, 1000, temp, &dummy);
 #endif
 
   const Uchar* extensions = glGetString(GL_EXTENSIONS);
-  TRACE_CODE(Trace::GRAPHICS, std::cout << "Extensions: " << extensions
-             << std::endl;);
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "Extensions: " << extensions
+                  << std::endl;);
 
   m_bump_map_supported = true;          // Start optimistic
 
@@ -237,19 +236,19 @@ void Gfx_conf::init()
 }
 
 /*! Is the the extension given by a name supported? */
-Boolean Gfx_conf::is_extension_supported(const Uchar * extensions,
-                                         const char * target_extension)
+Boolean Gfx_conf::is_extension_supported(const Uchar* extensions,
+                                         const char* target_extension)
 {
   // Extension names should not have spaces
-  const Uchar * where = (Uchar *) strchr(target_extension, ' ');
+  const Uchar* where = (Uchar*) strchr(target_extension, ' ');
   if (where || *target_extension == '\0') return false;
 
   // Search The Extensions String For An Exact Copy
-  const Uchar * start = extensions;
+  const Uchar* start = extensions;
   for (;;) {
     where = (Uchar *) strstr((const char *) start, target_extension);
     if (!where) break;
-    const Uchar * terminator = where + strlen(target_extension);
+    const Uchar* terminator = where + strlen(target_extension);
     if (where == start || *(where - 1) == ' ')
       if (*terminator == ' ' || *terminator == '\0') return true;
     start = terminator;

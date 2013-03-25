@@ -24,6 +24,8 @@
  * of a delay.
  */
 
+#include <boost/lexical_cast.hpp>
+
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -38,6 +40,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Window_item.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -226,10 +229,10 @@ const Accumulation::Quality Accumulation::s_def_quality = Accumulation::Q_HIGH;
 
 const Char* Accumulation::s_quality_names[] = {"high", "low"};
 
-const Uint Accumulation::s_def_red_bits(16);
-const Uint Accumulation::s_def_green_bits(16);
-const Uint Accumulation::s_def_blue_bits(16);
-const Uint Accumulation::s_def_alpha_bits(16);
+const Uint Accumulation::s_def_red_bits(SGAL_DEF_WINDOW_ACCUM_COLOR_BITS);
+const Uint Accumulation::s_def_green_bits(SGAL_DEF_WINDOW_ACCUM_COLOR_BITS);
+const Uint Accumulation::s_def_blue_bits(SGAL_DEF_WINDOW_ACCUM_COLOR_BITS);
+const Uint Accumulation::s_def_alpha_bits(SGAL_DEF_WINDOW_ACCUM_COLOR_BITS);
 
 REGISTER_TO_FACTORY(Accumulation, "Accumulation");
 
@@ -319,10 +322,16 @@ void Accumulation::set_attributes(Element* elem)
     }
     if (name == "quality") {
       Uint num = sizeof(s_quality_names) / sizeof(char *);
-      const char ** found = std::find(s_quality_names, &s_quality_names[num],
+      const char** found = std::find(s_quality_names, &s_quality_names[num],
                                       strip_double_quotes(value));
       Uint index = found - s_quality_names;
       if (index < num) m_quality = static_cast<Quality>(index);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "accumBits") {
+      Uint bits = boost::lexical_cast<Float>(value);
+      set_number_of_bits(bits, bits, bits, bits);    
       elem->mark_delete(ai);
       continue;
     }

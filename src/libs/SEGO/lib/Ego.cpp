@@ -35,6 +35,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
 
 #include <Magick++.h>
 
@@ -45,12 +46,22 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Context.hpp"
+#include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Field.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Image_texture.hpp"
 #include "SGAL/Appearance.hpp"
+#include "SGAL/Utilities.hpp"
+#include "SGAL/Mesh_set.hpp"
+#include "SGAL/Image_base.hpp"
+#include "SGAL/Scene_graph.hpp"
+#include "SGAL/Context.hpp"
+#include "SGAL/Camera.hpp"
+#include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Touch_sensor.hpp"
+#include "SGAL/Route.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -61,24 +72,47 @@
 #include "SEGO/Ego_voxels_tiler.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
 
+// #include <boost/tuple/tuple_io.hpp>
+
+// #define SGAL_EGO_VERBOSE 1
+#ifdef SGAL_EGO_VERBOSE
+#define SGAL_EGO_VAR(x) #x << " " << x
+#endif
+
 SGAL_BEGIN_NAMESPACE
 
+class Configuration;
+  
 std::string Ego::s_tag = "Ego";
 Container_proto* Ego::s_prototype = NULL;
 
-const Float Ego::s_def_voxel_width(8.2);
-const Float Ego::s_def_voxel_length(8.2);
-const Float Ego::s_def_voxel_height(9.6);
+const Float Ego::s_def_voxel_width(8.2f);
+const Float Ego::s_def_voxel_length(8.2f);
+const Float Ego::s_def_voxel_height(9.6f);
 const Ego_voxels_tiler::First_tile_placement 
 Ego::s_def_first_tile_placement(Ego_voxels_tiler::FIRST00);
 const Ego_voxels_tiler::Strategy
 Ego::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
 const Ego_voxels_tiler::Tiling_rows
 Ego::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
-const Ego::Style Ego::s_def_style(Ego::STYLE_RANDOM_COLORS);
+const Ego::Style Ego::s_def_style(STYLE_RANDOM_COLORS);
+const Ego::Color_space Ego::s_def_color_space(COLOR_SPACE_RGB);
+const Boolean Ego::s_def_space_filling(false);
+const Ego::Layer_visibility Ego::s_layer_x_visibility(LV_ALL);
+const Ego::Layer_visibility Ego::s_layer_y_visibility(LV_ALL);
+const Ego::Layer_visibility Ego::s_layer_z_visibility(LV_ALL);
 
-/*! Styles */
-const char* Ego::s_style_names[] = { "randomColors", "appearance" };
+/*! Style names */
+const char* Ego::s_style_names[] =
+  { "randomColors", "appearance", "discreteCubeMap" };
+
+/*! Color space names */
+const char* Ego::s_color_space_names[] = {"RGB", "HSL"};
+
+/*! Layer visibility names */
+const char* Ego::s_layer_visibility_names[] = {
+  "all", "above", "notAbove", "below", "notBelow", "only", "notOnly"
+};
 
 REGISTER_TO_FACTORY(Ego, "Ego");
 
@@ -88,8 +122,9 @@ Ego::Ego(Boolean proto) :
   m_voxel_width(s_def_voxel_width),
   m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),
-  m_style(s_def_style),  
+  m_style(s_def_style),
   m_appearance(NULL),
+  m_space_filling(s_def_space_filling),
   m_appearance_prev(NULL),
   m_first_tile_placement(s_def_first_tile_placement),
   m_tiling_strategy(s_def_tiling_strategy),
@@ -98,10 +133,21 @@ Ego::Ego(Boolean proto) :
   m_dirty_voxels(true),
   m_dirty_tiling(true),
   m_dirty_parts(true),
+  m_dirty_colors(true),
+  m_dirty_visibility(true),
   m_owned_parts(false),
-  m_scene_graph(NULL),
+  m_owned_touch_sensor(false),
   m_knob_slices(Ego_brick::s_def_knob_slices),
-  m_owned_appearance(false)
+  m_color_space(s_def_color_space),
+  m_layer_x(0),
+  m_layer_y(0),
+  m_layer_z(0),
+  m_layer_x_visibility(LV_ALL),
+  m_layer_y_visibility(LV_ALL),
+  m_layer_z_visibility(LV_ALL),
+  m_selection_id(0),
+  m_owned_appearance(false),
+  m_clean_colors_in_progress(false)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
 
 /*! Destructor */
@@ -137,19 +183,30 @@ void Ego::clear_parts()
   m_dirty_parts = true;
   Node_iterator it1 = m_childs.begin();
   while (it1 != m_childs.end()) {
-    Node* transform_node = *it1++;
-    // Remove the transform (translation):
-    Transform* transform = static_cast<Transform*>(transform_node);
-    Node_iterator it2 = transform->children_begin();
-    while (it2 != transform->children_end()) {
-      Node* shape_node = *it2++;
-      // Remove the brick (Shape):
-      Shape* brick_shape = static_cast<Shape*>(shape_node);
-      delete brick_shape;
-      transform->remove_child(shape_node);
+    Node* node1 = *it1++;
+    // Free the transform:
+    Transform* transform = dynamic_cast<Transform*>(node1);
+    if (transform) {
+      Node_iterator it2 = transform->children_begin();
+      while (it2 != transform->children_end()) {
+        Node* node2 = *it2++;
+        // Remove the brick (Shape):
+        Shape* brick_shape = dynamic_cast<Shape*>(node2);
+        if (brick_shape) delete brick_shape;
+        transform->remove_child(node2);
+        delete transform;
+      }
     }
-    delete transform;
-    remove_child(transform_node);
+
+    Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node1);
+    if (touch_sensor) {
+      if (m_owned_touch_sensor) {
+        delete touch_sensor;
+        m_owned_touch_sensor = false;
+      }
+    }
+    
+    remove_child(node1);
   }
 
   // Delete all appearances:
@@ -167,11 +224,14 @@ void Ego::clear_parts()
   // Delete all Ego bricks:
   Ego_brick_iter bit;
   for (bit = m_bricks.begin(); bit != m_bricks.end(); ++bit)
-    delete *bit;
+    delete (*bit).second;
   m_bricks.clear();
   for (bit = m_knobless_bricks.begin(); bit != m_knobless_bricks.end(); ++bit)
-    delete *bit;
+    delete (*bit).second;
   m_knobless_bricks.clear();
+
+  // Clean the voxel signature array. */
+  m_voxel_signatures.clear();
 
   m_owned_parts = false;
 }
@@ -185,7 +245,8 @@ void Ego::clear()
   m_dirty_sphere_bound = true;
   m_dirty_voxels = true;
   m_dirty_tiling = true;
-
+  m_dirty_visibility = true;
+  
   if (m_owned_appearance) {
     if (m_appearance) {
       delete m_appearance;
@@ -242,7 +303,24 @@ void Ego::init_prototype()
   exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
   s_prototype->add_field_info(new SF_container(APPEARANCE, "appearance",
                                                get_member_offset(&m_appearance),
-                                               exec_func));    
+                                               exec_func));
+  exec_func = static_cast<Execution_function>(&Ego::visibility_changed);
+  sf_int = new SF_int(LAYER_X_VISIBILITY, "layerXVisibility",
+                      get_member_offset(&m_layer_x_visibility), exec_func);
+  s_prototype->add_field_info(sf_int);
+
+  sf_int = new SF_int(LAYER_Y_VISIBILITY, "layerYVisibility",
+                      get_member_offset(&m_layer_y_visibility), exec_func);
+  s_prototype->add_field_info(sf_int);
+
+  sf_int = new SF_int(LAYER_Z_VISIBILITY, "layerZVisibility",
+                      get_member_offset(&m_layer_z_visibility), exec_func);
+  s_prototype->add_field_info(sf_int);  
+
+  exec_func = static_cast<Execution_function>(&Ego::selection_id_changed);
+  s_prototype->add_field_info(new SF_int(SELECTION_ID, "selectionId",
+                                         get_member_offset(&m_selection_id),
+                                         exec_func));  
 }
 
 /*! \brief deletes the container prototype */
@@ -309,8 +387,9 @@ void Ego::set_attributes(Element* elem)
         elem->mark_delete(cai);
         continue;
       }
-      Geo_set* ifs = dynamic_cast<Geo_set*>(cont);
-      set_model(ifs);
+      Mesh_set* mesh = dynamic_cast<Mesh_set*>(cont);
+      if (mesh->is_dirty()) mesh->clean();
+      set_model(mesh);
       elem->mark_delete(cai);
       continue;
     }
@@ -327,6 +406,11 @@ void Ego::set_attributes(Element* elem)
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
+    if (name == "spaceFilling") {
+      set_space_filling(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    } 
     if (name == "voxelWidth") {
       set_voxel_width(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -363,7 +447,7 @@ void Ego::set_attributes(Element* elem)
       continue;
     }
     if (name == "style") {
-      Uint num = sizeof(s_style_names) / sizeof(char *);
+      Uint num = sizeof(s_style_names) / sizeof(char*);
       const char** found = std::find(s_style_names,
                                      &s_style_names[num],
                                      strip_double_quotes(value));
@@ -376,6 +460,75 @@ void Ego::set_attributes(Element* elem)
       set_knob_slices(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
+    }
+    if (name == "colorSpace") {
+      Uint num = sizeof(s_color_space_names) / sizeof(char*);
+      const char** found = std::find(s_color_space_names,
+                                     &s_color_space_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_color_space_names;
+      if (index < num) set_color_space(static_cast<Color_space>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerX") {
+      set_layer_x(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerY") {
+      set_layer_y(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerZ") {
+      set_layer_z(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerXVisibility") {
+      Uint num = sizeof(s_layer_visibility_names) / sizeof(char*);
+      const char** found = std::find(s_layer_visibility_names,
+                                     &s_layer_visibility_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_layer_visibility_names;
+      if (index < num)
+        set_layer_x_visibility(static_cast<Layer_visibility>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerYVisibility") {
+      Uint num = sizeof(s_layer_visibility_names) / sizeof(char*);
+      const char** found = std::find(s_layer_visibility_names,
+                                     &s_layer_visibility_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_layer_visibility_names;
+      if (index < num)
+        set_layer_y_visibility(static_cast<Layer_visibility>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "layerZVisibility") {
+      Uint num = sizeof(s_layer_visibility_names) / sizeof(char*);
+      const char** found = std::find(s_layer_visibility_names,
+                                     &s_layer_visibility_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_layer_visibility_names;
+      if (index < num)
+        set_layer_z_visibility(static_cast<Layer_visibility>(index));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "brickTypes") {
+      Uint num_values = get_num_tokens(value);
+      Uint size = num_values / 3;
+      m_brick_types.resize(size);
+
+      std::istringstream svalue(value, std::istringstream::in);
+      for (Uint i = 0 ; i < size ; i++) {
+        svalue >> m_brick_types[i][0] >> m_brick_types[i][1] >> m_brick_types[i][2];
+      }
+      elem->mark_delete(ai);
     }
   }
 
@@ -393,28 +546,23 @@ void Ego::clean_voxels()
     m_dirty_voxels = false;
     m_dirty_tiling = true;
 
-    const double dx = m_voxel_length;
-    const double dy = m_voxel_width;
-    const double dz = m_voxel_height;
-
-    Ego_voxelizer voxelize (dx, dy, dz);
+    Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
     Ego_voxels_filler fill;
 
     m_voxels = Ego_voxels(); // Clear - should we make a func?
     if (this->is_model_polyhedron())
-      m_tiled_voxels_origin = 
+      m_voxels_center = 
         voxelize(this->get_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
     else if (this->is_model_exact_polyhedron())
-      m_tiled_voxels_origin = 
+      m_voxels_center = 
         voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
                  get_matrix(), &m_voxels);
     else if (this->is_model_geo_set())
-      m_tiled_voxels_origin = 
+      m_voxels_center = 
         voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
-    
+
     fill(&m_voxels);
-    adjust_voxels_for_tiling();
   }
 }
 
@@ -424,65 +572,115 @@ void Ego::clean_tiling()
   m_dirty_tiling = false;
   clear_parts();
     
-  m_tiled_voxels = m_voxels;
   Ego_voxels_tiler tile(m_first_tile_placement,
                         m_tiling_strategy,
-                        m_tiling_rows_direction);
-  tile(&m_tiled_voxels);
+                        m_tiling_rows_direction,
+                        convert_types(m_brick_types));
+  tile(&m_voxels);
 }
 
 /*! \brief (re)generate the parts. */
 void Ego::clean_parts()
 {
-  m_dirty_parts = false;
-  m_dirty_sphere_bound = true;
   m_owned_parts = true;
 
-  Vector3f origin(CGAL::to_double(m_tiled_voxels_origin.x()),
-                  CGAL::to_double(m_tiled_voxels_origin.y()),
-                  CGAL::to_double(m_tiled_voxels_origin.z()));
-  
-  const double dx = m_voxel_length;
-  const double dy = m_voxel_width;
-  const double dz = m_voxel_height;
+  // Add the parts:
+  Vector3f center(CGAL::to_double(m_voxels_center.x()),
+                  CGAL::to_double(m_voxels_center.y()),
+                  CGAL::to_double(m_voxels_center.z()));
+  Ego_voxels::size_type size = m_voxels.size();
+  Vector3f box(m_voxel_length * size.get<0>(),
+               m_voxel_width * size.get<1>(),
+               m_voxel_height * size.get<2>());
+  Vector3f origin;
+  origin.add_scaled(center, -0.5f, box);
 
-  Ego_voxels::size_type size = m_tiled_voxels.size();
-  Vector3f offset(dx * 0.5f, dy * 0.5f, dz * 0.5f);
-  Vector3f center(dx * size.get<0>() * 0.5f,
-                  dy * size.get<1>() * 0.5f,
-                  dz * size.get<2>() * 0.5f);
-  center.add(origin);
-  
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
-        if (m_tiled_voxels.is_filled(i, j, k) == false)
+        if (m_voxels.is_filled(i, j, k) == false)
           continue;
-        
-        boost::optional<Ego_voxels::size_type> brick =
-          m_tiled_voxels.get_brick(i, j, k);
 
+        boost::optional<Ego_voxels::size_type> brick =
+          m_voxels.get_brick(i, j, k);
         if (!brick) continue;
 
-        SGAL_assertion(brick->get<0>() == 2 && brick->get<1>() == 2);
+        // Continue, if the visibility scheme implies invisibility:
+        
+        // Continue, if the brick is completely obscured:
+        std::size_t num0(brick->get<0>());
+        std::size_t num1(brick->get<1>());
 
+        //! \todo In the following we check whether the brick is apparent.
+        // A brick is not apparent if it is obscured from all directions
+        // by opaque bricks. Currently we assume that all bricks are opaque. 
+        Boolean apparent = false;
+        if ((i == 0) || (j == 0) || (k == 0) ||
+            (i >= size.get<0>()-num0) || (j >= size.get<1>()-num1) ||
+            (k == size.get<2>()-1))
+          apparent = true;
+        if (!apparent) {
+          for (std::size_t t0 = 0; t0 < num0; ++t0) {
+            for (std::size_t t1 = 0; t1 < num1; ++t1) {
+              if (!m_voxels.is_filled(i+t0, j+t1, k-1) ||
+                  !m_voxels.is_filled(i+t0, j+t1, k+1))
+              {
+                apparent = true;
+                break;
+              }
+            }
+            if (apparent) break;
+          }
+        }
+        if (!apparent) {
+          for (std::size_t t0 = 0; t0 < num0; ++t0) {
+            if (!m_voxels.is_filled(i+t0, j-1, k) ||
+                !m_voxels.is_filled(i+t0, j+num1, k))
+            {
+              apparent = true;
+              break;
+            }
+          }
+        }
+        if (!apparent) {
+          for (std::size_t t1 = 0; t1 < num1; ++t1) {
+            if (!m_voxels.is_filled(i-1, j+t1, k) ||
+                !m_voxels.is_filled(i+num0, j+t1, k))
+            {
+              apparent = true;
+              break;
+            }
+          }
+        }
+        if (!m_space_filling && !apparent) continue;
+
+        m_voxel_signatures.push_back(boost::make_tuple(i, j, k));
         Transform* transform = new Transform;
         add_child(transform);
-
-        Vector3f displacement(i*dx, j*dy, k*dz);
+        transform->add_to_scene(m_scene_graph);
+        
+        Vector3f displacement(i*m_voxel_length, j*m_voxel_width,
+                              k*m_voxel_height);
         Vector3f brick_center(origin);
         brick_center.add(displacement);
+
+        // The offset is half a voxel for each knob.
+        Vector3f offset(m_voxel_length * 0.5f * num0,
+                        m_voxel_width * 0.5f * num1, m_voxel_height);
+
         brick_center.add(offset);
         transform->set_translation(brick_center);
 
         Shape* shape = new Shape;
         transform->add_child(shape);
 
+       // Determine whether to draw the knobs:
         bool should_draw_knobs = false;
         for (size_t s = 0; s < brick->get<0>(); ++s) {
           for (size_t t = 0; t < brick->get<1>(); ++t) {
             if ((k == size.get<2>() - 1) ||
-                (!m_tiled_voxels.is_filled(i+s, j+t, k+1)))
+                (!m_voxels.is_filled(i+s, j+t, k+1)) ||
+                (!m_voxels.is_placed(i+s, j+t, k+1)))
               should_draw_knobs = true;
           }
         }
@@ -491,86 +689,444 @@ void Ego::clean_parts()
         Vector3f tmp;
         switch (m_style) {
          case STYLE_APPEARANCE:
+          m_dirty_colors = false;
+          shape->set_override_blend_func(false);
           app = m_appearance;
           tmp.sub(center, brick_center);
-          ego_brick = create_geometry(should_draw_knobs, tmp);
+          ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
           break;
 
          case STYLE_RANDOM_COLORS:
+          m_dirty_colors = false;
           app = create_random_appearance();
-          ego_brick = create_geometry(should_draw_knobs);
+          ego_brick = create_geometry(num0, num1, should_draw_knobs);
           break;
 
+         case STYLE_DISCRETE_CUBE_MAP:
+          shape->set_override_tex_enable(false);
+          shape->set_override_tex_env(false);
+          shape->set_override_blend_func(false);
+          shape->set_override_light_model(false);
+          shape->set_override_tex_gen(false);
+          shape->set_override_light_enable(false);
+          m_dirty_colors = true;
+          app = m_appearance;
+          tmp.sub(center, brick_center);
+          ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
+          break;
+          
          default: std::cerr << "Invalid style!" << std::endl;
         }
-        shape->set_override_blend_func(false);
         shape->set_appearance(app);
         shape->set_geometry(ego_brick);
       }
     }
   }
+  Uint num_childs = children_size();
+  std::cout << "# of children: " << num_childs << std::endl;
+
+  // Add a touch sensor if such a node does not exist:
+  Touch_sensor* touch_sensor = NULL;
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    touch_sensor = dynamic_cast<Touch_sensor*>(node);
+    if (touch_sensor) break;
+  }
+  if (!touch_sensor) {
+    touch_sensor = new Touch_sensor;
+    touch_sensor->add_to_scene(m_scene_graph);
+    m_owned_touch_sensor = true;
+    add_child(touch_sensor);
+  }
+  touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
+                            (m_layer_y_visibility != LV_ALL) ||
+                            (m_layer_z_visibility != LV_ALL));
+  Field* src_field = touch_sensor->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
+  SGAL_assertion(src_field);
+  Field* dst_field = add_field(SELECTION_ID);
+  SGAL_assertion(dst_field);
+  src_field->connect(dst_field);
+
+  m_dirty_parts = false;
+  m_dirty_visibility = true;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief */
+void Ego::clean_colors()
+{
+  if (m_clean_colors_in_progress) return;
+  
+  //! \todo create a new context? and remove the (action) argument.
+  Context* context = m_scene_graph->get_context();
+  SGAL_assertion(context);
+  Uint x0 = 0, y0 = 0, width = 0, height = 0;
+  context->get_viewport(x0, y0, width, height);
+
+  // Prepare draw action:
+  Configuration* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  SGAL::Draw_action draw_action(conf);
+  draw_action.set_context(context);
+  draw_action.set_snap(false);
+
+  // Prepare isect action:
+  SGAL::Isect_action isect_action;
+  isect_action.set_context(context);
+  m_num_selection_ids = children_size();
+  m_start_selection_id =
+    m_scene_graph->allocate_selection_ids(m_num_selection_ids);
+  
+  // Prepare color image:
+  Image_base::Format format = Image_base::kRGB8_8_8;
+  GLenum gl_format = Image_base::get_format_format(format);
+  GLenum gl_type = Image_base::get_format_type(format);
+  Uint size = Image_base::get_size(width, height, format);
+  Uint num_components = Image_base::get_format_components(format);
+  Uchar* pixels = new Uchar[size];
+
+  // Prepare selection image:
+  Image_base::Format format_select = Image_base::kRGB8_8_8;
+  GLenum gl_format_select = Image_base::get_format_format(format_select);
+  GLenum gl_type_select = Image_base::get_format_type(format_select);
+  Uint size_select = Image_base::get_size(width, height, format_select);
+  Uint num_components_select = Image_base::get_format_components(format_select);
+  SGAL_assertion_code(Uint bits = Image_base::get_format_size(format_select));
+  SGAL_assertion(m_scene_graph->get_num_selection_ids() < (0x1 << bits));
+  Uchar* selections = new Uchar[size_select];
+  
+  // Set the clear color:
+  Vector3f color(0, 0, 0);
+
+  // Prepare the openGl state
+  // - Adjust texture environment
+  // - Disable lighting
+  // - Set read and draw buffers
+  m_appearance->set_tex_env(Gfx::REPLACE_TENV);
+  m_appearance->set_src_blend_func(Gfx::ONE_SBLEND);
+  m_appearance->set_dst_blend_func(Gfx::ZERO_DBLEND);
+  m_appearance->set_light_enable(false);
+  m_appearance->set_poly_mode(Gfx::FILL_PMODE);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  GLint val;
+  glGetIntegerv(GL_READ_BUFFER, &val);
+  GLenum read_buffer_mode = (GLenum)val;
+  glReadBuffer(GL_FRONT);
+  glGetIntegerv(GL_DRAW_BUFFER, &val);
+  GLenum draw_buffer_mode = (GLenum)val;
+  glDrawBuffer(GL_FRONT);
+
+  // Create the cameras:
+  Camera cameras[6];
+  Ego_voxels::size_type voxel_size = m_voxels.size();
+  Vector3f center(CGAL::to_double(m_voxels_center.x()),
+                  CGAL::to_double(m_voxels_center.y()),
+                  CGAL::to_double(m_voxels_center.z()));
+  Vector3f box(m_voxel_length * voxel_size.get<0>(),
+               m_voxel_width * voxel_size.get<1>(),
+               m_voxel_height * voxel_size.get<2>());
+  Vector3f disp(box);
+  disp.scale(0.5);
+  
+  // -1,0,0
+  cameras[0].set_position(center[0]-box[0], center[1], center[2]);
+  cameras[0].set_orientation(-1, 0, 0, 0);
+  cameras[0].get_frustum().make_ortho(center[2]-disp[2], center[2]+disp[2],
+                                      center[1]-disp[1], center[1]+disp[1],
+                                      0.1, box[0]+0.4);
+
+  // +1,0,0
+  cameras[1].set_position(center[0]+box[0], center[1], center[2]);
+  cameras[1].set_orientation(1, 0, 0, 0);
+  cameras[1].get_frustum().make_ortho(center[1]-disp[1], center[1]+disp[1],
+                                      center[2]-disp[2], center[2]+disp[2],
+                                      0.1, box[0]+0.4);
+  
+  // 0,-1,0
+  cameras[2].set_position(center[0], center[1]-box[1], center[2]);
+  cameras[2].set_orientation(0, -1, 0, 0);
+  cameras[2].get_frustum().make_ortho(center[0]-disp[0], center[0]+disp[0],
+                                      center[2]-disp[2], center[2]+disp[2],
+                                      0.1, box[1]+0.4);
+
+  // 0,+1,0
+  cameras[3].set_position(center[0], center[1]+box[1], center[2]);
+  cameras[3].set_orientation(0, 1, 0, 0);
+  cameras[3].get_frustum().make_ortho(center[2]-disp[2], center[2]+disp[2],
+                                      center[0]-disp[0], center[0]+disp[0],
+                                      0.1, box[1]+0.4);
+
+  // 0,0,-1
+  cameras[4].set_position(center[0], center[1], center[2]-box[2]);
+  cameras[4].set_orientation(0, 0, -1, 0);
+  cameras[4].get_frustum().make_ortho(center[1]-disp[1], center[1]+disp[1],
+                                      center[0]-disp[0], center[0]+disp[0],
+                                      0.1, box[2]+0.4);
+
+  // 0,0,+1
+  cameras[5].set_position(center[0], center[1], center[2]+box[2]);
+  cameras[5].set_orientation(0, 0, 1, 0);
+  cameras[5].get_frustum().make_ortho(center[0]-disp[0], center[0]+disp[0],
+                                      center[1]-disp[1], center[1]+disp[1],
+                                      0.1, box[2]+0.4);
+
+  // Draw
+  m_clean_colors_in_progress = true;
+  typedef std::pair<Vector3f,Uint>              Weighted_color;
+  typedef std::vector<Weighted_color>           Weighted_color_vector;
+  typedef Weighted_color_vector::iterator       Weighted_color_iter;
+  Weighted_color_vector colors(children_size());
+  std::fill(colors.begin(), colors.end(), Weighted_color(Vector3f(), 0));
+  typedef std::vector<Uint>                     Weight_vector;
+  typedef Weight_vector::iterator               Weight_iter;
+  Weight_vector weights(children_size());
+  for (Uint i = 0; i < 6; ++ i) {
+    m_appearance->set_tex_enable(true);
+    m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
+    context->clear_color_depth_buffer(color);
+    cameras[i].draw(&draw_action);
+
+    Cull_context cull_context;
+    cull_context.cull(this, &cameras[i]);
+    cull_context.draw(&draw_action);
+    glReadPixels(0, 0, width, height, gl_format, gl_type, pixels);
+
+#if defined(EGO_VERBOSE)
+    {
+      std::string ext = ".jpg";
+      std::ostringstream oss;
+      oss << i;
+      std::string file_name = "pixels_" + oss.str() + ext;
+      Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
+      image.flip();
+      image.magick(ext);
+      image.write(file_name);
+    }
+#endif
+    
+    context->draw_shade_model(Gfx::FLAT_SHADE);
+    context->draw_tex_enable(false);
+    context->clear_color_depth_buffer(color);
+    isect(&isect_action);
+    glReadPixels(0, 0, width, height, gl_format_select, gl_type_select,
+                 selections);
+
+#if defined(EGO_VERBOSE)
+    {
+      std::string ext = ".png";
+      std::ostringstream oss;
+      oss << i;
+      std::string file_name = "selections_" + oss.str() + ext;
+      const char* type = (num_components_select = 3) ? "RGB" : "RGBA";
+      Magick::Image image(width, height, type, Magick::CharPixel, selections);
+      image.flip();
+      image.magick(ext);
+      image.write(file_name);
+    }
+#endif
+    
+    // process pixels & selections
+    std::fill(weights.begin(), weights.end(), 0);
+    Uint j;
+    
+    // Pass 1:
+    for (j = 0; j < height; ++j) {
+      for (Uint k = 0; k < width; ++k) {
+        Uint pixel_id = j * width + k;
+        Uint component_id = pixel_id * num_components_select;
+        SGAL_assertion(component_id < size_select);
+        Uint brick_id = isect_action.get_index(&selections[component_id]);
+        if (brick_id == 0) continue;
+        brick_id -= m_start_selection_id;
+        SGAL_assertion(brick_id < children_size());
+        ++(weights[brick_id]);
+      }
+    }
+
+    // Pass 2:
+    Weighted_color_iter cit;
+    Weight_iter wit = weights.begin();
+    for (cit = colors.begin(); cit < colors.end(); ++cit, ++wit) {
+      if ((*wit == 0) || (cit->second == 0)) continue;
+      Float factor = weights[j] / (cit->second + *wit);
+      cit->first.scale(factor);
+    }
+    
+    // Pass 3:
+    for (j = 0; j < height; ++j) {
+      for (Uint k = 0; k < width; ++k) {
+        Uint pixel_id = j * width + k;
+        Uint component_id = pixel_id * num_components_select;
+        SGAL_assertion(component_id < size_select);
+        Uint brick_id = isect_action.get_index(&selections[component_id]);
+        if (brick_id == 0) continue;
+        brick_id -= m_start_selection_id;
+        SGAL_assertion(brick_id < children_size());
+        component_id = pixel_id * num_components;
+        SGAL_assertion(component_id < size);
+        Vector3f new_color;
+        if (m_color_space == COLOR_SPACE_HSL) {
+          Magick::ColorRGB color_rgb(((Float) pixels[component_id]) / 255.0f,
+                                     ((Float) pixels[component_id+1]) / 255.0f,
+                                     ((Float) pixels[component_id+2]) / 255.0f);
+          Magick::ColorHSL color_hsl(color_rgb);
+          new_color.set(color_hsl.hue(), color_hsl.saturation(),
+                        color_hsl.luminosity());
+        }
+        else
+          new_color.set(((Float) pixels[component_id]) / 255.0f,
+                        ((Float) pixels[component_id+1]) / 255.0f,
+                        ((Float) pixels[component_id+2]) / 255.0f);
+        SGAL_assertion(weights[brick_id] != 0);
+        Float factor = 1.0f / weights[brick_id];
+        colors[brick_id].first.add_scaled(factor, new_color);
+      }
+    }
+
+    // Pass 4:
+    wit = weights.begin();
+    for (cit = colors.begin(); cit < colors.end(); ++cit, ++wit)
+      cit->second += *wit;
+  }
+  m_clean_colors_in_progress = false;
+
+  // Clean & Recover 
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  //! \todo traverse the shapes and reset the overrid_* flags and turn on the
+  // dirty-appearance flag instead of the following. The first 3 should not
+  // even be set, cause we are using the material and not the texture!
+  m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
+  m_appearance->clean_tex_enable();
+  if (!conf->is_texture_map()) m_appearance->set_tex_enable(false);
+  m_appearance->clean_tex_env();
+  m_appearance->clean_blend_func();
+  m_appearance->clean_light_model();
+  m_appearance->set_light_enable(true);
+
+  glReadBuffer(read_buffer_mode);
+  glDrawBuffer(draw_buffer_mode);
+
+  // Clear space:
+  delete [] pixels;
+  delete [] selections;
+  weights.clear();
+
+  // Update the colors:
+  Node_iterator nit;
+  Weighted_color_iter cit = colors.begin();
+  for (nit = m_childs.begin(); nit != m_childs.end(); ++nit, ++cit) {
+    Transform* transform = dynamic_cast<Transform*>(*nit);
+    if (!transform) continue;
+
+    Shape* shape = dynamic_cast<Shape*>(*(transform->children_begin()));
+    shape->set_override_tex_enable(true);
+    shape->set_override_tex_env(true);
+    shape->set_override_blend_func(true);
+    shape->set_override_light_model(true);
+    shape->set_override_tex_gen(true);
+    shape->set_override_light_enable(true);
+    SGAL_assertion(shape);
+
+#ifdef SGAL_EGO_VERBOSE
+    std::cout << SGAL_EGO_VAR(cit->first) << std::endl;
+#endif
+
+    Appearance* app;
+    if (m_color_space == COLOR_SPACE_HSL)
+      app = create_appearance((Uint) (cit->first[0] * 255.0f),
+                              (Uint) (cit->first[1] * 255.0f),
+                              (Uint) (cit->first[2] * 255.0f));
+    else {
+      Magick::ColorRGB color_rgb(cit->first[0], cit->first[1], cit->first[2]);
+      Magick::ColorHSL color_hsl(color_rgb);
+      app = create_appearance((Uint) (color_hsl.hue() * 255.0f),
+                              (Uint) (color_hsl.saturation() * 255.0f),
+                              (Uint) (color_hsl.luminosity() * 255.0f));
+    }
+    shape->set_appearance(app);
+  }
+  colors.clear();
+  m_dirty_colors = false;
 }
 
 /*! \brief creates the geometry of a brick. */
-Geometry* Ego::create_geometry(Boolean draw_knobs)
+Geometry* Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs)
 {
   Ego_brick* ego_brick;
   if (draw_knobs) {
-    if (m_bricks.empty()) {
+    Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
+    if (it == m_bricks.end()) {
       ego_brick = new Ego_brick;
       ego_brick->set_knob_slices(m_knob_slices);
-      ego_brick->set_number_of_knobs1(2);
-      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_number_of_knobs1(num0);
+      ego_brick->set_number_of_knobs2(num1);
       ego_brick->set_knobs_visible(true);
-      m_bricks.push_back(ego_brick);
+      m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
     }
-    else ego_brick = m_bricks.front();
+    else ego_brick = (*it).second;
   }
   else {
-    if (m_knobless_bricks.empty()) {
+    Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
+    if (it == m_knobless_bricks.end()) {
       ego_brick = new Ego_brick;
       ego_brick->set_knob_slices(m_knob_slices);
-      ego_brick->set_number_of_knobs1(2);
-      ego_brick->set_number_of_knobs2(2);
+      ego_brick->set_number_of_knobs1(num0);
+      ego_brick->set_number_of_knobs2(num1);
       ego_brick->set_knobs_visible(false);
-      m_knobless_bricks.push_back(ego_brick);
+      m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
+                                              ego_brick));
     }
-    else ego_brick = m_knobless_bricks.front();
+    else ego_brick = (*it).second;
   }
 
   return ego_brick;
 }
 
 /*! \brief creates the geometry of a brick. */
-Geometry* Ego::create_geometry(Boolean draw_knobs, Vector3f& center)
+Geometry* Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
+                               Vector3f& center)
 {
   Ego_brick* ego_brick = new Ego_brick;
   ego_brick->set_knob_slices(m_knob_slices);
-  ego_brick->set_number_of_knobs1(2);
-  ego_brick->set_number_of_knobs2(2);
+  ego_brick->set_number_of_knobs1(num0);
+  ego_brick->set_number_of_knobs2(num1);
   ego_brick->set_center(center);
 
   if (draw_knobs) {
     ego_brick->set_knobs_visible(true);
-    if (!m_bricks.empty()) {
-      Ego_brick* ref_ego_brick = m_bricks.front();
+    Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
+    if (it != m_bricks.end()) {
+      Ego_brick* ref_ego_brick = (*it).second;
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
       ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
       ego_brick->set_indices_flat(true);
     }
-    m_bricks.push_back(ego_brick);
+    m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
   }
   else {
+    Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
     ego_brick->set_knobs_visible(false);
-    if (!m_knobless_bricks.empty()) {
-      Ego_brick* ref_ego_brick = m_knobless_bricks.front();
+    if (it != m_knobless_bricks.end()) {
+      Ego_brick* ref_ego_brick = (*it).second;
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
       ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
       ego_brick->set_indices_flat(true);
     }
-    m_knobless_bricks.push_back(ego_brick);
+    m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
+                                            ego_brick));
   }
 
   return ego_brick;
@@ -583,7 +1139,13 @@ Action::Trav_directive Ego::draw(Draw_action* action)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-
+  if (m_dirty_colors) clean_colors();
+  if (m_clean_colors_in_progress) {
+    if (!m_dirty_visibility) reset_visibility();
+  }
+  else {
+    if (m_dirty_visibility) clean_visibility();
+  }
   return Group::draw(action);
 }
 
@@ -594,79 +1156,130 @@ void Ego::cull(Cull_context& cull_context)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-
-  // We deliberately call the cull() member of the Group and of the Transform
-  // to avoid duplicate application of the transformations.
+  if (m_dirty_colors) clean_colors();
+  if (m_clean_colors_in_progress) {
+    if (!m_dirty_visibility) reset_visibility();
+  }
+  else {
+    if (m_dirty_visibility) clean_visibility();
+  }
+  
+  // We deliberately call the cull() member of the Group and not of the
+  // Transform to avoid duplicate application of the transformations.
   Group::cull(cull_context);
 }
 
-/*! \brief draws the sphere in selection mode. */
+/*! \brief draws the Ego object in selection mode. */
 void Ego::isect(Isect_action* action)
 {
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-
-  Transform::isect(action);
+  if (!m_dirty_visibility) reset_visibility();
+  Group::isect(action);
 }
 
+/*! \brief */
 void Ego::model_changed(Field_info* field_info)
 {
   m_dirty_sphere_bound = true;
   voxels_changed(field_info);
 }
 
+/*! \brief */
 void Ego::voxels_changed(Field_info* field_info)
 {
   m_dirty_voxels = true;
   tiling_changed(field_info);
 }
 
+/*! \brief Process change of tiling scheme. */
 void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
+
+/*! \brief Process change of visibility scheme. */
+void Ego::visibility_changed(Field_info*)
+{
+  Touch_sensor* touch_sensor = NULL;
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    touch_sensor = dynamic_cast<Touch_sensor*>(node);
+    if (touch_sensor) {
+      touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
+                                (m_layer_y_visibility != LV_ALL) ||
+                                (m_layer_z_visibility != LV_ALL));
+      m_dirty_visibility = true;
+      break;
+    }
+  }
+}
+
+/*! \brief Process change of visibility scheme. */
+void Ego::clean_visibility()
+{
+  std::size_t index = 0;
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    Transform* transform = dynamic_cast<Transform*>(node);
+    if (!transform) break;
+    std::size_t i, j, k;
+    boost::tie(i, j, k) = m_voxel_signatures[index++];
+    transform->set_visible(is_visible(m_layer_x_visibility, m_layer_x, i) &&
+                           is_visible(m_layer_y_visibility, m_layer_y, j) &&
+                           is_visible(m_layer_z_visibility, m_layer_z, k));
+  }
+  m_dirty_visibility = false;
+}
+
+/*! \brief Process change of visibility scheme. */
+void Ego::reset_visibility()
+{
+  Node_iterator it = m_childs.begin();
+  while (it != m_childs.end()) {
+    Node* node = *it++;
+    Transform* transform = dynamic_cast<Transform*>(node);
+    if (!transform) break;
+    transform->set_visible(true);
+  }
+  m_dirty_visibility = true;
+}
 
 /*! \brief calculate sphere bound of the node. */
 Boolean Ego::clean_sphere_bound()
 {
+  SGAL_assertion(!m_clean_colors_in_progress);
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
+  // Reset the visibiliy (to true) in case it is not set already for the
+  // computation of the bounding sphere.
+  if (!m_dirty_visibility) reset_visibility();
 
-  Ego_voxels::size_type size = m_tiled_voxels.size();
-  Vector3f offset(m_voxel_length * size.get<0>() / 2,
-                  m_voxel_width * size.get<1>() / 2,
-                  m_voxel_height * size.get<2>() / 2);
-  Vector3f center(CGAL::to_double(m_tiled_voxels_origin.x()),
-                  CGAL::to_double(m_tiled_voxels_origin.y()),
-                  CGAL::to_double(m_tiled_voxels_origin.z()));
-  center.add(offset);
-  float radius = offset.length();
-
+  Ego_voxels::size_type size = m_voxels.size();
+  Vector3f box(m_voxel_length * size.get<0>(),
+               m_voxel_width * size.get<1>(),
+               m_voxel_height * size.get<2>());
+  Vector3f center(CGAL::to_double(m_voxels_center.x()),
+                  CGAL::to_double(m_voxels_center.y()),
+                  CGAL::to_double(m_voxels_center.z()));
+  float radius = box.length() * 0.5f;
   m_sphere_bound.set_center(center);
   m_sphere_bound.set_radius(radius);
   m_dirty_sphere_bound = false;
   return true;
 }
 
-void Ego::adjust_voxels_for_tiling() {
-
-  // The current tiling uses 2x2 bricks and covers all the voxels.
-  // This means that the tiling can go about one square off the current
-  // voxels.
-  // Therefore we need to "offset" the voxels sturcture in 1 square in
-  // the xy-plane.
-  
-  // First, we move the origin. Don't touch z.
-  const double dx = m_voxel_length;
-  const double dy = m_voxel_width;
-  Exact_polyhedron_geo::Kernel::Vector_3 diff(-dx, -dy, 0);
-  m_tiled_voxels_origin = m_tiled_voxels_origin + diff;
-  
-  // Now offset the voxels.
-  m_voxels.offset_xy_layers(1);
+/*! \brief converts m_brick_types to the input received by Ego_voxels_tiler. */  
+Ego_voxels_tiler::Brick_types
+Ego::convert_types(const SGAL::Array<Vector3sh>& types)
+{
+  Ego_voxels_tiler::Brick_types ret;
+  BOOST_FOREACH(const Vector3sh& vec, types) {
+    ret.push_back(boost::make_tuple(vec[0], vec[1], vec[2]));
+  }
+  return ret;
 }
-
-/*! \brief adds the container to a given scene */  
-void Ego::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
 /*! \brief sets the appearance of the object. */
 void Ego::set_appearance(Appearance* app)
@@ -703,37 +1316,43 @@ void Ego::clean_appearance()
   m_dirty_appearance = false;
 }
 
+/*! \brief creates an appearance. */
+Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
+                                   Uint luminosity_key)
+{
+  Uint color_key =
+    (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
+  Appearance_iter ait = m_appearances.find(color_key);
+  if (ait != m_appearances.end()) return ait->second;
+
+  Float hue = (Float) hue_key / 255.0f;
+  Float saturation = (Float) saturation_key / 255.0f;
+  Float luminosity = (Float) luminosity_key / 255.0f;
+
+  Appearance* app = new Appearance;
+  Material* mat = new Material;
+  m_materials.push_back(mat);
+  Magick::ColorHSL color_hsl(hue, saturation, luminosity);
+  Magick::ColorRGB color_rgb(color_hsl);
+  Float red = color_rgb.red();
+  Float green = color_rgb.green();
+  Float blue = color_rgb.blue();
+  mat->set_diffuse_color(red, green, blue);
+  if (m_appearance && m_appearance->get_material())
+    mat->set_transparency(m_appearance->get_material()->get_transparency());
+  app->set_material(mat);
+  m_appearances[color_key] = app;
+
+  return app;
+}
+
 /*! \brief creates a random appearance. */
 Appearance* Ego::create_random_appearance()
 {
   Uint hue_key = std::rand() % 256;
   Uint saturation_key = std::rand() % 256;
-  // Uint luminosity_key = std::rand() % 256;
   Uint luminosity_key = 128;
-  Uint color_key =
-    (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
-  Appearance* app;
-  Appearance_iter ait = m_appearances.find(color_key);
-  if (ait == m_appearances.end()) {
-    app = new Appearance;
-    Material* mat = new Material;
-    m_materials.push_back(mat);
-    app->set_material(mat);
-    Float hue = (Float) hue_key / 255.0;
-    Float saturation = (Float) saturation_key / 255.0;
-    Float luminosity = (Float) luminosity_key / 255.0;
-    Magick::ColorHSL color_hsl(hue, saturation, luminosity);
-    Magick::ColorRGB color_rgb(color_hsl);
-    Float red = color_rgb.red();
-    Float green = color_rgb.green();
-    Float blue = color_rgb.blue();
-    mat->set_diffuse_color(red, green, blue);
-    m_appearances[color_key] = app;
-  }
-  else 
-    app = ait->second;
-
-  return app;
+  return create_appearance(hue_key, saturation_key, luminosity_key);
 }
 
 /*! \brief sets the style. */
@@ -743,7 +1362,44 @@ void Ego::set_style(Style style)
   if (m_style == STYLE_APPEARANCE) m_dirty_appearance = true;
 }
 
+/*! \brief sets the color space. */
+void Ego::set_color_space(Color_space color_space)
+{
+  m_color_space = color_space;
+  // set something to clean.
+}
+  
 /*! \brief sets the knob slicess number. */
 void Ego::set_knob_slices(Uint slices) { m_knob_slices = slices; }
+
+/*! \brief sets the flag that indicates whether the parts are space filling. */
+void Ego::set_space_filling(Boolean flag) { m_space_filling = flag; }
+
+/*! \brief determines whether a given brick is visible with respect to a 
+ * specific layer.
+ */
+Boolean Ego::is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index)
+{
+  switch (lv) {
+   case LV_ALL: return true;
+   case LV_ABOVE: return (brick_index > layer_index);
+   case LV_NOT_ABOVE: return (brick_index <= layer_index);
+   case LV_BELOW: return (brick_index < layer_index);
+   case LV_NOT_BELOW: return (brick_index >= layer_index);
+   case LV_ONLY: return (brick_index == layer_index);
+   case LV_NOT_ONLY: return (brick_index != layer_index);
+  }
+  SGAL_error();
+  return false;
+}
+
+/*! \brief processes change of selected brick. */
+void Ego::selection_id_changed(Field_info* /* field_info. */)
+{
+  SGAL_assertion(m_selection_id < m_voxel_signatures.size());
+  boost::tie(m_layer_x, m_layer_y, m_layer_z) =
+    m_voxel_signatures[m_selection_id];
+  m_dirty_visibility = true;
+}
 
 SGAL_END_NAMESPACE

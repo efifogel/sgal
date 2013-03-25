@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -97,32 +97,33 @@ class Simulation;
 
 class SGAL_CLASSDEF Scene_graph {
 public:
-  typedef std::list<Container *>                Container_list;
+  typedef std::list<Container*>                 Container_list;
   typedef Container_list::iterator              Container_list_iter;
 
-  typedef std::vector<Container *>              Container_vector;
+  typedef std::vector<Container*>               Container_vector;
   typedef Container_vector::iterator            Container_vector_iter;
   
-  typedef std::map<std::string, Container *>    Container_map;
+  typedef std::map<std::string, Container*>     Container_map;
   typedef Container_map::iterator               Container_map_iter;
 
-  typedef std::vector<Geometry *>               Geometry_vector;
-  typedef Geometry_vector::iterator             Geometry_iter;
+  typedef std::list<Touch_sensor*>              Touch_sensor_list;
+  typedef Touch_sensor_list::iterator           Touch_sensor_iter;
 
-  typedef std::vector<Touch_sensor *>           Touch_sensor_vector;
-  typedef Touch_sensor_vector::iterator         Touch_sensor_iter;
-
-  typedef std::list<Time_sensor *>              Time_sensor_list;
+  typedef std::list<Time_sensor*>               Time_sensor_list;
   typedef Time_sensor_list::iterator            Time_sensor_iter;
 
-  typedef std::list<Snapshot *>                 Snapshot_list;
+  typedef std::list<Snapshot*>                  Snapshot_list;
   typedef Snapshot_list::iterator               Snapshot_iter;
 
-  typedef std::list<Simulation *>               Simulation_list;
+  typedef std::list<Simulation*>                Simulation_list;
   typedef Simulation_list::iterator             Simulation_iter;
 
   typedef std::list<fi::path>                   Path_list;
   typedef Path_list::iterator                   Path_iter;
+
+  typedef std::pair<Uint, Uint>                 Selection_id_interval;
+  typedef std::list<Selection_id_interval>      Selection_id_interval_list;
+  typedef Selection_id_interval_list::iterator  Selection_id_interval_iter;
   
   /*! Constructor
    * \param syncronize indicates whether the creation and the rendering of the
@@ -208,13 +209,23 @@ public:
   Container* get_container(const std::string & name);
 
   /*! Add a touch sensor node to the scene graph.
-   * This pushes the touch sensor to the back of the list. It returns a
-   * unique selection id.
+   * Pushes the touch sensor to the back of the list. It returns a
    * \param touch_sensor a pointer to the touch sensor object
+   * unique selection id.
    * \return a unique selection id.
    */
-  Uint add_touch_sensor(Touch_sensor* touch_Sensor);
+  void add_touch_sensor(Touch_sensor* touch_Sensor);
 
+  /*! Allocate an interval of selection ids, given the size of the interval
+   * to allocate.
+   */
+  Uint allocate_selection_ids(Uint num);
+
+  /*! Free an interval of selection ids, given the starting id and size of
+   * the interval to free.
+   */
+  void free_selection_ids(Uint start, Uint num);
+  
   /*! Add a time sensor node to the scene graph. */
   void add_time_sensor(Time_sensor* time_Sensor);
 
@@ -307,8 +318,6 @@ public:
 
   Int get_unique_light_id();
 
-  Geometry_vector get_geometries();
-
   Float get_fps() { return m_fps; }
 
   /*! \breif sets the active key-sensor */
@@ -345,12 +354,6 @@ public:
              Container* dts_node, const char* dst_field_str,
              Route* route);
   
-  /*! Enable the scene graph sensors */
-  void enable_sensors();
-
-  /*! Disable the scene graph sensors */
-  void disable_sensors();
-
   /*! Add a directory to the directory-search list */
   void add_data_dir(const fi::path & dir) { m_data_dirs.push_back(dir); }
 
@@ -439,10 +442,10 @@ private:
   Isect_action* m_isect_action;
 
   /*! A vector of touch-sensor pointers */
-  Touch_sensor_vector m_touch_sensors;
+  Touch_sensor_list m_touch_sensors;
 
-  /*! The number of selection ids used so far */
-  Uint m_num_selection_ids;
+  /*! The list of intervals of free selection ids. */
+  Selection_id_interval_list m_free_selection_ids;
   
   /*! A list of time sensors */
   Time_sensor_list m_time_sensors;

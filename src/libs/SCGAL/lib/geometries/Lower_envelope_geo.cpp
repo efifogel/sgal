@@ -26,12 +26,7 @@
 
 #include <CGAL/Cartesian.h>
 
-#if defined(_WIN32)
-#include <windows.h>
-#endif
 #include <time.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <list>
 
 #include <boost/lexical_cast.hpp>

@@ -27,6 +27,7 @@
 #include <windows.h>
 #endif
 #include <list>
+#include <map>
 #include <boost/unordered_map.hpp>
 #include <boost/variant.hpp>
 
@@ -54,6 +55,8 @@ class Appearance;
 class Coord_array;
 class Normal_array;
 class Tex_coord_array;
+class Geo_set;
+class Touch_sensor;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
@@ -69,10 +72,24 @@ public:
     PARTS,
     STYLE,
     APPEARANCE,
+    KNOB_SLICES,
+    SPACE_FILLING,
+    COLOR_SPACE,
+    LAYER_X_VISIBILITY,
+    LAYER_Y_VISIBILITY,
+    LAYER_Z_VISIBILITY,
+    BRICK_TYPES,
+    SELECTION_ID,
     LAST
   };
 
-  enum Style { STYLE_RANDOM_COLORS, STYLE_APPEARANCE };
+  enum Color_space {COLOR_SPACE_RGB, COLOR_SPACE_HSL};
+  
+  enum Style { STYLE_RANDOM_COLORS, STYLE_APPEARANCE, STYLE_DISCRETE_CUBE_MAP };
+
+  enum Layer_visibility {
+    LV_ALL, LV_ABOVE, LV_NOT_ABOVE, LV_BELOW, LV_NOT_BELOW, LV_ONLY, LV_NOT_ONLY
+  };
   
   /*! Constructor */
   Ego(Boolean proto = false);
@@ -81,15 +98,14 @@ public:
   virtual ~Ego();
 
   /* Construct the prototype */
-  static Ego* prototype() { return new Ego(true); }
+  static Ego* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Ego(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
   
-
   /*! Delete the container prototype */
   virtual void delete_prototype(); 
 
@@ -99,11 +115,6 @@ public:
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene
-   */  
-  virtual void add_to_scene(Scene_graph* scene_graph);
-  
   // virtual Attribute_list get_attributes();
 
   /*! Draw the geometry */
@@ -112,7 +123,7 @@ public:
   /*! */
   virtual void cull(Cull_context& cull_context);
 
-  /*! */
+  /*! Draw the Ego object in selection mode. */
   virtual void isect(Isect_action* action);
 
   /*! Calculate sphere bound of the node */
@@ -127,11 +138,16 @@ public:
   /*! Create a random appearance. */
   Appearance* create_random_appearance();
 
-  /*! Create the geometry of a brick. */
-  Geometry* create_geometry(Boolean draw_knobs, Vector3f& center);
+  /*! Create an appearance. */
+  Appearance* create_appearance(Uint hue_key, Uint saturation_key,
+                                Uint luminosity_key);
   
   /*! Create the geometry of a brick. */
-  Geometry* create_geometry(Boolean draw_knobs);
+  Geometry* create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
+                            Vector3f& center);
+  
+  /*! Create the geometry of a brick. */
+  Geometry* create_geometry(Uint num0, Uint num1, Boolean draw_knobs);
 
   /*! Clean the voxels. */
   void clean_voxels();
@@ -141,7 +157,16 @@ public:
 
   /*! (Re)generate the parts. */
   void clean_parts();
+
+  /*! Clean (set) the part visibility flags. */
+  void clean_visibility();
+
+  /*! Reset the part visibility flags. */
+  void reset_visibility();
   
+  /*! (Re)generate the part colors. */
+  void clean_colors();
+
   /*! Clear the internal representation and auxiliary data structures */
   void clear();
 
@@ -152,27 +177,27 @@ public:
    */
   Boolean is_empty();
 
-  /*! Get the type of the model.
-   * \return true if this is the type of the model.
+  /*! Determine whether the type of the model is 'Polyhedron'.
+   * \return true if the type of the model is 'Polyhedron'.
    */
-  bool is_model_polyhedron() const {
-    return (boost::get<Polyhedron_geo*> (&m_model) != NULL);
-  }
+  Boolean is_model_polyhedron() const;
 
-  bool is_model_exact_polyhedron() const {
-    return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL);
-  }
+  /*! Determine whether the type of the model is 'Exact_polyhedron'.
+   * \return true if the type of the model is 'Exact_polyhedron'.
+   */
+  Boolean is_model_exact_polyhedron() const;
 
-  bool is_model_geo_set() const {
-    return (boost::get<Geo_set*> (&m_model) != NULL);
-  }
+  /*! Determine whether the base type of the model is 'Get_set'.
+   * \return true if the base type of the model is 'Get_set'.
+   */
+  Boolean is_model_geo_set() const;
 
   /*! Set the model.
    * \param model the model.
    */
-  void set_model(Polyhedron_geo* model) { m_model = model; }
-  void set_model(Exact_polyhedron_geo* model) { m_model = model; }
-  void set_model(Geo_set* model) { m_model = model; }
+  void set_model(Polyhedron_geo* model);
+  void set_model(Exact_polyhedron_geo* model);
+  void set_model(Geo_set* model);
 
   /*! Obtain the (const) polyhedron model.
    * \return the model.
@@ -205,31 +230,31 @@ public:
   Geo_set* get_geo_set_model();
 
   /*! Set the horizontal width of the voxel */
-  void set_voxel_width(Float voxel_width) { m_voxel_width = voxel_width; }
+  void set_voxel_width(Float voxel_width);
 
   /*! Obtain the horizontal width of the voxel */
-  Float get_voxel_width() const { return m_voxel_width; }
+  Float get_voxel_width() const;
 
   /*! Set the horizontal length of the voxel */
-  void set_voxel_length(Float voxel_length) { m_voxel_length = voxel_length; }
+  void set_voxel_length(Float voxel_length);
 
   /*! Obtain the horizontal length of the voxel */
-  Float get_voxel_length() const { return m_voxel_length; }
+  Float get_voxel_length() const;
 
   /*! Set the height of the voxel */
-  void set_voxel_height(Float voxel_height) { m_voxel_height = voxel_height; }
+  void set_voxel_height(Float voxel_height);
 
   /*! Obtain the height of the voxel */
-  Float get_voxel_height() const { return m_voxel_height; }
-  
-  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p)
-  { m_first_tile_placement = p; }
+  Float get_voxel_height() const;
 
-  void set_tiling_strategy(Ego_voxels_tiler::Strategy s)
-  { m_tiling_strategy = s; }
+  /*! */
+  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p);
+
+  /*! */
+  void set_tiling_strategy(Ego_voxels_tiler::Strategy s);
   
-  void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)
-  { m_tiling_rows_direction = r; }
+  /*! */
+  void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r);
 
   /*! Notify about a change in the model */
   void model_changed(Field_info* field_info = NULL);
@@ -258,6 +283,12 @@ public:
   /*! Process change of appearance. */
   void appearance_changed(Field_info* /* field_info. */);
 
+  /*! Process change of visibility scheme. */
+  void visibility_changed(Field_info* /* field_info. */);
+
+  /*! Process change of selected brick. */
+  void selection_id_changed(Field_info* /* field_info. */);
+  
   /*! Obtain the style. */
   Style get_style() const;
 
@@ -270,12 +301,65 @@ public:
   /*! Obtain the knob slices number. */
   Uint get_knob_slices() const;
 
+  /*! Determine whether the parts are space filling. */
+  Boolean is_space_filling() const;
+
+  /*! Set the flag that indicates whether the parts are space filling. */
+  void set_space_filling(Boolean flag);
+
+  /*! Obtain the color space. */
+  Color_space get_color_space() const;
+
+  /*! Set the style. */
+  void set_color_space(Color_space color_space);
+
+  /*! Obtain the layer-x index to use in the visibility computation. */
+  Uint get_layer_x() const;
+
+  /*! Set the layer-x index to use in the visibility computation. */
+  void set_layer_x(Uint layer);
+
+  /*! Obtain the layer-y index to use in the visibility computation. */
+  Uint get_layer_y() const;
+
+  /*! Set the layer-y index to use in the visibility computation. */
+  void set_layer_y(Uint layer);
+
+  /*! Obtain the layer-z index to use in the visibility computation. */
+  Uint get_layer_z() const;
+
+  /*! Set the layer-z index to use in the visibility computation. */
+  void set_layer_z(Uint layer);
+  
+  /*! Obtain the layer-x visibility scheme. */
+  Layer_visibility get_layer_x_visibility() const;
+
+  /*! Set the layer-x visibility scheme. */
+  void set_layer_x_visibility(Layer_visibility layer_visibility);
+
+  /*! Obtain the layer-y visibility scheme. */
+  Layer_visibility get_layer_y_visibility() const;
+
+  /*! Set the layer-y visibility scheme. */
+  void set_layer_y_visibility(Layer_visibility layer_visibility);
+
+  /*! Obtain the layer-z visibility scheme. */
+  Layer_visibility get_layer_z_visibility() const;
+
+  /*! Set the layer-z visibility scheme. */
+  void set_layer_z_visibility(Layer_visibility layer_visibility);
+  
 protected:
   /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
-  void adjust_voxels_for_tiling();
+  Ego_voxels_tiler::Brick_types convert_types(const SGAL::Array<Vector3sh> &types);
 
+  /*! Determine whether a given brick is visible with respect to a specific
+   * layer.
+   */
+  Boolean is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index);
+  
   /*! The segments */
   boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
 
@@ -290,15 +374,16 @@ protected:
 
   Ego_voxels m_voxels;
 
-  Ego_voxels m_tiled_voxels;
-
-  Exact_polyhedron_geo::Kernel::Point_3 m_tiled_voxels_origin;
+  Exact_polyhedron_geo::Kernel::Point_3 m_voxels_center;
   
   /*! The style */
   Style m_style;
 
   /*! The apperance attribute. */
   Appearance* m_appearance;
+
+  /*! Indicates whether the parts are space filling. */
+  Boolean m_space_filling;
 
   /*! Stores the pervious appearance. */
   Appearance* m_appearance_prev;
@@ -317,13 +402,20 @@ protected:
   Boolean m_dirty_voxels;
   Boolean m_dirty_tiling;
   Boolean m_dirty_parts;
+  Boolean m_dirty_colors;
+  Boolean m_dirty_visibility;
 
   /*! Indicates whether the parts are "owned". If they are owned (as
    * the user hasn't provided any) the parts should be destructed when
    * Ego is destructed.
    */
   Boolean m_owned_parts;
-  
+
+  /*! Indicates whether the touch sensor is "owned". If it is owned (as
+   * the user hasn't provided any) the touch sensor should be destructed when
+   * Ego is destructed.
+   */
+  Boolean m_owned_touch_sensor;
   typedef boost::unordered_map<Uint, Appearance*>       Appearance_map;
   typedef Appearance_map::iterator                      Appearance_iter;
   Appearance_map m_appearances;
@@ -332,16 +424,51 @@ protected:
   typedef Material_list::iterator                       Material_iter;
   Material_list m_materials;
 
-  typedef std::list<Ego_brick*>                         Ego_brick_list;
-  typedef Ego_brick_list::iterator                      Ego_brick_iter;
-  Ego_brick_list m_bricks;
-  Ego_brick_list m_knobless_bricks;
-  
-  /*! The Scene_graph */
-  Scene_graph* m_scene_graph;
+  typedef std::pair<Uint, Uint>                         Ego_brick_key;
+  typedef std::multimap<Ego_brick_key, Ego_brick*>      Ego_brick_map;
+  typedef Ego_brick_map::iterator                       Ego_brick_iter;
+  Ego_brick_map m_bricks;
+  Ego_brick_map m_knobless_bricks;
 
+  typedef boost::tuple<std::size_t, std::size_t, std::size_t>
+                                                        Voxel_signature;
+  typedef std::vector<Voxel_signature>                  Voxel_signatures;
+  typedef Voxel_signatures::iterator                    Voxel_signatures_iter;
+  
   /*! The number of slices of a knob. */
   Uint m_knob_slices;
+
+  /*! Indicates which color space to use to average color. */
+  Color_space m_color_space;
+
+  /*! Indicates the layer-x index to use in the visibility computation. */
+  Uint m_layer_x;
+
+  /*! Indicates the layer-y index to use in the visibility computation. */
+  Uint m_layer_y;
+
+  /*! Indicates the layer-z index to use in the visibility computation. */
+  Uint m_layer_z;
+  
+  /*! Indicates the layer-x visibility scheme. */
+  Layer_visibility m_layer_x_visibility;
+
+  /*! Indicates the layer-y visibility scheme. */
+  Layer_visibility m_layer_y_visibility;
+
+  /*! Indicates the layer-z visibility scheme. */
+  Layer_visibility m_layer_z_visibility;
+  
+  /*! Pieces with which it is OK to tile. */
+  // I am not using Vector3u because there is none, and I don't have
+  // the energy to create the right templates so it won't be repeatative.
+  SGAL::Array<Vector3sh> m_brick_types;
+
+  /*! A flag raised when the touch sensor senses a change. */
+  Uint m_selection_id;
+  
+  /*! A sorted vector of voxel signatures. */
+  Voxel_signatures m_voxel_signatures;
 
 private:
   /*! Indicates whether the appearance is "owned". If it is owned (as the
@@ -350,6 +477,12 @@ private:
    */
   Boolean m_owned_appearance;
 
+  /*! Indicates whether cleaning the color parts is in progress. 
+   * Upon invocation of clean_parts(), if this flag is on, the function
+   * immediately returns.
+   */
+  Boolean m_clean_colors_in_progress;
+  
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
@@ -358,6 +491,12 @@ private:
 
   /*! The array of style names. */
   static const char* s_style_names[];
+
+  /*! The array of style names. */
+  static const char* s_color_space_names[];
+
+  /*! The Layer visibility names */
+  static const char* s_layer_visibility_names[];
   
   /*! Default values */
   static const Ego_voxels_tiler::First_tile_placement
@@ -368,7 +507,35 @@ private:
   static const Float s_def_voxel_length;
   static const Float s_def_voxel_height;
   static const Style s_def_style;
+  static const Boolean s_def_space_filling;
+  static const Color_space s_def_color_space;
+  static const Layer_visibility s_layer_x_visibility;
+  static const Layer_visibility s_layer_y_visibility;
+  static const Layer_visibility s_layer_z_visibility;
 };
+
+/* \brief constructs the prototype. */
+inline Ego* Ego::prototype() { return new Ego(true); }
+
+/*! \brief clones. */
+inline Container* Ego::clone() { return new Ego(); }
+
+/*! \brief determines whether the type of the model is 'Polyhedron'. */
+inline Boolean Ego::is_model_polyhedron() const
+{  return (boost::get<Polyhedron_geo*> (&m_model) != NULL); }
+
+/*! \brief determines whether the type of the model is 'Exact_polyhedron'. */
+inline Boolean Ego::is_model_exact_polyhedron() const
+{ return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL); }
+
+/*! \brief determines whether the base type of the model is 'Get_set'. */
+inline Boolean Ego::is_model_geo_set() const
+{ return (boost::get<Geo_set*> (&m_model) != NULL); }
+
+/*! \brief sets the model. */
+inline void Ego::set_model(Polyhedron_geo* model) { m_model = model; }
+inline void Ego::set_model(Exact_polyhedron_geo* model) { m_model = model; }
+inline void Ego::set_model(Geo_set* model) { m_model = model; }
 
 /*! \brief obtains the (const) appearance. */
 inline const Appearance* Ego::get_appearance() const { return m_appearance; }
@@ -379,8 +546,93 @@ inline Appearance* Ego::get_appearance() { return m_appearance; }
 /*! \brief obtains the style. */
 inline Ego::Style Ego::get_style() const { return m_style; }
 
+/*! \brief obtains the color space. */
+inline Ego::Color_space Ego::get_color_space() const { return m_color_space; }
+
+/*! \brief determines whether the parts are space filling. */
+inline Boolean Ego::is_space_filling() const { return m_space_filling; }
+
 /*! \brief obtains the knob slices number. */
 inline Uint Ego::get_knob_slices() const { return m_knob_slices; }
+
+/*! \brief sets the horizontal width of the voxel. */
+inline void Ego::set_voxel_width(Float voxel_width)
+{ m_voxel_width = voxel_width; }
+
+/*! \brief obtains the horizontal width of the voxel. */
+inline Float Ego::get_voxel_width() const { return m_voxel_width; }
+
+/*! \brief sets the horizontal length of the voxel. */
+inline void Ego::set_voxel_length(Float voxel_length)
+{ m_voxel_length = voxel_length; }
+
+/*! \brief obtains the horizontal length of the voxel. */
+inline Float Ego::get_voxel_length() const { return m_voxel_length; }
+
+/*! \brief sets the height of the voxel. */
+inline void Ego::set_voxel_height(Float voxel_height)
+{ m_voxel_height = voxel_height; }
+
+/*! \brief obtains the height of the voxel. */
+inline Float Ego::get_voxel_height() const { return m_voxel_height; }
+
+/*! \brief  */
+inline
+void Ego::set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p)
+{ m_first_tile_placement = p; }
+
+/*! \brief  */
+inline void Ego::set_tiling_strategy(Ego_voxels_tiler::Strategy s)
+{ m_tiling_strategy = s; }
+  
+/*! \brief  */
+inline void Ego::set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)
+{ m_tiling_rows_direction = r; }
+
+/*! \brief obtains the layer-x index to use in the visibility computation. */
+inline Uint Ego::get_layer_x() const {return m_layer_x; }
+
+/*! \brief sets the layer-x index to use in the visibility computation. */
+inline void Ego::set_layer_x(Uint layer) { m_layer_x = layer; }
+
+/*! \brief obtains the layer-y index to use in the visibility computation. */
+inline Uint Ego::get_layer_y() const {return m_layer_y; }
+
+/*! \brief sets the layer-y index to use in the visibility computation. */
+inline void Ego::set_layer_y(Uint layer) { m_layer_y = layer; }
+
+/*! \brief obtains the layer-z index to use in the visibility computation. */
+inline Uint Ego::get_layer_z() const {return m_layer_z; }
+
+/*! \brief sets the layer-z index to use in the visibility computation. */
+inline void Ego::set_layer_z(Uint layer) { m_layer_z = layer; }
+
+/*! \brief obtains the layer-x visibility scheme. */
+inline Ego::Layer_visibility Ego::get_layer_x_visibility() const
+{ return m_layer_x_visibility; }
+
+/*! \brief sets the layer-x visibility scheme. */
+inline void Ego::set_layer_x_visibility(Layer_visibility layer_visibility)
+{ m_layer_x_visibility = layer_visibility; }
+
+/*! \brief obtains the layer-y visibility scheme. */
+inline Ego::Layer_visibility Ego::get_layer_y_visibility() const
+{ return m_layer_y_visibility; }
+
+/*! \brief sets the layer-y visibility scheme. */
+inline void Ego::set_layer_y_visibility(Layer_visibility layer_visibility)
+{ m_layer_y_visibility = layer_visibility; }
+
+/*! \brief obtains the layer-z visibility scheme. */
+inline Ego::Layer_visibility Ego::get_layer_z_visibility() const
+{ return m_layer_z_visibility; }
+
+/*! \brief sets the layer-z visibility scheme. */
+inline void Ego::set_layer_z_visibility(Layer_visibility layer_visibility)
+{ m_layer_z_visibility = layer_visibility; }
+  
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Ego::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

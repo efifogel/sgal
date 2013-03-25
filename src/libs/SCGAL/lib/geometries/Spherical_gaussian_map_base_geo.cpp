@@ -40,9 +40,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
-
+#include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Transform.hpp"
@@ -62,6 +61,9 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
+
+#include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
+#include "SCGAL/Exact_coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -187,16 +189,18 @@ void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-/*! Calculate the bounding sphere */
+/*! \brief calculates the bounding sphere. */
 bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
 {
+  if (!m_dirty_sphere_bound) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
 
   if (m_draw_aos) {
     m_sphere_bound.set_center(Vector3f(0, 0, 0));
     m_sphere_bound.set_radius(1);
-  } else if (!m_bb_is_pre_set) {
+  }
+  else if (!m_bb_is_pre_set) {
     Approximate_sphere_vector spheres;
     transform_coords(spheres);
     if (!spheres.empty()) {
@@ -210,7 +214,6 @@ bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
     }
   }
   m_dirty_sphere_bound = false;
-
   return true;
 }
 
@@ -220,10 +223,8 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
   Mesh_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "drawAos") {
@@ -554,9 +555,10 @@ draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
 /*! \brief draws an arrangement on sphere edge. */
 void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
                                                     Vector3f& source,
-                                                    Vector3f& target)
+                                                    Vector3f& target,
+                                                    Vector3f& normal)
 {
-  draw_edge_on_sphere(action, source, target,
+  draw_edge_on_sphere(action, source, target, normal,
                       m_aos_edge_style,
                       m_aos_edge_count,
                       m_aos_edge_directed,

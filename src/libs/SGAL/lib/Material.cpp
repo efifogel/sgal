@@ -41,7 +41,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Material::s_tag = "Material";
+const std::string Material::s_tag = "Material";
 Container_proto* Material::s_prototype = 0;
 
 // Default values:
@@ -69,7 +69,9 @@ Material::Material(Boolean proto) :
 /*! Destructor */
 Material::~Material() {}
 
-/*! */
+/*! \brief indicates whether the material has changed and, thus, must be
+ * redrawn.
+ */
 Boolean Material::is_changed()
 {
   Boolean changed = m_changed;
@@ -77,25 +79,42 @@ Boolean Material::is_changed()
   return changed;
 }
 
-/*! \brief sets the diffuse color. */
-void Material::set_diffuse_color(float v0, float v1, float v2)
+/*! \brief sets the transparency. */
+void Material::set_transparency(Float transparency)
 {
+  m_changed = true;
+  m_transparency = transparency;
+}
+
+/*! \brief sets the ambient intensity. */
+void Material::set_ambient_intensity(Float intensity)
+{
+  m_changed = true;
+  m_ambient_intensity = intensity;
+}
+
+/*! \brief sets the diffuse color. */
+void Material::set_diffuse_color(Float v0, Float v1, Float v2)
+{
+  m_changed = true;
   m_diffuse_color[0] = v0;
   m_diffuse_color[1] = v1;
   m_diffuse_color[2] = v2;
 }
 
 /*! \brief sets the specular color. */
-void Material::set_specular_color(float v0, float v1, float v2)
+void Material::set_specular_color(Float v0, Float v1, Float v2)
 {
+  m_changed = true;
   m_specular_color[0] = v0;
   m_specular_color[1] = v1;
   m_specular_color[2] = v2;
 }
 
 /*! \brief sets the amissive color. */
-void Material::set_emissive_color(float v0, float v1, float v2)
+void Material::set_emissive_color(Float v0, Float v1, Float v2)
 {
+  m_changed = true;
   m_emissive_color[0] = v0;
   m_emissive_color[1] = v1;
   m_emissive_color[2] = v2;
@@ -104,11 +123,12 @@ void Material::set_emissive_color(float v0, float v1, float v2)
 /*! \brief sets the shininess factor. */
 void Material::set_shininess(Float shininess)
 {
+  m_changed = true;
   if (shininess > 1) m_shininess = 1; 
   else m_shininess = shininess;
 }
 
-/*! \brief calls the ogl calls to set the current material.
+/*! \brief calls the ogl functions to set the current material.
  * we assume that if this method is called, all 
  * material parameters need to be set.
  */
@@ -126,10 +146,10 @@ void Material::draw(Face which_face, Context* /* context */)
 
   ambient[3] = diffuse[3] = specular[3] = emissive[3] = 1.0f - m_transparency;
 
-  glMaterialfv(face, GL_AMBIENT, (float *)&ambient);
-  glMaterialfv(face, GL_DIFFUSE, (float *)&diffuse);
-  glMaterialfv(face, GL_SPECULAR, (float *)&specular);
-  glMaterialfv(face, GL_EMISSION, (float *)&emissive);
+  glMaterialfv(face, GL_AMBIENT, (Float *)&ambient);
+  glMaterialfv(face, GL_DIFFUSE, (Float *)&diffuse);
+  glMaterialfv(face, GL_SPECULAR, (Float *)&specular);
+  glMaterialfv(face, GL_EMISSION, (Float *)&emissive);
   glMaterialf(face, GL_SHININESS, 128 * m_shininess);
 }
 
@@ -188,7 +208,7 @@ void Material::init_prototype()
                                            exec_func));
 }
 
-/*! deletes the prototype node. */
+/*! \brief deletes the prototype node. */
 void Material::delete_prototype()
 {
   delete s_prototype;
@@ -212,7 +232,7 @@ void Material::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "ambientIntensity") {
-      set_ambient_intensity((float) atof(value.c_str()));
+      set_ambient_intensity((Float) atof(value.c_str()));
       elem->mark_delete(ai);
       continue;
     }
@@ -235,12 +255,12 @@ void Material::set_attributes(Element* elem)
       continue;
     }
     if (name == "shininess") {
-      set_shininess((float) atof(value.c_str()));
+      set_shininess((Float) atof(value.c_str()));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "transparency") {
-      set_transparency((float) atof(value.c_str()));
+      set_transparency((Float) atof(value.c_str()));
       elem->mark_delete(ai);
       continue;
     }
@@ -260,7 +280,7 @@ void Material::write(Formatter* formatter)
 }
 
 #if 0
-/*! Get the attributes of the box */
+/*! Get the attributes of the box. */
 Attribute_list Material::get_attributes() 
 { 
   Attribute_list attribs; 
@@ -296,13 +316,13 @@ Attribute_list Material::get_attributes()
   }
   if (m_shininess != m_def_shininess) {
     attrib.first = "shininess";
-    sprintf(buf, "%g", (float)get_shininess());
+    sprintf(buf, "%g", (Float)get_shininess());
     attrib.second = buf;
     attribs.push_back(attrib);
   }
   if (m_transparency != m_def_transparency) {
     attrib.first = "transparency";
-    sprintf(buf, "%f", (float)get_transparency());
+    sprintf(buf, "%f", (Float)get_transparency());
     attrib.second = buf;
     attribs.push_back(attrib);
   }

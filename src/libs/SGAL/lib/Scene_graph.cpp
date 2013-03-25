@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -67,9 +67,6 @@
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 
-//! \todo #include "Window_handle.h"
-//! \todo #include "Event_manager_int.h"
-
 SGAL_BEGIN_NAMESPACE
 
 unsigned int Scene_graph::s_min_redraw_period = 500;
@@ -91,7 +88,6 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_does_have_lights(false),
   m_current_light_id(0),
   m_isect_action(NULL),
-  m_num_selection_ids(1),
   m_execution_coordinator(0),
   m_default_event_filter(0),
   m_configuration(NULL),
@@ -131,7 +127,6 @@ Scene_graph::Scene_graph(bool syncronize) :
 /*! Destructor */
 Scene_graph::~Scene_graph()
 {
-  TRACE_MSG(Trace::DESTRUCTOR, "~Scene_graph ...");
   // \todo sai
   // if (m_scripts_sai != NULL) delete m_scripts_sai;
   
@@ -192,6 +187,7 @@ void Scene_graph::set_context(Context* context)
 {
   m_context = context;
   if (m_isect_action) m_isect_action->set_context(context);
+  m_free_selection_ids.push_back(std::make_pair(1, (0x1 << 24) - 1));
 }
 
 /*! \brief intializes the context in the scene grpha and in all relevant
@@ -382,7 +378,8 @@ void Scene_graph::render_scene_graph(Draw_action* draw_action)
   
   //! \todo m_execution_coordinator->inc_frame_counter();
   Camera* act_camera = get_active_camera();
-  Cull_context cull_context(this);
+  Cull_context cull_context;
+  cull_context.set_head_light(get_head_light());
   cull_context.cull(m_root, act_camera);
   cull_context.draw(draw_action);
   
@@ -450,19 +447,30 @@ void Scene_graph::isect(Uint x, Uint y)
   m_navigation_root->isect(m_isect_action);
   glPopAttrib();
 
-  GLuint pixel[3];
-  pixel[0] = pixel[1] = pixel[2] = 0;
-  glReadPixels(x, y, 1, 1, GL_RGB, GL_UNSIGNED_INT, &pixel);
-  unsigned int ts_index = m_isect_action->get_index(pixel);
-
-  for (unsigned int i = 0; i < m_touch_sensors.size(); ++i) {
-    Boolean is_over = m_touch_sensors[i]->is_in_range(ts_index);
-    m_touch_sensors[i]->set_is_over(is_over);
-    if (is_over) m_touch_sensors[i]->set_selection_id(ts_index);
+  Image_base::Format format = Image_base::kRGB8_8_8;
+  GLenum gl_format = Image_base::get_format_format(format);
+  GLenum gl_type = Image_base::get_format_type(format);
+  SGAL_assertion_code(Uint bits = Image_base::get_format_size(format));
+  SGAL_assertion(get_num_selection_ids() < (0x1 << bits));
+  // Ideally, we would declare pixel[] as an array of size
+  // Image_base::get_format_components(format) (Uchar pixel[num_components]).
+  // Unfortunately, MSVC does not allow defining an array of non-constant
+  // size, so we define it to be of the maximum (of 3 and 4).
+#if (_MSC_VER <= 1600)
+  Uchar pixel[4];
+#else
+  Uchar pixel[Image_base::get_format_components(format)];
+#endif
+  glReadPixels(x, y, 1, 1, gl_format, gl_type, pixel);
+  Uint index = m_isect_action->get_index(pixel);
+  Touch_sensor_iter it;
+  for (it = m_touch_sensors.begin(); it != m_touch_sensors.end(); ++it) {
+    Boolean is_over = (*it)->is_in_range(index);
+    (*it)->set_selection_id(is_over ? index : 0);
   }
 }
 
-/*! Process all snapshot nodes */
+/*! \brief processes all snapshot nodes. */
 void Scene_graph::process_snapshots(Draw_action* action) 
 {
   for (Snapshot_iter i = m_snapshots.begin(); i != m_snapshots.end(); ++i) {
@@ -514,12 +522,82 @@ void Scene_graph::add_container(Container* container, const std::string& name)
 }
 
 /*! \brief adds a touch sensor to the scene graph. */
-Uint Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor) 
+void Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor) 
+{ m_touch_sensors.push_back(touch_sensor); }
+
+/*! \brief allocates an interval of selection ids, given the size of the
+ * interval to allocate.
+ */
+Uint Scene_graph::allocate_selection_ids(Uint num)
 {
-  m_touch_sensors.push_back(touch_sensor);
-  Uint start_ids = m_num_selection_ids;
-  m_num_selection_ids += touch_sensor->get_num_selection_ids();
-  return start_ids;
+  std::cout << "Scene_graph::allocate_selection_ids: " << num << std::endl;
+  Selection_id_interval_iter it = m_free_selection_ids.begin();
+  for (; it != m_free_selection_ids.end(); ++it) {
+    Selection_id_interval& interval = *it;
+    if (num > interval.second) continue;
+    Uint start = interval.first;
+    if (num == interval.second) m_free_selection_ids.erase(it);
+    else interval = std::make_pair(interval.first+num, interval.second-num);
+    return start;
+  }
+  std::cerr << "Failed to allocate interval of " << num << " ids!"
+            << std::endl;
+  return 0;
+}
+
+/*! \brief frees an interval of selection ids, given the starting id and size
+ * of the interval to free.
+ */
+void Scene_graph::free_selection_ids(Uint start, Uint num)
+{
+  // If the list of free intervals is empty, simply create a new free interval
+  // and insert it into the list of free intervals:
+  if (m_free_selection_ids.empty()) {
+    Selection_id_interval new_interval = std::make_pair(start, num);
+    m_free_selection_ids.push_front(new_interval);
+    return;
+  }
+
+
+  // Iterate over the list of free intervals:
+  Selection_id_interval_iter it;
+  for (; it != m_free_selection_ids.end(); ++it) {
+    Selection_id_interval& interval = *it;
+    Uint interval_end = interval.first + interval.second;
+
+    // If the new free interval starts efter the current interval ends,
+    // continue.
+    if (interval_end < start) continue;
+
+    // If the new free interval starts where the current interval ends,
+    // enlarge the current interval
+    if (interval_end == start) {
+      interval.second += num;
+      // If the next interval starts where the enlarged current interval
+      // ends, further enlarge the current interval:
+      Selection_id_interval_iter next = it;
+      ++next;
+      if (next == m_free_selection_ids.end()) return;
+      Selection_id_interval& next_interval = *next;
+      interval_end += num;
+      if (interval_end == next_interval.first) {
+        interval.second += next_interval.second;
+        m_free_selection_ids.erase(next);
+      }
+      return;
+    }
+    // The new interval ends before the current interval starts. Insert
+    // the new interval right before the current interval.
+    SGAL_assertion(last < interval.first);
+    Selection_id_interval new_interval = std::make_pair(start, num);
+    m_free_selection_ids.insert(it, new_interval);
+    return;
+  }
+
+  // All free intervals are strictly smaller than the new one.
+  // Create a new free interval and insert it into the list of free intervals:
+  Selection_id_interval new_interval = std::make_pair(start, num);
+  m_free_selection_ids.push_back(new_interval);
 }
 
 /*! \brief adds a time sensor node to the scene graph. */
@@ -879,44 +957,6 @@ bool Scene_graph::route(Container* src_node, const char* src_field_name,
   route->set(src_node, src_field, dst_node, dst_field);
              
   return true;
-}
-
-/*! \brief enables the scene graph sensors. */
-void Scene_graph::enable_sensors()
-{
-  Navigation_info* nav = get_active_navigation_info();
-  if (nav) nav->register_events();
-
-  Touch_sensor_iter tsi;
-  for (tsi = m_touch_sensors.begin(); tsi != m_touch_sensors.end(); ++tsi) {
-    Touch_sensor* touch_sensor = *tsi;
-    if (touch_sensor->get_enabled()) touch_sensor->register_events();
-  }
-
-  Time_sensor_iter si;
-  for (si = m_time_sensors.begin(); si != m_time_sensors.end(); ++si) {
-    Time_sensor* time_sensor = *si;
-    if (time_sensor->get_enabled()) time_sensor->register_events();
-  }
-}
-
-/*! \brief disables the scene graph sensors. */
-void Scene_graph::disable_sensors()
-{
-  Navigation_info* nav = get_active_navigation_info();
-  if (nav) nav->unregister_events();
-
-  Touch_sensor_iter tsi;
-  for (tsi = m_touch_sensors.begin(); tsi != m_touch_sensors.end(); ++tsi) {
-    Touch_sensor* touch_sensor = *tsi;
-    if (!touch_sensor->get_enabled()) touch_sensor->unregister_events();
-  }
-
-  Time_sensor_iter si;
-  for (si = m_time_sensors.begin(); si != m_time_sensors.end(); ++si) {
-    Time_sensor* time_sensor = *si;
-    if (!time_sensor->get_enabled()) time_sensor->unregister_events();
-  }
 }
 
 /*! \brief obtains the active navigation-info node. */

@@ -43,22 +43,22 @@ class Windows_window_manager :
   public Native_window_manager<Windows_window_item>
 {
 private:
-  /*! The module instance */
+  /*! The module instance. */
   HINSTANCE m_hInstance;
 
-  /*! The window class name */
-  char * m_window_class_name;
+  /*! The window class name. */
+  char* m_window_class_name;
   
-  /*! The window-manager singleton */
-  static Windows_window_manager * s_instance;
+  /*! The window-manager singleton. */
+  static Windows_window_manager* s_instance;
 
-  /*! The event handler */
+  /*! The event handler. */
   static Event_handler s_event_handler;
 
-  /*! Has the shift key pressed */
+  /*! Has the shift key pressed. */
   static Boolean s_capital;
   
-  /* Process messages sent to a window (the event handler)
+  /* Process messages sent to a window (the event handler).
    * \param hWnd
    * \param uMsg
    * \param wParam
@@ -67,24 +67,24 @@ private:
   static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg,
                                      WPARAM wParam, LPARAM lParam);
   
-  /*! Register a window class for this application
+  /*! Register a window class for this application.
    */
   void register_window_class();
   
 public:
-  /*! Obtain the window-manager singleton
-   * \return the window-manager
+  /*! Obtain the window-manager singleton.
+   * \return the window-manager.
    */
-  static Windows_window_manager * instance();  
+  static Windows_window_manager* instance();  
   
   /*! Constructor */
   Windows_window_manager();
 
-  /*! Initialize the window manager
-   * \param argc the number of arguments
-   * \param argv the array of ASCII arrguments
+  /*! Initialize the window manager.
+   * \param argc the number of arguments.
+   * \param argv the array of ASCII arrguments.
    */
-  void init(Uint argc, char * argv[]);
+  void init(Uint argc, char* argv[]);
   
   /*! Clear the window manager */
   void clear();
@@ -92,20 +92,20 @@ public:
   /*! Destructor */
   virtual ~Windows_window_manager() {}
   
-  /*! Create a new window
-   * \param window_item the window item that holds the window to create 
+  /*! Create a new window.
+   * \param window_item the window item that holds the window to create .
    */
-  virtual void create_window(Windows_window_item * window_item);
+  virtual void create_window(Windows_window_item* window_item);
 
-  /*! Destroy an existing window
-   * \param window_item the window item that holds the window to destroy
+  /*! Destroy an existing window.
+   * \param window_item the window item that holds the window to destroy.
    */
-  virtual void destroy_window(Windows_window_item * window_item);
+  virtual void destroy_window(Windows_window_item* window_item);
 
-  /*! Run the main event loop
-   * \param simulating indicates whether the application is simulating
+  /*! Run the main event loop.
+   * \param simulating indicates whether the application is simulating.
    */
-  virtual void event_loop(Boolean simulating = SGAL_FALSE);
+  virtual void event_loop(Boolean simulating = false);
 };
 
 SGAL_END_NAMESPACE

@@ -14,12 +14,13 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Color_background.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -34,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Color_background::s_tag = "ColorBackground";
-Container_proto * Color_background::s_prototype = NULL;
+Container_proto* Color_background::s_prototype = NULL;
 
 // Default values:
 const Vector4f Color_background::m_def_color(1, 1, 1, 0);
@@ -45,16 +46,15 @@ REGISTER_TO_FACTORY(Color_background, "Color_background");
 Color_background::Color_background(Boolean proto) :
   Background(proto),
   m_color(m_def_color)
-{
-}
+{}
 
 /*! Destructor */
 Color_background::~Color_background() {}
 
 /*! \brief draws the background. This is done by setting the clear color. */
-void Color_background::draw(Draw_action * draw_action)
+void Color_background::draw(Draw_action* draw_action)
 {
-  Context * context = draw_action->get_context();
+  Context* context = draw_action->get_context();
   if (!context) return;
   Uint which = Gfx::COLOR_CLEAR;
   if (get_clear_depth()) which |= Gfx::DEPTH_CLEAR;
@@ -62,20 +62,16 @@ void Color_background::draw(Draw_action * draw_action)
   context->clear(which, m_color);  
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Color_background::set_attributes(Element * elem)
+/*! \brief sets the attributes of this object. */
+void Color_background::set_attributes(Element* elem)
 {
   Background::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "color") {
       set_color(Vector4f(value));
       elem->mark_delete(ai);
@@ -87,15 +83,12 @@ void Color_background::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
-void Color_background::add_to_scene(Scene_graph * sg)
-{
-  Background::add_to_scene(sg);
-}
+/*! \brief adds the container to a given scene. */  
+void Color_background::add_to_scene(Scene_graph* sg)
+{ Background::add_to_scene(sg); }
 
 #if 0
-/*! get the attributes
- */
+/*! \brief obtains the attributes. */
 Attribute_list Color_background::get_attributes()
 {
   Attribute_list attribs; 
@@ -113,8 +106,7 @@ Attribute_list Color_background::get_attributes()
 }
 #endif
 
-/*!
- */
+/*! \brief */
 void Color_background::init_prototype()
 {
   if (s_prototype) return;
@@ -131,17 +123,15 @@ void Color_background::init_prototype()
                                               get_member_offset(&m_color)));
 }
 
-/*!
- */
+/*! \brief */
 void Color_background::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
-Container_proto * Color_background::get_prototype() 
+/*! \brief */
+Container_proto* Color_background::get_prototype() 
 {  
   if (s_prototype == NULL) Color_background::init_prototype();
   return s_prototype;

@@ -33,8 +33,9 @@
 #include <iostream>
 #include <list>
 #include <vector>
-#include <boost/graph/graph_utility.hpp>
+#include <boost/config.hpp>
 #include <boost/graph/strong_components.hpp>
+#include <boost/graph/adjacency_matrix.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_spherical_gaussian_map_3.h>
@@ -123,7 +124,7 @@ void Assembly::clear()
   
   // Clear the Minkowski-sum Gaussian-map node + geometry children:
   Uint i;
-  for (i = 0; i < m_ms_sgm_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_ms_sgm_geo_node.children_size(); ++i) {
     Node* node = m_ms_sgm_geo_node.get_child(i);
     m_ms_sgm_geo_node.remove_child(node);
     Shape* shape = static_cast<Shape*>(node);
@@ -133,7 +134,7 @@ void Assembly::clear()
   }
 
   // Clear the Minkowski-sum projection Aos node + geometry children:
-  for (i = 0; i < m_projection_aos_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_projection_aos_geo_node.children_size(); ++i) {
     Node* node = m_projection_aos_geo_node.get_child(i);
     m_projection_aos_geo_node.remove_child(node);
     Shape* shape = static_cast<Shape*>(node);
@@ -143,7 +144,7 @@ void Assembly::clear()
   }
 
   // Clear the per-part Minkowski-sum projection Aos node + geometry children:
-  for (i = 0; i < m_part_projection_aos_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_part_projection_aos_geo_node.children_size(); ++i) {
     Node* node = m_part_projection_aos_geo_node.get_child(i);
     m_part_projection_aos_geo_node.remove_child(node);
     Shape* shape = static_cast<Shape*>(node);
@@ -1077,6 +1078,13 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
   Aos_mark::Vertex_iterator vit;
   for (vit = aos->vertices_begin(); vit != aos->vertices_end(); ++vit) {
     if (!vit->mark()) continue;
+    if (vit->degree() == 0) {
+      // A marked isolated vertex can be the result of overlaying an
+      // a non-marked isolated vertex from one arrangement and a marked
+      // face from another.
+      aos->remove_isolated_vertex(vit);
+      continue;
+    }
     CGAL_assertion(vit->degree() == 2);
     Aos_mark::Halfedge_around_vertex_circulator eit = vit->incident_halfedges();
     const Aos_mark::Geometry_traits_2* traits = aos->geometry_traits();
@@ -1274,7 +1282,18 @@ void Assembly::process_aos_graph()
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+
+#if defined(_MSC_VER)    
+    int num_comp =
+      boost::strong_components
+      (*graph,
+       boost::make_iterator_property_map(component.begin(),
+                                         boost::get(boost::vertex_index,
+                                                    *graph),
+                                         component[0]));
+#else
     int num_comp = boost::strong_components(*graph, &component[0]);
+#endif
     if (num_comp > 1) {
       std::cout << "Num components in face " << i << ": " << num_comp
                 << std::endl;
@@ -1291,7 +1310,17 @@ void Assembly::process_aos_graph()
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+#if defined(_MSC_VER)
+    int num_comp =
+      boost::strong_components
+      (*graph,
+       boost::make_iterator_property_map(component.begin(),
+                                         boost::get(boost::vertex_index,
+                                                    *graph),
+                                         component[0]));
+#else
     int num_comp = boost::strong_components(*graph, &component[0]);
+#endif
     if (num_comp > 1) {
       std::cout << "Num components in edge " << eit->curve() << ": "
                 << num_comp << std::endl;
@@ -1308,7 +1337,17 @@ void Assembly::process_aos_graph()
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+#if defined(_MSC_VER)
+    int num_comp =
+      boost::strong_components
+      (*graph,
+       boost::make_iterator_property_map(component.begin(),
+                                         boost::get(boost::vertex_index,
+                                                    *graph),
+                                         component[0]));
+#else
     int num_comp = boost::strong_components(*graph, &component[0]);
+#endif
     if (num_comp > 1) {
       std::cout << "Num components in vertex " << vit->point() << ": "
                 << num_comp << std::endl;
@@ -1397,7 +1436,7 @@ void Assembly::draw_alt_changed(Field_info* field_info)
 void Assembly::inc_alt_changed(Field_info* field_info)
 {
   Uint which_choice = m_switch.get_which_choice();
-  if (++which_choice == m_switch.get_child_count())
+  if (++which_choice == m_switch.children_size())
     which_choice = 0;
   m_switch.set_which_choice(which_choice);
 }
@@ -1410,7 +1449,7 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
   solve(field_info);
 
   Uint i;
-  for (i = 0; i < m_ms_sgm_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_ms_sgm_geo_node.children_size(); ++i) {
     Node* node = m_ms_sgm_geo_node.get_child(i);
     Shape* shape = static_cast<Shape*>(node);
     Geometry* geo = shape->get_geometry();
@@ -1426,27 +1465,27 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
 void Assembly::inc_minkowski_sums_changed(Field_info* field_info)
 {
   Uint which_choice = m_ms_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_ms_sgm_geo_node.get_child_count())
+  if (++which_choice == m_ms_sgm_geo_node.children_size())
     which_choice = 0;
   m_ms_sgm_geo_node.set_which_choice(which_choice);
 
   which_choice = m_projection_aos_geo_node.get_which_choice();
-  if (++which_choice == m_projection_aos_geo_node.get_child_count())
+  if (++which_choice == m_projection_aos_geo_node.children_size())
     which_choice = 0;
   m_projection_aos_geo_node.set_which_choice(which_choice);
 
   which_choice = m_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_sgm_geo_node.get_child_count())
+  if (++which_choice == m_sgm_geo_node.children_size())
     which_choice = 0;
   m_sgm_geo_node.set_which_choice(which_choice);
 
   which_choice = m_reflected_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_reflected_sgm_geo_node.get_child_count())
+  if (++which_choice == m_reflected_sgm_geo_node.children_size())
     which_choice = 0;
   m_reflected_sgm_geo_node.set_which_choice(which_choice);
 
   which_choice = m_part_projection_aos_geo_node.get_which_choice();
-  if (++which_choice == m_part_projection_aos_geo_node.get_child_count())
+  if (++which_choice == m_part_projection_aos_geo_node.children_size())
     which_choice = 0;
   m_part_projection_aos_geo_node.set_which_choice(which_choice);  
 }

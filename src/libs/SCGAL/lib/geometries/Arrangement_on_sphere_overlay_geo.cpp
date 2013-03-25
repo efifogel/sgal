@@ -186,11 +186,12 @@ operator()(Draw_action * action)
       hei->curve();
     Vector3f src = to_vector3f(curve.source());
     Vector3f trg = to_vector3f(curve.target());
+    Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
     const Vector3f & color = hei->color();
     glColor3fv((float*)&color);
-    m_geo.draw_aos_edge(action, src, trg);
+    m_geo.draw_aos_edge(action, src, trg, normal);
   }
 }
 

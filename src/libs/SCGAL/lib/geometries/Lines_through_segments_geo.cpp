@@ -35,6 +35,7 @@
 #include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Plane.hpp"
 #include "SGAL/Line.hpp"
 #include "SGAL/Camera.hpp"
@@ -274,7 +275,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
   Context* context = action->get_context();
   Camera* camera = context->get_active_camera();
 
-  Frustum& frustum = camera->get_base_frust();
+  Frustum& frustum = camera->get_frustum();
   // float left;
   // float right;
   // float bottom;
@@ -524,6 +525,7 @@ void Lines_through_segments_geo::isect(Isect_action* action)
 /*! \brief */
 Boolean Lines_through_segments_geo::clean_sphere_bound()
 {
+  if (!m_dirty_sphere_bound) return false;
   if (is_dirty()) clean();
 
   // TODO: calculate the sphere bound

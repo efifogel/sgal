@@ -92,8 +92,10 @@ Shape::Shape(Boolean proto) :
   m_geometry_prev(NULL),
   m_texture_map(Configuration::s_def_texture_map),
   m_override_material(Configuration::s_def_override_material),
+  m_override_tex_enable(Configuration::s_def_override_tex_enable),
   m_override_tex_env(Configuration::s_def_override_tex_env),
   m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_light_model(Configuration::s_def_override_light_model),
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
   m_override_light_enable(Configuration::s_def_override_light_enable)
 {}
@@ -138,9 +140,7 @@ void Shape::set_geometry(Geometry* geometry)
 #endif
 }
 
-/*! \brief calculates the bounding sphere of all geometries in the shape.
- * \return true if the bounding sphere has changed since last call.
- */
+/*! \brief calculates the bounding sphere of all geometries in the shape. */
 Boolean Shape::clean_sphere_bound()
 {
   if (!is_visible()) {
@@ -207,27 +207,16 @@ void Shape::draw_geometry(Draw_action* action)
     if (!m_draw_depth) context->draw_depth_mask(true);  }
 }
 
-/*! \brief draws the shape in a compact way that includes only rendering the 
- * geometry and not the appearance. The color used is an identifier
- * of the touch sensor that is attaced to the shape. We assume there are 
- * no more than 256 touch sensors and we use the 4 most significant bits 
- * of the red and green to set the color.
- * @param isect_action
- */
+/*! \brief draws the shape for selection. */
 void Shape::isect(Isect_action* isect_action)
 {  
   if (!is_visible()) return;
   if (!m_geometry) return;
 
   Uint id = isect_action->get_id();
-  if (id != 0) {
-    Uint rgb[3];
-    isect_action->get_color(id, rgb);
-    glColor3ui(rgb[0], rgb[1], rgb[2]);
-  } else {
-    glColor3ui(0, 0, 0);
-  }
-
+  Uchar pixel[] = {0, 0, 0, 0};
+  if (id != 0) isect_action->get_color(id, pixel);
+  glColor4ub(pixel[0], pixel[1], pixel[2], pixel[3]);
   m_geometry->isect(isect_action);
 }
 
@@ -239,16 +228,19 @@ void Shape::clean()
     return;
   }
 
+  // Create an appearance if missing:
   if (m_dirty_appearance) clean_appearance();
-
-  // Disable the texture.
-  // \todo in case the image is not loaded yet?
-  if (!m_texture_map) m_appearance->set_tex_enable(false);
-
+  // Create a material if missing:
   if (m_override_material) m_appearance->clean_material();
+  // Enable texture if texture exists and not empty:
+  if (m_override_tex_enable) m_appearance->clean_tex_enable();
+  // Disable the texture if texture mapping is not desired:
+  if (!m_texture_map) m_appearance->set_tex_enable(false);
+  
   if (m_override_tex_env) m_appearance->clean_tex_env();
   if (m_override_blend_func) m_appearance->clean_blend_func();
-  
+  if (m_override_light_model) m_appearance->clean_light_model();
+    
   // If the geometry has no color coordinates, enabled the light by default.
   if (m_override_light_enable)
     if (!m_geometry->are_generated_color())
@@ -287,7 +279,7 @@ void Shape::clean()
   m_dirty = false;
 }
 
-/*! breif cleans the apperance. */
+/*! \brief cleans the apperance. */
 void Shape::clean_appearance()
 {
   // Construct a new owned appearance if needed, and delete the previously
@@ -309,7 +301,7 @@ void Shape::clean_appearance()
   }
 }
 
-/*! \brief sets the attributes of the shape */
+/*! \brief sets the attributes of the shape. */
 void Shape::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -401,7 +393,7 @@ void Shape::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief Obtain a list of attributes (called in the save process). */
+/*! \brief obtains a list of attributes (called in the save process). */
 Attribute_list Shape::get_attributes() 
 { 
   Attribute_list attrs;
@@ -510,6 +502,37 @@ void Shape::geometry_changed(Field_info* /* field_info. */)
 {
   m_dirty = true;
   m_dirty_geometry = true;
+}
+
+/*! \brief turns on the flag that indicates whether the shape should be
+ * rendered.
+ */
+void Shape::set_visible()
+{
+  if (!m_is_visible) {
+    m_is_visible = true;
+    m_dirty_sphere_bound = true;
+  }
+}
+
+/*! \brief turns off the flag that indicates whether the shape should be
+ * rendered.
+ */
+void Shape::set_invisible()
+{
+  if (m_is_visible) {
+    m_is_visible = false;
+    m_dirty_sphere_bound = true;
+  }
+}
+
+/*! \brief set the flag that indicates whether the shape should be rendered. */
+void Shape::set_visible(Boolean flag)
+{
+  if (flag != m_is_visible) {
+    m_is_visible = flag;
+    m_dirty_sphere_bound = true;
+  }
 }
 
 SGAL_END_NAMESPACE

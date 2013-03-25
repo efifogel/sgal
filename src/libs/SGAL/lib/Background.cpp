@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -25,6 +25,7 @@
 #include <GL/gl.h>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Background.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Gl_wrapper.hpp"
@@ -39,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Background::s_tag = "Background";
-Container_proto * Background::s_prototype = NULL;
+Container_proto* Background::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Background, "Background");
 
@@ -55,24 +56,19 @@ Background::Background(Boolean proto) :
 Background::~Background() {}
 
 /*! Obtain the bindable stack */
-Bindable_stack * Background::get_stack()
+Bindable_stack* Background::get_stack()
 { return m_scene_graph->get_background_stack(); }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Background::set_attributes(Element * elem)
+/*! \brief sets the attributes of this object. */
+void Background::set_attributes(Element* elem)
 {
   Bindable_node::set_attributes(elem);  
 
   typedef Element::Str_attr_iter                Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "clearColor") {
       set_clear_color(compare_to_true(value));
       elem->mark_delete(ai);
@@ -93,8 +89,8 @@ void Background::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
-void Background::add_to_scene(Scene_graph * sg)
+/*! \brief adds the container to a given scene. */  
+void Background::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
 
@@ -102,7 +98,7 @@ void Background::add_to_scene(Scene_graph * sg)
   insert_stack(this);
 }
 
-/*! \brief initializes the protoype */
+/*! \brief initializes the protoype. */
 void Background::init_prototype()
 {
   if (s_prototype) return;
@@ -111,24 +107,24 @@ void Background::init_prototype()
   s_prototype = new Container_proto(Bindable_node::get_prototype());
 }
 
-/*! \brief deletes the protoype */
+/*! \brief deletes the protoype. */
 void Background::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the protoype */
-Container_proto * Background::get_prototype()
+/*! \brief obtains the protoype. */
+Container_proto* Background::get_prototype()
 {
   if (s_prototype == NULL) Background::init_prototype();
   return s_prototype;
 }
 
 /*! \breif drwas the background */
-void Background::draw(Draw_action * draw_action)
+void Background::draw(Draw_action* draw_action)
 {
-  Context * context = draw_action->get_context();
+  Context* context = draw_action->get_context();
   if (!context) return;
   Uint which = 0;
   if (m_clear_color) which |= Gfx::COLOR_CLEAR;
@@ -137,8 +133,7 @@ void Background::draw(Draw_action * draw_action)
   context->clear(which);  
 }
 
-
-/*! Draw a 2d polygon with texture coordinates */
+/*! \brief draws a 2D polygon with texture coordinates. */
 void Background::draw_polygon()
 {
   glColor3f(1, 1, 1);

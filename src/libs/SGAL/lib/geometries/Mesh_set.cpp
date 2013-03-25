@@ -179,7 +179,7 @@ void Mesh_set::init_prototype()
 
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "convex",
+  s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
                                           get_member_offset(&m_crease_angle),
                                           exec_func));  
 }
@@ -212,6 +212,13 @@ inline Boolean Mesh_set::are_generated_tex_coord()
   if (is_dirty()) clean();
   return (m_generated_tex_coord && (m_tex_coord_array != NULL));
 }  
+
+/*! \brief obtains the coord-index array. */
+Array<Uint>& Mesh_set::get_coord_indices()
+{
+  if (is_dirty_indices()) clean_indices();
+  return Geo_set::get_coord_indices();
+}
 
 /*! \brief cleans the representation. */
 void Mesh_set::clean()

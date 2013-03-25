@@ -67,8 +67,12 @@ void Container_proto::add_field_info(Field_info * field_info)
   SGAL_assertion(m_first_id <= field_info->get_id());
 
   // Insert the new field info into the map
+  SGAL_assertion(m_field_info_ids.find(field_info->get_id()) ==
+                 m_field_info_ids.end());
   m_field_info_ids.insert
     (Field_info_id_map::value_type(field_info->get_id(), field_info));
+  SGAL_assertion(m_field_info_names.find(field_info->get_name()) ==
+                 m_field_info_names.end());
   m_field_info_names.insert
     (Field_info_name_map::value_type(field_info->get_name(), field_info));
 }

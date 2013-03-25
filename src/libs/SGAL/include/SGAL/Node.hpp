@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -89,7 +89,7 @@ public:
   /*! Cull the node if invisible and prepare for rendering. */
   virtual void cull(Cull_context& cull_context);
 
-  /*! Prepare the node for selection.
+  /*! Draw the node for selection.
    * \param isect_action
    */
   virtual void isect(Isect_action* isect_action);
@@ -140,9 +140,9 @@ inline Action::Trav_directive Node::draw(Draw_action* /* draw_action */)
 /*! \brief culls the node if invisible and prepare for rendering. */
 inline void Node::cull(Cull_context& /* cull_context */) {}
 
-/*! \brief prepares the node for selection. */
+/*! \brief draws the node for selection. */
 inline void Node::isect(Isect_action* /* isect_action */) {}
-  
+
 /*! \brief cleans the bounding sphere. */
 inline Boolean Node::clean_sphere_bound() { return false; }
 

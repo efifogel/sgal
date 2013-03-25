@@ -33,6 +33,7 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Multisample.hpp"
+#include "SGAL/Window_item.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -45,6 +46,8 @@ Configuration::s_def_geometry_drawing_mode(Configuration::GDM_VERTEX_ARRAY);
 const Boolean Configuration::s_def_are_global_lights_stationary(false);
 const Boolean Configuration::s_def_texture_map(true);
 const Boolean Configuration::s_def_is_fixed_head_light(true);
+const Uint Configuration::s_def_stencil_bits(SGAL_DEF_WINDOW_STENCIL_BITS);
+const Uint Configuration::s_def_depth_bits(SGAL_DEF_WINDOW_DEPTH_BITS);
 const Float Configuration::s_def_min_frame_rate(15);
 const Gfx::Poly_mode Configuration::s_def_poly_mode(Gfx::FILL_PMODE);
 const Boolean Configuration::s_def_display_fps(false);
@@ -53,8 +56,10 @@ const Float Configuration::s_def_speed_factor(100);
 const Uint Configuration::s_def_verbose_level(0);
 const Boolean Configuration::s_def_seamless_cube_map(true);
 const Boolean Configuration::s_def_override_material(true);
+const Boolean Configuration::s_def_override_tex_enable(true);
 const Boolean Configuration::s_def_override_tex_env(true);
 const Boolean Configuration::s_def_override_blend_func(true);
+const Boolean Configuration::s_def_override_light_model(true);
 const Boolean Configuration::s_def_override_tex_gen(true);
 const Boolean Configuration::s_def_override_light_enable(true);
 
@@ -72,6 +77,8 @@ Configuration::Configuration(Boolean proto) :
   m_are_global_lights_stationary(s_def_are_global_lights_stationary),
   m_texture_map(s_def_texture_map),
   m_is_fixed_head_light(s_def_is_fixed_head_light),
+  m_stencil_bits(s_def_stencil_bits),
+  m_depth_bits(s_def_depth_bits),
   m_min_frame_rate(s_def_min_frame_rate),
   m_poly_mode(s_def_poly_mode),
   m_display_fps(s_def_display_fps),
@@ -80,8 +87,10 @@ Configuration::Configuration(Boolean proto) :
   m_verbosity_level(s_def_verbose_level),
   m_seamless_cube_map(s_def_seamless_cube_map),
   m_override_material(Configuration::s_def_override_material),
+  m_override_tex_enable(Configuration::s_def_override_tex_enable),
   m_override_tex_env(Configuration::s_def_override_tex_env),
   m_override_blend_func(Configuration::s_def_override_blend_func),
+  m_override_light_model(Configuration::s_def_override_light_model),
   m_override_tex_gen(Configuration::s_def_override_tex_gen),
   m_override_light_enable(Configuration::s_def_override_light_enable),
   m_owned_accumulation(false)
@@ -92,6 +101,8 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
                           Boolean def_are_global_lights_stationary,
                           Boolean def_texture_map,
                           Boolean def_is_fixed_head_light,
+                          Uint def_stencil_bits,
+                          Uint def_depth_bits,
                           Float def_min_frame_rate,
                           Gfx::Poly_mode def_poly_mode,
                           Boolean def_display_fps,
@@ -104,6 +115,8 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
   m_geometry_drawing_mode = def_geometry_drawing_mode;
   m_are_global_lights_stationary = def_are_global_lights_stationary;
   m_is_fixed_head_light = def_is_fixed_head_light;
+  m_stencil_bits = def_stencil_bits;
+  m_depth_bits = def_depth_bits;
   m_min_frame_rate = def_min_frame_rate;
   m_poly_mode = def_poly_mode;
   m_display_fps = def_display_fps;
@@ -134,6 +147,14 @@ void Configuration::init_prototype()
     add_field_info(new SF_bool(FIXED_HEADLIGHT, "fixedHeadLight",
                                get_member_offset(&m_is_fixed_head_light),
                                exec_func));
+
+  s_prototype->
+    add_field_info(new SF_int(STENCIL_BITS, "stencilBits",
+                              get_member_offset(&m_stencil_bits)));
+
+  s_prototype->
+    add_field_info(new SF_int(DEPTH_BITS, "depthBits",
+                              get_member_offset(&m_depth_bits)));
 
   s_prototype->
     add_field_info(new SF_float(MIN_FRAME_RATE, "minFrameRate",
@@ -185,8 +206,18 @@ void Configuration::set_attributes(Element* elem)
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
+    if (name == "stencilBits") {
+      set_number_of_stencil_bits(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "depthBits") {
+      set_number_of_depth_bits(boost::lexical_cast<Uint>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
     if (name == "minFrameRate") {
-      set_min_frame_rate(atoff(value.c_str()));
+      set_min_frame_rate(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -226,7 +257,7 @@ void Configuration::set_attributes(Element* elem)
       continue;
     }
     if (name == "minZoomDistance") {
-      set_min_zoom_distance(atoff(value.c_str()));
+      set_min_zoom_distance(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -241,7 +272,7 @@ void Configuration::set_attributes(Element* elem)
       continue;
     }
     if (name == "verbosityLevel") {
-      set_verbosity_level(strtoul(value.c_str(), NULL, 10));
+      set_verbosity_level(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -255,6 +286,11 @@ void Configuration::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "overrideTexEnable") {
+      m_override_tex_enable = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
     if (name == "overrideTexEnv") {
       m_override_tex_env = compare_to_true(value);
       elem->mark_delete(ai);
@@ -262,6 +298,11 @@ void Configuration::set_attributes(Element* elem)
     }
     if (name == "overrideBlendFunc") {
       m_override_blend_func = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "overrideLightModel") {
+      m_override_light_model = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
     }

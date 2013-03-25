@@ -122,14 +122,14 @@ private:
 
 public:
   /*! Constructor */
-  Power_diagram_on_sphere_geo(Boolean proto = SGAL_FALSE);
+  Power_diagram_on_sphere_geo(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Power_diagram_on_sphere_geo();
 
   /* Construct the prototype */
   static Power_diagram_on_sphere_geo* prototype()
-  { return new Power_diagram_on_sphere_geo(SGAL_TRUE); }
+  { return new Power_diagram_on_sphere_geo(true); }
 
   /*! Clone */
   virtual Container* clone()
@@ -177,10 +177,10 @@ public:
   Boolean get_draw_sites() const { return m_draw_sites; }
 
   /*! Enable edge rendering */
-  void enable_site() { m_site_enabled = SGAL_TRUE; }
+  void enable_site() { m_site_enabled = true; }
 
   /*! Disable edge rendering */
-  void disable_site() { m_site_enabled = SGAL_FALSE; }
+  void disable_site() { m_site_enabled = false; }
 
   /*! Determine whether edge rendering is enabled */
   Boolean is_site_enabled() const { return m_site_enabled; }
@@ -373,7 +373,7 @@ private:
 };
 
 /*! \brief obtains the coordinate array */
-inline Power_diagram_on_sphere_geo::Coeff_array *
+inline Power_diagram_on_sphere_geo::Coeff_array*
 Power_diagram_on_sphere_geo::get_coeff_array() const
 { return m_coeff_array; }
 

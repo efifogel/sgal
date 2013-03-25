@@ -46,7 +46,7 @@ template <typename T_Point>
 inline Approximate_sphere_3 to_approximate_sphere(const T_Point & point)
 {
   Approximate_point_3 approximate_point = to_approximate_point(point);
-  return Approximate_sphere_3(approximate_point, 0.0);
+  return Approximate_sphere_3(approximate_point, 0.0f);
 }
 
 SGAL_END_NAMESPACE

@@ -39,180 +39,237 @@ SGAL_BEGIN_NAMESPACE
 
 class Native_window_item : public Window_item {
 protected:
-  /*! The window width */
-  unsigned int m_width;
+  /*! The window width. */
+  Uint m_width;
 
-  /*! The window height */
-  unsigned int m_height;
+  /*! The window height. */
+  Uint m_height;
 
-  /*! The window origin X position */
-  unsigned int m_x;
+  /*! The window origin X position. */
+  Uint m_x;
 
-  /*! The window origin X position */
-  unsigned int m_y;
+  /*! The window origin X position. */
+  Uint m_y;
 
-  /*! Number of (multi)samples */
-  unsigned int m_number_of_samples;
+  /*! Number of red bits. */
+  Uint m_red_bits;
+
+  /*! Number of green bits. */
+  Uint m_green_bits;
+
+  /*! Number of blue bits. */
+  Uint m_blue_bits;
+
+  /*! Number of alpha bits. */
+  Uint m_alpha_bits;
+
+  /*! Number of red bits stored in the accumulation buffer. */
+  Uint m_accum_red_bits;
+
+  /*! Number of green bits stored in the accumulation buffer. */
+  Uint m_accum_green_bits;
+
+  /*! Number of blue bits stored in the accumulation buffer. */
+  Uint m_accum_blue_bits;
+
+  /*! Number of alpha bits stored in the accumulation buffer. */
+  Uint m_accum_alpha_bits;
+
+  /*! The number of depth bits. */
+  Uint m_depth_bits;
 
   /*! Number of stencil bits */
-  unsigned int m_stencil_bits;
+  Uint m_stencil_bits;
 
-  /*! Number of red bits stored in the accumulation buffer */
-  unsigned int m_accum_red_bits;
+  /*! Number of (multi)samples. */
+  Uint m_number_of_samples;
 
-  /*! Number of red bits stored in the accumulation buffer */
-  unsigned int m_accum_green_bits;
-
-  /*! Number of red bits stored in the accumulation buffer */
-  unsigned int m_accum_blue_bits;
-
-  /*! Number of red bits stored in the accumulation buffer */
-  unsigned int m_accum_alpha_bits;
-
-  /*! The window is double buffered */
+  /*! The window is double buffered. */
   Boolean m_double_buffer;
 
-  /*! The window is full screen */
+  /*! The window is full screen. */
   Boolean m_full_screen;
 
-  /* The flag that indicates whether windows be made full screen */
+  /* The flag that indicates whether windows be made full screen. */
   static Boolean s_init_full_screen;
 
-  /*! The initial width of windows */
-  static unsigned int s_init_width;
+  /*! The initial width of windows. */
+  static Uint s_init_width;
 
-  /*! The initial height of windows */
-  static unsigned int s_init_height;
+  /*! The initial height of windows. */
+  static Uint s_init_height;
 
-  /*! The initial x-cordinate of window origins */
-  static unsigned int s_init_x;
+  /*! The initial x-cordinate of window origins. */
+  static Uint s_init_x;
 
-  /*! The initial y-cordinate of window origins */
-  static unsigned int s_init_y;
+  /*! The initial y-cordinate of window origins. */
+  static Uint s_init_y;
 
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Native_window_item();
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Native_window_item();
 
-  /*! Is the window full screen? */
-  virtual Boolean is_full_screen() const { return m_full_screen; }
+  /*! Determine whether the window full screen. */
+  virtual Boolean is_full_screen() const;
 
-  /*! Set the window to be full screen */
+  /*! Set the window to be full screen. */
   virtual void set_full_screen(Boolean flag);
 
-  /*! Set the width of the window
-   * \param width the new width of the window
+  /*! Set the width of the window.
+   * \param width the new width of the window.
    */
-  virtual void set_width(unsigned int width);
+  virtual void set_width(Uint width);
 
-  /*! Set the height of the window
-   * \param height the new height of the window
+  /*! Set the height of the window.
+   * \param height the new height of the window.
    */
-  virtual void set_height(unsigned int height);
+  virtual void set_height(Uint height);
   
-  /*! Set the width and height of the window
-   * \param width the new width of the window
-   * \param height the new height of the window
+  /*! Set the width and height of the window.
+   * \param width the new width of the window.
+   * \param height the new height of the window.
    */
-  virtual void set_size(unsigned int width, unsigned int height);
+  virtual void set_size(Uint width, Uint height);
 
-  /*! Set the origin of the window
-   * \param x the x-coordinate of the window origin
-   * \param y the y-coordinate of the window origin
+  /*! Set the origin of the window.
+   * \param x the x-coordinate of the window origin.
+   * \param y the y-coordinate of the window origin.
    */
-  virtual void set_position(unsigned int x, unsigned int y);
+  virtual void set_position(Uint x, Uint y);
 
-  /*! Set the number of samples for multisampling
-   * \param samples the number of samples 
+  /*! Set the number of RGB bits.
+   * \param red_bits the number of red bits.
+   * \param green_bits the number of green bitsr.
+   * \param blue_bits the number of blue bits.
    */
-  virtual void set_number_of_samples(unsigned int samples);
+  virtual void set_number_of_color_bits(Uint red_bits,
+                                        Uint green_bits,
+                                        Uint blue_bits);
 
-  /*! Obtain the number of samples for multisampling
-   * \return the number of samples
+  /*! Set the number of alpha bits.
+   * \param alpha_bits the number of alpha bits. 
    */
-  virtual unsigned int get_number_of_samples() const;
+  virtual void set_number_of_alpha_bits(Uint alpha_bits);
 
-  /*! Set the number of stencil bits in the accumulation buffer
-   * \param stencil_bits the number of stencil bits 
+  /*! Obtain the number of alpha bits.
+   * \return the number of alpha bits.
    */
-  virtual void set_number_of_stencil_bits(unsigned int stencil_bits);
-  
-  /*! Obtain the number of stencil bits in the accumulation buffer
-   * \return the number of stencil bits
+  virtual Uint get_number_of_alpha_bits() const;
+
+  /*! Obtain the number of RGB bits.
+   * \param red_bits the number of red bits.
+   * \param green_bits the number of green bits.
+   * \param blue_bits the number of blue bits.
    */
-  virtual unsigned int get_number_of_stencil_bits() const;
+  virtual void get_number_of_color_bits(Uint& red_bits,
+                                        Uint& green_bits,
+                                        Uint& blue_bits) const;
 
   /*! Set the number of RGBA bits stored in the accumulation buffer.
-   * \param red_bits the number of red bits stored in the accumulation buffer
-   * \param green_bits the number of red bits stored in the accumulation buffer
-   * \param blue_bits the number of red bits stored in the accumulation buffer
-   * \param alpha_bits the number of red bits stored in the accumulation buffer
+   * \param red_bits the number of red bits stored in the accumulation buffer.
+   * \param green_bits the number of green bits stored in the accumulation
+   *                   buffer.
+   * \param blue_bits the number of blue bits stored in the accumulation buffer.
+   * \param alpha_bits the number of alpha bits stored in the accumulation
+   *                   buffer.
    */
-  virtual void set_number_of_accumulation_bits(unsigned int red_bits,
-                                               unsigned int green_bits,
-                                               unsigned int blue_bits,
-                                               unsigned int alpha_bits);
+  virtual void set_number_of_accumulation_bits(Uint red_bits,
+                                               Uint green_bits,
+                                               Uint blue_bits,
+                                               Uint alpha_bits);
 
   /*! Obtain the number of RGBA bits stored in the accumulation buffer.
-   * \param red_bits the number of red bits stored in the accumulation buffer
-   * \param green_bits the number of red bits stored in the accumulation buffer
-   * \param blue_bits the number of red bits stored in the accumulation buffer
-   * \param alpha_bits the number of red bits stored in the accumulation buffer
+   * \param red_bits the number of red bits stored in the accumulation buffer.
+   * \param green_bits the number of green bits stored in the accumulation
+   *                   buffer.
+   * \param blue_bits the number of blue bits stored in the accumulation buffer.
+   * \param alpha_bits the number of alpha bits stored in the accumulation
+   *                   buffer.
    */
-  virtual void get_number_of_accumulation_bits(unsigned int & red_bits,
-                                               unsigned int & green_bits,
-                                               unsigned int & blue_bits,
-                                               unsigned int & alpha_bits) const;
+  virtual void get_number_of_accumulation_bits(Uint& red_bits,
+                                               Uint& green_bits,
+                                               Uint& blue_bits,
+                                               Uint& alpha_bits) const;
+
+  /*! Set the number of depth bits.
+   * \param depth the number of depth bits.
+   */
+  virtual void set_number_of_depth_bits(Uint depth);
+
+  /*! Obtain the number of depth bits.
+   * \return the number of depth bits.
+   */
+  virtual Uint get_number_of_depth_bits() const;
+
+  /*! Set the number of stencil bits.
+   * \param stencil_bits the number of stencil bits.
+   */
+  virtual void set_number_of_stencil_bits(Uint stencil_bits);
+  
+  /*! Obtain the number of stencil bits.
+   * \return the number of stencil bits.
+   */
+  virtual Uint get_number_of_stencil_bits() const;
+
+  /*! Set the number of samples for multisampling.
+   * \param samples the number of samples.
+   */
+  virtual void set_number_of_samples(Uint samples);
+
+  /*! Obtain the number of samples for multisampling.
+   * \return the number of samples.
+   */
+  virtual Uint get_number_of_samples() const;
 
   /*! Set the flag that indicates whether windows be made full screen
    * \param flag indicates whether windows be made full screen
    */
   static void set_init_full_screen(Boolean flag);
 
-  /*! Set the initial width of windows
-   * \param width the new width of the window
+  /*! Set the initial width of windows.
+   * \param width the new width of the window.
    */
-  static void set_init_width(unsigned int width);
+  static void set_init_width(Uint width);
 
-  /*! Set the initial height and height of windows
-   * \param height the new height of the window
+  /*! Set the initial height and height of windows.
+   * \param height the new height of the window.
    */
-  static void set_init_height(unsigned int height);
+  static void set_init_height(Uint height);
 
-  /*! Set the initial width and height of windows
-   * \param width the new width of the window
-   * \param height the new height of the window
+  /*! Set the initial width and height of windows.
+   * \param width the new width of the window.
+   * \param height the new height of the window.
    */
-  static void set_init_size(unsigned int width, unsigned int height);
+  static void set_init_size(Uint width, Uint height);
   
-  /*! Set the initial x-position of window otigins
-   * \param x the x-coordinate of the window origin
+  /*! Set the initial x-position of window otigins.
+   * \param x the x-coordinate of the window origin.
    */
-  static void set_init_x(unsigned int x);
+  static void set_init_x(Uint x);
 
-  /*! Obtain the initial x-coordinate of window origins
-   * \return the origin x-coordinate
+  /*! Obtain the initial x-coordinate of window origins.
+   * \return the origin x-coordinate.
    */
-  static unsigned int get_init_x();
+  static Uint get_init_x();
 
-  /*! Set the initial y-position of window otigins
-   * \param y the y-coordinate of the window origin
+  /*! Set the initial y-position of window otigins.
+   * \param y the y-coordinate of the window origin.
    */
-  static void set_init_y(unsigned int y);
+  static void set_init_y(Uint y);
 
-  /*! Obtain the initial y-coordinate of window origins
-   * \param y the origin y-coordinate
+  /*! Obtain the initial y-coordinate of window origins.
+   * \param y the origin y-coordinate.
    */
-  static unsigned int get_init_y();
+  static Uint get_init_y();
 
-  /*! Set the initial origin of windows
-   * \param x the x-coordinate of the window origin
-   * \param y the y-coordinate of the window origin
+  /*! Set the initial origin of windows.
+   * \param x the x-coordinate of the window origin.
+   * \param y the y-coordinate of the window origin.
    */
-  static void set_init_position(unsigned int x, unsigned int y);
+  static void set_init_position(Uint x, Uint y);
 
 #if defined(_WIN32)
   friend class Windows_window_manager;
@@ -220,6 +277,10 @@ public:
   friend class X11_window_manager;
 #endif
 };
+
+/*! \brief determines whether the window full screen. */
+inline Boolean Native_window_item::is_full_screen() const
+{ return m_full_screen; }
 
 SGAL_END_NAMESPACE
 

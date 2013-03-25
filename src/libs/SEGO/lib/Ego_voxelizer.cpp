@@ -80,19 +80,22 @@ Ego_voxelizer::operator()(const Triangles& triangles, Ego_voxels* out_voxels)
   const
 {
   SGAL_assertion(out_voxels != NULL);
-  
-  Point_3 origin = create_voxels_from_triangles(triangles, out_voxels);
 
-  for (Triangles::const_iterator it = triangles.begin();
-       it != triangles.end(); ++it) {
+  Iso_cuboid_3 bbox;
+  create_voxels_from_triangles(triangles, out_voxels, bbox);
+  Point_3 origin(bbox.min_coord(0), bbox.min_coord(1), bbox.min_coord(2));
+  Triangles::const_iterator it;
+  for (it = triangles.begin(); it != triangles.end(); ++it)
     mark_triangle(*it, origin, out_voxels);
-  }
 
 #ifdef EGO_VOXELIZER_VERBOSE
   out_voxels->print();
 #endif
 
-  return origin;
+  Point_3 center((bbox.min_coord(0)+bbox.max_coord(0)) / 2,
+                 (bbox.min_coord(1)+bbox.max_coord(1)) / 2,
+                 (bbox.min_coord(2)+bbox.max_coord(2)) / 2);
+  return center;
 }
 
 /*! \brief */
@@ -218,23 +221,20 @@ Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set,
   return res;
 }
 
-Ego_voxelizer::Point_3
-Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
-                                            Ego_voxels* out_voxels) const {
-  
+void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
+                                                 Ego_voxels* out_voxels,
+                                                 Iso_cuboid_3& bbox) const
+{
   std::vector<Point_3> vertices;
-  
-  for (Triangles::const_iterator it = triangles.begin();
-       it != triangles.end(); ++it) {
+  Triangles::const_iterator it;
+  for (it = triangles.begin(); it != triangles.end(); ++it) {
     vertices.push_back(it->vertex(0));
     vertices.push_back(it->vertex(1));
     vertices.push_back(it->vertex(2));
   }
-  
-  Iso_cuboid_3 bbox = CGAL::bounding_box(vertices.begin(), vertices.end());
+  bbox = CGAL::bounding_box(vertices.begin(), vertices.end());
 
-  // make the length, width, and height integers that contain the 
-  // mesh.
+  // make the length, width, and height integers that contain the mesh.
   // Not sure this is the best way to round up those puppies.
   
   Kernel::FT length = bbox.xmax() - bbox.xmin();
@@ -252,10 +252,6 @@ Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
   std::cout << VAR(iwidth) << std::endl;
   std::cout << VAR(iheight) << std::endl;
 #endif
-
-  return Point_3(bbox.min_coord(0),
-                 bbox.min_coord(1),
-                 bbox.min_coord(2));
 
   // TODO: Do you want to uncomment this?
   // // We guess that putting the mesh exactly in the middle of the voxels
@@ -376,10 +372,12 @@ void Ego_voxelizer::create_slicing_segments(long dim,
   points[1] = triangle[1];
   points[2] = triangle[2];
 
-  Point_3* pmax = std::max_element(points, points + 3,
-                                   SEGO_internal::Compare_point_by_axis<Point_3>(dim));
-  Point_3* pmin = std::min_element(points, points + 3,
-                                   SEGO_internal::Compare_point_by_axis<Point_3>(dim));
+  Point_3* pmax =
+    std::max_element(points, points + 3,
+                     SEGO_internal::Compare_point_by_axis<Point_3>(dim));
+  Point_3* pmin =
+    std::min_element(points, points + 3,
+                     SEGO_internal::Compare_point_by_axis<Point_3>(dim));
   
   std::vector<Plane_3> planes;
   create_parallel_planes(*pmin, *pmax, dim, origin, &planes);

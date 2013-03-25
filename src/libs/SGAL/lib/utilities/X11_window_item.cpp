@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12532 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -42,12 +42,10 @@ X11_window_item::X11_window_item() :
   m_display(NULL),
   m_screen(0),
   m_window(0)
-{
-  memset(&m_desk_mode, 0, sizeof(m_desk_mode));
-}
+{ memset(&m_desk_mode, 0, sizeof(m_desk_mode)); }
 
 /*! \brief creates a window */
-void X11_window_item::create(Display * display, int screen)
+void X11_window_item::create(Display* display, int screen)
 {
   int rc = 0;
   bool brc;
@@ -67,16 +65,18 @@ void X11_window_item::create(Display * display, int screen)
   attributes[index++] = GLX_RGBA;
   if (m_double_buffer) attributes[index++] = GLX_DOUBLEBUFFER;
   attributes[index++] = GLX_RED_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
+  attributes[index++] = m_red_bits;
   attributes[index++] = GLX_GREEN_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
+  attributes[index++] = m_green_bits;
   attributes[index++] = GLX_BLUE_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_COLOR_BITS;
+  attributes[index++] = m_blue_bits;
+  attributes[index++] = GLX_ALPHA_SIZE;
+  attributes[index++] = m_alpha_bits;
   attributes[index++] = GLX_DEPTH_SIZE;
-  attributes[index++] = SGAL_DEF_WINDOW_DEPTH_BITS;
+  attributes[index++] = m_depth_bits;
   if (m_stencil_bits > 0) {
     attributes[index++] = GLX_STENCIL_SIZE;
-    attributes[index++] = SGAL_DEF_WINDOW_STENCIL_BITS;
+    attributes[index++] = m_stencil_bits;
   }
   if (m_number_of_samples > 0) {
     attributes[index++] = GLX_SAMPLE_BUFFERS;
@@ -102,7 +102,7 @@ void X11_window_item::create(Display * display, int screen)
   }
   attributes[index++] = None;
 
-  XVisualInfo * vi = glXChooseVisual(display, screen, attributes);
+  XVisualInfo* vi = glXChooseVisual(display, screen, attributes);
   if (vi == NULL) {
     std::cerr << "Failed to choose visual!" << std::endl;
     return;
@@ -183,7 +183,7 @@ void X11_window_item::create(Display * display, int screen)
 //       std::cout << "XF86 VideoMode extension version "
 //                 << vm_major << "." << vm_minor << std::endl;
 
-    XF86VidModeModeInfo ** modes;
+    XF86VidModeModeInfo** modes;
     int number_of_modes;
     brc = XF86VidModeGetAllModeLines(display, screen, &number_of_modes, &modes);
     // std::cout << "number_of_modes: " << number_of_modes << std::endl;
@@ -231,7 +231,8 @@ void X11_window_item::create(Display * display, int screen)
                   CurrentTime);
     XGrabPointer(display, m_window, True, ButtonPressMask,
                  GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
-  } else {
+  }
+  else {
     // Create a window in window mode:
     m_win_attr.event_mask = 
       ExposureMask |
@@ -246,8 +247,8 @@ void X11_window_item::create(Display * display, int screen)
                              CWBorderPixel | CWColormap | CWEventMask,
                              &m_win_attr);
     /* only set window title and handle wm_delete_events if in windowed mode */
-    Atom wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", True);
-    XSetWMProtocols(display, m_window, &wm_delete, 1);
+    m_wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(display, m_window, &m_wm_delete, 1);
     XSetStandardProperties(display, m_window,
                            m_title.c_str(), m_title.c_str(),
                            None, NULL, 0, NULL);
@@ -263,8 +264,8 @@ void X11_window_item::create(Display * display, int screen)
 /*! \brief destroys the window */
 void X11_window_item::destroy()
 {
-  set_accumulating(SGAL_FALSE);
-  set_redraw(SGAL_FALSE);
+  set_accumulating(false);
+  set_redraw(false);
   if (m_window) {
     if (m_context) {
       if (m_full_screen) {
@@ -280,15 +281,14 @@ void X11_window_item::destroy()
     }
     XUnmapWindow(m_display, m_window);
     XDestroyWindow(m_display, m_window);
-    m_window = 0;
+    // Do not reset m_window here. It is used by the window manager when it
+    // handles the DestroyNotify event.
   }
 }
 
 /*! \brief swaps the window frame-buffer */
 void X11_window_item::swap_buffers()
-{
-  if (m_double_buffer) glXSwapBuffers(m_display, m_window);
-}
+{ if (m_double_buffer) glXSwapBuffers(m_display, m_window); }
 
 /*! \brief shows the window. Make the window current if it is not already. */
 void X11_window_item::show() {}
@@ -300,8 +300,6 @@ void X11_window_item::hide() {}
  * the calling thread
  */
 void X11_window_item::make_current()
-{
-  glXMakeCurrent(m_display, m_window, m_context);
-}
+{ glXMakeCurrent(m_display, m_window, m_context); }
 
 SGAL_END_NAMESPACE

@@ -121,17 +121,17 @@ private:
   
 public:
   /*! Constructor */
-  Arrangement_on_sphere_sim_geo(Boolean proto = SGAL_FALSE);
+  Arrangement_on_sphere_sim_geo(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Arrangement_on_sphere_sim_geo();
 
   /* Construct the prototype */
-  static Arrangement_on_sphere_sim_geo * prototype()
-  { return new Arrangement_on_sphere_sim_geo(SGAL_TRUE); }
+  static Arrangement_on_sphere_sim_geo* prototype()
+  { return new Arrangement_on_sphere_sim_geo(true); }
 
   /*! Clone */
-  virtual Container * clone()
+  virtual Container* clone()
   { return new Arrangement_on_sphere_sim_geo(); }
 
   /*! Initialize the container prototype */
@@ -141,10 +141,10 @@ public:
   virtual void delete_prototype(); 
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
@@ -152,7 +152,7 @@ public:
   virtual void clean();
 
   /*! */
-  virtual void cull(Cull_context & cull_context) {}
+  virtual void cull(Cull_context& cull_context) {}
 
   /*! Clear the internal representation and auxiliary data structures */
   virtual void clear();
@@ -161,10 +161,10 @@ public:
   virtual Boolean is_empty() const { return m_aos->is_empty(); }
 
   /*! Obrain the arrangement */
-  Aos_labeled * get_aos();
+  Aos_labeled* get_aos();
 
   /*! Set the arrangement */
-  void set_aos(Aos_labeled * aos);
+  void set_aos(Aos_labeled* aos);
   
   /*! Print statistics */
   void print_stat() { Arrangement_on_surface_geo::print_stat(this); }
@@ -200,16 +200,16 @@ protected:
   {
   public:
     /*! The arrangement geometry */
-    Arrangement_on_sphere_sim_geo & m_geo;
+    Arrangement_on_sphere_sim_geo& m_geo;
 
   public:
     typedef Arrangement_on_sphere_sim_geo               Geometry;
   
     /*! Constructor */
-    Sphere_sim_colored_vertices_renderer(Geometry & geo) : m_geo(geo) {}
+    Sphere_sim_colored_vertices_renderer(Geometry& geo) : m_geo(geo) {}
     
     /*! Render the edges */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
   
   /*! A function object that renders the edges with color */
@@ -218,16 +218,16 @@ protected:
   {
   public:
     /*! The arrangement geometry */
-    Arrangement_on_sphere_sim_geo & m_geo;
+    Arrangement_on_sphere_sim_geo& m_geo;
 
   public:
     typedef Arrangement_on_sphere_sim_geo               Geometry;
   
     /*! Constructor */
-    Sphere_sim_colored_edges_renderer(Geometry & geo) : m_geo(geo) {}
+    Sphere_sim_colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
     
     /*! Render the edges */
-    virtual void operator()(Draw_action * action);
+    virtual void operator()(Draw_action* action);
   };
 
   typedef SGAL::Line_colored_edges_renderer
@@ -266,7 +266,7 @@ protected:
     Sphere_sim_inflated_tube_edges_renderer;
 
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! Indicates whether the aos data structure is owned, i.e., explicitly
    * allocated. If the aos data structure is owned, it should be destructed
@@ -275,14 +275,14 @@ protected:
   Boolean m_owned_aos;
   
   /*! The arrangement of great-circle arcs on a sphere */
-  Aos_labeled * m_aos;
+  Aos_labeled* m_aos;
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The container prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! An observer that label the arrangement vertices and edges */
   Label_observer m_observer;
@@ -349,37 +349,37 @@ private:
   /*! Draw the arrangement vertices
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action)
+  virtual void draw_aos_vertices(Draw_action* action)
   { my_draw_aos_vertices(m_aos, action); }
 
   /*! Draw the arrangement isolated vertices
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action * action)
+  virtual void draw_aos_isolated_vertices(Draw_action* action)
   { my_draw_aos_isolated_vertices(m_aos, action); }
 
   /*! Draw the arrangement edges
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action)
+  virtual void draw_aos_edges(Draw_action* action)
   { my_draw_aos_edges(m_aos, action); }
 
   /*! Handle tick events
    * \param event
    */
-  virtual void handle(Tick_event * event);
+  virtual void handle(Tick_event* event);
 
   /*! Print out the name of this agent (for debugging purposes) */
   virtual void identify();
 
   /*! Process change of simulation time */
-  void time_changed(Field_info * field_info);
+  void time_changed(Field_info* field_info);
   
   /*! Resume the simulation */
-  void resume(Field_info * field_info);
+  void resume(Field_info* field_info);
   
   /*! Suspend the simulation */
-  void suspend(Field_info * field_info);
+  void suspend(Field_info* field_info);
   
   /*! Draw the labeled vertex */
   void draw_labeled_vertex();
@@ -393,17 +393,17 @@ private:
   /*! Increase the vertex label
    * \param field_info
    */
-  void increase_vertex_label(Field_info * field_info = NULL);
+  void increase_vertex_label(Field_info* field_info = NULL);
 
   /*! Increase the edge label
    * \param field_info
    */
-  void increase_edge_label(Field_info * field_info = NULL);
+  void increase_edge_label(Field_info* field_info = NULL);
 
   /*! Increase the face label
    * \param field_info
    */
-  void increase_face_label(Field_info * field_info = NULL);
+  void increase_face_label(Field_info* field_info = NULL);
 
   /*! Create the renderers */
   void create_renderers();

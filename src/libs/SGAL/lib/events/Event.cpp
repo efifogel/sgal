@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1309 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -28,21 +28,22 @@
 #include "SGAL/Agent.hpp"
 #include "SGAL/Trace.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
-/*!
- */
+/*! \brief */
 void Event::handle(void)
 {
-  std::set<Agent *>::const_iterator it;
-  const std::set<Agent *> & my_set = get_set();
+  std::set<Agent*>::const_iterator it;
+  const std::set<Agent*>& my_set = get_set();
 
   // Copy the set to a temporary place holder, because the handlers may
   // register and unregister agents to the original set.
   std::set<Agent *> tmp = my_set;
-  for (it = tmp.begin(); it != tmp.end(); it++) {
-    TRACE_CODE(Trace::EVENTS, (*it)->identify(););
+  for (it = tmp.begin(); it != tmp.end(); ++it) {
+    SGAL_TRACE_CODE(Trace::EVENTS, (*it)->identify(););
     handle(*it);
   }
   tmp.clear();
 }
+
+SGAL_END_NAMESPACE

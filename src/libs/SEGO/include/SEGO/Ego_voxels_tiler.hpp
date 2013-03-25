@@ -20,6 +20,8 @@
 #define SGAL_EGO_VOXELS_TILER_HPP
 
 #include "SGAL/config.hpp"
+#include <boost/tuple/tuple.hpp>
+#include <vector>
 
 SGAL_BEGIN_NAMESPACE
 
@@ -27,6 +29,9 @@ class Ego_voxels;
 
 class Ego_voxels_tiler {
 public:
+  typedef boost::tuple<size_t, size_t, size_t>  Brick_type;
+  typedef std::vector<Brick_type>                     Brick_types;
+
   // TODO: Missing if rows are x or y.
   enum First_tile_placement {FIRST00, FIRST01, FIRST10, FIRST11};
   enum Strategy {GRID, NONGRID};
@@ -34,17 +39,24 @@ public:
 
   Ego_voxels_tiler(First_tile_placement first_tile,
                    Strategy strategy,
-                   Tiling_rows rows);
+                   Tiling_rows rows,
+                   const Brick_types &available_types);
   
   void operator() (Ego_voxels* out_voxels);
 
 private:
   void tile_layer(size_t layer, Ego_voxels* out_voxels);
+  void tile_cell(size_t layer, size_t row, size_t column,
+                 size_t width, size_t height, Ego_voxels* out_voxels);
+
+  bool is_tiled(Ego_voxels* out_voxels, size_t x, size_t y, size_t z);
 
   size_t m_first_brick_x_offset;
   size_t m_first_brick_y_offset;
   size_t m_offset_between_rows;
   Tiling_rows m_tiling_rows;
+
+  Brick_types m_available_types;
 };
 
 SGAL_END_NAMESPACE

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -58,16 +58,16 @@ public:
   };
 
   /*! Constructor */
-  Transform(Boolean proto = SGAL_FALSE);
+  Transform(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Transform();
 
   /* Construct the prototype */
-  static Transform* prototype() { return new Transform(SGAL_TRUE); }
+  static Transform* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Transform(); }
+  virtual Container* clone();
 
   void set_translation(const Vector3f& translation);
   void get_translation(Vector3f& translation);
@@ -126,7 +126,7 @@ public:
   
 protected:
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type. */
@@ -183,6 +183,15 @@ private:
 
   void reset(Field_info* field_info);
 };
+
+/* \brief constructs the prototype. */
+inline Transform* Transform::prototype() { return new Transform(true); }
+
+/*! \brief clones. */
+inline Container* Transform::clone() { return new Transform(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Transform::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

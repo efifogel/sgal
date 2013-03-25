@@ -64,82 +64,85 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Material(Boolean proto = SGAL_FALSE);
-
-  /*! Destructor */
-  virtual ~Material();
-
-  /*! Construct the prototype */
-  static Material * prototype() { return new Material(SGAL_TRUE); }
-
-  /*! Clone */
-  virtual Container* clone() { return new Material(); }
-
   enum Face {
     FRONT,
     BACK,
     FRONT_AND_BACK
   };
 
+  /*! Constructor */
+  Material(Boolean proto = false);
+
+  /*! Destructor */
+  virtual ~Material();
+
+  /*! Construct the prototype */
+  static Material* prototype();
+
+  /*! Clone */
+  virtual Container* clone();
+
   /*! Set the ambient intensity */
-  void set_ambient_intensity(Float intensity)
-  { m_ambient_intensity = intensity; }
+  void set_ambient_intensity(Float intensity);
 
   /*! Obtain the ambient intensity */
-  Float get_ambient_intensity() const { return m_ambient_intensity; }
+  Float get_ambient_intensity() const;
 
   /*! Set the diffuse color */
-  void set_diffuse_color(const Vector3f& color) { m_diffuse_color = color; }
+  void set_diffuse_color(const Vector3f& color);
 
   /*! Set the diffuse color */
-  void set_diffuse_color(float v0, float v1, float v2);
+  void set_diffuse_color(Float v0, Float v1, Float v2);
 
   /*! Obtain the diffuse color */
-  const Vector3f& get_diffuse_color() const { return m_diffuse_color; }
+  const Vector3f& get_diffuse_color() const;
   
   /*! Obtain the diffuse color */
-  void get_diffuse_color(Vector3f& color) const { color = m_diffuse_color; }
+  void get_diffuse_color(Vector3f& color) const;
 
   /*! Set the specular color */
-  void set_specular_color(const Vector3f& color) { m_specular_color = color; }
+  void set_specular_color(const Vector3f& color);
 
   /*! Set the specular color */
-  void set_specular_color(float v0, float v1, float v2);
+  void set_specular_color(Float v0, Float v1, Float v2);
 
   /*! Obtain the specular color */
-  void get_specular_color(Vector3f& color) const { color = m_specular_color; }
+  void get_specular_color(Vector3f& color) const;
 
   /*! Obtain the specular color */
-  const Vector3f& get_specular_color() const { return m_specular_color; }
+  const Vector3f& get_specular_color() const;
   
   /*! Set the emissive color */
-  void set_emissive_color(const Vector3f& color) { m_emissive_color = color; }
+  void set_emissive_color(const Vector3f& color);
 
   /*! Set the emissive color */
-  void set_emissive_color(float v0, float v1, float v2);
+  void set_emissive_color(Float v0, Float v1, Float v2);
 
   /*! Obtain the emissive color */
-  const Vector3f& get_emissive_color() const { return m_emissive_color; }
+  const Vector3f& get_emissive_color() const;
   
   /*! Get the emissive color */
-  void get_emissive_color(Vector3f& color) const { color = m_emissive_color; }
+  void get_emissive_color(Vector3f& color) const;
 
   /*! Set the shininess */
   void set_shininess(Float shininess);
 
   /*! Obtain the shininess */
-  Float get_shininess() const { return m_shininess; }
+  Float get_shininess() const;
 
   /*! Set the transparency */
-  void set_transparency(Float transparency) { m_transparency = transparency; }
+  void set_transparency(Float transparency);
 
   /*! Obtain the transparency */
-  Float get_transparency() const { return m_transparency;}
+  Float get_transparency() const;
 
+  /*! Indicate whether the material has changed and, thus, must be redrawn. */
   bool is_changed();
+
+  /*! sets the flag that determines whether the material has changed. */
   virtual void material_changed(Field_info* field_info = NULL);
 
+  /*! Apply the material. */
   virtual void draw(Face which_face, Context* ctx);
 
   /*! Initialize the node prototype */
@@ -161,11 +164,11 @@ public:
 
 protected:
   /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   // static unsigned int m_dither_matrix[1025][32];
   
@@ -201,6 +204,62 @@ private:
   /*! indicates that the material attribute has changed */
   bool m_changed;
 };
+
+/*! \brief construct the prototype. */
+inline Material* Material::prototype() { return new Material(true); }
+
+/*! \brief clones. */
+inline Container* Material::clone() { return new Material(); }
+
+/*! \brief obtains the ambient intensity. */
+inline Float Material::get_ambient_intensity() const
+{ return m_ambient_intensity; }
+
+/*! \brief sets the diffuse color. */
+inline void Material::set_diffuse_color(const Vector3f& color)
+{ set_diffuse_color(color[0], color[1], color[2]); }
+
+/*! \brief obtains the diffuse color. */
+inline const Vector3f& Material::get_diffuse_color() const
+{ return m_diffuse_color; }
+
+/*! \brief obtains the diffuse color. */
+inline void Material::get_diffuse_color(Vector3f& color) const
+{ color = m_diffuse_color; }
+
+/*! \brief sets the specular color. */
+inline void Material::set_specular_color(const Vector3f& color)
+{ set_specular_color(color[0], color[1], color[2]); }
+
+/*! \brief obtains the specular color. */
+inline void Material::get_specular_color(Vector3f& color) const
+{ color = m_specular_color; }
+
+/*! \brief obtains the specular color. */
+inline const Vector3f& Material::get_specular_color() const
+{ return m_specular_color; }
+
+/*! \brief sets the emissive color */
+inline void Material::set_emissive_color(const Vector3f& color)
+{ set_emissive_color(color[0], color[1], color[2]); }
+
+/*! \brief obtains the emissive color */
+inline const Vector3f& Material::get_emissive_color() const
+{ return m_emissive_color; }
+  
+/*! \brief gets the emissive color */
+inline void Material::get_emissive_color(Vector3f& color) const
+{ color = m_emissive_color; }
+
+/*! \brief obtains the shininess */
+inline Float Material::get_shininess() const
+{ return m_shininess; }
+
+/*! \brief obtains the transparency */
+inline Float Material::get_transparency() const { return m_transparency;}
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Material::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

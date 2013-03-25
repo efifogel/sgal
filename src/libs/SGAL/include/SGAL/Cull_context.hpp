@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -57,23 +57,40 @@ public:
     Matrix4f wtm;       // Object to World space transformation.
   };
 
-  Cull_context(Scene_graph * sg);
+  /*! Constructor */
+  Cull_context();
+
+  /*! Destructor */
   virtual ~Cull_context();
 
+  /*! Traverse node hierarchy seacrhing for transform nodes and adding
+   * them to draw list.
+   * \param node a pointer to the node to draw
+   */
   virtual void cull(Node* node, Camera* camera);
+
   virtual void draw(Draw_action* draw_action);
 
   void add_shape(Shape* shape);
+
+  /*! 
+   * \param light a pointer to the Light.
+   */
   void add_light(Light* light);
 
+  void set_head_light(Light* light);
+  
   void push_matrix(const Matrix4f& mat);
+
   void pop_matrix();
 
   Camera* get_camera() const { return m_camera; };
+
   const Matrix4f& get_current_wtm() { return m_world_tm; }
 
   void set_current_lod(int lod) { m_current_lod = lod; };
-  int get_current_lod() const { return m_current_lod; };
+
+  Int get_current_lod() const { return m_current_lod; };
 
 protected:
   void draw_node(Draw_action* draw_action, const Render_node& rn);
@@ -90,10 +107,13 @@ private:
   float compute_distance(const Cull_context::Render_node& rn);
   
   Render_node_vector m_nodes;
+
   Render_node_vector m_2ndpass;
+
   Light_vector m_lights;
+
   Camera* m_camera;
-  Scene_graph* m_sg;
+
   Light* m_head_light;
 
   // Matrix stack (similar to opengl).

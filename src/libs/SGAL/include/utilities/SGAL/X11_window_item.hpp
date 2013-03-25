@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7918 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -39,32 +39,35 @@ SGAL_BEGIN_NAMESPACE
 
 class X11_window_item : public Native_window_item {
 private:
-  /* Information about the X server communicated with */
-  Display * m_display;
+  /* Information about the X server communicated with. */
+  Display* m_display;
 
-  /*! The screen identifier */
+  /*! The screen identifier. */
   int m_screen;
   
-  /* The window instance */
+  /* The window instance. */
   Window m_window;
 
-  /*! The glx context */
+  /*! The glx context. */
   GLXContext m_context;
 
-  /*! Window attributes */
+  /*! Window attributes. */
   XSetWindowAttributes m_win_attr;
 
-  /*! The original video mode */
+  /*! The original video mode. */
   XF86VidModeModeInfo m_desk_mode;
-  
-  /*! Create the window
-   * \param display
-   * \param screen
-   * \param full_screen
-   */
-  void create(Display * display, Int screen);
 
-  /*! Destroy the window */
+  /*! The delete atom. */
+  Atom m_wm_delete;
+  
+  /*! Create the window.
+   * \param display.
+   * \param screen.
+   * \param full_screen.
+   */
+  void create(Display* display, Int screen);
+
+  /*! Destroy the window. */
   void destroy();
   
 public:
@@ -81,17 +84,22 @@ public:
   virtual void hide();
 
   /*! Swap the window frame-buffer. It is assumed that this window is the
-   * current window, which has the GL context
+   * current window, which has the GL context.
    */
   virtual void swap_buffers();
 
   /*! Make the context of the window item the current rendering context of
-   * the calling thread
+   * the calling thread.
    */
   virtual void make_current();
 
+  void reset_window();
+  
   friend class X11_window_manager;
 };
+
+/*! \brief reset the window identifier. */
+inline void X11_window_item::reset_window() { m_window = 0; }
 
 SGAL_END_NAMESPACE
 
