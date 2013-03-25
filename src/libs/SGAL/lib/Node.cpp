@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12384 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -36,7 +36,7 @@ Node::Node(Boolean proto) :
   m_locked_sphere_bound(false)
 {}
 
-/*! \brief sets the attributes of this node. */
+/*! \brief initializes the node prototype. */
 void Node::init_prototype()
 {
   if (s_prototype) return;
@@ -52,14 +52,14 @@ void Node::init_prototype()
   s_prototype->add_field_info(sphere_bound_fi);
 }
 
-/*! */
+/*! \brief deletes the node prototype. */
 void Node::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+/*! \brief obtains the node prototype. */
 Container_proto* Node::get_prototype() 
 {  
   if (!s_prototype) Node::init_prototype();
