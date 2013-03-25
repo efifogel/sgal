@@ -44,10 +44,10 @@ endif
 # Define GMP directories:
 ifdef GMP_DIR
 ifndef GMP_INC_DIR
-GMP_INC_DIR="$(GMP_DIR)/include"
+GMP_INC_DIR=$(GMP_DIR)/include
 endif
 ifndef GMP_LIB_DIR
-GMP_LIB_DIR="$(GMP_DIR)/lib"
+GMP_LIB_DIR=$(GMP_DIR)/lib
 endif
 endif
 
