@@ -18,6 +18,12 @@ endif
 endif
 endif
 
+COMPILER_STR :=$(shell cl 2>&1)
+COMPILER_RE =Microsoft.*Version \([0-9][0-9].[0-9][0-9]\).*
+COMPILER_VER_CMD =expr match '$(COMPILER_STR)' '$(COMPILER_RE)'
+COMPILER_VER_LONG ?=$(shell $(COMPILER_VER_CMD))
+COMPILER_VER=$(subst .,,$(COMPILER_VER_LONG))
+
 LIBPROG =lib.exe
 RSC =rc.exe
 MTL =midl.exe
