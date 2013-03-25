@@ -124,7 +124,7 @@ void Assembly::clear()
   
   // Clear the Minkowski-sum Gaussian-map node + geometry children:
   Uint i;
-  for (i = 0; i < m_ms_sgm_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_ms_sgm_geo_node.children_size(); ++i) {
     Node* node = m_ms_sgm_geo_node.get_child(i);
     m_ms_sgm_geo_node.remove_child(node);
     Shape* shape = static_cast<Shape*>(node);
@@ -134,7 +134,7 @@ void Assembly::clear()
   }
 
   // Clear the Minkowski-sum projection Aos node + geometry children:
-  for (i = 0; i < m_projection_aos_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_projection_aos_geo_node.children_size(); ++i) {
     Node* node = m_projection_aos_geo_node.get_child(i);
     m_projection_aos_geo_node.remove_child(node);
     Shape* shape = static_cast<Shape*>(node);
@@ -144,7 +144,7 @@ void Assembly::clear()
   }
 
   // Clear the per-part Minkowski-sum projection Aos node + geometry children:
-  for (i = 0; i < m_part_projection_aos_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_part_projection_aos_geo_node.children_size(); ++i) {
     Node* node = m_part_projection_aos_geo_node.get_child(i);
     m_part_projection_aos_geo_node.remove_child(node);
     Shape* shape = static_cast<Shape*>(node);
@@ -1436,7 +1436,7 @@ void Assembly::draw_alt_changed(Field_info* field_info)
 void Assembly::inc_alt_changed(Field_info* field_info)
 {
   Uint which_choice = m_switch.get_which_choice();
-  if (++which_choice == m_switch.get_child_count())
+  if (++which_choice == m_switch.children_size())
     which_choice = 0;
   m_switch.set_which_choice(which_choice);
 }
@@ -1449,7 +1449,7 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
   solve(field_info);
 
   Uint i;
-  for (i = 0; i < m_ms_sgm_geo_node.get_child_count(); ++i) {
+  for (i = 0; i < m_ms_sgm_geo_node.children_size(); ++i) {
     Node* node = m_ms_sgm_geo_node.get_child(i);
     Shape* shape = static_cast<Shape*>(node);
     Geometry* geo = shape->get_geometry();
@@ -1465,27 +1465,27 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
 void Assembly::inc_minkowski_sums_changed(Field_info* field_info)
 {
   Uint which_choice = m_ms_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_ms_sgm_geo_node.get_child_count())
+  if (++which_choice == m_ms_sgm_geo_node.children_size())
     which_choice = 0;
   m_ms_sgm_geo_node.set_which_choice(which_choice);
 
   which_choice = m_projection_aos_geo_node.get_which_choice();
-  if (++which_choice == m_projection_aos_geo_node.get_child_count())
+  if (++which_choice == m_projection_aos_geo_node.children_size())
     which_choice = 0;
   m_projection_aos_geo_node.set_which_choice(which_choice);
 
   which_choice = m_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_sgm_geo_node.get_child_count())
+  if (++which_choice == m_sgm_geo_node.children_size())
     which_choice = 0;
   m_sgm_geo_node.set_which_choice(which_choice);
 
   which_choice = m_reflected_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_reflected_sgm_geo_node.get_child_count())
+  if (++which_choice == m_reflected_sgm_geo_node.children_size())
     which_choice = 0;
   m_reflected_sgm_geo_node.set_which_choice(which_choice);
 
   which_choice = m_part_projection_aos_geo_node.get_which_choice();
-  if (++which_choice == m_part_projection_aos_geo_node.get_child_count())
+  if (++which_choice == m_part_projection_aos_geo_node.children_size())
     which_choice = 0;
   m_part_projection_aos_geo_node.set_which_choice(which_choice);  
 }

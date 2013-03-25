@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,35 +40,35 @@ SGAL_BEGIN_NAMESPACE
 class Writer {
 private:
   // Copy constructor and assignment operator - not supported.
-  Writer(const Writer &);
-  Writer & operator=(const Writer &);
+  Writer(const Writer&);
+  Writer& operator=(const Writer&);
 
   /*! The scene graph to write */
-  Scene_graph * m_scene_graph;
+  Scene_graph* m_scene_graph;
 
 public:
   /*! Constructor */
-  Writer(Scene_graph * scene_graph) : m_scene_graph(scene_graph) {}
+  Writer(Scene_graph* scene_graph) : m_scene_graph(scene_graph) {}
   
   /*! Destructor */
   virtual ~Writer() {}
 
   /*! Write the scene graph */
-  template <class Formatter>
-  void operator() (Formatter & formatter) const
+  template <typename Formatter>
+  void operator() (Formatter& formatter) const
   {
     formatter.begin();
-    Group * root = m_scene_graph->get_root();
-    Transform * navigation_root = m_scene_graph->get_navigation_root();
-    Point_light * head_light = m_scene_graph->get_head_light();
+    Group* root = m_scene_graph->get_root();
+    Transform* navigation_root = m_scene_graph->get_navigation_root();
+    Point_light* head_light = m_scene_graph->get_head_light();
     Uint i;
-    for (i = 0; i < root->get_child_count(); ++i) {
-      Node * node = root->get_child(i);
+    for (i = 0; i < root->children_size(); ++i) {
+      Node* node = root->get_child(i);
       if ((node != navigation_root) && (node != head_light))
         formatter.write(node);
     }
-    for (i = 0; i < navigation_root->get_child_count(); ++i) {
-      Node * node = navigation_root->get_child(i);
+    for (i = 0; i < navigation_root->children_size(); ++i) {
+      Node* node = navigation_root->get_child(i);
       formatter.write(node);
     }
     formatter.end();
