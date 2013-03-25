@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -29,6 +29,8 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Touch_sensor.hpp"
+#include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -82,12 +84,33 @@ Action::Trav_directive Switch::draw(Draw_action* draw_action)
  */
 void Switch::isect(Isect_action* isect_action) 
 {
-  if (!is_visible())  return;
-  if (get_selection_id() != 0) isect_action->set_id(get_selection_id());
-  
+  if (!is_visible()) return;
   Node* node = get_choice();
-  if (node) isect_action->apply(node);
-  isect_action->set_id(0);
+  if (!node) return;
+
+  if (m_touch_sensor && m_touch_sensor->is_enabled()) {
+    if (m_num_selection_ids != 1) {
+      m_scene_graph->free_selection_ids(m_start_selection_id,
+                                        m_num_selection_ids);
+      m_start_selection_id = 0;
+      m_num_selection_ids = 0;
+    }
+
+    if (m_num_selection_ids == 0) {
+      m_num_selection_ids = 1;
+      m_start_selection_id =
+        m_scene_graph->allocate_selection_ids(m_num_selection_ids);
+    }
+    m_touch_sensor->set_selection_ids(m_start_selection_id,
+                                      m_num_selection_ids);
+  }
+  if (m_start_selection_id == 0) isect_action->apply(node);
+  else {
+    Uint save_id = isect_action->get_id();                // save the id
+    isect_action->set_id(m_start_selection_id);
+    isect_action->apply(node);
+    isect_action->set_id(save_id);                        // restore the id
+  }
 }
 
 /*! Calculate the sphere bound of the group based on all child objects.

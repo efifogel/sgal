@@ -63,8 +63,8 @@ REGISTER_TO_FACTORY(Touch_sensor, "Touch_sensor");
 Touch_sensor::Touch_sensor(Boolean enabled, Boolean proto) :
   Node(proto),
   m_scene_graph(NULL),
-  m_first_selection_id(0),
-  m_num_selection_ids(1),
+  m_start_selection_id(0),
+  m_num_selection_ids(0),
   m_selection_id(0),
   m_over_selection_id(0),
   m_active_selection_id(0),
@@ -85,7 +85,7 @@ Touch_sensor::Touch_sensor(Boolean enabled, Boolean proto) :
 { if (!proto && m_enabled) register_events(); }
 
 /*! Destructor */
-Touch_sensor::~Touch_sensor() { if (m_enabled) unregister_events(); }
+Touch_sensor::~Touch_sensor() { set_enabled(false); }
 
 /*! \brief initializes the prototype. */
 void Touch_sensor::init_prototype()
@@ -135,9 +135,6 @@ void Touch_sensor::init_prototype()
   s_prototype->add_field_info(field);
 
   s_prototype->
-    add_field_info(new SF_int(NUMBER_OF_SELECTION_IDS, "numberOfSelectionIds",
-                              get_member_offset(&m_num_selection_ids)));
-  s_prototype->
     add_field_info(new SF_int(OVER_SELECTION_ID, "overSelectionId",
                               get_member_offset(&m_over_selection_id)));
   s_prototype->
@@ -162,6 +159,7 @@ Container_proto* Touch_sensor::get_prototype()
 /*! \brief enables or disables the sensor. */
 void Touch_sensor::set_enabled(bool enabled)
 {
+  if (enabled == m_enabled) return;
   m_enabled = enabled;
   (enabled) ? register_events() : unregister_events();
 }
@@ -242,7 +240,7 @@ void Touch_sensor::start_dragging(const Vector2sh& /* point */)
 
   // Update and cascade the m_is_active field
   set_is_active(true);
-  set_active_selection_id(m_selection_id - m_first_selection_id);
+  set_active_selection_id(m_selection_id - m_start_selection_id);
 }
 
 /*! \brief invoked when dragging stops. */
@@ -310,7 +308,6 @@ void Touch_sensor::add_to_scene(Scene_graph* sg)
 {
   m_scene_graph = sg;
   sg->add_touch_sensor(this);
-  m_first_selection_id = sg->reserve_selection_ids(get_num_selection_ids());
 }
 
 /*! \brief writes this container. */
@@ -403,7 +400,7 @@ void Touch_sensor::handle(Passive_motion_event* event)
   // If selection changed, update and cascade the appropriate fields:
   if (m_last_selection_id != m_selection_id) {
     set_is_over(m_selection_id != 0);
-    set_over_selection_id(m_selection_id - m_first_selection_id);
+    set_over_selection_id(m_selection_id - m_start_selection_id);
     m_last_selection_id = m_selection_id;
   }
 
@@ -517,6 +514,13 @@ inline void Touch_sensor::set_active_selection_id(Uint id)
   m_active_selection_id = id;
   Field* field = get_field(ACTIVE_SELECTION_ID);
   if (field) field->cascade();
+}
+
+/*! \brief determines whether the given id in the range of color ids. */
+Boolean Touch_sensor::is_in_range(Uint id)
+{
+  return ((m_start_selection_id <= id) &&
+          (id < (m_start_selection_id + m_num_selection_ids)));
 }
 
 SGAL_END_NAMESPACE

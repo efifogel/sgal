@@ -137,7 +137,6 @@ Ego::Ego(Boolean proto) :
   m_dirty_visibility(true),
   m_owned_parts(false),
   m_owned_touch_sensor(false),
-  m_scene_graph(NULL),
   m_knob_slices(Ego_brick::s_def_knob_slices),
   m_color_space(s_def_color_space),
   m_layer_x(0),
@@ -658,7 +657,8 @@ void Ego::clean_parts()
         m_voxel_signatures.push_back(boost::make_tuple(i, j, k));
         Transform* transform = new Transform;
         add_child(transform);
-
+        transform->add_to_scene(m_scene_graph);
+        
         Vector3f displacement(i*m_voxel_length, j*m_voxel_width,
                               k*m_voxel_height);
         Vector3f brick_center(origin);
@@ -722,7 +722,7 @@ void Ego::clean_parts()
       }
     }
   }
-  Uint num_childs = get_child_count();
+  Uint num_childs = children_size();
   std::cout << "# of children: " << num_childs << std::endl;
 
   // Add a touch sensor if such a node does not exist:
@@ -737,7 +737,6 @@ void Ego::clean_parts()
     touch_sensor = new Touch_sensor;
     touch_sensor->add_to_scene(m_scene_graph);
     m_owned_touch_sensor = true;
-    touch_sensor->set_num_selection_ids(num_childs);
     add_child(touch_sensor);
   }
   touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
@@ -775,7 +774,9 @@ void Ego::clean_colors()
   // Prepare isect action:
   SGAL::Isect_action isect_action;
   isect_action.set_context(context);
-  m_selection_id = m_scene_graph->reserve_selection_ids(get_child_count());
+  m_num_selection_ids = children_size();
+  m_start_selection_id =
+    m_scene_graph->allocate_selection_ids(m_num_selection_ids);
   
   // Prepare color image:
   Image_base::Format format = Image_base::kRGB8_8_8;
@@ -881,11 +882,11 @@ void Ego::clean_colors()
   typedef std::pair<Vector3f,Uint>              Weighted_color;
   typedef std::vector<Weighted_color>           Weighted_color_vector;
   typedef Weighted_color_vector::iterator       Weighted_color_iter;
-  Weighted_color_vector colors(get_child_count());
+  Weighted_color_vector colors(children_size());
   std::fill(colors.begin(), colors.end(), Weighted_color(Vector3f(), 0));
   typedef std::vector<Uint>                     Weight_vector;
   typedef Weight_vector::iterator               Weight_iter;
-  Weight_vector weights(get_child_count());
+  Weight_vector weights(children_size());
   for (Uint i = 0; i < 6; ++ i) {
     m_appearance->set_tex_enable(true);
     m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
@@ -943,8 +944,8 @@ void Ego::clean_colors()
         SGAL_assertion(component_id < size_select);
         Uint brick_id = isect_action.get_index(&selections[component_id]);
         if (brick_id == 0) continue;
-        brick_id -= get_selection_id();
-        SGAL_assertion(brick_id < get_child_count());
+        brick_id -= m_start_selection_id;
+        SGAL_assertion(brick_id < children_size());
         ++(weights[brick_id]);
       }
     }
@@ -966,8 +967,8 @@ void Ego::clean_colors()
         SGAL_assertion(component_id < size_select);
         Uint brick_id = isect_action.get_index(&selections[component_id]);
         if (brick_id == 0) continue;
-        brick_id -= get_selection_id();
-        SGAL_assertion(brick_id < get_child_count());
+        brick_id -= m_start_selection_id;
+        SGAL_assertion(brick_id < children_size());
         component_id = pixel_id * num_components;
         SGAL_assertion(component_id < size);
         Vector3f new_color;
@@ -1247,15 +1248,13 @@ void Ego::reset_visibility()
 /*! \brief calculate sphere bound of the node. */
 Boolean Ego::clean_sphere_bound()
 {
+  SGAL_assertion(!m_clean_colors_in_progress);
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  if (m_clean_colors_in_progress) {
-    if (!m_dirty_visibility) reset_visibility();
-  }
-  else {
-    if (m_dirty_visibility) clean_visibility();
-  }
+  // Reset the visibiliy (to true) in case it is not set already for the
+  // computation of the bounding sphere.
+  if (!m_dirty_visibility) reset_visibility();
 
   Ego_voxels::size_type size = m_voxels.size();
   Vector3f box(m_voxel_length * size.get<0>(),
@@ -1281,9 +1280,6 @@ Ego::convert_types(const SGAL::Array<Vector3sh>& types)
   }
   return ret;
 }
-
-/*! \brief adds the container to a given scene. */  
-void Ego::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
 /*! \brief sets the appearance of the object. */
 void Ego::set_appearance(Appearance* app)

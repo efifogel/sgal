@@ -36,6 +36,7 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Scene_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -48,38 +49,44 @@ REGISTER_TO_FACTORY(Group, "Group");
 Group::Group(Boolean proto) :
   Node(proto),
   m_is_visible(true),
-  m_selection_id(0), 
-  m_has_touch_sensor(false), 
-  m_num_lights(0)
+  m_touch_sensor(NULL), 
+  m_num_lights(0),
+  m_start_selection_id(0),
+  m_num_selection_ids(0),
+  m_scene_graph(NULL)
 {}
 
 /*! Copy constructor */
 Group::Group(const Group& group) :
   Node(group),
   m_is_visible(group.m_is_visible),
-  m_selection_id(group.m_selection_id), 
-  m_has_touch_sensor(m_has_touch_sensor), 
+  m_touch_sensor(m_touch_sensor), 
   m_num_lights(group.m_num_lights)
 {
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Node* node = *it;
-    m_childs.push_back(node);
-  }
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+    m_childs.push_back(*it);
 }
 
 /*! Destructor */
-Group::~Group() { m_childs.clear(); }
+Group::~Group()
+{
+  m_childs.clear();
+  if (m_num_selection_ids > 0) {
+    m_scene_graph->free_selection_ids(m_start_selection_id,
+                                      m_num_selection_ids);
+    m_start_selection_id = 0;
+    m_num_selection_ids = 0;
+  }
+}
 
-/*! \brief obtains the number of children of the group. */
-unsigned int Group::get_child_count() { return m_childs.size(); }
-
-/*! \brief obtains a child according to its position in the children sequence. */
-Node* Group::get_child(unsigned int index)
+/*! \brief obtains a child according to its position in the children sequence.
+ */
+Node* Group::get_child(Uint index)
 {
   if (index >= m_childs.size()) return 0;
-  Node_iterator ni = m_childs.begin();
-  for (unsigned int i = 0; i < index; ++i) ++ni;
-  return *ni;
+  Node_iterator it = m_childs.begin();
+  for (Uint i = 0; i < index; ++i) ++it;
+  return *it;
 }
 
 /*! \brief adds a child to the sequence of children of the group. */
@@ -124,39 +131,68 @@ void Group::remove_child(Node* node)
   node->register_observer(observer);
 }
 
-/*! \brief draws the group; go over all of its children and draw each. */
+/*! \brief draws the children of the group. */
 Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
   if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
     return Action::TRAV_CONT;
   if (has_lights()) draw_action->get_context()->push_lights();
-  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni)
-    draw_action->apply(*ni);
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+    draw_action->apply(*it);
   if (has_lights()) draw_action->get_context()->pop_lights();
   return Action::TRAV_CONT;
 }
 
-/*! \brief culls the node if invisible and prepare for rendering. */
+/*! \brief culls the node if invisible; otherwise culls the children of the
+ * group.
+ */
 void Group::cull(Cull_context& cull_context)
 {
   if (!is_visible()) return;
-
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) 
     (*it)->cull(cull_context);
 }
 
-/*! \brief prepare the node for selection. */
+/*! \brief draws the node for selection. */
 void Group::isect(Isect_action* isect_action) 
 {
   if (!is_visible()) return;
 
-  Uint base_selection_id = get_selection_id();
+  // If the group has a touch sensor, reserve selections ids as many as
+  // children.
+  if (m_touch_sensor && m_touch_sensor->is_enabled()) {
+    if (m_num_selection_ids != children_size()) {
+      m_scene_graph->free_selection_ids(m_start_selection_id,
+                                        m_num_selection_ids);
+      m_start_selection_id = 0;
+      m_num_selection_ids = 0;
+    }
+
+    if (m_num_selection_ids == 0) {
+      m_num_selection_ids = children_size();
+      m_start_selection_id =
+        m_scene_graph->allocate_selection_ids(m_num_selection_ids);
+    }
+    // Update the touch sensor with the allocated selection ids.
+    m_touch_sensor->set_selection_ids(m_start_selection_id,
+                                      m_num_selection_ids);
+  }
+
   // Apply the current Group selection ids only if selection ids have been
-  // reserved for this Group. A base selection id that is equal to zero
+  // reserved for this Group. A start selection id that is equal to zero
   // indicates that no selection ids have been reserved.
-  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni) {
-    if (base_selection_id != 0) isect_action->set_id(base_selection_id++);
-    isect_action->apply(*ni);
+  if (m_start_selection_id == 0) {
+    for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+      isect_action->apply(*it);
+  }
+  else {
+    Uint save_id = isect_action->get_id();                // save the id
+    Uint selection_id = m_start_selection_id;
+    for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+      isect_action->set_id(selection_id++);
+      isect_action->apply(*it);
+    }
+    isect_action->set_id(save_id);                        // restore the id
   }
 }
 
@@ -176,11 +212,11 @@ Boolean Group::clean_sphere_bound()
 
   Sphere_bound_vector_const spheres;
   Boolean bb_changed = false;
-  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni) {
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
     Boolean changed = false;
-    if ((*ni)->is_dirty_sphere_bound())
-      changed = (*ni)->clean_sphere_bound();
-    const Sphere_bound& sb = (*ni)->get_sphere_bound();
+    if ((*it)->is_dirty_sphere_bound())
+      changed = (*it)->clean_sphere_bound();
+    const Sphere_bound& sb = (*it)->get_sphere_bound();
     if (sb.get_radius() == 0) continue;
     spheres.push_back(&sb);
     bb_changed = bb_changed || changed;
@@ -232,7 +268,7 @@ void Group::set_attributes(Element* elem)
 
   // Sets the multi-container attributes of this node:
   for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
+       mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
     const std::string& name = elem->get_name(mcai);
     Cont_list& cont_list = elem->get_value(mcai);
@@ -300,22 +336,22 @@ Container_proto* Group::get_prototype()
   return s_prototype;
 }
 
-/*! */
+/*! \brief */
 Boolean Group::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
-  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni) {
-    result &= (*ni)->attach_context(context);
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+    result &= (*it)->attach_context(context);
   }
   return result;
 }
 
-/*! */
+/*! \brief */
 Boolean Group::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
-  for (Node_iterator ni = m_childs.begin(); ni != m_childs.end(); ++ni) {
-    result &= (*ni)->detach_context(context);
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+    result &= (*it)->detach_context(context);
   }
   return result;
 }
@@ -387,19 +423,18 @@ void Group::remove_light(Light* light)
 /*! \brief adds a touch sensor to the group. */
 void Group::add_touch_sensor(Touch_sensor* touch_sensor)
 {
-  m_selection_id = touch_sensor->get_first_selection_id();
-  if (m_has_touch_sensor) {
+  if (m_touch_sensor != NULL) {
     std::cerr << "The Group already has a touch sensor!" << std::endl;
     return;
   }
-  m_has_touch_sensor = true;
+  m_touch_sensor = touch_sensor;
   m_childs.push_back(touch_sensor);
 }
 
 /*! \brief removes a touch sensor from the group. */
 void Group::remove_touch_sensor(Touch_sensor* touch_sensor)
 {
-  m_has_touch_sensor = false;
+  m_touch_sensor = NULL;
   m_childs.remove(touch_sensor);
 }
 

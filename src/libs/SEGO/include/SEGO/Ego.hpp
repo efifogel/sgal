@@ -115,11 +115,6 @@ public:
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene
-   */  
-  virtual void add_to_scene(Scene_graph* scene_graph);
-  
   // virtual Attribute_list get_attributes();
 
   /*! Draw the geometry */
@@ -163,7 +158,7 @@ public:
   /*! (Re)generate the parts. */
   void clean_parts();
 
-  /*! Set the part visibility flags. */
+  /*! Clean (set) the part visibility flags. */
   void clean_visibility();
 
   /*! Reset the part visibility flags. */
@@ -171,7 +166,7 @@ public:
   
   /*! (Re)generate the part colors. */
   void clean_colors();
-  
+
   /*! Clear the internal representation and auxiliary data structures */
   void clear();
 
@@ -440,9 +435,6 @@ protected:
   typedef std::vector<Voxel_signature>                  Voxel_signatures;
   typedef Voxel_signatures::iterator                    Voxel_signatures_iter;
   
-  /*! The Scene_graph */
-  Scene_graph* m_scene_graph;
-
   /*! The number of slices of a knob. */
   Uint m_knob_slices;
 

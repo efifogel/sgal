@@ -54,6 +54,7 @@ class Scene_graph;
 class Passive_motion_event;
 class Tick_event;
 class Formatter;
+class Draw_action;
 
 class SGAL_CLASSDEF Touch_sensor : public Agent, public Drag_sensor, public Node
 {
@@ -70,7 +71,7 @@ public:
     TOUCH_TIME,
     ROUTEDNODE,
     NUMBER_OF_SELECTION_IDS,
-    FIRST_SELECTION_ID,
+    START_SELECTION_ID,
     OVER_SELECTION_ID,
     ACTIVE_SELECTION_ID,
     LAST
@@ -88,7 +89,7 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
-  // attributes mutators - used by the scene graph picking mechanism
+  // attributes mutators - used by the scene graph selection mechanism
   void set_normal(const Vector3f& normal);
 
   void set_point(const Vector3f& point);
@@ -128,7 +129,7 @@ public:
 
   /*! Add the touch sensor object to a given scene.
    * This includes adding it to the container of touch sensors in the
-   * scene graph and setting the base selection id.
+   * scene graph.
    * \param scene_graph the given scene.
    */  
   virtual void add_to_scene(Scene_graph* scene_graph);
@@ -168,20 +169,14 @@ public:
   // of the navigation sensor.
   /*! \todo Ulong filter_priority() const { return MEDIUM_PRIORITY; } */
 
-  /*! Obtain the first id of a unique range of color ids used for picking. */
-  Uint get_first_selection_id() const;
+  /*! Obtain the the range of ids used for selection. */
+  void get_selection_ids(Uint& start_id, Uint& num_ids);
 
-  /*! Set the first id of a unique range of color ids used for picking. */
-  void set_start_selection_ids(Uint first_id);
+  /*! Set the range of ids used for selection. */
+  void set_selection_ids(Uint start_id, Uint num_ids);
 
-  /*! Obtain the number of ids in a unique range of color ids used for picking.
+  /*! Obtain the raw id of the geometry, which the cursor is hoovering above.
    */
-  Uint get_num_selection_ids() const;
-
-  /*! Set the number of ids in a unique range of color ids used for picking. */
-  void set_num_selection_ids(Uint num_ids);
-
-  /*! Obtain the raw id of the geometry, which the cursor is hoovering above. */
   Uint get_selection_id() const;
 
   /*! Set the raw id of the geometry, which the cursor is hoovering above. */
@@ -214,7 +209,7 @@ public:
   void set_enabled(Boolean enabled);
 
   /*! Determine whether the touch sensor is enabled. */
-  Boolean get_enabled() const;
+  Boolean is_enabled() const;
 
   /*! Set the scene-graph pointer. */
   void set_scene_graph(Scene_graph* sg);
@@ -239,7 +234,7 @@ protected:
    * Unlockes the dragging in the execution coordinator.
    * @param point (in) not used for now
    */
-  virtual void dragging_done(const Vector2sh& point); 
+  virtual void dragging_done(const Vector2sh& point);
 
 private:
   /*! The tag that identifies this container type */
@@ -251,12 +246,12 @@ private:
   /*! The scene graph */
   Scene_graph* m_scene_graph;
 
-  /*! The start id of a unique range of color ids used for picking */
-  Uint m_first_selection_id;
+  /*! The start id of a unique range of color ids used for selection */
+  Uint m_start_selection_id;
 
-  /*! The number of ids of a unique range of color ids used for picking */
+  /*! The number of ids of a unique range of color ids used for selection */
   Uint m_num_selection_ids;
-
+  
   /*! The raw id of the geometry, which the cursor is hoovering above. */
   Uint m_selection_id;
 
@@ -313,26 +308,19 @@ inline Container* Touch_sensor::clone() { return new Touch_sensor(); }
 inline Action::Trav_directive Touch_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
 
-/*! \brief obtains the first id of a unique range of color ids used for picking.
- */
-inline Uint Touch_sensor::get_first_selection_id() const
-{ return m_first_selection_id; }
+/*! \brief obtains the the range of ids used for selection. */
+inline void Touch_sensor::get_selection_ids(Uint& start_id, Uint& num_ids)
+{
+  start_id = m_start_selection_id;
+  num_ids = m_num_selection_ids;
+}
 
-/*! \brief sets the first id of a unique range of color ids used for picking. */
-inline void Touch_sensor::set_start_selection_ids(Uint first_id)
-{ m_first_selection_id = first_id; }
-
-/*! \brief obtains the number of ids in a unique range of color ids used for
- * picking.
- */
-inline Uint Touch_sensor::get_num_selection_ids() const
-{ return m_num_selection_ids; }
-
-/*! \brief sets the number of ids in a unique range of color ids used for
- * picking.
- */
-inline void Touch_sensor::set_num_selection_ids(Uint num_ids)
-{ m_num_selection_ids = num_ids; }
+/*! \brief sets the range of ids used for selection. */
+inline void Touch_sensor::set_selection_ids(Uint start_id, Uint num_ids)
+{
+  m_start_selection_id = start_id;
+  m_num_selection_ids = num_ids;
+}
 
 /*! \brief obtains the id of the geometry, which the cursor is hoovering above.
  */
@@ -353,15 +341,8 @@ inline Uint Touch_sensor::get_over_selection_id() const
 inline Uint Touch_sensor::get_active_selection_id() const
 { return m_active_selection_id; }
 
-/*! \brief determines whether the given id in the range of color ids. */
-inline Boolean Touch_sensor::is_in_range(Uint id)
-{
-  return ((m_first_selection_id <= id) &&
-          (id < (m_first_selection_id + m_num_selection_ids)));
-}
-
 /*! \brief determines whether the touch sensor is enabled. */
-inline Boolean Touch_sensor::get_enabled() const { return m_enabled; }
+inline Boolean Touch_sensor::is_enabled() const { return m_enabled; }
 
 /*! \brief sets the scene-graph pointer. */
 inline void Touch_sensor::set_scene_graph(Scene_graph* sg)
