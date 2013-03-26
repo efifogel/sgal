@@ -200,10 +200,9 @@ void Ego::clear_parts()
 
     Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node1);
     if (touch_sensor) {
-      if (m_owned_touch_sensor) {
-        delete touch_sensor;
-        m_owned_touch_sensor = false;
-      }
+      if (!m_owned_touch_sensor) continue;
+      delete touch_sensor;
+      m_owned_touch_sensor = false;
     }
     
     remove_child(node1);
@@ -341,34 +340,7 @@ Container_proto* Ego::get_prototype()
 void Ego::set_attributes(Element* elem)
 {
   Transform::set_attributes(elem);
-  
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
 
-  // Sets the multi-container attributes of this node:
-  Multi_cont_attr_iter mcai;
-  for (mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); ++mcai)
-  {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
-    if (name == "parts") {
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        // Container* cont = *ci;
-        // Spherical_gaussian_map_geo* sgm =
-        //   dynamic_cast<Spherical_gaussian_map_geo*>(cont);
-        // if (sgm) insert_sgm(sgm);
-        // else {
-        //   std::cerr << "Invalid " << s_tag << " geometry nodes!"
-        //             << std::endl;
-        // }
-      }
-      elem->mark_delete(mcai);
-    }
-    continue;
-  }
-  
   typedef Element::Cont_attr_iter         Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
@@ -727,10 +699,8 @@ void Ego::clean_parts()
 
   // Add a touch sensor if such a node does not exist:
   Touch_sensor* touch_sensor = NULL;
-  Node_iterator it = m_childs.begin();
-  while (it != m_childs.end()) {
-    Node* node = *it++;
-    touch_sensor = dynamic_cast<Touch_sensor*>(node);
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+    touch_sensor = dynamic_cast<Touch_sensor*>(*it);
     if (touch_sensor) break;
   }
   if (!touch_sensor) {
@@ -738,16 +708,17 @@ void Ego::clean_parts()
     touch_sensor->add_to_scene(m_scene_graph);
     m_owned_touch_sensor = true;
     add_child(touch_sensor);
+    Field* src_field =
+      touch_sensor->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
+    SGAL_assertion(src_field);
+    Field* dst_field = add_field(SELECTION_ID);
+    SGAL_assertion(dst_field);
+    src_field->connect(dst_field);
   }
   touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
                             (m_layer_y_visibility != LV_ALL) ||
                             (m_layer_z_visibility != LV_ALL));
-  Field* src_field = touch_sensor->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
-  SGAL_assertion(src_field);
-  Field* dst_field = add_field(SELECTION_ID);
-  SGAL_assertion(dst_field);
-  src_field->connect(dst_field);
-
+ 
   m_dirty_parts = false;
   m_dirty_visibility = true;
   m_dirty_sphere_bound = true;

@@ -597,7 +597,7 @@ Transform {
 	  knobSlices 16
 	  # layerXVisibility "notAbove"
 	  # layerYVisibility "notAbove"
-	  # layerZVisibility "notAbove"
+	  layerZVisibility "notAbove"
 	  brickTypes [
 	    # 2, 4, 1, 
 	    # 4, 2, 1,
@@ -606,6 +606,11 @@ Transform {
 	    1, 2, 1,
 	    1, 1, 1
           ]
+	  children [
+	    DEF SELECT_EGO TouchSensor {
+	      enabled TRUE
+	    }
+	   ]
 	}
        ]
     }
@@ -750,5 +755,8 @@ ROUTE INC_TILING_STRATEGY.value TO EGO.tilingStrategy
 
 ROUTE INC_TILING_ROW_KEY.state TO INC_TILING_ROW.trigger
 ROUTE INC_TILING_ROW.value TO EGO.tilingRowsDirection
+
+# ROUTE SELECT_EGO.activeSelectionId TO EGO.selectionId
+ROUTE SELECT_EGO.overSelectionId TO EGO.selectionId
 
 # ROUTE EXPORT_KEY.press TO EGO.export
