@@ -18,6 +18,12 @@ endif
 endif
 endif
 
+COMPILER_STR :=$(shell cl 2>&1)
+COMPILER_RE =Microsoft.*Version \([0-9][0-9].[0-9][0-9]\).*
+COMPILER_VER_CMD =expr match '$(COMPILER_STR)' '$(COMPILER_RE)'
+COMPILER_VER_LONG ?=$(shell $(COMPILER_VER_CMD))
+COMPILER_VER=$(subst .,,$(COMPILER_VER_LONG))
+
 LIBPROG =lib.exe
 RSC =rc.exe
 MTL =midl.exe
@@ -57,7 +63,7 @@ GCPPINCS+= -I$(STD_ROOT)/include
 
 # If GMP_INC_DIR is defined, add it to the list of include directories
 ifdef GMP_INC_DIR
-GCPPINCS+= -I$(GMP_INC_DIR)
+GCPPINCS+= -I"$(GMP_INC_DIR)"
 endif
 
 UNICODE_DEFS = -D_MBCS
@@ -296,10 +302,10 @@ LIBDIRPREFIX = -libpath:
 
 GLIBPATHOPTS = -libpath:$(STD_ROOT)/lib
 ifdef BOOST_LIB_DIR
-GLIBPATHOPTS+= -libpath:$(BOOST_LIB_DIR)
+GLIBPATHOPTS+= -libpath:"$(BOOST_LIB_DIR)"
 endif
 ifdef GMP_LIB_DIR
-GLIBPATHOPTS+= -libpath:$(GMP_LIB_DIR)
+GLIBPATHOPTS+= -libpath:"$(GMP_LIB_DIR)"
 endif
 
 LDDLLLIBS =
