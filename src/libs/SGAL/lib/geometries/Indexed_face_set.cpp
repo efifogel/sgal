@@ -1134,6 +1134,7 @@ void Indexed_face_set::isect_direct()
 /*! \brief draws the sphere in selection mode. */
 void Indexed_face_set::isect(Isect_action* action)
 {
+  if (is_dirty()) clean();
   if (is_empty()) return;
 
   Context* context = action->get_context();
