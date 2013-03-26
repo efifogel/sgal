@@ -161,7 +161,7 @@ void Group::isect(Isect_action* isect_action)
   // If the group has a touch sensor, reserve selections ids as many as
   // children.
   if (m_touch_sensor && m_touch_sensor->is_enabled()) {
-    if (m_num_selection_ids != children_size()) {
+    if ((m_num_selection_ids != 0) && m_num_selection_ids != children_size()) {
       m_scene_graph->free_selection_ids(m_start_selection_id,
                                         m_num_selection_ids);
       m_start_selection_id = 0;
