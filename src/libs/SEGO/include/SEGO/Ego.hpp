@@ -400,9 +400,13 @@ protected:
 
   /*! Indicates whether the data structure must be cleaned */
   Boolean m_dirty_voxels;
+
   Boolean m_dirty_tiling;
+
   Boolean m_dirty_parts;
+
   Boolean m_dirty_colors;
+
   Boolean m_dirty_visibility;
 
   /*! Indicates whether the parts are "owned". If they are owned (as
@@ -482,6 +486,9 @@ private:
    * immediately returns.
    */
   Boolean m_clean_colors_in_progress;
+
+  /*! The id of the first brick in the sequence of children of this group. */
+  Uint m_offset;
   
   /*! The tag that identifies this container type */
   static std::string s_tag;

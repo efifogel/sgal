@@ -147,7 +147,8 @@ Ego::Ego(Boolean proto) :
   m_layer_z_visibility(LV_ALL),
   m_selection_id(0),
   m_owned_appearance(false),
-  m_clean_colors_in_progress(false)
+  m_clean_colors_in_progress(false),
+  m_offset(0)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
 
 /*! Destructor */
@@ -567,6 +568,8 @@ void Ego::clean_parts()
   Vector3f origin;
   origin.add_scaled(center, -0.5f, box);
 
+  m_offset = children_size();
+  
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
@@ -763,8 +766,6 @@ void Ego::clean_colors()
   GLenum gl_type_select = Image_base::get_format_type(format_select);
   Uint size_select = Image_base::get_size(width, height, format_select);
   Uint num_components_select = Image_base::get_format_components(format_select);
-  SGAL_assertion_code(Uint bits = Image_base::get_format_size(format_select));
-  SGAL_assertion(m_scene_graph->get_num_selection_ids() < (0x1 << bits));
   Uchar* selections = new Uchar[size_select];
   
   // Set the clear color:
@@ -1193,7 +1194,7 @@ void Ego::clean_visibility()
   while (it != m_childs.end()) {
     Node* node = *it++;
     Transform* transform = dynamic_cast<Transform*>(node);
-    if (!transform) break;
+    if (!transform) continue;
     std::size_t i, j, k;
     boost::tie(i, j, k) = m_voxel_signatures[index++];
     transform->set_visible(is_visible(m_layer_x_visibility, m_layer_x, i) &&
@@ -1210,7 +1211,7 @@ void Ego::reset_visibility()
   while (it != m_childs.end()) {
     Node* node = *it++;
     Transform* transform = dynamic_cast<Transform*>(node);
-    if (!transform) break;
+    if (!transform) continue;
     transform->set_visible(true);
   }
   m_dirty_visibility = true;
@@ -1369,7 +1370,7 @@ void Ego::selection_id_changed(Field_info* /* field_info. */)
 {
   SGAL_assertion(m_selection_id < m_voxel_signatures.size());
   boost::tie(m_layer_x, m_layer_y, m_layer_z) =
-    m_voxel_signatures[m_selection_id];
+    m_voxel_signatures[m_selection_id - m_offset];
   m_dirty_visibility = true;
 }
 
