@@ -439,6 +439,7 @@ void Scene_graph::isect(Uint x, Uint y)
   glDisable(GL_LIGHTING);
   glDisable(GL_BLEND);
   glDisable(GL_TEXTURE_2D);
+  glDisable(GL_TEXTURE_CUBE_MAP);
   glDisable(GL_NORMALIZE);
   glDisable(GL_DITHER);
   glShadeModel(GL_FLAT);
@@ -450,8 +451,6 @@ void Scene_graph::isect(Uint x, Uint y)
   Image_base::Format format = Image_base::kRGB8_8_8;
   GLenum gl_format = Image_base::get_format_format(format);
   GLenum gl_type = Image_base::get_format_type(format);
-  SGAL_assertion_code(Uint bits = Image_base::get_format_size(format));
-  SGAL_assertion(get_num_selection_ids() < (0x1 << bits));
   // Ideally, we would declare pixel[] as an array of size
   // Image_base::get_format_components(format) (Uchar pixel[num_components]).
   // Unfortunately, MSVC does not allow defining an array of non-constant
@@ -530,7 +529,6 @@ void Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor)
  */
 Uint Scene_graph::allocate_selection_ids(Uint num)
 {
-  std::cout << "Scene_graph::allocate_selection_ids: " << num << std::endl;
   Selection_id_interval_iter it = m_free_selection_ids.begin();
   for (; it != m_free_selection_ids.end(); ++it) {
     Selection_id_interval& interval = *it;
@@ -557,7 +555,6 @@ void Scene_graph::free_selection_ids(Uint start, Uint num)
     m_free_selection_ids.push_front(new_interval);
     return;
   }
-
 
   // Iterate over the list of free intervals:
   Selection_id_interval_iter it;
@@ -586,9 +583,14 @@ void Scene_graph::free_selection_ids(Uint start, Uint num)
       }
       return;
     }
+    Uint end = start + num;
+    if (interval.first == end) {
+      interval.first -= num;
+      return;
+    }
     // The new interval ends before the current interval starts. Insert
     // the new interval right before the current interval.
-    SGAL_assertion(last < interval.first);
+    SGAL_assertion(end < interval.first);
     Selection_id_interval new_interval = std::make_pair(start, num);
     m_free_selection_ids.insert(it, new_interval);
     return;
