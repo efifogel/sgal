@@ -1368,9 +1368,12 @@ Boolean Ego::is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index)
 /*! \brief processes change of selected brick. */
 void Ego::selection_id_changed(Field_info* /* field_info. */)
 {
-  SGAL_assertion(m_selection_id < m_voxel_signatures.size());
+  if (m_selection_id == static_cast<Uint>(-1)) return;
+  
+  Uint id = m_selection_id - m_offset;
+  SGAL_assertion(id < m_voxel_signatures.size());
   boost::tie(m_layer_x, m_layer_y, m_layer_z) =
-    m_voxel_signatures[m_selection_id - m_offset];
+    m_voxel_signatures[id];
   m_dirty_visibility = true;
 }
 
