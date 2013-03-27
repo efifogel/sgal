@@ -11,10 +11,10 @@ ColorBackground {
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
-Viewpoint {
-  type "ORTHOGONAL"
-  fieldOfView 3.1408
-}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 3.1408
+# }
 DEF INC_FIRST_TILE_KEY SingleKeySensor { key "q" }
 DEF INC_FIRST_TILE Incrementor {
   minValue 0
@@ -607,9 +607,7 @@ Transform {
 	    1, 1, 1
           ]
 	  children [
-	    DEF SELECT_EGO TouchSensor {
-	      enabled TRUE
-	    }
+	    DEF SELECT_EGO TouchSensor { enabled TRUE }
 	   ]
 	}
        ]
@@ -756,7 +754,7 @@ ROUTE INC_TILING_STRATEGY.value TO EGO.tilingStrategy
 ROUTE INC_TILING_ROW_KEY.state TO INC_TILING_ROW.trigger
 ROUTE INC_TILING_ROW.value TO EGO.tilingRowsDirection
 
-# ROUTE SELECT_EGO.activeSelectionId TO EGO.selectionId
-ROUTE SELECT_EGO.overSelectionId TO EGO.selectionId
+ROUTE SELECT_EGO.activeSelectionId TO EGO.selectionId
+# ROUTE SELECT_EGO.overSelectionId TO EGO.selectionId
 
 # ROUTE EXPORT_KEY.press TO EGO.export
