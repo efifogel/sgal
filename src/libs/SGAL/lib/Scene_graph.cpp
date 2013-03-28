@@ -187,7 +187,11 @@ void Scene_graph::set_context(Context* context)
 {
   m_context = context;
   if (m_isect_action) m_isect_action->set_context(context);
-  m_free_selection_ids.push_back(std::make_pair(1, (0x1 << 24) - 1));
+  Uint bits = context->get_red_bits() + context->get_green_bits() +
+    context->get_blue_bits() + context->get_alpha_bits();
+  if (bits > 32) bits = 32;
+  Uint max_id = (0x1 << bits) - 1;
+  m_free_selection_ids.push_back(std::make_pair(1, max_id));
 }
 
 /*! \brief intializes the context in the scene grpha and in all relevant
