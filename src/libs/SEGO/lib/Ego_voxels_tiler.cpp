@@ -38,23 +38,27 @@ Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
     : m_tiling_rows(rows), m_available_types(available_types) {
   switch (first_tile) {
   case FIRST00:
-    m_first_brick_x_offset = 0;
-    m_first_brick_y_offset = 0;
+    m_layers_offsets[0][0] = 0;
+    m_layers_offsets[0][1] = 0;
     break;
   case FIRST01:
-    m_first_brick_x_offset = 0;
-    m_first_brick_y_offset = 1;
+    m_layers_offsets[0][0] = 0;
+    m_layers_offsets[0][1] = 1;
     break;
   case FIRST10:
-    m_first_brick_x_offset = 1;
-    m_first_brick_y_offset = 0;
+    m_layers_offsets[0][0] = 1;
+    m_layers_offsets[0][1] = 0;
     break;
   case FIRST11:
-    m_first_brick_x_offset = 1;
-    m_first_brick_y_offset = 1;
+    m_layers_offsets[0][0] = 1;
+    m_layers_offsets[0][1] = 1;
     break;
   }
 
+  // TODO: Move this to the user.
+  m_layers_offsets[1][0] = (m_layers_offsets[0][0] + 1) % 2;
+  m_layers_offsets[1][1] = (m_layers_offsets[0][1] + 1) % 2;
+  
   switch (strategy) {
   case GRID:
     m_offset_between_rows = 0;
@@ -82,87 +86,134 @@ void Ego_voxels_tiler::operator() (Ego_voxels* out_voxels)
 }
 
 void Ego_voxels_tiler::tile_layer(size_t layer, Ego_voxels* out_voxels) {
-
-  size_t xmax, ymax;
-  bool horizontal = (m_tiling_rows == XROWS);
-  if (horizontal)
-    boost::tie(xmax, ymax, boost::tuples::ignore) = out_voxels->size();
-  else
-    boost::tie(ymax, xmax, boost::tuples::ignore) = out_voxels->size();
   
-  size_t x = (layer + m_first_brick_x_offset) % 2;
-  for (; x + 1 < xmax; x += 2) {
+  // The first (main) brick we try to put in different locations.
+  // The other bricks, which should only fill the holes - we don't need 
+  // that.
+  // We kind of assume that we have at least 1x1. This can be larger
+  // in other schemes.
 
-    size_t y = (layer + m_first_brick_y_offset + (x/2) * m_offset_between_rows) % 2;
-    for (; y + 1 < ymax; y += 2) {
+  // Case we have a (main) brick.
+  if (m_available_types.size() > 1) {
+    bool horizontal = (m_tiling_rows == XROWS);
 
-      size_t row = (horizontal) ? x : y;
-      size_t column = (horizontal) ? y : x;
-      size_t width = (horizontal) ? 2 : std::numeric_limits<size_t>::max();
-      size_t height = (horizontal) ? std::numeric_limits<size_t>::max() : 2;
+    const Brick_type& brick = m_available_types.front();
 
-      this->tile_cell(layer, row, column, width, height, out_voxels);
+    size_t first_brick_x = m_layers_offsets[layer % 2][0] % brick.get<0>();
+    size_t first_brick_y = m_layers_offsets[layer % 2][1] % brick.get<1>();
+    
+    // It might be worth to move the skip outside...
+    tile_layer(true, horizontal, layer, brick,
+               first_brick_x, first_brick_y,
+               m_offset_between_rows,
+               out_voxels);
+  }
+  
+  // Now we tile the rest (start from second, right?)
+  Brick_types::iterator it = m_available_types.begin();
+  if (m_available_types.size() > 1)
+    ++it;
+  
+  for (; it != m_available_types.end(); ++it) {
+    // horizontal does not matter if there is no offset...
+    tile_layer(false, true, layer, *it, 0, 0, 0, out_voxels);
+  }
+}
+
+/** 
+ * 
+ * 
+ * @param skip Specifies whether to skip a brick if it does not fit.
+ *        Otherwise, there is no point in different first location if
+ *        the first location does not fit.
+ * @param horizontal 
+ * @param layer 
+ * @param brick_type 
+ * @param first_brick_x_placement 
+ * @param first_brick_y_placement 
+ * @param offset_between_rows 
+ * @param out_voxels 
+ */
+void Ego_voxels_tiler::tile_layer(bool skip,
+                                  bool horizontal,
+                                  std::size_t layer,
+                                  const Brick_type& brick_type,
+                                  std::size_t first_brick_x_placement,
+                                  std::size_t first_brick_y_placement,
+                                  std::size_t offset_between_rows,
+                                  Ego_voxels* out_voxels) {
+
+  size_t maxx = out_voxels->size().get<0>();
+  size_t maxy = out_voxels->size().get<1>();
+
+  size_t jumpx = skip ? brick_type.get<0>() : 1;
+  size_t jumpy = skip ? brick_type.get<1>(): 1;
+  
+  for (size_t i = first_brick_x_placement;
+       i < maxx; i += jumpx) {
+    for (size_t j = first_brick_y_placement;
+         j < maxy; j += jumpy) {
+      
+      size_t row_index = (i - first_brick_x_placement) / jumpx;
+      size_t column_index = (j - first_brick_y_placement) / jumpy;
+      size_t row = i;
+      size_t column = j;
+
+      // Skip is according to the index...
+      // if we are in an odd "row" we need to offset the column...
+      if (horizontal) {
+        if (row_index % 2 == 1)
+          column += (offset_between_rows % brick_type.get<0>());
+      } else {
+        if (column_index % 2 == 1)
+          row += (offset_between_rows % brick_type.get<1>());
+      }
+
+      // Should handle out-of-bounds
+      tile_cell(layer, row, column, brick_type, out_voxels);
     }
   }
 }
 
+
 void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
-                                 size_t width, size_t height,
+                                 const Brick_type& brick_type,
                                  Ego_voxels* out_voxels) {
   
+  if (row >= out_voxels->size().get<0>())
+    return;
+  if (column >= out_voxels->size().get<1>())
+    return;
+  if (layer >= out_voxels->size().get<2>())
+    return;
+
 #ifdef EGO_VOXELIZER_TILER_VERBOSE
   std::cout << "Row: " << row << " Column: " << column << std::endl;
 #endif
 
-  for (size_t i = 0; i < 2; ++i) {
-    for (size_t j = 0; j < 2; ++j) {
+  // 1) All are legal and filled.
+  // 2) All are not containing bricks.
+  bool place = true;
 
-      for (Brick_types::iterator it = m_available_types.begin();
-           it != m_available_types.end(); ++it) {
-
-#ifdef EGO_VOXELIZER_TILER_VERBOSE
-        std::cout << "Location: " << row + i << " " << column + j << std::endl;
-        std::cout << "Checking brick " << *it << std::endl;
-        std::cout << "Width " << width << " Height " << height << std::endl;
-#endif
-        // Check that the lego brick is in the proper size.
-        if (it->get<0>() > width - i)
-          continue;
-        if (it->get<1>() > height - j)
-          continue;
-
-        // 1) All are legal and filled.
-        // 2) All are not containing bricks.
-        bool place = true;
-        size_t place_x = row + i;
-        size_t place_y = column + j;
-        for (size_t n = place_x; n < place_x + it->get<0>(); ++n) {
-          for (size_t m = place_y; m < place_y + it->get<1>(); ++m) {
-#ifdef EGO_VOXELIZER_TILER_VERBOSE
-            std::cout << n << " " << m << " is " << is_tiled(out_voxels, n, m, layer)
-                      << std::endl;
-#endif
-            if (is_tiled(out_voxels, n, m, layer)) {
-              place = false;
-              break;
-            }
-          }
-          // instead of goto.
-          if (place == false)
-            break;
-        }
-         
-        if (place) {
-#ifdef EGO_VOXELIZER_TILER_VERBOSE
-          std::cout << "Placing " << *it << std::endl;
-          if (it->get<0>() == 4 || it->get<1>() == 4)
-            std::cout << *it << std::endl;
-#endif
-          out_voxels->place(boost::make_tuple(place_x, place_y, layer), *it);
-          break;
-        }
+  for (size_t i = row; i < row + brick_type.get<0>(); ++i) {
+    for (size_t j = column; j < column + brick_type.get<1>(); ++j) {
+      if (is_tiled(out_voxels, i, j, layer)) {
+        place = false;
+        break;
       }
     }
+    
+    // instead of goto.
+    if (place == false)
+      break;
+  }
+  
+  if (place) {
+#ifdef EGO_VOXELIZER_TILER_VERBOSE
+    std::cout << "Placing: " << width << "x" << height << std::endl;
+#endif
+    
+    out_voxels->place(boost::make_tuple(row, column, layer), brick_type);
   }
 }
 
