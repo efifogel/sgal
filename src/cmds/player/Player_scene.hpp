@@ -55,6 +55,9 @@ class Tick_event;
 class Draw_event;
 class Reshape_event;
 class Keyboard_event;
+class Mouse_event;
+class Motion_event;
+class Passive_motion_event;
 class Context;
 class Configuration;
 class Indexed_face_set;
@@ -155,6 +158,15 @@ public:
 
   /*! Handle a keyboard event. */
   virtual void handle(SGAL::Keyboard_event* event);
+
+  /*! Handle a mouse event. */
+  virtual void handle(SGAL::Mouse_event* event);
+
+  /*! Handle a motion event. */
+  virtual void handle(SGAL::Motion_event* event);
+
+  /*! Handle a passive motion event. */
+  virtual void handle(SGAL::Passive_motion_event* event);
   
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify(void);

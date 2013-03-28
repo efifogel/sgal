@@ -49,6 +49,9 @@
 #include "SGAL/Keyboard_event.hpp"
 #include "SGAL/Reshape_event.hpp"
 #include "SGAL/Draw_event.hpp"
+#include "SGAL/Motion_event.hpp"
+#include "SGAL/Passive_motion_event.hpp"
+#include "SGAL/Mouse_event.hpp"
 #include "SGAL/Simulate_event.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Draw_action.hpp"
@@ -166,6 +169,9 @@ void Player_scene::init()
   SGAL::Keyboard_event::doregister(this);
   SGAL::Draw_event::doregister(this);
   SGAL::Reshape_event::doregister(this);
+  SGAL::Motion_event::doregister(this);
+  SGAL::Passive_motion_event::doregister(this);
+  SGAL::Mouse_event::doregister(this);
 }
 
 /*! Destructor */
@@ -175,6 +181,9 @@ Player_scene::~Player_scene(void)
   SGAL::Draw_event::unregister(this);
   SGAL::Keyboard_event::unregister(this);
   SGAL::Tick_event::unregister(this);
+  SGAL::Motion_event::unregister(this);
+  SGAL::Passive_motion_event::unregister(this);
+  SGAL::Mouse_event::unregister(this);
   m_fullname.clear();
 }
 
@@ -515,6 +524,36 @@ void Player_scene::clear_scene()
 void Player_scene::identify(void)
 { std::cout << "Agent: Player_scene" << std::endl; }
 
+/*! \brief handles a mouse event. */
+void Player_scene::handle(SGAL::Mouse_event* event)
+{
+  SGAL_assertion(m_scene_graph);
+  SGAL::Configuration* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  SGAL::Accumulation* acc = conf->get_accumulation();
+  if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
+}
+
+/*! \brief handles a motion event. */
+void Player_scene::handle(SGAL::Motion_event* event)
+{
+  SGAL_assertion(m_scene_graph);
+  SGAL::Configuration* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  SGAL::Accumulation* acc = conf->get_accumulation();
+  if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
+}
+
+/*! \brief handles a passive motion event. */
+void Player_scene::handle(SGAL::Passive_motion_event* event)
+{
+  SGAL_assertion(m_scene_graph);
+  SGAL::Configuration* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  SGAL::Accumulation* acc = conf->get_accumulation();
+  if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
+}
+
 /*! \brief handless a keyboard event. */
 void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
 {
@@ -575,8 +614,8 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   
   if (!acc->is_active()) {
     acc->enactivate();
-    window_item->set_accumulating(SGAL_TRUE);
-    window_item->set_redraw(SGAL_TRUE);
+    window_item->set_accumulating(true);
+    window_item->set_redraw(true);
     return;
   }
 
@@ -585,13 +624,13 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
     // Accumulation is done:
     acc->disactivate();
     m_scene_graph->process_snapshots(&draw_action);
-    window_item->set_accumulating(SGAL_FALSE);
+    window_item->set_accumulating(false);
     window_item->swap_buffers();
     return;
   }
 
   // Accumulation is not done:
-  window_item->set_redraw(SGAL_TRUE);
+  window_item->set_redraw(true);
   if (acc->do_show()) window_item->swap_buffers();
 }
 
