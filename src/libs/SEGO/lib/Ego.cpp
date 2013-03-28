@@ -89,8 +89,10 @@ Container_proto* Ego::s_prototype = NULL;
 const Float Ego::s_def_voxel_width(8.2f);
 const Float Ego::s_def_voxel_length(8.2f);
 const Float Ego::s_def_voxel_height(9.6f);
-const Ego_voxels_tiler::First_tile_placement 
-Ego::s_def_first_tile_placement(Ego_voxels_tiler::FIRST00);
+const std::size_t Ego::s_def_even_layer_x(0);
+const std::size_t Ego::s_def_even_layer_y(0);
+const std::size_t Ego::s_def_odd_layer_x(1);
+const std::size_t Ego::s_def_odd_layer_y(1);
 const Ego_voxels_tiler::Strategy
 Ego::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
 const Ego_voxels_tiler::Tiling_rows
@@ -126,7 +128,10 @@ Ego::Ego(Boolean proto) :
   m_appearance(NULL),
   m_space_filling(s_def_space_filling),
   m_appearance_prev(NULL),
-  m_first_tile_placement(s_def_first_tile_placement),
+  m_even_layer_x(s_def_even_layer_x),
+  m_even_layer_y(s_def_even_layer_y),
+  m_odd_layer_x(s_def_odd_layer_x),
+  m_odd_layer_y(s_def_odd_layer_y),
   m_tiling_strategy(s_def_tiling_strategy),
   m_tiling_rows_direction(s_def_tiling_rows_direction),
   m_dirty_appearance(true),
@@ -286,18 +291,36 @@ void Ego::init_prototype()
                                            exec_func));
 
   exec_func = static_cast<Execution_function>(&Ego::tiling_changed);
-  SF_int* sf_int =
-    new SF_int(FIRST_TILE_PLACEMENT, "firstTilePlacement",
-               get_member_offset(&m_first_tile_placement), exec_func);
-  s_prototype->add_field_info(sf_int);
+  s_prototype->
+    add_field_info(new SF_int(EVEN_LAYER_X,
+                              "evenLayerX",
+                              get_member_offset(&m_even_layer_x),
+                              exec_func));
+  s_prototype->
+    add_field_info(new SF_int(EVEN_LAYER_Y,
+                              "evenLayerY",
+                              get_member_offset(&m_even_layer_y),
+                              exec_func));
+  s_prototype->
+    add_field_info(new SF_int(ODD_LAYER_X,
+                              "oddLayerX",
+                              get_member_offset(&m_odd_layer_x),
+                              exec_func));
+  s_prototype->
+    add_field_info(new SF_int(ODD_LAYER_Y,
+                              "oddLayerY",
+                              get_member_offset(&m_odd_layer_y),
+                              exec_func));
+
   
   s_prototype->add_field_info(new SF_int(TILING_STRATEGY,
                                          "tilingStrategy",
                                          get_member_offset(&m_tiling_strategy),
                                          exec_func));
 
-  sf_int = new SF_int(TILING_ROWS_DIRECTION, "tilingRowsDirection",
-                      get_member_offset(&m_tiling_rows_direction), exec_func);
+  SF_int* sf_int = new SF_int(TILING_ROWS_DIRECTION, "tilingRowsDirection",
+                             get_member_offset(&m_tiling_rows_direction),
+                             exec_func);
   s_prototype->add_field_info(sf_int);
   
   exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
@@ -399,10 +422,27 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "firstTilePlacement") {
+    if (name == "evenLayerX") {
       size_t val = boost::lexical_cast<size_t>(value);
-      set_first_tile_placement
-        (static_cast<Ego_voxels_tiler::First_tile_placement>(val));
+      set_even_layer_x(val);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "evenLayerY") {
+      size_t val = boost::lexical_cast<size_t>(value);
+      set_even_layer_y(val);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "oddLayerX") {
+      size_t val = boost::lexical_cast<size_t>(value);
+      set_odd_layer_x(val);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "oddLayerY") {
+      size_t val = boost::lexical_cast<size_t>(value);
+      set_odd_layer_y(val);
       elem->mark_delete(ai);
       continue;
     }
@@ -545,7 +585,10 @@ void Ego::clean_tiling()
   m_dirty_tiling = false;
   clear_parts();
     
-  Ego_voxels_tiler tile(m_first_tile_placement,
+  Ego_voxels_tiler tile(m_even_layer_x,
+                        m_even_layer_y,
+                        m_odd_layer_x,
+                        m_odd_layer_y,
                         m_tiling_strategy,
                         m_tiling_rows_direction,
                         convert_types(m_brick_types));

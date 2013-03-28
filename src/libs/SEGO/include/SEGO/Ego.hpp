@@ -66,7 +66,10 @@ public:
     VOXEL_WIDTH,
     VOXEL_LENGTH,
     VOXEL_HEIGHT,
-    FIRST_TILE_PLACEMENT,
+    EVEN_LAYER_X,
+    EVEN_LAYER_Y,
+    ODD_LAYER_X,
+    ODD_LAYER_Y,
     TILING_STRATEGY,
     TILING_ROWS_DIRECTION,
     PARTS,
@@ -248,7 +251,16 @@ public:
   Float get_voxel_height() const;
 
   /*! */
-  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p);
+  void set_even_layer_x(std::size_t x);
+
+  /*! */
+  void set_even_layer_y(std::size_t y);
+
+  /*! */
+  void set_odd_layer_x(std::size_t x);
+
+  /*! */
+  void set_odd_layer_y(std::size_t y);
 
   /*! */
   void set_tiling_strategy(Ego_voxels_tiler::Strategy s);
@@ -388,8 +400,11 @@ protected:
   /*! Stores the pervious appearance. */
   Appearance* m_appearance_prev;
 
-  /// Enums to control tiling.
-  Ego_voxels_tiler::First_tile_placement m_first_tile_placement;
+  /// Tiling parameter
+  std::size_t m_even_layer_x;
+  std::size_t m_even_layer_y;
+  std::size_t m_odd_layer_x;
+  std::size_t m_odd_layer_y;
   Ego_voxels_tiler::Strategy m_tiling_strategy;
   Ego_voxels_tiler::Tiling_rows m_tiling_rows_direction;
   
@@ -506,8 +521,10 @@ private:
   static const char* s_layer_visibility_names[];
   
   /*! Default values */
-  static const Ego_voxels_tiler::First_tile_placement
-    s_def_first_tile_placement;
+  static const std::size_t s_def_even_layer_x;
+  static const std::size_t s_def_even_layer_y;
+  static const std::size_t s_def_odd_layer_x;
+  static const std::size_t s_def_odd_layer_y;
   static const Ego_voxels_tiler::Strategy s_def_tiling_strategy;
   static const Ego_voxels_tiler::Tiling_rows s_def_tiling_rows_direction;
   static const Float s_def_voxel_width;
@@ -585,8 +602,23 @@ inline Float Ego::get_voxel_height() const { return m_voxel_height; }
 
 /*! \brief  */
 inline
-void Ego::set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p)
-{ m_first_tile_placement = p; }
+void Ego::set_even_layer_x(std::size_t x)
+{ m_even_layer_x = x; }
+
+/*! \brief  */
+inline
+void Ego::set_even_layer_y(std::size_t y)
+{ m_even_layer_y = y; }
+
+/*! \brief  */
+inline
+void Ego::set_odd_layer_x(std::size_t x)
+{ m_odd_layer_x = x; }
+
+/*! \brief  */
+inline
+void Ego::set_odd_layer_y(std::size_t y)
+{ m_odd_layer_y = y; }
 
 /*! \brief  */
 inline void Ego::set_tiling_strategy(Ego_voxels_tiler::Strategy s)

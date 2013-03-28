@@ -31,34 +31,20 @@
 SGAL_BEGIN_NAMESPACE
 
 // Tiling_rows are relevant only for non-grid.
-Ego_voxels_tiler::Ego_voxels_tiler(First_tile_placement first_tile,
+Ego_voxels_tiler::Ego_voxels_tiler(std::size_t even_layer_x,
+                                   std::size_t even_layer_y,
+                                   std::size_t odd_layer_x,
+                                   std::size_t odd_layer_y,
                                    Strategy strategy,
                                    Tiling_rows rows,
                                    const Brick_types& available_types)
     : m_tiling_rows(rows), m_available_types(available_types) {
-  switch (first_tile) {
-  case FIRST00:
-    m_layers_offsets[0][0] = 0;
-    m_layers_offsets[0][1] = 0;
-    break;
-  case FIRST01:
-    m_layers_offsets[0][0] = 0;
-    m_layers_offsets[0][1] = 1;
-    break;
-  case FIRST10:
-    m_layers_offsets[0][0] = 1;
-    m_layers_offsets[0][1] = 0;
-    break;
-  case FIRST11:
-    m_layers_offsets[0][0] = 1;
-    m_layers_offsets[0][1] = 1;
-    break;
-  }
 
-  // TODO: Move this to the user.
-  m_layers_offsets[1][0] = (m_layers_offsets[0][0] + 1) % 2;
-  m_layers_offsets[1][1] = (m_layers_offsets[0][1] + 1) % 2;
-  
+  m_layers_offsets[0][0] = even_layer_x;
+  m_layers_offsets[0][1] = even_layer_y;
+  m_layers_offsets[1][0] = odd_layer_x;
+  m_layers_offsets[1][1] = odd_layer_y;
+
   switch (strategy) {
   case GRID:
     m_offset_between_rows = 0;
