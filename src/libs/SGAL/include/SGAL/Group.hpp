@@ -226,6 +226,9 @@ protected:
   /*! The scene graph */
   Scene_graph* m_scene_graph;
 
+  /*! Allocate the selection ids for this group. */
+  void allocate_selection_ids();
+  
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 

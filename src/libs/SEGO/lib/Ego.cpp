@@ -798,6 +798,7 @@ void Ego::clean_colors()
   // Prepare isect action:
   SGAL::Isect_action isect_action;
   isect_action.set_context(context);
+  allocate_selection_ids();
   
   // Prepare color image:
   Image_base::Format format = Image_base::kRGB8_8_8;
@@ -1160,13 +1161,13 @@ Action::Trav_directive Ego::draw(Draw_action* action)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  if (m_dirty_colors) clean_colors();
   if (m_clean_colors_in_progress) {
     if (!m_dirty_visibility) reset_visibility();
   }
   else {
     if (m_dirty_visibility) clean_visibility();
   }
+  if (m_dirty_colors) clean_colors();
   return Group::draw(action);
 }
 
@@ -1177,13 +1178,13 @@ void Ego::cull(Cull_context& cull_context)
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
-  if (m_dirty_colors) clean_colors();
   if (m_clean_colors_in_progress) {
     if (!m_dirty_visibility) reset_visibility();
   }
   else {
     if (m_dirty_visibility) clean_visibility();
   }
+  if (m_dirty_colors) clean_colors();
   
   // We deliberately call the cull() member of the Group and not of the
   // Transform to avoid duplicate application of the transformations.
@@ -1221,10 +1222,8 @@ void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
 void Ego::visibility_changed(Field_info*)
 {
   Touch_sensor* touch_sensor = NULL;
-  Node_iterator it = m_childs.begin();
-  while (it != m_childs.end()) {
-    Node* node = *it++;
-    touch_sensor = dynamic_cast<Touch_sensor*>(node);
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+    touch_sensor = dynamic_cast<Touch_sensor*>(*it);
     if (touch_sensor) {
       touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
                                 (m_layer_y_visibility != LV_ALL) ||
@@ -1240,8 +1239,7 @@ void Ego::clean_visibility()
 {
   std::size_t index = 0;
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Node* node = *it;
-    Transform* transform = dynamic_cast<Transform*>(node);
+    Transform* transform = dynamic_cast<Transform*>(*it);
     if (!transform) continue;
     std::size_t i, j, k;
     boost::tie(i, j, k) = m_voxel_signatures[index++];
@@ -1255,10 +1253,8 @@ void Ego::clean_visibility()
 /*! \brief Process change of visibility scheme. */
 void Ego::reset_visibility()
 {
-  Node_iterator it = m_childs.begin();
-  while (it != m_childs.end()) {
-    Node* node = *it++;
-    Transform* transform = dynamic_cast<Transform*>(node);
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+    Transform* transform = dynamic_cast<Transform*>(*it);
     if (!transform) continue;
     transform->set_visible(true);
   }

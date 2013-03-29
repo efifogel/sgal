@@ -154,6 +154,22 @@ void Group::cull(Cull_context& cull_context)
     (*it)->cull(cull_context);
 }
 
+/*! \brief allocates the selection ids for this group. */
+void Group::allocate_selection_ids()
+{
+  if ((m_num_selection_ids != 0) && m_num_selection_ids != children_size()) {
+    m_scene_graph->free_selection_ids(m_start_selection_id, m_num_selection_ids);
+    m_start_selection_id = 0;
+    m_num_selection_ids = 0;
+  }
+
+  if (m_num_selection_ids == 0) {
+    m_num_selection_ids = children_size();
+    m_start_selection_id =
+      m_scene_graph->allocate_selection_ids(m_num_selection_ids);
+  }
+}
+
 /*! \brief draws the node for selection. */
 void Group::isect(Isect_action* isect_action) 
 {
@@ -162,21 +178,8 @@ void Group::isect(Isect_action* isect_action)
   // If the group has a touch sensor, reserve selections ids as many as
   // children.
   if (m_touch_sensor && m_touch_sensor->is_enabled()) {
-    if ((m_num_selection_ids != 0) && m_num_selection_ids != children_size()) {
-      m_scene_graph->free_selection_ids(m_start_selection_id,
-                                        m_num_selection_ids);
-      m_start_selection_id = 0;
-      m_num_selection_ids = 0;
-    }
-
-    if (m_num_selection_ids == 0) {
-      m_num_selection_ids = children_size();
-      m_start_selection_id =
-        m_scene_graph->allocate_selection_ids(m_num_selection_ids);
-    }
-    // Update the touch sensor with the allocated selection ids.
-    m_touch_sensor->set_selection_ids(m_start_selection_id,
-                                      m_num_selection_ids);
+    allocate_selection_ids();
+    m_touch_sensor->set_selection_ids(m_start_selection_id, m_num_selection_ids);
   }
 
   // Apply the current Group selection ids only if selection ids have been
