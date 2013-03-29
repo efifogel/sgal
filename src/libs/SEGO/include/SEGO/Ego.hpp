@@ -66,8 +66,11 @@ public:
     VOXEL_WIDTH,
     VOXEL_LENGTH,
     VOXEL_HEIGHT,
-    FIRST_TILE_PLACEMENT,
-    TILING_STRATEGY,
+    EVEN_LAYER_X,
+    EVEN_LAYER_Y,
+    ODD_LAYER_X,
+    ODD_LAYER_Y,
+    OFFSET_BETWEEN_ROWS,
     TILING_ROWS_DIRECTION,
     PARTS,
     STYLE,
@@ -248,10 +251,19 @@ public:
   Float get_voxel_height() const;
 
   /*! */
-  void set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p);
+  void set_even_layer_x(std::size_t x);
 
   /*! */
-  void set_tiling_strategy(Ego_voxels_tiler::Strategy s);
+  void set_even_layer_y(std::size_t y);
+
+  /*! */
+  void set_odd_layer_x(std::size_t x);
+
+  /*! */
+  void set_odd_layer_y(std::size_t y);
+
+  /*! */
+  void set_offset_between_rows(std::size_t s);
   
   /*! */
   void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r);
@@ -388,9 +400,12 @@ protected:
   /*! Stores the pervious appearance. */
   Appearance* m_appearance_prev;
 
-  /// Enums to control tiling.
-  Ego_voxels_tiler::First_tile_placement m_first_tile_placement;
-  Ego_voxels_tiler::Strategy m_tiling_strategy;
+  /// Tiling parameter
+  std::size_t m_even_layer_x;
+  std::size_t m_even_layer_y;
+  std::size_t m_odd_layer_x;
+  std::size_t m_odd_layer_y;
+  std::size_t m_offset_between_rows;
   Ego_voxels_tiler::Tiling_rows m_tiling_rows_direction;
   
   /*! Indicates whether the shape appearance is dirty, and thus needs
@@ -509,9 +524,11 @@ private:
   static const char* s_layer_visibility_names[];
   
   /*! Default values */
-  static const Ego_voxels_tiler::First_tile_placement
-    s_def_first_tile_placement;
-  static const Ego_voxels_tiler::Strategy s_def_tiling_strategy;
+  static const std::size_t s_def_even_layer_x;
+  static const std::size_t s_def_even_layer_y;
+  static const std::size_t s_def_odd_layer_x;
+  static const std::size_t s_def_odd_layer_y;
+  static const std::size_t s_def_offset_between_rows;
   static const Ego_voxels_tiler::Tiling_rows s_def_tiling_rows_direction;
   static const Float s_def_voxel_width;
   static const Float s_def_voxel_length;
@@ -588,12 +605,27 @@ inline Float Ego::get_voxel_height() const { return m_voxel_height; }
 
 /*! \brief  */
 inline
-void Ego::set_first_tile_placement(Ego_voxels_tiler::First_tile_placement p)
-{ m_first_tile_placement = p; }
+void Ego::set_even_layer_x(std::size_t x)
+{ m_even_layer_x = x; }
 
 /*! \brief  */
-inline void Ego::set_tiling_strategy(Ego_voxels_tiler::Strategy s)
-{ m_tiling_strategy = s; }
+inline
+void Ego::set_even_layer_y(std::size_t y)
+{ m_even_layer_y = y; }
+
+/*! \brief  */
+inline
+void Ego::set_odd_layer_x(std::size_t x)
+{ m_odd_layer_x = x; }
+
+/*! \brief  */
+inline
+void Ego::set_odd_layer_y(std::size_t y)
+{ m_odd_layer_y = y; }
+
+/*! \brief  */
+inline void Ego::set_offset_between_rows(std::size_t s)
+{ m_offset_between_rows = s; }
   
 /*! \brief  */
 inline void Ego::set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)

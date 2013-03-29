@@ -103,6 +103,13 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
   m_voxels[x][y][z].brick_size = size;
 }
 
+void Ego_voxels::clear_placing() {
+  for (size_t i = 0; i < m_voxels.size(); ++i)
+    for (size_t j = 0; j < m_voxels[0].size(); ++j)
+      for (size_t k = 0; k < m_voxels[0][0].size(); ++k)
+        m_voxels[i][j][k].brick_location.reset();
+}
+
 // A brick was placed in this place if there is a brick in the coords location.
 bool Ego_voxels::is_placed(std::size_t x, std::size_t y, std::size_t z) {
   SGAL_assertion(is_filled(x, y, z) == true);

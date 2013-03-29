@@ -33,12 +33,13 @@ public:
   typedef std::vector<Brick_type>                     Brick_types;
 
   // TODO: Missing if rows are x or y.
-  enum First_tile_placement {FIRST00, FIRST01, FIRST10, FIRST11};
-  enum Strategy {GRID, NONGRID};
   enum Tiling_rows {XROWS, YROWS};
 
-  Ego_voxels_tiler(First_tile_placement first_tile,
-                   Strategy strategy,
+  Ego_voxels_tiler(std::size_t even_layer_x,
+                   std::size_t even_layer_y,
+                   std::size_t odd_layer_x,
+                   std::size_t odd_layer_y,
+                   std::size_t offset_between_rows,
                    Tiling_rows rows,
                    const Brick_types &available_types);
   
@@ -46,13 +47,23 @@ public:
 
 private:
   void tile_layer(size_t layer, Ego_voxels* out_voxels);
+  void tile_layer(bool horizontal, bool skip, size_t layer,
+                  const Brick_type& brick_type,
+                  std::size_t first_brick_x_placement,
+                  std::size_t first_brick_y_placement,
+                  std::size_t offset_between_rows,
+                  Ego_voxels* out_voxels);
+
   void tile_cell(size_t layer, size_t row, size_t column,
-                 size_t width, size_t height, Ego_voxels* out_voxels);
+                 const Brick_type& brick_type, Ego_voxels* out_voxels);
 
   bool is_tiled(Ego_voxels* out_voxels, size_t x, size_t y, size_t z);
 
-  size_t m_first_brick_x_offset;
-  size_t m_first_brick_y_offset;
+  // This represents the offset of the odd layers and the even layers
+  // in case of the main brick. This actually what makes the tiling
+  // stronger.
+  // Should be adjusted not only for 2x2.
+  size_t m_layers_offsets[2][2];
   size_t m_offset_between_rows;
   Tiling_rows m_tiling_rows;
 
