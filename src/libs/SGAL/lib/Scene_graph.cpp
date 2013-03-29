@@ -561,7 +561,7 @@ void Scene_graph::free_selection_ids(Uint start, Uint num)
   }
 
   // Iterate over the list of free intervals:
-  Selection_id_interval_iter it;
+  Selection_id_interval_iter it = m_free_selection_ids.begin();
   for (; it != m_free_selection_ids.end(); ++it) {
     Selection_id_interval& interval = *it;
     Uint interval_end = interval.first + interval.second;
