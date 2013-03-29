@@ -148,7 +148,8 @@ Ego::Ego(Boolean proto) :
   m_selection_id(0),
   m_owned_appearance(false),
   m_clean_colors_in_progress(false),
-  m_offset(0)
+  m_start_brick(0),
+  m_num_bricks(0)
 { if (m_style == STYLE_RANDOM_COLORS) m_dirty_appearance = false; }
 
 /*! Destructor */
@@ -181,32 +182,34 @@ Geo_set* Ego::get_geo_set_model()
 /*! \brief clear the parts */
 void Ego::clear_parts()
 {
-  m_dirty_parts = true;
-  Node_iterator it1 = m_childs.begin();
-  while (it1 != m_childs.end()) {
-    Node* node1 = *it1++;
+  for (Node_iterator it1 = m_childs.begin(); it1 != m_childs.end(); ++it1) {
+    Node* node1 = *it1;
     // Free the transform:
     Transform* transform = dynamic_cast<Transform*>(node1);
     if (transform) {
-      Node_iterator it2 = transform->children_begin();
-      while (it2 != transform->children_end()) {
-        Node* node2 = *it2++;
+      for (Node_iterator it2 = transform->children_begin();
+           it2 != transform->children_end(); ++it2)
+      {
+        Node* node2 = *it2;
         // Remove the brick (Shape):
-        Shape* brick_shape = dynamic_cast<Shape*>(node2);
-        if (brick_shape) delete brick_shape;
         transform->remove_child(node2);
-        delete transform;
+        Shape* brick_shape = dynamic_cast<Shape*>(node2);
+        SGAL_assertion(brick_shape);
+        delete brick_shape;
       }
+      remove_child(node1);
+      delete transform;
+      continue;
     }
 
     Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node1);
     if (touch_sensor) {
       if (!m_owned_touch_sensor) continue;
-      delete touch_sensor;
       m_owned_touch_sensor = false;
+      remove_child(node1);
+      delete touch_sensor;
+      continue;
     }
-    
-    remove_child(node1);
   }
 
   // Delete all appearances:
@@ -234,6 +237,9 @@ void Ego::clear_parts()
   m_voxel_signatures.clear();
 
   m_owned_parts = false;
+  m_dirty_parts = true;
+  m_start_brick = 0;
+  m_num_bricks = 0;
 }
 
 /*! \brief clear the internal representation and auxiliary data structures
@@ -568,7 +574,7 @@ void Ego::clean_parts()
   Vector3f origin;
   origin.add_scaled(center, -0.5f, box);
 
-  m_offset = children_size();
+  m_start_brick = children_size();
   
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
@@ -697,8 +703,8 @@ void Ego::clean_parts()
       }
     }
   }
-  Uint num_childs = children_size();
-  std::cout << "# of children: " << num_childs << std::endl;
+  m_num_bricks = children_size() - m_start_brick;
+  std::cout << "# of bricks: " << m_num_bricks << std::endl;
 
   // Add a touch sensor if such a node does not exist:
   Touch_sensor* touch_sensor = NULL;
@@ -748,9 +754,6 @@ void Ego::clean_colors()
   // Prepare isect action:
   SGAL::Isect_action isect_action;
   isect_action.set_context(context);
-  m_num_selection_ids = children_size();
-  m_start_selection_id =
-    m_scene_graph->allocate_selection_ids(m_num_selection_ids);
   
   // Prepare color image:
   Image_base::Format format = Image_base::kRGB8_8_8;
@@ -790,10 +793,10 @@ void Ego::clean_colors()
   GLint val;
   glGetIntegerv(GL_READ_BUFFER, &val);
   GLenum read_buffer_mode = (GLenum)val;
-  glReadBuffer(GL_FRONT);
+  glReadBuffer(GL_BACK);
   glGetIntegerv(GL_DRAW_BUFFER, &val);
   GLenum draw_buffer_mode = (GLenum)val;
-  glDrawBuffer(GL_FRONT);
+  glDrawBuffer(GL_BACK);
 
   // Create the cameras:
   Camera cameras[6];
@@ -854,12 +857,12 @@ void Ego::clean_colors()
   typedef std::pair<Vector3f,Uint>              Weighted_color;
   typedef std::vector<Weighted_color>           Weighted_color_vector;
   typedef Weighted_color_vector::iterator       Weighted_color_iter;
-  Weighted_color_vector colors(children_size());
+  Weighted_color_vector colors(m_num_bricks);
   std::fill(colors.begin(), colors.end(), Weighted_color(Vector3f(), 0));
   typedef std::vector<Uint>                     Weight_vector;
   typedef Weight_vector::iterator               Weight_iter;
-  Weight_vector weights(children_size());
-  for (Uint i = 0; i < 6; ++ i) {
+  Weight_vector weights(m_num_bricks);
+  for (Uint i = 0; i < 6; ++i) {
     m_appearance->set_tex_enable(true);
     m_appearance->set_shade_model(Gfx::SMOOTH_SHADE);
     context->clear_color_depth_buffer(color);
@@ -916,8 +919,16 @@ void Ego::clean_colors()
         SGAL_assertion(component_id < size_select);
         Uint brick_id = isect_action.get_index(&selections[component_id]);
         if (brick_id == 0) continue;
-        brick_id -= m_start_selection_id;
-        SGAL_assertion(brick_id < children_size());
+        if ((brick_id - (m_start_selection_id + m_start_brick)) >=
+            m_num_bricks) {
+          std::cout << "m_num_bricks: " << m_num_bricks << std::endl;
+          std::cout << "brick_id: " << brick_id << std::endl;
+          std::cout << "m_start_selection_id: " << m_start_selection_id
+                    << std::endl;
+          std::cout << "m_start_brick: " << m_start_brick << std::endl;
+        }
+        brick_id -= (m_start_selection_id + m_start_brick);
+        SGAL_assertion(brick_id < m_num_bricks);
         ++(weights[brick_id]);
       }
     }
@@ -927,7 +938,7 @@ void Ego::clean_colors()
     Weight_iter wit = weights.begin();
     for (cit = colors.begin(); cit < colors.end(); ++cit, ++wit) {
       if ((*wit == 0) || (cit->second == 0)) continue;
-      Float factor = weights[j] / (cit->second + *wit);
+      Float factor = cit->second / (cit->second + *wit);
       cit->first.scale(factor);
     }
     
@@ -939,8 +950,8 @@ void Ego::clean_colors()
         SGAL_assertion(component_id < size_select);
         Uint brick_id = isect_action.get_index(&selections[component_id]);
         if (brick_id == 0) continue;
-        brick_id -= m_start_selection_id;
-        SGAL_assertion(brick_id < children_size());
+        brick_id -= (m_start_selection_id + m_start_brick);
+        SGAL_assertion(brick_id < m_num_bricks);
         component_id = pixel_id * num_components;
         SGAL_assertion(component_id < size);
         Vector3f new_color;
@@ -997,11 +1008,12 @@ void Ego::clean_colors()
   // Update the colors:
   Node_iterator nit;
   Weighted_color_iter cit = colors.begin();
-  for (nit = m_childs.begin(); nit != m_childs.end(); ++nit, ++cit) {
+  for (nit = m_childs.begin(); nit != m_childs.end(); ++nit) {
     Transform* transform = dynamic_cast<Transform*>(*nit);
     if (!transform) continue;
 
     Shape* shape = dynamic_cast<Shape*>(*(transform->children_begin()));
+    SGAL_assertion(shape);
     shape->set_override_tex_enable(true);
     shape->set_override_tex_env(true);
     shape->set_override_blend_func(true);
@@ -1016,17 +1028,18 @@ void Ego::clean_colors()
 
     Appearance* app;
     if (m_color_space == COLOR_SPACE_HSL)
-      app = create_appearance((Uint) (cit->first[0] * 255.0f),
-                              (Uint) (cit->first[1] * 255.0f),
-                              (Uint) (cit->first[2] * 255.0f));
+      app = create_appearance(static_cast<Uint>(cit->first[0] * 255.0f),
+                              static_cast<Uint>(cit->first[1] * 255.0f),
+                              static_cast<Uint>(cit->first[2] * 255.0f));
     else {
       Magick::ColorRGB color_rgb(cit->first[0], cit->first[1], cit->first[2]);
       Magick::ColorHSL color_hsl(color_rgb);
-      app = create_appearance((Uint) (color_hsl.hue() * 255.0f),
-                              (Uint) (color_hsl.saturation() * 255.0f),
-                              (Uint) (color_hsl.luminosity() * 255.0f));
+      app = create_appearance(static_cast<Uint>(color_hsl.hue()*255.0f),
+                              static_cast<Uint>(color_hsl.saturation()*255.0f),
+                              static_cast<Uint>(color_hsl.luminosity()*255.0f));
     }
     shape->set_appearance(app);
+    ++cit;
   }
   colors.clear();
   m_dirty_colors = false;
@@ -1370,7 +1383,7 @@ void Ego::selection_id_changed(Field_info* /* field_info. */)
 {
   if (m_selection_id == static_cast<Uint>(-1)) return;
   
-  Uint id = m_selection_id - m_offset;
+  Uint id = m_selection_id - m_start_brick;
   SGAL_assertion(id < m_voxel_signatures.size());
   boost::tie(m_layer_x, m_layer_y, m_layer_z) =
     m_voxel_signatures[id];

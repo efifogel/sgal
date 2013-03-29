@@ -488,7 +488,10 @@ private:
   Boolean m_clean_colors_in_progress;
 
   /*! The id of the first brick in the sequence of children of this group. */
-  Uint m_offset;
+  Uint m_start_brick;
+
+  /*! The number bricks in the sequence of children of this group. */  
+  Uint m_num_bricks;
   
   /*! The tag that identifies this container type */
   static std::string s_tag;
