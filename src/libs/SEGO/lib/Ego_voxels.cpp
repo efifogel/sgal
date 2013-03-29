@@ -106,8 +106,10 @@ void Ego_voxels::place(const size_type& coord, const size_type& size) {
 void Ego_voxels::clear_placing() {
   for (size_t i = 0; i < m_voxels.size(); ++i)
     for (size_t j = 0; j < m_voxels[0].size(); ++j)
-      for (size_t k = 0; k < m_voxels[0][0].size(); ++k)
+      for (size_t k = 0; k < m_voxels[0][0].size(); ++k) {
         m_voxels[i][j][k].brick_location.reset();
+        m_voxels[i][j][k].brick_size.reset();
+      }
 }
 
 // A brick was placed in this place if there is a brick in the coords location.

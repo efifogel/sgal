@@ -45,6 +45,14 @@ Ego_voxels_tiler::Ego_voxels_tiler(std::size_t even_layer_x,
   m_layers_offsets[0][1] = even_layer_y;
   m_layers_offsets[1][0] = odd_layer_x;
   m_layers_offsets[1][1] = odd_layer_y;
+
+#ifdef EGO_VOXELIZER_TILER_VERBOSE
+  std::cout << "even_layer_x " << even_layer_x << std::endl;
+  std::cout << "even_layer_y " << even_layer_y << std::endl;
+  std::cout << "odd_layer_x " << odd_layer_x << std::endl;
+  std::cout << "odd_layer_y " << odd_layer_y << std::endl;
+  std::cout << "offset_between_rows " << offset_between_rows << std::endl;
+#endif
 }
 
 /** 
