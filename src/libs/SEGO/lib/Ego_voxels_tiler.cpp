@@ -35,24 +35,16 @@ Ego_voxels_tiler::Ego_voxels_tiler(std::size_t even_layer_x,
                                    std::size_t even_layer_y,
                                    std::size_t odd_layer_x,
                                    std::size_t odd_layer_y,
-                                   Strategy strategy,
+                                   std::size_t offset_between_rows,
                                    Tiling_rows rows,
                                    const Brick_types& available_types)
-    : m_tiling_rows(rows), m_available_types(available_types) {
+    : m_offset_between_rows(offset_between_rows),
+      m_tiling_rows(rows), m_available_types(available_types) {
 
   m_layers_offsets[0][0] = even_layer_x;
   m_layers_offsets[0][1] = even_layer_y;
   m_layers_offsets[1][0] = odd_layer_x;
   m_layers_offsets[1][1] = odd_layer_y;
-
-  switch (strategy) {
-  case GRID:
-    m_offset_between_rows = 0;
-    break;
-  case NONGRID:
-    m_offset_between_rows = 1;
-    break;
-  }
 }
 
 /** 

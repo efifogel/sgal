@@ -46,6 +46,7 @@ public:
   bool is_filled(const size_type& coord) const;
 
   void place(const size_type& coord, const size_type& size);
+  void clear_placing();
   bool is_placed(std::size_t x, std::size_t y, std::size_t z);
   boost::optional<size_type>
   get_brick(std::size_t x, std::size_t y, std::size_t z);

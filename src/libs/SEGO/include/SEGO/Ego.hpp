@@ -70,7 +70,7 @@ public:
     EVEN_LAYER_Y,
     ODD_LAYER_X,
     ODD_LAYER_Y,
-    TILING_STRATEGY,
+    OFFSET_BETWEEN_ROWS,
     TILING_ROWS_DIRECTION,
     PARTS,
     STYLE,
@@ -263,7 +263,7 @@ public:
   void set_odd_layer_y(std::size_t y);
 
   /*! */
-  void set_tiling_strategy(Ego_voxels_tiler::Strategy s);
+  void set_offset_between_rows(std::size_t s);
   
   /*! */
   void set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r);
@@ -405,7 +405,7 @@ protected:
   std::size_t m_even_layer_y;
   std::size_t m_odd_layer_x;
   std::size_t m_odd_layer_y;
-  Ego_voxels_tiler::Strategy m_tiling_strategy;
+  std::size_t m_offset_between_rows;
   Ego_voxels_tiler::Tiling_rows m_tiling_rows_direction;
   
   /*! Indicates whether the shape appearance is dirty, and thus needs
@@ -525,7 +525,7 @@ private:
   static const std::size_t s_def_even_layer_y;
   static const std::size_t s_def_odd_layer_x;
   static const std::size_t s_def_odd_layer_y;
-  static const Ego_voxels_tiler::Strategy s_def_tiling_strategy;
+  static const std::size_t s_def_offset_between_rows;
   static const Ego_voxels_tiler::Tiling_rows s_def_tiling_rows_direction;
   static const Float s_def_voxel_width;
   static const Float s_def_voxel_length;
@@ -621,8 +621,8 @@ void Ego::set_odd_layer_y(std::size_t y)
 { m_odd_layer_y = y; }
 
 /*! \brief  */
-inline void Ego::set_tiling_strategy(Ego_voxels_tiler::Strategy s)
-{ m_tiling_strategy = s; }
+inline void Ego::set_offset_between_rows(std::size_t s)
+{ m_offset_between_rows = s; }
   
 /*! \brief  */
 inline void Ego::set_tiling_rows_direction(Ego_voxels_tiler::Tiling_rows r)

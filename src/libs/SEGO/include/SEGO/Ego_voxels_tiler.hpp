@@ -33,14 +33,13 @@ public:
   typedef std::vector<Brick_type>                     Brick_types;
 
   // TODO: Missing if rows are x or y.
-  enum Strategy {GRID, NONGRID};
   enum Tiling_rows {XROWS, YROWS};
 
   Ego_voxels_tiler(std::size_t even_layer_x,
                    std::size_t even_layer_y,
                    std::size_t odd_layer_x,
                    std::size_t odd_layer_y,
-                   Strategy strategy,
+                   std::size_t offset_between_rows,
                    Tiling_rows rows,
                    const Brick_types &available_types);
   

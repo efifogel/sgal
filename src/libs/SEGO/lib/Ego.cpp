@@ -93,8 +93,7 @@ const std::size_t Ego::s_def_even_layer_x(0);
 const std::size_t Ego::s_def_even_layer_y(0);
 const std::size_t Ego::s_def_odd_layer_x(1);
 const std::size_t Ego::s_def_odd_layer_y(1);
-const Ego_voxels_tiler::Strategy
-Ego::s_def_tiling_strategy(Ego_voxels_tiler::NONGRID);
+const std::size_t Ego::s_def_offset_between_rows(0);
 const Ego_voxels_tiler::Tiling_rows
 Ego::s_def_tiling_rows_direction(Ego_voxels_tiler::YROWS);
 const Ego::Style Ego::s_def_style(STYLE_RANDOM_COLORS);
@@ -132,7 +131,7 @@ Ego::Ego(Boolean proto) :
   m_even_layer_y(s_def_even_layer_y),
   m_odd_layer_x(s_def_odd_layer_x),
   m_odd_layer_y(s_def_odd_layer_y),
-  m_tiling_strategy(s_def_tiling_strategy),
+  m_offset_between_rows(s_def_offset_between_rows),
   m_tiling_rows_direction(s_def_tiling_rows_direction),
   m_dirty_appearance(true),
   m_dirty_voxels(true),
@@ -313,10 +312,11 @@ void Ego::init_prototype()
                               exec_func));
 
   
-  s_prototype->add_field_info(new SF_int(TILING_STRATEGY,
-                                         "tilingStrategy",
-                                         get_member_offset(&m_tiling_strategy),
-                                         exec_func));
+  s_prototype->
+    add_field_info(new SF_int(OFFSET_BETWEEN_ROWS,
+                              "offsetBetweenRows",
+                              get_member_offset(&m_offset_between_rows),
+                              exec_func));
 
   SF_int* sf_int = new SF_int(TILING_ROWS_DIRECTION, "tilingRowsDirection",
                              get_member_offset(&m_tiling_rows_direction),
@@ -446,9 +446,9 @@ void Ego::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "tilingStrategy") {
+    if (name == "offsetBetweenRows") {
       size_t val = boost::lexical_cast<size_t>(value);
-      set_tiling_strategy(static_cast<Ego_voxels_tiler::Strategy>(val));
+      set_offset_between_rows(val);
       elem->mark_delete(ai);
       continue;
     }
@@ -584,12 +584,13 @@ void Ego::clean_tiling()
 {
   m_dirty_tiling = false;
   clear_parts();
-    
+  
+  m_voxels.clear_placing();
   Ego_voxels_tiler tile(m_even_layer_x,
                         m_even_layer_y,
                         m_odd_layer_x,
                         m_odd_layer_y,
-                        m_tiling_strategy,
+                        m_offset_between_rows,
                         m_tiling_rows_direction,
                         convert_types(m_brick_types));
   tile(&m_voxels);
