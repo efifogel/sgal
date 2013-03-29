@@ -126,6 +126,7 @@ void Group::remove_child(Node* node)
     return;
   }
   
+  m_childs.remove(node);
   m_dirty_sphere_bound = true;
   Observer observer(this, get_field_info(SPHERE_BOUND));
   node->register_observer(observer);

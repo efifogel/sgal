@@ -186,22 +186,22 @@ Geo_set* Ego::get_geo_set_model()
 /*! \brief clear the parts */
 void Ego::clear_parts()
 {
-  for (Node_iterator it1 = m_childs.begin(); it1 != m_childs.end(); ++it1) {
-    Node* node1 = *it1;
+  Node_iterator it1 = m_childs.begin();
+  while (it1 != m_childs.end()) {
+    Node* node1 = *it1++;
     // Free the transform:
     Transform* transform = dynamic_cast<Transform*>(node1);
     if (transform) {
-      for (Node_iterator it2 = transform->children_begin();
-           it2 != transform->children_end(); ++it2)
-      {
-        Node* node2 = *it2;
+      Node_iterator it2 = transform->children_begin();
+      while (it2 != transform->children_end()) {
+        Node* node2 = *it2++;
         // Remove the brick (Shape):
         transform->remove_child(node2);
         Shape* brick_shape = dynamic_cast<Shape*>(node2);
         SGAL_assertion(brick_shape);
         delete brick_shape;
       }
-      remove_child(node1);
+       remove_child(node1);
       delete transform;
       continue;
     }
@@ -963,14 +963,6 @@ void Ego::clean_colors()
         SGAL_assertion(component_id < size_select);
         Uint brick_id = isect_action.get_index(&selections[component_id]);
         if (brick_id == 0) continue;
-        if ((brick_id - (m_start_selection_id + m_start_brick)) >=
-            m_num_bricks) {
-          std::cout << "m_num_bricks: " << m_num_bricks << std::endl;
-          std::cout << "brick_id: " << brick_id << std::endl;
-          std::cout << "m_start_selection_id: " << m_start_selection_id
-                    << std::endl;
-          std::cout << "m_start_brick: " << m_start_brick << std::endl;
-        }
         brick_id -= (m_start_selection_id + m_start_brick);
         SGAL_assertion(brick_id < m_num_bricks);
         ++(weights[brick_id]);
@@ -1247,9 +1239,8 @@ void Ego::visibility_changed(Field_info*)
 void Ego::clean_visibility()
 {
   std::size_t index = 0;
-  Node_iterator it = m_childs.begin();
-  while (it != m_childs.end()) {
-    Node* node = *it++;
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+    Node* node = *it;
     Transform* transform = dynamic_cast<Transform*>(node);
     if (!transform) continue;
     std::size_t i, j, k;
