@@ -32,7 +32,7 @@ Ego_voxels_filler_graph::out_edges(const vertex_descriptor& u) const {
   
   orthogonal_edges_no_filter unfiltered_begin(u);
   Is_inside_voxels pred1(dim);
-  Is_unique_color pred2(m_voxels);
+  Is_filling_identical pred2(m_voxels);
   
   orthogonal_edges env_begin(pred1, unfiltered_begin);
   orthogonal_edges env_end(pred1,
@@ -122,7 +122,7 @@ void Ego_voxels_filler_graph::orthogonal_edges_no_filter::increment() {
   }
 }
 
-bool Ego_voxels_filler_graph::Is_unique_color::operator()
+bool Ego_voxels_filler_graph::Is_filling_identical::operator()
   (const edge_descriptor& edge) const {
   
   return (m_voxels->is_filled(edge.first) ==

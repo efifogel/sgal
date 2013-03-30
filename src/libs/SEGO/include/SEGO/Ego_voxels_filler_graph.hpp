@@ -95,13 +95,13 @@ public:
     boost::tuple<std::size_t, std::size_t, std::size_t> m_dim;
   };
 
-  class Is_unique_color {
+  class Is_filling_identical {
   public:
 
     // TODO: Why do I need default constructor?
-    Is_unique_color() : m_voxels(NULL) {}
+    Is_filling_identical() : m_voxels(NULL) {}
     
-    Is_unique_color(const Ego_voxels& voxels) : m_voxels(&voxels) {}
+    Is_filling_identical(const Ego_voxels& voxels) : m_voxels(&voxels) {}
     
     bool operator() (const edge_descriptor& edge) const;
 
@@ -112,7 +112,7 @@ public:
 
   typedef boost::filter_iterator<Is_inside_voxels,
                                  orthogonal_edges_no_filter>  orthogonal_edges;
-  typedef boost::filter_iterator<Is_unique_color,
+  typedef boost::filter_iterator<Is_filling_identical,
                                  orthogonal_edges>            out_edge_iterator;
   typedef out_edge_iterator::difference_type                  degree_size_type;
 
