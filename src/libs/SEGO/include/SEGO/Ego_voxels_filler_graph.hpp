@@ -34,48 +34,20 @@
  *         The main classes are Ego_voxels_filler_graph, and Ego_graph_vertex_index_map.
  */
 
-#include "SEGO/multi_iterator.hpp"
-
-#include <boost/tuple/tuple.hpp>
-#include <boost/iterator/counting_iterator.hpp>
-#include <boost/iterator/filter_iterator.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/property_map/property_map.hpp>
+#include "SEGO/Ego_voxels_vertex_list_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class Ego_voxels;
-
-class Ego_voxels_filler_graph {
+class Ego_voxels_filler_graph : public Ego_voxels_vertex_list_graph {
 public:
-  Ego_voxels_filler_graph(const Ego_voxels& voxels) : m_voxels(voxels) {}
+  Ego_voxels_filler_graph(const Ego_voxels& voxels)
+      : Ego_voxels_vertex_list_graph(voxels) {}
 
-  // Graph
-  typedef boost::tuple<long, long, long>              vertex_descriptor;
-  typedef std::pair<vertex_descriptor,
-                    vertex_descriptor>                edge_descriptor;
-  typedef boost::undirected_tag                       directed_category;
-  typedef boost::disallow_parallel_edge_tag           edge_parallel_category;
-
-  struct traversal_category : public boost::vertex_list_graph_tag,
-                              public boost::incidence_graph_tag
+  struct traversal_category
+    : public Ego_voxels_vertex_list_graph::traversal_category,
+      public boost::incidence_graph_tag
   {};
 
-  static Ego_voxels_filler_graph::vertex_descriptor
-  null_vertex();
-
-  // VertexListGraph
-  typedef boost::counting_iterator<long>              counting_iterator;
-  typedef multi_iterator<counting_iterator,
-                         counting_iterator,
-                         counting_iterator>           vertex_iterator;
-
-  typedef vertex_iterator::difference_type            vertices_size_type;
-
-
-  std::pair<vertex_iterator, vertex_iterator> vertices() const;    
-  vertices_size_type num_vertices() const;
-    
   // IncidenceGraph
 
   // We need some helper classes.
@@ -146,36 +118,7 @@ public:
 
   std::pair<out_edge_iterator, out_edge_iterator>
   out_edges(const vertex_descriptor& u) const;
-
-private:
-  const Ego_voxels &m_voxels;
 };
-
-// Global req. of graph traits.
-// VertexListGraph
-inline std::pair<Ego_voxels_filler_graph::vertex_iterator,
-                 Ego_voxels_filler_graph::vertex_iterator>
-vertices(const Ego_voxels_filler_graph &graph) {
-  return graph.vertices();
-}
-
-inline Ego_voxels_filler_graph::vertices_size_type
-num_vertices(const Ego_voxels_filler_graph& g) {
-  // TODO inside the function: return the size of the matrix instead.
-  return g.num_vertices();
-}
-
-inline Ego_voxels_filler_graph::vertex_descriptor
-source(const Ego_voxels_filler_graph::edge_descriptor e,
-       const Ego_voxels_filler_graph&) {
-  return e.first;
-}
-
-inline Ego_voxels_filler_graph::vertex_descriptor
-target(const Ego_voxels_filler_graph::edge_descriptor e,
-       const Ego_voxels_filler_graph&) {
-  return e.second;
-}
 
 inline std::pair<Ego_voxels_filler_graph::out_edge_iterator,
                  Ego_voxels_filler_graph::out_edge_iterator>
@@ -194,30 +137,6 @@ out_degree(const Ego_voxels_filler_graph::vertex_descriptor& v,
     out_edges(v, graph);
   
   return std::distance(edges.first, edges.second);
-}
-
-// IndexMap
-struct Ego_graph_vertex_index_map {
-public:
-  typedef Ego_voxels_filler_graph::vertex_descriptor    vertex_descriptor;
-  typedef std::size_t                                   value_type;
-  typedef std::size_t                                   reference;
-  typedef vertex_descriptor                             key_type;
-  typedef boost::readable_property_map_tag              category;
-
-  Ego_graph_vertex_index_map(const Ego_voxels& voxels) : m_voxels(voxels) {}
-    
-  std::size_t operator[] (const vertex_descriptor& v) const;    
-  std::size_t max_index() const;
-
-private:
-  const Ego_voxels& m_voxels;
-};
-
-inline Ego_graph_vertex_index_map::reference
-get(const Ego_graph_vertex_index_map& map,
-    const Ego_graph_vertex_index_map::key_type &key) {
-  return map[key];
 }
 
 SGAL_END_NAMESPACE

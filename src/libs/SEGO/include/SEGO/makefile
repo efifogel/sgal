@@ -17,6 +17,7 @@ FILES+= Ego_voxelizer.hpp
 FILES+= Ego_voxels_filler.hpp
 FILES+= Ego_voxels.hpp
 FILES+= multi_iterator.hpp
+FILES+= Ego_voxels_vertex_list_graph.hpp
 FILES+= Ego_voxels_filler_graph.hpp
 FILES+= Ego_voxels_tiler.hpp
 
