@@ -42,6 +42,7 @@ public:
   bool is_in_limits(size_t, size_t, size_t) const;
 
   void fill(std::size_t x, std::size_t y, std::size_t z);
+  void fill(const size_type& coord);
   bool is_filled(std::size_t x, std::size_t y, std::size_t z) const;
   bool is_filled(const size_type& coord) const;
 

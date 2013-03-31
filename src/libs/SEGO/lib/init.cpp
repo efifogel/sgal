@@ -29,6 +29,8 @@
 
 #include "SEGO/Ego.hpp"
 #include "SEGO/Ego_brick.hpp"
+#include "SEGO/Ego_voxels_filler.hpp"
+#include "SEGO/Ego_voxels_layer_filler.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -36,6 +38,8 @@ void sego_init()
 {
   Container_factory::get_instance()->doregister(Ego::prototype());
   Container_factory::get_instance()->doregister(Ego_brick::prototype());
+  Container_factory::get_instance()->doregister(Ego_voxels_filler::prototype());
+  Container_factory::get_instance()->doregister(Ego_voxels_layer_filler::prototype());
 }
 
 SGAL_END_NAMESPACE

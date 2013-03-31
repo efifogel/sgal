@@ -36,6 +36,7 @@
 #include "SEGO/multi_iterator.hpp"
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/tuple/tuple_comparison.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>

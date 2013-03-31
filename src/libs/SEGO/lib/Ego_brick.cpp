@@ -449,7 +449,7 @@ void Ego_brick::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Indexed_face_set::get_prototype());
-
+  
   //! Container execution function
   typedef void (Container::* Execution_function)(Field_info*);
 

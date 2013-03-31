@@ -14,11 +14,18 @@ include $(ROOT)/make/comdef.mak
 FILES = Ego.hpp
 FILES+= Ego_brick.hpp
 FILES+= Ego_voxelizer.hpp
+FILES+= Ego_voxels_filler_base.hpp
 FILES+= Ego_voxels_filler.hpp
+FILES+= Ego_voxels_layer_filler.hpp
+FILES+= Ego_voxels_filler_template.hpp
 FILES+= Ego_voxels.hpp
 FILES+= multi_iterator.hpp
+FILES+= chain.hpp
 FILES+= Ego_voxels_vertex_list_graph.hpp
+FILES+= Ego_voxels_vertex_list_graph_utils.hpp
+FILES+= Ego_voxels_incidence_graph.hpp
 FILES+= Ego_voxels_filler_graph.hpp
+FILES+= Ego_voxels_layer_filler_graph.hpp
 FILES+= Ego_voxels_tiler.hpp
 
 INSTALLDIR =$(INCDIR)/SEGO

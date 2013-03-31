@@ -26,9 +26,14 @@ CPPSOURCES+= Ego.cpp
 CPPSOURCES+= Ego_brick.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Ego_voxelizer.cpp
+CPPSOURCES+= Ego_voxels_filler_base.cpp
 CPPSOURCES+= Ego_voxels_filler.cpp
+CPPSOURCES+= Ego_voxels_layer_filler.cpp
 CPPSOURCES+= Ego_voxels_vertex_list_graph.cpp
+CPPSOURCES+= Ego_voxels_vertex_list_graph_utils.cpp
+CPPSOURCES+= Ego_voxels_incidence_graph.cpp
 CPPSOURCES+= Ego_voxels_filler_graph.cpp
+CPPSOURCES+= Ego_voxels_layer_filler_graph.cpp
 CPPSOURCES+= Ego_voxels.cpp
 CPPSOURCES+= Ego_voxels_tiler.cpp
 

@@ -5827,6 +5827,9 @@ Transform {
 	1, 2, 1,
 	1, 1, 1
       ]
+      filler EgoVoxelsLayerFiller {
+      	     offset -1
+      }
     }
 
     # # The axes:

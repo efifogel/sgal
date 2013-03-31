@@ -67,12 +67,10 @@
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 #include "SEGO/Ego.hpp"
-#include "SEGO/Ego_voxels_filler.hpp"
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxels_tiler.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
-
-// #include <boost/tuple/tuple_io.hpp>
+#include "SEGO/Ego_voxels_filler.hpp"
 
 // #define SGAL_EGO_VERBOSE 1
 #ifdef SGAL_EGO_VERBOSE
@@ -127,6 +125,8 @@ Ego::Ego(Boolean proto) :
   m_appearance(NULL),
   m_space_filling(s_def_space_filling),
   m_appearance_prev(NULL),
+  m_owned_filler(false),
+  m_filler(NULL),
   m_even_layer_x(s_def_even_layer_x),
   m_even_layer_y(s_def_even_layer_y),
   m_odd_layer_x(s_def_odd_layer_x),
@@ -236,6 +236,12 @@ void Ego::clear_parts()
   for (bit = m_knobless_bricks.begin(); bit != m_knobless_bricks.end(); ++bit)
     delete (*bit).second;
   m_knobless_bricks.clear();
+
+  // Clear the filler
+  if (m_filler && m_owned_filler) {
+    delete m_filler;
+    m_filler = NULL;
+  }
 
   // Clean the voxel signature array. */
   m_voxel_signatures.clear();
@@ -375,6 +381,7 @@ void Ego::set_attributes(Element* elem)
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
+
     if (name == "model") {
       Exact_polyhedron_geo* epoly = dynamic_cast<Exact_polyhedron_geo*>(cont);
       if (epoly != NULL) {
@@ -397,6 +404,12 @@ void Ego::set_attributes(Element* elem)
     if (name == "appearance") {
       Appearance* app = dynamic_cast<Appearance*>(cont);
       set_appearance(app);
+      elem->mark_delete(cai);
+      continue;
+    }
+    if (name == "filler") {
+      Ego_voxels_filler_base* filler = dynamic_cast<Ego_voxels_filler_base*>(cont);
+      set_filler(filler);
       elem->mark_delete(cai);
       continue;
     }
@@ -565,7 +578,6 @@ void Ego::clean_voxels()
     m_dirty_tiling = true;
 
     Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
-    Ego_voxels_filler fill;
 
     m_voxels = Ego_voxels(); // Clear - should we make a func?
     if (this->is_model_polyhedron())
@@ -580,7 +592,21 @@ void Ego::clean_voxels()
       m_voxels_center = 
         voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
 
-    fill(&m_voxels);
+    if (!m_filler) {
+      m_filler = new Ego_voxels_filler();
+      m_owned_filler = true;
+
+      // Connect.
+      // Field* src_field =
+      //   filler->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
+      // SGAL_assertion(src_field);
+      
+      // Field* dst_field = add_field(SELECTION_ID);
+      // SGAL_assertion(dst_field);
+      // src_field->connect(dst_field);
+    }
+    
+    m_filler->fill(&m_voxels);
   }
 }
 
@@ -1369,6 +1395,20 @@ Appearance* Ego::create_random_appearance()
   Uint luminosity_key = 128;
   return create_appearance(hue_key, saturation_key, luminosity_key);
 }
+
+/*! Set a filler
+ * \param filler the new filler.
+ */
+void Ego::set_filler(Ego_voxels_filler_base* filler) {
+  if (m_filler && m_owned_filler) {
+    delete m_filler;
+    m_filler = NULL;
+  }
+  
+  m_filler = filler;
+  m_dirty_voxels = true;
+}
+
 
 /*! \brief sets the style. */
 void Ego::set_style(Style style)
