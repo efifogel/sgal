@@ -557,6 +557,12 @@ void Player_scene::handle(SGAL::Passive_motion_event* event)
 /*! \brief handless a keyboard event. */
 void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
 {
+  SGAL_assertion(m_scene_graph);
+  SGAL::Configuration* conf = m_scene_graph->get_configuration();
+  SGAL_assertion(conf);
+  SGAL::Accumulation* acc = conf->get_accumulation();
+  if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
+
   if (keyboard_event->get_pressed()) return;
   SGAL::Uint key = keyboard_event->get_key();
   if (key == 0x1b) m_window_manager->destroy_window(m_window_item); // escape
