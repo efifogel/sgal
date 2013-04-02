@@ -121,7 +121,7 @@ public:
   void calculate_normal_per_polygon();
 
   /*! Calculate a single normal per polygon for all polygons. */
-  void calculate_normal_per_polygon(Normal_array* normal_array);
+  void calculate_normal_per_polygon(Shared_normal_array normal_array);
   
   /*! Calculate the normals in case they are invalidated.
    * If the creaseAngle field is greater than 0, a normal is calculated per
@@ -420,7 +420,7 @@ protected:
   /*! An array that holds the lengths of all tristrips. The first 
    * number in the array is the number of tri strips.
    */
-  Int* m_tri_strip_lengths;
+  Uint* m_tri_strip_lengths;
 
   /*! true if there are multiple uv coordinates per vertex. */
   Boolean m_is_multiple_uv;
@@ -603,8 +603,8 @@ protected:
    * area.)
    * \param array (out) the array of the resulting normals.
    */
-  template <typename Array_T>
-  void calculate_single_normal_per_vertex(Array_T* array);
+  template <typename SharedArray_T>
+  void calculate_single_normal_per_vertex(SharedArray_T array);
   
 private:
   /*! The tag that identifies this container type */
@@ -624,12 +624,13 @@ private:
 };
 
 /*! \brief Calculate a single normal per vertex for all vertices. */
-template <typename Array_T>
-void Indexed_face_set::calculate_single_normal_per_vertex(Array_T* array)
+template <typename SharedArray_T>
+void Indexed_face_set::calculate_single_normal_per_vertex(SharedArray_T array)
 {
   // Calculate the normals of all facets.
   Normal_array normal_array;
-  calculate_normal_per_polygon(&normal_array);
+  Shared_normal_array shared_normal_array(&normal_array);
+  calculate_normal_per_polygon(shared_normal_array);
 
   // Initialize the weights:
   Vertices_info vertices_info;

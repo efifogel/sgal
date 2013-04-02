@@ -56,11 +56,6 @@ Geo_set::Geo_set(Boolean proto) :
   m_num_primitives(0),
   m_normal_attachment(PER_VERTEX),
   m_color_attachment(PER_VERTEX),
-  m_normal_array(NULL),
-  m_owned_normal_array(false),
-  m_tex_coord_array(NULL),
-  m_owned_tex_coord_array(false),
-  m_color_array(NULL),
   m_coord_indices(),
   m_tex_coord_indices(),
   m_normal_indices(),
@@ -69,23 +64,7 @@ Geo_set::Geo_set(Boolean proto) :
 {}
 
 /*! Destructor */
-Geo_set::~Geo_set()
-{
-  if (m_owned_normal_array) {
-    if (m_normal_array) {
-      delete m_normal_array;
-      m_normal_array = NULL;
-    }
-    m_owned_normal_array = false;
-  }
-  if (m_owned_tex_coord_array) {
-    if (m_tex_coord_array) {
-      delete m_tex_coord_array;
-      m_tex_coord_array = NULL;
-    }
-    m_owned_tex_coord_array = false;
-  }
-}
+Geo_set::~Geo_set() {}
 
 /*! \brief sets the attributes of this node. */
 void Geo_set::init_prototype()
@@ -102,7 +81,23 @@ void Geo_set::init_prototype()
   exec_func = static_cast<Execution_function>(&Geo_set::coord_changed);
   SF_shared_container* field;
   field = new SF_shared_container(COORD_ARRAY, "coord",
-                                  get_member_offset(&m_coord_array), exec_func);
+                                  get_member_offset(&m_coord_array),
+                                  exec_func);
+  s_prototype->add_field_info(field);
+
+  field = new SF_shared_container(NORMAL_ARRAY, "normal",
+                                  get_member_offset(&m_normal_array),
+                                  exec_func);
+  s_prototype->add_field_info(field);
+
+  field = new SF_shared_container(COLOR_ARRAY, "color",
+                                  get_member_offset(&m_color_array),
+                                  exec_func);
+  s_prototype->add_field_info(field);
+
+  field = new SF_shared_container(TEX_COORD_ARRAY, "texCoord",
+                                  get_member_offset(&m_tex_coord_array),
+                                  exec_func);
   s_prototype->add_field_info(field);
 }
 
@@ -131,27 +126,15 @@ void Geo_set::set_coord_array(Shared_coord_array coord_array)
 }
 
 /*! \brief sets the normal array. */
-void Geo_set::set_normal_array(Normal_array* normal_array)
-{
-  if (m_owned_normal_array) {
-    if (m_normal_array) delete m_normal_array;
-    m_owned_normal_array = false;
-  }
-  m_normal_array = normal_array;
-}
+void Geo_set::set_normal_array(Shared_normal_array normal_array)
+{ m_normal_array = normal_array; }
 
 /*! \brief sets the texture-coordinate array. */
-void Geo_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
-{
-  if (m_owned_tex_coord_array) {
-    if (m_tex_coord_array) delete m_tex_coord_array;
-    m_owned_tex_coord_array = false;
-  }
-  m_tex_coord_array = tex_coord_array;
-}
+void Geo_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
+{ m_tex_coord_array = tex_coord_array; }
 
 /*! \brief sets the color array. */
-void Geo_set::set_color_array(Color_array* color_array)
+void Geo_set::set_color_array(Shared_color_array color_array)
 { m_color_array = color_array; }
 
 /*! \brief returns true if the representation is empty. */
@@ -307,19 +290,25 @@ void Geo_set::set_attributes(Element* elem)
     }
     if (name == "normal") {
       Normal_array* normal_array = dynamic_cast<Normal_array*>(cont);
-      set_normal_array(normal_array);
+      Shared_normal_array shared_normal_array;
+      shared_normal_array.reset(normal_array);
+      set_normal_array(shared_normal_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "color") {
       Color_array* color_array = dynamic_cast<Color_array*>(cont);
-      set_color_array(color_array);
+      Shared_color_array shared_color_array;
+      shared_color_array.reset(color_array);
+      set_color_array(shared_color_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "texCoord") {
       Tex_coord_array* tex_coord_array = dynamic_cast<Tex_coord_array*>(cont);
-      set_tex_coord_array(tex_coord_array);
+      Shared_tex_coord_array shared_tex_coord_array;
+      shared_tex_coord_array.reset(tex_coord_array);
+      set_tex_coord_array(shared_tex_coord_array);
       elem->mark_delete(cai);
       continue;
     }

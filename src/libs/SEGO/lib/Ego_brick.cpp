@@ -77,29 +77,11 @@ Ego_brick::Ego_brick(Boolean proto) :
   m_knob_slices(s_def_knob_slices),
   m_knobs_visible(s_def_knobs_visible),
   m_dirty_center(true),
-  m_dirty_coords(true),
-  m_owned_normal_array(false),
-  m_owned_tex_coord_array(false)
+  m_dirty_coords(true)
 {}
 
 /*! Destructor */
-Ego_brick::~Ego_brick()
-{
-  if (m_owned_normal_array) {
-    if (m_normal_array) {
-      delete m_normal_array;
-      m_normal_array = NULL;
-    }
-    m_owned_normal_array = false;
-  }
-  if (m_owned_tex_coord_array) {
-    if (m_tex_coord_array) {
-      delete m_tex_coord_array;
-      m_tex_coord_array = NULL;
-    }
-    m_owned_tex_coord_array = false;
-  }
-}
+Ego_brick::~Ego_brick() {}
 
 /*! \brief cleans the internal represenation. */
 void Ego_brick::clean()
@@ -331,9 +313,8 @@ void Ego_brick::clean_normals()
 {
   SGAL_assertion(m_coord_array);
   SGAL_assertion(!m_normal_array);
-  m_normal_array = new Normal_array(m_coord_array->size());
+  m_normal_array.reset(new Normal_array(m_coord_array->size()));
   SGAL_assertion(m_normal_array);
-  m_owned_normal_array = true;
 
   m_dirty_normals = false;
   
@@ -391,9 +372,8 @@ void Ego_brick::clean_tex_coords()
   SGAL_assertion(!m_tex_coord_array);
   Tex_coord_array_3d* tex_coord_array =
     new Tex_coord_array_3d(m_coord_array->size());
-  SGAL_assertion(tex_coord_array);
-  m_tex_coord_array = tex_coord_array;
-  m_owned_tex_coord_array = true;
+  m_tex_coord_array.reset(tex_coord_array);
+  SGAL_assertion(m_tex_coord_array);
 
   m_dirty_tex_coords = false;  
 
@@ -543,14 +523,14 @@ void Ego_brick::set_coord_array(Shared_coord_array coord_array)
 }
 
 /*! \brief set the normals. */
-void Ego_brick::set_normal_array(Normal_array* normal_array)
+void Ego_brick::set_normal_array(Shared_normal_array normal_array)
 {
   Geo_set::set_normal_array(normal_array);
   m_dirty_normals = false;
 }
 
 /*! \brief sets the texture coordinates. */
-void Ego_brick::set_tex_coord_array(Tex_coord_array* tex_coord_array)
+void Ego_brick::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 {
   Geo_set::set_tex_coord_array(tex_coord_array);
   m_dirty_tex_coords = false;
@@ -585,14 +565,14 @@ Ego_brick::Shared_coord_array Ego_brick::get_coord_array()
 }
 
 /*! \brief obtains the normal array. */
-Normal_array* Ego_brick::get_normal_array()
+Ego_brick::Shared_normal_array Ego_brick::get_normal_array()
 {
   if (is_dirty()) clean();
   return Geo_set::get_normal_array();
 }
 
 /*! \brief obtains the texture-coordinate array. */
-Tex_coord_array* Ego_brick::get_tex_coord_array()
+Ego_brick::Shared_tex_coord_array Ego_brick::get_tex_coord_array()
 {
   if (is_dirty()) clean();
   return Geo_set::get_tex_coord_array();

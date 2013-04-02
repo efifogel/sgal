@@ -156,10 +156,10 @@ public:
   void set_coord_array(Shared_coord_array coord_array);
 
   /*! Set the normals. */
-  void set_normal_array(Normal_array* normal_array);
+  void set_normal_array(Shared_normal_array normal_array);
   
   /*! Set the texture coordinates. */
-  void set_tex_coord_array(Tex_coord_array* tex_coord_array);
+  void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
 
   /*! Set the texture indices. */
   void set_coord_indices(const Array<Uint>& indices);
@@ -168,10 +168,10 @@ public:
   Shared_coord_array get_coord_array();
 
   /*! Obtain the normal array. */
-  Normal_array* get_normal_array();
+  Shared_normal_array get_normal_array();
 
   /*! Obtain the texture-coordinate array. */
-  Tex_coord_array* get_tex_coord_array();
+  Shared_tex_coord_array get_tex_coord_array();
 
   /*! Obtain the coord-index array. */
   Array<Uint>& get_coord_indices();
@@ -255,18 +255,6 @@ private:
    */
   Vector3f m_center;
 
-  /*! Indicates whether the normal array is "owned". If it is owned (as
-   * the user hasn't provided one) the normal array should be destructed
-   * when Ego is destructed.
-   */
-  Boolean m_owned_normal_array;
-
-  /*! Indicates whether the texture coordinate array is "owned". If it is
-   * owned (as the user hasn't provided one) the texture coordinate array
-   * should be destructed when Ego is destructed.
-   */
-  Boolean m_owned_tex_coord_array;
-  
   /*! default values for Ego_brick.  */
   static const Uint s_def_number_of_knobs1;
   static const Uint s_def_number_of_knobs2;

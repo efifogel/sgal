@@ -890,9 +890,8 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
 
   // Initialize the normal array.
   if (!m_normal_array) {
-    m_normal_array = new Normal_array(m_coord_array->size());
+    m_normal_array.reset(new Normal_array(m_coord_array->size()));
     SGAL_assertion(m_normal_array);
-    m_owned_normal_array = true;
   }
 
   calculate_single_normal_per_vertex(m_normal_array);
@@ -913,12 +912,13 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
 { calculate_single_normal_per_vertex(); }
 
 /*! \brief calculates a single normal per polygon for all polygons. */
-void Indexed_face_set::calculate_normal_per_polygon(Normal_array* normal_array)
+void Indexed_face_set::
+calculate_normal_per_polygon(Shared_normal_array normal_array)
 {
   normal_array->resize(m_num_primitives);
 
   Uint j = 0;
-  for (Uint i = 0 ; i < m_num_primitives ; i++) {
+  for (Uint i = 0 ; i < m_num_primitives; ++i) {
     Vector3f normal;
 
     switch (m_primitive_type) {
@@ -952,9 +952,8 @@ void Indexed_face_set::calculate_normal_per_polygon()
   SGAL_assertion(m_coord_array);
 
   if (!m_normal_array) {
-    m_normal_array = new Normal_array();
+    m_normal_array.reset(new Normal_array());
     SGAL_assertion(m_normal_array);
-    m_owned_normal_array = true;
   }
   
   calculate_normal_per_polygon(m_normal_array);
@@ -970,9 +969,8 @@ void Indexed_face_set::clean_tex_coords()
   SGAL_assertion(!m_tex_coord_array);
   Tex_coord_array_2d* tex_coord_array =
     new Tex_coord_array_2d(m_coord_array->size());
-  SGAL_assertion(tex_coord_array);
-  m_tex_coord_array = tex_coord_array;
-  m_owned_tex_coord_array = true;
+  m_tex_coord_array.reset(tex_coord_array);
+  SGAL_assertion(m_tex_coord_array);
   
   Uint num_coords = m_coord_array->size();
 
@@ -1080,7 +1078,7 @@ void Indexed_face_set::isect_direct()
       for (int strip = 0 ; strip < num_tri_strips ; strip++) {
         int tmp = strip + 1;
         glBegin(GL_TRIANGLE_STRIP);
-        for (int i = 0 ; i < m_tri_strip_lengths[tmp] ; i++) {
+        for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i) {
           Vector3f& v = (*m_coord_array)[m_coord_indices[index]];
           glVertex3fv((float*)&v);
           index++;
@@ -1300,7 +1298,7 @@ void Indexed_face_set::create_vertex_buffer_object()
     else {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
       Uint size = m_coord_array->size()* sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) m_coord_array->get_vector();
+      GLfloat* data = (GLfloat*) (m_coord_array->get_vector());
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
@@ -1315,8 +1313,8 @@ void Indexed_face_set::create_vertex_buffer_object()
     }
     else {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
-      Uint size = m_normal_array->size()* sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) m_normal_array->get_vector();
+      Uint size = m_normal_array->size() * sizeof(Vector3f);
+      GLfloat* data = (GLfloat*) (m_normal_array->get_vector());
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
@@ -1332,7 +1330,7 @@ void Indexed_face_set::create_vertex_buffer_object()
     else {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
       Uint size = m_color_array->size()* sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) m_color_array->get_vector();
+      GLfloat* data = (GLfloat*) (m_color_array->get_vector());
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
   }
@@ -1347,9 +1345,10 @@ void Indexed_face_set::create_vertex_buffer_object()
     }
     else {
       Uint tcoords = 0;
-      if (dynamic_cast<Tex_coord_array_2d*>(m_tex_coord_array))
+      if (boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array))
         tcoords = sizeof(Vector2f);
-      else if (dynamic_cast<Tex_coord_array_3d*>(m_tex_coord_array))
+      else
+        if (boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array))
         tcoords = sizeof(Vector3f);
       SGAL_assertion(tcoords != 0);
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
@@ -1475,8 +1474,8 @@ Boolean Indexed_face_set::is_empty() const
  */
 void Indexed_face_set::coord_changed(Field_info* field_info)
 {
-  if (m_owned_normal_array) m_dirty_normals = true;
-  if (m_owned_tex_coord_array) m_dirty_tex_coords = true;
+  m_dirty_normals = true;
+  m_dirty_tex_coords = true;
   destroy_display_list();
   destroy_vertex_buffer_object();
   Mesh_set::coord_changed(field_info);
@@ -1499,7 +1498,7 @@ void Indexed_face_set::field_changed(Field_info* field_info)
     if (m_vertex_coord_id == 0) break;
     {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
-      Uint size = m_coord_array->size()* sizeof(Vector3f);
+      Uint size = m_coord_array->size() * sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_coord_array->get_vector();
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
@@ -1512,7 +1511,7 @@ void Indexed_face_set::field_changed(Field_info* field_info)
     if (m_vertex_normal_id == 0) break;
     {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
-      Uint size = m_normal_array->size()* sizeof(Vector3f);
+      Uint size = m_normal_array->size() * sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_normal_array->get_vector();
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
@@ -1525,7 +1524,7 @@ void Indexed_face_set::field_changed(Field_info* field_info)
     if (m_vertex_color_id == 0) break;
     {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
-      Uint size = m_color_array->size()* sizeof(Vector3f);
+      Uint size = m_color_array->size() * sizeof(Vector3f);
       GLfloat* data = (GLfloat*) m_color_array->get_vector();
       glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
     }
@@ -1538,9 +1537,10 @@ void Indexed_face_set::field_changed(Field_info* field_info)
     if (m_vertex_tex_coord_id == 0) break;
     {
       Uint tcoords = 0;
-      if (dynamic_cast<Tex_coord_array_2d*>(m_tex_coord_array))
+      if (boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array))
         tcoords = sizeof(Vector2f);
-      else if (dynamic_cast<Tex_coord_array_3d*>(m_tex_coord_array))
+      else
+        if (boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array))
         tcoords = sizeof(Vector3f);
       SGAL_assertion(tcoords != 0);
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);

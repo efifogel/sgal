@@ -98,16 +98,17 @@ void Indexed_line_set::set_coord_array(Shared_coord_array coord_array)
 }
 
 /*! \brief sets the normal set. */ 
-void Indexed_line_set::set_normal_array(Normal_array* normal_array)
+void Indexed_line_set::set_normal_array(Shared_normal_array normal_array)
 { m_normal_array = normal_array; }
 
-/*! \brief sets the texture coordinate set. */
-void Indexed_line_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
-{ m_tex_coord_array = tex_coord_array; }
-
 /*! \brief sets the color set. */
-void Indexed_line_set::set_color_array(Color_array* color_array)
+void Indexed_line_set::set_color_array(Shared_color_array color_array)
 { m_color_array = color_array; }
+
+/*! \brief sets the texture coordinate set. */
+void Indexed_line_set::
+set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
+{ m_tex_coord_array = tex_coord_array; }
 
 /*! \brief draws the geometry.
  * For efficiency reasons, differenrt methods were written to 
