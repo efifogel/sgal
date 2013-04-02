@@ -149,10 +149,10 @@ void Ego_voxels_tiler::tile_layer(bool skip,
       // if we are in an odd "row" we need to offset the column...
       if (horizontal) {
         if (row_index % 2 == 1)
-          column += (offset_between_rows % brick_type.get<0>());
+          column += (offset_between_rows % brick_type.get<1>());
       } else {
         if (column_index % 2 == 1)
-          row += (offset_between_rows % brick_type.get<1>());
+          row += (offset_between_rows % brick_type.get<0>());
       }
 
       // Should handle out-of-bounds
@@ -173,10 +173,6 @@ void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
   if (layer >= out_voxels->size().get<2>())
     return;
 
-#ifdef EGO_VOXELIZER_TILER_VERBOSE
-  std::cout << "Row: " << row << " Column: " << column << std::endl;
-#endif
-
   // 1) All are legal and filled.
   // 2) All are not containing bricks.
   bool place = true;
@@ -195,10 +191,6 @@ void Ego_voxels_tiler::tile_cell(size_t layer, size_t row, size_t column,
   }
   
   if (place) {
-#ifdef EGO_VOXELIZER_TILER_VERBOSE
-    std::cout << "Placing: " << width << "x" << height << std::endl;
-#endif
-    
     out_voxels->place(boost::make_tuple(row, column, layer), brick_type);
   }
 }
