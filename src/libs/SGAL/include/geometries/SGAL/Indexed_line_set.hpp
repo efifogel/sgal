@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 9185 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -53,10 +53,10 @@ public:
   virtual ~Indexed_line_set();
 
   /* Construct the prototype. */
-  static Indexed_line_set* prototype() { return new Indexed_line_set(true); }
+  static Indexed_line_set* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Indexed_line_set(); }
+  virtual Container* clone();
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -66,32 +66,60 @@ public:
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
+  /*! Delete the prototype. */
   virtual void delete_prototype();
 
+  /*! Obtain the prototype. */
   virtual Container_proto* get_prototype(); 
   
-  /*! Draw the geometry. */
+  /*! Draw the geometry.
+   * For efficiency reasons, differenrt methods were written to 
+   * draw geometries with different kinds of data (texture/normal/color).
+   * \param action action.
+   */
   virtual void draw(Draw_action* action);
 
   virtual void isect(Isect_action* action); 
 
-  virtual bool clean_sphere_bound();
+  /*! Calculate the sphere bound of the mesh. Returns true if the BS has
+   * changed since lst time this was called.
+   */
+  virtual Boolean clean_sphere_bound();
 
+  /*! Set the color set.
+   * \param color_array (in) a pointer to a color set
+   */
   virtual void set_color_array(Color_array* color_array);
 
-  virtual void set_coord_array(Coord_array* coord_array);
+  /*! Set the coordinate set. Pass the pointer to the geometry object 
+   * used by the decoder as well.
+   * \param coord_array (in) a pointer to a coord set
+   */
+  virtual void set_coord_array(Shared_coord_array coord_array);
 
+  /*! Set the normal set.
+   * \param coord_array (in) a pointer to a coord set
+   */ 
   virtual void set_normal_array(Normal_array* normal_array);
 
+  /*! Set the texture coordinate set.
+   * \param tex_coord_array (in) a pointer to a coord set
+   */
   virtual void set_tex_coord_array(Tex_coord_array* tex_coord_array);
 
+  /* Set the flag that indicates whether normals are bound per vertex
+   * or per line.
+   */
   void set_normal_per_vertex(Boolean normal_per_vertex);
 
-  Boolean get_normal_per_vertex() { return m_normal_per_vertex; }
+  Boolean get_normal_per_vertex() const;
 
+  /* Set the flag that indicates whether colors are bound per vertex or
+   * per line.
+   */
   void set_color_per_vertex(Boolean color_per_vertex);
 
-  Boolean get_color_per_vertex() { return m_color_per_vertex; }
+  Boolean get_color_per_vertex() const;
   
 protected:
   /*! Indicates whether a single color is specified per vertex. */
@@ -119,7 +147,7 @@ protected:
   Int m_display_list_id;
 
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -133,6 +161,25 @@ private:
   static const Boolean m_def_normal_per_vertex;
   static const Float s_def_line_width;
 };
+
+/* \brief constructs the prototype. */
+inline Indexed_line_set* Indexed_line_set::prototype()
+{ return new Indexed_line_set(true); }
+
+/*! \brief clones. */
+inline Container* Indexed_line_set::clone()
+{ return new Indexed_line_set(); }
+
+/*! \brief */
+inline Boolean Indexed_line_set::get_normal_per_vertex() const
+{ return m_normal_per_vertex; }
+
+/*! \brief */
+inline Boolean Indexed_line_set::get_color_per_vertex() const
+{ return m_color_per_vertex; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Indexed_line_set::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

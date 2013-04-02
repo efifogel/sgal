@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -44,93 +44,127 @@ public:
   };
 
   /*! Constructor */
-  Piece(Boolean proto = SGAL_FALSE);
+  Piece(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Piece();
 
-  /* Construct the prototype */
-  static Piece * prototype() { return new Piece(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Piece* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Piece(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
-  virtual Container_proto * get_prototype(); 
+  /*! Obtains the node prototype. */
+  virtual Container_proto* get_prototype(); 
   
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Write this container */
-  virtual void write(Formatter * formatter);
+  /*! Write this container. */
+  virtual void write(Formatter* formatter);
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! Set the width */
-  void set_width(Uint width) { m_width = width; }
+  /*! Set the width. */
+  void set_width(Uint width);
 
-  /*! Obtain the width */
-  Uint get_width() const { return m_width; }
+  /*! Obtain the width. */
+  Uint get_width() const;
 
-  /*! Set the height */
-  void set_height(Uint height) { m_height = height; }
+  /*! Set the height. */
+  void set_height(Uint height);
 
-  /*! Obtain the height */
-  Uint get_height() const { return m_height; }
+  /*! Obtain the height. */
+  Uint get_height() const;
   
-  /*! Set the depth */
-  void set_depth(Uint depth) { m_depth = depth; }
+  /*! Set the depth. */
+  void set_depth(Uint depth);
 
-  /*! Obtain the depth */
-  Uint get_depth() const { return m_depth; }
+  /*! Obtain the depth. */
+  Uint get_depth() const;
 
-  /*! Obtain the composition */
-  const Array<Uint> & get_composition() const { return m_composition; }
+  /*! Obtain the composition. */
+  const Array<Uint>& get_composition() const;
 
-  /*! Obtain the composition */
-  Array<Uint> & get_composition() { return m_composition; }
+  /*! Obtain the composition. */
+  Array<Uint>& get_composition();
   
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
-  /*! The piece unit size */
+  /*! The piece unit size. */
   Uint m_unit_size;
 
-  /*! The piece width */
+  /*! The piece width. */
   Uint m_width;
 
-  /*! The piece height */
+  /*! The piece height. */
   Uint m_height;
   
-  /*! The piece depth */
+  /*! The piece depth. */
   Uint m_depth;
 
-  /*! The piece composition array */
+  /*! The piece composition array. */
   Array<Uint> m_composition;
   
 private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
-  /*! default values for Piece */
+  /*! default values for Piece. */
   static const Uint s_def_width;
   static const Uint s_def_height;
   static const Uint s_def_depth;
   static const Uint s_def_unit_size;
 };
+
+/* \brief constructs the prototype. */
+inline Piece* Piece::prototype() { return new Piece(true); }
+
+/*! \brief clones. */
+inline Container* Piece::clone() { return new Piece(); }
+
+/*! \brief sets the width. */
+inline void Piece::set_width(Uint width) { m_width = width; }
+
+/*! \brief obtains the width. */
+inline Uint Piece::get_width() const { return m_width; }
+
+/*! \brief sets the height. */
+inline void Piece::set_height(Uint height) { m_height = height; }
+
+/*! \brief obtains the height. */
+inline Uint Piece::get_height() const { return m_height; }
+  
+/*! \brief sets the depth. */
+inline void Piece::set_depth(Uint depth) { m_depth = depth; }
+
+/*! \brief obtains the depth. */
+inline Uint Piece::get_depth() const { return m_depth; }
+
+/*! \brief obtains the composition. */
+inline const Array<Uint>& Piece::get_composition() const
+{ return m_composition; }
+
+/*! \brief obtains the composition. */
+inline Array<Uint>& Piece::get_composition() { return m_composition; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Piece::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

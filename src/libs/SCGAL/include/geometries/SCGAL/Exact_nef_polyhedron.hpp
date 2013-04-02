@@ -101,15 +101,11 @@ public:
 
     /*! */
     void set_inexact_point(const Inexact_point_3& point)
-    {
-      m_inexact_point = point;
-    }
+    { m_inexact_point = point; }
 
     /*! */
     const Inexact_point_3& get_inexact_point(void) const
-    {
-      return m_inexact_point;
-    }
+    { return m_inexact_point; }
   };
   
   /*! The polyhedron halfedge extended with a Boolean flag */
@@ -212,7 +208,9 @@ public:
   virtual Boolean is_empty() const { return m_nef_polyhedron.is_empty(); }
   
   virtual void cull(SGAL::Cull_context& cull_context);
+
   virtual void isect(SGAL::Isect_action* action);
+
   virtual Boolean clean_sphere_bound();
 
   /*! Set the attributes of this node */
@@ -303,7 +301,8 @@ public:
       CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
       typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
         size_type;
-      const Coord_array* coord_array = m_nef_polyhedron->get_coord_array();
+      const Exact_nef_polyhedron::Shared_coord_array coord_array =
+        m_nef_polyhedron->get_coord_array();
       size_type coord_array_size = coord_array->size();
       Uint num_primitives = m_nef_polyhedron->get_num_primitives();
       B.begin_surface(coord_array_size, num_primitives);
@@ -396,9 +395,6 @@ private:
   float m_time;
   
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
-
   /*! Clean the polyhedron data structure */
   void clean_polyhedron();
 
@@ -407,6 +403,9 @@ protected:
   
   /*! Draw the intermediate polyhedron (for debugging purpose) */
   void draw_polyhedron(Draw_action* action);  
+
+  /*! obtains the tag (type) of the container */
+  virtual const std::string& get_tag() const { return s_tag; }
 };
 
 SGAL_END_NAMESPACE

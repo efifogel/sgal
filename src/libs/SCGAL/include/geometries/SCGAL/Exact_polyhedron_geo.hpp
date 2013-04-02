@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 13487 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -133,24 +133,25 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Exact_polyhedron_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   ~Exact_polyhedron_geo();
 
-  /*! Construct the prototype */
-  static Exact_polyhedron_geo* prototype()
-  { return new Exact_polyhedron_geo(true); }
+  /*! Construct the prototype. */
+  static Exact_polyhedron_geo* prototype();
 
-  /*! Clone */
-  virtual SGAL::Container* clone() { return new Exact_polyhedron_geo(); }
+  /*! Clone. */
+  virtual SGAL::Container* clone();
 
   virtual void cull(SGAL::Cull_context& cull_context);
+
   virtual void isect(SGAL::Isect_action* action);
+
   virtual bool clean_sphere_bound();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(SGAL::Element* elem);
 
   /*! Initialize the node prototype. */
@@ -166,15 +167,15 @@ public:
    */
   Polyhedron& get_polyhedron();
 
-  /*! Obtains the flag that indicates whether to compute the convex hull
+  /*! Obtain the flag that indicates whether to compute the convex hull
    * of the coordinate set.
    */
-  bool get_convex_hull() const { return m_convex_hull; }
+  Boolean get_convex_hull() const;
 
-  /*! Sets the flag that indicates whether to compute the convex hull
-   * of the coordinate set
+  /*! Set the flag that indicates whether to compute the convex hull
+   * of the coordinate set.
    */
-  void set_convex_hull(bool flag) { m_convex_hull = flag; }  
+  void set_convex_hull(Boolean flag);
 
   /*! Computes the orientation of a point relative to the polyhedron. */
   CGAL::Oriented_side oriented_side(const Point_3& p);
@@ -184,7 +185,7 @@ public:
 
 protected:
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   /*! Cleans the representation. */
   virtual void clean();
@@ -245,7 +246,7 @@ private:
   };
   
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static SGAL::Container_proto* s_prototype;
@@ -265,6 +266,30 @@ private:
   /*! Computes the convex hull of the coordinate set */
   void convex_hull();
 };
+
+/*! \brief constructs the prototype. */
+inline Exact_polyhedron_geo* Exact_polyhedron_geo::prototype()
+{ return new Exact_polyhedron_geo(true); }
+
+/*! \brief clones. */
+inline SGAL::Container* Exact_polyhedron_geo::clone()
+{ return new Exact_polyhedron_geo(); }
+
+/*! \brief obtainss the flag that indicates whether to compute the convex hull
+ * of the coordinate set.
+ */
+inline Boolean Exact_polyhedron_geo::get_convex_hull() const
+{ return m_convex_hull; }
+
+/*! \brief Sets the flag that indicates whether to compute the convex hull
+ * of the coordinate set.
+ */
+inline void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
+{ m_convex_hull = flag; }  
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Exact_polyhedron_geo::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

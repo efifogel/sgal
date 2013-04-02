@@ -56,7 +56,6 @@ Geo_set::Geo_set(Boolean proto) :
   m_num_primitives(0),
   m_normal_attachment(PER_VERTEX),
   m_color_attachment(PER_VERTEX),
-  m_coord_array(NULL),
   m_normal_array(NULL),
   m_owned_normal_array(false),
   m_tex_coord_array(NULL),
@@ -101,9 +100,9 @@ void Geo_set::init_prototype()
   Execution_function exec_func;
 
   exec_func = static_cast<Execution_function>(&Geo_set::coord_changed);
-  SF_container* field;
-  field = new SF_container(COORD_ARRAY, "coord",
-                           get_member_offset(&m_coord_array), exec_func);
+  SF_shared_container* field;
+  field = new SF_shared_container(COORD_ARRAY, "coord",
+                                  get_member_offset(&m_coord_array), exec_func);
   s_prototype->add_field_info(field);
 }
 
@@ -122,7 +121,7 @@ Container_proto* Geo_set::get_prototype()
 }
 
 /*! \brief sets the coordinate array. */
-void Geo_set::set_coord_array(Coord_array* coord_array)
+void Geo_set::set_coord_array(Shared_coord_array coord_array)
 {
   Observer observer(this, get_field_info(COORD_ARRAY));
   if (m_coord_array) m_coord_array->unregister_observer(observer);
@@ -177,10 +176,8 @@ void Geo_set::set_attributes(Element* elem)
 
   typedef Element::Str_attr_iter        Str_attr_iter;
   typedef Element::Cont_attr_iter       Cont_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
 
@@ -302,7 +299,9 @@ void Geo_set::set_attributes(Element* elem)
     Container* cont = elem->get_value(cai);
     if (name == "coord") {
       Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
-      set_coord_array(coord_array);
+      Shared_coord_array shared_coord_array;
+      shared_coord_array.reset(coord_array);
+      set_coord_array(shared_coord_array);
       elem->mark_delete(cai);
       continue;
     }

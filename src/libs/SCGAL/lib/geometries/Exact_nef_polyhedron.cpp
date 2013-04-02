@@ -62,9 +62,7 @@ Exact_nef_polyhedron::Exact_nef_polyhedron(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
   m_time(0)
-{
-  m_surface.set_nef_polyhedron(this);
-}
+{ m_surface.set_nef_polyhedron(this); }
 
 /*! Destructor */
 Exact_nef_polyhedron::~Exact_nef_polyhedron() {}
@@ -119,18 +117,15 @@ void Exact_nef_polyhedron::clear()
   Mesh_set::clear();
 }
 
-/*!
- */
+/*! \brief */
 void Exact_nef_polyhedron::cull(SGAL::Cull_context& cull_context) {}
 
-/*! Draw the intermediate polyhedron (for debugging purpose) */
+/*! \brief draws the intermediate polyhedron (for debugging purpose). */
 void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
-
-  for (Polyhedron::Facet_const_iterator i = m_polyhedron.facets_begin();
-       i != m_polyhedron.facets_end(); ++i)
-  {
+  Polyhedron::Facet_const_iterator i;
+  for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Polyhedron::Halfedge_around_facet_const_circulator j = i->facet_begin();
     // Facets in polyhedral surfaces are at least triangles.
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
@@ -156,7 +151,7 @@ void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
   }
 }
 
-/*! Draw the nef polyhedron */
+/*! \brief draws the nef polyhedron. */
 void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
 {
   // draw_polyhedron(action);
@@ -194,9 +189,8 @@ void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
   }
 }
 
-/*!
- */
-void Exact_nef_polyhedron::isect(SGAL::Isect_action * action)
+/*! \brief */
+void Exact_nef_polyhedron::isect(SGAL::Isect_action* action)
 {
   if (is_dirty()) clean();
   if (is_empty()) return;
@@ -225,8 +219,7 @@ void Exact_nef_polyhedron::isect(SGAL::Isect_action * action)
   }
 }
 
-/*!
- */
+/*! \brief */
 bool Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
 {
   if (m_dirty_polyhedron) clean_polyhedron();
@@ -252,8 +245,7 @@ bool Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
   return true;
 }
   
-/*!
- */
+/*! \brief */
 bool Exact_nef_polyhedron::clean_sphere_bound()
 {
   if (is_dirty()) clean();
@@ -280,11 +272,8 @@ bool Exact_nef_polyhedron::clean_sphere_bound()
   return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Exact_nef_polyhedron::set_attributes(SGAL::Element * elem)
+/*! \brief sets the attributes of this node. */
+void Exact_nef_polyhedron::set_attributes(SGAL::Element* elem)
 {
   SGAL::Mesh_set::set_attributes(elem);
 
@@ -292,28 +281,28 @@ void Exact_nef_polyhedron::set_attributes(SGAL::Element * elem)
   elem->delete_marked();
 }
 
-/*! Initialize the prototype of this container */
+/*! \brief initializes the prototype of this container. */
 void Exact_nef_polyhedron::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new SGAL::Container_proto(SGAL::Mesh_set::get_prototype());
 }
 
-/*! Delete the prototype of this container */
+/*! \brief deletes the prototype of this container. */
 void Exact_nef_polyhedron::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the prototype of this container */
+/*! \brief obtains the prototype of this container. */
 SGAL::Container_proto* Exact_nef_polyhedron::get_prototype() 
 {  
   if (!s_prototype) Exact_nef_polyhedron::init_prototype();
   return s_prototype;
 }
 
-/*! Print statistics */
+/*! \brief prints statistics. */
 void Exact_nef_polyhedron::print_stat()
 {
   if (is_dirty()) clean();

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14182 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -144,7 +144,8 @@ private:
       CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
       typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
         size_type;
-      const Coord_array* coord_array = m_polyhedron->get_coord_array();
+      const Polyhedron_geo::Shared_coord_array coord_array =
+        m_polyhedron->get_coord_array();
       size_type coord_array_size = coord_array->size();
       unsigned int num_facets = m_polyhedron->get_num_primitives();
       SGAL_TRACE_CODE(SGAL::Trace::POLYHEDRON,
@@ -191,66 +192,78 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Polyhedron_geo(Boolean proto = SGAL_FALSE);
+  /*! Constructor. */
+  Polyhedron_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   ~Polyhedron_geo();
 
-  /*! Constructs the prototype */
-  static Polyhedron_geo* prototype() { return new Polyhedron_geo(SGAL_TRUE); }
+  /*! Constructs the prototype. */
+  static Polyhedron_geo* prototype();
 
-  /*! Clone */
-  virtual SGAL::Container* clone() { return new Polyhedron_geo(); }
+  /*! Clone. */
+  virtual SGAL::Container* clone();
 
   virtual void cull(SGAL::Cull_context& cull_context);
+
   virtual void isect(SGAL::Isect_action* action);
+
   virtual bool clean_sphere_bound();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(SGAL::Element* elem);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual SGAL::Container_proto* get_prototype();
 
-  /*! Obtain the polyhedron data-structure */
+  /*! Obtain the polyhedron data-structure. */
   Polyhedron& get_polyhedron();
   
 protected:
-  /*! The actual polyhedron object */
+  /*! The actual polyhedron object. */
   Polyhedron m_polyhedron;
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! Clear the internal representation */
+  /*! Clear the internal representation. */
   virtual void clear();
 
-  /*! Is the internal representation is empty? */
+  /*! Determine whether the internal representation is empty. */
   virtual bool is_empty() const { return m_polyhedron.empty(); }
 
-  /*! Draw the internal representation */
+  /*! Draw the internal representation. */
   virtual void draw_geometry(SGAL::Draw_action* action);
 
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static SGAL::Container_proto* m_prototype;
 
-  /*! The builder */
+  /*! The builder. */
   Build_surface<HalfedgeDS> m_surface;
 };
+
+/*! \brief constructs the prototype. */
+inline Polyhedron_geo* Polyhedron_geo::prototype()
+{ return new Polyhedron_geo(true); }
+
+/*! \brief clones. */
+inline SGAL::Container* Polyhedron_geo::clone() { return new Polyhedron_geo(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Polyhedron_geo::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

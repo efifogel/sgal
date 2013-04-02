@@ -59,36 +59,36 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Assembly(Boolean proto = SGAL_FALSE);
+  /*! Constructor. */
+  Assembly(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Assembly();
 
-  /* Construct the prototype */
-  static Assembly* prototype() { return new Assembly(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Assembly* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Assembly(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Clear the representation */
+  /*! Clear the representation. */
   virtual void clear();
   
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
     
 protected:
@@ -138,7 +138,7 @@ protected:
   typedef Projection_map::iterator                  Projection_iter;
  
   /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   /*! Obtain all the SGM's that comprise this part */
   template <typename OutputIterator>
@@ -207,7 +207,7 @@ protected:
   
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
@@ -430,6 +430,15 @@ private:
 //     }
 //   }
 // }
+
+/*! \brief constructs the prototype. */
+inline Assembly* Assembly::prototype() { return new Assembly(true); }
+
+/*! \brief clones. */
+inline  Container* Assembly::clone() { return new Assembly(); }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Assembly::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

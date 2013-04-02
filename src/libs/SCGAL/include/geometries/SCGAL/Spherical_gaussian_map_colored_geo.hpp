@@ -110,7 +110,7 @@ private:
   typedef Sgm::Halfedge_around_vertex_const_circulator
                                 Sgm_halfedge_around_vertex_const_circulator;
   
-  /*! Notification for computing the sgm */
+  /*! Notification for computing the sgm. */
   class Sgm_geo_initializer_visitor {
   public:
     typedef Polyhedron::Vertex_const_handle
@@ -135,9 +135,7 @@ private:
      */
     virtual void update_dual_vertex(Sgm_face_const_handle src,
                                     Sgm_face_handle trg)
-    {
-      trg->set_color(src->color());
-    }
+    { trg->set_color(src->color()); }
 
     /*! Pass information from a polyhedron facet to its dual - an aos vertex */
     virtual void update_dual_face(Polyhedron_facet_const_handle src,
@@ -179,24 +177,24 @@ protected:
     Geometry& m_geo;
   };
 
-  // List of pointers to Spherical_gaussian_map_colored_geo objects */
+  // List of pointers to Spherical_gaussian_map_colored_geo objects. */
   typedef std::list<Spherical_gaussian_map_colored_geo *>       Sgm_node_list;
   typedef Sgm_node_list::iterator                               Sgm_node_iter;
 
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
   
-  /*! Create the renderers */
+  /*! Create the renderers. */
   void create_renderers();
 
-  /*! Destroy the renderers */
+  /*! Destroy the renderers. */
   void destroy_renderers();
   
 private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
   /*! Indicates whther the sgm data structure is owned, i.e., allocated
@@ -205,54 +203,54 @@ private:
    */
   Boolean m_owned_sgm;
 
-  /*! The cubical Gaussian map representation */
+  /*! The cubical Gaussian map representation. */
   Sgm* m_sgm;
 
-  /*! An intermediate polyhedron */
+  /*! An intermediate polyhedron. */
   Polyhedron* m_polyhedron;
 
-  /*! The minkowski sum operands */
+  /*! The minkowski sum operands. */
   Sgm_node_list m_sgm_nodes;
 
-  /*! Indicates whether to compute the minkowski sum */
+  /*! Indicates whether to compute the minkowski sum. */
   Boolean m_minkowski_sum;
 
-  /*! For benchmarking */
+  /*! For benchmarking. */
   float m_time;
 
-  /*! The vertices renderer */
+  /*! The vertices renderer. */
   Arrangement_renderer::Renderer* m_vertices_renderer;
 
-  /*! The vertices renderer */
+  /*! The vertices renderer. */
   Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
-  /*! The edges renderer */
+  /*! The edges renderer. */
   Arrangement_renderer::Renderer* m_edges_renderer;
 
-  /*! The colored edges renderer */
+  /*! The colored edges renderer. */
   Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
-  /*! The inflated line edges renderer */
+  /*! The inflated line edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
-  /*! The inflated strip edges renderer */
+  /*! The inflated strip edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
   
-  /*! The inflated tube edges renderer */
+  /*! The inflated tube edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
    
-  /*! Default values */
+  /*! Default values. */
 
-  /*! Transform the coordinates of the SGM into spheres
-   * \param spheres (o) the transformed coordinates
+  /*! Transform the coordinates of the SGM into spheres.
+   * \param spheres (o) the transformed coordinates.
    */
   virtual void transform_coords(Approximate_sphere_vector& spheres)
   { transform_primal_coords(m_sgm, spheres); }
 
-  /*! Draw the primal representation of the polyhedron */
+  /*! Draw the primal representation of the polyhedron. */
   virtual void draw_primal(Draw_action* action);
 
-  /*! Draw the arrangement on sphere opaque
+  /*! Draw the arrangement on sphere opaque.
    * \param action
    */
   virtual void draw_aos_opaque(Draw_action* action);
@@ -260,23 +258,21 @@ private:
   virtual void isect_primary();
   
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Spherical_gaussian_map_colored_geo(Boolean proto = false);
 
-  /*! Copy constructor */
+  /*! Copy constructor. */
   Spherical_gaussian_map_colored_geo
   (const Spherical_gaussian_map_colored_geo& gm);
   
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Spherical_gaussian_map_colored_geo();
 
-  /*! Construct the prototype */
-  static Spherical_gaussian_map_colored_geo* prototype()
-  { return new Spherical_gaussian_map_colored_geo(true); }
+  /*! Construct the prototype. */
+  static Spherical_gaussian_map_colored_geo* prototype();
 
-  /*! Clone */
-  virtual Container* clone()
-  { return new Spherical_gaussian_map_colored_geo(); }
+  /*! Clone. */
+  virtual Container* clone();
 
   /*! */
   virtual void cull(Cull_context& cull_context);
@@ -284,69 +280,82 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! Set the attributes of this node
-   * \param elem contains lists of attribute names and values
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the prototype */
+  /*! Delete the prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the prototype */
+  /*! Obtain the prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! Clear the internal representation and auxiliary data structures */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
   
-  /*! Return true if the representation is empty */
+  /*! Return true if the representation is empty. */
   virtual Boolean is_empty() const { return m_sgm->is_empty(); }
 
-  /*! Draw the arrangement on sphere vertices
+  /*! Draw the arrangement on sphere vertices.
    * \param action
    */
   virtual void draw_aos_vertices(Draw_action* action);
 
-  /*! Draw the arrangement on sphere edges
+  /*! Draw the arrangement on sphere edges.
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action);
   
-  /*! Clean the renderer */
+  /*! Clean the renderer. */
   virtual void clean_renderer();
 
-  /*! Print statistics */
+  /*! Print statistics. */
   virtual void print_stat();
 
-  /*! Set the source gausian maps of the minkowski sum */
+  /*! Set the source gausian maps of the minkowski sum. */
   void insert_sgm(Spherical_gaussian_map_colored_geo* sgm);
 
-  /*! Obrain a reference to the cubical Gaussian map */
+  /*! Obrain a reference to the cubical Gaussian map. */
   Sgm* get_sgm();
 
-  /*! Set the Gaussian map */
+  /*! Set the Gaussian map. */
   void set_sgm(Sgm* sgm);
   
-  /*! Set the flag that indicates whether to compute the minkowski sum */
+  /*! Set the flag that indicates whether to compute the minkowski sum. */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
 
   /*! Compute the equations of, or the normals to, the planes of the aos
-   * facets and store them at the vertices of the planar map
+   * facets and store them at the vertices of the planar map.
    */
   void update_facets()
   { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 
-  /*! Obtain an intermediate polyhedron */
+  /*! Obtain an intermediate polyhedron. */
   Polyhedron* get_polyhedron() { return m_polyhedron; }
 
-  /*! Set an intermediate polyhedron */
+  /*! Set an intermediate polyhedron. */
   void set_polyhedron(Polyhedron* polyhedron);
 };
+
+/*! \brief constructs the prototype. */
+inline Spherical_gaussian_map_colored_geo*
+Spherical_gaussian_map_colored_geo::prototype()
+{ return new Spherical_gaussian_map_colored_geo(true); }
+
+/*! \brief clones. */
+inline Container* Spherical_gaussian_map_colored_geo::clone()
+{ return new Spherical_gaussian_map_colored_geo(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Spherical_gaussian_map_colored_geo::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

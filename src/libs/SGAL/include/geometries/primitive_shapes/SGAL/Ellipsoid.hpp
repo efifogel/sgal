@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -130,11 +130,11 @@ protected:
   Uint m_stacks;
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const;
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The container prototype */
   static Container_proto* s_prototype;
@@ -153,32 +153,11 @@ inline Ellipsoid* Ellipsoid::prototype() { return new Ellipsoid(true); }
 /*! \brief clones. */
 inline Container* Ellipsoid::clone() { return new Ellipsoid(); }
 
-/*! \brief sets the width of the ellipsoid. */
-inline void Ellipsoid::set_width(Float width)
-{
-  m_width = width;
-  m_dirty_sphere_bound = true;
-}
-
 /*! \brief obtains the width of the ellipsoid. */
 inline Float Ellipsoid::get_width() const { return m_width; }
 
-/*! \brief sets the height of the ellipsoid. */
-inline void Ellipsoid::set_height(Float height)
-{
-  m_height = height;
-  m_dirty_sphere_bound = true;
-}
-
 /*! \brief obtains the height of the ellipsoid. */
 inline Float Ellipsoid::get_height() const { return m_height; }
-
-/*! \brief sets the depth of the ellipsoid. */
-inline void Ellipsoid::set_depth(Float depth)
-{
-  m_depth = depth;
-  m_dirty_sphere_bound = true;
-}
 
 /*! \brief obtains the depth of the ellipsoid. */
 inline Float Ellipsoid::get_depth() const { return m_depth; }

@@ -254,8 +254,8 @@ void Cubical_gaussian_map_geo::clean()
     cgm_initializer.set_marked_edge_index(m_marked_edge_index);
     cgm_initializer.set_marked_facet_index(m_marked_facet_index);
 
-    Exact_coord_array* exact_coord_array =
-      dynamic_cast<Exact_coord_array *>(m_coord_array);
+    boost::shared_ptr<Exact_coord_array> exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       // std::cout << "Cubical_gaussian_map_geo::exact" << std::endl;
       cgm_initializer(exact_coord_array->begin(),
@@ -263,7 +263,8 @@ void Cubical_gaussian_map_geo::clean()
                       exact_coord_array->size(),
                       m_coord_indices.begin(), m_coord_indices.end(),
                       m_num_primitives, &visitor);
-    } else {
+    }
+    else {
       // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
       cgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),

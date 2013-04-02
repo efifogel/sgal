@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -44,62 +44,68 @@
 SGAL_BEGIN_NAMESPACE
 
 enum Field_type_enum {
-  SFBOOL      = 1,
-  SFFLOAT     = 2,
-  SFUINT32    = 3,
-  SFINT32     = 4,
-  SFTIME      = 5,
-  SFVEC2F     = 6,
-  SFVEC3F     = 7,
-  SFCOLOR     = 8,
-  SFVEC4F     = 9,
-  SFROTATION  = 10,
-  SFSB        = 11,
-  SFIMAGE     = 12,
-  SFSTRING    = 13,
-  SFCONTAINER = 14,
-  MFFLOAT     = 22,
-  MFUINT32    = 23,
-  MFINT32     = 24,
-  MFTIME      = 25,
-  MFVEC2F     = 26,
-  MFVEC3F     = 27,
-  MFCOLOR     = 28,
-  MFVEC4F     = 29,
-  MFROTATION  = 30,
-  MFSB        = 31,
-  MFSTRING    = 32,
-  MFCONTAINER = 33
+  SF_BOOL = 1,
+  SF_FLOAT = 2,
+  SF_UINT32 = 3,
+  SF_INT32 = 4,
+  SF_TIME = 5,
+  SF_VEC2F = 6,
+  SF_VEC3F = 7,
+  SF_COLOR = 8,
+  SF_VEC4F = 9,
+  SF_ROTATION = 10,
+  SF_SB = 11,
+  SF_IMAGE = 12,
+  SF_STRING = 13,
+  SF_CONTAINER = 14,
+  SF_SHARED_CONTAINER = 15,
+  MF_FLOAT = 22,
+  MF_UINT32 = 23,
+  MF_INT32 = 24,
+  MF_TIME = 25,
+  MF_VEC2F = 26,
+  MF_VEC3F = 27,
+  MF_COLOR = 28,
+  MF_VEC4F = 29,
+  MF_ROTATION = 30,
+  MF_SB = 31,
+  MF_STRING = 32,
+  MF_CONTAINER = 33,
+  MF_SHARED_CONTAINER = 34
 };
 
 class Field_types_utils {
 public:
   static Field_type_enum get_field_type(const std::string& type)
   {
-    if (type == "SFBool" || type == "Boolean") return SFBOOL;
-    else if (type == "SFColor" || type == "Color") return SFCOLOR;
-    else if (type == "SFFloat" || type == "Float") return SFFLOAT;
-    else if (type == "SFImage" || type == "Image") return SFIMAGE;
-    else if (type == "SFInt32" || type == "Integer") return SFINT32;
-    else if (type == "SFNode" || type == "Container") return SFCONTAINER;
-    else if (type == "SFRotation" || type == "Rotation") return SFROTATION;
-    else if (type == "SFSphereBound" || type == "SphereBound") return SFSB;
-    else if (type == "SFString" || type == "String") return SFSTRING;
-    else if (type == "SFTime" || type == "Time") return SFTIME;
-    else if (type == "SFVec2f" || type == "Vector2Float") return SFVEC2F;
-    else if (type == "SFVec3F" || type == "Vector3Float") return SFVEC3F;
-    else if (type == "SFVec4F" || type == "Vector4Float") return SFVEC4F;
-    else if (type == "MFColor" || type == "Colors") return MFVEC3F;
-    else if (type == "MFFloat" || type == "Floats") return MFFLOAT;
-    else if (type == "MFInt32" || type == "Integers") return MFINT32;
-    else if (type == "MFNode" || type == "Containers") return MFCONTAINER;
-    else if (type == "MFRotation" || type == "Rotations") return MFROTATION;
-    else if (type == "MFSphereBound" || type == "SphereBounds") return MFSB;
-    else if (type == "MFString" || type == "Strings") return MFSTRING;
-    else if (type == "MFTime" || type == "Times") return MFTIME;
-    else if (type == "MFVec2F" || type == "Vector2Floats") return MFVEC2F;
-    else if (type == "MFVec3F" || type == "Vector3Floats") return MFVEC3F;
-    else if (type == "MFVec4F" || type == "Vector4Floats") return SFVEC4F;
+    if (type == "SF_Bool" || type == "Boolean") return SF_BOOL;
+    else if (type == "SFColor" || type == "Color") return SF_COLOR;
+    else if (type == "SFFloat" || type == "Float") return SF_FLOAT;
+    else if (type == "SFImage" || type == "Image") return SF_IMAGE;
+    else if (type == "SFInt32" || type == "Integer") return SF_INT32;
+    else if (type == "SFNode" || type == "Container") return SF_CONTAINER;
+    else if (type == "SFSharedContainer" || type == "SharedContainer")
+      return SF_SHARED_CONTAINER;
+    else if (type == "SFRotation" || type == "Rotation") return SF_ROTATION;
+    else if (type == "SFSphereBound" || type == "SphereBound") return SF_SB;
+    else if (type == "SFString" || type == "String") return SF_STRING;
+    else if (type == "SFTime" || type == "Time") return SF_TIME;
+    else if (type == "SFVec2f" || type == "Vector2Float") return SF_VEC2F;
+    else if (type == "SFVec3F" || type == "Vector3Float") return SF_VEC3F;
+    else if (type == "SFVec4F" || type == "Vector4Float") return SF_VEC4F;
+    else if (type == "MFColor" || type == "Colors") return MF_VEC3F;
+    else if (type == "MFFloat" || type == "Floats") return MF_FLOAT;
+    else if (type == "MFInt32" || type == "Integers") return MF_INT32;
+    else if (type == "MFNode" || type == "Containers") return MF_CONTAINER;
+    else if (type == "MFSharedNode" || type == "SharedContainers")
+      return MF_SHARED_CONTAINER;
+    else if (type == "MFRotation" || type == "Rotations") return MF_ROTATION;
+    else if (type == "MFSphereBound" || type == "SphereBounds") return MF_SB;
+    else if (type == "MFString" || type == "Strings") return MF_STRING;
+    else if (type == "MFTime" || type == "Times") return MF_TIME;
+    else if (type == "MFVec2F" || type == "Vector2Floats") return MF_VEC2F;
+    else if (type == "MFVec3F" || type == "Vector3Floats") return MF_VEC3F;
+    else if (type == "MFVec4F" || type == "Vector4Floats") return MF_VEC4F;
     else {
       assert(false);
       return (Field_type_enum)0;

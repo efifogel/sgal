@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -90,43 +90,43 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Container(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Container();
 
-  /*! Clone the container */
+  /*! Clone the container. */
   virtual Container* clone() = 0;
     
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype() {};
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype() {};
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype() { return 0; }
   
-  /*! Set the attributes of this container */
+  /*! Set the attributes of this container. */
   virtual void set_attributes(Element* /* elem */) {}
 
-  /*! Obtain the attributes of this container */
+  /*! Obtain the attributes of this container. */
   virtual void get_attributes(Element* /* elem */, Scene_graph* /* sg */) {}
 
-  /*! Add the container to a given scene
-   * \param scene_graph the given scene
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
    */  
   virtual void add_to_scene(Scene_graph* /* scene_graph */) {}
 
-  /*! Write this container */
+  /*! Write this container. */
   virtual void write(Formatter* formatter);
   
-  /*! Obtain the name of the container provided in the USE and DEF tags */
-  const std::string& get_name() const { return m_name; }
+  /*! Obtain the name of the container provided in the USE and DEF tags. */
+  const std::string& get_name() const;
 
-  /*! Set the name of the container provided in the USE and DEF tags */
-  void set_name(const std::string& name) { m_name = name; }
+  /*! Set the name of the container provided in the USE and DEF tags. */
+  void set_name(const std::string& name);
 
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const = 0;
@@ -142,48 +142,48 @@ public:
   /*! Add a field of a given name. Obtains the suitable field info, and use it
    * to add the new field. Ignore the request, if a field with the given id
    * already exists.
-   * \param name the name of the field
-   * \return the added field or NULL if the requested name is invalid
+   * \param name the name of the field.
+   * \return the added field or NULL if the requested name is invalid.
    */
   Field* add_field(std::string name);
 
-  /*! Obtain a field by id
-   * \param id the requested field id
-   * \return The obtained field pointer
+  /*! Obtain a field by id.
+   * \param id the requested field id.
+   * \return The obtained field pointer.
    */
   Field* get_field(Uint id);
 
-  /*! Obtain a field by name
-   * \param name the requested field name
-   * \return The obtained field pointer
+  /*! Obtain a field by name.
+   * \param name the requested field name.
+   * \return The obtained field pointer.
    */
   Field* get_field(std::string name);
 
-  /*! Obtain a field info by id
-   * \param id the id of the field
-   * \return The requested field info pointer
+  /*! Obtain a field info by id.
+   * \param id the id of the field.
+   * \return The requested field info pointer.
    */
   Field_info* get_field_info(Uint id);
 
-  /*! Obtain a field info by name
-   *  Uses the node prototype to get the field info
-   * \param name the name of the field
-   * \return The obtained field info pointer
+  /*! Obtain a field info by name.
+   *  Uses the node prototype to get the field info.
+   * \param name the name of the field.
+   * \return The obtained field info pointer.
    */
   Field_info* get_field_info(const std::string& name);
 
-  /*! Obtain a field by a field info
-   * It loops over the fields and finds the one with the requested info
-   * \param field_info the requested field info
-   * \return The obtained field pointer
+  /*! Obtain a field by a field info.
+   * It loops over the fields and finds the one with the requested info.
+   * \param field_info the requested field info.
+   * \return The obtained field pointer.
    */
   Field* get_field(Field_info* field_info);
 
-  /*! Calculate the pointer of a data member according to a given offset */
+  /*! Calculate the pointer of a data member according to a given offset. */
   void* get_member_pointer(Ulong offset)
   { return (void*)((Ulong)(&m_base) + offset); }
 
-  /*! Force re-rendering */
+  /*! Force re-rendering. */
   virtual void set_rendering_required(Field_info* /* field_info */ = 0)
   {
     if (m_execution_coordinator)
@@ -194,39 +194,39 @@ public:
   virtual Boolean detach_context(Context* /* context */ = 0)
   { return false; }
 
-  /*! Process change of field
+  /*! Process change of field.
    * \param field_info
    */
   virtual void field_changed(Field_info* field_info);
 
-  /* Sets the execution coordinator
+  /* Sets the execution coordinator.
    * \param ec
    */
   void set_execution_coordinator(Execution_coordinator* ec)
   { m_execution_coordinator = ec; }
 
-  /*! Obtain a source field with a given name */
+  /*! Obtain a source field with a given name. */
   Field* get_source_field(const std::string& src_field_name);
 
-  /*! Obtain a destination field with a given name */
+  /*! Obtain a destination field with a given name. */
   Field* get_destination_field(const std::string& dst_field_name);
 
-  /*! Register an observer */
+  /*! Register an observer. */
   void register_observer(Observer& observer)
   { m_observers.push_back(observer); }
 
-  /*! Unregister an observer */
+  /*! Unregister an observer. */
   void unregister_observer(Observer& observer)
   { m_observers.remove(observer); }
 
-  /*! Processe change of content */
+  /*! Processe change of content. */
   void process_content_changed();
 
 protected:
-  /*! A pointer to the execution coordinator */
+  /*! A pointer to the execution coordinator. */
   Execution_coordinator* m_execution_coordinator;
   
-  /*! Calculate and obtain the ofsset of a data member */
+  /*! Calculate and obtain the ofsset of a data member. */
   Member_offset_type get_member_offset(void* data_member)
   { return (Member_offset_type)data_member - (Member_offset_type)&(m_base); }
   
@@ -235,24 +235,32 @@ private:
   typedef Field_map::iterator                           Field_iter;
   typedef Field_map::const_iterator                     Field_const_iter;
 
-  /*! The name of the container. Given as the value of the DEF tag */
+  /*! The name of the container. Given as the value of the DEF tag. */
   std::string m_name;
 
-  /*! Add a field for a field info. If a field with the given field info already
-   * exists, nothing is done. Otherwiese, a new field is created and added
+  /*! Add a field for a field info. If a field with the given field info 
+   * already exists, nothing is done. Otherwiese, a new field is created and
+   * added.
    * \param field_info the suitable field info for the field
    * \return the added field
    */
   Field* add_field(Field_info* field_info);
 
-  // A search structure to find Field_info's for fields */
+  // A search structure to find Field_info's for fields. */
   Field_map m_fields;
 
-  /*! A list of observers */
+  /*! A list of observers. */
   Observer_list m_observers;
   
   //! \todo Critical_section m_field_cs;
 };
+
+/*! \brief obtains the name of the container provided in the USE and DEF tags.
+ */
+inline const std::string& Container::get_name() const { return m_name; }
+
+/*! \brief sets the name of the container provided in the USE and DEF tags. */
+inline void Container::set_name(const std::string& name) { m_name = name; }
 
 SGAL_END_NAMESPACE
 

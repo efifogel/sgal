@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>; Boris Kozorovitzky <zbzzn@hotmail.com>
@@ -51,61 +51,95 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Indexed_geodesic_set(Boolean proto = SGAL_FALSE);
+  /*! Constructor. */
+  Indexed_geodesic_set(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Indexed_geodesic_set();
 
-  /* Construct the prototype */
-  static Indexed_geodesic_set * prototype() { return new Indexed_geodesic_set(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Indexed_geodesic_set* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Indexed_geodesic_set(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
+
+  /*! Delete the prototype. */
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype(); 
+
+  /*! Obtain the prototype. */
+  virtual Container_proto* get_prototype(); 
   
-  /*! Draw the geometry */
-  virtual void draw(Draw_action * action);
-  virtual void isect(Isect_action * action); 
+  /*! Draw the geometry. */
+  virtual void draw(Draw_action* action);
+
+  virtual void isect(Isect_action* action); 
+
+  /*! Calculate the sphere bound of the mesh. Returns true if the BS has
+   * changed since lst time this was called.
+   */
   virtual bool clean_sphere_bound();
 
-  virtual void set_color_array(Color_array * color_array);
-  virtual void set_coord_array(Coord_array * coord_array);
-  virtual void set_normal_array(Normal_array * normal_array);
-  virtual void set_tex_coord_array(Tex_coord_array * tex_coord_array);
+  virtual void set_color_array(Color_array* color_array);
 
+  /*! Set the coordinate set. Pass the pointer to the geometry object 
+   * used by the decoder as well.
+   * \param coord_array (in) a pointer to a coord set
+   */
+  virtual void set_coord_array(Shared_coord_array coord_array);
+
+  /*! Set the normal set. Pass the pointer to the geometry object 
+   * used by the decoder as well.
+   * \param coord_array (in) a pointer to a coord set
+   */ 
+  virtual void set_normal_array(Normal_array* normal_array);
+
+  /*! Set the texture coordinate set. Pass the pointer to the geometry
+   * object used by the decoder as well.
+   * \param tex_coord_array (in) a pointer to a coord set
+   */
+  virtual void set_tex_coord_array(Tex_coord_array* tex_coord_array);
+
+  /* Set the flag that indicates whether normals are bound per vertex or
+   * per face.
+   * \param normal_per_vertex true if normals are bound per vertex
+   */
   void set_normal_per_vertex(Boolean normal_per_vertex);
-  Boolean get_normal_per_vertex() { return m_normal_per_vertex; }
 
+  Boolean get_normal_per_vertex();
+
+  /* Set the flag that indicates whether colors are bound per vertex or
+   * per face.
+   * \param color_per_vertex true if normals are bound per vertex
+   */
   void set_color_per_vertex(Boolean color_per_vertex);
-  Boolean get_color_per_vertex() { return m_color_per_vertex; }
+
+  Boolean get_color_per_vertex();
   
 protected:
-  /*! Indicates whether a single color is specified per vertex */
+  /*! Indicates whether a single color is specified per vertex. */
   Boolean m_color_per_vertex;
   
-  /*! Indicates whether a single normal is specified per vertex */
+  /*! Indicates whether a single normal is specified per vertex. */
   Boolean m_normal_per_vertex;
 
-  /*! The width of the dual lines */
+  /*! The width of the dual lines. */
   Float m_line_width;
 
-  /*! Indicates whether to elliminate hiden lines using depth test */
+  /*! Indicates whether to elliminate hiden lines using depth test. */
   Boolean m_elliminate_hiden;
   
-  /*! Indicates whether the mesh is textured */
+  /*! Indicates whether the mesh is textured. */
   Boolean m_has_texture;
 
-  /* Indicates that the bbox is set externally */
+  /* Indicates that the bbox is set externally. */
   Boolean m_bb_is_pre_set;
 
   /*! */
@@ -114,21 +148,41 @@ protected:
   /*! */
   Int m_display_list_id;
 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default value */
   static const Boolean m_def_color_per_vertex;
   static const Boolean m_def_normal_per_vertex;
   static const Float s_def_line_width;
 };
+
+/* \brief constructs the prototype. */
+inline Indexed_geodesic_set* Indexed_geodesic_set::prototype()
+{ return new Indexed_geodesic_set(true); }
+
+/*! \brief clones. */
+inline Container* Indexed_geodesic_set::clone()
+{ return new Indexed_geodesic_set(); }
+
+/*! \brief obtains. */
+inline Boolean Indexed_geodesic_set::get_normal_per_vertex()
+{ return m_normal_per_vertex; }
+
+/*! \brief obtains. */
+inline Boolean Indexed_geodesic_set::get_color_per_vertex()
+{ return m_color_per_vertex; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Indexed_geodesic_set::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

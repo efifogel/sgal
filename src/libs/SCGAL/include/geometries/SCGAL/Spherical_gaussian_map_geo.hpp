@@ -70,30 +70,30 @@ private:
 protected:
   typedef Spherical_gaussian_map_geo                    Self;
 
-  // List of pointers to Spherical_gaussian_map_geo objects */
+  // List of pointers to Spherical_gaussian_map_geo objects. */
   typedef std::list<Spherical_gaussian_map_geo *>       Sgm_node_list;
   typedef Sgm_node_list::iterator                       Sgm_node_iter;
 
-  /*! The minkowski sum operands */
+  /*! The minkowski sum operands. */
   Sgm_node_list m_sgm_nodes;
 
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container .*/
+  virtual const std::string& get_tag() const;
   
-  /*! Create the renderers */
+  /*! Create the renderers. */
   void create_renderers();
 
-  /*! Destroy the renderers */
+  /*! Destroy the renderers. */
   void destroy_renderers();
   
 private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Default values */
+  /*! Default values. */
 
   /*! Indicates whether the sgm data structure is owned, i.e., explicitly
    * allocated. If the sgm data structure is owned, it should be destructed
@@ -101,46 +101,46 @@ private:
    */
   Boolean m_owned_sgm;
   
-  /*! The cubical Gaussian map representation */
+  /*! The cubical Gaussian map representation. */
   Sgm* m_sgm;
 
-  /*! Indicates whether to compute the minkowski sum */
+  /*! Indicates whether to compute the minkowski sum. */
   Boolean m_minkowski_sum;
 
-  /*! For benchmarking */
+  /*! For benchmarking. */
   float m_time;
 
-  /*! The vertices renderer */
+  /*! The vertices renderer. */
   Arrangement_renderer::Renderer* m_vertices_renderer;
 
-  /*! The vertices renderer */
+  /*! The vertices renderer. */
   Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
-  /*! The edges renderer */
+  /*! The edges renderer. */
   Arrangement_renderer::Renderer* m_edges_renderer;
 
-  /*! The colored edges renderer */
+  /*! The colored edges renderer. */
   Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
-  /*! The inflated line edges renderer */
+  /*! The inflated line edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
-  /*! The inflated strip edges renderer */
+  /*! The inflated strip edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
   
-  /*! The inflated tube edges renderer */
+  /*! The inflated tube edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
    
-  /*! Transform the coordinates of the SGM into spheres
-   * \param spheres (o) the transformed coordinates
+  /*! Transform the coordinates of the SGM into spheres.
+   * \param spheres (o) the transformed coordinates.
    */
   virtual void transform_coords(Approximate_sphere_vector& spheres)
   { transform_primal_coords(m_sgm, spheres); }
 
-  /*! Draw the primal representation of the polyhedron */
+  /*! Draw the primal representation of the polyhedron. */
   virtual void draw_primal(Draw_action* action);
 
-  /*! Draw the arrangement on sphere opaque
+  /*! Draw the arrangement on sphere opaque.
    * \param action
    */
   virtual void draw_aos_opaque(Draw_action* action);
@@ -154,15 +154,14 @@ public:
   /*! Copy constructor */
   Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo& gm);
   
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Spherical_gaussian_map_geo();
 
-  /*! Construct the prototype */
-  static Spherical_gaussian_map_geo* prototype()
-  { return new Spherical_gaussian_map_geo(true); }
+  /*! Construct the prototype. */
+  static Spherical_gaussian_map_geo* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Spherical_gaussian_map_geo(); }
+  /*! Clone. */
+  virtual Container* clone();
 
   /*! */
   virtual void cull(Cull_context& cull_context);
@@ -170,64 +169,75 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! Set the attributes of this node
-   * \param elem contains lists of attribute names and values
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! \brief deletes the prototype */
+  /*! Delete the prototype. */
   virtual void delete_prototype();
 
-  /*! \brief obtains the prototype */
+  /*! Obtain the prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! \brief cleans the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! \brief clears the internal representation and auxiliary data structures
-   */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
   
-  /*! \brief returns true if the representation is empty */
+  /*! Determine whether the representation is empty. */
   virtual Boolean is_empty() const { return m_sgm->is_empty(); }
 
-  /*! Draw the arrangement on sphere vertices
+  /*! Draw the arrangement on sphere vertices.
    * \param action
    */
   virtual void draw_aos_vertices(Draw_action* action);
 
-  /*! Draw the arrangement on sphere edges
+  /*! Draw the arrangement on sphere edges.
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action);
   
-  /*! Clean the renderer */
+  /*! Clean the renderer. */
   virtual void clean_renderer();
 
-  /*! Print statistics */
+  /*! Print statistics. */
   virtual void print_stat();
 
-  /*! Set the source gausian maps of the minkowski sum */
+  /*! Set the source gausian maps of the minkowski sum. */
   void insert_sgm(Spherical_gaussian_map_geo* sgm);
 
-  /*! Obrain the Gaussian map */
+  /*! Obrain the Gaussian map. */
   Sgm* get_sgm();
 
-  /*! Set the Gaussian map */
+  /*! Set the Gaussian map. */
   void set_sgm(Sgm* sgm);
   
-  /*! Set the flag that indicates whether to compute the minkowski sum */
+  /*! Set the flag that indicates whether to compute the minkowski sum. */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
 
   /*! Compute the equations of, or the normals to, the planes of the aos
-   * facets and store them at the vertices of the planar map
+   * facets and store them at the vertices of the planar map.
    */
   void update_facets()
   { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 };
+
+/*! \brief constructs the prototype. */
+inline Spherical_gaussian_map_geo* Spherical_gaussian_map_geo::prototype()
+{ return new Spherical_gaussian_map_geo(true); }
+
+/*! \brief clones. */
+inline Container* Spherical_gaussian_map_geo::clone()
+{ return new Spherical_gaussian_map_geo(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Spherical_gaussian_map_geo::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

@@ -143,10 +143,10 @@ void Lines_through_segments_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief determines whether the representation empty */
+/*! \brief determines whether the representation empty. */
 Boolean Lines_through_segments_geo::is_empty() { return true; }
 
-/*! \brief clean the representation */
+/*! \brief clean the representation. */
 void Lines_through_segments_geo::clean()
 {
   // std::cout << "Lines_through_segments_geo::clean()" << std::endl;
@@ -161,7 +161,8 @@ void Lines_through_segments_geo::clean()
 //     Exact_coord_array* coord_array =
 //       dynamic_cast<Exact_coord_array *>(m_segments->get_coord_array());
 //     if (!coord_array) return;
-    Coord_array* coord_array = m_segments->get_coord_array();
+    Indexed_line_set::Shared_coord_array coord_array =
+      m_segments->get_coord_array();
     if (!coord_array) return;
     const SGAL::Array<Uint>& coord_indices = m_segments->get_coord_indices();
 
@@ -265,7 +266,7 @@ void Lines_through_segments_geo::clean()
   }
 }
 
-/*! \brief Draws a single line */
+/*! \brief draws a single line. */
 template <typename Line_type>
 void Lines_through_segments_geo::draw_line(Draw_action* action,
                                            Line_type& line_obj,
@@ -398,7 +399,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
   glEnd();
 }
 
-/*! \brief Draws the geometry */
+/*! \brief draws the geometry. */
 void Lines_through_segments_geo::draw(Draw_action* action)
 {
   // Draw the input:
@@ -534,7 +535,7 @@ Boolean Lines_through_segments_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \biref Set the segments. */
+/*! \biref sets the segments. */
 void Lines_through_segments_geo::set_segments(Indexed_line_set* segments)
 {
   clear();
@@ -543,7 +544,7 @@ void Lines_through_segments_geo::set_segments(Indexed_line_set* segments)
   segments->register_observer(observer);
 }
 
-/*! \biref Processes change of points */
+/*! \biref processes change of points. */
 void Lines_through_segments_geo::field_changed(Field_info* field_info)
 {
   Container::field_changed(field_info);

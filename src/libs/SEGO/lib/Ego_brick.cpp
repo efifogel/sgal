@@ -78,7 +78,6 @@ Ego_brick::Ego_brick(Boolean proto) :
   m_knobs_visible(s_def_knobs_visible),
   m_dirty_center(true),
   m_dirty_coords(true),
-  m_owned_coord_array(false),
   m_owned_normal_array(false),
   m_owned_tex_coord_array(false)
 {}
@@ -86,13 +85,6 @@ Ego_brick::Ego_brick(Boolean proto) :
 /*! Destructor */
 Ego_brick::~Ego_brick()
 {
-  if (m_owned_coord_array) {
-    if (m_coord_array) {
-      delete m_coord_array;
-      m_coord_array = NULL;
-    }
-    m_owned_coord_array = false;
-  }
   if (m_owned_normal_array) {
     if (m_normal_array) {
       delete m_normal_array;
@@ -171,9 +163,8 @@ void Ego_brick::clean_coords()
   }
   
   SGAL_assertion(!m_coord_array);
-  m_coord_array = new Coord_array(size);
+  m_coord_array.reset(new Coord_array(size));
   SGAL_assertion(m_coord_array);
-  m_owned_coord_array = true;
   
   // Corner points:
   Float width = m_pitch * m_number_of_knobs1;
@@ -545,7 +536,7 @@ void Ego_brick::clean_center()
 }
 
 /*! \brief sets the coordinates. */
-void Ego_brick::set_coord_array(Coord_array* coord_array)
+void Ego_brick::set_coord_array(Shared_coord_array coord_array)
 {
   Geo_set::set_coord_array(coord_array);
   m_dirty_coords = false;
@@ -587,7 +578,7 @@ Vector3f& Ego_brick::get_center()
 }
 
 /*! \brief obtains the coordinate array. */
-Coord_array* Ego_brick::get_coord_array()
+Ego_brick::Shared_coord_array Ego_brick::get_coord_array()
 {
   if (is_dirty()) clean();
   return Geo_set::get_coord_array();

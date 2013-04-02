@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 13467 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -51,7 +51,8 @@ public:
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
     typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
       size_type;
-    const Coord_array* coord_array = m_geo_set->get_coord_array();
+    const Geo_set::Shared_coord_array coord_array =
+      m_geo_set->get_coord_array();
     size_type coord_array_size = coord_array->size();
     unsigned int num_facets = m_geo_set->get_num_primitives();
     B.begin_surface(coord_array_size, num_facets);

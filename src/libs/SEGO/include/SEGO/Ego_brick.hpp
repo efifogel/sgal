@@ -153,7 +153,7 @@ public:
   Vector3f& get_center();
   
   /*! Set the coordinates. */
-  void set_coord_array(Coord_array* coord_array);
+  void set_coord_array(Shared_coord_array coord_array);
 
   /*! Set the normals. */
   void set_normal_array(Normal_array* normal_array);
@@ -165,7 +165,7 @@ public:
   void set_coord_indices(const Array<Uint>& indices);
   
   /*! Obtain the coordinate array. */
-  Coord_array* get_coord_array();
+  Shared_coord_array get_coord_array();
 
   /*! Obtain the normal array. */
   Normal_array* get_normal_array();
@@ -254,12 +254,6 @@ private:
    * vertex v is the displacement of v relative to m_center (v - m_center).
    */
   Vector3f m_center;
-
-  /*! Indicates whether the coordinate array is "owned". If it is owned (as
-   * the user hasn't provided one) the coordinate array should be destructed
-   * when Ego is destructed.
-   */
-  Boolean m_owned_coord_array;
 
   /*! Indicates whether the normal array is "owned". If it is owned (as
    * the user hasn't provided one) the normal array should be destructed

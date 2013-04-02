@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12354 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -42,8 +42,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Piece::s_tag = "Piece";
-Container_proto * Piece::s_prototype = NULL;
+const std::string Piece::s_tag = "Piece";
+Container_proto* Piece::s_prototype = NULL;
 
 // Default values:
 const Uint Piece::s_def_width(0);
@@ -55,16 +55,12 @@ const Uint Piece::s_def_unit_size(1);
 Piece::Piece(Boolean proto) :
   Indexed_face_set(proto),
   m_unit_size(s_def_unit_size)
-{
-}
+{}
 
 /*! Destructor */
-Piece::~Piece()
-{
-  m_composition.clear();
-}
+Piece::~Piece() { m_composition.clear(); }
 
-/*! \brief initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Piece::init_prototype()
 {
   if (s_prototype) return;
@@ -82,34 +78,32 @@ void Piece::init_prototype()
                                           exec_func));
 }
 
-/*! \brief deletes the node prototype */
+/*! \brief deletes the node prototype. */
 void Piece::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype */
-Container_proto * Piece::get_prototype()
+/*! \brief obtains the node prototype. */
+Container_proto* Piece::get_prototype()
 {
   if (s_prototype == NULL) Piece::init_prototype();
   return s_prototype;
 }
   
-/*! \brief sets the attributes of this node */
-void Piece::set_attributes(Element * elem)
+/*! \brief sets the attributes of this node. */
+void Piece::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
 
   //! \todo sg->get_stats().add_num_mesh();
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ++ai)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "size") {
       m_unit_size = atoi(value.c_str());;
       elem->mark_delete(ai);
@@ -144,11 +138,11 @@ void Piece::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! Clean the representation */
+/*! Clean the representation. */
 void Piece::clean()
 {
   // Clear internal representation:
-  if (!m_coord_array) m_coord_array = new Coord_array;
+  if (!m_coord_array) m_coord_array.reset(new Coord_array);
 
   // Generate points:
   Uint size = (m_width + 1) * (m_height + 1) * (m_depth + 1);
@@ -202,7 +196,8 @@ void Piece::clean()
             m_coord_indices[m++] = start + 1;
             m_coord_indices[m++] = static_cast<Uint>(-1);
           }
-          if ((k == (m_depth - 1)) || (!m_composition[l + m_width * m_height])) {
+          if ((k == (m_depth - 1)) || (!m_composition[l + m_width * m_height]))
+          {
             m_coord_indices[m++] = offset + start;
             m_coord_indices[m++] = offset + start + 1;
             m_coord_indices[m++] = offset + start + width + 1;
@@ -247,8 +242,8 @@ void Piece::clean()
   Indexed_face_set::clean();
 }
 
-/*! Write this container */
-void Piece::write(Formatter * formatter)
+/*! Write this container. */
+void Piece::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
   formatter->single_int("width", m_width, s_def_width);

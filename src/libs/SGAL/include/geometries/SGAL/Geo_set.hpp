@@ -33,6 +33,7 @@
 #include <windows.h>
 #endif
 #include <GL/gl.h>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
@@ -96,10 +97,12 @@ public:
     FS_COLOR = 0x1
   };
 
-  /*! Constructor */
+  typedef boost::shared_ptr<Coord_array>                Shared_coord_array;
+
+  /*! Constructor. */
   Geo_set(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Geo_set();
 
   /*! Initialize the node prototype. */
@@ -108,13 +111,13 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype
-   * \return the node prototype
+  /*! Obtain the node prototype.
+   * \return the node prototype.
    */
   virtual Container_proto* get_prototype();
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
+   * \param elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
@@ -132,17 +135,17 @@ public:
   /*! Set the coordinate array.
    * \param coord_array (in) a pointer to a coordinate array
    */
-  void set_coord_array(Coord_array* coord_array);
+  void set_coord_array(Shared_coord_array coord_array);
 
   /*! Obtain the (const) coordinate array.
    * \return the coordinate array.
    */
-  const Coord_array* get_coord_array() const;
+  const Shared_coord_array get_coord_array() const;
 
   /*! Obtain the (non-const) coordinate array.
    * \return the coordinate array.
    */
-  Coord_array* get_coord_array();
+  Shared_coord_array get_coord_array();
 
   /*! Set the normal array.
    * \param normal_array (in) the normal array.
@@ -345,7 +348,7 @@ protected:
   Attachment m_color_attachment;
 
   /*! An array of vertex ccordinates. */
-  Coord_array* m_coord_array;
+  Shared_coord_array m_coord_array;
 
   /*! An array of normals. */
   Normal_array* m_normal_array;
@@ -492,7 +495,8 @@ inline Uint* Geo_set::get_tex_coord_indices_vector()
 { return m_tex_coord_indices.get_vector(); }
 
 /*! \brief Obtain the i-th coord index. */
-inline Uint Geo_set::get_coord_index(Uint i) const { return m_coord_indices[i]; }
+inline Uint Geo_set::get_coord_index(Uint i) const
+{ return m_coord_indices[i]; }
   
 /*! \brief resolvess the conflict between normal and colors. If the color
  * array is present, we use colors as source (disable lighting, etc.).
@@ -501,11 +505,12 @@ inline Geo_set::Fragment_source Geo_set::resolve_fragment_source() const
 { return (m_color_array && m_color_array->size()) ? FS_COLOR : FS_NORMAL; }
 
 /*! \brief obtains the (const) coordinate array. */
-inline const Coord_array* Geo_set::get_coord_array() const
+inline const Geo_set::Shared_coord_array Geo_set::get_coord_array() const
 { return m_coord_array; }
 
 /*! \brief obtains the (non-const) coordinate array. */
-inline Coord_array* Geo_set::get_coord_array() { return m_coord_array; }
+inline Geo_set::Shared_coord_array Geo_set::get_coord_array()
+{ return m_coord_array; }
 
 /*! \brief obtains the (const) normal array. */
 inline const Normal_array* Geo_set::get_normal_array() const

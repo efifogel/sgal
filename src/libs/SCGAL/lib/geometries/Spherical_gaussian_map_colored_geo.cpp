@@ -66,7 +66,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string
+const std::string
 Spherical_gaussian_map_colored_geo::s_tag("SphericalGaussianMapColored");
 Container_proto* Spherical_gaussian_map_colored_geo::s_prototype = NULL;
 
@@ -154,15 +154,16 @@ void Spherical_gaussian_map_colored_geo::clean()
     Sgm_initializer sgm_initializer(*m_sgm);
     Sgm_geo_initializer_visitor visitor;
 
-    Exact_coord_array* exact_coord_array =
-      dynamic_cast<Exact_coord_array *>(m_coord_array);
+    boost::shared_ptr<Exact_coord_array> exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       sgm_initializer(exact_coord_array->begin(),
                       exact_coord_array->end(),
                       exact_coord_array->size(),
                       m_coord_indices.begin(), m_coord_indices.end(),
                       m_num_primitives, &visitor);
-    } else {
+    }
+    else {
       sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
                       m_coord_indices.begin(), m_coord_indices.end(),

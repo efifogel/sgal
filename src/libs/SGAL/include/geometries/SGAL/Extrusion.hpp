@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -146,7 +146,10 @@ public:
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Set the ellpsoid attributes. */
+  /*! Set the attributes of the object extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -187,7 +190,7 @@ protected:
   
 private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The container prototype. */
   static Container_proto* s_prototype;

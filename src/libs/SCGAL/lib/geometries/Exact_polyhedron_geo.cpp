@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 13487 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -52,7 +52,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Exact_polyhedron_geo::s_tag = "ExactPolyhedron";
+const std::string Exact_polyhedron_geo::s_tag = "ExactPolyhedron";
 SGAL::Container_proto* Exact_polyhedron_geo::s_prototype = 0;
 
 REGISTER_TO_FACTORY(Exact_polyhedron_geo, "Exact_polyhedron_geo");
@@ -74,13 +74,14 @@ void Exact_polyhedron_geo::convex_hull()
   
   if (!m_coord_array) return;
 
-  Exact_coord_array* exact_coord_array =
-    dynamic_cast<Exact_coord_array *>(m_coord_array);
+  boost::shared_ptr<Exact_coord_array>  exact_coord_array =
+    boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     // std::cout << "Exact_polyhedron_geo::exact" << std::endl;
     CGAL::convex_hull_3(exact_coord_array->begin(),
                         exact_coord_array->end(), m_polyhedron);    
-  } else {
+  }
+  else {
     // std::cout << "Exact_polyhedron_geo::approximate" << std::endl;
     std::vector<Point_3> points;
     points.resize(m_coord_array->size());

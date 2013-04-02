@@ -19,13 +19,13 @@ DEF INC_EVEN_LAYER_X_KEY SingleKeySensor { key "q" }
 DEF INC_EVEN_LAYER_X Incrementor {
   minValue 0
   maxValue -1
-  value 1
+  value 0
 }
 DEF INC_EVEN_LAYER_Y_KEY SingleKeySensor { key "w" }
 DEF INC_EVEN_LAYER_Y Incrementor {
   minValue 0
   maxValue -1
-  value 1
+  value 0
 }
 DEF INC_ODD_LAYER_X_KEY SingleKeySensor { key "e" }
 DEF INC_ODD_LAYER_X Incrementor {

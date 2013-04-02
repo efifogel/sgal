@@ -38,43 +38,43 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Extend the arrangement vertex */
+/*! Extend the arrangement vertex. */
 template <class Point_2>
 class Sgm_colored_arr_vertex : public Sgm_arr_vertex<Point_2> {
 private:
-  /*! The color of the (aos) vertex) */
+  /*! The color of the (aos) vertex). */
   Vector3f m_color;
 
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Sgm_colored_arr_vertex() {}
 
-  /*! Obtain the color */
+  /*! Obtain the color. */
   const Vector3f& color() const { return m_color; }
 
-  /*! Set the color */
+  /*! Set the color. */
   void set_color(const Vector3f& color) { m_color = color; }
 };
 
-/*! Extend the arrangement halfedge */
+/*! Extend the arrangement halfedge. */
 template <class X_monotone_curve_2>
 class Sgm_colored_arr_halfedge : public Sgm_arr_halfedge<X_monotone_curve_2> {
 private:
-  /*! The color of the (aos) halfedge */
+  /*! The color of the (aos) halfedge. */
   Vector3f m_color;
 
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Sgm_colored_arr_halfedge() {}
 
-  /*! Obtain the color */
+  /*! Obtain the color. */
   const Vector3f& color() const { return m_color; }
 
-  /*! Set the color */
+  /*! Set the color. */
   void set_color(const Vector3f& color) { m_color = color; }
 };
   
-/*! Extend the arrangement face */
+/*! Extend the arrangement face. */
 class Sgm_colored_arr_face : public Sgm_arr_face {
 private:
   /*! Indicates whether it is a colored (aos) face */
@@ -117,10 +117,12 @@ typedef Spherical_gaussian_map_colored::Vertex          Sgm_colored_vertex;
 typedef Spherical_gaussian_map_colored::Halfedge        Sgm_colored_halfedge;
 typedef Spherical_gaussian_map_colored::Face            Sgm_colored_face;
 
-typedef Spherical_gaussian_map_colored::Vertex_handle   Sgm_colored_vertex_handle;
+typedef Spherical_gaussian_map_colored::Vertex_handle
+  Sgm_colored_vertex_handle;
 typedef Spherical_gaussian_map_colored::Halfedge_handle
   Sgm_colored_halfedge_handle;
-typedef Spherical_gaussian_map_colored::Face_handle     Sgm_colored_face_handle;
+typedef Spherical_gaussian_map_colored::Face_handle
+  Sgm_colored_face_handle;
 
 typedef Spherical_gaussian_map_colored::Vertex_const_handle
   Sgm_colored_vertex_const_handle;
@@ -133,8 +135,10 @@ typedef Spherical_gaussian_map_colored::Vertex_iterator
   Sgm_colored_vertex_iterator;
 typedef Spherical_gaussian_map_colored::Halfedge_iterator
   Sgm_colored_halfedge_iterator;
-typedef Spherical_gaussian_map_colored::Edge_iterator   Sgm_colored_edge_iterator;
-typedef Spherical_gaussian_map_colored::Face_iterator   Sgm_colored_face_iterator;
+typedef Spherical_gaussian_map_colored::Edge_iterator
+  Sgm_colored_edge_iterator;
+typedef Spherical_gaussian_map_colored::Face_iterator
+  Sgm_colored_face_iterator;
 
 typedef Spherical_gaussian_map_colored::Vertex_const_iterator
   Sgm_colored_vertex_const_iterator;

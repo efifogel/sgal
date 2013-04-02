@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7261 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,7 +40,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Extrusion::s_tag = "Extrusion";
+const std::string Extrusion::s_tag = "Extrusion";
 Container_proto* Extrusion::s_prototype = NULL;
 
 // Default values:
@@ -52,7 +52,7 @@ const Uint Extrusion::s_def_cross_section_slices(32);
 
 REGISTER_TO_FACTORY(Extrusion, "Extrusion");
 
-/*! Constructor */
+/*! Constructor. */
 Extrusion::Extrusion(Boolean proto) :
   Indexed_face_set(proto),
   m_begin_cap(s_def_begin_cap),
@@ -60,24 +60,22 @@ Extrusion::Extrusion(Boolean proto) :
   m_loop(s_def_loop),
   m_cross_section_radius(s_def_cross_section_radius),
   m_cross_section_slices(s_def_cross_section_slices)
-{
-}
+{}
 
-/*! Destructor */
+/*! Destructor. */
 Extrusion::~Extrusion()
 {
-  if (m_coord_array) delete m_coord_array;
   m_cross_section.clear();
   m_orientation.clear();
   m_scale.clear();
   m_spine.clear();
 }
 
-/*! Clean the ellipsoid internal representation */
+/*! Clean the ellipsoid internal representation. */
 void Extrusion::clean()
 {
   // Clear internal representation:
-  if (!m_coord_array) m_coord_array = new Coord_array;
+  if (!m_coord_array) m_coord_array.reset(new Coord_array);
 
   // Generate cross section:
   if (m_cross_section.size() == 0) {
@@ -146,7 +144,8 @@ void Extrusion::clean()
     Rotation applied_rot;
     applied_rot.slerp(0.5f, prev_rot, rot);
     mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
-  } else {
+  }
+  else {
     mat.make_rot(rot.get_axis(), rot.get_angle());
   }
   for (i = 0; i < m_cross_section.size(); ++i) {
@@ -175,7 +174,8 @@ void Extrusion::clean()
         axis.cross(prev_vec, vec);
         axis.normalize();
         tmp_rot.set(axis, angle);
-      } else {
+      }
+      else {
         tmp_rot.set(hor, -SGAL_PI);
       }
     } else {
@@ -309,17 +309,14 @@ void Extrusion::clean()
   Indexed_face_set::clean();
 }
 
-/*! Set the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the ellpsoid attributes. */
 void Extrusion::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "beginCap") {
@@ -422,7 +419,7 @@ Attribute_list Extrusion::get_attributes()
 }
 #endif
 
-/* Initilalize the container prototype */
+/* \brief initilalizes the container prototype. */
 void Extrusion::init_prototype()
 {
   if (s_prototype) return;
@@ -464,14 +461,14 @@ void Extrusion::init_prototype()
                                               exec_func));
 }
 
-/*! Delete the container prototype */
+/*! \brief deletes the container prototype. */
 void Extrusion::delete_prototype() 
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the container prototype */
+/*! \brief obtains the container prototype. */
 Container_proto* Extrusion::get_prototype() 
 {  
   if (!s_prototype) Extrusion::init_prototype();

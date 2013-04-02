@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -31,7 +31,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Ellipsoid::s_tag = "Ellipsoid";
+const std::string Ellipsoid::s_tag = "Ellipsoid";
 Container_proto* Ellipsoid::s_prototype = NULL;
 
 // Default values:
@@ -60,7 +60,7 @@ Ellipsoid::~Ellipsoid(){}
 void Ellipsoid::clean()
 {
   // Clear internal representation:
-  if (!m_coord_array) m_coord_array = new Coord_array;
+  if (!m_coord_array) m_coord_array.reset(new Coord_array);
   
   // Generate points:
   Uint size = 2 + m_slices * (m_stacks - 1);
@@ -285,5 +285,26 @@ Container_proto* Ellipsoid::get_prototype()
   if (!s_prototype) Ellipsoid::init_prototype();
   return s_prototype;
 } 
+
+/*! \brief sets the width of the ellipsoid. */
+void Ellipsoid::set_width(Float width)
+{
+  m_width = width;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief sets the height of the ellipsoid. */
+void Ellipsoid::set_height(Float height)
+{
+  m_height = height;
+  m_dirty_sphere_bound = true;
+}
+
+/*! \brief sets the depth of the ellipsoid. */
+void Ellipsoid::set_depth(Float depth)
+{
+  m_depth = depth;
+  m_dirty_sphere_bound = true;
+}
 
 SGAL_END_NAMESPACE

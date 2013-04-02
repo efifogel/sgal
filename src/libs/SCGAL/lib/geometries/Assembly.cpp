@@ -66,7 +66,7 @@
 SGAL_BEGIN_NAMESPACE
 
 Container_proto* Assembly::s_prototype = NULL;
-std::string Assembly::s_tag = "Assembly";
+const std::string Assembly::s_tag = "Assembly";
 
 REGISTER_TO_FACTORY(Assembly, "Assembly");
 
@@ -105,7 +105,7 @@ Assembly::Assembly(Boolean proto) :
   m_part_projection_aos_geo_node.set_which_choice(0);
 }
 
-/*! Destructor */
+/*! Destructor. */
 Assembly::~Assembly()
 {
   remove_child(&m_switch);
@@ -113,7 +113,7 @@ Assembly::~Assembly()
   clear();
 }
 
-/*! \brief clears the representation */
+/*! \brief clears the representation. */
 void Assembly::clear()
 {
   m_parts.clear();                      // clear container of parts
@@ -158,7 +158,7 @@ void Assembly::clear()
   // Clear map of projections (union per part) 
 }
 
-/*! \brief initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Assembly::init_prototype()
 {
   if (s_prototype) return;
@@ -204,27 +204,27 @@ void Assembly::init_prototype()
                                exec_func));
 }
 
-/*! \brief deletes the node prototype */
+/*! \brief deletes the node prototype. */
 void Assembly::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype */
+/*! \brief obtains the node prototype. */
 Container_proto* Assembly::get_prototype() 
 {  
   if (!s_prototype) Assembly::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
+/*! \brief sets the attributes of the object extracted from the input file. */
 void Assembly::set_attributes(Element* elem) 
 {
   Group::set_attributes(elem);
 }
 
-/*! \brief assigns each part a unique non-negative number */
+/*! \brief assigns each part a unique non-negative number. */
 Uint Assembly::assign_id(Node* node, Uint id) const
 {
   Assembly_part* part = dynamic_cast<Assembly_part*>(node);
@@ -246,7 +246,7 @@ Uint Assembly::assign_id(Node* node, Uint id) const
   return id;
 }
 
-/*! \brief assigns each part a unique non-negative number */
+/*! \brief assigns each part a unique non-negative number. */
 Uint Assembly::assign_id(Group* group, Uint id) const
 {
   Node_const_iterator it;
@@ -257,7 +257,7 @@ Uint Assembly::assign_id(Group* group, Uint id) const
   return id;
 }
 
-/*! \brief prints information to an output stream */
+/*! \brief prints information to an output stream. */
 void Assembly::print_info(std::ostream& out)
 {
   out << "Number of parts: " << m_number_of_parts << std::endl;
@@ -286,13 +286,13 @@ void Assembly::print_info(std::ostream& out)
             << std::endl;
 }
 
-/*! \brief solves the puzzle */
+/*! \brief solves the puzzle. */
 void Assembly::solve(Field_info* /* field_info */)
 {
   if (m_dirty) clean();
 }
 
-/*! \brief constructs the lists of the reflected sgm geometry nodes */
+/*! \brief constructs the lists of the reflected sgm geometry nodes. */
 void Assembly::construct_reflected_sgms()
 {
   clock_t start_time = clock();
@@ -316,11 +316,13 @@ void Assembly::construct_reflected_sgms()
        * from the input coordinate array, or from the input polyhedron with new
        * code that computes it directly from the Sgm.
        */
-      Exact_coord_array* coord_array =
-        static_cast<Exact_coord_array*>(sgm_geo->get_coord_array());
-      if (coord_array != NULL) {
+      Sgm_geo::Shared_coord_array tmp = sgm_geo->get_coord_array();
+      boost::shared_ptr<Exact_coord_array> coord_array =
+        boost::dynamic_pointer_cast<Exact_coord_array>(tmp);
+      if (coord_array) {
         Uint size  = coord_array->size();
-        Exact_coord_array* inverse_coord_array = new Exact_coord_array(size);
+        boost::shared_ptr<Exact_coord_array>
+          inverse_coord_array(new Exact_coord_array(size));
         Exact_coord_array::Exact_point_const_iter its;
         Exact_coord_array::Exact_point_iter itt = inverse_coord_array->begin();
         for (its = coord_array->begin(); its != coord_array->end(); ++its) {
@@ -331,7 +333,8 @@ void Assembly::construct_reflected_sgms()
         reflected_sgm_geo->set_coord_array(inverse_coord_array);
         const SGAL::Array<Uint>& indices = sgm_geo->get_coord_indices();
         reflected_sgm_geo->set_reverse_coord_indices(indices);
-      } else {         
+      }
+      else {         
         Sgm_geo::Polyhedron* reflected_polyhedron = new Sgm_geo::Polyhedron;
         Spherical_gaussian_map_colored* sgm = sgm_geo->get_sgm();
         std::vector<Exact_point_3> inverse_points;
@@ -358,7 +361,7 @@ void Assembly::construct_reflected_sgms()
             << std::endl;
 }
 
-/*! \brief computes the Minkowski sums */
+/*! \brief computes the Minkowski sums. */
 void Assembly::compute_minkowski_sums()
 {
   clock_t start_time = clock();
@@ -408,7 +411,7 @@ void Assembly::compute_minkowski_sums()
             << std::endl;
 }
 
-/* \brief constructs the sgm geometry nodes */
+/* \brief constructs the sgm geometry nodes. */
 void Assembly::construct_sgms_nodes()
 {
   clock_t start_time = clock();
@@ -440,7 +443,7 @@ void Assembly::construct_sgms_nodes()
             << std::endl;
 }
 
-/* \brief constructs the reflected sgm geometry nodes */
+/* \brief constructs the reflected sgm geometry nodes. */
 void Assembly::construct_reflected_sgms_nodes()
 {
   Sgm_geo_list_iter rslit = m_parts_reflected_sgm_geos.begin();
@@ -475,7 +478,7 @@ void Assembly::construct_reflected_sgms_nodes()
   }
 }
 
-/*! \brief constructs the Minkowski-sum nodes */
+/*! \brief constructs the Minkowski-sum nodes. */
 void Assembly::construct_minkowski_sum_nodes()
 {
   Minkowski_sum_list_iter msli;
@@ -533,7 +536,7 @@ void Assembly::construct_projection_nodes()
 }
 
 /*! \brief computes the projection of a convex polyhedron represented by a
- * spherical Gaussian map
+ * spherical Gaussian map.
  */
 void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
 {
@@ -608,7 +611,7 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
 }
 
 /*! \brief computes the projection of a convex polyhedron represented by a
- * spherical Gaussian map
+ * spherical Gaussian map.
  */
 void Assembly::compute_projection(Sgm::Halfedge_const_handle hit1,
                                   Aos_mark* aos)
@@ -669,7 +672,7 @@ void Assembly::compute_projection(Sgm::Halfedge_const_handle hit1,
 }
 
 /*! \brief computes the projection of a convex polyhedron represented by a
- * spherical Gaussian map
+ * spherical Gaussian map.
  */
 void Assembly::compute_projection(Sgm::Vertex_const_handle vit, Aos_mark* aos)
 {
@@ -723,7 +726,7 @@ void Assembly::compute_projection(Sgm::Vertex_const_handle vit, Aos_mark* aos)
   hes.clear();
 }
 
-/*! \brief finds the next halfedge on the silhouette */
+/*! \brief finds the next halfedge on the silhouette. */
 Assembly::Sgm::Halfedge_const_handle
 Assembly::find_next_silhouette_halfedge(Sgm::Halfedge_const_handle first_he)
 {
@@ -772,7 +775,7 @@ Assembly::find_next_silhouette_halfedge(Sgm::Halfedge_const_handle first_he)
 }
 
 /*! \brief computes the projection of a convex polyhedron represented by a
- * spherical Gaussian map
+ * spherical Gaussian map.
  */
 void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
 {
@@ -866,7 +869,7 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
 }
 
 /*! \brief compute the oriented side of the origin with respect to the
- * underlying plane of a facet
+ * underlying plane of a facet.
  */
 CGAL::Oriented_side Assembly::compute_side(Sgm::Halfedge_const_handle heh)
 {
@@ -888,7 +891,7 @@ CGAL::Oriented_side Assembly::compute_side(Sgm::Halfedge_const_handle heh)
 }
 
 /*! \brief computes the projection of a convex polyhedron represented by a
- * spherical Gaussian map
+ * spherical Gaussian map.
  */
 void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
 {
@@ -990,7 +993,7 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
   compute_general_projection(sgm, aos);
 }
 
-/*! \brief computes the Minkowski-sum projections */
+/*! \brief computes the Minkowski-sum projections. */
 void Assembly::compute_projections()
 {
   clock_t start_time = clock();
@@ -1020,7 +1023,7 @@ void Assembly::compute_projections()
 }
 
 /*! \brief computes the union of the pairwise Minkowski-sum projections per
- * part
+ * part.
  */
 void Assembly::compute_part_projections()
 {
@@ -1047,7 +1050,7 @@ void Assembly::compute_part_projections()
             << std::endl;
 }
 
-/*! \brief removes marked edges to lower the complexity of the arrangement */
+/*! \brief removes marked edges to lower the complexity of the arrangement. */
 void Assembly::remove_marked_edges(Aos_mark* aos)
 {
   // std::cout << *aos << std::endl;
@@ -1097,7 +1100,7 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
 }
 
 /*! \brief computes the union of the pairwise Minkowski-sum projections per
- * part
+ * part.
  */
 void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
 {
@@ -1165,7 +1168,7 @@ void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
   // std::cout << "compute_part_projections: 3a " << std::endl;
 }
 
-/*! \brief constructs the per-part Minkowski-sum projection nodes */
+/*! \brief constructs the per-part Minkowski-sum projection nodes. */
 void Assembly::construct_part_projection_nodes()
 {
   // std::cout << "Assembly::construct_part_projection_nodes" << std::endl;
@@ -1199,7 +1202,7 @@ void Assembly::construct_part_projection_nodes()
   // std::cout << "Assembly::construct_part_projection_nodes end" << std::endl;
 }
 
-/* \brief computes the NDBG */
+/* \brief computes the NDBG. */
 void Assembly::compute_aos_graph()
 {
   // std::cout << "compute_aos_graph" << std::endl;
@@ -1244,7 +1247,7 @@ void Assembly::compute_aos_graph()
             << std::endl;
 }
 
-/*! \brief construct the graph node */
+/*! \brief construct the graph node. */
 void Assembly::construct_graph_node()
 {
   m_graph_node.set_appearance(&m_appearance);
@@ -1261,7 +1264,7 @@ void Assembly::construct_graph_node()
   aos_geo->set_aos_vertex_radius(.03f);
 }
 
-/*! \brief processes the NDBG */
+/*! \brief processes the NDBG. */
 void Assembly::process_aos_graph()
 {
   std::cout << "# vertices: " << m_aos_graph->number_of_vertices()
@@ -1363,7 +1366,7 @@ void Assembly::process_aos_graph()
             << std::endl;
 }
 
-/*! \brief cleans internal representation */
+/*! \brief cleans internal representation. */
 void Assembly::clean()
 {
   m_dirty = false;
@@ -1414,7 +1417,7 @@ void Assembly::clean()
 }
 
 /* \brief processes change of the flag that indicates whether to draw the
- * alternate geometry
+ * alternate geometry.
  */
 void Assembly::draw_alt_changed(Field_info* field_info)
 {
@@ -1442,7 +1445,7 @@ void Assembly::inc_alt_changed(Field_info* field_info)
 }
 
 /* \brief processes change of the flag that indicates whether  to draw the
- * Gausian maps of the Minkowski sums of the parts
+ * Gausian maps of the Minkowski sums of the parts.
  */
 void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
 {
@@ -1460,7 +1463,7 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
 }
 
 /* \brief processes change of the flag that indicates whether  to increment
- * the Minkowski sums of the parts
+ * the Minkowski sums of the parts.
  */
 void Assembly::inc_minkowski_sums_changed(Field_info* field_info)
 {

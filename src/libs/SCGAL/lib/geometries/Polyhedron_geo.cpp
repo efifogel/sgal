@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14183 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -48,7 +48,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Polyhedron_geo::s_tag = "sgalPolyhedron";
+const std::string Polyhedron_geo::s_tag = "Polyhedron";
 SGAL::Container_proto* Polyhedron_geo::m_prototype = 0;
 
 REGISTER_TO_FACTORY(Polyhedron_geo, "Polyhedron_geo");
@@ -56,15 +56,11 @@ REGISTER_TO_FACTORY(Polyhedron_geo, "Polyhedron_geo");
 /*! Constructor */
 Polyhedron_geo::Polyhedron_geo(Boolean proto) :
   Mesh_set(proto)
-{
-  m_surface.set_polyhedron(this);
-}
+{ m_surface.set_polyhedron(this); }
 
 /*! Destructor */
 Polyhedron_geo::~Polyhedron_geo()
-{
-  m_polyhedron.clear();
-}
+{ m_polyhedron.clear(); }
 
 /*! Clean the data structure */
 void Polyhedron_geo::clean()
@@ -93,9 +89,8 @@ void Polyhedron_geo::cull(SGAL::Cull_context& cull_context) {}
 /*! \brief */
 void Polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
 {
-  for (Facet_iterator i = m_polyhedron.facets_begin();
-       i != m_polyhedron.facets_end(); ++i)
-  {
+  Facet_iterator i;
+  for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Halfedge_facet_circulator j = i->facet_begin();
     // Facets in polyhedral surfaces are at least triangles.
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
@@ -117,9 +112,8 @@ void Polyhedron_geo::isect(SGAL::Isect_action* action)
   if (is_dirty()) clean();
   if (is_empty()) return;
 
-  for (Facet_iterator i = m_polyhedron.facets_begin();
-       i != m_polyhedron.facets_end(); ++i)
-  {
+  Facet_iterator i;
+  for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Halfedge_facet_circulator j = i->facet_begin();
     // Facets in polyhedral surfaces are at least triangles.
     CGAL_assertion(CGAL::circulator_size(j) >= 3);

@@ -42,7 +42,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Indexed_geodesic_set::s_tag = "sgalIndexedGeodesicSet";
+const std::string Indexed_geodesic_set::s_tag = "IndexedGeodesicSet";
 Container_proto* Indexed_geodesic_set::s_prototype = 0;
 
 // Default values:
@@ -72,7 +72,6 @@ Indexed_geodesic_set::~Indexed_geodesic_set() {}
 
 /* \brief set the flag that indicates whether normals are bound per vertex or
  * per face.
- * \param normal_per_vertex true if normals are bound per vertex
  */
 void Indexed_geodesic_set::set_normal_per_vertex(Boolean normal_per_vertex)
 {
@@ -82,7 +81,6 @@ void Indexed_geodesic_set::set_normal_per_vertex(Boolean normal_per_vertex)
 
 /* \brief sets the flag that indicates whether colors are bound per vertex or
  * per face.
- * \param color_per_vertex true if normals are bound per vertex
  */
 void Indexed_geodesic_set::set_color_per_vertex(Boolean color_per_vertex)
 {
@@ -92,9 +90,8 @@ void Indexed_geodesic_set::set_color_per_vertex(Boolean color_per_vertex)
 
 /*! \brief sets the coordinate set. Pass the pointer to the geometry object 
  * used by the decoder as well.
- * \param coord_array (in) a pointer to a coord set
  */
-void Indexed_geodesic_set::set_coord_array(Coord_array* coord_array)
+void Indexed_geodesic_set::set_coord_array(Shared_coord_array coord_array)
 {
   m_coord_array = coord_array;
   m_dirty_sphere_bound = true;
@@ -102,14 +99,12 @@ void Indexed_geodesic_set::set_coord_array(Coord_array* coord_array)
 
 /*! \brief sets the normal set. Pass the pointer to the geometry object 
  * used by the decoder as well.
- * \param coord_array (in) a pointer to a coord set
  */ 
 void Indexed_geodesic_set::set_normal_array(Normal_array* normal_array)
 { m_normal_array = normal_array; }
 
 /*! \brief sets the texture coordinate set. Pass the pointer to the geometry
  * object used by the decoder as well.
- * \param tex_coord_array (in) a pointer to a coord set
  */
 void Indexed_geodesic_set::set_tex_coord_array(Tex_coord_array* tex_coord_array)
 { m_tex_coord_array = tex_coord_array; }
