@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7780 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -50,17 +50,17 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Coord_transformer::s_prototype = NULL;
-std::string Coord_transformer::s_tag = "CoordinateTransformer";
+Container_proto* Coord_transformer::s_prototype = NULL;
+const std::string Coord_transformer::s_tag = "CoordinateTransformer";
 
-bool Coord_transformer::s_def_enabled = SGAL_TRUE;
+Boolean Coord_transformer::s_def_enabled = true;
 
 /*! Register to the container factory. This will enable automatic creation
  * through the name provided as a parameter.
  */
 REGISTER_TO_FACTORY(Coord_transformer, "Coord_transformer");
 
-/*! A parameter-less constructor */
+/*! \brief A parameter-less constructor. */
 Coord_transformer::Coord_transformer(Boolean proto) :
   Container(proto), 
   m_enabled(s_def_enabled),
@@ -69,28 +69,19 @@ Coord_transformer::Coord_transformer(Boolean proto) :
   m_execute(false),
   m_translated(false),
   m_rotated(false),
-  m_transform(NULL),
-  m_coord_array(NULL),
-  m_coord_array_changed(NULL)
-{
-}
+  m_transform(NULL)
+{}
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Coord_transformer::set_attributes(Element * elem)
+/*! \brief sets the attributes of this object. */
+void Coord_transformer::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "translation") {
       Vector3f vec(value);
       m_translation.set(vec);
@@ -117,13 +108,16 @@ void Coord_transformer::set_attributes(Element * elem)
     }
   }
 
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+  typedef Element::Cont_attr_iter         Cont_attr_iter;
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Container* cont = elem->get_value(cai);
     if (name == "coord") {
-      m_coord_array = dynamic_cast<Coord_array*>(cont);
+      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
+      Shared_coord_array shared_coord_array;
+      shared_coord_array.reset(coord_array);
+      set_coord_array(shared_coord_array);
       elem->mark_delete(cai);      
       continue;
     }
@@ -133,7 +127,7 @@ void Coord_transformer::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! Set the attributes of this node */
+/*! \brief sets the attributes of this node. */
 void Coord_transformer::init_prototype()
 {
   if (s_prototype) return;
@@ -172,114 +166,112 @@ void Coord_transformer::init_prototype()
                                           get_member_offset(&m_execute),
                                           exec_func));
 
-  SF_container * field;
-  field = new SF_container(COORD, "coord", get_member_offset(&m_coord_array),
-                           exec_func);
+  SF_shared_container* field;
+  field = new SF_shared_container(COORD, "coord",
+                                  get_member_offset(&m_coord_array),
+                                  exec_func);
   s_prototype->add_field_info(field);
 
-  field = new SF_container(COORD_CHANGED, "coord_changed",
-                           get_member_offset(&m_coord_array_changed));
+  field = new SF_shared_container(COORD_CHANGED, "coord_changed",
+                                  get_member_offset(&m_coord_array_changed));
   s_prototype->add_field_info(field);
 }
 
-/*! Delete the prototype */
+/*! \brief deletes the prototype. */
 void Coord_transformer::delete_prototype()
 {
   delete s_prototype;
   s_prototype = 0;
 }
 
-/*! Obtain the prototype
- * \return the prototype
- */
-Container_proto * Coord_transformer::get_prototype() 
+/*! \brief obtains the prototype. */
+Container_proto* Coord_transformer::get_prototype() 
 {  
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! Sets the translation field
- */
-void Coord_transformer::set_translation(const Vector3f & translation)
+/*! \brief sets the translation field. */
+void Coord_transformer::set_translation(const Vector3f& translation)
 {
   set_translation(translation[0], translation[1], translation[2]);
 }
 
-/*! Sets the translation field
- */
+/*! \brief sets the translation field. */
 void Coord_transformer::set_translation(Float v0, Float v1, Float v2)
 {
   m_translation.set(v0, v1, v2);
   translate();
 }
 
-/*! Set the rotation field
- */
-void Coord_transformer::set_rotation(const Rotation & rotation)
+/*! \brief sets the rotation field. */
+void Coord_transformer::set_rotation(const Rotation& rotation)
 {
   set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle());
 }
 
-/*! Set the rotation field
- */
+/*! \brief sets the rotation field. */
 void Coord_transformer::set_rotation(Float v0, Float v1, Float v2, Float angle)
 {
   m_rotation.set(v0, v1, v2, angle);
   rotate();
 }
 
-/*! Translate the input vertices and store the results in the output vertices
+/*! \brief translates the input vertices and store the results in the output
+ * vertices.
  */
-void Coord_transformer::translate(Field_info * field_info)
+void Coord_transformer::translate(Field_info* field_info)
 {
   m_transform.set_translation(m_translation);
   execute(field_info);
 
   m_translated = true;
-  Field * changed_field = get_field(TRANSLATED);
+  Field* changed_field = get_field(TRANSLATED);
   if (changed_field) changed_field->cascade();
 }
 
-/*! Rotate the input vertices and store the results in the output vertices
+/*! \brief rotates the input vertices and store the results in the output
+ * vertices.
  */
-void Coord_transformer::rotate(Field_info * field_info)
+void Coord_transformer::rotate(Field_info* field_info)
 {
   m_transform.set_rotation(m_rotation);
   execute(field_info);
 
   m_rotated = true;
-  Field * changed_field = get_field(ROTATED);
+  Field* changed_field = get_field(ROTATED);
   if (changed_field) changed_field->cascade();
 }
 
-/*! Transform the input vertices and store the results in the output vertices
+/*! Transform the input vertices and store the results in the output vertices.
  */
-void Coord_transformer::execute(Field_info * field_info)
+void Coord_transformer::execute(Field_info* field_info)
 {
   if (!m_enabled) return;
   if (!m_coord_array) return;
 
-  unsigned int size = m_coord_array->size();
+  Uint size = m_coord_array->size();
 
   if (!m_coord_array_changed) 
-    m_coord_array_changed = new Coord_array(size);
+    m_coord_array_changed.reset(new Coord_array(size));
   else
     m_coord_array_changed->resize(size);
 
   if (m_reflect) {
-    for (unsigned int i = 0; i < size; ++i)
+    for (Uint i = 0; i < size; ++i)
       (*m_coord_array_changed)[i].negate((*m_coord_array)[i]);
-  } else {
-    const Matrix4f & mat = m_transform.get_matrix();
-    for (unsigned int i = 0; i < size; ++i)
+  }
+  else {
+    const Matrix4f& mat = m_transform.get_matrix();
+    for (Uint i = 0; i < size; ++i)
       (*m_coord_array_changed)[i].xform_pt((*m_coord_array)[i], mat);
   }
   
-  Field * coord_changed_field = get_field(COORD_CHANGED);
+  Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
 
   m_changed = true;
-  Field * changed_field = get_field(CHANGED);
+  Field* changed_field = get_field(CHANGED);
   if (changed_field) changed_field->cascade();
 
   m_coord_array->process_content_changed();

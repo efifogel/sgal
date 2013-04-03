@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// Id: $
 // $Revision: 12554 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -22,7 +22,6 @@
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
-#include <GL/gl.h>
 #include <string>
 
 #include "SGAL/Coord_minkowski.hpp"
@@ -40,41 +39,31 @@
 SGAL_BEGIN_NAMESPACE
 
 Container_proto* Coord_minkowski::s_prototype = NULL;
-std::string Coord_minkowski::s_tag = "CoordinateMinkowski";
+const std::string Coord_minkowski::s_tag = "CoordinateMinkowski";
 
-bool Coord_minkowski::s_def_enabled = SGAL_TRUE;
+Boolean Coord_minkowski::s_def_enabled(true);
 
 /*! Register to the container factory. This will enable automatic creation
  * through the name provided as a parameter.
  */
 REGISTER_TO_FACTORY(Coord_minkowski, "Coord_minkowski");
 
-/*! A parameter-less constructor */
+/*! A parameter-less constructor. */
 Coord_minkowski::Coord_minkowski(Boolean proto) :
   Container(proto), 
   m_enabled(s_def_enabled),
   m_changed(false),
-  m_execute(false),
-  m_coord_array1(0),
-  m_coord_array2(0),
-  m_coord_array_changed(0)
-{
-}
+  m_execute(false)
+{}
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem lists of attribute names and values extracted from the input file
- * \param sg a pointer to the scene graph
- */
+/*! \brief Sets the attributes of this object. */
 void Coord_minkowski::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
@@ -84,18 +73,24 @@ void Coord_minkowski::set_attributes(Element* elem)
     }
   }
 
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  typedef Element::Cont_attr_iter         Cont_attr_iter;
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Container* cont = elem->get_value(cai);
     if (name == "coord1") {
-      m_coord_array1 = dynamic_cast<Coord_array*>(cont);
+      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
+      Shared_coord_array shared_coord_array;
+      shared_coord_array.reset(coord_array);
+      set_coord_array1(shared_coord_array);
       elem->mark_delete(cai);      
       continue;
     }
     if (name == "coord2") {
-      m_coord_array2 = dynamic_cast<Coord_array*>(cont);
+      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
+      Shared_coord_array shared_coord_array;
+      shared_coord_array.reset(coord_array);
+      set_coord_array2(shared_coord_array);
       elem->mark_delete(cai);      
       continue;
     }
@@ -105,7 +100,7 @@ void Coord_minkowski::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! Set the attributes of this node */
+/*! \brief sets the attributes of this node. */
 void Coord_minkowski::init_prototype()
 {
   if (s_prototype) return;
@@ -129,39 +124,37 @@ void Coord_minkowski::init_prototype()
                                           get_member_offset(&m_execute),
                                           exec_func));
 
-  SF_container* field;
-  field = new SF_container(COORD1, "coord1",
-                           get_member_offset(&m_coord_array1),
-                           exec_func);
+  SF_shared_container* field;
+  field = new SF_shared_container(COORD1, "coord1",
+                                  get_member_offset(&m_coord_array1),
+                                  exec_func);
   s_prototype->add_field_info(field);
 
-  field = new SF_container(COORD2, "coord2",
-                           get_member_offset(&m_coord_array2),
-                           exec_func);
+  field = new SF_shared_container(COORD2, "coord2",
+                                  get_member_offset(&m_coord_array2),
+                                  exec_func);
   s_prototype->add_field_info(field);
 
-  field = new SF_container(COORD_CHANGED, "coord_changed",
-                           get_member_offset(&m_coord_array_changed));
+  field = new SF_shared_container(COORD_CHANGED, "coord_changed",
+                                  get_member_offset(&m_coord_array_changed));
   s_prototype->add_field_info(field);
 }
 
-/*!
- */
+/*! \brief deletes the node prototype. */
 void Coord_minkowski::delete_prototype()
 {
   delete s_prototype;
   s_prototype = 0;
 }
 
-/*!
- */
+/*! \brief obtains the node prototype. */
 Container_proto* Coord_minkowski::get_prototype() 
 {  
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! \brief Transforms the input vertices and store the results in the output
+/*! \brief transforms the input vertices and store the results in the output
  * vertices
  */
 void Coord_minkowski::execute(Field_info* /* field_info */)
@@ -175,13 +168,13 @@ void Coord_minkowski::execute(Field_info* /* field_info */)
   unsigned int size = size1 * size2;
 
   if (!m_coord_array_changed) 
-    m_coord_array_changed = new Coord_array(size);
+    m_coord_array_changed.reset(new Coord_array(size));
   else
     m_coord_array_changed->resize(size);
 
-  unsigned int k = 0;
-  for (unsigned int i = 0; i < size1; ++i) {
-    for (unsigned int j = 0; j < size2; ++j) {
+  Uint k = 0;
+  for (Uint i = 0; i < size1; ++i) {
+    for (Uint j = 0; j < size2; ++j) {
       (*m_coord_array_changed)[k++].add((*m_coord_array1)[i],
                                         (*m_coord_array2)[j]);
     }

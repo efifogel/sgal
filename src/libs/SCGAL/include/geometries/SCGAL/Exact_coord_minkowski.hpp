@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 9188 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -39,9 +39,8 @@ class Element;
 class Scene_graph;
 class Container_proto;
 
-/*! Add two coord arrays */
-class Exact_coord_minkowski : public Coord_minkowski
-{
+/*! Add two coord arrays. */
+class Exact_coord_minkowski : public Coord_minkowski {
 public:
   enum {
     FIRST = Coord_minkowski::LAST - 1,
@@ -51,45 +50,61 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Exact_coord_minkowski(Boolean proto = SGAL_FALSE) : Coord_minkowski(proto) {}
+  /*! Constructor. */
+  Exact_coord_minkowski(Boolean proto = false) : Coord_minkowski(proto) {}
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Exact_coord_minkowski() {}
 
-  /* Construct the prototype */
-  static Exact_coord_minkowski * prototype()
-  { return new Exact_coord_minkowski(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Exact_coord_minkowski* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Exact_coord_minkowski(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
+  /*! Obtains the node prototype. */  
+  virtual Container_proto* get_prototype();
   
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
+   */
+  virtual void set_attributes(Element* elem);
 
-  /*! \brief transforms the input vertices */
-  void execute(Field_info * field_info = NULL);
+  /*! Transform the input vertices and store the results in the output
+   * vertices.
+   * \param field_info the field information record.
+   */
+  void execute(Field_info* field_info = NULL);
   
 protected:
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 };
+
+/* \brief constructs the prototype. */
+inline Exact_coord_minkowski* Exact_coord_minkowski::prototype()
+{ return new Exact_coord_minkowski(true); }
+
+/*! \brief clones. */
+inline Container* Exact_coord_minkowski::clone()
+{ return new Exact_coord_minkowski(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Exact_coord_minkowski::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

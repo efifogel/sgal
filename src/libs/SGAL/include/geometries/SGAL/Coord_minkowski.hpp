@@ -22,6 +22,8 @@
 #ifndef SGAL_COORD_MINKOWSKI_HPP
 #define SGAL_COORD_MINKOWSKI_HPP
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Rotation.hpp"
@@ -34,39 +36,6 @@ class Container_proto;
 class Coord_array;
 
 class Coord_minkowski : public Container {
-private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
-
-  /*! The node prototype */
-  static Container_proto * s_prototype;
-
-protected:
-  /*! Determines whether the node is enabled */
-  bool m_enabled;
-
-  /*! Indicates that the transformation has been applied */
-  bool m_changed;
-
-  /*! Indicates that the operation should be executed */
-  bool m_execute;
-
-  /*! The input vertices */
-  Coord_array * m_coord_array1;
-
-  /*! The input vertices */
-  Coord_array * m_coord_array2;
-  
-  /*! The output vertices */
-  Coord_array * m_coord_array_changed;
-
-  // default values
-  static bool s_def_enabled;
-
-protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
-
 public:
   enum {
     FIRST = Container::LAST - 1,
@@ -79,46 +48,115 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Coord_minkowski(Boolean proto = SGAL_FALSE);
+  typedef boost::shared_ptr<Coord_array>                Shared_coord_array;
+
+  /*! Constructor. */
+  Coord_minkowski(Boolean proto = false);
   
-  /* Construct the prototype */
-  static Coord_minkowski * prototype() { return new Coord_minkowski(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Coord_minkowski* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Coord_minkowski(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node.
+   * \param elem lists of attribute names and values extracted from the input
+   * file.
+   */
+  virtual void set_attributes(Element* elem);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
 
-  /*! Transform the input vertices */
-  void execute(Field_info * field_info = NULL);
+  /*! Transform the input vertices. */
+  void execute(Field_info* field_info = NULL);
   
-  /*! Set the coordinate-set node */
-  void set_coord_array1(Coord_array * coord) { m_coord_array1 = coord; }
+  /*! Set the coordinate-set node. */
+  void set_coord_array1(Shared_coord_array coord);
 
-  /*! Obtain the coordinate-set node */
-  Coord_array * get_coord_array1() const { return m_coord_array1; }
+  /*! Obtain the coordinate-set node. */
+  Shared_coord_array get_coord_array1() const;
 
-  /*! Set the coordinate-set node */
-  void set_coord_array2(Coord_array * coord) { m_coord_array2 = coord; }
+  /*! Set the coordinate-set node. */
+  void set_coord_array2(Shared_coord_array coord);
 
-  /*! Obtain the coordinate-set node */
-  Coord_array * get_coord_array2() const { return m_coord_array2; }
+  /*! Obtain the coordinate-set node. */
+  Shared_coord_array get_coord_array2() const;
 
-  /*! Obtain the changed coordinate-set node */
-  Coord_array * get_coord_array_changed() const
-  { return m_coord_array_changed; }
+  /*! Obtain the changed coordinate-set node. */
+  Shared_coord_array get_coord_array_changed() const;
+
+protected:
+  /*! Determines whether the node is enabled. */
+  Boolean m_enabled;
+
+  /*! Indicates that the transformation has been applied. */
+  Boolean m_changed;
+
+  /*! Indicates that the operation should be executed. */
+  Boolean m_execute;
+
+  /*! The input vertices. */
+  Shared_coord_array m_coord_array1;
+
+  /*! The input vertices. */
+  Shared_coord_array m_coord_array2;
+  
+  /*! The output vertices. */
+  Shared_coord_array m_coord_array_changed;
+
+  // default values.
+  static Boolean s_def_enabled;
+
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
+
+private:
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
+
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 };
+
+/* \brief constructs the prototype. */
+inline Coord_minkowski* Coord_minkowski::prototype()
+{ return new Coord_minkowski(true); }
+
+/*! \brief clones. */
+inline Container* Coord_minkowski::clone() { return new Coord_minkowski(); }
+
+/*! \brief sets the coordinate-set node. */
+inline void Coord_minkowski::set_coord_array1(Shared_coord_array coord)
+{ m_coord_array1 = coord; }
+
+/*! \brief obtains the coordinate-set node. */
+inline Coord_minkowski::Shared_coord_array Coord_minkowski::get_coord_array1()
+  const
+{ return m_coord_array1; }
+
+/*! \brief sets the coordinate-set node. */
+inline void Coord_minkowski::set_coord_array2(Shared_coord_array coord)
+{ m_coord_array2 = coord; }
+
+/*! \brief obtains the coordinate-set node. */
+inline Coord_minkowski::Shared_coord_array Coord_minkowski::get_coord_array2()
+  const
+{ return m_coord_array2; }
+
+/*! \brief obtains the changed coordinate-set node. */
+inline Coord_minkowski::Shared_coord_array
+Coord_minkowski::get_coord_array_changed() const
+{ return m_coord_array_changed; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Coord_minkowski::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 
