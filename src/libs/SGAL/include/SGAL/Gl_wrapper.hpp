@@ -42,32 +42,39 @@ private:
   typedef std::map<GLenum, const char*> Name_map;
   typedef Name_map::const_iterator      Name_const_iter;
   
-  /*! The singletone */
+  /*! The singletone. */
   static Gl_wrapper* s_instance;
 
-  /*! The search data structure */
+  /*! The search data structure. */
   Name_map m_gl_token_names;
 
-  /*! Private Constructor */
+  /*! Private Constructor. */
   Gl_wrapper();
 
-  /*! Find the name of a token */
+  /*! Find the name of a token. */
   const char* find_name(GLenum num);
 
+  /*! Find the name of a Boolean token. */
+  const char* find_boolean_name(GLboolean flag);
+  
   /*! Check whether openGl errors have occured. */ 
   void check_error();
   
 public:
-  /*! Obtain the singletone */
+  /*! Obtain the singletone. */
   static Gl_wrapper* get_instance();
 
-  /*! Destructor */
+  /*! Destructor. */
   ~Gl_wrapper();
 
-  /*! Find the name of a token */
+  /*! Find the name of a token. */
   static const char* find(GLenum num) { return get_instance()->find_name(num); }
 
-  /*! check for GL errors */
+  /*! Find the name of a token. */
+  static const char* find_boolean(GLboolean flag)
+  { return get_instance()->find_boolean_name(flag); }
+  
+  /*! check for GL errors. */
   static void check() { get_instance()->check_error(); }
 };
 
@@ -76,6 +83,10 @@ public:
 #else
 #define SGAL_CHECK_GL() Gl_wrapper::check()
 #endif
+
+/*! \brief finds the name of a Boolean token. */
+inline const char* find_boolean_name(GLboolean flag)
+{ return (flag == GL_FALSE) ? "GL_FALSE" : "GL_TRUE"; }
 
 // Free function wrappers:
 
@@ -102,7 +113,7 @@ inline void glAlphaFunc(GLenum func, GLclampf ref)
 
 /*! glAreTexturesResident wrapper */
 inline GLboolean glAreTexturesResident(GLsizei n, const GLuint* textures,
-                                    GLboolean* residences)
+                                       GLboolean* residences)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glAreTexturesResident(" << n
                   << ");"
@@ -576,8 +587,10 @@ inline void glColorMask(GLboolean red, GLboolean green, GLboolean blue,
                         GLboolean alpha)
 {
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glColorMask("
-                  << red << ", " << green << ", " << blue << ", "
-                  << alpha << ");"
+                  << Gl_wrapper::find_boolean(red) << ", "
+                  << Gl_wrapper::find_boolean(green) << ", "
+                  << Gl_wrapper::find_boolean(blue) << ", "
+                  << Gl_wrapper::find_boolean(alpha) << ");"
                   << std::endl;);
   ::glColorMask(red, green, blue, alpha);
   SGAL_CHECK_GL();
@@ -710,7 +723,8 @@ inline void glDepthFunc(GLenum func)
 /*! glDepthMask wrapper */
 inline void glDepthMask(GLboolean flag)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glDepthMask(" << flag << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glDepthMask("
+                  << Gl_wrapper::find_boolean(flag) << ");"
                   << std::endl;);
   ::glDepthMask(flag);
   SGAL_CHECK_GL();
@@ -795,7 +809,8 @@ inline void glDrawPixels(GLsizei width, GLsizei height, GLenum format,
 /*! glEdgeFlag wrapper */
 inline void glEdgeFlag(GLboolean flag)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glEdgeFlag(" << flag << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glEdgeFlag("
+                  << Gl_wrapper::find_boolean(flag) << ");"
                   << std::endl;);
   ::glEdgeFlag(flag);
   SGAL_CHECK_GL();
@@ -813,7 +828,8 @@ inline void glEdgeFlagPointer(GLsizei stride, const GLvoid* pointer)
 /*! glEdgeFlagv wrapper */
 inline void glEdgeFlagv(const GLboolean* flag)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glEdgeFlagv(" << flag << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glEdgeFlagv("
+                  << flag << ");"
                   << std::endl;);
   ::glEdgeFlagv(flag);
   SGAL_CHECK_GL();
@@ -1511,7 +1527,7 @@ inline void glInterleavedArrays(GLenum format, GLsizei stride,
 /*! GLboolean wrapper */
 inline GLboolean glIsEnabled(GLenum cap)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "GLboolean(" << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glIsEnabled(" << cap << ");"
                   << std::endl;);
   GLboolean res = ::glIsEnabled(cap);
   SGAL_CHECK_GL();
@@ -1521,7 +1537,7 @@ inline GLboolean glIsEnabled(GLenum cap)
 /*! GLboolean wrapper */
 inline GLboolean glIsList(GLuint list)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "GLboolean(" << list << ");"
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glIsList(" << list << ");"
                   << std::endl;);
   GLboolean res = ::glIsList(list);
   SGAL_CHECK_GL();
