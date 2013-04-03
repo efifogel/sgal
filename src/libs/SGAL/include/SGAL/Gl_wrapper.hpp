@@ -68,14 +68,13 @@ public:
   ~Gl_wrapper();
 
   /*! Find the name of a token. */
-  static const char* find(GLenum num) { return get_instance()->find_name(num); }
+  static const char* find(GLenum num);
 
   /*! Find the name of a token. */
-  static const char* find_boolean(GLboolean flag)
-  { return get_instance()->find_boolean_name(flag); }
+  static const char* find_boolean(GLboolean flag);
   
-  /*! check for GL errors. */
-  static void check() { get_instance()->check_error(); }
+  /*! Check for GL errors. */
+  static void check();
 };
 
 #if defined(NDEBUG)
@@ -85,8 +84,19 @@ public:
 #endif
 
 /*! \brief finds the name of a Boolean token. */
-inline const char* find_boolean_name(GLboolean flag)
+inline const char* Gl_wrapper::find_boolean_name(GLboolean flag)
 { return (flag == GL_FALSE) ? "GL_FALSE" : "GL_TRUE"; }
+
+/*! \brief finds the name of a token. */
+inline const char* Gl_wrapper::find(GLenum num)
+{ return get_instance()->find_name(num); }
+
+/*! \brief finds the name of a token. */
+inline const char* Gl_wrapper::find_boolean(GLboolean flag)
+{ return get_instance()->find_boolean_name(flag); }
+  
+/*! \brief checks for GL errors. */
+inline void Gl_wrapper::check() { get_instance()->check_error(); }
 
 // Free function wrappers:
 
