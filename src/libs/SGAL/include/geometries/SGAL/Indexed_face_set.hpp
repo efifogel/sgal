@@ -121,7 +121,7 @@ public:
   void calculate_normal_per_polygon();
 
   /*! Calculate a single normal per polygon for all polygons. */
-  void calculate_normal_per_polygon(Shared_normal_array normal_array);
+  void calculate_normal_per_polygon(Normal_array& normals);
   
   /*! Calculate the normals in case they are invalidated.
    * If the creaseAngle field is greater than 0, a normal is calculated per
@@ -603,8 +603,7 @@ protected:
    * area.)
    * \param array (out) the array of the resulting normals.
    */
-  template <typename SharedArray_T>
-  void calculate_single_normal_per_vertex(SharedArray_T array);
+  void calculate_single_normal_per_vertex(Shared_normal_array normal_array);
   
 private:
   /*! The tag that identifies this container type */
@@ -622,44 +621,6 @@ private:
    */
   void calculate_vertices_info(Vertices_info& vertices_info);
 };
-
-/*! \brief Calculate a single normal per vertex for all vertices. */
-template <typename SharedArray_T>
-void Indexed_face_set::calculate_single_normal_per_vertex(SharedArray_T array)
-{
-  // Calculate the normals of all facets.
-  Normal_array normal_array;
-  Shared_normal_array shared_normal_array(&normal_array);
-  calculate_normal_per_polygon(shared_normal_array);
-
-  // Initialize the weights:
-  Vertices_info vertices_info;
-  calculate_vertices_info(vertices_info);
-  
-  // Calculate the weighted normals:
-  Uint j;
-  for (j = 0; j < vertices_info.size(); ++j) {
-    Float weight_sum = 0;
-    Vertex_info_const_iter it;
-    Vector3f n;
-    for (it = vertices_info[j].begin(); it != vertices_info[j].end(); ++it) {
-      Uint facet_index = it->first;
-      Float weight = it->second;
-      const Vector3f& normal = normal_array[facet_index];
-
-      weight_sum += weight;                     // accumulate the weight
-      Vector3f tmp;
-      tmp.scale(weight, normal);
-      n.add(tmp);
-    }
-    n.scale(1.0f / weight_sum);
-    n.normalize();
-    (*array)[j] = n;
-  }
-
-  for (j = 0; j < vertices_info.size(); j++) vertices_info[j].clear();
-  vertices_info.clear();
-}
 
 /*! Do the conditions allow for the use of openGl vertex array?
  * Configuration specifies VERTEX_ARRAY, and

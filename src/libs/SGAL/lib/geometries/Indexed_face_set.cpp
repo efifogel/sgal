@@ -913,27 +913,25 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
 
 /*! \brief calculates a single normal per polygon for all polygons. */
 void Indexed_face_set::
-calculate_normal_per_polygon(Shared_normal_array normal_array)
+calculate_normal_per_polygon(Normal_array& normals)
 {
-  normal_array->resize(m_num_primitives);
-
   Uint j = 0;
   for (Uint i = 0 ; i < m_num_primitives; ++i) {
     Vector3f normal;
 
     switch (m_primitive_type) {
      case PT_TRIANGLES:
-      compute_triangle_normal(j, (*normal_array)[i]);
+      compute_triangle_normal(j, normals[i]);
       j += 3;
       break;
 
      case PT_QUADS:
-      compute_quad_normal(j, (*normal_array)[i]);
+      compute_quad_normal(j, normals[i]);
       j += 4;
       break;
 
      case PT_POLYGONS:
-      compute_polygon_normal(j, (*normal_array)[i]);
+      compute_polygon_normal(j, normals[i]);
       for (; m_coord_indices[j] != (Uint) -1; ++j);     // advance to end
       ++j;                                      // skip the end-of-face marker
       break;
@@ -952,11 +950,10 @@ void Indexed_face_set::calculate_normal_per_polygon()
   SGAL_assertion(m_coord_array);
 
   if (!m_normal_array) {
-    m_normal_array.reset(new Normal_array());
+    m_normal_array.reset(new Normal_array(m_num_primitives));
     SGAL_assertion(m_normal_array);
   }
-  
-  calculate_normal_per_polygon(m_normal_array);
+  calculate_normal_per_polygon(*m_normal_array);
   set_normal_per_vertex(false);
 }
 
@@ -1552,6 +1549,43 @@ void Indexed_face_set::field_changed(Field_info* field_info)
     break;
   }
   Container::field_changed(field_info);
+}
+
+/*! \brief Calculate a single normal per vertex for all vertices. */
+void Indexed_face_set::
+calculate_single_normal_per_vertex(Shared_normal_array normals)
+{
+  // Calculate the normals of all facets.
+  Normal_array per_polygon_normals(m_num_primitives);
+  calculate_normal_per_polygon(per_polygon_normals);
+
+  // Initialize the weights:
+  Vertices_info vertices_info;
+  calculate_vertices_info(vertices_info);
+  
+  // Calculate the weighted normals:
+  Uint j;
+  for (j = 0; j < vertices_info.size(); ++j) {
+    Float weight_sum = 0;
+    Vertex_info_const_iter it;
+    Vector3f n;
+    for (it = vertices_info[j].begin(); it != vertices_info[j].end(); ++it) {
+      Uint facet_index = it->first;
+      Float weight = it->second;
+      const Vector3f& normal = per_polygon_normals[facet_index];
+
+      weight_sum += weight;                     // accumulate the weight
+      Vector3f tmp;
+      tmp.scale(weight, normal);
+      n.add(tmp);
+    }
+    n.scale(1.0f / weight_sum);
+    n.normalize();
+    (*normals)[j] = n;
+  }
+
+  for (j = 0; j < vertices_info.size(); j++) vertices_info[j].clear();
+  vertices_info.clear();
 }
 
 SGAL_END_NAMESPACE
