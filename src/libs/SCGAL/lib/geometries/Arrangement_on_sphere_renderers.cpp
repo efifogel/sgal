@@ -38,6 +38,7 @@
 #endif
 #include "GL/gl.h"
 
+#include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
 
 #include "SGAL/basic.hpp"

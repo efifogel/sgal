@@ -31,6 +31,7 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Rotation.hpp"
+#include "SGAL/Gl_wrapper.hpp"
 
 #include "SCGAL/Arrangement_renderer.hpp"
 
