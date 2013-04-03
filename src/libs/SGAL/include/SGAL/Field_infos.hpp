@@ -64,7 +64,7 @@ typedef Field_info_template<Vector3f, SF_COLOR>            SF_color;
 typedef Field_info_template<Vector4f, SF_VEC4F>            SF_vector4f;
 typedef Field_info_template<Rotation, SF_ROTATION>         SF_rotation;
 typedef Field_info_template<Sphere_bound, SF_SB>           SF_sphere_bound;
-typedef Field_info_template<std::string, SF_STRING>        SF_string;
+typedef Field_info_template<std::string, SF_STR>           SF_string;
 typedef Field_info_template<Container*, SF_CONTAINER>      SF_container;
 typedef Field_info_template<Shared_container, SF_SHARED_CONTAINER>
   SF_shared_container;
@@ -93,7 +93,7 @@ typedef Field_info_template<Vector3f_array, MF_COLOR>      MF_color;
 typedef Field_info_template<Vector4f_array, MF_VEC4F>      MF_vector4f;
 typedef Field_info_template<Rotation_array, MF_ROTATION>   MF_rotation;
 typedef Field_info_template<Sphere_bound_array, MF_SB>     MF_sphere_bound;
-typedef Field_info_template<String_array, MF_STRING>       MF_string;
+typedef Field_info_template<String_array, MF_STR>          MF_string;
 typedef Field_info_template<Container_array, MF_CONTAINER> MF_container;
 typedef Field_info_template<Shared_container_array, MF_SHARED_CONTAINER>
   MF_shared_container;

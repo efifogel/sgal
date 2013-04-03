@@ -56,7 +56,7 @@ enum Field_type_enum {
   SF_ROTATION = 10,
   SF_SB = 11,
   SF_IMAGE = 12,
-  SF_STRING = 13,
+  SF_STR = 13,
   SF_CONTAINER = 14,
   SF_SHARED_CONTAINER = 15,
   MF_FLOAT = 22,
@@ -69,7 +69,7 @@ enum Field_type_enum {
   MF_VEC4F = 29,
   MF_ROTATION = 30,
   MF_SB = 31,
-  MF_STRING = 32,
+  MF_STR = 32,
   MF_CONTAINER = 33,
   MF_SHARED_CONTAINER = 34
 };
@@ -88,7 +88,7 @@ public:
       return SF_SHARED_CONTAINER;
     else if (type == "SFRotation" || type == "Rotation") return SF_ROTATION;
     else if (type == "SFSphereBound" || type == "SphereBound") return SF_SB;
-    else if (type == "SFString" || type == "String") return SF_STRING;
+    else if (type == "SFString" || type == "String") return SF_STR;
     else if (type == "SFTime" || type == "Time") return SF_TIME;
     else if (type == "SFVec2f" || type == "Vector2Float") return SF_VEC2F;
     else if (type == "SFVec3F" || type == "Vector3Float") return SF_VEC3F;
@@ -101,7 +101,7 @@ public:
       return MF_SHARED_CONTAINER;
     else if (type == "MFRotation" || type == "Rotations") return MF_ROTATION;
     else if (type == "MFSphereBound" || type == "SphereBounds") return MF_SB;
-    else if (type == "MFString" || type == "Strings") return MF_STRING;
+    else if (type == "MFString" || type == "Strings") return MF_STR;
     else if (type == "MFTime" || type == "Times") return MF_TIME;
     else if (type == "MFVec2F" || type == "Vector2Floats") return MF_VEC2F;
     else if (type == "MFVec3F" || type == "Vector3Floats") return MF_VEC3F;
