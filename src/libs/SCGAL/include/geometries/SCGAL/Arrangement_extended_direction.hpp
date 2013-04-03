@@ -32,14 +32,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/* Convert a direction into Vector3f */
+/* Convert a direction into Vector3f. */
 typedef CGAL::Arr_extended_direction_3<Exact_kernel>  Arr_extended_direction_3;
 
 template <>
 inline Vector3f
-to_vector3f<Arr_extended_direction_3>(const Arr_extended_direction_3 & dir)
+to_vector3f<Arr_extended_direction_3>(const Arr_extended_direction_3& dir)
 {
-  const Exact_direction_3 & exact_dir = dir;
+  const Exact_direction_3& exact_dir = dir;
   return to_vector3f(exact_dir);
 }
 

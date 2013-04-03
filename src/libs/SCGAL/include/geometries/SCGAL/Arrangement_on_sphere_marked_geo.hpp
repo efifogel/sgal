@@ -89,50 +89,50 @@ protected:
                                                    Aos_point_location_strategy;
 
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Arrangement_on_sphere_marked_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Arrangement_on_sphere_marked_geo();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Arrangement_on_sphere_marked_geo* prototype()
   { return new Arrangement_on_sphere_marked_geo(true); }
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone()
   { return new Arrangement_on_sphere_marked_geo(); }
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
+  /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Set the ellpsoid attributes */
+  /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
   /*! */
   virtual void cull(Cull_context& cull_context) {}
 
-  /*! Clear the internal representation and auxiliary data structures */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
 
-  /*! Is the representation empty ? */
+  /*! Determine whether the representation empty. */
   virtual Boolean is_empty() const { return m_aos->is_empty(); }
 
-  /*! Obrain the arrangement */
+  /*! Obrain the arrangement. */
   Aos_marked* get_aos();
 
-  /*! Set the arrangement */
+  /*! Set the arrangement. */
   void set_aos(Aos_marked* aos);
   
   /*! Add a geometry container that represents an arrangement on a
@@ -141,66 +141,66 @@ public:
   void add_aos_geo(Arrangement_on_sphere_marked_geo* aos_geo)
   { m_aoses.push_back(aos_geo); }
 
-  /*! Obtain the overlay traits (const version) */
+  /*! Obtain the overlay traits (const version). */
   const Arrangement_marked_overlay_traits<Aos_marked>& get_overlay_traits()
     const
   { return m_overlay_traits; }
 
-  /*! Obtain the overlay traits (non-const version) */
+  /*! Obtain the overlay traits (non-const version). */
   Arrangement_marked_overlay_traits<Aos_marked>& get_overlay_traits()
   { return m_overlay_traits; }
 
   // Marked vertex attributes:
   
-  /*! Obtain the marked vertex shape style */
+  /*! Obtain the marked vertex shape style. */
   Vertex_style get_aos_marked_vertex_style() const
   { return m_aos_marked_vertex_style; }
 
-  /*! Set the marked vertex shape style */
+  /*! Set the marked vertex shape style. */
   void set_aos_marked_vertex_style(Vertex_style style) 
   { m_aos_marked_vertex_style = style; }
   
-  /*! Obtain the marked vertex point size */
+  /*! Obtain the marked vertex point size. */
   Float get_aos_marked_vertex_point_size() const
   { return m_aos_marked_vertex_point_size; }
 
-  /*! Set the marked vertex point size */
+  /*! Set the marked vertex point size. */
   void set_aos_marked_vertex_point_size(Float size)
   { m_aos_marked_vertex_point_size = size; }
   
-  /*! Obtain the marked vertex radius */
+  /*! Obtain the marked vertex radius. */
   Float get_aos_marked_vertex_radius() const
   { return m_aos_marked_vertex_radius; }
 
-  /*! Set the marked vertex radius */
+  /*! Set the marked vertex radius. */
   void get_aos_marked_vertex_radius(Float radius) 
   { m_aos_marked_vertex_radius = radius; }
 
-  /*! Obtain the marked vertex color */
-  const Vector3f&get_aos_marked_vertex_color() const
+  /*! Obtain the marked vertex color. */
+  const Vector3f& get_aos_marked_vertex_color() const
   { return m_aos_marked_vertex_color; }
 
   // Marked edge attributes:
 
-  /*! Enable marked edge rendering */
+  /*! Enable marked edge rendering. */
   void enable_aos_marked_edge() { m_aos_marked_edge_enabled = true; }
 
-  /*! Disable marked edge rendering */
+  /*! Disable marked edge rendering. */
   void disable_aos_marked_edge() { m_aos_marked_edge_enabled = false; }
 
-  /*! Determine whether marked edge rendering is enabled */
+  /*! Determine whether marked edge rendering is enabled. */
   Boolean is_aos_marked_edge_enabled() const
   { return m_aos_marked_edge_enabled; }
 
-  /*! Obtain the marked edge style */
+  /*! Obtain the marked edge style. */
   Edge_style get_aos_marked_edge_style() const
   { return m_aos_marked_edge_style; }
 
-  /*! Set the marked edge style */
+  /*! Set the marked edge style. */
   void set_aos_marked_edge_style(Edge_style style)
   { m_aos_marked_edge_style = style; }
 
-  /*! Obtain the marked edge type */
+  /*! Obtain the marked edge type. */
   Uint get_aos_marked_edge_count() const
   { return m_aos_marked_edge_count; }
 
@@ -208,114 +208,114 @@ public:
   void set_aos_marked_edge_count(Uint count)
   { m_aos_marked_edge_count = count; }
 
-  /*! Determine whether marked edges are rendered directed */
+  /*! Determine whether marked edges are rendered directed. */
   Boolean get_aos_marked_edge_directed() const
   { return m_aos_marked_edge_directed; }
 
-  /*! Set the flag that determines whether marked edges are rendered directed */
+  /*! Set the flag that determines whether marked edges are rendered directed. */
   void set_aos_marked_edge_directed(Boolean dir)
   { m_aos_marked_edge_directed = dir; }
 
-  /*! Obtaint the radius of the tubes that represent aos marked edges */
+  /*! Obtaint the radius of the tubes that represent aos marked edges. */
   Float get_aos_marked_edge_radius() const { return m_aos_marked_edge_radius; }
 
-  /*! Set the radius of the tubes that represent aos marked edges */
+  /*! Set the radius of the tubes that represent aos marked edges. */
   void set_aos_marked_edge_radius(Float radius)
   { m_aos_marked_edge_radius = radius; }
 
-  /*! Obtaint the width of the lines that represent aos marked edges */
+  /*! Obtaint the width of the lines that represent aos marked edges. */
   Float get_aos_marked_edge_line_width() const
   { return m_aos_marked_edge_line_width; }
   
-  /*! Set the width of the lines that represent aos marked edges */
+  /*! Set the width of the lines that represent aos marked edges. */
   void set_aos_marked_edge_line_width(Float width)
   { m_aos_marked_edge_line_width = width; }
 
-  /*! Obtain the marked edge color */
-  const Vector3f&get_aos_marked_edge_color() const
+  /*! Obtain the marked edge color. */
+  const Vector3f& get_aos_marked_edge_color() const
   { return m_aos_marked_edge_color; }
 
-  /*! Obtain the marked face color */
-  const Vector3f&get_aos_marked_face_color() const
+  /*! Obtain the marked face color. */
+  const Vector3f& get_aos_marked_face_color() const
   { return m_aos_marked_face_color; }
 
   // Aos marked face attributes:
   Float get_aos_marked_face_transparency() const
   { return m_aos_marked_face_transparency; }
   
-  /*! Print statistics */
+  /*! Print statistics. */
   void print_stat() { Arrangement_on_surface_geo::print_stat(this); }
 
 protected:
-  /*! A function object that renders the vertices with color */
+  /*! A function object that renders the vertices with color. */
   class Sphere_marked_colored_vertices_renderer :
     public Arrangement_renderer::Renderer
   {
   public:
-    /*! The arrangement geometry */
-    Arrangement_on_sphere_marked_geo&m_geo;
+    /*! The arrangement geometry. */
+    Arrangement_on_sphere_marked_geo& m_geo;
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
   
-    /*! Constructor */
-    Sphere_marked_colored_vertices_renderer(Geometry&geo) : m_geo(geo) {}
+    /*! Constructor. */
+    Sphere_marked_colored_vertices_renderer(Geometry& geo) : m_geo(geo) {}
     
-    /*! Render the edges */
+    /*! Render the edges. */
     virtual void operator()(Draw_action* action);
   };
   
-  /*! A function object that renders the isolated vertices with color */
+  /*! A function object that renders the isolated vertices with color. */
   class Sphere_marked_colored_isolated_vertices_renderer :
     public Arrangement_renderer::Renderer
   {
   public:
-    /*! The arrangement geometry */
-    Arrangement_on_sphere_marked_geo&m_geo;
+    /*! The arrangement geometry. */
+    Arrangement_on_sphere_marked_geo& m_geo;
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
   
-    /*! Constructor */
-    Sphere_marked_colored_isolated_vertices_renderer(Geometry&geo) :
+    /*! Constructor. */
+    Sphere_marked_colored_isolated_vertices_renderer(Geometry& geo) :
       m_geo(geo) {}
     
-    /*! Render the edges */
+    /*! Render the edges. */
     virtual void operator()(Draw_action* action);
   };
 
-  /*! A function object that renders the edges with color */
+  /*! A function object that renders the edges with color. */
   class Sphere_marked_colored_edges_renderer :
     public Arrangement_renderer::Renderer
   {
   public:
-    /*! The arrangement geometry */
-    Arrangement_on_sphere_marked_geo&m_geo;
+    /*! The arrangement geometry. */
+    Arrangement_on_sphere_marked_geo& m_geo;
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
   
-    /*! Constructor */
-    Sphere_marked_colored_edges_renderer(Geometry&geo) : m_geo(geo) {}
+    /*! Constructor. */
+    Sphere_marked_colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
     
-    /*! Render the edges */
+    /*! Render the edges. */
     virtual void operator()(Draw_action* action);
   };
 
-  /*! A function object that renders the marked primal vertex */
+  /*! A function object that renders the marked primal vertex. */
   class Marked_face_renderer : public Arrangement_renderer::Renderer {
   public:
     typedef Arrangement_on_sphere_marked_geo    Geometry;
 
-    /*! Constructor */
-    Marked_face_renderer(Geometry&geo) : m_geo(geo) {}
+    /*! Constructor. */
+    Marked_face_renderer(Geometry& geo) : m_geo(geo) {}
     
-    /*! Render the face */
+    /*! Render the face. */
     virtual void operator()(Draw_action* action);
 
   protected:
-    /*! The arrangement geometry */
-    Geometry&m_geo;
+    /*! The arrangement geometry. */
+    Geometry& m_geo;
   };
     
   typedef SGAL::Line_colored_edges_renderer
@@ -349,7 +349,7 @@ protected:
     Sphere_marked_inflated_tube_edges_renderer;
   
   /*! Obtain the tag (type) of the container */
-  virtual const std::string&get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! Indicates whether the aos data structure is owned, i.e., explicitly
    * allocated. If the aos data structure is owned, it should be destructed
@@ -357,21 +357,24 @@ protected:
    */
   Boolean m_owned_aos;
   
-  /*! The arrangement of great-circle arcs on a sphere */
+  /*! The arrangement of great-circle arcs on a sphere. */
   Aos_marked* m_aos;
 
   typedef std::vector<unsigned int>                         Uint_vector;
 
   /*! The indices of the marked vertices. The index is the position in
-   the arrangement */
+   * the arrangement.
+   */
   Uint_vector m_marked_vertices_indices;
 
   /*! The indices of the marked edges. The index is the position in
-   the arrangement */
+   * the arrangement.
+   */
   Uint_vector m_marked_edges_indices;
 
   /*! The indices of the marked faces. The index is the position in
-   the arrangement */
+   * the arrangement.
+   */
   Uint_vector m_marked_faces_indices;
 
   typedef std::vector<Arrangement_on_sphere_marked_geo *>   Aos_geo_vector;
@@ -379,66 +382,66 @@ protected:
   typedef Aos_geo_vector::difference_type                   Aos_geo_diff;
   
   /*! A container of geometry nodes that represent arrangements of
-   * great-circle arcs on a sphere
+   * great-circle arcs on a sphere.
    */
   Aos_geo_vector m_aoses;
 
-  /*! An overlay-traits class for computing the overlay */
+  /*! An overlay-traits class for computing the overlay. */
   Arrangement_marked_overlay_traits<Aos_marked> m_overlay_traits;
 
-  /*! The marked vertex shape style */
+  /*! The marked vertex shape style. */
   Vertex_style m_aos_marked_vertex_style;
 
-  /*! The radius of the disc or ball that represents a marked vertex */
+  /*! The radius of the disc or ball that represents a marked vertex. */
   Float m_aos_marked_vertex_radius;
 
-  /*! The size of the point that represents a marked vertex */
+  /*! The size of the point that represents a marked vertex. */
   Float m_aos_marked_vertex_point_size;
   
-  /*! The color of the marked vertices */
+  /*! The color of the marked vertices. */
   Vector3f m_aos_marked_vertex_color;
 
   // Marked edges:
-  /*! Indicates whether the rendering of marked edges is enabled or not */
+  /*! Indicates whether the rendering of marked edges is enabled or not. */
   Boolean m_aos_marked_edge_enabled;
 
-  /*! The marked edge style */
+  /*! The marked edge style. */
   Edge_style m_aos_marked_edge_style;
   
-  /*! The marked edge rendering type */
+  /*! The marked edge rendering type. */
   Uint m_aos_marked_edge_count;
 
-  /*! Determines whether marked edges are rendered directed or not */
+  /*! Determines whether marked edges are rendered directed or not. */
   Boolean m_aos_marked_edge_directed;
 
-  /*! The radius of the tube that represents a marked edge */
+  /*! The radius of the tube that represents a marked edge. */
   Float m_aos_marked_edge_radius;
 
-  /*! The width of the line that represents a marked edge */
+  /*! The width of the line that represents a marked edge. */
   Float m_aos_marked_edge_line_width;
 
-  /*! The color of the marked edges */
+  /*! The color of the marked edges. */
   Vector3f m_aos_marked_edge_color;
 
-  /*! The color of the marked face */
+  /*! The color of the marked face. */
   Vector3f m_aos_marked_face_color;
 
-  /*! The transparency of the aos marked face */
+  /*! The transparency of the aos marked face. */
   Float m_aos_marked_face_transparency;  
 
-  /*! The marked primal vertex renderer */
+  /*! The marked primal vertex renderer. */
   Arrangement_renderer::Renderer* m_marked_face_renderer;
   
 private:
   typedef Arrangement_on_sphere_marked_geo                      Self;
 
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
-  /*! The container prototype */
+  /*! The container prototype. */
   static Container_proto* s_prototype;
 
-  /*! Default values */
+  /*! Default values. */
   static const Vertex_style s_def_aos_marked_vertex_style;
   static const Float s_def_aos_marked_vertex_radius;
   static const Float s_def_aos_marked_vertex_point_size;
@@ -459,52 +462,52 @@ private:
   static const Boolean s_def_draw_aos_marked_edge;
   static const Boolean s_def_draw_aos_marked_face;
 
-  /*! Draw an arrangement on sphere marked vertex
+  /*! Draw an arrangement on sphere marked vertex.
    * \param action
-   * \param center the point center
+   * \param center the point center.
    */
-  void draw_aos_marked_vertex(Draw_action* action, Vector3f&center);
+  void draw_aos_marked_vertex(Draw_action* action, Vector3f& center);
 
-  /*! Draw an arrangement on sphere marked edge
+  /*! Draw an arrangement on sphere marked edge.
    * \param action
    * \param source the edge source point
    * \param target the edge target point
-   * \param normal the normal to the plane containing the edge
+   * \param normal the normal to the plane containing the edge.
    */
   void draw_aos_marked_edge(Draw_action* action,
                             Vector3f& source, Vector3f& target,
                             Vector3f& normal);
 
-  /*! Draw an arrangement on sphere marked face
+  /*! Draw an arrangement on sphere marked face.
    * \param action
    */
   void draw_aos_marked_face(Draw_action* action);
 
-  /*! Draw the arrangement vertices
+  /*! Draw the arrangement vertices.
    * \param action
    */
   virtual void draw_aos_vertices(Draw_action* action)
   { my_draw_aos_vertices(m_aos, action); }
 
-  /*! Draw the arrangement isolated vertices
+  /*! Draw the arrangement isolated vertices.
    * \param action
    */
   virtual void draw_aos_isolated_vertices(Draw_action* action)
   { my_draw_aos_isolated_vertices(m_aos, action); }
 
-  /*! Draw the arrangement edges
+  /*! Draw the arrangement edges.
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action)
   { my_draw_aos_edges(m_aos, action); }
 
-  /*! Clean the renderer */
+  /*! Clean the renderer. */
   virtual void clean_renderer();
 
-  /*! Create the renderers */
+  /*! Create the renderers. */
   void create_renderers();
 
-  /*! Detsroy the renderers */
+  /*! Detsroy the renderers. */
   void destroy_renderers();
 };
   

@@ -62,7 +62,7 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Arrangement_on_sphere_base_geo::s_prototype = NULL;
 
-/*! Constructor */
+/*! Constructor. */
 Arrangement_on_sphere_base_geo::
 Arrangement_on_sphere_base_geo(Boolean proto) :
   Arrangement_on_surface_geo(proto),
@@ -72,7 +72,7 @@ Arrangement_on_sphere_base_geo(Boolean proto) :
   if (!proto) create_renderers();
 }
 
-/*! Destructor */
+/*! Destructor. */
 Arrangement_on_sphere_base_geo::~Arrangement_on_sphere_base_geo()
 {
   if (m_surface_renderer) delete m_surface_renderer;
@@ -251,18 +251,18 @@ Boolean Arrangement_on_sphere_base_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the coordinate array */
+/*! \brief sets the coordinate array. */
 void Arrangement_on_sphere_base_geo::set_coord_array(Coord_array* coord_array)
 {
   m_coord_array = coord_array;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the coordinate array */
+/*! \brief sets the coordinate array. */
 void Arrangement_on_sphere_base_geo::set_normal_array(Normal_array* normal_array)
 { m_normal_array = normal_array; }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Arrangement_on_sphere_base_geo::create_renderers()
 {
   m_surface_renderer = new Surface_renderer();
@@ -275,7 +275,7 @@ void Arrangement_on_sphere_base_geo::create_renderers()
   m_stencil_surface_renderer = new Stencil_surface_renderer();
 }
 
-/*! \brief draws an arrangement on surface vertex */
+/*! \brief draws an arrangement on surface vertex. */
 void Arrangement_on_sphere_base_geo::draw_aos_vertex(Draw_action* action,
                                                      Vector3f& center)
 {
@@ -283,7 +283,7 @@ void Arrangement_on_sphere_base_geo::draw_aos_vertex(Draw_action* action,
                        m_aos_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief draws an arrangement on surface isolated vertex */
+/*! \brief draws an arrangement on surface isolated vertex. */
 void Arrangement_on_sphere_base_geo::
 draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
 {
@@ -291,7 +291,7 @@ draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
                         m_aos_isolated_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief Draw an arrangement on surface boundary_vertex */
+/*! \brief Draw an arrangement on surface boundary_vertex. */
 void Arrangement_on_sphere_base_geo::
 draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
 {
@@ -299,7 +299,7 @@ draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
                         m_aos_boundary_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief draws an arrangement on surface edge */
+/*! \brief draws an arrangement on surface edge. */
 void Arrangement_on_sphere_base_geo::draw_aos_edge(Draw_action* action,
                                                    Vector3f& src,
                                                    Vector3f& trg,

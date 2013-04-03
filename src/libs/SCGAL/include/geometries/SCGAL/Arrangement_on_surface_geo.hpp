@@ -59,7 +59,7 @@ class Scene_graph;
 class Element;
 
 /*! A geometry container that represents an arrangement embeded on a
- * parametric surface
+ * parametric surface.
  */
 class SGAL_CLASSDEF Arrangement_on_surface_geo : public Geometry {
 public:
@@ -101,7 +101,7 @@ public:
     LAST
   };
 
-  /*! The insertion strategies */
+  /*! The insertion strategies. */
   enum Insertion_strategy {
     AGGREGATE = 0,
     INCREMENT,
@@ -136,131 +136,129 @@ protected:
 
 public:
   /*! Constructor */
-  Arrangement_on_surface_geo(Boolean proto = SGAL_FALSE);
+  Arrangement_on_surface_geo(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Arrangement_on_surface_geo();
 
-  /*! Clone */
-  virtual Container * clone() = 0;
+  /*! Clone. */
+  virtual Container* clone() = 0;
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the container prototype. */
+  virtual Container_proto* get_prototype();
 
-  /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  /*! Set the ellpsoid attributes. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean() { m_dirty = false; }
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! */
-  virtual void isect(Isect_action * action) {}
+  virtual void isect(Isect_action* action) {}
 
   /*! */
   virtual Boolean clean_sphere_bound() { return false; }
 
-  /*! Draw the geometry */
-  virtual void draw(Draw_action * action);
+  /*! Draw the geometry. */
+  virtual void draw(Draw_action* action);
 
-  /*! Clear the internal representation and auxiliary data structures
-   */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear() {}
 
-  /*! Determine whether the representation hasn't been updated
-   */
+  /*! Determine whether the representation hasn't been updated. */
   virtual Boolean is_dirty() const { return m_dirty; }
   
-  /*! Is the representation empty ?
-   */
+  /*! Determine whether the representation empty. */
   virtual Boolean is_empty() const = 0;
 
-  /*! Draw an arrangement on surface vertex
+  /*! Draw an arrangement on surface vertex.
    * \param action
-   * \param center the vertex center
+   * \param center the vertex center.
    */
-  virtual void draw_aos_vertex(Draw_action * action, Vector3f & center) {}
+  virtual void draw_aos_vertex(Draw_action* action, Vector3f& center) {}
 
-  /*! Draw an arrangement on surface isolated vertex
+  /*! Draw an arrangement on surface isolated vertex.
    * \param action
-   * \param center the vertex center
+   * \param center the vertex center.
    */
-  virtual void draw_aos_isolated_vertex(Draw_action * action,
-                                        Vector3f & center) {}
+  virtual void draw_aos_isolated_vertex(Draw_action* action,
+                                        Vector3f& center) {}
   
-  /*! Draw an arrangement on surface boundary_vertex
+  /*! Draw an arrangement on surface boundary_vertex.
    * \param action
-   * \param center the vertex center
+   * \param center the vertex center.
    */
-  virtual void draw_aos_boundary_vertex(Draw_action * action,
-                                        Vector3f & center) {}
+  virtual void draw_aos_boundary_vertex(Draw_action* action,
+                                        Vector3f& center) {}
 
-  /*! Draw an arrangement on surface edge
+  /*! Draw an arrangement on surface edge.
    * \param action
-   * \param source the edge source point
-   * \param target the edge target point
+   * \param source the edge source point.
+   * \param target the edge target point.
    */
-  virtual void draw_aos_edge(Draw_action * action,
-                             Vector3f & source, Vector3f & target) {}
+  virtual void draw_aos_edge(Draw_action* action,
+                             Vector3f& source, Vector3f& target,
+                             Vector3f& normal) {}
   
-  /*! Clean the renderer */
+  /*! Clean the renderer. */
   virtual void clean_renderer();
 
-  /*! Draw the arrangement on surface edges
+  /*! Draw the arrangement on surface edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action) {}
+  virtual void draw_aos_edges(Draw_action* action) {}
 
-  /*! Draw the arrangement on surface vertices
+  /*! Draw the arrangement on surface vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action) {}
+  virtual void draw_aos_vertices(Draw_action* action) {}
 
-  /*! Draw the arrangement on surface isolated vertices
+  /*! Draw the arrangement on surface isolated vertices.
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action * action) {}
+  virtual void draw_aos_isolated_vertices(Draw_action* action) {}
 
-  /*! Raise the flag that indicates that the renderer changed */
-  void renderer_changed(Field_info * field_info = NULL);
+  /*! Raise the flag that indicates that the renderer changed. */
+  void renderer_changed(Field_info* field_info = NULL);
 
-  /*! Obtain the flag that indicates whether to draw the embedding surface
+  /*! Obtain the flag that indicates whether to draw the embedding surface.
    */
   Boolean get_draw_aos_surface() const { return m_draw_aos_surface; }
 
-  /*! Set the flag that indicates whether to draw the embedding surface
+  /*! Set the flag that indicates whether to draw the embedding surface.
    */
   void set_draw_aos_surface(Boolean flag) { m_draw_aos_surface = flag; }
   
   /*! Obtain the flag that indicates whether to draw the backfacing features
-   * halftone
+   * halftone.
    */
   Boolean get_draw_halftone() const { return m_draw_halftone; }
 
-  /*! Obtain the surface color
+  /*! Obtain the surface color.
    */
-  const Vector3f & get_aos_surface_color() const { return m_aos_surface_color; }
+  const Vector3f& get_aos_surface_color() const { return m_aos_surface_color; }
 
-  /*! Obtain the vertex-shape style */
+  /*! Obtain the vertex-shape style. */
   Vertex_style get_aos_vertex_style() const { return m_aos_vertex_style; }
 
-  /*! Set the vertex-shape style */
+  /*! Set the vertex-shape style. */
   void set_aos_vertex_style(Vertex_style style) { m_aos_vertex_style = style; }
   
-  /*! Set the aos vertex color
-   * \param color the new color
+  /*! Set the aos vertex color.
+   * \param color the new color.
    */
-  void set_aos_vertex_color(Vector3f & color) { m_aos_vertex_color = color; }
+  void set_aos_vertex_color(Vector3f& color) { m_aos_vertex_color = color; }
 
   /*! Obtain the vertex radius */
   Float get_aos_vertex_radius() const { return m_aos_vertex_radius; }
@@ -271,275 +269,275 @@ public:
   /*! Obtain the vertex point size */
   Float get_aos_vertex_point_size() const { return m_aos_vertex_point_size; }
 
-  /*! Obtain the aos vertex color
-   * \return the vertex color
+  /*! Obtain the aos vertex color.
+   * \return the vertex color.
    */
-  const Vector3f & get_aos_vertex_color() const { return m_aos_vertex_color; }
+  const Vector3f& get_aos_vertex_color() const { return m_aos_vertex_color; }
 
-  /*! Obtain the isolated vertex-shape style */
+  /*! Obtain the isolated vertex-shape style. */
   Vertex_style get_aos_isolated_vertex_style() const
   { return m_aos_isolated_vertex_style; }
 
-  /*! Set the isolated vertex-shape style */
+  /*! Set the isolated vertex-shape style. */
   void set_aos_isolated_vertex_style(Vertex_style style)
   { m_aos_isolated_vertex_style = style; }
   
-  /*! Obtain the isolated vertex point size */
+  /*! Obtain the isolated vertex point size. */
   Float get_aos_isolated_vertex_point_size() const
   { return m_aos_isolated_vertex_point_size; }
 
-  /*! Set the isolated vertex point size */
+  /*! Set the isolated vertex point size. */
   void set_aos_isolated_vertex_point_size(Float size)
   { m_aos_isolated_vertex_point_size = size; }
   
-  /*! Obtain the isolated_vertex radius */
+  /*! Obtain the isolated_vertex radius. */
   Float get_aos_isolated_vertex_radius() const
   { return m_aos_isolated_vertex_radius; }
 
-  /*! Set the isolated_vertex radius */
+  /*! Set the isolated_vertex radius. */
   void get_aos_isolated_vertex_radius(Float radius)
   { m_aos_isolated_vertex_radius = radius; }
   
-  /*! Obtain the aos isolated vertex color
-   * \return the isolated vertex color
+  /*! Obtain the aos isolated vertex color.
+   * \return the isolated vertex color.
    */
-  const Vector3f & get_aos_isolated_vertex_color() const
+  const Vector3f& get_aos_isolated_vertex_color() const
   { return m_aos_isolated_vertex_color; }
 
-  /*! Set the aos isolated vertex color
-   * \param color the isolated vertex color
+  /*! Set the aos isolated vertex color.
+   * \param color the isolated vertex color.
    */
-  void set_aos_isolated_vertex_color(const Vector3f & color)
+  void set_aos_isolated_vertex_color(const Vector3f& color)
   { m_aos_isolated_vertex_color = color; }
   
-  /*! Obtain the boundary vertex-shape style */
+  /*! Obtain the boundary vertex-shape style. */
   Vertex_style get_aos_boundary_vertex_style() const
   { return m_aos_boundary_vertex_style; }
 
-  /*! Obtain the boundary vertex point size */
+  /*! Obtain the boundary vertex point size. */
   Float get_aos_boundary_vertex_point_size() const
   { return m_aos_boundary_vertex_point_size; }
 
-  /*! Obtain the boundary_vertex radius */
+  /*! Obtain the boundary_vertex radius. */
   Float get_aos_boundary_vertex_radius() const
   { return m_aos_boundary_vertex_radius; }
 
-  /*! Obtain the aos boundary vertex color
-   * \return the boundary vertex color
+  /*! Obtain the aos boundary vertex color.
+   * \return the boundary vertex color.
    */
-  const Vector3f & get_aos_boundary_vertex_color() const
+  const Vector3f& get_aos_boundary_vertex_color() const
   { return m_aos_boundary_vertex_color; }
 
-  /*! Set the aos edge color
-   * \param color the new color
+  /*! Set the aos edge color.
+   * \param color the new color.
    */
-  void set_aos_edge_color(Vector3f & color) { m_aos_edge_color = color; }
+  void set_aos_edge_color(Vector3f& color) { m_aos_edge_color = color; }
   
-  /*! Obtain the aos edge color
-   * \return the edge color
+  /*! Obtain the aos edge color.
+   * \return the edge color.
    */
-  const Vector3f & get_aos_edge_color() const { return m_aos_edge_color; }
+  const Vector3f& get_aos_edge_color() const { return m_aos_edge_color; }
 
-  /*! Enable edge rendering */
-  void enable_aos_edge() { m_aos_edge_enabled = SGAL_TRUE; }
+  /*! Enable edge rendering. */
+  void enable_aos_edge() { m_aos_edge_enabled = true; }
 
-  /*! Disable edge rendering */
-  void disable_aos_edge() { m_aos_edge_enabled = SGAL_FALSE; }
+  /*! Disable edge rendering. */
+  void disable_aos_edge() { m_aos_edge_enabled = false; }
 
-  /*! Determine whether edge rendering is enabled */
+  /*! Determine whether edge rendering is enabled. */
   Boolean is_aos_edge_enabled() const { return m_aos_edge_enabled; }
 
-  /*! Obtain the edge shape style */
+  /*! Obtain the edge shape style. */
   Edge_style get_aos_edge_style() const { return m_aos_edge_style; }
 
-  /*! Set the edge shape style */
+  /*! Set the edge shape style. */
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
   
-  /*! Obtain the edge shape count */
+  /*! Obtain the edge shape count. */
   Int get_aos_edge_count() const { return m_aos_edge_count; }
 
-  /*! Set the edge shape count */
+  /*! Set the edge shape count. */
   void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
     
-  /*! Determine whether edges are rendered directed */
+  /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
 
-  /*! Set the flag that determines whether edges are rendered directed */
+  /*! Set the flag that determines whether edges are rendered directed. */
   void set_aos_edge_directed(Boolean dir) { m_aos_edge_directed = dir; }
 
-  /*! Obtain the edge radius */
+  /*! Obtain the edge radius. */
   Float get_aos_edge_radius() const { return m_aos_edge_radius; }
 
-  /*! Set the edge radius */
+  /*! Set the edge radius. */
   void set_aos_edge_radius(Float radius) { m_aos_edge_radius = radius; }
 
-  /*! Obtain the edge line width */
+  /*! Obtain the edge line width. */
   Float get_aos_edge_line_width() const { return m_aos_edge_line_width; }
 
-  /*! Set the edge line width */
+  /*! Set the edge line width. */
   void set_aos_edge_line_width(Float width) { m_aos_edge_line_width = width; }
 
-  /*! Obtain the delta angle */
+  /*! Obtain the delta angle. */
   Float get_aos_delta_angle() const { return m_aos_delta_angle; }
   
-  /*! Set the stencil reference value */
+  /*! Set the stencil reference value. */
   void set_stencil_ref(Int ref) { m_renderer.set_stencil_ref(ref); }
 
  protected:
-  /*! Insertion strategy names */
-  static const char * s_insertion_strategy_names[];
+  /*! Insertion strategy names. */
+  static const char* s_insertion_strategy_names[];
 
-  /*! Indicates whether the mesh must be cleaned */
+  /*! Indicates whether the mesh must be cleaned. */
   Boolean m_dirty;
 
-  /*! Indicates the insertion strategy */
+  /*! Indicates the insertion strategy. */
   Insertion_strategy m_insertion_strategy;
   
-  /*! Indicates whether to draw the sphere opaque */
+  /*! Indicates whether to draw the sphere opaque. */
   Boolean m_draw_opaque;
 
-  /*! Indicates whether to draw haloed lines */
+  /*! Indicates whether to draw haloed lines. */
   Boolean m_draw_haloed;
 
   /*! Indicates whether to apply halftoning to the backfacing edges abd
-   * vertices
+   * vertices.
    */
   Boolean m_draw_halftone;
 
-  /*! Indicates whether to draw the embedding surface */
+  /*! Indicates whether to draw the embedding surface. */
   Boolean m_draw_aos_surface;
 
-  /*! The embedding surface color */
+  /*! The embedding surface color. */
   Vector3f m_aos_surface_color;
 
-  /*! The vertex shape */
+  /*! The vertex shape. */
   Vertex_style m_aos_vertex_style;
 
-  /*! The radius of the disc or ball that represents a vertex */
+  /*! The radius of the disc or ball that represents a vertex. */
   Float m_aos_vertex_radius;
 
-  /*! The size of the point that represents a vertex */
+  /*! The size of the point that represents a vertex. */
   Float m_aos_vertex_point_size;
   
-  /*! The color of the vertices */
+  /*! The color of the vertices. */
   Vector3f m_aos_vertex_color;
 
-  /*! The isolated vertex shape */
+  /*! The isolated vertex shape. */
   Vertex_style m_aos_isolated_vertex_style;
 
-  /*! The radius of the disc or ball that represents an isolated vertex */
+  /*! The radius of the disc or ball that represents an isolated vertex. */
   Float m_aos_isolated_vertex_radius;
 
-  /*! The size of the point that represents an isolated vertex */
+  /*! The size of the point that represents an isolated vertex. */
   Float m_aos_isolated_vertex_point_size;
   
-  /*! The color of the isolated vertices */
+  /*! The color of the isolated vertices. */
   Vector3f m_aos_isolated_vertex_color;
 
-  /*! The boundary vertex shape */
+  /*! The boundary vertex shape. */
   Vertex_style m_aos_boundary_vertex_style;
 
-  /*! The radius of the disc or ball that represents an boundary vertex */
+  /*! The radius of the disc or ball that represents an boundary vertex. */
   Float m_aos_boundary_vertex_radius;
 
-  /*! The size of the point that represents an boundary vertex */
+  /*! The size of the point that represents an boundary vertex. */
   Float m_aos_boundary_vertex_point_size;
   
-  /*! The color of the boundary vertices */
+  /*! The color of the boundary vertices. */
   Vector3f m_aos_boundary_vertex_color;    
 
-  /*! Indicates whether the rendering of edges is enabled or not */
+  /*! Indicates whether the rendering of edges is enabled or not. */
   Boolean m_aos_edge_enabled;
 
-  /*! The edge rendering style */
+  /*! The edge rendering style. */
   Edge_style m_aos_edge_style;
 
-  /*! The edge rendering type */
+  /*! The edge rendering type. */
   Int m_aos_edge_count;
 
-  /*! Indicates whether edges are rendered directed or not */
+  /*! Indicates whether edges are rendered directed or not. */
   Boolean m_aos_edge_directed;
   
-  /*! The radius of the tube that represents an edge */
+  /*! The radius of the tube that represents an edge. */
   Float m_aos_edge_radius;
 
-  /*! The width of the line that represents an edge */
+  /*! The width of the line that represents an edge. */
   Float m_aos_edge_line_width;
   
-  /*! The angle of a single line strip of a spherical arc */
+  /*! The angle of a single line strip of a spherical arc. */
   Float m_aos_delta_angle;
   
-  /*! The color of the edges */
+  /*! The color of the edges. */
   Vector3f m_aos_edge_color;
 
-  /*! Indicates whether the renderer must be cleaned */
+  /*! Indicates whether the renderer must be cleaned. */
   Boolean m_renderer_dirty;
   
-  /*! The renderer of the arrangement data structure */
+  /*! The renderer of the arrangement data structure. */
   Arrangement_renderer m_renderer;
 
-  /*! The surface renderer */
-  Arrangement_renderer::Renderer * m_surface_renderer;
+  /*! The surface renderer. */
+  Arrangement_renderer::Renderer* m_surface_renderer;
 
-  /*! The surface renderer */
-  Arrangement_renderer::Renderer * m_colored_surface_renderer;
+  /*! The surface renderer. */
+  Arrangement_renderer::Renderer* m_colored_surface_renderer;
 
-  /*! The surface renderer */
-  Arrangement_renderer::Renderer * m_stencil_surface_renderer;
+  /*! The surface renderer. */
+  Arrangement_renderer::Renderer* m_stencil_surface_renderer;
 
-  /*! The edges renderer */
-  Arrangement_renderer::Renderer * m_edges_renderer;
+  /*! The edges renderer. */
+  Arrangement_renderer::Renderer* m_edges_renderer;
 
-  /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_vertices_renderer;
+  /*! The vertices renderer. */
+  Arrangement_renderer::Renderer* m_vertices_renderer;
 
-  /*! The isolated vertices renderer */
-  Arrangement_renderer::Renderer * m_isolated_vertices_renderer;
+  /*! The isolated vertices renderer. */
+  Arrangement_renderer::Renderer* m_isolated_vertices_renderer;
   
-  /*! The edges renderer */
-  Arrangement_renderer::Renderer * m_colored_edges_renderer;
+  /*! The edges renderer. */
+  Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
-  /*! The vertices renderer */
-  Arrangement_renderer::Renderer * m_colored_vertices_renderer;
+  /*! The vertices renderer. */
+  Arrangement_renderer::Renderer* m_colored_vertices_renderer;
 
-  /*! The isolated vertices renderer */
-  Arrangement_renderer::Renderer * m_colored_isolated_vertices_renderer;
+  /*! The isolated vertices renderer. */
+  Arrangement_renderer::Renderer* m_colored_isolated_vertices_renderer;
   
-  /*! The line edges renderer */
-  Arrangement_renderer::Renderer * m_line_colored_edges_renderer;
+  /*! The line edges renderer. */
+  Arrangement_renderer::Renderer* m_line_colored_edges_renderer;
 
-  /*! The point vertices renderer */
-  Arrangement_renderer::Renderer * m_point_colored_vertices_renderer;
+  /*! The point vertices renderer. */
+  Arrangement_renderer::Renderer* m_point_colored_vertices_renderer;
 
-  /*! The ring vertices renderer */
-  Arrangement_renderer::Renderer * m_ring_colored_vertices_renderer;
+  /*! The ring vertices renderer. */
+  Arrangement_renderer::Renderer* m_ring_colored_vertices_renderer;
   
-  /*! The point isolated vertices renderer */
-  Arrangement_renderer::Renderer * m_point_colored_isolated_vertices_renderer;
+  /*! The point isolated vertices renderer. */
+  Arrangement_renderer::Renderer* m_point_colored_isolated_vertices_renderer;
 
-  /*! The ring isolated vertices renderer */
-  Arrangement_renderer::Renderer * m_ring_colored_isolated_vertices_renderer;
+  /*! The ring isolated vertices renderer. */
+  Arrangement_renderer::Renderer* m_ring_colored_isolated_vertices_renderer;
 
-  /*! The inflated line edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_line_edges_renderer;
+  /*! The inflated line edges renderer. */
+  Arrangement_renderer::Renderer* m_inflated_line_edges_renderer;
 
-  /*! The inflated strip edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_strip_edges_renderer;
+  /*! The inflated strip edges renderer. */
+  Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
   
-  /*! The inflated tube edges renderer */
-  Arrangement_renderer::Renderer * m_inflated_tube_edges_renderer;
+  /*! The inflated tube edges renderer. */
+  Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
  
-  /*! Draw the arrangement on surface opaque
+  /*! Draw the arrangement on surface opaque.
    * \param action
    */
-  virtual void draw_opaque(Draw_action * action);
+  virtual void draw_opaque(Draw_action* action);
 
-  /*! Draw the vertices of a given arrangement on surface
-   * \param aos the arrangement on surface
+  /*! Draw the vertices of a given arrangement on surface.
+   * \param aos the arrangement on surface.
    * \param action
    */
   template <typename Aos>
-  void my_draw_aos_vertices(Aos * aos, Draw_action * action)
+  void my_draw_aos_vertices(Aos* aos, Draw_action* action)
   {
     typedef typename Aos::Vertex_const_iterator Vertex_const_iterator;
     typedef typename Aos::Geometry_traits_2     Geom_traits;
@@ -554,12 +552,12 @@ public:
     }
   }
 
-  /*! Draw the isolated vertices of a given arrangement on surface
-   * \param aos the arrangement on surface
+  /*! Draw the isolated vertices of a given arrangement on surface.
+   * \param aos the arrangement on surface.
    * \param action
    */
   template <typename Aos>
-  void my_draw_aos_isolated_vertices(Aos * aos, Draw_action * action)
+  void my_draw_aos_isolated_vertices(Aos* aos, Draw_action* action)
   {
     typedef typename Aos::Vertex_const_iterator Vertex_const_iterator;
     typedef typename Aos::Geometry_traits_2     Geom_traits;
@@ -574,34 +572,33 @@ public:
     }
   }
 
-  /*! Draw the edges of a given arrangement on surface
-   * \param aos the arrangement on surface
+  /*! Draw the edges of a given arrangement on surface.
+   * \param aos the arrangement on surface.
    * \param action
    */
   template <typename Aos>
-  void my_draw_aos_edges(Aos * aos, Draw_action * action)
+  void my_draw_aos_edges(Aos* aos, Draw_action* action)
   {
     typedef typename Aos::Edge_const_iterator           Edge_const_iterator;
     typedef typename Aos::Geometry_traits_2             Geom_traits;
     typedef typename Geom_traits::Point_2               Point;
     typedef typename Geom_traits::X_monotone_curve_2    X_monotone_curve;
 
-    Vector3f src;
-    Vector3f trg;
     Edge_const_iterator hei;
     for (hei = aos->edges_begin(); hei != aos->edges_end(); ++hei) {
-      const X_monotone_curve & curve = hei->curve();
-      src = to_vector3f(curve.source());
-      trg = to_vector3f(curve.target());
+      const X_monotone_curve& curve = hei->curve();
+      Vector3f src = to_vector3f(curve.source());
+      Vector3f trg = to_vector3f(curve.target());
+      Vector3f normal = to_vector3f(curve.normal());
       src.normalize();
       trg.normalize();
-      draw_aos_edge(action, src, trg);
+      draw_aos_edge(action, src, trg, normal);
     }
   }
 
-  /*! \brief prints statistics */
+  /*! Print statistics. */
   template <typename Aos_geo>
-  void print_stat(Aos_geo * aos_geo)
+  void print_stat(Aos_geo* aos_geo)
   {
     std::cout << "Information for " << aos_geo->get_name() << ":" << std::endl;
     if (aos_geo->is_dirty()) aos_geo->clean();
@@ -615,10 +612,10 @@ public:
   }
   
 private:
-  /*! The container prototype */
-  static Container_proto * s_prototype;
+  /*! The container prototype. */
+  static Container_proto* s_prototype;
 
-  /*! Default values */
+  /*! Default values. */
   static const Insertion_strategy s_def_insertion_strategy;
 
   static const Boolean s_def_draw_opaque;

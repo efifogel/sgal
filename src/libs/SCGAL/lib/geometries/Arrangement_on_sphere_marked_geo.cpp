@@ -58,7 +58,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Arrangement_on_sphere_marked_geo::s_tag =
+const std::string Arrangement_on_sphere_marked_geo::s_tag =
   "ArrangementOnSphereMarked";
 Container_proto* Arrangement_on_sphere_marked_geo::s_prototype = NULL;
 
@@ -123,9 +123,7 @@ Arrangement_on_sphere_marked_geo(Boolean proto) :
   m_aos_marked_face_color(s_def_aos_marked_face_color),
   m_aos_marked_face_transparency(s_def_aos_marked_face_transparency),  
   m_marked_face_renderer(NULL)
-{
-  if (!proto) create_renderers();
-}
+{ if (!proto) create_renderers(); }
 
 /*! Destructor */
 Arrangement_on_sphere_marked_geo::~Arrangement_on_sphere_marked_geo()
@@ -361,7 +359,7 @@ set_attributes(Element* elem)
   std::sort(m_marked_vertices_indices.begin(), m_marked_vertices_indices.end());
 }
 
-/*! \brief cleans the representation */
+/*! \brief cleans the representation. */
 void Arrangement_on_sphere_marked_geo::clean()
 {
   m_dirty = false;
@@ -512,7 +510,7 @@ void Arrangement_on_sphere_marked_geo::clean()
   }
 }
 
-/*! \brief clears the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Arrangement_on_sphere_marked_geo::clear()
 {
   if (m_aos) m_aos->clear();
@@ -520,7 +518,7 @@ void Arrangement_on_sphere_marked_geo::clear()
   m_dirty = true;
 }
 
-/*! \brief draws the arrangement on surface vertices with color */
+/*! \brief draws the arrangement on surface vertices with color. */
 void Arrangement_on_sphere_marked_geo::
 Sphere_marked_colored_vertices_renderer::operator()(Draw_action* action)
 {
@@ -543,7 +541,7 @@ Sphere_marked_colored_vertices_renderer::operator()(Draw_action* action)
   }
 }
 
-/*! \brief draws the arrangement on surface isolated vertices with color */
+/*! \brief draws the arrangement on surface isolated vertices with color. */
 void
 Arrangement_on_sphere_marked_geo::
 Sphere_marked_colored_isolated_vertices_renderer::
@@ -569,7 +567,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief draws the arrangement on surface edges with color */
+/*! \brief draws the arrangement on surface edges with color. */
 void Arrangement_on_sphere_marked_geo::
 Sphere_marked_colored_edges_renderer::operator()(Draw_action* action)
 {

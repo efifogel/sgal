@@ -40,43 +40,43 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! A function object that renders the edges */
+/*! A function object that renders the edges. */
 template <typename T_Geometry>
 class Edges_renderer : public Arrangement_renderer::Renderer {
 public:
   typedef T_Geometry                                    Geometry;
 
-  /*! Constructor */
-  Edges_renderer(Geometry & geo) : m_geo(geo) {}
+  /*! Constructor. */
+  Edges_renderer(Geometry& geo) : m_geo(geo) {}
     
-  /*! Render the edges */
-  virtual void operator()(Draw_action * action)
+  /*! Render the edges. */
+  virtual void operator()(Draw_action* action)
   { m_geo.draw_aos_edges(action); }
 
 protected:
-  /*! The arrangement geometry */
-  Geometry & m_geo;
+  /*! The arrangement geometry. */
+  Geometry& m_geo;
 };
   
-/*! A function object that renders the vertices */
+/*! A function object that renders the vertices. */
 template <typename T_Geometry>
 class Vertices_renderer : public Arrangement_renderer::Renderer {
 public:
   typedef T_Geometry                                    Geometry;
 
-  /*! Constructor */
-  Vertices_renderer(Geometry & geo) : m_geo(geo) {}
+  /*! Constructor. */
+  Vertices_renderer(Geometry& geo) : m_geo(geo) {}
     
-  /*! Render the vertices */
-  virtual void operator()(Draw_action * action)
+  /*! Render the vertices. */
+  virtual void operator()(Draw_action* action)
   { m_geo.draw_aos_vertices(action); }
 
 protected:
-  /*! The arrangement geometry */
-  Geometry & m_geo;
+  /*! The arrangement geometry. */
+  Geometry& m_geo;
 };
   
-/*! A function object that renders the isolated vertices */
+/*! A function object that renders the isolated vertices. */
 template <typename T_Geometry>
 class Isolated_vertices_renderer :
   public Arrangement_renderer::Renderer
@@ -85,30 +85,30 @@ public:
   typedef T_Geometry                                    Geometry;
 
   /*! Constructor */
-  Isolated_vertices_renderer(Geometry & geo) : m_geo(geo) {}
+  Isolated_vertices_renderer(Geometry& geo) : m_geo(geo) {}
     
   /*! Render the isolated vertices */
-  virtual void operator()(Draw_action * action)
+  virtual void operator()(Draw_action* action)
   { m_geo.draw_aos_isolated_vertices(action); }
 
 protected:
   /*! The arrangement geometry */
-  Geometry & m_geo;
+  Geometry& m_geo;
 };
   
-/*! A function object that renders the edges with color */
+/*! A function object that renders the edges with color. */
 template <typename Edges_renderer>
 class Colored_edges_renderer : public Edges_renderer {
 public:
   typedef typename Edges_renderer::Geometry          Geometry;
   
-  /*! Constructor */
-  Colored_edges_renderer(Geometry & geo) : Edges_renderer(geo) {}
+  /*! Constructor. */
+  Colored_edges_renderer(Geometry& geo) : Edges_renderer(geo) {}
     
-  /*! Render the edges */
-  virtual void operator()(Draw_action * action)
+  /*! Render the edges. */
+  virtual void operator()(Draw_action* action)
   {
-    const Vector3f & color = this->m_geo.get_aos_edge_color();
+    const Vector3f& color = this->m_geo.get_aos_edge_color();
     glColor3fv((float*)&color);
     Edges_renderer::operator()(action);
   }
@@ -121,66 +121,66 @@ public:
   typedef typename Vertices_renderer::Geometry       Geometry;
   
   /*! Constructor */
-  Colored_vertices_renderer(Geometry & geo) : Vertices_renderer(geo) {}
+  Colored_vertices_renderer(Geometry& geo) : Vertices_renderer(geo) {}
     
-  /*! Render the vertices */
-  virtual void operator()(Draw_action * action)
+  /*! Render the vertices. */
+  virtual void operator()(Draw_action* action)
   {
-    const Vector3f & color = this->m_geo.get_aos_vertex_color();
+    const Vector3f& color = this->m_geo.get_aos_vertex_color();
     glColor3fv((float*)&color);
     Vertices_renderer::operator()(action);
   }
 };
   
-/*! A function object that renders the isolated vertices with color */
+/*! A function object that renders the isolated vertices with color. */
 template <typename Isolated_vertices_renderer>
 class Colored_isolated_vertices_renderer : public Isolated_vertices_renderer {
 public:
   typedef typename Isolated_vertices_renderer::Geometry Geometry;
   
-  /*! Constructor */
-  Colored_isolated_vertices_renderer(Geometry & geo) :
+  /*! Constructor. */
+  Colored_isolated_vertices_renderer(Geometry& geo) :
     Isolated_vertices_renderer(geo) {}
     
-  /*! Render the isolated vertices */
-  virtual void operator()(Draw_action * action)
+  /*! Render the isolated vertices. */
+  virtual void operator()(Draw_action* action)
   {
-    const Vector3f & color = this->m_geo.get_aos_isolated_vertex_color();
+    const Vector3f& color = this->m_geo.get_aos_isolated_vertex_color();
     glColor3fv((float*)&color);
     Isolated_vertices_renderer::operator()(action);
   }
 };
   
-/*! A function object that draws edges as inflated lines */
+/*! A function object that draws edges as inflated lines. */
 template <typename Edges_renderer>
 class Inflated_line_edges_renderer : public Edges_renderer {
 public:
   typedef typename Edges_renderer::Geometry     Geometry;
   
   /*! Constructor */
-  Inflated_line_edges_renderer(Geometry & geo) : Edges_renderer(geo) {}
+  Inflated_line_edges_renderer(Geometry& geo) : Edges_renderer(geo) {}
     
-  /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  /*! Drawer operator. */
+  virtual void operator()(Draw_action* action)
   {
-    Context * context = action->get_context();
+    Context* context = action->get_context();
     context->draw_line_width(this->m_geo.get_aos_edge_line_width() * 8);
     Edges_renderer::operator()(action);
     context->draw_line_width(1.0f);
   }
 };
 
-/*! A function object that draws edges as inflated strips */
+/*! A function object that draws edges as inflated strips. */
 template <typename Edges_renderer>
 class Inflated_strip_edges_renderer : public Edges_renderer {
 public:
   typedef typename Edges_renderer::Geometry     Geometry;
   
-  /*! Constructor */
-  Inflated_strip_edges_renderer(Geometry & geo) : Edges_renderer(geo) {}
+  /*! Constructor. */
+  Inflated_strip_edges_renderer(Geometry& geo) : Edges_renderer(geo) {}
     
-  /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  /*! Drawer operator. */
+  virtual void operator()(Draw_action* action)
   {
     float saved_edge_radius = this->m_geo.get_aos_edge_radius();
     this->m_geo.set_aos_edge_radius(saved_edge_radius * 2);
@@ -189,17 +189,17 @@ public:
   }
 };
 
-/*! A function object that draws edges as inflated tubes */
+/*! A function object that draws edges as inflated tubes. */
 template <typename Edges_renderer>
 class Inflated_tube_edges_renderer : public Edges_renderer {
 public:
   typedef typename Edges_renderer::Geometry     Geometry;
   
-  /*! Constructor */
-  Inflated_tube_edges_renderer(Geometry & geo) : Edges_renderer(geo) {}
+  /*! Constructor. */
+  Inflated_tube_edges_renderer(Geometry& geo) : Edges_renderer(geo) {}
   
-  /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  /*! Drawer operator. */
+  virtual void operator()(Draw_action* action)
   {
     typedef Arrangement_renderer::Edge_shape    Edge_shape;
     
@@ -212,21 +212,21 @@ public:
   }
 };
 
-/*! A function object that renders the frontfacing  edges inflated */
+/*! A function object that renders the frontfacing  edges inflated. */
 template <typename Geometry>
 class Inflated_renderer : public Edges_renderer<Geometry> {
 public:
   typedef Edges_renderer<Geometry>                   Base_renderer;
   
-  /*! Constructor */
-  Inflated_renderer(Geometry & geo) : Base_renderer(geo) {}
+  /*! Constructor. */
+  Inflated_renderer(Geometry& geo) : Base_renderer(geo) {}
     
-  /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  /*! Drawer operator. */
+  virtual void operator()(Draw_action* action)
   {
     typedef Arrangement_renderer::Edge_shape    Edge_shape;
 
-    Context * context = action->get_context();
+    Context* context = action->get_context();
 
     float saved_edge_radius = 0;
     Boolean tube_edge_shape = false;
@@ -251,19 +251,19 @@ public:
   }
 };
 
-/*! A function object that draws edges as lines */
+/*! A function object that draws edges as lines. */
 template <typename Colored_edges_renderer>
 class Line_colored_edges_renderer : public Colored_edges_renderer {
 public:
   typedef typename Colored_edges_renderer::Geometry     Geometry;
   
   /*! Constructor */
-  Line_colored_edges_renderer(Geometry & geo) : Colored_edges_renderer(geo) {}
+  Line_colored_edges_renderer(Geometry& geo) : Colored_edges_renderer(geo) {}
     
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  virtual void operator()(Draw_action* action)
   {
-    Context * context = action->get_context();
+    Context* context = action->get_context();
     context->draw_light_enable(false);
     context->draw_line_width(this->m_geo.get_aos_edge_line_width());
     Colored_edges_renderer::operator()(action);
@@ -272,20 +272,20 @@ public:
   }
 };
 
-/*! A function object that draws vertices as rings */
+/*! A function object that draws vertices as rings. */
 template <typename Colored_vertices_renderer>
 class Point_colored_vertices_renderer : public Colored_vertices_renderer {
 public:
   typedef typename Colored_vertices_renderer::Geometry  Geometry;
   
-  /*! Constructor */
-  Point_colored_vertices_renderer(Geometry & geo) :
+  /*! Constructor. */
+  Point_colored_vertices_renderer(Geometry& geo) :
     Colored_vertices_renderer(geo) {}
     
-  /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  /*! Drawer operator. */
+  virtual void operator()(Draw_action* action)
   {
-    Context * context = action->get_context();
+    Context* context = action->get_context();
     context->draw_light_enable(false);  
     context->draw_point_size(this->m_geo.get_aos_vertex_point_size());
     Colored_vertices_renderer::operator()(action);
@@ -294,20 +294,20 @@ public:
   }
 };
 
-/*! A function object that draws vertices as points */
+/*! A function object that draws vertices as points. */
 template <typename Colored_vertices_renderer>
 class Ring_colored_vertices_renderer : public Colored_vertices_renderer {
 public:
   typedef typename Colored_vertices_renderer::Geometry  Geometry;
   
   /*! Constructor */
-  Ring_colored_vertices_renderer(Geometry & geo) :
+  Ring_colored_vertices_renderer(Geometry& geo) :
     Colored_vertices_renderer(geo) {}
     
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  virtual void operator()(Draw_action* action)
   {
-    Context * context = action->get_context();
+    Context* context = action->get_context();
     context->draw_light_enable(false);  
     context->draw_line_width(this->m_geo.get_aos_vertex_point_size());
     Colored_vertices_renderer::operator()(action);
@@ -316,7 +316,7 @@ public:
   }
 };
 
-/*! A function object that draws isolated vertices as rings */
+/*! A function object that draws isolated vertices as rings. */
 template <typename Colored_isolated_vertices_renderer>
 class Point_colored_isolated_vertices_renderer :
   public Colored_isolated_vertices_renderer
@@ -324,14 +324,14 @@ class Point_colored_isolated_vertices_renderer :
 public:
   typedef typename Colored_isolated_vertices_renderer::Geometry Geometry;
   
-  /*! Constructor */
-  Point_colored_isolated_vertices_renderer(Geometry & geo) :
+  /*! Constructor. */
+  Point_colored_isolated_vertices_renderer(Geometry& geo) :
     Colored_isolated_vertices_renderer(geo) {}
     
-  /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  /*! Drawer operator. */
+  virtual void operator()(Draw_action* action)
   {
-    Context * context = action->get_context();
+    Context* context = action->get_context();
     context->draw_light_enable(false);  
     context->draw_point_size(this->m_geo.get_aos_isolated_vertex_point_size());
     Colored_isolated_vertices_renderer::operator()(action);
@@ -340,7 +340,7 @@ public:
   }
 };
 
-/*! A function object that draws isolated vertices as points */
+/*! A function object that draws isolated vertices as points. */
 template <typename Colored_isolated_vertices_renderer>
 class Ring_colored_isolated_vertices_renderer :
   public Colored_isolated_vertices_renderer
@@ -348,14 +348,14 @@ class Ring_colored_isolated_vertices_renderer :
 public:
   typedef typename Colored_isolated_vertices_renderer::Geometry Geometry;
   
-  /*! Constructor */
-  Ring_colored_isolated_vertices_renderer(Geometry & geo) :
+  /*! Constructor. */
+  Ring_colored_isolated_vertices_renderer(Geometry& geo) :
     Colored_isolated_vertices_renderer(geo) {}
     
-  /*! Drawer operator */
-  virtual void operator()(Draw_action * action)
+  /*! Drawer operator. */
+  virtual void operator()(Draw_action* action)
   {
-    Context * context = action->get_context();
+    Context* context = action->get_context();
     context->draw_light_enable(false);  
     context->draw_line_width(this->m_geo.get_aos_isolated_vertex_point_size());
     Colored_isolated_vertices_renderer::operator()(action);

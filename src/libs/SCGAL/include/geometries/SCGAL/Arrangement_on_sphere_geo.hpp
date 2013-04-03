@@ -53,7 +53,7 @@ class Scene_graph;
 class Element;
 
 /*! A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
+ * great circles embeded on a sphere.
  */
 class SGAL_CLASSDEF Arrangement_on_sphere_geo :
   public Arrangement_on_sphere_base_geo
@@ -72,85 +72,85 @@ protected:
   typedef Arrangement_on_sphere                         Aos;
   
 public:
-  /*! Constructor */
-  Arrangement_on_sphere_geo(Boolean proto = SGAL_FALSE);
+  /*! Constructor. */
+  Arrangement_on_sphere_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Arrangement_on_sphere_geo();
 
-  /* Construct the prototype */
-  static Arrangement_on_sphere_geo * prototype()
-  { return new Arrangement_on_sphere_geo(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Arrangement_on_sphere_geo* prototype()
+  { return new Arrangement_on_sphere_geo(true); }
 
-  /*! Clone */
-  virtual Container * clone()
+  /*! Clone. */
+  virtual Container* clone()
   { return new Arrangement_on_sphere_geo(); }
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the container prototype. */
+  virtual Container_proto* get_prototype();
 
-  /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  /*! Set the ellpsoid attributes. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
   /*! */
-  virtual void cull(Cull_context & cull_context) {}
+  virtual void cull(Cull_context& cull_context) {}
 
   /*! Clear the internal representation and auxiliary data structures */
   virtual void clear();
 
-  /*! Is the representation empty ? */
+  /*! Determine whether the representation empty. */
   virtual Boolean is_empty() const { return m_aos->is_empty(); }
 
-  /*! Obrain the arrangement */
-  Arrangement_on_sphere * get_aos();
+  /*! Obrain the arrangement. */
+  Aos* get_aos();
 
-  /*! Set the arrangement */
-  void set_aos(Arrangement_on_sphere * aos);
+  /*! Set the arrangement. */
+  void set_aos(Aos* aos);
   
   /*! Add a geometry container that represents an arrangement on a
    * sphere to the list of such geometry containers.
    */
-  void add_aos_geo(Arrangement_on_sphere_geo * aos_geo)
+  void add_aos_geo(Arrangement_on_sphere_geo* aos_geo)
   { m_aoses.push_back(aos_geo); }
 
-  /*! Obtain the overlay traits (const version) */
-  const CGAL::Arr_default_overlay_traits<Aos> & get_overlay_traits() const
+  /*! Obtain the overlay traits (const version). */
+  const CGAL::Arr_default_overlay_traits<Aos>& get_overlay_traits() const
   { return m_overlay_traits; }
 
-  /*! Obtain the overlay traits (non-const version) */
-  CGAL::Arr_default_overlay_traits<Aos> & get_overlay_traits()
+  /*! Obtain the overlay traits (non-const version). */
+  CGAL::Arr_default_overlay_traits<Aos>& get_overlay_traits()
   { return m_overlay_traits; }
   
-  /*! Print statistics */
+  /*! Print statistics. */
   void print_stat() { Arrangement_on_surface_geo::print_stat(this); }
   
-  /*! Draw the arrangement vertices
+  /*! Draw the arrangement vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action)
+  virtual void draw_aos_vertices(Draw_action* action)
   { my_draw_aos_vertices(m_aos, action); }
 
-  /*! Draw the arrangement isolated vertices
+  /*! Draw the arrangement isolated vertices.
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action * action)
+  virtual void draw_aos_isolated_vertices(Draw_action* action)
   { my_draw_aos_isolated_vertices(m_aos, action); }
 
-  /*! Draw the arrangement edges
+  /*! Draw the arrangement edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action)
+  virtual void draw_aos_edges(Draw_action* action)
   { my_draw_aos_edges(m_aos, action); }
 
 protected:
@@ -185,8 +185,8 @@ protected:
   typedef Inflated_tube_edges_renderer<Sphere_edges_renderer>
                                            Sphere_inflated_tube_edges_renderer;
 
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! Indicates whether the aos data structure is owned, i.e., explicitly
    * allocated. If the aos data structure is owned, it should be destructed
@@ -194,33 +194,33 @@ protected:
    */
   Boolean m_owned_aos;
   
-  /*! The arrangement of great-circle arcs on a sphere */
-  Arrangement_on_sphere * m_aos;
+  /*! The arrangement of great-circle arcs on a sphere. */
+  Arrangement_on_sphere* m_aos;
 
   typedef std::vector<Arrangement_on_sphere_geo *>      Aos_geo_vector;
   typedef Aos_geo_vector::iterator                      Aos_geo_iter;
   typedef Aos_geo_vector::difference_type               Aos_geo_diff;
   
   /*! A container of geometry nodes that represent arrangements of
-   * great-circle arcs on a sphere
+   * great-circle arcs on a sphere.
    */
   Aos_geo_vector m_aoses;
 
-  /*! An overlay-traits class for computing the overlay */
+  /*! An overlay-traits class for computing the overlay. */
   CGAL::Arr_default_overlay_traits<Aos> m_overlay_traits;
   
-  /*! Create the renderers */
+  /*! Create the renderers. */
   void create_renderers();
 
-  /*! Detsroy the renderers */
+  /*! Detsroy the renderers. */
   void destroy_renderers();
 
  private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
-  /*! The container prototype */
-  static Container_proto * s_prototype;
+  /*! The container prototype. */
+  static Container_proto* s_prototype;
 };
   
 SGAL_END_NAMESPACE

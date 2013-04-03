@@ -56,7 +56,7 @@ class Scene_graph;
 class Element;
 
 /*! A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
+ * great circles embeded on a sphere.
  */
 class SGAL_CLASSDEF Arrangement_on_sphere_base_geo :
   public Arrangement_on_surface_geo
@@ -73,25 +73,25 @@ public:
   };
 
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Arrangement_on_sphere_base_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Arrangement_on_sphere_base_geo();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone() = 0;
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
+  /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Set the ellpsoid attributes */
+  /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -105,76 +105,76 @@ public:
   /*! */
   virtual Boolean clean_sphere_bound();
 
-  /*! Clear the internal representation and auxiliary data structures */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear() = 0;
 
-  /*! Set the coordinate array */
+  /*! Set the coordinate array. */
   void set_coord_array(Coord_array* coord_array);
 
-  /*! Obtain the coordinate array */
+  /*! Obtain the coordinate array. */
   Coord_array* get_coord_array() const;
 
-  /*! Set the normal array */
+  /*! Set the normal array. */
   void set_normal_array(Normal_array* normal_array);
 
-  /*! Obtain the normal array */
+  /*! Obtain the normal array. */
   Normal_array* get_normal_array() const;
 
-  /*! Obtain the x-monotone curve index array */
+  /*! Obtain the x-monotone curve index array. */
   const std::vector<Uint>& get_x_monotone_curve_indices() const;
 
-  /*! Obtain the curve index array */
+  /*! Obtain the curve index array. */
   const std::vector<Uint>& get_curve_indices() const;
 
-  /*! Obtain the normal index array */
+  /*! Obtain the normal index array. */
   const std::vector<Uint>& get_normal_indices() const;
   
-  /*! Obtain the point index array */
+  /*! Obtain the point index array. */
   const std::vector<Uint>& get_point_indices() const;
 
-  /*! Obtain the i-th x-monotone curve index */
+  /*! Obtain the i-th x-monotone curve index. */
   Uint get_x_monotone_curve_index(Uint i) const;
 
-  /*! Obtain the i-th curve index */
+  /*! Obtain the i-th curve index. */
   Uint get_curve_index(Uint i) const;
 
-  /*! Obtain the i-th normal index */
+  /*! Obtain the i-th normal index. */
   Uint get_normal_index(Uint i) const;
 
-  /*! Obtain the i-th point index */
+  /*! Obtain the i-th point index. */
   Uint get_point_index(Uint i) const;
 
-  /*! Obtain the point location index array */
+  /*! Obtain the point location index array. */
   const std::vector<Uint>& get_point_location_indices() const;
 
-  /*! Obtain the i-th point index */
+  /*! Obtain the i-th point index. */
   Uint get_point_location_index(Uint i) const;
     
-  /*! Draw an arrangement on surface vertex
+  /*! Draw an arrangement on surface vertex.
    * \param action
-   * \param center the vertex center
+   * \param center the vertex center.
    */
   virtual void draw_aos_vertex(Draw_action* action, Vector3f& center);
 
-  /*! Draw an arrangement on surface isolated vertex
+  /*! Draw an arrangement on surface isolated vertex.
    * \param action
-   * \param center the vertex center
+   * \param center the vertex center.
    */
   virtual void draw_aos_isolated_vertex(Draw_action* action,
                                         Vector3f& center);
   
-  /*! Draw an arrangement on surface boundary_vertex
+  /*! Draw an arrangement on surface boundary_vertex.
    * \param action
-   * \param center the vertex center
+   * \param center the vertex center.
    */
   virtual void draw_aos_boundary_vertex(Draw_action* action,
                                         Vector3f& center);
   
-  /*! Draw an arrangement on surface edge
+  /*! Draw an arrangement on surface edge.
    * \param action
-   * \param source the edge source point
-   * \param target the edge target point
-   * \param normal the normal to the plane containing the edge
+   * \param source the edge source point.
+   * \param target the edge target point.
+   * \param normal the normal to the plane containing the edge.
    */
   virtual void draw_aos_edge(Draw_action* action,
                              Vector3f& source, Vector3f& target,
@@ -186,29 +186,29 @@ protected:
   typedef SGAL::Colored_sphere_renderer    Colored_surface_renderer;
   typedef SGAL::Stencil_sphere_renderer    Stencil_surface_renderer;
 
-  /*! An array of coordinates */
+  /*! An array of coordinates. */
   Coord_array* m_coord_array;
 
-  /*! An array of normals */
+  /*! An array of normals. */
   Normal_array* m_normal_array;
   
-  /*! An array of indices into the coordinate array for general curves */
+  /*! An array of indices into the coordinate array for general curves. */
   std::vector<Uint> m_curve_indices;
 
-  /*! An array of indices into the coordinate array for x-monotone curves */
+  /*! An array of indices into the coordinate array for x-monotone curves. */
   std::vector<Uint> m_x_monotone_curve_indices;
 
-  /*! An array of indices into the coordinate array for isolated points */
+  /*! An array of indices into the coordinate array for isolated points. */
   std::vector<Uint> m_point_indices;
 
-  /*! An array of indices into the coordinate array for point queries */
+  /*! An array of indices into the coordinate array for point queries. */
   std::vector<Uint> m_point_location_indices;
 
-  /*! An array of indices into the normal array for curves */
+  /*! An array of indices into the normal array for curves. */
   std::vector<Uint> m_normal_indices;
   
   /*! Insert the points, curves, and x-monotone curves into the givem
-   * representation
+   * representation.
    */
   template <typename Aos>
   void insert_all(Aos* aos)
@@ -370,73 +370,73 @@ protected:
   }
 
 private:
-  /*! The container prototype */
+  /*! The container prototype. */
   static Container_proto* s_prototype;
 
-  /*! Draw the arrangement on sphere vertices
+  /*! Draw the arrangement on sphere vertices.
    * \param action
    */
   virtual void draw_aos_vertices(Draw_action* action) = 0;
 
-  /*! Draw the arrangement on sphere edges
+  /*! Draw the arrangement on sphere edges.
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action) = 0;
 
-  /*! Create the renderers */
+  /*! Create the renderers. */
   void create_renderers();
 };
 
-/*! \brief obtains the coordinate array */
+/*! \brief obtains the coordinate array. */
 inline Coord_array* Arrangement_on_sphere_base_geo::get_coord_array() const
 { return m_coord_array; }
 
-/*! \brief obtains the x-monotone curve index array */
+/*! \brief obtains the x-monotone curve index array. */
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_x_monotone_curve_indices() const
 { return m_x_monotone_curve_indices; }
 
-/*! \brief obtains the curve index array */
+/*! \brief obtains the curve index array. */
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_curve_indices() const
 { return m_curve_indices; }
 
-/*! \brief obtains the normal index array */
+/*! \brief obtains the normal index array. */
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_normal_indices() const
 { return m_normal_indices; }
 
-/*! \brief obtains the point index array */
-inline const std::vector<Uint> &
+/*! \brief obtains the point index array. */
+inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_point_indices() const
 { return m_point_indices; }
 
-/*! \brief obtains the i-th x-monotone curve index */
+/*! \brief obtains the i-th x-monotone curve index. */
 inline Uint
 Arrangement_on_sphere_base_geo::get_x_monotone_curve_index(Uint i) const
 { return m_x_monotone_curve_indices[i]; }
 
-/*! \brief obtains the i-th curve index */
+/*! \brief obtains the i-th curve index. */
 inline Uint
 Arrangement_on_sphere_base_geo::get_curve_index(Uint i) const
 { return m_curve_indices[i]; }
 
-/*! \brief obtains the i-th normal index */
+/*! \brief obtains the i-th normal index. */
 inline Uint
 Arrangement_on_sphere_base_geo::get_normal_index(Uint i) const
 { return m_normal_indices[i]; }
 
-/*! \brief obtains the i-th point index */
+/*! \brief obtains the i-th point index. */
 inline Uint
 Arrangement_on_sphere_base_geo::get_point_index(Uint i) const
 { return m_point_indices[i]; }
 
-/*! \brief obtains the point location index array */
+/*! \brief obtains the point location index array. */
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_point_location_indices() const
 { return m_point_location_indices; }
 
-/*! \brief obtains the i-th point location index */
+/*! \brief obtains the i-th point location index. */
 inline Uint
 Arrangement_on_sphere_base_geo::get_point_location_index(Uint i) const
 { return m_point_location_indices[i]; }
