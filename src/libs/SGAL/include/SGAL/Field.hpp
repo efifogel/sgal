@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -48,51 +48,71 @@ class Field {
 protected:
   typedef std::list<Field*> Field_list;
 
-  /*! The containing container */
-  Container * m_container;
+  /*! The containing container. */
+  Container* m_container;
 
-  /*! The field info record */
-  Field_info * m_field_info;
+  /*! The field info record. */
+  Field_info* m_field_info;
 
-  /*! A list of connected fields */
+  /*! A list of connected fields. */
   Field_list m_connected_fields;
 
-  /*! Indicated whether cascading is blocked */
+  /*! Indicate whether cascading is blocked. */
   Boolean m_blocked;
 
-  /*! The value of the field */
-  Value_holder * m_value_holder;
+  /*! The value of the field. */
+  Value_holder* m_value_holder;
 
   //! \todo Critical_section m_fields_cs;
 
 public:
   /*! Constructor */
-  Field(Container * container, Field_info * field_info);
+  Field(Container* container, Field_info* field_info);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Field();
 
-  /*! Obtain the field info */
-  Field_info * get_field_info() const { return m_field_info; }
+  /*! Obtain the field info. */
+  Field_info* get_field_info() const;
 
-  /*! Connect this field to the given field */
-  void connect(Field * field);
+  /*! Connect this field to the given field.
+   * Inserts the given field to the connected fields list.
+   * @param field (in) the field to be added.
+   */
+  void connect(Field* field);
 
-  /*! Disconnect this field from the given field */
-  void disconnect(Field * field);
+  /*! Disconnect this field from the given field.
+   * Removes the given field from the connected fields list
+   * @param field (in) the field to be removed  
+   */
+  void disconnect(Field* field);
 
-  /*! Cascade the execution flow of the connected fields */
+  /*! Cascade the execution flow of the connected fields.
+   * - Activate execution - if this field is an execution function.
+   * - For all connected fields
+   * - Set the value to the value of the current field.
+   * - Activate Cascade on each one.
+   */
   virtual void cascade();
 
-  /*! Set the blocked flag to ignore cascading */
-  void set_blocked(Boolean blocked) { m_blocked = blocked; }
+  /*! Set the blocked flag to ignore cascading. */
+  void set_blocked(Boolean blocked);
 
-  /*! Obtain the cascade-blocking flag */
-  Boolean is_blocked() const { return m_blocked; }
+  /*! Determine whether cascading is blocked. */
+  Boolean is_blocked() const;
 
-  // Returns the EValue member
-  virtual Value_holder * get_value_holder() { return m_value_holder; }
+  /*! Obtain the value member. */
+  virtual Value_holder* get_value_holder() { return m_value_holder; }
 };
+
+/*! \brief obtains the field info. */
+inline Field_info* Field::get_field_info() const { return m_field_info; }
+
+/*! \brief sets the blocked flag to ignore cascading. */
+inline void Field::set_blocked(Boolean blocked) { m_blocked = blocked; }
+
+/*! \brief determines whether cascading is blocked. */
+inline Boolean Field::is_blocked() const { return m_blocked; }
 
 SGAL_END_NAMESPACE
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -58,21 +58,21 @@ class Value_holder;
 
 class Field_info {  
 protected:
-  /*! The field id (e.g, Group::ISVISIBLE, etc) */
+  /*! The field id (e.g, Group::ISVISIBLE). */
   Uint m_id;
 
-  /*! The field name */
+  /*! The field name. */
   std::string m_name;
 
-  /*! The function to execute when the field changes */
+  /*! The function to execute when the field changes. */
   Execution_function m_exec_func;
 
   /*! \todo what is it? */
   Boolean m_initially_blocked;
 
 public:
-  /*! Constructor */
-  Field_info(Uint id, const std::string & name,
+  /*! Constructor. */
+  Field_info(Uint id, const std::string& name,
              Execution_function exec_func = NULL,
              Boolean initially_blocked = false) :
     m_id(id),
@@ -89,7 +89,7 @@ public:
   Uint get_id() const { return m_id; }
 
   /*! Obtaint the field name */
-  const std::string & get_name() const { return m_name; }
+  const std::string& get_name() const { return m_name; }
 
   /*! Obtain the execution function */
   Execution_function execution_function() const { return m_exec_func; }
@@ -101,11 +101,11 @@ public:
   /*! Obtain */
   Boolean is_initially_blocked() { return m_initially_blocked; }
 
-  // Get the field info type
+  // Get the field info type.
   virtual Uint get_type_id() const = 0;
 
-  // Returns an Value_holder object of the field info for the given container
-  virtual Value_holder * create_value_holder(Container * container) = 0;
+  // Returns an Value_holder object of the field info for the given container.
+  virtual Value_holder* create_value_holder(Container* container) = 0;
 
   /*! \todo
   // Creates an SAI_field of the same type id and name 
@@ -118,7 +118,7 @@ public:
 
 /*!
  */
-inline std::ostream & operator<<(std::ostream & os, const Field_info & fi)
+inline std::ostream& operator<<(std::ostream& os, const Field_info& fi)
 {
   os << fi.get_name().c_str() << ", " << fi.get_id();
   return os;

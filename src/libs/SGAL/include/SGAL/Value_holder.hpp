@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -23,7 +23,7 @@
 #define SGAL_VALUE_HOLDER_HPP
 
 /*! \file
- * Value_holder holds a field value.
+ * Holds a field value.
  */
 
 #include "SGAL/basic.hpp"
@@ -39,24 +39,24 @@ SGAL_BEGIN_NAMESPACE
 class Value_holder {
 public:
   /*! Destructor */
-  virtual ~Value_holder(){}
+  virtual ~Value_holder() {}
 
   /*! Set the value to the value of another Value instance */
-  virtual void set(Value_holder * other) = 0;
+  virtual void set(Value_holder* other) = 0;
 
   /*! Virtual copy constructor */
-  virtual Value_holder * clone() = 0;
+  virtual Value_holder* clone() = 0;
 };
 
 /*! An instance of Value_holder_specifc holds a single value of a specific
  * type. The value type can be any basic type, a complex type, or an array
  * of the above.
  */
-template<class T>
+template <typename T>
 class Value_holder_specific : public Value_holder {
 private:
   /*! A pointer to a value of a specific type */
-  T * m_value;
+  T* m_value;
 
   //! \todo
   // Critical_section m_cs;
@@ -64,7 +64,7 @@ private:
 
 public:
   /*! Constructor */
-  Value_holder_specific(T * value) :
+  Value_holder_specific(T* value) :
     m_value(value),
     m_allocated_internally(false)
   {
@@ -79,7 +79,7 @@ public:
   { if (m_allocated_internally) delete m_value; }
 
   /*! Set the value of the value holder */
-  void set_value(const T & value)
+  void set_value(const T& value)
   {
     // lock m_CS to protect the value when copied
     // (will unlock automaticaly at end of function)
@@ -88,7 +88,7 @@ public:
   }
 
   /*! Obtain the value from the value holder */
-  T & get_value()
+  T& get_value()
   {
     // lock m_CS to protect the value when copied
     // (will unlock automaticaly at end of function)
@@ -97,9 +97,9 @@ public:
   }
 
   /*! Set the value to the value of another Value instance */
-  virtual void set(Value_holder * other)
+  virtual void set(Value_holder* other)
   {
-    Value_holder_specific<T> * specific_other = 
+    Value_holder_specific<T>* specific_other = 
       dynamic_cast<Value_holder_specific<T>*>(other);
     SGAL_assertion(specific_other);
 
@@ -111,11 +111,11 @@ public:
     *m_value = *(specific_other->m_value);
   }
 
-  /*! Create a new instance of Value_holder with the same held value */
-  virtual Value_holder * clone() 
+  /*! Create a new instance of Value_holder with the same held value. */
+  virtual Value_holder* clone() 
   {
     // Allocate memory for the new value and copy the current value to it
-    T * new_value = new T;
+    T* new_value = new T;
     // lock m_CS to protect the value copy
     // (will unlock automaticaly at end of function)
     //! \todo Auto_lock auto_lock(&m_cs);

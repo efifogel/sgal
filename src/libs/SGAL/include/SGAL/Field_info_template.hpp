@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -44,21 +44,21 @@ SGAL_BEGIN_NAMESPACE
  * stores a value of a specific type. The type of the field value can be any
  * basic type, a complex type, or an array of the above.
  */
-template<class T, Uint type_id>
+template <typename T, Uint type_id>
 class Field_info_template : public Field_info {
 private:
   /*! The field offset */
   Member_offset_type m_offset;
 
-  /*! The field initial value */
+  /*! The field initial value. */
   T m_initial_value;
 
-  /*! Indicates whether to initialize the filed with the initial value */
+  /*! Indicates whether to initialize the filed with the initial value. */
   bool m_use_initial_value;
 
 public:
-  /*! Constructor */
-  Field_info_template(Uint id, const std::string & name,
+  /*! Constructor. */
+  Field_info_template(Uint id, const std::string& name,
                       Member_offset_type offset,
                       Execution_function execution = NULL,
                       bool initially_blocked = false,
@@ -70,24 +70,24 @@ public:
     m_use_initial_value(use_initial_value)
   {}
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Field_info_template() {}
 
-  /*! Obtain the field-info type id */
+  /*! Obtain the field-info type id. */
   virtual Uint get_type_id() const { return type_id; }
 
-  /*! Obtain the field offset */
+  /*! Obtain the field offset. */
   Member_offset_type get_offset() const { return m_offset; }
 
   /*! Create a Value_holder instance using the field info for the given
-   * container
-   * \param container the container
+   * container.
+   * \param container the container.
    */
-  virtual Value_holder * create_value_holder(Container * container)
+  virtual Value_holder* create_value_holder(Container* container)
   {
-    Value_holder_specific<T> * holder;
-    // if m_offset is zero - it indicates that the value holder should allocate
-    // memory for the value
+    Value_holder_specific<T>* holder;
+    // if m_offset is zero, it indicates that the value holder should allocate
+    // memory for the value.
     if (m_offset == 0)
       holder =  new Value_holder_specific<T>(NULL);  
     // else - the container member's pointer is used for the value

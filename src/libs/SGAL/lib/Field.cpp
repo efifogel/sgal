@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -28,31 +28,25 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
-Field::Field(Container * container, Field_info * field_info) :
+Field::Field(Container* container, Field_info* field_info) :
   m_container(container),
   m_field_info(field_info)
 {
   if (field_info != NULL) {
     m_value_holder = field_info->create_value_holder(container);
     m_blocked = field_info->is_initially_blocked();
-  } else {
+  }
+  else {
     m_value_holder = NULL;
     m_blocked = false;
   }
 };
 
 /*! Destructor */
-Field::~Field()
-{
-  delete m_value_holder;
-};
+Field::~Field() { delete m_value_holder; };
 
-/*! Connect this field to a given one
- *
- * Inserts the given field to the connected fields list
- * @param  field (in) the field to be added  
- */
-void Field::connect(Field * field)
+/*! \brief connects this field to a given one. */
+void Field::connect(Field* field)
 {
   // lock m_connected_fields critical section
   // (will unlock automaticaly at end of function)
@@ -60,11 +54,8 @@ void Field::connect(Field * field)
   m_connected_fields.insert(m_connected_fields.begin(), field);
 }
 
-/*! Disconnects this field from the given one
- * Removes the given field from the connected fields list
- * @param  field (in) the field to be removed  
- */
-void Field::disconnect(Field * field)
+/*! \brief disconnects this field from the given one. */
+void Field::disconnect(Field* field)
 {
   // lock m_connected_fields critical section
   // (will unlock automaticaly at end of function)
@@ -72,12 +63,7 @@ void Field::disconnect(Field * field)
   m_connected_fields.remove(field);
 }
 
-/*! Cascade the execution flow from this field to its connected ones
- * - Activate execution - if this field is an execution function.
- * - For all connected fields
- * - Set the value to the value of the current field.
- * - Activate Cascade on each one.
- */
+/*! \brief cascades the execution flow from this field to its connected ones. */
 void Field::cascade()
 {
   // Activate execution if the field info has one
@@ -94,8 +80,8 @@ void Field::cascade()
 
   Field_list::iterator fi;
   // Loop over the connected fields
-  for (fi = m_connected_fields.begin(); fi != m_connected_fields.end(); fi++) {
-    Field * connected_field = (*fi);
+  for (fi = m_connected_fields.begin(); fi != m_connected_fields.end(); ++fi) {
+    Field* connected_field = (*fi);
     
     // Continue the cascade into a connected field only if it is not blocked
     if (!connected_field->is_blocked()) {
