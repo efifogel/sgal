@@ -209,9 +209,6 @@ inline void Mesh_set::set_dirty_indices(Boolean flag) { m_dirty_indices = flag; 
 /*! \brief determines whether the indices hasn't been cleaned. */
 inline Boolean Mesh_set::is_dirty_indices() const { return m_dirty_indices; }
 
-/*! \brief clears the representation. */
-inline void Mesh_set::clear() { m_dirty = true; }
-  
 /*! \brief determines whether the representation hasn't been cleaned. */
 inline Boolean Mesh_set::is_dirty() const { return m_dirty; }
 

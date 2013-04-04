@@ -274,10 +274,10 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
-  /*! */
+  /*! Cull the Gaussian map if invisible and prepare for rendering. */
   virtual void cull(Cull_context& cull_context);
 
-  /*! */
+  /*! Draw the Gaussian map for selection. */
   virtual void isect(Isect_action* action);
 
   /*! Set the attributes of this node.

@@ -93,10 +93,10 @@ public:
   typedef Edge_shape::Style                           Edge_style;
 
 private:
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Default values */
+  /*! Default values. */
   static const Boolean s_def_draw_aos;
 
   static const Boolean s_def_draw_aos_opaque;
@@ -126,7 +126,7 @@ private:
   static const Vector3f s_def_aos_edge_color;
 
 protected:
-  /*! Extracts the approximate point from an aos face */
+  /*! Extracts the approximate point from an aos face. */
   template <typename Sgm>
   struct Convert_approximate_sphere {
     typedef typename Sgm::Face                          Sgm_face;
@@ -139,7 +139,7 @@ protected:
     }
   };
 
-  /*! Extracts the approximate point from an aos face */
+  /*! Extracts the approximate point from an aos face. */
   template <typename Sgm>
   struct Extract_aos_vector3f_point {
     typedef typename Sgm::Face                          Sgm_face;
@@ -152,9 +152,9 @@ protected:
     }
   };
   
-  /*! Transform the coordinates of the SGM into spheres
-   * \param sgm (i) the spherical Gaussian map
-   * \param spheres (o) the transformed coordinates
+  /*! Transform the coordinates of the SGM into spheres.
+   * \param sgm (in) the spherical Gaussian map.
+   * \param spheres (out) the transformed coordinates.
    */
   template <typename Sgm>
   void transform_primal_coords(Sgm* sgm, Approximate_sphere_vector& spheres)
@@ -181,7 +181,7 @@ protected:
   }
 
   /*! An adapter from a container of Spherical gaussian map geometry nodes to
-   * the a container of arrangements they hold
+   * the a container of arrangements they hold.
    */
   template <typename Iterator, typename Sgm>
   class Sgm_iterator {    
@@ -264,97 +264,97 @@ protected:
   typedef SGAL::Inflated_tube_edges_renderer<Self::Edges_renderer>
                                                 Inflated_tube_edges_renderer;
 
-  /*! The shape of an aos vertex */
+  /*! The shape of an aos vertex. */
   Sphere m_aos_sphere;
 
-  /*! Indicates that the coordinates were tranlated */
+  /*! Indicates that the coordinates were tranlated. */
   Boolean m_translated;
 
-  /*! Indicates that the coordinates were rotated */
+  /*! Indicates that the coordinates were rotated. */
   Boolean m_rotated;
   
-  /*! When trigerred the CGM is exported */
+  /*! When trigerred the CGM is exported. */
   Boolean m_export;
 
-  /*! Indicates wether to draw the polyhedron or its Gaussian map */
+  /*! Indicates wether to draw the polyhedron or its Gaussian map. */
   Boolean m_draw_aos;
 
-  /*! The opposite of the m_draw_aos flag */
+  /*! The opposite of the m_draw_aos flag. */
   Boolean m_draw_primal;
 
-  /*! Indicates whether to draw the aos sphere opaque */
+  /*! Indicates whether to draw the aos sphere opaque. */
   Boolean m_draw_aos_opaque;
 
-  /*! Indicates whether to draw the aos edges haloed */
+  /*! Indicates whether to draw the aos edges haloed. */
   Boolean m_draw_aos_haloed;
 
-  /*! Indicates whether to draw the aos sphere */
+  /*! Indicates whether to draw the aos sphere. */
   Boolean m_draw_aos_surface;
 
-  /*! The color of the aos sphere (aos faces) */
+  /*! The color of the aos sphere (aos faces). */
   Vector3f m_aos_surface_color;
 
   // Vertex attributes:
   
-  /*! The vertex shape style */
+  /*! The vertex shape style. */
   Vertex_style m_aos_vertex_style;
 
-  /*! The radius of the geometry that represents a vertex */
+  /*! The radius of the geometry that represents a vertex. */
   Float m_aos_vertex_radius;
 
-  /*! The size of the point that represents a vertex */
+  /*! The size of the point that represents a vertex. */
   Float m_aos_vertex_point_size;
   
-  /*! The color of the vertices */
+  /*! The color of the vertices. */
   Vector3f m_aos_vertex_color;
 
   // Aos boundary vertex attributes:
   
-  /*! The boundary vertex shape style */
+  /*! The boundary vertex shape style. */
   Vertex_style m_aos_boundary_vertex_style;
 
-  /*! The radius of the disc or ball that represents an boundary vertex */
+  /*! The radius of the disc or ball that represents an boundary vertex. */
   Float m_aos_boundary_vertex_radius;
 
-  /*! The size of the point that represents an boundary vertex */
+  /*! The size of the point that represents an boundary vertex. */
   Float m_aos_boundary_vertex_point_size;
   
-  /*! The color of the boundary vertices */
+  /*! The color of the boundary vertices. */
   Vector3f m_aos_boundary_vertex_color;    
   
   // Edge attributes:
   
-  /*! Indicates whether the rendering of edges is enabled or not */
+  /*! Indicates whether the rendering of edges is enabled or not. */
   Boolean m_aos_edge_enabled;
 
-  /*! The edge rendering style */
+  /*! The edge rendering style. */
   Edge_style m_aos_edge_style;
 
-  /*! The edge rendering type */
+  /*! The edge rendering type. */
   Int m_aos_edge_count;
 
-  /*! Indicates whether edges are rendered directed or not */
+  /*! Indicates whether edges are rendered directed or not. */
   Boolean m_aos_edge_directed;
   
-  /*! The radius of the geometry that represents an edge */
+  /*! The radius of the geometry that represents an edge. */
   Float m_aos_edge_radius;
   
-  /*! The width of the lines that represent aos edges */
+  /*! The width of the lines that represent aos edges. */
   Float m_aos_edge_line_width;
 
-  /*! The color of the aos edges */
+  /*! The color of the aos edges. */
   Vector3f m_aos_edge_colors[2];
 
-  /*! The angle of a single line strip of a spherical arc */
+  /*! The angle of a single line strip of a spherical arc. */
   Float m_aos_delta_angle;
 
-  /*! Indicates whether the renderer must be cleaned */
+  /*! Indicates whether the renderer must be cleaned. */
   Boolean m_renderer_dirty;
 
-  /*! Indicates whether the facets must be cleaned */
+  /*! Indicates whether the facets must be cleaned. */
   Boolean m_facets_dirty;
   
-  /*! The renderer of the arrangement data structure */
+  /*! The renderer of the arrangement data structure. */
   Arrangement_renderer m_renderer;
 
   /*! The surface renderer */
@@ -372,64 +372,58 @@ protected:
   /*! Destroy the renderers */
   void destroy_renderers();
   
-  /*! Transform the coordinates of the SGM into spheres
-   * \param spheres (o) the transformed coordinates
+  /*! Transform the coordinates of the SGM into spheres.
+   * \param spheres (out) the transformed coordinates.
    */
   virtual void transform_coords(Approximate_sphere_vector& spheres) {}
 
-  /*! Draw the primal representation of the polyhedron */
+  /*! Draw the primal representation of the polyhedron. */
   virtual void draw_primal(Draw_action* action) {}
 
+  /*! Draw the Gausian representation of the polyhedron opaque. */
   virtual void draw_aos_opaque(Draw_action* action) {}
   
-  /*! Draw an arrangement on sphere vertex
+  /*! Draw an arrangement on sphere vertex.
    * param action
-   * param center the vertex center
+   * param center the vertex center.
    */
   void draw_aos_vertex(Draw_action* action, Vector3f& center);
 
-  /*! Draw an arrangement on surface boundary_vertex
+  /*! Draw an arrangement on surface boundary_vertex.
    * \param action
-   * \param center the vertex center
+   * \param center the vertex center.
    */
   void draw_aos_boundary_vertex(Draw_action* action, Vector3f& center);
 
-  /*! Draw an arrangement on sphere edge
+  /*! Draw an arrangement on sphere edge.
    * \param action
-   * \param source the edge source point
-   * \param target the edge target point
-   * \param normal the normal to the plane containing the edge
+   * \param source the edge source point.
+   * \param target the edge target point.
+   * \param normal the normal to the plane containing the edge.
    */
   void draw_aos_edge(Draw_action* action, Vector3f& source, Vector3f& target,
                      Vector3f& normal);
     
   virtual void isect_primary() {}
 
-  /*! Export the planar maps associated with the faces of the unit sphere
+  /*! Export the planar maps associated with the faces of the unit sphere.
    */
   void output(Field_info* field_info)
-  {
-    SGAL_assertion_msg(0, "Not implemented yet!");
-    // std::cout << m_sgm << std::endl;
-  }
+  { SGAL_assertion_msg(0, "Not implemented yet!"); }
 
   /*! \brief imports  the planar maps associated with the faces of the unit
-   * sphere
+   * sphere.
    */
-  void input()
-  {
-    SGAL_assertion_msg(0, "Not implemented yet!");
-    // std::cin >> m_sgm;
-  }
+  void input() { SGAL_assertion_msg(0, "Not implemented yet!"); }
   
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Spherical_gaussian_map_base_geo(Boolean proto = false);
 
-  /*! Copy constructor */
+  /*! Copy constructor. */
   Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& sgm);
   
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Spherical_gaussian_map_base_geo();
 
   /*! */
@@ -438,210 +432,205 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! Calculate the bounding sphere
-   * \return a Boolean flag that indicates whether the sphere bound changed
+  /*! Calculate the bounding sphere.
+   * \return a Boolean flag that indicates whether the sphere bound changed.
    */
   virtual Boolean clean_sphere_bound();
 
-  /*! Set the attributes of this node
-   * \param elem contains lists of attribute names and values
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Draw the internal representation */
+  /*! Draw the internal representation. */
   virtual void draw_geometry(Draw_action* action);
     
-  /*! Clear the internal representation and auxiliary data structures
-   */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
   
-  /*! Clean the renderer */
+  /*! Clean the renderer. */
   virtual void clean_renderer();
 
-  /*! Process change of content */
+  /*! Process change of content. */
   virtual void field_changed(Field_info* field_info);
 
-  /*! Raise the flag that indicates that the sphere bound changed */
+  /*! Raise the flag that indicates that the sphere bound changed. */
   void draw_changed(Field_info* field_info = NULL);
   
-  /*! Draw the arrangement on sphere vertices
+  /*! Draw the arrangement on sphere vertices.
    * \param action
    */
   virtual void draw_aos_vertices(Draw_action* action) {}
 
-  /*! Draw the arrangement on sphere edges
+  /*! Draw the arrangement on sphere edges.
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action) {}
 
-  /*! Reverse the coordinate indices */
+  /*! Reverse the coordinate indices. */
   void set_reverse_coord_indices(const SGAL::Array<Uint>& indices);
   
-  /*! Obtain the aos surface color */
+  /*! Obtain the aos surface color. */
   const Vector3f& get_aos_surface_color(void) const;
 
-  /*! Set the aos surface color */
+  /*! Set the aos surface color. */
   void set_aos_surface_color(const Vector3f& color);
 
   // Vertex attributes:
   
-  /*! Obtain the vertex shape style */
+  /*! Obtain the vertex shape style. */
   Vertex_style get_aos_vertex_style() const { return m_aos_vertex_style; }
 
-  /*! Set the vertex shape style */
+  /*! Set the vertex shape style. */
   void set_aos_vertex_style(Vertex_style style) { m_aos_vertex_style = style; }
   
   /*! Obtain the vertex shape style */
   Float get_aos_vertex_point_size() const { return m_aos_vertex_point_size; }
 
-  /*! Obtain the vertex radius */
+  /*! Obtain the vertex radius. */
   Float get_aos_vertex_radius() const { return m_aos_vertex_radius; }
   
-  /*! Obtain the aos vertex color */
+  /*! Obtain the aos vertex color. */
   const Vector3f& get_aos_vertex_color() const { return m_aos_vertex_color; }
 
-  /*! Set the vertex color */
+  /*! Set the vertex color. */
   void set_aos_vertex_color(const Vector3f& color);
 
   // Aos boundary vertex attributes:
   
-  /*! Obtain the boundary vertex shape style */
+  /*! Obtain the boundary vertex shape style. */
   Vertex_style get_aos_boundary_vertex_style() const
   { return m_aos_boundary_vertex_style; }
 
-  /*! Obtain the boundary vertex point size */
+  /*! Obtain the boundary vertex point size. */
   Float get_aos_boundary_vertex_point_size() const
   { return m_aos_boundary_vertex_point_size; }
 
-  /*! Obtain the boundary_vertex radius */
+  /*! Obtain the boundary_vertex radius. */
   Float get_aos_boundary_vertex_radius() const
   { return m_aos_boundary_vertex_radius; }
 
-  /*! Obtain the aos boundary vertex color
-   * \return the boundary vertex color
+  /*! Obtain the aos boundary vertex color.
+   * \return the boundary vertex color.
    */
   const Vector3f& get_aos_boundary_vertex_color() const
   { return m_aos_boundary_vertex_color; }
   
   // Edge attributes:
   
-  /*! Enable edge rendering */
+  /*! Enable edge rendering. */
   void enable_aos_edge() { m_aos_edge_enabled = true; }
 
-  /*! Disable edge rendering */
+  /*! Disable edge rendering. */
   void disable_aos_edge() { m_aos_edge_enabled = false; }
 
-  /*! Determine whether edge rendering is enabled */
+  /*! Determine whether edge rendering is enabled. */
   Boolean is_aos_edge_enabled() const { return m_aos_edge_enabled; }
 
-  /*! Obtain the edge shape style */
+  /*! Obtain the edge shape style. */
   Edge_style get_aos_edge_style() const { return m_aos_edge_style; }
 
-  /*! Set the edge shape style */
+  /*! Set the edge shape style. */
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
   
-  /*! Obtain the edge shape type */
+  /*! Obtain the edge shape type. */
   Int get_aos_edge_count() const { return m_aos_edge_count; }
 
-  /*! Set the edge shape count */
+  /*! Set the edge shape count. */
   void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
     
-  /*! Determine whether edges are rendered directed */
+  /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
 
-  /*! Set the flag that determines whether edges are rendered directed */
+  /*! Set the flag that determines whether edges are rendered directed. */
   void set_aos_edge_directed(Boolean dir) { m_aos_edge_directed = dir; }
 
-  /*! Obtaint the radius of the tubes that represent aos edges */
+  /*! Obtaint the radius of the tubes that represent aos edges. */
   Float get_aos_edge_radius() const { return m_aos_edge_radius; }
 
-  /*! Set the radius of the tubes that represent aos edges */
+  /*! Set the radius of the tubes that represent aos edges. */
   void set_aos_edge_radius(Float radius) { m_aos_edge_radius = radius; }
 
-  /*! Set the width of the lines that represent aos edges */
+  /*! Set the width of the lines that represent aos edges. */
   void set_aos_edge_line_width(Float width);
 
-  /*! Obtaint the width of the lines that represent aos edges */
+  /*! Obtaint the width of the lines that represent aos edges. */
   Float get_aos_edge_line_width() const;
   
-  /*! Set the line color */
+  /*! Set the line color. */
   void set_aos_edge_color(const Vector3f& color, unsigned int id = 0);
 
-  /*! Obtain the line color */
+  /*! Obtain the line color. */
   const Vector3f& get_aos_edge_color(unsigned int id = 0);
 
-  /*! Obtain the angle of a trangle fan */
+  /*! Obtain the angle of a trangle fan. */
   Float get_aos_delta_angle() const { return m_aos_delta_angle; }
 
-  /*! Obtain the flag that indicates whether to draw the embedding surface
+  /*! Obtain the flag that indicates whether to draw the embedding surface.
    */
   Boolean get_draw_aos_surface() const { return m_draw_aos_surface; }
 
-  /*! Set the flag that indicates whether to draw the background */
+  /*! Set the flag that indicates whether to draw the background. */
   void set_draw_aos_surface(Boolean draw_bg);
 
-  /*! Set the flag that indicates whether to draw the primal or aos */
+  /*! Set the flag that indicates whether to draw the primal or aos. */
   void set_draw_aos(Boolean flag) { m_draw_aos = flag; }
 
-  /*! Set the flag that indicates whether to draw haloed lines */
+  /*! Set the flag that indicates whether to draw haloed lines. */
   void set_draw_aos_haloed(Boolean flag) { m_draw_aos_haloed = flag; }
 
-  /*! Obtain the flag that indicates whether to draw haloed lines */
+  /*! Obtain the flag that indicates whether to draw haloed lines. */
   Boolean get_draw_aos_haloed() const { return m_draw_aos_haloed; }
 };
 
-/*! brief sets the curve color */
-inline void
-Spherical_gaussian_map_base_geo::
+/*! brief sets the curve color. */
+inline void Spherical_gaussian_map_base_geo::
 set_aos_edge_color(const Vector3f& color, Uint id)
 { m_aos_edge_colors[id] = color; }
 
-/*! \brief obtains the curve color */
+/*! \brief obtains the curve color. */
 inline const Vector3f& Spherical_gaussian_map_base_geo::
 get_aos_edge_color(Uint id)
 { return m_aos_edge_colors[id]; }
 
-/*! \brief sets the aos sphere color */
-inline
-void Spherical_gaussian_map_base_geo::
+/*! \brief sets the aos sphere color. */
+inline void Spherical_gaussian_map_base_geo::
 set_aos_surface_color(const Vector3f& color)
 {
   m_aos_surface_color = color;
   if (m_colored_surface_renderer) m_colored_surface_renderer->set_color(color);
 }
 
-/*! \brief sets the aos vertex color */
-inline
-void Spherical_gaussian_map_base_geo::
+/*! \brief sets the aos vertex color. */
+inline void Spherical_gaussian_map_base_geo::
 set_aos_vertex_color(const Vector3f& color)
 { m_aos_vertex_color = color; }
 
-/*! \brief sets the flag that indicates whether to draw the surface sphere */
+/*! \brief sets the flag that indicates whether to draw the surface sphere. */
 inline void Spherical_gaussian_map_base_geo::
 set_draw_aos_surface(Boolean draw_bg)
 { m_draw_aos_surface = draw_bg; }
 
-/*! \brief sets the width of the lines */
+/*! \brief sets the width of the lines. */
 inline void
 Spherical_gaussian_map_base_geo::set_aos_edge_line_width(Float width)
 { m_aos_edge_line_width = width; }
 
-/*! \brief obtains the width of the lines */
+/*! \brief obtains the width of the lines. */
 inline Float Spherical_gaussian_map_base_geo::get_aos_edge_line_width() const
 { return m_aos_edge_line_width; }
 
-/*! \brief obtains the aos surface color */
-inline
-const Vector3f&
+/*! \brief obtains the aos surface color. */
+inline const Vector3f&
 Spherical_gaussian_map_base_geo::get_aos_surface_color(void) const
 { return m_aos_surface_color; }
 

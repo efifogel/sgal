@@ -246,8 +246,7 @@ void Ego::clear_parts()
   m_num_bricks = 0;
 }
 
-/*! \brief clear the internal representation and auxiliary data structures
- */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Ego::clear()
 {
   if (m_owned_parts) clear_parts();
@@ -266,7 +265,7 @@ void Ego::clear()
   }
 }
 
-/*! \brief initializes the container prototype */
+/*! \brief initializes the container prototype. */
 void Ego::init_prototype()
 {
     //! Container execution function

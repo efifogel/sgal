@@ -92,7 +92,7 @@ Spherical_gaussian_map_colored_geo(Boolean proto) :
   if (!proto) create_renderers();
 }
 
-/*! Copy Constructor */
+/*! Copy Constructor. */
 Spherical_gaussian_map_colored_geo::
 Spherical_gaussian_map_colored_geo(const Spherical_gaussian_map_colored_geo& gm)
 {
@@ -100,7 +100,7 @@ Spherical_gaussian_map_colored_geo(const Spherical_gaussian_map_colored_geo& gm)
   SGAL_assertion(0);
 }
 
-/*! Destructor */
+/*! Destructor. */
 Spherical_gaussian_map_colored_geo::~Spherical_gaussian_map_colored_geo()
 {
   m_sgm_nodes.clear();
@@ -131,7 +131,8 @@ void Spherical_gaussian_map_colored_geo::clean()
     m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()), sgm_overlay);
     clock_t end_time = clock();
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
-  } else if (m_polyhedron) {
+  }
+  else if (m_polyhedron) {
     typedef boost::is_same<Polyhedron::Plane_3, Exact_plane_3>
       Polyhedron_has_plane;
 
@@ -149,7 +150,8 @@ void Spherical_gaussian_map_colored_geo::clean()
       hei->set_color(get_aos_edge_color());
     clock_t end_time = clock();
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
-  } else if (m_coord_array) {
+  }
+  else if (m_coord_array) {
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
     Sgm_geo_initializer_visitor visitor;
@@ -178,7 +180,7 @@ void Spherical_gaussian_map_colored_geo::clean()
   update_facets();
 }
 
-/*! \brief clears the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Spherical_gaussian_map_colored_geo::clear()
 {
   Spherical_gaussian_map_base_geo::clear();
@@ -568,7 +570,7 @@ void Spherical_gaussian_map_colored_geo::set_polyhedron(Polyhedron* polyhedron)
   clear();
 }
 
-/*! \brief obrains a reference to the cubical Gaussian map. */
+/*! \brief obrains a reference to the Gaussian map. */
 Spherical_gaussian_map_colored* Spherical_gaussian_map_colored_geo::get_sgm()
 {
   if (m_dirty) clean();

@@ -292,11 +292,14 @@ void Mesh_set::flatten_indices()
   m_indices_flat = true;
 }
 
-/*! \brief processes change of coordinates. */
-void Mesh_set::coord_changed(Field_info* /* field_info */)
+/*! \brief clears the representation. */
+void Mesh_set::clear()
 {
   m_dirty = true;
   m_dirty_sphere_bound = true;
 }
+  
+/*! \brief processes change of coordinates. */
+void Mesh_set::coord_changed(Field_info* /* field_info */) { clear(); }
 
 SGAL_END_NAMESPACE

@@ -27,7 +27,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+/*! Constructor. */
 Field::Field(Container* container, Field_info* field_info) :
   m_container(container),
   m_field_info(field_info)
@@ -42,7 +42,7 @@ Field::Field(Container* container, Field_info* field_info) :
   }
 };
 
-/*! Destructor */
+/*! Destructor. */
 Field::~Field() { delete m_value_holder; };
 
 /*! \brief connects this field to a given one. */
@@ -66,7 +66,7 @@ void Field::disconnect(Field* field)
 /*! \brief cascades the execution flow from this field to its connected ones. */
 void Field::cascade()
 {
-  // Activate execution if the field info has one
+  // Activate execution if the field info has one:
   if (m_field_info != NULL) {
     Execution_function execution_func = m_field_info->execution_function();
     if (execution_func) (m_container->*execution_func)(m_field_info);
@@ -79,16 +79,16 @@ void Field::cascade()
   if (m_connected_fields.empty()) return;
 
   Field_list::iterator fi;
-  // Loop over the connected fields
+  // Loop over the connected fields:
   for (fi = m_connected_fields.begin(); fi != m_connected_fields.end(); ++fi) {
     Field* connected_field = (*fi);
     
-    // Continue the cascade into a connected field only if it is not blocked
+    // Continue the cascade into a connected field only if it is not blocked:
     if (!connected_field->is_blocked()) {
-      // Set the connected field's value to this field's value
+      // Set the connected field's value to this field's value:
       (connected_field->get_value_holder())->set(m_value_holder);
       
-      // Activate cascade on the connected field
+      // Apply cascade on the connected field:
       connected_field->cascade();
     }
   }

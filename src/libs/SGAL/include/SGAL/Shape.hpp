@@ -107,7 +107,7 @@ public:
   /*! Draw the node while traversing the scene graph. */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! \brief draws the shape for selection ignoring the appearance and using
+  /*! Draw the shape for selection ignoring the appearance and using
    * a unique number that identifies the shape instead. The identifier is
    * encoded as color in the frame buffer.
    */

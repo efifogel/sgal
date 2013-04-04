@@ -164,21 +164,21 @@ Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& gm)
   SGAL_assertion(0);
 }
 
-/*! Destructor */
-Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo()
-{ clear(); }
+/*! Destructor. */
+Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() { clear(); }
 
-/*! Clear the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Spherical_gaussian_map_base_geo::clear()
 {
+  std::cout << "Spherical_gaussian_map_base_geo::clear()" << std::endl;
   Mesh_set::clear();
   process_content_changed();
 }
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
 
-/*! */
+/*! \brief */
 void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 {
   Context* context = action->get_context();

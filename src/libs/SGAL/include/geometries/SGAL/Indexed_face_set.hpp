@@ -160,9 +160,12 @@ public:
    * @param color_per_vertex true if normals are bound per vertex
    */
   void set_color_per_vertex(Boolean color_per_vertex);
+
   Boolean get_color_per_vertex() { return m_color_per_vertex; }
-  
+
+  /*! Draw the polygons for selection. */
   virtual void isect(Isect_action* action); 
+
   virtual int create_display_list(Draw_action* action);
 
   /*! Clear the representation. */
@@ -171,7 +174,7 @@ public:
   /*! Return true if the representation is empty. */
   virtual Boolean is_empty() const;
 
-  /*! Draw the mesh conditionaly. */
+  /*! Draw the polygons. */
   virtual void draw(Draw_action* action);
 
   /*! Draw the representation.
