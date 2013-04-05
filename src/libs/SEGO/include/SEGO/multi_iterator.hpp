@@ -68,7 +68,7 @@ SGAL_BEGIN_NAMESPACE
                    It3 it3_b, It3 it3_e)
         : m_it1(it1_b), m_it1end(it1_e), m_it2(it2_b),
           m_it2begin(it2_b), m_it2end(it2_e), m_it3(it3_b),
-          m_it3begin(it2_b), m_it3end(it3_e) {}
+          m_it3begin(it3_b), m_it3end(it3_e) {}
 
   protected:
     friend class boost::iterator_core_access;
