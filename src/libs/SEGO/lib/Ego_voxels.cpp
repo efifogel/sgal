@@ -33,8 +33,8 @@ Ego_voxels::initialize_container(long length,
   }
 
   for (long i = 0; i < length; ++i) {
-    for (long j = 0; i < width; ++i) {
-      for (long k = 0; i < height; ++i) {
+    for (long j = 0; j < width; ++j) {
+      for (long k = 0; k < height; ++k) {
         m_voxels[i][j][k].filled = false;
       }
     }
