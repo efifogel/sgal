@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7780 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -38,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
-/*! Maintains an array of 3D vertex-coordinate */
+/*! Maintains an array of 3D vertex-coordinate. */
 class Coord_array : public Container {
 public:
   enum {
@@ -47,82 +47,119 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Coord_array(Boolean proto = SGAL_FALSE) : Container(proto) {}
+  /*! Constructor. */
+  Coord_array(Boolean proto = false);
 
-  /*! Constructor */
-  Coord_array(Uint n) { m_array.resize(n); }
+  /*! Constructor. */
+  Coord_array(Uint n);
 
-  /*! Destructor */
-  virtual ~Coord_array() { clear(); }
+  /*! Destructor. */
+  virtual ~Coord_array();
 
-  /* Construct the prototype */
-  static Coord_array * prototype() { return new Coord_array(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Coord_array* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Coord_array(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
+  /*! Obtains the node prototype. */  
+  virtual Container_proto* get_prototype();
   
-  /*! Set the attributes of this node
-   * \param elem contains lists of attribute names and values
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   //! \todo virtual Attribute_list get_attributes();
 
-  /*! Obtain the array size */
-  Uint size() const { return m_array.size(); }
+  /*! Obtain the array size. */
+  Uint size() const;
 
-  /*! Resize the array capacity */
-  void resize(Uint n) { m_array.resize(n); }
+  /*! Resize the array capacity. */
+  void resize(Uint n);
 
-  /*! Clear the array */
-  void clear() { m_array.clear(); }
+  /*! Clear the array. */
+  void clear();
 
-  /*! The iterator to the Array first element */
-  Vector3f * begin() { return m_array.begin(); }
-  const Vector3f * begin() const { return m_array.begin(); }
+  /*! The iterator to the Array first element. */
+  Vector3f* begin();
+  const Vector3f* begin() const;
 
   /*! The iterator to the Array past-the-end element */
-  Vector3f * end() { return m_array.end(); }
-  const Vector3f * end() const { return m_array.end(); }
+  Vector3f* end();
+  const Vector3f* end() const;
   
-  /*! Array indexing operator */
-  Vector3f & operator[](Uint n) { return m_array[n]; }
+  /*! Array indexing operator. */
+  Vector3f& operator[](Uint n);
 
-  /*! Array indexing operator */
-  const Vector3f & operator[](Uint n) const { return m_array[n]; }
+  /*! Array indexing operator. */
+  const Vector3f& operator[](Uint n) const;
 
-  /*! Obtain the vector */
-  Vector3f * get_vector() { return m_array.get_vector(); }
+  /*! Obtain the vector. */
+  const Vector3f* get_vector() const;
 
 protected:
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
-  /*! Process change of points
+  /*! Process change of points.
    * \param field_info
    */
-  void point_changed(Field_info * field_info);
+  void point_changed(Field_info* field_info);
   
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
-  /*! The coordinate array */
+  /*! The coordinate array. */
   SGAL::Array<Vector3f> m_array;
 };
+
+/* \brief constructs the prototype. */
+inline Coord_array* Coord_array::prototype() { return new Coord_array(true); }
+
+/*! \brief clones. */
+inline Container* Coord_array::clone() { return new Coord_array(); }
+
+/*! \brief obtains the array size. */
+inline Uint Coord_array::size() const { return m_array.size(); }
+
+/*! \brief resizes the array capacity. */
+inline void Coord_array::resize(Uint n) { m_array.resize(n); }
+
+/*! \brief clears the array. */
+inline void Coord_array::clear() { m_array.clear(); }
+
+/*! \brief obtains the iterator to the Array first element. */
+inline Vector3f* Coord_array::begin() { return m_array.begin(); }
+inline const Vector3f* Coord_array::begin() const { return m_array.begin(); }
+
+/*! \brief obtains the iterator to the Array past-the-end element */
+inline Vector3f* Coord_array::end() { return m_array.end(); }
+inline const Vector3f* Coord_array::end() const { return m_array.end(); }
+  
+/*! \brief array indexing operator. */
+inline Vector3f& Coord_array::operator[](Uint n) { return m_array[n]; }
+
+/*! \brief array indexing operator. */
+inline const Vector3f& Coord_array::operator[](Uint n) const
+{ return m_array[n]; }
+
+/*! \brief obtains the vector. */
+inline const Vector3f* Coord_array::get_vector() const
+{ return m_array.get_vector(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Coord_array::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

@@ -88,21 +88,17 @@ Spherical_gaussian_map_colored_geo(Boolean proto) :
   m_inflated_line_edges_renderer(NULL),
   m_inflated_strip_edges_renderer(NULL),
   m_inflated_tube_edges_renderer(NULL)
-{
-  if (!proto) create_renderers();
-}
+{ if (!proto) create_renderers(); }
 
-/*! Copy Constructor. */
+/*! Copy Constructor. Not implemented yet! */
 Spherical_gaussian_map_colored_geo::
 Spherical_gaussian_map_colored_geo(const Spherical_gaussian_map_colored_geo& gm)
-{
-  // Not implemented yet!
-  SGAL_assertion(0);
-}
+{ SGAL_assertion(0); }
 
 /*! Destructor. */
 Spherical_gaussian_map_colored_geo::~Spherical_gaussian_map_colored_geo()
 {
+  clear();
   m_sgm_nodes.clear();
   if (m_owned_sgm) {
     if (m_sgm) {

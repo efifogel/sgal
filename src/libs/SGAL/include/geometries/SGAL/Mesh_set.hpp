@@ -62,6 +62,14 @@ public:
   /*! Draw the mesh conditionaly. */
   virtual void draw(Draw_action* action);
 
+  /*! Process change of a field.
+   * Clear the mesh and generally process the change of the field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void field_changed(SGAL::Field_info* field_info);
+
   /*! Draw the mesh (unconditionaly). */
   virtual void draw_mesh(Draw_action* action);
   
@@ -118,9 +126,6 @@ public:
 
   /*! Obtain the creas_angle. */
   Float get_crease_angle() const;
-
-  /*! Process change of coordinates. */
-  virtual void coord_changed(SGAL::Field_info* field_info);
 
   /*! Set the flag that indicates whether the indices structure is "flat".
    */

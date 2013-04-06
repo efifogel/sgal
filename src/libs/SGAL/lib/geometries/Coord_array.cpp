@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7829 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -38,13 +38,22 @@ SGAL_BEGIN_NAMESPACE
 
 const std::string Coord_array::s_tag = "Coordinate";
 
-/*! The node prototype */
-Container_proto * Coord_array::s_prototype = NULL;
+/*! The node prototype. */
+Container_proto* Coord_array::s_prototype = NULL;
 
-/*! Register to the container factory */
+/*! Register to the container factory. */
 REGISTER_TO_FACTORY(Coord_array, "Coord_array");
 
-/*! Initialize the node prototype */
+/*! Constructor. */
+Coord_array::Coord_array(Boolean proto) : Container(proto) {}
+
+/*! Constructor. */
+Coord_array::Coord_array(Uint n) { m_array.resize(n); }
+
+/*! Destructor. */
+Coord_array::~Coord_array() { clear(); }
+
+/*! Initialize the node prototype. */
 void Coord_array::init_prototype()
 {
   if (s_prototype) return;
@@ -65,11 +74,11 @@ void Coord_array::init_prototype()
   
 }
 
-/*! \brief processes change of points */
-void Coord_array::point_changed(Field_info * /* field_info */)
+/*! \brief processes change of points. */
+void Coord_array::point_changed(Field_info* field_info)
 {
   set_rendering_required();
-  process_content_changed();
+  field_changed(field_info);
 }
     
 /*! \brief deletes the node prototype */
@@ -79,15 +88,15 @@ void Coord_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype */  
-Container_proto * Coord_array::get_prototype()
+/*! \brief obtains the node prototype. */  
+Container_proto* Coord_array::get_prototype()
 {
   if (s_prototype == NULL) Coord_array::init_prototype();
   return s_prototype;
 }
   
-/*! \brief sets the attributes of the object extracted from an input file */
-void Coord_array::set_attributes(Element * elem)
+/*! \brief sets the attributes of the object extracted from an input file. */
+void Coord_array::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
@@ -96,8 +105,8 @@ void Coord_array::set_attributes(Element * elem)
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
   {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "point") {
       Uint num_values = get_num_tokens(value);
       Uint size = num_values / 3;

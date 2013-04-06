@@ -243,7 +243,8 @@ void Coord_transformer::rotate(Field_info* field_info)
   if (changed_field) changed_field->cascade();
 }
 
-/*! Transform the input vertices and store the results in the output vertices.
+/*! \brief transforms the input vertices and store the results in the output
+ * vertices.
  */
 void Coord_transformer::execute(Field_info* field_info)
 {
@@ -274,7 +275,7 @@ void Coord_transformer::execute(Field_info* field_info)
   Field* changed_field = get_field(CHANGED);
   if (changed_field) changed_field->cascade();
 
-  m_coord_array->process_content_changed();
+  m_coord_array_changed->process_content_changed();
 }
 
 SGAL_END_NAMESPACE

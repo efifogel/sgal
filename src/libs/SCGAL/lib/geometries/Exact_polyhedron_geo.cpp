@@ -67,11 +67,9 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
 /*! Destructor */
 Exact_polyhedron_geo::~Exact_polyhedron_geo() {}
 
-/*! Compute the convex hull of the coordinate set */
+/*! \brief computes the convex hull of the coordinate set. */
 void Exact_polyhedron_geo::convex_hull()
 {
-  std::cout << "Exact_polyhedron_geo::convex_hull" << std::endl;
-  
   if (!m_coord_array) return;
 
   boost::shared_ptr<Exact_coord_array>  exact_coord_array =
@@ -97,7 +95,7 @@ void Exact_polyhedron_geo::convex_hull()
   }
 }
 
-/*! Clean the data structure */
+/*! \brief cleans the data structure. */
 void Exact_polyhedron_geo::clean()
 {
   SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
@@ -144,7 +142,7 @@ void Exact_polyhedron_geo::clean()
   Mesh_set::clean();
 }
 
-/*! Clear the internal representation */
+/*! \brief clears the internal representation. */
 void Exact_polyhedron_geo::clear()
 {
   SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
@@ -153,17 +151,15 @@ void Exact_polyhedron_geo::clear()
   Mesh_set::clear();
 }
 
-/*!
- */
+/*! \brief */
 void Exact_polyhedron_geo::cull(SGAL::Cull_context& cull_context) {}
 
-/*! Draw the internal representation */
-void Exact_polyhedron_geo::draw_geometry(SGAL::Draw_action * /* action */)
+/*! \brief draws the internal representation. */
+void Exact_polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
 {
   SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "Exact_polyhedron_geo::draw ... ");
-  for (Facet_iterator i = m_polyhedron.facets_begin();
-       i != m_polyhedron.facets_end(); ++i)
-  {
+  Facet_iterator i;
+  for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Polyhedron::Halfedge_around_facet_circulator j = i->facet_begin();
     // Facets in polyhedral surfaces are at least triangles.
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
@@ -179,16 +175,13 @@ void Exact_polyhedron_geo::draw_geometry(SGAL::Draw_action * /* action */)
   SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "completed\n");
 }
 
-/*!
- */
-void Exact_polyhedron_geo::isect(SGAL::Isect_action * action)
+/*! \brief */
+void Exact_polyhedron_geo::isect(SGAL::Isect_action* action)
 {
   if (is_dirty()) clean();
   if (is_empty()) return;
-
-  for (Facet_iterator i = m_polyhedron.facets_begin();
-       i != m_polyhedron.facets_end(); ++i)
-  {
+  Facet_iterator i;
+  for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Polyhedron::Halfedge_around_facet_circulator j = i->facet_begin();
     // Facets in polyhedral surfaces are at least triangles.
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
@@ -201,8 +194,7 @@ void Exact_polyhedron_geo::isect(SGAL::Isect_action * action)
   }
 }
 
-/*!
- */
+/*! \brief */
 Boolean Exact_polyhedron_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
@@ -228,21 +220,16 @@ Boolean Exact_polyhedron_geo::clean_sphere_bound()
   return true;
 }
 
-/*! Set the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Exact_polyhedron_geo::set_attributes(SGAL::Element * elem)
+/*! \brief sets the attributes of this object. */
+void Exact_polyhedron_geo::set_attributes(SGAL::Element* elem)
 {
   SGAL::Mesh_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "convexHull") {
       m_convex_hull = compare_to_true(value);
       elem->mark_delete(ai);
@@ -254,7 +241,7 @@ void Exact_polyhedron_geo::set_attributes(SGAL::Element * elem)
   elem->delete_marked();
 }
 
-/*! Initialize the container prototype */
+/*! \brief initializes the container prototype. */
 void Exact_polyhedron_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -265,21 +252,21 @@ void Exact_polyhedron_geo::init_prototype()
   // Execution_function exec_func;
 }
 
-/*! Delete the container prototype */
+/*! \brief deletes the container prototype. */
 void Exact_polyhedron_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the container prototype */
+/*! \brief obtains the container prototype. */
 SGAL::Container_proto* Exact_polyhedron_geo::get_prototype() 
 {  
   if (!s_prototype) Exact_polyhedron_geo::init_prototype();
   return s_prototype;
 }
 
-/*! Compute the orientation of a point relative to the polyhedron */
+/*! \brief computes the orientation of a point relative to the polyhedron. */
 CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Point_3& p)
 {
   Facet_iterator fi;
@@ -293,7 +280,7 @@ CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Point_3& p)
   return CGAL::ON_NEGATIVE_SIDE;
 }
 
-/*! Print statistics */
+/*! \brief prints statistics. */
 void Exact_polyhedron_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";

@@ -145,13 +145,18 @@ public:
   /*! Clone. */
   virtual SGAL::Container* clone();
 
+  /*! */
   virtual void cull(SGAL::Cull_context& cull_context);
 
+  /*! */
   virtual void isect(SGAL::Isect_action* action);
 
+  /*! */
   virtual bool clean_sphere_bound();
 
-  /*! Set the attributes of this node. */
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values
+   */
   virtual void set_attributes(SGAL::Element* elem);
 
   /*! Initialize the node prototype. */
@@ -219,7 +224,7 @@ private:
     { vertex.m_vertex = to_vector3f(vertex.point()); }
   };
 
-  /*! Convert Plane_3 to normal in Vector3f representation */
+  /*! Convert Plane_3 to normal in Vector3f representation. */
   struct Plane_to_normal {
     void operator()(Facet& facet)
     {
@@ -233,7 +238,7 @@ private:
   };
 
   
-  /*! Transform a (planar) facet into a plane */
+  /*! Transform a (planar) facet into a plane. */
   struct Plane_equation {
     template <class Facet>
     typename Facet::Plane_3 operator()(Facet & f) {
@@ -245,25 +250,25 @@ private:
     }
   };
   
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static SGAL::Container_proto* s_prototype;
 
-  /*! The builder */
+  /*! The builder. */
   Polyhedron_geo_builder<HalfedgeDS> m_surface;
 
-  /*! The resulting polyhedron */
+  /*! The resulting polyhedron. */
   Polyhedron m_polyhedron;
   
-  /*! Indicates whether to compute the convex hull */
+  /*! Indicates whether to compute the convex hull. */
   bool m_convex_hull;
 
-  /*! The time is took to compute the minkowski sum in seconds */
+  /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;
 
-  /*! Computes the convex hull of the coordinate set */
+  /*! Computes the convex hull of the coordinate set. */
   void convex_hull();
 };
 

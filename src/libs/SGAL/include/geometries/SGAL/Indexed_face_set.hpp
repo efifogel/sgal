@@ -478,8 +478,8 @@ protected:
   /*! Clear the vertex arrays */
   void clear_vertex_arrays();
 
-  /*! Destroy the vertex-index arrays */
-  void destroy_vertex_index_arrays();
+  /*! Clear the vertex-index arrays */
+  void clear_vertex_index_arrays();
   
   /*! Isect direct drawing-mode */
   void isect_direct();

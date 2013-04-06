@@ -318,4 +318,20 @@ void Geo_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
+/*! \brief processes change of coordinates. */
+void Geo_set::coord_changed(Field_info* field_info)
+{ field_changed(field_info); }
+
+/*! \brief processes change of normals. */
+void Geo_set::normal_changed(Field_info* field_info)
+{ field_changed(field_info); }
+
+/*! \brief processes change of colors. */
+void Geo_set::color_changed(Field_info* field_info)
+{ field_changed(field_info); }
+
+/*! \brief processes change of texture coordinates. */
+void Geo_set::tex_coord_changed(Field_info* field_info)
+{ field_changed(field_info); }
+
 SGAL_END_NAMESPACE

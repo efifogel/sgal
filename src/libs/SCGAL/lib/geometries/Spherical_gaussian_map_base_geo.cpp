@@ -169,11 +169,7 @@ Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() { clear(); }
 
 /*! \brief clears the internal representation and auxiliary data structures. */
 void Spherical_gaussian_map_base_geo::clear()
-{
-  std::cout << "Spherical_gaussian_map_base_geo::clear()" << std::endl;
-  Mesh_set::clear();
-  process_content_changed();
-}
+{ Mesh_set::clear(); }
 
 /*! \brief */
 void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
@@ -487,13 +483,6 @@ set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
     m_coord_indices[i++] = *ii;
   }
   m_coord_indices[i++] = (Uint) -1;
-}
-
-/*! \biref processes change of points. */
-void Spherical_gaussian_map_base_geo::field_changed(Field_info* field_info)
-{
-  Container::field_changed(field_info);
-  clear();
 }
 
 /*! \brief creates the renderers. */

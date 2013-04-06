@@ -1428,8 +1428,8 @@ void Indexed_face_set::clear_vertex_arrays()
   if (m_color_array) m_color_array->clear();
 }
 
-/*! \brief destroys the vertex-index arrays. */
-void Indexed_face_set::destroy_vertex_index_arrays()
+/*! \brief clears the vertex-index arrays. */
+void Indexed_face_set::clear_vertex_index_arrays()
 {
   m_coord_indices.clear();
   m_tex_coord_indices.clear();
@@ -1441,7 +1441,7 @@ void Indexed_face_set::destroy_vertex_index_arrays()
 void Indexed_face_set::clear()
 {
   clear_vertex_arrays();
-  destroy_vertex_index_arrays();
+  clear_vertex_index_arrays();
   destroy_display_list();
   destroy_vertex_buffer_object();
 
@@ -1485,6 +1485,8 @@ void Indexed_face_set::coord_changed(Field_info* field_info)
  *       2. This is not the place to update the arrays. We should mark
  *       the change needed here, and apply it in the appropriate *clean()
  *       function (which is invoked from the drawing routine.
+ *       The marking is, for example, partially done in
+ *       Mesh_set::field_changed(field_info);
  */
 void Indexed_face_set::field_changed(Field_info* field_info)
 {

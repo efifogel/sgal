@@ -299,7 +299,11 @@ void Mesh_set::clear()
   m_dirty_sphere_bound = true;
 }
   
-/*! \brief processes change of coordinates. */
-void Mesh_set::coord_changed(Field_info* /* field_info */) { clear(); }
+/*! \brief processes change of a field. */
+void Mesh_set::field_changed(Field_info* field_info)
+{
+  clear();
+  Container::field_changed(field_info);
+}
 
 SGAL_END_NAMESPACE
