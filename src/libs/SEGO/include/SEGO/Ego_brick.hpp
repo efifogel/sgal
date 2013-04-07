@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -72,64 +72,10 @@ public:
   virtual ~Ego_brick();
 
   /* Construct the prototype */
-  static Ego_brick* prototype() { return new Ego_brick(true); }
+  static Ego_brick* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Ego_brick(); }
-
-  /*! Set the number_of_knobs along the 1st dimension. */
-  void set_number_of_knobs1(Uint number) { m_number_of_knobs1 = number; }
-
-  /*! Obtain the number_of_knobs along the 1st dimension. */
-  Uint get_number_of_knobs1() const { return m_number_of_knobs1; }
-  
-  /*! Set the number_of_knobs along the 2nd dimension. */
-  void set_number_of_knobs2(Uint number) { m_number_of_knobs2 = number; }
-
-  /*! Obtain the number_of_knobs along the 2nd dimension. */
-  Uint get_number_of_knobs2() const { return m_number_of_knobs2; }
-  
-  /*! Set the horizontal pitch of the brick. */
-  void set_pitch(Float pitch) { m_pitch = pitch; }
-
-  /*! Obtain the horizontal pitch of the brick. */
-  Float get_pitch() const { return m_pitch; }
-
-  /*! Set the height of the brick. */
-  void set_height(Float height) { m_height = height; }
-
-  /*! Obtain the height of the brick. */
-  Float get_height() const { return m_height; }
-  
-  /*! Set the knob radius. */
-  void set_knob_radius(Float radius) { m_knob_radius = radius; }
-
-  /*! Obtain the knob radius. */
-  Float get_knob_radius() const { return m_knob_radius; }
-
-  /*! Set the knob height of the brick. */
-  void set_knob_height(Float knob_height) { m_knob_height = knob_height; }
-
-  /*! Obtain the knob height of the brick. */
-  Float get_knob_height() const { return m_knob_height; }
-
-  /*! Set the tolerance. */
-  void set_tolerance(Float tolerance) { m_tolerance = tolerance; }
-
-  /*! Obtain the tolerance. */
-  Float get_tolerance() const { return m_tolerance; }
-
-  /*! Set the knob slicess number. */
-  void set_knob_slices(Uint slices) { m_knob_slices = slices; }
-
-  /*! Obtain the knob slices number. */
-  Uint get_knob_slices() const { return m_knob_slices; }
-
-  /*! Set the flag that indicates whether the knos are visible. */
-  void set_knobs_visible(Boolean flag) { m_knobs_visible = flag; }
-  
-  /* Obtain the flag that indicates whether the knos are visible. */
-  Boolean are_knobs_visible() const { return m_knobs_visible; }
+  virtual Container* clone();
     
   /*! Initialize the container prototype. */
   virtual void init_prototype();
@@ -145,6 +91,60 @@ public:
 
   /*! Clean the representation. */
   virtual void clean();
+
+  /*! Set the number_of_knobs along the 1st dimension. */
+  void set_number_of_knobs1(Uint number);
+
+  /*! Obtain the number_of_knobs along the 1st dimension. */
+  Uint get_number_of_knobs1() const;
+  
+  /*! Set the number_of_knobs along the 2nd dimension. */
+  void set_number_of_knobs2(Uint number);
+
+  /*! Obtain the number_of_knobs along the 2nd dimension. */
+  Uint get_number_of_knobs2() const;
+  
+  /*! Set the horizontal pitch of the brick. */
+  void set_pitch(Float pitch);
+
+  /*! Obtain the horizontal pitch of the brick. */
+  Float get_pitch() const;
+
+  /*! Set the height of the brick. */
+  void set_height(Float height);
+
+  /*! Obtain the height of the brick. */
+  Float get_height() const;
+  
+  /*! Set the knob radius. */
+  void set_knob_radius(Float radius);
+
+  /*! Obtain the knob radius. */
+  Float get_knob_radius() const;
+
+  /*! Set the knob height of the brick. */
+  void set_knob_height(Float knob_height);
+
+  /*! Obtain the knob height of the brick. */
+  Float get_knob_height() const;
+
+  /*! Set the tolerance. */
+  void set_tolerance(Float tolerance);
+
+  /*! Obtain the tolerance. */
+  Float get_tolerance() const;
+
+  /*! Set the knob slicess number. */
+  void set_knob_slices(Uint slices);
+
+  /*! Obtain the knob slices number. */
+  Uint get_knob_slices() const;
+
+  /*! Set the flag that indicates whether the knos are visible. */
+  void set_knobs_visible(Boolean flag);
+  
+  /* Obtain the flag that indicates whether the knos are visible. */
+  Boolean are_knobs_visible() const;
 
   /*! Set the center of the Ego brick. */
   void set_center(Vector3f& center);
@@ -217,7 +217,7 @@ protected:
   Boolean m_dirty_coords;
   
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   /*! Generate the knob_cross_section. */
   void clean_knob_cross_section();
@@ -266,6 +266,77 @@ private:
   static const Uint s_def_knob_slices;
   static const Boolean s_def_knobs_visible;
 };
+
+/* \brief constructs the prototype */
+inline Ego_brick* Ego_brick::prototype() { return new Ego_brick(true); }
+
+/*! \brief clones. */
+inline Container* Ego_brick::clone() { return new Ego_brick(); }
+
+/*! \brief sets the number_of_knobs along the 1st dimension. */
+inline void Ego_brick::set_number_of_knobs1(Uint number)
+{ m_number_of_knobs1 = number; }
+
+/*! \brief obtains the number_of_knobs along the 1st dimension. */
+inline Uint Ego_brick::get_number_of_knobs1() const
+{ return m_number_of_knobs1; }
+  
+/*! \brief sets the number_of_knobs along the 2nd dimension. */
+inline void Ego_brick::set_number_of_knobs2(Uint number)
+{ m_number_of_knobs2 = number; }
+
+/*! \brief obtains the number_of_knobs along the 2nd dimension. */
+inline Uint Ego_brick::get_number_of_knobs2() const
+{ return m_number_of_knobs2; }
+  
+/*! \brief sets the horizontal pitch of the brick. */
+inline void Ego_brick::set_pitch(Float pitch) { m_pitch = pitch; }
+
+/*! \brief obtains the horizontal pitch of the brick. */
+inline Float Ego_brick::get_pitch() const { return m_pitch; }
+
+/*! \brief sets the height of the brick. */
+inline void Ego_brick::set_height(Float height) { m_height = height; }
+
+/*! \brief obtains the height of the brick. */
+inline Float Ego_brick::get_height() const { return m_height; }
+  
+/*! \brief sets the knob radius. */
+inline void Ego_brick::set_knob_radius(Float radius)
+{ m_knob_radius = radius; }
+
+/*! \brief obtains the knob radius. */
+inline Float Ego_brick::get_knob_radius() const { return m_knob_radius; }
+
+/*! \brief sets the knob height of the brick. */
+inline void Ego_brick::set_knob_height(Float knob_height)
+{ m_knob_height = knob_height; }
+
+/*! \brief obtains the knob height of the brick. */
+inline Float Ego_brick::get_knob_height() const { return m_knob_height; }
+
+/*! \brief sets the tolerance. */
+inline void Ego_brick::set_tolerance(Float tolerance)
+{ m_tolerance = tolerance; }
+
+/*! \brief obtains the tolerance. */
+inline Float Ego_brick::get_tolerance() const { return m_tolerance; }
+
+/*! \brief sets the knob slicess number. */
+inline void Ego_brick::set_knob_slices(Uint slices) { m_knob_slices = slices; }
+
+/*! \brief obtains the knob slices number. */
+inline Uint Ego_brick::get_knob_slices() const { return m_knob_slices; }
+
+/*! \brief sets the flag that indicates whether the knos are visible. */
+inline void Ego_brick::set_knobs_visible(Boolean flag)
+{ m_knobs_visible = flag; }
+  
+/* \brief obtains the flag that indicates whether the knos are visible. */
+inline Boolean Ego_brick::are_knobs_visible() const { return m_knobs_visible; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Ego_brick::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 
