@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -32,13 +32,13 @@ SGAL_BEGIN_NAMESPACE
 class Container;
 
 #if !defined (SGAL_LIB)
-#define REGISTER_TO_FACTORY(class_name, name)  \
-struct Reg_##class_name {                                               \
-  Reg_##class_name() {                                                  \
-    Container_factory * factory = Container_factory::get_instance();    \
-    factory->doregister(class_name::prototype());                      \
-  }                                                                     \
-  virtual ~Reg_##class_name() {}                                        \
+#define REGISTER_TO_FACTORY(class_name, name)                         \
+struct Reg_##class_name {                                             \
+  Reg_##class_name() {                                                \
+    Container_factory* factory = Container_factory::get_instance();   \
+    factory->doregister(class_name::prototype());                     \
+  }                                                                   \
+  virtual ~Reg_##class_name() {}                                      \
 } instance_##class_name;
 
 #define REGISTER_OBJECT(className)
@@ -55,17 +55,17 @@ struct Reg_##class_name {                                               \
 class Container_factory {
 public:
   /*! Obtain the factory singletone */
-  static Container_factory * get_instance();  
+  static Container_factory* get_instance();  
 
   /*! Register the given container type */
-  void doregister(Container * container);
+  void doregister(Container* container);
 
   /*! Create a clone of a container */
-  Container * create(const std::string & type);
+  Container* create(const std::string& type);
   
 private:
   /*! The container-factory singletone */
-  static Container_factory * m_instance;
+  static Container_factory* m_instance;
 
   typedef std::map<std::string, Container*>     Cont_map;
   typedef Cont_map::iterator                    Cont_iter;

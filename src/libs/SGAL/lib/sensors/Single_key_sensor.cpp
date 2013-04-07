@@ -40,10 +40,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Single_key_sensor::s_tag = "SingleKeySensor";
+const std::string Single_key_sensor::s_tag = "SingleKeySensor";
 Container_proto* Single_key_sensor::s_prototype = NULL;
 
-/*! Default Values */
+/*! Default Values. */
 Uint Single_key_sensor::s_def_num_states = 1;
 Boolean Single_key_sensor::s_def_trigger_on_release(true);
 
@@ -59,17 +59,9 @@ Single_key_sensor::Single_key_sensor(Boolean proto) :
   m_int_state(0),
   m_num_states(s_def_num_states),
   m_trigger_on_release(s_def_trigger_on_release)
-{}
+{ if (!proto) register_events(); }
 
-/*! \brief constructs a new instance. */
-Container* Single_key_sensor::clone()
-{
-  Single_key_sensor* sensor =  new Single_key_sensor();
-  sensor->register_events();
-  return sensor;
-}
-
-/*! The destructor */
+/*! \brief the destructor. */
 Single_key_sensor::~Single_key_sensor()
 { unregister_events(); }
 

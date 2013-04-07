@@ -66,10 +66,10 @@ Frustum::Frustum() :
   m_x_perturbation_scale(0), m_y_perturbation_scale(0)
 {}
 
-/*! Destructor */
+/*! \brief destructor. */
 Frustum::~Frustum() {}
 
-/*! \brief clones. */
+/*! \brief copy constructor. */
 void Frustum::copy(const Frustum* src)
 {
   m_type = src->m_type;
@@ -82,15 +82,14 @@ void Frustum::copy(const Frustum* src)
   m_horiz_fov = src->m_horiz_fov;
   m_vert_fov = src->m_vert_fov;
   
-  int i;
   if (!m_dirty_corners) {
-    for (i = 0; i < Frustum::NUM_CORNERS; i++) {
+    for (Uint i = 0; i < Frustum::NUM_CORNERS; i++) {
       m_corners[i] = src->m_corners[i];
     }
   }
 
   if (!m_dirty_planes) {
-    for (i = 0; i < Frustum::NUM_PLANES; i++) {
+    for (Uint i = 0; i < Frustum::NUM_PLANES; i++) {
       m_facets[i] = src->m_facets[i];
     }
   }
