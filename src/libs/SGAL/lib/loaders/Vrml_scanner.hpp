@@ -30,9 +30,9 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class wrlFlexLexer : public yyFlexLexer {
+class Vrml_scanner : public yyFlexLexer {
 public:
-  wrlFlexLexer(std::istream* arg_yyin = 0, std::ostream* arg_yyout = 0) :
+  Vrml_scanner(std::istream* arg_yyin = 0, std::ostream* arg_yyout = 0) :
     yyFlexLexer(arg_yyin, arg_yyout)
   {}
 

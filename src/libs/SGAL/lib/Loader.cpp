@@ -26,7 +26,7 @@
 #include "SGAL/Loader.hpp"
 #include "SGAL/Scene_graph.hpp"
 
-#include "wrlFlexLexer.hpp"
+#include "Vrml_scanner.hpp"
 
 extern SGAL::Scene_graph* scene_graph;
 
@@ -37,7 +37,7 @@ int Loader::load(const char* filename, Scene_graph* sg)
   // Open source file:
   std::ifstream src_stream(filename);
 
-  wrlFlexLexer scanner(&src_stream);
+  Vrml_scanner scanner(&src_stream);
   scanner.m_lineno = 1;
   // scanner.set_debug(1);
 

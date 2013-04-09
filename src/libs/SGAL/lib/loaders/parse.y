@@ -66,7 +66,7 @@ typedef Element::Multi_cont_attr        Multi_cont_attr;
 typedef Element::Multi_cont_attr_list   Multi_cont_attr_list;
 typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
 
-class wrlFlexLexer;
+class Vrml_scanner;
  
 SGAL_END_NAMESPACE
  
@@ -74,15 +74,15 @@ SGAL_END_NAMESPACE
 #define YYDEBUG         1
 }
 
-%lex-param { wrlFlexLexer& scanner }
-%parse-param { wrlFlexLexer& scanner }
+%lex-param { Vrml_scanner& scanner }
+%parse-param { Vrml_scanner& scanner }
 %parse-param { Scene_graph* scene_graph }
 
 %code // *.cc
 {
   static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
                    SGAL::Vrml_parser::location_type* yylloc,
-                   SGAL::wrlFlexLexer& scanner);  
+                   SGAL::Vrml_scanner& scanner);  
 }
 
 %union {
@@ -426,15 +426,15 @@ SGAL_BEGIN_NAMESPACE
 void Vrml_parser::error(const Vrml_parser::location_type& l,
                         const std::string& err_message)
 {
-  // wrlFlexLexer::instance()->yyerror(message, (int) yychar);
+  // Vrml_scanner::instance()->yyerror(message, (int) yychar);
   std::cerr << "Error: " << err_message << "\n";
 }
 
 SGAL_END_NAMESPACE
 
-#include "wrlFlexLexer.hpp"
+#include "Vrml_scanner.hpp"
 
 static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
                  SGAL::Vrml_parser::location_type* yylloc,
-                 SGAL::wrlFlexLexer& scanner)
+                 SGAL::Vrml_scanner& scanner)
 { return scanner.yylex(yylval, yylloc); }

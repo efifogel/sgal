@@ -37,7 +37,7 @@
 #include "SGAL/Transform.hpp"
 
 #include "parse.hpp"
-#include "wrlFlexLexer.hpp"
+#include "Vrml_scanner.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -63,7 +63,7 @@ static SGAL::location loc;
 %}
 
 %option debug 
-%option yyclass="SGAL::wrlFlexLexer"
+%option yyclass="SGAL::Vrml_scanner"
 %option never-interactive
 %option noyywrap 
 %option c++
@@ -198,7 +198,7 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 
 SGAL_BEGIN_NAMESPACE
 
-void wrlFlexLexer::comment()
+void Vrml_scanner::comment()
 {
   register int c;
 
@@ -225,7 +225,7 @@ void wrlFlexLexer::comment()
 #define yytext_ptr yytext
 #endif
 
-void wrlFlexLexer::comment_to_eol()
+void Vrml_scanner::comment_to_eol()
 {
   char c;
   while ((c = yyinput()) != '\n' && c != 0) /* putchar(c) */ ;
@@ -233,7 +233,7 @@ void wrlFlexLexer::comment_to_eol()
   else { /* putchar(c) */; }
 }
 
-void wrlFlexLexer::yyerror(const char* /* message */, int cur_token)
+void Vrml_scanner::yyerror(const char* /* message */, int cur_token)
 {
   fprintf(stderr, "Syntax error on line %d token %c\n", m_lineno, cur_token);
   exit(-1);
