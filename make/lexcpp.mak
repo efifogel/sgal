@@ -1,5 +1,5 @@
 define run-lex
-$(LEXF) -+ -o$@ $(firstword $^)
+$(LEXF) -o$@ $(firstword $^)
 endef
 
 %.cpp : %.l

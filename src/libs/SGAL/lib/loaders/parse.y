@@ -14,12 +14,20 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 13559 $
 //
 // Author(s)     : Efi Fogel
 
-%{
+%debug
+%skeleton "lalr1.cc"
+%defines
+%define api.namespace "SGAL"
+%define parser_class_name "Vrml_parser"
+%locations
+
+%code requires // *.hh
+{
 
 #if (defined _MSC_VER)
 #pragma warning ( disable : 4786 )
@@ -41,7 +49,6 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Route.hpp"
-#include "wrlFlexLexer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -58,29 +65,33 @@ typedef Element::Multi_cont_attr        Multi_cont_attr;
 typedef Element::Multi_cont_attr_list   Multi_cont_attr_list;
 typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
 
+class wrlFlexLexer;
+ 
 SGAL_END_NAMESPACE
  
 using namespace SGAL;
 
 #define YYERROR_VERBOSE 1
 #define YYDEBUG         1
+}
 
-extern int yylex();
-extern void yyerror(const char * s);
+%code // *.cc
+{
+  static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
+                   SGAL::Vrml_parser::location_type* l);  
 
-SGAL::Scene_graph * scene_graph = 0;
-
-%}
+  SGAL::Scene_graph* scene_graph = 0;
+}
 
 %union {
-  std::string * text;
-  SGAL::Element * element;
-  SGAL::Str_attr * attribute;
-  SGAL::Container * container;
-  SGAL::Cont_list * cont_list;
-  SGAL::Node * node;
-  SGAL::Group * group;
-  SGAL::Transform * transform;
+  std::string* text;
+  SGAL::Element* element;
+  SGAL::Str_attr* attribute;
+  SGAL::Container* container;
+  SGAL::Cont_list* cont_list;
+  SGAL::Node* node;
+  SGAL::Group* group;
+  SGAL::Transform* transform;
 }
 
 %type <group> vrmlScene
@@ -408,16 +419,19 @@ sfValues        : sfint32Values { $$ = $1; }
 
 %%
 
-/*! global yyerror
- */
-void yyerror(const char * message)
+SGAL_BEGIN_NAMESPACE
+
+void Vrml_parser::error(const Vrml_parser::location_type& l,
+                        const std::string& err_message)
 {
-  wrlFlexLexer::instance()->yyerror(message, (int) yychar);
+  // wrlFlexLexer::instance()->yyerror(message, (int) yychar);
+  std::cerr << "Error: " << err_message << "\n";
 }
 
-/*! global yylex
- */
-int yylex(void)
-{
-  return wrlFlexLexer::instance()->yylex();
-}
+SGAL_END_NAMESPACE
+
+#include "wrlFlexLexer.hpp"
+
+static int yylex(Vrml_parser::semantic_type* yylval,
+                 Vrml_parser::location_type* l)
+{ return (wrlFlexLexer::instance()->yylex(yylval)); }

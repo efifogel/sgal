@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -26,26 +26,34 @@
 #include <iostream>
 #include <FlexLexer.h>
 
-#include "SGAL/basic.hpp"
+#include "parse.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class wrlFlexLexer : public yyFlexLexer {
 public:
-  wrlFlexLexer(std::istream * arg_yyin = 0, std::ostream * arg_yyout = 0) :
+  wrlFlexLexer(std::istream* arg_yyin = 0, std::ostream* arg_yyout = 0) :
     yyFlexLexer(arg_yyin, arg_yyout)
-  {assert(s_instance == NULL); s_instance = this;}
-  static wrlFlexLexer * instance(void)
-  {assert(s_instance); return(s_instance);}
+  { assert(s_instance == NULL); s_instance = this; }
 
-  virtual int yylex(void);
-  void yyerror(const char * message, int cur_token);
+  static wrlFlexLexer* instance(void)
+  { assert(s_instance); return(s_instance); }
+
+  int yylex(Vrml_parser::semantic_type* lval)
+  {
+    yylval = lval;
+    return yylex();
+  }
+  
+  void yyerror(const char* message, int cur_token);
 
   int m_lineno;
     
 private:
-  static wrlFlexLexer * s_instance;
+  Vrml_parser::semantic_type* yylval;
+  static wrlFlexLexer* s_instance;
 
+  virtual int yylex();
   void comment_to_eol(void);
   void comment(void);
 };

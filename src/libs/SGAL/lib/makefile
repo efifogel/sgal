@@ -203,7 +203,8 @@ CPPSOURCES+= Vrml_formatter.cpp
 
 # LEX_PREFIX = wrlBase
 
-LCPPINCS = -I$(BASEDIR)
+LCPPINCS = -I.
+LCPPINCS+= -I$(BASEDIR)
 LCPPINCS+= -I$(BASEDIR)/loaders
 LCPPINCS+= -I$(BASEDIR)/primitives
 LCPPINCS+= -I$(BASEDIR)/interpolators
@@ -309,7 +310,7 @@ vpath %.cpp $(BASEDIR)/IO
 vpath %.y $(BASEDIR)/loaders
 vpath %.l $(BASEDIR)/loaders
 
-scan.o: parse.h
+scan.o: parse.hpp
 
 x:
 	echo $(FLEX_INT_VER_CMD)
