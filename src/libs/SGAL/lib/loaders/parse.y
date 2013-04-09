@@ -19,10 +19,12 @@
 //
 // Author(s)     : Efi Fogel
 
-%debug
+// %debug
+%require "2.7"
 %skeleton "lalr1.cc"
 %defines
 %define api.namespace "SGAL"
+%language "C++"
 %define parser_class_name "Vrml_parser"
 %locations
 
@@ -35,7 +37,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <string>
 #include <iostream>
 
@@ -69,18 +70,19 @@ class wrlFlexLexer;
  
 SGAL_END_NAMESPACE
  
-using namespace SGAL;
-
 #define YYERROR_VERBOSE 1
 #define YYDEBUG         1
 }
 
+%lex-param { wrlFlexLexer& scanner }
+%parse-param { wrlFlexLexer& scanner }
+%parse-param { Scene_graph* scene_graph }
+
 %code // *.cc
 {
   static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
-                   SGAL::Vrml_parser::location_type* l);  
-
-  SGAL::Scene_graph* scene_graph = 0;
+                   SGAL::Vrml_parser::location_type* yylloc,
+                   SGAL::wrlFlexLexer& scanner);  
 }
 
 %union {
@@ -432,6 +434,7 @@ SGAL_END_NAMESPACE
 
 #include "wrlFlexLexer.hpp"
 
-static int yylex(Vrml_parser::semantic_type* yylval,
-                 Vrml_parser::location_type* l)
-{ return (wrlFlexLexer::instance()->yylex(yylval)); }
+static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
+                 SGAL::Vrml_parser::location_type* yylloc,
+                 SGAL::wrlFlexLexer& scanner)
+{ return scanner.yylex(yylval, yylloc); }

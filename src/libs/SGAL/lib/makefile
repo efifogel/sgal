@@ -235,6 +235,7 @@ endif
 
 LCPPDEFS+= -DSGAL_LIB
 
+# Extract flex version
 FLEX_MAJOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+\([0-9]\)\.[0-9].[0-9]\+'
 FLEX_MAJOR_VER = $(shell $(FLEX_MAJOR_VER_CMD))
 FLEX_MINOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+[0-9]\.\([0-9]\).[0-9]\+'
@@ -242,10 +243,20 @@ FLEX_MINOR_VER = $(shell $(FLEX_MINOR_VER_CMD))
 FLEX_UPDATE_VER_CMD = expr match "$$(flex --version)" 'flex\s\+[0-9]\.[0-9].\([0-9]\+\)'
 FLEX_UPDATE_VER = $(shell $(FLEX_UPDATE_VER_CMD))
 
-FLEX_INT_VER_CMD = expr $(FLEX_MAJOR_VER) \* 1000 + $(FLEX_MINOR_VER) \* 100 + $(FLEX_UPDATE_VER)
-FLEX_INT_VER = $(shell $(FLEX_INT_VER_CMD))
+FLEX_VER_CMD = expr $(FLEX_MAJOR_VER) \* 1000 + $(FLEX_MINOR_VER) \* 100 + $(FLEX_UPDATE_VER)
+FLEX_VER = $(shell $(FLEX_VER_CMD))
 
-LCPPDEFS+= -DSGAL_FLEX_INT_VER=$(FLEX_INT_VER)
+# Extract bison version
+BISON_MAJOR_VER_CMD = expr match "$$(bison --version)" 'bison[^0-9]\+\([0-9]\)\.[0-9]'
+BISON_MAJOR_VER = $(shell $(BISON_MAJOR_VER_CMD))
+BISON_MINOR_VER_CMD = expr match "$$(bison --version)" 'bison[^0-9]\+[0-9]\.\([0-9]\)'
+BISON_MINOR_VER = $(shell $(BISON_MINOR_VER_CMD))
+
+BISON_VER_CMD = expr $(BISON_MAJOR_VER) \* 1000 + $(BISON_MINOR_VER) \* 100
+BISON_VER = $(shell $(BISON_VER_CMD))
+
+# Compilation define switch:
+# LCPPDEFS+= -DSGAL_FLEX_VER=$(FLEX_VER)
 
 ifeq ($(DE), msvc)
 ifeq ($(COMPILER_VER), 1200)
@@ -292,6 +303,16 @@ sed -e 's/#define yyFlexLexer yyFlexLexer//' \
 > $@
 endef
 
+ifeq ($(BISON_VER), 2500)
+define run-bison
+echo $(firstword $^)
+sed -e 's/%require "2.7"/%require "2.5"/' \
+    -e 's/%define api.namespace "SGAL"/%define namespace "SGAL"/' \
+$(firstword $^) > tmp.y
+$(BISONF) tmp.y -o $(basename $@).cpp
+endef
+endif
+
 include $(MAKEDIR)/comp.mak
 include $(MAKEDIR)/targlib.mak
 
@@ -312,5 +333,12 @@ vpath %.l $(BASEDIR)/loaders
 
 scan.o: parse.hpp
 
-x:
-	echo $(FLEX_INT_VER_CMD)
+# cancel the built-in implicit rule for yacc:
+%.c : %.y
+
+.PHONY :: flex-ver bison-ver
+flex-ver:
+	@echo $(FLEX_VER)
+
+bison-ver:
+	@echo $(BISON_VER)

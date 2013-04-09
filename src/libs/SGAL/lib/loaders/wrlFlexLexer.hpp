@@ -34,14 +34,13 @@ class wrlFlexLexer : public yyFlexLexer {
 public:
   wrlFlexLexer(std::istream* arg_yyin = 0, std::ostream* arg_yyout = 0) :
     yyFlexLexer(arg_yyin, arg_yyout)
-  { assert(s_instance == NULL); s_instance = this; }
+  {}
 
-  static wrlFlexLexer* instance(void)
-  { assert(s_instance); return(s_instance); }
-
-  int yylex(Vrml_parser::semantic_type* lval)
+  int yylex(Vrml_parser::semantic_type* lval,
+            Vrml_parser::location_type* lloc)
   {
     yylval = lval;
+    yylloc = lloc;
     return yylex();
   }
   
@@ -51,8 +50,8 @@ public:
     
 private:
   Vrml_parser::semantic_type* yylval;
-  static wrlFlexLexer* s_instance;
-
+  Vrml_parser::location_type* yylloc;
+  
   virtual int yylex();
   void comment_to_eol(void);
   void comment(void);

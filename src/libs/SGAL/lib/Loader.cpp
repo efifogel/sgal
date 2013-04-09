@@ -37,14 +37,12 @@ int Loader::load(const char* filename, Scene_graph* sg)
   // Open source file:
   std::ifstream src_stream(filename);
 
-  wrlFlexLexer flexLexer(&src_stream);
-  flexLexer.m_lineno = 1;
-  // flexLexer.set_debug(1);
+  wrlFlexLexer scanner(&src_stream);
+  scanner.m_lineno = 1;
+  // scanner.set_debug(1);
 
   // Parse & export:
-  scene_graph = sg;
-
-  Vrml_parser parser;  
+  Vrml_parser parser(scanner, sg);  
   if (parser.parse()) {
     std::cerr << "Failed to parse " << filename << "!" << std::endl;
     return -1;

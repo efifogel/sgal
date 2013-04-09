@@ -27,8 +27,6 @@
 #endif
 
 #include <stdio.h>
-//! \tbd remove malloc.h ?
-#include <malloc.h>
 #include <stdlib.h>
 #include <string>
 
@@ -43,27 +41,12 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Element::Str_attr	Str_attr;
-typedef Element::Cont_list	Cont_list; 
+typedef Element::Str_attr		Str_attr;
+typedef Element::Cont_list		Cont_list; 
 
 SGAL_END_NAMESPACE
 
-using std::cin;
-using std::cerr;
-using std::cout;
-using std::ostream;
-
-using namespace SGAL;
-
-class Element;
-class Container;
-class Node;
-class Group;
-class Transform;
-
 typedef SGAL::Vrml_parser::token	token;
-
-wrlFlexLexer* wrlFlexLexer::s_instance = NULL;
 
 #ifdef _DEBUG
 #define RET(x) \
@@ -80,7 +63,7 @@ static SGAL::location loc;
 %}
 
 %option debug 
-%option yyclass="wrlFlexLexer"
+%option yyclass="SGAL::wrlFlexLexer"
 %option never-interactive
 %option noyywrap 
 %option c++
@@ -213,6 +196,8 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 .			{ RET(yytext[0]); }  	/* everything else */
 %%
 
+SGAL_BEGIN_NAMESPACE
+
 void wrlFlexLexer::comment()
 {
   register int c;
@@ -253,3 +238,5 @@ void wrlFlexLexer::yyerror(const char* /* message */, int cur_token)
   fprintf(stderr, "Syntax error on line %d token %c\n", m_lineno, cur_token);
   exit(-1);
 }
+
+SGAL_END_NAMESPACE
