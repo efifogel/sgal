@@ -38,7 +38,6 @@ int Loader::load(const char* filename, Scene_graph* sg)
   std::ifstream src_stream(filename);
 
   Vrml_scanner scanner(&src_stream);
-  scanner.m_lineno = 1;
   // scanner.set_debug(1);
 
   // Parse & export:

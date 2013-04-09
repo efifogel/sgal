@@ -58,8 +58,7 @@ typedef SGAL::Vrml_parser::token	token;
 #define RET(x) return(x)
 #endif
 
-// The location of the current token.
-static SGAL::location loc;
+#define YY_NO_UNISTD_H
 %}
 
 %option debug 
@@ -92,16 +91,17 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 
 %s vrml js
 
+/* The following paragraph suffices to track locations accurately. Each time
+ * yylex is invoked, the begin position is moved onto the end position.
+ */
 %{
-  // Code run each time a pattern is matched.
-  # define YY_USER_ACTION  loc.columns (yyleng);
+#define YY_USER_ACTION  yylloc->columns(yyleng);
 %}
 
-%%
+%% /*** Regular Expressions Part ***/
 
 %{
-  // Code run each time yylex is called.
-  loc.step ();
+yylloc->step();		// reset location
 %}
 
 <INITIAL>"#VRML V2.0"[^\n]*	{ BEGIN(vrml); }
@@ -189,11 +189,9 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 "=="            	{ RET(token::EQ); }
 "!="            	{ RET(token::NE); }
 
-"\n\r"			{ m_lineno++; }		/* new line */ 
-"\r\n"			{ m_lineno++; }		/* new line */ 
-\n			{ m_lineno++; }		/* new line */ 
-[ \t\v\f,]		{ ; }		    	/* skip blanks and tabs */
-.			{ RET(yytext[0]); }  	/* everything else */
+[ \t\r\v\f,]+	{ yylloc->step(); }		/* skip blanks and tabs */ 
+\n		{ yylloc->lines(yyleng); yylloc->step(); } /* new line */ 
+.		{ RET(yytext[0]); }  		/* everything else */
 %%
 
 SGAL_BEGIN_NAMESPACE
@@ -205,7 +203,10 @@ void Vrml_scanner::comment()
   for ( ; ; ) {
     /* eat up text of comment: */
     while ((c = yyinput()) != '*' && c != EOF) {
-      if (c == '\n') m_lineno++;
+      if (c == '\n') {
+        yylloc->lines(yyleng);
+        yylloc->step();
+      }
     }
 
     if (c == '*') {
@@ -231,12 +232,6 @@ void Vrml_scanner::comment_to_eol()
   while ((c = yyinput()) != '\n' && c != 0) /* putchar(c) */ ;
   if (c == '\n') unput(c);
   else { /* putchar(c) */; }
-}
-
-void Vrml_scanner::yyerror(const char* /* message */, int cur_token)
-{
-  fprintf(stderr, "Syntax error on line %d token %c\n", m_lineno, cur_token);
-  exit(-1);
 }
 
 SGAL_END_NAMESPACE

@@ -236,8 +236,9 @@ externInterfaceDeclaration      : K_EVENTIN fieldType eventInId { /*! \todo */ }
 
 routeStatement  : K_ROUTE nodeNameId '.' eventOutId K_TO nodeNameId '.' eventInId
                 {
-                  Route * route = new Route;
+                  Route* route = new Route;
                   if (!scene_graph->route(*($2), *($4), *($6), *($8), route)) {
+                    error(yyloc, std::string("Cannot route"));
                     YYERROR;
                   }
                   scene_graph->add_container(route);
@@ -259,7 +260,7 @@ node            : nodeTypeId '{' nodeBody '}'
                 {
                   $$ = Container_factory::get_instance()->create(*($1));
                   if (!$$) {
-                    std::cerr << $1->c_str() << std::endl;
+                    error(yyloc, std::string("Unknown node type \"") + *$1 + "\"");
                     YYERROR;
                   }
                   else {
@@ -423,17 +424,16 @@ sfValues        : sfint32Values { $$ = $1; }
 
 SGAL_BEGIN_NAMESPACE
 
+/*! */
 void Vrml_parser::error(const Vrml_parser::location_type& l,
                         const std::string& err_message)
-{
-  // Vrml_scanner::instance()->yyerror(message, (int) yychar);
-  std::cerr << "Error: " << err_message << "\n";
-}
+{ std::cerr << "Error at " << l << ": " << err_message << std::endl; }
 
 SGAL_END_NAMESPACE
 
 #include "Vrml_scanner.hpp"
 
+/*! */
 static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
                  SGAL::Vrml_parser::location_type* yylloc,
                  SGAL::Vrml_scanner& scanner)

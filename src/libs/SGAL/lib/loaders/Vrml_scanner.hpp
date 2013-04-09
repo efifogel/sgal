@@ -46,8 +46,6 @@ public:
   
   void yyerror(const char* message, int cur_token);
 
-  int m_lineno;
-    
 private:
   Vrml_parser::semantic_type* yylval;
   Vrml_parser::location_type* yylloc;
