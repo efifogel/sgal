@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -25,14 +25,14 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Loader.hpp"
 #include "SGAL/Scene_graph.hpp"
+
 #include "wrlFlexLexer.hpp"
 
-  extern int yyparse();
-  extern SGAL::Scene_graph * scene_graph;
+extern SGAL::Scene_graph* scene_graph;
 
 SGAL_BEGIN_NAMESPACE
 
-int Loader::load(const char * filename, Scene_graph * sg)
+int Loader::load(const char* filename, Scene_graph* sg)
 {
   // Open source file:
   std::ifstream src_stream(filename);
@@ -43,7 +43,9 @@ int Loader::load(const char * filename, Scene_graph * sg)
 
   // Parse & export:
   scene_graph = sg;
-  if (yyparse()) {
+
+  Vrml_parser parser;  
+  if (parser.parse()) {
     std::cerr << "Failed to parse " << filename << "!" << std::endl;
     return -1;
   }
