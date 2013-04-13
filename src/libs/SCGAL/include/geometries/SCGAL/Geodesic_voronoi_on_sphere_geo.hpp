@@ -57,7 +57,7 @@ class Element;
 class Sphere;
 
 /*! A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
+ * great circles embeded on a sphere.
  */
 class SGAL_CLASSDEF Geodesic_voronoi_on_sphere_geo :
   public Arrangement_on_sphere_base_geo
@@ -77,13 +77,13 @@ public:
   typedef Kernel::Point_3                          Point_3;
   
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Geodesic_voronoi_on_sphere_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Geodesic_voronoi_on_sphere_geo();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container * clone() = 0;
 
   /*! Initialize the container prototype */
@@ -113,54 +113,54 @@ public:
   void set_site_color(Vector3f & color) { m_site_color = color; }
   
 protected:
-  /*! An array of indices into the coordinate array for points */
+  /*! An array of indices into the coordinate array for points. */
   std::vector<Uint> m_site_indices;
 
-  /*! Indicates whether to draw the sites */
+  /*! Indicates whether to draw the sites. */
   Boolean m_draw_sites;
 
-  /*! The site color */
+  /*! The site color. */
   Vector3f m_site_color;
   
 private:
-  /*! The container prototype */
+  /*! The container prototype. */
   static Container_proto * s_prototype;
 
-  /*! Default values */
+  /*! Default values. */
   static const Boolean s_def_draw_sites;
   static const Vector3f s_def_site_color;
   
-  /*! Draw the marked vertex */
+  /*! Draw the marked vertex. */
   void draw_marked_vertex();
     
-  /*! Draw the marked edge */
+  /*! Draw the marked edge. */
   void draw_marked_edge();
   
-  /*! Draw the marked face */
+  /*! Draw the marked face. */
   void draw_marked_face();
   
-  /*! Increase the vertex index
+  /*! Increase the vertex index.
    * \param field_info
    */
   void increase_vertex_index(Field_info * field_info = NULL);
 
-  /*! Increase the edge index
+  /*! Increase the edge index.
    * \param field_info
    */
   void increase_edge_index(Field_info * field_info = NULL);
 
-  /*! Increase the face index
+  /*! Increase the face index.
    * \param field_info
    */
   void increase_face_index(Field_info * field_info = NULL);
 };
 
-/*! \brief obtains the site index array */
-inline const std::vector<Uint> &
+/*! \brief obtains the site index array. */
+inline const std::vector<Uint>&
 Geodesic_voronoi_on_sphere_geo::get_site_indices() const
 { return m_site_indices; }
 
-/*! \brief obtains the i-th site index */
+/*! \brief obtains the i-th site index. */
 inline Uint
 Geodesic_voronoi_on_sphere_geo::get_site_index(Uint i) const
 { return m_site_indices[i]; }

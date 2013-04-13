@@ -103,16 +103,16 @@ public:
   typedef SGAL::X11_window_item                 Window_item;
 #endif
 
-  /*! Constructor */
+  /*! Constructor. */
   Player_scene(Player_option_parser* option_parser);
 
-  /*! Constructor */
+  /*! Constructor. */
   Player_scene();
 
-  /*! Initialize */
+  /*! Initialize. */
   void init();
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Player_scene(void);
 
   /*! Create the scene. */

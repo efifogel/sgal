@@ -279,36 +279,32 @@ void Geo_set::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "coord") {
-      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
-      Shared_coord_array shared_coord_array;
-      shared_coord_array.reset(coord_array);
-      set_coord_array(shared_coord_array);
+      Shared_coord_array coord_array =
+        boost::dynamic_pointer_cast<Coord_array>(cont);
+      set_coord_array(coord_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "normal") {
-      Normal_array* normal_array = dynamic_cast<Normal_array*>(cont);
-      Shared_normal_array shared_normal_array;
-      shared_normal_array.reset(normal_array);
-      set_normal_array(shared_normal_array);
+      Shared_normal_array normal_array =
+        boost::dynamic_pointer_cast<Normal_array>(cont);
+      set_normal_array(normal_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "color") {
-      Color_array* color_array = dynamic_cast<Color_array*>(cont);
-      Shared_color_array shared_color_array;
-      shared_color_array.reset(color_array);
-      set_color_array(shared_color_array);
+      Shared_color_array color_array =
+        boost::dynamic_pointer_cast<Color_array>(cont);
+      set_color_array(color_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "texCoord") {
-      Tex_coord_array* tex_coord_array = dynamic_cast<Tex_coord_array*>(cont);
-      Shared_tex_coord_array shared_tex_coord_array;
-      shared_tex_coord_array.reset(tex_coord_array);
-      set_tex_coord_array(shared_tex_coord_array);
+      Shared_tex_coord_array tex_coord_array =
+        boost::dynamic_pointer_cast<Tex_coord_array>(cont);
+      set_tex_coord_array(tex_coord_array);
       elem->mark_delete(cai);
       continue;
     }

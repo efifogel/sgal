@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -71,13 +71,9 @@
 #include "Player2_option_parser.hpp"
 
 /*! Constructor */
-Player2_scene::Player2_scene(Player2_option_parser * option_parser) :
+Player2_scene::Player2_scene(Player2_option_parser* option_parser) :
   Player_scene(option_parser),
-  m_option_parser(option_parser),
-#if defined(USE_CGM)
-  m_cgm_geo(NULL),
-#endif
-  m_sgm_geo(NULL)
+  m_option_parser(option_parser)
 {}
 
 /*! Destructor */
@@ -89,20 +85,20 @@ void Player2_scene::init_scene()
   Player_scene::init_scene();
 
 #if defined(USE_CGM)
-  m_cgm_geo = dynamic_cast<SGAL::Cubical_gaussian_map_geo*>
+  m_cgm_geo = boost::dynamic_pointer_cast<SGAL::Cubical_gaussian_map_geo>
     (m_scene_graph->get_container("GEOM"));
 #endif
 
-  m_sgm_geo = dynamic_cast<SGAL::Spherical_gaussian_map_base_geo*>
+  m_sgm_geo = boost::dynamic_pointer_cast<SGAL::Spherical_gaussian_map_base_geo>
     (m_scene_graph->get_container("GEOM"));
 }
 
 /*! Draw the scene */
-void Player2_scene::draw_window(SGAL::Window_item * window_item,
+void Player2_scene::draw_window(SGAL::Window_item* window_item,
                                 SGAL::Boolean dont_accumulate)
 {
   SGAL_assertion(m_scene_graph);
-  SGAL::Configuration * conf = m_scene_graph->get_configuration();
+  SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
   
   SGAL::Draw_action draw_action(conf);
@@ -122,13 +118,13 @@ void Player2_scene::draw_window(SGAL::Window_item * window_item,
   int y = (int) ((scale - 1) / 2 * height);
   int margin = m_option_parser->get_viewport_margin();
   
-  SGAL::Camera * camera = m_scene_graph->get_active_camera();
+  SGAL::Camera* camera = m_scene_graph->get_active_camera();
   SGAL_assertion(camera);
 
   // Clear the entire frame buffer:
   m_context->set_viewport(0, 0, width, height);  
   camera->init(m_context);
-  SGAL::Background * bg = m_scene_graph->get_active_background();
+  SGAL::Background* bg = m_scene_graph->get_active_background();
   if (bg) {
     bg->draw(&draw_action);
     m_context->clear_stencil_buffer();
@@ -136,7 +132,7 @@ void Player2_scene::draw_window(SGAL::Window_item * window_item,
     m_context->clear_color_depth_stencil_buffer();
   }
 
-  SGAL::Accumulation * acc = conf->get_accumulation();
+  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   bool enabled = false;
   if (acc) enabled = acc->is_enabled();
  

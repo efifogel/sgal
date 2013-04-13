@@ -27,13 +27,14 @@
  * data structure used as a base class to all lower envelope nodes.
  */
 
+#include <string>
+#include <vector>
+#include <boost/shared_ptr.hpp>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Env_triangle_traits_3.h>
 #include <CGAL/Env_surface_data_traits_3.h>
 #include <CGAL/envelope_3.h>
-
-#include <string>
-#include <vector>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Trace.hpp"
@@ -49,7 +50,7 @@ class Isect_action;
 class Draw_action;
 class Isect_action;
 
-/*! A lower-envelope data structure */
+/*! A lower-envelope data structure. */
 class Lower_envelope_geo : public Geometry {
 public:
   enum {
@@ -60,16 +61,16 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Lower_envelope_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Lower_envelope_geo();
 
-  /*! Clone */
+  /*! Clone. */
   virtual SGAL::Container* clone() = 0;
 
-  /*! Draw the geometry of the lower envelope */
+  /*! Draw the geometry of the lower envelope. */
   virtual void draw(Draw_action* action);
 
   virtual void isect(Isect_action* action) {}
@@ -98,76 +99,76 @@ public:
   /*! Print statistics */
   void print_stat();
 
-  /*! Obtain the vertex radius */
+  /*! Obtain the vertex radius. */
   Float get_vertex_radius() const { return m_vertex_radius; }
 
-  /*! Set the vertex radius */
+  /*! Set the vertex radius. */
   void set_vertex_radius(Float radius) { m_vertex_radius = radius; }
 
-  /*! Obtain the edge radius */
+  /*! Obtain the edge radius. */
   Float get_edge_radius() const { return m_edge_radius; }
 
-  /*! Set the face radius */
+  /*! Set the face radius. */
   void set_edge_radius(Float radius) { m_edge_radius = radius; }
 
-  /*! Obtain the face transparency */
+  /*! Obtain the face transparency. */
   Float get_face_transparency() const { return m_face_transparency; }
 
-  /*! Set the face transparency */
+  /*! Set the face transparency. */
   void set_face_transparency(Float frac) { m_face_transparency = frac; }
   
 protected:
-  /*! Indicates whether the envelope has been built */
+  /*! Indicates whether the envelope has been built. */
   Boolean m_dirty;
 
   typedef std::vector<Node *>                           Node_vector;
   typedef Node_vector::iterator                         Node_iter;
   
-  /*! The surfaces the envelope is computed for */
+  /*! The surfaces the envelope is computed for. */
   Node_vector m_surfaces;
   
-  /*! The time is took to compute the envelope in seconds */
+  /*! The time is took to compute the envelope in seconds. */
   Float m_time;
 
-  /*! The radius of a diagram vertex */
+  /*! The radius of a diagram vertex. */
   float m_vertex_radius;
 
-  /*! The radius of an diagram edge */
+  /*! The radius of an diagram edge. */
   float m_edge_radius;
 
-  /*! The transparency of a diagram face */
+  /*! The transparency of a diagram face. */
   float m_face_transparency;
   
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean() { m_dirty = false; }
 
-  /*! Clear the internal representation */
+  /*! Clear the internal representation. */
   virtual void clear() { m_dirty = true; }
 
-  /*! Return true if the envelope is empty */
+  /*! Return true if the envelope is empty. */
   virtual Boolean is_empty() const = 0;
 
-  /*! Transform the coordinates of the SGM into spheres
-   * \param spheres (o) the transformed coordinates
+  /*! Transform the coordinates of the SGM into spheres.
+   * \param spheres (o) the transformed coordinates.
    */
   virtual void transform_coords(Approximate_sphere_vector& spheres) {}
 
-  /*! Draw the envelope faces */
+  /*! Draw the envelope faces. */
   virtual void draw_envelope_faces(Draw_action* action) {}
 
-  /*! Draw the envelope edges */
+  /*! Draw the envelope edges. */
   virtual void draw_envelope_edges(Draw_action* action) {}
 
-  /*! Draw the envelope vertices */
+  /*! Draw the envelope vertices. */
   virtual void draw_envelope_vertices(Draw_action* action) {}
 
-  /*! Determine whether the representation hasn't been cleaned
-   * \return true if the representation hasn't been cleaned and false otherwise
+  /*! Determine whether the representation hasn't been cleaned.
+   * \return true if the representation hasn't been cleaned and false otherwise.
    */
   Boolean is_dirty() const { return m_dirty; }
   
-  /*! Transform the coordinates of the envelope into spheres
-   * \param spheres (o) the transformed coordinates
+  /*! Transform the coordinates of the envelope into spheres.
+   * \param spheres (o) the transformed coordinates.
    */
   template <typename Envelope>
   void transform_coords_impl(Envelope* envelope,
@@ -182,7 +183,7 @@ protected:
   }
 
 private:
-  /*! Converts an envelope point to a sphere */
+  /*! Converts an envelope point to a sphere. */
   template <typename Envelope>
   struct Convert_approximate_sphere {
     Approximate_sphere_3
@@ -202,10 +203,10 @@ private:
   static float s_def_edge_radius;
   static float s_def_face_transparency;
   
-  /*! Draw the envelope */
+  /*! Draw the envelope. */
   void draw_envelope(Draw_action* action);
 
-  /*! Add a surfaces to the container of surfaces to process */
+  /*! Add a surfaces to the container of surfaces to process. */
   void add_surface(Node* node) { m_surfaces.push_back(node); }
 };
 

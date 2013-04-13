@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -33,63 +33,56 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*!
- */
-void Element::add_attribute(Str_attr * attribute, bool back)
+/*! \brief */
+void Element::add_attribute(Str_attr* attribute, bool back)
 {
   if (back) m_str_attrs.push_back(attribute);
   else  m_str_attrs.push_front(attribute);
 }
 
-/*!
- */
-void Element::add_attribute(Cont_attr * attribute, bool back)
+/*! \brief */
+void Element::add_attribute(Cont_attr* attribute, bool back)
 {
   if (back) m_cont_attrs.push_back(attribute);
   else  m_cont_attrs.push_front(attribute);
 }
 
-/*!
- */
-void Element::add_attribute(Multi_cont_attr * attribute, bool back)
+/*! \brief */
+void Element::add_attribute(Multi_cont_attr* attribute, bool back)
 {
   if (back) m_multi_cont_attrs.push_back(attribute);
   else  m_multi_cont_attrs.push_front(attribute);
 }
 
-/*!
- */
-void Element::mark_delete(Str_attr_iter & ai)
+/*! \brief */
+void Element::mark_delete(Str_attr_iter& ai)
 {
-  Str_attr * attr = *ai;
+  Str_attr* attr = *ai;
   delete attr->first;
   delete attr->second;
   delete attr;
   *ai = 0;
 }
 
-/*!
- */
-void Element::mark_delete(Cont_attr_iter & ai)
+/*! \brief */
+void Element::mark_delete(Cont_attr_iter& ai)
 {
-  Cont_attr * attr = *ai;
+  Cont_attr* attr = *ai;
   delete attr->first;
   delete attr;
   *ai = 0;
 }
 
-/*!
- */
-void Element::mark_delete(Multi_cont_attr_iter & ai)
+/*! \brief */
+void Element::mark_delete(Multi_cont_attr_iter& ai)
 {
-  Multi_cont_attr * attr = *ai;
+  Multi_cont_attr* attr = *ai;
   delete attr->first;
   delete attr;
   *ai = 0;
 }
 
-/*!
- */
+/*! \brief */
 void Element::delete_marked()
 {
   m_str_attrs.erase(std::remove_if(m_str_attrs.begin(), m_str_attrs.end(),

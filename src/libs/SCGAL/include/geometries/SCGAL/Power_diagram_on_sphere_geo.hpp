@@ -27,14 +27,15 @@
 #ifndef SGAL_POWER_DIAGRAM_ON_SPHERE_GEO_HPP
 #define SGAL_POWER_DIAGRAM_ON_SPHERE_GEO_HPP
 
-#include <CGAL/basic.h>
-#include <CGAL/envelope_voronoi_2.h>
-#include <CGAL/Envelope_voronoi_traits_2/Spherical_power_diagram_traits_2.h>
-
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
 #include <vector>
+#include <boost/shared_ptr.hpp>
+
+#include <CGAL/basic.h>
+#include <CGAL/envelope_voronoi_2.h>
+#include <CGAL/Envelope_voronoi_traits_2/Spherical_power_diagram_traits_2.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -56,7 +57,7 @@ class Scene_graph;
 class Element;
 class Sphere;
 
-/*! A geometry container that represents a power diagram os a sphere
+/*! A geometry container that represents a power diagram os a sphere.
  */
 class SGAL_CLASSDEF Power_diagram_on_sphere_geo :
   public Geodesic_voronoi_on_sphere_geo
@@ -120,31 +121,34 @@ private:
   typedef Vos::Halfedge_around_vertex_const_circulator
     Vos_halfedge_around_vertex_const_circulator;
 
+  typedef boost::shared_ptr<Coeff_array>           Shared_coeff_array;
+  typedef boost::shared_ptr<Exact_plane_array>     Shared_exact_plane_array;
+  
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Power_diagram_on_sphere_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Power_diagram_on_sphere_geo();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Power_diagram_on_sphere_geo* prototype()
   { return new Power_diagram_on_sphere_geo(true); }
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone()
   { return new Power_diagram_on_sphere_geo(); }
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
+  /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Set the node attributes */
+  /*! Set the node attributes. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -152,67 +156,67 @@ public:
   /*! */
   virtual void cull(Cull_context& cull_context);
 
-  /*! Is the representation empty ? */
+  /*! Determine whether the representation empty. */
   virtual Boolean is_empty() const { return m_vos->is_empty(); }
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! Clear the internal representation and auxiliary data structures */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
 
-  /*! Clean the renderer */
+  /*! Clean the renderer. */
   virtual void clean_renderer();
   
-  /*! Set the coordinate array */
-  void set_coeff_array(Coeff_array* coeff_array);
+  /*! Set the coordinate array. */
+  void set_coeff_array(Shared_coeff_array coeff_array);
 
-  /*! Obtain the coordinate array */
-  Coeff_array* get_coeff_array() const;
+  /*! Obtain the coordinate array. */
+  Shared_coeff_array get_coeff_array() const;
 
-  /*! Obrain the power diagram */
+  /*! Obrain the power diagram. */
   Voronoi_on_sphere* get_vos() { return m_vos; }
 
-  /*! Obtain the flag that indicates whether to draw the sites */
+  /*! Obtain the flag that indicates whether to draw the sites. */
   Boolean get_draw_sites() const { return m_draw_sites; }
 
-  /*! Enable edge rendering */
+  /*! Enable edge rendering. */
   void enable_site() { m_site_enabled = true; }
 
-  /*! Disable edge rendering */
+  /*! Disable edge rendering. */
   void disable_site() { m_site_enabled = false; }
 
-  /*! Determine whether edge rendering is enabled */
+  /*! Determine whether edge rendering is enabled. */
   Boolean is_site_enabled() const { return m_site_enabled; }
 
-  /*! Obtain the edge shape style */
+  /*! Obtain the edge shape style. */
   Site_style get_site_style() const { return m_site_style; }
 
-  /*! Set the edge shape style */
+  /*! Set the edge shape style. */
   void set_site_style(Site_style style) { m_site_style = style; }
   
-  /*! Obtain the edge shape type */
+  /*! Obtain the edge shape type. */
   Int get_site_count() const { return m_site_count; }
 
-  /*! Set the edge shape type */
+  /*! Set the edge shape type. */
   void set_site_count(Int count) { m_site_count = count; }
     
-  /*! Determine whether edges are rendered directed */
+  /*! Determine whether edges are rendered directed. */
   Boolean get_site_directed() const { return m_site_directed; }
 
-  /*! Set the flag that determines whether edges are rendered directed */
+  /*! Set the flag that determines whether edges are rendered directed. */
   void set_site_directed(Boolean dir) { m_site_directed = dir; }
 
-  /*! Obtain the edge radius */
+  /*! Obtain the edge radius. */
   Float get_site_radius() const { return m_site_radius; }
 
-  /*! Set the edge radius */
+  /*! Set the edge radius. */
   void set_site_radius(Float radius) { m_site_radius = radius; }
 
-  /*! Obtain the edge line width */
+  /*! Obtain the edge line width. */
   Float get_site_line_width() const { return m_site_line_width; }
 
-  /*! Set the edge line width */
+  /*! Set the edge line width. */
   void set_site_line_width(Float width) { m_site_line_width = width; }
   
 protected:
@@ -240,97 +244,97 @@ protected:
 
   class Inflated_site_renderer : public Arrangement_renderer::Renderer {
   private:
-    /*! The arrangement geometry */
+    /*! The arrangement geometry. */
     Power_diagram_on_sphere_geo& m_geo;
     
   public:
-    /*! Constructor */
+    /*! Constructor. */
     Inflated_site_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
-    /*! Drawer operator */
+    /*! Drawer operator. */
     virtual void operator()(Draw_action* action);
   };
 
-  /*! A functor that draws the sites */
+  /*! A functor that draws the sites. */
   class Site_renderer : public Arrangement_renderer::Renderer {
   private:
-    /*! The arrangement geometry */
+    /*! The arrangement geometry. */
     Power_diagram_on_sphere_geo& m_geo;
     
   public:
-    /*! Constructor */
+    /*! Constructor. */
     Site_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
-    /*! Draw the sites */
+    /*! Draw the sites. */
     virtual void operator()(Draw_action* action) { m_geo.draw_sites(action); }
   };
 
   class Site_other_renderer : public Arrangement_renderer::Renderer {
   private:
-    /*! The arrangement geometry */
+    /*! The arrangement geometry. */
     Power_diagram_on_sphere_geo& m_geo;
     
   public:
-    /*! Constructor */
+    /*! Constructor. */
     Site_other_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
-    /*! Drawer operator */
+    /*! Drawer operator. */
     virtual void operator()(Draw_action* action);
   };
     
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
   /*! The container prototype */
   static Container_proto* s_prototype;
 
   /*! Indicates whether the vos data structure is owned, i.e., explicitly
-   * allocated. If the vos data structure is owned, it should be destructed
+   * allocated. If the vos data structure is owned, it should be destructed.
    * when this geometry node is destructed.
    */
   Boolean m_owned_vos;
 
-  /*! The arrangement of great-circle arcs on a sphere */
+  /*! The arrangement of great-circle arcs on a sphere. */
   Voronoi_on_sphere* m_vos;
 
-  /*! An array of direction ccordinates */
-  Coeff_array* m_coeff_array;
+  /*! An array of direction ccordinates. */
+  Shared_coeff_array m_coeff_array;
 
-  /*! Indicates whether the rendering of edges is enabled or not */
+  /*! Indicates whether the rendering of edges is enabled or not. */
   Boolean m_site_enabled;
 
-  /*! The edge rendering style */
+  /*! The edge rendering style. */
   Site_style m_site_style;
 
-  /*! The edge rendering type */
+  /*! The edge rendering type. */
   Int m_site_count;
 
-  /*! Indicates whether edges are rendered directed or not */
+  /*! Indicates whether edges are rendered directed or not. */
   Boolean m_site_directed;
   
-  /*! The site radius */
+  /*! The site radius. */
   Float m_site_radius;
 
   /*! The site line width (when drawn as a line) */
   Float m_site_line_width;
 
-  /*! The angle of a single triangle in the fan drawing of a site */
+  /*! The angle of a single triangle in the fan drawing of a site. */
   Float m_site_delta_angle;
   
-  /*! The site renderer */
+  /*! The site renderer. */
   Inflated_site_renderer* m_inflated_site_renderer;
 
-  /*! The site renderer */
+  /*! The site renderer. */
   Site_renderer* m_site_renderer;
   
-  /*! The non-flat site renderer */
+  /*! The non-flat site renderer. */
   Site_other_renderer* m_site_other_renderer;
   
-  /*! Default values */
+  /*! Default values. */
   static const Boolean s_def_site_enabled;
   static const Site_style s_def_site_style;
   static const Int s_def_site_count;
@@ -339,12 +343,12 @@ private:
   static const Float s_def_site_line_width;
   static const Float s_def_site_delta_angle;
   
-  /*! Draw the power diagram on sphere opaque
+  /*! Draw the power diagram on sphere opaque.
    * \param action
    */
   virtual void draw_opaque(Draw_action* action);
 
-  /*! Draw the sites
+  /*! Draw the sites.
    * \param action
    */
   void draw_sites(Draw_action* action);
@@ -355,27 +359,26 @@ private:
    */
   void draw_site(Draw_action* action, Exact_plane_3& plane);
 
-  /*! Draw the arrangement vertices
+  /*! Draw the arrangement vertices.
    * \param action
    */
   void draw_aos_vertices(Draw_action* action);
   
-  /*! Draw the arrangement edges
+  /*! Draw the arrangement edges.
    * \param action
    */
   void draw_aos_edges(Draw_action* action);
 
-  /*! Create the renderers */
+  /*! Create the renderers. */
   void create_renderers();
 
-  /*! Detsroy the renderers */
+  /*! Detsroy the renderers. */
   void destroy_renderers();
 };
 
-/*! \brief obtains the coordinate array */
-inline Power_diagram_on_sphere_geo::Coeff_array*
-Power_diagram_on_sphere_geo::get_coeff_array() const
-{ return m_coeff_array; }
+/*! \brief obtains the coordinate array. */
+inline Power_diagram_on_sphere_geo::Shared_coeff_array
+Power_diagram_on_sphere_geo::get_coeff_array() const { return m_coeff_array; }
 
 SGAL_END_NAMESPACE
 

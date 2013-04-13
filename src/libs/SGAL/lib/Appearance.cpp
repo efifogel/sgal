@@ -64,23 +64,13 @@ REGISTER_TO_FACTORY(Appearance, "Appearance");
 /*! The parameter-less constructor */
 Appearance::Appearance(Boolean proto) :
   Container(proto),
-  m_owned_material(false),
   m_owned_tex_gen(false),
-  m_material_prev(NULL),
   m_tex_gen_prev(NULL)
 { init(); }
 
 /*! Destructor */
 Appearance::~Appearance()
 {
-  // delete the owned material attribute if present
-  if (m_owned_material) {
-    SGAL_assertion(m_material_prev);
-    delete m_material_prev;
-    m_material_prev = NULL;
-    m_owned_material = false;
-  }
-
   // delete the owned texture-generation attribute if present
   if (m_owned_tex_gen) {
     SGAL_assertion(m_tex_gen_prev);
@@ -134,14 +124,14 @@ void Appearance::set(Appearance* app)
 /*! \brief */
 void Appearance::init()
 {
-  m_texture                   = 0;
+  // m_texture                   = 0;
   m_tex_enable                = false;
   m_tex_mode                  = Gfx::FAST_TEX;
   m_tex_blend_color.set(0.0f, 0.0f, 0.0f, 0.0f);
   m_tex_env                   = Gfx::MODULATE_TENV;
   m_tex_gen                   = 0;
   m_tex_gen_enable            = false;
-  m_material                  = 0;
+  // m_material                  = 0;
   m_material_mode_enable      = Gfx::NO_COLOR_MATERIAL;
   m_light_enable              = 0;
   m_shade_model               = Gfx::SMOOTH_SHADE;
@@ -161,9 +151,9 @@ void Appearance::init()
   m_line_stipple_factor       = 1;
   m_line_stipple_pattern      = 0xffff;
   m_tex_transform.make_identity();
-  m_back_material             = 0;
+  // m_back_material             = 0;
   m_polygon_stipple_enable    = false;
-  m_halftone                  = 0;
+  // m_halftone                  = 0;
   m_light_model_color_control = s_def_light_model_color_control;
 
   m_pending.off();
@@ -171,7 +161,7 @@ void Appearance::init()
 }
 
 /*! \brief */
-void Appearance::set_texture(Texture* texture)
+void Appearance::set_texture(Shared_texture texture)
 {
   m_texture = texture;
   m_pending.on_bit(Gfx::TEXTURE);
@@ -183,7 +173,7 @@ void Appearance::set_texture(Texture* texture)
 }
 
 /*! \brief */
-void Appearance::set_halftone(Halftone* halftone)
+void Appearance::set_halftone(Shared_halftone halftone)
 {
   m_halftone = halftone;
   m_pending.on_bit(Gfx::HALFTONE_PATTERN);
@@ -248,7 +238,7 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 }
 
 /*! \brief sets the material attribute. */
-void Appearance::set_material(Material* material)
+void Appearance::set_material(Shared_material material)
 {
   SGAL_assertion(material);
   m_material = material;
@@ -276,7 +266,7 @@ void Appearance::material_changed(Field_info* /* field_info */)
 }
 
 /*! \brief */
-void Appearance::set_back_material(Material* material)
+void Appearance::set_back_material(Shared_material material)
 {
   m_pending.on_bit(Gfx::BACK_MATERIAL);
   m_override.on_bit(Gfx::BACK_MATERIAL);
@@ -510,7 +500,7 @@ void Appearance::halftone_changed(Field_info* /* field_info */)
 Boolean Appearance::attach_context(Context* context)
 {
   Boolean result = Container::attach_context(context);
-  Texture* texture = get_texture();
+  Shared_texture texture = get_texture();
   if (texture) result &= texture->attach_context(context);
   return result;
 }
@@ -519,7 +509,7 @@ Boolean Appearance::attach_context(Context* context)
 Boolean Appearance::detach_context(Context* context)
 {
   Boolean result = Container::detach_context(context);
-  Texture* texture = get_texture();
+  Shared_texture texture = get_texture();
   if (texture) result &= texture->detach_context(context);
   return result;
 }
@@ -532,21 +522,22 @@ void Appearance::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func;
-  
+  SF_shared_container* field;
+
   exec_func = static_cast<Execution_function>(&Appearance::material_changed);
-  s_prototype->add_field_info(new SF_container(MATERIAL, "material",
-                                               get_member_offset(&m_material),
-                                               exec_func));
+  field = new SF_shared_container(MATERIAL, "material",
+                                  get_member_offset(&m_material), exec_func);
+  s_prototype->add_field_info(field);
 
   exec_func = static_cast<Execution_function>(&Appearance::texture_changed);
-  s_prototype->add_field_info(new SF_container(TEXTURE, "texture",
-                                               get_member_offset(&m_texture),
-                                               exec_func));
+  field = new SF_shared_container(TEXTURE, "texture",
+                                  get_member_offset(&m_texture), exec_func);
+  s_prototype->add_field_info(field);
 
   exec_func = static_cast<Execution_function>(&Appearance::halftone_changed);
-  s_prototype->add_field_info(new SF_container(HALFTONE_PATTERN, "halftone",
-                                               get_member_offset(&m_halftone),
-                                               exec_func));
+  field = new SF_shared_container(HALFTONE_PATTERN, "halftone",
+                                  get_member_offset(&m_halftone), exec_func);
+  s_prototype->add_field_info(field);
 }
 
 /*! \brief deletes the appearance prototype. */
@@ -611,9 +602,9 @@ void Appearance::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "material") {
-      Material* material = dynamic_cast<Material*>(cont); 
+      Shared_material material = boost::dynamic_pointer_cast<Material>(cont); 
       if (material) {
         set_material(material);
         if (!get_back_material()) set_back_material(material);
@@ -622,7 +613,7 @@ void Appearance::set_attributes(Element* elem)
       continue;
     }
     if (name == "texture") {
-      Texture* texture = dynamic_cast<Texture*>(cont);
+      Shared_texture texture = boost::dynamic_pointer_cast<Texture>(cont);
       set_texture(texture);
       elem->mark_delete(cai);
       continue;
@@ -633,7 +624,7 @@ void Appearance::set_attributes(Element* elem)
       continue;
     }
     if (name == "halftone") {
-      Halftone* halftone = dynamic_cast<Halftone*>(cont);
+      Shared_halftone halftone = boost::dynamic_pointer_cast<Halftone>(cont);
       set_polygon_stipple_enable(true);
       set_halftone(halftone);
       elem->mark_delete(cai);
@@ -650,7 +641,7 @@ void Appearance::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
   formatter->single_container_begin("material");
-  formatter->write(m_material);
+  formatter->write(&*m_material);
   formatter->single_container_end();  
   formatter->container_end();  
 }
@@ -761,28 +752,7 @@ void Appearance::clean_light_model()
 
 /*! \brief cleans the material attribute. */
 void Appearance::clean_material()
-{
-  // Construct a new owned texture generation attribute if needed, and delete
-  // the previously constructed owned texture generation attribute if not
-  // needed any more.
-  if (m_owned_material) {
-    SGAL_assertion(m_material_prev);
-    if (!m_material) set_material(m_material_prev);
-    else if (m_material != m_material_prev) {
-      delete m_material_prev;
-      m_material_prev = NULL;
-      m_owned_material = false;
-    }
-  }
-  else {
-    if (!m_material) {
-      Material* material = new Material();
-      SGAL_assertion(material);
-      set_material(material);
-      m_owned_material = true;
-    }
-  }
-}
+{ if (!m_material) m_material = Shared_material(new Material()); }
 
 /*! \brief cleans the texture generation attribute. */
 void Appearance::clean_tex_gen()
@@ -810,8 +780,8 @@ void Appearance::clean_tex_gen()
   }
 
   // Setup the textute-generation functions.
-  Texture* texture = get_texture();
-  if (dynamic_cast<Texture_2d*>(texture)) {
+  Shared_texture texture = get_texture();
+  if (boost::dynamic_pointer_cast<Texture_2d>(texture)) {
     // Setup standard texture map if requested:
 #if 0
     get_tex_gen()->set_mode_s(Tex_gen::EYE_LINEAR);
@@ -821,12 +791,12 @@ void Appearance::clean_tex_gen()
     get_tex_gen()->set_mode_t(Tex_gen::OBJECT_LINEAR);
 #endif
   }
-  else if (dynamic_cast<Sphere_environment*>(texture)) {
+  else if (boost::dynamic_pointer_cast<Sphere_environment>(texture)) {
     // Setup sphere environment map if requested:
     get_tex_gen()->set_mode_s(Tex_gen::SPHERE_MAP);
     get_tex_gen()->set_mode_t(Tex_gen::SPHERE_MAP);
   }
-  else if (dynamic_cast<Cube_environment*>(texture)) {
+  else if (boost::dynamic_pointer_cast<Cube_environment>(texture)) {
     // Setup cube environment map if requested:
 #if 0
     get_tex_gen()->set_mode_s(Tex_gen::NORMAL_MAP);

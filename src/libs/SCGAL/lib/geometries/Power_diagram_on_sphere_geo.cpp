@@ -30,7 +30,7 @@
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
+ * great circles embeded on a sphere.
  */
 
 #include <boost/lexical_cast.hpp>
@@ -85,7 +85,7 @@ const Float Power_diagram_on_sphere_geo::s_def_site_radius(.06f);
 const Float Power_diagram_on_sphere_geo::s_def_site_line_width(1);
 const Float Power_diagram_on_sphere_geo::s_def_site_delta_angle(.1f);
 
-/*! Constructor */
+/*! Constructor. */
 Power_diagram_on_sphere_geo::
 Power_diagram_on_sphere_geo(Boolean proto) :
   Geodesic_voronoi_on_sphere_geo(proto),
@@ -102,7 +102,7 @@ Power_diagram_on_sphere_geo(Boolean proto) :
   if (!proto) create_renderers();
 }
 
-/*! Destructor */
+/*! Destructor. */
 Power_diagram_on_sphere_geo::~Power_diagram_on_sphere_geo()
 {
   clear();
@@ -118,7 +118,7 @@ Power_diagram_on_sphere_geo::~Power_diagram_on_sphere_geo()
   }
 }
 
-/*! \brief initializes the container prototype */
+/*! \brief initializes the container prototype. */
 void Power_diagram_on_sphere_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -153,21 +153,21 @@ void Power_diagram_on_sphere_geo::init_prototype()
                                exec_func));
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Power_diagram_on_sphere_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
+/*! \brief obtains the container prototype. */
 Container_proto* Power_diagram_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Power_diagram_on_sphere_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes */
+/*! \brief sets the ellpsoid attributes. */
  void Power_diagram_on_sphere_geo::set_attributes(Element* elem)
 {
   Geodesic_voronoi_on_sphere_geo::set_attributes(elem);
@@ -215,9 +215,10 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "plane") {
-      Coeff_array* coeff_array = dynamic_cast<Coeff_array*>(cont);
+      Shared_coeff_array coeff_array =
+        boost::dynamic_pointer_cast<Coeff_array>(cont);
       set_coeff_array(coeff_array);
       elem->mark_delete(cai);
       continue;
@@ -228,7 +229,7 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation */
+/*! \brief cleans the representation. */
 void Power_diagram_on_sphere_geo::clean()
 {
   Geodesic_voronoi_on_sphere_geo::clean();
@@ -242,8 +243,8 @@ void Power_diagram_on_sphere_geo::clean()
   Exact_kernel kernel;
   Exact_point_3 origin = kernel.construct_point_3_object() (CGAL::ORIGIN);
 
-  Exact_plane_array* exact_coeff_array =
-    dynamic_cast<Exact_plane_array *>(m_coeff_array);
+  Shared_exact_plane_array exact_coeff_array =
+    boost::dynamic_pointer_cast<Exact_plane_array>(m_coeff_array);
   if (exact_coeff_array && (exact_coeff_array->size() > 0)) {
 
     if (this->m_site_indices.size() != 0) {
@@ -267,7 +268,7 @@ void Power_diagram_on_sphere_geo::clean()
   }
 }
 
-/*! \brief clears the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Power_diagram_on_sphere_geo::clear()
 {
   this->m_dirty = true;
@@ -277,22 +278,22 @@ void Power_diagram_on_sphere_geo::clear()
 /*! \brief */
 void Power_diagram_on_sphere_geo::cull(Cull_context& cull_context) {}
 
-/*! \brief sets the plane coefficients array */
+/*! \brief sets the plane coefficients array. */
 inline void
-Power_diagram_on_sphere_geo::set_coeff_array(Coeff_array* coeff_array)
+Power_diagram_on_sphere_geo::set_coeff_array(Shared_coeff_array coeff_array)
 {
   m_coeff_array = coeff_array;
   // No need to recalculate the sphere bound
 }
 
-/*! \brief draws the arrangement on sphere opaque */
+/*! \brief draws the arrangement on sphere opaque. */
 void Power_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
 {
   Arrangement_on_sphere_base_geo::draw_opaque(action);
   if (m_draw_sites) draw_sites(action);
 }
 
-/*! \brief draws a site */
+/*! \brief draws a site. */
 void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
                                             Exact_plane_3& plane)
 {
@@ -389,8 +390,8 @@ void Power_diagram_on_sphere_geo::draw_sites(Draw_action* action)
 {
   glColor3fv((float*)&m_site_color[0]);
 
-  Exact_plane_array* exact_coeff_array =
-    dynamic_cast<Exact_plane_array *>(m_coeff_array);
+  Shared_exact_plane_array exact_coeff_array =
+    boost::dynamic_pointer_cast<Exact_plane_array>(m_coeff_array);
   if (exact_coeff_array && (exact_coeff_array->size() > 0)) {
     std::vector<Uint>::iterator it;
     for (it = this->m_site_indices.begin();
@@ -402,7 +403,7 @@ void Power_diagram_on_sphere_geo::draw_sites(Draw_action* action)
   }
 }
 
-/*! \brief draws the arrangement vertices */
+/*! \brief draws the arrangement vertices. */
 void Power_diagram_on_sphere_geo::draw_aos_vertices(Draw_action* action)
 {
   Vos_vertex_const_iterator vi;
@@ -413,7 +414,7 @@ void Power_diagram_on_sphere_geo::draw_aos_vertices(Draw_action* action)
   }
 }
 
-/*! \brief draws the arrangement edges */
+/*! \brief draws the arrangement edges. */
 void Power_diagram_on_sphere_geo::draw_aos_edges(Draw_action* action)
 {
   Vos_edge_const_iterator hei;
@@ -500,7 +501,7 @@ void Power_diagram_on_sphere_geo::clean_renderer()
   m_renderer_dirty = false;
 }
 
-/*! \brief draws the sites */
+/*! \brief draws the sites. */
 void Power_diagram_on_sphere_geo::Inflated_site_renderer::
 operator()(Draw_action* action)
 {
@@ -527,7 +528,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief draws the sites */
+/*! \brief draws the sites. */
 void Power_diagram_on_sphere_geo::Site_other_renderer::
 operator()(Draw_action* action)
 {
@@ -543,7 +544,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Power_diagram_on_sphere_geo::create_renderers()
 {
   m_edges_renderer = new Pd_edges_renderer(*this);
@@ -570,7 +571,7 @@ void Power_diagram_on_sphere_geo::create_renderers()
   m_site_other_renderer = new Site_other_renderer(*this);
 }
 
-/*! \brief destroys the renderers */
+/*! \brief destroys the renderers. */
 void Power_diagram_on_sphere_geo::destroy_renderers()
 {
   if (m_edges_renderer) delete m_edges_renderer;

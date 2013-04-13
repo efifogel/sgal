@@ -27,13 +27,14 @@
 #ifndef SGAL_ARRANGEMENT_ON_SPHERE_BASE_GEO_HPP
 #define SGAL_ARRANGEMENT_ON_SPHERE_BASE_GEO_HPP
 
-#include <CGAL/basic.h>
-#include <CGAL/Min_sphere_of_spheres_d.h>
-
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
 #include <vector>
+#include <boost/shared_ptr.hpp>
+
+#include <CGAL/basic.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -62,6 +63,12 @@ class SGAL_CLASSDEF Arrangement_on_sphere_base_geo :
   public Arrangement_on_surface_geo
 {
 public:
+  // Shared pointers
+  typedef boost::shared_ptr<Coord_array>        Shared_coord_array;
+  typedef boost::shared_ptr<Normal_array>       Shared_normal_array;
+  typedef boost::shared_ptr<Exact_coord_array>  Shared_exact_coord_array;
+  typedef boost::shared_ptr<Exact_normal_array> Shared_exact_normal_array;
+  
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
     COORD_ARRAY,
@@ -109,16 +116,16 @@ public:
   virtual void clear() = 0;
 
   /*! Set the coordinate array. */
-  void set_coord_array(Coord_array* coord_array);
+  void set_coord_array(Shared_coord_array coord_array);
 
   /*! Obtain the coordinate array. */
-  Coord_array* get_coord_array() const;
+  Shared_coord_array get_coord_array() const;
 
   /*! Set the normal array. */
-  void set_normal_array(Normal_array* normal_array);
+  void set_normal_array(Shared_normal_array normal_array);
 
   /*! Obtain the normal array. */
-  Normal_array* get_normal_array() const;
+  Shared_normal_array get_normal_array() const;
 
   /*! Obtain the x-monotone curve index array. */
   const std::vector<Uint>& get_x_monotone_curve_indices() const;
@@ -187,10 +194,10 @@ protected:
   typedef SGAL::Stencil_sphere_renderer    Stencil_surface_renderer;
 
   /*! An array of coordinates. */
-  Coord_array* m_coord_array;
+  Shared_coord_array m_coord_array;
 
   /*! An array of normals. */
-  Normal_array* m_normal_array;
+  Shared_normal_array m_normal_array;
   
   /*! An array of indices into the coordinate array for general curves. */
   std::vector<Uint> m_curve_indices;
@@ -220,10 +227,10 @@ protected:
 
     if (!m_coord_array) return;
     
-    Exact_coord_array* exact_coord_array =
-      dynamic_cast<Exact_coord_array *>(m_coord_array);
-    Exact_normal_array* exact_normal_array =
-      dynamic_cast<Exact_normal_array *>(m_normal_array);
+    Shared_exact_coord_array exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+    Shared_exact_normal_array exact_normal_array =
+      boost::dynamic_pointer_cast<Exact_normal_array>(m_normal_array);
      
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       std::vector<Uint>::iterator it;
@@ -388,7 +395,8 @@ private:
 };
 
 /*! \brief obtains the coordinate array. */
-inline Coord_array* Arrangement_on_sphere_base_geo::get_coord_array() const
+inline Arrangement_on_sphere_base_geo::Shared_coord_array
+Arrangement_on_sphere_base_geo::get_coord_array() const
 { return m_coord_array; }
 
 /*! \brief obtains the x-monotone curve index array. */

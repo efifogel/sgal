@@ -71,8 +71,6 @@ REGISTER_TO_FACTORY(Configuration, "Configuration");
 /*! Constructor */
 Configuration::Configuration(Boolean proto) :
   Container(proto),
-  m_accumulation(NULL),
-  m_multisample(NULL),
   m_geometry_drawing_mode(s_def_geometry_drawing_mode),
   m_are_global_lights_stationary(s_def_are_global_lights_stationary),
   m_texture_map(s_def_texture_map),
@@ -322,15 +320,15 @@ void Configuration::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string & name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "accumulation") {
-      Accumulation* acc = dynamic_cast<Accumulation*>(cont);
+      Shared_accumulation acc = boost::dynamic_pointer_cast<Accumulation>(cont);
       set_accumulation(acc);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "multisample") {
-      Multisample* ms = dynamic_cast<Multisample*>(cont);
+      Shared_multisample ms = boost::dynamic_pointer_cast<Multisample>(cont);
       set_multisample(ms);
       elem->mark_delete(cai);
       continue;

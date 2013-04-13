@@ -27,6 +27,13 @@
 #ifndef SGAL_ARRANGEMENT_ON_QUADRIC_GEO_HPP
 #define SGAL_ARRANGEMENT_ON_QUADRIC_GEO_HPP
 
+#if (defined _MSC_VER)
+#include <windows.h>
+#endif
+#include <vector>
+#include <list>
+#include <boost/shared_ptr.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <CGAL/Arrangement_on_surface_2.h>
@@ -34,12 +41,6 @@
 
 #include <QdX/Quadric_intersections_on_base_traits_2.h>
 #include <NiX/Arithmetic_traits.h>
-
-#if (defined _MSC_VER)
-#include <windows.h>
-#endif
-#include <vector>
-#include <list>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -60,12 +61,15 @@ class Element;
 class Quadric_geo;
 
 /*! A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a quadric
+ * great circles embeded on a quadric.
  */
 class SGAL_CLASSDEF Arrangement_on_quadric_geo :
   public Arrangement_on_surface_geo
 {
 public:
+  // Shared_pointer
+  typedef boost::shared_ptr<Quadric_geo>              Shared_quadric_geo;
+  
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
     BASE_QUADRIC,
@@ -151,117 +155,124 @@ protected:
 
 public:
   /*! Constructor */
-  Arrangement_on_quadric_geo(Boolean proto = SGAL_FALSE);
+  Arrangement_on_quadric_geo(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Arrangement_on_quadric_geo();
 
-  /* Construct the prototype */
-  static Arrangement_on_quadric_geo * prototype()
-  { return new Arrangement_on_quadric_geo(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Arrangement_on_quadric_geo* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Arrangement_on_quadric_geo(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the container prototype. */
+  virtual Container_proto* get_prototype();
 
-  /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  /*! Set the ellpsoid attributes. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! */
-  virtual void isect(Isect_action * action);
+  virtual void isect(Isect_action* action);
 
   /*! */
   virtual Boolean clean_sphere_bound();
 
-  /*! Clear the internal representation and auxiliary data structures
-   */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
 
-  /*! Is the representation empty ?
-   */
+  /*! Determine whether the representation empty. */
   virtual Boolean is_empty() const;
 
-  /*! Set the base quadric
-   * \param quadric (in) a pointer to a quadric
+  /*! Set the base quadric.
+   * \param quadric (in) a pointer to a quadric.
    */
-  void set_base_quadric(Quadric_geo * quadric);
+  void set_base_quadric(Shared_quadric_geo quadric);
     
 protected:
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
-  /*! Vertex shapes */
-  static const char * s_vertex_styles[];
+  /*! Vertex shapes. */
+  static const char* s_vertex_styles[];
 
-  /*! Edge shapes */
-  static const char * s_edge_shapes[];
+  /*! Edge shapes. */
+  static const char* s_edge_shapes[];
   
-  /*! The arrangement on quadric representation */
+  /*! The arrangement on quadric representation. */
   Arrangement_on_quadric m_aoq;
 
-  /*! The base quadric */
-  Quadric_geo * m_base_quadric;
+  /*! The base quadric. */
+  Shared_quadric_geo m_base_quadric;
 
-  /*! The intersecting quadrics */
+  /*! The intersecting quadrics. */
   Quadric_node_list m_quadric_nodes;
   
-  /*! Draw a vertex
-   * \param center the vertex center
+  /*! Draw a vertex.
+   * \param center the vertex center.
    * \param shape
    * \param radius
    * \param delta_angle
    */
-  void draw_vertex(Draw_action * action, Vector3f & center,
+  void draw_vertex(Draw_action* action, Vector3f& center,
                    Vertex_shapes shape, Float radius, Float delta_angle);
   
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
-  /*! The container prototype */
-  static Container_proto * s_prototype;
+  /*! The container prototype. */
+  static Container_proto* s_prototype;
 
-  /*! Draw the embedding quadric surface
+  /*! Draw the embedding quadric surface.
    * \param action
    */
-  virtual void draw_surface(Draw_action * action);
+  virtual void draw_surface(Draw_action* action);
 
-  /*! Draw the arrangement on quadric vertices
+  /*! Draw the arrangement on quadric vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action * action);
+  virtual void draw_aos_vertices(Draw_action* action);
 
-  /*! Draw the arrangement on quadric edges
+  /*! Draw the arrangement on quadric edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action * action);
+  virtual void draw_aos_edges(Draw_action* action);
 
-  /*! Set the intersecting quadrics of the arrangement */
-  void insert_quadric(Quadric_geo * quadric);
+  /*! Set the intersecting quadrics of the arrangement. */
+  void insert_quadric(Quadric_geo* quadric);
 
 };
 
-/*! \brief sets the intersecting quadrics of the arrangement */
-inline void Arrangement_on_quadric_geo::insert_quadric(Quadric_geo * quadric)
-{
-  m_quadric_nodes.push_back(quadric);
-}
+/* \brief constructs the prototype. */
+inline Arrangement_on_quadric_geo* Arrangement_on_quadric_geo::prototype()
+{ return new Arrangement_on_quadric_geo(true); }
+
+/*! \brief clones. */
+inline Container* Arrangement_on_quadric_geo::clone()
+{ return new Arrangement_on_quadric_geo(); }
+
+/*! \brief sets the intersecting quadrics of the arrangement. */
+inline void Arrangement_on_quadric_geo::insert_quadric(Quadric_geo* quadric)
+{ m_quadric_nodes.push_back(quadric); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Arrangement_on_quadric_geo::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

@@ -52,7 +52,7 @@ public:
     DELAY,
     QUALITY
   };
-  
+
   /*! The quality of accumulation used for antialiasing */
   enum Quality {
     Q_HIGH = 0,

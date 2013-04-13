@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 #include <boost/type_traits.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
@@ -57,6 +58,8 @@ class Field_info;
  */
 class SGAL_CLASSDEF Lines_through_segments_geo : public Geometry {
 public:
+  typedef boost::shared_ptr<Indexed_line_set>           Shared_indexed_line_set;
+
   typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
   typedef Nt_traits::Algebraic                          Algebraic;
   typedef Nt_traits::Rational                           Rational;
@@ -144,15 +147,15 @@ public:
   /*! Set the segments.
    * \param segments the segments.
    */
-  void set_segments(Indexed_line_set* segments);
+  void set_segments(Shared_indexed_line_set segments);
 
   /*! Obtain the segments.
    * \return the segments.
    */
-  const Indexed_line_set* get_segments() const { return m_segments; }
+  const Shared_indexed_line_set get_segments() const { return m_segments; }
 
 protected:
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
   /*! Indicates whether the lts data structure is owned, i.e., explicitly
@@ -161,35 +164,35 @@ protected:
    */
   Boolean m_owned_lts;
   
-  /* The internal Lines Through Segments data structutre */
+  /* The internal Lines Through Segments data structutre. */
   Lines_through_segments_3* m_lts;
   
   /*! The segments */
-  Indexed_line_set* m_segments;
+  Shared_indexed_line_set m_segments;
 
-  /*! Indicates whether the data structure must be cleaned */
+  /*! Indicates whether the data structure must be cleaned. */
   Boolean m_dirty;
 
-  /*! Draw a single line */
+  /*! Draw a single line. */
   template <typename Line_type>
   void draw_line(Draw_action* action,
                  Line_type& line,
                  const Matrix4f& view_mat, const Matrix4f& view_mat_inv);
   
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The container prototype */
+  /*! The container prototype. */
   static Container_proto* s_prototype;
 
-  /*! The exact segments */
+  /*! The exact segments. */
   std::vector<Rat_segment_3> m_in_segments;
 
-  /*! Indicates whether the rational segments must be cleaned */
+  /*! Indicates whether the rational segments must be cleaned. */
   bool m_in_segments_dirty;
 
-  /*! The output list of lines */
+  /*! The output list of lines. */
   std::list<Transversal_with_segments> m_out_lines;
 
   Alg_kernel m_alg_kernel;

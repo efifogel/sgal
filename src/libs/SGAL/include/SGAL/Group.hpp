@@ -42,6 +42,7 @@
  */
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
@@ -70,9 +71,13 @@ public:
     LAST
   };
 
-  typedef std::list<Node *>             Node_list;
-  typedef Node_list::iterator           Node_iterator;
-  typedef Node_list::const_iterator     Node_const_iterator;
+  typedef boost::shared_ptr<Node>               Shared_node;
+  typedef boost::shared_ptr<Light>              Shared_light;
+  typedef boost::shared_ptr<Touch_sensor>       Shared_touch_sensor;
+  
+  typedef std::list<Shared_node>                Node_list;
+  typedef Node_list::iterator                   Node_iterator;
+  typedef Node_list::const_iterator             Node_const_iterator;
 
   /*! Constructor */
   Group(Boolean proto = false);
@@ -153,7 +158,7 @@ public:
    * \param index the index of the child.
    * \return a pointer to the child object.
    */
-  Node* get_child(Uint index);
+  Shared_node get_child(Uint index);
 
   /*! Obtain the beginning iterator of the children. */
   Node_iterator children_begin();
@@ -177,27 +182,27 @@ public:
    * Lights appear in front of the sequence followed by all the rest.
    * \param node (in) the child object
    */
-  void add_child(Node* node);
+  void add_child(Shared_node node);
 
   /* Remove a given child from the sequence of children of the group.
    * \param node (in) the child object
    */
-  void remove_child(Node* node);
+  void remove_child(Shared_node node);
 
   /*! Add a touch sensor to the group. */
-  void add_touch_sensor(Touch_sensor* touch_sensor);
+  void add_touch_sensor(Shared_touch_sensor touch_sensor);
 
   /*! Remove a touch sensor from the group. */
-  void remove_touch_sensor(Touch_sensor* touch_sensor);
+  void remove_touch_sensor(Shared_touch_sensor touch_sensor);
 
   /*! Determine whether the group has a touch sensor. */
   Boolean has_touch_sensor() const;
 
   /*! Add a light source to the group. */
-  void add_light(Light* light);
+  void add_light(Shared_light light);
 
   /*! Remove a light source from the group. */
-  void remove_light(Light* light);
+  void remove_light(Shared_light light);
 
   /*! Determine whether the group has light sources. */
   Boolean has_lights() const;
@@ -212,7 +217,7 @@ protected:
   Node_list m_childs;
 
   /*! Indicates whether the group has a touch sensor. */
-  Touch_sensor* m_touch_sensor;
+  Shared_touch_sensor m_touch_sensor;
 
   /*! The number of light sources in the group. */
   Uint m_num_lights;
@@ -262,8 +267,7 @@ inline Boolean Group::is_visible() const { return m_is_visible; }
 inline Boolean Group::has_lights() const { return (m_num_lights != 0); } 
 
 /*! \brief determines whether the group has a touch sensor. */
-inline Boolean Group::has_touch_sensor() const
-{ return (m_touch_sensor != NULL); } 
+inline Boolean Group::has_touch_sensor() const { return (m_touch_sensor); } 
 
 /*! \brief adds the touch sensor to a given scene. */  
 inline void Group::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }

@@ -66,11 +66,10 @@ const std::string Spherical_gaussian_map_geo::s_tag = "SphericalGaussianMap";
 Container_proto* Spherical_gaussian_map_geo::s_prototype = NULL;
 
 /*! Default values */
-
 REGISTER_TO_FACTORY(Spherical_gaussian_map_geo,
                     "Spherical_gaussian_map_geo");
 
-/*! Constructor */
+/*! Constructor. */
 Spherical_gaussian_map_geo::Spherical_gaussian_map_geo(Boolean proto) :
   Spherical_gaussian_map_base_geo(proto),
   m_owned_sgm(false),
@@ -87,12 +86,12 @@ Spherical_gaussian_map_geo::Spherical_gaussian_map_geo(Boolean proto) :
   if (!proto) create_renderers();
 }
 
-/*! Copy Constructor */
+/*! Copy Constructor. */
 Spherical_gaussian_map_geo::
 Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo& gm)
 { SGAL_assertion(0); }
 
-/*! Destructor */
+/*! Destructor. */
 Spherical_gaussian_map_geo::~Spherical_gaussian_map_geo()
 {
   m_sgm_nodes.clear();
@@ -117,12 +116,13 @@ void Spherical_gaussian_map_geo::clean()
   if (m_minkowski_sum) {
     clock_t start_time = clock();
     Sgm_node_iter  ni = m_sgm_nodes.begin();
-    Spherical_gaussian_map_geo* geo1 = *ni++;
-    Spherical_gaussian_map_geo* geo2 = *ni;
+    Shared_spherical_gaussian_map_geo geo1 = *ni++;
+    Shared_spherical_gaussian_map_geo geo2 = *ni;
     m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()));
     clock_t end_time = clock();
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
-  } else if (m_coord_array) {
+  }
+  else if (m_coord_array) {
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
 
@@ -186,9 +186,9 @@ void Spherical_gaussian_map_geo::set_attributes(Element* elem)
     if (name == "geometries") {
       set_minkowski_sum(true);
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
-        Spherical_gaussian_map_geo* sgm =
-          dynamic_cast<Spherical_gaussian_map_geo*>(cont);
+        Element::Shared_container cont = *ci;
+        Shared_spherical_gaussian_map_geo sgm =
+          boost::dynamic_pointer_cast<Spherical_gaussian_map_geo>(cont);
         if (sgm) insert_sgm(sgm);
         else {
           std::cerr << "Invalid " << s_tag << " geometry nodes!"
@@ -502,7 +502,7 @@ void Spherical_gaussian_map_geo::clean_renderer()
 
 /*! \brief sets the source gausian maps of the minkowski sum. */
 void Spherical_gaussian_map_geo::
-insert_sgm(Spherical_gaussian_map_geo* sgm)
+insert_sgm(Shared_spherical_gaussian_map_geo sgm)
 {
   m_sgm_nodes.push_back(sgm);
   Observer observer(this, get_field_info(GEOMETRIES));

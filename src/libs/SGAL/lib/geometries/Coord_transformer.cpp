@@ -112,12 +112,11 @@ void Coord_transformer::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "coord") {
-      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
-      Shared_coord_array shared_coord_array;
-      shared_coord_array.reset(coord_array);
-      set_coord_array(shared_coord_array);
+      Shared_coord_array coord_array =
+        boost::dynamic_pointer_cast<Coord_array>(cont);
+      set_coord_array(coord_array);
       elem->mark_delete(cai);      
       continue;
     }

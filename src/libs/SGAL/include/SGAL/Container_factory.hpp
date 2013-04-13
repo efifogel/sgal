@@ -24,6 +24,7 @@
 
 #include <map>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 
@@ -51,32 +52,36 @@ struct Reg_##class_name {                                             \
 
 #endif
 
-/*! Produces containers */
+/*! Produces containers. */
 class Container_factory {
 public:
-  /*! Obtain the factory singletone */
+  typedef boost::shared_ptr<Container>            Shared_container;
+
+  /*! Obtain the factory singletone. */
   static Container_factory* get_instance();  
 
-  /*! Register the given container type */
+  /*! Register the given container type. */
   void doregister(Container* container);
 
-  /*! Create a clone of a container */
-  Container* create(const std::string& type);
+  /*! Create a clone of a container,
+   * \param type the type of the container to be created.
+   */
+  Shared_container create(const std::string& type);
   
 private:
-  /*! The container-factory singletone */
+  /*! The container-factory singletone. */
   static Container_factory* m_instance;
 
   typedef std::map<std::string, Container*>     Cont_map;
   typedef Cont_map::iterator                    Cont_iter;
 
-  /*! The tag to container mapping */
+  /*! The tag to container mapping. */
   Cont_map m_map;
 
-  /*! Th parameter-less constructor */
+  /*! Th parameter-less constructor. */
   Container_factory() { initialize(); }
 
-  /*! Register all containers in the container factory */
+  /*! Register all containers in the container factory. */
   void initialize();
 };
 

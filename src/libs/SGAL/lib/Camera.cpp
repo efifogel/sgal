@@ -141,7 +141,7 @@ void Camera::set_dynamic_clipping_planes()
 {
   if (!m_is_dynamic) return;
   
-  Transform* nav_root = m_scene_graph->get_navigation_root();
+  Scene_graph::Shared_transform nav_root = m_scene_graph->get_navigation_root();
   const Sphere_bound& sb = nav_root->get_sphere_bound();
   set_clipping_planes(sb.get_center(), sb.get_radius());
 }
@@ -334,17 +334,17 @@ void Camera::clean_matrix()
 void Camera::draw(Draw_action* action)
 {
   Configuration* conf = action->get_configuration();
-  Accumulation* acc = NULL;
-  if (conf) acc = conf->get_accumulation();
-
-  if (acc && acc->is_enabled() && acc->is_active()) {
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    float xjitter, yjitter;
-    acc->get_jitter(xjitter, yjitter);
-    float xpert = xjitter / viewport[2];
-    float ypert = yjitter / viewport[3];
-    m_frustum.set_perturbation_scale(xpert, ypert);
+  if (conf) {
+    Configuration::Shared_accumulation acc = conf->get_accumulation();
+    if (acc && acc->is_enabled() && acc->is_active()) {
+      GLint viewport[4];
+      glGetIntegerv(GL_VIEWPORT, viewport);
+      float xjitter, yjitter;
+      acc->get_jitter(xjitter, yjitter);
+      float xpert = xjitter / viewport[2];
+      float ypert = yjitter / viewport[3];
+      m_frustum.set_perturbation_scale(xpert, ypert);
+    }
   }
   
   draw();

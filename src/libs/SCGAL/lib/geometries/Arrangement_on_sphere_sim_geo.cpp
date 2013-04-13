@@ -54,7 +54,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Arrangement_on_sphere_sim_geo::s_tag = "ArrangementOnSphereSim";
-Container_proto * Arrangement_on_sphere_sim_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_sphere_sim_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Arrangement_on_sphere_sim_geo,
                     "Arrangement_on_sphere_sim_geo");
@@ -161,22 +161,22 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
                                exec_func));  
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Arrangement_on_sphere_sim_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
-Container_proto * Arrangement_on_sphere_sim_geo::get_prototype()
+/*! \brief obtains the container prototype. */
+Container_proto* Arrangement_on_sphere_sim_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_sphere_sim_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the container attributes */
-void Arrangement_on_sphere_sim_geo::set_attributes(Element * elem)
+/*! \brief sets the container attributes. */
+void Arrangement_on_sphere_sim_geo::set_attributes(Element* elem)
 {
   Arrangement_on_sphere_base_geo::set_attributes(elem);
 
@@ -243,7 +243,7 @@ void Arrangement_on_sphere_sim_geo::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! Clean the representation */
+/*! Clean the representation. */
 void Arrangement_on_sphere_sim_geo::clean()
 {
   m_dirty = false;
@@ -257,14 +257,14 @@ void Arrangement_on_sphere_sim_geo::clean()
   m_num_labels = m_aos->number_of_vertices() + m_aos->number_of_edges();
 }
 
-/*! \brief clears the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Arrangement_on_sphere_sim_geo::clear()
 {
   if (m_aos) m_aos->clear();
   m_dirty = true;
 }
 
-/*! \brief draws the marked vertex */
+/*! \brief draws the marked vertex. */
 void Arrangement_on_sphere_sim_geo::draw_labeled_vertex()
 {
   Aos_labeled::Vertex_const_iterator vi;
@@ -280,7 +280,7 @@ void Arrangement_on_sphere_sim_geo::draw_labeled_vertex()
   }
 }
 
-/*! \brief draws the labeled edge */
+/*! \brief draws the labeled edge. */
 void Arrangement_on_sphere_sim_geo::draw_labeled_edge()
 {
 #if 0
@@ -300,7 +300,7 @@ void Arrangement_on_sphere_sim_geo::draw_labeled_edge()
 #endif
 }
 
-/*! \brief draws the labeled face */
+/*! \brief draws the labeled face. */
 void Arrangement_on_sphere_sim_geo::draw_labeled_face()
 {
 #if 0
@@ -314,11 +314,11 @@ void Arrangement_on_sphere_sim_geo::draw_labeled_face()
 #endif
 }
 
-/*! \brief draws the arrangement vertices with color */
+/*! \brief draws the arrangement vertices with color. */
 void Arrangement_on_sphere_sim_geo::Sphere_sim_colored_vertices_renderer::
-operator()(Draw_action * action)
+operator()(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   context->draw_transp_enable(true);
 
   Aos_labeled::Vertex_const_iterator vi;
@@ -349,11 +349,11 @@ operator()(Draw_action * action)
   context->draw_transp_enable(false);
 }
 
-/*! \brief draws the arrangement edges with color */
+/*! \brief draws the arrangement edges with color. */
 void Arrangement_on_sphere_sim_geo::Sphere_sim_colored_edges_renderer::
-operator()(Draw_action * action)
+operator()(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   context->draw_transp_enable(true);
 
   Aos_labeled::Edge_iterator hei;
@@ -384,8 +384,8 @@ operator()(Draw_action * action)
   context->draw_transp_enable(false);
 }
 
-/*! \brief handles tick events */
-void Arrangement_on_sphere_sim_geo::handle(Tick_event * event)
+/*! \brief handles tick events. */
+void Arrangement_on_sphere_sim_geo::handle(Tick_event* event)
 {
   static Uint cycle = 0;
   if (10 == cycle++) {
@@ -395,44 +395,38 @@ void Arrangement_on_sphere_sim_geo::handle(Tick_event * event)
   }
 }
 
-/*! \brief prints out the name of this agent (for debugging purposes) */
+/*! \brief prints out the name of this agent (for debugging purposes). */
 void Arrangement_on_sphere_sim_geo::identify()
-{
-  std::cout << "Agent: Arrangement_on_sphere_sim_geo" << std::endl;
-}
+{ std::cout << "Agent: Arrangement_on_sphere_sim_geo" << std::endl; }
 
-/*! Resume the simulation */
-void Arrangement_on_sphere_sim_geo::resume(Field_info * /* field_info */)
-{
-  Tick_event::doregister(this);
-}
+/*! \brief resumes the simulation. */
+void Arrangement_on_sphere_sim_geo::resume(Field_info* /* field_info */)
+{ Tick_event::doregister(this); }
   
-/*! Suspend the simulation */
-void Arrangement_on_sphere_sim_geo::suspend(Field_info * /* field_info */)
-{
-  Tick_event::unregister(this);
-} 
+/*! \brief suspends the simulation. */
+void Arrangement_on_sphere_sim_geo::suspend(Field_info* /* field_info */)
+{ Tick_event::unregister(this); } 
 
-/*! Process change of simulation time */
-void Arrangement_on_sphere_sim_geo::time_changed(Field_info * /* field_info */)
+/*! Process change of simulation time. */
+void Arrangement_on_sphere_sim_geo::time_changed(Field_info* /* field_info */)
 { m_label = static_cast<Uint>(m_time * (m_num_labels - 1)); }
 
-/*! Increas the vertex index */
+/*! \brief increases the vertex index. */
 void
-Arrangement_on_sphere_sim_geo::increase_vertex_label(Field_info * field_info)
+Arrangement_on_sphere_sim_geo::increase_vertex_label(Field_info* field_info)
 { ++m_vertex_label; }
 
-/*! Increas the face index */
+/*! \brief increases the face index. */
 void
-Arrangement_on_sphere_sim_geo::increase_edge_label(Field_info * field_info)
+Arrangement_on_sphere_sim_geo::increase_edge_label(Field_info* field_info)
 { ++m_edge_label; }
 
-/*! Increas the face index */
+/*! \brief increases the face index. */
 void
-Arrangement_on_sphere_sim_geo::increase_face_label(Field_info * field_info)
+Arrangement_on_sphere_sim_geo::increase_face_label(Field_info* field_info)
 { ++m_face_label; }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Arrangement_on_sphere_sim_geo::create_renderers()
 {
   m_edges_renderer = new Sphere_sim_edges_renderer(*this);
@@ -464,7 +458,7 @@ void Arrangement_on_sphere_sim_geo::create_renderers()
     new Sphere_sim_inflated_tube_edges_renderer(*this);
 }
 
-/*! \brief destroys the renderers */
+/*! \brief destroys the renderers. */
 void Arrangement_on_sphere_sim_geo::destroy_renderers()
 {
   if (m_edges_renderer) delete m_edges_renderer;
@@ -488,15 +482,15 @@ void Arrangement_on_sphere_sim_geo::destroy_renderers()
   if (m_inflated_tube_edges_renderer) delete m_inflated_tube_edges_renderer;
 }
 
-/*! \brief obtains the arrangement */
-Arrangement_on_sphere_labeled * Arrangement_on_sphere_sim_geo::get_aos()
+/*! \brief obtains the arrangement. */
+Arrangement_on_sphere_labeled* Arrangement_on_sphere_sim_geo::get_aos()
 {
   if (m_dirty) clean();
   return m_aos;
 }
 
-/*! \brief sets the arrangement */
-void Arrangement_on_sphere_sim_geo::set_aos(Arrangement_on_sphere_labeled * aos)
+/*! \brief sets the arrangement. */
+void Arrangement_on_sphere_sim_geo::set_aos(Arrangement_on_sphere_labeled* aos)
 {
   m_dirty = false;
   m_aos = aos;

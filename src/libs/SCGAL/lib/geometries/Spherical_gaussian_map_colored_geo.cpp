@@ -121,8 +121,8 @@ void Spherical_gaussian_map_colored_geo::clean()
   if (m_minkowski_sum) {
     clock_t start_time = clock();
     Sgm_node_iter  ni = m_sgm_nodes.begin();
-    Spherical_gaussian_map_colored_geo* geo1 = *ni++;
-    Spherical_gaussian_map_colored_geo* geo2 = *ni;
+    Shared_spherical_gaussian_map_colored_geo geo1 = *ni++;
+    Shared_spherical_gaussian_map_colored_geo geo2 = *ni;
     Sgm_color_overlay_traits<Sgm> sgm_overlay;
     m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()), sgm_overlay);
     clock_t end_time = clock();
@@ -213,9 +213,9 @@ void Spherical_gaussian_map_colored_geo::set_attributes(Element* elem)
     if (name == "geometries") {
       set_minkowski_sum(true);
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
-        Spherical_gaussian_map_colored_geo* sgm =
-          dynamic_cast<Spherical_gaussian_map_colored_geo*>(cont);
+        Element::Shared_container cont = *ci;
+        Shared_spherical_gaussian_map_colored_geo sgm =
+          boost::dynamic_pointer_cast<Spherical_gaussian_map_colored_geo>(cont);
         if (sgm) insert_sgm(sgm);
         else {
           std::cerr << "Invalid " << s_tag << " geometry nodes!"
@@ -551,7 +551,7 @@ void Spherical_gaussian_map_colored_geo::clean_renderer()
 
 /*! \brief sets the source gausian maps of the minkowski sum. */
 void Spherical_gaussian_map_colored_geo::
-insert_sgm(Spherical_gaussian_map_colored_geo* sgm)
+insert_sgm(Shared_spherical_gaussian_map_colored_geo sgm)
 {
   m_sgm_nodes.push_back(sgm);
   Observer observer(this, get_field_info(GEOMETRIES));  

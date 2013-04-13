@@ -25,14 +25,15 @@
 /*! \file
  */
 
-#include <CGAL/Cartesian.h>
-
 #include <time.h>
 #include <string>
 #include <vector>
 #include <list>
 #include <iostream>
 #include <fstream>
+#include <boost/shared_ptr.hpp>
+
+#include <CGAL/Cartesian.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -57,6 +58,9 @@ class Cylinder;
 
 class Spherical_gaussian_map_geo : public Spherical_gaussian_map_base_geo {
 public:
+  typedef boost::shared_ptr<Spherical_gaussian_map_geo>
+    Shared_spherical_gaussian_map_geo;
+
   /*! Fields */
   enum {
     FIRST = Spherical_gaussian_map_base_geo::LAST - 1,
@@ -71,7 +75,7 @@ protected:
   typedef Spherical_gaussian_map_geo                    Self;
 
   // List of pointers to Spherical_gaussian_map_geo objects. */
-  typedef std::list<Spherical_gaussian_map_geo *>       Sgm_node_list;
+  typedef std::list<Shared_spherical_gaussian_map_geo>  Sgm_node_list;
   typedef Sgm_node_list::iterator                       Sgm_node_iter;
 
   /*! The minkowski sum operands. */
@@ -209,7 +213,7 @@ public:
   virtual void print_stat();
 
   /*! Set the source gausian maps of the minkowski sum. */
-  void insert_sgm(Spherical_gaussian_map_geo* sgm);
+  void insert_sgm(Shared_spherical_gaussian_map_geo sgm);
 
   /*! Obrain the Gaussian map. */
   Sgm* get_sgm();

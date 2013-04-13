@@ -30,6 +30,7 @@
 #include <map>
 #include <boost/unordered_map.hpp>
 #include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Transform.hpp"
@@ -60,6 +61,9 @@ class Touch_sensor;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
+  typedef boost::shared_ptr<Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<Material>           Shared_material;
+  
   enum {
     FIRST = Transform::LAST - 1,
     MODEL,
@@ -280,17 +284,17 @@ public:
   /*! Obtain the (const) appearance.
    * \return the appearance.
    */
-  const Appearance* get_appearance() const;
+  const Shared_appearance get_appearance() const;
 
   /*! Obtain the (non-const) appearance.
    * \return the appearance.
    */
-  Appearance* get_appearance();
+  Shared_appearance get_appearance();
 
   /*! Set an appearance.
    * \param appearance the new appearance.
    */
-  void set_appearance(Appearance* appearance);
+  void set_appearance(Shared_appearance appearance);
 
   /*! Process change of appearance. */
   void appearance_changed(Field_info* /* field_info. */);
@@ -392,13 +396,10 @@ protected:
   Style m_style;
 
   /*! The apperance attribute. */
-  Appearance* m_appearance;
+  Shared_appearance m_appearance;
 
   /*! Indicates whether the parts are space filling. */
   Boolean m_space_filling;
-
-  /*! Stores the pervious appearance. */
-  Appearance* m_appearance_prev;
 
   /// Tiling parameter
   std::size_t m_even_layer_x;
@@ -435,11 +436,12 @@ protected:
    * Ego is destructed.
    */
   Boolean m_owned_touch_sensor;
+
   typedef boost::unordered_map<Uint, Appearance*>       Appearance_map;
   typedef Appearance_map::iterator                      Appearance_iter;
   Appearance_map m_appearances;
 
-  typedef std::list<Material*>                          Material_list;
+  typedef std::list<Shared_material>                    Material_list;
   typedef Material_list::iterator                       Material_iter;
   Material_list m_materials;
 
@@ -490,12 +492,6 @@ protected:
   Voxel_signatures m_voxel_signatures;
 
 private:
-  /*! Indicates whether the appearance is "owned". If it is owned (as the
-   * user hasn't provided one) the appearance should be destructed when Ego
-   * is destructed.
-   */
-  Boolean m_owned_appearance;
-
   /*! Indicates whether cleaning the color parts is in progress. 
    * Upon invocation of clean_parts(), if this flag is on, the function
    * immediately returns.
@@ -565,10 +561,11 @@ inline void Ego::set_model(Exact_polyhedron_geo* model) { m_model = model; }
 inline void Ego::set_model(Geo_set* model) { m_model = model; }
 
 /*! \brief obtains the (const) appearance. */
-inline const Appearance* Ego::get_appearance() const { return m_appearance; }
+inline const Ego::Shared_appearance Ego::get_appearance() const
+{ return m_appearance; }
 
 /*! \brief obtains the (non-const) appearance. */
-inline Appearance* Ego::get_appearance() { return m_appearance; }
+inline Ego::Shared_appearance Ego::get_appearance() { return m_appearance; }
 
 /*! \brief obtains the style. */
 inline Ego::Style Ego::get_style() const { return m_style; }

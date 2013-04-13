@@ -31,6 +31,7 @@
 #include <windows.h>
 #endif
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_default_overlay_traits.h>
@@ -66,6 +67,9 @@ public:
   };
 
   typedef Arrangement_on_sphere                         Arrangement_on_surface;
+
+  typedef boost::shared_ptr<Arrangement_on_sphere_geo>
+    Shared_arrangement_on_sphere_geo;
   
 protected:
   typedef Arrangement_on_sphere_geo                     Self;
@@ -121,7 +125,7 @@ public:
   /*! Add a geometry container that represents an arrangement on a
    * sphere to the list of such geometry containers.
    */
-  void add_aos_geo(Arrangement_on_sphere_geo* aos_geo)
+  void add_aos_geo(Shared_arrangement_on_sphere_geo aos_geo)
   { m_aoses.push_back(aos_geo); }
 
   /*! Obtain the overlay traits (const version). */
@@ -197,7 +201,7 @@ protected:
   /*! The arrangement of great-circle arcs on a sphere. */
   Arrangement_on_sphere* m_aos;
 
-  typedef std::vector<Arrangement_on_sphere_geo *>      Aos_geo_vector;
+  typedef std::vector<Shared_arrangement_on_sphere_geo> Aos_geo_vector;
   typedef Aos_geo_vector::iterator                      Aos_geo_iter;
   typedef Aos_geo_vector::difference_type               Aos_geo_diff;
   

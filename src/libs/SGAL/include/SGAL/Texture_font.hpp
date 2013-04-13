@@ -28,6 +28,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -46,6 +47,8 @@ public:
     Uint m_x;                           // x positon on bitmap
     Uint m_y;                           // y positon on bitmap
   };
+
+  typedef boost::shared_ptr<Texture>            Shared_texture;
 
   /*! Constructor */
   Texture_font(const std::string& name, Boolean antialias = true,
@@ -97,7 +100,7 @@ public:
   /*! Obtain the font-symbol texture.
    * \return the font-symbol texture
    */
-  Texture* get_texture() const { return m_texture; };
+  Shared_texture get_texture() const { return m_texture; };
 
   void set_appearance(Appearance* app);
 
@@ -173,7 +176,7 @@ protected:
   Uint m_max_char;
 
   /*! The font-symbol texture. */
-  Texture* m_texture;
+  Shared_texture m_texture;
 
   /*! The font-symbol appearance. */
   Appearance* m_appearance;

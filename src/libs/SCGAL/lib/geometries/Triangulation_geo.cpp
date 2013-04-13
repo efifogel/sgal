@@ -66,8 +66,6 @@ REGISTER_TO_FACTORY(Triangulation_geo, "Triangulation_geo");
 Triangulation_geo::Triangulation_geo(Boolean proto) :
   Geometry(proto),
   m_dirty(true),
-  m_coord_array(NULL),
-  m_color_array(NULL),
   m_line_width(s_def_line_width),
   m_draw_haloed(s_def_draw_haloed),
   m_bb_is_pre_set(false),
@@ -77,7 +75,7 @@ Triangulation_geo::Triangulation_geo(Boolean proto) :
 /*! Destructor */
 Triangulation_geo::~Triangulation_geo() {}
 
-/*! Clean the polyhedron data structure */
+/*! \brief cleans the polyhedron data structure. */
 void Triangulation_geo::clean()
 {
   clock_t start_time = clock();
@@ -133,7 +131,7 @@ void Triangulation_geo::clean()
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
 }
 
-/*! Clear the internal representation */
+/*! \brief clears the internal representation. */
 void Triangulation_geo::clear()
 {
   m_triangulation.clear();
@@ -253,7 +251,6 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
   SGAL::Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
@@ -271,17 +268,21 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
     }
   }
 
+  typedef Element::Cont_attr_iter         Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "coord") {
-      m_coord_array = dynamic_cast<SGAL::Coord_array*>(cont);
+      Shared_coord_array coord_array = 
+        boost::dynamic_pointer_cast<Coord_array>(cont);
+      set_coord_array(coord_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "color") {
-      Color_array* color_array = dynamic_cast<Color_array*>(cont);
+      Shared_color_array color_array =
+        boost::dynamic_pointer_cast<Color_array>(cont);
       set_color_array(color_array);
       elem->mark_delete(cai);      
       continue;
@@ -313,9 +314,10 @@ void Triangulation_geo::init_prototype()
 
   Execution_function exec_func =
     static_cast<Execution_function>(&Triangulation_geo::coord_changed);
-  SF_container* field = new SF_container(COORD, "coord",
-                                         get_member_offset(&m_coord_array),
-                                         exec_func);
+  SF_shared_container* field =
+    new SF_shared_container(COORD, "coord",
+                            get_member_offset(&m_coord_array),
+                            exec_func);
   s_prototype->add_field_info(field);
 
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",

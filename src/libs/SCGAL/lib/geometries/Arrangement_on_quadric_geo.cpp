@@ -69,26 +69,19 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Arrangement_on_quadric_geo::s_tag = "ArrangementOnQuadric";
-Container_proto * Arrangement_on_quadric_geo::s_prototype = NULL;
+const std::string Arrangement_on_quadric_geo::s_tag = "ArrangementOnQuadric";
+Container_proto* Arrangement_on_quadric_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Arrangement_on_quadric_geo, "Arrangement_on_quadric_geo");
 
 /*! Constructor */
 Arrangement_on_quadric_geo::
-Arrangement_on_quadric_geo(Boolean proto) :
-  Arrangement_on_surface_geo(proto),
-  m_base_quadric(NULL)
-{
-}
+Arrangement_on_quadric_geo(Boolean proto) : Arrangement_on_surface_geo(proto) {}
 
 /*! Destructor */
-Arrangement_on_quadric_geo::~Arrangement_on_quadric_geo()
-{
-  clear();
-}
+Arrangement_on_quadric_geo::~Arrangement_on_quadric_geo() { clear(); }
 
-/*! \brief initializes the container prototype */
+/*! \brief initializes the container prototype. */
 void Arrangement_on_quadric_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -98,48 +91,42 @@ void Arrangement_on_quadric_geo::init_prototype()
   typedef void (Container::* Execution_function)(Field_info*);
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Arrangement_on_quadric_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
-Container_proto * Arrangement_on_quadric_geo::get_prototype()
+/*! \brief obtains the container prototype. */
+Container_proto* Arrangement_on_quadric_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_quadric_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes */
- void Arrangement_on_quadric_geo::set_attributes(Element * elem,
-                                                 Scene_graph * sg)
+/*! \brief sets the container attributes. */
+ void Arrangement_on_quadric_geo::set_attributes(Element* elem)
 {
   Arrangement_on_surface_geo::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-  boost::char_separator<char> sep(", \t\n\r");
-
 #if 0
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  typedef Element::Str_attr_iter        Str_attr_iter;
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
   }
 #endif
   
   typedef Element::Cont_attr_iter       Cont_attr_iter;
-
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "baseQuadric") {
-      Quadric_geo * quadric = dynamic_cast<Quadric_geo*>(cont);
+      Shared_quadric_geo quadric =
+        boost::dynamic_pointer_cast<Quadric_geo>(cont);
       set_base_quadric(quadric);
       elem->mark_delete(cai);
       continue;
@@ -154,12 +141,12 @@ Container_proto * Arrangement_on_quadric_geo::get_prototype()
   for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); mcai++)
   {
-    const std::string & name = elem->get_name(mcai);
-    Cont_list & cont_list = elem->get_value(mcai);
+    const std::string& name = elem->get_name(mcai);
+    Cont_list& cont_list = elem->get_value(mcai);
     if (name == "quadrics") {
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container * cont = *ci;
-        Quadric_geo * quadric = dynamic_cast<Quadric_geo*>(cont);
+        Container* cont = *ci;
+        Quadric_geo* quadric = dynamic_cast<Quadric_geo*>(cont);
         if (quadric) insert_quadric(quadric);
         else {
           std::cerr << "Invalid " << s_tag << " quadric nodes!"
@@ -175,7 +162,7 @@ Container_proto * Arrangement_on_quadric_geo::get_prototype()
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation */
+/*! \brief cleans the representation. */
 void Arrangement_on_quadric_geo::clean()
 {
   typedef NiX::Arithmetic_traits AT;
@@ -189,7 +176,7 @@ void Arrangement_on_quadric_geo::clean()
   Quadric_node_iter it;
 
   if (m_base_quadric->is_dirty()) m_base_quadric->clean();
-  const Quadric_3 & base_quadric = m_base_quadric->get_quadric();
+  const Quadric_3& base_quadric = m_base_quadric->get_quadric();
 
   // creating the spatial segments
   std::vector<X_monotone_curve> segments_3;
@@ -197,7 +184,7 @@ void Arrangement_on_quadric_geo::clean()
                 
   for (it = m_quadric_nodes.begin(); it != m_quadric_nodes.end(); ++it) {
     std::vector< X_monotone_curve::Projected_segment_2 > lower_2, upper_2;
-    Quadric_geo * qg = *it;
+    Quadric_geo* qg = *it;
     if (qg->is_dirty()) qg->clean();
 #if !QdX_USE_AcX
     QdX::segments_of_surface_cut(base_quadric, qg->get_quadric(),
@@ -239,13 +226,13 @@ void Arrangement_on_quadric_geo::clean()
 }
 
 /*! \brief */
-void Arrangement_on_quadric_geo::cull(Cull_context & cull_context)
+void Arrangement_on_quadric_geo::cull(Cull_context& cull_context)
 {
   //! \todo 
 }
 
 /*! \brief */
-void Arrangement_on_quadric_geo::isect(Isect_action * action)
+void Arrangement_on_quadric_geo::isect(Isect_action* action)
 {
   //! \todo 
 }
@@ -256,35 +243,27 @@ Boolean Arrangement_on_quadric_geo::clean_sphere_bound()
   Boolean changed = false;
   if (m_base_quadric)
     m_sphere_bound = *m_base_quadric->get_sphere_bound(changed);
-
   return changed;
 }
 
-/*! \brief clears the internal representation and auxiliary data structures */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Arrangement_on_quadric_geo::clear()
-{
-  m_aoq.clear();
-}
+{ m_aoq.clear(); }
 
-/*! Is the representation empty ?
- */
+/*! \brief determines whether the representation is empty. */
 Boolean Arrangement_on_quadric_geo::is_empty() const
-{
-  return m_aoq.is_empty();
-}
+{ return m_aoq.is_empty(); }
 
-/*! \brief draws the embedding surface */
-void Arrangement_on_quadric_geo::draw_surface(Draw_action * action)
-{
-  m_base_quadric->draw(action);
-}
+/*! \brief draws the embedding surface. */
+void Arrangement_on_quadric_geo::draw_surface(Draw_action* action)
+{ m_base_quadric->draw(action); }
 
-/*! \brief draws the arrangement vertices */
-void Arrangement_on_quadric_geo::draw_aos_vertices(Draw_action * action)
+/*! \brief draws the arrangement vertices. */
+void Arrangement_on_quadric_geo::draw_aos_vertices(Draw_action* action)
 {
   Aoq_vertex_const_iterator vi;
   for (vi = m_aoq.vertices_begin(); vi != m_aoq.vertices_end(); ++vi) {
-    const Point & point = vi->point();
+    const Point& point = vi->point();
     if (point.is_at_infinity()) continue;
     QdX::Gfx_point_3 dpt = point.to_double();
     float x = static_cast<float>(dpt.x());
@@ -296,17 +275,17 @@ void Arrangement_on_quadric_geo::draw_aos_vertices(Draw_action * action)
   }
 }
 
-/*! \brief draws the arrangement edges */
-void Arrangement_on_quadric_geo::draw_aos_edges(Draw_action * action)
+/*! \brief draws the arrangement edges. */
+void Arrangement_on_quadric_geo::draw_aos_edges(Draw_action* action)
 {
 #if 0
   Vector3f src;
   Vector3f trg;
   Aos_edge_const_iterator hei;
   for (hei = m_aoq.edges_begin(); hei != m_aoq.edges_end(); ++hei) {
-    const X_monotone_curve & curve = hei->curve();
-    const Point & source = curve.source();
-    const Point & target = curve.target();
+    const X_monotone_curve& curve = hei->curve();
+    const Point& source = curve.source();
+    const Point& target = curve.target();
 
     src[0] = static_cast<float>(CGAL::to_double(source.dx()));
     src[1] = static_cast<float>(CGAL::to_double(source.dy()));
@@ -323,8 +302,8 @@ void Arrangement_on_quadric_geo::draw_aos_edges(Draw_action * action)
 #endif
 }
 
-/*! \brief sets the base quadric */
-void Arrangement_on_quadric_geo::set_base_quadric(Quadric_geo * quadric)
+/*! \brief sets the base quadric. */
+void Arrangement_on_quadric_geo::set_base_quadric(Shared_quadric_geo quadric)
 {
   m_base_quadric = quadric;
   m_is_sphere_bound_dirty = SGAL_TRUE;

@@ -22,10 +22,14 @@
 // %debug
 %require "2.7"
 %skeleton "lalr1.cc"
+ // %debug
+%error-verbose
 %defines
 %define api.namespace "SGAL"
 %language "C++"
 %define parser_class_name "Vrml_parser"
+ // %define api.token.constructor
+%define api.value.type variant
 %locations
 
 %code requires // *.hh
@@ -68,10 +72,13 @@ typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
 
 class Vrml_scanner;
  
+typedef boost::shared_ptr<Container>    Shared_container;
+typedef boost::shared_ptr<Node>         Shared_node;
+typedef boost::shared_ptr<Group>        Shared_group;
+typedef boost::shared_ptr<Transform>    Shared_transform;
+typedef boost::shared_ptr<Route>        Shared_route;
+
 SGAL_END_NAMESPACE
- 
-#define YYERROR_VERBOSE 1
-#define YYDEBUG         1
 }
 
 %lex-param { Vrml_scanner& scanner }
@@ -85,36 +92,36 @@ SGAL_END_NAMESPACE
                    SGAL::Vrml_scanner& scanner);  
 }
 
-%union {
-  std::string* text;
-  SGAL::Element* element;
-  SGAL::Str_attr* attribute;
-  SGAL::Container* container;
-  SGAL::Cont_list* cont_list;
-  SGAL::Node* node;
-  SGAL::Group* group;
-  SGAL::Transform* transform;
-}
+/* %union { */
+/*   std::string* text; */
+/*   SGAL::Element* element; */
+/*   SGAL::Str_attr* attribute; */
+/*   SGAL::Container* container; */
+/*   SGAL::Cont_list* cont_list; */
+/*   SGAL::Node* node; */
+/*   SGAL::Group* group; */
+/*   SGAL::Transform* transform; */
+/* } */
 
-%type <group> vrmlScene
-%type <transform> statements
-%type <node> statement
-%type <container> nodeStatement protoStatement routeStatement
-%type <container> node sfnodeValue
-%type <container> proto externproto
+%type <Shared_group> vrmlScene
+%type <Shared_transform> statements
+%type <Shared_node> statement
+%type <Shared_container> nodeStatement protoStatement routeStatement
+%type <Shared_container> node sfnodeValue
+%type <Shared_container> proto externproto
 
-%type <text> NUMBER STRING_LITERAL
-%type <text> IDENTIFIER
-%type <text> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
-%type <text> mfValue sfValues sfValue
-%type <text> sfstringValue sfstringValues mfstringValue URLList
-%type <text> sfint32Values
-%type <text> sfboolValue
-%type <text> fieldValue
-%type <text> fieldType
-%type <cont_list> nodeStatements
-%type <element> nodeBody
-%type <attribute> scriptBodyAttribute
+%type <std::string*> NUMBER STRING_LITERAL
+%type <std::string*> IDENTIFIER
+%type <std::string*> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
+%type <std::string*> mfValue sfValues sfValue
+%type <std::string*> sfstringValue sfstringValues mfstringValue URLList
+%type <std::string*> sfint32Values
+%type <std::string*> sfboolValue
+%type <std::string*> fieldValue
+%type <std::string*> fieldType
+%type <Cont_list*> nodeStatements
+%type <Element*> nodeBody
+%type <Str_attr*> scriptBodyAttribute
 
 %token IDENTIFIER
 %token STRING_LITERAL
@@ -175,22 +182,22 @@ Start           : vrmlScene { scene_graph->set_root($1); } ;
 
 vrmlScene       : statements
                 {
-                  $$ = new Group;
+                  $$ = Shared_group(new Group);
                   $$->add_child($1);
                 } ; 
 
 statements      : /* empty */
                 {
-                  $$ = new Transform;
+                  $$ = Shared_transform(new Transform);
                   scene_graph->add_container($$, g_navigation_root_name);
                   scene_graph->set_navigation_root($$);
                 }
                 | statements statement { $$ = $1; if ($2) $$->add_child($2); }
                 ;
 
-statement       : nodeStatement { $$ = dynamic_cast<Node *>($1); }
-                | protoStatement { $$ = dynamic_cast<Node *>($1); }
-                | routeStatement { $$ = dynamic_cast<Node *>($1); }
+statement       : nodeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
+                | protoStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
+                | routeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
                 ;
 
 nodeStatement   : node { scene_graph->add_container($1); $$ = $1; }
@@ -203,7 +210,7 @@ protoStatement  : proto { $$ = $1; }
                 | externproto { $$ = $1; }
                 ;
 
-proto           : K_PROTO nodeTypeId '[' interfaceDeclarations ']' '{' statements '}' { delete $2; $$ = 0; /*! \todo */ }
+proto           : K_PROTO nodeTypeId '[' interfaceDeclarations ']' '{' statements '}' { delete $2; $$ = Shared_container(); /*! \todo */ }
                 ;
 
 interfaceDeclarations   : /* empty */ { /*! \todo */ }
@@ -221,7 +228,7 @@ interfaceDeclaration    : restrictedInterfaceDeclaration { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId sfnodeValue { /*! \todo */ }
                 ;
 
-externproto     : K_EXTERNPROTO nodeTypeId '[' externInterfaceDeclarations ']' URLList { delete $2; delete $6; $$ = 0; /*! \todo */ }
+externproto     : K_EXTERNPROTO nodeTypeId '[' externInterfaceDeclarations ']' URLList { delete $2; delete $6; $$ = Shared_container(); /*! \todo */ }
                 ; 
 
 externInterfaceDeclarations     : /* empty */ { /*! \todo */ }
@@ -236,15 +243,15 @@ externInterfaceDeclaration      : K_EVENTIN fieldType eventInId { /*! \todo */ }
 
 routeStatement  : K_ROUTE nodeNameId '.' eventOutId K_TO nodeNameId '.' eventInId
                 {
-                  Route* route = new Route;
-                  if (!scene_graph->route(*($2), *($4), *($6), *($8), route)) {
-                    error(yyloc, std::string("Cannot route"));
+                  Shared_route route = Shared_route(new Route);
+                  if (!scene_graph->route(*($2), *($4), *($6), *($8), &*route)) {
+                    error(yyla.location, std::string("Cannot route"));
                     YYERROR;
                   }
                   scene_graph->add_container(route);
                   $$ = route;
                 }
-                ; 
+                ;
 
 URLList         : mfstringValue { $$ = $1; }
                 ;
@@ -260,7 +267,8 @@ node            : nodeTypeId '{' nodeBody '}'
                 {
                   $$ = Container_factory::get_instance()->create(*($1));
                   if (!$$) {
-                    error(yyloc, std::string("Unknown node type \"") + *$1 + "\"");
+                    error(yyla.location,
+                          std::string("Unknown node type \"") + *$1 + "\"");
                     YYERROR;
                   }
                   else {
@@ -268,7 +276,7 @@ node            : nodeTypeId '{' nodeBody '}'
                     $$->add_to_scene(scene_graph);
                   }
                 }
-                | K_SCRIPT '{' scriptBody '}' { $$ = 0; /*! \todo */ }
+                | K_SCRIPT '{' scriptBody '}' { $$ = Shared_container(); /*! \todo */ }
                 ;
 
 nodeBody        : /* empty */ { $$ = new Element; }
@@ -392,7 +400,7 @@ sfboolValue     : K_TRUE { $$ = new std::string("TRUE"); }
                 ; 
 
 sfnodeValue     : nodeStatement { $$ = $1; }
-                | K_NULL { $$ = 0; /*! \todo */ }
+                | K_NULL { $$ = Shared_container(); /*! \todo */ }
                 ; 
 
 sfstringValue   : STRING_LITERAL { $$ = $1; }

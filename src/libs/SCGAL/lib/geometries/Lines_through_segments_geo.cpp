@@ -67,11 +67,9 @@ Lines_through_segments_geo::Lines_through_segments_geo(Boolean proto) :
   Geometry(proto),
   m_owned_lts(false),
   m_lts(NULL),
-  m_segments(NULL),
   m_dirty(true),
   m_in_segments_dirty(true)
-{
-}
+{}
 
 /*! Destructor */
 Lines_through_segments_geo::~Lines_through_segments_geo()
@@ -126,13 +124,13 @@ Container_proto* Lines_through_segments_geo::get_prototype()
 void Lines_through_segments_geo::set_attributes(Element* elem)
 {
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "segments") {
-      Indexed_line_set * segments = dynamic_cast<Indexed_line_set*>(cont);
+      Shared_indexed_line_set segments =
+        boost::dynamic_pointer_cast<Indexed_line_set>(cont);
       set_segments(segments);
       elem->mark_delete(cai);
       continue;
@@ -513,9 +511,7 @@ void Lines_through_segments_geo::draw(Draw_action* action)
 }
 
 /*! \brief */
-void Lines_through_segments_geo::cull(Cull_context& cull_context)
-{
-}
+void Lines_through_segments_geo::cull(Cull_context& cull_context) {}
 
 /*! \brief */
 void Lines_through_segments_geo::isect(Isect_action* action)
@@ -536,7 +532,7 @@ Boolean Lines_through_segments_geo::clean_sphere_bound()
 }
 
 /*! \biref sets the segments. */
-void Lines_through_segments_geo::set_segments(Indexed_line_set* segments)
+void Lines_through_segments_geo::set_segments(Shared_indexed_line_set segments)
 {
   clear();
   m_segments = segments;

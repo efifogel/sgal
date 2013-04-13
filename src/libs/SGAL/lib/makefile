@@ -281,7 +281,8 @@ endif
 
 ifeq ($(DE), gnu)
 LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
-LCPPOPTS = -Wall -Werror
+LCPPOPTS = -Wall
+# LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
 LCPPOPTS+=`Magick++-config --cxxflags --cppflags`
 endif

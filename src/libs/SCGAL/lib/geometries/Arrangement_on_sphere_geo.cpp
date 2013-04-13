@@ -57,14 +57,14 @@ Container_proto* Arrangement_on_sphere_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Arrangement_on_sphere_geo, "Arrangement_on_sphere_geo");
 
-/*! Constructor */
+/*! Constructor. */
 Arrangement_on_sphere_geo::Arrangement_on_sphere_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
   m_owned_aos(false),
   m_aos(NULL)
 { if (!proto) create_renderers(); }
 
-/*! Destructor */
+/*! Destructor. */
 Arrangement_on_sphere_geo::~Arrangement_on_sphere_geo()
 {
   clear();
@@ -105,14 +105,13 @@ void Arrangement_on_sphere_geo::set_attributes(Element* elem)
   Arrangement_on_sphere_base_geo::set_attributes(elem);
 
   typedef Element::Cont_attr_iter       Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "overlay") {
-      Arrangement_on_sphere_geo* aos_geo =
-        dynamic_cast<Arrangement_on_sphere_geo*>(cont);
+      Shared_arrangement_on_sphere_geo aos_geo =
+        boost::dynamic_pointer_cast<Arrangement_on_sphere_geo>(cont);
       if (aos_geo) add_aos_geo(aos_geo);
       elem->mark_delete(cai);
       continue;
@@ -131,9 +130,9 @@ void Arrangement_on_sphere_geo::set_attributes(Element* elem)
     Cont_list& cont_list = elem->get_value(mcai);
     if (name == "overlay") {
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
-        Arrangement_on_sphere_geo* aos_geo =
-          dynamic_cast<Arrangement_on_sphere_geo*>(cont);
+        Element::Shared_container cont = *ci;
+        Shared_arrangement_on_sphere_geo aos_geo =
+          boost::dynamic_pointer_cast<Arrangement_on_sphere_geo>(cont);
         if (aos_geo) add_aos_geo(aos_geo);
       }
       elem->mark_delete(mcai);

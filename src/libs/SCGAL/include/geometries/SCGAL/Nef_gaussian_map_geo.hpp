@@ -32,6 +32,10 @@
 /*! \file
  */
 
+#include <string>
+#include <vector>
+#include <boost/shared_ptr.hpp>
+
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
@@ -39,9 +43,6 @@
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/HalfedgeDS_face_base.h>
-
-#include <string>
-#include <vector>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
@@ -182,10 +183,14 @@ public:
   typedef std::vector<int>                              Coord_index_vector;
   typedef Coord_index_vector::const_iterator            Coord_index_iter;
 
-  // List of pointers to Nef_gaussian_map_geo objects */
-  typedef std::list<Nef_gaussian_map_geo *>             Ngm_node_list;
-  typedef Ngm_node_list::iterator                       Ngm_node_iter;
+  // Shared pointer
+  typedef boost::shared_ptr<Nef_gaussian_map_geo>
+    Shared_nef_gaussian_map_geo;
   
+  // List of pointers to Nef_gaussian_map_geo objects */
+  typedef std::list<Shared_nef_gaussian_map_geo>        Ngm_node_list;
+  typedef Ngm_node_list::iterator                       Ngm_node_iter;
+
 public:
   enum {
     FIRST = Mesh_set::LAST - 1,
@@ -542,7 +547,7 @@ protected:
   void draw_dual_marked_vertex();
     
   /*! Set the operand gausian maps of the minkowski sum. */
-  void insert_ngm(Nef_gaussian_map_geo* ngm);
+  void insert_ngm(Shared_nef_gaussian_map_geo ngm);
 
   /*! Set the flag that indicates whether to draw the sphere. */
   void set_draw_dual_sphere(Boolean draw_bg);
@@ -603,7 +608,7 @@ protected:
 };
 
 /*! \brief sets the operand gausian maps of the minkowski sum. */
-inline void Nef_gaussian_map_geo::insert_ngm(Nef_gaussian_map_geo* ngm)
+inline void Nef_gaussian_map_geo::insert_ngm(Shared_nef_gaussian_map_geo ngm)
 { m_ngm_nodes.push_back(ngm); }
 
 /*! \brief sets the flag that indicates whether to draw the sphere. */

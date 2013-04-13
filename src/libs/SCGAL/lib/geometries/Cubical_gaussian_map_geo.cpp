@@ -238,7 +238,7 @@ void Cubical_gaussian_map_geo::clean()
   if (m_minkowski_sum) {
     Cgm_node_iter ni;
     for (ni = m_cgm_nodes.begin(); ni != m_cgm_nodes.end(); ++ni) {
-      Cubical_gaussian_map_geo* cgm_node = *ni;
+      Shared_cubical_gaussian_map_geo cgm_node = *ni;
       if (cgm_node->is_dirty()) cgm_node->clean();
     }
     clock_t start_time = clock();
@@ -605,9 +605,9 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
     if (name == "geometries") {
       set_minkowski_sum(true);
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
-        Cubical_gaussian_map_geo* cgm =
-          dynamic_cast<Cubical_gaussian_map_geo*>(cont);
+        Element::Shared_container cont = *ci;
+        Shared_cubical_gaussian_map_geo cgm =
+          boost::dynamic_pointer_cast<Cubical_gaussian_map_geo>(cont);
         if (cgm) insert_cgm(cgm);
         else {
           std::cerr << "Invalid " << s_tag << " geometry nodes!"
@@ -1550,7 +1550,7 @@ void Cubical_gaussian_map_geo::process_facets()
 }
 
 /*! \brief sets the source gausian maps of the minkowski sum. */
-void Cubical_gaussian_map_geo::insert_cgm(Cubical_gaussian_map_geo* cgm)
+void Cubical_gaussian_map_geo::insert_cgm(Shared_cubical_gaussian_map_geo cgm)
 {
   m_cgm_nodes.push_back(cgm);
   Observer observer(this, get_field_info(GEOMETRIES));

@@ -26,6 +26,8 @@
  * A node in the scene graph representing a background that is an image.
  */
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Background.hpp"
 
@@ -42,46 +44,51 @@ public:
     LAST
   };
 
+  typedef boost::shared_ptr<Appearance>                 Shared_appearance;
+  
   /*! Constructor */
-  Image_background(Boolean proto = SGAL_FALSE);
+  Image_background(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Image_background();
 
   /*! Construct the prototype */
-  static Image_background * prototype() { return new Image_background(SGAL_TRUE); }
+  static Image_background* prototype() { return new Image_background(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Image_background(); }
+  virtual Container* clone() { return new Image_background(); }
 
   /*! Set the attributes of this container */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();;
-  virtual Container_proto * get_prototype(); 
 
-  virtual void draw(Draw_action * draw_action);
+  virtual Container_proto* get_prototype(); 
 
-  Appearance * get_appearance() { return m_appearance; }
-  void set_appearance(Appearance * appearance);
+  virtual void draw(Draw_action* draw_action);
+
+  Shared_appearance get_appearance() { return m_appearance; }
+
+  void set_appearance(Shared_appearance appearance);
 
 protected:
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
   
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! An apperance used for the background */
-  Appearance * m_appearance;
+  Shared_appearance m_appearance;
 
   /*! Indicates whether the appearance is a default */
   Boolean m_is_default_appearance;

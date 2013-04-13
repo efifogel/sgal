@@ -28,6 +28,7 @@
 
 #include <list>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Group.hpp"
@@ -46,9 +47,12 @@ class SGAL_CLASSDEF Assembly_part : public Group {
   typedef Spherical_gaussian_map_colored_geo        Sgm_geo;
   typedef Spherical_gaussian_map_colored            Sgm;
 
-  typedef std::list<Sgm_geo*>                       Sgm_geo_list;
+  typedef boost::shared_ptr<Appearance>             Shared_appearance;
+  typedef boost::shared_ptr<Sgm_geo>                Shared_sgm_geo;
+  
+  typedef std::list<Shared_sgm_geo>                 Sgm_geo_list;
   typedef std::list<Boolean>                        Boolean_list;
-  typedef std::list<Appearance*>                    Appearance_list; 
+  typedef std::list<Shared_appearance>              Appearance_list; 
   
   typedef Sgm_geo_list::iterator                    Sgm_geo_iter;
 
@@ -58,83 +62,77 @@ class SGAL_CLASSDEF Assembly_part : public Group {
     LAST
   };
 
-  /*! Constructor */
-  Assembly_part(Boolean proto = SGAL_FALSE);
+  /*! Constructor. */
+  Assembly_part(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Assembly_part();
 
-  /* Construct the prototype */
-  static Assembly_part * prototype() { return new Assembly_part(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Assembly_part* prototype() { return new Assembly_part(true); }
 
-  /*! Clone */
-  virtual Container * clone() { return new Assembly_part(); }
+  /*! Clone. */
+  virtual Container* clone() { return new Assembly_part(); }
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Clear the representation */
+  /*! Clear the representation. */
   virtual void clear();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! Set the part id */
+  /*! Set the part id. */
   void set_id(Uint id) { m_id = id; }
   
-  /*! Print information to an output stream */
+  /*! Print information to an output stream. */
   void print_info(std::ostream& out);
 
-  /*! Obtain the container of the Sgm geometries that comprise this part */
+  /*! Obtain the container of the Sgm geometries that comprise this part. */
   Sgm_geo_list& get_sgm_geos();
 
   /*! Obtain the container of the Sgm appearances that comprise this part */
   Appearance_list& get_sgm_apps();
   
 protected:
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  /*! Construct all the SGM's that comprise this part */
+  /*! Construct all the SGM's that comprise this part. */
   void clean_sgm_geos(Node* node);
 
-  /*! Construct all the SGM's that comprise this part */
+  /*! Construct all the SGM's that comprise this part. */
   void clean_sgm_geos(Group* group);
  
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Is the internal representation dirty and requires cleaning */
+  /*! Is the internal representation dirty and requires cleaning. */
   Boolean m_dirty;
 
-  /*! A non-negative number unique among the parts of a given puzzle */
+  /*! A non-negative number unique among the parts of a given puzzle. */
   Uint m_id;
 
-  /*! The list of Sgm geometries */
+  /*! The list of Sgm geometries. */
   Sgm_geo_list m_sgm_geos;
 
-  /*! A list of flags that indicates whether the corresponding geomtery is 
-   * owned, i.e., allocated explicitly. If it is owned it should be explicitly
-   * deallocated.
-   */
-  Boolean_list m_owned_sgm_geos;
-
-  /*! The list of Sgm appearances */
+  /*! The list of Sgm appearances. */
   Appearance_list m_sgm_apps;
 
   /*! A list of flags that indicates whether the corresponding appearance is

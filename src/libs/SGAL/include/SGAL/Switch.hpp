@@ -74,7 +74,7 @@ public:
   Uint get_which_choice() const;
 
   /*! Return the node to traverse */
-  virtual Node* get_choice();
+  virtual Shared_node get_choice();
   
   /*! Draw the node while traversing the scene graph */
   virtual Action::Trav_directive draw(Draw_action* action);

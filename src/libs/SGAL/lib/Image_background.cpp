@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Image_background::s_tag = "ImageBackground";
+const std::string Image_background::s_tag = "ImageBackground";
 Container_proto* Image_background::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Image_background, "Image_background");
@@ -46,18 +46,11 @@ REGISTER_TO_FACTORY(Image_background, "Image_background");
 /*! Constructor */
 Image_background::Image_background(Boolean proto) :
   Background(proto),
-  m_appearance(NULL),
   m_is_default_appearance(false)
 {}
 
 /*! Destructor */
-Image_background::~Image_background()
-{
-  if (m_is_default_appearance && m_appearance) {
-    delete m_appearance;
-    m_appearance = NULL;
-  }
-}
+Image_background::~Image_background() {}
 
 /*! \brief sets the attributes of this object. */
 void Image_background::set_attributes(Element* elem) 
@@ -68,9 +61,9 @@ void Image_background::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "appearance") {
-      Appearance* app = dynamic_cast<Appearance*>(cont);
+      Shared_appearance app = boost::dynamic_pointer_cast<Appearance>(cont);
       set_appearance(app);
       elem->mark_delete(cai);
       continue;
@@ -107,7 +100,7 @@ Container_proto* Image_background::get_prototype()
 /*! \brief sets the appearance of the object.
  * @param app the appearance
  */
-void Image_background::set_appearance(Appearance *app) 
+void Image_background::set_appearance(Shared_appearance app) 
 {
   m_appearance = app;
   m_appearance->set_light_enable(false);

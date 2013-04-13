@@ -27,14 +27,14 @@
 #ifndef SGAL_VORONOI_DIAGRAM_ON_SPHERE_GEO_HPP
 #define SGAL_VORONOI_DIAGRAM_ON_SPHERE_GEO_HPP
 
-#include <CGAL/basic.h>
-#include <CGAL/envelope_voronoi_2.h>
-#include <CGAL/Envelope_voronoi_traits_2/Spherical_voronoi_diagram_traits_2.h>
-
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
 #include <vector>
+
+#include <CGAL/basic.h>
+#include <CGAL/envelope_voronoi_2.h>
+#include <CGAL/Envelope_voronoi_traits_2/Spherical_voronoi_diagram_traits_2.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -57,7 +57,7 @@ class Element;
 class Sphere;
 
 /*! A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
+ * great circles embeded on a sphere.
  */
 class SGAL_CLASSDEF Voronoi_diagram_on_sphere_geo :
   public Geodesic_voronoi_on_sphere_geo
@@ -117,47 +117,47 @@ private:
     Vos_halfedge_around_vertex_const_circulator;
 
 public:
-  /*! Constructor */
-  Voronoi_diagram_on_sphere_geo(Boolean proto = SGAL_FALSE);
+  /*! Constructor. */
+  Voronoi_diagram_on_sphere_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Voronoi_diagram_on_sphere_geo();
 
-  /* Construct the prototype */
-  static Voronoi_diagram_on_sphere_geo * prototype()
-  { return new Voronoi_diagram_on_sphere_geo(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Voronoi_diagram_on_sphere_geo* prototype()
+  { return new Voronoi_diagram_on_sphere_geo(true); }
 
-  /*! Clone */
-  virtual Container * clone()
+  /*! Clone. */
+  virtual Container* clone()
   { return new Voronoi_diagram_on_sphere_geo(); }
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype(); 
 
-  /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the container prototype. */
+  virtual Container_proto* get_prototype();
 
-  /*! Set the node attributes */
-  virtual void set_attributes(Element * elem);
+  /*! Set the node attributes. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
-  /*! Is the representation empty ? */
+  /*! Determine whether the representation empty. */
   virtual Boolean is_empty() const { return m_vos->is_empty(); }
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! Clear the internal representation and auxiliary data structures */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
 
-  /*! Clean the renderer */
+  /*! Clean the renderer. */
   virtual void clean_renderer();
 
   /*! Indicates whether the vos data structure is owned, i.e., explicitly
@@ -166,16 +166,16 @@ public:
    */
   Boolean m_owned_vos;
 
-  /*! Obrain the Voronoi diagram */
-  Voronoi_on_sphere * get_vos() { return m_vos; }
+  /*! Obrain the Voronoi diagram. */
+  Voronoi_on_sphere* get_vos() { return m_vos; }
 
-  /*! Obtain the flag that indicates whether to draw the sites */
+  /*! Obtain the flag that indicates whether to draw the sites. */
   Boolean get_draw_sites() const { return m_draw_sites; }
 
-  /*! Obtain the site shape style */
+  /*! Obtain the site shape style. */
   Vertex_style get_site_style() const { return m_site_style; }
   
-  /*! Obtain the site point size */
+  /*! Obtain the site point size. */
   Float get_site_point_size() const { return m_site_point_size; }
 
 protected:
@@ -201,63 +201,63 @@ protected:
   typedef Inflated_tube_edges_renderer<Voronoi_edges_renderer>
     Voronoi_inflated_tube_edges_renderer;
 
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! A functor that draws the sites */
+  /*! A functor that draws the sites. */
   class Site_renderer : public Arrangement_renderer::Renderer {
   private:
-    /*! The arrangement geometry */
-    Voronoi_diagram_on_sphere_geo & m_geo;
+    /*! The arrangement geometry. */
+    Voronoi_diagram_on_sphere_geo& m_geo;
     
   public:
-    /*! Constructor */
-    Site_renderer(Voronoi_diagram_on_sphere_geo & geo) : m_geo(geo) {}
+    /*! Constructor. */
+    Site_renderer(Voronoi_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
-    /*! Draw the sites */
-    virtual void operator()(Draw_action * action) { m_geo.draw_sites(action); }
+    /*! Draw the sites. */
+    virtual void operator()(Draw_action* action) { m_geo.draw_sites(action); }
   };
 
   class Site_other_renderer : public Arrangement_renderer::Renderer {
   private:
-    /*! The arrangement geometry */
-    Voronoi_diagram_on_sphere_geo & m_geo;
+    /*! The arrangement geometry. */
+    Voronoi_diagram_on_sphere_geo& m_geo;
     
   public:
-    /*! Constructor */
-    Site_other_renderer(Voronoi_diagram_on_sphere_geo & geo) : m_geo(geo) {}
+    /*! Constructor. */
+    Site_other_renderer(Voronoi_diagram_on_sphere_geo& geo) : m_geo(geo) {}
     
-    /*! Drawer operator */
-    virtual void operator()(Draw_action * action);
+    /*! Drawer operator. */
+    virtual void operator()(Draw_action* action);
   };
   
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The container prototype */
-  static Container_proto * s_prototype;
+  /*! The container prototype. */
+  static Container_proto* s_prototype;
 
-  /*! The arrangement of great-circle arcs on a sphere */
-  Voronoi_on_sphere * m_vos;
+  /*! The arrangement of great-circle arcs on a sphere. */
+  Voronoi_on_sphere* m_vos;
 
-  /*! The site shape style */
+  /*! The site shape style. */
   Vertex_style m_site_style;
 
-  /*! The site radius */
+  /*! The site radius. */
   Float m_site_radius;
 
-  /*! The site point size (when drawn as a point) */
+  /*! The site point size (when drawn as a point). */
   Float m_site_point_size;
 
-  /*! The angle of a single triangle in the fan drawing of a site */
+  /*! The angle of a single triangle in the fan drawing of a site. */
   Float m_site_delta_angle;
 
-  /*! The site renderer */
-  Site_renderer * m_site_renderer;
+  /*! The site renderer. */
+  Site_renderer* m_site_renderer;
 
-  /*! The non-flat site renderer */
-  Site_other_renderer * m_site_other_renderer;
+  /*! The non-flat site renderer. */
+  Site_other_renderer* m_site_other_renderer;
   
   /*! Default values */
   static const Vertex_style s_def_site_style;
@@ -265,38 +265,38 @@ private:
   static const Float s_def_site_point_size;
   static const Float s_def_site_delta_angle;
   
-  /*! Draw the arrangement on sphere opaque
+  /*! Draw the arrangement on sphere opaque.
    * \param action
    */
-  virtual void draw_opaque(Draw_action * action);
+  virtual void draw_opaque(Draw_action* action);
 
-  /*! Draw the sites
+  /*! Draw the sites.
    * \param action
    */
-  void draw_sites(Draw_action * action);
+  void draw_sites(Draw_action* action);
   
-  /*! Draw a site
+  /*! Draw a site.
    * \param action
    * \param point
    */
-  void draw_site(Draw_action * action, Exact_point_3 & point);
+  void draw_site(Draw_action* action, Exact_point_3& point);
 
-  /*! Draw the arrangement vertices
+  /*! Draw the arrangement vertices.
    * \param action
    */
-  void draw_aos_vertices(Draw_action * action)
+  void draw_aos_vertices(Draw_action* action)
   { my_draw_aos_vertices(m_vos, action); }
   
-  /*! Draw the arrangement edges
+  /*! Draw the arrangement edges.
    * \param action
    */
-  void draw_aos_edges(Draw_action * action)
+  void draw_aos_edges(Draw_action* action)
   { my_draw_aos_edges(m_vos, action); }
 
-  /*! Create the renderers */
+  /*! Create the renderers. */
   void create_renderers();
 
-  /*! Detsroy the renderers */
+  /*! Detsroy the renderers. */
   void destroy_renderers();
 };
 

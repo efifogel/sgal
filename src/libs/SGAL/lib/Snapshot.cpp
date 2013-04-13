@@ -60,7 +60,6 @@ const char* Snapshot::s_file_format_names[] =
 /*! Constructor */
 Snapshot::Snapshot(Boolean proto) :
   Node(proto),
-  m_image(NULL),
   m_dir_name(s_def_dir_name),
   m_file_name(s_def_file_name),
   m_file_format(s_def_file_format),
@@ -259,9 +258,9 @@ void Snapshot::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "image") {
-      m_image = dynamic_cast<Image*>(cont);
+      m_image = boost::dynamic_pointer_cast<Image>(cont);
       elem->mark_delete(cai);
       continue;
     }

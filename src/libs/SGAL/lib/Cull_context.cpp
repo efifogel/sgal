@@ -44,7 +44,6 @@ SGAL_BEGIN_NAMESPACE
 /*! Constructor */
 Cull_context::Cull_context() :
   m_camera(0),
-  m_head_light(0),
   m_current_lod(-1),
   m_sort(false)
 {}
@@ -74,7 +73,7 @@ void Cull_context::add_shape(Shape* node)
 /*! \brief adds a light node. */
 void Cull_context::add_light(Light* light)
 {
-  if (light != m_head_light) {
+  if (light != &*m_head_light) {
     Light_node ln;
     ln.light = light;
     ln.wtm = m_world_tm;
@@ -242,6 +241,6 @@ void Cull_context::pop_matrix()
 }
 
 /*! \brief sets the head light. */
-void Cull_context::set_head_light(Light* light) { m_head_light = light; }
+void Cull_context::set_head_light(Shared_light light) { m_head_light = light; }
 
 SGAL_END_NAMESPACE

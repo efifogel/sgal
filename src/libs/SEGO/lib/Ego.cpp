@@ -32,6 +32,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <cstdlib>
+#include <boost/shared_ptr.hpp>
 
 #include <boost/variant.hpp>
 #include <boost/lexical_cast.hpp>
@@ -124,9 +125,7 @@ Ego::Ego(Boolean proto) :
   m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),
   m_style(s_def_style),
-  m_appearance(NULL),
   m_space_filling(s_def_space_filling),
-  m_appearance_prev(NULL),
   m_even_layer_x(s_def_even_layer_x),
   m_even_layer_y(s_def_even_layer_y),
   m_odd_layer_x(s_def_odd_layer_x),
@@ -150,7 +149,6 @@ Ego::Ego(Boolean proto) :
   m_layer_y_visibility(LV_ALL),
   m_layer_z_visibility(LV_ALL),
   m_selection_id(0),
-  m_owned_appearance(false),
   m_clean_colors_in_progress(false),
   m_start_brick(0),
   m_num_bricks(0)
@@ -188,30 +186,27 @@ void Ego::clear_parts()
 {
   Node_iterator it1 = m_childs.begin();
   while (it1 != m_childs.end()) {
-    Node* node1 = *it1++;
+    Shared_node node1 = *it1++;
     // Free the transform:
-    Transform* transform = dynamic_cast<Transform*>(node1);
+    boost::shared_ptr<Transform> transform =
+      boost::dynamic_pointer_cast<Transform>(node1);
     if (transform) {
       Node_iterator it2 = transform->children_begin();
       while (it2 != transform->children_end()) {
-        Node* node2 = *it2++;
+        Shared_node node2 = *it2++;
         // Remove the brick (Shape):
         transform->remove_child(node2);
-        Shape* brick_shape = dynamic_cast<Shape*>(node2);
-        SGAL_assertion(brick_shape);
-        delete brick_shape;
       }
-       remove_child(node1);
-      delete transform;
+      remove_child(node1);
       continue;
     }
 
-    Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node1);
+    boost::shared_ptr<Touch_sensor> touch_sensor =
+      boost::dynamic_pointer_cast<Touch_sensor>(node1);
     if (touch_sensor) {
       if (!m_owned_touch_sensor) continue;
       m_owned_touch_sensor = false;
       remove_child(node1);
-      delete touch_sensor;
       continue;
     }
   }
@@ -221,11 +216,6 @@ void Ego::clear_parts()
   for (ait = m_appearances.begin(); ait != m_appearances.end(); ++ait)
     delete ait->second;
   m_appearances.clear();
-
-  // Delete all materials:
-  Material_iter mit;
-  for (mit = m_materials.begin(); mit != m_materials.end(); ++mit)
-    delete *mit;
   m_materials.clear();
 
   // Delete all Ego bricks:
@@ -255,14 +245,6 @@ void Ego::clear()
   m_dirty_voxels = true;
   m_dirty_tiling = true;
   m_dirty_visibility = true;
-  
-  if (m_owned_appearance) {
-    if (m_appearance) {
-      delete m_appearance;
-      m_appearance = NULL;
-    }
-    m_owned_appearance = false;
-  }
 }
 
 /*! \brief initializes the container prototype. */
@@ -374,28 +356,31 @@ void Ego::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "model") {
-      Exact_polyhedron_geo* epoly = dynamic_cast<Exact_polyhedron_geo*>(cont);
+      boost::shared_ptr<Exact_polyhedron_geo> epoly =
+        boost::dynamic_pointer_cast<Exact_polyhedron_geo>(cont);
       if (epoly != NULL) {
-        set_model(epoly);
+        set_model(&*epoly);
         elem->mark_delete(cai);
         continue;
       }
-      Polyhedron_geo* poly = dynamic_cast<Polyhedron_geo*>(cont);
+      boost::shared_ptr<Polyhedron_geo> poly =
+        boost::dynamic_pointer_cast<Polyhedron_geo>(cont);
       if (poly != NULL) {
-        set_model(poly);
+        set_model(&*poly);
         elem->mark_delete(cai);
         continue;
       }
-      Mesh_set* mesh = dynamic_cast<Mesh_set*>(cont);
+      boost::shared_ptr<Mesh_set> mesh =
+        boost::dynamic_pointer_cast<Mesh_set>(cont);
       if (mesh->is_dirty()) mesh->clean();
-      set_model(mesh);
+      set_model(&*mesh);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "appearance") {
-      Appearance* app = dynamic_cast<Appearance*>(cont);
+      Shared_appearance app = boost::dynamic_pointer_cast<Appearance>(cont);
       set_appearance(app);
       elem->mark_delete(cai);
       continue;
@@ -544,7 +529,8 @@ void Ego::set_attributes(Element* elem)
 
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0 ; i < size ; i++) {
-        svalue >> m_brick_types[i][0] >> m_brick_types[i][1] >> m_brick_types[i][2];
+        svalue >> m_brick_types[i][0] >> m_brick_types[i][1]
+               >> m_brick_types[i][2];
       }
       elem->mark_delete(ai);
     }
@@ -679,7 +665,7 @@ void Ego::clean_parts()
         if (!m_space_filling && !apparent) continue;
 
         m_voxel_signatures.push_back(boost::make_tuple(i, j, k));
-        Transform* transform = new Transform;
+        boost::shared_ptr<Transform> transform(new Transform);
         add_child(transform);
         transform->add_to_scene(m_scene_graph);
         
@@ -695,7 +681,7 @@ void Ego::clean_parts()
         brick_center.add(offset);
         transform->set_translation(brick_center);
 
-        Shape* shape = new Shape;
+        boost::shared_ptr<Shape> shape(new Shape);
         transform->add_child(shape);
 
        // Determine whether to draw the knobs:
@@ -708,41 +694,45 @@ void Ego::clean_parts()
               should_draw_knobs = true;
           }
         }
-        Appearance* app = NULL;
         Geometry* ego_brick = NULL;
         Vector3f tmp;
         switch (m_style) {
          case STYLE_APPEARANCE:
           m_dirty_colors = false;
           shape->set_override_blend_func(false);
-          app = m_appearance;
+          shape->set_appearance(m_appearance);
           tmp.sub(center, brick_center);
           ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
           break;
 
          case STYLE_RANDOM_COLORS:
-          m_dirty_colors = false;
-          app = create_random_appearance();
-          ego_brick = create_geometry(num0, num1, should_draw_knobs);
+          {
+           m_dirty_colors = false;
+           Shared_appearance app(create_random_appearance());
+           shape->set_appearance(app);
+           ego_brick = create_geometry(num0, num1, should_draw_knobs);
+          }
           break;
 
          case STYLE_DISCRETE_CUBE_MAP:
-          shape->set_override_tex_enable(false);
-          shape->set_override_tex_env(false);
-          shape->set_override_blend_func(false);
-          shape->set_override_light_model(false);
-          shape->set_override_tex_gen(false);
-          shape->set_override_light_enable(false);
-          m_dirty_colors = true;
-          app = m_appearance;
-          tmp.sub(center, brick_center);
-          ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
+          {
+           shape->set_override_tex_enable(false);
+           shape->set_override_tex_env(false);
+           shape->set_override_blend_func(false);
+           shape->set_override_light_model(false);
+           shape->set_override_tex_gen(false);
+           shape->set_override_light_enable(false);
+           m_dirty_colors = true;
+           shape->set_appearance(m_appearance);
+           tmp.sub(center, brick_center);
+           ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
+          }
           break;
           
          default: std::cerr << "Invalid style!" << std::endl;
         }
-        shape->set_appearance(app);
-        shape->set_geometry(ego_brick);
+        boost::shared_ptr<Geometry> geom(ego_brick);
+        shape->set_geometry(geom);
       }
     }
   }
@@ -750,13 +740,13 @@ void Ego::clean_parts()
   std::cout << "# of bricks: " << m_num_bricks << std::endl;
 
   // Add a touch sensor if such a node does not exist:
-  Touch_sensor* touch_sensor = NULL;
+  Shared_touch_sensor touch_sensor;
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    touch_sensor = dynamic_cast<Touch_sensor*>(*it);
+    touch_sensor = boost::dynamic_pointer_cast<Touch_sensor>(*it);
     if (touch_sensor) break;
   }
   if (!touch_sensor) {
-    touch_sensor = new Touch_sensor;
+    touch_sensor.reset(new Touch_sensor);
     touch_sensor->add_to_scene(m_scene_graph);
     m_owned_touch_sensor = true;
     add_child(touch_sensor);
@@ -1045,10 +1035,12 @@ void Ego::clean_colors()
   Node_iterator nit;
   Weighted_color_iter cit = colors.begin();
   for (nit = m_childs.begin(); nit != m_childs.end(); ++nit) {
-    Transform* transform = dynamic_cast<Transform*>(*nit);
+    boost::shared_ptr<Transform> transform =
+      boost::dynamic_pointer_cast<Transform>(*nit);
     if (!transform) continue;
 
-    Shape* shape = dynamic_cast<Shape*>(*(transform->children_begin()));
+    boost::shared_ptr<Shape> shape =
+      boost::dynamic_pointer_cast<Shape>(*(transform->children_begin()));
     SGAL_assertion(shape);
     shape->set_override_tex_enable(true);
     shape->set_override_tex_env(true);
@@ -1062,18 +1054,19 @@ void Ego::clean_colors()
     std::cout << SGAL_EGO_VAR(cit->first) << std::endl;
 #endif
 
-    Appearance* app;
+    Appearance* app_p;
     if (m_color_space == COLOR_SPACE_HSL)
-      app = create_appearance(static_cast<Uint>(cit->first[0] * 255.0f),
-                              static_cast<Uint>(cit->first[1] * 255.0f),
-                              static_cast<Uint>(cit->first[2] * 255.0f));
+      app_p = create_appearance(static_cast<Uint>(cit->first[0] * 255.0f),
+                                static_cast<Uint>(cit->first[1] * 255.0f),
+                                static_cast<Uint>(cit->first[2] * 255.0f));
     else {
       Magick::ColorRGB color_rgb(cit->first[0], cit->first[1], cit->first[2]);
       Magick::ColorHSL color_hsl(color_rgb);
-      app = create_appearance(static_cast<Uint>(color_hsl.hue()*255.0f),
-                              static_cast<Uint>(color_hsl.saturation()*255.0f),
-                              static_cast<Uint>(color_hsl.luminosity()*255.0f));
+      app_p = create_appearance(static_cast<Uint>(color_hsl.hue()*255.0f),
+                                static_cast<Uint>(color_hsl.saturation()*255.0f),
+                                static_cast<Uint>(color_hsl.luminosity()*255.0f));
     }
+    Shared_appearance app(app_p);
     shape->set_appearance(app);
     ++cit;
   }
@@ -1220,9 +1213,9 @@ void Ego::tiling_changed(Field_info*) { m_dirty_tiling = true; }
 /*! \brief Process change of visibility scheme. */
 void Ego::visibility_changed(Field_info*)
 {
-  Touch_sensor* touch_sensor = NULL;
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    touch_sensor = dynamic_cast<Touch_sensor*>(*it);
+    Shared_touch_sensor touch_sensor =
+      boost::dynamic_pointer_cast<Touch_sensor>(*it);
     if (touch_sensor) {
       touch_sensor->set_enabled((m_layer_x_visibility != LV_ALL) ||
                                 (m_layer_y_visibility != LV_ALL) ||
@@ -1238,7 +1231,8 @@ void Ego::clean_visibility()
 {
   std::size_t index = 0;
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Transform* transform = dynamic_cast<Transform*>(*it);
+    boost::shared_ptr<Transform> transform =
+      boost::dynamic_pointer_cast<Transform>(*it);
     if (!transform) continue;
     std::size_t i, j, k;
     boost::tie(i, j, k) = m_voxel_signatures[index++];
@@ -1253,7 +1247,8 @@ void Ego::clean_visibility()
 void Ego::reset_visibility()
 {
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Transform* transform = dynamic_cast<Transform*>(*it);
+    boost::shared_ptr<Transform> transform =
+      boost::dynamic_pointer_cast<Transform>(*it);
     if (!transform) continue;
     transform->set_visible(true);
   }
@@ -1297,7 +1292,7 @@ Ego::convert_types(const SGAL::Array<Vector3sh>& types)
 }
 
 /*! \brief sets the appearance of the object. */
-void Ego::set_appearance(Appearance* app)
+void Ego::set_appearance(Shared_appearance app)
 {
   m_appearance = app;
   if (m_style != STYLE_RANDOM_COLORS) m_dirty_appearance = true;
@@ -1310,24 +1305,10 @@ void Ego::appearance_changed(Field_info* /* field_info. */)
 /*! breif cleans the apperance. */
 void Ego::clean_appearance()
 {
-  // Construct a new owned appearance if needed, and delete the previously
-  // constructed owned appearance if not needed any more.
-  if (m_owned_appearance) {
-    if (!m_appearance) m_appearance = m_appearance_prev;
-    else if (m_appearance != m_appearance_prev) {
-      delete m_appearance_prev;
-      m_appearance_prev = NULL;
-      m_owned_appearance = false;
-    }
+  if (!m_appearance) {
+    m_appearance.reset(new Appearance);
+    SGAL_assertion(m_appearance);
   }
-  else {
-    if (!m_appearance) {
-      m_appearance = new Appearance;
-      SGAL_assertion(m_appearance);
-      m_owned_appearance = true;
-    }
-  }
-  m_appearance_prev = m_appearance;
   m_dirty_appearance = false;
 }
 
@@ -1345,7 +1326,7 @@ Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
   Float luminosity = (Float) luminosity_key / 255.0f;
 
   Appearance* app = new Appearance;
-  Material* mat = new Material;
+  Shared_material mat(new Material);
   m_materials.push_back(mat);
   Magick::ColorHSL color_hsl(hue, saturation, luminosity);
   Magick::ColorRGB color_rgb(color_hsl);

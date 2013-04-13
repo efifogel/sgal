@@ -65,12 +65,8 @@ Container_proto* Arrangement_on_sphere_base_geo::s_prototype = NULL;
 /*! Constructor. */
 Arrangement_on_sphere_base_geo::
 Arrangement_on_sphere_base_geo(Boolean proto) :
-  Arrangement_on_surface_geo(proto),
-  m_coord_array(NULL),
-  m_normal_array(NULL)
-{
-  if (!proto) create_renderers();
-}
+  Arrangement_on_surface_geo(proto)
+{ if (!proto) create_renderers(); }
 
 /*! Destructor. */
 Arrangement_on_sphere_base_geo::~Arrangement_on_sphere_base_geo()
@@ -205,19 +201,20 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
   }
 
   typedef Element::Cont_attr_iter       Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
-    const std::string & name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "coord") {
-      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
+      Shared_coord_array coord_array =
+        boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array(coord_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "normal") {
-      Normal_array* normal_array = dynamic_cast<Normal_array*>(cont);
+      Shared_normal_array normal_array =
+        boost::dynamic_pointer_cast<Normal_array>(cont);
       set_normal_array(normal_array);
       elem->mark_delete(cai);
       continue;
@@ -229,9 +226,7 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
 }
 
 /*! \brief */
-void Arrangement_on_sphere_base_geo::cull(Cull_context& cull_context)
-{
-}
+void Arrangement_on_sphere_base_geo::cull(Cull_context& cull_context) {}
 
 /*! \brief */
 void Arrangement_on_sphere_base_geo::isect(Isect_action* action)
@@ -252,14 +247,16 @@ Boolean Arrangement_on_sphere_base_geo::clean_sphere_bound()
 }
 
 /*! \brief sets the coordinate array. */
-void Arrangement_on_sphere_base_geo::set_coord_array(Coord_array* coord_array)
+void Arrangement_on_sphere_base_geo::
+set_coord_array(Shared_coord_array coord_array)
 {
   m_coord_array = coord_array;
   m_dirty_sphere_bound = true;
 }
 
 /*! \brief sets the coordinate array. */
-void Arrangement_on_sphere_base_geo::set_normal_array(Normal_array* normal_array)
+void Arrangement_on_sphere_base_geo::
+set_normal_array(Shared_normal_array normal_array)
 { m_normal_array = normal_array; }
 
 /*! \brief creates the renderers. */

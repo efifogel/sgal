@@ -49,10 +49,10 @@ Switch::Switch(Boolean proto) :
 Switch::~Switch() {}
 
 /*! Return the node to traverse */
-Node* Switch::get_choice()
+Switch::Shared_node Switch::get_choice()
 {
   return (m_which_choice < m_childs.size()) ?
-    get_child(m_which_choice) : NULL;
+    get_child(m_which_choice) : Shared_node();
 }
 
 /*! Cull switch node.
@@ -63,7 +63,7 @@ void Switch::cull(Cull_context & cull_context)
 {
   if (!is_visible())  return;
 
-  Node* node = get_choice();
+  Shared_node node = get_choice();
   if (node) node->cull(cull_context);
 }
 
@@ -73,9 +73,8 @@ void Switch::cull(Cull_context & cull_context)
 Action::Trav_directive Switch::draw(Draw_action* draw_action)
 {
   if (!is_visible())  return Action::TRAV_CONT;
-  Node* node = get_choice();
-  
-  if (node) draw_action->apply(node);
+  Shared_node node = get_choice();
+  if (node) draw_action->apply(&*node);
   return Action::TRAV_CONT;
 }
 
@@ -85,7 +84,7 @@ Action::Trav_directive Switch::draw(Draw_action* draw_action)
 void Switch::isect(Isect_action* isect_action) 
 {
   if (!is_visible()) return;
-  Node* node = get_choice();
+  Shared_node node = get_choice();
   if (!node) return;
 
   if (m_touch_sensor && m_touch_sensor->is_enabled()) {
@@ -104,11 +103,11 @@ void Switch::isect(Isect_action* isect_action)
     m_touch_sensor->set_selection_ids(m_start_selection_id,
                                       m_num_selection_ids);
   }
-  if (m_start_selection_id == 0) isect_action->apply(node);
+  if (m_start_selection_id == 0) isect_action->apply(&*node);
   else {
     Uint save_id = isect_action->get_id();                // save the id
     isect_action->set_id(m_start_selection_id);
-    isect_action->apply(node);
+    isect_action->apply(&*node);
     isect_action->set_id(save_id);                        // restore the id
   }
 }
@@ -126,11 +125,11 @@ Boolean Switch::clean_sphere_bound()
     return true;
   }
 
-  Node* node = get_choice();
+  Shared_node node = get_choice();
   if (!node) return false;
   Sphere_bound_vector_const spheres;
   Boolean bb_changed = node->clean_sphere_bound();
-  const Sphere_bound & sb = node->get_sphere_bound();
+  const Sphere_bound& sb = node->get_sphere_bound();
   if (sb.get_radius() != 0) spheres.push_back(&sb);
 
   // If the bb was changed in the childobjects, or if the radius is 0

@@ -148,13 +148,13 @@ yylloc->step();		// reset location
 <vrml>"SFVec2f"		{ RET(token::SFVec2f); }
 <vrml>"SFVec3f"		{ RET(token::SFVec3f); }
 
-<vrml>{quotion}		{ yylval->text = new std::string(YYText()); RET(token::NUMBER); }
-<vrml>{anynumber}	{ yylval->text = new std::string(YYText()); RET(token::NUMBER); }
+<vrml>{quotion}		{ *yylval = new std::string(YYText()); RET(token::NUMBER); }
+<vrml>{anynumber}	{ *yylval = new std::string(YYText()); RET(token::NUMBER); }
 
-<vrml>{idStartChar}{idRestChar}*	{ yylval->text = new std::string(YYText()); RET(token::IDENTIFIER); }
+<vrml>{idStartChar}{idRestChar}*	{ *yylval = new std::string(YYText()); RET(token::IDENTIFIER); }
 
-<vrml>\"(\\.|[^\\"])*\"	{ yylval->text = new std::string(YYText()); RET(token::STRING_LITERAL); }
-<vrml>\'(\\.|[^\\'])*\'	{ yylval->text = new std::string(YYText()); RET(token::STRING_LITERAL); }
+<vrml>\"(\\.|[^\\"])*\"	{ *yylval = new std::string(YYText()); RET(token::STRING_LITERAL); }
+<vrml>\'(\\.|[^\\'])*\'	{ *yylval = new std::string(YYText()); RET(token::STRING_LITERAL); }
 
 
 ";"			{ RET(';'); }

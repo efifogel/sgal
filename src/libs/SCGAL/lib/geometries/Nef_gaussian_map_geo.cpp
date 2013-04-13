@@ -156,8 +156,8 @@ void Nef_gaussian_map_geo::clean()
 {
   clock_t start_time = clock();
   if (m_minkowski_sum) {
-    Nef_gaussian_map_geo* ngm_geo1 = *(m_ngm_nodes.begin());
-    Nef_gaussian_map_geo* ngm_geo2 = *(++m_ngm_nodes.begin());
+    Nef_gaussian_map_geo* ngm_geo1 = &*(*(m_ngm_nodes.begin()));
+    Nef_gaussian_map_geo* ngm_geo2 = &*(*(++m_ngm_nodes.begin()));
     const Nef_gaussian_map& ngm1 = ngm_geo1->get_ngm();
     const Nef_gaussian_map& ngm2 = ngm_geo2->get_ngm();
     m_nef_gaussian_map.minkowski_sum(ngm1, ngm2);
@@ -188,8 +188,7 @@ void Nef_gaussian_map_geo::clear()
   Mesh_set::clear();
 }
 
-/*!
- */
+/*! \brief */
 void Nef_gaussian_map_geo::cull(SGAL::Cull_context& cull_context) {}
 
 /*! \brief draws the intermediate polyhedron (for debugging purpose). */
@@ -749,14 +748,15 @@ void Nef_gaussian_map_geo::set_attributes(Element* elem)
   
   // Sets the multi-container attributes of this node:
   for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
+       mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
     const std::string& name = elem->get_name(mcai);
     Cont_list& cont_list = elem->get_value(mcai);
     if (name == "geometries") {
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
-        Nef_gaussian_map_geo* ngm = dynamic_cast<Nef_gaussian_map_geo*>(cont);
+        Element::Shared_container cont = *ci;
+        Shared_nef_gaussian_map_geo ngm =
+          boost::dynamic_pointer_cast<Nef_gaussian_map_geo>(cont);
         insert_ngm(ngm);
       }
       m_minkowski_sum = true;
@@ -880,7 +880,7 @@ void Nef_gaussian_map_geo::increase_edge_index(Field_info* field_info)
     m_marked_edge_index = 0;
 }
 
-/*! Increas the face index. */
+/*! \brief increases the face index. */
 void Nef_gaussian_map_geo::increase_facet_index(Field_info* field_info)
 {
   m_marked_facet_index++;
