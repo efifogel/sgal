@@ -25,11 +25,11 @@
  // %debug
 %error-verbose
 %defines
+%define api.token.constructor
 %define api.namespace "SGAL"
+%define api.value.type variant
 %language "C++"
 %define parser_class_name "Vrml_parser"
- // %define api.token.constructor
-%define api.value.type variant
 %locations
 
 %code requires // *.hh
@@ -71,7 +71,7 @@ typedef Element::Multi_cont_attr_list   Multi_cont_attr_list;
 typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
 
 class Vrml_scanner;
- 
+
 typedef boost::shared_ptr<Container>    Shared_container;
 typedef boost::shared_ptr<Node>         Shared_node;
 typedef boost::shared_ptr<Group>        Shared_group;
@@ -87,9 +87,7 @@ SGAL_END_NAMESPACE
 
 %code // *.cc
 {
-  static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
-                   SGAL::Vrml_parser::location_type* yylloc,
-                   SGAL::Vrml_scanner& scanner);  
+  static SGAL::Vrml_parser::symbol_type yylex(SGAL::Vrml_scanner& scanner);  
 }
 
 /* %union { */
@@ -110,18 +108,45 @@ SGAL_END_NAMESPACE
 %type <Shared_container> node sfnodeValue
 %type <Shared_container> proto externproto
 
-%type <std::string*> NUMBER STRING_LITERAL
-%type <std::string*> IDENTIFIER
-%type <std::string*> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
-%type <std::string*> mfValue sfValues sfValue
-%type <std::string*> sfstringValue sfstringValues mfstringValue URLList
-%type <std::string*> sfint32Values
-%type <std::string*> sfboolValue
-%type <std::string*> fieldValue
-%type <std::string*> fieldType
+%type <std::string> NUMBER STRING_LITERAL
+%type <std::string> IDENTIFIER
+%type <std::string> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
+%type <std::string> mfValue sfValues sfValue
+%type <std::string> sfstringValue sfstringValues mfstringValue URLList
+%type <std::string> sfint32Values
+%type <std::string> sfboolValue
+%type <std::string> fieldValue
+%type <std::string> fieldType
 %type <Cont_list*> nodeStatements
 %type <Element*> nodeBody
 %type <Str_attr*> scriptBodyAttribute
+
+%define api.token.prefix "TOK_"
+
+%token
+  END               0   "end of file"
+  SEMICOLON         ";"
+  OPEN_PARENTHESES  "("
+  CLOSE_PARENTHESES ")"
+  COLON             ":"
+  BAR               "|"
+  OPEN_BRACES       "{"
+  CLOSE_BRACES      "}"
+  OPEN_BRACKETS     "["
+  CLOSE_BRACKETS    "]"
+  QUESTION          "?"
+  EQUAL             "="
+  STAR              "*"
+  SLASH             "/"
+  PLUS              "+"
+  MINUS             "-"
+  TILDE             "~"
+  AT                "@"
+  AMPERSAND         "&"
+  HAT               "^"
+  PROCENT           "%"
+  DOT               "."
+;
 
 %token IDENTIFIER
 %token STRING_LITERAL
@@ -164,7 +189,6 @@ SGAL_END_NAMESPACE
 
 %token LS
 %token RS
-%token AT
 %token AND
 %token OR
 %token LE
@@ -192,7 +216,7 @@ statements      : /* empty */
                   scene_graph->add_container($$, g_navigation_root_name);
                   scene_graph->set_navigation_root($$);
                 }
-                | statements statement { $$ = $1; if ($2) $$->add_child($2); }
+                | statements statement { std::swap($$, $1); if ($2) $$->add_child($2); }
                 ;
 
 statement       : nodeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
@@ -200,17 +224,17 @@ statement       : nodeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
                 | routeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }
                 ;
 
-nodeStatement   : node { scene_graph->add_container($1); $$ = $1; }
+nodeStatement   : node { scene_graph->add_container($1); std::swap($$, $1); }
                 | K_DEF nodeNameId node
-                { scene_graph->add_container($3, *($2)); $$ = $3; }
-                | K_USE nodeNameId { $$ = scene_graph->get_container(*($2)); }
+                { scene_graph->add_container($3, $2); $$ = $3; }
+                | K_USE nodeNameId { $$ = scene_graph->get_container($2); }
                 ;
 
-protoStatement  : proto { $$ = $1; }
-                | externproto { $$ = $1; }
+protoStatement  : proto { std::swap($$, $1); }
+                | externproto { std::swap($$, $1); }
                 ;
 
-proto           : K_PROTO nodeTypeId '[' interfaceDeclarations ']' '{' statements '}' { delete $2; $$ = Shared_container(); /*! \todo */ }
+proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statements "}" { $$ = Shared_container(); /*! \todo */ }
                 ;
 
 interfaceDeclarations   : /* empty */ { /*! \todo */ }
@@ -228,7 +252,7 @@ interfaceDeclaration    : restrictedInterfaceDeclaration { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId sfnodeValue { /*! \todo */ }
                 ;
 
-externproto     : K_EXTERNPROTO nodeTypeId '[' externInterfaceDeclarations ']' URLList { delete $2; delete $6; $$ = Shared_container(); /*! \todo */ }
+externproto     : K_EXTERNPROTO nodeTypeId "[" externInterfaceDeclarations "]" URLList { $$ = Shared_container(); /*! \todo */ }
                 ; 
 
 externInterfaceDeclarations     : /* empty */ { /*! \todo */ }
@@ -241,10 +265,10 @@ externInterfaceDeclaration      : K_EVENTIN fieldType eventInId { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId { /*! \todo */ }
                 ;
 
-routeStatement  : K_ROUTE nodeNameId '.' eventOutId K_TO nodeNameId '.' eventInId
+routeStatement  : K_ROUTE nodeNameId "." eventOutId K_TO nodeNameId "." eventInId
                 {
                   Shared_route route = Shared_route(new Route);
-                  if (!scene_graph->route(*($2), *($4), *($6), *($8), &*route)) {
+                  if (!scene_graph->route($2, $4, $6, $8, &*route)) {
                     error(yyla.location, std::string("Cannot route"));
                     YYERROR;
                   }
@@ -253,22 +277,22 @@ routeStatement  : K_ROUTE nodeNameId '.' eventOutId K_TO nodeNameId '.' eventInI
                 }
                 ;
 
-URLList         : mfstringValue { $$ = $1; }
+URLList         : mfstringValue { std::swap($$, $1); }
                 ;
 
-mfstringValue   : sfstringValue { $$ = $1; }
-                | '[' ']' { $$ = new std::string; }
-                | '[' sfstringValues ']' { $$ = $2; }
+mfstringValue   : sfstringValue { std::swap($$, $1); }
+                | "[" "]" { ; }
+                | "[" sfstringValues "]" { std::swap($$, $2); }
                 ;
 
 /* nodes: */
 
-node            : nodeTypeId '{' nodeBody '}'
+node            : nodeTypeId "{" nodeBody "}"
                 {
-                  $$ = Container_factory::get_instance()->create(*($1));
+                  $$ = Container_factory::get_instance()->create($1);
                   if (!$$) {
                     error(yyla.location,
-                          std::string("Unknown node type \"") + *$1 + "\"");
+                          std::string("Unknown node type \"") + $1 + "\"");
                     YYERROR;
                   }
                   else {
@@ -276,40 +300,40 @@ node            : nodeTypeId '{' nodeBody '}'
                     $$->add_to_scene(scene_graph);
                   }
                 }
-                | K_SCRIPT '{' scriptBody '}' { $$ = Shared_container(); /*! \todo */ }
+                | K_SCRIPT "{" scriptBody "}" { $$ = Shared_container(); /*! \todo */ }
                 ;
 
 nodeBody        : /* empty */ { $$ = new Element; }
                 | nodeBody fieldId sfValue
                 {
-                  $$ = $1;
-                  $$->add_attribute(new Str_attr($2,$3));
+                  std::swap($$, $1);
+                  $$->add_attribute(new Str_attr(new std::string($2), new std::string($3)));
                 }
-                | nodeBody fieldId '[' sfValues ']'
+                | nodeBody fieldId "[" sfValues "]"
                 {
-                  $$ = $1;
-                  $$->add_attribute(new Str_attr($2,$4));
+                  std::swap($$, $1);
+                  $$->add_attribute(new Str_attr(new std::string($2), new std::string($4)));
                 }
                 | nodeBody fieldId sfnodeValue
                 {
-                  $$ = $1;
-                  $$->add_attribute(new Cont_attr($2,$3));
+                  std::swap($$, $1);
+                  $$->add_attribute(new Cont_attr(new std::string($2), $3));
                 }
-                | nodeBody fieldId '[' ']'
+                | nodeBody fieldId "[" "]"
                 {
-                  $$ = $1;
-                  $$->add_attribute(new Multi_cont_attr($2,new Cont_list));
+                  std::swap($$, $1);
+                  $$->add_attribute(new Multi_cont_attr(new std::string($2), new Cont_list));
                 }
-                | nodeBody fieldId '[' nodeStatements ']'
+                | nodeBody fieldId "[" nodeStatements "]"
                 {
-                  $$ = $1;
-                  $$->add_attribute(new Multi_cont_attr($2,$4));
+                  std::swap($$, $1);
+                  $$->add_attribute(new Multi_cont_attr(new std::string($2), $4));
                 }
                 | nodeBody fieldId K_IS fieldId { $$ = 0; /*! \todo */ }
                 /* | nodeBody eventInId K_IS eventInId */
                 /* | nodeBody eventOutId K_IS eventOutId */
-                | nodeBody routeStatement { $$ = $1; /*! \todo */ }
-                | nodeBody protoStatement { $$ = $1; /*! \todo */ }
+                | nodeBody routeStatement { std::swap($$, $1); /*! \todo */ }
+                | nodeBody protoStatement { std::swap($$, $1); /*! \todo */ }
                 ; 
 
 
@@ -331,25 +355,25 @@ scriptBodyElement : restrictedInterfaceDeclaration { /*! \todo */ }
                 /* | eventOutId K_IS eventOutId */
                 ;
 
-scriptBodyAttribute : fieldId fieldValue { $$ = new Str_attr($1, $2); }
-                ; 
-
-nodeNameId      : Id { $$ = $1; }
-                ; 
-
-nodeTypeId      : Id { $$ = $1; }
-                ; 
-
-fieldId         : Id { $$ = $1; }
-                ; 
-
-eventInId       : Id { $$ = $1; }
-                ; 
-
-eventOutId      : Id { $$ = $1; }
+scriptBodyAttribute : fieldId fieldValue { $$ = new Str_attr(&$1, &$2); }
                 ;
 
-Id              : IDENTIFIER { $$ = $1; }
+nodeNameId      : Id { std::swap($$, $1); }
+                ;
+
+nodeTypeId      : Id { std::swap($$, $1); }
+                ;
+
+fieldId         : Id { std::swap($$, $1); }
+                ;
+
+eventInId       : Id { std::swap($$, $1); }
+                ;
+
+eventOutId      : Id { std::swap($$, $1); }
+                ;
+
+Id              : IDENTIFIER { std::swap($$, $1); }
                 ;
 
 /*
@@ -364,68 +388,68 @@ IdRestChars     : Any number of ISO-10646 characters except: 0x0-0x20, 0x22, 0x2
 
 /* Fields: */
 
-fieldType       : MFColor { $$ = new std::string("Colors"); }
-                | MFFloat { $$ = new std::string("Floats"); }
-                | MFInt32 { $$ = new std::string("Integers"); }
-                | MFNode { $$ = new std::string("Nodes"); }
-                | MFRotation { $$ = new std::string("Rotations"); }
-                | MFString { $$ = new std::string("Strings"); }
-                | MFTime { $$ = new std::string("Times"); }
-                | MFVec2f { $$ = new std::string("Vector2Floats"); }
-                | MFVec3f { $$ = new std::string("Vector2Floats"); }
-                | SFBool { $$ = new std::string("Boolean"); }
-                | SFColor { $$ = new std::string("Color"); }
-                | SFFloat { $$ = new std::string("Float"); }
-                | SFImage { $$ = new std::string("Image"); }
-                | SFInt32 { $$ = new std::string("Integer"); }
-                | SFNode { $$ = new std::string("Node"); }
-                | SFRotation { $$ = new std::string("Rotation"); }
-                | SFString { $$ = new std::string("String"); }
-                | SFTime { $$ = new std::string("Time"); }
-                | SFVec2f { $$ = new std::string("Vector2Float"); }
-                | SFVec3f { $$ = new std::string("Vector3Float"); }
+fieldType       : MFColor { $$ = std::string("Colors"); }
+                | MFFloat { $$ = std::string("Floats"); }
+                | MFInt32 { $$ = std::string("Integers"); }
+                | MFNode { $$ = std::string("Nodes"); }
+                | MFRotation { $$ = std::string("Rotations"); }
+                | MFString { $$ = std::string("Strings"); }
+                | MFTime { $$ = std::string("Times"); }
+                | MFVec2f { $$ = std::string("Vector2Floats"); }
+                | MFVec3f { $$ = std::string("Vector2Floats"); }
+                | SFBool { $$ = std::string("Boolean"); }
+                | SFColor { $$ = std::string("Color"); }
+                | SFFloat { $$ = std::string("Float"); }
+                | SFImage { $$ = std::string("Image"); }
+                | SFInt32 { $$ = std::string("Integer"); }
+                | SFNode { $$ = std::string("Node"); }
+                | SFRotation { $$ = std::string("Rotation"); }
+                | SFString { $$ = std::string("String"); }
+                | SFTime { $$ = std::string("Time"); }
+                | SFVec2f { $$ = std::string("Vector2Float"); }
+                | SFVec3f { $$ = std::string("Vector3Float"); }
                 ;
 
-fieldValue      : sfValue { $$ = $1; }
-                | mfValue { $$ = $1; }
+fieldValue      : sfValue { std::swap($$, $1); }
+                | mfValue { std::swap($$, $1); }
                 ;
 
-sfValue         : sfint32Values { $$ = $1; }
-                | sfboolValue { $$ = $1; }
-                | sfstringValue { $$ = $1; }
+sfValue         : sfint32Values { std::swap($$, $1); }
+                | sfboolValue { std::swap($$, $1); }
+                | sfstringValue { std::swap($$, $1); }
                 ;
 
-sfboolValue     : K_TRUE { $$ = new std::string("TRUE"); }
-                | K_FALSE { $$ = new std::string("FALSE"); }
+sfboolValue     : K_TRUE { $$ = std::string("TRUE"); }
+                | K_FALSE { $$ = std::string("FALSE"); }
                 ; 
 
-sfnodeValue     : nodeStatement { $$ = $1; }
+sfnodeValue     : nodeStatement { std::swap($$, $1); }
                 | K_NULL { $$ = Shared_container(); /*! \todo */ }
                 ; 
 
-sfstringValue   : STRING_LITERAL { $$ = $1; }
+sfstringValue   : STRING_LITERAL { std::swap($$, $1); }
                 ; 
 
-sfint32Values   : NUMBER { $$ = $1; }
-                | sfint32Values NUMBER { (*$1) += " " + (*$2); $$ = $1; }
-                | sfint32Values ',' NUMBER { (*$1) += " " + (*$3); $$ = $1; }
+sfint32Values   : NUMBER { std::swap($$, $1); }
+                | sfint32Values NUMBER { $1 += " " + $2; std::swap($$, $1); }
+                | sfint32Values "," NUMBER { $1 += " " + $3; std::swap($$, $1); }
                 ; 
 
-sfstringValues  : STRING_LITERAL { $$ = $1; }
-                | sfstringValues STRING_LITERAL { (*$1) += (*$2); $$ = $1; }
-                | sfstringValues ',' STRING_LITERAL { (*$1) += (*$3); $$ = $1; }
+sfstringValues  : STRING_LITERAL { std::swap($$, $1); }
+| sfstringValues STRING_LITERAL { $1 += $2; std::swap($$, $1); }
+                | sfstringValues "," STRING_LITERAL { $1 += $3; std::swap($$, $1); }
                 ;
 
 nodeStatements  : nodeStatement { $$ = new Cont_list; $$->push_back($1); }
-                | nodeStatements nodeStatement { $$ = $1; $$->push_back($2); }
+                | nodeStatements nodeStatement { std::swap($$, $1); $$->push_back($2); }
                 ; 
 
-mfValue         : '[' ']' { $$ = new std::string; }
-                | '[' sfValues ']' { $$ = $2; }
+mfValue         : "[" "]" { ; }
+                | "[" sfValues "]" { std::swap($$, $2); }
                 ;
 
-sfValues        : sfint32Values { $$ = $1; } 
-                | sfstringValues { $$ = $1; }
+sfValues        : sfint32Values { std::swap($$, $1); } 
+                | sfstringValues { std::swap($$, $1); }
                 ;
 
 %%
@@ -442,7 +466,5 @@ SGAL_END_NAMESPACE
 #include "Vrml_scanner.hpp"
 
 /*! */
-static int yylex(SGAL::Vrml_parser::semantic_type* yylval,
-                 SGAL::Vrml_parser::location_type* yylloc,
-                 SGAL::Vrml_scanner& scanner)
-{ return scanner.yylex(yylval, yylloc); }
+static SGAL::Vrml_parser::symbol_type yylex(SGAL::Vrml_scanner& scanner)
+{ return scanner.mylex(); }

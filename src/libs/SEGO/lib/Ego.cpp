@@ -212,19 +212,11 @@ void Ego::clear_parts()
   }
 
   // Delete all appearances:
-  Appearance_iter ait;
-  for (ait = m_appearances.begin(); ait != m_appearances.end(); ++ait)
-    delete ait->second;
   m_appearances.clear();
   m_materials.clear();
 
   // Delete all Ego bricks:
-  Ego_brick_iter bit;
-  for (bit = m_bricks.begin(); bit != m_bricks.end(); ++bit)
-    delete (*bit).second;
   m_bricks.clear();
-  for (bit = m_knobless_bricks.begin(); bit != m_knobless_bricks.end(); ++bit)
-    delete (*bit).second;
   m_knobless_bricks.clear();
 
   // Clean the voxel signature array. */
@@ -694,15 +686,18 @@ void Ego::clean_parts()
               should_draw_knobs = true;
           }
         }
-        Geometry* ego_brick = NULL;
         Vector3f tmp;
         switch (m_style) {
          case STYLE_APPEARANCE:
-          m_dirty_colors = false;
-          shape->set_override_blend_func(false);
-          shape->set_appearance(m_appearance);
-          tmp.sub(center, brick_center);
-          ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
+          {
+           m_dirty_colors = false;
+           shape->set_override_blend_func(false);
+           shape->set_appearance(m_appearance);
+           tmp.sub(center, brick_center);
+           Shared_geometry geom =
+             create_geometry(num0, num1, should_draw_knobs, tmp);
+           shape->set_geometry(geom);
+          }
           break;
 
          case STYLE_RANDOM_COLORS:
@@ -710,7 +705,8 @@ void Ego::clean_parts()
            m_dirty_colors = false;
            Shared_appearance app(create_random_appearance());
            shape->set_appearance(app);
-           ego_brick = create_geometry(num0, num1, should_draw_knobs);
+           Shared_geometry geom = create_geometry(num0, num1, should_draw_knobs);
+           shape->set_geometry(geom);
           }
           break;
 
@@ -725,14 +721,14 @@ void Ego::clean_parts()
            m_dirty_colors = true;
            shape->set_appearance(m_appearance);
            tmp.sub(center, brick_center);
-           ego_brick = create_geometry(num0, num1, should_draw_knobs, tmp);
+           Shared_geometry geom =
+             create_geometry(num0, num1, should_draw_knobs, tmp);
+           shape->set_geometry(geom);
           }
           break;
           
          default: std::cerr << "Invalid style!" << std::endl;
         }
-        boost::shared_ptr<Geometry> geom(ego_brick);
-        shape->set_geometry(geom);
       }
     }
   }
@@ -1054,20 +1050,22 @@ void Ego::clean_colors()
     std::cout << SGAL_EGO_VAR(cit->first) << std::endl;
 #endif
 
-    Appearance* app_p;
-    if (m_color_space == COLOR_SPACE_HSL)
-      app_p = create_appearance(static_cast<Uint>(cit->first[0] * 255.0f),
-                                static_cast<Uint>(cit->first[1] * 255.0f),
-                                static_cast<Uint>(cit->first[2] * 255.0f));
+    if (m_color_space == COLOR_SPACE_HSL) {
+      Shared_appearance app = 
+        create_appearance(static_cast<Uint>(cit->first[0] * 255.0f),
+                          static_cast<Uint>(cit->first[1] * 255.0f),
+                          static_cast<Uint>(cit->first[2] * 255.0f));
+      shape->set_appearance(app);
+    }
     else {
       Magick::ColorRGB color_rgb(cit->first[0], cit->first[1], cit->first[2]);
       Magick::ColorHSL color_hsl(color_rgb);
-      app_p = create_appearance(static_cast<Uint>(color_hsl.hue()*255.0f),
-                                static_cast<Uint>(color_hsl.saturation()*255.0f),
-                                static_cast<Uint>(color_hsl.luminosity()*255.0f));
+      Shared_appearance app = 
+        create_appearance(static_cast<Uint>(color_hsl.hue()*255.0f),
+                          static_cast<Uint>(color_hsl.saturation()*255.0f),
+                          static_cast<Uint>(color_hsl.luminosity()*255.0f));
+      shape->set_appearance(app);
     }
-    Shared_appearance app(app_p);
-    shape->set_appearance(app);
     ++cit;
   }
   colors.clear();
@@ -1075,43 +1073,41 @@ void Ego::clean_colors()
 }
 
 /*! \brief creates the geometry of a brick. */
-Geometry* Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs)
+Ego::Shared_geometry Ego::create_geometry(Uint num0, Uint num1,
+                                          Boolean draw_knobs)
 {
-  Ego_brick* ego_brick;
   if (draw_knobs) {
     Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
     if (it == m_bricks.end()) {
-      ego_brick = new Ego_brick;
+      Shared_ego_brick ego_brick(new Ego_brick);
       ego_brick->set_knob_slices(m_knob_slices);
       ego_brick->set_number_of_knobs1(num0);
       ego_brick->set_number_of_knobs2(num1);
       ego_brick->set_knobs_visible(true);
       m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
+      return ego_brick;
     }
-    else ego_brick = (*it).second;
+    return (*it).second;
   }
-  else {
-    Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
-    if (it == m_knobless_bricks.end()) {
-      ego_brick = new Ego_brick;
-      ego_brick->set_knob_slices(m_knob_slices);
-      ego_brick->set_number_of_knobs1(num0);
-      ego_brick->set_number_of_knobs2(num1);
-      ego_brick->set_knobs_visible(false);
-      m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
-                                              ego_brick));
-    }
-    else ego_brick = (*it).second;
+  Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
+  if (it == m_knobless_bricks.end()) {
+    Shared_ego_brick ego_brick(new Ego_brick);
+    ego_brick->set_knob_slices(m_knob_slices);
+    ego_brick->set_number_of_knobs1(num0);
+    ego_brick->set_number_of_knobs2(num1);
+    ego_brick->set_knobs_visible(false);
+    m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
+                                            ego_brick));
+    return ego_brick;
   }
-
-  return ego_brick;
+  return (*it).second;
 }
 
 /*! \brief creates the geometry of a brick. */
-Geometry* Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
-                               Vector3f& center)
+Ego::Shared_geometry
+Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs, Vector3f& center)
 {
-  Ego_brick* ego_brick = new Ego_brick;
+  Shared_ego_brick ego_brick(new Ego_brick);
   ego_brick->set_knob_slices(m_knob_slices);
   ego_brick->set_number_of_knobs1(num0);
   ego_brick->set_number_of_knobs2(num1);
@@ -1121,28 +1117,27 @@ Geometry* Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
     ego_brick->set_knobs_visible(true);
     Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
     if (it != m_bricks.end()) {
-      Ego_brick* ref_ego_brick = (*it).second;
+      Shared_ego_brick ref_ego_brick = (*it).second;
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
       ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
       ego_brick->set_indices_flat(true);
     }
     m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
-  }
-  else {
-    Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
-    ego_brick->set_knobs_visible(false);
-    if (it != m_knobless_bricks.end()) {
-      Ego_brick* ref_ego_brick = (*it).second;
-      ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
-      ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
-      ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
-      ego_brick->set_indices_flat(true);
-    }
-    m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
-                                            ego_brick));
+    return ego_brick;
   }
 
+  Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
+  ego_brick->set_knobs_visible(false);
+  if (it != m_knobless_bricks.end()) {
+    Shared_ego_brick ref_ego_brick = (*it).second;
+    ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
+    ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
+    ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
+    ego_brick->set_indices_flat(true);
+  }
+  m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
+                                          ego_brick));
   return ego_brick;
 }
 
@@ -1313,8 +1308,8 @@ void Ego::clean_appearance()
 }
 
 /*! \brief creates an appearance. */
-Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
-                                   Uint luminosity_key)
+Ego::Shared_appearance Ego::create_appearance(Uint hue_key, Uint saturation_key,
+                                              Uint luminosity_key)
 {
   Uint color_key =
     (((hue_key << 8) | saturation_key) << 8) | luminosity_key;
@@ -1325,7 +1320,7 @@ Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
   Float saturation = (Float) saturation_key / 255.0f;
   Float luminosity = (Float) luminosity_key / 255.0f;
 
-  Appearance* app = new Appearance;
+  Shared_appearance app(new Appearance);
   Shared_material mat(new Material);
   m_materials.push_back(mat);
   Magick::ColorHSL color_hsl(hue, saturation, luminosity);
@@ -1343,7 +1338,7 @@ Appearance* Ego::create_appearance(Uint hue_key, Uint saturation_key,
 }
 
 /*! \brief creates a random appearance. */
-Appearance* Ego::create_random_appearance()
+Ego::Shared_appearance Ego::create_random_appearance()
 {
   Uint hue_key = std::rand() % 256;
   Uint saturation_key = std::rand() % 256;

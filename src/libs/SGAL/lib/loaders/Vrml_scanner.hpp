@@ -36,22 +36,19 @@ public:
     yyFlexLexer(arg_yyin, arg_yyout)
   {}
 
-  int yylex(Vrml_parser::semantic_type* lval,
-            Vrml_parser::location_type* lloc)
-  {
-    yylval = lval;
-    yylloc = lloc;
-    return yylex();
-  }
+  /*! */
+  Vrml_parser::symbol_type mylex();
   
+  /*! */
   void yyerror(const char* message, int cur_token);
 
 private:
-  Vrml_parser::semantic_type* yylval;
-  Vrml_parser::location_type* yylloc;
+  Vrml_parser::location_type loc;
   
-  virtual int yylex();
+  /*! */
   void comment_to_eol(void);
+
+  /*! */
   void comment(void);
 };
 

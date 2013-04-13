@@ -134,7 +134,8 @@ void X11_window_manager::event_loop(Boolean simulating)
           X11_window_item* window_item = *it;
           window_item->set_redraw(true);
         }
-      } else {
+      }
+      else {
         // If any window is being accumulated, do not advance in the time line.
         bool accumulating = false;
         Windows_iter it;

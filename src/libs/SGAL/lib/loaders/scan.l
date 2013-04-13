@@ -36,6 +36,9 @@
 #include "SGAL/Group.hpp"
 #include "SGAL/Transform.hpp"
 
+#undef YY_DECL
+#define YY_DECL SGAL::Vrml_parser::symbol_type SGAL::Vrml_scanner::mylex()
+
 #include "parse.hpp"
 #include "Vrml_scanner.hpp"
 
@@ -44,19 +47,10 @@ SGAL_BEGIN_NAMESPACE
 typedef Element::Str_attr		Str_attr;
 typedef Element::Cont_list		Cont_list; 
 
+#undef yywrap
+#define yywrap() 1
+
 SGAL_END_NAMESPACE
-
-typedef SGAL::Vrml_parser::token	token;
-
-#ifdef _DEBUG
-#define RET(x) \
-{ \
-  if (yy_flex_debug) printf("lex %hu [%s]\n", (int) x, YYText()); \
-  return(x); \
-}
-#else
-#define RET(x) return(x)
-#endif
 
 #define YY_NO_UNISTD_H
 %}
@@ -95,13 +89,13 @@ idRestChar      	({idStartChar}|[0-9]|\-)
  * yylex is invoked, the begin position is moved onto the end position.
  */
 %{
-#define YY_USER_ACTION  yylloc->columns(yyleng);
+#define YY_USER_ACTION  loc.columns(yyleng);
 %}
 
 %% /*** Regular Expressions Part ***/
 
 %{
-yylloc->step();		// reset location
+loc.step();		// reset location
 %}
 
 <INITIAL>"#VRML V2.0"[^\n]*	{ BEGIN(vrml); }
@@ -109,89 +103,89 @@ yylloc->step();		// reset location
 <vrml>"/*"		{ comment(); }
 <vrml>"#"		{ comment_to_eol(); }
 
-<vrml>"TRUE"		{ RET(token::K_TRUE); }
-<vrml>"FALSE"		{ RET(token::K_FALSE); }
-<vrml>"DEF"		{ RET(token::K_DEF); }
-<vrml>"USE"		{ RET(token::K_USE); }
-<vrml>"PROTO"		{ RET(token::K_PROTO); }
-<vrml>"EXTERNPROTO"	{ RET(token::K_EXTERNPROTO); }
-<vrml>"TO"		{ RET(token::K_TO); }
-<vrml>"ROUTE"		{ RET(token::K_ROUTE); }
-<vrml>"IS"		{ RET(token::K_IS); }
-<vrml>"NULL"		{ RET(token::K_NULL); }
+<vrml>"TRUE"		{ return Vrml_parser::make_K_TRUE(loc); }
+<vrml>"FALSE"		{ return Vrml_parser::make_K_FALSE(loc); }
+<vrml>"DEF"		{ return Vrml_parser::make_K_DEF(loc); }
+<vrml>"USE"		{ return Vrml_parser::make_K_USE(loc); }
+<vrml>"PROTO"		{ return Vrml_parser::make_K_PROTO(loc); }
+<vrml>"EXTERNPROTO"	{ return Vrml_parser::make_K_EXTERNPROTO(loc); }
+<vrml>"TO"		{ return Vrml_parser::make_K_TO(loc); }
+<vrml>"ROUTE"		{ return Vrml_parser::make_K_ROUTE(loc); }
+<vrml>"IS"		{ return Vrml_parser::make_K_IS(loc); }
+<vrml>"NULL"		{ return Vrml_parser::make_K_NULL(loc); }
 
-<vrml>"eventIn"		{ RET(token::K_EVENTIN); }
-<vrml>"eventOut"	{ RET(token::K_EVENTOUT); }
-<vrml>"exposedField"	{ RET(token::K_EXPOSEDFIELD); }
-<vrml>"field"		{ RET(token::K_FIELD); }
+<vrml>"eventIn"		{ return Vrml_parser::make_K_EVENTIN(loc); }
+<vrml>"eventOut"	{ return Vrml_parser::make_K_EVENTOUT(loc); }
+<vrml>"exposedField"	{ return Vrml_parser::make_K_EXPOSEDFIELD(loc); }
+<vrml>"field"		{ return Vrml_parser::make_K_FIELD(loc); }
 
-<vrml>"Script"		{ RET(token::K_SCRIPT); }
+<vrml>"Script"		{ return Vrml_parser::make_K_SCRIPT(loc); }
 
-<vrml>"MFColor"		{ RET(token::MFColor); }
-<vrml>"MFFloat"		{ RET(token::MFFloat); }
-<vrml>"MFInt32"		{ RET(token::MFInt32); }
-<vrml>"MFNode"		{ RET(token::MFNode); }
-<vrml>"MFRotation"	{ RET(token::MFRotation); }
-<vrml>"MFString"	{ RET(token::MFString); }
-<vrml>"MFTime"		{ RET(token::MFTime); }
-<vrml>"MFVec2f"		{ RET(token::MFVec2f); }
-<vrml>"MFVec3f"		{ RET(token::MFVec3f); }
-<vrml>"SFBool"		{ RET(token::SFBool); }
-<vrml>"SFColor"		{ RET(token::SFColor); }
-<vrml>"SFFloat"		{ RET(token::SFFloat); }
-<vrml>"SFImage"		{ RET(token::SFImage); }
-<vrml>"SFInt32"		{ RET(token::SFInt32); }
-<vrml>"SFNode"		{ RET(token::SFNode); }
-<vrml>"SFRotation"	{ RET(token::SFRotation); }
-<vrml>"SFString"	{ RET(token::SFString); }
-<vrml>"SFTime"		{ RET(token::SFTime); }
-<vrml>"SFVec2f"		{ RET(token::SFVec2f); }
-<vrml>"SFVec3f"		{ RET(token::SFVec3f); }
+<vrml>"MFColor"		{ return Vrml_parser::make_MFColor(loc); }
+<vrml>"MFFloat"		{ return Vrml_parser::make_MFFloat(loc); }
+<vrml>"MFInt32"		{ return Vrml_parser::make_MFInt32(loc); }
+<vrml>"MFNode"		{ return Vrml_parser::make_MFNode(loc); }
+<vrml>"MFRotation"	{ return Vrml_parser::make_MFRotation(loc); }
+<vrml>"MFString"	{ return Vrml_parser::make_MFString(loc); }
+<vrml>"MFTime"		{ return Vrml_parser::make_MFTime(loc); }
+<vrml>"MFVec2f"		{ return Vrml_parser::make_MFVec2f(loc); }
+<vrml>"MFVec3f"		{ return Vrml_parser::make_MFVec3f(loc); }
+<vrml>"SFBool"		{ return Vrml_parser::make_SFBool(loc); }
+<vrml>"SFColor"		{ return Vrml_parser::make_SFColor(loc); }
+<vrml>"SFFloat"		{ return Vrml_parser::make_SFFloat(loc); }
+<vrml>"SFImage"		{ return Vrml_parser::make_SFImage(loc); }
+<vrml>"SFInt32"		{ return Vrml_parser::make_SFInt32(loc); }
+<vrml>"SFNode"		{ return Vrml_parser::make_SFNode(loc); }
+<vrml>"SFRotation"	{ return Vrml_parser::make_SFRotation(loc); }
+<vrml>"SFString"	{ return Vrml_parser::make_SFString(loc); }
+<vrml>"SFTime"		{ return Vrml_parser::make_SFTime(loc); }
+<vrml>"SFVec2f"		{ return Vrml_parser::make_SFVec2f(loc); }
+<vrml>"SFVec3f"		{ return Vrml_parser::make_SFVec3f(loc); }
 
-<vrml>{quotion}		{ *yylval = new std::string(YYText()); RET(token::NUMBER); }
-<vrml>{anynumber}	{ *yylval = new std::string(YYText()); RET(token::NUMBER); }
+<vrml>{quotion}		{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
+<vrml>{anynumber}	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
 
-<vrml>{idStartChar}{idRestChar}*	{ *yylval = new std::string(YYText()); RET(token::IDENTIFIER); }
+<vrml>{idStartChar}{idRestChar}*	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_IDENTIFIER(*yylval, loc); }
 
-<vrml>\"(\\.|[^\\"])*\"	{ *yylval = new std::string(YYText()); RET(token::STRING_LITERAL); }
-<vrml>\'(\\.|[^\\'])*\'	{ *yylval = new std::string(YYText()); RET(token::STRING_LITERAL); }
+<vrml>\"(\\.|[^\\"])*\"	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }
+<vrml>\'(\\.|[^\\'])*\'	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }
 
 
-";"			{ RET(';'); }
-<vrml>"("		{ RET('('); }
-<vrml>")"		{ RET(')'); }
-":"			{ RET(':'); }
-"|"			{ RET('|'); }
-<vrml>"{"		{ RET('{'); }
-<vrml>"}"		{ RET('}'); }
-<vrml>"["		{ RET('['); }
-<vrml>"]"		{ RET(']'); }
-"?"			{ RET('?'); }
-"="			{ RET('='); }
-"*"			{ RET('*'); }
-"/"			{ RET('/'); }
-"+"			{ RET('+'); }
-"-"			{ RET('-'); }
-"~"			{ RET('~'); }
-"@"			{ RET('@'); }
-"&"			{ RET('&'); }
-"^"			{ RET('^'); }
-"%"			{ RET('%'); }
-"."			{ RET('.'); }
+";"		{ return Vrml_parser::make_SEMICOLON(loc); }
+<vrml>"("	{ return Vrml_parser::make_OPEN_PARENTHESES(loc); }
+<vrml>")"	{ return Vrml_parser::make_CLOSE_PARENTHESES(loc); }
+":"		{ return Vrml_parser::make_COLON(loc); }
+"|"		{ return Vrml_parser::make_BAR(loc); }
+<vrml>"{"	{ return Vrml_parser::make_OPEN_BRACES(loc); }
+<vrml>"}"	{ return Vrml_parser::make_CLOSE_BRACES(loc); }
+<vrml>"["	{ return Vrml_parser::make_OPEN_BRACKETS(loc); }
+<vrml>"]"	{ return Vrml_parser::make_CLOSE_BRACKETS(loc); }
+"?"		{ return Vrml_parser::make_QUESTION(loc); }
+"="		{ return Vrml_parser::make_EQUAL(loc); }
+"*"		{ return Vrml_parser::make_STAR(loc); }
+"/"		{ return Vrml_parser::make_SLASH(loc); }
+"+"		{ return Vrml_parser::make_PLUS(loc); }
+"-"		{ return Vrml_parser::make_MINUS(loc); }
+"~"		{ return Vrml_parser::make_TILDE(loc); }
+"@"		{ return Vrml_parser::make_AT(loc); }
+"&"		{ return Vrml_parser::make_AMPERSAND(loc); }
+"^"		{ return Vrml_parser::make_HAT(loc); }
+"%"		{ return Vrml_parser::make_PROCENT(loc); }
+"."		{ return Vrml_parser::make_DOT(loc); }
 
-"<<"			{ RET(token::LS); }
-">>"			{ RET(token::RS); }
-"@@"			{ RET(token::AT); }
-"&&"            	{ RET(token::AND); }
-"||"            	{ RET(token::OR); }
-"<="            	{ RET(token::LE); }
-">="            	{ RET(token::GE); }
-"=="            	{ RET(token::EQ); }
-"!="            	{ RET(token::NE); }
+"<<"		{ return Vrml_parser::make_LS(loc); }
+">>"		{ return Vrml_parser::make_RS(loc); }
+"&&"            { return Vrml_parser::make_AND(loc); }
+"||"            { return Vrml_parser::make_OR(loc); }
+"<="            { return Vrml_parser::make_LE(loc); }
+">="            { return Vrml_parser::make_GE(loc); }
+"=="            { return Vrml_parser::make_EQ(loc); }
+"!="            { return Vrml_parser::make_NE(loc); }
 
-[ \t\r\v\f,]+	{ yylloc->step(); }		/* skip blanks and tabs */ 
-\n		{ yylloc->lines(yyleng); yylloc->step(); } /* new line */ 
-.		{ RET(yytext[0]); }  		/* everything else */
+[ \t\r\v\f,]+	{ loc.step(); }                    /* skip blanks and tabs */
+\n		{ loc.lines(yyleng); loc.step(); } /* new line */ 
+.		{ ; }                              /* everything else */
+<<EOF>>         { return Vrml_parser::make_END(loc); }
 %%
 
 SGAL_BEGIN_NAMESPACE
@@ -204,8 +198,8 @@ void Vrml_scanner::comment()
     /* eat up text of comment: */
     while ((c = yyinput()) != '*' && c != EOF) {
       if (c == '\n') {
-        yylloc->lines(yyleng);
-        yylloc->step();
+        loc.lines(yyleng);
+        loc.step();
       }
     }
 

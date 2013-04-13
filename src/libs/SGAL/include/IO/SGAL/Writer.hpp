@@ -58,18 +58,19 @@ public:
   void operator() (Formatter& formatter) const
   {
     formatter.begin();
-    Group* root = m_scene_graph->get_root();
-    Transform* navigation_root = m_scene_graph->get_navigation_root();
-    Point_light* head_light = m_scene_graph->get_head_light();
+    boost::shared_ptr<Group> root = m_scene_graph->get_root();
+    boost::shared_ptr<Transform> navigation_root =
+      m_scene_graph->get_navigation_root();
+    boost::shared_ptr<Point_light> head_light = m_scene_graph->get_head_light();
     Uint i;
     for (i = 0; i < root->children_size(); ++i) {
-      Node* node = root->get_child(i);
+      boost::shared_ptr<Node> node = root->get_child(i);
       if ((node != navigation_root) && (node != head_light))
-        formatter.write(node);
+        formatter.write(&*node);
     }
     for (i = 0; i < navigation_root->children_size(); ++i) {
-      Node* node = navigation_root->get_child(i);
-      formatter.write(node);
+      boost::shared_ptr<Node> node = navigation_root->get_child(i);
+      formatter.write(&*node);
     }
     formatter.end();
   }

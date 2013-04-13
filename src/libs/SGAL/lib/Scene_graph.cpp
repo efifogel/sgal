@@ -233,7 +233,7 @@ void Scene_graph::draw(Draw_action* draw_action)
     return;
   }
 
-  Boolean accumulation_enabled = false;
+  Boolean accumulation_enabled = true;
   Configuration::Shared_accumulation acc;
   Gfx::Poly_mode poly_mode = Gfx::FILL_PMODE;
   Configuration* config = draw_action->get_configuration();

@@ -63,6 +63,8 @@ class SGAL_CLASSDEF Ego : public Transform {
 public:
   typedef boost::shared_ptr<Appearance>         Shared_appearance;
   typedef boost::shared_ptr<Material>           Shared_material;
+  typedef boost::shared_ptr<Geometry>           Shared_geometry;
+  typedef boost::shared_ptr<Ego_brick>          Shared_ego_brick;
   
   enum {
     FIRST = Transform::LAST - 1,
@@ -143,18 +145,18 @@ public:
   void clean_appearance();
 
   /*! Create a random appearance. */
-  Appearance* create_random_appearance();
+  Shared_appearance create_random_appearance();
 
   /*! Create an appearance. */
-  Appearance* create_appearance(Uint hue_key, Uint saturation_key,
-                                Uint luminosity_key);
+  Shared_appearance create_appearance(Uint hue_key, Uint saturation_key,
+                                      Uint luminosity_key);
   
   /*! Create the geometry of a brick. */
-  Geometry* create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
-                            Vector3f& center);
+  Shared_geometry create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
+                                  Vector3f& center);
   
   /*! Create the geometry of a brick. */
-  Geometry* create_geometry(Uint num0, Uint num1, Boolean draw_knobs);
+  Shared_geometry create_geometry(Uint num0, Uint num1, Boolean draw_knobs);
 
   /*! Clean the voxels. */
   void clean_voxels();
@@ -437,24 +439,24 @@ protected:
    */
   Boolean m_owned_touch_sensor;
 
-  typedef boost::unordered_map<Uint, Appearance*>       Appearance_map;
-  typedef Appearance_map::iterator                      Appearance_iter;
+  typedef boost::unordered_map<Uint, Shared_appearance>  Appearance_map;
+  typedef Appearance_map::iterator                       Appearance_iter;
   Appearance_map m_appearances;
 
-  typedef std::list<Shared_material>                    Material_list;
-  typedef Material_list::iterator                       Material_iter;
+  typedef std::list<Shared_material>                     Material_list;
+  typedef Material_list::iterator                        Material_iter;
   Material_list m_materials;
 
-  typedef std::pair<Uint, Uint>                         Ego_brick_key;
-  typedef std::multimap<Ego_brick_key, Ego_brick*>      Ego_brick_map;
-  typedef Ego_brick_map::iterator                       Ego_brick_iter;
+  typedef std::pair<Uint, Uint>                          Ego_brick_key;
+  typedef std::multimap<Ego_brick_key, Shared_ego_brick> Ego_brick_map;
+  typedef Ego_brick_map::iterator                        Ego_brick_iter;
   Ego_brick_map m_bricks;
   Ego_brick_map m_knobless_bricks;
 
   typedef boost::tuple<std::size_t, std::size_t, std::size_t>
-                                                        Voxel_signature;
-  typedef std::vector<Voxel_signature>                  Voxel_signatures;
-  typedef Voxel_signatures::iterator                    Voxel_signatures_iter;
+                                                         Voxel_signature;
+  typedef std::vector<Voxel_signature>                   Voxel_signatures;
+  typedef Voxel_signatures::iterator                     Voxel_signatures_iter;
   
   /*! The number of slices of a knob. */
   Uint m_knob_slices;
