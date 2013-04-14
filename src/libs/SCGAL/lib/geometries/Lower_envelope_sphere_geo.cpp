@@ -24,8 +24,6 @@
  * data structure, where the surfaces are sphere.
  */
 
-#include <CGAL/Cartesian.h>
-
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -34,6 +32,9 @@
 #include <list>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include <CGAL/Cartesian.h>
 
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -53,14 +54,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Lower_envelope_sphere_geo::s_tag = "LowerEnvelopeSphere";
-Container_proto * Lower_envelope_sphere_geo::s_prototype = NULL;
+const std::string Lower_envelope_sphere_geo::s_tag = "LowerEnvelopeSphere";
+Container_proto* Lower_envelope_sphere_geo::s_prototype = NULL;
 
 Uint Lower_envelope_sphere_geo::s_def_resolution(32);
 
 REGISTER_TO_FACTORY(Lower_envelope_sphere_geo, "Lower_envelope_sphere_geo");
 
-/*! Constructor */
+/*! Constructor. */
 Lower_envelope_sphere_geo::Lower_envelope_sphere_geo(Boolean proto) :
   Lower_envelope_geo(proto),
   m_owned_envelope(false),
@@ -68,11 +69,11 @@ Lower_envelope_sphere_geo::Lower_envelope_sphere_geo(Boolean proto) :
   m_resolution(s_def_resolution)
 {}
 
-/*! Destructor */
+/*! Destructor. */
 Lower_envelope_sphere_geo::~Lower_envelope_sphere_geo()
-{ if (m_envelope && m_own_envelope) delete m_envelope; }
+{ if (m_envelope && m_owned_envelope) delete m_envelope; }
 
-/*! \brief cleans the polyhedron data structure */
+/*! \brief cleans the polyhedron data structure. */
 void Lower_envelope_sphere_geo::clean()
 {
   clock_t start_time = clock();
@@ -91,7 +92,7 @@ void Lower_envelope_sphere_geo::clean()
   Envelope_diagram_2::Edge_iterator eit;
   for (eit = m_envelope->edges_begin(); eit != m_envelope->edges_end(); ++eit) {
     if (eit->get_points()) continue;
-    Double_point_list * points = new Double_point_list;
+    Double_point_list* points = new Double_point_list;
     eit->curve().polyline_approximation(m_resolution,
                                         std::back_inserter(*points));
     eit->set_points(points);
@@ -103,15 +104,15 @@ void Lower_envelope_sphere_geo::clean()
   Lower_envelope_geo::clean();
 }
 
-/*! \brief clears the internal representation */
+/*! \brief clears the internal representation. */
 void Lower_envelope_sphere_geo::clear()
 {
   Lower_envelope_geo::clear();
   if (m_envelope) m_envelope->clear();
 }
 
-/*! \brief sets the attributes of the object extracted from an input file */
-void Lower_envelope_sphere_geo::set_attributes(SGAL::Element * elem)
+/*! \brief sets the attributes of the object extracted from an input file. */
+void Lower_envelope_sphere_geo::set_attributes(SGAL::Element* elem)
 { Lower_envelope_geo::set_attributes(elem); }
 
 /*! \brief initializes the prototype of this container. */
@@ -121,24 +122,24 @@ void Lower_envelope_sphere_geo::init_prototype()
   s_prototype = new Container_proto(Lower_envelope_geo::get_prototype());
 }
 
-/*! \brief deletes the prototype of this container */
+/*! \brief deletes the prototype of this container. */
 void Lower_envelope_sphere_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype of this container */
-Container_proto * Lower_envelope_sphere_geo::get_prototype() 
+/*! \brief obtains the prototype of this container. */
+Container_proto* Lower_envelope_sphere_geo::get_prototype() 
 {  
   if (!s_prototype) Lower_envelope_sphere_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief draws the envelope faces */
-void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action * action)
+/*! \brief draws the envelope faces. */
+void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   context->draw_material_mode_enable(SGAL::Gfx::COLOR_MATERIAL);
   context->draw_light_model_sides(SGAL::Gfx::TWO_SIDE);
   context->draw_cull_face(Gfx::NO_CULL);
@@ -151,9 +152,9 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action * action)
     Vector3f color;
     Envelope_diagram_2::Surface_const_iterator sit;
     for (sit = fit->surfaces_begin(); sit != fit->surfaces_end(); ++sit) {
-      const Appearance * surf_app = sit->data();
-      const Material * surf_mat = surf_app->get_material();
-      const Vector3f & surf_color = surf_mat->get_diffuse_color();
+      Shared_appearance surf_app = sit->data();
+      boost::shared_ptr<Material> surf_mat = surf_app->get_material();
+      const Vector3f& surf_color = surf_mat->get_diffuse_color();
       color.add(surf_color);
     }
     color.scale(1.0f / std::distance(fit->surfaces_begin(),
@@ -166,15 +167,15 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action * action)
       Envelope_diagram_2::Halfedge_const_iterator curr = first;
       glBegin(GL_POLYGON);
       do {
-        const Rational & r = curr->curve().r();
-        const Rational & s = curr->curve().s();
+        const Rational& r = curr->curve().r();
+        const Rational& s = curr->curve().s();
         if ((r == 0) && (s == 0)) {
           // Segment:
-          const Vector2f & p = to_vector2f(curr->source()->point());
+          const Vector2f& p = to_vector2f(curr->source()->point());
           Vector2f vec(p[0], p[1]);
           glVertex2fv((float*)&vec);
         } else {
-          const Double_point_list * points = curr->get_points();
+          const Double_point_list* points = curr->get_points();
           SGAL_assertion(points);
           if (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) {            
             Double_point_list::const_iterator it_next = points->begin();
@@ -182,7 +183,8 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action * action)
             for (; it_next != points->end(); it = it_next++)
               glVertex2d((*it).first, (*it).second);
           } else {
-            Double_point_list::const_reverse_iterator it_next = points->rbegin();
+            Double_point_list::const_reverse_iterator it_next =
+              points->rbegin();
             Double_point_list::const_reverse_iterator it = it_next++;
             for (; it_next != points->rend(); it = it_next++)
               glVertex2d((*it).first, (*it).second);
@@ -199,14 +201,14 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action * action)
       Envelope_diagram_2::Halfedge_const_iterator curr = first;
       glBegin(GL_POLYGON);
       do {
-        const Rational & r = curr->curve().r();
-        const Rational & s = curr->curve().s();
+        const Rational& r = curr->curve().r();
+        const Rational& s = curr->curve().s();
         if ((r == 0) && (s == 0)) {
           // Segment:
-          const Vector2f & p = to_vector2f(curr->source()->point());
+          const Vector2f& p = to_vector2f(curr->source()->point());
           glVertex2f(p[0], p[1]);
         } else {
-          const Double_point_list * points = curr->get_points();
+          const Double_point_list* points = curr->get_points();
           SGAL_assertion(points);
           if (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) {
             Double_point_list::const_iterator it_next = points->begin();
@@ -214,7 +216,8 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action * action)
             for (; it_next != points->end(); it = it_next++)
               glVertex2d((*it).first, (*it).second);
           } else {
-            Double_point_list::const_reverse_iterator it_next = points->rbegin();
+            Double_point_list::const_reverse_iterator it_next =
+              points->rbegin();
             Double_point_list::const_reverse_iterator it = it_next++;
             for (; it_next != points->rend(); it = it_next++)
               glVertex2d((*it).first, (*it).second);
@@ -232,17 +235,17 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action * action)
   context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
 }
 
-/*! \brief draws the envelope edges */
-void Lower_envelope_sphere_geo::draw_envelope_edges(Draw_action * action)
+/*! \brief draws the envelope edges. */
+void Lower_envelope_sphere_geo::draw_envelope_edges(Draw_action* action)
 {
   Envelope_diagram_2::Edge_const_iterator eit;
   for (eit = m_envelope->edges_begin(); eit != m_envelope->edges_end(); ++eit) {
-    const Rational & r = eit->curve().r();
-    const Rational & s = eit->curve().s();
+    const Rational& r = eit->curve().r();
+    const Rational& s = eit->curve().s();
     
     SGAL_assertion((eit->curve().t() == 0) && (r == s));
     Extrusion tube;
-    SGAL::Array<Vector3f> & spine = tube.get_spine();
+    SGAL::Array<Vector3f>& spine = tube.get_spine();
     tube.set_cross_section_radius(m_edge_radius);
     if ((r == 0) && (s == 0)) {
       // Segment:
@@ -254,7 +257,7 @@ void Lower_envelope_sphere_geo::draw_envelope_edges(Draw_action * action)
       tube.draw(action);
       continue;
     }
-    const Double_point_list * points = eit->get_points();
+    const Double_point_list* points = eit->get_points();
     SGAL_assertion(points);
     spine.resize(points->size());
     Double_point_list::const_iterator it;
@@ -265,14 +268,14 @@ void Lower_envelope_sphere_geo::draw_envelope_edges(Draw_action * action)
   }
 }
 
-/*! \brief draws the envelope vertices */
-void Lower_envelope_sphere_geo::draw_envelope_vertices(Draw_action * action)
+/*! \brief draws the envelope vertices. */
+void Lower_envelope_sphere_geo::draw_envelope_vertices(Draw_action* action)
 {
   Envelope_diagram_2::Vertex_const_iterator vit;
   for (vit = m_envelope->vertices_begin(); vit != m_envelope->vertices_end();
        ++vit)
   {
-    const Vector2f & p = to_vector2f(vit->point());
+    const Vector2f& p = to_vector2f(vit->point());
     Vector3f center(p[0], p[1], 0);
     Sphere sphere;
     sphere.set_radius(m_vertex_radius);
