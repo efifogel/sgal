@@ -17,8 +17,11 @@ It provide the ability to read VRML files.
 ## Compiling - current instructions
 
 You need to compile:
-1) Libs: gl2ps, SGAL, SCGAL, and SEGO
-2) Cmds: player
+1) Tools: bison - in branch
+2) Libs: gl2ps, SGAL, SCGAL, and SEGO
+3) Cmds: player
+
+1) Bison - first install automake, autopoint, & texinfo. Then, run ./bootstrap from the bison directory. Then the regular ./configure and make, make install.
 
 Set the following env. variables:
 
