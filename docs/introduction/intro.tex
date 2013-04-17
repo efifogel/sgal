@@ -1,0 +1,156 @@
+\documentclass{article}
+\input{header}
+% ======== Author comments ====================================================
+\ifthenelse{\boolean{ShowTODO}}{%
+  \def\marrow{{\raggedright\footnotesize $\longleftarrow$}}
+  \def\danny#1{\textcolor{red}{{\sc Danny says: }{\marrow\sf #1}}}
+  \def\efi#1{\textcolor{red}{{\sc Efi says: }{\marrow\sf #1}}}
+}{%
+  \def\danny#1{}
+  \def\efi#1{}
+}
+% ======= figs ================================================================
+\graphicspath{{../../figs}}
+%
+% =============================================================================
+\begin{document}
+\title{Making Three-Dimensional Printing Attainable or Extending the
+  Set of \lego{} kits}
+\author{Dan Halperin and Efi Fogel}
+\date{\copyright{} All copyrights reserved to the authors\\\today}
+\maketitle
+% =============================================================================
+\section{Abstract}
+\label{sec:abstract}
+% =============================================================================
+We present a couple of applications that are based on novel techniques
+in assembly planning and assembly partitioning. The first application
+extends the seemingly capabilities of current 3D printers; the
+application enables the 3D printing of virtually any object using low
+cost 3D printers. The second application (which we intend to make
+available first) enables the rapid production of \lego{} (or the like)
+kits.
+
+Similar applications do not exist in the market, to the best of our
+knowledge, and we do not expect that similar applications will
+suddenly emerged, simply due to the complexity of computational 
+tasks that need to be carried out behind the scenes.
+
+% =============================================================================
+\section{Introduction}
+\label{sec:introduction}
+% =============================================================================
+Three-Dimensional (3D) printing is a unique form of printing
+related to traditional rapid prototyping technology. Here, a 3D
+object is created by layering and connecting successive cross-sections
+of plastics, metals, or other materials. The 3D printers have become
+popular for rapid prototyping of product designs, but are moving into
+the creation of more end-market products.
+
+The 3D printing market could soar to \$8.4 billion in sales in~2025,
+from \$777 million last year, fueled largely by the automotive,
+aerospace and medical markets, according a new report by Lux
+Research. The auto, aerospace and medical industries are seen taking
+an~84\% share of the 3D printing market, which is poised to grow
+at~18\% annually, Lux says. Meanwhile, consumer applications will
+remain small relative to industrial uses, he says. 3D-printed consumer
+goods were a \$17 million market in~2012, led by \$10 million from
+custom jewelry. The consumer market, dominated by hobbyists and
+artists, will grow to \$894 million in sales in~2025, Vicari says.
+
+Rapid prototyping is a group of techniques used to fabricate a scale
+model of a physical part or assembly using three-dimensional computer
+aided design (CAD) data. The term "rapid" is relative. While the
+construction of a model using contemporary methods can take anywhere
+from several hours to several days, depending on the method used and
+the size and complexity of the model, additive systems, i.e., 3D
+printers, can typically reduce this time to a few hours, but the model
+to be printed must meet some limitations. 3D printers are usually
+faster, more affordable, and easier to use than other (non-additive)
+fabrication technologies. However, not everything can be
+printed---size and resolution are the main limitations. 
+
+The maximum resolution and size of a 3D print depends on the chosen 3D
+Printer. For example, on the one hand, printing an object bounded by a
+$(254 \times 381 \times 203)$~mm box can be done using the
+ZPrinter\textregistered{}~650 by \zcorp{}, which costs approximately
+\$100,000. On the other hand, the ZPrinter\textregistered{}~150, which
+costs approximately \$15,000, enables the printing of only objects
+bounded by a $(236 \times 185 \times 127)$~mm box each. We present a
+technique that enables the printing of large objects on low cost
+printers.
+
+We present a couple of applications that are based on novel techniques
+in assembly planning and assembly partitioning. The first application
+enables the 3D printing of virtually any object using low cost 3D
+printers. The second application (which we intend to make
+available first) enables the rapid production of \lego{} (or the like)
+kits.
+
+%% The resolution of the printer is given in layer thickness and XY
+%% resolution in DPI (Dots Per Inch). Usually, the layer thickness is
+%% approximately one hundred micrometers (0.1 [mm] (millimeters)), while
+%% $XY$ resolution is comparable to that of laser printers. The particles
+%% (3D dots) are approximately 50 to 100 micrometers (0.05 mm-0.1 mm) in
+%% diameter.
+
+%% The layers of material in 3D printers are approximately $0.1$~mm
+%% thick. Although very fine, they are slightly perceptible to the naked
+%% eye (particularly on rounded or false-flat shapes).
+
+%% A model is printable if it consists of a set
+%% of closed 2D (two-dimensional) manifolds, which bind volumes that do
+%% not intersect in their interior pair-wise, and also there exists a
+%% convex decomposition, such that the $z$-directional (vertical) width
+%% of every convex piece is larger than a given threshold, and the
+%% $xy$-directional (horizontal) width of every convex piece is larger
+%% than a given threshold ($x$, $y$, and $z$ are axes).
+
+% =============================================================================
+\section{Enabling the 3D Printing of Virtually any Object}
+\label{sec:3d-printing}
+% =============================================================================
+Given a model of an object, the bounding box of which is
+large, and thus can be printed only on a high-cost 3D printer or not
+at all, the application automatically decomposes the model into smaller
+pieces and adds connectors to the resulting pieces, so that these
+pieces can be easily assembled to form an object similar to the
+original one without any additional materials (such as glue). The
+application also automatically produces the procedure that guides the
+assembly.
+
+The same application subsumes a simpler application that enables the
+relatively low-cost 3D printing of models that are already decomposed
+into pieces of different colors or different resolution. Given such a
+model that consists of several submodels, the application simply adds
+connectors to the at the appropriate places to the submodels so that
+they can be individualy printed. The printed pieces can be assembled
+to form the original object. Naturally, a combination is also
+applicable.
+
+% =============================================================================
+\section{Enabling the Rapid Production of \lego{} Kits}
+\label{sec:}
+% =============================================================================
+\begin{figure}[!t]%
+  \centering
+  \subfloat[]{\label{fig:lego-earth:discrete}
+    \includegraphics[height=4cm,bb=0 0 556 576]{figs/ego_geodesic_sphere_3_discrete_earth.jpg}}\quad
+  \subfloat[]{\label{fig:lego-earth:continuous}
+    \includegraphics[height=4cm,bb=0 0 512 512]{figs/ego_geodesic_sphere_3_continuous_earth.jpg}}\quad
+  \subfloat[]{\label{fig:lego-earth:random-color}
+    \includegraphics[height=4cm,bb=0 0 512 512]{figs/ego_geodesic_sphere_3_random_color.jpg}}
+  \caption[]{\subref{fig:lego-earth:discrete} The earth decomposed into
+    \lego{} bricks.
+    \subref{fig:lego-earth:continuous} The earth decomposed into
+    \lego{} bricks.
+    \subref{fig:lego-earth:random-color} The earth decomposed into
+    \lego{} bricks.}
+  \label{fig:stick-maze}
+\end{figure}
+
+% =============================================================================
+% \bibliographystyle{abbrv}
+% \bibliography{abrev,thickening}
+% =============================================================================
+\end{document}
