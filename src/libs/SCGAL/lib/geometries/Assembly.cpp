@@ -83,10 +83,12 @@ Assembly::Assembly(Boolean proto) :
   m_inc_minkowski_sums(false)
 {
   if (proto) return;
+  m_appearance.reset(new Appearance);
   m_material.reset(new Material);
   m_appearance->set_material(m_material);
   m_material->set_transparency(0.0001f);
 
+  m_sphere_appearance.reset(new Appearance);
   m_sphere_material.reset(new Material);
   m_sphere_appearance->set_material(m_sphere_material);
   m_sphere_material->set_ambient_intensity(0.7f);
