@@ -67,6 +67,10 @@ class SGAL_CLASSDEF Polygon_set_on_sphere_geo :
   public Arrangement_on_sphere_marked_geo
 {
 public:
+  // Shared pointer
+  typedef boost::shared_ptr<Polygon_set_on_sphere_geo>
+    Shared_polygon_set_on_sphere_geo;
+
   /*! Fields 
    * We assume that the Boolean set operations fields are continous and in
    * the same order as s_operation_types.
@@ -193,7 +197,7 @@ protected:
 
  private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The container prototype. */
   static Container_proto* s_prototype;
