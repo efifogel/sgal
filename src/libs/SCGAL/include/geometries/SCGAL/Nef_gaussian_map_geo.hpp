@@ -206,6 +206,7 @@ public:
     INCREASE_VERTEX_INDEX,
     INCREASE_EDGE_INDEX,
     INCREASE_FACET_INDEX,
+    GEOMETRIES,
     LAST
   };
 
@@ -609,7 +610,12 @@ protected:
 
 /*! \brief sets the operand gausian maps of the minkowski sum. */
 inline void Nef_gaussian_map_geo::insert_ngm(Shared_nef_gaussian_map_geo ngm)
-{ m_ngm_nodes.push_back(ngm); }
+{
+  m_ngm_nodes.push_back(ngm);
+  Observer observer(this, get_field_info(GEOMETRIES));
+  ngm->register_observer(observer);
+  m_dirty_sphere_bound = true;
+}
 
 /*! \brief sets the flag that indicates whether to draw the sphere. */
 inline void Nef_gaussian_map_geo::set_draw_dual_sphere(Boolean draw_bg)
