@@ -61,7 +61,10 @@
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_overlay_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_sim_geo.hpp"
-// #include "SCGAL/Polygon_set_on_sphere_geo.hpp"
+// Ignore in Debug mode, cause is_valid() on the sphere does not compile 
+#if !defined(NDEBUG)
+#include "SCGAL/Polygon_set_on_sphere_geo.hpp"
+#endif
 #endif
 #if defined(USE_VOS)
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
@@ -113,7 +116,10 @@ void scgal_init()
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_marked_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_overlay_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_sim_geo::prototype());
-  //   Container_factory::get_instance()->doregister(Polygon_set_on_sphere_geo::prototype());
+// Ignore in Debug mode, cause is_valid() on the sphere does not compile 
+#if !defined(NDEBUG)
+  Container_factory::get_instance()->doregister(Polygon_set_on_sphere_geo::prototype());
+#endif
 #endif
 #if defined(USE_VOS)
   Container_factory::get_instance()->doregister(Voronoi_diagram_on_sphere_geo::prototype());
