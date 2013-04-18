@@ -22,11 +22,10 @@
 // %debug
 %require "2.7"
 %skeleton "lalr1.cc"
- // %debug
 %error-verbose
 %defines
 %define api.token.constructor
-%define api.namespace "SGAL"
+%define api.namespace {SGAL}
 %define api.value.type variant
 %language "C++"
 %define parser_class_name "Vrml_parser"
@@ -121,7 +120,7 @@ SGAL_END_NAMESPACE
 %type <Element*> nodeBody
 %type <Str_attr*> scriptBodyAttribute
 
-%define api.token.prefix "TOK_"
+%define api.token.prefix {TOK_}
 
 %token
   END               0   "end of file"
