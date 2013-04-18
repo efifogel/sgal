@@ -54,7 +54,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Polygon_set_on_sphere_geo::s_tag = "PolygonSetOnSphere";
+const std::string Polygon_set_on_sphere_geo::s_tag = "PolygonSetOnSphere";
 
 std::string Polygon_set_on_sphere_geo::s_operation_types[] = {
   "complement", 
@@ -97,7 +97,7 @@ void Polygon_set_on_sphere_geo::delete_prototype()
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto * Polygon_set_on_sphere_geo::get_prototype()
+Container_proto* Polygon_set_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Polygon_set_on_sphere_geo::init_prototype();
   return s_prototype;
@@ -145,8 +145,8 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
     Shared_container cont = elem->get_value(cai);
     if (is_operation_type_name(name)) {
       set_operation_type(get_operation_type_by_name(name));
-      Polygon_set_on_sphere_geo* aos_geo =
-        dynamic_cast<Polygon_set_on_sphere_geo*>(cont);
+      Shared_polygon_set_on_sphere_geo aos_geo =
+        boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(cont);
       if (aos_geo) add_aos_geo(aos_geo);
       elem->mark_delete(cai);
       continue;
@@ -168,7 +168,7 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
       set_operation_type(get_operation_type_by_name(name));
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Shared_container cont = *ci;
-        Shared_polygon_set_on_sphere_geo* aos_geo =
+        Shared_polygon_set_on_sphere_geo aos_geo =
           boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(cont);
         if (aos_geo) add_aos_geo(aos_geo);
       }
@@ -198,8 +198,8 @@ void Polygon_set_on_sphere_geo::clean()
   this->polygon_set().clear();
 
   if (m_poly_indices.empty() == false) {
-    Exact_coord_array * exact_coord_array =
-      dynamic_cast<Exact_coord_array *>(m_coord_array);
+    boost::shared_ptr<Exact_coord_array> exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
 
     Int_container::const_iterator it = m_poly_indices.begin();
     while (it != m_poly_indices.end()) {
@@ -264,27 +264,26 @@ void Polygon_set_on_sphere_geo::clean()
   // For now, we compute the operation between the first and the last
   // polygons.
   if (m_aoses.size() >= 2) {
-    Polygon_set_on_sphere_geo* first = 
-      dynamic_cast<Polygon_set_on_sphere_geo*>(m_aoses.front());
-    Polygon_set_on_sphere_geo* last = 
-      dynamic_cast<Polygon_set_on_sphere_geo*>(m_aoses.back());
+    Shared_polygon_set_on_sphere_geo first = 
+      boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.front());
+    Shared_polygon_set_on_sphere_geo last = 
+      boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.back());
 
     // TODO: Prevent infinite recursion!
     first->clean();
     last->clean();
       
-    switch (operation_type())
-    {
-    case SET_INTERSECTION:
+    switch (operation_type()) {
+     case SET_INTERSECTION:
       polygon_set().intersection(first->polygon_set(), last->polygon_set());
       return;
-    case SET_UNION:
+     case SET_UNION:
       polygon_set().join(first->polygon_set(), last->polygon_set());
       return;
-    case SET_DIFFERENCE:
+     case SET_DIFFERENCE:
       polygon_set().difference(first->polygon_set(), last->polygon_set());
       return;
-    case SET_SYMMETRIC_DIFFERENCE:
+     case SET_SYMMETRIC_DIFFERENCE:
       polygon_set().symmetric_difference(first->polygon_set(), 
                                          last->polygon_set());
       return;
@@ -295,8 +294,8 @@ void Polygon_set_on_sphere_geo::clean()
 
   // Complement uses the first polygon.
   if (m_aoses.size() >= 1) {
-    Polygon_set_on_sphere_geo* poly_set = 
-      dynamic_cast<Polygon_set_on_sphere_geo*>(m_aoses.front());
+    Shared_polygon_set_on_sphere_geo poly_set = 
+      boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.front());
 
     // TODO: prevent infinite recursion.
     // For some reason, I was not able to create infinite recursion.
