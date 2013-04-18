@@ -289,6 +289,21 @@ endif
 
 LDIRT = parse.output
 
+vpath %.cpp $(BASEDIR)/primitives
+vpath %.cpp $(BASEDIR)/engines
+vpath %.cpp $(BASEDIR)/events
+vpath %.cpp $(BASEDIR)/loaders
+vpath %.cpp $(BASEDIR)/geo
+vpath %.cpp $(BASEDIR)/lights
+vpath %.cpp $(BASEDIR)/sensors
+vpath %.cpp $(BASEDIR)/geometries
+vpath %.cpp $(BASEDIR)/geometries/primitive_shapes
+vpath %.cpp $(BASEDIR)/utilities
+vpath %.cpp $(BASEDIR)/interpolators
+vpath %.cpp $(BASEDIR)/IO
+vpath %.y $(BASEDIR)/loaders
+vpath %.l $(BASEDIR)/loaders
+
 include $(MAKEDIR)/basedir.mak
 include $(MAKEDIR)/comrul.mak
 include $(MAKEDIR)/bisoncpp.mak
@@ -306,7 +321,6 @@ endef
 
 ifeq ($(BISON_VER), 2500)
 define run-bison
-echo $(firstword $^)
 sed -e 's/%require "2.7"/%require "2.5"/' \
     -e 's/%define api.namespace "SGAL"/%define namespace "SGAL"/' \
 $(firstword $^) > tmp.y
@@ -314,23 +328,23 @@ $(BISONF) tmp.y -o $(basename $@).cpp
 endef
 endif
 
+ifeq ($(BISON_VER), 2700)
+define fix-bison
+sed -i -e 's/0 < count || -count < line/0 < count || -count < (int) line/' \
+       -e 's/0 < count || -count < column/0 < count || -count < (int) column/' \
+position.hh
+endef
+else
+define fix-bison
+endef
+endif
+
 include $(MAKEDIR)/comp.mak
 include $(MAKEDIR)/targlib.mak
 
-vpath %.cpp $(BASEDIR)/primitives
-vpath %.cpp $(BASEDIR)/engines
-vpath %.cpp $(BASEDIR)/events
-vpath %.cpp $(BASEDIR)/loaders
-vpath %.cpp $(BASEDIR)/geo
-vpath %.cpp $(BASEDIR)/lights
-vpath %.cpp $(BASEDIR)/sensors
-vpath %.cpp $(BASEDIR)/geometries
-vpath %.cpp $(BASEDIR)/geometries/primitive_shapes
-vpath %.cpp $(BASEDIR)/utilities
-vpath %.cpp $(BASEDIR)/interpolators
-vpath %.cpp $(BASEDIR)/IO
-vpath %.y $(BASEDIR)/loaders
-vpath %.l $(BASEDIR)/loaders
+parse.cpp parse.hpp: parse.y
+	$(run-bison)
+	$(fix-bison)
 
 scan.o: parse.hpp
 
