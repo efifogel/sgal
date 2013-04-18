@@ -43,7 +43,7 @@ Container_proto * Sphere_plane_intersection::s_prototype = NULL;
 // Defaults values:
   // Default values:
 const Float Sphere_plane_intersection::s_def_sphere_radius(1);
-const Vector4f Sphere_plane_intersection::s_def_plane(0,0,1,0);
+const Vector4f Sphere_plane_intersection::s_def_plane(0, 0, 1, 0);
 
 REGISTER_TO_FACTORY(Sphere_plane_intersection, "Sphere_plane_intersection");
 
@@ -53,13 +53,10 @@ Sphere_plane_intersection::Sphere_plane_intersection(Boolean proto) :
   m_sphere_radius(s_def_sphere_radius),
   m_plane(s_def_plane),
   m_trigger(SGAL_FALSE)
-{
-}
+{}
 
 /*! \brief destructor */
-Sphere_plane_intersection::~Sphere_plane_intersection()
-{
-}
+Sphere_plane_intersection::~Sphere_plane_intersection() {}
 
 /*! \brief initializes the container prototype */
 void Sphere_plane_intersection::init_prototype()
