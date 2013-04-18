@@ -57,7 +57,10 @@ ifeq ($(USE_AOS), 1)
 CPPSOURCES+= Arrangement_on_sphere_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_graph_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_marked_geo.cpp
-# CPPSOURCES+= Polygon_set_on_sphere_geo.cpp
+# Ignore in Debug mode, cause is_valid() on the sphere does not compile 
+ifneq ($(DEBUG), 1)
+CPPSOURCES+= Polygon_set_on_sphere_geo.cpp
+endif
 CPPSOURCES+= Arrangement_on_sphere_overlay_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_sim_geo.cpp
 endif
