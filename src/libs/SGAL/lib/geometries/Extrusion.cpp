@@ -430,7 +430,7 @@ void Extrusion::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Mesh_set::coord_changed);
+    static_cast<Execution_function>(&Extrusion::structure_changed);
   s_prototype->add_field_info(new SF_bool(BEGIN_CAP, "beginCap",
                                           get_member_offset(&m_begin_cap),
                                           exec_func));
@@ -474,6 +474,13 @@ Container_proto* Extrusion::get_prototype()
   if (!s_prototype) Extrusion::init_prototype();
   return s_prototype;
 } 
+
+/*! \brief processes change of structure. */
+void Extrusion::structure_changed(Field_info* field_info)
+{
+  m_dirty = true;
+  Indexed_face_set::coord_changed(field_info);
+}
 
 SGAL_END_NAMESPACE
 
