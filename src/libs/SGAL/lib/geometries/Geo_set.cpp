@@ -85,16 +85,19 @@ void Geo_set::init_prototype()
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  exec_func = static_cast<Execution_function>(&Geo_set::normal_changed);
   field = new SF_shared_container(NORMAL_ARRAY, "normal",
                                   get_member_offset(&m_normal_array),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  exec_func = static_cast<Execution_function>(&Geo_set::color_changed);
   field = new SF_shared_container(COLOR_ARRAY, "color",
                                   get_member_offset(&m_color_array),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  exec_func = static_cast<Execution_function>(&Geo_set::tex_coord_changed);
   field = new SF_shared_container(TEX_COORD_ARRAY, "texCoord",
                                   get_member_offset(&m_tex_coord_array),
                                   exec_func);
@@ -121,7 +124,7 @@ void Geo_set::set_coord_array(Shared_coord_array coord_array)
   Observer observer(this, get_field_info(COORD_ARRAY));
   if (m_coord_array) m_coord_array->unregister_observer(observer);
   m_coord_array = coord_array;
-  m_coord_array->register_observer(observer);
+  if (m_coord_array) m_coord_array->register_observer(observer);
   m_dirty_sphere_bound = true;
 }
 
@@ -316,7 +319,19 @@ void Geo_set::set_attributes(Element* elem)
 
 /*! \brief processes change of coordinates. */
 void Geo_set::coord_changed(Field_info* field_info)
-{ field_changed(field_info); }
+{
+  //! \todo Need to unregisted the previous observer. This is impossible to
+  // do in the current settings.
+  //! \todo Need to decide on a global strategy regarding obeservers:
+  // 1. All nodes observe all their fields automatically, or
+  // 2. Specified nodes observe all their fields automatically, or
+  // 3. Specified nodes observe allspecified fields.
+  if (m_coord_array) {
+    Observer observer(this, get_field_info(COORD_ARRAY));
+    m_coord_array->register_observer(observer);
+  }
+  field_changed(field_info);
+}
 
 /*! \brief processes change of normals. */
 void Geo_set::normal_changed(Field_info* field_info)
