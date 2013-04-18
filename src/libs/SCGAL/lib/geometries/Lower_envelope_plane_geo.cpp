@@ -24,16 +24,15 @@
  * data structure, where the surfaces are planes.
  */
 
-#include <CGAL/Cartesian.h>
-
 #if defined(_WIN32)
 #include <windows.h>
 #endif
 #include <time.h>
 #include <GL/gl.h>
 #include <list>
-
 #include <boost/lexical_cast.hpp>
+
+#include <CGAL/Cartesian.h>
 
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -63,15 +62,14 @@ REGISTER_TO_FACTORY(Lower_envelope_plane_geo, "Lower_envelope_plane_geo");
 /*! Constructor. */
 Lower_envelope_plane_geo::Lower_envelope_plane_geo(Boolean proto) :
   Lower_envelope_geo(proto),
-  m_plane_array(NULL),
-  m_color_array(NULL),
-  m_owned_bounding_polygon(false),
-  m_bounding_polygon(NULL),
+  m_owned_envelope(false),
+  m_envelope(NULL),
   m_draw_patches(s_def_draw_patches)
 {}
 
 /*! Destructor. */
-Lower_envelope_plane_geo::~Lower_envelope_plane_geo() {}
+Lower_envelope_plane_geo::~Lower_envelope_plane_geo()
+{ if (m_envelope && m_owned_envelope) delete m_envelope; }
 
 /*! \brief cleans the polyhedron data structure. */
 void Lower_envelope_plane_geo::clean()
@@ -79,8 +77,9 @@ void Lower_envelope_plane_geo::clean()
   clock_t start_time = clock();
 
   if (!m_envelope) {
-    m_envelope = Shared_envelope(new Envelope_diagram_2);
+    m_envelope = new Envelope_diagram_2;
     SGAL_assertion(m_envelope);
+    m_owned_envelope = true;
   }
 
   std::list<Plane_3> planes;
@@ -91,7 +90,7 @@ void Lower_envelope_plane_geo::clean()
   //! \todo compute a bouding squre if none is provided
   // if (!m_bounding_polygon) {
   //}
-  My_observer obs (*m_envelope);
+  My_observer obs(*m_envelope);
 
   Exact_coord2_array::Exact_point_const_iter it = m_bounding_polygon->begin();
   const Env_plane_traits_3::Point_2& start_point = *it;
@@ -148,7 +147,7 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
     }
     if (name == "color") {
       Shared_color_array color_array =
-        boost::dynamic_pointer_bcast<Color_array>(cont);
+        boost::dynamic_pointer_cast<Color_array>(cont);
       set_color_array(color_array);
       elem->mark_delete(cai);
       continue;

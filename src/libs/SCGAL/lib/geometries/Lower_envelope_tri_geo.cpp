@@ -53,23 +53,23 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Lower_envelope_tri_geo::s_tag = "LowerEnvelopeTri";
-Container_proto * Lower_envelope_tri_geo::s_prototype = NULL;
+const std::string Lower_envelope_tri_geo::s_tag = "LowerEnvelopeTri";
+Container_proto* Lower_envelope_tri_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Lower_envelope_tri_geo, "Lower_envelope_tri_geo");
 
-/*! Constructor */
+/*! Constructor. */
 Lower_envelope_tri_geo::Lower_envelope_tri_geo(Boolean proto) :
   Lower_envelope_geo(proto),
   m_owned_envelope(false),
   m_envelope(NULL)
 {}
 
-/*! Destructor */
+/*! Destructor. */
 Lower_envelope_tri_geo::~Lower_envelope_tri_geo()
-{ if (m_envelope && m_own_envelope) delete m_envelope; }
+{ if (m_envelope && m_owned_envelope) delete m_envelope; }
 
-/*! \brief cleans the polyhedron data structure */
+/*! \brief cleans the polyhedron data structure. */
 void Lower_envelope_tri_geo::clean()
 {
   clock_t start_time = clock();
@@ -89,15 +89,15 @@ void Lower_envelope_tri_geo::clean()
   Lower_envelope_geo::clean();
 }
 
-/*! \brief clears the internal representation */
+/*! \brief clears the internal representation. */
 void Lower_envelope_tri_geo::clear()
 {
   Lower_envelope_geo::clear();
   if (m_envelope) m_envelope->clear();
 }
 
-/*! \brief sets the attributes of the object extracted from an input file */
-void Lower_envelope_tri_geo::set_attributes(SGAL::Element * elem)
+/*! \brief sets the attributes of the object extracted from an input file. */
+void Lower_envelope_tri_geo::set_attributes(SGAL::Element* elem)
 { Lower_envelope_geo::set_attributes(elem); }
 
 /*! \brief initializes the prototype of this container. */
@@ -107,24 +107,24 @@ void Lower_envelope_tri_geo::init_prototype()
   s_prototype = new Container_proto(Lower_envelope_geo::get_prototype());
 }
 
-/*! \brief deletes the prototype of this container */
+/*! \brief deletes the prototype of this container. */
 void Lower_envelope_tri_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype of this container */
-Container_proto * Lower_envelope_tri_geo::get_prototype() 
+/*! \brief obtains the prototype of this container. */
+Container_proto* Lower_envelope_tri_geo::get_prototype() 
 {  
   if (!s_prototype) Lower_envelope_tri_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief draws the envelope faces */
-void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action * action)
+/*! \brief draws the envelope faces. */
+void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   context->draw_material_mode_enable(SGAL::Gfx::COLOR_MATERIAL);
   context->draw_light_model_sides(SGAL::Gfx::TWO_SIDE);
   context->draw_cull_face(Gfx::NO_CULL);
@@ -137,9 +137,9 @@ void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action * action)
     Vector3f color;
     Envelope_diagram_2::Surface_const_iterator sit;
     for (sit = fit->surfaces_begin(); sit != fit->surfaces_end(); ++sit) {
-      const Appearance * surf_app = sit->data();
-      const Material * surf_mat = surf_app->get_material();
-      const Vector3f & surf_color = surf_mat->get_diffuse_color();
+      Shared_appearance surf_app = sit->data();
+      boost::shared_ptr<Material> surf_mat = surf_app->get_material();
+      const Vector3f& surf_color = surf_mat->get_diffuse_color();
       color.add(surf_color);
     }
     color.scale(1.0f / std::distance(fit->surfaces_begin(),
@@ -152,7 +152,7 @@ void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action * action)
       Envelope_diagram_2::Halfedge_const_iterator curr = first;
       glBegin(GL_POLYGON);
       do {
-        const Vector2f & vec = to_vector2f(curr->source()->point());
+        const Vector2f& vec = to_vector2f(curr->source()->point());
         glVertex2fv((float*)&vec);
         curr = curr->next();
       } while (curr != first);
@@ -165,7 +165,7 @@ void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action * action)
       Envelope_diagram_2::Halfedge_const_iterator curr = first;
       glBegin(GL_POLYGON);
       do {
-        const Vector2f & vec = to_vector2f(curr->source()->point());
+        const Vector2f& vec = to_vector2f(curr->source()->point());
         glVertex2fv((float*)&vec);
         curr = curr->next();
       } while (curr != first);
@@ -178,8 +178,8 @@ void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action * action)
   context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
 }
 
-/*! \brief draws the envelope edges */
-void Lower_envelope_tri_geo::draw_envelope_edges(Draw_action * action)
+/*! \brief draws the envelope edges. */
+void Lower_envelope_tri_geo::draw_envelope_edges(Draw_action* action)
 {
   Envelope_diagram_2::Edge_const_iterator eit;
   for (eit = m_envelope->edges_begin(); eit != m_envelope->edges_end(); ++eit) {
@@ -188,7 +188,7 @@ void Lower_envelope_tri_geo::draw_envelope_edges(Draw_action * action)
 
     Extrusion tube;
     tube.set_cross_section_radius(m_edge_radius);
-    SGAL::Array<Vector3f> & spine = tube.get_spine();
+    SGAL::Array<Vector3f>& spine = tube.get_spine();
     spine.resize(2);
     spine[0].set(src[0], src[1], 0);
     spine[1].set(trg[0], trg[1], 0);
@@ -196,14 +196,14 @@ void Lower_envelope_tri_geo::draw_envelope_edges(Draw_action * action)
   }
 }
 
-/*! \brief draws the envelope vertices */
-void Lower_envelope_tri_geo::draw_envelope_vertices(Draw_action * action)
+/*! \brief draws the envelope vertices. */
+void Lower_envelope_tri_geo::draw_envelope_vertices(Draw_action* action)
 {
   Envelope_diagram_2::Vertex_const_iterator vit;
   for (vit = m_envelope->vertices_begin(); vit != m_envelope->vertices_end();
        ++vit)
   {
-    const Vector2f & p = to_vector2f(vit->point());
+    const Vector2f& p = to_vector2f(vit->point());
     Vector3f center(p[0], p[1], 0);
     Sphere sphere;
     sphere.set_radius(m_vertex_radius);

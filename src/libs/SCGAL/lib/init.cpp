@@ -38,9 +38,11 @@
 #include "SCGAL/Exact_coord_minkowski.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 #include "SCGAL/Triangulation_geo.hpp"
-//#include "SCGAL/Lower_envelope_tri_geo.hpp"
-//#include "SCGAL/Lower_envelope_sphere_geo.hpp"
-//#include "SCGAL/Lower_envelope_plane_geo.hpp"
+#if defined(USE_ENV)
+#include "SCGAL/Lower_envelope_tri_geo.hpp"
+#include "SCGAL/Lower_envelope_sphere_geo.hpp"
+#include "SCGAL/Lower_envelope_plane_geo.hpp"
+#endif
 #if defined(USE_CGM)
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
 #endif
@@ -88,9 +90,11 @@ void scgal_init()
   Container_factory::get_instance()->doregister(Exact_coord_minkowski::prototype());
   Container_factory::get_instance()->doregister(Exact_polyhedron_geo::prototype());
   Container_factory::get_instance()->doregister(Triangulation_geo::prototype());
-  //  Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());
-  //  Container_factory::get_instance()->doregister(Lower_envelope_sphere_geo::prototype());
-  //  Container_factory::get_instance()->doregister(Lower_envelope_plane_geo::prototype());
+#if defined(USE_ENV)
+  Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());
+  Container_factory::get_instance()->doregister(Lower_envelope_sphere_geo::prototype());
+  Container_factory::get_instance()->doregister(Lower_envelope_plane_geo::prototype());
+#endif
 #if defined(USE_CGM)
   Container_factory::get_instance()->doregister(Cubical_gaussian_map_geo::prototype());
 #endif

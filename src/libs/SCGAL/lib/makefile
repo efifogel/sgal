@@ -82,10 +82,12 @@ CPPSOURCES+= Exact_normal_array.cpp
 CPPSOURCES+= Exact_plane_array.cpp
 CPPSOURCES+= Exact_polyhedron_geo.cpp
 CPPSOURCES+= Triangulation_geo.cpp
-# CPPSOURCES+= Lower_envelope_geo.cpp
-# CPPSOURCES+= Lower_envelope_tri_geo.cpp
-# CPPSOURCES+= Lower_envelope_sphere_geo.cpp
-# CPPSOURCES+= Lower_envelope_plane_geo.cpp
+ifeq ($(USE_ENV), 1)
+CPPSOURCES+= Lower_envelope_geo.cpp
+CPPSOURCES+= Lower_envelope_tri_geo.cpp
+CPPSOURCES+= Lower_envelope_sphere_geo.cpp
+CPPSOURCES+= Lower_envelope_plane_geo.cpp
+endif
 ifeq ($(USE_CGM), 1)
 CPPSOURCES+= Cubical_gaussian_map_geo.cpp
 CPPSOURCES+= Arrangement_on_cube_renderers.cpp
@@ -177,6 +179,10 @@ endif
 
 ifeq ($(USE_QUADRIC), 1)
 LCPPDEFS+= -DUSE_QUADRIC
+endif
+
+ifeq ($(USE_ENV), 1)
+LCPPDEFS+= -DUSE_ENV
 endif
 
 # Include:
