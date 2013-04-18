@@ -40,10 +40,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Light::s_prototype = NULL;
+Container_proto* Light::s_prototype = NULL;
 
 /*! defaults values for Light's members.*/
-const Boolean Light::m_def_is_on(SGAL_TRUE);
+const Boolean Light::m_def_is_on(true);
 const Float Light::m_def_intensity(1);
 const Float Light::m_def_ambient_intensity(1);
 const Vector3f Light::m_def_color(1, 1, 1);
@@ -56,62 +56,38 @@ Light::Light(Boolean proto) :
   m_intensity(m_def_intensity),
   m_ambient_intensity(m_def_ambient_intensity),
   m_ref(0)
-{
-  m_color = Vector3f(m_def_color);
-}
+{ m_color = Vector3f(m_def_color); }
 
-/*! distructor */
+/*! Distructor */
 Light::~Light() {}
 
-/*! turn the light on/off */
-void Light::set_on(Boolean is_on) 
-{ 
-  m_is_on = is_on;
-} 
+/*! \brief turns the light on and off. */
+void Light::set_on(Boolean is_on) { m_is_on = is_on; } 
 
-/*! return the status of the light */
-Boolean Light::get_on() 
-{ 
-  return m_is_on; 
-}
+/*! \brief determines whether the light is on. */
+Boolean Light::get_on() { return m_is_on; }
 
-/*! set the light's intensity */
-void Light::set_intensity(Float intensity)
-{
-  m_intensity = intensity;
-}
+/*! \brief sets the light intensity. */
+void Light::set_intensity(Float intensity) { m_intensity = intensity; }
 
-/*! get the light's intensity */
-Float Light::get_intensity()
-{
-  return m_intensity;
-}
+/*! \brief obtains the light intensity. */
+Float Light::get_intensity() { return m_intensity; }
 
-/*! set the ambient intensity of the light */
+/*! \brief sets the ambient intensity of the light. */
 void Light::set_ambient_intensity(Float ambient_intensity)
-{
-  m_ambient_intensity = ambient_intensity;
-}
+{ m_ambient_intensity = ambient_intensity; }
 
-/*! get the ambient intensity of the light */
-Float Light::get_ambient_intensity()
-{
-  return m_ambient_intensity;
-}
+/*! \brief obtains the ambient intensity of the light. */
+Float Light::get_ambient_intensity() { return m_ambient_intensity; }
 
-/*! set the light's color. It is used for diffuse and specular components */
-void Light::set_color(const Vector3f & color)
-{
-  m_color = color;
-}
+/*! \brief sets the light color. It is used for diffuse and specular components.
+ */
+void Light::set_color(const Vector3f& color) { m_color = color; }
 
-/*! get the light's color */
-void Light::get_color(Vector3f & color)
-{
-  color = m_color;
-}
+/*! \brief obtains the light color. */
+void Light::get_color(Vector3f& color) { color = m_color; }
 
-/*! initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Light::init_prototype()
 {
   if (s_prototype) return;
@@ -147,29 +123,26 @@ void Light::init_prototype()
                                 exec_func));
 }
 
-/*! Delete the node prototype */
+/*! \brief deletes the node prototype. */
 void Light::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
-Container_proto * Light::get_prototype() 
+/*! \brief obtains the node prototype. */
+Container_proto* Light::get_prototype() 
 {  
   if (!s_prototype) Light::init_prototype();
   return s_prototype;
 }
 
-/*!
- */
-void Light::cull(Cull_context & cull_context)
-{
-  cull_context.add_light(this);
-}
+/*! \brief */
+void Light::cull(Cull_context& cull_context)
+{ cull_context.add_light(this); }
 
-/*! draw the light */
-Action::Trav_directive Light::draw(Draw_action * da) 
+/*! \brief draws the light. */
+Action::Trav_directive Light::draw(Draw_action* da) 
 {
   if (da == 0 || da->get_context() == 0) return Action::TRAV_STOP;
 
@@ -190,20 +163,16 @@ Action::Trav_directive Light::draw(Draw_action * da)
   return Action::TRAV_CONT;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Light::set_attributes(Element * elem)
+/*! \brief sets the attributes of this object. */
+void Light::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "on") {
       set_on(compare_to_true(value));
       elem->mark_delete(ai);
@@ -230,10 +199,8 @@ void Light::set_attributes(Element * elem)
 }
 
 /*! \brief adds the container to a given scene */  
-void Light::add_to_scene(Scene_graph * sg)
-{
-  sg->set_have_lights(SGAL_TRUE);
-}
+void Light::add_to_scene(Scene_graph* sg)
+{ sg->set_have_lights(true); }
 
 #if 0
 /*! get a list of attributes (called in the save process) */
@@ -276,11 +243,10 @@ Attribute_list Light::get_attributes()
 
 /*! Add a child object to the scene 
  * @param sg (in) a reference to the scene graph
- * @param parentName (in) the name of the parent object.
  */
-void Light::add_to_scene(Scene_graph * sg, XML_entity * parent) 
+void Light::add_to_scene(Scene_graph* sg) 
 { 
-  Scene_config * scene_config = sg->get_scene_config();
+  Scene_config* scene_config = sg->get_scene_config();
 
   if (scene_config && 
       parent == (XML_entity*)sg->get_navigation_root() && 
@@ -290,7 +256,7 @@ void Light::add_to_scene(Scene_graph * sg, XML_entity * parent)
   }  
   Node::add_to_scene(sg, parent);
 
-  Group * group = dynamic_cast<Group *>(parent);
+  Group* group = dynamic_cast<Group *>(parent);
   if (group) group->SetHasLight();
 }
 #endif
