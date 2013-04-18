@@ -73,7 +73,7 @@ void Cull_context::add_shape(Shape* node)
 /*! \brief adds a light node. */
 void Cull_context::add_light(Light* light)
 {
-  if (light != &*m_head_light) {
+  if (!m_head_light || (light != &*m_head_light)) {
     Light_node ln;
     ln.light = light;
     ln.wtm = m_world_tm;
