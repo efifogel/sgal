@@ -27,6 +27,7 @@
  */
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
@@ -78,6 +79,9 @@ public:
     GDM_DISPLAY_LIST,
     GDM_VERTEX_ARRAY
   };
+  
+  typedef boost::shared_ptr<Accumulation>               Shared_accumulation;
+  typedef boost::shared_ptr<Multisample>                Shared_multisample;
   
   /*! Constructor */
   Configuration(Boolean proto = false);
@@ -165,16 +169,16 @@ public:
   Geometry_drawing_mode get_geometry_drawing_mode() const;
 
   /*! Set the accumulation object. */
-  void set_accumulation(Accumulation* acc);
+  void set_accumulation(Shared_accumulation acc);
   
   /*! Obtain the accumulation object. */
-  Accumulation* get_accumulation() const;
+  Shared_accumulation get_accumulation() const;
 
   /*! Set the multisample object. */
-  void set_multisample(Multisample* ms);
+  void set_multisample(Shared_multisample ms);
   
   /*! Obtain the multisample object. */
-  Multisample* get_multisample() const;
+  Shared_multisample get_multisample() const;
 
   /*! Set the verbosity level. */
   void set_verbosity_level(Uint level);
@@ -256,10 +260,10 @@ private:
   static Container_proto* s_prototype;
 
   /*! Accumulation object. */
-  Accumulation* m_accumulation;
+  Shared_accumulation m_accumulation;
 
   /*! Multisample object. */
-  Multisample* m_multisample;
+  Shared_multisample m_multisample;
   
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Geometry_drawing_mode m_geometry_drawing_mode;
@@ -496,19 +500,20 @@ Configuration::get_geometry_drawing_mode() const
 { return m_geometry_drawing_mode; }
 
 /*! \brief sets the accumulation object. */
-inline void Configuration::set_accumulation(Accumulation* acc)
+inline void Configuration::set_accumulation(Shared_accumulation acc)
 { m_accumulation = acc; }
   
 /*! \brief obtains the accumulation object. */
-inline Accumulation* Configuration::get_accumulation() const
+inline Configuration::Shared_accumulation Configuration::get_accumulation()
+  const
 { return m_accumulation; }
 
 /*! \brief sets the multisample object. */
-inline void Configuration::set_multisample(Multisample* ms)
+inline void Configuration::set_multisample(Shared_multisample ms)
 { m_multisample = ms; }
   
 /*! \brief obtains the multisample object. */
-inline Multisample* Configuration::get_multisample() const
+inline Configuration::Shared_multisample Configuration::get_multisample() const
 { return m_multisample; }
 
 /*! \brief obtains the verbosity level. */

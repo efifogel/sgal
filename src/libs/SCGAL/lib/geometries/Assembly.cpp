@@ -70,7 +70,7 @@ const std::string Assembly::s_tag = "Assembly";
 
 REGISTER_TO_FACTORY(Assembly, "Assembly");
 
-/*! Constructor */
+/*! Constructor. */
 Assembly::Assembly(Boolean proto) :
   Group(proto),
   m_dirty(true),
@@ -83,32 +83,52 @@ Assembly::Assembly(Boolean proto) :
   m_inc_minkowski_sums(false)
 {
   if (proto) return;
-  m_appearance.set_material(&m_material);
-  m_material.set_transparency(0.0001f);
-  m_sphere_appearance.set_material(&m_sphere_material);
-  m_sphere_material.set_ambient_intensity(0.7f);
-  m_sphere_material.set_specular_color(0.5f, 0.5f, 0.5f);
-  m_sphere_material.set_diffuse_color(0.5f, 0.5f, 0.5f);
-  m_sphere_material.set_transparency(0.5f);
-  m_switch.add_child(&m_sgm_geo_node);
-  m_switch.add_child(&m_reflected_sgm_geo_node);
-  m_switch.add_child(&m_ms_sgm_geo_node);
-  m_switch.add_child(&m_projection_aos_geo_node);
-  m_switch.add_child(&m_part_projection_aos_geo_node);
-  m_switch.add_child(&m_graph_node);
-  m_switch.set_which_choice(0);
+  m_appearance.reset(new Appearance);
+  m_material.reset(new Material);
+  m_appearance->set_material(m_material);
+  m_material->set_transparency(0.0001f);
 
-  m_sgm_geo_node.set_which_choice(0);
-  m_reflected_sgm_geo_node.set_which_choice(0);
-  m_ms_sgm_geo_node.set_which_choice(0);
-  m_projection_aos_geo_node.set_which_choice(0);
-  m_part_projection_aos_geo_node.set_which_choice(0);
+  m_sphere_appearance.reset(new Appearance);
+  m_sphere_material.reset(new Material);
+  m_sphere_appearance->set_material(m_sphere_material);
+  m_sphere_material->set_ambient_intensity(0.7f);
+  m_sphere_material->set_specular_color(0.5f, 0.5f, 0.5f);
+  m_sphere_material->set_diffuse_color(0.5f, 0.5f, 0.5f);
+  m_sphere_material->set_transparency(0.5f);
+
+  m_switch.reset(new Switch);
+  
+  m_sgm_geo_node.reset(new Switch);
+  m_switch->add_child(m_sgm_geo_node);
+  
+  m_reflected_sgm_geo_node.reset(new Switch);
+  m_switch->add_child(m_reflected_sgm_geo_node);
+
+  m_ms_sgm_geo_node.reset(new Switch);
+  m_switch->add_child(m_ms_sgm_geo_node);
+
+  m_projection_aos_geo_node.reset(new Switch);
+  m_switch->add_child(m_projection_aos_geo_node);
+
+  m_part_projection_aos_geo_node.reset(new Switch);
+  m_switch->add_child(m_part_projection_aos_geo_node);
+
+  m_graph_node.reset(new Shape);
+  m_switch->add_child(m_graph_node);
+  
+  m_switch->set_which_choice(0);
+
+  m_sgm_geo_node->set_which_choice(0);
+  m_reflected_sgm_geo_node->set_which_choice(0);
+  m_ms_sgm_geo_node->set_which_choice(0);
+  m_projection_aos_geo_node->set_which_choice(0);
+  m_part_projection_aos_geo_node->set_which_choice(0);
 }
 
 /*! Destructor. */
 Assembly::~Assembly()
 {
-  remove_child(&m_switch);
+  remove_child(m_switch);
   m_childs = m_childs_save;
   clear();
 }
@@ -124,33 +144,21 @@ void Assembly::clear()
   
   // Clear the Minkowski-sum Gaussian-map node + geometry children:
   Uint i;
-  for (i = 0; i < m_ms_sgm_geo_node.children_size(); ++i) {
-    Node* node = m_ms_sgm_geo_node.get_child(i);
-    m_ms_sgm_geo_node.remove_child(node);
-    Shape* shape = static_cast<Shape*>(node);
-    Geometry* geo = shape->get_geometry();
-    delete geo;
-    delete shape;
+  for (i = 0; i < m_ms_sgm_geo_node->children_size(); ++i) {
+    Shared_node node = m_ms_sgm_geo_node->get_child(i);
+    m_ms_sgm_geo_node->remove_child(node);
   }
 
   // Clear the Minkowski-sum projection Aos node + geometry children:
-  for (i = 0; i < m_projection_aos_geo_node.children_size(); ++i) {
-    Node* node = m_projection_aos_geo_node.get_child(i);
-    m_projection_aos_geo_node.remove_child(node);
-    Shape* shape = static_cast<Shape*>(node);
-    Geometry* geo = shape->get_geometry();
-    delete geo;
-    delete shape;
+  for (i = 0; i < m_projection_aos_geo_node->children_size(); ++i) {
+    Shared_node node = m_projection_aos_geo_node->get_child(i);
+    m_projection_aos_geo_node->remove_child(node);
   }
 
   // Clear the per-part Minkowski-sum projection Aos node + geometry children:
-  for (i = 0; i < m_part_projection_aos_geo_node.children_size(); ++i) {
-    Node* node = m_part_projection_aos_geo_node.get_child(i);
-    m_part_projection_aos_geo_node.remove_child(node);
-    Shape* shape = static_cast<Shape*>(node);
-    Geometry* geo = shape->get_geometry();
-    delete geo;
-    delete shape;
+  for (i = 0; i < m_part_projection_aos_geo_node->children_size(); ++i) {
+    Shared_node node = m_part_projection_aos_geo_node->get_child(i);
+    m_part_projection_aos_geo_node->remove_child(node);
   }
   
   // Clear map of Minkowski sum lists:
@@ -235,9 +243,9 @@ Uint Assembly::assign_id(Node* node, Uint id) const
     
   Switch* my_switch = dynamic_cast<Switch*>(node);
   if (my_switch) {
-    Node* choice = my_switch->get_choice();
+    Shared_node choice = my_switch->get_choice();
     if (!choice) return id;
-    return assign_id(choice, id);
+    return assign_id(&*choice, id);
   }
     
   Group* group = dynamic_cast<Group*>(node);
@@ -251,8 +259,8 @@ Uint Assembly::assign_id(Group* group, Uint id) const
 {
   Node_const_iterator it;
   for (it = group->children_begin(); it != group->children_end(); ++it) {
-    Node* node = *it;
-    id = assign_id(node, id);
+    Shared_node node = *it;
+    id = assign_id(&*node, id);
   }
   return id;
 }
@@ -310,18 +318,19 @@ void Assembly::construct_reflected_sgms()
     m_parts_reflected_sgm_geos.push_back(Sgm_geo_list());
     Sgm_geo_list& part_reflected_sgm_geos = m_parts_reflected_sgm_geos.back();
     for (sit = sgm_geos.begin(); sit != sgm_geos.end(); ++sit) {
-      Sgm_geo* sgm_geo = *sit;
-      Sgm_geo* reflected_sgm_geo = new Sgm_geo;
+      Shared_sgm_geo sgm_geo = *sit;
+      Shared_sgm_geo reflected_sgm_geo(new Sgm_geo);
       /*! \todo Replace the code that computes the reflection about the origin
        * from the input coordinate array, or from the input polyhedron with new
        * code that computes it directly from the Sgm.
        */
+      typedef boost::shared_ptr<Exact_coord_array>    Shared_exact_coord_array;
       Sgm_geo::Shared_coord_array tmp = sgm_geo->get_coord_array();
-      boost::shared_ptr<Exact_coord_array> coord_array =
+      Shared_exact_coord_array coord_array =
         boost::dynamic_pointer_cast<Exact_coord_array>(tmp);
       if (coord_array) {
         Uint size  = coord_array->size();
-        boost::shared_ptr<Exact_coord_array>
+        Shared_exact_coord_array
           inverse_coord_array(new Exact_coord_array(size));
         Exact_coord_array::Exact_point_const_iter its;
         Exact_coord_array::Exact_point_iter itt = inverse_coord_array->begin();
@@ -387,12 +396,12 @@ void Assembly::compute_minkowski_sums()
 
       Sgm_geo_iter sit1;
       for (sit1 = sgm_geos1.begin(); sit1 != sgm_geos1.end(); ++sit1) {
-        Sgm_geo* sgm_geo1 = *sit1;
+        Shared_sgm_geo sgm_geo1 = *sit1;
         Sgm* sgm1 = sgm_geo1->get_sgm();
 
         Sgm_geo_iter sit2;
         for (sit2 = sgm_geos2.begin(); sit2 != sgm_geos2.end(); ++sit2) {
-          Sgm_geo* sgm_geo2 = *sit2;
+          Shared_sgm_geo sgm_geo2 = *sit2;
           Sgm* sgm2 = sgm_geo2->get_sgm();
 
           Sgm* sgm = new Sgm;
@@ -425,11 +434,11 @@ void Assembly::construct_sgms_nodes()
     Appearance_iter apit = sgm_apps.begin();
     for (sgit = sgm_geos.begin(); sgit != sgm_geos.end(); ++sgit, ++apit) {
       SGAL_assertion(apit != sgm_apps.end());
-      Sgm_geo* sgm_geo = *sgit;
-      Shape* shape = new Shape();
+      Shared_sgm_geo sgm_geo = *sgit;
+      Shared_shape shape(new Shape());
       shape->set_appearance(*apit);
       shape->set_geometry(sgm_geo);
-      m_sgm_geo_node.add_child(shape);
+      m_sgm_geo_node->add_child(shape);
       // sgm_geo->set_aos_vertex_style(Arrangement_renderer::Vertex_shape::NONE);
       // sgm_geo->set_draw_aos(true);
     }
@@ -456,12 +465,12 @@ void Assembly::construct_reflected_sgms_nodes()
     Sgm_geo_iter rsgit = reflected_sgm_geos.begin();
     Sgm_geo_iter sgit;
     for (sgit = sgm_geos.begin(); sgit != sgm_geos.end(); ++sgit, ++rsgit) {
-      Sgm_geo* sgm_geo = *sgit;
+      Shared_sgm_geo sgm_geo = *sgit;
       Sgm* reflected_sgm = (*rsgit)->get_sgm();
-      Shape* shape = new Shape();
-      shape->set_appearance(&m_appearance);
-      m_reflected_sgm_geo_node.add_child(shape);
-      Sgm_geo* reflected_sgm_geo = new Sgm_geo;
+      Shared_shape shape(new Shape);
+      shape->set_appearance(m_appearance);
+      m_reflected_sgm_geo_node->add_child(shape);
+      Shared_sgm_geo reflected_sgm_geo(new Sgm_geo);
       shape->set_geometry(reflected_sgm_geo);
       reflected_sgm_geo->set_sgm(reflected_sgm);
       reflected_sgm_geo->set_aos_vertex_style
@@ -491,10 +500,10 @@ void Assembly::construct_minkowski_sum_nodes()
     for (sit = sgm_list.begin(); sit != sgm_list.end(); ++sit) {
       Sgm* sgm = *sit;
       
-      Shape* shape = new Shape();
-      shape->set_appearance(&m_appearance);
-      m_ms_sgm_geo_node.add_child(shape);
-      Sgm_geo* sgm_geo = new Sgm_geo;
+      Shared_shape shape(new Shape());
+      shape->set_appearance(m_appearance);
+      m_ms_sgm_geo_node->add_child(shape);
+      Shared_sgm_geo sgm_geo(new Sgm_geo);
       shape->set_geometry(sgm_geo);
       sgm_geo->set_minkowski_sum(true);
       sgm_geo->set_sgm(sgm);
@@ -516,12 +525,14 @@ void Assembly::construct_projection_nodes()
     for (ait = aos_list.begin(); ait != aos_list.end(); ++ait) {
       Aos_mark* aos = *ait;
       
-      Shape* shape = new Shape();
-      shape->set_appearance(&m_appearance);
+      Shared_shape shape(new Shape());
+      shape->set_appearance(m_appearance);
       //shape->set_draw_depth(false);
-      m_projection_aos_geo_node.add_child(shape);
-      Arrangement_on_sphere_marked_geo* aos_geo =
-        new Arrangement_on_sphere_marked_geo;
+      m_projection_aos_geo_node->add_child(shape);
+      typedef boost::shared_ptr<Arrangement_on_sphere_marked_geo>
+        Shared_arrangement_on_sphere_marked_geo;
+      Shared_arrangement_on_sphere_marked_geo
+        aos_geo(new Arrangement_on_sphere_marked_geo);
       shape->set_geometry(aos_geo);
       aos_geo->set_aos(aos);
       aos_geo->set_aos_vertex_style(Arrangement_renderer::Vertex_shape::DISC);
@@ -1177,12 +1188,14 @@ void Assembly::construct_part_projection_nodes()
        ++pli)
   {
     Aos_mark* aos = (*pli).second;
-    Shape* shape = new Shape();
-    shape->set_appearance(&m_appearance);
+    Shared_shape shape(new Shape());
+    shape->set_appearance(m_appearance);
     // shape->set_draw_depth(false);
-    m_part_projection_aos_geo_node.add_child(shape);
-    Arrangement_on_sphere_marked_geo* aos_geo =
-      new Arrangement_on_sphere_marked_geo;
+    m_part_projection_aos_geo_node->add_child(shape);
+    typedef boost::shared_ptr<Arrangement_on_sphere_marked_geo>
+      Shared_arrangement_on_sphere_marked_geo;
+    Shared_arrangement_on_sphere_marked_geo
+      aos_geo(new Arrangement_on_sphere_marked_geo);
     shape->set_geometry(aos_geo);
     aos_geo->set_aos(aos);
     aos_geo->set_aos_vertex_style(Arrangement_renderer::Vertex_shape::DISC);
@@ -1250,10 +1263,12 @@ void Assembly::compute_aos_graph()
 /*! \brief construct the graph node. */
 void Assembly::construct_graph_node()
 {
-  m_graph_node.set_appearance(&m_appearance);
-  Arrangement_on_sphere_graph_geo* aos_geo =
-    new Arrangement_on_sphere_graph_geo;
-  m_graph_node.set_geometry(aos_geo);
+  m_graph_node->set_appearance(m_appearance);
+  typedef boost::shared_ptr<Arrangement_on_sphere_graph_geo>
+    Shared_arrangement_on_sphere_graph_geo;
+  Shared_arrangement_on_sphere_graph_geo
+    aos_geo(new Arrangement_on_sphere_graph_geo);
+  m_graph_node->set_geometry(aos_geo);
   aos_geo->set_aos(m_aos_graph);
 
   aos_geo->set_aos_vertex_style(Arrangement_renderer::Vertex_shape::DISC);
@@ -1422,7 +1437,7 @@ void Assembly::clean()
 void Assembly::draw_alt_changed(Field_info* field_info)
 {
  if (!m_draw_alternate) {
-    remove_child(&m_switch);
+    remove_child(m_switch);
     m_childs = m_childs_save;
     return;
   }
@@ -1430,7 +1445,7 @@ void Assembly::draw_alt_changed(Field_info* field_info)
   solve(field_info);
   m_childs_save = m_childs;
   m_childs.clear();
-  add_child(&m_switch);
+  add_child(m_switch);
 }
 
 /* \brief processes change of the flag that indicates whether to increment the
@@ -1438,10 +1453,9 @@ void Assembly::draw_alt_changed(Field_info* field_info)
  */
 void Assembly::inc_alt_changed(Field_info* field_info)
 {
-  Uint which_choice = m_switch.get_which_choice();
-  if (++which_choice == m_switch.children_size())
-    which_choice = 0;
-  m_switch.set_which_choice(which_choice);
+  Uint which_choice = m_switch->get_which_choice();
+  if (++which_choice == m_switch->children_size()) which_choice = 0;
+  m_switch->set_which_choice(which_choice);
 }
 
 /* \brief processes change of the flag that indicates whether  to draw the
@@ -1452,12 +1466,15 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
   solve(field_info);
 
   Uint i;
-  for (i = 0; i < m_ms_sgm_geo_node.children_size(); ++i) {
-    Node* node = m_ms_sgm_geo_node.get_child(i);
-    Shape* shape = static_cast<Shape*>(node);
-    Geometry* geo = shape->get_geometry();
-    Spherical_gaussian_map_base_geo* sgm_geo =
-      static_cast<Spherical_gaussian_map_base_geo*>(geo);
+  for (i = 0; i < m_ms_sgm_geo_node->children_size(); ++i) {
+    Shared_node node = m_ms_sgm_geo_node->get_child(i);
+    Shared_shape shape = boost::static_pointer_cast<Shape>(node);
+    typedef boost::shared_ptr<Geometry>         Shared_geometry;
+    Shared_geometry geo = shape->get_geometry();
+    typedef boost::shared_ptr<Spherical_gaussian_map_base_geo>
+      Shared_spherical_gaussian_map_base_geo;
+    Shared_spherical_gaussian_map_base_geo sgm_geo =
+      boost::static_pointer_cast<Spherical_gaussian_map_base_geo>(geo);
     sgm_geo->set_draw_aos(m_draw_aos_minkowski_sums);
   }
 }
@@ -1467,30 +1484,30 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
  */
 void Assembly::inc_minkowski_sums_changed(Field_info* field_info)
 {
-  Uint which_choice = m_ms_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_ms_sgm_geo_node.children_size())
+  Uint which_choice = m_ms_sgm_geo_node->get_which_choice();
+  if (++which_choice == m_ms_sgm_geo_node->children_size())
     which_choice = 0;
-  m_ms_sgm_geo_node.set_which_choice(which_choice);
+  m_ms_sgm_geo_node->set_which_choice(which_choice);
 
-  which_choice = m_projection_aos_geo_node.get_which_choice();
-  if (++which_choice == m_projection_aos_geo_node.children_size())
+  which_choice = m_projection_aos_geo_node->get_which_choice();
+  if (++which_choice == m_projection_aos_geo_node->children_size())
     which_choice = 0;
-  m_projection_aos_geo_node.set_which_choice(which_choice);
+  m_projection_aos_geo_node->set_which_choice(which_choice);
 
-  which_choice = m_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_sgm_geo_node.children_size())
+  which_choice = m_sgm_geo_node->get_which_choice();
+  if (++which_choice == m_sgm_geo_node->children_size())
     which_choice = 0;
-  m_sgm_geo_node.set_which_choice(which_choice);
+  m_sgm_geo_node->set_which_choice(which_choice);
 
-  which_choice = m_reflected_sgm_geo_node.get_which_choice();
-  if (++which_choice == m_reflected_sgm_geo_node.children_size())
+  which_choice = m_reflected_sgm_geo_node->get_which_choice();
+  if (++which_choice == m_reflected_sgm_geo_node->children_size())
     which_choice = 0;
-  m_reflected_sgm_geo_node.set_which_choice(which_choice);
+  m_reflected_sgm_geo_node->set_which_choice(which_choice);
 
-  which_choice = m_part_projection_aos_geo_node.get_which_choice();
-  if (++which_choice == m_part_projection_aos_geo_node.children_size())
+  which_choice = m_part_projection_aos_geo_node->get_which_choice();
+  if (++which_choice == m_part_projection_aos_geo_node->children_size())
     which_choice = 0;
-  m_part_projection_aos_geo_node.set_which_choice(which_choice);  
+  m_part_projection_aos_geo_node->set_which_choice(which_choice);  
 }
 
 SGAL_END_NAMESPACE

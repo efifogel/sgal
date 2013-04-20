@@ -36,7 +36,7 @@ SGAL_BEGIN_NAMESPACE
  */
 template <typename Input_iterator, typename Difference, typename Aos_geo>
 void overlay_all(Input_iterator begin, Input_iterator end,
-                 Difference diff, Aos_geo * res_geo)
+                 Difference diff, Aos_geo* res_geo)
 {
   typedef typename Aos_geo::Arrangement_on_surface       Aos;
   
@@ -44,11 +44,11 @@ void overlay_all(Input_iterator begin, Input_iterator end,
 
   Input_iterator it;
   for (it = begin; it != end; ++it) {
-    Aos_geo * aos_geo = (*it);
+    boost::shared_ptr<Aos_geo> aos_geo = (*it);
     if (aos_geo->is_dirty()) aos_geo->clean();
   }
 
-  Aos * res_aos = res_geo->get_aos();
+  Aos* res_aos = res_geo->get_aos();
   if (res_geo->get_aos()->is_empty() && (1 == diff)) {
     // There is exactly one item in the range.
     // The arrangement to store the result in is empty.
@@ -58,18 +58,19 @@ void overlay_all(Input_iterator begin, Input_iterator end,
   }
   
   Aos copy_aos;
-  Aos * aos1;
+  Aos* aos1;
   if (res_aos->is_empty()) {
-    Aos_geo * aos_geo = *begin++;
+    boost::shared_ptr<Aos_geo> aos_geo = *begin++;
     aos1 = aos_geo->get_aos();
-  } else {
+  }
+  else {
     copy_aos = *res_aos;
     res_aos->clear();
     aos1 = &copy_aos;
   }
 
-  Aos_geo * aos_geo2 = *begin++;
-  Aos * aos2 = aos_geo2->get_aos();
+  boost::shared_ptr<Aos_geo> aos_geo2 = *begin++;
+  Aos* aos2 = aos_geo2->get_aos();
   Aos tmp_aos1;
   Aos tmp_aos2;
   while (begin != end) {

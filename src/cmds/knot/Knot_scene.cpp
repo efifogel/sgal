@@ -190,8 +190,6 @@ Knot_scene::Knot_scene(Knot_option_parser& option_parser) :
   m_window_manager(NULL),
   m_window_item(NULL),
   m_scene_graph(NULL),
-  m_root(NULL),
-  m_navigation(NULL),
   m_context(NULL),
   m_option_parser(option_parser),
   m_volume_width(0),
@@ -200,22 +198,12 @@ Knot_scene::Knot_scene(Knot_option_parser& option_parser) :
   m_head_pad_x(0), m_head_pad_y(0), m_head_pad_z(0),
   m_tail_pad_x(0), m_tail_pad_y(0), m_tail_pad_z(0),
   m_volume_trans(NULL),
-  m_volume(NULL),
   m_next_free_state_index(0),
   m_next_free_state_block(NULL),
   m_num_invocations(0),
   m_max_level(0)
 {
-  Uint color;
-  for (color = 0; color < NUMBER_OF_COLORS; ++color) {
-    m_pieces[color] = NULL;
-    m_transforms[color] = NULL;
-  }
-
-  Uint i;
-  for (i = 0; i < 3; ++i) {
-    m_time_sensors[i] = NULL;
-    m_pos_interpolators[i] = NULL;
+  for (Uint i = 0; i < 3; ++i) {
     m_time_routers[i] = NULL;
     m_pos_interpolator_routers[i] = NULL;
   }
@@ -237,22 +225,14 @@ void Knot_scene::destroy_scene()
     m_scene_graph = NULL;
   }
 
-  if (m_root) {
-    delete m_root;
-    m_root = NULL;
-  }
-
-  if (m_navigation) {
-    delete m_navigation;
-    m_navigation = NULL;
-  }
+  m_root.reset();
+  m_navigation.reset();
   
   m_solution.clear();
 
-  Uint i;
-  for (i = 0; i < 3; ++i) {
-    delete m_time_sensors[i];
-    delete m_pos_interpolators[i];
+  for (Uint i = 0; i < 3; ++i) {
+    m_time_sensors[i].reset();
+    m_pos_interpolators[i].reset();
     delete m_time_routers[i];
     delete m_pos_interpolator_routers[i];
   }
@@ -279,9 +259,9 @@ void Knot_scene::create_scene()
   
   // Construct a Scene_graph:
   m_scene_graph = new SGAL::Scene_graph;
-  m_root = new SGAL::Group;
+  m_root.reset(new SGAL::Group);
   m_scene_graph->set_root(m_root);
-  m_navigation = new SGAL::Transform;
+  m_navigation.reset(new SGAL::Transform);
   m_scene_graph->set_navigation_root(m_navigation);
   m_root->add_child(m_navigation);
   unsigned int n;
@@ -319,7 +299,7 @@ void Knot_scene::create_scene()
   m_volume_depth = m_head_pad_z + max_size + m_tail_pad_z;
 
   for (n = 0; n < NUMBER_OF_COLORS; ++n) {
-    SGAL::Transform* transform = new SGAL::Transform;
+    Shared_transform transform(new SGAL::Transform);
     m_transforms[n] = transform;
     transform->
       set_translation(static_cast<float>(puzzle.m_pieces[n]->m_position[0]),
@@ -327,18 +307,18 @@ void Knot_scene::create_scene()
                       static_cast<float>(puzzle.m_pieces[n]->m_position[2]));
     m_navigation->add_child(transform);
 
-    SGAL::Touch_sensor* touch_sensor = new SGAL::Touch_sensor;
+    boost::shared_ptr<SGAL::Touch_sensor> touch_sensor(new SGAL::Touch_sensor);
     transform->add_child(touch_sensor);
     touch_sensor->add_to_scene(m_scene_graph);
     
-    SGAL::Shape* shape = new SGAL::Shape;
+    boost::shared_ptr<SGAL::Shape> shape(new SGAL::Shape);
     transform->add_child(shape);
-    SGAL::Appearance* app = new SGAL::Appearance;
+    boost::shared_ptr<SGAL::Appearance> app(new SGAL::Appearance);
     shape->set_appearance(app);
-    SGAL::Material* mat = new SGAL::Material;
+    boost::shared_ptr<SGAL::Material> mat(new SGAL::Material);
     app->set_material(mat);
     mat->set_diffuse_color(colors[n]);
-    SGAL::Piece* piece = new SGAL::Piece;
+    Shared_piece piece(new SGAL::Piece);
     m_pieces[n] = piece;
     Uint size = WIDTH * HEIGHT * DEPTH;
     SGAL::Array<Uint>& composition = piece->get_composition();
@@ -395,12 +375,12 @@ void Knot_scene::create_scene()
     m_navigation->add_child(transform);
     transform->add_child(shape);
 #endif
-    SGAL::Appearance* app = new SGAL::Appearance;
+    boost::shared_ptr<SGAL::Appearance> app(new SGAL::Appearance);
     shape->set_appearance(app);
-    SGAL::Material* mat = new SGAL::Material;
+    boost::shared_ptr<SGAL::Material> mat(new SGAL::Material);
     app->set_material(mat);
     mat->set_diffuse_color(0.5, 0.5, 0.5);
-    m_volume = new SGAL::Piece;
+    m_volume.reset(new SGAL::Piece);
     Uint_array& composition = m_volume->get_composition();
     Uint size = m_volume_width * m_volume_height * m_volume_depth;
     composition.resize(size);
@@ -466,14 +446,14 @@ void Knot_scene::init_animation()
   Uint i;
   for (i = 0; i < 3; ++i) {
     // Construct a rime sensor and add to the scene graph:
-    m_time_sensors[i] = new SGAL::Time_sensor;
+    m_time_sensors[i].reset(new SGAL::Time_sensor);
     m_root->add_child(m_time_sensors[i]);
     m_time_sensors[i]->
       set_cycle_interval(m_option_parser.get_cycle_interval());
-    m_scene_graph->add_time_sensor(m_time_sensors[i]);
+    m_scene_graph->add_time_sensor(&*(m_time_sensors[i]));
 
     // Construct a position interpolator and add to the scene graph:
-    m_pos_interpolators[i] = new SGAL::Position_interpolator;
+    m_pos_interpolators[i].reset(new SGAL::Position_interpolator);
     m_root->add_child(m_pos_interpolators[i]);
     Float_array& keys = m_pos_interpolators[i]->get_keys();
     Vector3f_array& values = m_pos_interpolators[i]->get_values();
@@ -484,8 +464,8 @@ void Knot_scene::init_animation()
 
     // ROUTE TIME.fraction_changed TO POS_INTERPOLATOR.set_fraction
     m_time_routers[i] = new SGAL::Route;
-    if (!m_scene_graph->route(m_time_sensors[i], "fraction_changed",
-                              m_pos_interpolators[i], "set_fraction",
+    if (!m_scene_graph->route(&*(m_time_sensors[i]), "fraction_changed",
+                              &*(m_pos_interpolators[i]), "set_fraction",
                               m_time_routers[i]))
       std::cerr << "Route 1 failed!" << std::endl;
 
@@ -504,7 +484,7 @@ void Knot_scene::update(const State state)
   Uint color;
   for (color = 0; color < NUMBER_OF_COLORS; ++color) {
     if (!state[color].m_active) continue;
-    SGAL::Piece* piece = m_pieces[color];
+    Shared_piece piece = m_pieces[color];
     Uint_array& composition = piece->get_composition();
     Uint width = piece->get_width();
     Uint height = piece->get_height();
@@ -513,10 +493,9 @@ void Knot_scene::update(const State state)
     Uint y = state[color].m_position[1];
     Uint z = state[color].m_position[2];
 
-    Uint i, j, k;
-    for (k = 0; k < depth; ++k) {
-      for (j = 0; j < height; ++j) {
-        for (i = 0; i < width; ++i) {
+    for (Uint k = 0; k < depth; ++k) {
+      for (Uint j = 0; j < height; ++j) {
+        for (Uint i = 0; i < width; ++i) {
           Uint l1 = i + width * (j + height * k);
           if (!composition[l1]) continue;
           Uint l2 = (x+i) + m_volume_width * ((y+j) + m_volume_height * (z+k));
@@ -539,7 +518,7 @@ Knot_scene::Boolean Knot_scene::reduce(State state)
   for (color = 0; color < NUMBER_OF_COLORS; ++color) {
     if (!state[color].m_active) continue;
     bool free = true;
-    SGAL::Piece* piece = m_pieces[color];
+    Shared_piece piece = m_pieces[color];
     Uint_array& composition = piece->get_composition();
     Uint width = piece->get_width();
     Uint height = piece->get_height();
@@ -547,12 +526,11 @@ Knot_scene::Boolean Knot_scene::reduce(State state)
     SGAL::Short x = state[color].m_position[0];
     SGAL::Short y = state[color].m_position[1];
     SGAL::Short z = state[color].m_position[2];
-    Uint i, j, k;
-    for (k = 0; k < depth; ++k) {
+    for (Uint k = 0; k < depth; ++k) {
       if (!free) break;
-      for (j = 0; j < height; ++j) {
+      for (Uint j = 0; j < height; ++j) {
         if (!free) break;
-        for (i = 0; i < width; ++i) {
+        for (Uint i = 0; i < width; ++i) {
           Uint l1 = i + width * (j + height * k);
           if (composition[l1]) continue;
           Uint l2 = (x+i) + m_volume_width * ((y+j) + m_volume_height * (z+k));
@@ -575,7 +553,7 @@ Knot_scene::Boolean Knot_scene::reduce(State state)
 SGAL::Boolean Knot_scene::conflict(State state, Uint color, Uint dir)
 {
   Uint_array& volume_composition = m_volume->get_composition();
-  SGAL::Piece* piece = m_pieces[color];
+  Shared_piece piece = m_pieces[color];
   Uint_array& composition = piece->get_composition();
   Uint width = piece->get_width();
   Uint height = piece->get_height();
@@ -587,10 +565,9 @@ SGAL::Boolean Knot_scene::conflict(State state, Uint color, Uint dir)
   SGAL::Byte z = s_directions[dir][2] + state[color].m_position[2];
   if ((z < 0) || (m_volume_depth <= (z + depth))) return true;
 
-  Uint i, j, k;
-  for (k = 0; k < depth; ++k) {
-    for (j = 0; j < height; ++j) {
-      for (i = 0; i < width; ++i) {
+  for (Uint k = 0; k < depth; ++k) {
+    for (Uint j = 0; j < height; ++j) {
+      for (Uint i = 0; i < width; ++i) {
         Uint l1 = i + width * (j + height * k);
         if (!composition[l1]) continue;
         Uint l2 = (x+i) + m_volume_width * ((y+j) + m_volume_height * (z+k));
@@ -914,7 +891,7 @@ void Knot_scene::mark_all(State state)
   for (k = 0; k < m_volume_depth; ++k) {
     for (color = 0; color < NUMBER_OF_COLORS; ++color) {
       if (!state[color].m_active) continue;
-      SGAL::Piece* piece = m_pieces[color];
+      Shared_piece piece = m_pieces[color];
       Uint depth = piece->get_depth();
       Uint z = state[color].m_position[2] - min_z + k;
       if (z + depth >= m_volume_depth) {
@@ -929,7 +906,7 @@ void Knot_scene::mark_all(State state)
     for (j = 0; j < m_volume_height; ++j) {
       for (color = 0; color < NUMBER_OF_COLORS; ++color) {
         if (!state[color].m_active) continue;
-        SGAL::Piece* piece = m_pieces[color];
+        Shared_piece piece = m_pieces[color];
         Uint height = piece->get_height();
         Uint y = state[color].m_position[1] - min_y + j;
         if (y + height >= m_volume_height) {
@@ -944,7 +921,7 @@ void Knot_scene::mark_all(State state)
       for (i = 0; i < m_volume_width; ++i) {
         for (color = 0; color < NUMBER_OF_COLORS; ++color) {
           if (!state[color].m_active) continue;
-          SGAL::Piece* piece = m_pieces[color];
+          Shared_piece piece = m_pieces[color];
           Uint width = piece->get_width();
           Uint x = state[color].m_position[0] - min_x + i;
           if (x + width >= m_volume_width) {
@@ -1007,8 +984,8 @@ void Knot_scene::animate(Scene_time cur_time, Uint color, Uint dir, Uint route)
   puzzle.m_pieces[color]->m_position[2] += s_directions[dir][2];
     
   // Route the interpolator to the transform:
-  if (!m_scene_graph->route(m_pos_interpolators[route], "value_changed",
-                            m_transforms[color], "set_translation",
+  if (!m_scene_graph->route(&*(m_pos_interpolators[route]), "value_changed",
+                            &*(m_transforms[color]), "set_translation",
                             m_pos_interpolator_routers[route]))
     std::cerr << "Route 2 failed!" << std::endl;
 

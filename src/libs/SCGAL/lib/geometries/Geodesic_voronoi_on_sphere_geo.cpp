@@ -30,7 +30,7 @@
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
+ * great circles embeded on a sphere.
  */
 
 #include <boost/lexical_cast.hpp>
@@ -62,7 +62,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Geodesic_voronoi_on_sphere_geo::s_prototype = NULL;
+Container_proto* Geodesic_voronoi_on_sphere_geo::s_prototype = NULL;
 
 /*! Default values */
 const Boolean Geodesic_voronoi_on_sphere_geo::s_def_draw_sites(SGAL_TRUE);
@@ -74,13 +74,12 @@ Geodesic_voronoi_on_sphere_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
   m_draw_sites(s_def_draw_sites),
   m_site_color(s_def_site_color)
-{
-}
+{}
 
 /*! Destructor */
 Geodesic_voronoi_on_sphere_geo::~Geodesic_voronoi_on_sphere_geo() {}
 
-/*! \brief initializes the container prototype */
+/*! \brief initializes the container prototype. */
 void Geodesic_voronoi_on_sphere_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -94,34 +93,32 @@ void Geodesic_voronoi_on_sphere_geo::init_prototype()
                                           get_member_offset(&m_draw_sites)));
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Geodesic_voronoi_on_sphere_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
-Container_proto * Geodesic_voronoi_on_sphere_geo::get_prototype()
+/*! \brief obtains the container prototype. */
+Container_proto* Geodesic_voronoi_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Geodesic_voronoi_on_sphere_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes */
- void Geodesic_voronoi_on_sphere_geo::set_attributes(Element * elem)
+/*! \brief sets the ellpsoid attributes. */
+ void Geodesic_voronoi_on_sphere_geo::set_attributes(Element* elem)
 {
   Arrangement_on_sphere_base_geo::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "siteIndex") {
       tokenizer tokens(value, sep);      
       Uint size = std::distance(tokens.begin(), tokens.end());
@@ -161,6 +158,6 @@ Container_proto * Geodesic_voronoi_on_sphere_geo::get_prototype()
 }
 
 /*! \brief */
-void Geodesic_voronoi_on_sphere_geo::cull(Cull_context & cull_context) {}
+void Geodesic_voronoi_on_sphere_geo::cull(Cull_context& cull_context) {}
 
 SGAL_END_NAMESPACE

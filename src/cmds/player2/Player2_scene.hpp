@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6205 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -45,8 +45,16 @@ class Player2_option_parser;
 
 class Player2_scene : public Player_scene {
 public:
+#if defined(USE_CGM)
+  /*! The CGM geometry */
+  typedef boost::shared_ptr<SGAL::Cubical_gaussian_map_geo>
+    Shared_cubical_gaussian_map_geo;
+#endif
+  typedef boost::shared_ptr<SGAL::Spherical_gaussian_map_base_geo>
+    Shared_spherical_gaussian_map_base_geo;
+
   /*! Constructor */
-  Player2_scene(Player2_option_parser * option_parser);
+  Player2_scene(Player2_option_parser* option_parser);
 
   /*! Destructor */
   virtual ~Player2_scene();
@@ -59,19 +67,19 @@ public:
    * \param window_item the window to draw
    * \param dont_accumulate indicates that no accumulation should be performed
    */
-  virtual void draw_window(SGAL::Window_item * window_item,
+  virtual void draw_window(SGAL::Window_item* window_item,
                            SGAL::Boolean dont_accumulate);
 
 private:
-  Player2_option_parser * m_option_parser;
+  Player2_option_parser* m_option_parser;
   
 #if defined(USE_CGM)
   /*! The CGM geometry */
-  SGAL::Cubical_gaussian_map_geo * m_cgm_geo;
+  Shared_cubical_gaussian_map_geo m_cgm_geo;
 #endif
 
   /*! The SGM geometry */
-  SGAL::Spherical_gaussian_map_base_geo * m_sgm_geo;
+  Shared_spherical_gaussian_map_base_geo m_sgm_geo;
 };
 
 #endif

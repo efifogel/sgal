@@ -25,13 +25,12 @@
 /*! \file
  */
 
-#include <CGAL/basic.h>
-
 #include <list>
 
+#include <CGAL/basic.h>
 #include <CGAL/Envelope_3/Envelope_pm_dcel.h>
 
-/*! Extend the envelope-diagram vertex */
+/*! Extend the envelope-diagram vertex. */
 template <typename Point_2, typename Data>
 class Rendered_envelope_diagram_vertex :
   public CGAL::Envelope_3::Envelope_pm_vertex<Point_2, Data>
@@ -51,7 +50,7 @@ typedef Double_point_list::reverse_iterator                 Double_point_riter;
 typedef Double_point_list::const_reverse_iterator
   Double_point_const_riter;
 
-/*! Extend the planar-map halfedge */
+/*! Extend the planar-map halfedge. */
 template <typename X_monotone_curve_2, typename Data>
 class Rendered_envelope_diagram_halfedge :
   public CGAL::Envelope_3::Envelope_pm_halfedge<X_monotone_curve_2, Data>
@@ -61,14 +60,14 @@ private:
   typedef CGAL::Envelope_3::Envelope_pm_halfedge<X_monotone_curve_2, Data>
     Base;
 
-  /*! A sequence of points that approximate the x-monotone curve */
-  Double_point_list * m_points;
+  /*! A sequence of points that approximate the x-monotone curve. */
+  Double_point_list* m_points;
   
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Rendered_envelope_diagram_halfedge() : m_points(NULL) {}
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Rendered_envelope_diagram_halfedge() { clear_points(); }
 
   /*! Clear the sequence of points that approximate the x-monotone curve */
@@ -83,27 +82,27 @@ public:
   /*! Assign from another halfedge.
    * \param h the other halfedge.
    */
-  virtual void assign(const Self & h)
+  virtual void assign(const Self& h)
   {
     Base::assign(h);
     set_points(h.m_points);
   }
 
-  /*! Set the sequence of points that approximate the x-monotone curve */
-  void set_points(Double_point_list * points)
+  /*! Set the sequence of points that approximate the x-monotone curve. */
+  void set_points(Double_point_list* points)
   {
     clear_points();
     m_points = points;
   }
 
-  /*! Obtain the sequence of points that approximate the x-monotone curve */
-  Double_point_list * get_points() { return m_points; }
+  /*! Obtain the sequence of points that approximate the x-monotone curve. */
+  Double_point_list* get_points() { return m_points; }
 
-  /*! Obtain the sequence of points that approximate the x-monotone curve */
-  const Double_point_list * get_points() const { return m_points; }
+  /*! Obtain the sequence of points that approximate the x-monotone curve. */
+  const Double_point_list* get_points() const { return m_points; }
 };
 
-/*! Extend the planar-map face */
+/*! Extend the planar-map face. */
 template <typename Data>
 class Rendered_envelope_diagram_face :
   public CGAL::Envelope_3::Envelope_pm_face<Data>
@@ -113,7 +112,7 @@ private:
   typedef CGAL::Envelope_3::Envelope_pm_face<Data>      Base;
 };
 
-/*! A new dcel builder with full Envelope features */
+/*! A new dcel builder with full Envelope features. */
 template <typename Traits, typename Data>
 class Rendered_Envelope_diagram_dcel :
   public CGAL::Arr_dcel_base<Rendered_envelope_diagram_vertex

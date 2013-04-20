@@ -24,6 +24,7 @@
  */
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #ifndef SGAL_SNAPSHOT_HPP
 #define SGAL_SNAPSHOT_HPP
@@ -53,6 +54,8 @@ public:
     LAST
   };
 
+  typedef boost::shared_ptr<Image>              Shared_image;
+  
   /*! Constructor */
   Snapshot(Boolean proto = false);
 
@@ -123,17 +126,17 @@ public:
   File_format get_file_format() const { return m_file_format; }
 
   /*! Set the image */
-  void set_image(Image* image) { m_image = image; }
+  void set_image(Shared_image image) { m_image = image; }
   
   /*! Obtain the image */
-  Image* get_image() const { return m_image; }
+  Shared_image get_image() const { return m_image; }
   
 protected: 
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
   /*! A place holder for the image */
-  Image* m_image;
+  Shared_image m_image;
 
   /*! The directory to save the image at */
   std::string m_dir_name;

@@ -27,8 +27,8 @@
 #include <string>
 #include <iostream>
 #include <string.h>
-
 #include <boost/unordered_set.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/Types.hpp"
 #include "SGAL/Scene.hpp"
@@ -81,10 +81,17 @@ public:
   typedef SGAL::X11_window_item                 Window_item;
 #endif
 
-  typedef SGAL::Uint                    Uint;
-  typedef SGAL::Int                     Int;
-  typedef SGAL::Boolean                 Boolean;
-  typedef SGAL::Scene_time              Scene_time;
+  typedef SGAL::Uint                            Uint;
+  typedef SGAL::Int                             Int;
+  typedef SGAL::Boolean                         Boolean;
+  typedef SGAL::Scene_time                      Scene_time;
+
+  typedef boost::shared_ptr<SGAL::Group>        Shared_group;
+  typedef boost::shared_ptr<SGAL::Transform>    Shared_transform;
+  typedef boost::shared_ptr<SGAL::Piece>        Shared_piece;
+  typedef boost::shared_ptr<SGAL::Time_sensor>  Shared_time_sensor;
+  typedef boost::shared_ptr<SGAL::Position_interpolator>
+    Shared_position_interpolator;
   
   /*! The piece colors (ids) */
   enum Color {
@@ -133,29 +140,29 @@ public:
     std::string m_filename;
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Knot_scene(Knot_option_parser& option_parser);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Knot_scene(void);
 
-  /*! \brief creates the scene */
+  /*! \brief creates the scene. */
   virtual void create_scene();
 
-  /*! \brief destroys the scene */
+  /*! \brief destroys the scene. */
   virtual void destroy_scene();
   
-  /*! \brief initializes the secene */
+  /*! \brief initializes the secene. */
   virtual void init_scene();
 
-  /*! \brief clears the scene */  
+  /*! \brief clears the scene. */  
   virtual void clear_scene();
 
-  /*! Reshape the viewport of a window of the scene
-   * It is assumed that the window context is the current context
-   * \param window_item the window to reshape
-   * \param width the new width of the window
-   * \param height the new height of the window
+  /*! Reshape the viewport of a window of the scene.
+   * It is assumed that the window context is the current context.
+   * \param window_item the window to reshape.
+   * \param width the new width of the window.
+   * \param height the new height of the window.
    */
   virtual void reshape_window(SGAL::Window_item* window_item,
                               SGAL::Uint width, SGAL::Uint height);
@@ -177,12 +184,12 @@ public:
   /*! Handle a keyboard event. */
   virtual void handle(SGAL::Keyboard_event* event);
    
-  /*! Set the window manager */
+  /*! Set the window manager. */
   template <typename Window_manager>
   void set_window_manager(Window_manager* manager)
   { m_window_manager = manager; }
 
-  /*! \brief obtains the scene scene-graph */
+  /*! \brief obtains the scene scene-graph. */
   SGAL::Scene_graph* get_scene_graph() { return m_scene_graph; }
 
   /*! \brief returns true iff the scene does simulate something */
@@ -191,7 +198,7 @@ public:
   /*! \brief clears the scene */
   void clear();
 
-  /*! Obtain the name of a given color */
+  /*! Obtain the name of a given color. */
   static const char* get_color_name(Uint color) { return s_color_names[color]; }
   
 private:
@@ -199,86 +206,86 @@ private:
   typedef SGAL::Array<SGAL::Float>      Float_array;
   typedef SGAL::Array<Uint>             Uint_array;
   
-  /*! The window manager */
+  /*! The window manager. */
   Window_manager* m_window_manager;
 
-  /*! The window item */
+  /*! The window item. */
   Window_item* m_window_item;
   
-  /*! The scene graph */
+  /*! The scene graph. */
   SGAL::Scene_graph* m_scene_graph;
 
-  /*! The root of the scene graph */
-  SGAL::Group* m_root;
+  /*! The root of the scene graph. */
+  Shared_group m_root;
 
-  /*! The scene navigation root */
-  SGAL::Transform* m_navigation;
+  /*! The scene navigation root. */
+  Shared_transform m_navigation;
   
-  /*! The context of the scene */
+  /*! The context of the scene. */
   SGAL::Context* m_context;
   
-  /*! Option parser */
+  /*! Option parser. */
   Knot_option_parser& m_option_parser;
 
-  /*! A vector of directions to move the pieces while attempting to solve */
+  /*! A vector of directions to move the pieces while attempting to solve. */
   static Piece_position s_directions[NUMBER_OF_DIRECTIONS] ;
 
-  /*! COlor names for debuggin */
+  /*! COlor names for debuggin. */
   static const char* s_color_names[NUMBER_OF_COLORS];
 
-  /*! Pointers to the piece geometries */
-  SGAL::Piece* m_pieces[NUMBER_OF_COLORS];
+  /*! Pointers to the piece geometries. */
+  Shared_piece m_pieces[NUMBER_OF_COLORS];
 
-  /*! Pointers to the piece transforms */
-  SGAL::Transform* m_transforms[NUMBER_OF_COLORS];
+  /*! Pointers to the piece transforms. */
+  Shared_transform m_transforms[NUMBER_OF_COLORS];
   
-  /*! The width of the volume where all the pieces reside */
+  /*! The width of the volume where all the pieces reside. */
   Uint m_volume_width;
 
-  /*! The height of the volume where all the pieces reside */
+  /*! The height of the volume where all the pieces reside. */
   Uint m_volume_height;
 
-  /*! The depth of the volume where all the pieces reside */
+  /*! The depth of the volume where all the pieces reside. */
   Uint m_volume_depth;
 
-  /*! The head padding of the pieces within the volume along the x-coord */
+  /*! The head padding of the pieces within the volume along the x-coord. */
   Uint m_head_pad_x;
 
-  /*! The head padding of the pieces within the volume along the y-coord */
+  /*! The head padding of the pieces within the volume along the y-coord. */
   Uint m_head_pad_y;
 
-  /*! The head padding of the pieces within the volume along the z-coord */
+  /*! The head padding of the pieces within the volume along the z-coord. */
   Uint m_head_pad_z;
 
-  /*! The tail padding of the pieces within the volume along the x-coord */
+  /*! The tail padding of the pieces within the volume along the x-coord. */
   Uint m_tail_pad_x;
 
-  /*! The tail padding of the pieces within the volume along the y-coord */
+  /*! The tail padding of the pieces within the volume along the y-coord. */
   Uint m_tail_pad_y;
 
-  /*! The tail padding of the pieces within the volume along the z-coord */
+  /*! The tail padding of the pieces within the volume along the z-coord. */
   Uint m_tail_pad_z;
   
-  /*! The volume transform */
+  /*! The volume transform. */
   SGAL::Transform* m_volume_trans;
 
-  /*! The volume piece */
-  SGAL::Piece* m_volume;
+  /*! The volume piece. */
+  Shared_piece m_volume;
 
-  /*! \brief hashes a given state --- map to size_t */
+  /*! \brief hashes a given state --- map to size_t. */
   static inline size_t my_hash(const State state);
 
-  /*! The hash_multiset's key equality function object */
+  /*! The hash_multiset's key equality function object. */
   class Hash_comparer {
   public:
 
-    /*! \brief compares 2 hash keys */
+    /*! \brief compares 2 hash keys. */
     inline bool operator( )(const Piece_state* key1, const Piece_state* key2)
       const;
   };
   
   /*! Stores all visited states. Used to prevent visiting the same state
-   * more than once
+   * more than once.
    */
   struct Hasher {
     inline size_t operator()(const Piece_state* state) const
@@ -291,105 +298,105 @@ private:
   typedef std::list<Step>                       Solution;
   typedef Solution::iterator                    Solution_iter;
 
-  /*! The solution */
+  /*! The solution. */
   Solution                                      m_solution;
 
-  /*! Pointer to the next step in the solution */
+  /*! Pointer to the next step in the solution. */
   Solution::iterator                            m_solution_iterator;
   
   typedef std::list<State*>                     List_state_blocks;
   typedef List_state_blocks::iterator           List_states_iter;
   
-  /*! A link list of free state */
+  /*! A link list of free state. */
   List_state_blocks m_state_blocks;
 
   #define BLOCK_SIZE                            65536
 
-  /*! Next free state index */
+  /*! Next free state index. */
   Uint m_next_free_state_index;
   
-  /*! Next free state block */
+  /*! Next free state block. */
   State* m_next_free_state_block;
   
-  /*! Number of times solve() is invoked */
+  /*! Number of times solve() is invoked. */
   Uint m_num_invocations;
 
-  /*! The level of recursion */
+  /*! The level of recursion. */
   Uint m_max_level;
 
   /*! The time sensors to trigger the interpolations respectively. */
-  SGAL::Time_sensor* m_time_sensors[3];
+  Shared_time_sensor m_time_sensors[3];
 
-  /*! The position interpolators to animate the solution */
-  SGAL::Position_interpolator* m_pos_interpolators[3];
+  /*! The position interpolators to animate the solution. */
+  Shared_position_interpolator m_pos_interpolators[3];
 
-  /*! The time sensor routers */
+  /*! The time sensor routers. */
   SGAL::Route* m_time_routers[3];
 
-  /*! The position interpolator routers */
+  /*! The position interpolator routers. */
   SGAL::Route* m_pos_interpolator_routers[3];
 
-  /*! Encode 1 color */
+  /*! Encode 1 color. */
   Uint encode(Uint color1) const { return color1+1; }
 
-  /*! Encode 2 colors */
+  /*! Encode 2 colors. */
   Uint encode(Uint color1, Uint color2) const
   { return (color2+1) + (NUMBER_OF_COLORS+1)* encode(color1); }
 
-  /*! Encode 3 colors */
+  /*! Encode 3 colors. */
   Uint encode(Uint color1, Uint color2, Uint color3) const
   { return (color3+1) + (NUMBER_OF_COLORS+1)* encode(color1, color2); }
   
-  /*! \brief indulges user requests from the command line */
+  /*! Indulge user requests from the command line */
   void indulge_user();
 
-  /*! \brief solves the puzzle */
+  /*! Solve the puzzle. */
   Boolean solve(State state, Uint level);
 
-  /*! \brief updates the volume */
+  /*! Update the volume. */
   void update(const State state);
   
-  /*! \brief reduces the number of pieces if possible */
+  /*! Reduce the number of pieces if possible. */
   Boolean reduce(State state);
 
-  /*! \brief advances one piece (one step), if possible */
+  /*! Advance one piece (one step), if possible. */
   Boolean advance1(State state, Uint color, Uint dir, State& next_state);
 
-  /*! \brief advances two pieces (one step), if possible */
+  /*! Advance two pieces (one step), if possible. */
   Boolean advance2(State state, Uint color1, Uint color2, Uint dir,
                    State& next_state);
 
-  /*! \brief advances three pieces (one step), if possible */
+  /*! Advance three pieces (one step), if possible. */
   Boolean advance3(State state, Uint color1, Uint color2, Uint color3,
                    Uint dir, State& next_state);
   
-  /*! \brief does the expected move cause a conflict? */
+  /*! Determine whether the expected move cause a conflict. */
   Boolean conflict(State state, Uint color, Uint dir);
 
-  /*! \brief checks whether the state is empty */
+  /*! Check whether the state is empty. */
   Boolean empty(State state) const;
 
-  /*! \brief marks a given state and its equivalent states as visited */
+  /*! Mark a given state and its equivalent states as visited. */
   void mark_all(State state);
 
-  /*! \brief marks a given state as visited */
+  /*! Mark a given state as visited. */
   void mark(State state);
 
-  /*! \brief finds the minimum coordinate values */
+  /*! Find the minimum coordinate values. */
   static void find_min(const State state,
                        Uint& min_x, Uint& min_y, Uint& min_z);
 
-  /*! \brief compares lexicographically two states */
+  /*! Compare lexicographically two states. */
   static Int compare(const State state1, const State state2);
 
-  /*! \brief initializes the nodes required for animations */
+  /*! Initialize the nodes required for animations. */
   void init_animation();
 
-  /*! \brief animates */
+  /*! Animate. */
   void animate(Scene_time cur_time, Uint color, Uint dir, Uint route);
 };
 
-/*! Exporter */
+/*! Exporter. */
 inline std::ostream& operator<<(std::ostream& os,
                                  const Knot_scene::State state)
 {
@@ -415,14 +422,14 @@ inline std::ostream& operator<<(std::ostream& os,
   return os;
 }
 
-/*! Indenter */
+/*! \brief indenter. */
 inline std::ostream& operator<<(std::ostream& os, Knot_scene::indent const& in)
 {
   for (Knot_scene::Uint i = 0; i != in.m_depth; ++i) os << " ";
   return os;
 }
 
-/*! Compare 2 hash keys */
+/*! \brief compares 2 hash keys. */
 inline bool Knot_scene::Hash_comparer::operator()(const Piece_state* key1,
                                                   const Piece_state* key2)
   const
@@ -430,7 +437,7 @@ inline bool Knot_scene::Hash_comparer::operator()(const Piece_state* key1,
   return (compare(key1, key2) == 0);
 }
 
-/*! Hash a given state --- map to size_t */
+/*! \brief hashes a given state --- map to size_t. */
 inline size_t Knot_scene::my_hash(const State state)
 {
   Uint min_x, min_y, min_z;

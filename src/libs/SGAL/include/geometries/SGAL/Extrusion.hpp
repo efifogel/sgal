@@ -156,6 +156,10 @@ public:
 
   /*! Clean the representation. */
   virtual void clean();
+
+  /*! Process change of structure. */
+  //! \todo refine---it is unnecessary to rebuild everything on every change.
+  virtual void structure_changed(Field_info* field_info);
   
 protected:
   /*! Specifies whether the extruded shape is open at the beginning. */

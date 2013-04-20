@@ -30,7 +30,7 @@
 
 /*! \file
  * A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
+ * great circles embeded on a sphere.
  */
 
 #include <boost/lexical_cast.hpp>
@@ -57,10 +57,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Arrangement_on_surface_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_surface_geo::s_prototype = NULL;
 
 /*! Insertion strategy names */
-const char * Arrangement_on_surface_geo::s_insertion_strategy_names[] =
+const char* Arrangement_on_surface_geo::s_insertion_strategy_names[] =
   {"aggregate", "increment"};
 
 /*! Default values */
@@ -111,7 +111,7 @@ const Float Arrangement_on_surface_geo::s_def_aos_edge_line_width(1);
 const Float Arrangement_on_surface_geo::s_def_aos_delta_angle(.1f);
 const Vector3f Arrangement_on_surface_geo::s_def_aos_edge_color(0, 0, .5f);
 
-/*! Constructor */
+/*! Constructor. */
 Arrangement_on_surface_geo::
 Arrangement_on_surface_geo(Boolean proto) :
   Geometry(proto),
@@ -168,11 +168,8 @@ Arrangement_on_surface_geo(Boolean proto) :
   m_inflated_tube_edges_renderer(NULL)
 {}
 
-/*! Destructor */
-Arrangement_on_surface_geo::~Arrangement_on_surface_geo()
-{
-  clear();
-}
+/*! Destructor. */
+Arrangement_on_surface_geo::~Arrangement_on_surface_geo() { clear(); }
 
 /*! \brief initializes the container prototype */
 void Arrangement_on_surface_geo::init_prototype()
@@ -242,39 +239,37 @@ void Arrangement_on_surface_geo::init_prototype()
                                exec_func));
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Arrangement_on_surface_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
-Container_proto * Arrangement_on_surface_geo::get_prototype()
+/*! \brief obtains the container prototype. */
+Container_proto* Arrangement_on_surface_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_surface_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes */
- void Arrangement_on_surface_geo::set_attributes(Element * elem)
+/*! \brief sets the ellpsoid attributes. */
+ void Arrangement_on_surface_geo::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
 
     if (name == "insertionStrategy") {
       std::string req_strategy = strip_double_quotes(value);
       for (unsigned int i = 0; i < NUM_INSERTION_STRATEGIES; ++i) {
-        const char * strategy = s_insertion_strategy_names[i];
+        const char* strategy = s_insertion_strategy_names[i];
         if (req_strategy.compare(strategy) == 0) {
           m_insertion_strategy = (Insertion_strategy) i;
           break;
@@ -421,10 +416,10 @@ Container_proto * Arrangement_on_surface_geo::get_prototype()
 }
 
 /*! \brief */
-void Arrangement_on_surface_geo::cull(Cull_context & cull_context) {}
+void Arrangement_on_surface_geo::cull(Cull_context& cull_context) {}
 
 /*! \brief draws the geometry */
-void Arrangement_on_surface_geo::draw(Draw_action * action)
+void Arrangement_on_surface_geo::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
   // if (is_empty()) return;
@@ -437,7 +432,7 @@ void Arrangement_on_surface_geo::draw(Draw_action * action)
   if (normalize) glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the arrangement on sphere opaque
+/*! \brief draws the arrangement on sphere opaque.
  * 1. Draw the geometry once without updating the depth buffer. Draw only
  * the embedding surface, and the vertices and edges rendered with flat
  * polygons embedded on the sphere, as indicated by their shapes.
@@ -447,9 +442,9 @@ void Arrangement_on_surface_geo::draw(Draw_action * action)
  * 3. Draw the vertices and edges rendered with points and lines
  * 4. Draw the vertices and edges rendered the usual way.
  */
-void Arrangement_on_surface_geo::draw_opaque(Draw_action * action)
+void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
 {
-  Context * context = action->get_context();
+  Context* context = action->get_context();
   context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
 
   // Update only the color buffer:
@@ -512,7 +507,8 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action * action)
     context->draw_light_enable(false);  
     context->draw_point_size(m_aos_vertex_point_size);
     glIsEnabled(GL_POINT_SMOOTH);
-  } else if (m_aos_vertex_style == Vertex_shape::RING) {
+  }
+  else if (m_aos_vertex_style == Vertex_shape::RING) {
     context->draw_light_enable(false);  
     context->draw_line_width(m_aos_vertex_point_size);
     glIsEnabled(GL_LINE_SMOOTH);
@@ -521,7 +517,8 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action * action)
   if (m_aos_vertex_style == Vertex_shape::POINT) {
     context->draw_point_size(1.0f);
     context->draw_light_enable(true);  
-  } else if (m_aos_vertex_style == Vertex_shape::RING) {
+  }
+  else if (m_aos_vertex_style == Vertex_shape::RING) {
     context->draw_light_enable(true);  
     context->draw_line_width(1.0);
   }
@@ -531,7 +528,8 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action * action)
     context->draw_light_enable(false);  
     context->draw_point_size(m_aos_vertex_point_size);
     glIsEnabled(GL_POINT_SMOOTH);
-  } else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
+  }
+  else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
     context->draw_light_enable(false);  
     context->draw_line_width(m_aos_vertex_point_size);
     glIsEnabled(GL_LINE_SMOOTH);
@@ -541,7 +539,8 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action * action)
   if (m_aos_isolated_vertex_style == Vertex_shape::POINT) {
     context->draw_point_size(1.0f);
     context->draw_light_enable(true);  
-  } else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
+  }
+  else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
     context->draw_light_enable(true);  
     context->draw_line_width(1.0);
   }
@@ -555,14 +554,14 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action * action)
   context->draw_material_mode_enable(Gfx::NO_COLOR_MATERIAL);
 }
 
-/*! \brief raises the flag that indicates that the renderer changed */
-void Arrangement_on_surface_geo::renderer_changed(Field_info * field_info)
+/*! \brief raises the flag that indicates that the renderer changed. */
+void Arrangement_on_surface_geo::renderer_changed(Field_info* field_info)
 {
   m_renderer.clear();
   m_renderer_dirty = true;
 }
 
-/*! \brief cleans the renderer */
+/*! \brief cleans the renderer. */
 void Arrangement_on_surface_geo::clean_renderer()
 {
   if (get_draw_aos_surface())

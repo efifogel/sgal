@@ -337,9 +337,42 @@ public:
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action) = 0;
 
-  /*! Process change of coordinates. */
-  virtual void coord_changed(Field_info* /* field_info. */) {}
+  /*! Process change of coordinate field.
+   * Generally process the change of coordinate field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void coord_changed(Field_info* field_info);
 
+  /*! Process change of normal field.
+   * Generally process the change of normal field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void normal_changed(Field_info* field_info);
+
+  /*! Process change of color field.
+   * Generally process the change of color field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void color_changed(Field_info* field_info);
+
+  /*! Process change of texture coordinate field.
+   * Generally process the change of texture coordinate field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void tex_coord_changed(Field_info* field_info);
+  
 protected:
   /*! The number of primitives in this Geo_set. */
   Uint m_num_primitives;

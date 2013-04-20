@@ -67,58 +67,51 @@ Assembly_part::Assembly_part(Boolean proto) :
 /*! Destructor */
 Assembly_part::~Assembly_part() { clear(); }
 
-/*! \brief initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Assembly_part::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Group::get_prototype());
 }
 
-/*! \brief deletes the node prototype */
+/*! \brief deletes the node prototype. */
 void Assembly_part::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype */
+/*! \brief obtains the node prototype. */
 Container_proto* Assembly_part::get_prototype() 
 {  
   if (!s_prototype) Assembly_part::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
+/*! \brief sets the attributes of the object extracted from the input file. */
 void Assembly_part::set_attributes(Element* elem) 
 { Group::set_attributes(elem); }
 
-/*! \brief prints information to an output stream */
+/*! \brief prints information to an output stream. */
 void Assembly_part::print_info(std::ostream& out)
 { out << "Part id[" << m_id << "]" << std::endl; }
 
-/*! \brief clears the representation */
+/*! \brief clears the representation. */
 void Assembly_part::clear()
 {
-  Sgm_geo_iter is;
-  std::list<Boolean>::iterator ib = m_owned_sgm_geos.begin();
-  for (is = m_sgm_geos.begin(); is != m_sgm_geos.end(); ++is, ++ib) {
-    if (*ib) delete (*is);
-  }
-  m_owned_sgm_geos.clear();
   m_sgm_geos.clear();
   m_sgm_apps.clear();
-  
   m_dirty = true;
 }
 
-/*! \brief cleans internal representation */
+/*! \brief cleans internal representation. */
 void Assembly_part::clean()
 {
   clean_sgm_geos(this);
   m_dirty = false;
 }
 
-/*! \brief obtains the container of the Sgm geometries that comprise this part
+/*! \brief obtains the container of the Sgm geometries that comprise this part.
  */
 Assembly_part::Sgm_geo_list& Assembly_part::get_sgm_geos()
 {
@@ -126,7 +119,7 @@ Assembly_part::Sgm_geo_list& Assembly_part::get_sgm_geos()
   return m_sgm_geos;
 }
 
-/*! \brief obtains the container of the SGM appearances that comprise this part
+/*! \brief obtains the container of the SGM appearances that comprise this part.
  */
 Assembly_part::Appearance_list& Assembly_part::get_sgm_apps()
 {
@@ -134,35 +127,38 @@ Assembly_part::Appearance_list& Assembly_part::get_sgm_apps()
   return m_sgm_apps;
 }
 
-/*! \brief constructs all the SGM's that comprise this part */
+/*! \brief constructs all the SGM's that comprise this part. */
 void Assembly_part::clean_sgm_geos(Group* group)
 {
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Node* node = *it;
-    clean_sgm_geos(node);
+    Shared_node node = *it;
+    clean_sgm_geos(&*node);
   }
 }
 
-/*! \brief constructs all the SGM's that comprise this part */
+/*! \brief constructs all the SGM's that comprise this part. */
 void Assembly_part::clean_sgm_geos(Node* node)
 {
   static float total_duration_time = 0;
   static Uint total_number_of_vertices = 0;
   static Uint total_number_of_edges = 0;
   static Uint total_number_of_facets = 0;
+
   Shape* shape = dynamic_cast<Shape*>(node);
   if (shape) {
-    Appearance* app = shape->get_appearance();
-    Sgm_geo* sgm_geo = dynamic_cast<Sgm_geo*>(shape->get_geometry());
+    Shared_appearance app = shape->get_appearance();
+    Shared_sgm_geo sgm_geo =
+      boost::dynamic_pointer_cast<Sgm_geo>(shape->get_geometry());
     if (sgm_geo) {
       m_sgm_geos.push_back(sgm_geo);
-      m_owned_sgm_geos.push_back(false);
       m_sgm_apps.push_back(app);
       return;
     }
 
-    Exact_polyhedron_geo* polyhedron_geo =
-      dynamic_cast<Exact_polyhedron_geo*>(shape->get_geometry());
+    typedef boost::shared_ptr<Exact_polyhedron_geo>
+      Shared_exact_polyhedron_geo;
+    Shared_exact_polyhedron_geo polyhedron_geo =
+      boost::dynamic_pointer_cast<Exact_polyhedron_geo>(shape->get_geometry());
     if (polyhedron_geo) {
       typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
       typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
@@ -198,13 +194,12 @@ void Assembly_part::clean_sgm_geos(Node* node)
         number_of_edges += p.size_of_halfedges()/2;
         number_of_facets += p.size_of_facets();
         // std::cout << p << std::endl;
-        Sgm_geo* sgm_geo = new Sgm_geo;
+        Shared_sgm_geo sgm_geo = Shared_sgm_geo(new Sgm_geo);
         sgm_geo->set_polyhedron(&p);
         sgm_geo->set_aos_edge_color(app->get_material()->get_diffuse_color());
         // We need to clean, because the Polyhedron is local
         sgm_geo->clean();
         m_sgm_geos.push_back(sgm_geo);
-        m_owned_sgm_geos.push_back(true);
         m_sgm_apps.push_back(app);
       }
       total_number_of_vertices += number_of_vertices;
@@ -222,8 +217,10 @@ void Assembly_part::clean_sgm_geos(Node* node)
       return;
     }
 
-    Exact_nef_polyhedron* nef_geo =
-      dynamic_cast<Exact_nef_polyhedron*>(shape->get_geometry());
+    typedef boost::shared_ptr<Exact_nef_polyhedron>
+      Shared_exact_nef_polyhedron;    
+    Shared_exact_nef_polyhedron nef_geo =
+      boost::dynamic_pointer_cast<Exact_nef_polyhedron>(shape->get_geometry());
     if (nef_geo) {
       nef_geo->convex_decomposition();
       Exact_nef_polyhedron::Volume_const_iterator ci;
@@ -233,12 +230,11 @@ void Assembly_part::clean_sgm_geos(Node* node)
         Sgm_geo::Polyhedron polyhedron;
         nef_geo->convert_inner_shell_to_polyhedron(ci->shells_begin(),
                                                    polyhedron);
-        Sgm_geo* sgm_geo = new Sgm_geo;
+        Shared_sgm_geo sgm_geo = Shared_sgm_geo(new Sgm_geo);
         sgm_geo->set_polyhedron(&polyhedron);
         // We need to clean, because the Polyhedron is local
         sgm_geo->clean();
         m_sgm_geos.push_back(sgm_geo);
-        m_owned_sgm_geos.push_back(true);
         m_sgm_apps.push_back(app);
       }
       return;
@@ -253,9 +249,9 @@ void Assembly_part::clean_sgm_geos(Node* node)
     
   Switch* my_switch = dynamic_cast<Switch*>(node);
   if (my_switch) {
-    Node* choice = my_switch->get_choice();
+    Shared_node choice = my_switch->get_choice();
     if (!choice) return;
-    return clean_sgm_geos(choice);
+    return clean_sgm_geos(&*choice);
   }
   
   Group* group = dynamic_cast<Group*>(node);

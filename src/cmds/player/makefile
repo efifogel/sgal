@@ -112,6 +112,10 @@ ifeq ($(USE_NEF), 1)
 LCPPDEFS+= -DUSE_NEF
 endif
 
+ifeq ($(USE_ENV), 1)
+LCPPDEFS+= -DUSE_ENV
+endif
+
 ifeq ($(USE_EGO), 1)
 LCPPDEFS+= -DUSE_EGO
 endif

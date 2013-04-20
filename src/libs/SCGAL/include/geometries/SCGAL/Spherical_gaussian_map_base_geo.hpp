@@ -460,9 +460,6 @@ public:
   /*! Clean the renderer. */
   virtual void clean_renderer();
 
-  /*! Process change of content. */
-  virtual void field_changed(Field_info* field_info);
-
   /*! Raise the flag that indicates that the sphere bound changed. */
   void draw_changed(Field_info* field_info = NULL);
   

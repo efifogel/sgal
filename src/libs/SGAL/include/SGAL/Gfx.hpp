@@ -27,6 +27,7 @@
  */
 
 #include <string.h>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -45,11 +46,11 @@ class Material;
 #define SGAL_GFX_STRUCT \
   Float m_alpha_ref; \
   Gfx::Tex_mode m_tex_mode; \
-  Texture* m_texture; \
+  Shared_texture m_texture; \
   Vector4f m_tex_blend_color; \
   Gfx::Tex_env m_tex_env; \
   Tex_gen* m_tex_gen; \
-  Material* m_material; \
+  Shared_material m_material; \
   Gfx::Shade_model m_shade_model; \
   Gfx::Transparency_mode m_transp_mode; \
   Gfx::Alpha_func m_alpha_func; \
@@ -67,10 +68,10 @@ class Material;
   Uint m_line_stipple_pattern; \
   Uint m_line_stipple_factor; \
   Matrix4f m_tex_transform; \
-  Material* m_back_material; \
+  Shared_material m_back_material; \
   Float m_line_width; \
   Float m_point_size; \
-  Halftone* m_halftone; \
+  Shared_halftone m_halftone; \
  \
   Boolean m_tex_enable; \
   Boolean m_tex_gen_enable; \
@@ -248,6 +249,10 @@ public:
 
   Bit_mask m_pending;
   Bit_mask m_override;
+
+  typedef boost::shared_ptr<Texture>            Shared_texture;
+  typedef boost::shared_ptr<Material>           Shared_material;
+  typedef boost::shared_ptr<Halftone>           Shared_halftone;
 
   SGAL_GFX_STRUCT;
 

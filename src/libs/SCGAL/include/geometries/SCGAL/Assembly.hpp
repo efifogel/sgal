@@ -29,6 +29,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Group.hpp"
@@ -98,20 +99,26 @@ protected:
   typedef Spherical_gaussian_map_colored_geo        Sgm_geo;
   typedef Spherical_gaussian_map_colored            Sgm;
 
+  typedef boost::shared_ptr<Material>               Shared_material;
+  typedef boost::shared_ptr<Appearance>             Shared_appearance;
+  typedef boost::shared_ptr<Switch>                 Shared_switch;
+  typedef boost::shared_ptr<Shape>                  Shared_shape;
+  typedef boost::shared_ptr<Sgm_geo>                Shared_sgm_geo;
+  
   typedef std::list<Sgm*>                           Sgm_list;
   typedef Sgm_list::iterator                        Sgm_iter;
 
   typedef std::list<Sgm_list>                       Sgm_list_list;
   typedef Sgm_list_list::iterator                   Sgm_list_iter;
 
-  typedef std::list<Sgm_geo*>                       Sgm_geo_list;
+  typedef std::list<Shared_sgm_geo>                 Sgm_geo_list;
   typedef Sgm_geo_list::iterator                    Sgm_geo_iter;
   typedef Sgm_geo_list::const_iterator              Sgm_geo_const_iter;
 
   typedef std::list<Sgm_geo_list>                   Sgm_geo_list_list;
   typedef Sgm_geo_list_list::iterator               Sgm_geo_list_iter;
 
-  typedef std::list<Appearance*>                    Appearance_list;
+  typedef std::list<Shared_appearance>              Appearance_list;
   typedef Appearance_list::iterator                 Appearance_iter;
   
   typedef std::pair<Uint, Uint>                     Key;
@@ -137,22 +144,22 @@ protected:
   typedef std::map<Key, Aos_mark*, Key_comparer>    Projection_map;
   typedef Projection_map::iterator                  Projection_iter;
  
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! Obtain all the SGM's that comprise this part */
+  /*! Obtain all the SGM's that comprise this part. */
   template <typename OutputIterator>
   OutputIterator get_parts(Group* group, OutputIterator oi) const
   {
     Node_iterator it;
     for (it = group->children_begin(); it != group->children_end(); ++it) {
-      Node* node = *it;
-      oi = get_parts(node, oi);
+      Shared_node node = *it;
+      oi = get_parts(&*node, oi);
     }
     return oi;
   }
 
-  /*! Obtain all the SGM's that comprise this part */
+  /*! Obtain all the SGM's that comprise this part. */
   template <typename OutputIterator>
   OutputIterator get_parts(Node* node, OutputIterator oi) const
   {
@@ -164,9 +171,9 @@ protected:
     
     Switch* my_switch = dynamic_cast<Switch*>(node);
     if (my_switch) {
-      Node* choice = my_switch->get_choice();
+      Shared_node choice = my_switch->get_choice();
       if (!choice) return oi;
-      return get_parts(choice, oi);
+      return get_parts(&*choice, oi);
     }
     
     Group* group = dynamic_cast<Group*>(node);
@@ -175,165 +182,165 @@ protected:
     return oi;
   }
 
-  /*! Solve the puzzle */
+  /*! Solve the puzzle. */
   void solve(Field_info* field_info);
 
   /* Process change of the flag that indicates whether to draw the alternate
-   * geometry
+   * geometry.
    */
   void draw_alt_changed(Field_info* field_info);
 
   /* Process change of the flag that indicates whether to increment the
-   * alternate geometry
+   * alternate geometry.
    */
   void inc_alt_changed(Field_info* field_info);
   
   /* Process change of the flag that indicates whether  to draw the Gausian
-   * maps of the Minkowski sums of the parts
+   * maps of the Minkowski sums of the parts.
    */
   void draw_aos_minkowski_sums_changed(Field_info* field_info);
 
   /* Process change of the flag that indicates whether  to increment
-   * the Minkowski sums of the parts
+   * the Minkowski sums of the parts.
    */
   void inc_minkowski_sums_changed(Field_info* field_info);
 
   /*! Find the next halfedge on the silhouette starting from a halfedge on the
    * silhouette.
-   * \param silhouette_he the starting point
+   * \param silhouette_he the starting point.
    */
   Sgm::Halfedge_const_handle
   find_next_silhouette_halfedge(Sgm::Halfedge_const_handle silhouette_he);
   
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Is the internal representation dirty and requires cleaning */
+  /*! Is the internal representation dirty and requires cleaning. */
   Boolean m_dirty;
   
-  /*! When trigerred, the puzzle solves itself */
+  /*! When trigerred, the puzzle solves itself. */
   Boolean m_trigger;
   
-  /*! The number of parts in the puzzle */
+  /*! The number of parts in the puzzle. */
   Uint m_number_of_parts;
 
-  /*! A container of puzzle parts */
+  /*! A container of puzzle parts. */
   Assembly_part_list m_parts;
   
-  /*! A container of containers of (reflected) Gaussian map geometries */
+  /*! A container of containers of (reflected) Gaussian map geometries. */
   Sgm_geo_list_list m_parts_reflected_sgm_geos;
   
-  /* The pairwise Minkowski sums map */
+  /* The pairwise Minkowski sums map. */
   Minkowski_sum_list_map m_minkowski_sum_lists;
 
-  /*! The pairwise Minkowski-sum projections */
+  /*! The pairwise Minkowski-sum projections. */
   Projection_list_map m_projection_lists;
 
-  /*! The union of the pairwise Minkowski-sum projections per part */
+  /*! The union of the pairwise Minkowski-sum projections per part. */
   Projection_map m_part_projections;
 
-  /*! The final arrangement */
+  /*! The final arrangement. */
   Aos_graph* m_aos_graph;
   
-  /*! Space holder */
-  Appearance m_appearance;
+  /*! Space holder. */
+  Shared_appearance m_appearance;
 
-  /*! Space holder */
-  Material m_material;
+  /*! Space holder. */
+  Shared_material m_material;
   
-  /*! Space holder */
-  Appearance m_sphere_appearance;
+  /*! Space holder. */
+  Shared_appearance m_sphere_appearance;
   
-  /*! Space holder */
-  Material m_sphere_material;
+  /*! Space holder. */
+  Shared_material m_sphere_material;
 
-  /*! A node that holds the Sgm shapes */
-  Switch m_sgm_geo_node;
+  /*! A node that holds the Sgm shapes. */
+  Shared_switch m_sgm_geo_node;
   
-  /*! A node that holds the reflected Sgm shapes */
-  Switch m_reflected_sgm_geo_node;
+  /*! A node that holds the reflected Sgm shapes. */
+  Shared_switch m_reflected_sgm_geo_node;
 
-  /*! A node that holds the Minkowski-sum Sgm shapes */
-  Switch m_ms_sgm_geo_node;
+  /*! A node that holds the Minkowski-sum Sgm shapes. */
+  Shared_switch m_ms_sgm_geo_node;
 
-  /*! A node that holds the Minkowski-sum projection Aos shapes */
-  Switch m_projection_aos_geo_node;
+  /*! A node that holds the Minkowski-sum projection Aos shapes. */
+  Shared_switch m_projection_aos_geo_node;
 
-  /*! A node that holds the per-part Minkowski-sum projection Aos shapes */
-  Switch m_part_projection_aos_geo_node;
+  /*! A node that holds the per-part Minkowski-sum projection Aos shapes. */
+  Shared_switch m_part_projection_aos_geo_node;
 
-  /*! A shape node that holds the graph Aos */
-  Shape m_graph_node;
+  /*! A shape node that holds the graph Aos. */
+  Shared_shape m_graph_node;
   
-  /*! A switch node */
-  Switch m_switch;
+  /*! A switch node. */
+  Shared_switch m_switch;
   
-  /*! Indicates whether to draw the alternate geometry */
+  /*! Indicates whether to draw the alternate geometry. */
   Boolean m_draw_alternate;
 
-  /*! Indicates whether to increment the alternate geometry */
+  /*! Indicates whether to increment the alternate geometry. */
   Boolean m_inc_alternate;
   
-  /*! Space holder */
+  /*! Space holder. */
   Node_list m_childs_save;
   
   /*! Indicates whether to draw the Gausian maps of the Minkowski sums of the
-   * parts
+   * parts.
    */
   Boolean m_draw_aos_minkowski_sums;
 
   /*! Indicates whether to increment the switch counter of the Minkowski
-   * sums of the parts
+   * sums of the parts.
    */
   Boolean m_inc_minkowski_sums;
   
-  /*! Assign each part a unique non-negative number
+  /*! Assign each part a unique non-negative number.
    */
   Uint assign_id(Node* node, Uint id) const;
 
-  /*! Assign each part a unique non-negative number
+  /*! Assign each part a unique non-negative number.
    */
   Uint assign_id(Group* group, Uint id) const;
 
-  /*! Obtain the lists of the reflected sgm geometries */
+  /*! Obtain the lists of the reflected sgm geometries. */
   void construct_reflected_sgms();
   
-  /*! Compute the Minkowski sums */
+  /*! Compute the Minkowski sums. */
   void compute_minkowski_sums();
 
-  /*! Compute the Minkowski-sum projections */
+  /*! Compute the Minkowski-sum projections. */
   void compute_projections();
 
   /*! Compute the projection of a convex polyhedron represented by a
-   * spherical Gaussian map
-   * \param sgm the spherical Gaussian map that represents the input polyhedron
+   * spherical Gaussian map.
+   * \param sgm the spherical Gaussian map that represents the input polyhedron.
    * \param aos the output projection represented as an arrangement on the
-   * sphere
+   * sphere.
    */
   void compute_projection(const Sgm* sgm, Aos_mark* aos);
 
   /*! Compute the projection of a convex polyhedron represented by a
-   * spherical Gaussian map
+   * spherical Gaussian map.
    * \param fit
    * \param aos the output projection represented as an arrangement on the
-   * sphere
+   * sphere.
    */
   void compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos);
 
   /*! Compute the projection of a convex polyhedron represented by a
-   * spherical Gaussian map
+   * spherical Gaussian map.
    * \param hit
    * \param aos the output projection represented as an arrangement on the
-   * sphere
+   * sphere.
    */
   void compute_projection(Sgm::Halfedge_const_handle hit, Aos_mark* aos);
 
   /*! Compute the projection of a convex polyhedron represented by a
-   * spherical Gaussian map
+   * spherical Gaussian map.
    * \param vit 
    * \param aos the output projection represented as an arrangement on the
    * sphere
@@ -341,60 +348,60 @@ private:
   void compute_projection(Sgm::Vertex_const_handle vit, Aos_mark* aos);
 
   /*! Compute the projection of a convex polyhedron represented by a
-   * spherical Gaussian map
-   * \param sgm the spherical Gaussian map that represents the input polyhedron
+   * spherical Gaussian map.
+   * \param sgm the spherical Gaussian map that represents the input polyhedron.
    * \param aos the output projection represented as an arrangement on the
-   * sphere
+   * sphere.
    */
   void compute_general_projection(const Sgm* sgm, Aos_mark* aos);
 
   /*! Compute the union of the pairwise Minkowski-sum projections per
-   * part
+   * part.
    */
   void compute_part_projections();
   
   /*! Compute the union of the pairwise Minkowski-sum projections per
-   * part
-   * \param aoss the list of projections for the part
-   * \param aos the union of the projections aoss
+   * part.
+   * \param aoss the list of projections for the part.
+   * \param aos the union of the projections aoss.
    */
   void compute_part_projections(Aos_list& aoss, Aos_mark* aos);
   
   /*! Remove marked edges to lower the complexity of the arrangement
-   * \param aos the arrangement
+   * \param aos the arrangement.
    */
   void remove_marked_edges(Aos_mark* aos);
   
-  /*! Construct the per-part Minkowski-sum projection nodes */
+  /*! Construct the per-part Minkowski-sum projection nodes. */
   void construct_part_projection_nodes();
   
-  /* Compute the NDBG */
+  /* Compute the NDBG. */
   void compute_aos_graph();
 
-  /*! Construct the graph node */
+  /*! Construct the graph node. */
   void construct_graph_node();
 
-  /*! Process the NDBG */
+  /*! Process the NDBG. */
   void process_aos_graph();
   
-  /* Construct the sgm geometry nodes */
+  /* Construct the sgm geometry nodes. */
   void construct_sgms_nodes();
 
-  /* Construct the reflected sgm geometry nodes */
+  /* Construct the reflected sgm geometry nodes. */
   void construct_reflected_sgms_nodes();
   
-  /*! Construct the Minkowski-sum nodes */
+  /*! Construct the Minkowski-sum nodes. */
   void construct_minkowski_sum_nodes();
 
-  /*! Construct the Minkowski-sum projection nodes */
+  /*! Construct the Minkowski-sum projection nodes. */
   void construct_projection_nodes();
 
   /*! Compute the oriented side of the origin with respect to the
-   * underlying plane of a facet
+   * underlying plane of a facet.
    */
   CGAL::Oriented_side compute_side(Sgm::Halfedge_const_handle heh);
   
-  /*! Print information to an output stream */
+  /*! Print information to an output stream. */
   void print_info(std::ostream& out);
 };
 
@@ -437,7 +444,7 @@ inline Assembly* Assembly::prototype() { return new Assembly(true); }
 /*! \brief clones. */
 inline  Container* Assembly::clone() { return new Assembly(); }
 
-/*! \brief obtains the tag (type) of the container */
+/*! \brief obtains the tag (type) of the container. */
 inline const std::string& Assembly::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

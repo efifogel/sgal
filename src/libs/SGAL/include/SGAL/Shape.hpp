@@ -36,6 +36,8 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Node.hpp"
@@ -71,6 +73,9 @@ public:
     LAST
   };
 
+  typedef boost::shared_ptr<Appearance>         Shared_appearance;
+  typedef boost::shared_ptr<Geometry>           Shared_geometry;
+  
   /*! Constructor */
   Shape(Boolean proto = false);
 
@@ -122,27 +127,27 @@ public:
   /*! Obtain the (const) appearance.
    * \return the appearance.
    */
-  const Appearance* get_appearance() const;
+  const Shared_appearance get_appearance() const;
 
   /*! Obtain the (non-const) appearance.
    * \return the appearance.
    */
-  Appearance* get_appearance();
+  Shared_appearance get_appearance();
 
   /*! Set an appearance.
    * \param appearance the new appearance.
    */
-  void set_appearance(Appearance* appearance);
+  void set_appearance(Shared_appearance appearance);
 
   /*! Obtain the geometry.
    * \retrun the geometry.
    */
-  Geometry* get_geometry() const;
+  Shared_geometry get_geometry() const;
 
   /*! Set a geometry
    * \param geometry the new geometry.
    */
-  void set_geometry(Geometry* geometry);
+  void set_geometry(Shared_geometry geometry);
 
   /*! Obtain the flag that indicates whether to draw into the depth buffer.
    * \return true iff drawing into the depth buffer is enbaled.
@@ -292,10 +297,10 @@ private:
   static Container_proto* s_prototype;
 
   /*! The apperance attribute. */
-  Appearance* m_appearance;
+  Shared_appearance m_appearance;
 
   /*! The list of geometries. */
-  Geometry* m_geometry;
+  Shared_geometry m_geometry;
 
   /*! Indicates whether the shape is visible and thus should be rendered. */
   Boolean m_is_visible;
@@ -305,11 +310,6 @@ private:
 
   /* A flag that indicates whether backface drawing is required. */
   Boolean m_draw_backface;
-
-  /*! Indicates whether the texture-generation field has been constructed
-   * by default.
-   */
-  Boolean m_owned_appearance;
 
   /*! Indicates whether the shape is dirty, and thus needs cleaning. */
   Boolean m_dirty;
@@ -321,12 +321,6 @@ private:
 
   /*! Indicates whether the shape geometry is dirty, and thus needs cleaning. */
   Boolean m_dirty_geometry;
-
-  /*! Stores the pervious appearance. */
-  Appearance* m_appearance_prev;
-
-  /*! Stores the pervious geometry. */
-  Geometry* m_geometry_prev;
 
   /*! Indicates whether to apply texture mapping. */
   Boolean m_texture_map;
@@ -407,10 +401,11 @@ inline Shape* Shape::prototype() { return new Shape(true); }
 inline Container* Shape::clone() { return new Shape(); }
 
 /*! \brief obtains the (const) appearance. */
-inline const Appearance* Shape::get_appearance() const { return m_appearance; }
+inline const Shape::Shared_appearance Shape::get_appearance() const
+{ return m_appearance; }
 
 /*! \brief obtains the (non-const) appearance. */
-inline Appearance* Shape::get_appearance() { return m_appearance; }
+inline Shape::Shared_appearance Shape::get_appearance() { return m_appearance; }
 
 /*! \brief obtains the flag that indicates whether to draw into the depth
  * buffer.
@@ -463,7 +458,8 @@ inline void Shape::set_priority(Float priority) { m_priority = priority; }
 inline const std::string& Shape::get_tag() const { return s_tag; }
 
 /*! \brief obtains the gepmetry. */
-inline Geometry* Shape::get_geometry() const { return m_geometry; }
+inline Shape::Shared_geometry Shape::get_geometry() const
+{ return m_geometry; }
 
 /*! \brief sets the flag that indicates whether to construct the appearance
  * material attribute when missing.

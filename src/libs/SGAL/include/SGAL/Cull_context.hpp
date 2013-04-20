@@ -28,6 +28,7 @@
  */
 
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
@@ -51,11 +52,14 @@ public:
     Matrix4f wtm;       // Object to World space transformation.
     int lod;            // Level of detail for node.
   };
+
   class Light_node {
   public:
     Light* light;
     Matrix4f wtm;       // Object to World space transformation.
   };
+
+  typedef boost::shared_ptr<Light>            Shared_light;
 
   /*! Constructor */
   Cull_context();
@@ -78,7 +82,8 @@ public:
    */
   void add_light(Light* light);
 
-  void set_head_light(Light* light);
+  /*! */
+  void set_head_light(Shared_light light);
   
   void push_matrix(const Matrix4f& mat);
 
@@ -114,7 +119,7 @@ private:
 
   Camera* m_camera;
 
-  Light* m_head_light;
+  Shared_light m_head_light;
 
   // Matrix stack (similar to opengl).
   Matrix_stack m_matrix_stack;

@@ -53,7 +53,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Arrangement_on_sphere_graph_geo::s_tag = "ArrangementOnSphereGraph";
-Container_proto * Arrangement_on_sphere_graph_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_sphere_graph_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Arrangement_on_sphere_graph_geo,
                     "Arrangement_on_sphere_graph_geo");
@@ -79,7 +79,7 @@ Arrangement_on_sphere_graph_geo::~Arrangement_on_sphere_graph_geo()
   }
 }
 
-/*! \brief initializes the container prototype */
+/*! \brief initializes the container prototype. */
 void Arrangement_on_sphere_graph_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -87,34 +87,33 @@ void Arrangement_on_sphere_graph_geo::init_prototype()
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Arrangement_on_sphere_graph_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
-Container_proto * Arrangement_on_sphere_graph_geo::get_prototype()
+/*! \brief obtains the container prototype. */
+Container_proto* Arrangement_on_sphere_graph_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_sphere_graph_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes */
-void Arrangement_on_sphere_graph_geo::set_attributes(Element * elem)
+/*! \brief sets the ellpsoid attributes. */
+void Arrangement_on_sphere_graph_geo::set_attributes(Element* elem)
 {
   Arrangement_on_sphere_base_geo::set_attributes(elem);
 
   typedef Element::Cont_attr_iter       Cont_attr_iter;
-  for (Cont_attr_iter cai = elem->cont_attrs_begin();
-       cai != elem->cont_attrs_end(); cai++)
-  {
-    const std::string & name = elem->get_name(cai);
-    Container * cont = elem->get_value(cai);
+  Cont_attr_iter cai;
+  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+    const std::string& name = elem->get_name(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "overlay") {
-      Arrangement_on_sphere_graph_geo * aos_geo =
-        dynamic_cast<Arrangement_on_sphere_graph_geo*>(cont);
+      Shared_arrangement_on_sphere_graph_geo aos_geo =
+        boost::dynamic_pointer_cast<Arrangement_on_sphere_graph_geo>(cont);
       if (aos_geo) add_aos_geo(aos_geo);
       elem->mark_delete(cai);
       continue;
@@ -129,13 +128,13 @@ void Arrangement_on_sphere_graph_geo::set_attributes(Element * elem)
   for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); mcai++)
   {
-    const std::string & name = elem->get_name(mcai);
-    Cont_list & cont_list = elem->get_value(mcai);
+    const std::string& name = elem->get_name(mcai);
+    Cont_list& cont_list = elem->get_value(mcai);
     if (name == "overlay") {
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container * cont = *ci;
-        Arrangement_on_sphere_graph_geo * aos_geo =
-          dynamic_cast<Arrangement_on_sphere_graph_geo*>(cont);
+        Element::Shared_container cont = *ci;
+        Shared_arrangement_on_sphere_graph_geo aos_geo =
+          boost::dynamic_pointer_cast<Arrangement_on_sphere_graph_geo>(cont);
         if (aos_geo) add_aos_geo(aos_geo);
       }
       elem->mark_delete(mcai);
@@ -147,7 +146,7 @@ void Arrangement_on_sphere_graph_geo::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation */
+/*! \brief cleans the representation. */
 void Arrangement_on_sphere_graph_geo::clean()
 {
   m_dirty = false;
@@ -170,7 +169,7 @@ void Arrangement_on_sphere_graph_geo::clear()
   m_dirty = true;
 }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Arrangement_on_sphere_graph_geo::create_renderers()
 {
   m_edges_renderer = new Sphere_edges_renderer(*this);
@@ -200,7 +199,7 @@ void Arrangement_on_sphere_graph_geo::create_renderers()
     new Sphere_inflated_tube_edges_renderer(*this);
 }
 
-/*! \brief destroys the renderers */
+/*! \brief destroys the renderers. */
 void Arrangement_on_sphere_graph_geo::destroy_renderers()
 {
   if (m_edges_renderer) delete m_edges_renderer;
@@ -224,15 +223,15 @@ void Arrangement_on_sphere_graph_geo::destroy_renderers()
   if (m_inflated_tube_edges_renderer) delete m_inflated_tube_edges_renderer;
 }
 
-/*! \brief obrains the arrangement */
-Arrangement_on_sphere_graph * Arrangement_on_sphere_graph_geo::get_aos()
+/*! \brief obrains the arrangement. */
+Arrangement_on_sphere_graph* Arrangement_on_sphere_graph_geo::get_aos()
 {
   if (m_dirty) clean();
   return m_aos;
 }
 
-/*! \brief sets the arrangement */
-void Arrangement_on_sphere_graph_geo::set_aos(Arrangement_on_sphere_graph * aos)
+/*! \brief sets the arrangement. */
+void Arrangement_on_sphere_graph_geo::set_aos(Arrangement_on_sphere_graph* aos)
 {
   m_dirty = false;
   m_aos = aos;

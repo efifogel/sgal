@@ -1,5 +1,24 @@
-%option yyclass="wrlFlexLexer"
-%option never-interactive
+/* Copyright (c) 2004 Israel.
+ * All rights reserved.
+ *
+ * This file is part of SGAL; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; version 2.1 of the
+ * License. See the file LICENSE.LGPL distributed with SGAL.
+ *
+ * Licensees holding a valid commercial license may use this file in
+ * accordance with the commercial license agreement provided with the
+ * software.
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+ * THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ * $Id: $
+ * $Revision: 13559 $
+ *
+ * Author(s)     : Efi Fogel
+ */
 
 %{
 
@@ -8,8 +27,6 @@
 #endif
 
 #include <stdio.h>
-//! \tbd remove malloc.h ?
-#include <malloc.h>
 #include <stdlib.h>
 #include <string>
 
@@ -18,48 +35,31 @@
 #include "SGAL/Node.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Transform.hpp"
-#include "wrlFlexLexer.hpp"
 
-// For older versions of flex (less than 2.5.31)
-#if SGAL_FLEX_INT_VER <= 2533
-extern "C" int yywrap(void);
-#endif
+#undef YY_DECL
+#define YY_DECL SGAL::Vrml_parser::symbol_type SGAL::Vrml_scanner::mylex()
+
+#include "parse.hpp"
+#include "Vrml_scanner.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Element::Str_attr	Str_attr;
-typedef Element::Cont_list	Cont_list; 
+typedef Element::Str_attr		Str_attr;
+typedef Element::Cont_list		Cont_list; 
+
+#undef yywrap
+#define yywrap() 1
 
 SGAL_END_NAMESPACE
 
-using std::cin;
-using std::cerr;
-using std::cout;
-using std::ostream;
-
-using namespace SGAL;
-
-class Element;
-class Container;
-class Node;
-class Group;
-class Transform;
-
-#include "parse.h"
-
-wrlFlexLexer * wrlFlexLexer::s_instance = NULL;
-
-#ifdef _DEBUG
-#define RET(x) \
-{ \
-  if (yy_flex_debug) printf("lex %hu [%s]\n", (int) x, YYText()); \
-  return(x); \
-}
-#else
-#define RET(x) return(x)
-#endif
-
+#define YY_NO_UNISTD_H
 %}
+
+%option debug 
+%option yyclass="SGAL::Vrml_scanner"
+%option never-interactive
+%option noyywrap 
+%option c++
 
 I			[1-9]
 D			[0-9]
@@ -85,118 +85,122 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 
 %s vrml js
 
-%%
+/* The following paragraph suffices to track locations accurately. Each time
+ * yylex is invoked, the begin position is moved onto the end position.
+ */
+%{
+#define YY_USER_ACTION  loc.columns(yyleng);
+%}
+
+%% /*** Regular Expressions Part ***/
+
+%{
+loc.step();		// reset location
+%}
 
 <INITIAL>"#VRML V2.0"[^\n]*	{ BEGIN(vrml); }
 
 <vrml>"/*"		{ comment(); }
 <vrml>"#"		{ comment_to_eol(); }
 
-<vrml>"TRUE"		{ RET(K_TRUE); }
-<vrml>"FALSE"		{ RET(K_FALSE); }
-<vrml>"DEF"		{ RET(K_DEF); }
-<vrml>"USE"		{ RET(K_USE); }
-<vrml>"PROTO"		{ RET(K_PROTO); }
-<vrml>"EXTERNPROTO"	{ RET(K_EXTERNPROTO); }
-<vrml>"TO"		{ RET(K_TO); }
-<vrml>"ROUTE"		{ RET(K_ROUTE); }
-<vrml>"IS"		{ RET(K_IS); }
-<vrml>"NULL"		{ RET(K_NULL); }
+<vrml>"TRUE"		{ return Vrml_parser::make_K_TRUE(loc); }
+<vrml>"FALSE"		{ return Vrml_parser::make_K_FALSE(loc); }
+<vrml>"DEF"		{ return Vrml_parser::make_K_DEF(loc); }
+<vrml>"USE"		{ return Vrml_parser::make_K_USE(loc); }
+<vrml>"PROTO"		{ return Vrml_parser::make_K_PROTO(loc); }
+<vrml>"EXTERNPROTO"	{ return Vrml_parser::make_K_EXTERNPROTO(loc); }
+<vrml>"TO"		{ return Vrml_parser::make_K_TO(loc); }
+<vrml>"ROUTE"		{ return Vrml_parser::make_K_ROUTE(loc); }
+<vrml>"IS"		{ return Vrml_parser::make_K_IS(loc); }
+<vrml>"NULL"		{ return Vrml_parser::make_K_NULL(loc); }
 
-<vrml>"eventIn"		{ RET(K_EVENTIN); }
-<vrml>"eventOut"	{ RET(K_EVENTOUT); }
-<vrml>"exposedField"	{ RET(K_EXPOSEDFIELD); }
-<vrml>"field"		{ RET(K_FIELD); }
+<vrml>"eventIn"		{ return Vrml_parser::make_K_EVENTIN(loc); }
+<vrml>"eventOut"	{ return Vrml_parser::make_K_EVENTOUT(loc); }
+<vrml>"exposedField"	{ return Vrml_parser::make_K_EXPOSEDFIELD(loc); }
+<vrml>"field"		{ return Vrml_parser::make_K_FIELD(loc); }
 
-<vrml>"Script"		{ RET(K_SCRIPT); }
+<vrml>"Script"		{ return Vrml_parser::make_K_SCRIPT(loc); }
 
-<vrml>"MFColor"		{ RET(MFColor); }
-<vrml>"MFFloat"		{ RET(MFFloat); }
-<vrml>"MFInt32"		{ RET(MFInt32); }
-<vrml>"MFNode"		{ RET(MFNode); }
-<vrml>"MFRotation"	{ RET(MFRotation); }
-<vrml>"MFString"	{ RET(MFString); }
-<vrml>"MFTime"		{ RET(MFTime); }
-<vrml>"MFVec2f"		{ RET(MFVec2f); }
-<vrml>"MFVec3f"		{ RET(MFVec3f); }
-<vrml>"SFBool"		{ RET(SFBool); }
-<vrml>"SFColor"		{ RET(SFColor); }
-<vrml>"SFFloat"		{ RET(SFFloat); }
-<vrml>"SFImage"		{ RET(SFImage); }
-<vrml>"SFInt32"		{ RET(SFInt32); }
-<vrml>"SFNode"		{ RET(SFNode); }
-<vrml>"SFRotation"	{ RET(SFRotation); }
-<vrml>"SFString"	{ RET(SFString); }
-<vrml>"SFTime"		{ RET(SFTime); }
-<vrml>"SFVec2f"		{ RET(SFVec2f); }
-<vrml>"SFVec3f"		{ RET(SFVec3f); }
+<vrml>"MFColor"		{ return Vrml_parser::make_MFColor(loc); }
+<vrml>"MFFloat"		{ return Vrml_parser::make_MFFloat(loc); }
+<vrml>"MFInt32"		{ return Vrml_parser::make_MFInt32(loc); }
+<vrml>"MFNode"		{ return Vrml_parser::make_MFNode(loc); }
+<vrml>"MFRotation"	{ return Vrml_parser::make_MFRotation(loc); }
+<vrml>"MFString"	{ return Vrml_parser::make_MFString(loc); }
+<vrml>"MFTime"		{ return Vrml_parser::make_MFTime(loc); }
+<vrml>"MFVec2f"		{ return Vrml_parser::make_MFVec2f(loc); }
+<vrml>"MFVec3f"		{ return Vrml_parser::make_MFVec3f(loc); }
+<vrml>"SFBool"		{ return Vrml_parser::make_SFBool(loc); }
+<vrml>"SFColor"		{ return Vrml_parser::make_SFColor(loc); }
+<vrml>"SFFloat"		{ return Vrml_parser::make_SFFloat(loc); }
+<vrml>"SFImage"		{ return Vrml_parser::make_SFImage(loc); }
+<vrml>"SFInt32"		{ return Vrml_parser::make_SFInt32(loc); }
+<vrml>"SFNode"		{ return Vrml_parser::make_SFNode(loc); }
+<vrml>"SFRotation"	{ return Vrml_parser::make_SFRotation(loc); }
+<vrml>"SFString"	{ return Vrml_parser::make_SFString(loc); }
+<vrml>"SFTime"		{ return Vrml_parser::make_SFTime(loc); }
+<vrml>"SFVec2f"		{ return Vrml_parser::make_SFVec2f(loc); }
+<vrml>"SFVec3f"		{ return Vrml_parser::make_SFVec3f(loc); }
 
-<vrml>{quotion}		{ yylval.text = new std::string(YYText()); RET(NUMBER); }
-<vrml>{anynumber}	{ yylval.text = new std::string(YYText()); RET(NUMBER); }
+<vrml>{quotion}		{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
+<vrml>{anynumber}	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
 
-<vrml>{idStartChar}{idRestChar}*	{ yylval.text = new std::string(YYText()); RET(IDENTIFIER); }
+<vrml>{idStartChar}{idRestChar}*	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_IDENTIFIER(*yylval, loc); }
 
-<vrml>\"(\\.|[^\\"])*\"	{ yylval.text = new std::string(YYText()); RET(STRING_LITERAL); }
-<vrml>\'(\\.|[^\\'])*\'	{ yylval.text = new std::string(YYText()); RET(STRING_LITERAL); }
+<vrml>\"(\\.|[^\\"])*\"	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }
+<vrml>\'(\\.|[^\\'])*\'	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }
 
 
-";"			{ RET(';'); }
-<vrml>"("		{ RET('('); }
-<vrml>")"		{ RET(')'); }
-":"			{ RET(':'); }
-"|"			{ RET('|'); }
-<vrml>"{"		{ RET('{'); }
-<vrml>"}"		{ RET('}'); }
-<vrml>"["		{ RET('['); }
-<vrml>"]"		{ RET(']'); }
-"?"			{ RET('?'); }
-"="			{ RET('='); }
-"*"			{ RET('*'); }
-"/"			{ RET('/'); }
-"+"			{ RET('+'); }
-"-"			{ RET('-'); }
-"~"			{ RET('~'); }
-"@"			{ RET('@'); }
-"&"			{ RET('&'); }
-"^"			{ RET('^'); }
-"%"			{ RET('%'); }
-"."			{ RET('.'); }
+";"		{ return Vrml_parser::make_SEMICOLON(loc); }
+<vrml>"("	{ return Vrml_parser::make_OPEN_PARENTHESES(loc); }
+<vrml>")"	{ return Vrml_parser::make_CLOSE_PARENTHESES(loc); }
+":"		{ return Vrml_parser::make_COLON(loc); }
+"|"		{ return Vrml_parser::make_BAR(loc); }
+<vrml>"{"	{ return Vrml_parser::make_OPEN_BRACES(loc); }
+<vrml>"}"	{ return Vrml_parser::make_CLOSE_BRACES(loc); }
+<vrml>"["	{ return Vrml_parser::make_OPEN_BRACKETS(loc); }
+<vrml>"]"	{ return Vrml_parser::make_CLOSE_BRACKETS(loc); }
+"?"		{ return Vrml_parser::make_QUESTION(loc); }
+"="		{ return Vrml_parser::make_EQUAL(loc); }
+"*"		{ return Vrml_parser::make_STAR(loc); }
+"/"		{ return Vrml_parser::make_SLASH(loc); }
+"+"		{ return Vrml_parser::make_PLUS(loc); }
+"-"		{ return Vrml_parser::make_MINUS(loc); }
+"~"		{ return Vrml_parser::make_TILDE(loc); }
+"@"		{ return Vrml_parser::make_AT(loc); }
+"&"		{ return Vrml_parser::make_AMPERSAND(loc); }
+"^"		{ return Vrml_parser::make_HAT(loc); }
+"%"		{ return Vrml_parser::make_PROCENT(loc); }
+"."		{ return Vrml_parser::make_DOT(loc); }
 
-"<<"			{ RET(LS); }
-">>"			{ RET(RS); }
-"@@"			{ RET(AT); }
-"&&"            	{ RET(AND); }
-"||"            	{ RET(OR); }
-"<="            	{ RET(LE); }
-">="            	{ RET(GE); }
-"=="            	{ RET(EQ); }
-"!="            	{ RET(NE); }
+"<<"		{ return Vrml_parser::make_LS(loc); }
+">>"		{ return Vrml_parser::make_RS(loc); }
+"&&"            { return Vrml_parser::make_AND(loc); }
+"||"            { return Vrml_parser::make_OR(loc); }
+"<="            { return Vrml_parser::make_LE(loc); }
+">="            { return Vrml_parser::make_GE(loc); }
+"=="            { return Vrml_parser::make_EQ(loc); }
+"!="            { return Vrml_parser::make_NE(loc); }
 
-"\n\r"			{ m_lineno++; }		/* new line */ 
-"\r\n"			{ m_lineno++; }		/* new line */ 
-\n			{ m_lineno++; }		/* new line */ 
-[ \t\v\f,]		{ ; }		    	/* skip blanks and tabs */
-.			{ RET(yytext[0]); }  	/* everything else */
+[ \t\r\v\f,]+	{ loc.step(); }                    /* skip blanks and tabs */
+\n		{ loc.lines(yyleng); loc.step(); } /* new line */ 
+.		{ ; }                              /* everything else */
+<<EOF>>         { return Vrml_parser::make_END(loc); }
 %%
 
-#if SGAL_FLEX_INT_VER <= 2533
-extern "C" int yywrap()
-#else
-int yyFlexLexer::yywrap()
-#endif
-{
-  return(1);
-}
+SGAL_BEGIN_NAMESPACE
 
-
-void wrlFlexLexer::comment()
+void Vrml_scanner::comment()
 {
   register int c;
 
   for ( ; ; ) {
     /* eat up text of comment: */
     while ((c = yyinput()) != '*' && c != EOF) {
-      if (c == '\n') m_lineno++;
+      if (c == '\n') {
+        loc.lines(yyleng);
+        loc.step();
+      }
     }
 
     if (c == '*') {
@@ -216,7 +220,7 @@ void wrlFlexLexer::comment()
 #define yytext_ptr yytext
 #endif
 
-void wrlFlexLexer::comment_to_eol()
+void Vrml_scanner::comment_to_eol()
 {
   char c;
   while ((c = yyinput()) != '\n' && c != 0) /* putchar(c) */ ;
@@ -224,8 +228,4 @@ void wrlFlexLexer::comment_to_eol()
   else { /* putchar(c) */; }
 }
 
-void wrlFlexLexer::yyerror(const char* /* message */, int cur_token)
-{
-  fprintf(stderr, "Syntax error on line %d token %c\n", m_lineno, cur_token);
-  exit(-1);
-}
+SGAL_END_NAMESPACE

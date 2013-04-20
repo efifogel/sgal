@@ -103,8 +103,6 @@ Attribute_list Exact_coord_minkowski::get_attributes()
 /*! \brief transforms the input vertices. */
 void Exact_coord_minkowski::execute(Field_info* field_info)
 {
-  std::cout << "Exact_coord_minkowski::transform " << m_enabled << std::endl;
-  
   if (!m_enabled) return;
 
   boost::shared_ptr<Exact_coord_array> exact_coord_array1 =

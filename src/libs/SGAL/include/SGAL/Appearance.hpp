@@ -30,6 +30,8 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Bit_mask.hpp"
@@ -56,6 +58,10 @@ public:
     LAST
   };
 
+  typedef boost::shared_ptr<Texture>            Shared_texture;
+  typedef boost::shared_ptr<Material>           Shared_material;
+  typedef boost::shared_ptr<Halftone>           Shared_halftone;
+
   /*! Constructor */
   Appearance(Boolean proto = false);
 
@@ -72,16 +78,16 @@ public:
   void set(Appearance* app);
 
   /*! Set the texture attribute. */
-  void set_texture(Texture* texture);
+  void set_texture(Shared_texture texture);
 
   /*! Obtain the texture attribute. */
-  Texture* get_texture() const;   
+  Shared_texture get_texture() const;   
 
   /*! Set the halftone attribute. */
-  void set_halftone(Halftone* halftone);
+  void set_halftone(Shared_halftone halftone);
 
   /*! Obtain the halftone attribute. */
-  Halftone* get_halftone() const;
+  Shared_halftone get_halftone() const;
   
   /*! Set the texture-enable attribute. */
   void set_tex_enable(Boolean tex_enable);
@@ -130,16 +136,16 @@ public:
   /*! Set the material attribute.
    * \param material (in) the material attribute.
    */
-  void set_material(Material* material);
+  void set_material(Shared_material material);
 
   /*! Obtain the material attribute. */
-  Material* get_material() const;
+  Shared_material get_material() const;
 
   /*! Set the back material attribute. */
-  void set_back_material(Material* material);
+  void set_back_material(Shared_material material);
 
   /*! Obtain the back material attribute. */
-  Material* get_back_material() const;
+  Shared_material get_back_material() const;
 
   /*! Set the light enable flag. */
   void set_light_enable(Boolean light_enable);
@@ -381,20 +387,11 @@ private:
   Bit_mask m_override;
   Boolean m_skip_refer;
 
-  /*! Indicates whether the material attribute is owned. If it is owned (as
-   * the user hasn't provided one) the material attribute should be
-   * destructed when the shape is destructed.
-   */
-  Boolean m_owned_material;
-
   /*! Indicates whether the texture-generation attribute is owned. If it is
    * owned  (as the user hasn't provided one) the texture-generation attribute
    * should be destructed when the shape is destructed.
    */
   Boolean m_owned_tex_gen;
-
-  /*! The previous appearance attribute if existed. */
-  Material* m_material_prev;
 
   /*! The previous texture-generation attribute if existed. */
   Tex_gen* m_tex_gen_prev;
@@ -415,10 +412,12 @@ inline Appearance* Appearance::prototype() { return new Appearance(true); }
 inline Container* Appearance::clone() { return new Appearance(); }
 
 /*! \brief obtains the texture attribute. */
-inline Texture* Appearance::get_texture() const { return m_texture; }    
+inline Appearance::Shared_texture Appearance::get_texture() const
+{ return m_texture; }    
 
 /*! \brief obtains the halftone attribute. */
-inline Halftone* Appearance::get_halftone() const { return m_halftone; }    
+inline Appearance::Shared_halftone Appearance::get_halftone() const
+{ return m_halftone; }    
   
 /*! \brief obtains the texture-enable attribute. */
 inline Boolean Appearance::get_tex_enable() const { return m_tex_enable; }
@@ -449,10 +448,11 @@ inline Boolean Appearance::get_tex_gen_enable() const
 { return m_tex_gen_enable; }
 
 /*! \brief obtains the material attribute. */
-inline Material* Appearance::get_material() const { return m_material; }
+inline Appearance::Shared_material Appearance::get_material() const
+{ return m_material; }
 
 /*! \brief obtains the back material attribute. */
-inline Material* Appearance::get_back_material() const
+inline Appearance::Shared_material Appearance::get_back_material() const
 { return m_back_material; }
 
 /*! \brief obtains the light enable flag. */

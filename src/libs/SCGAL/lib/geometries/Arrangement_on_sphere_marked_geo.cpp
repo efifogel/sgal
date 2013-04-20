@@ -138,7 +138,7 @@ Arrangement_on_sphere_marked_geo::~Arrangement_on_sphere_marked_geo()
   }
 }
 
-/*! \brief initializes the container prototype */
+/*! \brief initializes the container prototype. */
 void Arrangement_on_sphere_marked_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -155,21 +155,21 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
                                 get_member_offset(&m_aos_marked_edge_radius)));
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Arrangement_on_sphere_marked_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
+/*! \brief obtains the container prototype. */
 Container_proto* Arrangement_on_sphere_marked_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_sphere_marked_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes */
+/*! \brief sets the ellpsoid attributes. */
 void Arrangement_on_sphere_marked_geo::
 set_attributes(Element* elem)
 {
@@ -319,10 +319,10 @@ set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Element::Shared_container cont = elem->get_value(cai);
     if (name == "overlay") {
-      Arrangement_on_sphere_marked_geo* aos_geo =
-        dynamic_cast<Arrangement_on_sphere_marked_geo*>(cont);
+      Shared_arrangement_on_sphere_marked_geo aos_geo =
+        boost::dynamic_pointer_cast<Arrangement_on_sphere_marked_geo>(cont);
       if (aos_geo) add_aos_geo(aos_geo);
       elem->mark_delete(cai);
       continue;
@@ -341,9 +341,9 @@ set_attributes(Element* elem)
     Cont_list& cont_list = elem->get_value(mcai);
     if (name == "overlay") {
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
-        Arrangement_on_sphere_marked_geo* aos_geo =
-          dynamic_cast<Arrangement_on_sphere_marked_geo*>(cont);
+        Element::Shared_container cont = *ci;
+        Shared_arrangement_on_sphere_marked_geo aos_geo =
+          boost::dynamic_pointer_cast<Arrangement_on_sphere_marked_geo>(cont);
         if (aos_geo) add_aos_geo(aos_geo);
       }
       elem->mark_delete(mcai);
@@ -373,8 +373,8 @@ void Arrangement_on_sphere_marked_geo::clean()
               std::distance(m_aoses.begin(), m_aoses.end()), this);
 
   // Locate points:
-  Exact_coord_array* exact_coord_array =
-    dynamic_cast<Exact_coord_array *>(m_coord_array);
+  boost::shared_ptr<Exact_coord_array> exact_coord_array =
+    boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     Aos_point_location_strategy naive_pl(*m_aos);
     std::vector<Uint>::iterator it;
@@ -668,7 +668,7 @@ draw_aos_marked_face(Draw_action* action)
   }
 }
   
-/*! \brief renders the marked primal vertex */
+/*! \brief renders the marked primal vertex. */
 void Arrangement_on_sphere_marked_geo::Marked_face_renderer::
 operator()(Draw_action* action)
 {
@@ -691,7 +691,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief creates the renderers */
+/*! \brief creates the renderers. */
 void Arrangement_on_sphere_marked_geo::create_renderers()
 {
   m_edges_renderer = new Sphere_marked_edges_renderer(*this);
@@ -725,7 +725,7 @@ void Arrangement_on_sphere_marked_geo::create_renderers()
   m_marked_face_renderer = new Marked_face_renderer(*this);
 }
 
-/*! \brief destroys the renderers */
+/*! \brief destroys the renderers. */
 void Arrangement_on_sphere_marked_geo::destroy_renderers()
 {
   if (m_edges_renderer) delete m_edges_renderer;
@@ -751,7 +751,7 @@ void Arrangement_on_sphere_marked_geo::destroy_renderers()
   if (m_marked_face_renderer) delete m_marked_face_renderer;
 }
 
-/*! \brief cleans the renderer */
+/*! \brief cleans the renderer. */
 void Arrangement_on_sphere_marked_geo::clean_renderer()
 {
   Arrangement_on_surface_geo::clean_renderer();
@@ -761,7 +761,7 @@ void Arrangement_on_sphere_marked_geo::clean_renderer()
                         Arrangement_renderer::SURFACE);
 }
 
-/*! \brief draws an arrangement on sphere marked vertex */
+/*! \brief draws an arrangement on sphere marked vertex. */
 void Arrangement_on_sphere_marked_geo::
 draw_aos_marked_vertex(Draw_action* action, Vector3f& center)
 {
@@ -770,7 +770,7 @@ draw_aos_marked_vertex(Draw_action* action, Vector3f& center)
                         m_aos_delta_angle);
 }
 
-/*! \brief Draw an arrangement on sphere marked edge */
+/*! \brief Draw an arrangement on sphere marked edge. */
 void Arrangement_on_sphere_marked_geo::
 draw_aos_marked_edge(Draw_action* action,
                      Vector3f& source, Vector3f& target, Vector3f& normal)
@@ -784,14 +784,14 @@ draw_aos_marked_edge(Draw_action* action,
                       m_aos_vertex_radius, m_aos_vertex_radius);
 }
 
-/*! \brief obrains the arrangement */
+/*! \brief obrains the arrangement. */
 Arrangement_on_sphere_marked* Arrangement_on_sphere_marked_geo::get_aos()
 {
   if (m_dirty) clean();
   return m_aos;
 }
 
-/*! \brief sets the arrangement */
+/*! \brief sets the arrangement. */
 void
 Arrangement_on_sphere_marked_geo::set_aos(Arrangement_on_sphere_marked* aos)
 {

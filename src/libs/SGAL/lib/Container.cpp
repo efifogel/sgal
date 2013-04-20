@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14223 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,14 +35,13 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+/*! Constructor. */
 Container::Container(Boolean proto) :
   m_base(0), 
   m_execution_coordinator(0)
-{
-}
+{}
 
-/*! Destructor */ 
+/*! Destructor. */ 
 Container::~Container()
 {
   for (Field_iter fi = m_fields.begin(); fi != m_fields.end(); ++fi)
@@ -52,35 +51,35 @@ Container::~Container()
   m_observers.clear();
 };
 
-/*! \brief adds a field with the given id */
+/*! \brief adds a field with the given id. */
 Field* Container::add_field(Uint id)
 {
   Field_info* field_info = get_field_info(id);
   return add_field(field_info);
 }
 
-/*! \brief adds a field with the given name */
+/*! \brief adds a field with the given name. */
 Field* Container::add_field(std::string name)
 {
   Field_info* field_info = get_field_info(name);
   return add_field(field_info);
 }
 
-/*! \brief obtains the field with the given id */
+/*! \brief obtains the field with the given id. */
 Field* Container::get_field(Uint id)
 {
   Field_info* field_info = get_field_info(id);
   return get_field(field_info);
 }
 
-/*! \brief obtains the field with the given name */
+/*! \brief obtains the field with the given name. */
 Field* Container::get_field(std::string name)
 {
   Field_info* field_info = get_field_info(name);
   return get_field(field_info);
 }
 
-/*! \brief obtains a field by a field info */
+/*! \brief obtains a field by a field info. */
 Field* Container::get_field(Field_info* field_info)
 {
   // Lock the fields critical section (will unlock autonmaticaly at the end of
@@ -92,7 +91,7 @@ Field* Container::get_field(Field_info* field_info)
   return NULL;
 }
 
-/*! \brief adds a field given its field-info */
+/*! \brief adds a field given its field-info. */
 Field* Container::add_field(Field_info* field_info)
 {
   if (!field_info) return NULL;
@@ -112,11 +111,9 @@ Field* Container::add_field(Field_info* field_info)
   return field;
 }
 
-/*! \brief obtains a field info by id */
+/*! \brief obtains a field info by id. */
 Field_info* Container::get_field_info(Uint id)
-{
-  return (get_prototype()) ? get_prototype()->get_field_info(id) : NULL;
-}
+{ return (get_prototype()) ? get_prototype()->get_field_info(id) : NULL; }
 
 /*! \brief obtains a field info by name */
 Field_info* Container::get_field_info(const std::string& name)
@@ -141,14 +138,12 @@ Attribute_list Container::get_attributes()
   return attribs;
 }
 
-/*! \brief Add a child object to the scene */
+/*! \brief Add a child object to the scene. */
 void Container::add_to_scene(Scene_graph* sg, XML_entity* parent) 
-{ 
-  m_execution_coordinator = sg->get_execution_coordinator();
-}
+{ m_execution_coordinator = sg->get_execution_coordinator(); }
 #endif
 
-/*! \brief obtains a source field with a given name */
+/*! \brief obtains a source field with a given name. */
 Field* Container::get_source_field(const std::string& src_field_name)
 {
   Field* src_field = add_field(src_field_name);
@@ -168,7 +163,7 @@ Field* Container::get_source_field(const std::string& src_field_name)
   return NULL;
 }
 
-/*! \brief obtains a destination field with a given name */
+/*! \brief obtains a destination field with a given name. */
 Field* Container::get_destination_field(const std::string& dst_field_name)
 {
   Field* dst_field = add_field(dst_field_name);
@@ -186,14 +181,14 @@ Field* Container::get_destination_field(const std::string& dst_field_name)
   return NULL;
 }
 
-/*! \brief writes this container */
+/*! \brief writes this container. */
 void Container::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
   formatter->container_end();
 }
 
-/*! \breif processes change of content */
+/*! \breif processes change of content. */
 void Container::process_content_changed()
 {
   Observer_iter it;
@@ -204,10 +199,8 @@ void Container::process_content_changed()
   }
 }
 
-/*! \brief Processes change of field */
+/*! \brief Processes change of field. */
 void Container::field_changed(Field_info* field_info)
-{
-  process_content_changed();
-}
+{ process_content_changed(); }
 
 SGAL_END_NAMESPACE

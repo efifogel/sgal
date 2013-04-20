@@ -30,18 +30,18 @@
 #pragma warning ( disable : 4503 )
 #endif
 
-#include <stdlib.h>
-
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/exception.hpp>
-
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
-#include <GL/gl.h>
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <GL/gl.h>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/exception.hpp>
+#include <boost/shared_ptr.hpp>
+
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Event_handler.hpp"
@@ -115,10 +115,10 @@
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 
-/*! Valid file format names */
+/*! Valid file format names. */
 const char* Player_scene::s_file_format_names[] = { "wrl" };
 
-/*! Constructor */
+/*! Constructor. */
 Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_window_manager(NULL),
   m_window_item(NULL),
@@ -129,7 +129,7 @@ Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_simulate(false)  
 { init(); }
 
-/*! Constructor */
+/*! Constructor. */
 Player_scene::Player_scene() :
   m_window_manager(NULL),
   m_window_item(NULL),
@@ -174,7 +174,7 @@ void Player_scene::init()
   SGAL::Mouse_event::doregister(this);
 }
 
-/*! Destructor */
+/*! Destructor. */
 Player_scene::~Player_scene(void)
 {
   SGAL::Reshape_event::unregister(this);
@@ -289,8 +289,8 @@ void Player_scene::init_scene()
   // Update the configuration node.
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  SGAL::Accumulation* acc = conf->get_accumulation();
-  SGAL::Multisample* ms = conf->get_multisample();
+  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
+  boost::shared_ptr<SGAL::Multisample> ms = conf->get_multisample();
 
   if (acc) {
     SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
@@ -331,12 +331,13 @@ void Player_scene::indulge_user()
   if (m_option_parser->get_display_texture_info()) {
     SGAL_assertion(m_scene_graph);
     // Look for non instance containers:
-    SGAL::Scene_graph::Container_vector_iter ci;
+    SGAL::Scene_graph::Container_list_iter ci;
     for (ci = m_scene_graph->containers_begin();
          ci != m_scene_graph->containers_end(); ++ci)
     {
-      SGAL::Container* cont = *ci;
-      SGAL::Texture_2d* texture = dynamic_cast<SGAL::Texture_2d*>(cont);
+      boost::shared_ptr<SGAL::Container> cont = *ci;
+      boost::shared_ptr<SGAL::Texture_2d> texture =
+        boost::dynamic_pointer_cast<SGAL::Texture_2d>(cont);
       if (texture) texture->print_info();
     }
     
@@ -345,24 +346,27 @@ void Player_scene::indulge_user()
     for (ii = m_scene_graph->instances_begin();
          ii != m_scene_graph->instances_end(); ++ii)
     {
-      SGAL::Container* cont = (*ii).second;
-      SGAL::Texture_2d* texture = dynamic_cast<SGAL::Texture_2d*>(cont);
+      boost::shared_ptr<SGAL::Container> cont = (*ii).second;
+      boost::shared_ptr<SGAL::Texture_2d> texture =
+        boost::dynamic_pointer_cast<SGAL::Texture_2d>(cont);
       if (texture) texture->print_info();
     }
   }
 
   if (m_option_parser->get_display_geometry_info()) {
     // Look for non instance containers:
-    SGAL::Scene_graph::Container_vector_iter ci;
+    SGAL::Scene_graph::Container_list_iter ci;
     for (ci = m_scene_graph->containers_begin();
          ci != m_scene_graph->containers_end(); ++ci)
     {
-      SGAL::Container* cont = *ci;
+      boost::shared_ptr<SGAL::Container> cont = *ci;
       // std::cout << "Tag 1: " << cont->get_tag().c_str() << std::endl;
-      SGAL::Indexed_face_set* ifs = dynamic_cast<SGAL::Indexed_face_set*>(cont);
-      if (ifs) print_geometry_info(ifs);
-      SGAL::Box* box = dynamic_cast<SGAL::Box*>(cont);
-      if (box) print_geometry_info(box);
+      boost::shared_ptr<SGAL::Indexed_face_set> ifs =
+        boost::dynamic_pointer_cast<SGAL::Indexed_face_set>(cont);
+      if (ifs) print_geometry_info(&*ifs);
+      boost::shared_ptr<SGAL::Box> box =
+        boost::dynamic_pointer_cast<SGAL::Box>(cont);
+      if (box) print_geometry_info(&*box);
     }
 
     // Look for instance containers:
@@ -370,12 +374,14 @@ void Player_scene::indulge_user()
     for (ii = m_scene_graph->instances_begin();
          ii != m_scene_graph->instances_end(); ++ii)
     {
-      SGAL::Container* cont = (*ii).second;
+      boost::shared_ptr<SGAL::Container> cont = (*ii).second;
       // std::cout << "Tag 2: " << cont->get_tag().c_str() << std::endl;
-      SGAL::Indexed_face_set* ifs = dynamic_cast<SGAL::Indexed_face_set*>(cont);
-      if (ifs) print_geometry_info(ifs);
-      SGAL::Box* box = dynamic_cast<SGAL::Box*>(cont);
-      if (box) print_geometry_info(box);
+      boost::shared_ptr<SGAL::Indexed_face_set> ifs =
+        boost::dynamic_pointer_cast<SGAL::Indexed_face_set>(cont);
+      if (ifs) print_geometry_info(&*ifs);
+      boost::shared_ptr<SGAL::Box> box =
+        boost::dynamic_pointer_cast<SGAL::Box>(cont);
+      if (box) print_geometry_info(&*box);
     }
   }
 
@@ -477,33 +483,29 @@ void Player_scene::print_stat()
     unsigned int size = sizeof(names) / sizeof(char*);
     for (const char** ni = names; ni != &names[size]; ++ni) {
       std::string name(*ni);
-    
-      SGAL::Exact_polyhedron_geo* ep =
-        dynamic_cast<SGAL::Exact_polyhedron_geo*>
-        (m_scene_graph->get_container(name));
+      boost::shared_ptr<SGAL::Container> cont =
+        m_scene_graph->get_container(name);
+      boost::shared_ptr<SGAL::Exact_polyhedron_geo> ep =
+        boost::dynamic_pointer_cast<SGAL::Exact_polyhedron_geo>(cont);
       if (ep) ep->print_stat();
 #if defined(USE_AOS)
-      SGAL::Arrangement_on_sphere_geo* aos =
-        dynamic_cast<SGAL::Arrangement_on_sphere_geo*>
-        (m_scene_graph->get_container(name));
+      boost::shared_ptr<SGAL::Arrangement_on_sphere_geo> aos =
+        boost::dynamic_pointer_cast<SGAL::Arrangement_on_sphere_geo>(cont);
       if (aos) aos->print_stat();
 #endif
 #if defined(USE_SGM)
-      SGAL::Spherical_gaussian_map_geo* sgm =
-        dynamic_cast<SGAL::Spherical_gaussian_map_geo*>
-        (m_scene_graph->get_container(name));
+      boost::shared_ptr<SGAL::Spherical_gaussian_map_geo> sgm =
+        boost::dynamic_pointer_cast<SGAL::Spherical_gaussian_map_geo>(cont);
       if (sgm) sgm->print_stat();
 #endif
 #if defined(USE_CGM)
-      SGAL::Cubical_gaussian_map_geo* cgm =
-        dynamic_cast<SGAL::Cubical_gaussian_map_geo*>
-        (m_scene_graph->get_container(name));
+      boost::shared_ptr<SGAL::Cubical_gaussian_map_geo> cgm =
+        boost::dynamic_pointer_cast<SGAL::Cubical_gaussian_map_geo>(cont);
       if (cgm) cgm->print_stat();
 #endif
 #if defined(USE_NEF) && defined(USE_NGM)
-      SGAL::Nef_gaussian_map_geo* ngm =
-        dynamic_cast<SGAL::Nef_gaussian_map_geo*>
-        (m_scene_graph->get_container(name));
+      boost::shared_ptr<SGAL::Nef_gaussian_map_geo> ngm =
+        boost::dynamic_pointer_cast<SGAL::Nef_gaussian_map_geo>(cont);
       if (ngm) ngm->print_stat();
 #endif
     }
@@ -530,7 +532,7 @@ void Player_scene::handle(SGAL::Mouse_event* event)
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  SGAL::Accumulation* acc = conf->get_accumulation();
+  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 }
 
@@ -540,7 +542,7 @@ void Player_scene::handle(SGAL::Motion_event* event)
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  SGAL::Accumulation* acc = conf->get_accumulation();
+  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 }
 
@@ -550,7 +552,7 @@ void Player_scene::handle(SGAL::Passive_motion_event* event)
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  SGAL::Accumulation* acc = conf->get_accumulation();
+  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 }
 
@@ -560,7 +562,7 @@ void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  SGAL::Accumulation* acc = conf->get_accumulation();
+  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 
   if (keyboard_event->get_pressed()) return;
@@ -608,7 +610,7 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   m_scene_graph->draw(&draw_action);
   if (m_option_parser->get_draw_grid()) draw_grid();
   
-  SGAL::Accumulation* acc = conf->get_accumulation();
+  boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   if (!acc || !acc->is_enabled() || dont_accumulate) {
     m_scene_graph->process_snapshots(&draw_action);
     if (acc) acc->disactivate();

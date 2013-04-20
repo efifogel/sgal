@@ -38,9 +38,11 @@
 #include "SCGAL/Exact_coord_minkowski.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 #include "SCGAL/Triangulation_geo.hpp"
-//#include "SCGAL/Lower_envelope_tri_geo.hpp"
-//#include "SCGAL/Lower_envelope_sphere_geo.hpp"
-//#include "SCGAL/Lower_envelope_plane_geo.hpp"
+#if defined(USE_ENV)
+#include "SCGAL/Lower_envelope_tri_geo.hpp"
+#include "SCGAL/Lower_envelope_sphere_geo.hpp"
+#include "SCGAL/Lower_envelope_plane_geo.hpp"
+#endif
 #if defined(USE_CGM)
 #include "SCGAL/Cubical_gaussian_map_geo.hpp"
 #endif
@@ -59,7 +61,10 @@
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_overlay_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_sim_geo.hpp"
-// #include "SCGAL/Polygon_set_on_sphere_geo.hpp"
+// Ignore in Debug mode, cause is_valid() on the sphere does not compile 
+#if defined(NDEBUG)
+#include "SCGAL/Polygon_set_on_sphere_geo.hpp"
+#endif
 #endif
 #if defined(USE_VOS)
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
@@ -88,9 +93,11 @@ void scgal_init()
   Container_factory::get_instance()->doregister(Exact_coord_minkowski::prototype());
   Container_factory::get_instance()->doregister(Exact_polyhedron_geo::prototype());
   Container_factory::get_instance()->doregister(Triangulation_geo::prototype());
-  //  Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());
-  //  Container_factory::get_instance()->doregister(Lower_envelope_sphere_geo::prototype());
-  //  Container_factory::get_instance()->doregister(Lower_envelope_plane_geo::prototype());
+#if defined(USE_ENV)
+  Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());
+  Container_factory::get_instance()->doregister(Lower_envelope_sphere_geo::prototype());
+  Container_factory::get_instance()->doregister(Lower_envelope_plane_geo::prototype());
+#endif
 #if defined(USE_CGM)
   Container_factory::get_instance()->doregister(Cubical_gaussian_map_geo::prototype());
 #endif
@@ -109,7 +116,10 @@ void scgal_init()
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_marked_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_overlay_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_sim_geo::prototype());
-  //   Container_factory::get_instance()->doregister(Polygon_set_on_sphere_geo::prototype());
+// Ignore in Debug mode, cause is_valid() on the sphere does not compile 
+#if defined(NDEBUG)
+  Container_factory::get_instance()->doregister(Polygon_set_on_sphere_geo::prototype());
+#endif
 #endif
 #if defined(USE_VOS)
   Container_factory::get_instance()->doregister(Voronoi_diagram_on_sphere_geo::prototype());

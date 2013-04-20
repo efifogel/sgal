@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -27,6 +27,7 @@
  */
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
@@ -47,6 +48,8 @@ public:
     STRING,
     LAST
   };
+
+  typedef boost::shared_ptr<Font_style>         Shared_font_style;
 
   /*! Constructor */
   Text(Boolean proto = false);
@@ -84,10 +87,10 @@ public:
   virtual Boolean clean_sphere_bound();
 
   /*! Set the font style */
-  void set_font_style(Font_style* font_style);
+  void set_font_style(Shared_font_style font_style);
 
   /*! Obtain the font style */
-  Font_style* get_font_style() const { return m_font_style; }
+  Shared_font_style get_font_style() const { return m_font_style; }
 
 protected:
   /*! obtains the tag (type) of the container */
@@ -104,10 +107,10 @@ private:
   std::string m_string;
 
   /*! The font style */
-  Font_style* m_font_style;
+  Shared_font_style m_font_style;
 
   /*! Indicates whether a default fontStyle was constructed */
-  Font_style* m_default_font_style;
+  Shared_font_style m_default_font_style;
 };
 
 SGAL_END_NAMESPACE

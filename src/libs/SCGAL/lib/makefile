@@ -57,7 +57,10 @@ ifeq ($(USE_AOS), 1)
 CPPSOURCES+= Arrangement_on_sphere_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_graph_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_marked_geo.cpp
-# CPPSOURCES+= Polygon_set_on_sphere_geo.cpp
+# Ignore in Debug mode, cause is_valid() on the sphere does not compile 
+ifneq ($(DEBUG), 1)
+CPPSOURCES+= Polygon_set_on_sphere_geo.cpp
+endif
 CPPSOURCES+= Arrangement_on_sphere_overlay_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_sim_geo.cpp
 endif
@@ -82,10 +85,12 @@ CPPSOURCES+= Exact_normal_array.cpp
 CPPSOURCES+= Exact_plane_array.cpp
 CPPSOURCES+= Exact_polyhedron_geo.cpp
 CPPSOURCES+= Triangulation_geo.cpp
-# CPPSOURCES+= Lower_envelope_geo.cpp
-# CPPSOURCES+= Lower_envelope_tri_geo.cpp
-# CPPSOURCES+= Lower_envelope_sphere_geo.cpp
-# CPPSOURCES+= Lower_envelope_plane_geo.cpp
+ifeq ($(USE_ENV), 1)
+CPPSOURCES+= Lower_envelope_geo.cpp
+CPPSOURCES+= Lower_envelope_tri_geo.cpp
+CPPSOURCES+= Lower_envelope_sphere_geo.cpp
+CPPSOURCES+= Lower_envelope_plane_geo.cpp
+endif
 ifeq ($(USE_CGM), 1)
 CPPSOURCES+= Cubical_gaussian_map_geo.cpp
 CPPSOURCES+= Arrangement_on_cube_renderers.cpp
@@ -151,6 +156,10 @@ LCPPDEFS+= -DUSE_CGM
 SGAL_INCLUDE_AOS=1
 endif
 
+ifeq ($(USE_NGM), 1)
+LCPPDEFS+= -DUSE_NGM
+endif
+
 ifeq ($(USE_LTS), 1)
 LCPPDEFS+= -DUSE_LTS
 SGAL_INCLUDE_AOS=1
@@ -177,6 +186,10 @@ endif
 
 ifeq ($(USE_QUADRIC), 1)
 LCPPDEFS+= -DUSE_QUADRIC
+endif
+
+ifeq ($(USE_ENV), 1)
+LCPPDEFS+= -DUSE_ENV
 endif
 
 # Include:

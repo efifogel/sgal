@@ -78,11 +78,8 @@ unsigned int Scene_graph::s_min_redraw_period = 500;
  * is created and rendered by two different threads
  */
 Scene_graph::Scene_graph(bool syncronize) : 
-  m_root(0), 
-  m_head_light(NULL),
   m_camera(NULL),
   m_navigation_info(NULL),
-  m_navigation_root(NULL),
   m_context(NULL),
   m_is_scene_done(!syncronize), 
   m_does_have_lights(false),
@@ -104,8 +101,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_is_camera_in_focus(false),
   m_owned_configuration(false),
   m_owned_navigation_info(false),
-  m_owned_camera(false),
-  m_owned_head_light(false)
+  m_owned_camera(false)
 {
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
@@ -129,16 +125,8 @@ Scene_graph::~Scene_graph()
 {
   // \todo sai
   // if (m_scripts_sai != NULL) delete m_scripts_sai;
-  
-  for (unsigned int i = 0 ; i < m_containers.size(); ++i)
-    delete m_containers[i];
-  m_containers.clear();
 
-  Container_map_iter iter;
-  for (iter = m_instances.begin(); iter != m_instances.end(); ++iter) {
-    Container* c = iter->second;
-    delete c;
-  }
+  m_containers.clear();
   m_instances.clear();
 
   delete m_isect_action;
@@ -245,15 +233,16 @@ void Scene_graph::draw(Draw_action* draw_action)
     return;
   }
 
-  Accumulation* acc = NULL;
+  Boolean accumulation_enabled = true;
+  Configuration::Shared_accumulation acc;
   Gfx::Poly_mode poly_mode = Gfx::FILL_PMODE;
   Configuration* config = draw_action->get_configuration();
   if (config) {
-    acc = config->get_accumulation();
     poly_mode = config->get_poly_mode();
     m_context->set_poly_mode(poly_mode);
+    acc = config->get_accumulation();
+    if (!acc || !acc->is_enabled()) accumulation_enabled = false;
   }
-  bool accumulation_enabled = acc && acc->is_enabled();
   if (poly_mode != Gfx::FILL_PMODE) accumulation_enabled = false;
 
   if (m_execution_coordinator && !m_execution_coordinator->is_loading_done()) {
@@ -363,7 +352,7 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
   /*! \todo move to Context! */
   Configuration* config = draw_action->get_configuration();
   if (config) {
-    Multisample* ms = config->get_multisample();
+    Configuration::Shared_multisample ms = config->get_multisample();
     if (ms && ms->is_enabled()) glEnable(GL_MULTISAMPLE);
   }
 }
@@ -384,7 +373,7 @@ void Scene_graph::render_scene_graph(Draw_action* draw_action)
   Camera* act_camera = get_active_camera();
   Cull_context cull_context;
   cull_context.set_head_light(get_head_light());
-  cull_context.cull(m_root, act_camera);
+  cull_context.cull(&*m_root, act_camera);
   cull_context.draw(draw_action);
   
   // Draw Text screen.
@@ -510,14 +499,15 @@ void Scene_graph::create_execution_coordinator()
 }
 
 /*! \brief adds a container to the name-less container-pool. */
-void Scene_graph::add_container(Container* container)
+void Scene_graph::add_container(Shared_container container)
 {
   if (!container) return;
   m_containers.push_back(container);
 }
 
 /*! \brief adds a container to the instance container-pool. */
-void Scene_graph::add_container(Container* container, const std::string& name)
+void Scene_graph::add_container(Shared_container container,
+                                const std::string& name)
 {
   if (!container) return;
   container->set_name(name);
@@ -632,7 +622,7 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
       SGAL_assertion(pos_field);
       SGAL_assertion(orient_field);
   
-      Transform* navigat_root = get_navigation_root();
+      Shared_transform navigat_root = get_navigation_root();
       Field* sg_pos_field = navigat_root->get_field(Transform::TRANSLATION);
       Field* sg_orient_field = navigat_root->get_field(Transform::ROTATION);
       SGAL_assertion(sg_pos_field);
@@ -664,11 +654,12 @@ void Scene_graph::set_configuration(Configuration* config)
 }
 
 /*! \brief obtains a container by its instance name. */
-Container* Scene_graph::get_container(const std::string& name)
+Scene_graph::Shared_container
+Scene_graph::get_container(const std::string& name)
 {
   Container_map_iter ni = m_instances.find(name);
   if (ni != m_instances.end()) return ni->second;
-  return 0;
+  return Shared_container();
 }
 
 /*! \todo Model_stats& Scene_graph::get_stats() */
@@ -705,10 +696,10 @@ Int Scene_graph::get_unique_light_id()
 }
 
 /*! \brief sets the root of the scene graph. */
-void Scene_graph::set_root(Group* root) { m_root = root; }
+void Scene_graph::set_root(Shared_group root) { m_root = root; }
 
 /*! \brief sets the navigation root. */
-void Scene_graph::set_navigation_root(Transform* nav_root)
+void Scene_graph::set_navigation_root(Shared_transform nav_root)
 {
   SGAL_assertion(nav_root);
   m_navigation_root = nav_root;
@@ -790,14 +781,6 @@ void Scene_graph::destroy_defaults()
     }
     m_owned_camera = false;
   }
-
-  if (m_owned_head_light) {
-    if (m_head_light) {
-      delete m_head_light;
-      m_head_light = NULL;
-    }
-    m_owned_head_light = false;
-  }
 }
  
 /*! \brief creates default nodes and route them appropriately. */
@@ -831,9 +814,8 @@ void Scene_graph::create_defaults()
 
   // The default light:
   if (!does_have_lights()) {
-    m_head_light = new Point_light();
+    m_head_light = Shared_point_light(new Point_light);
     SGAL_assertion(m_head_light);
-    m_owned_head_light = true;
     set_head_light(m_configuration);
     m_head_light->set_ambient_intensity(1);
     get_root()->add_child(m_head_light);
@@ -927,10 +909,10 @@ bool Scene_graph::route(const std::string& src_node_str,
                         Route* route)
 {
   // Get the containers from the scene graph:
-  Container* src_node = get_container(src_node_str);
+  Shared_container src_node = get_container(src_node_str);
   if (!src_node) return false;
   
-  Container* dst_node = get_container(dst_node_str);
+  Shared_container dst_node = get_container(dst_node_str);
   if (!dst_node) return false;
   
   // Get the source and destination fields from the container:
@@ -940,7 +922,7 @@ bool Scene_graph::route(const std::string& src_node_str,
   Field* dst_field = dst_node->get_destination_field(dst_field_name);
   if (!dst_field) return false;
 
-  route->set(src_node, src_field, dst_node, dst_field);
+  route->set(&*src_node, src_field, &*dst_node, dst_field);
              
   return true;
 }

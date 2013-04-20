@@ -25,20 +25,20 @@
 /*! \file
  */
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Min_sphere_of_spheres_d.h>
-
-// #include <CGAL/IO/Arr_iostream.h>
-#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm.h>
-#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_arr_dcel.h>
-#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
-
 #include <time.h>
 #include <string>
 #include <vector>
 #include <list>
 #include <iostream>
 #include <fstream>
+#include <boost/shared_ptr.hpp>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Min_sphere_of_spheres_d.h>
+// #include <CGAL/IO/Arr_iostream.h>
+#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm.h>
+#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_arr_dcel.h>
+#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -77,6 +77,9 @@ public:
   };
 
 private:
+  typedef boost::shared_ptr<Spherical_gaussian_map_marked_geo>
+    Shared_spherical_gaussian_map_marked_geo;
+  
   typedef Spherical_gaussian_map_marked           Sgm;
   typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Exact_kernel>
                                                   Polyhedron;
@@ -126,28 +129,23 @@ private:
     /*! Destructor. */
     virtual ~Sgm_geo_initializer_visitor() {}
     
-    /*! Pass information from the polyhedron vertex to its dual - an aos face */
+    /*! Pass information from the polyhedron vertex to its dual - an aos face.
+     */
     virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,
                                     Sgm_face_handle trg)
-    {
-      trg->set_marked(src->marked());
-    }
+    { trg->set_marked(src->marked()); }
 
     /*! Pass information from an aos face to another aos face that are duals
      * of the same polyhedron vertex.
      */
     virtual void update_dual_vertex(Sgm_face_const_handle src,
                                     Sgm_face_handle trg)
-    {
-      trg->set_marked(src->marked());
-    }
+    { trg->set_marked(src->marked()); }
 
-    /*! Pass information from a polyhedron facet to its dual - an aos vertex */
+    /*! Pass information from a polyhedron facet to its dual - an aos vertex. */
     virtual void update_dual_face(Polyhedron_facet_const_handle src,
                                   Sgm_vertex_handle trg)
-    {
-      trg->set_marked(src->marked());
-    }
+    { trg->set_marked(src->marked()); }
 
     /*! Pass information from a polyhedron halfedge to its dual - an aos
      * halfedge.
@@ -263,7 +261,7 @@ protected:
   };
 
   // List of pointers to Spherical_gaussian_map_marked_geo objects. */
-  typedef std::list<Spherical_gaussian_map_marked_geo *>        Sgm_node_list;
+  typedef std::list<Shared_spherical_gaussian_map_marked_geo>   Sgm_node_list;
   typedef Sgm_node_list::iterator                               Sgm_node_iter;
 
   /*! The minkowski sum operands. */
@@ -662,9 +660,9 @@ public:
   virtual void print_stat();
 
   /*! Set the source gausian maps of the minkowski sum. */
-  void insert_sgm(Spherical_gaussian_map_marked_geo* sgm);
+  void insert_sgm(Shared_spherical_gaussian_map_marked_geo sgm);
 
-  /*! Obrain a reference to the cubical Gaussian map */
+  /*! Obrain a reference to the Gaussian map */
   Sgm* get_sgm();
 
   /*! Set the Gaussian map. */

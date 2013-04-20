@@ -45,7 +45,6 @@ static const Int LAST_CHAR = 128;
 Texture_font::Texture_font(const std::string& name, Boolean antialias,
                            Boolean left_to_right, Boolean top_to_bottom) :
   Font(name, antialias, left_to_right, top_to_bottom),
-  m_texture(NULL),
   m_appearance(NULL)
 {
   m_min_char = FIRST_CHAR;
@@ -69,8 +68,6 @@ Texture_font::Texture_font(const std::string& name, Boolean antialias,
 /*! Destructor */
 Texture_font::~Texture_font()
 {
-  if (m_texture) delete m_texture;
-
 #if 0
 #if (defined _MSC_VER)    
   DeleteObject(m_hfont);
@@ -398,8 +395,8 @@ void Texture_font::create_image_texture(void* pixels)
    * This allows for a transparent background for the text.
    */
 
-  if (m_texture) delete m_texture;
-  m_texture = new Image_texture;
+  if (m_texture) m_texture.reset();
+  m_texture = Shared_texture(new Image_texture);
   Image* image = new Image;
   image->set_width(m_bitmap_width);
   image->set_height(m_bitmap_height);
@@ -486,7 +483,7 @@ void Texture_font::draw_char(float x, float y, int ch) const
 
   // Texel offset.
   Vector3f color;
-  Material* mat = m_appearance->get_material();
+  Material* mat = &*(m_appearance->get_material());
   if (mat) mat->get_diffuse_color(color);
   glColor3f(color[0], color[1], color[2]);
   glBegin(GL_QUADS);

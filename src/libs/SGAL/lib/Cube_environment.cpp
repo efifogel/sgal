@@ -97,39 +97,39 @@ void Cube_environment::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "leftImage") {
-      Image* image = dynamic_cast<Image*>(cont);
+      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
       set_left_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "rightImage") {
-      Image* image = dynamic_cast<Image*>(cont);
+      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
       set_right_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "frontImage") {
-      Image* image = dynamic_cast<Image*>(cont);
+      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
       set_front_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "backImage") {
-      Image* image = dynamic_cast<Image*>(cont);
+      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
       set_back_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "bottomImage") {
-      Image* image = dynamic_cast<Image*>(cont);
+      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
       set_bottom_image(image);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "topImage") {
-      Image* image = dynamic_cast<Image*>(cont);
+      Shared_image image = boost::dynamic_pointer_cast<Image>(cont);
       set_top_image(image);
       elem->mark_delete(cai);
       continue;
@@ -143,8 +143,8 @@ void Cube_environment::set_attributes(Element* elem)
 void Cube_environment::add_to_scene(Scene_graph* scene_graph)
 {
   for (Uint i = 0; i < NUM_IMAGES; ++i) {
-    if (!m_images[i].first) return;
-    m_images[i].first->set_dirs(scene_graph->get_data_dirs());
+    if (!m_images[i]) return;
+    m_images[i]->set_dirs(scene_graph->get_data_dirs());
   }
 }
 
@@ -161,8 +161,8 @@ void Cube_environment::clean()
   };
   if (Texture::is_dirty()) Texture::clean();
   for (Uint i = 0; i < NUM_IMAGES; ++i) {
-    if (m_images[i].first->is_dirty()) m_images[i].first->clean();
-    load_color_map(m_images[i].first, targets[i]);
+    if (m_images[i]->is_dirty()) m_images[i]->clean();
+    load_color_map(&*(m_images[i]), targets[i]);
   }
   m_dirty = false;
 }
@@ -171,9 +171,9 @@ void Cube_environment::clean()
 Boolean Cube_environment::empty()
 {
   for (Uint i = 0; i < NUM_IMAGES; ++i) {
-    if (!m_images[i].first) return true;
-    if (m_images[i].first->is_dirty()) m_images[i].first->clean();
-    if (m_images[i].first->empty()) return true;
+    if (!m_images[i]) return true;
+    if (m_images[i]->is_dirty()) m_images[i]->clean();
+    if (m_images[i]->empty()) return true;
   }
   return false;
 }
@@ -181,69 +181,33 @@ Boolean Cube_environment::empty()
 /*! \brief obtains the texture number of components. */
 Uint Cube_environment::get_component_count() const
 {
-  if (!m_images[0].first) return 0;
-  if (m_images[0].first->is_dirty()) m_images[0].first->clean();
-  return m_images[0].first->get_component_count();
+  if (!m_images[0]) return 0;
+  if (m_images[0]->is_dirty()) m_images[0]->clean();
+  return m_images[0]->get_component_count();
 }
 
 /*! \brief sets the left image. */
-void Cube_environment::set_left_image(Image* image)
-{
-  if (m_images[LEFT_IMAGE].second) {
-    if (m_images[LEFT_IMAGE].first) delete m_images[LEFT_IMAGE].first;
-    m_images[LEFT_IMAGE].second = false; 
-  }
-  m_images[LEFT_IMAGE].first = image;
-}  
+void Cube_environment::set_left_image(Shared_image image)
+{ m_images[LEFT_IMAGE] = image; }  
 
 /*! \brief sets the right image. */
-void Cube_environment::set_right_image(Image* image)
-{
-  if (m_images[RIGHT_IMAGE].second) {
-    if (m_images[RIGHT_IMAGE].first) delete m_images[RIGHT_IMAGE].first;
-    m_images[RIGHT_IMAGE].second = false; 
-  }
-  m_images[RIGHT_IMAGE].first = image;
-}  
+void Cube_environment::set_right_image(Shared_image image)
+{ m_images[RIGHT_IMAGE] = image; }  
 
 /*! \brief sets the front image. */
-void Cube_environment::set_front_image(Image* image)
-{
-  if (m_images[FRONT_IMAGE].second) {
-    if (m_images[FRONT_IMAGE].first) delete m_images[FRONT_IMAGE].first;
-    m_images[FRONT_IMAGE].second = false; 
-  }
-  m_images[FRONT_IMAGE].first = image;
-}  
+void Cube_environment::set_front_image(Shared_image image)
+{ m_images[FRONT_IMAGE] = image; }  
 
 /*! \brief sets the back image. */
-void Cube_environment::set_back_image(Image* image)
-{
-  if (m_images[BACK_IMAGE].second) {
-    if (m_images[BACK_IMAGE].first) delete m_images[BACK_IMAGE].first;
-    m_images[BACK_IMAGE].second = false; 
-  }
-  m_images[BACK_IMAGE].first = image;
-}  
+void Cube_environment::set_back_image(Shared_image image)
+{ m_images[BACK_IMAGE] = image; }  
 
 /*! \brief sets the bottom image. */
-void Cube_environment::set_bottom_image(Image* image)
-{
-  if (m_images[BOTTOM_IMAGE].second) {
-    if (m_images[BOTTOM_IMAGE].first) delete m_images[BOTTOM_IMAGE].first;
-    m_images[BOTTOM_IMAGE].second = false; 
-  }
-  m_images[BOTTOM_IMAGE].first = image;
-}  
+void Cube_environment::set_bottom_image(Shared_image image)
+{ m_images[BOTTOM_IMAGE] = image; }  
 
 /*! \brief sets the top image. */
-void Cube_environment::set_top_image(Image* image)
-{
-  if (m_images[TOP_IMAGE].second) {
-    if (m_images[TOP_IMAGE].first) delete m_images[TOP_IMAGE].first;
-    m_images[TOP_IMAGE].second = false; 
-  }
-  m_images[TOP_IMAGE].first = image;
-}  
+void Cube_environment::set_top_image(Shared_image image)
+{ m_images[TOP_IMAGE] = image; }  
 
 SGAL_END_NAMESPACE

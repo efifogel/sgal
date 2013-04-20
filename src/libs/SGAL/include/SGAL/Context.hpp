@@ -120,6 +120,7 @@
  */
 
 #include <string.h>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/SGAL_defs.hpp"
@@ -163,11 +164,14 @@ struct Light_target {
 
 class SGAL_CLASSDEF Context {
 private:
-
 #define SGAL_MAX_STACK 16
 #define SGAL_MAX_LIGHTS 8
 
 public:
+  typedef boost::shared_ptr<Texture>            Shared_texture;
+  typedef boost::shared_ptr<Material>           Shared_material;
+  typedef boost::shared_ptr<Halftone>           Shared_halftone;
+
   /*! Constructor */
   Context();
 
@@ -218,98 +222,135 @@ public:
   };
 
   void set_viewport(Uint x, Uint y, Uint w, Uint h);
+
   void get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const;
 
   void set_material_mode_enable(Gfx::Material_mode material_mode_enable);
+
   Gfx::Material_mode get_material_mode_enable() const;
 
-  void set_texture(Texture* texture);
-  Texture* get_texture() const;
+  void set_texture(Shared_texture texture);
 
-  void set_halftone(Halftone* halftone);
-  Halftone* get_halftone() const;
+  Shared_texture get_texture() const;
+
+  void set_halftone(Shared_halftone halftone);
+
+  Shared_halftone get_halftone() const;
   
   void set_tex_enable(bool tex_enable);
+
   Boolean get_tex_enable() const;
+
   void draw_tex_enable(bool tex_enable);
 
   void set_tex_mode(Gfx::Tex_mode tex_mode);
+
   Gfx::Tex_mode get_tex_mode() const;
 
   void set_tex_blend_color(Float v0, Float v1, Float v2, Float v3);
+
   void set_tex_blend_color(const Vector4f& tex_blend_color);
+
   void get_tex_blend_color(Vector4f& tex_blend_color) const;
+
   void get_tex_blend_color(Float* v0, Float* v1, Float* v2, Float* v3) const;
 
   void set_tex_env(Gfx::Tex_env tex_env);
+
   Gfx::Tex_env get_tex_env() const;
 
   void set_tex_gen(Tex_gen* tex_gen);
+
   Tex_gen* get_tex_gen() const;
 
   void set_tex_gen_enable(Boolean tex_gen_enable);
+
   Boolean get_tex_gen_enable() const;
 
-  void set_material(Material* material);
-  Material* get_material() const;
+  void set_material(Shared_material material);
+
+  Shared_material get_material() const;
 
   void set_light_enable(Boolean light_enable);
+
   Boolean get_light_enable() const;
 
   Light* get_light(const Int i) const;
 
   void set_shade_model(Gfx::Shade_model shade_model);
+
   Gfx::Shade_model get_shade_model() const;
+
   void draw_shade_model(Gfx::Shade_model shade_model);
 
   void set_transp_enable(Boolean transp_enable);
+
   Boolean get_transp_enable() const;
 
   void set_transp_mode(Gfx::Transparency_mode transp_mode);
+
   Gfx::Transparency_mode get_transp_mode() const;
 
   void set_alpha_func(Gfx::Alpha_func alpha_func);
+
   Gfx::Alpha_func get_alpha_func() const;
 
   void set_alpha_ref(Float alpha_ref);
+
   Float get_alpha_ref() const;
 
   void set_blend_color(const Vector4f& blend_color);
+
   void get_blend_color(Vector4f& blend_color) const;
+
   void set_blend_color(Float v0, Float v1, Float v2, Float v3);
+
   void get_blend_color(Float* v0, Float* v1, Float* v2, Float* v3) const;
 
   void set_src_blend_func(Gfx::Src_blend_func src_blend_func);
+
   Gfx::Src_blend_func get_src_blend_func() const;
 
   void set_dst_blend_func(Gfx::Dst_blend_func dst_blend_func);
+
   Gfx::Dst_blend_func get_dst_blend_func() const;
 
   void set_color_mask(const Vector4ub& color_mask);
+
   void get_color_mask(Vector4ub& color_mask) const;
+
   void set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3); 
+
   void get_color_mask(Ubyte* v0, Ubyte* v1, Ubyte* v2, Ubyte* v3) const; 
 
   void set_depth_enable(Boolean depth_enable);
+
   Boolean get_depth_enable() const;
 
   void set_depth_func(Gfx::Depth_func depth_func);
+
   Gfx::Depth_func get_depth_func() const;
 
   void set_depth_mask(Boolean depth_mask);
+
   Boolean get_depth_mask() const;
 
   void set_fog_enable(Boolean fog_enable);
+
   Boolean get_fog_enable() const;
 
   void set_polygon_stipple_enable(Boolean enable);
+
   Boolean get_polygon_stipple_enable() const;
   
   void set_poly_mode(Gfx::Poly_mode poly_mode);
+
   Gfx::Poly_mode get_poly_mode() const;
 
   void set_cull_face(Gfx::Cull_face cull_face);
+
   Gfx::Cull_face get_cull_face() const;
+
   void draw_cull_face(Gfx::Cull_face cull_face);
 
   /*! Set the attribute that indicates whether one- or two-sided lighting
@@ -362,8 +403,8 @@ public:
   void set_tex_transform(const Matrix4f& xform);
   void get_tex_transform(Matrix4f& xform) const;
 
-  void set_back_material(Material* material);
-  Material* get_back_material() const;
+  void set_back_material(Shared_material material);
+  Shared_material get_back_material() const;
 
   void clear(Uint which);
   void clear(Uint which, Float r, Float g, Float b, Float a);
@@ -513,14 +554,14 @@ private:
   void draw_state_elements(const Bit_mask& set_mask, const Appearance* app);
 
 public:
-  void draw_texture(Texture* texture);
-  void draw_halftone(Halftone* halftone);
+  void draw_texture(Shared_texture texture);
+  void draw_halftone(Shared_halftone halftone);
   void draw_tex_mode(Gfx::Tex_mode tex_mode);
   void draw_tex_blend_color(const Vector4f& tex_blend_color);
   void draw_tex_env(Gfx::Tex_env tex_env);
   void draw_tex_gen(Tex_gen* tex_gen);
   void draw_tex_gen_enable(Boolean tex_gen_enable);
-  void draw_material(Material* material, Material* back_material);
+  void draw_material(Shared_material material, Shared_material back_material);
   void draw_light_enable(Boolean light_enable);
   void draw_transp_enable(Boolean transp_enable);
   void draw_transp_mode(Gfx::Transparency_mode transp_mode);
@@ -542,7 +583,8 @@ public:
   void draw_line_stipple_pattern(unsigned int pattern);
   void draw_line_stipple_factor(unsigned int factor);
   void draw_tex_transform(const Matrix4f& matrix);
-  void draw_back_material(Material* material, Material* back_material);
+  void draw_back_material(Shared_material material,
+                          Shared_material back_material);
 
   void draw_blend_funcs(Gfx::Src_blend_func src_blend_func,
                         Gfx::Dst_blend_func dst_blend_func);
@@ -558,11 +600,11 @@ private:
 };
 
 /*! \brief obtains the texture attribute. */
-inline Texture* Context::get_texture() const
+inline Context::Shared_texture Context::get_texture() const
 { return m_current_state->m_texture; }
 
 /*! \brief obtains the halftone attribute. */
-inline Halftone* Context::get_halftone() const
+inline Context::Shared_halftone Context::get_halftone() const
 { return m_current_state->m_halftone; }
 
 /*! \brief obtains the texture enable attribute. */
@@ -590,7 +632,7 @@ inline Boolean Context::get_tex_gen_enable() const
 { return m_current_state->m_tex_gen_enable != 0; }
 
 /*! \brief obtains the material attribute. */
-inline Material* Context::get_material() const
+inline Context::Shared_material Context::get_material() const
 { return m_current_state->m_material; }
 
 /*! \brief */
@@ -799,7 +841,7 @@ inline void Context::get_tex_transform(Matrix4f& xform) const
 { xform = m_current_state->m_tex_transform; }
 
 /*! \brief */
-inline Material* Context::get_back_material() const
+inline Context::Shared_material Context::get_back_material() const
 { return m_current_state->m_back_material; }
 
 /*! \brief */

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 10982 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -121,12 +121,12 @@
 // #include "SGAL/Movie_recorder.hpp"
 // #include "SGAL/Field_def.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
-Container_factory * Container_factory::m_instance = 0;
+Container_factory* Container_factory::m_instance = 0;
 
 /*! Returns a pointer to the factory and makes sure only one instance exits */
-Container_factory * Container_factory::get_instance() 
+Container_factory* Container_factory::get_instance() 
 {
   if (!m_instance) {
     m_instance = new Container_factory();
@@ -135,34 +135,29 @@ Container_factory * Container_factory::get_instance()
   return m_instance;
 }
 
-/*! Register a container to the factory */
-void Container_factory::doregister(Container * container) 
+/*! \brief registers a container to the factory. */
+void Container_factory::doregister(Container* container) 
 {
   container->init_prototype();
   m_map[container->get_tag()] = container;
 }
 
-/*! Create a container according to the type
-  \param type the type of the container to be created
- */
-Container * Container_factory::create(const std::string & type)
+/*! \brief creates a container according to the type. */
+Shared_container Container_factory::create(const std::string& type)
 {
   Cont_iter iter = m_map.find(type);
-  if (iter != m_map.end())
-    return iter->second->clone();
+  if (iter != m_map.end()) return Shared_container(iter->second->clone());
 
   // try to add the "sgal" prefix:
   // The "sgal" prefix is added to containers that differ from the standard
   std::string alt_name("sgal");
   alt_name += type;
   iter = m_map.find(alt_name);
-  if (iter != m_map.end())
-    return iter->second->clone();
-
-  return 0;
+  if (iter != m_map.end()) return Shared_container(iter->second->clone());
+  return Shared_container();
 }
 
-/*! Register all containers */
+/*! \brief registers all containers. */
 void Container_factory::initialize() 
 {
   REGISTER_OBJECT(Accumulation);
@@ -252,3 +247,5 @@ void Container_factory::initialize()
   // REGISTER_OBJECT(Movie_recorder);
   // REGISTER_OBJECT(Field_def);
 }
+
+SGAL_END_NAMESPACE

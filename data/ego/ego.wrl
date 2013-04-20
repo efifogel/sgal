@@ -1,24 +1,76 @@
 #VRML V2.0 utf8
 Configuration {
-  accumulation Accumulation { enabled TRUE }
+  accumulation Accumulation { enabled FALSE }
 }
 ColorBackground {
   color 0.5 0.5 0.5 0
   clearStencil TRUE
 }
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
-Viewpoint {
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+DEF EGO_VIEW Viewpoint {
   # type "ORTHOGONAL"
   # fieldOfView 3.04
   radiusScale 0.7
 }
+DEF MODEL_VIEW Viewpoint {
+  # type "ORTHOGONAL"
+  # fieldOfView 2.0
+  radiusScale 0.7
+  position 0 0 8
+}
+DEF MODEL_VISIBLE_KEY SingleKeySensor { key "m" }
+DEF INC_MODEL_VISIBLE Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+DEF EGO_VISIBLE_KEY SingleKeySensor { key "l" }
+DEF INC_EGO_VISIBLE Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+DEF INC_EVEN_LAYER_X_KEY SingleKeySensor { key "q" }
+DEF INC_EVEN_LAYER_X Incrementor {
+  minValue 0
+  maxValue 1
+  value 0
+}
+DEF INC_EVEN_LAYER_Y_KEY SingleKeySensor { key "w" }
+DEF INC_EVEN_LAYER_Y Incrementor {
+  minValue 0
+  maxValue 1
+  value 0
+}
+DEF INC_ODD_LAYER_X_KEY SingleKeySensor { key "e" }
+DEF INC_ODD_LAYER_X Incrementor {
+  minValue 0
+  maxValue 1
+  value 1
+}
+DEF INC_ODD_LAYER_Y_KEY SingleKeySensor { key "r" }
+DEF INC_ODD_LAYER_Y Incrementor {
+  minValue 0
+  maxValue 1
+  value 1
+}
 
+DEF INC_OFFSET_BETWEEN_ROWS_KEY SingleKeySensor { key "a" }
+DEF INC_OFFSET_BETWEEN_ROWS Incrementor {
+  minValue 0
+  maxValue 1
+  value 0
+}
+DEF INC_TILING_ROW_KEY SingleKeySensor { key "s" }
+DEF INC_TILING_ROW Incrementor {
+  minValue 0
+  maxValue 1
+  value 1
+}
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EXPORT_KEY SingleKeySensor { key "O" }
 DEF SNAP_KEY SingleKeySensor { key "S" }
-DEF AOS_MODEL_VISIBLE_KEY SingleKeySensor { key "m" }
-DEF AOS_EGO_VISIBLE_KEY SingleKeySensor { key "e" }
-
 DEF SNAP Snapshot {
   image Image { }
   fileFormat "jpg"
@@ -33,13 +85,13 @@ Transform {
   #bboxSize 1.5 1.5 1.5
   children [
     DEF SWITCH_MODEL Switch {
-      whichChoice -1
+      whichChoice 0
       children [
-	Shape {
+	DEF MODEL Shape {
 	  appearance Appearance {
 	    material Material {}
 	  }
-	  geometry DEF MODEL Polyhedron {
+	  geometry DEF MODEL_GEOM Polyhedron {
 	    coord Coordinate {
 	      point [0 0 1.732051,
 		     1.632993 0 -0.5773503,
@@ -59,7 +111,7 @@ Transform {
     DEF SWITCH_EGO Switch {
       whichChoice 0
       children [
-	DEF GEOM Ego {
+	DEF EGO Ego {
 	  appearance Appearance {
 	    material Material {
 	      diffuseColor 0.7 0.7 0.7
@@ -78,7 +130,10 @@ Transform {
 	  }
 	  # style "appearance"
 	  scale 100 100 100
-	  model USE MODEL
+	  model USE MODEL_GEOM
+	  # layerXVisibility "notAbove"
+	  # layerYVisibility "notAbove"
+	  layerZVisibility "notAbove"
 	  # spaceFilling TRUE
 	  brickTypes [
 	    2, 4, 1, 
@@ -88,13 +143,9 @@ Transform {
 	    1, 2, 1,
 	    1, 1, 1
           ]
-
-	  # parts {
-	  #   children [
-	  #     USE PART0
-	  #     USE PART1
-	  #    ]
-	  # }
+	  children [
+	    DEF SELECT_EGO TouchSensor { enabled TRUE }
+	   ]
 	}
        ]
     }
@@ -159,24 +210,39 @@ Transform {
 }
 
 # Model visible toggle
-DEF INC_MODEL_VISIBLE Incrementor {
-  minValue -1
-  maxValue 0
-  value 0
-}
-
-ROUTE AOS_MODEL_VISIBLE_KEY.state TO INC_MODEL_VISIBLE.trigger
+ROUTE MODEL_VISIBLE_KEY.state TO INC_MODEL_VISIBLE.trigger
 ROUTE INC_MODEL_VISIBLE.value TO SWITCH_MODEL.whichChoice
 
 # Ego visible toggle
-DEF INC_EGO_VISIBLE Incrementor {
-  minValue -1
-  maxValue 0
-  value 0
-}
-
-ROUTE AOS_EGO_VISIBLE_KEY.state TO INC_EGO_VISIBLE.trigger
+ROUTE EGO_VISIBLE_KEY.state TO INC_EGO_VISIBLE.trigger
 ROUTE INC_EGO_VISIBLE.value TO SWITCH_EGO.whichChoice
 
+# Strategy
+ROUTE INC_EVEN_LAYER_X_KEY.state TO INC_EVEN_LAYER_X.trigger
+ROUTE INC_EVEN_LAYER_X.value TO EGO.evenLayerX
+
+ROUTE INC_EVEN_LAYER_Y_KEY.state TO INC_EVEN_LAYER_Y.trigger
+ROUTE INC_EVEN_LAYER_Y.value TO EGO.evenLayerY
+
+ROUTE INC_ODD_LAYER_X_KEY.state TO INC_ODD_LAYER_X.trigger
+ROUTE INC_ODD_LAYER_X.value TO EGO.oddLayerX
+
+ROUTE INC_ODD_LAYER_Y_KEY.state TO INC_ODD_LAYER_Y.trigger
+ROUTE INC_ODD_LAYER_Y.value TO EGO.oddLayerY
+
+ROUTE INC_OFFSET_BETWEEN_ROWS_KEY.state TO INC_OFFSET_BETWEEN_ROWS.trigger
+ROUTE INC_OFFSET_BETWEEN_ROWS.value TO EGO.offsetBetweenRows
+
+ROUTE INC_TILING_ROW_KEY.state TO INC_TILING_ROW.trigger
+ROUTE INC_TILING_ROW.value TO EGO.tilingRowsDirection
+
+# Viewpoint
+ROUTE MODEL_VISIBLE_KEY.state TO MODEL_VIEW.set_bind
+ROUTE EGO_VISIBLE_KEY.state TO EGO_VIEW.set_bind
+
+# Layer visibility
+# ROUTE SELECT_EGO.activeSelectionId TO EGO.selectionId
+ROUTE SELECT_EGO.overSelectionId TO EGO.selectionId
+
+# Snapshot
 ROUTE SNAP_KEY.state TO SNAP.trigger
-# ROUTE EXPORT_KEY.press TO GEOM.export

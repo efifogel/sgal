@@ -38,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
-/*! Maintains an array of 2D vertex-coordinate */
+/*! Maintains an array of 2D vertex-coordinate. */
 class Exact_coord2_array : public Container {
 public:
   typedef std::vector<Exact_point_2>                    Exact_point_vector;
@@ -51,74 +51,74 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Exact_coord2_array(Boolean proto = SGAL_FALSE) : Container(proto) {}
+  /*! Constructor. */
+  Exact_coord2_array(Boolean proto = false) : Container(proto) {}
 
-  /*! Constructor */
+  /*! Constructor. */
   Exact_coord2_array(Uint n) { m_array.resize(n); }
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Exact_coord2_array() { clear(); }
 
-  /* Construct the prototype */
-  static Exact_coord2_array * prototype()
-  { return new Exact_coord2_array(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Exact_coord2_array* prototype()
+  { return new Exact_coord2_array(true); }
 
-  /*! Clone */
-  virtual Container * clone() { return new Exact_coord2_array(); }
+  /*! Clone. */
+  virtual Container* clone() { return new Exact_coord2_array(); }
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
+  /*! Obtains the node prototype. */  
+  virtual Container_proto* get_prototype();
   
-  /*! Set the attributes of this node
-   * \param elem contains lists of attribute names and values
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
-  /*! Size */
+  /*! Size. */
   Uint size() const { return m_array.size(); }
   
-  /*! Resize */
+  /*! Resize. */
   void resize(Uint n) { m_array.resize(n); }
 
-  /*! Clear the array */
+  /*! Clear the array. */
   void clear() { m_array.clear(); }
 
-  /*! Begin */
+  /*! Begin. */
   Exact_point_iter begin() { return m_array.begin(); }
   Exact_point_const_iter begin() const { return m_array.begin(); }
   
-  /*! End */
+  /*! End. */
   Exact_point_iter end() { return m_array.end(); }
   Exact_point_const_iter end() const { return m_array.end(); }
 
-  /*! Array indexing operator */
-  Exact_point_2 & operator[](Uint n) { return m_array[n]; }
+  /*! Array indexing operator. */
+  Exact_point_2& operator[](Uint n) { return m_array[n]; }
 
-  /*! Array indexing operator */
-  const Exact_point_2 & operator[](Uint n) const { return m_array[n]; }
+  /*! Array indexing operator. */
+  const Exact_point_2& operator[](Uint n) const { return m_array[n]; }
 
-  /*! Inserts a new element at the end */
-  void push_back(const Exact_point_2 & p) { m_array.push_back(p); }
+  /*! Inserts a new element at the end. */
+  void push_back(const Exact_point_2& p) { m_array.push_back(p); }
     
 protected:
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
-  /*! The exact coordinate array */
+  /*! The exact coordinate array. */
   Exact_point_vector m_array;
 };
 

@@ -49,7 +49,6 @@ REGISTER_TO_FACTORY(Group, "Group");
 Group::Group(Boolean proto) :
   Node(proto),
   m_is_visible(true),
-  m_touch_sensor(NULL), 
   m_num_lights(0),
   m_start_selection_id(0),
   m_num_selection_ids(0),
@@ -81,25 +80,26 @@ Group::~Group()
 
 /*! \brief obtains a child according to its position in the children sequence.
  */
-Node* Group::get_child(Uint index)
+Group::Shared_node Group::get_child(Uint index)
 {
-  if (index >= m_childs.size()) return 0;
+  if (index >= m_childs.size()) return Group::Shared_node();
   Node_iterator it = m_childs.begin();
   for (Uint i = 0; i < index; ++i) ++it;
   return *it;
 }
 
 /*! \brief adds a child to the sequence of children of the group. */
-void Group::add_child(Node* node)
+void Group::add_child(Shared_node node)
 {
   // Lights are inserted at the begining of the sequence, the engines, and
   // then all the rest.
-  Light* light = dynamic_cast<Light*>(node);
+  Shared_light light = boost::dynamic_pointer_cast<Light>(node);
   if (light) {
     add_light(light);
     return;
   }
-  Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node);
+  Shared_touch_sensor touch_sensor =
+    boost::dynamic_pointer_cast<Touch_sensor>(node);
   if (touch_sensor) {
     add_touch_sensor(touch_sensor);
     return;
@@ -112,15 +112,16 @@ void Group::add_child(Node* node)
 }
 
 /*! \brief removes a given child from the sequence of children of the group. */
-void Group::remove_child(Node* node)
+void Group::remove_child(Shared_node node)
 {
-  Light* light = dynamic_cast<Light*>(node);
+  Shared_light light = boost::dynamic_pointer_cast<Light>(node);
   if (light) {
     remove_light(light);
     return;
   }
 
-  Touch_sensor* touch_sensor = dynamic_cast<Touch_sensor*>(node);
+  Shared_touch_sensor touch_sensor =
+    boost::dynamic_pointer_cast<Touch_sensor>(node);
   if (touch_sensor) {
     remove_touch_sensor(touch_sensor);
     return;
@@ -139,7 +140,7 @@ Action::Trav_directive Group::draw(Draw_action* draw_action)
     return Action::TRAV_CONT;
   if (has_lights()) draw_action->get_context()->push_lights();
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
-    draw_action->apply(*it);
+    draw_action->apply(&*(*it));
   if (has_lights()) draw_action->get_context()->pop_lights();
   return Action::TRAV_CONT;
 }
@@ -187,14 +188,14 @@ void Group::isect(Isect_action* isect_action)
   // indicates that no selection ids have been reserved.
   if (m_start_selection_id == 0) {
     for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
-      isect_action->apply(*it);
+      isect_action->apply(&*(*it));
   }
   else {
     Uint save_id = isect_action->get_id();                // save the id
     Uint selection_id = m_start_selection_id;
     for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
       isect_action->set_id(selection_id++);
-      isect_action->apply(*it);
+      isect_action->apply(&*(*it));
     }
     isect_action->set_id(save_id);                        // restore the id
   }
@@ -257,9 +258,9 @@ void Group::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "children") {
-      Node* node = dynamic_cast<Node*>(cont);
+      Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
       if (node) add_child(node);
       elem->mark_delete(cai);
       continue;
@@ -278,8 +279,8 @@ void Group::set_attributes(Element* elem)
     Cont_list& cont_list = elem->get_value(mcai);
     if (name == "children") {
       for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
-        Container* cont = *ci;
-        Node* node = dynamic_cast<Node*>(cont);
+        Shared_container cont = *ci;
+        Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
         if (node) add_child(node);
       }
       elem->mark_delete(mcai);
@@ -373,8 +374,8 @@ void Group::write_children(Formatter* formatter)
 {
   formatter->multi_container_begin("children");
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Node* node = *it;
-    formatter->write(node);
+    Shared_node node = *it;
+    formatter->write(&*node);
   }
   formatter->multi_container_end();
 }
@@ -411,23 +412,23 @@ void Group::set_visible(Boolean flag)
 }
 
 /*! \brief adds a light source to the group. */
-void Group::add_light(Light* light)
+void Group::add_light(Shared_light light)
 {
   m_childs.push_front(light);
   ++m_num_lights;
 }
 
 /*! \brief removes a light source from the group. */
-void Group::remove_light(Light* light)
+void Group::remove_light(Shared_light light)
 {
   m_childs.remove(light);
   --m_num_lights;
 }
 
 /*! \brief adds a touch sensor to the group. */
-void Group::add_touch_sensor(Touch_sensor* touch_sensor)
+void Group::add_touch_sensor(Shared_touch_sensor touch_sensor)
 {
-  if (m_touch_sensor != NULL) {
+  if (m_touch_sensor) {
     std::cerr << "The Group already has a touch sensor!" << std::endl;
     return;
   }
@@ -436,9 +437,9 @@ void Group::add_touch_sensor(Touch_sensor* touch_sensor)
 }
 
 /*! \brief removes a touch sensor from the group. */
-void Group::remove_touch_sensor(Touch_sensor* touch_sensor)
+void Group::remove_touch_sensor(Shared_touch_sensor touch_sensor)
 {
-  m_touch_sensor = NULL;
+  m_touch_sensor.reset();
   m_childs.remove(touch_sensor);
 }
 

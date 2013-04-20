@@ -129,9 +129,6 @@ public:
    */
   void clean_normals();
 
-  /*! Clear the representation of the normals. */
-  virtual void clear_normals() { m_dirty_normals = true; }
-  
   /*! Determine whether the representation of the normals hasn't been
    * cleaned.
    */
@@ -140,9 +137,6 @@ public:
   /*! Calculate the texture coordinates in case they are invalidated. */
   void clean_tex_coords();
 
-  /*! Clear the representation of the normals. */
-  void clear_tex_coords() { m_dirty_tex_coords = true; }
-  
   /*! Determine whether the representation of the normals hasn't been
    * cleaned.
    */
@@ -390,8 +384,41 @@ public:
   static void (Indexed_face_set::*draws[NUM_DRAWS])();
   static Boolean m_draws_initialized;
 
-  /*! Process change of coordinates */
-  virtual void coord_changed(SGAL::Field_info* field_info);
+  /*! Process change of coordinate field.
+   * Generally process the change of coordinate field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void coord_changed(Field_info* field_info);
+
+  /*! Process change of normal field.
+   * Generally process the change of normal field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void normal_changed(Field_info* field_info);
+
+  /*! Process change of color field.
+   * Generally process the change of color field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void color_changed(Field_info* field_info);
+
+  /*! Process change of texture coordinate field.
+   * Generally process the change of texture coordinate field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void tex_coord_changed(Field_info* field_info);
   
   /*! Process change of field */
   virtual void field_changed(Field_info* field_info);
@@ -452,46 +479,76 @@ protected:
   // data structures to hold the low level geometry
   Int m_tri_strip_lengths_size;
 
-  /* if the bbox is read from the xml file, this is true */
+  /* if the bbox is read from the xml file, this is true. */
   Boolean m_bb_is_pre_set;
 
   Boolean m_is_progressive;
 
-  /*! Indicates that the normal array has been invalidated */
+  /*! Indicates that the normal array has been invalidated. */
   Boolean m_dirty_normals;
 
-  /*! Indicates that the texture coordinate array has been invalidated */
+  /*! Indicates that the texture coordinate array has been invalidated. */
   Boolean m_dirty_tex_coords;
+
+  /*! Indicates that the vetex coordinate buffer is dirty. */
+  Boolean m_dirty_vertex_coord_buffer;
+
+  /*! Indicates that the vetex normal buffer is dirty. */
+  Boolean m_dirty_vertex_normal_buffer;
+
+  /*! Indicates that the vetex color buffer is dirty. */
+  Boolean m_dirty_vertex_color_buffer;
+
+  /*! Indicates that the vetex texture coordinate buffer is dirty. */
+  Boolean m_dirty_vertex_tex_coord_buffer;
   
-  /*! Indicates that the vertex buffer objects have been created */
-  Boolean m_vertex_buffer_object_created;
+  /*! Clean the data structure of the vertex coordinate buffer object. */
+  void clean_vertex_coord_buffer();
 
-  /*! Create the data structure of the vertex buffer object */
-  void create_vertex_buffer_object();
+  /*! Clean the data structure of the vertex normal buffer object. */
+  void clean_vertex_normal_buffer();
 
-  /*! Destroy the data structure of the vertex buffer object */
+  /*! Clean the data structure of the vertex color buffer object. */
+  void clean_vertex_color_buffer();
+
+  /*! Clean the data structure of the vertex texture coordinate buffer object. */
+  void clean_vertex_tex_coord_buffer();
+  
+  /*! Destroy the data structure of the vertex buffer object. */
   void destroy_vertex_buffer_object();
 
-  /*! Destroy the data structure of the display_list */
+  /*! Destroy the data structure of the display_list. */
   void destroy_display_list();
 
   /*! Clear the vertex arrays */
   void clear_vertex_arrays();
 
-  /*! Destroy the vertex-index arrays */
-  void destroy_vertex_index_arrays();
+  /*! Clear the vertex-index arrays */
+  void clear_vertex_index_arrays();
+  
+  /*! Clear all data that depends on the coordinates. */
+  virtual void clear_coords() {}
+    
+  /*! Clear all data that depends on the normals. */
+  virtual void clear_normals();
+
+  /*! Clear all data that depends on the colors. */
+  virtual void clear_colors();
+  
+  /*! Clear all data that depends on the texture coordinates. */
+  virtual void clear_tex_coords();
   
   /*! Isect direct drawing-mode */
   void isect_direct();
 
-  /*! Dispatch the appropriate drawing routine */
+  /*! Dispatch the appropriate drawing routine. */
   void draw_dispatch(Draw_action* action);
 
-  /*! Do the conditions allow for the use of openGl vertex array? */
+  /*! Determine whether the conditions allow for the use of openGl vertex array.
+   */
   Boolean use_vertex_array() const;
 
-  /*! Compute the normalized normal to a facet from 3 points lying on the
-   * facet.
+  /*! Compute the normalized normal to a facet from 3 points lying on the facet.
    */
   void compute_normal(const Vector3f& v1, const Vector3f& v2,
                       const Vector3f& v3, Vector3f& normal) const;

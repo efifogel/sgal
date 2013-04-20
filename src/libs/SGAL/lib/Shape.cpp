@@ -79,17 +79,12 @@ Shape::Shape(Boolean proto) :
   m_depth_function(s_def_depth_function),
   m_color_mask(s_def_color_mask),
   m_cull_face(s_def_cull_face),
-  m_appearance(NULL),
-  m_geometry(NULL),
   m_is_visible(true),
   m_priority(0),
   m_draw_backface(false),
-  m_owned_appearance(false),
   m_dirty(true),
   m_dirty_appearance(true),
   m_dirty_geometry(true),
-  m_appearance_prev(NULL),
-  m_geometry_prev(NULL),
   m_texture_map(Configuration::s_def_texture_map),
   m_override_material(Configuration::s_def_override_material),
   m_override_tex_enable(Configuration::s_def_override_tex_enable),
@@ -101,20 +96,10 @@ Shape::Shape(Boolean proto) :
 {}
 
 /*! Destructor */
-Shape::~Shape()
-{
-  // delete the owned appearance if present
-  if (m_owned_appearance) {
-    if (m_appearance) {
-      delete m_appearance;
-      m_appearance = NULL;
-    }
-    m_owned_appearance = false;
-  }
-}
+Shape::~Shape() {}
 
 /*! \brief sets the appearance of the object. */
-void Shape::set_appearance(Appearance* app)
+void Shape::set_appearance(Shared_appearance app)
 {
   m_appearance = app;
   m_dirty = true;
@@ -122,7 +107,7 @@ void Shape::set_appearance(Appearance* app)
 }
 
 /*! \brief adds a geometry to the shape at the end of the list. */
-void Shape::set_geometry(Geometry* geometry)
+void Shape::set_geometry(Shared_geometry geometry)
 {
   m_geometry = geometry;
   m_dirty = true;
@@ -132,7 +117,7 @@ void Shape::set_geometry(Geometry* geometry)
   //! \todo
   // the text object needs to pass a pointer to the appearance 
   // for the FontTexture object
-  Text* text = dynamic_cast<Text*>(geometry);
+  Shared_text text = boost::dynamic_pointer_cast<Text>(geometry);
   if (text) {
     text->set_appearance(m_appearance);
     m_is_text_object = true;
@@ -150,8 +135,7 @@ Boolean Shape::clean_sphere_bound()
   }
 
   Boolean changed = false;
-  if (m_geometry)
-    m_sphere_bound = *m_geometry->get_sphere_bound(changed);
+  if (m_geometry) m_sphere_bound = *m_geometry->get_sphere_bound(changed);
 
   return changed;
 }
@@ -254,22 +238,20 @@ void Shape::clean()
       m_appearance->clean_tex_gen();
   }
   
-  if (m_dirty_appearance) {
-    m_appearance_prev = m_appearance;
-    m_dirty_appearance = false;
-  }
+  if (m_dirty_appearance) m_dirty_appearance = false;
   
   if (m_dirty_geometry) {
+    // \todo unregister observer!
+    // if (m_geometry_prev) m_geometry_prev->unregister_observer(observer);
+    // m_geometry_prev = m_geometry;
     Observer observer(this, get_field_info(SPHERE_BOUND));
-    if (m_geometry_prev) m_geometry_prev->unregister_observer(observer);
     if (m_geometry) m_geometry->register_observer(observer);
-    m_geometry_prev = m_geometry;
     m_dirty_geometry = false;
   }
     
 #if 0
   //! \todo
-  Text* text = dynamic_cast<Text*>(m_geometry);
+  Shared_text text = boost::dynamic_pointer_cast<Text>(m_geometry);
   if (text) {
     text->set_appearance(m_appearance);
     m_is_text_object = true;
@@ -282,22 +264,9 @@ void Shape::clean()
 /*! \brief cleans the apperance. */
 void Shape::clean_appearance()
 {
-  // Construct a new owned appearance if needed, and delete the previously
-  // constructed owned appearance if not needed any more.
-  if (m_owned_appearance) {
-    if (!m_appearance) m_appearance = m_appearance_prev;
-    else if (m_appearance != m_appearance_prev) {
-      delete m_appearance_prev;
-      m_appearance_prev = NULL;
-      m_owned_appearance = false;
-    }
-  }
-  else {
-    if (!m_appearance) {
-      m_appearance = new Appearance;
-      SGAL_assertion(m_appearance);
-      m_owned_appearance = true;
-    }
+  if (!m_appearance) {
+    m_appearance = Shared_appearance(new Appearance);
+    SGAL_assertion(m_appearance);
   }
 }
 
@@ -373,15 +342,15 @@ void Shape::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "appearance") {
-      Appearance* app = dynamic_cast<Appearance*>(cont);
+      Shared_appearance app = boost::dynamic_pointer_cast<Appearance>(cont);
       set_appearance(app);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "geometry") {
-      Geometry* geo = dynamic_cast<Geometry*>(cont);
+      Shared_geometry geo = boost::dynamic_pointer_cast<Geometry>(cont);
       set_geometry(geo);
       elem->mark_delete(cai);      
       continue;
@@ -416,11 +385,11 @@ void Shape::write(Formatter* formatter)
   formatter->container_begin(get_tag());
 
   formatter->single_container_begin("appearance");
-  formatter->write(m_appearance);
+  formatter->write(&*m_appearance);
   formatter->single_container_end();
 
   formatter->single_container_begin("geometry");
-  formatter->write(m_geometry);
+  formatter->write(&*m_geometry);
   formatter->single_container_end();
 
   formatter->container_end();
@@ -440,15 +409,16 @@ void Shape::init_prototype()
                                           get_member_offset(&m_is_visible),
                                           exec_func));    
 
+  SF_shared_container* field;
   exec_func = static_cast<Execution_function>(&Shape::geometry_changed);
-  s_prototype->add_field_info(new SF_container(GEOMETRY, "geometry",
-                                               get_member_offset(&m_geometry),
-                                               exec_func));    
+  field = new SF_shared_container(GEOMETRY, "geometry",
+                                  get_member_offset(&m_geometry), exec_func);
+  s_prototype->add_field_info(field);    
 
   exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
-  s_prototype->add_field_info(new SF_container(APPEARANCE, "appearance",
-                                               get_member_offset(&m_appearance),
-                                               exec_func));    
+  field = new SF_shared_container(APPEARANCE, "appearance",
+                                  get_member_offset(&m_appearance), exec_func);
+  s_prototype->add_field_info(field);    
 }
 
 /*! \brief deletes the node prototype. */
@@ -476,7 +446,7 @@ void Shape::add_to_scene(Scene_graph* sg)
 Boolean Shape::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
-  Appearance* app = get_appearance();
+  Shared_appearance app = get_appearance();
   if (app) result &= app->attach_context(context);  
   return result;
 }
@@ -485,7 +455,7 @@ Boolean Shape::attach_context(Context* context)
 Boolean Shape::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
-  Appearance* app = get_appearance();
+  Shared_appearance app = get_appearance();
   if (app) result &= app->detach_context(context);
   return result;
 }

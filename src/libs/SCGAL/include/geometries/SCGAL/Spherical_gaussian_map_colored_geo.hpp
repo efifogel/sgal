@@ -31,6 +31,7 @@
 #include <list>
 #include <iostream>
 #include <fstream>
+#include <boost/shared_ptr.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
@@ -65,6 +66,9 @@ class Spherical_gaussian_map_colored_geo :
   public Spherical_gaussian_map_base_geo
 {
 public:
+  typedef boost::shared_ptr<Spherical_gaussian_map_colored_geo>
+    Shared_spherical_gaussian_map_colored_geo;
+  
   typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_colored,
                                                 Exact_kernel>
                                                   Polyhedron;
@@ -178,7 +182,7 @@ protected:
   };
 
   // List of pointers to Spherical_gaussian_map_colored_geo objects. */
-  typedef std::list<Spherical_gaussian_map_colored_geo *>       Sgm_node_list;
+  typedef std::list<Shared_spherical_gaussian_map_colored_geo>  Sgm_node_list;
   typedef Sgm_node_list::iterator                               Sgm_node_iter;
 
   /*! Obtain the tag (type) of the container. */
@@ -320,7 +324,7 @@ public:
   virtual void print_stat();
 
   /*! Set the source gausian maps of the minkowski sum. */
-  void insert_sgm(Spherical_gaussian_map_colored_geo* sgm);
+  void insert_sgm(Shared_spherical_gaussian_map_colored_geo sgm);
 
   /*! Obrain a reference to the cubical Gaussian map. */
   Sgm* get_sgm();

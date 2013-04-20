@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -50,15 +50,14 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Single_key_sensor(Boolean proto = SGAL_FALSE);
+  /*! Constructor. */
+  Single_key_sensor(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Single_key_sensor();
 
-  /* Construct the prototype */
-  static Single_key_sensor* prototype()
-  { return new Single_key_sensor(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Single_key_sensor* prototype();
 
   /*! Clone */
   virtual Container* clone();
@@ -66,18 +65,18 @@ public:
   /*! Initializes the node prototype */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Draw the node (does nothing) */
+  /*! Draw the node (does nothing). */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
   /*! Register the keyboard event */
@@ -86,36 +85,37 @@ public:
   /*! Unregisters the keyboard event */
   void unregister_events();
   
-  /*! Print out the name of this agent (for debugging purposes) */
+  /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();
 
-  /*! Handle mouse events */
+  /*! Handle mouse events. */
   virtual void handle(Keyboard_event* event);
   
-  /*! Set the flag that indicates whether the sensor is triggered on release */
+  /*! Set the flag that indicates whether the sensor is triggered on release.
+   */
   void set_trigger_on_release(Boolean flag) { m_trigger_on_release = flag; }
 
-  /*! Is the sensor triggered on release */  
+  /*! Determine whether the sensor should be triggered on release. */  
   Boolean is_trigger_on_release() const { return m_trigger_on_release;}
   
 protected:
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
-  /*! The tag that identifies this container type */
-  static std::string s_tag;
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! The designated key */
+  /*! The designated key. */
   Uint m_key;
 
-  /*! Indicates that the designated key has been pressed */
+  /*! Indicates that the designated key has been pressed. */
   Boolean m_press;
 
-  /*! The time of the event */
+  /*! The time of the event. */
   Scene_time m_time;
 
   /*! Indicates whether it is a boolean state */
@@ -124,26 +124,32 @@ private:
   /*! A binary state toggled each press */
   Boolean m_state;
 
-  /*! An integer state increased each press */
+  /*! An integer state increased each press. */
   Int m_int_state;
 
-  /*! Number of integer states */
+  /*! Number of integer states. */
   Uint m_num_states;
 
-  /*! Indicates whether the sensor is triggered on release */
+  /*! Indicates whether the sensor is triggered on release. */
   Boolean m_trigger_on_release;
   
-  /*! Default Values */
+  /*! Default Values. */
   static Uint s_def_num_states;
   static Boolean s_def_trigger_on_release;
 };
 
-/*! Draws the node (does nothing) */
+/* \brief constructs the prototype. */
+inline Single_key_sensor* Single_key_sensor::prototype()
+{ return new Single_key_sensor(true); }
+
+/*! \brief constructs a new instance. */
+inline Container* Single_key_sensor::clone()
+{ return  new Single_key_sensor(); }
+
+/*! \brief draws the node (does nothing). */
 inline
 Action::Trav_directive Single_key_sensor::draw(Draw_action* /* draw_action */)
-{
-  return Action::TRAV_CONT;
-}
+{ return Action::TRAV_CONT; }
 
 SGAL_END_NAMESPACE
 

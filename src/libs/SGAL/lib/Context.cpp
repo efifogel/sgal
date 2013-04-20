@@ -119,15 +119,15 @@ void Context::init()
   m_current_state->m_pending.off();
   m_current_state->m_override.off();
     
-  m_current_state->m_texture               = 0;
-  m_current_state->m_halftone              = 0;
+  // m_current_state->m_texture               = 0;
+  // m_current_state->m_halftone              = 0;
   m_current_state->m_tex_enable            = false;
   m_current_state->m_tex_mode              = Gfx::FAST_TEX;
   m_current_state->m_tex_blend_color.set(0.0f, 0.0f, 0.0f, 0.0f);
   m_current_state->m_tex_env               = Gfx::MODULATE_TENV;
   m_current_state->m_tex_gen               = 0;
   m_current_state->m_tex_gen_enable        = false;
-  m_current_state->m_material              = 0;
+  // m_current_state->m_material              = 0;
   m_current_state->m_material_mode_enable  = Gfx::NO_COLOR_MATERIAL;
   m_current_state->m_light_enable          = false;
   m_current_state->m_shade_model           = Gfx::SMOOTH_SHADE;
@@ -152,7 +152,7 @@ void Context::init()
   m_current_state->m_line_stipple_factor   = 1;
   m_current_state->m_line_stipple_pattern  = 0xffff;
   m_current_state->m_tex_transform.make_identity();
-  m_current_state->m_back_material         = 0;
+  // m_current_state->m_back_material         = 0;
   m_current_state->m_polygon_stipple_enable = false;
 
   // Copy TopStack to default_state so they start out the same
@@ -296,7 +296,7 @@ void Context::set_local_viewer(Boolean local_viewer)
 }
 
 /*! \brief */
-void Context::set_texture(Texture* texture)
+void Context::set_texture(Shared_texture texture)
 {
   m_default_state->m_texture = texture;
   m_default_state->m_pending.on_bit(Gfx::TEXTURE);
@@ -304,7 +304,7 @@ void Context::set_texture(Texture* texture)
 }
 
 /*! \brief */
-void Context::draw_texture(Texture* texture)
+void Context::draw_texture(Shared_texture texture)
 {
   if ((m_current_state->m_texture == texture) &&
       (!texture || !texture->is_dirty()))
@@ -315,14 +315,14 @@ void Context::draw_texture(Texture* texture)
 }
 
 /*! \brief */
-void Context::set_halftone(Halftone* halftone)
+void Context::set_halftone(Shared_halftone halftone)
 {
   m_default_state->m_halftone = halftone;
   m_default_state->m_pending.on_bit(Gfx::HALFTONE_PATTERN);
 }
 
 /*! \brief */
-void Context::draw_halftone(Halftone* halftone)
+void Context::draw_halftone(Shared_halftone halftone)
 {
   if ((m_current_state->m_halftone == halftone) &&
       (!halftone || !halftone->is_dirty()))
@@ -343,11 +343,13 @@ void Context::set_tex_enable(Boolean tex_enable)
 /*! \brief */
 void Context::draw_tex_enable(Boolean tex_enable)
 {
+  typedef boost::shared_ptr<Cube_environment>   Shared_cube_environment;
+  
   if (m_current_state->m_tex_enable == tex_enable) return;
   m_current_state->m_tex_enable = tex_enable;
   if (tex_enable) {
-    Cube_environment* cube_environment =
-      dynamic_cast<Cube_environment*>(m_current_state->m_texture);
+    Shared_cube_environment cube_environment =
+      boost::dynamic_pointer_cast<Cube_environment>(m_current_state->m_texture);
     if (cube_environment) glEnable(GL_TEXTURE_CUBE_MAP);
     else glEnable(GL_TEXTURE_2D);
   }
@@ -462,7 +464,7 @@ void Context::draw_tex_gen_enable(Boolean tex_gen_enable)
 }
 
 /*! \brief */
-void Context::set_material(Material* material)
+void Context::set_material(Shared_material material)
 {
   m_default_state->m_material = material;
   m_default_state->m_pending.on_bit(Gfx::MATERIAL);
@@ -472,7 +474,8 @@ void Context::set_material(Material* material)
 /*! \brief If the material and the back material are the same, apply to front
  * and back
  */
-void Context::draw_material(Material* material, Material* back_material)
+void Context::draw_material(Shared_material material,
+                            Shared_material back_material)
 {
   if ((m_current_state->m_material == material) &&
       material && !material->is_changed())
@@ -1126,7 +1129,7 @@ void Context::draw_tex_transform(const Matrix4f& matrix)
 }
 
 /*! \brief */
-void Context::set_back_material(Material* material)
+void Context::set_back_material(Shared_material material)
 {
   m_default_state->m_back_material = material;
   m_default_state->m_pending.on_bit(Gfx::BACK_MATERIAL);
@@ -1137,7 +1140,8 @@ void Context::set_back_material(Material* material)
  * material has already been applied through the draw_material()
  * function.
  */
-void Context::draw_back_material(Material* material, Material* back_material)
+void Context::draw_back_material(Shared_material material,
+                                 Shared_material back_material)
 {
   if (m_current_state->m_back_material == back_material &&
       back_material && !back_material->is_changed())

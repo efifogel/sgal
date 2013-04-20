@@ -77,21 +77,19 @@ void Coord_minkowski::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "coord1") {
-      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
-      Shared_coord_array shared_coord_array;
-      shared_coord_array.reset(coord_array);
-      set_coord_array1(shared_coord_array);
-      elem->mark_delete(cai);      
+      Shared_coord_array coord_array =
+        boost::dynamic_pointer_cast<Coord_array>(cont);
+      set_coord_array1(coord_array);
+      elem->mark_delete(cai);
       continue;
     }
     if (name == "coord2") {
-      Coord_array* coord_array = dynamic_cast<Coord_array*>(cont);
-      Shared_coord_array shared_coord_array;
-      shared_coord_array.reset(coord_array);
-      set_coord_array2(shared_coord_array);
-      elem->mark_delete(cai);      
+      Shared_coord_array coord_array =
+        boost::dynamic_pointer_cast<Coord_array>(cont);
+      set_coord_array2(coord_array);
+      elem->mark_delete(cai);
       continue;
     }
   }
@@ -186,6 +184,8 @@ void Coord_minkowski::execute(Field_info* /* field_info */)
   m_changed = true;
   Field* changed_field = get_field(CHANGED);
   if (changed_field) changed_field->cascade();
+
+  m_coord_array_changed->process_content_changed();
 }
 
 SGAL_END_NAMESPACE

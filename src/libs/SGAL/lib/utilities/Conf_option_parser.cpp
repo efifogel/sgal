@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -76,7 +76,7 @@ void Conf_option_parser::configure(po::variables_map& variable_map,
   if (!conf) return;
 
   if (variable_map.count("accumulate")) {
-    SGAL::Accumulation * acc = conf->get_accumulation();
+    Configuration::Shared_accumulation acc = conf->get_accumulation();
     if (acc) acc->set_enabled(variable_map["accumulate"].as<Boolean>());
   }
 
@@ -89,7 +89,7 @@ void Conf_option_parser::configure(po::variables_map& variable_map,
   }
 
   if (variable_map.count("use-vertex-buffer-object")) {
-    SGAL::Gfx_conf * gfx_conf = SGAL::Gfx_conf::get_instance();
+    SGAL::Gfx_conf* gfx_conf = SGAL::Gfx_conf::get_instance();
     SGAL_assertion(gfx_conf);
     if (!variable_map["use-vertex-buffer-object"].as<Boolean>())
       gfx_conf->disable_vertex_buffer_object_support();

@@ -44,20 +44,10 @@ Container_proto* Text::s_prototype = NULL;
 REGISTER_TO_FACTORY(Text, "Text");
 
 /*! Constructor */
-Text::Text(Boolean proto) :
-  Geometry(proto),
-  m_font_style(NULL),
-  m_default_font_style(NULL)
-{}
+Text::Text(Boolean proto) : Geometry(proto) {}
 
 /*! Destructor */
-Text::~Text()
-{
-  if (m_default_font_style) {
-    delete m_default_font_style;
-    m_default_font_style = NULL;
-  }
-}
+Text::~Text() {}
 
 /*! Draw choosen node
  * \param draw_action
@@ -69,13 +59,13 @@ void Text::draw(Draw_action* draw_action)
 
   if (m_string.empty()) return;
   if (!m_font_style) {
-    m_default_font_style = new Font_style();
+    m_default_font_style = Shared_font_style(new Font_style());
     set_font_style(m_default_font_style);
   }
 
   int pass_no = draw_action->get_pass_no();
   if (pass_no == 0) {
-    draw_action->set_second_pass_required(SGAL_TRUE);
+    draw_action->set_second_pass_required(true);
     return;
   }
 
@@ -137,9 +127,10 @@ void Text::set_attributes(Element* elem)
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
-    Container* cont = elem->get_value(cai);
+    Shared_container cont = elem->get_value(cai);
     if (name == "fontStyle") {
-      Font_style* font_style = dynamic_cast<Font_style*>(cont); 
+      Shared_font_style font_style =
+        boost::dynamic_pointer_cast<Font_style>(cont); 
       set_font_style(font_style);
       elem->mark_delete(cai);
       continue;
@@ -172,7 +163,7 @@ Attribute_list Text::get_attributes()
 #endif
 
 /*! \brief sets the font style. */
-void Text::set_font_style(Font_style* font_style)
+void Text::set_font_style(Shared_font_style font_style)
 {
   m_font_style = font_style;
   m_dirty_sphere_bound = true;
@@ -184,7 +175,7 @@ void Text::set_font_style(Font_style* font_style)
 Boolean Text::clean_sphere_bound()
 {
   if (!m_font_style) {
-    m_default_font_style = new Font_style();
+    m_default_font_style = Shared_font_style(new Font_style());
     set_font_style(m_default_font_style);
   }
   

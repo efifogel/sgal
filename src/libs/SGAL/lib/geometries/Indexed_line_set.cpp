@@ -88,28 +88,6 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/*! \brief sets the coordinate set. Pass the pointer to the geometry object 
- * used by the decoder as well.
- */
-void Indexed_line_set::set_coord_array(Shared_coord_array coord_array)
-{
-  m_coord_array = coord_array;
-  m_dirty_sphere_bound = true;
-}
-
-/*! \brief sets the normal set. */ 
-void Indexed_line_set::set_normal_array(Shared_normal_array normal_array)
-{ m_normal_array = normal_array; }
-
-/*! \brief sets the color set. */
-void Indexed_line_set::set_color_array(Shared_color_array color_array)
-{ m_color_array = color_array; }
-
-/*! \brief sets the texture coordinate set. */
-void Indexed_line_set::
-set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
-{ m_tex_coord_array = tex_coord_array; }
-
 /*! \brief draws the geometry.
  * For efficiency reasons, differenrt methods were written to 
  * draw geometries with different kinds of data (texture/normal/color).

@@ -135,10 +135,10 @@ protected:
   typedef Edge_shape::Style                           Edge_style;
 
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Arrangement_on_surface_geo(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Arrangement_on_surface_geo();
 
   /*! Clone. */
@@ -192,24 +192,24 @@ public:
    * \param action
    * \param center the vertex center.
    */
-  virtual void draw_aos_isolated_vertex(Draw_action* action,
-                                        Vector3f& center) {}
+  virtual void draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
+  {}
   
   /*! Draw an arrangement on surface boundary_vertex.
    * \param action
    * \param center the vertex center.
    */
-  virtual void draw_aos_boundary_vertex(Draw_action* action,
-                                        Vector3f& center) {}
+  virtual void draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
+  {}
 
   /*! Draw an arrangement on surface edge.
    * \param action
    * \param source the edge source point.
    * \param target the edge target point.
    */
-  virtual void draw_aos_edge(Draw_action* action,
-                             Vector3f& source, Vector3f& target,
-                             Vector3f& normal) {}
+  virtual void draw_aos_edge(Draw_action* action, Vector3f& source,
+                             Vector3f& target, Vector3f& normal)
+  {}
   
   /*! Clean the renderer. */
   virtual void clean_renderer();
@@ -232,12 +232,10 @@ public:
   /*! Raise the flag that indicates that the renderer changed. */
   void renderer_changed(Field_info* field_info = NULL);
 
-  /*! Obtain the flag that indicates whether to draw the embedding surface.
-   */
+  /*! Obtain the flag that indicates whether to draw the embedding surface. */
   Boolean get_draw_aos_surface() const { return m_draw_aos_surface; }
 
-  /*! Set the flag that indicates whether to draw the embedding surface.
-   */
+  /*! Set the flag that indicates whether to draw the embedding surface. */
   void set_draw_aos_surface(Boolean flag) { m_draw_aos_surface = flag; }
   
   /*! Obtain the flag that indicates whether to draw the backfacing features
@@ -245,8 +243,7 @@ public:
    */
   Boolean get_draw_halftone() const { return m_draw_halftone; }
 
-  /*! Obtain the surface color.
-   */
+  /*! Obtain the surface color. */
   const Vector3f& get_aos_surface_color() const { return m_aos_surface_color; }
 
   /*! Obtain the vertex-shape style. */

@@ -86,7 +86,10 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_is_progressive(false),
   m_dirty_normals(true),
   m_dirty_tex_coords(true),
-  m_vertex_buffer_object_created(false)
+  m_dirty_vertex_coord_buffer(true),
+  m_dirty_vertex_normal_buffer(true),
+  m_dirty_vertex_color_buffer(true),
+  m_dirty_vertex_tex_coord_buffer(true)
 {
   m_primitive_type = PT_POLYGONS;
   m_flatten_indices = true;
@@ -997,7 +1000,6 @@ void Indexed_face_set::draw(Draw_action* action)
     clean_normals();
 
   // Clean the tex coordinates:
-  //! add vertex buffer object for the tex-coords
   Context* context = action->get_context();
   if (context->get_tex_enable() && !(context->get_tex_gen_enable()) &&
       m_dirty_tex_coords)
@@ -1022,11 +1024,18 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
     break;
 
    case Configuration::GDM_VERTEX_ARRAY:
-    if (!m_vertex_buffer_object_created) {
-      if (use_vertex_array() &&
-          (Gfx_conf::get_instance()->is_vertex_buffer_object_supported()))
-        create_vertex_buffer_object();
+    if (use_vertex_array() &&
+        (Gfx_conf::get_instance()->is_vertex_buffer_object_supported()))
+    {
+      //! \todo Add a try() and catch() to catch errors.
+      // If an error is cought, call destroy_vertex_buffer_object()
+
+      if (m_dirty_vertex_coord_buffer) clean_vertex_coord_buffer();  
+      if (m_dirty_vertex_normal_buffer) clean_vertex_normal_buffer();  
+      if (m_dirty_vertex_color_buffer) clean_vertex_color_buffer();  
+      if (m_dirty_vertex_tex_coord_buffer) clean_vertex_tex_coord_buffer();  
     }
+
    case Configuration::GDM_DIRECT:
     draw_dispatch(action);
     break;
@@ -1275,115 +1284,6 @@ Container_proto* Indexed_face_set::get_prototype()
   return s_prototype;
 }
 
-/*! \brief creates the data structure of the vertex buffer object. */
-void Indexed_face_set::create_vertex_buffer_object()
-{
-#if defined(GL_ARB_vertex_buffer_object)
-  // std::cout << "Using vertex buffer object extension!" << std::endl;
-  
-  destroy_vertex_buffer_object();
-  Boolean error_occured = false;
-  
-  // Create the vertex coord buffer context. */
-  if (m_coord_array) {
-    glGenBuffersARB(1, &m_vertex_coord_id);
-    if (m_vertex_coord_id == 0) {
-      std::cerr << "glGenBuffersARB failed to generate vertex coord buffer!"
-                << std::endl;
-      error_occured = true;
-    }
-    else {
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
-      Uint size = m_coord_array->size()* sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) (m_coord_array->get_vector());
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-  }
-  
-  // Create the vertex normal buffer context. */
-  if (!error_occured && m_normal_array) {
-    glGenBuffersARB(1, &m_vertex_normal_id);
-    if (m_vertex_normal_id == 0) {
-      std::cerr << "glGenBuffersARB failed to generate vertex normal buffer!"
-                << std::endl;
-      error_occured = true;
-    }
-    else {
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
-      Uint size = m_normal_array->size() * sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) (m_normal_array->get_vector());
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-  }
-
-  // Create the vertex color buffer context. */
-  if (!error_occured && m_color_array) {
-    glGenBuffersARB(1, &m_vertex_color_id);
-    if (m_vertex_color_id == 0) {
-      std::cerr << "glGenBuffersARB failed to generate vertex color buffer!"
-                << std::endl;
-      error_occured = true;
-    }
-    else {
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
-      Uint size = m_color_array->size()* sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) (m_color_array->get_vector());
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-  }
-
-  // Create the vertex texture-coordinate buffer context. */
-  if (!error_occured && m_tex_coord_array) {
-    glGenBuffersARB(1, &m_vertex_tex_coord_id);
-    if (m_vertex_tex_coord_id == 0) {
-      std::cerr << "glGenBuffersARB failed to generate vertex tex_coord buffer!"
-                << std::endl;
-      error_occured = true;
-    }
-    else {
-      Uint tcoords = 0;
-      if (boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array))
-        tcoords = sizeof(Vector2f);
-      else
-        if (boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array))
-        tcoords = sizeof(Vector3f);
-      SGAL_assertion(tcoords != 0);
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
-      Uint size = m_tex_coord_array->size() * tcoords;
-      GLfloat* data = m_tex_coord_array->get_gl_data();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-  }
-  
-  // Verify that everything is ok:
-  if (!error_occured) {
-    int param_array_size = 0;
-    glGetBufferParameterivARB(GL_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB,
-                              &param_array_size);
-    
-    if (param_array_size <= 0) {
-      destroy_vertex_buffer_object();
-      std::cerr << "glBufferDataARB failed to allocate any memory!"
-                << std::endl;
-      error_occured = true;
-    }
-  }
-
-  // Leave clean state:
-  if (error_occured) {
-    destroy_vertex_buffer_object();
-    return;
-  }
-  
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-  /*! \todo add a flag the user can set to indicate that the vertex arrays
-   * can be cleared. It cannot be determined automatically.
-   */
-  // clear_vertex_arrays();
-  m_vertex_buffer_object_created = true;
-#endif
-}
-
 /*! \brief destroys the data structure of the vertex buffer object. */
 void Indexed_face_set::destroy_vertex_buffer_object()
 {
@@ -1408,6 +1308,10 @@ void Indexed_face_set::destroy_vertex_buffer_object()
     m_vertex_tex_coord_id = 0;
   }
 #endif
+  m_dirty_vertex_coord_buffer = true;
+  m_dirty_vertex_normal_buffer = true;
+  m_dirty_vertex_color_buffer = true;
+  m_dirty_vertex_tex_coord_buffer = true;
 }
 
 /*! \brief destroys the data structure of the display_list. */
@@ -1428,8 +1332,8 @@ void Indexed_face_set::clear_vertex_arrays()
   if (m_color_array) m_color_array->clear();
 }
 
-/*! \brief destroys the vertex-index arrays. */
-void Indexed_face_set::destroy_vertex_index_arrays()
+/*! \brief clears the vertex-index arrays. */
+void Indexed_face_set::clear_vertex_index_arrays()
 {
   m_coord_indices.clear();
   m_tex_coord_indices.clear();
@@ -1441,10 +1345,9 @@ void Indexed_face_set::destroy_vertex_index_arrays()
 void Indexed_face_set::clear()
 {
   clear_vertex_arrays();
-  destroy_vertex_index_arrays();
+  clear_vertex_index_arrays();
   destroy_display_list();
   destroy_vertex_buffer_object();
-
   Mesh_set::clear();
 }
   
@@ -1462,99 +1365,69 @@ Boolean Indexed_face_set::is_empty() const
   return Geo_set::is_empty();
 }
 
-/*! \brief processes change of coordinates.
- * EFEF: It is not absolutely necessary to destroy the vertex buffer.
- *       Instead, we can simply update it as done in field_changed().
- *       In any case, this is not the place to do it. We should mark
- *       the change needed here, and apply it in the appropriate *clean()
- *       function (which is invoked from the drawing routine.
- */
+/*! \brief processes change of coordinates. */
 void Indexed_face_set::coord_changed(Field_info* field_info)
 {
-  m_dirty_normals = true;
-  m_dirty_tex_coords = true;
   destroy_display_list();
-  destroy_vertex_buffer_object();
+  m_dirty_vertex_coord_buffer = true;
+  m_dirty_sphere_bound = true;
+  clear_normals();
+  clear_tex_coords();
   Mesh_set::coord_changed(field_info);
 }
 
-/*! \brief Process change of field.
- * EFEF: This is wrong for two reasons:
- *       1. A change to the coord_array may imply a change in the normal, 
- *       color, or text_coord arrays.
- *       2. This is not the place to update the arrays. We should mark
- *       the change needed here, and apply it in the appropriate *clean()
- *       function (which is invoked from the drawing routine.
- */
-void Indexed_face_set::field_changed(Field_info* field_info)
+/*! \brief processes change of normals. */
+void Indexed_face_set::normal_changed(Field_info* field_info)
 {
-  switch (field_info->get_id()) {
-   case COORD_ARRAY:
-#if defined(GL_ARB_vertex_buffer_object)
-    if (!m_vertex_buffer_object_created) break;
-    if (m_vertex_coord_id == 0) break;
-    {
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
-      Uint size = m_coord_array->size() * sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) m_coord_array->get_vector();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-#endif
-    break;
+  destroy_display_list();
+  m_dirty_vertex_normal_buffer = true;
+  Mesh_set::normal_changed(field_info);
+}
 
-   case NORMAL_ARRAY:
-#if defined(GL_ARB_vertex_buffer_object)
-    if (!m_vertex_buffer_object_created) break;
-    if (m_vertex_normal_id == 0) break;
-    {
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
-      Uint size = m_normal_array->size() * sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) m_normal_array->get_vector();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-#endif
-    break;
+/*! \brief processes change of colors. */
+void Indexed_face_set::color_changed(Field_info* field_info)
+{
+  destroy_display_list();
+  m_dirty_vertex_color_buffer = true;
+  Mesh_set::color_changed(field_info);
+}
 
-   case COLOR_ARRAY:
-#if defined(GL_ARB_vertex_buffer_object)
-    if (!m_vertex_buffer_object_created) break;
-    if (m_vertex_color_id == 0) break;
-    {
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
-      Uint size = m_color_array->size() * sizeof(Vector3f);
-      GLfloat* data = (GLfloat*) m_color_array->get_vector();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-#endif
-    break;
+/*! \brief processes change of texture coordinates. */
+void Indexed_face_set::tex_coord_changed(Field_info* field_info)
+{
+  destroy_display_list();
+  m_dirty_vertex_tex_coord_buffer = true;
+  Mesh_set::tex_coord_changed(field_info);
+}
 
-   case TEX_COORD_ARRAY:
-#if defined(GL_ARB_vertex_buffer_object)
-    if (!m_vertex_buffer_object_created) break;
-    if (m_vertex_tex_coord_id == 0) break;
-    {
-      Uint tcoords = 0;
-      if (boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array))
-        tcoords = sizeof(Vector2f);
-      else
-        if (boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array))
-        tcoords = sizeof(Vector3f);
-      SGAL_assertion(tcoords != 0);
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
-      Uint size = m_tex_coord_array->size() * tcoords;
-      GLfloat* data = m_tex_coord_array->get_gl_data();
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
-    }
-#endif
-    break;
-  }
-  Container::field_changed(field_info);
+/*! \brief clears all data that depends on the normals. */
+void Indexed_face_set::clear_normals()
+{
+  destroy_display_list();
+  m_dirty_normals = true;
+  m_dirty_vertex_normal_buffer = true;
+}
+
+/*! \brief clears all data that depends on the colors. */
+void Indexed_face_set::clear_colors()
+{
+  destroy_display_list();
+  m_dirty_vertex_color_buffer = true;
+}
+
+/*! \brief clears all data that depends on the texture coordinates. */
+void Indexed_face_set::clear_tex_coords()
+{
+  destroy_display_list();
+  m_dirty_tex_coords = true;
+  m_dirty_vertex_tex_coord_buffer = true;
 }
 
 /*! \brief Calculate a single normal per vertex for all vertices. */
 void Indexed_face_set::
 calculate_single_normal_per_vertex(Shared_normal_array normals)
 {
+  normals->resize(m_coord_array->size());
   // Calculate the normals of all facets.
   Normal_array per_polygon_normals(m_num_primitives);
   calculate_normal_per_polygon(per_polygon_normals);
@@ -1586,6 +1459,148 @@ calculate_single_normal_per_vertex(Shared_normal_array normals)
 
   for (j = 0; j < vertices_info.size(); j++) vertices_info[j].clear();
   vertices_info.clear();
+}
+
+/*! \brief cleans the data structure of the vertex coordinate buffer object. */
+void Indexed_face_set::clean_vertex_coord_buffer()
+{
+  if (!m_coord_array) return;
+#if defined(GL_ARB_vertex_buffer_object)
+  if (m_vertex_coord_id == 0) glGenBuffersARB(1, &m_vertex_coord_id);
+  SGAL_assertion(m_vertex_coord_id != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
+  Uint size = m_coord_array->size() * sizeof(Vector3f);
+  GLfloat* data = (GLfloat*) m_coord_array->get_vector();
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+
+      // Verify that everything is ok:
+#if !defined(NDEBUG)
+  int param_array_size = 0;
+  glGetBufferParameterivARB(GL_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB,
+                            &param_array_size);
+  SGAL_assertion(param_array_size > 0);
+#endif
+  
+  // Leave clean state:
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#endif
+  m_dirty_vertex_coord_buffer = false;
+}
+
+/*! \brief cleans the data structure of the vertex normal buffer object. */
+void Indexed_face_set::clean_vertex_normal_buffer()
+{
+  if (!m_normal_array) return;
+#if defined(GL_ARB_vertex_buffer_object)
+  if (m_vertex_normal_id == 0) glGenBuffersARB(1, &m_vertex_normal_id);
+  SGAL_assertion(m_vertex_normal_id != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
+  Uint size = m_normal_array->size() * sizeof(Vector3f);
+  GLfloat* data = (GLfloat*) m_normal_array->get_vector();
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+
+#if !defined(NDEBUG)
+  int param_array_size = 0;
+  glGetBufferParameterivARB(GL_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB,
+                            &param_array_size);
+  SGAL_assertion(param_array_size > 0);
+#endif
+
+  // Leave clean state:
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#endif
+  m_dirty_vertex_normal_buffer = false;
+}
+
+/*! \brief cleans the data structure of the vertex color buffer object. */
+void Indexed_face_set::clean_vertex_color_buffer()
+{
+  if (!m_color_array) return;
+#if defined(GL_ARB_vertex_buffer_object)
+  if (m_vertex_color_id == 0) glGenBuffersARB(1, &m_vertex_color_id);
+  SGAL_assertion(m_vertex_color_id != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
+  Uint size = m_color_array->size() * sizeof(Vector3f);
+  GLfloat* data = (GLfloat*) m_color_array->get_vector();
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+
+#if !defined(NDEBUG)
+  int param_array_size = 0;
+  glGetBufferParameterivARB(GL_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB,
+                            &param_array_size);
+  SGAL_assertion(param_array_size > 0);
+#endif
+
+  // Leave clean state:
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#endif
+  m_dirty_vertex_color_buffer = false;
+}
+
+/*! \brief cleans the data structure of the vertex texture coordinate buffer
+ * object.
+ */
+void Indexed_face_set::clean_vertex_tex_coord_buffer()
+{
+  if (!m_tex_coord_array) return;
+#if defined(GL_ARB_vertex_buffer_object)
+  if (m_vertex_tex_coord_id == 0) glGenBuffersARB(1, &m_vertex_tex_coord_id);
+  SGAL_assertion(m_vertex_tex_coord_id != 0);
+  Uint tcoords = 0;
+  if (boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array))
+    tcoords = sizeof(Vector2f);
+  else
+    if (boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array))
+      tcoords = sizeof(Vector3f);
+  SGAL_assertion(tcoords != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
+  Uint size = m_tex_coord_array->size() * tcoords;
+  GLfloat* data = m_tex_coord_array->get_gl_data();
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+
+#if !defined(NDEBUG)
+  int param_array_size = 0;
+  glGetBufferParameterivARB(GL_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB,
+                            &param_array_size);
+  SGAL_assertion(param_array_size > 0);
+#endif
+
+  // Leave clean state:
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#endif
+  m_dirty_vertex_tex_coord_buffer = false;
+}
+
+/*! \brief Process change of field. */
+void Indexed_face_set::field_changed(Field_info* field_info)
+{
+  switch (field_info->get_id()) {    
+   case COORD_ARRAY:
+    destroy_display_list();
+    m_dirty_vertex_coord_buffer = true;
+    m_dirty_sphere_bound = true;
+    clear_normals();
+    clear_tex_coords();
+    break;
+    
+   case NORMAL_ARRAY:
+    destroy_display_list();
+    m_dirty_vertex_normal_buffer = true;
+    break;
+    
+   case COLOR_ARRAY:
+    destroy_display_list();
+    m_dirty_vertex_color_buffer = true;
+    break;
+    
+   case TEX_COORD_ARRAY:
+    destroy_display_list();
+    m_dirty_vertex_tex_coord_buffer = true;
+    break;
+    
+   default: break;
+  }
+  Container::field_changed(field_info);
 }
 
 SGAL_END_NAMESPACE

@@ -203,7 +203,8 @@ CPPSOURCES+= Vrml_formatter.cpp
 
 # LEX_PREFIX = wrlBase
 
-LCPPINCS = -I$(BASEDIR)
+LCPPINCS = -I.
+LCPPINCS+= -I$(BASEDIR)
 LCPPINCS+= -I$(BASEDIR)/loaders
 LCPPINCS+= -I$(BASEDIR)/primitives
 LCPPINCS+= -I$(BASEDIR)/interpolators
@@ -234,6 +235,7 @@ endif
 
 LCPPDEFS+= -DSGAL_LIB
 
+# Extract flex version
 FLEX_MAJOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+\([0-9]\)\.[0-9].[0-9]\+'
 FLEX_MAJOR_VER = $(shell $(FLEX_MAJOR_VER_CMD))
 FLEX_MINOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+[0-9]\.\([0-9]\).[0-9]\+'
@@ -241,10 +243,20 @@ FLEX_MINOR_VER = $(shell $(FLEX_MINOR_VER_CMD))
 FLEX_UPDATE_VER_CMD = expr match "$$(flex --version)" 'flex\s\+[0-9]\.[0-9].\([0-9]\+\)'
 FLEX_UPDATE_VER = $(shell $(FLEX_UPDATE_VER_CMD))
 
-FLEX_INT_VER_CMD = expr $(FLEX_MAJOR_VER) \* 1000 + $(FLEX_MINOR_VER) \* 100 + $(FLEX_UPDATE_VER)
-FLEX_INT_VER = $(shell $(FLEX_INT_VER_CMD))
+FLEX_VER_CMD = expr $(FLEX_MAJOR_VER) \* 1000 + $(FLEX_MINOR_VER) \* 100 + $(FLEX_UPDATE_VER)
+FLEX_VER = $(shell $(FLEX_VER_CMD))
 
-LCPPDEFS+= -DSGAL_FLEX_INT_VER=$(FLEX_INT_VER)
+# Extract bison version
+BISON_MAJOR_VER_CMD = expr match "$$(bison --version)" 'bison[^0-9]\+\([0-9]\)\.[0-9]'
+BISON_MAJOR_VER = $(shell $(BISON_MAJOR_VER_CMD))
+BISON_MINOR_VER_CMD = expr match "$$(bison --version)" 'bison[^0-9]\+[0-9]\.\([0-9]\)'
+BISON_MINOR_VER = $(shell $(BISON_MINOR_VER_CMD))
+
+BISON_VER_CMD = expr $(BISON_MAJOR_VER) \* 1000 + $(BISON_MINOR_VER) \* 100
+BISON_VER = $(shell $(BISON_VER_CMD))
+
+# Compilation define switch:
+# LCPPDEFS+= -DSGAL_FLEX_VER=$(FLEX_VER)
 
 ifeq ($(DE), msvc)
 ifeq ($(COMPILER_VER), 1200)
@@ -269,30 +281,13 @@ endif
 
 ifeq ($(DE), gnu)
 LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
-LCPPOPTS = -Wall -Werror
+LCPPOPTS = -Wall
+LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
 LCPPOPTS+=`Magick++-config --cxxflags --cppflags`
 endif
 
 LDIRT = parse.output
-
-include $(MAKEDIR)/basedir.mak
-include $(MAKEDIR)/comrul.mak
-include $(MAKEDIR)/bisoncpp.mak
-include $(MAKEDIR)/lexcpp.mak
-
-# For older versions of flex (less than 2.5.31)
-define run-lex
-$(LEXF) -d -t -+ $(firstword $^) | \
-sed -e 's/#define yyFlexLexer yyFlexLexer//' \
--e 's/class istream;/#include <iostream>/' \
--e 's/istream/std::istream/' \
--e 's/std::std/std/' \
-> $@
-endef
-
-include $(MAKEDIR)/comp.mak
-include $(MAKEDIR)/targlib.mak
 
 vpath %.cpp $(BASEDIR)/primitives
 vpath %.cpp $(BASEDIR)/engines
@@ -309,7 +304,56 @@ vpath %.cpp $(BASEDIR)/IO
 vpath %.y $(BASEDIR)/loaders
 vpath %.l $(BASEDIR)/loaders
 
-scan.o: parse.h
+include $(MAKEDIR)/basedir.mak
+include $(MAKEDIR)/comrul.mak
+include $(MAKEDIR)/bisoncpp.mak
+include $(MAKEDIR)/lexcpp.mak
 
-x:
-	echo $(FLEX_INT_VER_CMD)
+# For older versions of flex (less than 2.5.31)
+define run-lex
+$(LEXF) -d -t -+ $(firstword $^) | \
+sed -e 's/#define yyFlexLexer yyFlexLexer//' \
+-e 's/class istream;/#include <iostream>/' \
+-e 's/istream/std::istream/' \
+-e 's/std::std/std/' \
+> $@
+endef
+
+ifeq ($(BISON_VER), 2500)
+define run-bison
+sed -e 's/%require "2.7"/%require "2.5"/' \
+    -e 's/%define api.namespace "SGAL"/%define namespace "SGAL"/' \
+$(firstword $^) > tmp.y
+$(BISONF) tmp.y -o $(basename $@).cpp
+endef
+endif
+
+ifeq ($(BISON_VER), 2700)
+define fix-bison
+sed -i -e 's/0 < count || -count < line/0 < count || -count < (int) line/' \
+       -e 's/0 < count || -count < column/0 < count || -count < (int) column/' \
+position.hh
+endef
+else
+define fix-bison
+endef
+endif
+
+include $(MAKEDIR)/comp.mak
+include $(MAKEDIR)/targlib.mak
+
+parse.cpp parse.hpp: parse.y
+	$(run-bison)
+	$(fix-bison)
+
+scan.o: parse.hpp
+
+# cancel the built-in implicit rule for yacc:
+%.c : %.y
+
+.PHONY :: flex-ver bison-ver
+flex-ver:
+	@echo $(FLEX_VER)
+
+bison-ver:
+	@echo $(BISON_VER)
