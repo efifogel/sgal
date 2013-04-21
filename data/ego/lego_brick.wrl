@@ -1,7 +1,7 @@
 #VRML V2.0 utf8
 Configuration {
   accumulation Accumulation {
-    enabled FALSE
+    enabled TRUE
     # accumBits 0
   }
   # geometryDrawingMode "direct"
@@ -53,34 +53,25 @@ Transform {
 	  ambientIntensity 0.2
 	  # transparency 0
 	}
-	# texture ImageTexture { url ["negx.jpg"] }
-	# texture CubeEnvironment {
-	#   rightImage Image { flip FALSE url ["posx.jpg"] }
-	#   leftImage Image { flip FALSE url ["negx.jpg"] }
-	#   backImage Image { flip FALSE url ["posy.jpg"] }
-	#   frontImage Image { flip FALSE url ["negy.jpg"] }
-	#   topImage Image { flip FALSE url ["posz.jpg"] }
-	#   bottomImage Image { flip FALSE url ["negz.jpg"] }
-	# }
 	texture CubeEnvironment {
 	  rightImage Image {
 	    flip FALSE alpha TRUE transparency 0.2 url ["right.jpg"]
-	  } 	# -90
-	  leftImage Image { 
+	  } # -90
+	  leftImage Image {
 	    flip FALSE alpha TRUE transparency 0.2 url ["left.jpg"]
-	  }   	#  90
-	  backImage Image { 
+	  } #  90
+	  backImage Image {
 	    flip FALSE alpha TRUE transparency 0.2 url ["back.jpg"]
-	  }   	# 180
-	  frontImage Image { 
+	  } # 180
+	  frontImage Image {
 	    flip FALSE alpha TRUE transparency 0.2 url ["front.jpg"]
 	  }
-	  topImage Image { 
+	  topImage Image {
 	    flip FALSE alpha TRUE transparency 0.2 url ["top.jpg"]
 	  }
-	  bottomImage Image { 
+	  bottomImage Image {
 	    flip FALSE alpha TRUE transparency 0.2 url ["bottom.jpg"]
-	  }		# 180
+	  } # 180
 	}	
       }
       geometry DEF BRICK EgoBrick {

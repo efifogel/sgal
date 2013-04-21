@@ -81,7 +81,13 @@ Ego_brick::Ego_brick(Boolean proto) :
 {}
 
 /*! Destructor */
-Ego_brick::~Ego_brick() {}
+Ego_brick::~Ego_brick()
+{
+  m_knob_cross_section.clear();
+  if (m_coord_array) m_coord_array->clear();
+  if (m_normal_array) m_normal_array->clear();
+  if (m_tex_coord_array) m_tex_coord_array->clear();
+}
 
 /*! \brief cleans the internal represenation. */
 void Ego_brick::clean()
@@ -92,14 +98,15 @@ void Ego_brick::clean()
     Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
     Uint primitives_per_knob = m_knob_slices * 3;
     m_num_primitives += primitives_per_knob * num_knobs;
+
+    if ((m_dirty_coords || m_dirty_normals) &&
+        (m_knob_cross_section.size() != m_knob_slices))
+      clean_knob_cross_section();
   }
 
   // Clean
-  if (m_knobs_visible && (m_dirty_coords || m_dirty_normals))
-    clean_knob_cross_section();
   if (m_dirty_center) clean_center();
   if (m_dirty_coords) clean_coords();
-  if (m_knobs_visible) m_knob_cross_section.clear();
   set_primitive_type(PT_TRIANGLES);
   set_solid(true);
 
@@ -142,9 +149,11 @@ void Ego_brick::clean_coords()
     size += points_per_knob * num_knobs;
   }
   
-  SGAL_assertion(!m_coord_array);
-  m_coord_array.reset(new Coord_array(size));
-  SGAL_assertion(m_coord_array);
+  if (m_coord_array) m_coord_array->resize(size);
+  else {
+    m_coord_array.reset(new Coord_array(size));
+    SGAL_assertion(m_coord_array);
+  }
   
   // Corner points:
   Float width = m_pitch * m_number_of_knobs1;
@@ -310,9 +319,11 @@ void Ego_brick::clean_indices()
 void Ego_brick::clean_normals()
 {
   SGAL_assertion(m_coord_array);
-  SGAL_assertion(!m_normal_array);
-  m_normal_array.reset(new Normal_array(m_coord_array->size()));
-  SGAL_assertion(m_normal_array);
+  if (m_normal_array) m_normal_array->resize(m_coord_array->size());
+  else {
+    m_normal_array.reset(new Normal_array(m_coord_array->size()));
+    SGAL_assertion(m_normal_array);
+  }
 
   Uint k = 0;
 
@@ -341,6 +352,10 @@ void Ego_brick::clean_normals()
   (*m_normal_array)[k++].set(0, 0, 1); (*m_normal_array)[k++].set(0, 0, 1);
   (*m_normal_array)[k++].set(0, 0, 1); (*m_normal_array)[k++].set(0, 0, 1);
 
+  m_dirty_normals = false;
+  m_normals_cleaned = true;
+  m_dirty_vertex_normal_buffer = true;
+
   // Knobs:
   if (!m_knobs_visible) return;
   
@@ -359,23 +374,21 @@ void Ego_brick::clean_normals()
       (*m_normal_array)[k++].set(0, 0, 1);
     }
   }
-
-  m_dirty_normals = false;
-  m_normals_cleaned = true;
-  m_dirty_vertex_normal_buffer = true;
 }
 
 /*! \brief cleans the texture_coordinates. */
 void Ego_brick::clean_tex_coords()
 {
   SGAL_assertion(m_coord_array);
-  SGAL_assertion(!m_tex_coord_array);
+  if (m_tex_coord_array) m_tex_coord_array->resize(m_coord_array->size());
+  else {
+    m_tex_coord_array.reset(new Tex_coord_array_3d(m_coord_array->size()));
+    SGAL_assertion(m_tex_coord_array);
+  }
   Tex_coord_array_3d* tex_coord_array =
-    new Tex_coord_array_3d(m_coord_array->size());
-  m_tex_coord_array.reset(tex_coord_array);
-  SGAL_assertion(m_tex_coord_array);
-
-  for (Uint k = 0; k < tex_coord_array->size(); ++ k) {
+    static_cast<Tex_coord_array_3d*>(&*m_tex_coord_array);
+    
+  for (Uint k = 0; k < tex_coord_array->size(); ++k) {
     (*tex_coord_array)[k].sub((*m_coord_array)[k], m_center);
     (*tex_coord_array)[k].normalize();
   }
