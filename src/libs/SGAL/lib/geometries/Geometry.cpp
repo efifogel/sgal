@@ -87,9 +87,6 @@ void Geometry::set_attributes(Element* elem)
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
-
-  Container::set_attributes(elem);
-
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);

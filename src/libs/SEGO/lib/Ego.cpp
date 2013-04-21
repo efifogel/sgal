@@ -553,41 +553,39 @@ Boolean Ego::is_empty() { return true; }
 /*! \brief clean the voxels */
 void Ego::clean_voxels()
 {
-  if (m_dirty_voxels) {
-    m_dirty_voxels = false;
-    m_dirty_tiling = true;
+  m_dirty_voxels = false;
+  m_dirty_tiling = true;
 
-    Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
+  Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
 
-    m_voxels = Ego_voxels(); // Clear - should we make a func?
-    if (this->is_model_polyhedron())
-      m_voxels_center = 
-        voxelize(this->get_polyhedron_model()->get_polyhedron(),
-                 get_matrix(), &m_voxels);
-    else if (this->is_model_exact_polyhedron())
-      m_voxels_center = 
-        voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
-                 get_matrix(), &m_voxels);
-    else if (this->is_model_geo_set())
-      m_voxels_center = 
-        voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
+  m_voxels = Ego_voxels(); // Clear - should we make a func?
+  if (this->is_model_polyhedron())
+    m_voxels_center = 
+      voxelize(this->get_polyhedron_model()->get_polyhedron(),
+               get_matrix(), &m_voxels);
+  else if (this->is_model_exact_polyhedron())
+    m_voxels_center = 
+      voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
+               get_matrix(), &m_voxels);
+  else if (this->is_model_geo_set())
+    m_voxels_center = 
+      voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
 
-    if (!m_filler) {
-      m_filler = new Ego_voxels_filler();
-      m_owned_filler = true;
+  if (!m_filler) {
+    m_filler = new Ego_voxels_filler();
+    m_owned_filler = true;
 
-      // Connect.
-      // Field* src_field =
-      //   filler->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
-      // SGAL_assertion(src_field);
+    // Connect.
+    // Field* src_field =
+    //   filler->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
+    // SGAL_assertion(src_field);
       
-      // Field* dst_field = add_field(SELECTION_ID);
-      // SGAL_assertion(dst_field);
-      // src_field->connect(dst_field);
-    }
-    
-    m_filler->fill(&m_voxels);
+    // Field* dst_field = add_field(SELECTION_ID);
+    // SGAL_assertion(dst_field);
+    // src_field->connect(dst_field);
   }
+    
+  m_filler->fill(&m_voxels);
 }
 
 /*! \brief clean the tiling. */
@@ -733,7 +731,8 @@ void Ego::clean_parts()
            m_dirty_colors = false;
            Shared_appearance app(create_random_appearance());
            shape->set_appearance(app);
-           Shared_geometry geom = create_geometry(num0, num1, should_draw_knobs);
+           Shared_geometry geom =
+             create_geometry(num0, num1, should_draw_knobs);
            shape->set_geometry(geom);
           }
           break;

@@ -132,24 +132,11 @@ inline Torus* Torus::prototype() { return new Torus(true); }
 /*! \brief clones. */
 inline Container* Torus::clone() { return new Torus(); }
 
-/*! \brief sets the spine radius of the ellipsoid. */
-inline void Torus::set_spine_radius(Float spine_radius)
-{
-  m_spine_radius = spine_radius;
-  m_dirty_sphere_bound = true;
-}
-
 /*! \brief obtains the spine radius of the ellipsoid. */
 inline Float Torus::get_spine_radius() const { return m_spine_radius; }
 
-/*! \brief sets the number of slices (horizontal) longitudes. */
-inline void Torus::set_slices(Uint slices) { m_slices = slices; }
-
 /*! \brief obtains the number of slices (horizontal) longitudes. */
 inline Uint Torus::get_slices() const { return m_slices; }
-
-/*! \brief sets the number of stacks (vertical) latitudes. */
-inline void Torus::set_stacks(Uint stacks) { m_stacks = stacks; }
 
 /*! \brief obtains the number of stacks (vertical) latitudes. */
 inline Uint Torus::get_stacks() const { return m_stacks; }

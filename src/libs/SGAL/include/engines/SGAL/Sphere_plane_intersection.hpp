@@ -54,92 +54,130 @@ public:
   };
 
   /*! Constructor */
-  Sphere_plane_intersection(Boolean proto = SGAL_FALSE);
+  Sphere_plane_intersection(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Sphere_plane_intersection();
 
-  /*! Construct the prototype */
-  static Sphere_plane_intersection * prototype()
-  { return new Sphere_plane_intersection(SGAL_TRUE); }
+  /*! Construct the prototype. */
+  static Sphere_plane_intersection* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Sphere_plane_intersection(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtain the container prototype. */
+  virtual Container_proto* get_prototype();
   
   /*! Set the attributes of the object extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
+   * \param elem contains lists of attribute names and values.
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! The interpolation execution function */
-  virtual void execute(Field_info * field_info);
+  /*! The interpolation execution function. */
+  virtual void execute(Field_info* field_info);
 
-  /*! Obtain the sphere radius */
-  Float get_sphere_radius() const { return m_sphere_radius; }
+  /*! Obtain the sphere radius. */
+  Float get_sphere_radius() const;
 
-  /*! Set the sphere radius */
-  void set_sphere_radius(Float radius) { m_sphere_radius = radius; }
+  /*! Set the sphere radius. */
+  void set_sphere_radius(Float radius);
 
-  /*! Obtain the plane coefficients */
-  const Vector4f & get_plane() const { return m_plane; }
+  /*! Obtain the plane coefficients. */
+  const Vector4f& get_plane() const;
 
-  /*! Set the plane coefficients */
-  void set_plane(const Vector4f & vec) { m_plane = vec; }
+  /*! Set the plane coefficients. */
+  void set_plane(const Vector4f& vec);
   
-  /*! Obtain the circle translation */
-  const Vector3f & get_circle_translation() const { return m_circle_translation; }
+  /*! Obtain the circle translation. */
+  const Vector3f& get_circle_translation() const;
 
-  /*! Obtain the circle rotation */
-  const Rotation & get_circle_rotation() const { return m_circle_rotation; }
+  /*! Obtain the circle rotation. */
+  const Rotation& get_circle_rotation() const;
 
-  /*! Obtain the circle radius */
-  Float get_circle_radius() const { return m_circle_radius; } 
+  /*! Obtain the circle radius. */
+  Float get_circle_radius() const;
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
-  /*! The sphere radius */
+  /*! The sphere radius. */
   Float m_sphere_radius;
 
   /*! The plane coefficients */
   Vector4f m_plane;
 
-  /*! The circle translation */
+  /*! The circle translation. */
   Vector3f m_circle_translation;
 
-  /*! The circle rotation */
+  /*! The circle rotation. */
   Rotation m_circle_rotation;
 
-  /*! The circle radius */
+  /*! The circle radius. */
   Float m_circle_radius;
 
-  /*! Trigger of the engine that makes the engine excute */
+  /*! Trigger of the engine that makes the engine excute. */
   Boolean m_trigger;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
   // Default values:
   static const Float s_def_sphere_radius;
   static const Vector4f s_def_plane;
 };
+
+/*! \brief constructs the prototype. */
+inline Sphere_plane_intersection* Sphere_plane_intersection::prototype()
+{ return new Sphere_plane_intersection(true); }
+
+/*! \brief clones. */
+inline Container* Sphere_plane_intersection::clone()
+{ return new Sphere_plane_intersection(); }
+
+/*! \brief obtains the sphere radius. */
+inline Float Sphere_plane_intersection::get_sphere_radius() const
+{ return m_sphere_radius; }
+
+/*! \brief sets the sphere radius. */
+inline void Sphere_plane_intersection::set_sphere_radius(Float radius)
+{ m_sphere_radius = radius; }
+
+/*! \brief obtains the plane coefficients. */
+inline const Vector4f& Sphere_plane_intersection::get_plane() const
+{ return m_plane; }
+
+/*! \brief sets the plane coefficients. */
+inline void Sphere_plane_intersection::set_plane(const Vector4f& vec)
+{ m_plane = vec; }
+  
+/*! \brief obtains the circle translation. */
+inline const Vector3f& Sphere_plane_intersection::get_circle_translation() const
+{ return m_circle_translation; }
+
+/*! \brief obtains the circle rotation. */
+inline const Rotation& Sphere_plane_intersection::get_circle_rotation() const
+{ return m_circle_rotation; }
+
+/*! \brief obtains the circle radius. */
+inline Float Sphere_plane_intersection::get_circle_radius() const
+{ return m_circle_radius; } 
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Sphere_plane_intersection::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

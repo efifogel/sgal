@@ -193,7 +193,6 @@ void Spherical_gaussian_map_marked_geo::clean()
     SGAL_assertion(m_sgm);
     m_owned_sgm = true;
   }
-  Mesh_set::clean();
   if (m_minkowski_sum) {
     clock_t start_time = clock();
     Sgm_node_iter ni = m_sgm_nodes.begin();
@@ -202,7 +201,8 @@ void Spherical_gaussian_map_marked_geo::clean()
     m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()));
     clock_t end_time = clock();
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
-  } else if (m_coord_array) {
+  }
+  else if (m_coord_array) {
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
     Sgm_geo_initializer_visitor visitor;
@@ -247,6 +247,8 @@ void Spherical_gaussian_map_marked_geo::clean()
     m_marked_vertex_index = num_vertices;
   if (m_marked_edge_index >= num_edges) m_marked_edge_index = num_edges;
   if (m_marked_facet_index >= num_facets) m_marked_facet_index = num_facets;
+
+  Spherical_gaussian_map_base_geo::clean();
 }
 
 /*! \brief clears the internal representation and auxiliary data structures. */

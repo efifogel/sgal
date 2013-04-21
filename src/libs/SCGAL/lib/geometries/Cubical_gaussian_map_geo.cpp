@@ -295,7 +295,7 @@ void Cubical_gaussian_map_geo::clean()
   if (m_marked_edge_index >= num_edges) m_marked_edge_index = num_edges;
   if (m_marked_facet_index >= num_facets) m_marked_facet_index = num_facets;
 
-  if (Mesh_set::is_dirty()) Mesh_set::clean();
+  Mesh_set::clean();
 }
 
 /*! \brief clears the internal representation and auxiliary data structures. */
@@ -303,7 +303,6 @@ void Cubical_gaussian_map_geo::clear()
 {
   Mesh_set::clear();
   m_cgm.clear();
-  process_content_changed();
 }
 
 /*! \brief */
@@ -332,11 +331,13 @@ bool Cubical_gaussian_map_geo::clean_sphere_bound()
     if (!m_draw_aos_unfolded) {
       m_sphere_bound.set_center(Vector3f(0, 0, 0));
       m_sphere_bound.set_radius(SQRT_3);
-    } else {
+    }
+    else {
       m_sphere_bound.set_center(Vector3f(5, 4, 0));
       m_sphere_bound.set_radius(4);
     }
-  } else if (!m_bb_is_pre_set) {
+  }
+  else if (!m_bb_is_pre_set) {
     Approximate_sphere_vector spheres;
 
     //! \todo this should change with dual-face iterator
@@ -660,7 +661,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     add_field_info(new SF_float(DUAL_EDGE_LINE_WIDTH, "dualLineWidth",
                                get_member_offset(&m_aos_edge_line_width)));
 
-  exec_func = static_cast<Execution_function>(&SGAL::Mesh_set::coord_changed);
+  exec_func = static_cast<Execution_function>(&Cubical_gaussian_map_geo::coord_changed);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
                                           get_member_offset(&m_translated),
                                           exec_func));
@@ -747,7 +748,8 @@ void Cubical_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
       Field* field = get_field(TRUE_DRAW_DUAL_UNFOLDED);    
       if (field) field->cascade();
     }
-  } else {
+  }
+  else {
     Field* field = get_field(TRUE_DRAW_PRIMAL);
     if (field) field->cascade();
   }
@@ -1558,13 +1560,6 @@ void Cubical_gaussian_map_geo::insert_cgm(Shared_cubical_gaussian_map_geo cgm)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief processes change of points. */
-void Cubical_gaussian_map_geo::field_changed(Field_info* field_info)
-{
-  Container::field_changed(field_info);
-  clear();
-}
-
 /*! \brief increases the vertex index. */
 void Cubical_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
 {
@@ -1853,6 +1848,20 @@ operator()(Draw_action* action)
   glColor4f(color[0], color[1], color[2], 0.6);
   for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i)
     m_geo.draw_aos_marked_face(i);
+}
+
+/*! \brief processes change of points. */
+void Cubical_gaussian_map_geo::field_changed(Field_info* field_info)
+{
+  clear();
+  Mesh_set::field_changed(field_info);
+}
+
+/*! \brief processes change of coordinate field. */
+void Cubical_gaussian_map_geo::coord_changed(Field_info* field_info)
+{
+  clear();
+  Mesh_set::coord_changed(field_info);
 }
 
 SGAL_END_NAMESPACE

@@ -85,7 +85,9 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_bb_is_pre_set(false),
   m_is_progressive(false),
   m_dirty_normals(true),
+  m_normals_cleaned(false),
   m_dirty_tex_coords(true),
+  m_tex_coords_cleaned(false),
   m_dirty_vertex_coord_buffer(true),
   m_dirty_vertex_normal_buffer(true),
   m_dirty_vertex_color_buffer(true),
@@ -673,7 +675,13 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 }
 
 /*! Destructor */
-Indexed_face_set::~Indexed_face_set() { clear(); }
+Indexed_face_set::~Indexed_face_set()
+{
+  clear_vertex_arrays();
+  clear_vertex_index_arrays();
+  destroy_display_list();
+  destroy_vertex_buffer_object();
+}
 
 /* \brief sets the flag that indicates whether normals are bound per vertex or
  * per face.
@@ -700,6 +708,8 @@ void Indexed_face_set::clean_normals()
   else if (m_crease_angle > 0) calculate_multiple_normals_per_vertex();
   else calculate_normal_per_polygon();
   m_dirty_normals = false;
+  m_normals_cleaned = true;
+  m_dirty_vertex_normal_buffer = true;
 }
 
 /*! \brief Compute the normal to a facet from 3 points lying on the facet. */
@@ -890,15 +900,12 @@ void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
 void Indexed_face_set::calculate_single_normal_per_vertex()
 {
   SGAL_assertion(m_coord_array);
-
-  // Initialize the normal array.
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array(m_coord_array->size()));
     SGAL_assertion(m_normal_array);
   }
-
+  else m_normal_array->resize(m_coord_array->size());
   calculate_single_normal_per_vertex(m_normal_array);
-  
   set_normal_per_vertex(true);
 }
 
@@ -918,6 +925,7 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
 void Indexed_face_set::
 calculate_normal_per_polygon(Normal_array& normals)
 {
+  SGAL_assertion(normals.size() == m_num_primitives);
   Uint j = 0;
   for (Uint i = 0 ; i < m_num_primitives; ++i) {
     Vector3f normal;
@@ -951,11 +959,11 @@ calculate_normal_per_polygon(Normal_array& normals)
 void Indexed_face_set::calculate_normal_per_polygon()
 {
   SGAL_assertion(m_coord_array);
-
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array(m_num_primitives));
     SGAL_assertion(m_normal_array);
   }
+  else m_normal_array->resize(m_num_primitives);
   calculate_normal_per_polygon(*m_normal_array);
   set_normal_per_vertex(false);
 }
@@ -966,14 +974,19 @@ void Indexed_face_set::calculate_normal_per_polygon()
 void Indexed_face_set::clean_tex_coords()
 {
   SGAL_assertion(m_coord_array);
-  SGAL_assertion(!m_tex_coord_array);
-  Tex_coord_array_2d* tex_coord_array =
-    new Tex_coord_array_2d(m_coord_array->size());
-  m_tex_coord_array.reset(tex_coord_array);
-  SGAL_assertion(m_tex_coord_array);
-  
   Uint num_coords = m_coord_array->size();
-
+  if (m_tex_coord_array) {
+    m_tex_coord_array->resize(num_coords);
+  }
+  else {
+    m_tex_coord_array.reset(new Tex_coord_array_2d(num_coords));
+    SGAL_assertion(m_tex_coord_array);
+  }
+  boost::shared_ptr<Tex_coord_array_2d> shared_tex_coord_array =
+    boost::static_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  SGAL_assertion(shared_tex_coord_array);
+  Tex_coord_array_2d* tex_coord_array = &*shared_tex_coord_array;
+  
   //! \todo do the right thing!
   const Vector2f t0(0,0);
   const Vector2f t1(1,0);
@@ -987,12 +1000,15 @@ void Indexed_face_set::clean_tex_coords()
   }
 
   m_dirty_tex_coords = false;
+  m_tex_coords_cleaned = true;
+  m_dirty_vertex_tex_coord_buffer = true;
 }
 
 /*! \brief draws the mesh conditionaly. */
 void Indexed_face_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
+  if (is_dirty_indices()) clean_indices();
   if (is_empty()) return;
   
   // Clean the normals:
@@ -1139,6 +1155,7 @@ void Indexed_face_set::isect_direct()
 void Indexed_face_set::isect(Isect_action* action)
 {
   if (is_dirty()) clean();
+  if (is_dirty_indices()) clean_indices();
   if (is_empty()) return;
 
   Context* context = action->get_context();
@@ -1341,16 +1358,15 @@ void Indexed_face_set::clear_vertex_index_arrays()
   m_color_indices.clear();
 }
 
-/*! \brief clears the representation. */
-void Indexed_face_set::clear()
+/*! \brief processes change of coordinate points. */
+void Indexed_face_set::coord_point_changed()
 {
-  clear_vertex_arrays();
-  clear_vertex_index_arrays();
   destroy_display_list();
-  destroy_vertex_buffer_object();
-  Mesh_set::clear();
+  m_dirty_vertex_coord_buffer = true;
+  if (m_normals_cleaned || !m_normal_array) m_dirty_normals = true;
+  if (m_tex_coords_cleaned || !m_tex_coord_array) m_dirty_tex_coords = true;
 }
-  
+
 /*! \brief returns true if the representation is empty. */
 Boolean Indexed_face_set::is_empty() const
 {
@@ -1365,69 +1381,11 @@ Boolean Indexed_face_set::is_empty() const
   return Geo_set::is_empty();
 }
 
-/*! \brief processes change of coordinates. */
-void Indexed_face_set::coord_changed(Field_info* field_info)
-{
-  destroy_display_list();
-  m_dirty_vertex_coord_buffer = true;
-  m_dirty_sphere_bound = true;
-  clear_normals();
-  clear_tex_coords();
-  Mesh_set::coord_changed(field_info);
-}
-
-/*! \brief processes change of normals. */
-void Indexed_face_set::normal_changed(Field_info* field_info)
-{
-  destroy_display_list();
-  m_dirty_vertex_normal_buffer = true;
-  Mesh_set::normal_changed(field_info);
-}
-
-/*! \brief processes change of colors. */
-void Indexed_face_set::color_changed(Field_info* field_info)
-{
-  destroy_display_list();
-  m_dirty_vertex_color_buffer = true;
-  Mesh_set::color_changed(field_info);
-}
-
-/*! \brief processes change of texture coordinates. */
-void Indexed_face_set::tex_coord_changed(Field_info* field_info)
-{
-  destroy_display_list();
-  m_dirty_vertex_tex_coord_buffer = true;
-  Mesh_set::tex_coord_changed(field_info);
-}
-
-/*! \brief clears all data that depends on the normals. */
-void Indexed_face_set::clear_normals()
-{
-  destroy_display_list();
-  m_dirty_normals = true;
-  m_dirty_vertex_normal_buffer = true;
-}
-
-/*! \brief clears all data that depends on the colors. */
-void Indexed_face_set::clear_colors()
-{
-  destroy_display_list();
-  m_dirty_vertex_color_buffer = true;
-}
-
-/*! \brief clears all data that depends on the texture coordinates. */
-void Indexed_face_set::clear_tex_coords()
-{
-  destroy_display_list();
-  m_dirty_tex_coords = true;
-  m_dirty_vertex_tex_coord_buffer = true;
-}
-
 /*! \brief Calculate a single normal per vertex for all vertices. */
 void Indexed_face_set::
 calculate_single_normal_per_vertex(Shared_normal_array normals)
 {
-  normals->resize(m_coord_array->size());
+  SGAL_assertion(normals->size() == m_coord_array->size());
   // Calculate the normals of all facets.
   Normal_array per_polygon_normals(m_num_primitives);
   calculate_normal_per_polygon(per_polygon_normals);
@@ -1571,21 +1529,53 @@ void Indexed_face_set::clean_vertex_tex_coord_buffer()
   m_dirty_vertex_tex_coord_buffer = false;
 }
 
+/*! \brief sets the coordinate array. */
+void Indexed_face_set::set_coord_array(Shared_coord_array coord_array)
+{
+  Mesh_set::set_coord_array(coord_array);
+  coord_point_changed();
+}
+
+/*! \brief sets the normal array. */
+void Indexed_face_set::set_normal_array(Shared_normal_array normal_array)
+{
+  Mesh_set::set_normal_array(normal_array);
+  destroy_display_list();
+  m_dirty_vertex_normal_buffer = true;
+  m_dirty_normals = false;
+  m_normals_cleaned = false;
+}
+
+/*! \brief sets the color field. */
+void Indexed_face_set::set_color_array(Shared_color_array color_array)
+{
+  Mesh_set::set_color_array(color_array);
+  destroy_display_list();
+  m_dirty_vertex_color_buffer = true;
+}
+
+/*! \brief sets the texture-coordinate array. */
+void
+Indexed_face_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
+{
+  Mesh_set::set_tex_coord_array(tex_coord_array);
+  destroy_display_list();
+  m_dirty_vertex_tex_coord_buffer = true;
+  m_dirty_tex_coords = false;
+  m_tex_coords_cleaned = false;
+}
+
 /*! \brief Process change of field. */
 void Indexed_face_set::field_changed(Field_info* field_info)
 {
   switch (field_info->get_id()) {    
-   case COORD_ARRAY:
-    destroy_display_list();
-    m_dirty_vertex_coord_buffer = true;
-    m_dirty_sphere_bound = true;
-    clear_normals();
-    clear_tex_coords();
-    break;
+   case COORD_ARRAY: coord_point_changed(); break;
     
    case NORMAL_ARRAY:
     destroy_display_list();
     m_dirty_vertex_normal_buffer = true;
+    m_dirty_normals = false;
+    m_normals_cleaned = false;
     break;
     
    case COLOR_ARRAY:
@@ -1596,11 +1586,22 @@ void Indexed_face_set::field_changed(Field_info* field_info)
    case TEX_COORD_ARRAY:
     destroy_display_list();
     m_dirty_vertex_tex_coord_buffer = true;
+    m_dirty_tex_coords = false;
+    m_tex_coords_cleaned = false;
     break;
     
    default: break;
   }
-  Container::field_changed(field_info);
+  Mesh_set::field_changed(field_info);
 }
+
+/*! \brief determines whether colors are generated by the geometry. */
+inline Boolean Indexed_face_set::are_generated_color()
+{ return (m_generated_color); }  
+  
+/*! \brief determines whether texture coordinates are generated by the geometry.
+ */
+inline Boolean Indexed_face_set::are_generated_tex_coord()
+{ return (m_generated_tex_coord); }  
 
 SGAL_END_NAMESPACE

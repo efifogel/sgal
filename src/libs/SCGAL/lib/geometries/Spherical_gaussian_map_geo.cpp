@@ -112,7 +112,6 @@ void Spherical_gaussian_map_geo::clean()
     SGAL_assertion(m_sgm);
     m_owned_sgm = true;
   }
-  if (Mesh_set::is_dirty()) Mesh_set::clean();
   if (m_minkowski_sum) {
     clock_t start_time = clock();
     Sgm_node_iter  ni = m_sgm_nodes.begin();
@@ -147,6 +146,8 @@ void Spherical_gaussian_map_geo::clean()
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
   }
   update_facets();
+
+  Spherical_gaussian_map_base_geo::clean();
 }
 
 /*! \brief clears the internal representation and auxiliary data structures. */

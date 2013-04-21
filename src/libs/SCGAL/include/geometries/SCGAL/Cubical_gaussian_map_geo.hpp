@@ -964,6 +964,15 @@ public:
   /*! Update the representation */
   void update();
   
+  /*! Process change of coordinate field.
+   * Generally process the change of coordinate field.
+   * We assume that any change requires the general processing of a field.
+   * Notice that by default the general processing of a field of a container
+   * (i.e., this container) consists of the processing of all observers of
+   * that container.
+   */
+  virtual void coord_changed(Field_info* field_info);
+
   /*! Raise the flag that indicates that the sphere bound changed. */
   void draw_changed(Field_info* field_info = NULL);
   

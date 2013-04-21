@@ -327,7 +327,7 @@ void Geo_set::coord_changed(Field_info* field_info)
   // 2. Specified nodes observe all their fields automatically, or
   // 3. Specified nodes observe allspecified fields.
   if (m_coord_array) {
-    Observer observer(this, get_field_info(COORD_ARRAY));
+    Observer observer(this, field_info);
     m_coord_array->register_observer(observer);
   }
   field_changed(field_info);
@@ -344,5 +344,15 @@ void Geo_set::color_changed(Field_info* field_info)
 /*! \brief processes change of texture coordinates. */
 void Geo_set::tex_coord_changed(Field_info* field_info)
 { field_changed(field_info); }
+
+/*! \brief Process change of field. */
+void Geo_set::field_changed(Field_info* field_info)
+{
+  switch (field_info->get_id()) {    
+   case COORD_ARRAY: m_dirty_sphere_bound = true; break;
+   default: break;
+  }
+  Container::field_changed(field_info);
+}
 
 SGAL_END_NAMESPACE
