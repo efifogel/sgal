@@ -168,8 +168,7 @@ Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& gm)
 Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() { clear(); }
 
 /*! \brief clears the internal representation and auxiliary data structures. */
-void Spherical_gaussian_map_base_geo::clear()
-{ Mesh_set::clear(); }
+void Spherical_gaussian_map_base_geo::clear() { Mesh_set::clear(); }
 
 /*! \brief */
 void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
@@ -396,7 +395,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     add_field_info(new SF_float(AOS_EDGE_LINE_WIDTH, "aosLineWidth",
                                get_member_offset(&m_aos_edge_line_width)));
 
-  exec_func = static_cast<Execution_function>(&Mesh_set::coord_changed);
+  exec_func = static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::coord_changed);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
                                           get_member_offset(&m_translated),
                                           exec_func));
@@ -556,4 +555,18 @@ void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
                       m_aos_vertex_radius, m_aos_vertex_radius);
 }
     
+/*! \brief processes change of coordinate field. */
+void Spherical_gaussian_map_base_geo::coord_changed(Field_info* field_info)
+{
+  clear();
+  Mesh_set::coord_changed(field_info);
+}
+
+/*! \brief processes change of points. */
+void Spherical_gaussian_map_base_geo::field_changed(Field_info* field_info)
+{
+  clear();
+  Container::field_changed(field_info);
+}
+
 SGAL_END_NAMESPACE

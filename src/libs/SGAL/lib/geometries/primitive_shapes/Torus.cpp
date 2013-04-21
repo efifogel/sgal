@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -56,9 +56,7 @@ Torus::Torus(Boolean proto) :
   m_spine_radius(s_def_spine_radius),
   m_slices(s_def_slices),
   m_stacks(s_def_stacks)
-{
-  m_cross_section_radius = s_def_cross_section_radius;
-}
+{ m_cross_section_radius = s_def_cross_section_radius; }
 
 /*! Destructor */
 Torus::~Torus(){}
@@ -91,20 +89,14 @@ void Torus::clean()
   Extrusion::clean();
 }
 
-/*! Set the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this object. */
 void Torus::set_attributes(Element* elem)
 {
   Extrusion::set_attributes(elem);
 
-  std::string name;
-  std::string value;
-
   typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "spineRadius") {
@@ -139,7 +131,7 @@ void Torus::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Mesh_set::coord_changed);
+    static_cast<Execution_function>(&Extrusion::structure_changed);
 
   s_prototype->add_field_info(new SF_float(SPINE_RADIUS, "spineRadius",
                                            get_member_offset(&m_spine_radius),
@@ -170,5 +162,26 @@ Container_proto* Torus::get_prototype()
   if (!s_prototype) Torus::init_prototype();
   return s_prototype;
 } 
+
+/*! \brief sets the spine radius of the ellipsoid. */
+void Torus::set_spine_radius(Float spine_radius)
+{
+  m_spine_radius = spine_radius;
+  clear();
+}
+
+/*! \brief sets the number of slices (horizontal) longitudes. */
+void Torus::set_slices(Uint slices)
+{
+  m_slices = slices;
+  clear();
+}
+
+/*! \brief sets the number of stacks (vertical) latitudes. */
+void Torus::set_stacks(Uint stacks)
+{
+  m_stacks = stacks;
+  clear();
+}
 
 SGAL_END_NAMESPACE

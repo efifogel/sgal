@@ -315,6 +315,9 @@ public:
 
   /*! Notify that the halftone has changed. */
   void halftone_changed(Field_info* field_info = NULL);
+
+  /*! Process change of field. */
+  void field_changed(Field_info* field_info);
   
   /*! Attache a given context. */
   virtual Boolean attach_context(Context* context); 

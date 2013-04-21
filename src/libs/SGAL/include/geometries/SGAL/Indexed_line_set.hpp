@@ -86,27 +86,6 @@ public:
    */
   virtual Boolean clean_sphere_bound();
 
-  /*! Set the coordinate set. Pass the pointer to the geometry object 
-   * used by the decoder as well.
-   * \param coord_array (in) a pointer to a coord set
-   */
-  virtual void set_coord_array(Shared_coord_array coord_array);
-
-  /*! Set the normal set.
-   * \param coord_array (in) a pointer to a coord set
-   */ 
-  virtual void set_normal_array(Shared_normal_array normal_array);
-
-  /*! Set the color set.
-   * \param color_array (in) a pointer to a color set
-   */
-  virtual void set_color_array(Shared_color_array color_array);
-
-  /*! Set the texture coordinate set.
-   * \param tex_coord_array (in) a pointer to a coord set
-   */
-  virtual void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
-
   /* Set the flag that indicates whether normals are bound per vertex
    * or per line.
    */

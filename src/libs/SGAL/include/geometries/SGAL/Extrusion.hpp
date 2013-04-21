@@ -156,6 +156,12 @@ public:
 
   /*! Clean the representation. */
   virtual void clean();
+
+  /*! Clean the coordinate indices. */
+  virtual void clean_indices();
+
+  /*! Process change of structure. */
+  void structure_changed(Field_info* field_info);
   
 protected:
   /*! Specifies whether the extruded shape is open at the beginning. */
@@ -209,43 +215,20 @@ inline Extrusion* Extrusion::prototype() { return new Extrusion(true); }
 /*! \brief clones. */
 inline Container* Extrusion::clone() { return new Extrusion(); }
 
-/*! \brief sets the flag that specifies whether the extruded shape is open at
- * the beginning.
- */
-inline void Extrusion::set_begin_cap(Boolean begin_cap)
-{ m_begin_cap = begin_cap; }
-
 /*! \brief obtains the flag that specifies whether the extruded shape is
  * open at the beginning.
  */
 inline Boolean Extrusion::get_begin_cap() const { return m_begin_cap; }
-
-/*! \brief sets the flag that specifies whether the extruded shape is open
- * at the end.
- */
-inline void Extrusion::set_end_cap(Boolean end_cap) { m_end_cap = end_cap; }
 
 /*! \brief obtains the flag that specifies whether the extruded shape is 
  * open at the end.
  */
 inline Boolean Extrusion::get_end_cap() const { return m_end_cap; }
 
-/*! \brief sets the flag that specifies whether the spine is a closed loop. */
-inline void Extrusion::set_loop(Boolean loop) { m_loop = loop; }
-
 /*! \brief obtains the flag that specifies whether the spine is a closed
  * loop.
  */
 inline Boolean Extrusion::get_loop() const { return m_loop; }
-
-/*! \brief sets the 2-D cross section of the final shape defined in the XZ
- * plane.
- */
-inline void Extrusion::set_cross_section(SGAL::Array<Vector2f>& cross_section)
-{
-  m_cross_section = cross_section;
-  m_dirty_sphere_bound = true;
-}
 
 /*! \brief obtains the 2-D cross section of the final shape defined in the
  * XZ plane.
@@ -253,34 +236,13 @@ inline void Extrusion::set_cross_section(SGAL::Array<Vector2f>& cross_section)
 inline const SGAL::Array<Vector2f>& Extrusion::get_cross_section() const
 { return m_cross_section; }
   
-/*! \brief sets the orientation of the cross section. */
-inline void Extrusion::set_orientation(SGAL::Array<Rotation>& orientation)
-{
-  m_orientation = orientation;
-  m_dirty_sphere_bound = true;
-}
-
 /*! \brief obtains the orientation of the cross section. */
 inline const SGAL::Array<Rotation>& Extrusion::get_orientation() const
 { return m_orientation; }
 
-/*! \brief sets the scale of the cross section. */
-inline void Extrusion::set_scale(SGAL::Array<Vector2f>& scale)
-{
-  m_scale = scale;
-  m_dirty_sphere_bound = true;
-}
-
 /*! \brief obtains the scale of the cross section. */
 inline const SGAL::Array<Vector2f>& Extrusion::get_scale() const
 { return m_scale; }
-
-/*! \brief sets the path that the cross section travels to create the shape. */
-inline void Extrusion::set_spine(SGAL::Array<Vector3f>& spine)
-{
-  m_spine = spine;
-  m_dirty_sphere_bound = true;
-}
   
 /*! \brief obtains the path that the cross section travels to create the
  * shape.
@@ -293,20 +255,9 @@ inline const SGAL::Array<Vector3f>& Extrusion::get_spine() const
  */
 inline SGAL::Array<Vector3f>& Extrusion::get_spine() { return m_spine; }
   
-/*! \brief sets the cross section radius. */
-inline void Extrusion::set_cross_section_radius(Float radius)
-{
-  m_cross_section_radius = radius;
-  m_dirty_sphere_bound = true;
-}
-
 /*! \brief obtains the cross section radius. */
 inline Float Extrusion::get_cross_section_radius() const
 { return m_cross_section_radius; }
-
-/*! \brief sets the cross section slicess number. */
-inline void Extrusion::set_cross_section_slices(Uint slices)
-{ m_cross_section_slices = slices; }
 
 /*! \brief obtains the cross section slices number. */
 inline Uint Extrusion::get_cross_section_slices() const

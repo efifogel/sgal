@@ -58,6 +58,7 @@ class Normal_array;
 class Tex_coord_array;
 class Geo_set;
 class Touch_sensor;
+class Ego_voxels_filler_base;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
@@ -307,6 +308,12 @@ public:
   /*! Process change of selected brick. */
   void selection_id_changed(Field_info* /* field_info. */);
   
+
+  /*! Set a filler
+   * \param filler the new filler.
+   */
+  void set_filler(Ego_voxels_filler_base* filler);
+
   /*! Obtain the style. */
   Style get_style() const;
 
@@ -381,6 +388,16 @@ protected:
   /*! The segments */
   boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
 
+  /*! Find a child of certain type */
+  template <class T>
+  T* find() {
+    for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+      T* res = dynamic_cast<T*>(*it);
+      if (res != NULL) return res;
+    }
+    return NULL;
+  }
+
   /*! The horizontal voxel width */
   Float m_voxel_width;
 
@@ -402,6 +419,9 @@ protected:
 
   /*! Indicates whether the parts are space filling. */
   Boolean m_space_filling;
+
+  Boolean m_owned_filler;
+  Ego_voxels_filler_base* m_filler;
 
   /// Tiling parameter
   std::size_t m_even_layer_x;

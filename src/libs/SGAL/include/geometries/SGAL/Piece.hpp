@@ -75,6 +75,9 @@ public:
   /*! Clean the representation. */
   virtual void clean();
 
+  /*! Clean the coordinate indices. */
+  virtual void clean_indices();
+
   /*! Set the width. */
   void set_width(Uint width);
 
@@ -99,6 +102,9 @@ public:
   /*! Obtain the composition. */
   Array<Uint>& get_composition();
   
+  /*! Process change of structure. */
+  void structure_changed(Field_info* field_info);
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;

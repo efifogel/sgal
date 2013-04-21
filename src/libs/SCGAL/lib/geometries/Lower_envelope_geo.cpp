@@ -66,8 +66,7 @@ Lower_envelope_geo::Lower_envelope_geo(Boolean proto) :
   m_vertex_radius(s_def_vertex_radius),
   m_edge_radius(s_def_edge_radius),
   m_face_transparency(s_def_face_transparency)
-{
-}
+{}
 
 /*! Destructor. */
 Lower_envelope_geo::~Lower_envelope_geo() { clear(); }

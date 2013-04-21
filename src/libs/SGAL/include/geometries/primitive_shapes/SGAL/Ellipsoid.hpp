@@ -113,6 +113,9 @@ public:
   /*! Clean the representation */
   virtual void clean();
   
+  /*! Process change of structure. */
+  void structure_changed(Field_info* field_info);
+
 protected:
   /*! The width of the ellipsoid */
   Float m_width;

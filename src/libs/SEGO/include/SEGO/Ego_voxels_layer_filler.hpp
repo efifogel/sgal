@@ -16,8 +16,8 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELS_FILLER_HPP
-#define SGAL_EGO_VOXELS_FILLER_HPP
+#ifndef SGAL_EGO_VOXELS_LAYER_FILLER_HPP
+#define SGAL_EGO_VOXELS_LAYER_FILLER_HPP
 
 #include "SEGO/Ego_voxels_filler_base.hpp"
 
@@ -30,14 +30,14 @@ SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 
-class SGAL_CLASSDEF Ego_voxels_filler : public Ego_voxels_filler_base {
+class SGAL_CLASSDEF Ego_voxels_layer_filler : public Ego_voxels_filler_base {
  public:
 
   /* Constructor */
-  Ego_voxels_filler(bool = false);
+  Ego_voxels_layer_filler(bool = false);
   
   /* Construct the prototype */
-  static Ego_voxels_filler* prototype();
+  static Ego_voxels_layer_filler* prototype();
 
   /*! Clone. */
   virtual Container* clone();
@@ -55,4 +55,4 @@ class SGAL_CLASSDEF Ego_voxels_filler : public Ego_voxels_filler_base {
 
 SGAL_END_NAMESPACE
 
-#endif // SGAL_EGO_VOXELS_FILLER_HPP
+#endif // SGAL_EGO_VOXELS_LAYER_FILLER_HPP

@@ -16,32 +16,32 @@
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
-#include "SEGO/Ego_voxels_filler_graph.hpp"
+#include "SEGO/Ego_voxels_incidence_graph.hpp"
 #include "SEGO/Ego_voxels.hpp"
 
 #include <boost/tuple/tuple_comparison.hpp>
 
 SGAL_BEGIN_NAMESPACE
 
-std::pair<Ego_voxels_filler_graph::out_edge_iterator,
-          Ego_voxels_filler_graph::out_edge_iterator>
-Ego_voxels_filler_graph::out_edges(const vertex_descriptor& u) const {
+std::pair<Ego_voxels_incidence_graph::out_edge_iterator,
+          Ego_voxels_incidence_graph::out_edge_iterator>
+Ego_voxels_incidence_graph::out_edges(const vertex_descriptor& u) const {
   
   boost::tuple<std::size_t, std::size_t, std::size_t>
     dim = m_voxels.size();
   
   Is_inside_voxels is_inside(dim);
-  Is_filling_identical is_filling(m_voxels);
+  Out_edges_predicate filter(std::logical_and<bool>(),
+                             Is_orthogonal(),
+                             Not_self_edge(),
+                             is_inside);
   
-  Out_edges_predicate pred(std::logical_and<bool>(), 
-                           is_filling,
-                           Is_orthogonal(),
-                           Not_self_edge(),
-                           is_inside);
+  neighborhood_iterator unfiltered_begin(u);
+  neighborhood_iterator unfiltered_end;
 
-  out_edge_iterator begin(pred, neighborhood_iterator(u));
-  out_edge_iterator end(pred, neighborhood_iterator());
-  
+  out_edge_iterator begin(filter, unfiltered_begin);
+  out_edge_iterator end(filter, unfiltered_end);
+
   return std::make_pair(begin, end);
 }
 

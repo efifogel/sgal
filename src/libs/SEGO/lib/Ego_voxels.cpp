@@ -74,6 +74,11 @@ void Ego_voxels::fill(size_t x, size_t y, size_t z) {
   m_voxels[x][y][z].filled = true;
 }
 
+void Ego_voxels::fill(const size_type& coord) {
+  fill(coord.get<0>(), coord.get<1>(), coord.get<2>());
+}
+
+
 bool Ego_voxels::is_filled(std::size_t x, std::size_t y, std::size_t z) const {
   SGAL_assertion(is_in_limits(x, y, z) == true);
   
@@ -128,9 +133,9 @@ Ego_voxels::get_brick(std::size_t x, std::size_t y, std::size_t z) {
 
 void Ego_voxels::print() const {
 
-  for (std::size_t i = 0; i < m_voxels.size(); ++i) {
+  for (std::size_t k = 0; k < m_voxels[0][0].size(); ++k) {
     for (std::size_t j = 0; j < m_voxels[0].size(); ++j) {
-      for (std::size_t k = 0; k < m_voxels[0][0].size(); ++k) {
+      for (std::size_t i = 0; i < m_voxels.size(); ++i) {
         if (is_filled(i, j, k))
           std::cout << "*";
         else

@@ -82,6 +82,8 @@ Boolean Material::is_changed()
 /*! \brief sets the transparency. */
 void Material::set_transparency(Float transparency)
 {
+  Field_info* field_info = get_field_info(TRANSPARENCY);
+  field_changed(field_info);
   m_changed = true;
   m_transparency = transparency;
 }
@@ -158,6 +160,7 @@ void Material::draw(Face which_face, Context* /* context */)
  */
 void Material::material_changed(Field_info* field_info)
 {
+  field_changed(field_info);
   m_changed = true;
   Container::set_rendering_required(field_info);
 }

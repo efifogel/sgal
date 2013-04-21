@@ -71,7 +71,7 @@ void Piece::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required);
+    static_cast<Execution_function>(&Piece::structure_changed);
 
   s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size",
                                           get_member_offset(&m_unit_size),
@@ -178,15 +178,26 @@ void Piece::clean()
   }
   
   m_num_primitives = size;
-  m_coord_indices.resize(size * 5);
+
+  set_solid(true);
+  Indexed_face_set::clean();
+  Indexed_face_set::coord_point_changed();
+  Indexed_face_set::clear_indices();
+}
+
+/*! \brief cleans the coordinate indices. */
+void Piece::clean_indices()
+{
+  //! \todo generate the indices flat to start with.
+  m_coord_indices.resize(m_num_primitives * 5);
   Uint width = m_width + 1;
   Uint height = m_height + 1;
   Uint offset = height * width;
   Uint m = 0;
-  l = 0;
-  for (k = 0; k < m_depth; ++k) {
-    for (j = 0; j < m_height; ++j) {
-      for (i = 0; i < m_width; ++i) {
+  Uint l = 0;
+  for (Uint k = 0; k < m_depth; ++k) {
+    for (Uint j = 0; j < m_height; ++j) {
+      for (Uint i = 0; i < m_width; ++i) {
         if (m_composition[l]) {
           Uint start = i + width * (j + height * k);
           if ((k == 0) || (!m_composition[l - m_width * m_height])) {
@@ -237,9 +248,7 @@ void Piece::clean()
       }
     }
   }
-  
-  set_solid(true);
-  Indexed_face_set::clean();
+  Indexed_face_set::clean_indices();
 }
 
 /*! Write this container. */
@@ -251,6 +260,13 @@ void Piece::write(Formatter* formatter)
   formatter->single_int("depth", m_depth, s_def_depth);
   formatter->multi_uint("composition", m_composition);
   formatter->container_end();
+}
+
+/*! \brief processes change of structure. */
+void Piece::structure_changed(Field_info* field_info)
+{
+  clear();
+  field_changed(field_info);
 }
 
 SGAL_END_NAMESPACE

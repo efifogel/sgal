@@ -138,7 +138,7 @@ public:
   /*! Set the coordinate array.
    * \param coord_array (in) a pointer to a coordinate array
    */
-  void set_coord_array(Shared_coord_array coord_array);
+  virtual void set_coord_array(Shared_coord_array coord_array);
 
   /*! Obtain the (const) coordinate array.
    * \return the coordinate array.
@@ -153,7 +153,7 @@ public:
   /*! Set the normal array.
    * \param normal_array (in) the normal array.
    */
-  void set_normal_array(Shared_normal_array normal_array);
+  virtual void set_normal_array(Shared_normal_array normal_array);
 
   /*! Obtain the (const) normal array.
    * \return the normal array.
@@ -168,7 +168,7 @@ public:
   /*! Set the texture-coordinate array.
    * \param tex_coord_array (in) the texture coordinate array.
    */
-  void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
+  virtual void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
 
   /*! Obtain the (const) texture-coordinate array.
    * \return the texture-coordinate array.
@@ -183,7 +183,7 @@ public:
   /*! Set the color field.
    * \param color_array (in) a pointer to a color array
    */
-  void set_color_array(Shared_color_array color_array);
+  virtual void set_color_array(Shared_color_array color_array);
 
   /*! Obtain the (const) normal array.
    * \return the color array.
@@ -373,6 +373,9 @@ public:
    */
   virtual void tex_coord_changed(Field_info* field_info);
   
+  /*! Process change of field. */
+  virtual void field_changed(Field_info* field_info);
+
 protected:
   /*! The number of primitives in this Geo_set. */
   Uint m_num_primitives;

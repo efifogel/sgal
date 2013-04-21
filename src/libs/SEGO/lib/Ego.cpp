@@ -68,12 +68,10 @@
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 #include "SEGO/Ego.hpp"
-#include "SEGO/Ego_voxels_filler.hpp"
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxels_tiler.hpp"
 #include "SEGO/Ego_voxelizer.hpp"
-
-// #include <boost/tuple/tuple_io.hpp>
+#include "SEGO/Ego_voxels_filler.hpp"
 
 // #define SGAL_EGO_VERBOSE 1
 #ifdef SGAL_EGO_VERBOSE
@@ -125,7 +123,10 @@ Ego::Ego(Boolean proto) :
   m_voxel_length(s_def_voxel_length),
   m_voxel_height(s_def_voxel_height),
   m_style(s_def_style),
+  m_appearance(),
   m_space_filling(s_def_space_filling),
+  m_owned_filler(false),
+  m_filler(NULL),
   m_even_layer_x(s_def_even_layer_x),
   m_even_layer_y(s_def_even_layer_y),
   m_odd_layer_x(s_def_odd_layer_x),
@@ -218,6 +219,12 @@ void Ego::clear_parts()
   // Delete all Ego bricks:
   m_bricks.clear();
   m_knobless_bricks.clear();
+
+  // Clear the filler
+  if (m_filler && m_owned_filler) {
+    delete m_filler;
+    m_filler = NULL;
+  }
 
   // Clean the voxel signature array. */
   m_voxel_signatures.clear();
@@ -349,6 +356,7 @@ void Ego::set_attributes(Element* elem)
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
     Element::Shared_container cont = elem->get_value(cai);
+
     if (name == "model") {
       boost::shared_ptr<Exact_polyhedron_geo> epoly =
         boost::dynamic_pointer_cast<Exact_polyhedron_geo>(cont);
@@ -374,6 +382,13 @@ void Ego::set_attributes(Element* elem)
     if (name == "appearance") {
       Shared_appearance app = boost::dynamic_pointer_cast<Appearance>(cont);
       set_appearance(app);
+      elem->mark_delete(cai);
+      continue;
+    }
+    if (name == "filler") {
+      boost::shared_ptr<Ego_voxels_filler_base> filler =
+        boost::dynamic_pointer_cast<Ego_voxels_filler_base>(cont);
+      set_filler(&*filler);
       elem->mark_delete(cai);
       continue;
     }
@@ -538,28 +553,39 @@ Boolean Ego::is_empty() { return true; }
 /*! \brief clean the voxels */
 void Ego::clean_voxels()
 {
-  if (m_dirty_voxels) {
-    m_dirty_voxels = false;
-    m_dirty_tiling = true;
+  m_dirty_voxels = false;
+  m_dirty_tiling = true;
 
-    Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
-    Ego_voxels_filler fill;
+  Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
 
-    m_voxels = Ego_voxels(); // Clear - should we make a func?
-    if (this->is_model_polyhedron())
-      m_voxels_center = 
-        voxelize(this->get_polyhedron_model()->get_polyhedron(),
-                 get_matrix(), &m_voxels);
-    else if (this->is_model_exact_polyhedron())
-      m_voxels_center = 
-        voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
-                 get_matrix(), &m_voxels);
-    else if (this->is_model_geo_set())
-      m_voxels_center = 
-        voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
+  m_voxels = Ego_voxels(); // Clear - should we make a func?
+  if (this->is_model_polyhedron())
+    m_voxels_center = 
+      voxelize(this->get_polyhedron_model()->get_polyhedron(),
+               get_matrix(), &m_voxels);
+  else if (this->is_model_exact_polyhedron())
+    m_voxels_center = 
+      voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
+               get_matrix(), &m_voxels);
+  else if (this->is_model_geo_set())
+    m_voxels_center = 
+      voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
 
-    fill(&m_voxels);
+  if (!m_filler) {
+    m_filler = new Ego_voxels_filler();
+    m_owned_filler = true;
+
+    // Connect.
+    // Field* src_field =
+    //   filler->add_field(Touch_sensor::ACTIVE_SELECTION_ID);
+    // SGAL_assertion(src_field);
+      
+    // Field* dst_field = add_field(SELECTION_ID);
+    // SGAL_assertion(dst_field);
+    // src_field->connect(dst_field);
   }
+    
+  m_filler->fill(&m_voxels);
 }
 
 /*! \brief clean the tiling. */
@@ -705,7 +731,8 @@ void Ego::clean_parts()
            m_dirty_colors = false;
            Shared_appearance app(create_random_appearance());
            shape->set_appearance(app);
-           Shared_geometry geom = create_geometry(num0, num1, should_draw_knobs);
+           Shared_geometry geom =
+             create_geometry(num0, num1, should_draw_knobs);
            shape->set_geometry(geom);
           }
           break;
@@ -1345,6 +1372,20 @@ Ego::Shared_appearance Ego::create_random_appearance()
   Uint luminosity_key = 128;
   return create_appearance(hue_key, saturation_key, luminosity_key);
 }
+
+/*! Set a filler
+ * \param filler the new filler.
+ */
+void Ego::set_filler(Ego_voxels_filler_base* filler) {
+  if (m_filler && m_owned_filler) {
+    delete m_filler;
+    m_filler = NULL;
+  }
+  
+  m_filler = filler;
+  m_dirty_voxels = true;
+}
+
 
 /*! \brief sets the style. */
 void Ego::set_style(Style style)

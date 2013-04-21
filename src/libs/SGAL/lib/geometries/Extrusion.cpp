@@ -71,7 +71,7 @@ Extrusion::~Extrusion()
   m_spine.clear();
 }
 
-/*! Clean the ellipsoid internal representation. */
+/*! Clean the extrusion internal representation. */
 void Extrusion::clean()
 {
   // Clear internal representation:
@@ -114,10 +114,12 @@ void Extrusion::clean()
         axis.cross(vert, vec);
         axis.normalize();
         prev_rot.set(axis, angle);
-      } else {
+      }
+      else {
         prev_rot.set(hor, -SGAL_PI);
       }
-    } else {
+    }
+    else {
       prev_rot.set(hor, 0);
     }
   }
@@ -133,10 +135,12 @@ void Extrusion::clean()
       axis.cross(prev_vec, vec);
       axis.normalize();
       tmp_rot.set(axis, angle);
-    } else {
+    }
+    else {
       tmp_rot.set(hor, -SGAL_PI);
     }
-  } else {
+  }
+  else {
     tmp_rot.set(hor, 0);
   }
   rot.mult(tmp_rot, prev_rot);
@@ -178,7 +182,8 @@ void Extrusion::clean()
       else {
         tmp_rot.set(hor, -SGAL_PI);
       }
-    } else {
+    }
+    else {
       tmp_rot.set(hor, 0);
     }
     rot.mult(tmp_rot, prev_rot);
@@ -214,14 +219,16 @@ void Extrusion::clean()
       } else {
         tmp_rot.set(hor, -SGAL_PI);
       }
-    } else {
+    }
+    else {
       tmp_rot.set(hor, 0);
     }
     rot.mult(tmp_rot, prev_rot);
     Rotation applied_rot;
     applied_rot.slerp(0.5f, prev_rot, rot);
     mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
-  } else {
+  }
+  else {
     mat.make_rot(rot.get_axis(), rot.get_angle());
   }
   for (i = 0; i < m_cross_section.size(); ++i) {
@@ -234,12 +241,21 @@ void Extrusion::clean()
     (*m_coord_array)[k++].add(m_spine[j], point);
   }
 
-  // Generates coordinate indices:
+  set_solid(m_loop || (m_begin_cap && m_end_cap));
+  Indexed_face_set::clean();
+  Indexed_face_set::coord_point_changed();
+  Indexed_face_set::clear_indices();
+}
 
+/*! \brief cleans the coordinate indices. */
+void Extrusion::clean_indices()
+{
+  //! \todo generate the indices flat to start with.
   // Generate all:
   Uint sections = (m_loop) ? m_spine.size() : m_spine.size() - 1;
   Uint offset = m_cross_section.size() * (m_spine.size() - 1);
   m_num_primitives = m_cross_section.size() * sections;
+  Uint size = m_cross_section.size() * m_spine.size();
   size = m_num_primitives * 5;
   if (m_begin_cap) {
     size += m_cross_section.size() + 1;
@@ -250,7 +266,7 @@ void Extrusion::clean()
     ++m_num_primitives;
   }
   
-  k = 0;
+  Uint j, i, k = 0;
   m_coord_indices.resize(size);
   for (j = 0; j < m_spine.size() - 1; ++j) {
     Uint start = j * m_cross_section.size();
@@ -304,9 +320,8 @@ void Extrusion::clean()
       m_coord_indices[k++] = offset + i;
     m_coord_indices[k++] = static_cast<Uint>(-1);
   }
-  
-  set_solid(m_loop || (m_begin_cap && m_end_cap));
-  Indexed_face_set::clean();
+
+  Indexed_face_set::clean_indices();
 }
 
 /*! \brief sets the ellpsoid attributes. */
@@ -430,7 +445,7 @@ void Extrusion::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Mesh_set::coord_changed);
+    static_cast<Execution_function>(&Extrusion::structure_changed);
   s_prototype->add_field_info(new SF_bool(BEGIN_CAP, "beginCap",
                                           get_member_offset(&m_begin_cap),
                                           exec_func));
@@ -468,6 +483,75 @@ void Extrusion::delete_prototype()
   s_prototype = NULL;
 }
 
+/*! \brief sets the path that the cross section travels to create the shape. */
+void Extrusion::set_spine(SGAL::Array<Vector3f>& spine)
+{
+  m_spine = spine;
+  clear();
+}
+
+/*! \brief sets the flag that specifies whether the spine is a closed loop. */
+void Extrusion::set_loop(Boolean loop)
+{
+  m_loop = loop;
+  clear();
+}
+
+/*! \brief sets the 2-D cross section of the final shape defined in the XZ
+ * plane.
+ */
+void Extrusion::set_cross_section(SGAL::Array<Vector2f>& cross_section)
+{
+  m_cross_section = cross_section;
+  clear();
+}
+
+/*! \brief sets the cross section radius. */
+void Extrusion::set_cross_section_radius(Float radius)
+{
+  m_cross_section_radius = radius;
+  clear();
+}
+
+/*! \brief sets the cross section slicess number. */
+void Extrusion::set_cross_section_slices(Uint slices)
+{
+  m_cross_section_slices = slices;
+  clear();
+}
+
+/*! \brief sets the orientation of the cross section. */
+void Extrusion::set_orientation(SGAL::Array<Rotation>& orientation)
+{
+  m_orientation = orientation;
+  clear();
+}
+
+/*! \brief sets the scale of the cross section. */
+void Extrusion::set_scale(SGAL::Array<Vector2f>& scale)
+{
+  m_scale = scale;
+  clear();
+}
+
+/*! \brief sets the flag that specifies whether the extruded shape is open at
+ * the beginning.
+ */
+void Extrusion::set_begin_cap(Boolean begin_cap)
+{
+  m_begin_cap = begin_cap;
+  clear_indices();
+}
+
+/*! \brief sets the flag that specifies whether the extruded shape is open
+ * at the end.
+ */
+void Extrusion::set_end_cap(Boolean end_cap)
+{
+  m_end_cap = end_cap;
+  clear_indices();
+}
+
 /*! \brief obtains the container prototype. */
 Container_proto* Extrusion::get_prototype() 
 {  
@@ -475,5 +559,11 @@ Container_proto* Extrusion::get_prototype()
   return s_prototype;
 } 
 
+/*! \brief processes change of structure. */
+void Extrusion::structure_changed(Field_info* field_info)
+{
+  clear();
+  field_changed(field_info);
+}
+  
 SGAL_END_NAMESPACE
-

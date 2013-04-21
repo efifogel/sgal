@@ -241,15 +241,24 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 void Appearance::set_material(Shared_material material)
 {
   SGAL_assertion(material);
+
+  Observer observer(this, get_field_info(MATERIAL));
+  if (m_material) m_material->unregister_observer(observer);
   m_material = material;
 
   if (material->get_transparency() != 0.0f) {
     set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
     set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
   }
+  else {
+    set_src_blend_func(Gfx::ONE_SBLEND);
+    set_dst_blend_func(Gfx::ZERO_DBLEND);
+  }
   
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
+
+  material->register_observer(observer);
 }
 
 /*! \brief processes change of material. */
@@ -490,6 +499,9 @@ void Appearance::texture_changed(Field_info* /* field_info */)
 /*! \brief notifies that halftone has been changed. */
 void Appearance::halftone_changed(Field_info* /* field_info */)
 {
+  m_pending.on_bit(Gfx::HALFTONE_PATTERN);
+  m_override.on_bit(Gfx::HALFTONE_PATTERN);
+
   // this is to indicate that the texture has changed and 
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
@@ -807,6 +819,29 @@ void Appearance::clean_tex_gen()
     get_tex_gen()->set_mode_t(Tex_gen::REFLECTION_MAP);
     get_tex_gen()->set_mode_r(Tex_gen::REFLECTION_MAP);
 #endif
+  }
+}
+
+/*! \brief Process change of field. */
+void Appearance::field_changed(Field_info* field_info)
+{
+  switch (field_info->get_id()) {
+   case MATERIAL:
+    SGAL_assertion(m_material);
+    if (m_material->get_transparency() != 0.0f) {
+      set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
+      set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
+    }
+    else {
+      set_src_blend_func(Gfx::ONE_SBLEND);
+      set_dst_blend_func(Gfx::ZERO_DBLEND);
+    }
+  
+    m_pending.on_bit(Gfx::MATERIAL);
+    m_override.on_bit(Gfx::MATERIAL);
+    break;
+
+   default: break;
   }
 }
 

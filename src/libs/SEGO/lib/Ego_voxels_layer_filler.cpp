@@ -16,9 +16,9 @@
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
-#include "SEGO/Ego_voxels_filler.hpp"
+#include "SEGO/Ego_voxels_layer_filler.hpp"
 #include "SEGO/Ego_voxels.hpp"
-#include "SEGO/Ego_voxels_filler_graph.hpp"
+#include "SEGO/Ego_voxels_layer_filler_graph.hpp"
 #include "SEGO/Ego_voxels_filler_template.hpp"
 
 #include <boost/tuple/tuple_comparison.hpp>
@@ -29,36 +29,35 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/unordered_set.hpp>
 
-// #define EGO_VOXELIZER_FILLER_VERBOSE
+// #define EGO_VOXELIZER_LAYER_FILLER_VERBOSE
 
 SGAL_BEGIN_NAMESPACE
 
 /*! The tag that identifies this container type */
-std::string Ego_voxels_filler::s_tag = "EgoVoxelsFiller";
+std::string Ego_voxels_layer_filler::s_tag = "EgoVoxelsLayerFiller";
 
 /* Constructor */
-Ego_voxels_filler::Ego_voxels_filler(bool prototype)
+Ego_voxels_layer_filler::Ego_voxels_layer_filler(bool prototype)
     : Ego_voxels_filler_base(prototype) {}
 
 /* Construct the prototype */
-Ego_voxels_filler* Ego_voxels_filler::prototype() {
-  return new Ego_voxels_filler(true);
+Ego_voxels_layer_filler* Ego_voxels_layer_filler::prototype() {
+  return new Ego_voxels_layer_filler(true);
 }
 
 /*! Clone. */
-Container* Ego_voxels_filler::clone() {
-  return new Ego_voxels_filler();
+Container* Ego_voxels_layer_filler::clone() {
+  return new Ego_voxels_layer_filler();
 }
 
 /*! Obtain the tag (type) of the container. */
-const std::string& Ego_voxels_filler::get_tag() const {
+const std::string& Ego_voxels_layer_filler::get_tag() const {
   return s_tag;
 }
 
 
-void Ego_voxels_filler::fill(Ego_voxels* voxels) const {
-  
-  Ego_voxels_filler_template<Ego_voxels_filler_graph> filler(m_offset);
+void Ego_voxels_layer_filler::fill(Ego_voxels* voxels) const {
+  Ego_voxels_filler_template<Ego_voxels_layer_filler_graph> filler(m_offset);
   filler(voxels);
 }
   

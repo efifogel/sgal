@@ -38,12 +38,12 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Sphere_plane_intersection::s_tag = "SpherePlaneIntersection";
-Container_proto * Sphere_plane_intersection::s_prototype = NULL;
+Container_proto* Sphere_plane_intersection::s_prototype = NULL;
 
 // Defaults values:
   // Default values:
 const Float Sphere_plane_intersection::s_def_sphere_radius(1);
-const Vector4f Sphere_plane_intersection::s_def_plane(0,0,1,0);
+const Vector4f Sphere_plane_intersection::s_def_plane(0, 0, 1, 0);
 
 REGISTER_TO_FACTORY(Sphere_plane_intersection, "Sphere_plane_intersection");
 
@@ -52,14 +52,11 @@ Sphere_plane_intersection::Sphere_plane_intersection(Boolean proto) :
   Node(proto),
   m_sphere_radius(s_def_sphere_radius),
   m_plane(s_def_plane),
-  m_trigger(SGAL_FALSE)
-{
-}
+  m_trigger(false)
+{}
 
 /*! \brief destructor */
-Sphere_plane_intersection::~Sphere_plane_intersection()
-{
-}
+Sphere_plane_intersection::~Sphere_plane_intersection() {}
 
 /*! \brief initializes the container prototype */
 void Sphere_plane_intersection::init_prototype()
@@ -105,25 +102,23 @@ void Sphere_plane_intersection::delete_prototype()
 }
 
 /*! \brief obtains the container prototype */
-Container_proto * Sphere_plane_intersection::get_prototype()
+Container_proto* Sphere_plane_intersection::get_prototype()
 {
   if (!s_prototype) Sphere_plane_intersection::init_prototype();
   return s_prototype;
 }
   
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Sphere_plane_intersection::set_attributes(Element * elem)
+void Sphere_plane_intersection::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
 
   Node::set_attributes(elem);
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "sphereRadius") {
       m_sphere_radius = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
@@ -164,11 +159,11 @@ void Sphere_plane_intersection::set_attributes(Element * elem)
 }
 
 /*! \brief executes the engine */
-void Sphere_plane_intersection::execute(Field_info * /*! field_info */)
+void Sphere_plane_intersection::execute(Field_info* /*! field_info */)
 {
-  Field * circle_trans = get_field(CIRCLE_TRANSLATION);
-  Field * circle_rot = get_field(CIRCLE_ROTATION);
-  Field * circle_rad = get_field(CIRCLE_RADIUS);
+  Field* circle_trans = get_field(CIRCLE_TRANSLATION);
+  Field* circle_rot = get_field(CIRCLE_ROTATION);
+  Field* circle_rad = get_field(CIRCLE_RADIUS);
 
   float a = m_plane[0];
   float b = m_plane[1];

@@ -402,7 +402,7 @@ void Accumulation::pre_render(Draw_action* draw_action)
 void Accumulation::post_render(Draw_action* draw_action)
 {
   Boolean blendMode = (glIsEnabled(GL_BLEND) == GL_TRUE);
-  glDisable(GL_BLEND);
+  if (blendMode) glDisable(GL_BLEND);
 
   ++m_iteration_no;
   m_accumulate += m_contribution;

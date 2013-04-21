@@ -824,6 +824,10 @@ void Nef_gaussian_map_geo::init_prototype()
     add_field_info(new SF_bool(INCREASE_FACET_INDEX, "increaseFacetIndex",
                                get_member_offset(&m_increase_facet_index),
                                exec_func));
+
+  MF_container* field = new MF_container(GEOMETRIES, "geometries",
+                                         get_member_offset(&m_ngm_nodes));
+  s_prototype->add_field_info(field);
 }
 
 /*! \brief */

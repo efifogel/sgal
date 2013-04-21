@@ -92,6 +92,9 @@ public:
   /*! Clean the representation. */
   virtual void clean();
 
+  /*! Clean the texture indices. */
+  virtual void clean_indices();
+
   /*! Set the number_of_knobs along the 1st dimension. */
   void set_number_of_knobs1(Uint number);
 
@@ -152,15 +155,6 @@ public:
   /*! Obtain the center of the Ego brick. */
   Vector3f& get_center();
   
-  /*! Set the coordinates. */
-  void set_coord_array(Shared_coord_array coord_array);
-
-  /*! Set the normals. */
-  void set_normal_array(Shared_normal_array normal_array);
-  
-  /*! Set the texture coordinates. */
-  void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
-
   /*! Set the texture indices. */
   void set_coord_indices(const Array<Uint>& indices);
   
@@ -226,13 +220,10 @@ protected:
   void clean_coords();
 
   /*! Clean the normals. */
-  void clean_normals();
+  virtual void clean_normals();
   
   /*! Clean the texture coordinates. */
-  void clean_tex_coords();
-
-  /*! Clean the texture indices. */
-  void clean_indices();
+  virtual void clean_tex_coords();
 
   /*! Clean the center of the Ego brick. */
   void clean_center();
