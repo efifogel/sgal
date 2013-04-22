@@ -1,0 +1,364 @@
+\usepackage{a4wide}
+% =============================================================================
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+
+\usepackage{ifpdf}
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+
+% ======== Font ===============================================================
+\usepackage[T1]{fontenc}
+\usepackage{slantsc}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+% \usepackage{pifont}
+
+% ======== Theorem ============================================================
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+% ======== Math ===============================================================
+% Be sure to load this package with the cmex10 option to ensure that
+% only type 1 fonts will utilized at all point sizes. Without this option,
+% it is possible that some math symbols, particularly those within
+% footnotes, will be rendered in bitmap form which will result in a
+% document that can not be IEEE Xplore compliant!
+\usepackage[cmex10]{amsmath}
+%\usepackage{algorithmicx}
+%\usepackage{algorithmic}
+% Do NOT use the algorithm floating environment provided by algorithm.sty
+% (by the same authors) or algorithm2e.sty (by Christophe Fiorio) as
+% IEEE does not use dedicated algorithm float types and packages that
+% provide these will not provide correct IEEE style captions. 
+
+% ======== pdf, url and hyperlink =============================================
+%\usepackage{url}
+\usepackage{hyperref}
+% Use the following instead of the previous if you use 'dvipdfmx'
+% instead of dvipdf. However, 'breakurl' breaks when using 'dvipdfmx'.
+% \usepackage[dvipdfmx]{hyperref}
+\usepackage[hyphenbreaks]{breakurl}
+
+% ======== Specialized list ===================================================
+\usepackage{paralist} % compactenum,compactitem, inparaitem, inparaenum
+
+% ======== Alignment ==========================================================
+%\usepackage{array}
+%\usepackage{mdwmath}
+%\usepackage{mdwtab}
+%\usepackage{eqparbox}
+
+% ======== Subfigure ==========================================================
+%\usepackage[font=footnotesize]{subfig}
+% subfig.sty requires and automatically loads Axel Sommerfeldt's
+% caption.sty which will override IEEEtran.cls handling of captions
+% and this will result in nonIEEE style figure/table captions. To
+% prevent this problem, be sure and preload caption.sty with its
+% "caption=false" package option. This is will preserve IEEEtran.cls
+% handing of captions. Version 1.3 (2005/06/28) and later (recommended
+% due to many improvements over 1.2) of subfig.sty supports the
+% caption=false option directly: 
+% \usepackage[caption=false,font=footnotesize]{subfig}
+% \usepackage[caption=false,bf]{caption}
+%% \usepackage[caption=false,font={sf,footnotesize}]{subfig}
+\usepackage[caption=false,font=footnotesize]{subfig}
+
+% ======== Float ==============================================================
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, corrects a few
+% problems in the LaTeX2e kernel, the most notable of which is that in
+% current LaTeX2e releases, the ordering of single and double column
+% floats is not guaranteed to be preserved. Thus, an unpatched LaTeX2e
+% can allow a single column figure to be placed prior to an earlier
+% double column figure. 
+
+%\usepackage{stfloats}
+% stfloats.sty gives LaTeX2e the ability to do double column floats at
+% the bottom of the page as well as the top. (e.g.,
+% "\begin{figure*}[!b]" is not normally possible in LaTeX2e). It also
+% provides a command:
+% %\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines.
+% Do not use the stfloats baselinefloat ability as IEEE
+% does not allow \baselineskip to stretch. Authors submitting work to the
+% IEEE should note that IEEE rarely uses double column equations and
+% that authors should try to avoid such use. Do not be tempted to use the
+% cuted.sty or midfloat.sty packages (also by Sigitas Tolusis) as IEEE does
+% not format its papers in such ways.
+
+%\ifCLASSOPTIONcaptionsoff
+%  \usepackage[nomarkers]{endfloat}
+% \let\MYoriglatexcaption\caption
+% \renewcommand{\caption}[2][\relax]{\MYoriglatexcaption[#2]{#2}}
+%\fi
+% endfloat.sty may be useful when used in conjunction with IEEEtran.cls'
+% captionsoff option. Some IEEE journals/societies require that submissions
+% have lists of figures/tables at the end of the paper and that
+% figures/tables without any captions are placed on a page by themselves at
+% the end of the document. If needed, the draftcls IEEEtran class option or
+% \CLASSINPUTbaselinestretch interface can be used to increase the line
+% spacing as well. Be sure and use the nomarkers option of endfloat to
+% prevent endfloat from "marking" where the figures would have been placed
+% in the text. The two hack lines of code above are a slight modification of
+% that suggested by in the endfloat docs (section 8.3.1) to ensure that
+% the full captions always appear in the list of figures/tables - even if
+% the user used the short optional argument of \caption[]{}.
+% IEEE papers do not typically make use of \caption[]'s optional argument,
+% so this should not be an issue. A similar trick can be used to disable
+% captions of packages such as subfig.sty that lack options to turn off
+% the subcaptions:
+% For subfig.sty:
+% \let\MYorigsubfloat\subfloat
+% \renewcommand{\subfloat}[2][\relax]{\MYorigsubfloat[]{#2}}
+% For subfigure.sty:
+% \let\MYorigsubfigure\subfigure
+% \renewcommand{\subfigure}[2][\relax]{\MYorigsubfigure[]{#2}}
+% However, the above trick will not work if both optional arguments of
+% the \subfloat/subfig command are used. Furthermore, there needs to be a
+% description of each subfigure *somewhere* and endfloat does not add
+% subfigure captions to its list of figures. Thus, the best approach is to
+% avoid the use of subfigure captions (many IEEE journals avoid them anyway)
+% and instead reference/explain all the subfigures within the main caption.
+%
+% The IEEEtran \ifCLASSOPTIONcaptionsoff conditional can also be used
+% later in the document, say, to conditionally put the References on a
+% page by themselves.
+
+% \usepackage[outercaption]{sidecap}
+
+% ======== Citations ==========================================================
+\usepackage{cite}
+\usepackage{nameref}
+
+% ======== Tables =============================================================
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{tabularx}
+
+% ======== Vector graphics ====================================================
+\usepackage{pstricks,pst-node,pst-plot}
+
+% ======== Listings ===========================================================
+%\usepackage{alltt}
+\usepackage{listings}
+\lstset{%
+  language=C++,%
+%  basewidth=\ccBaseWidth,
+  keywordstyle=\color{blue},commentstyle=\color{red}%
+}
+\def\myLstinline#1{\lstinline[columns=fixed]{#1}}
+
+% ======== Miscellaneous ======================================================
+\usepackage{psfrag}
+\usepackage{colordvi}
+\usepackage{wrapfig}
+\usepackage{calc}
+\usepackage{xspace}
+% \usepackage{amscd}
+% \usepackage{fancybox}
+% \usepackage{comment}
+% \usepackage{marginnote}
+
+% ======== Math Commands ======================================================
+% \renewcommand{\QED}{\hfill\QEDopen}
+
+\def\calA{{\cal A}}
+\def\calB{{\cal B}}
+\def\calC{{\cal C}}
+\def\calE{{\cal E}}
+\def\calG{{\cal G}}
+\def\calH{{\cal H}}
+\def\calI{{\cal I}}
+\def\calJ{{\cal J}}
+\def\calK{{\cal K}}
+\def\calL{{\cal L}}
+\def\calM{{\cal M}}
+\def\calO{{\cal O}}
+\def\calP{{\cal P}}
+\def\calQ{{\cal Q}}
+\def\calS{{\cal S}}
+\def\calR{{\cal R}}
+\def\calT{{\cal T}}
+\def\calU{{\cal U}}
+
+\newcommand{\B}{\ensuremath{\mathbb{B}}}               % B boolesche Werte
+\newcommand{\C}{\ensuremath{\mathbb{C}}}               % C komplexe Zahlen
+\newcommand{\D}{\ensuremath{\mathbb{D}}}               % D Definitionsbereich
+\newcommand{\K}{\ensuremath{\mathbb{K}}}               % K field
+\newcommand{\N}{\ensuremath{\mathbb{N}}}               % N natuerliche Zahlen
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}               % Q rationale Zahlen
+\newcommand{\PP}{\ensuremath{\mathbb{P}}}              % P projektiver Raum
+\newcommand{\R}{\ensuremath{\mathbb{R}}}               % R reelle Zahlen
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}               % Z ganze Zahlen
+
+\newcommand{\Pone}{\ensuremath{\PP \rule{0.3mm}{0mm}^1}\xspace}     % P^1
+
+\newcommand{\Rtwo}{\ensuremath{\R \rule{0.3mm}{0mm}^2}\xspace}      % R^2
+\newcommand{\Rthree}{\ensuremath{\R \rule{0.3mm}{0mm}^3}\xspace}    % R^3
+\newcommand{\Rd}{\ensuremath{\R \rule{0.3mm}{0mm}^d}\xspace}        % R^d
+\newcommand{\Rx}[1]{\ensuremath{\R \rule{0.3mm}{0mm} ^ {#1}}\xspace} % R^x
+\newcommand{\SOd}[1]{\ensuremath{\mathbb{S}\rule{0.3mm}{0mm}^{#1}}}
+\newcommand{\SOtwo}{\SOd{2}\xspace}
+\newcommand{\HOd}[1]{\ensuremath{\mathbb{H}\rule{0.3mm}{0mm}^{#1}}}
+\newcommand{\HOtwo}{\HOd{2}\xspace}
+\def\eps{{\epsilon}}
+% \newcommand{\naive}{na\"{\i}ve}
+\newcommand{\Cfree}{{\mathcal C}_{\rm free}}
+\newcommand{\Cforb}{{\mathcal C}_{\rm forb}}
+\newcommand{\parms}{{\Phi}}      % Parameter space
+\newcommand{\parmf}{{\phi}}      % Parameter function
+\newcommand{\RC}{\overline{\R}}  % compactified real line
+\newcommand{\Min}[1]{#1_{\rm min}}
+\newcommand{\Max}[1]{#1_{\rm max}}
+\newcommand{\umin}{\Min{u}}
+\newcommand{\umax}{\Max{u}}
+\newcommand{\vmin}{\Min{v}}
+\newcommand{\vmax}{\Max{v}}
+\newcommand{\vecd}{\vec{d}}
+
+% ======== Hyphenation ========================================================
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+% ======== English ============================================================
+\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\eg}{e.g.,\xspace}
+\newcommand{\etal}{et~al.\xspace}
+\newcommand{\Wlog}{W.\,l.\,o.\,g.\xspace}
+\newcommand{\apriori}{a~priori\xspace}
+\newcommand{\iFF}{if and only if\xspace}
+
+% ======== Extras =============================================================
+\newcommand{\cgal}{{\sc Cgal}}
+\newcommand{\sgal}{{\sc Sgal}}
+\newcommand{\vrml}{{\sc Vrml}}
+\newcommand{\boost}{{\sc Boost}}
+\newcommand{\dcel}{{\sc Dcel}}
+\newcommand{\gmp}{{\sc Gmp}}
+\newcommand{\lego}{{\sc Lego}}
+\newcommand{\zcorp}{{\sc ZCorp}}
+
+% ======== Part colors ========================================================
+\newcommand{\redpart}{{\sc \textcolor{red}{$R$}}}
+\newcommand{\greenpart}{{\sc \textcolor{green}{$G$}}}
+\newcommand{\bluepart}{{\sc \textcolor{blue}{$B$}}}
+\newcommand{\purplepart}{{\sc \textcolor{magenta}{$P$}}}
+\newcommand{\yellowpart}{{\sc \textcolor{orange}{$Y$}}}
+\newcommand{\turquoisepart}{{\sc \textcolor{cyan}{$T$}}}
+
+% ======== CGAL package names =================================================
+\newcommand{\cgalPackage}[1]{{\emph{#1}\index{CGAL package@\cgal{} package!#1@\emph{#1}}}}
+
+\newcommand{\AlgebraicFoundationsPackage}{\cgalPackage{Algebraic Foundations}}
+\newcommand{\NumberTypesPackage}{\cgalPackage{Number Types}}
+\newcommand{\ModularArithmeticPackage}{\cgalPackage{Modular Arithmetic}}
+\newcommand{\PolynomialPackage}{\cgalPackage{Polynomial}}
+\newcommand{\AlgebraicKernelPackage}{\cgalPackage{Algebraic Kernel}}
+\newcommand{\MonotoneandSortedMatrixSearchPackage}{\cgalPackage{Monotone and Sorted Matrix Search}}
+\newcommand{\LinearandQuadraticProgrammingSolverPackage}{\cgalPackage{Linear and Quadratic Programming Solver}}
+\newcommand{\iiDandiiiDGeometryKernelPackage}{\cgalPackage{2D and 3D Geometry Kernel}}
+\newcommand{\dDGeometryKernelPackage}{\cgalPackage{dD Geometry Kernel}}
+\newcommand{\iiDCircularGeometryKernelPackage}{\cgalPackage{2D Circular Geometry Kernel}}
+\newcommand{\iiiDSphericalGeometryKernelPackage}{\cgalPackage{3D Spherical Geometry Kernel}}
+\newcommand{\iiDConvexHullsandExtremePointsPackage}{\cgalPackage{2D Convex Hulls and Extreme Points}}
+\newcommand{\iiiDConvexHullsPackage}{\cgalPackage{3D Convex Hulls}}
+\newcommand{\dDConvexHullsandDelaunayTriangulationsPackage}{\cgalPackage{dD Convex Hulls and Delaunay Triangulations}}
+\newcommand{\iiDPolygonsPackage}{\cgalPackage{2D Polygons}}
+\newcommand{\iiDRegularizedBooleanSetOperationsPackage}{\cgalPackage{2D Regularized Boolean Set-Operations}}
+\newcommand{\iiDBooleanOperationsonNefPolygonsPackage}{\cgalPackage{2D Boolean Operations on Nef Polygons}}
+\newcommand{\iiDBooleanOperationsonNefPolygonsEmbeddedontheSpherePackage}{\cgalPackage{2D Boolean Operations on Nef Polygons Embedded on the Sphere}}
+\newcommand{\iiDPolygonPartitioningPackage}{\cgalPackage{2D Polygon Partitioning}}
+\newcommand{\iiDStraightSkeletonandPolygonOffsettingPackage}{\cgalPackage{2D Straight Skeleton and Polygon Offsetting}}
+\newcommand{\iiDMinkowskiSumsPackage}{\cgalPackage{2D Minkowski Sums}}
+\newcommand{\iiiDPolyhedralSurfacesPackage}{\cgalPackage{3D Polyhedral Surfaces}}
+\newcommand{\HalfedgeDataStructuresPackage}{\cgalPackage{Halfedge Data Structures}}
+\newcommand{\iiiDBooleanOperationsonNefPolyhedraPackage}{\cgalPackage{3D Boolean Operations on Nef Polyhedra}}
+\newcommand{\ConvexDecompositionofPolyhedraPackage}{\cgalPackage{Convex Decomposition of Polyhedra}}
+\newcommand{\iiiDMinkowskiSumofPolyhedraPackage}{\cgalPackage{3D Minkowski Sum of Polyhedra}}
+\newcommand{\iiDArrangementsPackage}{\cgalPackage{2D Arrangements}}
+\newcommand{\iiDIntersectionofCurvesPackage}{\cgalPackage{2D Intersection of Curves}}
+\newcommand{\iiDSnapRoundingPackage}{\cgalPackage{2D Snap Rounding}}
+\newcommand{\EnvelopesofCurvesiniiDPackage}{\cgalPackage{Envelopes of Curves in 2D}}
+\newcommand{\EnvelopesofSurfacesiniiiDPackage}{\cgalPackage{Envelopes of Surfaces in 3D}}
+\newcommand{\iiDTriangulationsPackage}{\cgalPackage{2D Triangulations}}
+\newcommand{\iiDTriangulationDataStructurePackage}{\cgalPackage{2D Triangulation Data Structure}}
+\newcommand{\iiiDTriangulationsPackage}{\cgalPackage{3D Triangulations}}
+\newcommand{\iiiDTriangulationDataStructurePackage}{\cgalPackage{3D Triangulation Data Structure}}
+\newcommand{\iiiDPeriodicTriangulationsPackage}{\cgalPackage{3D Periodic Triangulations}}
+\newcommand{\iiDAlphaShapesPackage}{\cgalPackage{2D Alpha Shapes}}
+\newcommand{\iiiDAlphaShapesPackage}{\cgalPackage{3D Alpha Shapes}}
+\newcommand{\iiDSegmentDelaunayGraphsPackage}{\cgalPackage{2D Segment Delaunay Graphs}}
+\newcommand{\iiDApolloniusGraphsPackage}{\cgalPackage{2D Apollonius Graphs (Delaunay Graphs of Disks)}}
+\newcommand{\iiDVoronoiDiagramAdaptorPackage}{\cgalPackage{2D Voronoi Diagram Adaptor}}
+\newcommand{\iiDConformingTriangulationsandMeshesPackage}{\cgalPackage{2D Conforming Triangulations and Meshes}}
+\newcommand{\iiiDSurfaceMeshGenerationPackage}{\cgalPackage{3D Surface Mesh Generation}}
+\newcommand{\SurfaceReconstructionfromPointSetsPackage}{\cgalPackage{Surface Reconstruction from Point Sets}}
+\newcommand{\iiiDSkinSurfaceMeshingPackage}{\cgalPackage{3D Skin Surface Meshing}}
+\newcommand{\iiiDMeshGenerationPackage}{\cgalPackage{3D Mesh Generation}}
+\newcommand{\iiiDSurfaceSubdivisionMethodsPackage}{\cgalPackage{3D Surface Subdivision Methods}}
+\newcommand{\TriangulatedSurfaceMeshSimplificationPackage}{\cgalPackage{Triangulated Surface Mesh Simplification}}
+\newcommand{\PlanarParameterizationofTriangulatedSurfaceMeshesPackage}{\cgalPackage{Planar Parameterization of Triangulated Surface Meshes}}
+\newcommand{\iiDPlacementofStreamlinesPackage}{\cgalPackage{2D Placement of Streamlines}}
+\newcommand{\ApproximationofRidgesandUmbilicsonTriangulatedSurfaceMeshesPackage}{\cgalPackage{Approximation of Ridges and Umbilics on Triangulated Surface Meshes }}
+\newcommand{\EstimationofLocalDifferentialPropertiesPackage}{\cgalPackage{Estimation of Local Differential Properties}}
+\newcommand{\PointSetProcessingPackage}{\cgalPackage{Point Set Processing}}
+\newcommand{\iiDRangeandNeighborSearchPackage}{\cgalPackage{2D Range and Neighbor Search}}
+\newcommand{\IntervalSkipListPackage}{\cgalPackage{Interval Skip List}}
+\newcommand{\dDSpatialSearchingPackage}{\cgalPackage{dD Spatial Searching}}
+\newcommand{\dDRangeandSegmentTreesPackage}{\cgalPackage{dD Range and Segment Trees}}
+\newcommand{\IntersectingSequencesofdDIsoorientedBoxesPackage}{\cgalPackage{Intersecting Sequences of dD Iso-oriented Boxes}}
+\newcommand{\AABBTreePackage}{\cgalPackage{AABB Tree}}
+\newcommand{\SpatialSortingPackage}{\cgalPackage{Spatial Sorting}}
+\newcommand{\BoundingVolumesPackage}{\cgalPackage{Bounding Volumes}}
+\newcommand{\InscribedAreasPackage}{\cgalPackage{Inscribed Areas}}
+\newcommand{\OptimalDistancesPackage}{\cgalPackage{Optimal Distances}}
+\newcommand{\PrincipalComponentAnalysisPackage}{\cgalPackage{Principal Component Analysis}}
+\newcommand{\iiDandSurfaceFunctionInterpolationPackage}{\cgalPackage{2D and Surface Function Interpolation}}
+\newcommand{\KineticDataStructuresPackage}{\cgalPackage{Kinetic Data Structures}}
+\newcommand{\KineticFrameworkPackage}{\cgalPackage{Kinetic Framework}}
+\newcommand{\STLExtensionsforCGALPackage}{\cgalPackage{STL Extensions for CGAL}}
+\newcommand{\CGALandtheBoostGraphLibraryPackage}{\cgalPackage{CGAL and the Boost Graph Library}}
+\newcommand{\CGALandBoostPropertyMapsPackage}{\cgalPackage{CGAL and Boost Property Maps}}
+\newcommand{\HandlesandCirculatorsPackage}{\cgalPackage{Handles and Circulators}}
+\newcommand{\GeometricObjectGeneratorsPackage}{\cgalPackage{Geometric Object Generators}}
+\newcommand{\ProfilingtoolsHashMapUnionfindModifiersPackage}{\cgalPackage{Profiling tools, Hash Map, Union-find, Modifiers}}
+\newcommand{\IOStreamsPackage}{\cgalPackage{IO Streams}}
+\newcommand{\GeomviewPackage}{\cgalPackage{Geomview}}
+\newcommand{\CGALandtheQtGraphicsViewFrameworkPackage}{\cgalPackage{CGAL and the Qt Graphics View Framework}}
+\newcommand{\CGALIpeletsPackage}{\cgalPackage{CGAL Ipelets}}
+
+\newcommand{\iiiDLinesThroughSegments}{\cgalPackage{3D Lines Through Segments}}
+
+% ======== Graphics ===========================================================
+\usepackage{graphicx}
+% \usepackage{psfig}
+% \usepackage{epsfig}
+\DeclareGraphicsExtensions{.png}
+\DeclareGraphicsExtensions{.jpg}
+% \DeclareGraphicsRule{.png}{eps}{.bb}{`convert -compress JPEG #1 eps2:-}
+\DeclareGraphicsRule{.png}{eps}{.bb}{`convert #1 eps2:-}
+\DeclareGraphicsRule{.jpg}{eps}{.bb}{`convert #1 eps2:-}
+
+% ======== Editing ============================================================
+\usepackage{ifthen}
+\newboolean{ShowTODO}
+\setboolean{ShowTODO}{true}
+
+%% \newcommand{\cpm}{\textsc{Cpm}}
+%% \newcounter{copyrightbox}
+%% \renewcommand{\captionfont}{\sffamily}
