@@ -600,6 +600,7 @@ void Player_scene::handle(SGAL::Draw_event* event)
 void Player_scene::draw_window(SGAL::Window_item* window_item,
                                SGAL::Boolean dont_accumulate)
 {
+  if (!m_context) return;
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);

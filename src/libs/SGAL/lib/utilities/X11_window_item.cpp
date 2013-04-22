@@ -288,7 +288,10 @@ void X11_window_item::destroy()
 
 /*! \brief swaps the window frame-buffer */
 void X11_window_item::swap_buffers()
-{ if (m_double_buffer) glXSwapBuffers(m_display, m_window); }
+{
+  if (!m_context) return;       // The window is being destroyed
+  if (m_double_buffer) glXSwapBuffers(m_display, m_window);
+}
 
 /*! \brief shows the window. Make the window current if it is not already. */
 void X11_window_item::show() {}
@@ -300,6 +303,9 @@ void X11_window_item::hide() {}
  * the calling thread
  */
 void X11_window_item::make_current()
-{ glXMakeCurrent(m_display, m_window, m_context); }
+{
+  if (!m_context) return;       // The window is being destroyed
+  glXMakeCurrent(m_display, m_window, m_context);
+}
 
 SGAL_END_NAMESPACE
