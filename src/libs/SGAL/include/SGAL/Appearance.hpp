@@ -308,14 +308,20 @@ public:
   Boolean is_transparent() const;
 
   /*! Notify that the material has changed. */
-  void material_changed(Field_info* field_info);
+  void material_changed(Field_info* field_info = NULL);
 
+  /*! Notify that the back material has changed. */
+  void back_material_changed(Field_info* field_info = NULL);
+  
   /*! Notify that the texture has changed. */
   void texture_changed(Field_info* field_info = NULL);
 
   /*! Notify that the halftone has changed. */
   void halftone_changed(Field_info* field_info = NULL);
 
+  /*! Notify that the texture generation has changed. */
+  void tex_gen_changed(Field_info* field_info = NULL);
+  
   /*! Process change of field. */
   void field_changed(Field_info* field_info);
   

@@ -139,8 +139,6 @@ public:
   /*! Obtain the (const) q-texture coordinate generation reference-plane. */
   const Plane& get_plane_q() const;
   
-  bool is_changed();
-
 protected: 
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
@@ -236,9 +234,6 @@ inline Plane& Tex_gen::get_plane_q() { return m_plane_q; }
 /*! \brief Obtain the (const) s-texture coordinate generation reference-plane. */
 inline const Plane& Tex_gen::get_plane_q() const { return m_plane_q; }
   
-/*! \brief */
-inline bool Tex_gen::is_changed() { return false; }
-
 SGAL_END_NAMESPACE
 
 #endif

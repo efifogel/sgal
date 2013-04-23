@@ -425,9 +425,7 @@ void Context::set_tex_gen(Tex_gen* tex_gen)
 /*! \brief */
 void Context::draw_tex_gen(Tex_gen* tex_gen)
 {
-  if ((m_current_state->m_tex_gen == tex_gen) &&
-      (tex_gen && !tex_gen->is_changed()))
-    return;
+  if (m_current_state->m_tex_gen == tex_gen) return;
   m_current_state->m_tex_gen = tex_gen;
   if (tex_gen) tex_gen->draw(this);
 }
@@ -477,12 +475,8 @@ void Context::set_material(Shared_material material)
 void Context::draw_material(Shared_material material,
                             Shared_material back_material)
 {
-  if ((m_current_state->m_material == material) &&
-      material && !material->is_changed())
-    return;
-
+  if (m_current_state->m_material == material) return;
   m_current_state->m_material = material;
-
   if (material) {
     material->draw((back_material == material) ?
                    Material::FRONT_AND_BACK : Material::FRONT,
@@ -1143,10 +1137,7 @@ void Context::set_back_material(Shared_material material)
 void Context::draw_back_material(Shared_material material,
                                  Shared_material back_material)
 {
-  if (m_current_state->m_back_material == back_material &&
-      back_material && !back_material->is_changed())
-    return;
-
+  if (m_current_state->m_back_material == back_material) return;
   m_current_state->m_back_material = back_material;
   if (back_material && back_material != material) {
     back_material->draw(Material::BACK, this);

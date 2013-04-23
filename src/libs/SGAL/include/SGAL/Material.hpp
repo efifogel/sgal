@@ -136,10 +136,7 @@ public:
   /*! Obtain the transparency */
   Float get_transparency() const;
 
-  /*! Indicate whether the material has changed and, thus, must be redrawn. */
-  bool is_changed();
-
-  /*! sets the flag that determines whether the material has changed. */
+  /*! The callback invoked when the material chages. */
   virtual void material_changed(Field_info* field_info = NULL);
 
   /*! Apply the material. */
@@ -200,9 +197,6 @@ private:
 
   /*! the transparancy */
   Float m_transparency;
-
-  /*! indicates that the material attribute has changed */
-  bool m_changed;
 };
 
 /*! \brief construct the prototype. */

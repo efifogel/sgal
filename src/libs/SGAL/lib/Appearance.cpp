@@ -163,7 +163,10 @@ void Appearance::init()
 /*! \brief */
 void Appearance::set_texture(Shared_texture texture)
 {
+  Observer observer(this, get_field_info(TEXTURE));
+  if (m_texture) m_texture->unregister_observer(observer);
   m_texture = texture;
+  if (m_texture) m_texture->register_observer(observer);
   m_pending.on_bit(Gfx::TEXTURE);
   m_override.on_bit(Gfx::TEXTURE);
 
@@ -175,7 +178,10 @@ void Appearance::set_texture(Shared_texture texture)
 /*! \brief */
 void Appearance::set_halftone(Shared_halftone halftone)
 {
+  Observer observer(this, get_field_info(HALFTONE_PATTERN));
+  if (m_halftone) m_halftone->unregister_observer(observer);
   m_halftone = halftone;
+  if (m_halftone) m_halftone->register_observer(observer);
   m_pending.on_bit(Gfx::HALFTONE_PATTERN);
   m_override.on_bit(Gfx::HALFTONE_PATTERN);
 
@@ -224,7 +230,10 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 /*! \brief sets the texture-generation attribute. */
 void Appearance::set_tex_gen(Tex_gen* tex_gen)
 {
+  Observer observer(this, get_field_info(TEX_GEN));
+  if (m_tex_gen) m_tex_gen->unregister_observer(observer);
   m_tex_gen = tex_gen;
+  if (m_tex_gen) m_tex_gen->register_observer(observer);
   m_pending.on_bit(Gfx::TEX_GEN);
   m_override.on_bit(Gfx::TEX_GEN);
 }
@@ -241,10 +250,10 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 void Appearance::set_material(Shared_material material)
 {
   SGAL_assertion(material);
-
   Observer observer(this, get_field_info(MATERIAL));
   if (m_material) m_material->unregister_observer(observer);
   m_material = material;
+  m_material->register_observer(observer);
 
   if (material->get_transparency() != 0.0f) {
     set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
@@ -257,8 +266,6 @@ void Appearance::set_material(Shared_material material)
   
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
-
-  material->register_observer(observer);
 }
 
 /*! \brief processes change of material. */
@@ -272,14 +279,27 @@ void Appearance::material_changed(Field_info* /* field_info */)
 
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
+  process_content_changed();
+}
+
+/*! \brief notifies that the back material has changed. */
+void Appearance::back_material_changed(Field_info* /* field_info */)
+{
+  //! \todo need to unregister the old back material.
+  m_pending.on_bit(Gfx::BACK_MATERIAL);
+  m_override.on_bit(Gfx::BACK_MATERIAL);
+  process_content_changed();
 }
 
 /*! \brief */
 void Appearance::set_back_material(Shared_material material)
 {
+  Observer observer(this, get_field_info(BACK_MATERIAL));
+  if (m_back_material) m_back_material->unregister_observer(observer);
+  m_back_material = material;
+  if (m_back_material) m_back_material->register_observer(observer);
   m_pending.on_bit(Gfx::BACK_MATERIAL);
   m_override.on_bit(Gfx::BACK_MATERIAL);
-  m_back_material = material;
 }
 
 /*! \brief */
@@ -494,6 +514,7 @@ void Appearance::texture_changed(Field_info* /* field_info */)
   // this is to indicate that the texture has changed and 
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::TEX_ENV);
+  process_content_changed();
 }
 
 /*! \brief notifies that halftone has been changed. */
@@ -506,6 +527,15 @@ void Appearance::halftone_changed(Field_info* /* field_info */)
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
   set_rendering_required();
+  process_content_changed();
+}
+
+/*! \brief notifies that the texture generation has changed. */
+void Appearance::tex_gen_changed(Field_info* /* field_info */)
+{
+  m_pending.on_bit(Gfx::TEX_GEN);
+  m_override.on_bit(Gfx::TEX_GEN);
+  process_content_changed();
 }
 
 /*! \brief */
@@ -546,9 +576,21 @@ void Appearance::init_prototype()
                                   get_member_offset(&m_texture), exec_func);
   s_prototype->add_field_info(field);
 
+  exec_func = static_cast<Execution_function>(&Appearance::tex_gen_changed);
+  field = new SF_shared_container(TEX_GEN, "textureGeneration",
+                                  get_member_offset(&m_tex_gen), exec_func);
+  s_prototype->add_field_info(field);
+  
   exec_func = static_cast<Execution_function>(&Appearance::halftone_changed);
   field = new SF_shared_container(HALFTONE_PATTERN, "halftone",
                                   get_member_offset(&m_halftone), exec_func);
+  s_prototype->add_field_info(field);
+
+  exec_func =
+    static_cast<Execution_function>(&Appearance::back_material_changed);
+  field =
+    new SF_shared_container(BACK_MATERIAL, "backMaterial",
+                            get_member_offset(&m_back_material), exec_func);
   s_prototype->add_field_info(field);
 }
 
@@ -839,6 +881,26 @@ void Appearance::field_changed(Field_info* field_info)
   
     m_pending.on_bit(Gfx::MATERIAL);
     m_override.on_bit(Gfx::MATERIAL);
+    break;
+
+   case BACK_MATERIAL:
+    m_pending.on_bit(Gfx::BACK_MATERIAL);
+    m_override.on_bit(Gfx::BACK_MATERIAL);
+    break;
+
+   case TEXTURE:
+    m_pending.on_bit(Gfx::TEXTURE);
+    m_override.on_bit(Gfx::TEXTURE);
+    break;
+
+   case TEX_GEN:
+    m_pending.on_bit(Gfx::TEX_GEN);
+    m_override.on_bit(Gfx::TEX_GEN);
+    break;
+    
+   case HALFTONE_PATTERN:
+    m_pending.on_bit(Gfx::HALFTONE_PATTERN);
+    m_override.on_bit(Gfx::HALFTONE_PATTERN);
     break;
 
    default: break;

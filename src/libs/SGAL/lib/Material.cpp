@@ -62,43 +62,27 @@ Material::Material(Boolean proto) :
   m_specular_color(m_def_specular_color),
   m_emissive_color(m_def_emissive_color),
   m_shininess(m_def_shininess),
-  m_transparency(m_def_transparency),
-  m_changed(true)
+  m_transparency(m_def_transparency)
 {}
 
 /*! Destructor */
 Material::~Material() {}
-
-/*! \brief indicates whether the material has changed and, thus, must be
- * redrawn.
- */
-Boolean Material::is_changed()
-{
-  Boolean changed = m_changed;
-  m_changed = false;
-  return changed;
-}
 
 /*! \brief sets the transparency. */
 void Material::set_transparency(Float transparency)
 {
   Field_info* field_info = get_field_info(TRANSPARENCY);
   field_changed(field_info);
-  m_changed = true;
   m_transparency = transparency;
 }
 
 /*! \brief sets the ambient intensity. */
 void Material::set_ambient_intensity(Float intensity)
-{
-  m_changed = true;
-  m_ambient_intensity = intensity;
-}
+{ m_ambient_intensity = intensity; }
 
 /*! \brief sets the diffuse color. */
 void Material::set_diffuse_color(Float v0, Float v1, Float v2)
 {
-  m_changed = true;
   m_diffuse_color[0] = v0;
   m_diffuse_color[1] = v1;
   m_diffuse_color[2] = v2;
@@ -107,7 +91,6 @@ void Material::set_diffuse_color(Float v0, Float v1, Float v2)
 /*! \brief sets the specular color. */
 void Material::set_specular_color(Float v0, Float v1, Float v2)
 {
-  m_changed = true;
   m_specular_color[0] = v0;
   m_specular_color[1] = v1;
   m_specular_color[2] = v2;
@@ -116,7 +99,6 @@ void Material::set_specular_color(Float v0, Float v1, Float v2)
 /*! \brief sets the amissive color. */
 void Material::set_emissive_color(Float v0, Float v1, Float v2)
 {
-  m_changed = true;
   m_emissive_color[0] = v0;
   m_emissive_color[1] = v1;
   m_emissive_color[2] = v2;
@@ -125,7 +107,6 @@ void Material::set_emissive_color(Float v0, Float v1, Float v2)
 /*! \brief sets the shininess factor. */
 void Material::set_shininess(Float shininess)
 {
-  m_changed = true;
   if (shininess > 1) m_shininess = 1; 
   else m_shininess = shininess;
 }
@@ -155,14 +136,11 @@ void Material::draw(Face which_face, Context* /* context */)
   glMaterialf(face, GL_SHININESS, 128 * m_shininess);
 }
 
-/*! Callback, called when field change, rise changed flag and forward call to
- * set_rendering_required.
- */
+/*! \brief the callback invoked when the material chages. */
 void Material::material_changed(Field_info* field_info)
 {
+  set_rendering_required(field_info);
   field_changed(field_info);
-  m_changed = true;
-  Container::set_rendering_required(field_info);
 }
 
 /*! \brief initilalizes the prototype of this node. */
