@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 9188 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -52,74 +52,121 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Exact_plane_array(Boolean proto = SGAL_FALSE) : Container(proto) {}
+  /*! Constructor. */
+  Exact_plane_array(Boolean proto = false);
 
-  /*! Constructor */
-  Exact_plane_array(Uint n) { m_array.resize(n); }
+  /*! Constructor. */
+  Exact_plane_array(Uint n);
 
-  /*! Destructor */
-  virtual ~Exact_plane_array() { clear(); }
+  /*! Destructor. */
+  virtual ~Exact_plane_array();
 
-  /* Construct the prototype */
-  static Exact_plane_array * prototype()
-  { return new Exact_plane_array(SGAL_TRUE); }
+  /* Construct the prototype. */
+  static Exact_plane_array* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Exact_plane_array(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
+  /*! Obtain the node prototype. */  
+  virtual Container_proto* get_prototype();
   
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
-  /*! Size */
-  Uint size() const { return m_array.size(); }
+  /*! Size. */
+  Uint size() const;
   
-  /*! Resize */
-  void resize(Uint n) { m_array.resize(n); }
+  /*! Resize. */
+  void resize(Uint n);
 
-  /*! Clear the array */
-  void clear() { m_array.clear(); }
+  /*! Clear the array. */
+  void clear();
 
-  /*! Begin */
-  Exact_plane_iter begin() { return m_array.begin(); }
-  Exact_plane_const_iter begin() const { return m_array.begin(); }
+  /*! Begin. */
+  Exact_plane_iter begin();
+  Exact_plane_const_iter begin() const;
   
-  /*! End */
-  Exact_plane_iter end() { return m_array.end(); }
-  Exact_plane_const_iter end() const { return m_array.end(); }
+  /*! End. */
+  Exact_plane_iter end();
+  Exact_plane_const_iter end() const;
 
-  /*! Array indexing operator */
-  Exact_plane_3 & operator[](Uint n) { return m_array[n]; }
+  /*! Array indexing operator. */
+  Exact_plane_3& operator[](Uint n);
 
-  /*! Array indexing operator */
-  const Exact_plane_3 & operator[](Uint n) const { return m_array[n]; }
+  /*! Array indexing operator. */
+  const Exact_plane_3& operator[](Uint n) const;
 
-  /*! Inserts a new element at the end */
-  void push_back(const Exact_plane_3 & p) { m_array.push_back(p); }
+  /*! Insert a new element at the end. */
+  void push_back(const Exact_plane_3& p);
     
 protected:
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The exact coordinate array */
   Exact_plane_vector m_array;
 };
+
+/* \brief constructs the prototype. */
+inline Exact_plane_array* Exact_plane_array::prototype()
+{ return new Exact_plane_array(true); }
+
+/*! \brief clones. */
+inline Container* Exact_plane_array::clone() { return new Exact_plane_array(); }
+
+/*! \brief Size. */
+inline Uint Exact_plane_array::size() const { return m_array.size(); }
+  
+/*! \brief Resize. */
+inline void Exact_plane_array::resize(Uint n) { m_array.resize(n); }
+
+/*! \brief clears the array. */
+inline void Exact_plane_array::clear() { m_array.clear(); }
+
+/*! \brief obtains the (non-const) begin iterator. */
+inline Exact_plane_array::Exact_plane_iter Exact_plane_array::begin()
+{ return m_array.begin(); }
+
+/*! \brief obtains the (const) begin iterator. */
+inline Exact_plane_array::Exact_plane_const_iter Exact_plane_array::begin()
+  const
+{ return m_array.begin(); }
+  
+/*! \brief obtains the (non-const) pass-the-end iterator. */
+inline Exact_plane_array::Exact_plane_iter
+Exact_plane_array::end() { return m_array.end(); }
+
+/*! \brief obtains the (const) pass-the-end iterator. */
+inline Exact_plane_array::Exact_plane_const_iter Exact_plane_array::end() const
+{ return m_array.end(); }
+
+/*! \brief array indexing (non-const) operator. */
+inline Exact_plane_3& Exact_plane_array::operator[](Uint n)
+{ return m_array[n]; }
+
+/*! \brief array indexing (const) operator. */
+inline const Exact_plane_3& Exact_plane_array::operator[](Uint n) const
+{ return m_array[n]; }
+
+/*! \brief inserts a new element at the end. */
+inline void Exact_plane_array::push_back(const Exact_plane_3& p)
+{ m_array.push_back(p); }
+    
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Exact_plane_array::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 
