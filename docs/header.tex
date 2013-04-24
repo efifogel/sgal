@@ -1,11 +1,5 @@
 \usepackage{a4wide}
 % =============================================================================
-% *** Do not adjust lengths that control margins, column widths, etc. ***
-% *** Do not use packages that alter fonts (such as pslatex).         ***
-% There should be no need to do such things with IEEEtran.cls V1.6 and later.
-% (Unless specifically asked to do so by the journal or conference you plan
-% to submit to, of course. )
-
 \usepackage{ifpdf}
 % usage:
 % \ifpdf
@@ -56,7 +50,7 @@
 \usepackage{paralist} % compactenum,compactitem, inparaitem, inparaenum
 
 % ======== Alignment ==========================================================
-%\usepackage{array}
+\usepackage{array}
 %\usepackage{mdwmath}
 %\usepackage{mdwtab}
 %\usepackage{eqparbox}
@@ -350,9 +344,11 @@
 % \usepackage{epsfig}
 \DeclareGraphicsExtensions{.png}
 \DeclareGraphicsExtensions{.jpg}
+\DeclareGraphicsExtensions{.svg}
 % \DeclareGraphicsRule{.png}{eps}{.bb}{`convert -compress JPEG #1 eps2:-}
 \DeclareGraphicsRule{.png}{eps}{.bb}{`convert #1 eps2:-}
 \DeclareGraphicsRule{.jpg}{eps}{.bb}{`convert #1 eps2:-}
+\DeclareGraphicsRule{.svg}{eps}{.bb}{`convert #1 eps2:-}
 
 % ======== Editing ============================================================
 \usepackage{ifthen}
