@@ -39,12 +39,15 @@
 
 \pdfpagewidth 8.5in
 \pdfpageheight 11in
-\headheight 35pt
-% \rhead{Printing the Future}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% \headheight 35pt
+\rhead{Printing the Future}
 % \lhead{\includegraphics{figs/letterhead_left.eps}}
-% \rfoot{Draft}
-% \cfoot{\thepage}
+\rfoot{Draft}
+\cfoot{\thepage}
 % \lfoot{This document is signed}
+\renewcommand{\abstractname}{The Business}
 
 % =============================================================================
 \begin{document}
@@ -53,21 +56,33 @@
 \date{\today\\~\\\copyright{} All copyrights reserved to the authors}
 \maketitle
 % =============================================================================
-\section{Abstract}
+\abstract
 \label{sec:abstract}
 % =============================================================================
-We present a couple of applications that are based on novel techniques
-in assembly planning and assembly partitioning. The first application
-extends the seemingly capabilities of current 3D printers; the
-application enables the 3D printing of virtually any object using low
-cost 3D printers. The second application (which we intend to make
-available first) enables the rapid production of \lego{} (or the like)
-kits.
+The 3D printing market could soar to \$8.4 billion in sales in~2025,
+from \$777 million in~2012, fueled largely by the automotive,
+aerospace, and medical markets, according a report by \lux{} Research.
 
-Similar applications do not exist in the market, to the best of our
-knowledge, and we do not expect that similar applications will
-suddenly emerged, simply due to the complexity of computational 
-tasks that need to be carried out behind the scenes.
+Widespread adoption of 3D printing technology may not be that far away,
+according to a \gartner{} report predicting that enterprise-class 3D
+printers will be available for less than \$2,000 by~2016.
+
+The Global Computer-aided Design (CAD) market is expected to post a compound
+annual growth rate (CAGR) of 8.60 percent during the period 2013--2016.
+The market is expected to post revenue of \$8,3 billion in~2016 according
+to a \technavio{} reprt.
+
+We present a business opportunity that shows promise to make a considerable
+profit within a year and a much larger profit within a couple of years. The
+opportunity is in the market of CAD and is driven by the immensely grown
+3D-printing market. It includes an application that extends the seemingly
+capabilities of current and future 3D printers; the application enables the
+3D printing of virtually any object using low cost 3D printers. The
+application is based on novel techniques in assembly planning and assembly
+partitioning. Similar applications do not exist in the market, to the best
+of our knowledge, and we do not expect that similar applications will
+suddenly emerge, simply due to the complexity of computational tasks that
+need to be carried out behind the scenes.
 
 % =============================================================================
 \section{Introduction}
@@ -81,15 +96,16 @@ popular for rapid prototyping of product designs, but are moving into
 the creation of more end-market products.
 
 The 3D printing market could soar to \$8.4 billion in sales in~2025,
-from \$777 million last year, fueled largely by the automotive,
-aerospace and medical markets, according a new report by Lux
-Research. The auto, aerospace and medical industries are seen taking
+from \$777 million in~2012, fueled largely by the automotive,
+aerospace and medical markets, according a report by \lux{} Research.
+The auto, aerospace and medical industries are seen taking
 an~84\% share of the 3D printing market, which is poised to grow
-at~18\% annually, Lux says. Meanwhile, consumer applications will
-remain small relative to industrial uses, he says. 3D-printed consumer
-goods were a \$17 million market in~2012, led by \$10 million from
-custom jewelry. The consumer market, dominated by hobbyists and
-artists, will grow to \$894 million in sales in~2025, Vicari says.
+at~18\% annually, \lux{} says. Meanwhile, consumer applications will
+remain small relative to industrial uses, Anthony Vicari, a research
+associate at \lux, says. 3D-printed consumer goods were a \$17 million
+market in~2012, led by \$10 million from custom jewelry. The consumer
+market, dominated by hobbyists and artists, will grow to \$894 million
+in sales in~2025, he says.
 
 Rapid prototyping is a group of techniques used to fabricate a scale
 model of a physical part or assembly using three-dimensional computer
@@ -98,7 +114,7 @@ construction of a model using contemporary methods can take anywhere
 from several hours to several days, depending on the method used and
 the size and complexity of the model, additive systems, i.e., 3D
 printers, can typically reduce this time to a few hours, but the model
-to be printed must meet some limitations. 3D printers are usually
+to be printed must meet some constraints. 3D printers are usually
 faster, more affordable, and easier to use than other (non-additive)
 fabrication technologies. However, not everything can be
 printed---size and resolution are the main limitations. 
@@ -109,15 +125,13 @@ $(254 \times 381 \times 203)$~mm box can be done using the
 ZPrinter\textregistered{}~650 by \zcorp{}, which costs approximately
 \$100,000. On the other hand, the ZPrinter\textregistered{}~150, which
 costs approximately \$15,000, enables the printing of only objects
-bounded by a $(236 \times 185 \times 127)$~mm box each. We present a
-technique that enables the printing of large objects on low cost
-printers.
+bounded by a $(236 \times 185 \times 127)$~mm box each.
 
-We present a couple of applications that are based on novel techniques
-in assembly planning and assembly partitioning. The first application
-enables the 3D printing of virtually any object using low cost 3D
-printers. The second application (which we intend to make
-available first) enables the rapid production of \lego{} (or the like)
+We present an application that enables the printing of large objects on
+low cost printers. The application is based on novel techniques
+in assembly planning and assembly partitioning. It enables the 3D
+printing of virtually any object using low cost 3D printers. The eact same
+application also enables the rapid production of \lego{} (or the like)
 kits.
 
 %% The resolution of the printer is given in layer thickness and XY
@@ -143,23 +157,23 @@ kits.
 \section{Enabling the 3D Printing of Virtually any Object}
 \label{sec:3d-printing}
 % =============================================================================
-Given a model of an object, the bounding box of which is
-large, and thus can be printed only on a high-cost 3D printer or not
-at all, the application automatically decomposes the model into smaller
-pieces and adds connectors to the resulting pieces, so that these
-pieces can be easily assembled to form an object similar to the
-original one without any additional materials (such as glue). The
-application also automatically produces the procedure that guides the
-assembly.
+Given a model of an object, the bounding box of which is large, and
+thus can be printed only on a high-cost 3D printer or not at all, the
+application automatically decomposes the input model into smaller pieces
+and adds connectors to the resulting pieces, so that these pieces can be
+used as building blocks, and as such can be to easily assembled to form
+an object similar to the original one without any additional materials
+(such as glue). The application also automatically produces the procedure
+that guides the assembly.
 
 The same application subsumes a simpler application that enables the
 relatively low-cost 3D printing of models that are already decomposed
 into pieces of different colors or different resolution. Given such a
 model that consists of several submodels, the application simply adds
-connectors to the at the appropriate places to the submodels so that
-they can be individualy printed. The printed pieces can be assembled
-to form the original object. Naturally, a combination is also
-applicable.
+connectors at the appropriate places to the submodels so that they can
+be individualy 3D-printed. The printed pieces can be assembled to form
+the original object. Naturally, a combination, where a partial
+decomposition is given, is also applicable.
 
 % =============================================================================
 \section{Enabling the Rapid Production of \lego{} Kits}
@@ -173,14 +187,29 @@ applicable.
     \includegraphics[height=4cm,bb=0 0 512 512]{figs/ego_geodesic_sphere_3_continuous_earth.jpg}}\quad
   \subfloat[]{\label{fig:lego-earth:random-color}
     \includegraphics[height=4cm,bb=0 0 512 512]{figs/ego_geodesic_sphere_3_random_color.jpg}}
-  \caption[]{\subref{fig:lego-earth:discrete} The earth decomposed into
-    \lego{} bricks.
-    \subref{fig:lego-earth:continuous} The earth decomposed into
-    \lego{} bricks.
-    \subref{fig:lego-earth:random-color} The earth decomposed into
-    \lego{} bricks.}
-  \label{fig:stick-maze}
+  \caption[]{\subref{fig:lego-earth:discrete} The sphere decomposed into
+    single-colored \lego{} bricks, such that the assembled object has
+    the perseption of the earth.
+    \subref{fig:lego-earth:continuous} The sphere decomposed into
+    uniquely textured \lego{} bricks, such that the assembled object
+    looks like the earth.
+    \subref{fig:lego-earth:random-color} The sphere decomposed into
+    single-colored \lego{} bricks the color of which is randomly generated.}
+  \label{fig:earth}
 \end{figure}
+Tipically, the application determines an optimal decomposition of the
+input model into submodels of building blocks, with optimal placement
+of connectors, according to some srestrictions, for example, bounding
+boxes imposed by certain printers. If the building blocks are to be
+3D-printed, the application also determines the appropriate orientations
+of the submodels, but the building blocks do not necessarily need to
+be 3D-printed; they can be taken from any collection of existing building
+blocks, such as \lego{} bricks. The application accepts several types of
+restrictions on the properties of the resulting submodels. At the extreme,
+the user can predetermine the exact size and shape of the building blocks,
+by passing a database of building-block prototypes to our application as
+input. Figure~\ref{fig:earth} shows three examples of decompositions into
+standard \lego{} bricks.
 
 % =============================================================================
 % \bibliographystyle{abbrv}
