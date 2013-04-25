@@ -245,6 +245,7 @@
 \newcommand{\dcel}{{\sc Dcel}}
 \newcommand{\gmp}{{\sc Gmp}}
 \newcommand{\lego}{{\sc Lego}}
+\newcommand{\ego}{{\sc Ego}}
 \newcommand{\zcorp}{{\sc ZCorp}}
 
 % ======== Part colors ========================================================
@@ -358,3 +359,12 @@
 %% \newcommand{\cpm}{\textsc{Cpm}}
 %% \newcounter{copyrightbox}
 %% \renewcommand{\captionfont}{\sffamily}
+
+\catcode`\_=11\relax
+\newcommand\email[1]{\_email #1\q_nil}
+\def\_email#1@#2\q_nil{%
+  \href{mailto:#1@#2}{{\emailfont #1\emailampersat #2}}
+}
+\newcommand\emailfont{\sffamily}
+\newcommand\emailampersat{{\color{red}\small@}}
+\catcode`\_=8\relax   
