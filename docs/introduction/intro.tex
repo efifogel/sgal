@@ -51,7 +51,7 @@
 
 % =============================================================================
 \begin{document}
-\title{Making Three-Dimensional Printing Attainable}
+\title{Enabling the 3D Printing of Virtually any Object}
 \author{Prof. Dan Halperin\thanks{+972 54 7406478, \email{halperin.dan@gmail.com}}~~and Dr. Efi Fogel\thanks{+972 52 6225863, \email{efifogel@gmail.com}}}
 \date{\today\\~\\\copyright{} All copyrights reserved to the authors}
 \maketitle
@@ -117,7 +117,7 @@ printers, can typically reduce this time to a few hours, but the model
 to be printed must meet some constraints. 3D printers are usually
 faster, more affordable, and easier to use than other (non-additive)
 fabrication technologies. However, not everything can be
-printed---size and resolution are the main limitations. 
+printed---size and resolution are the main limitations.
 
 The maximum resolution and size of a 3D print depends on the chosen 3D
 Printer. For example, on the one hand, printing an object bounded by a
@@ -154,7 +154,7 @@ kits.
 %% than a given threshold ($x$, $y$, and $z$ are axes).
 
 % =============================================================================
-\section{Enabling the 3D Printing of Virtually any Object}
+\section{The products}
 \label{sec:3d-printing}
 % =============================================================================
 Given a model of an object, the bounding box of which is large, and
@@ -175,9 +175,11 @@ be individualy 3D-printed. The printed pieces can be assembled to form
 the original object. Naturally, a combination, where a partial
 decomposition is given, is also applicable.
 
+\danha{add text on re-scaling of models and
+adapting/cleaning/repairing}
 % =============================================================================
-\section{Enabling the Rapid Production of \lego{} Kits}
-\label{sec:}
+%\section{Enabling the Rapid Production of \lego{} Kits}
+%\label{sec:}
 % =============================================================================
 \begin{figure}[!t]%
   \centering
@@ -197,19 +199,22 @@ decomposition is given, is also applicable.
     single-colored \lego{} bricks the color of which is randomly generated.}
   \label{fig:earth}
 \end{figure}
-Tipically, the application determines an optimal decomposition of the
-input model into submodels of building blocks, with optimal placement
-of connectors, according to some srestrictions, for example, bounding
-boxes imposed by certain printers. If the building blocks are to be
-3D-printed, the application also determines the appropriate orientations
-of the submodels, but the building blocks do not necessarily need to
-be 3D-printed; they can be taken from any collection of existing building
-blocks, such as \lego{} bricks. The application accepts several types of
-restrictions on the properties of the resulting submodels. At the extreme,
-the user can predetermine the exact size and shape of the building blocks,
-by passing a database of building-block prototypes to our application as
-input. Figure~\ref{fig:earth} shows three examples of decompositions into
-standard \lego{} bricks.
+Tipically, the application determines an optimal
+decomposition of the input model into submodels of building
+blocks, with optimal placement of connectors, according to
+some restrictions, for example, bounding boxes imposed by
+certain printers. If the building blocks are to be
+3D-printed, the application also determines the appropriate
+orientations of the submodels, but the building blocks do
+not necessarily need to be 3D-printed; they can be taken
+from any collection of existing building blocks, such as
+\lego{} bricks. The application accepts several types of
+restrictions on the properties of the resulting submodels.
+At the extreme, the user can predetermine the exact size
+and shape of the building blocks, by passing a database of
+building-block prototypes to our application as input.
+Figure~\ref{fig:earth} shows three examples of
+decompositions into standard \lego{} bricks.
 
 % =============================================================================
 % \bibliographystyle{abbrv}
