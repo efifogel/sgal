@@ -11,8 +11,12 @@
   \def\efi#1{}
 }
 % ======= figs ================================================================
-\graphicspath{{figs/}}
+\graphicspath{{../../figs/}}
 %
+% =============================================================================
+\usepackage{pst-node}
+\usepackage{pst-lens}
+\newpsstyle{SimpleHandle}{fillstyle=solid,fillcolor=white,framearc=0.5}
 % =============================================================================
 \usepackage{bookmark}
 \usepackage{pdflscape}
@@ -77,17 +81,17 @@ profit within a year and a much larger profit within a couple of years. The
 opportunity is in the market of CAD and is driven by the immensely grown
 3D-printing market. It includes an application that extends the seemingly
 capabilities of current and future 3D printers; the application enables the
-3D printing of virtually any object using low cost 3D printers. The
-application is based on novel techniques in assembly planning and assembly
-partitioning. Similar applications do not exist in the market, to the best
-of our knowledge, and we do not expect that similar applications will
-suddenly emerge, simply due to the complexity of computational tasks that
-need to be carried out behind the scenes.
+3D printing of virtually any object (large objects in particular) using low
+cost 3D printers. The application is based on novel techniques in assembly
+planning and assembly partitioning. Similar applications do not exist in
+the market, to the best of our knowledge, and we do not expect that similar
+applications will suddenly emerge, simply due to the complexity of
+computational tasks that need to be carried out behind the scenes.
 \end{abstract}
 
 % =============================================================================
-\section{Introduction}
-\label{sec:introduction}
+\section{The Market}
+\label{sec:market}
 % =============================================================================
 Three-Dimensional (3D) printing is a unique form of printing
 related to traditional rapid prototyping technology. Here, a 3D
@@ -128,13 +132,6 @@ ZPrinter\textregistered{}~650 by \zcorp{}, which costs approximately
 costs approximately \$15,000, enables the printing of only objects
 bounded by a $(236 \times 185 \times 127)$~mm box each.
 
-We present an application that enables the printing of large objects on
-low cost printers. The application is based on novel techniques
-in assembly planning and assembly partitioning. It enables the 3D
-printing of virtually any object using low cost 3D printers. The eact same
-application also enables the rapid production of \lego{} (or the like)
-kits.
-
 %% The resolution of the printer is given in layer thickness and XY
 %% resolution in DPI (Dots Per Inch). Usually, the layer thickness is
 %% approximately one hundred micrometers (0.1 [mm] (millimeters)), while
@@ -155,8 +152,8 @@ kits.
 %% than a given threshold ($x$, $y$, and $z$ are axes).
 
 % =============================================================================
-\section{The products}
-\label{sec:3d-printing}
+\section{The Product}
+\label{sec:product}
 % =============================================================================
 Given a model of an object, the bounding box of which is large, and
 thus can be printed only on a high-cost 3D printer or not at all, the
@@ -182,14 +179,41 @@ adapting/cleaning/repairing}
 %\section{Enabling the Rapid Production of \lego{} Kits}
 %\label{sec:}
 % =============================================================================
+\newcommand{\discrete}{%
+  \rput[lb](0,0){%
+  \includegraphics[height=4cm,bb=0 0 1024 1024]{%
+    ego_geodesic_sphere_3_discrete_earth.jpg}}}
+\newcommand{\continuous}{%
+  \rput[lb](0,0){%
+  \includegraphics[height=4cm,bb=0 0 1024 1024]{%
+    ego_geodesic_sphere_3_continuous_earth.jpg}}}
+\newcommand{\random}{%
+  \rput[lb](0,0){%
+  \includegraphics[height=4cm,bb=0 0 1024 1024]{%
+    ego_geodesic_sphere_3_random_color.jpg}}}
 \begin{figure}[!t]%
   \centering
   \subfloat[]{\label{fig:lego-earth:discrete}
-    \includegraphics[height=4cm,bb=0 0 556 576]{figs/ego_geodesic_sphere_3_discrete_earth.jpg}}\quad
+    \pspicture[](0,0)(4,5)
+    \psset{unit=1cm}
+    \discrete
+    \PstLens[LensHandle=true,LensStyleHandle=SimpleHandle,linewidth=1pt,LensHandleWidth=10pt,LensHandleHeight=2,LensRotation=110,LensSize=1,LensMagnification=4](1.5,3.5){\discrete}
+    \endpspicture%
+  }\quad
   \subfloat[]{\label{fig:lego-earth:continuous}
-    \includegraphics[height=4cm,bb=0 0 512 512]{figs/ego_geodesic_sphere_3_continuous_earth.jpg}}\quad
+    \pspicture[](0,0)(4,5)
+    \psset{unit=1cm}
+    \continuous
+    \PstLens[LensHandle=true,LensStyleHandle=SimpleHandle,linewidth=1pt,LensHandleWidth=10pt,LensHandleHeight=2,LensRotation=110,LensSize=1,LensMagnification=4](1.5,3.5){\continuous}
+    \endpspicture%
+  }\quad
   \subfloat[]{\label{fig:lego-earth:random-color}
-    \includegraphics[height=4cm,bb=0 0 512 512]{figs/ego_geodesic_sphere_3_random_color.jpg}}
+    \pspicture[](0,0)(4,5)
+    \psset{unit=1cm}
+    \random
+    \PstLens[LensHandle=true,LensStyleHandle=SimpleHandle,linewidth=1pt,LensHandleWidth=10pt,LensHandleHeight=2,LensRotation=110,LensSize=1,LensMagnification=4](1.5,3.5){\random}
+    \endpspicture%
+  }
   \caption[]{\subref{fig:lego-earth:discrete} The sphere decomposed into
     single-colored \lego{} bricks, such that the assembled object has
     the perseption of the earth.
@@ -216,6 +240,29 @@ and shape of the building blocks, by passing a database of
 building-block prototypes to our application as input.
 Figure~\ref{fig:earth} shows three examples of
 decompositions into standard \lego{} bricks.
+
+% =============================================================================
+\section{The Team}
+\label{sec:team}
+% =============================================================================
+Dr. Efraim (Efi) Fogel is a consultant in the fields of Computational
+Geometry and 3D Graphics and a researcher in the Blavatnik school of
+computer science at the Tel Aviv university, Israel. Efi received
+a Ph.D.\ degree from Tel Aviv University, Israel, where he also held a
+post doctoral position. He received an M.Sc.\ degree in computer
+science from Stanford University, California, USA. He also serves as a
+member of the editorial board of \cgal, the Computational Geometry
+Algorithm Library.
+
+Prof. Dan Halperin holds a B.Sc.\ in Mathematics and Computer Science
+and an M.Sc.\ and a Ph.D.\ in Computer Science, all from Tel Aviv
+University. After his Ph.D.\ he spent three years at the Computer
+Science Robotics Lab at Stanford. He is currently a professor of
+Computer Science at Aviv University. Halperin's main areas of
+research are computational geometry and its applications, robust
+geometric computing, algorithmic robotics and motion planning. He
+recently published the Springer book ``CGAL Arrangements and Their
+Applications'' co-authored with Efi Fogel and Ron Wein. 
 
 % =============================================================================
 % \bibliographystyle{abbrv}
