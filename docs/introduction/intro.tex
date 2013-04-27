@@ -159,7 +159,7 @@ Given a model of an object, the bounding box of which is large, and
 thus can be printed only on a high-cost 3D printer or not at all, the
 application automatically decomposes the input model into smaller pieces
 and adds connectors to the resulting pieces, so that these pieces can be
-used as building blocks, and as such can be to easily assembled to form
+used as building blocks, and as such can be easily assembled to form
 an object similar to the original one without any additional materials
 (such as glue). The application also automatically produces the procedure
 that guides the assembly.
@@ -173,12 +173,6 @@ be individualy 3D-printed. The printed pieces can be assembled to form
 the original object. Naturally, a combination, where a partial
 decomposition is given, is also applicable.
 
-\danny{add text on re-scaling of models and
-adapting/cleaning/repairing}
-% =============================================================================
-%\section{Enabling the Rapid Production of \lego{} Kits}
-%\label{sec:}
-% =============================================================================
 \newcommand{\discrete}{%
   \rput[lb](0,0){%
   \includegraphics[height=4cm,bb=0 0 1024 1024]{%
@@ -224,22 +218,30 @@ adapting/cleaning/repairing}
     single-colored \lego{} bricks the color of which is randomly generated.}
   \label{fig:earth}
 \end{figure}
-Tipically, the application determines an optimal
-decomposition of the input model into submodels of building
-blocks, with optimal placement of connectors, according to
-some restrictions, for example, bounding boxes imposed by
-certain printers. If the building blocks are to be
-3D-printed, the application also determines the appropriate
-orientations of the submodels, but the building blocks do
-not necessarily need to be 3D-printed; they can be taken
-from any collection of existing building blocks, such as
-\lego{} bricks. The application accepts several types of
-restrictions on the properties of the resulting submodels.
-At the extreme, the user can predetermine the exact size
-and shape of the building blocks, by passing a database of
-building-block prototypes to our application as input.
-Figure~\ref{fig:earth} shows three examples of
+Tipically, the application determines an optimal decomposition of the
+input model into submodels of building blocks, with optimal placement
+of connectors, according to some restrictions, for example, bounding
+boxes imposed by certain printers. The application also determines the
+appropriate orientations of the submodels to be printed, but the
+building blocks do not necessarily need to be 3D-printed; they can be
+taken from any collection of existing building blocks, such as \lego{}
+bricks. The application accepts several types of restrictions on the
+properties of the resulting submodels. At the extreme, the user can
+predetermine the exact size and shape of the building blocks, by
+passing a database of building-block prototypes to our application as
+input. This capability essentially enables the rapid production of
+\lego{} kits. Figure~\ref{fig:earth} shows three examples of
 decompositions into standard \lego{} bricks.
+
+Correct and consistent representations of three-dimensional objects
+are required by applications as varied as modeling, simulation,
+visualization, CAD/CAM, finite element analysis, and 3D-printing. 
+However, most acquired 3D models, whether created by hand or by
+automatic tools, contain errors and inconsistencies. We aim to provide
+tools and services for repairing such errors and inconsistencies,
+for example, transforming non-printable 3D-printable models into
+printable models.
+
 
 % =============================================================================
 \section{The Team}
@@ -247,12 +249,15 @@ decompositions into standard \lego{} bricks.
 % =============================================================================
 Dr. Efraim (Efi) Fogel is a consultant in the fields of Computational
 Geometry and 3D Graphics and a researcher in the Blavatnik school of
-computer science at the Tel Aviv university, Israel. Efi received
-a Ph.D.\ degree from Tel Aviv University, Israel, where he also held a
-post doctoral position. He received an M.Sc.\ degree in computer
-science from Stanford University, California, USA. He also serves as a
+computer science at the Tel Aviv university, Israel. He also serves as a
 member of the editorial board of \cgal, the Computational Geometry
-Algorithm Library.
+Algorithm Library. For nine years Efi was one of the architects of
+3D-graphics solutions at \sgi{}, he was a co-founder of \lucid{} Ltd.,
+and served as a CTO at \enbaya{} Inc., to name few items in Efi's
+industrial experiences. Efi received a Ph.D.\ degree from Tel Aviv
+University, Israel, where he also held a post doctoral position. He
+received an M.Sc.\ degree in computer science from Stanford
+University, California, USA.
 
 Prof. Dan Halperin holds a B.Sc.\ in Mathematics and Computer Science
 and an M.Sc.\ and a Ph.D.\ in Computer Science, all from Tel Aviv
