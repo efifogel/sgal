@@ -47,11 +47,14 @@
 \pagestyle{fancy}
 % \headheight 35pt
 \rhead{Printing the Future} \lhead{A new Enterprise}
-% \rfoot{Draft}
+\rfoot{Confidential}
 \cfoot{\thepage}
 % \lfoot{This document is signed}
 \renewcommand{\abstractname}{The Business}
-
+% =============================================================================
+\usepackage{draftwatermark}
+\SetWatermarkText{Confidential}
+\SetWatermarkScale{1}
 % =============================================================================
 \begin{document}
 \title{Enabling the 3D Printing of Virtually any Object}
