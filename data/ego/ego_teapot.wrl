@@ -5851,53 +5851,58 @@ Transform {
     }
 
     # The axes:
-    DEF AXES Transform {
-      # scale 0.1 0.1 0.1
+    Switch {
+      whichChoice -1
       children [
-	Shape {
-	  appearance DEF AXES_APP Appearance {
-	    material Material {
-	      # ambientIntensity 1
-	      diffuseColor 0.4 0.4 0.4
-	      # specularColor 0.3 0.3 0.3
-	      # transparency 0.0001
-	    }
-	  }
-	  geometry Sphere { radius 0.1 }
-	}
-	DEF CS_AXIS Transform {
-	  translation 0 1.5 0
+	DEF AXES Transform {
+	  # scale 0.1 0.1 0.1
 	  children [
 	    Shape {
-	      appearance USE AXES_APP
-	      geometry Cylinder {
-		radius 0.1
-		height 3
-		set_is_bottom_visible FALSE
-		set_is_top_visible FALSE
+	      appearance DEF AXES_APP Appearance {
+		material Material {
+		  # ambientIntensity 1
+		  diffuseColor 0.4 0.4 0.4
+		  # specularColor 0.3 0.3 0.3
+		  # transparency 0.0001
+		}
 	      }
+	      geometry Sphere { radius 0.1 }
 	    }
-	    Transform {
-	      translation 0 1.7 0
+	    DEF CS_AXIS Transform {
+	      translation 0 1.5 0
 	      children [
 		Shape {
 		  appearance USE AXES_APP
-		  geometry Cone {
-		    bottomRadius 0.2
-		    height 0.4
+		  geometry Cylinder {
+		    radius 0.1
+		    height 3
+		    set_is_bottom_visible FALSE
+		    set_is_top_visible FALSE
 		  }
+		}
+		Transform {
+		  translation 0 1.7 0
+		  children [
+		    Shape {
+		      appearance USE AXES_APP
+		      geometry Cone {
+			bottomRadius 0.2
+			height 0.4
+		      }
+		    }
+		   ]
 		}
 	       ]
 	    }
+	    Transform {
+	      rotation 0 0 -1 1.57
+	      children [ USE CS_AXIS ]
+	    }
+	    Transform {
+	      rotation 1 0 0 1.57
+	      children [ USE CS_AXIS ]
+	    }
 	   ]
-	}
-	Transform {
-	  rotation 0 0 -1 1.57
-	  children [ USE CS_AXIS ]
-	}
-	Transform {
-	  rotation 1 0 0 1.57
-	  children [ USE CS_AXIS ]
 	}
        ]
     }
