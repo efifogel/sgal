@@ -56,7 +56,7 @@ class Appearance;
 class Coord_array;
 class Normal_array;
 class Tex_coord_array;
-class Geo_set;
+class Mesh_set;
 class Touch_sensor;
 class Ego_voxels_filler_base;
 
@@ -200,14 +200,14 @@ public:
   /*! Determine whether the base type of the model is 'Get_set'.
    * \return true if the base type of the model is 'Get_set'.
    */
-  Boolean is_model_geo_set() const;
+  Boolean is_model_mesh_set() const;
 
   /*! Set the model.
    * \param model the model.
    */
   void set_model(Polyhedron_geo* model);
   void set_model(Exact_polyhedron_geo* model);
-  void set_model(Geo_set* model);
+  void set_model(Mesh_set* model);
 
   /*! Obtain the (const) polyhedron model.
    * \return the model.
@@ -232,12 +232,12 @@ public:
   /*! Obtain the (const) geometry-set model.
    * \return the model.
    */
-  const Geo_set* get_geo_set_model() const;
+  const Mesh_set* get_mesh_set_model() const;
 
   /*! Obtain the (non-const) geometry-set model.
    * \return the model.
    */
-  Geo_set* get_geo_set_model();
+  Mesh_set* get_mesh_set_model();
 
   /*! Set the horizontal width of the voxel */
   void set_voxel_width(Float voxel_width);
@@ -386,7 +386,7 @@ protected:
   Boolean is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index);
   
   /*! The segments */
-  boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Geo_set*> m_model;
+  boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Mesh_set*> m_model;
 
   /*! Find a child of certain type */
   template <class T>
@@ -574,13 +574,13 @@ inline Boolean Ego::is_model_exact_polyhedron() const
 { return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL); }
 
 /*! \brief determines whether the base type of the model is 'Get_set'. */
-inline Boolean Ego::is_model_geo_set() const
-{ return (boost::get<Geo_set*> (&m_model) != NULL); }
+inline Boolean Ego::is_model_mesh_set() const
+{ return (boost::get<Mesh_set*> (&m_model) != NULL); }
 
 /*! \brief sets the model. */
 inline void Ego::set_model(Polyhedron_geo* model) { m_model = model; }
 inline void Ego::set_model(Exact_polyhedron_geo* model) { m_model = model; }
-inline void Ego::set_model(Geo_set* model) { m_model = model; }
+inline void Ego::set_model(Mesh_set* model) { m_model = model; }
 
 /*! \brief obtains the (const) appearance. */
 inline const Ego::Shared_appearance Ego::get_appearance() const

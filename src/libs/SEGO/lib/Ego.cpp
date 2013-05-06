@@ -167,8 +167,8 @@ const Exact_polyhedron_geo* Ego::get_exact_polyhedron_model() const
 { return boost::get<Exact_polyhedron_geo*>(m_model); }
 
 /*! \brief obtains the (const) geometry set model. */
-const Geo_set* Ego::get_geo_set_model() const
-{ return boost::get<Geo_set*>(m_model); }
+const Mesh_set* Ego::get_mesh_set_model() const
+{ return boost::get<Mesh_set*>(m_model); }
 
 /*! \brief obtains the (non-const) polyhedron model. */
 Polyhedron_geo* Ego::get_polyhedron_model()
@@ -179,8 +179,8 @@ Exact_polyhedron_geo* Ego::get_exact_polyhedron_model()
 { return boost::get<Exact_polyhedron_geo*>(m_model); }
 
 /*! \brief obtains the (non-const) geometry set model. */
-Geo_set* Ego::get_geo_set_model()
-{ return boost::get<Geo_set*>(m_model); }
+Mesh_set* Ego::get_mesh_set_model()
+{ return boost::get<Mesh_set*>(m_model); }
 
 /*! \brief clear the parts */
 void Ego::clear_parts()
@@ -567,9 +567,9 @@ void Ego::clean_voxels()
     m_voxels_center = 
       voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
                get_matrix(), &m_voxels);
-  else if (this->is_model_geo_set())
+  else if (this->is_model_mesh_set())
     m_voxels_center = 
-      voxelize(*(this->get_geo_set_model()), get_matrix(), &m_voxels);
+      voxelize(*(this->get_mesh_set_model()), get_matrix(), &m_voxels);
 
   if (!m_filler) {
     m_filler = new Ego_voxels_filler();

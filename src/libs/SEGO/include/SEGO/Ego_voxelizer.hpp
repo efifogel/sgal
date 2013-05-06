@@ -83,7 +83,7 @@ class SGAL_CLASSDEF Ego_voxelizer {
   /*!
    * @return The origin of the voxels structure.
    */
-  Kernel::Point_3 operator()(const Geo_set& geo_set,
+  Kernel::Point_3 operator()(Mesh_set& mesh_set,
                              const Matrix4f& matrix, Ego_voxels* out_voxels)
     const;
   
@@ -109,8 +109,8 @@ class SGAL_CLASSDEF Ego_voxelizer {
                                              const Matrix4f& matrix) const;
   Triangles create_triangles_from_polyhedron(const Exact_polyhedron& polyhedron,
                                              const Matrix4f& matrix) const;
-  Triangles create_triangles_from_geo_set(const Geo_set& polyhedron,
-                                          const Matrix4f& matrix) const;
+  Triangles create_triangles_from_mesh_set(Mesh_set& polyhedron,
+                                           const Matrix4f& matrix) const;
 
   /*! Creates the voxels.
    * \param polyhedron (in)

@@ -37,9 +37,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+/*! \brief Constructor */
 Ego_voxelizer::Ego_voxelizer(const Kernel::FT& voxel_length,
                              const Kernel::FT& voxel_width,
-                             const Kernel::FT& voxel_height) {
+                             const Kernel::FT& voxel_height)
+{
   m_voxel_dimensions[0] = voxel_length;
   m_voxel_dimensions[1] = voxel_width;
   m_voxel_dimensions[2] = voxel_height;
@@ -68,13 +70,14 @@ Ego_voxelizer::operator()(const Exact_polyhedron& polyhedron,
 
 /*! \brief voxelize */
 Ego_voxelizer::Point_3
-Ego_voxelizer::operator()(const Geo_set& geo_set, const Matrix4f& matrix,
+Ego_voxelizer::operator()(Mesh_set& mesh_set, const Matrix4f& matrix,
                           Ego_voxels* out_voxels) const
 {
-  Triangles triangles = create_triangles_from_geo_set(geo_set, matrix);
+  Triangles triangles = create_triangles_from_mesh_set(mesh_set, matrix);
   return operator() (triangles, out_voxels);
 }
 
+/*! \brief voxelize */
 Ego_voxelizer::Point_3
 Ego_voxelizer::operator()(const Triangles& triangles, Ego_voxels* out_voxels)
   const
@@ -116,19 +119,19 @@ Ego_voxelizer::create_triangles_from_polyhedron(const Polyhedron& polyhedron,
     point.xform_pt(tmp, matrix);
     points[0] = Point_3(Kernel::FT(point[0]), Kernel::FT(point[1]),
                         Kernel::FT(point[2]));
-    cit++;
+    ++cit;
     tmp.set(cit->vertex()->point().x(), cit->vertex()->point().y(),
             cit->vertex()->point().z());
     point.xform_pt(tmp, matrix);
     points[1] = Point_3(Kernel::FT(point[0]), Kernel::FT(point[1]),
                         Kernel::FT(point[2]));
-    cit++;
+    ++cit;
     tmp.set(cit->vertex()->point().x(), cit->vertex()->point().y(),
             cit->vertex()->point().z());
     point.xform_pt(tmp, matrix);
     points[2] = Point_3(Kernel::FT(point[0]), Kernel::FT(point[1]),
                         Kernel::FT(point[2]));
-    cit++;
+    ++cit;
     Triangle_3 triangle(points[0], points[1], points[2]);
     ret.push_back(triangle);
   }
@@ -167,19 +170,20 @@ create_triangles_from_polyhedron(const Exact_polyhedron& polyhedron,
   //     vec = ctr_vector(cit->vertex()->point(), CGAL::ORIGIN);
   //     scaled_vec = ctr_scale(vec, escale);
   //     points[0] = ctr_point(CGAL::ORIGIN, scaled_vec);
-  //     cit++;
+  //     ++cit;
   //     vec = ctr_vector(cit->vertex()->point(), CGAL::ORIGIN);
   //     scaled_vec = ctr_scale(vec, escale);
   //     points[1] = ctr_point(CGAL::ORIGIN, scaled_vec);
-  //     cit++;
+  //     ++cit;
   //     vec = ctr_vector(cit->vertex()->point(), CGAL::ORIGIN);
   //     scaled_vec = ctr_scale(vec, escale);
   //     points[2] = ctr_point(CGAL::ORIGIN, scaled_vec);
-  //     cit++;
-  //   } else {
-  //     points[0] = cit->vertex()->point(); cit++;
-  //     points[1] = cit->vertex()->point(); cit++;
-  //     points[2] = cit->vertex()->point(); cit++;
+  //     ++cit;
+  //   }
+  //   else {
+  //     points[0] = cit->vertex()->point(); ++cit;
+  //     points[1] = cit->vertex()->point(); ++cit;
+  //     points[2] = cit->vertex()->point(); ++cit;
   //   }
     
   //   Triangle_3 triangle(points[0], points[1], points[2]);
@@ -191,21 +195,20 @@ create_triangles_from_polyhedron(const Exact_polyhedron& polyhedron,
 
 /*! \brief */
 Ego_voxelizer::Triangles
-Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set,
-                                             const Matrix4f& matrix) const
+Ego_voxelizer::create_triangles_from_mesh_set(Mesh_set& mesh_set,
+                                              const Matrix4f& matrix) const
 {
   Triangles res;
   
-  const SGAL::Array<Uint>& coord_ind = geo_set.get_coord_indices();
-  const Coord_array& coords = *(geo_set.get_coord_array());
+  const SGAL::Array<Uint>& coord_ind = mesh_set.get_coord_indices();
+  const Coord_array& coords = *(mesh_set.get_coord_array());
 
   Point_3 triangle[3];
   long j = 0;
   for (SGAL::Array<Uint>::const_iterator it = coord_ind.begin();
-       it != coord_ind.end(); ++it, ++j) {
-
-    if (j == 3)
-      j = 0;
+       it != coord_ind.end(); ++it, ++j)
+  {
+    if (j == 3) j = 0;
 
     SGAL_assertion(*it < coords.size());
 
@@ -221,6 +224,7 @@ Ego_voxelizer::create_triangles_from_geo_set(const Geo_set& geo_set,
   return res;
 }
 
+/*! \brief */
 void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
                                                  Ego_voxels* out_voxels,
                                                  Iso_cuboid_3& bbox) const
@@ -267,43 +271,46 @@ void Ego_voxelizer::create_voxels_from_triangles(const Triangles& triangles,
   // out_voxels->origin = Kernel::Point_3(origin_x, origin_y, origin_z);
 }
 
+/*! \brief */
 void Ego_voxelizer::mark_triangle(const Triangle_3& triangle,
                                   const Point_3& origin,
-                                  Ego_voxels* out_voxels) const {
+                                  Ego_voxels* out_voxels) const
+{
   mark_triangle_vertices(triangle, origin, out_voxels);
-
-  SlicingSegments segments =
-    create_slicing_segments(triangle, origin);
-
+  SlicingSegments segments = create_slicing_segments(triangle, origin);
   for (SlicingSegments::iterator it = segments.begin();
        it != segments.end(); ++it)
     mark_segment(*it, origin, out_voxels);
 }
 
+/*! \brief */
 void Ego_voxelizer::mark_triangle_vertices(const Triangle_3& triangle,
                                            const Point_3& origin,
-                                           Ego_voxels* out_voxels) const {
-
+                                           Ego_voxels* out_voxels) const
+{
   mark_point(triangle[0], origin, out_voxels);
   mark_point(triangle[1], origin, out_voxels);
   mark_point(triangle[2], origin, out_voxels);
 }
 
+/*! \brief */
 void Ego_voxelizer::mark_segment(const Segment_3& segment,
                                  const Point_3& origin,
-                                 Ego_voxels* out_voxels) const {
-
+                                 Ego_voxels* out_voxels) const
+{
   // This can be done with a walk. Currenly we do simple geometric 
   // stuff (that already exist). If you want optimizing, consider walk.
-
   std::vector<Plane_3> planes;
   for (long dim = 0; dim < 3; ++dim) {
     SEGO_internal::Compare_point_by_axis<Point_3> comp(dim);
     Point_3 pmin, pmax;
     if (comp(segment.source(), segment.target())) {
-      pmin = segment.source(); pmax = segment.target();
-    } else {
-      pmin = segment.target(); pmax = segment.source();
+      pmin = segment.source();
+      pmax = segment.target();
+    }
+    else {
+      pmin = segment.target();
+      pmax = segment.source();
     }
     
     create_parallel_planes(pmin, pmax, dim, origin, &planes);
@@ -321,11 +328,11 @@ void Ego_voxelizer::mark_segment(const Segment_3& segment,
   mark_point(segment.target(), origin, out_voxels);
 }
 
-void
-Ego_voxelizer::mark_point(const Point_3& point,
-                          const Point_3& origin,
-                          Ego_voxels* out_voxels) const {
-
+/*! \brief */
+void Ego_voxelizer::mark_point(const Point_3& point,
+                               const Point_3& origin,
+                               Ego_voxels* out_voxels) const
+{
   Point_3 in_voxel = CGAL::ORIGIN + (point - origin);
 
   Kernel::FT ft_x = in_voxel.x() / m_voxel_dimensions[0];
@@ -348,10 +355,11 @@ Ego_voxelizer::mark_point(const Point_3& point,
         out_voxels->fill(*it, *jt, *kt);
 }
 
+/*! \brief */
 Ego_voxelizer::SlicingSegments
 Ego_voxelizer::create_slicing_segments(const Triangle_3& triangle,
-                                       const Point_3& origin) const {
-  
+                                       const Point_3& origin) const
+{
   // We assume here that the facet is convex.
   // We create here segments in all 3 direction, though I am quite sure
   // this can be reduced.
@@ -359,14 +367,15 @@ Ego_voxelizer::create_slicing_segments(const Triangle_3& triangle,
   create_slicing_segments(0, triangle, origin, &out_slicing);
   create_slicing_segments(1, triangle, origin, &out_slicing);
   create_slicing_segments(2, triangle, origin, &out_slicing);
-  
   return out_slicing;
 }
 
+/*! \brief */
 void Ego_voxelizer::create_slicing_segments(long dim,
                                             const Triangle_3& triangle,
                                             const Point_3& origin,
-                                            SlicingSegments* out_slicing) const {
+                                            SlicingSegments* out_slicing) const
+{
   Point_3 points[3];
   points[0] = triangle[0];
   points[1] = triangle[1];
@@ -381,119 +390,105 @@ void Ego_voxelizer::create_slicing_segments(long dim,
   
   std::vector<Plane_3> planes;
   create_parallel_planes(*pmin, *pmax, dim, origin, &planes);
-  
   intersect_triangle_with_planes(triangle, planes, out_slicing);
 }
 
+/*! \brief */
 void Ego_voxelizer::create_parallel_planes(const Point_3& pmin,
                                            const Point_3& pmax,
                                            long dim, const Point_3& origin,
-                                           std::vector<Plane_3> *out_planes) const {
-
+                                           std::vector<Plane_3> *out_planes)
+  const
+{
   SGAL_assertion(pmin[dim] <= pmax[dim]);
-
   Kernel::FT dir_ft[3] = {0, 0, 0};
   dir_ft[dim] = 1;
   Direction_3 dir(dir_ft[0], dir_ft[1], dir_ft[2]);
-
   Kernel::FT ad_ft[3] = {0, 0, 0};
   ad_ft[dim] = m_voxel_dimensions[dim];
   Vector_3 advance(ad_ft[0], ad_ft[1], ad_ft[2]);
-
   Point_3 cur_point = get_first_point_for_segment(pmin, origin, dim);
-
   while (cur_point[dim] <= pmax[dim]) {
     out_planes->push_back(Plane_3(cur_point, dir));
     cur_point = cur_point + advance;
   }
 }
 
+/*! \brief */
 Ego_voxelizer::Point_3
 Ego_voxelizer::get_first_point_for_segment(const Point_3& psegment,
                                            const Point_3& porigin,
-                                           long dim) const {
-
-  typedef CGAL::Fraction_traits<Kernel::FT>            Fraction_traits;
-  typedef Fraction_traits::Numerator_type              Numerator_type;
-  typedef Fraction_traits::Denominator_type            Denominator_type;
+                                           long dim) const
+{
+  typedef CGAL::Fraction_traits<Kernel::FT>        Fraction_traits;
+  typedef Fraction_traits::Numerator_type          Numerator_type;
+  typedef Fraction_traits::Denominator_type        Denominator_type;
   typedef CGAL::Algebraic_structure_traits<Numerator_type> 
-    Algebraic_structure_traits;
+                                                   Algebraic_structure_traits;
 
   Kernel::FT begin_ft = (psegment - porigin)[dim] / m_voxel_dimensions[dim];
-
   Fraction_traits::Decompose decompose;
   Algebraic_structure_traits::Div_mod div;
-
   Numerator_type nume;
   Denominator_type denom;
   Algebraic_structure_traits::Type div_res, mod_res;
- 
   decompose(begin_ft, nume, denom);
   div(nume, denom, div_res, mod_res);
-
-  if (mod_res != 0)
-    div_res = div_res + 1;
-
-  SGAL_assertion(porigin[dim] + div_res * m_voxel_dimensions[dim] >= psegment[dim]);
-
+  if (mod_res != 0) div_res = div_res + 1;
+  SGAL_assertion(porigin[dim] + div_res * m_voxel_dimensions[dim] >=
+                 psegment[dim]);
   Kernel::FT res_ft[3] = {0, 0, 0};
   res_ft[dim] = porigin[dim] + div_res * m_voxel_dimensions[dim];
   Point_3 res(res_ft[0], res_ft[1], res_ft[2]);
-
   return res;
 }
 
-void Ego_voxelizer::intersect_triangle_with_planes(const Triangle_3& triangle,
-                                                   const std::vector<Plane_3>& planes,
-                                                   SlicingSegments *out_segments) const {
-
+/*! \brief */
+void Ego_voxelizer::
+intersect_triangle_with_planes(const Triangle_3& triangle,
+                               const std::vector<Plane_3>& planes,
+                               SlicingSegments* out_segments) const
+{
   BOOST_FOREACH(Plane_3 plane, planes) {
     CGAL::Object obj = CGAL::intersection(triangle, plane);
-    
     const Segment_3* seg = CGAL::object_cast<Segment_3> (&obj);
-    
     SGAL_assertion(obj.empty() == false);
     SGAL_assertion((CGAL::object_cast<Point_3> (&obj) != NULL) || 
                    (seg != NULL) || 
                    (CGAL::object_cast<Triangle_3> (&obj) != NULL));
-    
-    if (seg != NULL)
-      out_segments->push_back(*seg);
+    if (seg != NULL) out_segments->push_back(*seg);
   }
 }
 
+/*! \brief */
 void
 Ego_voxelizer::intersect_segment_with_planes(const Segment_3& segment,
                                              const std::vector<Plane_3>& planes,
-                                             std::vector<Point_3>* out_points) const {
-
+                                             std::vector<Point_3>* out_points)
+  const
+{
   BOOST_FOREACH(Plane_3 plane, planes) {
     CGAL::Object obj = CGAL::intersection(segment, plane);
     const Point_3* p = CGAL::object_cast<Point_3> (&obj);
-
     SGAL_assertion((CGAL::object_cast<Segment_3>(&obj) != NULL) || (p != NULL));
-    
-    if (p != NULL)
-      out_points->push_back(*p);
+    if (p != NULL) out_points->push_back(*p);
   }
 }
 
 std::vector<long>
-Ego_voxelizer::get_voxels_coords(const Kernel::FT& ft) const {
-
-  typedef CGAL::Fraction_traits<Kernel::FT>            Fraction_traits;
-  typedef Fraction_traits::Numerator_type              Numerator_type;
-  typedef Fraction_traits::Denominator_type            Denominator_type;
+Ego_voxelizer::get_voxels_coords(const Kernel::FT& ft) const
+{
+  typedef CGAL::Fraction_traits<Kernel::FT>        Fraction_traits;
+  typedef Fraction_traits::Numerator_type          Numerator_type;
+  typedef Fraction_traits::Denominator_type        Denominator_type;
 
   typedef CGAL::Algebraic_structure_traits<Numerator_type> 
-    Algebraic_structure_traits;
-  typedef Algebraic_structure_traits::Div_mod          Div_mod;
+                                                   Algebraic_structure_traits;
+  typedef Algebraic_structure_traits::Div_mod      Div_mod;
 
   std::vector<long> out_vec;
-  
   Fraction_traits::Decompose decompose;
   Div_mod div;
-
   Numerator_type nume;
   Denominator_type denom;
   Algebraic_structure_traits::Type div_res, mod_res;
@@ -501,16 +496,10 @@ Ego_voxelizer::get_voxels_coords(const Kernel::FT& ft) const {
   // How do we convert Gmpz to long?
   decompose(ft, nume, denom);
   div(nume, denom, div_res, mod_res);
-  
   long res = long(CGAL::to_double(div_res));
   SGAL_assertion(res == div_res);
-
   out_vec.push_back(res);
-  if (mod_res == 0 && res > 0) {
-    // We are on a border.
-    out_vec.push_back(res - 1);
-  }
-
+  if (mod_res == 0 && res > 0) out_vec.push_back(res - 1); // We are on a border
   return out_vec;
 }
 
