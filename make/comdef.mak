@@ -191,8 +191,14 @@ PS2PDFFLAGS =
 PS2PDFF =$(PS2PDF) $(PS2PDFFLAGS)
 
 DVI2PDF =dvipdf
-DVI2PDFFLAGS =
+DVI2PDFFLAGS = -R0
 DVI2PDFF =$(DVI2PDF) $(DVI2PDFFLAGS)
+
+PDFLATEX =pdflatex
+
+DVI2PDFM =dvipdfm
+DVI2PDFMFLAGS =
+DVI2PDFMF =$(DVI2PDFM) $(DVI2PDFMFLAGS)
 
 DOXYGEN =doxygen
 HHC =hhc
@@ -436,39 +442,39 @@ GENMAINHTMLF = $(GENMAINHTML) $(GENMAINHTMLFLAGS)
 # extract BOOST directories:
 ifdef BOOST_DIR
 ifndef BOOST_INC_DIR
-BOOST_INC_DIR=$(BOOST_DIR)/include
+BOOST_INC_DIR="$(BOOST_DIR)/include"
 endif
 ifndef BOOST_LIB_DIR
-BOOST_LIB_DIR=$(BOOST_DIR)/lib
+BOOST_LIB_DIR="$(BOOST_DIR)/lib"
 endif
 endif
 
 # extract GMP include directories:
 ifdef GMP_DIR
 ifndef GMP_INC_DIR
-GMP_INC_DIR=$(GMP_DIR)/include
+GMP_INC_DIR="$(GMP_DIR)/include"
 endif
 ifndef GMP_LIB_DIR
-GMP_LIB_DIR=$(GMP_DIR)/lib
+GMP_LIB_DIR="$(GMP_DIR)/lib"
 endif
 endif
 
 # extract MPFR directories:
 ifdef MPFR_DIR
 ifndef MPFR_INC_DIR
-MPFR_INC_DIR=$(MPFR_DIR)/include
+MPFR_INC_DIR="$(MPFR_DIR)/include"
 endif
 ifndef MPFR_LIB_DIR
-MPFR_LIB_DIR=$(MPFR_DIR)/lib
+MPFR_LIB_DIR="$(MPFR_DIR)/lib"
 endif
 endif
 
 # extract MAGICK include directories:
 ifdef MAGICK_DIR
 ifndef MAGICK_INC_DIR
-MAGICK_INC_DIR=$(MAGICK_DIR)/include
+MAGICK_INC_DIR="$(MAGICK_DIR)/include"
 endif
 ifndef MAGICK_LIB_DIR
-MAGICK_LIB_DIR=$(MAGICK_DIR)/lib
+MAGICK_LIB_DIR="$(MAGICK_DIR)/lib"
 endif
 endif
