@@ -11,23 +11,23 @@ endif
 
 BASENAME = player
 TARGET0 = $(BASENAME)$(EXEFILESUFFIX)
-INSTALLDIR0 = $(BINDIR)
+INSTALLDIR0 = "$(BINDIR)"
 
 ifeq ($(DE), msvc)
 ifeq ($(COMPILER_VER), 1400)
 MANIFEST_FILE = $(TARGET0).manifest
 TARGET1 = $(MANIFEST_FILE)
-INSTALLDIR1 = $(BINDIR)
+INSTALLDIR1 = "$(BINDIR)"
 else
 ifeq ($(COMPILER_VER), 1500)
 MANIFEST_FILE = $(TARGET0).manifest
 TARGET1 = $(MANIFEST_FILE)
-INSTALLDIR1 = $(BINDIR)
+INSTALLDIR1 = "$(BINDIR)"
 else
 ifeq ($(COMPILER_VER), 1600)
 MANIFEST_FILE = $(TARGET0).manifest
 TARGET1 = $(MANIFEST_FILE)
-INSTALLDIR1 = $(BINDIR)
+INSTALLDIR1 = "$(BINDIR)"
 endif
 endif
 endif
@@ -232,8 +232,10 @@ endif
 # LLDLIBS+= boost_thread-vc$(VC_NUM)-mt-1_47.lib
 # LLDLIBS+= boost_program_options-vc$(VC_NUM)-mt-1_47.lib
 # LLDLIBS+= boost_filesystem-vc$(VC_NUM)-mt-1_47.lib
+ifeq ($(USE_CGAL), 1)
 LLDLIBS+= mpfr-vc$(VC_NUM)-mt.lib
 LLDLIBS+= gmp-vc$(VC_NUM)-mt.lib
+endif
 LLDLIBS+= glu32.lib opengl32.lib
 LLDLIBS+= $(LDSYSLIBS)
 ifeq ($(COMPILER_VER), 1200)
@@ -254,10 +256,10 @@ LLDOPTS+= -nodefaultlib:msvcrt
 endif
 else
 endif
-LIBS = $(LIBDIR)/SGAL.lib
-LIBS+= $(LIBDIR)/gl2ps.lib
+LIBS = "$(LIBDIR)/SGAL.lib"
+LIBS+= "$(LIBDIR)/gl2ps.lib"
 ifeq ($(USE_CGAL), 1)
-LIBS+= $(LIBDIR)/SCGAL.lib
+LIBS+= "$(LIBDIR)/SCGAL.lib"
 endif
 ifeq ($(USE_EGO), 1)
 LIBS+= $(LIBDIR)/SEGO.lib
