@@ -70,8 +70,6 @@ Boolean_operation::~Boolean_operation() {}
 /*! \brief executes the engine. */
 void Boolean_operation::execute(Field_info* /* field_info */)
 {
-  std::cout << "Boolean_operation::execute" << std::endl;
-  
   typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
   typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
                                                     Nef_polyhedron;
@@ -105,7 +103,6 @@ void Boolean_operation::execute(Field_info* /* field_info */)
   // Cascade the result field:
   Field* field = get_field(RESULT);
   if (field) field->cascade();
-  std::cout << "Boolean_operation::execute end" << std::endl;
 }
 
 /*! \brief sets the attributes of this object. */
