@@ -61,7 +61,7 @@ class Color_array;
 class Draw_action;
 class Scene_graph;
 
-class Exact_polyhedron_geo : public SGAL::Mesh_set {
+class Exact_polyhedron_geo : public Mesh_set {
 public:
   typedef Exact_number_type                             Number_type;
   typedef Exact_kernel                                  Kernel;
@@ -143,13 +143,13 @@ public:
   static Exact_polyhedron_geo* prototype();
 
   /*! Clone. */
-  virtual SGAL::Container* clone();
+  virtual Container* clone();
 
   /*! */
-  virtual void cull(SGAL::Cull_context& cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! */
-  virtual void isect(SGAL::Isect_action* action);
+  virtual void isect(Isect_action* action);
 
   /*! */
   virtual bool clean_sphere_bound();
@@ -157,7 +157,7 @@ public:
   /*! Set the attributes of this node.
    * \param elem contains lists of attribute names and values
    */
-  virtual void set_attributes(SGAL::Element* elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -166,10 +166,12 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype. */
-  virtual SGAL::Container_proto* get_prototype();
+  virtual Container_proto* get_prototype();
 
-  /*! Obtain the polyhedron data-structure.
-   */
+  /*! Set the polyhedron data-structure. */
+  void set_polyhedron(Polyhedron& polyhedron);
+
+  /*! Obtain the polyhedron data-structure. */
   Polyhedron& get_polyhedron();
 
   /*! Obtain the flag that indicates whether to compute the convex hull
@@ -199,7 +201,7 @@ protected:
   virtual void clear();
 
   /*! Draws the internal representation. */
-  virtual void draw_geometry(SGAL::Draw_action * action);
+  virtual void draw_geometry(Draw_action * action);
 
   /*! Returns true if the internal representation is empty. */
   virtual bool is_empty() const { return m_polyhedron.empty(); }
@@ -254,7 +256,7 @@ private:
   static const std::string s_tag;
 
   /*! The node prototype. */
-  static SGAL::Container_proto* s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The builder. */
   Polyhedron_geo_builder<HalfedgeDS> m_surface;
@@ -265,6 +267,9 @@ private:
   /*! Indicates whether to compute the convex hull. */
   bool m_convex_hull;
 
+  /*! Indicates whether the geometry is dirty and thus should be cleaned. */
+  Boolean m_dirty_polyhedron;
+  
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;
 
@@ -277,7 +282,7 @@ inline Exact_polyhedron_geo* Exact_polyhedron_geo::prototype()
 { return new Exact_polyhedron_geo(true); }
 
 /*! \brief clones. */
-inline SGAL::Container* Exact_polyhedron_geo::clone()
+inline Container* Exact_polyhedron_geo::clone()
 { return new Exact_polyhedron_geo(); }
 
 /*! \brief obtainss the flag that indicates whether to compute the convex hull
@@ -285,12 +290,6 @@ inline SGAL::Container* Exact_polyhedron_geo::clone()
  */
 inline Boolean Exact_polyhedron_geo::get_convex_hull() const
 { return m_convex_hull; }
-
-/*! \brief Sets the flag that indicates whether to compute the convex hull
- * of the coordinate set.
- */
-inline void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
-{ m_convex_hull = flag; }  
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Exact_polyhedron_geo::get_tag() const

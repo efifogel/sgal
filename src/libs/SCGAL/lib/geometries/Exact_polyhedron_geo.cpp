@@ -53,7 +53,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_polyhedron_geo::s_tag = "ExactPolyhedron";
-SGAL::Container_proto* Exact_polyhedron_geo::s_prototype = 0;
+Container_proto* Exact_polyhedron_geo::s_prototype = 0;
 
 REGISTER_TO_FACTORY(Exact_polyhedron_geo, "Exact_polyhedron_geo");
 
@@ -61,6 +61,7 @@ REGISTER_TO_FACTORY(Exact_polyhedron_geo, "Exact_polyhedron_geo");
 Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Mesh_set(proto),
   m_convex_hull(false),
+  m_dirty_polyhedron(true),
   m_time(0)
 {}
 
@@ -75,12 +76,10 @@ void Exact_polyhedron_geo::convex_hull()
   boost::shared_ptr<Exact_coord_array>  exact_coord_array =
     boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
-    // std::cout << "Exact_polyhedron_geo::exact" << std::endl;
     CGAL::convex_hull_3(exact_coord_array->begin(),
                         exact_coord_array->end(), m_polyhedron);    
   }
   else {
-    // std::cout << "Exact_polyhedron_geo::approximate" << std::endl;
     std::vector<Point_3> points;
     points.resize(m_coord_array->size());
     std::transform(m_coord_array->begin(), m_coord_array->end(),
@@ -93,25 +92,28 @@ void Exact_polyhedron_geo::convex_hull()
 
     CGAL::convex_hull_3(points.begin(), points.end(), m_polyhedron);
   }
+  m_dirty_polyhedron = false;
 }
 
 /*! \brief cleans the data structure. */
 void Exact_polyhedron_geo::clean()
 {
-  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
+  SGAL_TRACE_MSG(Trace::POLYHEDRON,
                  "Exact_polyhedron_geo::clean() start\n");
   clock_t start_time = clock();
-  if (m_convex_hull) convex_hull();
-  else {
-    m_surface.set_geo_set(this);
-    
-    m_polyhedron.delegate(m_surface);
+  if (m_dirty_polyhedron) {
+    if (m_convex_hull) convex_hull();
+    else {
+      m_surface.set_geo_set(this);
+      m_polyhedron.delegate(m_surface);
 #if 0
-    if (!m_polyhedron.normalized_border_is_valid())
-      m_polyhedron.normalize_border();
+      if (!m_polyhedron.normalized_border_is_valid())
+        m_polyhedron.normalize_border();
 #else
-    m_polyhedron.normalize_border();
+      m_polyhedron.normalize_border();
 #endif
+      m_dirty_polyhedron = false;
+    }
   }
 
   // Compute the plane equations:
@@ -145,19 +147,19 @@ void Exact_polyhedron_geo::clean()
 /*! \brief clears the internal representation. */
 void Exact_polyhedron_geo::clear()
 {
-  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON,
+  SGAL_TRACE_MSG(Trace::POLYHEDRON,
                  "Exact_polyhedron_geo::clear() start\n");
   m_polyhedron.clear();
   Mesh_set::clear();
 }
 
 /*! \brief */
-void Exact_polyhedron_geo::cull(SGAL::Cull_context& cull_context) {}
+void Exact_polyhedron_geo::cull(Cull_context& cull_context) {}
 
 /*! \brief draws the internal representation. */
-void Exact_polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
+void Exact_polyhedron_geo::draw_geometry(Draw_action* /* action */)
 {
-  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "Exact_polyhedron_geo::draw ... ");
+  SGAL_TRACE_MSG(Trace::POLYHEDRON, "Exact_polyhedron_geo::draw ... ");
   Facet_iterator i;
   for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Polyhedron::Halfedge_around_facet_circulator j = i->facet_begin();
@@ -172,11 +174,11 @@ void Exact_polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
     } while (++j != i->facet_begin());
     glEnd();
   }
-  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "completed\n");
+  SGAL_TRACE_MSG(Trace::POLYHEDRON, "completed\n");
 }
 
 /*! \brief */
-void Exact_polyhedron_geo::isect(SGAL::Isect_action* action)
+void Exact_polyhedron_geo::isect(Isect_action* action)
 {
   if (is_dirty()) clean();
   if (is_empty()) return;
@@ -221,9 +223,9 @@ Boolean Exact_polyhedron_geo::clean_sphere_bound()
 }
 
 /*! \brief sets the attributes of this object. */
-void Exact_polyhedron_geo::set_attributes(SGAL::Element* elem)
+void Exact_polyhedron_geo::set_attributes(Element* elem)
 {
-  SGAL::Mesh_set::set_attributes(elem);
+  Mesh_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
   Str_attr_iter ai;
@@ -245,10 +247,10 @@ void Exact_polyhedron_geo::set_attributes(SGAL::Element* elem)
 void Exact_polyhedron_geo::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new SGAL::Container_proto(Mesh_set::get_prototype());
+  s_prototype = new Container_proto(Mesh_set::get_prototype());
 
   //! Container execution function
-  // typedef void (SGAL::Container::* Execution_function)(SGAL::Field_info*);
+  // typedef void (Container::* Execution_function)(Field_info*);
   // Execution_function exec_func;
 }
 
@@ -260,7 +262,7 @@ void Exact_polyhedron_geo::delete_prototype()
 }
 
 /*! \brief obtains the container prototype. */
-SGAL::Container_proto* Exact_polyhedron_geo::get_prototype() 
+Container_proto* Exact_polyhedron_geo::get_prototype() 
 {  
   if (!s_prototype) Exact_polyhedron_geo::init_prototype();
   return s_prototype;
@@ -302,5 +304,23 @@ Exact_polyhedron_geo::Polyhedron& Exact_polyhedron_geo::get_polyhedron()
   if (is_dirty()) clean();
   return m_polyhedron;
 }
+
+/*! \brief sets the polyhedron data-structure. */
+void Exact_polyhedron_geo::set_polyhedron(Polyhedron& polyhedron)
+{
+  m_dirty_polyhedron = false;
+  m_polyhedron = polyhedron;
+}
+
+/*! \brief Sets the flag that indicates whether to compute the convex hull
+ * of the coordinate set.
+ */
+void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
+{
+  if (m_convex_hull == flag) return;
+  m_convex_hull = flag;
+  m_polyhedron.clear();
+  m_dirty_polyhedron = true;
+}  
 
 SGAL_END_NAMESPACE

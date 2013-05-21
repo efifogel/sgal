@@ -66,14 +66,39 @@ public:
     }
     
     // Add the faces:
-    Uint j = 0;
-    for (i = 0; i < num_facets; ++i) {
-      B.begin_facet();
-      for (; m_geo_set->get_coord_index(j) != (Uint) -1; ++j) {
+    if (m_geo_set->get_primitive_type() == Geo_set::PT_TRIANGLES) {
+      Uint j = 0;
+      for (i = 0; i < num_facets; ++i) {
+        B.begin_facet();
         B.add_vertex_to_facet(m_geo_set->get_coord_index(j));
+        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+1));
+        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+2));
+        B.end_facet();
+        j += 3;
       }
-      ++j;
-      B.end_facet();
+    }
+    else if (m_geo_set->get_primitive_type() == Geo_set::PT_QUADS) {
+      Uint j = 0;
+      for (i = 0; i < num_facets; ++i) {
+        B.begin_facet();
+        B.add_vertex_to_facet(m_geo_set->get_coord_index(j));
+        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+1));
+        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+2));
+        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+3));
+        B.end_facet();
+        j += 4;
+      }
+    }
+    else {
+      Uint j = 0;
+      for (i = 0; i < num_facets; ++i) {
+        B.begin_facet();
+        for (; m_geo_set->get_coord_index(j) != (Uint) -1; ++j) {
+          B.add_vertex_to_facet(m_geo_set->get_coord_index(j));
+        }
+        ++j;
+        B.end_facet();
+      }
     }
     B.end_surface();
   }
