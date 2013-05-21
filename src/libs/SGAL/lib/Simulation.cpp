@@ -29,52 +29,48 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Simulation::s_tag = "sgalSimulation";
-Container_proto * Simulation::s_prototype = NULL;
+const std::string Simulation::s_tag = "Simulation";
+Container_proto* Simulation::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Simulation, "Simulation");
 
-/*! Constructor */
+/*! \brief constructor */
 Simulation::Simulation(Boolean proto) :
   Container(proto),
-  m_start(SGAL_FALSE)
+  m_start(false)
 {}
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Simulation::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
-
   s_prototype->add_field_info(new SF_bool(START, "start",
                                           get_member_offset(&m_start)));
 }
 
-/*! Delete the node prototype */
+/*! \brief deletes the node prototype. */
 void Simulation::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
+/*! \brief obtains the node prototype. */
 Container_proto * Simulation::get_prototype() 
 {  
   if (!s_prototype) Simulation::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
-void Simulation::set_attributes(Element * elem)
+/*! \brief sets the attributes of the object extracted from the input file. */
+void Simulation::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 }
 
-/*! \brief adds the container to a given scene */  
-void Simulation::add_to_scene(Scene_graph * sg)
-{
-  sg->add_simulation(this);
-}
+/*! \brief adds the container to a given scene. */  
+void Simulation::add_to_scene(Scene_graph* sg) { sg->add_simulation(this); }
 
 /*! Start simulation */
 void Simulation::start()
