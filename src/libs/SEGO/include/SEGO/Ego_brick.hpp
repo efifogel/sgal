@@ -233,7 +233,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The container prototype. */
   static Container_proto* s_prototype;

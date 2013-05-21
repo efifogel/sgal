@@ -48,7 +48,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Ego_brick::s_tag = "EgoBrick";
+const std::string Ego_brick::s_tag = "EgoBrick";
 Container_proto* Ego_brick::s_prototype = NULL;
 
 // Default values:
