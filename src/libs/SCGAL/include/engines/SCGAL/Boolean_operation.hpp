@@ -1,0 +1,191 @@
+// Copyright (c) 2004 Israel.
+// All rights reserved.
+//
+// This file is part of SGAL; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the
+// License. See the file LICENSE.LGPL distributed with SGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the
+// software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+// THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+// PARTICULAR PURPOSE.
+//
+// $Id: $
+// $Revision: 6147 $
+//
+// Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#ifndef SGAL_BOOLEAN_OPERATION_HPP
+#define SGAL_BOOLEAN_OPERATION_HPP
+
+/*! \file
+ * An engine that computes a Boolean operation.
+ *  
+ * Inherits from Node
+ */
+
+#include <boost/shared_ptr.hpp>
+
+#include "SGAL/basic.hpp"
+#include "SGAL/SGAL_defs.hpp"
+#include "SGAL/Node.hpp"
+#include "SGAL/Types.hpp"
+#include "SGAL/Math_defs.hpp"
+
+#include "SCGAL/Exact_polyhedron_geo.hpp"
+
+SGAL_BEGIN_NAMESPACE
+
+class Draw_action;
+class Isect_action;
+class Container_proto;
+class Element;
+
+class SGAL_CLASSDEF Boolean_operation : public Node {
+public:
+  enum {
+    FIRST = Node::LAST - 1,
+    OPERAND1,
+    OPERAND2,
+    OPERATION,
+    RESULT,
+    TRIGGER,
+    LAST
+  };
+
+  enum Operation {
+    OP_NOP,
+    OP_INTERSECTION
+  };
+  
+  typedef boost::shared_ptr<Exact_polyhedron_geo>   Shared_exact_polyhedron_geo;
+  typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
+
+  /*! Constructor */
+  Boolean_operation(Boolean proto = false);
+
+  /*! Destructor */
+  virtual ~Boolean_operation();
+
+  /* Construct the prototype */
+  static Boolean_operation* prototype();
+
+  /*! Clone. */
+  virtual Container* clone();
+    
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
+  
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+  
+  /*! Execute the engine. */
+  void execute(Field_info* field_info);
+
+protected:
+  /*! 1st operand. */
+  Shared_mesh_set m_operand1;
+
+  /*! 2nd operand. */
+  Shared_mesh_set m_operand2;
+
+  /*! Result. */
+  Shared_exact_polyhedron_geo m_result;
+  
+  /*! The operation. */
+  Operation m_operation;
+
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
+
+  /*! Obtain the operation. */
+  Operation get_operation() const;
+
+  /*! Set the operation. */
+  void set_operation(Operation operation);
+
+  /*! Set the 1st operand.
+   * \param operand the operand.
+   */
+  void set_operand1(Shared_mesh_set operand);
+
+  /*! Obtain the 1st operand.
+   * \result the operand.
+   */
+  Shared_mesh_set get_operand1() const;
+
+  /*! Set the 2nd operand.
+   * \param operand the operand.
+   */
+  void set_operand2(Shared_mesh_set operand);
+
+  /*! Obtain the 2nd operand.
+   * \result the operand.
+   */
+  Shared_mesh_set set_operand2() const;
+  
+private:
+  /*! Trigger of the engine that makes the engine excute. */
+  Boolean m_trigger;
+
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
+
+  /*! The prototype of this node. */
+  static Container_proto* s_prototype;
+
+  /*! The array of operation names. */
+  static const char* s_operation_names[];
+};
+
+/* \brief constructs the prototype */
+inline Boolean_operation* Boolean_operation::prototype()
+{ return new Boolean_operation(true); }
+
+/*! \brief clones. */
+inline Container* Boolean_operation::clone() { return new Boolean_operation(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Boolean_operation::get_tag() const { return s_tag; }
+
+/*! \brief obtains the operation. */
+inline Boolean_operation::Operation Boolean_operation::get_operation() const
+{ return m_operation; }
+
+/*! \brief sets the operation. */
+inline void Boolean_operation::set_operation(Operation operation)
+{ m_operation = operation; }
+
+/*! \brief obtains the 1st operand. */
+inline Boolean_operation::Shared_mesh_set Boolean_operation::get_operand1()
+  const
+{ return m_operand1; }
+
+/*! \brief sets the 1st operand. */
+inline void Boolean_operation::set_operand1(Shared_mesh_set operand)
+{ m_operand1 = operand; }
+
+/*! \brief obtains the 2nd operand. */
+inline Boolean_operation::Shared_mesh_set Boolean_operation::set_operand2()
+  const
+{ return m_operand2; }
+
+/*! \brief sets the 2nd operand. */
+inline void Boolean_operation::set_operand2(Shared_mesh_set operand)
+{ m_operand2 = operand; }
+ 
+SGAL_END_NAMESPACE
+
+#endif

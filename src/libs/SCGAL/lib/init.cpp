@@ -30,6 +30,7 @@
 #include <iostream>
 
 #include "SGAL/Container_factory.hpp"
+#include "SCGAL/Boolean_operation.hpp"
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_coord_array.hpp"
 #include "SCGAL/Exact_coord2_array.hpp"
@@ -85,6 +86,7 @@ SGAL_BEGIN_NAMESPACE
 
 void scgal_init()
 {
+  Container_factory::get_instance()->doregister(Boolean_operation::prototype());
   Container_factory::get_instance()->doregister(Polyhedron_geo::prototype());
   Container_factory::get_instance()->doregister(Exact_coord_array::prototype());
   Container_factory::get_instance()->doregister(Exact_coord2_array::prototype());

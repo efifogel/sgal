@@ -76,6 +76,7 @@ CPPSOURCES+= Quadric_geo.cpp
 CPPSOURCES+= Arrangement_on_quadric_geo.cpp
 endif
 
+CPPSOURCES+= Boolean_operation.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Polyhedron_geo.cpp
 CPPSOURCES+= Exact_coord_array.cpp
@@ -195,6 +196,7 @@ endif
 # Include:
 LCPPINCS = -I$(BASEDIR)
 LCPPINCS+= -I$(BASEDIR)/../include/primitives
+LCPPINCS+= -I$(BASEDIR)/../include/engines
 LCPPINCS+= -I$(BASEDIR)/../include/geo
 LCPPINCS+= -I$(BASEDIR)/../include/geometries
 LCPPINCS+= -I$(BASEDIR)/../include/engines
@@ -316,6 +318,7 @@ include $(MAKEDIR)/comp.mak
 include $(MAKEDIR)/targlib.mak
 
 vpath %.cpp $(BASEDIR)/geo
+vpath %.cpp $(BASEDIR)/engines
 vpath %.cpp $(BASEDIR)/geometries
 
 seg_std_double:
