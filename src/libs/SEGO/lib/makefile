@@ -21,8 +21,7 @@ include $(MAKEDIR)/scgaldef.mak
 BASETARGET =SEGO
 BASEINSTALLDIR =$(ROOT)
 
-CPPSOURCES =
-CPPSOURCES+= Ego.cpp
+CPPSOURCES = Ego.cpp
 CPPSOURCES+= Ego_brick.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Ego_voxelizer.cpp
