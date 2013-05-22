@@ -27,9 +27,11 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Ego_voxels_filler_base::s_prototype;
 
+const Int Ego_voxels_filler_base::s_def_offset = -1;
+
 /*! Constructor */
 Ego_voxels_filler_base::Ego_voxels_filler_base(Boolean proto)
-    : Node(proto) {}
+    : Node(proto), m_offset(s_def_offset) {}
 
 Ego_voxels_filler_base::~Ego_voxels_filler_base() {}
 

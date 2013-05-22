@@ -74,6 +74,8 @@ class SGAL_CLASSDEF Ego_voxels_filler_base : public Node {
   /*! The container prototype. */
   static Container_proto* s_prototype;
   
+  /*! Default values */
+  static const Int s_def_offset;
 };
 
 SGAL_END_NAMESPACE
