@@ -6,7 +6,7 @@ from pygame.locals import *
 
 pygame.init()
 
-screen = pygame.display.set_mode((640, 480))
+screen = pygame.display.set_mode((500, 500))
 pygame.display.set_caption('Monkey Fever')
 pygame.display.set_caption('בנה פסל משלך')
 
@@ -21,9 +21,11 @@ background = pygame.Surface(screen.get_size())
 background = background.convert()
 background.fill((250, 250, 250))
 
+text_color = (107,142,35)
+
 # Display some text
 font = pygame.font.Font(None, 36)
-text = font.render("Please pick your model:", 1, (10, 10, 10))
+text = font.render("Please pick your model:", 1, text_color)
 textpos = text.get_rect()
 textpos.centerx = background.get_rect().centerx
 background.blit(text, textpos)
@@ -34,7 +36,7 @@ pygame.display.flip()
 
 # Buttons
 button = Buttons.Button()
-button.create_button(screen, (107,142,35), 225, 135, 200, 100, 0, \
+button.create_button(screen, text_color, 100, 100, 300, 300, 0, \
                          "World Example", (255,255,255), model_image)
 pygame.display.flip()
 
