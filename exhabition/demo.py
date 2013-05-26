@@ -6,7 +6,7 @@ from pygame.locals import *
 
 pygame.init()
 
-screen = pygame.display.set_mode((500, 500))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('Monkey Fever')
 pygame.display.set_caption('בנה פסל משלך')
 
@@ -44,7 +44,10 @@ pygame.display.flip()
 def input(events): 
    for event in events: 
       if event.type == QUIT: 
-         sys.exit(0) 
+         sys.exit(0)
+      elif event.type == KEYUP:
+         if event.key == K_ESCAPE:
+            sys.exit(0)
       elif event.type == MOUSEBUTTONDOWN:
          if button.pressed(pygame.mouse.get_pos()):
              os.system("player ../data/ego/ego_geodesic_sphere_3_128.wrl")
