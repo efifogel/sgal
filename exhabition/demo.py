@@ -2,10 +2,12 @@
 
 import pygame, Buttons, sys, os
 from pygame.locals import *
-
+from multiprocessing import Process
 
 pygame.init()
 
+# todo: how to get current resolution?
+# screen = pygame.display.set_mode((640, 480))
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('Monkey Fever')
 pygame.display.set_caption('בנה פסל משלך')
@@ -40,6 +42,8 @@ button.create_button(screen, text_color, 100, 100, 300, 300, 0, \
                          "World Example", (255,255,255), model_image)
 pygame.display.flip()
 
+def player():
+   os.system("player ../data/ego/ego_geodesic_sphere_3_128.wrl")
 
 def input(events): 
    for event in events: 
@@ -50,8 +54,11 @@ def input(events):
             sys.exit(0)
       elif event.type == MOUSEBUTTONDOWN:
          if button.pressed(pygame.mouse.get_pos()):
-             os.system("player ../data/ego/ego_geodesic_sphere_3_128.wrl")
-
+            p = Process(target=player)
+            p.start()
+            pygame.display.toggle_fullscreen()
+            p.join()
+            pygame.display.toggle_fullscreen()
 
 while True: 
    input(pygame.event.get())
