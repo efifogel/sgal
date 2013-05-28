@@ -91,25 +91,12 @@ public:
 
   // virtual Attribute_list get_attributes();
   
+  /*! . */
+  void trigger_changed(Field_info* field_info);
+
   /*! Execute the engine. */
-  void execute(Field_info* field_info);
-
-protected:
-  /*! 1st operand. */
-  Shared_mesh_set m_operand1;
-
-  /*! 2nd operand. */
-  Shared_mesh_set m_operand2;
-
-  /*! Result. */
-  Shared_exact_polyhedron_geo m_result;
+  void execute();
   
-  /*! The operation. */
-  Operation m_operation;
-
-  /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const;
-
   /*! Obtain the operation. */
   Operation get_operation() const;
 
@@ -136,6 +123,22 @@ protected:
    */
   Shared_mesh_set set_operand2() const;
   
+protected:
+  /*! 1st operand. */
+  Shared_mesh_set m_operand1;
+
+  /*! 2nd operand. */
+  Shared_mesh_set m_operand2;
+
+  /*! Result. */
+  Shared_exact_polyhedron_geo m_result;
+  
+  /*! The operation. */
+  Operation m_operation;
+
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
+
 private:
   /*! Trigger of the engine that makes the engine excute. */
   Boolean m_trigger;
