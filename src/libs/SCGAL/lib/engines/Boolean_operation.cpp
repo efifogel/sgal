@@ -67,8 +67,12 @@ Boolean_operation::Boolean_operation(Boolean proto) :
 /*! Destructor */
 Boolean_operation::~Boolean_operation() {}
 
+/*! \brief . */
+void Boolean_operation::trigger_changed(Field_info* /* field_info */)
+{ execute(); }
+
 /*! \brief executes the engine. */
-void Boolean_operation::execute(Field_info* /* field_info */)
+void Boolean_operation::execute()
 {
   typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
   typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
@@ -168,7 +172,7 @@ void Boolean_operation::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
-    static_cast<Execution_function>(&Boolean_operation::execute);
+    static_cast<Execution_function>(&Boolean_operation::trigger_changed);
 
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           get_member_offset(&m_trigger),
