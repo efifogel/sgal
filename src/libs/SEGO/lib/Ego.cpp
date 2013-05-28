@@ -62,10 +62,10 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Touch_sensor.hpp"
-#include "SGAL/Route.hpp"
 
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
+#include "SCGAL/Boolean_operation.hpp"
 
 #include "SEGO/Ego.hpp"
 #include "SEGO/Ego_brick.hpp"
@@ -101,6 +101,7 @@ const Boolean Ego::s_def_space_filling(false);
 const Ego::Layer_visibility Ego::s_layer_x_visibility(LV_ALL);
 const Ego::Layer_visibility Ego::s_layer_y_visibility(LV_ALL);
 const Ego::Layer_visibility Ego::s_layer_z_visibility(LV_ALL);
+const Boolean Ego::s_def_smooth(false);
 
 /*! Style names */
 const char* Ego::s_style_names[] =
@@ -150,6 +151,7 @@ Ego::Ego(Boolean proto) :
   m_layer_y_visibility(LV_ALL),
   m_layer_z_visibility(LV_ALL),
   m_selection_id(0),
+  m_smooth(s_def_smooth),
   m_clean_colors_in_progress(false),
   m_start_brick(0),
   m_num_bricks(0)
@@ -159,28 +161,28 @@ Ego::Ego(Boolean proto) :
 Ego::~Ego() { clear(); }
 
 /*! \brief obtains the (const) polyhedron model. */
-const Polyhedron_geo* Ego::get_polyhedron_model() const
-{ return boost::get<Polyhedron_geo*>(m_model); }
+const Ego::Shared_polyhedron_geo Ego::get_polyhedron_model() const
+{ return boost::get<Shared_polyhedron_geo>(m_model); }
 
 /*! \brief obtains the (const) exact polyhedron model. */
-const Exact_polyhedron_geo* Ego::get_exact_polyhedron_model() const
-{ return boost::get<Exact_polyhedron_geo*>(m_model); }
+const Ego::Shared_exact_polyhedron_geo Ego::get_exact_polyhedron_model() const
+{ return boost::get<Shared_exact_polyhedron_geo>(m_model); }
 
 /*! \brief obtains the (const) geometry set model. */
-const Mesh_set* Ego::get_mesh_set_model() const
-{ return boost::get<Mesh_set*>(m_model); }
+const Ego::Shared_mesh_set Ego::get_mesh_set_model() const
+{ return boost::get<Shared_mesh_set>(m_model); }
 
 /*! \brief obtains the (non-const) polyhedron model. */
-Polyhedron_geo* Ego::get_polyhedron_model()
-{ return boost::get<Polyhedron_geo*>(m_model); }
+Ego::Shared_polyhedron_geo Ego::get_polyhedron_model()
+{ return boost::get<Shared_polyhedron_geo>(m_model); }
 
 /*! \brief obtains the (non-const) exact polyhedron model. */
-Exact_polyhedron_geo* Ego::get_exact_polyhedron_model()
-{ return boost::get<Exact_polyhedron_geo*>(m_model); }
+Ego::Shared_exact_polyhedron_geo Ego::get_exact_polyhedron_model()
+{ return boost::get<Shared_exact_polyhedron_geo>(m_model); }
 
 /*! \brief obtains the (non-const) geometry set model. */
-Mesh_set* Ego::get_mesh_set_model()
-{ return boost::get<Mesh_set*>(m_model); }
+Ego::Shared_mesh_set Ego::get_mesh_set_model()
+{ return boost::get<Shared_mesh_set>(m_model); }
 
 /*! \brief clear the parts */
 void Ego::clear_parts()
@@ -358,24 +360,24 @@ void Ego::set_attributes(Element* elem)
     Element::Shared_container cont = elem->get_value(cai);
 
     if (name == "model") {
-      boost::shared_ptr<Exact_polyhedron_geo> epoly =
+      Shared_exact_polyhedron_geo epoly =
         boost::dynamic_pointer_cast<Exact_polyhedron_geo>(cont);
       if (epoly != NULL) {
-        set_model(&*epoly);
+        set_model(epoly);
         elem->mark_delete(cai);
         continue;
       }
-      boost::shared_ptr<Polyhedron_geo> poly =
+      Shared_polyhedron_geo poly =
         boost::dynamic_pointer_cast<Polyhedron_geo>(cont);
       if (poly != NULL) {
-        set_model(&*poly);
+        set_model(poly);
         elem->mark_delete(cai);
         continue;
       }
-      boost::shared_ptr<Mesh_set> mesh =
+      Shared_mesh_set mesh =
         boost::dynamic_pointer_cast<Mesh_set>(cont);
       if (mesh->is_dirty()) mesh->clean();
-      set_model(&*mesh);
+      set_model(mesh);
       elem->mark_delete(cai);
       continue;
     }
@@ -535,10 +537,14 @@ void Ego::set_attributes(Element* elem)
       m_brick_types.resize(size);
 
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0 ; i < size ; i++) {
+      for (Uint i = 0; i < size; ++i) {
         svalue >> m_brick_types[i][0] >> m_brick_types[i][1]
                >> m_brick_types[i][2];
       }
+      elem->mark_delete(ai);
+    }
+    if (name == "smooth") {
+      set_smooth(compare_to_true(value));
       elem->mark_delete(ai);
     }
   }
@@ -712,6 +718,10 @@ void Ego::clean_parts()
               should_draw_knobs = true;
           }
         }
+        bool should_smooth = false;
+        if (m_smooth) {
+          should_smooth = true;
+        }
         Vector3f tmp;
         switch (m_style) {
          case STYLE_APPEARANCE:
@@ -720,7 +730,7 @@ void Ego::clean_parts()
            shape->set_override_blend_func(false);
            shape->set_appearance(m_appearance);
            tmp.sub(center, brick_center);
-           Shared_geometry geom =
+           Shared_mesh_set geom =
              create_geometry(num0, num1, should_draw_knobs, tmp);
            shape->set_geometry(geom);
           }
@@ -731,7 +741,7 @@ void Ego::clean_parts()
            m_dirty_colors = false;
            Shared_appearance app(create_random_appearance());
            shape->set_appearance(app);
-           Shared_geometry geom =
+           Shared_mesh_set geom =
              create_geometry(num0, num1, should_draw_knobs);
            shape->set_geometry(geom);
           }
@@ -748,9 +758,24 @@ void Ego::clean_parts()
            m_dirty_colors = true;
            shape->set_appearance(m_appearance);
            tmp.sub(center, brick_center);
-           Shared_geometry geom =
+           Shared_mesh_set geom =
              create_geometry(num0, num1, should_draw_knobs, tmp);
-           shape->set_geometry(geom);
+
+           if (should_smooth) {
+             boost::shared_ptr<Boolean_operation> bo(new Boolean_operation);
+             transform->add_child(bo);
+             SGAL_assertion(this->is_model_mesh_set());
+             bo->set_operand1(this->get_mesh_set_model());
+             bo->set_operand2(geom);
+             Field* src_field = bo->add_field(Boolean_operation::RESULT);
+             SGAL_assertion(src_field);
+             Field* dst_field = shape->add_field(Shape::GEOMETRY);
+             SGAL_assertion(dst_field);
+             src_field->connect(dst_field);
+             bo->execute();
+           }
+           else
+             shape->set_geometry(geom);
           }
           break;
           
@@ -1100,7 +1125,7 @@ void Ego::clean_colors()
 }
 
 /*! \brief creates the geometry of a brick. */
-Ego::Shared_geometry Ego::create_geometry(Uint num0, Uint num1,
+Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
                                           Boolean draw_knobs)
 {
   if (draw_knobs) {
@@ -1131,7 +1156,7 @@ Ego::Shared_geometry Ego::create_geometry(Uint num0, Uint num1,
 }
 
 /*! \brief creates the geometry of a brick. */
-Ego::Shared_geometry
+Ego::Shared_mesh_set
 Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs, Vector3f& center)
 {
   Shared_ego_brick ego_brick(new Ego_brick);
@@ -1406,6 +1431,9 @@ void Ego::set_knob_slices(Uint slices) { m_knob_slices = slices; }
 
 /*! \brief sets the flag that indicates whether the parts are space filling. */
 void Ego::set_space_filling(Boolean flag) { m_space_filling = flag; }
+
+/*! \brief sets the flag that indicates whether the parts are smooth. */
+void Ego::set_smooth(Boolean flag) { m_smooth = flag; }
 
 /*! \brief determines whether a given brick is visible with respect to a 
  * specific layer.

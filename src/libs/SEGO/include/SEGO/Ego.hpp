@@ -62,10 +62,12 @@ class Ego_voxels_filler_base;
 
 class SGAL_CLASSDEF Ego : public Transform {
 public:
-  typedef boost::shared_ptr<Appearance>         Shared_appearance;
-  typedef boost::shared_ptr<Material>           Shared_material;
-  typedef boost::shared_ptr<Geometry>           Shared_geometry;
-  typedef boost::shared_ptr<Ego_brick>          Shared_ego_brick;
+  typedef boost::shared_ptr<Appearance>           Shared_appearance;
+  typedef boost::shared_ptr<Material>             Shared_material;
+  typedef boost::shared_ptr<Mesh_set>             Shared_mesh_set;
+  typedef boost::shared_ptr<Ego_brick>            Shared_ego_brick;
+  typedef boost::shared_ptr<Polyhedron_geo>       Shared_polyhedron_geo;
+  typedef boost::shared_ptr<Exact_polyhedron_geo> Shared_exact_polyhedron_geo;
   
   enum {
     FIRST = Transform::LAST - 1,
@@ -90,6 +92,7 @@ public:
     LAYER_Z_VISIBILITY,
     BRICK_TYPES,
     SELECTION_ID,
+    SMOOTH,
     LAST
   };
 
@@ -153,11 +156,11 @@ public:
                                       Uint luminosity_key);
   
   /*! Create the geometry of a brick. */
-  Shared_geometry create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
+  Shared_mesh_set create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
                                   Vector3f& center);
   
   /*! Create the geometry of a brick. */
-  Shared_geometry create_geometry(Uint num0, Uint num1, Boolean draw_knobs);
+  Shared_mesh_set create_geometry(Uint num0, Uint num1, Boolean draw_knobs);
 
   /*! Clean the voxels. */
   void clean_voxels();
@@ -205,39 +208,39 @@ public:
   /*! Set the model.
    * \param model the model.
    */
-  void set_model(Polyhedron_geo* model);
-  void set_model(Exact_polyhedron_geo* model);
-  void set_model(Mesh_set* model);
+  void set_model(Shared_polyhedron_geo model);
+  void set_model(Shared_exact_polyhedron_geo model);
+  void set_model(Shared_mesh_set model);
 
   /*! Obtain the (const) polyhedron model.
    * \return the model.
    */
-  const Polyhedron_geo* get_polyhedron_model() const;
+  const Shared_polyhedron_geo get_polyhedron_model() const;
 
   /*! Obtain the (non-const) polyhedron model.
    * \return the model.
    */
-  Polyhedron_geo* get_polyhedron_model();
+  Shared_polyhedron_geo get_polyhedron_model();
   
   /*! Obtain the (const) exact polyhedron model.
    * \return the model.
    */
-  const Exact_polyhedron_geo* get_exact_polyhedron_model() const;
+  const Shared_exact_polyhedron_geo get_exact_polyhedron_model() const;
 
   /*! Obtain the (non-const) exact polyhedron model.
    * \return the model.
    */
-  Exact_polyhedron_geo* get_exact_polyhedron_model();
+  Shared_exact_polyhedron_geo get_exact_polyhedron_model();
 
   /*! Obtain the (const) geometry-set model.
    * \return the model.
    */
-  const Mesh_set* get_mesh_set_model() const;
+  const Shared_mesh_set get_mesh_set_model() const;
 
   /*! Obtain the (non-const) geometry-set model.
    * \return the model.
    */
-  Mesh_set* get_mesh_set_model();
+  Shared_mesh_set get_mesh_set_model();
 
   /*! Set the horizontal width of the voxel */
   void set_voxel_width(Float voxel_width);
@@ -374,6 +377,12 @@ public:
   /*! Set the layer-z visibility scheme. */
   void set_layer_z_visibility(Layer_visibility layer_visibility);
   
+  /*! Determine whether the parts are smooth. */
+  Boolean is_smooth() const;
+
+  /*! Set the flag that indicates whether the parts are smooth. */
+  void set_smooth(Boolean flag);
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
@@ -386,7 +395,8 @@ protected:
   Boolean is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index);
   
   /*! The segments */
-  boost::variant<Polyhedron_geo*, Exact_polyhedron_geo*, Mesh_set*> m_model;
+  boost::variant<Shared_polyhedron_geo, Shared_exact_polyhedron_geo,
+                 Shared_mesh_set> m_model;
 
   /*! Find a child of certain type */
   template <class T>
@@ -513,6 +523,9 @@ protected:
   /*! A sorted vector of voxel signatures. */
   Voxel_signatures m_voxel_signatures;
 
+  /*! Indicates whether the parts are smooth. */
+  Boolean m_smooth;
+  
 private:
   /*! Indicates whether cleaning the color parts is in progress. 
    * Upon invocation of clean_parts(), if this flag is on, the function
@@ -557,6 +570,7 @@ private:
   static const Layer_visibility s_layer_x_visibility;
   static const Layer_visibility s_layer_y_visibility;
   static const Layer_visibility s_layer_z_visibility;
+  static const Boolean s_def_smooth;
 };
 
 /* \brief constructs the prototype. */
@@ -567,20 +581,20 @@ inline Container* Ego::clone() { return new Ego(); }
 
 /*! \brief determines whether the type of the model is 'Polyhedron'. */
 inline Boolean Ego::is_model_polyhedron() const
-{  return (boost::get<Polyhedron_geo*> (&m_model) != NULL); }
+{  return (boost::get<Shared_polyhedron_geo>(&m_model)); }
 
 /*! \brief determines whether the type of the model is 'Exact_polyhedron'. */
 inline Boolean Ego::is_model_exact_polyhedron() const
-{ return (boost::get<Exact_polyhedron_geo*> (&m_model) != NULL); }
+{ return (boost::get<Shared_exact_polyhedron_geo>(&m_model)); }
 
 /*! \brief determines whether the base type of the model is 'Get_set'. */
 inline Boolean Ego::is_model_mesh_set() const
-{ return (boost::get<Mesh_set*> (&m_model) != NULL); }
+{ return (boost::get<Shared_mesh_set>(&m_model)); }
 
 /*! \brief sets the model. */
-inline void Ego::set_model(Polyhedron_geo* model) { m_model = model; }
-inline void Ego::set_model(Exact_polyhedron_geo* model) { m_model = model; }
-inline void Ego::set_model(Mesh_set* model) { m_model = model; }
+inline void Ego::set_model(Shared_polyhedron_geo model) { m_model = model; }
+inline void Ego::set_model(Shared_exact_polyhedron_geo model) { m_model = model; }
+inline void Ego::set_model(Shared_mesh_set model) { m_model = model; }
 
 /*! \brief obtains the (const) appearance. */
 inline const Ego::Shared_appearance Ego::get_appearance() const
@@ -694,6 +708,9 @@ inline void Ego::set_layer_z_visibility(Layer_visibility layer_visibility)
   
 /*! \brief obtains the tag (type) of the container */
 inline const std::string& Ego::get_tag() const { return s_tag; }
+
+/*! \brief determines whether the parts are smooth. */
+inline Boolean Ego::is_smooth() const { return m_smooth; }
 
 SGAL_END_NAMESPACE
 

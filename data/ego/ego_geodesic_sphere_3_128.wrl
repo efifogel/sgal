@@ -10,8 +10,8 @@ ColorBackground {
 NavigationInfo { type [ "EXAMINE" "ANY" ] }
 DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
 DEF EGO_VIEW Viewpoint {
-  type "ORTHOGONAL"
-  fieldOfView 3.14066
+#   type "ORTHOGONAL"
+#   fieldOfView 3.14066
 }
 DEF MODEL_VIEW Viewpoint {
 #   type "ORTHOGONAL"
@@ -93,7 +93,7 @@ Transform {
 		  appearance Appearance {
 		    material Material {}
 		  }
-		  geometry DEF MODEL Polyhedron {
+		  geometry DEF MODEL IndexedFaceSet {
 		    coord Coordinate {
 		      point [
 			     .2764 -.4472 .8507,
@@ -622,14 +622,16 @@ Transform {
 	      }
 	      # style "appearance"
 	      style "discreteCubeMap"
-	      colorSpace "RGB"
+	      pcolorSpace "RGB"
+	      # smooth TRUE
 	      scale 200 200 200
+	      # scale 60 60 60
 	      model USE MODEL
 	      knobSlices 16
 	      spaceFilling TRUE
 	      # layerXVisibility "notAbove"
 	      # layerYVisibility "notAbove"
-	      layerZVisibility "notAbove"
+	      # layerZVisibility "notAbove"
 	      brickTypes [
 			  # 2, 4, 1, 
 			  # 4, 2, 1,
