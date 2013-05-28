@@ -623,7 +623,7 @@ Transform {
 	      # style "appearance"
 	      style "discreteCubeMap"
 	      pcolorSpace "RGB"
-	      # smooth TRUE
+	      smooth TRUE
 	      scale 200 200 200
 	      # scale 60 60 60
 	      model USE MODEL
