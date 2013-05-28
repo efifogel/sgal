@@ -159,16 +159,16 @@ public:
   void set_coord_indices(const Array<Uint>& indices);
   
   /*! Obtain the coordinate array. */
-  Shared_coord_array get_coord_array();
+  virtual Shared_coord_array get_coord_array();
 
   /*! Obtain the normal array. */
-  Shared_normal_array get_normal_array();
+  virtual Shared_normal_array get_normal_array();
 
   /*! Obtain the texture-coordinate array. */
-  Shared_tex_coord_array get_tex_coord_array();
+  virtual Shared_tex_coord_array get_tex_coord_array();
 
   /*! Obtain the coord-index array. */
-  Array<Uint>& get_coord_indices();
+  virtual Array<Uint>& get_coord_indices();
 
 protected:
   friend class Ego;

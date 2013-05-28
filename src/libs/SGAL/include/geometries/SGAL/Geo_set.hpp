@@ -148,7 +148,7 @@ public:
   /*! Obtain the (non-const) coordinate array.
    * \return the coordinate array.
    */
-  Shared_coord_array get_coord_array();
+  virtual Shared_coord_array get_coord_array();
 
   /*! Set the normal array.
    * \param normal_array (in) the normal array.
@@ -163,7 +163,7 @@ public:
   /*! Obtain the (non-const) normal array.
    * \return the normal array.
    */
-  Shared_normal_array get_normal_array();
+  virtual Shared_normal_array get_normal_array();
 
   /*! Set the texture-coordinate array.
    * \param tex_coord_array (in) the texture coordinate array.
@@ -178,7 +178,7 @@ public:
   /*! Obtain the (non-const) texture-coordinate array.
    * \return the texture-coordinate array.
    */
-  Shared_tex_coord_array get_tex_coord_array();
+  virtual Shared_tex_coord_array get_tex_coord_array();
 
   /*! Set the color field.
    * \param color_array (in) a pointer to a color array
@@ -208,7 +208,7 @@ public:
   /*! Obtain the (non-const) coordinate-index array.
    * \return the coordinate-index array.
    */
-  Array<Uint>& get_coord_indices();
+  virtual Array<Uint>& get_coord_indices();
 
   /*! Set the color-index array.
    * \param indices (in)

@@ -125,7 +125,7 @@ public:
   Boolean are_indices_flat() const;
 
   /*! Obtain the coord-index array. */
-  Array<Uint>& get_coord_indices();
+  virtual Array<Uint>& get_coord_indices();
 
 protected:
   /*! Indicates whether the mesh must be cleaned. */
