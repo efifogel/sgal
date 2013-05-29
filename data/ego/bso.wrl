@@ -16,11 +16,6 @@ ColorBackground {
 #   positionTranslation 0.4 0 0
 # }
 DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
-DEF ROBOT_NAVIGATION NavigationInfo {
-  type [ "TRANSFORM" ]
-  translation 3 0 0
-  rotation 1 -1 0 0.5
-}
 
 Transform {
   rotation 1 -1 0 0.3
