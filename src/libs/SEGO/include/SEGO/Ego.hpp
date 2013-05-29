@@ -156,11 +156,16 @@ public:
                                       Uint luminosity_key);
   
   /*! Create the geometry of a brick. */
-  Shared_mesh_set create_geometry(Uint num0, Uint num1, Boolean draw_knobs,
+  Shared_mesh_set create_geometry(Uint num0, Uint num1,
+                                  Boolean draw_knobs, Boolean watertight,
                                   Vector3f& center);
   
   /*! Create the geometry of a brick. */
-  Shared_mesh_set create_geometry(Uint num0, Uint num1, Boolean draw_knobs);
+  Shared_mesh_set create_geometry(Uint num0, Uint num1,
+                                  Boolean draw_knobs, Boolean watertight);
+
+  /*! Clean the transformed model. */
+  void clean_model();
 
   /*! Clean the voxels. */
   void clean_voxels();
@@ -190,58 +195,21 @@ public:
    */
   Boolean is_empty();
 
-  /*! Determine whether the type of the model is 'Polyhedron'.
-   * \return true if the type of the model is 'Polyhedron'.
-   */
-  Boolean is_model_polyhedron() const;
-
-  /*! Determine whether the type of the model is 'Exact_polyhedron'.
-   * \return true if the type of the model is 'Exact_polyhedron'.
-   */
-  Boolean is_model_exact_polyhedron() const;
-
-  /*! Determine whether the base type of the model is 'Get_set'.
-   * \return true if the base type of the model is 'Get_set'.
-   */
-  Boolean is_model_mesh_set() const;
-
   /*! Set the model.
    * \param model the model.
    */
-  void set_model(Shared_polyhedron_geo model);
-  void set_model(Shared_exact_polyhedron_geo model);
   void set_model(Shared_mesh_set model);
 
-  /*! Obtain the (const) polyhedron model.
+  /*! Obtain the (const) model.
    * \return the model.
    */
-  const Shared_polyhedron_geo get_polyhedron_model() const;
+  const Shared_mesh_set get_model() const;
 
-  /*! Obtain the (non-const) polyhedron model.
+  /*! Obtain the (non-const) model.
    * \return the model.
    */
-  Shared_polyhedron_geo get_polyhedron_model();
+  Shared_mesh_set get_model();
   
-  /*! Obtain the (const) exact polyhedron model.
-   * \return the model.
-   */
-  const Shared_exact_polyhedron_geo get_exact_polyhedron_model() const;
-
-  /*! Obtain the (non-const) exact polyhedron model.
-   * \return the model.
-   */
-  Shared_exact_polyhedron_geo get_exact_polyhedron_model();
-
-  /*! Obtain the (const) geometry-set model.
-   * \return the model.
-   */
-  const Shared_mesh_set get_mesh_set_model() const;
-
-  /*! Obtain the (non-const) geometry-set model.
-   * \return the model.
-   */
-  Shared_mesh_set get_mesh_set_model();
-
   /*! Set the horizontal width of the voxel */
   void set_voxel_width(Float voxel_width);
 
@@ -394,10 +362,12 @@ protected:
    */
   Boolean is_visible(Layer_visibility lv, Uint layer_index, Uint brick_index);
   
-  /*! The segments */
-  boost::variant<Shared_polyhedron_geo, Shared_exact_polyhedron_geo,
-                 Shared_mesh_set> m_model;
+  /*! The input model. */
+  Shared_mesh_set m_model;
 
+  /*! The transformed model. */
+  Shared_mesh_set m_transformed_model;
+  
   /*! Find a child of certain type */
   template <class T>
   T* find() {
@@ -447,6 +417,8 @@ protected:
   Boolean m_dirty_appearance;
 
   /*! Indicates whether the data structure must be cleaned */
+  Boolean m_dirty_model;
+  
   Boolean m_dirty_voxels;
 
   Boolean m_dirty_tiling;
@@ -579,21 +551,7 @@ inline Ego* Ego::prototype() { return new Ego(true); }
 /*! \brief clones. */
 inline Container* Ego::clone() { return new Ego(); }
 
-/*! \brief determines whether the type of the model is 'Polyhedron'. */
-inline Boolean Ego::is_model_polyhedron() const
-{  return (boost::get<Shared_polyhedron_geo>(&m_model)); }
-
-/*! \brief determines whether the type of the model is 'Exact_polyhedron'. */
-inline Boolean Ego::is_model_exact_polyhedron() const
-{ return (boost::get<Shared_exact_polyhedron_geo>(&m_model)); }
-
-/*! \brief determines whether the base type of the model is 'Get_set'. */
-inline Boolean Ego::is_model_mesh_set() const
-{ return (boost::get<Shared_mesh_set>(&m_model)); }
-
 /*! \brief sets the model. */
-inline void Ego::set_model(Shared_polyhedron_geo model) { m_model = model; }
-inline void Ego::set_model(Shared_exact_polyhedron_geo model) { m_model = model; }
 inline void Ego::set_model(Shared_mesh_set model) { m_model = model; }
 
 /*! \brief obtains the (const) appearance. */

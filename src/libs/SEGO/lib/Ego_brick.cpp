@@ -61,6 +61,7 @@ const Float Ego_brick::s_def_knob_height(1.8);
 const Float Ego_brick::s_def_tolerance(0.1);
 const Uint Ego_brick::s_def_knob_slices(32);
 const Boolean Ego_brick::s_def_knobs_visible(true);
+const Boolean Ego_brick::s_def_watertight(false);
 
 REGISTER_TO_FACTORY(Ego_brick, "Ego_brick");
 
@@ -76,6 +77,7 @@ Ego_brick::Ego_brick(Boolean proto) :
   m_tolerance(s_def_tolerance),
   m_knob_slices(s_def_knob_slices),
   m_knobs_visible(s_def_knobs_visible),
+  m_watertight(s_def_watertight),
   m_dirty_center(true),
   m_dirty_coords(true)
 {}
@@ -142,11 +144,18 @@ void Ego_brick::clean_coords()
   m_dirty_indices = true;
   
   // Compute size:
-  Uint size = 4 * 6;
-  if (m_knobs_visible) {  
-    Uint points_per_knob = 1 + m_knob_slices * 3;
-    Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
-    size += points_per_knob * num_knobs;
+  Uint size;
+  if (m_watertight) {
+    size = 8;
+    SGAL_assertion(!m_knobs_visible);
+  }
+  else {
+    size = 4 * 6;
+    if (m_knobs_visible) {  
+      Uint points_per_knob = 1 + m_knob_slices * 3;
+      Uint num_knobs = m_number_of_knobs1 * m_number_of_knobs2;
+      size += points_per_knob * num_knobs;
+    }
   }
   
   if (m_coord_array) m_coord_array->resize(size);
@@ -166,41 +175,56 @@ void Ego_brick::clean_coords()
   Uint k = 0;
 
   // Box
-  // Left
-  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
-  (*m_coord_array)[k++].set(base_x, base_y, base_z);
-  (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+  if (m_watertight) {
+    // Bottom
+    (*m_coord_array)[k++].set(base_x, base_y, base_z);
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
 
-  // Right
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+    // Top
+    (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+  }
+  else {
+    // Left
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+    (*m_coord_array)[k++].set(base_x, base_y, base_z);
+    (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
 
-  // Near
-  (*m_coord_array)[k++].set(base_x, base_y, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+    // Right
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
 
-  // Far
-  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
-  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
-  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+    // Near
+    (*m_coord_array)[k++].set(base_x, base_y, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
 
-  // Bottom
-  (*m_coord_array)[k++].set(base_x, base_y, base_z);
-  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+    // Far
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
 
-  // Top
-  (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
-  (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+    // Bottom
+    (*m_coord_array)[k++].set(base_x, base_y, base_z);
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z);
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z);
+
+    // Top
+    (*m_coord_array)[k++].set(base_x, base_y, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x + width, base_y, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x + width, base_y + depth, base_z + m_height);
+    (*m_coord_array)[k++].set(base_x, base_y + depth, base_z + m_height);
+  }
 
   // Knobs:
   if (!m_knobs_visible) return;
@@ -248,36 +272,69 @@ void Ego_brick::clean_indices()
   Uint num_indices = m_num_primitives * 3;
   m_coord_indices.resize(num_indices);
 
-  // Left
-  m_coord_indices[k++] = 0;  m_coord_indices[k++] = 1;
-  m_coord_indices[k++] = 2;  m_coord_indices[k++] = 0;
-  m_coord_indices[k++] = 2;  m_coord_indices[k++] = 3;
+  if (m_watertight) {
+    // Left
+    m_coord_indices[k++] = 0; m_coord_indices[k++] = 4;
+    m_coord_indices[k++] = 5; m_coord_indices[k++] = 5;
+    m_coord_indices[k++] = 1; m_coord_indices[k++] = 0;
 
-  // Right
-  m_coord_indices[k++] = 4;  m_coord_indices[k++] = 5;
-  m_coord_indices[k++] = 6;  m_coord_indices[k++] = 4;
-  m_coord_indices[k++] = 6;  m_coord_indices[k++] = 7;
+    // Right
+    m_coord_indices[k++] = 2; m_coord_indices[k++] = 3;
+    m_coord_indices[k++] = 7; m_coord_indices[k++] = 7;
+    m_coord_indices[k++] = 6; m_coord_indices[k++] = 2;
 
-  // Near
-  m_coord_indices[k++] = 8;  m_coord_indices[k++] = 9;
-  m_coord_indices[k++] = 10; m_coord_indices[k++] = 8;
-  m_coord_indices[k++] = 10; m_coord_indices[k++] = 11;
+    // Near
+    m_coord_indices[k++] = 0; m_coord_indices[k++] = 2;
+    m_coord_indices[k++] = 6; m_coord_indices[k++] = 6;
+    m_coord_indices[k++] = 4; m_coord_indices[k++] = 0;
 
-  // Far
-  m_coord_indices[k++] = 12; m_coord_indices[k++] = 13;
-  m_coord_indices[k++] = 14; m_coord_indices[k++] = 12;
-  m_coord_indices[k++] = 14; m_coord_indices[k++] = 15;
+    // Far
+    m_coord_indices[k++] = 1; m_coord_indices[k++] = 5;
+    m_coord_indices[k++] = 7; m_coord_indices[k++] = 7;
+    m_coord_indices[k++] = 3; m_coord_indices[k++] = 1;
 
-  // Bottom
-  m_coord_indices[k++] = 16; m_coord_indices[k++] = 17;
-  m_coord_indices[k++] = 18; m_coord_indices[k++] = 16;
-  m_coord_indices[k++] = 18; m_coord_indices[k++] = 19;
+    // Bottom
+    m_coord_indices[k++] = 0; m_coord_indices[k++] = 1;
+    m_coord_indices[k++] = 3; m_coord_indices[k++] = 3;
+    m_coord_indices[k++] = 2; m_coord_indices[k++] = 0;
 
-  // top
-  m_coord_indices[k++] = 20; m_coord_indices[k++] = 21;
-  m_coord_indices[k++] = 22; m_coord_indices[k++] = 20;
-  m_coord_indices[k++] = 22; m_coord_indices[k++] = 23;
+    // top
+    m_coord_indices[k++] = 4; m_coord_indices[k++] = 6;
+    m_coord_indices[k++] = 7; m_coord_indices[k++] = 7;
+    m_coord_indices[k++] = 5; m_coord_indices[k++] = 4;
+  }
+  else {
+    // Left
+    m_coord_indices[k++] = 0;  m_coord_indices[k++] = 1;
+    m_coord_indices[k++] = 2;  m_coord_indices[k++] = 0;
+    m_coord_indices[k++] = 2;  m_coord_indices[k++] = 3;
 
+    // Right
+    m_coord_indices[k++] = 4;  m_coord_indices[k++] = 5;
+    m_coord_indices[k++] = 6;  m_coord_indices[k++] = 4;
+    m_coord_indices[k++] = 6;  m_coord_indices[k++] = 7;
+
+    // Near
+    m_coord_indices[k++] = 8;  m_coord_indices[k++] = 9;
+    m_coord_indices[k++] = 10; m_coord_indices[k++] = 8;
+    m_coord_indices[k++] = 10; m_coord_indices[k++] = 11;
+
+    // Far
+    m_coord_indices[k++] = 12; m_coord_indices[k++] = 13;
+    m_coord_indices[k++] = 14; m_coord_indices[k++] = 12;
+    m_coord_indices[k++] = 14; m_coord_indices[k++] = 15;
+
+    // Bottom
+    m_coord_indices[k++] = 16; m_coord_indices[k++] = 17;
+    m_coord_indices[k++] = 18; m_coord_indices[k++] = 16;
+    m_coord_indices[k++] = 18; m_coord_indices[k++] = 19;
+
+    // top
+    m_coord_indices[k++] = 20; m_coord_indices[k++] = 21;
+    m_coord_indices[k++] = 22; m_coord_indices[k++] = 20;
+    m_coord_indices[k++] = 22; m_coord_indices[k++] = 23;
+  }
+  
   // Knobs:
   if (!m_knobs_visible) {
     SGAL_assertion(num_indices = k);
@@ -318,10 +375,10 @@ void Ego_brick::clean_indices()
 /*! \brief cleans the normals. */
 void Ego_brick::clean_normals()
 {
-  SGAL_assertion(m_coord_array);
-  if (m_normal_array) m_normal_array->resize(m_coord_array->size());
+  Uint size = (m_watertight) ? 4 * 6 : m_coord_array->size(); 
+  if (m_normal_array) m_normal_array->resize(size);
   else {
-    m_normal_array.reset(new Normal_array(m_coord_array->size()));
+    m_normal_array.reset(new Normal_array(size));
     SGAL_assertion(m_normal_array);
   }
 
@@ -379,18 +436,159 @@ void Ego_brick::clean_normals()
 /*! \brief cleans the texture_coordinates. */
 void Ego_brick::clean_tex_coords()
 {
-  SGAL_assertion(m_coord_array);
-  if (m_tex_coord_array) m_tex_coord_array->resize(m_coord_array->size());
+  Uint size = (m_watertight) ? 4 * 6 : m_coord_array->size(); 
+  if (m_tex_coord_array) m_tex_coord_array->resize(size);
   else {
-    m_tex_coord_array.reset(new Tex_coord_array_3d(m_coord_array->size()));
+    m_tex_coord_array.reset(new Tex_coord_array_3d(size));
     SGAL_assertion(m_tex_coord_array);
   }
   Tex_coord_array_3d* tex_coord_array =
     static_cast<Tex_coord_array_3d*>(&*m_tex_coord_array);
     
-  for (Uint k = 0; k < tex_coord_array->size(); ++k) {
-    (*tex_coord_array)[k].sub((*m_coord_array)[k], m_center);
-    (*tex_coord_array)[k].normalize();
+  if (m_watertight) {
+    // Corner points:
+    Float width = m_pitch * m_number_of_knobs1;
+    Float depth = m_pitch * m_number_of_knobs2;
+    Float height = m_height + m_knob_height;
+    Float base_x = width * -0.5f;
+    Float base_y = depth * -0.5f;
+    Float base_z = height * -0.5f;
+
+    Uint k = 0;
+    Vector3f* coord;
+    
+    // Left
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y + depth, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+      
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y + depth, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    // Right
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y + depth, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y + depth, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    // Near
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    // Far
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y + depth, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y + depth, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y + depth, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y + depth, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    // Bottom
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y + depth, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y + depth, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y, base_z);
+    coord->sub(m_center);
+    coord->normalize();
+
+    // Top
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x + width, base_y + depth, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+
+    coord = &(*tex_coord_array)[k++];
+    coord->set(base_x, base_y + depth, base_z + m_height);
+    coord->sub(m_center);
+    coord->normalize();
+  }
+  else {
+    SGAL_assertion(m_coord_array);
+    for (Uint k = 0; k < tex_coord_array->size(); ++k) {
+      (*tex_coord_array)[k].sub((*m_coord_array)[k], m_center);
+      (*tex_coord_array)[k].normalize();
+    }
   }
 
   m_dirty_tex_coords = false;  
@@ -450,6 +648,11 @@ void Ego_brick::set_attributes(Element* elem)
     }
     if (name == "knobsVisible") {
       set_knobs_visible(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    } 
+    if (name == "watertight") {
+      set_watertight(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     } 

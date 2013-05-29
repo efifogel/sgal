@@ -135,6 +135,7 @@ Ego::Ego(Boolean proto) :
   m_offset_between_rows(s_def_offset_between_rows),
   m_tiling_rows_direction(s_def_tiling_rows_direction),
   m_dirty_appearance(true),
+  m_dirty_model(true),
   m_dirty_voxels(true),
   m_dirty_tiling(true),
   m_dirty_parts(true),
@@ -159,30 +160,6 @@ Ego::Ego(Boolean proto) :
 
 /*! Destructor */
 Ego::~Ego() { clear(); }
-
-/*! \brief obtains the (const) polyhedron model. */
-const Ego::Shared_polyhedron_geo Ego::get_polyhedron_model() const
-{ return boost::get<Shared_polyhedron_geo>(m_model); }
-
-/*! \brief obtains the (const) exact polyhedron model. */
-const Ego::Shared_exact_polyhedron_geo Ego::get_exact_polyhedron_model() const
-{ return boost::get<Shared_exact_polyhedron_geo>(m_model); }
-
-/*! \brief obtains the (const) geometry set model. */
-const Ego::Shared_mesh_set Ego::get_mesh_set_model() const
-{ return boost::get<Shared_mesh_set>(m_model); }
-
-/*! \brief obtains the (non-const) polyhedron model. */
-Ego::Shared_polyhedron_geo Ego::get_polyhedron_model()
-{ return boost::get<Shared_polyhedron_geo>(m_model); }
-
-/*! \brief obtains the (non-const) exact polyhedron model. */
-Ego::Shared_exact_polyhedron_geo Ego::get_exact_polyhedron_model()
-{ return boost::get<Shared_exact_polyhedron_geo>(m_model); }
-
-/*! \brief obtains the (non-const) geometry set model. */
-Ego::Shared_mesh_set Ego::get_mesh_set_model()
-{ return boost::get<Shared_mesh_set>(m_model); }
 
 /*! \brief clear the parts */
 void Ego::clear_parts()
@@ -243,6 +220,7 @@ void Ego::clear()
   if (m_owned_parts) clear_parts();
   
   m_dirty_sphere_bound = true;
+  m_dirty_model = true;
   m_dirty_voxels = true;
   m_dirty_tiling = true;
   m_dirty_visibility = true;
@@ -360,24 +338,8 @@ void Ego::set_attributes(Element* elem)
     Element::Shared_container cont = elem->get_value(cai);
 
     if (name == "model") {
-      Shared_exact_polyhedron_geo epoly =
-        boost::dynamic_pointer_cast<Exact_polyhedron_geo>(cont);
-      if (epoly != NULL) {
-        set_model(epoly);
-        elem->mark_delete(cai);
-        continue;
-      }
-      Shared_polyhedron_geo poly =
-        boost::dynamic_pointer_cast<Polyhedron_geo>(cont);
-      if (poly != NULL) {
-        set_model(poly);
-        elem->mark_delete(cai);
-        continue;
-      }
-      Shared_mesh_set mesh =
-        boost::dynamic_pointer_cast<Mesh_set>(cont);
-      if (mesh->is_dirty()) mesh->clean();
-      set_model(mesh);
+      Shared_mesh_set model = boost::dynamic_pointer_cast<Mesh_set>(cont);
+      set_model(model);
       elem->mark_delete(cai);
       continue;
     }
@@ -556,6 +518,42 @@ void Ego::set_attributes(Element* elem)
 /*! \brief determines whether the representation empty */
 Boolean Ego::is_empty() { return true; }
 
+/*! \brief cleans the transformed model. */
+void Ego::clean_model()
+{
+  m_dirty_model = false;
+  m_dirty_voxels = true;
+
+  Shared_polyhedron_geo pg =
+    boost::dynamic_pointer_cast<Polyhedron_geo>(m_model);
+  if (pg) m_transformed_model.reset(new Polyhedron_geo);
+  else {
+    Shared_exact_polyhedron_geo epg =
+      boost::dynamic_pointer_cast<Exact_polyhedron_geo>(m_model);
+    if (epg) m_transformed_model.reset(new Exact_polyhedron_geo);
+    else {
+      boost::shared_ptr<Indexed_face_set> ifs =
+        boost::dynamic_pointer_cast<Indexed_face_set>(m_model);
+      if (ifs) m_transformed_model.reset(new Indexed_face_set);
+      else SGAL_error();
+    }
+  }
+
+  // Transform the model
+  boost::shared_ptr<Coord_array> coords = m_model->get_coord_array();
+
+  boost::shared_ptr<Coord_array>
+    transformed_coords(new Coord_array(coords->size()));
+  m_transformed_model->set_coord_array(transformed_coords);
+  for (Uint i = 0; i < coords->size(); ++i)
+    (*transformed_coords)[i].xform_pt((*coords)[i], get_matrix());
+  
+  m_transformed_model->set_coord_indices(m_model->get_coord_indices());
+  m_transformed_model->set_num_primitives(m_model->get_num_primitives());
+  m_transformed_model->set_primitive_type(m_model->get_primitive_type());
+  m_transformed_model->set_indices_flat(m_model->are_indices_flat());
+}
+
 /*! \brief clean the voxels */
 void Ego::clean_voxels()
 {
@@ -564,19 +562,21 @@ void Ego::clean_voxels()
 
   Ego_voxelizer voxelize(m_voxel_length, m_voxel_width, m_voxel_height);
 
+  Matrix4f dummy;
   m_voxels = Ego_voxels(); // Clear - should we make a func?
-  if (this->is_model_polyhedron())
-    m_voxels_center = 
-      voxelize(this->get_polyhedron_model()->get_polyhedron(),
-               get_matrix(), &m_voxels);
-  else if (this->is_model_exact_polyhedron())
-    m_voxels_center = 
-      voxelize(this->get_exact_polyhedron_model()->get_polyhedron(),
-               get_matrix(), &m_voxels);
-  else if (this->is_model_mesh_set())
-    m_voxels_center = 
-      voxelize(*(this->get_mesh_set_model()), get_matrix(), &m_voxels);
-
+  Shared_polyhedron_geo pg =
+    boost::dynamic_pointer_cast<Polyhedron_geo>(m_transformed_model);
+  if (pg)
+    m_voxels_center = voxelize(pg->get_polyhedron(), dummy, &m_voxels);
+  else {
+    Shared_exact_polyhedron_geo epg =
+      boost::dynamic_pointer_cast<Exact_polyhedron_geo>(m_transformed_model);
+    if (epg)
+      m_voxels_center = voxelize(epg->get_polyhedron(), dummy, &m_voxels);
+    else
+      m_voxels_center = voxelize(*m_transformed_model, dummy, &m_voxels);
+  }
+  
   if (!m_filler) {
     m_filler = new Ego_voxels_filler();
     m_owned_filler = true;
@@ -628,7 +628,7 @@ void Ego::clean_parts()
   origin.add_scaled(center, -0.5f, box);
 
   m_start_brick = children_size();
-  
+
   for (std::size_t i = 0; i < size.get<0>(); ++i) {
     for (std::size_t j = 0; j < size.get<1>(); ++j) {
       for (std::size_t k = 0; k < size.get<2>(); ++k) {
@@ -708,19 +708,21 @@ void Ego::clean_parts()
         boost::shared_ptr<Shape> shape(new Shape);
         transform->add_child(shape);
 
-       // Determine whether to draw the knobs:
-        bool should_draw_knobs = false;
+        // Determine whether to draw the knobs:
+        bool draw_knobs = false;
         for (size_t s = 0; s < brick->get<0>(); ++s) {
           for (size_t t = 0; t < brick->get<1>(); ++t) {
             if ((k == size.get<2>() - 1) ||
                 (!m_voxels.is_filled(i+s, j+t, k+1)) ||
                 (!m_voxels.is_placed(i+s, j+t, k+1)))
-              should_draw_knobs = true;
+              draw_knobs = true;
           }
         }
-        bool should_smooth = false;
+
+        bool smooth = false;
         if (m_smooth) {
-          should_smooth = true;
+          smooth = true;
+          draw_knobs = false;            // force knobless bricks
         }
         Vector3f tmp;
         switch (m_style) {
@@ -731,7 +733,7 @@ void Ego::clean_parts()
            shape->set_appearance(m_appearance);
            tmp.sub(center, brick_center);
            Shared_mesh_set geom =
-             create_geometry(num0, num1, should_draw_knobs, tmp);
+             create_geometry(num0, num1, draw_knobs, smooth, tmp);
            shape->set_geometry(geom);
           }
           break;
@@ -742,8 +744,34 @@ void Ego::clean_parts()
            Shared_appearance app(create_random_appearance());
            shape->set_appearance(app);
            Shared_mesh_set geom =
-             create_geometry(num0, num1, should_draw_knobs);
-           shape->set_geometry(geom);
+             create_geometry(num0, num1, draw_knobs, smooth);
+
+           if (smooth) {
+             // Transform the brick
+             Coord_array& coords = *(geom->get_coord_array());
+             Uint i;
+             for (i = 0; i < coords.size(); ++i)
+               coords[i].xform_pt(coords[i], transform->get_matrix());
+
+             // Reset the transform
+             Vector3f tmp;
+             transform->set_translation(tmp);
+
+             // Intersect
+             boost::shared_ptr<Boolean_operation> bo(new Boolean_operation);
+             transform->add_child(bo);
+
+             bo->set_operand1(m_transformed_model);
+             bo->set_operand2(geom);
+             Field* src_field = bo->add_field(Boolean_operation::RESULT);
+             SGAL_assertion(src_field);
+             Field* dst_field = shape->add_field(Shape::GEOMETRY);
+             SGAL_assertion(dst_field);
+             src_field->connect(dst_field);
+             bo->execute();
+           }
+           else
+             shape->set_geometry(geom);
           }
           break;
 
@@ -759,13 +787,24 @@ void Ego::clean_parts()
            shape->set_appearance(m_appearance);
            tmp.sub(center, brick_center);
            Shared_mesh_set geom =
-             create_geometry(num0, num1, should_draw_knobs, tmp);
+             create_geometry(num0, num1, draw_knobs, smooth, tmp);
 
-           if (should_smooth) {
+           if (smooth) {
+             // Transform the brick
+             Coord_array& coords = *(geom->get_coord_array());
+             Uint i;
+             for (i = 0; i < coords.size(); ++i)
+               coords[i].xform_pt(coords[i], transform->get_matrix());
+
+             // Reset the transform
+             Vector3f tmp;
+             transform->set_translation(tmp);
+
+             // Intersect
              boost::shared_ptr<Boolean_operation> bo(new Boolean_operation);
              transform->add_child(bo);
-             SGAL_assertion(this->is_model_mesh_set());
-             bo->set_operand1(this->get_mesh_set_model());
+
+             bo->set_operand1(m_transformed_model);
              bo->set_operand2(geom);
              Field* src_field = bo->add_field(Boolean_operation::RESULT);
              SGAL_assertion(src_field);
@@ -1126,7 +1165,7 @@ void Ego::clean_colors()
 
 /*! \brief creates the geometry of a brick. */
 Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
-                                          Boolean draw_knobs)
+                                          Boolean draw_knobs, Boolean watertight)
 {
   if (draw_knobs) {
     Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
@@ -1136,6 +1175,7 @@ Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
       ego_brick->set_number_of_knobs1(num0);
       ego_brick->set_number_of_knobs2(num1);
       ego_brick->set_knobs_visible(true);
+      ego_brick->set_watertight(watertight);
       m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
       return ego_brick;
     }
@@ -1148,6 +1188,7 @@ Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
     ego_brick->set_number_of_knobs1(num0);
     ego_brick->set_number_of_knobs2(num1);
     ego_brick->set_knobs_visible(false);
+    ego_brick->set_watertight(watertight);
     m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
                                             ego_brick));
     return ego_brick;
@@ -1157,13 +1198,16 @@ Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
 
 /*! \brief creates the geometry of a brick. */
 Ego::Shared_mesh_set
-Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs, Vector3f& center)
+Ego::create_geometry(Uint num0, Uint num1,
+                     Boolean draw_knobs, Boolean watertight,
+                     Vector3f& center)
 {
   Shared_ego_brick ego_brick(new Ego_brick);
   ego_brick->set_knob_slices(m_knob_slices);
   ego_brick->set_number_of_knobs1(num0);
   ego_brick->set_number_of_knobs2(num1);
   ego_brick->set_center(center);
+  ego_brick->set_watertight(watertight);
 
   if (draw_knobs) {
     ego_brick->set_knobs_visible(true);
@@ -1181,7 +1225,7 @@ Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs, Vector3f& center)
 
   Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
   ego_brick->set_knobs_visible(false);
-  if (it != m_knobless_bricks.end()) {
+  if (false && (it != m_knobless_bricks.end())) {
     Shared_ego_brick ref_ego_brick = (*it).second;
     ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
     ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
@@ -1197,6 +1241,7 @@ Ego::create_geometry(Uint num0, Uint num1, Boolean draw_knobs, Vector3f& center)
 Action::Trav_directive Ego::draw(Draw_action* action)
 {
   if (m_dirty_appearance) clean_appearance();
+  if (m_dirty_model) clean_model();
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
@@ -1214,6 +1259,7 @@ Action::Trav_directive Ego::draw(Draw_action* action)
 void Ego::cull(Cull_context& cull_context)
 {
   if (m_dirty_appearance) clean_appearance();
+  if (m_dirty_model) clean_model();
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
@@ -1233,6 +1279,7 @@ void Ego::cull(Cull_context& cull_context)
 /*! \brief draws the Ego object in selection mode. */
 void Ego::isect(Isect_action* action)
 {
+  if (m_dirty_model) clean_model();
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();
@@ -1306,6 +1353,7 @@ void Ego::reset_visibility()
 Boolean Ego::clean_sphere_bound()
 {
   SGAL_assertion(!m_clean_colors_in_progress);
+  if (m_dirty_model) clean_model();
   if (m_dirty_voxels) clean_voxels();
   if (m_dirty_tiling) clean_tiling();
   if (m_dirty_parts) clean_parts();

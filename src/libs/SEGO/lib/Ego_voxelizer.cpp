@@ -50,7 +50,8 @@ Ego_voxelizer::Ego_voxelizer(const Kernel::FT& voxel_length,
 /*! \brief voxelize */
 Ego_voxelizer::Point_3
 Ego_voxelizer::operator()(const Polyhedron& polyhedron, const Matrix4f& matrix,
-                          Ego_voxels* out_voxels) const {
+                          Ego_voxels* out_voxels) const
+{
   SGAL_assertion(polyhedron.is_pure_triangle());
   
   Triangles triangles = create_triangles_from_polyhedron(polyhedron, matrix);

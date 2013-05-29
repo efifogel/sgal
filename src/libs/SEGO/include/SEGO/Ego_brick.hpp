@@ -146,9 +146,15 @@ public:
   /*! Set the flag that indicates whether the knos are visible. */
   void set_knobs_visible(Boolean flag);
   
-  /* Obtain the flag that indicates whether the knos are visible. */
+  /* Determine whether the knos are visible. */
   Boolean are_knobs_visible() const;
 
+  /*! Set the flag that indicates whether the model is watertight. */
+  void set_watertight(Boolean flag);
+  
+  /* Obtain the flag that indicates whether the model is watertight. */
+  Boolean is_watertight() const;
+  
   /*! Set the center of the Ego brick. */
   void set_center(Vector3f& center);
 
@@ -200,9 +206,12 @@ protected:
   /*! The number of slices of a knob. */
   Uint m_knob_slices;
 
-  /*! Are the knobs visible. */
+  /*! Indicates whether the knobs are visible. */
   Boolean m_knobs_visible;
 
+  /*! Indicates whether the model is watertight. */
+  Boolean m_watertight;
+  
   /*! Indicates whether the center is dirty and thus needs cleaning. */
   Boolean m_dirty_center;
 
@@ -256,6 +265,7 @@ private:
   static const Float s_def_tolerance;
   static const Uint s_def_knob_slices;
   static const Boolean s_def_knobs_visible;
+  static const Boolean s_def_watertight;
 };
 
 /* \brief constructs the prototype */
@@ -323,8 +333,15 @@ inline Uint Ego_brick::get_knob_slices() const { return m_knob_slices; }
 inline void Ego_brick::set_knobs_visible(Boolean flag)
 { m_knobs_visible = flag; }
   
-/* \brief obtains the flag that indicates whether the knos are visible. */
+/* \brief determines whether the knos are visible. */
 inline Boolean Ego_brick::are_knobs_visible() const { return m_knobs_visible; }
+
+/*! \brief sets the flag that indicates whether the model is watertight. */
+inline void Ego_brick::set_watertight(Boolean flag)
+{ m_watertight = flag; }
+  
+/* \brief determines whether the model is watertight. */
+inline Boolean Ego_brick::is_watertight() const { return m_watertight; }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Ego_brick::get_tag() const { return s_tag; }
