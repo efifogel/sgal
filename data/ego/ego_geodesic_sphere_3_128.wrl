@@ -621,11 +621,11 @@ Transform {
 		}
 	      }
 	      # style "appearance"
-	      style "discreteCubeMap"
+	      # style "discreteCubeMap"
 	      pcolorSpace "RGB"
 	      smooth TRUE
-	      scale 200 200 200
-	      # scale 60 60 60
+	      # scale 200 200 200
+	      scale 10 10 10
 	      model USE MODEL
 	      knobSlices 16
 	      spaceFilling TRUE
