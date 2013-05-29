@@ -725,6 +725,7 @@ void Ego::clean_parts()
           draw_knobs = false;            // force knobless bricks
         }
         Vector3f tmp;
+        Shared_mesh_set geom;
         switch (m_style) {
          case STYLE_APPEARANCE:
           {
@@ -732,8 +733,7 @@ void Ego::clean_parts()
            shape->set_override_blend_func(false);
            shape->set_appearance(m_appearance);
            tmp.sub(center, brick_center);
-           Shared_mesh_set geom =
-             create_geometry(num0, num1, draw_knobs, smooth, tmp);
+           geom = create_geometry(num0, num1, draw_knobs, smooth, tmp);
            shape->set_geometry(geom);
           }
           break;
@@ -743,35 +743,7 @@ void Ego::clean_parts()
            m_dirty_colors = false;
            Shared_appearance app(create_random_appearance());
            shape->set_appearance(app);
-           Shared_mesh_set geom =
-             create_geometry(num0, num1, draw_knobs, smooth);
-
-           if (smooth) {
-             // Transform the brick
-             Coord_array& coords = *(geom->get_coord_array());
-             Uint i;
-             for (i = 0; i < coords.size(); ++i)
-               coords[i].xform_pt(coords[i], transform->get_matrix());
-
-             // Reset the transform
-             Vector3f tmp;
-             transform->set_translation(tmp);
-
-             // Intersect
-             boost::shared_ptr<Boolean_operation> bo(new Boolean_operation);
-             transform->add_child(bo);
-
-             bo->set_operand1(m_transformed_model);
-             bo->set_operand2(geom);
-             Field* src_field = bo->add_field(Boolean_operation::RESULT);
-             SGAL_assertion(src_field);
-             Field* dst_field = shape->add_field(Shape::GEOMETRY);
-             SGAL_assertion(dst_field);
-             src_field->connect(dst_field);
-             bo->execute();
-           }
-           else
-             shape->set_geometry(geom);
+           geom = create_geometry(num0, num1, draw_knobs, smooth);
           }
           break;
 
@@ -786,40 +758,37 @@ void Ego::clean_parts()
            m_dirty_colors = true;
            shape->set_appearance(m_appearance);
            tmp.sub(center, brick_center);
-           Shared_mesh_set geom =
-             create_geometry(num0, num1, draw_knobs, smooth, tmp);
-
-           if (smooth) {
-             // Transform the brick
-             Coord_array& coords = *(geom->get_coord_array());
-             Uint i;
-             for (i = 0; i < coords.size(); ++i)
-               coords[i].xform_pt(coords[i], transform->get_matrix());
-
-             // Reset the transform
-             Vector3f tmp;
-             transform->set_translation(tmp);
-
-             // Intersect
-             boost::shared_ptr<Boolean_operation> bo(new Boolean_operation);
-             transform->add_child(bo);
-
-             bo->set_operand1(m_transformed_model);
-             bo->set_operand2(geom);
-             Field* src_field = bo->add_field(Boolean_operation::RESULT);
-             SGAL_assertion(src_field);
-             Field* dst_field = shape->add_field(Shape::GEOMETRY);
-             SGAL_assertion(dst_field);
-             src_field->connect(dst_field);
-             bo->execute();
-           }
-           else
-             shape->set_geometry(geom);
+           geom = create_geometry(num0, num1, draw_knobs, smooth, tmp);
           }
           break;
           
          default: std::cerr << "Invalid style!" << std::endl;
         }
+
+        if (smooth) {
+          // Transform the brick
+          Coord_array& coords = *(geom->get_coord_array());
+          for (Uint i = 0; i < coords.size(); ++i)
+            coords[i].xform_pt(coords[i], transform->get_matrix());
+
+          // Reset the transform
+          Vector3f tmp;
+          transform->set_translation(tmp);
+
+          // Intersect
+          boost::shared_ptr<Boolean_operation> bo(new Boolean_operation);
+          transform->add_child(bo);
+
+          bo->set_operand1(m_transformed_model);
+          bo->set_operand2(geom);
+          Field* src_field = bo->add_field(Boolean_operation::RESULT);
+          SGAL_assertion(src_field);
+          Field* dst_field = shape->add_field(Shape::GEOMETRY);
+          SGAL_assertion(dst_field);
+          src_field->connect(dst_field);
+          bo->execute();
+        }
+        else shape->set_geometry(geom);
       }
     }
   }
