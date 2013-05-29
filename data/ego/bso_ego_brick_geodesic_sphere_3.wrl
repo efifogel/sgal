@@ -25,7 +25,7 @@ Transform {
       whichChoice 0
       children [
 	Transform {
-	  translation -6 0 0
+	  translation -20 0 0
 	  children [
 	    DEF CUBE Shape {
 	      appearance Appearance {
@@ -530,7 +530,7 @@ Transform {
       whichChoice 0
       children [
 	Transform {
-	  translation 6 0 0
+	  translation 20 0 0
 	  children [
 	    DEF TRIANGLE Shape {
 	      appearance Appearance {
@@ -538,6 +538,7 @@ Transform {
 	      }
 	      geometry DEF OPERAND2 EgoBrick {
 	      	knobsVisible FALSE
+		watertight TRUE
 	      	numberOfKnobs1 2
 	      	numberOfKnobs2 2
 	      }
@@ -555,11 +556,11 @@ Transform {
   ]
 }
 
-# DEF BO BooleanOperation {
-#   operation "intersection"
-#   operand1 USE OPERAND1
-#   operand2 USE OPERAND2
-# }
+DEF BO BooleanOperation {
+  operation "intersection"
+  operand1 USE OPERAND1
+  operand2 USE OPERAND2
+}
 
-# ROUTE SIM.start TO BO.trigger
-# ROUTE BO.result TO INTERSECTION.geometry
+ROUTE SIM.start TO BO.trigger
+ROUTE BO.result TO INTERSECTION.geometry
