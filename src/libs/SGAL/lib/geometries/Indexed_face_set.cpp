@@ -1008,7 +1008,10 @@ void Indexed_face_set::clean_tex_coords()
 void Indexed_face_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
-  if (is_dirty_indices()) clean_indices();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_normal_indices()) clean_normal_indices();
+  if (is_dirty_color_indices()) clean_color_indices();
+  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
   if (is_empty()) return;
   
   // Clean the normals:
@@ -1155,7 +1158,7 @@ void Indexed_face_set::isect_direct()
 void Indexed_face_set::isect(Isect_action* action)
 {
   if (is_dirty()) clean();
-  if (is_dirty_indices()) clean_indices();
+  if (is_dirty_coord_indices()) clean_coord_indices();
   if (is_empty()) return;
 
   Context* context = action->get_context();

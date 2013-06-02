@@ -141,7 +141,7 @@ void Ego_brick::clean_coords()
   m_dirty_coords = false;
   m_dirty_normals = true;
   m_dirty_tex_coords = true;
-  m_dirty_indices = true;
+  m_dirty_coord_indices = true;
   
   // Compute size:
   Uint size;
@@ -262,10 +262,10 @@ void Ego_brick::clean_coords()
 }
 
 /*! \brief cleans the texture indices. */
-void Ego_brick::clean_indices()
+void Ego_brick::clean_coord_indices()
 {
-  m_dirty_indices = false;
-  m_indices_flat = true;
+  m_dirty_coord_indices = false;
+  m_coord_indices_flat = true;
 
   // Box
   Uint k = 0;
@@ -737,7 +737,7 @@ void Ego_brick::clean_center()
 void Ego_brick::set_coord_indices(const Array<Uint>& indices)
 {
   Geo_set::set_coord_indices(indices);
-  m_dirty_indices = false;
+  m_dirty_coord_indices = false;
 }
 
 /*! \brief sets the center of the Ego brick. */
@@ -779,7 +779,7 @@ Ego_brick::Shared_tex_coord_array Ego_brick::get_tex_coord_array()
 Array<Uint>& Ego_brick::get_coord_indices()
 {
   if (is_dirty()) clean();
-  if (is_dirty_indices()) clean_indices();
+  if (is_dirty_coord_indices()) clean_coord_indices();
   return Geo_set::get_coord_indices();
 }
 

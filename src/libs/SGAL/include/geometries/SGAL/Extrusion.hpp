@@ -158,7 +158,7 @@ public:
   virtual void clean();
 
   /*! Clean the coordinate indices. */
-  virtual void clean_indices();
+  virtual void clean_coord_indices();
 
   /*! Process change of structure. */
   void structure_changed(Field_info* field_info);

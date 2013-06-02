@@ -55,14 +55,14 @@ public:
     m_vector(NULL)
   {}
 
-  /*! Constructor */
+  /*! Constructor. */
   Array(Uint n) : m_size(0), m_capacity(0), m_vector(NULL)  { resize(n); }
 
-  /*! Copy Constructor */
+  /*! Copy Constructor. */
   Array(const Array& other) : m_size(0), m_capacity(0), m_vector(NULL)  
   { set(other); }
 
-  /*! assignment operator */
+  /*! assignment operator. */
   Array& operator=(const Array& other)
   {
     // using the copy constructor and placement new.
@@ -70,13 +70,16 @@ public:
     return *this;
   }
   
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Array() { clear(); }
 
-  /*! Obtain the size */
+  /*! Obtain the size. */
   Uint size() const { return m_size; }
 
-  /*! Resize the capacity */
+  /*! Determine whether the array is empty. */
+  Boolean empty() const { return (m_size == 0); }
+  
+  /*! Resize the capacity. */
   void resize(Uint n) {
     if (n > m_capacity) {
       m_capacity = 2 * n;
@@ -104,19 +107,19 @@ public:
   typedef Attribute* iterator;
   typedef const Attribute* const_iterator;
 
-  /*! The iterator to the first element */
+  /*! The iterator to the first element. */
   Attribute* begin() { return m_vector; }
   const Attribute* begin() const { return m_vector; }
 
-  /*! The iterator to the past-the-end element */
+  /*! The iterator to the past-the-end element. */
   Attribute* end() { return begin() + m_size; }
   const Attribute* end() const { return begin() + m_size; }
   
-  /*! Obtain the vector */
+  /*! Obtain the vector. */
   Attribute* get_vector() { return m_vector; }
   const Attribute* get_vector() const { return m_vector; }
 
-  /*! Indexing operator */
+  /*! Indexing operator. */
   Attribute& operator[](Uint n) { return *(begin() + n); }
   const Attribute& operator[](Uint n) const { return *(begin() + n); }
   
@@ -125,7 +128,7 @@ public:
 
 private:
   /*! uses by copy-constructor and assignment operator to change the contents
-   * of the array
+   * of the array.
    */
   void set(const Array& other)
   {
@@ -135,13 +138,13 @@ private:
     std::copy(other.m_vector, other.m_vector + m_size, m_vector);
   }
 
-  /*! The number of elements in the vector */
+  /*! The number of elements in the vector. */
   Uint m_size;
 
-  /*! The capacity of the vector */
+  /*! The capacity of the vector. */
   Uint m_capacity;
   
-  /*! The coordinates */
+  /*! The coordinates. */
   Attribute* m_vector;
 };
 

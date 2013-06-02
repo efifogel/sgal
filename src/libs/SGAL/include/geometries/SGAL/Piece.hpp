@@ -75,8 +75,8 @@ public:
   /*! Clean the representation. */
   virtual void clean();
 
-  /*! Clean the coordinate indices. */
-  virtual void clean_indices();
+  /*! Clean the coordinate index array. */
+  virtual void clean_coord_indices();
 
   /*! Set the width. */
   void set_width(Uint width);

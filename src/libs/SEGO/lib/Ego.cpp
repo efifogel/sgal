@@ -551,7 +551,7 @@ void Ego::clean_model()
   m_transformed_model->set_coord_indices(m_model->get_coord_indices());
   m_transformed_model->set_num_primitives(m_model->get_num_primitives());
   m_transformed_model->set_primitive_type(m_model->get_primitive_type());
-  m_transformed_model->set_indices_flat(m_model->are_indices_flat());
+  m_transformed_model->set_coord_indices_flat(m_model->are_coord_indices_flat());
 }
 
 /*! \brief clean the voxels */
@@ -1186,7 +1186,7 @@ Ego::create_geometry(Uint num0, Uint num1,
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
       ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
-      ego_brick->set_indices_flat(true);
+      ego_brick->set_coord_indices_flat(true);
     }
     m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
     return ego_brick;
@@ -1199,7 +1199,7 @@ Ego::create_geometry(Uint num0, Uint num1,
     ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
     ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
     ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
-    ego_brick->set_indices_flat(true);
+    ego_brick->set_coord_indices_flat(true);
   }
   m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
                                           ego_brick));

@@ -244,11 +244,11 @@ void Extrusion::clean()
   set_solid(m_loop || (m_begin_cap && m_end_cap));
   Indexed_face_set::clean();
   Indexed_face_set::coord_point_changed();
-  Indexed_face_set::clear_indices();
+  Indexed_face_set::clear_coord_indices();
 }
 
 /*! \brief cleans the coordinate indices. */
-void Extrusion::clean_indices()
+void Extrusion::clean_coord_indices()
 {
   //! \todo generate the indices flat to start with.
   // Generate all:
@@ -321,7 +321,7 @@ void Extrusion::clean_indices()
     m_coord_indices[k++] = static_cast<Uint>(-1);
   }
 
-  Indexed_face_set::clean_indices();
+  Indexed_face_set::clean_coord_indices();
 }
 
 /*! \brief sets the ellpsoid attributes. */

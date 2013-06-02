@@ -53,10 +53,25 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_is_convex(s_def_is_convex),
   m_crease_angle(s_def_crease_angle),
   m_polygon_offset_factor(s_def_polygon_offset_factor),
-  m_dirty_indices(true),
+  m_dirty_coord_indices(true),
+  m_dirty_normal_indices(true),
+  m_dirty_color_indices(true),
+  m_dirty_tex_coord_indices(true),
   m_flatten_indices(false),
-  m_indices_flat(false)
+  m_coord_indices_flat(false),
+  m_normal_indices_flat(false),
+  m_color_indices_flat(false),
+  m_tex_coord_indices_flat(false)
 {}
+
+/*! \brief clears the indices arrays, e.g., forces their cleaning. */
+void Mesh_set::clear_indices()
+{
+  clear_coord_indices();
+  clear_normal_indices();
+  clear_color_indices();
+  clear_tex_coord_indices();
+}
 
 /*! \brief sets the attributes of this object. */
 void Mesh_set::set_attributes(Element* elem)
@@ -103,7 +118,10 @@ void Mesh_set::set_attributes(Element* elem)
 void Mesh_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
-  if (is_dirty_indices()) clean_indices();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_normal_indices()) clean_normal_indices();
+  if (is_dirty_color_indices()) clean_color_indices();
+  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
   if (is_empty()) return;
 
   draw_mesh(action);
@@ -204,14 +222,139 @@ Container_proto* Mesh_set::get_prototype()
 /*! \brief obtains the coord-index array. */
 Array<Uint>& Mesh_set::get_coord_indices()
 {
-  if (is_dirty_indices()) clean_indices();
+  if (is_dirty_coord_indices()) clean_coord_indices();
   return Geo_set::get_coord_indices();
 }
 
-void Mesh_set::clean_indices()
+/*! \brief sets the coordinate-index array. */
+void Mesh_set::set_coord_indices(Array<Uint>& indices)
 {
-  if (!m_indices_flat && m_flatten_indices) flatten_indices();
-  m_dirty_indices = false;
+  m_coord_indices = indices;
+  m_dirty_coord_indices = false;
+}
+
+/*! \brief flatten the coordinate index array.
+ * In case of triangles or quads remove the '-1' end-of-polygon indication
+ * from the index buffers. This operation changes the structure of the
+ * index buffer, and must be reflected in the drawing routines.
+ */
+void Mesh_set::clean_coord_indices()
+{
+  if (!m_coord_indices_flat && m_flatten_indices && !m_coord_indices.empty()) {
+    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
+      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
+    if (!size) return;
+    Uint* indices = m_coord_indices.get_vector();
+    flatten_indices(indices, indices, m_num_primitives);
+    m_coord_indices.resize(size);
+  }
+  m_coord_indices_flat = true;
+  m_dirty_coord_indices = false;
+}
+
+/*! \brief sets the normal-index array. */
+void Mesh_set::set_normal_indices(Array<Uint>& indices)
+{
+  m_normal_indices = indices;
+  m_dirty_normal_indices = false;
+}
+
+/*! \brief obtains the normal-index array. */
+Array<Uint>& Mesh_set::get_normal_indices()
+{
+  if (is_dirty_normal_indices()) clean_normal_indices();
+  return Geo_set::get_normal_indices();
+}
+
+/*! \brief flatten the normal index array.
+ * In case of triangles or quads remove the '-1' end-of-polygon indication
+ * from the index buffers. This operation changes the structure of the
+ * index buffer, and must be reflected in the drawing routines.
+ */
+void Mesh_set::clean_normal_indices()
+{
+  if (!m_normal_indices_flat && m_flatten_indices &&
+      !m_normal_indices.empty() && (m_normal_attachment == PER_VERTEX))
+  {
+    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
+      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
+    if (!size) return;
+    Uint* indices = m_normal_indices.get_vector();
+    flatten_indices(indices, indices, m_num_primitives);
+    m_normal_indices.resize(size);
+  }
+  m_normal_indices_flat = true;
+  m_dirty_normal_indices = false;
+}
+
+/*! \brief sets the color-index array. */
+void Mesh_set::set_color_indices(Array<Uint>& indices)
+{
+  m_color_indices = indices;
+  m_dirty_color_indices = false;
+}
+
+/*! \brief obtains the color-index array. */
+Array<Uint>& Mesh_set::get_color_indices()
+{
+  if (is_dirty_color_indices()) clean_color_indices();
+  return Geo_set::get_color_indices();
+}
+
+/*! \brief flatten the color index array.
+ * In case of triangles or quads remove the '-1' end-of-polygon indication
+ * from the index buffers. This operation changes the structure of the
+ * index buffer, and must be reflected in the drawing routines.
+ */
+void Mesh_set::clean_color_indices()
+{
+  if (!m_color_indices_flat && m_flatten_indices &&
+      !m_color_indices.empty() && (m_color_attachment == PER_VERTEX))
+  {
+    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
+      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
+    if (!size) return;
+    Uint* indices = m_color_indices.get_vector();
+    flatten_indices(indices, indices, m_num_primitives);
+    m_color_indices.resize(size);
+  }
+  m_color_indices_flat = true;
+  m_dirty_color_indices = false;
+}
+
+/*! \brief sets the texture coordinate-index array. */
+void Mesh_set::set_tex_coord_indices(Array<Uint>& indices)
+{
+  m_tex_coord_indices = indices;
+  m_dirty_tex_coord_indices = false;
+}
+
+/*! \brief obtains the texture coordinate-index array. */
+Array<Uint>& Mesh_set::get_tex_coord_indices()
+{
+  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  return Geo_set::get_tex_coord_indices();
+}
+
+/*! \brief flatten the texture coordinate index array.
+ * In case of triangles or quads remove the '-1' end-of-polygon indication
+ * from the index buffers. This operation changes the structure of the
+ * index buffer, and must be reflected in the drawing routines.
+ */
+void Mesh_set::clean_tex_coord_indices()
+{
+  if (!m_tex_coord_indices_flat && m_flatten_indices &&
+      !m_tex_coord_indices.empty())
+  {
+    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
+      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
+    if (!size) return;
+    Uint* indices = m_tex_coord_indices.get_vector();
+    flatten_indices(indices, indices, m_num_primitives);
+    m_tex_coord_indices.resize(size);
+  }
+  m_tex_coord_indices_flat = true;
+  m_dirty_tex_coord_indices = false;
 }
 
 /*! \brief proceses the indices (in places). */
@@ -238,41 +381,6 @@ void Mesh_set::flatten_indices(Uint* src, Uint* dst, Uint num)
     }
     return;
   }
-}
-
-/*! \brief processes the indices.
- * In case of triangles or quads remove the '-1' end-of-polygon indication
- * from the index buffers. This operation changes the the structure of the
- * index buffers, and must be reflected in the drawing routines.
- */
-void Mesh_set::flatten_indices()
-{
-  Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
-    (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-  if (!size) return;
-
-  Uint* indices = m_coord_indices.get_vector();
-  flatten_indices(indices, indices, m_num_primitives);
-  m_coord_indices.resize(size);
-
-  if (m_tex_coord_indices.size()) {
-    Uint* indices = m_tex_coord_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_tex_coord_indices.resize(size);
-  }
-
-  if (m_normal_indices.size() && m_normal_attachment == PER_VERTEX) {
-    Uint* indices = m_normal_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_normal_indices.resize(size);
-  }
-
-  if (m_color_indices.size() && m_color_attachment == PER_VERTEX) {
-    Uint* indices = m_color_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_color_indices.resize(size);
-  }
-  m_indices_flat = true;
 }
 
 SGAL_END_NAMESPACE

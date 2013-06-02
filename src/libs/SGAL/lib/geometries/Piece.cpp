@@ -31,7 +31,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Coord_array.hpp"
-#include "SGAL/Normal_array.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Trace.hpp"
@@ -185,8 +184,8 @@ void Piece::clean()
   Indexed_face_set::clear_indices();
 }
 
-/*! \brief cleans the coordinate indices. */
-void Piece::clean_indices()
+/*! \brief cleans the coordinate index array. */
+void Piece::clean_coord_indices()
 {
   //! \todo generate the indices flat to start with.
   m_coord_indices.resize(m_num_primitives * 5);
@@ -248,7 +247,7 @@ void Piece::clean_indices()
       }
     }
   }
-  Indexed_face_set::clean_indices();
+  Indexed_face_set::clean_coord_indices();
 }
 
 /*! Write this container. */

@@ -93,7 +93,7 @@ public:
   virtual void clean();
 
   /*! Clean the texture indices. */
-  virtual void clean_indices();
+  virtual void clean_coord_indices();
 
   /*! Set the number_of_knobs along the 1st dimension. */
   void set_number_of_knobs1(Uint number);
