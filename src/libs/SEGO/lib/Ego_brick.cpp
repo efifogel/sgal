@@ -733,13 +733,6 @@ void Ego_brick::clean_center()
   m_dirty_center = false;
 }
 
-/*! \brief sets the texture indices. */
-void Ego_brick::set_coord_indices(const Array<Uint>& indices)
-{
-  Geo_set::set_coord_indices(indices);
-  m_dirty_coord_indices = false;
-}
-
 /*! \brief sets the center of the Ego brick. */
 void Ego_brick::set_center(Vector3f& center)
 {
@@ -779,7 +772,6 @@ Ego_brick::Shared_tex_coord_array Ego_brick::get_tex_coord_array()
 Array<Uint>& Ego_brick::get_coord_indices()
 {
   if (is_dirty()) clean();
-  if (is_dirty_coord_indices()) clean_coord_indices();
   return Geo_set::get_coord_indices();
 }
 

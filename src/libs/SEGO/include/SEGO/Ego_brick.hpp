@@ -161,9 +161,6 @@ public:
   /*! Obtain the center of the Ego brick. */
   Vector3f& get_center();
   
-  /*! Set the texture indices. */
-  void set_coord_indices(const Array<Uint>& indices);
-  
   /*! Obtain the coordinate array. */
   virtual Shared_coord_array get_coord_array();
 

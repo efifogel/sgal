@@ -1066,7 +1066,7 @@ void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
 {
   // When using vertex array, the index arrays must be flat:
   SGAL_assertion_code(Boolean uva = use_vertex_array(););
-  SGAL_assertion(!uva || (uva && m_indices_flat));
+  SGAL_assertion(!uva || m_coord_indices_flat);
   
   Fragment_source fragment_source = resolve_fragment_source();
   Boolean fragment_indexed = (fragment_source == FS_NORMAL) ?

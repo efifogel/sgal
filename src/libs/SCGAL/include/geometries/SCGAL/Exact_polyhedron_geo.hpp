@@ -145,6 +145,9 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Draw the geometry. */
+  virtual void draw(Draw_action* action);
+
   /*! */
   virtual void cull(Cull_context& cull_context);
 
@@ -194,8 +197,11 @@ protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! Cleans the representation. */
-  virtual void clean();
+  /*! Cleans the polyhedron. */
+  virtual void clean_polyhedron();
+
+  /*! Cleans the facets. */
+  virtual void clean_facets();
 
   /*! Clears the internal representation. */
   virtual void clear();
@@ -269,6 +275,9 @@ private:
 
   /*! Indicates whether the geometry is dirty and thus should be cleaned. */
   Boolean m_dirty_polyhedron;
+
+  /*! Indicates whether the facets are dirty and thus should be cleaned. */
+  Boolean m_dirty_facets;
   
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;

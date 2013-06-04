@@ -50,7 +50,6 @@
 #include "SGAL/Cylinder.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Isect_action.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -161,7 +160,9 @@ Spherical_gaussian_map_marked_geo(Boolean proto) :
   m_marked_edges_renderer(NULL),
   m_colored_marked_edges_renderer(NULL)
 {
-  if (!proto) create_renderers();
+  if (proto) return;
+  create_renderers();
+  m_flatten_indices = true;
 }
 
 /*! Copy Constructor */
@@ -186,8 +187,9 @@ Spherical_gaussian_map_marked_geo::~Spherical_gaussian_map_marked_geo()
 }
 
 /*! Clean the data structure */
-void Spherical_gaussian_map_marked_geo::clean()
+void Spherical_gaussian_map_marked_geo::clean_sgm()
 {
+  std::cout << "Spherical_gaussian_map_marked_geo::clean_sgm(): " << std::endl;
   if (!m_sgm) {
     m_sgm = new Sgm;
     SGAL_assertion(m_sgm);
@@ -209,7 +211,13 @@ void Spherical_gaussian_map_marked_geo::clean()
     sgm_initializer.set_marked_vertex_index(m_marked_vertex_index);
     sgm_initializer.set_marked_edge_index(m_marked_edge_index);
     sgm_initializer.set_marked_facet_index(m_marked_facet_index);
-
+    Uint num_vertices_per_facet = 0;
+    std::cout << "are_coord_indices_flat(): " << are_coord_indices_flat()
+              << std::endl;
+    if (are_coord_indices_flat())
+      num_vertices_per_facet =
+        (m_primitive_type == PT_TRIANGLES) ? 3 :
+        (m_primitive_type == PT_QUADS) ? 4 : 0;
     boost::shared_ptr<Exact_coord_array> exact_coord_array =
       boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
@@ -218,14 +226,14 @@ void Spherical_gaussian_map_marked_geo::clean()
                       exact_coord_array->end(),
                       exact_coord_array->size(),
                       m_coord_indices.begin(), m_coord_indices.end(),
-                      m_num_primitives, &visitor);
+                      m_num_primitives, num_vertices_per_facet, &visitor);
     }
     else {
       // std::cout << "Spherical_gaussian_map_marked_geo::inexact" << std::endl;
       sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
                       m_coord_indices.begin(), m_coord_indices.end(),
-                      m_num_primitives, &visitor);
+                      m_num_primitives, num_vertices_per_facet, &visitor);
     }
     clock_t end_time = clock();
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
@@ -248,28 +256,14 @@ void Spherical_gaussian_map_marked_geo::clean()
   if (m_marked_edge_index >= num_edges) m_marked_edge_index = num_edges;
   if (m_marked_facet_index >= num_facets) m_marked_facet_index = num_facets;
 
-  Spherical_gaussian_map_base_geo::clean();
+  m_dirty_sgm = false;
 }
 
 /*! \brief clears the internal representation and auxiliary data structures. */
 void Spherical_gaussian_map_marked_geo::clear()
 {
-  Spherical_gaussian_map_base_geo::clear();
   if (m_sgm) m_sgm->clear();
-}
-
-/*! \brief */
-void Spherical_gaussian_map_marked_geo::cull(Cull_context& cull_context) {}
-
-/*! \brief */
-void Spherical_gaussian_map_marked_geo::isect(Isect_action* action)
-{
-  Context* context = action->get_context();
-  if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
-
-  isect_primary();
-    
-  if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
+  m_dirty_sgm = true;
 }
 
 /*! \brief sets the attributes of the object extracted from an input file. */
@@ -659,7 +653,8 @@ void Spherical_gaussian_map_marked_geo::isect_primary()
 void Spherical_gaussian_map_marked_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty()) clean();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_sgm) clean_sgm();
 
   if (m_minkowski_sum)
     std::cout << "Minkowski sum took " << m_time << " seconds.\n";
@@ -1153,7 +1148,7 @@ insert_sgm(Shared_spherical_gaussian_map_marked_geo sgm)
 /*! \brief obrains a reference to the cubical Gaussian map. */
 Spherical_gaussian_map_marked* Spherical_gaussian_map_marked_geo::get_sgm()
 {
-  if (m_dirty) clean();
+  if (m_dirty_sgm) clean_sgm();
   return m_sgm;
 }
 
@@ -1161,7 +1156,7 @@ Spherical_gaussian_map_marked* Spherical_gaussian_map_marked_geo::get_sgm()
 void Spherical_gaussian_map_marked_geo::
 set_sgm(Spherical_gaussian_map_marked* sgm)
 {
-  m_dirty = false;
+  m_dirty_sgm = false;
   m_dirty_sphere_bound = true;
   m_sgm = sgm;
 }

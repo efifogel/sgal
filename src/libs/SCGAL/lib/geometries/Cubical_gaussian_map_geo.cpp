@@ -1504,19 +1504,6 @@ void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
   }
 }
 
-/*! \brief reverses the coordinate indices. */
-void Cubical_gaussian_map_geo::
-set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
-{
-  m_coord_indices.resize(indices.size());
-  Uint i = 0;
-  const Uint* ii = indices.end() - 2;
-  for (; ii >= indices.begin(); --ii) {
-    m_coord_indices[i++] = *ii;
-  }
-  m_coord_indices[i++] = (Uint) -1;
-}
-
 /*! Print statistics */
 void Cubical_gaussian_map_geo::print_stat()
 {

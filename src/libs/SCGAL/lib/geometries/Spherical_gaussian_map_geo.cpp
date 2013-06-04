@@ -46,7 +46,6 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Isect_action.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -83,7 +82,9 @@ Spherical_gaussian_map_geo::Spherical_gaussian_map_geo(Boolean proto) :
   m_inflated_strip_edges_renderer(NULL),
   m_inflated_tube_edges_renderer(NULL)
 {
-  if (!proto) create_renderers();
+  if (proto) return;
+  create_renderers();
+  m_flatten_indices = true;
 }
 
 /*! Copy Constructor. */
@@ -105,7 +106,7 @@ Spherical_gaussian_map_geo::~Spherical_gaussian_map_geo()
 }
 
 /*! \brief cleans the data structure. */
-void Spherical_gaussian_map_geo::clean()
+void Spherical_gaussian_map_geo::clean_sgm()
 {
   if (!m_sgm) {
     m_sgm = new Sgm;
@@ -124,8 +125,12 @@ void Spherical_gaussian_map_geo::clean()
   else if (m_coord_array) {
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
-
-    boost::shared_ptr<Exact_coord_array>  exact_coord_array =
+    Uint num_vertices_per_facet = 0;
+    if (are_coord_indices_flat())
+      num_vertices_per_facet =
+        (m_primitive_type == PT_TRIANGLES) ? 3 :
+        (m_primitive_type == PT_QUADS) ? 4 : 0;
+    boost::shared_ptr<Exact_coord_array> exact_coord_array =
       boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       // std::cout << "Spherical_gaussian_map_geo::exact" << std::endl;
@@ -133,40 +138,28 @@ void Spherical_gaussian_map_geo::clean()
                       exact_coord_array->end(),
                       exact_coord_array->size(),
                       m_coord_indices.begin(), m_coord_indices.end(),
-                      m_num_primitives);
+                      m_num_primitives, num_vertices_per_facet);
     }
     else {
       // std::cout << "Spherical_gaussian_map_geo::inexact" << std::endl;
       sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
                       m_coord_indices.begin(), m_coord_indices.end(),
-                      m_num_primitives);
+                      m_num_primitives, num_vertices_per_facet);
     }
     clock_t end_time = clock();
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
   }
   update_facets();
 
-  Spherical_gaussian_map_base_geo::clean();
+  m_dirty_sgm = false;
 }
 
 /*! \brief clears the internal representation and auxiliary data structures. */
 void Spherical_gaussian_map_geo::clear()
 {
-  Spherical_gaussian_map_base_geo::clear();
   if (m_sgm) m_sgm->clear();
-}
-
-/*! \brief */
-void Spherical_gaussian_map_geo::cull(Cull_context& cull_context) {}
-
-/*! \brief */
-void Spherical_gaussian_map_geo::isect(Isect_action* action)
-{
-  Context* context = action->get_context();
-  if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
-  isect_primary();
-  if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
+  m_dirty_sgm = true;
 }
 
 /*! \brief sets the attributes of the object extracted from an input file. */
@@ -316,7 +309,8 @@ void Spherical_gaussian_map_geo::isect_primary()
 void Spherical_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty()) clean();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_sgm) clean_sgm();
 
   if (m_minkowski_sum)
     std::cout << "Minkowski sum took " << m_time << " seconds.\n";
@@ -514,14 +508,15 @@ insert_sgm(Shared_spherical_gaussian_map_geo sgm)
 /*! \brief obrains the Gaussian map. */
 Spherical_gaussian_map* Spherical_gaussian_map_geo::get_sgm()
 {
-  if (m_dirty) clean();
+  if (m_dirty_sgm) clean_sgm();
+  m_dirty_sphere_bound = true;
   return m_sgm;
 }
 
 /*! \brief sets the Gaussian map. */
 void Spherical_gaussian_map_geo::set_sgm(Spherical_gaussian_map* sgm)
 {
-  m_dirty = false;
+  m_dirty_sgm = false;
   m_sgm = sgm;
 }
   

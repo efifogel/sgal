@@ -230,6 +230,15 @@ Array<Uint>& Mesh_set::get_coord_indices()
 void Mesh_set::set_coord_indices(Array<Uint>& indices)
 {
   m_coord_indices = indices;
+  m_coord_indices_flat = false;
+  m_dirty_coord_indices = true;
+}
+
+/*! \brief sets the flat coordinate-index array. */
+void Mesh_set::set_flat_coord_indices(Array<Uint>& indices)
+{
+  m_coord_indices = indices;
+  m_coord_indices_flat = true;
   m_dirty_coord_indices = false;
 }
 
@@ -243,12 +252,13 @@ void Mesh_set::clean_coord_indices()
   if (!m_coord_indices_flat && m_flatten_indices && !m_coord_indices.empty()) {
     Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
       (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-    if (!size) return;
-    Uint* indices = m_coord_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_coord_indices.resize(size);
+    if (size) {
+      Uint* indices = m_coord_indices.get_vector();
+      flatten_indices(indices, indices, m_num_primitives);
+      m_coord_indices.resize(size);
+      m_coord_indices_flat = true;
+    }
   }
-  m_coord_indices_flat = true;
   m_dirty_coord_indices = false;
 }
 
@@ -256,6 +266,15 @@ void Mesh_set::clean_coord_indices()
 void Mesh_set::set_normal_indices(Array<Uint>& indices)
 {
   m_normal_indices = indices;
+  m_normal_indices_flat = false;
+  m_dirty_normal_indices = true;
+}
+
+/*! \brief sets the normal-index array. */
+void Mesh_set::set_flat_normal_indices(Array<Uint>& indices)
+{
+  m_normal_indices = indices;
+  m_normal_indices_flat = true;
   m_dirty_normal_indices = false;
 }
 
@@ -278,12 +297,13 @@ void Mesh_set::clean_normal_indices()
   {
     Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
       (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-    if (!size) return;
-    Uint* indices = m_normal_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_normal_indices.resize(size);
+    if (size) {
+      Uint* indices = m_normal_indices.get_vector();
+      flatten_indices(indices, indices, m_num_primitives);
+      m_normal_indices.resize(size);
+      m_normal_indices_flat = true;
+    }
   }
-  m_normal_indices_flat = true;
   m_dirty_normal_indices = false;
 }
 
@@ -291,6 +311,15 @@ void Mesh_set::clean_normal_indices()
 void Mesh_set::set_color_indices(Array<Uint>& indices)
 {
   m_color_indices = indices;
+  m_color_indices_flat = false;
+  m_dirty_color_indices = true;
+}
+
+/*! \brief sets the color-index array. */
+void Mesh_set::set_flat_color_indices(Array<Uint>& indices)
+{
+  m_color_indices = indices;
+  m_color_indices_flat = true;
   m_dirty_color_indices = false;
 }
 
@@ -313,12 +342,13 @@ void Mesh_set::clean_color_indices()
   {
     Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
       (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-    if (!size) return;
-    Uint* indices = m_color_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_color_indices.resize(size);
+    if (size) {
+      Uint* indices = m_color_indices.get_vector();
+      flatten_indices(indices, indices, m_num_primitives);
+      m_color_indices.resize(size);
+      m_color_indices_flat = true;
+    }
   }
-  m_color_indices_flat = true;
   m_dirty_color_indices = false;
 }
 
@@ -326,6 +356,15 @@ void Mesh_set::clean_color_indices()
 void Mesh_set::set_tex_coord_indices(Array<Uint>& indices)
 {
   m_tex_coord_indices = indices;
+  m_tex_coord_indices_flat = false;
+  m_dirty_tex_coord_indices = true;
+}
+
+/*! \brief sets the texture coordinate-index array. */
+void Mesh_set::set_flat_tex_coord_indices(Array<Uint>& indices)
+{
+  m_tex_coord_indices = indices;
+  m_tex_coord_indices_flat = true;
   m_dirty_tex_coord_indices = false;
 }
 
@@ -352,8 +391,8 @@ void Mesh_set::clean_tex_coord_indices()
     Uint* indices = m_tex_coord_indices.get_vector();
     flatten_indices(indices, indices, m_num_primitives);
     m_tex_coord_indices.resize(size);
+    m_tex_coord_indices_flat = true;
   }
-  m_tex_coord_indices_flat = true;
   m_dirty_tex_coord_indices = false;
 }
 
@@ -381,6 +420,31 @@ void Mesh_set::flatten_indices(Uint* src, Uint* dst, Uint num)
     }
     return;
   }
+}
+
+/*! \brief reverses the coordinate indices. */
+void Mesh_set::set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
+{
+  m_coord_indices.resize(indices.size());
+  Uint i = 0;
+  const Uint* ii = indices.end() - 2;
+  for (; ii >= indices.begin(); --ii) {
+    m_coord_indices[i++] = *ii;
+  }
+  m_coord_indices[i++] = (Uint) -1;
+  m_coord_indices_flat = false;
+  m_dirty_coord_indices = true;
+}
+
+/*! \brief reverses the flat coordinate indices. */
+void Mesh_set::set_reverse_flat_coord_indices(const SGAL::Array<Uint>& indices)
+{
+  m_coord_indices.resize(indices.size());
+  Uint i = 0;
+  Uint j = indices.size();
+  while (i < indices.size()) m_coord_indices[i++] = indices[--j];
+  m_coord_indices_flat = true;
+  m_dirty_coord_indices = false;
 }
 
 SGAL_END_NAMESPACE

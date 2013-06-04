@@ -38,7 +38,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Cull_context.hpp"
 
 #include "SCGAL/Spherical_gaussian_map.hpp"
 #include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
@@ -50,8 +49,6 @@ SGAL_BEGIN_NAMESPACE
 
 class Field_info;
 class Container_proto;
-class Cull_context;
-class Isect_action;
 class Draw_action;
 class Scene_graph;
 class Cylinder;
@@ -167,12 +164,6 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
-  /*! */
-  virtual void cull(Cull_context& cull_context);
-
-  /*! */
-  virtual void isect(Isect_action* action);
-
   /*! Set the attributes of this node.
    * \param elem contains lists of attribute names and values.
    */
@@ -188,7 +179,7 @@ public:
   virtual Container_proto* get_prototype();
 
   /*! Clean the representation. */
-  virtual void clean();
+  virtual void clean_sgm();
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();

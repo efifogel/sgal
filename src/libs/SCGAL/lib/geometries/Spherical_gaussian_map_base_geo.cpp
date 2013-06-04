@@ -142,7 +142,7 @@ Spherical_gaussian_map_base_geo(Boolean proto) :
   m_aos_edge_radius(s_def_aos_edge_radius),
   m_aos_edge_line_width(s_def_aos_edge_line_width),
   m_aos_delta_angle(s_def_aos_delta_angle),
-
+  m_dirty_sgm(true),
   m_renderer_dirty(true),
   m_surface_renderer(NULL),
   m_colored_surface_renderer(NULL),
@@ -165,10 +165,10 @@ Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& gm)
 }
 
 /*! Destructor. */
-Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() { clear(); }
+Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() {}
 
 /*! \brief clears the internal representation and auxiliary data structures. */
-void Spherical_gaussian_map_base_geo::clear() { Mesh_set::clear(); }
+void Spherical_gaussian_map_base_geo::clear() {}
 
 /*! \brief */
 void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
@@ -176,6 +176,9 @@ void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
 /*! \brief */
 void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 {
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_sgm) clean_sgm();
+
   Context* context = action->get_context();
   if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
 
@@ -188,7 +191,8 @@ void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
-  if (is_dirty()) clean();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_sgm) clean_sgm();
   if (m_bb_is_pre_set) return true;
 
   if (m_draw_aos) {
@@ -471,19 +475,6 @@ void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action* action)
   m_renderer(action);
 }
 
-/*! \brief reverses the coordinate indices. */
-void Spherical_gaussian_map_base_geo::
-set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
-{
-  m_coord_indices.resize(indices.size());
-  Uint i = 0;
-  const Uint* ii = indices.end() - 2;
-  for (; ii >= indices.begin(); --ii) {
-    m_coord_indices[i++] = *ii;
-  }
-  m_coord_indices[i++] = (Uint) -1;
-}
-
 /*! \brief creates the renderers. */
 void Spherical_gaussian_map_base_geo::create_renderers()
 {
@@ -567,6 +558,22 @@ void Spherical_gaussian_map_base_geo::field_changed(Field_info* field_info)
 {
   clear();
   Container::field_changed(field_info);
+}
+
+/*! \brief cleans the geometry. */
+void Spherical_gaussian_map_base_geo::clean_sgm() {}
+
+/*! \brief draws the geometry. */
+void Spherical_gaussian_map_base_geo::draw(Draw_action* action)
+{
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_normal_indices()) clean_normal_indices();
+  if (is_dirty_color_indices()) clean_color_indices();
+  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (m_dirty_sgm) clean_sgm();
+  if (is_empty()) return;
+
+  draw_mesh(action);
 }
 
 SGAL_END_NAMESPACE

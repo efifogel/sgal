@@ -227,10 +227,7 @@ Container_proto* Assembly::get_prototype()
 }
 
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Assembly::set_attributes(Element* elem) 
-{
-  Group::set_attributes(elem);
-}
+void Assembly::set_attributes(Element* elem) { Group::set_attributes(elem); }
 
 /*! \brief assigns each part a unique non-negative number. */
 Uint Assembly::assign_id(Node* node, Uint id) const
@@ -340,8 +337,12 @@ void Assembly::construct_reflected_sgms()
           *itt++ = tpoint(CGAL::ORIGIN, vec);
         }
         reflected_sgm_geo->set_coord_array(inverse_coord_array);
-        const SGAL::Array<Uint>& indices = sgm_geo->get_coord_indices();
-        reflected_sgm_geo->set_reverse_coord_indices(indices);
+        reflected_sgm_geo->set_primitive_type(sgm_geo->get_primitive_type());
+        reflected_sgm_geo->set_num_primitives(sgm_geo->get_num_primitives());
+        const Array<Uint>& indices = sgm_geo->get_coord_indices();
+        if (sgm_geo->are_coord_indices_flat())
+          reflected_sgm_geo->set_reverse_flat_coord_indices(indices);
+        else reflected_sgm_geo->set_reverse_coord_indices(indices);
       }
       else {         
         Sgm_geo::Polyhedron* reflected_polyhedron = new Sgm_geo::Polyhedron;
@@ -1047,8 +1048,8 @@ void Assembly::compute_part_projections()
       Aos_list& aoss = m_projection_lists[key];
       Aos_mark* aos = new Aos_mark;
       m_part_projections[key] = aos;
-      std::cout << "compute_part_projections ("
-                << i << "," << j << ")" << std::endl;
+      // std::cout << "compute_part_projections ("
+      //           << i << "," << j << ")" << std::endl;
       compute_part_projections(aoss, aos);
       remove_marked_edges(aos);
     }
@@ -1116,7 +1117,7 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
 void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
 {
   // SGAL_assertion(begin != end);
-  std::cout << "compute_part_projections: " << aoss.size() << std::endl;
+  // std::cout << "compute_part_projections: " << aoss.size() << std::endl;
 
   Arrangement_marked_overlay_traits<Aos_mark> overlay_traits;
   Aos_iter it = aoss.begin();
@@ -1199,7 +1200,8 @@ void Assembly::construct_part_projection_nodes()
     shape->set_geometry(aos_geo);
     aos_geo->set_aos(aos);
     aos_geo->set_aos_vertex_style(Arrangement_renderer::Vertex_shape::DISC);
-    aos_geo->set_aos_isolated_vertex_style(Arrangement_renderer::Vertex_shape::DISC);
+    aos_geo->set_aos_isolated_vertex_style(Arrangement_renderer::
+                                           Vertex_shape::DISC);
     aos_geo->set_aos_edge_style(Arrangement_renderer::Edge_shape::STRIP);
     Vector3f color(0, 0, 0);
     aos_geo->set_aos_vertex_color(color);
@@ -1207,7 +1209,8 @@ void Assembly::construct_part_projection_nodes()
     aos_geo->set_aos_edge_color(color);
     aos_geo->set_aos_vertex_radius(0.06f);
 
-    aos_geo->set_aos_marked_vertex_style(Arrangement_renderer::Vertex_shape::NONE);
+    aos_geo->set_aos_marked_vertex_style(Arrangement_renderer::
+                                         Vertex_shape::NONE);
     aos_geo->disable_aos_marked_edge();
     //aos_geo->set_aos_marked_vertex_style(Arrangement_renderer::DISC);
     //aos_geo->set_aos_marked_edge_shape(Arrangement_renderer::STRIP);

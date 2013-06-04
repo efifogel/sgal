@@ -348,6 +348,9 @@ protected:
   /*! The angle of a single line strip of a spherical arc. */
   Float m_aos_delta_angle;
 
+  /*! Indicates whether (sphearical) Gaussian map must be cleaned. */
+  Boolean m_dirty_sgm;
+  
   /*! Indicates whether the renderer must be cleaned. */
   Boolean m_renderer_dirty;
 
@@ -426,12 +429,18 @@ public:
   /*! Destructor. */
   virtual ~Spherical_gaussian_map_base_geo();
 
-  /*! */
+  /*! Draw the geometry. */
+  virtual void draw(Draw_action* action);
+
+  /*! Cull the geometry. */
   virtual void cull(Cull_context& cull_context);
 
   /*! */
   virtual void isect(Isect_action* action);
 
+  /*! Clean the geometry. */
+  virtual void clean_sgm();
+  
   /*! Calculate the bounding sphere.
    * \return a Boolean flag that indicates whether the sphere bound changed.
    */
@@ -485,9 +494,6 @@ public:
    */
   virtual void draw_aos_edges(Draw_action* action) {}
 
-  /*! Reverse the coordinate indices. */
-  void set_reverse_coord_indices(const SGAL::Array<Uint>& indices);
-  
   /*! Obtain the aos surface color. */
   const Vector3f& get_aos_surface_color(void) const;
 

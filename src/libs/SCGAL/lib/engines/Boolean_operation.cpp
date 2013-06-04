@@ -81,7 +81,10 @@ void Boolean_operation::execute()
 
   Exact_polyhedron_geo geometry1;
   geometry1.set_coord_array(m_operand1->get_coord_array());
-  geometry1.set_coord_indices(m_operand1->get_coord_indices());
+  Array<Uint>& indices1 = m_operand1->get_coord_indices();
+  if (m_operand1->are_coord_indices_flat())
+    geometry1.set_flat_coord_indices(indices1);
+  else geometry1.set_coord_indices(indices1);
   geometry1.set_num_primitives(m_operand1->get_num_primitives());
   geometry1.set_primitive_type(m_operand1->get_primitive_type());
   Polyhedron& polyhedron1 = geometry1.get_polyhedron();
@@ -89,8 +92,14 @@ void Boolean_operation::execute()
 
   Exact_polyhedron_geo geometry2;
   geometry2.set_coord_array(m_operand2->get_coord_array());
-  geometry2.set_coord_indices(m_operand2->get_coord_indices());
+  Array<Uint>& indices2 = m_operand2->get_coord_indices();
+  if (m_operand2->are_coord_indices_flat())
+    geometry2.set_flat_coord_indices(indices2);
+  else geometry2.set_coord_indices(indices2);
   geometry2.set_num_primitives(m_operand2->get_num_primitives());
+
+  std::cout << "# primitives: " << m_operand2->get_num_primitives() << std::endl;
+
   geometry2.set_primitive_type(m_operand2->get_primitive_type());
   Polyhedron& polyhedron2 = geometry2.get_polyhedron();
   Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(polyhedron2);

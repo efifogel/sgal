@@ -204,10 +204,16 @@ public:
   /*! Clone. */
   virtual SGAL::Container* clone();
 
+  /*! Draw the geometry. */
+  virtual void draw(Draw_action* action);
+
+  /*! */  
   virtual void cull(SGAL::Cull_context& cull_context);
 
+  /*! */  
   virtual void isect(SGAL::Isect_action* action);
 
+  /*! */  
   virtual bool clean_sphere_bound();
 
   /*! Set the attributes of this node. */
@@ -219,8 +225,11 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
+  /*! Set the polyhedron data-structure. */
+  void set_polyhedron(Polyhedron& polyhedron);
+
   /*! Obtain the node prototype. */
-  virtual SGAL::Container_proto* get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Obtain the polyhedron data-structure. */
   Polyhedron& get_polyhedron();
@@ -229,8 +238,17 @@ protected:
   /*! The actual polyhedron object. */
   Polyhedron m_polyhedron;
 
-  /*! Clean the representation. */
-  virtual void clean();
+  /*! Indicates whether the geometry is dirty and thus should be cleaned. */
+  Boolean m_dirty_polyhedron;
+
+  /*! Indicates whether the facets are dirty and thus should be cleaned. */
+  Boolean m_dirty_facets;
+  
+  /*! Cleans the polyhedron. */
+  virtual void clean_polyhedron();
+
+  /*! Cleans the facets. */
+  virtual void clean_facets();
 
   /*! Clear the internal representation. */
   virtual void clear();

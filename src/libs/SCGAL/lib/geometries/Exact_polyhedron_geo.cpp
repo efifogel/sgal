@@ -62,8 +62,12 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Mesh_set(proto),
   m_convex_hull(false),
   m_dirty_polyhedron(true),
+  m_dirty_facets(true),
   m_time(0)
-{}
+{
+  if (proto) return;
+  m_flatten_indices = true;
+}
 
 /*! Destructor */
 Exact_polyhedron_geo::~Exact_polyhedron_geo() {}
@@ -95,27 +99,44 @@ void Exact_polyhedron_geo::convex_hull()
   m_dirty_polyhedron = false;
 }
 
-/*! \brief cleans the data structure. */
-void Exact_polyhedron_geo::clean()
+/*! \brief draws the geometry. */
+void Exact_polyhedron_geo::draw(Draw_action* action)
 {
-  SGAL_TRACE_MSG(Trace::POLYHEDRON,
-                 "Exact_polyhedron_geo::clean() start\n");
-  clock_t start_time = clock();
-  if (m_dirty_polyhedron) {
-    if (m_convex_hull) convex_hull();
-    else {
-      m_surface.set_geo_set(this);
-      m_polyhedron.delegate(m_surface);
-#if 0
-      if (!m_polyhedron.normalized_border_is_valid())
-        m_polyhedron.normalize_border();
-#else
-      m_polyhedron.normalize_border();
-#endif
-      m_dirty_polyhedron = false;
-    }
-  }
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_normal_indices()) clean_normal_indices();
+  if (is_dirty_color_indices()) clean_color_indices();
+  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_facets) clean_facets();
+  if (is_empty()) return;
 
+  draw_mesh(action);
+}
+
+/*! \brief cleans the data structure. */
+void Exact_polyhedron_geo::clean_polyhedron()
+{
+  clock_t start_time = clock();
+  if (m_convex_hull) convex_hull();
+  else {
+    m_surface.set_mesh_set(this);
+    m_polyhedron.delegate(m_surface);
+#if 0
+    if (!m_polyhedron.normalized_border_is_valid())
+      m_polyhedron.normalize_border();
+#else
+    m_polyhedron.normalize_border();
+#endif
+    m_dirty_polyhedron = false;
+  }
+  clock_t end_time = clock();
+  m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
+  m_dirty_facets = true;
+}
+
+/*! \brief cleans the facets. */
+void Exact_polyhedron_geo::clean_facets()
+{
   // Compute the plane equations:
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                  m_polyhedron.planes_begin(), Plane_equation());
@@ -138,10 +159,7 @@ void Exact_polyhedron_geo::clean()
   std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
                 Point_to_vector());
 
-  clock_t end_time = clock();
-  m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
-
-  Mesh_set::clean();
+  m_dirty_facets = false;
 }
 
 /*! \brief clears the internal representation. */
@@ -150,7 +168,8 @@ void Exact_polyhedron_geo::clear()
   SGAL_TRACE_MSG(Trace::POLYHEDRON,
                  "Exact_polyhedron_geo::clear() start\n");
   m_polyhedron.clear();
-  Mesh_set::clear();
+  m_dirty_polyhedron = true;
+  m_dirty_facets = true;
 }
 
 /*! \brief */
@@ -180,8 +199,11 @@ void Exact_polyhedron_geo::draw_geometry(Draw_action* /* action */)
 /*! \brief */
 void Exact_polyhedron_geo::isect(Isect_action* action)
 {
-  if (is_dirty()) clean();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_facets) clean_facets();
   if (is_empty()) return;
+  
   Facet_iterator i;
   for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Polyhedron::Halfedge_around_facet_circulator j = i->facet_begin();
@@ -199,7 +221,9 @@ void Exact_polyhedron_geo::isect(Isect_action* action)
 /*! \brief */
 Boolean Exact_polyhedron_geo::clean_sphere_bound()
 {
-  if (is_dirty()) clean();
+  if (!m_dirty_sphere_bound) return false;
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
   if (m_bb_is_pre_set) return true;
   
   Approximate_sphere_vector spheres;
@@ -286,7 +310,9 @@ CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Point_3& p)
 void Exact_polyhedron_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty()) clean();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_facets) clean_facets();
 
   std::cout << "Primal"
             << ", no. vertices: " << m_polyhedron.size_of_vertices()
@@ -301,7 +327,8 @@ void Exact_polyhedron_geo::print_stat()
 /*! \brief obtains the polyhedron data-structure. */
 Exact_polyhedron_geo::Polyhedron& Exact_polyhedron_geo::get_polyhedron()
 {
-  if (is_dirty()) clean();
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
   return m_polyhedron;
 }
 

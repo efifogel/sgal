@@ -198,7 +198,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
         sgm_geo->set_polyhedron(&p);
         sgm_geo->set_aos_edge_color(app->get_material()->get_diffuse_color());
         // We need to clean, because the Polyhedron is local
-        sgm_geo->clean();
+        sgm_geo->clean_sgm();
         m_sgm_geos.push_back(sgm_geo);
         m_sgm_apps.push_back(app);
       }
@@ -233,7 +233,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
         Shared_sgm_geo sgm_geo = Shared_sgm_geo(new Sgm_geo);
         sgm_geo->set_polyhedron(&polyhedron);
         // We need to clean, because the Polyhedron is local
-        sgm_geo->clean();
+        sgm_geo->clean_sgm();
         m_sgm_geos.push_back(sgm_geo);
         m_sgm_apps.push_back(app);
       }

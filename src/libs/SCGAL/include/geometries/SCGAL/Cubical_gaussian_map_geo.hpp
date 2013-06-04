@@ -979,9 +979,6 @@ public:
   /*! Draw the dual representation of the polyhedron in 2D. */
   void draw_aos_unfolded(SGAL::Draw_action* action);
 
-  /*! Reverse the coordinate indices. */
-  void set_reverse_coord_indices(const SGAL::Array<Uint>& indices);
-  
   /*! Obtain the dual surface color. */
   const Vector3f& get_aos_surface_color(void) const;
 

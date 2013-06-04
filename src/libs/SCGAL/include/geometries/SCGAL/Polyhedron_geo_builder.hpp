@@ -28,7 +28,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Geo_set.hpp"
+#include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -36,13 +36,13 @@ SGAL_BEGIN_NAMESPACE
 template <class HDS>
 class Polyhedron_geo_builder : public CGAL::Modifier_base<HDS> {
 private:
-  const Geo_set* m_geo_set;
+  const Mesh_set* m_mesh_set;
 
 public:
   /*! */
   Polyhedron_geo_builder() {}
 
-  void set_geo_set(const Geo_set* geo_set) { m_geo_set = geo_set; }
+  void set_mesh_set(const Mesh_set* mesh_set) { m_mesh_set = mesh_set; }
   
   /*! */
   void operator()(HDS& hds)
@@ -52,9 +52,9 @@ public:
     typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
       size_type;
     const Geo_set::Shared_coord_array coord_array =
-      m_geo_set->get_coord_array();
+      m_mesh_set->get_coord_array();
     size_type coord_array_size = coord_array->size();
-    unsigned int num_facets = m_geo_set->get_num_primitives();
+    unsigned int num_facets = m_mesh_set->get_num_primitives();
     B.begin_surface(coord_array_size, num_facets);
     typedef typename HDS::Vertex Vertex;
     typedef typename Vertex::Point Point;
@@ -66,35 +66,38 @@ public:
     }
     
     // Add the faces:
-    if (m_geo_set->get_primitive_type() == Geo_set::PT_TRIANGLES) {
-      Uint j = 0;
-      for (i = 0; i < num_facets; ++i) {
-        B.begin_facet();
-        B.add_vertex_to_facet(m_geo_set->get_coord_index(j));
-        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+1));
-        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+2));
-        B.end_facet();
-        j += 3;
+    if (m_mesh_set->are_coord_indices_flat()) {
+      if (m_mesh_set->get_primitive_type() == Geo_set::PT_TRIANGLES) {
+        Uint j = 0;
+        for (i = 0; i < num_facets; ++i) {
+          B.begin_facet();
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+1));
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+2));
+          B.end_facet();
+          j += 3;
+        }
       }
-    }
-    else if (m_geo_set->get_primitive_type() == Geo_set::PT_QUADS) {
-      Uint j = 0;
-      for (i = 0; i < num_facets; ++i) {
-        B.begin_facet();
-        B.add_vertex_to_facet(m_geo_set->get_coord_index(j));
-        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+1));
-        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+2));
-        B.add_vertex_to_facet(m_geo_set->get_coord_index(j+3));
-        B.end_facet();
-        j += 4;
+      else if (m_mesh_set->get_primitive_type() == Geo_set::PT_QUADS) {
+        Uint j = 0;
+        for (i = 0; i < num_facets; ++i) {
+          B.begin_facet();
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+1));
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+2));
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+3));
+          B.end_facet();
+          j += 4;
+        }
       }
+      else SGAL_error();
     }
     else {
       Uint j = 0;
       for (i = 0; i < num_facets; ++i) {
         B.begin_facet();
-        for (; m_geo_set->get_coord_index(j) != (Uint) -1; ++j) {
-          B.add_vertex_to_facet(m_geo_set->get_coord_index(j));
+        for (; m_mesh_set->get_coord_index(j) != (Uint) -1; ++j) {
+          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
         }
         ++j;
         B.end_facet();

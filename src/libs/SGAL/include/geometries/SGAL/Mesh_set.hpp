@@ -125,10 +125,6 @@ public:
   /*! Obtain the creas_angle. */
   Float get_crease_angle() const;
 
-  /*! Set the flag that indicates whether the coordinate-index array is "flat".
-   */
-  void set_coord_indices_flat(Boolean flag);
-
   /*! Determine whether the coordinate-index array is "flat". */
   Boolean are_coord_indices_flat() const;
 
@@ -136,11 +132,17 @@ public:
   virtual Array<Uint>& get_coord_indices();
 
   /*! Set the coordinate-index array. */
-  virtual void set_coord_indices(Array<Uint>& indices);
+  void set_coord_indices(Array<Uint>& indices);
 
-  /*! Set the flag that indicates whether the normal-index array is "flat". */
-  void set_normal_indices_flat(Boolean flag);
+  /*! Set the flat coordinate-index array. */
+  void set_flat_coord_indices(Array<Uint>& indices);
+  
+  /*! Reverse the coordinate indices. */
+  void set_reverse_coord_indices(const Array<Uint>& indices);
 
+  /*! Reverse the flat coordinate indices. */
+  void set_reverse_flat_coord_indices(const Array<Uint>& indices);
+  
   /*! Determine whether the normal-index array is "flat". */
   Boolean are_normal_indices_flat() const;
 
@@ -148,11 +150,11 @@ public:
   virtual Array<Uint>& get_normal_indices();
 
   /*! Set the normal-index array. */
-  virtual void set_normal_indices(Array<Uint>& indices);
+  void set_normal_indices(Array<Uint>& indices);
 
-  /*! Set the flag that indicates whether the color-index array is "flat". */
-  void set_color_indices_flat(Boolean flag);
-
+  /*! Set the flat normal-index array. */
+  void set_flat_normal_indices(Array<Uint>& indices);
+  
   /*! Determine whether the color-index array is "flat". */
   Boolean are_color_indices_flat() const;
 
@@ -160,12 +162,10 @@ public:
   virtual Array<Uint>& get_color_indices();
 
   /*! Set the color-index array. */
-  virtual void set_color_indices(Array<Uint>& indices);
+  void set_color_indices(Array<Uint>& indices);
   
-  /*! Set the flag that indicates whether the texture coordinate-index array
-   * is "flat".
-   */
-  void set_tex_coord_indices_flat(Boolean flag);
+  /*! Set the flat color-index array. */
+  void set_flat_color_indices(Array<Uint>& indices);
 
   /*! Determine whether the texture coordinate-index array is "flat". */
   Boolean are_tex_coord_indices_flat() const;
@@ -174,8 +174,11 @@ public:
   virtual Array<Uint>& get_tex_coord_indices();
 
   /*! Set the texture coordinate-index array. */
-  virtual void set_tex_coord_indices(Array<Uint>& indices);
+  void set_tex_coord_indices(Array<Uint>& indices);
 
+  /*! Set the flat texture coordinate-index array. */
+  void set_flat_tex_coord_indices(Array<Uint>& indices);
+  
 protected:
   /*! Indicates whether the mesh must be cleaned. */
   Boolean m_dirty;
@@ -348,44 +351,20 @@ inline void Mesh_set::set_crease_angle(Float crease_angle)
 /*! \brief obtains the creas_angle. */
 inline Float Mesh_set::get_crease_angle() const { return m_crease_angle; }
 
-/*! \brief sets the flag that indicates whether the coordinate index array is
- * "flat".
- */
-inline void Mesh_set::set_coord_indices_flat(Boolean flag)
-{ m_coord_indices_flat = flag; }
-
 /*! \brief determines whether the coordinate index array is "flat".
  */
 inline Boolean Mesh_set::are_coord_indices_flat() const
 { return m_coord_indices_flat; }
-
-/*! \brief sets the flag that indicates whether the normal index array is
- * "flat".
- */
-inline void Mesh_set::set_normal_indices_flat(Boolean flag)
-{ m_normal_indices_flat = flag; }
 
 /*! \brief determines whether the normal index array is "flat".
  */
 inline Boolean Mesh_set::are_normal_indices_flat() const
 { return m_normal_indices_flat; }
 
-/*! \brief sets the flag that indicates whether the color index array is
- * "flat".
- */
-inline void Mesh_set::set_color_indices_flat(Boolean flag)
-{ m_color_indices_flat = flag; }
-
 /*! \brief determines whether the color index array is "flat".
  */
 inline Boolean Mesh_set::are_color_indices_flat() const
 { return m_color_indices_flat; }
-
-/*! \brief sets the flag that indicates whether the texture coordinate index
- * array is "flat".
- */
-inline void Mesh_set::set_tex_coord_indices_flat(Boolean flag)
-{ m_tex_coord_indices_flat = flag; }
 
 /*! \brief determines whether the texture coordinate index array is "flat".
  */

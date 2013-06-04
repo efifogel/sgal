@@ -547,11 +547,11 @@ void Ego::clean_model()
   m_transformed_model->set_coord_array(transformed_coords);
   for (Uint i = 0; i < coords->size(); ++i)
     (*transformed_coords)[i].xform_pt((*coords)[i], get_matrix());
-  
-  m_transformed_model->set_coord_indices(m_model->get_coord_indices());
+
   m_transformed_model->set_num_primitives(m_model->get_num_primitives());
   m_transformed_model->set_primitive_type(m_model->get_primitive_type());
-  m_transformed_model->set_coord_indices_flat(m_model->are_coord_indices_flat());
+  m_transformed_model->set_flat_coord_indices(m_model->get_coord_indices());
+  SGAL_assertion(m_model->are_coord_indices_flat());
 }
 
 /*! \brief clean the voxels */
@@ -1185,8 +1185,10 @@ Ego::create_geometry(Uint num0, Uint num1,
       Shared_ego_brick ref_ego_brick = (*it).second;
       ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
       ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
-      ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
-      ego_brick->set_coord_indices_flat(true);
+      ego_brick->set_num_primitives(ref_ego_brick->get_num_primitives());
+      ego_brick->set_primitive_type(ref_ego_brick->get_primitive_type());
+      ego_brick->set_flat_coord_indices(ref_ego_brick->get_coord_indices());
+      SGAL_assertion(ego_brick->are_coord_indices_flat());
     }
     m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
     return ego_brick;
@@ -1198,8 +1200,10 @@ Ego::create_geometry(Uint num0, Uint num1,
     Shared_ego_brick ref_ego_brick = (*it).second;
     ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
     ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
-    ego_brick->set_coord_indices(ref_ego_brick->get_coord_indices());
-    ego_brick->set_coord_indices_flat(true);
+    ego_brick->set_num_primitives(ref_ego_brick->get_num_primitives());
+    ego_brick->set_primitive_type(ref_ego_brick->get_primitive_type());
+    ego_brick->set_flat_coord_indices(ref_ego_brick->get_coord_indices());
+    SGAL_assertion(ego_brick->are_coord_indices_flat());
   }
   m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
                                           ego_brick));
