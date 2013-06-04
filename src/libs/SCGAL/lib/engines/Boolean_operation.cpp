@@ -92,14 +92,11 @@ void Boolean_operation::execute()
 
   Exact_polyhedron_geo geometry2;
   geometry2.set_coord_array(m_operand2->get_coord_array());
-  Array<Uint>& indices2 = m_operand2->get_coord_indices();
+  Array<Uint>& indices2 = m_operand2->get_coord_indices();  
   if (m_operand2->are_coord_indices_flat())
     geometry2.set_flat_coord_indices(indices2);
   else geometry2.set_coord_indices(indices2);
   geometry2.set_num_primitives(m_operand2->get_num_primitives());
-
-  std::cout << "# primitives: " << m_operand2->get_num_primitives() << std::endl;
-
   geometry2.set_primitive_type(m_operand2->get_primitive_type());
   Polyhedron& polyhedron2 = geometry2.get_polyhedron();
   Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(polyhedron2);
