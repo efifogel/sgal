@@ -772,6 +772,7 @@ Ego_brick::Shared_tex_coord_array Ego_brick::get_tex_coord_array()
 Array<Uint>& Ego_brick::get_coord_indices()
 {
   if (is_dirty()) clean();
+  if (is_dirty_coord_indices()) clean_coord_indices();
   return Geo_set::get_coord_indices();
 }
 
