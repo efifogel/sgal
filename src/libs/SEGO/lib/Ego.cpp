@@ -772,8 +772,9 @@ void Ego::clean_parts()
             coords[i].xform_pt(coords[i], transform->get_matrix());
 
           // Reset the transform
-          Vector3f tmp;
-          transform->set_translation(tmp);
+          Matrix4f matrix;
+          matrix.make_identity();
+          transform->set_matrix(matrix);
 
           // Intersect
           boost::shared_ptr<Boolean_operation> bo(new Boolean_operation);
@@ -1134,8 +1135,19 @@ void Ego::clean_colors()
 
 /*! \brief creates the geometry of a brick. */
 Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
-                                          Boolean draw_knobs, Boolean watertight)
+                                          Boolean draw_knobs,
+                                          Boolean watertight)
 {
+  if (watertight) {
+    Shared_ego_brick ego_brick(new Ego_brick);
+    ego_brick->set_knob_slices(m_knob_slices);
+    ego_brick->set_number_of_knobs1(num0);
+    ego_brick->set_number_of_knobs2(num1);
+    ego_brick->set_knobs_visible(false);
+    ego_brick->set_watertight(true);
+    return ego_brick;
+  }
+  
   if (draw_knobs) {
     Ego_brick_iter it = m_bricks.find(std::make_pair(num0, num1));
     if (it == m_bricks.end()) {
@@ -1144,12 +1156,13 @@ Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
       ego_brick->set_number_of_knobs1(num0);
       ego_brick->set_number_of_knobs2(num1);
       ego_brick->set_knobs_visible(true);
-      ego_brick->set_watertight(watertight);
+      ego_brick->set_watertight(false);
       m_bricks.insert(std::make_pair(std::make_pair(num0, num1), ego_brick));
       return ego_brick;
     }
     return (*it).second;
   }
+  
   Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
   if (it == m_knobless_bricks.end()) {
     Shared_ego_brick ego_brick(new Ego_brick);
@@ -1157,7 +1170,7 @@ Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
     ego_brick->set_number_of_knobs1(num0);
     ego_brick->set_number_of_knobs2(num1);
     ego_brick->set_knobs_visible(false);
-    ego_brick->set_watertight(watertight);
+    ego_brick->set_watertight(false);
     m_knobless_bricks.insert(std::make_pair(std::make_pair(num0, num1),
                                             ego_brick));
     return ego_brick;
@@ -1166,10 +1179,10 @@ Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
 }
 
 /*! \brief creates the geometry of a brick. */
-Ego::Shared_mesh_set
-Ego::create_geometry(Uint num0, Uint num1,
-                     Boolean draw_knobs, Boolean watertight,
-                     Vector3f& center)
+Ego::Shared_mesh_set Ego::create_geometry(Uint num0, Uint num1,
+                                          Boolean draw_knobs,
+                                          Boolean watertight,
+                                          Vector3f& center)
 {
   Shared_ego_brick ego_brick(new Ego_brick);
   ego_brick->set_knob_slices(m_knob_slices);
@@ -1177,6 +1190,7 @@ Ego::create_geometry(Uint num0, Uint num1,
   ego_brick->set_number_of_knobs2(num1);
   ego_brick->set_center(center);
   ego_brick->set_watertight(watertight);
+  if (watertight) return ego_brick;
 
   if (draw_knobs) {
     ego_brick->set_knobs_visible(true);
@@ -1194,9 +1208,9 @@ Ego::create_geometry(Uint num0, Uint num1,
     return ego_brick;
   }
 
-  Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
   ego_brick->set_knobs_visible(false);
-  if (false && (it != m_knobless_bricks.end())) {
+  Ego_brick_iter it = m_knobless_bricks.find(std::make_pair(num0, num1));
+  if (it != m_knobless_bricks.end()) {
     Shared_ego_brick ref_ego_brick = (*it).second;
     ego_brick->set_coord_array(ref_ego_brick->get_coord_array());
     ego_brick->set_normal_array(ref_ego_brick->get_normal_array());
