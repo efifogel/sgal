@@ -902,11 +902,14 @@ public:
   /*! Clone. */
   virtual SGAL::Container* clone() { return new Cubical_gaussian_map_geo(); }
 
-  /*! */
-  virtual void cull(SGAL::Cull_context& cull_context);
+  /*! Draw the geometry. */
+  virtual void draw(Draw_action* action);
 
   /*! */
-  virtual void isect(SGAL::Isect_action* action);
+  virtual void cull(Cull_context& cull_context);
+
+  /*! */
+  virtual void isect(Isect_action* action);
 
   /*! Calculate the bounding sphere.
    * \return a Boolean flag that indicates whether the sphere bound changed.
