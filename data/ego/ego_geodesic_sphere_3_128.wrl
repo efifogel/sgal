@@ -91,7 +91,7 @@ Transform {
 	      children [
 		Shape {
 		  appearance Appearance {
-		    material Material {}
+		    material Material { transparency 0.5 }
 		  }
 		  geometry DEF MODEL IndexedFaceSet {
 		    coord Coordinate {
@@ -602,13 +602,13 @@ Transform {
 		texture CubeEnvironment {
 		  rightImage Image {
 		    flip FALSE alpha TRUE transparency 0.2 url ["right_128.jpg"]
-		  } 	# -90
+		  } # -90
 		  leftImage Image { 
 		    flip FALSE alpha TRUE transparency 0.2 url ["left_128.jpg"]
-		  }   	#  90
+		  } #  90
 		  backImage Image { 
 		    flip FALSE alpha TRUE transparency 0.2 url ["back_128.jpg"]
-		  }   	# 180
+		  } # 180
 		  frontImage Image { 
 		    flip FALSE alpha TRUE transparency 0.2 url ["front_128.jpg"]
 		  }
@@ -617,7 +617,7 @@ Transform {
 		  }
 		  bottomImage Image { 
 		    flip FALSE alpha TRUE transparency 0.2 url ["bottom_128.jpg"]
-		  }		# 180
+		  } # 180
 		}
 	      }
 	      # style "appearance"
@@ -625,7 +625,7 @@ Transform {
 	      colorSpace "RGB"
 	      smooth TRUE
 	      # scale 200 200 200
-	      scale 10 10 10
+	      scale 9 9 9
 	      model USE MODEL
 	      knobSlices 16
 	      spaceFilling TRUE
