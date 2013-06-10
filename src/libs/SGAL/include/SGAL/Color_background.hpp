@@ -47,13 +47,13 @@ public:
   };
 
   /*! Constructor */
-  Color_background(Boolean proto = SGAL_FALSE);
+  Color_background(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Color_background();
 
   /*! Construct the prototype */
-  static Color_background * prototype() { return new Color_background(SGAL_TRUE); }
+  static Color_background * prototype() { return new Color_background(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Color_background(); }
