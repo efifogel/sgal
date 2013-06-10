@@ -113,9 +113,6 @@ const Vector3f Spherical_gaussian_map_base_geo::s_def_aos_edge_color(0, 0, .5f);
 // General rendering attributes:
 const Float Spherical_gaussian_map_base_geo::s_def_aos_delta_angle(.1f);
 
-REGISTER_TO_FACTORY(Spherical_gaussian_map_base_geo,
-                    "Spherical_gaussian_map_base_geo");
-
 /*! Constructor */
 Spherical_gaussian_map_base_geo::
 Spherical_gaussian_map_base_geo(Boolean proto) :
