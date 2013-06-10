@@ -84,10 +84,10 @@ Transform {
       #bboxSize 1.5 1.5 1.5
       children [
 	DEF SWITCH_MODEL Switch {
-	  whichChoice -1
+	  whichChoice 0
 	  children [
 	    Transform {
-	      scale 100 100 100
+	      scale 9 9 9
 	      children [
 		Shape {
 		  appearance Appearance {
@@ -623,7 +623,7 @@ Transform {
 	      # style "appearance"
 	      # style "discreteCubeMap"
 	      colorSpace "RGB"
-	      smooth TRUE
+	      # smooth TRUE
 	      # scale 200 200 200
 	      scale 9 9 9
 	      model USE MODEL
@@ -631,7 +631,7 @@ Transform {
 	      spaceFilling TRUE
 	      # layerXVisibility "notAbove"
 	      # layerYVisibility "notAbove"
-	      # layerZVisibility "notAbove"
+	      layerZVisibility "notAbove"
 	      brickTypes [
 			  # 2, 4, 1, 
 			  # 4, 2, 1,
