@@ -120,4 +120,6 @@ void Vertex_shader::set_url(const std::string& url)
   m_dirty = true;
 }
 
+Boolean Vertex_shader::empty() { return true; }
+
 SGAL_END_NAMESPACE

@@ -120,4 +120,6 @@ void Fragment_shader::set_url(const std::string& url)
   m_dirty = true;
 }
 
+Boolean Fragment_shader::empty() { return true; }
+
 SGAL_END_NAMESPACE
