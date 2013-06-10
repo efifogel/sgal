@@ -34,24 +34,18 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Interpolator::s_prototype = NULL;
-
-REGISTER_TO_FACTORY(Interpolator, "Interpolator");
+Container_proto* Interpolator::s_prototype = NULL;
 
 /*! Constructor
-*/
-Interpolator::Interpolator(Boolean interpolate_flag,
-                           Boolean proto) :
+ */
+Interpolator::Interpolator(Boolean interpolate_flag, Boolean proto) :
   Node(proto),
   m_fraction(0),
   m_interpolate_flag(interpolate_flag)
 {}
 
 /*! Destructor */ 
-Interpolator::~Interpolator()
-{
-  m_keys.clear();
-}
+Interpolator::~Interpolator() { m_keys.clear(); }
 
 /*! Initializes the container prototype */
 void Interpolator::init_prototype()
@@ -78,7 +72,7 @@ void Interpolator::delete_prototype()
 }
 
 /*! Obtain the container prototype */
-Container_proto * Interpolator::get_prototype() 
+Container_proto* Interpolator::get_prototype() 
 {  
   if (!s_prototype) Interpolator::init_prototype();
   return s_prototype;
@@ -86,20 +80,17 @@ Container_proto * Interpolator::get_prototype()
 
 
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Interpolator::set_attributes(Element * elem) 
+void Interpolator::set_attributes(Element* elem) 
 { 
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
-    if ( name == "key" ) 
-    {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
+    if (name == "key") {
       Uint size = get_num_tokens(value);
       m_keys.resize(size);
       std::istringstream svalue(value, std::istringstream::in);
@@ -107,8 +98,7 @@ void Interpolator::set_attributes(Element * elem)
       elem->mark_delete(ai);
       continue;
     }
-    if ( name == "interpolateFlag" )
-    {
+    if (name == "interpolateFlag") {
       m_interpolate_flag = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
