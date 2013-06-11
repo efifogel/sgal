@@ -60,7 +60,7 @@ Polyhedron_geo::Polyhedron_geo(Boolean proto) :
   m_dirty_facets(true)  
 {
   if (proto) return;
-  m_surface.set_polyhedron(this);
+  m_surface.set_mesh_set(this);
   m_flatten_indices = true;
 }
 
@@ -117,7 +117,7 @@ void Polyhedron_geo::clear()
 /*! \brief */
 void Polyhedron_geo::cull(SGAL::Cull_context& cull_context) {}
 
-/*! \brief */
+/*! \brief draws the internal representation. */
 void Polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
 {
   Facet_iterator i;
