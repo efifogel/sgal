@@ -46,9 +46,9 @@
 \usepackage{fancyhdr}
 \pagestyle{empty}
 % =============================================================================
-\usepackage{draftwatermark}
-\SetWatermarkText{Confidential}
-\SetWatermarkScale{1}
+%% \usepackage{draftwatermark}
+%% \SetWatermarkText{Confidential}
+%% \SetWatermarkScale{1}
 % =============================================================================
 \begin{document}
 \title{Technological Strength}
@@ -62,44 +62,98 @@
 \paragraph{Polygon Mesh}
 A polygon mesh, also referred to as an unstructured grid, is a
 collection of vertices, edges, and facets, defining the shape of a
-polyhedral object in space. The facets usually consist of triangles,
-quadrilaterals, or other convex polygons, since this simplifies the
-application of operations on the mesh, but may also be composed of
-concave polygons, polygons with holes, and degenerate polygons.
-A polygon mesh consist of the geometric information and optionaly
-sufficient topologic information, so that the incident relation
-between the vertices, edges, and facets can be retrieved.
+polyhedral object in 3D space. The facets are usually triangles,
+quadrilaterals, or other convex polygons, as this simplifies the
+operations applied to the mesh, but may also be concave polygons,
+polygons with holes, and degenerate polygons (\eg{} antenas and
+isolated vertices). A polygon mesh consists of the geometric
+information and optionaly sufficient topologic information, so that
+the incident relation between the vertices, edges, and facets can
+be efficiently retrieved.
 
 \paragraph{3D Model}
 A 3D model is a mathematical representation of any three-dimensional
-entitiy (either inanimate or living) via specialized software.
-Almost all 3D models can be divided into two categories as follows:
-\begin{description}
-\item[Solid models] describe the volume of the objects they represent.
-\item[Boundary models] describe the boundary surface of the objects
-  they represent. A polygonal mesh is an example of a boundary model.
-\end{description}
+entitiy (either inanimate or living, synthetic or genuine) via
+specialized software. Almost all 3D models can be divided into two
+categories as follows:
+\begin{enumerate}
+\item \emph{Solid models} describe the volume of the objects they
+  represent.
+\item \emph{Boundary models} describe the boundary surface of the
+  objects they represent. A polygonal mesh is an example of a boundary
+  model.
+\end{enumerate}
 Solid models are more realistic, but at the same time more difficult
-to construct. They are mostly used for medical and engineering
-simulations, for CAD and specialized visual applications such as ray
-tracing and constructive solid geometry. Boundary models are easier to
-work with than solid models. Almost all visual models used in games and
-film are boundary models, and all models fed to conventional 3D printers
-are polygonal meshes, for example, in the STL (Stereolithography)
-file-format.\footnote{See, for example,
-\url{http://en.wikipedia.org/wiki/STL_(file_format)}}.
+to handle. They are mostly used for medical and engineering
+simulations, for computer aided design (CAD), computer aided
+manufacturing (CAM), and specialized visual applications such as ray
+tracing and constructive solid geometry\footnote{In constructive solid
+  geometry complex objects are obtained as the result of the
+  application of Boolean operators on other objects.} Boundary models
+are easier to work with than solid models. Almost all models used for
+visualization in games and film are boundary models. In particular, all
+models fed to conventional 3D printers are polygonal meshes, for
+example, in the STL (Stereolithography) file-format.\footnote{See, for
+  example, \url{http://en.wikipedia.org/wiki/STL_(file_format)}}.
+
+\paragraph{Acquiring Models}
+A 3D model is created as the result of a manual or automatic 3D
+modeling process. A manual modeling process is similar to plastic
+arts such as sculpting, but carried out by specialized software tools.
+A 3D model can be algorithmically computed via an automatic procedural
+process, such as constructive solid geometry or it can be generated from
+scanned data.
+
+
+The reconstruction of precise surfaces from unorganized point clouds
+derived from laser scanner data or photogrammetric image measurements is
+a very hard problem, not completely solved and problematic in case of
+incomplete, noisy and sparse data. The generation of artifact-free solid
+models is required not only for 3D printing, but also in other
+applications, such as video-games, movies, virtual reality applications,
+and e-commerce. The goal is always to find a way to create a computer
+model of an object, which best fit the real object. 
+
+
+%% Surface reconstruction from images is an old, fundamental yet difficult problem in computer vision, which has been extensively investigated over the past three decades. Recent developments in camera calibration and multimedia computing have broadened the interests in the reconstruction problem, and the big proliferation of digital cameras and computers allow to take and process multiple images respectively. The emphasis of the nowaday applications has been shifted to generating more "appearance" views of the scene, and it requires highly detailed surfaces to be constructed within a tolerable computational resources. Such a task, however, is difficult to accomplish due to the intrinsic ill-posedness of the reconstruction, interference from image noise, and insufficiency of scalability and flexibility.
+
+\paragraph{Corrupted Models}
+Acquired 3D models, whether created by hand or by automatic tools,
+usually contain errors and inconsistencies. For example, they can
+contain wrongly-oriented, intersecting, or overlapping polygons,
+cracks, and T-junctions. In addition, polygons might be missing, and
+topological information can be inconsistent. Problems are caused by
+designer errors or software errors in the modeling tool. These errors
+can be compounded by data exchange problems, such as: (i) automatic
+transfer between CAD formats (\eg{} IGES (Initial Graphics Exchange
+Specification), STEP (Standard for Exchange of Product model data),
+DXF (Drawing Interchange Format), binary files from CATIA (Computer
+Aided Three-dimensional Interactive Application) or AutoCAD), between
+B-Spline or NURBS-based (Non-uniform Rational B-Spline) formats; (ii)
+geometric transformation into an engineering analysis system (e.g., a
+triangular surface mesh). The techniques to reconstruct manifold models
+from acquired 3D models vary according to efficiency, robustness, level
+of automation, and other preconditions. Level of automation is measured
+in terms of required user input. Preconditions include requirements,
+such as: (i) polygons in the input set are consistently oriented; (ii)
+most polygons are orthogonal; or (iii) the input parts are closed
+2D-manifolds. A naive but efficient approach is to use scene-relative
+tolerances to "fill over'' cracks in the model or merge features within
+some tolerance. Boundary-based approaches that try to infer solid
+structures from how input polygons mesh together are likely to perform
+incorrectly in the presence of non-manifold geometry.
 
 \paragraph{3D Printable Model}
 Correct and consistent models are required by most conventional
 applications that apply operations such as modeling, simulation,
-visualization, and finite element analysis to name a few. Conventional
+visualization, and finite element analysis, to name a few. Conventional
 3D printers can produce correct 3D physical objects only when fed with
 correct and consistent models. However, in the case of 3D printing, an
 input model must satisfy additional requirements. First, an input
 model must consist of a closed and orientable
 2D-manifold,\footnote{Non-orientable 2D-manifolds, such as a Klein
-  bottle, and non-closed 2D-manifolds, such as a M\"obius strip
-  comprise illegal input, as they do not define proper solids.} or in
+  bottle and the M\"obius strip, and non-closed 2D-manifolds comprise
+  illegal input, as they do not define proper solids.} or in
 simple words, the model must be watertight (which simply implies that
 if you were to pour water into your 3D model, it would hold the water
 you poured into it.) In some cases, it is possible to relax the
@@ -115,41 +169,97 @@ XY-directional (horizontal) widths of every convex piece are larger than
 two given threshold, respectively. In simple words, all parts of the
 model must be sufficiently thick with respect to the resolution of the
 printer. Finally, the model must be bounded by a volume, typically a box,
-defined by the 3D printing device.
+defined by the designated 3D printing device.
 
-\paragraph{Obtaining Models}
-A 3D model is created as the result of a manual or an automatic 3D
-modeling process. A manual modeling process is similar to plastic
-arts such as sculpting. Nevertheless, specialized software tools are
-always invloved in the final creation of 3D models. A 3D model can
-be algorithmically computed via an automatic procedural process, such
-as constructive solid modeling
-Constructive solid geometry allows a modeler to create a complex surface or object by using Boolean operators to combine objects.
+\paragraph{Robust, Efficient, and Complete}
+All approaches
+do not work well when the size of errors are larger than the smallest
+feature in the model. As degenerate input is commonplace in practical
+applications and numerical errors are inevitable, an algorithm
+implemented while ignoring limited precision imposed by floating-point
+arithmetic get into an infinite loop, or just crash, while running on
+a degenerate, or nearly degenerate, input; see [KMP+08,Sch00] for examples.
 
-or it
-can be generated from scanned data.
+\paragraph{\cgal}
+The Computational Geometry Algorithms Library (\cgal) is a software
+library that aims to provide easy access to efficient and reliable
+algorithms in computational geometry. The code is written in C++ and
+rigorously adheres to the generic programming paradigm. \cgal{} follows
+the exact geometric-computation paradigm, which simply amounts to
+ensuring that errors in predicate evaluations do not occur.
 
-data exchange
+\cgal{} is used in various areas needing geometric computation, such
+as, computer graphics, scientific visualization, CAD/CAM, geographic
+information systems, molecular biology, medical imaging, and many more.
+\cgal{} has a variety of components that are useful in robotics and
+automation: Minkowski sums, offset polygons, Boolean operations on
+curved regions, Voronoi diagrams and Delaunay triangulations to mention
+just a few relevant components. For automation in particular the high
+precision of \cgal{} allows for solving geometric problems involving
+motion in tight quarters, such as arise in assembly planning.
+
+The software is available under open source licenses. In particular,
+it is publicly and freely available for academic use. For more
+information see the \cgal{} website, \url{http://www.cgal.org}.
+
+high expertise for educated usage; very high expertise for extension
+
+Unique project (no competition, magnitude)
+
+
+\paragraph{2D Arrangements}
+
+\paragraph{Assembly and Partitioning}
+assembly and partitioning: non-trivial theory; very difficult to implement: requires reduction to complex arrangements
+such as arrangements on a sphere, and searching for optimal solutions through such arrangements
+
+\paragraph{3D Graphics}
+The partitioning process is realized within a software library we
+have developed, called Scene Graph Algorithms Library (\sgal{}).
+\sgal{} supports the construction and maintenance of directed
+acyclic graphs that represent scenes and models in \Rthree. The
+library comes with an application, called \emph{player}, that enables
+users to visualize the scene in an interactive manner. The
+\emph{player} parses input files that describe the scene in a
+degenerate yet extended \vrml{}
+format.\footnote{\url{http://www.web3d.org/}} The format is degenerate,
+as not all \vrml{} features are supported (yet). However, it has been
+extended to support all the necessary ingredients required to represent
+and visualize the input, the simulation of the process, and the output.
+In particular, it has been extended with two geometry node types: the
+\myLstinline{Assembly} node type represents assemblies or subassemblies,
+and the \myLstinline{AssemblyPart} node type represents parts of
+assemblies. The format has been extended in the past with other related
+geometry node types, such as the \myLstinline{SphericalGaussianMap}
+node type, which represents (spherical) Gaussian maps of convex
+polytopes in \Rthree, and the \myLstinline{ArrangementOnSphere}, which
+represents arrangements of geodesic arcs embedded on the sphere. The
+extended format also supports a node type called
+\myLstinline{ExactCoordinate}, which represents exact coordinates, and
+enables the provision of exact rational coordinates as input.
+%% \footnote{We plan to offer \sgal{} with an open-source license in
+%%   the future, making it available to the public.}
+Each node object of the three types \myLstinline{AssemblyPart},
+\myLstinline{SphericalGaussianMap}, and \myLstinline{ArrangementOnSphere}
+internally maintains the \cgal{} data structure that represents an
+arrangement of geodesic arcs embedded on the sphere~\cite{bfhks-apsca-10}.
+
+% =============================================================================
+\section{Strength}
+\label{sec:strength}
+% =============================================================================
+
 % =============================================================================
 % \bibliographystyle{abbrv}
 % \bibliography{abrev,thickening}
 % =============================================================================
 \end{document}
 
-A valid model
-%% represented as a polygonal mesh comprises a polygon-soup (an arbitrary
-%% set of polygons) that represents an artifact-free and sufficiently thick closed 2D-manifold, or a collection of closed 2D-manifolds that do not intersect each other. A valid printable model satisfies additional requirements imposed by various printing devices (different printing devices impose different requirements, as they are based on different technologies).
-
-%% Correct and consistent representations of 3D objects are required by conventional applications, such as modeling, simulation, visualization, CAD (Computer-Aided Design), CAM (Computer-Aided Manufacturing), finite element analysis, and the like. However, the acquired 3D models, whether created by hand or by automatic tools, usually contain errors and inconsistencies. For example, they can contain wrongly-oriented, intersecting, or overlapping polygons, cracks, and T-junctions. In addition, polygons might be missing, and topological information can be inconsistent. Problems are caused by designer errors or software errors in the modeling tool. These errors can be compounded by data exchange problems, such as: (i) automatic transfer between CAD formats (e.g., IGES (Initial Graphics Exchange Specification), STEP (Standard for Exchange of Product model data), DXF (Drawing Interchange Format), binary files from CATIA8 (Computer Aided Three-dimensional Interactive Application) or AutoCAD), between B-Spline or NURBS-based (Non-uniform Rational B-Spline) formats; (ii) geometric transformation into an engineering analysis system (e.g., a triangular surface mesh). The techniques to reconstruct manifold models from acquired 3D models vary according to efficiency, robustness, level of automation, and other preconditions. Level of automation is measured in terms of required user input. Preconditions include requirements, such as: (i) polygons in the input set are consistently oriented; (ii) most polygons are orthogonal; or (iii) the input parts are closed 2D-manifolds. A naïve but efficient approach is to use scene-relative tolerances to "fill over'' cracks in the model or merge features within some tolerance. Boundary-based approaches that try to infer solid structures from how input polygons mesh together are likely to perform incorrectly in the presence of non-manifold geometry. All approaches do not work well when the size of errors are larger than the smallest feature in the model. As degenerate input is commonplace in practical applications and numerical errors are inevitable, an algorithm implemented while ignoring limited precision imposed by floating-point arithmetic get into an infinite loop, or just crash, while running on a degenerate, or nearly degenerate, input; see [KMP+08,Sch00] for examples.
 
 
 
 
 
-%% The reconstruction of precise surfaces from unorganized point clouds derived from laser scanner data or photogrammetric image measurements is a very hard problem, not completely solved and problematic in case of incomplete, noisy and sparse data. The generation of polygonal models that can satisfy high modeling and visualization demands is required in different applications, like video-games, movies, virtual reality applications, e-commerce and other graphics applications. The goal is always to find a way to create a computer model of an object which best fit the real object. Polygons are usually the ideal way to accurately represent the results of measurements, providing an optimal surface description. While the generation of digital terrain models has a long tradition and has found efficient solutions, the correct modeling of closed surfaces or free-form objects is of recent nature, a not completely solved problem and still an important issue investigated in many research activities.
-
-
-%% Surface reconstruction from images is an old, fundamental yet difficult problem in computer vision, which has been extensively investigated over the past three decades. Recent developments in camera calibration and multimedia computing have broadened the interests in the reconstruction problem, and the big proliferation of digital cameras and computers allow to take and process multiple images respectively. The emphasis of the nowaday applications has been shifted to generating more "appearance" views of the scene, and it requires highly detailed surfaces to be constructed within a tolerable computational resources. Such a task, however, is difficult to accomplish due to the intrinsic ill-posedness of the reconstruction, interference from image noise, and insufficiency of scalability and flexibility.
 
 
 %% Increasing need for geometric 3D models
