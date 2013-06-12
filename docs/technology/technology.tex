@@ -67,9 +67,9 @@ quadrilaterals, or other convex polygons, as this simplifies the
 operations applied to the mesh, but may also be concave polygons,
 polygons with holes, and degenerate polygons (\eg{} antenas and
 isolated vertices). A polygon mesh consists of the geometric
-information and optionaly sufficient topologic information, so that
-the incident relation between the vertices, edges, and facets can
-be efficiently retrieved.
+information and optionaly sufficient topological information, so
+that the incident relation between the vertices, edges, and facets
+can be efficiently retrieved.
 
 \paragraph{3D Model}
 A 3D model is a mathematical representation of any three-dimensional
@@ -80,42 +80,89 @@ categories as follows:
 \item \emph{Solid models} describe the volume of the objects they
   represent.
 \item \emph{Boundary models} describe the boundary surface of the
-  objects they represent. A polygonal mesh is an example of a boundary
-  model.
+  objects they represent. A polygonal mesh is an example of a
+  boundary model.
 \end{enumerate}
 Solid models are more realistic, but at the same time more difficult
 to handle. They are mostly used for medical and engineering
-simulations, for computer aided design (CAD), computer aided
-manufacturing (CAM), and specialized visual applications such as ray
-tracing and constructive solid geometry\footnote{In constructive solid
-  geometry complex objects are obtained as the result of the
-  application of Boolean operators on other objects.} Boundary models
-are easier to work with than solid models. Almost all models used for
-visualization in games and film are boundary models. In particular, all
-models fed to conventional 3D printers are polygonal meshes, for
-example, in the STL (Stereolithography) file-format.\footnote{See, for
-  example, \url{http://en.wikipedia.org/wiki/STL_(file_format)}}.
+simulations, computer aided design (CAD), computer aided manufacturing
+(CAM), computer aided engineering (CAE) and specialized visual
+applications such as ray tracing and constructive solid geometry
+(CSG).\footnote{In constructive solid geometry complex objects are
+  obtained as the result of the application of Boolean operations,
+  \eg{} complement, intersection, union, and symmetric difference, on
+  other objects.} Boundary models are typically easier to work with
+than solid models. Almost all models used for visualization in games
+and film are boundary models. In particular, all models fed to
+conventional 3D printers are polygonal meshes, for example, in the STL
+(Stereolithography) file-format.\footnote{See, for example,
+  \url{http://en.wikipedia.org/wiki/STL_(file_format)}}.
 
 \paragraph{Acquiring Models}
 A 3D model is created as the result of a manual or automatic 3D
 modeling process. A manual modeling process is similar to plastic
-arts such as sculpting, but carried out by specialized software tools.
-A 3D model can be algorithmically computed via an automatic procedural
-process, such as constructive solid geometry or it can be generated from
-scanned data.
+arts such as sculpting, but carried out by specialized software
+tools. A 3D model can be algorithmically computed via an automatic
+procedural process, such as CSG, or it can be automatically
+generated from scaned or captured data through a process commonly
+referred to as surface reconstruction. The automatic generation of
+artifact-free watertight solid models required in many applications
+such as video-games, movies, virtual reality applications, e-commerce,
+and 3D printing, is a collection of hard problems due to the intrinsic
+ill-posedness of the methods, interference from input data in form of
+noise, and limited scalability and flexibility of the known approaches.
+The goal, however, is to find a way to create a computer model of an
+object, which best fits the real genuine object.
 
+\paragraph{Surface Reconstruction}
+Surface reconstruction from unorganized point clouds,\footnote{A point
+  cloud is a set of data points in some coordinate system, often
+  intended to sample the external surface of an object. Point clouds
+  can be obtained by laser scanners, which automatically sample a large
+  number of points on the surface of an object or computed from
+  photographic images using a process called \emph{photogrammetry}.}
+has been extensively investigated over the past three decades, yet not
+completely solved, and especially problematic in the presence of
+incomplete, noisy, or sparse data. Recent advances in multimedia
+computing and camera calibration and the development of less constly,
+less cumbersome, and more accurate, 3D scanners and cameras enabled
+significant progress in surface reconstruction from poit clouds. This
+approach best targets models that are invariant to changes in color,
+texture, and minor within class shape deformation. Another approach,
+which is not limited to the reconstruction of the prototypical shape of
+an object but can also capture the ``appearance'' of the object, is
+surface reconstruction from several photographic images shot from
+different viewpoints. This approach has a shorter research track, and
+while considered harder to apply, has also seen significant progress
+due to recent advances in \emph{machine vision},\footnote{Machine vision
+  is the a computational discipline that covers imaging-based automatic
+  inspection.} and the increase of computational resources in general.
 
-The reconstruction of precise surfaces from unorganized point clouds
-derived from laser scanner data or photogrammetric image measurements is
-a very hard problem, not completely solved and problematic in case of
-incomplete, noisy and sparse data. The generation of artifact-free solid
-models is required not only for 3D printing, but also in other
-applications, such as video-games, movies, virtual reality applications,
-and e-commerce. The goal is always to find a way to create a computer
-model of an object, which best fit the real object. 
-
-
-%% Surface reconstruction from images is an old, fundamental yet difficult problem in computer vision, which has been extensively investigated over the past three decades. Recent developments in camera calibration and multimedia computing have broadened the interests in the reconstruction problem, and the big proliferation of digital cameras and computers allow to take and process multiple images respectively. The emphasis of the nowaday applications has been shifted to generating more "appearance" views of the scene, and it requires highly detailed surfaces to be constructed within a tolerable computational resources. Such a task, however, is difficult to accomplish due to the intrinsic ill-posedness of the reconstruction, interference from image noise, and insufficiency of scalability and flexibility.
+\paragraph{Transforming Models}
+Models that are not represented as polygon meshes, that are, models
+in solid representation, \eg{} the result of CGS, and boundary
+models represented by \emph{freedom surfaces}, \eg{} B-Spline or
+NURBS-based (Non-uniform Rational B-Spline), must be transformed
+into polygon meshes before they can be 3D-printed, a process
+referred to as \emph{tessellation}. In general, models that are not
+in the STL format must be transformed to the STL format to be
+3D-printed, and there are many formats out there, \eg{} IGES (Initial
+Graphics Exchange Specification), STEP (Standard for Exchange of
+Product model data), DXF (Drawing Interchange Format), binary files
+from CATIA (Computer Aided Three-dimensional Interactive Application),
+and DWG.
+%% The techniques to reconstruct manifold models from acquired 3D models
+%% vary according to efficiency, robustness, level of automation, and
+%% other preconditions. Level of automation is measured in terms of
+%% required user input. Preconditions include requirements, such as:
+%% (i) polygons in the input set are consistently oriented;
+%% (ii) polygons are orthogonal; or
+%% (iii) the input parts are orientable closed 2D-manifolds.
+%% A naive but efficient approach is to use scene-relative tolerances to
+%% "fill over'' cracks in the model or merge features within some
+%% tolerance. Boundary-based approaches that try to infer solid
+%% structures from how input polygons mesh together are likely to perform
+%% incorrectly in the presence of non-manifold geometry.
 
 \paragraph{Corrupted Models}
 Acquired 3D models, whether created by hand or by automatic tools,
@@ -125,23 +172,8 @@ cracks, and T-junctions. In addition, polygons might be missing, and
 topological information can be inconsistent. Problems are caused by
 designer errors or software errors in the modeling tool. These errors
 can be compounded by data exchange problems, such as: (i) automatic
-transfer between CAD formats (\eg{} IGES (Initial Graphics Exchange
-Specification), STEP (Standard for Exchange of Product model data),
-DXF (Drawing Interchange Format), binary files from CATIA (Computer
-Aided Three-dimensional Interactive Application) or AutoCAD), between
-B-Spline or NURBS-based (Non-uniform Rational B-Spline) formats; (ii)
-geometric transformation into an engineering analysis system (e.g., a
-triangular surface mesh). The techniques to reconstruct manifold models
-from acquired 3D models vary according to efficiency, robustness, level
-of automation, and other preconditions. Level of automation is measured
-in terms of required user input. Preconditions include requirements,
-such as: (i) polygons in the input set are consistently oriented; (ii)
-most polygons are orthogonal; or (iii) the input parts are closed
-2D-manifolds. A naive but efficient approach is to use scene-relative
-tolerances to "fill over'' cracks in the model or merge features within
-some tolerance. Boundary-based approaches that try to infer solid
-structures from how input polygons mesh together are likely to perform
-incorrectly in the presence of non-manifold geometry.
+transfer between CAD formats, and (ii) geometric transformation into
+an engineering analysis system.
 
 \paragraph{3D Printable Model}
 Correct and consistent models are required by most conventional
@@ -152,11 +184,11 @@ correct and consistent models. However, in the case of 3D printing, an
 input model must satisfy additional requirements. First, an input
 model must consist of a closed and orientable
 2D-manifold,\footnote{Non-orientable 2D-manifolds, such as a Klein
-  bottle and the M\"obius strip, and non-closed 2D-manifolds comprise
-  illegal input, as they do not define proper solids.} or in
-simple words, the model must be watertight (which simply implies that
-if you were to pour water into your 3D model, it would hold the water
-you poured into it.) In some cases, it is possible to relax the
+  bottle and the M\"obius strip (which is also non-closed) comprise
+  illegal input, as they do not define proper solids.} or in simple
+words, the model must be watertight (which simply implies that if you
+were to pour water into your 3D model, it would hold the water you
+poured into it.) In some cases, it is possible to relax the
 aformentioned requirement, and alow the model to consist of a set of
 closed and orientable 2D-manifolds that bind pair-wise interior disjoint
 volumes. (In simple words, such a model can be decomposed into several
@@ -170,6 +202,9 @@ two given threshold, respectively. In simple words, all parts of the
 model must be sufficiently thick with respect to the resolution of the
 printer. Finally, the model must be bounded by a volume, typically a box,
 defined by the designated 3D printing device.
+
+\paragraph{Alligning Models}
+
 
 \paragraph{Robust, Efficient, and Complete}
 All approaches
@@ -255,44 +290,4 @@ arrangement of geodesic arcs embedded on the sphere~\cite{bfhks-apsca-10}.
 % =============================================================================
 \end{document}
 
-
-
-
-
-
-
-
-%% Increasing need for geometric 3D models
-%% ª
-%% Movie industry, games, virtual environments...
-%% • Existing solutions are not fully satisfying
-%% ª
-%% User-driven modeling: long and error-prone
-%% ª
-%% 3D scanners: costly and cumbersome
-%% • Alternative: analyzing image sequences
-%% ª
-%% Cameras are cheap and lightweight
-%% ª
-%% Cameras are precise (several megapixels)
-
-
-%% retrieve the 3D shape
-
-%% We proposed a new method for reconstruct 3D surface from (scanned) multiple-view 2D images. 
-
-
-%% A point cloud is a set of data points in some coordinate system.
-
-%% In a three-dimensional coordinate system, these points are usually defined by X, Y, and Z coordinates, and often are intended to represent the external surface of an object.
-
-%% Point clouds may be created by 3D scanners. These devices measure in an automatic way a large number of points on the surface of an object, and often output a point cloud as a data file. The point cloud represents the set of points that the device has measured.
-
-%% While point clouds can be directly rendered and inspected,[1] usually point clouds themselves are generally not directly usable in most 3D applications, and therefore are usually converted to polygon mesh or triangle mesh models, NURBS surface models, or CAD models through a process commonly referred to as surface reconstruction.
-
-
-
-
-%% Opposite:
-%%  modeled the prototypical shape of an object, seeking models that were invariant to
-%% changes in color, texture, and minor within-class shape deformation.
+error-prone
