@@ -66,6 +66,7 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   m_time(0)
 {
   if (proto) return;
+  m_surface.set_mesh_set(this);
   m_flatten_indices = true;
 }
 
@@ -119,7 +120,6 @@ void Exact_polyhedron_geo::clean_polyhedron()
   clock_t start_time = clock();
   if (m_convex_hull) convex_hull();
   else {
-    m_surface.set_mesh_set(this);
     m_polyhedron.delegate(m_surface);
 #if 0
     if (!m_polyhedron.normalized_border_is_valid())
