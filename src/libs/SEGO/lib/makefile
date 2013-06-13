@@ -12,7 +12,7 @@
 BASEDIR =.
 MULTITHREAD =1
 USE_SHARED =1
-
+DEF_SHARED =1
 
 include $(ROOT)/make/cgaldef.mak
 include $(MAKEDIR)/scgaldef.mak

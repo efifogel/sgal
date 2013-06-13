@@ -1,6 +1,9 @@
 BASEDIR =.
 MULTITHREAD =1
 USE_SHARED =1
+USE_SHARED_SGAL =1
+USE_SHARED_SCGAL =1
+USE_SHARED_SEGO =1
 
 ifeq ($(USE_CGAL), 1)
 include $(ROOT)/make/cgaldef.mak
@@ -270,10 +273,10 @@ ifeq ($(DE), gnu)
 LCPPOPTS+= -Wall
 LCPPOPTS+= -frounding-math
 # LCPPOPTS+= -pedantic
-LLDOPTS = $(CGALLDOPTS)
-
+LLDOPTS+= $(CGALLDOPTS)
+LLDLIBS =
 ifeq ($(USE_CGAL), 1)
-LLDLIBS = -lSCGAL
+LLDLIBS+= -lSCGAL
 LLDLIBS+= $(CGALLDLIBS)
 ifeq ($(USE_QUADRIC), 1)
 LLDLIBS+= -lQdX -lNiX -lSoX
@@ -287,7 +290,8 @@ endif
 ifeq ($(USE_GMP), 1)
 LLDLIBS+= -lgmp -lmpfr -lgmpxx
 endif
-LLDLIBS+= -lSGAL -lgl2ps
+LLDLIBS+= -lSGAL
+LLDLIBS+= -lgl2ps
 LLDLIBS+= -lMagick++
 LLDLIBS+= -lboost_program_options$(BOOST_LIBNAME_SUFFIX)
 LLDLIBS+= -lboost_filesystem$(BOOST_LIBNAME_SUFFIX)
@@ -299,13 +303,19 @@ LLDLIBS+= -lXi
 # LLDLIBS+= -lXmu
 LLDLIBS+= -lX11 -lm
 
-LIBS = $(LIBDIR)/libSGAL.a
-LIBS+= $(LIBDIR)/libgl2ps.a
+LIBS =
+ifneq ($(USE_SHARED_SGAL), 1)
+LIBS+= $(LIBDIR)/libSGAL.a
+endif
 ifeq ($(USE_CGAL), 1)
+ifneq ($(USE_SHARED_SCGAL), 1)
 LIBS+= $(LIBDIR)/libSCGAL.a
 endif
+endif
 ifeq ($(USE_EGO), 1)
+ifneq ($(USE_SHARED_SEGO), 1)
 LIBS+= $(LIBDIR)/libSEGO.a
+endif
 endif
 endif
 

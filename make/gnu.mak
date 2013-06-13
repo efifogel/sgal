@@ -14,7 +14,7 @@ ifeq ($(DEF_SHARED), 1)
 # The implicit assumption is that these parameters are always used as
 # $(LIBS) OUTPUT OBJECTS. It is used like that in targlink.mak, and in a few
 # local makefiles.
-LIBPROG = $(CROSS)gcc
+LIBPROG = $(CROSS)g++
 GLIBFLAGS = -shared -o 
 else
 LIBPROG = $(CROSS)ar
@@ -76,7 +76,7 @@ endif
 
 ifeq ($(DEF_SHARED), 1)
 GCOPTS += -fPIC
-GCCOPTS += -fPIC
+GCPPOPTS += -fPIC
 endif
 
 GLIBPATHOPTS = -L$(LIBDIR)
@@ -108,7 +108,7 @@ GASMFLAGS =
 EXEFILESUFFIX =
 
 ifeq ($(DEF_SHARED), 1)
-RELINSTALLDIR =libso
+RELINSTALLDIR =lib
 else
 RELINSTALLDIR =lib
 endif
