@@ -42,7 +42,6 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/shared_ptr.hpp>
 
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Event_handler.hpp"
 #include "SGAL/Tick_event.hpp"
@@ -91,6 +90,7 @@
 #include "SGAL/X11_window_manager.hpp"
 #endif
 
+#if 0
 #if defined(USE_CGAL)
 #include "CGAL/basic.h"
 
@@ -109,6 +109,7 @@
 #endif
 #if defined(USE_NEF) && defined(USE_NGM)
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
+#endif
 #endif
 #endif
 
@@ -475,6 +476,7 @@ void Player_scene::update_data_dirs()
 /*! \brief prints statistic information. */
 void Player_scene::print_stat()
 {
+#if 0
 #if defined(USE_CGAL)
   static const char* names[] =
     {"GEOM", "ROBOT", "OBSTACLE", "MINK", "MINK_CH"};
@@ -510,6 +512,7 @@ void Player_scene::print_stat()
 #endif
     }
   }
+#endif
 #endif
 }
 

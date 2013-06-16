@@ -27,7 +27,7 @@
 #pragma warning ( disable : 4800 )
 #endif
 
-#include <iostream>
+#include <boost/extension/extension.hpp>
 
 #include "SGAL/Container_factory.hpp"
 #include "SCGAL/Boolean_operation.hpp"
@@ -84,6 +84,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
+// extern "C" void BOOST_EXTENSION_EXPORT_DECL scgal_init()
 void scgal_init()
 {
   Container_factory::get_instance()->doregister(Boolean_operation::prototype());
