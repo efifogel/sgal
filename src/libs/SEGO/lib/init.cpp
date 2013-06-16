@@ -24,6 +24,8 @@
 #pragma warning ( disable : 4800 )
 #endif
 
+#include <boost/extension/extension.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
 
@@ -34,7 +36,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-void sego_init()
+extern "C" void BOOST_EXTENSION_EXPORT_DECL sego_init()
 {
   Container_factory::get_instance()->doregister(Ego::prototype());
   Container_factory::get_instance()->doregister(Ego_brick::prototype());

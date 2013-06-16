@@ -4,6 +4,9 @@ USE_SHARED =1
 USE_SHARED_SGAL =1
 USE_SHARED_SCGAL =1
 USE_SHARED_SEGO =1
+USE_DYNAMIC_SGAL =0
+USE_DYNAMIC_SCGAL =0
+USE_DYNAMIC_SEGO =1
 
 ifeq ($(USE_CGAL), 1)
 include $(ROOT)/make/cgaldef.mak
@@ -274,23 +277,33 @@ LCPPOPTS+= -Wall
 LCPPOPTS+= -frounding-math
 # LCPPOPTS+= -pedantic
 LLDOPTS+= $(CGALLDOPTS)
+LLDOPTS+= -rdynamic -ldl
 LLDLIBS =
+
+ifneq ($(USE_DYNAMIC_SCGAL), 1)
 ifeq ($(USE_CGAL), 1)
 LLDLIBS+= -lSCGAL
-LLDLIBS+= $(CGALLDLIBS)
-ifeq ($(USE_QUADRIC), 1)
-LLDLIBS+= -lQdX -lNiX -lSoX
 endif
 endif
 
+ifneq ($(USE_DYNAMIC_SEGO), 1)
 ifeq ($(USE_EGO), 1)
 LLDLIBS+= -lSEGO
+endif
+endif
+
+ifneq ($(USE_DYNAMIC_SGAL), 1)
+LLDLIBS+= -lSGAL
+endif
+
+ifeq ($(USE_CGAL), 1)
+LLDLIBS+= $(CGALLDLIBS)
 endif
 
 ifeq ($(USE_GMP), 1)
 LLDLIBS+= -lgmp -lmpfr -lgmpxx
 endif
-LLDLIBS+= -lSGAL
+
 LLDLIBS+= -lgl2ps
 LLDLIBS+= -lMagick++
 LLDLIBS+= -lboost_program_options$(BOOST_LIBNAME_SUFFIX)

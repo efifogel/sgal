@@ -21,6 +21,10 @@
 
 #include <iostream>
 #include <fstream>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/exception.hpp>
+#include <boost/extension/shared_library.hpp>
+#include <boost/function.hpp>
 
 #include "SGAL/basic.hpp"
 #if (defined USE_GLUT)
@@ -40,22 +44,46 @@ extern void scgal_init();
 SGAL_END_NAMESPACE
 #endif
 
-#if (defined USE_CGAL)
-SGAL_BEGIN_NAMESPACE
-extern void sego_init();
-SGAL_END_NAMESPACE
-#endif
+// #if (defined USE_CGAL)
+// SGAL_BEGIN_NAMESPACE
+// extern void sego_init();
+// SGAL_END_NAMESPACE
+// #endif
+
+namespace fi = boost::filesystem;
+namespace ex = boost::extensions;
 
 /*! Main entry */
 int main(int argc, char * argv[])
 {
   // SGAL::initialize(argc, argv);
-#if (defined USE_CGAL)
-  SGAL::scgal_init();
+  
+#if (defined USE_EGO)
+  // Create shared_library object with the absolute path to the shared library.
+  std::string sego_lib_name = "libSEGO.so";
+  ex::shared_library lib(sego_lib_name);
+  // Attempt to open the shared library.
+  if (!lib.open()) {
+    std::cerr << "Cannot open library " << sego_lib_name << std::endl;
+    return 1;
+  }
+
+  // SGAL::sego_init();
+  boost::function<void()> sego_init(lib.get<void>("sego_init"));
+
+  // Check that the function was found.
+  if (!sego_init) {
+    std::cerr << "Function sego_init() not found!" << std::endl;
+    return 1;
+  }
+
+  // Call the function from the shared library with
+  // an integer parameter.
+  sego_init();  
 #endif
 
-#if (defined USE_EGO)
-  SGAL::sego_init();
+#if (defined USE_CGAL)
+  SGAL::scgal_init();
 #endif
 
   // Create a window manager:
