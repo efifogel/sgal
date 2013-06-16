@@ -1,6 +1,9 @@
 BASEDIR =.
 MULTITHREAD =1
 USE_SHARED =1
+USE_SHARED_SGAL =1
+USE_SHARED_SCGAL =1
+USE_SHARED_SEGO =1
 
 include $(ROOT)/make/comdef.mak
 
@@ -130,8 +133,10 @@ LLDLIBS+= -lGLU -lGL
 LLDLIBS+= -lXi
 # LLDLIBS+= -lXmu
 
-LIBS = $(LIBDIR)/libSGAL.a
-LIBS+= $(LIBDIR)/libgl2ps.a
+LIBS =
+ifneq ($(USE_SHARED_SGAL), 1)
+LIBS+= $(LIBDIR)/libSGAL.a
+endif
 endif
 
 LDIRT = parse.output

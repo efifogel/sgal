@@ -1,6 +1,9 @@
 BASEDIR =.
 MULTITHREAD =1
 USE_SHARED =1
+USE_SHARED_SGAL =1
+USE_SHARED_SCGAL =1
+USE_SHARED_SEGO =1
 
 include $(ROOT)/make/cgaldef.mak
 include $(MAKEDIR)/scgaldef.mak
@@ -214,7 +217,8 @@ endif
 ifeq ($(USE_GMP), 1)
 LLDLIBS+= -lgmp -lmpfr -lgmpxx
 endif
-LLDLIBS+= -lSGAL -lgl2ps
+LLDLIBS+= -lSGAL
+LLDLIBS+= -lgl2ps
 LLDLIBS+= -lMagick++
 LLDLIBS+= -lboost_program_options$(BOOST_LIBNAME_SUFFIX)
 LLDLIBS+= -lboost_filesystem$(BOOST_LIBNAME_SUFFIX)
@@ -226,11 +230,12 @@ LLDLIBS+= -lXi
 # LLDLIBS+= -lXmu
 LLDLIBS+= -lX11 -lm
 
-LIBS = $(ROOT)/lib/libSGAL.a
-LIBS+= $(ROOT)/lib/libgl2ps.a
+LIBS =
+ifneq ($(USE_SHARED_SGAL), 1)
+LIBS+= $(ROOT)/lib/libSGAL.a
+endif
+ifneq ($(USE_SHARED_SCGAL), 1)
 LIBS+= $(ROOT)/lib/libSCGAL.a
-ifeq ($(USE_GLUT), 1)
-LIBS+= $(ROOT)/lib/libSGLUT.a
 endif
 endif
 
