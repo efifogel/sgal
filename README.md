@@ -66,8 +66,6 @@ Dependencies: Boost, CGAL, Gmp, Mpfr, Imagemagic, Qt4, and some X libraries that
 * libmagick++-dev
 * libgl2ps-dev
 * libxxf86vm-dev
-* libgl2ps-dev
-
 
 ## List of selected packages in cygwin (PLATFORM=windows)
 * ImageMagick
