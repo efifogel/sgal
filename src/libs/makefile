@@ -1,5 +1,6 @@
 include $(ROOT)/make/comdef.mak
 SUBDIRS =
+SUBDIRS+= boost
 ifeq ($(DE), msvc)
 ifeq ($(COMPILER_VER), 1200)
 # SUBDIRS+= STLport
