@@ -76,4 +76,16 @@ Dependencies: Boost, CGAL, Gmp, Mpfr, Imagemagic, Qt4, and some X libraries that
 * bison
 Don't forget to set the BOOST_INC_DIR to the path of the boost include.
 Don't forget to set the MAGICK_DIR
+Don't forget to set the GL2PS_DIR
 
+# To obtain the latest version of bison from the its git repository
+# (using anonymus checkout) issue:
+git clone git://git.savannah.gnu.org/bison.git
+
+# To update all submodules, issue:
+git submodule -q foreach git pull -q origin master
+
+# To build bison from scratch, issue:
+./bootstrap
+automake
+autoconf
