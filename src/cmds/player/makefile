@@ -76,7 +76,7 @@ CPPSOURCES+= Player_option_parser.cpp
 
 LCPPINCS = -I$(BASEDIR)
 
-# Add BOOST, GMP, MPFR, and Magick include directory:
+# Add BOOST, GMP, MPFR, Magick, and gl2ps include directory:
 ifdef BOOST_INC_DIR
 LCPPINCS+= -I"$(BOOST_INC_DIR)"
 endif
@@ -91,6 +91,10 @@ endif
 
 ifdef MAGICK_INC_DIR
 LCPPINCS+= -I"$(MAGICK_INC_DIR)"
+endif
+
+ifdef GL2PS_INC_DIR
+LCPPINCS+= -I"$(GL2PS_INC_DIR)"
 endif
 
 ifeq ($(USE_CGAL), 1)

@@ -478,3 +478,13 @@ ifndef MAGICK_LIB_DIR
 MAGICK_LIB_DIR="$(MAGICK_DIR)/lib"
 endif
 endif
+
+# extract GL2PS directories:
+ifdef GL2PS_DIR
+ifndef GL2PS_INC_DIR
+GL2PS_INC_DIR="$(GL2PS_DIR)/include"
+endif
+ifndef GL2PS_LIB_DIR
+GL2PS_LIB_DIR="$(GL2PS_DIR)/lib"
+endif
+endif

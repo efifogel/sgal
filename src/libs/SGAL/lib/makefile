@@ -225,13 +225,17 @@ LCPPINCS+= -I$(SGAL_INC_DIR)/interpolators
 LCPPINCS+= -I$(SGAL_INC_DIR)/lights
 LCPPINCS+= -I$(SGAL_INC_DIR)/primitives
 
-# Add BOOST and Magick include directory:
+# Add BOOST, Magick, and gl2ps include directory:
 ifdef BOOST_INC_DIR
 LCPPINCS+= -I"$(BOOST_INC_DIR)"
 endif
 
 ifdef MAGICK_INC_DIR
 LCPPINCS+= -I"$(MAGICK_INC_DIR)"
+endif
+
+ifdef GL2PS_INC_DIR
+LCPPINCS+= -I"$(GL2PS_INC_DIR)"
 endif
 
 LCPPDEFS+= -DSGAL_LIB
