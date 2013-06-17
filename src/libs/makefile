@@ -8,7 +8,6 @@ endif
 # SUBDIRS+= getopt
 SUBDIRS+= flex
 SUBDIRS+= GL
-SUBDIRS+= gl2ps
 endif
 SUBDIRS+= SGAL
 ifeq ($(USE_GLUT), 1)
