@@ -1,10 +1,10 @@
 ifeq ($(DE), msvc)
 ifneq "$(DEFSOURCE)" ""
-$(TARGET0) :: %.lib : $(DEFSOURCE) $(OBJECTS)
+$(TARGET0) :: %$(LIBFILESUFFIX) : $(DEFSOURCE) $(OBJECTS)
 	@echo Creating library $@ ...
 	$(LIBF) -def:$(filter %.def,$^) -out:$@ $(OBJECTS)
 else
-$(TARGET0) :: %.lib : $(OBJECTS)
+$(TARGET0) :: %$(LIBFILESUFFIX) : $(OBJECTS)
 	@echo Creating library $@ ...
 	$(LIBF) -out:$@ $(OBJECTS)
 endif
