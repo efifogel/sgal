@@ -12,13 +12,13 @@ First we decide that we implement a way to convert to model into a grid model...
 ## Player
 
 The visualization is performed by a graphic player written by...
-It provide the ability to read VRML files.
+It provides the ability to read VRML files.
 
 ## Compiling - current instructions
 
 You need to compile:
 1) Tools: bison - in branch
-2) Libs: gl2ps, SGAL, SCGAL, and SEGO
+2) Libs: SGAL, SCGAL, and SEGO
 3) Cmds: player
 
 1) Bison - first install automake, autopoint, & texinfo. Then, run ./bootstrap from the bison directory. Then the regular ./configure and make, make install.
@@ -85,7 +85,9 @@ git clone git://git.savannah.gnu.org/bison.git
 # To update all submodules, issue:
 git submodule -q foreach git pull -q origin master
 
-# To build bison from scratch, issue:
+# To build bison from scratch, install via cygwin:
+# gcc, autopoint,  make, automake, autoconf, texinfo, and rsync,
+# Then, issue:
 ./bootstrap
-automake
-autoconf
+./configure
+make # make install
