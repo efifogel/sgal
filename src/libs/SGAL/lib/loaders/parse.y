@@ -28,7 +28,7 @@
 %define api.namespace {SGAL}
 %define api.value.type variant
 %language "C++"
-%define parser_class_name "Vrml_parser"
+%define parser_class_name {Vrml_parser}
 %locations
 
 %code requires // *.hh
