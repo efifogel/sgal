@@ -77,7 +77,6 @@ void Boolean_operation::execute()
   typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
   typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
                                                     Nef_polyhedron;
-  typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
 
   Exact_polyhedron_geo geometry1;
   geometry1.set_coord_array(m_operand1->get_coord_array());
