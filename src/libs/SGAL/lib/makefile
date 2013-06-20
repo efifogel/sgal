@@ -315,6 +315,19 @@ include $(MAKEDIR)/bisoncpp.mak
 include $(MAKEDIR)/lexcpp.mak
 
 # For older versions of flex (less than 2.5.31)
+ifeq ($(DE), msvc)
+ifeq ($(COMPILER_VER), 1600)
+# The insertion of 'include <stdint.h>' prevents a warning at least with VC 10
+define run-lex
+$(LEXF) -d -t -+ $(firstword $^) | \
+sed -e 's/#define yyFlexLexer yyFlexLexer//' \
+-e 's/class istream;/#include <iostream>/' \
+-e 's/istream/std::istream/' \
+-e 's/std::std/std/' \
+-e '1 a #include <stdint.h>' \
+> $@
+endef
+else
 define run-lex
 $(LEXF) -d -t -+ $(firstword $^) | \
 sed -e 's/#define yyFlexLexer yyFlexLexer//' \
@@ -323,6 +336,17 @@ sed -e 's/#define yyFlexLexer yyFlexLexer//' \
 -e 's/std::std/std/' \
 > $@
 endef
+endif
+else
+define run-lex
+$(LEXF) -d -t -+ $(firstword $^) | \
+sed -e 's/#define yyFlexLexer yyFlexLexer//' \
+-e 's/class istream;/#include <iostream>/' \
+-e 's/istream/std::istream/' \
+-e 's/std::std/std/' \
+> $@
+endef
+endif
 
 ifeq ($(BISON_VER), 2500)
 define run-bison
