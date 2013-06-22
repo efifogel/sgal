@@ -320,7 +320,7 @@ LDIRT = parse.output
 include $(MAKEDIR)/basedir.mak
 include $(MAKEDIR)/comrul.mak
 include $(MAKEDIR)/comp.mak
-include $(MAKEDIR)/targlib.mak
+include $(MAKEDIR)/targ.mak
 
 vpath %.cpp $(BASEDIR)/geo
 vpath %.cpp $(BASEDIR)/engines

@@ -128,3 +128,19 @@ endif
 # p   STLport runtime, instead of the vendor toolset runtime.
 # n   STLport runtime using the "native" IO streams instead of the STLport IO str
 DE_GOBJDIR =
+
+MAKEDEPEND =gcc
+# Consider only user header files included with `#include file"'.
+GMAKEDEPENDFLAGS+= -MM
+# Treat missing header files as generated files:
+GMAKEDEPENDFLAGS+= -MG
+
+output_operatior=-o
+# Due to a bug in gcc 3.0.3
+# The workaround will work only if $GCC_VER is present! 
+ifeq ($(GCC_VER),3.0.3)
+output_operatior=>
+endif
+define run-makedepend-cpp
+$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
+endef

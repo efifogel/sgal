@@ -162,7 +162,6 @@ BISON =bison
 COPY =cp
 INST =install
 PERL =perl
-MAKEDEPEND =gcc
 QT_MOC =moc
 
 # Initialize variables to default values:
@@ -301,17 +300,11 @@ GMAKEFLAGS+= PASS=$(NEXTPASS)
 MYMAKEFLAGS =$(GMAKEFLAGS) $(LMAKEFLAGS)
 MAKEF =$(MAKE) $(MYMAKEFLAGS)
 
-ifeq ($(MAKEDEPEND), gcc)
-# Consider only user header files included with `#include file"'.
-GMAKEDEPENDFLAGS+= -MM
-# Treat missing header files as generated files:
-GMAKEDEPENDFLAGS+= -MG
-endif
-
-ifeq ($(MAKEDEPEND), makedepend)
-# I think?
-GMAKEDEPENDFLAGS =-x -a -o .o -S ::
-endif
+# Obsolete
+# ifeq ($(MAKEDEPEND), makedepend)
+# # I think?
+# GMAKEDEPENDFLAGS =-x -a -o .o -S ::
+# endif
 
 MAKEDEPENDFLAGS =$(LMAKEDEPENDFLAGS) $(GMAKEDEPENDFLAGS)
 MAKEDEPENDF =$(MAKEDEPEND) $(MAKEDEPENDFLAGS)

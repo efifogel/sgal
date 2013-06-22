@@ -120,9 +120,6 @@ else
 ifeq ($(COMPILER_VER), 1500)
 MULTITHREAD =1
 endif
-ifeq ($(COMPILER_VER), 1600)
-MULTITHREAD =1
-endif
 endif
 
 ifeq ($(MULTITHREAD), 1)
@@ -379,36 +376,19 @@ endif
 endif
 endif
 
-ifeq ($(MAKEDEPEND), gcc)
-# GMAKEDEPENDFLAGS+= -isystem '$(MSVCDIR)/Include'
-# GMAKEDEPENDFLAGS+= -isystem '$(MSVCDIR)/ATL/Include'
-# GMAKEDEPENDFLAGS+= -isystem '$(MSVCDIR)/MFC/Include'
-# GMAKEDEPENDFLAGS+= -nostdinc
-ifeq ($(COMPILER_VER), 1200)
-MSVCDIR_STLPORT_TMP=$(shell cygpath "$(MSVCDIR)/Include/stlport")
-GMAKEDEPENDFLAGS+= -isystem "$(MSVCDIR_STLPORT_TMP)"
-endif
-
-ifdef MSVCDIR
-MSVCDIR_TMP=$(shell cygpath "$(MSVCDIR)/Include")
-GMAKEDEPENDFLAGS+= -isystem "$(MSVCDIR_TMP)"
-else
-ifdef VCINSTALLDIR
-VCINSTALLDIR_TMP=$(shell cygpath "$(VCINSTALLDIR)/Include")
-GMAKEDEPENDFLAGS+= -isystem "$(VCINSTALLDIR_TMP)"
-endif
-endif
-
-ifdef BOOST_INC_DIR
-BOOST_TMP=$(shell cygpath "$(BOOST_INC_DIR)")
-GMAKEDEPENDFLAGS+= -isystem "$(BOOST_TMP)"
-endif
-ifdef GMP_INC_DIR
-GMP_TMP=$(shell cygpath "$(GMP_INC_DIR)")
-GMAKEDEPENDFLAGS+= -isystem "$(GMP_TMP)"
-endif
-GMAKEDEPENDFLAGS+= -DNOMINMAX -D_M_IA64 -D_M_IX86 -D_X86_ -D_MSC_VER=$(COMPILER_VER)
-endif
+MAKEDEPEND =cl
+GMAKEDEPENDFLAGS+= -showIncludes -nologo -Zs -EHsc
+define run-makedepend-cpp
+$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< | \
+sed -e '1 c $(basename $@).o: $< \\' \
+-e 's/Note: including file: *//' \
+-e '/Program Files\|boost/I d' \
+-e '/: warning/I d' \
+-e 's/\([A-Za-z]\):/\/cygdrive\/\1/g' \
+-e 's/\\/\//g' \
+-e '$$! s/$$/ \\/g' \
+> $@
+endef
 
 # TBD: should be one of the following:
 #
