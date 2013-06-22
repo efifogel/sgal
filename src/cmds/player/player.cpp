@@ -48,9 +48,34 @@ namespace fi = boost::filesystem;
 namespace ex = boost::extensions;
 
 /*! \breif */
+static std::string& error_message(std::string& str)
+{
+  str.append(": ");
+#if (defined _MSC_VER)
+  DWORD err;
+  LPVOID lpMsgBuf;
+  if ((err = ::GetLastError()) != NO_ERROR &&
+       ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                        FORMAT_MESSAGE_FROM_SYSTEM,
+                        NULL,
+                        err,
+                        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                        (LPSTR) &lpMsgBuf,
+                        0,
+                        NULL) != 0)
+  {
+    str.append((LPSTR) lpMsgBuf);
+    ::LocalFree(lpMsgBuf);
+  }
+#else
+  str.append(dlerror();
+#endif
+  return str;
+}
+
 struct Shared_library_error : public std::logic_error {
   Shared_library_error(std::string& str) :
-    std::logic_error(str.append(": ").append(dlerror())) {}
+    std::logic_error(error_message(str)) {}
 };
 
 /*! \breif */
