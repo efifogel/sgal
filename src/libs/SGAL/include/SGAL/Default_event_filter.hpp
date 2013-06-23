@@ -30,17 +30,16 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "Event_filter.h"
-#include "Scene_graphDefs.h"
-#include "Debug.h"
+#include "SGAL/Event_filter.h"
+#include "SGAL/Scene_graphDefs.h"
+#include "SGAL/Debug.h"
 
 SGAL_BEGIN_NAMESPACE
 
 class Scene_graphInt;
 class Execution_coordinator;
 
-class SCENE_GRAPH_CLASSDEF EDefaultEvent_filter : public EEvent_filter 
-{
+class SGAL_SGAL_DECL EDefaultEvent_filter : public EEvent_filter {
   DECLARE_DEBUG_CLASS(DBG_DEFAULTEVENTFILTER);
 public:
   EDefaultEvent_filter() : EEvent_filter(), m_executionCoordinator(0) 
@@ -49,23 +48,25 @@ public:
   };
   virtual ~EDefaultEvent_filter() {};
 
-  void set_executionCoordinator(Execution_coordinator *ec) { m_executionCoordinator = ec; }
-  void SetScene_graph(Scene_graphInt *sg) { m_sceneGraph = sg; }
+  void set_executionCoordinator(Execution_coordinator* ec)
+  { m_executionCoordinator = ec; }
 
-  virtual bool Draw      ( const EDrawData & );
-  virtual bool Size      ( const ESizeData & );
-  virtual bool EraseBkgnd    ( const EEraseBkgndData & );
-  virtual bool PaletteChanged  ( const EPaletteChangedData & );
-  virtual bool SetCursor    ( const ECursorData & );
+  void SetScene_graph(Scene_graphInt* sg) { m_sceneGraph = sg; }
+
+  virtual bool Draw ( const EDrawData& );
+  virtual bool Size ( const ESizeData& );
+  virtual bool EraseBkgnd ( const EEraseBkgndData& );
+  virtual bool PaletteChanged ( const EPaletteChangedData& );
+  virtual bool SetCursor ( const ECursorData& );
 
 private:
 
   /** a pointer to the executtion manage to redraw the scene */
-  Execution_coordinator *m_executionCoordinator;
+  Execution_coordinator* m_executionCoordinator;
 
   /** a pointer to the scene graph interface. Used to call Isect
       on the scene graph */
-  Scene_graphInt *m_sceneGraph;
+  Scene_graphInt* m_sceneGraph;
 };
 
 SGAL_END_NAMESPACE

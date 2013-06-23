@@ -37,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Native_window_item : public Window_item {
+class SGAL_SGAL_DECL Native_window_item : public Window_item {
 protected:
   /*! The window width. */
   Uint m_width;

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -23,13 +23,13 @@
 #define SGAL_ORTHO_CAMERA_HPP
 
 #include "SGAL/basic.hpp"
-#include "Types.h"
+#include "SGAL/Types.h"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class Ortho_camera : public Camera {
+class SGAL_SGAL_DECL Ortho_camera : public Camera {
 private:
   // static void InitClass();
   // SGAL_DLLEXPORT static EType * s_classType;
@@ -70,10 +70,10 @@ public:
   void set_height(Float height);
   Float get_height() const;
 
-  void set_center(const Vector2f & center);
-  void get_center(Vector2f & center) const;
+  void set_center(const Vector2f& center);
+  void get_center(Vector2f& center) const;
   void set_center(Float v0, Float v1);
-  void get_center(Float * v0, Float * v1) const;
+  void get_center(Float* v0, Float * v1) const;
 
   void set_near_clip(Float near_clip);
   Float get_near_clip() const;
@@ -104,15 +104,11 @@ protected:
   Float m_aspect_ratio;
 };
 
-inline void Ortho_camera::set_Center(const Vector2f & center)
-{
-  set_Center(center[0], center[1]);
-}
+inline void Ortho_camera::set_Center(const Vector2f& center)
+{ set_Center(center[0], center[1]); }
 
-inline void Ortho_camera::get_center(Vector2f & center) const
-{
-  get_center(&center[0], &center[1]);
-}
+inline void Ortho_camera::get_center(Vector2f& center) const
+{ get_center(&center[0], &center[1]); }
 
 SGAL_END_NAMESPACE
 

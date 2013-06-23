@@ -34,7 +34,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Window_item;
 
-class Scene : public SGAL::Agent {
+class SGAL_SGAL_DECL Scene : public SGAL::Agent {
 public:
   /*! Destructor */
   virtual ~Scene() {}

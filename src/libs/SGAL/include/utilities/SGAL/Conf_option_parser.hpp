@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -33,7 +33,7 @@ namespace po = boost::program_options;
 
 class Configuration;
 
-class Conf_option_parser {
+class SGAL_SGAL_DECL Conf_option_parser {
 public:
   /*! Constructor */
   Conf_option_parser();
@@ -44,13 +44,13 @@ public:
   /*! Apply the options
    * \param variable_map
    */
-  void apply(po::variables_map & variable_map);
+  void apply(po::variables_map& variable_map);
   
   /*! Obtain the conf-option description */
-  const po::options_description & get_conf_opts() const { return m_conf_opts; }
+  const po::options_description& get_conf_opts() const { return m_conf_opts; }
 
   /*! Configure */
-  void configure(po::variables_map & variable_map, Configuration * conf);
+  void configure(po::variables_map& variable_map, Configuration * conf);
   
   /*! Is the accumulate option set? */
   Boolean get_accumulate() const { return m_accumulate; }
@@ -66,7 +66,7 @@ public:
   Boolean get_map_texture() const { return m_map_texture; }
 
   /*! Is the display_fps option set? */
-  Boolean get_display_fps(Boolean & flag);
+  Boolean get_display_fps(Boolean& flag);
   
 protected:
   /*! The conf options */

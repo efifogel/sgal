@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1311 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -29,7 +29,9 @@
 
 #include <string>
 
-enum Error_type {
+#include "SGAL/basic.hpp"
+
+enum SGAL_SGAL_DECL Error_type {
   etDbgInfo = 0,      // <debug message>
   etFatal,            // <error message>
   etInvalidName,      // <invalid name>|<description>
@@ -38,7 +40,7 @@ enum Error_type {
   etGLError           // <where>|<description>
 };
 
-class App_error_handle_int {
+class SGAL_SGAL_DECL App_error_handle_int {
 public :
   App_error_handle_int() {}
   virtual ~App_error_handle_int() {}

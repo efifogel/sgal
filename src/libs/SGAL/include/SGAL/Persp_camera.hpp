@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -27,7 +27,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Persp_camera : public Camera {
+class SGAL_SGAL_DECL Persp_camera : public Camera {
 private:
   // static void InitClass();
   // SGAL_DLLEXPORT static EType * s_classType;

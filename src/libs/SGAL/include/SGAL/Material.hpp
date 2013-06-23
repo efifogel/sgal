@@ -51,7 +51,7 @@ class Element;
 class Formatter;
 
 /*! \brief A representation of a material */
-class Material : public Container {
+class SGAL_SGAL_DECL Material : public Container {
 public: 
   enum {
     FIRST = Container::LAST - 1,

@@ -29,7 +29,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-
 #include "SGAL/Generic_option_parser.hpp"
 #include "SGAL/Bench_option_parser.hpp"
 #include "SGAL/Conf_option_parser.hpp"
@@ -40,9 +39,9 @@ namespace po = boost::program_options;
 
 class Scene_graph;
 
-class Option_parser : public Generic_option_parser,
-                      public Bench_option_parser,
-                      public Conf_option_parser
+class SGAL_SGAL_DECL Option_parser : public Generic_option_parser,
+                                     public Bench_option_parser,
+                                     public Conf_option_parser
 {
 public:
   /*! Trace id */

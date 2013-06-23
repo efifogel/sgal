@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,10 +35,10 @@ SGAL_BEGIN_NAMESPACE
 
 /*! 
  */
-class Command_line_parser {
+class SGAL_SGAL_DECL Command_line_parser {
 public:
   /*! Constructor */
-  Command_line_parser(int argc, char * argv[]);
+  Command_line_parser(int argc, char* argv[]);
 
   /*! Parameter-less constructor */
   Command_line_parser(void);
@@ -50,16 +50,16 @@ public:
   virtual void print_help(void) {}
 
   /*! Obtain the options string */
-  virtual char * get_option_str(void) const = 0;
+  virtual char* get_option_str(void) const = 0;
   
   /*! Parse the command-line */
   virtual int operator()(void) = 0;
 
   /*! Obtain the program name */
-  static const char * get_prog_name(void) { return s_prog_name; }
+  static const char* get_prog_name(void) { return s_prog_name; }
 
   /*! Register the given parser to parse the command line */
-  void doregister(Command_line_parser * cl);
+  void doregister(Command_line_parser* cl);
 
   /*! Return true if the command line was syntacticaly valid */
   Boolean is_valid(void) const;
@@ -74,13 +74,13 @@ protected:
   static int s_argc;
 
   /*! The command-line strings */
-  static char ** s_argv;
+  static char** s_argv;
 
   /*! The program name */
-  static const char * s_prog_name;
+  static const char* s_prog_name;
 
   /*! A set of command line parsers to apply */
-  static std::set<Command_line_parser *> s_set;
+  static std::set<Command_line_parser*> s_set;
 
   /*! Indicates that the program should be terminated immediately once parsing
    * is complete

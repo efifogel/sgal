@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id $
 // $Revision: 4977 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,7 +30,7 @@ SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-class Generic_option_parser {
+class SGAL_SGAL_DECL Generic_option_parser {
 public:
   enum Generic_option_id { AUTHOR, HELP, LICENSE, VERSION };
   struct Generic_option_exception {
@@ -46,10 +46,10 @@ public:
   
   /*! Apply the options
    */
-  void apply(po::variables_map & variable_map);
+  void apply(po::variables_map& variable_map);
   
   /*! Obtain the generic-option description */
-  const po::options_description & get_generic_opts() const
+  const po::options_description& get_generic_opts() const
   { return m_generic_opts; }
   
 protected:
@@ -57,7 +57,7 @@ protected:
   po::options_description m_generic_opts;
   
 private:
-  virtual const po::options_description & get_visible_opts() const = 0;
+  virtual const po::options_description& get_visible_opts() const = 0;
 };
 
 SGAL_END_NAMESPACE

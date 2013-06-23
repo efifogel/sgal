@@ -196,11 +196,11 @@ endif
 
 # Include:
 LCPPINCS = -I$(BASEDIR)
+LCPPINCS+= -I$(BASEDIR)/../include
 LCPPINCS+= -I$(BASEDIR)/../include/primitives
 LCPPINCS+= -I$(BASEDIR)/../include/engines
 LCPPINCS+= -I$(BASEDIR)/../include/geo
 LCPPINCS+= -I$(BASEDIR)/../include/geometries
-LCPPINCS+= -I$(BASEDIR)/../include/engines
 
 # Add BOOST, GMP, MPFR, Magick, and gl2ps include directory:
 ifdef BOOST_INC_DIR

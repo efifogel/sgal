@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 4979 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -31,7 +31,7 @@ SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-class Bench_option_parser {
+class SGAL_SGAL_DECL Bench_option_parser {
 public:
   /*! Constructor */
   Bench_option_parser();
@@ -42,10 +42,10 @@ public:
   /*! Apply the options
    * \param variable_map
    */
-  void apply(po::variables_map & variable_map);
+  void apply(po::variables_map& variable_map);
   
   /*! Obtain the bench-option description */
-  const po::options_description & get_bench_opts() const
+  const po::options_description& get_bench_opts() const
   { return m_bench_opts; }
 
   /*! Display the log-table header? */

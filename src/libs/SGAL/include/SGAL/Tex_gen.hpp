@@ -35,7 +35,7 @@ SGAL_BEGIN_NAMESPACE
 class Context;
 class Element;
 
-class Tex_gen : public Container {
+class SGAL_SGAL_DECL Tex_gen : public Container {
 public: 
   enum {
     FIRST = Container::LAST - 1,

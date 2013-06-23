@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6746 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,7 +40,9 @@ SGAL_BEGIN_NAMESPACE
 
 class Scene;
 
-class X11_window_manager : public Native_window_manager<X11_window_item> {
+class SGAL_SGAL_DECL X11_window_manager :
+  public Native_window_manager<X11_window_item>
+{
 private:
   /*! The window-manager singleton */
   static X11_window_manager* s_instance;
@@ -97,7 +99,7 @@ public:
   /*! Run the main event loop
    * \param simulating indicates whether the application is simulating
    */
-  virtual void event_loop(Boolean simulating = SGAL_FALSE);
+  virtual void event_loop(Boolean simulating = false);
 };
 
 SGAL_END_NAMESPACE

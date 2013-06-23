@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,13 +35,17 @@ enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE };
 // =====================
 // failure functions
 // -----------------
-void assertion_fail(const char*, const char*, int, const char* = 0);
-void precondition_fail(const char*, const char*, int, const char* = 0);
-void postcondition_fail(const char*, const char*, int, const char* = 0);
+SGAL_SGAL_DECL void assertion_fail(const char*, const char*, int,
+                                   const char* = 0);
+SGAL_SGAL_DECL void precondition_fail(const char*, const char*, int,
+                                      const char* = 0);
+SGAL_SGAL_DECL void postcondition_fail(const char*, const char*, int,
+                                       const char* = 0);
 
 // warning function
 // ----------------
-void warning_fail(const char*, const char*, int, const char* = 0);
+SGAL_SGAL_DECL void warning_fail(const char*, const char*, int,
+                                 const char* = 0);
 
 
 // macro definitions

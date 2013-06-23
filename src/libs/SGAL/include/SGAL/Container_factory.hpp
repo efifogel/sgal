@@ -53,7 +53,7 @@ struct Reg_##class_name {                                             \
 #endif
 
 /*! Produces containers. */
-class Container_factory {
+class SGAL_SGAL_DECL Container_factory {
 public:
   typedef boost::shared_ptr<Container>            Shared_container;
 

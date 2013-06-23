@@ -35,7 +35,7 @@ class Element;
 class Container_proto;
 class Coord_array;
 
-class Coord_minkowski : public Container {
+class SGAL_SGAL_DECL Coord_minkowski : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
