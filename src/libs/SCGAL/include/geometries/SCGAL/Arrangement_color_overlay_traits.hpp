@@ -32,6 +32,8 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SCGAL/basic.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 template <class Aos>

@@ -52,7 +52,8 @@ class Motion_event;
 class Scene_graph;
 
 class SGAL_SGAL_DECL Navigation_sensor : public Agent, public Drag_sensor,
-                                        public Bindable_node {
+                                         public Bindable_node
+{
 public:
   enum {
     FIRST = Bindable_node::LAST - 1,
@@ -65,16 +66,16 @@ public:
   };
 
   /*! Constructor */
-  Navigation_sensor(const Vector3f & translation = Vector3f(),
-                    const Rotation & rotation = Rotation(),
-                    Boolean proto = SGAL_FALSE);
+  Navigation_sensor(const Vector3f& translation = Vector3f(),
+                    const Rotation& rotation = Rotation(),
+                    Boolean proto = false);
 
   /*! Destructor */
   virtual ~Navigation_sensor();
 
   /* Construct the prototype */
   static Navigation_sensor* prototype()
-  { return new Navigation_sensor(Vector3f(), Rotation(), SGAL_TRUE); }
+  { return new Navigation_sensor(Vector3f(), Rotation(), true); }
 
   /*! Clone */
   virtual Container* clone() { return new Navigation_sensor(); }

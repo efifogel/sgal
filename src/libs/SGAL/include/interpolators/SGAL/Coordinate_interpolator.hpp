@@ -46,7 +46,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
-class Coordinate_interpolator : public Interpolator {
+class SGAL_SGAL_DECL Coordinate_interpolator : public Interpolator {
 public:
   enum {
     FIRST = Interpolator::LAST-1,
@@ -56,17 +56,17 @@ public:
   };
 
   // Constructor
-  Coordinate_interpolator(Boolean proto = SGAL_FALSE);
+  Coordinate_interpolator(Boolean proto = false);
 
   // Destructor
   virtual ~Coordinate_interpolator();
 
   /* Construct the prototype */
-  static Coordinate_interpolator * prototype()
-  { return new Coordinate_interpolator(SGAL_TRUE); }
+  static Coordinate_interpolator* prototype()
+  { return new Coordinate_interpolator(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Coordinate_interpolator (); }
+  virtual Container* clone() { return new Coordinate_interpolator (); }
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -75,28 +75,28 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
   
   // Functions that handles the creation of an instance in the scene graph
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! The interpolation execution function */
-  virtual void execute(Field_info * field_info);
+  virtual void execute(Field_info* field_info);
 
   /*! Obtain the domain values */
-  const Vector3f_array & get_values() const { return m_values; }
+  const Vector3f_array& get_values() const { return m_values; }
   
   /*! Obtain the domain values */
-  Vector3f_array & get_values() { return m_values; }
+  Vector3f_array& get_values() { return m_values; }
 
 protected:
   /*! The interpolator domain key-values */
   Vector3f_array m_values;
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! returns a copy of the value in a specific location */
   Vector3f_array get_value (Uint location);
@@ -106,7 +106,7 @@ private:
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The last range location */
   Uint m_last_location;

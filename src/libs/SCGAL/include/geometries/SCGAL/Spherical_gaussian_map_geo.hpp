@@ -39,6 +39,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Trace.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Spherical_gaussian_map.hpp"
 #include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
 #include "SCGAL/Arrangement_extended_direction.hpp"
@@ -53,7 +54,8 @@ class Draw_action;
 class Scene_graph;
 class Cylinder;
 
-class Spherical_gaussian_map_geo : public Spherical_gaussian_map_base_geo {
+class SGAL_SCGAL_DECL Spherical_gaussian_map_geo :
+  public Spherical_gaussian_map_base_geo {
 public:
   typedef boost::shared_ptr<Spherical_gaussian_map_geo>
     Shared_spherical_gaussian_map_geo;

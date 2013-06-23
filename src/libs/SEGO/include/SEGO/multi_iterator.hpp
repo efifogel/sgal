@@ -38,20 +38,20 @@
 
 SGAL_BEGIN_NAMESPACE
 
-  template <class It1, class It2, class It3>
-  class multi_iterator : public boost::iterator_facade<
-    multi_iterator<It1, It2, It3>,
-    boost::tuple<typename std::iterator_traits<It1>::value_type,
-                 typename std::iterator_traits<It2>::value_type,
-                 typename std::iterator_traits<It3>::value_type>,
-                   boost::forward_traversal_tag,
-    boost::tuple<typename std::iterator_traits<It1>::reference,
-                 typename std::iterator_traits<It2>::reference,
-                 typename std::iterator_traits<It3>::reference> > {
-  public:
+template <typename It1, typename It2, typename It3>
+class multi_iterator : public boost::iterator_facade<
+  multi_iterator<It1, It2, It3>,
+  boost::tuple<typename std::iterator_traits<It1>::value_type,
+               typename std::iterator_traits<It2>::value_type,
+               typename std::iterator_traits<It3>::value_type>,
+  boost::forward_traversal_tag,
+  boost::tuple<typename std::iterator_traits<It1>::reference,
+               typename std::iterator_traits<It2>::reference,
+               typename std::iterator_traits<It3>::reference> > {
 
-    // TODO: Why do I need this?
-    multi_iterator() {}
+public:
+  // TODO: Why do I need this?
+  multi_iterator() {}
     
   /** 
    * The constructor receives ranges of all 3 iterators.
@@ -63,66 +63,66 @@ SGAL_BEGIN_NAMESPACE
    * @param it3_b Begin iterator for the 3rd iterator.
    * @param it3_e End iteator of the 3rs iterator.
    */
-    multi_iterator(It1 it1_b, It1 it1_e,
-                   It2 it2_b, It2 it2_e,
-                   It3 it3_b, It3 it3_e)
-        : m_it1(it1_b), m_it1end(it1_e), m_it2(it2_b),
-          m_it2begin(it2_b), m_it2end(it2_e), m_it3(it3_b),
-          m_it3begin(it3_b), m_it3end(it3_e) {}
+  multi_iterator(It1 it1_b, It1 it1_e,
+                 It2 it2_b, It2 it2_e,
+                 It3 it3_b, It3 it3_e) :
+    m_it1(it1_b), m_it1end(it1_e), m_it2(it2_b),
+    m_it2begin(it2_b), m_it2end(it2_e), m_it3(it3_b),
+    m_it3begin(it3_b), m_it3end(it3_e) {}
 
-  protected:
-    friend class boost::iterator_core_access;
+protected:
+  friend class boost::iterator_core_access;
 
-    typedef multi_iterator<It1, It2, It3>            This;
-    typedef boost::iterator_facade<
-      This,
-      boost::tuple<typename std::iterator_traits<It1>::value_type,
-                   typename std::iterator_traits<It2>::value_type,
-                   typename std::iterator_traits<It3>::value_type>,
-                     boost::forward_traversal_tag,
-      boost::tuple<typename std::iterator_traits<It1>::reference,
-                   typename std::iterator_traits<It2>::reference,
-                   typename std::iterator_traits<It3>::reference> >
-    Base;
+  typedef multi_iterator<It1, It2, It3>            This;
+  typedef boost::iterator_facade<
+    This,
+    boost::tuple<typename std::iterator_traits<It1>::value_type,
+                 typename std::iterator_traits<It2>::value_type,
+                 typename std::iterator_traits<It3>::value_type>,
+                   boost::forward_traversal_tag,
+    boost::tuple<typename std::iterator_traits<It1>::reference,
+                 typename std::iterator_traits<It2>::reference,
+                 typename std::iterator_traits<It3>::reference> >
+  Base;
 
-    typedef Base                                        Facade;
+  typedef Base                                        Facade;
 
-    typename Facade::reference
-    dereference() const {
-      return typename Facade::reference(*m_it1, *m_it2, *m_it3);
+  typename Facade::reference
+  dereference() const {
+    return typename Facade::reference(*m_it1, *m_it2, *m_it3);
+  }
+
+  bool equal(const This& o) const {
+    return ((this->m_it1 == o.m_it1) &&
+            (this->m_it2 == o.m_it2) &&
+            (this->m_it3 == o.m_it3));
+  }
+
+  void increment() {
+    ++m_it3;
+
+    if (m_it3 == m_it3end && m_it2 != m_it2end) {
+      m_it3 = m_it3begin;
+      ++m_it2;
     }
-
-    bool equal(const This& o) const {
-      return ((this->m_it1 == o.m_it1) &&
-              (this->m_it2 == o.m_it2) &&
-              (this->m_it3 == o.m_it3));
-    }
-
-    void increment() {
-      ++m_it3;
-
-      if (m_it3 == m_it3end && m_it2 != m_it2end) {
-        m_it3 = m_it3begin;
-        ++m_it2;
-      }
       
-      if (m_it2 == m_it2end && m_it1 != m_it1end) {
-        m_it2 = m_it2begin;
-        ++m_it1;
-      }
-      
-      // end
-      if (m_it1 == m_it1end) {
-        m_it2 = m_it2end;
-        m_it3 = m_it3end;
-      }
+    if (m_it2 == m_it2end && m_it1 != m_it1end) {
+      m_it2 = m_it2begin;
+      ++m_it1;
     }
+      
+    // end
+    if (m_it1 == m_it1end) {
+      m_it2 = m_it2end;
+      m_it3 = m_it3end;
+    }
+  }
 
-  private:
-    It1 m_it1, m_it1end;
-    It2 m_it2, m_it2begin, m_it2end;
-    It3 m_it3, m_it3begin, m_it3end;
-  };
+private:
+  It1 m_it1, m_it1end;
+  It2 m_it2, m_it2begin, m_it2end;
+  It3 m_it3, m_it3begin, m_it3end;
+};
 
 SGAL_END_NAMESPACE
 

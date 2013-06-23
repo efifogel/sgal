@@ -37,7 +37,7 @@ class Draw_action;
 class Appearance;
 class Element;
 
-class Image_background : public Background {
+class SGAL_SGAL_DECL Image_background : public Background {
 public:
   enum {
     FIRST = Background::LAST - 1,

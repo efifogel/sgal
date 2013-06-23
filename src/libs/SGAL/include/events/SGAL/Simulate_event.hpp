@@ -37,20 +37,20 @@ class Agent;
 
 /*!
  */
-class Simulate_event: public Event {
+class SGAL_SGAL_DECL Simulate_event: public Event {
 private:
   /*! A set of agents registered to process this type of event */
-  static std::set<Agent *> s_set;
+  static std::set<Agent*> s_set;
 
   bool m_simulate;
   
 protected:
-  virtual void handle(Agent * agent);
+  virtual void handle(Agent* agent);
   
 public:
-  static void doregister(Agent * agent) { s_set.insert(agent); }
-  static void unregister(Agent * agent) { s_set.erase(agent); }
-  virtual const std::set<Agent *> & get_set(void) const { return s_set; }
+  static void doregister(Agent* agent) { s_set.insert(agent); }
+  static void unregister(Agent* agent) { s_set.erase(agent); }
+  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
   
   virtual ~Simulate_event(void) {}
 

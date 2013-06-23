@@ -21,7 +21,7 @@
 
 #include "SEGO/Ego_voxels_filler_base.hpp"
 
-#include "SGAL/config.hpp"
+#include "SEGO/basic.hpp"
 
 #include <string>
 
@@ -29,7 +29,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 
-class SGAL_SGAL_DECL Ego_voxels_filler : public Ego_voxels_filler_base {
+class SGAL_SEGO_DECL Ego_voxels_filler : public Ego_voxels_filler_base {
  public:
 
   /* Constructor */

@@ -42,7 +42,7 @@ class Window_item;
 /*! The keyboard event. Holds data related to the event of pressing or
  * releasing a key by the user.
  */
-class Keyboard_event : public Event {
+class SGAL_SGAL_DECL Keyboard_event : public Event {
 public:
   enum Modifier {
     SHIFT_KEY = 0x1,

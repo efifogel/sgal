@@ -35,17 +35,17 @@ SGAL_BEGIN_NAMESPACE
 class Container;
 
 /*! Writes a scene graph to an output stream in the VRML format */
-class Vrml_formatter : public Formatter {
+class SGAL_SGAL_DECL Vrml_formatter : public Formatter {
 public:
   /*! Constructor */
   Vrml_formatter() : m_indent(0), m_indented(false) {}
 
   /*! Construct an output formatter. */
-  Vrml_formatter(std::ostream & os) :
+  Vrml_formatter(std::ostream& os) :
     Formatter(os), m_indent(0), m_indented(false) {}
 
   /*! Construct an input formatter. */
-  Vrml_formatter(std::istream & is) :
+  Vrml_formatter(std::istream& is) :
     Formatter(is), m_indent(0), m_indented(false) {}
 
   /*! Destructor */
@@ -61,41 +61,41 @@ public:
   virtual void end();
 
   /*! Write a scene-graph node */  
-  virtual void write(Container * container);
+  virtual void write(Container* container);
 
   /*! Write the container header */
-  virtual void container_begin(const std::string & tag);
+  virtual void container_begin(const std::string& tag);
 
   /*! Write the container tailer */
   virtual void container_end();
 
   /*! Write a single Boolean field */
-  virtual void single_boolean(const std::string & name,
+  virtual void single_boolean(const std::string& name,
                               Boolean value, Boolean default_value)
   { single_field(name, value, default_value); }
 
   /*! Write a single Int field */
-  virtual void single_int(const std::string & name,
+  virtual void single_int(const std::string& name,
                           Int value, Int default_value)
   { single_field(name, value, default_value); }    
   
   /*! Write a single Vector3d field */
-  virtual void single_vector3f(const std::string & name,
-                               const Vector3f & value,
-                               const Vector3f & default_value)
+  virtual void single_vector3f(const std::string& name,
+                               const Vector3f& value,
+                               const Vector3f& default_value)
   { single_field(name, value, default_value); }    
 
   /*! Write the header of a single-container field */
-  virtual void single_container_begin(const std::string & name);
+  virtual void single_container_begin(const std::string& name);
 
   /*! Write the tailer of a single-container field */
   virtual void single_container_end();
 
   /*! Write a multi Uint field */
-  virtual void multi_uint(const std::string & name, const Array<Uint> & value);
+  virtual void multi_uint(const std::string& name, const Array<Uint>& value);
 
   /*! Write the header of a multi-container field */
-  virtual void multi_container_begin(const std::string & name);
+  virtual void multi_container_begin(const std::string& name);
 
   /*! Write the tailer of a multi-container field */
   virtual void multi_container_end();
@@ -105,8 +105,8 @@ public:
 private:
   /*! Write a single field of type T */
   template <typename T>
-  void single_field(const std::string & name, const T & value,
-                    const T & default_value)
+  void single_field(const std::string& name, const T& value,
+                    const T& default_value)
   {
     if (value == default_value) return;
     new_line();

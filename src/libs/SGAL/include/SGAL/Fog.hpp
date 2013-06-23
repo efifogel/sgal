@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -38,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Element;
 
-class Fog : public Node {
+class SGAL_SGAL_DECL Fog : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,
@@ -53,16 +53,16 @@ public:
   };
 
   /*! Constructor */
-  Fog(Boolean proto = SGAL_FALSE);
+  Fog(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Fog();
 
   /*! Construct the prototype */
-  static Fog * prototype() { return new Fog(SGAL_TRUE); }
+  static Fog* prototype() { return new Fog(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Fog(); }
+  virtual Container* clone() { return new Fog(); }
 
   enum Fog_mode {
     LINEAR_FOG,
@@ -88,17 +88,17 @@ public:
   void set_index(Float index);
   Float get_index();
 
-  void set_color(const Vector4f & color);
-  void get_color(Vector4f & color);
+  void set_color(const Vector4f& color);
+  void get_color(Vector4f& color);
   void set_color(Float v0, Float v1, Float v2, Float v3);
-  void get_color(Float * v0, Float * v1, Float * v2, Float * v3);
+  void get_color(Float* v0, Float* v1, Float* v2, Float* v3);
 
   void push();
-  void pop(Fog * outgoing_fog);
-  virtual Trav_directive draw(Draw_action * draw_action);
+  void pop(Fog* outgoing_fog);
+  virtual Trav_directive draw(Draw_action* draw_action);
 
   /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
 #if 0
   virtual Attribute_list get_attributes() { }
@@ -116,15 +116,11 @@ private:
   Vector4f m_color; 
 };
 
-inline void Fog::set_color(const Vector4f & color)
-{
-  SetColor(color.Get(0), color.Get(1), color.Get(2), color.Get(3));
-}
+inline void Fog::set_color(const Vector4f& color)
+{ SetColor(color.Get(0), color.Get(1), color.Get(2), color.Get(3)); }
 
-inline void Fog::get_color(Vector4f & color)
-{
-  get_color(&color[0], &color[1], &color[2], &color[3]);
-}
+inline void Fog::get_color(Vector4f& color)
+{ get_color(&color[0], &color[1], &color[2], &color[3]); }
 
 SGAL_END_NAMESPACE
 

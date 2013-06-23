@@ -19,21 +19,22 @@
 #ifndef SGAL_EGO_VOXELS_TILER_HPP
 #define SGAL_EGO_VOXELS_TILER_HPP
 
-#include "SGAL/config.hpp"
-#include <boost/tuple/tuple.hpp>
 #include <vector>
+#include <boost/tuple/tuple.hpp>
+
+#include "SEGO/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 
-class Ego_voxels_tiler {
+class SGAL_SEGO_DECL Ego_voxels_tiler {
 public:
-  typedef boost::tuple<size_t, size_t, size_t>  Brick_type;
-  typedef std::vector<Brick_type>                     Brick_types;
+  typedef boost::tuple<size_t, size_t, size_t>          Brick_type;
+  typedef std::vector<Brick_type>                       Brick_types;
 
   // TODO: Missing if rows are x or y.
-  enum Tiling_rows {XROWS, YROWS};
+  enum Tiling_rows{XROWS, YROWS};
 
   Ego_voxels_tiler(std::size_t even_layer_x,
                    std::size_t even_layer_y,
@@ -43,7 +44,7 @@ public:
                    Tiling_rows rows,
                    const Brick_types &available_types);
   
-  void operator() (Ego_voxels* out_voxels);
+  void operator()(Ego_voxels* out_voxels);
 
 private:
   void tile_layer(size_t layer, Ego_voxels* out_voxels);
@@ -71,7 +72,6 @@ private:
 };
 
 SGAL_END_NAMESPACE
-
 
 #endif // SGAL_EGO_VOXELS_TILER_HPP
 

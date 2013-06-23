@@ -40,13 +40,13 @@ class Window_item;
 
 /*!
  */
-class Reshape_event: public Event {
+class SGAL_SGAL_DECL Reshape_event: public Event {
 private:
   /*! A set of agents registered to process this type of event */
-  static std::set<Agent *> s_set;
+  static std::set<Agent*> s_set;
 
   /*! The window that is being reshaped */
-  Window_item * m_window_item;
+  Window_item* m_window_item;
 
   /*! The width of the window being reshaped */
   Uint m_width;
@@ -56,17 +56,17 @@ private:
 
 protected:
   /*! Handle any agent */
-  virtual void handle(Agent * agent);
+  virtual void handle(Agent* agent);
   
   /*! Obtain set of agents registered to process this type of event */
-  virtual const std::set<Agent *> & get_set(void) const { return s_set; }
+  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
 
 public:
   /*! Register this event for a particular agent */
-  static void doregister(Agent * agent) { s_set.insert(agent); }
+  static void doregister(Agent* agent) { s_set.insert(agent); }
 
   /*! Unregister this event for a particular agent */
-  static void unregister(Agent * agent) { s_set.erase(agent); }
+  static void unregister(Agent* agent) { s_set.erase(agent); }
 
   /*! Constructor */
   Reshape_event(void) :
@@ -82,10 +82,10 @@ public:
   virtual void identify(void);
 
   /*! Set the window item */
-  void set_window_item(Window_item * item) { m_window_item = item; }
+  void set_window_item(Window_item* item) { m_window_item = item; }
 
   /*! Obtain the window where the event took place */
-  Window_item * get_window_item() const { return m_window_item; }
+  Window_item* get_window_item() const { return m_window_item; }
   
   /*! Set the window width */
   void set_width(Uint width) { m_width = width; }

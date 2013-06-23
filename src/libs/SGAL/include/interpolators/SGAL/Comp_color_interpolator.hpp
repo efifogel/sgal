@@ -31,20 +31,23 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Comp_color_interpolator : public Comp_vector3f_interpolator {
+class SGAL_SGAL_DECL Comp_color_interpolator :
+  public Comp_vector3f_interpolator
+{
 public:
   /*! Constructor */
-  Comp_color_interpolator(Boolean interpolate_flag = true, Boolean proto = SGAL_FALSE);
+  Comp_color_interpolator(Boolean interpolate_flag = true,
+                          Boolean proto = false);
 
   /*! Destructor */
   virtual ~Comp_color_interpolator() {}
 
   /* Construct the prototype */
-  static Comp_color_interpolator * prototype()
-  { return new Comp_color_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Comp_color_interpolator* prototype()
+  { return new Comp_color_interpolator(false, true); }
   
   /*! Clone */
-  virtual Container * clone() { return new Comp_color_interpolator(); }
+  virtual Container* clone() { return new Comp_color_interpolator(); }
 
 protected:
   virtual float get_key_bin() { return m_default_key_bin; }

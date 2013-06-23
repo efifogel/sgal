@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -33,7 +33,7 @@ class Element;
 class Container_proto;
 
 /*! This class maintains an array of vertex-colors */
-class Color_array : public Container {
+class SGAL_SGAL_DECL Color_array : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

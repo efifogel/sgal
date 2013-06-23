@@ -39,7 +39,7 @@ class Element;
 class Scene_graph;
 class Tick_event;
 
-class Time_sensor : public Agent, public Node {
+class SGAL_SGAL_DECL Time_sensor : public Agent, public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,
@@ -62,13 +62,13 @@ public:
   };
 
   /*! Constructor */
-  Time_sensor(Boolean proto = SGAL_FALSE);
+  Time_sensor(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Time_sensor();
 
   /*! Construct the prototype */
-  static Time_sensor* prototype() { return new Time_sensor(SGAL_TRUE); }
+  static Time_sensor* prototype() { return new Time_sensor(true); }
 
   /*! Clone */
   virtual Container* clone() { return new Time_sensor(); }

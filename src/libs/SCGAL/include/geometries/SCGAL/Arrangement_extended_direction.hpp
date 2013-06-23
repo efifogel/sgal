@@ -28,6 +28,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE

@@ -31,6 +31,8 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
+#include "SCGAL/basic.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 template <class Aos>

@@ -19,19 +19,19 @@
 #ifndef SGAL_EGO_VOXELS_HPP
 #define SGAL_EGO_VOXELS_HPP
 
-#include "SGAL/basic.hpp"
-
 #include <boost/tuple/tuple.hpp>
 #include <boost/optional.hpp>
 
 #include <vector>
+
+#include "SEGO/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 
 // Temp until we decide the true voxels.
 // Each bool represents a voxel.
-class Ego_voxels {
+class SGAL_SEGO_DECL Ego_voxels {
 public:
   typedef boost::tuple<
     std::size_t, std::size_t, std::size_t>              size_type;
@@ -55,7 +55,6 @@ public:
   void print() const;
 
 private:
-
   // Each voxel is covered by one brick, but one brick can cover many
   // voxels. A voxel contains the position of its brick (where the
   // term "position of its brick" is defined to be the voxel with

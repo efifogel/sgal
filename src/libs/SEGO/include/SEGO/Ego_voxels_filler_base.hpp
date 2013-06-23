@@ -22,16 +22,18 @@
 #include "SGAL/config.hpp"
 #include "SGAL/Node.hpp"
 
+#include "SEGO/config.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 
-class Ego_filler {
+class SGAL_SEGO_DECL Ego_filler {
 public:
   virtual void fill(Ego_voxels*) const = 0;
 };
 
-class SGAL_SGAL_DECL Ego_voxels_filler_base : public Node {
+class SGAL_SEGO_DECL Ego_voxels_filler_base : public Node {
  public:
   
   enum {

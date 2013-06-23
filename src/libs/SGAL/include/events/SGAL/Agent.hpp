@@ -43,23 +43,23 @@ class Start_event;
 class Stop_event;
 class Tick_event;
 
-class Agent {
+class SGAL_SGAL_DECL Agent {
 public:
   /*! Destructor */
   virtual ~Agent() {}
   
-  virtual void handle(Draw_event *) {}
-  virtual void handle(Keyboard_event *) {}
-  virtual void handle(Motion_event *) {}
-  virtual void handle(Mouse_event *) {}
-  virtual void handle(Passive_motion_event *) {}
-  virtual void handle(Redraw_event *) {}
-  virtual void handle(Reset_event *) {}
-  virtual void handle(Reshape_event *) {}
-  virtual void handle(Simulate_event *) {}
-  virtual void handle(Start_event *) {}
-  virtual void handle(Stop_event *) {}
-  virtual void handle(Tick_event *) {}
+  virtual void handle(Draw_event*) {}
+  virtual void handle(Keyboard_event*) {}
+  virtual void handle(Motion_event*) {}
+  virtual void handle(Mouse_event*) {}
+  virtual void handle(Passive_motion_event*) {}
+  virtual void handle(Redraw_event*) {}
+  virtual void handle(Reset_event*) {}
+  virtual void handle(Reshape_event*) {}
+  virtual void handle(Simulate_event*) {}
+  virtual void handle(Start_event*) {}
+  virtual void handle(Stop_event*) {}
+  virtual void handle(Tick_event*) {}
 
   virtual void identify(void) = 0;
 };

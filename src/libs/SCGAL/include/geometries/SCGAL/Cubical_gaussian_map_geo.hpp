@@ -50,6 +50,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
@@ -68,7 +69,7 @@ class Scene_graph;
 class Sphere;
 class Cylinder;
 
-class Cubical_gaussian_map_geo : public SGAL::Mesh_set {
+class SGAL_SCGAL_DECL Cubical_gaussian_map_geo : public SGAL::Mesh_set {
 public:
   typedef boost::shared_ptr<Cubical_gaussian_map_geo>
     Shared_cubical_gaussian_map_geo;

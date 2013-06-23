@@ -50,7 +50,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
-class Vector3f_interpolator : public Interpolator {
+class SGAL_SGAL_DECL Vector3f_interpolator : public Interpolator {
 public:
   enum {
     FIRST = Interpolator::LAST-1,
@@ -60,18 +60,18 @@ public:
   };
 
   // Constructor
-  Vector3f_interpolator(Boolean interpolate_flag = SGAL_TRUE,
-                        Boolean proto = SGAL_FALSE);
+  Vector3f_interpolator(Boolean interpolate_flag = true,
+                        Boolean proto = false);
 
   // Destructor
   virtual ~Vector3f_interpolator();
 
   /* Construct the prototype */
-  static Vector3f_interpolator * prototype()
-  { return new Vector3f_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Vector3f_interpolator* prototype()
+  { return new Vector3f_interpolator(false, true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Vector3f_interpolator (); }
+  virtual Container* clone() { return new Vector3f_interpolator (); }
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -80,41 +80,41 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
   
   // Functions that handles the creation of an instance in the scene graph
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! The interpolation execution function */
-  virtual void execute(Field_info * field_info);
+  virtual void execute(Field_info* field_info);
 
   /*! Obtain the range keys */
-  const Array<Float> & get_keys() const { return m_keys; }
+  const Array<Float>& get_keys() const { return m_keys; }
 
   /*! Obtain the range keys */
-  Array<Float> & get_keys() { return m_keys; }
+  Array<Float>& get_keys() { return m_keys; }
   
   /*! Obtain the domain values */
-  const Array<Vector3f> & get_values() const { return m_values; }
+  const Array<Vector3f>& get_values() const { return m_values; }
 
   /*! Obtain the domain values */
-  Array<Vector3f> & get_values() { return m_values; }
+  Array<Vector3f>& get_values() { return m_values; }
 
 protected:
   /*! The interpolator domain key-values */
   Array<Vector3f> m_values;
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The last range location */
   Uint m_last_location;

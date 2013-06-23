@@ -41,7 +41,7 @@ class Window_item;
 
 /*!
  */
-class Mouse_event: public Event {
+class SGAL_SGAL_DECL Mouse_event: public Event {
 public:
   enum Press {
     DOWN = 1,
@@ -56,10 +56,10 @@ public:
 
 private:
   /*! A set of agents registered to process this type of event */
-  static std::set<Agent *> s_set;
+  static std::set<Agent*> s_set;
   
   /*! The window where the event took place */
-  Window_item * m_window_item;
+  Window_item* m_window_item;
 
   /*! The mouse button pressed or released */
   Mouse_button m_button;
@@ -75,17 +75,17 @@ private:
 
 protected:
   /*! Handle any agent */
-  virtual void handle(Agent * agent);
+  virtual void handle(Agent* agent);
   
   /*! Obtain set of agents registered to process this type of event */
-  virtual const std::set<Agent *> & get_set(void) const { return s_set; }
+  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
 
 public:
   /*! Register this event for a particular agent */
-  static void doregister(Agent * agent) { s_set.insert(agent); }
+  static void doregister(Agent* agent) { s_set.insert(agent); }
 
   /*! Unregister this event for a particular agent */
-  static void unregister(Agent * agent) { s_set.erase(agent); }
+  static void unregister(Agent* agent) { s_set.erase(agent); }
 
   /*! Constructor */
   Mouse_event(void) :
@@ -101,10 +101,10 @@ public:
   virtual void identify(void);
   
   /*! Set the window where the event took place */
-  void set_window_item(Window_item * item) { m_window_item = item; }
+  void set_window_item(Window_item* item) { m_window_item = item; }
 
   /*! Obtain the window where the event took place */
-  Window_item * get_window_item() const { return m_window_item; }
+  Window_item* get_window_item() const { return m_window_item; }
 
   /*! Set the mouse button pressed or released */
   void set_button(Mouse_button button) { m_button = button; }

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,13 +30,13 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SCENE_GRAPH_CLASSDEF Key_action {
+class SGAL_SGAL_DECL Key_action {
 public:
   Key_action();
   virtual ~Key_action();
 };
 
-class SCENE_GRAPH_CLASSDEF EKARotate : public Key_action {
+class SGAL_SGAL_DECL EKARotate : public Key_action {
 public:
   EKARotate();
   EKARotate(int vx,int vy, int vz, int angle);

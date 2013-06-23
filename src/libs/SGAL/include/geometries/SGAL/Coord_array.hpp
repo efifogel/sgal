@@ -39,7 +39,7 @@ class Element;
 class Container_proto;
 
 /*! Maintains an array of 3D vertex-coordinate. */
-class Coord_array : public Container {
+class SGAL_SGAL_DECL Coord_array : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

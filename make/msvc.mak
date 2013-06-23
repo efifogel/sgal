@@ -377,15 +377,31 @@ endif
 endif
 
 MAKEDEPEND =cl
-GMAKEDEPENDFLAGS+= -showIncludes -nologo -Zs -EHsc
+GMAKEDEPENDFLAGS+= -showIncludes -Zs -w
+
+BOOST_INC_DIR_TMP = $(subst ",,$(BOOST_INC_DIR))
+BOOST_INC_DIR_REG = $(subst /,\/,$(BOOST_INC_DIR_TMP))
+
+MAGICK_INC_DIR_TMP = $(subst ",,$(MAGICK_INC_DIR))
+MAGICK_INC_DIR_REG = $(subst /,\/,$(MAGICK_INC_DIR_TMP))
+
+CGAL_INC_DIR_TMP = $(subst ",,$(CGAL_INC_DIR))
+CGAL_INC_DIR_REG = $(subst /,\/,$(CGAL_INC_DIR_TMP))
+
+GMP_INC_DIR_TMP = $(subst ",,$(GMP_INC_DIR))
+GMP_INC_DIR_REG = $(subst /,\/,$(GMP_INC_DIR_TMP))
+
+MPFR_INC_DIR_TMP = $(subst ",,$(MPFR_INC_DIR))
+MPFR_INC_DIR_REG = $(subst /,\/,$(MPFR_INC_DIR_TMP))
+
 define run-makedepend-cpp
-$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< | \
+$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $(CPPOPTS) $< | \
 sed -e '1 c $(basename $@).o: $< \\' \
 -e 's/Note: including file: *//' \
--e '/Program Files\|boost/I d' \
--e '/: warning/I d' \
--e 's/\([A-Za-z]\):/\/cygdrive\/\1/g' \
 -e 's/\\/\//g' \
+-e '/Program Files\|$(BOOST_INC_DIR_REG)\|$(CGAL_INC_DIR_REG)\|$(GMP_INC_DIR_REG)\|$(MAGICK_INC_DIR_REG)/I d' \
+-e '/with/,$$ d' \
+-e 's/\([A-Za-z]\):/\/cygdrive\/\1/g' \
 -e '$$! s/$$/ \\/g' \
 > $@
 endef

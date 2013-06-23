@@ -42,48 +42,48 @@ class Draw_action;
 class Field;
 class Scene_graph;
 
-class Route : public Container {
+class SGAL_SGAL_DECL Route : public Container {
 public:
   /*! Constructor */
-  Route(Boolean proto = SGAL_FALSE);
+  Route(Boolean proto = false);
   
   /*! Destructor */
   virtual ~Route() {};
 
   /*! Construct the prototype */
-  static Route * prototype() { return new Route(SGAL_TRUE); }
+  static Route* prototype() { return new Route(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Route(); }
+  virtual Container* clone() { return new Route(); }
 
   /*! Set the connection */
-  void set(Container * src_node, Field * src_field,
-           Container * dst_node, Field * dst_field);
+  void set(Container* src_node, Field* src_field,
+           Container* dst_node, Field* dst_field);
   
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
 
   /*! The route source-node */
-  Container * m_src_node;
+  Container* m_src_node;
 
   /*! The route source-field */
-  Field * m_src_field;
+  Field* m_src_field;
 
   /*! The route destination-node */
-  Container * m_dst_node;
+  Container* m_dst_node;
 
   /*! The route destination-field */
-  Field * m_dst_field;
+  Field* m_dst_field;
 };
 
 SGAL_END_NAMESPACE

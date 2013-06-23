@@ -38,6 +38,8 @@
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SEGO/basic.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 class Draw_action;
@@ -49,7 +51,7 @@ class Normal_array;
 class Tex_coord_array;
 class Field_info;
 
-class SGAL_SGAL_DECL Ego_brick : public Indexed_face_set {
+class SGAL_SEGO_DECL Ego_brick : public Indexed_face_set {
 public:
   enum {
     FIRST = Indexed_face_set::LAST - 1,

@@ -40,12 +40,12 @@ class Agent;
 
 /*!
  */
-class Event {
+class SGAL_SGAL_DECL Event {
 private:
   int m_verbose_level;
 
-  virtual void handle(Agent * agent) = 0;
-  virtual const std::set<Agent *> & get_set(void) const = 0;
+  virtual void handle(Agent* agent) = 0;
+  virtual const std::set<Agent*>& get_set(void) const = 0;
 
 public:
   /*!

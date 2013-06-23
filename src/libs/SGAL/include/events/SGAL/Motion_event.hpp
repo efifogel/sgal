@@ -41,13 +41,13 @@ class Window_item;
 
 /*!
  */
-class Motion_event: public Event {
+class SGAL_SGAL_DECL Motion_event: public Event {
 private:
   /*! A set of agents registered to process this type of event */
-  static std::set<Agent *> s_set;
+  static std::set<Agent*> s_set;
   
   /*! The window where the event took place */
-  Window_item * m_window_item;
+  Window_item* m_window_item;
 
   /*! The x coordinate of the cursor location at the time of the event */
   int m_x;
@@ -57,17 +57,17 @@ private:
 
 protected:
   /*! Handle any agent */
-  virtual void handle(Agent * agent);
+  virtual void handle(Agent* agent);
 
   /*! Obtain set of agents registered to process this type of event */
-  virtual const std::set<Agent *> & get_set(void) const { return s_set; }
+  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
 
 public:
   /*! Register this event for a particular agent */
-  static void doregister(Agent * agent) { s_set.insert(agent); }
+  static void doregister(Agent* agent) { s_set.insert(agent); }
 
   /*! Unregisters this event for a particular agent */
-  static void unregister(Agent * agent) { s_set.erase(agent); }
+  static void unregister(Agent* agent) { s_set.erase(agent); }
 
   /*! Constructor */
   Motion_event(void) :
@@ -83,10 +83,10 @@ public:
   virtual void identify(void);
   
   /*! Set the window where the event took place */
-  void set_window_item(Window_item * item) { m_window_item = item; }
+  void set_window_item(Window_item* item) { m_window_item = item; }
 
   /*! Obtain the window where the event took place */
-  Window_item * get_window_item() const { return m_window_item; }
+  Window_item* get_window_item() const { return m_window_item; }
 
   /*! Set the x-coordinate of the cursor at the time of the event */
   void set_x(int x) { m_x = x; }

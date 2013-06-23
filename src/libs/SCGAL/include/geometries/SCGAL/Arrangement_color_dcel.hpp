@@ -34,11 +34,15 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SCGAL/basic.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex */
 template <class Point_2>
-class Arrangement_color_vertex : public CGAL::Arr_vertex_base<Point_2> {
+class SGAL_SCGAL_DECL Arrangement_color_vertex :
+  public CGAL::Arr_vertex_base<Point_2>
+{
 private:
   /*! An arbitrary color */
   Vector3f m_color;

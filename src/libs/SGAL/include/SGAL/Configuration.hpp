@@ -42,7 +42,7 @@ class Scene_graph;
 class Accumulation;
 class Multisample;
 
-class Configuration : public Container {
+class SGAL_SGAL_DECL Configuration : public Container {
   friend class Indexed_face_set;
   friend class Shape;
   //dirty patch for accessing defauly flags 
@@ -151,7 +151,7 @@ public:
   void set_poly_mode(Gfx::Poly_mode mode);
   
   /*! Obtain the polygon mode. */
-  Gfx::Poly_mode get_poly_mode () const;
+  Gfx::Poly_mode get_poly_mode() const;
 
   /*! Determine whether texture-maping is enabled. */
   Boolean is_texture_map() const;

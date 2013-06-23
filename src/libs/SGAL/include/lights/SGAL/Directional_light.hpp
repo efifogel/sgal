@@ -46,7 +46,7 @@ class Draw_action;
 class Element;
 class Container_proto;
 
-class Directional_light : public Light {
+class SGAL_SGAL_DECL Directional_light : public Light {
 public:
   enum {
     FIRST = Light::LAST-1,
@@ -55,19 +55,19 @@ public:
   };
 
   /*! Constructor */
-  Directional_light(Boolean proto = SGAL_FALSE);
+  Directional_light(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Directional_light();
 
   /* Construct the prototype */
-  static Directional_light * prototype()
-  { return new Directional_light(SGAL_TRUE); }
+  static Directional_light* prototype()
+  { return new Directional_light(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Directional_light(); }
+  virtual Container* clone() { return new Directional_light(); }
 
-  virtual Action::Trav_directive draw(Draw_action * draw_action);
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -76,26 +76,26 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! \biref sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  void set_direction(const Vector3f & direction);
-  void get_direction(Vector3f & direction) const;
+  void set_direction(const Vector3f& direction);
+  void get_direction(Vector3f& direction) const;
   
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
   
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The default direction of the light */
   static const Vector3f s_def_direction;

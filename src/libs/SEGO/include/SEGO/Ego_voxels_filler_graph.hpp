@@ -30,17 +30,22 @@
  *         We use the graph to fill the voxels from the inside.
  *         Vertices are defined to be the voxels themselves, and the edges
  *         are defined to be the neighboring voxels (no diagonals). An edge
- *         is defined between two voxels only if they are both filled/not-filled.
- *         The main classes are Ego_voxels_filler_graph, and Ego_graph_vertex_index_map.
+ *         is defined between two voxels only if they are both
+ *         filled/not-filled.
+ *         The main classes are Ego_voxels_filler_graph,
+ *         and Ego_graph_vertex_index_map.
  */
 
+#include "SEGO/basic.hpp"
 #include "SEGO/Ego_voxels_vertex_list_graph.hpp"
 #include "SEGO/Ego_voxels_vertex_list_graph_utils.hpp"
 #include "SEGO/chain.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class Ego_voxels_filler_graph : public Ego_voxels_vertex_list_graph {
+class SGAL_SEGO_DECL Ego_voxels_filler_graph :
+  public Ego_voxels_vertex_list_graph
+{
 public:
   Ego_voxels_filler_graph(const Ego_voxels& voxels)
       : Ego_voxels_vertex_list_graph(voxels) {}
@@ -58,10 +63,9 @@ public:
                 Is_orthogonal,
                 Not_self_edge,
                 Is_inside_voxels>                          Out_edges_predicate;
-  typedef boost::filter_iterator<Out_edges_predicate,
-                                 neighborhood_iterator>    out_edge_iterator;
-
-  typedef out_edge_iterator::difference_type                  degree_size_type;
+  typedef boost::filter_iterator<Out_edges_predicate, neighborhood_iterator>
+                                                           out_edge_iterator;
+  typedef out_edge_iterator::difference_type               degree_size_type;
 
   std::pair<out_edge_iterator, out_edge_iterator>
   out_edges(const vertex_descriptor& u) const;
@@ -71,7 +75,6 @@ inline std::pair<Ego_voxels_filler_graph::out_edge_iterator,
                  Ego_voxels_filler_graph::out_edge_iterator>
 out_edges(const Ego_voxels_filler_graph::vertex_descriptor& v,
           const Ego_voxels_filler_graph &graph) {
-  
   return graph.out_edges(v);
 }
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -43,7 +43,7 @@ class Element;
 class Container_proto;
 
 /*! This class maintains an array of vertex-normals */
-class Normal_array : public Container {
+class SGAL_SGAL_DECL Normal_array : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
@@ -52,7 +52,7 @@ public:
   };
 
   /*! Constructor */
-  Normal_array(Boolean proto = SGAL_FALSE) : Container(proto) {}
+  Normal_array(Boolean proto = false) : Container(proto) {}
 
   /*! Constructor */
   Normal_array(Uint n) { m_array.resize(n); }
@@ -61,10 +61,10 @@ public:
   virtual ~Normal_array() {}
 
   /* Construct the prototype */
-  static Normal_array * prototype() { return new Normal_array(SGAL_TRUE); }
+  static Normal_array* prototype() { return new Normal_array(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Normal_array(); }
+  virtual Container* clone() { return new Normal_array(); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -73,10 +73,10 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
   
   /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   //! \todo virtual Attribute_list get_attributes();
 
@@ -90,32 +90,32 @@ public:
   void clear() { m_array.clear(); }
 
   /*! The iterator to the Array first element */
-  Vector3f * begin() { return m_array.begin(); }
-  const Vector3f * begin() const { return m_array.begin(); }
+  Vector3f* begin() { return m_array.begin(); }
+  const Vector3f* begin() const { return m_array.begin(); }
 
   /*! The iterator to the Array past-the-end element */
-  Vector3f * end() { return m_array.end(); }
-  const Vector3f * end() const { return m_array.end(); }
+  Vector3f* end() { return m_array.end(); }
+  const Vector3f* end() const { return m_array.end(); }
   
   /*! Array indexing operator */
-  Vector3f & operator[](Uint n) { return m_array[n]; }
+  Vector3f& operator[](Uint n) { return m_array[n]; }
 
   /*! Array indexing operator */
-  const Vector3f & operator[](Uint n) const { return m_array[n]; }
+  const Vector3f& operator[](Uint n) const { return m_array[n]; }
   
   /*! Obtain the vector */
-  Vector3f * get_vector() { return m_array.get_vector(); }
+  Vector3f* get_vector() { return m_array.get_vector(); }
 
 protected: 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The normal array */
   SGAL::Array<Vector3f> m_array;

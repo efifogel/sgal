@@ -45,6 +45,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Spherical_gaussian_map_colored.hpp"
 #include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
 #include "SCGAL/Arrangement_extended_direction.hpp"
@@ -61,7 +62,7 @@ class Draw_action;
 class Scene_graph;
 class Cylinder;
 
-class Spherical_gaussian_map_colored_geo :
+class SGAL_SCGAL_DECL Spherical_gaussian_map_colored_geo :
   public Spherical_gaussian_map_base_geo
 {
 public:

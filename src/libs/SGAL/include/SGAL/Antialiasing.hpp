@@ -49,7 +49,7 @@ public:
 
   void set_delay_duration(int dur);
   Boolean is_in_process();
-  void pre_render(Draw_action * draw_action);
+  void pre_render(Draw_action* draw_action);
   void post_render();
   void reset_delay_time();
   void set_in_process(Boolean in_process) { m_is_in_process = in_process; }

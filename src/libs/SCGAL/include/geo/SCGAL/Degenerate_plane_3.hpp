@@ -22,15 +22,17 @@
 #ifndef SCGAL_DEGENERATE_PLANE_3_HPP
 #define SCGAL_DEGENERATE_PLANE_3_HPP
 
+#include <iostream>
+
 #include "SGAL/basic.hpp"
 
-#include <iostream>
+#include "SCGAL/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 /*! \brief a plane that goes through the origin extended with a few methods */
-template <class Kernel_>
-class Degenerate_plane_3 : public Kernel_::Plane_3 {
+template <typename Kernel_>
+class SGAL_SCGAL_DECL Degenerate_plane_3 : public Kernel_::Plane_3 {
 public:
   typedef Kernel_                       Kernel;
   typedef typename Kernel::Plane_3      Base;
@@ -40,7 +42,7 @@ public:
   typedef typename Kernel::FT           FT;
   
   /*! Constructor */
-  Degenerate_plane_3(const Point_3 & p, const Point_3 & q, const Point_3 & r) :
+  Degenerate_plane_3(const Point_3& p, const Point_3& q, const Point_3& r) :
     Base(p, q, r)
   {}
 
@@ -102,8 +104,8 @@ public:
 
 /*!
  */
-template <class Kernel>
-inline std::ostream & operator<<(std::ostream & os,
+template <typename Kernel>
+inline std::ostream& operator<<(std::ostream& os,
                                  const Degenerate_plane_3<Kernel> & plane)
 {
   os << plane[0] << ", " << plane[1] << ", " << plane[2];

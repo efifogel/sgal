@@ -51,30 +51,28 @@ public:
   };
 
   /*! Constructor */
-  Environment_map(Boolean proto = SGAL_FALSE);
+  Environment_map(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Environment_map();
 
   /*! Construct the prototype */
-  static Environment_map * prototype() { return new Environment_map(SGAL_TRUE); }
+  static Environment_map* prototype() { return new Environment_map(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Environment_map(); }
+  virtual Container* clone() { return new Environment_map(); }
 
   void set_alpha(float alpha);
   float get_alpha() const;
   void set_quality(bool flag) { m_quality = flag; }
   bool is_quality() const { return m_quality; }
-  void set_texture(Texture * texture);
-  Texture * get_texture() { return m_texture; }
+  void set_texture(Texture* texture);
+  Texture* get_texture() { return m_texture; }
 
   // this method is used when an appearance is created by the environment
   // object it should not be called in any other case (FIX)
-  Execution_coordinator * get_execution_coordinator() const
-  {
-    return m_execution_coordinator;
-  }
+  Execution_coordinator* get_execution_coordinator() const
+  { return m_execution_coordinator; }
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element * elem);
@@ -84,24 +82,24 @@ public:
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
-  virtual Boolean attach_context(Context * context ); 
-  virtual Boolean detach_context(Context * context = 0); 
+  virtual Boolean attach_context(Context* context ); 
+  virtual Boolean detach_context(Context* context = 0); 
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! the node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! the texture object */
-  Texture * m_texture;
+  Texture* m_texture;
 
   /*! the alpha value to use in blending in the second pass */
   float m_alpha;
@@ -114,7 +112,7 @@ private:
   static bool m_def_quality;
 
   /*! Copy constructor */
-  Environment_map(const Environment_map &) {}
+  Environment_map(const Environment_map&) {}
 };
 
 SGAL_END_NAMESPACE

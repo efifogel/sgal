@@ -33,20 +33,20 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Normal_interpolator : public Vector3f_interpolator {
+class SGAL_SGAL_DECL Normal_interpolator : public Vector3f_interpolator {
 public:
   /*! Constructor */
-  Normal_interpolator(Boolean interpolate_flag = true, Boolean proto = SGAL_FALSE);
+  Normal_interpolator(Boolean interpolate_flag = true, Boolean proto = false);
 
   /*! Destructor */
   virtual ~Normal_interpolator() {};
 
   /* Construct the prototype */
-  static Normal_interpolator * prototype()
-  { return new Normal_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Normal_interpolator* prototype()
+  { return new Normal_interpolator(false, true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Normal_interpolator (); }
+  virtual Container* clone() { return new Normal_interpolator (); }
 };
 
 SGAL_END_NAMESPACE

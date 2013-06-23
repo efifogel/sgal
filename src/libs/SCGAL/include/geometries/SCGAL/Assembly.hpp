@@ -37,6 +37,7 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Assembly_part.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked.hpp"
 #include "SCGAL/Arrangement_on_sphere_graph.hpp"
@@ -48,7 +49,7 @@ class Element;
 class Container_proto;
 class Field_info;
 
-class SGAL_SGAL_DECL Assembly : public Group {
+class SGAL_SCGAL_DECL Assembly : public Group {
 public:
   enum {
     FIRST = Group::LAST - 1,

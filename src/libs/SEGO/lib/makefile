@@ -79,7 +79,8 @@ LCPPOPTS+= -frounding-math
 endif
 
 ifeq ($(DE), msvc)
-LCPPDEFS+=-DBOOST_ALL_DYN_LINK
+LCPPDEFS+= -DBOOST_ALL_DYN_LINK
+LCPPDEFS+= -DSGAL_ALL_DYN_LINK
 LCPPOPTS+= -GR
 LCPPOPTS+= -vmg
 endif

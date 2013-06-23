@@ -52,6 +52,7 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 
@@ -62,7 +63,7 @@ class Cull_context;
 class Isect_action;
 class Draw_action;
 
-class Triangulation_geo : public SGAL::Geometry {
+class SGAL_SCGAL_DECL Triangulation_geo : public SGAL::Geometry {
 public:
   typedef boost::shared_ptr<Coord_array>                Shared_coord_array;
   typedef boost::shared_ptr<Color_array>                Shared_color_array;

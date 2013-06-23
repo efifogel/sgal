@@ -19,19 +19,17 @@
 #ifndef SGAL_EGO_VOXELS_LAYER_FILLER_HPP
 #define SGAL_EGO_VOXELS_LAYER_FILLER_HPP
 
-#include "SEGO/Ego_voxels_filler_base.hpp"
-
-#include "SGAL/config.hpp"
-
 #include <string>
+
+#include "SEGO/basic.hpp"
+#include "SEGO/Ego_voxels_filler_base.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 
-class SGAL_SGAL_DECL Ego_voxels_layer_filler : public Ego_voxels_filler_base {
+class SGAL_SEGO_DECL Ego_voxels_layer_filler : public Ego_voxels_filler_base {
  public:
-
   /* Constructor */
   Ego_voxels_layer_filler(bool = false);
   

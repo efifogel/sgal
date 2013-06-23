@@ -44,7 +44,7 @@ class Field_info;
 /* Hold a pointer to the suitable field-info records and a list of connected
  * fields, which this field is connected to.
  */
-class Field {
+class SGAL_SGAL_DECL Field {
 protected:
   typedef std::list<Field*> Field_list;
 

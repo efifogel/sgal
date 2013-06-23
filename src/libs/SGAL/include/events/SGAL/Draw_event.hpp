@@ -39,30 +39,30 @@ class Window_item;
 
 /*!
  */
-class Draw_event: public Event {
+class SGAL_SGAL_DECL Draw_event: public Event {
 private:
   /*! A set of agents registered to process this type of event */
-  static std::set<Agent *> s_set;
+  static std::set<Agent*> s_set;
 
   /*! The window where the event took place */
-  Window_item * m_window_item;
+  Window_item* m_window_item;
 
   /*! Do suppress accumulation? */
   Boolean m_suppress_accumulation;
   
 protected:
   /*! Handle any agent */
-  virtual void handle(Agent * agent);
+  virtual void handle(Agent* agent);
   
   /*! Obtain set of agents registered to process this type of event */
-  virtual const std::set<Agent *> & get_set(void) const { return s_set; }
+  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
 
 public:
   /*! Register this event for a particular agent */
-  static void doregister(Agent * agent) { s_set.insert(agent); }
+  static void doregister(Agent* agent) { s_set.insert(agent); }
 
   /*! Unregister this event for a particular agent */
-  static void unregister(Agent * agent) { s_set.erase(agent); }
+  static void unregister(Agent* agent) { s_set.erase(agent); }
 
   /*! Constructor */
   Draw_event(void) :
@@ -78,13 +78,14 @@ public:
   virtual void identify(void);
 
   /*! Set the window where the event took place */
-  void set_window_item(Window_item * item) { m_window_item = item; }
+  void set_window_item(Window_item* item) { m_window_item = item; }
 
   /*! Obtain the window where the event took place */
-  Window_item * get_window_item() const { return m_window_item; }
+  Window_item* get_window_item() const { return m_window_item; }
 
   /*! Set the flag that indicates whether to suppress accumulation */
-  void set_suppress_accumulation(Boolean flag) { m_suppress_accumulation = flag; }
+  void set_suppress_accumulation(Boolean flag)
+  { m_suppress_accumulation = flag; }
 
   /*! Obtain the flag that indicates whether to suppress accumulation */
   Boolean get_suppress_accumulation() const { return m_suppress_accumulation; }

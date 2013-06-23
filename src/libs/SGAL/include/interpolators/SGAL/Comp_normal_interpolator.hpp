@@ -31,20 +31,23 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Comp_normal_interpolator : public Comp_vector3f_interpolator {
+class SGAL_SGAL_DECL Comp_normal_interpolator :
+  public Comp_vector3f_interpolator
+{
 public:
   /*! Constructor */
-  Comp_normal_interpolator(Boolean interpolate_flag = true, Boolean proto = SGAL_FALSE);
+  Comp_normal_interpolator(Boolean interpolate_flag = true,
+                           Boolean proto = false);
   
   /*! Destructor */
   virtual ~Comp_normal_interpolator() {}
 
   /* Construct the prototype */
-  static Comp_normal_interpolator * prototype()
-  { return new Comp_normal_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Comp_normal_interpolator* prototype()
+  { return new Comp_normal_interpolator(false, true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Comp_normal_interpolator(); }
+  virtual Container* clone() { return new Comp_normal_interpolator(); }
 
   virtual void delete_prototype() {}
 protected:

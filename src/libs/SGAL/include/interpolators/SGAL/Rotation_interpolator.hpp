@@ -48,7 +48,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 
-class Rotation_interpolator : public Interpolator {
+class SGAL_SGAL_DECL Rotation_interpolator : public Interpolator {
 public:
   enum {
     FIRST = Interpolator::LAST-1,
@@ -57,18 +57,18 @@ public:
   };
 
   /*! Constructor */
-  Rotation_interpolator(Boolean interpolate_flag = SGAL_TRUE,
-                        Boolean proto = SGAL_FALSE);
+  Rotation_interpolator(Boolean interpolate_flag = true,
+                        Boolean proto = false);
 
   /*! Destructor */
   virtual ~Rotation_interpolator();
 
   /*! Construct the prototype */
-  static Rotation_interpolator * prototype()
-  { return new Rotation_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Rotation_interpolator* prototype()
+  { return new Rotation_interpolator(false, true); }
 
   /*! Clone */
-  virtual Container * clone(){ return new Rotation_interpolator (); }
+  virtual Container* clone(){ return new Rotation_interpolator (); }
 
   /*! Initializes the node prototype */
   virtual void init_prototype();
@@ -77,16 +77,16 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   // The execution function of the interpolator - calculates the interpolation
   // between two rotation fields according to the current m_fraction
-  virtual void execute(Field_info *);
+  virtual void execute(Field_info*);
 
 protected:
   /*! Indicates whether to interpolate between keys */
@@ -96,14 +96,14 @@ protected:
   Array<Rotation> m_values;
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   Uint m_last_location;
 

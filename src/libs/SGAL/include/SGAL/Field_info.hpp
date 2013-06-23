@@ -56,7 +56,7 @@ class Field_info;
 class SAI_field_services;
 class Value_holder;
 
-class Field_info {  
+class SGAL_SGAL_DECL Field_info {  
 protected:
   /*! The field id (e.g, Group::ISVISIBLE). */
   Uint m_id;

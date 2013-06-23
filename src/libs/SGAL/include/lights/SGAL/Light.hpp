@@ -45,7 +45,7 @@ class Container_proto;
 class Element;
 class Scene_graph;
 
-class Light : public Node {
+class SGAL_SGAL_DECL Light : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,
@@ -57,13 +57,13 @@ public:
   };
 
   /*! Constructor */
-  Light(Boolean proto = SGAL_FALSE);
+  Light(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Light();
 
   /*! Clone */
-  virtual Container * clone() { SGAL_assertion(0); return 0; }
+  virtual Container* clone() { SGAL_assertion(0); return 0; }
 
   // ---  Get/Set Methods  ---
   void set_on(Boolean is_on);
@@ -75,13 +75,13 @@ public:
   void set_ambient_intensity(Float ambient_intensity);
   Float get_ambient_intensity();
 
-  void set_color(const Vector3f & color);
-  void get_color(Vector3f & color);
+  void set_color(const Vector3f& color);
+  void get_color(Vector3f& color);
 
-  // void pop(const Matrix4f & mat);
+  // void pop(const Matrix4f& mat);
 
-  virtual void cull(Cull_context & cull_context);
-  virtual Action::Trav_directive draw(Draw_action * draw_action);
+  virtual void cull(Cull_context& cull_context);
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
   
   void ref() { m_ref++; }
   void unref() { --m_ref; }
@@ -89,17 +89,17 @@ public:
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
   
   /*! Add the container to a given scene
    * \param scene_graph the given scene
    */  
-  virtual void add_to_scene(Scene_graph * scene_graph);
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
 protected:
   /*! a uniqu id for a light (0-7) */
@@ -133,7 +133,7 @@ private:
   static const Vector3f m_def_color;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Reference count */
   Int m_ref;

@@ -30,7 +30,7 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Field_info;
 
-class Mesh_set : public Geo_set {
+class SGAL_SGAL_DECL Mesh_set : public Geo_set {
 public:
   enum {
     FIRST = Geo_set::LAST - 1,

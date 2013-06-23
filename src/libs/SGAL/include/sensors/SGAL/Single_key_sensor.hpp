@@ -38,7 +38,7 @@ class Element;
 class Keyboard_event;
 class Container_proto;
 
-class Single_key_sensor : public Agent, public Node {
+class SGAL_SGAL_DECL Single_key_sensor : public Agent, public Node {
 public:
   enum {
     FIRST = Container::LAST - 1,

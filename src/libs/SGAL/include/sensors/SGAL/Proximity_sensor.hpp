@@ -49,14 +49,14 @@ public:
   };
 
   /*! Constructor */
-  Proximity_sensor(Boolean enabled = true, Boolean proto = SGAL_FALSE);
+  Proximity_sensor(Boolean enabled = true, Boolean proto = false);
 
   /*! Destructor */
   virtual ~Proximity_sensor();
 
   /*! Construct the prototype */
   static Proximity_sensor* prototype()
-  { return new Proximity_sensor(SGAL_FALSE, SGAL_TRUE); }
+  { return new Proximity_sensor(false, true); }
 
   /*! Clone */
   virtual Container* clone() { return new Proximity_sensor(); }

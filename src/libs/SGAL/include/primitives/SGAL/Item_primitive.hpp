@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1311 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,10 +40,10 @@ public:
   virtual ~Item_primitive() {}
 
   std::string get_value(unsigned int param_id) const;
-  void get_value(unsigned int param_id, float & value) const;
-  void get_value(unsigned int param_id, int & value) const;
-  void get_value(unsigned int param_id, bool & value) const;
-  void set_value(unsigned int param_id, const std::string & value);
+  void get_value(unsigned int param_id, float& value) const;
+  void get_value(unsigned int param_id, int& value) const;
+  void get_value(unsigned int param_id, bool& value) const;
+  void set_value(unsigned int param_id, const std::string& value);
   void set_value(unsigned int param_id, int value);
   void set_value(unsigned int param_id, float value);
   void set_value(unsigned int param_id, bool value);

@@ -38,22 +38,22 @@ class Agent;
 
 /*!
  */
-class Tick_event: public Event {
+class SGAL_SGAL_DECL Tick_event: public Event {
 private:
   /*! A set of agents registered to process this type of event */
-  static std::set<Agent *> s_set;
+  static std::set<Agent*> s_set;
   static unsigned int s_num_ticks;
   
   clock_t m_est_tick_duration;
   clock_t m_sim_time;
 
 protected:
-  virtual void handle(Agent * agent);
+  virtual void handle(Agent* agent);
   
 public:
-  static void doregister(Agent * agent) { s_set.insert(agent); }
-  static void unregister(Agent * agent) { s_set.erase(agent); }
-  virtual const std::set<Agent *> & get_set(void) const { return s_set; }
+  static void doregister(Agent* agent) { s_set.insert(agent); }
+  static void unregister(Agent* agent) { s_set.erase(agent); }
+  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
 
   Tick_event(void) : Event(), m_est_tick_duration(0), m_sim_time(0)
   { s_num_ticks++; }

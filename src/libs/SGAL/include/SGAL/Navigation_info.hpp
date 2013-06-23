@@ -40,24 +40,24 @@ public:
   };
 
   /*! Constructor */
-  Navigation_info(Boolean proto = SGAL_FALSE);
+  Navigation_info(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Navigation_info();
 
   /*! Construct the prototype */
-  static Navigation_info * prototype() { return new Navigation_info(SGAL_TRUE); }
+  static Navigation_info* prototype() { return new Navigation_info(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Navigation_info(); }
+  virtual Container* clone() { return new Navigation_info(); }
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
    */  
-  virtual void add_to_scene(Scene_graph * scene_graph);
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -66,7 +66,7 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the type */
   void set_type(SGAL::Navigation_info_type type) { m_type = type; }
@@ -78,17 +78,17 @@ public:
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The navigation type strings */
-  static const char * s_type_strings[];
+  static const char* s_type_strings[];
   
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Indicates whether to allow the user to change navigation type */
   bool m_any;
@@ -97,7 +97,7 @@ private:
   SGAL::Navigation_info_type m_type;
   
   /*! Parse the type string-attribute */
-  int parse_type(const std::string & type);
+  int parse_type(const std::string& type);
 };
 
 SGAL_END_NAMESPACE

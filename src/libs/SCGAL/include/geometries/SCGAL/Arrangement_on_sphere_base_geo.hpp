@@ -39,6 +39,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 #include "SCGAL/Exact_coord_array.hpp"
@@ -58,7 +59,7 @@ class Element;
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere.
  */
-class SGAL_SGAL_DECL Arrangement_on_sphere_base_geo :
+class SGAL_SCGAL_DECL Arrangement_on_sphere_base_geo :
   public Arrangement_on_surface_geo
 {
 public:

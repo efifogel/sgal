@@ -28,6 +28,7 @@
 #include <CGAL/Arr_tracing_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_color_dcel.hpp"

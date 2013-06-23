@@ -33,8 +33,6 @@
  *         Ego_graph_vertex_index_map.
  */
 
-#include "SEGO/multi_iterator.hpp"
-
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/iterator/counting_iterator.hpp>
@@ -42,11 +40,14 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
 
+#include "SEGO/basic.hpp"
+#include "SEGO/multi_iterator.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 
-class Ego_voxels_vertex_list_graph {
+class SGAL_SEGO_DECL Ego_voxels_vertex_list_graph {
 public:
   Ego_voxels_vertex_list_graph(const Ego_voxels& voxels) : m_voxels(voxels) {}
 
@@ -106,13 +107,13 @@ target(const Ego_voxels_vertex_list_graph::edge_descriptor e,
 }
 
 // IndexMap
-struct Ego_graph_vertex_index_map {
+struct SGAL_SEGO_DECL Ego_graph_vertex_index_map {
 public:
-  typedef Ego_voxels_vertex_list_graph::vertex_descriptor    vertex_descriptor;
-  typedef std::size_t                                   value_type;
-  typedef std::size_t                                   reference;
-  typedef vertex_descriptor                             key_type;
-  typedef boost::readable_property_map_tag              category;
+  typedef Ego_voxels_vertex_list_graph::vertex_descriptor   vertex_descriptor;
+  typedef std::size_t                                       value_type;
+  typedef std::size_t                                       reference;
+  typedef vertex_descriptor                                 key_type;
+  typedef boost::readable_property_map_tag                  category;
 
   Ego_graph_vertex_index_map(const Ego_voxels& voxels) : m_voxels(voxels) {}
     
@@ -146,6 +147,5 @@ namespace boost {
     typedef Graph::edge_descriptor                  edge_descriptor;
   };
 }
-
 
 #endif // _EGO_VOXELS_VERTEX_LIST_GRAPH_HPP_

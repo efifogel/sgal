@@ -37,10 +37,10 @@ class Event;
 
 /*!
  */ 
-class Event_handler {
+class SGAL_SGAL_DECL Event_handler {
 public:
   void process();
-  static void issue(Event * event);
+  static void issue(Event* event);
 
   /*!
    */
@@ -54,7 +54,7 @@ public:
 private:
   static int s_verbose_level;
 
-  typedef std::queue<Event *> Event_queue;
+  typedef std::queue<Event*> Event_queue;
   static Event_queue s_queue;
 };
 

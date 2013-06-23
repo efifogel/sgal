@@ -46,6 +46,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Mesh_set.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
@@ -61,7 +62,7 @@ class Color_array;
 class Draw_action;
 class Scene_graph;
 
-class Exact_polyhedron_geo : public Mesh_set {
+class SGAL_SCGAL_DECL Exact_polyhedron_geo : public Mesh_set {
 public:
   typedef Exact_number_type                             Number_type;
   typedef Exact_kernel                                  Kernel;

@@ -37,7 +37,7 @@ SGAL_BEGIN_NAMESPACE
 /*! A functor that Writes a scene graph to an output stream using a
  * parameterized formatter.
  */
-class Writer {
+class SGAL_SGAL_DECL Writer {
 private:
   // Copy constructor and assignment operator - not supported.
   Writer(const Writer&);

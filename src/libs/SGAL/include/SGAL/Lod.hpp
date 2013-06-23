@@ -40,7 +40,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
-class SCENE_GRAPH_CLASSDEF Lod : public Switch {
+class SGAL_SGAL_DECL Lod : public Switch {
 public:
   enum {
     FIRST = Switch::LAST - 1,
@@ -48,41 +48,41 @@ public:
   };
 
   /*! Constructor */
-  Lod(Boolean proto = SGAL_FALSE);
+  Lod(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Lod();
   
   /*! Construct the prototype */
-  static Lod * prototype() { return new Lod(SGAL_TRUE); }
+  static Lod* prototype() { return new Lod(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Lod(); }
+  virtual Container* clone() { return new Lod(); }
 
-  virtual Node * get_choosen_node() const;
+  virtual Node* get_choosen_node() const;
   
   virtual void cull(Cull_context & cull_context);
-  virtual Action::Trav_directive draw(Draw_action * draw_action);
-  virtual void isect(Isect_action * isect_action);
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
+  virtual void isect(Isect_action* isect_action);
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
 private:
   std::vector<float> m_range;
-  Node * m_choosen_node;
+  Node* m_choosen_node;
 
   // LOD local center.
   Vector3f m_center;
 
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE

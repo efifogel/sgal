@@ -481,3 +481,13 @@ ifndef GL2PS_LIB_DIR
 GL2PS_LIB_DIR="$(GL2PS_DIR)/lib"
 endif
 endif
+
+# extract CGAL directories:
+ifdef CGAL_DIR
+ifndef CGAL_INC_DIR
+CGAL_INC_DIR="$(CGAL_DIR)/include"
+endif
+ifndef CGAL_LIB_DIR
+CGAL_LIB_DIR="$(CGAL_DIR)/lib"
+endif
+endif

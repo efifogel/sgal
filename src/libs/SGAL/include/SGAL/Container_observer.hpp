@@ -35,7 +35,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Field_info;
 
-class Container_observer {
+class SGAL_SGAL_DECL Container_observer {
 public:
   /*! Destructor */
   virtual ~Container_observer() {}

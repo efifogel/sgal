@@ -36,7 +36,8 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! */
-struct lt_nocase : public std::binary_function<char, char, bool> {
+struct SGAL_SGAL_DECL lt_nocase : public std::binary_function<char, char, bool>
+{
   bool operator()(char x, char y) const
   {
     return ::toupper(static_cast<unsigned char>(x)) <
@@ -45,14 +46,14 @@ struct lt_nocase : public std::binary_function<char, char, bool> {
 };
 
 /*! \brief compares the input string to "TRUE" or "FALSE" */
-Boolean compare_to_true(const std::string & str);
+SGAL_SGAL_DECL Boolean compare_to_true(const std::string& str);
 
 /*! \brief obtains the number of tokens in a string */
-Uint get_num_tokens(const std::string & str);
+SGAL_SGAL_DECL Uint get_num_tokens(const std::string& str);
 
 /*! \todo replace this code */
-template<class T>
-inline Uint get_num_values(const std::string & value)
+template <typename T>
+inline Uint get_num_values(const std::string& value)
 {
   std::istringstream svalue(value, std::istringstream::in);
   Uint num_values;
@@ -62,7 +63,7 @@ inline Uint get_num_values(const std::string & value)
 }
 
 /*! \brief strips embedding double quotes */
-std::string strip_double_quotes(std::string str);
+SGAL_SGAL_DECL std::string strip_double_quotes(std::string str);
 
 SGAL_END_NAMESPACE
 

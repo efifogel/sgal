@@ -28,10 +28,11 @@
 
 #include <vector>
 
-#include "SCGAL/Exact_kernel.hpp"
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Coord_minkowski.hpp"
+
+#include "SCGAL/basic.hpp"
+#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,7 +41,7 @@ class Scene_graph;
 class Container_proto;
 
 /*! Add two coord arrays. */
-class Exact_coord_minkowski : public Coord_minkowski {
+class SGAL_SCGAL_DECL Exact_coord_minkowski : public Coord_minkowski {
 public:
   enum {
     FIRST = Coord_minkowski::LAST - 1,

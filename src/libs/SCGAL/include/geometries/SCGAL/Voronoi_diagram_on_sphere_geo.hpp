@@ -58,7 +58,7 @@ class Sphere;
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere.
  */
-class SGAL_SGAL_DECL Voronoi_diagram_on_sphere_geo :
+class SGAL_SCGAL_DECL Voronoi_diagram_on_sphere_geo :
   public Geodesic_voronoi_on_sphere_geo
 {
 public:

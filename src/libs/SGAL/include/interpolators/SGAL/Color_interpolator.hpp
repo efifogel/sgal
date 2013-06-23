@@ -33,25 +33,25 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Color_interpolator : public Vector3f_interpolator {
+class SGAL_SGAL_DECL Color_interpolator : public Vector3f_interpolator {
 public:
   /*! Constructor */
-  Color_interpolator(Boolean interpolate_flag = true, Boolean proto = SGAL_FALSE);
+  Color_interpolator(Boolean interpolate_flag = true, Boolean proto = false);
 
   /*! Destructor */
   virtual ~Color_interpolator() {}
 
   /* Construct the prototype */
-  static Color_interpolator * prototype()
-  { return new Color_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Color_interpolator* prototype()
+  { return new Color_interpolator(false, true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Color_interpolator(); }
+  virtual Container* clone() { return new Color_interpolator(); }
 
   virtual void delete_prototype() {}
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */

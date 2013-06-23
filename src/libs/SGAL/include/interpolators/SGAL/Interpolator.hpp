@@ -46,7 +46,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
-class Interpolator : public Node {
+class SGAL_SGAL_DECL Interpolator : public Node {
 public:
   enum {
     FIRST = Node::LAST-1,
@@ -56,14 +56,13 @@ public:
   };
 
   /*! Constructor */
-  Interpolator(Boolean interpolate_flag = SGAL_TRUE, 
-               Boolean proto = SGAL_FALSE);
+  Interpolator(Boolean interpolate_flag = true, Boolean proto = false);
 
   /*! Destructor */
   virtual ~Interpolator();
 
   /*! Clone */
-  virtual Container * clone() { SGAL_assertion(0); return 0; }
+  virtual Container* clone() { SGAL_assertion(0); return 0; }
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -72,21 +71,21 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
   
   // Functions that handles the creation of an instance in the scene graph
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! The interpolation execution function */
-  virtual void execute(Field_info * field_info) = 0;
+  virtual void execute(Field_info* field_info) = 0;
 
   /*! Obtain the range keys */
-  const Float_array & get_keys() const { return m_keys; }
+  const Float_array& get_keys() const { return m_keys; }
   
   /*! Obtain the range keys */
-  Float_array & get_keys() { return m_keys; }
+  Float_array& get_keys() { return m_keys; }
   
 protected:
   /*! The interpolator range keys */
@@ -100,7 +99,7 @@ protected:
 
 private:
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE

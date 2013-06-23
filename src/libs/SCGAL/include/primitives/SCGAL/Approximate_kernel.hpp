@@ -24,7 +24,7 @@
 
 #include <CGAL/Cartesian.h>
 
-#include "SGAL/basic.hpp"
+#include "SCGAL/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

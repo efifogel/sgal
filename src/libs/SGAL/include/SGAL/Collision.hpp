@@ -28,6 +28,7 @@
 
 #include <string>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Group.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -40,7 +41,7 @@ public:
   };
 
   /*! Constructor */
-  Collision(Boolean proto = SGAL_FALSE);
+  Collision(Boolean proto = false);
 
   /*! Copy constructor */
   Collision(const Collision & groop);
@@ -49,13 +50,13 @@ public:
   virtual ~Collision();
 
   /*! Construct the prototype */
-  static Collision * prototype() { return new Collision(SGAL_TRUE); }
+  static Collision* prototype() { return new Collision(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Collision(); }
+  virtual Container* clone() { return new Collision(); }
   
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
@@ -63,18 +64,18 @@ public:
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that represents the container */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE

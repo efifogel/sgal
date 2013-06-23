@@ -35,13 +35,13 @@
 #define SGAL_MOVIE_RECORDER_HPP
 
 #include "SGAL/basic.hpp"
-#include "Node.h"
-#include "Event_filter.h"
-#include "Context.h"
-#include "TEvent.h"
+#include "SGAL/Node.h"
+#include "SGAL/Event_filter.h"
+#include "SGAL/Context.h"
+#include "SGAL/Event.h"
 
-#include "Thread.h"
-#include "SocketUtil.h"
+#include "SGAL/Thread.h"
+#include "SGAL/SocketUtil.h"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -51,7 +51,7 @@ class Scene_graph;
 
 enum Movie_recorder { rmFile, rmSocket };
 
-class SCENE_GRAPH_CLASSDEF Movie_recorder :
+class SGAL_SGAL_DECL Movie_recorder :
   public EEvent_filter,
   public Node,
   public TThreadHandler,
@@ -66,19 +66,19 @@ public:
   };
 
   /*! Constructor */
-  Movie_recorder(Boolean proto = SGAL_FALSE);
+  Movie_recorder(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Movie_recorder();
 
   /* Construct the prototype */
-  static Movie_recorder * prototype() { return new Movie_recorder(SGAL_TRUE); }
+  static Movie_recorder* prototype() { return new Movie_recorder(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Movie_recorder(); }
+  virtual Container* clone() { return new Movie_recorder(); }
 
-  void set_enabled( Field_info * field_info = NULL );
-  virtual Action::Trav_directive Draw(Draw_action * draw_action)
+  void set_enabled( Field_info* field_info = NULL );
+  virtual Action::Trav_directive Draw(Draw_action* draw_action)
   { return Action::Trav_cont; }; 
 
   virtual bool UpdateTime  ();
@@ -101,23 +101,21 @@ public:
   Movie_recorder GetRecordingMode() const { return m_mode; }
 
   /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
   unsigned ThreadHandlerProc(void);
   void Start();
 
-  void OnData(char *inBuff = NULL,int len = 0);
+  void OnData(char* inBuff = NULL,int len = 0);
   void OnAccept();
 
 protected:
-
   void CheckKill();
 
 private: 
-
-  static Container_proto *s_prototype;
+  static Container_proto* s_prototype;
 
   /** the name of the movie file */
   String m_movieFileName;
@@ -140,10 +138,10 @@ private:
   Int m_totalFrames;
 
   /** a pointer to the context. Used to get the viewpoint */
-  Context * m_context;
+  Context* m_context;
 
   /** a pointer to the scene graph */
-  Scene_graph * m_sceneGraph;
+  Scene_graph* m_sceneGraph;
 
   /** the mode of recording (file or socket) */
   Movie_recorder m_mode;
@@ -160,14 +158,14 @@ private:
   std::string m_status;
 
   TEvent m_KillEvent;
-  UChar *m_pixels;
-  UChar *m_rgbBuffer;
-  UChar *m_rgbBuffer2;
-  UChar *m_hintBuffer;
+  UChar* m_pixels;
+  UChar* m_rgbBuffer;
+  UChar* m_rgbBuffer2;
+  UChar* m_hintBuffer;
   int m_currentFrameHeaderQuant;
 
-  short *m_bgBuffer;
-  short *m_quantBuffer;
+  short* m_bgBuffer;
+  short* m_quantBuffer;
 
   /** frame width */
   int m_width;
@@ -181,20 +179,20 @@ private:
   /** number of vertical blocks */
   long m_vertBlocks;
 
-  TThread * m_pThread;    
+  TThread* m_pThread;    
 
   String m_hintType;
 
   // default values for fields
-  const static char * m_defMovieFileName;
-  const static char * m_defHintFileName;
+  const static char* m_defMovieFileName;
+  const static char* m_defHintFileName;
   const static Int m_defTotalFrames;
   const static Short m_defNumLevels;
   const static int m_defWidth;
   const static int m_defHeight;
   const static Movie_recorder m_defMode;
 
-  Boolean IsBackgroundBlock(int row, int col, UChar * pixels) const;
+  Boolean IsBackgroundBlock(int row, int col, UChar* pixels) const;
   void WriteBuffers() const;
   bool ProcessFrame();
 };

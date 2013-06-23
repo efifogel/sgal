@@ -39,7 +39,7 @@ class Bindable_stack;
 class Container_proto;
 
 /*! Virtual base class for backgrounds */
-class Background : public Bindable_node {
+class SGAL_SGAL_DECL Background : public Bindable_node {
 public:
   enum {
     FIRST = Bindable_node::LAST - 1,
@@ -50,16 +50,16 @@ public:
   };
 
   /*! Constructor */
-  Background(Boolean proto = SGAL_FALSE);
+  Background(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Background();
 
   /*! Construct the prototype */
-  static Background * prototype() { return new Background(SGAL_TRUE); }
+  static Background* prototype() { return new Background(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Background(); }
+  virtual Container* clone() { return new Background(); }
 
   /*! Initialize the protoype */
   virtual void init_prototype();
@@ -68,24 +68,24 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the protoype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Obtain the bindable stack */
-  virtual Bindable_stack * get_stack();
+  virtual Bindable_stack* get_stack();
 
   /*! Set the attributes of this container */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
    */  
-  virtual void add_to_scene(Scene_graph * scene_graph);
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Draw the background */
-  virtual void draw(Draw_action * draw_action);
+  virtual void draw(Draw_action* draw_action);
 
   /*! Set the scene graph */
-  void set_scene_graph(Scene_graph * sg) { m_scene_graph = sg; }
+  void set_scene_graph(Scene_graph* sg) { m_scene_graph = sg; }
 
   /*! Obtain the flag that indicates whether to clear the color buffer */
   Boolean get_clear_color() const { return m_clear_color; }
@@ -110,14 +110,14 @@ protected:
   void draw_polygon();
   
   /*! The Scene_graph */
-  Scene_graph * m_scene_graph;
+  Scene_graph* m_scene_graph;
 
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Indicates whether the color buffer should be cleared */
   Boolean m_clear_color;

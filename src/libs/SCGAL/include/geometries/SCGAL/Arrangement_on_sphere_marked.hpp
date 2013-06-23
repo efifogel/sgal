@@ -36,6 +36,9 @@
 
 #include <CGAL/Gps_traits_2.h>
 
+#include "SGAL/basic.hpp"
+
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_mark_dcel.hpp"
 
@@ -44,8 +47,8 @@ SGAL_BEGIN_NAMESPACE
 /*! 
   Internal namespace that there will not be any collision.
  */
-namespace Arrangement_on_sphere_marked_internal
-{
+namespace Arrangement_on_sphere_marked_internal {
+  
 //  We use Gps_face_base as the base of our face so we could use Boolean
 //  set operations in the node Polygon_set_on_sphere_geo and still have
 //  Polygon_set_on_sphere_geo inherit from the Arrangement_on_sphere_marked_geo.

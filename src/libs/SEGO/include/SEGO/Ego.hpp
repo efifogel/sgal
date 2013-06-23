@@ -37,9 +37,11 @@
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
+#include "SEGO/basic.hpp"
 #include "SEGO/Ego_brick.hpp"
 #include "SEGO/Ego_voxels.hpp"
 #include "SEGO/Ego_voxels_tiler.hpp"
@@ -60,7 +62,7 @@ class Mesh_set;
 class Touch_sensor;
 class Ego_voxels_filler_base;
 
-class SGAL_SGAL_DECL Ego : public Transform {
+class SGAL_SEGO_DECL Ego : public Transform {
 public:
   typedef boost::shared_ptr<Appearance>           Shared_appearance;
   typedef boost::shared_ptr<Material>             Shared_material;

@@ -28,10 +28,11 @@
 
 #include <vector>
 
-#include "SCGAL/Exact_kernel.hpp"
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Coord_array.hpp"
+
+#include "SCGAL/basic.hpp"
+#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,8 +41,7 @@ class Scene_graph;
 class Container_proto;
 
 /*! Maintains an array of 3D vertex-coordinate */
-class Exact_coord_array : public Coord_array
-{
+class SGAL_SCGAL_DECL Exact_coord_array : public Coord_array {
 public:
   typedef std::vector<Exact_point_3>                    Exact_point_vector;
   typedef Exact_point_vector::iterator                  Exact_point_iter;
@@ -54,7 +54,7 @@ public:
   };
 
   /*! Constructor */
-  Exact_coord_array(Boolean proto = SGAL_FALSE) : Coord_array(proto) {}
+  Exact_coord_array(Boolean proto = false) : Coord_array(proto) {}
 
   /*! Constructor */
   Exact_coord_array(Uint n) { m_array.resize(n); }
@@ -63,11 +63,11 @@ public:
   virtual ~Exact_coord_array() { clear(); }
 
   /* Construct the prototype */
-  static Exact_coord_array * prototype()
-  { return new Exact_coord_array(SGAL_TRUE); }
+  static Exact_coord_array* prototype()
+  { return new Exact_coord_array(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Exact_coord_array(); }
+  virtual Container* clone() { return new Exact_coord_array(); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -76,10 +76,10 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
   
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Size */
   Uint size() const { return m_array.size(); }
@@ -99,24 +99,24 @@ public:
   Exact_point_const_iter end() const { return m_array.end(); }
 
   /*! Array indexing operator */
-  Exact_point_3 & operator[](Uint n) { return m_array[n]; }
+  Exact_point_3& operator[](Uint n) { return m_array[n]; }
 
   /*! Array indexing operator */
-  const Exact_point_3 & operator[](Uint n) const { return m_array[n]; }
+  const Exact_point_3& operator[](Uint n) const { return m_array[n]; }
 
   /*! Inserts a new element at the end */
-  void push_back(const Exact_point_3 & p) { m_array.push_back(p); }
+  void push_back(const Exact_point_3& p) { m_array.push_back(p); }
     
 protected:
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The exact coordinate array */
   Exact_point_vector m_array;

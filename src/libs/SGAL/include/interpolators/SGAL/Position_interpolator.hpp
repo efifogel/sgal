@@ -33,25 +33,25 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Position_interpolator : public Vector3f_interpolator {
+class SGAL_SGAL_DECL Position_interpolator : public Vector3f_interpolator {
 public:
   /*! Constructor */
   Position_interpolator(Boolean interpolate_flag = true,
-                        Boolean proto = SGAL_FALSE);
+                        Boolean proto = false);
   
   /*! Destructor */
   virtual ~Position_interpolator() {};
 
   /* Construct the prototype */
-  static Position_interpolator * prototype()
-  { return new Position_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Position_interpolator* prototype()
+  { return new Position_interpolator(false, true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Position_interpolator (); }
+  virtual Container* clone() { return new Position_interpolator (); }
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */

@@ -31,6 +31,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_label_dcel.hpp"
 

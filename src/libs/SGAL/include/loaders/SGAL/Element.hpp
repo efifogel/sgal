@@ -35,7 +35,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Element {
+class SGAL_SGAL_DECL Element {
 public:
   typedef boost::shared_ptr<Container>              Shared_container;
 

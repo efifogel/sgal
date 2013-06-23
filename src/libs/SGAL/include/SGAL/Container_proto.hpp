@@ -48,7 +48,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Field_info;
 
-class Container_proto {
+class SGAL_SGAL_DECL Container_proto {
 private:
   typedef std::map<Uint,Field_info*>            Field_info_id_map;
   typedef Field_info_id_map::const_iterator     Field_info_id_const_iter;
@@ -71,7 +71,7 @@ private:
 
 public:
   /*! Constructor */
-  Container_proto(Container_proto * ancestor = NULL);
+  Container_proto(Container_proto* ancestor = NULL);
 
   /*! Destructor - deletes each added field info */
   virtual ~Container_proto();
@@ -85,21 +85,21 @@ public:
    * The destructor will delete it when the container prototype is deleted
    * \todo this is not right!
    */
-  void add_field_info(Field_info * field_info);
+  void add_field_info(Field_info* field_info);
 
 #if 0
   /*! The field info will be allocated according to the given params
    * The destructor will delete it when the container prototype is deleted
    */
-  void add_field_info(Uint id, const std::string & name,
-                      const std::string & type, const std::string & value,
+  void add_field_info(Uint id, const std::string& name,
+                      const std::string& type, const std::string& value,
                       Ulong offset, Execution_function execution = NULL);
 
   /*! The field info will be allocated according to the given params
    * The destructor will delete it when the container prototype is deleted
    */
-  void add_field_info(Uint id,  const std::string & name,
-                      const std::string & type, Container * value,
+  void add_field_info(Uint id,  const std::string& name,
+                      const std::string& type, Container* value,
                       Ulong offset, Execution_function execution = NULL);
 #endif
   
@@ -109,13 +109,13 @@ public:
    * \param id the id of the field info
    * \return the requested field info  
    */
-  Field_info * get_field_info(Uint id) const;
+  Field_info* get_field_info(Uint id) const;
 
   /*! Obtain the field info by name
    * \param name (in) the name of the field info
    * \return A pointer to the requested field info  
    */
-  Field_info * get_field_info(const std::string & name) const;
+  Field_info * get_field_info(const std::string& name) const;
 };
 
 SGAL_END_NAMESPACE

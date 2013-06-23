@@ -19,25 +19,27 @@
 #ifndef _EGO_VOXELS_VERTEX_LIST_GRAPH_UTILS_HPP_
 #define _EGO_VOXELS_VERTEX_LIST_GRAPH_UTILS_HPP_
 
-#include "SEGO/Ego_voxels_vertex_list_graph.hpp"
-
 #include <functional>
+
+#include "SEGO/basic.hpp"
+#include "SEGO/Ego_voxels_vertex_list_graph.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 
-class Is_inside_voxels
-  : public std::unary_function<const Ego_voxels_vertex_list_graph::edge_descriptor&, bool> {
+class SGAL_SEGO_DECL Is_inside_voxels :
+  public std::unary_function<const Ego_voxels_vertex_list_graph::
+                             edge_descriptor&, bool>
+{
 public:
   typedef Ego_voxels_vertex_list_graph::vertex_descriptor vertex_descriptor;
   typedef Ego_voxels_vertex_list_graph::edge_descriptor   edge_descriptor;
 
   // TODO: Why do I need default constructor?
   Is_inside_voxels() {}
-  Is_inside_voxels(const boost::tuple<std::size_t,
-                                      std::size_t,
-                                        std::size_t>& dim) : m_dim(dim) {}
+  Is_inside_voxels(const boost::tuple<std::size_t, std::size_t,
+                   std::size_t>& dim) : m_dim(dim) {}
   
   bool operator() (const vertex_descriptor& point) const;
   bool operator() (const edge_descriptor& edge) const;
@@ -46,8 +48,10 @@ protected:
     boost::tuple<std::size_t, std::size_t, std::size_t> m_dim;
 };
 
-class Is_filling_identical
-  : public std::unary_function<const Ego_voxels_vertex_list_graph::edge_descriptor&, bool> {
+class Is_filling_identical :
+  public std::unary_function<const Ego_voxels_vertex_list_graph::
+                             edge_descriptor&, bool>
+{
 public:
   typedef Ego_voxels_vertex_list_graph::vertex_descriptor vertex_descriptor;
   typedef Ego_voxels_vertex_list_graph::edge_descriptor   edge_descriptor;
@@ -60,27 +64,33 @@ public:
   bool operator() (const edge_descriptor& edge) const;
     
 protected:
-  const Ego_voxels *m_voxels;
+  const Ego_voxels* m_voxels;
 };
 
-class Not_self_edge
-  : public std::unary_function<const Ego_voxels_vertex_list_graph::edge_descriptor&, bool> {
+class Not_self_edge :
+  public std::unary_function<const Ego_voxels_vertex_list_graph::
+                             edge_descriptor&, bool>
+{
 public:
   typedef Ego_voxels_vertex_list_graph::edge_descriptor   edge_descriptor;
 
   bool operator() (const edge_descriptor& edge) const;
 };
 
-class Is_same_level
-  : public std::unary_function<const Ego_voxels_vertex_list_graph::edge_descriptor&, bool> {
+class Is_same_level :
+  public std::unary_function<const Ego_voxels_vertex_list_graph::
+                             edge_descriptor&, bool>
+{
 public:
   typedef Ego_voxels_vertex_list_graph::edge_descriptor   edge_descriptor;
 
   bool operator() (const edge_descriptor& edge) const;
 };
 
-class Is_orthogonal
-  : public std::unary_function<const Ego_voxels_vertex_list_graph::edge_descriptor&, bool> {
+class Is_orthogonal :
+  public std::unary_function<const Ego_voxels_vertex_list_graph::
+                             edge_descriptor&, bool>
+{
 public:
   typedef Ego_voxels_vertex_list_graph::edge_descriptor   edge_descriptor;
 
@@ -104,12 +114,12 @@ public:
 protected:
   friend class boost::iterator_core_access;
   
-  typedef boost::iterator_facade<
-    neighborhood_iterator, edge_descriptor,
-    boost::forward_traversal_tag, edge_descriptor>     Base;
+  typedef boost::iterator_facade<neighborhood_iterator, edge_descriptor,
+                                 boost::forward_traversal_tag, edge_descriptor>
+                                                       Base;
   typedef Base                                         Facade;
   
-    Facade::reference dereference() const;
+  Facade::reference dereference() const;
   bool equal(const neighborhood_iterator& o) const;
   void increment();
   

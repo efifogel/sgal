@@ -46,6 +46,7 @@
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -57,7 +58,7 @@ class Coord_array;
 class Draw_action;
 class Scene_graph;
 
-class Polyhedron_geo : public SGAL::Mesh_set {
+class SGAL_SCGAL_DECL Polyhedron_geo : public SGAL::Mesh_set {
 public:
   // A halfedge type with a flag member variable.
   template <class Refs>

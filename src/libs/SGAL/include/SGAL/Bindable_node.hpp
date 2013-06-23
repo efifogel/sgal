@@ -37,7 +37,7 @@ class Element;
 class Bindable_stack;
 class Field_info;
 
-class Bindable_node : public Container {
+class SGAL_SGAL_DECL Bindable_node : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
@@ -47,16 +47,16 @@ public:
   };
 
   /*! Constructor */
-  Bindable_node(Boolean proto = SGAL_FALSE);
+  Bindable_node(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Bindable_node();
 
   /*! Clone */
-  virtual Container * clone() { return new Bindable_node(); }
+  virtual Container* clone() { return new Bindable_node(); }
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -65,22 +65,22 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
     
   /*! Obtain the Navigation_info at the top os the stack */
-  Bindable_node * top_stack();
+  Bindable_node* top_stack();
   
   /*! Erase the Navigation_info */
-  void erase_stack(Bindable_node * bindable);
+  void erase_stack(Bindable_node* bindable);
   
   /*! Pop the Navigation_info at the top of the stack */
   void pop_stack();
 
   /*! Pushe a Navigation_info onto the stack */
-  void push_stack(Bindable_node * bindable);
+  void push_stack(Bindable_node* bindable);
 
   /*! Insert a Navigation_info at the back of the stack */
-  void insert_stack(Bindable_node * bindable);
+  void insert_stack(Bindable_node* bindable);
 
   /*! Bind this node (used during initialization) */
   void bind();
@@ -89,7 +89,7 @@ public:
   void set_is_bound(bool is_bound);
   
   /*! Bind or unbinds this node */
-  void set_bind(Field_info * field_info);
+  void set_bind(Field_info* field_info);
 
 protected:
   /*! Set this field to bind the node */
@@ -99,10 +99,10 @@ protected:
   bool m_is_bound;
   
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! Obtain the bindable stack */
-  virtual Bindable_stack * get_stack() { SGAL_assertion(0); return NULL; }
+  virtual Bindable_stack* get_stack() { SGAL_assertion(0); return NULL; }
 
   /*! Enable the bindable node */
   virtual void enable() { }
@@ -115,7 +115,7 @@ private:
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE

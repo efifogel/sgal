@@ -11,7 +11,9 @@
 
 include $(ROOT)/make/comdef.mak
 
-FILES = Ego.hpp
+FILES = basic.hpp
+FILES+= config.hpp
+FILES+= Ego.hpp
 FILES+= Ego_brick.hpp
 FILES+= Ego_voxelizer.hpp
 FILES+= Ego_voxels_filler_base.hpp

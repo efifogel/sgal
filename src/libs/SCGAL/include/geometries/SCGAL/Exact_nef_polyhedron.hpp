@@ -49,6 +49,7 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -60,7 +61,7 @@ class Color_array;
 class Draw_action;
 class Scene_graph;
 
-class Exact_nef_polyhedron : public SGAL::Mesh_set {
+class SGAL_SCGAL_DECL Exact_nef_polyhedron : public SGAL::Mesh_set {
 public:
   typedef CGAL::Tag_true                                Tag_true;
   typedef CGAL::Tag_false                               Tag_false;

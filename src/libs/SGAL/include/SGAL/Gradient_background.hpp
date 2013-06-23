@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,7 +37,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
-class Gradient_background : public Background {
+class SGAL_SGAL_DECL Gradient_background : public Background {
 public:
   enum {
     FIRST = Node::LAST - 1,
@@ -49,17 +49,17 @@ public:
   };
 
   /*! Constructor */
-  Gradient_background(Boolean proto = SGAL_FALSE);
+  Gradient_background(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Gradient_background();
 
   /*! Construct the prototype */
-  static Gradient_background * prototype()
-  { return new Gradient_background(SGAL_TRUE); }
+  static Gradient_background* prototype()
+  { return new Gradient_background(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Gradient_background(); }
+  virtual Container* clone() { return new Gradient_background(); }
 
   void SetULColor(Vector4f color);
   Vector4f GetULColor() const;
@@ -70,21 +70,21 @@ public:
   void SetLRColor(Vector4f color);
   Vector4f GetLRColor() const;
 
-  virtual Trav_directive Draw(Draw_action * draw_action);
+  virtual Trav_directive Draw(Draw_action* draw_action);
 
   /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto *get_prototype();
+  virtual Container_proto* get_prototype();
 
 private:
 
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   Vector4f m_ulColor;
   Vector4f m_urColor;
@@ -92,11 +92,11 @@ private:
   Vector4f m_lrColor;
   static float m_size;
 
-  Appearance * m_appearance;
+  Appearance* m_appearance;
 
-  void DrawPolygon(Context *context);
-  void CreateAppearance() ;
-  Gradient_background(const Background &) {}
+  void DrawPolygon(Context* context);
+  void CreateAppearance();
+  Gradient_background(const Background&) {}
 
   /** default color values.  */
 

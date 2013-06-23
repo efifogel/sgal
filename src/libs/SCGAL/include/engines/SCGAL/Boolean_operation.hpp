@@ -35,6 +35,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -44,7 +45,7 @@ class Isect_action;
 class Container_proto;
 class Element;
 
-class SGAL_SGAL_DECL Boolean_operation : public Node {
+class SGAL_SCGAL_DECL Boolean_operation : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,

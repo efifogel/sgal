@@ -30,6 +30,7 @@
 #include "SGAL/Box.hpp"
 #include "SGAL/Vector4f.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_renderer.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -37,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 
 /*! A function object that renders the cube surface */
-class Cube_renderer : public Arrangement_renderer::Renderer {
+class SGAL_SCGAL_DECL Cube_renderer : public Arrangement_renderer::Renderer {
 public:
   /*! Constrcutor */
   Cube_renderer() {}

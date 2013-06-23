@@ -43,6 +43,7 @@
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Sphere.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
 #include "SCGAL/Arrangement_renderer.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
@@ -58,7 +59,7 @@ class Draw_action;
 class Scene_graph;
 class Cylinder;
 
-class Spherical_gaussian_map_base_geo : public Mesh_set {
+class SGAL_SCGAL_DECL Spherical_gaussian_map_base_geo : public Mesh_set {
 public:
   /*! Fields */
   enum {

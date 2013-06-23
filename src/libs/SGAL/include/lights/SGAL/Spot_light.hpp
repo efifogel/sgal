@@ -41,7 +41,7 @@ class Draw_action;
 class Container_proto;
 class Element;
 
-class Spot_light : public Light {
+class SGAL_SGAL_DECL Spot_light : public Light {
 public:
   enum {
     FIRST = Light::LAST - 1,
@@ -55,41 +55,41 @@ public:
   };
 
   /*! Constructor */
-  Spot_light(Boolean proto = SGAL_FALSE);
+  Spot_light(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Spot_light();
 
   /* Construct the prototype */
-  static Spot_light * prototype() { return new Spot_light(SGAL_TRUE); }
+  static Spot_light*  prototype() { return new Spot_light(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Spot_light(); }
+  virtual Container*  clone() { return new Spot_light(); }
 
-  virtual Action::Trav_directive draw(Draw_action * draw_action);
+  virtual Action::Trav_directive draw(Draw_action*  draw_action);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+  virtual Container_proto*  get_prototype();
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element*  elem);
 
   // virtual Attribute_list get_attributes();
   
-  void set_direction(const Vector3f & direction);
-  void get_direction(Vector3f & direction);
-  void set_beam_width(const Float & beam_width);
+  void set_direction(const Vector3f& direction);
+  void get_direction(Vector3f& direction);
+  void set_beam_width(const Float& beam_width);
   Float get_beam_width();
-  void set_cutoff_angle(const Float & cutoff_angle);
+  void set_cutoff_angle(const Float& cutoff_angle);
   Float get_cutoff_angle();
   float get_exponent();
-  void set_attenuation(const Vector3f & attenuation);
-  void get_attenuation(Vector3f & attenuation);
-  void set_location(const Vector3f & location);
-  void get_location(Vector3f & location);
-  void set_radius(const Float & radius);
+  void set_attenuation(const Vector3f& attenuation);
+  void get_attenuation(Vector3f& attenuation);
+  void set_location(const Vector3f& location);
+  void get_location(Vector3f& location);
+  void set_radius(const Float& radius);
   Float get_radius();
 
 protected:
@@ -114,7 +114,7 @@ protected:
   static Float s_def_radius;
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
@@ -141,7 +141,7 @@ private:
   static Float s_def_cutoff_angle;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE

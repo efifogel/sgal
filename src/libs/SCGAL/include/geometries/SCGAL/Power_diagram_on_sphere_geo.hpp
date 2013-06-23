@@ -37,7 +37,7 @@
 #include <CGAL/envelope_voronoi_2.h>
 #include <CGAL/Envelope_voronoi_traits_2/Spherical_power_diagram_traits_2.h>
 
-#include "SGAL/basic.hpp"
+#include "SCGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 #include "SCGAL/Geodesic_voronoi_on_sphere_geo.hpp"
@@ -58,7 +58,7 @@ class Sphere;
 
 /*! A geometry container that represents a power diagram os a sphere.
  */
-class SGAL_SGAL_DECL Power_diagram_on_sphere_geo :
+class SGAL_SCGAL_DECL Power_diagram_on_sphere_geo :
   public Geodesic_voronoi_on_sphere_geo
 {
 public:

@@ -69,21 +69,21 @@ public:
   };
 
   /*! Constructor */
-  Flow_sensor(Boolean proto = SGAL_FALSE);
+  Flow_sensor(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Flow_sensor();
 
   /* Construct the prototype */
-  static Flow_sensor* prototype() { return new Flow_sensor(SGAL_TRUE); }
+  static Flow_sensor* prototype() { return new Flow_sensor(true); }
 
   /*! Clone */
   virtual Container* clone() { return new Flow_sensor(); }
 
-  void set_loading_done(Boolean flag = SGAL_TRUE);
-  void set_level0_loading_done(Boolean flag = SGAL_TRUE);
-  void set_snapshot_done(Boolean flag = SGAL_TRUE);
-  void set_animation_loading_done(Boolean flag = SGAL_TRUE);
+  void set_loading_done(Boolean flag = true);
+  void set_level0_loading_done(Boolean flag = true);
+  void set_snapshot_done(Boolean flag = true);
+  void set_animation_loading_done(Boolean flag = true);
   void add_num_polygons(const Int n);
   void add_geometry_memory(const Int n);
 

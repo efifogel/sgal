@@ -49,7 +49,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
-class Scalar_interpolator : public Interpolator {
+class SGAL_SGAL_DECL Scalar_interpolator : public Interpolator {
 public:
   enum {
     FIRST = Node::LAST-1,
@@ -60,25 +60,25 @@ public:
 
   /*! Constructor */
   Scalar_interpolator(Boolean interpolate_flag = true, 
-                      Boolean proto = SGAL_FALSE);
+                      Boolean proto = false);
 
   /*! Destructor */
   virtual ~Scalar_interpolator();
 
   /* Construct the prototype */
-  static Scalar_interpolator * prototype()
-  { return new Scalar_interpolator(SGAL_FALSE, SGAL_TRUE); }
+  static Scalar_interpolator* prototype()
+  { return new Scalar_interpolator(false, true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Scalar_interpolator (); }
+  virtual Container* clone() { return new Scalar_interpolator (); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   // Functions that handles the creation of an instance in the scene graph
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
   // virtual Attribute_list get_attributes();
 
   // The execution function - executes the intepolation for each cascade of 
@@ -89,14 +89,14 @@ protected:
   Array<Float> m_values;
 
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   Int m_last_location;
   Float m_value;
