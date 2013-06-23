@@ -17,8 +17,8 @@
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
 
-#ifndef _EGO_VOXELS_VERTEX_LIST_GRAPH_HPP_
-#define _EGO_VOXELS_VERTEX_LIST_GRAPH_HPP_
+#ifndef SEGO_EGO_VOXELS_VERTEX_LIST_GRAPH_HPP
+#define SEGO_EGO_VOXELS_VERTEX_LIST_GRAPH_HPP
 
 /**
  * @file   Ego_voxels_vertex_list_graph.hpp
@@ -148,4 +148,4 @@ namespace boost {
   };
 }
 
-#endif // _EGO_VOXELS_VERTEX_LIST_GRAPH_HPP_
+#endif // SEGO_EGO_VOXELS_VERTEX_LIST_GRAPH_HPP

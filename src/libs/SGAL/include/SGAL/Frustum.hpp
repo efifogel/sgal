@@ -36,7 +36,7 @@ class Sphere_bound;
 class Box_bound;
 class Element;
 
-class Frustum {
+class SGAL_SGAL_DECL Frustum {
 public:
   /*! Constructor */
   Frustum();

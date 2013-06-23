@@ -16,13 +16,13 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELS_FILLER_BASE_HPP
-#define SGAL_EGO_VOXELS_FILLER_BASE_HPP
+#ifndef SEGO_EGO_VOXELS_FILLER_BASE_HPP
+#define SEGO_EGO_VOXELS_FILLER_BASE_HPP
 
-#include "SGAL/config.hpp"
+#include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
 
-#include "SEGO/config.hpp"
+#include "SEGO/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -34,7 +34,7 @@ public:
 };
 
 class SGAL_SEGO_DECL Ego_voxels_filler_base : public Node {
- public:
+public:
   
   enum {
     FIRST = Node::LAST - 1,
@@ -81,4 +81,4 @@ class SGAL_SEGO_DECL Ego_voxels_filler_base : public Node {
 
 SGAL_END_NAMESPACE
 
-#endif // SGAL_EGO_VOXELS_FILLER_BASE_HPP
+#endif // SEGO_EGO_VOXELS_FILLER_BASE_HPP

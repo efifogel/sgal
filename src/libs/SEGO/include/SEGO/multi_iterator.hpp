@@ -16,8 +16,8 @@
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
-#ifndef _EGO_MULTI_ITERATOR_HPP_
-#define _EGO_MULTI_ITERATOR_HPP_
+#ifndef SEGO_MULTI_ITERATOR_HPP
+#define SEGO_MULTI_ITERATOR_HPP
 
 /**
  * @file   multi_iterator.hpp
@@ -126,4 +126,4 @@ private:
 
 SGAL_END_NAMESPACE
 
-#endif // _EGO_MULTI_ITERATOR_HPP_
+#endif // SEGO_MULTI_ITERATOR_HPP

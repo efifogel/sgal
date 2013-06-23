@@ -23,8 +23,8 @@
  * A geometry container that represents an Ego brick.
  */
 
-#ifndef SGAL_EGO_BRICK_HPP
-#define SGAL_EGO_BRICK_HPP
+#ifndef SEGO_EGO_BRICK_HPP
+#define SEGO_EGO_BRICK_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>

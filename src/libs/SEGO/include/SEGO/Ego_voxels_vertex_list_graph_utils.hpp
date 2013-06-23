@@ -16,8 +16,8 @@
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
-#ifndef _EGO_VOXELS_VERTEX_LIST_GRAPH_UTILS_HPP_
-#define _EGO_VOXELS_VERTEX_LIST_GRAPH_UTILS_HPP_
+#ifndef SEGO_EGO_VOXELS_VERTEX_LIST_GRAPH_UTILS_HPP
+#define SEGO_EGO_VOXELS_VERTEX_LIST_GRAPH_UTILS_HPP
 
 #include <functional>
 
@@ -132,9 +132,7 @@ private:
   bool m_null;
 };
 
-
 SGAL_END_NAMESPACE
-
 
 #endif
 

@@ -16,14 +16,13 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELS_FILLER_HPP
-#define SGAL_EGO_VOXELS_FILLER_HPP
-
-#include "SEGO/Ego_voxels_filler_base.hpp"
-
-#include "SEGO/basic.hpp"
+#ifndef SEGO_EGO_VOXELS_FILLER_HPP
+#define SEGO_EGO_VOXELS_FILLER_HPP
 
 #include <string>
+
+#include "SEGO/basic.hpp"
+#include "SEGO/Ego_voxels_filler_base.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -54,4 +53,4 @@ class SGAL_SEGO_DECL Ego_voxels_filler : public Ego_voxels_filler_base {
 
 SGAL_END_NAMESPACE
 
-#endif // SGAL_EGO_VOXELS_FILLER_HPP
+#endif // SEGO_EGO_VOXELS_FILLER_HPP

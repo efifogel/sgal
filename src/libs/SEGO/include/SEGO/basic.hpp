@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SCGAL_BASIC_HPP
-#define SCGAL_BASIC_HPP
+#ifndef SEGO_BASIC_HPP
+#define SEGO_BASIC_HPP
 
 #include "SGAL/basic.hpp"
 #include "SCGAL/basic.hpp"

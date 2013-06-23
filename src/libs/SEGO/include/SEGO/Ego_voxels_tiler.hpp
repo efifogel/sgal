@@ -16,8 +16,8 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELS_TILER_HPP
-#define SGAL_EGO_VOXELS_TILER_HPP
+#ifndef SEGO_EGO_VOXELS_TILER_HPP
+#define SEGO_EGO_VOXELS_TILER_HPP
 
 #include <vector>
 #include <boost/tuple/tuple.hpp>
@@ -73,5 +73,5 @@ private:
 
 SGAL_END_NAMESPACE
 
-#endif // SGAL_EGO_VOXELS_TILER_HPP
+#endif // SEGO_EGO_VOXELS_TILER_HPP
 

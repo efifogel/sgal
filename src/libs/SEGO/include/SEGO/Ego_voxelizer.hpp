@@ -16,8 +16,8 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELIZER_HPP
-#define SGAL_EGO_VOXELIZER_HPP
+#ifndef SEGO_EGO_VOXELIZER_HPP
+#define SEGO_EGO_VOXELIZER_HPP
 
 /**
  * @file   Ego_voxelizer.hpp
@@ -29,18 +29,20 @@
  * 
  */
 
-#include "SGAL/config.hpp"
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
+
+#include "SEGO/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Ego_voxels;
 class Matrix4f;
 
-namespace SEGO_internal{
+namespace SEGO_internal {
   
-  template <class Point>
+  template <typename Point>
   struct Compare_point_by_axis {
     long m_dim;
     
@@ -53,9 +55,8 @@ namespace SEGO_internal{
 
 } // SEGO_internal
 
-class SGAL_SGAL_DECL Ego_voxelizer {
- public:
-  
+class SGAL_SEGO_DECL Ego_voxelizer {
+public:
   typedef Polyhedron_geo::Polyhedron                    Polyhedron;
   typedef Exact_polyhedron_geo::Polyhedron              Exact_polyhedron;
   typedef Exact_polyhedron::Traits::Kernel              Kernel;
@@ -87,8 +88,7 @@ class SGAL_SGAL_DECL Ego_voxelizer {
                              const Matrix4f& matrix, Ego_voxels* out_voxels)
     const;
   
- private:
-
+private:
   typedef Kernel::Iso_cuboid_3                          Iso_cuboid_3;
   typedef Kernel::Segment_3                             Segment_3;  
   typedef Kernel::Point_3                               Point_3;  
@@ -156,9 +156,8 @@ class SGAL_SGAL_DECL Ego_voxelizer {
   Kernel::FT m_voxel_dimensions[3];
 };
 
-
 SGAL_END_NAMESPACE
 
-#endif // SGAL_EGO_VOXELIZER_HPP
+#endif // SEGO_EGO_VOXELIZER_HPP
 
 

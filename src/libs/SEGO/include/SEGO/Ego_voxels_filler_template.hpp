@@ -16,8 +16,8 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELS_FILLER_TEMPLATE_HPP
-#define SGAL_EGO_VOXELS_FILLER_TEMPLATE_HPP
+#ifndef SEGO_EGO_VOXELS_FILLER_TEMPLATE_HPP
+#define SEGO_EGO_VOXELS_FILLER_TEMPLATE_HPP
 
 #include "SGAL/config.hpp"
 
@@ -270,4 +270,4 @@ void Ego_voxels_filler_template<Graph>::fill
 
 SGAL_END_NAMESPACE
 
-#endif // SGAL_EGO_VOXELS_FILLER_TEMPLATE_HPP
+#endif // SEGO_EGO_VOXELS_FILLER_TEMPLATE_HPP

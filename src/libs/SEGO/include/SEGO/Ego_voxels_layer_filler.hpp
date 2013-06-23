@@ -16,8 +16,8 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELS_LAYER_FILLER_HPP
-#define SGAL_EGO_VOXELS_LAYER_FILLER_HPP
+#ifndef SEGO_EGO_VOXELS_LAYER_FILLER_HPP
+#define SEGO_EGO_VOXELS_LAYER_FILLER_HPP
 
 #include <string>
 
@@ -52,4 +52,4 @@ class SGAL_SEGO_DECL Ego_voxels_layer_filler : public Ego_voxels_filler_base {
 
 SGAL_END_NAMESPACE
 
-#endif // SGAL_EGO_VOXELS_LAYER_FILLER_HPP
+#endif // SEGO_EGO_VOXELS_LAYER_FILLER_HPP

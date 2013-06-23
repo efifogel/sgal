@@ -16,8 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EGO_GEO_HPP
-#define SGAL_EGO_GEO_HPP
+#ifndef SEGO_EGO_HPP
+#define SEGO_EGO_HPP
 
 /*! \file
  * A geometry container that represents a model decomposed into ego bricks.

@@ -17,8 +17,8 @@
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
 
-#ifndef _EGO_VOXELS_FILLER_GRAPH_HPP_
-#define _EGO_VOXELS_FILLER_GRAPH_HPP_
+#ifndef SEGO_EGO_VOXELS_FILLER_GRAPH_HPP
+#define SEGO_EGO_VOXELS_FILLER_GRAPH_HPP
 
 /**
  * @file   Ego_voxels_filler_graph.hpp
@@ -109,5 +109,4 @@ namespace boost {
   };
 }
 
-
-#endif // _EGO_VOXELS_FILLER_GRAPH_HPP_
+#endif // SEGO_EGO_VOXELS_FILLER_GRAPH_HPP

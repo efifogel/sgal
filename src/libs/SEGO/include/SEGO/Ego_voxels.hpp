@@ -16,25 +16,23 @@
 //
 // Author(s)     : Ophir Setter           <ophir.setter@gmail.com>
 
-#ifndef SGAL_EGO_VOXELS_HPP
-#define SGAL_EGO_VOXELS_HPP
+#ifndef SEGO_EGO_VOXELS_HPP
+#define SEGO_EGO_VOXELS_HPP
+
+#include <vector>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/optional.hpp>
-
-#include <vector>
 
 #include "SEGO/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-
 // Temp until we decide the true voxels.
 // Each bool represents a voxel.
 class SGAL_SEGO_DECL Ego_voxels {
 public:
-  typedef boost::tuple<
-    std::size_t, std::size_t, std::size_t>              size_type;
+  typedef boost::tuple<std::size_t, std::size_t, std::size_t>   size_type;
 
   void initialize_container(long length, long width, long height);
   size_type size() const;
@@ -70,9 +68,9 @@ private:
 
   typedef std::vector<std::vector<std::vector<Voxel> > > Container;
     
-  Container       m_voxels;
+  Container m_voxels;
 };
 
 SGAL_END_NAMESPACE
     
-#endif // SGAL_EGO_VOXELS_HPP
+#endif // SEGO_EGO_VOXELS_HPP

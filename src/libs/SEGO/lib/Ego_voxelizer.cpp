@@ -16,8 +16,9 @@
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
-#include "SEGO/Ego_voxelizer.hpp"
-#include "SEGO/Ego_voxels.hpp"
+#include <functional>
+
+#include <boost/foreach.hpp>
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/squared_distance_3.h> 
@@ -26,9 +27,8 @@
 #include <CGAL/circulator.h>
 #include <CGAL/intersections.h>
 
-#include <boost/foreach.hpp>
-
-#include <functional>
+#include "SEGO/Ego_voxelizer.hpp"
+#include "SEGO/Ego_voxels.hpp"
 
 // #define EGO_VOXELIZER_VERBOSE
 #ifdef EGO_VOXELIZER_VERBOSE

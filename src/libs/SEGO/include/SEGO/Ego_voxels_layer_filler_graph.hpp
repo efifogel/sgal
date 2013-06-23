@@ -17,8 +17,8 @@
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
 
-#ifndef _EGO_VOXELS_LAYER_FILLER_GRAPH_HPP_
-#define _EGO_VOXELS_LAYER_FILLER_GRAPH_HPP_
+#ifndef SEGO_EGO_VOXELS_LAYER_FILLER_GRAPH_HPP
+#define SEGO_EGO_VOXELS_LAYER_FILLER_GRAPH_HPP
 
 /**
  * @file   Ego_voxels_layer_filler_graph.hpp
@@ -115,7 +115,7 @@ out_edges(const Ego_voxels_layer_filler_graph::vertex_descriptor& v,
 
 inline Ego_voxels_layer_filler_graph::degree_size_type
 out_degree(const Ego_voxels_layer_filler_graph::vertex_descriptor& v,
-           const Ego_voxels_layer_filler_graph &graph) {
+           const Ego_voxels_layer_filler_graph& graph) {
   // This can probably be more efficient.
   std::pair<Ego_voxels_layer_filler_graph::out_edge_iterator,
             Ego_voxels_layer_filler_graph::out_edge_iterator> edges = 
@@ -144,5 +144,4 @@ namespace boost {
   };
 }
 
-
-#endif // _EGO_VOXELS_LAYER_FILLER_GRAPH_HPP_
+#endif // SEGO_EGO_VOXELS_LAYER_FILLER_GRAPH_HPP

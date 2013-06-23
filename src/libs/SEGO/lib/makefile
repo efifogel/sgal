@@ -37,7 +37,7 @@ CPPSOURCES+= Ego_voxels.cpp
 CPPSOURCES+= Ego_voxels_tiler.cpp
 
 LCPPDEFS+= -DSGAL_LIB
-LCPPDEFS+= -DSGAL_SGAL_SOURCE
+LCPPDEFS+= -DSGAL_SEGO_SOURCE
 LCPPDEFS+= -DSCGAL_NT=$(SCGAL_NT)
 LCPPDEFS+= -DSCGAL_KERNEL=$(SCGAL_KERNEL)
 
@@ -83,6 +83,45 @@ LCPPDEFS+= -DBOOST_ALL_DYN_LINK
 LCPPDEFS+= -DSGAL_ALL_DYN_LINK
 LCPPOPTS+= -GR
 LCPPOPTS+= -vmg
+
+ifeq ($(DEF_SHARED), 1)
+LCPPDEFS+= -DGL2PSDLL
+
+ifdef BOOST_LIB_DIR
+LLDOPTS+= -libpath:"$(BOOST_LIB_DIR)"
+endif
+ifdef MAGICK_LIB_DIR
+LLDOPTS+= -libpath:"$(MAGICK_LIB_DIR)"
+endif
+
+ifdef GMP_LIB_DIR
+LLDOPTS+= -libpath:"$(GMP_LIB_DIR)"
+endif
+ifdef MPFR_LIB_DIR
+LLDOPTS+= -libpath:"$(MPFR_LIB_DIR)"
+endif
+
+LLDLIBS+= SGAL.lib
+LLDLIBS+= SCGAL.lib
+ifeq ($(DEBUG), 1)
+LLDLIBS+= CORE_DB_Magick++_.lib
+else
+LLDLIBS+= CORE_RL_Magick++_.lib
+endif
+
+VC_NUM=80
+ifeq ($(COMPILER_VER), 1400)
+VC_NUM=90
+endif
+ifeq ($(COMPILER_VER), 1600)
+VC_NUM=100
+endif
+LLDLIBS+= mpfr-vc$(VC_NUM)-mt.lib
+LLDLIBS+= gmp-vc$(VC_NUM)-mt.lib
+LLDLIBS+= glu32.lib opengl32.lib
+LLDLIBS+= $(LDSYSLIBS)
+endif
+
 endif
 
 ifeq ($(DE), gnu)
@@ -95,7 +134,7 @@ endif
 include $(MAKEDIR)/basedir.mak
 include $(MAKEDIR)/comrul.mak
 include $(MAKEDIR)/comp.mak
-include $(MAKEDIR)/targlib.mak
+include $(MAKEDIR)/targ.mak
 
 vpath %.cpp $(BASEDIR)/geo
 vpath %.cpp $(BASEDIR)/geometries

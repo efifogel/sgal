@@ -16,9 +16,8 @@
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
-
-#ifndef _CHAIN_HPP_
-#define _CHAIN_HPP_
+#ifndef SEGO_CHAIN_HPP
+#define SEGO_CHAIN_HPP
 
 /**
  * @file   chain.hpp
@@ -55,7 +54,6 @@ namespace chain_ns {
     BOOST_STATIC_CONSTANT(bool, stop_value = false);
   };
   
-
   // forward declaration.
   template <int Begin, typename Op, typename Tuple>
   struct Accumulate;
@@ -104,8 +102,8 @@ namespace chain_ns {
   struct Accumulate_internal<Begin, Op, Tuple, 1> {
     typedef typename 
     boost::tuples::element<Begin,
-                           typename Tuple::inherited >::type::argument_type
-                                     argument_type;
+                           typename Tuple::inherited>::type::argument_type
+      argument_type;
 
     typedef typename Op::result_type result_type;
 
@@ -143,7 +141,6 @@ namespace chain_ns {
     typedef Accumulate_internal<Begin, Op, Tuple, I> type;
   };
 }
-
 
 // The class uses one binary function object multiple times on 
 // multipe unary function objects to receive the final result.
@@ -193,14 +190,12 @@ public:
   }
 
 private:
-
   BinaryFunc m_binary_func;
 };
 
-
 SGAL_END_NAMESPACE
 
-#endif // _CHAIN_HPP_
+#endif // SEGO_CHAIN_HPP
 
 
 
