@@ -37,7 +37,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -61,7 +60,7 @@ class Element;
 /*! A geometry container that represents an arrangement embeded on a
  * parametric surface.
  */
-class SGAL_CLASSDEF Arrangement_on_surface_geo : public Geometry {
+class SGAL_SGAL_DECL Arrangement_on_surface_geo : public Geometry {
 public:
   enum {
     FIRST = Geometry::LAST - 1,

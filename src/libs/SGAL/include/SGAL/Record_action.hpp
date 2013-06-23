@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,19 +35,21 @@
 #define SGAL_RECORD_ACTION_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Action.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Record_action : public Isect_action {
+class SGAL_SGAL_DECL Record_action : public Isect_action {
 public:
+  /*! Constructor */
   Record_action();
+
+  /*! Destructor */
   virtual ~Record_action();
 
-  virtual Action::Trav_directive pre_visit(Node * node);
-  virtual Action::Trav_directive post_visit(Node * node);
+  virtual Action::Trav_directive pre_visit(Node* node);
+  virtual Action::Trav_directive post_visit(Node* node);
 };
 
 SGAL_END_NAMESPACE

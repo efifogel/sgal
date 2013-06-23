@@ -45,7 +45,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
@@ -62,7 +61,7 @@ class Touch_sensor;
 class Light;
 class Scene_graph;
 
-class SGAL_CLASSDEF Group : public Node {
+class SGAL_SGAL_DECL Group : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,

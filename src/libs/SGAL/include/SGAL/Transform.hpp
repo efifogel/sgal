@@ -32,7 +32,6 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Matrix4f.hpp"
@@ -44,7 +43,7 @@ class Element;
 class Container_proto;
 class Formatter;
 
-class SGAL_CLASSDEF Transform : public Group {
+class SGAL_SGAL_DECL Transform : public Group {
 public:
   enum {
     FIRST = Group::LAST - 1,

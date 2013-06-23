@@ -239,6 +239,7 @@ LCPPINCS+= -I"$(GL2PS_INC_DIR)"
 endif
 
 LCPPDEFS+= -DSGAL_LIB
+LCPPDEFS+= -DSGAL_SGAL_SOURCE
 
 # Extract flex version
 FLEX_MAJOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+\([0-9]\)\.[0-9].[0-9]\+'
@@ -268,11 +269,28 @@ ifeq ($(COMPILER_VER), 1200)
 LCPPINCS+= -I$(STLPORT_DIR)
 endif
 LCPPDEFS+= -DBOOST_ALL_DYN_LINK
+LCPPDEFS+= -DSGAL_ALL_DYN_LINK
 LCPPOPTS = -GR
 LCPPOPTS+= -vmg
 
+ifeq ($(DEF_SHARED), 1)
+LCPPDEFS+= -DGL2PSDLL
+
 ifdef BOOST_LIB_DIR
 LLDOPTS+= -libpath:"$(BOOST_LIB_DIR)"
+endif
+ifdef MAGICK_LIB_DIR
+LLDOPTS+= -libpath:"$(MAGICK_LIB_DIR)"
+endif
+
+ifeq ($(DEBUG), 1)
+LLDLIBS+= CORE_DB_Magick++_.lib
+else
+LLDLIBS+= CORE_RL_Magick++_.lib
+endif
+
+LLDLIBS+= glu32.lib opengl32.lib
+LLDLIBS+= $(LDSYSLIBS)
 endif
 
 endif

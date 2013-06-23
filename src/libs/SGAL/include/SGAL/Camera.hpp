@@ -36,7 +36,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Rotation.hpp"
@@ -55,7 +54,7 @@ class Scene_graph;
 class Container;
 class Bindable_stack;
 
-class SGAL_CLASSDEF Camera : public Bindable_node {
+class SGAL_SGAL_DECL Camera : public Bindable_node {
 public:
   enum {
     FIRST = Bindable_node::LAST - 1,

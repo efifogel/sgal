@@ -22,12 +22,12 @@
 #include <stdlib.h>
 
 #include "SGAL/basic.hpp"
-#include "Scene_graph_int.h"
-#include "Text_texture.h"
-#include "Element.h"
-#include "Image.h"
+#include "SGAL/Scene_graph_int.h"
+#include "SGAL/Text_texture.h"
+#include "SGAL/Element.h"
+#include "SGAL/Image.h"
 #include "SGAL/Texture.hpp"
-#include "Container_proto.h"
+#include "SGAL/Container_proto.h"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 
@@ -361,6 +361,7 @@ void Text_texture::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
+#if 0
 /*! \brief */
 Attribute_list Text_texture::get_attributes() 
 { 
@@ -419,5 +420,6 @@ void Text_texture::add_to_scene(Scene_graph* sg, XML_entity* parent)
   }
   sg->AddContainer(this);
 }
+#endif
 
 SGAL_END_NAMESPACE

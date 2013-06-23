@@ -27,7 +27,6 @@
 #define SGAL_SPHERE_ENVIRONMENT_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Action.hpp"
 
@@ -39,7 +38,7 @@ class Element;
 class Image;
 class Scene_graph;
 
-class SGAL_CLASSDEF Sphere_environment : public Texture {
+class SGAL_SGAL_DECL Sphere_environment : public Texture {
 public:
   enum {
     FIRST = Texture::LAST - 1,

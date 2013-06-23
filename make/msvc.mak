@@ -347,9 +347,9 @@ GLDOPTS+= -nodefaultlib:libcmtd.lib
 GLDOPTS+= -nodefaultlib:libcpmtd.lib
 GLDOPTS+= -nodefaultlib:libcd.lib
 else
-GLDOPTS+= -nodefaultlib:libcmt.lib
-GLDOPTS+= -nodefaultlib:libcpmt.lib
-GLDOPTS+= -nodefaultlib:libc.lib
+# GLDOPTS+= -nodefaultlib:libcmt.lib
+# GLDOPTS+= -nodefaultlib:libcpmt.lib
+# GLDOPTS+= -nodefaultlib:libc.lib
 endif
 else
 ifeq ($(DEBUG), 1)

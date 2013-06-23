@@ -36,7 +36,6 @@
 #include <GL/glu.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Vector3f.hpp"
 
@@ -45,7 +44,7 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Container_proto;
 
-class SGAL_CLASSDEF Sphere : public Geometry {
+class SGAL_SGAL_DECL Sphere : public Geometry {
 public:
   /*! Fields */
   enum {

@@ -23,7 +23,6 @@
 #define SGAL_NAVIGATION_INFO_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Navigation_info_types.hpp"
 #include "SGAL/Navigation_sensor.hpp"
 
@@ -33,7 +32,7 @@ class Container_proto;
 class Element;
 class Scene_graph;
 
-class SGAL_CLASSDEF Navigation_info : public Navigation_sensor {
+class SGAL_SGAL_DECL Navigation_info : public Navigation_sensor {
 public:
   enum {
     FIRST = Navigation_sensor::LAST - 1,

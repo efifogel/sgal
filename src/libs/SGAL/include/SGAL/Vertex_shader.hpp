@@ -23,12 +23,11 @@
 #define SGAL_VERTEX_SHADER_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Shader.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Vertex_shader : public Shader {
+class SGAL_SGAL_DECL Vertex_shader : public Shader {
 public: 
   enum {
     FIRST = Shader::LAST - 1,

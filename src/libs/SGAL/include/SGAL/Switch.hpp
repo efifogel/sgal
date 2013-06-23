@@ -35,7 +35,6 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Action.hpp"
 
@@ -47,7 +46,7 @@ class Element;
 class Container_proto;
 class Isect_action;
 
-class SGAL_CLASSDEF Switch : public Group {
+class SGAL_SGAL_DECL Switch : public Group {
 public:
   enum {
     FIRST = Group::LAST - 1,

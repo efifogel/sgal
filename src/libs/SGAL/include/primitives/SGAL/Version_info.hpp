@@ -26,7 +26,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Version_info {
+class SGAL_SGAL_DECL Version_info {
 private:
   Ulong m_major;
   Ulong m_middle;

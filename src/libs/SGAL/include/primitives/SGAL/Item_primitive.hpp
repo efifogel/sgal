@@ -30,12 +30,11 @@
 #include <vector>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Item_primitive {
+class SGAL_SGAL_DECL Item_primitive {
 public:
   /*! Destructor */
   virtual ~Item_primitive() {}

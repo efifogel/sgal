@@ -36,7 +36,7 @@ class Element;
 class Container_proto;
 
 /*! This class maintains an array of vertex-texture-coordinates pairs */
-class SGAL_CLASSDEF Tex_coord_array : public Container {
+class SGAL_SGAL_DECL Tex_coord_array : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

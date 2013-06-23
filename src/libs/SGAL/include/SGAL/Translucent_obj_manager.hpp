@@ -29,7 +29,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Debug.hpp"
 #include "SGAL/Translucent_obj.hpp"
 #include "SGAL/Shape.hpp"
@@ -38,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Translucent_obj_manager {
+class SGAL_SGAL_DECL Translucent_obj_manager {
 public:
   Translucent_obj_manager();
   virtual ~Translucent_obj_manager();

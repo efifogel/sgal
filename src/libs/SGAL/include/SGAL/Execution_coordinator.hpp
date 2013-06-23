@@ -29,7 +29,6 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/App_error_handle_int.hpp"
 
@@ -49,7 +48,7 @@ enum Cursor_type {
 class Key_sensor;
 class Flow_sensor;
 
-class SGAL_CLASSDEF Execution_coordinator {
+class SGAL_SGAL_DECL Execution_coordinator {
 public:
   Execution_coordinator();
   virtual ~Execution_coordinator(){};

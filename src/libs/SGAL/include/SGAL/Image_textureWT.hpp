@@ -33,14 +33,13 @@
 #endif
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Texture.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
 
-class SGAL_CLASSDEF Image_texture_wt : public Texture {
+class SGAL_SGAL_DECL Image_texture_wt : public Texture {
 public: 
   /*! Constructor */
   Image_texture_wt(Boolean proto = false);

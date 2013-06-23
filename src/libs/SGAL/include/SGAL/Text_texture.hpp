@@ -31,7 +31,6 @@
 #endif
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Vector3f.hpp"
 
@@ -42,7 +41,7 @@ class Image;
 class Texture;
 class Container_proto;
 
-class SGAL_CLASSDEF Text_texture : public Container {
+class SGAL_SGAL_DECL Text_texture : public Container {
 public: 
   enum {
     FIRST = Container::LAST - 1,

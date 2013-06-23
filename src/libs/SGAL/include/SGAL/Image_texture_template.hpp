@@ -33,7 +33,6 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Url_image.hpp"
 #include "SGAL/Element.hpp"
@@ -47,7 +46,7 @@ class Element;
 class Scene_graph;
 
 template <class T_Texture>
-class SGAL_CLASSDEF Image_texture_template : public T_Texture {
+class SGAL_SGAL_DECL Image_texture_template : public T_Texture {
 public:
   typedef Url_image::Path_list                          Path_list;
   

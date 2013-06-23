@@ -47,7 +47,7 @@ class Isec_action;
 class Container_proto;
 class Element;
 
-class SGAL_CLASSDEF Cylinder : public Geometry {
+class SGAL_SGAL_DECL Cylinder : public Geometry {
 public:
   enum {
     FIRST = Geometry::LAST - 1,

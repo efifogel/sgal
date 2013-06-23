@@ -23,7 +23,6 @@
 #define SGAL_INDEXED_LINE_SET_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geo_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -35,7 +34,7 @@ class Coord_array;
 class Normal_array;
 class Tex_coord_array;
 
-class SGAL_CLASSDEF Indexed_line_set : public Geo_set {
+class SGAL_SGAL_DECL Indexed_line_set : public Geo_set {
 public:
   enum {
     FIRST = Geo_set::LAST - 1,

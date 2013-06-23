@@ -14,17 +14,17 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "Record_action.h"
-#include "Action.h"
-#include "Shape.h"
+#include "SGAL/Record_action.h"
+#include "SGAL/Action.h"
+#include "SGAL/Shape.h"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
 Record_action::Record_action() : Isect_action() {}
@@ -34,22 +34,20 @@ Record_action::~Record_action() {}
 
 /*!
  */
-Action::Trav_directive Record_action::pre_visit(Node * node) 
+Action::Trav_directive Record_action::pre_visit(Node* node) 
 { 
   Shape * shape = dynamic_cast<Shape *>(node);
-  if (shape && !shape->is_background()) {
-    m_current_id = 1;
-  }
+  if (shape && !shape->is_background()) m_current_id = 1;
   return Action::TRAV_CONT; 
 }
 
 /*!
  */
-Action::Trav_directive Record_action::post_visit(Node * node)
+Action::Trav_directive Record_action::post_visit(Node* node)
 { 
   Shape * shape = dynamic_cast<Shape *>(node);
-  if (shape) {
-    m_current_id = 0;
-  }
+  if (shape) m_current_id = 0;
   return Action::TRAV_CONT; 
 }
+
+SGAL_END_NAMESPACE

@@ -20,7 +20,6 @@
 #define SGAL_EGO_VOXELS_FILLER_TEMPLATE_HPP
 
 #include "SGAL/config.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 #include "SEGO/Ego_voxels_vertex_list_graph.hpp"
 #include "SEGO/Ego_voxels_incidence_graph.hpp"

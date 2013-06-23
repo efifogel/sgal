@@ -35,7 +35,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Image_sphere_environment : public Sphere_environment {
+class SGAL_SGAL_DECL Image_sphere_environment : public Sphere_environment {
 public:
   typedef Image::Path_list                          Path_list;
   

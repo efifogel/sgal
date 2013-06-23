@@ -32,7 +32,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Collision : public Group {
+class SGAL_SGAL_DECL Collision : public Group {
 public:
   enum {
     FIRST = Group::LAST - 1,

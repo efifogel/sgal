@@ -43,7 +43,7 @@ class Element;
 class Container_proto;
 class Appearance;
 
-class SGAL_CLASSDEF Assembly_part : public Group {
+class SGAL_SGAL_DECL Assembly_part : public Group {
   typedef Spherical_gaussian_map_colored_geo        Sgm_geo;
   typedef Spherical_gaussian_map_colored            Sgm;
 

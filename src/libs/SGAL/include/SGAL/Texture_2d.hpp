@@ -37,7 +37,6 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Texture.hpp"
 #include "SGAL/Image.hpp"
 
@@ -45,12 +44,14 @@ SGAL_BEGIN_NAMESPACE
 
 class Context;
 class Appearance;
+#if 0
 class Text_texture;
+#endif
 class Element;
 class Container_proto;
 class Scene_graph;
 
-class SGAL_CLASSDEF Texture_2d : public Texture {
+class SGAL_SGAL_DECL Texture_2d : public Texture {
 public: 
   enum {
     FIRST = Texture::LAST - 1,
@@ -120,11 +121,13 @@ public:
 
   /*! Obtain the texture number of components. */
   virtual Uint get_component_count() const;
-  
+
+#if 0
   void set_text(Text_texture* text);
 
   Text_texture* get_text() const;
-
+#endif
+  
   /*! Prin texture information */
   void print_info();
 
@@ -132,9 +135,11 @@ protected:
   /*! The texture pixels. */
   Image* m_image;
 
+#if 0
   /*! */
   Text_texture* m_text;
-
+#endif
+  
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
@@ -170,12 +175,14 @@ inline Int Texture_2d::get_height() const { return m_image->get_height(); }
 
 /*! \brief obtains the texture pixel-data. */
 inline void* Texture_2d::get_pixels() const { return m_image->get_pixels(); }
-  
+
+#if 0
 /*! \brief */
 inline void Texture_2d::set_text(Text_texture* text) { m_text = text; }
 
 /*! \brief */
 inline Text_texture* Texture_2d::get_text() const { return m_text; }
+#endif
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Texture_2d::get_tag() const { return s_tag; }

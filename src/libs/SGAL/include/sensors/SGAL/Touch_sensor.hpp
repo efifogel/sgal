@@ -37,7 +37,6 @@
 #include <vector>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Drag_sensor.hpp"
 #include "SGAL/Node.hpp"
@@ -56,7 +55,7 @@ class Tick_event;
 class Formatter;
 class Draw_action;
 
-class SGAL_CLASSDEF Touch_sensor : public Agent, public Drag_sensor, public Node
+class SGAL_SGAL_DECL Touch_sensor : public Agent, public Drag_sensor, public Node
 {
 public:
   enum {

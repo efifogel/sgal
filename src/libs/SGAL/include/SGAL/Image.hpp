@@ -28,14 +28,13 @@
 #include <boost/filesystem/path.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Image_base.hpp"
 
 namespace fi = boost::filesystem;
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Image : public Image_base {
+class SGAL_SGAL_DECL Image : public Image_base {
 public:
   typedef std::list<fi::path>                   Path_list;
   typedef Path_list::iterator                   Path_iter;

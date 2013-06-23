@@ -33,7 +33,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Bit_mask.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Gfx.hpp"
@@ -50,7 +49,7 @@ class Formatter;
 class Halftone;
 
 /*! \brief A represenation of an appearance of a shape */
-class SGAL_CLASSDEF Appearance : public Container {
+class SGAL_SGAL_DECL Appearance : public Container {
 public: 
   enum {
     FIRST = Container::LAST - 1,

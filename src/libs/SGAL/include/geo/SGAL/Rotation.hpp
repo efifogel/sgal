@@ -30,13 +30,12 @@
 #include <sstream>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Rotation {
+class SGAL_SGAL_DECL Rotation {
 public:
   /*! Default Constructor */
   Rotation();

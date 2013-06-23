@@ -123,7 +123,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Bit_mask.hpp"
 #include "SGAL/Vector4ub.hpp"
@@ -162,7 +161,7 @@ struct Light_target {
   Matrix4f m_mat;    // Current matrix when light is bound
 };
 
-class SGAL_CLASSDEF Context {
+class SGAL_SGAL_DECL Context {
 private:
 #define SGAL_MAX_STACK 16
 #define SGAL_MAX_LIGHTS 8

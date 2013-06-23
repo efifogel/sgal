@@ -36,7 +36,6 @@
 #include <GL/gl.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Math_defs.hpp"
 
@@ -45,7 +44,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
-class SGAL_CLASSDEF Image_base : public Container {
+class SGAL_SGAL_DECL Image_base : public Container {
 public: 
   enum {
     FIRST = Container::LAST - 1,

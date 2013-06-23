@@ -35,14 +35,13 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Draw_action;
 class Container_proto;
 
-class SGAL_CLASSDEF Accumulation : public Container {
+class SGAL_SGAL_DECL Accumulation : public Container {
 public:
   typedef struct jitter { Float x, y; } Jitter;
 

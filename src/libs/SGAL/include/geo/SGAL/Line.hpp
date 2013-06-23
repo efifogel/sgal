@@ -27,12 +27,11 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Line {
+class SGAL_SGAL_DECL Line {
 public:
   /*! Constructor */
   Line(const Vector3f& p1, const Vector3f& p2);

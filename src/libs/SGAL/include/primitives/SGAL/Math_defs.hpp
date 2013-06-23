@@ -27,7 +27,6 @@
 #include <boost/math/special_functions/fpclassify.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -204,7 +203,7 @@ template <class T> inline const T square(const T x) {return (x * x);}
                                                            * MSB's */
 #define SET_MANTSEED(a) (((unsigned long)(a)) << SEED_POS)  /* Set mantissa
                                                              * 8 MSB's */
-class SGAL_CLASSDEF Math {
+class SGAL_SGAL_DECL Math {
 public:
   // Non-WinTel platforms don't need fastcall:
 #ifndef FASTCALL

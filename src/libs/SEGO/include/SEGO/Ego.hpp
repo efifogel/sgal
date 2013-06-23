@@ -60,7 +60,7 @@ class Mesh_set;
 class Touch_sensor;
 class Ego_voxels_filler_base;
 
-class SGAL_CLASSDEF Ego : public Transform {
+class SGAL_SGAL_DECL Ego : public Transform {
 public:
   typedef boost::shared_ptr<Appearance>           Shared_appearance;
   typedef boost::shared_ptr<Material>             Shared_material;

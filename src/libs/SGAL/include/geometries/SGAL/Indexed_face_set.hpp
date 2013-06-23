@@ -25,7 +25,6 @@
 #include <vector>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Indexed_face_set_geometry.hpp"
 #include "SGAL/Configuration.hpp"
@@ -65,7 +64,7 @@ class Scene_graph;
  *     Indexed_face_set::clear_indices() as a response to a change in the
  *     respective field.
  */
-class SGAL_CLASSDEF Indexed_face_set : public Mesh_set {
+class SGAL_SGAL_DECL Indexed_face_set : public Mesh_set {
 public:
   enum {
     FIRST = Mesh_set::LAST - 1,

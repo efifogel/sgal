@@ -30,7 +30,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geometry.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -41,7 +40,7 @@ class Container_proto;
 class Element;
 class Cull_context;
 
-class SGAL_CLASSDEF Text : public Geometry {
+class SGAL_SGAL_DECL Text : public Geometry {
 public:
   enum {
     FIRST = Geometry::LAST - 1,

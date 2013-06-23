@@ -27,7 +27,6 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Matrix4f.hpp"
 
@@ -38,7 +37,7 @@ class Sphere_bound;
 class Seg;
 class Line;
 
-class SGAL_CLASSDEF Plane {
+class SGAL_SGAL_DECL Plane {
 public:
   /*! Set the plane with the content of another plane. */
   void set(const Plane& plane);

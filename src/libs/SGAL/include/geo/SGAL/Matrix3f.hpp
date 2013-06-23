@@ -29,12 +29,11 @@
 #include <string.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Matrix3f {
+class SGAL_SGAL_DECL Matrix3f {
 private:
   float m_matrix[3][3];
 

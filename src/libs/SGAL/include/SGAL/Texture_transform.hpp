@@ -30,7 +30,6 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Container.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -38,7 +37,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
-class SGAL_CLASSDEF Texture_transform : public Container {
+class SGAL_SGAL_DECL Texture_transform : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

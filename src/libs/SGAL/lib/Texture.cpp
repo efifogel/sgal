@@ -32,7 +32,6 @@
 #include "SGAL/Image.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Execution_coordinator.hpp"
-#include "SGAL/Text_texture.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"

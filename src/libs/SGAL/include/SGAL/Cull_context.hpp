@@ -31,7 +31,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -43,7 +42,7 @@ class Shape;
 class Light;
 class Draw_action;
 
-class SGAL_CLASSDEF Cull_context {
+class SGAL_SGAL_DECL Cull_context {
 public:
   class Render_node {
   public:

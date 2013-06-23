@@ -31,7 +31,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -45,7 +44,7 @@ class Isect_action;
 class Container_proto;
 class Element;
 
-class SGAL_CLASSDEF Boolean_operation : public Node {
+class SGAL_SGAL_DECL Boolean_operation : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,

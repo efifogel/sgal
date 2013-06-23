@@ -32,7 +32,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

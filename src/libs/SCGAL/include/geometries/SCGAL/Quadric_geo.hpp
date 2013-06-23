@@ -40,7 +40,6 @@
 #include <NiX/Arithmetic_traits.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Vector3f.hpp"
 
@@ -53,7 +52,7 @@ class Scene_graph;
 class Element;
 class Cull_context;
 
-class SGAL_CLASSDEF Quadric_geo : public Geometry {
+class SGAL_SGAL_DECL Quadric_geo : public Geometry {
 public:
   typedef NiX::Arithmetic_traits AT;
 #if QdX_USE_AcX

@@ -32,7 +32,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE

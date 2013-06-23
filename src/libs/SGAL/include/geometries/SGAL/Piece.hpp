@@ -26,7 +26,6 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Array.hpp"
 #include "SGAL/Indexed_face_set.hpp"

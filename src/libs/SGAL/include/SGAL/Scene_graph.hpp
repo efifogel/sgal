@@ -56,7 +56,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Navigation_info_types.hpp"
 #include "SGAL/Bindable_stack.hpp"
 
@@ -96,7 +95,7 @@ class Route;
 class Isect_action;
 class Simulation;
 
-class SGAL_CLASSDEF Scene_graph {
+class SGAL_SGAL_DECL Scene_graph {
 public:
   typedef boost::shared_ptr<Container>            Shared_container;
   typedef boost::shared_ptr<Group>                Shared_group;

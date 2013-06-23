@@ -25,7 +25,6 @@
 #include <vector>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Agent.hpp"
 #include "SGAL/Action.hpp"
@@ -39,7 +38,7 @@ class Element;
 class Scene_graph;
 class Passive_motion_event;
 
-class SGAL_CLASSDEF Proximity_sensor : public Agent, public Node {
+class SGAL_SGAL_DECL Proximity_sensor : public Agent, public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,

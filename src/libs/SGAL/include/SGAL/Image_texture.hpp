@@ -33,7 +33,6 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Texture_2d.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Element.hpp"
@@ -45,7 +44,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Scene_graph;
 
-class SGAL_CLASSDEF Image_texture : public Texture_2d {
+class SGAL_SGAL_DECL Image_texture : public Texture_2d {
 public:
   typedef Image::Path_list                          Path_list;
   

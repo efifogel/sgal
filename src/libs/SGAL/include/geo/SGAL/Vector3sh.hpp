@@ -30,11 +30,10 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Vector3sh {
+class SGAL_SGAL_DECL Vector3sh {
 private:
   short m_vector[3];
 

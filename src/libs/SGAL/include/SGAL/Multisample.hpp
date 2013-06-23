@@ -33,14 +33,13 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Draw_action;
 class Container_proto;
 
-class SGAL_CLASSDEF Multisample : public Container {
+class SGAL_SGAL_DECL Multisample : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

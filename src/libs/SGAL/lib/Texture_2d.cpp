@@ -31,7 +31,9 @@
 #include "SGAL/Image.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Execution_coordinator.hpp"
+#if 0
 #include "SGAL/Text_texture.hpp"
+#endif
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_factory.hpp"
@@ -53,8 +55,10 @@ REGISTER_TO_FACTORY(Texture_2d, "Texture_2d");
 /*! Constructor */
 Texture_2d::Texture_2d(Boolean proto) :
   Texture(proto),
-  m_image(NULL),
+  m_image(NULL)
+#if 0
   m_text(0)
+#endif
 { set_target(TEXTURE_2D); }
 
 /*! Destructor */
@@ -63,7 +67,9 @@ Texture_2d::~Texture_2d() {}
 /*! \brief draws the texture. */
 void Texture_2d::draw(Context* context)
 {
+#if 0
   if (m_text) m_text->draw(context);
+#endif
   Texture::draw(context);
 }
 
@@ -73,7 +79,9 @@ void Texture_2d::clean()
   Texture::clean();
   if (m_image->is_dirty()) m_image->clean();
   load_color_map(m_image, s_targets[m_target]);
+#if 0
   if (m_text) m_text->clean();
+#endif
 }
 
 /* \brief determines whether texture image is empty. */

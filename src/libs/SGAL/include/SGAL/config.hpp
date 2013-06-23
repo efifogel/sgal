@@ -22,6 +22,8 @@
 #ifndef SGAL_CONFIG_HPP
 #define SGAL_CONFIG_HPP
 
+#include <boost/config.hpp>
+
 #include "SGAL/version.hpp"
 
 //----------------------------------------------------------------------//
@@ -121,7 +123,7 @@ using std::max;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Windows DLL suport
-#ifdef SGAL_HAS_DECLSPEC
+#ifdef BOOST_HAS_DECLSPEC
 #if defined(SGAL_ALL_DYN_LINK) || defined(SGAL_SGAL_DYN_LINK)
 // export if this is our own source, otherwise import:
 #ifdef SGAL_SGAL_SOURCE

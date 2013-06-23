@@ -39,7 +39,6 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Color_map.hpp"
 
@@ -48,7 +47,7 @@ SGAL_BEGIN_NAMESPACE
 class Context;
 class Node;
 
-class SGAL_CLASSDEF Isect_action : public Action {
+class SGAL_SGAL_DECL Isect_action : public Action {
 public:
   /*! Constructor */
   Isect_action();

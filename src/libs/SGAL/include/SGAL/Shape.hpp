@@ -39,7 +39,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Vector2f.hpp"
@@ -57,7 +56,7 @@ class Formatter;
 class Scene_graph;
 
 /*! \brief A representation of a shape node */
-class SGAL_CLASSDEF Shape : public Node {
+class SGAL_SGAL_DECL Shape : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,

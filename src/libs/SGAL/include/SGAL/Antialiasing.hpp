@@ -29,7 +29,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -38,7 +37,7 @@ class Draw_action;
 //! \todo class Execution_coordinator;
 //! \todo class Time_check;
 
-class SGAL_CLASSDEF Antialiasing {
+class SGAL_SGAL_DECL Antialiasing {
 public:
   /*! Constructor */
   Antialiasing();

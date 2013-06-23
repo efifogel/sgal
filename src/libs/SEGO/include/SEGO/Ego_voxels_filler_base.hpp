@@ -20,7 +20,6 @@
 #define SGAL_EGO_VOXELS_FILLER_BASE_HPP
 
 #include "SGAL/config.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Node.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -32,7 +31,7 @@ public:
   virtual void fill(Ego_voxels*) const = 0;
 };
 
-class SGAL_CLASSDEF Ego_voxels_filler_base : public Node {
+class SGAL_SGAL_DECL Ego_voxels_filler_base : public Node {
  public:
   
   enum {

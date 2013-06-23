@@ -44,7 +44,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
 #include "SCGAL/Exact_number_type.hpp"
@@ -63,7 +62,7 @@ class Quadric_geo;
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a quadric.
  */
-class SGAL_CLASSDEF Arrangement_on_quadric_geo :
+class SGAL_SGAL_DECL Arrangement_on_quadric_geo :
   public Arrangement_on_surface_geo
 {
 public:

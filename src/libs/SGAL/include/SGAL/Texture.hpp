@@ -41,7 +41,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Image;
 
-class SGAL_CLASSDEF Texture : public Container {
+class SGAL_SGAL_DECL Texture : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

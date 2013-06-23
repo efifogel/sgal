@@ -30,7 +30,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector2sh.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -39,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 class Window_handle;
 #endif
 
-class SGAL_CLASSDEF Drag_sensor {
+class SGAL_SGAL_DECL Drag_sensor {
 public:
   // Constructor
   Drag_sensor();

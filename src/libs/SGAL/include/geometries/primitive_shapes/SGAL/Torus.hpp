@@ -32,7 +32,6 @@
 #include <GL/glu.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Extrusion.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -42,7 +41,7 @@ class Isec_action;
 class Container_proto;
 class Element;
 
-class SGAL_CLASSDEF Torus : public Extrusion {
+class SGAL_SGAL_DECL Torus : public Extrusion {
 public:
   enum {
     FIRST = Extrusion::LAST - 1,

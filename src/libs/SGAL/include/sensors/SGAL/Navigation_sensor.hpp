@@ -34,7 +34,6 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Drag_sensor.hpp"
@@ -52,7 +51,7 @@ class Mouse_event;
 class Motion_event;
 class Scene_graph;
 
-class SGAL_CLASSDEF Navigation_sensor : public Agent, public Drag_sensor,
+class SGAL_SGAL_DECL Navigation_sensor : public Agent, public Drag_sensor,
                                         public Bindable_node {
 public:
   enum {

@@ -36,7 +36,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Array.hpp"
 #include "SGAL/Color_array.hpp"
@@ -54,7 +53,7 @@ class Element;
  * coordinates, normals, colors, and texture-coordinates of the vertices
  * of the geometry, and corresponding index arrays into the former resp.
  */
-class SGAL_CLASSDEF Geo_set : public Geometry {
+class SGAL_SGAL_DECL Geo_set : public Geometry {
 public:
   /*! Fields */
   enum {

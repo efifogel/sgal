@@ -31,7 +31,6 @@
 #define SGAL_BOX_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Vector3f.hpp"
 
@@ -41,7 +40,7 @@ class Draw_action;
 class Isect_action;
 class Container_proto;
 
-class SGAL_CLASSDEF Box : public Geometry {
+class SGAL_SGAL_DECL Box : public Geometry {
 public:
   /*! Fields */
   enum {

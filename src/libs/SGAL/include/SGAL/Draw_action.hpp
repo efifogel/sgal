@@ -30,7 +30,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Matrix4f.hpp"
 
@@ -38,7 +37,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Configuration;
 
-class SGAL_CLASSDEF Draw_action : public Isect_action {
+class SGAL_SGAL_DECL Draw_action : public Isect_action {
 public:
   /*! Constructor */
   Draw_action(Configuration* configuration = NULL); 

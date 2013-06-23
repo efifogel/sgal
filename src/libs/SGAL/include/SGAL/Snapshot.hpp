@@ -30,7 +30,6 @@
 #define SGAL_SNAPSHOT_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Image.hpp"
@@ -43,7 +42,7 @@ class Element;
 class Scene_graph;
 class ofstream;
 
-class SGAL_CLASSDEF Snapshot : public Node {
+class SGAL_SGAL_DECL Snapshot : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,

@@ -29,14 +29,13 @@
 #include <string.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Rotation;
 
-class SGAL_CLASSDEF Matrix4f {
+class SGAL_SGAL_DECL Matrix4f {
 private:
     float m_matrix[4][4];
 

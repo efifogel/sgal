@@ -30,13 +30,12 @@
 #include <sstream>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector2sh.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Vector2f {
+class SGAL_SGAL_DECL Vector2f {
 private:
   Float m_vector[2];
 

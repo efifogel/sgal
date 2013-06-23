@@ -61,7 +61,6 @@
 #include <vector>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Member_offset_type.hpp"
 #include "SGAL/Container_observer.hpp"
@@ -76,7 +75,7 @@ class Element;
 class Scene_graph;
 class Formatter;
 
-class SGAL_CLASSDEF Container : public Container_observer {
+class SGAL_SGAL_DECL Container : public Container_observer {
 private:
   int m_base;  
 

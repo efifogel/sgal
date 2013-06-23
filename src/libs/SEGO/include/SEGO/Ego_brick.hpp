@@ -33,7 +33,6 @@
 #include <vector>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector2f.hpp"
@@ -50,7 +49,7 @@ class Normal_array;
 class Tex_coord_array;
 class Field_info;
 
-class SGAL_CLASSDEF Ego_brick : public Indexed_face_set {
+class SGAL_SGAL_DECL Ego_brick : public Indexed_face_set {
 public:
   enum {
     FIRST = Indexed_face_set::LAST - 1,

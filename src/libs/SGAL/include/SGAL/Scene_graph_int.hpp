@@ -29,7 +29,6 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -51,7 +50,7 @@ class Container;
 const std::string g_navigation_root_name = "NAVIGATION_ROOT";
 const std::string g_root_name = "ROOT";
 
-class SGAL_CLASSDEF Scene_graph_int {
+class SGAL_SGAL_DECL Scene_graph_int {
 public:
   Scene_graph_int() { }
   virtual ~Scene_graph_int() { }

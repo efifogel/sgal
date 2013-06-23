@@ -48,7 +48,7 @@ class Element;
 class Container_proto;
 class Field_info;
 
-class SGAL_CLASSDEF Assembly : public Group {
+class SGAL_SGAL_DECL Assembly : public Group {
 public:
   enum {
     FIRST = Group::LAST - 1,

@@ -53,7 +53,7 @@ namespace SEGO_internal{
 
 } // SEGO_internal
 
-class SGAL_CLASSDEF Ego_voxelizer {
+class SGAL_SGAL_DECL Ego_voxelizer {
  public:
   
   typedef Polyhedron_geo::Polyhedron                    Polyhedron;

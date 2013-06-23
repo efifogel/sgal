@@ -43,7 +43,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Sphere_bound;
+class SGAL_SGAL_DECL Sphere_bound;
 typedef std::vector<Sphere_bound *>             Sphere_bound_vector;
 typedef std::vector<const Sphere_bound *>       Sphere_bound_vector_const;
 

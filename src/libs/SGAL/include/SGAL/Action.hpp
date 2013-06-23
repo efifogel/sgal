@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -28,14 +28,13 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Node;
 class Context;
 
-class SGAL_CLASSDEF Action {
+class SGAL_SGAL_DECL Action {
 public:
   typedef enum {TRAV_CONT = 0, TRAV_PRUNE = 1, TRAV_STOP = 2} Trav_directive;
 
@@ -46,17 +45,17 @@ public:
   virtual ~Action() {}
 
   /*! Set the context */
-  virtual void set_context(Context *context) { m_context = context; }
+  virtual void set_context(Context* context) { m_context = context; }
 
   /*! Obtain the context */
-  Context * get_context() { return m_context; }
+  Context* get_context() { return m_context; }
 
   /*! Apply node */
-  virtual Trav_directive apply(Node * node) = 0;
+  virtual Trav_directive apply(Node* node) = 0;
    
 protected:
   /*! The current context */
-  Context * m_context;
+  Context* m_context;
 };
 
 SGAL_END_NAMESPACE

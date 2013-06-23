@@ -56,7 +56,7 @@ class Field_info;
 /*! A geometry container that represents all lines that intersect tupples
  * of 4 segments, given a container of segments
  */
-class SGAL_CLASSDEF Lines_through_segments_geo : public Geometry {
+class SGAL_SGAL_DECL Lines_through_segments_geo : public Geometry {
 public:
   typedef boost::shared_ptr<Indexed_line_set>           Shared_indexed_line_set;
 

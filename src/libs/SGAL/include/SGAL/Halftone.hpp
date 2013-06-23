@@ -50,7 +50,7 @@ class Appearance;
 class Element;
 class Container_proto;
 
-class SGAL_CLASSDEF Halftone : public Container {
+class SGAL_SGAL_DECL Halftone : public Container {
 public: 
   enum {
     FIRST = Container::LAST - 1,

@@ -38,7 +38,6 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Texture.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -47,7 +46,7 @@ class Container_proto;
 class Scene_graph;
 class Image;
 
-class SGAL_CLASSDEF Cube_environment : public Texture {
+class SGAL_SGAL_DECL Cube_environment : public Texture {
 public:
   enum {
     FIRST = Texture::LAST - 1,

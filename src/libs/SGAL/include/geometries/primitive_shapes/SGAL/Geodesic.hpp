@@ -28,7 +28,6 @@
 #define SGAL_GEODESIC_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Geometry.hpp"
 
 #include "SGAL/Vector2f.hpp"
@@ -39,7 +38,7 @@ class Draw_action;
 class Container_proto;
 class Element;
 
-class SGAL_CLASSDEF Geodesic : public Geometry {
+class SGAL_SGAL_DECL Geodesic : public Geometry {
 public:
   enum {
     FIRST = Geometry::LAST - 1,

@@ -27,12 +27,11 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-class SGAL_CLASSDEF Vector2sh {
+class SGAL_SGAL_DECL Vector2sh {
 private:
   short m_vector[2];
 

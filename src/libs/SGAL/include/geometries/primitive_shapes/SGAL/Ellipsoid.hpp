@@ -32,7 +32,6 @@
 #include <GL/glu.h>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -42,7 +41,7 @@ class Isec_action;
 class Container_proto;
 class Element;
 
-class SGAL_CLASSDEF Ellipsoid : public Indexed_face_set {
+class SGAL_SGAL_DECL Ellipsoid : public Indexed_face_set {
 public:
   enum {
     FIRST = Indexed_face_set::LAST - 1,

@@ -27,7 +27,6 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
 
@@ -39,7 +38,7 @@ class Container_proto;
 class Font;
 class Context;
 
-class SGAL_CLASSDEF Font_style : public Node {
+class SGAL_SGAL_DECL Font_style : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,

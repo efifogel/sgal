@@ -27,14 +27,13 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Gfx.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Window_handle;
 
-class SGAL_CLASSDEF Open_gl_os_init {
+class SGAL_SGAL_DECL Open_gl_os_init {
 
 public:
   Open_gl_os_init() { };

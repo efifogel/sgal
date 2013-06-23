@@ -34,7 +34,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 
-class SGAL_CLASSDEF Shader : public Container {
+class SGAL_SGAL_DECL Shader : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

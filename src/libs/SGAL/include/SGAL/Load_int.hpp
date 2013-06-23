@@ -33,13 +33,12 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Item_primitive;
 
-class SGAL_CLASSDEF Load_int {
+class SGAL_SGAL_DECL Load_int {
 public:
   Load_int() {}
   virtual ~Load_int() {}

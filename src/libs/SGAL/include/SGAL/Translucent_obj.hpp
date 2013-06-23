@@ -29,7 +29,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Debug.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Matrix4f.hpp"
 

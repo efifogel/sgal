@@ -39,7 +39,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 
 #include "SCGAL/Geodesic_voronoi_on_sphere_geo.hpp"
 #include "SCGAL/Exact_plane_array.hpp"
@@ -59,7 +58,7 @@ class Sphere;
 
 /*! A geometry container that represents a power diagram os a sphere.
  */
-class SGAL_CLASSDEF Power_diagram_on_sphere_geo :
+class SGAL_SGAL_DECL Power_diagram_on_sphere_geo :
   public Geodesic_voronoi_on_sphere_geo
 {
 public:

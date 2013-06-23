@@ -33,7 +33,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Agent.hpp"
 
 #include "SCGAL/Arrangement_on_sphere_base_geo.hpp"
@@ -48,7 +47,7 @@ class Tick_event;
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere
  */
-class SGAL_CLASSDEF Arrangement_on_sphere_sim_geo :
+class SGAL_SGAL_DECL Arrangement_on_sphere_sim_geo :
   public Agent, 
   public Arrangement_on_sphere_base_geo
 {

@@ -30,14 +30,13 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Vector3sh.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Matrix4f;
 
-class SGAL_CLASSDEF Vector3f {
+class SGAL_SGAL_DECL Vector3f {
 private:
   Float m_vector[3];
 

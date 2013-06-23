@@ -41,7 +41,6 @@
 #include <queue>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Container.hpp"
 //! \todo #include "Time_check.h"
 
@@ -53,7 +52,7 @@ class Container_proto;
 typedef std::queue<int>         Int_queue;
 typedef std::queue<Ulong>       Ulong_queue;
 
-class SGAL_CLASSDEF Flow_sensor : public Container {
+class SGAL_SGAL_DECL Flow_sensor : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,

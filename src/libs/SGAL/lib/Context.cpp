@@ -21,7 +21,7 @@
 
 #include <iostream>
 
-#include "gl2ps.h"
+#include <gl2ps.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -45,7 +45,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-#define GL2PS
+// #define GL2PS
 
 Context* Context::s_current_context = NULL;
 
@@ -1060,7 +1060,9 @@ void Context::draw_point_size(Float point_size)
   if (m_current_state->m_point_size == point_size) return;
   m_current_state->m_point_size = point_size;
   glPointSize(point_size);
+#ifdef GL2PS
   gl2psPointSize(point_size);
+#endif
 }   
 
 /*! \brief */

@@ -42,7 +42,6 @@
 #include <list>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/SGAL_defs.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Sphere_bound.hpp"
@@ -55,7 +54,7 @@ class Isect_action;
 class Element;
 class Container_proto;
 
-class SGAL_CLASSDEF Node : public Container {
+class SGAL_SGAL_DECL Node : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
