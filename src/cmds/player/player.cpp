@@ -68,7 +68,7 @@ static std::string& error_message(std::string& str)
     ::LocalFree(lpMsgBuf);
   }
 #else
-  str.append(dlerror();
+  str.append(dlerror());
 #endif
   return str;
 }
