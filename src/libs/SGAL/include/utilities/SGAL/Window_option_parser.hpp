@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 4988 $
 //
 // Author(s)     : Efi Fogel
@@ -31,7 +31,7 @@ SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-class Window_option_parser {
+class SGAL_SGAL_DECL Window_option_parser {
 public:
   /*! Constructor */
   Window_option_parser();
@@ -40,72 +40,72 @@ public:
   virtual ~Window_option_parser();
 
   /*! Obtain the window-option description */
-  inline const po::options_description & get_window_opts() const
+  inline const po::options_description& get_window_opts() const
   { return m_window_opts; }
 
   /*! Obtain the requested window width
    * \param width the requested width
    * \return true if a particular width is requested, and false otherwise.
    */
-  Boolean get_window_width(const po::variables_map & variable_map,
-                           Uint & width) const;
+  Boolean get_window_width(const po::variables_map& variable_map,
+                           Uint& width) const;
 
   /*! Obtain the requested window height
    * \param height the requested height
    * \return true if a particular height is requested, and false otherwise.
    */
-  Boolean get_window_height(const po::variables_map & variable_map,
-                            Uint & height) const;
+  Boolean get_window_height(const po::variables_map& variable_map,
+                            Uint& height) const;
 
   /*! Obtain the requested x-position of the window origin
    * \param x the requested x-coordinate of the window lower-left corner
    * \return true if a particular position is requested, and false otherwise.
    */
-  Boolean get_window_x(const po::variables_map & variable_map,
-                       Uint & x) const;
+  Boolean get_window_x(const po::variables_map& variable_map,
+                       Uint& x) const;
 
   /*! Obtain the requested y-position of the window origin
    * \param y the requested y-coordinate of the window lower-left corner
    * \return true if a particular position is requested, and false otherwise.
    */
-  Boolean get_window_y(const po::variables_map & variable_map,
-                       Uint & y) const;
+  Boolean get_window_y(const po::variables_map& variable_map,
+                       Uint& y) const;
   
   /*! Obtain the requested position of the window origin
    * \param x the requested x-coordinate of the window lower-left corner
    * \param y the requested y-coordinate  of the window lower-left corner
    * \return true if a particular position is requested, and false otherwise.
    */
-  Boolean get_window_position(const po::variables_map & variable_map,
-                              Uint & x, Uint & y) const;
+  Boolean get_window_position(const po::variables_map& variable_map,
+                              Uint& x, Uint& y) const;
 
   /*! Obtain the boolean flag that indicates whether full screen is requested 
    * \param full_sreen indicates whether full screen is requested 
    * \return true if a prticular value is requested, and false otherwise.
    */
-  Boolean get_window_full_screen(const po::variables_map & variable_map,
-                                 Boolean & full_sreen) const;
+  Boolean get_window_full_screen(const po::variables_map& variable_map,
+                                 Boolean& full_sreen) const;
 
   /*! Parse the options */
   template <typename Window_manager>
-  void apply(const po::variables_map & variable_map,
-             Window_manager * window_manager)
+  void apply(const po::variables_map& variable_map,
+             Window_manager* window_manager)
   {
-    SGAL::Uint width;
+    Uint width;
     if (get_window_width(variable_map, width))
       window_manager->set_window_width(width);
 
-    SGAL::Uint height;
+    Uint height;
     if (get_window_height(variable_map, height))
       window_manager->set_window_height(height);
     
-    SGAL::Uint x;
+    Uint x;
     if (get_window_x(variable_map, x)) window_manager->set_window_x(x);
 
-    SGAL::Uint y;
+    Uint y;
     if (get_window_y(variable_map, y)) window_manager->set_window_y(y);
     
-    SGAL::Boolean full_screen;
+    Boolean full_screen;
     if (get_window_full_screen(variable_map, full_screen))
       window_manager->set_full_screen(full_screen);
   }
@@ -116,19 +116,19 @@ protected:
 
 private:
   /*! The window width */
-  SGAL::Uint m_win_width;
+  Uint m_win_width;
 
   /*! The window height */
-  SGAL::Uint m_win_height;
+  Uint m_win_height;
 
   /*! The window origin X position */
-  SGAL::Uint m_win_x;
+  Uint m_win_x;
 
   /*! The window origin Y position */
-  SGAL::Uint m_win_y;
+  Uint m_win_y;
 
   /*! Indicates to open the application in full screen */
-  SGAL::Boolean m_full_screen;
+  Boolean m_full_screen;
 };
 
 SGAL_END_NAMESPACE

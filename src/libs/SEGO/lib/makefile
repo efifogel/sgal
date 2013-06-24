@@ -120,9 +120,18 @@ LLDLIBS+= mpfr-vc$(VC_NUM)-mt.lib
 LLDLIBS+= gmp-vc$(VC_NUM)-mt.lib
 LLDLIBS+= glu32.lib opengl32.lib
 LLDLIBS+= $(LDSYSLIBS)
+
+LIBS =
+ifneq ($(USE_DYNAMIC_SGAL), 1)
+LIBS+= $(LIBDIR)/SGAL.lib
+endif
+ifneq ($(USE_DYNAMIC_SCGAL), 1)
+LIBS+= $(LIBDIR)/SCGAL.lib
 endif
 
-endif
+endif # DEF_SHARED
+
+endif # msvc
 
 ifeq ($(DE), gnu)
 LCPPDEFS+= -DGL_GLEXT_PROTOTYPES

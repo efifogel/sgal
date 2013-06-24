@@ -160,7 +160,6 @@ ifeq ($(DE), msvc)
 LCPPDEFS+=-DBOOST_ALL_DYN_LINK
 LCPPOPTS =-GR
 LCPPOPTS+= -vmg
-LCPPOPTS+= -W3
 ifeq ($(COMPILER_VER), 1400)
 LCPPOPTS+= -errorReport:prompt
 else
@@ -189,18 +188,18 @@ endif
 
 # 
 ifeq ($(USE_CGAL), 1)
-ifneq ($(USE_SHARED_SCGAL), 1)
+ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= SCGAL.lib
 endif
 endif
 
 ifeq ($(USE_EGO), 1)
-ifneq ($(USE_SHARED_SEGO), 1)
+ifneq ($(USE_DYNAMIC_SEGO), 1)
 LLDLIBS+= SEGO.lib
 endif
 endif
 
-ifneq ($(USE_SHARED_SGAL), 1)
+ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= SGAL.lib
 endif
 
@@ -246,18 +245,18 @@ else
 endif
 
 LIBS =
-ifneq ($(USE_SHARED_SGAL), 1)
-LIBS+= "$(LIBDIR)/SGAL.lib"
+ifneq ($(USE_DYNAMIC_SGAL), 1)
+LIBS+= $(LIBDIR)/SGAL.lib
 endif
 
 ifeq ($(USE_CGAL), 1)
-ifneq ($(USE_SHARED_SCGAL), 1)
-LIBS+= "$(LIBDIR)/SCGAL.lib"
+ifneq ($(USE_DYNAMIC_SCGAL), 1)
+LIBS+= $(LIBDIR)/SCGAL.lib
 endif
 endif
 
 ifeq ($(USE_EGO), 1)
-ifneq ($(USE_SHARED_SEGO), 1)
+ifneq ($(USE_DYNAMIC_SEGO), 1)
 LIBS+= $(LIBDIR)/SEGO.lib
 endif
 endif

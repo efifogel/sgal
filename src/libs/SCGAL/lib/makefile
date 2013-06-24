@@ -310,9 +310,15 @@ LLDLIBS+= mpfr-vc$(VC_NUM)-mt.lib
 LLDLIBS+= gmp-vc$(VC_NUM)-mt.lib
 LLDLIBS+= glu32.lib opengl32.lib
 LLDLIBS+= $(LDSYSLIBS)
+
+LIBS =
+ifneq ($(USE_DYNAMIC_SGAL), 1)
+LIBS+= $(LIBDIR)/SGAL.lib
 endif
 
-endif
+endif # DEF_SHARED
+
+endif # msvc
 
 LDIRT = parse.output
 

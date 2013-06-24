@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 6004 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Windows_window_item : public Native_window_item {
+class SGAL_SGAL_DECL Windows_window_item : public Native_window_item {
 private:
   bool m_bOwnWnd;
 
@@ -58,16 +58,19 @@ private:
   /*! Create the window
    * \param hInstance the module instance
    * \param window_class_name the window-class name
-   * \param hWnd if we don't want to create a new window, the handle of an existing window.
+   * \param hWnd if we don't want to create a new window, the handle of an
+   *        existing window.
    */
-  void create(HINSTANCE & hInstance, char * window_class_name, HWND hWnd = NULL);
+  void create(HINSTANCE& hInstance, char* window_class_name, HWND hWnd = NULL);
 
   /*! Create the window
    * \param hInstance the module instance
    * \param window_class_name the window-class name
-   * \param hWnd if we don't want to create a new window, the handle of an existing window.
+   * \param hWnd if we don't want to create a new window, the handle of an
+   *        existing window.
    */
-  void create_base(HINSTANCE & hInstance, char * window_class_name, HWND hWnd = NULL);
+  void create_base(HINSTANCE& hInstance, char* window_class_name,
+                   HWND hWnd = NULL);
 
   /*! Destroy the window */
   void destroy();
@@ -76,13 +79,11 @@ private:
    * \param hInstance
    * \param pfd
    */
-  Boolean init_multisample(HINSTANCE & hInstance);
+  Boolean init_multisample(HINSTANCE& hInstance);
 
 public:
   /*! Constructor */
-  Windows_window_item() :
-    m_arb_multisample_format(0)
-  {}
+  Windows_window_item() : m_arb_multisample_format(0) {}
 
   /*! Destructor */
   virtual ~Windows_window_item() {}
