@@ -30,6 +30,13 @@ SGAL_BEGIN_NAMESPACE
 
 std::set<Agent*> Draw_event::s_set;
 
+/*! Constructor */
+Draw_event::Draw_event(void) :
+  Event(),
+  m_window_item(NULL),
+  m_suppress_accumulation(false)
+{}
+
 /*! deligates the handling of the current event to the given agent. */
 void Draw_event::handle(Agent* agent) { agent->handle(this); }
 

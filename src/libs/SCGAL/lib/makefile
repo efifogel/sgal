@@ -22,8 +22,16 @@ include $(ROOT)/make/cgaldef.mak
 include $(MAKEDIR)/scgaldef.mak
 
 # Target, etc.:
-BASETARGET =SCGAL
+BASELIBNAME =SCGAL
 BASEINSTALLDIR =$(ROOT)
+
+TARGET0 = $(LIBNAME)
+INSTALLDIR0 = $(LIBINSTALLDIR)
+
+ifeq ($(DE), msvc)
+TARGET1 = $(BASELIBNAME).lib
+INSTALLDIR1 = $(LIBDIR)
+endif
 
 SCGAL_AOS_BASE = 0
 ifeq ($(USE_AOS), 1)
