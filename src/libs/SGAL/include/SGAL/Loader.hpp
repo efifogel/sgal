@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -28,13 +28,13 @@ SGAL_BEGIN_NAMESPACE
 
 class Scene_graph;
 
-class Loader {
+class SGAL_SGAL_DECL Loader {
 public:
   /*! Constructor */
   Loader() {}
   
   /*! Destructor */
-  int load(const char * filename, Scene_graph * sg);
+  int load(const char* filename, Scene_graph* sg);
 };
 
 SGAL_END_NAMESPACE

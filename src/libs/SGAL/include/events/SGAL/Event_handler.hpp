@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,6 +30,7 @@
 #include <queue>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,23 +41,30 @@ class Event;
 class SGAL_SGAL_DECL Event_handler {
 public:
   void process();
+
   static void issue(Event* event);
 
-  /*!
+  /*! Set the verbosity level.
+   * \param level the verbosity level.
    */
-  static void set_verbose_level(int verbose_level)
-  { s_verbose_level = verbose_level; }
+  static void set_verbose_level(Uint level);
 
-  /*!
+  /*! Determine whether the event queue is empty.
+   * \return true if the event queue is empty and false otherwise.
    */
-  static bool is_empty(void);
+  static Boolean is_empty(void);
   
 private:
-  static int s_verbose_level;
+  /*! The verbosity level. */
+  static Uint s_verbose_level;
 
   typedef std::queue<Event*> Event_queue;
   static Event_queue s_queue;
 };
+
+/*! \brief sets the verbosity level. */
+inline void Event_handler::set_verbose_level(Uint verbose_level)
+{ s_verbose_level = verbose_level; }
 
 SGAL_END_NAMESPACE
 

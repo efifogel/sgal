@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -41,7 +41,7 @@ class Window_item;
 
 /*!
  */
-class SGAL_SGAL_DECL Passive_motion_event: public Event {
+class SGAL_SGAL_DECL Passive_motion_event : public Event {
 private:
   /*! A set of agents registered to process this type of event */
   static std::set<Agent*> s_set;
@@ -56,50 +56,79 @@ private:
   Uint m_y;
 
 protected:
-  /*! Handle any agent */
+  /*! Deligate the handling of the current event to the given agent.
+   * \param agent the agent.
+   */
   virtual void handle(Agent* agent);
 
-  /*! Obtain set of agents registered to process this type of event */
-  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
+  /*! Obtain the set of agents registered to process this type of event.
+   * \return the set of agents.
+   */
+  virtual const std::set<Agent*>& get_set(void) const;
 
 public:
-  /*! Register this event for a particular agent */
-  static void doregister(Agent* agent) { s_set.insert(agent); }
+  /*! Register this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void doregister(Agent* agent);
 
-  /*! Unregisters this event for a particular agent */
-  static void unregister(Agent* agent) { s_set.erase(agent); }
+  /*! Unregister this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void unregister(Agent* agent);
 
   /*! Constructor */
-  Passive_motion_event(void) :
-    Event(),
-    m_window_item(NULL),
-    m_x(0), m_y(0)
-  {}
+  Passive_motion_event(void);
 
   /*! Destructor */
   virtual ~Passive_motion_event(void) {}
 
-  /*! Identify the event (for debugging purposes) */
+  /*! Export an identification message to standard output. */
   virtual void identify(void);
   
   /*! Set the window where the event took place */
-  void set_window_item(Window_item* item) { m_window_item = item; }
+  void set_window_item(Window_item* item);
 
   /*! Obtain the window where the event took place */
-  Window_item* get_window_item() const { return m_window_item; }
+  Window_item* get_window_item() const;
 
   /*! Set the x-coordinate of the cursor at the time of the event */
-  void set_x(Uint x) { m_x = x; }
+  void set_x(Uint x);
 
   /*! Obtain the x-coordinate of the cursor at the time of the event */
-  Uint get_x() const { return m_x; }
+  Uint get_x() const;
 
   /*! Set the y-coordinate of the cursor at the time of the event */
-  void set_y(Uint y) { m_y = y; }
+  void set_y(Uint y);
 
   /*! Obtain the x-coordinate of the cursor at the time of the event */
-  Uint get_y() const { return m_y; }
+  Uint get_y() const;
 };
+
+/*! \brief obtains the set of agents registered to process this type of event.
+ */
+inline const std::set<Agent*>& Passive_motion_event::get_set(void) const
+{ return s_set; }
+
+/*! \brief sets the window where the event took place */
+inline void Passive_motion_event::set_window_item(Window_item* item)
+{ m_window_item = item; }
+
+/*! \brief obtains the window where the event took place */
+inline Window_item* Passive_motion_event::get_window_item() const
+{ return m_window_item; }
+
+/*! \brief sets the x-coordinate of the cursor at the time of the event */
+inline void Passive_motion_event::set_x(Uint x) { m_x = x; }
+
+/*! \brief obtains the x-coordinate of the cursor at the time of the event */
+inline Uint Passive_motion_event::get_x() const { return m_x; }
+
+/*! \brief sets the y-coordinate of the cursor at the time of the event */
+inline void Passive_motion_event::set_y(Uint y) { m_y = y; }
+
+/*! \brief obtains the x-coordinate of the cursor at the time of the event */
+inline Uint Passive_motion_event::get_y() const { return m_y; }
 
 SGAL_END_NAMESPACE
 

@@ -29,7 +29,10 @@
 
 #include <boost/extension/extension.hpp>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
+
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Boolean_operation.hpp"
 #include "SCGAL/Polyhedron_geo.hpp"
 #include "SCGAL/Exact_coord_array.hpp"
@@ -85,7 +88,8 @@
 SGAL_BEGIN_NAMESPACE
 
 // extern "C" void BOOST_EXTENSION_EXPORT_DECL scgal_init()
-void scgal_init()
+// void scgal_init()
+SGAL_SCGAL_DECL void scgal_init()
 {
   Container_factory::get_instance()->doregister(Boolean_operation::prototype());
   Container_factory::get_instance()->doregister(Polyhedron_geo::prototype());

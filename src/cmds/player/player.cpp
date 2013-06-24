@@ -137,7 +137,11 @@ int main(int argc, char* argv[])
   
 #if (defined USE_EGO)
   try {
+#if (defined _MSC_VER)
+    std::string library_name = "SEGO.dll";
+#else
     std::string library_name = "libSEGO.so";
+#endif
     std::string function_name = "sego_init";
     load_shared_library(library_name, function_name);
   }

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -51,7 +51,7 @@ public:
   };
 
 private:
-  /*! A set of agents registered to process this type of event. */
+  /*! The set of agents registered to process this type of event. */
   static std::set<Agent*> s_set;
 
   /*! The window where the event took place. */
@@ -70,17 +70,25 @@ private:
   Boolean m_pressed;
   
 protected:
-  /*! Handle any agent. */
+  /*! Deligate the handling of the current event to the given agent.
+   * \param agent the agent.
+   */
   virtual void handle(Agent* agent);
   
-  /*! Obtain set of agents registered to process this type of event. */
+  /*! Obtain the set of agents registered to process this type of event.
+   * \return the set of agents.
+   */
   virtual const std::set<Agent*>& get_set(void) const;
 
 public:
-  /*! Register this event for a particular agent. */
+  /*! Register this event for a particular agent.
+   * \param agent the agent.
+   */
   static void doregister(Agent* agent);
 
-  /*! Unregister this event for a particular agent. */
+  /*! Unregister this event for a particular agent.
+   * \param agent the agent.
+   */
   static void unregister(Agent* agent);
 
   /*! Constructor */
@@ -89,7 +97,7 @@ public:
   /*! Destructor */
   virtual ~Keyboard_event(void);
 
-  /*! Identify the event (for debugging purposes). */
+  /*! Export an identification message to standard output. */
   virtual void identify(void);
 
   /*! Set the window where the event took place. */
@@ -123,25 +131,12 @@ public:
   Boolean get_pressed() const;
 };
 
-/*! \brief constructor */
-inline Keyboard_event::Keyboard_event(void) :
-  Event(),
-  m_window_item(NULL),
-  m_key('\0'), m_x(0), m_y(0), m_pressed(false)
-{}
-
 /*! \brief destructor */
 inline Keyboard_event::~Keyboard_event(void) {}
 
 /*! \brief obtains set of agents registered to process this type of event. */
 inline const std::set<Agent*>& Keyboard_event::get_set(void) const
 { return s_set; }
-
-/*! \brief registers this event for a particular agent. */
-inline void Keyboard_event::doregister(Agent* agent) { s_set.insert(agent); }
-
-/*! \brief unregisters this event for a particular agent. */
-inline void Keyboard_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 /*! \brief sets the window where the event took place. */
 inline void Keyboard_event::set_window_item(Window_item* item)

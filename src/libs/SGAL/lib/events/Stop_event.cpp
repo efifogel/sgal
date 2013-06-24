@@ -14,24 +14,32 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1309 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Stop_event.hpp"
 #include "SGAL/Agent.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
-std::set<Agent *> Stop_event::s_set;
+std::set<Agent*> Stop_event::s_set;
 
-/*!
- */
-void Stop_event::handle(Agent * agent) { agent->handle(this); }
+/*! \brief deligates the handling of the current event to the given agent. */
+void Stop_event::handle(Agent* agent) { agent->handle(this); }
 
-/*!
- */
+/*! \brief exports an identification message to standard output. */
 void Stop_event::identify(void) { std::cout << "Stop" << std::endl; }
+
+/*! \brief registers this event for a particular agent. */
+void Stop_event::doregister(Agent* agent) { s_set.insert(agent); }
+
+/*! \brief unregisters this event for a particular agent. */
+void Stop_event::unregister(Agent* agent) { s_set.erase(agent); }
+
+SGAL_END_NAMESPACE

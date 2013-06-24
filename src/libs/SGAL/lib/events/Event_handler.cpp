@@ -26,7 +26,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-int Event_handler::s_verbose_level = 0;
+Uint Event_handler::s_verbose_level = 0;
 Event_handler::Event_queue Event_handler::s_queue;
 
 /*! \brief */

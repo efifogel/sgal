@@ -21,19 +21,39 @@
 
 #include <iostream>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Reshape_event.hpp"
 #include "SGAL/Agent.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-std::set<Agent *> Reshape_event::s_set;
+std::set<Agent*> Reshape_event::s_set;
 
-/*! Call the appropriate agent to handle the current specific event.
- */
-void Reshape_event::handle(Agent * agent) { agent->handle(this); }
+/*! Constructor */
+Reshape_event::Reshape_event(void) :
+  Event(),
+  m_window_item(NULL),
+  m_width(0), m_height(0)
+{}
 
-/*!
- */
-void Reshape_event::identify(void) { std::cout << "Event: Reshape" << std::endl; }
+/*! \brief deligates the handling of the current event to the given agent. */
+void Reshape_event::handle(Agent* agent) { agent->handle(this); }
+
+/*! \brief exports an identification message to standard output. */
+void Reshape_event::identify(void)
+{ std::cout << "Event: Reshape" << std::endl; }
+
+/*! \brief sets the window item */
+void Reshape_event::set_window_item(Window_item* item) { m_window_item = item; }
+
+/*! \brief obtains the window where the event took place */
+Window_item* Reshape_event::get_window_item() const { return m_window_item; }
+  
+/*! \brief registersw this event for a particular agent. */
+void Reshape_event::doregister(Agent* agent) { s_set.insert(agent); }
+
+/*! \brief unregisters this event for a particular agent */
+void Reshape_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

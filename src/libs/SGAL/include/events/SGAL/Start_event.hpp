@@ -37,25 +37,44 @@ class Agent;
 
 /*!
  */
-class SGAL_SGAL_DECL Start_event: public Event {
+class SGAL_SGAL_DECL Start_event : public Event {
 private:
-  /*! A set of agents registered to process this type of event */
+  /*! A set of agents registered to process this type of event. */
   static std::set<Agent*> s_set;
 
+  /*! Obtain the set of agents registered to process this type of event.
+   * \return the set of agents.
+   */
+  virtual const std::set<Agent*>& get_set(void) const;
+
 protected:
+  /*! Deligate the handling of the current event to the given agent.
+   * \param agent the agent.
+   */
   virtual void handle(Agent* agent);
   
 public:
-  static void doregister(Agent* agent) { s_set.insert(agent); }
-  static void unregister(Agent* agent) { s_set.erase(agent); }
-  virtual const std::set<Agent*> & get_set(void) const { return s_set; }
-  
+  /*! Register this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void doregister(Agent* agent);
+
+  /*! Unregister this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void unregister(Agent* agent);
+
+  /*! Destructor */
   virtual ~Start_event(void) {}
 
-  /*!
-   */
+  /*! Export an identification message to standard output. */
   virtual void identify(void);
 };
+
+/*! \brief obtains the set of agents registered to process this type of event.
+ */
+inline const std::set<Agent*>& Start_event::get_set(void) const
+{ return s_set; }
 
 SGAL_END_NAMESPACE
 

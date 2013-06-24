@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5006 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -26,12 +26,18 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::set<Agent *> Redraw_event::s_set;
+std::set<Agent*> Redraw_event::s_set;
 
-/*! Generic handling function */
-void Redraw_event::handle(Agent * agent) { agent->handle(this); }
+/*! \brief deligates the handling of the current event to the given agent. */
+void Redraw_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! Print the identity of this event */
+/*! \brief exports an identification message to standard output. */
 void Redraw_event::identify(void) { std::cout << "Redraw" << std::endl; }
+
+/*! \brief registers this event for a particular agent. */
+void Redraw_event::doregister(Agent* agent) { s_set.insert(agent); }
+
+/*! \brief unregisters this event for a particular agent. */
+void Redraw_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

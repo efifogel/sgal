@@ -14,25 +14,37 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1309 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include<iostream>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Agent.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
-std::set<Agent *> Tick_event::s_set;
-unsigned int Tick_event::s_num_ticks = 0;
+std::set<Agent*> Tick_event::s_set;
+Uint Tick_event::s_num_ticks = 0;
 
-/*! Call the appropriate agent to handle the current specific event.
- */
-void Tick_event::handle(Agent * agent) { agent->handle(this); }
+/*! Constructor */
+Tick_event::Tick_event(void) : Event(), m_est_tick_duration(0), m_sim_time(0)
+{ s_num_ticks++; }
 
-/*!
- */
+/*! \brief deligates the handling of the current event to the given agent. */
+void Tick_event::handle(Agent* agent) { agent->handle(this); }
+
+/*! \brief exports an identification message to standard output. */
 void Tick_event::identify(void) { std::cout << "Event: Tick" << std::endl; }
+
+/*! \brief registers the event for a particular agent. */
+void Tick_event::doregister(Agent* agent) { s_set.insert(agent); }
+
+/*! \brief unregisters the event for a particular agent. */
+void Tick_event::unregister(Agent* agent) { s_set.erase(agent); }
+
+SGAL_END_NAMESPACE

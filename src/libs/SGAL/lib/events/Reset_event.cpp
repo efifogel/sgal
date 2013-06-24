@@ -14,24 +14,32 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1309 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Reset_event.hpp"
 #include "SGAL/Agent.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-std::set<Agent *> Reset_event::s_set;
+std::set<Agent*> Reset_event::s_set;
 
-/*! Generic handling function */
-void Reset_event::handle(Agent * agent) { agent->handle(this); }
+/*! \brief deligates the handling of the current event to the given agent. */
+void Reset_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! Print the identity of this event */
+/*! \brief exports an identification message to standard output. */
 void Reset_event::identify(void) { std::cout << "Reset" << std::endl; }
+
+/*! \brief registers this event for a particular agent. */
+void Reset_event::doregister(Agent* agent) { s_set.insert(agent); }
+
+/*! \brief unregisters this event for a particular agent. */
+void Reset_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

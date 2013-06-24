@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5154 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -39,7 +39,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Scene;
 
-class Windows_window_manager :
+class SGAL_SGAL_DECL Windows_window_manager :
   public Native_window_manager<Windows_window_item>
 {
 private:

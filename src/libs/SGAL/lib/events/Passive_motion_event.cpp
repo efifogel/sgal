@@ -14,29 +14,42 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1309 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
+#include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Passive_motion_event.hpp"
 #include "SGAL/Agent.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-std::set<Agent *> Passive_motion_event::s_set;
+std::set<Agent*> Passive_motion_event::s_set;
 
-/*! Call the appropriate agent to handle the current specific event.
- */
-void Passive_motion_event::handle(Agent * agent) { agent->handle(this); }
+/*! Constructor */
+Passive_motion_event::Passive_motion_event(void) :
+  Event(),
+  m_window_item(NULL),
+  m_x(0), m_y(0)
+{}
 
-/*!
- */
+/*! \brief deligates the handling of the current event to the given agent. */
+void Passive_motion_event::handle(Agent* agent) { agent->handle(this); }
+
+/*! \brief exports an identification message to standard output. */
 void Passive_motion_event::identify(void)
-{
-  std::cout << "Event: Passive_motion" << std::endl;
-}
+{ std::cout << "Event: Passive_motion" << std::endl; }
+
+/*! \brief registers this event for a particular agent. */
+void Passive_motion_event::doregister(Agent* agent)
+{ s_set.insert(agent); }
+
+/*! \brief unregisters this event for a particular agent. */
+void Passive_motion_event::unregister(Agent* agent)
+{ s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

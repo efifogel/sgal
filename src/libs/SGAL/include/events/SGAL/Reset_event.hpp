@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,26 +37,45 @@ class Agent;
 
 /*!
  */
-class SGAL_SGAL_DECL Reset_event: public Event {
+class SGAL_SGAL_DECL Reset_event : public Event {
 private:
   /*! A set of agents registered to process this type of event */
   static std::set<Agent*> s_set;
 
 protected:
+  /*! Deligate the handling of the current event to the given agent.
+   * \param agent the agent.
+   */
   virtual void handle(Agent* agent);
   
-public:
-  static void doregister(Agent* agent) { s_set.insert(agent); }
-  static void unregister(Agent* agent) { s_set.erase(agent); }
-  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
+  /*! Obtain the set of agents registered to process this type of event.
+   * \return the set of agents.
+   */
+  virtual const std::set<Agent*>& get_set(void) const;
   
+public:
+  /*! Register this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void doregister(Agent* agent);
+
+  /*! Unregister this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void unregister(Agent* agent);
+
+  /*! Destructor */
   virtual ~Reset_event(void) {}
 
-  /*!
-   */
+  /*! Export an identification message to standard output. */
   virtual void identify(void);
 };
 
+/*! \brief obtains the set of agents registered to process this type of event.
+ */
+inline const std::set<Agent*>& Reset_event::get_set(void) const
+{ return s_set; }
+  
 SGAL_END_NAMESPACE
 
 #endif

@@ -57,7 +57,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Lines_through_segments_geo::s_tag = "LinesThroughSegments";
+const std::string Lines_through_segments_geo::s_tag = "LinesThroughSegments";
 Container_proto* Lines_through_segments_geo::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Lines_through_segments_geo, "Lines_through_segments_geo");

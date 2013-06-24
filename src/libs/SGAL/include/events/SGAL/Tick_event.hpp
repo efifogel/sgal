@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,6 +30,7 @@
 #include <set>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Event.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -40,52 +41,92 @@ class Agent;
  */
 class SGAL_SGAL_DECL Tick_event: public Event {
 private:
-  /*! A set of agents registered to process this type of event */
+  /*! A set of agents registered to process this type of event. */
   static std::set<Agent*> s_set;
-  static unsigned int s_num_ticks;
+
+  /*! */
+  static Uint s_num_ticks;
   
+  /*! */
   clock_t m_est_tick_duration;
+
+  /*! */
   clock_t m_sim_time;
 
 protected:
+  /*! Deligate the handling of the current event to the given agent.
+   * \param agent the agent.
+   */
   virtual void handle(Agent* agent);
   
-public:
-  static void doregister(Agent* agent) { s_set.insert(agent); }
-  static void unregister(Agent* agent) { s_set.erase(agent); }
-  virtual const std::set<Agent*>& get_set(void) const { return s_set; }
+  /*! Obtain the set of agents registered to process this type of event.
+   * \return the set of agents.
+   */
+  virtual const std::set<Agent*>& get_set(void) const;
 
-  Tick_event(void) : Event(), m_est_tick_duration(0), m_sim_time(0)
-  { s_num_ticks++; }
+public:
+  /*! Register this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void doregister(Agent* agent);
+  
+  /*! Unregister this event for a particular agent.
+   * \param agent the agent.
+   */
+  static void unregister(Agent* agent);
+  
+  /*! Constructor */
+  Tick_event(void);
+
+  /*! Destructor */
   virtual ~Tick_event(void) {}
   
+  /*! Export an identification message to standard output. */
   virtual void identify(void);
 
   /*!
    */
-  void set_est_tick_duration(clock_t est_tick_duration)
-  { m_est_tick_duration = est_tick_duration; }
+  void set_est_tick_duration(clock_t est_tick_duration);
 
   /*!
    */
-  clock_t get_est_tick_duration() const { return m_est_tick_duration; }
+  clock_t get_est_tick_duration() const;
 
   /*!
    */
-  void set_sim_time(clock_t sim_time) { m_sim_time = sim_time; }
+  void set_sim_time(clock_t sim_time);
 
   /*!
    */
-  clock_t get_sim_time(void) const { return m_sim_time; }
+  clock_t get_sim_time(void) const;
 
   /*!
    */
   unsigned int get_num_ticks() const;
 };
 
-/*!
+/*! \brief */
+inline Uint Tick_event::get_num_ticks() const { return s_num_ticks; }
+
+/*! \brief obtains the set of agents registered to process this type of event.
  */
-inline unsigned int Tick_event::get_num_ticks() const { return s_num_ticks; }
+inline const std::set<Agent*>& Tick_event::get_set(void) const
+{ return s_set; }
+
+/*! \brief */
+inline void Tick_event::set_est_tick_duration(clock_t est_tick_duration)
+{ m_est_tick_duration = est_tick_duration; }
+
+/*! \brief */
+inline clock_t Tick_event::get_est_tick_duration() const
+{ return m_est_tick_duration; }
+
+/*! \brief */
+inline void Tick_event::set_sim_time(clock_t sim_time)
+{ m_sim_time = sim_time; }
+
+/*! \brief */
+inline clock_t Tick_event::get_sim_time(void) const { return m_sim_time; }
 
 SGAL_END_NAMESPACE
 
