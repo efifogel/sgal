@@ -34,7 +34,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Formatter;
 
-class Piece : public Indexed_face_set {
+class SGAL_SGAL_DECL Piece : public Indexed_face_set {
 public:
   enum {
     FIRST = Indexed_face_set::LAST - 1,
