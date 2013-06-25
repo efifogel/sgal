@@ -300,6 +300,7 @@ void Knot_scene::create_scene()
 
   for (n = 0; n < NUMBER_OF_COLORS; ++n) {
     Shared_transform transform(new SGAL::Transform);
+    transform->add_to_scene(m_scene_graph);
     m_transforms[n] = transform;
     transform->
       set_translation(static_cast<float>(puzzle.m_pieces[n]->m_position[0]),
@@ -370,6 +371,7 @@ void Knot_scene::create_scene()
 #if 0
     // Add the volume to the scene graph:
     SGAL::Transform* transform = new SGAL::Transform;
+    transform->add_to_scene(m_scene_graph);
     m_volume_trans = transform;
     transform->set_translation(10,0,0);
     m_navigation->add_child(transform);
@@ -943,7 +945,7 @@ void Knot_scene::handle(SGAL::Keyboard_event* keyboard_event)
 {
   if (keyboard_event->get_pressed()) return;
   SGAL::Uint key = keyboard_event->get_key();
-  if (key == 0x3b) m_window_manager->destroy_window(m_window_item); // escape
+  if (key == 0x1b) m_window_manager->destroy_window(m_window_item); // escape
 }
 
 /*! \brief handles tick events. */
