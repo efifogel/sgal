@@ -2,10 +2,10 @@ BASEDIR =.
 MULTITHREAD =1
 USE_SHARED =1
 USE_SHARED_SGAL =1
-USE_SHARED_SCGAL =1
-USE_SHARED_SEGO =1
 USE_DYNAMIC_SGAL =0
+USE_SHARED_SCGAL =1
 USE_DYNAMIC_SCGAL =0
+USE_SHARED_SEGO =1
 USE_DYNAMIC_SEGO =1
 
 ifeq ($(USE_CGAL), 1)
@@ -157,27 +157,20 @@ LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
 endif
 
 ifeq ($(DE), msvc)
-LCPPDEFS+=-DBOOST_ALL_DYN_LINK
-LCPPOPTS =-GR
+LCPPDEFS+= -DBOOST_ALL_DYN_LINK
+LCPPOPTS+= -GR
 LCPPOPTS+= -vmg
-ifeq ($(COMPILER_VER), 1400)
 LCPPOPTS+= -errorReport:prompt
-else
-ifeq ($(COMPILER_VER), 1500)
-LCPPOPTS+= -errorReport:prompt
-else
-ifeq ($(COMPILER_VER), 1600)
-LCPPOPTS+= -errorReport:prompt
-endif
-endif
-endif
 
-# Add BOOST, GMP, MFFR, and Magick lib directories:
-ifdef MAGICK_LIB_DIR
-LLDOPTS+= -libpath:"$(MAGICK_LIB_DIR)"
-endif
+# Add BOOST, GL2PS, GMP, MFFR, and Magick lib directories:
 ifdef BOOST_LIB_DIR
 LLDOPTS+= -libpath:"$(BOOST_LIB_DIR)"
+endif
+ifdef GL2PS_LIB_DIR
+LLDOPTS+= -libpath:"$(GL2PS_LIB_DIR)"
+endif
+ifdef MAGICK_LIB_DIR
+LLDOPTS+= -libpath:"$(MAGICK_LIB_DIR)"
 endif
 ifdef GMP_LIB_DIR
 LLDOPTS+= -libpath:"$(GMP_LIB_DIR)"
@@ -186,16 +179,16 @@ ifdef MPFR_LIB_DIR
 LLDOPTS+= -libpath:"$(MPFR_LIB_DIR)"
 endif
 
-# 
-ifeq ($(USE_CGAL), 1)
-ifneq ($(USE_DYNAMIC_SCGAL), 1)
-LLDLIBS+= SCGAL.lib
-endif
-endif
-
+LLDLIBS =
 ifeq ($(USE_EGO), 1)
 ifneq ($(USE_DYNAMIC_SEGO), 1)
 LLDLIBS+= SEGO.lib
+endif
+endif
+
+ifeq ($(USE_CGAL), 1)
+ifneq ($(USE_DYNAMIC_SCGAL), 1)
+LLDLIBS+= SCGAL.lib
 endif
 endif
 
@@ -223,26 +216,9 @@ ifeq ($(USE_CGAL), 1)
 LLDLIBS+= mpfr-vc$(VC_NUM)-mt.lib
 LLDLIBS+= gmp-vc$(VC_NUM)-mt.lib
 endif
+# LLDLIBS+= gl2ps.lib
 LLDLIBS+= glu32.lib opengl32.lib
 LLDLIBS+= $(LDSYSLIBS)
-ifeq ($(COMPILER_VER), 1200)
-ifeq ($(DEBUG), 1)
-LLDLIBS+= stlport_vc6_stldebug_static.lib
-else
-LLDLIBS+= stlport_vc6_static.lib
-endif
-endif
-ifeq ($(DEBUG), 1)
-ifeq ($(COMPILER_VER), 1200)
-LLDOPTS+= -nodefaultlib:libcd
-LLDOPTS+= -nodefaultlib:libcmtd
-endif
-ifeq ($(COMPILER_VER), 1310)
-LLDOPTS+= -nodefaultlib:libc
-LLDOPTS+= -nodefaultlib:msvcrt
-endif
-else
-endif
 
 LIBS =
 ifneq ($(USE_DYNAMIC_SGAL), 1)
@@ -260,7 +236,7 @@ ifneq ($(USE_DYNAMIC_SEGO), 1)
 LIBS+= $(LIBDIR)/SEGO.lib
 endif
 endif
-endif
+endif # msvc
 
 ifeq ($(DE), gnu)
 LCPPOPTS+= -Wall
@@ -268,16 +244,16 @@ LCPPOPTS+= -frounding-math
 # LCPPOPTS+= -pedantic
 LLDOPTS+= $(CGALLDOPTS)
 LLDOPTS+= -rdynamic -ldl
-LLDLIBS =
 
-ifneq ($(USE_DYNAMIC_SCGAL), 1)
+LLDLIBS =
 ifeq ($(USE_CGAL), 1)
+ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= -lSCGAL
 endif
 endif
 
-ifneq ($(USE_DYNAMIC_SEGO), 1)
 ifeq ($(USE_EGO), 1)
+ifneq ($(USE_DYNAMIC_SEGO), 1)
 LLDLIBS+= -lSEGO
 endif
 endif
