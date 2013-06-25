@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Gl_wrapper {
+class SGAL_SGAL_DECL Gl_wrapper {
 private:
   typedef std::map<GLenum, const char*> Name_map;
   typedef Name_map::const_iterator      Name_const_iter;
