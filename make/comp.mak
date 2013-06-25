@@ -100,15 +100,15 @@ ifneq ($(NOMAKEDEPEND), 1)
 
 %.d : %.C %.o
 	@echo Generating dependency for $<
-	$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
+	$(run-makedepend-cpp)
 
 %.d : %.c %.o
 	@echo Generating dependency for $<
-	$(MAKEDEPENDF) $(MAKEDEPEND_CINCS) $(CDEFS) $< $(output_operatior) $@
+	$(run-makedepend-c)
 
 %.d : %.asm %.o
 	@echo Generating dependency for $<
-	$(MAKEDEPENDF) $(MAKEDEPEND_ASMINCS) $(ASMDEFS) $< $(output_operatior) $@
+	$(run-makedepend-a)
 
 ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPENDS)

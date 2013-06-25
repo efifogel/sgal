@@ -144,3 +144,11 @@ endif
 define run-makedepend-cpp
 $(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
 endef
+
+define run-makedepend-c
+$(MAKEDEPENDF) $(MAKEDEPEND_CINCS) $(CDEFS) $< $(output_operatior) $@
+endef
+
+define run-makedepend-a
+$(MAKEDEPENDF) $(MAKEDEPEND_ASMINCS) $(ASMDEFS) $< $(output_operatior) $@
+endef

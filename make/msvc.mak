@@ -406,6 +406,30 @@ sed -e '1 c $(basename $@).o: $< \\' \
 > $@
 endef
 
+define run-makedepend-c
+$(MAKEDEPENDF) $(MAKEDEPEND_CINCS) $(CDEFS) $(COPTS) $< | \
+sed -e '1 c $(basename $@).o: $< \\' \
+-e 's/Note: including file: *//' \
+-e 's/\\/\//g' \
+-e '/Program Files\|$(BOOST_INC_DIR_REG)\|$(CGAL_INC_DIR_REG)\|$(GMP_INC_DIR_REG)\|$(MAGICK_INC_DIR_REG)/I d' \
+-e '/with/,$$ d' \
+-e 's/\([A-Za-z]\):/\/cygdrive\/\1/g' \
+-e '$$! s/$$/ \\/g' \
+> $@
+endef
+
+define run-makedepend-a
+$(MAKEDEPENDF) $(MAKEDEPEND_ASMINCS) $(ASMDEFS) $(ASMOPTS) $< | \
+sed -e '1 c $(basename $@).o: $< \\' \
+-e 's/Note: including file: *//' \
+-e 's/\\/\//g' \
+-e '/Program Files\|$(BOOST_INC_DIR_REG)\|$(CGAL_INC_DIR_REG)\|$(GMP_INC_DIR_REG)\|$(MAGICK_INC_DIR_REG)/I d' \
+-e '/with/,$$ d' \
+-e 's/\([A-Za-z]\):/\/cygdrive\/\1/g' \
+-e '$$! s/$$/ \\/g' \
+> $@
+endef
+
 # TBD: should be one of the following:
 #
 # Key Feature
