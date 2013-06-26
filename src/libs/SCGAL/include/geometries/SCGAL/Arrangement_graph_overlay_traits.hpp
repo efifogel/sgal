@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_GRAPH_OVERLAY_TRAITS_HPP
-#define SGAL_ARRANGEMENT_GRAPH_OVERLAY_TRAITS_HPP
+#ifndef SCGAL_ARRANGEMENT_GRAPH_OVERLAY_TRAITS_HPP
+#define SCGAL_ARRANGEMENT_GRAPH_OVERLAY_TRAITS_HPP
 
 /*! \file
  * An arrangement overlay traits class template
@@ -73,8 +73,8 @@ public:
   void create_face(Face_graph_const_handle f1, Face_mark_const_handle f2,
                    Face_graph_handle f)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = f1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = f1->graph();
     *graph = *graph1;
     if (f2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
     f->set_graph(graph);
@@ -85,8 +85,8 @@ public:
                      Halfedge_mark_const_handle h2,
                      Vertex_graph_handle v)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = h1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = h1->graph();
     *graph = *graph1;
     if (h2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
     v->set_graph(graph);
@@ -96,8 +96,8 @@ public:
   void create_vertex(Vertex_graph_const_handle v1, Vertex_mark_const_handle v2,
                      Vertex_graph_handle v)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = v1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = v1->graph();
     *graph = *graph1;
     if (v2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
     v->set_graph(graph);
@@ -108,8 +108,8 @@ public:
                      Halfedge_mark_const_handle h2,
                      Vertex_graph_handle v)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = v1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = v1->graph();
     *graph = *graph1;
     if (h2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
     v->set_graph(graph);
@@ -120,8 +120,8 @@ public:
                      Vertex_mark_const_handle v2,
                      Vertex_graph_handle v)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = h1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = h1->graph();
     *graph = *graph1;
     if (v2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
     v->set_graph(graph);
@@ -131,8 +131,8 @@ public:
   void create_vertex(Face_graph_const_handle f1, Vertex_mark_const_handle v2,
                      Vertex_graph_handle v)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = f1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = f1->graph();
     *graph = *graph1;
     if (v2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
     v->set_graph(graph);
@@ -143,8 +143,8 @@ public:
                      Face_mark_const_handle f2,
                      Vertex_graph_handle v)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = v1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = v1->graph();
     *graph = *graph1;
     if (f2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
     v->set_graph(graph);
@@ -155,8 +155,8 @@ public:
                    Halfedge_mark_const_handle h2,
                    Halfedge_graph_handle h)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = h1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = h1->graph();
     *graph = *graph1;
     h->set_graph(graph);
     if (h2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
@@ -167,8 +167,8 @@ public:
   void create_edge(Halfedge_graph_const_handle h1, Face_mark_const_handle f2,
                    Halfedge_graph_handle h)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = h1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = h1->graph();
     *graph = *graph1;
     h->set_graph(graph);
     if (f2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);
@@ -179,8 +179,8 @@ public:
   void create_edge(Face_graph_const_handle f1, Halfedge_mark_const_handle h2,
                    Halfedge_graph_handle h)
   {
-    Graph * graph = new Graph(m_number_of_pieces);
-    const Graph * graph1 = f1->graph();
+    Graph* graph = new Graph(m_number_of_pieces);
+    const Graph* graph1 = f1->graph();
     *graph = *graph1;
     h->set_graph(graph);
     if (h2->mark()) boost::add_edge(m_key.second, m_key.first, *graph);

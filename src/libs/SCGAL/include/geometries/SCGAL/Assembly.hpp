@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ASSEMBLY_HPP
-#define SGAL_ASSEMBLY_HPP
+#ifndef SCGAL_ASSEMBLY_HPP
+#define SCGAL_ASSEMBLY_HPP
 
 /*! \file
  * A class representing a puzzle.

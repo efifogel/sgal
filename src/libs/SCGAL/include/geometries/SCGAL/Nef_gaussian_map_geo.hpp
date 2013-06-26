@@ -26,8 +26,8 @@
  * in Vector3f (inexact) representation. The later is used for rendering.
  */
 
-#ifndef SGAL_NEF_GAUSSIAN_MAP_GEO_HPP
-#define SGAL_NEF_GAUSSIAN_MAP_GEO_HPP
+#ifndef SCGAL_NEF_GAUSSIAN_MAP_GEO_HPP
+#define SCGAL_NEF_GAUSSIAN_MAP_GEO_HPP
 
 /*! \file
  */
@@ -50,6 +50,7 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Nef_gaussian_map.hpp"
@@ -66,7 +67,7 @@ class Draw_action;
 class Scene_graph;
 class Sphere;
 
-class Nef_gaussian_map_geo : public SGAL::Mesh_set {
+class SGAL_SCGAL_DECL Nef_gaussian_map_geo : public Mesh_set {
 public:
   //  typedef Uint *                                        Coord_index_iter;
 
@@ -272,7 +273,7 @@ public:
 #if 0
   /*! Transforms a (planar) facet into a normal. */
   struct Normal_vector {
-    template <class Facet>
+    template <typename Facet>
     typename Facet::Plane_3 operator()(Facet& f) {
       typename Facet::Halfedge_handle h = f.halfedge();
       // Facet::Plane_3 is the normal vector type. We assume the
@@ -348,7 +349,7 @@ public:
 private:
   /*! Transforms a (planar) facet into a plane. */
   struct Plane_equation {
-    template <class Facet>
+    template <typename Facet>
     typename Facet::Plane_3 operator()(Facet& f) {
       typename Facet::Halfedge_handle h = f.halfedge();
       typedef typename Facet::Plane_3 Plane;
@@ -386,7 +387,7 @@ private:
   static const std::string s_tag;
 
   /*! The node prototype. */
-  static SGAL::Container_proto* s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The builder. */
   Build_surface<HalfedgeDS> m_surface;
@@ -647,17 +648,17 @@ inline const Vector3f& Nef_gaussian_map_geo::get_dual_sphere_color() const
 
 /*! \brief sets the color of the marked vertex. */
 inline void
-Nef_gaussian_map_geo::set_marked_vertex_color(const SGAL::Vector3f& color)
+Nef_gaussian_map_geo::set_marked_vertex_color(const Vector3f& color)
 { m_marked_vertex_color = color; }
 
 /*! \brief sets the color of the marked edge. */
 inline void
-Nef_gaussian_map_geo::set_marked_edge_color(const SGAL::Vector3f& color)
+Nef_gaussian_map_geo::set_marked_edge_color(const Vector3f& color)
 { m_marked_edge_color = color; }
 
 /*! \brief sets the color of the marked facet. */
 inline void
-Nef_gaussian_map_geo::set_marked_facet_color(const SGAL::Vector3f& color)
+Nef_gaussian_map_geo::set_marked_facet_color(const Vector3f& color)
 { m_marked_facet_color = color; }
 
 SGAL_END_NAMESPACE

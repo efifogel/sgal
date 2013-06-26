@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: 
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
@@ -26,8 +26,8 @@
 */
 
 
-#ifndef SGAL_ARRANGEMENT_ON_SPHERE_GRAPH_HPP
-#define SGAL_ARRANGEMENT_ON_SPHERE_GRAPH_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SPHERE_GRAPH_HPP
+#define SCGAL_ARRANGEMENT_ON_SPHERE_GRAPH_HPP
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
@@ -42,8 +42,7 @@ SGAL_BEGIN_NAMESPACE
 /*! 
   Internal namespace that there will not be any collision.
  */
-namespace Arrangement_on_sphere_graph_internal
-{
+namespace Arrangement_on_sphere_graph_internal {
   typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Exact_kernel>
                                                     Aos_geom_traits_base;
 #if defined(CGAL_ARR_TRACING_TRAITS)

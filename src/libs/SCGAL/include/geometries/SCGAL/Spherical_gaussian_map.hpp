@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_SPHERICAL_GAUSSIAN_MAP_HPP
-#define SGAL_SPHERICAL_GAUSSIAN_MAP_HPP
+#ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_HPP
+#define SCGAL_SPHERICAL_GAUSSIAN_MAP_HPP
 
 /*! \file
  */
@@ -40,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex */
-template <class Point_2>
+template <typename Point_2>
 class Sgm_arr_vertex : public CGAL::Arr_polyhedral_sgm_arr_vertex<Point_2> {
 private:
   /*! The (approximate) normal of an aos face */
@@ -54,7 +54,8 @@ public:
   const Vector3f& get_rendered_normal() const { return m_rendered_normal; }
 
   /*! Set the normal of the aos face */
-  void set_rendered_normal(const Vector3f& normal) { m_rendered_normal = normal; }
+  void set_rendered_normal(const Vector3f& normal)
+  { m_rendered_normal = normal; }
 };
 
 /*! Extend the arrangement halfedge */
@@ -83,7 +84,7 @@ public:
 };
 
 /*! A new dcel builder with extended features */
-template <class Traits>
+template <typename Traits>
 class Sgm_arr_dcel :
   public CGAL::Arr_dcel_base<Sgm_arr_vertex<typename Traits::Point_2>,
                              Sgm_arr_halfedge<typename Traits::X_monotone_curve_2>,

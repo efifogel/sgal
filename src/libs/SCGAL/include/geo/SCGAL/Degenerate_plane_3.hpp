@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5322 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -25,6 +25,7 @@
 #include <iostream>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 #include "SCGAL/basic.hpp"
 
@@ -47,7 +48,7 @@ public:
   {}
 
   /*!  returns the i-th coefficient of the plane */
-  RT operator[](unsigned int i) const
+  RT operator[](Uint i) const
   {
     CGAL_assertion(i < 3);
     return (i == 0) ? a() : ((i == 1) ? b() : c());
@@ -60,7 +61,7 @@ public:
    * \param i the index of the axis-parallel plane. 0, 1, or 2 indicate the
    * yz-, zx-, and xy-plane respectively
    */
-  Point_3 to_3d(const Point_2 & p_2, unsigned int i) const
+  Point_3 to_3d(const Point_2 & p_2, Uint i) const
   {
     CGAL_assertion(i < 3);
 

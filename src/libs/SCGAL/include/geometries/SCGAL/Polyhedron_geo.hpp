@@ -23,8 +23,8 @@
  * A node in the scene graph that maintains a planar map.
  */
 
-#ifndef SGAL_POLYHEDRON_GEO_HPP
-#define SGAL_POLYHEDRON_GEO_HPP
+#ifndef SCGAL_POLYHEDRON_GEO_HPP
+#define SCGAL_POLYHEDRON_GEO_HPP
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_traits_with_normals_3.h>
@@ -58,7 +58,7 @@ class Coord_array;
 class Draw_action;
 class Scene_graph;
 
-class SGAL_SCGAL_DECL Polyhedron_geo : public SGAL::Mesh_set {
+class SGAL_SCGAL_DECL Polyhedron_geo : public Mesh_set {
 public:
   // A halfedge type with a flag member variable.
   template <class Refs>
@@ -108,7 +108,7 @@ public:
   /*! Convert the point to a sphere */
   struct Extract_sphere {
     /*! */
-    Sphere_3 operator()(const Point & point) const
+    Sphere_3 operator()(const Point& point) const
     { return Sphere_3(point, 0.0f); }
   };
   

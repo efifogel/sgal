@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EXACT_NEF_POLYHEDRON_HPP
-#define SGAL_EXACT_NEF_POLYHEDRON_HPP
+#ifndef SCGAL_EXACT_NEF_POLYHEDRON_HPP
+#define SCGAL_EXACT_NEF_POLYHEDRON_HPP
 
 /*! \file
  * A node in the scene graph that maintains a polyhedron.
@@ -246,7 +246,7 @@ public:
   /* */
   template <typename T_Polyhedron>
   void convert_inner_shell_to_polyhedron(Shell_entry_const_iterator it,
-                                         T_Polyhedron & polyhedron)
+                                         T_Polyhedron& polyhedron)
   { m_nef_polyhedron.convert_inner_shell_to_polyhedron(it, polyhedron); }
   
   /*! Print statistics */

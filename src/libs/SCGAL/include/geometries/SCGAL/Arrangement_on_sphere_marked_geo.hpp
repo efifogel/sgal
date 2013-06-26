@@ -25,8 +25,8 @@
  * halfedge, and face is extended with a Boolean mark.
  */
 
-#ifndef SGAL_ARRANGEMENT_ON_SPHERE_MARKED_GEO_HPP
-#define SGAL_ARRANGEMENT_ON_SPHERE_MARKED_GEO_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SPHERE_MARKED_GEO_HPP
+#define SCGAL_ARRANGEMENT_ON_SPHERE_MARKED_GEO_HPP
 
 
 #if (defined _MSC_VER)

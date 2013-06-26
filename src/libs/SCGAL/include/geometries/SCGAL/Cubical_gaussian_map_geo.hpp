@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_CUBICAL_GAUSSIAN_MAP_GEO_HPP
-#define SGAL_CUBICAL_GAUSSIAN_MAP_GEO_HPP
+#ifndef SCGAL_CUBICAL_GAUSSIAN_MAP_GEO_HPP
+#define SCGAL_CUBICAL_GAUSSIAN_MAP_GEO_HPP
 
 /*! \file
  * Conventions
@@ -115,7 +115,7 @@ public:
 
 private:
   /*! Extend the planar-map vertex */
-  template <class Point_2>
+  template <typename Point_2>
   class My_arr_vertex : public CGAL::Polyhedral_cgm_arr_vertex<Point_2> {
   private:
     /*! The (approximate) normal of dual facet */
@@ -180,7 +180,7 @@ private:
   };
 
   /*! A new dcel builder with extended features */
-  template <class Traits>
+  template <typename Traits>
   class My_arr_dcel :
     public CGAL::Arr_dcel_base<My_arr_vertex<typename Traits::Point_2>,
                                My_arr_halfedge<typename Traits::X_monotone_curve_2>,
@@ -462,7 +462,7 @@ private:
   /*! A functor with an operator that sets the "marked" flag */
   class Face_set_marked_op {
   public:
-    void operator()(Arr_face_handle fh) { fh->set_marked(SGAL_TRUE); }
+    void operator()(Arr_face_handle fh) { fh->set_marked(true); }
   };
 
   /*! Notification for computing the cgm */

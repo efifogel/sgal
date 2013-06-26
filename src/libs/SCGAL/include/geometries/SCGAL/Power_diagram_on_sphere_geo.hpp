@@ -24,8 +24,8 @@
  * great circles embeded on a sphere
  */
 
-#ifndef SGAL_POWER_DIAGRAM_ON_SPHERE_GEO_HPP
-#define SGAL_POWER_DIAGRAM_ON_SPHERE_GEO_HPP
+#ifndef SCGAL_POWER_DIAGRAM_ON_SPHERE_GEO_HPP
+#define SCGAL_POWER_DIAGRAM_ON_SPHERE_GEO_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>
@@ -37,9 +37,10 @@
 #include <CGAL/envelope_voronoi_2.h>
 #include <CGAL/Envelope_voronoi_traits_2/Spherical_power_diagram_traits_2.h>
 
-#include "SCGAL/basic.hpp"
+#include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Geodesic_voronoi_on_sphere_geo.hpp"
 #include "SCGAL/Exact_plane_array.hpp"
 #include "SCGAL/Arrangement_extended_direction.hpp"

@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_MERGE_COPLANAR_FACETS_HPP
-#define SGAL_MERGE_COPLANAR_FACETS_HPP
+#ifndef SCGAL_MERGE_COPLANAR_FACETS_HPP
+#define SCGAL_MERGE_COPLANAR_FACETS_HPP
 
 /*! \file
  * This file contains a few function that accepts a polyhedron. It merges
@@ -36,7 +36,7 @@ SGAL_BEGIN_NAMESPACE
 
 /*! Merge coplanar facets */
 template <typename Polyhedron, typename Equal>
-void merge_coplanar_facets(Polyhedron & polyhedron, Equal & eq)
+void merge_coplanar_facets(Polyhedron& polyhedron, Equal& eq)
 {
   typedef typename Polyhedron::Vertex_handle            Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle          Halfedge_handle;
@@ -96,10 +96,10 @@ void merge_coplanar_facets(Polyhedron & polyhedron, Equal & eq)
 
 template <typename Kernel>
 struct Direction_equal {
-  Kernel & m_kernel;
-  Direction_equal(Kernel & kernel) : m_kernel(kernel) {}
+  Kernel& m_kernel;
+  Direction_equal(Kernel& kernel) : m_kernel(kernel) {}
   template <typename Vector>
-  bool operator()(Vector & v1, Vector & v2)
+  bool operator()(Vector& v1, Vector& v2)
   {
     typename Kernel::Equal_3 eq = m_kernel.equal_3_object();
     return eq(v1.direction(), v2.direction());
@@ -107,7 +107,7 @@ struct Direction_equal {
 };
 
 template <typename Kernel, typename Polyhedron>
-void merge_coplanar_facets(Kernel & kernel, Polyhedron & polyhedron,
+void merge_coplanar_facets(Kernel& kernel, Polyhedron& polyhedron,
                            boost::false_type)
 {
   Direction_equal<Kernel> eq(kernel);
@@ -115,7 +115,7 @@ void merge_coplanar_facets(Kernel & kernel, Polyhedron & polyhedron,
 }
 
 template <typename Kernel, typename Polyhedron>
-void merge_coplanar_facets(Kernel & kernel, Polyhedron & polyhedron,
+void merge_coplanar_facets(Kernel& kernel, Polyhedron& polyhedron,
                            boost::true_type)
 {
   typename Kernel::Equal_3 eq = kernel.equal_3_object();

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 9188 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -32,12 +32,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class K>
+template <typename K>
 class Nef_gaussian_map :
   public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geometry<K>,
                                              CGAL::SM_items, 
-                                             typename K::Point_3> > {
-
+                                             typename K::Point_3> >
+{
   typedef CGAL::Sphere_geometry<K>                      Kernel;
   typedef typename Kernel::Point_3                      Mark;
   typedef CGAL::Sphere_map<Kernel,CGAL::SM_items,Mark>  Sphere_map;
@@ -125,18 +125,19 @@ public:
       SHalfedge_const_handle se(fc);
       SHalfedge_around_facet_const_circulator hc(se), hend(hc);
       do {
-	Halfedge_const_handle e = hc->source();
-	SHalfedge_handle set = Edge2SEdge[e->twin()];
-	if(set == SHalfedge_handle())
-	  Edge2SEdge[e] = new_shalfedge_pair_at_source(Facet2SVertex[f],1);
-	else {
-	  link_as_target_and_append(Facet2SVertex[f], set);
-	  set->mark() = set->twin()->mark() = Mark(0,0,0);
-	  set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
-	  set->twin()->circle() = set->circle().opposite();
-	  Edge2SEdge[e] = set->twin();
-	}
-	++hc;
+        Halfedge_const_handle e = hc->source();
+        SHalfedge_handle set = Edge2SEdge[e->twin()];
+        if(set == SHalfedge_handle())
+          Edge2SEdge[e] = new_shalfedge_pair_at_source(Facet2SVertex[f],1);
+        else {
+          link_as_target_and_append(Facet2SVertex[f], set);
+          set->mark() = set->twin()->mark() = Mark(0,0,0);
+          set->circle() = Sphere_circle(set->source()->point(),
+                                        set->twin()->source()->point());
+          set->twin()->circle() = set->circle().opposite();
+          Edge2SEdge[e] = set->twin();
+        }
+        ++hc;
       } while(hc != hend);
     }
     
@@ -186,7 +187,8 @@ public:
 	else {
 	  link_as_target_and_append(Facet2SVertex[f], set,1);
 	  set->mark() = set->twin()->mark() = Mark(0,0,0);
-	  set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
+	  set->circle() = Sphere_circle(set->source()->point(),
+                                    set->twin()->source()->point());
 	  set->twin()->circle() = set->circle().opposite();
 	  Edge2SEdge[e] = set->twin();
 	}
@@ -208,8 +210,8 @@ public:
     CGAL_NEF_TRACEN("simplify");
 
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
-    CGAL::Unique_hash_map< SFace_handle, Union_find_handle> Pitem(NULL);
-    CGAL::Union_find< SFace_handle> UF;
+    CGAL::Unique_hash_map<SFace_handle, Union_find_handle> Pitem(NULL);
+    CGAL::Union_find<SFace_handle> UF;
   
     SFace_iterator f;
     CGAL_forall_sfaces(f,*this) {
@@ -221,14 +223,13 @@ public:
     for(e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) { 
       if (e->is_twin() ) continue;
       CGAL_NEF_TRACEN("can simplify ? " << PH(e));
-      CGAL_NEF_TRACEN(mark(e) << " " << mark(face(e)) << " " << mark(face(twin(e))));
+      CGAL_NEF_TRACEN(mark(e) << " " << mark(face(e)) << " "
+                      << mark(face(twin(e))));
       if (mark(face(e)) == mark(face(twin(e)))) {
         CGAL_NEF_TRACEN("deleting "<<PH(e));
-        if ( !UF.same_set(Pitem[face(e)],
-                          Pitem[face(twin(e))]) ) {
+        if (!UF.same_set(Pitem[face(e)], Pitem[face(twin(e))])) {
 	    
-          UF.unify_sets( Pitem[face(e)],
-                         Pitem[face(twin(e))] );
+          UF.unify_sets(Pitem[face(e)], Pitem[face(twin(e))]);
           CGAL_NEF_TRACEN("unioning disjoint faces");
         }
 	  
@@ -283,14 +284,17 @@ public:
 };
 
 template<typename Kernel>
-std::ostream& operator<<(std::ostream& out, const CGAL::Nef_gaussian_map<Kernel>& G) {
+std::ostream& operator<<(std::ostream& out,
+                         const CGAL::Nef_gaussian_map<Kernel>& G)
+{
   out << "OFF" << std::endl;
-  out << G.number_of_sfaces() << " " << G.number_of_svertices() << " 0" << std::endl;
+  out << G.number_of_sfaces() << " " << G.number_of_svertices() << " 0"
+      << std::endl;
   
   typedef typename CGAL::Nef_gaussian_map<Kernel>::SFace_const_iterator SFace_const_iterator;
   CGAL::Unique_hash_map<SFace_const_iterator, int> SFace2int;
   
-  int i=0;
+  int i = 0;
   SFace_const_iterator sf;
   CGAL_forall_sfaces(sf, G) {
     SFace2int[sf] = i++;

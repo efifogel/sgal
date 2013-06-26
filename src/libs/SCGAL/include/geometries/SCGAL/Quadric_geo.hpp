@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -23,8 +23,8 @@
  * A geometry container that represents a quadric surface
  */
 
-#ifndef SGAL_QUADRIC_GEO_HPP
-#define SGAL_QUADRIC_GEO_HPP
+#ifndef SCGAL_QUADRIC_GEO_HPP
+#define SCGAL_QUADRIC_GEO_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>

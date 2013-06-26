@@ -25,8 +25,8 @@
  * sphere bounded by geodesic arcs.
  */
 
-#ifndef SGAL_POLYGON_SET_ON_SPHERE_GEO_HPP
-#define SGAL_POLYGON_SET_ON_SPHERE_GEO_HPP
+#ifndef SCGAL_POLYGON_SET_ON_SPHERE_GEO_HPP
+#define SCGAL_POLYGON_SET_ON_SPHERE_GEO_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>

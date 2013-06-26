@@ -23,8 +23,8 @@
  * Renderers of arrangement parts
  */
 
-#ifndef SGAL_ARRANGEMENT_ON_CUBE_RENDERERS_HPP
-#define SGAL_ARRANGEMENT_ON_CUBE_RENDERERS_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_CUBE_RENDERERS_HPP
+#define SCGAL_ARRANGEMENT_ON_CUBE_RENDERERS_HPP
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Box.hpp"
@@ -44,7 +44,7 @@ public:
   Cube_renderer() {}
     
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action);
+  virtual void operator()(Draw_action* action);
 
 protected:
   /*! The arrangement geometry */
@@ -55,12 +55,12 @@ protected:
 class Colored_cube_renderer : public Cube_renderer {
 public:
   /*! Constructor */
-  Colored_cube_renderer(const Vector4f & color);
+  Colored_cube_renderer(const Vector4f& color);
     
   /*! Set the color
    * \param color the new color
    */
-  void set_color(const Vector3f & color)
+  void set_color(const Vector3f& color)
   {
     m_color[0] = color[0];
     m_color[1] = color[1];
@@ -74,7 +74,7 @@ public:
   { m_color[3] = 1.0f - transparency; }
 
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action);
+  virtual void operator()(Draw_action* action);
 
 protected:
   /*! The surface color */
@@ -87,7 +87,7 @@ protected:
 class Stencil_cube_renderer : public Cube_renderer {
 public:
   /*! Drawer operator */
-  virtual void operator()(Draw_action * action);
+  virtual void operator()(Draw_action* action);
 };
 
 /*! Draw an arrangement on cube vertex
@@ -97,8 +97,8 @@ public:
  * \param shape
  * \param radius
  */
-void draw_vertex_on_cube(Draw_action * action,
-                         const Vector3f & center, const Vector3f & normal,
+void draw_vertex_on_cube(Draw_action* action,
+                         const Vector3f& center, const Vector3f& normal,
                          Arrangement_renderer::Vertex_shape::Style style,
                          Float radius, Float delta_angle);
 
@@ -110,9 +110,9 @@ void draw_vertex_on_cube(Draw_action * action,
  * \param shape
  * \param radius
  */
-void draw_edge_on_cube(Draw_action * action,
-                       const Vector3f & source, const Vector3f & target,
-                       const Vector3f & normal,
+void draw_edge_on_cube(Draw_action* action,
+                       const Vector3f& source, const Vector3f& target,
+                       const Vector3f& normal,
                        Arrangement_renderer::Edge_shape::Style style,
                        Float radius);
 

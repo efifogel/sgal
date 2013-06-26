@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6681 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -76,7 +76,7 @@ typedef Exact_kernel::Plane_3                           Exact_plane_3;
 
 /* Convert a point into Vector3f */
 template <typename Point>
-inline Vector3f to_vector3f(const Point & point)
+inline Vector3f to_vector3f(const Point& point)
 {
   return Vector3f(static_cast<float>(CGAL::to_double(point.x())),
                   static_cast<float>(CGAL::to_double(point.y())),
@@ -85,7 +85,7 @@ inline Vector3f to_vector3f(const Point & point)
 
 /* Convert a direction into Vector3f */
 template <>
-inline Vector3f to_vector3f<Exact_direction_3>(const Exact_direction_3 & dir)
+inline Vector3f to_vector3f<Exact_direction_3>(const Exact_direction_3& dir)
 {
   return Vector3f(static_cast<float>(CGAL::to_double(dir.dx())),
                   static_cast<float>(CGAL::to_double(dir.dy())),
@@ -102,7 +102,7 @@ inline Vector2f to_vector2f(const Point & point)
 
 /* Convert a direction into Vector2f */
 template <>
-inline Vector2f to_vector2f<Exact_direction_2>(const Exact_direction_2 & dir)
+inline Vector2f to_vector2f<Exact_direction_2>(const Exact_direction_2& dir)
 {
   return Vector2f(static_cast<float>(CGAL::to_double(dir.dx())),
                   static_cast<float>(CGAL::to_double(dir.dy())));

@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_TRIANGULATION_GEO_HPP
-#define SGAL_TRIANGULATION_GEO_HPP
+#ifndef SCGAL_TRIANGULATION_GEO_HPP
+#define SCGAL_TRIANGULATION_GEO_HPP
 
 /*! \file
  * A node in the scene graph that maintains a polyhedron.
@@ -125,21 +125,25 @@ public:
   static Triangulation_geo* prototype() { return new Triangulation_geo(true); }
 
   /*! Clone. */
-  virtual SGAL::Container* clone() { return new Triangulation_geo(); }
+  virtual Container* clone() { return new Triangulation_geo(); }
 
   /*! \brief draws the mesh */
   virtual void draw(Draw_action* action);
 
-  virtual void cull(SGAL::Cull_context& cull_context);
-  virtual void isect(SGAL::Isect_action* action);
-  virtual SGAL::Boolean clean_sphere_bound();
+  virtual void cull(Cull_context& cull_context);
+
+  virtual void isect(Isect_action* action);
+
+  virtual Boolean clean_sphere_bound();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(SGAL::Element* elem);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual SGAL::Container_proto* get_prototype();
 
   /*! Print statistics */

@@ -24,8 +24,8 @@
  * great circles embeded on a sphere
  */
 
-#ifndef SGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_GEO_HPP
-#define SGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_GEO_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_GEO_HPP
+#define SCGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_GEO_HPP
 
 #include <CGAL/basic.h>
 #include <boost/shared_ptr.hpp>

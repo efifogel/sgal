@@ -23,8 +23,8 @@
  * A renderer of arrangements
  */
 
-#ifndef SGAL_ARRANGEMENT_RENDERER_HPP
-#define SGAL_ARRANGEMENT_RENDERER_HPP
+#ifndef SCGAL_ARRANGEMENT_RENDERER_HPP
+#define SCGAL_ARRANGEMENT_RENDERER_HPP
 
 #include <list>
 #include <string>
@@ -32,25 +32,27 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
+#include "SCGAL/basic.hpp"
+
 SGAL_BEGIN_NAMESPACE
 
 class Draw_action;
 class Vector3f;
 
-class Arrangement_renderer {
+class SGAL_SCGAL_DECL Arrangement_renderer {
 public:
   /*! A function object that renders something */
   class Renderer {
   public:
     /*! Render */
-    virtual void operator()(Draw_action * action) = 0;
+    virtual void operator()(Draw_action* action) = 0;
 
     /*! Destructor */
     virtual ~Renderer() {}
   };
   
 protected:
-  typedef std::list<Renderer *>                         Renderer_list;
+  typedef std::list<Renderer*>                          Renderer_list;
   typedef Renderer_list::iterator                       Renderer_iter;
 
   /*! A list of renderers that render the embedding surface or faces. */
@@ -95,11 +97,11 @@ public:
      * \param style the edge-shape style
      * \return the enumeration of style. If there is no match, then BALL
      */
-    static Style style(const std::string & style);
+    static Style style(const std::string& style);
 
   private:
     /*! Vertex styles */
-    static const char * s_styles[];
+    static const char* s_styles[];
   };
 
   /*! Edge shape enumerations and names */
@@ -111,11 +113,11 @@ public:
      * \param style the edge-shape style
      * \return the enumeration of style. If there is no match, then TUBE
      */
-    static Style style(const std::string & style);
+    static Style style(const std::string& style);
 
   private:
     /*! Edge styles */
-    static const char * s_styles[];
+    static const char* s_styles[];
   };
   
   /*! Constructor */
@@ -125,10 +127,10 @@ public:
   ~Arrangement_renderer();
   
   /*! Insert a renderer to the back a given renderer list */
-  void push_back(Renderer * renderer, Renderer_type type);
+  void push_back(Renderer* renderer, Renderer_type type);
 
   /*! Insert a renderer to the front a given renderer list */
-  void push_front(Renderer * renderer, Renderer_type type);
+  void push_front(Renderer* renderer, Renderer_type type);
   
   /*! Clear all renderer lists */
   void clear();
@@ -137,7 +139,7 @@ public:
   void clear(Renderer_type type);
   
   /*! Render all */
-  void operator()(Draw_action * action);
+  void operator()(Draw_action* action);
 
   /*! Set the stencil reference value */
   void set_stencil_ref(Int stencil_ref) { m_stencil_ref = stencil_ref; }

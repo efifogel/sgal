@@ -24,8 +24,8 @@
  * of 4 segments, given a container of segments
  */
 
-#ifndef SGAL_LINES_THROUGH_SEGMENTS_HPP
-#define SGAL_LINES_THROUGH_SEGMENTS_HPP
+#ifndef SCGAL_LINES_THROUGH_SEGMENTS_HPP
+#define SCGAL_LINES_THROUGH_SEGMENTS_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>

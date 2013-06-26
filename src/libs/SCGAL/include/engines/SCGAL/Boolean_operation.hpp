@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_BOOLEAN_OPERATION_HPP
-#define SGAL_BOOLEAN_OPERATION_HPP
+#ifndef SCGAL_BOOLEAN_OPERATION_HPP
+#define SCGAL_BOOLEAN_OPERATION_HPP
 
 /*! \file
  * An engine that computes a Boolean operation.

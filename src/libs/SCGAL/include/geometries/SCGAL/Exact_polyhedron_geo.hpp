@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EXACT_POLYHEDRON_GEO_HPP
-#define SGAL_EXACT_POLYHEDRON_GEO_HPP
+#ifndef SCGAL_EXACT_POLYHEDRON_GEO_HPP
+#define SCGAL_EXACT_POLYHEDRON_GEO_HPP
 
 /*! \file
  * A node in the scene graph that maintains a polyhedron.

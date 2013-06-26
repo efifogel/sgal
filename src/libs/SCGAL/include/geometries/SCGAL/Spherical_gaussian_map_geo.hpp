@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_SPHERICAL_GAUSSIAN_MAP_GEO_HPP
-#define SGAL_SPHERICAL_GAUSSIAN_MAP_GEO_HPP
+#ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_GEO_HPP
+#define SCGAL_SPHERICAL_GAUSSIAN_MAP_GEO_HPP
 
 /*! \file
  */

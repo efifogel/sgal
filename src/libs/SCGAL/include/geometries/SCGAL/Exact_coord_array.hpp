@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EXACT_COORD_ARRAY_HPP
-#define SGAL_EXACT_COORD_ARRAY_HPP
+#ifndef SCGAL_EXACT_COORD_ARRAY_HPP
+#define SCGAL_EXACT_COORD_ARRAY_HPP
 
 #if (defined _MSC_VER)
 #pragma warning ( disable : 4786 )

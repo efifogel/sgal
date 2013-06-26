@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_LABEL_DCEL_HPP
-#define SGAL_ARRANGEMENT_LABEL_DCEL_HPP
+#ifndef SCGAL_ARRANGEMENT_LABEL_DCEL_HPP
+#define SCGAL_ARRANGEMENT_LABEL_DCEL_HPP
 
 /*! \file
  * An arrangement DCEL, the vertex, halfedge, and face of which are extended
@@ -36,7 +36,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex */
-template <class Point_2>
+template <typename Point_2>
 class Arrangement_label_vertex : public CGAL::Arr_vertex_base<Point_2> {
 private:
   /*! An arbitrary label */
@@ -55,7 +55,7 @@ public:
   /*! Assign from another vertex.
    * \param v the other vertex
    */
-  virtual void assign(const Arrangement_label_vertex & v)
+  virtual void assign(const Arrangement_label_vertex& v)
   {
     CGAL::Arr_vertex_base<Point_2>::assign(v);
     m_label = v.m_label;
@@ -63,7 +63,7 @@ public:
 };
 
 /*! Extend the arrangement halfedge */
-template <class X_monotone_curve_2>
+template <typename X_monotone_curve_2>
 class Arrangement_label_halfedge :
   public CGAL::Arr_halfedge_base<X_monotone_curve_2> {
 private:
@@ -83,7 +83,7 @@ public:
   /*! Assign from another halfedge.
    * \param he the other halfedge
    */
-  virtual void assign(const Arrangement_label_halfedge & he)
+  virtual void assign(const Arrangement_label_halfedge& he)
   {
     CGAL::Arr_halfedge_base<X_monotone_curve_2>::assign(he);
     m_label = he.m_label;
@@ -109,7 +109,7 @@ public:
   /*! Assign from another face.
    * \param f the other face
    */
-  virtual void assign(const Arrangement_label_face & f)
+  virtual void assign(const Arrangement_label_face& f)
   {
     CGAL::Arr_face_base::assign(f);
     m_label = f.m_label;
@@ -117,7 +117,7 @@ public:
 };
 
 /*! A new dcel builder with extended features */
-template <class Traits>
+template <typename Traits>
 class Arrangement_label_dcel :
   public CGAL::Arr_dcel_base<Arrangement_label_vertex<typename Traits::
                                                       Point_2>,

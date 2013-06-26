@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_NUMBER_TYPES_HPP
-#define SGAL_NUMBER_TYPES_HPP
+#ifndef SCGAL_NUMBER_TYPES_HPP
+#define SCGAL_NUMBER_TYPES_HPP
 
 #include "SGAL/basic.hpp"
 

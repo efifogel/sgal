@@ -24,8 +24,8 @@
  * great circles embeded on a sphere
  */
 
-#ifndef SGAL_GEODESIC_VORONOI_ON_SPHERE_GEO_HPP
-#define SGAL_GEODESIC_VORONOI_ON_SPHERE_GEO_HPP
+#ifndef SCGAL_GEODESIC_VORONOI_ON_SPHERE_GEO_HPP
+#define SCGAL_GEODESIC_VORONOI_ON_SPHERE_GEO_HPP
 
 #include <CGAL/basic.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
@@ -84,7 +84,7 @@ public:
   virtual ~Geodesic_voronoi_on_sphere_geo();
 
   /*! Clone. */
-  virtual Container * clone() = 0;
+  virtual Container* clone() = 0;
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -93,24 +93,24 @@ public:
   virtual void delete_prototype(); 
 
   /*! Obtain the container prototype */
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
 
   /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! */
-  virtual void cull(Cull_context & cull_context);
+  virtual void cull(Cull_context& cull_context);
 
   /*! Obtain the point index array */
-  const std::vector<Uint> & get_site_indices() const;
+  const std::vector<Uint>& get_site_indices() const;
 
   /*! Obtain the i-th point index */
   Uint get_site_index(Uint i) const;
   
   /*! Set the site color */
-  void set_site_color(Vector3f & color) { m_site_color = color; }
+  void set_site_color(Vector3f& color) { m_site_color = color; }
   
 protected:
   /*! An array of indices into the coordinate array for points. */
@@ -124,7 +124,7 @@ protected:
   
 private:
   /*! The container prototype. */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! Default values. */
   static const Boolean s_def_draw_sites;
@@ -142,17 +142,17 @@ private:
   /*! Increase the vertex index.
    * \param field_info
    */
-  void increase_vertex_index(Field_info * field_info = NULL);
+  void increase_vertex_index(Field_info* field_info = NULL);
 
   /*! Increase the edge index.
    * \param field_info
    */
-  void increase_edge_index(Field_info * field_info = NULL);
+  void increase_edge_index(Field_info* field_info = NULL);
 
   /*! Increase the face index.
    * \param field_info
    */
-  void increase_face_index(Field_info * field_info = NULL);
+  void increase_face_index(Field_info* field_info = NULL);
 };
 
 /*! \brief obtains the site index array. */

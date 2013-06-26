@@ -24,8 +24,8 @@
  * parametric surface
  */
 
-#ifndef SGAL_ARRANGEMENT_ON_SURFACE_GEO_HPP
-#define SGAL_ARRANGEMENT_ON_SURFACE_GEO_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SURFACE_GEO_HPP
+#define SCGAL_ARRANGEMENT_ON_SURFACE_GEO_HPP
 
 #include <CGAL/basic.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>

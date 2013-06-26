@@ -27,7 +27,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 
-#include "SGAL/basic.hpp"
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Approximate_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -43,7 +43,7 @@ typedef Approximate_sphere_vector::const_iterator  Approximate_sphere_iter;
 
 /* Convert an exact point into an approximate sphere */
 template <typename T_Point>
-inline Approximate_sphere_3 to_approximate_sphere(const T_Point & point)
+inline Approximate_sphere_3 to_approximate_sphere(const T_Point& point)
 {
   Approximate_point_3 approximate_point = to_approximate_point(point);
   return Approximate_sphere_3(approximate_point, 0.0f);

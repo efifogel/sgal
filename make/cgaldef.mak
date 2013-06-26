@@ -25,13 +25,13 @@ CGAL_X_MINUS_11_Y_7 = 2
 CGAL_CGM_TRAITS ?= $(CGAL_ARR_SEGMENT_TRAITS)
 CGAL_IDENTIFICATION_XY ?= $(CGAL_X_MINUS_1_Y_0)
 
-CGALCPPINCS = -I"$(CGALROOT)/include"
+CGALCPPINCS = -I"$(CGAL_DIR)/include"
 CGALCPPOPTS =
 CGALCPPDEFS =
 
 ifeq ($(DE), gnu)
 
-CGALLIBDIRS = -L"$(CGALROOT)/lib"
+CGALLIBDIRS = -L"$(CGAL_DIR)/lib"
 
 # only versions less than 3.2 require (GCCROOT)/include be explicitly provided
 # as a directory to search for header files
@@ -42,7 +42,7 @@ endif
 ifdef GCCROOT
 CGALLIBOPTS+= -Xlinker -R$(GCCROOT)/lib
 endif
-CGALLIBOPTS+= -Xlinker -R"$(CGALROOT)/lib"
+CGALLIBOPTS+= -Xlinker -R"$(CGAL_DIR)/lib"
 
 LEDALIBS = -lP -lG -lL -lW
 QTLIBS = -lqt-mt
@@ -62,7 +62,7 @@ endif
 
 ifeq ($(DE), msvc)
 
-CGALLIBDIRS = -libpath:"$(CGALROOT)/lib"
+CGALLIBDIRS = -libpath:"$(CGAL_DIR)/lib"
 
 LCPPOPTS = -GR -Zm900
 

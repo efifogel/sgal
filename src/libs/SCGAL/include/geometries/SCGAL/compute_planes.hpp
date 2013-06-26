@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_COMPUTE_PLANES_HPP
-#define SGAL_COMPUTE_PLANES_HPP
+#ifndef SCGAL_COMPUTE_PLANES_HPP
+#define SCGAL_COMPUTE_PLANES_HPP
 
 /*! \file
  * This file contains a free function that computes the equesions of or the
@@ -43,7 +43,7 @@ private:
 public:
   Normal_equation(const Kernel& kernel) : m_kernel(kernel) {}
   template <typename Facet>
-  typename Facet::Plane_3 operator()(Facet & f) {
+  typename Facet::Plane_3 operator()(Facet& f) {
     typename Facet::Halfedge_handle h = f.halfedge();
     typename Facet::Vertex::Point_3& p1 = h->vertex()->point();
     typename Facet::Vertex::Point_3& p2 = h->next()->vertex()->point();
@@ -74,7 +74,7 @@ private:
 public:
   Plane_equation(const Kernel& kernel) : m_kernel(kernel) {}
   template <typename Facet>
-  typename Facet::Plane_3 operator()(Facet & f) {
+  typename Facet::Plane_3 operator()(Facet& f) {
     typename Facet::Halfedge_handle h = f.halfedge();
     typename Facet::Vertex::Point_3& p1 = h->vertex()->point();
     typename Facet::Vertex::Point_3& p2 = h->next()->vertex()->point();

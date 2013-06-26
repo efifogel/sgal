@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EXACT_COORD_MINKOWSKI_HPP
-#define SGAL_EXACT_COORD_MINKOWSKI_HPP
+#ifndef SCGAL_EXACT_COORD_MINKOWSKI_HPP
+#define SCGAL_EXACT_COORD_MINKOWSKI_HPP
 
 #if (defined _MSC_VER)
 #pragma warning ( disable : 4786 )

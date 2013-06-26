@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_COLOR_DCEL_HPP
-#define SGAL_ARRANGEMENT_COLOR_DCEL_HPP
+#ifndef SCGAL_ARRANGEMENT_COLOR_DCEL_HPP
+#define SCGAL_ARRANGEMENT_COLOR_DCEL_HPP
 
 /*! \file
  * An arrangement DCEL, the vertex, halfedge, and face of which are extended
@@ -39,8 +39,8 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex */
-template <class Point_2>
-class SGAL_SCGAL_DECL Arrangement_color_vertex :
+template <typename Point_2>
+class Arrangement_color_vertex :
   public CGAL::Arr_vertex_base<Point_2>
 {
 private:
@@ -52,15 +52,15 @@ public:
   Arrangement_color_vertex() {}
 
   /*! Obtain the color */
-  const Vector3f & color() const { return m_color; }
+  const Vector3f& color() const { return m_color; }
 
   /*! Set the color */
-  void set_color(const Vector3f & color) { m_color = color; }
+  void set_color(const Vector3f& color) { m_color = color; }
 
   /*! Assign from another vertex.
    * \param v the other vertex
    */
-  virtual void assign(const Arrangement_color_vertex & v)
+  virtual void assign(const Arrangement_color_vertex& v)
   {
     CGAL::Arr_vertex_base<Point_2>::assign(v);
     m_color = v.m_color;
@@ -68,7 +68,7 @@ public:
 };
 
 /*! Extend the arrangement halfedge */
-template <class X_monotone_curve_2>
+template <typename X_monotone_curve_2>
 class Arrangement_color_halfedge :
   public CGAL::Arr_halfedge_base<X_monotone_curve_2> {
 private:
@@ -80,15 +80,15 @@ public:
   Arrangement_color_halfedge() {}
 
   /*! Obtain the color */
-  const Vector3f & color() const { return m_color; }
+  const Vector3f& color() const { return m_color; }
 
   /*! Set the color */
-  void set_color(const Vector3f & color) { m_color = color; }
+  void set_color(const Vector3f& color) { m_color = color; }
 
   /*! Assign from another halfedge.
    * \param he the other halfedge
    */
-  virtual void assign(const Arrangement_color_halfedge & he)
+  virtual void assign(const Arrangement_color_halfedge& he)
   {
     CGAL::Arr_halfedge_base<X_monotone_curve_2>::assign(he);
     m_color = he.m_color;
@@ -106,15 +106,15 @@ public:
   Arrangement_color_face() {}
 
   /*! Obtain the color */
-  const Vector3f & color() const { return m_color; }
+  const Vector3f& color() const { return m_color; }
 
   /*! Set the color */
-  void set_color(const Vector3f & color) { m_color = color; }
+  void set_color(const Vector3f& color) { m_color = color; }
 
   /*! Assign from another face.
    * \param f the other face
    */
-  virtual void assign(const Arrangement_color_face & f)
+  virtual void assign(const Arrangement_color_face& f)
   {
     CGAL::Arr_face_base::assign(f);
     m_color = f.m_color;
@@ -122,7 +122,7 @@ public:
 };
 
 /*! A new dcel builder with extended features */
-template <class Traits>
+template <typename Traits>
 class Arrangement_color_dcel :
   public CGAL::Arr_dcel_base<Arrangement_color_vertex<typename Traits::
                                                       Point_2>,

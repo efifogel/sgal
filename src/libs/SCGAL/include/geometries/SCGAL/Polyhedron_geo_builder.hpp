@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_POLYHEDRON_GEO_BUILDER_HPP
-#define SGAL_POLYHEDRON_GEO_BUILDER_HPP
+#ifndef SCGAL_POLYHEDRON_GEO_BUILDER_HPP
+#define SCGAL_POLYHEDRON_GEO_BUILDER_HPP
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
@@ -33,7 +33,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-template <class HDS>
+template <typename HDS>
 class Polyhedron_geo_builder : public CGAL::Modifier_base<HDS> {
 private:
   const Mesh_set* m_mesh_set;

@@ -23,8 +23,8 @@
  * Renderers of arrangement parts
  */
 
-#ifndef SGAL_ARRANGEMENT_RENDERERS_HPP
-#define SGAL_ARRANGEMENT_RENDERERS_HPP
+#ifndef SCGAL_ARRANGEMENT_RENDERERS_HPP
+#define SCGAL_ARRANGEMENT_RENDERERS_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>

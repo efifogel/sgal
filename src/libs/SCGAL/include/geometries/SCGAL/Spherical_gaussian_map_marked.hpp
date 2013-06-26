@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_SPHERICAL_GAUSSIAN_MAP_MARKED_HPP
-#define SGAL_SPHERICAL_GAUSSIAN_MAP_MARKED_HPP
+#ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_MARKED_HPP
+#define SCGAL_SPHERICAL_GAUSSIAN_MAP_MARKED_HPP
 
 /*! \file
  */
@@ -40,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex */
-template <class Point_2>
+template <typename Point_2>
 class Sgm_marked_arr_vertex : public Sgm_arr_vertex<Point_2> {
 private:
   /*! Indicates whether it is a marked polyheron vertex (aos face) */
@@ -48,7 +48,7 @@ private:
 
 public:
   /*! Constructor */
-  Sgm_marked_arr_vertex() : m_marked(SGAL_FALSE) {}
+  Sgm_marked_arr_vertex() : m_marked(false) {}
 
   /*! Obtain the "marked" flag */
   Boolean marked() const { return m_marked; }
@@ -58,7 +58,7 @@ public:
 };
 
 /*! Extend the arrangement halfedge */
-template <class X_monotone_curve_2>
+template <typename X_monotone_curve_2>
 class Sgm_marked_arr_halfedge : public Sgm_arr_halfedge<X_monotone_curve_2> {
 private:
   /*! Indicates whether it is a marked (aos) halfedge */
@@ -66,7 +66,7 @@ private:
 
 public:
   /*! Constructor */
-  Sgm_marked_arr_halfedge() : m_marked(SGAL_FALSE) {}
+  Sgm_marked_arr_halfedge() : m_marked(false) {}
 
   /*! Obtain the "marked" flag */
   Boolean marked() const { return m_marked; }
@@ -82,14 +82,14 @@ class Sgm_marked_arr_face : public Sgm_arr_face {
 
 public:
   /*! Constructor */
-  Sgm_marked_arr_face() : m_marked(SGAL_FALSE) {}
+  Sgm_marked_arr_face() : m_marked(false) {}
 
   Boolean marked() const { return m_marked; }
   void set_marked(Boolean marked) { m_marked = marked; }
 };
 
 /*! A new dcel builder with extended features */
-template <class Traits>
+template <typename Traits>
 class Sgm_marked_arr_dcel :
   public CGAL::Arr_dcel_base<Sgm_marked_arr_vertex<typename Traits::Point_2>,
                              Sgm_marked_arr_halfedge<typename Traits::X_monotone_curve_2>,

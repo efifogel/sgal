@@ -40,7 +40,7 @@ typedef Approximate_kernel::Plane_3                   Approximate_plane_3;
 
 /* Convert an exact point into an approximate point */
 template <typename T_Point>
-inline Approximate_point_3 to_approximate_point(const T_Point & point)
+inline Approximate_point_3 to_approximate_point(const T_Point& point)
 {
   return Approximate_point_3(static_cast<float>(CGAL::to_double(point.x())),
                              static_cast<float>(CGAL::to_double(point.y())),

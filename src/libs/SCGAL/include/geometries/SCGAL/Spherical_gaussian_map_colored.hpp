@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_SPHERICAL_GAUSSIAN_MAP_COLORED_HPP
-#define SGAL_SPHERICAL_GAUSSIAN_MAP_COLORED_HPP
+#ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_COLORED_HPP
+#define SCGAL_SPHERICAL_GAUSSIAN_MAP_COLORED_HPP
 
 /*! \file
  */
@@ -39,7 +39,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex. */
-template <class Point_2>
+template <typename Point_2>
 class Sgm_colored_arr_vertex : public Sgm_arr_vertex<Point_2> {
 private:
   /*! The color of the (aos) vertex). */

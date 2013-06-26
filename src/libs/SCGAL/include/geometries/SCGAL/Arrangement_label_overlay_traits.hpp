@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_LABEL_OVERLAY_HPP
-#define SGAL_ARRANGEMENT_LABEL_OVERLAY_HPP
+#ifndef SCGAL_ARRANGEMENT_LABEL_OVERLAY_HPP
+#define SCGAL_ARRANGEMENT_LABEL_OVERLAY_HPP
 
 /*! \file
  * An arrangement overlay traits class template
@@ -33,7 +33,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-template <class Aos>
+template <typename Aos>
 class Arrangement_label_overlay {
 private:
     Uint m_vertex_label1;

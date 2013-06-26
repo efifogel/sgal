@@ -23,8 +23,8 @@
  * Renderers of arrangement on sphere
  */
 
-#ifndef SGAL_ARRANGEMENT_ON_SPHERE_RENDERERS_HPP
-#define SGAL_ARRANGEMENT_ON_SPHERE_RENDERERS_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SPHERE_RENDERERS_HPP
+#define SCGAL_ARRANGEMENT_ON_SPHERE_RENDERERS_HPP
 
 #include <list>
 #if (defined _MSC_VER)
@@ -38,12 +38,13 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Draw_action.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_renderer.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 /*! A function object that renders the sphere surface */
-class Sphere_renderer : public Arrangement_renderer::Renderer {
+class SGAL_SCGAL_DECL Sphere_renderer : public Arrangement_renderer::Renderer {
 public:
   /*! Constrcutor */
   Sphere_renderer();
@@ -57,7 +58,7 @@ protected:
 };
 
 /*! A function object that renders the sphere surface with color */
-class Colored_sphere_renderer : public Sphere_renderer {
+class SGAL_SCGAL_DECL Colored_sphere_renderer : public Sphere_renderer {
 public:
   /*! Constructor */
   Colored_sphere_renderer(const Vector4f& color);
@@ -89,7 +90,7 @@ protected:
 /*! A function object that renders the sphere surface only into the stencil
  * buffer
  */
-class Stencil_sphere_renderer : public Sphere_renderer {
+class SGAL_SCGAL_DECL Stencil_sphere_renderer : public Sphere_renderer {
 public:
   /*! Drawer operator */
   virtual void operator()(Draw_action* action);

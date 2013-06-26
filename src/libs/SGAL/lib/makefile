@@ -249,6 +249,10 @@ endif
 LCPPDEFS+= -DSGAL_LIB
 LCPPDEFS+= -DSGAL_SGAL_SOURCE
 
+ifeq ($(TRACE), 1)
+LCPPDEFS+= -DSGAL_TRACE
+endif
+
 # Extract flex version
 FLEX_MAJOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+\([0-9]\)\.[0-9].[0-9]\+'
 FLEX_MAJOR_VER = $(shell $(FLEX_MAJOR_VER_CMD))

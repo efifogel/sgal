@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Trace {
+class SGAL_SGAL_DECL Trace {
 public:
   enum Code {
     GRAPHICS = 0,
@@ -89,7 +89,7 @@ private:
 inline Boolean TRACE(Trace::Code code)
 { return Trace::get_instance()->is_enabled(code); }
 
-#if defined(NDEBUG)
+#if defined(NDEBUG) && !defined(SGAL_TRACE)
 #define SGAL_TRACE_MSG(key, msg)
 #define SGAL_TRACE_CODE(key, code)
 #else

@@ -24,8 +24,8 @@
  * great circles embeded on a sphere
  */
 
-#ifndef SGAL_ARRANGEMENT_ON_SPHERE_GRAPH_GEO_HPP
-#define SGAL_ARRANGEMENT_ON_SPHERE_GRAPH_GEO_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SPHERE_GRAPH_GEO_HPP
+#define SCGAL_ARRANGEMENT_ON_SPHERE_GRAPH_GEO_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>
@@ -108,7 +108,7 @@ public:
   virtual void clean();
 
   /*! */
-  virtual void cull(Cull_context & cull_context) {}
+  virtual void cull(Cull_context& cull_context) {}
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();

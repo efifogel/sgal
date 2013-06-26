@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_LOWER_ENVELOPE_SPHERE_HPP
-#define SGAL_LOWER_ENVELOPE_SPHERE_HPP
+#ifndef SCGAL_LOWER_ENVELOPE_SPHERE_HPP
+#define SCGAL_LOWER_ENVELOPE_SPHERE_HPP
 
 /*! \file
  */

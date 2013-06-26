@@ -386,13 +386,6 @@ endif
 DEBUGDEFS =-DNDEBUG
 ifeq ($(DEBUG), 1)
 DEBUGDEFS =-D_DEBUG
-else
-
-# Allow tracing in release (non-debug) mode
-ifeq ($(TRACE), 1)
-DEBUGDEFS =
-endif
-
 endif
 
 GCDEFS+= $(DEBUGDEFS) $(DLLDEFS)

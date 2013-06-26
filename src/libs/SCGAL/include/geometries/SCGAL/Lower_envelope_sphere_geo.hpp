@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_LOWER_ENVELOPE_SPHERE_GEO_HPP
-#define SGAL_LOWER_ENVELOPE_SPHERE_GEO_HPP
+#ifndef SCGAL_LOWER_ENVELOPE_SPHERE_GEO_HPP
+#define SCGAL_LOWER_ENVELOPE_SPHERE_GEO_HPP
 
 /*! \file
  * A geometry node in the scene graph that maintains a CGAL::Lower_envelope_3
@@ -42,6 +42,7 @@
 #include "SGAL/Shape.hpp"
 #include "SGAL/Sphere.hpp"
 
+#include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_geo.hpp"
 #include "SCGAL/Lower_envelope_sphere.hpp"
 #include "SCGAL/Exact_kernel.hpp"
@@ -56,7 +57,7 @@ class Isect_action;
 class Appearance;
 
 /*! A lower-envelope data structure. */
-class Lower_envelope_sphere_geo : public Lower_envelope_geo {
+class SGAL_SCGAL_DECL Lower_envelope_sphere_geo : public Lower_envelope_geo {
 public:
   typedef boost::shared_ptr<Appearance>                   Shared_appearance;
 

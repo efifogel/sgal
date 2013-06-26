@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_MARK_DCEL_HPP
-#define SGAL_ARRANGEMENT_MARK_DCEL_HPP
+#ifndef SCGAL_ARRANGEMENT_MARK_DCEL_HPP
+#define SCGAL_ARRANGEMENT_MARK_DCEL_HPP
 
 /*! \file
  * An arrangement DCEL, the vertex, halfedge, and face of which are extended
@@ -37,7 +37,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex */
-template <class Point_2>
+template <typename Point_2>
 class Arrangement_mark_vertex : public CGAL::Arr_vertex_base<Point_2> {
 private:
   /*! An arbitrary mark */
@@ -56,7 +56,7 @@ public:
   /*! Assign from another vertex.
    * \param v the other vertex
    */
-  virtual void assign(const Arrangement_mark_vertex & v)
+  virtual void assign(const Arrangement_mark_vertex& v)
   {
     CGAL::Arr_vertex_base<Point_2>::assign(v);
     m_mark = v.m_mark;
@@ -64,7 +64,7 @@ public:
 };
 
 /*! Extend the arrangement halfedge */
-template <class X_monotone_curve_2>
+template <typename X_monotone_curve_2>
 class Arrangement_mark_halfedge :
   public CGAL::Arr_halfedge_base<X_monotone_curve_2> {
 private:
@@ -84,7 +84,7 @@ public:
   /*! Assign from another halfedge.
    * \param he the other halfedge
    */
-  virtual void assign(const Arrangement_mark_halfedge & he)
+  virtual void assign(const Arrangement_mark_halfedge& he)
   {
     CGAL::Arr_halfedge_base<X_monotone_curve_2>::assign(he);
     m_mark = he.m_mark;
@@ -112,19 +112,19 @@ public:
   /*! Obtain the "mark" flag */
   Boolean mark() const { 
     // return m_mark;
-    return contained() ? SGAL_TRUE : SGAL_FALSE; 
+    return contained() ? true : false; 
   }
 
   /*! Set the mark */
   void set_mark(Boolean mark) { 
     // m_mark = mark; 
-    (mark == SGAL_TRUE) ? set_contained(true) : set_contained(false);
+    (mark == true) ? set_contained(true) : set_contained(false);
   }
 
   /*! Assign from another face.
    * \param f the other face
    */
-  virtual void assign(const Arrangement_mark_face & f)
+  virtual void assign(const Arrangement_mark_face& f)
   {
     CGAL::Gps_face_base::operator= (f);
     CGAL::Arr_face_base::assign(f);
@@ -133,7 +133,7 @@ public:
 };
 
 /*! A new dcel builder with extended features */
-template <class Traits>
+template <typename Traits>
 class Arrangement_mark_dcel :
   public CGAL::Arr_dcel_base<Arrangement_mark_vertex<typename Traits::
                                                      Point_2>,

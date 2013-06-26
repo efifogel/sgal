@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: 
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
@@ -26,8 +26,8 @@
 */
 
 
-#ifndef SGAL_ARRANGEMENT_ON_SPHERE_MARKED_HPP
-#define SGAL_ARRANGEMENT_ON_SPHERE_MARKED_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SPHERE_MARKED_HPP
+#define SCGAL_ARRANGEMENT_ON_SPHERE_MARKED_HPP
 
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>

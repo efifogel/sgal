@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EXACT_NORMAL_ARRAY_HPP
-#define SGAL_EXACT_NORMAL_ARRAY_HPP
+#ifndef SCGAL_EXACT_NORMAL_ARRAY_HPP
+#define SCGAL_EXACT_NORMAL_ARRAY_HPP
 
 #if (defined _MSC_VER)
 #pragma warning ( disable : 4786 )
@@ -28,10 +28,11 @@
 
 #include <vector>
 
-#include "SCGAL/Exact_kernel.hpp"
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Normal_array.hpp"
+
+#include "SCGAL/basic.hpp"
+#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,7 +41,7 @@ class Scene_graph;
 class Container_proto;
 
 /*! Maintains an array of 3D normals */
-class Exact_normal_array : public Normal_array {
+class SGAL_SCGAL_DECL Exact_normal_array : public Normal_array {
 public:
   typedef std::vector<Exact_vector_3>                   Exact_vector_vector;
   typedef Exact_vector_vector::iterator                 Exact_vector_iter;
@@ -53,7 +54,7 @@ public:
   };
 
   /*! Constructor */
-  Exact_normal_array(Boolean proto = SGAL_FALSE) : Normal_array(proto) {}
+  Exact_normal_array(Boolean proto = false) : Normal_array(proto) {}
 
   /*! Constructor */
   Exact_normal_array(Uint n) { m_array.resize(n); }
@@ -63,10 +64,10 @@ public:
 
   /* Construct the prototype */
   static Exact_normal_array* prototype()
-  { return new Exact_normal_array(SGAL_TRUE); }
+  { return new Exact_normal_array(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Exact_normal_array(); }
+  virtual Container* clone() { return new Exact_normal_array(); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();

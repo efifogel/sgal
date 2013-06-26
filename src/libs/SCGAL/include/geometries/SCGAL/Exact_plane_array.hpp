@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_EXACT_PLANE_ARRAY_HPP
-#define SGAL_EXACT_PLANE_ARRAY_HPP
+#ifndef SCGAL_EXACT_PLANE_ARRAY_HPP
+#define SCGAL_EXACT_PLANE_ARRAY_HPP
 
 #if (defined _MSC_VER)
 #pragma warning ( disable : 4786 )
@@ -28,10 +28,11 @@
 
 #include <vector>
 
-#include "SCGAL/Exact_kernel.hpp"
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
+
+#include "SCGAL/basic.hpp"
+#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -40,7 +41,7 @@ class Scene_graph;
 class Container_proto;
 
 /*! Maintains an array of 3D vertex-coordinate */
-class Exact_plane_array : public Container {
+class SGAL_SCGAL_DECL Exact_plane_array : public Container {
 public:
   typedef std::vector<Exact_plane_3>                    Exact_plane_vector;
   typedef Exact_plane_vector::iterator                  Exact_plane_iter;

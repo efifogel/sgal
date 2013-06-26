@@ -66,6 +66,11 @@ ifdef GL2PS_INC_DIR
 LCPPINCS+= -I"$(GL2PS_INC_DIR)"
 endif
 
+LCPPDEFS =
+ifeq ($(TRACE), 1)
+LCPPDEFS+= -DSGAL_TRACE
+endif
+
 ifeq ($(USE_CGAL), 1)
 ifeq ($(USE_CGM), 1)
 LCPPDEFS+= -DUSE_CGM

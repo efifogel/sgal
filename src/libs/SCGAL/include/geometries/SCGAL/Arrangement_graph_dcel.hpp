@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_GRAPH_DCEL_HPP
-#define SGAL_ARRANGEMENT_GRAPH_DCEL_HPP
+#ifndef SCGAL_ARRANGEMENT_GRAPH_DCEL_HPP
+#define SCGAL_ARRANGEMENT_GRAPH_DCEL_HPP
 
 /*! \file
  * An arrangement DCEL, the vertex, halfedge, and face of which are extended
@@ -40,32 +40,32 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Extend the arrangement vertex */
-template <class Point_2>
+template <typename Point_2>
 class Arrangement_graph_vertex : public CGAL::Arr_vertex_base<Point_2> {
 public:
   typedef boost::adjacency_matrix<boost::directedS>     Graph;
 
 private:
   /*! An adjacency matrix graph */
-  Graph * m_graph;
+  Graph* m_graph;
 
 public:
   /*! Constructor */
   Arrangement_graph_vertex() : m_graph(NULL) {}
 
   /*! Obtain the graph */
-  Graph * graph() { return m_graph; }
-  const Graph * graph() const { return m_graph; }
+  Graph* graph() { return m_graph; }
+  const Graph* graph() const { return m_graph; }
 
   /*! Set a graph
    * \param graph the graph
    */
-  void set_graph(Graph * graph) { m_graph = graph; }
+  void set_graph(Graph* graph) { m_graph = graph; }
 
   /*! Assign from another vertex.
    * \param v the other vertex
    */
-  virtual void assign(const Arrangement_graph_vertex & v)
+  virtual void assign(const Arrangement_graph_vertex& v)
   {
     CGAL::Arr_vertex_base<Point_2>::assign(v);
     m_graph = v.m_graph;
@@ -73,7 +73,7 @@ public:
 };
 
 /*! Extend the arrangement halfedge */
-template <class X_monotone_curve_2>
+template <typename X_monotone_curve_2>
 class Arrangement_graph_halfedge :
   public CGAL::Arr_halfedge_base<X_monotone_curve_2>
 {
@@ -89,18 +89,18 @@ public:
   Arrangement_graph_halfedge() : m_graph(NULL) {}
 
   /*! Obtain the graph */
-  Graph * graph() { return m_graph; }
-  const Graph * graph() const { return m_graph; }
+  Graph* graph() { return m_graph; }
+  const Graph* graph() const { return m_graph; }
 
   /*! Set a graph
    * \param graph the graph
    */
-  void set_graph(Graph * graph) { m_graph = graph; }
+  void set_graph(Graph* graph) { m_graph = graph; }
 
   /*! Assign from another halfedge.
    * \param he the other halfedge
    */
-  virtual void assign(const Arrangement_graph_halfedge & he)
+  virtual void assign(const Arrangement_graph_halfedge& he)
   {
     CGAL::Arr_halfedge_base<X_monotone_curve_2>::assign(he);
     m_graph = he.m_graph;
@@ -121,13 +121,13 @@ public:
   Arrangement_graph_face() : m_graph(NULL) {}
 
   /*! Obtain the graph */
-  Graph * graph() { return m_graph; }
-  const Graph * graph() const { return m_graph; }
+  Graph* graph() { return m_graph; }
+  const Graph* graph() const { return m_graph; }
 
   /*! Set a graph
    * \param graph the graph
    */
-  void set_graph(Graph * graph) { m_graph = graph; }
+  void set_graph(Graph* graph) { m_graph = graph; }
 
   /*! Assign from another face.
    * \param f the other face
@@ -140,7 +140,7 @@ public:
 };
 
 /*! A new dcel builder with extended features */
-template <class Traits>
+template <typename Traits>
 class Arrangement_graph_dcel :
   public CGAL::Arr_dcel_base<Arrangement_graph_vertex<typename Traits::
                                                      Point_2>,

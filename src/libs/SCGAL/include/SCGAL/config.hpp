@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1809 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -24,7 +24,7 @@
 
 #include <boost/config.hpp>
 
-// #include "SGAL/version.hpp"
+// #include "SCGAL/version.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Windows DLL suport

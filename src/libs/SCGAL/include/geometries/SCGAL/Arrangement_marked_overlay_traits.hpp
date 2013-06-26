@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_MARKED_OVERLAY_TRAITS_HPP
-#define SGAL_ARRANGEMENT_MARKED_OVERLAY_TRAITS_HPP
+#ifndef SCGAL_ARRANGEMENT_MARKED_OVERLAY_TRAITS_HPP
+#define SCGAL_ARRANGEMENT_MARKED_OVERLAY_TRAITS_HPP
 
 /*! \file
  * An arrangement overlay traits class template
@@ -35,7 +35,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-template <class Aos>
+template <typename Aos>
 class Arrangement_marked_overlay_traits {
 public:
   typedef typename Aos::Face_handle                   Face_handle;

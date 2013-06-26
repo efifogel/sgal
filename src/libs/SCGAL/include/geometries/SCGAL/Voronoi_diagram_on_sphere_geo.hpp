@@ -24,8 +24,8 @@
  * great circles embeded on a sphere
  */
 
-#ifndef SGAL_VORONOI_DIAGRAM_ON_SPHERE_GEO_HPP
-#define SGAL_VORONOI_DIAGRAM_ON_SPHERE_GEO_HPP
+#ifndef SCGAL_VORONOI_DIAGRAM_ON_SPHERE_GEO_HPP
+#define SCGAL_VORONOI_DIAGRAM_ON_SPHERE_GEO_HPP
 
 #if (defined _MSC_VER)
 #include <windows.h>

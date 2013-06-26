@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_SGM_COLOR_OVERLAY_TRAITS_HPP
-#define SGAL_SGM_COLOR_OVERLAY_TRAITS_HPP
+#ifndef SCGAL_SGM_COLOR_OVERLAY_TRAITS_HPP
+#define SCGAL_SGM_COLOR_OVERLAY_TRAITS_HPP
 
 /*! \file
  * An arrangement overlay traits class template
@@ -35,7 +35,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-template <class Sgm>
+template <typename Sgm>
 class Sgm_color_overlay_traits : public CGAL::Arr_polyhedral_sgm_overlay<Sgm>
 {
 private:

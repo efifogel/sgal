@@ -19,8 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_HPP
-#define SGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_HPP
+#ifndef SCGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_HPP
+#define SCGAL_ARRANGEMENT_ON_SPHERE_OVERLAY_HPP
 
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_on_surface_2.h>
