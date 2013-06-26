@@ -48,7 +48,7 @@ LCPPOPTS =
 LCPPINCS =
 
 LLDLIBS =
-LLDOPTS =
+LLDOPTS = $(CGALLDOPTS)
 
 LCPPINCS+= -I$(BASEDIR)
 
@@ -252,7 +252,6 @@ LCPPOPTS+= -Wall
 # LCPPOPTS+= -pedantic
 LCPPOPTS+= `Magick++-config --cxxflags --cppflags`
 LCPPOPTS+= -frounding-math
-LLDOPTS+= $(CGALLDOPTS)
 LLDOPTS+= -rdynamic -ldl
 
 ifeq ($(USE_CGAL), 1)
