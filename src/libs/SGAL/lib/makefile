@@ -210,9 +210,11 @@ CPPSOURCES+= Color_interpolator.cpp
 # IO
 CPPSOURCES+= Vrml_formatter.cpp
 
-# LEX_PREFIX = wrlBase
+LCPPDEFS =
+LCPPOPTS =
+LCPPINCS =
 
-LCPPINCS = -I.
+LCPPINCS+= -I.
 LCPPINCS+= -I$(BASEDIR)
 LCPPINCS+= -I$(BASEDIR)/loaders
 LCPPINCS+= -I$(BASEDIR)/primitives
@@ -248,7 +250,6 @@ endif
 
 LCPPDEFS+= -DSGAL_LIB
 LCPPDEFS+= -DSGAL_SGAL_SOURCE
-
 ifeq ($(TRACE), 1)
 LCPPDEFS+= -DSGAL_TRACE
 endif
@@ -282,7 +283,7 @@ LCPPINCS+= -I$(STLPORT_DIR)
 endif
 LCPPDEFS+= -DBOOST_ALL_DYN_LINK
 LCPPDEFS+= -DSGAL_ALL_DYN_LINK
-LCPPOPTS = -GR
+LCPPOPTS+= -GR
 LCPPOPTS+= -vmg
 
 ifeq ($(DEF_SHARED), 1)
@@ -309,7 +310,7 @@ endif
 
 ifeq ($(DE), gnu)
 LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
-LCPPOPTS = -Wall
+LCPPOPTS+= -Wall
 LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
 LCPPOPTS+=`Magick++-config --cxxflags --cppflags`

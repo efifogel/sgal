@@ -41,8 +41,15 @@ CPPSOURCES+= Player_option_parser.cpp
 CPPSOURCES+= Player2_scene.cpp
 CPPSOURCES+= Player2_option_parser.cpp
 
-LCPPINCS = -I$(BASEDIR)
-LCPPINCS = -I$(BASEDIR)/../player
+LCPPDEFS =
+LCPPINCS =
+LCPPOPTS =
+
+LLDLIBS =
+LLDOPTS =
+
+LCPPINCS+= -I$(BASEDIR)
+LCPPINCS+= -I$(BASEDIR)/../player
 
 # Add BOOST, GMP, MPFR, Magick, and gl2ps include directory:
 ifdef BOOST_INC_DIR
@@ -95,10 +102,6 @@ LCPPDEFS+= -DCGAL_CGM_TRAITS=$(CGAL_CGM_TRAITS)
 LCPPDEFS+= -DSCGAL_KERNEL=$(SCGAL_KERNEL)
 LCPPDEFS+= -DUSE_CGAL
 
-ifeq ($(DE), gnu)
-LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
-endif
-
 ifeq ($(DE), msvc)
 LCPPDEFS+= -DBOOST_ALL_DYN_LINK
 LCPPOPTS+= -GR
@@ -122,7 +125,6 @@ ifdef MPFR_LIB_DIR
 LLDOPTS+= -libpath:"$(MPFR_LIB_DIR)"
 endif
 
-LLDLIBS =
 LLDLIBS+= SCGAL.lib
 LLDLIBS+= SGAL.lib
 # LLDLIBS+= gl2ps.lib
@@ -154,12 +156,13 @@ endif
 endif # msvc
 
 ifeq ($(DE), gnu)
+LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
 LCPPOPTS+= -Wall
+# LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
 LLDOPTS+= -rdynamic -ldl
-LLDOPTS = $(CGALLDOPTS)
+LLDOPTS+= $(CGALLDOPTS)
 
-LLDLIBS =
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= -lSCGAL
 endif

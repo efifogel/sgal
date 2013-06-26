@@ -277,8 +277,10 @@ LCPPINCS+= $(CGALCPPINCS)
 ifeq ($(DE), gnu)
 LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
 LCPPOPTS+= -Wall
-LCPPOPTS+= -frounding-math
+# LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
+LCPPOPTS+= `Magick++-config --cxxflags --cppflags`
+LCPPOPTS+= -frounding-math
 endif
 
 ifeq ($(DE), msvc)

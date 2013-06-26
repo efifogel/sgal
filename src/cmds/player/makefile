@@ -43,7 +43,14 @@ CPPSOURCES = player.cpp
 CPPSOURCES+= Player_scene.cpp
 CPPSOURCES+= Player_option_parser.cpp
 
-LCPPINCS = -I$(BASEDIR)
+LCPPDEFS =
+LCPPOPTS =
+LCPPINCS =
+
+LLDLIBS =
+LLDOPTS =
+
+LCPPINCS+= -I$(BASEDIR)
 
 # Add BOOST, GMP, MPFR, Magick, and gl2ps include directory:
 ifdef BOOST_INC_DIR
@@ -157,10 +164,6 @@ LOBJDIR :=$(LOBJDIR)_identification_xy_x_minus_11_y_7
 endif
 endif
 
-ifeq ($(DE), gnu)
-LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
-endif
-
 ifeq ($(DE), msvc)
 LCPPDEFS+= -DBOOST_ALL_DYN_LINK
 LCPPOPTS+= -GR
@@ -184,7 +187,6 @@ ifdef MPFR_LIB_DIR
 LLDOPTS+= -libpath:"$(MPFR_LIB_DIR)"
 endif
 
-LLDLIBS =
 ifeq ($(USE_EGO), 1)
 ifneq ($(USE_DYNAMIC_SEGO), 1)
 LLDLIBS+= SEGO.lib
@@ -244,13 +246,15 @@ endif
 endif # msvc
 
 ifeq ($(DE), gnu)
+LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
 LCPPOPTS+= -Wall
-LCPPOPTS+= -frounding-math
+# LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
+LCPPOPTS+= `Magick++-config --cxxflags --cppflags`
+LCPPOPTS+= -frounding-math
 LLDOPTS+= $(CGALLDOPTS)
 LLDOPTS+= -rdynamic -ldl
 
-LLDLIBS =
 ifeq ($(USE_CGAL), 1)
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= -lSCGAL

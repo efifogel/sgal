@@ -34,7 +34,14 @@ CPPSOURCES = knot.cpp
 CPPSOURCES+= Knot_scene.cpp
 CPPSOURCES+= Knot_option_parser.cpp
 
-LCPPINCS = -I$(BASEDIR)
+LCPPDEFS =
+LCPPINCS =
+LCPPOPTS =
+
+LLDLIBS =
+LLDOPTS =
+
+LCPPINCS+= -I$(BASEDIR)
 
 # Add BOOST, Magick, and gl2ps include directory:
 ifdef BOOST_INC_DIR
@@ -47,10 +54,6 @@ endif
 
 ifdef GL2PS_INC_DIR
 LCPPINCS+= -I"$(GL2PS_INC_DIR)"
-endif
-
-ifeq ($(DE), gnu)
-LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
 endif
 
 ifeq ($(DE), msvc)
@@ -70,7 +73,6 @@ ifdef GL2PS_LIB_DIR
 LLDOPTS+= -libpath:"$(GL2PS_LIB_DIR)"
 endif
 
-LLDLIBS =
 ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= SGAL.lib
 endif
@@ -87,10 +89,11 @@ endif
 endif # msvc
 
 ifeq ($(DE), gnu)
-LCPPOPTS = -Wall
+LCPPDEFS+= -DGL_GLEXT_PROTOTYPES
+LCPPOPTS+= -Wall
+# LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
 LLDOPTS+= -rdynamic -ldl
-LLDLIBS =
 
 ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= -lSGAL
