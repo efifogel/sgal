@@ -53,7 +53,7 @@ via the clone command below. Once you have an account, an admin of the
 repository, e.g., Efi (efifogel@gmail.com), can grant you the appropriate
 access permissions. Currently, the repository is closed to the public.
 
-  git clone git@bitbucket.org:efogel/ego.git
+  git git@bitbucket.org:efogel/sgal.git
 
 If you are on Windows you may not download and run SGAL-1.0-Setup.exe, as
 such an installer does not exist (yet).
