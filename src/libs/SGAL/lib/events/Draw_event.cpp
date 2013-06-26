@@ -44,10 +44,10 @@ void Draw_event::handle(Agent* agent) { agent->handle(this); }
 void Draw_event::identify(void) { std::cout << "Event: Draw" << std::endl; }
 
 /*! \brief registers this event for a particular agent. */
-inline void Draw_event::doregister(Agent* agent) { s_set.insert(agent); }
+void Draw_event::doregister(Agent* agent) { s_set.insert(agent); }
 
 /*! \brief unregisters this event for a particular agent. */
-inline void Draw_event::unregister(Agent* agent) { s_set.erase(agent); }
+void Draw_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE
 
