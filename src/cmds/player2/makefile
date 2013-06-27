@@ -165,8 +165,8 @@ LLDOPTS+= -rdynamic -ldl
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= -lSCGAL
 endif
-ifneq ($(USE_DYNAMIC_SCGAL), 1)
-LLDLIBS+= -lSCGAL
+ifneq ($(USE_DYNAMIC_SGAL), 1)
+LLDLIBS+= -lSGAL
 endif
 LLDLIBS+= $(CGALLDLIBS)
 ifeq ($(USE_GMP), 1)
