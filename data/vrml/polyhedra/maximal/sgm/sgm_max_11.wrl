@@ -1,0 +1,110 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
+}
+DEF BACKGROUND ColorBackground {
+  color 1 1 1
+  clearStencil TRUE
+}
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+
+DEF DRAW_DUAL_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_UNFOLDED_KEY SingleKeySensor { key "u" }
+DEF DRAW_DUAL_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF FLATTEN_KEY SingleKeySensor { key "f" }
+DEF DRAW_DUAL_HALOED_KEY SingleKeySensor { key "l" }
+DEF SNAP_SGM_KEY SingleKeySensor { key "N" }
+DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
+
+DEF SNAP_SGM Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  sequence FALSE
+  dirName "."
+  fileName "max_11_sgm"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  sequence FALSE
+  dirName "."
+  fileName "max_11"
+}
+
+DEF PRIMAL_VIEW Viewpoint {
+  fieldOfView 0.5
+}
+DEF DUAL_VIEW Viewpoint {
+  fieldOfView 0.5
+}
+
+DEF TRANSFORMER CoordinateTransformer {
+  coord DEF COORD Coordinate {
+    point [0.707142135641705 -0.707071424963623 0,
+	   0.831490445601648 -0.555539052518518 0,
+	   0.92388909930838 -0.382660335257196 0,
+	   0.980787718955631 -0.195078062184888 0,
+	   1 -6.46217829773035e-15 0,
+	   -1 3.23108914886517e-15 0,
+	   -0.980787718955632 -0.195078062184879 0,
+	   -0.923889099308384 -0.382660335257187 0,
+	   -0.831490445601654 -0.55553905251851 0,
+	   -0.707142135641711 -0.707071424963617 0,
+	   -0.555622198785242 -0.831434887539038 -0.00248726925150829,
+	   -0.382752722253671 -0.923850828655473 -0.004335588073837,
+	   -0.195176139981228 -0.980768206245506 -0.00547393562563766,
+	   -9.9999999838613e-05 -0.999999995 -0.00585857140072753,
+	   9.99999998284757e-05 -0.999999995 -0.00585857140072753,
+	   0.195176139981219 -0.980768206245508 -0.0054739356256377,
+	   0.382752722253661 -0.923850828655477 -0.00433558807383707,
+	   0.555622198785235 -0.831434887539043 -0.00248726925150839
+	  ]
+  }
+}
+
+DEF TRANSFORM Transform {
+  rotation  1 4 0 0.4
+  children [
+    DEF SELECT TouchSensor { enabled TRUE }
+    Shape {
+      appearance Appearance {
+	material Material { diffuseColor 0.5 0.5 0.5 }
+      }
+      geometry DEF GEOM SphericalGaussianMap {
+#	drawAosSphere FALSE
+	drawAosHaloed TRUE
+	aosEdgeRadius 0.005
+	aosVertexRadius 0.01
+	coord USE COORD
+	coordIndex [0 1 2 3 4 5 6 7 8 9 -1
+		    9 10 11 12 13 14 15 16 17 0 -1
+		    1 0 17 -1
+		    2 1 17 16 -1
+		    3 2 16 15 -1
+		    4 3 15 14 -1
+		    5 4 14 13 -1
+		    6 5 13 12 -1
+		    7 6 12 11 -1
+		    8 7 11 10 -1
+		    9 8 10 -1
+		   ]
+      }
+    }
+   ]
+}
+
+ROUTE GEOM.trueDrawPrimal TO PRIMAL_VIEW.set_bind
+ROUTE GEOM.trueDrawAos TO DUAL_VIEW.set_bind
+ROUTE DRAW_DUAL_KEY.state TO GEOM.drawAos
+ROUTE DRAW_DUAL_OPAQUE_KEY.state TO GEOM.drawAosOpaque
+ROUTE DRAW_DUAL_HALOED_KEY.state TO GEOM.drawAosHaloed
+ROUTE TRANSFORMER_NAV.rotation TO TRANSFORMER.rotation
+ROUTE TRANSFORMER_NAV.translation TO TRANSFORMER.translation
+ROUTE TRANSFORMER.coord_changed TO GEOM.coord
+ROUTE TRANSFORMER.changed TO TRANSFORM.reset
+ROUTE SELECT.isOver TO TRANSFORMER_NAV.set_bind
+ROUTE FLATTEN_KEY.press TO TRANSFORMER_NAV.set_bind
+ROUTE SNAP_SGM_KEY.state TO SNAP_SGM.trigger
+ROUTE SNAP_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger

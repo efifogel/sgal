@@ -1,0 +1,255 @@
+#VRML V2.0 utf8
+DEF BACKGROUND ColorBackground { color 1 1 1 }
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+
+DEF DRAW_DUAL_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF FLATTEN_KEY SingleKeySensor { key "f" }
+DEF DRAW_DUAL_UNFOLDED_KEY SingleKeySensor { key "u" }
+DEF DRAW_DUAL_HALOED_KEY SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_BACKGROUND_KEY SingleKeySensor { key "b" state TRUE }
+DEF EXPORT_KEY SingleKeySensor { key "O" }
+DEF SNAP_CGM_KEY SingleKeySensor { key "C" }
+DEF SNAP_CGM_UNFOLDED_KEY SingleKeySensor { key "U" }
+DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
+
+DEF SNAP_CGM Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "pentagonal_hexecontahedron_cgm"
+}
+
+DEF SNAP_CGM_UNFOLDED Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "pentagonal_hexecontahedron_cgm_unfolded"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "pentagonal_hexecontahedron"
+}
+
+DEF PRIMAL_VIEW Viewpoint {
+  radiusScale 1
+  positionTranslation 0 0 0
+  fieldOfView 0.5
+}
+DEF DUAL_VIEW Viewpoint {
+  type "SIMPLE"
+  radiusScale 0.80
+  positionTranslation 0.15 -0.11 0
+  fieldOfView 0.5
+}
+DEF DUAL_UNFOLDED_VIEW Viewpoint {
+  type "ORTHOGONAL"
+  position 0 0 0
+  left -0.5 right 8.5 bottom -0.5 top 6.5 near -1 far 1
+}
+
+DEF TRANSFORMER CoordinateTransformer {
+  coord DEF COORD Coordinate {
+    point [-0.000000 -0.000000 1.000000,
+	   0.451209 -0.000000 0.892418,
+	   0.212779 0.397888 0.892418,
+	   -0.250526 0.375268 0.892418,
+	   -0.449063 -0.043953 0.892418,
+	   -0.173008 -0.416722 0.892418,
+	   0.557063 -0.416722 0.718348,
+	   0.803419 -0.043953 0.593789,
+	   0.626241 0.375268 0.683371,
+	   0.340114 0.729203 0.593789,
+	   -0.409529 0.692604 0.593789,
+	   -0.659818 0.312480 0.683371,
+	   -0.586707 -0.434486 0.683371,
+	   -0.267464 -0.758866 0.593789,
+	   0.171275 -0.674271 0.718348,
+	   0.506613 -0.758866 0.409227,
+	   0.831931 -0.434486 0.345125,
+	   0.985320 -0.034518 0.167191,
+	   0.698640 0.643796 0.312137,
+	   0.353461 0.919677 0.171055,
+	   -0.044494 0.911347 0.409227,
+	   -0.441367 0.880872 0.171055,
+	   -0.758030 0.572678 0.312137,
+	   -0.927716 0.142235 0.345125,
+	   -0.882531 -0.319416 0.345125,
+	   -0.632604 -0.708789 0.312137,
+	   0.082288 -0.934942 0.345125,
+	   0.384147 -0.923246 -0.006880,
+	   0.910524 -0.398390 -0.110598,
+	   0.956136 0.026189 -0.291749,
+	   0.920563 0.390534 -0.006880,
+	   0.652176 0.745388 -0.138066,
+	   -0.048711 0.997730 -0.046496,
+	   -0.417724 0.860458 -0.291749,
+	   -0.930096 0.361791 -0.063473,
+	   -0.994168 -0.097306 -0.046496,
+	   -0.842295 -0.535267 -0.063473,
+	   -0.508521 -0.853917 -0.110598,
+	   -0.066694 -0.993687 -0.090210,
+	   0.217118 -0.873016 -0.436695,
+	   0.633778 -0.700460 -0.328149,
+	   0.775223 -0.316523 -0.546665,
+	   0.784691 0.427551 -0.448843,
+	   0.434620 0.715725 -0.546665,
+	   0.001448 0.871681 -0.490072,
+	   -0.343900 0.635939 -0.690879,
+	   -0.719775 0.539649 -0.436695,
+	   -0.887155 0.107214 -0.448843,
+	   -0.641420 -0.601421 -0.476312,
+	   -0.242274 -0.837337 -0.490072,
+	   0.418377 -0.560779 -0.714484,
+	   0.491967 -0.126969 -0.861305,
+	   0.497819 0.332894 -0.800848,
+	   0.094740 0.561456 -0.822066,
+	   -0.585483 0.248299 -0.771724,
+	   -0.669145 -0.204346 -0.714484,
+	   -0.324935 -0.503050 -0.800848,
+	   0.083369 -0.332128 -0.939543,
+	   0.124252 0.127782 -0.983988,
+	   -0.296148 -0.065760 -0.952876
+	  ]
+  }
+}
+
+DEF TRANS Transform {
+  rotation  1 4 0 0.4
+  children [
+    DEF SELECT TouchSensor { enabled TRUE }
+    Shape {
+      appearance Appearance {
+	material Material { }
+      }
+      geometry DEF GEOM CubicalGaussianMap {
+	dualLineColor 0 0 0
+	drawDualCube FALSE
+	coord USE COORD
+	coordIndex [0,1,2,-1,
+		    0,2,3,-1,
+		    0,3,4,-1,
+		    0,4,5,-1,
+		    5,14,6,1,0,-1,
+		    1,6,7,-1,
+		    1,7,8,-1,
+		    8,2,1,-1,
+		    2,8,9,-1,
+		    9,20,10,3,2,-1,
+		    3,10,11,-1,
+		    11,4,3,-1,
+		    4,11,23,24,12,-1,
+		    12,5,4,-1,
+		    5,12,13,-1,
+		    5,13,14,-1,
+		    6,14,15,-1,
+		    6,15,16,-1,
+		    16,7,6,-1,
+		    7,16,17,-1,
+		    17,30,18,8,7,-1,
+		    18,9,8,-1,
+		    9,18,19,-1,
+		    9,19,20,-1,
+		    10,20,21,-1,
+		    10,21,22,-1,
+		    22,11,10,-1,
+		    11,22,23,-1,
+		    12,24,25,-1,
+		    25,13,12,-1,
+		    13,25,37,38,26,-1,
+		    26,14,13,-1,
+		    26,15,14,-1,
+		    15,26,27,-1,
+		    27,40,28,16,15,-1,
+		    28,17,16,-1,
+		    17,28,29,-1,
+		    17,29,30,-1,
+		    18,30,31,-1,
+		    31,19,18,-1,
+		    19,31,43,44,32,-1,
+		    32,20,19,-1,
+		    32,21,20,-1,
+		    21,32,33,-1,
+		    33,46,34,22,21,-1,
+		    34,23,22,-1,
+		    23,34,35,-1,
+		    35,24,23,-1,
+		    24,35,36,-1,
+		    36,25,24,-1,
+		    25,36,37,-1,
+		    38,27,26,-1,
+		    27,38,39,-1,
+		    27,39,40,-1,
+		    28,40,41,-1,
+		    41,29,28,-1,
+		    29,41,51,52,42,-1,
+		    42,30,29,-1,
+		    42,31,30,-1,
+		    31,42,43,-1,
+		    44,33,32,-1,
+		    33,44,45,-1,
+		    33,45,46,-1,
+		    34,46,47,-1,
+		    47,35,34,-1,
+		    47,55,48,36,35,-1,
+		    48,37,36,-1,
+		    37,48,49,-1,
+		    49,38,37,-1,
+		    49,39,38,-1,
+		    39,49,56,57,50,-1,
+		    50,40,39,-1,
+		    50,41,40,-1,
+		    41,50,51,-1,
+		    52,43,42,-1,
+		    43,52,53,-1,
+		    53,44,43,-1,
+		    53,45,44,-1,
+		    45,53,58,59,54,-1,
+		    54,46,45,-1,
+		    54,47,46,-1,
+		    47,54,55,-1,
+		    48,55,56,-1,
+		    56,49,48,-1,
+		    57,51,50,-1,
+		    51,57,58,-1,
+		    58,52,51,-1,
+		    58,53,52,-1,
+		    59,55,54,-1,
+		    59,56,55,-1,
+		    59,57,56,-1,
+		    59,58,57,-1
+		   ]
+      }
+    }
+   ]
+}
+
+ROUTE GEOM.trueDrawPrimal TO PRIMAL_VIEW.set_bind
+ROUTE GEOM.trueDrawDual TO DUAL_VIEW.set_bind
+ROUTE GEOM.trueDrawDualUnfolded TO DUAL_UNFOLDED_VIEW.set_bind
+ROUTE GEOM.trueDrawDualUnfolded TO TRANS.reset
+ROUTE GEOM.trueDrawDualUnfolded TO NAVIGATION_ROOT.reset
+ROUTE DRAW_DUAL_UNFOLDED_KEY.state TO GEOM.drawDualUnfolded
+ROUTE DRAW_DUAL_KEY.state TO GEOM.drawDual
+ROUTE DRAW_DUAL_OPAQUE_KEY.state TO GEOM.drawDualOpaque
+ROUTE DRAW_DUAL_HALOED_KEY.state TO GEOM.drawDualHaloed
+ROUTE DRAW_DUAL_BACKGROUND_KEY.state TO GEOM.drawDualCube
+ROUTE TRANSFORMER_NAV.rotation TO TRANSFORMER.rotation
+ROUTE TRANSFORMER_NAV.translation TO TRANSFORMER.translation
+ROUTE TRANSFORMER.coord_changed TO GEOM.coord
+ROUTE SELECT.isOver TO TRANSFORMER_NAV.set_bind
+ROUTE FLATTEN_KEY.press TO TRANSFORMER_NAV.set_bind
+ROUTE EXPORT_KEY.press TO GEOM.export
+ROUTE SNAP_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger
+ROUTE SNAP_CGM_KEY.state TO SNAP_CGM.trigger
+ROUTE SNAP_CGM_UNFOLDED_KEY.state TO SNAP_CGM_UNFOLDED.trigger

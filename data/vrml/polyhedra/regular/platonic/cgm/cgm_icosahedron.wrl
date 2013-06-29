@@ -1,0 +1,135 @@
+#VRML V2.0 utf8
+DEF BACKGROUND ColorBackground { color 1 1 1 }
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+
+DEF DRAW_DUAL_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF FLATTEN_KEY SingleKeySensor { key "f" }
+DEF DRAW_DUAL_UNFOLDED_KEY SingleKeySensor { key "u" }
+DEF DRAW_DUAL_HALOED_KEY SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_BACKGROUND_KEY SingleKeySensor { key "b" state TRUE }
+DEF EXPORT_KEY SingleKeySensor { key "O" }
+DEF SNAP_CGM_KEY SingleKeySensor { key "C" }
+DEF SNAP_CGM_UNFOLDED_KEY SingleKeySensor { key "U" }
+DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
+
+DEF SNAP_CGM Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "icosahedron_cgm"
+}
+
+DEF SNAP_CGM_UNFOLDED Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "icosahedron_cgm_unfolded"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "icosahedron"
+}
+
+DEF PRIMAL_VIEW Viewpoint {
+  radiusScale 1
+  positionTranslation 0 0 0
+  fieldOfView 0.5
+}
+DEF DUAL_VIEW Viewpoint {
+  type "SIMPLE"
+  radiusScale 0.80
+  positionTranslation 0.15 -0.11 0
+  fieldOfView 0.5
+}
+DEF DUAL_UNFOLDED_VIEW Viewpoint {
+  type "ORTHOGONAL"
+  position 0 0 0
+  left -0.5 right 8.5 bottom -0.5 top 6.5 near -1 far 1
+}
+
+DEF TRANSFORMER CoordinateTransformer {
+  coord DEF COORD Coordinate {
+    point [0 0 1.175571,
+	   1.051462 0 0.5257311,
+	   0.3249197 1. 0.5257311,
+	   -0.8506508 0.618034 0.5257311,
+	   -0.8506508 -0.618034 0.5257311,
+	   0.3249197 -1. 0.5257311,
+	   0.8506508 0.618034 -0.5257311,
+	   0.8506508 -0.618034 -0.5257311,
+	   -0.3249197 1. -0.5257311,
+	   -1.051462 0 -0.5257311,
+	   -0.3249197 -1. -0.5257311,
+	   0 0 -1.175571,
+	  ]
+  }
+}
+
+DEF trans Transform {
+  rotation  1 4 0 0.4
+  children [
+    DEF SELECT TouchSensor { enabled TRUE }
+    Shape {
+      appearance Appearance {
+	material Material { }
+      }
+      geometry DEF GEOM CubicalGaussianMap {
+	dualLineColor 0 0 0
+	drawDualCube FALSE
+	coord USE COORD
+	coordIndex [0,1,2,-1,
+		    0,2,3,-1,
+		    0,3,4,-1,
+		    0,4,5,-1,
+		    0,5,1,-1,
+		    1,5,7,-1,
+		    1,7,6,-1,
+		    1,6,2,-1,
+		    2,6,8,-1,
+		    2,8,3,-1,
+		    3,8,9,-1,
+		    3,9,4,-1,
+		    4,9,10,-1,
+		    4,10,5,-1,
+		    5,10,7,-1,
+		    6,7,11,-1,
+		    6,11,8,-1,
+		    7,10,11,-1,
+		    8,11,9,-1,
+		    9,11,10,-1,
+		   ]
+      }
+    }
+   ]
+}
+
+ROUTE GEOM.trueDrawPrimal TO PRIMAL_VIEW.set_bind
+ROUTE GEOM.trueDrawDual TO DUAL_VIEW.set_bind
+ROUTE GEOM.trueDrawDualUnfolded TO DUAL_UNFOLDED_VIEW.set_bind
+ROUTE GEOM.trueDrawDualUnfolded TO trans.reset
+ROUTE GEOM.trueDrawDualUnfolded TO NAVIGATION_ROOT.reset
+ROUTE DRAW_DUAL_UNFOLDED_KEY.state TO GEOM.drawDualUnfolded
+ROUTE DRAW_DUAL_KEY.state TO GEOM.drawDual
+ROUTE DRAW_DUAL_OPAQUE_KEY.state TO GEOM.drawDualOpaque
+ROUTE DRAW_DUAL_HALOED_KEY.state TO GEOM.drawDualHaloed
+ROUTE DRAW_DUAL_BACKGROUND_KEY.state TO GEOM.drawDualCube
+ROUTE TRANSFORMER_NAV.rotation TO TRANSFORMER.rotation
+ROUTE TRANSFORMER_NAV.translation TO TRANSFORMER.translation
+ROUTE TRANSFORMER.coord_changed TO GEOM.coord
+ROUTE SELECT.isOver TO TRANSFORMER_NAV.set_bind
+ROUTE FLATTEN_KEY.press TO TRANSFORMER_NAV.set_bind
+ROUTE EXPORT_KEY.press TO GEOM.export
+ROUTE SNAP_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger
+ROUTE SNAP_CGM_KEY.state TO SNAP_CGM.trigger
+ROUTE SNAP_CGM_UNFOLDED_KEY.state TO SNAP_CGM_UNFOLDED.trigger

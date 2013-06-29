@@ -1,0 +1,224 @@
+#VRML V2.0 utf8
+DEF BACKGROUND ColorBackground { color 1 1 1 }
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+
+DEF DRAW_DUAL_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF FLATTEN_KEY SingleKeySensor { key "f" }
+DEF DRAW_DUAL_UNFOLDED_KEY SingleKeySensor { key "u" }
+DEF DRAW_DUAL_HALOED_KEY SingleKeySensor { key "l" state TRUE }
+DEF DRAW_DUAL_BACKGROUND_KEY SingleKeySensor { key "b" state TRUE }
+DEF SNAP_CGM_KEY SingleKeySensor { key "C" }
+DEF SNAP_CGM_UNFOLDED_KEY SingleKeySensor { key "U" }
+DEF SNAP_PRIMAL_KEY SingleKeySensor { key "X" }
+
+DEF SNAP_CGM Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "geodesic_sphere1_cgm"
+}
+
+DEF SNAP_CGM_UNFOLDED Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "geodesic_sphere1_cgm_unfolded"
+}
+
+DEF SNAP_PRIMAL Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "geodesic_sphere1"
+}
+
+DEF PRIMAL_VIEW Viewpoint {
+  radiusScale 1
+  positionTranslation 0 0 0
+  fieldOfView 0.5
+}
+DEF DUAL_VIEW Viewpoint {
+  type "SIMPLE"
+  radiusScale 0.80
+  positionTranslation 0.15 -0.11 0
+  fieldOfView 0.5
+}
+DEF DUAL_UNFOLDED_VIEW Viewpoint {
+  type "ORTHOGONAL"
+  position 0 0 0
+  left -0.5 right 8.5 bottom -0.5 top 6.5 near -1 far 1
+}
+
+DEF TRANSFORMER CoordinateTransformer {
+  coord DEF COORD Coordinate {
+    point [.2764 -.4472 .8507,
+	   0 0 1,
+	   .5878 0 .809,
+	   -.2764 .4472 .8507,
+	   .2629 .5257 .809,
+	   .7236 .4472 .5257,
+	   -.2629 -.5257 .809,
+	   -.7236 -.4472 .5257,
+	   -.5878 0 .809,
+	   .8944 -.4472 0,
+	   .6882 -.5257 .5,
+	   .9511 0 .309,
+	   .5257 -.8507 0,
+	   0 -1 0,
+	   .1625 -.8507 .5,
+	   -.1625 .8507 .5,
+	   0 1 0,
+	   .4253 .8507 .309,
+	   -.6882 .5257 .5,
+	   -.8944 .4472 0,
+	   -.5257 .8507 0,
+	   .4253 .8507 -.309,
+	   .7236 .4472 -.5257,
+	   .8507 .5257 0,
+	   -.1625 .8507 -.5,
+	   -.2764 .4472 -.8507,
+	   .2629 .5257 -.809,
+	   .9511 0 -.309,
+	   .5878 0 -.809,
+	   .2764 -.4472 -.8507,
+	   .6882 -.5257 -.5,
+	   0 0 -1,
+	   -.2629 -.5257 -.809,
+	   -.5878 0 -.809,
+	   -.7236 -.4472 -.5257,
+	   .1625 -.8507 -.5,
+	   -.4253 -.8507 -.309,
+	   -.6882 .5257 -.5,
+	   -.9511 0 -.309,
+	   -.9511 0 .309,
+	   -.8507 -.5257 0,
+	   -.4253 -.8507 .309
+	  ]
+  }
+}
+
+DEF trans Transform {
+  rotation  1 4 0 0.4
+  children [
+    DEF SELECT TouchSensor { enabled TRUE }
+    Shape {
+      appearance Appearance {
+	material Material { }
+      }
+      geometry DEF GEOM CubicalGaussianMap {
+	solid TRUE
+	dualLineColor 0 0 0
+	drawDualCube FALSE
+	coord USE COORD
+	coordIndex [2 1 0 -1,
+		    4 3 1 -1,
+		    5 4 2 -1,
+		    2 4 1 -1,
+		    1 6 0 -1,
+		    8 7 6 -1,
+		    3 8 1 -1,
+		    1 8 6 -1,
+		    11 10 9 -1,
+		    2 0 10 -1,
+		    5 2 11 -1,
+		    11 2 10 -1,
+		    10 12 9 -1,
+		    14 13 12 -1,
+		    0 14 10 -1,
+		    10 14 12 -1,
+		    4 15 3 -1,
+		    17 16 15 -1,
+		    5 17 4 -1,
+		    4 17 15 -1,
+		    15 18 3 -1,
+		    20 19 18 -1,
+		    16 20 15 -1,
+		    15 20 18 -1,
+		    17 21 16 -1,
+		    23 22 21 -1,
+		    5 23 17 -1,
+		    17 23 21 -1,
+		    21 24 16 -1,
+		    26 25 24 -1,
+		    22 26 21 -1,
+		    21 26 24 -1,
+		    23 27 22 -1,
+		    11 9 27 -1,
+		    5 11 23 -1,
+		    23 11 27 -1,
+		    27 28 22 -1,
+		    30 29 28 -1,
+		    9 30 27 -1,
+		    27 30 28 -1,
+		    32 31 29 -1,
+		    33 25 31 -1,
+		    34 33 32 -1,
+		    32 33 31 -1,
+		    31 28 29 -1,
+		    26 22 28 -1,
+		    25 26 31 -1,
+		    31 26 28 -1,
+		    36 35 13 -1,
+		    32 29 35 -1,
+		    34 32 36 -1,
+		    36 32 35 -1,
+		    35 12 13 -1,
+		    30 9 12 -1,
+		    29 30 35 -1,
+		    35 30 12 -1,
+		    33 37 25 -1,
+		    38 19 37 -1,
+		    34 38 33 -1,
+		    33 38 37 -1,
+		    37 24 25 -1,
+		    20 16 24 -1,
+		    19 20 37 -1,
+		    37 20 24 -1,
+		    38 39 19 -1,
+		    40 7 39 -1,
+		    34 40 38 -1,
+		    38 40 39 -1,
+		    39 18 19 -1,
+		    8 3 18 -1,
+		    7 8 39 -1,
+		    39 8 18 -1,
+		    40 41 7 -1,
+		    36 13 41 -1,
+		    34 36 40 -1,
+		    40 36 41 -1,
+		    41 6 7 -1,
+		    14 0 6 -1,
+		    13 14 41 -1,
+		    41 14 6 -1
+		   ]
+      }
+    }
+   ]
+}
+
+ROUTE GEOM.trueDrawPrimal TO PRIMAL_VIEW.set_bind
+ROUTE GEOM.trueDrawDual TO DUAL_VIEW.set_bind
+ROUTE GEOM.trueDrawDualUnfolded TO DUAL_UNFOLDED_VIEW.set_bind
+ROUTE GEOM.trueDrawDualUnfolded TO trans.reset
+ROUTE GEOM.trueDrawDualUnfolded TO NAVIGATION_ROOT.reset
+ROUTE DRAW_DUAL_UNFOLDED_KEY.state TO GEOM.drawDualUnfolded
+ROUTE DRAW_DUAL_KEY.state TO GEOM.drawDual
+ROUTE DRAW_DUAL_OPAQUE_KEY.state TO GEOM.drawDualOpaque
+ROUTE DRAW_DUAL_HALOED_KEY.state TO GEOM.drawDualHaloed
+ROUTE DRAW_DUAL_BACKGROUND_KEY.state TO GEOM.drawDualCube
+ROUTE TRANSFORMER_NAV.rotation TO TRANSFORMER.rotation
+ROUTE TRANSFORMER_NAV.translation TO TRANSFORMER.translation
+ROUTE TRANSFORMER.coord_changed TO GEOM.coord
+ROUTE SELECT.isOver TO TRANSFORMER_NAV.set_bind
+ROUTE FLATTEN_KEY.press TO TRANSFORMER_NAV.set_bind
+ROUTE SNAP_PRIMAL_KEY.state TO SNAP_PRIMAL.trigger
+ROUTE SNAP_CGM_KEY.state TO SNAP_CGM.trigger
+ROUTE SNAP_CGM_UNFOLDED_KEY.state TO SNAP_CGM_UNFOLDED.trigger

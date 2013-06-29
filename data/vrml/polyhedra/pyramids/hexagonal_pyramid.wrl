@@ -1,0 +1,28 @@
+#VRML V2.0 utf8
+NavigationInfo { type [ "EXAMINE" "ANY" ] }
+
+Shape {
+  appearance Appearance {
+    material Material { }
+  }
+  geometry IndexedFaceSet {
+    coord Coordinate {
+      point [ 0.866  0.5 0.0,
+	      0.0    1.0 0.0,
+	     -0.866  0.5 0.0,
+	     -0.866 -0.5 0.0,
+	      0.0   -1.0 0.0,
+	      0.866 -0.5 0.0,
+	      0.0    0.0 1.0
+	    ]
+    }
+    coordIndex [0 1 6 -1,
+		1 2 6 -1,
+		2 3 6 -1,
+		3 4 6 -1,
+		4 5 6 -1,
+		5 0 6 -1,
+		5 4 3 2 1 0 -1
+	       ]
+  }
+}

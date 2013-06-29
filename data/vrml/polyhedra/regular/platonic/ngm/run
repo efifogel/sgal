@@ -1,0 +1,5 @@
+player -v1 ngm_cube.wrl
+player -v1 ngm_dodecahedron.wrl
+player -v1 ngm_icosahedron.wrl
+player -v1 ngm_octahedron.wrl
+player -v1 ngm_tetrahedron.wrl
