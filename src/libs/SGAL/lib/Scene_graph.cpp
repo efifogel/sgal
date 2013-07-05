@@ -448,7 +448,7 @@ void Scene_graph::isect(Uint x, Uint y)
   // Image_base::get_format_components(format) (Uchar pixel[num_components]).
   // Unfortunately, MSVC does not allow defining an array of non-constant
   // size, so we define it to be of the maximum (of 3 and 4).
-#if (_MSC_VER <= 1600)
+#if (_MSC_VER <= 1700)
   Uchar pixel[4];
 #else
   Uchar pixel[Image_base::get_format_components(format)];
