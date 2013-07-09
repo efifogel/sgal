@@ -24,6 +24,7 @@
 
 #include <assert.h>
 #include <iostream>
+#undef yyFlexLexer
 #include <FlexLexer.h>
 
 #include "parse.hpp"
