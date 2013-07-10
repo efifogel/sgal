@@ -1,3 +1,3 @@
 include $(ROOT)/make/comdef.mak
-SUBDIRS = boost
+SUBDIRS = extension
 include $(MAKEDIR)/subdirs.mak
