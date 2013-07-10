@@ -14,7 +14,7 @@ include_directories(${ImageMagick_Magick++_INCLUDE_DIR})
 include_directories(libs/GL/include) 
 include_directories(libs/flex/include) 
 include_directories(libs/gl2ps/include) 
-include_directories(libs/boost/include/extension) 
+include_directories(libs/boost/include) 
 
 #Add some compiler options
 if (WIN32)
