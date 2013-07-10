@@ -40,9 +40,9 @@ CGALLIBDIRS+= -L$(GCCROOT)/lib
 endif
 
 ifdef GCCROOT
-CGALLIBOPTS+= -Xlinker -R$(GCCROOT)/lib
+CGALLIBOPTS+= -Wl,-rpath $(GCCROOT)/lib
 endif
-CGALLIBOPTS+= -Xlinker -R"$(CGAL_DIR)/lib"
+CGALLIBOPTS+= -Wl,-rpath "$(CGAL_DIR)/lib"
 
 LEDALIBS = -lP -lG -lL -lW
 QTLIBS = -lqt-mt
@@ -79,7 +79,7 @@ endif
 LLDLIBS+= user32.lib gdi32.lib comdlg32.lib advapi32.lib shell32.lib ws2_32.lib
 endif
 
-CGALCPPINCS+= 
+CGALCPPINCS+=
 CGALCPPDEFS+=
 CGALCPPOPTS+=
 
