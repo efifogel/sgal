@@ -255,23 +255,24 @@ LCPPDEFS+= -DSGAL_TRACE
 endif
 
 # Extract flex version
-FLEX_MAJOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+\([0-9]\)\.[0-9].[0-9]\+'
-FLEX_MAJOR_VER = $(shell $(FLEX_MAJOR_VER_CMD))
-FLEX_MINOR_VER_CMD = expr match "$$(flex --version)" 'flex\s\+[0-9]\.\([0-9]\).[0-9]\+'
-FLEX_MINOR_VER = $(shell $(FLEX_MINOR_VER_CMD))
-FLEX_UPDATE_VER_CMD = expr match "$$(flex --version)" 'flex\s\+[0-9]\.[0-9].\([0-9]\+\)'
-FLEX_UPDATE_VER = $(shell $(FLEX_UPDATE_VER_CMD))
+FLEX_MAJOR_VER_CMD = expr "$(flex --version)" : 'flex \([0-9]\)\.[0-9].[0-9]'
+FLEX_MINOR_VER_CMD = expr "$(flex --version)" : 'flex [0-9]\.\([0-9]\).[0-9]'
+FLEX_UPDATE_VER_CMD = expr "$(flex --version)" : 'flex [0-9]\.[0-9].\([0-9]\)'
+FLEX_VER_CMD = $(expr $(expr $(FLEX_MAJOR_VER) * 1000) + $(expr $(expr $(FLEX_MINOR_VER) * 100) + $(FLEX_UPDATE_VER)))
 
-FLEX_VER_CMD = expr $(FLEX_MAJOR_VER) \* 1000 + $(FLEX_MINOR_VER) \* 100 + $(FLEX_UPDATE_VER)
+FLEX_MAJOR_VER = $(shell $(FLEX_MAJOR_VER_CMD))
+FLEX_MINOR_VER = $(shell $(FLEX_MINOR_VER_CMD))
+FLEX_UPDATE_VER = $(shell $(FLEX_UPDATE_VER_CMD))
 FLEX_VER = $(shell $(FLEX_VER_CMD))
 
 # Extract bison version
-BISON_MAJOR_VER_CMD = expr match "$$(bison --version)" 'bison[^0-9]\+\([0-9]\)\.[0-9]'
-BISON_MAJOR_VER = $(shell $(BISON_MAJOR_VER_CMD))
-BISON_MINOR_VER_CMD = expr match "$$(bison --version)" 'bison[^0-9]\+[0-9]\.\([0-9]\)'
-BISON_MINOR_VER = $(shell $(BISON_MINOR_VER_CMD))
 
-BISON_VER_CMD = expr $(BISON_MAJOR_VER) \* 1000 + $(BISON_MINOR_VER) \* 100
+BISON_MAJOR_VER_CMD = expr "$$(bison --version)" : 'bison[^0-9]\+\([0-9]\)\.[0-9]'
+BISON_MINOR_VER_CMD = expr "$$(bison --version)" : 'bison[^0-9]\+[0-9]\.\([0-9]\)'
+BISON_VER_CMD = $(expr $(expr $(BISON_MAJOR_VER) * 1000) + $(expr $(BISON_MINOR_VER) * 100))
+
+BISON_MAJOR_VER = $(shell $(BISON_MAJOR_VER_CMD))
+BISON_MINOR_VER = $(shell $(BISON_MINOR_VER_CMD))
 BISON_VER = $(shell $(BISON_VER_CMD))
 
 # Compilation define switch:
