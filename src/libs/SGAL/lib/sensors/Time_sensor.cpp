@@ -325,7 +325,7 @@ bool Time_sensor::update_time(Scene_time current_time)
   }
 
   // Update fraction
-  m_fraction = static_cast<float>(m_time_in_cycle) / m_cycle_interval;
+  m_fraction = static_cast<Float>(m_time_in_cycle / m_cycle_interval);
   
   // Use the fraction addition and factor to calculate the final fraction
   m_fraction = m_fraction_bias + (m_fraction * m_fraction_scale);

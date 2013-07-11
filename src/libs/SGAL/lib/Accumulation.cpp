@@ -330,7 +330,7 @@ void Accumulation::set_attributes(Element* elem)
       continue;
     }
     if (name == "accumBits") {
-      Uint bits = boost::lexical_cast<Float>(value);
+      Uint bits = boost::lexical_cast<Uint>(value);
       set_number_of_bits(bits, bits, bits, bits);    
       elem->mark_delete(ai);
       continue;

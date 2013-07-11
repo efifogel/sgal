@@ -90,9 +90,7 @@ void Rotation::mult(const Rotation& r1, const Rotation& r2)
 
 /*! \brief sets this rotation to be the reverse of the given rotation. */
 void Rotation::invert(const Rotation& /* q1 */)
-{
-  m_axis.negate();
-}
+{ m_axis.negate(); }
 
 /*! \brief Spherical interpolation for quaternions. */
 void Rotation::slerp(Float t, const Rotation& r1, const Rotation& r2)
@@ -101,18 +99,18 @@ void Rotation::slerp(Float t, const Rotation& r1, const Rotation& r2)
   r1.make_quaternion(q1);
   r2.make_quaternion(q2);
 
-  float cos_half_theta = q1.dot(q2);
+  Float cos_half_theta = q1.dot(q2);
   if (abs(cos_half_theta) >= 1) qr = q1;
   else {
     // Calculate temporary values.
-    double sin_half_theta = sqrtf(1.0 - cos_half_theta * cos_half_theta);
+    Float sin_half_theta = sqrtf(1.0 - cos_half_theta * cos_half_theta);
     // if theta = 180 degrees then result is not fully defined
     // we could rotate around any axis normal to q1 or q2
     if (abs(sin_half_theta) < SGAL_EPSILON) qr.combine(0.5, q1, 0.5, q2);
     else {
-      float half_theta = acosf(cos_half_theta);
-      float ratio1 = sinf((1 - t) * half_theta) / sin_half_theta;
-      float ratio2 = sinf(t * half_theta) / sin_half_theta; 
+      Float half_theta = acosf(cos_half_theta);
+      Float ratio1 = sinf((1 - t) * half_theta) / sin_half_theta;
+      Float ratio2 = sinf(t * half_theta) / sin_half_theta; 
       qr.combine(ratio1, q1, ratio2, q2);
     }
   }
