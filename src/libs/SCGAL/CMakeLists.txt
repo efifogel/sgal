@@ -148,3 +148,13 @@ target_link_libraries(SCGAL
 	${ImageMagick_Magick++_LIBRARY}
 	glu32.lib 
 	opengl32.lib)
+
+install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    DESTINATION "include"
+    FILES_MATCHING
+ #   PATTERN "*.hpp"
+ #   PATTERN ".git" EXCLUDE
+ #   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+)
+install(TARGETS SCGAL DESTINATION "lib")
