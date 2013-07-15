@@ -298,9 +298,9 @@ target_link_libraries(SGAL
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     DESTINATION "include"
-#    FILES_MATCHING
-#    PATTERN "*.hpp"
-#    PATTERN ".git" EXCLUDE
+    FILES_MATCHING
+    PATTERN "*.hpp"
+#   PATTERN ".git" EXCLUDE
 #   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
 # TODO add generated files!
