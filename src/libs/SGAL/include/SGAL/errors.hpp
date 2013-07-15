@@ -15,7 +15,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 4993 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -69,6 +69,26 @@ public:
 
   // gcc says that throw specification on dtor is loosened without this line
   ~Frame_buffer_not_allocated_error() throw() {}
+};
+
+/*! Class thrown when a visual cannot be selected. */
+class SGAL_SGAL_DECL Visual_selection_error : public error {
+public:
+  Visual_selection_error() :
+    error(std::string("Failed to choose Visual!")) {}
+
+  // gcc says that throw specification on dtor is loosened without this line
+  ~Visual_selection_error() throw() {}
+};
+
+/*! Class thrown when a visual configuration fails. */
+class SGAL_SGAL_DECL Visual_configuration_error : public error {
+public:
+  Visual_configuration_error() :
+    error(std::string("Failed to configure Visual!")) {}
+
+  // gcc says that throw specification on dtor is loosened without this line
+  ~Visual_configuration_error() throw() {}
 };
 
 SGAL_END_NAMESPACE

@@ -57,7 +57,7 @@ Boolean Windows_window_item::init_multisample(HINSTANCE& hInstance)
   float fAttributes[] = {0,0};
 
   // These Attributes Are The Bits We Want To Test For In Our Sample
-  // Everything Is Pretty Standard, The Only One We Want To 
+  // Everything Is Pretty Standard, The Only One We Want To
   // Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
   // These Two Are Going To Do The Main Testing For Whether Or Not
   // We Support Multisampling On This Hardware.
@@ -83,10 +83,10 @@ Boolean Windows_window_item::init_multisample(HINSTANCE& hInstance)
   Uint num_formats;
   int valid = wglChoosePixelFormatARB(m_hDC, iAttributes, fAttributes, 1,
                                       &m_arb_multisample_format, &num_formats);
- 
+
   // If We Returned True, And Our Format Count Is Greater Than 1
   if (valid && (num_formats >= 1)) return true;
- 
+
   return false;
 }
 
@@ -182,7 +182,7 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
                 << std::endl;
       ReleaseDC(m_hWnd, m_hDC);                 // release the device context
       m_hDC = 0;                                // zero the device context
-	  if (m_bOwnWnd) DestroyWindow(m_hWnd);     // destroy the window
+      if (m_bOwnWnd) DestroyWindow(m_hWnd);     // destroy the window
       m_hWnd = 0;                               // zero the window handle
       return;                                   // return failure
     }
@@ -241,20 +241,20 @@ void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
     }
   }
 
-  // get the current pixel format index 
-  int iPixelFormat = GetPixelFormat(m_hDC); 
-    
-  // obtain a detailed description of that pixel format 
+  // get the current pixel format index
+  int iPixelFormat = GetPixelFormat(m_hDC);
+
+  // obtain a detailed description of that pixel format
   PIXELFORMATDESCRIPTOR  pfd;
   DescribePixelFormat(m_hDC, iPixelFormat,
                       sizeof(PIXELFORMATDESCRIPTOR), &pfd);
 
-  m_accum_red_bits = pfd.cAccumRedBits; 
-  m_accum_green_bits = pfd.cAccumGreenBits; 
-  m_accum_blue_bits = pfd.cAccumBlueBits; 
+  m_accum_red_bits = pfd.cAccumRedBits;
+  m_accum_green_bits = pfd.cAccumGreenBits;
+  m_accum_blue_bits = pfd.cAccumBlueBits;
   m_accum_alpha_bits = pfd.cAccumAlphaBits;
-  m_depth_bits = pfd.cDepthBits; 
-  m_stencil_bits = pfd.cStencilBits; 
+  m_depth_bits = pfd.cDepthBits;
+  m_stencil_bits = pfd.cStencilBits;
 
   if (Gfx_conf::get_instance()->is_multisample_supported()) {
     Int piAttributes[] = {WGL_SAMPLES_ARB};
@@ -269,7 +269,7 @@ void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
     }
     m_number_of_samples = piValues[0];
   }
-  
+
   UpdateWindow(m_hWnd);                 // expose the window
                                         // ... send an initial WM_PAINT message
   /* The window is showed only when the application calls show() to let the
@@ -295,5 +295,5 @@ void Windows_window_item::destroy()
     m_hWnd = NULL;
   }
 }
-  
+
 SGAL_END_NAMESPACE

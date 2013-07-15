@@ -43,6 +43,8 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
+#include "SGAL/errors.hpp"
 #include "SGAL/Event_handler.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Keyboard_event.hpp"
@@ -127,7 +129,7 @@ Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_scene_graph(NULL),
   m_context(NULL),
   m_option_parser(option_parser),
-  m_simulate(false)  
+  m_simulate(false)
 { init(); }
 
 /*! Constructor. */
@@ -137,7 +139,7 @@ Player_scene::Player_scene() :
   m_win_width(0), m_win_height(0),
   m_scene_graph(NULL),
   m_context(NULL),
-  m_simulate(false)  
+  m_simulate(false)
 { init(); }
 
 /*! \brief initializes. */
@@ -206,12 +208,12 @@ void Player_scene::create_scene()
     filename.insert(1, ":");
   }
 #endif
-  
+
 #if BOOST_VERSION >= 103400
   fi::path file_path(filename);
 #else
   fi::path file_path(filename, fi::native);
-#endif  
+#endif
   if (file_path.is_complete()) {
 #if BOOST_VERSION >= 103400
     if (fi::exists(file_path)) m_fullname = file_path.string();
@@ -235,13 +237,13 @@ void Player_scene::create_scene()
     throw Illegal_input(FILE_NOT_FOUND, "cannot find file", filename);
     return;
   }
-  
-  std::cout << m_fullname.c_str() << std::endl; 
+
+  std::cout << m_fullname.c_str() << std::endl;
 
   // Construct a Scene_graph:
   m_scene_graph = new SGAL::Scene_graph;
   SGAL_assertion(m_scene_graph);
-  
+
   update_data_dirs();
 }
 
@@ -258,7 +260,7 @@ void Player_scene::destroy_scene()
     m_scene_graph = NULL;
   }
 }
-  
+
 /*! \brief initializes the secene. */
 void Player_scene::init_scene()
 {
@@ -281,7 +283,7 @@ void Player_scene::init_scene()
 
   // Create the missing nodes.
   m_scene_graph->create_defaults();
-    
+
   // Prepare the window item.
   m_window_item = new Window_item;
   m_window_item->set_title(filename);
@@ -302,7 +304,49 @@ void Player_scene::init_scene()
   if (ms) m_window_item->set_number_of_samples(ms->get_number_of_samples());
   m_window_item->set_number_of_stencil_bits(conf->get_number_of_stencil_bits());
   m_window_item->set_number_of_depth_bits(conf->get_number_of_depth_bits());
-  m_window_manager->create_window(m_window_item);
+
+  SGAL::Boolean visual_chosen = false;
+
+  SGAL::Uint sample_bits = m_window_item->get_number_of_samples();
+  SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
+  m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
+                                                 blue_bits, alpha_bits);
+  SGAL::Boolean retry =
+    ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) == 0);
+
+  while (retry && !visual_chosen) {
+    try {
+      m_window_manager->create_window(m_window_item);
+    }
+    catch(SGAL::Visual_selection_error& e) {
+      std::cerr << e.what() << std::endl;
+      if (sample_bits > 0) {
+        // Try with less sample bits:
+        sample_bits = 0;
+        std::cerr << "Retrying with 0 sample bits." << std::endl;
+        m_window_item->set_number_of_samples(sample_bits);
+        retry =
+          ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) == 0);
+        continue;
+      }
+
+      if ((red_bits + green_bits + blue_bits + alpha_bits) > 0) {
+        // Try with less accumulation bits:
+        red_bits = green_bits = blue_bits = alpha_bits = 0;
+        std::cerr << "Retrying with 0 accumulation bits." << std::endl;
+        m_window_item->set_number_of_accumulation_bits(red_bits, green_bits,
+                                                       blue_bits, alpha_bits);
+        retry =
+          ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) == 0);
+        continue;
+      }
+      SGAL_error();
+    }
+    visual_chosen = true;
+  };
+
+  if (!visual_chosen) m_window_manager->create_window(m_window_item);
+
   if (ms) ms->set_number_of_samples(m_window_item->get_number_of_samples());
   if (acc) {
     SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
@@ -327,7 +371,7 @@ void Player_scene::init_scene()
 void Player_scene::indulge_user()
 {
   m_option_parser->configure(m_scene_graph);
-  
+
   // Local options:
   if (m_option_parser->get_display_texture_info()) {
     SGAL_assertion(m_scene_graph);
@@ -341,7 +385,7 @@ void Player_scene::indulge_user()
         boost::dynamic_pointer_cast<SGAL::Texture_2d>(cont);
       if (texture) texture->print_info();
     }
-    
+
     // Look for instance containers:
     SGAL::Scene_graph::Container_map_iter ii;
     for (ii = m_scene_graph->instances_begin();
@@ -392,7 +436,7 @@ void Player_scene::indulge_user()
     m_window_manager->set_num_samples(m_option_parser->get_samples());
   }
 #endif
-  
+
 #if 0
   SGAL::Uint sub_index_buffer_size;
   if (m_option_parser->get_sub_index_buffer_size(sub_index_buffer_size)) {
@@ -425,7 +469,7 @@ void Player_scene::indulge_user()
 /*! \brief print geometry information of Box */
 void Player_scene::print_geometry_info(SGAL::Box* box)
 {
-  std::cout << "Geometry: Box" << std::endl;  
+  std::cout << "Geometry: Box" << std::endl;
 }
 
 /*! \brief prints texture information of Index_face_set. */
@@ -439,7 +483,7 @@ void Player_scene::print_geometry_info(SGAL::Indexed_face_set* ifs)
     "QUADS",
     "POLYGONS"
   };
-  
+
   std::cout << "Geometry: Indexed_face_set"
             << ", No. primitives: " << ifs->get_num_primitives()
             << ", Types: " << primitive_types[ifs->get_primitive_type()]
@@ -460,14 +504,14 @@ void Player_scene::update_data_dirs()
     if (path != ".") m_scene_graph->add_data_dir(path);
     path.clear();
   }
-  
+
   const char* root = getenv("ROOT");
   if (root) {
 #if BOOST_VERSION >= 103400
     fi::path dir(root);
 #else
     fi::path dir(root, fi::native);
-#endif    
+#endif
     dir /= "/data/images";
     m_scene_graph->add_data_dir(dir);
   }
@@ -588,7 +632,7 @@ void Player_scene::handle(SGAL::Reshape_event* event)
   SGAL::Window_item* window_item = event->get_window_item();
   SGAL::Uint width = event->get_width();
   SGAL::Uint height = event->get_height();
-  reshape_window(window_item, width, height);  
+  reshape_window(window_item, width, height);
 }
 
 /*! \brief handles a draw event */
@@ -613,7 +657,7 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   draw_action.set_snap(false);
   m_scene_graph->draw(&draw_action);
   if (m_option_parser->get_draw_grid()) draw_grid();
-  
+
   boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   if (!acc || !acc->is_enabled() || dont_accumulate) {
     m_scene_graph->process_snapshots(&draw_action);
@@ -623,7 +667,7 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
     window_item->swap_buffers();
     return;
   }
-  
+
   if (!acc->is_active()) {
     acc->enactivate();
     window_item->set_accumulating(true);

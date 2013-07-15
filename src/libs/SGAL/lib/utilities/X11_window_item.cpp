@@ -33,6 +33,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/errors.hpp"
 #include "SGAL/X11_window_item.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -49,15 +50,15 @@ void X11_window_item::create(Display* display, int screen)
 {
   int rc = 0;
   bool brc;
-  
+
   m_display = display;              // retain the display for further actions
   m_screen = screen;                // retain the screen for further actions
 
   // Window winDummy;
   // unsigned int borderDummy;
-    
+
   // Get an appropriate visual:
-  /* attributes for a visual in RGBA format with at least 
+  /* attributes for a visual in RGBA format with at least
    * 4 bits per color and a 24 bit depth buffer
    */
   int attributes[32];
@@ -104,7 +105,7 @@ void X11_window_item::create(Display* display, int screen)
 
   XVisualInfo* vi = glXChooseVisual(display, screen, attributes);
   if (vi == NULL) {
-    std::cerr << "Failed to choose visual!" << std::endl;
+    throw Visual_selection_error();
     return;
   }
 
@@ -112,7 +113,7 @@ void X11_window_item::create(Display* display, int screen)
     rc = glXGetConfig(display, vi, GLX_STENCIL_SIZE,
                       reinterpret_cast<int*>(&m_stencil_bits));
     if (rc != 0) {
-      std::cerr << "Failed to configure visual!" << std::endl;
+      throw Visual_configuration_error();
       return;
     }
   }
@@ -120,7 +121,7 @@ void X11_window_item::create(Display* display, int screen)
     rc = glXGetConfig(display, vi, GLX_ACCUM_RED_SIZE,
                       reinterpret_cast<int*>(&m_accum_red_bits));
     if (rc != 0) {
-      std::cerr << "Failed to configure visual!" << std::endl;
+      throw Visual_configuration_error();
       return;
     }
   }
@@ -128,7 +129,7 @@ void X11_window_item::create(Display* display, int screen)
     rc = glXGetConfig(display, vi, GLX_ACCUM_GREEN_SIZE,
                       reinterpret_cast<int*>(&m_accum_green_bits));
     if (rc != 0) {
-      std::cerr << "Failed to configure visual!" << std::endl;
+      throw Visual_configuration_error();
       return;
     }
   }
@@ -136,7 +137,7 @@ void X11_window_item::create(Display* display, int screen)
     rc = glXGetConfig(display, vi, GLX_ACCUM_BLUE_SIZE,
                       reinterpret_cast<int*>(&m_accum_blue_bits));
     if (rc != 0) {
-      std::cerr << "Failed to configure visual!" << std::endl;
+      throw Visual_configuration_error();
       return;
     }
   }
@@ -144,7 +145,7 @@ void X11_window_item::create(Display* display, int screen)
     rc = glXGetConfig(display, vi, GLX_ACCUM_ALPHA_SIZE,
                       reinterpret_cast<int*>(&m_accum_alpha_bits));
     if (rc != 0) {
-      std::cerr << "Failed to configure visual!" << std::endl;
+      throw Visual_configuration_error();
       return;
     }
   }
@@ -152,11 +153,11 @@ void X11_window_item::create(Display* display, int screen)
     rc = glXGetConfig(display, vi, GLX_SAMPLES,
                       reinterpret_cast<int*>(&m_number_of_samples));
     if (rc != 0) {
-      std::cerr << "Failed to configure visual!" << std::endl;
+      throw Visual_configuration_error();
       return;
     }
   }
-  
+
 //   int glx_major, glx_minor;
 //   brc glXQueryVersion(display, &glx_major, &glx_minor);
 //   if (!brc)
@@ -172,7 +173,7 @@ void X11_window_item::create(Display* display, int screen)
                                   vi->visual, AllocNone);
   m_win_attr.colormap = cmap;
   m_win_attr.border_pixel = 0;
- 
+
   if (m_full_screen) {
     // Determine the version:
 //     int vm_major, vm_minor;
@@ -211,7 +212,7 @@ void X11_window_item::create(Display* display, int screen)
       dpy_height = modes[best_mode]->vdisplay;
       XFree(modes);
     }
-    
+
     // Set window attributes:
     m_win_attr.override_redirect = True;
     m_win_attr.event_mask =
@@ -234,7 +235,7 @@ void X11_window_item::create(Display* display, int screen)
   }
   else {
     // Create a window in window mode:
-    m_win_attr.event_mask = 
+    m_win_attr.event_mask =
       ExposureMask |
       KeyPressMask | KeyReleaseMask |
       ButtonPressMask | ButtonReleaseMask |
@@ -272,7 +273,7 @@ void X11_window_item::destroy()
         if ((m_desk_mode.hdisplay != 0) && (m_desk_mode.vdisplay != 0))
           XF86VidModeSwitchToMode(m_display, m_screen, &m_desk_mode);
       }
-      
+
       if (!glXMakeCurrent(m_display, None, NULL)) {
         printf("Could not release drawing context.\n");
       }
