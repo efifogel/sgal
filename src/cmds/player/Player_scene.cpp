@@ -312,7 +312,7 @@ void Player_scene::init_scene()
   m_window_item->get_number_of_accumulation_bits(red_bits, green_bits,
                                                  blue_bits, alpha_bits);
   SGAL::Boolean retry =
-    ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) == 0);
+    ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) > 0);
 
   while (retry && !visual_chosen) {
     try {
@@ -326,7 +326,7 @@ void Player_scene::init_scene()
         std::cerr << "Retrying with 0 sample bits." << std::endl;
         m_window_item->set_number_of_samples(sample_bits);
         retry =
-          ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) == 0);
+          ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) > 0);
         continue;
       }
 
@@ -337,7 +337,7 @@ void Player_scene::init_scene()
         m_window_item->set_number_of_accumulation_bits(red_bits, green_bits,
                                                        blue_bits, alpha_bits);
         retry =
-          ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) == 0);
+          ((red_bits + green_bits + blue_bits + alpha_bits + sample_bits) > 0);
         continue;
       }
       SGAL_error();
