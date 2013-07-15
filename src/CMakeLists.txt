@@ -17,11 +17,13 @@ include_directories(${ImageMagick_Magick++_INCLUDE_DIR})
 if (NOT WIN32)
   include_directories(${X11_INCLUDE_DIR})
 endif(NOT WIN32)
-# TODO do we really need all of them? on all platforms?
-include_directories(libs/GL/include)
-include_directories(libs/flex/include)
-include_directories(libs/gl2ps/include)
+
 include_directories(libs/boost/include)
+include_directories(libs/gl2ps/include)
+if (WIN32)
+  include_directories(libs/GL/include)
+  include_directories(libs/flex/include)
+endif(WIN32)
 
 #Add some compiler options
 if (WIN32)
