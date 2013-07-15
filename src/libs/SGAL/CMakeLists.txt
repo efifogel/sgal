@@ -1,41 +1,47 @@
 #Check for bison
 find_package(BISON 2.7 REQUIRED)
 find_package(FLEX 2.5.31 REQUIRED)
+find_package(OpenGL REQUIRED)
+
+set (GENERATED_DIR "${CMAKE_BINARY_DIR}/src/libs/SGAL/generated")
 
 # Create custom command for flex/lex (note the outputs)
-add_custom_command(
-	TARGET SGAL
-	PRE_BUILD
-	COMMAND ${CMAKE_COMMAND}
-	ARGS -E make_directory ${CMAKE_CURRENT_LIST_DIR}/lib/generated)
+#add_custom_command(
+#	TARGET SGAL
+#	PRE_BUILD
+#	COMMAND ${CMAKE_COMMAND}
+#	ARGS -E make_directory ${GENERATED_DIR})
+
+file(MAKE_DIRECTORY ${GENERATED_DIR})
 
 add_custom_command(
-	SOURCE lib/loaders/scan.l
-	COMMAND ${FLEX_EXECUTABLE} 
-	ARGS -d -+ --nounistd -o ${CMAKE_CURRENT_LIST_DIR}/lib/generated/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l
 	TARGET SGAL
-	OUTPUTS ${CMAKE_CURRENT_LIST_DIR}/lib/generated/scan.cpp)
+	SOURCE lib/loaders/scan.l
+	COMMAND ${FLEX_EXECUTABLE}
+	ARGS -d -+ --nounistd -o ${GENERATED_DIR}/scan.cpp ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/scan.l
+	OUTPUTS ${GENERATED_DIR}/scan.cpp)
 
 # Create custom command for bison/yacc (note the DEPENDS)
 add_custom_command(
-	SOURCE lib/loaders/parse.y
-	COMMAND ${BISON_EXECUTABLE} 
-	ARGS -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y -o ${CMAKE_CURRENT_LIST_DIR}/lib/generated/parse.cpp
 	TARGET SGAL
-	DEPENDS ${CMAKE_CURRENT_LIST_DIR}/lib/generated/scan.cpp
-	OUTPUTS ${CMAKE_CURRENT_LIST_DIR}/lib/generated/parse.cpp)
+	SOURCE lib/loaders/parse.y
+	COMMAND ${BISON_EXECUTABLE}
+	ARGS -y ${CMAKE_CURRENT_LIST_DIR}/lib/loaders/parse.y -o ${GENERATED_DIR}/parse.cpp
+    PRE_BUILD
+	DEPENDS ${GENERATED_DIR}/scan.cpp
+	OUTPUTS ${GENERATED_DIR}/parse.cpp)
 
 # Add parser.c to the list of sources
-set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} lib/generated/parse.cpp)
-set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} lib/generated/scan.cpp)
+set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${GENERATED_DIR}/parse.cpp)
+set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${GENERATED_DIR}/scan.cpp)
 
 # Since parser.c does not exists yet when cmake is run, mark
 # it as generated
-set_source_files_properties(lib/generated/parse.cpp GENERATED)
-set_source_files_properties(lib/generated/scan.cpp GENERATED)
+set_source_files_properties(${GENERATED_DIR}/parse.cpp GENERATED)
+set_source_files_properties(${GENERATED_DIR}/scan.cpp GENERATED)
 
 # Include binary directory to include lexer.c in parser.c
-include_directories(lib/generated)
+include_directories(${GENERATED_DIR})
 
 #Look for cpp files (Removed for now due to unmaintained files)
 #file(GLOB_RECURSE SGAL_SOURCE_FILES *.cpp)
@@ -225,24 +231,24 @@ set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} lib/interpolators/Color_interpolator.
 set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} lib/IO/Vrml_formatter.cpp)
 
 #Add all include directories
-include_directories(include/) 
-include_directories(include/SGAL) 
-include_directories(include/engines) 
-include_directories(include/events) 
-include_directories(include/geo) 
-include_directories(include/geometries) 
-include_directories(include/geometries/primitive_shapes) 
-include_directories(include/interpolators) 
-include_directories(include/IO) 
-include_directories(include/lights) 
-include_directories(include/loaders) 
-include_directories(include/primitives) 
-include_directories(include/sensors) 
-include_directories(include/utilities) 
-include_directories(lib) 
-include_directories(lib/loaders) 
-include_directories(lib/primitives) 
-include_directories(lib/interpolators) 
+include_directories(include/)
+include_directories(include/SGAL)
+include_directories(include/engines)
+include_directories(include/events)
+include_directories(include/geo)
+include_directories(include/geometries)
+include_directories(include/geometries/primitive_shapes)
+include_directories(include/interpolators)
+include_directories(include/IO)
+include_directories(include/lights)
+include_directories(include/loaders)
+include_directories(include/primitives)
+include_directories(include/sensors)
+include_directories(include/utilities)
+include_directories(lib)
+include_directories(lib/loaders)
+include_directories(lib/primitives)
+include_directories(lib/interpolators)
 
 #Add defines
 add_definitions(-DSGAL_SGAL_SOURCE)
@@ -251,7 +257,14 @@ add_definitions(-DSGAL_LIB)
 
 if (WIN32)
 	add_definitions(/wd4251)
-endif()
+else(WIN32)
+  add_definitions(-DGL_GLEXT_PROTOTYPES)
+endif(WIN32)
+
+if (APPLE)
+  add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16)
+  add_definitions(-DMAGICKCORE_HDRI_ENABLE=0)
+endif(APPLE)
 
 #Add library
 if (BUILD_SHARED_LIBS)
@@ -262,10 +275,33 @@ else()
 endif()
 
 #Add links
-target_link_libraries(SGAL 
-	${Boost_FILESYSTEM_LIBRARY} 
+if (NOT WIN32)
+  set (NON_WIN32_LIBRARIES
+       ${X11_LIBRARIES}
+       ${X11_Xxf86vm_LIB}
+  )
+  if (APPLE)
+    set (NON_WIN32_LIBRARIES ${NON_WIN32_LIBRARIES} /opt/X11/lib/libGL.dylib)
+  endif(APPLE)
+endif(NOT WIN32)
+
+target_link_libraries(SGAL
+	${Boost_FILESYSTEM_LIBRARY}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_PROGRAM_OPTIONS_LIBRARY}
 	${ImageMagick_Magick++_LIBRARY}
-	glu32.lib 
-	opengl32.lib)
+    ${OPENGL_LIBRARIES}
+    ${NON_WIN32_LIBRARIES}
+)
+
+# Installation
+install(
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    DESTINATION "include"
+#    FILES_MATCHING
+#    PATTERN "*.hpp"
+#    PATTERN ".git" EXCLUDE
+#   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+)
+# TODO add generated files!
+install(TARGETS SGAL DESTINATION "lib")

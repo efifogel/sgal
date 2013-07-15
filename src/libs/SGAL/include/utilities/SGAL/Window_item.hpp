@@ -46,7 +46,7 @@ SGAL_BEGIN_NAMESPACE
 #define SGAL_DEF_WINDOW_DEPTH_BITS              24
 #define SGAL_DEF_WINDOW_STENCIL_BITS            0
 
-class Window_item {
+class SGAL_SGAL_DECL Window_item {
 protected:
   /*! The window requires redrawing. */
   Boolean m_redraw;

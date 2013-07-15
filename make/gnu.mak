@@ -7,7 +7,7 @@ CC  = $(CROSS)gcc
 
 COMPILER_STR := $(shell g++ --version)
 COMPILER_RE = g++ (.*) \([0-9]\.[0-9]\.[0-9]\)
-COMPILER_VER_CMD = expr match "$(COMPILER_STR)" "$(COMPILER_RE)"
+COMPILER_VER_CMD = expr "$(COMPILER_STR)" : "$(COMPILER_RE)"
 COMPILER_VER ?= $(shell $(COMPILER_VER_CMD))
 
 ifeq ($(DEF_SHARED), 1)
@@ -15,7 +15,7 @@ ifeq ($(DEF_SHARED), 1)
 # $(LIBS) OUTPUT OBJECTS. It is used like that in targlink.mak, and in a few
 # local makefiles.
 LIBPROG = $(CROSS)g++
-GLIBFLAGS = -shared -o 
+GLIBFLAGS = -shared -o
 else
 LIBPROG = $(CROSS)ar
 GLIBFLAGS = cruv
@@ -86,7 +86,7 @@ GLDOPTS = $(GLIBPATHOPTS) -lstdc++
 # If BOOST_LIB_DIR is defined, add it to the list of lib directories
 # Otherwise, it is assumed that boost is installed in the standard place
 ifdef BOOST_LIB_DIR
-GLDOPTS+= -L$(BOOST_LIB_DIR) -Xlinker -R$(BOOST_LIB_DIR)
+GLDOPTS+= -L$(BOOST_LIB_DIR) -Wl,-rpath $(BOOST_LIB_DIR)
 endif
 
 ifeq ($(PROFILE), 1)
@@ -137,7 +137,7 @@ GMAKEDEPENDFLAGS+= -MG
 
 output_operatior=-o
 # Due to a bug in gcc 3.0.3
-# The workaround will work only if $GCC_VER is present! 
+# The workaround will work only if $GCC_VER is present!
 ifeq ($(GCC_VER),3.0.3)
 output_operatior=>
 endif

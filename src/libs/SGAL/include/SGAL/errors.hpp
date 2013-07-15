@@ -36,13 +36,13 @@ SGAL_BEGIN_NAMESPACE
 /*! Base class for all errors in the library */
 class SGAL_SGAL_DECL error : public std::logic_error {
 public:
-  error(const std::string & what) : std::logic_error(what) {}
+  error(const std::string& what) : std::logic_error(what) {}
 };
 
 /*! Class thrown when the input file cannot be found. */
 class SGAL_SGAL_DECL File_not_found_error : public error {
 public:
-  File_not_found_error(const std::string & filename) :
+  File_not_found_error(const std::string& filename) :
     error(std::string("File ").append(filename).append(" not found!")) {}
 
   // gcc says that throw specification on dtor is loosened without this line
@@ -52,7 +52,7 @@ public:
 /*! Class thrown when a required extension is not supported. */
 class SGAL_SGAL_DECL Extension_not_supported_error : public error {
 public:
-  Extension_not_supported_error(const std::string & extension) :
+  Extension_not_supported_error(const std::string& extension) :
     error(std::string("Extension ").append(extension).append(" not supported!"))
   {}
 
@@ -63,7 +63,7 @@ public:
 /*! Class thrown when a required frame buffer is not allocated. */
 class SGAL_SGAL_DECL Frame_buffer_not_allocated_error : public error {
 public:
-  Frame_buffer_not_allocated_error(const std::string & name) :
+  Frame_buffer_not_allocated_error(const std::string& name) :
     error(std::string("Frame buffer ").append(name).append(" not allocated!"))
   {}
 

@@ -26,6 +26,7 @@
 #include <boost/version.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
+#include <boost/lexical_cast.hpp>
 
 #if (defined _MSC_VER)
 #define __WIN32__
@@ -183,7 +184,7 @@ void Image::clean()
         using namespace Magick;
         quantum_range = QuantumRange;
       }
-      image.opacity(quantum_range * m_transparency);
+      image.opacity(boost::lexical_cast<Uint>(quantum_range * m_transparency));
       image.colorSpace(Magick::TransparentColorspace);
     }
     Image_base::Format format = kIllegal;

@@ -68,7 +68,7 @@ $(PREFIX)clobber:: $(PREFIX)clean
 	rm -rf $(TARGET0) $(TARGET1) $(TARGET2) $(INSTFILE)
 
 $(BUILDDIR):
-	@mkdir --parents $(BUILDDIR)
+	@mkdir -p $(BUILDDIR)
 
 $(BUILDDIR)/$(MAKEFILENAME): $(MAKEFILENAME)
 	@sed -e s/BASEDIR\ *=./BASEDIR=../ $(MAKEFILENAME) > $(BUILDDIR)/$(MAKEFILENAME)
