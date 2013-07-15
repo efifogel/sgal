@@ -41,7 +41,7 @@ add_executable (player ${PLAYER_SOURCE_FILES})
 target_link_libraries(player SGAL)
 
 if (USE_CGAL)
-	target_link_libraries(player SCGAL)
+	target_link_libraries(player SCGAL CGAL)
 endif()
 
 install(TARGETS player DESTINATION "bin")
