@@ -1,6 +1,7 @@
 #Check for bison
 find_package(BISON 2.7 REQUIRED)
 find_package(FLEX 2.5.31 REQUIRED)
+find_package(OpenGL REQUIRED)
 
 set (GENERATED_DIR "${CMAKE_BINARY_DIR}/src/libs/SGAL/generated")
 
@@ -256,7 +257,14 @@ add_definitions(-DSGAL_LIB)
 
 if (WIN32)
 	add_definitions(/wd4251)
-endif()
+else(WIN32)
+  add_definitions(-DGL_GLEXT_PROTOTYPES)
+endif(WIN32)
+
+if (APPLE)
+  add_definitions(-DMAGICKCORE_QUANTUM_DEPTH=16)
+  add_definitions(-DMAGICKCORE_HDRI_ENABLE=0)
+endif(APPLE)
 
 #Add library
 if (BUILD_SHARED_LIBS)
@@ -267,15 +275,26 @@ else()
 endif()
 
 #Add links
-target_link_libraries(SGAL 
-	${Boost_FILESYSTEM_LIBRARY} 
+if (NOT WIN32)
+  set (NON_WIN32_LIBRARIES
+       ${X11_LIBRARIES}
+       ${X11_Xxf86vm_LIB}
+  )
+  if (APPLE)
+    set (NON_WIN32_LIBRARIES ${NON_WIN32_LIBRARIES} /opt/X11/lib/libGL.dylib)
+  endif(APPLE)
+endif(NOT WIN32)
+
+target_link_libraries(SGAL
+	${Boost_FILESYSTEM_LIBRARY}
 	${Boost_SYSTEM_LIBRARY}
 	${Boost_PROGRAM_OPTIONS_LIBRARY}
 	${ImageMagick_Magick++_LIBRARY}
-	glu32.lib 
-	opengl32.lib)
+    ${OPENGL_LIBRARIES}
+    ${NON_WIN32_LIBRARIES}
+)
 
-
+# Installation
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
     DESTINATION "include"
