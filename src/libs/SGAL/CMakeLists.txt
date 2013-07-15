@@ -303,5 +303,4 @@ install(
 #   PATTERN ".git" EXCLUDE
 #   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
 )
-# TODO add generated files!
 install(TARGETS SGAL DESTINATION "lib")
