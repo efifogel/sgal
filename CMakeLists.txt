@@ -10,3 +10,13 @@ set(SCGAL_KERNEL "0" CACHE STRING "CGAL kernel")
 
 #Add src subdirectory
 add_subdirectory(src)
+
+include (InstallRequiredSystemLibraries)
+#set (CPACK_RESOURCE_FILE_LICENSE
+#     "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
+set (CPACK_GENERATOR TGZ)
+set (CPACK_PACKAGE_VENDOR "Fogel Inc")
+set (CPACK_PACKAGE_VERSION_MAJOR "0")
+set (CPACK_PACKAGE_VERSION_MINOR "1")
+set (CPACK_PACKAGE_VERSION_PATCH "0")
+include (CPack)
