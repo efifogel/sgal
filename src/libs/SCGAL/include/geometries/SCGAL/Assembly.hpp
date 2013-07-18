@@ -30,6 +30,7 @@
 #include <list>
 #include <map>
 #include <boost/shared_ptr.hpp>
+#include <boost/variant.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Group.hpp"
@@ -89,10 +90,10 @@ public:
 
   /*! Clear the representation. */
   virtual void clear();
-  
+
   /*! Clean the representation. */
   virtual void clean();
-    
+
 protected:
   typedef std::list<Assembly_part*>                 Assembly_part_list;
   typedef Assembly_part_list::iterator              Assembly_part_iter;
@@ -105,7 +106,7 @@ protected:
   typedef boost::shared_ptr<Switch>                 Shared_switch;
   typedef boost::shared_ptr<Shape>                  Shared_shape;
   typedef boost::shared_ptr<Sgm_geo>                Shared_sgm_geo;
-  
+
   typedef std::list<Sgm*>                           Sgm_list;
   typedef Sgm_list::iterator                        Sgm_iter;
 
@@ -121,7 +122,7 @@ protected:
 
   typedef std::list<Shared_appearance>              Appearance_list;
   typedef Appearance_list::iterator                 Appearance_iter;
-  
+
   typedef std::pair<Uint, Uint>                     Key;
   struct Key_comparer {
     bool operator()(Key key1, Key key2) const
@@ -135,16 +136,16 @@ protected:
 
   typedef Arrangement_on_sphere_graph               Aos_graph;
   typedef Arrangement_on_sphere_marked              Aos_mark;
-  
+
   typedef std::list<Aos_mark*>                      Aos_list;
   typedef Aos_list::iterator                        Aos_iter;
-  
+
   typedef std::map<Key, Aos_list, Key_comparer>     Projection_list_map;
   typedef Projection_list_map::iterator             Projection_list_iter;
 
   typedef std::map<Key, Aos_mark*, Key_comparer>    Projection_map;
   typedef Projection_map::iterator                  Projection_iter;
- 
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
@@ -169,14 +170,14 @@ protected:
       oi++ = part;
       return oi;
     }
-    
+
     Switch* my_switch = dynamic_cast<Switch*>(node);
     if (my_switch) {
       Shared_node choice = my_switch->get_choice();
       if (!choice) return oi;
       return get_parts(&*choice, oi);
     }
-    
+
     Group* group = dynamic_cast<Group*>(node);
     if (group) return get_parts(group, oi);
 
@@ -195,7 +196,7 @@ protected:
    * alternate geometry.
    */
   void inc_alt_changed(Field_info* field_info);
-  
+
   /* Process change of the flag that indicates whether  to draw the Gausian
    * maps of the Minkowski sums of the parts.
    */
@@ -212,7 +213,7 @@ protected:
    */
   Sgm::Halfedge_const_handle
   find_next_silhouette_halfedge(Sgm::Halfedge_const_handle silhouette_he);
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -222,19 +223,19 @@ private:
 
   /*! Is the internal representation dirty and requires cleaning. */
   Boolean m_dirty;
-  
+
   /*! When trigerred, the puzzle solves itself. */
   Boolean m_trigger;
-  
+
   /*! The number of parts in the puzzle. */
   Uint m_number_of_parts;
 
   /*! A container of puzzle parts. */
   Assembly_part_list m_parts;
-  
+
   /*! A container of containers of (reflected) Gaussian map geometries. */
   Sgm_geo_list_list m_parts_reflected_sgm_geos;
-  
+
   /* The pairwise Minkowski sums map. */
   Minkowski_sum_list_map m_minkowski_sum_lists;
 
@@ -246,22 +247,22 @@ private:
 
   /*! The final arrangement. */
   Aos_graph* m_aos_graph;
-  
+
   /*! Space holder. */
   Shared_appearance m_appearance;
 
   /*! Space holder. */
   Shared_material m_material;
-  
+
   /*! Space holder. */
   Shared_appearance m_sphere_appearance;
-  
+
   /*! Space holder. */
   Shared_material m_sphere_material;
 
   /*! A node that holds the Sgm shapes. */
   Shared_switch m_sgm_geo_node;
-  
+
   /*! A node that holds the reflected Sgm shapes. */
   Shared_switch m_reflected_sgm_geo_node;
 
@@ -276,19 +277,19 @@ private:
 
   /*! A shape node that holds the graph Aos. */
   Shared_shape m_graph_node;
-  
+
   /*! A switch node. */
   Shared_switch m_switch;
-  
+
   /*! Indicates whether to draw the alternate geometry. */
   Boolean m_draw_alternate;
 
   /*! Indicates whether to increment the alternate geometry. */
   Boolean m_inc_alternate;
-  
+
   /*! Space holder. */
   Node_list m_childs_save;
-  
+
   /*! Indicates whether to draw the Gausian maps of the Minkowski sums of the
    * parts.
    */
@@ -298,7 +299,18 @@ private:
    * sums of the parts.
    */
   Boolean m_inc_minkowski_sums;
-  
+
+  /*! The solution */
+  typedef boost::variant<Aos_graph::Vertex_const_handle,
+                         Aos_graph::Halfedge_const_handle,
+                         Aos_graph::Face_const_handle>  Cell_const_handle;
+  typedef std::vector<Uint>                             Components;
+  typedef std::pair<Uint, Components>                   Component_data;
+  typedef std::pair<Cell_const_handle, Component_data>  Solution;
+  typedef std::list<Solution*>                          Solutions;
+
+  Solutions m_solutions;
+
   /*! Assign each part a unique non-negative number.
    */
   Uint assign_id(Node* node, Uint id) const;
@@ -309,7 +321,7 @@ private:
 
   /*! Obtain the lists of the reflected sgm geometries. */
   void construct_reflected_sgms();
-  
+
   /*! Compute the Minkowski sums. */
   void compute_minkowski_sums();
 
@@ -342,7 +354,7 @@ private:
 
   /*! Compute the projection of a convex polyhedron represented by a
    * spherical Gaussian map.
-   * \param vit 
+   * \param vit
    * \param aos the output projection represented as an arrangement on the
    * sphere
    */
@@ -360,22 +372,22 @@ private:
    * part.
    */
   void compute_part_projections();
-  
+
   /*! Compute the union of the pairwise Minkowski-sum projections per
    * part.
    * \param aoss the list of projections for the part.
    * \param aos the union of the projections aoss.
    */
   void compute_part_projections(Aos_list& aoss, Aos_mark* aos);
-  
+
   /*! Remove marked edges to lower the complexity of the arrangement
    * \param aos the arrangement.
    */
   void remove_marked_edges(Aos_mark* aos);
-  
+
   /*! Construct the per-part Minkowski-sum projection nodes. */
   void construct_part_projection_nodes();
-  
+
   /* Compute the NDBG. */
   void compute_aos_graph();
 
@@ -384,13 +396,13 @@ private:
 
   /*! Process the NDBG. */
   void process_aos_graph();
-  
+
   /* Construct the sgm geometry nodes. */
   void construct_sgms_nodes();
 
   /* Construct the reflected sgm geometry nodes. */
   void construct_reflected_sgms_nodes();
-  
+
   /*! Construct the Minkowski-sum nodes. */
   void construct_minkowski_sum_nodes();
 
@@ -401,7 +413,7 @@ private:
    * underlying plane of a facet.
    */
   CGAL::Oriented_side compute_side(Sgm::Halfedge_const_handle heh);
-  
+
   /*! Print information to an output stream. */
   void print_info(std::ostream& out);
 };
@@ -412,7 +424,7 @@ private:
 //   typedef typename PartIterator::value_type    Part;
 //   typedef typename Part::ConvexPartIterator   ConvexPartIterator;
 //   typedef typename PartIterator::value_type    ConvexPart;
-  
+
 //   PartIterator pit1;
 //   for (pit1 = begin; pit1 != end; ++pit1) {
 //     Part part1 = *pit1;

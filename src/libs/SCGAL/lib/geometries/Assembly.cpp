@@ -33,6 +33,7 @@
 #include <iostream>
 #include <list>
 #include <vector>
+#include <iterator>
 #include <boost/config.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
@@ -97,10 +98,10 @@ Assembly::Assembly(Boolean proto) :
   m_sphere_material->set_transparency(0.5f);
 
   m_switch.reset(new Switch);
-  
+
   m_sgm_geo_node.reset(new Switch);
   m_switch->add_child(m_sgm_geo_node);
-  
+
   m_reflected_sgm_geo_node.reset(new Switch);
   m_switch->add_child(m_reflected_sgm_geo_node);
 
@@ -115,7 +116,7 @@ Assembly::Assembly(Boolean proto) :
 
   m_graph_node.reset(new Shape);
   m_switch->add_child(m_graph_node);
-  
+
   m_switch->set_which_choice(0);
 
   m_sgm_geo_node->set_which_choice(0);
@@ -141,7 +142,7 @@ void Assembly::clear()
   // Clear the geometry nodes:
 
   // Clear the reflection nodes + geometry children
-  
+
   // Clear the Minkowski-sum Gaussian-map node + geometry children:
   Uint i;
   for (i = 0; i < m_ms_sgm_geo_node->children_size(); ++i) {
@@ -160,10 +161,15 @@ void Assembly::clear()
     Shared_node node = m_part_projection_aos_geo_node->get_child(i);
     m_part_projection_aos_geo_node->remove_child(node);
   }
-  
+
   // Clear map of Minkowski sum lists:
   // Clear map of projection lists:
-  // Clear map of projections (union per part) 
+  // Clear map of projections (union per part)
+
+  // Clear the solutions:
+  typename Solutions::const_iterator it;
+  for (it = m_solutions.begin(); it != m_solutions.end(); ++it) delete *it;
+  m_solutions.clear();
 }
 
 /*! \brief initializes the node prototype. */
@@ -220,8 +226,8 @@ void Assembly::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Assembly::get_prototype() 
-{  
+Container_proto* Assembly::get_prototype()
+{
   if (!s_prototype) Assembly::init_prototype();
   return s_prototype;
 }
@@ -237,14 +243,14 @@ Uint Assembly::assign_id(Node* node, Uint id) const
     part->set_id(id++);
     return id;
   }
-    
+
   Switch* my_switch = dynamic_cast<Switch*>(node);
   if (my_switch) {
     Shared_node choice = my_switch->get_choice();
     if (!choice) return id;
     return assign_id(&*choice, id);
   }
-    
+
   Group* group = dynamic_cast<Group*>(node);
   if (group) return assign_id(group, id);
 
@@ -306,7 +312,7 @@ void Assembly::construct_reflected_sgms()
   Exact_kernel::Construct_translated_point_3 tpoint =
     kernel.construct_translated_point_3_object();
   Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
-  
+
   Assembly_part_iter ppit;
   for (ppit = m_parts.begin(); ppit != m_parts.end(); ++ppit) {
     Assembly_part* part = *ppit;
@@ -344,7 +350,7 @@ void Assembly::construct_reflected_sgms()
           reflected_sgm_geo->set_reverse_flat_coord_indices(indices);
         else reflected_sgm_geo->set_reverse_coord_indices(indices);
       }
-      else {         
+      else {
         Sgm_geo::Polyhedron* reflected_polyhedron = new Sgm_geo::Polyhedron;
         Spherical_gaussian_map_colored* sgm = sgm_geo->get_sgm();
         std::vector<Exact_point_3> inverse_points;
@@ -388,10 +394,10 @@ void Assembly::compute_minkowski_sums()
          ++slit2, ++j)
     {
       if (i == j) continue;
-      
+
       Sgm_geo_list& sgm_geos2 = *slit2;
-      
-      Key key = std::make_pair(i, j);        
+
+      Key key = std::make_pair(i, j);
       m_minkowski_sum_lists[key] = Sgm_list();
       Sgm_list& sgms = m_minkowski_sum_lists[key];
 
@@ -500,7 +506,7 @@ void Assembly::construct_minkowski_sum_nodes()
     Sgm_iter sit;
     for (sit = sgm_list.begin(); sit != sgm_list.end(); ++sit) {
       Sgm* sgm = *sit;
-      
+
       Shared_shape shape(new Shape());
       shape->set_appearance(m_appearance);
       m_ms_sgm_geo_node->add_child(shape);
@@ -525,7 +531,7 @@ void Assembly::construct_projection_nodes()
     Aos_iter ait;
     for (ait = aos_list.begin(); ait != aos_list.end(); ++ait) {
       Aos_mark* aos = *ait;
-      
+
       Shared_shape shape(new Shape());
       shape->set_appearance(m_appearance);
       //shape->set_draw_depth(false);
@@ -564,7 +570,7 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
     Sgm::Inner_ccb_const_iterator iit = fit->inner_ccbs_begin();
     first = *iit;
   }
-  
+
   typedef std::list<Aos_mark::Halfedge_handle>          Halfedge_list;
   typedef Halfedge_list::iterator                       Halfedge_list_iter;
 
@@ -576,13 +582,13 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
 
   // Advance the first to a proper place:
   if (first->source()->degree() == 2) first = first->next();
-  
+
   const Exact_point_3& first_point = first->twin()->face()->point();
   Exact_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
 
   Sgm::Halfedge_const_iterator curr = first->next();
   if (curr->source()->degree() == 2) curr = curr->next();
-  
+
   const Exact_point_3& curr_point = curr->twin()->face()->point();
   Exact_vector_3 curr_vec = cvec(CGAL::ORIGIN, curr_point);
 
@@ -597,7 +603,7 @@ void Assembly::compute_projection(Sgm::Face_const_handle fit, Aos_mark* aos)
 
   curr = curr->next();
   if (curr->source()->degree() == 2) curr = curr->next();
-  
+
   do {
     const Exact_point_3& curr_point = curr->twin()->face()->point();
     Exact_vector_3 curr_vec = cvec(CGAL::ORIGIN, curr_point);
@@ -635,10 +641,10 @@ void Assembly::compute_projection(Sgm::Halfedge_const_handle hit1,
   Exact_kernel::Construct_vector_3 cvec = kernel.construct_vector_3_object();
 
   Sgm::Halfedge_const_iterator hit2 = hit1->twin();
-  
+
   Sgm::Face_const_handle fh1 = hit1->face();
   Sgm::Face_const_handle fh2 = hit2->face();
-  
+
   const Exact_point_3& point0 = fh1->point();
   const Exact_point_3& point2 = fh2->point();
 
@@ -733,7 +739,7 @@ void Assembly::compute_projection(Sgm::Vertex_const_handle vit, Aos_mark* aos)
 
   last_hit = hes.end();
   --last_hit;
-  
+
   (*last_hit)->face()->set_mark(true);
   hes.clear();
 }
@@ -749,16 +755,16 @@ Assembly::find_next_silhouette_halfedge(Sgm::Halfedge_const_handle first_he)
     Sgm::Vertex_const_handle first_he_target =
       (first_he->target()->degree() > 2) ?
       first_he->target() : first_he->next()->target();
-    
+
     Sgm::Halfedge_const_handle he = first_he;
     he = he->next();
     if (he->source()->degree() == 2) he = he->next();
     do {
       Sgm::Vertex_const_handle he_source = he->source();
-      Sgm::Vertex_const_handle he_target = 
+      Sgm::Vertex_const_handle he_target =
         (he->target()->degree() > 2) ?
         he->target() : he->next()->target();
-      
+
       CGAL::Oriented_side source_vertex_side = compute_side(he);
       CGAL::Oriented_side target_vertex_side = compute_side(he->twin());
       if ((source_vertex_side != CGAL::ON_POSITIVE_SIDE) &&
@@ -799,7 +805,7 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
 
   CGAL::Arr_sgm_initializer<Aos_mark, Exact_kernel> initializer(*aos);
   Halfedge_list hes;
-  
+
   /* Traverse all halfedges. Search for a halfedge, such that the origin lies
    * in the non-positive side of one and the non-negative side of the other:
    */
@@ -815,12 +821,12 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
       break;
   }
   SGAL_assertion(heit != sgm->halfedges_end());
-  
+
   /* Advance to a silhouette halfedge, the face of which is associated with
    * a real silhouette vertex
    */
   Sgm::Halfedge_const_handle silhouette_he = heit;
-  
+
   if ((source_vertex_side == CGAL::ON_ORIENTED_BOUNDARY) ||
       (target_vertex_side == CGAL::ON_ORIENTED_BOUNDARY)) {
     silhouette_he = find_next_silhouette_halfedge(heit->twin());
@@ -830,7 +836,7 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
 
   const Exact_point_3& first_point = first_silhouette_face->point();
   Exact_vector_3 first_vec = cvec(CGAL::ORIGIN, first_point);
-    
+
   // Advance:
   silhouette_he = find_next_silhouette_halfedge(silhouette_he->twin());
   SGAL_assertion(silhouette_he != Sgm::Halfedge_const_handle());
@@ -845,7 +851,7 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
   --last_hit;
   Aos_mark::Vertex_handle first_vertex = (*first_hit)->source();
   Aos_mark::Vertex_handle vertex = (*last_hit)->target();
-  
+
   // Advance:
   silhouette_he = find_next_silhouette_halfedge(silhouette_he->twin());
   SGAL_assertion(silhouette_he != Sgm::Halfedge_const_handle());
@@ -875,7 +881,7 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
                      std::back_inserter(hes));
   last_hit = hes.end();
   --last_hit;
-  
+
   (*last_hit)->face()->set_mark(true);
   hes.clear();
 }
@@ -886,7 +892,7 @@ void Assembly::compute_general_projection(const Sgm* sgm, Aos_mark* aos)
 CGAL::Oriented_side Assembly::compute_side(Sgm::Halfedge_const_handle heh)
 {
   typedef Exact_kernel::Plane_3                         Exact_plane_3;
-    
+
   Exact_kernel kernel;
   Exact_kernel::Oriented_side_3 os_op = kernel.oriented_side_3_object();
   Exact_kernel::Construct_plane_3 construct_plane =
@@ -917,7 +923,7 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
 
   Exact_kernel kernel;
   Exact_kernel::Coplanar_3 coplanar = kernel.coplanar_3_object();
-  
+
   // Traverse all Gaussian map vertices (primal facets):
   Sgm::Vertex_const_iterator vit;
   for (vit = sgm->vertices_begin(); vit != sgm->vertices_end(); ++vit) {
@@ -928,7 +934,7 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
     ++hedge2;
     Sgm::Halfedge_around_vertex_const_circulator hedge3 = hedge2;
     ++hedge3;
-    
+
     const Exact_point_3& point1 = hedge1->face()->point();
     const Exact_point_3& point2 = hedge2->face()->point();
     const Exact_point_3& point3 = hedge3->face()->point();
@@ -947,7 +953,7 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
         if (side == CGAL::ON_NEGATIVE_SIDE) {
           /* The origin is contained in the underlying plane of the primal
            * facet associated with vit, but it is separated from the polytope.
-           * Resort to the general procedure. Provide vit as a hint: 
+           * Resort to the general procedure. Provide vit as a hint:
            */
           compute_general_projection(sgm, aos);
           return;
@@ -1066,9 +1072,9 @@ void Assembly::compute_part_projections()
 void Assembly::remove_marked_edges(Aos_mark* aos)
 {
   // std::cout << *aos << std::endl;
-  
+
   std::list<Aos_mark::Halfedge_handle> tmp;
-  
+
   Aos_mark::Edge_iterator eit;
   for (eit = aos->edges_begin(); eit != aos->edges_end(); ++eit) {
     if (eit->mark()) {
@@ -1128,7 +1134,7 @@ void Assembly::compute_part_projections(Aos_list& aoss, Aos_mark* res_aos)
     *res_aos = *aos1;
     return;
   }
-  
+
   Aos_mark* aos2 = *it++;
   Aos_mark tmp_aos1;
   Aos_mark tmp_aos2;
@@ -1233,10 +1239,10 @@ void Assembly::compute_aos_graph()
   if (m_part_projections.empty()) return;
 
   // std::cout << "compute_aos_graph m_number_of_parts: "
-  //           << m_number_of_parts << std::endl;  
+  //           << m_number_of_parts << std::endl;
   Arrangement_graph_overlay_traits<Aos_mark, Aos_graph>
     overlay_traits(m_number_of_parts);
-  
+
   Aos_graph tmp_aos;
   Projection_iter pli;
   for (pli = m_part_projections.begin();
@@ -1253,7 +1259,7 @@ void Assembly::compute_aos_graph()
     //           << std::endl;
     CGAL::overlay(tmp_aos, *aos, *m_aos_graph, overlay_traits);
     // std::cout << "compute_aos_graph m_number_of_parts: after overlay"
-    //           << std::endl;  
+    //           << std::endl;
   }
   clock_t end_time = clock();
   float duration_time =
@@ -1290,105 +1296,160 @@ void Assembly::process_aos_graph()
             << ", # faces: " << m_aos_graph->number_of_faces()
             << std::endl;
 
-  clock_t start_time = clock();
   typedef boost::adjacency_matrix<boost::directedS>     Graph;
-  std::vector<int> component(m_number_of_parts);
+  typedef Aos_graph::Vertex_const_handle                Vertex_const_handle;
+  typedef Aos_graph::Halfedge_const_handle              Halfedge_const_handle;
+  typedef Aos_graph::Face_const_handle                  Face_const_handle;
 
-  Uint i = 0;
-  Aos_graph::Face_const_iterator fit;
-  for (fit = m_aos_graph->faces_begin(); fit != m_aos_graph->faces_end();
-       ++fit, ++i)
-  {
+  typedef Aos_graph::Vertex_const_iterator              Vertex_const_iterator;
+  typedef Aos_graph::Edge_const_iterator                Edge_const_iterator;
+  typedef Aos_graph::Face_const_iterator                Face_const_iterator;
+
+  Solution* solution = new Solution;
+
+  clock_t start_time = clock();
+
+  Face_const_iterator fit = m_aos_graph->faces_begin();
+  for (; fit != m_aos_graph->faces_end(); ++fit) {
     const Graph* graph = fit->graph();
+    // boost::print_graph(*graph);
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
-
-#if defined(_MSC_VER)    
-    int num_comp =
+    Components& components = (solution->second).second;
+    components.resize(m_number_of_parts);
+#if defined(_MSC_VER)
+    (solution->second).first =
       boost::strong_components
       (*graph,
-       boost::make_iterator_property_map(component.begin(),
+       boost::make_iterator_property_map(components.begin(),
                                          boost::get(boost::vertex_index,
                                                     *graph),
-                                         component[0]));
+                                         components[0]));
 #else
-    int num_comp = boost::strong_components(*graph, &component[0]);
+    (solution->second).first = boost::strong_components(*graph, &components[0]);
 #endif
-    if (num_comp > 1) {
-      std::cout << "Num components in face " << i << ": " << num_comp
-                << std::endl;
-      // boost::print_graph(*graph);
+    if ((solution->second).first > 1) {
+      solution->first = fit;
+      m_solutions.push_front(solution);
+      solution = new Solution;
     }
   }
 
-  i = 0;
-  Aos_graph::Edge_const_iterator eit;
-  for (eit = m_aos_graph->edges_begin(); eit != m_aos_graph->edges_end();
-       ++eit, ++i)
-  {
+  Edge_const_iterator eit = m_aos_graph->edges_begin();
+  for (; eit != m_aos_graph->edges_end(); ++eit) {
     const Graph* graph = eit->graph();
+    // boost::print_graph(*graph);
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+
+    Components& components = (solution->second).second;
+    components.resize(m_number_of_parts);
 #if defined(_MSC_VER)
-    int num_comp =
+    (solution->second).first =
       boost::strong_components
       (*graph,
-       boost::make_iterator_property_map(component.begin(),
+       boost::make_iterator_property_map(components.begin(),
                                          boost::get(boost::vertex_index,
                                                     *graph),
-                                         component[0]));
+                                         components[0]));
 #else
-    int num_comp = boost::strong_components(*graph, &component[0]);
+    (solution->second).first = boost::strong_components(*graph, &components[0]);
 #endif
-    if (num_comp > 1) {
-      std::cout << "Num components in edge " << eit->curve() << ": "
-                << num_comp << std::endl;
-      // boost::print_graph(*graph);
+    if ((solution->second).first > 1) {
+      solution->first = eit;
+      m_solutions.push_front(solution);
+      solution = new Solution;
     }
   }
 
-  i = 0;
-  Aos_graph::Vertex_const_iterator vit;
-  for (vit = m_aos_graph->vertices_begin(); vit != m_aos_graph->vertices_end();
-       ++vit, ++i)
-  {
+  Vertex_const_iterator vit = m_aos_graph->vertices_begin();
+  for (; vit != m_aos_graph->vertices_end(); ++vit) {
     const Graph* graph = vit->graph();
+    // boost::print_graph(*graph);
     // std::vector<int> discover_time(boost::num_vertices(*graph));
     // std::vector<default_color_type> color(num_vertices(*graph));
     // std::vector<Vertex> root(num_vertices(G));
+
+    Components& components = (solution->second).second;
+    components.resize(m_number_of_parts);
+
 #if defined(_MSC_VER)
-    int num_comp =
+    (solution->second).first =
       boost::strong_components
       (*graph,
-       boost::make_iterator_property_map(component.begin(),
+       boost::make_iterator_property_map(components.begin(),
                                          boost::get(boost::vertex_index,
                                                     *graph),
-                                         component[0]));
+                                         components[0]));
 #else
-    int num_comp = boost::strong_components(*graph, &component[0]);
+    (solution->second).first = boost::strong_components(*graph, &components[0]);
 #endif
-    if (num_comp > 1) {
-      std::cout << "Num components in vertex " << vit->point() << ": "
-                << num_comp << std::endl;
-      // boost::print_graph(*graph);
+    if ((solution->second).first > 1) {
+      solution->first = vit;
+      m_solutions.push_front(solution);
+      solution = new Solution;
     }
   }
-  component.clear();
+  delete solution;
+
   clock_t end_time = clock();
   float duration_time =
     static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
   std::cout << "Motion space processing: "
             << duration_time << " seconds."
             << std::endl;
+
+  if (m_solutions.size() == 0) {
+    std::cout << "The Assembly is interlocked!" << std::endl;
+    return;
+  }
+
+  typename Solutions::const_iterator it;
+  for (it = m_solutions.begin(); it != m_solutions.end(); ++it) {
+    const Solution* solution = *it;
+    Cell_const_handle ch = solution->first;
+    Uint num_comp = (solution->second).first;
+    const Components& components = (solution->second).second;
+    const Face_const_handle* fh = boost::get<Face_const_handle>(&ch);
+    if (fh) {
+      std::cout << "Num components in face " << ": "
+                << num_comp
+                << std::endl;
+      std::copy(components.begin(), components.end(),
+                std::ostream_iterator<int>(std::cout, " "));
+      std::cout << std::endl;
+      continue;
+    }
+
+    const Halfedge_const_handle* eh = boost::get<Halfedge_const_handle>(&ch);
+    if (eh) {
+      std::cout << "Num components in edge " << (*eh)->curve() << ": "
+                << num_comp
+                << std::endl;
+      std::copy(components.begin(), components.end(),
+                std::ostream_iterator<int>(std::cout, " "));
+      std::cout << std::endl;
+      continue;
+    }
+
+    const Vertex_const_handle* vh = boost::get<Vertex_const_handle>(&ch);
+    if (vh) {
+      std::cout << "Num components in vertex " << (*vh)->point() << ": "
+                << num_comp
+                << std::endl;
+      std::copy(components.begin(), components.end(),
+                std::ostream_iterator<int>(std::cout, " "));
+      std::cout << std::endl;
+      continue;
+    }
+  }
 }
 
 /*! \brief cleans internal representation. */
 void Assembly::clean()
 {
-  m_dirty = false;
-  
   // Visit all parts and assign each a unique non-negative number:
   m_number_of_parts = assign_id(this, 0);
 
@@ -1403,7 +1464,7 @@ void Assembly::clean()
 
   // Construct the reflected sgm geometry nodes:
   construct_reflected_sgms_nodes();
-  
+
   // Compute the Minkowski sums:
   compute_minkowski_sums();
 
@@ -1415,7 +1476,7 @@ void Assembly::clean()
 
   // Construct the Minkowski-sum projection nodes:
   construct_projection_nodes();
-  
+
   // Compute the union of the Minkowski-sum projections per part:
   compute_part_projections();
 
@@ -1427,11 +1488,12 @@ void Assembly::clean()
 
   // Construct the graph aos node:
   construct_graph_node();
-  
+
   // Process the NDBG
   process_aos_graph();
-  
+
   // print_info(std::cout);
+  m_dirty = false;
 }
 
 /* \brief processes change of the flag that indicates whether to draw the
@@ -1444,7 +1506,7 @@ void Assembly::draw_alt_changed(Field_info* field_info)
     m_childs = m_childs_save;
     return;
   }
-  
+
   solve(field_info);
   m_childs_save = m_childs;
   m_childs.clear();
@@ -1510,7 +1572,7 @@ void Assembly::inc_minkowski_sums_changed(Field_info* field_info)
   which_choice = m_part_projection_aos_geo_node->get_which_choice();
   if (++which_choice == m_part_projection_aos_geo_node->children_size())
     which_choice = 0;
-  m_part_projection_aos_geo_node->set_which_choice(which_choice);  
+  m_part_projection_aos_geo_node->set_which_choice(which_choice);
 }
 
 SGAL_END_NAMESPACE
