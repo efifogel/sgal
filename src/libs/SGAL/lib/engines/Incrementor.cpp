@@ -46,7 +46,16 @@ const Int Incrementor::s_def_max_value(1);
 
 REGISTER_TO_FACTORY(Incrementor, "Incrementor");
 
-/*! \brief initializes the container prototype */
+/*! Constructor */
+Incrementor::Incrementor(Boolean proto) :
+  Node(proto),
+  m_min_value(s_def_min_value),
+  m_max_value(s_def_max_value),
+  m_trigger(false),
+  m_value(s_def_min_value)
+{}
+
+/*! \brief initializes the container prototype. */
 void Incrementor::init_prototype()
 {
   //! Container execution function
@@ -54,7 +63,7 @@ void Incrementor::init_prototype()
 
   if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
-  
+
   // Add the field-info records to the prototype:
   Execution_function exec_func =
     static_cast<Execution_function>(&Incrementor::execute);
@@ -75,33 +84,31 @@ void Incrementor::init_prototype()
                                          get_member_offset(&m_value)));
 }
 
-/*! \brief deletes the container prototype */
+/*! \brief deletes the container prototype. */
 void Incrementor::delete_prototype()
 {
+  if (!s_prototype) return;
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
+/*! \brief obtains the container prototype. */
 Container_proto* Incrementor::get_prototype()
 {
   if (!s_prototype) Incrementor::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of the object extracted from the input file. */
 void Incrementor::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
 
   Node::set_attributes(elem);
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "minValue") {
       m_min_value = boost::lexical_cast<Int>(value);
       elem->mark_delete(ai);
@@ -123,7 +130,7 @@ void Incrementor::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }

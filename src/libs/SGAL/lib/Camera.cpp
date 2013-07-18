@@ -100,7 +100,7 @@ void Camera::set_orientation(const Rotation& orientation)
 void Camera::set_clipping_planes(float near_plane, float far_plane)
 {
   m_frustum.set_near(near_plane);
-  m_frustum.set_far(far_plane); 
+  m_frustum.set_far(far_plane);
 }
 
 /*! \brief sets the clipping planes so that the frustum contains the
@@ -124,23 +124,23 @@ void Camera::set_clipping_planes(const Vector3f& bb_center, Float bb_radius)
 
   near_plane = m_nearest_clipping_plane;
   far_plane = dist * m_far_plane_scale;
-    
+
   Vector3f los(0,0,1);
   los.scale(dist);
   m_position.add(bb_center, los);
   m_position.add(m_position_translation);
-  
+
   m_frustum.set_near(near_plane);
   m_frustum.set_far(far_plane);
 }
 
-/*! \brief sets the cliping plane so the the frustum contains the 
+/*! \brief sets the cliping plane so the the frustum contains the
  * bounding-sphere of the current scene, if the dynamic flag is raised
  */
 void Camera::set_dynamic_clipping_planes()
 {
   if (!m_is_dynamic) return;
-  
+
   Scene_graph::Shared_transform nav_root = m_scene_graph->get_navigation_root();
   const Sphere_bound& sb = nav_root->get_sphere_bound();
   set_clipping_planes(sb.get_center(), sb.get_radius());
@@ -210,7 +210,7 @@ void Camera::update_matrix_requiered(Field_info* /* info */)
 #endif
 }
 
-/*! \brief */
+/*! \brief initializes the container prototype. */
 void Camera::init_prototype()
 {
   if (s_prototype) return;
@@ -249,8 +249,8 @@ void Camera::delete_prototype()
 }
 
 /*! \brief obtains the camera prototype. */
-Container_proto* Camera::get_prototype() 
-{  
+Container_proto* Camera::get_prototype()
+{
   if (s_prototype == NULL) Camera::init_prototype();
   return s_prototype;
 }
@@ -328,7 +328,7 @@ void Camera::clean_matrix()
   m_view_mat.set_row(3, new_pos);
 
   m_dirty_matrix = false;
-}  
+}
 
 /*! \brief applies the camera. */
 void Camera::draw(Draw_action* action)
@@ -346,7 +346,7 @@ void Camera::draw(Draw_action* action)
       m_frustum.set_perturbation_scale(xpert, ypert);
     }
   }
-  
+
   draw();
 }
 
@@ -358,13 +358,13 @@ void Camera::draw()
 {
   m_frustum.apply();
   if (m_dirty_matrix) clean_matrix();
-  
+
   glMatrixMode(GL_MODELVIEW);
   if (Gfx_conf::get_instance()->get_renderer() != Gfx_conf::reGeneric) {
     glLoadMatrixf((GLfloat*) &m_view_mat);
   } else {
     // It looks like there is a bug related to lights in the soft version
-    // of opengl. Therefore, if we recognize the driver as software, we 
+    // of opengl. Therefore, if we recognize the driver as software, we
     // use a non visualy apperant scale to work around the bug.
     glLoadIdentity();
     glScalef(1.001f, 1.001f, 1.001f);
@@ -375,9 +375,9 @@ void Camera::draw()
 /*! \brief sets the attributes of the object extracted from the input file */
 void Camera::set_attributes(Element* elem)
 {
-  Container::set_attributes(elem);  
+  Container::set_attributes(elem);
   m_frustum.set_attributes(elem);
-  
+
   typedef Element::Str_attr_iter                Str_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
@@ -425,7 +425,7 @@ void Camera::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 void Camera::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
@@ -439,7 +439,7 @@ void Camera::add_to_scene(Scene_graph* sg)
  */
 Attribute_list Camera::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
   char buf[32];
 
