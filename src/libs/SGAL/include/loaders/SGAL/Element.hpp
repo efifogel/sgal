@@ -28,6 +28,7 @@
 
 #include <list>
 #include <string>
+#include <boost/tuple/tuple.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
@@ -42,16 +43,21 @@ public:
   typedef std::pair<std::string*, std::string*>     Str_attr;
   typedef std::list<Str_attr*>                      Str_attr_list;
   typedef Str_attr_list::iterator                   Str_attr_iter;
-  
+
   typedef std::pair<std::string*, Shared_container> Cont_attr;
   typedef std::list<Cont_attr*>                     Cont_attr_list;
   typedef Cont_attr_list::iterator                  Cont_attr_iter;
-  
+
   typedef std::list<Shared_container>               Cont_list;
   typedef Cont_list::iterator                       Cont_iter;
   typedef std::pair<std::string*, Cont_list*>       Multi_cont_attr;
   typedef std::list<Multi_cont_attr*>               Multi_cont_attr_list;
   typedef Multi_cont_attr_list::iterator            Multi_cont_attr_iter;
+
+  typedef boost::tuple<std::string*, std::string*, std::string*>
+    Field_attr;
+  typedef std::list<Field_attr*>                    Field_attr_list;
+  typedef Field_attr_list::iterator                 Field_attr_iter;
 
 private:
   /*! */
@@ -68,96 +74,192 @@ private:
   struct Multi_cont_eraser {
     bool operator()(const Multi_cont_attr* attr) { return attr == 0; }
   };
-  
-public:  
+
   /*! */
+  struct Field_eraser {
+    bool operator()(const Field_attr* attr) { return attr == 0; }
+  };
+
+public:
+  /*! Obtain the name of an attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  template <typename Iterator>
+  const std::string& get_name(Iterator ai) const;
+
+  /*! Add a string attribute.
+   * \param attribute the attribute.
+   * \param back indicates whether to add at the back of the attribute list.
+   */
   void add_attribute(Str_attr* attribute, bool back = true);
 
-  /*! */
+  /*! Add a container attribute.
+   * \param attribute the attribute.
+   * \param back indicates whether to add at the back of the attribute list.
+   */
   void add_attribute(Cont_attr* attribute, bool back = true);
 
-  /*! */
+  /*! Add a container-list attribute.
+   * \param attribute the attribute.
+   * \param back indicates whether to add at the back of the attribute list.
+   */
   void add_attribute(Multi_cont_attr* attribute, bool back = true);
-    
-  /*! */
-  Str_attr_list& get_str_attributes() { return m_str_attrs; }
 
-  /*! */
-  Cont_attr_list& get_cont_attributes() { return m_cont_attrs; }
+  /*! Add a field attribute.
+   * \param attribute the attribute.
+   * \param back indicates whether to add at the back of the attribute list.
+   */
+  void add_attribute(Field_attr* attribute, bool back = true);
 
-  /*! */
-  Multi_cont_attr_list& get_multi_cont_attributes()
-  {
-    return m_multi_cont_attrs;
-  }
+  /*! Obtain the string-attribute container. */
+  Str_attr_list& get_str_attributes();
 
-  /*! */
-  Str_attr_iter str_attrs_begin() { return m_str_attrs.begin(); }
+  /*! Obtain the container-attribute container. */
+  Cont_attr_list& get_cont_attributes();
 
-  /*! */
-  Str_attr_iter str_attrs_end() { return m_str_attrs.end(); }
+  /*! Obtain the multi-container-attribute container. */
+  Multi_cont_attr_list& get_multi_cont_attributes();
 
-  /*! */
-  void mark_delete(Str_attr_iter& ai);
+  /*! Obtain the field-attribute container. */
+  Field_attr_list& get_field_attributes();
 
-  /*! */
-  const std::string& get_name(Str_attr_iter ai) { return *((*ai)->first); }
+  /*! Delete the attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  void mark_delete(Str_attr_iter ai);
 
-  /*! */
-  const std::string& get_value(Str_attr_iter ai) { return *((*ai)->second); }
+  /*! Obtain the begin iterator of the string-attribute container. */
+  Str_attr_iter str_attrs_begin();
 
-  /*! */
-  Cont_attr_iter cont_attrs_begin() { return m_cont_attrs.begin(); }
+  /*! Obtain the past-the-end iterator of the string-attribute container. */
+  Str_attr_iter str_attrs_end();
 
-  /*! */
-  Cont_attr_iter cont_attrs_end() { return m_cont_attrs.end(); }
+  /*! Obtain the value of a string-attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  const std::string& get_value(Str_attr_iter ai) const;
 
-  /*! */
-  void mark_delete(Cont_attr_iter& ai);
+  /*! Delete the attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  void mark_delete(Cont_attr_iter ai);
 
-  /*! */
-  const std::string& get_name(Cont_attr_iter ai) { return *((*ai)->first); }
+  /*! Obtain the begin iterator of the container-attribute container. */
+  Cont_attr_iter cont_attrs_begin();
 
-  /*! */
-  Shared_container get_value(Cont_attr_iter ai) { return (*ai)->second; }
+  /*! Obtain the past-the-end iterator of the container-attribute container. */
+  Cont_attr_iter cont_attrs_end();
 
-  /*! */
-  Multi_cont_attr_iter multi_cont_attrs_begin()
-  {
-    return m_multi_cont_attrs.begin();
-  }
+  /*! Obtain the value of a container-attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  Shared_container get_value(Cont_attr_iter ai) const;
 
-  /*! */
-  Multi_cont_attr_iter multi_cont_attrs_end()
-  {
-    return m_multi_cont_attrs.end();
-  }
+  /*! Delete the attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  void mark_delete(Multi_cont_attr_iter ai);
 
-  /*! */
-  void mark_delete(Multi_cont_attr_iter& ai);
+  /*! Obtain the begin iterator of the multi-container-attribute container. */
+  Multi_cont_attr_iter multi_cont_attrs_begin();
 
-  /*! */
-  const std::string& get_name(Multi_cont_attr_iter ai)
-  {
-    return *((*ai)->first);
-  }
+  /*! Obtain the past-the-end iterator of the multi-container-attribute
+   * container.
+   */
+  Multi_cont_attr_iter multi_cont_attrs_end();
 
-  /*! */
-  Cont_list& get_value(Multi_cont_attr_iter ai) { return *((*ai)->second); }
-  
-  /*! */
+  /*! Obtain the value of a multi-container-attribute pointed by a given
+   * iterator.
+   * \param ai the string-attribute iterator.
+   */
+  Cont_list& get_value(Multi_cont_attr_iter ai) const;
+
+  /*! Delete all attributes. */
   void delete_marked();
-  
+
 protected:
-  /*! */
+  /*! The container of the string attributes. */
   Str_attr_list m_str_attrs;
 
-  /*! */
+  /*! The container of the container attributes. */
   Cont_attr_list m_cont_attrs;
 
-  /*! */
+  /*! The container of the multi-container attributes. */
   Multi_cont_attr_list m_multi_cont_attrs;
+
+  /*! The container of the field attributes. */
+  Field_attr_list m_field_attrs;
 };
+
+/*! \brief obtains the name of an attribute pointed by a given iterator.
+ */
+template <typename Iterator>
+inline const std::string& Element::get_name(Iterator ai) const
+{ return *((*ai)->first); }
+
+/*! \brief obtains the string-attribute list. */
+inline Element::Str_attr_list& Element::get_str_attributes()
+{ return m_str_attrs; }
+
+/*! \brief obtains the container-attribute list. */
+inline Element::Cont_attr_list& Element::get_cont_attributes()
+{ return m_cont_attrs; }
+
+/*! \brief obtains the multi-container-attribute list. */
+inline Element::Multi_cont_attr_list& Element::get_multi_cont_attributes()
+{ return m_multi_cont_attrs; }
+
+/*! \brief obtains the field-attribute list. */
+inline Element::Field_attr_list& Element::get_field_attributes()
+{ return m_field_attrs; }
+
+/*! \brief obtains the begin iterator of the string-attribute container. */
+inline Element::Str_attr_iter Element::str_attrs_begin()
+{ return m_str_attrs.begin(); }
+
+/*! \brief obtains the past-the-end iterator of the string-attribute container.
+ */
+inline Element::Str_attr_iter Element::str_attrs_end()
+{ return m_str_attrs.end(); }
+
+/*! \brief obtains the value of a string-attribute pointed by a given iterator.
+ */
+inline const std::string& Element::get_value(Str_attr_iter ai) const
+{ return *((*ai)->second); }
+
+/*! \brief obtains the begin iterator of the container-attribute container. */
+inline Element::Cont_attr_iter Element::cont_attrs_begin()
+{ return m_cont_attrs.begin(); }
+
+/*! \brief obtains the past-the-end iterator of the container-attribute
+ * container.
+ */
+inline Element::Cont_attr_iter Element::cont_attrs_end()
+{ return m_cont_attrs.end(); }
+
+/*! \brief obtains the value of a container-attribute pointed by a given
+ * iterator.
+ */
+inline Element::Shared_container Element::get_value(Cont_attr_iter ai) const
+{ return (*ai)->second; }
+
+/*! \brief obtains the begin iterator of the multi-container-attribute
+ * container.
+ */
+inline Element::Multi_cont_attr_iter Element::multi_cont_attrs_begin()
+{ return m_multi_cont_attrs.begin(); }
+
+/*! \brief obtains the past-the-end iterator of the multi-container-attribute
+ * container.
+ */
+inline Element::Multi_cont_attr_iter Element::multi_cont_attrs_end()
+{ return m_multi_cont_attrs.end(); }
+
+/*! \brief obtains the value of a multi-container-attribute pointed by a given
+ * iterator.
+ */
+inline Element::Cont_list& Element::get_value(Multi_cont_attr_iter ai) const
+{ return *((*ai)->second); }
 
 SGAL_END_NAMESPACE
 

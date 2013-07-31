@@ -33,29 +33,36 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! \brief */
+/*! \brief adds a string attribute. */
 void Element::add_attribute(Str_attr* attribute, bool back)
 {
   if (back) m_str_attrs.push_back(attribute);
   else  m_str_attrs.push_front(attribute);
 }
 
-/*! \brief */
+/*! \brief adds a container attribute. */
 void Element::add_attribute(Cont_attr* attribute, bool back)
 {
   if (back) m_cont_attrs.push_back(attribute);
   else  m_cont_attrs.push_front(attribute);
 }
 
-/*! \brief */
+/*! \brief adds a container-list attribute. */
 void Element::add_attribute(Multi_cont_attr* attribute, bool back)
 {
   if (back) m_multi_cont_attrs.push_back(attribute);
   else  m_multi_cont_attrs.push_front(attribute);
 }
 
-/*! \brief */
-void Element::mark_delete(Str_attr_iter& ai)
+/*! \brief adds a field attribute. */
+void Element::add_attribute(Field_attr* attribute, bool back)
+{
+  if (back) m_field_attrs.push_back(attribute);
+  else  m_field_attrs.push_front(attribute);
+}
+
+/*! \brief deletes the string-attribute pointed by a given iterator. */
+void Element::mark_delete(Str_attr_iter ai)
 {
   Str_attr* attr = *ai;
   delete attr->first;
@@ -64,8 +71,8 @@ void Element::mark_delete(Str_attr_iter& ai)
   *ai = 0;
 }
 
-/*! \brief */
-void Element::mark_delete(Cont_attr_iter& ai)
+/*! \brief deletes the container-attribute pointed by a given iterator. */
+void Element::mark_delete(Cont_attr_iter ai)
 {
   Cont_attr* attr = *ai;
   delete attr->first;
@@ -73,8 +80,8 @@ void Element::mark_delete(Cont_attr_iter& ai)
   *ai = 0;
 }
 
-/*! \brief */
-void Element::mark_delete(Multi_cont_attr_iter& ai)
+/*! \brief deletes the multi-container-attribute pointed by a given iterator. */
+void Element::mark_delete(Multi_cont_attr_iter ai)
 {
   Multi_cont_attr* attr = *ai;
   delete attr->first;
@@ -82,7 +89,7 @@ void Element::mark_delete(Multi_cont_attr_iter& ai)
   *ai = 0;
 }
 
-/*! \brief */
+/*! \brief deletes all attributes. */
 void Element::delete_marked()
 {
   m_str_attrs.erase(std::remove_if(m_str_attrs.begin(), m_str_attrs.end(),
@@ -93,6 +100,8 @@ void Element::delete_marked()
                                           m_multi_cont_attrs.end(),
                                           Multi_cont_eraser()),
                            m_multi_cont_attrs.end());
+  m_field_attrs.erase(std::remove_if(m_field_attrs.begin(), m_field_attrs.end(),
+                                     Field_eraser()), m_field_attrs.end());
 }
 
 SGAL_END_NAMESPACE
