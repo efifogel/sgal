@@ -176,14 +176,16 @@ cygwin, and bison for Windows). Thus, it must be built from sources.
 A bison submodule exists in the SGAL git repository for convenience.
 To build bison you need to install apriori the following components:
 
-  gcc,
-  autopoint
-  make
-  automake
-  autoconf
-  texinfo
-  pkg-config
-  rsync
+  Component  Category Package
+  ---------- -------- -------
+  gcc        Devel    gcc
+  autopoint  Devel    gettext-devel
+  make       Devel    make
+  automake   Devel    automake
+  autoconf   Devel    autoconf
+  texinfo    Text     texinfo
+  pkg-config Devel    pkg-config
+  rsync      Net      rsync
 
 This holds for Linux as well as for Windows, assuming you are going to
 build bison via cygwin. First you need to update the bison sources.
@@ -243,7 +245,7 @@ If ImageMagick is not installed in a standard place, you must set the
 environment variable MAGICK_DIR to point at the directory where
 ImageMagick is installed, e.g.,
 
-  MAGICK_DIR=d:/ImageMagick-6.8.3-Q16
+  MAGICK_DIR=d:/ImageMagick-6.8.6-Q16
 
 2.5.4. CGAL
 The Computational Geometry Algorithms Library (CGAL) is an open
