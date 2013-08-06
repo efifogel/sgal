@@ -167,7 +167,7 @@ void Assembly::clear()
   // Clear map of projections (union per part)
 
   // Clear the solutions:
-  typename Solutions::const_iterator it;
+  Solutions::const_iterator it;
   for (it = m_solutions.begin(); it != m_solutions.end(); ++it) delete *it;
   m_solutions.clear();
 }
@@ -1406,7 +1406,7 @@ void Assembly::process_aos_graph()
     return;
   }
 
-  typename Solutions::const_iterator it;
+  Solutions::const_iterator it;
   for (it = m_solutions.begin(); it != m_solutions.end(); ++it) {
     const Solution* solution = *it;
     Cell_const_handle ch = solution->first;
