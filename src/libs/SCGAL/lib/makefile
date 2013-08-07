@@ -65,7 +65,7 @@ ifeq ($(USE_AOS), 1)
 CPPSOURCES+= Arrangement_on_sphere_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_graph_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_marked_geo.cpp
-# Ignore in Debug mode, cause is_valid() on the sphere does not compile 
+# Ignore in Debug mode, cause is_valid() on the sphere does not compile
 ifneq ($(DEBUG), 1)
 CPPSOURCES+= Polygon_set_on_sphere_geo.cpp
 endif
@@ -130,7 +130,6 @@ LCPPDEFS+= -DSGAL_TRACE
 endif
 
 LCPPDEFS+= -DSCGAL_NT=$(SCGAL_NT)
-LCPPDEFS+= -DCGAL_CGM_TRAITS=$(CGAL_CGM_TRAITS)
 LCPPDEFS+= -DSCGAL_KERNEL=$(SCGAL_KERNEL)
 
 # LCPPDEFS+= -DVERBOSE

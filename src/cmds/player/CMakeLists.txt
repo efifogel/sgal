@@ -8,10 +8,12 @@ if (NOT WIN32)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif (NOT WIN32)
 if (USE_CGAL)
-	add_definitions(-DUSE_CGAL)
-	add_definitions(-DSCGAL_NT=${SCGAL_NT})
-	add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
-	add_definitions(-DCGAL_CGM_TRAITS=${CGAL_CGM_TRAITS})
+  find_package(CGAL COMPONENTS)
+  include(${CGAL_USE_FILE})
+
+  add_definitions(-DUSE_CGAL)
+  add_definitions(-DSCGAL_NT=${SCGAL_NT})
+  add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
 endif()
 
 #Add include dirs
