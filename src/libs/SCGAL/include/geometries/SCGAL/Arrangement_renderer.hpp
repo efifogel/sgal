@@ -42,7 +42,7 @@ class Vector3f;
 class SGAL_SCGAL_DECL Arrangement_renderer {
 public:
   /*! A function object that renders something */
-  class Renderer {
+  class SGAL_SCGAL_DECL Renderer {
   public:
     /*! Render */
     virtual void operator()(Draw_action* action) = 0;
@@ -50,7 +50,7 @@ public:
     /*! Destructor */
     virtual ~Renderer() {}
   };
-  
+
 protected:
   typedef std::list<Renderer*>                          Renderer_list;
   typedef Renderer_list::iterator                       Renderer_iter;
@@ -60,7 +60,7 @@ protected:
 
   /*! A list of renderers that render the frontfacing features inflated */
   Renderer_list m_inflated_renderers;
-  
+
   /*! A list of renderers that render the backfacing features */
   Renderer_list m_backfacing_renderers;
 
@@ -75,7 +75,7 @@ protected:
 
   /*! Stencil reference value */
   Int m_stencil_ref;
-  
+
   /*! Halftone stipple pattern for backfacing elements */
   static Ubyte s_halftone[];
 
@@ -119,25 +119,25 @@ public:
     /*! Edge styles */
     static const char* s_styles[];
   };
-  
+
   /*! Constructor */
   Arrangement_renderer();
 
   /*! Destructor */
   ~Arrangement_renderer();
-  
+
   /*! Insert a renderer to the back a given renderer list */
   void push_back(Renderer* renderer, Renderer_type type);
 
   /*! Insert a renderer to the front a given renderer list */
   void push_front(Renderer* renderer, Renderer_type type);
-  
+
   /*! Clear all renderer lists */
   void clear();
 
   /*! Clear a given renderer list */
   void clear(Renderer_type type);
-  
+
   /*! Render all */
   void operator()(Draw_action* action);
 
