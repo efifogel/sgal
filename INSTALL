@@ -170,11 +170,13 @@ parser employing LALR(1) parser tables. For more information see
 http://www.gnu.org/software/bison/
 
 The code of SGAL is using an advanced feature of bison available in
-bison version 2.7 and above. The binaries of this release has not made
-it yet to the standard distrubution channels (e.g., Ubuntu, Red Hat,
-cygwin, and bison for Windows). Thus, it must be built from sources.
-A bison submodule exists in the SGAL git repository for convenience.
-To build bison you need to install apriori the following components:
+bison version 2.7.91 and above. The binaries of this release has not
+made it yet to the standard distrubution channels (e.g., Ubuntu, Red
+Hat, cygwin, and bison for Windows). Thus, it must be built from
+sources. A bison submodule exists in the SGAL git repository for
+convenience. To build bison you need to install apriori the components
+listed in the table below. The table lists the cygwin packages that
+contain the components.
 
   Component  Category Package
   ---------- -------- -------
@@ -198,7 +200,7 @@ following command:
 
   git submodule -q foreach git pull -q origin master
 
-To obtain the latest version of bison from the its git repository
+To obtain the latest version of bison from its git repository
 (using anonymus checkout) issue:
 
   git clone git://git.savannah.gnu.org/bison.git
@@ -209,8 +211,8 @@ bison, ammounts to:
   ./bootstrap
   ./configure
   make
-  
-Then, place the generated bison executable (tests/bison) somewhere
+
+Then, place the generated bison executable (src/bison[.exe]) somewhere
 in your PATH, so that it is picked up before any other bison executable
 that may reside on your system. I place it under $ROOT/bin, which is in
 my PATH; see Section 2.6.1. for a discusion about environment variables.
@@ -222,13 +224,20 @@ http://stackoverflow.com/questions/17143607/i-cannot-build-bison-on-cygwin-using
 - Edit the file bootstrap.conf and search for the statement:
 
   gnulib_tool_option_extras='--symlink --makefile-name=gnulib.mk'
-  
+
 remove '--symlink' option. Then, run the bootstrap script while forcing
 (hard) copies over symbolic links and procede as above:
 
   ./bootstrap --copy
   ./configure
   make
+
+Finally, bison requires m4 among the others. If you build bison via
+cygwin, you need to set the environment variable BISON_PKGDATADIR to
+point to the bison data directory (otherwise m4sugar/m4sugar.m4 is not
+found):
+
+export BISON_PKGDATADIR=${BISON}/data
 
 2.5.2.2. flex (Fast Lexical Analyzer)
 Flex is a fast lexical analyser generator. It is a tool for generating
@@ -285,7 +294,7 @@ Linux neither in Windows), you must set the environment variable CGAL_DIR
 to point at the directory where CGAL is installed, e.g.,
 
   CGAL_DIR=/usr/local/CGAL/CGAL-combined
-  
+
 2.5.5. GMP and MPFR
 The SGAL library SCGAL requires CGAL, and CGAL in turn requires GMP and
 MPFR, which are libraries for multi precision integers and rational
@@ -319,7 +328,7 @@ That is, SGAL does not use Direct 3D (on Windows) or any other proprietary
 API.
 
 Typically, OpenGL is preinstalled on systems; if not, it can be downloaded
-from http://www.opengl.org/. 
+from http://www.opengl.org/.
 
 2.5.7. gl2ps
 GL2PS is a C library providing vector output for any OpenGL application.
@@ -357,9 +366,9 @@ difference is that a windows application's entry point is WinMain(),
 whereas a console application's entry point is main().
 
 Under Linux I set PLATFORM as follows:
-  
+
   PLATFORM=linux
-   
+
 2.6.1.2. ROOT
 The ROOT environment variable points at the root directory of the
 directory structure where all files generated during the build are
@@ -368,7 +377,7 @@ installed into. You can have several roots and switch between them.
 Under Linux I set ROOT as follows:
 
   ROOT=$HOME//roots/$PLATFORM
-  
+
 Using different roots for different platforms allows using a file
 system that is shared between different platforms (for example, if the
 Windows root and the Linux root end up on the same disk.)
@@ -382,7 +391,7 @@ Let FTR ne an acronym of a feature. Set the environment variable
 USE_FTR to enable the feature. If the feature requires a corresponding
 CGAL feature, you must also install an appropriate version of CGAL that
 supports the corresponding CGAL feature.
-   
+
    USE_NGM=1  # Nef Gaussian Map (CGAL)
    USE_LTS=1  # Lines Through Segments
    USE_AOS=1  # Arrangement On Surface
