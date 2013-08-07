@@ -1098,16 +1098,17 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
   // Merge mergable edges:
   Aos_mark::Vertex_iterator vit;
   for (vit = aos->vertices_begin(); vit != aos->vertices_end(); ++vit) {
-    if (!vit->mark()) continue;
-    if (vit->degree() == 0) {
+    if ((vit->degree() == 0) && vit->mark()) {
       // A marked isolated vertex can be the result of overlaying an
       // a non-marked isolated vertex from one arrangement and a marked
       // face from another.
       aos->remove_isolated_vertex(vit);
       continue;
     }
-    CGAL_assertion(vit->degree() == 2);
+    if (vit->degree() != 2) continue;
     Aos_mark::Halfedge_around_vertex_circulator eit = vit->incident_halfedges();
+    // Either the vertex is marked or both its incident edges are not marked.
+    SGAL_assertion(vit->mark() || (!eit->mark() && !eit->next()->mark()));
     const Aos_mark::Geometry_traits_2* traits = aos->geometry_traits();
     if (traits->are_mergeable_2_object()(eit->curve(), eit->next()->curve())) {
       Aos_mark::Geometry_traits_2::X_monotone_curve_2 c;
