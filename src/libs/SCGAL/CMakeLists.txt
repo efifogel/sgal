@@ -1,4 +1,4 @@
-find_package(CGAL COMPONENTS)
+find_package(CGAL REQUIRED)
 include(${CGAL_USE_FILE})
 
 #Set some values...

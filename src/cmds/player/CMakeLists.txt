@@ -8,7 +8,7 @@ if (NOT WIN32)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif (NOT WIN32)
 if (USE_CGAL)
-  find_package(CGAL COMPONENTS)
+  find_package(CGAL REQUIRED)
   include(${CGAL_USE_FILE})
 
   add_definitions(-DUSE_CGAL)
