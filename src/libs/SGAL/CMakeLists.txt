@@ -274,6 +274,12 @@ else()
 	add_library(SGAL STATIC ${SGAL_SOURCE_FILES})
 endif()
 
+
+set_target_properties(SGAL PROPERTIES
+  VERSION "${SGAL_SOVERSION}"
+  SOVERSION "${SGAL_SONAME_VERSION}"
+)
+
 #Add links
 if (NOT WIN32)
   set (NON_WIN32_LIBRARIES

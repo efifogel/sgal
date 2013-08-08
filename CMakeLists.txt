@@ -7,6 +7,29 @@ option(USE_CGAL "Use CGAL related stuff" ON)
 set(SCGAL_NT "3" CACHE STRING "CGAL number type")
 set(SCGAL_KERNEL "0" CACHE STRING "CGAL kernel")
 
+# SONAME, SOVERSION
+#
+# The rule is that each new release or bug fix release should increse the soversion.
+#
+# SOVERSION is $(SONAME_VERSION).$(SOVERSION_MINOR).$(SOVERSION_RELEASE)
+#
+# - If the binary interface of libraries do not change from previous release
+#   (example: most bug fix releases), increase SOVERSION_RELEASE (this third number).
+# - If the binary interface is changed, but remains compatible with
+#   previous release (example: only addition of new functions), then increase
+#   SOVERSION_MINOR (second number) and set SOVERSION_RELEASE to 0.
+# - If the binary interface is changed in an incompatible way to previous
+#   release, then increase the SONAME_VERSION, and set the two other
+#   numbers to 0.
+#
+# SOVERSION history:
+#   SGAL-0.1  : 0.1.0
+#
+set( SGAL_SONAME_VERSION "0" )
+set( SGAL_SOVERSION      "0.1.0" )
+message( STATUS "SGAL_SONAME_VERSION=${SGAL_SONAME_VERSION}" )
+message( STATUS "SGAL_SOVERSION     =${SGAL_SOVERSION}" )
+
 #Add src subdirectory
 add_subdirectory(src)
 
