@@ -28,7 +28,6 @@
 
 #include <list>
 #include <string>
-#include <boost/tuple/tuple.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
@@ -54,7 +53,7 @@ public:
   typedef std::list<Multi_cont_attr*>               Multi_cont_attr_list;
   typedef Multi_cont_attr_list::iterator            Multi_cont_attr_iter;
 
-  typedef boost::tuple<std::string*, std::string*, std::string*>
+  typedef std::pair<std::string*, std::pair<std::string*, std::string*> >
     Field_attr;
   typedef std::list<Field_attr*>                    Field_attr_list;
   typedef Field_attr_list::iterator                 Field_attr_iter;
@@ -110,6 +109,11 @@ public:
    * \param back indicates whether to add at the back of the attribute list.
    */
   void add_attribute(Field_attr* attribute, bool back = true);
+
+  /* Transfer attributes from a given element into this element.
+   * \param element the given element.
+   */
+  void splice(Element& element);
 
   /*! Obtain the string-attribute container. */
   Str_attr_list& get_str_attributes();
@@ -173,6 +177,27 @@ public:
    * \param ai the string-attribute iterator.
    */
   Cont_list& get_value(Multi_cont_attr_iter ai) const;
+
+  /*! Delete the attribute pointed by a given iterator.
+   * \param ai the string-attribute iterator.
+   */
+  void mark_delete(Field_attr_iter ai);
+
+  /*! Obtain the begin iterator of the field-attribute container. */
+  Field_attr_iter field_attrs_begin();
+
+  /*! Obtain the past-the-end iterator of the field-attribute container. */
+  Field_attr_iter field_attrs_end();
+
+  /*! Obtain the value of a field-attribute pointed by a given iterator.
+   * \param ai the field-attribute iterator.
+   */
+  const std::string& get_value(Field_attr_iter ai) const;
+
+  /*! Obtain the type of a field-attribute pointed by a given iterator.
+   * \param ai the field-attribute iterator.
+   */
+  const std::string& get_type(Field_attr_iter ai) const;
 
   /*! Delete all attributes. */
   void delete_marked();
@@ -260,6 +285,25 @@ inline Element::Multi_cont_attr_iter Element::multi_cont_attrs_end()
  */
 inline Element::Cont_list& Element::get_value(Multi_cont_attr_iter ai) const
 { return *((*ai)->second); }
+
+/*! \brief obtains the begin iterator of the field-attribute container. */
+inline Element::Field_attr_iter Element::field_attrs_begin()
+{ return m_field_attrs.begin(); }
+
+/*! \brief obtains the past-the-end iterator of the field-attribute container.
+ */
+inline Element::Field_attr_iter Element::field_attrs_end()
+{ return m_field_attrs.end(); }
+
+/*! \brief obtains the value of a field-attribute pointed by a given iterator.
+ */
+inline const std::string& Element::get_value(Field_attr_iter ai) const
+{ return *((*ai)->second.second); }
+
+/*! \brief obtains the type of a field-attribute pointed by a given iterator.
+ */
+inline const std::string& Element::get_type(Field_attr_iter ai) const
+{ return *((*ai)->second.first); }
 
 SGAL_END_NAMESPACE
 

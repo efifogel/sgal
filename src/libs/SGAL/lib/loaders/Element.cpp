@@ -89,6 +89,17 @@ void Element::mark_delete(Multi_cont_attr_iter ai)
   *ai = 0;
 }
 
+/*! \brief deletes the Field-attribute pointed by a given iterator. */
+void Element::mark_delete(Field_attr_iter ai)
+{
+  Field_attr* attr = *ai;
+  delete attr->first;
+  delete attr->second.first;
+  delete attr->second.second;
+  delete attr;
+  *ai = 0;
+}
+
 /*! \brief deletes all attributes. */
 void Element::delete_marked()
 {
@@ -102,6 +113,16 @@ void Element::delete_marked()
                            m_multi_cont_attrs.end());
   m_field_attrs.erase(std::remove_if(m_field_attrs.begin(), m_field_attrs.end(),
                                      Field_eraser()), m_field_attrs.end());
+}
+
+/*! \brief transfers attributes from a given element into this element. */
+void Element::splice(Element& element)
+{
+  m_str_attrs.splice(m_str_attrs.end(), element.get_str_attributes());
+  m_cont_attrs.splice(m_cont_attrs.end(), element.get_cont_attributes());
+  m_multi_cont_attrs.splice(m_multi_cont_attrs.end(),
+                            element.get_multi_cont_attributes());
+  m_field_attrs.splice(m_field_attrs.end(), element.get_field_attributes());
 }
 
 SGAL_END_NAMESPACE

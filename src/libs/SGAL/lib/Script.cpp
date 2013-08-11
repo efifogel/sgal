@@ -26,6 +26,9 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Container_factory.hpp"
+#include "SGAL/Utilities.hpp"
+#include "SGAL/Element.hpp"
 #include "SGAL/Script.hpp"
 
 // #include "JSWObjectInt.h"
@@ -35,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Script::s_tag = "Script";
-Container_proto* Camera::s_prototype = NULL;
+Container_proto* Script::s_prototype = NULL;
 
 REGISTER_TO_FACTORY(Script, "Script");
 
@@ -94,7 +97,25 @@ void Script::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
+    if (name == "directOutput") {
+      if (compare_to_true(value)) set_direct_output();
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "mustEvaluate") {
+      if (compare_to_true(value)) set_must_evaluate();
+      elem->mark_delete(ai);
+      continue;
+    }
   }
+
+  // Element::Field_attr_iter fi;
+  // for (fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi) {
+  //   const std::string& name = elem->get_name(fi);
+  //   const std::string& value = elem->get_value(fi);
+  //   const std::string& type = elem->get_type(fi);
+  // }
+
   // Remove all the marked attributes:
   elem->delete_marked();
 }
@@ -196,11 +217,13 @@ void Script::add_field_def(const String& name, const String& type,
 
   ++m_field_infoIDCount;
 }
+#endif
 
 // Execution function - executes the suitable script function according to the
 // event
 void Script::execute(Field_info* field_info)
 {
+#if 0
   // if this is the first time the script is executed -
   // initialize the suitable script engine object
   if (!m_engineInitialized) {
@@ -332,8 +355,7 @@ void Script::execute(Field_info* field_info)
   else assert(false);
 
   m_SAI->EndUpdate();
-}
-
 #endif
+}
 
 SGAL_END_NAMESPACE

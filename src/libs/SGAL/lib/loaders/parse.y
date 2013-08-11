@@ -64,10 +64,14 @@ typedef Element::Cont_attr              Cont_attr;
 typedef Element::Cont_attr_list         Cont_attr_list;
 typedef Element::Cont_attr_iter         Cont_attr_iter;
 
-typedef Element::Cont_list              Cont_list; 
+typedef Element::Cont_list              Cont_list;
 typedef Element::Multi_cont_attr        Multi_cont_attr;
 typedef Element::Multi_cont_attr_list   Multi_cont_attr_list;
 typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
+
+typedef Element::Field_attr             Field_attr;
+typedef Element::Field_attr_list        Field_attr_list;
+typedef Element::Field_attr_iter        Field_attr_iter;
 
 class Vrml_scanner;
 
@@ -86,7 +90,7 @@ SGAL_END_NAMESPACE
 
 %code // *.cc
 {
-  static SGAL::Vrml_parser::symbol_type yylex(SGAL::Vrml_scanner& scanner);  
+  static SGAL::Vrml_parser::symbol_type yylex(SGAL::Vrml_scanner& scanner);
 }
 
 /* %union { */
@@ -118,7 +122,9 @@ SGAL_END_NAMESPACE
 %type <std::string> fieldType
 %type <Cont_list*> nodeStatements
 %type <Element*> nodeBody
-%type <Str_attr*> scriptBodyAttribute
+%type <Element*> scriptBody
+%type <Element*> scriptBodyElement
+%type <Element*> restrictedInterfaceDeclaration
 
 %define api.token.prefix {TOK_}
 
@@ -207,7 +213,7 @@ vrmlScene       : statements
                 {
                   $$ = Shared_group(new Group);
                   $$->add_child($1);
-                } ; 
+                } ;
 
 statements      : /* empty */
                 {
@@ -238,21 +244,44 @@ proto           : K_PROTO nodeTypeId "[" interfaceDeclarations "]" "{" statement
 
 interfaceDeclarations   : /* empty */ { /*! \todo */ }
                 | interfaceDeclarations interfaceDeclaration { /*! \todo */ }
-                ; 
-
-restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId { /*! \todo */ }
-                | K_EVENTOUT fieldType eventOutId { /*! \todo */ }
-                | K_FIELD fieldType fieldId fieldValue { /*! \todo */ }
-                | K_FIELD fieldType fieldId sfnodeValue { /*! \todo */ }
                 ;
 
-interfaceDeclaration    : restrictedInterfaceDeclaration { /*! \todo */ }
+restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
+                {
+                  $$ = new Element;
+                  Field_attr* field_attr =
+                    new Field_attr(new std::string($3),
+                                   std::make_pair(new std::string($2),
+                                                  new std::string("")));
+                  $$->add_attribute(field_attr);
+                }
+                | K_EVENTOUT fieldType eventOutId
+                {
+                  $$ = new Element;
+                  Field_attr* field_attr =
+                    new Field_attr(new std::string($3),
+                                   std::make_pair(new std::string($3),
+                                                  new std::string("")));
+                  $$->add_attribute(field_attr);
+                }
+                | K_FIELD fieldType fieldId sfValue
+                {
+                  $$ = new Element;
+                  Field_attr* field_attr =
+                    new Field_attr(new std::string($3),
+                                   std::make_pair(new std::string($2),
+                                                  new std::string($4)));
+                  $$->add_attribute(field_attr);
+                }
+                ;
+
+interfaceDeclaration : restrictedInterfaceDeclaration { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId fieldValue { /*! \todo */ }
                 | K_EXPOSEDFIELD fieldType fieldId sfnodeValue { /*! \todo */ }
                 ;
 
 externproto     : K_EXTERNPROTO nodeTypeId "[" externInterfaceDeclarations "]" URLList { $$ = Shared_container(); /*! \todo */ }
-                ; 
+                ;
 
 externInterfaceDeclarations     : /* empty */ { /*! \todo */ }
                 | externInterfaceDeclarations externInterfaceDeclaration { /*! \todo */ }
@@ -299,7 +328,20 @@ node            : nodeTypeId "{" nodeBody "}"
                     $$->add_to_scene(scene_graph);
                   }
                 }
-                | K_SCRIPT "{" scriptBody "}" { $$ = Shared_container(); /*! \todo */ }
+                | K_SCRIPT "{" scriptBody "}"
+                {
+                  std::string script("Script");
+                  $$ = Container_factory::get_instance()->create(script);
+                  if (!$$) {
+                    error(yyla.location,
+                          std::string("Unknown node type \"Script\""));
+                    YYERROR;
+                  }
+                  else {
+                    $$->set_attributes($3);
+                    $$->add_to_scene(scene_graph);
+                  }
+                }
                 ;
 
 nodeBody        : /* empty */ { $$ = new Element; }
@@ -333,28 +375,27 @@ nodeBody        : /* empty */ { $$ = new Element; }
                 /* | nodeBody eventOutId K_IS eventOutId */
                 | nodeBody routeStatement { std::swap($$, $1); /*! \todo */ }
                 | nodeBody protoStatement { std::swap($$, $1); /*! \todo */ }
-                ; 
-
-
-scriptBody      : scriptBodyElement { /*! \todo */ }
-                | scriptBody scriptBodyElement { /*! \todo */ }
-                | scriptBodyAttribute { /*! \todo */ }
-                | scriptBody scriptBodyAttribute { delete $2; /*! \todo */ }
-                ; 
-
-scriptBodyElement : restrictedInterfaceDeclaration { /*! \todo */ }
-                | routeStatement { /*! \todo */ }
-                | protoStatement { /*! \todo */ }
-                | K_EVENTIN fieldType eventInId K_IS eventInId { /*! \todo */ }
-                | K_EVENTOUT fieldType eventOutId K_IS eventOutId { /*! \todo */ }
-                | K_FIELD fieldType fieldId K_IS fieldId { /*! \todo */ }
-                /* | fieldId sfnodeValue */
-                /* | fieldId K_IS fieldId { $1; } */
-                /* | eventInId K_IS eventInId */
-                /* | eventOutId K_IS eventOutId */
                 ;
 
-scriptBodyAttribute : fieldId fieldValue { $$ = new Str_attr(&$1, &$2); }
+
+scriptBody      : /* empty */ { $$ = new Element; }
+                | scriptBody scriptBodyElement
+                {
+                  std::swap($$, $1);
+                  $$->splice(*$2);
+                }
+                ;
+
+scriptBodyElement : fieldId sfValue
+                {
+                  $$ = new Element;
+                  $$->add_attribute(new Str_attr(new std::string($1), new std::string($2)));
+                }
+
+                | restrictedInterfaceDeclaration { std::swap($$, $1); }
+                /*! | K_EVENTIN fieldType eventInId K_IS eventInId { \todo } */
+                /*! | K_EVENTOUT fieldType eventOutId K_IS eventOutId { \todo } */
+                /*! | K_FIELD fieldType fieldId K_IS fieldId { \todo } */
                 ;
 
 nodeNameId      : Id { std::swap($$, $1); }
@@ -378,11 +419,11 @@ Id              : IDENTIFIER { std::swap($$, $1); }
 /*
 Id              : IdFirstChar
                 | IdFirstChar IdRestChars
-                ; 
+                ;
 
-IdFirstChar     : Any ISO-10646 character encoded using UTF-8 except: 0x30-0x39, 0x0-0x20, 0x22, 0x23, 0x27, 0x2b, 0x2c, 0x2d, 0x2e, 0x5b, 0x5c, 0x5d, 0x7b, 0x7d, 0x7f ; 
+IdFirstChar     : Any ISO-10646 character encoded using UTF-8 except: 0x30-0x39, 0x0-0x20, 0x22, 0x23, 0x27, 0x2b, 0x2c, 0x2d, 0x2e, 0x5b, 0x5c, 0x5d, 0x7b, 0x7d, 0x7f ;
 
-IdRestChars     : Any number of ISO-10646 characters except: 0x0-0x20, 0x22, 0x23, 0x27, 0x2c, 0x2e, 0x5b, 0x5c, 0x5d, 0x7b, 0x7d, 0x7f ; 
+IdRestChars     : Any number of ISO-10646 characters except: 0x0-0x20, 0x22, 0x23, 0x27, 0x2c, 0x2e, 0x5b, 0x5c, 0x5d, 0x7b, 0x7d, 0x7f ;
 */
 
 /* Fields: */
@@ -420,19 +461,19 @@ sfValue         : sfint32Values { std::swap($$, $1); }
 
 sfboolValue     : K_TRUE { $$ = std::string("TRUE"); }
                 | K_FALSE { $$ = std::string("FALSE"); }
-                ; 
+                ;
 
 sfnodeValue     : nodeStatement { std::swap($$, $1); }
                 | K_NULL { $$ = Shared_container(); /*! \todo */ }
-                ; 
+                ;
 
 sfstringValue   : STRING_LITERAL { std::swap($$, $1); }
-                ; 
+                ;
 
 sfint32Values   : NUMBER { std::swap($$, $1); }
                 | sfint32Values NUMBER { $1 += " " + $2; std::swap($$, $1); }
                 | sfint32Values "," NUMBER { $1 += " " + $3; std::swap($$, $1); }
-                ; 
+                ;
 
 sfstringValues  : STRING_LITERAL { std::swap($$, $1); }
 | sfstringValues STRING_LITERAL { $1 += $2; std::swap($$, $1); }
@@ -441,13 +482,13 @@ sfstringValues  : STRING_LITERAL { std::swap($$, $1); }
 
 nodeStatements  : nodeStatement { $$ = new Cont_list; $$->push_back($1); }
                 | nodeStatements nodeStatement { std::swap($$, $1); $$->push_back($2); }
-                ; 
+                ;
 
 mfValue         : "[" "]" { ; }
                 | "[" sfValues "]" { std::swap($$, $2); }
                 ;
 
-sfValues        : sfint32Values { std::swap($$, $1); } 
+sfValues        : sfint32Values { std::swap($$, $1); }
                 | sfstringValues { std::swap($$, $1); }
                 ;
 

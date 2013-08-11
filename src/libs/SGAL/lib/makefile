@@ -7,8 +7,8 @@
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Source$
-# $Name$
+# $Id: $
+# $Revision: $
 #
 # Author(s)     : Efi Fogel
 
@@ -135,6 +135,7 @@ CPPSOURCES+= Point_light.cpp
 CPPSOURCES+= Rotation.cpp
 CPPSOURCES+= Route.cpp
 CPPSOURCES+= Scene_graph.cpp
+CPPSOURCES+= Script.cpp
 CPPSOURCES+= Simulation.cpp
 CPPSOURCES+= Shader.cpp
 CPPSOURCES+= Shape.cpp
