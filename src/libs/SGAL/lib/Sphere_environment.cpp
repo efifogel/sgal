@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Sphere_environment::s_tag = "sphericalEnvironmentMap";
-Container_proto* Sphere_environment::s_prototype = NULL;
+Container_proto* Sphere_environment::s_prototype(NULL);
 
 // Default values:
 const Float Sphere_environment::m_def_alpha(0.5f);
@@ -57,12 +57,10 @@ Sphere_environment::~Sphere_environment() {}
 /*! \brief initializes the prototype. */
 void Sphere_environment::init_prototype()
 {
-  // The prototype shuold be allocated only once for all instances
   if (s_prototype != NULL) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Texture::get_prototype());
 
+  // alpha
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
@@ -78,8 +76,8 @@ void Sphere_environment::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto * Sphere_environment::get_prototype() 
-{  
+Container_proto * Sphere_environment::get_prototype()
+{
   if (s_prototype == NULL) Sphere_environment::init_prototype();
   return s_prototype;
 }
@@ -117,8 +115,8 @@ void Sphere_environment::set_attributes(Element* elem)
 /*!
  */
 Attribute_list Sphere_environment::get_attributes()
-{  
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
   char buf[32];
 
@@ -139,7 +137,7 @@ Attribute_list Sphere_environment::get_attributes()
   return attribs;
 }
 
-/*! Add the reflection map into the scene graph. 
+/*! Add the reflection map into the scene graph.
  * There are three ways an reflection map can be added.
  * -# the reflection map is defined as a child of a Shape object. In this case
  * we set the reflection map on the shape to point to this.
@@ -153,7 +151,7 @@ Attribute_list Sphere_environment::get_attributes()
  * is defined in the top level.
  */
 void Sphere_environment::add_to_scene(Scene_graph * sg,
-                                             XML_entity * parent) 
+                                             XML_entity * parent)
 {
   Container::add_to_scene(sg, parent);
   sg->add_container(this);
@@ -166,7 +164,7 @@ void Sphere_environment::add_to_scene(Scene_graph * sg,
   if (shape) {
     shape->set_env_map(this);
     return;
-  } 
+  }
 }
 #endif
 
@@ -193,7 +191,7 @@ Uint Sphere_environment::get_component_count() const
   return m_images[0].first->get_component_count();
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Sphere_environment::add_to_scene(Scene_graph* scene_graph)
 {
   if (!m_images[0].first || !m_images[1].first) return;

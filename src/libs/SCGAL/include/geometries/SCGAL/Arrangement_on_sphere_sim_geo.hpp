@@ -49,7 +49,7 @@ class Tick_event;
  * great circles embeded on a sphere
  */
 class SGAL_SCGAL_DECL Arrangement_on_sphere_sim_geo :
-  public Agent, 
+  public Agent,
   public Arrangement_on_sphere_base_geo
 {
 public:
@@ -76,8 +76,8 @@ public:
 protected:
   typedef Arrangement_on_sphere_labeled         Aos_labeled;
   typedef Aos_labeled::Geometry_traits_2        Geometry_traits;
-  
-private:  
+
+private:
   /* An observer that labels the vertices, edges, and faces in the order they
    * are created.
    */
@@ -107,7 +107,7 @@ private:
       // std::cout << "after_create_boundary_vertex: " << m_label << std::endl;
       v->set_label(m_label++);
     }
-    
+
     /*! Notification after the creation of a new edge.
      * \param e A handle to one of the twin halfedges that were created.
      */
@@ -118,7 +118,7 @@ private:
       e->set_label(m_label++);
     }
   };
-  
+
 public:
   /*! Constructor */
   Arrangement_on_sphere_sim_geo(Boolean proto = false);
@@ -138,10 +138,14 @@ public:
   virtual void init_prototype();
 
   /*! Delete the container prototype */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes */
   virtual void set_attributes(Element* elem);
@@ -165,10 +169,10 @@ public:
 
   /*! Set the arrangement */
   void set_aos(Aos_labeled* aos);
-  
+
   /*! Print statistics */
   void print_stat() { Arrangement_on_surface_geo::print_stat(this); }
-  
+
   /*! Obtain the the global label */
   Uint get_label() const { return m_label; }
 
@@ -180,10 +184,10 @@ public:
 
   /*! Obtain the edge label */
   Uint get_edge_label() const { return m_edge_label; }
-  
+
   /*! Obtain the face label */
   Uint get_face_label() const { return m_face_label; }
-  
+
   /*! Set the vertex label */
   void set_vertex_label(Uint label) { m_vertex_label = label; }
 
@@ -204,14 +208,14 @@ protected:
 
   public:
     typedef Arrangement_on_sphere_sim_geo               Geometry;
-  
+
     /*! Constructor */
     Sphere_sim_colored_vertices_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the edges */
     virtual void operator()(Draw_action* action);
   };
-  
+
   /*! A function object that renders the edges with color */
   class Sphere_sim_colored_edges_renderer :
     public Arrangement_renderer::Renderer
@@ -222,10 +226,10 @@ protected:
 
   public:
     typedef Arrangement_on_sphere_sim_geo               Geometry;
-  
+
     /*! Constructor */
     Sphere_sim_colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the edges */
     virtual void operator()(Draw_action* action);
   };
@@ -246,7 +250,7 @@ protected:
     Sphere_sim_isolated_vertices_renderer;
   typedef Edges_renderer<Self>
     Sphere_sim_edges_renderer;
-  
+
   typedef Colored_isolated_vertices_renderer
     <Sphere_sim_isolated_vertices_renderer>
     Sphere_sim_colored_isolated_vertices_renderer;
@@ -273,7 +277,7 @@ protected:
    * when this geometry node is destructed.
    */
   Boolean m_owned_aos;
-  
+
   /*! The arrangement of great-circle arcs on a sphere */
   Aos_labeled* m_aos;
 
@@ -286,22 +290,22 @@ private:
 
   /*! An observer that label the arrangement vertices and edges */
   Label_observer m_observer;
-  
+
   /*! The simulation time */
   Float m_time;
-  
+
   /*! Triggers the resume of simulation */
   Boolean m_resume;
 
   /*! Triggers the suspension of simulation */
   Boolean m_suspend;
-  
+
   /*! Indicates whether to draw the labeled vertex */
   Boolean m_draw_labeled_vertex;
 
   /*! Indicates whether to draw the labeled halfedge */
   Boolean m_draw_labeled_edge;
-  
+
   /*! Indicates whether to draw the labeled face */
   Boolean m_draw_labeled_face;
 
@@ -345,7 +349,7 @@ private:
   static const Vector3f s_def_labeled_vertex_color;
   static const Vector3f s_def_labeled_edge_color;
   static const Vector3f s_def_labeled_face_color;
-  
+
   /*! Draw the arrangement vertices
    * \param action
    */
@@ -374,19 +378,19 @@ private:
 
   /*! Process change of simulation time */
   void time_changed(Field_info* field_info);
-  
+
   /*! Resume the simulation */
   void resume(Field_info* field_info);
-  
+
   /*! Suspend the simulation */
   void suspend(Field_info* field_info);
-  
+
   /*! Draw the labeled vertex */
   void draw_labeled_vertex();
-    
+
   /*! Draw the labeled edge */
   void draw_labeled_edge();
-  
+
   /*! Draw the labeled face */
   void draw_labeled_face();
 

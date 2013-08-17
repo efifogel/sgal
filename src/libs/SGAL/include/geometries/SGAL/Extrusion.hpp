@@ -102,7 +102,7 @@ public:
   /*! Obtain the 2-D cross section of the final shape defined in the XZ plane.
    */
   const SGAL::Array<Vector2f>& get_cross_section() const;
-  
+
   /*! Set the orientation of the cross section. */
   void set_orientation(SGAL::Array<Rotation>& orientation);
 
@@ -117,13 +117,13 @@ public:
 
   /*! Set the path that the cross section travels to create the shape. */
   void set_spine(SGAL::Array<Vector3f>& spine);
-  
+
   /*! Obtains the path that the cross section travels to create the shape. */
   const SGAL::Array<Vector3f>& get_spine() const;
 
   /*! Obtains the path that the cross section travels to create the shape. */
   SGAL::Array<Vector3f>& get_spine();
-  
+
   /*! Set the cross section radius. */
   void set_cross_section_radius(Float radius);
 
@@ -135,15 +135,19 @@ public:
 
   /*! Obtain the cross section slices number. */
   Uint get_cross_section_slices() const;
-  
+
   /*! Initialize the container prototype. */
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
@@ -161,7 +165,7 @@ public:
 
   /*! Process change of structure. */
   void structure_changed(Field_info* field_info);
-  
+
 protected:
   /*! Specifies whether the extruded shape is open at the beginning. */
   Boolean m_begin_cap;
@@ -183,7 +187,7 @@ protected:
 
   /*! Defines the path that the cross section travels to create the shape. */
   SGAL::Array<Vector3f> m_spine;
-  
+
   /*! obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
@@ -192,7 +196,7 @@ protected:
 
   /*! The number of slices of the cross-section. */
   Uint m_cross_section_slices;
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -219,7 +223,7 @@ inline Container* Extrusion::clone() { return new Extrusion(); }
  */
 inline Boolean Extrusion::get_begin_cap() const { return m_begin_cap; }
 
-/*! \brief obtains the flag that specifies whether the extruded shape is 
+/*! \brief obtains the flag that specifies whether the extruded shape is
  * open at the end.
  */
 inline Boolean Extrusion::get_end_cap() const { return m_end_cap; }
@@ -234,7 +238,7 @@ inline Boolean Extrusion::get_loop() const { return m_loop; }
  */
 inline const SGAL::Array<Vector2f>& Extrusion::get_cross_section() const
 { return m_cross_section; }
-  
+
 /*! \brief obtains the orientation of the cross section. */
 inline const SGAL::Array<Rotation>& Extrusion::get_orientation() const
 { return m_orientation; }
@@ -242,7 +246,7 @@ inline const SGAL::Array<Rotation>& Extrusion::get_orientation() const
 /*! \brief obtains the scale of the cross section. */
 inline const SGAL::Array<Vector2f>& Extrusion::get_scale() const
 { return m_scale; }
-  
+
 /*! \brief obtains the path that the cross section travels to create the
  * shape.
  */
@@ -253,7 +257,7 @@ inline const SGAL::Array<Vector3f>& Extrusion::get_spine() const
  * shape.
  */
 inline SGAL::Array<Vector3f>& Extrusion::get_spine() { return m_spine; }
-  
+
 /*! \brief obtains the cross section radius. */
 inline Float Extrusion::get_cross_section_radius() const
 { return m_cross_section_radius; }
@@ -261,7 +265,7 @@ inline Float Extrusion::get_cross_section_radius() const
 /*! \brief obtains the cross section slices number. */
 inline Uint Extrusion::get_cross_section_slices() const
 { return m_cross_section_slices; }
-  
+
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Extrusion::get_tag() const { return s_tag; }
 

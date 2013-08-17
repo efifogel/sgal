@@ -52,8 +52,9 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Arrangement_on_sphere_graph_geo::s_tag = "ArrangementOnSphereGraph";
-Container_proto* Arrangement_on_sphere_graph_geo::s_prototype = NULL;
+const std::string Arrangement_on_sphere_graph_geo::s_tag =
+  "ArrangementOnSphereGraph";
+Container_proto* Arrangement_on_sphere_graph_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Arrangement_on_sphere_graph_geo,
                     "Arrangement_on_sphere_graph_geo");
@@ -141,7 +142,7 @@ void Arrangement_on_sphere_graph_geo::set_attributes(Element* elem)
     }
     continue;
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }

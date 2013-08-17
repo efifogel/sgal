@@ -44,13 +44,13 @@ public:
   };
 
   /*! Constructor */
-  Simulation(Boolean proto = SGAL_FALSE);
+  Simulation(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Simulation() {};
 
   /*! Construct the prototype */
-  static Simulation * prototype() { return new Simulation(SGAL_TRUE); }
+  static Simulation * prototype() { return new Simulation(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Simulation(); }
@@ -64,6 +64,10 @@ public:
   /*! Obtains the node prototype */
   virtual Container_proto * get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element * elem);
 
@@ -71,12 +75,12 @@ public:
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph * scene_graph);
 
   /*! Start simulation */
   void start();
-  
+
 protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string & get_tag() const { return s_tag; }

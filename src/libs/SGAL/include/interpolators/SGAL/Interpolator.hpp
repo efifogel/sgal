@@ -62,7 +62,7 @@ public:
   virtual ~Interpolator();
 
   /*! Clone */
-  virtual Container* clone() { SGAL_assertion(0); return 0; }
+  virtual Container* clone();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
@@ -72,7 +72,12 @@ public:
 
   /*! Obtain the container prototype */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  Float* fraction_handle(Field_info*) { return &m_fraction; }
+  //@}
+
   // Functions that handles the creation of an instance in the scene graph
   virtual void set_attributes(Element* elem);
 
@@ -83,10 +88,10 @@ public:
 
   /*! Obtain the range keys */
   const Float_array& get_keys() const { return m_keys; }
-  
+
   /*! Obtain the range keys */
   Float_array& get_keys() { return m_keys; }
-  
+
 protected:
   /*! The interpolator range keys */
   Float_array m_keys;
@@ -101,6 +106,9 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+/*! \brief clones */
+inline Container* Interpolator::clone() { SGAL_error(); return 0; }
 
 SGAL_END_NAMESPACE
 

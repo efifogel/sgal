@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,7 +37,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Directional_light::s_tag = "DirectionalLight";
-Container_proto * Directional_light::s_prototype = NULL;
+Container_proto * Directional_light::s_prototype(NULL);
 
 /*! the default direction of the light */
 const Vector3f Directional_light::s_def_direction(0, 0, -1);
@@ -54,19 +54,19 @@ Directional_light::Directional_light(Boolean proto) :
 Directional_light::~Directional_light() {}
 
 /*! Set the direction of the light */
-void Directional_light::set_direction(const Vector3f & direction)
+void Directional_light::set_direction(const Vector3f& direction)
 {
   m_direction = direction;
 }
 
 /*! Obtain the direction of the light */
-void Directional_light::get_direction(Vector3f & direction) const
+void Directional_light::get_direction(Vector3f& direction) const
 {
   direction = m_direction;
 }
 
 /*! Draw the light */
-Action::Trav_directive Directional_light::draw(Draw_action * draw_action)
+Action::Trav_directive Directional_light::draw(Draw_action* draw_action)
 {
   if (!m_is_on) return Action::TRAV_CONT;
 
@@ -85,10 +85,8 @@ void Directional_light::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Light::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // direction
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_vector3f(DIRECTION, "direction",
@@ -104,8 +102,8 @@ void Directional_light::delete_prototype()
 }
 
 /*! Obtain the node prototype */
-Container_proto * Directional_light::get_prototype() 
-{  
+Container_proto* Directional_light::get_prototype()
+{
   if (!s_prototype) Directional_light::init_prototype();
   return s_prototype;
 }
@@ -114,17 +112,15 @@ Container_proto * Directional_light::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Directional_light::set_attributes(Element * elem) 
-{  
+void Directional_light::set_attributes(Element* elem)
+{
   Light::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "direction") {
       Vector3f dir(value);
       set_direction(dir);
@@ -140,8 +136,8 @@ void Directional_light::set_attributes(Element * elem)
 #if 0
 /** get a list of attributes (called in the save process) */
 Attribute_list Directional_light::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   attribs = Light::get_attributes();
   Attribue attrib;
   Vector3f dir;
@@ -153,7 +149,7 @@ Attribute_list Directional_light::get_attributes()
     attribs.push_back(attrib);
   }
 
-  return attribs; 
+  return attribs;
 }
 #endif
 

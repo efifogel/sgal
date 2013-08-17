@@ -74,15 +74,19 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */  
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   /*! Size. */
   Uint size() const;
-  
+
   /*! Resize. */
   void resize(Uint n);
 
@@ -92,7 +96,7 @@ public:
   /*! Begin. */
   Exact_plane_iter begin();
   Exact_plane_const_iter begin() const;
-  
+
   /*! End. */
   Exact_plane_iter end();
   Exact_plane_const_iter end() const;
@@ -105,7 +109,7 @@ public:
 
   /*! Insert a new element at the end. */
   void push_back(const Exact_plane_3& p);
-    
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -130,7 +134,7 @@ inline Container* Exact_plane_array::clone() { return new Exact_plane_array(); }
 
 /*! \brief Size. */
 inline Uint Exact_plane_array::size() const { return m_array.size(); }
-  
+
 /*! \brief Resize. */
 inline void Exact_plane_array::resize(Uint n) { m_array.resize(n); }
 
@@ -145,7 +149,7 @@ inline Exact_plane_array::Exact_plane_iter Exact_plane_array::begin()
 inline Exact_plane_array::Exact_plane_const_iter Exact_plane_array::begin()
   const
 { return m_array.begin(); }
-  
+
 /*! \brief obtains the (non-const) pass-the-end iterator. */
 inline Exact_plane_array::Exact_plane_iter
 Exact_plane_array::end() { return m_array.end(); }
@@ -165,7 +169,7 @@ inline const Exact_plane_3& Exact_plane_array::operator[](Uint n) const
 /*! \brief inserts a new element at the end. */
 inline void Exact_plane_array::push_back(const Exact_plane_3& p)
 { m_array.push_back(p); }
-    
+
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Exact_plane_array::get_tag() const { return s_tag; }
 

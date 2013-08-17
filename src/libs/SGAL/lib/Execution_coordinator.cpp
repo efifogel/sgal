@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -25,23 +25,23 @@
 using namespace SGAL;
 
 Execution_coordinator::Execution_coordinator():
-    m_renderingRequired(SGAL_FALSE),
-    m_draggingLocked(SGAL_FALSE),
-    m_boundingSphereModified(SGAL_TRUE),
+    m_renderingRequired(false),
+    m_draggingLocked(false),
+    m_boundingSphereModified(true),
     m_currentCursorId(ctARROW),
-    m_isCursorOn(SGAL_TRUE),
-    m_isMouseOver(SGAL_FALSE),
-    m_isLoadingDone(SGAL_TRUE),
-    m_isAAInterrupt(SGAL_FALSE),
+    m_isCursorOn(true),
+    m_isMouseOver(false),
+    m_isLoadingDone(true),
+    m_isAAInterrupt(false),
     m_activeKeySensor(NULL),
-    m_scopeLocked (SGAL_FALSE),
+    m_scopeLocked (false),
     m_frameRate(30),
     m_minFrameRate(0),
-    m_currentViewCalculationRequired(SGAL_TRUE),
+    m_currentViewCalculationRequired(true),
     m_flowSensor(0),
     m_errorHandle(0),
     m_CompressedInterpolatorsCount(0),
-    m_isUpdateTimeActive(SGAL_TRUE),
+    m_isUpdateTimeActive(true),
     m_SceneBoundingSphereRadius((Float)0.0),
     m_frameCounter(0)
 {}
@@ -68,21 +68,21 @@ void Execution_coordinator::SetLoadingDone(Boolean flag)
 void Execution_coordinator::SignalLastLevelRendered()
 {
     if ( m_flowSensor ) {
-        m_flowSensor->SetLoadingDone(SGAL_TRUE);
+        m_flowSensor->SetLoadingDone(true);
     }
 }
 
 void Execution_coordinator::SignalLevel0Rendered()
 {
   if ( m_flowSensor ) {
-    m_flowSensor->SetLevel0LoadingDone(SGAL_TRUE);
+    m_flowSensor->SetLevel0LoadingDone(true);
   }
 }
 
 void Execution_coordinator::SignalSnapshotDone()
 {
     if ( m_flowSensor ) {
-        m_flowSensor->SetSnapshotDone(SGAL_TRUE);
+        m_flowSensor->SetSnapshotDone(true);
     }
 }
 
@@ -91,7 +91,7 @@ void Execution_coordinator::UpdateCompInterpolator()
     m_CompressedInterpolatorsCount--; 
     if (m_CompressedInterpolatorsCount <= 0)
     {
-        m_isUpdateTimeActive = SGAL_TRUE;        
+        m_isUpdateTimeActive = true;        
         if (m_flowSensor)
         {
             m_flowSensor->set_animationLoadingDone();
@@ -107,8 +107,8 @@ void Execution_coordinator::SetFlowSensor(EFlowSensor *flowSensor)
 Boolean Execution_coordinator::IsAAInterrupt() 
 {
     if ( m_isAAInterrupt ) {
-        m_isAAInterrupt = SGAL_FALSE;
-        return SGAL_TRUE;;
+        m_isAAInterrupt = false;
+        return true;;
     }
     return m_isAAInterrupt;
 }

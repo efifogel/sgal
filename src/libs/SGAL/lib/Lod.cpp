@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,8 +30,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string o::s_tag = "LOD";
-Container_proto * Lod::s_prototype = 0;
+const std::string Lod::s_tag = "LOD";
+Container_proto* Lod::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Lod, "Lod");
 
@@ -41,26 +41,18 @@ Lod::Lod(Boolean proto) :  Switch(proto), m_choosen_node(0) {}
 /* Destructor */
 Lod::~Lod() {}
 
-/*!
- */
-Node *  Lod::get_choosen_node() const
+/*! \brief */
+Node*  Lod::get_choosen_node() const
 {
-  for (Node_list::const_iterator it = m_child_list.begin(); it != m_child_list.end(); ++it)
-  {
-    if (*it == m_choosenNode)
-    {
-      return *it;
-    }
+  Node_list::const_iterator it;
+  for (it = m_child_list.begin(); it != m_child_list.end(); ++it) {
+    if (*it == m_choosenNode) return *it;
   }
-  return 0;
+  return NULL;
 }
 
-/**
- * Cull switch node.
- * If this node should be rendered, it added to Cull_context.
- * @param cull_context
- */
-void Lod::Cull(Cull_context &cull_context)
+/*! \brief culls the node. */
+void Lod::Cull(Cull_context& cull_context)
 {
   if (!IsVisible())  return;
 
@@ -78,10 +70,9 @@ void Lod::Cull(Cull_context &cull_context)
 
   int lod = 0;
   // Find node from range array.
-  int i;
+  Uint i;
   int nodeIndex = -1;
-  for (i = 0; i < m_range.size(); i++)
-  {
+  for (i = 0; i < m_range.size(); ++i) {
     if (dist < m_range[i]) {
       nodeIndex = i;
       lod = m_range.size()-nodeIndex;
@@ -93,7 +84,8 @@ void Lod::Cull(Cull_context &cull_context)
     if (!m_child_list.empty()) {
       m_choosenNode = m_child_list.front();
     }
-    for (NodeList::const_iterator it = m_child_list.begin(); it != m_child_list.end(); it++,i++) {
+    NodeList::const_iterator it;
+    for (it = m_child_list.begin(); it != m_child_list.end(); ++it, ++i) {
       if (i == nodeIndex) {
         m_choosenNode = *it;
         break;
@@ -113,39 +105,27 @@ void Lod::Cull(Cull_context &cull_context)
   }
 }
 
-/**
- * Draw choosen node.
- * @param draw_action
- */
-Trav_directive Lod::Draw(Draw_action *draw_action)
+/*! \brief draw the node. */
+Trav_directive Lod::Draw(Draw_action* draw_action)
 {
   if (!IsVisible())  return Trav_cont;
-  Node *node = get_choosenNode();
-  if (node) {
-    draw_action->Apply(node);
-  }
+  Node* node = get_choosenNode();
+  if (node) draw_action->Apply(node);
   return Trav_cont;
 }
 
-/**
- * Traverses the choosen node for selections.
- * @param isect_action
- */
-void Lod::Isect(Isect_action *isect_action) 
+/*! \brief traverses the choosen node for selections. */
+void Lod::Isect(Isect_action* isect_action)
 {
   if (!IsVisible())  return;
-  
-  isect_action->PreVisit(this);
-  
-  Node *node = get_choosenNode();
-  if (node) {
-    isect_action->Apply(node);
-  }
 
+  isect_action->PreVisit(this);
+  Node *node = get_choosenNode();
+  if (node) isect_action->Apply(node);
   isect_action->PostVisit(this);
 }
 
-/*! Initialize the fields */
+/*! \brief initializes the container prototype. */
 void Lod::init_prototype()
 {
   // The prototype shuold be allocated only once for all instances
@@ -163,39 +143,34 @@ void Lod::init_prototype()
 */
 }
 
-/*!
- */
+/*! \brief */
 void Lod::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
-/*!
- */
-Container_proto * Lod::get_prototype() 
-{  
+/*! \brief */
+Container_proto* Lod::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Lod::set_attributes(Element * elem) 
+/*! \brief sets the attributes of this container. */
+void Lod::set_attributes(Element * elem)
 {
   Group::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "range") {
       value.getFloatArray(" ", m_range);
       elem->mark_delete(ai);
     }
     /*
-    if (name == m_whichChooseFieldName) 
+    if (name == m_whichChooseFieldName)
     {
       m_whichChoose = value.toInteger();
     }
@@ -205,9 +180,9 @@ void Lod::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-Attribute_list Lod::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Lod::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
   Vector3f vec;
   Rotation rot;
@@ -216,7 +191,7 @@ Attribute_list Lod::get_attributes()
 
   if (!m_range.empty()) {
     String range;
-    for (int i = 0; i < m_range.size(); i++) {
+    for (Uint i = 0; i < m_range.size(); i++) {
       range += String::fromFloat(m_range[i]) + " ";
     }
     range.trimRight();
@@ -226,7 +201,7 @@ Attribute_list Lod::get_attributes()
   }
 
   /*
-  if (m_whichChoose >= 0) 
+  if (m_whichChoose >= 0)
   {
     attrib.first = m_whichChooseFieldName;
     attrib.second = String::fromInteger(m_whichChoose);

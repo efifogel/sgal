@@ -72,9 +72,13 @@ public:
   /*! Delete the node prototype */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
+  /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -96,23 +100,23 @@ public:
   /*! The iterator to the Array past-the-end element */
   Vector3f* end() { return m_array.end(); }
   const Vector3f* end() const { return m_array.end(); }
-  
+
   /*! Array indexing operator */
   Vector3f& operator[](Uint n) { return m_array[n]; }
 
   /*! Array indexing operator */
   const Vector3f& operator[](Uint n) const { return m_array[n]; }
-  
+
   /*! Obtain the vector */
   Vector3f* get_vector() { return m_array.get_vector(); }
 
-protected: 
+protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

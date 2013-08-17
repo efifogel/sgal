@@ -38,19 +38,14 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_coord2_array::s_tag = "ExactCoordinate2";
+Container_proto * Exact_coord2_array::s_prototype(NULL);
 
-/*! The node prototype */
-Container_proto * Exact_coord2_array::s_prototype = NULL;
-
-/*! Register to the container factory */
 REGISTER_TO_FACTORY(Exact_coord2_array, "Exact_coord2_array");
 
 /*! \brief initializes the node prototype */
 void Exact_coord2_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Container::get_prototype());
 }
 
@@ -61,13 +56,13 @@ void Exact_coord2_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype */  
+/*! \brief obtains the node prototype */
 Container_proto * Exact_coord2_array::get_prototype()
 {
   if (s_prototype == NULL) Exact_coord2_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of the object extracted from an input file */
 void Exact_coord2_array::set_attributes(Element * elem)
 {
@@ -124,10 +119,10 @@ void Exact_coord2_array::set_attributes(Element * elem)
 
 #if 0
 Attribute_list Exact_coord2_array::get_attributes()
-{ 
+{
   Attribute_list attrs;
   attrs = Container::get_attributes();
-  return attrs; 
+  return attrs;
 }
 #endif
 

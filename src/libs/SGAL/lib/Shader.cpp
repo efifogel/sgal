@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Shader::s_prototype = NULL;
+Container_proto* Shader::s_prototype(NULL);
 
 /*! Constructor */
 Shader::Shader(Boolean proto) :  Container(proto) { }

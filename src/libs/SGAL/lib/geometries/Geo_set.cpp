@@ -34,10 +34,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Geo_set::s_prototype = NULL;
+Container_proto* Geo_set::s_prototype(NULL);
 
 const char* Geo_set::s_primitive_type_names[] = {
-  "triangleStrip", "triangleFan", "triangles", 
+  "triangleStrip", "triangleFan", "triangles",
   "quadsStrip", "quads",
   "polygons",
   "lines", "lineStrips", "lineLoops"
@@ -72,12 +72,9 @@ void Geo_set::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::*Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
   Execution_function exec_func;
-
+  // coord
   exec_func = static_cast<Execution_function>(&Geo_set::coord_changed);
   SF_shared_container* field;
   field = new SF_shared_container(COORD_ARRAY, "coord",
@@ -85,18 +82,21 @@ void Geo_set::init_prototype()
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  // normal
   exec_func = static_cast<Execution_function>(&Geo_set::normal_changed);
   field = new SF_shared_container(NORMAL_ARRAY, "normal",
                                   get_member_offset(&m_normal_array),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  // color
   exec_func = static_cast<Execution_function>(&Geo_set::color_changed);
   field = new SF_shared_container(COLOR_ARRAY, "color",
                                   get_member_offset(&m_color_array),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  // texCoord
   exec_func = static_cast<Execution_function>(&Geo_set::tex_coord_changed);
   field = new SF_shared_container(TEX_COORD_ARRAY, "texCoord",
                                   get_member_offset(&m_tex_coord_array),
@@ -112,8 +112,8 @@ void Geo_set::delete_prototype()
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Geo_set::get_prototype() 
-{  
+Container_proto* Geo_set::get_prototype()
+{
   if (s_prototype == NULL) Geo_set::init_prototype();
   return s_prototype;
 }
@@ -181,13 +181,13 @@ void Geo_set::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    
+
     if (name == "coordIndex") {
       m_num_primitives = 0;
 
       typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
       boost::char_separator<char> sep(", \t\n\r");
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it)
         ++size;
@@ -195,7 +195,7 @@ void Geo_set::set_attributes(Element* elem)
       err:
         m_coord_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -206,7 +206,7 @@ void Geo_set::set_attributes(Element* elem)
         m_coord_indices[i++] =
           static_cast<Uint>(boost::lexical_cast<int>(*it));
       }
-    
+
       if (m_primitive_type == PT_POLYGONS) {
         Uint j = 0;
         Boolean tris = true, quads = true;
@@ -271,7 +271,7 @@ void Geo_set::set_attributes(Element* elem)
       Uint index = found - s_primitive_type_names;
       if (index < num)
         set_primitive_type(static_cast<Primitive_type>(index));
-      else 
+      else
         std::cerr << "Illegal primitive type name (" << value << ")!"
                   << std::endl;
       elem->mark_delete(ai);
@@ -348,7 +348,7 @@ void Geo_set::tex_coord_changed(Field_info* field_info)
 /*! \brief Process change of field. */
 void Geo_set::field_changed(Field_info* field_info)
 {
-  switch (field_info->get_id()) {    
+  switch (field_info->get_id()) {
    case COORD_ARRAY: m_dirty_sphere_bound = true; break;
    default: break;
   }

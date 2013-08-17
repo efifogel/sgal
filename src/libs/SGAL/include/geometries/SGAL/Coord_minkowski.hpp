@@ -52,7 +52,7 @@ public:
 
   /*! Constructor. */
   Coord_minkowski(Boolean proto = false);
-  
+
   /* Construct the prototype. */
   static Coord_minkowski* prototype();
 
@@ -74,9 +74,13 @@ public:
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Transform the input vertices. */
   void execute(Field_info* field_info = NULL);
-  
+
   /*! Set the coordinate-set node. */
   void set_coord_array1(Shared_coord_array coord);
 
@@ -107,7 +111,7 @@ protected:
 
   /*! The input vertices. */
   Shared_coord_array m_coord_array2;
-  
+
   /*! The output vertices. */
   Shared_coord_array m_coord_array_changed;
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -68,8 +68,6 @@ typedef unsigned long long int  Double_word;
 
 // Bool is already defined in X11/Xlib.h
 typedef bool            Boolean;
-#define SGAL_TRUE       true
-#define SGAL_FALSE      false
 
 SGAL_END_NAMESPACE
 

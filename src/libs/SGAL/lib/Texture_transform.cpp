@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -26,8 +26,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Texture_transform::s_prototype = NULL;
-std::string Texture_transform::s_tag = "TextureTransform";
+Container_proto* Texture_transform::s_prototype(NULL);
+const std::string Texture_transform::s_tag = "TextureTransform";
 
 REGISTER_TO_FACTORY(Texture_transform, "Textture_transform");
 
@@ -55,8 +55,8 @@ void Texture_transform::delete_prototype()
 }
 
 /*! Obtains the node prototype */
-Container_proto * Texture_transform::get_prototype() 
-{  
+Container_proto* Texture_transform::get_prototype()
+{
   if (!s_prototype) Texture_transform::init_prototype();
   return s_prototype;
 }
@@ -65,7 +65,7 @@ Container_proto * Texture_transform::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Texture_transform::set_attributes(Element * elem) 
+void Texture_transform::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 };

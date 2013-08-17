@@ -27,7 +27,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Node::s_prototype = NULL;
+Container_proto* Node::s_prototype(NULL);
 
 /*! Constructor */
 Node::Node(Boolean proto) :

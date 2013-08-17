@@ -53,7 +53,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Lower_envelope_plane_geo::s_tag = "LowerEnvelopePlane";
-Container_proto* Lower_envelope_plane_geo::s_prototype = NULL;
+Container_proto* Lower_envelope_plane_geo::s_prototype(NULL);
 
 bool Lower_envelope_plane_geo::s_def_draw_patches(true);
 

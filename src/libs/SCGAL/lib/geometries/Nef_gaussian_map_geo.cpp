@@ -58,7 +58,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Nef_gaussian_map_geo::s_tag = "NefGaussianMap";
-SGAL::Container_proto* Nef_gaussian_map_geo::s_prototype = 0;
+SGAL::Container_proto* Nef_gaussian_map_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Nef_gaussian_map_geo, "Nef_gaussian_map_geo");
 
@@ -165,7 +165,7 @@ void Nef_gaussian_map_geo::clean()
       Polyhedron::HDS> Converter(m_nef_gaussian_map);
 
     m_polyhedron.clear();
-    m_polyhedron.delegate(Converter); 
+    m_polyhedron.delegate(Converter);
     std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                    m_polyhedron.planes_begin(), Plane_equation());
   } else {
@@ -253,7 +253,7 @@ void Nef_gaussian_map_geo::draw_dual_edges()
       Rotation rot;
       rot.make(p_src, p_trg);
       float angle = rot.get_angle();
-    
+
       glBegin(GL_LINE_STRIP);
       glVertex3fv((float*)&p_src);
       for (float tmp_angle = m_delta_angle; tmp_angle < angle;
@@ -338,7 +338,7 @@ void Nef_gaussian_map_geo::draw_dual_marked_edge(Vector3f& src, Vector3f& trg)
   }
 
   v0.sub(trg, ext);
-  v1.add(trg, ext);  
+  v1.add(trg, ext);
   glVertex3fv((float*)&v0);
   glVertex3fv((float*)&v1);
   glEnd();
@@ -352,7 +352,7 @@ void Nef_gaussian_map_geo::draw_dual_marked_vertex()
   Nef_gaussian_map::SFace_const_iterator f;
   CGAL_forall_sfaces(f, m_nef_gaussian_map) {
     if (m_marked_vertex_index == i) {
-      Nef_gaussian_map::SFace_cycle_const_iterator fc = 
+      Nef_gaussian_map::SFace_cycle_const_iterator fc =
         f->sface_cycles_begin();
       Nef_gaussian_map::SHalfedge_const_handle se(fc);
 
@@ -428,7 +428,7 @@ void Nef_gaussian_map_geo::draw_dual(Draw_action* action)
     context->draw_transp_enable(false);
     context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
   }
-  
+
   context->draw_light_enable(false);
 
   if (!m_draw_dual_haloed) {
@@ -455,7 +455,7 @@ void Nef_gaussian_map_geo::draw_dual(Draw_action* action)
 
     context->draw_line_width(m_dual_line_width);
     glDepthRange(0, 1.0);
-    context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));    
+    context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));
     context->draw_depth_func(Gfx::LEQUAL_DFUNC);
     context->draw_light_model_sides(SGAL::Gfx::TWO_SIDE);
     context->draw_cull_face(SGAL::Gfx::NO_CULL);
@@ -482,7 +482,7 @@ void Nef_gaussian_map_geo::draw_dual(Draw_action* action)
     draw_dual_marked_vertex();
     glColor3f(1, 1, 1);
   }
-    
+
   context->draw_line_width(1.0f);
   context->draw_light_enable(true);
 }
@@ -494,7 +494,7 @@ void Nef_gaussian_map_geo::draw_dual_opaque(Draw_action* action)
 
   if (m_draw_dual_sphere) {
     // \todo why is it necessary? should be the default.
-    context->draw_cull_face(SGAL::Gfx::BACK_CULL);  
+    context->draw_cull_face(SGAL::Gfx::BACK_CULL);
     context->draw_material_mode_enable(SGAL::Gfx::COLOR_MATERIAL);
     glColor4f(m_dual_sphere_color[0], m_dual_sphere_color[1],
               m_dual_sphere_color[2], 0.5f);
@@ -505,7 +505,7 @@ void Nef_gaussian_map_geo::draw_dual_opaque(Draw_action* action)
     glDisable(GL_POLYGON_OFFSET_FILL);
     context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
   }
-  
+
   context->draw_light_enable(false);
   glColor3fv((float*)&m_dual_line_color);
   context->draw_line_width(m_dual_line_width);
@@ -532,15 +532,15 @@ void Nef_gaussian_map_geo::draw_primal(Draw_action* action)
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
     glBegin(GL_POLYGON);
     Vector_3 normal = i->plane().orthogonal_vector();
-    Vector3f n(static_cast<float>(CGAL::to_double(normal.x())), 
-               static_cast<float>(CGAL::to_double(normal.y())), 
+    Vector3f n(static_cast<float>(CGAL::to_double(normal.x())),
+               static_cast<float>(CGAL::to_double(normal.y())),
                static_cast<float>(CGAL::to_double(normal.z())));
     n.normalize();
     glNormal3fv((float*)&n);
     do {
       Point_3& point = j->vertex()->point();
-      glVertex3f(static_cast<float>(CGAL::to_double(point.x())), 
-                 static_cast<float>(CGAL::to_double(point.y())), 
+      glVertex3f(static_cast<float>(CGAL::to_double(point.x())),
+                 static_cast<float>(CGAL::to_double(point.y())),
                  static_cast<float>(CGAL::to_double(point.z())));
     } while (++j != i->facet_begin());
     glEnd();
@@ -560,7 +560,7 @@ void Nef_gaussian_map_geo::draw_primal(Draw_action* action)
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
 
     glBegin(GL_POLYGON);
-    
+
     Vector_3 normal = f->plane().orthogonal_vector();
     float x = CGAL::to_double(normal.x());
     float y = CGAL::to_double(normal.y());
@@ -603,8 +603,8 @@ void Nef_gaussian_map_geo::isect(SGAL::Isect_action* action)
     glBegin(GL_POLYGON);
     do {
       Point_3& point = j->vertex()->point();
-      glVertex3f(static_cast<float>(CGAL::to_double(point.x())), 
-                 static_cast<float>(CGAL::to_double(point.y())), 
+      glVertex3f(static_cast<float>(CGAL::to_double(point.x())),
+                 static_cast<float>(CGAL::to_double(point.y())),
                  static_cast<float>(CGAL::to_double(point.z())));
     } while (++j != i->facet_begin());
     glEnd();
@@ -617,7 +617,7 @@ Boolean Nef_gaussian_map_geo::clean_sphere_bound()
   if (!m_dirty_sphere_bound) return false;
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
-  
+
   Inexact_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
     spheres.resize(m_polyhedron.size_of_vertices());
@@ -745,7 +745,7 @@ void Nef_gaussian_map_geo::set_attributes(Element* elem)
   typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
   typedef Element::Cont_list              Cont_list;
   typedef Element::Cont_iter              Cont_iter;
-  
+
   // Sets the multi-container attributes of this node:
   for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); ++mcai)
@@ -763,7 +763,7 @@ void Nef_gaussian_map_geo::set_attributes(Element* elem)
       elem->mark_delete(mcai);
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -774,35 +774,40 @@ void Nef_gaussian_map_geo::init_prototype()
   if (s_prototype) return;
   s_prototype = new SGAL::Container_proto(SGAL::Mesh_set::get_prototype());
 
-  //! Container execution function
-  typedef void (SGAL::Container::* Execution_function)(SGAL::Field_info*);
   Execution_function exec_func;
 
   // Add the object fields to the prototype
+  // drawDual
   exec_func =
     static_cast<Execution_function>(&Nef_gaussian_map_geo::draw_changed);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL, "drawDual",
                                           get_member_offset(&m_draw_dual),
                                           exec_func));
- 
+
+  // drawDualSphere
   s_prototype->
     add_field_info(new SF_bool(DRAW_DUAL_SPHERE, "drawDualSphere",
                                get_member_offset(&m_draw_dual_sphere)));
 
+  // trueDrawPrimal
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
                                           get_member_offset(&m_draw_primal)));
 
- s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL, "trueDrawDual",
+  // trueDrawDual
+  s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL, "trueDrawDual",
                                          get_member_offset(&m_draw_dual)));
 
+  // drawDualOpaque
   s_prototype->
     add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
                                get_member_offset(&m_draw_dual_opaque)));
-  
+
+  // drawDualHaloed
   s_prototype->
     add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
                                get_member_offset(&m_draw_dual_haloed)));
 
+  // increaseVertexIndex
   exec_func =
     static_cast<Execution_function>(&Nef_gaussian_map_geo::
                                     increase_vertex_index);
@@ -810,6 +815,8 @@ void Nef_gaussian_map_geo::init_prototype()
     add_field_info(new SF_bool(INCREASE_VERTEX_INDEX, "increaseVertexIndex",
                                get_member_offset(&m_increase_vertex_index),
                                exec_func));
+
+  // increaseEdgeIndex
   exec_func =
     static_cast<Execution_function>(&Nef_gaussian_map_geo::
                                     increase_edge_index);
@@ -817,6 +824,8 @@ void Nef_gaussian_map_geo::init_prototype()
     add_field_info(new SF_bool(INCREASE_EDGE_INDEX, "increaseEdgeIndex",
                                get_member_offset(&m_increase_edge_index),
                                exec_func));
+
+  // increaseFacetIndex
   exec_func =
     static_cast<Execution_function>(&Nef_gaussian_map_geo::
                                     increase_facet_index);
@@ -825,6 +834,7 @@ void Nef_gaussian_map_geo::init_prototype()
                                get_member_offset(&m_increase_facet_index),
                                exec_func));
 
+  // geometries
   MF_container* field = new MF_container(GEOMETRIES, "geometries",
                                          get_member_offset(&m_ngm_nodes));
   s_prototype->add_field_info(field);
@@ -834,11 +844,11 @@ void Nef_gaussian_map_geo::init_prototype()
 void Nef_gaussian_map_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief */
-SGAL::Container_proto* Nef_gaussian_map_geo::get_prototype() 
+SGAL::Container_proto* Nef_gaussian_map_geo::get_prototype()
 {
   if (!s_prototype) Nef_gaussian_map_geo::init_prototype();
   return s_prototype;
@@ -862,7 +872,8 @@ void Nef_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
   if (m_draw_dual) {
     Field* field = get_field(TRUE_DRAW_DUAL);
     if (field) field->cascade();
-  } else {
+  }
+  else {
     Field* field = get_field(TRUE_DRAW_PRIMAL);
     if (field) field->cascade();
   }

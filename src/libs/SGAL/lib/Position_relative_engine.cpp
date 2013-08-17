@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -34,8 +34,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Position_relative_engine::s_tag = "enbPositionRelativeEngine";
-Container_proto * Position_relative_engine::s_prototype = 0;
+std::string Position_relative_engine::s_tag = "PositionRelativeEngine";
+Container_proto * Position_relative_engine::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Position_relative_engine, "Position_relative_engine");
 
@@ -50,11 +50,11 @@ Position_relative_engine::Position_relative_engine(Boolean proto) :
   m_lastFraction(-1)
 {}
 
-/*! Destructor */ 
+/*! Destructor */
 Position_relative_engine::~Position_relative_engine() {}
 
 /**
- Purpose: prototype initialization function - initializes the prototype for 
+ Purpose: prototype initialization function - initializes the prototype for
  all the node instances of Rotation_interpolator in the scene graph.
  Creates and adds a field info for each potential field.
 */
@@ -87,15 +87,15 @@ void Position_relative_engine::init_prototype()
 void Position_relative_engine::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */
-Container_proto * Position_relative_engine::get_prototype() 
-{  
+Container_proto * Position_relative_engine::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
-
 
 /**
  The execution function.
@@ -145,8 +145,8 @@ void Position_relative_engine::execute(Field_info*)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Position_relative_engine::set_attributes(Element * elem) 
-{ 
+void Position_relative_engine::set_attributes(Element * elem)
+{
   Node::set_attributes(elem);
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
@@ -162,21 +162,21 @@ void Position_relative_engine::set_attributes(Element * elem)
     } else if (name == "position") {
       m_position = Vector3f(value);
       elem->mark_delete(ai);
-    }    
+    }
   }
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
 /**
- * Get a list of atytributes in this object. This method is called only 
- * from the Builder side. 
+ * Get a list of atytributes in this object. This method is called only
+ * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Position_relative_engine::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attrib.first = "position";

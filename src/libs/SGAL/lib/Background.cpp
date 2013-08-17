@@ -40,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Background::s_tag = "Background";
-Container_proto* Background::s_prototype = NULL;
+Container_proto* Background::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Background, "Background");
 
@@ -62,7 +62,7 @@ Bindable_stack* Background::get_stack()
 /*! \brief sets the attributes of this object. */
 void Background::set_attributes(Element* elem)
 {
-  Bindable_node::set_attributes(elem);  
+  Bindable_node::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
   Str_attr_iter ai;
@@ -89,7 +89,7 @@ void Background::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Background::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
@@ -102,8 +102,6 @@ void Background::add_to_scene(Scene_graph* sg)
 void Background::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Bindable_node::get_prototype());
 }
 
@@ -130,7 +128,7 @@ void Background::draw(Draw_action* draw_action)
   if (m_clear_color) which |= Gfx::COLOR_CLEAR;
   if (m_clear_depth) which |= Gfx::DEPTH_CLEAR;
   if (m_clear_stencil) which |= Gfx::STENCIL_CLEAR;
-  context->clear(which);  
+  context->clear(which);
 }
 
 /*! \brief draws a 2D polygon with texture coordinates. */

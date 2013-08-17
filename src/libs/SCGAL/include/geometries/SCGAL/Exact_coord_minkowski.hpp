@@ -69,9 +69,13 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */  
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node.
    * \param elem contains lists of attribute names and values.
    */
@@ -82,7 +86,7 @@ public:
    * \param field_info the field information record.
    */
   void execute(Field_info* field_info = NULL);
-  
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;

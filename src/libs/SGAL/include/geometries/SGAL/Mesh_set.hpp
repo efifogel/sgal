@@ -53,8 +53,12 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */  
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -64,19 +68,19 @@ public:
 
   /*! Draw the mesh (unconditionaly). */
   virtual void draw_mesh(Draw_action* action);
-  
+
   /*! Clean the mesh. */
   virtual void clean();
 
   /*! Calculate the sphere bound. */
   virtual Boolean clean_sphere_bound();
-  
+
   /*! Draw the representation. */
   virtual void draw_geometry(Draw_action* action) = 0;
 
   /*! Clear the representation. */
   virtual void clear();
-  
+
   /*! Determine whether the is dirty and thus needs cleaning. */
   virtual Boolean is_dirty() const;
 
@@ -136,13 +140,13 @@ public:
 
   /*! Set the flat coordinate-index array. */
   void set_flat_coord_indices(Array<Uint>& indices);
-  
+
   /*! Reverse the coordinate indices. */
   void set_reverse_coord_indices(const Array<Uint>& indices);
 
   /*! Reverse the flat coordinate indices. */
   void set_reverse_flat_coord_indices(const Array<Uint>& indices);
-  
+
   /*! Determine whether the normal-index array is "flat". */
   Boolean are_normal_indices_flat() const;
 
@@ -154,7 +158,7 @@ public:
 
   /*! Set the flat normal-index array. */
   void set_flat_normal_indices(Array<Uint>& indices);
-  
+
   /*! Determine whether the color-index array is "flat". */
   Boolean are_color_indices_flat() const;
 
@@ -163,7 +167,7 @@ public:
 
   /*! Set the color-index array. */
   void set_color_indices(Array<Uint>& indices);
-  
+
   /*! Set the flat color-index array. */
   void set_flat_color_indices(Array<Uint>& indices);
 
@@ -178,7 +182,7 @@ public:
 
   /*! Set the flat texture coordinate-index array. */
   void set_flat_tex_coord_indices(Array<Uint>& indices);
-  
+
 protected:
   /*! Indicates whether the mesh must be cleaned. */
   Boolean m_dirty;
@@ -189,7 +193,7 @@ protected:
   Boolean m_is_ccw;
 
   /*! Indicates wether the object is a solid. If it is not a solid we need
-   * to draw both sides of the polygons. 
+   * to draw both sides of the polygons.
    */
   Boolean m_is_solid;
 
@@ -201,7 +205,7 @@ protected:
 
   /*! The polygon offset factor. */
   Float m_polygon_offset_factor;
-  
+
   /*! Indicates whether the coordinate-index array be cleaned. */
   Boolean m_dirty_coord_indices;
 
@@ -235,7 +239,7 @@ protected:
 
   /*! Indicates whether the texture coordinate index array is "flat". */
   Boolean m_tex_coord_indices_flat;
-  
+
   /*! Clear the indices arrays, e.g., forces their cleaning. */
   void clear_indices();
 
@@ -288,7 +292,7 @@ private:
 
 /*! \brief clears the representation. */
 inline void Mesh_set::clear() { m_dirty = true; }
-  
+
 /*! \brief cleans the mesh. */
 inline void Mesh_set::clean() { m_dirty = false; }
 

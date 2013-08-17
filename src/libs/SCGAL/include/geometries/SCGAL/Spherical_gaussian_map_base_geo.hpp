@@ -89,7 +89,7 @@ public:
 
   typedef Arrangement_renderer::Vertex_shape          Vertex_shape;
   typedef Vertex_shape::Style                         Vertex_style;
-  
+
   typedef Arrangement_renderer::Edge_shape            Edge_shape;
   typedef Edge_shape::Style                           Edge_style;
 
@@ -131,7 +131,7 @@ protected:
   template <typename Sgm>
   struct Convert_approximate_sphere {
     typedef typename Sgm::Face                          Sgm_face;
-    
+
     /*! */
     Approximate_sphere_3 operator()(const Sgm_face& face) const
     {
@@ -152,7 +152,7 @@ protected:
       return to_vector3f(face.point());
     }
   };
-  
+
   /*! Transform the coordinates of the SGM into spheres.
    * \param sgm (in) the spherical Gaussian map.
    * \param spheres (out) the transformed coordinates.
@@ -185,17 +185,17 @@ protected:
    * the a container of arrangements they hold.
    */
   template <typename Iterator, typename Sgm>
-  class Sgm_iterator {    
+  class Sgm_iterator {
   private:
     Iterator m_it;
-    
+
   public:
     typedef typename Iterator::iterator_category iterator_category;
     typedef Sgm*                                 value_type;
     typedef typename Iterator::difference_type   difference_type;
     typedef Sgm**                                pointer;
     typedef Sgm*&                                reference;
-    
+
   public:
     // Default constructor.
     Sgm_iterator () : m_it() {}
@@ -209,7 +209,7 @@ protected:
       Iterator& base = m_it;
       return (*base)->get_sgm();
     }
-    
+
     value_type operator*()
     {
       Iterator& base = m_it;
@@ -222,7 +222,7 @@ protected:
       ++m_it;
       return *this;
     }
-    
+
     /*! Operator post ++ */
     Sgm_iterator operator++(int)
     {
@@ -230,14 +230,14 @@ protected:
       ++*this;
       return tmp;
     }
-    
+
     // operator->
     pointer operator->()
     {
       Iterator& base = m_it;
       return &((*base)->get_sgm());
     }
-    
+
     const pointer operator->() const
     {
       Iterator& base = m_it;
@@ -257,7 +257,7 @@ protected:
                                                 Colored_vertices_renderer;
   typedef SGAL::Colored_edges_renderer<Edges_renderer>
                                                 Colored_edges_renderer;
-  
+
   typedef SGAL::Inflated_line_edges_renderer<Self::Edges_renderer>
                                                 Inflated_line_edges_renderer;
   typedef SGAL::Inflated_strip_edges_renderer<Self::Edges_renderer>
@@ -273,7 +273,7 @@ protected:
 
   /*! Indicates that the coordinates were rotated. */
   Boolean m_rotated;
-  
+
   /*! When trigerred the CGM is exported. */
   Boolean m_export;
 
@@ -296,7 +296,7 @@ protected:
   Vector3f m_aos_surface_color;
 
   // Vertex attributes:
-  
+
   /*! The vertex shape style. */
   Vertex_style m_aos_vertex_style;
 
@@ -305,12 +305,12 @@ protected:
 
   /*! The size of the point that represents a vertex. */
   Float m_aos_vertex_point_size;
-  
+
   /*! The color of the vertices. */
   Vector3f m_aos_vertex_color;
 
   // Aos boundary vertex attributes:
-  
+
   /*! The boundary vertex shape style. */
   Vertex_style m_aos_boundary_vertex_style;
 
@@ -319,12 +319,12 @@ protected:
 
   /*! The size of the point that represents an boundary vertex. */
   Float m_aos_boundary_vertex_point_size;
-  
+
   /*! The color of the boundary vertices. */
-  Vector3f m_aos_boundary_vertex_color;    
-  
+  Vector3f m_aos_boundary_vertex_color;
+
   // Edge attributes:
-  
+
   /*! Indicates whether the rendering of edges is enabled or not. */
   Boolean m_aos_edge_enabled;
 
@@ -336,10 +336,10 @@ protected:
 
   /*! Indicates whether edges are rendered directed or not. */
   Boolean m_aos_edge_directed;
-  
+
   /*! The radius of the geometry that represents an edge. */
   Float m_aos_edge_radius;
-  
+
   /*! The width of the lines that represent aos edges. */
   Float m_aos_edge_line_width;
 
@@ -351,13 +351,13 @@ protected:
 
   /*! Indicates whether (sphearical) Gaussian map must be cleaned. */
   Boolean m_dirty_sgm;
-  
+
   /*! Indicates whether the renderer must be cleaned. */
   Boolean m_renderer_dirty;
 
   /*! Indicates whether the facets must be cleaned. */
   Boolean m_facets_dirty;
-  
+
   /*! The renderer of the arrangement data structure. */
   Arrangement_renderer m_renderer;
 
@@ -369,13 +369,13 @@ protected:
 
   /*! The surface renderer */
   Arrangement_renderer::Renderer* m_stencil_surface_renderer;
-  
+
   /*! Create the renderers */
   void create_renderers();
 
   /*! Destroy the renderers */
   void destroy_renderers();
-  
+
   /*! Transform the coordinates of the SGM into spheres.
    * \param spheres (out) the transformed coordinates.
    */
@@ -386,7 +386,7 @@ protected:
 
   /*! Draw the Gausian representation of the polyhedron opaque. */
   virtual void draw_aos_opaque(Draw_action* action) {}
-  
+
   /*! Draw an arrangement on sphere vertex.
    * param action
    * param center the vertex center.
@@ -407,7 +407,7 @@ protected:
    */
   void draw_aos_edge(Draw_action* action, Vector3f& source, Vector3f& target,
                      Vector3f& normal);
-    
+
   virtual void isect_primary() {}
 
   /*! Export the planar maps associated with the faces of the unit sphere.
@@ -419,16 +419,34 @@ protected:
    * sphere.
    */
   void input() { SGAL_assertion_msg(0, "Not implemented yet!"); }
-  
+
 public:
   /*! Constructor. */
   Spherical_gaussian_map_base_geo(Boolean proto = false);
 
   /*! Copy constructor. */
   Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& sgm);
-  
+
   /*! Destructor. */
   virtual ~Spherical_gaussian_map_base_geo();
+
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
+   */
+  virtual void set_attributes(Element* elem);
 
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action);
@@ -441,32 +459,18 @@ public:
 
   /*! Clean the geometry. */
   virtual void clean_sgm();
-  
+
   /*! Calculate the bounding sphere.
    * \return a Boolean flag that indicates whether the sphere bound changed.
    */
   virtual Boolean clean_sphere_bound();
 
-  /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values.
-   */
-  virtual void set_attributes(Element* elem);
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype();
-
   /*! Draw the internal representation. */
   virtual void draw_geometry(Draw_action* action);
-    
+
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
-  
+
   /*! Clean the renderer. */
   virtual void clean_renderer();
 
@@ -484,7 +488,7 @@ public:
 
   /*! Raise the flag that indicates that the sphere bound changed. */
   void draw_changed(Field_info* field_info = NULL);
-  
+
   /*! Draw the arrangement on sphere vertices.
    * \param action
    */
@@ -502,19 +506,19 @@ public:
   void set_aos_surface_color(const Vector3f& color);
 
   // Vertex attributes:
-  
+
   /*! Obtain the vertex shape style. */
   Vertex_style get_aos_vertex_style() const { return m_aos_vertex_style; }
 
   /*! Set the vertex shape style. */
   void set_aos_vertex_style(Vertex_style style) { m_aos_vertex_style = style; }
-  
+
   /*! Obtain the vertex shape style */
   Float get_aos_vertex_point_size() const { return m_aos_vertex_point_size; }
 
   /*! Obtain the vertex radius. */
   Float get_aos_vertex_radius() const { return m_aos_vertex_radius; }
-  
+
   /*! Obtain the aos vertex color. */
   const Vector3f& get_aos_vertex_color() const { return m_aos_vertex_color; }
 
@@ -522,7 +526,7 @@ public:
   void set_aos_vertex_color(const Vector3f& color);
 
   // Aos boundary vertex attributes:
-  
+
   /*! Obtain the boundary vertex shape style. */
   Vertex_style get_aos_boundary_vertex_style() const
   { return m_aos_boundary_vertex_style; }
@@ -540,9 +544,9 @@ public:
    */
   const Vector3f& get_aos_boundary_vertex_color() const
   { return m_aos_boundary_vertex_color; }
-  
+
   // Edge attributes:
-  
+
   /*! Enable edge rendering. */
   void enable_aos_edge() { m_aos_edge_enabled = true; }
 
@@ -557,13 +561,13 @@ public:
 
   /*! Set the edge shape style. */
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
-  
+
   /*! Obtain the edge shape type. */
   Int get_aos_edge_count() const { return m_aos_edge_count; }
 
   /*! Set the edge shape count. */
   void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
-    
+
   /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
 
@@ -581,7 +585,7 @@ public:
 
   /*! Obtaint the width of the lines that represent aos edges. */
   Float get_aos_edge_line_width() const;
-  
+
   /*! Set the line color. */
   void set_aos_edge_color(const Vector3f& color, unsigned int id = 0);
 

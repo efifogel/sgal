@@ -79,8 +79,14 @@ public:
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
 private:
 

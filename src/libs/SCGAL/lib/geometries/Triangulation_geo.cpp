@@ -55,7 +55,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Triangulation_geo::s_tag = "Triangulation";
-SGAL::Container_proto* Triangulation_geo::s_prototype = 0;
+SGAL::Container_proto* Triangulation_geo::s_prototype(NULL);
 
 const Float Triangulation_geo::s_def_line_width(1.0f);
 const Boolean Triangulation_geo::s_def_draw_haloed(true);
@@ -82,7 +82,7 @@ void Triangulation_geo::clean()
 
   typedef std::vector<Point>            Point_vector;
   typedef Point_vector::const_iterator  Point_iter;
-  
+
   Point_vector points;
   points.resize(m_coord_array->size());
   Convert_exact_point convert;
@@ -93,7 +93,7 @@ void Triangulation_geo::clean()
   // An inverse index for the points
   typedef std::map<const Point*, Uint, Point_cmp>       Index_map;
   typedef Index_map::const_iterator                     Index_iter;
-  
+
   Index_map point_index;
   if (are_generated_color()) {
     SGAL_assertion_msg(m_coord_array->size() <= m_color_array->size(),
@@ -123,10 +123,10 @@ void Triangulation_geo::clean()
       vd.set_color(color);
     }
   }
-  
+
   points.clear();
   m_dirty = false;
-  
+
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
 }
@@ -157,7 +157,7 @@ void Triangulation_geo::draw(SGAL::Draw_action* action)
 
     context->draw_line_width(m_line_width);
     glDepthRange (0, 1.0);
-    context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));    
+    context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));
     context->draw_depth_func(Gfx::LEQUAL_DFUNC);
     draw_geometry(action);
     context->draw_depth_func(Gfx::LESS_DFUNC);
@@ -186,14 +186,14 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
     int i2 = fei->third;
     const Vertex_handle& v1 = ch->vertex(i1);
     const Vertex_handle& v2 = ch->vertex(i2);
-    
+
     const Vertex_data& vd1 = v1->info();
 
     if (are_generated_color()) {
       const Vector3f& c1 = vd1.get_color();
       glColor3fv((float*)&c1);
     }
-    
+
     const Vector3f& p1 = vd1.get_coord();
     glVertex3fv((float*)&p1);
 
@@ -203,7 +203,7 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
       const Vector3f& c2 = vd2.get_color();
       glColor3fv((float*)&c2);
     }
-    
+
     const Vector3f& p2 = vd2.get_coord();
     glVertex3fv((float*)&p2);
   }
@@ -223,7 +223,7 @@ Boolean Triangulation_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
-  
+
   Approximate_sphere_vector spheres;
   if (m_triangulation.number_of_vertices() > 0) {
     spheres.resize(m_triangulation.number_of_vertices());
@@ -274,7 +274,7 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
     const std::string& name = elem->get_name(cai);
     Element::Shared_container cont = elem->get_value(cai);
     if (name == "coord") {
-      Shared_coord_array coord_array = 
+      Shared_coord_array coord_array =
         boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array(coord_array);
       elem->mark_delete(cai);
@@ -284,7 +284,7 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
       Shared_color_array color_array =
         boost::dynamic_pointer_cast<Color_array>(cont);
       set_color_array(color_array);
-      elem->mark_delete(cai);      
+      elem->mark_delete(cai);
       continue;
     }
   }
@@ -305,13 +305,10 @@ void Triangulation_geo::coord_changed(SGAL::Field_info* field_info)
 /*! \brief sets the attributes of this node. */
 void Triangulation_geo::init_prototype()
 {
-  //! Container execution function
-  typedef void (SGAL::Container::* Execution_function)(SGAL::Field_info*);
-
   if (s_prototype) return;
-  SGAL::Geometry::init_prototype();
-  s_prototype = new SGAL::Container_proto();
+  s_prototype = new Container_proto(Geometry::get_prototype());
 
+  // coord
   Execution_function exec_func =
     static_cast<Execution_function>(&Triangulation_geo::coord_changed);
   SF_shared_container* field =
@@ -320,9 +317,11 @@ void Triangulation_geo::init_prototype()
                             exec_func);
   s_prototype->add_field_info(field);
 
+  // lineWidth
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
                                            get_member_offset(&m_line_width)));
 
+  // drawHaloed
   s_prototype->add_field_info(new SF_bool(DRAW_HALOED, "drawHaloed",
                                           get_member_offset(&m_draw_haloed)));
 
@@ -332,12 +331,12 @@ void Triangulation_geo::init_prototype()
 void Triangulation_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief obtains the prototype. */
-SGAL::Container_proto* Triangulation_geo::get_prototype() 
-{  
+SGAL::Container_proto* Triangulation_geo::get_prototype()
+{
   if (!s_prototype) Triangulation_geo::init_prototype();
   return s_prototype;
 }

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,7 +30,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Simulation::s_tag = "Simulation";
-Container_proto* Simulation::s_prototype = NULL;
+Container_proto* Simulation::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Simulation, "Simulation");
 
@@ -45,6 +45,8 @@ void Simulation::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
+
+  // start
   s_prototype->add_field_info(new SF_bool(START, "start",
                                           get_member_offset(&m_start)));
 }
@@ -57,8 +59,8 @@ void Simulation::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto * Simulation::get_prototype() 
-{  
+Container_proto * Simulation::get_prototype()
+{
   if (!s_prototype) Simulation::init_prototype();
   return s_prototype;
 }
@@ -69,7 +71,7 @@ void Simulation::set_attributes(Element* elem)
   Container::set_attributes(elem);
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Simulation::add_to_scene(Scene_graph* sg) { sg->add_simulation(this); }
 
 /*! Start simulation */

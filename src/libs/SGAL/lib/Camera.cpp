@@ -48,16 +48,16 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Camera::s_tag = "Viewpoint";
-Container_proto* Camera::s_prototype = 0;
+Container_proto* Camera::s_prototype(NULL);
 
 // Defaults values:
 const Vector3f Camera::s_def_position(0, 0, 10);
 const Rotation Camera::s_def_orientation(0, 0, 1, 0);
-const float Camera::s_def_field_of_view = 0.785398f;    // 45 degrees
+const float Camera::s_def_field_of_view(0.785398f);    // 45 degrees
 Frustum Camera::s_def_frustum;
 const std::string Camera::s_def_description("");
-const Float Camera::s_def_radius_scale = 1.1f;
-const Float Camera::s_def_far_plane_scale = 64;
+const Float Camera::s_def_radius_scale(1.1f);
+const Float Camera::s_def_far_plane_scale(64);
 
 REGISTER_TO_FACTORY(Camera, "Camera");
 
@@ -65,7 +65,7 @@ REGISTER_TO_FACTORY(Camera, "Camera");
 Camera::Camera(Boolean proto) :
   Bindable_node(proto),
   m_scene_graph(0),
-  m_is_dynamic(SGAL_TRUE),
+  m_is_dynamic(true),
   m_position(s_def_position),
   m_orientation(s_def_orientation),
   m_view_mat(),
@@ -217,26 +217,32 @@ void Camera::init_prototype()
   s_prototype = new Container_proto(Bindable_node::get_prototype());
 
   // Add the object fields to the prototype
+  // position
   Execution_function exec_func =
     static_cast<Execution_function>(&Camera::update_matrix_requiered);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
                                               get_member_offset(&m_position),
                                               exec_func));
+
+  // orientation
   exec_func =
     static_cast<Execution_function>(&Camera::update_matrix_requiered);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
                                               get_member_offset(&m_orientation),
                                               exec_func));
 
+  // fieldOfView
   exec_func =
     static_cast<Execution_function>(&Camera::update_field_of_view);
   s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
                                            get_member_offset(&m_field_of_view),
                                            exec_func));
 
+  // description
   s_prototype->add_field_info(new SF_string(DESCRIPTION, "description",
                                             get_member_offset(&m_description)));
 
+  // radiusScale
   s_prototype->add_field_info(new SF_float(RADIUS_SCALE, "radiusScale",
                                            get_member_offset(&m_radius_scale)));
 }

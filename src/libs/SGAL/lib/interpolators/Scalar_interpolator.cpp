@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -34,8 +34,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Scalar_interpolator::s_tag = "ScalarInterpolator";
-Container_proto * Scalar_interpolator::s_prototype = 0;
+const std::string Scalar_interpolator::s_tag = "ScalarInterpolator";
+Container_proto* Scalar_interpolator::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Scalar_interpolator, "Scalar_interpolator");
 
@@ -43,27 +43,24 @@ REGISTER_TO_FACTORY(Scalar_interpolator, "Scalar_interpolator");
  * \param interpolate_flag (in) initialization value for the interpolate flag
  * field
  */
-Scalar_interpolator::Scalar_interpolator(Boolean interpolate_flag, 
+Scalar_interpolator::Scalar_interpolator(Boolean interpolate_flag,
                                          Boolean proto) :
   Interpolator(interpolate_flag, proto),
   m_last_location(0)
-{
-}
+{}
 
-/*! Destructor */ 
+/*! Destructor */
 Scalar_interpolator::~Scalar_interpolator()
 {}
 
 /*! initializes the node prototype */
 void Scalar_interpolator::init_prototype()
 {
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   if (s_prototype) return;
   s_prototype = new Container_proto(Interpolator::get_prototype());
 
-  s_prototype->add_field_info(new SF_float(VALUE,"value_changed",
+  // value
+  s_prototype->add_field_info(new SF_float(VALUE, "value_changed",
                                            get_member_offset(&m_value)));
 }
 
@@ -74,8 +71,8 @@ void Scalar_interpolator::delete_prototype()
 }
 
 /*! */
-Container_proto * Scalar_interpolator::get_prototype() 
-{  
+Container_proto* Scalar_interpolator::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
@@ -85,7 +82,7 @@ Container_proto * Scalar_interpolator::get_prototype()
  * The function calculates m_value, updates it and activate cascade on it
  * \param pointer (in) to the cascaded field's field info - not used for now
  */
-void Scalar_interpolator::execute(Field_info *)
+void Scalar_interpolator::execute(Field_info*)
 {
   Field* value = get_field(VALUE);
   // if there is no connection to the value field there is no need to execute
@@ -117,7 +114,7 @@ void Scalar_interpolator::execute(Field_info *)
     value->cascade();
     return;
   }
-  
+
   // If the fraction is smaller than the first key - set the value to the first one
   if (m_fraction <= m_keys[0])
   {
@@ -125,11 +122,11 @@ void Scalar_interpolator::execute(Field_info *)
     value->cascade();
     return;
   }
-  
+
   // Start looking for the fraction location in the keys array
   // from the last fraction location place
   int location = m_last_location;
-  
+
   // Loop up the array to find the closest key which is bigger than fraction
   while (location+1 < no_keys && m_fraction>m_keys[location+1])
     location++;
@@ -161,24 +158,17 @@ void Scalar_interpolator::execute(Field_info *)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Scalar_interpolator::set_attributes(Element * elem)
-{ 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-
+void Scalar_interpolator::set_attributes(Element* elem)
+{
   Interpolator::set_attributes(elem);
 
-  std::string name;
-  std::string value;
-
-  Str_attr_iter iter = elem->str_attrs_begin();
-  for (; iter != elem->str_attrs_end(); ++iter) 
-  {
-    name = elem->get_name(iter);
-    value = elem->get_value(iter);
-
-    if ( name == "keyValue" )  
-    {
+  typedef Element::Str_attr_iter          Str_attr_iter;
+  typedef Element::Cont_attr_iter         Cont_attr_iter;
+  Str_attr_iter ai = elem->str_attrs_begin();
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
+    if (name == "keyValue") {
       std::vector<Float> values;
       std::istringstream svalue(value, std::istringstream::in);
 
@@ -186,8 +176,8 @@ void Scalar_interpolator::set_attributes(Element * elem)
       m_values.resize(num_values);
 
       for (Uint i = 0; i < num_values; ++i) svalue >> m_values[i];
-      elem->mark_delete(iter);
-    } 
+      elem->mark_delete(ai);
+    }
   }
 
   // Remove all the deleted attributes:
@@ -196,14 +186,14 @@ void Scalar_interpolator::set_attributes(Element * elem)
 
 #if 0
 /**
- * Get a list of attributes in this object. This method is called only 
- * from the Builder side. 
+ * Get a list of attributes in this object. This method is called only
+ * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Scalar_interpolator::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
   attribs = Interpolator::get_attributes();
 
@@ -223,7 +213,7 @@ Attribute_list Scalar_interpolator::get_attributes()
   attrib.second = (m_interpolate_flag) ? TRUE_STR : FALSE_STR;
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 }
 #endif
 

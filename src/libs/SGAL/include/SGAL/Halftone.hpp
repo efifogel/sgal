@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 10982 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -51,7 +51,7 @@ class Element;
 class Container_proto;
 
 class SGAL_SGAL_DECL Halftone : public Container {
-public: 
+public:
   enum {
     FIRST = Container::LAST - 1,
     FILE_NAME,
@@ -77,8 +77,12 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */
-  virtual Container_proto* get_prototype(); 
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -89,13 +93,13 @@ public:
 
   /*! Set the halftone image */
   void set_image(Image* image) { m_image = image; }
-  
+
   /*! Obtain the halftone format */
   Image::Format get_format() { return m_image->get_format(); }
 
   /*! Obtain the halftone pixel-data */
   Ubyte* get_pattern();
-  
+
   /*! Draw the halftone */
   virtual void draw(Context* context);
 
@@ -105,8 +109,8 @@ public:
   /*! Clean the object using the new decoded data */
   virtual void clean();
 
-  virtual Boolean attach_context(Context * context);
-  virtual Boolean detach_context(Context * context = 0);
+  virtual Boolean attach_context(Context* context);
+  virtual Boolean detach_context(Context* context = 0);
 
 protected:
   /*! true after a call to clean. */
@@ -114,14 +118,14 @@ protected:
 
   /*! The halftone pixels */
   Image* m_image;
-  
+
   /*! Obtain the tag (type) of the container */
   virtual const std::string & get_tag() const { return s_tag; }
 
 private:
   /*! Halftone stipple pattern for backfacing elements */
   Ubyte* m_pattern;
-    
+
   /*! true after a call to clean. */
   Boolean m_dirty_pattern;
 
@@ -129,7 +133,7 @@ private:
   static Ubyte s_def_pattern[];
 
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

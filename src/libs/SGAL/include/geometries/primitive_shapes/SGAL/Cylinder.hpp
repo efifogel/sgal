@@ -54,7 +54,7 @@ public:
     RADIUS,
     HEIGHT,
     SIDE,
-    BOTTOM, 
+    BOTTOM,
     TOP,
     SLICES,
     STACKS,
@@ -79,12 +79,12 @@ public:
   /*! Obtain the radius of the cylinder. */
   Float get_radius() const;
 
-  /*! Set the height of the cylinder. */  
+  /*! Set the height of the cylinder. */
   void set_height(Float height);
 
-  /*! Obtain the height of the cylinder. */  
+  /*! Obtain the height of the cylinder. */
   Float get_height() const;
-  
+
   /*! Set the number of stacks that the cylinder is made of. */
   void set_stacks(Uint stacks);
 
@@ -118,22 +118,26 @@ public:
   /*! Draw the cylinder.
    * \param draw_action the draw action
    */
-  virtual void draw(Draw_action* action); 
-  
+  virtual void draw(Draw_action* action);
+
   /*! Draw the cylinder in selection mode.
    * \param action
    */
   virtual void isect(Isect_action* action);
 
   virtual Boolean clean_sphere_bound();
-    
+
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   virtual void delete_prototype();
 
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   virtual void set_attributes(Element* elem);
   // virtual Attribute_list get_attributes();
 
@@ -143,7 +147,7 @@ public:
 protected:
   /*! Indicates whether the sphere has been initialized. */
   Boolean m_dirty;
-  
+
   /*! The radius of the cylinder. */
   Float m_radius;
 
@@ -156,13 +160,13 @@ protected:
   /*! The number if vertical slices used in rendering. */
   Uint m_slices;
 
-  /*! SGAL_TRUE if the bottom is showing. */
+  /*! true if the bottom is showing. */
   Boolean m_is_bottom_visible;
 
-  /*! SGAL_TRUE if the top is showing. */
+  /*! true if the top is showing. */
   Boolean m_is_top_visible;
 
-  /*! SGAL_TRUE if the cylinder is showing. */
+  /*! true if the cylinder is showing. */
   Boolean m_is_body_visible;
 
   /*! The OpenGL object used to draw the cylinder. */
@@ -212,7 +216,7 @@ inline void Cylinder::set_radius(Float radius)
 /*! \brief obtains the radius of the cylinder. */
 inline Float Cylinder::get_radius() const { return m_radius; }
 
-/*! \brief sets the height of the cylinder. */  
+/*! \brief sets the height of the cylinder. */
 inline void Cylinder::set_height(Float height)
 {
   m_height = height;
@@ -221,7 +225,7 @@ inline void Cylinder::set_height(Float height)
 
 /*! \brief obtains the height of the cylinder. */
 inline Float Cylinder::get_height() const { return m_height; }
-  
+
 /*! \brief sets the number of stacks that the cylinder is made of. */
 inline void Cylinder::set_stacks(Uint stacks) { m_stacks = stacks; }
 

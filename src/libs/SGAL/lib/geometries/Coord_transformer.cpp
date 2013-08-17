@@ -50,7 +50,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Coord_transformer::s_prototype = NULL;
+Container_proto* Coord_transformer::s_prototype(NULL);
 const std::string Coord_transformer::s_tag = "CoordinateTransformer";
 
 Boolean Coord_transformer::s_def_enabled = true;
@@ -62,7 +62,7 @@ REGISTER_TO_FACTORY(Coord_transformer, "Coord_transformer");
 
 /*! \brief A parameter-less constructor. */
 Coord_transformer::Coord_transformer(Boolean proto) :
-  Container(proto), 
+  Container(proto),
   m_enabled(s_def_enabled),
   m_reflect(false),
   m_changed(false),
@@ -117,11 +117,11 @@ void Coord_transformer::set_attributes(Element* elem)
       Shared_coord_array coord_array =
         boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array(coord_array);
-      elem->mark_delete(cai);      
+      elem->mark_delete(cai);
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -130,47 +130,51 @@ void Coord_transformer::set_attributes(Element* elem)
 void Coord_transformer::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto();
-
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
+  s_prototype = new Container_proto(Container::get_prototype());
 
   Execution_function exec_func;
-  
+
   // Add the field-info records to the prototype:
+  // enabled
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           get_member_offset(&m_enabled)));
 
+  // changed
   s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
                                           get_member_offset(&m_changed)));
 
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
                                           get_member_offset(&m_translated)));
 
+  // rotated
   s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
                                           get_member_offset(&m_rotated)));
 
-  exec_func = static_cast<Execution_function>(&Coord_transformer::translate);  
+  exec_func = static_cast<Execution_function>(&Coord_transformer::translate);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
                                               get_member_offset(&m_translation),
                                               exec_func));
 
-  exec_func = static_cast<Execution_function>(&Coord_transformer::rotate);  
+  // rotation
+  exec_func = static_cast<Execution_function>(&Coord_transformer::rotate);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
                                               get_member_offset(&m_rotation),
                                               exec_func));
 
-  exec_func = static_cast<Execution_function>(&Coord_transformer::execute);  
+  // execute
+  exec_func = static_cast<Execution_function>(&Coord_transformer::execute);
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
                                           get_member_offset(&m_execute),
                                           exec_func));
 
+  // coordArray
   SF_shared_container* field;
   field = new SF_shared_container(COORD, "coord",
                                   get_member_offset(&m_coord_array),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  // coord
   field = new SF_shared_container(COORD_CHANGED, "coord_changed",
                                   get_member_offset(&m_coord_array_changed));
   s_prototype->add_field_info(field);
@@ -180,12 +184,12 @@ void Coord_transformer::init_prototype()
 void Coord_transformer::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Coord_transformer::get_prototype() 
-{  
+Container_proto* Coord_transformer::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
@@ -252,7 +256,7 @@ void Coord_transformer::execute(Field_info* field_info)
 
   Uint size = m_coord_array->size();
 
-  if (!m_coord_array_changed) 
+  if (!m_coord_array_changed)
     m_coord_array_changed.reset(new Coord_array(size));
   else
     m_coord_array_changed->resize(size);
@@ -266,7 +270,7 @@ void Coord_transformer::execute(Field_info* field_info)
     for (Uint i = 0; i < size; ++i)
       (*m_coord_array_changed)[i].xform_pt((*m_coord_array)[i], mat);
   }
-  
+
   Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
 

@@ -53,7 +53,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Arrangement_on_sphere_geo::s_tag = "ArrangementOnSphere";
-Container_proto* Arrangement_on_sphere_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_sphere_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Arrangement_on_sphere_geo, "Arrangement_on_sphere_geo");
 

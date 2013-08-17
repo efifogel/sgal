@@ -67,7 +67,7 @@ SGAL_BEGIN_NAMESPACE
 
 const std::string
 Spherical_gaussian_map_marked_geo::s_tag("SphericalGaussianMapMarked");
-Container_proto* Spherical_gaussian_map_marked_geo::s_prototype = NULL;
+Container_proto* Spherical_gaussian_map_marked_geo::s_prototype(NULL);
 
 /*! Default values */
 

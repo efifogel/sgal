@@ -46,7 +46,7 @@ public:
   enum {
     FIRST = Extrusion::LAST - 1,
     SPINE_RADIUS,
-    STACKS, 
+    STACKS,
     SLICES,
     LAST
   };
@@ -85,10 +85,14 @@ public:
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes */
   virtual void set_attributes(Element* elem);
@@ -97,7 +101,7 @@ public:
 
   /*! Clean the representation. */
   virtual void clean();
-  
+
 protected:
   /*! The spine_height of the ellipsoid. */
   Float m_spine_radius;

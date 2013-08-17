@@ -36,7 +36,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Mesh_set::s_prototype = 0;
+Container_proto* Mesh_set::s_prototype(NULL);
 
 const Boolean Mesh_set::s_def_is_solid(true);
 const Boolean Mesh_set::s_def_is_convex(true);
@@ -150,9 +150,9 @@ void Mesh_set::draw_mesh(Draw_action* action)
     glDisable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(0, 0);
   }
-  
+
   if (!m_is_ccw) glFrontFace(GL_CCW);
-  
+
   if (!m_is_solid && context) {
     context->draw_cull_face(Gfx::BACK_CULL);
     context->draw_light_model_sides(Gfx::ONE_SIDE);
@@ -176,33 +176,34 @@ void Mesh_set::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geo_set::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // ccw
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(CCW, "ccw",
                                           get_member_offset(&m_is_ccw),
                                           exec_func));
 
+  // solid
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(SOLID, "solid",
                                           get_member_offset(&m_is_solid),
                                           exec_func));
 
+  // convex
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(CONVEX, "convex",
                                           get_member_offset(&m_is_convex),
                                           exec_func));
 
+  // creaseAngle
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
                                           get_member_offset(&m_crease_angle),
-                                          exec_func));  
+                                          exec_func));
 }
 
 /*! \brief deletes the container prototype. */
@@ -213,8 +214,8 @@ void Mesh_set::delete_prototype()
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Mesh_set::get_prototype() 
-{  
+Container_proto* Mesh_set::get_prototype()
+{
   if (!s_prototype) Mesh_set::init_prototype();
   return s_prototype;
 }

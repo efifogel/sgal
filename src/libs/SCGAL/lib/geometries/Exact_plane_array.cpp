@@ -39,11 +39,8 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_plane_array::s_tag = "ExactPlane";
+Container_proto* Exact_plane_array::s_prototype(NULL);
 
-/*! \brief the node prototype. */
-Container_proto* Exact_plane_array::s_prototype = NULL;
-
-/*! \brief registers to the container factory. */
 REGISTER_TO_FACTORY(Exact_plane_array, "Exact_plane_array");
 
 /*! Constructor */
@@ -59,8 +56,6 @@ Exact_plane_array::~Exact_plane_array() { clear(); }
 void Exact_plane_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Container::get_prototype());
 }
 
@@ -71,13 +66,13 @@ void Exact_plane_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */  
+/*! \brief obtains the node prototype. */
 Container_proto* Exact_plane_array::get_prototype()
 {
   if (s_prototype == NULL) Exact_plane_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of this object. */
 void Exact_plane_array::set_attributes(Element* elem)
 {
@@ -145,17 +140,17 @@ void Exact_plane_array::set_attributes(Element* elem)
     }
   }
 #endif
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
 #if 0
 Attribute_list Exact_plane_array::get_attributes()
-{ 
+{
   Attribute_list attrs;
   attrs = Plane_array::get_attributes();
-  return attrs; 
+  return attrs;
 }
 #endif
 

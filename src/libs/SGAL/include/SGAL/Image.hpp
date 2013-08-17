@@ -47,7 +47,7 @@ public:
 
   /*! Constructor */
   Image(Boolean proto = false);
-  
+
   /*! Destructor */
   virtual ~Image();
 
@@ -66,6 +66,10 @@ public:
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -83,7 +87,7 @@ public:
 
   /*! Obtain the directory-search structure. */
   const Path_list& get_dirs() const;
-  
+
   /*! Obtain the image width. */
   virtual Uint get_width();
 

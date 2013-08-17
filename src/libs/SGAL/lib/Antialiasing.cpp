@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -34,9 +34,9 @@ Antialiasing::Antialiasing() :
   m_aalias_quality(8),
   m_accumulate(0),
   m_pass_no(0),
-  m_is_in_process(SGAL_FALSE),
+  m_is_in_process(false),
   m_delay_start_time(0.0f),
-  m_is_in_delay(SGAL_FALSE),
+  m_is_in_delay(false),
   m_delay_duration(800),
   //! \todo m_ec(0),
   m_render(false)
@@ -65,32 +65,32 @@ Boolean Antialiasing::is_in_process()
   /*! \todo
   if (!m_ec || !m_timer) {
     //ASSERT(0);
-    return SGAL_FALSE;
+    return false;
   }
   
   if (!m_ec->is_loading_done()) {
-    m_is_in_process = SGAL_FALSE;
-    m_is_in_delay = SGAL_FALSE;
+    m_is_in_process = false;
+    m_is_in_delay = false;
     return m_is_in_process; 
   } 
   
   if (m_ec->is_aa_interrupt() && m_is_in_process) {
-    m_is_in_process = SGAL_FALSE;
+    m_is_in_process = false;
 
   } else if (m_is_in_delay) {
     long int dt = m_timer->get_time() - m_delay_start_time;
     if (dt > m_delay_duration) {
-      m_is_in_process = SGAL_TRUE;
+      m_is_in_process = true;
       m_pass_no = 0;
-      m_is_in_delay = SGAL_FALSE;
+      m_is_in_delay = false;
     } else {
-      m_is_in_process = SGAL_FALSE;
+      m_is_in_process = false;
     }
   } else if (m_pass_no == m_aalias_quality) {
-    m_is_in_process = SGAL_FALSE;
+    m_is_in_process = false;
 
   } else {
-    m_is_in_process = SGAL_TRUE;
+    m_is_in_process = true;
   }
   */
 
@@ -171,7 +171,7 @@ void Antialiasing::reset_delay_time()
   /*! \todo
   if (m_timer) {
     m_delay_start_time = m_timer->get_time();
-    m_is_in_delay = SGAL_TRUE;
+    m_is_in_delay = true;
   }
   */
 }

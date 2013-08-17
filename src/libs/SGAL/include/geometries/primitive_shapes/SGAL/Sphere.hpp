@@ -51,7 +51,7 @@ public:
     FIRST = Geometry::LAST - 1,
     CENTER,
     RADIUS,
-    STACKS, 
+    STACKS,
     SLICES,
     LAST
   };
@@ -73,7 +73,7 @@ public:
 
   /*! Obtain the sphere center. */
   const Vector3f& get_center() const;
-  
+
   /*! Set the sphere radius. */
   void set_radius(Float radius);
 
@@ -93,7 +93,7 @@ public:
   Uint get_slices() const;
 
   /*! Draw the sphere. */
-  virtual void draw(Draw_action* action); 
+  virtual void draw(Draw_action* action);
 
   /*! Draw the sphere in selection mode. */
   virtual void isect(Isect_action* action);
@@ -109,7 +109,11 @@ public:
 
   /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
-    
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -117,17 +121,17 @@ public:
 
   /*! Determine whether the is dirty and thus needs cleaning. */
   Boolean is_dirty() const;
-  
+
 protected:
   /*! Indicates whether the sphere has been initialized */
   Boolean m_dirty;
-  
+
   /*! The utility instance. */
   GLUquadricObj* m_sphere;
 
   /*! The sphere center. */
   Vector3f m_center;
-  
+
   /*! The sphere radius. */
   Float m_radius;
 
@@ -142,10 +146,10 @@ protected:
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
-  
+
 private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
@@ -172,7 +176,7 @@ inline void Sphere::set_center(const Vector3f& center)
 
 /*! \brief obtains the sphere center. */
 inline const Vector3f& Sphere::get_center() const { return m_center; }
-  
+
 /*! \brief sets the sphere radius. */
 inline void Sphere::set_radius(Float radius)
 {

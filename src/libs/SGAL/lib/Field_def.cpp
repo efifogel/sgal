@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,68 +30,62 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Field_def::s_prototype = 0;
-std::string Field_def::s_tag = "field";
+Container_proto* Field_def::s_prototype(NULL);
+const std::string Field_def::s_tag = "field";
 
 REGISTER_TO_FACTORY(Field_def, "Field_def");
 
 /*! Constructor */
 Field_def::Field_def(Boolean proto) :
   Node(proto), m_containerValue(NULL), m_script(NULL)
-{
-}
-
+{}
 
 /**
  Purpose: prototype initialization function.
 */
 void Field_def::init_prototype()
 {
-  // The prototype shuold be allocated only once for all instances
-  if (s_prototype!=NULL)
-    return;
-
-  // Allocate a prototype instance
+  if (s_prototype != NULL) return;
   s_prototype = new Container_proto();
-
 }
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Field_def::set_attributes(Element * elem) 
-{ 
+void Field_def::set_attributes(Element* elem)
+{
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "name") {
       m_name = value;
       elem->mark_delete(ai);
-    } else if (name == "type") {
+    }
+    else if (name == "type") {
       m_type = value;
       elem->mark_delete(ai);
-    } else if (name == "value") {
+    }
+    else if (name == "value") {
       m_value = value;
       elem->mark_delete(ai);
-    } 
+    }
   }
   // Remove all the marked attributes:
   elem->delete_marked();
 }
 
 /**
- * Get a list of atributes in this object. This method is called only 
- * from the Builder side. 
+ * Get a list of atributes in this object. This method is called only
+ * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Field_def::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Node::get_attributes();
@@ -111,7 +105,7 @@ Attribute_list Field_def::get_attributes()
     attribs.push_back(attrib);
   }
 
-  return attribs; 
+  return attribs;
 };
 
 
@@ -127,7 +121,7 @@ void Field_def::AddToScene(Scene_graph *sg, XML_entity *parent)
     if (!(m_type=="SFNode" || m_type=="Node"))
       m_script->add_fieldDef(m_name,m_type,m_value,this);
 
-    // If set_value (for SFNodes) was already executed - 
+    // If set_value (for SFNodes) was already executed -
     // add the field def to the script
     else if (m_containerValue!=NULL)
       m_script->add_fieldDef(m_name,m_type,m_containerValue,this);

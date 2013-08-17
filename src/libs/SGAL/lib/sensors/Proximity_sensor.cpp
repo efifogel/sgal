@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,10 +37,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Boolean Proximity_sensor::s_def_enabled = SGAL_TRUE;
+Boolean Proximity_sensor::s_def_enabled = true;
 
 const std::string Proximity_sensor::s_tag = "ProximitySensor";
-Container_proto* Proximity_sensor::s_prototype = NULL;
+Container_proto* Proximity_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Proximity_sensor, "Proximity_sensor");
 
@@ -59,32 +59,26 @@ Proximity_sensor::~Proximity_sensor()
   if (m_enabled) unregister_events();
 }
 
-/*! prototype initialization function - initializes the prototype for 
+/*! prototype initialization function - initializes the prototype for
  * all the node instances of Proximity_sensor in the scene graph.
  * Creates and adds a field info for each potential field.
  */
 void Proximity_sensor::init_prototype()
 {
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
-  // The prototype shuold be allocated only once for all instances
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the field-info records to the prototype:
-  // Execution_function exec_func;
-
-  // Add the object fields to the prototype
+  // enabled
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           get_member_offset(&m_enabled)));
 
+  // position
   SF_vector3f* vector3f_fi =
     new SF_vector3f(POSITION, "position", get_member_offset(&m_position));
   s_prototype->add_field_info(vector3f_fi);
 
+  // orientation
   SF_rotation* rotation_fi =
     new SF_rotation(ORIENTATION, "orientation",
                     get_member_offset(&m_orientation));
@@ -99,7 +93,7 @@ void Proximity_sensor::delete_prototype()
 }
 
 /*! Obtain prototype */
-Container_proto* Proximity_sensor::get_prototype() 
+Container_proto* Proximity_sensor::get_prototype()
 {
   if (!s_prototype) init_prototype();
   return s_prototype;
@@ -133,21 +127,21 @@ void Proximity_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 void Proximity_sensor::add_to_scene(Scene_graph* sg)
 {
   m_scene_graph = sg;
 }
 
 #if 0
-/*! Get a list of atributes in this object. This method is called only 
+/*! Get a list of atributes in this object. This method is called only
  * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Proximity_sensor::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Node::get_attributes();
@@ -158,7 +152,7 @@ Attribute_list Proximity_sensor::get_attributes()
     attribs.push_back(attrib);
   }
 
-  return attribs; 
+  return attribs;
 };
 
 /*! Add a touch sensor object to the scene.
@@ -168,8 +162,8 @@ Attribute_list Proximity_sensor::get_attributes()
  * @param sg (in) a reference to the scene graph
  * @param parent (in) a pointer to the parent object.
  */
-void Proximity_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent) 
-{ 
+void Proximity_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent)
+{
   Node::add_to_scene(sg, parent);
 
   char id = sg->AddProximitySensor(this);
@@ -203,7 +197,7 @@ void Proximity_sensor::unregister_events()
 void Proximity_sensor::handle(Mouse_event* /* event */)
 {
 }
-  
+
 /*! handle motion events */
 void Proximity_sensor::handle(Motion_event* /* event */)
 {

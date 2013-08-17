@@ -170,8 +170,8 @@ public:
   /*! Destroys the window and all associated system resources */
   virtual ~Window_obj();
 
-  /*! Return SGAL_TRUE if mode is supported for window creation on this system,
-   * SGAL_FALSE otherwise. Possible values of mode are a bitwise OR of the
+  /*! Return true if mode is supported for window creation on this system,
+   * false otherwise. Possible values of mode are a bitwise OR of the
    * Window_obj::Window_mode enumerated type. This method is intended to
    * allow chosing a valid mode without running into fatal errors from the
    * Window_obj() constructor.
@@ -230,7 +230,7 @@ public:
   /*! Return the Context for this window. */
   Context * get_this_window_context();
 
-  /*! Return SGAL_TRUE if the timer is enabled, SGAL_FALSE otherwise. */
+  /*! Return true if the timer is enabled, false otherwise. */
   bool get_timer_enabled();
 
   /*! Return the timer interval in milliseconds for this window. */

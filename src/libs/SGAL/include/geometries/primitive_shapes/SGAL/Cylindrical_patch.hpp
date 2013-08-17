@@ -49,7 +49,7 @@ public:
     RADIUS,
     HEIGHT,
     SIDE,
-    BOTTOM, 
+    BOTTOM,
     TOP,
     SLICES,
     ALPHA,
@@ -86,7 +86,7 @@ public:
 
   /*! Set the height of the underlying cylinder
    * \param height the height of the underlying cylinder
-   */  
+   */
   void set_height(Float height)
   {
     m_height = height;
@@ -95,12 +95,12 @@ public:
 
   /*! Obtain the height of the underlying cylinder
    * \return the height of the underlying cylinder
-   */  
+   */
   Float get_height() const { return m_height; }
-  
+
   /*! Set the angle between the vector (1,0,0) and the vector to the left
    * endpoint of the arc of a horizontal cross section of the patch
-   * \param alpha the angle 
+   * \param alpha the angle
    */
   void set_alpha(Float alpha) { m_alpha = alpha; }
 
@@ -121,7 +121,7 @@ public:
    * \return the angle
    */
   Float get_beta() const { return m_beta; }
-  
+
   /*! Set the number of slices of a horizontal cross section of the patch
    * \param slices the number of slices of a horizontal cross section
    */
@@ -135,16 +135,16 @@ public:
   /*! Draw the cylindrical patch
    * \param action the draw action
    */
-  virtual void draw(Draw_action* action); 
-  
-  /*! Draw the cylindrical patch in selection mode 
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the cylindrical patch in selection mode
    * \param action the draw action
    */
   virtual void isect(Isect_action* action);
 
   /*! Calculare the sphere bound of the cylindrical patch */
   virtual Boolean clean_sphere_bound();
-    
+
   /*! Initializes the container prototype */
   virtual void init_prototype();
 
@@ -155,6 +155,10 @@ public:
    * \return the container prototype
    */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Sets the attributes of the object extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
@@ -170,7 +174,7 @@ public:
 protected:
   /*! Indicates whether the patch has been cleaned */
   /* Boolean m_dirty; */
-  
+
   /*! The radius of the underlying cylinder */
   Float m_radius;
 
@@ -186,7 +190,7 @@ protected:
    * endpoint of the arc of a horizontal cross section of the patch
    */
   Float m_beta;
-  
+
   /*! The number if vertical slices used in rendering */
   Uint m_slices;
 
@@ -195,7 +199,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -22,10 +22,10 @@
 /**
  * @class: EMovieRecorder
  *
- * Purpose: To record a movie sequence. 
+ * Purpose: To record a movie sequence.
  *
  * Description:  This is used to produce a movie file for the MPEG-4 project.
- *    
+ *
  * Inherits from EEvent_filter, Node, TThreadHandler, ESocketUtil
  *
  * authors: Tali zvi, Meiron Cohen
@@ -65,96 +65,102 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Movie_recorder(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Movie_recorder();
 
-  /* Construct the prototype */
-  static Movie_recorder* prototype() { return new Movie_recorder(true); }
+  /* Construct the prototype. */
+  static Movie_recorder* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Movie_recorder(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  void set_enabled( Field_info* field_info = NULL );
-  virtual Action::Trav_directive Draw(Draw_action* draw_action)
-  { return Action::Trav_cont; }; 
-
-  virtual bool UpdateTime  ();
-
- /*! Initialize the node prototype */
+ /*! Initialize the container prototype. */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto *get_prototype(); 
-
-  void set_movieFileName( String filename );
-  String get_movieFileName() const { return m_movieFileName; }
-
-  void SetHintFileName( String filename );
-  String GetHintFileName() const { return m_hintFileName; }
-
-  void Movie_recorder::SetTotalFrames(int num);
-  int get_totalFrames() const { return m_totalFrames; }
-
-  void SetRecordingMode(const String mode);
-  Movie_recorder GetRecordingMode() const { return m_mode; }
+  virtual Container_proto *get_prototype();
 
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
+  void set_enabled( Field_info* field_info = NULL );
+  virtual Action::Trav_directive Draw(Draw_action* draw_action)
+  { return Action::Trav_cont; };
+
+  virtual bool UpdateTime  ();
+
+  void set_movieFileName( String filename );
+
+  String get_movieFileName() const { return m_movieFileName; }
+
+  void SetHintFileName( String filename );
+
+  String GetHintFileName() const { return m_hintFileName; }
+
+  void Movie_recorder::SetTotalFrames(int num);
+
+  int get_totalFrames() const { return m_totalFrames; }
+
+  void SetRecordingMode(const String mode);
+
+  Movie_recorder GetRecordingMode() const { return m_mode; }
+
   unsigned ThreadHandlerProc(void);
+
   void Start();
 
   void OnData(char* inBuff = NULL,int len = 0);
+
   void OnAccept();
 
 protected:
   void CheckKill();
 
-private: 
+private:
   static Container_proto* s_prototype;
 
-  /** the name of the movie file */
+  /*! the name of the movie file */
   String m_movieFileName;
   String m_movieFullName;
 
-  /** the name of the hint file */
+  /*! the name of the hint file */
   String m_hintFileName;
   String m_hintFullName;
 
-  /** the trigger */
+  /*! The trigger */
   Boolean m_isEnabled;
 
-  /** the number of layers used */
+  /*! The number of layers used */
   Short m_numLevels;
 
-  /** the current number of frames */
+  /*! The current number of frames */
   Int m_frameNo;
 
-  /** the total number of frames to store */
+  /*! The total number of frames to store */
   Int m_totalFrames;
 
-  /** a pointer to the context. Used to get the viewpoint */
+  /*! A pointer to the context. Used to get the viewpoint */
   Context* m_context;
 
-  /** a pointer to the scene graph */
+  /*! A pointer to the scene graph */
   Scene_graph* m_sceneGraph;
 
-  /** the mode of recording (file or socket) */
+  /*! The mode of recording (file or socket) */
   Movie_recorder m_mode;
 
-  /** the ip to connect to */
+  /*! The ip to connect to */
   String m_transmitterIP;
   String m_receiverIP;
 
-  /** the port to connect to */
+  /*! The port to connect to */
   UShort m_transmitterPort;
   UShort m_receiverPort;
 
-  /** the status of the movie */
+  /*! The status of the movie */
   std::string m_status;
 
   TEvent m_KillEvent;
@@ -167,19 +173,19 @@ private:
   short* m_bgBuffer;
   short* m_quantBuffer;
 
-  /** frame width */
+  /*! Frame width */
   int m_width;
 
-  /** frame height */
+  /*! Frame height */
   int m_height;
 
-  /** number of horizontal blocks */
+  /*! Number of horizontal blocks */
   long m_horzBlocks;
 
-  /** number of vertical blocks */
+  /*! Number of vertical blocks */
   long m_vertBlocks;
 
-  TThread* m_pThread;    
+  TThread* m_pThread;
 
   String m_hintType;
 
@@ -196,6 +202,13 @@ private:
   void WriteBuffers() const;
   bool ProcessFrame();
 };
+
+/* \brief constructs the prototype. */
+inline Movie_recorder* Movie_recorder::prototype()
+{ return new Movie_recorder(true); }
+
+/*! \brief clones. */
+inline Container* Movie_recorder::clone() { return new Movie_recorder(); }
 
 void RunJavaThread();
 

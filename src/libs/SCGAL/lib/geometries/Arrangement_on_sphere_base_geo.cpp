@@ -60,7 +60,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Arrangement_on_sphere_base_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_sphere_base_geo::s_prototype(NULL);
 
 /*! Constructor. */
 Arrangement_on_sphere_base_geo::

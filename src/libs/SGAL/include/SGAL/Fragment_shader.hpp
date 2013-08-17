@@ -28,7 +28,7 @@
 SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Fragment_shader : public Shader {
-public: 
+public:
   enum {
     FIRST = Shader::LAST - 1,
     URL,
@@ -53,8 +53,12 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype(); 
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of the shader extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
    */

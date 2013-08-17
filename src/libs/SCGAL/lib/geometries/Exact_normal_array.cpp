@@ -39,19 +39,14 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_normal_array::s_tag = "ExactNormal";
+Container_proto* Exact_normal_array::s_prototype(NULL);
 
-/*! The node prototype */
-Container_proto* Exact_normal_array::s_prototype = NULL;
-
-/*! Register to the container factory */
 REGISTER_TO_FACTORY(Exact_normal_array, "Exact_normal_array");
 
 /*! Initialize the node prototype */
 void Exact_normal_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Normal_array::get_prototype());
 }
 
@@ -62,13 +57,13 @@ void Exact_normal_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */  
+/*! Obtain the node prototype */
 Container_proto* Exact_normal_array::get_prototype()
 {
   if (s_prototype == NULL) Exact_normal_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
  */
@@ -142,17 +137,17 @@ void Exact_normal_array::set_attributes(Element* elem)
                                static_cast<float>(todouble(d.z())));
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
 #if 0
 Attribute_list Exact_normal_array::get_attributes()
-{ 
+{
   Attribute_list attrs;
   attrs = Normal_array::get_attributes();
-  return attrs; 
+  return attrs;
 }
 #endif
 

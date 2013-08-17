@@ -32,6 +32,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Delegator.hpp"
 
 //! \todo #include "Critical_section.h"
 
@@ -47,6 +48,7 @@ class Field_info;
 class SGAL_SGAL_DECL Field {
 protected:
   typedef std::list<Field*> Field_list;
+  typedef std::list<Delegator*> Delegator_list;
 
   /*! The containing container. */
   Container* m_container;
@@ -56,6 +58,7 @@ protected:
 
   /*! A list of connected fields. */
   Field_list m_connected_fields;
+  Delegator_list m_delegators;
 
   /*! Indicate whether cascading is blocked. */
   Boolean m_blocked;
@@ -83,7 +86,7 @@ public:
 
   /*! Disconnect this field from the given field.
    * Removes the given field from the connected fields list
-   * @param field (in) the field to be removed  
+   * @param field (in) the field to be removed
    */
   void disconnect(Field* field);
 
@@ -103,6 +106,8 @@ public:
 
   /*! Obtain the value member. */
   virtual Value_holder* get_value_holder() { return m_value_holder; }
+
+  Delegator* set_destination(Delegator* delegator);
 };
 
 /*! \brief obtains the field info. */

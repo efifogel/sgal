@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -56,13 +56,13 @@ public:
   };
 
   /*! Constructor */
-  Key_sensor(Boolean proto = SGAL_FALSE);
+  Key_sensor(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Key_sensor() {};
 
   /*! Construct the prototype */
-  static  Key_sensor* prototype() { return new Key_sensor(SGAL_TRUE); }
+  static  Key_sensor* prototype() { return new Key_sensor(true); }
 
   /*! Clone */
   virtual Container* clone() { return new Key_sensor(); }
@@ -78,6 +78,10 @@ public:
   virtual void delete_prototype();
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -85,7 +89,7 @@ public:
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Draw the node (does nothing) */
@@ -96,13 +100,13 @@ public:
 
   /*! Register the mouse and mostion events */
   void unregister_events();
-  
+
   /*! print out the name of this agent (for debugging purposes) */
   virtual void identify();
 
   /*! Handle mouse events */
   virtual void handle(Keyboard_event* event);
-  
+
 protected:
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
@@ -115,7 +119,7 @@ protected:
 
   /*! Indicates whether any key is currently pressed */
   Boolean m_pressed;
-  
+
   Int m_key;
   Int m_action_key;
 
@@ -134,7 +138,7 @@ private:
 inline Action::Trav_directive Key_sensor::draw(Draw_action* /* draw_action */)
 {
   return Action::TRAV_CONT;
-}; 
+};
 
 SGAL_END_NAMESPACE
 

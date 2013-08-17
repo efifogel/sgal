@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -42,14 +42,14 @@ public:
   };
 
   /*! Constructor */
-  Transformation_engine(Boolean proto = SGAL_FALSE);
+  Transformation_engine(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Transformation_engine();
 
   /*! Construct the prototype */
   static Transformation_engine * prototype()
-  { return new Transformation_engine(SGAL_TRUE); }
+  { return new Transformation_engine(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Transformation_engine(); }
@@ -60,12 +60,16 @@ public:
   {
     delete s_prototype;
   }
-  virtual Container_proto * get_prototype() 
-  {  
+  virtual Container_proto* get_prototype()
+  {
     if (s_prototype == NULL)
       init_prototype();
     return s_prototype;
   }
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element * elem);
@@ -76,7 +80,7 @@ public:
   // using the currentRotation relative angle and fraction
   virtual void execute(Field_info *);
 
-  virtual Trav_directive Draw(Draw_action * draw_action) { return Trav_cont; }; 
+  virtual Trav_directive Draw(Draw_action * draw_action) { return Trav_cont; };
 
 private:
   static Container_proto * s_prototype;

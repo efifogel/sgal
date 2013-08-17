@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -40,7 +40,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Light::s_prototype = NULL;
+Container_proto* Light::s_prototype(NULL);
 
 /*! defaults values for Light's members.*/
 const Boolean Light::m_def_is_on(true);
@@ -50,7 +50,7 @@ const Vector3f Light::m_def_color(1, 1, 1);
 
 /*! constructor */
 Light::Light(Boolean proto) :
-  Node(proto), 
+  Node(proto),
   m_id(-1),
   m_is_on(m_def_is_on),
   m_intensity(m_def_intensity),
@@ -62,7 +62,7 @@ Light::Light(Boolean proto) :
 Light::~Light() {}
 
 /*! \brief turns the light on and off. */
-void Light::set_on(Boolean is_on) { m_is_on = is_on; } 
+void Light::set_on(Boolean is_on) { m_is_on = is_on; }
 
 /*! \brief determines whether the light is on. */
 Boolean Light::get_on() { return m_is_on; }
@@ -93,32 +93,33 @@ void Light::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // on
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(ON, "on",
                                           get_member_offset(&m_is_on),
                                           exec_func));
 
+  // color
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_vector3f(COLOR, "color",
                                               get_member_offset(&m_color),
                                               exec_func));
 
+  // intensity
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(INTENSITY, "intensity",
                                            get_member_offset(&m_intensity),
                                            exec_func));
 
+  // ambientIntensity
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
-    add_field_info(new SF_float(AMBIENT_INTENSITY,"ambient_intensity",
+    add_field_info(new SF_float(AMBIENT_INTENSITY,"ambientIntensity",
                                 get_member_offset(&m_ambient_intensity),
                                 exec_func));
 }
@@ -131,8 +132,8 @@ void Light::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Light::get_prototype() 
-{  
+Container_proto* Light::get_prototype()
+{
   if (!s_prototype) Light::init_prototype();
   return s_prototype;
 }
@@ -142,7 +143,7 @@ void Light::cull(Cull_context& cull_context)
 { cull_context.add_light(this); }
 
 /*! \brief draws the light. */
-Action::Trav_directive Light::draw(Draw_action* da) 
+Action::Trav_directive Light::draw(Draw_action* da)
 {
   if (da == 0 || da->get_context() == 0) return Action::TRAV_STOP;
 
@@ -150,7 +151,7 @@ Action::Trav_directive Light::draw(Draw_action* da)
   Matrix4f mat;
   m_id = da->get_context()->get_light_target(this, mat, already_defined);
   if (m_id == already_defined) return Action::TRAV_CONT;
-  
+
   int light_id  = GL_LIGHT0 + m_id;
 
   Vector3f ambient;
@@ -198,15 +199,15 @@ void Light::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 void Light::add_to_scene(Scene_graph* sg)
 { sg->set_have_lights(true); }
 
 #if 0
 /*! get a list of attributes (called in the save process) */
 Attribute_list Light::get_attributes()
-{ 
-  Attribute_list attrs; 
+{
+  Attribute_list attrs;
   Attribue attrib;
   char buf[32];
   Vector3f col;
@@ -238,22 +239,22 @@ Attribute_list Light::get_attributes()
     attrs.push_back(attrib);
   }
 
-  return attrs; 
+  return attrs;
 }
 
-/*! Add a child object to the scene 
+/*! Add a child object to the scene
  * @param sg (in) a reference to the scene graph
  */
-void Light::add_to_scene(Scene_graph* sg) 
-{ 
+void Light::add_to_scene(Scene_graph* sg)
+{
   Scene_config* scene_config = sg->get_scene_config();
 
-  if (scene_config && 
-      parent == (XML_entity*)sg->get_navigation_root() && 
+  if (scene_config &&
+      parent == (XML_entity*)sg->get_navigation_root() &&
       scene_config->AreGlobalLightsStationary())
   {
     parent = (XML_entity*)sg->get_root();
-  }  
+  }
   Node::add_to_scene(sg, parent);
 
   Group* group = dynamic_cast<Group *>(parent);

@@ -68,7 +68,7 @@ class SGAL_SGAL_DECL Arrangement_on_quadric_geo :
 public:
   // Shared_pointer
   typedef boost::shared_ptr<Quadric_geo>              Shared_quadric_geo;
-  
+
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
     BASE_QUADRIC,
@@ -98,14 +98,14 @@ protected:
   typedef std::vector<Approximate_sphere_3>
     Approximate_sphere_vector;
   typedef Approximate_sphere_vector::const_iterator   Approximate_sphere_iter;
-  
+
   // List of pointers to Quadric_geo objects */
   typedef std::list<Quadric_geo *>                    Quadric_node_list;
   typedef Quadric_node_list::iterator                 Quadric_node_iter;
 
   typedef NiX::Arithmetic_traits AT;
 
-  typedef QdX::Quadric_intersections_on_base_traits_2< AT > 
+  typedef QdX::Quadric_intersections_on_base_traits_2< AT >
                                                    Geom_traits_base;
 #if defined(CGAL_ARR_TRACING_TRAITS)
   typedef CGAL::Arr_tracing_traits_2<Geom_traits_base>
@@ -124,7 +124,7 @@ protected:
   typedef Geom_traits::Curve_2                     Curve;
 
   typedef Arrangement_on_quadric                   Aoq;
-  
+
   typedef Aoq::Vertex                              Aoq_vertex;
   typedef Aoq::Halfedge                            Aoq_halfedge;
   typedef Aoq::Face                                Aoq_face;
@@ -136,7 +136,7 @@ protected:
   typedef Aoq::Vertex_const_handle                 Aoq_vertex_const_handle;
   typedef Aoq::Halfedge_const_handle               Aoq_halfedge_const_handle;
   typedef Aoq::Face_const_handle                   Aoq_face_const_handle;
-  
+
   typedef Aoq::Vertex_iterator                     Aoq_vertex_iterator;
   typedef Aoq::Halfedge_iterator                   Aoq_halfedge_iterator;
   typedef Aoq::Edge_iterator                       Aoq_edge_iterator;
@@ -169,10 +169,14 @@ public:
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
@@ -201,7 +205,7 @@ public:
    * \param quadric (in) a pointer to a quadric.
    */
   void set_base_quadric(Shared_quadric_geo quadric);
-    
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -211,7 +215,7 @@ protected:
 
   /*! Edge shapes. */
   static const char* s_edge_shapes[];
-  
+
   /*! The arrangement on quadric representation. */
   Arrangement_on_quadric m_aoq;
 
@@ -220,7 +224,7 @@ protected:
 
   /*! The intersecting quadrics. */
   Quadric_node_list m_quadric_nodes;
-  
+
   /*! Draw a vertex.
    * \param center the vertex center.
    * \param shape
@@ -229,7 +233,7 @@ protected:
    */
   void draw_vertex(Draw_action* action, Vector3f& center,
                    Vertex_shapes shape, Float radius, Float delta_angle);
-  
+
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;

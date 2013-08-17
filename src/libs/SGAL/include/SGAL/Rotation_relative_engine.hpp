@@ -14,14 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /**
  @class:   RotationRelativeEngine
-                               
+
  Purpose: Relative engine for rotations
 
  Description: The rotation relative engine has the following attributes:
@@ -29,14 +29,14 @@
         - value (of type Rotation) (field)
         - rotation (field)
         - angle - required relative change in rotation (field)
-        
+
         The fraction field is the trigger to the execute function.
         So - for each cascade of the fraction field execute() is activated ->
         the value field is calculated according to the fraction, rotation
         and angle (which is relative).
         rotation is updated to the new rotation when a fraction value,
         which is smaller than the last fraction value is given (this means
-        this is a new cycle).  
+        this is a new cycle).
 */
 
 #include "SGAL/basic.hpp"
@@ -59,14 +59,14 @@ public:
   };
 
   /*! Constructor */
-  Rotation_relative_engine(Boolean proto = SGAL_FALSE);
+  Rotation_relative_engine(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Rotation_relative_engine();
 
   /*! Construct the prototype */
   static Rotation_relative_engine * prototype()
-  { return new Rotation_relative_engine(SGAL_TRUE); }
+  { return new Rotation_relative_engine(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Rotation_relative_engine(); }
@@ -74,12 +74,16 @@ public:
   // protoype handling
   virtual void init_prototype();
   virtual void delete_prototype() { delete s_prototype; }
-  virtual Container_proto * get_prototype() 
-  {  
+  virtual Container_proto* get_prototype()
+  {
     if (s_prototype == NULL)
       init_prototype();
     return s_prototype;
   }
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element * elem);
@@ -90,7 +94,7 @@ public:
   // using the currentRotation relative angle and fraction
   virtual void execute(Field_info *);
 
-  virtual Trav_directive Draw(Draw_action * draw_action) { return Trav_cont; }; 
+  virtual Trav_directive Draw(Draw_action * draw_action) { return Trav_cont; };
 
 private:
   static Container_proto * s_prototype;

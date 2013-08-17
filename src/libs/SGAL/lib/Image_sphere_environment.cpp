@@ -49,10 +49,7 @@ void Image_sphere_environment::set_attributes(Element* elem)
 /*! \brief initializes the node prototype. */
 void Image_sphere_environment::init_prototype()
 {
-  // The prototype shuold be allocated only once for all instances
   if (s_prototype != NULL) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Sphere_environment::get_prototype());
 }
 

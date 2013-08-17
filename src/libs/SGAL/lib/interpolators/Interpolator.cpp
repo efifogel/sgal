@@ -34,7 +34,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Interpolator::s_prototype = NULL;
+Container_proto* Interpolator::s_prototype(NULL);
 
 /*! Constructor
  */
@@ -44,24 +44,23 @@ Interpolator::Interpolator(Boolean interpolate_flag, Boolean proto) :
   m_interpolate_flag(interpolate_flag)
 {}
 
-/*! Destructor */ 
+/*! Destructor */
 Interpolator::~Interpolator() { m_keys.clear(); }
 
 /*! Initializes the container prototype */
 void Interpolator::init_prototype()
 {
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
-  
+
   // Add the field-info records to the prototype:
+  // fraction
   Execution_function exec_func =
     static_cast<Execution_function>(&Interpolator::execute);
+  Float_handle_function fraction_func =
+    static_cast<Float_handle_function>(&Interpolator::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION, "set_fraction",
-                                           get_member_offset(&m_fraction),
-                                           exec_func));
+                                           fraction_func, exec_func));
 }
 
 /*! Delete the container prototype */
@@ -72,16 +71,16 @@ void Interpolator::delete_prototype()
 }
 
 /*! Obtain the container prototype */
-Container_proto* Interpolator::get_prototype() 
-{  
+Container_proto* Interpolator::get_prototype()
+{
   if (!s_prototype) Interpolator::init_prototype();
   return s_prototype;
 }
 
 
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Interpolator::set_attributes(Element* elem) 
-{ 
+void Interpolator::set_attributes(Element* elem)
+{
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -110,14 +109,14 @@ void Interpolator::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get a list of attributes in this object. This method is called only 
- * from the Builder side. 
+/*! Get a list of attributes in this object. This method is called only
+ * from the Builder side.
  *
- * \return a list of attributes 
+ * \return a list of attributes
  */
 Attribute_list Vector3f_interpolator::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Node::get_attributes();
@@ -127,7 +126,7 @@ Attribute_list Vector3f_interpolator::get_attributes()
   String key("");
   char buf[30];
 
-  for (int i=0;i<m_num_keys;i++) {
+  for (int i = 0; i < m_num_keys; ++i) {
     sprintf(buf, "%g ", m_keys[i]);
     key = key + String(buf);
   }

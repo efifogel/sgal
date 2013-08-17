@@ -24,7 +24,7 @@
 
 /*! \file
  * Encapsulates the OpenGL accumulation application. Specifies the
- * parameters needed to accumulate frame buffers produced in a sequence. 
+ * parameters needed to accumulate frame buffers produced in a sequence.
  * It is used to implement antialiasing of the highest quality at the price
  * of a delay.
  */
@@ -78,7 +78,11 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -96,7 +100,7 @@ public:
   /*! Set the accumulation delay in miliseconds. */
   void set_delay(Uint ms);
 
-  /*! Obtain the accumulation delay in miliseconds. */  
+  /*! Obtain the accumulation delay in miliseconds. */
   Uint get_delay() const;
 
   /*! Set the accumulation quality. */
@@ -107,7 +111,7 @@ public:
 
   /*! Set the total number of iterations. */
   void set_num_iters(Uint num_iters);
-  
+
   /*! Apply actions when accumulation starts */
   void pre_render(Draw_action* draw_action);
 
@@ -119,13 +123,13 @@ public:
 
   /*! Disactivate */
   void disactivate() { m_active = false; }
-  
+
   /*! Return ture if the frame buffer is being accumulated. */
   Boolean is_active() const;
 
   /*! Return ture if accumulation is done. */
   Boolean is_done();
-  
+
   /*! Return ture if the frame buffer showld be shown. */
   Boolean do_show() const;
 
@@ -166,7 +170,7 @@ protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-private:  
+private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -183,16 +187,16 @@ private:
   static Jitter s_j66[];
 
   typedef std::pair<Uint,Jitter*> Jitter_pair;
-  
+
   /*! Size array. */
   static Jitter_pair s_sizes[];
-  
+
   /*! The jittering values. */
   Jitter* m_jitters;
 
   /*! The number of jittering values. */
   Uint m_num_jitters;
-  
+
   /*! Indicates whether accumulation is enabled. */
   Boolean m_enabled;
 
@@ -204,10 +208,10 @@ private:
 
   /*! The total number of accumulation iterations. */
   Uint m_num_iters;
-  
+
   /*! Indicate whether to start accumulating. */
   Boolean m_active;
-  
+
   /*! The contribution each iteration. */
   Float m_contribution;
 
@@ -231,7 +235,7 @@ private:
 
   /*! Number of alpha bits stored in the accumulation buffer. */
   Uint m_alpha_bits;
-  
+
   // default values
   static const Boolean s_def_enabled;
   static const Uint s_def_delay;
@@ -241,7 +245,7 @@ private:
   static const Uint s_def_green_bits;
   static const Uint s_def_blue_bits;
   static const Uint s_def_alpha_bits;
-  
+
   static const Char* s_quality_names[];
 };
 
@@ -267,7 +271,7 @@ inline Boolean Accumulation::is_enabled() const { return m_enabled; }
 /*! \brief sets the accumulation delay in miliseconds. */
 inline void Accumulation::set_delay(Uint ms) { m_delay = ms; }
 
-/*! \brief obtains the accumulation delay in miliseconds. */  
+/*! \brief obtains the accumulation delay in miliseconds. */
 inline Uint Accumulation::get_delay() const { return m_delay; }
 
 /*! \brief sets the accumulation quality. */

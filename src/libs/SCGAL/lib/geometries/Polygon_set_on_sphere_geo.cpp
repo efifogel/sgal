@@ -55,19 +55,18 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Polygon_set_on_sphere_geo::s_tag = "PolygonSetOnSphere";
+Container_proto* Polygon_set_on_sphere_geo::s_prototype(NULL);
 
-std::string Polygon_set_on_sphere_geo::s_operation_types[] = {
-  "complement", 
-  "intersection", 
-  "union", 
-  "difference", 
-  "symmetric_difference"
-};
-
-Container_proto* Polygon_set_on_sphere_geo::s_prototype = NULL;
+REGISTER_TO_FACTORY(Polygon_set_on_sphere_geo, "Polygon_set_on_sphere_geo");
 
 // Default values
-REGISTER_TO_FACTORY(Polygon_set_on_sphere_geo, "Polygon_set_on_sphere_geo");
+std::string Polygon_set_on_sphere_geo::s_operation_types[] = {
+  "complement",
+  "intersection",
+  "union",
+  "difference",
+  "symmetric_difference"
+};
 
 /*! Constructor. */
 Polygon_set_on_sphere_geo::
@@ -118,12 +117,12 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
     const std::string& value = elem->get_value(ai);
 
     if (name == "polyIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_poly_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -131,7 +130,7 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
       m_poly_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_poly_indices[i++] = 
+        m_poly_indices[i++] =
           static_cast<Int>(boost::lexical_cast<int>(*it));
       }
       continue;
@@ -176,7 +175,7 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
     }
     continue;
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -184,16 +183,16 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
 /*! \brief cleans the representation. */
 void Polygon_set_on_sphere_geo::clean()
 {
-  // If you, for some reason, want to overlay the arrangements, insert 
+  // If you, for some reason, want to overlay the arrangements, insert
   // some curves, or do a point location, you can use the base class function.
-  // Bare in mind, though, that the base class BY DEFAULT, overlay the 
+  // Bare in mind, though, that the base class BY DEFAULT, overlay the
   // arrangements which is a redunt operation if you want to do Boolean set
   // operations. You should take care that the base function does not overlay
   // for nothing.
 
   SGAL_assertion(is_operation_type(m_operation_type));
   SGAL_assertion(m_aos != NULL);
-  
+
   m_dirty = false;
   this->polygon_set().clear();
 
@@ -203,7 +202,7 @@ void Polygon_set_on_sphere_geo::clean()
 
     Int_container::const_iterator it = m_poly_indices.begin();
     while (it != m_poly_indices.end()) {
-      // create the polygons according to the indices and add them to the 
+      // create the polygons according to the indices and add them to the
       // polygon set.
       typedef std::vector<CGAL::Object>                           Obj_cont;
 
@@ -216,7 +215,7 @@ void Polygon_set_on_sphere_geo::clean()
 
         if (*it >= (int)(*exact_coord_array).size()) {
           std::cerr << "Error! Index too big " << std::endl;
-          ++it; 
+          ++it;
           continue;
         }
         curr = &(*exact_coord_array)[*it];
@@ -225,7 +224,7 @@ void Polygon_set_on_sphere_geo::clean()
           if (*prev == *curr) {
             std::cerr << "Error! Degenerate segment of polygon "
               "polygon_set_on_sphere_geo" << std::endl;
-            ++it; 
+            ++it;
             continue;
           }
           Curve_cont temp = construct_curves(prev, curr);
@@ -243,13 +242,13 @@ void Polygon_set_on_sphere_geo::clean()
           curves.insert(curves.end(), temp_curs.begin(), temp_curs.end());
         }
       }
-      
+
       // create the polygon and add it to the set.
       Polygon_2 cur_pgn;
       if (curves.empty() == false) {
         this->m_aos->geometry_traits()->
           construct_polygon_2_object() (curves.begin(), curves.end(), cur_pgn);
-        
+
         this->polygon_set().insert(cur_pgn);
       }
 
@@ -260,19 +259,19 @@ void Polygon_set_on_sphere_geo::clean()
 
     return;
   }
-  
+
   // For now, we compute the operation between the first and the last
   // polygons.
   if (m_aoses.size() >= 2) {
-    Shared_polygon_set_on_sphere_geo first = 
+    Shared_polygon_set_on_sphere_geo first =
       boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.front());
-    Shared_polygon_set_on_sphere_geo last = 
+    Shared_polygon_set_on_sphere_geo last =
       boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.back());
 
     // TODO: Prevent infinite recursion!
     first->clean();
     last->clean();
-      
+
     switch (operation_type()) {
      case SET_INTERSECTION:
       polygon_set().intersection(first->polygon_set(), last->polygon_set());
@@ -284,7 +283,7 @@ void Polygon_set_on_sphere_geo::clean()
       polygon_set().difference(first->polygon_set(), last->polygon_set());
       return;
      case SET_SYMMETRIC_DIFFERENCE:
-      polygon_set().symmetric_difference(first->polygon_set(), 
+      polygon_set().symmetric_difference(first->polygon_set(),
                                          last->polygon_set());
       return;
     default:
@@ -294,7 +293,7 @@ void Polygon_set_on_sphere_geo::clean()
 
   // Complement uses the first polygon.
   if (m_aoses.size() >= 1) {
-    Shared_polygon_set_on_sphere_geo poly_set = 
+    Shared_polygon_set_on_sphere_geo poly_set =
       boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(m_aoses.front());
 
     // TODO: prevent infinite recursion.
@@ -314,18 +313,18 @@ void Polygon_set_on_sphere_geo::clear()
 }
 
 //! Get the type of operation according to its name
-Polygon_set_on_sphere_geo::Operation_type 
+Polygon_set_on_sphere_geo::Operation_type
 Polygon_set_on_sphere_geo::get_operation_type_by_name(const std::string& op_name)
 {
-  
-  std::string* p = std::find(&s_operation_types[0], 
+
+  std::string* p = std::find(&s_operation_types[0],
                              &s_operation_types[NUM_OF_OPERATIONS],
                              op_name);
-  
+
   if (p == &s_operation_types[NUM_OF_OPERATIONS])
     return LAST;   // which is NOT an operation type.
 
-  return static_cast<Operation_type>(SET_COMPLEMENT + 
+  return static_cast<Operation_type>(SET_COMPLEMENT +
                                      (p - &s_operation_types[0]));
 }
 
@@ -336,7 +335,7 @@ Polygon_set_on_sphere_geo::get_operation_type_by_name(const std::string& op_name
  * \param p2 Second point
  */
 Polygon_set_on_sphere_geo::Curve_cont
-Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1, 
+Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1,
                                             Exact_point_3* p2)
 {
   SGAL_precondition(p1 != NULL);
@@ -357,15 +356,15 @@ Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1,
   Exact_kernel::Direction_3 dir2 = k.construct_direction_3_object()
     (vec2);
   Curve_2 new_cv(dir1, dir2);
-           
+
   std::list<CGAL::Object> objects;
   m_aos->geometry_traits()->make_x_monotone_2_object()
     (new_cv , std::back_inserter(objects));
-  
+
   Curve_cont res;
   std::list<CGAL::Object>::iterator it;
   for (it = objects.begin(); it != objects.end(); ++it) {
-    const X_monotone_curve_2* x_mono_cv = 
+    const X_monotone_curve_2* x_mono_cv =
       CGAL::object_cast<X_monotone_curve_2>(&(*it));
     SGAL_assertion_msg(x_mono_cv != NULL, "We should receive only x-mono " \
                        "curves.");

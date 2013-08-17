@@ -53,7 +53,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_polyhedron_geo::s_tag = "ExactPolyhedron";
-Container_proto* Exact_polyhedron_geo::s_prototype = 0;
+Container_proto* Exact_polyhedron_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Exact_polyhedron_geo, "Exact_polyhedron_geo");
 
@@ -82,7 +82,7 @@ void Exact_polyhedron_geo::convex_hull()
     boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     CGAL::convex_hull_3(exact_coord_array->begin(),
-                        exact_coord_array->end(), m_polyhedron);    
+                        exact_coord_array->end(), m_polyhedron);
   }
   else {
     std::vector<Point_3> points;
@@ -150,7 +150,7 @@ void Exact_polyhedron_geo::clean_facets()
                 ((side == CGAL::ON_POSITIVE_SIDE) ? "Outside" : "Inside"))
             << std::endl;
 #endif
-  
+
   // Compute the normal used only for drawing the polyhedron
   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                 Plane_to_normal());
@@ -203,7 +203,7 @@ void Exact_polyhedron_geo::isect(Isect_action* action)
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_facets) clean_facets();
   if (is_empty()) return;
-  
+
   Facet_iterator i;
   for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
     Polyhedron::Halfedge_around_facet_circulator j = i->facet_begin();
@@ -225,7 +225,7 @@ Boolean Exact_polyhedron_geo::clean_sphere_bound()
   if (is_dirty_coord_indices()) clean_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_bb_is_pre_set) return true;
-  
+
   Approximate_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
     spheres.resize(m_polyhedron.size_of_vertices());
@@ -272,10 +272,6 @@ void Exact_polyhedron_geo::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Mesh_set::get_prototype());
-
-  //! Container execution function
-  // typedef void (Container::* Execution_function)(Field_info*);
-  // Execution_function exec_func;
 }
 
 /*! \brief deletes the container prototype. */
@@ -286,8 +282,8 @@ void Exact_polyhedron_geo::delete_prototype()
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Exact_polyhedron_geo::get_prototype() 
-{  
+Container_proto* Exact_polyhedron_geo::get_prototype()
+{
   if (!s_prototype) Exact_polyhedron_geo::init_prototype();
   return s_prototype;
 }
@@ -348,6 +344,6 @@ void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
   m_convex_hull = flag;
   m_polyhedron.clear();
   m_dirty_polyhedron = true;
-}  
+}
 
 SGAL_END_NAMESPACE

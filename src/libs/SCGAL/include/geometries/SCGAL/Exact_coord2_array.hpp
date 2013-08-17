@@ -62,11 +62,10 @@ public:
   virtual ~Exact_coord2_array() { clear(); }
 
   /* Construct the prototype. */
-  static Exact_coord2_array* prototype()
-  { return new Exact_coord2_array(true); }
+  static Exact_coord2_array* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Exact_coord2_array(); }
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -74,9 +73,13 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */  
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node.
    * \param elem contains lists of attribute names and values.
    */
@@ -84,7 +87,7 @@ public:
 
   /*! Size. */
   Uint size() const { return m_array.size(); }
-  
+
   /*! Resize. */
   void resize(Uint n) { m_array.resize(n); }
 
@@ -94,7 +97,7 @@ public:
   /*! Begin. */
   Exact_point_iter begin() { return m_array.begin(); }
   Exact_point_const_iter begin() const { return m_array.begin(); }
-  
+
   /*! End. */
   Exact_point_iter end() { return m_array.end(); }
   Exact_point_const_iter end() const { return m_array.end(); }
@@ -107,7 +110,7 @@ public:
 
   /*! Inserts a new element at the end. */
   void push_back(const Exact_point_2& p) { m_array.push_back(p); }
-    
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -122,6 +125,14 @@ private:
   /*! The exact coordinate array. */
   Exact_point_vector m_array;
 };
+
+/* \brief constructs the prototype. */
+inline Exact_coord2_array* Exact_coord2_array::prototype()
+{ return new Exact_coord2_array(true); }
+
+/*! \brief clones. */
+inline Container* Exact_coord2_array::clone()
+{ return new Exact_coord2_array(); }
 
 SGAL_END_NAMESPACE
 

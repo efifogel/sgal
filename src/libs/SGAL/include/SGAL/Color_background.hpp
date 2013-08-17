@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -24,7 +24,7 @@
 
 /*! \file
  * A fixed color background.
- *                        
+ *
  * Inherits from Background
  */
 
@@ -53,45 +53,51 @@ public:
   virtual ~Color_background();
 
   /*! Construct the prototype */
-  static Color_background * prototype() { return new Color_background(true); }
+  static Color_background* prototype() { return new Color_background(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Color_background(); }
+  virtual Container* clone() { return new Color_background(); }
 
   /*! \breif drwas the background */
-  virtual void draw(Draw_action * draw_action);
+  virtual void draw(Draw_action* draw_action);
 
   /*! Set the attributes of this container */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
-  virtual void add_to_scene(Scene_graph * scene_graph);
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();;
-  virtual Container_proto * get_prototype(); 
+
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the color of the background */
-  void set_color(const Vector4f & color) { m_color = color; };
+  void set_color(const Vector4f& color) { m_color = color; };
 
   /*! Obtain the color of the background */
-  const Vector4f & get_color() const { return m_color; }
+  const Vector4f& get_color() const { return m_color; }
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The background color */
   Vector4f m_color;

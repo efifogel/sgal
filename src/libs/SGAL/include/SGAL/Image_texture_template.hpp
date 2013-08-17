@@ -49,7 +49,7 @@ template <class T_Texture>
 class SGAL_SGAL_DECL Image_texture_template : public T_Texture {
 public:
   typedef Url_image::Path_list                          Path_list;
-  
+
   /*! Constructor */
   Image_texture_template(Boolean proto = false) : T_Texture(proto)
   { this->m_image = &m_url_image; }
@@ -75,7 +75,7 @@ public:
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype. */
@@ -86,6 +86,10 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the URL. */
   void set_url(const std::string& url);
@@ -98,17 +102,17 @@ public:
 
   /*! Obtain the flag that indicates whether to reflect the image. */
   Boolean get_flip() const;
-  
+
   /*! Set the directory-search structure. */
   void set_dirs(const Path_list& dirs);
 
   /*! Obtain the directory-search structure. */
   const Path_list& get_dirs() const;
-  
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
-  
+
 private:
   /*! The tag that identifies this container type. */
   static std::string s_tag;
@@ -139,7 +143,7 @@ void Image_texture_template<T_Texture>::set_flip(Boolean flag)
 template <class T_Texture>
 Boolean Image_texture_template<T_Texture>::get_flip() const
 { return m_url_image.get_flip(); }
- 
+
 /*! \brief sets the directory-search structure. */
 template <class T_Texture>
 void
@@ -169,15 +173,15 @@ void Image_texture_template<T_Texture>::delete_prototype()
 
 /*! \brief obtains the node prototype. */
 template <class T_Texture>
-Container_proto* Image_texture_template<T_Texture>::get_prototype() 
-{  
+Container_proto* Image_texture_template<T_Texture>::get_prototype()
+{
   if (!s_prototype) Image_texture_template<T_Texture>::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of the image texture. */
 template <class T_Texture>
-void Image_texture_template<T_Texture>::set_attributes(Element* elem) 
+void Image_texture_template<T_Texture>::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
 
@@ -234,7 +238,7 @@ template <class T_Texture>
 const std::string& Image_texture_template<T_Texture>::get_tag() const
 { return s_tag; }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 template <class T_Texture>
 void Image_texture_template<T_Texture>::add_to_scene(Scene_graph* sg)
 { m_url_image.set_dirs(sg->get_data_dirs()); }
@@ -242,9 +246,9 @@ void Image_texture_template<T_Texture>::add_to_scene(Scene_graph* sg)
 #if 0
 /*! \brief */
 template <class T_Texture>
-Attribute_list Image_texture_template<T_Texture>::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Image_texture_template<T_Texture>::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Texture::get_attributes();
@@ -253,7 +257,7 @@ Attribute_list Image_texture_template<T_Texture>::get_attributes()
   attrib.second = get_fileName();
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 }
 #endif
 

@@ -43,8 +43,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Transform::s_prototype = NULL;
-std::string Transform::s_tag = "Transform";
+Container_proto* Transform::s_prototype(NULL);
+const std::string Transform::s_tag = "Transform";
 
 Vector3f Transform::s_def_translation(0, 0, 0);
 Rotation Transform::s_def_rotation(0, 0, 1, 0);
@@ -60,12 +60,12 @@ REGISTER_TO_FACTORY(Transform, "Transform");
 Transform::Transform(Boolean proto) :
   Group(proto),
   m_translation(s_def_translation),
-  m_rotation(s_def_rotation), 
+  m_rotation(s_def_rotation),
   m_scale(s_def_scale),
-  m_scale_orientation(s_def_scale_orientation), 
+  m_scale_orientation(s_def_scale_orientation),
   m_center(s_def_center),
-  m_dirty_matrix(false), 
-  m_dirty_inverse(false), 
+  m_dirty_matrix(false),
+  m_dirty_inverse(false),
   m_dirty_parts(false)
 {}
 
@@ -90,7 +90,7 @@ void Transform::get_matrix(Matrix4f& matrix)
   m_matrix.get(matrix);
 }
 
-/*! \brief obtains (a const reference of) the matrix */  
+/*! \brief obtains (a const reference of) the matrix */
 const Matrix4f& Transform::get_matrix()
 {
   if (m_dirty_matrix) clean_matrix();
@@ -228,7 +228,7 @@ void Transform::clean_parts()
     // of ustar, vstar, and wstar rows.
     //
     // The unknown w is an axis of rotation
-    
+
     ustar[0] -= 1.0f;
     vstar[1] -= 1.0f;
     wstar[2] -= 1.0f;
@@ -284,14 +284,14 @@ void Transform::clean_parts()
       mySin = (vstar[2] + (myCos - 1.0f) * axis[1] * axis[2]) / axis[0];
     else if (axis[1] != 0.0f)
       mySin = (wstar[0] + (myCos - 1.0f) * axis[2] * axis[0]) / axis[1];
-    
+
     angle = arccosf(myCos);
     if (mySin < 0.0f) angle = SGAL_PI * 2.0f - angle;
   }
 
   m_rotation.set(axis[0], axis[1], axis[2], angle);
   m_scale.set(s1, s2, s3);
-  
+
   m_dirty_parts = false;
 }
 
@@ -473,7 +473,7 @@ void Transform::cull(Cull_context& cull_context)
 /*! Traverses the tree of the group for selections.
  * @param isect_action
  */
-void Transform::isect(Isect_action* isect_action) 
+void Transform::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
   if (m_dirty_matrix) clean_matrix();
@@ -499,7 +499,7 @@ Boolean Transform::clean_sphere_bound()
   if (m_locked_sphere_bound) return false;
 
   Group::clean_sphere_bound();
-  if (m_dirty_matrix) clean_matrix(); 
+  if (m_dirty_matrix) clean_matrix();
 
   // transform the center of the boundng sphere
   Vector3f new_center;
@@ -524,24 +524,29 @@ void Transform::init_prototype()
   SF_vector3f* vector3f_fi;
   SF_rotation* rotation_fi;
   SF_bool* bool_fi;
-  
+
+  // center
   exec_func = static_cast<Execution_function>(&Transform::parts_changed);
   vector3f_fi = new SF_vector3f(CENTER, "center",
                                 get_member_offset(&m_center), exec_func);
   s_prototype->add_field_info(vector3f_fi);
 
+  // translation
   vector3f_fi = new SF_vector3f(TRANSLATION, "translation",
                                 get_member_offset(&m_translation), exec_func);
   s_prototype->add_field_info(vector3f_fi);
 
+  // rotation
   rotation_fi = new SF_rotation(ROTATION, "rotation",
                                 get_member_offset(&m_rotation), exec_func);
   s_prototype->add_field_info(rotation_fi);
 
+  // scale
   vector3f_fi = new SF_vector3f(SCALE, "scale",
                                 get_member_offset(&m_scale), exec_func);
   s_prototype->add_field_info(vector3f_fi);
 
+  // reset
   exec_func = static_cast<Execution_function>(&Transform::reset);
   bool_fi = new SF_bool(RESET, "reset", get_member_offset(&m_reset),
                         exec_func);
@@ -556,14 +561,14 @@ void Transform::delete_prototype()
 }
 
 /*! \brief obtains the node prototype */
-Container_proto* Transform::get_prototype() 
-{  
+Container_proto* Transform::get_prototype()
+{
   if (!s_prototype) Transform::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of the object extracted from the input file */
-void Transform::set_attributes(Element* elem) 
+void Transform::set_attributes(Element* elem)
 {
   Group::set_attributes(elem);
 
@@ -627,9 +632,9 @@ void Transform::set_attributes(Element* elem)
 #if 0
 /*!
  */
-Attribute_list Transform::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Transform::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
   Vector3f vec;
   Rotation rot;

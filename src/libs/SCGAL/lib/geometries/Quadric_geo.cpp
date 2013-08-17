@@ -39,7 +39,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Quadric_geo::s_tag = "Quadric";
-SGAL::Container_proto * Quadric_geo::s_prototype = NULL;
+SGAL::Container_proto* Quadric_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Quadric_geo, "Quadric_geo");
 
@@ -57,9 +57,6 @@ void Quadric_geo::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
-
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
 }
 
 /*! \brief deletes the container prototype */
@@ -70,33 +67,31 @@ void Quadric_geo::delete_prototype()
 }
 
 /*! \brief obtains the container prototype */
-Container_proto * Quadric_geo::get_prototype()
+Container_proto* Quadric_geo::get_prototype()
 {
   if (!s_prototype) Quadric_geo::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the ellpsoid attributes */
-void Quadric_geo::set_attributes(Element * elem)
+void Quadric_geo::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "coefficients") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_coefficients.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -125,7 +120,7 @@ void Quadric_geo::clean()
 
   m_dirty = false;
 }
-  
+
 /*! \brief */
 void Quadric_geo::cull(Cull_context & cull_context)
 {

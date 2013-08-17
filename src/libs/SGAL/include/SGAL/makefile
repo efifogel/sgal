@@ -25,6 +25,7 @@ FILES+= Context.hpp
 FILES+= Cube_environment.hpp
 FILES+= Cull_context.hpp
 FILES+= Default_event_filter.hpp
+FILES+= Delegator.hpp
 FILES+= Draw_action.hpp
 FILES+= Environment_background.hpp
 FILES+= errors.hpp

@@ -82,7 +82,7 @@ public:
     Lines_through_segments_3;
   typedef Lines_through_segments_3::Transversal_with_segments
     Transversal_with_segments;
-  
+
   enum {
     FIRST = Geometry::LAST - 1,
     SEGMENTS,
@@ -96,20 +96,23 @@ public:
   virtual ~Lines_through_segments_geo();
 
   /* Construct the prototype */
-  static Lines_through_segments_geo* prototype()
-  { return new Lines_through_segments_geo(true); }
+  static Lines_through_segments_geo* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Lines_through_segments_geo(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
 
   /*! Delete the container prototype */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
@@ -138,7 +141,7 @@ public:
   /*! Determine whether the representation hasn't been updated
    */
   virtual Boolean is_dirty() const { return m_dirty; }
-  
+
   /*! Is the representation empty ?
    */
   virtual Boolean is_empty();
@@ -165,10 +168,10 @@ protected:
    * when this geometry node is destructed.
    */
   Boolean m_owned_lts;
-  
+
   /* The internal Lines Through Segments data structutre. */
   Lines_through_segments_3* m_lts;
-  
+
   /*! The segments */
   Shared_indexed_line_set m_segments;
 
@@ -180,7 +183,7 @@ protected:
   void draw_line(Draw_action* action,
                  Line_type& line,
                  const Matrix4f& view_mat, const Matrix4f& view_mat_inv);
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -202,6 +205,14 @@ private:
 
   /*! Default values */
 };
+
+/* \brief constructs the prototype. */
+inline Lines_through_segments_geo* Lines_through_segments_geo::prototype()
+{ return new Lines_through_segments_geo(true); }
+
+/*! \brief clones. */
+inline Container* Lines_through_segments_geo::clone()
+{ return new Lines_through_segments_geo(); }
 
 SGAL_END_NAMESPACE
 

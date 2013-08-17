@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Font_style::s_tag = "FontStyle";
-Container_proto* Font_style::s_prototype = NULL;
+Container_proto* Font_style::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Font_style, "Font_style");
 
@@ -84,7 +84,7 @@ void Font_style::set_italic(Boolean i)
   m_italic = i;
   m_dirty = true;
 }
-  
+
 /*! \brief sets the flag that indicates whether the font is antialiased font */
 void Font_style::set_antialias(Boolean a)
 {
@@ -108,47 +108,53 @@ void Font_style::on_field_change(Field_info* /* field_info */)
 /*! \breif initializes the prototype. */
 void Font_style::init_prototype()
 {
-  // The prototype shuold be allocated only once for all instances
   if (s_prototype != NULL) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the object fields to the prototype
+  // family
   Execution_function exec_func =
     static_cast<Execution_function>(&Font_style::on_field_change);
   s_prototype->add_field_info(new SF_string(FAMILY, "family",
                                             get_member_offset(&m_family),
                                             exec_func));
 
+  // style
   s_prototype->add_field_info(new SF_string(STYLE, "style",
                                             get_member_offset(&m_style),
                                             exec_func));
 
+  // horizontal
   s_prototype->add_field_info(new SF_bool(HORIZONTAL, "horizontal",
                                           get_member_offset(&m_horizontal),
                                           exec_func));
 
+  // justify
   s_prototype->add_field_info(new SF_string(JUSTIFY, "justify",
                                             get_member_offset(&m_justify),
                                             exec_func));
 
+  // language
   s_prototype->add_field_info(new SF_string(LANGUAGE, "language",
                                             get_member_offset(&m_language),
                                             exec_func));
 
+  // leftToRight
   s_prototype->add_field_info(new SF_bool(LEFT_TO_RIGHT, "leftToRight",
                                           get_member_offset(&m_left_to_right),
                                           exec_func));
 
+  // size
   s_prototype->add_field_info(new SF_float(SIZE, "size",
                                            get_member_offset(&m_size),
                                            exec_func));
 
+  // spacing
   s_prototype->add_field_info(new SF_float(SPACING, "spacing",
                                            get_member_offset(&m_spacing),
                                            exec_func));
 
+  // topToBottom
   s_prototype->add_field_info(new SF_bool(TOP_TO_BOTTOM, "topToBottom",
                                           get_member_offset(&m_top_to_bottom),
                                           exec_func));
@@ -162,14 +168,14 @@ void Font_style::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Font_style::get_prototype() 
-{  
+Container_proto* Font_style::get_prototype()
+{
   if (!s_prototype)  Font_style::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of this object. */
-void Font_style::set_attributes(Element* elem) 
+void Font_style::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
@@ -238,8 +244,8 @@ void Font_style::set_attributes(Element* elem)
 #if 0
 /*!
  */
-Attribute_list Font_style::get_attributes() 
-{ 
+Attribute_list Font_style::get_attributes()
+{
   Attribute_list attribs;
   Attribue attrib;
   Vector3f vec;

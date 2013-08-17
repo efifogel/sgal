@@ -39,8 +39,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Cube_environment::s_tag = "CubeEnvironment";
-Container_proto* Cube_environment::s_prototype = NULL;
+const std::string Cube_environment::s_tag = "CubeEnvironment";
+Container_proto* Cube_environment::s_prototype(NULL);
 
 // Default values:
 
@@ -75,8 +75,8 @@ void Cube_environment::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Cube_environment::get_prototype() 
-{  
+Container_proto* Cube_environment::get_prototype()
+{
   if (s_prototype == NULL) Cube_environment::init_prototype();
   return s_prototype;
 }
@@ -139,7 +139,7 @@ void Cube_environment::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Cube_environment::add_to_scene(Scene_graph* scene_graph)
 {
   for (Uint i = 0; i < NUM_IMAGES; ++i) {
@@ -188,26 +188,26 @@ Uint Cube_environment::get_component_count() const
 
 /*! \brief sets the left image. */
 void Cube_environment::set_left_image(Shared_image image)
-{ m_images[LEFT_IMAGE] = image; }  
+{ m_images[LEFT_IMAGE] = image; }
 
 /*! \brief sets the right image. */
 void Cube_environment::set_right_image(Shared_image image)
-{ m_images[RIGHT_IMAGE] = image; }  
+{ m_images[RIGHT_IMAGE] = image; }
 
 /*! \brief sets the front image. */
 void Cube_environment::set_front_image(Shared_image image)
-{ m_images[FRONT_IMAGE] = image; }  
+{ m_images[FRONT_IMAGE] = image; }
 
 /*! \brief sets the back image. */
 void Cube_environment::set_back_image(Shared_image image)
-{ m_images[BACK_IMAGE] = image; }  
+{ m_images[BACK_IMAGE] = image; }
 
 /*! \brief sets the bottom image. */
 void Cube_environment::set_bottom_image(Shared_image image)
-{ m_images[BOTTOM_IMAGE] = image; }  
+{ m_images[BOTTOM_IMAGE] = image; }
 
 /*! \brief sets the top image. */
 void Cube_environment::set_top_image(Shared_image image)
-{ m_images[TOP_IMAGE] = image; }  
+{ m_images[TOP_IMAGE] = image; }
 
 SGAL_END_NAMESPACE

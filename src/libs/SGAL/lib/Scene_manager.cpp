@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -268,7 +268,7 @@ Boolean Scene_manager::ActiveNextCamera()
   if( m_scene ) {
     return m_scene->ActiveNextCamera(); 
   }
-  return SGAL_FALSE;
+  return false;
 }
 
 Boolean Scene_manager::ActivePrevCamera()
@@ -277,7 +277,7 @@ Boolean Scene_manager::ActivePrevCamera()
     return m_scene->ActivePrevCamera(); 
   }
 
-  return SGAL_FALSE;
+  return false;
 }
 
 Boolean Scene_manager::HasMoreThenOneCamera ()

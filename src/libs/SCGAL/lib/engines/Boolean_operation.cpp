@@ -48,7 +48,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Boolean_operation::s_tag = "BooleanOperation";
-Container_proto* Boolean_operation::s_prototype = NULL;
+Container_proto* Boolean_operation::s_prototype(NULL);
 
 /*! Operation names */
 const char* Boolean_operation::s_operation_names[] =
@@ -91,7 +91,7 @@ void Boolean_operation::execute()
 
   Exact_polyhedron_geo geometry2;
   geometry2.set_coord_array(m_operand2->get_coord_array());
-  Array<Uint>& indices2 = m_operand2->get_coord_indices();  
+  Array<Uint>& indices2 = m_operand2->get_coord_indices();
   if (m_operand2->are_coord_indices_flat())
     geometry2.set_flat_coord_indices(indices2);
   else geometry2.set_coord_indices(indices2);
@@ -135,7 +135,7 @@ void Boolean_operation::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   typedef Element::Cont_attr_iter         Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
@@ -161,7 +161,7 @@ void Boolean_operation::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -171,51 +171,60 @@ void Boolean_operation::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
-  
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
 
   // Add the field-info records to the prototype:
   Execution_function exec_func =
     static_cast<Execution_function>(&Boolean_operation::trigger_changed);
 
+  // trigger
+  Boolean_handle_function trigger_func =
+    static_cast<Boolean_handle_function>(&Boolean_operation::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          get_member_offset(&m_trigger),
-                                          exec_func));
+                                          trigger_func, exec_func));
 
-  // We use SF_int (instead of SF_uint) to allow connecting the value
-  // field of an Incrementor, which is of int type (and not Uint) to this
-  // field.
-  s_prototype->add_field_info(new SF_int(OPERATION, "operation",
-                                         get_member_offset(&m_operation),
-                                         exec_func));
+  // operation
+  Uint_handle_function operation_func =
+    reinterpret_cast<Uint_handle_function>
+    (&Boolean_operation::operation_handle);
+  s_prototype->add_field_info(new SF_uint(OPERATION, "operation",
+                                          operation_func, exec_func));
 
-  SF_shared_container* field;
-  field = new SF_shared_container(OPERAND1, "operand1",
-                                  get_member_offset(&m_operand1), exec_func);
-  s_prototype->add_field_info(field);    
+  // operand1
+  Shared_container_handle_function operand1_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Boolean_operation::operand1_handle);
+  s_prototype->add_field_info(new SF_shared_container(OPERAND1, "operand1",
+                                                      operand1_func,
+                                                      exec_func));
 
-  field = new SF_shared_container(OPERAND2, "operand2",
-                                  get_member_offset(&m_operand2), exec_func);
-  s_prototype->add_field_info(field);    
+  // operand2
+  Shared_container_handle_function operand2_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Boolean_operation::operand2_handle);
+  s_prototype->add_field_info(new SF_shared_container(OPERAND2, "operand2",
+                                                      operand2_func,
+                                                      exec_func));
 
-  field = new SF_shared_container(RESULT, "result",
-                                  get_member_offset(&m_result));
-  s_prototype->add_field_info(field);    
+  // result
+  Shared_container_handle_function result_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Boolean_operation::result_handle);
+  s_prototype->add_field_info(new SF_shared_container(RESULT, "result",
+                                                      result_func));
 }
 
 /*! \brief deletes the container prototype. */
-void Boolean_operation::delete_prototype() 
+void Boolean_operation::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Boolean_operation::get_prototype() 
+Container_proto* Boolean_operation::get_prototype()
 {
   if (!s_prototype) Boolean_operation::init_prototype();
   return s_prototype;
-} 
+}
 
 SGAL_END_NAMESPACE

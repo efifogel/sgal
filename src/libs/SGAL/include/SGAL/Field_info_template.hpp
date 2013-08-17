@@ -36,9 +36,15 @@
 #include "SGAL/Member_offset_type.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Delegator.hpp"
 //! \todo #include "SAI_field_template.h"
 
 SGAL_BEGIN_NAMESPACE
+
+template <typename T>
+struct Handle_function {
+  typedef T* (Container::* type)(Field_info*);
+};
 
 /*! An instance of Field_info_template holds information about a field that
  * stores a value of a specific type. The type of the field value can be any
@@ -46,7 +52,13 @@ SGAL_BEGIN_NAMESPACE
  */
 template <typename T, Uint type_id>
 class Field_info_template : public Field_info {
+public:
+  typedef typename Handle_function<T>::type     Handle;
+
 private:
+  /*! The field handle function. */
+  Handle m_handle;
+
   /*! The field offset */
   Member_offset_type m_offset;
 
@@ -59,12 +71,27 @@ private:
 public:
   /*! Constructor. */
   Field_info_template(Uint id, const std::string& name,
+                      Handle handle,
+                      Execution_function execution = NULL,
+                      bool initially_blocked = false,
+                      bool use_initial_value = false,
+                      T initial_value = T()) :
+    Field_info(id, name, execution, initially_blocked),
+    m_handle(handle),
+    m_offset(0),
+    m_initial_value(initial_value),
+    m_use_initial_value(use_initial_value)
+  {}
+
+  /*! Constructor. */
+  Field_info_template(Uint id, const std::string& name,
                       Member_offset_type offset,
                       Execution_function execution = NULL,
                       bool initially_blocked = false,
                       bool use_initial_value = false,
                       T initial_value = T()) :
     Field_info(id, name, execution, initially_blocked),
+    m_handle(NULL),
     m_offset(offset),
     m_initial_value(initial_value),
     m_use_initial_value(use_initial_value)
@@ -89,7 +116,7 @@ public:
     // if m_offset is zero, it indicates that the value holder should allocate
     // memory for the value.
     if (m_offset == 0)
-      holder =  new Value_holder_specific<T>(NULL);  
+      holder =  new Value_holder_specific<T>(NULL);
     // else - the container member's pointer is used for the value
     else
       holder = new Value_holder_specific<T>((T*)container->get_member_pointer(m_offset));
@@ -102,7 +129,7 @@ public:
   }
 
   /*! \todo
-  // Creates an SAI_field of the same type id and name 
+  // Creates an SAI_field of the same type id and name
   // as this field info.
   // The function also create a new SAI_field_info of the same type
   // and initializes the new SAI_field with it.
@@ -111,6 +138,40 @@ public:
     return new SAI_field_template<T,type_id>;
   }
   */
+
+  virtual Delegator* create_delegator()
+  {
+    Delegator_specific<T>* delegator = new Delegator_specific<T>();
+    return delegator;
+  }
+
+  virtual Delegator* set_source(Container* container, Delegator* delegator)
+  {
+    if (!m_handle) {
+      if (delegator) delete delegator;
+      return NULL;
+    }
+
+    Delegator_specific<T>* delegator_specific =
+      dynamic_cast<Delegator_specific<T>*>(delegator);
+    T* handle = (container->*m_handle)(this);
+    delegator_specific->set_source(handle);
+    return delegator;
+  }
+
+  virtual Delegator* set_destination(Container* container, Delegator* delegator)
+  {
+    if (!m_handle) {
+      if (delegator) delete delegator;
+      return NULL;
+    }
+
+    Delegator_specific<T>* delegator_specific =
+      dynamic_cast<Delegator_specific<T>*>(delegator);
+    T* handle = (container->*m_handle)(this);
+    delegator_specific->set_destination(handle);
+    return delegator;
+  }
 };
 
 SGAL_END_NAMESPACE

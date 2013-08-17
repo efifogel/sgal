@@ -74,7 +74,7 @@ protected:
   typedef Arrangement_on_sphere_graph_geo           Self;
   typedef SGAL::Arrangement_on_sphere_graph         Aos_graph;
   typedef SGAL::Arrangement_on_sphere_marked        Aos_mark;
-   
+
 public:
   /*! Constructor. */
   Arrangement_on_sphere_graph_geo(Boolean proto = false);
@@ -83,21 +83,23 @@ public:
   virtual ~Arrangement_on_sphere_graph_geo();
 
   /* Construct the prototype. */
-  static Arrangement_on_sphere_graph_geo* prototype()
-  { return new Arrangement_on_sphere_graph_geo(true); }
+  static Arrangement_on_sphere_graph_geo* prototype();
 
   /*! Clone */
-  virtual Container* clone()
-  { return new Arrangement_on_sphere_graph_geo(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype */
   virtual void init_prototype();
 
   /*! Delete the container prototype */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes */
   virtual void set_attributes(Element* elem);
@@ -121,7 +123,7 @@ public:
 
   /*! Set the arrangement. */
   void set_aos(Aos_graph* aos);
-  
+
   /*! Add a geometry container that represents an arrangement on a
    * sphere to the list of such geometry containers.
    */
@@ -136,10 +138,10 @@ public:
   /*! Obtain the overlay traits (non-const version). */
   Arrangement_graph_overlay_traits<Aos_mark, Aos_graph> & get_overlay_traits()
   { return m_overlay_traits; }
-  
+
   /*! Print statistics. */
   void print_stat() { Arrangement_on_surface_geo::print_stat(this); }
-  
+
   /*! Draw the arrangement vertices.
    * \param action
    */
@@ -162,7 +164,7 @@ protected:
   typedef Vertices_renderer<Self>          Sphere_vertices_renderer;
   typedef Isolated_vertices_renderer<Self> Sphere_isolated_vertices_renderer;
   typedef Edges_renderer<Self>             Sphere_edges_renderer;
-  
+
   typedef Colored_vertices_renderer<Sphere_vertices_renderer>
                                            Sphere_colored_vertices_renderer;
   typedef Colored_isolated_vertices_renderer<Sphere_isolated_vertices_renderer>
@@ -198,14 +200,14 @@ protected:
    * when this geometry node is destructed.
    */
   Boolean m_owned_aos;
-  
+
   /*! The arrangement of great-circle arcs on a sphere. */
   Aos_graph* m_aos;
 
   typedef std::vector<Shared_arrangement_on_sphere_graph_geo> Aos_geo_vector;
   typedef Aos_geo_vector::iterator                            Aos_geo_iter;
   typedef Aos_geo_vector::difference_type                     Aos_geo_diff;
-  
+
   /*! A container of geometry nodes that represent arrangements of
    * great-circle arcs on a sphere.
    */
@@ -213,7 +215,7 @@ protected:
 
   /*! An overlay-traits class for computing the overlay. */
   Arrangement_graph_overlay_traits<Aos_mark, Aos_graph> m_overlay_traits;
-  
+
   /*! Create the renderers. */
   void create_renderers();
 
@@ -222,12 +224,21 @@ protected:
 
  private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The container prototype. */
   static Container_proto* s_prototype;
 };
-  
+
+/* \brief constructs the prototype. */
+inline Arrangement_on_sphere_graph_geo*
+Arrangement_on_sphere_graph_geo::prototype()
+{ return new Arrangement_on_sphere_graph_geo(true); }
+
+/*! \brief clones. */
+inline Container* Arrangement_on_sphere_graph_geo::clone()
+{ return new Arrangement_on_sphere_graph_geo(); }
+
 SGAL_END_NAMESPACE
 
 #endif

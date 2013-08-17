@@ -57,7 +57,7 @@ public:
    */
   void cycle_reset()
   {
-    m_is_mouse_over = SGAL_FALSE;
+    m_is_mouse_over = false;
   }
 
   /*!
@@ -99,43 +99,43 @@ public:
    */
   void set_rendering_required()
   {
-    m_rendering_required = SGAL_TRUE;
-    m_is_aa_interrupt = SGAL_TRUE;
+    m_rendering_required = true;
+    m_is_aa_interrupt = true;
   }
 
   /*!
    */
   void reset_rendering_required()
   {
-    m_rendering_required = SGAL_FALSE;
+    m_rendering_required = false;
   }
 
   /*!
    */
   void lock_draging()
   {
-    m_dragging_locked = SGAL_TRUE;
+    m_dragging_locked = true;
   }
 
   /*!
    */
   void unlock_dragging()
   {
-    m_dragging_locked = SGAL_FALSE;
+    m_dragging_locked = false;
   }
 
   /*!
    */
   void lock_scope()
   {
-    m_scope_locked = SGAL_TRUE;
+    m_scope_locked = true;
   }
 
   /*!
    */
   void unlock_scope()
   {
-    m_scope_locked = SGAL_FALSE;
+    m_scope_locked = false;
   }
 
   /*!
@@ -158,14 +158,14 @@ public:
    */
   void set_is_cursor_on() 
   {
-    m_is_cursor_on = SGAL_TRUE;
+    m_is_cursor_on = true;
   }
 
   /*!
    */
   void reset_is_cursor_on() 
   {
-    m_is_cursor_on = SGAL_FALSE;
+    m_is_cursor_on = false;
   }
 
   /*!
@@ -179,7 +179,7 @@ public:
    */
   void set_mouse_over() 
   {
-    m_is_mouse_over = SGAL_TRUE;
+    m_is_mouse_over = true;
   }
 
   /*!
@@ -191,7 +191,7 @@ public:
 
   /*!
    */
-  void set_loading_done(Boolean flag = SGAL_TRUE);
+  void set_loading_done(Boolean flag = true);
 
   /*!
    */
@@ -214,7 +214,7 @@ public:
 
   /*!
    */
-  void set_current_view_calculation_required(Boolean flag = SGAL_TRUE)
+  void set_current_view_calculation_required(Boolean flag = true)
   {
     m_current_view_calculation_required = flag;
   }
@@ -253,7 +253,7 @@ public:
   void add_comp_interpolator() 
   { 
     m_compressed_interpolators_count++; 
-    m_is_update_time_active = SGAL_FALSE;            
+    m_is_update_time_active = false;            
   }
     
   void update_comp_interpolator(); 
@@ -318,7 +318,7 @@ private :
    */
   float m_min_frame_rate;
 
-  /*! SGAL_TRUE when the current view should be calculated */
+  /*! true when the current view should be calculated */
   Boolean m_current_view_calculation_required;
 
   /*! a pointer to the flow sensor */

@@ -37,11 +37,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! Container execution function
-typedef void (Container::* Execution_function)(Field_info*);
-
-std::string Arc::s_tag = "Arc";
-Container_proto* Arc::s_prototype = NULL;
+const std::string Arc::s_tag = "Arc";
+Container_proto* Arc::s_prototype(NULL);
 
 // Default values:
 const Float Arc::s_def_radius(1.0f);
@@ -55,20 +52,20 @@ const Boolean Arc::s_def_is_solid(false);
 
 /*! Halftone stipple pattern for backfacing elements */
 Ubyte Arc::s_halftone[] = {
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+  0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
 };
@@ -78,14 +75,14 @@ REGISTER_TO_FACTORY(Arc, "Arc");
 /*! Constructor */
 Arc::Arc(Boolean proto) :
   Geometry(proto),
-  m_radius(s_def_radius), 
+  m_radius(s_def_radius),
   m_stacks(s_def_stacks),
   m_slices(s_def_slices),
   m_alpha(s_def_alpha),
   m_beta(s_def_beta),
   m_gamma(s_def_gamma),
   m_delta(s_def_delta),
-/*  		
+/*
 alpha 2.0 #arc start position in radians
 beta 1.0 #Arc height on the main axis in radians
 gamma 3.14 #Arc length in radians
@@ -98,11 +95,11 @@ delta 0.01 #thickness
 Arc::~Arc() {}
 
 /*! \brief draws the arc */
-void Arc::draw(Draw_action* action) 
+void Arc::draw(Draw_action* action)
 {
   Context* context = action->get_context();
   if (!context) return;
-  
+
   Uint pass_no = action->get_pass_no();
   if (pass_no == 0) {
     action->set_second_pass_required(true);
@@ -113,7 +110,7 @@ void Arc::draw(Draw_action* action)
     glEnable(GL_POLYGON_STIPPLE);
     glPolygonStipple(s_halftone);
   }
-  
+
   if (has_scale()) glEnable(GL_NORMALIZE);
 //   if (!m_is_solid) {
 //     context->draw_cull_face(Gfx::NO_CULL);
@@ -138,16 +135,16 @@ void Arc::draw(Draw_action* action)
 
     float beta = m_beta;
     float beta_top;
-        
+
     for (j = 0; j < m_stacks; j++) {
       float sin_beta_bottom, sin_beta_top;
       float cos_beta_bottom, cos_beta_top;
 
       beta_top = beta + d_delta;
-            
+
       sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
       sincosf(beta_top, &sin_beta_top, &cos_beta_top);
-            
+
       // bottom left:
       vbl[0] = sin_beta_bottom * sin_alpha_left;
       vbl[2] = sin_beta_bottom * cos_alpha_left;
@@ -170,7 +167,7 @@ void Arc::draw(Draw_action* action)
 
       float bottom = m_radius * cos_beta_bottom;
       float top = m_radius * cos_beta_top;
-            
+
       // Render:
       glBegin(GL_QUADS);
       glNormal3f(vbl[0], cos_beta_bottom, vbl[2]);
@@ -195,7 +192,7 @@ void Arc::draw(Draw_action* action)
     }
     alpha = alpha_right;
   }
-    
+
 //   if (!m_is_solid) {
 //     context->draw_cull_face(Gfx::BACK_CULL);
 //     context->draw_light_model_sides(Gfx::ONE_SIDE);
@@ -211,7 +208,7 @@ void Arc::draw(Draw_action* action)
 }
 
 /*! \brief draws the object in selection mode */
-void Arc::isect(Isect_action* action) 
+void Arc::isect(Isect_action* action)
 {
   // Calculate lower left vertex:
   Vector3f vbl, vtl, vtr, vbr;
@@ -231,16 +228,16 @@ void Arc::isect(Isect_action* action)
 
     float beta = m_beta;
     float beta_top;
-        
+
     for (j = 0; j < m_slices; j++) {
       float sin_beta_bottom, sin_beta_top;
       float cos_beta_bottom, cos_beta_top;
 
       beta_top = beta + d_delta;
-            
+
       sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
       sincosf(beta_top, &sin_beta_top, &cos_beta_top);
-            
+
       // bottom left:
       vbl[0] = sin_beta_bottom * sin_alpha_left;
       vbl[2] = sin_beta_bottom * cos_alpha_left;
@@ -263,7 +260,7 @@ void Arc::isect(Isect_action* action)
 
       float bottom = m_radius * cos_beta_bottom;
       float top = m_radius * cos_beta_top;
-            
+
       // Render:
       glBegin(GL_QUADS);
       glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
@@ -290,7 +287,7 @@ Boolean Arc::clean_sphere_bound()
 void Arc::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
-  
+
   typedef Element::Str_attr_iter Str_attr_iter;
 
   for (Str_attr_iter ai = elem->str_attrs_begin();
@@ -350,9 +347,9 @@ void Arc::set_attributes(Element* elem)
  * The list is of name=value pairs.
  * \return a list of pairs of strings
  */
-Attribute_list Arc::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Arc::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -419,42 +416,49 @@ void Arc::init_prototype()
   s_prototype = new Container_proto(Geometry::get_prototype());
 
   // Add the field-info records to the prototype:
+  // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func));
 
+  // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           get_member_offset(&m_stacks),
                                           exec_func));
 
+  // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           get_member_offset(&m_slices),
                                           exec_func));
 
+  // alpha
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
                                            get_member_offset(&m_slices),
                                            exec_func));
 
+  // beta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(BETA, "beta",
                                            get_member_offset(&m_slices),
                                            exec_func));
 
+  // gamma
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(GAMMA, "gamma",
                                            get_member_offset(&m_slices),
                                            exec_func));
 
+  // delta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(DELTA, "delta",
@@ -470,10 +474,10 @@ void Arc::delete_prototype()
 }
 
 /*! \brief obtains the arc prototype, */
-Container_proto* Arc::get_prototype() 
-{  
+Container_proto* Arc::get_prototype()
+{
   if (!s_prototype) Arc::init_prototype();
   return s_prototype;
-} 
+}
 
 SGAL_END_NAMESPACE

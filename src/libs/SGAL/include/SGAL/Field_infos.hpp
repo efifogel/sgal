@@ -51,61 +51,87 @@ SGAL_BEGIN_NAMESPACE
 // Definition of a cointainer pointer
 class Container;
 
-typedef boost::shared_ptr<Container>                       Shared_container;
+typedef boost::shared_ptr<Container>                   Shared_container;
 
-typedef Field_info_template<Boolean, SF_BOOL>              SF_bool;
-typedef Field_info_template<Float, SF_FLOAT>               SF_float;
-typedef Field_info_template<Uint, SF_INT32>                SF_uint;
-typedef Field_info_template<Int, SF_INT32>                 SF_int;
-typedef Field_info_template<Scene_time, SF_TIME>           SF_time;
-typedef Field_info_template<Vector2f, SF_VEC2F>            SF_vector2f;
-typedef Field_info_template<Vector3f, SF_VEC3F>            SF_vector3f;
-typedef Field_info_template<Vector3f, SF_COLOR>            SF_color;
-typedef Field_info_template<Vector4f, SF_VEC4F>            SF_vector4f;
-typedef Field_info_template<Rotation, SF_ROTATION>         SF_rotation;
-typedef Field_info_template<Sphere_bound, SF_SB>           SF_sphere_bound;
-typedef Field_info_template<std::string, SF_STR>           SF_string;
-typedef Field_info_template<Container*, SF_CONTAINER>      SF_container;
+// Multi field types
+typedef SGAL::Array<Float>                             Float_array;
+typedef SGAL::Array<Uint>                              Uint_array;
+typedef SGAL::Array<Int>                               Int_array;
+typedef SGAL::Array<Scene_time>                        Scene_time_array;
+typedef SGAL::Array<Vector2f>                          Vector2f_array;
+typedef SGAL::Array<Vector3f>                          Vector3f_array;
+typedef SGAL::Array<Vector3f>                          Vector3f_array;
+typedef SGAL::Array<Vector4f>                          Vector4f_array;
+typedef SGAL::Array<Rotation>                          Rotation_array;
+typedef SGAL::Array<Sphere_bound>                      Sphere_bound_array;
+typedef SGAL::Array<std::string>                       String_array;
+typedef SGAL::Array<Container*>                        Container_array;
+typedef SGAL::Array<Shared_container>                  Shared_container_array;
+
+// Field information records
+// Single field
+typedef Field_info_template<Boolean, SF_BOOL>          SF_bool;
+typedef Field_info_template<Float, SF_FLOAT>           SF_float;
+typedef Field_info_template<Uint, SF_INT32>            SF_uint;
+typedef Field_info_template<Int, SF_INT32>             SF_int;
+typedef Field_info_template<Scene_time, SF_TIME>       SF_time;
+typedef Field_info_template<Vector2f, SF_VEC2F>        SF_vector2f;
+typedef Field_info_template<Vector3f, SF_VEC3F>        SF_vector3f;
+typedef Field_info_template<Vector3f, SF_COLOR>        SF_color;
+typedef Field_info_template<Vector4f, SF_VEC4F>        SF_vector4f;
+typedef Field_info_template<Rotation, SF_ROTATION>     SF_rotation;
+typedef Field_info_template<Sphere_bound, SF_SB>       SF_sphere_bound;
+typedef Field_info_template<std::string, SF_STR>       SF_string;
+typedef Field_info_template<Container*, SF_CONTAINER>  SF_container;
 typedef Field_info_template<Shared_container, SF_SHARED_CONTAINER>
-  SF_shared_container;
+                                                       SF_shared_container;
 
-typedef SGAL::Array<Float>                            Float_array;
-typedef SGAL::Array<Uint>                             Uint_array;
-typedef SGAL::Array<Int>                              Int_array;
-typedef SGAL::Array<Scene_time>                       Scene_time_array;
-typedef SGAL::Array<Vector2f>                         Vector2f_array;
-typedef SGAL::Array<Vector3f>                         Vector3f_array;
-typedef SGAL::Array<Vector3f>                         Vector3f_array;
-typedef SGAL::Array<Vector4f>                         Vector4f_array;
-typedef SGAL::Array<Rotation>                         Rotation_array;
-typedef SGAL::Array<Sphere_bound>                     Sphere_bound_array;
-typedef SGAL::Array<std::string>                      String_array;
-typedef SGAL::Array<Container*>                       Container_array;
-typedef SGAL::Array<Shared_container>                 Shared_container_array;
-
-typedef Field_info_template<Float_array, MF_FLOAT>         MF_float;
-typedef Field_info_template<Uint_array, MF_INT32>          MF_uint;
-typedef Field_info_template<Int_array, MF_INT32>           MF_int;
-typedef Field_info_template<Scene_time_array, MF_TIME>     MF_time;
-typedef Field_info_template<Vector2f_array, MF_VEC2F>      MF_vector2f;
-typedef Field_info_template<Vector3f_array, MF_VEC3F>      MF_vector3f;
-typedef Field_info_template<Vector3f_array, MF_COLOR>      MF_color;
-typedef Field_info_template<Vector4f_array, MF_VEC4F>      MF_vector4f;
-typedef Field_info_template<Rotation_array, MF_ROTATION>   MF_rotation;
-typedef Field_info_template<Sphere_bound_array, MF_SB>     MF_sphere_bound;
-typedef Field_info_template<String_array, MF_STR>          MF_string;
-typedef Field_info_template<Container_array, MF_CONTAINER> MF_container;
+// Multi field
+typedef Field_info_template<Float_array, MF_FLOAT>     MF_float;
+typedef Field_info_template<Uint_array, MF_INT32>      MF_uint;
+typedef Field_info_template<Int_array, MF_INT32>       MF_int;
+typedef Field_info_template<Scene_time_array, MF_TIME> MF_time;
+typedef Field_info_template<Vector2f_array, MF_VEC2F>  MF_vector2f;
+typedef Field_info_template<Vector3f_array, MF_VEC3F>  MF_vector3f;
+typedef Field_info_template<Vector3f_array, MF_COLOR>  MF_color;
+typedef Field_info_template<Vector4f_array, MF_VEC4F>  MF_vector4f;
+typedef Field_info_template<Rotation_array, MF_ROTATION>
+                                                       MF_rotation;
+typedef Field_info_template<Sphere_bound_array, MF_SB> MF_sphere_bound;
+typedef Field_info_template<String_array, MF_STR>      MF_string;
+typedef Field_info_template<Container_array, MF_CONTAINER>
+                                                       MF_container;
 typedef Field_info_template<Shared_container_array, MF_SHARED_CONTAINER>
-  MF_shared_container;
+                                                       MF_shared_container;
+
+// Field handle functions
+// Single field handle functions
+typedef Handle_function<Boolean>::type        Boolean_handle_function;
+typedef Handle_function<Float>::type          Float_handle_function;
+typedef Handle_function<Uint>::type           Uint_handle_function;
+typedef Handle_function<Int>::type            Int_handle_function;
+typedef Handle_function<Scene_time>::type     Scene_time_handle_function;
+typedef Handle_function<Vector2f>::type       Vector2f_handle_function;
+typedef Handle_function<Vector3f>::type       Vector3f_handle_function;
+typedef Handle_function<Vector3f>::type       Vector3f_handle_function;
+typedef Handle_function<Vector4f>::type       Vector4f_handle_function;
+typedef Handle_function<Rotation>::type       Rotation_handle_function;
+typedef Handle_function<Sphere_bound>::type   Sphere_bound_handle_function;
+typedef Handle_function<std::string>::type    String_handle_function;
+typedef Handle_function<Container*>::type     Container_pointer_handle_function;
+typedef Handle_function<Shared_container>::type
+                                              Shared_container_handle_function;
+
+// Multi field handle functions
 
 #if 0
 class Field_info_utils {
 public:
   /*! */
-  static Field_info* allocate_field_info(Uint id, 
+  static Field_info* allocate_field_info(Uint id,
                                          const std::string& name,
                                          const std::string& type,
-                                         const std::string& value, 
+                                         const std::string& value,
                                          Ulong offset,
                                          Execution_function execution = NULL)
   {

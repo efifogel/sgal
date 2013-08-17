@@ -52,7 +52,7 @@ class Container_proto;
 class Scene_graph;
 
 class SGAL_SGAL_DECL Texture_2d : public Texture {
-public: 
+public:
   enum {
     FIRST = Texture::LAST - 1,
     IMAGE,
@@ -78,8 +78,12 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype(); 
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of the texture extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
    */
@@ -87,7 +91,7 @@ public:
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   // virtual Attribute_list get_attributes();
@@ -97,7 +101,7 @@ public:
 
   /*! Set the texture image. */
   void set_image(Image* image);
-  
+
   /*! Obtain the texture format. */
   Image::Format get_format() const;
 
@@ -109,7 +113,7 @@ public:
 
   /*! Obtain the texture pixel-data. */
   void* get_pixels() const;
-  
+
   /*! Draw the texture. */
   virtual void draw(Context* ctx);
 
@@ -127,7 +131,7 @@ public:
 
   Text_texture* get_text() const;
 #endif
-  
+
   /*! Prin texture information */
   void print_info();
 
@@ -139,7 +143,7 @@ protected:
   /*! */
   Text_texture* m_text;
 #endif
-  
+
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
@@ -162,7 +166,7 @@ inline Image* Texture_2d::get_image() const { return m_image; }
 
 /*! \brief sets the texture image. */
 inline  void Texture_2d::set_image(Image* image) { m_image = image; }
-  
+
 /*! \brief obtain the texture format. */
 inline  Image::Format Texture_2d::get_format() const
 { return m_image->get_format(); }

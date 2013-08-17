@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Cone::s_tag = "Cone";
-Container_proto* Cone::s_prototype = NULL;
+Container_proto* Cone::s_prototype(NULL);
 
 // Default values:
 const Float Cone::s_def_bottom_radius(1);
@@ -50,7 +50,7 @@ REGISTER_TO_FACTORY(Cone, "Cone");
 /*! Constructor */
 Cone::Cone(Boolean proto) :
   Geometry(proto),
-  m_dirty(SGAL_TRUE),
+  m_dirty(true),
   m_bottom_radius(s_def_bottom_radius),
   m_height(s_def_height),
   m_stacks(s_def_stacks),
@@ -69,8 +69,8 @@ Cone::~Cone()
   gluDeleteQuadric(m_cone_base);
 }
 
-/** 
- * Draws the Cone. 
+/**
+ * Draws the Cone.
  * @param draw_action the draw action
  */
 void Cone::draw(Draw_action* action)
@@ -103,11 +103,11 @@ void Cone::draw(Draw_action* action)
   glDisable(GL_NORMALIZE);
 }
 
-/** 
- * Draws the object in selection mode 
+/**
+ * Draws the object in selection mode
  * @param action
  */
-void Cone::isect(Isect_action* action) 
+void Cone::isect(Isect_action* action)
 {
   if (is_dirty()) clean();
 
@@ -145,13 +145,13 @@ void Cone::clean()
 {
   m_cone = gluNewQuadric();
   gluQuadricOrientation(m_cone, GLU_OUTSIDE);
-  gluQuadricNormals(m_cone, GLU_SMOOTH); 
-  gluQuadricDrawStyle(m_cone, GLU_FILL); 
+  gluQuadricNormals(m_cone, GLU_SMOOTH);
+  gluQuadricDrawStyle(m_cone, GLU_FILL);
 
   m_cone_base = gluNewQuadric();
   gluQuadricOrientation(m_cone_base, GLU_OUTSIDE);
-  gluQuadricNormals(m_cone_base, GLU_SMOOTH); 
-  gluQuadricDrawStyle(m_cone_base, GLU_FILL); 
+  gluQuadricNormals(m_cone_base, GLU_SMOOTH);
+  gluQuadricDrawStyle(m_cone_base, GLU_FILL);
 
   m_dirty = false;
 }
@@ -189,17 +189,17 @@ void Cone::set_attributes(Element* elem)
       set_slices(atoi(value.c_str()));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "bottom") {
       set_is_bottom_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "side") {
       set_is_side_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
   }
 
   // Remove all the deleted attributes:
@@ -214,9 +214,9 @@ void Cone::set_attributes(Element* elem)
  * The list is of name=value pairs.
  * @return a list of pairs of strings
  */
-Attribute_list Cone::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Cone::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -275,39 +275,40 @@ void Cone::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
 
-  // Bounding sphere changed
+  // bottomRadius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_float(BOTTOM_RADIUS, "bottom_radius",
+  s_prototype->add_field_info(new SF_float(BOTTOM_RADIUS, "bottomRadius",
                                            get_member_offset(&m_bottom_radius),
                                            exec_func));
 
+  // height
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            get_member_offset(&m_height),
                                            exec_func));
 
+  // side
   s_prototype->
     add_field_info(new SF_bool(SIDE, "side",
                                get_member_offset(&m_side_visible),
                                exec_func));
 
+  // bottom
   s_prototype->
     add_field_info(new SF_bool(BOTTOM, "bottom",
                                get_member_offset(&m_bottom_visible),
                                exec_func));
 
-  // Only rendering
+  // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_int(SLICES, "slices",
                                          get_member_offset(&m_slices),
                                          exec_func));
 
+  // stacks
   s_prototype->add_field_info(new SF_int(STACKS, "stacks",
                                          get_member_offset(&m_stacks),
                                          exec_func));
@@ -321,10 +322,10 @@ void Cone::delete_prototype()
 }
 
 /*! */
-Container_proto* Cone::get_prototype() 
-{  
+Container_proto* Cone::get_prototype()
+{
   if (!s_prototype) Cone::init_prototype();
   return s_prototype;
-} 
+}
 
 SGAL_END_NAMESPACE

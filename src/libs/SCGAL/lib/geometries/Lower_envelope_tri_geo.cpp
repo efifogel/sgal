@@ -54,7 +54,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Lower_envelope_tri_geo::s_tag = "LowerEnvelopeTri";
-Container_proto* Lower_envelope_tri_geo::s_prototype = NULL;
+Container_proto* Lower_envelope_tri_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Lower_envelope_tri_geo, "Lower_envelope_tri_geo");
 

@@ -60,7 +60,7 @@ typedef QdX::Quadric_3<AT> Quadric_3;
 #else
 typedef QdX::P_quadric_3<AT> Quadric_3;
 #endif
-  
+
   enum {
     FIRST = Geometry::LAST - 1,
     COEFFICIENTS,
@@ -74,27 +74,23 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
   virtual ~Quadric_geo();
 
   /* Construct the prototype. */
-  static Quadric_geo* prototype() { return new Quadric_geo(true); }
+  static Quadric_geo* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Quadric_geo(); }
-
-  /*! Set the coefficients of the quadric. */
-  void set_coefficients(std::vector<AT::Integer>& coeff)
-  { m_coefficients = coeff; }
-
-  /*! Obtain the coefficients of the quadric. */
-  const std::vector<AT::Integer>& get_coefficients() const
-  { return m_coefficients; }
+  virtual Container* clone();
 
   /*! \brief initializes the container prototype. */
   virtual void init_prototype();
 
   /*! \brief deletes the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! \brief obtains the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! \brief sets the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
@@ -115,10 +111,18 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
    */
   virtual void draw(Draw_action* action);
 
+  /*! Set the coefficients of the quadric. */
+  void set_coefficients(std::vector<AT::Integer>& coeff)
+  { m_coefficients = coeff; }
+
+  /*! Obtain the coefficients of the quadric. */
+  const std::vector<AT::Integer>& get_coefficients() const
+  { return m_coefficients; }
+
   /*! Clean the representation and prepares it for drawing.
    */
   void clean();
-  
+
   /*! Clear the internal representation and auxiliary data structures.
    */
   void clear();
@@ -126,7 +130,7 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
   /*! Determine whether the representation hasn't been updated.
    */
   Boolean is_dirty() const { return m_dirty; }
-  
+
   /*! Is the representation empty ?
    * \return a Boolean that indicates whether the representation empty.
    */
@@ -136,7 +140,7 @@ typedef QdX::P_quadric_3<AT> Quadric_3;
    * \return the quadric object
    */
   const Quadric_3& get_quadric() const { return m_quadric; }
-  
+
 protected:
   /*! The coefficients of the quadric */
   std::vector<AT::Integer> m_coefficients;
@@ -144,7 +148,7 @@ protected:
   /*! obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
-private:  
+private:
   /*! The tag that identifies this container type. */
   static std::string s_tag;
 
@@ -162,6 +166,12 @@ private:
    */
   void draw_geometry(Draw_action* action);
 };
+
+/* \brief constructs the prototype. */
+inline Quadric_geo* Quadric_geo::prototype() { return new Quadric_geo(true); }
+
+/*! \brief clones. */
+inline Container* Quadric_geo::clone() { return new Quadric_geo(); }
 
 SGAL_END_NAMESPACE
 

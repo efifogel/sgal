@@ -63,11 +63,10 @@ public:
   virtual ~Exact_normal_array() { clear(); }
 
   /* Construct the prototype */
-  static Exact_normal_array* prototype()
-  { return new Exact_normal_array(true); }
+  static Exact_normal_array* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Exact_normal_array(); }
+  virtual Container* clone();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -75,41 +74,45 @@ public:
   /*! Delete the node prototype */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
+  /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
-  /*! Size */
-  Uint size() const { return m_array.size(); }
-  
-  /*! Resize */
-  void resize(Uint n) { m_array.resize(n); }
+  /*! Obain the size. */
+  Uint size() const;
+
+  /*! Resize. */
+  void resize(Uint n);
 
   /*! Clear the array */
-  void clear() { m_array.clear(); }
+  void clear();
 
   /*! Begin */
-  Exact_vector_iter begin() { return m_array.begin(); }
-  Exact_vector_const_iter begin() const { return m_array.begin(); }
-  
+  Exact_vector_iter begin();
+  Exact_vector_const_iter begin() const;
+
   /*! End */
-  Exact_vector_iter end() { return m_array.end(); }
-  Exact_vector_const_iter end() const { return m_array.end(); }
+  Exact_vector_iter end();
+  Exact_vector_const_iter end() const;
 
   /*! Array indexing operator */
-  Exact_vector_3& operator[](Uint n) { return m_array[n]; }
+  Exact_vector_3& operator[](Uint n);
 
   /*! Array indexing operator */
-  const Exact_vector_3& operator[](Uint n) const { return m_array[n]; }
+  const Exact_vector_3& operator[](Uint n) const;
 
   /*! Inserts a new element at the end */
-  void push_back(const Exact_vector_3& p) { m_array.push_back(p); }
-    
+  void push_back(const Exact_vector_3& p);
+
 protected:
   /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -121,6 +124,55 @@ private:
   /*! The exact normal array */
   Exact_vector_vector m_array;
 };
+
+/* \brief constructs the prototype. */
+inline Exact_normal_array* Exact_normal_array::prototype()
+{ return new Exact_normal_array(true); }
+
+/*! \brief clones. */
+inline Container* Exact_normal_array::clone()
+{ return new Exact_normal_array(); }
+
+/*! \brief obains the size. */
+inline Uint Exact_normal_array::size() const { return m_array.size(); }
+
+/*! \brief resizes. */
+inline void Exact_normal_array::resize(Uint n) { m_array.resize(n); }
+
+/*! \brief clears the array */
+inline void Exact_normal_array::clear() { m_array.clear(); }
+
+/*! \brief obtains the begin iterator. */
+inline Exact_normal_array::Exact_vector_iter Exact_normal_array::begin()
+{ return m_array.begin(); }
+
+inline Exact_normal_array::Exact_vector_const_iter Exact_normal_array::begin()
+  const
+{ return m_array.begin(); }
+
+/*! \brief obtains the pass-the-end iterator. */
+inline Exact_normal_array::Exact_vector_iter Exact_normal_array::end()
+{ return m_array.end(); }
+
+inline Exact_normal_array::Exact_vector_const_iter Exact_normal_array::end()
+  const
+{ return m_array.end(); }
+
+/*! \brief array indexing (non-const) operator. */
+inline Exact_vector_3& Exact_normal_array::operator[](Uint n)
+{ return m_array[n]; }
+
+/*! \brief array indexing (const) operator */
+inline const Exact_vector_3& Exact_normal_array::operator[](Uint n) const
+{ return m_array[n]; }
+
+/*! \brief inserts a new element at the end. */
+inline void Exact_normal_array::push_back(const Exact_vector_3& p)
+{ m_array.push_back(p); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Exact_normal_array::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

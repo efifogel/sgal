@@ -54,7 +54,7 @@ public:
   };
 
   typedef boost::shared_ptr<Image>              Shared_image;
-  
+
   /*! Constructor */
   Snapshot(Boolean proto = false);
 
@@ -76,12 +76,16 @@ public:
   /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Trigger the snapshot */
@@ -102,7 +106,7 @@ public:
     FF_pbm,
     FF_num
   };
-  
+
   void set_trigger(Field_info* field_info = NULL  );
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
@@ -126,11 +130,11 @@ public:
 
   /*! Set the image */
   void set_image(Shared_image image) { m_image = image; }
-  
+
   /*! Obtain the image */
   Shared_image get_image() const { return m_image; }
-  
-protected: 
+
+protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -139,7 +143,7 @@ protected:
 
   /*! The directory to save the image at */
   std::string m_dir_name;
-  
+
   /*! The name of the file the image is written to */
   std::string m_file_name;
 
@@ -154,14 +158,14 @@ protected:
 
   /*! The sequence counter */
   Uint m_count;
-  
+
 protected:
   /*! File format names */
   static const char* s_file_format_names[];
-  
-private: 
+
+private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
@@ -174,7 +178,7 @@ private:
 
   /*! Indicates whether the rows are in reverse order (window system style) */
   Boolean m_flip;
-  
+
   // Default values for fields
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
@@ -183,7 +187,7 @@ private:
 
   /*! Allocate space for the image */
   Boolean allocate_space(Draw_action* action);
-  
+
   /*! Take a snapshot of the window */
   void take_snapshot();
 

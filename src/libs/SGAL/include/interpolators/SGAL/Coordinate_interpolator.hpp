@@ -76,7 +76,11 @@ public:
 
   /*! Obtain the container prototype */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   // Functions that handles the creation of an instance in the scene graph
   virtual void set_attributes(Element* elem);
 
@@ -87,7 +91,7 @@ public:
 
   /*! Obtain the domain values */
   const Vector3f_array& get_values() const { return m_values; }
-  
+
   /*! Obtain the domain values */
   Vector3f_array& get_values() { return m_values; }
 

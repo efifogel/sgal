@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -69,15 +69,19 @@ public:
 
   /*! Obtain the node prototype */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
-  
+
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Draw the node while traversing the scene graph */
@@ -88,19 +92,19 @@ public:
 
   /*! Register the mouse and mostion events */
   void unregister_events();
-  
+
   /*! Print out the name of this agent (for debugging purposes) */
   virtual void identify();
 
   /*! Handle mouse events */
   virtual void handle(Mouse_event* event);
-  
+
   /*! Handle motion events */
   virtual void handle(Motion_event* event);
 
   /*! Handle mouse events */
   virtual void handle(Passive_motion_event* event);
-  
+
   void set_enabled(bool enabled);
   bool get_enabled() const { return m_enabled; }
 
@@ -109,7 +113,7 @@ public:
 
   /*! Obtain the scene-graph pointer */
   Scene_graph* get_scene_graph() const { return m_scene_graph; }
-  
+
 protected :
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -129,7 +133,7 @@ private:
 
   Vector3f m_position;
   Rotation m_orientation;
-  
+
   // default values
   static bool s_def_enabled;
 };

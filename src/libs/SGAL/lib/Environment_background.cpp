@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Environment_background::s_tag = "Background";
-Container_proto * Environment_background::s_prototype = NULL;
+Container_proto * Environment_background::s_prototype(NULL);
 
 const Vector3f Environment_background::m_def_sky_color(0, 0, 0);
 
@@ -60,7 +60,7 @@ Environment_background::~Environment_background()
   if (m_back_appearance) {
     delete m_back_appearance;
     m_back_appearance = NULL;
-    
+
   }
 }
 
@@ -106,8 +106,6 @@ void Environment_background::set_attributes(Element * elem)
 void Environment_background::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Background::get_prototype());
 }
 
@@ -121,20 +119,20 @@ void Environment_background::delete_prototype()
 
 /*!
  */
-Container_proto * Environment_background::get_prototype() 
-{  
+Container_proto * Environment_background::get_prototype()
+{
   if (s_prototype == NULL) Environment_background::init_prototype();
   return s_prototype;
 }
 
-/*! Set the appearance of the object 
+/*! Set the appearance of the object
  * @param app the appearance
  */
-void Environment_background::set_back_appearance(Appearance * app) 
+void Environment_background::set_back_appearance(Appearance * app)
 {
   m_back_appearance = app;
-  m_back_appearance->set_light_enable(SGAL_FALSE);
-  m_back_appearance->set_depth_enable(SGAL_FALSE);
+  m_back_appearance->set_light_enable(false);
+  m_back_appearance->set_depth_enable(false);
   m_back_appearance->set_poly_mode(Gfx::FILL_PMODE);
 }
 
@@ -162,7 +160,7 @@ void Environment_background::draw(Draw_action * draw_action)
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
-    
+
   } else {
     Context * context = draw_action->get_context();
     if (context) context->clear_color_depth_buffer(m_sky_color);

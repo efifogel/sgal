@@ -44,8 +44,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Cylindrical_patch::s_tag = "CylindricalPatch";
-Container_proto* Cylindrical_patch::s_prototype = 0;
+const std::string Cylindrical_patch::s_tag = "CylindricalPatch";
+Container_proto* Cylindrical_patch::s_prototype(NULL);
 
 // default values:
 const Float Cylindrical_patch::s_def_radius(1);
@@ -59,7 +59,7 @@ REGISTER_TO_FACTORY(Cylindrical_patch, "Cylindrical_patch");
 /*! Constructor */
 Cylindrical_patch::Cylindrical_patch(Boolean proto) :
   Geometry(proto),
-  m_radius(s_def_radius), 
+  m_radius(s_def_radius),
   m_height(s_def_height),
   m_alpha(s_def_alpha),
   m_beta(s_def_beta),
@@ -79,7 +79,7 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
   Float n_left_z = -sin_left;
   Float top = m_height / 2;
   Float bottom = -top;
-  
+
   Float v_right_x = m_radius * cos_right;
   Float v_right_z = -m_radius * sin_right;
   Float n_right_x = cos_right;
@@ -96,7 +96,7 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
   glNormal3f(n_right_x, 0, n_right_z);
   if (m_generated_tex_coord) glTexCoord2f(1, 1);
   glVertex3f(v_right_x, top, v_right_z);
-    
+
   glNormal3f(n_left_x, 0, n_left_z);
   if (m_generated_tex_coord) glTexCoord2f(1, 0);
   glVertex3f(v_left_x, top, v_left_z);
@@ -105,7 +105,7 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
 /*! Draw the cylindrical patch
  * \param draw_action the draw action
  */
-void Cylindrical_patch::draw(Draw_action* action) 
+void Cylindrical_patch::draw(Draw_action* action)
 {
   if (has_scale()) glEnable(GL_NORMALIZE);
 
@@ -114,7 +114,7 @@ void Cylindrical_patch::draw(Draw_action* action)
     context->draw_cull_face(Gfx::NO_CULL);
     context->draw_light_model_sides(Gfx::TWO_SIDE);
   }
-  
+
   glBegin(GL_QUADS);
   unsigned int i;
   Float cos_left, sin_left, cos_right, sin_right;
@@ -130,7 +130,7 @@ void Cylindrical_patch::draw(Draw_action* action)
   sincosf(m_beta, &sin_right, &cos_right);
   draw_quad(cos_left, sin_left, cos_right, sin_right);
   glEnd();
-  
+
   if (context) {
     context->draw_cull_face(Gfx::BACK_CULL);
     context->draw_light_model_sides(Gfx::ONE_SIDE);
@@ -138,10 +138,10 @@ void Cylindrical_patch::draw(Draw_action* action)
   if (has_scale()) glDisable(GL_NORMALIZE);
 }
 
-/*! Draw the cylindrical patch in selection mode 
+/*! Draw the cylindrical patch in selection mode
  * \param action
  */
-void Cylindrical_patch::isect(Isect_action* action) 
+void Cylindrical_patch::isect(Isect_action* action)
 {
   Float top = m_height / 2;
   Float bottom = -top;
@@ -211,17 +211,17 @@ void Cylindrical_patch::set_attributes(Element* elem)
       set_slices(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "alpha") {
       set_alpha(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "beta") {
       set_beta(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
   }
 
   // Remove all the deleted attributes:
@@ -235,9 +235,9 @@ void Cylindrical_patch::set_attributes(Element* elem)
  * The list is of name=value pairs.
  * \return a list of pairs of strings
  */
-Attribute_list Cylindrical_patch::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Cylindrical_patch::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -281,34 +281,35 @@ void Cylindrical_patch::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! type definition of a container execution function - used with engines
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
 
-  // Sphere bound changed
+  // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func));
 
+  // height
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            get_member_offset(&m_height),
                                            exec_func));
 
-  // Rendering required
+  // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           get_member_offset(&m_slices),
                                           exec_func));
 
+  // alpha
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
                                            get_member_offset(&m_alpha),
                                            exec_func));
+
+  // beta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(BETA, "beta",
@@ -324,10 +325,10 @@ void Cylindrical_patch::delete_prototype()
 }
 
 /*! \brief obtains the prototype */
-Container_proto* Cylindrical_patch::get_prototype() 
-{  
+Container_proto* Cylindrical_patch::get_prototype()
+{
   if (!s_prototype) Cylindrical_patch::init_prototype();
   return s_prototype;
-} 
+}
 
 SGAL_END_NAMESPACE

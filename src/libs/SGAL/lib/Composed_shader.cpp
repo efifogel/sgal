@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Composed_shader::s_prototype = NULL;
+Container_proto* Composed_shader::s_prototype(NULL);
 const std::string Composed_shader::s_tag = "ComposedShader";
 
 /*! Constructor */

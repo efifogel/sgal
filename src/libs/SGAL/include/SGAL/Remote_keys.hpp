@@ -22,10 +22,10 @@
 /**
  * @class: ERemoteKeys
  *
- * Purpose: keys actions. 
+ * Purpose: keys actions.
  *
  * Description:  This is used to key actions on remote controller.
- *    
+ *
  *  Inherits from Container
  */
 
@@ -48,38 +48,44 @@ public:
   typedef std::map<std::string, Key_action *> Key_action_map;
 
   /*! Constructor */
-  Remote_keys(Boolean proto = SGAL_FALSE);
+  Remote_keys(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Remote_keys();
 
   /*! Construct the prototype */
-  static Remote_keys * prototype() {  return new Remote_keys(SGAL_TRUE); }
+  static Remote_keys* prototype() {  return new Remote_keys(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Remote_keys(); }
+  virtual Container* clone() { return new Remote_keys(); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
-  virtual void delete_prototype();
-  virtual Container_proto *get_prototype();
 
-  virtual Trav_directive Draw(Draw_action * draw_action) { return Trav_cont; }
+  virtual void delete_prototype();
+
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  virtual Trav_directive Draw(Draw_action* draw_action) { return Trav_cont; }
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
-  Key_action *get_keyAction(std::string str);
+  Key_action* get_keyAction(std::string str);
 
 private:
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   Key_action_map m_keyMap;
 
 private:
-  Key_action * CreateKeyAction(std::string str);
+  Key_action* CreateKeyAction(std::string str);
 
 };
 

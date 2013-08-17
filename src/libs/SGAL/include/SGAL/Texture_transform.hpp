@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -45,23 +45,23 @@ public:
   };
 
   /*! Constructor */
-  Texture_transform(Boolean proto = SGAL_FALSE);
+  Texture_transform(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Texture_transform();
 
   /* Construct the prototype */
-  static Texture_transform * prototype()
-  { return new Texture_transform(SGAL_TRUE); }
+  static Texture_transform* prototype()
+  { return new Texture_transform(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Texture_transform(); }
+  virtual Container* clone() { return new Texture_transform(); }
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
-  
+
   /*! Initialize the node prototype */
   virtual void init_prototype();
 
@@ -69,18 +69,22 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype */
-  virtual Container_proto * get_prototype();
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 };
 
 SGAL_END_NAMESPACE

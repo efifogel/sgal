@@ -72,7 +72,7 @@ public:
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype */
@@ -84,6 +84,10 @@ public:
   /*! Obtain the node prototype */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Clean the object in case it is dirty. */
   virtual void clean();
 
@@ -92,7 +96,7 @@ public:
 
   /*! Obtain the texture number of components. */
   virtual Uint get_component_count() const;
-  
+
   /*! Set the alpha value */
   void set_alpha(float alpha);
 
@@ -108,7 +112,7 @@ public:
 protected:
   /*! The texture images and a flag that indicates that the image is owned. */
   std::pair<Image*,Boolean> m_images[NUM_IMAGES];
-  
+
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 

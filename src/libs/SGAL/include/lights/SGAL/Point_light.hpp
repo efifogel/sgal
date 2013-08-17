@@ -43,13 +43,13 @@ class Element;
 class Point_light : public Spot_light {
 public:
   /*! Constructor */
-  Point_light(Boolean proto = SGAL_FALSE);
+  Point_light(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Point_light();
 
   /* Construct the prototype */
-  static Point_light * prototype() { return new Point_light(SGAL_TRUE); }
+  static Point_light * prototype() { return new Point_light(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Point_light(); }

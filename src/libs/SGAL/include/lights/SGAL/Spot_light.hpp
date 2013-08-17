@@ -21,10 +21,10 @@
 
 /*!
  * An implementation of a spot light.
- *  
+ *
  * A spot light is a light that is positioned as specified, and has a
  * direction and  a cut off cone specified.
- *  
+ *
  * Inherits from Light
  */
 
@@ -60,24 +60,28 @@ public:
   /*! Destructor */
   virtual ~Spot_light();
 
-  /* Construct the prototype */
-  static Spot_light*  prototype() { return new Spot_light(true); }
+  /* Construct the prototype. */
+  static Spot_light* prototype();
 
   /*! Clone */
-  virtual Container*  clone() { return new Spot_light(); }
-
-  virtual Action::Trav_directive draw(Draw_action*  draw_action);
+  virtual Container* clone();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
   virtual Container_proto*  get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element*  elem);
 
+  virtual Action::Trav_directive draw(Draw_action*  draw_action);
+
   // virtual Attribute_list get_attributes();
-  
+
   void set_direction(const Vector3f& direction);
   void get_direction(Vector3f& direction);
   void set_beam_width(const Float& beam_width);
@@ -102,7 +106,7 @@ protected:
   /*! The radius to which it shines (not used) */
   Float m_radius;
 
-  // default values 
+  // default values
 
   /*! The default attenuation factors (constant, linear, quadratic) */
   static Vector3f s_def_attenuation;
@@ -129,7 +133,7 @@ private:
   /*! The cut off angle (in degrees)*/
   Float m_cutoff_angle;
 
-  // Default values 
+  // Default values
 
   /*! The direction of the light */
   static Vector3f s_def_direction;
@@ -143,6 +147,12 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+/* \brief constructs the prototype. */
+inline Spot_light* Spot_light::prototype() { return new Spot_light(true); }
+
+/*! \brief clones. */
+inline Container* Spot_light::clone() { return new Spot_light(); }
 
 SGAL_END_NAMESPACE
 

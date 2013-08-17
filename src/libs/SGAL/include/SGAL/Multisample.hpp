@@ -46,73 +46,101 @@ public:
     ENABLED,
     NUMBER_OF_SAMPLES
   };
-  
+
   /*! Constructor */
-  Multisample(Boolean proto = SGAL_FALSE);
+  Multisample(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Multisample() {}
 
-  /*! Construct the prototype */
-  static Multisample * prototype() { return new Multisample(SGAL_TRUE); }
+  /*! Construct the prototype. */
+  static Multisample* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Multisample(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype();
-  
-  /*! Set the attributes of the object extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
+  Uint* number_of_samples_handle(Field_info*) { return &m_number_of_samples; }
+  //@}
+
+  /*! Set the attributes of the object extracted from the input file.
+   * \param elem contains lists of attribute names and values.
    */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Set the flag that indicates whether accumulation is enabled */
-  void set_enabled(Boolean flag) { m_enabled = flag; }
+  /*! Set the flag that indicates whether accumulation is enabled. */
+  void set_enabled(Boolean flag);
 
-  /*! is multisample enabled? */
-  Boolean is_enabled() const { return m_enabled; }
-  
-  /*! Set the number of (multi)samples
-   * \param samples number of (multi)samples
-   */
-  void set_number_of_samples(Uint samples) { m_number_of_samples = samples; }
+  /*! Determine whether multisample is enabled. */
+  Boolean is_enabled() const;
 
-  /*! Obtain the number of (multi)samples
-   * \return the number of (multi)samples
+  /*! Set the number of (multi)samples.
+   * \param samples number of (multi)samples.
    */
-  Uint get_number_of_samples() const { return m_number_of_samples; }
-  
+  void set_number_of_samples(Uint samples);
+
+  /*! Obtain the number of (multi)samples.
+   * \return the number of (multi)samples.
+   */
+  Uint get_number_of_samples() const;
+
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
-private:  
-  /*! The tag that identifies this container type */
+private:
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
-  static Container_proto * s_prototype;
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 
-  /*! Indicates whether accumulation is enabled */
+  /*! Indicates whether accumulation is enabled. */
   Boolean m_enabled;
 
-  /*! The number of samples */
+  /*! The number of samples. */
   Uint m_number_of_samples;
-  
-  // default values
+
+  // default values.
   static Boolean s_def_enabled;
   static Uint s_def_number_of_samples;
 };
+
+/*! \brief constructs the prototype. */
+inline Multisample* Multisample::prototype() { return new Multisample(true); }
+
+/*! \brief clones. */
+inline Container* Multisample::clone() { return new Multisample(); }
+
+/*! \brief sets the flag that indicates whether accumulation is enabled. */
+inline void Multisample::set_enabled(Boolean flag) { m_enabled = flag; }
+
+/*! \brief determines whether multisample is enabled. */
+inline Boolean Multisample::is_enabled() const { return m_enabled; }
+
+/*! \brief sets the number of (multi)samples. */
+inline void Multisample::set_number_of_samples(Uint samples)
+{ m_number_of_samples = samples; }
+
+/*! \brief obtains the number of (multi)samples. */
+inline Uint Multisample::get_number_of_samples() const
+{ return m_number_of_samples; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Multisample::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

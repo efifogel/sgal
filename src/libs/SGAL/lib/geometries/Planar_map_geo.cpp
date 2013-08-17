@@ -56,7 +56,7 @@ void Planar_map_geo::draw(Draw_action * draw_action)
 
   int pass_no = draw_action->get_pass_no();
   if (pass_no == 0) {
-    draw_action->set_second_pass_required(SGAL_TRUE);
+    draw_action->set_second_pass_required(true);
     return;
   }
 

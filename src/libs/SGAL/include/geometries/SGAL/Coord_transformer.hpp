@@ -56,7 +56,7 @@ public:
 
   /*! Constructor. */
   Coord_transformer(Boolean proto = false);
-  
+
   /* Construct the prototype. */
   static Coord_transformer* prototype();
 
@@ -79,9 +79,13 @@ public:
    */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Apply the current transformation on the coordinates. */
   void apply();
-  
+
   /*! Translate the input vertices. */
   void translate(Field_info* field_info = NULL);
 
@@ -90,9 +94,9 @@ public:
 
   /*! Transform the input vertices. */
   void execute(Field_info* field_info = NULL);
-  
+
   /*! Set the rotation field. */
-  void set_rotation(const Rotation& rotation);  
+  void set_rotation(const Rotation& rotation);
 
   /*! Set the rotation field. */
   void set_rotation(float v0, float v1, float v2, float v3);
@@ -149,13 +153,13 @@ private:
 
   /*! The transformation */
   Transform m_transform;
-  
+
   /*! The rotation vector */
   Rotation m_rotation;
 
   /*! The translation vector */
   Vector3f m_translation;
-  
+
   /*! The input vertices */
   Shared_coord_array m_coord_array;
 

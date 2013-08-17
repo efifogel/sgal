@@ -51,7 +51,20 @@ void Field::connect(Field* field)
   // lock m_connected_fields critical section
   // (will unlock automaticaly at end of function)
   //! \todo Auto_lock auto_lock(&m_fields_cs);
+  Delegator* delegator = m_field_info->create_delegator();
+  delegator->set_field(field);
+  delegator = m_field_info->set_source(m_container, delegator);
+  if (delegator) delegator = field->set_destination(delegator);
+  if (delegator) {
+    m_delegators.push_back(delegator);
+    return;
+  }
   m_connected_fields.insert(m_connected_fields.begin(), field);
+}
+
+Delegator* Field::set_destination(Delegator* delegator)
+{
+  return m_field_info->set_destination(m_container, delegator);
 }
 
 /*! \brief disconnects this field from the given one. */
@@ -76,22 +89,39 @@ void Field::cascade()
   // (will unlock automaticaly at end of function)
 
   //! \todo Auto_lock auto_lock(&m_fields_cs);
-  if (m_connected_fields.empty()) return;
 
   Field_list::iterator fi;
   // Loop over the connected fields:
   for (fi = m_connected_fields.begin(); fi != m_connected_fields.end(); ++fi) {
     Field* connected_field = (*fi);
-    
+
     // Continue the cascade into a connected field only if it is not blocked:
     if (!connected_field->is_blocked()) {
       // Set the connected field's value to this field's value:
       (connected_field->get_value_holder())->set(m_value_holder);
-      
+
       // Apply cascade on the connected field:
       connected_field->cascade();
     }
   }
+
+  Delegator_list::iterator di;
+  // Loop over the connected fields:
+  for (di = m_delegators.begin(); di != m_delegators.end(); ++di) {
+    Delegator* delegator = *di;
+    Field* connected_field = delegator->get_field();
+
+    // Continue the cascade into a connected field only if it is not blocked:
+    if (!connected_field->is_blocked()) {
+
+     // Set the connected field's value to this field's value:
+      (*delegator)();
+
+      // Apply cascade on the connected field:
+      connected_field->cascade();
+    }
+  }
+
 }
 
 SGAL_END_NAMESPACE

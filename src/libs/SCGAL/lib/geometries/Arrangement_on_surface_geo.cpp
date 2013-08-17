@@ -57,7 +57,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Arrangement_on_surface_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_surface_geo::s_prototype(NULL);
 
 /*! Insertion strategy names */
 const char* Arrangement_on_surface_geo::s_insertion_strategy_names[] =
@@ -177,62 +177,69 @@ void Arrangement_on_surface_geo::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   Execution_function exec_func =
     static_cast<Execution_function>(&Arrangement_on_surface_geo::
                                     renderer_changed);
-  
+
+  // drawOpaque
   s_prototype->
     add_field_info(new SF_bool(DRAW_OPAQUE, "drawOpaque",
                                get_member_offset(&m_draw_opaque), exec_func));
-  
+
+  // drawHaloed
   s_prototype->
     add_field_info(new SF_bool(DRAW_HALOED, "drawHaloed",
                                get_member_offset(&m_draw_haloed), exec_func));
 
+  // drawHalftone
   s_prototype->
     add_field_info(new SF_bool(DRAW_HALFTONE, "drawHalftone",
                                get_member_offset(&m_draw_halftone), exec_func));
 
+  // drawSurface
   s_prototype->
     add_field_info(new SF_bool(DRAW_AOS_SURFACE, "drawSurface",
                                get_member_offset(&m_draw_aos_surface),
                                exec_func));
-  
 
+  // aosVertexStyleId
   s_prototype->
     add_field_info(new SF_int(AOS_VERTEX_STYLE_ID, "aosVertexStyleId",
                               get_member_offset(&m_aos_vertex_style),
                               exec_func));
 
+  // aosIsolatedVertexStyleId
   s_prototype->
     add_field_info(new SF_int(AOS_ISOLATED_VERTEX_STYLE_ID,
                               "aosIsolatedVertexStyleId",
                               get_member_offset(&m_aos_isolated_vertex_style),
                               exec_func));
 
+  // aosIsolatedVertexRadius
   s_prototype->
     add_field_info(new SF_float(AOS_ISOLATED_VERTEX_RADIUS,
                                 "aosIsolatedVertexRadius",
                                 get_member_offset(&m_aos_isolated_vertex_radius)));
 
+  // aosEdgeEnabled
   s_prototype->
     add_field_info(new SF_bool(AOS_EDGE_ENABLED, "aosEdgeEnabled",
                                get_member_offset(&m_aos_edge_enabled),
                                exec_func));
 
+  // aosEdgeStyleId
   s_prototype->
     add_field_info(new SF_int(AOS_EDGE_STYLE_ID, "aosEdgeStyleId",
                               get_member_offset(&m_aos_edge_style),
                               exec_func));
 
+  // aosEdgeCountId
   s_prototype->
     add_field_info(new SF_int(AOS_EDGE_COUNT_ID, "aosEdgeCountId",
                               get_member_offset(&m_aos_edge_count),
                               exec_func));
 
+  // aosEdgeDirected
   s_prototype->
     add_field_info(new SF_bool(AOS_EDGE_DIRECTED, "aosEdgeDirected",
                                get_member_offset(&m_aos_edge_directed),
@@ -304,7 +311,7 @@ Container_proto* Arrangement_on_surface_geo::get_prototype()
       elem->mark_delete(ai);
       continue;
     }
-    
+
     if (name == "aosVertexStyle") {
       m_aos_vertex_style = Vertex_shape::style(strip_double_quotes(value));
       elem->mark_delete(ai);
@@ -372,7 +379,7 @@ Container_proto* Arrangement_on_surface_geo::get_prototype()
       elem->mark_delete(ai);
       continue;
     }
-      
+
     if (name == "aosEdgeEnabled") {
       m_aos_edge_enabled = compare_to_true(value);
       elem->mark_delete(ai);
@@ -410,7 +417,7 @@ Container_proto* Arrangement_on_surface_geo::get_prototype()
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -448,14 +455,14 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
   context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
 
   // Update only the color buffer:
-  context->draw_depth_mask(SGAL_FALSE);
+  context->draw_depth_mask(false);
 
   // Draw the sphere:
   if (m_draw_aos_surface) {
     glColor3fv((float*)&m_aos_surface_color);
     (*m_surface_renderer)(action);
   }
-  
+
   // Draw the edges and the vertices:
   if (m_aos_edge_style == Edge_shape::STRIP)
     (*m_colored_edges_renderer)(action);
@@ -464,7 +471,7 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
   if (m_aos_isolated_vertex_style == Vertex_shape::DISC)
     (*m_colored_isolated_vertices_renderer)(action);
 
-  context->draw_depth_mask(SGAL_TRUE);
+  context->draw_depth_mask(true);
 
   // Update only the depth buffer:
   if ((m_aos_edge_style == Edge_shape::LINE) ||
@@ -482,18 +489,18 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
     draw_aos_vertices(action);
   if (m_aos_isolated_vertex_style == Vertex_shape::DISC)
     draw_aos_isolated_vertices(action);
-  context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));    
+  context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));
   if ((m_aos_edge_style == Edge_shape::LINE) ||
       (m_aos_vertex_style == Vertex_shape::POINT) ||
       (m_aos_vertex_style == Vertex_shape::RING))
   {
-    glDisable(GL_POLYGON_OFFSET_FILL);  
+    glDisable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(0, 0);
   }
-  
+
   // Draw the edges as lines:
   if (m_aos_edge_style == Edge_shape::LINE) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_line_width(m_aos_edge_line_width);
   }
   (*m_colored_edges_renderer)(action);
@@ -504,33 +511,33 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
 
   // Draw the vertices as points or lines:
   if (m_aos_vertex_style == Vertex_shape::POINT) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_point_size(m_aos_vertex_point_size);
     glIsEnabled(GL_POINT_SMOOTH);
   }
   else if (m_aos_vertex_style == Vertex_shape::RING) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_line_width(m_aos_vertex_point_size);
     glIsEnabled(GL_LINE_SMOOTH);
   }
   (*m_colored_vertices_renderer)(action);
   if (m_aos_vertex_style == Vertex_shape::POINT) {
     context->draw_point_size(1.0f);
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
   }
   else if (m_aos_vertex_style == Vertex_shape::RING) {
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
     context->draw_line_width(1.0);
   }
 
   // Draw the isolated vertices as points or lines:
   if (m_aos_isolated_vertex_style == Vertex_shape::POINT) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_point_size(m_aos_vertex_point_size);
     glIsEnabled(GL_POINT_SMOOTH);
   }
   else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_line_width(m_aos_vertex_point_size);
     glIsEnabled(GL_LINE_SMOOTH);
   }
@@ -538,19 +545,19 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
     (*m_colored_isolated_vertices_renderer)(action);
   if (m_aos_isolated_vertex_style == Vertex_shape::POINT) {
     context->draw_point_size(1.0f);
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
   }
   else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
     context->draw_line_width(1.0);
   }
-  
+
   // Draw the usual way:
   if (m_aos_edge_style == Edge_shape::TUBE)
     (*m_colored_edges_renderer)(action);
   if (m_aos_vertex_style == Vertex_shape::BALL)
     (*m_colored_vertices_renderer)(action);
-  
+
   context->draw_material_mode_enable(Gfx::NO_COLOR_MATERIAL);
 }
 
@@ -636,7 +643,7 @@ void Arrangement_on_surface_geo::clean_renderer()
     m_renderer.push_back(m_isolated_vertices_renderer,
                          Arrangement_renderer::DEPTH);
   }
-  
+
   m_renderer_dirty = false;
 }
 

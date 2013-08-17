@@ -36,7 +36,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Single_key_sensor::s_tag = "ViewSensor";
-Container_proto * View_sensor::s_prototype = NULL;
+Container_proto * View_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(View_sensor, "View_sensor");
 
@@ -112,7 +112,7 @@ bool View_sensor::update()
     m_local_view_name_set = true;
   }
 
-  // If the camera is a remote camera - reset the navigation sensor and dont 
+  // If the camera is a remote camera - reset the navigation sensor and dont
   // update the navigation sensor
   if (camera->get_remote())
   {
@@ -167,16 +167,25 @@ void View_sensor::init_prototype()
   s_prototype = new Container_proto();
 
   // Add the object field infos to the prototype
+  // translation
   s_prototype->AddFieldInfo(new SF_vector3f(TRANSLATION, "translation",
                                             get_member_offset(&m_translation)));
+
+  // rotation
   s_prototype->AddFieldInfo(new SF_rotation(ROTATION, "rotation",
                                             get_member_offset(&m_rotation)));
+
+  // fieldOfView
   s_prototype->AddFieldInfo(new SF_float(FOV, "fieldOfView",
                                          get_member_offset(&m_FOV)));
-  s_prototype->AddFieldInfo(new SF_string(LOCALVIEWNAME, "local_view_name",
+
+  // localViewName
+  s_prototype->AddFieldInfo(new SF_string(LOCALVIEWNAME, "localViewName",
                                           get_member_offset(&m_local_view_name)));
+
+  // currentViewName
   s_prototype->
-    AddFieldInfo(new SF_string(CURRENTVIEWNAME, "current_view_name",
+    AddFieldInfo(new SF_string(CURRENTVIEWNAME, "currentViewName",
                                get_member_offset(&m_current_view_name)));
 }
 
@@ -184,17 +193,16 @@ void View_sensor::init_prototype()
 void View_sensor::delete_prototyp() { delete s_prototype; }
 
 /*! */
-Container_proto * View_sensor::get_prototype() 
-{  
+Container_proto* View_sensor::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
-} 
+}
 
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
  */
-void View_sensor::set_attributes(Element * ele, Scene_graph * sg)
+void View_sensor::set_attributes(Element * elem)
 {
   Container::set_attributes(elem);
 }

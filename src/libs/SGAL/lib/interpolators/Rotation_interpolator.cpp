@@ -34,8 +34,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Rotation_interpolator::s_tag = "OrientationInterpolator";
-Container_proto * Rotation_interpolator::s_prototype = 0;
+const std::string Rotation_interpolator::s_tag = "OrientationInterpolator";
+Container_proto* Rotation_interpolator::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Rotation_interpolator, "Rotation_interpolator");
 
@@ -47,10 +47,9 @@ Rotation_interpolator::Rotation_interpolator(Boolean flag, Boolean proto) :
   Interpolator(proto),
   m_interpolate_flag(flag),
   m_last_location(0)
-{
-}
+{}
 
-/*! Destructor - Deletes m_keys and m_values arrays */ 
+/*! Destructor - Deletes m_keys and m_values arrays */
 Rotation_interpolator::~Rotation_interpolator()
 {
   m_values.clear();
@@ -62,6 +61,7 @@ void Rotation_interpolator::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Interpolator::get_prototype());
 
+  // value
   s_prototype->add_field_info(new SF_rotation(VALUE, "value_changed",
                                               get_member_offset(&m_value)));
 }
@@ -74,8 +74,8 @@ void Rotation_interpolator::delete_prototype()
 }
 
 /*! \brief obtains the node prototype */
-Container_proto * Rotation_interpolator::get_prototype() 
-{  
+Container_proto* Rotation_interpolator::get_prototype()
+{
   if (!s_prototype) Rotation_interpolator::init_prototype();
   return s_prototype;
 }
@@ -85,9 +85,9 @@ Container_proto * Rotation_interpolator::get_prototype()
  * The function calculates m_value, updates it and activate cascade on it.
  * \param pointer (in) to the cascaded field's field info - not used for now
  */
-void Rotation_interpolator::execute(Field_info *)
+void Rotation_interpolator::execute(Field_info*)
 {
-  Field * value = get_field(VALUE);
+  Field* value = get_field(VALUE);
   // if there is no connection to the value field there is no need to execute
   // the interpolation
   if (value == NULL) return;
@@ -113,7 +113,7 @@ void Rotation_interpolator::execute(Field_info *)
     value->cascade();
     return;
   }
-    
+
   // If the fraction is smaller than the first key - set the value to the
   // first one
   if (m_fraction <= m_keys[0]) {
@@ -152,7 +152,7 @@ void Rotation_interpolator::execute(Field_info *)
       location_value[2] = -location_value[2];
       location_value[3] = SGAL_TWO_PI - location_value[3];
     }
-        
+
     // make sure the angle between the two angles is less than PI
     while (abs(next_location_value[3]-location_value[3]) > SGAL_PI) {
       if (location_value[3]<next_location_value[3]) {
@@ -174,8 +174,8 @@ void Rotation_interpolator::execute(Field_info *)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Rotation_interpolator::set_attributes(Element * elem) 
-{ 
+void Rotation_interpolator::set_attributes(Element * elem)
+{
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
 
@@ -207,14 +207,14 @@ void Rotation_interpolator::set_attributes(Element * elem)
 }
 
 #if 0
-/*! Get a list of atytributes in this object. This method is called only 
- * from the Builder side. 
+/*! Get a list of atytributes in this object. This method is called only
+ * from the Builder side.
  *
- * \return a list of attributes 
+ * \return a list of attributes
  */
 Attribute_list Rotation_interpolator::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
   attribs = Interpolator::get_attributes();
 
@@ -235,7 +235,7 @@ Attribute_list Rotation_interpolator::get_attributes()
   attrib.second = (m_interpolate_flag) ? TRUE_STR : FALSE_STR;
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 }
 #endif
 

@@ -79,7 +79,7 @@ public:
 private:
   typedef boost::shared_ptr<Spherical_gaussian_map_marked_geo>
     Shared_spherical_gaussian_map_marked_geo;
-  
+
   typedef Spherical_gaussian_map_marked           Sgm;
   typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Exact_kernel>
                                                   Polyhedron;
@@ -100,7 +100,7 @@ private:
   typedef Sgm::Vertex_const_handle                Sgm_vertex_const_handle;
   typedef Sgm::Halfedge_const_handle              Sgm_halfedge_const_handle;
   typedef Sgm::Face_const_handle                  Sgm_face_const_handle;
-  
+
   typedef Sgm::Vertex_iterator                    Sgm_vertex_iterator;
   typedef Sgm::Halfedge_iterator                  Sgm_halfedge_iterator;
   typedef Sgm::Edge_iterator                      Sgm_edge_iterator;
@@ -115,7 +115,7 @@ private:
                                 Sgm_halfedge_around_vertex_circulator;
   typedef Sgm::Halfedge_around_vertex_const_circulator
                                 Sgm_halfedge_around_vertex_const_circulator;
-  
+
   /*! Notification for computing the sgm */
   class Sgm_geo_initializer_visitor {
   public:
@@ -125,10 +125,10 @@ private:
                                         Polyhedron_halfedge_const_handle;
     typedef Polyhedron::Facet_const_handle
                                         Polyhedron_facet_const_handle;
-    
+
     /*! Destructor. */
     virtual ~Sgm_geo_initializer_visitor() {}
-    
+
     /*! Pass information from the polyhedron vertex to its dual - an aos face.
      */
     virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,
@@ -156,11 +156,11 @@ private:
       trg->set_marked(src->marked());
     }
   };
-   
+
   typedef CGAL::
   Arr_polyhedral_sgm_initializer<Sgm, Polyhedron, Sgm_geo_initializer_visitor>
                                                   Sgm_initializer;
-  
+
 protected:
   typedef Spherical_gaussian_map_marked_geo            Self;
 
@@ -171,7 +171,7 @@ protected:
 
     /*! Constructor. */
     Colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
 
@@ -187,7 +187,7 @@ protected:
 
     /*! Constructor */
     Marked_vertices_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the vertex. */
     virtual void operator()(Draw_action* action);
 
@@ -195,7 +195,7 @@ protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
   };
-  
+
   /*! A function object that renders the marked vertices with color. */
   class Colored_marked_vertices_renderer : public Marked_vertices_renderer {
   public:
@@ -204,11 +204,11 @@ protected:
     /*! Constructor. */
     Colored_marked_vertices_renderer(Geometry& geo) :
       Marked_vertices_renderer(geo) {}
-    
+
     /*! Render the vertex. */
     virtual void operator()(Draw_action* action);
   };
-  
+
   /*! A function object that renders the marked edges. */
   class Marked_edges_renderer : public Arrangement_renderer::Renderer {
   public:
@@ -216,7 +216,7 @@ protected:
 
     /*! Constructor. */
     Marked_edges_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the vertex. */
     virtual void operator()(Draw_action* action);
 
@@ -224,7 +224,7 @@ protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
   };
-  
+
   /*! A function object that renders the marked edges with color. */
   class Colored_marked_edges_renderer : public Marked_edges_renderer {
   public:
@@ -233,11 +233,11 @@ protected:
     /*! Constructor. */
     Colored_marked_edges_renderer(Geometry& geo) :
       Marked_edges_renderer(geo) {}
-    
+
     /*! Render the vertex. */
     virtual void operator()(Draw_action* action);
   };
-  
+
   /*! A function object that renders the marked primal vertex. */
   class Marked_face_renderer : public Arrangement_renderer::Renderer {
   public:
@@ -245,7 +245,7 @@ protected:
 
     /*! Constructor. */
     Marked_face_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
 
@@ -253,7 +253,7 @@ protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
   };
-  
+
   /*! A functor with an operator that sets the "marked" flag. */
   class Face_set_marked_op {
   public:
@@ -269,13 +269,13 @@ protected:
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
-  
+
   /*! Create the renderers. */
   void create_renderers();
 
   /*! Destroy the renderers. */
   void destroy_renderers();
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -296,7 +296,7 @@ private:
   static const Float s_def_aos_marked_edge_line_width;
 
   static const Float s_def_aos_marked_face_transparency;
-  
+
   static const Boolean s_def_draw_marked_vertex;
   static const Boolean s_def_draw_marked_edge;
   static const Boolean s_def_draw_marked_facet;
@@ -324,7 +324,7 @@ private:
   float m_time;
 
   // Marked vertex attributes:
-  
+
   /*! The vertex shape style. */
   Vertex_style m_aos_marked_vertex_style;
 
@@ -341,25 +341,25 @@ private:
 
   /*! The marked edge style */
   Edge_style m_aos_marked_edge_style;
-  
+
   /*! The marked edge rendering type */
   Int m_aos_marked_edge_count;
 
   /*! Determines whether marked edges are rendered directed or not */
   Boolean m_aos_marked_edge_directed;
-  
+
   /*! The radius of the geometry that represents an aos marked edge. */
   Float m_aos_marked_edge_radius;
-  
+
   /*! The width of the lines that represent aos marked edges. */
   Float m_aos_marked_edge_line_width;
 
   /*! The transparency of the aos marked face. */
   Float m_aos_marked_face_transparency;
-  
+
   // Feature attributes:
-  
-  // Marked vertex: 
+
+  // Marked vertex:
 
   /*! Indicates whether to draw the marked vertex */
   Boolean m_draw_marked_vertex;
@@ -369,18 +369,18 @@ private:
 
   /*! The radius of the marked primal vertex. */
   Float m_marked_vertex_radius;
-  
+
   /*! The color of the marked vertex. */
   Vector3f m_marked_vertex_color;
 
   /*! When trigerred the vertex index is increased. */
   Boolean m_increase_vertex_index;
 
-  // Marked edge: 
+  // Marked edge:
 
   /*! Indicates whether to draw the marked halfedge. */
   Boolean m_draw_marked_edge;
-  
+
   /*! The index of the marked edge. */
   Uint m_marked_edge_index;
 
@@ -394,7 +394,7 @@ private:
   Boolean m_increase_edge_index;
 
   // Makrked facet:
-  
+
   /*! Indicates whether to draw the marked face. */
   Boolean m_draw_marked_facet;
 
@@ -403,7 +403,7 @@ private:
 
   /*! The index of the marked face. */
   Uint m_marked_facet_index;
-  
+
   /*! When trigerred the face index is increased. */
   Boolean m_increase_facet_index;
 
@@ -424,13 +424,13 @@ private:
 
   /*! The inflated strip edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
-  
+
   /*! The inflated tube edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
-   
+
   /*! The marked primal vertex renderer. */
   Arrangement_renderer::Renderer* m_marked_face_renderer;
-  
+
   /*! The marked vertices renderer. */
   Arrangement_renderer::Renderer* m_marked_vertices_renderer;
 
@@ -458,7 +458,7 @@ private:
   virtual void draw_aos_opaque(Draw_action* action);
 
   virtual void isect_primary();
-  
+
   /*! Draw the primal marked vertex. */
   void draw_primal_marked_vertex(Draw_action* action);
 
@@ -470,7 +470,7 @@ private:
    * param center the vertex center.
    */
   void draw_aos_marked_vertex(Draw_action* action, Vector3f& center);
-  
+
   /*! Draw an arrangement on sphere marked edge
    * \param action
    * \param source the edge source point
@@ -492,22 +492,15 @@ public:
 
   /*! Copy constructor. */
   Spherical_gaussian_map_marked_geo(const Spherical_gaussian_map_marked_geo& gm);
-  
+
   /*! Destructor. */
   virtual ~Spherical_gaussian_map_marked_geo();
 
   /*! Construct the prototype. */
-  static Spherical_gaussian_map_marked_geo* prototype()
-  { return new Spherical_gaussian_map_marked_geo(true); }
+  static Spherical_gaussian_map_marked_geo* prototype();
 
   /*! Clone. */
-  virtual Container* clone()
-  { return new Spherical_gaussian_map_marked_geo(); }
-
-  /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values.
-   */
-  virtual void set_attributes(Element* elem);
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -518,12 +511,21 @@ public:
   /*! Obtain the prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
+   */
+  virtual void set_attributes(Element* elem);
+
   /*! Clean the representation. */
   virtual void clean_sgm();
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
-  
+
   /*! Determine whether the representation is empty. */
   virtual Boolean is_empty() const { return m_sgm->is_empty(); }
 
@@ -536,12 +538,12 @@ public:
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action);
-  
+
   /*! Clean the renderer. */
   virtual void clean_renderer();
 
   // Marked vertex attributes:
-  
+
   /*! Obtain the marked vertex shape style. */
   Vertex_style get_aos_marked_vertex_style() const
   { return m_aos_marked_vertex_style; }
@@ -555,7 +557,7 @@ public:
   { return m_aos_marked_vertex_radius; }
 
   // Aos marked edge attributes:
-  
+
   /*! Enable marked edge rendering. */
   void enable_aos_marked_edge() { m_aos_marked_edge_enabled = true; }
 
@@ -605,30 +607,30 @@ public:
   /*! Obtaint the width of the lines that represent aos marked edges. */
   Float get_aos_marked_edge_line_width() const
   { return m_aos_marked_edge_line_width; }
-  
+
   // Aos marked face attributes:
   Float get_aos_marked_face_transparency() const
   { return m_aos_marked_face_transparency; }
-  
+
   /*! Obtain the flag that indicates whether to draw the marked vertex. */
   Boolean get_draw_marked_vertex() const { return m_draw_marked_vertex; }
 
   /*! Obtain the flag that indicates whether to draw the marked halfedge. */
   Boolean get_draw_marked_edge() const { return m_draw_marked_edge; }
-  
+
   /*! Obtain the flag that indicates whether to draw the marked face. */
   Boolean get_draw_marked_facet() const { return m_draw_marked_facet; }
 
-  
+
   /*! Obtain the index of the marked vertex. */
   Uint marked_vertex_index() const { return m_marked_vertex_index; }
 
   /*! Obtain the index of the marked edge. */
   Uint marked_edge_index() const { return m_marked_edge_index; }
-  
+
   /*! Obtain the index of the marked facet. */
   Uint marked_facet_index() const { return m_marked_facet_index; }
-  
+
   /*! Set the index of the marked vertex. */
   void set_marked_vertex_index(Uint index) { m_marked_vertex_index = index; }
 
@@ -637,7 +639,7 @@ public:
 
   /*! Set the index of the marked facet. */
   void set_marked_facet_index(Uint index) { m_marked_facet_index = index; }
-  
+
   /*! Obtain the color of the marked vertex. */
   const Vector3f get_marked_vertex_color() const;
 
@@ -649,7 +651,7 @@ public:
 
   /*! Set the color of the marked facet. */
   void set_marked_facet_color(const Vector3f& color);
-  
+
   /*! Print statistics. */
   virtual void print_stat();
 
@@ -661,7 +663,7 @@ public:
 
   /*! Set the Gaussian map. */
   void set_sgm(Sgm* sgm);
-  
+
   /*! Set the flag that indicates whether to compute the minkowski sum. */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
 
@@ -680,6 +682,15 @@ public:
   /*! Increase the face index. */
   void increase_facet_index(Field_info* field_info = NULL);
 };
+
+/*! \brief constructs the prototype. */
+inline Spherical_gaussian_map_marked_geo*
+Spherical_gaussian_map_marked_geo::prototype()
+{ return new Spherical_gaussian_map_marked_geo(true); }
+
+/*! \brief clones. */
+inline Container* Spherical_gaussian_map_marked_geo::clone()
+{ return new Spherical_gaussian_map_marked_geo(); }
 
 /*! \brief obtains the color of the marked vertex. */
 inline

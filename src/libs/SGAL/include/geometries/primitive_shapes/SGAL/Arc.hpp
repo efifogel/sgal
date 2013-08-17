@@ -51,7 +51,7 @@ public:
     GAMMA,
     DELTA,
     SOLID,
-    STACKS, 
+    STACKS,
     SLICES,
     LAST
   };
@@ -67,7 +67,44 @@ public:
 
   /*! Clone */
   virtual Container* clone();
-  
+
+  /*! Initialize the node prototype */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype
+   * \return the node prototype
+   */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of the object extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Draw the arc
+   * \param action the draw action
+   */
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the arc in selection mode
+   * \param action the draw action
+   */
+  virtual void isect(Isect_action* action);
+
+  /*! Calculare the sphere bound of the arc */
+  virtual Boolean clean_sphere_bound();
+
+  // virtual void FieldChanged(short fieldId);
+
   /*! Set the arc radius
    * \param radius the new radius
    */
@@ -92,7 +129,7 @@ public:
    * \param  the new number of slices
    */
   void set_slices(Uint slices);
-  
+
   /*! Obtain the number of slices
    * \return the number of slices
    */
@@ -132,56 +169,23 @@ public:
   /*! Obtain */
   Boolean is_solid() const;
 
-  /*! Draw the arc
-   * \param action the draw action
-   */
-  virtual void draw(Draw_action* action); 
-
-  /*! Draw the arc in selection mode 
-   * \param action the draw action
-   */
-  virtual void isect(Isect_action* action);
-
-  /*! Calculare the sphere bound of the arc */
-  virtual Boolean clean_sphere_bound();
-  
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype
-   * \return the node prototype
-   */
-  virtual Container_proto* get_prototype();
-
-  // virtual void FieldChanged(short fieldId);
-
-  /*! Set the attributes of the object extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
 protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
   /*! Halftone stipple pattern for backfacing elements */
   static Ubyte s_halftone[];
-  
+
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
 
   /*! The radius of the arc sphere */
   Float m_radius;
-  
+
   /*! The number of stacks of the arc */
   Uint m_stacks;
 
@@ -219,7 +223,7 @@ inline Arc* Arc::prototype() { return new Arc(true); }
 
 /*! \brief clones. */
 inline Container* Arc::clone() { return new Arc(); }
-  
+
 /*! \brief sets the arc radius.*/
 inline void Arc::set_radius(Float radius)
 {
@@ -238,7 +242,7 @@ inline Uint Arc::get_stacks() const { return m_stacks; }
 
 /*! \brief sets the number of slices. */
 inline void Arc::set_slices(Uint slices) { m_slices = slices; }
-  
+
 /*! \brief obtains the number of slices */
 inline Uint Arc::get_slices() const { return m_slices; }
 

@@ -55,15 +55,15 @@ SGAL_BEGIN_NAMESPACE
 
 //! \todo #include "Model_stats.h"
 
-const std::string Indexed_face_set::s_tag = "sgalIndexedFaceSet";
-Container_proto* Indexed_face_set::s_prototype = 0;
+const std::string Indexed_face_set::s_tag = "IndexedFaceSet";
+Container_proto* Indexed_face_set::s_prototype(NULL);
 
 // Default values:
 const Boolean Indexed_face_set::s_def_normal_per_vertex(true);
 const Boolean Indexed_face_set::s_def_color_per_vertex(true);
 
 void (Indexed_face_set::*Indexed_face_set::draws[NUM_DRAWS])();
-Boolean Indexed_face_set::m_draws_initialized = false;
+Boolean Indexed_face_set::m_draws_initialized(false);
 
 REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 
@@ -95,10 +95,10 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 {
   m_primitive_type = PT_POLYGONS;
   m_flatten_indices = true;
-  
+
   if (m_draws_initialized) return;
   m_draws_initialized = true;
-    
+
   // Initialize static draws[] array:
   for (int i = 0; i < NUM_DRAWS; ++i)
     draws[i] = &Indexed_face_set::draw_invalid;
@@ -128,7 +128,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOPO_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOPO_VANO] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO] =
     &Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO;
@@ -200,7 +200,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOTR_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOTR_VANO] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO] =
     &Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO;
@@ -272,7 +272,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOQU_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOQU_VANO] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO] =
     &Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO;
@@ -319,7 +319,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO;
   draws[FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO;
-    
+
   // Triangle Strips:
   // Texture disabled:
   draws[FSNO_FINO_FAPV_TENO_MOTS_VANO] =
@@ -344,7 +344,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOTS_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOTS_VANO] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO] =
     &Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO;
@@ -363,7 +363,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO;
   draws[FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO] =
     &Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO;
-  
+
   draws[FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO] =
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO;
   draws[FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO] =
@@ -417,7 +417,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOPO_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOPO_VAYE] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOPO_VAYE] =
     &Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO;
@@ -485,7 +485,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOTR_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOTR_VAYE] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOTR_VAYE] =
     &Indexed_face_set::draw_FAPV_VAYE;
@@ -553,7 +553,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOQU_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOQU_VAYE] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOQU_VAYE] =
     &Indexed_face_set::draw_FAPV_VAYE;
@@ -600,7 +600,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO;
   draws[FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VAYE] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO;
-    
+
   // Triangle Strips:
   // Texture disabled:
   draws[FSNO_FINO_FAPV_TENO_MOTS_VAYE] =
@@ -625,7 +625,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TENO_MOTS_VANO;
   draws[FSCO_FINO_FAPM_TENO_MOTS_VAYE] =
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO;
-        
+
   // Texture enabled:
   draws[FSNO_FINO_FAPV_TEYE_TINO_MOTS_VAYE] =
     &Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO;
@@ -644,7 +644,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO;
   draws[FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VAYE] =
     &Indexed_face_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO;
-  
+
   draws[FSNO_FINO_FAPM_TEYE_TINO_MOTS_VAYE] =
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO;
   draws[FSCO_FINO_FAPM_TEYE_TINO_MOTS_VAYE] =
@@ -671,7 +671,7 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   draws[FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VAYE] =
     &Indexed_face_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO;
   draws[FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VAYE] =
-    &Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO;    
+    &Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO;
 }
 
 /*! Destructor */
@@ -720,7 +720,7 @@ void Indexed_face_set::compute_normal(const Vector3f& v1, const Vector3f& v2,
   Vector3f l1, l2;
   l1.sub(v2, v1);
   l2.sub(v3, v2);
-  if (m_is_ccw) normal.cross(l1, l2); 
+  if (m_is_ccw) normal.cross(l1, l2);
   else normal.cross(l2, l1);
   normal.normalize();
 }
@@ -790,7 +790,7 @@ void Indexed_face_set::compute_quad_center(Uint j, Vector3f& center) const
   center.add((*m_coord_array)[m_coord_indices[j+3]]);
   center.scale(1.0f / 4);
 }
-  
+
 /*! \brief computes the vertex information for the four vertices of a
  * quadrilateral.
  */
@@ -803,13 +803,13 @@ Indexed_face_set::compute_quad_vertex_info(Uint j, Uint facet_index,
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
   vertex_index = m_coord_indices[j+1];
-  compute_vertex_info(vertex_index, facet_index, center, 
+  compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
   vertex_index = m_coord_indices[j+2];
-  compute_vertex_info(vertex_index, facet_index, center, 
+  compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
   vertex_index = m_coord_indices[j+3];
-  compute_vertex_info(vertex_index, facet_index, center, 
+  compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
 }
 
@@ -858,7 +858,7 @@ void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
   SGAL_assertion(m_coord_array);
 
   vertices_info.resize(m_coord_array->size());
-  
+
   Uint i, j = 0;
   // Assume that the facet is planar, and compute its normal:
   switch (m_primitive_type) {
@@ -870,7 +870,7 @@ void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
       j += 3;
     }
     break;
-      
+
    case PT_QUADS:
     for (i = 0; i < m_num_primitives; ++i) {
       Vector3f center;
@@ -879,7 +879,7 @@ void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
       j += 4;
     }
     break;
-      
+
    case PT_POLYGONS:
     for (i = 0; i < m_num_primitives; ++i) {
       Vector3f center;
@@ -888,9 +888,9 @@ void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
       j += k + 1;       // skip the end-of-face marker
     }
     break;
-      
-   case PT_TRIANGLE_STRIP: 
-   case PT_TRIANGLE_FAN: 
+
+   case PT_TRIANGLE_STRIP:
+   case PT_TRIANGLE_FAN:
    case PT_QUAD_STRIP:
    default: SGAL_assertion(0); break;
   }
@@ -946,7 +946,7 @@ calculate_normal_per_polygon(Normal_array& normals)
       for (; m_coord_indices[j] != (Uint) -1; ++j);     // advance to end
       ++j;                                      // skip the end-of-face marker
       break;
-      
+
      case PT_TRIANGLE_STRIP: break;
      case PT_TRIANGLE_FAN: break;
      case PT_QUAD_STRIP:
@@ -986,7 +986,7 @@ void Indexed_face_set::clean_tex_coords()
     boost::static_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(shared_tex_coord_array);
   Tex_coord_array_2d* tex_coord_array = &*shared_tex_coord_array;
-  
+
   //! \todo do the right thing!
   const Vector2f t0(0,0);
   const Vector2f t1(1,0);
@@ -1013,7 +1013,7 @@ void Indexed_face_set::draw(Draw_action* action)
   if (is_dirty_color_indices()) clean_color_indices();
   if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
   if (is_empty()) return;
-  
+
   // Clean the normals:
   if ((resolve_fragment_source() == FS_NORMAL) && m_dirty_normals)
     clean_normals();
@@ -1028,7 +1028,7 @@ void Indexed_face_set::draw(Draw_action* action)
 }
 
 /*! \brief draws the geometry.
- * For efficiency reasons, differenrt methods were written to 
+ * For efficiency reasons, differenrt methods were written to
  * draw geometries with different kinds of data (texture/normal/color).
  */
 void Indexed_face_set::draw_geometry(Draw_action* action)
@@ -1049,10 +1049,10 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
       //! \todo Add a try() and catch() to catch errors.
       // If an error is cought, call destroy_vertex_buffer_object()
 
-      if (m_dirty_vertex_coord_buffer) clean_vertex_coord_buffer();  
-      if (m_dirty_vertex_normal_buffer) clean_vertex_normal_buffer();  
-      if (m_dirty_vertex_color_buffer) clean_vertex_color_buffer();  
-      if (m_dirty_vertex_tex_coord_buffer) clean_vertex_tex_coord_buffer();  
+      if (m_dirty_vertex_coord_buffer) clean_vertex_coord_buffer();
+      if (m_dirty_vertex_normal_buffer) clean_vertex_normal_buffer();
+      if (m_dirty_vertex_color_buffer) clean_vertex_color_buffer();
+      if (m_dirty_vertex_tex_coord_buffer) clean_vertex_tex_coord_buffer();
     }
 
    case Configuration::GDM_DIRECT:
@@ -1062,12 +1062,12 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
 }
 
 /*! \brief dispatches the appropriate drawing routine. */
-void Indexed_face_set::draw_dispatch(Draw_action* /* action */) 
+void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
 {
   // When using vertex array, the index arrays must be flat:
   SGAL_assertion_code(Boolean uva = use_vertex_array(););
   SGAL_assertion(!uva || m_coord_indices_flat);
-  
+
   Fragment_source fragment_source = resolve_fragment_source();
   Boolean fragment_indexed = (fragment_source == FS_NORMAL) ?
     (m_normal_indices.size() ? true : false) :
@@ -1144,7 +1144,7 @@ void Indexed_face_set::isect_direct()
       ++j;
     }
     return;
-    
+
    case PT_TRIANGLE_FAN:
    case PT_QUAD_STRIP:
     SGAL_assertion_msg(0, "Not implemented yet!");
@@ -1171,11 +1171,11 @@ void Indexed_face_set::isect(Isect_action* action)
    case Configuration::GDM_DIRECT:
     isect_direct();
     break;
-    
+
    case Configuration::GDM_DISPLAY_LIST:
     glCallList(m_display_list_id);
     break;
-    
+
    case Configuration::GDM_VERTEX_ARRAY:
     //! \todo Implement isect with vertex-array
     isect_direct();
@@ -1196,8 +1196,8 @@ int Indexed_face_set::create_display_list(Draw_action* action)
 }
 
 /*! \brief sets the attributes of the object. */
-void Indexed_face_set::set_attributes(Element* elem) 
-{ 
+void Indexed_face_set::set_attributes(Element* elem)
+{
   Mesh_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -1227,7 +1227,7 @@ void Indexed_face_set::set_attributes(Element* elem)
   // in case normalPerVertex or colorPerVertex is false resp.
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Indexed_face_set::add_to_scene(Scene_graph* sg)
 {
   Configuration* config = sg->get_configuration();
@@ -1235,17 +1235,17 @@ void Indexed_face_set::add_to_scene(Scene_graph* sg)
 }
 
 #if 0
-/*! Get a list of atytributes in this object. This method is called only 
- * from the Builder side. 
- * An Indexed_face_set is always converted to an ProgIndexedTriSet 
- * and therefore any information regarding compressed data is not 
+/*! Get a list of atytributes in this object. This method is called only
+ * from the Builder side.
+ * An Indexed_face_set is always converted to an ProgIndexedTriSet
+ * and therefore any information regarding compressed data is not
  * written out (e.g., coordIndex).
  *
- * \return a list of attributes 
+ * \return a list of attributes
  */
 Attribute_list Indexed_face_set::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribute attrib;
   char buf[32];
   Vector3f col;
@@ -1262,7 +1262,7 @@ Attribute_list Indexed_face_set::get_attributes()
     attrib.second = get_color_per_vertex() ? "TRUE" : "FALSE";
     attribs.push_back(attrib);
   }
-  return attribs; 
+  return attribs;
 }
 
 #endif
@@ -1273,10 +1273,8 @@ void Indexed_face_set::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Mesh_set::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // normalPerVertex
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
@@ -1284,6 +1282,7 @@ void Indexed_face_set::init_prototype()
                                get_member_offset(&m_normal_per_vertex),
                                exec_func));
 
+  // colorPerVertex
   s_prototype->
     add_field_info(new SF_bool(COLOR_PER_VERTEX, "colorPerVertex",
                                get_member_offset(&m_color_per_vertex),
@@ -1298,8 +1297,8 @@ void Indexed_face_set::delete_prototype()
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Indexed_face_set::get_prototype() 
-{  
+Container_proto* Indexed_face_set::get_prototype()
+{
   if (s_prototype == NULL) Indexed_face_set::init_prototype();
   return s_prototype;
 }
@@ -1380,7 +1379,7 @@ Boolean Indexed_face_set::is_empty() const
     if (Gfx_conf::get_instance()->is_vertex_buffer_object_supported())
       return ((m_vertex_coord_id == 0) && Geo_set::is_empty());
   }
-  
+
   return Geo_set::is_empty();
 }
 
@@ -1396,7 +1395,7 @@ calculate_single_normal_per_vertex(Shared_normal_array normals)
   // Initialize the weights:
   Vertices_info vertices_info;
   calculate_vertices_info(vertices_info);
-  
+
   // Calculate the weighted normals:
   Uint j;
   for (j = 0; j < vertices_info.size(); ++j) {
@@ -1441,7 +1440,7 @@ void Indexed_face_set::clean_vertex_coord_buffer()
                             &param_array_size);
   SGAL_assertion(param_array_size > 0);
 #endif
-  
+
   // Leave clean state:
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #endif
@@ -1571,28 +1570,28 @@ Indexed_face_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 /*! \brief Process change of field. */
 void Indexed_face_set::field_changed(Field_info* field_info)
 {
-  switch (field_info->get_id()) {    
+  switch (field_info->get_id()) {
    case COORD_ARRAY: coord_point_changed(); break;
-    
+
    case NORMAL_ARRAY:
     destroy_display_list();
     m_dirty_vertex_normal_buffer = true;
     m_dirty_normals = false;
     m_normals_cleaned = false;
     break;
-    
+
    case COLOR_ARRAY:
     destroy_display_list();
     m_dirty_vertex_color_buffer = true;
     break;
-    
+
    case TEX_COORD_ARRAY:
     destroy_display_list();
     m_dirty_vertex_tex_coord_buffer = true;
     m_dirty_tex_coords = false;
     m_tex_coords_cleaned = false;
     break;
-    
+
    default: break;
   }
   Mesh_set::field_changed(field_info);
@@ -1600,11 +1599,11 @@ void Indexed_face_set::field_changed(Field_info* field_info)
 
 /*! \brief determines whether colors are generated by the geometry. */
 inline Boolean Indexed_face_set::are_generated_color()
-{ return (m_generated_color); }  
-  
+{ return (m_generated_color); }
+
 /*! \brief determines whether texture coordinates are generated by the geometry.
  */
 inline Boolean Indexed_face_set::are_generated_tex_coord()
-{ return (m_generated_tex_coord); }  
+{ return (m_generated_tex_coord); }
 
 SGAL_END_NAMESPACE

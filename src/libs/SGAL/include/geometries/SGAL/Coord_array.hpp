@@ -68,9 +68,13 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */  
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node.
    * \param elem contains lists of attribute names and values.
    */
@@ -94,7 +98,7 @@ public:
   /*! The iterator to the Array past-the-end element */
   Vector3f* end();
   const Vector3f* end() const;
-  
+
   /*! Array indexing operator. */
   Vector3f& operator[](Uint n);
 
@@ -112,7 +116,7 @@ protected:
    * \param field_info
    */
   void point_changed(Field_info* field_info);
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -146,7 +150,7 @@ inline const Vector3f* Coord_array::begin() const { return m_array.begin(); }
 /*! \brief obtains the iterator to the Array past-the-end element */
 inline Vector3f* Coord_array::end() { return m_array.end(); }
 inline const Vector3f* Coord_array::end() const { return m_array.end(); }
-  
+
 /*! \brief array indexing operator. */
 inline Vector3f& Coord_array::operator[](Uint n) { return m_array[n]; }
 

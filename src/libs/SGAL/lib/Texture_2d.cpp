@@ -48,7 +48,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Texture_2d::s_tag = "Texture2d";
-Container_proto* Texture_2d::s_prototype = NULL;
+Container_proto* Texture_2d::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Texture_2d, "Texture_2d");
 

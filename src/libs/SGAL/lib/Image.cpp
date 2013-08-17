@@ -54,7 +54,7 @@ REGISTER_TO_FACTORY(Image, "Image");
 
 /*! Constructor */
 Image::Image(Boolean proto) : Image_base(proto) {}
-  
+
 /*! Destructor */
 Image::~Image() {}
 
@@ -64,10 +64,7 @@ void Image::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Image_base::get_prototype());
 
-  // Add the field-info records to the prototype:
-  //! \todo set and use the exec_func
-  // Execution_function exec_func;
-
+  // url
   s_prototype->add_field_info(new SF_string(URL, "url",
                                             get_member_offset(&m_url)));
 }
@@ -80,8 +77,8 @@ void Image::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Image::get_prototype() 
-{  
+Container_proto* Image::get_prototype()
+{
   if (!s_prototype) Image::init_prototype();
   return s_prototype;
 }
@@ -141,9 +138,9 @@ void* Image::get_pixels()
 void Image::clean()
 {
   if (m_url.empty()) return;
-  
+
   std::string fullname;
-  
+
 #if BOOST_VERSION >= 103400
   fi::path file_path(m_url);
 #else
@@ -170,7 +167,7 @@ void Image::clean()
     throw File_not_found_error(m_url);
     return;
   }
-  
+
   Magick::Image image;
   try {
     image.read(fullname.c_str());
@@ -234,10 +231,10 @@ void Image::clean()
     m_owned_pixels = true;
     image.write(0, 0, width, height, magick_map, magick_type, m_pixels);
   }
-  catch (Magick::Exception &error_) { 
-    std::cerr << "Caught exception: " << error_.what() << std::endl; 
-    return; 
-  } 
+  catch (Magick::Exception &error_) {
+    std::cerr << "Caught exception: " << error_.what() << std::endl;
+    return;
+  }
   m_dirty = false;
 }
 

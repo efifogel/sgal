@@ -41,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Single_key_sensor::s_tag = "SingleKeySensor";
-Container_proto* Single_key_sensor::s_prototype = NULL;
+Container_proto* Single_key_sensor::s_prototype(NULL);
 
 /*! Default Values. */
 Uint Single_key_sensor::s_def_num_states = 1;
@@ -68,21 +68,27 @@ Single_key_sensor::~Single_key_sensor()
 /*! \brief initializes the node prototype. */
 void Single_key_sensor::init_prototype()
 {
-  // The prototype shuold be allocated only once for all instances
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto();
 
   // Add the object fields to the prototype
+  // press
   s_prototype->add_field_info(new SF_bool(PRESS, "press",
                                           get_member_offset(&m_press)));
+
+  // pressTime
   s_prototype->add_field_info(new SF_time(TIME, "pressTime",
                                           get_member_offset(&m_time)));
+
+  // state
   s_prototype->add_field_info(new SF_bool(STATE, "state",
                                           get_member_offset(&m_state)));
+
+  // intState
   s_prototype->add_field_info(new SF_int(INT_STATE, "intState",
                                           get_member_offset(&m_int_state)));
+
+  // numberOfStates
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_STATES, "numberOfStates",
                                           get_member_offset(&m_num_states)));
 }
@@ -108,7 +114,7 @@ void Single_key_sensor::register_events()
 /*! \brief unregisters the keyboard event for this agent. */
 void Single_key_sensor::unregister_events()
 { Keyboard_event::unregister(this); }
-  
+
 /*! \brief prints out the name of this agent (for debugging purposes). */
 void Single_key_sensor::identify()
 { std::cout << "Agent: Single_key_sensor" << std::endl; }
@@ -137,7 +143,7 @@ void Single_key_sensor::handle(Keyboard_event* event)
   field = get_field(INT_STATE);
   if (field) field->cascade();
 }
-  
+
 /*! \brief sets the attributes of this object. */
 void Single_key_sensor::set_attributes(Element* elem)
 {
@@ -179,14 +185,14 @@ void Single_key_sensor::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get a list of atributes in this object. This method is called only 
- * from the Builder side. 
+/*! Get a list of atributes in this object. This method is called only
+ * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Single_key_sensor::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
   char buf[32];
 
@@ -197,7 +203,7 @@ Attribute_list Single_key_sensor::get_attributes()
   attrib.second = buf;
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 };
 #endif
 

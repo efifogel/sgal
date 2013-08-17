@@ -87,16 +87,20 @@ public:
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the rotation field */
-  void set_rotation(const Rotation& rotation);  
+  void set_rotation(const Rotation& rotation);
 
   /*! Set the rotation field */
   void set_rotation(float v0, float v1, float v2, float v3);
@@ -106,27 +110,27 @@ public:
 
   /*! Set the translation field */
   void set_translation(float v0, float v1, float v2);
-  
+
   /*! Set the scene graph */
   void set_scene_graph(Scene_graph* sg) { m_scene_graph = sg; }
-  
+
 #if 0
   Window_handle* get_win_handle();
   Window_handle* get_win_handle() const;
 #endif
-  
+
   /*! Register the mouse and mostion events */
   void register_events();
 
   /*! Register the mouse and mostion events */
   void unregister_events();
-  
+
   /*! Print out the name of this agent (for debugging purposes) */
   virtual void identify();
 
   /*! Handle mouse events */
   virtual void handle(Mouse_event* event);
-  
+
   /*! Handle motion events */
   virtual void handle(Motion_event* event);
 
@@ -135,13 +139,13 @@ public:
 
   /*! Obtain the dragging speed  */
   float get_dragging_speed() const { return m_dragging_speed; }
-  
+
   void set_min_zoom_distance(float val);
   virtual bool is_left_button_double_click();
 
   /*! Reset the sensor to the default translation and rotation */
   void reset();
-  
+
 protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -152,10 +156,10 @@ protected:
   virtual void start_dragging(const Vector2sh& point);
   virtual void mouse_drag(const Vector2sh& from, const Vector2sh & to);
 
-  virtual void dragging_done(const Vector2sh& point); 
+  virtual void dragging_done(const Vector2sh& point);
 
   virtual void track_ball(const Vector2sh& from, const Vector2sh & to,
-                          float speed = 1.0f); 
+                          float speed = 1.0f);
   virtual void translate(const Vector3f& distance, float speed);
 
   /*! Obtain the bindable stack */
@@ -166,7 +170,7 @@ protected:
 
   /*! Disable the bindable node */
   virtual void disable();
-  
+
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;
@@ -176,7 +180,7 @@ private:
 
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
-  
+
   /*! The output translation */
   Vector3f m_translation;
 
@@ -218,7 +222,7 @@ private:
 
   /*! Issue events at the end of a transformation session */
   void transform_done();
-  
+
   bool setup_cursor();
   bool allow_zoom_in(const Vector3f& trans);
 };

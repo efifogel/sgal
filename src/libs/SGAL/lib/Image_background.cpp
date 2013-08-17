@@ -39,7 +39,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Image_background::s_tag = "ImageBackground";
-Container_proto* Image_background::s_prototype = NULL;
+Container_proto* Image_background::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Image_background, "Image_background");
 
@@ -53,7 +53,7 @@ Image_background::Image_background(Boolean proto) :
 Image_background::~Image_background() {}
 
 /*! \brief sets the attributes of this object. */
-void Image_background::set_attributes(Element* elem) 
+void Image_background::set_attributes(Element* elem)
 {
   Background::set_attributes(elem);
 
@@ -69,7 +69,7 @@ void Image_background::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -78,8 +78,6 @@ void Image_background::set_attributes(Element* elem)
 void Image_background::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Background::get_prototype());
 }
 
@@ -91,8 +89,8 @@ void Image_background::delete_prototype()
 }
 
 /*! \brief */
-Container_proto* Image_background::get_prototype() 
-{  
+Container_proto* Image_background::get_prototype()
+{
   if (s_prototype == NULL) Image_background::init_prototype();
   return s_prototype;
 }
@@ -100,7 +98,7 @@ Container_proto* Image_background::get_prototype()
 /*! \brief sets the appearance of the object.
  * @param app the appearance
  */
-void Image_background::set_appearance(Shared_appearance app) 
+void Image_background::set_appearance(Shared_appearance app)
 {
   m_appearance = app;
   m_appearance->set_light_enable(false);

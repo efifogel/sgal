@@ -78,7 +78,7 @@ void Item_primitive::get_value(unsigned int param_id, bool & value) const
     SGAL_assertion(0);
     value = 0;
   }
-  value = (m_attributes[param_id] == "TRUE" ? SGAL_TRUE : SGAL_FALSE);
+  value = (m_attributes[param_id] == "TRUE" ? true : false);
 }
 
 /*! Set a value of a parameter.

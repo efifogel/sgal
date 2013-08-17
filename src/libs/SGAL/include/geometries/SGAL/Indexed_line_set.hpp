@@ -69,16 +69,20 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the prototype. */
-  virtual Container_proto* get_prototype(); 
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Draw the geometry.
-   * For efficiency reasons, differenrt methods were written to 
+   * For efficiency reasons, differenrt methods were written to
    * draw geometries with different kinds of data (texture/normal/color).
    * \param action action.
    */
   virtual void draw(Draw_action* action);
 
-  virtual void isect(Isect_action* action); 
+  virtual void isect(Isect_action* action);
 
   /*! Calculate the sphere bound of the mesh. Returns true if the BS has
    * changed since lst time this was called.
@@ -98,11 +102,11 @@ public:
   void set_color_per_vertex(Boolean color_per_vertex);
 
   Boolean get_color_per_vertex() const;
-  
+
 protected:
   /*! Indicates whether a single color is specified per vertex. */
   Boolean m_color_per_vertex;
-  
+
   /*! Indicates whether a single normal is specified per vertex. */
   Boolean m_normal_per_vertex;
 
@@ -111,7 +115,7 @@ protected:
 
   /*! Indicates whether to elliminate hiden lines using depth test. */
   Boolean m_elliminate_hiden;
-  
+
   /*! Indicates whether the mesh is textured. */
   Boolean m_has_texture;
 
@@ -129,7 +133,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype. */
   static Container_proto* s_prototype;

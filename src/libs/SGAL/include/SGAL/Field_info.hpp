@@ -27,16 +27,16 @@
  *      - The way it's data is held
  *      - Optional pointer to a function that should be executed
  *        when the field is changed
- *          
- * Hold the fields id, name of the a field 
+ *
+ * Hold the fields id, name of the a field
  * within its node class, and a pointer to a possible function.
  * The function is used by fields when cascade is activated.
  *
  * Field_info - The basic abstract field info - used by containers ...
- * 
+ *
  * Field_infoTemplate - a specific field info template for handling the
  * specific type of the field's value
- * 
+ *
  * Specific field infos (like SFFloat, SFInt...) are
  * declared by type instantiation of Field_infoTemplate.
  */
@@ -55,8 +55,10 @@ class Container;
 class Field_info;
 class SAI_field_services;
 class Value_holder;
+class Delegator;
+class Field;
 
-class SGAL_SGAL_DECL Field_info {  
+class SGAL_SGAL_DECL Field_info {
 protected:
   /*! The field id (e.g, Group::ISVISIBLE). */
   Uint m_id;
@@ -108,12 +110,20 @@ public:
   virtual Value_holder* create_value_holder(Container* container) = 0;
 
   /*! \todo
-  // Creates an SAI_field of the same type id and name 
+  // Creates an SAI_field of the same type id and name
   // as this field info.
   // The function also create a new SAI_field_info of the same type
   // and initializes the new SAI_field with it.
   virtual SAI_field_services * create_sai_field() = 0;
   */
+
+  virtual Delegator* create_delegator() = 0;
+
+  virtual Delegator* set_source(Container* container,
+                                Delegator* delegator) = 0;
+
+  virtual Delegator* set_destination(Container* container,
+                                     Delegator* delegator) = 0;
 };
 
 /*!

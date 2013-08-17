@@ -47,7 +47,7 @@ class Scene_graph;
 class SGAL_SGAL_DECL Image_texture : public Texture_2d {
 public:
   typedef Image::Path_list                          Path_list;
-  
+
   enum {
     FIRST = Texture_2d::LAST - 1,
     URL,
@@ -78,7 +78,7 @@ public:
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype. */
@@ -89,6 +89,10 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the URL. */
   void set_url(const std::string& url);
@@ -101,17 +105,17 @@ public:
 
   /*! Obtain the flag that indicates whether to reflect the image. */
   Boolean get_flip() const;
-  
+
   /*! Set the directory-search structure. */
   void set_dirs(const Path_list& dirs);
 
   /*! Obtain the directory-search structure. */
   const Path_list& get_dirs() const;
-  
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -145,7 +149,7 @@ inline void Image_texture::set_flip(Boolean flag)
 /*! \brief obtains the flag that indicates whether to reflect the image. */
 inline Boolean Image_texture::get_flip() const
 { return m_image.get_flip(); }
- 
+
 /*! \brief sets the directory-search structure. */
 inline void Image_texture::set_dirs(const Image::Path_list& dirs)
 { m_image.set_dirs(dirs); }

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -39,7 +39,7 @@ void Fog::SetOn(Boolean on)
 
 Boolean Fog::GetOn()
 {
-  return SGAL_TRUE;
+  return true;
 }
 
 void Fog::Push()

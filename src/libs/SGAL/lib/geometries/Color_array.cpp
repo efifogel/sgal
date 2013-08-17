@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -31,9 +31,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Color_array::s_tag = "Color";
-
-/*! The node prototype */
-Container_proto * Color_array::s_prototype = NULL;
+Container_proto* Color_array::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Color_array, "Color_array");
 
@@ -41,8 +39,6 @@ REGISTER_TO_FACTORY(Color_array, "Color_array");
 void Color_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Container::get_prototype());
 }
 
@@ -53,27 +49,26 @@ void Color_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */  
-Container_proto * Color_array::get_prototype()
+/*! Obtain the node prototype */
+Container_proto* Color_array::get_prototype()
 {
   if (s_prototype == NULL) Color_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Color_array::set_attributes(Element * elem)
-{ 
+void Color_array::set_attributes(Element* elem)
+{
   typedef Element::Str_attr_iter          Str_attr_iter;
 
   Container::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "color") {
       Uint num_values = get_num_tokens(value);
       unsigned int size = num_values / 3;
@@ -83,7 +78,7 @@ void Color_array::set_attributes(Element * elem)
       for (unsigned int i = 0 ; i < size ; i++) {
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       }
-      elem->mark_delete(ai);      
+      elem->mark_delete(ai);
     }
   }
 

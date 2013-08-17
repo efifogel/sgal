@@ -116,7 +116,7 @@ public:
     const Inexact_point_3& get_inexact_point(void) const
     { return m_inexact_point; }
   };
-  
+
   /*! Represnts a polyhedron halfedge */
   template <class Refs>
   struct Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
@@ -158,7 +158,7 @@ public:
       typedef Polyhedron_face<Refs> Face;
     };
   };
-  
+
   typedef Kernel                                        Polyhedron_traits;
   // typedef CGAL::Polyhedron_3<Polyhedron_traits,Polyhedron_items>
   // Polyhedron;
@@ -171,23 +171,23 @@ public:
     Halfedge_facet_circulator;
   typedef Polyhedron::Facet_const_handle                Facet_const_handle;
   typedef Polyhedron::Facet_handle                      Facet_handle;
-  
+
   typedef Polyhedron::Vertex                            Vertex;
-  
+
   // Nef stuff:
   //  typedef CGAL::Nef_polyhedron_3<Polyhedron_traits>     Nef_polyhedron_3;
   //  typedef Nef_polyhedron_3::Halffacet_const_iterator    Nef_halffacet_iterator;
 
   // Nef Gaussian map
   typedef CGAL::Nef_gaussian_map<Polyhedron_traits>     Nef_gaussian_map;
-  
+
   typedef std::vector<int>                              Coord_index_vector;
   typedef Coord_index_vector::const_iterator            Coord_index_iter;
 
   // Shared pointer
   typedef boost::shared_ptr<Nef_gaussian_map_geo>
     Shared_nef_gaussian_map_geo;
-  
+
   // List of pointers to Nef_gaussian_map_geo objects */
   typedef std::list<Shared_nef_gaussian_map_geo>        Ngm_node_list;
   typedef Ngm_node_list::iterator                       Ngm_node_iter;
@@ -218,18 +218,10 @@ public:
   ~Nef_gaussian_map_geo();
 
   /*! Construct the prototype. */
-  static Nef_gaussian_map_geo* prototype()
-  { return new Nef_gaussian_map_geo(true); }
+  static Nef_gaussian_map_geo* prototype();
 
   /*! Clone. */
-  virtual SGAL::Container* clone() { return new Nef_gaussian_map_geo(); }
-
-  virtual void cull(SGAL::Cull_context& cull_context);
-  virtual void isect(SGAL::Isect_action* action);
-  virtual bool clean_sphere_bound();
-
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -238,7 +230,18 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype. */
-  virtual SGAL::Container_proto* get_prototype();
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  virtual void cull(Cull_context& cull_context);
+  virtual void isect(Isect_action* action);
+  virtual bool clean_sphere_bound();
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   /*! Print statistics. */
   void print_stat();
@@ -269,7 +272,7 @@ public:
     }
   };
 #endif
-  
+
 #if 0
   /*! Transforms a (planar) facet into a normal. */
   struct Normal_vector {
@@ -282,7 +285,7 @@ public:
       const Point_3& x = h->vertex()->point();
       const Point_3& y = h->next()->vertex()->point();
       const Point_3& z = h->next()->next()->vertex()->point();
-#endif 
+#endif
       Vector_3 normal =
         CGAL::cross_product(h->next()->vertex()->point() - h->vertex()->point(),
                             h->next()->next()->vertex()->point() -
@@ -293,7 +296,7 @@ public:
     }
   };
 #endif
-  
+
   /*! */
   template <class HDS>
   class Build_surface : public CGAL::Modifier_base<HDS> {
@@ -323,7 +326,7 @@ public:
         const Vector3f& v = (*coord_array)[i];
         B.add_vertex(Point(v[0], v[1], v[2]));
       }
-      
+
       // Add the faces:
       Uint j = 0;
       for (i = 0; i < num_facets; i++) {
@@ -340,7 +343,7 @@ public:
     /*! sets a pointer to the geometry */
     void set_nef_polyhedron(Nef_gaussian_map_geo* p)
     { m_nef_polyhedron = p; }
-    
+
   private:
     /*! The Geometry node */
     Nef_gaussian_map_geo* m_nef_polyhedron;
@@ -358,9 +361,9 @@ private:
                     h->next()->next()->vertex()->point());
     }
   };
-  
+
   /*! Extracts the inexact point from a polyhedron vertex. */
- 
+
   struct Convert_inexact_sphere {
     Inexact_sphere_3 operator()(const Nef_gaussian_map::SVertex& vertex) const
     {
@@ -400,7 +403,7 @@ private:
 
   /*! The Nef Gaussian map representation. */
   Nef_gaussian_map m_nef_gaussian_map;
-  
+
   /* Indicates that the bbox is set externally. */
   bool m_bb_is_pre_set;
 
@@ -444,10 +447,10 @@ private:
 
   /*! Indicates whether to draw the marked halfedge. */
   Boolean m_draw_marked_edge;
-  
+
   /*! Indicates whether to draw the marked face. */
   Boolean m_draw_marked_facet;
-  
+
   /*! The color of the marked vertex. */
   Vector3f m_marked_vertex_color;
 
@@ -456,7 +459,7 @@ private:
 
   /*! The color of the marked face. */
   Vector3f m_marked_facet_color;
-  
+
   /*! The scale of the radius of the geometry that represents a marked
    * vertex.
    */
@@ -464,7 +467,7 @@ private:
 
   /*! The scale of the radius of the geometry that represents a marked edge. */
   float m_edge_radius_scale;
-  
+
   /*! The index of the marked vertex. */
   Uint m_marked_vertex_index;
 
@@ -473,7 +476,7 @@ private:
 
   /*! The index of the marked face. */
   Uint m_marked_facet_index;
-  
+
   /*! When trigerred the vertex index is increased. */
   Boolean m_increase_vertex_index;
 
@@ -482,7 +485,7 @@ private:
 
   /*! When trigerred the face index is increased. */
   Boolean m_increase_facet_index;
-  
+
   // Default values:
   static const Boolean s_def_draw_dual;
   static const Boolean s_def_draw_dual_sphere;
@@ -500,7 +503,7 @@ private:
   static const Vector3f s_def_marked_facet_color;
   static const float s_def_vertex_radius_scale;
   static const float s_def_edge_radius_scale;
-  
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -525,14 +528,14 @@ protected:
   void draw_changed(Field_info* field_info = NULL);
 
   /*! Draw the intermediate polyhedron (for debugging purpose). */
-  void draw_polyhedron(Draw_action* action);  
+  void draw_polyhedron(Draw_action* action);
 
   /*! \brief draws the dual representation of the polyhedron. */
   void draw_dual(Draw_action* action);
 
   /*! \brief draws the dual edges. */
   void draw_dual_edges();
-  
+
   /*! \brief draws the dual representation opaque. */
   void draw_dual_opaque(Draw_action* action);
 
@@ -541,13 +544,13 @@ protected:
 
   /*! Draw the dual marked facet, that is, the vertex. */
   void draw_dual_marked_facet();
-  
+
   /*! Draw the dual marked edge. */
   void draw_dual_marked_edge(Vector3f& src, Vector3f& trg);
-  
+
   /*! Draw the dual marked vertex, that is a face. */
   void draw_dual_marked_vertex();
-    
+
   /*! Set the operand gausian maps of the minkowski sum. */
   void insert_ngm(Shared_nef_gaussian_map_geo ngm);
 
@@ -559,13 +562,13 @@ protected:
 
   /*! Obtaint the width of the lines. */
   Float get_dual_line_width() const;
-  
+
   /*! Set the line color. */
   void set_dual_line_color(const Vector3f& color);
 
   /*! Obtain the line color */
   const Vector3f& get_dual_line_color();
-  
+
   /*! Set the sphere color. */
   void set_dual_sphere_color(const Vector3f& color);
 
@@ -586,10 +589,10 @@ protected:
 
   /*! Obtain the index of the marked edge. */
   Uint marked_edge_index() const { return m_marked_edge_index; }
-  
+
   /*! Obtain the index of the marked facet. */
   Uint marked_facet_index() const { return m_marked_facet_index; }
-  
+
   /*! Set the index of the marked vertex. */
   void set_marked_vertex_index(Uint index) { m_marked_vertex_index = index; }
 
@@ -598,7 +601,7 @@ protected:
 
   /*! Set the index of the marked facet. */
   void set_marked_facet_index(Uint index) { m_marked_facet_index = index; }
-  
+
   /*! Set the color of the marked vertex. */
   void set_marked_vertex_color(const SGAL::Vector3f& color);
 
@@ -608,6 +611,14 @@ protected:
   /*! Sets the color of the marked facet. */
   void set_marked_facet_color(const SGAL::Vector3f& color);
 };
+
+/*! \brief constructs the prototype. */
+inline Nef_gaussian_map_geo* Nef_gaussian_map_geo::prototype()
+{ return new Nef_gaussian_map_geo(true); }
+
+/*! \brief clones. */
+inline Container* Nef_gaussian_map_geo::clone()
+{ return new Nef_gaussian_map_geo(); }
 
 /*! \brief sets the operand gausian maps of the minkowski sum. */
 inline void Nef_gaussian_map_geo::insert_ngm(Shared_nef_gaussian_map_geo ngm)
@@ -629,7 +640,7 @@ inline void Nef_gaussian_map_geo::set_dual_line_width(Float width)
 /*! \brief obtaints the width of the lines. */
 inline Float Nef_gaussian_map_geo::get_dual_line_width() const
 { return m_dual_line_width; }
-  
+
 /*! \brief sets the curve color. */
 inline void Nef_gaussian_map_geo::set_dual_line_color(const Vector3f& color)
 { m_dual_line_color = color; }

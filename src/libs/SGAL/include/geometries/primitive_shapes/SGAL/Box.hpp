@@ -20,10 +20,10 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! An implementation of the Box geometry.
- *                        
+ *
  *  A geometry of type box. The box is specified by its center and
- *  size.                            
- *              
+ *  size.
+ *
  *  Inherits from Geometry.
  */
 
@@ -71,7 +71,7 @@ public:
   Vector3f get_size() const;
 
   /*! Draw the box. */
-  virtual void draw(Draw_action* action); 
+  virtual void draw(Draw_action* action);
 
   /*! Draw the sphere in selection mode */
   virtual void isect(Isect_action* action);
@@ -87,6 +87,10 @@ public:
 
   /*! Obtain the box prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);

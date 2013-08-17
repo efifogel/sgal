@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Switch::s_tag = "Switch";
-Container_proto* Switch::s_prototype = 0;
+Container_proto* Switch::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Switch, "Switch");
 
@@ -81,7 +81,7 @@ Action::Trav_directive Switch::draw(Draw_action* draw_action)
 /*! Traverses the choosen node for selections.
  * @param isect_action
  */
-void Switch::isect(Isect_action* isect_action) 
+void Switch::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
   Shared_node node = get_choice();
@@ -118,7 +118,7 @@ void Switch::isect(Isect_action* isect_action)
 Boolean Switch::clean_sphere_bound()
 {
   m_dirty_sphere_bound = false;
-  
+
   if (!is_visible()) {
     if (m_sphere_bound.get_radius() == 0) return false;
     m_sphere_bound.set_radius(0);
@@ -149,6 +149,7 @@ void Switch::init_prototype()
   s_prototype = new Container_proto(Group::get_prototype());
 
   // Add the field-info records to the prototype:
+  // whichChoice
   Execution_function exec_func =
     static_cast<Execution_function>(&Node::sphere_bound_changed);
   s_prototype->add_field_info(new SF_int(WHICH_CHOICE, "whichChoice",
@@ -164,8 +165,8 @@ void Switch::delete_prototype()
 }
 
 /*! */
-Container_proto* Switch::get_prototype() 
-{  
+Container_proto* Switch::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
@@ -175,7 +176,7 @@ Container_proto* Switch::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Switch::set_attributes(Element* elem) 
+void Switch::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter Str_attr_iter;
 
@@ -197,9 +198,9 @@ void Switch::set_attributes(Element* elem)
 
 #if 0
 /*! */
-Attribute_list Switch::get_attributes() 
+Attribute_list Switch::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
   Vector3f vec;
   Rotation rot;

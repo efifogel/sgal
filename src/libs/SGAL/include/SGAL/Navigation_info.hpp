@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -56,7 +56,7 @@ public:
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype */
@@ -68,8 +68,12 @@ public:
   /*! Obtain the node prototype */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the type */
-  void set_type(SGAL::Navigation_info_type type) { m_type = type; }
+  void set_type(Navigation_info_type type) { m_type = type; }
 
   /*! Set the 'any' bollean flag that indicates whether the user can
    * change navigation types
@@ -83,7 +87,7 @@ protected:
 private:
   /*! The navigation type strings */
   static const char* s_type_strings[];
-  
+
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
@@ -95,7 +99,7 @@ private:
 
   /*! The navigation type */
   SGAL::Navigation_info_type m_type;
-  
+
   /*! Parse the type string-attribute */
   int parse_type(const std::string& type);
 };

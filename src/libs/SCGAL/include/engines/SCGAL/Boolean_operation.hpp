@@ -24,7 +24,7 @@
 
 /*! \file
  * An engine that computes a Boolean operation.
- *  
+ *
  * Inherits from Node
  */
 
@@ -61,7 +61,7 @@ public:
     OP_NOP,
     OP_INTERSECTION
   };
-  
+
   typedef boost::shared_ptr<Exact_polyhedron_geo>   Shared_exact_polyhedron_geo;
   typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
 
@@ -76,7 +76,7 @@ public:
 
   /*! Clone. */
   virtual Container* clone();
-    
+
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -85,18 +85,27 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
+  Operation* operation_handle(Field_info*) { return &m_operation; }
+  Shared_mesh_set* operand1_handle(Field_info*) { return &m_operand1; }
+  Shared_mesh_set* operand2_handle(Field_info*) { return &m_operand2; }
+  Shared_exact_polyhedron_geo* result_handle(Field_info*) { return &m_result; }
+  //@}
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
-  
+
   /*! . */
   void trigger_changed(Field_info* field_info);
 
   /*! Execute the engine. */
   void execute();
-  
+
   /*! Obtain the operation. */
   Operation get_operation() const;
 
@@ -122,7 +131,7 @@ public:
    * \result the operand.
    */
   Shared_mesh_set set_operand2() const;
-  
+
 protected:
   /*! 1st operand. */
   Shared_mesh_set m_operand1;
@@ -132,7 +141,7 @@ protected:
 
   /*! Result. */
   Shared_exact_polyhedron_geo m_result;
-  
+
   /*! The operation. */
   Operation m_operation;
 
@@ -188,7 +197,7 @@ inline Boolean_operation::Shared_mesh_set Boolean_operation::set_operand2()
 /*! \brief sets the 2nd operand. */
 inline void Boolean_operation::set_operand2(Shared_mesh_set operand)
 { m_operand2 = operand; }
- 
+
 SGAL_END_NAMESPACE
 
 #endif

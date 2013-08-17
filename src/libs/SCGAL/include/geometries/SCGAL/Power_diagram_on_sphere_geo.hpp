@@ -78,10 +78,10 @@ public:
 
   typedef Arrangement_renderer::Edge_shape      Site_shape;
   typedef Site_shape::Style                     Site_style;
-  
+
 private:
   typedef Exact_plane_array                        Coeff_array;
-  
+
   typedef CGAL::Spherical_power_diagram_traits_2<Kernel>
     Geom_traits;
   typedef CGAL::Envelope_voronoi_2::Spherical_voronoi_diagram_2<Geom_traits>
@@ -93,7 +93,7 @@ private:
   typedef Geom_traits::Site_2                      Site;
 
   typedef Voronoi_on_sphere                        Vos;
-  
+
   typedef Vos::Vertex                              Vos_vertex;
   typedef Vos::Halfedge                            Vos_halfedge;
   typedef Vos::Face                                Vos_face;
@@ -105,7 +105,7 @@ private:
   typedef Vos::Vertex_const_handle                 Vos_vertex_const_handle;
   typedef Vos::Halfedge_const_handle               Vos_halfedge_const_handle;
   typedef Vos::Face_const_handle                   Vos_face_const_handle;
-  
+
   typedef Vos::Vertex_iterator                     Vos_vertex_iterator;
   typedef Vos::Halfedge_iterator                   Vos_halfedge_iterator;
   typedef Vos::Edge_iterator                       Vos_edge_iterator;
@@ -123,7 +123,7 @@ private:
 
   typedef boost::shared_ptr<Coeff_array>           Shared_coeff_array;
   typedef boost::shared_ptr<Exact_plane_array>     Shared_exact_plane_array;
-  
+
 public:
   /*! Constructor. */
   Power_diagram_on_sphere_geo(Boolean proto = false);
@@ -132,21 +132,23 @@ public:
   virtual ~Power_diagram_on_sphere_geo();
 
   /* Construct the prototype. */
-  static Power_diagram_on_sphere_geo* prototype()
-  { return new Power_diagram_on_sphere_geo(true); }
+  static Power_diagram_on_sphere_geo* prototype();
 
   /*! Clone. */
-  virtual Container* clone()
-  { return new Power_diagram_on_sphere_geo(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the node attributes. */
   virtual void set_attributes(Element* elem);
@@ -167,7 +169,7 @@ public:
 
   /*! Clean the renderer. */
   virtual void clean_renderer();
-  
+
   /*! Set the coordinate array. */
   void set_coeff_array(Shared_coeff_array coeff_array);
 
@@ -194,13 +196,13 @@ public:
 
   /*! Set the edge shape style. */
   void set_site_style(Site_style style) { m_site_style = style; }
-  
+
   /*! Obtain the edge shape type. */
   Int get_site_count() const { return m_site_count; }
 
   /*! Set the edge shape type. */
   void set_site_count(Int count) { m_site_count = count; }
-    
+
   /*! Determine whether edges are rendered directed. */
   Boolean get_site_directed() const { return m_site_directed; }
 
@@ -218,11 +220,11 @@ public:
 
   /*! Set the edge line width. */
   void set_site_line_width(Float width) { m_site_line_width = width; }
-  
+
 protected:
   typedef Vertices_renderer<Self>          Pd_vertices_renderer;
   typedef Edges_renderer<Self>             Pd_edges_renderer;
-  
+
   typedef Colored_vertices_renderer<Pd_vertices_renderer>
                                            Pd_colored_vertices_renderer;
   typedef Colored_edges_renderer<Pd_edges_renderer>
@@ -246,11 +248,11 @@ protected:
   private:
     /*! The arrangement geometry. */
     Power_diagram_on_sphere_geo& m_geo;
-    
+
   public:
     /*! Constructor. */
     Inflated_site_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
-    
+
     /*! Drawer operator. */
     virtual void operator()(Draw_action* action);
   };
@@ -260,11 +262,11 @@ protected:
   private:
     /*! The arrangement geometry. */
     Power_diagram_on_sphere_geo& m_geo;
-    
+
   public:
     /*! Constructor. */
     Site_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
-    
+
     /*! Draw the sites. */
     virtual void operator()(Draw_action* action) { m_geo.draw_sites(action); }
   };
@@ -273,15 +275,15 @@ protected:
   private:
     /*! The arrangement geometry. */
     Power_diagram_on_sphere_geo& m_geo;
-    
+
   public:
     /*! Constructor. */
     Site_other_renderer(Power_diagram_on_sphere_geo& geo) : m_geo(geo) {}
-    
+
     /*! Drawer operator. */
     virtual void operator()(Draw_action* action);
   };
-    
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -315,7 +317,7 @@ private:
 
   /*! Indicates whether edges are rendered directed or not. */
   Boolean m_site_directed;
-  
+
   /*! The site radius. */
   Float m_site_radius;
 
@@ -324,16 +326,16 @@ private:
 
   /*! The angle of a single triangle in the fan drawing of a site. */
   Float m_site_delta_angle;
-  
+
   /*! The site renderer. */
   Inflated_site_renderer* m_inflated_site_renderer;
 
   /*! The site renderer. */
   Site_renderer* m_site_renderer;
-  
+
   /*! The non-flat site renderer. */
   Site_other_renderer* m_site_other_renderer;
-  
+
   /*! Default values. */
   static const Boolean s_def_site_enabled;
   static const Site_style s_def_site_style;
@@ -342,7 +344,7 @@ private:
   static const Float s_def_site_radius;
   static const Float s_def_site_line_width;
   static const Float s_def_site_delta_angle;
-  
+
   /*! Draw the power diagram on sphere opaque.
    * \param action
    */
@@ -352,7 +354,7 @@ private:
    * \param action
    */
   void draw_sites(Draw_action* action);
-  
+
   /*! Draw a site
    * \param action
    * \param point
@@ -363,7 +365,7 @@ private:
    * \param action
    */
   void draw_aos_vertices(Draw_action* action);
-  
+
   /*! Draw the arrangement edges.
    * \param action
    */
@@ -375,6 +377,14 @@ private:
   /*! Detsroy the renderers. */
   void destroy_renderers();
 };
+
+/* \brief constructs the prototype. */
+inline Power_diagram_on_sphere_geo* Power_diagram_on_sphere_geo::prototype()
+{ return new Power_diagram_on_sphere_geo(true); }
+
+/*! \brief clones. */
+inline Container* Power_diagram_on_sphere_geo::clone()
+{ return new Power_diagram_on_sphere_geo(); }
 
 /*! \brief obtains the coordinate array. */
 inline Power_diagram_on_sphere_geo::Shared_coeff_array

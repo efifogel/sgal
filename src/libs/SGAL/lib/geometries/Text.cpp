@@ -38,8 +38,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Text::s_tag = "Text";
-Container_proto* Text::s_prototype = NULL;
+const std::string Text::s_tag = "Text";
+Container_proto* Text::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Text, "Text");
 
@@ -79,12 +79,10 @@ void Text::draw(Draw_action* draw_action)
 void Text::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto();
-
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
+  s_prototype = new Container_proto(Geometry::get_prototype());
 
   // Add the field-info records to the prototype:
+  // string
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_string(STRING, "string",
@@ -100,14 +98,14 @@ void Text::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Text::get_prototype() 
-{  
+Container_proto* Text::get_prototype()
+{
   if (!s_prototype) Text::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of this object. */
-void Text::set_attributes(Element* elem) 
+void Text::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
@@ -130,28 +128,28 @@ void Text::set_attributes(Element* elem)
     Shared_container cont = elem->get_value(cai);
     if (name == "fontStyle") {
       Shared_font_style font_style =
-        boost::dynamic_pointer_cast<Font_style>(cont); 
+        boost::dynamic_pointer_cast<Font_style>(cont);
       set_font_style(font_style);
       elem->mark_delete(cai);
       continue;
     }
   }
-  
+
   // remove all the marked attributes
   elem->delete_marked();
 }
 
 #if 0
-Attribute_list Text::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Text::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
   Vector3f vec;
   Rotation rot;
 
   attribs = Geometry::get_attributes();
 
-  if (!m_string.empty()) 
+  if (!m_string.empty())
   {
     attrib.first = "string";
     attrib.second = m_string;
@@ -178,7 +176,7 @@ Boolean Text::clean_sphere_bound()
     m_default_font_style = Shared_font_style(new Font_style());
     set_font_style(m_default_font_style);
   }
-  
+
   Float width, height;
   m_font_style->get_string_size(m_string, width, height);
   //! \todo Assume the origin is in the center

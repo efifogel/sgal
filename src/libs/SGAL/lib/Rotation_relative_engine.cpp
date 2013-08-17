@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,8 +35,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Rotation_relative_engine::s_tag = "sgalRotationRelativeEngine";
-Container_proto * Rotation_relative_engine::s_prototype = 0;
+const std::string Rotation_relative_engine::s_tag = "RotationRelativeEngine";
+Container_proto * Rotation_relative_engine::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Rotation_relative_engine, "Rotation_relative_engine");
 
@@ -50,11 +50,11 @@ Rotation_relative_engine::Rotation_relative_engine(Boolean proto):
   m_lastFraction(-1)
 {}
 
-/*! Destructor */ 
+/*! Destructor */
 Rotation_relative_engine::~Rotation_relative_engine() {}
 
 /**
- Purpose: prototype initialization function - initializes the prototype for 
+ Purpose: prototype initialization function - initializes the prototype for
  all the node instances of Rotation_interpolator in the scene graph.
  Creates and adds a field info for each potential field.
 */
@@ -110,8 +110,8 @@ void Rotation_relative_engine::execute(Field_info *)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Rotation_relative_engine::set_attributes(Element * elem) 
-{ 
+void Rotation_relative_engine::set_attributes(Element * elem)
+{
   Node::set_attributes(elem);
   for (Str_attr_iter ai = elem->str_attrs_begin();
        ai != elem->str_attrs_end(); ai++)
@@ -131,14 +131,14 @@ void Rotation_relative_engine::set_attributes(Element * elem)
 }
 
 /**
- * Get a list of atytributes in this object. This method is called only 
- * from the Builder side. 
+ * Get a list of atytributes in this object. This method is called only
+ * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Rotation_relative_engine::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
   char buf[32];
 

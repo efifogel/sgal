@@ -52,7 +52,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Assembly_part::s_prototype = NULL;
+Container_proto* Assembly_part::s_prototype(NULL);
 std::string Assembly_part::s_tag = "AssemblyPart";
 
 REGISTER_TO_FACTORY(Assembly_part, "Assembly_part");

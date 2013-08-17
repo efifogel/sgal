@@ -23,18 +23,18 @@
 #define SGAL_FLOW_SENSOR_HPP
 
 /*! \file
- * This sensor is used to inform several loading and configuration 
- * parameters. A web based application can register on the fields of 
+ * This sensor is used to inform several loading and configuration
+ * parameters. A web based application can register on the fields of
  * this sensor to be informed on these attributes.
  * The currently supported attributes are:
  * load done - returns true when the loading of the model (including all
  *             geometry and image data) is done. Currently supports a single
  *             scene data.
- * collaboration - returns true when the client is joined into a collaboration 
+ * collaboration - returns true when the client is joined into a collaboration
  *                 session and the collaboration is active.
- * number of polygons - the total number of polygons currently being rendered 
+ * number of polygons - the total number of polygons currently being rendered
  * (and in memory)
- * absolute number of polygons - the total number of polygons that have been 
+ * absolute number of polygons - the total number of polygons that have been
  * produced since the beginning. This number always increases.
  */
 
@@ -91,6 +91,10 @@ public:
   virtual void init_prototype();
   virtual void delete_prototype();
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);

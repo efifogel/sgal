@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1658 $
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Coordinate_interpolator::s_tag = "CoordinateInterpolator";
-Container_proto * Coordinate_interpolator::s_prototype = 0;
+Container_proto * Coordinate_interpolator::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Coordinate_interpolator, "Coordinate_interpolator");
 
@@ -46,7 +46,7 @@ Coordinate_interpolator::Coordinate_interpolator(Boolean proto) :
   m_last_location(0)
 {}
 
-/*! Destructor */ 
+/*! Destructor */
 Coordinate_interpolator::~Coordinate_interpolator()
 {
   m_keys.clear();
@@ -59,8 +59,9 @@ void Coordinate_interpolator::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Interpolator::get_prototype());
-  
-  s_prototype->add_field_info(new MF_vector3f(VALUE,"value_changed", 
+
+  // value
+  s_prototype->add_field_info(new MF_vector3f(VALUE,"value_changed",
                                               get_member_offset(&m_value)));
 }
 
@@ -72,8 +73,8 @@ void Coordinate_interpolator::delete_prototype()
 }
 
 /*! \brief obtains the container prototype */
-Container_proto * Coordinate_interpolator::get_prototype() 
-{  
+Container_proto * Coordinate_interpolator::get_prototype()
+{
   if (!s_prototype) Coordinate_interpolator::init_prototype();
   return s_prototype;
 }
@@ -86,13 +87,13 @@ Container_proto * Coordinate_interpolator::get_prototype()
 void Coordinate_interpolator::execute(Field_info *)
 {
   Field * value = get_field(VALUE);
-  
+
   // if there is no connection to the value field there is no need to execute
   // the interpolation
   if (value == NULL) return;
 
   // if there are no array set the value to zero and return
-  if ((m_keys.size() == 0) || m_values.size() == 0) 
+  if ((m_keys.size() == 0) || m_values.size() == 0)
   {
     m_value = Vector3f_array(1);
     value->cascade();
@@ -100,7 +101,7 @@ void Coordinate_interpolator::execute(Field_info *)
   }
 
   // If there is only one key/value pair, set it and return
-  if (m_keys.size() == 1) 
+  if (m_keys.size() == 1)
   {
     m_value = get_value(0);
     value->cascade();
@@ -108,16 +109,16 @@ void Coordinate_interpolator::execute(Field_info *)
   }
 
   // If the fraction is larger than the last key, set the value to the last one
-  if (m_fraction >= m_keys[m_keys.size() - 1]) 
+  if (m_fraction >= m_keys[m_keys.size() - 1])
   {
     m_value = get_value(m_keys.size() - 1);
     value->cascade();
     return;
   }
-    
+
   // If the fraction is smaller than the first key - set the value to the
   // first one
-  if (m_fraction <= m_keys[0]) 
+  if (m_fraction <= m_keys[0])
   {
     m_value = get_value(0);
     value->cascade();
@@ -133,7 +134,7 @@ void Coordinate_interpolator::execute(Field_info *)
     ++location;
 
   // Loop down the array to find the closest key which is smaller than fraction
-  while (location > 0 && m_fraction < m_keys[location]) 
+  while (location > 0 && m_fraction < m_keys[location])
     location--;
 
   // Set the last location to the current one for next execution
@@ -142,7 +143,7 @@ void Coordinate_interpolator::execute(Field_info *)
   // Set m_value by interpolating between two values
   Uint size_of_array = m_values.size() / m_keys.size();
   Vector3f *location_value = m_values.begin() + location * size_of_array;
-  Vector3f *next_location_value = m_values.begin() + 
+  Vector3f *next_location_value = m_values.begin() +
     (location + 1) * size_of_array;
 
   Float key_delta = m_keys[location + 1] - m_keys[location];
@@ -151,10 +152,10 @@ void Coordinate_interpolator::execute(Field_info *)
   m_value = Vector3f_array(size_of_array);
   for (unsigned int j = 0; j < size_of_array; ++j)
   {
-    for (unsigned int i = 0; i < 3; ++i) 
+    for (unsigned int i = 0; i < 3; ++i)
     {
       Float delta = next_location_value[j][i] - location_value[j][i];
-      m_value[j][i] = location_value[j][i] + 
+      m_value[j][i] = location_value[j][i] +
         (fration_delta * delta) / key_delta;
     }
   }
@@ -163,7 +164,7 @@ void Coordinate_interpolator::execute(Field_info *)
   value->cascade();
 }
 
-/*! returns a copy of the value in a specific location 
+/*! returns a copy of the value in a specific location
  * \param location The location of the sub array that needs to be returned.
  */
 Vector3f_array Coordinate_interpolator::get_value (Uint location)
@@ -185,8 +186,8 @@ Vector3f_array Coordinate_interpolator::get_value (Uint location)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Coordinate_interpolator::set_attributes(Element * elem) 
-{ 
+void Coordinate_interpolator::set_attributes(Element * elem)
+{
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
 
@@ -197,7 +198,7 @@ void Coordinate_interpolator::set_attributes(Element * elem)
   {
     const std::string & name = elem->get_name(ai);
     const std::string & value = elem->get_value(ai);
-    if (name == "keyValue") 
+    if (name == "keyValue")
     {
       Uint num_values = get_num_tokens(value);
       Uint num_vecs = num_values / 3;
@@ -214,14 +215,14 @@ void Coordinate_interpolator::set_attributes(Element * elem)
 }
 
 #if 0
-/*! Get a list of attributes in this object. This method is called only 
- * from the Builder side. 
+/*! Get a list of attributes in this object. This method is called only
+ * from the Builder side.
  *
- * \return a list of attributes 
+ * \return a list of attributes
  */
 Attribute_list Vector3f_interpolator::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Interpolator::get_attributes();

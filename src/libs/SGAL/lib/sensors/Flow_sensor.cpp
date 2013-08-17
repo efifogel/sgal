@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -27,8 +27,8 @@ SGAL_BEGIN_NAMESPACE
 
 #define QUEUE_DEPTH 5
 
-std::string Flow_sensor::s_tag = "sgalFlowSensor";
-Container_proto * Flow_sensor::s_prototype = 0;
+const std::string Flow_sensor::s_tag = "FlowSensor";
+Container_proto* Flow_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Flow_sensor, "Flow_sensor");
 
@@ -45,9 +45,9 @@ Flow_sensor::Flow_sensor(Boolean proto) :
   m_rate(0),
   m_geomMemory(0)
 {
-  m_name = "sgalFlowSensor";
+  m_name = "FlowSensor";
 
-  for( int i = 0 ; i < QUEUE_DEPTH ; i++) {
+  for ( int i = 0; i < QUEUE_DEPTH; i++) {
     m_timeQ.push(0);
     m_polygonCountQ.push(0);
   }
@@ -162,7 +162,7 @@ void Flow_sensor::set_attributes(Element * elem)
 /*!
  */
 Attribute_list Flow_sensor::get_attributes()
-{  
+{
   Attribute_list attribs = Container::get_attributes();
   return attribs;
 }
@@ -204,21 +204,21 @@ void Flow_sensor::init_prototype()
   // Add the object fields to the prototype
   s_prototype->
     add_field_info(new SF_bool(COLLABORATED, "collaborated",
-                               get_member_offset(&m_collaborated)));    
+                               get_member_offset(&m_collaborated)));
 
   // Add the object fields to the prototype
   s_prototype->
     add_field_info(new SF_int(NUM_POLYGONS, "num_polygons",
-                              get_member_offset(&m_num_polygons)));    
+                              get_member_offset(&m_num_polygons)));
 
   // Add the object fields to the prototype
   s_prototype->
     add_field_info(new SF_int(ACCUM_NUM_POLYGONS, "accumNumPolygons",
-                              get_member_offset(&m_accumNumPolygons)));    
+                              get_member_offset(&m_accumNumPolygons)));
 
   // Add the object fields to the prototype
   s_prototype->add_field_info(new SF_float(RATE, "rate",
-                                           get_member_offset(&m_rate)));    
+                                           get_member_offset(&m_rate)));
 
   // Add the object fields to the prototype
   s_prototype->add_field_info(new SF_int(GEOM_MEMORY, "geomMemory",
@@ -230,12 +230,13 @@ void Flow_sensor::init_prototype()
 void Flow_sensor::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*!
  */
-Container_proto * Flow_sensor::get_prototype() 
-{  
+Container_proto* Flow_sensor::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }

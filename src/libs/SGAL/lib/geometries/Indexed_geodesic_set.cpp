@@ -43,7 +43,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Indexed_geodesic_set::s_tag = "IndexedGeodesicSet";
-Container_proto* Indexed_geodesic_set::s_prototype = 0;
+Container_proto* Indexed_geodesic_set::s_prototype(NULL);
 
 // Default values:
 const Boolean Indexed_geodesic_set::m_def_color_per_vertex(true);
@@ -88,7 +88,7 @@ void Indexed_geodesic_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/*! \brief sets the coordinate set. Pass the pointer to the geometry object 
+/*! \brief sets the coordinate set. Pass the pointer to the geometry object
  * used by the decoder as well.
  */
 void Indexed_geodesic_set::set_coord_array(Shared_coord_array coord_array)
@@ -97,9 +97,9 @@ void Indexed_geodesic_set::set_coord_array(Shared_coord_array coord_array)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the normal set. Pass the pointer to the geometry object 
+/*! \brief sets the normal set. Pass the pointer to the geometry object
  * used by the decoder as well.
- */ 
+ */
 void Indexed_geodesic_set::set_normal_array(Shared_normal_array normal_array)
 { m_normal_array = normal_array; }
 
@@ -110,7 +110,7 @@ void Indexed_geodesic_set::
 set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 { m_tex_coord_array = tex_coord_array; }
 
-/*! \brief sets the color set. Pass the pointer to the geometry object 
+/*! \brief sets the color set. Pass the pointer to the geometry object
  * used by the decoder as well.
  * \param color_array (in) a pointer to a color set
  */
@@ -118,7 +118,7 @@ void Indexed_geodesic_set::set_color_array(Shared_color_array color_array)
 { m_color_array = color_array; }
 
 /*! \brief draws the geometry.
- * For efficiency reasons, differenrt methods were written to 
+ * For efficiency reasons, differenrt methods were written to
  * draw geometries with different kinds of data (texture/normal/color).
  * \param action action.
  */
@@ -143,7 +143,7 @@ void Indexed_geodesic_set::draw(Draw_action* action)
   if (m_primitive_type == PT_LINES) {
     Uint j = 0;
     Uint k = 0;
-	
+
     glBegin(GL_LINES);
 
     for (Uint i = 0; i < m_num_primitives; ++i) {
@@ -180,22 +180,22 @@ void Indexed_geodesic_set::draw(Draw_action* action)
         }
         ++k;
       }
-	  
+
       glBegin(GL_LINE_STRIP);
-      
+
       // std::cout << m_coord_indices[j] << " * " << m_coord_indices[j+1]
       //           << std::endl;
       Vector3f first_coord = (*m_coord_array)[m_coord_indices[j]];
       Vector3f second_coord = (*m_coord_array)[m_coord_indices[j+1]];
       j += 2;
       //std::cout << first_coord <<"  "<<second_coord<<std::endl;
-		
+
       float x_start = m_radius*cos(first_coord[0])*sin(first_coord[1]);
       float y_start = m_radius*sin(first_coord[0])*sin(first_coord[1]);
       float z_start = m_radius*cos(first_coord[1]);
-		
+
       Vector3f source = Vector3f(x_start,y_start,z_start);
-		
+
       float x_end = m_radius*cos(second_coord[0])*sin(second_coord[1]);
       float y_end = m_radius*sin(second_coord[0])*sin(second_coord[1]);
       float z_end = m_radius*cos(second_coord[1]);
@@ -207,9 +207,9 @@ void Indexed_geodesic_set::draw(Draw_action* action)
       std::list<Vector3f>::iterator iter;
       std::list<Vector3f>::iterator nextIter;
       Uint breaks;
-      
+
       for (breaks = 1; breaks <= 1; breaks++) {
-		
+
         iter = points.begin();
         nextIter = iter;
         nextIter++;
@@ -219,12 +219,12 @@ void Indexed_geodesic_set::draw(Draw_action* action)
           float x = (vertex2[0] + vertex1[0])/2;
           float y = (vertex2[1] + vertex1[1])/2;
           float z = (vertex2[2] + vertex1[2])/2;
-			
-          float r = sqrt(x*x+y*y+z*z); 
+
+          float r = sqrt(x*x+y*y+z*z);
           float theta = atan2(y,x);
           float fi = acos(z/r);
-			
-			
+
+
           float x_new = m_radius*cos(theta)*sin(fi);
           float y_new = m_radius*sin(theta)*sin(fi);
           float z_new = m_radius*cos(fi);
@@ -239,7 +239,7 @@ void Indexed_geodesic_set::draw(Draw_action* action)
       }
     }
     glEnd();
-    
+
   }
 
   context->draw_line_width(1.0f);
@@ -265,8 +265,8 @@ bool Indexed_geodesic_set::clean_sphere_bound()
 }
 
 /*! \brief sets the attributes of the object. */
-void Indexed_geodesic_set::set_attributes(Element* elem) 
-{ 
+void Indexed_geodesic_set::set_attributes(Element* elem)
+{
   Geo_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter Str_attr_iter;
@@ -309,6 +309,7 @@ void Indexed_geodesic_set::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geo_set::get_prototype());
 
+  // lineWidth
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
                                            get_member_offset(&m_line_width)));
 }
@@ -321,8 +322,8 @@ void Indexed_geodesic_set::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Indexed_geodesic_set::get_prototype() 
-{  
+Container_proto* Indexed_geodesic_set::get_prototype()
+{
   if (!s_prototype) Indexed_geodesic_set::init_prototype();
   return s_prototype;
 }

@@ -38,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 class SGAL_SGAL_DECL Image_sphere_environment : public Sphere_environment {
 public:
   typedef Image::Path_list                          Path_list;
-  
+
   /*! Constructor */
   Image_sphere_environment(Boolean proto = false);
 
@@ -60,7 +60,7 @@ public:
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype. */
@@ -72,16 +72,20 @@ public:
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the directory-search structure. */
   void set_dirs(const Path_list& dirs);
 
   /*! Obtain the directory-search structure. */
   const Path_list& get_dirs() const;
-  
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -101,7 +105,7 @@ inline Image_sphere_environment* Image_sphere_environment::prototype()
 inline Container* Image_sphere_environment::clone()
 { return new Image_sphere_environment(); }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 inline void Image_sphere_environment::add_to_scene(Scene_graph* sg)
 {
   m_images[0].set_dirs(sg->get_data_dirs());

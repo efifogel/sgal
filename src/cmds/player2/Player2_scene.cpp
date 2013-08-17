@@ -100,14 +100,14 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
   SGAL_assertion(conf);
-  
+
   SGAL::Draw_action draw_action(conf);
   draw_action.set_context(m_context);
   draw_action.set_snap(false);
   draw_action.set_clear(0);
 
   SGAL_assertion(conf);
-  
+
   SGAL::Uint width = m_win_width;
   SGAL::Uint height = m_win_height;
   SGAL::Uint hwidth = width / 2;
@@ -117,25 +117,26 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
   int x = (int) ((scale - 1) / 2 * hwidth);
   int y = (int) ((scale - 1) / 2 * height);
   int margin = m_option_parser->get_viewport_margin();
-  
+
   SGAL::Camera* camera = m_scene_graph->get_active_camera();
   SGAL_assertion(camera);
 
   // Clear the entire frame buffer:
-  m_context->set_viewport(0, 0, width, height);  
+  m_context->set_viewport(0, 0, width, height);
   camera->init(m_context);
   SGAL::Background* bg = m_scene_graph->get_active_background();
   if (bg) {
     bg->draw(&draw_action);
     m_context->clear_stencil_buffer();
-  } else {
+  }
+  else {
     m_context->clear_color_depth_stencil_buffer();
   }
 
   boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   bool enabled = false;
   if (acc) enabled = acc->is_enabled();
- 
+
   // Draw 1st viewport
   if (acc) acc->set_enabled(false);
   m_context->set_viewport(-x + margin, -y, sw, sh);
@@ -148,7 +149,7 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
 
   // Draw 2nd viewport
   if (acc) acc->set_enabled(enabled);
-  m_context->set_viewport(hwidth - x - margin, -y, sw, sh);  
+  m_context->set_viewport(hwidth - x - margin, -y, sw, sh);
   camera->init(m_context);
 #if defined(USE_CGM)
   if (m_cgm_geo) m_cgm_geo->set_draw_aos(true);
@@ -157,9 +158,9 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
   m_scene_graph->draw(&draw_action);
 
   // Draw grid
-  m_context->set_viewport(0, 0, width, height);  
+  m_context->set_viewport(0, 0, width, height);
   if (m_option_parser->get_draw_grid()) draw_grid();
-  
+
   if (!acc || !acc->is_enabled() || dont_accumulate) {
     m_scene_graph->process_snapshots(&draw_action);
     if (acc) acc->disactivate();
@@ -168,11 +169,11 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
     window_item->swap_buffers();
     return;
   }
-  
+
   if (!acc->is_active()) {
     acc->enactivate();
-    window_item->set_accumulating(SGAL_TRUE);
-    window_item->set_redraw(SGAL_TRUE);
+    window_item->set_accumulating(true);
+    window_item->set_redraw(true);
     return;
   }
 
@@ -181,12 +182,12 @@ void Player2_scene::draw_window(SGAL::Window_item* window_item,
     // Accumulation is done:
     acc->disactivate();
     m_scene_graph->process_snapshots(&draw_action);
-    window_item->set_accumulating(SGAL_FALSE);
+    window_item->set_accumulating(false);
     window_item->swap_buffers();
     return;
   }
 
   // Accumulation is not done:
-  window_item->set_redraw(SGAL_TRUE);
+  window_item->set_redraw(true);
   if (acc->do_show()) window_item->swap_buffers();
 }

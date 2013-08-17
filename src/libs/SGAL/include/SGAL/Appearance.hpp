@@ -50,7 +50,7 @@ class Halftone;
 
 /*! \brief A represenation of an appearance of a shape */
 class SGAL_SGAL_DECL Appearance : public Container {
-public: 
+public:
   enum {
     FIRST = Container::LAST - 1,
     SGAL_STATE_ELEMENTS,
@@ -73,6 +73,33 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtains the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Attache a given context. */
+  virtual Boolean attach_context(Context* context);
+
+  /*! Detache a given context. */
+  virtual Boolean detach_context(Context* context = 0);
+
+  /*! Write this container. */
+  virtual void write(Formatter* formatter);
+
   /*! Set the appearance with the content of another appearance. */
   void set(Appearance* app);
 
@@ -80,14 +107,14 @@ public:
   void set_texture(Shared_texture texture);
 
   /*! Obtain the texture attribute. */
-  Shared_texture get_texture() const;   
+  Shared_texture get_texture() const;
 
   /*! Set the halftone attribute. */
   void set_halftone(Shared_halftone halftone);
 
   /*! Obtain the halftone attribute. */
   Shared_halftone get_halftone() const;
-  
+
   /*! Set the texture-enable attribute. */
   void set_tex_enable(Boolean tex_enable);
 
@@ -111,7 +138,7 @@ public:
 
   /*! Obtain the texture blend-color attribute. */
   void get_tex_blend_color(Float* v0, Float* v1, Float* v2, Float* v3) const;
-  
+
   /*! Set the texture environment attribute. */
   void set_tex_env(Gfx::Tex_env tex_env);
 
@@ -205,7 +232,7 @@ public:
 
   /*! Obtain the destination blend function attribute. */
   Gfx::Dst_blend_func get_dst_blend_func() const;
-  
+
   /*! Set the color mask attribute. */
   void set_color_mask(const Vector4ub& color_mask);
 
@@ -213,7 +240,7 @@ public:
   void get_color_mask(Vector4ub& color_mask) const;
 
   /*! Set the color mask attribute. */
-  void set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3); 
+  void set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3);
 
   /*! Obtain the color mask attribute. */
   void get_color_mask(Ubyte* v0, Ubyte* v1, Ubyte* v2, Ubyte* v3) const;
@@ -223,7 +250,7 @@ public:
 
   /*! Obtain the depth enable flag. */
   Boolean get_depth_enable() const;
-  
+
   /*! Set the depth function attribute. */
   void set_depth_func(Gfx::Depth_func depth_func);
 
@@ -251,7 +278,7 @@ public:
    * \return a flag that indicates whether polygon stipple should be enabled
    */
   Boolean get_polygon_stipple_enable() const;
-  
+
   /*! Set the material-mode enable flag. */
   void set_material_mode_enable(Gfx::Material_mode material_mode_enable);
 
@@ -291,7 +318,7 @@ public:
    * generated from the lighting computation for a vertex.
    */
   Gfx::Light_model_color_control get_light_model_color_control() const;
-    
+
   /*! Set the inheritance mask. */
   void set_inherit(const Bit_mask& inherit);
 
@@ -311,7 +338,7 @@ public:
 
   /*! Notify that the back material has changed. */
   void back_material_changed(Field_info* field_info = NULL);
-  
+
   /*! Notify that the texture has changed. */
   void texture_changed(Field_info* field_info = NULL);
 
@@ -320,32 +347,9 @@ public:
 
   /*! Notify that the texture generation has changed. */
   void tex_gen_changed(Field_info* field_info = NULL);
-  
+
   /*! Process change of field. */
   void field_changed(Field_info* field_info);
-  
-  /*! Attache a given context. */
-  virtual Boolean attach_context(Context* context); 
-
-  /*! Detache a given context. */
-  virtual Boolean detach_context(Context* context = 0); 
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtains the node prototype. */
-  virtual Container_proto* get_prototype();
-
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
-    
-  // virtual Attribute_list get_attributes();
-  
-  /*! Write this container. */
-  virtual void write(Formatter* formatter);
 
   /*! Clean the material attribute. */
   void clean_material();
@@ -355,13 +359,13 @@ public:
 
   /*! Clean the texture enable flag. */
   void clean_tex_enable();
-    
+
   /*! Clean the texture environment attribute. */
   void clean_tex_env();
 
   /*! Clean the blend functions. */
   void clean_blend_func();
-  
+
   /*! Clean the light model. */
   void clean_light_model();
 
@@ -386,11 +390,11 @@ private:
   static const Gfx::Tex_env s_def_tex_env;
   static const Gfx::Light_model_color_control s_def_light_model_color_control;
 
-  // for each field, the corresponding bit is being set when the filed is 
+  // for each field, the corresponding bit is being set when the filed is
   // set to a new value. it is then turned off after the drawing is performed
   Bit_mask m_pending;
 
-  // for each field, the corresponding bit is being set when the filed is 
+  // for each field, the corresponding bit is being set when the filed is
   // set to a new value. it remains on forever.
   Bit_mask m_override;
   Boolean m_skip_refer;
@@ -403,7 +407,7 @@ private:
 
   /*! The previous texture-generation attribute if existed. */
   Tex_gen* m_tex_gen_prev;
-  
+
   /*! The default halftone pattern. */
   static Ubyte s_def_halftone[];
 
@@ -421,12 +425,12 @@ inline Container* Appearance::clone() { return new Appearance(); }
 
 /*! \brief obtains the texture attribute. */
 inline Appearance::Shared_texture Appearance::get_texture() const
-{ return m_texture; }    
+{ return m_texture; }
 
 /*! \brief obtains the halftone attribute. */
 inline Appearance::Shared_halftone Appearance::get_halftone() const
-{ return m_halftone; }    
-  
+{ return m_halftone; }
+
 /*! \brief obtains the texture-enable attribute. */
 inline Boolean Appearance::get_tex_enable() const { return m_tex_enable; }
 
@@ -503,7 +507,7 @@ inline Gfx::Src_blend_func Appearance::get_src_blend_func() const
 /*! \brief obtains the destination blend function attribute. */
 inline Gfx::Dst_blend_func Appearance::get_dst_blend_func() const
 { return m_dst_blend_func; }
-  
+
 /*! \brief obtains the color mask attribute. */
 inline void Appearance::get_color_mask(Vector4ub& color_mask) const
 {
@@ -518,7 +522,7 @@ inline void Appearance::get_color_mask(Ubyte* v0, Ubyte* v1,
 
 /*! \brief obtains the depth enable flag. */
 inline Boolean Appearance::get_depth_enable() const { return m_depth_enable; }
-  
+
 /*! \brief obtains the depth function attribute. */
 inline Gfx::Depth_func Appearance::get_depth_func() const
 { return m_depth_func; }

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -22,8 +22,8 @@
 /*!
  * A node in the scene graph that can choose for traversing one of child
  * objects.
- * 
- * This is a level of detail node in the scene graph. It inherits 
+ *
+ * This is a level of detail node in the scene graph. It inherits
  * from Switch and therefore can have multiple child objects.
  */
 
@@ -52,28 +52,34 @@ public:
 
   /*! Destructor */
   virtual ~Lod();
-  
-  /*! Construct the prototype */
-  static Lod* prototype() { return new Lod(true); }
 
-  /*! Clone */
-  virtual Container* clone() { return new Lod(); }
+  /*! Construct the prototype. */
+  static Lod* prototype();
 
-  virtual Node* get_choosen_node() const;
-  
-  virtual void cull(Cull_context & cull_context);
-  virtual Action::Trav_directive draw(Draw_action* draw_action);
-  virtual void isect(Isect_action* isect_action);
+  /*! Clone. */
+  virtual Container* clone();
+
+  /*! Initialize the container prototype. */
+  virtual void init_prototype();
+  virtual void delete_prototype();
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
-  virtual void delete_prototype();
-  virtual Container_proto* get_prototype();
+  virtual void cull(Cull_context & cull_context);
+
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
+
+  virtual void isect(Isect_action* isect_action);
+
+  virtual Node* get_choosen_node() const;
 
 private:
   std::vector<float> m_range;
@@ -84,6 +90,12 @@ private:
 
   static Container_proto* s_prototype;
 };
+
+/*! \brief constructs the prototype. */
+inline Lod* Lod::prototype() { return new Lod(true); }
+
+/*! \brief clones. */
+inline Container* Lod::clone() { return new Lod(); }
 
 SGAL_END_NAMESPACE
 

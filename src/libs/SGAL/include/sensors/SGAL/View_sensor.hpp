@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -60,16 +60,30 @@ public:
   };
 
   /*! Constructor */
-  View_sensor(Boolean proto = SGAL_FALSE);
+  View_sensor(Boolean proto = false);
 
   /*! Destructor */
   virtual ~View_sensor(){};
 
   /*! Construct the prototype */
-  static View_sensor* prototype() { return new View_sensor(SGAL_TRUE); }
+  static View_sensor* prototype() { return new View_sensor(true); }
 
   /*! Clone */
   virtual Container* clone() { return new View_sensor(); }
+
+  /*! Initialize the node prototype */
+  virtual void init_prototype();
+  virtual void delete_prototyp();
+  virtual Container_proto* get_prototype();
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   // Initializes the object
   void init(Camera_pool* camera_pool, Transform* navigation_root,
@@ -78,19 +92,7 @@ public:
   virtual bool update();
 
   virtual Action::Trav_directive draw(Draw_action* /* draw_action */)
-  {
-    return Action::TRAV_CONT;
-  }
-
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
-  virtual void delete_prototyp();
-  virtual Container_proto* get_prototype();
-  
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
+  { return Action::TRAV_CONT; }
 
 protected :
   /*! obtains the tag (type) of the container */

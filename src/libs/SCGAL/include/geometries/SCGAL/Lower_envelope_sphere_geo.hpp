@@ -83,8 +83,8 @@ public:
   // Adding the specific type because I removed template template parameter.
   // \todo Consult Efi.
   typedef CGAL::Envelope_diagram_2<Env_sphere_traits_3,
-                                   Rendered_Envelope_diagram_dcel< 
-                                     Env_sphere_traits_3, 
+                                   Rendered_Envelope_diagram_dcel<
+                                     Env_sphere_traits_3,
                                      Env_sphere_traits_3::Xy_monotone_surface_3
                                      >
                                    >
@@ -120,6 +120,10 @@ public:
   /*! Obtain the prototype of this container. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   struct Convert_approximate_sphere {
     Approximate_sphere_3
     operator()(const Envelope_diagram_2::Vertex& vertex) const
@@ -140,7 +144,7 @@ public:
 
     // transform_coords_impl(m_envelope, spheres);
     if (!m_envelope || is_empty()) return;
-  
+
     spheres.resize(m_envelope->number_of_vertices());
     Convert_approximate_sphere convert;
     std::transform(m_envelope->vertices_begin(), m_envelope->vertices_end(),
@@ -177,7 +181,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! Indicates whether the envelope data structure is owned, i.e., explicitly
-   * allocated. If the envelope data structure is owned, it should be 
+   * allocated. If the envelope data structure is owned, it should be
    * destructed when this geometry node is destructed.
    */
   Boolean m_owned_envelope;

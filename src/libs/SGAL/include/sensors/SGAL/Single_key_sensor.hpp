@@ -71,6 +71,10 @@ public:
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -84,20 +88,20 @@ public:
 
   /*! Unregisters the keyboard event */
   void unregister_events();
-  
+
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();
 
   /*! Handle mouse events. */
   virtual void handle(Keyboard_event* event);
-  
+
   /*! Set the flag that indicates whether the sensor is triggered on release.
    */
   void set_trigger_on_release(Boolean flag) { m_trigger_on_release = flag; }
 
-  /*! Determine whether the sensor should be triggered on release. */  
+  /*! Determine whether the sensor should be triggered on release. */
   Boolean is_trigger_on_release() const { return m_trigger_on_release;}
-  
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -120,7 +124,7 @@ private:
 
   /*! Indicates whether it is a boolean state */
   Boolean m_boolean;
-  
+
   /*! A binary state toggled each press */
   Boolean m_state;
 
@@ -132,7 +136,7 @@ private:
 
   /*! Indicates whether the sensor is triggered on release. */
   Boolean m_trigger_on_release;
-  
+
   /*! Default Values. */
   static Uint s_def_num_states;
   static Boolean s_def_trigger_on_release;

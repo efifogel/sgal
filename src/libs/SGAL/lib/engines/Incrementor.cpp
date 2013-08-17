@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Incrementor::s_tag = "Incrementor";
-Container_proto* Incrementor::s_prototype = NULL;
+Container_proto* Incrementor::s_prototype(NULL);
 
 // Default values:
 const Int Incrementor::s_def_min_value(0);

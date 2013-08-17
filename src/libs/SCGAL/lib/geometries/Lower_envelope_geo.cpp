@@ -51,7 +51,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Lower_envelope_geo::s_prototype = NULL;
+Container_proto* Lower_envelope_geo::s_prototype(NULL);
 
 // Default Values:
 Float Lower_envelope_geo::s_def_vertex_radius(0.2f);
@@ -105,7 +105,7 @@ bool Lower_envelope_geo::clean_sphere_bound()
     m_sphere_bound.set_center(center_vec);
     m_sphere_bound.set_radius(min_sphere.radius());
   }
-    
+
   m_dirty_sphere_bound = false;
   return true;
 }
@@ -182,17 +182,17 @@ void Lower_envelope_geo::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
+  // vertexRadius
   s_prototype->
     add_field_info(new SF_float(VERTEX_RADIUS, "vertexRadius",
                                 get_member_offset(&m_vertex_radius)));
 
+  // edgeRadius
   s_prototype->
     add_field_info(new SF_float(EDGE_RADIUS, "edgeRadius",
                                 get_member_offset(&m_edge_radius)));
 
+  // faceTransparency
   s_prototype->
     add_field_info(new SF_float(FACE_TRANSPARENCY, "faceTransparency",
                                 get_member_offset(&m_face_transparency)));
@@ -206,8 +206,8 @@ void Lower_envelope_geo::delete_prototype()
 }
 
 /*! \brief obtains the prototype of this container. */
-Container_proto* Lower_envelope_geo::get_prototype() 
-{  
+Container_proto* Lower_envelope_geo::get_prototype()
+{
   if (!s_prototype) Lower_envelope_geo::init_prototype();
   return s_prototype;
 }

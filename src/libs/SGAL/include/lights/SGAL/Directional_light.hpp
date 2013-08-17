@@ -14,21 +14,21 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /**
  *
- * @class: Directional_light  
- *  
+ * @class: Directional_light
+ *
  * Purpose: An implementation of a directional light.
- *  
+ *
  * Description:
  *  A directional light is a light that is positioned at infinity
  *  and has only a direction specified.
- *  
+ *
  *  Inherits from Light
  */
 
@@ -67,8 +67,6 @@ public:
   /*! Clone */
   virtual Container* clone() { return new Directional_light(); }
 
-  virtual Action::Trav_directive draw(Draw_action* draw_action);
-
   /*! Initialize the node prototype */
   virtual void init_prototype();
 
@@ -78,18 +76,24 @@ public:
   /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! \biref sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
+
   void set_direction(const Vector3f& direction);
   void get_direction(Vector3f& direction) const;
-  
+
 protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
-  
+
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;

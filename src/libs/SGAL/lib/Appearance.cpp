@@ -50,7 +50,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Appearance::s_tag = "sgalAppearance";
-Container_proto* Appearance::s_prototype = NULL;
+Container_proto* Appearance::s_prototype(NULL);
 
 // Default values:
 const Gfx::Light_model_color_control

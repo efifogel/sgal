@@ -71,7 +71,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Power_diagram_on_sphere_geo::s_tag = "PowerDiagramOnSphere";
-Container_proto* Power_diagram_on_sphere_geo::s_prototype = NULL;
+Container_proto* Power_diagram_on_sphere_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Power_diagram_on_sphere_geo, "Power_diagram_on_sphere_geo");
 
@@ -98,9 +98,7 @@ Power_diagram_on_sphere_geo(Boolean proto) :
   m_site_radius(s_def_site_radius),
   m_site_line_width(s_def_site_line_width),
   m_site_delta_angle(s_def_site_delta_angle)
-{
-  if (!proto) create_renderers();
-}
+{ if (!proto) create_renderers(); }
 
 /*! Destructor. */
 Power_diagram_on_sphere_geo::~Power_diagram_on_sphere_geo()
@@ -125,28 +123,29 @@ void Power_diagram_on_sphere_geo::init_prototype()
   s_prototype =
     new Container_proto(Geodesic_voronoi_on_sphere_geo::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-  
   Execution_function exec_func =
     static_cast<Execution_function>(&Arrangement_on_surface_geo::
                                     renderer_changed);
 
+  // siteEnabled
   s_prototype->
     add_field_info(new SF_bool(SITE_ENABLED, "siteEnabled",
                                get_member_offset(&m_site_enabled),
                                exec_func));
 
+  // siteStyleId
   s_prototype->
     add_field_info(new SF_int(SITE_STYLE_ID, "siteStyleId",
                               get_member_offset(&m_site_style),
                               exec_func));
 
+  // siteCountId
   s_prototype->
     add_field_info(new SF_int(SITE_COUNT_ID, "siteCountId",
                               get_member_offset(&m_site_count),
                               exec_func));
 
+  // siteDirected
   s_prototype->
     add_field_info(new SF_bool(SITE_DIRECTED, "siteDirected",
                                get_member_offset(&m_site_directed),
@@ -224,7 +223,7 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -239,7 +238,7 @@ void Power_diagram_on_sphere_geo::clean()
     SGAL_assertion(m_vos);
     m_owned_vos = true;
   }
-  
+
   Exact_kernel kernel;
   Exact_point_3 origin = kernel.construct_point_3_object() (CGAL::ORIGIN);
 
@@ -257,7 +256,7 @@ void Power_diagram_on_sphere_geo::clean()
            it != this->m_site_indices.end(); ++it)
       {
         Exact_plane_3 plane = (*exact_coeff_array)[*it];
-        if (kernel.oriented_side_3_object() (plane, origin) == 
+        if (kernel.oriented_side_3_object() (plane, origin) ==
             CGAL::ON_NEGATIVE_SIDE)
           plane = kernel.construct_opposite_plane_3_object() (plane);
         sites[i++] = plane;
@@ -317,7 +316,7 @@ void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
   transform.set_rotation(rot);
   glPushMatrix();
   glMultMatrixf((float *)&(transform.get_matrix()));
-  
+
   switch (m_site_style) {
    case Edge_shape::TUBE:                 // draw a tube
     {
@@ -336,7 +335,7 @@ void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
      torus.draw(action);
     }
     break;
-    
+
    case Edge_shape::LINE:                // draw a line
     {
      glBegin(GL_LINE_LOOP);
@@ -356,7 +355,7 @@ void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
      glEnd();
     }
     break;
-    
+
    case Edge_shape::STRIP:
     {
      Arc arc;
@@ -497,7 +496,7 @@ void Power_diagram_on_sphere_geo::clean_renderer()
       m_renderer.push_back(m_site_other_renderer, Arrangement_renderer::OTHER);
     }
   }
-  
+
   m_renderer_dirty = false;
 }
 
@@ -534,7 +533,7 @@ operator()(Draw_action* action)
 {
   Context* context = action->get_context();
   if (m_geo.get_site_style() == Edge_shape::LINE) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_line_width(m_geo.get_site_line_width());
   }
   m_geo.draw_sites(action);

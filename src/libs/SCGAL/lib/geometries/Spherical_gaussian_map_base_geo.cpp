@@ -67,7 +67,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Spherical_gaussian_map_base_geo::s_prototype = NULL;
+Container_proto* Spherical_gaussian_map_base_geo::s_prototype(NULL);
 
 /*! Default values */
 const Boolean Spherical_gaussian_map_base_geo::s_def_draw_aos(false);
@@ -180,7 +180,7 @@ void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
   if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
 
   isect_primary();
-    
+
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
@@ -370,55 +370,66 @@ void Spherical_gaussian_map_base_geo::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Mesh_set::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the object fields to the prototype
+  // drawAos
   Execution_function exec_func =
     static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::draw_changed);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS, "drawAos",
                                           get_member_offset(&m_draw_aos),
                                           exec_func));
- 
+
+  // drawAosOpaque
   s_prototype->
     add_field_info(new SF_bool(DRAW_AOS_OPAQUE, "drawAosOpaque",
                                get_member_offset(&m_draw_aos_opaque)));
-  
+
+  // drawAosHaloed
   s_prototype->
     add_field_info(new SF_bool(DRAW_AOS_HALOED, "drawAosHaloed",
                                get_member_offset(&m_draw_aos_haloed)));
 
+  // drawAosSphere
   s_prototype->
     add_field_info(new SF_bool(DRAW_AOS_SPHERE, "drawAosSphere",
                                get_member_offset(&m_draw_aos_surface)));
-  
+
+  // aosLineWidth
   s_prototype->
     add_field_info(new SF_float(AOS_EDGE_LINE_WIDTH, "aosLineWidth",
                                get_member_offset(&m_aos_edge_line_width)));
 
+  // translated
   exec_func = static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::coord_changed);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
                                           get_member_offset(&m_translated),
                                           exec_func));
+
+  // rotated
   s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
                                           get_member_offset(&m_rotated),
-                                          exec_func));  
+                                          exec_func));
 
+  // trueDrawPrimal
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
                                           get_member_offset(&m_draw_primal)));
 
+  // trueDrawAos
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_AOS, "trueDrawAos",
                                          get_member_offset(&m_draw_aos)));
 
+  // export
   exec_func =
     static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::output);
   s_prototype->add_field_info(new SF_bool(EXPORT, "export",
                                           get_member_offset(&m_export),
                                           exec_func));
 
+  // aosEdgeColor1
   s_prototype->
     add_field_info(new SF_vector3f(AOS_EDGE_COLOR1, "aosEdgeColor1",
                                    get_member_offset(&m_aos_edge_colors[0])));
+
+  // aosEdgeColor2
   s_prototype->
     add_field_info(new SF_vector3f(AOS_EDGE_COLOR2, "aosEdgeColor2",
                                    get_member_offset(&m_aos_edge_colors[1])));
@@ -432,8 +443,8 @@ void Spherical_gaussian_map_base_geo::delete_prototype()
 }
 
 /*! */
-Container_proto* Spherical_gaussian_map_base_geo::get_prototype() 
-{  
+Container_proto* Spherical_gaussian_map_base_geo::get_prototype()
+{
   if (!s_prototype) Spherical_gaussian_map_base_geo::init_prototype();
   return s_prototype;
 }
@@ -457,7 +468,7 @@ draw_changed(Field_info* /* field_info */)
 
 /*! \brief drawss the internal representation. */
 void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action* action)
-{  
+{
   if (!m_draw_aos) {
     draw_primal(action);
     return;
@@ -519,7 +530,7 @@ void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action* action,
                         m_aos_vertex_radius,
                         m_aos_delta_angle);
 }
-  
+
 /*! \brief Draw an arrangement on surface boundary_vertex. */
 void Spherical_gaussian_map_base_geo::
 draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
@@ -542,7 +553,7 @@ void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
                       m_aos_delta_angle,
                       m_aos_vertex_radius, m_aos_vertex_radius);
 }
-    
+
 /*! \brief processes change of coordinate field. */
 void Spherical_gaussian_map_base_geo::coord_changed(Field_info* field_info)
 {

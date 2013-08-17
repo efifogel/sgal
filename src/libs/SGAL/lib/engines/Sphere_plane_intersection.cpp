@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Sphere_plane_intersection::s_tag = "SpherePlaneIntersection";
-Container_proto* Sphere_plane_intersection::s_prototype = NULL;
+Container_proto* Sphere_plane_intersection::s_prototype(NULL);
 
 // Defaults values:
   // Default values:
@@ -61,34 +61,39 @@ Sphere_plane_intersection::~Sphere_plane_intersection() {}
 /*! \brief initializes the container prototype */
 void Sphere_plane_intersection::init_prototype()
 {
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
-  
+
   // Add the field-info records to the prototype:
   Execution_function exec_func =
     static_cast<Execution_function>(&Sphere_plane_intersection::execute);
 
+  // sphereRadius
   s_prototype->add_field_info(new SF_float(SPHERE_RADIUS, "sphereRadius",
                                            get_member_offset(&m_sphere_radius),
                                            exec_func));
+
+  // plane
   s_prototype->add_field_info(new SF_vector4f(PLANE, "plane",
                                            get_member_offset(&m_plane),
                                            exec_func));
+
+  // trigger
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           get_member_offset(&m_trigger),
                                           exec_func));
 
+  // circleTranslation
   s_prototype->
     add_field_info(new SF_vector3f(CIRCLE_TRANSLATION, "circleTranslation",
                                    get_member_offset(&m_circle_translation)));
-  
+
+  // circleRotation
   s_prototype->
     add_field_info(new SF_rotation(CIRCLE_ROTATION, "circleRotation",
                                    get_member_offset(&m_circle_rotation)));
 
+  // circleRadius
   s_prototype->
     add_field_info(new SF_float(CIRCLE_RADIUS, "circleRadius",
                                 get_member_offset(&m_circle_radius)));
@@ -107,7 +112,7 @@ Container_proto* Sphere_plane_intersection::get_prototype()
   if (!s_prototype) Sphere_plane_intersection::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of the object extracted from the input file. */
 void Sphere_plane_intersection::set_attributes(Element* elem)
 {
@@ -153,7 +158,7 @@ void Sphere_plane_intersection::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -183,7 +188,7 @@ void Sphere_plane_intersection::execute(Field_info* /*! field_info */)
 
   m_circle_rotation.make(ref, normal);
   m_circle_translation.set(0, -d * length_reciprocal, 0);
-  
+
   if (circle_trans != NULL) circle_trans->cascade();
   if (circle_rot != NULL) circle_rot->cascade();
   if (circle_rad != NULL) circle_rad->cascade();

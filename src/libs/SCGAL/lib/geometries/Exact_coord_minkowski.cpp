@@ -39,11 +39,8 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_coord_minkowski::s_tag = "ExactCoordinateMinkowski";
+Container_proto* Exact_coord_minkowski::s_prototype(NULL);
 
-/*! The node prototype. */
-Container_proto* Exact_coord_minkowski::s_prototype = NULL;
-
-/*! Register to the container factory. */
 REGISTER_TO_FACTORY(Exact_coord_minkowski, "Exact_coord_minkowski");
 
 /*! \brief initializes the node prototype. */
@@ -55,18 +52,21 @@ void Exact_coord_minkowski::init_prototype()
   s_prototype = new Container_proto(Coord_minkowski::get_prototype());
 
   Execution_function exec_func =
-    static_cast<Execution_function>(&Exact_coord_minkowski::execute);  
+    static_cast<Execution_function>(&Exact_coord_minkowski::execute);
 
+  // exactExecute
   s_prototype->add_field_info(new SF_bool(EXACT_EXECUTE, "exactExecute",
                                           get_member_offset(&m_execute),
                                           exec_func));
 
+  // exactCoord1
   SF_shared_container* field;
   field = new SF_shared_container(EXACT_COORD1, "exactCoord1",
                                   get_member_offset(&m_coord_array1),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  // exactCoord2
   field = new SF_shared_container(EXACT_COORD2, "exactCoord2",
                                   get_member_offset(&m_coord_array2),
                                   exec_func);
@@ -80,23 +80,23 @@ void Exact_coord_minkowski::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */  
+/*! \brief obtains the node prototype. */
 Container_proto* Exact_coord_minkowski::get_prototype()
 {
   if (s_prototype == NULL) Exact_coord_minkowski::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of this object. */
 void Exact_coord_minkowski::set_attributes(Element* elem)
 { Coord_minkowski::set_attributes(elem); }
 
 #if 0
 Attribute_list Exact_coord_minkowski::get_attributes()
-{ 
+{
   Attribute_list attrs;
   attrs = Coord_minkowski::get_attributes();
-  return attrs; 
+  return attrs;
 }
 #endif
 
@@ -116,7 +116,7 @@ void Exact_coord_minkowski::execute(Field_info* field_info)
     Coord_minkowski::execute(field_info);
     return;
   }
-  
+
   Uint size1 = exact_coord_array1->size();
   Uint size2 = exact_coord_array2->size();
   Uint size = size1 * size2;
@@ -131,7 +131,7 @@ void Exact_coord_minkowski::execute(Field_info* field_info)
       boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array_changed);
     coord_array_changed->resize(size);
   }
-  
+
   Exact_coord_array::Exact_point_iter pi1;
   for (pi1 = exact_coord_array1->begin(); pi1 != exact_coord_array1->end();
        ++pi1)
@@ -146,7 +146,7 @@ void Exact_coord_minkowski::execute(Field_info* field_info)
       coord_array_changed->push_back(p2 + v);
     }
   }
-  
+
   Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
 

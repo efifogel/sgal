@@ -74,12 +74,16 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the prototype. */
-  virtual Container_proto* get_prototype(); 
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action);
 
-  virtual void isect(Isect_action* action); 
+  virtual void isect(Isect_action* action);
 
   /*! Calculate the sphere bound of the mesh. Returns true if the BS has
    * changed since lst time this was called.
@@ -88,16 +92,16 @@ public:
 
   virtual void set_color_array(Shared_color_array color_array);
 
-  /*! Set the coordinate set. Pass the pointer to the geometry object 
+  /*! Set the coordinate set. Pass the pointer to the geometry object
    * used by the decoder as well.
    * \param coord_array (in) a pointer to a coord set
    */
   virtual void set_coord_array(Shared_coord_array coord_array);
 
-  /*! Set the normal set. Pass the pointer to the geometry object 
+  /*! Set the normal set. Pass the pointer to the geometry object
    * used by the decoder as well.
    * \param coord_array (in) a pointer to a coord set
-   */ 
+   */
   virtual void set_normal_array(Shared_normal_array normal_array);
 
   /*! Set the texture coordinate set. Pass the pointer to the geometry
@@ -121,11 +125,11 @@ public:
   void set_color_per_vertex(Boolean color_per_vertex);
 
   Boolean get_color_per_vertex();
-  
+
 protected:
   /*! Indicates whether a single color is specified per vertex. */
   Boolean m_color_per_vertex;
-  
+
   /*! Indicates whether a single normal is specified per vertex. */
   Boolean m_normal_per_vertex;
 
@@ -134,7 +138,7 @@ protected:
 
   /*! Indicates whether to elliminate hiden lines using depth test. */
   Boolean m_elliminate_hiden;
-  
+
   /*! Indicates whether the mesh is textured. */
   Boolean m_has_texture;
 

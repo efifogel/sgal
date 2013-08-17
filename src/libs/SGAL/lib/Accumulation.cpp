@@ -45,7 +45,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Accumulation::s_tag = "Accumulation";
-Container_proto* Accumulation::s_prototype = NULL;
+Container_proto* Accumulation::s_prototype(NULL);
 
 /* jitter point arrays for 2,3,4,8,15,24 and 66 jitters.
  * The arrays are named j2, j3, etc.
@@ -262,19 +262,21 @@ void Accumulation::init_prototype()
   // Add the object fields to the prototype
   Execution_function exec_func;
 
+  // enabled
   exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required); 
+    static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           get_member_offset(&m_enabled),
                                           exec_func));
 
+  // quality
   s_prototype->add_field_info(new SF_int(QUALITY, "quality",
                                          get_member_offset(&m_quality),
                                          exec_func));
-  
+
+  // delay
   s_prototype->add_field_info(new SF_int(DELAY, "delay",
                                          get_member_offset(&m_delay)));
-
 }
 
 /*! \brief deletes the node prototype. */
@@ -285,8 +287,8 @@ void Accumulation::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Accumulation::get_prototype() 
-{  
+Container_proto* Accumulation::get_prototype()
+{
   if (!s_prototype) Accumulation::init_prototype();
   return s_prototype;
 }
@@ -331,7 +333,7 @@ void Accumulation::set_attributes(Element* elem)
     }
     if (name == "accumBits") {
       Uint bits = boost::lexical_cast<Uint>(value);
-      set_number_of_bits(bits, bits, bits, bits);    
+      set_number_of_bits(bits, bits, bits, bits);
       elem->mark_delete(ai);
       continue;
     }
@@ -344,8 +346,8 @@ void Accumulation::set_attributes(Element* elem)
 #if 0
 /*! \brief */
 Attribute_list Accumulation::get_attributes()
-{  
-  Attribute_list attrs; 
+{
+  Attribute_list attrs;
   Attribue attrib;
   char buf[32];
 
@@ -381,10 +383,10 @@ void Accumulation::set_num_iters(Uint num_iters)
     --i;
     num_iters = s_sizes[i].first;
   }
-  
+
   m_num_jitters = s_sizes[i].first;
   m_jitters = s_sizes[i].second;
-    
+
   m_num_iters = num_iters;
   m_contribution = 1 / (Float) m_num_iters;
 }
@@ -392,7 +394,7 @@ void Accumulation::set_num_iters(Uint num_iters)
 /*! \brief applies Actions when accumulation starts. */
 void Accumulation::pre_render(Draw_action* draw_action)
 {
-  if (m_iteration_no == 0) {  
+  if (m_iteration_no == 0) {
     glClearAccum(0, 0, 0, 0);
     glClear(GL_ACCUM_BUFFER_BIT);
   }
@@ -412,7 +414,7 @@ void Accumulation::post_render(Draw_action* draw_action)
   // ((m_iteration_no == m_num_iters / 2) || (m_iteration_no == m_num_iters))
 
   if (is_done()) glAccum(GL_RETURN, 1.0f / m_accumulate);
-  
+
   if (blendMode) glEnable(GL_BLEND);
 }
 

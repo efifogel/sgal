@@ -48,7 +48,7 @@ public:
 
   /*! Constructor */
   Tex_coord_array_3d(Uint n);
-  
+
   /*! Destructor */
   ~Tex_coord_array_3d();
 
@@ -64,9 +64,13 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */  
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Sets the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -92,13 +96,13 @@ public:
   /*! Obtain the iterator to the Array past-the-end element. */
   Vector3f* end();
   const Vector3f* end() const;
-  
+
   /*! Obtain the nth element in the array (non-const). */
   Vector3f& operator[](Uint n);
 
   /*! Obtain the nth element in the array (const). */
   const Vector3f& operator[](Uint n) const;
-  
+
   /*! Obtain the vector. */
   Vector3f* get_vector();
 
@@ -138,14 +142,14 @@ inline const Vector3f* Tex_coord_array_3d::begin() const
 /*! \brief obtains the iterator to the Array past-the-end element */
 inline Vector3f* Tex_coord_array_3d::end() { return m_array.end(); }
 inline const Vector3f* Tex_coord_array_3d::end() const { return m_array.end(); }
-  
+
 /*! \brief obtains the Array indexing (non-const) operator */
 inline Vector3f& Tex_coord_array_3d::operator[](Uint n) { return m_array[n]; }
 
 /*! \brief obtains the Array indexing (const) operator */
 inline const Vector3f& Tex_coord_array_3d::operator[](Uint n) const
 { return m_array[n]; }
-  
+
 /*! \brief Obtain the vector */
 inline Vector3f* Tex_coord_array_3d::get_vector()
 { return m_array.get_vector(); }

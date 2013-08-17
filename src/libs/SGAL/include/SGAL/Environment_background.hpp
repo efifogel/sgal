@@ -47,14 +47,14 @@ public:
   };
 
   /*! Constructor */
-  Environment_background(Boolean proto = SGAL_FALSE);
+  Environment_background(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Environment_background();
 
   /*! Construct the prototype */
   static Environment_background * prototype()
-  { return new Environment_background(SGAL_TRUE); }
+  { return new Environment_background(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Environment_background(); }
@@ -71,20 +71,24 @@ public:
   virtual void delete_prototype();;
 
   /*! Obtain the node prototype */
-  virtual Container_proto * get_prototype(); 
+  virtual Container_proto * get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Draw the background */
   virtual void draw(Draw_action * draw_action);
 
   /*! Set the sky color */
   void set_sky_color(const Vector3f & sky_color) { m_sky_color = sky_color; }
-  
+
   /*! Obtain the sky color */
   const Vector3f & get_sky_color() const { return m_sky_color; }
 
   /*! Set the appearance of the object  */
   void set_back_appearance(Appearance * app);
-  
+
 protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string & get_tag() const { return s_tag; }

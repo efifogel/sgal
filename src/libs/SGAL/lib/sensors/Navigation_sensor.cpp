@@ -41,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Navigation_sensor::s_tag = "NavigationSensor";
-Container_proto* Navigation_sensor::s_prototype = 0;
+Container_proto* Navigation_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Navigation_sensor, "Navigation_sensor");
 
@@ -65,8 +65,7 @@ Navigation_sensor::Navigation_sensor(const Vector3f& translation,
   m_translation_done(false),
   m_rotation_done(false),
   m_translating(false), m_rotating(false)
-{
-}
+{}
 
 /*! Destructor */
 Navigation_sensor::~Navigation_sensor() {}
@@ -74,28 +73,30 @@ Navigation_sensor::~Navigation_sensor() {}
 /*! Initialize the node prototype. */
 void Navigation_sensor::init_prototype()
 {
-  //! type definition of a container execution function - used with engines
-  typedef void (Container::* Execution_function)(Field_info*);
-
   if (s_prototype) return;
   s_prototype = new Container_proto(Bindable_node::get_prototype());
 
   // Add the object field infos to the prototype
+  // translation
   s_prototype->
     add_field_info(new SF_vector3f(TRANSLATION, "translation",
                                    get_member_offset(&m_translation)));
 
+  // rotation
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
                                               get_member_offset(&m_rotation)));
 
+  // minZoomDistance
   s_prototype->
     add_field_info(new SF_float(MIN_ZOOM_DISTANCE, "minZoomDistance",
                                 get_member_offset(&m_min_zoom_distance)));
 
+  // translationDone
   s_prototype->
     add_field_info(new SF_bool(TRANSLATION_DONE, "translationDone",
                                get_member_offset(&m_translation_done)));
 
+  // rotationDone
   s_prototype->
     add_field_info(new SF_bool(ROTATION_DONE, "rotationDone",
                                get_member_offset(&m_rotation_done)));
@@ -105,11 +106,12 @@ void Navigation_sensor::init_prototype()
 void Navigation_sensor::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Navigation_sensor::get_prototype() 
-{  
+Container_proto* Navigation_sensor::get_prototype()
+{
   if (!s_prototype) Navigation_sensor::init_prototype();
   return s_prototype;
 }
@@ -176,7 +178,7 @@ void Navigation_sensor::handle(Mouse_event* event)
     break;
   }
 }
-  
+
 /*! \brief handles motion events. */
 void Navigation_sensor::handle(Motion_event* event)
 { mouse_move(event->get_x(), event->get_y()); }
@@ -186,7 +188,7 @@ void Navigation_sensor::identify()
 { std::cout << "Agent: Navigation_sensor" << std::endl; }
 
 /*! \brief activated when dragging is started
- * If dragging is not locked by another sensor - 
+ * If dragging is not locked by another sensor -
  * Locks the dragging in the execution coordinator.
  */
 void Navigation_sensor::start_dragging(const Vector2sh& /* point */)
@@ -200,7 +202,7 @@ void Navigation_sensor::start_dragging(const Vector2sh& /* point */)
   // Lock the dragging
   m_execution_coordinator->lock_dragging();
 #endif
-  
+
   m_drag_locked = true;
 }
 
@@ -243,11 +245,11 @@ void Navigation_sensor::mouse_drag(const Vector2sh& from,
     translate(point, m_half_dragging_speed);
   } else if (is_left_mouse_down()) {
     track_ball(from, to, 0.01f);
-  } 
+  }
 
 #if 0
   // Set the bounding sphere modified flag
-  m_execution_coordinator->set_bounding_sphere_modified(SGAL_TRUE);
+  m_execution_coordinator->set_bounding_sphere_modified(true);
 #endif
 }
 
@@ -262,7 +264,7 @@ void Navigation_sensor::transform_done()
     Field* field = get_field(TRANSLATION_DONE);
     if (field) field->cascade();
   }
-  
+
   if (m_rotating) {
     m_rotating = false;
     m_rotation_done = true;
@@ -277,7 +279,7 @@ void Navigation_sensor::transform_done()
 void Navigation_sensor::dragging_done(const Vector2sh& /* point */)
 {
   transform_done();
-  
+
   if (!m_drag_locked) return;
 
   m_drag_locked = false;
@@ -290,25 +292,25 @@ void Navigation_sensor::dragging_done(const Vector2sh& /* point */)
  * @param from (in) the point from which the dragging has started
  * @param to (in) the point where the dragging has reached
  * @param speed (in) the current speed of the navigation
- * 
+ *
  * This is not a real trackball implementation. It is a slightly varied
- * version of the trackball. When the mouse button is clicked, the position 
+ * version of the trackball. When the mouse button is clicked, the position
  * of the cursor is stored. So is the "current" rotation matrix. Each move
  * of the cursor, the rotational transformation is calculated relative the
- * the cursors position at the time the mouse button was pressed (unlike 
- * "real" trackball in which it is calculated relative to the last "segment" 
- * on the screen). It is then multiplied by the rotation matrix at the time 
+ * the cursors position at the time the mouse button was pressed (unlike
+ * "real" trackball in which it is calculated relative to the last "segment"
+ * on the screen). It is then multiplied by the rotation matrix at the time
  * the mouse button was pressed.
- * 
+ *
  * Doing it this way, we avoid the weird rotational movement of the model
- * when a circular motion is performed with the cursor. 
+ * when a circular motion is performed with the cursor.
  */
 void Navigation_sensor::track_ball(const Vector2sh& from,
                                    const Vector2sh& to, float speed)
 {
   m_rotating = true;
   m_rotation_done = false;
-  
+
   Context* context = m_scene_graph->get_context();
 
   // \todo return if the viewport is not initialized
@@ -332,7 +334,7 @@ void Navigation_sensor::track_ball(const Vector2sh& from,
 
   Vector3f rot_axis;
   rot_axis.cross(Vector3f(0, 0, 1), p0p1);
-  
+
   const Matrix4f& camera_mat = camera->get_view_mat();
   Matrix4f inv_camera_mat;
   // The camera matrix consists of pure rotation (no scale or shear),
@@ -341,7 +343,7 @@ void Navigation_sensor::track_ball(const Vector2sh& from,
 
   Vector3f transformed_rot_axis;
   transformed_rot_axis.xform_vec(rot_axis, inv_camera_mat);
-  
+
   // calculate the distance on the screen and from that the angle of roatation
   Vector3f p0(m_from[0], m_from[1], 0);
   Vector3f p1(to[0], to[1], 0);
@@ -349,7 +351,7 @@ void Navigation_sensor::track_ball(const Vector2sh& from,
 
   // create the Rotation
   m_rotation.mult(Rotation(transformed_rot_axis[0], transformed_rot_axis[1],
-                           transformed_rot_axis[2], radians), 
+                           transformed_rot_axis[2], radians),
                   m_base_rotation);
 
   // update the field
@@ -369,7 +371,7 @@ void Navigation_sensor::track_ball(const Vector2sh& from,
  * @param speed (in) the current speed of the navigation
  */
 void Navigation_sensor::translate(const Vector3f& distance, float speed)
-{  
+{
   m_translating = true;
   m_translation_done = false;
 
@@ -385,7 +387,7 @@ void Navigation_sensor::translate(const Vector3f& distance, float speed)
   // Therefore, transpose inverts the matrix:
   inv_camera_mat.transpose(camera_mat);
 
-  // transform the distance vector to the camera's view 
+  // transform the distance vector to the camera's view
   Vector3f transformed_distance;
   transformed_distance.xform_vec(distance, inv_camera_mat);
 
@@ -422,23 +424,23 @@ bool Navigation_sensor::allow_zoom_in(const Vector3f& trans)
   const Matrix4f& camera_mat = camera->get_view_mat();
   view_dir.xform_vec(view_dir, camera_mat);
 
-  // get the angle between the looking direction and the 
-  // vector connecting the camera position and the center 
+  // get the angle between the looking direction and the
+  // vector connecting the camera position and the center
   // of the model
   Vector3f cam_pos = camera->get_position();
   Vector3f cam2_model_vector = trans;
   cam2_model_vector.sub(cam_pos);
   cam2_model_vector.normalize();
   float cosa = cam2_model_vector.dot(view_dir);
-  
+
   Vector3f pos = trans;
   float dist = pos.distance(cam_pos) * cosa;
-  
+
   Vector3f old_cam_2p = m_translation;
   old_cam_2p.sub(cam_pos);
   old_cam_2p.normalize();
   float old_cosa = old_cam_2p.dot(view_dir);
-  
+
   Vector3f old_pos = m_translation;
   float old_dist = old_pos.distance(cam_pos) * old_cosa;
 
@@ -473,7 +475,7 @@ void Navigation_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Navigation_sensor::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
@@ -521,8 +523,8 @@ void Navigation_sensor::reset()
   m_reset = true;
 
   // Mark the bounding sphere as modified in the execution coordinator
-#if 0  
-  m_execution_coordinator->set_bounding_sphere_modified(SGAL_TRUE);
+#if 0
+  m_execution_coordinator->set_bounding_sphere_modified(true);
 #endif
   set_rendering_required();
 }

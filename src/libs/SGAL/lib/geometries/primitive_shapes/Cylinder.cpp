@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -36,24 +36,24 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Cylinder::s_tag = "Cylinder";
-Container_proto* Cylinder::s_prototype = 0;
+Container_proto* Cylinder::s_prototype(NULL);
 
 // default values:
 const Float Cylinder::s_def_radius(1);
 const Float Cylinder::s_def_height(2);
 const Uint  Cylinder::s_def_stacks(1);
 const Uint  Cylinder::s_def_slices(16);
-const Boolean  Cylinder::s_def_is_bottom_visible(SGAL_TRUE);
-const Boolean  Cylinder::s_def_is_top_visible(SGAL_TRUE);
-const Boolean  Cylinder::s_def_is_body_visible(SGAL_TRUE);
+const Boolean  Cylinder::s_def_is_bottom_visible(true);
+const Boolean  Cylinder::s_def_is_top_visible(true);
+const Boolean  Cylinder::s_def_is_body_visible(true);
 
 REGISTER_TO_FACTORY(Cylinder, "Cylinder");
 
 /*! Constructor */
 Cylinder::Cylinder(Boolean proto) :
   Geometry(proto),
-  m_dirty(SGAL_TRUE),
-  m_radius(s_def_radius), 
+  m_dirty(true),
+  m_radius(s_def_radius),
   m_height(s_def_height),
   m_stacks(s_def_stacks),
   m_slices(s_def_slices),
@@ -72,7 +72,7 @@ Cylinder::~Cylinder()
 }
 
 /*! \brief draws the cylinder. */
-void Cylinder::draw(Draw_action* action) 
+void Cylinder::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
 
@@ -119,7 +119,7 @@ void Cylinder::draw(Draw_action* action)
 }
 
 /*! \brief draws the cylinder in selection mode. */
-void Cylinder::isect(Isect_action* action) 
+void Cylinder::isect(Isect_action* action)
 {
   if (m_dirty) clean();
 
@@ -156,13 +156,13 @@ void Cylinder::clean()
 {
   m_cylinder = gluNewQuadric();
   gluQuadricOrientation(m_cylinder, GLU_OUTSIDE);
-  gluQuadricNormals(m_cylinder, GLU_SMOOTH); 
-  gluQuadricDrawStyle(m_cylinder, GLU_FILL); 
+  gluQuadricNormals(m_cylinder, GLU_SMOOTH);
+  gluQuadricDrawStyle(m_cylinder, GLU_FILL);
 
   m_cylinder_base = gluNewQuadric();
   gluQuadricOrientation(m_cylinder_base, GLU_OUTSIDE);
-  gluQuadricNormals(m_cylinder_base, GLU_SMOOTH); 
-  gluQuadricDrawStyle(m_cylinder_base, GLU_FILL); 
+  gluQuadricNormals(m_cylinder_base, GLU_SMOOTH);
+  gluQuadricDrawStyle(m_cylinder_base, GLU_FILL);
 
   m_dirty = false;
 }
@@ -206,22 +206,22 @@ void Cylinder::set_attributes(Element* elem)
       set_slices(atoi(value.c_str()));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "bottomVisible") {
       set_is_bottom_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "sideVisible") {
       set_is_body_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "topVisible") {
       set_is_top_visible(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
   }
 
   // Remove all the deleted attributes:
@@ -233,9 +233,9 @@ void Cylinder::set_attributes(Element* elem)
  * The list is of name=value pairs.
  * @return a list of pairs of strings
  */
-Attribute_list Cylinder::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Cylinder::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -298,24 +298,25 @@ void Cylinder::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! type definition of a container execution function - used with engines
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
                                            exec_func));
 
+  // height
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            get_member_offset(&m_height),
                                            exec_func));
 
+  // side
   s_prototype->add_field_info(new SF_bool(SIDE, "side",
                                           get_member_offset(&m_is_body_visible),
                                           exec_func));
 
+  // bottom
   s_prototype->
     add_field_info(new SF_bool(BOTTOM, "bottom",
                                get_member_offset(&m_is_bottom_visible),
@@ -349,10 +350,10 @@ void Cylinder::delete_prototype()
 }
 
 /*! */
-Container_proto* Cylinder::get_prototype() 
-{  
+Container_proto* Cylinder::get_prototype()
+{
   if (!s_prototype) Cylinder::init_prototype();
   return s_prototype;
-} 
+}
 
 SGAL_END_NAMESPACE

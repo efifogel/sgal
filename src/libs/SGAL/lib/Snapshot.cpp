@@ -42,16 +42,16 @@
 
 SGAL_BEGIN_NAMESPACE
 
-REGISTER_TO_FACTORY(Snapshot, "Snapshot");
-
-std::string Snapshot::s_tag = "Snapshot";
-Container_proto* Snapshot::s_prototype = NULL;
+const std::string Snapshot::s_tag = "Snapshot";
+Container_proto* Snapshot::s_prototype(NULL);
 
 // Default values
 const std::string Snapshot::s_def_dir_name = ".";
 const std::string Snapshot::s_def_file_name = "snaphsot";
 const Snapshot::File_format Snapshot::s_def_file_format = Snapshot::FF_ppm;
 const Int Snapshot::s_def_quality = 50;
+
+REGISTER_TO_FACTORY(Snapshot, "Snapshot");
 
 /*! File format names */
 const char* Snapshot::s_file_format_names[] =
@@ -84,7 +84,7 @@ Snapshot::~Snapshot()
 }
 
 /*! \brief takes a snapshot and write to a file if triggered. */
-Action::Trav_directive Snapshot::draw(Draw_action* draw_action) 
+Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
 {
   if (!m_triggered) return Action::TRAV_CONT;
   m_triggered = false;
@@ -167,7 +167,7 @@ void Snapshot::write_image()
   Magick::Image image(width, height, "RGB", Magick::CharPixel, pixels);
   if (m_flip) image.flip();
   image.magick(s_file_format_names[m_file_format]);
-  image.write(file_name); 
+  image.write(file_name);
 }
 
 /*! \brief initializes the container prototype. */
@@ -176,15 +176,19 @@ void Snapshot::init_prototype()
   if (s_prototype)  return;
   s_prototype = new Container_proto(Node::get_prototype());
 
+  // trigger
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           get_member_offset(&m_triggered)));
-  
+
+  // dirName
   s_prototype->add_field_info(new SF_string(DIR_NAME, "dirName",
                                             get_member_offset(&m_dir_name)));
 
+  // fileName
   s_prototype->add_field_info(new SF_string(FILE_NAME, "fileName",
                                             get_member_offset(&m_file_name)));
-  
+
+  // fileFormat
   s_prototype->add_field_info(new SF_int(FILE_FORMAT, "fileFormat",
                                          get_member_offset(&m_file_format)));
 }
@@ -197,8 +201,8 @@ void Snapshot::delete_prototype()
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Snapshot::get_prototype() 
-{  
+Container_proto* Snapshot::get_prototype()
+{
   if (!s_prototype) Snapshot::init_prototype();
   return s_prototype;
 }
@@ -265,19 +269,19 @@ void Snapshot::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the marked attributes:
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 void Snapshot::add_to_scene(Scene_graph* sg) { sg->add_snaphot(this); }
 
 #if 0
 /*! \brief */
 Attribute_list Snapshot::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Node::get_attributes();
@@ -288,7 +292,7 @@ Attribute_list Snapshot::get_attributes()
     attribs.push_back(attrib);
   }
 
-  return attribs; 
+  return attribs;
 }
 
 #endif

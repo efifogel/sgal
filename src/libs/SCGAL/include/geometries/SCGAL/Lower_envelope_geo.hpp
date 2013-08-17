@@ -74,18 +74,6 @@ public:
   /*! Clone. */
   virtual Container* clone() = 0;
 
-  /*! Draw the geometry of the lower envelope. */
-  virtual void draw(Draw_action* action);
-
-  /* Draw the envelope for selection. */
-  virtual void isect(Isect_action* action) {}
-
-  /*! Calculate the sphere bound of this geometry containter */
-  virtual Boolean clean_sphere_bound();
-
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element* elem);
-
   /*! Initialize the node prototype */
   virtual void init_prototype();
 
@@ -94,6 +82,22 @@ public:
 
   /*! Obtain the prototype of this container */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element* elem);
+
+  /*! Draw the geometry of the lower envelope. */
+  virtual void draw(Draw_action* action);
+
+  /* Draw the envelope for selection. */
+  virtual void isect(Isect_action* action) {}
+
+  /*! Calculate the sphere bound of this geometry containter */
+  virtual Boolean clean_sphere_bound();
 
   /*! Print statistics */
   void print_stat();
@@ -115,17 +119,17 @@ public:
 
   /*! Set the face transparency. */
   void set_face_transparency(Float frac);
-  
+
 protected:
   /*! Indicates whether the envelope is dirty and thus should be cleaned. */
   Boolean m_dirty;
 
   typedef std::vector<Shared_node>                      Node_vector;
   typedef Node_vector::iterator                         Node_iter;
-  
+
   /*! The surfaces the envelope is computed for. */
   Node_vector m_surfaces;
-  
+
   /*! The time is took to compute the envelope in seconds. */
   Float m_time;
 
@@ -137,7 +141,7 @@ protected:
 
   /*! The transparency of a diagram face. */
   float m_face_transparency;
-  
+
   /*! Clean the representation. */
   virtual void clean();
 
@@ -165,7 +169,7 @@ protected:
    * \return true if the representation hasn't been cleaned and false otherwise.
    */
   Boolean is_dirty() const;
-  
+
   /*! Transform the coordinates of the envelope into spheres.
    * \param spheres (o) the transformed coordinates.
    */
@@ -174,7 +178,7 @@ protected:
                              Approximate_sphere_vector& spheres)
   {
     if (!envelope || is_empty()) return;
-  
+
     spheres.resize(envelope->number_of_vertices());
     Convert_approximate_sphere<Envelope> convert;
     std::transform(envelope->vertices_begin(), envelope->vertices_end(),
@@ -201,7 +205,7 @@ private:
   static float s_def_vertex_radius;
   static float s_def_edge_radius;
   static float s_def_face_transparency;
-  
+
   /*! Draw the envelope. */
   void draw_envelope(Draw_action* action);
 

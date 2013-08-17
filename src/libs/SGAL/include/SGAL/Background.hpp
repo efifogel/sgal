@@ -70,6 +70,10 @@ public:
   /*! Obtain the protoype */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Obtain the bindable stack */
   virtual Bindable_stack* get_stack();
 
@@ -78,7 +82,7 @@ public:
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Draw the background */
@@ -104,11 +108,11 @@ public:
 
   /*! Set the flag that Indicates whether to clear the stencil buffer */
   void set_clear_stencil(Boolean clear) { m_clear_stencil = clear; }
-  
+
 protected:
   /*! Draw a 2d polygon with texture coordinates */
   void draw_polygon();
-  
+
   /*! The Scene_graph */
   Scene_graph* m_scene_graph;
 

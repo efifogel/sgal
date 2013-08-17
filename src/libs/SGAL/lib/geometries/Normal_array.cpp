@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,10 +30,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Normal_array::s_tag = "Normal";
-
-/*! The node prototype */
-Container_proto * Normal_array::s_prototype = NULL;
+const std::string Normal_array::s_tag = "Normal";
+Container_proto* Normal_array::s_prototype(NULL);
 
 /*! Register to the container factory */
 REGISTER_TO_FACTORY(Normal_array, "Normal_array");
@@ -42,8 +40,6 @@ REGISTER_TO_FACTORY(Normal_array, "Normal_array");
 void Normal_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Container::get_prototype());
 }
 
@@ -54,19 +50,19 @@ void Normal_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */  
+/*! Obtain the node prototype */
 Container_proto * Normal_array::get_prototype()
 {
   if (s_prototype == NULL) Normal_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
 void Normal_array::set_attributes(Element * elem)
-{ 
+{
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -83,7 +79,7 @@ void Normal_array::set_attributes(Element * elem)
       for (Uint i = 0 ; i < size ; i++) {
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       }
-      elem->mark_delete(ai);      
+      elem->mark_delete(ai);
     }
   }
 
@@ -95,10 +91,10 @@ void Normal_array::set_attributes(Element * elem)
 /*!
  */
 Attribute_list Normal_array::get_attributes()
-{ 
-  Attribute_list attrs; 
+{
+  Attribute_list attrs;
   attrs = Container::get_attributes();
-  return attrs; 
+  return attrs;
 }
 #endif
 

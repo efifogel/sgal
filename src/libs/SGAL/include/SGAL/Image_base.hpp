@@ -24,9 +24,9 @@
 
 /*! \file
  * A class that holds images of various formats.
- * Image_base is a class that can hold an image in various formats. 
+ * Image_base is a class that can hold an image in various formats.
  * We currently assume that the default image is RGB8_8_8 (24 bit).
- *    
+ *
  *  Inherits from Container
  */
 
@@ -45,7 +45,7 @@ class Element;
 class Container_proto;
 
 class SGAL_SGAL_DECL Image_base : public Container {
-public: 
+public:
   enum {
     FIRST = Container::LAST - 1,
     WIDTH,
@@ -131,7 +131,7 @@ public:
     kBGR10_10_10,
     kBGR12_12_12,
     kBGR16_16_16,               // 50
-    
+
     // YIQ:
     kYIQ4_2_2,
 
@@ -173,7 +173,7 @@ public:
     kDepth32,
     kStencil,
     kDepthStencil24_8,              // 80
-    
+
     kNumFormats
   };
 
@@ -191,6 +191,10 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -221,7 +225,7 @@ public:
 
   /*! Obtain the number of pixels in a row. */
   Uint get_pack_row_length() const;
-  
+
   /*! Set the image pixel space.
    * \param pixels the image pixel space.
    */
@@ -244,7 +248,7 @@ public:
 
   /*! Obtain the memory that is used by the image (in bytes). */
   Uint get_size() const;
-  
+
   /*! Obtain the memory that is used by an image (in bytes) with the given
    * attributes.
    */
@@ -267,22 +271,22 @@ public:
 
   /*! Obtain the format name (string). */
   static const char* get_format_name(Format format);
-  
+
   /*! Draw the image. */
   void draw();
-  
+
   /*! Set the flag that indicates whether the image should be reflected. */
   void set_flip(Boolean flag);
 
   /*! Obtain the flag that indicates whether the image should be reflected. */
   Boolean get_flip() const;
-  
+
   /*! Set the rotation angle. */
   void set_rotation(Float rotation);
 
   /*! Obtain the rotation angle. */
   Float get_rotation() const;
-  
+
   /*! Set the flag that determine whether to add (or retain) the alpha
    * channel, or remove it when present.
    */
@@ -291,12 +295,12 @@ public:
   /*! Determine whether to add (or retain) the alpha channel or remove it. */
   Boolean get_alpha() const;
 
-  /*! Set the transparency of the image. */ 
+  /*! Set the transparency of the image. */
   void set_transparency(Float transparency);
 
-  /*! Obtain the transparency of the image. */ 
+  /*! Obtain the transparency of the image. */
   Float get_transparency() const;
-  
+
 protected:
   /*! A map from format to number of bits. */
   static Uint s_format_sizes[];
@@ -312,10 +316,10 @@ protected:
 
   /*! A map from format to OpenGl internal format. */
   static GLenum s_format_internal_formats[];
-  
+
   /*! A map from format to format names. */
   static const char* s_format_names[];
-  
+
   /*! The image width. */
   Uint m_width;
 
@@ -333,7 +337,7 @@ protected:
 
   /*! Indicates whether the image is dirty and should be cleaned. */
   Boolean m_dirty;
-  
+
   /*! Indicates whether the image should be reflected when read from file. */
   Boolean m_flip;
 
@@ -345,9 +349,9 @@ protected:
    */
   Boolean m_alpha;
 
-  /*! The transparency of the image. */ 
+  /*! The transparency of the image. */
   Float m_transparency;
-  
+
   /*! Indicates whether the image pixel space is owned. If it is owned it
    * should be destructed when the image is destructed.
    */
@@ -356,7 +360,7 @@ protected:
 private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
-  
+
   /*! Default value. */
   static const Format s_def_format;
 };
@@ -386,7 +390,7 @@ inline void Image_base::set_pack_row_length(Uint length)
 /*! \brief obtains the number of pixels in a row. */
 inline Uint Image_base::get_pack_row_length() const
 { return m_pack_row_length; }
-  
+
 /*! \brief obtains the image pixel data. */
 inline void* Image_base::get_pixels() { return m_pixels; }
 
@@ -425,7 +429,7 @@ inline GLenum Image_base::get_format_internal_format(Format format)
 /*! \brief obtains the format name (string). */
 inline const char* Image_base::get_format_name(Format format)
 { return s_format_names[format]; }
-  
+
 /*! \brief sets the flag that indicates whether the image should be reflected.
  */
 inline void Image_base::set_flip(Boolean flag) { m_flip = flag; }
@@ -434,13 +438,13 @@ inline void Image_base::set_flip(Boolean flag) { m_flip = flag; }
  * reflected.
  */
 inline Boolean Image_base::get_flip() const { return m_flip; }
-  
+
 /*! \brief sets the rotation angle. */
 inline void Image_base::set_rotation(Float rotation) { m_rotation = rotation; }
 
 /*! \brief obtains the rotation angle. */
 inline Float Image_base::get_rotation() const { return m_rotation; }
-  
+
 /*! \brief sets the flag that indicates whether to add (or retain) the alpha
  * channel or remove it.
  */
@@ -450,13 +454,13 @@ inline void Image_base::set_alpha(Boolean flag) { m_alpha = flag; }
  */
 inline Boolean Image_base::get_alpha() const { return m_alpha; }
 
-/*! \brief set the transparency of the image. */ 
+/*! \brief set the transparency of the image. */
 inline void Image_base::set_transparency(Float transparency)
 { m_transparency = transparency; }
 
-/*! \brief obtain the transparency of the image. */ 
+/*! \brief obtain the transparency of the image. */
 inline Float Image_base::get_transparency() const { return m_transparency; }
-  
+
 SGAL_END_NAMESPACE
 
 #endif

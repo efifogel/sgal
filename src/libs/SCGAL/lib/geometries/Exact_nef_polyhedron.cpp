@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 14183 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -53,7 +53,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_nef_polyhedron::s_tag = "ExactNefPolyhedron";
-SGAL::Container_proto* Exact_nef_polyhedron::s_prototype = 0;
+Container_proto* Exact_nef_polyhedron::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Exact_nef_polyhedron, "Exact_nef_polyhedron");
 
@@ -101,7 +101,7 @@ void Exact_nef_polyhedron::clean()
 
   // Construct the nef polyhedron:
   m_nef_polyhedron = Nef_polyhedron_3(m_polyhedron);
-  
+
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
 
@@ -169,7 +169,7 @@ void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
 
     glBegin(GL_POLYGON);
-    
+
     Vector_3 normal = f->plane().orthogonal_vector();
     float x = static_cast<float>(CGAL::to_double(normal.x()));
     float y = static_cast<float>(CGAL::to_double(normal.y()));
@@ -244,13 +244,13 @@ bool Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
   m_dirty_sphere_bound = false;
   return true;
 }
-  
+
 /*! \brief */
 bool Exact_nef_polyhedron::clean_sphere_bound()
 {
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
-  
+
   Inexact_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
     spheres.resize(m_polyhedron.size_of_vertices());
@@ -285,7 +285,7 @@ void Exact_nef_polyhedron::set_attributes(SGAL::Element* elem)
 void Exact_nef_polyhedron::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new SGAL::Container_proto(SGAL::Mesh_set::get_prototype());
+  s_prototype = new SGAL::Container_proto(Mesh_set::get_prototype());
 }
 
 /*! \brief deletes the prototype of this container. */
@@ -296,8 +296,8 @@ void Exact_nef_polyhedron::delete_prototype()
 }
 
 /*! \brief obtains the prototype of this container. */
-SGAL::Container_proto* Exact_nef_polyhedron::get_prototype() 
-{  
+SGAL::Container_proto* Exact_nef_polyhedron::get_prototype()
+{
   if (!s_prototype) Exact_nef_polyhedron::init_prototype();
   return s_prototype;
 }

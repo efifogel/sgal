@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 13463 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -61,7 +61,7 @@ class Color_array;
 class Draw_action;
 class Scene_graph;
 
-class SGAL_SCGAL_DECL Exact_nef_polyhedron : public SGAL::Mesh_set {
+class SGAL_SCGAL_DECL Exact_nef_polyhedron : public Mesh_set {
 public:
   typedef CGAL::Tag_true                                Tag_true;
   typedef CGAL::Tag_false                               Tag_false;
@@ -108,7 +108,7 @@ public:
     const Inexact_point_3& get_inexact_point(void) const
     { return m_inexact_point; }
   };
-  
+
   /*! The polyhedron halfedge extended with a Boolean flag */
   template <class Refs>
   struct Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
@@ -150,7 +150,7 @@ public:
       typedef Polyhedron_face<Refs> Face;
     };
   };
-  
+
   typedef Kernel                                        Polyhedron_traits;
   // typedef CGAL::Polyhedron_3<Polyhedron_traits,Polyhedron_items>
   // Polyhedron;
@@ -164,9 +164,9 @@ public:
     Halfedge_facet_circulator;
   typedef Polyhedron::Facet_const_handle                Facet_const_handle;
   typedef Polyhedron::Facet_handle                      Facet_handle;
-  
+
   typedef Polyhedron::Vertex                            Vertex;
-  
+
   // Nef Polyhedron stuff:
   typedef CGAL::Nef_polyhedron_3<Polyhedron_traits, CGAL::SNC_indexed_items>
     Nef_polyhedron_3;
@@ -174,7 +174,7 @@ public:
   typedef Nef_polyhedron_3::Volume_const_iterator       Volume_const_iterator;
   typedef Nef_polyhedron_3::Shell_entry_const_iterator
     Shell_entry_const_iterator;
-  
+
 public:
   enum {
     FIRST = Mesh_set::LAST - 1,
@@ -190,32 +190,13 @@ public:
   ~Exact_nef_polyhedron();
 
   /*! Construct the prototype */
-  static Exact_nef_polyhedron* prototype()
-  { return new Exact_nef_polyhedron(true); }
+  static Exact_nef_polyhedron* prototype();
 
   /*! Clone */
-  virtual SGAL::Container* clone() { return new Exact_nef_polyhedron(); }
+  virtual Container* clone();
 
   /*! Draw the Nef polyhedron */
   virtual void draw_geometry(Draw_action * action);
-
-  /*! Clean the representation */
-  virtual void clean();
-  
-  /*! Clear the internal representation */
-  virtual void clear();
-
-  /*! Return true if the representation is empty */
-  virtual Boolean is_empty() const { return m_nef_polyhedron.is_empty(); }
-  
-  virtual void cull(SGAL::Cull_context& cull_context);
-
-  virtual void isect(SGAL::Isect_action* action);
-
-  virtual Boolean clean_sphere_bound();
-
-  /*! Set the attributes of this node */
-  virtual void set_attributes(SGAL::Element * elem);
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -225,6 +206,28 @@ public:
 
   /*! Obtain the node prototype */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element * elem);
+
+  /*! Clean the representation */
+  virtual void clean();
+
+  /*! Clear the internal representation */
+  virtual void clear();
+
+  /*! Return true if the representation is empty */
+  virtual Boolean is_empty() const { return m_nef_polyhedron.is_empty(); }
+
+  virtual void cull(Cull_context& cull_context);
+
+  virtual void isect(Isect_action* action);
+
+  virtual Boolean clean_sphere_bound();
 
   /*! Obtain the Nef polyhedron */
   Nef_polyhedron_3& get_nef_polyhedron() { return m_nef_polyhedron; }
@@ -248,7 +251,7 @@ public:
   void convert_inner_shell_to_polyhedron(Shell_entry_const_iterator it,
                                          T_Polyhedron& polyhedron)
   { m_nef_polyhedron.convert_inner_shell_to_polyhedron(it, polyhedron); }
-  
+
   /*! Print statistics */
   void print_stat();
 
@@ -285,7 +288,7 @@ public:
     }
   };
 #endif
-  
+
   /*! */
   template <class HDS>
   class Build_surface : public CGAL::Modifier_base<HDS> {
@@ -315,7 +318,7 @@ public:
         const Vector3f& v = (*coord_array)[i];
         B.add_vertex(Point(v[0], v[1], v[2]));
       }
-      
+
       // Add the faces:
       Uint j = 0;
       for (i = 0; i < num_primitives; ++i) {
@@ -332,7 +335,7 @@ public:
     /*! sets a pointer to the geometry */
     void set_nef_polyhedron(Exact_nef_polyhedron* p)
     { m_nef_polyhedron = p; }
-    
+
   private:
     /*! The Geometry node */
     Exact_nef_polyhedron* m_nef_polyhedron;
@@ -350,7 +353,7 @@ private:
                     h->next()->next()->vertex()->point());
     }
   };
-  
+
   /*! Extracts the inexact point from a polyhedron vertex */
   struct Convert_inexact_sphere {
     Inexact_sphere_3 operator()(const Nef_polyhedron_3::Vertex& vertex) const
@@ -385,29 +388,37 @@ private:
 
   /*! Indicates whether the intermediate polyhedron has been built */
   Boolean m_dirty_polyhedron;
-  
+
   /*! The resulting polyhedron */
   Polyhedron m_polyhedron;
 
   /*! The Nef_3 representation */
   Nef_polyhedron_3 m_nef_polyhedron;
-  
+
   /*! The time is took to compute the minkowski sum in seconds */
   float m_time;
-  
+
 protected:
   /*! Clean the polyhedron data structure */
   void clean_polyhedron();
 
   /*! Calculate the polyhedron spere-bound */
   Boolean clean_sphere_bound_polyhedron();
-  
+
   /*! Draw the intermediate polyhedron (for debugging purpose) */
-  void draw_polyhedron(Draw_action* action);  
+  void draw_polyhedron(Draw_action* action);
 
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 };
+
+/*! \brief constructs the prototype. */
+inline Exact_nef_polyhedron* Exact_nef_polyhedron::prototype()
+{ return new Exact_nef_polyhedron(true); }
+
+/*! \brief clones. */
+inline Container* Exact_nef_polyhedron::clone()
+{ return new Exact_nef_polyhedron(); }
 
 SGAL_END_NAMESPACE
 

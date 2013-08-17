@@ -42,7 +42,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Material::s_tag = "Material";
-Container_proto* Material::s_prototype = 0;
+Container_proto* Material::s_prototype(NULL);
 
 // Default values:
 Float Material::m_def_ambient_intensity = 0.2f;
@@ -107,12 +107,12 @@ void Material::set_emissive_color(Float v0, Float v1, Float v2)
 /*! \brief sets the shininess factor. */
 void Material::set_shininess(Float shininess)
 {
-  if (shininess > 1) m_shininess = 1; 
+  if (shininess > 1) m_shininess = 1;
   else m_shininess = shininess;
 }
 
 /*! \brief calls the ogl functions to set the current material.
- * we assume that if this method is called, all 
+ * we assume that if this method is called, all
  * material parameters need to be set.
  */
 void Material::draw(Face which_face, Context* /* context */)
@@ -147,12 +147,10 @@ void Material::material_changed(Field_info* field_info)
 void Material::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance
-  //! \todo s_prototype = new Container_proto(Geometry::get_prototype());
-  s_prototype = new Container_proto();
+  s_prototype = new Container_proto(Container::get_prototype());
 
   // Add the object fields to the prototype
+  // ambientIntensity
   Execution_function exec_func =
     static_cast<Execution_function>(&Material::material_changed);
   s_prototype->add_field_info
@@ -160,29 +158,34 @@ void Material::init_prototype()
                   get_member_offset(&m_ambient_intensity),
                   exec_func));
 
+  // diffuseColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   s_prototype->
     add_field_info(new SF_vector3f(DIFFUSE_COLOR, "diffuseColor",
                                    get_member_offset(&m_diffuse_color),
                                    exec_func));
 
+  // specularColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   s_prototype->add_field_info
     (new SF_vector3f(SPECULAR_COLOR, "specularColor",
                      get_member_offset(&m_specular_color),
                      exec_func));
 
+  // emissiveColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   s_prototype->
     add_field_info(new SF_vector3f(EMISSIVE_COLOR, "emissiveColor",
                                    get_member_offset(&m_emissive_color),
                                    exec_func));
 
+  // shininess
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   s_prototype->add_field_info(new SF_float(SHININESS, "shininess",
                                            get_member_offset(&m_shininess),
                                            exec_func));
 
+  // transparency
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
                                            get_member_offset(&m_transparency),
@@ -193,18 +196,18 @@ void Material::init_prototype()
 void Material::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief obtains the prototype. Initialize as nessary. */
-Container_proto* Material::get_prototype() 
-{  
-  if (!s_prototype) init_prototype();
+Container_proto* Material::get_prototype()
+{
+  if (!s_prototype) Material::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of this object. */
-void Material::set_attributes(Element* elem) 
+void Material::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
   typedef Element::Str_attr_iter                Str_attr_iter;
@@ -257,14 +260,14 @@ void Material::write(Formatter* formatter)
   formatter->container_begin(get_tag());
   formatter->single_vector3f("diffuseColor",
                              m_diffuse_color, m_def_diffuse_color);
-  formatter->container_end();  
+  formatter->container_end();
 }
 
 #if 0
 /*! Get the attributes of the box. */
-Attribute_list Material::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Material::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
   char buf[32];
   Vector3f col;
@@ -308,7 +311,7 @@ Attribute_list Material::get_attributes()
     attribs.push_back(attrib);
   }
 
-  return attribs; 
+  return attribs;
 }
 
 #endif

@@ -68,7 +68,7 @@ class SGAL_SCGAL_DECL Spherical_gaussian_map_colored_geo :
 public:
   typedef boost::shared_ptr<Spherical_gaussian_map_colored_geo>
     Shared_spherical_gaussian_map_colored_geo;
-  
+
   typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_colored,
                                                 Exact_kernel>
                                                   Polyhedron;
@@ -98,7 +98,7 @@ private:
   typedef Sgm::Vertex_const_handle                Sgm_vertex_const_handle;
   typedef Sgm::Halfedge_const_handle              Sgm_halfedge_const_handle;
   typedef Sgm::Face_const_handle                  Sgm_face_const_handle;
-  
+
   typedef Sgm::Vertex_iterator                    Sgm_vertex_iterator;
   typedef Sgm::Halfedge_iterator                  Sgm_halfedge_iterator;
   typedef Sgm::Edge_iterator                      Sgm_edge_iterator;
@@ -113,7 +113,7 @@ private:
                                 Sgm_halfedge_around_vertex_circulator;
   typedef Sgm::Halfedge_around_vertex_const_circulator
                                 Sgm_halfedge_around_vertex_const_circulator;
-  
+
   /*! Notification for computing the sgm. */
   class Sgm_geo_initializer_visitor {
   public:
@@ -123,10 +123,10 @@ private:
                                         Polyhedron_halfedge_const_handle;
     typedef Polyhedron::Facet_const_handle
                                         Polyhedron_facet_const_handle;
-    
+
     /*! Destructor */
     virtual ~Sgm_geo_initializer_visitor() {}
-    
+
     /*! Pass information from the polyhedron vertex to its dual - an aos face */
     virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,
                                     Sgm_face_handle trg)
@@ -157,11 +157,11 @@ private:
       // trg->set_color(src->color());
     }
   };
-   
+
   typedef CGAL::
   Arr_polyhedral_sgm_initializer<Sgm, Polyhedron, Sgm_geo_initializer_visitor>
                                                   Sgm_initializer;
-  
+
 protected:
   typedef Spherical_gaussian_map_colored_geo            Self;
 
@@ -172,7 +172,7 @@ protected:
 
     /*! Constructor */
     Colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the face */
     virtual void operator()(Draw_action* action);
 
@@ -187,13 +187,13 @@ protected:
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
-  
+
   /*! Create the renderers. */
   void create_renderers();
 
   /*! Destroy the renderers. */
   void destroy_renderers();
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -239,10 +239,10 @@ private:
 
   /*! The inflated strip edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
-  
+
   /*! The inflated tube edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
-   
+
   /*! Default values. */
 
   /*! Transform the coordinates of the SGM into spheres.
@@ -260,7 +260,7 @@ private:
   virtual void draw_aos_opaque(Draw_action* action);
 
   virtual void isect_primary();
-  
+
 public:
   /*! Constructor. */
   Spherical_gaussian_map_colored_geo(Boolean proto = false);
@@ -268,7 +268,7 @@ public:
   /*! Copy constructor. */
   Spherical_gaussian_map_colored_geo
   (const Spherical_gaussian_map_colored_geo& gm);
-  
+
   /*! Destructor. */
   virtual ~Spherical_gaussian_map_colored_geo();
 
@@ -277,11 +277,6 @@ public:
 
   /*! Clone. */
   virtual Container* clone();
-
-  /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values.
-   */
-  virtual void set_attributes(Element* elem);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -292,12 +287,21 @@ public:
   /*! Obtain the prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
+   */
+  virtual void set_attributes(Element* elem);
+
   /*! Clean the representation. */
   virtual void clean_sgm();
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
-  
+
   /*! Return true if the representation is empty. */
   virtual Boolean is_empty() const { return m_sgm->is_empty(); }
 
@@ -310,7 +314,7 @@ public:
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action);
-  
+
   /*! Clean the renderer. */
   virtual void clean_renderer();
 
@@ -325,7 +329,7 @@ public:
 
   /*! Set the Gaussian map. */
   void set_sgm(Sgm* sgm);
-  
+
   /*! Set the flag that indicates whether to compute the minkowski sum. */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
 

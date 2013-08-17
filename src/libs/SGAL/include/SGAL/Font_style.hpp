@@ -55,13 +55,13 @@ public:
   };
 
   /*! Constructor */
-  Font_style(Boolean proto = SGAL_FALSE);
+  Font_style(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Font_style();
-  
+
   /*! Construct the prototype */
-  static Font_style * prototype() { return new Font_style(SGAL_TRUE); }
+  static Font_style * prototype() { return new Font_style(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Font_style(); }
@@ -79,6 +79,10 @@ public:
 
   /*! Obtain the container prototype */
   virtual Container_proto * get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Draw the node while traversing the scene graph */
   virtual Action::Trav_directive draw(Draw_action *);
@@ -135,7 +139,7 @@ private:
 
   /*! The font name */
   std::string m_font_name;
-  
+
   /*! The font family: "SERIF", "SANS", or "TYPEWRITER" */
   std::string m_family;
 

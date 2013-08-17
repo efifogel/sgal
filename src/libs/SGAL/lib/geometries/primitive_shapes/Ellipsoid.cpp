@@ -32,7 +32,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Ellipsoid::s_tag = "Ellipsoid";
-Container_proto* Ellipsoid::s_prototype = NULL;
+Container_proto* Ellipsoid::s_prototype(NULL);
 
 // Default values:
 const Float Ellipsoid::s_def_width(1);
@@ -61,7 +61,7 @@ void Ellipsoid::clean()
 {
   // Clear internal representation:
   if (!m_coord_array) m_coord_array.reset(new Coord_array);
-  
+
   // Generate points:
   Uint size = 2 + m_slices * (m_stacks - 1);
   m_coord_array->resize(size);
@@ -176,12 +176,12 @@ void Ellipsoid::set_attributes(Element* elem)
       set_slices(atoi(value.c_str()));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     else if (name == "stacks") {
       set_stacks(atoi(value.c_str()));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
   }
 
   // Remove all the deleted attributes:
@@ -194,9 +194,9 @@ void Ellipsoid::set_attributes(Element* elem)
  * The list is of name=value pairs.
  * @return a list of pairs of strings
  */
-Attribute_list Ellipsoid::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Ellipsoid::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -241,45 +241,48 @@ void Ellipsoid::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Indexed_face_set::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // width
   Execution_function exec_func =
     static_cast<Execution_function>(&Ellipsoid::structure_changed);
   s_prototype->add_field_info(new SF_float(WIDTH, "width",
                                            get_member_offset(&m_width),
                                            exec_func));
 
+  // height
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
                                            get_member_offset(&m_height),
                                            exec_func));
 
+  // depth
   s_prototype->add_field_info(new SF_float(DEPTH, "depth",
                                            get_member_offset(&m_depth),
                                            exec_func));
 
+  // slices
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           get_member_offset(&m_slices),
                                           exec_func));
+
+  // stacks
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           get_member_offset(&m_stacks),
                                           exec_func));
 }
 
 /*! Delete the container prototype */
-void Ellipsoid::delete_prototype() 
+void Ellipsoid::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
 /*! Obtain the container prototype */
-Container_proto* Ellipsoid::get_prototype() 
-{  
+Container_proto* Ellipsoid::get_prototype()
+{
   if (!s_prototype) Ellipsoid::init_prototype();
   return s_prototype;
-} 
+}
 
 /*! \brief sets the width of the ellipsoid. */
 void Ellipsoid::set_width(Float width)

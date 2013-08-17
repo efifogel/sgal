@@ -46,7 +46,7 @@ public:
     START,
     END,
     SOLID,
-    STACKS, 
+    STACKS,
     BREAKS,
     COMPLEMENT,
     LAST
@@ -108,7 +108,7 @@ public:
    * \param  the new number of breaks
    */
   void set_breaks(Uint breaks);
-  
+
   /*! Obtain the number of breaks
    * \return the number of breaks
    */
@@ -119,7 +119,7 @@ public:
 
   /*! Obtain */
   Boolean is_solid() const;
-  
+
    /*! Set */
   void set_complement(Boolean complement);
 
@@ -129,16 +129,16 @@ public:
   /*! Draw the geodesic
    * \param action the draw action
    */
-  virtual void draw(Draw_action* action); 
+  virtual void draw(Draw_action* action);
 
-  /*! Draw the geodesic in selection mode 
+  /*! Draw the geodesic in selection mode
    * \param action the draw action
    */
   virtual void isect(Isect_action* action);
 
   /*! Calculare the sphere bound of the geodesic */
   virtual Boolean clean_sphere_bound();
-  
+
   /*! Initialize the node prototype */
   virtual void init_prototype();
 
@@ -149,6 +149,10 @@ public:
    * \return the node prototype
    */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   // virtual void FieldChanged(short fieldId);
 
@@ -164,20 +168,20 @@ protected:
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
 
   /*! The radius of the arc sphere */
   Float m_radius;
-  
+
   /*! The start point of the geodesic */
   Vector2f m_start;
 
   /*! The start point of the geodesic */
   Vector2f m_end;
-  
+
   /*! The number of stacks of the geodesic */
   Uint m_stacks;
 
@@ -185,10 +189,10 @@ private:
   Uint m_breaks;
 
    /*! Indicates wether the object is a solid. If it is not a solid we need
-   * to draw both sides of the polygons. 
+   * to draw both sides of the polygons.
    */
   Boolean m_is_solid;
-  
+
   Boolean m_is_complement;
 
   void clean();
@@ -248,7 +252,7 @@ inline Uint Geodesic::get_stacks() const { return m_stacks; }
 
 /*! \brief sets the number of breaks. */
 inline void Geodesic::set_breaks(Uint breaks) { m_breaks = breaks; }
-  
+
 /*! \brief obtains the number of breaks. */
 inline Uint Geodesic::get_breaks() const { return m_breaks; }
 
@@ -257,7 +261,7 @@ inline void Geodesic::set_solid(Boolean solid) { m_is_solid = solid; }
 
 /*! \brief obtains. */
 inline Boolean Geodesic::is_solid() const { return m_is_solid; }
-  
+
 /*! \brief sets. */
 inline void Geodesic::set_complement(Boolean complement)
 {

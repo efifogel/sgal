@@ -29,14 +29,12 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! The node prototype */
-Container_proto* Tex_coord_array::s_prototype = NULL;
+Container_proto* Tex_coord_array::s_prototype(NULL);
 
 /*! Initialize the node prototype */
 void Tex_coord_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Container::get_prototype());
 }
 
@@ -47,13 +45,13 @@ void Tex_coord_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */  
+/*! Obtain the node prototype */
 Container_proto* Tex_coord_array::get_prototype()
 {
   if (s_prototype == NULL) Tex_coord_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
  */

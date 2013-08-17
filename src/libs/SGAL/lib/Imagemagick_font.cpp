@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5659 $
 //
 // Author(s)     : Ophir Setter      <ophir.setter@gmail.com>
@@ -44,7 +44,7 @@ Imagemagick_font::Imagemagick_font(const std::string & name, Boolean antialias,
   m_text_height(0),
   m_width(0),
   m_height(0),
-  m_dirty(SGAL_TRUE)
+  m_dirty(true)
 {
   m_magick_image.fillColor(Magick::Color("white"));
   m_magick_image.strokeColor(Magick::Color("white"));
@@ -106,12 +106,12 @@ void Imagemagick_font::draw_string(Context * context, const std::string & str,
     //     Uchar alpha = pixels[i];
     //     pixels[i] = (alpha < 0x7f) ? 0 : 0xff;
     //   }
-    m_dirty = SGAL_FALSE;
+    m_dirty = false;
   }
 
   m_texture.draw(context);
   
-  context->draw_tex_enable(SGAL_TRUE);
+  context->draw_tex_enable(true);
   context->draw_tex_env(Gfx::MODULATE_TENV);
   context->draw_alpha_func(Gfx::GREATER_AFUNC);
   context->draw_alpha_ref(0);
@@ -140,7 +140,7 @@ void Imagemagick_font::draw_string(Context * context, const std::string & str,
   glEnd();
 
   //! \todo restore old state correctly.
-  context->draw_tex_enable(SGAL_FALSE);
+  context->draw_tex_enable(false);
   context->draw_alpha_func(Gfx::ALWAYS_AFUNC);
 }
 

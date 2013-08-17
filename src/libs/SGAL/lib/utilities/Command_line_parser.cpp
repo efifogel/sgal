@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1309 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -39,7 +39,7 @@ std::set<Command_line_parser *> Command_line_parser::s_set;
 
 /*! Constructor */
 Command_line_parser::Command_line_parser(int argc, char * argv[]) :
-  m_done(SGAL_FALSE)
+  m_done(false)
 {
   s_argc = argc;
   s_argv = argv;

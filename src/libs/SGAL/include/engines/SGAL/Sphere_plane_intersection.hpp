@@ -73,7 +73,11 @@ public:
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of the object extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values.
    */
@@ -95,7 +99,7 @@ public:
 
   /*! Set the plane coefficients. */
   void set_plane(const Vector4f& vec);
-  
+
   /*! Obtain the circle translation. */
   const Vector3f& get_circle_translation() const;
 
@@ -162,7 +166,7 @@ inline const Vector4f& Sphere_plane_intersection::get_plane() const
 /*! \brief sets the plane coefficients. */
 inline void Sphere_plane_intersection::set_plane(const Vector4f& vec)
 { m_plane = vec; }
-  
+
 /*! \brief obtains the circle translation. */
 inline const Vector3f& Sphere_plane_intersection::get_circle_translation() const
 { return m_circle_translation; }
@@ -173,7 +177,7 @@ inline const Rotation& Sphere_plane_intersection::get_circle_rotation() const
 
 /*! \brief obtains the circle radius. */
 inline Float Sphere_plane_intersection::get_circle_radius() const
-{ return m_circle_radius; } 
+{ return m_circle_radius; }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Sphere_plane_intersection::get_tag() const

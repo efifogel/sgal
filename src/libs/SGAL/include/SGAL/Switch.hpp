@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -25,8 +25,8 @@
 /*! \file
  * A node in the scene graph that can choose for traversing one of child
  * objects.
- * 
- * This is a switch node in the scene graph. It inherits 
+ *
+ * This is a switch node in the scene graph. It inherits
  * from Group and therefore can have multiple child objects.
  * It contains whichChoice field that choose which of child nodes will be
  * traversed.
@@ -59,7 +59,7 @@ public:
 
   /*! Desstructor */
   virtual ~Switch();
-  
+
   /*! Construct the prototype */
   static Switch* prototype() { return new Switch(true); }
 
@@ -74,7 +74,7 @@ public:
 
   /*! Return the node to traverse */
   virtual Shared_node get_choice();
-  
+
   /*! Draw the node while traversing the scene graph */
   virtual Action::Trav_directive draw(Draw_action* action);
 
@@ -95,7 +95,11 @@ public:
 
   virtual void delete_prototype();
 
-  virtual Container_proto* get_prototype(); 
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
 protected:
   /*! obtains the tag (type) of the container */
@@ -118,7 +122,7 @@ inline void Switch::set_which_choice(Uint index)
   m_which_choice = index;
   m_dirty_sphere_bound = true;
 }
-  
+
 /*! Obtain the index of the child to traverse */
 inline Uint Switch::get_which_choice() const { return m_which_choice; }
 

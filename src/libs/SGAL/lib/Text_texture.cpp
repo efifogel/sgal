@@ -34,7 +34,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Transform::s_tag = "TextTexture";
-Container_proto* Text_texture::s_prototype = 0;
+Container_proto* Text_texture::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Text_texture, "Text_texture");
 
@@ -289,7 +289,7 @@ void Text_texture::init_prototype()
 void Text_texture::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief */

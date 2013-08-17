@@ -26,7 +26,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image_texture::s_prototype = NULL;
+Container_proto* Image_texture::s_prototype(NULL);
 const std::string Image_texture::s_tag = "ImageTexture";
 
 REGISTER_TO_FACTORY(Image_texture, "Image_texture");

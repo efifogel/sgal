@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -36,11 +36,8 @@ SGAL_BEGIN_NAMESPACE
 
 typedef Element::Str_attr_iter          Str_attr_iter;
 
-//! Container execution function
-typedef void (Container::* Execution_function)(Field_info*);
-
 std::string Key_sensor::s_tag = "KeySensor";
-Container_proto * Key_sensor::s_prototype = NULL;
+Container_proto* Key_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Key_sensor, "Key_sensor");
 
@@ -69,21 +66,35 @@ void Key_sensor::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the field-info records to the prototype:
+  // keyPress
   s_prototype->add_field_info(new SF_int(KEY_PRESS, "keyPress",
                                          get_member_offset(&m_key)));
+
+  // keyRelease
   s_prototype->add_field_info(new SF_int(KEY_RELEASE, "keyRelease",
                                          get_member_offset(&m_key)));
+
+  // actionKeyPress
   s_prototype->add_field_info(new SF_int(ACTION_KEY_PRESS, "actionKeyPress",
                                          get_member_offset(&m_action_key)));
+
+  // actionKeyRelease
   s_prototype->add_field_info(new SF_int(ACTION_KEY_RELEASE, "actionKeyRelease",
                                          get_member_offset(&m_action_key)));
+
+  // shiftKey
   s_prototype->add_field_info(new SF_bool(SHIFT_KEY, "shiftKey",
                                           get_member_offset(&m_shift_key)));
+
+  // controlKey
   s_prototype->add_field_info(new SF_bool(CONTROL_KEY, "controlKey",
                                           get_member_offset(&m_control_key)));
+
+  // altKey
   s_prototype->add_field_info(new SF_bool(ALT_KEY, "altKey",
                                           get_member_offset(&m_alt_key)));
 
+  // isActive
   Execution_function exec_func =
     static_cast<Execution_function>(&Key_sensor::activate);
   s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive",
@@ -95,10 +106,11 @@ void Key_sensor::init_prototype()
 void Key_sensor::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */
-Container_proto * Key_sensor::get_prototype() 
+Container_proto* Key_sensor::get_prototype()
 {
   if (!s_prototype) Key_sensor::init_prototype();
   return s_prototype;
@@ -115,12 +127,10 @@ void Key_sensor::unregister_events()
 {
   Keyboard_event::unregister(this);
 }
-  
+
 /*! Prints out the name of this agent (for debugging purposes) */
 void Key_sensor::identify()
-{
-  std::cout << "Agent: Key_sensor" << std::endl;
-}
+{ std::cout << "Agent: Key_sensor" << std::endl; }
 
 /*! Handles keyboard events */
 void Key_sensor::handle(Keyboard_event * event)
@@ -130,7 +140,7 @@ void Key_sensor::handle(Keyboard_event * event)
   Field * field = (m_pressed) ? get_field(KEY_PRESS) : get_field(KEY_RELEASE);
   if (field) field->cascade();
 }
-  
+
 /*! Makes the key sensor to be the active key sensor (also makes the current
  * active key sensor inactive).
  * At most one KeySensor can be active at any given time.
@@ -139,20 +149,20 @@ void Key_sensor::activate(Field_info* /* field_info */)
 {
   // Get the current active key-sensor, and set this as the new active one:
   //! \todo use the execution coordinator instead of the scene graph
-  Key_sensor * current = m_scene_graph->get_active_key_sensor();
+  Key_sensor* current = m_scene_graph->get_active_key_sensor();
   m_scene_graph->set_active_key_sensor(this);
   // Inactivate the current key sensor
   if (current) {
     current->set_active(false);
 
     // Cascade the isActive field on current key sensor if needed
-    Field * current_field = current->get_field(IS_ACTIVE);
+    Field* current_field = current->get_field(IS_ACTIVE);
     if (current_field) current_field->cascade();
   }
   set_active(true);                      // mark as active
 
   // Cascade the isActive field if needed
-  Field * field = get_field(IS_ACTIVE);
+  Field* field = get_field(IS_ACTIVE);
   if (field) field->cascade();
 }
 
@@ -163,7 +173,7 @@ void Key_sensor::activate(Field_info* /* field_info */)
 bool Key_sensor::Key_down()
 {
   UShort key_code = event.Code();
-  Field * field;
+  Field* field;
 
   // Set the suitable member with the pressed key info and get the suitable
   // field
@@ -187,17 +197,19 @@ bool Key_sensor::Key_down()
  */
 void Key_sensor::Key_up()
 {
-  Field * field;
+  Field* field;
 
   // Set the suitable member with the pressed key info and get the suitable
   // field
   if (key_code == SHIFT_CODE) {
     m_shift_key = false;
     field = get_field(SHIFTKEY);
-  } else if (key_code == CTRL_CODE) {
+  }
+  else if (key_code == CTRL_CODE) {
     m_control_key = false;
     field = get_field(CONTROLKEY);
-  } else {
+  }
+  else {
     m_key = (Int)key_code;
     field = get_field(KEY_PRESS);
   }
@@ -214,21 +226,20 @@ void Key_sensor::Key_up()
 void Key_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
       m_enabled = compare_to_true(value);
       elem->mark_delete(ai);
-    } 
+    }
   }
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 void Key_sensor::add_to_scene(Scene_graph * sg)
 {
   m_scene_graph = sg;
@@ -236,14 +247,14 @@ void Key_sensor::add_to_scene(Scene_graph * sg)
 }
 
 #if 0
-/*! Get a list of atributes in this object. This method is called only 
- * from the Builder side. 
+/*! Get a list of atributes in this object. This method is called only
+ * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Key_sensor::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Node::get_attributes();
@@ -252,11 +263,11 @@ Attribute_list Key_sensor::get_attributes()
   attrib.second = (m_active) ? TRUE_STR : FALSE_STR;
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 };
 
 /*!
- * Adds this key sensor to the scene graph. 
+ * Adds this key sensor to the scene graph.
  * Also set the execution coordinator to point at this one as active if needed.
  *
  * @param sg (in) pointer to the scene graph
@@ -267,7 +278,7 @@ void Key_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent)
   Node::add_to_scene(sg, parent);
 
   // If this key sensor is marked active and there is no active key
-  // sensor pointed by the execution coordinator already - set 
+  // sensor pointed by the execution coordinator already - set
   // the execution coordinator to point to this:
   if (m_active && m_execution_coordinator->get_active_key_sensor() == NULL)
     // Set this as the active key sensor
@@ -284,7 +295,7 @@ void Key_sensor::set_active(Boolean active)
   m_active = active;
   if (active) register_events();
   else unregister_events();
-  m_pressed = SGAL_FALSE;
+  m_pressed = false;
 }
 
 SGAL_END_NAMESPACE

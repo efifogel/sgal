@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1808 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -611,8 +611,8 @@ void Window_obj::set_display(const char * name)
   _sgal_glut_set_display(name);
 }
 
-/*! Return SGAL_TRUE if mode is supported for window creation on this system,
- * SGAL_FALSE otherwise. Possible values of mode are a bitwise OR of the
+/*! Return true if mode is supported for window creation on this system,
+ * false otherwise. Possible values of mode are a bitwise OR of the
  * Window_obj::Window_mode enumerated type. This method is intended to
  * allow chosing a valid mode without running into fatal errors from the
  * Window_obj() constructor.

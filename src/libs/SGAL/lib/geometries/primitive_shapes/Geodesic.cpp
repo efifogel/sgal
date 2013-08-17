@@ -37,11 +37,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! Container execution function
-typedef void (Container::* Execution_function)(Field_info*);
-
-std::string Geodesic::s_tag = "Geodesic";
-Container_proto * Geodesic::s_prototype = NULL;
+const std::string Geodesic::s_tag = "Geodesic";
+Container_proto* Geodesic::s_prototype(NULL);
 
 // Default values:
 const Float Geodesic::s_def_radius(1.0f);
@@ -57,8 +54,8 @@ REGISTER_TO_FACTORY(Geodesic, "Geodesic");
 /*! Constructor */
 Geodesic::Geodesic(Boolean proto) :
   Geometry(proto),
-  m_radius(s_def_radius), 
-  m_start(s_def_start), 
+  m_radius(s_def_radius),
+  m_start(s_def_start),
   m_end(s_def_end),
   m_stacks(s_def_stacks),
   m_breaks(s_def_breaks),
@@ -73,7 +70,7 @@ Geodesic::~Geodesic(){}
 void Geodesic::clean() { /* m_dirty = false; */ }
 
 /*! \brief draws the arc. */
-void Geodesic::draw(Draw_action * action) 
+void Geodesic::draw(Draw_action * action)
 {
   // if (!is_dirty()) clean();
 
@@ -87,9 +84,9 @@ void Geodesic::draw(Draw_action * action)
     float x_start = m_radius*cos(m_start[0])*sin(m_start[1]);
 	float y_start = m_radius*sin(m_start[0])*sin(m_start[1]);
 	float z_start = m_radius*cos(m_start[1]);
-	
+
     Vector3f source = Vector3f(x_start,y_start,z_start);
-	
+
     float x_end = m_radius*cos(m_end[0])*sin(m_end[1]);
 	float y_end = m_radius*sin(m_end[0])*sin(m_end[1]);
 	float z_end = m_radius*cos(m_end[1]);
@@ -103,10 +100,10 @@ void Geodesic::draw(Draw_action * action)
     glBegin(GL_LINE_STRIP);
 	Uint i;
 	int multiplier = m_is_complement?-1:1;
-	
-	for (i = 1; i <= m_breaks; i++) 
+
+	for (i = 1; i <= m_breaks; i++)
 	{
-	
+
       if (i>1)
 		multiplier = 1;
 	  iter = points.begin();
@@ -119,12 +116,12 @@ void Geodesic::draw(Draw_action * action)
 		float x = (vertex2[0] + vertex1[0])/2;
 		float y = (vertex2[1] + vertex1[1])/2;
 		float z = (vertex2[2] + vertex1[2])/2;
-		
- 		float r = sqrt(x*x+y*y+z*z); 
+
+ 		float r = sqrt(x*x+y*y+z*z);
 		float theta = atan2(y,x);
 		float fi = acos(z/r);
-		
-		
+
+
 	    float x_new = multiplier*m_radius*cos(theta)*sin(fi);
  	    float y_new = multiplier*m_radius*sin(theta)*sin(fi);
 	    float z_new = multiplier*m_radius*cos(fi);
@@ -139,7 +136,7 @@ void Geodesic::draw(Draw_action * action)
 	  glVertex3fv((float*)&temp);
 	}
     glEnd();
-	
+
   // // Calculate lower left vertex:
   // Vector3f vbl, vtl, vtr, vbr;
 
@@ -158,16 +155,16 @@ void Geodesic::draw(Draw_action * action)
 
     // float beta = m_beta;
     // float beta_top;
-        
+
     // for (j = 0; j < m_stacks; j++) {
       // float sin_beta_bottom, sin_beta_top;
       // float cos_beta_bottom, cos_beta_top;
 
       // beta_top = beta + d_delta;
-            
+
       // sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
       // sincosf(beta_top, &sin_beta_top, &cos_beta_top);
-            
+
       // // bottom left:
       // vbl[0] = sin_beta_bottom * sin_alpha_left;
       // vbl[2] = sin_beta_bottom * cos_alpha_left;
@@ -190,7 +187,7 @@ void Geodesic::draw(Draw_action * action)
 
       // float bottom = m_radius * cos_beta_bottom;
       // float top = m_radius * cos_beta_top;
-            
+
       // // Render:
       // glBegin(GL_QUADS);
       // glNormal3f(vbl[0], cos_beta_bottom, vbl[2]);
@@ -215,7 +212,7 @@ void Geodesic::draw(Draw_action * action)
     // }
     // alpha = alpha_right;
   // }
-    
+
   if (!m_is_solid && context) {
     context->draw_cull_face(Gfx::BACK_CULL);
     context->draw_light_model_sides(Gfx::ONE_SIDE);
@@ -224,7 +221,7 @@ void Geodesic::draw(Draw_action * action)
 }
 
 /*! \brief draws the object in selection mode */
-void Geodesic::isect(Isect_action * action) 
+void Geodesic::isect(Isect_action * action)
 {
   // // if (!is_dirty()) clean();
 
@@ -246,16 +243,16 @@ void Geodesic::isect(Isect_action * action)
 
     // float beta = m_beta;
     // float beta_top;
-        
+
     // for (j = 0; j < m_breaks; j++) {
       // float sin_beta_bottom, sin_beta_top;
       // float cos_beta_bottom, cos_beta_top;
 
       // beta_top = beta + d_delta;
-            
+
       // sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
       // sincosf(beta_top, &sin_beta_top, &cos_beta_top);
-            
+
       // // bottom left:
       // vbl[0] = sin_beta_bottom * sin_alpha_left;
       // vbl[2] = sin_beta_bottom * cos_alpha_left;
@@ -278,7 +275,7 @@ void Geodesic::isect(Isect_action * action)
 
       // float bottom = m_radius * cos_beta_bottom;
       // float top = m_radius * cos_beta_top;
-            
+
       // // Render:
       // glBegin(GL_QUADS);
       // glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
@@ -296,7 +293,7 @@ void Geodesic::isect(Isect_action * action)
 /*! \brief calculares the sphere bound of the sphere */
 Boolean Geodesic::clean_sphere_bound()
 {
-  m_sphere_bound.set_radius(m_radius); 
+  m_sphere_bound.set_radius(m_radius);
   m_sphere_bound.set_center(Vector3f(0, 0, 0));
   return true;
 }
@@ -305,7 +302,7 @@ Boolean Geodesic::clean_sphere_bound()
 void Geodesic::set_attributes(Element * elem)
 {
   Geometry::set_attributes(elem);
-  
+
   typedef Element::Str_attr_iter Str_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
@@ -317,7 +314,7 @@ void Geodesic::set_attributes(Element * elem)
       elem->mark_delete(ai);
       continue;
     }
-	
+
     if (name == "start") {
       set_start(Vector2f(value));
       elem->mark_delete(ai);
@@ -359,9 +356,9 @@ void Geodesic::set_attributes(Element * elem)
  * The list is of name=value pairs.
  * \return a list of pairs of strings
  */
-Attribute_list Geodesic::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Geodesic::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -373,7 +370,7 @@ Attribute_list Geodesic::get_attributes()
     attrib.second = buf;
     attribs.push_back(attrib);
   }
-  
+
   if (m_start != s_def_start) {
     attrib.first = "start";
     sprintf(buf, "%g", get_start());
@@ -387,7 +384,7 @@ Attribute_list Geodesic::get_attributes()
     attrib.second = buf;
     attribs.push_back(attrib);
   }
-  
+
   if (m_breaks != s_def_breaks) {
     attrib.first = "breaks";
     sprintf(buf, "%d", get_breaks());
@@ -419,32 +416,38 @@ void Geodesic::init_prototype()
   s_prototype = new Container_proto(Geometry::get_prototype());
 
   // Add the field-info records to the prototype:
+  // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                            get_member_offset(&m_radius),
-                                           exec_func)); 
-  
+                                           exec_func));
+
+  // start
   s_prototype->add_field_info(new SF_vector2f(START, "start",
                                            get_member_offset(&m_start),
                                            exec_func));
 
+  // end
   s_prototype->add_field_info(new SF_vector2f(END, "end",
                                            get_member_offset(&m_end),
                                            exec_func));
 
+  // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           get_member_offset(&m_stacks),
                                           exec_func));
 
+  // breaks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(BREAKS, "breaks",
                                           get_member_offset(&m_breaks),
                                           exec_func));
-  
+
+  // complement
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(COMPLEMENT, "complement",
@@ -461,10 +464,10 @@ void Geodesic::delete_prototype()
 }
 
 /*! \brief obtains the geodesic prototype */
-Container_proto* Geodesic::get_prototype() 
-{  
+Container_proto* Geodesic::get_prototype()
+{
   if (!s_prototype) Geodesic::init_prototype();
   return s_prototype;
-} 
+}
 
 SGAL_END_NAMESPACE

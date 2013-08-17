@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,17 +37,17 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Movie_recorder::s_tag = "enbMovieRecorder";
-Container_proto * Movie_recorder::s_prototype = 0;
+const std::string Movie_recorder::s_tag = "movieRecorder";
+Container_proto * Movie_recorder::s_prototype(NULL);
 
 // Default values: */
-const char * Movie_recorder::m_defMovieFileName = "movie";
-const char * Movie_recorder::m_defHintFileName = "hint";
-const Int Movie_recorder::m_defTotalFrames = 160;
-const Short Movie_recorder::m_defNumLevels = 4;
-const int Movie_recorder::m_defWidth = 352;
-const int Movie_recorder::m_defHeight = 288;
-const ERecMode Movie_recorder::m_defMode = rmFile;
+const char* Movie_recorder::m_defMovieFileName = "movie";
+const char* Movie_recorder::m_defHintFileName = "hint";
+const Int Movie_recorder::m_defTotalFrames(160);
+const Short Movie_recorder::m_defNumLevels(4);
+const int Movie_recorder::m_defWidth(352);
+const int Movie_recorder::m_defHeight(288);
+const ERecMode Movie_recorder::m_defMode(rmFile);
 
 REGISTER_TO_FACTORY(Movie_recorder, "Movie_recorder");
 
@@ -76,9 +76,9 @@ static int quants[][2][2][2] = {
   /*! Constructor */
 Movie_recorder::Movie_recorder(Boolean proto) :
   Node(proto),
-  m_movieFileName(m_defMovieFileName), 
-  m_hintFileName(m_defHintFileName), 
-  m_isEnabled(SGAL_FALSE),
+  m_movieFileName(m_defMovieFileName),
+  m_hintFileName(m_defHintFileName),
+  m_isEnabled(false),
   m_numLevels(m_defNumLevels),
   m_frameNo(0),
   m_totalFrames(m_defTotalFrames),
@@ -128,7 +128,7 @@ void Movie_recorder::SetHintFileName(String filename)
   m_hintFileName = filename;
 }
 
-void Movie_recorder::SetTotalFrames(int num) 
+void Movie_recorder::SetTotalFrames(int num)
 {
   m_totalFrames = num;
 }
@@ -148,7 +148,7 @@ void Movie_recorder::SetRecordingMode(const String mode)
 void Movie_recorder::set_enabled(Field_info* field_info)
 {
 
-  m_isEnabled = SGAL_TRUE;
+  m_isEnabled = true;
   m_frameNo = 0;
 
   if (!m_pixels) {
@@ -160,7 +160,7 @@ void Movie_recorder::set_enabled(Field_info* field_info)
     m_quantBuffer = new short[m_width/BLOCK_SIZE*m_height/BLOCK_SIZE];
   }
 
-  if (m_mode == rmSocket) 
+  if (m_mode == rmSocket)
   {
     if (m_mode == rmSocket) {
       Start();
@@ -168,10 +168,10 @@ void Movie_recorder::set_enabled(Field_info* field_info)
       m_status = "Connected...";
 
     }
-  } 
-  else 
+  }
+  else
   {
-    
+
     String folder = EOperatingSystem::get_instance()->get_snapshotsFolder();
     m_movieFullName = folder + "/" + m_movieFileName + ".enm";
     m_hintFullName = folder + "/" + m_hintFileName + ".enh";
@@ -214,7 +214,7 @@ bool Movie_recorder::UpdateTime()
 
   ProcessFrame();
 
-  if (m_mode == rmSocket) 
+  if (m_mode == rmSocket)
   {
     bool res = Reply((char*)m_rgbBuffer, 3*m_width*m_height);
     if (res) {
@@ -222,7 +222,7 @@ bool Movie_recorder::UpdateTime()
     } else {
       m_status = "Disconnecting...";
     }
-  } else 
+  } else
   {
     WriteBuffers();
   }
@@ -230,7 +230,7 @@ bool Movie_recorder::UpdateTime()
   // if this is the last frame, stop the recording
   m_frameNo++;
   if ((m_mode == rmFile) && (m_frameNo == m_totalFrames)) {
-    m_isEnabled = SGAL_FALSE;
+    m_isEnabled = false;
   }
 
 
@@ -246,12 +246,12 @@ bool Movie_recorder::ProcessFrame()
   glReadPixels(0, 0, m_width, m_height, GL_RGB, GL_UNSIGNED_BYTE, m_rgbBuffer2);
   glReadBuffer(GL_BACK);
   // turn picture up-side-down
-  for (int i = 0 ; i < m_height ; i++) 
+  for (int i = 0 ; i < m_height ; i++)
   {
     memcpy(&m_rgbBuffer[m_width*3*(m_height-i-1)], &m_rgbBuffer2[m_width*3*i], m_width*3);
   }
 
-  
+
 
   // draw and then read the background hint frame from the color buffer
   m_sceneGraph->Record();
@@ -259,7 +259,7 @@ bool Movie_recorder::ProcessFrame()
 
 
 
-  // set the values of background for each block. If at least one pixel 
+  // set the values of background for each block. If at least one pixel
   // in the block is FG, the block is set to be Foreground bloack.
   int k = 0;
   for (int row = m_vertBlocks-1 ; row >= 0 ; row--) {
@@ -275,7 +275,7 @@ bool Movie_recorder::ProcessFrame()
 
 
 
-  // now we scan the background frame, first horizontally and then vertically, 
+  // now we scan the background frame, first horizontally and then vertically,
   // to set the quantization levels
 
   // set the header valu so that the quant inthe first MB is always 0
@@ -288,13 +288,13 @@ bool Movie_recorder::ProcessFrame()
   } else {
     m_currentFrameHeaderQuant = LOW_Q;
   }
-    
+
   // the horizontal scan
   int current_q = m_currentFrameHeaderQuant;
 
-  
+
   int bl = 0;
-  for (bl = 0 ; bl < m_horzBlocks*m_vertBlocks-2 ; bl++) 
+  for (bl = 0 ; bl < m_horzBlocks*m_vertBlocks-2 ; bl++)
   {
     m_quantBuffer[bl] = quants[(current_q-highest)/STEP][m_bgBuffer[bl]][m_bgBuffer[bl+1]][m_bgBuffer[bl+2]];
     current_q = m_quantBuffer[bl];
@@ -306,7 +306,7 @@ bool Movie_recorder::ProcessFrame()
 
   // the vertical scan
   current_q = m_currentFrameHeaderQuant;
-  for (bl = 0 ; bl < m_horzBlocks*m_vertBlocks-2 ; bl++) 
+  for (bl = 0 ; bl < m_horzBlocks*m_vertBlocks-2 ; bl++)
   {
     int n0 = bl/m_vertBlocks + (bl%m_vertBlocks)*m_horzBlocks;
     if (m_quantBuffer[n0] == LOW_Q) {
@@ -320,12 +320,12 @@ bool Movie_recorder::ProcessFrame()
 
 
   // calculate the differences for the hint buffer
-  m_hintBuffer[0] = m_quantBuffer[0] - m_currentFrameHeaderQuant; 
-  for (bl = 1 ; bl < m_horzBlocks*m_vertBlocks ; bl++) 
+  m_hintBuffer[0] = m_quantBuffer[0] - m_currentFrameHeaderQuant;
+  for (bl = 1 ; bl < m_horzBlocks*m_vertBlocks ; bl++)
   {
     m_hintBuffer[bl] = m_quantBuffer[bl]-m_quantBuffer[bl-1];
   }
-  
+
   return true;
 }
 
@@ -363,7 +363,7 @@ void Movie_recorder::WriteBuffers() const
   int row, col;
   for (row = 0 ; row < m_height ; row++) {
     for (col = 0 ; col < m_width ; col++) {
-      rgbStream << m_rgbBuffer[row*m_width*3+3*col] 
+      rgbStream << m_rgbBuffer[row*m_width*3+3*col]
         << m_rgbBuffer[row*m_width*3+3*col+1]
         << m_rgbBuffer[row*m_width*3+3*col+2];
     }
@@ -396,7 +396,7 @@ void Movie_recorder::WriteBuffers() const
 
   int c = m_currentFrameHeaderQuant;
   hintStream << (char)m_currentFrameHeaderQuant;
-  for (int bl = 0 ; bl < m_horzBlocks*m_vertBlocks ; bl++) 
+  for (int bl = 0 ; bl < m_horzBlocks*m_vertBlocks ; bl++)
   {
     hintStream << (char)m_hintBuffer[bl];
 
@@ -440,12 +440,13 @@ void Movie_recorder::init_prototype()
 void Movie_recorder::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*!
  */
-Container_proto * Movie_recorder::get_prototype() 
-{  
+Container_proto* Movie_recorder::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
@@ -454,27 +455,30 @@ Container_proto * Movie_recorder::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Movie_recorder::set_attributes(Element * elem)
+void Movie_recorder::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "movieFileName") {
       set_movieFileName(value);
       elem->mark_delete(ai);
-    } else if (name == "hintFileName") {
+    }
+    else if (name == "hintFileName") {
       SetHintFileName(value);
       elem->mark_delete(ai);
-    } else if (name == "totalFrames") { 
+    }
+    else if (name == "totalFrames") {
       SetTotalFrames(atoi(value.c_str()));
       elem->mark_delete(ai);
-    } else if (name == "mode") { 
+    }
+    else if (name == "mode") {
       SetRecordingMode(value);
       elem->mark_delete(ai);
-    } else if (name == "transmitterIP") { 
+    }
+    else if (name == "transmitterIP") {
       m_transmitterIP = value;
 /*//      strcpy(m_transmitterIP, value.c_str());
       hostent *pHostent = gethostbyname("meiron.enbaya.org");
@@ -488,18 +492,22 @@ void Movie_recorder::set_attributes(Element * elem)
         pHostent1 = gethostbyaddr ((char*) &res, sizeof(res),AF_INET);
       }*/
       elem->mark_delete(ai);
-    } else if (name == "transmitterPort") { 
+    }
+    else if (name == "transmitterPort") {
       m_transmitterPort = atoi(value.c_str());
       elem->mark_delete(ai);
-    } else if (name == "receiverIP") { 
+    }
+    else if (name == "receiverIP") {
       m_receiverIP = value;
 //      strcpy(m_receiverIP, value.c_str());
 
       elem->mark_delete(ai);
-    } else if (name == "receiverPort") { 
+    }
+    else if (name == "receiverPort") {
       m_receiverPort = atoi(value.c_str());
       elem->mark_delete(ai);
-    } else if (name == "cif") { 
+    }
+    else if (name == "cif") {
       StringVector aParametrs = std::stringUtils::SplitStringByToken(value, ",");
       assert(aParametrs.size() == 2);
       m_width = atoi(aParametrs[0].c_str());
@@ -508,7 +516,8 @@ void Movie_recorder::set_attributes(Element * elem)
       m_horzBlocks = m_width/BLOCK_SIZE;
       m_vertBlocks = m_height/BLOCK_SIZE;
       elem->mark_delete(ai);
-    } else if (name == "hintType") {
+    }
+    else if (name == "hintType") {
       m_hintType = value;
       elem->mark_delete(ai);
     }
@@ -521,43 +530,38 @@ void Movie_recorder::set_attributes(Element * elem)
  */
 Attribute_list Movie_recorder::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
   char buf[32];
 
   attribs = Node::get_attributes();
 
-  if (m_movieFileName != m_defMovieFileName) 
-  {
+  if (m_movieFileName != m_defMovieFileName) {
     attrib.first = "movieFileName";
     attrib.second = get_movieFileName();
     attribs.push_back(attrib);
   }
 
-  if (m_hintFileName != m_defHintFileName) 
-  {
+  if (m_hintFileName != m_defHintFileName) {
     attrib.first = "hintFileName";
     attrib.second = GetHintFileName();
     attribs.push_back(attrib);
   }
 
-  if (m_totalFrames != m_defTotalFrames) 
-  {
+  if (m_totalFrames != m_defTotalFrames) {
     attrib.first = "totalFrames";
     sprintf(buf, "%d", m_totalFrames);
     attrib.second = buf;
     attribs.push_back(attrib);
   }
 
-  if (m_mode != m_defMode) 
-  {
+  if (m_mode != m_defMode) {
     attrib.first = "mode";
     attrib.second = "socket";
     attribs.push_back(attrib);
   }
 
-  if (m_mode == rmSocket) 
-  {
+  if (m_mode == rmSocket) {
     attrib.first = "ip";
     attrib.second = m_transmitterIP;
     attribs.push_back(attrib);
@@ -568,10 +572,10 @@ Attribute_list Movie_recorder::get_attributes()
     attribs.push_back(attrib);
   }
 
-  return attribs; 
+  return attribs;
 }
 
-void Movie_recorder::AddToScene(Scene_graph *sg, XML_entity *parent)
+void Movie_recorder::AddToScene(Scene_graph* sg, XML_entity* parent)
 {
   Node::AddToScene(sg, parent);
   m_context = sg->get_context();
@@ -581,18 +585,18 @@ void Movie_recorder::AddToScene(Scene_graph *sg, XML_entity *parent)
 
 /* --------  documentation  ----------------------------
 
-  The movie file contains n frames of RGB triplets, written in binary format. 
-  The hint file contains a single byte signed value ranges from -4 to 4. Each 
-  value is the difference in the quantization level ob the current block relative 
-  to the previous block. The changes in the levels are usually in steps of 2 
-  (using the STEP variable). We currently support 2 formats. 3 level quantization and 
+  The movie file contains n frames of RGB triplets, written in binary format.
+  The hint file contains a single byte signed value ranges from -4 to 4. Each
+  value is the difference in the quantization level ob the current block relative
+  to the previous block. The changes in the levels are usually in steps of 2
+  (using the STEP variable). We currently support 2 formats. 3 level quantization and
   4 (the default) level quantization. The highest quantization level (lowest quality)
-  is specified with the LOW_Q variable. The level of quantization is set according to the 
-  following tables. The coumns are as following: 
+  is specified with the LOW_Q variable. The level of quantization is set according to the
+  following tables. The coumns are as following:
 
        The     | The next | The second | next   | difference
-     current   |  block   | next block | block  | (stored in 
-   block quant | (F, B)   |   (F, B)   | quant. | the hint file) 
+     current   |  block   | next block | block  | (stored in
+   block quant | (F, B)   |   (F, B)   | quant. | the hint file)
 
   where: F - Foregroung, B - Background.
 
@@ -611,7 +615,7 @@ void Movie_recorder::AddToScene(Scene_graph *sg, XML_entity *parent)
       F F 6 -2
 
     In case of 4 levels:
-    2 B B 4 2 
+    2 B B 4 2
       B F 4 2
       F B 4 2
       F F 2 0
@@ -645,7 +649,7 @@ unsigned Movie_recorder::ThreadHandlerProc(void)
 //  else
 //    MessageBox(NULL,"socket init OK","ERemoteController",MB_OK);
 
-//  String installationFolder = 
+//  String installationFolder =
 //  EOperatingSystem::get_instance()->get_installationFolder();
 //  installationFolder += "\\RunTransmitter.bat";
 
@@ -672,7 +676,7 @@ void Movie_recorder::OnAccept()
   Reply((char*)data, strlen(data));
 }
 
-void Movie_recorder::OnData(char *inBuff,int len)
+void Movie_recorder::OnData(char* inBuff,int len)
 {
 }
 
@@ -684,7 +688,7 @@ void RunJavaThread()
 {
 //  Sleep(1000);
   //ShellExecute();
-  String installationFolder = 
+  String installationFolder =
     EOperatingSystem::get_instance()->get_installationFolder();
 
   ShellExecute(NULL, "open", "C:\\Documents and Settings\\meiron\\Desktop\\tst.bat", NULL, NULL, SW_MINIMIZE );//SW_SHOWNORMAL);

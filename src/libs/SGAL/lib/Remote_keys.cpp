@@ -14,20 +14,20 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "RemoteKeys.h"
-#include "Element.h"
-#include "Container_proto.h"
+#include "SGAL/RemoteKeys.h"
+#include "SGAL/Element.h"
+#include "SGAL/Container_proto.h"
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Remote_keys::s_tag = "sgalRemoteKeys";
-Container_proto * Remote_keys::s_prototype = 0;
+const std::string Remote_keys::s_tag = "RemoteKeys";
+Container_proto * Remote_keys::s_prototype(NULL);
 
 /*! Constructor */
 Remote_keys::Remote_keys(Boolean proto) : Node(proto) {}
@@ -46,11 +46,12 @@ void Remote_keys::init_prototype()
 void Remote_keys::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */
-Container_proto * Remote_keys::get_prototype() 
-{  
+Container_proto * Remote_keys::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
@@ -186,14 +187,14 @@ void Remote_keys::set_attributes(Element * elem)
 
 Attribute_list Remote_keys::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
 //  char buf[32];
 
   attribs = Node::get_attributes();
 
 
-  return attribs; 
+  return attribs;
 }
 
 void Remote_keys::AddToScene(Scene_graph *sg, XML_entity *parent)

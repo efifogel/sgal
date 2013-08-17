@@ -62,10 +62,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Geodesic_voronoi_on_sphere_geo::s_prototype = NULL;
+Container_proto* Geodesic_voronoi_on_sphere_geo::s_prototype(NULL);
 
 /*! Default values */
-const Boolean Geodesic_voronoi_on_sphere_geo::s_def_draw_sites(SGAL_TRUE);
+const Boolean Geodesic_voronoi_on_sphere_geo::s_def_draw_sites(true);
 const Vector3f Geodesic_voronoi_on_sphere_geo::s_def_site_color(0, 0, 0);
 
 /*! Constructor */
@@ -86,9 +86,7 @@ void Geodesic_voronoi_on_sphere_geo::init_prototype()
   s_prototype =
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-  
+  // drawSites
   s_prototype->add_field_info(new SF_bool(DRAW_SITES, "drawSites",
                                           get_member_offset(&m_draw_sites)));
 }
@@ -120,12 +118,12 @@ Container_proto* Geodesic_voronoi_on_sphere_geo::get_prototype()
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "siteIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_site_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }

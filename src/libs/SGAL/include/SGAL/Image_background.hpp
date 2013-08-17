@@ -45,7 +45,7 @@ public:
   };
 
   typedef boost::shared_ptr<Appearance>                 Shared_appearance;
-  
+
   /*! Constructor */
   Image_background(Boolean proto = false);
 
@@ -68,7 +68,11 @@ public:
 
   virtual void delete_prototype();;
 
-  virtual Container_proto* get_prototype(); 
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   virtual void draw(Draw_action* draw_action);
 
@@ -79,7 +83,7 @@ public:
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
-  
+
 private:
   /*! The tag that identifies this container type */
   static const std::string s_tag;

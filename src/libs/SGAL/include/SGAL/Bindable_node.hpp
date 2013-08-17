@@ -66,13 +66,17 @@ public:
 
   /*! Obtain the node prototype */
   virtual Container_proto* get_prototype();
-    
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Obtain the Navigation_info at the top os the stack */
   Bindable_node* top_stack();
-  
+
   /*! Erase the Navigation_info */
   void erase_stack(Bindable_node* bindable);
-  
+
   /*! Pop the Navigation_info at the top of the stack */
   void pop_stack();
 
@@ -84,20 +88,20 @@ public:
 
   /*! Bind this node (used during initialization) */
   void bind();
-  
+
   /*! Set the flag that indicates whether this node is bound */
   void set_is_bound(bool is_bound);
-  
+
   /*! Bind or unbinds this node */
   void set_bind(Field_info* field_info);
 
 protected:
   /*! Set this field to bind the node */
   bool m_set_bind;
-  
+
   /*! Indicates whether the node is bound */
   bool m_is_bound;
-  
+
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -109,7 +113,7 @@ protected:
 
   /*! Disable the bindable node */
   virtual void disable() {}
-  
+
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;

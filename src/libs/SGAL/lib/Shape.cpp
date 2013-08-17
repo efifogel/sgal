@@ -54,7 +54,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Shape::s_tag = "Shape";
-Container_proto* Shape::s_prototype = 0;
+Container_proto* Shape::s_prototype(NULL);
 
 // Default values:
 const Vector2f Shape::s_def_depth_range(0, 1);
@@ -72,7 +72,7 @@ REGISTER_TO_FACTORY(Shape, "Shape");
 
 /* Constructor */
 Shape::Shape(Boolean proto) :
-  Node(proto), 
+  Node(proto),
   m_draw_depth(true),
   m_test_depth(true),
   m_depth_range(s_def_depth_range),
@@ -112,10 +112,10 @@ void Shape::set_geometry(Shared_geometry geometry)
   m_geometry = geometry;
   m_dirty = true;
   m_dirty_geometry = true;
-  
+
 #if 0
   //! \todo
-  // the text object needs to pass a pointer to the appearance 
+  // the text object needs to pass a pointer to the appearance
   // for the FontTexture object
   Shared_text text = boost::dynamic_pointer_cast<Text>(geometry);
   if (text) {
@@ -151,7 +151,7 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
     draw_action->set_second_pass_required(true);
     return Action::TRAV_CONT;
   }
-  
+
   m_appearance->draw(draw_action);
   draw_geometry(draw_action);
 
@@ -162,7 +162,7 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
 void Shape::cull(Cull_context& cull_context) { cull_context.add_shape(this); }
 
 /*! \brief draws the geometry. */
-void Shape::draw_geometry(Draw_action* action) 
+void Shape::draw_geometry(Draw_action* action)
 {
   if (m_geometry) {
     Context* context = action->get_context();
@@ -193,7 +193,7 @@ void Shape::draw_geometry(Draw_action* action)
 
 /*! \brief draws the shape for selection. */
 void Shape::isect(Isect_action* isect_action)
-{  
+{
   if (!is_visible()) return;
   if (!m_geometry) return;
 
@@ -220,11 +220,11 @@ void Shape::clean()
   if (m_override_tex_enable) m_appearance->clean_tex_enable();
   // Disable the texture if texture mapping is not desired:
   if (!m_texture_map) m_appearance->set_tex_enable(false);
-  
+
   if (m_override_tex_env) m_appearance->clean_tex_env();
   if (m_override_blend_func) m_appearance->clean_blend_func();
   if (m_override_light_model) m_appearance->clean_light_model();
-    
+
   // If the geometry has no color coordinates, enabled the light by default.
   if (m_override_light_enable)
     if (!m_geometry->are_generated_color())
@@ -237,9 +237,9 @@ void Shape::clean()
         !m_geometry->are_generated_tex_coord())
       m_appearance->clean_tex_gen();
   }
-  
+
   if (m_dirty_appearance) m_dirty_appearance = false;
-  
+
   if (m_dirty_geometry) {
     // \todo unregister observer!
     // if (m_geometry_prev) m_geometry_prev->unregister_observer(observer);
@@ -248,7 +248,7 @@ void Shape::clean()
     if (m_geometry) m_geometry->register_observer(observer);
     m_dirty_geometry = false;
   }
-    
+
 #if 0
   //! \todo
   Shared_text text = boost::dynamic_pointer_cast<Text>(m_geometry);
@@ -257,7 +257,7 @@ void Shape::clean()
     m_is_text_object = true;
   }
 #endif
-  
+
   m_dirty = false;
 }
 
@@ -289,7 +289,7 @@ void Shape::set_attributes(Element* elem)
         m_cull_face = static_cast<Gfx::Cull_face>(index);
       elem->mark_delete(ai);
       continue;
-    }    
+    }
     if (name == "depthFunction") {
       Uint num = sizeof(s_depth_function_names) / sizeof(char*);
       const char** found = std::find(s_depth_function_names,
@@ -325,7 +325,7 @@ void Shape::set_attributes(Element* elem)
       m_color_mask = Vector4ub(value);
       elem->mark_delete(ai);
       continue;
-    }    
+    }
     if (name == "priority") {
       set_priority(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -352,7 +352,7 @@ void Shape::set_attributes(Element* elem)
     if (name == "geometry") {
       Shared_geometry geo = boost::dynamic_pointer_cast<Geometry>(cont);
       set_geometry(geo);
-      elem->mark_delete(cai);      
+      elem->mark_delete(cai);
       continue;
     }
   }
@@ -363,8 +363,8 @@ void Shape::set_attributes(Element* elem)
 
 #if 0
 /*! \brief obtains a list of attributes (called in the save process). */
-Attribute_list Shape::get_attributes() 
-{ 
+Attribute_list Shape::get_attributes()
+{
   Attribute_list attrs;
   attrs = Node::get_attributes();
   Attribue attrib;
@@ -375,7 +375,7 @@ Attribute_list Shape::get_attributes()
     attrs.push_back(attrib);
   }
 
-  return attrs; 
+  return attrs;
 }
 #endif
 
@@ -399,26 +399,27 @@ void Shape::write(Formatter* formatter)
 void Shape::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Node::get_prototype());
 
-  Execution_function exec_func = 
+  // visible
+  Execution_function exec_func =
     static_cast<Execution_function>(&Node::sphere_bound_changed);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE, "visible",
                                           get_member_offset(&m_is_visible),
-                                          exec_func));    
+                                          exec_func));
 
+  // geometry
   SF_shared_container* field;
   exec_func = static_cast<Execution_function>(&Shape::geometry_changed);
   field = new SF_shared_container(GEOMETRY, "geometry",
                                   get_member_offset(&m_geometry), exec_func);
-  s_prototype->add_field_info(field);    
+  s_prototype->add_field_info(field);
 
+  // appearance
   exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
   field = new SF_shared_container(APPEARANCE, "appearance",
                                   get_member_offset(&m_appearance), exec_func);
-  s_prototype->add_field_info(field);    
+  s_prototype->add_field_info(field);
 }
 
 /*! \brief deletes the node prototype. */
@@ -429,13 +430,13 @@ void Shape::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Shape::get_prototype() 
-{  
+Container_proto* Shape::get_prototype()
+{
   if (s_prototype == NULL) Shape::init_prototype();
   return s_prototype;
 }
 
-/*! \brief adds the container to the given scene. */  
+/*! \brief adds the container to the given scene. */
 void Shape::add_to_scene(Scene_graph* sg)
 {
   Configuration* config = sg->get_configuration();
@@ -447,7 +448,7 @@ Boolean Shape::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
   Shared_appearance app = get_appearance();
-  if (app) result &= app->attach_context(context);  
+  if (app) result &= app->attach_context(context);
   return result;
 }
 

@@ -46,7 +46,7 @@ Prog_indexed_tri_set::Prog_indexed_tri_set() : Indexed_face_set(),
   m_memoryBase(0)
 {
   REGISTER_DEBUG_CLASS(DBG_PROGINDEXEDTRISET, "EAIndFaceSet")
-  m_isProgressive = SGAL_TRUE;
+  m_isProgressive = true;
 }
 
 /*! Destructor */
@@ -218,7 +218,7 @@ void Prog_indexed_tri_set::Update(Boolean is_last)
     m_lodIndex2Level.push_back(currentLevel);
   }
 
-  SetRenderingPointers(SGAL_FALSE);
+  SetRenderingPointers(false);
 
   // if display list are used, create them here and dispose the data
   // we create display lists only for levels that should be kept
@@ -246,13 +246,13 @@ void Prog_indexed_tri_set::Update(Boolean is_last)
     }
 
     for ( int i = 0 ; i < m_keepLevel.size() ; i++ ) {
-      if ( m_keepLevel[i] == SGAL_FALSE ) {
+      if ( m_keepLevel[i] == false ) {
         DeleteLevel(i);
       }
     }
   }
 
-  m_isSphereBoundDirty = SGAL_TRUE;
+  m_isSphereBoundDirty = true;
 
   // Refresh display for level 0
   if (currentLevel >= 0)  {
@@ -372,19 +372,19 @@ Boolean Prog_indexed_tri_set::IsKeepLOD(Int level, Boolean is_last) const
   int i = 0;
   switch ( m_lodKeepType ) {
   case lkALL:
-    return SGAL_TRUE;
+    return true;
     break;
 
   case lkDEFAULT:
     if ( is_last || (level == m_lowLevel) ) {
-      return SGAL_TRUE;
+      return true;
     } 
     break;
 
   case lkCUSTOMIZE:
     for ( i = 0 ; i < m_lodList.size() ; i++ ) {
       if ( m_lodList[i] == level ) {
-        return SGAL_TRUE;
+        return true;
       }
     }
     break;
@@ -392,7 +392,7 @@ Boolean Prog_indexed_tri_set::IsKeepLOD(Int level, Boolean is_last) const
     break;
   }
 
-  return SGAL_FALSE;
+  return false;
 }
 
 

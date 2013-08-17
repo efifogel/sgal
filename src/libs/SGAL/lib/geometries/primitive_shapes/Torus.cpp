@@ -40,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Torus::s_tag = "Torus";
-Container_proto* Torus::s_prototype = NULL;
+Container_proto* Torus::s_prototype(NULL);
 
 // Default values:
 const Float Torus::s_def_cross_section_radius(1); // Override Extrusion def.
@@ -66,7 +66,7 @@ void Torus::clean()
 {
   Uint i;
   float angle;
-  
+
   m_cross_section.resize(m_stacks);
   angle = SGAL_PI * 2 / m_stacks;
   for (i = 0; i < m_stacks; ++i) {
@@ -85,7 +85,7 @@ void Torus::clean()
   m_begin_cap = false;
   m_end_cap = false;
   m_loop = true;
-  
+
   Extrusion::clean();
 }
 
@@ -113,7 +113,7 @@ void Torus::set_attributes(Element* elem)
       set_slices(atoi(value.c_str()));
       elem->mark_delete(ai);
       continue;
-    } 
+    }
   }
 
   // Remove all the deleted attributes:
@@ -126,10 +126,8 @@ void Torus::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Extrusion::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // spineRadius
   Execution_function exec_func =
     static_cast<Execution_function>(&Extrusion::structure_changed);
 
@@ -137,31 +135,32 @@ void Torus::init_prototype()
                                            get_member_offset(&m_spine_radius),
                                            exec_func));
 
-  // Rendering required
+  // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
                                           get_member_offset(&m_stacks),
                                           exec_func));
 
+  // slices
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
                                           get_member_offset(&m_slices),
                                           exec_func));
 }
 
 /*! \brief deletes the container prototype. */
-void Torus::delete_prototype() 
+void Torus::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Torus::get_prototype() 
-{  
+Container_proto* Torus::get_prototype()
+{
   if (!s_prototype) Torus::init_prototype();
   return s_prototype;
-} 
+}
 
 /*! \brief sets the spine radius of the ellipsoid. */
 void Torus::set_spine_radius(Float spine_radius)

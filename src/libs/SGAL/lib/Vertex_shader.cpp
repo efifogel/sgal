@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Vertex_shader::s_prototype = NULL;
+Container_proto* Vertex_shader::s_prototype(NULL);
 const std::string Vertex_shader::s_tag = "VertexShader";
 
 /*! Constructor */
@@ -64,10 +64,10 @@ void Vertex_shader::clean()
 }
 
 /*! \brief sets the attributes of the shader node. */
-void Vertex_shader::set_attributes(Element* elem) 
+void Vertex_shader::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
-  
+
   Shader::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -95,6 +95,7 @@ void Vertex_shader::init_prototype()
   s_prototype = new Container_proto();
 
   // Add the field-info records to the prototype:
+  // url
   s_prototype->add_field_info(new SF_string(URL, "url",
                                             get_member_offset(&m_url)));
 }
@@ -107,8 +108,8 @@ void Vertex_shader::delete_prototype()
 }
 
 /*! \brief obtains the shader node prototype. */
-Container_proto* Vertex_shader::get_prototype() 
-{  
+Container_proto* Vertex_shader::get_prototype()
+{
   if (!s_prototype) Vertex_shader::init_prototype();
   return s_prototype;
 }

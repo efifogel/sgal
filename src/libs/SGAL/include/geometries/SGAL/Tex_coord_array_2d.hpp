@@ -46,7 +46,7 @@ public:
 
   /*! Constructor */
   Tex_coord_array_2d(Uint n);
-  
+
   /*! Destructor */
   virtual ~Tex_coord_array_2d();
 
@@ -62,9 +62,13 @@ public:
   /*! Delete the node prototype */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
+  /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -79,7 +83,7 @@ public:
 
   /*! Obtain the GL data. */
   virtual GLfloat* get_gl_data();
-  
+
   /*! Clear the array. */
   virtual void clear();
 
@@ -90,13 +94,13 @@ public:
   /*! Obtain the iterator to the Array past-the-end element. */
   Vector2f* end();
   const Vector2f* end() const;
-  
+
   /*! Obtain the nth element in the array (non-const). */
   Vector2f& operator[](Uint n);
 
   /*! Obtain the nth element in the array (const). */
   const Vector2f& operator[](Uint n) const;
-  
+
   /*! Obtain the vector. */
   Vector2f* get_vector();
 
@@ -129,7 +133,7 @@ inline Uint Tex_coord_array_2d::size() const { return m_array.size(); }
 /*! \brief obtains the GL data. */
 inline GLfloat* Tex_coord_array_2d::get_gl_data()
 { return (GLfloat*)(get_vector()); }
-  
+
 /*! \brief resizes the array capacity .*/
 inline void Tex_coord_array_2d::resize(Uint n) { m_array.resize(n); }
 
@@ -144,14 +148,14 @@ inline const Vector2f* Tex_coord_array_2d::begin() const
 /*! \brief obtains the iterator to the Array past-the-end element. */
 inline Vector2f* Tex_coord_array_2d::end() { return m_array.end(); }
 inline const Vector2f* Tex_coord_array_2d::end() const { return m_array.end(); }
-  
+
 /*! \brief obtains the nth element in the array (non-const). */
 inline Vector2f& Tex_coord_array_2d::operator[](Uint n) { return m_array[n]; }
 
 /*! \brief obtains the nth element in the array (const). */
 inline const Vector2f& Tex_coord_array_2d::operator[](Uint n) const
 { return m_array[n]; }
-  
+
 /*! \brief obtains the vector. */
 inline Vector2f* Tex_coord_array_2d::get_vector()
 { return m_array.get_vector(); }

@@ -70,7 +70,7 @@ public:
   };
 
   typedef boost::shared_ptr<Image>                      Shared_image;
-  
+
   /*! Constructor */
   Cube_environment(Boolean proto = false);
 
@@ -85,10 +85,10 @@ public:
 
   /*! Set the attributes of the cubical environment map. */
   virtual void set_attributes(Element* elem);
-  
+
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Initialize the node prototype. */
@@ -99,6 +99,10 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Clean the object using the new decoded data. */
   virtual void clean();
@@ -116,7 +120,7 @@ public:
 
   /*! Obtain the (non const) left image. */
   Shared_image get_left_image();
-  
+
   /*! Obtain the (const) left image. */
   const Shared_image get_left_image() const;
 
@@ -152,7 +156,7 @@ public:
 
   /*! Obtain the (const) back image. */
   const Shared_image get_back_image() const;
-  
+
   /*! Set the back image.
    * \param image (in) the image.
    */
@@ -163,7 +167,7 @@ public:
 
   /*! Obtain the (const) bottom image. */
   const Shared_image get_bottom_image() const;
-  
+
   /*! Set the front image.
    * \param image (in) the image.
    */
@@ -174,7 +178,7 @@ public:
 
   /*! Obtain the (const) top image. */
   const Shared_image get_top_image() const;
-  
+
 protected:
   /*! The texture images and a flag that indicates that the image is owned. */
   Shared_image m_images[NUM_IMAGES];
@@ -184,7 +188,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! the node prototype */
   static Container_proto* s_prototype;
@@ -203,12 +207,12 @@ inline const std::string& Cube_environment::get_tag() const { return s_tag; }
 /*! \brief obtains the (non const) left image. */
 inline Cube_environment::Shared_image Cube_environment::get_left_image()
 { return m_images[LEFT_IMAGE]; }
-  
+
 /*! \brief obtains the (const) left image. */
 inline const Cube_environment::Shared_image Cube_environment::get_left_image()
   const
 { return m_images[LEFT_IMAGE]; }
-  
+
 /*! \brief obtains the (non const) right image. */
 inline Cube_environment::Shared_image Cube_environment::get_right_image()
 { return m_images[RIGHT_IMAGE]; }

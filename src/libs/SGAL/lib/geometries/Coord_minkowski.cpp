@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Coord_minkowski::s_prototype = NULL;
+Container_proto* Coord_minkowski::s_prototype(NULL);
 const std::string Coord_minkowski::s_tag = "CoordinateMinkowski";
 
 Boolean Coord_minkowski::s_def_enabled(true);
@@ -50,7 +50,7 @@ REGISTER_TO_FACTORY(Coord_minkowski, "Coord_minkowski");
 
 /*! A parameter-less constructor. */
 Coord_minkowski::Coord_minkowski(Boolean proto) :
-  Container(proto), 
+  Container(proto),
   m_enabled(s_def_enabled),
   m_changed(false),
   m_execute(false)
@@ -93,7 +93,7 @@ void Coord_minkowski::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -104,35 +104,38 @@ void Coord_minkowski::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto();
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   Execution_function exec_func;
-  
+
   // Add the field-info records to the prototype:
+  // enabled
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           get_member_offset(&m_enabled)));
 
+  // changed
   s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
                                           get_member_offset(&m_changed)));
 
-  exec_func = static_cast<Execution_function>(&Coord_minkowski::execute);  
+  // execute
+  exec_func = static_cast<Execution_function>(&Coord_minkowski::execute);
 
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
                                           get_member_offset(&m_execute),
                                           exec_func));
 
+  // coord1
   SF_shared_container* field;
   field = new SF_shared_container(COORD1, "coord1",
                                   get_member_offset(&m_coord_array1),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  // coord2
   field = new SF_shared_container(COORD2, "coord2",
                                   get_member_offset(&m_coord_array2),
                                   exec_func);
   s_prototype->add_field_info(field);
 
+  // coord
   field = new SF_shared_container(COORD_CHANGED, "coord_changed",
                                   get_member_offset(&m_coord_array_changed));
   s_prototype->add_field_info(field);
@@ -142,12 +145,12 @@ void Coord_minkowski::init_prototype()
 void Coord_minkowski::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Coord_minkowski::get_prototype() 
-{  
+Container_proto* Coord_minkowski::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
@@ -165,7 +168,7 @@ void Coord_minkowski::execute(Field_info* /* field_info */)
   unsigned int size2 = m_coord_array2->size();
   unsigned int size = size1 * size2;
 
-  if (!m_coord_array_changed) 
+  if (!m_coord_array_changed)
     m_coord_array_changed.reset(new Coord_array(size));
   else
     m_coord_array_changed->resize(size);
@@ -177,7 +180,7 @@ void Coord_minkowski::execute(Field_info* /* field_info */)
                                         (*m_coord_array2)[j]);
     }
   }
-  
+
   Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
 

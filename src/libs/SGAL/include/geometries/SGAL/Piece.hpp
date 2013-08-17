@@ -61,8 +61,12 @@ public:
   virtual void delete_prototype();
 
   /*! Obtains the node prototype. */
-  virtual Container_proto* get_prototype(); 
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -88,7 +92,7 @@ public:
 
   /*! Obtain the height. */
   Uint get_height() const;
-  
+
   /*! Set the depth. */
   void set_depth(Uint depth);
 
@@ -100,7 +104,7 @@ public:
 
   /*! Obtain the composition. */
   Array<Uint>& get_composition();
-  
+
   /*! Process change of structure. */
   void structure_changed(Field_info* field_info);
 
@@ -116,13 +120,13 @@ protected:
 
   /*! The piece height. */
   Uint m_height;
-  
+
   /*! The piece depth. */
   Uint m_depth;
 
   /*! The piece composition array. */
   Array<Uint> m_composition;
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -154,7 +158,7 @@ inline void Piece::set_height(Uint height) { m_height = height; }
 
 /*! \brief obtains the height. */
 inline Uint Piece::get_height() const { return m_height; }
-  
+
 /*! \brief sets the depth. */
 inline void Piece::set_depth(Uint depth) { m_depth = depth; }
 

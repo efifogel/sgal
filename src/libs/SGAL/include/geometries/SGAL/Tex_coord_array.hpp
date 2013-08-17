@@ -55,9 +55,13 @@ public:
   /*! Delete the node prototype */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
+  /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -72,7 +76,7 @@ public:
 
   /*! Obtain the GL data. */
   virtual GLfloat* get_gl_data() = 0;
-  
+
 private:  /*! The node prototype */
   static Container_proto* s_prototype;
 };

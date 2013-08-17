@@ -74,7 +74,7 @@ public:
 
   typedef Arrangement_renderer::Vertex_shape       Site_shape;
   typedef Site_shape::Style                        Site_style;
-  
+
 private:
   typedef CGAL::Spherical_voronoi_diagram_traits_2<Kernel>
     Geom_traits;
@@ -87,7 +87,7 @@ private:
   typedef Geom_traits::Site_2                      Site;
 
   typedef Voronoi_on_sphere                        Vos;
-  
+
   typedef Vos::Vertex                              Vos_vertex;
   typedef Vos::Halfedge                            Vos_halfedge;
   typedef Vos::Face                                Vos_face;
@@ -99,7 +99,7 @@ private:
   typedef Vos::Vertex_const_handle                 Vos_vertex_const_handle;
   typedef Vos::Halfedge_const_handle               Vos_halfedge_const_handle;
   typedef Vos::Face_const_handle                   Vos_face_const_handle;
-  
+
   typedef Vos::Vertex_iterator                     Vos_vertex_iterator;
   typedef Vos::Halfedge_iterator                   Vos_halfedge_iterator;
   typedef Vos::Edge_iterator                       Vos_edge_iterator;
@@ -123,21 +123,23 @@ public:
   virtual ~Voronoi_diagram_on_sphere_geo();
 
   /* Construct the prototype. */
-  static Voronoi_diagram_on_sphere_geo* prototype()
-  { return new Voronoi_diagram_on_sphere_geo(true); }
+  static Voronoi_diagram_on_sphere_geo* prototype();
 
   /*! Clone. */
-  virtual Container* clone()
-  { return new Voronoi_diagram_on_sphere_geo(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the node attributes. */
   virtual void set_attributes(Element* elem);
@@ -173,14 +175,14 @@ public:
 
   /*! Obtain the site shape style. */
   Vertex_style get_site_style() const { return m_site_style; }
-  
+
   /*! Obtain the site point size. */
   Float get_site_point_size() const { return m_site_point_size; }
 
 protected:
   typedef Vertices_renderer<Self>          Voronoi_vertices_renderer;
   typedef Edges_renderer<Self>             Voronoi_edges_renderer;
-  
+
   typedef Colored_vertices_renderer<Voronoi_vertices_renderer>
                                            Voronoi_colored_vertices_renderer;
   typedef Colored_edges_renderer<Voronoi_edges_renderer>
@@ -209,11 +211,11 @@ private:
   private:
     /*! The arrangement geometry. */
     Voronoi_diagram_on_sphere_geo& m_geo;
-    
+
   public:
     /*! Constructor. */
     Site_renderer(Voronoi_diagram_on_sphere_geo& geo) : m_geo(geo) {}
-    
+
     /*! Draw the sites. */
     virtual void operator()(Draw_action* action) { m_geo.draw_sites(action); }
   };
@@ -222,15 +224,15 @@ private:
   private:
     /*! The arrangement geometry. */
     Voronoi_diagram_on_sphere_geo& m_geo;
-    
+
   public:
     /*! Constructor. */
     Site_other_renderer(Voronoi_diagram_on_sphere_geo& geo) : m_geo(geo) {}
-    
+
     /*! Drawer operator. */
     virtual void operator()(Draw_action* action);
   };
-  
+
   /*! The tag that identifies this container type. */
   static std::string s_tag;
 
@@ -257,13 +259,13 @@ private:
 
   /*! The non-flat site renderer. */
   Site_other_renderer* m_site_other_renderer;
-  
+
   /*! Default values */
   static const Vertex_style s_def_site_style;
   static const Float s_def_site_radius;
   static const Float s_def_site_point_size;
   static const Float s_def_site_delta_angle;
-  
+
   /*! Draw the arrangement on sphere opaque.
    * \param action
    */
@@ -273,7 +275,7 @@ private:
    * \param action
    */
   void draw_sites(Draw_action* action);
-  
+
   /*! Draw a site.
    * \param action
    * \param point
@@ -285,7 +287,7 @@ private:
    */
   void draw_aos_vertices(Draw_action* action)
   { my_draw_aos_vertices(m_vos, action); }
-  
+
   /*! Draw the arrangement edges.
    * \param action
    */
@@ -298,6 +300,15 @@ private:
   /*! Detsroy the renderers. */
   void destroy_renderers();
 };
+
+/* \brief constructs the prototype. */
+inline Voronoi_diagram_on_sphere_geo*
+Voronoi_diagram_on_sphere_geo::prototype()
+{ return new Voronoi_diagram_on_sphere_geo(true); }
+
+/*! \brief clones. */
+inline Container* Voronoi_diagram_on_sphere_geo::clone()
+{ return new Voronoi_diagram_on_sphere_geo(); }
 
 SGAL_END_NAMESPACE
 

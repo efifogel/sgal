@@ -74,7 +74,7 @@ public:
       typedef My_halfedge<Refs> Halfedge;
     };
   };
-  
+
   typedef CGAL::Cartesian<float>                         Kernel;
   typedef Kernel::Point_3                                Point;
   typedef Kernel::Vector_3                               Vector;
@@ -111,7 +111,7 @@ public:
     Sphere_3 operator()(const Point& point) const
     { return Sphere_3(point, 0.0f); }
   };
-  
+
 private:
   /*! */
   struct Normal_vector {
@@ -147,36 +147,40 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
-  /*! Draw the geometry. */
-  virtual void draw(Draw_action* action);
-
-  /*! */  
-  virtual void cull(Cull_context& cull_context);
-
-  /*! */  
-  virtual void isect(Isect_action* action);
-
-  /*! */  
-  virtual bool clean_sphere_bound();
-
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(SGAL::Element* elem);
-
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Set the polyhedron data-structure. */
-  void set_polyhedron(Polyhedron& polyhedron);
-
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(SGAL::Element* elem);
+
+  /*! Draw the geometry. */
+  virtual void draw(Draw_action* action);
+
+  /*! */
+  virtual void cull(Cull_context& cull_context);
+
+  /*! */
+  virtual void isect(Isect_action* action);
+
+  /*! */
+  virtual bool clean_sphere_bound();
+
+  /*! Set the polyhedron data-structure. */
+  void set_polyhedron(Polyhedron& polyhedron);
+
   /*! Obtain the polyhedron data-structure. */
   Polyhedron& get_polyhedron();
-  
+
 protected:
   /*! The actual polyhedron object. */
   Polyhedron m_polyhedron;
@@ -186,7 +190,7 @@ protected:
 
   /*! Indicates whether the facets are dirty and thus should be cleaned. */
   Boolean m_dirty_facets;
-  
+
   /*! Cleans the polyhedron. */
   virtual void clean_polyhedron();
 

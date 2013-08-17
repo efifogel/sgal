@@ -37,9 +37,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Coord_array::s_tag = "Coordinate";
-
-/*! The node prototype. */
-Container_proto* Coord_array::s_prototype = NULL;
+Container_proto* Coord_array::s_prototype(NULL);
 
 /*! Register to the container factory. */
 REGISTER_TO_FACTORY(Coord_array, "Coord_array");
@@ -57,21 +55,17 @@ Coord_array::~Coord_array() { clear(); }
 void Coord_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Container::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-  
   // Add the field-info records to the prototype:
   Execution_function exec_func =
     static_cast<Execution_function>(&Coord_array::point_changed);
-  
+
+  // point
   s_prototype->add_field_info(new MF_vector3f(POINT, "set_point",
                                               get_member_offset(&m_array),
                                               exec_func));
-  
+
 }
 
 /*! \brief processes change of points. */
@@ -80,7 +74,7 @@ void Coord_array::point_changed(Field_info* field_info)
   set_rendering_required();
   field_changed(field_info);
 }
-    
+
 /*! \brief deletes the node prototype */
 void Coord_array::delete_prototype()
 {
@@ -88,13 +82,13 @@ void Coord_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */  
+/*! \brief obtains the node prototype. */
 Container_proto* Coord_array::get_prototype()
 {
   if (s_prototype == NULL) Coord_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of the object extracted from an input file. */
 void Coord_array::set_attributes(Element* elem)
 {
@@ -126,10 +120,10 @@ void Coord_array::set_attributes(Element* elem)
 
 #if 0
 Attribute_list Coord_array::get_attributes()
-{ 
+{
   Attribute_list attrs;
   attrs = Container::get_attributes();
-  return attrs; 
+  return attrs;
 }
 #endif
 

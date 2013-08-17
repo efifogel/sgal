@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -37,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto * Spot_light::s_prototype = NULL;
+Container_proto* Spot_light::s_prototype(NULL);
 const std::string Spot_light::s_tag = "SpotLight";
 
 // Default values:
@@ -65,7 +65,7 @@ Spot_light::Spot_light(Boolean proto) :
 Spot_light::~Spot_light() {}
 
 /*! sets the direction of the light */
-void Spot_light::set_direction(const Vector3f & direction)
+void Spot_light::set_direction(const Vector3f& direction)
 {
   m_direction = direction;
 }
@@ -155,7 +155,7 @@ Float Spot_light::get_radius()
 Action::Trav_directive Spot_light::draw(Draw_action * draw_action)
 {
   if (!m_is_on) return Action::TRAV_CONT;
-  
+
   Light::draw(draw_action);
   int lightId  = GL_LIGHT0 + m_id;
 
@@ -184,10 +184,8 @@ void Spot_light::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Light::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // location
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
@@ -195,6 +193,7 @@ void Spot_light::init_prototype()
                                    get_member_offset(&m_location),
                                    exec_func));
 
+  // direction
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
@@ -202,6 +201,7 @@ void Spot_light::init_prototype()
                                    get_member_offset(&m_direction),
                                    exec_func));
 
+  // attenuation
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->
@@ -209,18 +209,21 @@ void Spot_light::init_prototype()
                                    get_member_offset(&m_attenuation),
                                    exec_func));
 
+  // radius
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
                                                get_member_offset(&m_radius),
                                                exec_func));
 
+  // beamwidth
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(BEAMWIDTH, "beamwidth",
                                                get_member_offset(&m_beam_width),
                                                exec_func));
 
+  // cutoffangle
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   s_prototype->add_field_info(new SF_float(CUTOFFANGLE, "cutoffangle",
@@ -236,15 +239,15 @@ void Spot_light::delete_prototype()
 }
 
 /*! Obtain the node prototype */
-Container_proto * Spot_light::get_prototype() 
-{  
+Container_proto * Spot_light::get_prototype()
+{
   if (!s_prototype) Spot_light::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of the object extracted from the input file */
 void Spot_light::set_attributes(Element * elem)
-{  
+{
   Light::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -296,8 +299,8 @@ void Spot_light::set_attributes(Element * elem)
 #if 0
 /*! get a list of attributes (called in the save process) */
 Attribute_list Spot_light::get_attributes()
-{ 
-  Attribute_list attrs; 
+{
+  Attribute_list attrs;
   attrs = Light::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -340,7 +343,7 @@ Attribute_list Spot_light::get_attributes()
     attrs.push_back(attrib);
   }
 
-  return attrs; 
+  return attrs;
 }
 #endif
 

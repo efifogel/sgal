@@ -41,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Time_sensor::s_tag = "TimeSensor";
-Container_proto* Time_sensor::s_prototype = 0;
+Container_proto* Time_sensor::s_prototype(NULL);
 
 // Default values:
 Scene_time Time_sensor::s_def_cycle_interval = 1;
@@ -85,80 +85,110 @@ Time_sensor::~Time_sensor() { if (m_enabled) unregister_events(); }
 /*! initializes the node prototype */
 void Time_sensor::init_prototype()
 {
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   if (s_prototype) return;
   s_prototype = new Container_proto();
 
-  // Add the field-info records to the prototype:
   Execution_function exec_func;
 
+  // Add the field-info records to the prototype:
   // cycleInterval
-  SF_time* ci = new SF_time(CYCLE_INTERVAL, "cycleInterval",
-                            get_member_offset(&m_cycle_interval));
-  s_prototype->add_field_info(ci);
+  Scene_time_handle_function cycle_interval_func =
+    static_cast<Scene_time_handle_function>
+    (&Time_sensor::cycle_interval_handle);
+  s_prototype->add_field_info(new SF_time(CYCLE_INTERVAL, "cycleInterval",
+                                          cycle_interval_func));
 
   // frequency
-  s_prototype->add_field_info(new SF_int(FREQUENCY, "frequency",
-                                         get_member_offset(&m_frequency)));
+  Uint_handle_function frequency_func =
+    static_cast<Uint_handle_function>(&Time_sensor::frequency_handle);
+  s_prototype->add_field_info(new SF_uint(FREQUENCY, "frequency",
+                                          frequency_func));
 
   // enabled
   exec_func = static_cast<Execution_function>(&Time_sensor::execute_enabled);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          get_member_offset(&m_enabled),
+  Boolean_handle_function enabled_handle =
+    static_cast<Boolean_handle_function>(&Time_sensor::enabled_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_handle,
                                           exec_func));
 
   // loop
-  s_prototype->add_field_info(new SF_bool(LOOP, "loop",
-                                          get_member_offset(&m_loop)));
+  Boolean_handle_function loop_func =
+    static_cast<Boolean_handle_function>(&Time_sensor::loop_handle);
+  s_prototype->add_field_info(new SF_bool(LOOP, "loop", loop_func));
 
   // startTime
-  SF_time* st = new SF_time(START_TIME, "startTime",
-                            get_member_offset(&m_start_time), NULL, true);
-  s_prototype->add_field_info(st);
+  Scene_time_handle_function start_time_func =
+    static_cast<Scene_time_handle_function>(&Time_sensor::start_time_handle);
+  s_prototype->add_field_info(new SF_time(START_TIME, "startTime",
+                                          start_time_func, NULL, true));
 
   // startTime is initially blocked until the first UpdateTime. So Animations
   // won't start in the middle, if the player was not ready to activate them
   // when activated
+
+  // stopTime
+  Scene_time_handle_function stop_time_func =
+    static_cast<Scene_time_handle_function>(&Time_sensor::stop_time_handle);
   s_prototype->add_field_info(new SF_time(STOP_TIME, "stopTime",
-                                          get_member_offset(&m_stop_time)));
+                                          stop_time_func));
+
+  // cycleTime
+  Scene_time_handle_function cycle_time_func =
+    static_cast<Scene_time_handle_function>(&Time_sensor::cycle_time_handle);
   s_prototype->add_field_info(new SF_time(CYCLE_TIME, "cycleTime",
-                                          get_member_offset(&m_cycle_time)));
+                                          cycle_time_func));
+
+  // fraction
+  Float_handle_function fraction_func =
+    static_cast<Float_handle_function>(&Time_sensor::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION, "fraction_changed",
-                                           get_member_offset(&m_fraction)));
+                                           fraction_func));
 
   // trueFractionChanged
-  SF_bool* tfc = new SF_bool(TRUE_FRACTION, "trueFractionChanged",
-                             get_member_offset(&m_true_fraction));
-  s_prototype->add_field_info(tfc);
+  Boolean_handle_function true_fraction_func =
+    static_cast<Boolean_handle_function>(&Time_sensor::true_fraction_handle);
+  s_prototype->add_field_info(new SF_bool(TRUE_FRACTION, "trueFractionChanged",
+                                          true_fraction_func));
 
-  // sgalFractionBias
-  SF_float* fb = new SF_float(FRACTION_BIAS, "fractionBias",
-                              get_member_offset(&m_fraction_bias));
-  s_prototype->add_field_info(fb);
+  // FractionBias
+  Float_handle_function fraction_bias_func =
+    static_cast<Float_handle_function>(&Time_sensor::fraction_bias_handle);
+  s_prototype->add_field_info(new SF_float(FRACTION_BIAS, "fractionBias",
+                                           fraction_bias_func));
 
-  // sgalFractionScale
-  SF_float* fs = new SF_float(FRACTION_SCALE, "fractionScale",
-                              get_member_offset(&m_fraction_scale));
-  s_prototype->add_field_info(fs);
+  // FractionScale
+  Float_handle_function fraction_scale_func =
+    static_cast<Float_handle_function>(&Time_sensor::fraction_scale_handle);
+  s_prototype->add_field_info(new SF_float(FRACTION_SCALE, "fractionScale",
+                                           fraction_scale_func));
 
+  // isActive
+  Boolean_handle_function is_active_func =
+    static_cast<Boolean_handle_function>(&Time_sensor::is_active_handle);
   s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive",
-                                          get_member_offset(&m_is_active)));
-  s_prototype->add_field_info(new SF_time(TIME, "time",
-                                          get_member_offset(&m_time)));
+                                          is_active_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Time_sensor::start);
-  s_prototype->add_field_info(new SF_time(START, "start",
-                                          get_member_offset(&m_start),
+  // time
+  Scene_time_handle_function time_func =
+    static_cast<Scene_time_handle_function>(&Time_sensor::time_handle);
+  s_prototype->add_field_info(new SF_time(TIME, "time", time_func));
+
+  // start
+  Scene_time_handle_function start_func =
+    static_cast<Scene_time_handle_function>(&Time_sensor::start_handle);
+  exec_func = static_cast<Execution_function>(&Time_sensor::start);
+  s_prototype->add_field_info(new SF_time(START, "start", start_func,
                                           exec_func, true));
+
   // startTime is initially blocked until the first UpdateTime. So Animations
   // won't start in the middle if the player was not ready to activate them
   // when activated
+
+  // stop
+  Scene_time_handle_function stop_func =
+    static_cast<Scene_time_handle_function>(&Time_sensor::stop_handle);
   exec_func = static_cast<Execution_function>(&Time_sensor::stop);
-  s_prototype->add_field_info(new SF_time(STOP, "stop",
-                                          get_member_offset(&m_stop),
+  s_prototype->add_field_info(new SF_time(STOP, "stop", stop_func,
                                           exec_func));
 }
 

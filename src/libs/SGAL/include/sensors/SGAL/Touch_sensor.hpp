@@ -88,6 +88,19 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Initialize the object prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the object prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the object prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   // attributes mutators - used by the scene graph selection mechanism
   void set_normal(const Vector3f& normal);
 
@@ -106,21 +119,12 @@ public:
    * \param active (in) the flag.
    */
   void set_is_active(const Boolean active);
-  
+
   /* Sets the routed node pointer. */
   void set_routed_node(Container* node);
 
   Container* get_routed_node() const;
 
-  /*! Initialize the object prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the object prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtain the object prototype. */
-  virtual Container_proto* get_prototype();
-  
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -130,9 +134,9 @@ public:
    * This includes adding it to the container of touch sensors in the
    * scene graph.
    * \param scene_graph the given scene.
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
-  
+
   /*! Write this container */
   virtual void write(Formatter* formatter);
 
@@ -144,19 +148,19 @@ public:
 
   /*! Register the mouse and mostion events. */
   void unregister_events();
-  
+
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();
 
   /*! Handle mouse events. */
   virtual void handle(Mouse_event* event);
-  
+
   /*! Handle motion events. */
   virtual void handle(Motion_event* event);
 
   /*! Handle mouse events. */
   virtual void handle(Passive_motion_event* event);
-  
+
   /*! Handle tick events. */
   virtual void handle(Tick_event* event);
 
@@ -180,7 +184,7 @@ public:
 
   /*! Set the raw id of the geometry, which the cursor is hoovering above. */
   void set_selection_id(Uint id);
-  
+
   /*! Obtain the (normalized) id of the geometry, which the cursor is hoovering
    * above.
    */
@@ -190,7 +194,7 @@ public:
    * above.
    */
   void set_over_selection_id(Uint id);
-  
+
   /*! Obtain the (normalized) id of the geometry, which the cursor was above
    * when dragging started.
    */
@@ -215,7 +219,7 @@ public:
 
   /*! Obtain the scene-graph pointer. */
   Scene_graph* get_scene_graph() const;
-  
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -250,7 +254,7 @@ private:
 
   /*! The number of ids of a unique range of color ids used for selection */
   Uint m_num_selection_ids;
-  
+
   /*! The raw id of the geometry, which the cursor is hoovering above. */
   Uint m_selection_id;
 
@@ -265,7 +269,7 @@ private:
 
   /*! Indicates whether the touch sensor is enabled. */
   Boolean m_enabled;
-  
+
   Vector3f m_hit_normal;
 
   Vector3f m_hit_point;
@@ -350,7 +354,7 @@ inline void Touch_sensor::set_scene_graph(Scene_graph* sg)
 /*! \brief obtains the scene-graph pointer. */
 inline Scene_graph* Touch_sensor::get_scene_graph() const
 { return m_scene_graph; }
-  
+
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Touch_sensor::get_tag() const { return s_tag; }
 

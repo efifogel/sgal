@@ -66,62 +66,92 @@ public:
   // Destructor
   virtual ~Vector3f_interpolator();
 
-  /* Construct the prototype */
-  static Vector3f_interpolator* prototype()
-  { return new Vector3f_interpolator(false, true); }
+  /* Construct the prototype. */
+  static Vector3f_interpolator* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Vector3f_interpolator (); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the container prototype */
+  /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
-  
-  // Functions that handles the creation of an instance in the scene graph
+
+  /// \name field handlers
+  //@{
+  Vector3f* value_handle(Field_info*) { return &m_value; }
+  //@}
+
+  // Functions that handles the creation of an instance in the scene graph.
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! The interpolation execution function */
+  /*! The interpolation execution function. */
   virtual void execute(Field_info* field_info);
 
-  /*! Obtain the range keys */
-  const Array<Float>& get_keys() const { return m_keys; }
+  /*! Obtain the range keys. */
+  const Array<Float>& get_keys() const;
 
-  /*! Obtain the range keys */
-  Array<Float>& get_keys() { return m_keys; }
-  
-  /*! Obtain the domain values */
-  const Array<Vector3f>& get_values() const { return m_values; }
+  /*! Obtain the range keys. */
+  Array<Float>& get_keys();
 
-  /*! Obtain the domain values */
-  Array<Vector3f>& get_values() { return m_values; }
+  /*! Obtain the domain values. */
+  const Array<Vector3f>& get_values() const;
+
+  /*! Obtain the domain values. */
+  Array<Vector3f>& get_values();
 
 protected:
-  /*! The interpolator domain key-values */
+  /*! The interpolator domain key-values. */
   Array<Vector3f> m_values;
 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype .*/
   static Container_proto* s_prototype;
 
-  /*! The last range location */
+  /*! The last range location. */
   Uint m_last_location;
 
-  /*! The interpolator value */
+  /*! The interpolator value. */
   Vector3f m_value;
 };
+
+/* \brief constructs the prototype. */
+inline Vector3f_interpolator* Vector3f_interpolator::prototype()
+{ return new Vector3f_interpolator(false, true); }
+
+/*! \brief clones. */
+inline Container* Vector3f_interpolator::clone()
+{ return new Vector3f_interpolator (); }
+
+/*! \brief obtains the range keys. */
+inline const Array<Float>& Vector3f_interpolator::get_keys() const
+{ return m_keys; }
+
+/*! \brief obtains the range keys. */
+inline Array<Float>& Vector3f_interpolator::get_keys() { return m_keys; }
+
+/*! \brief obtains the domain values. */
+inline const Array<Vector3f>& Vector3f_interpolator::get_values() const
+{ return m_values; }
+
+/*! \brief obtains the domain values. */
+inline Array<Vector3f>& Vector3f_interpolator::get_values() { return m_values; }
+
+/*! Obtain the tag (type) of the container. */
+inline const std::string& Vector3f_interpolator::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

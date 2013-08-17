@@ -234,8 +234,8 @@ void Texture_font::get_bitmap_size(Uint& x, Uint& y)
 void Texture_font::set_appearance(Appearance* app) { 
   m_appearance = app; 
   if (m_appearance) {
-    m_appearance->set_light_enable(SGAL_FALSE);
-    m_appearance->set_depth_enable(SGAL_FALSE);
+    m_appearance->set_light_enable(false);
+    m_appearance->set_depth_enable(false);
     m_appearance->set_poly_mode(Gfx::FILL_PMODE);
     m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
     m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);

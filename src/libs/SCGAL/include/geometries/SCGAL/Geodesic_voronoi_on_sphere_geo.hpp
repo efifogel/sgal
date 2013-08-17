@@ -75,7 +75,7 @@ public:
   typedef Exact_number_type                        Number_type;
   typedef Exact_kernel                             Kernel;
   typedef Kernel::Point_3                          Point_3;
-  
+
 public:
   /*! Constructor. */
   Geodesic_voronoi_on_sphere_geo(Boolean proto = false);
@@ -90,10 +90,14 @@ public:
   virtual void init_prototype();
 
   /*! Delete the container prototype */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes */
   virtual void set_attributes(Element* elem);
@@ -108,10 +112,10 @@ public:
 
   /*! Obtain the i-th point index */
   Uint get_site_index(Uint i) const;
-  
+
   /*! Set the site color */
   void set_site_color(Vector3f& color) { m_site_color = color; }
-  
+
 protected:
   /*! An array of indices into the coordinate array for points. */
   std::vector<Uint> m_site_indices;
@@ -121,7 +125,7 @@ protected:
 
   /*! The site color. */
   Vector3f m_site_color;
-  
+
 private:
   /*! The container prototype. */
   static Container_proto* s_prototype;
@@ -129,16 +133,16 @@ private:
   /*! Default values. */
   static const Boolean s_def_draw_sites;
   static const Vector3f s_def_site_color;
-  
+
   /*! Draw the marked vertex. */
   void draw_marked_vertex();
-    
+
   /*! Draw the marked edge. */
   void draw_marked_edge();
-  
+
   /*! Draw the marked face. */
   void draw_marked_face();
-  
+
   /*! Increase the vertex index.
    * \param field_info
    */
@@ -164,7 +168,7 @@ Geodesic_voronoi_on_sphere_geo::get_site_indices() const
 inline Uint
 Geodesic_voronoi_on_sphere_geo::get_site_index(Uint i) const
 { return m_site_indices[i]; }
-  
+
 SGAL_END_NAMESPACE
 
 #endif

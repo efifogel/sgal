@@ -42,8 +42,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Indexed_line_set::s_tag = "IndexedLineSet";
-Container_proto* Indexed_line_set::s_prototype = 0;
+const std::string Indexed_line_set::s_tag = "IndexedLineSet";
+Container_proto* Indexed_line_set::s_prototype(NULL);
 
 // Default values:
 const Boolean Indexed_line_set::m_def_color_per_vertex(true);
@@ -89,7 +89,7 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
 }
 
 /*! \brief draws the geometry.
- * For efficiency reasons, differenrt methods were written to 
+ * For efficiency reasons, differenrt methods were written to
  * draw geometries with different kinds of data (texture/normal/color).
  */
 void Indexed_line_set::draw(Draw_action* action)
@@ -185,8 +185,8 @@ bool Indexed_line_set::clean_sphere_bound()
 }
 
 /*! \brief setss the attributes of the geometry object. */
-void Indexed_line_set::set_attributes(Element* elem) 
-{ 
+void Indexed_line_set::set_attributes(Element* elem)
+{
   Geo_set::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -239,8 +239,8 @@ void Indexed_line_set::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Indexed_line_set::get_prototype() 
-{  
+Container_proto* Indexed_line_set::get_prototype()
+{
   if (!s_prototype) Indexed_line_set::init_prototype();
   return s_prototype;
 }

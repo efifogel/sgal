@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Script::s_tag = "Script";
-Container_proto* Script::s_prototype = NULL;
+Container_proto* Script::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Script, "Script");
 

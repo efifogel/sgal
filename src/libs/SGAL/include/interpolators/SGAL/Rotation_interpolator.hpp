@@ -25,10 +25,10 @@
  * The rotation interpolator engine has the following attributes:
  *        - fraction (field)
  *        - value (of type Rotation) (field)
- *        - keys 
+ *        - keys
  *        - values (array of Rotation)
  *        - interpolation flag
- *        
+ *
  *        The fraction field is the trigger to the execute function.
  *        So - for each cascade of the fraction field execute() is activated ->
  *        the value field is calculated according to the fraction,keys,values
@@ -79,6 +79,10 @@ public:
   /*! Obtain the node prototype */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -100,7 +104,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

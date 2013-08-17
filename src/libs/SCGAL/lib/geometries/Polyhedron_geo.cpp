@@ -49,7 +49,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Polyhedron_geo::s_tag = "Polyhedron";
-SGAL::Container_proto* Polyhedron_geo::m_prototype = 0;
+SGAL::Container_proto* Polyhedron_geo::m_prototype(NULL);
 
 REGISTER_TO_FACTORY(Polyhedron_geo, "Polyhedron_geo");
 
@@ -57,7 +57,7 @@ REGISTER_TO_FACTORY(Polyhedron_geo, "Polyhedron_geo");
 Polyhedron_geo::Polyhedron_geo(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
-  m_dirty_facets(true)  
+  m_dirty_facets(true)
 {
   if (proto) return;
   m_surface.set_mesh_set(this);
@@ -166,7 +166,7 @@ Boolean Polyhedron_geo::clean_sphere_bound()
   if (is_dirty_coord_indices()) clean_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_bb_is_pre_set) return true;
-  
+
   if (!m_polyhedron.empty()) {
     Vector3f center_vec;
 
@@ -208,10 +208,7 @@ void Polyhedron_geo::set_attributes(SGAL::Element* elem)
 void Polyhedron_geo::init_prototype()
 {
   if (m_prototype) return;
-  m_prototype = new SGAL::Container_proto(SGAL::Mesh_set::get_prototype());
-
-  //! Container execution function
-  typedef void (SGAL::Container::* Execution_function)(SGAL::Field_info*);
+  m_prototype = new Container_proto(SGAL::Mesh_set::get_prototype());
 }
 
 /*! \brief deletes the prototype. */
@@ -222,8 +219,8 @@ void Polyhedron_geo::delete_prototype()
 }
 
 /*! \brief obtaisn the prototype. */
-SGAL::Container_proto* Polyhedron_geo::get_prototype() 
-{  
+SGAL::Container_proto* Polyhedron_geo::get_prototype()
+{
   if (!m_prototype) Polyhedron_geo::init_prototype();
   return m_prototype;
 }

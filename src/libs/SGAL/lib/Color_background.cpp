@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Color_background::s_tag = "ColorBackground";
-Container_proto* Color_background::s_prototype = NULL;
+Container_proto* Color_background::s_prototype(NULL);
 
 // Default values:
 const Vector4f Color_background::m_def_color(1, 1, 1, 0);
@@ -59,7 +59,7 @@ void Color_background::draw(Draw_action* draw_action)
   Uint which = Gfx::COLOR_CLEAR;
   if (get_clear_depth()) which |= Gfx::DEPTH_CLEAR;
   if (get_clear_stencil()) which |= Gfx::STENCIL_CLEAR;
-  context->clear(which, m_color);  
+  context->clear(which, m_color);
 }
 
 /*! \brief sets the attributes of this object. */
@@ -83,7 +83,7 @@ void Color_background::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Color_background::add_to_scene(Scene_graph* sg)
 { Background::add_to_scene(sg); }
 
@@ -91,7 +91,7 @@ void Color_background::add_to_scene(Scene_graph* sg)
 /*! \brief obtains the attributes. */
 Attribute_list Color_background::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Node::get_attributes();
@@ -110,15 +110,10 @@ Attribute_list Color_background::get_attributes()
 void Color_background::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Background::get_prototype());
 
   // Add the object fields to the prototype
-  /*! \todo
-   * Execution_function exec_func =
-   * static_cast<Execution_function>(&Container::SetRenderingRequired);
-   */
+  // color
   s_prototype->add_field_info(new SF_vector4f(COLOR, "color",
                                               get_member_offset(&m_color)));
 }
@@ -131,8 +126,8 @@ void Color_background::delete_prototype()
 }
 
 /*! \brief */
-Container_proto* Color_background::get_prototype() 
-{  
+Container_proto* Color_background::get_prototype()
+{
   if (s_prototype == NULL) Color_background::init_prototype();
   return s_prototype;
 }

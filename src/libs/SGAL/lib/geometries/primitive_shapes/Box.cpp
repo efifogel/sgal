@@ -37,8 +37,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Box::s_tag = "Box";
-
-Container_proto* Box::s_prototype = 0;
+Container_proto* Box::s_prototype(NULL);
 
 // Default values:
 const Vector3f Box::m_def_size(2, 2, 2);
@@ -57,7 +56,7 @@ void Box::draw(Draw_action* action) { draw_box(); }
 /*! Draw the box for selection
  * *param isect_action
  */
-void Box::isect(Isect_action* action) 
+void Box::isect(Isect_action* action)
 {
   float w = m_size[0] * 0.5f;
   float h = m_size[1] * 0.5f;
@@ -200,7 +199,7 @@ void Box::draw_box()
   if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p0);
   if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p1);
   if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
-  
+
   glEnd();
 
   glDisable(GL_NORMALIZE);
@@ -234,9 +233,9 @@ void Box::set_attributes(Element* elem)
 
 #if 0
 /*! Get the attributes of the box */
-Attribute_list Box::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Box::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Geometry::get_attributes();
@@ -257,10 +256,8 @@ void Box::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! type definition of a container execution function - used with engines
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // size
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   s_prototype->add_field_info(new SF_vector3f(SIZE, "size",
@@ -276,8 +273,8 @@ void Box::delete_prototype()
 }
 
 /*! */
-Container_proto* Box::get_prototype() 
-{  
+Container_proto* Box::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }

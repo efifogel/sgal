@@ -66,7 +66,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Assembly::s_prototype = NULL;
+Container_proto* Assembly::s_prototype(NULL);
 const std::string Assembly::s_tag = "Assembly";
 
 REGISTER_TO_FACTORY(Assembly, "Assembly");
@@ -178,17 +178,16 @@ void Assembly::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Group::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
   Execution_function exec_func =
     static_cast<Execution_function>(&Assembly::solve);
 
+  // trigger
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           get_member_offset(&m_trigger),
                                           exec_func));
 
+  // drawAlternate
   exec_func =
     static_cast<Execution_function>(&Assembly::draw_alt_changed);
   s_prototype->
@@ -196,6 +195,7 @@ void Assembly::init_prototype()
                                get_member_offset(&m_draw_alternate),
                                exec_func));
 
+  // incAlternate
   exec_func =
     static_cast<Execution_function>(&Assembly::inc_alt_changed);
   s_prototype->
@@ -203,6 +203,7 @@ void Assembly::init_prototype()
                                get_member_offset(&m_inc_alternate),
                                exec_func));
 
+  // drawAosMinkowskiSums
   exec_func =
     static_cast<Execution_function>(&Assembly::draw_aos_minkowski_sums_changed);
   s_prototype->
@@ -210,6 +211,7 @@ void Assembly::init_prototype()
                                get_member_offset(&m_draw_aos_minkowski_sums),
                                exec_func));
 
+  // incMinkowskiSums
   exec_func =
     static_cast<Execution_function>(&Assembly::inc_minkowski_sums_changed);
   s_prototype->

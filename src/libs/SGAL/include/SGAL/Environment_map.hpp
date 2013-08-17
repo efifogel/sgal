@@ -23,7 +23,7 @@
 #define SGAL_ENVIRONMENT_MAP_HPP
 
 /*! \file
- * A node that represents a reflection map. At firts we only implement 
+ * A node that represents a reflection map. At firts we only implement
  * sperical reflection map.
  *
  * Inherits from Container
@@ -81,11 +81,17 @@ public:
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual Container_proto* get_prototype();
 
-  virtual Boolean attach_context(Context* context ); 
-  virtual Boolean detach_context(Context* context = 0); 
+  /// \name field handlers
+  //@{
+  //@}
+
+  virtual Boolean attach_context(Context* context );
+  virtual Boolean detach_context(Context* context = 0);
 
 protected:
   /*! obtains the tag (type) of the container */

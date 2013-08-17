@@ -41,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Extrusion::s_tag = "Extrusion";
-Container_proto* Extrusion::s_prototype = NULL;
+Container_proto* Extrusion::s_prototype(NULL);
 
 // Default values:
 const Boolean Extrusion::s_def_begin_cap(true);
@@ -90,18 +90,18 @@ void Extrusion::clean()
       m_cross_section[i].set(x, y);
     }
   }
-  
+
   // Generate points:
   Uint size = m_cross_section.size() * m_spine.size();
   m_coord_array->resize(size);
-  
+
   Uint j, i, k = 0;
   const Vector3f vert(0, 1, 0);
   const Vector3f hor(0, 0, 1);
   Vector3f vec(vert);
   Rotation rot, prev_rot;
   Matrix4f mat;
-  
+
   // First:
   if (m_loop) {
     vec.sub(m_spine[0], m_spine[m_spine.size()-1]);
@@ -162,7 +162,7 @@ void Extrusion::clean()
 
     (*m_coord_array)[k++].add(m_spine[0], point);
   }
-  
+
   // Middle:
   for (j = 1; j < m_spine.size() - 1; ++j) {
     Rotation prev_rot(rot);
@@ -265,7 +265,7 @@ void Extrusion::clean_coord_indices()
     size += m_cross_section.size() + 1;
     ++m_num_primitives;
   }
-  
+
   Uint j, i, k = 0;
   m_coord_indices.resize(size);
   for (j = 0; j < m_spine.size() - 1; ++j) {
@@ -307,7 +307,7 @@ void Extrusion::clean_coord_indices()
     m_coord_indices[k++] = ul;
     m_coord_indices[k++] = static_cast<Uint>(-1);
   }
-  
+
   // Generate caps:
   if (m_begin_cap) {
     for (i = 0; i < m_cross_section.size(); ++i)
@@ -390,7 +390,7 @@ void Extrusion::set_attributes(Element* elem)
       for (Uint i = 0; i < size; i++) svalue >> m_scale[i][0] >> m_scale[i][1];
       elem->mark_delete(ai);
       continue;
-    } 
+    }
     if (name == "spine") {
       Uint num_values = get_num_tokens(value);
       Uint size = num_values / 3;
@@ -402,7 +402,7 @@ void Extrusion::set_attributes(Element* elem)
       }
       elem->mark_delete(ai);
       continue;
-    } 
+    }
   }
 
   // Remove all the deleted attributes:
@@ -415,9 +415,9 @@ void Extrusion::set_attributes(Element* elem)
  * The list is of name=value pairs.
  * @return a list of pairs of strings
  */
-Attribute_list Extrusion::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Extrusion::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -440,44 +440,49 @@ void Extrusion::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Indexed_face_set::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // beginCap
   Execution_function exec_func =
     static_cast<Execution_function>(&Extrusion::structure_changed);
   s_prototype->add_field_info(new SF_bool(BEGIN_CAP, "beginCap",
                                           get_member_offset(&m_begin_cap),
                                           exec_func));
 
+  // endCap
   s_prototype->add_field_info(new SF_bool(END_CAP, "endCap",
                                           get_member_offset(&m_end_cap),
                                           exec_func));
 
+  // loop
   s_prototype->add_field_info(new SF_bool(LOOP, "loop",
                                           get_member_offset(&m_loop),
                                           exec_func));
 
+  // crossSection
   s_prototype->
     add_field_info(new MF_vector2f(CROSS_SECTION, "crossSection",
                                    get_member_offset(&m_cross_section),
                                    exec_func));
 
+  // orientation
   s_prototype->
     add_field_info(new MF_rotation(ORIENTATION, "orientation",
                                    get_member_offset(&m_orientation),
                                    exec_func));
+
+  // scale
   s_prototype->add_field_info(new MF_vector2f(SCALE, "scale",
                                               get_member_offset(&m_scale),
                                               exec_func));
 
+  // spine
   s_prototype->add_field_info(new MF_vector3f(SPINE, "spine",
                                               get_member_offset(&m_spine),
                                               exec_func));
 }
 
 /*! \brief deletes the container prototype. */
-void Extrusion::delete_prototype() 
+void Extrusion::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
@@ -553,11 +558,11 @@ void Extrusion::set_end_cap(Boolean end_cap)
 }
 
 /*! \brief obtains the container prototype. */
-Container_proto* Extrusion::get_prototype() 
-{  
+Container_proto* Extrusion::get_prototype()
+{
   if (!s_prototype) Extrusion::init_prototype();
   return s_prototype;
-} 
+}
 
 /*! \brief processes change of structure. */
 void Extrusion::structure_changed(Field_info* field_info)
@@ -565,5 +570,5 @@ void Extrusion::structure_changed(Field_info* field_info)
   clear();
   field_changed(field_info);
 }
-  
+
 SGAL_END_NAMESPACE

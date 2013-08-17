@@ -74,19 +74,35 @@ public:
 
   /*! Destructor */
   virtual ~Camera();
-  
+
   /*! Construct the prototype. */
   static Camera* prototype();
 
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Protoype handling. */
+  virtual void init_prototype();
+
+  virtual void delete_prototype();
+
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this container. */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
   /*! Set the camera position. */
   void set_position(const Vector3f& position);
 
   /*! Set the camera position. */
   void set_position(Float x, Float y, Float z);
-  
+
   /*! Obtain the camera position. */
   const Vector3f& get_position() const;
 
@@ -95,7 +111,7 @@ public:
 
   /*! Set the camera orientation. */
   void set_orientation(Float v0, Float v1, Float v2, Float v3);
-  
+
   /*! Obtain the camera orientation. */
   const Rotation& get_orientation() const;
 
@@ -109,7 +125,7 @@ public:
 
   /*! Set the textual description of the camera. */
   void set_description(const std::string& description);
-  
+
   /*! Obtain the textual description of the camera. */
   const std::string& get_description() const;
 
@@ -118,7 +134,7 @@ public:
 
   /*! Obtain the (const) frustum. */
   const Frustum& get_frustum() const;
-  
+
   const Matrix4f& get_view_mat();
 
   void update_matrix_requiered(Field_info* info);
@@ -143,33 +159,21 @@ public:
   void init(const Context* context);
 
   /*! Apply the camera. */
-  virtual void draw(Draw_action* action); 
+  virtual void draw(Draw_action* action);
 
   /*! Apply the camera. */
-  virtual void draw(Isect_action* action); 
-  
-  /*! Protoype handling. */
-  virtual void init_prototype();
+  virtual void draw(Isect_action* action);
 
-  virtual void delete_prototype();
-
-  virtual Container_proto* get_prototype();
-
-  /*! Set the attributes of this container. */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-  
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   //! \todo what for? static const std::string m_static_tag;
 
   /*! Obtain the bindable stack. */
   virtual Bindable_stack* get_stack();
-  
+
   /*! Enable the bindable node. */
   virtual void enable();
 
@@ -194,7 +198,7 @@ protected:
 
   /*! Indicates whether the cliping planes are set dynamically. */
   bool m_is_dynamic;
-  
+
   Vector3f m_position;
 
   Rotation m_orientation;
@@ -216,10 +220,10 @@ protected:
 
   /*! The scale value the far plane is extended by. */
   float m_far_plane_scale;
-  
+
   /*! The translational vector to adjust the initial position. */
   Vector3f m_position_translation;
-  
+
   /*! The textual description of the camera. (Used by VRML.) */
   std::string m_description;
 
@@ -244,7 +248,7 @@ private:
   void clean_matrix();
 
   /*! Apply the camera. */
-  void draw(); 
+  void draw();
 
   // static Isect_action * m_picker;
 };
@@ -272,7 +276,7 @@ inline const Rotation& Camera::get_orientation() const { return m_orientation; }
 /*! \brief sets the textual description of the camera. */
 inline void Camera::set_description(const std::string& description)
 { m_description = description; }
-  
+
 /*! \brief obtains the textual description of the camera. */
 inline const std::string& Camera::get_description() const
 { return m_description; }
@@ -282,7 +286,7 @@ inline Frustum& Camera::get_frustum() { return m_frustum; }
 
 /*! \brief obtains the (const) frustum. */
 inline const Frustum& Camera::get_frustum() const { return m_frustum; }
-  
+
 SGAL_END_NAMESPACE
 
 #endif

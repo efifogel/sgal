@@ -43,11 +43,11 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Multisample::s_tag = "Multisample";
-Container_proto * Multisample::s_prototype = NULL;
+Container_proto* Multisample::s_prototype(NULL);
 
 // Default values:
-Boolean Multisample::s_def_enabled = SGAL_TRUE;
-Uint Multisample::s_def_number_of_samples = 4;
+Boolean Multisample::s_def_enabled(true);
+Uint Multisample::s_def_number_of_samples(4);
 
 REGISTER_TO_FACTORY(Multisample, "Multisample");
 
@@ -56,8 +56,7 @@ Multisample::Multisample(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
   m_number_of_samples(s_def_number_of_samples)
-{
-}
+{}
 
 /*! brief initializess the node prototype */
 void Multisample::init_prototype()
@@ -65,18 +64,22 @@ void Multisample::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
 
-  // Add the object fields to the prototype
+  // Add the object fields to the prototype:
   Execution_function exec_func;
 
+  // enabled
   exec_func =
-    static_cast<Execution_function>(&Container::set_rendering_required); 
-  s_prototype->
-    add_field_info(new SF_bool(ENABLED, "enabled",
-                               get_member_offset(&m_enabled),
-                               exec_func));
+    static_cast<Execution_function>(&Container::set_rendering_required);
+  Boolean_handle_function enabled_handle =
+    static_cast<Boolean_handle_function>(&Multisample::enabled_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_handle,
+                                          exec_func));
 
+  // numberOfSamples
+  Uint_handle_function number_of_samples_handle =
+    static_cast<Uint_handle_function>(&Multisample::number_of_samples_handle);
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_SAMPLES, "numberOfSamples",
-                                         get_member_offset(&m_number_of_samples)));
+                                          number_of_samples_handle));
 
 }
 
@@ -88,24 +91,22 @@ void Multisample::delete_prototype()
 }
 
 /*! \brief obtains the node prototype */
-Container_proto * Multisample::get_prototype() 
-{  
+Container_proto* Multisample::get_prototype()
+{
   if (!s_prototype) Multisample::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of this node */
-void Multisample::set_attributes(Element * elem)
+void Multisample::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter                Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
       set_enabled(compare_to_true(value));
       elem->mark_delete(ai);
@@ -126,8 +127,8 @@ void Multisample::set_attributes(Element * elem)
 /*!
  */
 Attribute_list Multisample::get_attributes()
-{  
-  Attribute_list attrs; 
+{
+  Attribute_list attrs;
   Attribue attrib;
   char buf[32];
 

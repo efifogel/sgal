@@ -74,7 +74,7 @@ public:
 
   typedef boost::shared_ptr<Appearance>         Shared_appearance;
   typedef boost::shared_ptr<Geometry>           Shared_geometry;
-  
+
   /*! Constructor */
   Shape(Boolean proto = false);
 
@@ -95,6 +95,10 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -119,8 +123,8 @@ public:
 
   /*! Write this container. */
   virtual void write(Formatter* formatter);
-  
-  /*! Add the container to the given scene. */  
+
+  /*! Add the container to the given scene. */
   void add_to_scene(Scene_graph* sg);
 
   /*! Obtain the (const) appearance.
@@ -157,7 +161,7 @@ public:
    * \param draw_depth indicates whether to draw into the depth buffer.
    */
   void set_draw_depth(Boolean draw_depth);
-  
+
   /*! Obtain the flag that indicates whether to test the depth buffer.
    * \return true iff testing the depth buffer is enabled.
    */
@@ -167,7 +171,7 @@ public:
    * \param test_depth indicates whether to test the depth buffer.
    */
   void set_test_depth(Boolean test_depth);
-  
+
   /*! Obtain the depth function.
    * \return the depth function.
    */
@@ -225,9 +229,9 @@ public:
   /*! Process change of geometry. */
   void geometry_changed(Field_info* /* field_info. */);
 
-  virtual Boolean attach_context(Context* context); 
+  virtual Boolean attach_context(Context* context);
 
-  virtual Boolean detach_context(Context* context = 0); 
+  virtual Boolean detach_context(Context* context = 0);
 
   /*! Sets the flag that indicates whether to construct the appearance
    * material attribute when missing.
@@ -235,20 +239,20 @@ public:
   void set_override_material(Boolean flag);
 
   /*! Sets the flag that indicates whether to override the appearance texture
-   * enable flag. 
+   * enable flag.
    */
   void set_override_tex_enable(Boolean flag);
 
   /*! Sets the flag that indicates whether to override the appearance texture
-   * environment. 
+   * environment.
    */
   void set_override_tex_env(Boolean flag);
-  
+
   /*! Sets the flag that indicates whether to override the appearance blend
-   * functions. 
+   * functions.
    */
   void set_override_blend_func(Boolean flag);
-  
+
   /*! Sets the flag that indicates whether to override the light model
    */
   void set_override_light_model(Boolean flag);
@@ -263,7 +267,7 @@ public:
    * light-enable flag.
    */
   void set_override_light_enable(Boolean flag);
-  
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -284,7 +288,7 @@ protected:
 
   /*! The color mask of the shape. */
   Vector4ub m_color_mask;
-  
+
   /*! The cull-face mode of the shape. */
   Gfx::Cull_face m_cull_face;
 
@@ -323,7 +327,7 @@ private:
 
   /*! Indicates whether to apply texture mapping. */
   Boolean m_texture_map;
-  
+
   /*! Indicates whether to construct the appearance material attribute when
    * missing.
    * Notice that when the appearance chages, the material attribute of the
@@ -344,14 +348,14 @@ private:
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_tex_env;
-  
+
   /*! Indicates whether to override the appearance blend functions. If
    * this flag is on, the (appearance) blend functions may be overriden.
    * Notice than when the appearance chages, the blend functions of the
    * previous appearance is not restored to its original value.
    */
   Boolean m_override_blend_func;
-  
+
   /*! Indicates whether to override the appearance light model. If
    * this flag is on, the (appearance) light model may be overriden.
    * Notice than when the appearance chages, the light model of the
@@ -414,14 +418,14 @@ inline Boolean Shape::get_draw_depth() const { return m_draw_depth; }
 /*! \brief sets the flag that indicates whether to draw into the depth buffer. */
 inline void Shape::set_draw_depth(Boolean draw_depth)
 { m_draw_depth = draw_depth; }
-  
+
 /*! \brief obtains the flag that indicates whether to test the depth buffer. */
 inline Boolean Shape::get_test_depth() const { return m_test_depth; }
 
 /*! \brief sets the flag that indicates whether to test the depth buffer. */
 inline void Shape::set_test_depth(Boolean test_depth)
 { m_test_depth = test_depth; }
-  
+
 /*! \brief obtains the depth function. */
 inline Gfx::Depth_func Shape::get_depth_function() const
 { return m_depth_function; }
@@ -466,26 +470,26 @@ inline Shape::Shared_geometry Shape::get_geometry() const
 inline void Shape::set_override_material(Boolean flag)
 { m_override_material = flag; }
 
-/*! \brief sets the flag that indicates whether to override the appearance 
- * texture enable flag. 
+/*! \brief sets the flag that indicates whether to override the appearance
+ * texture enable flag.
  */
 inline void Shape::set_override_tex_enable(Boolean flag)
 { m_override_tex_enable = flag; }
 
-/*! \brief sets the flag that indicates whether to override the appearance 
- * texture environment. 
+/*! \brief sets the flag that indicates whether to override the appearance
+ * texture environment.
  */
 inline void Shape::set_override_tex_env(Boolean flag)
 { m_override_tex_env = flag; }
-  
-/*! \brief sets the flag that indicates whether to override the appearance 
- * blend functions. 
+
+/*! \brief sets the flag that indicates whether to override the appearance
+ * blend functions.
  */
 inline void Shape::set_override_blend_func(Boolean flag)
 { m_override_blend_func = flag; }
-  
-/*! \brief sets the flag that indicates whether to override the appearance 
- * light model. 
+
+/*! \brief sets the flag that indicates whether to override the appearance
+ * light model.
  */
 inline void Shape::set_override_light_model(Boolean flag)
 { m_override_light_model = flag; }

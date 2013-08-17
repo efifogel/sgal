@@ -118,7 +118,7 @@ public:
       typedef My_face<Refs> Face;
     };
   };
-  
+
   typedef Kernel                                        Traits;
   typedef CGAL::Polyhedron_3<Traits, My_items>          Polyhedron;
   typedef Polyhedron::Vertex                            Vertex;
@@ -146,6 +146,24 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values
+   */
+  virtual void set_attributes(Element* elem);
+
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action);
 
@@ -157,20 +175,6 @@ public:
 
   /*! */
   virtual bool clean_sphere_bound();
-
-  /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values
-   */
-  virtual void set_attributes(Element* elem);
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype();
 
   /*! Set the polyhedron data-structure. */
   void set_polyhedron(Polyhedron& polyhedron);
@@ -190,7 +194,7 @@ public:
 
   /*! Computes the orientation of a point relative to the polyhedron. */
   CGAL::Oriented_side oriented_side(const Point_3& p);
-  
+
   /*! Prints statistics. */
   void print_stat();
 
@@ -246,7 +250,7 @@ private:
     }
   };
 
-  
+
   /*! Transform a (planar) facet into a plane. */
   struct Plane_equation {
     template <class Facet>
@@ -258,7 +262,7 @@ private:
                     h->next()->next()->vertex()->point());
     }
   };
-  
+
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -270,7 +274,7 @@ private:
 
   /*! The resulting polyhedron. */
   Polyhedron m_polyhedron;
-  
+
   /*! Indicates whether to compute the convex hull. */
   bool m_convex_hull;
 
@@ -279,7 +283,7 @@ private:
 
   /*! Indicates whether the facets are dirty and thus should be cleaned. */
   Boolean m_dirty_facets;
-  
+
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1310 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -38,8 +38,8 @@ Text_screen::Text_screen()
   m_font = new Font_texture("fixedsys", 8);
 
   m_appearance = new Appearance();
-  m_appearance->set_light_enable(SGAL_FALSE);
-  m_appearance->set_depth_enable(SGAL_FALSE);
+  m_appearance->set_light_enable(false);
+  m_appearance->set_depth_enable(false);
   m_appearance->set_poly_mode(Gfx::FILL_PMODE);
   m_appearance->set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
   m_appearance->set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);

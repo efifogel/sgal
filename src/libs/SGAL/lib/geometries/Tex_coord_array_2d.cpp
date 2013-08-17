@@ -32,22 +32,20 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string const Tex_coord_array_2d::s_tag = "TextureCoordinate";
+const std::string Tex_coord_array_2d::s_tag = "TextureCoordinate";
+Container_proto* Tex_coord_array_2d::s_prototype(NULL);
 
 /*! Register to the container factory. This will enable automatic creation
  * through the name provided as a parameter.
  */
 REGISTER_TO_FACTORY(Tex_coord_array_2d, "Tex_coord_array_2d");
 
-/*! The node prototype */
-Container_proto* Tex_coord_array_2d::s_prototype = NULL;
-
 /*! \brief Constructor */
 Tex_coord_array_2d::Tex_coord_array_2d(Boolean proto) : Tex_coord_array(proto){}
 
 /*! \brief Constructor */
 Tex_coord_array_2d::Tex_coord_array_2d(Uint n) { m_array.resize(n); }
-  
+
 /*! \brief Destructor */
 Tex_coord_array_2d::~Tex_coord_array_2d() {}
 
@@ -55,8 +53,6 @@ Tex_coord_array_2d::~Tex_coord_array_2d() {}
 void Tex_coord_array_2d::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Tex_coord_array::get_prototype());
 }
 
@@ -67,13 +63,13 @@ void Tex_coord_array_2d::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */  
+/*! \brief obtains the node prototype. */
 Container_proto* Tex_coord_array_2d::get_prototype()
 {
   if (s_prototype == NULL) Tex_coord_array_2d::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of the object. */
 void Tex_coord_array_2d::set_attributes(Element* elem)
 {
@@ -103,7 +99,7 @@ void Tex_coord_array_2d::set_attributes(Element* elem)
 #if 0
 /*! */
 Attribute_list Tex_coord_array_2d::get_attributes()
-{ 
+{
   Attribute_list attribs;
   attribs = Tex_coord_array::get_attributes();
   return attribs;

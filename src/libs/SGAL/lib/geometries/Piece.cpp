@@ -42,7 +42,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Piece::s_tag = "Piece";
-Container_proto* Piece::s_prototype = NULL;
+Container_proto* Piece::s_prototype(NULL);
 
 // Default values:
 const Uint Piece::s_def_width(0);
@@ -65,13 +65,10 @@ void Piece::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Indexed_face_set::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
+  // size
   Execution_function exec_func =
     static_cast<Execution_function>(&Piece::structure_changed);
-
   s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size",
                                           get_member_offset(&m_unit_size),
                                           exec_func));
@@ -90,7 +87,7 @@ Container_proto* Piece::get_prototype()
   if (s_prototype == NULL) Piece::init_prototype();
   return s_prototype;
 }
-  
+
 /*! \brief sets the attributes of this node. */
 void Piece::set_attributes(Element* elem)
 {
@@ -175,7 +172,7 @@ void Piece::clean()
       }
     }
   }
-  
+
   m_num_primitives = size;
 
   set_solid(true);

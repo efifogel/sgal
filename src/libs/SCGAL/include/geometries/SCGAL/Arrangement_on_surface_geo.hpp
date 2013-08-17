@@ -89,7 +89,7 @@ public:
     AOS_BOUNDARY_VERTEX_STYLE_ID,
     AOS_BOUNDARY_VERTEX_RADIUS,
     AOS_BOUNDARY_VERTEX_POINT_SIZE,
-    AOS_BOUNDARY_VERTEX_COLOR,    
+    AOS_BOUNDARY_VERTEX_COLOR,
     //
     AOS_EDGE_ENABLED,
     AOS_EDGE_STYLE_ID,
@@ -107,7 +107,7 @@ public:
     INCREMENT,
     NUM_INSERTION_STRATEGIES
   };
-  
+
 protected:
   typedef Arrangement_on_surface_geo                  Self;
 
@@ -148,10 +148,14 @@ public:
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
@@ -178,7 +182,7 @@ public:
 
   /*! Determine whether the representation hasn't been updated. */
   virtual Boolean is_dirty() const { return m_dirty; }
-  
+
   /*! Determine whether the representation empty. */
   virtual Boolean is_empty() const = 0;
 
@@ -194,7 +198,7 @@ public:
    */
   virtual void draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
   {}
-  
+
   /*! Draw an arrangement on surface boundary_vertex.
    * \param action
    * \param center the vertex center.
@@ -210,7 +214,7 @@ public:
   virtual void draw_aos_edge(Draw_action* action, Vector3f& source,
                              Vector3f& target, Vector3f& normal)
   {}
-  
+
   /*! Clean the renderer. */
   virtual void clean_renderer();
 
@@ -237,7 +241,7 @@ public:
 
   /*! Set the flag that indicates whether to draw the embedding surface. */
   void set_draw_aos_surface(Boolean flag) { m_draw_aos_surface = flag; }
-  
+
   /*! Obtain the flag that indicates whether to draw the backfacing features
    * halftone.
    */
@@ -251,7 +255,7 @@ public:
 
   /*! Set the vertex-shape style. */
   void set_aos_vertex_style(Vertex_style style) { m_aos_vertex_style = style; }
-  
+
   /*! Set the aos vertex color.
    * \param color the new color.
    */
@@ -278,7 +282,7 @@ public:
   /*! Set the isolated vertex-shape style. */
   void set_aos_isolated_vertex_style(Vertex_style style)
   { m_aos_isolated_vertex_style = style; }
-  
+
   /*! Obtain the isolated vertex point size. */
   Float get_aos_isolated_vertex_point_size() const
   { return m_aos_isolated_vertex_point_size; }
@@ -286,7 +290,7 @@ public:
   /*! Set the isolated vertex point size. */
   void set_aos_isolated_vertex_point_size(Float size)
   { m_aos_isolated_vertex_point_size = size; }
-  
+
   /*! Obtain the isolated_vertex radius. */
   Float get_aos_isolated_vertex_radius() const
   { return m_aos_isolated_vertex_radius; }
@@ -294,7 +298,7 @@ public:
   /*! Set the isolated_vertex radius. */
   void get_aos_isolated_vertex_radius(Float radius)
   { m_aos_isolated_vertex_radius = radius; }
-  
+
   /*! Obtain the aos isolated vertex color.
    * \return the isolated vertex color.
    */
@@ -306,7 +310,7 @@ public:
    */
   void set_aos_isolated_vertex_color(const Vector3f& color)
   { m_aos_isolated_vertex_color = color; }
-  
+
   /*! Obtain the boundary vertex-shape style. */
   Vertex_style get_aos_boundary_vertex_style() const
   { return m_aos_boundary_vertex_style; }
@@ -329,7 +333,7 @@ public:
    * \param color the new color.
    */
   void set_aos_edge_color(Vector3f& color) { m_aos_edge_color = color; }
-  
+
   /*! Obtain the aos edge color.
    * \return the edge color.
    */
@@ -349,13 +353,13 @@ public:
 
   /*! Set the edge shape style. */
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
-  
+
   /*! Obtain the edge shape count. */
   Int get_aos_edge_count() const { return m_aos_edge_count; }
 
   /*! Set the edge shape count. */
   void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
-    
+
   /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
 
@@ -376,7 +380,7 @@ public:
 
   /*! Obtain the delta angle. */
   Float get_aos_delta_angle() const { return m_aos_delta_angle; }
-  
+
   /*! Set the stencil reference value. */
   void set_stencil_ref(Int ref) { m_renderer.set_stencil_ref(ref); }
 
@@ -389,7 +393,7 @@ public:
 
   /*! Indicates the insertion strategy. */
   Insertion_strategy m_insertion_strategy;
-  
+
   /*! Indicates whether to draw the sphere opaque. */
   Boolean m_draw_opaque;
 
@@ -415,7 +419,7 @@ public:
 
   /*! The size of the point that represents a vertex. */
   Float m_aos_vertex_point_size;
-  
+
   /*! The color of the vertices. */
   Vector3f m_aos_vertex_color;
 
@@ -427,7 +431,7 @@ public:
 
   /*! The size of the point that represents an isolated vertex. */
   Float m_aos_isolated_vertex_point_size;
-  
+
   /*! The color of the isolated vertices. */
   Vector3f m_aos_isolated_vertex_color;
 
@@ -439,9 +443,9 @@ public:
 
   /*! The size of the point that represents an boundary vertex. */
   Float m_aos_boundary_vertex_point_size;
-  
+
   /*! The color of the boundary vertices. */
-  Vector3f m_aos_boundary_vertex_color;    
+  Vector3f m_aos_boundary_vertex_color;
 
   /*! Indicates whether the rendering of edges is enabled or not. */
   Boolean m_aos_edge_enabled;
@@ -454,22 +458,22 @@ public:
 
   /*! Indicates whether edges are rendered directed or not. */
   Boolean m_aos_edge_directed;
-  
+
   /*! The radius of the tube that represents an edge. */
   Float m_aos_edge_radius;
 
   /*! The width of the line that represents an edge. */
   Float m_aos_edge_line_width;
-  
+
   /*! The angle of a single line strip of a spherical arc. */
   Float m_aos_delta_angle;
-  
+
   /*! The color of the edges. */
   Vector3f m_aos_edge_color;
 
   /*! Indicates whether the renderer must be cleaned. */
   Boolean m_renderer_dirty;
-  
+
   /*! The renderer of the arrangement data structure. */
   Arrangement_renderer m_renderer;
 
@@ -490,7 +494,7 @@ public:
 
   /*! The isolated vertices renderer. */
   Arrangement_renderer::Renderer* m_isolated_vertices_renderer;
-  
+
   /*! The edges renderer. */
   Arrangement_renderer::Renderer* m_colored_edges_renderer;
 
@@ -499,7 +503,7 @@ public:
 
   /*! The isolated vertices renderer. */
   Arrangement_renderer::Renderer* m_colored_isolated_vertices_renderer;
-  
+
   /*! The line edges renderer. */
   Arrangement_renderer::Renderer* m_line_colored_edges_renderer;
 
@@ -508,7 +512,7 @@ public:
 
   /*! The ring vertices renderer. */
   Arrangement_renderer::Renderer* m_ring_colored_vertices_renderer;
-  
+
   /*! The point isolated vertices renderer. */
   Arrangement_renderer::Renderer* m_point_colored_isolated_vertices_renderer;
 
@@ -520,10 +524,10 @@ public:
 
   /*! The inflated strip edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
-  
+
   /*! The inflated tube edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
- 
+
   /*! Draw the arrangement on surface opaque.
    * \param action
    */
@@ -607,7 +611,7 @@ public:
               << "# faces: " << aos_geo->get_aos()->number_of_faces()
               << std::endl;
   }
-  
+
 private:
   /*! The container prototype. */
   static Container_proto* s_prototype;
@@ -621,7 +625,7 @@ private:
 
   static const Boolean s_def_draw_aos_surface;
   static const Vector3f s_def_aos_surface_color;
-  
+
   static const Vertex_style s_def_aos_vertex_style;
   static const Float s_def_aos_vertex_radius;
   static const Float s_def_aos_vertex_point_size;
@@ -636,7 +640,7 @@ private:
   static const Float s_def_aos_boundary_vertex_radius;
   static const Float s_def_aos_boundary_vertex_point_size;
   static const Vector3f s_def_aos_boundary_vertex_color;
-  
+
   static const Boolean s_def_aos_edge_enabled;
   static const Edge_style s_def_aos_edge_style;
   static const Int s_def_aos_edge_count;

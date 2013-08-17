@@ -98,8 +98,8 @@ public:
   void set_is_side_visible(Boolean flag);
 
   Boolean is_side_visible() const;
-  
-  virtual void draw(Draw_action* action); 
+
+  virtual void draw(Draw_action* action);
 
   virtual void isect(Isect_action* action);
 
@@ -108,9 +108,13 @@ public:
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   virtual void set_attributes(Element* elem);
   // virtual Attribute_list get_attributes();

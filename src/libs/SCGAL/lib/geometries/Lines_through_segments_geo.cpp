@@ -58,7 +58,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Lines_through_segments_geo::s_tag = "LinesThroughSegments";
-Container_proto* Lines_through_segments_geo::s_prototype = NULL;
+Container_proto* Lines_through_segments_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Lines_through_segments_geo, "Lines_through_segments_geo");
 
@@ -101,6 +101,7 @@ void Lines_through_segments_geo::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
+  // segments
   SF_container* field =
     new SF_container(SEGMENTS, "segments", get_member_offset(&m_segments));
   s_prototype->add_field_info(field);
@@ -153,7 +154,7 @@ void Lines_through_segments_geo::clean()
     SGAL_assertion(m_lts);
     m_owned_lts = true;
   }
-  
+
   if (m_in_segments_dirty) {
     if (!m_segments) return;
 //     Exact_coord_array* coord_array =
@@ -186,27 +187,27 @@ void Lines_through_segments_geo::clean()
   for (it = m_out_lines.begin(); it != m_out_lines.end(); ++it) {
 
     typedef Lines_through_segments_3::Transversal         Transversal;
-      
+
     typedef Lines_through_segments_3::Line_3              Line_3;
     typedef Lines_through_segments_3::Mapped_2            Mapped_2;
     typedef Lines_through_segments_3::Through_3           Through_3;
 
     typedef Lines_through_segments_3::Mapped_transversal  Mapped_transversal;
     typedef Lines_through_segments_3::Through_transversal Through_transversal;
-      
+
     typedef Lines_through_segments_3::Mapped_x_monotone_curve_2
       Mapped_x_monotone_curve_2;
     typedef Lines_through_segments_3::Mapped_general_polygon_2
       Mapped_general_polygon_2;
     typedef Lines_through_segments_3::Mapped_point_2      Mapped_point_2;
- 
+
     typedef Lines_through_segments_3::Through_point_3     Through_point_3;
     typedef Lines_through_segments_3::Through_point_3_segment_3
       Through_point_3_segment_3;
     typedef Lines_through_segments_3::Through_segment_3   Through_segment_3;
 
     Transversal transversal = it->first;
-    
+
     Line_3* line_obj;
     Mapped_2* mapped_obj;
     Through_3* through_obj;
@@ -298,7 +299,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
   // std::cout << "near:m_offset: " << near_plane.get_offset() << std::endl;
   // std::cout << "far:m_normal: " << far_plane.get_normal() << std::endl;
   // std::cout << "far:m_offset: " << far_plane.get_offset() << std::endl;
-  
+
   //Rat_point_3 ep1 = line_obj.point(0);
   //Rat_point_3 ep2 = line_obj.point(1);
   float x = CGAL::to_double(line_obj.point(0).x());
@@ -320,7 +321,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
   Vector3f xp2;
   xp2.xform_pt(p2, view_mat);
   //std::cout << xp2 << std::endl;
-      
+
   Line line(xp1, xp2);
   std::list<Vector3f> points;
   Vector3f p;
@@ -380,14 +381,14 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
   xp1.xform_pt(*cit++, view_mat_inv);
   xp2.xform_pt(*cit, view_mat_inv);
   points.clear();
-      
+
   // Vector3f center;
   // center.add(xp1, xp2);
   // center.scale(0.5f);
   // Sphere sphere;
   // sphere.set_center(center);
   // sphere.draw(action);
-      
+
   glBegin(GL_LINES);
   glColor3f(1.0f, 1.0f, 1.0f);
   glVertex3fv((float*)&xp1);
@@ -401,7 +402,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
 void Lines_through_segments_geo::draw(Draw_action* action)
 {
   // Draw the input:
-  
+
   if (m_dirty) clean();
   if (m_dirty) return;
 
@@ -413,7 +414,7 @@ void Lines_through_segments_geo::draw(Draw_action* action)
   const Matrix4f* world_mat = action->get_current_wtm();
   Matrix4f view_mat;
   view_mat.mult(camera_mat, *world_mat);
-  
+
   Matrix4f view_mat_inv;
   view_mat_inv.invert_affine(view_mat);
 
@@ -423,18 +424,18 @@ void Lines_through_segments_geo::draw(Draw_action* action)
   context->draw_light_enable(false);
   context->draw_line_width(2);
   // glDepthRange(0.05f, 1);
-  
+
   for (it = m_out_lines.begin(); it != m_out_lines.end(); ++it) {
 
     typedef Lines_through_segments_3::Transversal         Transversal;
-      
+
     typedef Lines_through_segments_3::Line_3              Line_3;
     typedef Lines_through_segments_3::Mapped_2            Mapped_2;
     typedef Lines_through_segments_3::Through_3           Through_3;
 
     typedef Lines_through_segments_3::Mapped_transversal  Mapped_transversal;
     typedef Lines_through_segments_3::Through_transversal Through_transversal;
-      
+
     typedef Lines_through_segments_3::Mapped_x_monotone_curve_2
       Mapped_x_monotone_curve_2;
     typedef Lines_through_segments_3::Mapped_general_polygon_2
@@ -447,7 +448,7 @@ void Lines_through_segments_geo::draw(Draw_action* action)
     typedef Lines_through_segments_3::Through_segment_3   Through_segment_3;
 
     Transversal transversal = it->first;
-    
+
     Line_3* line_obj;
     Mapped_2* mapped_obj;
     Through_3* through_obj;
@@ -526,7 +527,7 @@ Boolean Lines_through_segments_geo::clean_sphere_bound()
   if (is_dirty()) clean();
 
   // TODO: calculate the sphere bound
-  
+
   m_dirty_sphere_bound = false;
   return true;
 }

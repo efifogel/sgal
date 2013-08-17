@@ -50,11 +50,11 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
 
   typedef boost::shared_ptr<Appearance>             Shared_appearance;
   typedef boost::shared_ptr<Sgm_geo>                Shared_sgm_geo;
-  
+
   typedef std::list<Shared_sgm_geo>                 Sgm_geo_list;
   typedef std::list<Boolean>                        Boolean_list;
-  typedef std::list<Shared_appearance>              Appearance_list; 
-  
+  typedef std::list<Shared_appearance>              Appearance_list;
+
   typedef Sgm_geo_list::iterator                    Sgm_geo_iter;
 
  public:
@@ -70,15 +70,10 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
   virtual ~Assembly_part();
 
   /* Construct the prototype. */
-  static Assembly_part* prototype() { return new Assembly_part(true); }
+  static Assembly_part* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Assembly_part(); }
-
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -89,6 +84,15 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
   /*! Clear the representation. */
   virtual void clear();
 
@@ -97,7 +101,7 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
 
   /*! Set the part id. */
   void set_id(Uint id) { m_id = id; }
-  
+
   /*! Print information to an output stream. */
   void print_info(std::ostream& out);
 
@@ -106,7 +110,7 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
 
   /*! Obtain the container of the Sgm appearances that comprise this part */
   Appearance_list& get_sgm_apps();
-  
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
@@ -116,7 +120,7 @@ protected:
 
   /*! Construct all the SGM's that comprise this part. */
   void clean_sgm_geos(Group* group);
- 
+
 private:
   /*! The tag that identifies this container type. */
   static std::string s_tag;
@@ -141,8 +145,15 @@ private:
    * deallocated.
    */
   Boolean_list m_owned_sgm_aps;
-  
+
 };
+
+/* \brief constructs the prototype. */
+inline Assembly_part* Assembly_part::prototype()
+{ return new Assembly_part(true); }
+
+/*! \brief clones. */
+inline Container* Assembly_part::clone() { return new Assembly_part(); }
 
 SGAL_END_NAMESPACE
 

@@ -42,7 +42,7 @@ public:
   };
 
   /*! Constructor */
-  Color_array(Boolean proto = SGAL_FALSE) : Container(proto) {}
+  Color_array(Boolean proto = false) : Container(proto) {}
 
   /*! Constructor */
   Color_array(Int n) { m_array.resize(n); }
@@ -51,10 +51,10 @@ public:
   virtual ~Color_array() {}
 
   /* Construct the prototype */
-  static Color_array * prototype() { return new Color_array(SGAL_TRUE); }
+  static Color_array* prototype() { return new Color_array(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Color_array(); }
+  virtual Container* clone() { return new Color_array(); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -62,9 +62,13 @@ public:
   /*! Delete the node prototype */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */  
-  virtual Container_proto * get_prototype();
-  
+  /*! Obtains the node prototype */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element * elem);
 
@@ -80,32 +84,32 @@ public:
   void clear() { m_array.clear(); }
 
   /*! The iterator to the Array first element */
-  Vector3f * begin() { return m_array.begin(); }
+  Vector3f* begin() { return m_array.begin(); }
   const Vector3f * begin() const { return m_array.begin(); }
 
   /*! The iterator to the Array past-the-end element */
-  Vector3f * end() { return m_array.end(); }
-  const Vector3f * end() const { return m_array.end(); }
-  
-  /*! Array indexing operator */
-  Vector3f & operator[](Uint n) { return m_array[n]; }
+  Vector3f* end() { return m_array.end(); }
+  const Vector3f* end() const { return m_array.end(); }
 
   /*! Array indexing operator */
-  const Vector3f & operator[](Uint n) const { return m_array[n]; }
-  
+  Vector3f& operator[](Uint n) { return m_array[n]; }
+
+  /*! Array indexing operator */
+  const Vector3f& operator[](Uint n) const { return m_array[n]; }
+
   /*! Obtain the vector */
-  Vector3f * get_vector() { return m_array.get_vector(); }
+  Vector3f* get_vector() { return m_array.get_vector(); }
 
-protected: 
+protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const { return s_tag; }
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   /*! The array of colors */
   SGAL::Array<Vector3f> m_array;

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -32,13 +32,13 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Bindable_node::s_tag = "BindableNode";
-Container_proto * Bindable_node::s_prototype = 0;
+Container_proto * Bindable_node::s_prototype(NULL);
 
 /*! Constructor */
 Bindable_node::Bindable_node(Boolean proto) :
   Container(proto),
-  m_set_bind(SGAL_FALSE),
-  m_is_bound(SGAL_FALSE)
+  m_set_bind(false),
+  m_is_bound(false)
 {}
 
 /*! Destructor */
@@ -51,16 +51,15 @@ void Bindable_node::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
 
-  //! type definition of a container execution function - used with engines
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the object fields to the prototype:
-  Execution_function exec_func = 
+  // set_bind
+  Execution_function exec_func =
     static_cast<Execution_function>(&Bindable_node::set_bind);
   s_prototype->add_field_info(new SF_bool(SET_BIND, "set_bind",
                                           get_member_offset(&m_set_bind),
-                                          exec_func));    
+                                          exec_func));
 
+  // isBound
   s_prototype->add_field_info(new SF_bool(IS_BOUND, "isBound",
                                           get_member_offset(&m_is_bound)));
 }
@@ -70,7 +69,7 @@ void Bindable_node::init_prototype()
 void Bindable_node::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*!
@@ -83,7 +82,7 @@ Container_proto * Bindable_node::get_prototype()
 
 /*! Sets the attributes of this node
  */
-void Bindable_node::set_attributes(Element * elem) 
+void Bindable_node::set_attributes(Element * elem)
 {
   Container::set_attributes(elem);
 }
@@ -96,7 +95,7 @@ void Bindable_node::erase_stack(Bindable_node * bindable)
 {
   get_stack()->erase(bindable);
 }
-  
+
 /*! \brief pops the Navigation_info at the top of the stack */
 void Bindable_node::pop_stack() { get_stack()->pop(); }
 
@@ -114,7 +113,7 @@ void Bindable_node::insert_stack(Bindable_node * bindable)
 }
 
 /*! Binds this node (used during initialization) */
-void Bindable_node::bind()  
+void Bindable_node::bind()
 {
   if (m_is_bound) return;
   m_set_bind = true;
@@ -127,7 +126,7 @@ void Bindable_node::bind()
 void Bindable_node::set_is_bound(Boolean is_bound)
 {
   (is_bound) ? enable() : disable();
-  
+
   m_is_bound = is_bound;
   Field * is_bound_field = get_field(IS_BOUND);
   if (is_bound_field) is_bound_field->cascade();
@@ -151,19 +150,19 @@ void Bindable_node::set_bind(Field_info * /* field_info */)
      * speed factor as input and computes the dragging speed as output
      */
     // set_dragging_speed(top->get_dragging_speed());
-      
+
     erase_stack(this);
     push_stack(this);
     set_is_bound(true);
     return;
   }
-  
+
   // set_bind is false:
   Bindable_node * top = top_stack();
   if (this == top) {
     set_is_bound(false);
     pop_stack();
-      
+
     top = top_stack();
     top->set_is_bound(true);
     return;

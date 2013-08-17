@@ -64,7 +64,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Voronoi_diagram_on_sphere_geo::s_tag = "VoronoiDiagramOnSphere";
-Container_proto* Voronoi_diagram_on_sphere_geo::s_prototype = NULL;
+Container_proto* Voronoi_diagram_on_sphere_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Voronoi_diagram_on_sphere_geo,
                     "Voronoi_diagram_on_sphere_geo");
@@ -110,9 +110,7 @@ void Voronoi_diagram_on_sphere_geo::init_prototype()
   s_prototype =
     new Container_proto(Geodesic_voronoi_on_sphere_geo::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-  
+  // siteStyleId
   Execution_function exec_func =
     static_cast<Execution_function>(&Arrangement_on_surface_geo::
                                     renderer_changed);
@@ -178,7 +176,7 @@ Container_proto* Voronoi_diagram_on_sphere_geo::get_prototype()
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -235,21 +233,21 @@ void Voronoi_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
   context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
 
   // Update only the color buffer:
-  context->draw_depth_mask(SGAL_FALSE);
-    
+  context->draw_depth_mask(false);
+
   // Draw the sphere:
   if (m_draw_aos_surface) {
     glColor3fv((float*)&m_aos_surface_color);
     (*m_surface_renderer)(action);
   }
-  
+
   // Draw the edges and the vertices:
   if (m_aos_edge_style == Edge_shape::STRIP)
     (*m_colored_edges_renderer)(action);
   if (m_aos_vertex_style == Vertex_shape::DISC)
     (*m_colored_vertices_renderer)(action);
 
-  context->draw_depth_mask(SGAL_TRUE);
+  context->draw_depth_mask(true);
 
   // Update only the depth buffer:
   if ((m_aos_edge_style == Edge_shape::LINE) ||
@@ -264,18 +262,18 @@ void Voronoi_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
   if (m_aos_edge_style == Edge_shape::STRIP) draw_aos_edges(action);
   if (m_aos_vertex_style == Vertex_shape::DISC)
     draw_aos_vertices(action);
-  context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));    
+  context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));
   if ((m_aos_edge_style == Edge_shape::LINE) ||
       (m_aos_vertex_style == Vertex_shape::POINT) ||
       (m_aos_vertex_style == Vertex_shape::RING))
   {
-    glDisable(GL_POLYGON_OFFSET_FILL);  
+    glDisable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(0, 0);
   }
-  
+
   // Draw the edges as lines:
   if (m_aos_edge_style == Edge_shape::LINE) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_line_width(m_aos_edge_line_width);
   }
   (*m_colored_edges_renderer)(action);
@@ -286,20 +284,20 @@ void Voronoi_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
 
   // Draw the vertices as points or lines:
   if (m_aos_vertex_style == Vertex_shape::POINT) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_point_size(m_aos_vertex_point_size);
     glIsEnabled(GL_POINT_SMOOTH);
   } else if (m_aos_vertex_style == Vertex_shape::RING) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_line_width(m_aos_vertex_point_size);
     glIsEnabled(GL_LINE_SMOOTH);
   }
   (*m_colored_vertices_renderer)(action);
   if (m_aos_vertex_style == Vertex_shape::POINT) {
     context->draw_point_size(1.0f);
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
   } else if (m_aos_vertex_style == Vertex_shape::RING) {
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
     context->draw_line_width(1.0);
   }
 
@@ -308,7 +306,7 @@ void Voronoi_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
     (*m_colored_edges_renderer)(action);
   if (m_aos_vertex_style == Vertex_shape::BALL)
     (*m_colored_vertices_renderer)(action);
-  
+
   if (m_draw_sites) draw_sites(action);
   context->draw_material_mode_enable(Gfx::NO_COLOR_MATERIAL);
 }
@@ -400,7 +398,7 @@ void Voronoi_diagram_on_sphere_geo::clean_renderer()
     m_renderer.push_back(m_edges_renderer, Arrangement_renderer::DEPTH);
   if (get_aos_vertex_style() != Vertex_shape::NONE)
     m_renderer.push_back(m_vertices_renderer, Arrangement_renderer::DEPTH);
-  
+
   if (!get_draw_sites()) return;
   if (get_site_style() == Vertex_shape::DISC) {
     m_renderer.push_back(m_site_renderer, Arrangement_renderer::BACKFACING);

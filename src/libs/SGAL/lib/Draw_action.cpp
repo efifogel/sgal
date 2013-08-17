@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5848 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -32,12 +32,12 @@ SGAL_BEGIN_NAMESPACE
 Draw_action::Draw_action(Configuration * config) :
   Isect_action(),
   m_pass_no(0),
-  m_second_pass_required(SGAL_FALSE),
+  m_second_pass_required(false),
   m_current_lod(-1),    // Negative lod force choosing max level.
-  m_snap_from_front(SGAL_FALSE),
+  m_snap_from_front(false),
   m_clear(Gfx::COLOR_CLEAR | Gfx::DEPTH_CLEAR),
-  m_snap(SGAL_TRUE),
-  m_apply_camera(SGAL_TRUE),
+  m_snap(true),
+  m_apply_camera(true),
   m_configuration(config)
 {
 }
@@ -100,7 +100,7 @@ Int Draw_action::get_pass_no()
 void Draw_action::reset_pass_no() 
 { 
   m_pass_no = 0; 
-  m_second_pass_required = SGAL_FALSE; 
+  m_second_pass_required = false; 
 
 }
 

@@ -24,8 +24,8 @@
 
 /*! \file
  * A class representing transformation in the scene graph.
- * 
- * This is a transformation node in the scene graph. It inherits 
+ *
+ * This is a transformation node in the scene graph. It inherits
  * from Group and therefore can have multiple child objects. It
  * contains a tranlation vector, a rotation and a scale vector. It
  * also contains a matrix representation of the transformation.
@@ -84,9 +84,9 @@ public:
   /*! Obtain (a copy of) the matrix */
   void get_matrix(Matrix4f& matrix);
 
-  /*! Obtain (a const reference of) the matrix */  
+  /*! Obtain (a const reference of) the matrix */
   const Matrix4f& get_matrix();
-  
+
   void set_translation(Float v0, Float v1, Float v2);
   void get_translation(Float* v0, Float* v1, Float* v2);
   void set_rotation(Float v0, Float v1, Float v2, Float v3);
@@ -113,7 +113,7 @@ public:
 
   /*! \bried writes this container. */
   virtual void write(Formatter* formatter);
-  
+
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -122,14 +122,18 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype. */
   static Container_proto* s_prototype;
@@ -160,7 +164,7 @@ private:
 
   /*! Indicates whether the transform should be reset. */
   bool m_reset;
-  
+
   Boolean m_dirty_inverse;
 
   Boolean m_dirty_parts;

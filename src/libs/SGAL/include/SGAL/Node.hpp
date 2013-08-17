@@ -28,7 +28,7 @@
  * A node is a base type for all objects that can be in the scene graph. This
  * type supports bounding sphere. For nodes in which the bounding sphere is
  * effective, the CalculateBoundingSphere method has to be implemented.
- * Otherwise the bounding sphere will be initialized to an invalid value 
+ * Otherwise the bounding sphere will be initialized to an invalid value
  * and will be ignored.
  *
  * Inherits from Container.
@@ -81,10 +81,14 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Draw the object. */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
-    
+
   /*! Cull the node if invisible and prepare for rendering. */
   virtual void cull(Cull_context& cull_context);
 
@@ -92,7 +96,7 @@ public:
    * \param isect_action
    */
   virtual void isect(Isect_action* isect_action);
-  
+
   /*! Clean the bounding sphere of the node.
    * \return true iff the bounding sphere has changed during the clean.
    */
@@ -102,7 +106,7 @@ public:
    * \return true iff the bounding sphere must be recomputed.
    */
   virtual Boolean is_dirty_sphere_bound();
-  
+
   /*! Obtain the sphere bound. */
   const Sphere_bound& get_sphere_bound();
 
@@ -113,10 +117,10 @@ public:
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
-  
+
   /*! Set the flag that indicates that the sphere bound should be cleaned.*/
   void sphere_bound_changed(Field_info* field_info = NULL);
-  
+
 protected:
   /*! The sphere bound of the node. */
   Sphere_bound m_sphere_bound;

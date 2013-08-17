@@ -68,7 +68,7 @@ public:
   typedef boost::shared_ptr<Normal_array>       Shared_normal_array;
   typedef boost::shared_ptr<Exact_coord_array>  Shared_exact_coord_array;
   typedef boost::shared_ptr<Exact_normal_array> Shared_exact_normal_array;
-  
+
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
     COORD_ARRAY,
@@ -93,10 +93,14 @@ public:
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
@@ -135,7 +139,7 @@ public:
 
   /*! Obtain the normal index array. */
   const std::vector<Uint>& get_normal_indices() const;
-  
+
   /*! Obtain the point index array. */
   const std::vector<Uint>& get_point_indices() const;
 
@@ -156,7 +160,7 @@ public:
 
   /*! Obtain the i-th point index. */
   Uint get_point_location_index(Uint i) const;
-    
+
   /*! Draw an arrangement on surface vertex.
    * \param action
    * \param center the vertex center.
@@ -169,14 +173,14 @@ public:
    */
   virtual void draw_aos_isolated_vertex(Draw_action* action,
                                         Vector3f& center);
-  
+
   /*! Draw an arrangement on surface boundary_vertex.
    * \param action
    * \param center the vertex center.
    */
   virtual void draw_aos_boundary_vertex(Draw_action* action,
                                         Vector3f& center);
-  
+
   /*! Draw an arrangement on surface edge.
    * \param action
    * \param source the edge source point.
@@ -186,8 +190,8 @@ public:
   virtual void draw_aos_edge(Draw_action* action,
                              Vector3f& source, Vector3f& target,
                              Vector3f& normal);
-  
-    
+
+
 protected:
   typedef SGAL::Sphere_renderer            Surface_renderer;
   typedef SGAL::Colored_sphere_renderer    Colored_surface_renderer;
@@ -198,7 +202,7 @@ protected:
 
   /*! An array of normals. */
   Shared_normal_array m_normal_array;
-  
+
   /*! An array of indices into the coordinate array for general curves. */
   std::vector<Uint> m_curve_indices;
 
@@ -213,7 +217,7 @@ protected:
 
   /*! An array of indices into the normal array for curves. */
   std::vector<Uint> m_normal_indices;
-  
+
   /*! Insert the points, curves, and x-monotone curves into the givem
    * representation.
    */
@@ -226,12 +230,12 @@ protected:
     typedef typename Geom_traits::Curve_2               Curve;
 
     if (!m_coord_array) return;
-    
+
     Shared_exact_coord_array exact_coord_array =
       boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
     Shared_exact_normal_array exact_normal_array =
       boost::dynamic_pointer_cast<Exact_normal_array>(m_normal_array);
-     
+
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       std::vector<Uint>::iterator it;
       Exact_kernel kernel;
@@ -239,7 +243,7 @@ protected:
         kernel.construct_direction_3_object();
       Exact_kernel::Construct_vector_3 ctr_vector =
         kernel.construct_vector_3_object();
-        
+
       // Insert the x-monotone curves:
       if (m_x_monotone_curve_indices.size() != 0) {
         if (m_insertion_strategy == AGGREGATE) {
@@ -254,7 +258,7 @@ protected:
             Exact_direction_3 d1 = ctr_direction(v1);
             Point q1(d1);
             ++it;
-            
+
             Exact_point_3& p2 = (*exact_coord_array)[*it];
             Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
             Exact_direction_3 d2 = ctr_direction(v2);
@@ -282,7 +286,7 @@ protected:
             Exact_direction_3 d1 = ctr_direction(v1);
             Point q1(d1);
             ++it;
-          
+
             Exact_point_3& p2 = (*exact_coord_array)[*it];
             Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
             Exact_direction_3 d2 = ctr_direction(v2);
@@ -305,7 +309,7 @@ protected:
           }
         }
       }
-    
+
       // Insert the general curves:
       if (m_curve_indices.size() != 0) {
         if (m_insertion_strategy == AGGREGATE) {
@@ -317,7 +321,7 @@ protected:
             Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
             Exact_direction_3 d1 = ctr_direction(v1);
             ++it;
-          
+
             Exact_point_3& p2 = (*exact_coord_array)[*it];
             Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
             Exact_direction_3 d2 = ctr_direction(v2);
@@ -343,7 +347,7 @@ protected:
             Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
             Exact_direction_3 d1 = ctr_direction(v1);
             ++it;
-          
+
             Exact_point_3& p2 = (*exact_coord_array)[*it];
             Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
             Exact_direction_3 d2 = ctr_direction(v2);

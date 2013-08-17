@@ -74,11 +74,6 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -87,6 +82,15 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
 
   /*! Clear the representation. */
   virtual void clear();

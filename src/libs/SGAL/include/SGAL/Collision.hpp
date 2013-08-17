@@ -45,7 +45,7 @@ public:
 
   /*! Copy constructor */
   Collision(const Collision & groop);
-  
+
   /*! Destructor */
   virtual ~Collision();
 
@@ -54,7 +54,7 @@ public:
 
   /*! Clone */
   virtual Container* clone() { return new Collision(); }
-  
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -63,8 +63,14 @@ public:
   /*! Protoype handling: */
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
 protected:
   /*! obtains the tag (type) of the container */
@@ -72,7 +78,7 @@ protected:
 
 private:
   /*! The tag that represents the container */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

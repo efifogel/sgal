@@ -67,13 +67,13 @@ private:
   /*! the current pass number in the anti aliasing (0-m_AAliasQuality) */
   int m_pass_no;
 
-  /*! SGAL_TRUE if anti aliasing calculations are in progress. */
+  /*! true if anti aliasing calculations are in progress. */
   Boolean m_is_in_process;
 
   /*! the starting time of the delay */
   long int m_delay_start_time;
 
-  /*! SGAL_TRUE if thr anti aliasing process is delayed */
+  /*! true if thr anti aliasing process is delayed */
   Boolean m_is_in_delay;
 
   /*! the delay duration before anti aliasing starts (in ms) */

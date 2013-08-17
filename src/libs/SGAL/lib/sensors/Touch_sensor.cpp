@@ -55,7 +55,7 @@ SGAL_BEGIN_NAMESPACE
 Boolean Touch_sensor::s_def_enabled(true);
 
 const std::string Touch_sensor::s_tag = "TouchSensor";
-Container_proto* Touch_sensor::s_prototype = NULL;
+Container_proto* Touch_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Touch_sensor, "Touch_sensor");
 

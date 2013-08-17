@@ -66,8 +66,12 @@ public:
   virtual void delete_prototype();
 
   /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype(); 
-  
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of the texture extracted from the VRML or X3D file.
    * \param elem contains lists of attribute names and values
    */
@@ -78,18 +82,18 @@ public:
   enum Min_filter {
     NEAREST_MIN = 0,
     LINEAR_MIN,
-    NEAREST_MIPMAP_NEAREST, 
-    NEAREST_MIPMAP_LINEAR, 
+    NEAREST_MIPMAP_NEAREST,
+    NEAREST_MIPMAP_LINEAR,
     LINEAR_MIPMAP_LINEAR
   };
 
   enum Mag_filter {
-    NEAREST_MAG = 0, 
+    NEAREST_MAG = 0,
     LINEAR_MAG
   };
 
   enum Wrap {
-    CLAMP = 0, 
+    CLAMP = 0,
     REPEAT,
     CLAMP_TO_EDGE
   };
@@ -113,7 +117,7 @@ public:
 
   /*! Obtain the texture target. */
   Target get_target() const;
-  
+
   /*! Set the wrapping factor on the S. */
   void set_wrap_s(Texture::Wrap wrap);
 
@@ -128,28 +132,28 @@ public:
 
   /*! Set the wrapping factor on the T. */
   void set_wrap_t(Texture::Wrap wrap);
-  
+
   /*! Set the wrapping factor on the T. */
   void set_wrap_t(Boolean flag);
-  
+
   /*! Obtain the wrapping factor on the T. */
   Texture::Wrap get_wrap_t() const;
 
-  /*! Notify that the wrapping factor on the T changed. */  
+  /*! Notify that the wrapping factor on the T changed. */
   void wrap_t_changed(Field_info* field_info);
-  
+
   /*! Set the wrapping factor on the R. */
   void set_wrap_r(Texture::Wrap wrap);
-  
+
   /*! Set the wrapping factor on the R. */
   void set_wrap_r(Boolean flag);
-  
+
   /*! Obtain the wrapping factor on the R. */
   Texture::Wrap get_wrap_r() const;
-  
-  /*! Notify that the wrapping factor on the R changed. */  
+
+  /*! Notify that the wrapping factor on the R changed. */
   void wrap_r_changed(Field_info* field_info);
-  
+
   /*! Set the minimization filter. */
   void set_min_filter(Texture::Min_filter min_filter);
 
@@ -188,11 +192,11 @@ public:
 
   /*! Obtain the texture number of components. */
   virtual Uint get_component_count() const = 0;
-  
+
 protected:
   /*! The texture target index. */
   Target m_target;
-  
+
   /*! A unique id for the texture (used in OpenGL for texture binding) */
   Uint m_id;
 
@@ -201,7 +205,7 @@ protected:
 
   /*! Specify how the texture wrap in the S direction. If repeat_s is true
    * (the default), the texture map is repeated outside the [0.0, 1.0] texture
-   * coordinate range in the S direction so that it fills the shape. If 
+   * coordinate range in the S direction so that it fills the shape. If
    * repeat_s is false, the texture coordinates are clamped in the S direction
    * to lie within the [0.0, 1.0] range.
    */
@@ -223,8 +227,8 @@ protected:
 
   /*! Specify how the texture wrap in the R direction. If repeat_r is true
    * (the default), the texture map is repeated outside the [0.0, 1.0] texture
-   * coordinate range in the R direction so that it fills the shape. If 
-   * repeat_r is false, the texture coordinates are clamped in the R direction 
+   * coordinate range in the R direction so that it fills the shape. If
+   * repeat_r is false, the texture coordinates are clamped in the R direction
    * to lie within the [0.0, 1.0] range.
    */
   Boolean m_repeat_r;
@@ -262,7 +266,7 @@ protected:
 
   /*! An array of wrap names. */
   static const char* s_wrap_names[3];
-  
+
   /*! An array of minimization filter tokens. */
   static const GLenum s_min_filter_tokens[];
 
@@ -274,7 +278,7 @@ protected:
 
   /*! Download the image as a 2D color map to the graphics pipe. */
   void load_color_map(Image* image, GLenum target);
-  
+
 private:
   /*! The node prototype */
   static Container_proto* s_prototype;
@@ -300,22 +304,22 @@ inline Texture::Wrap Texture::get_wrap_s() const { return m_wrap_s; }
 /*! \brief sets the wrapping factor on the T. */
 inline void Texture::set_wrap_t(Texture::Wrap wrap)
 { m_wrap_t = wrap; }
-  
+
 /*! \brief sets the wrapping factor on the T. */
 inline void Texture::set_wrap_t(Boolean flag)
 { flag ? set_wrap_t(REPEAT) : set_wrap_t(CLAMP); }
-  
+
 /*! \brief obtains the wrapping factor on the T. */
 inline Texture::Wrap Texture::get_wrap_t() const { return m_wrap_t; }
 
 /*! \brief sets the wrapping factor on the R. */
 inline void Texture::set_wrap_r(Texture::Wrap wrap)
 { m_wrap_r = wrap; }
-  
+
 /*! \brief sets the wrapping factor on the R. */
 inline void Texture::set_wrap_r(Boolean flag)
 { flag ? set_wrap_r(REPEAT) : set_wrap_r(CLAMP); }
-  
+
 /*! \brief obtains the wrapping factor on the R. */
 inline Texture::Wrap Texture::get_wrap_r() const { return m_wrap_r; }
 

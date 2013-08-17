@@ -55,7 +55,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Lower_envelope_sphere_geo::s_tag = "LowerEnvelopeSphere";
-Container_proto* Lower_envelope_sphere_geo::s_prototype = NULL;
+Container_proto* Lower_envelope_sphere_geo::s_prototype(NULL);
 
 Uint Lower_envelope_sphere_geo::s_def_resolution(32);
 

@@ -82,13 +82,13 @@ protected:
 
   /*! Obtain the tag (type) of the container .*/
   virtual const std::string& get_tag() const;
-  
+
   /*! Create the renderers. */
   void create_renderers();
 
   /*! Destroy the renderers. */
   void destroy_renderers();
-  
+
 private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
@@ -103,7 +103,7 @@ private:
    * when this geometry node is destructed.
    */
   Boolean m_owned_sgm;
-  
+
   /*! The cubical Gaussian map representation. */
   Sgm* m_sgm;
 
@@ -130,10 +130,10 @@ private:
 
   /*! The inflated strip edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
-  
+
   /*! The inflated tube edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
-   
+
   /*! Transform the coordinates of the SGM into spheres.
    * \param spheres (o) the transformed coordinates.
    */
@@ -149,14 +149,14 @@ private:
   virtual void draw_aos_opaque(Draw_action* action);
 
   virtual void isect_primary();
-  
+
 public:
   /*! Constructor */
   Spherical_gaussian_map_geo(Boolean proto = false);
 
   /*! Copy constructor */
   Spherical_gaussian_map_geo(const Spherical_gaussian_map_geo& gm);
-  
+
   /*! Destructor. */
   virtual ~Spherical_gaussian_map_geo();
 
@@ -165,11 +165,6 @@ public:
 
   /*! Clone. */
   virtual Container* clone();
-
-  /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values.
-   */
-  virtual void set_attributes(Element* elem);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -180,12 +175,21 @@ public:
   /*! Obtain the prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute names and values.
+   */
+  virtual void set_attributes(Element* elem);
+
   /*! Clean the representation. */
   virtual void clean_sgm();
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
-  
+
   /*! Determine whether the representation is empty. */
   virtual Boolean is_empty() const { return m_sgm->is_empty(); }
 
@@ -198,7 +202,7 @@ public:
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action);
-  
+
   /*! Clean the renderer. */
   virtual void clean_renderer();
 
@@ -213,7 +217,7 @@ public:
 
   /*! Set the Gaussian map. */
   void set_sgm(Sgm* sgm);
-  
+
   /*! Set the flag that indicates whether to compute the minkowski sum. */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
 

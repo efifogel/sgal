@@ -28,11 +28,11 @@
  * Maintains a list of fields that are connected to or connected from fields
  * in other containers.
  *
- * The following explains what should be done to connect two fields. 
+ * The following explains what should be done to connect two fields.
  * by example with the navigation sensor, which inherites from Container.
  * Assume that navSensor is of type Navigation_sensor* and pointing to the
  * navigation sensor instance in the scene graph.
- * 
+ *
  * navSensor->add_field(Navigation_sensor::POSITION);
  * navSensor->add_field(Navigation_sensor::rotation);
  * Field* pos_field = nav_sensor->get_field(Navigation_sensor::POSITION);
@@ -77,13 +77,13 @@ class Formatter;
 
 class SGAL_SGAL_DECL Container : public Container_observer {
 private:
-  int m_base;  
+  int m_base;
 
 public:
   typedef std::pair<Container_observer*, Field_info*>   Observer;
   typedef std::list<Observer>                           Observer_list;
   typedef Observer_list::iterator                       Observer_iter;
-  
+
   // Fields unique id enumeration
   enum {
     LAST
@@ -97,7 +97,7 @@ public:
 
   /*! Clone the container. */
   virtual Container* clone() = 0;
-    
+
   /*! Initialize the node prototype. */
   virtual void init_prototype() {};
 
@@ -106,7 +106,11 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype() { return 0; }
-  
+
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this container. */
   virtual void set_attributes(Element* /* elem */) {}
 
@@ -115,12 +119,12 @@ public:
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
-   */  
+   */
   virtual void add_to_scene(Scene_graph* /* scene_graph */) {}
 
   /*! Write this container. */
   virtual void write(Formatter* formatter);
-  
+
   /*! Obtain the name of the container provided in the USE and DEF tags. */
   const std::string& get_name() const;
 
@@ -224,11 +228,11 @@ public:
 protected:
   /*! A pointer to the execution coordinator. */
   Execution_coordinator* m_execution_coordinator;
-  
+
   /*! Calculate and obtain the ofsset of a data member. */
   Member_offset_type get_member_offset(void* data_member)
   { return (Member_offset_type)data_member - (Member_offset_type)&(m_base); }
-  
+
 private:
   typedef std::map<Field_info*,Field*>                  Field_map;
   typedef Field_map::iterator                           Field_iter;
@@ -237,7 +241,7 @@ private:
   /*! The name of the container. Given as the value of the DEF tag. */
   std::string m_name;
 
-  /*! Add a field for a field info. If a field with the given field info 
+  /*! Add a field for a field info. If a field with the given field info
    * already exists, nothing is done. Otherwiese, a new field is created and
    * added.
    * \param field_info the suitable field info for the field
@@ -250,7 +254,7 @@ private:
 
   /*! A list of observers. */
   Observer_list m_observers;
-  
+
   //! \todo Critical_section m_field_cs;
 };
 

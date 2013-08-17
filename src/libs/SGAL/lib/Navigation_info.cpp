@@ -34,7 +34,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Navigation_info::s_tag = "NavigationInfo";
-Container_proto* Navigation_info::s_prototype = 0;
+Container_proto* Navigation_info::s_prototype(NULL);
 const char* Navigation_info::s_type_strings[] =
   {"NONE", "EXAMINE", "FLY", "WALK", "TRANSFORM"};
 
@@ -141,7 +141,7 @@ void Navigation_info::init_prototype()
 void Navigation_info::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = 0;
+  s_prototype = NULL;
 }
 
 /*! \brief Obtains the prototype. */

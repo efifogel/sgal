@@ -48,7 +48,7 @@ public:
     WIDTH,
     HEIGHT,
     DEPTH,
-    STACKS, 
+    STACKS,
     SLICES,
     LAST
   };
@@ -99,10 +99,14 @@ public:
   virtual void init_prototype();
 
   /*! Delete the container prototype */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes */
   virtual void set_attributes(Element* elem);
@@ -111,7 +115,7 @@ public:
 
   /*! Clean the representation */
   virtual void clean();
-  
+
   /*! Process change of structure. */
   void structure_changed(Field_info* field_info);
 
@@ -124,7 +128,7 @@ protected:
 
   /*! The depth of the ellipsoid */
   Float m_depth;
-  
+
   /*! The number of vertical slices (horizontal) longitudes */
   Uint m_slices;
 

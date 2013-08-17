@@ -20,7 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \brief The material container represents a material
- *                      
+ *
  * A material has the following properties:
  *    ambient Intensity
  *    ambient color
@@ -52,7 +52,7 @@ class Formatter;
 
 /*! \brief A representation of a material */
 class SGAL_SGAL_DECL Material : public Container {
-public: 
+public:
   enum {
     FIRST = Container::LAST - 1,
     AMBIENT_INTENSITY,
@@ -96,7 +96,7 @@ public:
 
   /*! Obtain the diffuse color */
   const Vector3f& get_diffuse_color() const;
-  
+
   /*! Obtain the diffuse color */
   void get_diffuse_color(Vector3f& color) const;
 
@@ -111,7 +111,7 @@ public:
 
   /*! Obtain the specular color */
   const Vector3f& get_specular_color() const;
-  
+
   /*! Set the emissive color */
   void set_emissive_color(const Vector3f& color);
 
@@ -120,7 +120,7 @@ public:
 
   /*! Obtain the emissive color */
   const Vector3f& get_emissive_color() const;
-  
+
   /*! Get the emissive color */
   void get_emissive_color(Vector3f& color) const;
 
@@ -151,6 +151,10 @@ public:
   /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of this container */
   virtual void set_attributes(Element* elem);
 
@@ -168,7 +172,7 @@ private:
   static const std::string s_tag;
 
   // static unsigned int m_dither_matrix[1025][32];
-  
+
   /*! the node prototype */
   static Container_proto* s_prototype;
 
@@ -240,7 +244,7 @@ inline void Material::set_emissive_color(const Vector3f& color)
 /*! \brief obtains the emissive color */
 inline const Vector3f& Material::get_emissive_color() const
 { return m_emissive_color; }
-  
+
 /*! \brief gets the emissive color */
 inline void Material::get_emissive_color(Vector3f& color) const
 { color = m_emissive_color; }

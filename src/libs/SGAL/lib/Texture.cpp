@@ -43,30 +43,30 @@
 
 SGAL_BEGIN_NAMESPACE
 
-const Texture::Min_filter Texture::m_def_min_filter = Texture::LINEAR_MIN;
-const Texture::Mag_filter Texture::m_def_mag_filter = Texture::LINEAR_MAG;
+const Texture::Min_filter Texture::m_def_min_filter(Texture::LINEAR_MIN);
+const Texture::Mag_filter Texture::m_def_mag_filter(Texture::LINEAR_MAG);
 
-const Texture::Wrap Texture::m_def_wrap_s = Texture::REPEAT;
-const Texture::Wrap Texture::m_def_wrap_t = Texture::REPEAT;
-const Texture::Wrap Texture::m_def_wrap_r = Texture::REPEAT;
+const Texture::Wrap Texture::m_def_wrap_s(Texture::REPEAT);
+const Texture::Wrap Texture::m_def_wrap_t(Texture::REPEAT);
+const Texture::Wrap Texture::m_def_wrap_r(Texture::REPEAT);
 
-Container_proto* Texture::s_prototype = NULL;
+Container_proto* Texture::s_prototype(NULL);
 
 const char* Texture::s_min_filter_names[] = {
-  "nearest",                  // NEAREST_MIN, 
+  "nearest",                  // NEAREST_MIN,
   "linear",                   // LINEAR_MIN,
-  "mipmapNearest",            // NEAREST_MIPMAP_NEAREST, 
-  "mipmapLinear",             // NEAREST_MIPMAP_LINEAR, 
+  "mipmapNearest",            // NEAREST_MIPMAP_NEAREST,
+  "mipmapLinear",             // NEAREST_MIPMAP_LINEAR,
   "linearMipmapLinear"        // LINEAR_MIPMAP_LINEAR
 };
 
 const char* Texture::s_mag_filter_names[] = {
-  "nearest",                  // NEAREST_MAG, 
+  "nearest",                  // NEAREST_MAG,
   "linear"                    // LINEAR_MAG
 };
 
 const char* Texture::s_wrap_names[] = {
-  "clamp",                    // CLAMP, 
+  "clamp",                    // CLAMP,
   "repeat",                   // REPEAT,
   "clampToEdge"               // CLAMP_TO_EDGE
 };
@@ -221,10 +221,10 @@ void Texture::clean()
 }
 
 /*! \brief sets the attributes of the texture. */
-void Texture::set_attributes(Element* elem) 
+void Texture::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
-  
+
   Container::set_attributes(elem);
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
@@ -258,9 +258,9 @@ void Texture::set_attributes(Element* elem)
 #if 0
 /*!
  */
-Attribute_list Texture::get_attributes() 
-{ 
-  Attribute_list attrs; 
+Attribute_list Texture::get_attributes()
+{
+  Attribute_list attrs;
   Attribue attrib;
   char buf[32];
 
@@ -289,7 +289,7 @@ Attribute_list Texture::get_attributes()
     attrs.push_back(attrib);
   }
 
-  return attrs; 
+  return attrs;
 }
 
 /*! add a material to the material pool. connect the material to
@@ -331,7 +331,7 @@ void Texture::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func;
-  
+
   exec_func = static_cast<Execution_function>(&Texture::min_filter_changed);
   SF_int* min_filter_field_info = new SF_int(MIN_FILTER, "minFilter",
                                              get_member_offset(&m_min_filter),
@@ -341,7 +341,7 @@ void Texture::init_prototype()
   exec_func = static_cast<Execution_function>(&Texture::mag_filter_changed);
   SF_int* mag_filter_field_info = new SF_int(MAG_FILTER, "magFilter",
                                              get_member_offset(&m_mag_filter),
-                                             exec_func);  
+                                             exec_func);
   s_prototype->add_field_info(mag_filter_field_info);
 
   exec_func = static_cast<Execution_function>(&Texture::wrap_s_changed);
@@ -363,8 +363,8 @@ void Texture::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Texture::get_prototype() 
-{  
+Container_proto* Texture::get_prototype()
+{
   if (!s_prototype) Texture::init_prototype();
   return s_prototype;
 }
@@ -375,7 +375,7 @@ void Texture::load_color_map(Image* image, GLenum target)
   Uint width = image->get_width();
   Uint height = image->get_height();
   Image::Format format = image->get_format();
-  
+
   GLint req_format = Image::get_format_format(format);
   GLint req_type = Image::get_format_type(format);
 
@@ -390,7 +390,7 @@ void Texture::load_color_map(Image* image, GLenum target)
   }
 
   GLenum internal_format = Image::get_format_internal_format(format);
-  
+
   if (m_min_filter >= NEAREST_MIPMAP_NEAREST) {
     int rc = gluBuild2DMipmaps(target, internal_format, width, height,
                                req_format, req_type, image->get_pixels());

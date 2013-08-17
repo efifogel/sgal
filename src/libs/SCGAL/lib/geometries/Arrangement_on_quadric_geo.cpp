@@ -70,7 +70,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Arrangement_on_quadric_geo::s_tag = "ArrangementOnQuadric";
-Container_proto* Arrangement_on_quadric_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_quadric_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Arrangement_on_quadric_geo, "Arrangement_on_quadric_geo");
 
@@ -85,10 +85,8 @@ Arrangement_on_quadric_geo::~Arrangement_on_quadric_geo() { clear(); }
 void Arrangement_on_quadric_geo::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto(Arrangement_on_surface_geo::get_prototype());
-
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
+  s_prototype =
+    new Container_proto(Arrangement_on_surface_geo::get_prototype());
 }
 
 /*! \brief deletes the container prototype. */
@@ -118,7 +116,7 @@ Container_proto* Arrangement_on_quadric_geo::get_prototype()
     const std::string& value = elem->get_value(ai);
   }
 #endif
-  
+
   typedef Element::Cont_attr_iter       Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
@@ -132,7 +130,7 @@ Container_proto* Arrangement_on_quadric_geo::get_prototype()
       continue;
     }
   }
-  
+
   // Sets the multi-container attributes of this node:
   typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
   typedef Element::Cont_list              Cont_list;
@@ -181,7 +179,7 @@ void Arrangement_on_quadric_geo::clean()
   // creating the spatial segments
   std::vector<X_monotone_curve> segments_3;
   std::vector<Point> points_3;
-                
+
   for (it = m_quadric_nodes.begin(); it != m_quadric_nodes.end(); ++it) {
     std::vector< X_monotone_curve::Projected_segment_2 > lower_2, upper_2;
     Quadric_geo* qg = *it;
@@ -193,13 +191,13 @@ void Arrangement_on_quadric_geo::clean()
     QdX::lift_segments<X_monotone_curve>(lower_2.begin(), lower_2.end(),
                                          base_quadric, 0,
                                          std::back_inserter(segments_3));
-                    
+
     QdX::lift_segments<X_monotone_curve>(upper_2.begin(), upper_2.end(),
                                          base_quadric, 1,
                                          std::back_inserter(segments_3));
 #else
     Quadric_pair_3 pair(base_quadric, qg->get_quadric());
-    
+
     // lift segments
     pair.spatial_intersections<X_monotone_curve>(base_quadric,
                                                  std::back_inserter(segments_3),
@@ -216,25 +214,25 @@ void Arrangement_on_quadric_geo::clean()
   // Initialize:
   Geom_traits geo_traits(base_quadric);
   m_aoq = Arrangement_on_quadric(&geo_traits);
-                
+
   // Insert:
   CGAL::insert_empty(m_aoq,
                      segments_3.begin(), segments_3.end(),
                      points_3.begin(), points_3.end());
-  
+
   m_dirty = false;
 }
 
 /*! \brief */
 void Arrangement_on_quadric_geo::cull(Cull_context& cull_context)
 {
-  //! \todo 
+  //! \todo
 }
 
 /*! \brief */
 void Arrangement_on_quadric_geo::isect(Isect_action* action)
 {
-  //! \todo 
+  //! \todo
 }
 
 /*! \brief */
@@ -294,7 +292,7 @@ void Arrangement_on_quadric_geo::draw_aos_edges(Draw_action* action)
     trg[0] = static_cast<float>(CGAL::to_double(target.dx()));
     trg[1] = static_cast<float>(CGAL::to_double(target.dy()));
     trg[2] = static_cast<float>(CGAL::to_double(target.dz()));
-    
+
     src.normalize();
     trg.normalize();
     draw_aos_edge(action, src, trg);
@@ -306,7 +304,7 @@ void Arrangement_on_quadric_geo::draw_aos_edges(Draw_action* action)
 void Arrangement_on_quadric_geo::set_base_quadric(Shared_quadric_geo quadric)
 {
   m_base_quadric = quadric;
-  m_is_sphere_bound_dirty = SGAL_TRUE;
+  m_is_sphere_bound_dirty = true;
 }
 
 SGAL_END_NAMESPACE

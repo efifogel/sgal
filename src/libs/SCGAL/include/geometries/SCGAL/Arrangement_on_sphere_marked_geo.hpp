@@ -85,10 +85,10 @@ public:
 
   typedef boost::shared_ptr<Arrangement_on_sphere_marked_geo>
     Shared_arrangement_on_sphere_marked_geo;
-  
+
 protected:
   typedef Arrangement_on_surface                   Aos_marked;
-  
+
   typedef Aos_topol_traits::Default_point_location_strategy
                                                    Aos_point_location_strategy;
 
@@ -100,21 +100,23 @@ public:
   virtual ~Arrangement_on_sphere_marked_geo();
 
   /* Construct the prototype. */
-  static Arrangement_on_sphere_marked_geo* prototype()
-  { return new Arrangement_on_sphere_marked_geo(true); }
+  static Arrangement_on_sphere_marked_geo* prototype();
 
   /*! Clone. */
-  virtual Container* clone()
-  { return new Arrangement_on_sphere_marked_geo(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
@@ -138,7 +140,7 @@ public:
 
   /*! Set the arrangement. */
   void set_aos(Aos_marked* aos);
-  
+
   /*! Add a geometry container that represents an arrangement on a
    * sphere to the list of such geometry containers.
    */
@@ -155,15 +157,15 @@ public:
   { return m_overlay_traits; }
 
   // Marked vertex attributes:
-  
+
   /*! Obtain the marked vertex shape style. */
   Vertex_style get_aos_marked_vertex_style() const
   { return m_aos_marked_vertex_style; }
 
   /*! Set the marked vertex shape style. */
-  void set_aos_marked_vertex_style(Vertex_style style) 
+  void set_aos_marked_vertex_style(Vertex_style style)
   { m_aos_marked_vertex_style = style; }
-  
+
   /*! Obtain the marked vertex point size. */
   Float get_aos_marked_vertex_point_size() const
   { return m_aos_marked_vertex_point_size; }
@@ -171,13 +173,13 @@ public:
   /*! Set the marked vertex point size. */
   void set_aos_marked_vertex_point_size(Float size)
   { m_aos_marked_vertex_point_size = size; }
-  
+
   /*! Obtain the marked vertex radius. */
   Float get_aos_marked_vertex_radius() const
   { return m_aos_marked_vertex_radius; }
 
   /*! Set the marked vertex radius. */
-  void get_aos_marked_vertex_radius(Float radius) 
+  void get_aos_marked_vertex_radius(Float radius)
   { m_aos_marked_vertex_radius = radius; }
 
   /*! Obtain the marked vertex color. */
@@ -230,7 +232,7 @@ public:
   /*! Obtaint the width of the lines that represent aos marked edges. */
   Float get_aos_marked_edge_line_width() const
   { return m_aos_marked_edge_line_width; }
-  
+
   /*! Set the width of the lines that represent aos marked edges. */
   void set_aos_marked_edge_line_width(Float width)
   { m_aos_marked_edge_line_width = width; }
@@ -246,7 +248,7 @@ public:
   // Aos marked face attributes:
   Float get_aos_marked_face_transparency() const
   { return m_aos_marked_face_transparency; }
-  
+
   /*! Print statistics. */
   void print_stat() { Arrangement_on_surface_geo::print_stat(this); }
 
@@ -261,14 +263,14 @@ protected:
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
-  
+
     /*! Constructor. */
     Sphere_marked_colored_vertices_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the edges. */
     virtual void operator()(Draw_action* action);
   };
-  
+
   /*! A function object that renders the isolated vertices with color. */
   class Sphere_marked_colored_isolated_vertices_renderer :
     public Arrangement_renderer::Renderer
@@ -279,11 +281,11 @@ protected:
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
-  
+
     /*! Constructor. */
     Sphere_marked_colored_isolated_vertices_renderer(Geometry& geo) :
       m_geo(geo) {}
-    
+
     /*! Render the edges. */
     virtual void operator()(Draw_action* action);
   };
@@ -298,10 +300,10 @@ protected:
 
   public:
     typedef Arrangement_on_sphere_marked_geo               Geometry;
-  
+
     /*! Constructor. */
     Sphere_marked_colored_edges_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the edges. */
     virtual void operator()(Draw_action* action);
   };
@@ -313,7 +315,7 @@ protected:
 
     /*! Constructor. */
     Marked_face_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
 
@@ -321,7 +323,7 @@ protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
   };
-    
+
   typedef SGAL::Line_colored_edges_renderer
     <Sphere_marked_colored_edges_renderer>
     Sphere_marked_line_colored_edges_renderer;
@@ -344,14 +346,14 @@ protected:
     Sphere_marked_isolated_vertices_renderer;
   typedef Edges_renderer<Self>
     Sphere_marked_edges_renderer;
-  
+
   typedef Inflated_line_edges_renderer<Sphere_marked_edges_renderer>
     Sphere_marked_inflated_line_edges_renderer;
   typedef Inflated_strip_edges_renderer<Sphere_marked_edges_renderer>
     Sphere_marked_inflated_strip_edges_renderer;
   typedef Inflated_tube_edges_renderer<Sphere_marked_edges_renderer>
     Sphere_marked_inflated_tube_edges_renderer;
-  
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const { return s_tag; }
 
@@ -360,7 +362,7 @@ protected:
    * when this geometry node is destructed.
    */
   Boolean m_owned_aos;
-  
+
   /*! The arrangement of great-circle arcs on a sphere. */
   Aos_marked* m_aos;
 
@@ -384,7 +386,7 @@ protected:
   typedef std::vector<Shared_arrangement_on_sphere_marked_geo> Aos_geo_vector;
   typedef Aos_geo_vector::iterator                             Aos_geo_iter;
   typedef Aos_geo_vector::difference_type                      Aos_geo_diff;
-  
+
   /*! A container of geometry nodes that represent arrangements of
    * great-circle arcs on a sphere.
    */
@@ -401,7 +403,7 @@ protected:
 
   /*! The size of the point that represents a marked vertex. */
   Float m_aos_marked_vertex_point_size;
-  
+
   /*! The color of the marked vertices. */
   Vector3f m_aos_marked_vertex_color;
 
@@ -411,7 +413,7 @@ protected:
 
   /*! The marked edge style. */
   Edge_style m_aos_marked_edge_style;
-  
+
   /*! The marked edge rendering type. */
   Uint m_aos_marked_edge_count;
 
@@ -431,11 +433,11 @@ protected:
   Vector3f m_aos_marked_face_color;
 
   /*! The transparency of the aos marked face. */
-  Float m_aos_marked_face_transparency;  
+  Float m_aos_marked_face_transparency;
 
   /*! The marked primal vertex renderer. */
   Arrangement_renderer::Renderer* m_marked_face_renderer;
-  
+
 private:
   typedef Arrangement_on_sphere_marked_geo                      Self;
 
@@ -514,7 +516,16 @@ private:
   /*! Detsroy the renderers. */
   void destroy_renderers();
 };
-  
+
+/* \brief constructs the prototype. */
+inline Arrangement_on_sphere_marked_geo*
+Arrangement_on_sphere_marked_geo::prototype()
+{ return new Arrangement_on_sphere_marked_geo(true); }
+
+/*! \brief clones. */
+inline Container* Arrangement_on_sphere_marked_geo::clone()
+{ return new Arrangement_on_sphere_marked_geo(); }
+
 SGAL_END_NAMESPACE
 
 #endif

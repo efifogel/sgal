@@ -55,7 +55,7 @@ public:
 
   /*! Destructor */
   virtual ~Text();
-  
+
   /* Construct the prototype. */
   static Text* prototype() { return new Text(true); }
 
@@ -70,6 +70,10 @@ public:
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
@@ -97,7 +101,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

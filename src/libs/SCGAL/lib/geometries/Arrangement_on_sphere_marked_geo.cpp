@@ -60,7 +60,7 @@ SGAL_BEGIN_NAMESPACE
 
 const std::string Arrangement_on_sphere_marked_geo::s_tag =
   "ArrangementOnSphereMarked";
-Container_proto* Arrangement_on_sphere_marked_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_sphere_marked_geo::s_prototype(NULL);
 
 // Default values
 const Arrangement_on_sphere_marked_geo::Vertex_style
@@ -121,7 +121,7 @@ Arrangement_on_sphere_marked_geo(Boolean proto) :
   m_aos_marked_edge_line_width(s_def_aos_marked_edge_line_width),
   m_aos_marked_edge_color(s_def_aos_marked_edge_color),
   m_aos_marked_face_color(s_def_aos_marked_face_color),
-  m_aos_marked_face_transparency(s_def_aos_marked_face_transparency),  
+  m_aos_marked_face_transparency(s_def_aos_marked_face_transparency),
   m_marked_face_renderer(NULL)
 { if (!proto) create_renderers(); }
 
@@ -145,10 +145,13 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
   s_prototype =
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 
+  // aosMarkedVertexRadius
   s_prototype->
     add_field_info(new SF_float(AOS_MARKED_VERTEX_RADIUS,
                                 "aosMarkedVertexRadius",
                                 get_member_offset(&m_aos_marked_vertex_radius)));
+
+  // aosMarkedEdgeRadius
   s_prototype->
     add_field_info(new SF_float(AOS_MARKED_EDGE_RADIUS,
                                 "aosMarkedEdgeRadius",
@@ -255,12 +258,12 @@ set_attributes(Element* elem)
     }
 
     if (name == "aosMarkedFaceIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_marked_faces_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -268,19 +271,19 @@ set_attributes(Element* elem)
       m_marked_faces_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_marked_faces_indices[i++] = 
+        m_marked_faces_indices[i++] =
           static_cast<Uint>(boost::lexical_cast<int>(*it));
       }
       continue;
     }
-    
+
     if (name == "aosMarkedEdgeIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_marked_edges_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -288,33 +291,33 @@ set_attributes(Element* elem)
       m_marked_edges_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_marked_edges_indices[i++] = 
+        m_marked_edges_indices[i++] =
           static_cast<Uint>(boost::lexical_cast<int>(*it));
       }
       continue;
     }
 
     if (name == "aosMarkedVertexIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_marked_vertices_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
-      
+
       m_marked_vertices_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_marked_vertices_indices[i++] = 
+        m_marked_vertices_indices[i++] =
           static_cast<Uint>(boost::lexical_cast<int>(*it));
       }
       continue;
     }
   }
-  
+
   typedef Element::Cont_attr_iter       Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
@@ -350,7 +353,7 @@ set_attributes(Element* elem)
     }
     continue;
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 
@@ -581,7 +584,7 @@ Sphere_marked_colored_edges_renderer::operator()(Draw_action* action)
     Vector3f normal = to_vector3f(curve.normal());
     src.normalize();
     trg.normalize();
-    
+
     if (hei->mark() && m_geo.is_aos_marked_edge_enabled()) {
       const Vector3f& color = m_geo.get_aos_marked_edge_color();
       glColor3fv((float*)&color);
@@ -608,7 +611,7 @@ draw_aos_marked_face(Draw_action* action)
   Aos_marked::Face_const_iterator fi;
   for (fi = m_aos->faces_begin(); fi != m_aos->faces_end(); ++fi) {
     if (!fi->mark()) continue;
-    
+
     // First, if the face is non-convex then we assume that it does no
     // cross any of the boundaries. We partition the face into convex pieces
     // and then  draw them. (Pay attention to the fact that, for NOW, we
@@ -667,7 +670,7 @@ draw_aos_marked_face(Draw_action* action)
 //     }
   }
 }
-  
+
 /*! \brief renders the marked primal vertex. */
 void Arrangement_on_sphere_marked_geo::Marked_face_renderer::
 operator()(Draw_action* action)
@@ -721,7 +724,7 @@ void Arrangement_on_sphere_marked_geo::create_renderers()
     new Sphere_marked_inflated_strip_edges_renderer(*this);
   m_inflated_tube_edges_renderer =
     new Sphere_marked_inflated_tube_edges_renderer(*this);
-  
+
   m_marked_face_renderer = new Marked_face_renderer(*this);
 }
 
@@ -798,5 +801,5 @@ Arrangement_on_sphere_marked_geo::set_aos(Arrangement_on_sphere_marked* aos)
   m_dirty = false;
   m_aos = aos;
 }
-  
+
 SGAL_END_NAMESPACE

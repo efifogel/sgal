@@ -41,7 +41,7 @@ SGAL_BEGIN_NAMESPACE
 const std::string Exact_coord_array::s_tag = "ExactCoordinate";
 
 /*! The node prototype */
-Container_proto * Exact_coord_array::s_prototype = NULL;
+Container_proto* Exact_coord_array::s_prototype(NULL);
 
 /*! Register to the container factory */
 REGISTER_TO_FACTORY(Exact_coord_array, "Exact_coord_array");
@@ -62,18 +62,18 @@ void Exact_coord_array::delete_prototype()
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */  
-Container_proto * Exact_coord_array::get_prototype()
+/*! Obtain the node prototype */
+Container_proto* Exact_coord_array::get_prototype()
 {
   if (s_prototype == NULL) Exact_coord_array::init_prototype();
   return s_prototype;
 }
-  
+
 /*! Sets the attributes of the object extracted from the VRML or X3D file.
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Exact_coord_array::set_attributes(Element * elem)
+void Exact_coord_array::set_attributes(Element* elem)
 {
   // We want to allow several types of points (so we can, for example,
   // use both fltPoint and fltPolarPoint in the same ExactCoordinate
@@ -159,17 +159,17 @@ void Exact_coord_array::set_attributes(Element * elem)
         Exact_FT vt_square = CGAL::square(vt);
         Exact_FT cosv = (1 - vt_square) / (1 + vt_square);
         Exact_FT sinv = 2 * vt / (1 + vt_square);
-        
+
         Exact_FT fx = cosu * cosv;
         Exact_FT fy = cosu * sinv;
         Exact_FT fz = sinu;
 #endif
-        
+
         m_array[old_size + i] = Exact_point_3(fx,fy,fz);
       }
       elem->mark_delete(ai);
     }
-    
+
     if (name == "ratPoint") {
       Uint num_values = get_num_values<Exact_number_type>(value);
       Uint size = num_values / 3;
@@ -196,17 +196,17 @@ void Exact_coord_array::set_attributes(Element * elem)
                               static_cast<float>(todouble(p.z())));
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
 #if 0
 Attribute_list Exact_coord_array::get_attributes()
-{ 
+{
   Attribute_list attrs;
   attrs = Coord_array::get_attributes();
-  return attrs; 
+  return attrs;
 }
 #endif
 

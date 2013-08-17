@@ -21,7 +21,7 @@
 
 /*!
  * A base class representing a light.
- *                      
+ *
  * A material has the following properties:
  *    is on (boolean)
  *    intensity (0-1)
@@ -63,7 +63,23 @@ public:
   virtual ~Light();
 
   /*! Clone */
-  virtual Container* clone() { SGAL_assertion(0); return 0; }
+  virtual Container* clone() { SGAL_error(); return 0; }
+
+  /*! Initialize the node prototype */
+  virtual void init_prototype();
+
+  virtual void delete_prototype();
+
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
 
   // ---  Get/Set Methods  ---
   void set_on(Boolean is_on);
@@ -82,23 +98,13 @@ public:
 
   virtual void cull(Cull_context& cull_context);
   virtual Action::Trav_directive draw(Draw_action* draw_action);
-  
+
   void ref() { m_ref++; }
   void unref() { --m_ref; }
-    
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
-  virtual void delete_prototype();
-  virtual Container_proto* get_prototype();
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-  
   /*! Add the container to a given scene
    * \param scene_graph the given scene
-   */  
+   */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
 protected:

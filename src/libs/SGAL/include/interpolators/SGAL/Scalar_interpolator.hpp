@@ -14,21 +14,21 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * Scalar interpolator engine
- * 
+ *
  * The scalar interpolator engine has the following attributes:
  *        - fraction (field)
  *        - value (of type float) (field)
- *        - keys 
+ *        - keys
  *        - values
  *        - interpolation flag
- *        
+ *
  *        The fraction field is the trigger to the execute function.
  *        So - for each cascade of the fraction field execute() is activated ->
  *        the value field is calculated according to the fraction,keys,values
@@ -59,7 +59,7 @@ public:
   };
 
   /*! Constructor */
-  Scalar_interpolator(Boolean interpolate_flag = true, 
+  Scalar_interpolator(Boolean interpolate_flag = true,
                       Boolean proto = false);
 
   /*! Destructor */
@@ -74,14 +74,20 @@ public:
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   // Functions that handles the creation of an instance in the scene graph
   virtual void set_attributes(Element* elem);
   // virtual Attribute_list get_attributes();
 
-  // The execution function - executes the intepolation for each cascade of 
+  // The execution function - executes the intepolation for each cascade of
   // m_fraction, updated m_value and activate Cascade on it.
   virtual void execute(Field_info*);
 
@@ -93,7 +99,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;

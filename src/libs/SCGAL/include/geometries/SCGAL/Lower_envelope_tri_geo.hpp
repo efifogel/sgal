@@ -87,9 +87,6 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
-
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -98,6 +95,13 @@ public:
 
   /*! Obtain the prototype of this container. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   /*! Transform the coordinates of the envelope into spheres.
    * \param spheres (o) the transformed coordinates.
@@ -134,7 +138,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! Indicates whether the envelope data structure is owned, i.e., explicitly
-   * allocated. If the envelope data structure is owned, it should be 
+   * allocated. If the envelope data structure is owned, it should be
    * destructed when this geometry node is destructed.
    */
   Boolean m_owned_envelope;

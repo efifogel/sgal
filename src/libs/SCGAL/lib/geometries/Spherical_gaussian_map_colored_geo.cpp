@@ -67,7 +67,7 @@ SGAL_BEGIN_NAMESPACE
 
 const std::string
 Spherical_gaussian_map_colored_geo::s_tag("SphericalGaussianMapColored");
-Container_proto* Spherical_gaussian_map_colored_geo::s_prototype = NULL;
+Container_proto* Spherical_gaussian_map_colored_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Spherical_gaussian_map_colored_geo,
                     "Spherical_gaussian_map_colored_geo");

@@ -68,6 +68,10 @@ public:
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
+  /// \name field handlers
+  //@{
+  //@}
+
   /*! Set the attributes of the object extracted from the input file.
    * \param elem
    */

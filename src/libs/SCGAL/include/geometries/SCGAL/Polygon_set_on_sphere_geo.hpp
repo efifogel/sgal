@@ -71,7 +71,7 @@ public:
   typedef boost::shared_ptr<Polygon_set_on_sphere_geo>
     Shared_polygon_set_on_sphere_geo;
 
-  /*! Fields 
+  /*! Fields
    * We assume that the Boolean set operations fields are continous and in
    * the same order as s_operation_types.
    */
@@ -91,7 +91,7 @@ public:
 protected:
   typedef Polygon_set_on_sphere_geo                   Self;
   typedef Arrangement_on_sphere_marked_geo            Base;
-  
+
   typedef Base::Aos_geom_traits                       Gps_traits_2;
   typedef CGAL::General_polygon_set_on_surface_2<
     Gps_traits_2, Base::Aos_topol_traits>             Polygon_set;
@@ -110,21 +110,23 @@ public:
   virtual ~Polygon_set_on_sphere_geo();
 
   /* Construct the prototype. */
-  static Polygon_set_on_sphere_geo* prototype()
-  { return new Polygon_set_on_sphere_geo(true); }
+  static Polygon_set_on_sphere_geo* prototype();
 
   /*! Clone. */
-  virtual Container* clone()
-  { return new Polygon_set_on_sphere_geo(); }
+  virtual Container* clone();
 
   /*! Initialize the container prototype. */
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
-  virtual void delete_prototype(); 
+  virtual void delete_prototype();
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
@@ -167,7 +169,7 @@ protected:
    */
   bool is_operation_type_name(const std::string& op_name)
   { return is_operation_type(get_operation_type_by_name(op_name)); }
-  
+
   //! construct_curves
   /*! Construct x-monotone curve that represent the shortest geodesic arc
       between p1 and p2.
@@ -184,14 +186,14 @@ protected:
    */
   Polygon_set m_polygon_set;
 
-  /*! 
+  /*!
     enum that specifies the operation type.
     Should be equal to one of the following values: SET_COMPLEMENT,
-    SET_INTERSECTION, SET_UNION, SET_DIFFERENCE, SET_SYMMETRIC_DIFFERENCE, 
+    SET_INTERSECTION, SET_UNION, SET_DIFFERENCE, SET_SYMMETRIC_DIFFERENCE,
     or NUM_OF_OPERATIONS (which specifies no operation).
    */
   Operation_type m_operation_type;
- 
+
   /*! An array of indices into the vertex-coordinate array */
   Int_container m_poly_indices;
 
@@ -207,7 +209,15 @@ protected:
 
   /*! Default values. */
 };
-  
+
+/* \brief constructs the prototype. */
+inline Polygon_set_on_sphere_geo* Polygon_set_on_sphere_geo::prototype()
+{ return new Polygon_set_on_sphere_geo(true); }
+
+/*! \brief clones. */
+inline Container* Polygon_set_on_sphere_geo::clone()
+{ return new Polygon_set_on_sphere_geo(); }
+
 SGAL_END_NAMESPACE
 
 #endif // SGAL_POLYGON_SET_ON_SPHERE_GEO_HPP

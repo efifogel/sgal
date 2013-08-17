@@ -34,8 +34,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Sphere::s_tag = "Sphere";
-Container_proto * Sphere::s_prototype = 0;
+const std::string Sphere::s_tag = "Sphere";
+Container_proto * Sphere::s_prototype(NULL);
 
 // Default values:
 const Vector3f Sphere::s_def_center(0,0,0);
@@ -48,10 +48,10 @@ REGISTER_TO_FACTORY(Sphere, "Sphere");
 /*! Constructor */
 Sphere::Sphere(Boolean proto) :
   Geometry(proto),
-  m_dirty(SGAL_TRUE),
+  m_dirty(true),
   m_sphere(NULL),
   m_center(s_def_center),
-  m_radius(s_def_radius), 
+  m_radius(s_def_radius),
   m_stacks(s_def_stacks),
   m_slices(s_def_slices)
 {
@@ -61,7 +61,7 @@ Sphere::Sphere(Boolean proto) :
 Sphere::~Sphere() { gluDeleteQuadric(m_sphere); }
 
 /*! \brief drawss the sphere. */
-void Sphere::draw(Draw_action* /* action */) 
+void Sphere::draw(Draw_action* /* action */)
 {
   if (is_dirty()) init();
 
@@ -78,7 +78,7 @@ void Sphere::draw(Draw_action* /* action */)
 }
 
 /*! \brief draws the object in selection mode. */
-void Sphere::isect(Isect_action* /* action */) 
+void Sphere::isect(Isect_action* /* action */)
 {
   if (is_dirty()) init();
   glPushMatrix();
@@ -92,9 +92,9 @@ void Sphere::init()
 {
   m_sphere = gluNewQuadric();
   gluQuadricOrientation(m_sphere, GLU_OUTSIDE);
-  gluQuadricNormals(m_sphere, GLU_SMOOTH); 
-  gluQuadricDrawStyle(m_sphere, GLU_FILL); 
-  m_dirty = SGAL_FALSE;
+  gluQuadricNormals(m_sphere, GLU_SMOOTH);
+  gluQuadricDrawStyle(m_sphere, GLU_FILL);
+  m_dirty = false;
 }
 
 /*! Calculare the sphere bound of the sphere. In this case, the sphere
@@ -154,9 +154,9 @@ void Sphere::set_attributes(Element * elem)
  * The list is of name=value pairs.
  * @return a list of pairs of strings
  */
-Attribute_list Sphere::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Sphere::get_attributes()
+{
+  Attribute_list attribs;
   // attribs = Geometry::get_attributes();
   Attribue attrib;
   char buf[32];
@@ -226,10 +226,10 @@ void Sphere::delete_prototype()
 }
 
 /*! \brief obtains the sphere prototype. */
-Container_proto* Sphere::get_prototype() 
-{  
+Container_proto* Sphere::get_prototype()
+{
   if (s_prototype == NULL) Sphere::init_prototype();
   return s_prototype;
-} 
+}
 
 SGAL_END_NAMESPACE

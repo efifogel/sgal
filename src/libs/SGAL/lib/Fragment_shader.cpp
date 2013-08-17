@@ -38,7 +38,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Fragment_shader::s_prototype = NULL;
+Container_proto* Fragment_shader::s_prototype(NULL);
 const std::string Fragment_shader::s_tag = "FragmentShader";
 
 /*! Constructor */
@@ -64,10 +64,10 @@ void Fragment_shader::clean()
 }
 
 /*! \brief sets the attributes of the shader node. */
-void Fragment_shader::set_attributes(Element* elem) 
+void Fragment_shader::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
-  
+
   Shader::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -95,6 +95,7 @@ void Fragment_shader::init_prototype()
   s_prototype = new Container_proto();
 
   // Add the field-info records to the prototype:
+  // url
   s_prototype->add_field_info(new SF_string(URL, "url",
                                             get_member_offset(&m_url)));
 }
@@ -107,8 +108,8 @@ void Fragment_shader::delete_prototype()
 }
 
 /*! \brief obtains the shader node prototype. */
-Container_proto* Fragment_shader::get_prototype() 
-{  
+Container_proto* Fragment_shader::get_prototype()
+{
   if (!s_prototype) Fragment_shader::init_prototype();
   return s_prototype;
 }

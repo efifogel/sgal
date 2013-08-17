@@ -30,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Gfx.hpp"
 
@@ -45,7 +46,7 @@ class Multisample;
 class SGAL_SGAL_DECL Configuration : public Container {
   friend class Indexed_face_set;
   friend class Shape;
-  //dirty patch for accessing defauly flags 
+  //dirty patch for accessing defauly flags
   //(particullary - using display lists) from Indexed_face_set
 
 public:
@@ -79,10 +80,10 @@ public:
     GDM_DISPLAY_LIST,
     GDM_VERTEX_ARRAY
   };
-  
+
   typedef boost::shared_ptr<Accumulation>               Shared_accumulation;
   typedef boost::shared_ptr<Multisample>                Shared_multisample;
-  
+
   /*! Constructor */
   Configuration(Boolean proto = false);
 
@@ -94,6 +95,42 @@ public:
 
   /*! Clone */
   virtual Container* clone();
+
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Gfx::Poly_mode* poly_mode_handle(Field_info*) { return &m_poly_mode; }
+  Boolean* display_fps_handle(Field_info*) { return &m_display_fps; }
+  Boolean* is_fixed_head_light_handle(Field_info*)
+  { return &m_is_fixed_head_light; }
+  Uint* stencil_bits_handle(Field_info*) { return &m_stencil_bits; }
+  Uint* depth_bits_handle(Field_info*) { return &m_depth_bits; }
+  Float* min_frame_rate_handle(Field_info*) { return &m_min_frame_rate; }
+  Float* min_zoom_distance_handle(Field_info*) { return &m_min_zoom_distance; }
+  Float* speed_factor_handle(Field_info*) { return &m_speed_factor; }
+  Boolean* texture_map_handle(Field_info*) { return &m_texture_map; }
+  Uint* verbosity_level_handle(Field_info*) { return &m_verbosity_level; }
+  Boolean* seamless_cube_map_handle(Field_info*)
+  { return &m_seamless_cube_map; }
+  //@}
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! */
   void set_global_lights_stationary(Boolean flag);
@@ -118,7 +155,7 @@ public:
 
   /*! Obtain the number of the desired depth bits. */
   Uint get_number_of_depth_bits() const;
-  
+
   /*! */
   void set_min_frame_rate(Float rate);
 
@@ -149,7 +186,7 @@ public:
 
   /*! Set the polygon mode. */
   void set_poly_mode(Gfx::Poly_mode mode);
-  
+
   /*! Obtain the polygon mode. */
   Gfx::Poly_mode get_poly_mode() const;
 
@@ -158,7 +195,7 @@ public:
 
   /*! Set the texture-map flag. */
   void set_texture_map(Boolean flag);
-  
+
   /*! Obtain the transformation speed scale. */
   Float get_speed_factor() const;
 
@@ -170,13 +207,13 @@ public:
 
   /*! Set the accumulation object. */
   void set_accumulation(Shared_accumulation acc);
-  
+
   /*! Obtain the accumulation object. */
   Shared_accumulation get_accumulation() const;
 
   /*! Set the multisample object. */
   void set_multisample(Shared_multisample ms);
-  
+
   /*! Obtain the multisample object. */
   Shared_multisample get_multisample() const;
 
@@ -195,7 +232,7 @@ public:
    * resulting in a seamless transition.
    */
   Boolean is_seamless_cube_map() const;
-  
+
   /*! Set the flag that indicates whether to override the appearance
    * light-enable flag. If this flag is on, the (appearance) light is enabled
    * if the corresponding geometry does not have color.
@@ -211,7 +248,7 @@ public:
    * previous appearance is not restored to its original value.
    */
   Boolean is_override_light_enable() const;
-  
+
    /*! Set defualt values. */
   void reset(Geometry_drawing_mode def_geometry_drawing_mode =
                s_def_geometry_drawing_mode,
@@ -229,25 +266,6 @@ public:
              Float def_speed_factor = s_def_speed_factor,
              Boolean def_seamless_cube_map = s_def_seamless_cube_map);
 
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype();
-  
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene.
-   */  
-  virtual void add_to_scene(Scene_graph* scene_graph);
-
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -264,7 +282,7 @@ private:
 
   /*! Multisample object. */
   Shared_multisample m_multisample;
-  
+
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Geometry_drawing_mode m_geometry_drawing_mode;
 
@@ -280,7 +298,7 @@ private:
 
   /* The desired depth bits. */
   Uint m_depth_bits;
-  
+
   Float m_min_frame_rate;
 
   /*! The polygon mode. */
@@ -306,10 +324,10 @@ private:
   /*! Detemines whether to apply filtering across faces of the cubemap
    * resulting in a seamless transition. This was a hardware limitation in
    * the past, but modern hardware is capable of interpolating across a
-   * cube face boundary. 
+   * cube face boundary.
    */
   Boolean m_seamless_cube_map;
-  
+
   /*! Indicates whether to construct the appearance material attribute when
    * missing.
    * Notice that when the appearance chages, the material attribute of the
@@ -368,7 +386,7 @@ private:
    * owned, it is constructed and destructed by this construct.
    */
   Boolean m_owned_accumulation;
-  
+
   // default values
   static const Geometry_drawing_mode s_def_geometry_drawing_mode;
   static const Boolean s_def_are_global_lights_stationary;
@@ -390,7 +408,7 @@ private:
   static const Boolean s_def_override_light_model;
   static const Boolean s_def_override_tex_gen;
   static const Boolean s_def_override_light_enable;
-  
+
   static const Char* s_geometry_drawing_mode_names[];
 };
 
@@ -435,7 +453,7 @@ inline void Configuration::set_number_of_depth_bits(Uint bits)
 /*! \brief obtains the number of the desired depth bits. */
 inline Uint Configuration::get_number_of_depth_bits() const
 { return m_depth_bits; }
-  
+
 /*! \brief */
 inline void Configuration::set_min_frame_rate(Float rate)
 { m_min_frame_rate = rate; }
@@ -474,7 +492,7 @@ inline Boolean Configuration::is_display_fps() const { return m_display_fps; }
 /*! \brief sets the polygon mode. */
 inline void Configuration::set_poly_mode(Gfx::Poly_mode mode)
 { m_poly_mode = mode; }
-  
+
 /*! \brief obtains the polygon mode. */
 inline Gfx::Poly_mode Configuration::get_poly_mode () const
 { return m_poly_mode; }
@@ -485,7 +503,7 @@ inline Boolean Configuration::is_texture_map() const { return m_texture_map; }
 /*! \brief sets the texture-map flag. */
 inline void Configuration::set_texture_map(Boolean flag)
 { m_texture_map = flag; }
-  
+
 /*! \brief obtains the transformation speed scale. */
 inline Float Configuration::get_speed_factor() const {return m_speed_factor; }
 
@@ -502,7 +520,7 @@ Configuration::get_geometry_drawing_mode() const
 /*! \brief sets the accumulation object. */
 inline void Configuration::set_accumulation(Shared_accumulation acc)
 { m_accumulation = acc; }
-  
+
 /*! \brief obtains the accumulation object. */
 inline Configuration::Shared_accumulation Configuration::get_accumulation()
   const
@@ -511,7 +529,7 @@ inline Configuration::Shared_accumulation Configuration::get_accumulation()
 /*! \brief sets the multisample object. */
 inline void Configuration::set_multisample(Shared_multisample ms)
 { m_multisample = ms; }
-  
+
 /*! \brief obtains the multisample object. */
 inline Configuration::Shared_multisample Configuration::get_multisample() const
 { return m_multisample; }
@@ -531,7 +549,7 @@ inline void Configuration::set_seamless_cube_map(Boolean flag)
  */
 inline Boolean Configuration::is_seamless_cube_map() const
 { return m_seamless_cube_map; }
-  
+
 SGAL_END_NAMESPACE
 
 #endif

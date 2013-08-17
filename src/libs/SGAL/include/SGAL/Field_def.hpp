@@ -37,13 +37,13 @@ class Script;
 class Field_def : public Node {
 public:
   // Constructor
-  Field_def(Boolean proto = SGAL_FALSE);
+  Field_def(Boolean proto = false);
 
   // Destructor
   virtual ~Field_def(){};
 
   /* Construct the prototype */
-  static Field_def * prototype() { return new Field_def(SGAL_TRUE); }
+  static Field_def * prototype() { return new Field_def(true); }
 
   /*! Clone */
   virtual Container * clone() { return new Field_def(); }
@@ -55,12 +55,16 @@ public:
     delete s_prototype;
   }
 
-  virtual Container_proto * get_prototype() 
-  {  
+  virtual Container_proto* get_prototype()
+  {
     if (s_prototype == NULL)
       init_prototype();
     return s_prototype;
-  } 
+  }
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element * elem);

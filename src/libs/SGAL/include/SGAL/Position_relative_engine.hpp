@@ -22,7 +22,7 @@
 // Copyright 2000 Enbaya Ltd.
 /**
  @class:   Position_relative_engine
-                               
+
  Purpose: Relative engine for positions
 
  Description: The position relative engine has the following attributes:
@@ -32,14 +32,14 @@
         - delta - required relative change in position (field)
         - rotation - direction for the relative position xhange (field)
                      used to calculate the new position
-        
+
         The fraction field is the trigger to the execute function.
         So - for each cascade of the fraction field execute() is activated ->
         the value field is calculated according to the fraction, position, delta
         and rotation.
         currentRotation is updated to the new rotation when a fraction value,
         which is smaller than the last fraction value is given (this means
-        this is a new cycle).  
+        this is a new cycle).
 */
 
 #include "SGAL/basic.hpp"
@@ -64,25 +64,29 @@ public:
   };
 
   /*! Constructor */
-  Position_relative_engine(Boolean proto = SGAL_FALSE);
+  Position_relative_engine(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Position_relative_engine();
 
   /*! Construct the prototype */
-  static Position_relative_engine * prototype()
+  static Position_relative_engine* prototype()
   { return new Position_relative_engine(); }
 
   /*! Clone */
-  virtual Container * clone() { return new Position_relative_engine(SGAL_TRUE); }
+  virtual Container* clone() { return new Position_relative_engine(true); }
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
   virtual void delete_prototype();
-  virtual Container_proto * get_prototype();
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
   /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
@@ -90,10 +94,10 @@ public:
   // using the currentRotation relative angle and fraction
   virtual void execute(Field_info*);
 
-  virtual Trav_directive Draw(Draw_action *draw_action) {return Trav_cont;}; 
+  virtual Trav_directive Draw(Draw_action* draw_action) {return Trav_cont;};
 
 private:
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   Float m_fraction;
   Vector3f m_value;

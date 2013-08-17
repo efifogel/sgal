@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -36,12 +36,12 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Environment_map::s_tag = "sgalEnvironmentMap";
-Container_proto * Environment_map::s_prototype = NULL;
+std::string Environment_map::s_tag = "EnvironmentMap";
+Container_proto* Environment_map::s_prototype(NULL);
 
 // Default values:
-float Environment_map::m_def_alpha = 0.5f;
-bool Environment_map::m_def_quality = SGAL_FALSE;
+float Environment_map::m_def_alpha(0.5f);
+bool Environment_map::m_def_quality(false);
 
 REGISTER_TO_FACTORY(Environment_map, "Environment_map");
 
@@ -58,16 +58,16 @@ Environment_map::~Environment_map() {}
 
 /*!
  */
-void Environment_map::set_alpha(float alpha) 
-{ 
-  m_alpha = alpha; 
+void Environment_map::set_alpha(float alpha)
+{
+  m_alpha = alpha;
 }
 
 /*!
  */
-float Environment_map::get_alpha() const 
-{ 
-  return m_alpha; 
+float Environment_map::get_alpha() const
+{
+  return m_alpha;
 }
 
 /*!
@@ -101,7 +101,7 @@ Boolean Environment_map::detach_context(Context * context)
   return result;
 }
 
-/*! prototype initialization function - initializes the prototype for 
+/*! prototype initialization function - initializes the prototype for
  * all the node instances of Appearance in the scene graph.
  * Creates and adds a field info for each potential field.
  */
@@ -137,8 +137,8 @@ void Environment_map::delete_prototype()
 
 /*!
  */
-Container_proto * Environment_map::get_prototype() 
-{  
+Container_proto * Environment_map::get_prototype()
+{
   if (s_prototype == NULL) Environment_map::init_prototype();
   return s_prototype;
 }
@@ -147,16 +147,15 @@ Container_proto * Environment_map::get_prototype()
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Environment_map::set_attributes(Element * elem)
+void Environment_map::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter                Str_attr_iter;
 
   Container::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "sgalAlpha") {
       set_alpha(atoff(value.c_str()));
       elem->mark_delete(ai);
@@ -176,8 +175,8 @@ void Environment_map::set_attributes(Element * elem)
 /*!
  */
 Attribute_list Environment_map::get_attributes()
-{  
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
   char buf[32];
 
@@ -198,7 +197,7 @@ Attribute_list Environment_map::get_attributes()
   return attribs;
 }
 
-/*! Add the reflection map into the scene graph. 
+/*! Add the reflection map into the scene graph.
  * There are three ways an reflection map can be added.
  * -# the reflection map is defined as a child of a Shape object. In this case
  * we set the reflection map on the shape to point to this.
@@ -211,7 +210,7 @@ Attribute_list Environment_map::get_attributes()
  * @param parent a pointer to the parent object. NULL if the apperance
  * is defined in the top level.
  */
-void Environment_map::add_to_scene(Scene_graph * sg, XML_entity * parent) 
+void Environment_map::add_to_scene(Scene_graph * sg, XML_entity * parent)
 {
   Container::add_to_scene(sg, parent);
   sg->add_container(this);
@@ -224,7 +223,7 @@ void Environment_map::add_to_scene(Scene_graph * sg, XML_entity * parent)
   if (shape) {
     shape->set_env_map(this);
     return;
-  } 
+  }
 }
 #endif
 

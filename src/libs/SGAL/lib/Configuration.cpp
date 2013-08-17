@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Configuration::s_tag = "Configuration";
-Container_proto* Configuration::s_prototype = NULL;
+Container_proto* Configuration::s_prototype(NULL);
 
 // Default values:
 const Configuration::Geometry_drawing_mode
@@ -109,7 +109,7 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
                           Boolean def_seamless_cube_map)
 {
   if (m_accumulation) m_accumulation->reset();
-  
+
   m_geometry_drawing_mode = def_geometry_drawing_mode;
   m_are_global_lights_stationary = def_are_global_lights_stationary;
   m_is_fixed_head_light = def_is_fixed_head_light;
@@ -130,54 +130,78 @@ void Configuration::init_prototype()
 
   // Add the object fields to the prototype
   Execution_function exec_func;
-  
+
+  // polyMode
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_int(POLY_MODE, "polyMode",
-                                         get_member_offset(&m_poly_mode),
-                                         exec_func));
+  Uint_handle_function poly_mode_func =
+    reinterpret_cast<Uint_handle_function>(&Configuration::poly_mode_handle);
+  s_prototype->add_field_info(new SF_uint(POLY_MODE, "polyMode",
+                                          poly_mode_func, exec_func));
 
+  // displayFPS
+  Boolean_handle_function display_fps_func =
+    static_cast<Boolean_handle_function>(&Configuration::display_fps_handle);
   s_prototype->add_field_info(new SF_bool(DISPLAY_FPS, "displayFPS",
-                                          get_member_offset(&m_display_fps),
-                                          exec_func));
+                                          display_fps_func, exec_func));
 
-  s_prototype->
-    add_field_info(new SF_bool(FIXED_HEADLIGHT, "fixedHeadLight",
-                               get_member_offset(&m_is_fixed_head_light),
-                               exec_func));
+  // fixedHeadLight
+  Boolean_handle_function is_fixed_head_light_func =
+    static_cast<Boolean_handle_function>
+    (&Configuration::is_fixed_head_light_handle);
+  s_prototype->add_field_info(new SF_bool(FIXED_HEADLIGHT, "fixedHeadLight",
+                                          is_fixed_head_light_func, exec_func));
 
-  s_prototype->
-    add_field_info(new SF_int(STENCIL_BITS, "stencilBits",
-                              get_member_offset(&m_stencil_bits)));
+  // stencilBits
+  Uint_handle_function stencil_bits_func =
+    static_cast<Uint_handle_function>(&Configuration::stencil_bits_handle);
+  s_prototype->add_field_info(new SF_uint(STENCIL_BITS, "stencilBits",
+                                          stencil_bits_func));
 
-  s_prototype->
-    add_field_info(new SF_int(DEPTH_BITS, "depthBits",
-                              get_member_offset(&m_depth_bits)));
+  // depthBits
+  Uint_handle_function depth_bits_func =
+    static_cast<Uint_handle_function>(&Configuration::depth_bits_handle);
+  s_prototype->add_field_info(new SF_uint(DEPTH_BITS, "depthBits",
+                                          depth_bits_func));
 
-  s_prototype->
-    add_field_info(new SF_float(MIN_FRAME_RATE, "minFrameRate",
-                                get_member_offset(&m_min_frame_rate)));
+  // minFrameRate
+  Float_handle_function min_frame_rate_func =
+    static_cast<Float_handle_function>(&Configuration::min_frame_rate_handle);
+  s_prototype->add_field_info(new SF_float(MIN_FRAME_RATE, "minFrameRate",
+                                           min_frame_rate_func));
 
-  s_prototype->
-    add_field_info(new SF_float(MIN_ZOOM_DISTANCE, "minZoomDistance",
-                                get_member_offset(&m_min_zoom_distance)));
+  // minZoomDistance
+  Float_handle_function min_zoom_distance_func =
+    static_cast<Float_handle_function>
+    (&Configuration::min_zoom_distance_handle);
+  s_prototype->add_field_info(new SF_float(MIN_ZOOM_DISTANCE,
+                                           "minZoomDistance",
+                                           min_zoom_distance_func));
 
-  s_prototype->
-    add_field_info(new SF_float(SPEED_FACTOR, "speedFacotr",
-                                get_member_offset(&m_speed_factor)));
+  // speedFacotor
+  Float_handle_function speed_factor_func =
+    static_cast<Float_handle_function>(&Configuration::speed_factor_handle);
+  s_prototype->add_field_info(new SF_float(SPEED_FACTOR, "speedFacotor",
+                                           speed_factor_func));
 
-  s_prototype->
-    add_field_info(new SGAL::SF_bool(TEXTURE_MAP, "textureMap",
-                                     get_member_offset(&m_texture_map)));
+  // textureMap
+  Boolean_handle_function texture_map_func =
+    static_cast<Boolean_handle_function>(&Configuration::texture_map_handle);
+  s_prototype->add_field_info(new SF_bool(TEXTURE_MAP, "textureMap",
+                                          texture_map_func));
 
-  s_prototype->
-    add_field_info(new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
-                               get_member_offset(&m_verbosity_level)));
+  // verbosityLevel
+  Uint_handle_function verbosity_level_func =
+    static_cast<Uint_handle_function>(&Configuration::verbosity_level_handle);
+  s_prototype->add_field_info(new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
+                                          verbosity_level_func));
 
-  s_prototype->
-    add_field_info(new SGAL::SF_bool(SEAMLESS_CUBE_MAP, "seamlessCubeMap",
-                                     get_member_offset(&m_seamless_cube_map)));
-  
+  // seamlessCubeMap
+  Boolean_handle_function seamless_cube_map_func =
+    static_cast<Boolean_handle_function>
+    (&Configuration::seamless_cube_map_handle);
+  s_prototype->add_field_info(new SF_bool(SEAMLESS_CUBE_MAP, "seamlessCubeMap",
+                                          seamless_cube_map_func));
 }
 
 /*! \brief deletes the node prototype */
@@ -188,8 +212,8 @@ void Configuration::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Configuration::get_prototype() 
-{  
+Container_proto* Configuration::get_prototype()
+{
   if (!s_prototype) Configuration::init_prototype();
   return s_prototype;
 }
@@ -334,12 +358,12 @@ void Configuration::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the marked attributes:
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Configuration::add_to_scene(Scene_graph* sg)
 { sg->set_configuration(this); }
 
@@ -354,8 +378,8 @@ void Configuration::set_verbosity_level(Uint level)
 #if 0
 /*! \brief */
 Attribute_list Configuration::get_attributes()
-{  
-  Attribute_list attrs; 
+{
+  Attribute_list attrs;
   Attribue attrib;
   char buf[32];
 
@@ -401,12 +425,12 @@ Attribute_list Configuration::get_attributes()
       attrib.second = "point";
     }
     attrs.push_back(attrib);
-  } 
+  }
   if (!get_max_model_name().empty()) {
     attrib.first = "max_model_name";
     attrib.second = get_max_model_name();
     attrs.push_back(attrib);
-  }  
+  }
 
   if (m_accumulation) m_accumulation->get_attributes();
   if (m_multisample) m_multisample->get_attributes();

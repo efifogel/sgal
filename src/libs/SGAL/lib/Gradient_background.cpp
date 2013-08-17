@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,8 +30,8 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Gradient_background::s_tag = "sgalGradientBackground";
-Container_proto * Gradient_background::s_prototype = 0;
+std::string Gradient_background::s_tag = "GradientBackground";
+Container_proto * Gradient_background::s_prototype(NULL);
 
 // Default values:
 const Vector4f Gradient_background::m_defUlColor(0.5, 0, 0  , 0);
@@ -61,16 +61,16 @@ Gradient_background::~Gradient_background()
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
-/** 
+/**
  * set the color of the upper left corner
  * @param color (in) the color
  */
-void Gradient_background::SetULColor(Vector4f color) 
+void Gradient_background::SetULColor(Vector4f color)
 {
   m_ulColor = color;
 }
 
-/** 
+/**
  * get the color of the upper left corner
  * @return the color
  */
@@ -79,16 +79,16 @@ Vector4f Gradient_background::GetULColor() const
   return m_ulColor;
 }
 
-/** 
+/**
  * set the color of the upper right corner
  * @param color (in) the color
  */
-void Gradient_background::SetURColor(Vector4f color) 
+void Gradient_background::SetURColor(Vector4f color)
 {
   m_urColor = color;
 }
 
-/** 
+/**
  * get the color of the upper right corner
  * @return the color
  */
@@ -97,16 +97,16 @@ Vector4f Gradient_background::GetURColor() const
   return m_urColor;
 }
 
-/** 
+/**
  * set the color of the lower left corner
  * @param color (in)  the color
  */
-void Gradient_background::SetLLColor(Vector4f color) 
+void Gradient_background::SetLLColor(Vector4f color)
 {
   m_llColor = color;
 }
 
-/** 
+/**
  * get the color of the lower left corner
  * @return the color
  */
@@ -115,16 +115,16 @@ Vector4f Gradient_background::GetLLColor() const
   return m_llColor;
 }
 
-/** 
+/**
  * set the color of the lower right corner
  * @param color (in)  the color
  */
-void Gradient_background::SetLRColor(Vector4f color) 
+void Gradient_background::SetLRColor(Vector4f color)
 {
   m_lrColor = color;
 }
 
-/** 
+/**
  * get the color of the lower right corner
  * @return the color
  */
@@ -165,7 +165,7 @@ Trav_directive Gradient_background::Draw(Draw_action *draw_action)
   return Trav_cont;
 }
 
-void Gradient_background::DrawPolygon(Context *context) 
+void Gradient_background::DrawPolygon(Context *context)
 {
   glBegin(GL_QUADS);
     glColor3fv((float*)&m_llColor);
@@ -177,14 +177,14 @@ void Gradient_background::DrawPolygon(Context *context)
     glColor3fv((float *)&m_ulColor);
     glVertex2f(-m_size,  m_size);
   glEnd();
-  
+
 }
 
-void Gradient_background::CreateAppearance() 
+void Gradient_background::CreateAppearance()
 {
   m_appearance = new Appearance();
-  m_appearance->SetLightEnable(SGAL_FALSE);
-  m_appearance->SetDepthEnable(SGAL_FALSE);
+  m_appearance->SetLightEnable(false);
+  m_appearance->SetDepthEnable(false);
   m_appearance->SetPolyMode(Gfx::FILL_PMODE);
 }
 
@@ -222,7 +222,7 @@ void Gradient_background::set_attributes(Element * elem)
  */
 Attribute_list Gradient_background::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Node::get_attributes();
@@ -260,30 +260,25 @@ Attribute_list Gradient_background::get_attributes()
 
 void Gradient_background::init_prototype()
 {
-  if (s_prototype != NULL) {
-    return;
-  }
-
-  // Allocate a prototype instance
+  if (s_prototype != NULL) return;
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the object fields to the prototype
-  s_prototype->add_field_info(new SF_Vector3f(ULCOLOR,
-                      "ulColor",
-                      get_member_offset(&m_ulColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));    
-  s_prototype->add_field_info(new SF_Vector3f(URCOLOR,
-                      "urColor",
-                      get_member_offset(&m_urColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));    
-  s_prototype->add_field_info(new SF_Vector3f(LLCOLOR,
-                      "llColor",
-                      get_member_offset(&m_llColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));    
-  s_prototype->add_field_info(new SF_Vector3f(LRCOLOR,
-                      "lrColor",
-                      get_member_offset(&m_lrColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));    
+  s_prototype->add_field_info(new SF_Vector3f(ULCOLOR, "ulColor",
+                                              get_member_offset(&m_ulColor),
+                      (Execution_func_type)&Container::SetRenderingRequired));
+
+  s_prototype->add_field_info(new SF_Vector3f(URCOLOR, "urColor",
+                                              get_member_offset(&m_urColor),
+                      (Execution_func_type)&Container::SetRenderingRequired));
+
+  s_prototype->add_field_info(new SF_Vector3f(LLCOLOR, "llColor",
+                                              get_member_offset(&m_llColor),
+                      (Execution_func_type)&Container::SetRenderingRequired));
+
+  s_prototype->add_field_info(new SF_Vector3f(LRCOLOR, "lrColor",
+                                              get_member_offset(&m_lrColor),
+                      (Execution_func_type)&Container::SetRenderingRequired));
 }
 
 /*!
@@ -291,12 +286,13 @@ void Gradient_background::init_prototype()
 void Gradient_background::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*!
  */
-Container_proto * Gradient_background::get_prototype() 
-{  
+Container_proto* Gradient_background::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }

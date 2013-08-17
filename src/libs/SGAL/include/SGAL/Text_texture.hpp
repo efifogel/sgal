@@ -42,7 +42,7 @@ class Texture;
 class Container_proto;
 
 class SGAL_SGAL_DECL Text_texture : public Container {
-public: 
+public:
   enum {
     FIRST = Container::LAST - 1,
     TEXT,
@@ -66,7 +66,7 @@ public:
 
   /*! Clone. */
   virtual Container* clone() { return new Text_texture(); }
-  
+
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
@@ -83,7 +83,11 @@ public:
 
   virtual void delete_prototype();
 
-  virtual Container_proto* get_prototype(); 
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
 
 protected:
   /*! Obtain the tag (type) of the container. */

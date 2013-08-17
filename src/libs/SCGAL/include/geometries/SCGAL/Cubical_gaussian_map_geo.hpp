@@ -123,7 +123,7 @@ private:
 
     /*! Indicates whether it is a marked (dual) face */
     Boolean m_marked;
-    
+
   public:
     /*! Constructor */
     My_arr_vertex() : m_marked(false) {}
@@ -159,7 +159,7 @@ private:
     /*! Set the "marked" flag */
     void set_marked(Boolean marked) { m_marked = marked; }
   };
-  
+
   /*! Extend the planar-map face */
   class My_arr_face : public CGAL::Polyhedral_cgm_arr_face<Point_3> {
   private:
@@ -167,7 +167,7 @@ private:
 
     /*! Indicates whether it is a marked (dual) vertex */
     Boolean m_marked;
-    
+
   public:
     /*! Constructor */
     My_arr_face() : m_marked(false) {}
@@ -194,7 +194,7 @@ private:
 
   typedef Polyhedral_cgm                                Cgm;
   typedef CGAL::Polyhedral_cgm_initializer<Cgm>         Cgm_initializer;
-  
+
   typedef Cgm::Halfedge_around_vertex_const_circulator
     Halfedge_around_vertex_const_circulator;
 
@@ -204,7 +204,7 @@ private:
   typedef Arr_traits::X_monotone_curve_2                X_monotone_curve_2;
 
   typedef My_arr_vertex<Point_2>                        Arr_vertex;
-    
+
   // Extended Cubical_gaussian_map, Arrangement stuff:
   typedef Cgm::Arrangement                              Arrangement;
   typedef Cgm::Arr_vertex_iterator                      Arr_vertex_iterator;
@@ -224,12 +224,12 @@ private:
     Arr_ccb_halfedge_circulator;
   typedef Cgm::Arr_ccb_halfedge_const_circulator
     Arr_ccb_halfedge_const_circulator;
-  
+
   typedef Cgm::Arr_vertex_handle                        Arr_vertex_handle;
   typedef Cgm::Arr_vertex_const_handle                  Arr_vertex_const_handle;
   typedef Cgm::Arr_face_handle                          Arr_face_handle;
   typedef Cgm::Arr_face_const_handle                    Arr_face_const_handle;
-  
+
   // List of pointers to Cubical_gaussian_map_geo objects */
   typedef std::list<Shared_cubical_gaussian_map_geo>    Cgm_node_list;
   typedef Cgm_node_list::iterator                       Cgm_node_iter;
@@ -244,17 +244,17 @@ private:
                             (float) CGAL::to_double(point.z()));
     }
   };
-  
+
 protected:
   typedef Cubical_gaussian_map_geo          Self;
-  
+
   typedef Cube_renderer                     Surface_renderer;
   typedef Colored_cube_renderer             Colored_surface_renderer;
   typedef Stencil_cube_renderer             Stencil_surface_renderer;
 
   typedef Vertices_renderer<Self>           Cgm_vertices_renderer;
   typedef Edges_renderer<Self>              Cgm_edges_renderer;
-  
+
   typedef Inflated_line_edges_renderer<Cgm_edges_renderer>
                                             Cgm_inflated_line_edges_renderer;
   typedef Inflated_strip_edges_renderer<Cgm_edges_renderer>
@@ -269,7 +269,7 @@ protected:
 
     /*! Constructor. */
     Colored_edges_renderer(Geometry& geo) : Cgm_edges_renderer(geo) {}
-    
+
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
   };
@@ -282,11 +282,11 @@ protected:
 
     /*! Constructor */
     Colored_vertices_renderer(Geometry& geo) : Cgm_vertices_renderer(geo) {}
-    
+
     /*! Render the face */
     virtual void operator()(Draw_action* action);
   };
-  
+
   /*! A function object that renders the marked vertices */
   class Marked_vertices_renderer : public Arrangement_renderer::Renderer {
   public:
@@ -294,7 +294,7 @@ protected:
 
     /*! Constructor */
     Marked_vertices_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the face */
     virtual void operator()(Draw_action* action);
 
@@ -302,7 +302,7 @@ protected:
     /*! The arrangement geometry */
     Geometry& m_geo;
   };
-  
+
   /*! A function object that renders the vertices with color */
   class Colored_marked_vertices_renderer : public Marked_vertices_renderer {
   public:
@@ -311,7 +311,7 @@ protected:
     /*! Constructor */
     Colored_marked_vertices_renderer(Geometry& geo) :
       Marked_vertices_renderer(geo) {}
-    
+
     /*! Render the face */
     virtual void operator()(Draw_action* action);
   };
@@ -323,7 +323,7 @@ protected:
 
     /*! Constructor */
     Nonreal_vertices_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the face */
     virtual void operator()(Draw_action* action);
 
@@ -331,7 +331,7 @@ protected:
     /*! The arrangement geometry */
     Geometry& m_geo;
   };
-  
+
   /*! A function object that renders the nonreal vertices with color. */
   class Colored_nonreal_vertices_renderer : public Nonreal_vertices_renderer {
   public:
@@ -340,7 +340,7 @@ protected:
     /*! Constructor. */
     Colored_nonreal_vertices_renderer(Geometry& geo) :
       Nonreal_vertices_renderer(geo) {}
-    
+
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
   };
@@ -352,7 +352,7 @@ protected:
 
     /*! Constructor. */
     Marked_face_renderer(Geometry& geo) : m_geo(geo) {}
-    
+
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
 
@@ -360,33 +360,33 @@ protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
   };
-  
+
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
-  
+
   /*! Create the renderers */
   void create_renderers();
 
   /*! Destroy the renderers */
   void destroy_renderers();
-  
+
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
   /*! */
   template <typename Iterator>
-  class Cgm_iterator {    
+  class Cgm_iterator {
   private:
     Iterator m_it;
-    
+
   public:
     typedef typename Iterator::iterator_category       iterator_category;
     typedef Cgm*                                       value_type;
     typedef typename Iterator::difference_type         difference_type;
     typedef Cgm**                                      pointer;
     typedef Cgm*&                                      reference;
-    
+
   public:
     // Default constructor.
     Cgm_iterator () : m_it() {}
@@ -400,7 +400,7 @@ private:
       Iterator& base = m_it;
       return (*base)->get_cgm();
     }
-    
+
     value_type operator*()
     {
       Iterator& base = m_it;
@@ -413,7 +413,7 @@ private:
       ++m_it;
       return *this;
     }
-    
+
     /*! \brief operator post ++ */
     Cgm_iterator operator++(int)
     {
@@ -421,14 +421,14 @@ private:
       ++*this;
       return tmp;
     }
-    
+
     // operator->
     pointer operator->()
     {
       Iterator& base = m_it;
       return &((*base)->get_cgm());
     }
-    
+
     const pointer operator->() const
     {
       Iterator& base = m_it;
@@ -458,7 +458,7 @@ private:
       return Point_to_vector3f()(p);
     }
   };
-  
+
   /*! A functor with an operator that sets the "marked" flag */
   class Face_set_marked_op {
   public:
@@ -472,7 +472,7 @@ private:
   public:
     /*! Destructor */
     virtual ~Cgm_geo_initializer_visitor() {}
-    
+
     /*! Pass information from the polyhedron vertex to its dual - a cgm-face. */
     virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,
                                     Arr_face_handle trg)
@@ -503,7 +503,7 @@ private:
       trg->set_marked(src->marked());
     }
   };
-   
+
   /*! The node prototype */
   static SGAL::Container_proto* s_prototype;
 
@@ -527,7 +527,7 @@ private:
   static const Float s_def_aos_nonreal_vertex_radius;
   static const Float s_def_aos_nonreal_vertex_point_size;
   static const Vector3f s_def_aos_nonreal_vertex_color;
-  
+
   // Default dual edge attributes:
   static const Boolean s_def_aos_edge_enabled;
   static const Edge_style s_def_aos_edge_style;
@@ -551,7 +551,7 @@ private:
   static const Vertex_style s_def_aos_marked_vertex_style;
   static const Float s_def_aos_marked_vertex_radius;
   static const Float s_def_aos_marked_vertex_point_size;
-  
+
   static const Boolean s_def_draw_marked_vertex;
   static const Boolean s_def_draw_marked_edge;
   static const Boolean s_def_draw_marked_facet;
@@ -588,7 +588,7 @@ private:
   Vector3f m_aos_surface_color;
 
   // Dual vertex attributes:
-  
+
   /*! The vertex shape style. */
   Vertex_style m_aos_vertex_style;
 
@@ -597,12 +597,12 @@ private:
 
   /*! The size of the point that represents a dual vertex. */
   Float m_aos_vertex_point_size;
-  
+
   /*! The color of the vertices. */
   Vector3f m_aos_vertex_color;
 
   // Dual nonreal-vertex attributes:
-  
+
   /*! The nonreal vertex shape style. */
   Vertex_style m_aos_nonreal_vertex_style;
 
@@ -611,12 +611,12 @@ private:
 
   /*! The size of the point that represents a dual nonreal vertex. */
   Float m_aos_nonreal_vertex_point_size;
-  
+
   /*! The color of the vertices. */
   Vector3f m_aos_nonreal_vertex_color;
 
   // Dual edge attributes:
-  
+
   /*! Indicates whether the rendering of edges is enabled or not. */
   Boolean m_aos_edge_enabled;
 
@@ -639,7 +639,7 @@ private:
   Vector3f m_aos_edge_color[2];
 
   // Non-real dual edge attributes:
-  
+
   /*! Indicates whether the rendering of nonreal edges is enabled or not. */
   Boolean m_aos_nonreal_edge_enabled;
 
@@ -657,15 +657,15 @@ private:
 
   /*! The width of the line that represents a non-real dual edge. */
   Float m_aos_nonreal_edge_line_width;
-  
+
   /*! The color of the non-real dual edges. */
   Vector3f m_aos_nonreal_edge_color;
-  
+
   /*! The angle of a single line strip of a spherical arc. */
   Float m_aos_delta_angle;
 
   // Dual marked vertex attributes:
-  
+
   /*! The dual marked vertex shape style. */
   Vertex_style m_aos_marked_vertex_style;
 
@@ -676,13 +676,13 @@ private:
   Float m_aos_marked_vertex_point_size;
 
   // Marked feature attributes:
-  
+
   /*! Indicates whether to draw the marked vertex. */
   Boolean m_draw_marked_vertex;
 
   /*! Indicates whether to draw the marked halfedge. */
   Boolean m_draw_marked_edge;
-  
+
   /*! Indicates whether to draw the marked face. */
   Boolean m_draw_marked_facet;
 
@@ -694,13 +694,13 @@ private:
 
   /*! The color of the marked face */
   Vector3f m_marked_facet_color;
-  
+
   /*! Indicates that the coordinates were tranlated. */
   Boolean m_translated;
 
   /*! Indicates that the coordinates were rotated. */
   Boolean m_rotated;
-  
+
   /*! Indicates whether to compute the minkowski sum. */
   Boolean m_minkowski_sum;
 
@@ -718,13 +718,13 @@ private:
 
   /*! The shape of a marked edge. */
   Cylinder* m_edge_geom;
-  
+
   /*! The radius of the geometry that represents a marked vertex. */
   Float m_marked_vertex_radius;
 
   /*! The radius of the geometry that represents a marked edge. */
   Float m_marked_edge_radius;
-  
+
   /*! The index of the marked vertex. */
   Uint m_marked_vertex_index;
 
@@ -733,7 +733,7 @@ private:
 
   /*! The index of the marked face. */
   Uint m_marked_facet_index;
-  
+
   /*! When trigerred the vertex index is increased. */
   Boolean m_increase_vertex_index;
 
@@ -742,16 +742,16 @@ private:
 
   /*! When trigerred the face index is increased. */
   Boolean m_increase_facet_index;
-  
+
   /*! Indicates whether the renderer must be cleaned. */
   Boolean m_renderer_dirty;
-  
+
   /*! The renderer of the arrangement data structure. */
   Arrangement_renderer m_renderer;
 
   /*! The dual marked face (primal vertex) renderer. */
   Arrangement_renderer::Renderer* m_aos_marked_face_renderer;
-  
+
   /*! The surface renderer. */
   Arrangement_renderer::Renderer* m_surface_renderer;
 
@@ -769,10 +769,10 @@ private:
 
   /*! The nonreal vertices renderer. */
   Arrangement_renderer::Renderer* m_nonreal_vertices_renderer;
-  
+
   /*! The nonreal vertices with color renderer. */
   Arrangement_renderer::Renderer* m_colored_nonreal_vertices_renderer;
-  
+
   /*! The marked_vertices renderer. */
   Arrangement_renderer::Renderer* m_marked_vertices_renderer;
 
@@ -790,7 +790,7 @@ private:
 
   /*! The inflated strip edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_strip_edges_renderer;
-  
+
   /*! The inflated tube edges renderer. */
   Arrangement_renderer::Renderer* m_inflated_tube_edges_renderer;
 
@@ -826,11 +826,11 @@ private:
    */
   void draw_aos_nonreal_vertex(Draw_action* action, const Vector3f& center,
                                const Vector3f& normal);
-  
+
   /*! Draw a dual marked vertex */
   void draw_aos_marked_vertex(Draw_action* action, const Vector3f& center,
                               const Vector3f& normal);
-  
+
   /*! Draw a dual edge.
    * \param action
    * \param source
@@ -850,28 +850,28 @@ private:
   void draw_aos_nonreal_edge(Draw_action* action,
                              const Vector3f& source, const Vector3f& target,
                              const Vector3f& normal);
-  
+
   /*! draws the face of the unit cube. */
   void draw_cube_face(unsigned int id);
 
   /*! \brief draws the dual marked face. */
   void draw_aos_marked_face(unsigned int id);
-    
+
   /*! \brief draws the dual marked edge. */
   void draw_aos_marked_edge(unsigned int id);
-  
+
   /*! \brief draws the dual marked vertex. */
   void draw_aos_marked_vertex(unsigned int id);
-  
+
   /*! Draw the planar map associated with a face of the unit cube. */
-  void draw_projection(SGAL::Draw_action* action, unsigned int id, 
+  void draw_projection(SGAL::Draw_action* action, unsigned int id,
                        float non_edge_line_width);
 
   /*! Export the planar maps associated with the faces of the unit cube. */
   void output(SGAL::Field_info* field_info)
   {
     // std::cout << m_cgm << std::endl;
-    for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
+    for (Uint i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
       std::cout << "# Arrangement " << i << std::endl << std::endl;
       const Arrangement& arr = m_cgm.arrangement(i);
       std::cout << arr << std::endl;
@@ -883,7 +883,7 @@ private:
   {
     // std::in >> m_cgm;
   }
-  
+
   void isect_primary();
 
 public:
@@ -892,16 +892,31 @@ public:
 
   /*! Copy Constructor. */
   Cubical_gaussian_map_geo(const Cubical_gaussian_map_geo& gaussian_map);
-  
+
   /*! Destructor. */
   virtual ~Cubical_gaussian_map_geo();
 
   /*! Construct the prototype. */
-  static Cubical_gaussian_map_geo* prototype()
-  { return new Cubical_gaussian_map_geo(true); }
+  static Cubical_gaussian_map_geo* prototype();
 
   /*! Clone. */
-  virtual SGAL::Container* clone() { return new Cubical_gaussian_map_geo(); }
+  virtual Container* clone();
+
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! \brief deletes the prototype. */
+  virtual void delete_prototype();
+
+  /*! \brief obtains the prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action);
@@ -917,28 +932,16 @@ public:
    */
   virtual Boolean clean_sphere_bound();
 
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! \brief deletes the prototype. */
-  virtual void delete_prototype();
-
-  /*! \brief obtains the prototype. */
-  virtual SGAL::Container_proto* get_prototype();
-
   /*! \brief draws the internal representation. */
-  virtual void draw_geometry(SGAL::Draw_action* action);
-    
+  virtual void draw_geometry(Draw_action* action);
+
   /*! \brief cleans the representation. */
   virtual void clean();
 
   /*! \brief clears the internal representation and auxiliary data structures.
    */
   virtual void clear();
-  
+
   /*! \brief determineswhether the representation is empty. */
   virtual Boolean is_empty() const { return m_cgm.is_empty(); }
 
@@ -951,7 +954,7 @@ public:
    * \param action
    */
   virtual void draw_aos_nonreal_vertices(Draw_action* action);
-  
+
   /*! Draw the dual marked vertices.
    * \param action
    */
@@ -967,7 +970,7 @@ public:
 
   /*! Update the representation */
   void update();
-  
+
   /*! Process change of coordinate field.
    * Generally process the change of coordinate field.
    * We assume that any change requires the general processing of a field.
@@ -979,18 +982,18 @@ public:
 
   /*! Raise the flag that indicates that the sphere bound changed. */
   void draw_changed(Field_info* field_info = NULL);
-  
+
   /*! Draw the dual representation of the polyhedron in 2D. */
-  void draw_aos_unfolded(SGAL::Draw_action* action);
+  void draw_aos_unfolded(Draw_action* action);
 
   /*! Obtain the dual surface color. */
   const Vector3f& get_aos_surface_color(void) const;
 
   /*! Set the dual surface color. */
-  void set_aos_surface_color(const SGAL::Vector3f& color);
+  void set_aos_surface_color(const Vector3f& color);
 
   // Dual vertex attributes:
-  
+
   /*! Obtain the vertex shape style. */
   Vertex_style get_aos_vertex_style() const { return m_aos_vertex_style; }
 
@@ -999,7 +1002,7 @@ public:
 
   /*! Obtain the vertex radius. */
   Float get_aos_vertex_radius() const { return m_aos_vertex_radius; }
-  
+
   /*! Obtain the dual vertex color. */
   const Vector3f& get_aos_vertex_color() const { return m_aos_vertex_color; }
 
@@ -1008,7 +1011,7 @@ public:
   { m_aos_vertex_color = color; }
 
   // Dual nonreal vertex attributes:
-  
+
   /*! Obtain the nonreal-vertex shape style. */
   Vertex_style get_aos_nonreal_vertex_style() const
   { return m_aos_nonreal_vertex_style; }
@@ -1020,17 +1023,17 @@ public:
   /*! Obtain the nonreal vertex radius. */
   Float get_aos_nonreal_vertex_radius() const
   { return m_aos_nonreal_vertex_radius; }
-  
+
   /*! Obtain the dual nonreal vertex color. */
   const Vector3f& get_aos_nonreal_vertex_color() const
   { return m_aos_nonreal_vertex_color; }
 
   /*! Set the dual nonreal vertex color. */
-  void set_aos_nonreal_vertex_color(const Vector3f& color) 
+  void set_aos_nonreal_vertex_color(const Vector3f& color)
   { m_aos_nonreal_vertex_color = color; }
 
   // Dual edge attributes:
-  
+
   /*! Enable edge rendering. */
   void enable_aos_edge() { m_aos_edge_enabled = true; }
 
@@ -1045,13 +1048,13 @@ public:
 
   /*! Set the edge shape style. */
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
-  
+
   /*! Obtain the edge shape count. */
   Int get_aos_edge_count() const { return m_aos_edge_count; }
 
   /*! Set the edge shape count. */
   void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
-    
+
   /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
 
@@ -1067,32 +1070,32 @@ public:
   /*! Set the width of the edges drawn as lines. */
   void set_aos_edge_line_width(Float width)
   { m_aos_edge_line_width = width; }
-  
+
   /*! Obtaint the width of the edges drawn as lines. */
   Float get_aos_edge_line_width() const
   { return m_aos_edge_line_width; }
-  
+
   /*! Set the edge color. */
-  void set_aos_edge_color(const SGAL::Vector3f& color, unsigned int id = 0);
+  void set_aos_edge_color(const Vector3f& color, unsigned int id = 0);
 
   /*! Obtain the edge color. */
-  const SGAL::Vector3f& get_aos_edge_color(unsigned int id = 0) const;
+  const Vector3f& get_aos_edge_color(unsigned int id = 0) const;
 
   // Nonreal edges:
-  
+
   /*! Set the nonreal-edge color. */
   void set_aos_nonreal_edge_color(const SGAL::Vector3f& color)
   { m_aos_nonreal_edge_color = color; }
 
   /*! Obtain the nonreal-edge color. */
-  const SGAL::Vector3f& get_aos_nonreal_edge_color() const
-  { return m_aos_nonreal_edge_color; } 
+  const Vector3f& get_aos_nonreal_edge_color() const
+  { return m_aos_nonreal_edge_color; }
 
   /*! Obtain the angle of a trangle fan. */
   Float get_aos_delta_angle() const { return m_aos_delta_angle; }
-  
+
   // Aos marked vertex attributes:
-  
+
   /*! Obtain the marked vertex shape style. */
   Vertex_style get_aos_marked_vertex_style() const
   { return m_aos_marked_vertex_style; }
@@ -1104,18 +1107,18 @@ public:
   /*! Obtain the marked vertex radius. */
   Float get_aos_marked_vertex_radius() const
   { return m_aos_marked_vertex_radius; }
-  
+
   // Marked feature attributes:
-  
+
   /*! Obtain the index of the marked vertex. */
   Uint marked_vertex_index() const { return m_marked_vertex_index; }
 
   /*! Obtain the index of the marked edge */
   Uint marked_edge_index() const { return m_marked_edge_index; }
-  
+
   /*! Obtain the index of the marked facet. */
   Uint marked_facet_index() const { return m_marked_facet_index; }
-  
+
   /*! Set the index of the marked vertex. */
   void set_marked_vertex_index(Uint index) { m_marked_vertex_index = index; }
 
@@ -1124,7 +1127,7 @@ public:
 
   /*! Set the index of the marked facet. */
   void set_marked_facet_index(Uint index) { m_marked_facet_index = index; }
-  
+
   /*! Obtain the color of the marked vertex. */
   const Vector3f& get_marked_vertex_color() const;
 
@@ -1136,13 +1139,13 @@ public:
 
   /*! Set the color of the marked facet. */
   void set_marked_facet_color(const SGAL::Vector3f& color);
-  
+
   /*! Obtain the flag that indicates whether to draw the embedding surface. */
   Boolean get_draw_aos_surface() const { return m_draw_aos_surface; }
 
   /*! Set the flag that indicates whether to draw the background. */
   void set_draw_aos_surface(Boolean draw_bg)
-  { m_draw_aos_surface = draw_bg; }  
+  { m_draw_aos_surface = draw_bg; }
 
   /*! Set the source gausian maps of the minkowski sum. */
   void insert_cgm(Shared_cubical_gaussian_map_geo cgm);
@@ -1178,10 +1181,18 @@ public:
   void increase_facet_index(Field_info* field_info = NULL);
 };
 
+/*! \brief constructs the prototype. */
+inline Cubical_gaussian_map_geo* Cubical_gaussian_map_geo::prototype()
+{ return new Cubical_gaussian_map_geo(true); }
+
+/*! \brief clones. */
+inline Container* Cubical_gaussian_map_geo::clone()
+{ return new Cubical_gaussian_map_geo(); }
+
 /*! \brief set the curve color */
 inline void
-Cubical_gaussian_map_geo::set_aos_edge_color(const SGAL::Vector3f& color,
-                                              unsigned int id)
+Cubical_gaussian_map_geo::set_aos_edge_color(const Vector3f& color,
+                                             unsigned int id)
 { m_aos_edge_color[id] = color; }
 
 /*! \brief obtains the curve color. */
@@ -1210,17 +1221,17 @@ const Vector3f& Cubical_gaussian_map_geo::get_marked_vertex_color() const
 
 /*! \brief sets the color of the marked vertex. */
 inline void
-Cubical_gaussian_map_geo::set_marked_vertex_color(const SGAL::Vector3f& color)
+Cubical_gaussian_map_geo::set_marked_vertex_color(const Vector3f& color)
 { m_marked_vertex_color = color; }
 
 /*! \brief sets the color of the marked edge. */
 inline void
-Cubical_gaussian_map_geo::set_marked_edge_color(const SGAL::Vector3f& color)
+Cubical_gaussian_map_geo::set_marked_edge_color(const Vector3f& color)
 { m_marked_edge_color = color; }
 
 /*! \brief sets the color of the marked facet. */
 inline void
-Cubical_gaussian_map_geo::set_marked_facet_color(const SGAL::Vector3f& color)
+Cubical_gaussian_map_geo::set_marked_facet_color(const Vector3f& color)
 { m_marked_facet_color = color; }
 
 SGAL_END_NAMESPACE

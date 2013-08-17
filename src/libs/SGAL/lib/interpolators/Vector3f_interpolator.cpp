@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Vector3f_interpolator::s_tag = "Vector3fInterpolator";
-Container_proto * Vector3f_interpolator::s_prototype = 0;
+Container_proto* Vector3f_interpolator::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Vector3f_interpolator, "Vector3f_interpolator");
 
@@ -49,7 +49,7 @@ Vector3f_interpolator::Vector3f_interpolator(Boolean interpolate_flag,
   m_last_location(0)
 {}
 
-/*! Destructor */ 
+/*! Destructor */
 Vector3f_interpolator::~Vector3f_interpolator()
 {
   m_values.clear();
@@ -61,8 +61,11 @@ void Vector3f_interpolator::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Interpolator::get_prototype());
 
+  // value
+  Vector3f_handle_function value_func =
+    static_cast<Vector3f_handle_function>(&Vector3f_interpolator::value_handle);
   s_prototype->add_field_info(new SF_vector3f(VALUE,"value_changed",
-                                              get_member_offset(&m_value)));
+                                              value_func));
 }
 
 /*! \brief delete the prototype */
@@ -73,8 +76,8 @@ void Vector3f_interpolator::delete_prototype()
 }
 
 /*! \brief obtain the prototype */
-Container_proto * Vector3f_interpolator::get_prototype() 
-{  
+Container_proto* Vector3f_interpolator::get_prototype()
+{
   if (!s_prototype) Vector3f_interpolator::init_prototype();
   return s_prototype;
 }
@@ -86,7 +89,7 @@ Container_proto * Vector3f_interpolator::get_prototype()
  */
 void Vector3f_interpolator::execute(Field_info *)
 {
-  Field * value = get_field(VALUE);
+  Field* value = get_field(VALUE);
   // if there is no connection to the value field there is no need to execute
   // the interpolation
   if (value == NULL) return;
@@ -111,7 +114,7 @@ void Vector3f_interpolator::execute(Field_info *)
     value->cascade();
     return;
   }
-    
+
   // If the fraction is smaller than the first key - set the value to the
   // first one
   if (m_fraction <= m_keys[0]) {
@@ -136,9 +139,9 @@ void Vector3f_interpolator::execute(Field_info *)
 
   // Set m_value by interpolating between two values or
   // just return the first one (if interpolate flag is false)
-  if (m_interpolate_flag) {  
-    const Vector3f & location_value = m_values[location];
-    const Vector3f & next_location_value = m_values[location+1];
+  if (m_interpolate_flag) {
+    const Vector3f& location_value = m_values[location];
+    const Vector3f& next_location_value = m_values[location+1];
     Float key_delta = m_keys[location+1] - m_keys[location];
     Float fration_delta = m_fraction - m_keys[location];
 
@@ -154,22 +157,17 @@ void Vector3f_interpolator::execute(Field_info *)
   value->cascade();
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Vector3f_interpolator::set_attributes(Element * elem) 
-{ 
+/*! \brief sets the attributes of this container. */
+void Vector3f_interpolator::set_attributes(Element* elem)
+{
   Interpolator::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
   typedef Element::Cont_attr_iter         Cont_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "keyValue") {
       Uint num_values = get_num_tokens(value);
       Uint num_vecs = num_values / 3;
@@ -186,14 +184,14 @@ void Vector3f_interpolator::set_attributes(Element * elem)
 }
 
 #if 0
-/*! Get a list of attributes in this object. This method is called only 
- * from the Builder side. 
+/*! Get a list of attributes in this object. This method is called only
+ * from the Builder side.
  *
- * \return a list of attributes 
+ * \return a list of attributes
  */
 Attribute_list Vector3f_interpolator::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Interpolator::get_attributes();

@@ -54,7 +54,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Arrangement_on_sphere_sim_geo::s_tag = "ArrangementOnSphereSim";
-Container_proto* Arrangement_on_sphere_sim_geo::s_prototype = NULL;
+Container_proto* Arrangement_on_sphere_sim_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Arrangement_on_sphere_sim_geo,
                     "Arrangement_on_sphere_sim_geo");
@@ -119,9 +119,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
   s_prototype =
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-  
+  // time
   Execution_function exec_func =
     static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
                                     time_changed);
@@ -129,36 +127,43 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
                                            get_member_offset(&m_time),
                                            exec_func));
 
+  // resume
   exec_func =
     static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::resume);
   s_prototype->add_field_info(new SF_bool(RESUME, "resume",
                                           get_member_offset(&m_resume),
                                           exec_func));
 
+  // suspend
   exec_func =
     static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::suspend);
   s_prototype->add_field_info(new SF_bool(SUSPEND, "suspend",
                                           get_member_offset(&m_suspend),
                                           exec_func));
 
+  // increaseVertexLabel
   exec_func = static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
                                               increase_vertex_label);
   s_prototype->
     add_field_info(new SF_bool(INCREASE_VERTEX_LABEL, "increaseVertexLabel",
                                get_member_offset(&m_increase_vertex_label),
                                exec_func));
+
+  // increaseEdgeLabel
   exec_func = static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
                                               increase_edge_label);
   s_prototype->
     add_field_info(new SF_bool(INCREASE_EDGE_LABEL, "increaseEdgeLabel",
                                get_member_offset(&m_increase_edge_label),
                                exec_func));
+
+  // increaseFaceLabel
   exec_func = static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
                                               increase_face_label);
   s_prototype->
     add_field_info(new SF_bool(INCREASE_FACE_LABEL, "increaseFaceLabel",
                                get_member_offset(&m_increase_face_label),
-                               exec_func));  
+                               exec_func));
 }
 
 /*! \brief deletes the container prototype. */
@@ -371,7 +376,7 @@ operator()(Draw_action* action)
     const Vector3f& color = m_geo.get_aos_edge_color();
     glColor4f(color[0], color[1], color[2], transparency);
     m_geo.draw_aos_edge(action, src, trg, normal);
-    
+
     if (hei->label() == m_geo.m_label) {
       const Geometry_traits::Point_2& src = hei->source()->point();
       if (!(src.is_no_boundary()))
@@ -402,10 +407,10 @@ void Arrangement_on_sphere_sim_geo::identify()
 /*! \brief resumes the simulation. */
 void Arrangement_on_sphere_sim_geo::resume(Field_info* /* field_info */)
 { Tick_event::doregister(this); }
-  
+
 /*! \brief suspends the simulation. */
 void Arrangement_on_sphere_sim_geo::suspend(Field_info* /* field_info */)
-{ Tick_event::unregister(this); } 
+{ Tick_event::unregister(this); }
 
 /*! Process change of simulation time. */
 void Arrangement_on_sphere_sim_geo::time_changed(Field_info* /* field_info */)
@@ -495,5 +500,5 @@ void Arrangement_on_sphere_sim_geo::set_aos(Arrangement_on_sphere_labeled* aos)
   m_dirty = false;
   m_aos = aos;
 }
-  
+
 SGAL_END_NAMESPACE
