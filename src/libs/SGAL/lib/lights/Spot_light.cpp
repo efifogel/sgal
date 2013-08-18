@@ -44,9 +44,9 @@ const std::string Spot_light::s_tag = "SpotLight";
 Vector3f Spot_light::s_def_direction(0, 0, -1);
 Vector3f Spot_light::s_def_attenuation(1, 0, 0);
 Vector3f Spot_light::s_def_location(0, 0, 0);
-float Spot_light::s_def_beam_width = 90;
-float Spot_light::s_def_cutoff_angle = 45.0f;
-float Spot_light::s_def_radius = 100;
+float Spot_light::s_def_beam_width(90);
+float Spot_light::s_def_cutoff_angle(45.0f);
+float Spot_light::s_def_radius(100);
 
 REGISTER_TO_FACTORY(Spot_light, "Spot_light");
 
@@ -64,44 +64,16 @@ Spot_light::Spot_light(Boolean proto) :
 /*! Destructor */
 Spot_light::~Spot_light() {}
 
-/*! sets the direction of the light */
-void Spot_light::set_direction(const Vector3f& direction)
-{
-  m_direction = direction;
-}
-
-/*! obtains the direction of the light */
-void Spot_light::get_direction(Vector3f & direction)
-{
-  direction = m_direction;
-}
-
-/*! sets the beam_width (iner cone angel) of the light */
-void Spot_light::set_beam_width(const Float & beam_width)
-{
-  m_beam_width = beam_width * 180.0f / SGAL_PI;
-}
-
-/*! sets the beam_width (iner cone angle) of the light */
-Float Spot_light::get_beam_width()
-{
-  return m_beam_width / 180.0f * SGAL_PI;
-}
-
 /*! set the cutOffAngle (outer cone angle) of the light */
 void Spot_light::set_cutoff_angle(const Float & cutoff_angle)
 {
   m_cutoff_angle = cutoff_angle * 180.0f / SGAL_PI;
-  if (m_cutoff_angle > 90) {
-    m_cutoff_angle = 90;
-  }
+  if (m_cutoff_angle > 90) m_cutoff_angle = 90;
 }
 
 /*! set the cutOffAngle (outer cone angle) of the light */
 Float Spot_light::get_cutoff_angle()
-{
-  return m_cutoff_angle / 180.0f * SGAL_PI;
-}
+{ return m_cutoff_angle / 180.0f * SGAL_PI; }
 
 /*!  exponent = It's an OpenGL factor (0 - 128) determined the intensity of
  * the iner cone (beam_width angle) light. To translate the vrml attribute, we
@@ -115,43 +87,7 @@ float Spot_light::get_exponent()
   return exponent;
 }
 
-/*! sets the attenuation factor of the light */
-void Spot_light::set_attenuation(const Vector3f & attenuation)
-{
-  m_attenuation = attenuation;
-}
-
-/*! sets the attenuation factor of the light */
-void Spot_light::get_attenuation(Vector3f & attenuation)
-{
-  attenuation = m_attenuation;
-}
-
-/*! sets the location of the light */
-void Spot_light::set_location(const Vector3f & location)
-{
-  m_location = location;
-}
-
-/*! sets the location of the light */
-void Spot_light::get_location(Vector3f & location)
-{
-  location = m_location;
-}
-
-/*! sets the radius */
-void Spot_light::set_radius(const Float & radius)
-{
-  m_radius = radius;
-}
-
-/*! obtains the radius of the light */
-Float Spot_light::get_radius()
-{
-  return m_radius;
-}
-
-/*! draws the light */
+/*! \brief draws the light */
 Action::Trav_directive Spot_light::draw(Draw_action * draw_action)
 {
   if (!m_is_on) return Action::TRAV_CONT;
@@ -178,7 +114,7 @@ Action::Trav_directive Spot_light::draw(Draw_action * draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Spot_light::init_prototype()
 {
   if (s_prototype) return;
@@ -188,75 +124,76 @@ void Spot_light::init_prototype()
   // location
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->
-    add_field_info(new SF_vector3f(LOCATION, "location",
-                                   get_member_offset(&m_location),
-                                   exec_func));
+  Vector3f_handle_function location_func =
+    static_cast<Vector3f_handle_function>(&Spot_light::location_handle);
+  s_prototype->add_field_info(new SF_vector3f(LOCATION, "location",
+                                              location_func, exec_func));
 
   // direction
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->
-    add_field_info(new SF_vector3f(DIRECTION, "direction",
-                                   get_member_offset(&m_direction),
-                                   exec_func));
+  Vector3f_handle_function direction_func =
+    static_cast<Vector3f_handle_function>(&Spot_light::direction_handle);
+  s_prototype->add_field_info(new SF_vector3f(DIRECTION, "direction",
+                                              direction_func, exec_func));
 
   // attenuation
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->
-    add_field_info(new SF_vector3f(ATTENUATION, "attenuation",
-                                   get_member_offset(&m_attenuation),
-                                   exec_func));
+  Vector3f_handle_function attenuation_func =
+    static_cast<Vector3f_handle_function>(&Spot_light::attenuation_handle);
+  s_prototype->add_field_info(new SF_vector3f(ATTENUATION, "attenuation",
+                                              attenuation_func, exec_func));
 
   // radius
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                               get_member_offset(&m_radius),
-                                               exec_func));
+  Float_handle_function radius_func =
+    static_cast<Float_handle_function>(&Spot_light::radius_handle);
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
+                                           exec_func));
 
   // beamwidth
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
+  Float_handle_function beam_width_func =
+    static_cast<Float_handle_function>(&Spot_light::beam_width_handle);
   s_prototype->add_field_info(new SF_float(BEAMWIDTH, "beamwidth",
-                                               get_member_offset(&m_beam_width),
-                                               exec_func));
+                                           beam_width_func, exec_func));
 
   // cutoffangle
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
+  Float_handle_function cutoff_angle_func =
+    static_cast<Float_handle_function>(&Spot_light::cutoff_angle_handle);
   s_prototype->add_field_info(new SF_float(CUTOFFANGLE, "cutoffangle",
-                                           get_member_offset(&m_cutoff_angle),
-                                           exec_func));
+                                           cutoff_angle_func, exec_func));
 }
 
-/*! Delete the node prototype */
+/*! \brief deletes the node prototype. */
 void Spot_light::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
-Container_proto * Spot_light::get_prototype()
+/*! \brief obtains the node prototype. */
+Container_proto* Spot_light::get_prototype()
 {
   if (!s_prototype) Spot_light::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of the object extracted from the input file */
-void Spot_light::set_attributes(Element * elem)
+void Spot_light::set_attributes(Element* elem)
 {
   Light::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "direction") {
       Vector3f dir(value);
       set_direction(dir);

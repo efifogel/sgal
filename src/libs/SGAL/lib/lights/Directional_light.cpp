@@ -53,18 +53,6 @@ Directional_light::Directional_light(Boolean proto) :
 /*! Destructor */
 Directional_light::~Directional_light() {}
 
-/*! Set the direction of the light */
-void Directional_light::set_direction(const Vector3f& direction)
-{
-  m_direction = direction;
-}
-
-/*! Obtain the direction of the light */
-void Directional_light::get_direction(Vector3f& direction) const
-{
-  direction = m_direction;
-}
-
 /*! Draw the light */
 Action::Trav_directive Directional_light::draw(Draw_action* draw_action)
 {
@@ -89,9 +77,11 @@ void Directional_light::init_prototype()
   // direction
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
+  Vector3f_handle_function direction_func =
+    static_cast<Vector3f_handle_function>
+    (&Directional_light::direction_handle);
   s_prototype->add_field_info(new SF_vector3f(DIRECTION, "direction",
-                                              get_member_offset(&m_direction),
-                                              exec_func));
+                                              direction_func, exec_func));
 }
 
 /*! Delete the node prototype */

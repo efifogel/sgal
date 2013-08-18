@@ -74,6 +74,10 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* is_on_handle(Field_info*) { return &m_is_on; }
+  Vector3f* color_handle(Field_info*) { return &m_color; }
+  Float* intensity_handle(Field_info*) { return &m_intensity; }
+  Float* ambient_intensity_handle(Field_info*) { return &m_ambient_intensity; }
   //@}
 
   /*! Set the attributes of this node */
@@ -147,6 +151,9 @@ private:
   // void init(void);
   // int m_dirty_id, m_dirty_count;
 };
+
+/*! \brief clones. */
+inline Container* Container::clone() { SGAL_error(); return 0; }
 
 SGAL_END_NAMESPACE
 

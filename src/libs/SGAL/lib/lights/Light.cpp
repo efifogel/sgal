@@ -97,31 +97,35 @@ void Light::init_prototype()
   // on
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_bool(ON, "on",
-                                          get_member_offset(&m_is_on),
-                                          exec_func));
+  Boolean_handle_function is_on_func =
+    static_cast<Boolean_handle_function>(&Light::is_on_handle);
+  s_prototype->add_field_info(new SF_bool(ON, "on", is_on_func, exec_func));
 
   // color
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_vector3f(COLOR, "color",
-                                              get_member_offset(&m_color),
+  Vector3f_handle_function color_func =
+    static_cast<Vector3f_handle_function>(&Light::color_handle);
+  s_prototype->add_field_info(new SF_vector3f(COLOR, "color", color_func,
                                               exec_func));
 
   // intensity
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
+  Float_handle_function intensity_func =
+    static_cast<Float_handle_function>(&Light::intensity_handle);
   s_prototype->add_field_info(new SF_float(INTENSITY, "intensity",
-                                           get_member_offset(&m_intensity),
-                                           exec_func));
+                                           intensity_func, exec_func));
 
   // ambientIntensity
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->
-    add_field_info(new SF_float(AMBIENT_INTENSITY,"ambientIntensity",
-                                get_member_offset(&m_ambient_intensity),
-                                exec_func));
+  Float_handle_function ambient_intensity_func =
+    static_cast<Float_handle_function>(&Light::ambient_intensity_handle);
+  s_prototype->add_field_info(new SF_float(AMBIENT_INTENSITY,
+                                           "ambientIntensity",
+                                           ambient_intensity_func,
+                                           exec_func));
 }
 
 /*! \brief deletes the node prototype. */
@@ -145,7 +149,7 @@ void Light::cull(Cull_context& cull_context)
 /*! \brief draws the light. */
 Action::Trav_directive Light::draw(Draw_action* da)
 {
-  if (da == 0 || da->get_context() == 0) return Action::TRAV_STOP;
+  if ((da == 0) || (da->get_context() == 0)) return Action::TRAV_STOP;
 
   int already_defined;
   Matrix4f mat;

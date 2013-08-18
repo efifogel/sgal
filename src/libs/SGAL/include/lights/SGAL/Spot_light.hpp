@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -32,6 +32,7 @@
 #define SGAL_SPOT_LIGHT_HPP
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Math_defs.hpp"
 #include "SGAL/Light.hpp"
 #include "SGAL/Action.hpp"
 
@@ -73,6 +74,13 @@ public:
 
   /// \name field handlers
   //@{
+  // location
+  Vector3f* location_handle(Field_info*) { return &m_location; }
+  Vector3f* direction_handle(Field_info*) { return &m_direction; }
+  Vector3f* attenuation_handle(Field_info*) { return &m_attenuation; }
+  float* radius_handle(Field_info*) { return &m_radius; }
+  Float* beam_width_handle(Field_info*) { return &m_beam_width; }
+  Float* cutoff_angle_handle(Field_info*) { return &m_cutoff_angle; }
   //@}
 
   /*! Set the attributes of this node */
@@ -153,6 +161,46 @@ inline Spot_light* Spot_light::prototype() { return new Spot_light(true); }
 
 /*! \brief clones. */
 inline Container* Spot_light::clone() { return new Spot_light(); }
+
+/*! \brief sets the direction of the light. */
+inline void Spot_light::set_direction(const Vector3f& direction)
+{ m_direction = direction; }
+
+/*! \brief obtains the direction of the light. */
+inline void Spot_light::get_direction(Vector3f & direction)
+{ direction = m_direction; }
+
+/*! \brief sets the beam_width (iner cone angel) of the light. */
+inline void Spot_light::set_beam_width(const Float& beam_width)
+{ m_beam_width = beam_width * 180.0f / SGAL_PI; }
+
+/*! \brief obtains the beam_width (iner cone angle) of the light. */
+inline Float Spot_light::get_beam_width()
+{ return m_beam_width / 180.0f * SGAL_PI; }
+
+/*! \brief sets the attenuation factor of the light. */
+inline void Spot_light::set_attenuation(const Vector3f & attenuation)
+{ m_attenuation = attenuation; }
+
+/*! \brief sets the attenuation factor of the light. */
+inline void Spot_light::get_attenuation(Vector3f & attenuation)
+{ attenuation = m_attenuation; }
+
+/*! \brief sets the location of the light. */
+inline void Spot_light::set_location(const Vector3f & location)
+{ m_location = location; }
+
+/*! \brief sets the location of the light. */
+inline void Spot_light::get_location(Vector3f & location)
+{ location = m_location; }
+
+/*! \brief sets the radius. */
+inline void Spot_light::set_radius(const Float & radius)
+{ m_radius = radius; }
+
+/*! \brief obtains the radius of the light. */
+inline Float Spot_light::get_radius()
+{ return m_radius; }
 
 SGAL_END_NAMESPACE
 

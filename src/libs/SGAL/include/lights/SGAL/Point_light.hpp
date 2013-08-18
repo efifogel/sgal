@@ -14,14 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
  * \brief: An implementation of a point light.
- *  
+ *
  * A point light is a light that is positioned as specified, and has no
  * direction and a cut off cone angle of 180.
  *
@@ -61,7 +61,7 @@ public:
   virtual void set_attributes(Element * elem);
 
   // virtual Attribute_list get_attributes();
-  
+
   // this has to be implemented as an emty methid to avoid double deletion
   // of the prototype in the bae class.
   virtual void delete_prototype() {}
@@ -69,7 +69,7 @@ public:
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string & get_tag() const { return s_tag; }
-  
+
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;

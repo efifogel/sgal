@@ -20,8 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /**
- *
- * @class: Directional_light
+ * \class: Directional_light
  *
  * Purpose: An implementation of a directional light.
  *
@@ -60,12 +59,11 @@ public:
   /*! Destructor */
   virtual ~Directional_light();
 
-  /* Construct the prototype */
-  static Directional_light* prototype()
-  { return new Directional_light(true); }
+  /* Construct the prototype. */
+  static Directional_light* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Directional_light(); }
+  /*! Clone. */
+  virtual Container* clone();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -78,6 +76,7 @@ public:
 
   /// \name field handlers
   //@{
+  Vector3f* direction_handle(Field_info*) { return &m_direction; }
   //@}
 
   /*! \biref sets the attributes of this node */
@@ -92,7 +91,7 @@ public:
 
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -107,6 +106,25 @@ private:
   /*! The direction of the light */
   Vector3f m_direction;
 };
+
+/* \brief constructs the prototype. */
+inline Directional_light* Directional_light::prototype()
+{ return new Directional_light(true); }
+
+/*! \brief clones. */
+inline Container* Directional_light::clone()
+{ return new Directional_light(); }
+
+/*! \brief sets the direction of the light. */
+inline void Directional_light::set_direction(const Vector3f& direction)
+{ m_direction = direction; }
+
+/*! \brief obtains the direction of the light. */
+inline void Directional_light::get_direction(Vector3f& direction) const
+{ direction = m_direction; }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Directional_light::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

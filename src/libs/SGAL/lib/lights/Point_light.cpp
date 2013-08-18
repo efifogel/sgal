@@ -46,7 +46,7 @@ Point_light::Point_light(Boolean proto) : Spot_light(proto) {}
 Point_light::~Point_light() {}
 
 /*! Draws the light */
-Action::Trav_directive Point_light::draw(Draw_action * draw_action)
+Action::Trav_directive Point_light::draw(Draw_action* draw_action)
 {
   if (!m_is_on) return Action::TRAV_CONT;
 
@@ -66,22 +66,19 @@ Action::Trav_directive Point_light::draw(Draw_action * draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Point_light::set_attributes(Element * elem)
-{  
+/*! \brief sets the attributes of this container. */
+void Point_light::set_attributes(Element* elem)
+{
   Spot_light::set_attributes(elem);
 }
 
 #if 0
 /*! obtains a list of attributes (called in the save process) */
-Attribute_list Point_light::get_attributes() { 
+Attribute_list Point_light::get_attributes() {
 
-  Attribute_list attribs; 
+  Attribute_list attribs;
   attribs = Spot_light::get_attributes();
-  return attribs; 
+  return attribs;
 }
 #endif
 
