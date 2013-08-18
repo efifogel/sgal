@@ -58,9 +58,6 @@ Incrementor::Incrementor(Boolean proto) :
 /*! \brief initializes the container prototype. */
 void Incrementor::init_prototype()
 {
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
   if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
 
@@ -68,20 +65,24 @@ void Incrementor::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Incrementor::execute);
 
+  Int_handle_function min_value_func =
+    static_cast<Int_handle_function>(&Incrementor::min_value_handle);
   s_prototype->add_field_info(new SF_int(MIN_VALUE, "minValue",
-                                         get_member_offset(&m_min_value),
-                                         exec_func));
+                                         min_value_func, exec_func));
 
+  Int_handle_function max_value_func =
+    static_cast<Int_handle_function>(&Incrementor::max_value_handle);
   s_prototype->add_field_info(new SF_int(MAX_VALUE, "maxValue",
-                                         get_member_offset(&m_max_value),
-                                         exec_func));
+                                         max_value_func, exec_func));
 
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          get_member_offset(&m_trigger),
+  Boolean_handle_function trigger_func =
+    static_cast<Boolean_handle_function>(&Incrementor::trigger_handle);
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
                                           exec_func));
 
-  s_prototype->add_field_info(new SF_int(VALUE, "value",
-                                         get_member_offset(&m_value)));
+  Int_handle_function value_func =
+    static_cast<Int_handle_function>(&Incrementor::value_handle);
+  s_prototype->add_field_info(new SF_int(VALUE, "value", value_func));
 }
 
 /*! \brief deletes the container prototype. */

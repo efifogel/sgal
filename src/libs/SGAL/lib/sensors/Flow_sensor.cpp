@@ -45,9 +45,7 @@ Flow_sensor::Flow_sensor(Boolean proto) :
   m_rate(0),
   m_geomMemory(0)
 {
-  m_name = "FlowSensor";
-
-  for ( int i = 0; i < QUEUE_DEPTH; i++) {
+  for (Uint i = 0; i < QUEUE_DEPTH; i++) {
     m_timeQ.push(0);
     m_polygonCountQ.push(0);
   }
@@ -56,66 +54,47 @@ Flow_sensor::Flow_sensor(Boolean proto) :
 /*! Destructor */
 Flow_sensor::~Flow_sensor() {}
 
-/*!
- */
+/*! \brief */
 void Flow_sensor::set_animation_loading_done(Boolean flag)
 {
   m_isAnimationLoadingDone = flag;
-  Field * field = get_field(ANIMATION_LOAD_DONE);
-  if( field) {
-    field->Cascade();
-  }
+  Field* field = get_field(ANIMATION_LOAD_DONE);
+  if (field) field->Cascade();
 }
 
-/*!
- */
+/*! \brief */
 void Flow_sensor::SetLevel0LoadingDone(Boolean flag)
 {
   m_isLevel0LoadingDone = flag;
-  Field * field = get_field(LEVEL0_LOAD_DONE);
-  if( field) {
-    field->Cascade();
-  }
+  Field* field = get_field(LEVEL0_LOAD_DONE);
+  if (field) field->Cascade();
 }
 
-/*!
- */
+/*! \brief */
 void Flow_sensor::SetLoadingDone(Boolean flag)
 {
   m_isLoadingDone = flag;
-  Field * field = get_field(LOAD_DONE);
-  if( field) {
-    field->cascade();
-  }
+  Field* field = get_field(LOAD_DONE);
+  if (field) field->cascade();
 }
 
-/*!
- */
+/*! \brief */
 void Flow_sensor::SetSnapshotDone(Boolean flag)
 {
   m_isSnapshotDone = flag;
-  Field *field = get_field(SNAPSHOT_DONE);
-  if( field) {
-    field->cascade();
-  }
+  Field* field = get_field(SNAPSHOT_DONE);
+  if (field) field->cascade();
 }
 
-/*!
- */
+/*! \brief */
 void Flow_sensor::AddNumPolygons(const Int n)
 {
   m_num_polygons += n;
-  if( n > 0) {
-    m_accumNumPolygons += n;
-  }
-  Field * field = get_field(NUM_POLYGONS);
-  if( field) {
-    field->cascade();
-  }
+  if (n > 0) m_accumNumPolygons += n;
+  Field* field = get_field(NUM_POLYGONS);
+  if (field) field->cascade();
   field = get_field(ACCUM_NUM_POLYGONS);
-  if( field) {
-    field->cascade();
-  }
+  if (field) field->cascade();
 
   ULong time = m_timer.get_time();
   m_timeQ.pop();
@@ -126,30 +105,22 @@ void Flow_sensor::AddNumPolygons(const Int n)
   m_polygonCountQ.push(m_accumNumPolygons);
   int dp = m_accumNumPolygons - m_polygonCountQ.front();
 
-  if( dt != 0) {
+  if (dt != 0) {
     m_rate = 1000*dp/dt ;
     field = get_field(RATE);
-    if(field) {
-      field->cascade();
-    }
+    if (field) field->cascade();
   }
 }
 
-/*!
- */
+/*! \brief */
 void Flow_sensor::AddGeometryMemory(const Int n)
 {
   m_geomMemory += n;
   Field field = get_field(GEOM_MEMORY);
-  if(field) {
-    field->cascade();
-  }
+  if (field) field->cascade();
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Flow_sensor::set_attributes(Element * elem)
 {
   Container::set_attributes(elem);
@@ -167,13 +138,6 @@ Attribute_list Flow_sensor::get_attributes()
   return attribs;
 }
 
-/*!
- */
-void Flow_sensor::add_to_scene(Scene_graph * sg, XML_entity * parent)
-{
-  Container::add_to_scene(sg, parent);
-  sg->add_container(this);
-}
 #endif
 
 /*! initializes the node prototype */
@@ -208,7 +172,7 @@ void Flow_sensor::init_prototype()
 
   // Add the object fields to the prototype
   s_prototype->
-    add_field_info(new SF_int(NUM_POLYGONS, "num_polygons",
+    add_field_info(new SF_int(NUM_POLYGONS, "numPolygons",
                               get_member_offset(&m_num_polygons)));
 
   // Add the object fields to the prototype
@@ -225,16 +189,14 @@ void Flow_sensor::init_prototype()
                                          get_member_offset(&m_geomMemory)));
 }
 
-/*!
- */
+/*! \brief */
 void Flow_sensor::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief */
 Container_proto* Flow_sensor::get_prototype()
 {
   if (!s_prototype) init_prototype();

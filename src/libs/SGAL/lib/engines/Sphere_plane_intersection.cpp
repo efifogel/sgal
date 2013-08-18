@@ -69,34 +69,48 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Execution_function>(&Sphere_plane_intersection::execute);
 
   // sphereRadius
+  Float_handle_function sphere_radius_func =
+    static_cast<Float_handle_function>
+    (&Sphere_plane_intersection::sphere_radius_handle);
   s_prototype->add_field_info(new SF_float(SPHERE_RADIUS, "sphereRadius",
-                                           get_member_offset(&m_sphere_radius),
-                                           exec_func));
+                                           sphere_radius_func, exec_func));
 
   // plane
-  s_prototype->add_field_info(new SF_vector4f(PLANE, "plane",
-                                           get_member_offset(&m_plane),
-                                           exec_func));
+  Vector4f_handle_function plane_func =
+    static_cast<Vector4f_handle_function>
+    (&Sphere_plane_intersection::plane_handle);
+  s_prototype->add_field_info(new SF_vector4f(PLANE, "plane", plane_func,
+                                              exec_func));
 
   // trigger
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          get_member_offset(&m_trigger),
+  Boolean_handle_function trigger_func =
+    static_cast<Boolean_handle_function>
+    (&Sphere_plane_intersection::trigger_handle);
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
                                           exec_func));
 
   // circleTranslation
-  s_prototype->
-    add_field_info(new SF_vector3f(CIRCLE_TRANSLATION, "circleTranslation",
-                                   get_member_offset(&m_circle_translation)));
+  Vector3f_handle_function circle_translation_func =
+    static_cast<Vector3f_handle_function>
+    (&Sphere_plane_intersection::circle_translation_handle);
+  s_prototype->add_field_info(new SF_vector3f(CIRCLE_TRANSLATION,
+                                              "circleTranslation",
+                                              circle_translation_func));
 
   // circleRotation
-  s_prototype->
-    add_field_info(new SF_rotation(CIRCLE_ROTATION, "circleRotation",
-                                   get_member_offset(&m_circle_rotation)));
+  Rotation_handle_function circle_rotation_func =
+    static_cast<Rotation_handle_function>
+    (&Sphere_plane_intersection::circle_rotation_handle);
+  s_prototype->add_field_info(new SF_rotation(CIRCLE_ROTATION,
+                                              "circleRotation",
+                                              circle_rotation_func));
 
   // circleRadius
-  s_prototype->
-    add_field_info(new SF_float(CIRCLE_RADIUS, "circleRadius",
-                                get_member_offset(&m_circle_radius)));
+  Float_handle_function circle_radius_func =
+    static_cast<Float_handle_function>
+    (&Sphere_plane_intersection::circle_radius_handle);
+  s_prototype->add_field_info(new SF_float(CIRCLE_RADIUS, "circleRadius",
+                                           circle_radius_func));
 }
 
 /*! \brief deletes the container prototype */
