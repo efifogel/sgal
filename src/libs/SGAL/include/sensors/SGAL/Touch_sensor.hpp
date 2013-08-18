@@ -30,7 +30,7 @@
  * definition.
  *
  * In addition to the X3D touch sensor definition this sensor
- * also supports a SFNode event out (ROUTEDNODE)
+ * also supports a SFNode event out (ROUTED_NODE)
  * which cascaded for a mouseup event.
  */
 
@@ -55,7 +55,8 @@ class Tick_event;
 class Formatter;
 class Draw_action;
 
-class SGAL_SGAL_DECL Touch_sensor : public Agent, public Drag_sensor, public Node
+class SGAL_SGAL_DECL Touch_sensor :
+  public Agent, public Drag_sensor, public Node
 {
 public:
   enum {
@@ -68,11 +69,11 @@ public:
     IS_OVER,
     EXACTIVATE,
     TOUCH_TIME,
-    ROUTEDNODE,
     NUMBER_OF_SELECTION_IDS,
     START_SELECTION_ID,
     OVER_SELECTION_ID,
     ACTIVE_SELECTION_ID,
+    // ROUTED_NODE,
     LAST
   };
 
@@ -99,31 +100,20 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
+  Vector3f* hit_normal_handle(Field_info*) { return &m_hit_normal; }
+  Vector3f* hit_point_handle(Field_info*) { return &m_hit_point; }
+  Vector2f* hit_tex_coord_handle(Field_info*) { return &m_hit_tex_coord; }
+  Boolean* is_active_handle(Field_info*) { return &m_is_active; }
+  Boolean* ex_activate_handle(Field_info*) { return &m_ex_activate; }
+  Boolean* is_over_handle(Field_info*) { return &m_is_over; }
+  Scene_time* touch_time_handle(Field_info*) { return &m_touch_time; }
+  Uint* over_selection_id_handle(Field_info*) { return &m_over_selection_id; }
+  Uint* active_selection_id_handle(Field_info*)
+    { return &m_active_selection_id; }
+  // Shared_container* routed_node_handle(Field_info*)
+  //   { return &m_routed_node; }
   //@}
-
-  // attributes mutators - used by the scene graph selection mechanism
-  void set_normal(const Vector3f& normal);
-
-  void set_point(const Vector3f& point);
-
-  void set_tex_coord(const Vector2f& tex_coord);
-
-  /*! Set the flag that indicates whether the cursor hoovers above a selected
-   * geometry.
-   * \param over (in) the flag.
-   */
-  void set_is_over(const Boolean over);
-
-  /*! Set the flag that indicates whether the mouse is pressed when the cursor
-   * is above a selected geometry.
-   * \param active (in) the flag.
-   */
-  void set_is_active(const Boolean active);
-
-  /* Sets the routed node pointer. */
-  void set_routed_node(Container* node);
-
-  Container* get_routed_node() const;
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -143,12 +133,6 @@ public:
   /*! Draw the node while traversing the scene graph */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Register the mouse and mostion events. */
-  void register_events();
-
-  /*! Register the mouse and mostion events. */
-  void unregister_events();
-
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();
 
@@ -167,6 +151,31 @@ public:
   // This function is executed when the exActivate field is cascaded from
   // another field.
   virtual void external_activate(Field_info*);
+
+  /*! Register the mouse and mostion events. */
+  void register_events();
+
+  /*! Register the mouse and mostion events. */
+  void unregister_events();
+
+  // attributes mutators - used by the scene graph selection mechanism
+  void set_normal(const Vector3f& normal);
+
+  void set_point(const Vector3f& point);
+
+  void set_tex_coord(const Vector2f& tex_coord);
+
+  /*! Set the flag that indicates whether the cursor hoovers above a selected
+   * geometry.
+   * \param over (in) the flag.
+   */
+  void set_is_over(const Boolean over);
+
+  /*! Set the flag that indicates whether the mouse is pressed when the cursor
+   * is above a selected geometry.
+   * \param active (in) the flag.
+   */
+  void set_is_active(const Boolean active);
 
   // Returns the priority of the touch sensor - is higher than the priority
   // of the navigation sensor.
@@ -219,6 +228,12 @@ public:
 
   /*! Obtain the scene-graph pointer. */
   Scene_graph* get_scene_graph() const;
+
+  /* Set the routed node. */
+  // void set_routed_node(Container* node);
+
+  /* Obtain the routed node. */
+  // Container* get_routed_node() const;
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -294,10 +309,10 @@ private:
   Uint m_last_selection_id;
   Boolean m_drag_locked;
 
-  Container* m_routed_node;
+  // Shared_container* m_routed_node;
 
   // default values
-  static bool s_def_enabled;
+  static Boolean s_def_enabled;
 };
 
 /*! \brief constructs the prototype. */
@@ -354,6 +369,14 @@ inline void Touch_sensor::set_scene_graph(Scene_graph* sg)
 /*! \brief obtains the scene-graph pointer. */
 inline Scene_graph* Touch_sensor::get_scene_graph() const
 { return m_scene_graph; }
+
+/*! \brief sets the routed node pointer. */
+// inline void Touch_sensor::set_routed_node(Container* node)
+// { m_routed_node = node; }
+
+/*! \brief gets the routed node pointer. */
+// inline Container* Touch_sensor::get_routed_node() const
+// { return m_routed_node; }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Touch_sensor::get_tag() const { return s_tag; }

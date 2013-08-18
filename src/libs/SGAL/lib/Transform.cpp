@@ -72,8 +72,7 @@ Transform::Transform(Boolean proto) :
 /*! Destructor */
 Transform::~Transform() {}
 
-/*!
- */
+/*! \brief sets the affine transform 4x4 matrix. */
 void Transform::set_matrix(const Matrix4f& matrix)
 {
   m_matrix.set(matrix);
@@ -90,14 +89,14 @@ void Transform::get_matrix(Matrix4f& matrix)
   m_matrix.get(matrix);
 }
 
-/*! \brief obtains (a const reference of) the matrix */
+/*! \brief obtains (a const reference to) the matrix */
 const Matrix4f& Transform::get_matrix()
 {
   if (m_dirty_matrix) clean_matrix();
   return m_matrix;
 }
 
-/*! \brief builds the matrix out of the individual transforms */
+/*! \brief builds the matrix out of the individual transforms. */
 void Transform::clean_matrix()
 {
   Vector3f& axis = m_rotation.get_axis();
@@ -520,37 +519,39 @@ void Transform::init_prototype()
   s_prototype = new Container_proto(Group::get_prototype());
 
   // Add the field-info records to the prototype:
-  Execution_function exec_func;
-  SF_vector3f* vector3f_fi;
-  SF_rotation* rotation_fi;
-  SF_bool* bool_fi;
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Transform::parts_changed);
 
   // center
-  exec_func = static_cast<Execution_function>(&Transform::parts_changed);
-  vector3f_fi = new SF_vector3f(CENTER, "center",
-                                get_member_offset(&m_center), exec_func);
-  s_prototype->add_field_info(vector3f_fi);
+  Vector3f_handle_function center_func =
+    static_cast<Vector3f_handle_function>(&Transform::center_handle);
+  s_prototype->add_field_info(new SF_vector3f(CENTER, "center", center_func,
+                                              exec_func));
 
   // translation
-  vector3f_fi = new SF_vector3f(TRANSLATION, "translation",
-                                get_member_offset(&m_translation), exec_func);
-  s_prototype->add_field_info(vector3f_fi);
+  Vector3f_handle_function translation_func =
+    static_cast<Vector3f_handle_function>(&Transform::translation_handle);
+  s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
+                                              translation_func, exec_func));
 
   // rotation
-  rotation_fi = new SF_rotation(ROTATION, "rotation",
-                                get_member_offset(&m_rotation), exec_func);
-  s_prototype->add_field_info(rotation_fi);
+  Rotation_handle_function rotation_func =
+    static_cast<Rotation_handle_function>(&Transform::rotation_handle);
+  s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
+                                              rotation_func, exec_func));
 
   // scale
-  vector3f_fi = new SF_vector3f(SCALE, "scale",
-                                get_member_offset(&m_scale), exec_func);
-  s_prototype->add_field_info(vector3f_fi);
+  Vector3f_handle_function scale_func =
+    static_cast<Vector3f_handle_function>(&Transform::scale_handle);
+  s_prototype->add_field_info(new SF_vector3f(SCALE, "scale", scale_func,
+                                              exec_func));
 
   // reset
   exec_func = static_cast<Execution_function>(&Transform::reset);
-  bool_fi = new SF_bool(RESET, "reset", get_member_offset(&m_reset),
-                        exec_func);
-  s_prototype->add_field_info(bool_fi);
+  Boolean_handle_function reset_func =
+    static_cast<Boolean_handle_function>(&Transform::reset_handle);
+  s_prototype->add_field_info(new SF_bool(RESET, "reset", reset_func,
+                                          exec_func));
 }
 
 /*! \brief deletes the node prototype */

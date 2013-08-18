@@ -106,9 +106,9 @@ void Time_sensor::init_prototype()
 
   // enabled
   exec_func = static_cast<Execution_function>(&Time_sensor::execute_enabled);
-  Boolean_handle_function enabled_handle =
+  Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Time_sensor::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_handle,
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func,
                                           exec_func));
 
   // loop
@@ -193,7 +193,11 @@ void Time_sensor::init_prototype()
 }
 
 /*! */
-void Time_sensor::delete_prototype() { delete s_prototype; }
+void Time_sensor::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
 
 /*! */
 Container_proto* Time_sensor::get_prototype()

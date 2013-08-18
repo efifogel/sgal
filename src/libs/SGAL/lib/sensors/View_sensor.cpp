@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -35,35 +35,32 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Single_key_sensor::s_tag = "ViewSensor";
-Container_proto * View_sensor::s_prototype(NULL);
+const std::string Single_key_sensor::s_tag = "ViewSensor";
+Container_proto* View_sensor::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(View_sensor, "View_sensor");
 
 /*! Constructor */
-View_sensor::View_sensor(Camera_pool * camera_pool,
-                         Transform * navigation_root,
-                         Navigation_sensor * navigation_sensor,
+View_sensor::View_sensor(Camera_pool* camera_pool,
+                         Transform* navigation_root,
+                         Navigation_sensor* navigation_sensor,
                          Boolean proto) :
   Node(proto),
-  m_translation(0.0,0.0,0.0),
-  m_rotation(0.0,0.0,1.0,0.0),
+  m_translation(0.0, 0.0, 0.0),
+  m_rotation(0.0, 0.0, 1.0, 0.0),
   m_camera_pool(camera_pool),
   m_navigation_root(navigation_root),
   m_navigation_sensor(navigation_sensor),
   m_local_view_name(""),
   m_current_view_name(""),
   m_local_view_name_set(false),
-  m_last_camera(0)
-{
-  set_name("View_sensor");
-}
+  m_last_camera(NULL)
+{}
 
-/*! Initializes the view sensor
- */
-void View_sensor::init(Camera_pool * camera_pool,
-                        Transform * navigation_root,
-                        Navigation_sensor * navigation_sensor)
+/*! \brief initializes the view sensor. */
+void View_sensor::init(Camera_pool* camera_pool,
+                        Transform* navigation_root,
+                        Navigation_sensor* navigation_sensor)
 {
   m_camera_pool = camera_pool;
   m_navigation_root = navigation_root;
@@ -73,49 +70,37 @@ void View_sensor::init(Camera_pool * camera_pool,
 /*! Activated every application loop.
  * Calculates and cascades the scene current view translation and rotation.
  */
-bool View_sensor::update()
+Boolean View_sensor::update()
 {
-  if (!m_executionCoordinator->IsCurrentViewCalculationRequired())
-    return true;
+  // if (!m_executionCoordinator->IsCurrentViewCalculationRequired())
+  //   return true;
 
   // Reset the CurrentViewCalculationRequired flag
-  m_executionCoordinator->SetCurrentViewCalculationRequired(false);
+  // m_executionCoordinator->SetCurrentViewCalculationRequired(false);
 
-  if (m_navigation_root==ENULL || m_camera_pool==ENULL)
-  {
-    assert(false);
-    return true;
-  }
+  SGAL_assertion(m_navigation_root);
+  SGAL_assertion(m_camera_pool);
 
   // Get the current camera
-  Camera * camera = m_camera_pool->get_active_camera();
-  if (!camera) {
-    assert(false);
-    return true;
-  }
+  Camera* camera = m_camera_pool->get_active_camera();
+  SGAL_assertion(camera);
 
   if (m_last_camera != camera) {
     m_current_view_name = camera->get_description();
-
-    Field * cur_view_field = get_field(CURRENTVIEWNAME);
-    if (cur_view_field) {
-      cur_view_field->Cascade();
-    }
+    Field* cur_view_field = get_field(CURRENTVIEWNAME);
+    if (cur_view_field) cur_view_field->Cascade();
     m_last_camera = camera;
   }
 
-  if (!m_local_view_name_set && (m_local_view_name!="")) {
-    Field * local_view_field = get_field(LOCALVIEWNAME);
-    if (local_view_field) {
-      local_view_field->cascade();
-    }
+  if (!m_local_view_name_set && (m_local_view_name != "")) {
+    Field* local_view_field = get_field(LOCALVIEWNAME);
+    if (local_view_field) local_view_field->cascade();
     m_local_view_name_set = true;
   }
 
   // If the camera is a remote camera - reset the navigation sensor and dont
   // update the navigation sensor
-  if (camera->get_remote())
-  {
+  if (camera->get_remote()) {
     m_navigation_sensor->reset();
     return true;
   }
@@ -145,18 +130,12 @@ bool View_sensor::update()
   m_FOV = camera->get_field_of_view();
 
   // Cascade the view fields if needed
-  Field * rot_field = get_field(ROTATION);
-  if (rot_field) {
-    rot_field->Cascade();
-  }
-  Field * trans_field = get_field(TRANSLATION);
-  if (trans_field) {
-    trans_field->Cascade();
-  }
-  Field * FOVField = get_field (FOV);
-  if (FOVField) {
-    FOVField->Cascade();
-  }
+  Field* rot_field = get_field(ROTATION);
+  if (rot_field) rot_field->Cascade();
+  Field* trans_field = get_field(TRANSLATION);
+  if (trans_field) trans_field->Cascade();
+  Field* FOVField = get_field (FOV);
+  if (FOVField) FOVField->Cascade();
   return true;
 };
 
@@ -190,7 +169,11 @@ void View_sensor::init_prototype()
 }
 
 /*! */
-void View_sensor::delete_prototyp() { delete s_prototype; }
+void View_sensor::delete_prototyp()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
 
 /*! */
 Container_proto* View_sensor::get_prototype()
@@ -199,16 +182,14 @@ Container_proto* View_sensor::get_prototype()
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- */
-void View_sensor::set_attributes(Element * elem)
+/*! \brief sets the attributes of this container. */
+void View_sensor::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 }
 
-/*!
- */
+#if 0
+/*! */
 Attribute_list View_sensor::get_attributes()
 {
   Attribute_list attribs;

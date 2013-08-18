@@ -62,11 +62,44 @@ public:
   /*! Destructor */
   virtual ~Transform();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Transform* prototype();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone();
+
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Vector3f* center_handle(Field_info*) { return &m_center; }
+  Vector3f* translation_handle(Field_info*) { return &m_translation; }
+  Rotation* rotation_handle(Field_info*) { return &m_rotation; }
+  Vector3f* scale_handle(Field_info*) { return &m_scale; }
+  Boolean* reset_handle(Field_info*) { return &m_reset; }
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  virtual void cull(Cull_context& cull_context);
+
+  virtual void isect(Isect_action* isect_action);
+
+  /*! Clean the bounding sphere of the transformation node. */
+  virtual Boolean clean_sphere_bound();
+
+  /*! \bried writes this container. */
+  virtual void write(Formatter* formatter);
 
   void set_translation(const Vector3f& translation);
   void get_translation(Vector3f& translation);
@@ -79,12 +112,15 @@ public:
   void set_center(const Vector3f& center);
   void get_center(Vector3f& center);
 
+  /*! Set the affine transform 4x4 matrix.
+   * \param matrix the matrix.
+   */
   void set_matrix(const Matrix4f& matrix);
 
-  /*! Obtain (a copy of) the matrix */
+  /*! Obtain (a copy of) the matrix. */
   void get_matrix(Matrix4f& matrix);
 
-  /*! Obtain (a const reference of) the matrix */
+  /*! Obtain (a const reference to) the matrix. */
   const Matrix4f& get_matrix();
 
   void set_translation(Float v0, Float v1, Float v2);
@@ -99,33 +135,6 @@ public:
   void get_center(Float* v0, Float* v1, Float* v2);
 
   void parts_changed(Field_info* field_info = NULL);
-
-  virtual void cull(Cull_context& cull_context);
-  virtual void isect(Isect_action* isect_action);
-
-  /*! Clean the bounding sphere of the transformation node. */
-  virtual Boolean clean_sphere_bound();
-
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
-  /*! \bried writes this container. */
-  virtual void write(Formatter* formatter);
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
 
 protected:
   /*! Obtain the tag (type) of the container. */

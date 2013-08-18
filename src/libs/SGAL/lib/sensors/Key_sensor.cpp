@@ -56,10 +56,9 @@ Key_sensor::Key_sensor(Boolean proto) :
   m_pressed(false),
   m_key(0),
   m_action_key(0)
-{
-}
+{}
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Key_sensor::init_prototype()
 {
   if (s_prototype) return;
@@ -117,16 +116,10 @@ Container_proto* Key_sensor::get_prototype()
 }
 
 /*! Registers the mouse and mostion events */
-void Key_sensor::register_events()
-{
-  Keyboard_event::doregister(this);
-}
+void Key_sensor::register_events() { Keyboard_event::doregister(this); }
 
 /*! Registers the mouse and mostion events */
-void Key_sensor::unregister_events()
-{
-  Keyboard_event::unregister(this);
-}
+void Key_sensor::unregister_events() { Keyboard_event::unregister(this); }
 
 /*! Prints out the name of this agent (for debugging purposes) */
 void Key_sensor::identify()
@@ -137,7 +130,7 @@ void Key_sensor::handle(Keyboard_event * event)
 {
   m_key = event->get_key();
   m_pressed = event->get_pressed();
-  Field * field = (m_pressed) ? get_field(KEY_PRESS) : get_field(KEY_RELEASE);
+  Field* field = (m_pressed) ? get_field(KEY_PRESS) : get_field(KEY_RELEASE);
   if (field) field->cascade();
 }
 
@@ -166,7 +159,7 @@ void Key_sensor::activate(Field_info* /* field_info */)
   if (field) field->cascade();
 }
 
-  #if 0
+#if 0
 /*! Invoked when a key is pressed
  * @param event (in) the identifier of the pressed key
  */
@@ -180,10 +173,12 @@ bool Key_sensor::Key_down()
   if (key_code == SHIFT_CODE) {
     m_shift_key = true;
     field = get_field(SHIFTKEY);
-  } else if (key_code == CTRL_CODE) {
+  }
+  else if (key_code == CTRL_CODE) {
     m_control_key = true;
     field = get_field(CONTROLKEY);
-  } else {
+  }
+  else {
     m_key = (Int)key_code;
     field = get_field(KEY_RELEASE);
   }
@@ -219,10 +214,7 @@ void Key_sensor::Key_up()
 }
 #endif
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Key_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -269,11 +261,9 @@ Attribute_list Key_sensor::get_attributes()
 /*!
  * Adds this key sensor to the scene graph.
  * Also set the execution coordinator to point at this one as active if needed.
- *
- * @param sg (in) pointer to the scene graph
  * @param parent (in) pointer to the parent node
  */
-void Key_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent)
+void Key_sensor::add_to_scene(Scene_graph* sg)
 {
   Node::add_to_scene(sg, parent);
 

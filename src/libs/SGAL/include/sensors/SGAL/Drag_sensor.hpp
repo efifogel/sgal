@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 11857 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -52,7 +52,7 @@ protected:
   virtual void right_button_down(int x, int y);
   virtual void right_button_up(int x, int y);
   virtual void mouse_move(int x, int y);
-  
+
   // Virtual functions that are activated by this class to handle dragging
 
   // Activated when dragging with the left mouse button is started
@@ -66,18 +66,19 @@ protected:
                                 const Vector2sh& /* to */) {};
 
   // Activated when dragging with left button stops
-  virtual void left_dragging_done(const Vector2sh& /* point */) {}; 
-  virtual void right_dragging_done(const Vector2sh& /* point */) {}; 
+  virtual void left_dragging_done(const Vector2sh& /* point */) {};
+  virtual void right_dragging_done(const Vector2sh& /* point */) {};
 
-  // Activated when dragging with left or right mouse button is started  
+  // Activated when dragging with left or right mouse button is started
   virtual void start_dragging(const Vector2sh& /* point */) {};
 
   // Activated for mouse move during left or right button dragging
-  virtual void mouse_drag(const Vector2sh& /* from */, const Vector2sh& /* to */)
+  virtual void mouse_drag(const Vector2sh& /* from */,
+                          const Vector2sh& /* to */)
   {};
 
   // Activated when dragging with left or right button stops
-  virtual void dragging_done(const Vector2sh& /* point */) {}; 
+  virtual void dragging_done(const Vector2sh& /* point */) {};
 
   // Query about the state (down or up) of buttons
   virtual bool is_left_mouse_down() const;
@@ -86,13 +87,13 @@ protected:
   virtual bool is_shift_down() const;
 
   // Returns the point from which dragging has started
-  Vector2sh& get_from_point(); 
-  const Vector2sh& get_from_point() const; 
+  Vector2sh& get_from_point();
+  const Vector2sh& get_from_point() const;
 
   // Returns the point from which dragging has finished
-  Vector2sh& get_to_point(); 
-  const Vector2sh& get_to_point() const; 
-  
+  Vector2sh& get_to_point();
+  const Vector2sh& get_to_point() const;
+
 public:
   virtual bool is_mouse_drag() const { return m_is_mouse_drag; }
 
@@ -103,7 +104,7 @@ public:
 
 protected:
   // Data members that holds the current state of the user actions:
-  
+
   bool m_is_control_down;
 
   bool m_is_shift_down;
@@ -122,44 +123,28 @@ protected:
 // Inline implementation of the simple query functions
 
 inline bool Drag_sensor::is_left_mouse_down() const
-{
-  return m_is_left_mouse_down;
-}
+{ return m_is_left_mouse_down; }
 
 inline bool Drag_sensor::is_right_mouse_down() const
-{
-  return m_is_right_mouse_down;
-}
+{ return m_is_right_mouse_down; }
 
 inline bool Drag_sensor::is_control_down() const
-{
-  return m_is_control_down;
-}
+{ return m_is_control_down; }
 
 inline bool Drag_sensor::is_shift_down() const
-{
-  return m_is_shift_down;
-}
+{ return m_is_shift_down; }
 
 inline Vector2sh& Drag_sensor::get_from_point()
-{
-  return m_from_point;
-}
+{ return m_from_point; }
 
 inline const Vector2sh& Drag_sensor::get_from_point() const
-{
-  return m_from_point;
-}
+{ return m_from_point; }
 
 inline Vector2sh& Drag_sensor::get_to_point()
-{
-  return m_to_point;
-}
+{ return m_to_point; }
 
 inline const Vector2sh& Drag_sensor::get_to_point() const
-{
-  return m_to_point;
-}
+{ return m_to_point; }
 
 SGAL_END_NAMESPACE
 

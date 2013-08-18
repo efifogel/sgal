@@ -48,7 +48,7 @@
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Time_sensor.hpp"
 #include "SGAL/Configuration.hpp"
-#include "SGAL/View_sensor.hpp"
+// #include "SGAL/View_sensor.hpp"
 #include "SGAL/Text_screen.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/GL_error.hpp"
@@ -77,18 +77,18 @@ unsigned int Scene_graph::s_min_redraw_period = 500;
  * scene graph must be syncronized. This is necessary when the scene graph
  * is created and rendered by two different threads
  */
-Scene_graph::Scene_graph(bool syncronize) : 
+Scene_graph::Scene_graph(bool syncronize) :
   m_camera(NULL),
   m_navigation_info(NULL),
   m_context(NULL),
-  m_is_scene_done(!syncronize), 
+  m_is_scene_done(!syncronize),
   m_does_have_lights(false),
   m_current_light_id(0),
   m_isect_action(NULL),
   m_execution_coordinator(0),
   m_default_event_filter(0),
   m_configuration(NULL),
-  m_view_sensor(NULL),
+  // m_view_sensor(NULL),
   m_active_key_sensor(NULL),
   m_fps(0),
   m_fps_counter(0),
@@ -135,13 +135,13 @@ Scene_graph::~Scene_graph()
 
 #ifdef JAVA_SCRIPT
   if (m_jsw_engine != NULL) m_jsw_engine->destroy();
-#endif 
+#endif
 
   Navigation_info* nav = get_active_navigation_info();
   if (nav) nav->unregister_events();
 
   destroy_defaults();
-  
+
   //! \todo destroy stacks
 }
 
@@ -218,14 +218,14 @@ void Scene_graph::release_context()
 }
 
 /*! \brief renders the scene graph. */
-void Scene_graph::draw(Draw_action* draw_action) 
+void Scene_graph::draw(Draw_action* draw_action)
 {
   //! \todo Auto_lock lock(&s_render_CS);
   if (!m_context) return;
 
   //! \todo should the user set this?
   draw_action->set_context(m_context);
-  
+
   if (!m_is_scene_done) {
     // this is to clear the scereen with no scene graph loaded
     m_context->make_current();
@@ -278,7 +278,7 @@ void Scene_graph::draw(Draw_action* draw_action)
   if (accumulation_enabled && acc->is_active()) acc->post_render(draw_action);
   if (poly_mode != Gfx::FILL_PMODE) m_context->set_cull_face(Gfx::BACK_CULL);
 
-  if (accumulation_enabled) {   
+  if (accumulation_enabled) {
     if (acc->is_done() && draw_action->get_snap()) {
       draw_action->set_snap_from_front(false);
       process_snapshots(draw_action);
@@ -288,20 +288,20 @@ void Scene_graph::draw(Draw_action* draw_action)
     draw_action->set_snap_from_front(false);
     process_snapshots(draw_action);
   }
-  
+
   if (acc && !acc->is_active()) acc->reset_delay_time();
-  
+
   // temporary code to get FPS
   if (m_fps_counter == 0) m_fps_start_time = clock();
   else if (m_fps_counter == 20) {
     time_t t2 = clock();
-    float elapsed = (float)(t2-m_fps_start_time); 
+    float elapsed = (float)(t2-m_fps_start_time);
     if (elapsed != 0) {
       m_fps = m_fps_counter / (elapsed/(float)CLOCKS_PER_SEC);
-    }   
+    }
     //! \todo m_execution_coordinator->set_frame_rate(m_fps);
     m_fps_counter = -1;
-    
+
     if (config && config->is_display_fps()) {
       std::cout << "fps: " << m_fps << std::endl;
       std::ostringstream stream_fps;
@@ -310,7 +310,7 @@ void Scene_graph::draw(Draw_action* draw_action)
     }
     else clear_text_screen();
   }
-    
+
   ++m_fps_counter;
 
   // since this is the end of the current frame, we reset the isect.
@@ -320,7 +320,7 @@ void Scene_graph::draw(Draw_action* draw_action)
 /*! \brief sets the camera and draws the background.
  * \todo make it so that it is not called for each pass of the accumulation!
  */
-void Scene_graph::initialize_rendering(Draw_action* draw_action) 
+void Scene_graph::initialize_rendering(Draw_action* draw_action)
 {
   if (!m_context) return;
 
@@ -331,14 +331,14 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
   m_context->set_active_camera(camera);
 
 #if 0
-  // Set the clipping planes around the bounding sphere. 
+  // Set the clipping planes around the bounding sphere.
   if (!m_is_camera_in_focus && camera->get_is_dynamic()) {
     const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
     camera->set_dynamic_clipping_planes(sb.get_center(), sb.get_radius());
     m_is_camera_in_focus = true;
   }
 #endif
-  
+
   set_head_light(draw_action->get_configuration());
 
   if (draw_action->get_clear()) {
@@ -358,34 +358,34 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
 }
 
 /*! \brief renders the scene graph (all passes). */
-void Scene_graph::render_scene_graph(Draw_action* draw_action) 
+void Scene_graph::render_scene_graph(Draw_action* draw_action)
 {
   /*
     draw_action->Apply(m_root);
-    if (draw_action->IsSecondPassRequired()) 
+    if (draw_action->IsSecondPassRequired())
     {
     draw_action->IncreasePassNo();
     draw_action->Apply(m_root);
     }
   */
-  
+
   //! \todo m_execution_coordinator->inc_frame_counter();
   Camera* act_camera = get_active_camera();
   Cull_context cull_context;
   cull_context.set_head_light(get_head_light());
   cull_context.cull(&*m_root, act_camera);
   cull_context.draw(draw_action);
-  
+
   // Draw Text screen.
 #if 0
   if (m_text_screen)
     m_text_screen->draw(draw_action);
 #endif
-  
+
   //! \todo m_execution_coordinator->reset_rendering_required();
 }
 
-/*! This method is called whenever there is a need to see if the mouse 
+/*! This method is called whenever there is a need to see if the mouse
  * is positioned on an object that has a touch sensor.
  * See isect_action for more details.
  */
@@ -397,7 +397,7 @@ void Scene_graph::isect(Uint x, Uint y)
 
   m_is_isect_required = false;
   if (!m_is_scene_done || !m_context) return;
-  
+
   Camera* act_camera = get_active_camera();
   /*! \todo this is all wrong!
    * Instead of the scene graph calling Camera::draw(Isect_action) , the
@@ -418,12 +418,12 @@ void Scene_graph::isect(Uint x, Uint y)
    * This currently works, because the action is not used in Camera::draw()
    */
   act_camera->draw(m_isect_action);
-  
+
   Uint x0 = 0, y0 = 0, width = 0, height = 0;
   m_context->get_viewport(x0, y0, width, height);
   // if the viewport is not initialized return here
   if (width == 0) return;
-    
+
   m_context->make_current();
   //! \todo should be done in make_current
 
@@ -463,7 +463,7 @@ void Scene_graph::isect(Uint x, Uint y)
 }
 
 /*! \brief processes all snapshot nodes. */
-void Scene_graph::process_snapshots(Draw_action* action) 
+void Scene_graph::process_snapshots(Draw_action* action)
 {
   for (Snapshot_iter i = m_snapshots.begin(); i != m_snapshots.end(); ++i) {
     Snapshot* snapshot = *i;
@@ -490,7 +490,7 @@ void Scene_graph::start_simulation()
  */
 void Scene_graph::create_execution_coordinator()
 {
-  /*! \todo   
+  /*! \todo
   if (!m_execution_coordinator) {
     m_execution_coordinator = new Execution_coordinator();
     m_antialiasing.set_ec(m_execution_coordinator);
@@ -515,7 +515,7 @@ void Scene_graph::add_container(Shared_container container,
 }
 
 /*! \brief adds a touch sensor to the scene graph. */
-void Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor) 
+void Scene_graph::add_touch_sensor(Touch_sensor* touch_sensor)
 { m_touch_sensors.push_back(touch_sensor); }
 
 /*! \brief allocates an interval of selection ids, given the size of the
@@ -598,7 +598,7 @@ void Scene_graph::free_selection_ids(Uint start, Uint num)
 
 /*! \brief adds a time sensor node to the scene graph. */
 void Scene_graph::add_time_sensor(Time_sensor* time_sensor)
-{ m_time_sensors.push_back(time_sensor); } 
+{ m_time_sensors.push_back(time_sensor); }
 
 /*! \brief adds a snapshot node to the list of snapshots nodes. */
 void Scene_graph::add_snaphot(Snapshot* snapshot)
@@ -621,18 +621,18 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
       Field* orient_field = nav->get_field(Navigation_sensor::ROTATION);
       SGAL_assertion(pos_field);
       SGAL_assertion(orient_field);
-  
+
       Shared_transform navigat_root = get_navigation_root();
       Field* sg_pos_field = navigat_root->get_field(Transform::TRANSLATION);
       Field* sg_orient_field = navigat_root->get_field(Transform::ROTATION);
       SGAL_assertion(sg_pos_field);
       SGAL_assertion(sg_orient_field);
-  
+
       pos_field->connect(sg_pos_field);
       orient_field->connect(sg_orient_field);
     }
     break;
-    
+
    case SGAL::FLY: SGAL_warning_msg(0, "\"FLY\" not supported yet!"); break;
    case SGAL::WALK: SGAL_warning_msg(0, "\"WALK\" not supported yet!"); break;
 
@@ -643,7 +643,7 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
 }
 
 /*! \brief sets the scene configuration container. */
-void Scene_graph::set_configuration(Configuration* config) 
+void Scene_graph::set_configuration(Configuration* config)
 {
   if (m_owned_configuration) {
     if (m_configuration) delete m_configuration;
@@ -716,7 +716,7 @@ void Scene_graph::set_head_light(Configuration* config)
 
 #if 0
   const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
-  const Vector3f& center = sb.get_center();  
+  const Vector3f& center = sb.get_center();
 
   Vector3f org;
   Vector3f loc;
@@ -731,7 +731,7 @@ void Scene_graph::set_head_light(Configuration* config)
     EMatrix4f m;
     m_camera_pool.get_active_camera()->GetViewMat(m);
     m.Transpose();
-    direction.XformVec(direction,m); 
+    direction.XformVec(direction,m);
     m_head_light->SetDirection(direction);
   */
 }
@@ -743,18 +743,17 @@ void Scene_graph::signal_cascade_start()
    * m_scripts_sai->signal_cascade_start();
    */
 }
- 
+
 /*! \brief performs post cascade activity. */
 void Scene_graph::signal_cascade_end()
 {
-  if (m_view_sensor != NULL)
-    m_view_sensor->update();
+  // if (m_view_sensor != NULL) m_view_sensor->update();
 
   /*! \todo if (m_scripts_sai != NULL)
     m_scripts_sai->signal_cascade_end();
   */
 }
- 
+
 /* \brief destroys default (owned) nodes. */
 void Scene_graph::destroy_defaults()
 {
@@ -782,7 +781,7 @@ void Scene_graph::destroy_defaults()
     m_owned_camera = false;
   }
 }
- 
+
 /*! \brief creates default nodes and route them appropriately. */
 void Scene_graph::create_defaults()
 {
@@ -802,7 +801,7 @@ void Scene_graph::create_defaults()
     m_navigation_info_stack.insert(m_navigation_info);
     route_navigation_info(m_navigation_info, EXAMINE);
   }
-    
+
   // The default camera:
   if (!get_active_camera()) {
     m_camera = new Camera;
@@ -838,7 +837,7 @@ void Scene_graph::create_defaults()
   // Set the default center of rotation:
   const Sphere_bound& sb = m_navigation_root->get_sphere_bound();
   m_navigation_root->set_center(sb.get_center());
-  
+
 #if 0
   //! \todo Execution_coordinator* ec = get_execution_coordinator();
   if (ec) {
@@ -880,7 +879,7 @@ void Scene_graph::put_text_string(int /* line */, const std::string& /* str */)
   }
 #endif
 }
-	
+
 /*! \brief */
 void Scene_graph::add_text_string(const std::string& /* str */)
 {
@@ -911,10 +910,10 @@ bool Scene_graph::route(const std::string& src_node_str,
   // Get the containers from the scene graph:
   Shared_container src_node = get_container(src_node_str);
   if (!src_node) return false;
-  
+
   Shared_container dst_node = get_container(dst_node_str);
   if (!dst_node) return false;
-  
+
   // Get the source and destination fields from the container:
   Field* src_field = src_node->get_source_field(src_field_name);
   if (!src_field) return false;
@@ -923,7 +922,7 @@ bool Scene_graph::route(const std::string& src_node_str,
   if (!dst_field) return false;
 
   route->set(&*src_node, src_field, &*dst_node, dst_field);
-             
+
   return true;
 }
 
@@ -934,7 +933,7 @@ bool Scene_graph::route(Container* src_node, const char* src_field_name,
 {
   if (!src_node) return false;
   if (!dst_node) return false;
-  
+
   // Get the source and destination fields from the container:
   Field* src_field = src_node->get_source_field(src_field_name);
   if (!src_field) return false;
@@ -943,7 +942,7 @@ bool Scene_graph::route(Container* src_node, const char* src_field_name,
   if (!dst_field) return false;
 
   route->set(src_node, src_field, dst_node, dst_field);
-             
+
   return true;
 }
 

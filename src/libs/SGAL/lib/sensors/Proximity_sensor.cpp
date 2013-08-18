@@ -49,20 +49,12 @@ Proximity_sensor::Proximity_sensor(Boolean enabled, Boolean proto) :
   Node(proto),
   m_scene_graph(0),
   m_enabled(enabled)
-{
-  if (!proto && m_enabled) register_events();
-}
+{ if (!proto && m_enabled) register_events(); }
 
 /*! Destructor */
-Proximity_sensor::~Proximity_sensor()
-{
-  if (m_enabled) unregister_events();
-}
+Proximity_sensor::~Proximity_sensor() { if (m_enabled) unregister_events(); }
 
-/*! prototype initialization function - initializes the prototype for
- * all the node instances of Proximity_sensor in the scene graph.
- * Creates and adds a field info for each potential field.
- */
+/*! \brief initializes the prototype. */
 void Proximity_sensor::init_prototype()
 {
   if (s_prototype) return;
@@ -70,29 +62,32 @@ void Proximity_sensor::init_prototype()
 
   // Add the field-info records to the prototype:
   // enabled
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          get_member_offset(&m_enabled)));
+  Boolean_handle_function enabled_func =
+    static_cast<Boolean_handle_function>(&Proximity_sensor::enabled_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func));
 
   // position
-  SF_vector3f* vector3f_fi =
-    new SF_vector3f(POSITION, "position", get_member_offset(&m_position));
-  s_prototype->add_field_info(vector3f_fi);
+  Vector3f_handle_function position_func =
+    static_cast<Vector3f_handle_function>(&Proximity_sensor::position_handle);
+  s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
+                                              position_func));
 
   // orientation
-  SF_rotation* rotation_fi =
-    new SF_rotation(ORIENTATION, "orientation",
-                    get_member_offset(&m_orientation));
-  s_prototype->add_field_info(rotation_fi);
+  Rotation_handle_function orientation_func =
+    static_cast<Rotation_handle_function>
+    (&Proximity_sensor::orientation_handle);
+  s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
+                                              orientation_func));
 }
 
-/*! Delete prototype */
+/*! \brief deletes the prototype. */
 void Proximity_sensor::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain prototype */
+/*! \brief obtains the prototype. */
 Container_proto* Proximity_sensor::get_prototype()
 {
   if (!s_prototype) init_prototype();
@@ -112,12 +107,10 @@ void Proximity_sensor::set_attributes(Element* elem)
   Node::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
       set_enabled(compare_to_true(value));
       elem->mark_delete(ai);
@@ -128,16 +121,13 @@ void Proximity_sensor::set_attributes(Element* elem)
 }
 
 /*! \brief adds the container to a given scene */
-void Proximity_sensor::add_to_scene(Scene_graph* sg)
-{
-  m_scene_graph = sg;
-}
+void Proximity_sensor::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
 #if 0
-/*! Get a list of atributes in this object. This method is called only
- * from the Builder side.
+/*! \brief obtains a list of atributes in this object. This method is called
+ * only from the Builder side.
  *
- * @return a list of attributes
+ * \return a list of attributes
  */
 Attribute_list Proximity_sensor::get_attributes()
 {
@@ -155,29 +145,25 @@ Attribute_list Proximity_sensor::get_attributes()
   return attribs;
 };
 
-/*! Add a touch sensor object to the scene.
+/*! \brief adds a touch sensor object to the scene.
  * This includes adding it to the array of touch sensors in the
  * scene graph and setting a flag in the group indicating it has
  * a touch sensor.
  * @param sg (in) a reference to the scene graph
  * @param parent (in) a pointer to the parent object.
  */
-void Proximity_sensor::add_to_scene(Scene_graph* sg, XML_entity* parent)
+void Proximity_sensor::add_to_scene(Scene_graph* sg)
 {
   Node::add_to_scene(sg, parent);
-
   char id = sg->AddProximitySensor(this);
-
-  Group* group = dynamic_cast<Group *>(parent);
+  Group* group = dynamic_cast<Group*>(parent);
   ASSERT(group);
-  if (group) {
-    group->set_has_touch_sensor(id);
-  }
+  if (group) group->set_has_touch_sensor(id);
   m_scene_graph = sg;
 }
 #endif
 
-/*! registers the mouse and mostion events */
+/*! \brief registers the mouse and mostion events. */
 void Proximity_sensor::register_events()
 {
   Mouse_event::doregister(this);
@@ -185,7 +171,7 @@ void Proximity_sensor::register_events()
   Passive_motion_event::doregister(this);
 }
 
-/*! registers the mouse and mostion events */
+/*! \brief registers the mouse and mostion events */
 void Proximity_sensor::unregister_events()
 {
   Mouse_event::unregister(this);
@@ -193,29 +179,20 @@ void Proximity_sensor::unregister_events()
   Passive_motion_event::unregister(this);
 }
 
-/*! handles mouse events */
-void Proximity_sensor::handle(Mouse_event* /* event */)
-{
-}
+/*! \brief handles mouse events. */
+void Proximity_sensor::handle(Mouse_event* /* event */) {}
 
-/*! handle motion events */
-void Proximity_sensor::handle(Motion_event* /* event */)
-{
-}
+/*! \brief handles motion events. */
+void Proximity_sensor::handle(Motion_event* /* event */) {}
 
-/*! handle passive motion events
+/*! \brief handles passive motion events.
  * Updates and cascades the m_is_over field if needed.
  */
 void Proximity_sensor::handle(Passive_motion_event* /* event */)
-{
-  if (!m_enabled) return;
-}
+{ if (!m_enabled) return; }
 
-/*! prints an identification message
- */
+/*! prints an identification message. */
 void Proximity_sensor::identify()
-{
-  std::cout << "Agent: Proximity_sensor" << std::endl;
-}
+{ std::cout << "Agent: Proximity_sensor" << std::endl; }
 
 SGAL_END_NAMESPACE

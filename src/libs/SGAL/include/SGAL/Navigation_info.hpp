@@ -46,43 +46,39 @@ public:
   virtual ~Navigation_info();
 
   /*! Construct the prototype */
-  static Navigation_info* prototype() { return new Navigation_info(true); }
+  static Navigation_info* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Navigation_info(); }
+  virtual Container* clone();
+
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
-  /*! Add the container to a given scene
-   * \param scene_graph the given scene
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
   /*! Set the type */
-  void set_type(Navigation_info_type type) { m_type = type; }
+  void set_type(Navigation_info_type type);
 
-  /*! Set the 'any' bollean flag that indicates whether the user can
-   * change navigation types
+  /*! Set the 'any' Boolean flag that indicates whether the user can
+   * change navigation types.
    */
-  void set_any(bool any) { m_any = any; }
+  void set_any(Boolean any);
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The navigation type strings */
@@ -97,12 +93,31 @@ private:
   /*! Indicates whether to allow the user to change navigation type */
   bool m_any;
 
-  /*! The navigation type */
-  SGAL::Navigation_info_type m_type;
+  /*! The navigation type. */
+  Navigation_info_type m_type;
 
-  /*! Parse the type string-attribute */
+  /*! Parse the type string-attribute. */
   int parse_type(const std::string& type);
 };
+
+/*! \brief constructs the prototype. */
+inline Navigation_info* Navigation_info::prototype()
+{ return new Navigation_info(true); }
+
+/*! \brief clones. */
+inline Container* Navigation_info::clone() { return new Navigation_info(); }
+
+/*! \brief sets the type. */
+inline void Navigation_info::set_type(Navigation_info_type type)
+{ m_type = type; }
+
+/*! \brief sets the 'any' Boolean flag that indicates whether the user can
+ * change navigation types.
+ */
+inline void Navigation_info::set_any(Boolean any) { m_any = any; }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Navigation_info::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

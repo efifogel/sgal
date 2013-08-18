@@ -62,18 +62,18 @@ public:
   virtual ~Key_sensor() {};
 
   /*! Construct the prototype */
-  static  Key_sensor* prototype() { return new Key_sensor(true); }
+  static Key_sensor* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Key_sensor(); }
+  virtual Container* clone();
 
-  /*! Enactivate or disactivates this key sensor */
+  /*! Enactivate or disactivates this key sensor. */
   void set_active(Boolean active);
 
-  /*! Activate the key sensor */
+  /*! Activate the key sensor. */
   void activate(Field_info* field_info = NULL);
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
   virtual void delete_prototype();
   virtual Container_proto* get_prototype();
@@ -87,7 +87,7 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Add the container to a given scene
+  /*! Add the key sensor to a given scene graph
    * \param scene_graph the given scene
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
@@ -123,8 +123,8 @@ protected:
   Int m_key;
   Int m_action_key;
 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -134,11 +134,18 @@ private:
   static Container_proto* s_prototype;
 };
 
-/*! Draws the node (does nothing) */
+/*! \brief constructs the prototype. */
+inline Key_sensor* Key_sensor::prototype() { return new Key_sensor(true); }
+
+/*! \brief clones. */
+inline Container* Key_sensor::clone() { return new Key_sensor(); }
+
+/*! \brief drawss the node (does nothing). */
 inline Action::Trav_directive Key_sensor::draw(Draw_action* /* draw_action */)
-{
-  return Action::TRAV_CONT;
-};
+{ return Action::TRAV_CONT; };
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Key_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

@@ -65,18 +65,18 @@ public:
   /*! Destructor */
   virtual ~View_sensor(){};
 
-  /*! Construct the prototype */
-  static View_sensor* prototype() { return new View_sensor(true); }
+  /*! Construct the prototype. */
+  static View_sensor* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new View_sensor(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
   virtual void delete_prototyp();
   virtual Container_proto* get_prototype();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -85,22 +85,21 @@ public:
   //@{
   //@}
 
-  // Initializes the object
+  // Initialize the object
   void init(Camera_pool* camera_pool, Transform* navigation_root,
             Navigation_sensor* navigation_sensor = NULL);
 
-  virtual bool update();
+  virtual Boolean update();
 
-  virtual Action::Trav_directive draw(Draw_action* /* draw_action */)
-  { return Action::TRAV_CONT; }
+  virtual Action::Trav_directive draw(Draw_action* /* draw_action */);
 
 protected :
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
@@ -118,6 +117,18 @@ private:
   Camera* m_last_camera;
   Boolean m_local_view_name_set;
 };
+
+/*! \brief constructs the prototype. */
+inline View_sensor* View_sensor::prototype() { return new View_sensor(true); }
+
+/*! \brief clones. */
+inline Container* View_sensor::clone() { return new View_sensor(); }
+
+inline Action::Trav_directive View_sensor::draw(Draw_action* /* draw_action */)
+{ return Action::TRAV_CONT; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& View_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

@@ -73,6 +73,12 @@ public:
 
   /// \name field handlers
   //@{
+  // press
+  Boolean* press_handle(Field_info*) { return &m_press; }
+  Scene_time* time_handle(Field_info*) { return &m_time; }
+  Boolean* state_handle(Field_info*) { return &m_state; }
+  Int* int_state_handle(Field_info*) { return &m_int_state; }
+  Uint* num_states_handle(Field_info*) { return &m_num_states; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -83,28 +89,28 @@ public:
   /*! Draw the node (does nothing). */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Register the keyboard event */
-  void register_events();
-
-  /*! Unregisters the keyboard event */
-  void unregister_events();
-
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify();
 
   /*! Handle mouse events. */
   virtual void handle(Keyboard_event* event);
 
+  /*! Register the keyboard event */
+  void register_events();
+
+  /*! Unregisters the keyboard event */
+  void unregister_events();
+
   /*! Set the flag that indicates whether the sensor is triggered on release.
    */
-  void set_trigger_on_release(Boolean flag) { m_trigger_on_release = flag; }
+  void set_trigger_on_release(Boolean flag);
 
   /*! Determine whether the sensor should be triggered on release. */
-  Boolean is_trigger_on_release() const { return m_trigger_on_release;}
+  Boolean is_trigger_on_release() const;
 
 protected:
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type. */
@@ -154,6 +160,19 @@ inline Container* Single_key_sensor::clone()
 inline
 Action::Trav_directive Single_key_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
+
+/*! \brief sets the flag that indicates whether the sensor is triggered on
+ * release.
+ */
+inline void Single_key_sensor::set_trigger_on_release(Boolean flag)
+{ m_trigger_on_release = flag; }
+
+/*! \brief determines whether the sensor should be triggered on release. */
+inline Boolean Single_key_sensor::is_trigger_on_release() const
+{ return m_trigger_on_release;}
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Single_key_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

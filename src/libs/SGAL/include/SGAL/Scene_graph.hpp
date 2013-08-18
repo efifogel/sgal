@@ -88,7 +88,7 @@ class Draw_action;
 class Execution_coordinator;
 class Configuration;
 class SAI;
-class View_sensor;
+// class View_sensor;
 class Text_screen;
 class Event_filter;
 class Route;
@@ -101,13 +101,13 @@ public:
   typedef boost::shared_ptr<Group>                Shared_group;
   typedef boost::shared_ptr<Transform>            Shared_transform;
   typedef boost::shared_ptr<Point_light>          Shared_point_light;
-  
+
   typedef std::list<Shared_container>             Container_list;
   typedef Container_list::iterator                Container_list_iter;
 
   typedef std::vector<Container*>                 Container_vector;
   typedef Container_vector::iterator              Container_vector_iter;
-  
+
   typedef std::map<std::string, Shared_container> Container_map;
   typedef Container_map::iterator                 Container_map_iter;
 
@@ -129,7 +129,7 @@ public:
   typedef std::pair<Uint, Uint>                   Selection_id_interval;
   typedef std::list<Selection_id_interval>        Selection_id_interval_list;
   typedef Selection_id_interval_list::iterator    Selection_id_interval_iter;
-  
+
   /*! Constructor
    * \param syncronize indicates whether the creation and the rendering of the
    * scene graph must be syncronized. This is necessary when the scene graph
@@ -147,7 +147,7 @@ public:
 
   /*! Initialize the graphics state context. */
   void init_context();
-  
+
   /*! Release the graphics state context. */
   void release_context();
 
@@ -157,22 +157,22 @@ public:
   Context* get_context() const { return m_context; }
 
   /*! Create default nodes and route them appropriately.
-   * The set of such nodes consists of a navigation sensor node, a 
-   * configuration node, a camera node, and a light node. Also, connect 
+   * The set of such nodes consists of a navigation sensor node, a
+   * configuration node, a camera node, and a light node. Also, connect
    * navigation sensor node to the navigation root node.
    */
   void create_defaults();
 
   /*! Destroy default (owned) nodes */
   void destroy_defaults();
-  
+
   /*! Bind the bindable nodes */
   void bind();
 
   /*! Render the scene graph.
-   * The scene is rendered only if the scene graph is complete and it has been 
-   * modified since the last render. 
-   * If a background node exits, we first render it. Otherwise we clear the 
+   * The scene is rendered only if the scene graph is complete and it has been
+   * modified since the last render.
+   * If a background node exits, we first render it. Otherwise we clear the
    * buffers. Then we render the camera and then we start rendering the scene
    * graph from the root. At the end we swap the buffers.
    * \param draw_action (in)
@@ -188,7 +188,7 @@ public:
 
   /*! Start simulation. */
   void start_simulation();
-  
+
   void create_execution_coordinator();
   Execution_coordinator* get_execution_coordinator();
 
@@ -230,7 +230,7 @@ public:
    * the interval to free.
    */
   void free_selection_ids(Uint start, Uint num);
-  
+
   /*! Add a time sensor node to the scene graph. */
   void add_time_sensor(Time_sensor* time_Sensor);
 
@@ -287,15 +287,15 @@ public:
   /*! Return the begin pointer of the containers */
   Container_list_iter containers_begin() { return m_containers.begin(); }
 
-  /*! Return the past-the-end pointer of the containers */  
+  /*! Return the past-the-end pointer of the containers */
   Container_list_iter containers_end() { return m_containers.end(); }
 
   /*! Return the begin pointer of the containers */
   Container_map_iter instances_begin() { return m_instances.begin(); }
 
-  /*! Return the past-the-end pointer of the containers */  
+  /*! Return the past-the-end pointer of the containers */
   Container_map_iter instances_end() { return m_instances.end(); }
-  
+
   /*! Obtain the navigation root. It's a node of type Transform */
   Shared_transform get_navigation_root() { return m_navigation_root; }
 
@@ -316,7 +316,7 @@ public:
 
   /*! Raises the flag that indicates whether the scene creation is complete */
   void set_done() { m_is_scene_done = true; }
-  
+
   void set_have_lights(Boolean flag);
 
   Boolean does_have_lights();
@@ -335,7 +335,7 @@ public:
   JSW_engine_int* get_jsw_engine();
   SAI* get_scripts_sai();
   */
-  
+
   // Text screen operations.
   // Clear all text lines.
   void clear_text_screen();
@@ -349,7 +349,7 @@ public:
 
   /*! \bried computes the speed factor required by the sensors */
   float compute_speed_factor() const;
-  
+
   /*! Route the connection */
   bool route(const std::string& src_node_str,
              const std::string& src_field_str,
@@ -361,7 +361,7 @@ public:
   bool route(Container* src_node, const char* src_field_str,
              Container* dts_node, const char* dst_field_str,
              Route* route);
-  
+
   /*! Add a directory to the directory-search list */
   void add_data_dir(const fi::path & dir) { m_data_dirs.push_back(dir); }
 
@@ -370,7 +370,7 @@ public:
 
   /*! Obtain the directory-search structure */
   const Path_list & get_data_dirs() const { return m_data_dirs; }
-  
+
   /*! Find containers of a particular type and inserts them into a given
    * container
    */
@@ -389,7 +389,7 @@ public:
     }
     return oi;
   }
-  
+
 private:
   /*! Binadable stacks */
 
@@ -401,10 +401,10 @@ private:
 
   /*! The fog stack */
   Bindable_stack m_fog_stack;
-  
+
   /*! The camera stack */
   Bindable_stack m_camera_stack;
-  
+
   /*! The background stack */
   Bindable_stack m_background_stack;
 
@@ -416,10 +416,10 @@ private:
 
   /*! The default camera */
   Camera* m_camera;
-  
+
   /*! The default navigation info */
   Navigation_info* m_navigation_info;
-  
+
   /*! A list of objects that are children of the root of the scene */
   Container_vector m_root_objects;
 
@@ -454,10 +454,10 @@ private:
 
   /*! The list of intervals of free selection ids. */
   Selection_id_interval_list m_free_selection_ids;
-  
+
   /*! A list of time sensors */
   Time_sensor_list m_time_sensors;
-  
+
   /*! an array of snapshot objects to be processed at the end of the rendering
    * sequence.
    */
@@ -480,16 +480,16 @@ private:
   Configuration* m_configuration;
 
   /*! a pointer to the view sensor object. */
-  View_sensor* m_view_sensor;
+  // View_sensor* m_view_sensor;
 
   /*! The active key sensor. */
   Key_sensor* m_active_key_sensor;
-  
+
   /*! the rendering frames per second. */
   float m_fps;
   short m_fps_counter;
   time_t m_fps_start_time;
-  
+
   /*! Last rendering time. */
   Uint m_last_render_time;
 
@@ -506,7 +506,7 @@ private:
 
   /*! an object that is used to display the FPS on the screen. */
   Text_screen* m_text_screen;
-  
+
   /*! */
   //! \todo SG_JS_err_reporter m_js_error_reporter;
 
@@ -538,8 +538,8 @@ private:
 
   void set_head_light(Configuration* config);
 
-  /*! Set the camera and draws the background. Any other rendering 
-   * calls that should not me done for each pass of the anti aliasing 
+  /*! Set the camera and draws the background. Any other rendering
+   * calls that should not me done for each pass of the anti aliasing
    * should go in this method.
    */
   void initialize_rendering(Draw_action* draw_action);

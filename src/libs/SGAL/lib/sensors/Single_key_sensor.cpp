@@ -44,7 +44,7 @@ const std::string Single_key_sensor::s_tag = "SingleKeySensor";
 Container_proto* Single_key_sensor::s_prototype(NULL);
 
 /*! Default Values. */
-Uint Single_key_sensor::s_def_num_states = 1;
+Uint Single_key_sensor::s_def_num_states = 2;
 Boolean Single_key_sensor::s_def_trigger_on_release(true);
 
 REGISTER_TO_FACTORY(Single_key_sensor, "Single_key_sensor");
@@ -73,24 +73,31 @@ void Single_key_sensor::init_prototype()
 
   // Add the object fields to the prototype
   // press
-  s_prototype->add_field_info(new SF_bool(PRESS, "press",
-                                          get_member_offset(&m_press)));
+  Boolean_handle_function press_func =
+    static_cast<Boolean_handle_function>(&Single_key_sensor::press_handle);
+  s_prototype->add_field_info(new SF_bool(PRESS, "press", press_func));
 
   // pressTime
-  s_prototype->add_field_info(new SF_time(TIME, "pressTime",
-                                          get_member_offset(&m_time)));
+  Scene_time_handle_function time_func =
+    static_cast<Scene_time_handle_function>(&Single_key_sensor::time_handle);
+  s_prototype->add_field_info(new SF_time(TIME, "pressTime", time_func));
 
   // state
-  s_prototype->add_field_info(new SF_bool(STATE, "state",
-                                          get_member_offset(&m_state)));
+  Boolean_handle_function state_func =
+    static_cast<Boolean_handle_function>(&Single_key_sensor::state_handle);
+  s_prototype->add_field_info(new SF_bool(STATE, "state", state_func));
 
   // intState
+  Int_handle_function int_state_func =
+    static_cast<Int_handle_function>(&Single_key_sensor::int_state_handle);
   s_prototype->add_field_info(new SF_int(INT_STATE, "intState",
-                                          get_member_offset(&m_int_state)));
+                                         int_state_func));
 
   // numberOfStates
+  Uint_handle_function num_states_func =
+    static_cast<Uint_handle_function>(&Single_key_sensor::num_states_handle);
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_STATES, "numberOfStates",
-                                          get_member_offset(&m_num_states)));
+                                          num_states_func));
 }
 
 /*! \brief deletes the node prototype. */
@@ -138,7 +145,7 @@ void Single_key_sensor::handle(Keyboard_event* event)
   field = get_field(STATE);
   if (field) field->cascade();
 
-  m_int_state++;
+  ++m_int_state;
   m_int_state %= m_num_states;
   field = get_field(INT_STATE);
   if (field) field->cascade();
@@ -175,7 +182,7 @@ void Single_key_sensor::set_attributes(Element* elem)
       continue;
     }
     if (name == "intState") {
-      m_int_state = atoi(value.c_str());
+      m_int_state = boost::lexical_cast<Int>(value.c_str());
       elem->mark_delete(ai);
       continue;
     }
