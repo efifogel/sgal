@@ -49,31 +49,40 @@ public:
   virtual ~Point_light();
 
   /* Construct the prototype */
-  static Point_light * prototype() { return new Point_light(true); }
+  static Point_light* prototype();
 
   /*! Clone */
-  virtual Container * clone() { return new Point_light(); }
+  virtual Container* clone();
 
   /*! Draw the node */
-  virtual Action::Trav_directive draw(Draw_action * draw_action);
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element * elem);
 
   // virtual Attribute_list get_attributes();
 
-  // this has to be implemented as an emty methid to avoid double deletion
-  // of the prototype in the bae class.
+  // this has to be implemented as an empty methid to avoid double deletion
+  // of the prototype in the base class.
   virtual void delete_prototype() {}
 
 protected:
   /*! Obtain the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 };
+
+/* \brief constructs the prototype. */
+inline Point_light* Point_light::prototype() { return new Point_light(true); }
+
+/*! \brief clones. */
+inline Container* Point_light::clone() { return new Point_light(); }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Point_light::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 
