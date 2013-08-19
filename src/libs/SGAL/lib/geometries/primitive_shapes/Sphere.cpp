@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -54,8 +54,7 @@ Sphere::Sphere(Boolean proto) :
   m_radius(s_def_radius),
   m_stacks(s_def_stacks),
   m_slices(s_def_slices)
-{
-}
+{}
 
 /*! Destructor */
 Sphere::~Sphere() { gluDeleteQuadric(m_sphere); }
@@ -107,17 +106,14 @@ Boolean Sphere::clean_sphere_bound()
   return true;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Sphere::set_attributes(Element * elem)
 {
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string & name = elem->get_name(ai);
     const std::string & value = elem->get_value(ai);
     if (name == "center") {
@@ -196,26 +192,25 @@ void Sphere::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geometry::get_prototype());
 
-  //! type definition of a container execution function - used with engines
-  typedef void (Container::* Execution_function)(Field_info*);
-
   // Add the field-info records to the prototype:
-
   // Bounding sphere changed
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           get_member_offset(&m_radius),
+  Float_handle_function radius_func =
+    static_cast<Float_handle_function>(&Sphere::radius_handle);
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
                                            exec_func));
 
   // Rendering required
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          get_member_offset(&m_stacks)));
+  Uint_handle_function stacks_func =
+    static_cast<Uint_handle_function>(&Sphere::stacks_handle);
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func));
 
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          get_member_offset(&m_slices)));
+  Uint_handle_function slices_func =
+    static_cast<Uint_handle_function>(&Sphere::slices_handle);
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func));
 }
 
 /*! \brief deletes the sphere prototype. */

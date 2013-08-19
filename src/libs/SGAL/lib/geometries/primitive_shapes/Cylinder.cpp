@@ -182,9 +182,8 @@ void Cylinder::set_attributes(Element* elem)
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "radius") {
@@ -302,44 +301,53 @@ void Cylinder::init_prototype()
   // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           get_member_offset(&m_radius),
+  Float_handle_function radius_func =
+    static_cast<Float_handle_function>(&Cylinder::radius_handle);
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
                                            exec_func));
 
   // height
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
-                                           get_member_offset(&m_height),
+  Float_handle_function height_func =
+    static_cast<Float_handle_function>(&Cylinder::height_handle);
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
                                            exec_func));
 
   // side
-  s_prototype->add_field_info(new SF_bool(SIDE, "side",
-                                          get_member_offset(&m_is_body_visible),
+  Boolean_handle_function is_body_visible_func =
+    static_cast<Boolean_handle_function>(&Cylinder::is_body_visible_handle);
+  s_prototype->add_field_info(new SF_bool(SIDE, "side", is_body_visible_func,
                                           exec_func));
 
   // bottom
-  s_prototype->
-    add_field_info(new SF_bool(BOTTOM, "bottom",
-                               get_member_offset(&m_is_bottom_visible),
-                               exec_func));
+  Boolean_handle_function is_bottom_visible_func =
+    static_cast<Boolean_handle_function>
+    (&Cylinder::is_bottom_visible_handle);
+  s_prototype->add_field_info(new SF_bool(BOTTOM, "bottom",
+                                          is_bottom_visible_func, exec_func));
 
   // Rendering required
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_bool(TOP, "top",
-                                          get_member_offset(&m_is_top_visible),
+  Boolean_handle_function is_top_visible_func =
+    static_cast<Boolean_handle_function>(&Cylinder::is_top_visible_handle);
+  s_prototype->add_field_info(new SF_bool(TOP, "top", is_top_visible_func,
                                           exec_func));
 
+  // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_int(SLICES, "slices",
-                                         get_member_offset(&m_slices),
-                                         exec_func));
+  Uint_handle_function slices_func =
+    static_cast<Uint_handle_function>(&Cylinder::slices_handle);
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
+                                          exec_func));
 
+  // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_int(STACKS, "stacks",
-                                         get_member_offset(&m_stacks),
-                                         exec_func));
+  Uint_handle_function stacks_func =
+    static_cast<Uint_handle_function>(&Cylinder::stacks_handle);
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
+                                          exec_func));
 }
 
 /*! */

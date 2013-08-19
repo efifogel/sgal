@@ -40,22 +40,20 @@ const std::string Box::s_tag = "Box";
 Container_proto* Box::s_prototype(NULL);
 
 // Default values:
-const Vector3f Box::m_def_size(2, 2, 2);
+const Vector3f Box::s_def_size(2, 2, 2);
 
 REGISTER_TO_FACTORY(Box, "Box");
 
 /*! Constructor */
-Box::Box(Boolean proto) : Geometry(proto), m_size(m_def_size) {}
+Box::Box(Boolean proto) : Geometry(proto), m_size(s_def_size) {}
 
 /*! Destructor */
 Box::~Box() {}
 
-/* draw the box by calling the display list */
+/* \brief draws the box by calling the display list. */
 void Box::draw(Draw_action* action) { draw_box(); }
 
-/*! Draw the box for selection
- * *param isect_action
- */
+/*! \brief draws the box for selection. */
 void Box::isect(Isect_action* action)
 {
   float w = m_size[0] * 0.5f;
@@ -125,7 +123,7 @@ Boolean Box::clean_sphere_bound()
   return true;
 }
 
-/*! Initialize the display list that is used to draw the box */
+/*! \brief initializes the display list that is used to draw the box. */
 void Box::init()
 {
 #if 0
@@ -205,10 +203,7 @@ void Box::draw_box()
   glDisable(GL_NORMALIZE);
 }
 
-/*! Set the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Box::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -232,7 +227,7 @@ void Box::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get the attributes of the box */
+/*! \brief obtains the attributes of the box. */
 Attribute_list Box::get_attributes()
 {
   Attribute_list attribs;
@@ -240,7 +235,7 @@ Attribute_list Box::get_attributes()
 
   attribs = Geometry::get_attributes();
 
-  if (m_size != m_def_size) {
+  if (m_size != s_def_size) {
     attrib.first = "size";
     attrib.second = get_size().get_text();
     attribs.push_back(attrib);
@@ -260,8 +255,9 @@ void Box::init_prototype()
   // size
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_vector3f(SIZE, "size",
-                                              get_member_offset(&m_size),
+  Vector3f_handle_function size_func =
+    static_cast<Vector3f_handle_function>(&Box::size_handle);
+  s_prototype->add_field_info(new SF_vector3f(SIZE, "size", size_func,
                                               exec_func));
 }
 

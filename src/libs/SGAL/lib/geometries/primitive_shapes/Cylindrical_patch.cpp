@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -102,9 +102,7 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
   glVertex3f(v_left_x, top, v_left_z);
 }
 
-/*! Draw the cylindrical patch
- * \param draw_action the draw action
- */
+/*! \brief draws the cylindrical patch. */
 void Cylindrical_patch::draw(Draw_action* action)
 {
   if (has_scale()) glEnable(GL_NORMALIZE);
@@ -138,9 +136,7 @@ void Cylindrical_patch::draw(Draw_action* action)
   if (has_scale()) glDisable(GL_NORMALIZE);
 }
 
-/*! Draw the cylindrical patch in selection mode
- * \param action
- */
+/*! \brief draws the cylindrical patch in selection mode. */
 void Cylindrical_patch::isect(Isect_action* action)
 {
   Float top = m_height / 2;
@@ -192,9 +188,8 @@ void Cylindrical_patch::set_attributes(Element* elem)
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "radius") {
@@ -286,34 +281,39 @@ void Cylindrical_patch::init_prototype()
   // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           get_member_offset(&m_radius),
+  Float_handle_function radius_func =
+    static_cast<Float_handle_function>(&Cylindrical_patch::radius_handle);
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
                                            exec_func));
 
   // height
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
-                                           get_member_offset(&m_height),
+  Float_handle_function height_func =
+    static_cast<Float_handle_function>(&Cylindrical_patch::height_handle);
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
                                            exec_func));
 
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          get_member_offset(&m_slices),
+  Uint_handle_function slices_func =
+    static_cast<Uint_handle_function>(&Cylindrical_patch::slices_handle);
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
                                           exec_func));
 
   // alpha
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
-                                           get_member_offset(&m_alpha),
+  Float_handle_function alpha_func =
+    static_cast<Float_handle_function>(&Cylindrical_patch::alpha_handle);
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
                                            exec_func));
 
   // beta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(BETA, "beta",
-                                           get_member_offset(&m_beta),
+  Float_handle_function beta_func =
+    static_cast<Float_handle_function>(&Cylindrical_patch::beta_handle);
+  s_prototype->add_field_info(new SF_float(BETA, "beta", beta_func,
                                            exec_func));
 }
 

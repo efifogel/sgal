@@ -61,24 +61,6 @@ public:
   /*! clones a new instance. */
   virtual Container* clone();
 
-  /* sets the size of the box. */
-  void set_size(const Vector3f& size);
-
-  /* gets the size of the box. */
-  void get_size(Vector3f& size) const;
-
-  /* gets the size of the box. */
-  Vector3f get_size() const;
-
-  /*! Draw the box. */
-  virtual void draw(Draw_action* action);
-
-  /*! Draw the sphere in selection mode */
-  virtual void isect(Isect_action* action);
-
-  /*! Clean the bounding sphere. */
-  virtual Boolean clean_sphere_bound();
-
   /*! Initialize the box prototype. */
   virtual void init_prototype();
 
@@ -90,12 +72,31 @@ public:
 
   /// \name field handlers
   //@{
+  Vector3f* size_handle(Field_info*) { return &m_size; }
   //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
+
+  /*! Draw the box. */
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the sphere in selection mode */
+  virtual void isect(Isect_action* action);
+
+  /*! Clean the bounding sphere. */
+  virtual Boolean clean_sphere_bound();
+
+  /* Set the size of the box. */
+  void set_size(const Vector3f& size);
+
+  /* Obtain the size of the box. */
+  void get_size(Vector3f& size) const;
+
+  /* Obtain the size of the box. */
+  Vector3f get_size() const;
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -119,7 +120,7 @@ private:
 
 private:
   /*! the default size of the box. */
-  static const Vector3f m_def_size;
+  static const Vector3f s_def_size;
 };
 
 /*! \brief constructs the prototype.. */

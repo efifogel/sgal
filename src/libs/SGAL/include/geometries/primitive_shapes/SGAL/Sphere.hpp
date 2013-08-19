@@ -68,6 +68,36 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtains the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Float* radius_handle(Field_info*) { return &m_radius; }
+  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  Uint* slices_handle(Field_info*) { return &m_slices; }
+  //@}
+
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Draw the sphere. */
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the sphere in selection mode. */
+  virtual void isect(Isect_action* action);
+
+  /*! Calculare the sphere bound of the sphere */
+  virtual Boolean clean_sphere_bound();
+
   /*! Set the sphere center. */
   void set_center(const Vector3f& center);
 
@@ -91,33 +121,6 @@ public:
 
   /*! Obtain the number of slices that the sphere is made of. */
   Uint get_slices() const;
-
-  /*! Draw the sphere. */
-  virtual void draw(Draw_action* action);
-
-  /*! Draw the sphere in selection mode. */
-  virtual void isect(Isect_action* action);
-
-  /*! Calculare the sphere bound of the sphere */
-  virtual Boolean clean_sphere_bound();
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtains the node prototype. */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  /*! Set the attributes of this node. */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
 
   /*! Determine whether the is dirty and thus needs cleaning. */
   Boolean is_dirty() const;

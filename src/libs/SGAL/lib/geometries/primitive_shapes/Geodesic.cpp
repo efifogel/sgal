@@ -81,61 +81,55 @@ void Geodesic::draw(Draw_action * action)
     context->draw_light_model_sides(Gfx::TWO_SIDE);
   }
 
-    float x_start = m_radius*cos(m_start[0])*sin(m_start[1]);
-	float y_start = m_radius*sin(m_start[0])*sin(m_start[1]);
-	float z_start = m_radius*cos(m_start[1]);
+  float x_start = m_radius*cos(m_start[0])*sin(m_start[1]);
+  float y_start = m_radius*sin(m_start[0])*sin(m_start[1]);
+  float z_start = m_radius*cos(m_start[1]);
 
-    Vector3f source = Vector3f(x_start,y_start,z_start);
+  Vector3f source = Vector3f(x_start,y_start,z_start);
 
-    float x_end = m_radius*cos(m_end[0])*sin(m_end[1]);
-	float y_end = m_radius*sin(m_end[0])*sin(m_end[1]);
-	float z_end = m_radius*cos(m_end[1]);
+  float x_end = m_radius*cos(m_end[0])*sin(m_end[1]);
+  float y_end = m_radius*sin(m_end[0])*sin(m_end[1]);
+  float z_end = m_radius*cos(m_end[1]);
 
-	Vector3f target = Vector3f(x_end,y_end,z_end);
-	std::list<Vector3f> points;
-	points.push_front(source);
-	points.push_back(target);
-	std::list<Vector3f>::iterator iter;
-    std::list<Vector3f>::iterator nextIter;
-    glBegin(GL_LINE_STRIP);
-	Uint i;
-	int multiplier = m_is_complement?-1:1;
+  Vector3f target = Vector3f(x_end,y_end,z_end);
+  std::list<Vector3f> points;
+  points.push_front(source);
+  points.push_back(target);
+  std::list<Vector3f>::iterator iter;
+  std::list<Vector3f>::iterator nextIter;
+  glBegin(GL_LINE_STRIP);
+  Uint i;
+  int multiplier = m_is_complement? -1 : 1;
 
-	for (i = 1; i <= m_breaks; i++)
-	{
+  for (i = 1; i <= m_breaks; ++i) {
+    if (i > 1) multiplier = 1;
+    iter = points.begin();
+    nextIter = iter;
+    nextIter++;
+    while (nextIter != points.end()) {
+      Vector3f vertex1 = *iter;
+      Vector3f vertex2 = *nextIter;
+      float x = (vertex2[0] + vertex1[0])/2;
+      float y = (vertex2[1] + vertex1[1])/2;
+      float z = (vertex2[2] + vertex1[2])/2;
 
-      if (i>1)
-		multiplier = 1;
-	  iter = points.begin();
-	  nextIter = iter;
-	  nextIter++;
-	  while (nextIter != points.end())
-	  {
-	    Vector3f vertex1 = *iter;
-		Vector3f vertex2 = *nextIter;
-		float x = (vertex2[0] + vertex1[0])/2;
-		float y = (vertex2[1] + vertex1[1])/2;
-		float z = (vertex2[2] + vertex1[2])/2;
+      float r = sqrt(x*x+y*y+z*z);
+      float theta = atan2(y,x);
+      float fi = acos(z/r);
 
- 		float r = sqrt(x*x+y*y+z*z);
-		float theta = atan2(y,x);
-		float fi = acos(z/r);
-
-
-	    float x_new = multiplier*m_radius*cos(theta)*sin(fi);
- 	    float y_new = multiplier*m_radius*sin(theta)*sin(fi);
-	    float z_new = multiplier*m_radius*cos(fi);
-		iter = points.insert(nextIter, Vector3f(x_new,y_new,z_new));
-	    iter++;
-		nextIter++;
-      }
+      float x_new = multiplier*m_radius*cos(theta)*sin(fi);
+      float y_new = multiplier*m_radius*sin(theta)*sin(fi);
+      float z_new = multiplier*m_radius*cos(fi);
+      iter = points.insert(nextIter, Vector3f(x_new,y_new,z_new));
+      ++iter;
+      ++nextIter;
     }
-	for (iter = points.begin(); iter!= points.end(); iter++)
-	{
-	  Vector3f temp = *iter;
-	  glVertex3fv((float*)&temp);
-	}
-    glEnd();
+  }
+  for (iter = points.begin(); iter!= points.end(); iter++) {
+    Vector3f temp = *iter;
+    glVertex3fv((float*)&temp);
+  }
+  glEnd();
 
   // // Calculate lower left vertex:
   // Vector3f vbl, vtl, vtr, vbr;
@@ -146,71 +140,71 @@ void Geodesic::draw(Draw_action * action)
   // float alpha = m_alpha;
   // float alpha_right;
   // for (i = 0; i < m_breaks; i++) {
-    // float sin_alpha_left, sin_alpha_right;
-    // float cos_alpha_left, cos_alpha_right;
-    // alpha_right = alpha + dGamma;
+  // float sin_alpha_left, sin_alpha_right;
+  // float cos_alpha_left, cos_alpha_right;
+  // alpha_right = alpha + dGamma;
 
-    // sincosf(alpha, &sin_alpha_left, &cos_alpha_left);
-    // sincosf(alpha_right, &sin_alpha_right, &cos_alpha_right);
+  // sincosf(alpha, &sin_alpha_left, &cos_alpha_left);
+  // sincosf(alpha_right, &sin_alpha_right, &cos_alpha_right);
 
-    // float beta = m_beta;
-    // float beta_top;
+  // float beta = m_beta;
+  // float beta_top;
 
-    // for (j = 0; j < m_stacks; j++) {
-      // float sin_beta_bottom, sin_beta_top;
-      // float cos_beta_bottom, cos_beta_top;
+  // for (j = 0; j < m_stacks; j++) {
+  // float sin_beta_bottom, sin_beta_top;
+  // float cos_beta_bottom, cos_beta_top;
 
-      // beta_top = beta + d_delta;
+  // beta_top = beta + d_delta;
 
-      // sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
-      // sincosf(beta_top, &sin_beta_top, &cos_beta_top);
+  // sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
+  // sincosf(beta_top, &sin_beta_top, &cos_beta_top);
 
-      // // bottom left:
-      // vbl[0] = sin_beta_bottom * sin_alpha_left;
-      // vbl[2] = sin_beta_bottom * cos_alpha_left;
-      // // vbl[1] = cos_beta_bottom;
+  // // bottom left:
+  // vbl[0] = sin_beta_bottom * sin_alpha_left;
+  // vbl[2] = sin_beta_bottom * cos_alpha_left;
+  // // vbl[1] = cos_beta_bottom;
 
-      // // top left:
-      // vtl[0] = sin_beta_top * sin_alpha_left;
-      // vtl[2] = sin_beta_top * cos_alpha_left;
-      // // vtl[1] = cos_beta_top;
+  // // top left:
+  // vtl[0] = sin_beta_top * sin_alpha_left;
+  // vtl[2] = sin_beta_top * cos_alpha_left;
+  // // vtl[1] = cos_beta_top;
 
-      // // top right:
-      // vtr[0] = sin_beta_top * sin_alpha_right;
-      // vtr[2] = sin_beta_top * cos_alpha_right;
-      // // vtr[1] = cos_beta_top;
+  // // top right:
+  // vtr[0] = sin_beta_top * sin_alpha_right;
+  // vtr[2] = sin_beta_top * cos_alpha_right;
+  // // vtr[1] = cos_beta_top;
 
-      // // bottom right:
-      // vbr[0] = sin_beta_bottom * sin_alpha_right;
-      // vbr[2] = sin_beta_bottom * cos_alpha_right;
-      // // vbr[1] = cos_beta_bottom;
+  // // bottom right:
+  // vbr[0] = sin_beta_bottom * sin_alpha_right;
+  // vbr[2] = sin_beta_bottom * cos_alpha_right;
+  // // vbr[1] = cos_beta_bottom;
 
-      // float bottom = m_radius * cos_beta_bottom;
-      // float top = m_radius * cos_beta_top;
+  // float bottom = m_radius * cos_beta_bottom;
+  // float top = m_radius * cos_beta_top;
 
-      // // Render:
-      // glBegin(GL_QUADS);
-      // glNormal3f(vbl[0], cos_beta_bottom, vbl[2]);
-      // glTexCoord2f(0.0f, 0.0f);
-      // glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
+  // // Render:
+  // glBegin(GL_QUADS);
+  // glNormal3f(vbl[0], cos_beta_bottom, vbl[2]);
+  // glTexCoord2f(0.0f, 0.0f);
+  // glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
 
-      // glNormal3f(vtl[0], cos_beta_top, vtl[2]);
-      // glTexCoord2f(0.0f, 1.0f);
-      // glVertex3f(m_radius * vtl[0], top, m_radius * vtl[2]);
+  // glNormal3f(vtl[0], cos_beta_top, vtl[2]);
+  // glTexCoord2f(0.0f, 1.0f);
+  // glVertex3f(m_radius * vtl[0], top, m_radius * vtl[2]);
 
-      // glNormal3f(vtr[0], cos_beta_top, vtr[2]);
-      // glTexCoord2f(1.0f, 1.0f);
-      // glVertex3f(m_radius * vtr[0], top, m_radius * vtr[2]);
+  // glNormal3f(vtr[0], cos_beta_top, vtr[2]);
+  // glTexCoord2f(1.0f, 1.0f);
+  // glVertex3f(m_radius * vtr[0], top, m_radius * vtr[2]);
 
-      // glNormal3f(vbr[0], cos_beta_bottom, vbr[2]);
-      // glTexCoord2f(1.0f, 0.0f);
-      // glVertex3f(m_radius * vbr[0], bottom, m_radius * vbr[2]);
+  // glNormal3f(vbr[0], cos_beta_bottom, vbr[2]);
+  // glTexCoord2f(1.0f, 0.0f);
+  // glVertex3f(m_radius * vbr[0], bottom, m_radius * vbr[2]);
 
-      // glEnd();
+  // glEnd();
 
-      // beta = beta_top;
-    // }
-    // alpha = alpha_right;
+  // beta = beta_top;
+  // }
+  // alpha = alpha_right;
   // }
 
   if (!m_is_solid && context) {
@@ -221,7 +215,7 @@ void Geodesic::draw(Draw_action * action)
 }
 
 /*! \brief draws the object in selection mode */
-void Geodesic::isect(Isect_action * action)
+void Geodesic::isect(Isect_action* action)
 {
   // // if (!is_dirty()) clean();
 
@@ -234,59 +228,59 @@ void Geodesic::isect(Isect_action * action)
   // float alpha = m_alpha;
   // float alpha_right;
   // for (i = 0; i < m_stacks; i++) {
-    // float sin_alpha_left, sin_alpha_right;
-    // float cos_alpha_left, cos_alpha_right;
-    // alpha_right = alpha + dGamma;
+  // float sin_alpha_left, sin_alpha_right;
+  // float cos_alpha_left, cos_alpha_right;
+  // alpha_right = alpha + dGamma;
 
-    // sincosf(alpha, &sin_alpha_left, &cos_alpha_left);
-    // sincosf(alpha_right, &sin_alpha_right, &cos_alpha_right);
+  // sincosf(alpha, &sin_alpha_left, &cos_alpha_left);
+  // sincosf(alpha_right, &sin_alpha_right, &cos_alpha_right);
 
-    // float beta = m_beta;
-    // float beta_top;
+  // float beta = m_beta;
+  // float beta_top;
 
-    // for (j = 0; j < m_breaks; j++) {
-      // float sin_beta_bottom, sin_beta_top;
-      // float cos_beta_bottom, cos_beta_top;
+  // for (j = 0; j < m_breaks; j++) {
+  // float sin_beta_bottom, sin_beta_top;
+  // float cos_beta_bottom, cos_beta_top;
 
-      // beta_top = beta + d_delta;
+  // beta_top = beta + d_delta;
 
-      // sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
-      // sincosf(beta_top, &sin_beta_top, &cos_beta_top);
+  // sincosf(beta, &sin_beta_bottom, &cos_beta_bottom);
+  // sincosf(beta_top, &sin_beta_top, &cos_beta_top);
 
-      // // bottom left:
-      // vbl[0] = sin_beta_bottom * sin_alpha_left;
-      // vbl[2] = sin_beta_bottom * cos_alpha_left;
-      // // vbl[1] = cos_beta_bottom;
+  // // bottom left:
+  // vbl[0] = sin_beta_bottom * sin_alpha_left;
+  // vbl[2] = sin_beta_bottom * cos_alpha_left;
+  // // vbl[1] = cos_beta_bottom;
 
-      // // top left:
-      // vtl[0] = sin_beta_top * sin_alpha_left;
-      // vtl[2] = sin_beta_top * cos_alpha_left;
-      // // vtl[1] = cos_beta_top;
+  // // top left:
+  // vtl[0] = sin_beta_top * sin_alpha_left;
+  // vtl[2] = sin_beta_top * cos_alpha_left;
+  // // vtl[1] = cos_beta_top;
 
-      // // top right:
-      // vtr[0] = sin_beta_top * sin_alpha_right;
-      // vtr[2] = sin_beta_top * cos_alpha_right;
-      // // vtr[1] = cos_beta_top;
+  // // top right:
+  // vtr[0] = sin_beta_top * sin_alpha_right;
+  // vtr[2] = sin_beta_top * cos_alpha_right;
+  // // vtr[1] = cos_beta_top;
 
-      // // bottom right:
-      // vbr[0] = sin_beta_bottom * sin_alpha_right;
-      // vbr[2] = sin_beta_bottom * cos_alpha_right;
-      // // vbr[1] = cos_beta_bottom;
+  // // bottom right:
+  // vbr[0] = sin_beta_bottom * sin_alpha_right;
+  // vbr[2] = sin_beta_bottom * cos_alpha_right;
+  // // vbr[1] = cos_beta_bottom;
 
-      // float bottom = m_radius * cos_beta_bottom;
-      // float top = m_radius * cos_beta_top;
+  // float bottom = m_radius * cos_beta_bottom;
+  // float top = m_radius * cos_beta_top;
 
-      // // Render:
-      // glBegin(GL_QUADS);
-      // glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
-      // glVertex3f(m_radius * vtl[0], top, m_radius * vtl[2]);
-      // glVertex3f(m_radius * vtr[0], top, m_radius * vtr[2]);
-      // glVertex3f(m_radius * vbr[0], bottom, m_radius * vbr[2]);
-      // glEnd();
+  // // Render:
+  // glBegin(GL_QUADS);
+  // glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
+  // glVertex3f(m_radius * vtl[0], top, m_radius * vtl[2]);
+  // glVertex3f(m_radius * vtr[0], top, m_radius * vtr[2]);
+  // glVertex3f(m_radius * vbr[0], bottom, m_radius * vbr[2]);
+  // glEnd();
 
-      // beta = beta_top;
-    // }
-    // alpha = alpha_right;
+  // beta = beta_top;
+  // }
+  // alpha = alpha_right;
   // }
 }
 
@@ -308,8 +302,7 @@ void Geodesic::set_attributes(Element * elem)
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-
-	if (name == "radius") {
+    if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
@@ -419,41 +412,46 @@ void Geodesic::init_prototype()
   // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           get_member_offset(&m_radius),
+  Float_handle_function radius_func =
+    static_cast<Float_handle_function>(&Geodesic::radius_handle);
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
                                            exec_func));
 
   // start
-  s_prototype->add_field_info(new SF_vector2f(START, "start",
-                                           get_member_offset(&m_start),
-                                           exec_func));
+  Vector2f_handle_function start_func =
+    static_cast<Vector2f_handle_function>(&Geodesic::start_handle);
+  s_prototype->add_field_info(new SF_vector2f(START, "start", start_func,
+                                              exec_func));
 
   // end
-  s_prototype->add_field_info(new SF_vector2f(END, "end",
-                                           get_member_offset(&m_end),
-                                           exec_func));
+  Vector2f_handle_function end_func =
+    static_cast<Vector2f_handle_function>(&Geodesic::end_handle);
+  s_prototype->add_field_info(new SF_vector2f(END, "end", end_func,
+                                              exec_func));
 
   // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          get_member_offset(&m_stacks),
+  Uint_handle_function stacks_func =
+    static_cast<Uint_handle_function>(&Geodesic::stacks_handle);
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
                                           exec_func));
 
   // breaks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(BREAKS, "breaks",
-                                          get_member_offset(&m_breaks),
+  Uint_handle_function breaks_func =
+    static_cast<Uint_handle_function>(&Geodesic::breaks_handle);
+  s_prototype->add_field_info(new SF_uint(BREAKS, "breaks", breaks_func,
                                           exec_func));
 
   // complement
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(COMPLEMENT, "complement",
-                                          get_member_offset(&m_is_complement),
-                                          exec_func));
-
+  Boolean_handle_function is_complement_func =
+    static_cast<Boolean_handle_function>(&Geodesic::is_complement_handle);
+  s_prototype->add_field_info(new SF_bool(COMPLEMENT, "complement",
+                                          is_complement_func, exec_func));
 }
 
 /*! \brief deletes the geodesic prototype */

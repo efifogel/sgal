@@ -73,6 +73,40 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  virtual void delete_prototype();
+
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Float* radius_handle(Field_info*) { return &m_radius; }
+  Float* height_handle(Field_info*) { return &m_height; }
+  Boolean* is_body_visible_handle(Field_info*) { return &m_is_body_visible; }
+  Boolean* is_bottom_visible_handle(Field_info*)
+    { return &m_is_bottom_visible; }
+  Boolean* is_top_visible_handle(Field_info*) { return &m_is_top_visible; }
+  Uint* slices_handle(Field_info*) { return &m_slices; }
+  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  //@}
+
+  virtual void set_attributes(Element* elem);
+  // virtual Attribute_list get_attributes();
+
+  /*! Draw the cylinder.
+   * \param draw_action the draw action
+   */
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the cylinder in selection mode.
+   * \param action
+   */
+  virtual void isect(Isect_action* action);
+
+  virtual Boolean clean_sphere_bound();
+
   /*! Set the radius of the cylinder. */
   void set_radius(Float radius);
 
@@ -114,32 +148,6 @@ public:
 
   /*! Obtain the flag that determines whether the body is visible */
   Boolean is_body_visible() const;
-
-  /*! Draw the cylinder.
-   * \param draw_action the draw action
-   */
-  virtual void draw(Draw_action* action);
-
-  /*! Draw the cylinder in selection mode.
-   * \param action
-   */
-  virtual void isect(Isect_action* action);
-
-  virtual Boolean clean_sphere_bound();
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  virtual void delete_prototype();
-
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  virtual void set_attributes(Element* elem);
-  // virtual Attribute_list get_attributes();
 
   /*! Determine whether the cylinder is dirty. */
   Boolean is_dirty() const { return m_dirty; }

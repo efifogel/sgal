@@ -20,7 +20,8 @@
 /*!
  * An implementation of geodesic arc on a disc
  *
- * A geometry of type Geodesic. The arc is specified by two spherical coordinates.
+ * A geometry of type Geodesic. The arc is specified by two spherical c
+ * oordinates.
  * Inherits from Geometry.
  */
 
@@ -63,6 +64,43 @@ public:
 
   /*! Clone */
   virtual Container* clone();
+
+  /*! Initialize the node prototype */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype
+   * \return the node prototype
+   */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Float* radius_handle(Field_info*) { return &m_radius; }
+  Vector2f* start_handle(Field_info*) { return &m_start; }
+  Vector2f* end_handle(Field_info*) { return &m_end; }
+  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  Uint* breaks_handle(Field_info*) { return &m_breaks; }
+  Boolean* is_complement_handle(Field_info*) { return &m_is_complement; }
+  //@}
+
+  /*! Draw the geodesic in selection mode
+   * \param action the draw action
+   */
+  virtual void isect(Isect_action* action);
+
+  /*! Calculare the sphere bound of the geodesic */
+  virtual Boolean clean_sphere_bound();
+
+  // virtual void FieldChanged(short fieldId);
+
+  /*! Set the attributes of the object extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
+  virtual void set_attributes(Element* elem);
 
   /*! Set the arc radius
    * \param radius the new radius
@@ -130,37 +168,6 @@ public:
    * \param action the draw action
    */
   virtual void draw(Draw_action* action);
-
-  /*! Draw the geodesic in selection mode
-   * \param action the draw action
-   */
-  virtual void isect(Isect_action* action);
-
-  /*! Calculare the sphere bound of the geodesic */
-  virtual Boolean clean_sphere_bound();
-
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype
-   * \return the node prototype
-   */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  // virtual void FieldChanged(short fieldId);
-
-  /*! Set the attributes of the object extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
-   */
-  virtual void set_attributes(Element* elem);
 
 protected:
   /*! Obtain the tag (type) of the container */

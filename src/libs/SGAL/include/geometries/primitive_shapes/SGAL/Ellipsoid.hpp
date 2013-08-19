@@ -65,6 +65,32 @@ public:
   /*! Clone */
   virtual Container* clone();
 
+  /*! Initialize the container prototype */
+  virtual void init_prototype();
+
+  /*! Delete the container prototype */
+  virtual void delete_prototype();
+
+  /*! Obtain the container prototype */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Float* width_handle(Field_info*) { return &m_width; }
+  Float* height_handle(Field_info*) { return &m_height; }
+  Float* depth_handle(Field_info*) { return &m_depth; }
+  Uint* slices_handle(Field_info*) { return &m_slices; }
+  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  //@}
+
+  /*! Set the ellpsoid attributes */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Clean the representation */
+  virtual void clean();
+
   /*! Set the width of the ellipsoid */
   void set_width(Float width);
 
@@ -94,27 +120,6 @@ public:
 
   /*! Obtain the number of stacks (vertical) latitudes */
   Uint get_stacks() const;
-
-  /*! Initialize the container prototype */
-  virtual void init_prototype();
-
-  /*! Delete the container prototype */
-  virtual void delete_prototype();
-
-  /*! Obtain the container prototype */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
-  /*! Clean the representation */
-  virtual void clean();
 
   /*! Process change of structure. */
   void structure_changed(Field_info* field_info);

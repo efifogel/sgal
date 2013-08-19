@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 8692 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -283,19 +283,16 @@ Boolean Arc::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
+/*! \brief sets the attributes of this container. */
 void Arc::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-
     if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -343,7 +340,7 @@ void Arc::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get a list of attributes for the object.
+/*! \brief obtains a list of attributes for the container.
  * The list is of name=value pairs.
  * \return a list of pairs of strings
  */
@@ -419,50 +416,57 @@ void Arc::init_prototype()
   // radius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           get_member_offset(&m_radius),
+  Float_handle_function radius_func =
+    static_cast<Float_handle_function>(&Arc::radius_handle);
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
                                            exec_func));
 
   // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          get_member_offset(&m_stacks),
+  Uint_handle_function stacks_func =
+    static_cast<Uint_handle_function>(&Arc::stacks_handle);
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
                                           exec_func));
 
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          get_member_offset(&m_slices),
+  Uint_handle_function slices_func =
+    static_cast<Uint_handle_function>(&Arc::slices_handle);
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
                                           exec_func));
 
   // alpha
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
-                                           get_member_offset(&m_slices),
+  Float_handle_function alpha_func =
+    static_cast<Float_handle_function>(&Arc::alpha_handle);
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
                                            exec_func));
 
   // beta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(BETA, "beta",
-                                           get_member_offset(&m_slices),
+  Float_handle_function beta_func =
+    static_cast<Float_handle_function>(&Arc::beta_handle);
+  s_prototype->add_field_info(new SF_float(BETA, "beta", beta_func,
                                            exec_func));
 
   // gamma
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(GAMMA, "gamma",
-                                           get_member_offset(&m_slices),
+  Float_handle_function gamma_func =
+    static_cast<Float_handle_function>(&Arc::gamma_handle);
+  s_prototype->add_field_info(new SF_float(GAMMA, "gamma", gamma_func,
                                            exec_func));
 
   // delta
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(DELTA, "delta",
-                                           get_member_offset(&m_slices),
+  Float_handle_function delta_func =
+    static_cast<Float_handle_function>(&Arc::delta_handle);
+  s_prototype->add_field_info(new SF_float(DELTA, "delta", delta_func,
                                            exec_func));
 }
 

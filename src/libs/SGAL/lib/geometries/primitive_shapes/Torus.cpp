@@ -131,20 +131,24 @@ void Torus::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Extrusion::structure_changed);
 
+  Float_handle_function spine_radius_func =
+    static_cast<Float_handle_function>(&Torus::spine_radius_handle);
   s_prototype->add_field_info(new SF_float(SPINE_RADIUS, "spineRadius",
-                                           get_member_offset(&m_spine_radius),
+                                           spine_radius_func,
                                            exec_func));
 
   // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          get_member_offset(&m_stacks),
+  Uint_handle_function stacks_func =
+    static_cast<Uint_handle_function>(&Torus::stacks_handle);
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
                                           exec_func));
 
   // slices
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          get_member_offset(&m_slices),
+  Uint_handle_function slices_func =
+    static_cast<Uint_handle_function>(&Torus::slices_handle);
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
                                           exec_func));
 }
 

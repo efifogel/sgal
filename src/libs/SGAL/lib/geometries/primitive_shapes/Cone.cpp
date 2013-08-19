@@ -103,10 +103,7 @@ void Cone::draw(Draw_action* action)
   glDisable(GL_NORMALIZE);
 }
 
-/**
- * Draws the object in selection mode
- * @param action
- */
+/*! \brief draws the object in selection mode. */
 void Cone::isect(Isect_action* action)
 {
   if (is_dirty()) clean();
@@ -156,18 +153,14 @@ void Cone::clean()
   m_dirty = false;
 }
 
-/*! \brief sets the attributes of the object extracted from the VRML or X3D
- * file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Cone::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++) {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "bottomRadius") {
@@ -280,37 +273,42 @@ void Cone::init_prototype()
   // bottomRadius
   Execution_function exec_func =
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
+  Float_handle_function bottom_radius_func =
+    static_cast<Float_handle_function>(&Cone::bottom_radius_handle);
   s_prototype->add_field_info(new SF_float(BOTTOM_RADIUS, "bottomRadius",
-                                           get_member_offset(&m_bottom_radius),
+                                           bottom_radius_func,
                                            exec_func));
 
   // height
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
-                                           get_member_offset(&m_height),
+  Float_handle_function height_func =
+    static_cast<Float_handle_function>(&Cone::height_handle);
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
                                            exec_func));
 
   // side
-  s_prototype->
-    add_field_info(new SF_bool(SIDE, "side",
-                               get_member_offset(&m_side_visible),
-                               exec_func));
+  Boolean_handle_function side_visible_func =
+    static_cast<Boolean_handle_function>(&Cone::side_visible_handle);
+  s_prototype->add_field_info(new SF_bool(SIDE, "side", side_visible_func,
+                                          exec_func));
 
   // bottom
-  s_prototype->
-    add_field_info(new SF_bool(BOTTOM, "bottom",
-                               get_member_offset(&m_bottom_visible),
-                               exec_func));
+  Boolean_handle_function bottom_visible_func =
+    static_cast<Boolean_handle_function>(&Cone::bottom_visible_handle);
+  s_prototype->add_field_info(new SF_bool(BOTTOM, "bottom",
+                                          bottom_visible_func, exec_func));
 
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_int(SLICES, "slices",
-                                         get_member_offset(&m_slices),
-                                         exec_func));
+  Uint_handle_function slices_func =
+    static_cast<Uint_handle_function>(&Cone::slices_handle);
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
+                                          exec_func));
 
   // stacks
-  s_prototype->add_field_info(new SF_int(STACKS, "stacks",
-                                         get_member_offset(&m_stacks),
+  Uint_handle_function stacks_func =
+    static_cast<Uint_handle_function>(&Cone::stacks_handle);
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
                                          exec_func));
 }
 

@@ -63,12 +63,52 @@ public:
   /*! Destructor */
   virtual ~Cylindrical_patch();
 
-  /* Construct the prototype */
-  static Cylindrical_patch* prototype()
-  { return new Cylindrical_patch(true); }
+  /* Construct the prototype. */
+  static Cylindrical_patch* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Cylindrical_patch(); }
+  /*! Clone. */
+  virtual Container* clone();
+
+  /*! Initializes the container prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the container prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the container prototype.
+   * \return the container prototype.
+   */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Float* radius_handle(Field_info*) { return &m_radius; }
+  Float* height_handle(Field_info*) { return &m_height; }
+  Uint* slices_handle(Field_info*) { return &m_slices; }
+  Float* alpha_handle(Field_info*) { return &m_alpha; }
+  Float* beta_handle(Field_info*) { return &m_beta; }
+  //@}
+
+  /*! Sets the attributes of the object extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Draw the cylindrical patch
+   * \param action the draw action
+   */
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the cylindrical patch in selection mode
+   * \param action the draw action
+   */
+  virtual void isect(Isect_action* action);
+
+  /*! Calculare the sphere bound of the cylindrical patch */
+  virtual Boolean clean_sphere_bound();
 
   /*! Set the radius of the underlying cylinder
    * \param radius the radius of the underlying cylinder
@@ -132,42 +172,6 @@ public:
    */
   Uint get_slices() const { return m_slices; }
 
-  /*! Draw the cylindrical patch
-   * \param action the draw action
-   */
-  virtual void draw(Draw_action* action);
-
-  /*! Draw the cylindrical patch in selection mode
-   * \param action the draw action
-   */
-  virtual void isect(Isect_action* action);
-
-  /*! Calculare the sphere bound of the cylindrical patch */
-  virtual Boolean clean_sphere_bound();
-
-  /*! Initializes the container prototype */
-  virtual void init_prototype();
-
-  /*! Delete the container prototype */
-  virtual void delete_prototype();
-
-  /*! Obtain the container prototype
-   * \return the container prototype
-   */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  /*! Sets the attributes of the object extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
-   */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
   /*! Is dirty? */
   /* Boolean is_dirty() const { return m_dirty; } */
 
@@ -224,6 +228,13 @@ private:
   void draw_quad(Float cos_left, Float sin_left,
                  Float cos_right, Float sin_right);
 };
+
+/* \brief constructs the prototype. */
+inline Cylindrical_patch* Cylindrical_patch::prototype()
+{ return new Cylindrical_patch(true); }
+
+/*! \brief clones. */
+inline Container* Cylindrical_patch::clone() { return new Cylindrical_patch(); }
 
 SGAL_END_NAMESPACE
 

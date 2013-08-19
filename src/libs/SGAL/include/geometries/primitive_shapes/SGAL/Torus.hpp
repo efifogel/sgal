@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -63,6 +63,30 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /*! Initialize the container prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the container prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the container prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Float* spine_radius_handle(Field_info*) { return &m_spine_radius; }
+  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  Uint* slices_handle(Field_info*) { return &m_slices; }
+  //@}
+
+  /*! Set the ellpsoid attributes */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Clean the representation. */
+  virtual void clean();
+
   /*! Set the spine radius of the ellipsoid. */
   void set_spine_radius(Float spine_radius);
 
@@ -80,27 +104,6 @@ public:
 
   /*! Obtain the number of stacks (vertical) latitudes. */
   Uint get_stacks() const;
-
-  /*! Initialize the container prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the container prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtain the container prototype. */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  /*! Set the ellpsoid attributes */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
-  /*! Clean the representation. */
-  virtual void clean();
 
 protected:
   /*! The spine_height of the ellipsoid. */

@@ -245,28 +245,33 @@ void Ellipsoid::init_prototype()
   // width
   Execution_function exec_func =
     static_cast<Execution_function>(&Ellipsoid::structure_changed);
-  s_prototype->add_field_info(new SF_float(WIDTH, "width",
-                                           get_member_offset(&m_width),
+  Float_handle_function width_func =
+    static_cast<Float_handle_function>(&Ellipsoid::width_handle);
+  s_prototype->add_field_info(new SF_float(WIDTH, "width", width_func,
                                            exec_func));
 
   // height
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
-                                           get_member_offset(&m_height),
+  Float_handle_function height_func =
+    static_cast<Float_handle_function>(&Ellipsoid::height_handle);
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
                                            exec_func));
 
   // depth
-  s_prototype->add_field_info(new SF_float(DEPTH, "depth",
-                                           get_member_offset(&m_depth),
+  Float_handle_function depth_func =
+    static_cast<Float_handle_function>(&Ellipsoid::depth_handle);
+  s_prototype->add_field_info(new SF_float(DEPTH, "depth", depth_func,
                                            exec_func));
 
   // slices
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          get_member_offset(&m_slices),
+  Uint_handle_function slices_func =
+    static_cast<Uint_handle_function>(&Ellipsoid::slices_handle);
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
                                           exec_func));
 
   // stacks
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          get_member_offset(&m_stacks),
+  Uint_handle_function stacks_func =
+    static_cast<Uint_handle_function>(&Ellipsoid::stacks_handle);
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
                                           exec_func));
 }
 

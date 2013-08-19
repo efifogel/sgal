@@ -71,6 +71,32 @@ public:
   /*! Clone */
   virtual Container* clone();
 
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  virtual void delete_prototype();
+
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Float* bottom_radius_handle(Field_info*) { return &m_bottom_radius; }
+  Float* height_handle(Field_info*) { return &m_height; }
+  Boolean* side_visible_handle(Field_info*) { return &m_side_visible; }
+  Boolean* bottom_visible_handle(Field_info*) { return &m_bottom_visible; }
+  Uint* slices_handle(Field_info*) { return &m_slices; }
+  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  //@}
+
+  virtual void set_attributes(Element* elem);
+  // virtual Attribute_list get_attributes();
+
+  virtual void draw(Draw_action* action);
+
+  virtual void isect(Isect_action* action);
+
+  virtual Boolean clean_sphere_bound();
+
   /*! Set the radius of the bottom disk */
   void set_bottom_radius(Float radius);
 
@@ -99,26 +125,6 @@ public:
 
   Boolean is_side_visible() const;
 
-  virtual void draw(Draw_action* action);
-
-  virtual void isect(Isect_action* action);
-
-  virtual Boolean clean_sphere_bound();
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  virtual void delete_prototype();
-
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  virtual void set_attributes(Element* elem);
-  // virtual Attribute_list get_attributes();
-
   /*! Determine whether the geometry is dirty. */
   Boolean is_dirty() const;
 
@@ -133,10 +139,10 @@ protected:
   Float m_height;
 
   /*! The number of horizontal stacks used in rendering. */
-  Int m_stacks;
+  Uint m_stacks;
 
   /*! The number of vertical slices used in rendering. */
-  Int m_slices;
+  Uint m_slices;
 
   /*! Determines whether the sides of cone are visible. */
   Boolean m_side_visible;
