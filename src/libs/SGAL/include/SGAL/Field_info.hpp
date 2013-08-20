@@ -54,8 +54,7 @@ SGAL_BEGIN_NAMESPACE
 class Container;
 class Field_info;
 class SAI_field_services;
-class Value_holder;
-class Delegator;
+class Value_holder_base;
 class Field;
 
 class SGAL_SGAL_DECL Field_info {
@@ -97,7 +96,7 @@ public:
   Execution_function execution_function() const { return m_exec_func; }
 
   // opetator
-  Boolean operator==(const Field_info & other)
+  Boolean operator==(const Field_info& other)
   { return (m_id == other.m_id); }
 
   /*! Obtain */
@@ -107,7 +106,7 @@ public:
   virtual Uint get_type_id() const = 0;
 
   // Returns an Value_holder object of the field info for the given container.
-  virtual Value_holder* create_value_holder(Container* container) = 0;
+  virtual Value_holder_base* create_value_holder(Container* container) = 0;
 
   /*! \todo
   // Creates an SAI_field of the same type id and name
@@ -116,14 +115,6 @@ public:
   // and initializes the new SAI_field with it.
   virtual SAI_field_services * create_sai_field() = 0;
   */
-
-  virtual Delegator* create_delegator() = 0;
-
-  virtual Delegator* set_source(Container* container,
-                                Delegator* delegator) = 0;
-
-  virtual Delegator* set_destination(Container* container,
-                                     Delegator* delegator) = 0;
 };
 
 /*!

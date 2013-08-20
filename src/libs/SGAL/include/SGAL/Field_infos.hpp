@@ -44,29 +44,13 @@
 #include "SGAL/Field_types_enum.hpp"
 #include "SGAL/Field_info_template.hpp"
 #include "SGAL/Execution_function.hpp"
-#include "SGAL/Array.hpp"
+#include "SGAL/Array_types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-// Definition of a cointainer pointer
 class Container;
 
 typedef boost::shared_ptr<Container>                   Shared_container;
-
-// Multi field types
-typedef SGAL::Array<Float>                             Float_array;
-typedef SGAL::Array<Uint>                              Uint_array;
-typedef SGAL::Array<Int>                               Int_array;
-typedef SGAL::Array<Scene_time>                        Scene_time_array;
-typedef SGAL::Array<Vector2f>                          Vector2f_array;
-typedef SGAL::Array<Vector3f>                          Vector3f_array;
-typedef SGAL::Array<Vector3f>                          Vector3f_array;
-typedef SGAL::Array<Vector4f>                          Vector4f_array;
-typedef SGAL::Array<Rotation>                          Rotation_array;
-typedef SGAL::Array<Sphere_bound>                      Sphere_bound_array;
-typedef SGAL::Array<std::string>                       String_array;
-typedef SGAL::Array<Container*>                        Container_array;
-typedef SGAL::Array<Shared_container>                  Shared_container_array;
 
 // Field information records
 // Single field

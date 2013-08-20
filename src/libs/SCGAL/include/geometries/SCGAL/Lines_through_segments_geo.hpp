@@ -112,6 +112,7 @@ public:
 
   /// \name field handlers
   //@{
+  Shared_indexed_line_set* segments_handle(Field_info*) { return &m_segments; }
   //@}
 
   /*! Set the attributes of this node */

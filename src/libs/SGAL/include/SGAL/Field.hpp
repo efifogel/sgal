@@ -32,13 +32,12 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Delegator.hpp"
 
 //! \todo #include "Critical_section.h"
 
 SGAL_BEGIN_NAMESPACE
 
-class Value_holder;
+class Value_holder_base;
 class Container;
 class Field_info;
 
@@ -48,7 +47,6 @@ class Field_info;
 class SGAL_SGAL_DECL Field {
 protected:
   typedef std::list<Field*> Field_list;
-  typedef std::list<Delegator*> Delegator_list;
 
   /*! The containing container. */
   Container* m_container;
@@ -58,13 +56,12 @@ protected:
 
   /*! A list of connected fields. */
   Field_list m_connected_fields;
-  Delegator_list m_delegators;
 
   /*! Indicate whether cascading is blocked. */
   Boolean m_blocked;
 
   /*! The value of the field. */
-  Value_holder* m_value_holder;
+  Value_holder_base* m_value_holder;
 
   //! \todo Critical_section m_fields_cs;
 
@@ -105,9 +102,7 @@ public:
   Boolean is_blocked() const;
 
   /*! Obtain the value member. */
-  virtual Value_holder* get_value_holder() { return m_value_holder; }
-
-  Delegator* set_destination(Delegator* delegator);
+  virtual Value_holder_base* get_value_holder() { return m_value_holder; }
 };
 
 /*! \brief obtains the field info. */

@@ -332,7 +332,7 @@ void Spherical_gaussian_map_marked_geo::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-      
+
     if (name == "drawMarkedVertex") {
       m_draw_marked_vertex = compare_to_true(value);
       elem->mark_delete(ai);
@@ -420,7 +420,7 @@ void Spherical_gaussian_map_marked_geo::set_attributes(Element* elem)
     }
     continue;
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -432,13 +432,10 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
   s_prototype =
     new Container_proto(Spherical_gaussian_map_base_geo::get_prototype());
 
-  //! Container execution function
-  typedef void (Container::* Execution_function)(Field_info*);
-
-  // Add the object fields to the prototype
-  MF_container* field = new MF_container(GEOMETRIES, "geometries",
-                                          get_member_offset(&m_sgm_nodes));
-  s_prototype->add_field_info(field);
+  // // Add the object fields to the prototype
+  //! \todo change to MF_shared_container and change m_sgm_nodes respectively.
+  // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
+  //                                              get_member_offset(&m_sgm_nodes)));
 
   Execution_function exec_func =
     static_cast<Execution_function>(&Spherical_gaussian_map_marked_geo::
@@ -472,8 +469,8 @@ void Spherical_gaussian_map_marked_geo::delete_prototype()
 }
 
 /*! \brief */
-Container_proto* Spherical_gaussian_map_marked_geo::get_prototype() 
-{  
+Container_proto* Spherical_gaussian_map_marked_geo::get_prototype()
+{
   if (!s_prototype) Spherical_gaussian_map_marked_geo::init_prototype();
   return s_prototype;
 }
@@ -517,20 +514,20 @@ void Spherical_gaussian_map_marked_geo::draw_primal(Draw_action* action)
     std::cout << std::endl;
   }
 #endif
-  
+
   Context* context = action->get_context();
   glColor3fv((float*)&m_marked_facet_color);
-  
+
   glFrontFace((is_ccw()) ? GL_CW : GL_CCW);
 
   Sgm_vertex_const_iterator vit;
   for (vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit) {
     // Vertices with boundary conditions may have degree 2. Skip them:
     if (vit->degree() < 3) continue;
-    
+
     if (m_draw_marked_facet && vit->marked())
       context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
-          
+
     glBegin(GL_POLYGON);
     const Vector3f& normal = vit->get_rendered_normal();
     glNormal3fv((float*)&normal);
@@ -562,11 +559,11 @@ draw_primal_marked_vertex(Draw_action* action)
   vertex_geom.set_radius(m_marked_vertex_radius);
 
   Context* context = action->get_context();
-  
+
   Sgm_face_const_iterator fi;
   for (fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
     if (!fi->marked()) continue;
-    
+
     Vector3f vec = to_vector3f(fi->point());
 
     glPushMatrix();
@@ -588,11 +585,11 @@ draw_primal_marked_edge(Draw_action* action)
   edge_geom.set_radius(m_marked_edge_radius);
 
   Context* context = action->get_context();
-  
+
   Sgm_halfedge_const_iterator hi;
   for (hi = m_sgm->halfedges_begin(); hi != m_sgm->halfedges_end(); ++hi) {
     if (!hi->marked()) continue;
-    
+
     Sgm_face_const_handle face1 = hi->face();
     Sgm_face_const_handle face2 = hi->twin()->face();
 
@@ -608,7 +605,7 @@ draw_primal_marked_edge(Draw_action* action)
     Vector3f translation;
     translation.add(vec1, vec2);
     translation.scale(0.5f);
-        
+
     float dist = vec1.distance(vec2);
     edge_geom.set_height(dist);
 
@@ -617,7 +614,7 @@ draw_primal_marked_edge(Draw_action* action)
     trans.set_rotation(rot);
     Matrix4f mat;
     trans.get_matrix(mat);
-        
+
     glPushMatrix();
     glMultMatrixf((float *)&mat);
     glColor3fv((float*)&m_marked_edge_color);
@@ -669,7 +666,7 @@ void Spherical_gaussian_map_marked_geo::draw_aos_opaque(Draw_action* action)
   Context* context = action->get_context();
   context->draw_cull_face(Gfx::BACK_CULL);
   context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
-  
+
   // Draw marked (primal) vertex:
   glEnable(GL_STENCIL_TEST);
   if (m_draw_marked_vertex) {
@@ -678,7 +675,7 @@ void Spherical_gaussian_map_marked_geo::draw_aos_opaque(Draw_action* action)
     glColor3fv((float *)&m_marked_vertex_color);
     draw_aos_marked_face(action);
   }
-  
+
   // Draw the sphere:
   if (m_draw_aos_surface) {
     glStencilFunc(GL_EQUAL, 0, 0xFFFFFFFFL);
@@ -697,7 +694,7 @@ void Spherical_gaussian_map_marked_geo::draw_aos_opaque(Draw_action* action)
         (m_aos_edge_style != Edge_shape::TUBE))
       glDepthRange(0, 1);
   }
-  glDisable(GL_STENCIL_TEST);  
+  glDisable(GL_STENCIL_TEST);
 
   // Draw the edges:
   glColor3fv((float*)&m_aos_edge_colors[0][0]);
@@ -706,11 +703,11 @@ void Spherical_gaussian_map_marked_geo::draw_aos_opaque(Draw_action* action)
     context->draw_line_width(m_aos_edge_line_width);
   }
   if (m_aos_edge_style != Edge_shape::TUBE) glDepthRange(0.05f, 1);
-  
+
   (*m_colored_edges_renderer)(action);
   if (m_aos_edge_style == Edge_shape::LINE) {
     context->draw_line_width(1.0f);
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
   }
   if (m_aos_edge_style != Edge_shape::TUBE) glDepthRange(0, 1);
 
@@ -723,44 +720,44 @@ void Spherical_gaussian_map_marked_geo::draw_aos_opaque(Draw_action* action)
     }
     if (m_aos_marked_edge_style != Edge_shape::TUBE)
       glDepthRange(0.05f, 1);
-  
+
     (*m_colored_marked_edges_renderer)(action);
     if (m_aos_marked_edge_style == Edge_shape::LINE) {
       context->draw_line_width(1.0f);
-      context->draw_light_enable(true);  
+      context->draw_light_enable(true);
     }
     if (m_aos_marked_edge_style != Edge_shape::TUBE)
       glDepthRange(0, 1);
   }
-  
+
   // Draw the vertices:
   glColor3fv((float*)&m_aos_vertex_color);
   if (m_aos_vertex_style == Vertex_shape::POINT) {
-    context->draw_light_enable(false);  
+    context->draw_light_enable(false);
     context->draw_point_size(m_aos_vertex_point_size);
     glIsEnabled(GL_POINT_SMOOTH);
   }
   (*m_colored_vertices_renderer)(action);
   if (m_aos_vertex_style == Vertex_shape::POINT) {
     context->draw_point_size(1.0f);
-    context->draw_light_enable(true);  
+    context->draw_light_enable(true);
   }
 
   // Draw the marked vertices:
   if (m_draw_marked_facet) {
     glColor3fv((float*)&m_marked_facet_color);
     if (m_aos_marked_vertex_style == Vertex_shape::POINT) {
-      context->draw_light_enable(false);  
+      context->draw_light_enable(false);
       context->draw_point_size(m_aos_marked_vertex_point_size);
       glIsEnabled(GL_POINT_SMOOTH);
     }
     (*m_colored_marked_vertices_renderer)(action);
     if (m_aos_marked_vertex_style == Vertex_shape::POINT) {
       context->draw_point_size(1.0f);
-      context->draw_light_enable(true);  
+      context->draw_light_enable(true);
     }
   }
-  
+
   context->draw_cull_face(Gfx::NO_CULL);
   context->draw_material_mode_enable(Gfx::NO_COLOR_MATERIAL);
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -800,7 +797,7 @@ draw_aos_marked_face(Draw_action* action)
     points.clear();
   }
 }
-  
+
 /*! \brief draws the arrangement vertices. */
 void Spherical_gaussian_map_marked_geo::draw_aos_vertices(Draw_action* action)
 {
@@ -891,7 +888,7 @@ operator()(Draw_action* action)
   for (hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end(); ++hei)
   {
     if (m_geo.get_draw_marked_edge() && hei->marked()) continue;
-    
+
     const X_monotone_curve_2& curve = hei->curve();
     Vector3f src = to_vector3f(curve.source());
     Vector3f trg = to_vector3f(curve.target());
@@ -960,13 +957,13 @@ void Spherical_gaussian_map_marked_geo::create_renderers()
 
   m_edges_renderer = new Edges_renderer(*this);
   m_colored_edges_renderer = new Colored_edges_renderer(*this);
-  
+
   m_inflated_line_edges_renderer = new Inflated_line_edges_renderer(*this);
   m_inflated_strip_edges_renderer = new Inflated_strip_edges_renderer(*this);
   m_inflated_tube_edges_renderer = new Inflated_tube_edges_renderer(*this);
 
   m_marked_face_renderer = new Marked_face_renderer(*this);
-  
+
   m_marked_vertices_renderer = new Marked_vertices_renderer(*this);
   m_colored_marked_vertices_renderer =
     new Colored_marked_vertices_renderer(*this);
@@ -1002,7 +999,7 @@ void Spherical_gaussian_map_marked_geo::destroy_renderers()
 void Spherical_gaussian_map_marked_geo::clean_renderer()
 {
   Spherical_gaussian_map_base_geo::clean_renderer();
-  
+
   if (m_draw_aos_haloed) {
     if (get_aos_edge_style() == Edge_shape::LINE)
       m_renderer.push_back(m_inflated_line_edges_renderer,
@@ -1066,7 +1063,7 @@ void Spherical_gaussian_map_marked_geo::clean_renderer()
       m_renderer.push_back(m_colored_marked_edges_renderer,
                            Arrangement_renderer::FRONTFACING);
       break;
-      
+
      case Edge_shape::LINE:
      case Edge_shape::TUBE:
       m_renderer.push_back(m_colored_marked_edges_renderer,
@@ -1086,24 +1083,24 @@ void Spherical_gaussian_map_marked_geo::clean_renderer()
       m_renderer.push_back(m_colored_marked_vertices_renderer,
                            Arrangement_renderer::FRONTFACING);
       break;
-      
+
      case Vertex_shape::POINT:
      case Vertex_shape::RING:
      case Vertex_shape::BALL:
       m_renderer.push_back(m_colored_marked_vertices_renderer,
                            Arrangement_renderer::OTHER);
       break;
-      
+
      default: break;
     }
   }
 
-  // Depth:  
+  // Depth:
   if (is_aos_edge_enabled())
     m_renderer.push_back(m_edges_renderer, Arrangement_renderer::DEPTH);
   if (get_aos_vertex_style() != Vertex_shape::NONE)
     m_renderer.push_back(m_vertices_renderer, Arrangement_renderer::DEPTH);
-  if (m_draw_marked_facet && 
+  if (m_draw_marked_facet &&
       (get_aos_marked_vertex_style() != Vertex_shape::NONE))
     m_renderer.push_back(m_marked_vertices_renderer,
                          Arrangement_renderer::DEPTH);
@@ -1140,7 +1137,7 @@ void Spherical_gaussian_map_marked_geo::
 insert_sgm(Shared_spherical_gaussian_map_marked_geo sgm)
 {
   m_sgm_nodes.push_back(sgm);
-  Observer observer(this, get_field_info(GEOMETRIES));  
+  Observer observer(this, get_field_info(GEOMETRIES));
   sgm->register_observer(observer);
   m_dirty_sphere_bound = true;
 }
@@ -1160,5 +1157,5 @@ set_sgm(Spherical_gaussian_map_marked* sgm)
   m_dirty_sphere_bound = true;
   m_sgm = sgm;
 }
-  
+
 SGAL_END_NAMESPACE

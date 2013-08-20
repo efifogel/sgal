@@ -36,7 +36,6 @@
 #include "SGAL/Member_offset_type.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
-#include "SGAL/Delegator.hpp"
 //! \todo #include "SAI_field_template.h"
 
 SGAL_BEGIN_NAMESPACE
@@ -110,21 +109,11 @@ public:
    * container.
    * \param container the container.
    */
-  virtual Value_holder* create_value_holder(Container* container)
+  virtual Value_holder_base* create_value_holder(Container* container)
   {
-    Value_holder_specific<T>* holder;
-    // if m_offset is zero, it indicates that the value holder should allocate
-    // memory for the value.
-    if (m_offset == 0)
-      holder =  new Value_holder_specific<T>(NULL);
-    // else - the container member's pointer is used for the value
-    else
-      holder = new Value_holder_specific<T>((T*)container->get_member_pointer(m_offset));
-
-     // Set the value to the initial value
-    if (m_use_initial_value)
-      holder->set_value(m_initial_value);
-
+    T* handle = (container->*m_handle)(this);
+    Value_holder<T>* holder = new Value_holder<T>(handle);
+    if (m_use_initial_value) holder->set_value(m_initial_value);
     return holder;
   }
 
@@ -138,40 +127,6 @@ public:
     return new SAI_field_template<T,type_id>;
   }
   */
-
-  virtual Delegator* create_delegator()
-  {
-    Delegator_specific<T>* delegator = new Delegator_specific<T>();
-    return delegator;
-  }
-
-  virtual Delegator* set_source(Container* container, Delegator* delegator)
-  {
-    if (!m_handle) {
-      if (delegator) delete delegator;
-      return NULL;
-    }
-
-    Delegator_specific<T>* delegator_specific =
-      dynamic_cast<Delegator_specific<T>*>(delegator);
-    T* handle = (container->*m_handle)(this);
-    delegator_specific->set_source(handle);
-    return delegator;
-  }
-
-  virtual Delegator* set_destination(Container* container, Delegator* delegator)
-  {
-    if (!m_handle) {
-      if (delegator) delete delegator;
-      return NULL;
-    }
-
-    Delegator_specific<T>* delegator_specific =
-      dynamic_cast<Delegator_specific<T>*>(delegator);
-    T* handle = (container->*m_handle)(this);
-    delegator_specific->set_destination(handle);
-    return delegator;
-  }
 };
 
 SGAL_END_NAMESPACE

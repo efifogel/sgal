@@ -206,9 +206,9 @@ void Spherical_gaussian_map_geo::init_prototype()
     new Container_proto(Spherical_gaussian_map_base_geo::get_prototype());
 
   // geometries
-  MF_container* field = new MF_container(GEOMETRIES, "geometries",
-                                         get_member_offset(&m_sgm_nodes));
-  s_prototype->add_field_info(field);
+  //! \todo change to MF_shared_container and change m_sgm_nodes respectively.
+  // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
+  //                                              get_member_offset(&m_sgm_nodes)));
 }
 
 /*! \brief */

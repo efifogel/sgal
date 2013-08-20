@@ -84,8 +84,7 @@ Lines_through_segments_geo::~Lines_through_segments_geo()
   }
 }
 
-/*! \brief clear the internal representation and auxiliary data structures
- */
+/*! \brief clears the internal representation and auxiliary data structures. */
 void Lines_through_segments_geo::clear()
 {
   m_in_segments.clear();
@@ -102,8 +101,11 @@ void Lines_through_segments_geo::init_prototype()
   s_prototype = new Container_proto(Geometry::get_prototype());
 
   // segments
-  SF_container* field =
-    new SF_container(SEGMENTS, "segments", get_member_offset(&m_segments));
+  Shared_container_handle_function segments_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Lines_through_segments_geo::segments_handle);
+  SF_shared_container* field =
+    new SF_shared_container(SEGMENTS, "segments", segments_func);
   s_prototype->add_field_info(field);
 }
 

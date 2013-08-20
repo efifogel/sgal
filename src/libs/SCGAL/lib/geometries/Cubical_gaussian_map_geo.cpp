@@ -739,9 +739,9 @@ void Cubical_gaussian_map_geo::init_prototype()
                                    get_member_offset(&m_aos_edge_color[1])));
 
   // geometries
-  MF_container* field = new MF_container(GEOMETRIES, "geometries",
-                                         get_member_offset(&m_cgm_nodes));
-  s_prototype->add_field_info(field);
+  //! \todo change to MF_shared_container and change m_cgm_nodes respectively.
+  // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
+  //                                              get_member_offset(&m_cgm_nodes)));
 }
 
 /*! \brief */

@@ -772,7 +772,7 @@ void Nef_gaussian_map_geo::set_attributes(Element* elem)
 void Nef_gaussian_map_geo::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new SGAL::Container_proto(SGAL::Mesh_set::get_prototype());
+  s_prototype = new Container_proto(SGAL::Mesh_set::get_prototype());
 
   Execution_function exec_func;
 
@@ -834,10 +834,11 @@ void Nef_gaussian_map_geo::init_prototype()
                                get_member_offset(&m_increase_facet_index),
                                exec_func));
 
-  // geometries
-  MF_container* field = new MF_container(GEOMETRIES, "geometries",
-                                         get_member_offset(&m_ngm_nodes));
-  s_prototype->add_field_info(field);
+  // // geometries
+  //! \todo change to MF_shared_container and change m_ngm_nodes respectively.
+  // MF_container* field = new MF_container(GEOMETRIES, "geometries",
+  //                                        get_member_offset(&m_ngm_nodes));
+  // s_prototype->add_field_info(field);
 }
 
 /*! \brief */
