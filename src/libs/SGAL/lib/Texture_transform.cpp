@@ -32,10 +32,7 @@ const std::string Texture_transform::s_tag = "TextureTransform";
 REGISTER_TO_FACTORY(Texture_transform, "Textture_transform");
 
 /*! Constructor */
-Texture_transform::Texture_transform(Boolean proto) :
-  Container(proto)
-{
-}
+Texture_transform::Texture_transform(Boolean proto) : Container(proto) {}
 
 /*! Destructor */
 Texture_transform::~Texture_transform() {}
@@ -61,10 +58,7 @@ Container_proto* Texture_transform::get_prototype()
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Texture_transform::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);

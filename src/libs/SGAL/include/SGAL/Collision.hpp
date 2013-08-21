@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -49,13 +49,13 @@ public:
   /*! Destructor */
   virtual ~Collision();
 
-  /*! Construct the prototype */
-  static Collision* prototype() { return new Collision(true); }
+  /*! Construct the prototype. */
+  static Collision* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Collision(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -68,21 +68,26 @@ public:
 
   virtual Container_proto* get_prototype();
 
-  /// \name field handlers
-  //@{
-  //@}
-
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that represents the container */
+  /*! The tag that represents the container. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 };
+
+/*! \brief constructs the prototype. */
+inline Collision* Collision::prototype() { return new Collision(true); }
+
+/*! \brief clones. */
+inline Container* Collision::clone() { return new Collision(); }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Collision::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

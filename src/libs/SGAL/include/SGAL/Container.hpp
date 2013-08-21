@@ -105,11 +105,7 @@ public:
   virtual void delete_prototype() {};
 
   /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype() { return 0; }
-
-  /// \name field handlers
-  //@{
-  //@}
+  virtual Container_proto* get_prototype() { return NULL; }
 
   /*! Set the attributes of this container. */
   virtual void set_attributes(Element* /* elem */) {}

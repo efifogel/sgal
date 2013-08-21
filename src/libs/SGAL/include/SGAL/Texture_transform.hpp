@@ -50,12 +50,11 @@ public:
   /*! Destructor */
   virtual ~Texture_transform();
 
-  /* Construct the prototype */
-  static Texture_transform* prototype()
-  { return new Texture_transform(true); }
+  /* Construct the prototype. */
+  static Texture_transform* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Texture_transform(); }
+  /*! Clone. */
+  virtual Container* clone();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
@@ -71,13 +70,9 @@ public:
   /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
 
-  /// \name field handlers
-  //@{
-  //@}
-
 protected:
   /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -86,6 +81,17 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+/* \brief constructs the prototype. */
+inline Texture_transform* Texture_transform::prototype()
+{ return new Texture_transform(true); }
+
+/*! \brief clones. */
+inline Container* Texture_transform::clone()
+{ return new Texture_transform(); }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Texture_transform::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

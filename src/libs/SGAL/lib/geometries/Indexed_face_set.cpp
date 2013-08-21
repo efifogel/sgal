@@ -1235,7 +1235,7 @@ void Indexed_face_set::add_to_scene(Scene_graph* sg)
 }
 
 #if 0
-/*! Get a list of atytributes in this object. This method is called only
+/*! Obtain a list of atytributes in this object. This method is called only
  * from the Builder side.
  * An Indexed_face_set is always converted to an ProgIndexedTriSet
  * and therefore any information regarding compressed data is not

@@ -80,11 +80,10 @@ public:
   virtual ~Indexed_face_set();
 
   /* Construct the prototype. */
-  static Indexed_face_set* prototype()
-  { return new Indexed_face_set(true); }
+  static Indexed_face_set* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Indexed_face_set(); }
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -97,6 +96,9 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* normal_per_vertex_handle(Field_info*)
+    { return &m_normal_per_vertex; }
+  Boolean* color_per_vertex_handle(Field_info*) { return &m_color_per_vertex; }
   //@}
 
   /*! Sets the attributes of this node extracted from the VRML or X3D file.
@@ -693,6 +695,13 @@ private:
    */
   void calculate_vertices_info(Vertices_info& vertices_info);
 };
+
+/* \brief constructs the prototype. */
+inline Indexed_face_set* Indexed_face_set::prototype()
+{ return new Indexed_face_set(true); }
+
+/*! \brief clones. */
+inline Container* Indexed_face_set::clone() { return new Indexed_face_set(); }
 
 /*! Do the conditions allow for the use of openGl vertex array?
  * Configuration specifies VERTEX_ARRAY, and

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -53,7 +53,7 @@ public:
   virtual ~Bindable_node();
 
   /*! Clone */
-  virtual Container* clone() { return new Bindable_node(); }
+  virtual Container* clone();
 
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
@@ -69,6 +69,8 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* bind_handle(Field_info*) { return &m_set_bind; }
+  Boolean* is_bound_handle(Field_info*) { return &m_is_bound; }
   //@}
 
   /*! Obtain the Navigation_info at the top os the stack */
@@ -103,13 +105,13 @@ protected:
   bool m_is_bound;
 
   /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   /*! Obtain the bindable stack */
-  virtual Bindable_stack* get_stack() { SGAL_assertion(0); return NULL; }
+  virtual Bindable_stack* get_stack();
 
   /*! Enable the bindable node */
-  virtual void enable() { }
+  virtual void enable() {}
 
   /*! Disable the bindable node */
   virtual void disable() {}
@@ -121,6 +123,16 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+/*! \brief clones. */
+inline Container* Bindable_node::clone() { return new Bindable_node(); }
+
+/*! \brief obtains the bindable stack. */
+inline Bindable_stack* Bindable_node::get_stack()
+{ SGAL_error(); return NULL; }
+
+/*! \brief obtains the tag (type) of the container. */
+inline const std::string& Bindable_node::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

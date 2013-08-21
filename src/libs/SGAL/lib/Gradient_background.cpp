@@ -34,117 +34,36 @@ std::string Gradient_background::s_tag = "GradientBackground";
 Container_proto * Gradient_background::s_prototype(NULL);
 
 // Default values:
-const Vector4f Gradient_background::m_defUlColor(0.5, 0, 0  , 0);
-const Vector4f Gradient_background::m_defUrColor(0.5, 0, 0  , 0);
-const Vector4f Gradient_background::m_defLlColor(0,   0, 0.5, 0);
-const Vector4f Gradient_background::m_defLrColor(0,   0, 0.5, 0);
+const Vector4f Gradient_background::s_defUlColor(0.5, 0, 0  , 0);
+const Vector4f Gradient_background::s_defUrColor(0.5, 0, 0  , 0);
+const Vector4f Gradient_background::s_defLlColor(0,   0, 0.5, 0);
+const Vector4f Gradient_background::s_defLrColor(0,   0, 0.5, 0);
 
-float Gradient_background::m_size = 1.0f;
+float Gradient_background::m_size(1.0f);
 
 REGISTER_TO_FACTORY(Gradient_background, "Gradient_background");
 
 /*! Constructor */
 Gradient_background::Gradient_background(Boolean proto) :
   Background(proto),
-  m_ulColor(m_defUlColor),
-  m_urColor(m_defUrColor),
-  m_llColor(m_defLlColor),
-  m_lrColor(m_defLrColor),
+  m_ulColor(s_defUlColor),
+  m_urColor(s_defUrColor),
+  m_llColor(s_defLlColor),
+  m_lrColor(s_defLrColor),
   m_appearance(0)
 {}
 
 /*! Destructor */
-Gradient_background::~Gradient_background()
-{
-  TRACE_MSG(Trace::DESTRUCTOR, "~Gradient_background ...");
-  delete m_appearance;
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
-}
+Gradient_background::~Gradient_background() { delete m_appearance; }
 
-/**
- * set the color of the upper left corner
- * @param color (in) the color
- */
-void Gradient_background::SetULColor(Vector4f color)
+/*! \brief draws the background. This is done by setting the clear color. */
+Trav_directive Gradient_background::draw(Draw_action* draw_action)
 {
-  m_ulColor = color;
-}
-
-/**
- * get the color of the upper left corner
- * @return the color
- */
-Vector4f Gradient_background::GetULColor() const
-{
-  return m_ulColor;
-}
-
-/**
- * set the color of the upper right corner
- * @param color (in) the color
- */
-void Gradient_background::SetURColor(Vector4f color)
-{
-  m_urColor = color;
-}
-
-/**
- * get the color of the upper right corner
- * @return the color
- */
-Vector4f Gradient_background::GetURColor() const
-{
-  return m_urColor;
-}
-
-/**
- * set the color of the lower left corner
- * @param color (in)  the color
- */
-void Gradient_background::SetLLColor(Vector4f color)
-{
-  m_llColor = color;
-}
-
-/**
- * get the color of the lower left corner
- * @return the color
- */
-Vector4f Gradient_background::GetLLColor() const
-{
-  return m_llColor;
-}
-
-/**
- * set the color of the lower right corner
- * @param color (in)  the color
- */
-void Gradient_background::SetLRColor(Vector4f color)
-{
-  m_lrColor = color;
-}
-
-/**
- * get the color of the lower right corner
- * @return the color
- */
-Vector4f Gradient_background::GetLRColor() const
-{
-  return m_lrColor;
-}
-
-/** draw the background. This is done by setting the clear color. */
-Trav_directive Gradient_background::Draw(Draw_action *draw_action)
-{
-  Context *context = draw_action->get_context();
-  if (!context) {
-    return Trav_cont;
-  }
+  Context* context = draw_action->get_context();
+  if (!context) return Trav_cont;
   context->ClearDepthBuffer();
 
-  if (!m_appearance) {
-    CreateAppearance();
-  }
+  if (!m_appearance) CreateAppearance();
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -165,7 +84,7 @@ Trav_directive Gradient_background::Draw(Draw_action *draw_action)
   return Trav_cont;
 }
 
-void Gradient_background::DrawPolygon(Context *context)
+void Gradient_background::DrawPolygon(Context* context)
 {
   glBegin(GL_QUADS);
     glColor3fv((float*)&m_llColor);
@@ -188,38 +107,40 @@ void Gradient_background::CreateAppearance()
   m_appearance->SetPolyMode(Gfx::FILL_PMODE);
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Gradient_background::set_attributes(Element * elem)
+/*! \brief sets the attributes of this container. */
+void Gradient_background::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "ll") {
       SetLLColor(Vector4f(value));
       elem->mark_delete(ai);
-    } else if (name == "lr")  {
+      continue;
+    }
+    if (name == "lr")  {
       SetLRColor(Vector4f(value));
       elem->mark_delete(ai);
-    } else if (name == "ur") {
+      continue;
+    }
+    if (name == "ur") {
       SetURColor(Vector4f(value));
       elem->mark_delete(ai);
-    } else if (name == "ul") {
+      continue;
+    }
+    if (name == "ul") {
       SetULColor(Vector4f(value));
       elem->mark_delete(ai);
+      continue;
     }
   }
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
-/*!
- */
+/*! \brief */
 Attribute_list Gradient_background::get_attributes()
 {
   Attribute_list attribs;
@@ -227,29 +148,25 @@ Attribute_list Gradient_background::get_attributes()
 
   attribs = Node::get_attributes();
 
-  if (m_llColor != m_defLlColor)
-  {
+  if (m_llColor != m_defLlColor) {
     attrib.first = "ll";
     attrib.second = GetLLColor().get_text();
     attribs.push_back(attrib);
   }
 
-  if (m_lrColor != m_defLrColor)
-  {
+  if (m_lrColor != m_defLrColor) {
     attrib.first = "lr";
     attrib.second = GetLRColor().get_text();
     attribs.push_back(attrib);
   }
 
-  if (m_urColor != m_defUrColor)
-  {
+  if (m_urColor != m_defUrColor) {
     attrib.first = "ur";
     attrib.second = GetURColor().get_text();
     attribs.push_back(attrib);
   }
 
-  if (m_ulColor != m_defUlColor)
-  {
+  if (m_ulColor != m_defUlColor) {
     attrib.first = "ul";
     attrib.second = GetULColor().get_text();
     attribs.push_back(attrib);
@@ -281,16 +198,14 @@ void Gradient_background::init_prototype()
                       (Execution_func_type)&Container::SetRenderingRequired));
 }
 
-/*!
- */
+/*! \brief */
 void Gradient_background::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief */
 Container_proto* Gradient_background::get_prototype()
 {
   if (!s_prototype) init_prototype();

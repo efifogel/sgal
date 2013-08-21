@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -43,59 +43,51 @@ public:
   virtual ~Field_def(){};
 
   /* Construct the prototype */
-  static Field_def * prototype() { return new Field_def(true); }
+  static Field_def* prototype() { return new Field_def(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Field_def(); }
+  virtual Container* clone() { return new Field_def(); }
 
   // protoype handling
   virtual void init_prototype();
   virtual void delete_prototype()
   {
     delete s_prototype;
+    s_prototype = NULL;
   }
 
   virtual Container_proto* get_prototype()
   {
-    if (s_prototype == NULL)
-      init_prototype();
+    if (s_prototype == NULL) Field_def::init_prototype();
     return s_prototype;
   }
-
-  /// \name field handlers
-  //@{
-  //@}
 
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element * elem);
 
   virtual Attribute_list get_attributes();
 
-  virtual Action::Trav_directive Draw(Draw_action * draw_action)
-  {
-    return Action::TRAV_CONT;
-  }
+  virtual Action::Trav_directive Draw(Draw_action* draw_action)
+  { return Action::TRAV_CONT; }
 
   // Set value for fields of type SFNode
-  void set_value(Container * value);
+  void set_value(Container* value);
 
-  Container * get_container_value() const;
+  Container* get_container_value() const;
 
 private:
-  static Container_proto *s_prototype;
+  static Container_proto* s_prototype;
 
   std::string m_name;
   std::string m_type;
   std::string m_value;
 
-  Container * m_containerValue;
-  Script * m_script;
+  Container* m_containerValue;
+  Script* m_script;
 };
 
-inline Container * Field_def::get_containerValue() const
-{
-  return m_containerValue;
-}
+inline Container* Field_def::get_containerValue() const
+{ return m_containerValue; }
 
 SGAL_END_NAMESPACE
 

@@ -50,70 +50,110 @@ public:
   /*! Destructor */
   virtual ~Color_array() {}
 
-  /* Construct the prototype */
-  static Color_array* prototype() { return new Color_array(true); }
+  /*! Construct the prototype. */
+  static Color_array* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Color_array(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
 
-  /// \name field handlers
-  //@{
-  //@}
-
-  /*! Sets the attributes of this node */
+  /*! Sets the attributes of this node. */
   virtual void set_attributes(Element * elem);
 
   //! \todo virtual Attribute_list get_attributes();
 
-  /*! Obtain the array size */
-  Uint size() const { return m_array.size(); }
+  /*! Obtain the array size. */
+  Uint size() const;
 
-  /*! Resize the array capacity */
-  void resize(Uint n) { m_array.resize(n); }
+  /*! Resize the array capacity. */
+  void resize(Uint n);
 
-  /*! Clear the array */
-  void clear() { m_array.clear(); }
+  /*! Clear the array. */
+  void clear();
 
-  /*! The iterator to the Array first element */
-  Vector3f* begin() { return m_array.begin(); }
-  const Vector3f * begin() const { return m_array.begin(); }
+  /*! Obtain the iterator to the Array first element. */
+  Vector3f* begin();
 
-  /*! The iterator to the Array past-the-end element */
-  Vector3f* end() { return m_array.end(); }
-  const Vector3f* end() const { return m_array.end(); }
+  /*! Obtain the const iterator to the Array first element. */
+  const Vector3f * begin() const;
 
-  /*! Array indexing operator */
-  Vector3f& operator[](Uint n) { return m_array[n]; }
+  /*! Obtain the iterator to the Array past-the-end element. */
+  Vector3f* end();
 
-  /*! Array indexing operator */
-  const Vector3f& operator[](Uint n) const { return m_array[n]; }
+  /*! Obtain the const iterator to the Array past-the-end element. */
+  const Vector3f* end() const ;
 
-  /*! Obtain the vector */
-  Vector3f* get_vector() { return m_array.get_vector(); }
+  /*! Array indexing operator. */
+  Vector3f& operator[](Uint n);
+
+  /*! Array indexing operator. */
+  const Vector3f& operator[](Uint n) const;
+
+  /*! Obtain the vector. */
+  Vector3f* get_vector();
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! The array of colors */
-  SGAL::Array<Vector3f> m_array;
+  /*! The array of colors. */
+  Array<Vector3f> m_array;
 };
+
+/*! \brief constructs the prototype. */
+inline Color_array* Color_array::prototype() { return new Color_array(true); }
+
+/*! \brief clones. */
+inline Container* Color_array::clone() { return new Color_array(); }
+
+/*! \brief obtains the array size. */
+inline Uint Color_array::size() const { return m_array.size(); }
+
+/*! \brief resizes the array capacity. */
+inline void Color_array::resize(Uint n) { m_array.resize(n); }
+
+/*! \brief clears the array. */
+inline void Color_array::clear() { m_array.clear(); }
+
+/*! \brief obtains the iterator to the Array first element. */
+inline Vector3f* Color_array::begin() { return m_array.begin(); }
+
+/*! \brief obtains the const iterator to the Array first element. */
+inline const Vector3f * Color_array::begin() const { return m_array.begin(); }
+
+/*! \brief obtains the iterator to the Array past-the-end element. */
+inline Vector3f* Color_array::end() { return m_array.end(); }
+
+/*! \brief obtains the const iterator to the Array first element. */
+inline const Vector3f* Color_array::end() const { return m_array.end(); }
+
+/*! \brief Array indexing operator. */
+inline Vector3f& Color_array::operator[](Uint n) { return m_array[n]; }
+
+/*! \brief Array indexing operator. */
+inline const Vector3f& Color_array::operator[](Uint n) const
+{ return m_array[n]; }
+
+/*! \brief obtains the vector. */
+inline Vector3f* Color_array::get_vector() { return m_array.get_vector(); }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Color_array::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

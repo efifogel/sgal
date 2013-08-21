@@ -48,11 +48,11 @@ public:
   virtual ~Transformation_engine();
 
   /*! Construct the prototype */
-  static Transformation_engine * prototype()
+  static Transformation_engine* prototype()
   { return new Transformation_engine(true); }
 
   /*! Clone */
-  virtual Container * clone() { return new Transformation_engine(); }
+  virtual Container* clone() { return new Transformation_engine(); }
 
   // protoype handling
   virtual void init_prototype();
@@ -72,18 +72,18 @@ public:
   //@}
 
   /*! Sets the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  virtual void set_attributes(Element* elem);
 
   virtual Attribute_list get_attributes();
 
   // The execution function of the engine - calculates the suitable rotation
   // using the currentRotation relative angle and fraction
-  virtual void execute(Field_info *);
+  virtual void execute(Field_info*);
 
-  virtual Trav_directive Draw(Draw_action * draw_action) { return Trav_cont; };
+  virtual Trav_directive Draw(Draw_action* draw_action) { return Trav_cont; };
 
 private:
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
   Float m_fraction;
   Rotation m_value;

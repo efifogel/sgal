@@ -66,14 +66,21 @@ public:
   /*! Clone */
   virtual Container* clone() { return new Switch(); }
 
-  /*! Set the index of the child to traverse */
-  void set_which_choice(Uint which_choice);
+  /*! Initialize the node prototype */
+  virtual void init_prototype();
 
-  /*! Obtain the index of the child to traverse */
-  Uint get_which_choice() const;
+  virtual void delete_prototype();
 
-  /*! Return the node to traverse */
-  virtual Shared_node get_choice();
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  //@}
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
 
   /*! Draw the node while traversing the scene graph */
   virtual Action::Trav_directive draw(Draw_action* action);
@@ -85,21 +92,14 @@ public:
   /*! Calculate the sphere bound of the group */
   virtual bool clean_sphere_bound();
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element* elem);
+  /*! Set the index of the child to traverse */
+  void set_which_choice(Uint which_choice);
 
-  // virtual Attribute_list get_attributes();
+  /*! Obtain the index of the child to traverse */
+  Uint get_which_choice() const;
 
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
-
-  virtual void delete_prototype();
-
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
+  /*! Return the node to traverse */
+  virtual Shared_node get_choice();
 
 protected:
   /*! obtains the tag (type) of the container */

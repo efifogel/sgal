@@ -35,31 +35,28 @@ Container_proto* Color_array::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Color_array, "Color_array");
 
-/*! Initialize the node prototype */
+/*! Initialize the node prototype. */
 void Color_array::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
 }
 
-/*! Delete the node prototype */
+/*! Delete the node prototype. */
 void Color_array::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
+/*! Obtain the node prototype. */
 Container_proto* Color_array::get_prototype()
 {
   if (s_prototype == NULL) Color_array::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Color_array::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
