@@ -639,109 +639,155 @@ void Cubical_gaussian_map_geo::init_prototype()
   // drawDual
   Execution_function exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::draw_changed);
-  s_prototype->add_field_info(new SF_bool(DRAW_DUAL, "drawDual",
-                                          get_member_offset(&m_draw_aos),
+  Boolean_handle_function draw_aos_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::draw_aos_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL, "drawDual", draw_aos_func,
                                           exec_func));
 
   // drawDualUnfolded
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_DUAL_UNFOLDED, "drawDualUnfolded",
-                               get_member_offset(&m_draw_aos_unfolded),
-                               exec_func));
+  Boolean_handle_function draw_aos_unfolded_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::draw_aos_unfolded_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL_UNFOLDED,
+                                          "drawDualUnfolded",
+                                          draw_aos_unfolded_func, exec_func));
 
   // drawDualOpaque
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
-                               get_member_offset(&m_draw_aos_opaque)));
+  Boolean_handle_function draw_aos_opaque_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::draw_aos_opaque_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
+                                          draw_aos_opaque_func));
 
   // drawDualHaloed
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
-                               get_member_offset(&m_draw_aos_haloed)));
+  Boolean_handle_function draw_aos_haloed_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::draw_aos_haloed_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
+                                          draw_aos_haloed_func));
 
   // drawDualCube
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_DUAL_CUBE, "drawDualCube",
-                               get_member_offset(&m_draw_aos_surface)));
+  Boolean_handle_function draw_aos_surface_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::draw_aos_surface_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL_CUBE, "drawDualCube",
+                                          draw_aos_surface_func));
 
   // dualLineWidth
+  Float_handle_function aos_edge_line_width_func =
+    static_cast<Float_handle_function>
+    (&Cubical_gaussian_map_geo::aos_edge_line_width_handle);
   s_prototype->
     add_field_info(new SF_float(DUAL_EDGE_LINE_WIDTH, "dualLineWidth",
-                               get_member_offset(&m_aos_edge_line_width)));
+                                aos_edge_line_width_func));
 
   // translated
-  exec_func = static_cast<Execution_function>(&Cubical_gaussian_map_geo::coord_changed);
+  Boolean_handle_function translated_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::translated_handle);
+  exec_func =
+    static_cast<Execution_function>(&Cubical_gaussian_map_geo::coord_changed);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
-                                          get_member_offset(&m_translated),
-                                          exec_func));
+                                          translated_func, exec_func));
 
   // rotated
-  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
-                                          get_member_offset(&m_rotated),
+  Boolean_handle_function rotated_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::rotated_handle);
+  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated", rotated_func,
                                           exec_func));
 
   // trueDrawPrimal
+  Boolean_handle_function draw_primal_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
-                                          get_member_offset(&m_draw_primal)));
+                                          draw_primal_func));
 
   // trueDrawDual
+//   Boolean_handle_function draw_aos_func =
+//     static_cast<Boolean_handle_function>
+//     (&Cubical_gaussian_map_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL, "trueDrawDual",
-                                         get_member_offset(&m_draw_aos)));
+                                          draw_aos_func));
 
   // trueDrawDualUnfolded
-  s_prototype->
-   add_field_info(new SF_bool(TRUE_DRAW_DUAL_UNFOLDED,
-                              "trueDrawDualUnfolded",
-                              get_member_offset(&m_draw_aos_unfolded)));
+//   Boolean_handle_function draw_aos_unfolded_func =
+//     static_cast<Boolean_handle_function>
+//     (&Cubical_gaussian_map_geo::draw_aos_unfolded_handle);
+  s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL_UNFOLDED,
+                                          "trueDrawDualUnfolded",
+                                           draw_aos_unfolded_func));
 
   // export
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::output);
-  s_prototype->add_field_info(new SF_bool(EXPORT, "export",
-                                          get_member_offset(&m_export),
+  Boolean_handle_function export_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::export_handle);
+  s_prototype->add_field_info(new SF_bool(EXPORT, "export", export_func,
                                           exec_func));
 
   // increaseVertexIndex
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::
                                     increase_vertex_index);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_VERTEX_INDEX, "increaseVertexIndex",
-                               get_member_offset(&m_increase_vertex_index),
-                               exec_func));
+  Boolean_handle_function increase_vertex_index_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::increase_vertex_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
+                                          "increaseVertexIndex",
+                                          increase_vertex_index_func,
+                                          exec_func));
 
   // increaseEdgeIndex
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::
                                     increase_edge_index);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_EDGE_INDEX, "increaseEdgeIndex",
-                               get_member_offset(&m_increase_edge_index),
-                               exec_func));
+  Boolean_handle_function increase_edge_index_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::increase_edge_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
+                                          "increaseEdgeIndex",
+                                          increase_edge_index_func,
+                                          exec_func));
 
   // increaseFacetIndex
   exec_func =
     static_cast<Execution_function>(&Cubical_gaussian_map_geo::
                                     increase_facet_index);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_FACET_INDEX, "increaseFacetIndex",
-                               get_member_offset(&m_increase_facet_index),
-                               exec_func));
+  Boolean_handle_function increase_facet_index_func =
+    static_cast<Boolean_handle_function>
+    (&Cubical_gaussian_map_geo::increase_facet_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
+                                          "increaseFacetIndex",
+                                          increase_facet_index_func,
+                                          exec_func));
 
   // dualLineColor1
-  s_prototype->
-    add_field_info(new SF_vector3f(DUAL_EDGE_COLOR1, "dualLineColor1",
-                                   get_member_offset(&m_aos_edge_color[0])));
+  Vector3f_handle_function aos_edge_color0_func =
+    static_cast<Vector3f_handle_function>
+    (&Cubical_gaussian_map_geo::aos_edge_color1_handle);
+  s_prototype->add_field_info(new SF_vector3f(DUAL_EDGE_COLOR1,
+                                              "dualLineColor1",
+                                              aos_edge_color0_func));
 
   // dualLineColor2
-  s_prototype->
-    add_field_info(new SF_vector3f(DUAL_EDGE_COLOR2, "dualLineColor2",
-                                   get_member_offset(&m_aos_edge_color[1])));
+  Vector3f_handle_function aos_edge_color1_func =
+    static_cast<Vector3f_handle_function>
+    (&Cubical_gaussian_map_geo::aos_edge_color2_handle);
+  s_prototype->add_field_info(new SF_vector3f(DUAL_EDGE_COLOR2,
+                                              "dualLineColor2",
+                                              aos_edge_color1_func));
 
   // geometries
+//   Boolean_handle_function geometries_func =
+//     static_cast<Boolean_handle_function>
+//     (&Cubical_gaussian_map_geo::geometries_handle);
   //! \todo change to MF_shared_container and change m_cgm_nodes respectively.
   // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
-  //                                              get_member_offset(&m_cgm_nodes)));
+  //                                              geometries_func));
 }
 
 /*! \brief */

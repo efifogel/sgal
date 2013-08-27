@@ -55,13 +55,15 @@ void Bindable_node::init_prototype()
   // set_bind
   Execution_function exec_func =
     static_cast<Execution_function>(&Bindable_node::set_bind);
-  s_prototype->add_field_info(new SF_bool(SET_BIND, "set_bind",
-                                          get_member_offset(&m_set_bind),
+  Boolean_handle_function bind_func =
+    static_cast<Boolean_handle_function>(&Bindable_node::bind_handle);
+  s_prototype->add_field_info(new SF_bool(SET_BIND, "set_bind", bind_func,
                                           exec_func));
 
   // isBound
-  s_prototype->add_field_info(new SF_bool(IS_BOUND, "isBound",
-                                          get_member_offset(&m_is_bound)));
+  Boolean_handle_function is_bound_func =
+    static_cast<Boolean_handle_function>(&Bindable_node::is_bound_handle);
+  s_prototype->add_field_info(new SF_bool(IS_BOUND, "isBound", is_bound_func));
 }
 
 /*!

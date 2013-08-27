@@ -49,7 +49,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Polyhedron_geo::s_tag = "Polyhedron";
-SGAL::Container_proto* Polyhedron_geo::m_prototype(NULL);
+Container_proto* Polyhedron_geo::m_prototype(NULL);
 
 REGISTER_TO_FACTORY(Polyhedron_geo, "Polyhedron_geo");
 
@@ -84,7 +84,6 @@ void Polyhedron_geo::draw(Draw_action* action)
 /*! Clean the data structure */
 void Polyhedron_geo::clean_polyhedron()
 {
-  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "Polyhedron_geo::clean() start\n");
   m_polyhedron.delegate(m_surface);
 #if 0
   if (!m_polyhedron.normalized_border_is_valid()) {
@@ -115,10 +114,10 @@ void Polyhedron_geo::clear()
 }
 
 /*! \brief */
-void Polyhedron_geo::cull(SGAL::Cull_context& cull_context) {}
+void Polyhedron_geo::cull(Cull_context& cull_context) {}
 
 /*! \brief draws the internal representation. */
-void Polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
+void Polyhedron_geo::draw_geometry(Draw_action* /* action */)
 {
   Facet_iterator i;
   for (i = m_polyhedron.facets_begin(); i != m_polyhedron.facets_end(); ++i) {
@@ -134,11 +133,11 @@ void Polyhedron_geo::draw_geometry(SGAL::Draw_action* /* action */)
     } while (++j != i->facet_begin());
     glEnd();
   }
-  SGAL_TRACE_MSG(SGAL::Trace::POLYHEDRON, "completed\n");
+  SGAL_TRACE_MSG(Trace::POLYHEDRON, "completed\n");
 }
 
 /*! \brief */
-void Polyhedron_geo::isect(SGAL::Isect_action* action)
+void Polyhedron_geo::isect(Isect_action* action)
 {
   if (is_dirty_coord_indices()) clean_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
@@ -199,16 +198,16 @@ Boolean Polyhedron_geo::clean_sphere_bound()
 }
 
 /*! \brief sets the attributes of this object. */
-void Polyhedron_geo::set_attributes(SGAL::Element* elem)
+void Polyhedron_geo::set_attributes(Element* elem)
 {
-  SGAL::Mesh_set::set_attributes(elem);
+  Mesh_set::set_attributes(elem);
 }
 
 /*! sets the attributes of this node */
 void Polyhedron_geo::init_prototype()
 {
   if (m_prototype) return;
-  m_prototype = new Container_proto(SGAL::Mesh_set::get_prototype());
+  m_prototype = new Container_proto(Mesh_set::get_prototype());
 }
 
 /*! \brief deletes the prototype. */
@@ -219,7 +218,7 @@ void Polyhedron_geo::delete_prototype()
 }
 
 /*! \brief obtaisn the prototype. */
-SGAL::Container_proto* Polyhedron_geo::get_prototype()
+Container_proto* Polyhedron_geo::get_prototype()
 {
   if (!m_prototype) Polyhedron_geo::init_prototype();
   return m_prototype;
