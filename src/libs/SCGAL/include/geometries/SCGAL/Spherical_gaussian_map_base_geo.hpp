@@ -441,6 +441,20 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* draw_aos_handle(Field_info*) { return &m_draw_aos; }
+  Boolean* draw_aos_opaque_handle(Field_info*) { return &m_draw_aos_opaque; }
+  Boolean* draw_aos_haloed_handle(Field_info*) { return &m_draw_aos_haloed; }
+  Boolean* draw_aos_surface_handle(Field_info*) { return &m_draw_aos_surface; }
+  Float* aos_edge_line_width_handle(Field_info*)
+    { return &m_aos_edge_line_width; }
+  Boolean* translated_handle(Field_info*) { return &m_translated; }
+  Boolean* rotated_handle(Field_info*) { return &m_rotated; }
+  Boolean* draw_primal_handle(Field_info*) { return &m_draw_primal; }
+  Boolean* export_handle(Field_info*) { return &m_export; }
+  Vector3f* aos_edge_colors1_handle(Field_info*)
+   { return &m_aos_edge_colors[0]; }
+  Vector3f* aos_edge_colors2_handle(Field_info*)
+   { return &m_aos_edge_colors[1]; }
   //@}
 
   /*! Set the attributes of this node.

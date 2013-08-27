@@ -53,6 +53,20 @@ public:
     LAST
   };
 
+  /*! File formats */
+  enum File_format {
+    FF_illegal = 0,
+    FF_jpeg,
+    FF_png,
+    FF_gif,
+    FF_tiff,
+    FF_bmp,
+    FF_ppm,
+    FF_pgm,
+    FF_pbm,
+    FF_num
+  };
+
   typedef boost::shared_ptr<Image>              Shared_image;
 
   /*! Constructor */
@@ -78,6 +92,10 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
+  std::string* dir_name_handle(Field_info*) { return &m_dir_name; }
+  std::string* file_name_handle(Field_info*) { return &m_file_name; }
+  File_format* file_format_handle(Field_info*) { return &m_file_format; }
   //@}
 
   /*! Set the attributes of this node */
@@ -89,23 +107,9 @@ public:
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Trigger the snapshot */
-  void trigger() { m_triggered = true; }
+  void trigger() { m_trigger = true; }
 
   // virtual Attribute_list get_attributes();
-
-  /*! File formats */
-  enum File_format {
-    FF_illegal = 0,
-    FF_jpeg,
-    FF_png,
-    FF_gif,
-    FF_tiff,
-    FF_bmp,
-    FF_ppm,
-    FF_pgm,
-    FF_pbm,
-    FF_num
-  };
 
   void set_trigger(Field_info* field_info = NULL  );
   virtual Action::Trav_directive draw(Draw_action* draw_action);
@@ -170,7 +174,7 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  Boolean m_triggered;
+  Boolean m_trigger;
 
   Boolean m_use_front_buffer;
 

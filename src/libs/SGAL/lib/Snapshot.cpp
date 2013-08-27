@@ -66,7 +66,7 @@ Snapshot::Snapshot(Boolean proto) :
   m_quality(s_def_quality),
   m_sequence(false),
   m_count(0),
-  m_triggered(false),
+  m_trigger(false),
   m_use_front_buffer(true),
   m_size(0),
   m_flip(true)
@@ -86,8 +86,8 @@ Snapshot::~Snapshot()
 /*! \brief takes a snapshot and write to a file if triggered. */
 Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
 {
-  if (!m_triggered) return Action::TRAV_CONT;
-  m_triggered = false;
+  if (!m_trigger) return Action::TRAV_CONT;
+  m_trigger = false;
 
   m_use_front_buffer = draw_action->is_snap_from_front();
   if (!allocate_space(draw_action)) return Action::TRAV_CONT;
@@ -177,20 +177,27 @@ void Snapshot::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // trigger
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          get_member_offset(&m_triggered)));
+  Boolean_handle_function trigger_func =
+    static_cast<Boolean_handle_function>(&Snapshot::trigger_handle);
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func));
 
   // dirName
+  String_handle_function dir_name_func =
+    static_cast<String_handle_function>(&Snapshot::dir_name_handle);
   s_prototype->add_field_info(new SF_string(DIR_NAME, "dirName",
-                                            get_member_offset(&m_dir_name)));
+                                            dir_name_func));
 
   // fileName
+  String_handle_function file_name_func =
+    static_cast<String_handle_function>(&Snapshot::file_name_handle);
   s_prototype->add_field_info(new SF_string(FILE_NAME, "fileName",
-                                            get_member_offset(&m_file_name)));
+                                            file_name_func));
 
   // fileFormat
-  s_prototype->add_field_info(new SF_int(FILE_FORMAT, "fileFormat",
-                                         get_member_offset(&m_file_format)));
+  Uint_handle_function file_format_func =
+    reinterpret_cast<Uint_handle_function>(&Snapshot::file_format_handle);
+  s_prototype->add_field_info(new SF_uint(FILE_FORMAT, "fileFormat",
+                                          file_format_func));
 }
 
 /*! \brief deletes the container prototype. */

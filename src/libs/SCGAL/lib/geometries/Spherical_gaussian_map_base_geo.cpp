@@ -364,7 +364,7 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! */
+/*! \breif initializes the container prototype. */
 void Spherical_gaussian_map_base_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -373,66 +373,93 @@ void Spherical_gaussian_map_base_geo::init_prototype()
   // Add the object fields to the prototype
   // drawAos
   Execution_function exec_func =
-    static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::draw_changed);
-  s_prototype->add_field_info(new SF_bool(DRAW_AOS, "drawAos",
-                                          get_member_offset(&m_draw_aos),
+    static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::
+                                    draw_changed);
+  Boolean_handle_function draw_aos_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::draw_aos_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_AOS, "drawAos", draw_aos_func,
                                           exec_func));
 
   // drawAosOpaque
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_AOS_OPAQUE, "drawAosOpaque",
-                               get_member_offset(&m_draw_aos_opaque)));
+  Boolean_handle_function draw_aos_opaque_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::draw_aos_opaque_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_AOS_OPAQUE, "drawAosOpaque",
+                                          draw_aos_opaque_func));
 
   // drawAosHaloed
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_AOS_HALOED, "drawAosHaloed",
-                               get_member_offset(&m_draw_aos_haloed)));
+  Boolean_handle_function draw_aos_haloed_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::draw_aos_haloed_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_AOS_HALOED, "drawAosHaloed",
+                                          draw_aos_haloed_func));
 
   // drawAosSphere
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_AOS_SPHERE, "drawAosSphere",
-                               get_member_offset(&m_draw_aos_surface)));
+  Boolean_handle_function draw_aos_surface_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::draw_aos_surface_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_AOS_SPHERE, "drawAosSphere",
+                                          draw_aos_surface_func));
 
   // aosLineWidth
-  s_prototype->
-    add_field_info(new SF_float(AOS_EDGE_LINE_WIDTH, "aosLineWidth",
-                               get_member_offset(&m_aos_edge_line_width)));
+  Float_handle_function aos_edge_line_width_func =
+    static_cast<Float_handle_function>
+    (&Spherical_gaussian_map_base_geo::aos_edge_line_width_handle);
+  s_prototype->add_field_info(new SF_float(AOS_EDGE_LINE_WIDTH, "aosLineWidth",
+                                           aos_edge_line_width_func));
 
   // translated
   exec_func = static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::coord_changed);
+  Boolean_handle_function translated_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::translated_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
-                                          get_member_offset(&m_translated),
-                                          exec_func));
+                                          translated_func, exec_func));
 
   // rotated
-  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
-                                          get_member_offset(&m_rotated),
+  Boolean_handle_function rotated_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::rotated_handle);
+  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated", rotated_func,
                                           exec_func));
 
   // trueDrawPrimal
+  Boolean_handle_function draw_primal_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
-                                          get_member_offset(&m_draw_primal)));
+                                          draw_primal_func));
 
   // trueDrawAos
+//   Boolean_handle_function draw_aos_func =
+//     static_cast<Boolean_handle_function>
+//     (&Spherical_gaussian_map_base_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_AOS, "trueDrawAos",
                                          get_member_offset(&m_draw_aos)));
 
   // export
   exec_func =
     static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::output);
-  s_prototype->add_field_info(new SF_bool(EXPORT, "export",
-                                          get_member_offset(&m_export),
+  Boolean_handle_function export_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_base_geo::export_handle);
+  s_prototype->add_field_info(new SF_bool(EXPORT, "export", export_func,
                                           exec_func));
 
   // aosEdgeColor1
-  s_prototype->
-    add_field_info(new SF_vector3f(AOS_EDGE_COLOR1, "aosEdgeColor1",
-                                   get_member_offset(&m_aos_edge_colors[0])));
+  Vector3f_handle_function aos_edge_colors1_func =
+    static_cast<Vector3f_handle_function>
+    (&Spherical_gaussian_map_base_geo::aos_edge_colors1_handle);
+  s_prototype->add_field_info(new SF_vector3f(AOS_EDGE_COLOR1, "aosEdgeColor1",
+                                              aos_edge_colors1_func));
 
   // aosEdgeColor2
-  s_prototype->
-    add_field_info(new SF_vector3f(AOS_EDGE_COLOR2, "aosEdgeColor2",
-                                   get_member_offset(&m_aos_edge_colors[1])));
+  Vector3f_handle_function aos_edge_colors2_func =
+    static_cast<Vector3f_handle_function>
+    (&Spherical_gaussian_map_base_geo::aos_edge_colors2_handle);
+  s_prototype->add_field_info(new SF_vector3f(AOS_EDGE_COLOR2, "aosEdgeColor2",
+                                              aos_edge_colors2_func));
 }
 
 /*! */

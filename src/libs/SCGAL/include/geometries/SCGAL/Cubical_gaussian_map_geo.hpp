@@ -913,6 +913,26 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* draw_aos_handle(Field_info*) { return &m_draw_aos; }
+  Boolean* draw_aos_unfolded_handle(Field_info*) { return &m_draw_aos_unfolded; }
+  Boolean* draw_aos_opaque_handle(Field_info*) { return &m_draw_aos_opaque; }
+  Boolean* draw_aos_haloed_handle(Field_info*) { return &m_draw_aos_haloed; }
+  Boolean* draw_aos_surface_handle(Field_info*) { return &m_draw_aos_surface; }
+  Float* aos_edge_line_width_handle(Field_info*)
+    { return &m_aos_edge_line_width; }
+  Boolean* translated_handle(Field_info*) { return &m_translated; }
+  Boolean* rotated_handle(Field_info*) { return &m_rotated; }
+  Boolean* draw_primal_handle(Field_info*) { return &m_draw_primal; }
+  Boolean* export_handle(Field_info*) { return &m_export; }
+  Boolean* increase_vertex_index_handle(Field_info*)
+    { return &m_increase_vertex_index; }
+  Boolean* increase_edge_index_handle(Field_info*)
+    { return &m_increase_edge_index; }
+  Boolean* increase_facet_index_handle(Field_info*)
+    { return &m_increase_facet_index; }
+  Vector3f* aos_edge_color1_handle(Field_info*) { return &m_aos_edge_color[0]; }
+  Vector3f* aos_edge_color2_handle(Field_info*) { return &m_aos_edge_color[1]; }
+//   MF_container cgm_nodes_handle(Field_info*) { return &m_cgm_nodes); }
   //@}
 
   /*! Set the attributes of this node. */

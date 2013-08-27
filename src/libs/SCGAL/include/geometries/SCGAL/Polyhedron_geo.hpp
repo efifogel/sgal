@@ -156,12 +156,8 @@ public:
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
-  /// \name field handlers
-  //@{
-  //@}
-
   /*! Set the attributes of this node. */
-  virtual void set_attributes(SGAL::Element* elem);
+  virtual void set_attributes(Element* elem);
 
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action);
@@ -204,7 +200,7 @@ protected:
   virtual bool is_empty() const { return m_polyhedron.empty(); }
 
   /*! Draw the internal representation. */
-  virtual void draw_geometry(SGAL::Draw_action* action);
+  virtual void draw_geometry(Draw_action* action);
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -214,7 +210,7 @@ private:
   static const std::string s_tag;
 
   /*! The node prototype. */
-  static SGAL::Container_proto* m_prototype;
+  static Container_proto* m_prototype;
 
   /*! The builder. */
   Polyhedron_geo_builder<HalfedgeDS> m_surface;
@@ -225,7 +221,7 @@ inline Polyhedron_geo* Polyhedron_geo::prototype()
 { return new Polyhedron_geo(true); }
 
 /*! \brief clones. */
-inline SGAL::Container* Polyhedron_geo::clone() { return new Polyhedron_geo(); }
+inline Container* Polyhedron_geo::clone() { return new Polyhedron_geo(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Polyhedron_geo::get_tag() const { return s_tag; }
