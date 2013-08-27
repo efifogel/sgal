@@ -59,7 +59,7 @@ void Simulation::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto * Simulation::get_prototype()
+Container_proto* Simulation::get_prototype()
 {
   if (!s_prototype) Simulation::init_prototype();
   return s_prototype;
@@ -77,7 +77,7 @@ void Simulation::add_to_scene(Scene_graph* sg) { sg->add_simulation(this); }
 /*! Start simulation */
 void Simulation::start()
 {
-  Field * start_field = get_field(START);
+  Field* start_field = get_field(START);
   if (start_field) start_field->cascade();
 }
 

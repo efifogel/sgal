@@ -35,12 +35,11 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Coordinate_interpolator::s_tag = "CoordinateInterpolator";
-Container_proto * Coordinate_interpolator::s_prototype(NULL);
+Container_proto* Coordinate_interpolator::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Coordinate_interpolator, "Coordinate_interpolator");
 
-/*! Constructor
-*/
+/*! Constructor */
 Coordinate_interpolator::Coordinate_interpolator(Boolean proto) :
   Interpolator(proto),
   m_last_location(0)
@@ -84,33 +83,30 @@ Container_proto * Coordinate_interpolator::get_prototype()
  * The function calculates m_value, updates it and activate cascade on it
  * @param pointer (in) to the cascaded field's field info - not used for now
  */
-void Coordinate_interpolator::execute(Field_info *)
+void Coordinate_interpolator::execute(Field_info* /* field_info */)
 {
-  Field * value = get_field(VALUE);
+  Field* value = get_field(VALUE);
 
   // if there is no connection to the value field there is no need to execute
   // the interpolation
   if (value == NULL) return;
 
   // if there are no array set the value to zero and return
-  if ((m_keys.size() == 0) || m_values.size() == 0)
-  {
+  if ((m_keys.size() == 0) || (m_values.size() == 0)) {
     m_value = Vector3f_array(1);
     value->cascade();
     return;
   }
 
   // If there is only one key/value pair, set it and return
-  if (m_keys.size() == 1)
-  {
+  if (m_keys.size() == 1) {
     m_value = get_value(0);
     value->cascade();
     return;
   }
 
   // If the fraction is larger than the last key, set the value to the last one
-  if (m_fraction >= m_keys[m_keys.size() - 1])
-  {
+  if (m_fraction >= m_keys[m_keys.size() - 1]) {
     m_value = get_value(m_keys.size() - 1);
     value->cascade();
     return;
@@ -118,8 +114,7 @@ void Coordinate_interpolator::execute(Field_info *)
 
   // If the fraction is smaller than the first key - set the value to the
   // first one
-  if (m_fraction <= m_keys[0])
-  {
+  if (m_fraction <= m_keys[0]) {
     m_value = get_value(0);
     value->cascade();
     return;
@@ -150,10 +145,8 @@ void Coordinate_interpolator::execute(Field_info *)
   Float fration_delta = m_fraction - m_keys[location];
 
   m_value = Vector3f_array(size_of_array);
-  for (unsigned int j = 0; j < size_of_array; ++j)
-  {
-    for (unsigned int i = 0; i < 3; ++i)
-    {
+  for (unsigned int j = 0; j < size_of_array; ++j) {
+    for (unsigned int i = 0; i < 3; ++i) {
       Float delta = next_location_value[j][i] - location_value[j][i];
       m_value[j][i] = location_value[j][i] +
         (fration_delta * delta) / key_delta;
@@ -172,12 +165,8 @@ Vector3f_array Coordinate_interpolator::get_value (Uint location)
   Int size_of_array = m_values.size() / m_keys.size();
   Vector3f_array ret = Vector3f_array(size_of_array);
   Int start = location * size_of_array;
-
   for (int i = 0; i < size_of_array; ++i)
-  {
     ret[i] = m_values[start + i];
-  }
-
   return ret;
 }
 
@@ -192,14 +181,11 @@ void Coordinate_interpolator::set_attributes(Element * elem)
   typedef Element::Cont_attr_iter         Cont_attr_iter;
 
   Interpolator::set_attributes(elem);
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
-    if (name == "keyValue")
-    {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
+    if (name == "keyValue") {
       Uint num_values = get_num_tokens(value);
       Uint num_vecs = num_values / 3;
       m_values.resize(num_vecs);

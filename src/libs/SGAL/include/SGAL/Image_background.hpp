@@ -52,18 +52,18 @@ public:
   /*! Destructor */
   virtual ~Image_background();
 
-  /*! Construct the prototype */
-  static Image_background* prototype() { return new Image_background(true); }
+  /*! Construct the prototype. */
+  static Image_background* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Image_background(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Set the attributes of this container */
+  /*! Set the attributes of this container. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   virtual void delete_prototype();;
@@ -81,22 +81,32 @@ public:
   void set_appearance(Shared_appearance appearance);
 
 protected:
-  /*! Obtain the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! An apperance used for the background */
+  /*! An apperance used for the background. */
   Shared_appearance m_appearance;
 
-  /*! Indicates whether the appearance is a default */
+  /*! Indicates whether the appearance is a default. */
   Boolean m_is_default_appearance;
 };
+
+/*! \brief constructs the prototype. */
+inline Image_background* Image_background::prototype()
+{ return new Image_background(true); }
+
+/*! \brief clones. */
+inline Container* Image_background::clone() { return new Image_background(); }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Image_background::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

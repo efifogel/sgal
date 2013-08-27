@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -57,27 +57,10 @@ public:
   virtual ~Environment_map();
 
   /*! Construct the prototype */
-  static Environment_map* prototype() { return new Environment_map(true); }
+  static Environment_map* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Environment_map(); }
-
-  void set_alpha(float alpha);
-  float get_alpha() const;
-  void set_quality(bool flag) { m_quality = flag; }
-  bool is_quality() const { return m_quality; }
-  void set_texture(Texture* texture);
-  Texture* get_texture() { return m_texture; }
-
-  // this method is used when an appearance is created by the environment
-  // object it should not be called in any other case (FIX)
-  Execution_coordinator* get_execution_coordinator() const
-  { return m_execution_coordinator; }
-
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
-
-  // virtual Attribute_list get_attributes();
+  virtual Container* clone();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -88,10 +71,35 @@ public:
 
   /// \name field handlers
   //@{
+  Shared_texture* texture_handle(Field_info*) { return &m_texture; }
+  Float* alpha_handle(Field_info*) { return &m_alpha; }
   //@}
 
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element * elem);
+
+  // virtual Attribute_list get_attributes();
+
   virtual Boolean attach_context(Context* context );
+
   virtual Boolean detach_context(Context* context = 0);
+
+  void set_alpha(float alpha);
+
+  float get_alpha() const;
+
+  void set_quality(bool flag) { m_quality = flag; }
+
+  bool is_quality() const { return m_quality; }
+
+  void set_texture(Texture* texture);
+
+  Texture* get_texture() { return m_texture; }
+
+  // this method is used when an appearance is created by the environment
+  // object it should not be called in any other case (FIX)
+  Execution_coordinator* get_execution_coordinator() const
+  { return m_execution_coordinator; }
 
 protected:
   /*! obtains the tag (type) of the container */
@@ -120,6 +128,13 @@ private:
   /*! Copy constructor */
   Environment_map(const Environment_map&) {}
 };
+
+/*! \brief constructs the prototype. */
+inline Environment_map* Environment_map::prototype()
+{ return new Environment_map(true); }
+
+/*! \brief clones. */
+inline Container* Environment_map::clone() { return new Environment_map(); }
 
 SGAL_END_NAMESPACE
 

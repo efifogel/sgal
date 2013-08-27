@@ -50,8 +50,7 @@ Scalar_interpolator::Scalar_interpolator(Boolean interpolate_flag,
 {}
 
 /*! Destructor */
-Scalar_interpolator::~Scalar_interpolator()
-{}
+Scalar_interpolator::~Scalar_interpolator() {}
 
 /*! initializes the node prototype */
 void Scalar_interpolator::init_prototype()
@@ -68,6 +67,7 @@ void Scalar_interpolator::init_prototype()
 void Scalar_interpolator::delete_prototype()
 {
   delete s_prototype;
+  s_prototype = NULL;
 }
 
 /*! */
@@ -82,42 +82,38 @@ Container_proto* Scalar_interpolator::get_prototype()
  * The function calculates m_value, updates it and activate cascade on it
  * \param pointer (in) to the cascaded field's field info - not used for now
  */
-void Scalar_interpolator::execute(Field_info*)
+void Scalar_interpolator::execute(Field_info* /* field_info */)
 {
   Field* value = get_field(VALUE);
   // if there is no connection to the value field there is no need to execute
   // the interpolation
-  if (value == NULL)
-    return;
+  if (value == NULL) return;
 
   Int no_keys = get_keys().size();
 
   // if there are no array set the value to zero and return
-  if (m_keys.size() == 0 || m_values.size() == 0 || no_keys == 0) {
+  if ((m_keys.size() == 0) || (m_values.size() == 0) || (no_keys == 0)) {
     m_value = 0.0;
     value->cascade();
     return;
   }
 
   // If there is only one value - set it and return
-  if (no_keys == 1)
-  {
+  if (no_keys == 1) {
     m_value = m_values[0];
     value->cascade();
     return;
   }
 
   // If the fraction is bigger than the last key - set the value to the last one
-  if (m_fraction >= m_keys[no_keys-1])
-  {
+  if (m_fraction >= m_keys[no_keys-1]) {
     m_value = m_values[no_keys-1];
     value->cascade();
     return;
   }
 
   // If the fraction is smaller than the first key - set the value to the first one
-  if (m_fraction <= m_keys[0])
-  {
+  if (m_fraction <= m_keys[0]) {
     m_value = m_values[0];
     value->cascade();
     return;
@@ -128,20 +124,17 @@ void Scalar_interpolator::execute(Field_info*)
   int location = m_last_location;
 
   // Loop up the array to find the closest key which is bigger than fraction
-  while (location+1 < no_keys && m_fraction>m_keys[location+1])
-    location++;
+  while (location+1 < no_keys && m_fraction>m_keys[location+1]) location++;
 
   // Loop down the array to find the closest key which is smaller than fraction
-  while (location>0 && m_fraction<m_keys[location])
-    location--;
+  while (location>0 && m_fraction<m_keys[location]) location--;
 
   // Set the last location to the current one for next execution
   m_last_location = location;
 
   // Set m_value by interpolating between two values or
   // just return the first one (if interpolate flag is false)
-  if (m_interpolate_flag)
-  {
+  if (m_interpolate_flag) {
     Float delta = m_values[location+1] - m_values[location];
     Float key_delta = m_keys[location+1] - m_keys[location];
     Float fration_delta = m_fraction - m_keys[location];

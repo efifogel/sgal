@@ -93,43 +93,6 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
-  /*! Draw the node while traversing the scene graph. */
-  virtual Action::Trav_directive draw(Draw_action* draw_action);
-
-  /*! Cull the node if invisible and prepare for rendering. */
-  virtual void cull(Cull_context& cull_context);
-
-  /*! Prepare the node for selection.
-   * \param isect_action
-   */
-  virtual void isect(Isect_action* isect_action);
-
-  /*! Clean the bounding sphere of the group.
-   * \return true iff the bounding sphere has changed during the clean.
-   */
-  virtual Boolean clean_sphere_bound();
-
-  /*! Set the attributes of the group  extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
-   */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
-  /*! Add the touch sensor object to a given scene.
-   * This includes adding it to the container of touch sensors in the
-   * scene graph.
-   * \param scene_graph the given scene.
-   */
-  virtual void add_to_scene(Scene_graph* scene_graph);
-
-  /*! Write this container */
-  virtual void write(Formatter* formatter);
-
-  /*! Write the children */
-  void write_children(Formatter* formatter);
-
   /// \name Protoype handling
   //@{
 
@@ -146,7 +109,45 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* is_visible_handle(Field_info*) { return &m_is_visible; }
   //@}
+
+  /*! Set the attributes of the group  extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   * \param sg a pointer to the scene graph
+   */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Draw the node while traversing the scene graph. */
+  virtual Action::Trav_directive draw(Draw_action* draw_action);
+
+  /*! Cull the node if invisible and prepare for rendering. */
+  virtual void cull(Cull_context& cull_context);
+
+  /*! Prepare the node for selection.
+   * \param isect_action
+   */
+  virtual void isect(Isect_action* isect_action);
+
+  /*! Clean the bounding sphere of the group.
+   * \return true iff the bounding sphere has changed during the clean.
+   */
+  virtual Boolean clean_sphere_bound();
+
+  /*! Add the touch sensor object to a given scene.
+   * This includes adding it to the container of touch sensors in the
+   * scene graph.
+   * \param scene_graph the given scene.
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
+
+  /*! Write this container */
+  virtual void write(Formatter* formatter);
+
+  /*! Write the children */
+  void write_children(Formatter* formatter);
 
   virtual Boolean attach_context(Context* context );
 

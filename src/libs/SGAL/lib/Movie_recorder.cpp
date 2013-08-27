@@ -425,14 +425,12 @@ void Movie_recorder::init_prototype()
   // Allocate a prototype instance
   s_prototype = new Container_proto();
 
-  s_prototype->add_field_info(new ESFBool(ENABLED,
-                      "enabled",
-                      get_member_offset(&m_isEnabled),
+  s_prototype->add_field_info(new ESFBool(ENABLED, "enabled",
+                                          get_member_offset(&m_isEnabled),
                       (Execution_func_type)&Movie_recorder::set_enabled));
 
-  s_prototype->add_field_info(new ESFString(STATUS,
-                      "status",
-                      get_member_offset(&m_status)));
+  s_prototype->add_field_info(new ESFString(STATUS, "status",
+                                            get_member_offset(&m_status)));
 }
 
 /*!

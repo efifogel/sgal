@@ -159,7 +159,8 @@ void Group::cull(Cull_context& cull_context)
 void Group::allocate_selection_ids()
 {
   if ((m_num_selection_ids != 0) && m_num_selection_ids != children_size()) {
-    m_scene_graph->free_selection_ids(m_start_selection_id, m_num_selection_ids);
+    m_scene_graph->free_selection_ids(m_start_selection_id,
+                                      m_num_selection_ids);
     m_start_selection_id = 0;
     m_num_selection_ids = 0;
   }
@@ -180,7 +181,8 @@ void Group::isect(Isect_action* isect_action)
   // children.
   if (m_touch_sensor && m_touch_sensor->is_enabled()) {
     allocate_selection_ids();
-    m_touch_sensor->set_selection_ids(m_start_selection_id, m_num_selection_ids);
+    m_touch_sensor->set_selection_ids(m_start_selection_id,
+                                      m_num_selection_ids);
   }
 
   // Apply the current Group selection ids only if selection ids have been

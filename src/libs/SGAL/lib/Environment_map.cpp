@@ -56,52 +56,35 @@ Environment_map::Environment_map(Boolean proto) :
 /*! Destructor */
 Environment_map::~Environment_map() {}
 
-/*!
- */
-void Environment_map::set_alpha(float alpha)
-{
-  m_alpha = alpha;
-}
+/*! \brief */
+void Environment_map::set_alpha(float alpha) { m_alpha = alpha; }
 
-/*!
- */
-float Environment_map::get_alpha() const
-{
-  return m_alpha;
-}
+/*! \brief */
+float Environment_map::get_alpha() const { return m_alpha; }
 
-/*!
- */
-void Environment_map::set_texture(Texture * texture)
-{
-  m_texture = texture;
-}
+/*! \brief */
+void Environment_map::set_texture(Texture* texture)
+{ m_texture = texture; }
 
-/*!
- */
-Boolean Environment_map::attach_context(Context * context)
+/*! \brief */
+Boolean Environment_map::attach_context(Context* context)
 {
   Boolean result = Container::attach_context (context);
-    Texture * texture = get_texture();
-  if (texture)
-    result &= texture->attach_context(context);
-
+  Texture* texture = get_texture();
+  if (texture) result &= texture->attach_context(context);
   return result;
 }
 
-/*!
- */
+/*! \brief */
 Boolean Environment_map::detach_context(Context * context)
 {
   Boolean result = Container::detach_context (context);
-    Texture *texture = get_texture();
-  if (texture)
-    result &= texture->detach_context(context);
-
+  Texture* texture = get_texture();
+  if (texture) result &= texture->detach_context(context);
   return result;
 }
 
-/*! prototype initialization function - initializes the prototype for
+/*! Initialize the prototype for
  * all the node instances of Appearance in the scene graph.
  * Creates and adds a field info for each potential field.
  */
@@ -116,19 +99,18 @@ void Environment_map::init_prototype()
 
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_node(TEXTURE, "texture",
+  s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
                                           get_member_offset(&m_texture),
-                                          exec_func));
+                                                      exec_func));
 
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(ALPHA, "sgalAlpha",
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
                                            get_member_offset(&m_alpha),
                                            exec_func));
 }
 
-/*!
- */
+/*! \brief */
 void Environment_map::delete_prototype()
 {
   delete s_prototype;

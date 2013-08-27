@@ -44,22 +44,21 @@ void Collision::set_attributes(Element* elem)
   Group::set_attributes(elem);
 }
 
-/*! Initializes the node prototype */
+/*! \brief initializes the node prototype. */
 void Collision::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Group::get_prototype());
 }
 
-/*! Deletes the node prototype */
+/*! \brief deletes the node prototype. */
 void Collision::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*!
- */
+/*! \brief */
 Container_proto* Collision::get_prototype()
 {
   if (!s_prototype) Collision::init_prototype();

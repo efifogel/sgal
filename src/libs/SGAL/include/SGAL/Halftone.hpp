@@ -79,10 +79,6 @@ public:
   /*! Obtains the node prototype */
   virtual Container_proto* get_prototype();
 
-  /// \name field handlers
-  //@{
-  //@}
-
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 

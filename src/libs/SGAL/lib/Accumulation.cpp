@@ -223,9 +223,9 @@ Accumulation::Jitter_pair Accumulation::s_sizes[] = {
 };
 
 // Default values:
-const Boolean Accumulation::s_def_enabled = true;
-const Uint Accumulation::s_def_delay = 800;
-const Accumulation::Quality Accumulation::s_def_quality = Accumulation::Q_HIGH;
+const Boolean Accumulation::s_def_enabled(true);
+const Uint Accumulation::s_def_delay(800);
+const Accumulation::Quality Accumulation::s_def_quality(Accumulation::Q_HIGH);
 
 const Char* Accumulation::s_quality_names[] = {"high", "low"};
 
@@ -265,18 +265,21 @@ void Accumulation::init_prototype()
   // enabled
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          get_member_offset(&m_enabled),
+  Boolean_handle_function enabled_func =
+    static_cast<Boolean_handle_function>(&Accumulation::enabled_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func,
                                           exec_func));
 
   // quality
-  s_prototype->add_field_info(new SF_int(QUALITY, "quality",
-                                         get_member_offset(&m_quality),
-                                         exec_func));
+  Uint_handle_function quality_func =
+    reinterpret_cast<Uint_handle_function>(&Accumulation::quality_handle);
+  s_prototype->add_field_info(new SF_uint(QUALITY, "quality", quality_func,
+                                          exec_func));
 
   // delay
-  s_prototype->add_field_info(new SF_int(DELAY, "delay",
-                                         get_member_offset(&m_delay)));
+  Uint_handle_function delay_func =
+    static_cast<Uint_handle_function>(&Accumulation::delay_handle);
+  s_prototype->add_field_info(new SF_uint(DELAY, "delay", delay_func));
 }
 
 /*! \brief deletes the node prototype. */
