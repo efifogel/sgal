@@ -223,10 +223,12 @@ void Geo_set::set_attributes(Element* elem)
         m_primitive_type =
           (tris) ? PT_TRIANGLES : (quads) ? PT_QUADS : PT_POLYGONS;
         //! \todo sg->get_stats().add_num_polygons(m_num_primitives);
-      } else if (m_primitive_type == PT_LINES) {
+      }
+      else if (m_primitive_type == PT_LINES) {
         if ((size & 0x1) != 0) goto err;
         m_num_primitives = size >> 1;
-      } else if (m_primitive_type == PT_LINE_STRIPS) {
+      }
+      else if (m_primitive_type == PT_LINE_STRIPS) {
         for (i = 0; i < size; ++i) {
           if (m_coord_indices[i] == static_cast<Uint>(-1)) m_num_primitives++;
         }

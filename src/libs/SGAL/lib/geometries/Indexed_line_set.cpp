@@ -63,9 +63,7 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_bb_is_pre_set(false),
   m_use_display_list(false),
   m_display_list_id(-1)
-{
-  m_primitive_type = PT_LINES;
-}
+{ m_primitive_type = PT_LINE_STRIPS; }
 
 /*! Destructor */
 Indexed_line_set::~Indexed_line_set() {}
@@ -93,7 +91,7 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
  * draw geometries with different kinds of data (texture/normal/color).
  */
 void Indexed_line_set::draw(Draw_action* action)
-{
+{  
   Context* context = action->get_context();
   if (!m_elliminate_hiden) {
     context->draw_depth_mask(false);
@@ -149,16 +147,22 @@ void Indexed_line_set::draw(Draw_action* action)
         ++k;
       }
       glBegin(GL_LINE_STRIP);
-      for (; m_coord_indices[j] != (Uint) -1; ++j) {
-        glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
         if (fragment_attached == PER_VERTEX) {
-          if (fragment_source == FS_COLOR)
-            glColor3fv(get_by_coord_index(*m_color_array, k));
-          else glNormal3fv(get_by_coord_index(*m_normal_array, k));
+          if (fragment_source == FS_COLOR) {
+            if (m_color_array)
+              glColor3fv(get_by_coord_index(*m_color_array, k));
+          }
+          else {
+            if (m_normal_array)
+              glNormal3fv(get_by_coord_index(*m_normal_array, k));
+          }
           ++k;
         }
+        glVertex3fv(get_by_coord_index(*m_coord_array, j));
       }
       glEnd();
+      ++j;
     }
   }
 
