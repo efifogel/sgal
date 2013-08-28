@@ -152,9 +152,10 @@ void Switch::init_prototype()
   // whichChoice
   Execution_function exec_func =
     static_cast<Execution_function>(&Node::sphere_bound_changed);
-  s_prototype->add_field_info(new SF_int(WHICH_CHOICE, "whichChoice",
-                                         get_member_offset(&m_which_choice),
-                                         exec_func));
+  Uint_handle_function which_choice_func =
+    static_cast<Uint_handle_function>(&Switch::which_choice_handle);
+  s_prototype->add_field_info(new SF_uint(WHICH_CHOICE, "whichChoice",
+                                          which_choice_func, exec_func));
 }
 
 /*! */

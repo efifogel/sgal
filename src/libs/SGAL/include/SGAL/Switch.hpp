@@ -75,6 +75,7 @@ public:
 
   /// \name field handlers
   //@{
+  Uint* which_choice_handle(Field_info*) { return &m_which_choice; }
   //@}
 
   /*! Set the attributes of this node */
