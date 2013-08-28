@@ -98,6 +98,9 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* is_visible_handle(Field_info*) { return &m_is_visible; }
+  Shared_geometry* geometry_handle(Field_info*) { return &m_geometry; }
+  Shared_appearance* appearance_handle(Field_info*) { return &m_appearance; }
   //@}
 
   /*! Set the attributes of this node. */

@@ -404,22 +404,27 @@ void Shape::init_prototype()
   // visible
   Execution_function exec_func =
     static_cast<Execution_function>(&Node::sphere_bound_changed);
+  Boolean_handle_function is_visible_func =
+    static_cast<Boolean_handle_function>(&Shape::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE, "visible",
-                                          get_member_offset(&m_is_visible),
-                                          exec_func));
+                                          is_visible_func, exec_func));
 
   // geometry
-  SF_shared_container* field;
   exec_func = static_cast<Execution_function>(&Shape::geometry_changed);
-  field = new SF_shared_container(GEOMETRY, "geometry",
-                                  get_member_offset(&m_geometry), exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function geometry_func =
+    reinterpret_cast<Shared_container_handle_function>(&Shape::geometry_handle);
+  s_prototype->add_field_info(new SF_shared_container(GEOMETRY, "geometry",
+                                                      geometry_func,
+                                                      exec_func));
 
   // appearance
   exec_func = static_cast<Execution_function>(&Shape::appearance_changed);
-  field = new SF_shared_container(APPEARANCE, "appearance",
-                                  get_member_offset(&m_appearance), exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function appearance_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Shape::appearance_handle);
+  s_prototype->add_field_info(new SF_shared_container(APPEARANCE, "appearance",
+                                                      appearance_func,
+                                                      exec_func));
 }
 
 /*! \brief deletes the node prototype. */
