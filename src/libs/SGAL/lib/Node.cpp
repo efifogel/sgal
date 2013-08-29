@@ -44,12 +44,11 @@ void Node::init_prototype()
 
   // Add the field-info records to the prototype:
   // Execution_function exec_func;
-  SF_sphere_bound* sphere_bound_fi;
-
   // exec_func = static_cast<Execution_function>(&Transform::parts_changed);
-  sphere_bound_fi = new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
-                                        get_member_offset(&m_sphere_bound));
-  s_prototype->add_field_info(sphere_bound_fi);
+  Sphere_bound_handle_function sphere_bound_func =
+    static_cast<Sphere_bound_handle_function>(&Node::sphere_bound_handle);
+  s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
+                                                  sphere_bound_func));
 }
 
 /*! \brief deletes the node prototype. */
@@ -60,8 +59,8 @@ void Node::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Node::get_prototype() 
-{  
+Container_proto* Node::get_prototype()
+{
   if (!s_prototype) Node::init_prototype();
   return s_prototype;
 }
@@ -84,9 +83,9 @@ void Node::set_attributes(Element* elem) { Container::set_attributes(elem); }
 
 #if 0
 /*! \brief gets the attributes of the node. */
-Attribute_list Node::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Node::get_attributes()
+{
+  Attribute_list attribs;
   attribs = Container::get_attributes();
   return attribs;
 }

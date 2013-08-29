@@ -128,7 +128,7 @@ Uint Image_base::s_format_sizes[] = {
 
 /*! A map from format to OpenGl format
  * The OpenGL format of the kIntensity<x> and kAlpha<x> formats is
- * GL_LUMINANCE<x> 
+ * GL_LUMINANCE<x>
  */
 GLenum Image_base::s_format_formats[] = {
   (Uint) -1,                    // kIllegal
@@ -146,7 +146,7 @@ GLenum Image_base::s_format_formats[] = {
   (Uint) -1,                    // kPalette12
   (Uint) -1,                    // kPalette16
   GL_LUMINANCE4,                // kAlpha4
-  GL_LUMINANCE,                 // kAlpha8, works better than GL_ALPHA8 
+  GL_LUMINANCE,                 // kAlpha8, works better than GL_ALPHA8
   GL_LUMINANCE12,               // kAlpha12
   GL_LUMINANCE16,               // kAlpha16
   GL_LUMINANCE4,                // kLuminance4
@@ -231,11 +231,11 @@ GLenum Image_base::s_format_internal_formats[] = {
   (Uint) -1,                    // kPalette12
   (Uint) -1,                    // kPalette16
   GL_ALPHA4,                    // kAlpha4
-  GL_ALPHA,                     // kAlpha8, 
+  GL_ALPHA,                     // kAlpha8,
   GL_ALPHA12,                   // kAlpha12
   GL_ALPHA16,                   // kAlpha16
   GL_LUMINANCE4,                // kLuminance4
-  1,                            // kLuminance8, 
+  1,                            // kLuminance8,
   GL_LUMINANCE12,               // kLuminance12
   GL_LUMINANCE16,               // kLuminance16
   GL_INTENSITY4,                // kIntensity4
@@ -255,7 +255,7 @@ GLenum Image_base::s_format_internal_formats[] = {
   GL_RGB4,                      // kRGB4_4_4
   (Uint) -1,                    // kRGB5_5_5
   GL_RGB5,                      // kRGB5_6_5
-  GL_RGB8,                      // kRGB8_8_8, 
+  GL_RGB8,                      // kRGB8_8_8,
   GL_RGB10,                     // kRGB10_10_10
   GL_RGB12,                     // kRGB12_12_12
   GL_RGB16,                     // kRGB16_16_16
@@ -401,7 +401,7 @@ GLenum Image_base::s_format_components[] = {
   (Uint) -1,                    // kPalette12
   (Uint) -1,                    // kPalette16
   1,                            // kAlpha4
-  1,                            // kAlpha8, works better than GL_ALPHA8 
+  1,                            // kAlpha8, works better than GL_ALPHA8
   1,                            // kAlpha12
   1,                            // kAlpha16
   1,                            // kLuminance4
@@ -532,7 +532,7 @@ const char* Image_base::s_format_names[] = {
   "RGBA12_12_12_12",
   "RGBA16_16_16_16",
   "ARGB2_2_2_2",
-  "ARGB4_4_4_4",  
+  "ARGB4_4_4_4",
   "ARGB8_3_3_2",
   "ARGB1_5_5_5",
   "ARGB8_8_8_8",
@@ -546,7 +546,7 @@ const char* Image_base::s_format_names[] = {
   "ABGR8_8_8_8",
   "ABGR2_10_10_10",
   "ABGR12_12_12_12",
-  "ABGR16_16_16_16",  
+  "ABGR16_16_16_16",
   "AYIQ8_4_2_2",
   "Depth16",
   "Depth32",
@@ -560,8 +560,8 @@ const Image_base::Format Image_base::s_def_format = Image_base::kRGB8_8_8;
 /*! Constructor */
 Image_base::Image_base(Boolean proto) :
   Container(proto),
-  m_width(0), 
-  m_height(0), 
+  m_width(0),
+  m_height(0),
   m_format(s_def_format),
   m_pixels(NULL),
   m_pack_row_length(0),
@@ -591,26 +591,35 @@ void Image_base::init_prototype()
   if (s_prototype)  return;
   s_prototype = new Container_proto();
 
-  s_prototype->add_field_info(new SF_int(WIDTH, "width",
-                                          get_member_offset(&m_width)));
+  Uint_handle_function width_func =
+    static_cast<Uint_handle_function>(&Image_base::width_handle);
+  s_prototype->add_field_info(new SF_uint(WIDTH, "width", width_func));
 
-  s_prototype->add_field_info(new SF_int(HEIGHT, "height",
-                                          get_member_offset(&m_height)));
+  Uint_handle_function height_func =
+    static_cast<Uint_handle_function>(&Image_base::height_handle);
+  s_prototype->add_field_info(new SF_uint(HEIGHT, "height", height_func));
 
-  s_prototype->add_field_info(new SF_int(FORMAT, "format",
-                                         get_member_offset(&m_format)));
+  Uint_handle_function format_func =
+    reinterpret_cast<Uint_handle_function>(&Image_base::format_handle);
+  s_prototype->add_field_info(new SF_uint(FORMAT, "format", format_func));
 
-  s_prototype->add_field_info(new SF_bool(FLIP, "flip",
-                                          get_member_offset(&m_flip)));
+  Boolean_handle_function flip_func =
+    static_cast<Boolean_handle_function>(&Image_base::flip_handle);
+  s_prototype->add_field_info(new SF_bool(FLIP, "flip", flip_func));
 
+  Float_handle_function rotation_func =
+    static_cast<Float_handle_function>(&Image_base::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
-                                           get_member_offset(&m_rotation)));
+                                           rotation_func));
 
-  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
-                                          get_member_offset(&m_alpha)));
+  Boolean_handle_function alpha_func =
+    static_cast<Boolean_handle_function>(&Image_base::alpha_handle);
+  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha", alpha_func));
 
+  Float_handle_function transparency_func =
+    static_cast<Float_handle_function>(&Image_base::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
-                                           get_member_offset(&m_transparency)));
+                                           transparency_func));
 }
 
 /*! \brief deletes the prototype. */
@@ -621,8 +630,8 @@ void Image_base::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto* Image_base::get_prototype() 
-{  
+Container_proto* Image_base::get_prototype()
+{
   if (!s_prototype) Image_base::init_prototype();
   return s_prototype;
 }

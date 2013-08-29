@@ -65,16 +65,6 @@ public:
   /*! Clone */
   virtual Container* clone();
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
-  /*! Add the container to a given scene.
-   * \param scene_graph the given scene.
-   */
-  virtual void add_to_scene(Scene_graph* scene_graph);
-
   /*! Initialize the node prototype */
   virtual void init_prototype();
 
@@ -86,7 +76,18 @@ public:
 
   /// \name field handlers
   //@{
+  Float* alpha_handle(Field_info*) { return &m_alpha; }
   //@}
+
+  /*! Set the attributes of this node */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Clean the object in case it is dirty. */
   virtual void clean();

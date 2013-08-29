@@ -194,6 +194,13 @@ public:
 
   /// \name field handlers
   //@{
+  Uint* width_handle(Field_info*) { return &m_width; }
+  Uint* height_handle(Field_info*) { return &m_height; }
+  Format* format_handle(Field_info*) { return &m_format; }
+  Boolean* flip_handle(Field_info*) { return &m_flip; }
+  Float* rotation_handle(Field_info*) { return &m_rotation; }
+  Boolean* alpha_handle(Field_info*) { return &m_alpha; }
+  Float* transparency_handle(Field_info*) { return &m_transparency; }
   //@}
 
   /*! Set the attributes of this node. */

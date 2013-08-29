@@ -128,19 +128,14 @@ void Lod::Isect(Isect_action* isect_action)
 /*! \brief initializes the container prototype. */
 void Lod::init_prototype()
 {
-  // The prototype shuold be allocated only once for all instances
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto(Group::get_prototype());
 
-  /*
-  // Add the object fields to the prototype
-  s_prototype->add_field_info(new ESFInt(WHICHCHOOSE,
-                      m_whichChooseFieldName,
-                      get_member_offset(&m_whichChoose),
-                      (Execution_func_type)&Node::SetSphereBoundModified));
-*/
+  // // Add the object fields to the prototype
+  // s_prototype->add_field_info(new ESFInt(WHICHCHOOSE,
+  //                                        m_whichChooseFieldName,
+  //                                        which_choose_func,
+  //                       (Execution_func_type)&Node::SetSphereBoundModified));
 }
 
 /*! \brief */

@@ -64,7 +64,7 @@ void Composed_shader::clean()
 }
 
 /*! \brief sets the attributes of the shader node. */
-void Composed_shader::set_attributes(Element* elem) 
+void Composed_shader::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
@@ -93,8 +93,10 @@ void Composed_shader::init_prototype()
   s_prototype = new Container_proto();
 
   // Add the field-info records to the prototype:
+  String_handle_function language_func =
+    static_cast<String_handle_function>(&Composed_shader::language_handle);
   s_prototype->add_field_info(new SF_string(LANGUAGE, "language",
-                                            get_member_offset(&m_language)));
+                                            language_func));
 }
 
 /*! \brief deletes the shader node prototype. */
@@ -105,8 +107,8 @@ void Composed_shader::delete_prototype()
 }
 
 /*! \brief obtains the shader node prototype. */
-Container_proto* Composed_shader::get_prototype() 
-{  
+Container_proto* Composed_shader::get_prototype()
+{
   if (!s_prototype) Composed_shader::init_prototype();
   return s_prototype;
 }

@@ -24,18 +24,19 @@
  */
 
 #include "SGAL/basic.hpp"
-#include "Scene_graph_int.h"
-#include "Position_relative_engine.h"
-#include "Field_infos.h"
-#include "Field.h"
-#include "String_utils.h"
-#include "Element.h"
-#include "Container_proto.h"
+#include "SGAL/Scene_graph_int.h"
+#include "SGAL/Position_relative_engine.h"
+#include "SGAL/Field_infos.h"
+#include "SGAL/Field.h"
+#include "SGAL/String_utils.h"
+#include "SGAL/Element.h"
+#include "SGAL/Container_proto.h"
+#include "SGAL/Execution_function.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Position_relative_engine::s_tag = "PositionRelativeEngine";
-Container_proto * Position_relative_engine::s_prototype(NULL);
+const std::string Position_relative_engine::s_tag = "PositionRelativeEngine";
+Container_proto* Position_relative_engine::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Position_relative_engine, "Position_relative_engine");
 
@@ -53,34 +54,38 @@ Position_relative_engine::Position_relative_engine(Boolean proto) :
 /*! Destructor */
 Position_relative_engine::~Position_relative_engine() {}
 
-/**
- Purpose: prototype initialization function - initializes the prototype for
- all the node instances of Rotation_interpolator in the scene graph.
- Creates and adds a field info for each potential field.
-*/
+/*! Initialize the prototype. */
 void Position_relative_engine::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto();
+  s_prototype = new Container_proto(Node::get_prototype());
 
 
   // Add the object fields to the prototype
-  s_prototype->add_field_info(new SF_float(FRACTION,
-                       "fraction",
-                       get_member_offset(&m_fraction),
-                       (Execution_func_type)&RotationRelativeEngine::execute));
+  Execution_function exec_func =
+    static_cast<Execution_function>(&RotationRelativeEngine::execute);
+  Float_handle_function fraction_func =
+    static_cast<Float_handle_function>(&Texture::fraction_handle);
+  s_prototype->add_field_info(new SF_float(FRACTION, "fraction", fraction_func,
+                                           exec_func));
 
-  s_prototype->add_field_info(new SF_Vector3f(VALUE,"value",
-                          get_member_offset(&m_value)));
+  Vector3f_handle_function value_func =
+    static_cast<Vector3f_handle_function>(&Texture::value_handle);
+  s_prototype->add_field_info(new SF_vector3f(VALUE, "value", value_func));
 
-  s_prototype->add_field_info(new SF_Vector3f(POSITION,"position",
-                          get_member_offset(&m_position)));
+  Vector3f_handle_function position_func =
+    static_cast<Vector3f_handle_function>(&Texture::position_handle);
+  s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
+                                              position_func));
 
-  s_prototype->add_field_info(new SF_Vector3f(DELTA,"delta",
-                          get_member_offset(&m_delta)));
+  Vector3f_handle_function delta_func =
+    static_cast<Vector3f_handle_function>(&Texture::delta_handle);
+  s_prototype->add_field_info(new SF_vector3f(DELTA, "delta", delta_func));
 
-  s_prototype->add_field_info(new ESFRotation(ROTATION,"rotation",
-                          get_member_offset(&m_rotation)));
+  Rotation_handle_function rotation_func =
+    static_cast<Rotation_handle_function>(&Texture::rotation_handle);
+  s_prototype->add_field_info(new Rotation(ROTATION, "rotation",
+                                           rotation_func));
 }
 
 /*! */
@@ -111,16 +116,15 @@ void Position_relative_engine::execute(Field_info*)
   Vector3f freactionedDelta;
 
   // check if this is a new cycle - if so - update the current rotation
-  if (m_fraction==1)
-  {
+  if (m_fraction == 1) {
     rotMat.MakeRot(m_rotation[0],m_rotation[1],m_rotation[2],m_rotation[3]);
     transMat.MakeTrans(m_delta);
     mulMat.Mult(rotMat,transMat);
     mulMat.GetRow(3,m_value);
     m_position.Add(m_value);
     m_value = m_position;
-  } else
-  {
+  }
+  else {
     // Calculate m_value
     rotMat.MakeRot(m_rotation[0],m_rotation[1],m_rotation[2],m_rotation[3]);
     freactionedDelta.Set(m_delta[0]*m_fraction,
@@ -145,23 +149,27 @@ void Position_relative_engine::execute(Field_info*)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Position_relative_engine::set_attributes(Element * elem)
+void Position_relative_engine::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "delta") {
       m_delta = Vector3f(value);
       elem->mark_delete(ai);
-    } else if (name == "rotation") {
+      continue;
+    }
+    if (name == "rotation") {
       m_rotation = Rotation(value);
       elem->mark_delete(ai);
-    } else if (name == "position") {
+      continue;
+    }
+    if (name == "position") {
       m_position = Vector3f(value);
       elem->mark_delete(ai);
+      continue;
     }
   }
   // Remove all the deleted attributes:

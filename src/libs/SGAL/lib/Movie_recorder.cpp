@@ -413,24 +413,24 @@ void Movie_recorder::WriteBuffers() const
     bg_stream.Close();
   }
 }
+
 /**
  * Insert the image in m_snapPixels into the local stream "Stream"
  * concerning with ppm format file.
  */
 void Movie_recorder::init_prototype()
 {
-  if (s_prototype!=NULL)
-    return;
+  if (s_prototype!=NULL)  return;
+  s_prototype = new Container_proto(Node::get_prototype());
 
-  // Allocate a prototype instance
-  s_prototype = new Container_proto();
-
-  s_prototype->add_field_info(new ESFBool(ENABLED, "enabled",
-                                          get_member_offset(&m_isEnabled),
+  Float_handle_function alpha_func =
+    static_cast<Float_handle_function>(&Camera::alpha_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", is_enabled_func,
                       (Execution_func_type)&Movie_recorder::set_enabled));
 
-  s_prototype->add_field_info(new ESFString(STATUS, "status",
-                                            get_member_offset(&m_status)));
+  String_handle_function status_func =
+    static_cast<String_handle_function>(&Camera::status_handle);
+  s_prototype->add_field_info(new SF_string(STATUS, "status", status_func));
 }
 
 /*!
@@ -449,10 +449,7 @@ Container_proto* Movie_recorder::get_prototype()
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! Sets the attributes of this container. */
 void Movie_recorder::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);

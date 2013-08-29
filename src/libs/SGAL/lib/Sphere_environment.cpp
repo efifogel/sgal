@@ -63,8 +63,9 @@ void Sphere_environment::init_prototype()
   // alpha
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
-                                           get_member_offset(&m_alpha),
+  Float_handle_function alpha_func =
+    static_cast<Float_handle_function>(&Sphere_environment::alpha_handle);
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
                                            exec_func));
 }
 
@@ -76,7 +77,7 @@ void Sphere_environment::delete_prototype()
 }
 
 /*! \brief obtains the prototype. */
-Container_proto * Sphere_environment::get_prototype()
+Container_proto* Sphere_environment::get_prototype()
 {
   if (s_prototype == NULL) Sphere_environment::init_prototype();
   return s_prototype;
@@ -150,17 +151,12 @@ Attribute_list Sphere_environment::get_attributes()
  * @param parent a pointer to the parent object. NULL if the apperance
  * is defined in the top level.
  */
-void Sphere_environment::add_to_scene(Scene_graph * sg,
-                                             XML_entity * parent)
+void Sphere_environment::add_to_scene(Scene_graph* sg)
 {
   Container::add_to_scene(sg, parent);
   sg->add_container(this);
-
-  if (parent->get_name() == g_navigation_root_name) {
-    return;
-  }
-
-  Shape * shape = dynamic_cast<Shape *>(parent);
+  if (parent->get_name() == g_navigation_root_name) return;
+  Shape* shape = dynamic_cast<Shape *>(parent);
   if (shape) {
     shape->set_env_map(this);
     return;
@@ -198,4 +194,5 @@ void Sphere_environment::add_to_scene(Scene_graph* scene_graph)
   m_images[0].first->set_dirs(scene_graph->get_data_dirs());
   m_images[1].first->set_dirs(scene_graph->get_data_dirs());
 }
+
 SGAL_END_NAMESPACE

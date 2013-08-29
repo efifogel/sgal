@@ -91,8 +91,7 @@ Boolean Environment_map::detach_context(Context * context)
 void Environment_map::init_prototype()
 {
   // The prototype shuold be allocated only once for all instances
-  if (s_prototype != NULL)
-    return;
+  if (s_prototype != NULL) return;
 
   // Allocate a prototype instance
   s_prototype = new Container_proto();

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -82,6 +82,15 @@ public:
 
   /// \name field handlers
   //@{
+  std::string* family_handle(Field_info*) { return &m_family; }
+  std::string* style_handle(Field_info*) { return &m_style; }
+  Boolean* horizontal_handle(Field_info*) { return &m_horizontal; }
+  std::string* justify_handle(Field_info*) { return &m_justify; }
+  std::string* language_handle(Field_info*) { return &m_language; }
+  Boolean* l2r_handle(Field_info*) { return &m_left_to_right; }
+  Float* size_handle(Field_info*) { return &m_size; }
+  Float* spacing_handle(Field_info*) { return &m_spacing; }
+  Boolean* t2b_handle(Field_info*) { return &m_top_to_bottom; }
   //@}
 
   /*! Draw the node while traversing the scene graph */

@@ -65,6 +65,7 @@ public:
 
   /// \name field handlers
   //@{
+  std::string* language_handle(Field_info*) { return &m_language; }
   //@}
 
   /*! Set the attributes of the shader extracted from the VRML or X3D file.

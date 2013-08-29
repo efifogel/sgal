@@ -333,14 +333,16 @@ void Texture::init_prototype()
   Execution_function exec_func;
 
   exec_func = static_cast<Execution_function>(&Texture::min_filter_changed);
+  Uint_handle_function min_filter_func =
+    reinterpret_cast<Uint_handle_function>(&Texture::min_filter_handle);
   s_prototype->add_field_info(new SF_uint(MIN_FILTER, "minFilter",
-                                          get_member_offset(&m_min_filter),
-                                          exec_func));
+                                          min_filter_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::mag_filter_changed);
+  Uint_handle_function mag_filter_func =
+    reinterpret_cast<Uint_handle_function>(&Texture::mag_filter_handle);
   s_prototype->add_field_info(new SF_uint(MAG_FILTER, "magFilter",
-                                          get_member_offset(&m_mag_filter),
-                                          exec_func));
+                                          mag_filter_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::wrap_s_changed);
   Boolean_handle_function repeat_s_func =

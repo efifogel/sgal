@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -49,52 +49,62 @@ public:
   /*! Destructor */
   virtual ~Simulation() {};
 
-  /*! Construct the prototype */
-  static Simulation * prototype() { return new Simulation(true); }
+  /*! Construct the prototype. */
+  static Simulation* prototype();
 
-  /*! Clone */
-  virtual Container * clone() { return new Simulation(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
-  virtual Container_proto * get_prototype();
+  /*! Obtains the node prototype. */
+  virtual Container_proto* get_prototype();
 
   /// \name field handlers
   //@{
+  Boolean* start_handle(Field_info*) { return &m_start; }
   //@}
 
-  /*! Set the attributes of this node */
-  virtual void set_attributes(Element * elem);
+  /*! Set the attributes of this node. */
+  virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Add the container to a given scene
-   * \param scene_graph the given scene
+  /*! Add the container to a given scene.
+   * \param scene_graph the given scene.
    */
-  virtual void add_to_scene(Scene_graph * scene_graph);
+  virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Start simulation */
+  /*! Start simulation. */
   void start();
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string & get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
   /*! The node prototype */
-  static Container_proto * s_prototype;
+  static Container_proto* s_prototype;
 
-  /*! A field to trigger the start of the simulation */
+  /*! A field to trigger the start of the simulation. */
   Boolean m_start;
 };
+
+/*! \brief constructs the prototype. */
+inline Simulation* Simulation::prototype() { return new Simulation(true); }
+
+/*! \brief clones. */
+inline Container* Simulation::clone() { return new Simulation(); }
+
+/*! \brief obtains the tag (type) of the container */
+inline const std::string& Simulation::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 
