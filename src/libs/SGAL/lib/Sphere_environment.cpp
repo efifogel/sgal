@@ -37,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Sphere_environment::s_tag = "sphericalEnvironmentMap";
+const std::string Sphere_environment::s_tag = "sphericalEnvironmentMap";
 Container_proto* Sphere_environment::s_prototype(NULL);
 
 // Default values:
@@ -83,10 +83,7 @@ Container_proto* Sphere_environment::get_prototype()
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+/*! \brief sets the attributes of this container. */
 void Sphere_environment::set_attributes(Element* elem)
 {
   Texture::set_attributes(elem);
