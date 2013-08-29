@@ -73,16 +73,14 @@ public:
 
   // protoype handling
   virtual void init_prototype();
-  virtual void delete_prototype() { delete s_prototype; }
-  virtual Container_proto* get_prototype()
-  {
-    if (s_prototype == NULL)
-      init_prototype();
-    return s_prototype;
-  }
+  virtual void delete_prototype();
+  virtual Container_proto* get_prototype();
 
   /// \name field handlers
   //@{
+  Float* fraction_handle(Field_info*) { return &m_fraction; }
+  Rotation* value_handle(Field_info*) { return &m_value; }
+  Float* angle_handle(Field_info*) { return &m_angle; }
   //@}
 
   /*! Sets the attributes of this node */

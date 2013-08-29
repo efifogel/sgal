@@ -87,6 +87,13 @@ public:
 
   /// \name field handlers
   //@{
+  std::string* _handle(Field_info*) { return &m_text; }
+  Vector3f* _handle(Field_info*) { return &m_color; }
+  std::string* _handle(Field_info*) { return &m_font; }
+  Int* _handle(Field_info*) { return &m_font_size; }
+  Boolean* _handle(Field_info*) { return &m_bold; }
+  Boolean* _handle(Field_info*) { return &m_italic; }
+  Boolean* _handle(Field_info*) { return &m_antialias; }
   //@}
 
 protected:

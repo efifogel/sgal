@@ -60,28 +60,43 @@ Rotation_relative_engine::~Rotation_relative_engine() {}
 */
 void Rotation_relative_engine::init_prototype()
 {
-  // The prototype shuold be allocated only once for all instances
   if (s_prototype) return;
-
-  // Allocate a prototype instance
   s_prototype = new Container_proto();
 
   Execution_function exec_func;
 
   // Add the object fields to the prototype
-  exec_func = static_cast<Execution_function>&Rotation_relative_engine::execute;
-  s_prototype->add_field_info(new SF_float(FRACTION, "fraction",
-                                           get_member_offset(&m_fraction),
+  exec_func =
+    static_cast<Execution_function>&Rotation_relative_engine::execute;
+  Float_handle_function fraction_func =
+    static_cast<Float_handle_function>
+    (&Rotation_relative_engine::fraction_handle);
+  s_prototype->add_field_info(new SF_float(FRACTION, "fraction", fraction_func,
                                            exec_func));
 
-  s_prototype->add_field_info(new SF_rotation(VALUE,"value",
-                                              get_member_offset(&m_value)));
+  Rotation_handle_function rotation_func =
+    static_cast<Rotation_handle_function>
+    (&Rotation_relative_engine::rotation_handle);
+  s_prototype->add_field_info(new SF_rotation(VALUE, "value", rotation_func));
 
-  s_prototype->add_field_info(new SF_float(ANGLE,"angle",
-                                           get_member_offset(&m_angle)));
+  Float_handle_function angle_func =
+    static_cast<Float_handle_function>
+    (&Rotation_relative_engine::angle_handle);
+  s_prototype->add_field_info(new SF_float(ANGLE, "angle", angle_func));
+}
 
-  s_prototype->add_field_info(new SF_rotation(ROTATION,"rotation",
-                                              get_member_offset(&m_rotation)));
+/*! \brief */
+virtual void Rotation_relative_engine::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = NULL;
+}
+
+/*! \brief */
+virtual Container_proto* Rotation_relative_engine::get_prototype()
+{
+  if (s_prototype == NULL) Rotation_relative_engine::init_prototype();
+  return s_prototype;
 }
 
 /*!

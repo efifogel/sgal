@@ -114,8 +114,9 @@ void Color_background::init_prototype()
 
   // Add the object fields to the prototype
   // color
-  s_prototype->add_field_info(new SF_vector4f(COLOR, "color",
-                                              get_member_offset(&m_color)));
+  Vector4f_handle_function color_func =
+    static_cast<Vector4f_handle_function>(&Color_background::color_handle);
+  s_prototype->add_field_info(new SF_vector4f(COLOR, "color", color_func));
 }
 
 /*! \brief */

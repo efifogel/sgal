@@ -68,6 +68,7 @@ public:
 
   /// \name field handlers
   //@{
+  std::string* url_handle(Field_info*) { return &m_url; }
   //@}
 
   /*! Set the attributes of this node. */

@@ -153,6 +153,12 @@ public:
 
   /// \name field handlers
   //@{
+  Float* ambient_intensity_handle(Field_info*) { return &m_ambient_intensity; }
+  Vector3f* diffuse_color_handle(Field_info*) { return &m_diffuse_color; }
+  Vector3f* specular_color_handle(Field_info*) { return &m_specular_color; }
+  Vector3f* emissive_color_handle(Field_info*) { return &m_emissive_color; }
+  Float* shininess_handle(Field_info*) { return &m_shininess; }
+  Float* transparency_handle(Field_info*) { return &m_transparency; }
   //@}
 
   /*! Set the attributes of this container */

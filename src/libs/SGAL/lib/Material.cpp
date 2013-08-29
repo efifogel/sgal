@@ -153,43 +153,47 @@ void Material::init_prototype()
   // ambientIntensity
   Execution_function exec_func =
     static_cast<Execution_function>(&Material::material_changed);
-  s_prototype->add_field_info
-    (new SF_float(AMBIENT_INTENSITY, "ambientIntensity",
-                  get_member_offset(&m_ambient_intensity),
-                  exec_func));
+  Float_handle_function ambient_intensity_func =
+    static_cast<Float_handle_function>(&Material::ambient_intensity_handle);
+  s_prototype->add_field_info(new SF_float(AMBIENT_INTENSITY,
+                                           "ambientIntensity",
+                                           ambient_intensity_func,
+                                           exec_func));
 
   // diffuseColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
-  s_prototype->
-    add_field_info(new SF_vector3f(DIFFUSE_COLOR, "diffuseColor",
-                                   get_member_offset(&m_diffuse_color),
-                                   exec_func));
+  Vector3f_handle_function diffuse_color_func =
+    static_cast<Vector3f_handle_function>(&Material::diffuse_color_handle);
+  s_prototype->add_field_info(new SF_vector3f(DIFFUSE_COLOR, "diffuseColor",
+                                              diffuse_color_func, exec_func));
 
   // specularColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
-  s_prototype->add_field_info
-    (new SF_vector3f(SPECULAR_COLOR, "specularColor",
-                     get_member_offset(&m_specular_color),
-                     exec_func));
+  Vector3f_handle_function specular_color_func =
+    static_cast<Vector3f_handle_function>(&Material::specular_color_handle);
+  s_prototype->add_field_info(new SF_vector3f(SPECULAR_COLOR, "specularColor",
+                                              specular_color_func, exec_func));
 
   // emissiveColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
-  s_prototype->
-    add_field_info(new SF_vector3f(EMISSIVE_COLOR, "emissiveColor",
-                                   get_member_offset(&m_emissive_color),
-                                   exec_func));
+  Vector3f_handle_function emissive_color_func =
+    static_cast<Vector3f_handle_function>(&Material::emissive_color_handle);
+  s_prototype->add_field_info(new SF_vector3f(EMISSIVE_COLOR, "emissiveColor",
+                                              emissive_color_func, exec_func));
 
   // shininess
   exec_func = static_cast<Execution_function>(&Material::material_changed);
+  Float_handle_function shininess_func =
+    static_cast<Float_handle_function>(&Material::shininess_handle);
   s_prototype->add_field_info(new SF_float(SHININESS, "shininess",
-                                           get_member_offset(&m_shininess),
-                                           exec_func));
+                                           shininess_func, exec_func));
 
   // transparency
   exec_func = static_cast<Execution_function>(&Material::material_changed);
+  Float_handle_function transparency_func =
+    static_cast<Float_handle_function>(&Material::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
-                                           get_member_offset(&m_transparency),
-                                           exec_func));
+                                           transparency_func, exec_func));
 }
 
 /*! \brief deletes the prototype node. */

@@ -69,6 +69,10 @@ public:
 
   /// \name field handlers
   //@{
+  Vector3f* ul_color_handle(Field_info*) { return &m_ul_color; }
+  Vector3f* ur_color_handle(Field_info*) { return &m_ur_color; }
+  Vector3f* ll_color_handle(Field_info*) { return &m_ll_color; }
+  Vector3f* lr_color_handle(Field_info*) { return &m_lr_color; }
   //@}
 
   /*! Sets the attributes of this node */

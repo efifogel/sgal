@@ -115,49 +115,58 @@ void Font_style::init_prototype()
   // family
   Execution_function exec_func =
     static_cast<Execution_function>(&Font_style::on_field_change);
-  s_prototype->add_field_info(new SF_string(FAMILY, "family",
-                                            get_member_offset(&m_family),
+  String_handle_function family_func =
+    static_cast<String_handle_function>(&Font_style::family_handle);
+  s_prototype->add_field_info(new SF_string(FAMILY, "family", family_func,
                                             exec_func));
 
   // style
-  s_prototype->add_field_info(new SF_string(STYLE, "style",
-                                            get_member_offset(&m_style),
+  String_handle_function style_func =
+    static_cast<String_handle_function>(&Font_style::style_handle);
+  s_prototype->add_field_info(new SF_string(STYLE, "style", style_func,
                                             exec_func));
 
   // horizontal
+  Boolean_handle_function horizontal_func =
+    static_cast<Boolean_handle_function>(&Font_style::horizontal_handle);
   s_prototype->add_field_info(new SF_bool(HORIZONTAL, "horizontal",
-                                          get_member_offset(&m_horizontal),
-                                          exec_func));
+                                          horizontal_func, exec_func));
 
   // justify
-  s_prototype->add_field_info(new SF_string(JUSTIFY, "justify",
-                                            get_member_offset(&m_justify),
+  String_handle_function justify_func =
+    static_cast<String_handle_function>(&Font_style::justify_handle);
+  s_prototype->add_field_info(new SF_string(JUSTIFY, "justify", justify_func,
                                             exec_func));
 
   // language
+  String_handle_function language_func =
+    static_cast<String_handle_function>(&Font_style::language_handle);
   s_prototype->add_field_info(new SF_string(LANGUAGE, "language",
-                                            get_member_offset(&m_language),
-                                            exec_func));
+                                            language_func, exec_func));
 
   // leftToRight
+  Boolean_handle_function l2r_func =
+    static_cast<Boolean_handle_function>(&Font_style::l2r_handle);
   s_prototype->add_field_info(new SF_bool(LEFT_TO_RIGHT, "leftToRight",
-                                          get_member_offset(&m_left_to_right),
-                                          exec_func));
+                                          l2r_func, exec_func));
 
   // size
-  s_prototype->add_field_info(new SF_float(SIZE, "size",
-                                           get_member_offset(&m_size),
+  Float_handle_function size_func =
+    static_cast<Float_handle_function>(&Font_style::size_handle);
+  s_prototype->add_field_info(new SF_float(SIZE, "size", size_func,
                                            exec_func));
 
   // spacing
-  s_prototype->add_field_info(new SF_float(SPACING, "spacing",
-                                           get_member_offset(&m_spacing),
+  Float_handle_function spacing_func =
+    static_cast<Float_handle_function>(&Font_style::spacing_handle);
+  s_prototype->add_field_info(new SF_float(SPACING, "spacing", spacing_func,
                                            exec_func));
 
   // topToBottom
+  Boolean_handle_function t2b_func =
+    static_cast<Boolean_handle_function>(&Font_style::t2b_handle);
   s_prototype->add_field_info(new SF_bool(TOP_TO_BOTTOM, "topToBottom",
-                                          get_member_offset(&m_top_to_bottom),
-                                          exec_func));
+                                          t2b_func, exec_func));
 }
 
 /*! \brief deletes the prototype. */

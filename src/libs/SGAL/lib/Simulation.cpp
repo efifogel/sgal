@@ -47,8 +47,9 @@ void Simulation::init_prototype()
   s_prototype = new Container_proto(Container::get_prototype());
 
   // start
-  s_prototype->add_field_info(new SF_bool(START, "start",
-                                          get_member_offset(&m_start)));
+  Boolean_handle_function start_func =
+    static_cast<Boolean_handle_function>(&Simulation::start_handle);
+  s_prototype->add_field_info(new SF_bool(START, "start", start_func));
 }
 
 /*! \brief deletes the node prototype. */
@@ -82,4 +83,3 @@ void Simulation::start()
 }
 
 SGAL_END_NAMESPACE
-

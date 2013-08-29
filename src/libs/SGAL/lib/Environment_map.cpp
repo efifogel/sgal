@@ -98,14 +98,17 @@ void Environment_map::init_prototype()
 
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
+  _handle_function texture_func =
+    static_cast<_handle_function>(&Environment_map::texture_handle);
   s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
-                                          get_member_offset(&m_texture),
+                                                      texture_func,
                                                       exec_func));
 
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
-                                           get_member_offset(&m_alpha),
+  Float_handle_function alpha_func =
+    static_cast<Float_handle_function>(&Environment_map::alpha_handle);
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
                                            exec_func));
 }
 

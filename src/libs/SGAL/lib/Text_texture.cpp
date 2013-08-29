@@ -52,19 +52,14 @@ Text_texture::Text_texture(Boolean proto) :
 { m_color.set(1, 1, 1); }
 
 /*! Destructor */
-Text_texture::~Text_texture()
-{
-  TRACE_MSG(Trace::DESTRUCTOR, "~Text_texture ...");
-  delete m_original_image;
-  TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
-}
+Text_texture::~Text_texture() { delete m_original_image; }
 
 /*! \brief */
 void Text_texture::draw(Context* ctx)
 {
   if (m_update_texture) {
     void* bmpData = 0;
-    
+
     Image_data& img = m_parent->get_image_data();
     int width = atoi(img.get_value(Image_data::WIDTH));
     int height = atoi(img.get_value(Image_data::HEIGHT));
@@ -73,11 +68,11 @@ void Text_texture::draw(Context* ctx)
 
     const Image* current_image = m_parent->get_image();
 
-    // if the new created image has a different size, we recreate the 
+    // if the new created image has a different size, we recreate the
     // text texture to adjust the size
     if (m_original_image &&
       ((m_original_image->get_width() != width) ||
-      (m_original_image->GetHeight() != height))) 
+      (m_original_image->GetHeight() != height)))
     {
       m_original_image->delete_pixels();
       //! \todo DELETE_OBJECT(m_original_image);
@@ -91,12 +86,12 @@ void Text_texture::draw(Context* ctx)
       ::memcpy(m_original_image->get_pixels(),
                current_image->get_pixels(), current_image->get_size());
     }
-    
+
     HWND hwnd = get_desktop_window();
     HDC dc = get_dC(hwnd);
     HDC hdc = CreateCompatibleDC(get_dC(hwnd));
     ReleaseDC(hwnd,dc);
-    
+
     /////////////////////////////////////////////////////////////////////////////
     // Create bitmap,
     /////////////////////////////////////////////////////////////////////////////
@@ -104,7 +99,7 @@ void Text_texture::draw(Context* ctx)
     BITMAPINFO bi;
     bi.bmiHeader.biSize   = sizeof(bi.bmiHeader);
     bi.bmiHeader.biWidth  =  width;
-    bi.bmiHeader.biHeight = height; // bitmap is a top-down DIB (origin is upper-left corner) 
+    bi.bmiHeader.biHeight = height; // bitmap is a top-down DIB (origin is upper-left corner)
     bi.bmiHeader.biPlanes =  1;
     bi.bmiHeader.biBitCount    = 24;
     bi.bmiHeader.biCompression = BI_RGB;
@@ -113,15 +108,15 @@ void Text_texture::draw(Context* ctx)
     bi.bmiHeader.biYPelsPerMeter = height;
     bi.bmiHeader.biClrUsed       = 0;
     bi.bmiHeader.biClrImportant  = 0;
-    
+
     // Create GDI bitmap
     HBITMAP hBmp = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS, &bmpData, 0, 0);
     HBITMAP oldBmp = (HBITMAP)SelectObject(hdc, hBmp);
-    
+
     // Initialize all bitmap pixels to black
     BitBlt(hdc,0,0,width,height,hdc,0,0,BLACKNESS);
 
-    
+
     int bmpSize = m_original_image->get_size();
 
     if (m_parent->get_component_count() == 3) {
@@ -133,9 +128,9 @@ void Text_texture::draw(Context* ctx)
     } else if (m_parent->get_componentCount() == 4) {
 
       // handle RGB
-      char *originalPixels = (char *)m_original_image->get_pixels();
-      char *currentPixels = (char *)current_image->get_pixels();
-      char *bmpDataC = (char *)bmpData;
+      char* originalPixels = (char *)m_original_image->get_pixels();
+      char* currentPixels = (char *)current_image->get_pixels();
+      char* bmpDataC = (char *)bmpData;
       int i = 0;
 
       for (i = 0; i < bmpSize/4; ++i) {
@@ -159,7 +154,7 @@ void Text_texture::draw(Context* ctx)
     } else {
       ASSERT(0);
     }
-    
+
     // Release Bitmap.
     // Destroy current bitmap.
     SelectObject(hdc, oldBmp);
@@ -170,20 +165,14 @@ void Text_texture::draw(Context* ctx)
   }
 }
 
-Boolean Text_texture::is_equal(const Text_texture *t) const
+Boolean Text_texture::is_equal(const Text_texture* t) const
 {
-  if (m_text != t->m_text) 
-    return false;
-  if (m_color != t->m_color) 
-    return false;
-  if (m_font != t->m_font) 
-    return false;
-  if (m_font_size != t->m_font_size)
-    return false;
-  if (m_bold != t->m_bold) 
-    return false;
-  if (m_italic != t->m_italic)
-    return false;
+  if (m_text != t->m_text) return false;
+  if (m_color != t->m_color) return false;
+  if (m_font != t->m_font) return false;
+  if (m_font_size != t->m_font_size) return false;
+  if (m_bold != t->m_bold) return false;
+  if (m_italic != t->m_italic) return false;
   return true;
 }
 
@@ -196,7 +185,7 @@ void Text_texture::Draw_text(HDC hdc,const String &text,int width,int height)
   int pixPerInch = get_deviceCaps(hdc, LOGPIXELSY);
   // height is in pixels, size in points (1 point = 1/72 inch)
   int   fontHeight = -MulDiv(m_font_size, pixPerInch, 72);
-  
+
   int   weight  = m_bold ? FW_BOLD : FW_NORMAL;
   DWORD italic  = m_italic ? TRUE : FALSE;
   DWORD quality = m_antialias ? ANTIALIASED_QUALITY : NONANTIALIASED_QUALITY;
@@ -244,45 +233,46 @@ void Text_texture::init_prototype()
   // Add the field-info records to the prototype:
   Execution_function exec_func =
     static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new ESFString(TEXT,"text",
-                                            get_member_offset(&m_text),
+  String_handle_function text_func =
+    static_cast<String_handle_function>(&Color_background::text_handle);
+  s_prototype->add_field_info(new SF_string(TEXT, "text", text_func,
                                             exec_func));
 
   exec_func =
     static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new SF_Vector3f(COLOR,"color",
-                                              get_member_offset(&m_color),
+  Vector3f_handle_function color_func =
+    static_cast<Vector3f_handle_function>(&Color_background::color_handle);
+  s_prototype->add_field_info(new SF_vector3f(COLOR, "color", color_func,
                                               exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new ESFString(FONT,"font",
-                                            get_member_offset(&m_font),
+  exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
+  String_handle_function font_func =
+    static_cast<String_handle_function>(&Color_background::font_handle);
+  s_prototype->add_field_info(new SF_string(FONT, "font", font_func,
                                             exec_func));
-  
-  exec_func =
-    static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new ESFInt(FONTSIZE,"fontSize",
-                                         get_member_offset(&m_font_size),
-                                         exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new ESFBool(BOLD,"bold",
-                                          get_member_offset(&m_bold),
+  exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
+  Uint_handle_function font_size_func =
+    static_cast<Uint_handle_function>(&Color_background::font_size_handle);
+  s_prototype->add_field_info(new SF_uint(FONTSIZE, "fontSize", font_size_func,
                                           exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new ESFBool(ITALIC,"italic",
-                                          get_member_offset(&m_italic),
+  exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
+  Boolean_handle_function bold_func =
+    static_cast<Boolean_handle_function>(&Color_background::bold_handle);
+  s_prototype->add_field_info(new SF_bool(BOLD, "bold", bold_func, exec_func));
+
+  exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
+  Boolean_handle_function italic_func =
+    static_cast<Boolean_handle_function>(&Color_background::italic_handle);
+  s_prototype->add_field_info(new SF_bool(ITALIC, "italic", italic_func,
                                           exec_func));
 
-  exec_func =
-    static_cast<Execution_function>(&Text_texture::OnFieldChanged);
-  s_prototype->add_field_info(new ESFBool(ANTIALIAS,"antialias",
-                                          get_member_offset(&m_antialias),
-                                          exec_func));
+  exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
+  Boolean_handle_function antialias_func =
+    static_cast<Boolean_handle_function>(&Color_background::antialias_handle);
+  s_prototype->add_field_info(new SF_bool(ANTIALIAS, "antialias",
+                                          antialias_func, exec_func));
 }
 
 /*! \brief */
@@ -293,8 +283,8 @@ void Text_texture::delete_prototype()
 }
 
 /*! \brief */
-Container_proto* Text_texture::get_prototype() 
-{  
+Container_proto* Text_texture::get_prototype()
+{
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
@@ -363,11 +353,11 @@ void Text_texture::set_attributes(Element* elem)
 
 #if 0
 /*! \brief */
-Attribute_list Text_texture::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Text_texture::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
-  
+
     attribs = Container::get_attributes();
 
   if (!m_text.empty()) {
@@ -405,12 +395,12 @@ Attribute_list Text_texture::get_attributes()
     attrib.second = "TRUE";
     attribs.push_back(attrib);
   }
-  
-  return attribs; 
+
+  return attribs;
 }
 
 /*! */
-void Text_texture::add_to_scene(Scene_graph* sg, XML_entity* parent)
+void Text_texture::add_to_scene(Scene_graph* sg)
 {
   Container::add_to_scene(sg, parent);
   Texture* t = dynamic_cast<Texture *>(parent);
