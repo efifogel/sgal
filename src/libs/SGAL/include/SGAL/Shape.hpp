@@ -227,10 +227,10 @@ public:
   void clean();
 
   /*! Process change of appearance. */
-  void appearance_changed(Field_info* /* field_info. */);
+  void appearance_changed(Field_info* field_info);
 
   /*! Process change of geometry. */
-  void geometry_changed(Field_info* /* field_info. */);
+  void geometry_changed(Field_info* field_info);
 
   virtual Boolean attach_context(Context* context);
 

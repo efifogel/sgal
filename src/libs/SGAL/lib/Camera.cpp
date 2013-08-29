@@ -105,8 +105,6 @@ void Camera::set_clipping_planes(float near_plane, float far_plane)
 
 /*! \brief sets the clipping planes so that the frustum contains the
  * bounding-sphere.
- * \param bb_center the center of the bounding sphere
- * \param bb_radius the radius of the bounding sphere
  */
 void Camera::set_clipping_planes(const Vector3f& bb_center, Float bb_radius)
 {
@@ -180,14 +178,12 @@ void Camera::utilize()
 
   Gfx_conf::Vendor vendor = gfx_conf->get_vendor();
   Gfx_conf::Renderer renderer = gfx_conf->get_renderer();
-  if (vendor == Gfx_conf::ve3Dfx ||
-      renderer == Gfx_conf::reG400 ||
-      renderer == Gfx_conf::reG200 ||
-      renderer == Gfx_conf::reRADEON_IGP ||
-      renderer == Gfx_conf::reGEFORCE_6200)
-  {
-    m_nearest_clipping_plane = 1;
-  }
+  if ((vendor == Gfx_conf::ve3Dfx) ||
+      (renderer == Gfx_conf::reG400) ||
+      (renderer == Gfx_conf::reG200) ||
+      (renderer == Gfx_conf::reRADEON_IGP) ||
+      (renderer == Gfx_conf::reGEFORCE_6200))
+  { m_nearest_clipping_plane = 1; }
 }
 
 /*! \brief updates the aspect ratio based on the context. */
@@ -220,31 +216,38 @@ void Camera::init_prototype()
   // position
   Execution_function exec_func =
     static_cast<Execution_function>(&Camera::update_matrix_requiered);
+  Vector3f_handle_function position_func =
+    static_cast<Vector3f_handle_function>(&Camera::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
-                                              get_member_offset(&m_position),
-                                              exec_func));
+                                              position_func, exec_func));
 
   // orientation
   exec_func =
     static_cast<Execution_function>(&Camera::update_matrix_requiered);
+  Rotation_handle_function orientation_func =
+    static_cast<Rotation_handle_function>(&Camera::orientation_handle);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
-                                              get_member_offset(&m_orientation),
-                                              exec_func));
+                                              orientation_func, exec_func));
 
   // fieldOfView
   exec_func =
     static_cast<Execution_function>(&Camera::update_field_of_view);
-  s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
-                                           get_member_offset(&m_field_of_view),
+  Float_handle_function fov_func =
+    static_cast<Float_handle_function>(&Camera::fov_handle);
+  s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView", fov_func,
                                            exec_func));
 
   // description
+  String_handle_function description_func =
+    static_cast<String_handle_function>(&Camera::description_handle);
   s_prototype->add_field_info(new SF_string(DESCRIPTION, "description",
-                                            get_member_offset(&m_description)));
+                                            description_func));
 
   // radiusScale
+  Float_handle_function radius_scale_func =
+    static_cast<Float_handle_function>(&Camera::radius_scale_handle);
   s_prototype->add_field_info(new SF_float(RADIUS_SCALE, "radiusScale",
-                                           get_member_offset(&m_radius_scale)));
+                                           radius_scale_func));
 }
 
 /*! \brief deletes the camera prototype. */
@@ -368,7 +371,8 @@ void Camera::draw()
   glMatrixMode(GL_MODELVIEW);
   if (Gfx_conf::get_instance()->get_renderer() != Gfx_conf::reGeneric) {
     glLoadMatrixf((GLfloat*) &m_view_mat);
-  } else {
+  }
+  else {
     // It looks like there is a bug related to lights in the soft version
     // of opengl. Therefore, if we recognize the driver as software, we
     // use a non visualy apperant scale to work around the bug.

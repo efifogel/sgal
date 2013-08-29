@@ -31,7 +31,7 @@
  *
  * OpenGL is a state machine: you set various modes that then remain in
  * effect until you change them. For example, the current color is a mode.
- * The Context maintains two notions of state: 
+ * The Context maintains two notions of state:
  *   - Default State - default global graphics state defined on a per-context
  *     basis.
  *   - Current State - reflects the rendering (OpenGl) state, and is the
@@ -170,6 +170,7 @@ public:
   typedef boost::shared_ptr<Texture>            Shared_texture;
   typedef boost::shared_ptr<Material>           Shared_material;
   typedef boost::shared_ptr<Halftone>           Shared_halftone;
+  typedef boost::shared_ptr<Tex_gen>            Shared_tex_gen;
 
   /*! Constructor */
   Context();
@@ -183,9 +184,9 @@ public:
 #if defined(__GNUC__) && !defined(_WIN32)
   /*! Constructor */
   Context(Display* display, XVisualInfo* visual);
-#endif  
 #endif
-  
+#endif
+
   /*! Destructor */
   virtual ~Context();
 
@@ -235,7 +236,7 @@ public:
   void set_halftone(Shared_halftone halftone);
 
   Shared_halftone get_halftone() const;
-  
+
   void set_tex_enable(bool tex_enable);
 
   Boolean get_tex_enable() const;
@@ -258,9 +259,9 @@ public:
 
   Gfx::Tex_env get_tex_env() const;
 
-  void set_tex_gen(Tex_gen* tex_gen);
+  void set_tex_gen(Shared_tex_gen tex_gen);
 
-  Tex_gen* get_tex_gen() const;
+  Shared_tex_gen get_tex_gen() const;
 
   void set_tex_gen_enable(Boolean tex_gen_enable);
 
@@ -318,9 +319,9 @@ public:
 
   void get_color_mask(Vector4ub& color_mask) const;
 
-  void set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3); 
+  void set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3);
 
-  void get_color_mask(Ubyte* v0, Ubyte* v1, Ubyte* v2, Ubyte* v3) const; 
+  void get_color_mask(Ubyte* v0, Ubyte* v1, Ubyte* v2, Ubyte* v3) const;
 
   void set_depth_enable(Boolean depth_enable);
 
@@ -341,7 +342,7 @@ public:
   void set_polygon_stipple_enable(Boolean enable);
 
   Boolean get_polygon_stipple_enable() const;
-  
+
   void set_poly_mode(Gfx::Poly_mode poly_mode);
 
   Gfx::Poly_mode get_poly_mode() const;
@@ -381,7 +382,7 @@ public:
    * generated from the lighting computation for a vertex.
    */
   void draw_light_model_color_control(Gfx::Light_model_color_control model);
-  
+
   void set_line_width(Float line_width);
   Float get_line_width() const;
 
@@ -411,10 +412,10 @@ public:
 
   void clear(Uint which, const Vector4f& color)
   { clear(which, color[0], color[1], color[2], color[3]); }
-    
+
   void clear(Uint which, const Vector4f& color, Int stencil)
   { clear(which, color[0], color[1], color[2], color[3], stencil); }
-    
+
   void clear_color_buffer();
   void clear_depth_buffer();
   void clear_stencil_buffer();
@@ -486,7 +487,7 @@ public:
   Uint get_stencil_bits() const;
 
   Uint get_number_of_samples() const;
-  
+
 private:
   int m_mat_stack_depth;
 
@@ -548,7 +549,7 @@ private:
   Uint m_stencil_bits;
 
   Uint m_number_of_samples;
-  
+
   void draw_state_elements(const Bit_mask& set_mask, const Gfx* gfx);
   void draw_state_elements(const Bit_mask& set_mask, const Appearance* app);
 
@@ -558,7 +559,7 @@ public:
   void draw_tex_mode(Gfx::Tex_mode tex_mode);
   void draw_tex_blend_color(const Vector4f& tex_blend_color);
   void draw_tex_env(Gfx::Tex_env tex_env);
-  void draw_tex_gen(Tex_gen* tex_gen);
+  void draw_tex_gen(Shared_tex_gen tex_gen);
   void draw_tex_gen_enable(Boolean tex_gen_enable);
   void draw_material(Shared_material material, Shared_material back_material);
   void draw_light_enable(Boolean light_enable);
@@ -623,7 +624,7 @@ inline Gfx::Tex_env Context::get_tex_env() const
 { return m_current_state->m_tex_env; }
 
 /*! \brief obtains the texture generation attribute. */
-inline Tex_gen* Context::get_tex_gen() const
+inline Context::Shared_tex_gen Context::get_tex_gen() const
 { return m_current_state->m_tex_gen; }
 
 /*! \brief obtains the texture generation enable attribute. */
@@ -698,7 +699,7 @@ inline Gfx::Poly_mode Context::get_poly_mode() const
 inline Gfx::Cull_face Context::get_cull_face() const
 { return m_current_state->m_cull_face; }
 
-/*! \brief obtains the attribute that indicates whether one- or two-sided 
+/*! \brief obtains the attribute that indicates whether one- or two-sided
  * lighting calculations are done for polygons.
  */
 inline Gfx::Light_model_sides Context::get_light_model_sides() const

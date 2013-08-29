@@ -66,23 +66,7 @@ void Vertex_shader::clean()
 /*! \brief sets the attributes of the shader node. */
 void Vertex_shader::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter        Str_attr_iter;
-
   Shader::set_attributes(elem);
-
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
-    if (name == "url") {
-      std::string url = strip_double_quotes(value);
-      set_url(url);
-      url.clear();
-      elem->mark_delete(ai);
-      continue;
-    }
-  }
 
   // Remove all the marked attributes:
   elem->delete_marked();
@@ -92,12 +76,7 @@ void Vertex_shader::set_attributes(Element* elem)
 void Vertex_shader::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto();
-
-  // Add the field-info records to the prototype:
-  // url
-  s_prototype->add_field_info(new SF_string(URL, "url",
-                                            get_member_offset(&m_url)));
+  s_prototype = new Container_proto(Shader::get_prototype());
 }
 
 /*! \brief deletes the shader node prototype. */
@@ -112,13 +91,6 @@ Container_proto* Vertex_shader::get_prototype()
 {
   if (!s_prototype) Vertex_shader::init_prototype();
   return s_prototype;
-}
-
-/*! \brief sets the URL. */
-void Vertex_shader::set_url(const std::string& url)
-{
-  m_url = url;
-  m_dirty = true;
 }
 
 Boolean Vertex_shader::empty() { return true; }

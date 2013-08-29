@@ -62,23 +62,10 @@ const Gfx::Tex_env Appearance::s_def_tex_env(Gfx::MODULATE_TENV);
 REGISTER_TO_FACTORY(Appearance, "Appearance");
 
 /*! The parameter-less constructor */
-Appearance::Appearance(Boolean proto) :
-  Container(proto),
-  m_owned_tex_gen(false),
-  m_tex_gen_prev(NULL)
-{ init(); }
+Appearance::Appearance(Boolean proto) : Container(proto) { init(); }
 
 /*! Destructor */
-Appearance::~Appearance()
-{
-  // delete the owned texture-generation attribute if present
-  if (m_owned_tex_gen) {
-    SGAL_assertion(m_tex_gen_prev);
-    delete m_tex_gen_prev;
-    m_tex_gen_prev = NULL;
-    m_owned_tex_gen = false;
-  }
-}
+Appearance::~Appearance() {}
 
 /*! \brief assigns the appearance with the content of another appearance;
  * performs a shallow copy.
@@ -124,14 +111,16 @@ void Appearance::set(Appearance* app)
 /*! \brief */
 void Appearance::init()
 {
-  // m_texture                   = 0;
+  m_texture.reset();            // shared pointer
+  m_tex_gen.reset();            // shared pointer
+  m_material.reset();           // shared pointer
+  m_back_material.reset();      // shared pointer
+  m_halftone.reset();           // shared pointer
   m_tex_enable                = false;
   m_tex_mode                  = Gfx::FAST_TEX;
   m_tex_blend_color.set(0.0f, 0.0f, 0.0f, 0.0f);
   m_tex_env                   = Gfx::MODULATE_TENV;
-  m_tex_gen                   = 0;
   m_tex_gen_enable            = false;
-  // m_material                  = 0;
   m_material_mode_enable      = Gfx::NO_COLOR_MATERIAL;
   m_light_enable              = 0;
   m_shade_model               = Gfx::SMOOTH_SHADE;
@@ -151,9 +140,7 @@ void Appearance::init()
   m_line_stipple_factor       = 1;
   m_line_stipple_pattern      = 0xffff;
   m_tex_transform.make_identity();
-  // m_back_material             = 0;
   m_polygon_stipple_enable    = false;
-  // m_halftone                  = 0;
   m_light_model_color_control = s_def_light_model_color_control;
 
   m_pending.off();
@@ -170,7 +157,7 @@ void Appearance::set_texture(Shared_texture texture)
   m_pending.on_bit(Gfx::TEXTURE);
   m_override.on_bit(Gfx::TEXTURE);
 
-  // this is to indicate that the texture has changed and 
+  // this is to indicate that the texture has changed and
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::TEX_ENV);
 }
@@ -228,7 +215,7 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 }
 
 /*! \brief sets the texture-generation attribute. */
-void Appearance::set_tex_gen(Tex_gen* tex_gen)
+void Appearance::set_tex_gen(Shared_tex_gen tex_gen)
 {
   Observer observer(this, get_field_info(TEX_GEN));
   if (m_tex_gen) m_tex_gen->unregister_observer(observer);
@@ -263,7 +250,7 @@ void Appearance::set_material(Shared_material material)
     set_src_blend_func(Gfx::ONE_SBLEND);
     set_dst_blend_func(Gfx::ZERO_DBLEND);
   }
-  
+
   m_pending.on_bit(Gfx::MATERIAL);
   m_override.on_bit(Gfx::MATERIAL);
 }
@@ -511,7 +498,7 @@ void Appearance::texture_changed(Field_info* /* field_info */)
   m_pending.on_bit(Gfx::TEXTURE);
   m_override.on_bit(Gfx::TEXTURE);
 
-  // this is to indicate that the texture has changed and 
+  // this is to indicate that the texture has changed and
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::TEX_ENV);
   process_content_changed();
@@ -523,7 +510,7 @@ void Appearance::halftone_changed(Field_info* /* field_info */)
   m_pending.on_bit(Gfx::HALFTONE_PATTERN);
   m_override.on_bit(Gfx::HALFTONE_PATTERN);
 
-  // this is to indicate that the texture has changed and 
+  // this is to indicate that the texture has changed and
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
   set_rendering_required();
@@ -564,34 +551,47 @@ void Appearance::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func;
-  SF_shared_container* field;
 
   exec_func = static_cast<Execution_function>(&Appearance::material_changed);
-  field = new SF_shared_container(MATERIAL, "material",
-                                  get_member_offset(&m_material), exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function material_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Appearance::material_handle);
+  s_prototype->add_field_info(new SF_shared_container(MATERIAL, "material",
+                                                      material_func,
+                                                      exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::texture_changed);
-  field = new SF_shared_container(TEXTURE, "texture",
-                                  get_member_offset(&m_texture), exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function texture_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Appearance::texture_handle);
+  s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
+                                                      texture_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::tex_gen_changed);
-  field = new SF_shared_container(TEX_GEN, "textureGeneration",
-                                  get_member_offset(&m_tex_gen), exec_func);
-  s_prototype->add_field_info(field);
-  
+  Shared_container_handle_function tex_gen_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Appearance::tex_gen_handle);
+  s_prototype->add_field_info(new SF_shared_container(TEX_GEN,
+                                                      "textureGeneration",
+                                                      tex_gen_func, exec_func));
+
   exec_func = static_cast<Execution_function>(&Appearance::halftone_changed);
-  field = new SF_shared_container(HALFTONE_PATTERN, "halftone",
-                                  get_member_offset(&m_halftone), exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function halftone_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Appearance::halftone_handle);
+  s_prototype->add_field_info(new SF_shared_container(HALFTONE_PATTERN,
+                                                      "halftone", halftone_func,
+                                                      exec_func));
 
   exec_func =
     static_cast<Execution_function>(&Appearance::back_material_changed);
-  field =
-    new SF_shared_container(BACK_MATERIAL, "backMaterial",
-                            get_member_offset(&m_back_material), exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function back_material_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Appearance::back_material_handle);
+  s_prototype->add_field_info(new SF_shared_container(BACK_MATERIAL,
+                                                      "backMaterial",
+                                                      back_material_func,
+                                                      exec_func));
 }
 
 /*! \brief deletes the appearance prototype. */
@@ -602,8 +602,8 @@ void Appearance::delete_prototype()
 }
 
 /*! \brief obtains the appearance prototype. */
-Container_proto* Appearance::get_prototype() 
-{  
+Container_proto* Appearance::get_prototype()
+{
   if (s_prototype == NULL) init_prototype();
   return s_prototype;
 }
@@ -658,7 +658,7 @@ void Appearance::set_attributes(Element* elem)
     const std::string& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "material") {
-      Shared_material material = boost::dynamic_pointer_cast<Material>(cont); 
+      Shared_material material = boost::dynamic_pointer_cast<Material>(cont);
       if (material) {
         set_material(material);
         if (!get_back_material()) set_back_material(material);
@@ -696,15 +696,15 @@ void Appearance::write(Formatter* formatter)
   formatter->container_begin(get_tag());
   formatter->single_container_begin("material");
   formatter->write(&*m_material);
-  formatter->single_container_end();  
-  formatter->container_end();  
+  formatter->single_container_end();
+  formatter->container_end();
 }
 
 #if 0
 /*! \brief */
-Attribute_list Appearance::get_attributes() 
-{ 
-  Attribute_list attrs; 
+Attribute_list Appearance::get_attributes()
+{
+  Attribute_list attrs;
   Attribue attrib;
 
   attrs = Container::get_attributes();
@@ -811,27 +811,8 @@ void Appearance::clean_material()
 /*! \brief cleans the texture generation attribute. */
 void Appearance::clean_tex_gen()
 {
-  // Construct a new owned texture generation attribute if needed, and delete
-  // the previously constructed owned texture generation attribute if not
-  // needed any more.
+  if (!m_tex_gen) m_tex_gen = Shared_tex_gen(new Tex_gen());
   set_tex_gen_enable(true);
-  if (m_owned_tex_gen) {
-    SGAL_assertion(m_tex_gen_prev);
-    if (!m_tex_gen) set_tex_gen(m_tex_gen_prev);
-    else if (m_tex_gen != m_tex_gen_prev) {
-      delete m_tex_gen_prev;
-      m_tex_gen_prev = NULL;
-      m_owned_tex_gen = false;
-    }
-  }
-  else {
-    if (!m_tex_gen) {
-      Tex_gen* tex_gen = new Tex_gen();
-      SGAL_assertion(tex_gen);
-      set_tex_gen(tex_gen);
-      m_owned_tex_gen = true;
-    }
-  }
 
   // Setup the textute-generation functions.
   Shared_texture texture = get_texture();
@@ -878,7 +859,7 @@ void Appearance::field_changed(Field_info* field_info)
       set_src_blend_func(Gfx::ONE_SBLEND);
       set_dst_blend_func(Gfx::ZERO_DBLEND);
     }
-  
+
     m_pending.on_bit(Gfx::MATERIAL);
     m_override.on_bit(Gfx::MATERIAL);
     break;
@@ -897,7 +878,7 @@ void Appearance::field_changed(Field_info* field_info)
     m_pending.on_bit(Gfx::TEX_GEN);
     m_override.on_bit(Gfx::TEX_GEN);
     break;
-    
+
    case HALFTONE_PATTERN:
     m_pending.on_bit(Gfx::HALFTONE_PATTERN);
     m_override.on_bit(Gfx::HALFTONE_PATTERN);

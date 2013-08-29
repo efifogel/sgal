@@ -50,7 +50,7 @@ SGAL_BEGIN_NAMESPACE
 Context* Context::s_current_context = NULL;
 
 // NextId, must start at 1 so we don't clobber GL default targets of 0.
-// Int Context::s_nextId = 1; 
+// Int Context::s_nextId = 1;
 // IntArray* Context::s_freeIdArray = 0;
 
 #if !defined(NO_AUDIO)
@@ -87,7 +87,7 @@ Window_handle* Context::get_win_handle() const
 */
 
 /*! \brief */
-void Context::init()    
+void Context::init()
 {
   m_mat_stack_depth = 1;
   m_light_stack_depth = 0;
@@ -99,7 +99,7 @@ void Context::init()
   // baseFog->set_On(false);
   // baseFog->ref();
   // m_fogStack[0] = baseFog;
-  
+
   // State stack starts out at zero and increases with pushes
   m_stack_depth = 0;
 
@@ -118,16 +118,17 @@ void Context::init()
 
   m_current_state->m_pending.off();
   m_current_state->m_override.off();
-    
-  // m_current_state->m_texture               = 0;
-  // m_current_state->m_halftone              = 0;
+
+  m_current_state->m_texture.reset();           // shared pointer
+  m_current_state->m_halftone.reset();          // shared pointer
+  m_current_state->m_tex_gen.reset();           // shared pointer
+  m_current_state->m_material.reset();          // shared pointer
+  m_current_state->m_back_material.reset();     // shared pointer
   m_current_state->m_tex_enable            = false;
   m_current_state->m_tex_mode              = Gfx::FAST_TEX;
   m_current_state->m_tex_blend_color.set(0.0f, 0.0f, 0.0f, 0.0f);
   m_current_state->m_tex_env               = Gfx::MODULATE_TENV;
-  m_current_state->m_tex_gen               = 0;
   m_current_state->m_tex_gen_enable        = false;
-  // m_current_state->m_material              = 0;
   m_current_state->m_material_mode_enable  = Gfx::NO_COLOR_MATERIAL;
   m_current_state->m_light_enable          = false;
   m_current_state->m_shade_model           = Gfx::SMOOTH_SHADE;
@@ -152,7 +153,6 @@ void Context::init()
   m_current_state->m_line_stipple_factor   = 1;
   m_current_state->m_line_stipple_pattern  = 0xffff;
   m_current_state->m_tex_transform.make_identity();
-  // m_current_state->m_back_material         = 0;
   m_current_state->m_polygon_stipple_enable = false;
 
   // Copy TopStack to default_state so they start out the same
@@ -282,7 +282,7 @@ void Context::get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const
 void Context::set_normalize_enable(Boolean normalize_enable)
 {
   if (normalize_enable == m_normalize_enable) return;
-  m_normalize_enable = normalize_enable;    
+  m_normalize_enable = normalize_enable;
   if (normalize_enable) glEnable(GL_NORMALIZE);
   else glDisable(GL_NORMALIZE);
 }
@@ -344,7 +344,7 @@ void Context::set_tex_enable(Boolean tex_enable)
 void Context::draw_tex_enable(Boolean tex_enable)
 {
   typedef boost::shared_ptr<Cube_environment>   Shared_cube_environment;
-  
+
   if (m_current_state->m_tex_enable == tex_enable) return;
   m_current_state->m_tex_enable = tex_enable;
   if (tex_enable) {
@@ -415,7 +415,7 @@ void Context::draw_tex_env(Gfx::Tex_env tex_env)
 }
 
 /*! \brief */
-void Context::set_tex_gen(Tex_gen* tex_gen)
+void Context::set_tex_gen(Shared_tex_gen tex_gen)
 {
   m_default_state->m_tex_gen = tex_gen;
   m_default_state->m_pending.on_bit(Gfx::TEX_GEN);
@@ -423,7 +423,7 @@ void Context::set_tex_gen(Tex_gen* tex_gen)
 }
 
 /*! \brief */
-void Context::draw_tex_gen(Tex_gen* tex_gen)
+void Context::draw_tex_gen(Shared_tex_gen tex_gen)
 {
   if (m_current_state->m_tex_gen == tex_gen) return;
   m_current_state->m_tex_gen = tex_gen;
@@ -445,7 +445,7 @@ void Context::draw_tex_gen_enable(Boolean tex_gen_enable)
   m_current_state->m_tex_gen_enable = tex_gen_enable;
 
   if (tex_gen_enable) {
-    Tex_gen* tgen = m_current_state->m_tex_gen;
+    Shared_tex_gen tgen = m_current_state->m_tex_gen;
     if (tgen) {
       if (tgen->get_mode_s() != Tex_gen::OFF) glEnable(GL_TEXTURE_GEN_S);
       if (tgen->get_mode_t() != Tex_gen::OFF) glEnable(GL_TEXTURE_GEN_T);
@@ -623,10 +623,10 @@ void Context::draw_transp_mode(Gfx::Transparency_mode transp_mode)
 }
 
 /*! \brief */
-static GLenum s_alpha_func_tokens[] = 
+static GLenum s_alpha_func_tokens[] =
 {
-  GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, 
-  GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS 
+  GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER,
+  GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
 };
 
 /*! \brief */
@@ -681,21 +681,21 @@ void Context::draw_blend_color(const Vector4f& blend_color)
 }
 
 /*! \brief */
-static GLenum s_src_blend_func_tokens[] = 
+static GLenum s_src_blend_func_tokens[] =
 {
-  GL_ZERO, GL_ONE, GL_DST_COLOR, 
-  GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE, 
-  GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, 
-  GL_ONE_MINUS_DST_ALPHA, 
+  GL_ZERO, GL_ONE, GL_DST_COLOR,
+  GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE,
+  GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA,
+  GL_ONE_MINUS_DST_ALPHA,
 };
 
 /*! \brief */
-static GLenum s_dst_blend_func_tokens[] = 
+static GLenum s_dst_blend_func_tokens[] =
 {
-  GL_ZERO, GL_ONE, GL_SRC_COLOR, 
-  GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA, 
-  GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, 
-  GL_ONE_MINUS_DST_ALPHA, 
+  GL_ZERO, GL_ONE, GL_SRC_COLOR,
+  GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA,
+  GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA,
+  GL_ONE_MINUS_DST_ALPHA,
 };
 
 /*! \brief */
@@ -715,7 +715,7 @@ void Context::draw_src_blend_func(Gfx::Src_blend_func src_blend_func)
     if (src_blend_func == Gfx::ONE_SBLEND) glDisable(GL_BLEND);
     else glEnable(GL_BLEND);
   }
-  glBlendFunc(s_src_blend_func_tokens[src_blend_func], 
+  glBlendFunc(s_src_blend_func_tokens[src_blend_func],
               s_dst_blend_func_tokens[m_current_state->m_dst_blend_func]);
 }
 
@@ -736,7 +736,7 @@ void Context::draw_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
     if (dst_blend_func == Gfx::ZERO_DBLEND) glDisable(GL_BLEND);
     else glEnable(GL_BLEND);
   }
-  glBlendFunc(s_src_blend_func_tokens[m_current_state->m_src_blend_func], 
+  glBlendFunc(s_src_blend_func_tokens[m_current_state->m_src_blend_func],
               s_dst_blend_func_tokens[dst_blend_func]);
 }
 
@@ -753,7 +753,7 @@ void Context::draw_color_mask(const Vector4ub& color_mask)
 {
   if (m_current_state->m_color_mask == color_mask) return;
   m_current_state->m_color_mask = color_mask;
-  glColorMask(color_mask[0] != 0, color_mask[1] != 0, 
+  glColorMask(color_mask[0] != 0, color_mask[1] != 0,
               color_mask[2] != 0, color_mask[3] != 0);
 }
 
@@ -788,8 +788,8 @@ void Context::draw_depth_func(Gfx::Depth_func depth_func)
   if (m_current_state->m_depth_func == depth_func) return;
   m_current_state->m_depth_func = depth_func;
   static GLenum s_depth_func_tokens[] = {
-    GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER, 
-    GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS 
+    GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER,
+    GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
   };
   glDepthFunc(s_depth_func_tokens[depth_func]);
 }
@@ -940,7 +940,7 @@ void Context::set_light_model_sides(Gfx::Light_model_sides light_model_sides)
   m_default_state->m_pending.on_bit(Gfx::LIGHT_MODEL_SIDES);
 }
 
-/*! \brief applies the attribute that indicates whether one- or two-sided 
+/*! \brief applies the attribute that indicates whether one- or two-sided
  * lighting calculations are done for polygons.
  */
 void Context::draw_light_model_sides(Gfx::Light_model_sides model)
@@ -1017,7 +1017,7 @@ void Context::draw_line_width(Float line_width)
     Bit_mask geo_override;
     m_override_geo_prop_stack[m_override_geo_prop_stack_top]->
       get_override(geo_override);
-    
+
     if (geo_override.get_bit(LINE_WIDTH)) {
       line_width =
         m_override_geo_prop_stack[m_override_geo_prop_stack_top]->
@@ -1035,7 +1035,7 @@ void Context::draw_line_width(Float line_width)
 
 /*! \brief */
 void Context::set_point_size(Float point_size)
-{   
+{
   m_default_state->m_point_size = point_size;
   m_default_state->m_pending.on_bit(Gfx::POINT_SIZE);
   // DrawPointSize(point_size);
@@ -1043,7 +1043,7 @@ void Context::set_point_size(Float point_size)
 
 /*! \brief */
 void Context::draw_point_size(Float point_size)
-{   
+{
   // Use override value if one has been set
   if (m_override_geo_prop_stack_top != -1) {
     Bit_mask geo_override;
@@ -1056,14 +1056,14 @@ void Context::draw_point_size(Float point_size)
         get_point_size();
     }
   }
-        
+
   if (m_current_state->m_point_size == point_size) return;
   m_current_state->m_point_size = point_size;
   glPointSize(point_size);
 #ifdef GL2PS
   gl2psPointSize(point_size);
 #endif
-}   
+}
 
 /*! \brief */
 void Context::set_line_stipple_pattern(Uint pattern)
@@ -1153,7 +1153,7 @@ void Context::clear(Uint which)
 
   if (which & Gfx::COLOR_CLEAR) {
     glclear |= GL_COLOR_BUFFER_BIT;
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   }
   if (which & Gfx::DEPTH_CLEAR) {
     glclear |= GL_DEPTH_BUFFER_BIT;
@@ -1297,7 +1297,7 @@ void Context::push_lights()
     if (current_lights[i].m_defined != 0)
       current_lights[i].m_defined->ref();
   }
-  
+
   // Push the stack pointer
   m_light_stack_depth = s;
 }
@@ -1316,9 +1316,9 @@ void Context::push_state()
   m_current_state = &m_current_state_stack[s];
 }
 
-/*! \brief draws the new state is performed in 2 passes. The boolean 
- * (enable/disable)elements are handled first, then the rest of the elements. 
- * This is done in order to maintain proper state Darw to enable flags and 
+/*! \brief draws the new state is performed in 2 passes. The boolean
+ * (enable/disable)elements are handled first, then the rest of the elements.
+ * This is done in order to maintain proper state Darw to enable flags and
  * their corresponding data.
  * Each pass is performed in 2 steps. During the 1st step the default state
  * is used to Draw the new state for all state elements that their notInherit
@@ -1332,7 +1332,7 @@ void Context::pop_state()
   Int s = m_stack_depth - 1;
 
   Gfx* new_gfx = &m_current_state_stack[s];
-  
+
   // Compute the bit mask that represent the TRUE to FALSE transition:
   Bit_mask def_draw(m_default_state->m_pending);
   def_draw.or_equal(m_current_state->m_override);
@@ -1362,7 +1362,7 @@ void Context::pop_lights()
 {
   // Pop lights - lights are tricky because they can "float" amongst GL light
   // targets. Also, lights need to be restored with the matrix they were last
-  // bound with. 
+  // bound with.
 
   int i, j;
   Light_target* prev_lights = m_light_stack[m_light_stack_depth];
@@ -1395,7 +1395,7 @@ void Context::pop_lights()
           //current_lights[found].m_defined->Pop(current_lights[found].m_mat, this); // TBD
         }
       }
-      
+
       prev_lights[i].m_defined->unref();
     }
   }
@@ -1412,14 +1412,14 @@ void Context::make_current()
   s_current_context = this;
 
   m_current_state = &m_current_state_stack[m_stack_depth];
-  
+
   //! \todo m_gfx_handle->make_current();
   //! \todo m_win_handle = win_handle;
-    
+
   if (!m_made_current) {
     glGetIntegerv(GL_VIEWPORT, m_viewport);
     if (m_viewport[2] != 0 && m_viewport[3] != 0)
-      m_made_current = true;  
+      m_made_current = true;
   }
   m_is_current = true;
 
@@ -1429,7 +1429,7 @@ void Context::make_current()
 }
 
 /*! \brief */
-/*! \todo Window_handle 
+/*! \todo Window_handle
 void Context::make_current(Window_handle* win_handle)
 {
   // Ignore same context.
@@ -1437,14 +1437,14 @@ void Context::make_current(Window_handle* win_handle)
   s_current_context = this;
 
   m_current_state = &m_current_state_stack[m_stack_depth];
-  
+
   //! \todo m_gfx_handle->make_current();
   //! \todo m_win_handle = win_handle;
-    
+
   if (!m_made_current) {
     glGetIntegerv(GL_VIEWPORT, m_viewport);
     if (m_viewport[2] != 0 && m_viewport[3] != 0)
-      m_made_current = true;  
+      m_made_current = true;
   }
   m_is_current = true;
 
@@ -1490,7 +1490,7 @@ void Context::push_override_appearance(Appearance* app)
 Appearance* Context::pop_override_appearance()
 {
   if (m_override_app_stack_top == -1) {
-    fprintf(stderr, "underflow in Context override appearance stack");  
+    fprintf(stderr, "underflow in Context override appearance stack");
     return (0);
   }
 
@@ -1503,7 +1503,7 @@ Appearance* Context::pop_override_appearance()
 void Context::push_override_geo_prop(Override_geo_prop* gprop)
 {
   if (m_override_geo_prop_stack_top == SGAL_MAX_STACK - 1) {
-    fprintf(stderr, "overflow in Context override geometry property stack");  
+    fprintf(stderr, "overflow in Context override geometry property stack");
     return;
   }
   m_override_geo_prop_stack[++m_override_geo_prop_stack_top] = gprop;
@@ -1513,7 +1513,7 @@ void Context::push_override_geo_prop(Override_geo_prop* gprop)
 Override_geo_prop* Context::pop_override_geo_prop()
 {
   if (m_override_geo_prop_stack_top == -1) {
-    fprintf(stderr, "underflow in Context override geometry property stack");  
+    fprintf(stderr, "underflow in Context override geometry property stack");
     return (0);
   }
 
@@ -1550,7 +1550,7 @@ void Context::draw_blend_funcs(Gfx::Src_blend_func src_blend_func,
       if (src_blend_func == Gfx::ONE_SBLEND) glDisable(GL_BLEND);
       else glEnable(GL_BLEND);
     }
-    glBlendFunc(s_src_blend_func_tokens[src_blend_func], 
+    glBlendFunc(s_src_blend_func_tokens[src_blend_func],
                 s_dst_blend_func_tokens[m_current_state->m_dst_blend_func]);
     m_current_state->m_src_blend_func = src_blend_func;
   }
@@ -1561,7 +1561,7 @@ void Context::draw_blend_funcs(Gfx::Src_blend_func src_blend_func,
       else glEnable(GL_BLEND);
     }
 
-    glBlendFunc(s_src_blend_func_tokens[m_current_state->m_src_blend_func], 
+    glBlendFunc(s_src_blend_func_tokens[m_current_state->m_src_blend_func],
                 s_dst_blend_func_tokens[dst_blend_func]);
     m_current_state->m_dst_blend_func = dst_blend_func;
   }
@@ -1569,7 +1569,7 @@ void Context::draw_blend_funcs(Gfx::Src_blend_func src_blend_func,
 
 /*! \brief */
 void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
-                                  const Gfx* gfx) 
+                                  const Gfx* gfx)
 {
   Bit_mask tmp_mask(set_mask_ptr);
 
@@ -1613,10 +1613,10 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
      case Gfx::BLEND_COLOR: draw_blend_color(gfx->m_blend_color); break;
      case Gfx::SRC_BLEND_FUNC:
       draw_src_blend_func(gfx->m_src_blend_func); break;
-      
+
      case Gfx::DST_BLEND_FUNC:
       draw_dst_blend_func(gfx->m_dst_blend_func); break;
-      
+
      case Gfx::COLOR_MASK: draw_color_mask(gfx->m_color_mask); break;
      case Gfx::DEPTH_FUNC: draw_depth_func(gfx->m_depth_func); break;
      case Gfx::DEPTH_MASK: draw_depth_mask(gfx->m_depth_mask); break;
@@ -1653,7 +1653,7 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
 
 /*! \breif */
 void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
-                                  const Appearance* app) 
+                                  const Appearance* app)
 {
   Bit_mask tmp_mask(set_mask_ptr);
 
@@ -1679,7 +1679,7 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
 
      case Gfx::POLYGON_STIPPLE_ENABLE:
       draw_polygon_stipple_enable(app->m_polygon_stipple_enable); break;
-      
+
      case Gfx::TEXTURE: draw_texture(app->m_texture); break;
      case Gfx::HALFTONE_PATTERN: draw_halftone(app->m_halftone); break;
      case Gfx::TEX_MODE: draw_tex_mode(app->m_tex_mode); break;
@@ -1701,7 +1701,7 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
 
      case Gfx::DST_BLEND_FUNC:
       draw_dst_blend_func(app->m_dst_blend_func); break;
-      
+
      case Gfx::COLOR_MASK: draw_color_mask(app->m_color_mask); break;
      case Gfx::DEPTH_FUNC: draw_depth_func(app->m_depth_func); break;
      case Gfx::DEPTH_MASK: draw_depth_mask(app->m_depth_mask); break;
@@ -1715,10 +1715,10 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
      case Gfx::TEX_TRANSFORM: draw_tex_transform(app->m_tex_transform); break;
      case Gfx::BACK_MATERIAL:
       draw_back_material(app->m_material, app->m_back_material); break;
-            
+
      case Gfx::LIGHT_MODEL_COLOR_CONTROL:
       draw_light_model_color_control(app->m_light_model_color_control); break;
-      
+
       // These are geoset-specific, not in appearance but in context
      case Gfx::CULL_FACE: break;
      case Gfx::LIGHT_MODEL_SIDES: break;
@@ -1755,9 +1755,9 @@ void Context::draw_app(Appearance* app)
     if (app != 0) {
       // Call the constructor for the temporary new local appearance
       // Note: the space is already allocated on the stack
-      // Save the reference to the newly constructed appearance, 
+      // Save the reference to the newly constructed appearance,
       local_app = ::new(space_for_local_app) Appearance;
-  
+
       // mark the appearance to prevent it from altering the scene
       // graph by calling refer() when we setTexture, etc.
       local_app->m_skip_refer = true;
@@ -1790,7 +1790,7 @@ void Context::draw_app(Appearance* app)
         local_app->set_halftone(override_app->get_halftone());
       else if (app_inherit_mask.get_bit(Gfx::HALFTONE_PATTERN) == 0)
         local_app->set_halftone(app->get_halftone());
-      
+
       // TEX_ENABLE:
       if (override_inherit_mask.get_bit(Gfx::TEX_ENABLE) == 0)
         local_app->set_tex_enable(override_app->get_tex_enable());
@@ -1842,7 +1842,7 @@ void Context::draw_app(Appearance* app)
         local_app->set_shade_model(override_app->get_shade_model());
       else if (app_inherit_mask.get_bit(Gfx::SHADE_MODEL) == 0)
         local_app->set_shade_model(app->get_shade_model());
-            
+
       // TRANSP_ENABLE:
       if (override_inherit_mask.get_bit(Gfx::TRANSP_ENABLE) == 0)
         local_app->set_transp_enable(override_app->get_transp_enable());
@@ -1860,7 +1860,7 @@ void Context::draw_app(Appearance* app)
         local_app->set_alpha_func(override_app->get_alpha_func());
       else if (app_inherit_mask.get_bit(Gfx::ALPHA_FUNC) == 0)
         local_app->set_alpha_func(app->get_alpha_func());
-            
+
       // ALPHA_REF:
       if (override_inherit_mask.get_bit(Gfx::ALPHA_REF) == 0)
         local_app->set_alpha_ref(override_app->get_alpha_ref());
@@ -1892,11 +1892,11 @@ void Context::draw_app(Appearance* app)
       // COLOR_MASK:
       if (override_inherit_mask.get_bit(Gfx::COLOR_MASK) == 0) {
         override_app->get_color_mask(&v0, &v1, &v2, &v3);
-        local_app->set_color_mask(v0, v1, v2, v3); 
+        local_app->set_color_mask(v0, v1, v2, v3);
       }
       else if (app_inherit_mask.get_bit(Gfx::COLOR_MASK) == 0) {
         app->get_color_mask(&v0,  &v1,  &v2,  &v3);
-        local_app->set_color_mask(v0, v1, v2, v3); 
+        local_app->set_color_mask(v0, v1, v2, v3);
       }
 
       // DEPTH_FUNC:
@@ -1924,7 +1924,7 @@ void Context::draw_app(Appearance* app)
       else if (app_inherit_mask.get_bit(Gfx::POLYGON_STIPPLE_ENABLE) == 0)
         local_app->
           set_polygon_stipple_enable(app->get_polygon_stipple_enable());
-      
+
       // POLY_MODE:
       if (override_inherit_mask.get_bit(Gfx::POLY_MODE) == 0)
         local_app->set_poly_mode(override_app->get_poly_mode());
@@ -1983,7 +1983,7 @@ void Context::draw_app(Appearance* app)
       else if (app_inherit_mask.get_bit(Gfx::LIGHT_MODEL_COLOR_CONTROL) == 0)
         local_app->set_light_model_color_control
           (app->get_light_model_color_control());
-      
+
       new_app = local_app;
     }
     else {
@@ -2040,7 +2040,7 @@ void Context::draw_app(Appearance* app)
 
     // Set the override of the current state accordingly:
     m_current_state->m_override.set(new_app->m_override);
-    
+
     m_last_app = (new_app == local_app) ? 0 : new_app;
     return;
   }
@@ -2056,7 +2056,7 @@ Light* Context::get_light(const Int i) const
 /*! \brief obtains the index of the light associated with the given viewing
  * matrix.
  */
-Int Context::get_light_target(Light* light, const Matrix4f& mat, 
+Int Context::get_light_target(Light* light, const Matrix4f& mat,
                               Int& already_defined)
 {
   int i;
@@ -2068,7 +2068,7 @@ Int Context::get_light_target(Light* light, const Matrix4f& mat,
   // Assume that we have yet to define this light
   already_defined = -1;
 
-  // Find the GL target which already has 'l' defined 
+  // Find the GL target which already has 'l' defined
   for (i = 0; i < SGAL_MAX_LIGHTS; i++) {
     // If it's defined we want to return it
     if (lights[i].m_defined == light) {
@@ -2151,7 +2151,7 @@ float Context::get_aspect_ratio() const
   if (m_viewport[3] == 0) return 1;
   return ((float) m_viewport[2] / (float) m_viewport[3]);
 }
- 
+
 /*! \brief obtains the number of red bits. */
 Uint Context::get_red_bits() const { return m_red_bits; }
 

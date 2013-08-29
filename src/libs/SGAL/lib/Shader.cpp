@@ -63,9 +63,23 @@ void Shader::clean()
 }
 
 /*! \brief sets the attributes of the shader node. */
-void Shader::set_attributes(Element* elem) 
+void Shader::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
+
+  typedef Element::Str_attr_iter          Str_attr_iter;
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
+    if (name == "url") {
+      std::string url = strip_double_quotes(value);
+      set_url(url);
+      url.clear();
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
 
   // Remove all the marked attributes:
   elem->delete_marked();
@@ -83,13 +97,26 @@ void Shader::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
+
+  // Add the field-info records to the prototype:
+  // url
+  String_handle_function url_func =
+    static_cast<String_handle_function>(&Shader::url_handle);
+  s_prototype->add_field_info(new SF_string(URL, "url", url_func));
 }
 
 /*! \brief obtains the shader node prototype. */
-Container_proto* Shader::get_prototype() 
-{  
+Container_proto* Shader::get_prototype()
+{
   if (!s_prototype) Shader::init_prototype();
   return s_prototype;
+}
+
+/*! \brief sets the URL. */
+void Shader::set_url(const std::string& url)
+{
+  m_url = url;
+  m_dirty = true;
 }
 
 SGAL_END_NAMESPACE

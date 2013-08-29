@@ -333,25 +333,25 @@ void Texture::init_prototype()
   Execution_function exec_func;
 
   exec_func = static_cast<Execution_function>(&Texture::min_filter_changed);
-  SF_int* min_filter_field_info = new SF_int(MIN_FILTER, "minFilter",
-                                             get_member_offset(&m_min_filter),
-                                             exec_func);
-  s_prototype->add_field_info(min_filter_field_info);
+  s_prototype->add_field_info(new SF_uint(MIN_FILTER, "minFilter",
+                                          get_member_offset(&m_min_filter),
+                                          exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::mag_filter_changed);
-  SF_int* mag_filter_field_info = new SF_int(MAG_FILTER, "magFilter",
-                                             get_member_offset(&m_mag_filter),
-                                             exec_func);
-  s_prototype->add_field_info(mag_filter_field_info);
+  s_prototype->add_field_info(new SF_uint(MAG_FILTER, "magFilter",
+                                          get_member_offset(&m_mag_filter),
+                                          exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::wrap_s_changed);
-  s_prototype->add_field_info(new SF_bool(REPEAT_S, "repeatS",
-                                          get_member_offset(&m_repeat_s),
+  Boolean_handle_function repeat_s_func =
+    static_cast<Boolean_handle_function>(&Texture::repeat_s_handle);
+  s_prototype->add_field_info(new SF_bool(REPEAT_S, "repeatS", repeat_s_func,
                                           exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::wrap_t_changed);
-  s_prototype->add_field_info(new SF_bool(REPEAT_T, "repeatT",
-                                          get_member_offset(&m_repeat_t),
+  Boolean_handle_function repeat_t_func =
+    static_cast<Boolean_handle_function>(&Texture::repeat_t_handle);
+  s_prototype->add_field_info(new SF_bool(REPEAT_T, "repeatT", repeat_t_func,
                                           exec_func));
 }
 
@@ -385,7 +385,7 @@ void Texture::load_color_map(Image* image, GLenum target)
   int height_border = (height & (height - 1)) ?
     (((height - 2) & (height - 3)) ? -1: 1) : 0;
 
-  if (border == -1 || border != height_border) {
+  if ((border == -1) || (border != height_border)) {
     ;
   }
 

@@ -60,6 +60,7 @@ public:
   typedef boost::shared_ptr<Texture>            Shared_texture;
   typedef boost::shared_ptr<Material>           Shared_material;
   typedef boost::shared_ptr<Halftone>           Shared_halftone;
+  typedef boost::shared_ptr<Tex_gen>            Shared_tex_gen;
 
   /*! Constructor */
   Appearance(Boolean proto = false);
@@ -84,6 +85,12 @@ public:
 
   /// \name field handlers
   //@{
+  Shared_material* material_handle(Field_info*) { return &m_material; }
+  Shared_texture* texture_handle(Field_info*) { return &m_texture; }
+  Shared_tex_gen* tex_gen_handle(Field_info*) { return &m_tex_gen; }
+  Shared_halftone* halftone_handle(Field_info*) { return &m_halftone; }
+  Shared_material* back_material_handle(Field_info*)
+    { return &m_back_material; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -148,10 +155,10 @@ public:
   /*! Set the texture-generation attribute.
    * \param tex_gen (in) the texture-generation attribute.
    */
-  void set_tex_gen(Tex_gen* tex_gen);
+  void set_tex_gen(Shared_tex_gen tex_gen);
 
   /*! Obtain the texture-generation attribute. */
-  Tex_gen* get_tex_gen() const;
+  Shared_tex_gen get_tex_gen() const;
 
   /*! Set the texture-generation enable flag. */
   void set_tex_gen_enable(Boolean tex_gen_enable);
@@ -399,15 +406,6 @@ private:
   Bit_mask m_override;
   Boolean m_skip_refer;
 
-  /*! Indicates whether the texture-generation attribute is owned. If it is
-   * owned  (as the user hasn't provided one) the texture-generation attribute
-   * should be destructed when the shape is destructed.
-   */
-  Boolean m_owned_tex_gen;
-
-  /*! The previous texture-generation attribute if existed. */
-  Tex_gen* m_tex_gen_prev;
-
   /*! The default halftone pattern. */
   static Ubyte s_def_halftone[];
 
@@ -453,7 +451,8 @@ inline void Appearance::get_tex_blend_color(Float* v0, Float* v1,
 inline Gfx::Tex_env Appearance::get_tex_env() const { return m_tex_env; }
 
 /*! \brief obtains the texture-generation attribute. */
-inline Tex_gen* Appearance::get_tex_gen() const { return m_tex_gen; }
+inline Appearance::Shared_tex_gen Appearance::get_tex_gen() const
+{ return m_tex_gen; }
 
 /*! \brief obtains  the texture-generation enable flag. */
 inline Boolean Appearance::get_tex_gen_enable() const

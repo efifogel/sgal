@@ -38,6 +38,7 @@ class SGAL_SGAL_DECL Shader : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
+    URL,
     LAST
   };
 
@@ -58,6 +59,7 @@ public:
 
   /// \name field handlers
   //@{
+  std::string* url_handle(Field_info*) { return &m_url; }
   //@}
 
   /*! Set the attributes of the shader extracted from the VRML or X3D file.
@@ -79,7 +81,18 @@ public:
   /*! Determines whether the shader is empty. */
   virtual Boolean empty() = 0;
 
+  /*! Set the URL. */
+  void set_url(const std::string& url);
+
+  /*! Obtain the URL. */
+  const std::string& get_url() const;
+
 protected:
+  /*! The uniform resource locator (url) that refers to the (Internet)
+   * resource that contains the shader code.
+   */
+  std::string m_url;
+
   /*! Determine whether the shader is dirty, and thus needs cleaning. */
   Boolean m_dirty;
 
@@ -89,6 +102,9 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+/*! \brief obtains the URL. */
+inline const std::string& Shader::get_url() const { return m_url; }
 
 SGAL_END_NAMESPACE
 

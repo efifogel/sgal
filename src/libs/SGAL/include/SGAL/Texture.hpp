@@ -53,32 +53,6 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Texture(Boolean proto = false);
-
-  /*! Destructor */
-  virtual ~Texture();
-
-  /*! Initialize the node prototype. */
-  virtual void init_prototype();
-
-  /*! Delete the node prototype. */
-  virtual void delete_prototype();
-
-  /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
-
-  /*! Set the attributes of the texture extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
-
   enum Min_filter {
     NEAREST_MIN = 0,
     LINEAR_MIN,
@@ -111,6 +85,36 @@ public:
     TEXTURE_2D_MULTISAMPLE,
     TEXTURE_2D_MULTISAMPLE_ARRAY
   };
+
+  /*! Constructor */
+  Texture(Boolean proto = false);
+
+  /*! Destructor */
+  virtual ~Texture();
+
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype. */
+  virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Min_filter* min_filter_handle(Field_info*) { return &m_min_filter; }
+  Mag_filter* mag_filter_handle(Field_info*) { return &m_mag_filter; }
+  Boolean* repeat_s_handle(Field_info*) { return &m_repeat_s; }
+  Boolean* repeat_t_handle(Field_info*) { return &m_repeat_t; }
+  //@}
+
+  /*! Set the attributes of the texture extracted from the VRML or X3D file.
+   * \param elem contains lists of attribute names and values
+   */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
 
   /*! Set the texture target. */
   void set_target(Target taregt);

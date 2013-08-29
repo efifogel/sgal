@@ -49,7 +49,7 @@ class Material;
   Shared_texture m_texture; \
   Vector4f m_tex_blend_color; \
   Gfx::Tex_env m_tex_env; \
-  Tex_gen* m_tex_gen; \
+  Shared_tex_gen m_tex_gen; \
   Shared_material m_material; \
   Gfx::Shade_model m_shade_model; \
   Gfx::Transparency_mode m_transp_mode; \
@@ -168,7 +168,7 @@ public:
     LESS_AFUNC,
     EQUAL_AFUNC,
     LEQUAL_AFUNC,
-    GREATER_AFUNC, 
+    GREATER_AFUNC,
     NOTEQUAL_AFUNC,
     GEQUAL_AFUNC,
     ALWAYS_AFUNC
@@ -179,10 +179,10 @@ public:
     ONE_SBLEND,
     DST_COLOR_SBLEND,
     ONE_MINUS_DST_COLOR_SBLEND,
-    SRC_ALPHA_SATURATE_SBLEND, 
+    SRC_ALPHA_SATURATE_SBLEND,
     SRC_ALPHA_SBLEND,
     ONE_MINUS_SRC_ALPHA_SBLEND,
-    DST_ALPHA_SBLEND, 
+    DST_ALPHA_SBLEND,
     ONE_MINUS_DST_ALPHA_SBLEND
   };
 
@@ -209,15 +209,15 @@ public:
   };
 
   enum Poly_mode {
-    POINT_PMODE, 
-    LINE_PMODE, 
+    POINT_PMODE,
+    LINE_PMODE,
     FILL_PMODE
   };
 
   enum Cull_face {
-    NO_CULL, 
-    FRONT_CULL, 
-    BACK_CULL, 
+    NO_CULL,
+    FRONT_CULL,
+    BACK_CULL,
     BOTH_CULL
   };
 
@@ -230,9 +230,9 @@ public:
     SEPARATE_SPECULAR_COLOR,
     SINGLE_COLOR
   };
-  
+
   enum Clear_bits {
-    COLOR_CLEAR = 0x1, 
+    COLOR_CLEAR = 0x1,
     DEPTH_CLEAR = 0x2,
     STENCIL_CLEAR = 0x4
   };
@@ -253,6 +253,7 @@ public:
   typedef boost::shared_ptr<Texture>            Shared_texture;
   typedef boost::shared_ptr<Material>           Shared_material;
   typedef boost::shared_ptr<Halftone>           Shared_halftone;
+  typedef boost::shared_ptr<Tex_gen>            Shared_tex_gen;
 
   SGAL_GFX_STRUCT;
 

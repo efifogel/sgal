@@ -322,8 +322,9 @@ void Group::init_prototype()
   // visible
   Execution_function exec_func =
     static_cast<Execution_function>(&Node::sphere_bound_changed);
-  SF_bool* field_info = new SF_bool(ISVISIBLE, "visible",
-                                    get_member_offset(&m_is_visible),
+  Boolean_handle_function is_visible_func =
+    static_cast<Boolean_handle_function>(&Group::is_visible_handle);
+  SF_bool* field_info = new SF_bool(ISVISIBLE, "visible", is_visible_func,
                                     exec_func);
   s_prototype->add_field_info(field_info);
 }
