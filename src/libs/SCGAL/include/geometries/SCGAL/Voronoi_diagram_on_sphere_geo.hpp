@@ -139,6 +139,7 @@ public:
 
   /// \name field handlers
   //@{
+  Vertex_style* site_style_handle(Field_info*) { return &m_site_style; }
   //@}
 
   /*! Set the node attributes. */

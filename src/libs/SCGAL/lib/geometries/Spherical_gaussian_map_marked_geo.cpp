@@ -438,27 +438,35 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
   //                                              get_member_offset(&m_sgm_nodes)));
 
   Execution_function exec_func =
-    static_cast<Execution_function>(&Spherical_gaussian_map_marked_geo::
-                                    increase_vertex_index);
-  SF_bool* bool_field =
-    new SF_bool(INCREASE_VERTEX_INDEX, "increaseVertexIndex",
-                get_member_offset(&m_increase_vertex_index),
-                exec_func);
-  s_prototype->add_field_info(bool_field);
-  exec_func =
-    static_cast<Execution_function>(&Spherical_gaussian_map_marked_geo::
-                                    increase_edge_index);
-  bool_field = new SF_bool(INCREASE_EDGE_INDEX, "increaseEdgeIndex",
-                           get_member_offset(&m_increase_edge_index),
-                           exec_func);
-  s_prototype->add_field_info(bool_field);
-  exec_func =
-    static_cast<Execution_function>(&Spherical_gaussian_map_marked_geo::
-                                    increase_facet_index);
-  bool_field = new SF_bool(INCREASE_FACET_INDEX, "increaseFacetIndex",
-                           get_member_offset(&m_increase_facet_index),
-                           exec_func);
-  s_prototype->add_field_info(bool_field);
+    static_cast<Execution_function>
+    (&Spherical_gaussian_map_marked_geo::increase_vertex_index);
+  Boolean_handle_function increase_vertex_index_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_marked_geo::increase_vertex_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
+                                          "increaseVertexIndex",
+                                          increase_vertex_index_func,
+                                          exec_func));
+
+  exec_func = static_cast<Execution_function>
+    (&Spherical_gaussian_map_marked_geo::increase_edge_index);
+  Boolean_handle_function increase_edge_index_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_marked_geo::increase_edge_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
+                                          "increaseEdgeIndex",
+                                          increase_edge_index_func,
+                                          exec_func));
+
+  exec_func = static_cast<Execution_function>
+    (&Spherical_gaussian_map_marked_geo::increase_facet_index);
+  Boolean_handle_function increase_facet_index_func =
+    static_cast<Boolean_handle_function>
+    (&Spherical_gaussian_map_marked_geo::increase_facet_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
+                                          "increaseFacetIndex",
+                                          increase_facet_index_func,
+                                          exec_func));
 }
 
 /*! \brief */

@@ -116,6 +116,10 @@ public:
 
   /// \name field handlers
   //@{
+  Float* aos_marked_vertex_radius_handle(Field_info*)
+  { return &m_aos_marked_vertex_radius; }
+  Float* aos_marked_edge_radius_handle(Field_info*)
+  { return &m_aos_marked_edge_radius; }
   //@}
 
   /*! Set the ellpsoid attributes. */

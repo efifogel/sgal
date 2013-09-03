@@ -111,12 +111,13 @@ void Voronoi_diagram_on_sphere_geo::init_prototype()
     new Container_proto(Geodesic_voronoi_on_sphere_geo::get_prototype());
 
   // siteStyleId
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Arrangement_on_surface_geo::
-                                    renderer_changed);
-  s_prototype->add_field_info(new SF_int(SITE_STYLE_ID, "siteStyleId",
-                                         get_member_offset(&m_site_style),
-                                         exec_func));
+  Execution_function exec_func = static_cast<Execution_function>
+    (&Arrangement_on_surface_geo::renderer_changed);
+  Uint_handle_function site_style_func =
+    reinterpret_cast<Uint_handle_function>
+    (&Voronoi_diagram_on_sphere_geo::site_style_handle);
+  s_prototype->add_field_info(new SF_uint(SITE_STYLE_ID, "siteStyleId",
+                                          site_style_func, exec_func));
 }
 
 /*! \brief deletes the container prototype. */

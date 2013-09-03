@@ -104,7 +104,7 @@ s_def_aos_boundary_vertex_color(.5f, .5f, 0);
 const Boolean Arrangement_on_surface_geo::s_def_aos_edge_enabled(true);
 const Arrangement_on_surface_geo::Edge_style
   Arrangement_on_surface_geo::s_def_aos_edge_style(Edge_shape::TUBE);
-const Int Arrangement_on_surface_geo::s_def_aos_edge_count(1);
+const Uint Arrangement_on_surface_geo::s_def_aos_edge_count(1);
 const Boolean Arrangement_on_surface_geo::s_def_aos_edge_directed(false);
 const Float Arrangement_on_surface_geo::s_def_aos_edge_radius(.03f);
 const Float Arrangement_on_surface_geo::s_def_aos_edge_line_width(1);
@@ -182,68 +182,86 @@ void Arrangement_on_surface_geo::init_prototype()
                                     renderer_changed);
 
   // drawOpaque
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_OPAQUE, "drawOpaque",
-                               get_member_offset(&m_draw_opaque), exec_func));
+  Boolean_handle_function draw_opaque_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_surface_geo::draw_opaque_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_OPAQUE, "drawOpaque",
+                                          draw_opaque_func, exec_func));
 
   // drawHaloed
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_HALOED, "drawHaloed",
-                               get_member_offset(&m_draw_haloed), exec_func));
+  Boolean_handle_function draw_haloed_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_surface_geo::draw_haloed_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_HALOED, "drawHaloed",
+                                          draw_haloed_func, exec_func));
 
   // drawHalftone
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_HALFTONE, "drawHalftone",
-                               get_member_offset(&m_draw_halftone), exec_func));
+  Boolean_handle_function draw_halftone_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_surface_geo::draw_halftone_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_HALFTONE, "drawHalftone",
+                                          draw_halftone_func, exec_func));
 
   // drawSurface
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_AOS_SURFACE, "drawSurface",
-                               get_member_offset(&m_draw_aos_surface),
-                               exec_func));
+  Boolean_handle_function draw_aos_surface_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_surface_geo::draw_aos_surface_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_AOS_SURFACE, "drawSurface",
+                                          draw_aos_surface_func, exec_func));
 
   // aosVertexStyleId
-  s_prototype->
-    add_field_info(new SF_int(AOS_VERTEX_STYLE_ID, "aosVertexStyleId",
-                              get_member_offset(&m_aos_vertex_style),
-                              exec_func));
+  Uint_handle_function aos_vertex_style_func =
+    reinterpret_cast<Uint_handle_function>
+    (&Arrangement_on_surface_geo::aos_vertex_style_handle);
+  s_prototype->add_field_info(new SF_uint(AOS_VERTEX_STYLE_ID,
+                                          "aosVertexStyleId",
+                                          aos_vertex_style_func,
+                                          exec_func));
 
+  Uint_handle_function aos_isolated_vertex_style_func =
+    reinterpret_cast<Uint_handle_function>
+    (&Arrangement_on_surface_geo::aos_isolated_vertex_style_handle);
   // aosIsolatedVertexStyleId
-  s_prototype->
-    add_field_info(new SF_int(AOS_ISOLATED_VERTEX_STYLE_ID,
-                              "aosIsolatedVertexStyleId",
-                              get_member_offset(&m_aos_isolated_vertex_style),
-                              exec_func));
+  s_prototype->add_field_info(new SF_uint(AOS_ISOLATED_VERTEX_STYLE_ID,
+                                          "aosIsolatedVertexStyleId",
+                                          aos_isolated_vertex_style_func,
+                                          exec_func));
 
   // aosIsolatedVertexRadius
-  s_prototype->
-    add_field_info(new SF_float(AOS_ISOLATED_VERTEX_RADIUS,
-                                "aosIsolatedVertexRadius",
-                                get_member_offset(&m_aos_isolated_vertex_radius)));
+  Float_handle_function aos_isolated_vertex_radius_func =
+    static_cast<Float_handle_function>
+    (&Arrangement_on_surface_geo::aos_isolated_vertex_radius_handle);
+  s_prototype->add_field_info(new SF_float(AOS_ISOLATED_VERTEX_RADIUS,
+                                           "aosIsolatedVertexRadius",
+                                           aos_isolated_vertex_radius_func));
 
   // aosEdgeEnabled
-  s_prototype->
-    add_field_info(new SF_bool(AOS_EDGE_ENABLED, "aosEdgeEnabled",
-                               get_member_offset(&m_aos_edge_enabled),
-                               exec_func));
+  Boolean_handle_function aos_edge_enabled_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_surface_geo::aos_edge_enabled_handle);
+  s_prototype->add_field_info(new SF_bool(AOS_EDGE_ENABLED, "aosEdgeEnabled",
+                                          aos_edge_enabled_func, exec_func));
 
   // aosEdgeStyleId
-  s_prototype->
-    add_field_info(new SF_int(AOS_EDGE_STYLE_ID, "aosEdgeStyleId",
-                              get_member_offset(&m_aos_edge_style),
-                              exec_func));
+  Uint_handle_function aos_edge_style_func =
+    reinterpret_cast<Uint_handle_function>
+    (&Arrangement_on_surface_geo::aos_edge_style_handle);
+  s_prototype->add_field_info(new SF_uint(AOS_EDGE_STYLE_ID, "aosEdgeStyleId",
+                                          aos_edge_style_func, exec_func));
 
   // aosEdgeCountId
-  s_prototype->
-    add_field_info(new SF_int(AOS_EDGE_COUNT_ID, "aosEdgeCountId",
-                              get_member_offset(&m_aos_edge_count),
-                              exec_func));
+  Uint_handle_function aos_edge_count_func =
+    static_cast<Uint_handle_function>
+    (&Arrangement_on_surface_geo::aos_edge_count_handle);
+  s_prototype->add_field_info(new SF_uint(AOS_EDGE_COUNT_ID, "aosEdgeCountId",
+                                          aos_edge_count_func, exec_func));
 
   // aosEdgeDirected
-  s_prototype->
-    add_field_info(new SF_bool(AOS_EDGE_DIRECTED, "aosEdgeDirected",
-                               get_member_offset(&m_aos_edge_directed),
-                               exec_func));
+  Boolean_handle_function aos_edge_directed_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_surface_geo::aos_edge_directed_handle);
+  s_prototype->add_field_info(new SF_bool(AOS_EDGE_DIRECTED, "aosEdgeDirected",
+                                          aos_edge_directed_func, exec_func));
 }
 
 /*! \brief deletes the container prototype. */
@@ -391,7 +409,7 @@ Container_proto* Arrangement_on_surface_geo::get_prototype()
       continue;
     }
     if (name == "aosEdgeCount") {
-      m_aos_edge_count = boost::lexical_cast<Int>(value);
+      m_aos_edge_count = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }

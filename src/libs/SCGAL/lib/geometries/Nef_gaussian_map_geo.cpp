@@ -778,61 +778,78 @@ void Nef_gaussian_map_geo::init_prototype()
 
   // Add the object fields to the prototype
   // drawDual
-  exec_func =
-    static_cast<Execution_function>(&Nef_gaussian_map_geo::draw_changed);
+  exec_func = static_cast<Execution_function>
+    (&Nef_gaussian_map_geo::draw_changed);
+  Boolean_handle_function draw_dual_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::draw_dual_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL, "drawDual",
-                                          get_member_offset(&m_draw_dual),
-                                          exec_func));
+                                          draw_dual_func, exec_func));
 
   // drawDualSphere
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_DUAL_SPHERE, "drawDualSphere",
-                               get_member_offset(&m_draw_dual_sphere)));
+  Boolean_handle_function draw_dual_sphere_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::draw_dual_sphere_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL_SPHERE, "drawDualSphere",
+                                          draw_dual_sphere_func));
 
   // trueDrawPrimal
+  Boolean_handle_function draw_primal_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
-                                          get_member_offset(&m_draw_primal)));
+                                          draw_primal_func));
 
   // trueDrawDual
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL, "trueDrawDual",
-                                         get_member_offset(&m_draw_dual)));
+                                          draw_dual_func));
 
   // drawDualOpaque
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
-                               get_member_offset(&m_draw_dual_opaque)));
+  Boolean_handle_function draw_dual_opaque_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::draw_dual_opaque_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
+                                          draw_dual_opaque_func));
 
   // drawDualHaloed
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
-                               get_member_offset(&m_draw_dual_haloed)));
+  Boolean_handle_function draw_dual_haloed_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::draw_dual_haloed_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
+                                          draw_dual_haloed_func));
 
   // increaseVertexIndex
-  exec_func =
-    static_cast<Execution_function>(&Nef_gaussian_map_geo::
-                                    increase_vertex_index);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_VERTEX_INDEX, "increaseVertexIndex",
-                               get_member_offset(&m_increase_vertex_index),
-                               exec_func));
+  exec_func = static_cast<Execution_function>
+    (&Nef_gaussian_map_geo::increase_vertex_index);
+  Boolean_handle_function increase_vertex_index_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::increase_vertex_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
+                                          "increaseVertexIndex",
+                                          increase_vertex_index_func,
+                                          exec_func));
 
   // increaseEdgeIndex
-  exec_func =
-    static_cast<Execution_function>(&Nef_gaussian_map_geo::
-                                    increase_edge_index);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_EDGE_INDEX, "increaseEdgeIndex",
-                               get_member_offset(&m_increase_edge_index),
-                               exec_func));
+  exec_func = static_cast<Execution_function>
+    (&Nef_gaussian_map_geo::increase_edge_index);
+  Boolean_handle_function increase_edge_index_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::increase_edge_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
+                                          "increaseEdgeIndex",
+                                          increase_edge_index_func,
+                                          exec_func));
 
   // increaseFacetIndex
-  exec_func =
-    static_cast<Execution_function>(&Nef_gaussian_map_geo::
-                                    increase_facet_index);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_FACET_INDEX, "increaseFacetIndex",
-                               get_member_offset(&m_increase_facet_index),
-                               exec_func));
+  exec_func = static_cast<Execution_function>
+    (&Nef_gaussian_map_geo::increase_facet_index);
+  Boolean_handle_function increase_facet_index_func =
+    static_cast<Boolean_handle_function>
+    (&Nef_gaussian_map_geo::increase_facet_index_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
+                                          "increaseFacetIndex",
+                                          increase_facet_index_func,
+                                          exec_func));
 
   // // geometries
   //! \todo change to MF_shared_container and change m_ngm_nodes respectively.

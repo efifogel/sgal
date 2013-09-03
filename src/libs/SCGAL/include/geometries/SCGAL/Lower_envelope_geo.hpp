@@ -85,6 +85,9 @@ public:
 
   /// \name field handlers
   //@{
+  Float* vertex_radius_handle(Field_info*) { return &m_vertex_radius; }
+  Float* edge_radius_handle(Field_info*) { return &m_edge_radius; }
+  Float* face_transparency_handle(Field_info*) { return &m_face_transparency; }
   //@}
 
   /*! Set the attributes of this node */

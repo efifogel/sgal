@@ -121,49 +121,64 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
 
   // time
   Execution_function exec_func =
-    static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
-                                    time_changed);
-  s_prototype->add_field_info(new SF_float(TIME, "time",
-                                           get_member_offset(&m_time),
+    static_cast<Execution_function>
+    (&Arrangement_on_sphere_sim_geo::time_changed);
+  Float_handle_function time_func =
+    static_cast<Float_handle_function>
+    (&Arrangement_on_sphere_sim_geo::time_handle);
+  s_prototype->add_field_info(new SF_float(TIME, "time", time_func,
                                            exec_func));
 
   // resume
   exec_func =
     static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::resume);
-  s_prototype->add_field_info(new SF_bool(RESUME, "resume",
-                                          get_member_offset(&m_resume),
+  Boolean_handle_function resume_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_sphere_sim_geo::resume_handle);
+  s_prototype->add_field_info(new SF_bool(RESUME, "resume", resume_func,
                                           exec_func));
 
   // suspend
   exec_func =
     static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::suspend);
-  s_prototype->add_field_info(new SF_bool(SUSPEND, "suspend",
-                                          get_member_offset(&m_suspend),
+  Boolean_handle_function suspend_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_sphere_sim_geo::suspend_handle);
+  s_prototype->add_field_info(new SF_bool(SUSPEND, "suspend", suspend_func,
                                           exec_func));
 
   // increaseVertexLabel
   exec_func = static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
                                               increase_vertex_label);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_VERTEX_LABEL, "increaseVertexLabel",
-                               get_member_offset(&m_increase_vertex_label),
-                               exec_func));
+  Boolean_handle_function increase_vertex_label_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_sphere_sim_geo::increase_vertex_label_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_LABEL,
+                                          "increaseVertexLabel",
+                                          increase_vertex_label_func,
+                                          exec_func));
 
   // increaseEdgeLabel
   exec_func = static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
                                               increase_edge_label);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_EDGE_LABEL, "increaseEdgeLabel",
-                               get_member_offset(&m_increase_edge_label),
-                               exec_func));
+  Boolean_handle_function increase_edge_label_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_sphere_sim_geo::increase_edge_label_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_LABEL,
+                                          "increaseEdgeLabel",
+                                          increase_edge_label_func,
+                                          exec_func));
 
   // increaseFaceLabel
   exec_func = static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
                                               increase_face_label);
-  s_prototype->
-    add_field_info(new SF_bool(INCREASE_FACE_LABEL, "increaseFaceLabel",
-                               get_member_offset(&m_increase_face_label),
-                               exec_func));
+  Boolean_handle_function increase_face_label_func =
+    static_cast<Boolean_handle_function>
+    (&Arrangement_on_sphere_sim_geo::increase_face_label_handle);
+  s_prototype->add_field_info(new SF_bool(INCREASE_FACE_LABEL,
+                                          "increaseFaceLabel",
+                                          increase_face_label_func,
+                                          exec_func));
 }
 
 /*! \brief deletes the container prototype. */

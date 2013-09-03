@@ -98,7 +98,7 @@ s_def_aos_nonreal_vertex_color(0, 0, 0);
 const Boolean Cubical_gaussian_map_geo::s_def_aos_edge_enabled(true);
 const Cubical_gaussian_map_geo::Edge_style
   Cubical_gaussian_map_geo::s_def_aos_edge_style(Edge_shape::TUBE);
-const Int Cubical_gaussian_map_geo::s_def_aos_edge_count(1);
+const Uint Cubical_gaussian_map_geo::s_def_aos_edge_count(1);
 const Boolean Cubical_gaussian_map_geo::s_def_aos_edge_directed(false);
 const Float Cubical_gaussian_map_geo::s_def_aos_edge_radius(.03f);
 const Float Cubical_gaussian_map_geo::s_def_aos_edge_line_width(1);
@@ -481,7 +481,7 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
       continue;
     }
     if (name == "aosEdgeCount") {
-      m_aos_edge_count = boost::lexical_cast<Int>(value);
+      m_aos_edge_count = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -678,16 +678,16 @@ void Cubical_gaussian_map_geo::init_prototype()
   Float_handle_function aos_edge_line_width_func =
     static_cast<Float_handle_function>
     (&Cubical_gaussian_map_geo::aos_edge_line_width_handle);
-  s_prototype->
-    add_field_info(new SF_float(DUAL_EDGE_LINE_WIDTH, "dualLineWidth",
-                                aos_edge_line_width_func));
+  s_prototype->add_field_info(new SF_float(DUAL_EDGE_LINE_WIDTH,
+                                           "dualLineWidth",
+                                           aos_edge_line_width_func));
 
   // translated
+  exec_func =
+    static_cast<Execution_function>(&Cubical_gaussian_map_geo::coord_changed);
   Boolean_handle_function translated_func =
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::translated_handle);
-  exec_func =
-    static_cast<Execution_function>(&Cubical_gaussian_map_geo::coord_changed);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
                                           translated_func, exec_func));
 

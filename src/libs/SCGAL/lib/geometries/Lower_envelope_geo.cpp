@@ -183,19 +183,26 @@ void Lower_envelope_geo::init_prototype()
   s_prototype = new Container_proto(Geometry::get_prototype());
 
   // vertexRadius
-  s_prototype->
-    add_field_info(new SF_float(VERTEX_RADIUS, "vertexRadius",
-                                get_member_offset(&m_vertex_radius)));
+  Float_handle_function vertex_radius_func =
+    static_cast<Float_handle_function>
+    (&Lower_envelope_geo::vertex_radius_handle);
+  s_prototype->add_field_info(new SF_float(VERTEX_RADIUS, "vertexRadius",
+                                           vertex_radius_func));
 
   // edgeRadius
-  s_prototype->
-    add_field_info(new SF_float(EDGE_RADIUS, "edgeRadius",
-                                get_member_offset(&m_edge_radius)));
+  Float_handle_function edge_radius_func =
+    static_cast<Float_handle_function>
+    (&Lower_envelope_geo::edge_radius_handle);
+  s_prototype->add_field_info(new SF_float(EDGE_RADIUS, "edgeRadius",
+                                           edge_radius_func));
 
   // faceTransparency
-  s_prototype->
-    add_field_info(new SF_float(FACE_TRANSPARENCY, "faceTransparency",
-                                get_member_offset(&m_face_transparency)));
+  Float_handle_function face_transparency_func =
+    static_cast<Float_handle_function>
+    (&Lower_envelope_geo::face_transparency_handle);
+  s_prototype->add_field_info(new SF_float(FACE_TRANSPARENCY,
+                                           "faceTransparency",
+                                           face_transparency_func));
 }
 
 /*! \brief deletes the prototype of this container. */

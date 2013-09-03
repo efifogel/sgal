@@ -104,7 +104,7 @@ const Boolean Spherical_gaussian_map_base_geo::s_def_aos_edge_enabled(true);
 const Spherical_gaussian_map_base_geo::Edge_style
   Spherical_gaussian_map_base_geo::
   s_def_aos_edge_style(Edge_shape::TUBE);
-const Int Spherical_gaussian_map_base_geo::s_def_aos_edge_count(1);
+const Uint Spherical_gaussian_map_base_geo::s_def_aos_edge_count(1);
 const Boolean Spherical_gaussian_map_base_geo::s_def_aos_edge_directed(false);
 const Float Spherical_gaussian_map_base_geo::s_def_aos_edge_radius(.03f);
 const Float Spherical_gaussian_map_base_geo::s_def_aos_edge_line_width(1);
@@ -286,7 +286,7 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "aosEdgeCount") {
-      m_aos_edge_count = boost::lexical_cast<Int>(value);
+      m_aos_edge_count = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }

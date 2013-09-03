@@ -98,10 +98,6 @@ public:
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
-  /// \name field handlers
-  //@{
-  //@}
-
   /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
 

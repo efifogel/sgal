@@ -87,8 +87,11 @@ void Geodesic_voronoi_on_sphere_geo::init_prototype()
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 
   // drawSites
+  Boolean_handle_function draw_sites_func =
+    static_cast<Boolean_handle_function>
+    (&Geodesic_voronoi_on_sphere_geo::draw_sites_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_SITES, "drawSites",
-                                          get_member_offset(&m_draw_sites)));
+                                          draw_sites_func));
 }
 
 /*! \brief deletes the container prototype. */

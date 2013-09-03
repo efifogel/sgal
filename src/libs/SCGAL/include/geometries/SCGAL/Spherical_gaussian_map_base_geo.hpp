@@ -120,7 +120,7 @@ private:
 
   static const Boolean s_def_aos_edge_enabled;
   static const Edge_style s_def_aos_edge_style;
-  static const Int s_def_aos_edge_count;
+  static const Uint s_def_aos_edge_count;
   static const Boolean s_def_aos_edge_directed;
   static const Float s_def_aos_edge_radius;
   static const Float s_def_aos_edge_line_width;
@@ -332,7 +332,7 @@ protected:
   Edge_style m_aos_edge_style;
 
   /*! The edge rendering type. */
-  Int m_aos_edge_count;
+  Uint m_aos_edge_count;
 
   /*! Indicates whether edges are rendered directed or not. */
   Boolean m_aos_edge_directed;

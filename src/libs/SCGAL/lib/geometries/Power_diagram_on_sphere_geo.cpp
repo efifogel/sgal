@@ -123,33 +123,36 @@ void Power_diagram_on_sphere_geo::init_prototype()
   s_prototype =
     new Container_proto(Geodesic_voronoi_on_sphere_geo::get_prototype());
 
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Arrangement_on_surface_geo::
-                                    renderer_changed);
+  Execution_function exec_func = static_cast<Execution_function>
+    (&Arrangement_on_surface_geo::renderer_changed);
 
   // siteEnabled
-  s_prototype->
-    add_field_info(new SF_bool(SITE_ENABLED, "siteEnabled",
-                               get_member_offset(&m_site_enabled),
-                               exec_func));
+  Boolean_handle_function site_enabled_func =
+    static_cast<Boolean_handle_function>
+    (&Power_diagram_on_sphere_geo::site_enabled_handle);
+  s_prototype->add_field_info(new SF_bool(SITE_ENABLED, "siteEnabled",
+                                          site_enabled_func, exec_func));
 
   // siteStyleId
-  s_prototype->
-    add_field_info(new SF_int(SITE_STYLE_ID, "siteStyleId",
-                              get_member_offset(&m_site_style),
-                              exec_func));
+  Uint_handle_function site_style_func =
+    reinterpret_cast<Uint_handle_function>
+    (&Power_diagram_on_sphere_geo::site_style_handle);
+  s_prototype->add_field_info(new SF_uint(SITE_STYLE_ID, "siteStyleId",
+                                          site_style_func, exec_func));
 
   // siteCountId
-  s_prototype->
-    add_field_info(new SF_int(SITE_COUNT_ID, "siteCountId",
-                              get_member_offset(&m_site_count),
-                              exec_func));
+  Int_handle_function site_count_func =
+    static_cast<Int_handle_function>
+    (&Power_diagram_on_sphere_geo::site_count_handle);
+  s_prototype->add_field_info(new SF_int(SITE_COUNT_ID, "siteCountId",
+                                         site_count_func, exec_func));
 
   // siteDirected
-  s_prototype->
-    add_field_info(new SF_bool(SITE_DIRECTED, "siteDirected",
-                               get_member_offset(&m_site_directed),
-                               exec_func));
+  Boolean_handle_function site_directed_func =
+    static_cast<Boolean_handle_function>
+    (&Power_diagram_on_sphere_geo::site_directed_handle);
+  s_prototype->add_field_info(new SF_bool(SITE_DIRECTED, "siteDirected",
+                                          site_directed_func, exec_func));
 }
 
 /*! \brief deletes the container prototype. */

@@ -514,11 +514,11 @@ public:
   /// \name field handlers
   //@{
   Boolean* increase_vertex_index_handle(Field_info*)
-    { return &m_increase_vertex_index; }
+  { return &m_increase_vertex_index; }
   Boolean* increase_edge_index_handle(Field_info*)
-    { return &m_increase_edge_index; }
+  { return &m_increase_edge_index; }
   Boolean* increase_facet_index_handle(Field_info*)
-    { return &m_increase_facet_index; }
+  { return &m_increase_facet_index; }
   //@}
 
   /*! Set the attributes of this node.

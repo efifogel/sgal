@@ -146,16 +146,20 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 
   // aosMarkedVertexRadius
-  s_prototype->
-    add_field_info(new SF_float(AOS_MARKED_VERTEX_RADIUS,
-                                "aosMarkedVertexRadius",
-                                get_member_offset(&m_aos_marked_vertex_radius)));
+  Float_handle_function aos_marked_vertex_radius_func =
+    static_cast<Float_handle_function>
+    (&Arrangement_on_sphere_marked_geo::aos_marked_vertex_radius_handle);
+  s_prototype->add_field_info(new SF_float(AOS_MARKED_VERTEX_RADIUS,
+                                           "aosMarkedVertexRadius",
+                                           aos_marked_vertex_radius_func));
 
   // aosMarkedEdgeRadius
-  s_prototype->
-    add_field_info(new SF_float(AOS_MARKED_EDGE_RADIUS,
-                                "aosMarkedEdgeRadius",
-                                get_member_offset(&m_aos_marked_edge_radius)));
+  Float_handle_function aos_marked_edge_radius_func =
+    static_cast<Float_handle_function>
+    (&Arrangement_on_sphere_marked_geo::aos_marked_edge_radius_handle);
+  s_prototype->add_field_info(new SF_float(AOS_MARKED_EDGE_RADIUS,
+                                           "aosMarkedEdgeRadius",
+                                           aos_marked_edge_radius_func));
 }
 
 /*! \brief deletes the container prototype. */

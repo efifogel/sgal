@@ -155,6 +155,21 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* draw_opaque_handle(Field_info*) { return &m_draw_opaque; }
+  Boolean* draw_haloed_handle(Field_info*) { return &m_draw_haloed; }
+  Boolean* draw_halftone_handle(Field_info*) { return &m_draw_halftone; }
+  Boolean* draw_aos_surface_handle(Field_info*) { return &m_draw_aos_surface; }
+  Vertex_style* aos_vertex_style_handle(Field_info*)
+  { return &m_aos_vertex_style; }
+  Vertex_style* aos_isolated_vertex_style_handle(Field_info*)
+  { return &m_aos_isolated_vertex_style; }
+  Float* aos_isolated_vertex_radius_handle(Field_info*)
+  { return &m_aos_isolated_vertex_radius; }
+  Boolean* aos_edge_enabled_handle(Field_info*) { return &m_aos_edge_enabled; }
+  Edge_style* aos_edge_style_handle(Field_info*) { return &m_aos_edge_style; }
+  Uint* aos_edge_count_handle(Field_info*) { return &m_aos_edge_count; }
+  Boolean* aos_edge_directed_handle(Field_info*)
+  { return &m_aos_edge_directed; }
   //@}
 
   /*! Set the ellpsoid attributes. */
@@ -355,10 +370,10 @@ public:
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
 
   /*! Obtain the edge shape count. */
-  Int get_aos_edge_count() const { return m_aos_edge_count; }
+  Uint get_aos_edge_count() const { return m_aos_edge_count; }
 
   /*! Set the edge shape count. */
-  void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
+  void set_aos_edge_count(Uint count) { m_aos_edge_count = count; }
 
   /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
@@ -454,7 +469,7 @@ public:
   Edge_style m_aos_edge_style;
 
   /*! The edge rendering type. */
-  Int m_aos_edge_count;
+  Uint m_aos_edge_count;
 
   /*! Indicates whether edges are rendered directed or not. */
   Boolean m_aos_edge_directed;
@@ -643,7 +658,7 @@ private:
 
   static const Boolean s_def_aos_edge_enabled;
   static const Edge_style s_def_aos_edge_style;
-  static const Int s_def_aos_edge_count;
+  static const Uint s_def_aos_edge_count;
   static const Boolean s_def_aos_edge_directed;
   static const Float s_def_aos_edge_radius;
   static const Float s_def_aos_edge_line_width;
