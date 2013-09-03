@@ -221,12 +221,13 @@ On Windows, you can build an executable using GNU tools from a cygwin
 bash terminal. Unfortunately, bootstrap fails, but I found a workaround.
 The issue is described at
 http://stackoverflow.com/questions/17143607/i-cannot-build-bison-on-cygwin-using-bootstrap/17157991?noredirect=1#17157991. In short,
-- Edit the file bootstrap.conf and search for the statement:
+
+Edit the file bootstrap.conf and search for the statement:
 
   gnulib_tool_option_extras='--symlink --makefile-name=gnulib.mk'
 
-remove '--symlink' option. Then, run the bootstrap script while forcing
-(hard) copies over symbolic links and procede as above:
+remove the '--symlink' option. Then, run the bootstrap script while forcing
+(hard) copies over symbolic links and proceed as above:
 
   ./bootstrap --copy
   ./configure
