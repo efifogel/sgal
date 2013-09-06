@@ -69,8 +69,9 @@ void Piece::init_prototype()
   // size
   Execution_function exec_func =
     static_cast<Execution_function>(&Piece::structure_changed);
-  s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size",
-                                          get_member_offset(&m_unit_size),
+  Uint_handle_function unit_size_func =
+    static_cast<Uint_handle_function>(&Piece::unit_size_handle);
+  s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size", unit_size_func,
                                           exec_func));
 }
 

@@ -85,6 +85,13 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
+  Boolean* draw_alternate_handle(Field_info*) { return &m_draw_alternate; }
+  Boolean* inc_alternate_handle(Field_info*) { return &m_inc_alternate; }
+  Boolean* draw_aos_minkowski_sums_handle(Field_info*)
+  { return &m_draw_aos_minkowski_sums; }
+  Boolean* inc_minkowski_sums_handle(Field_info*)
+  { return &m_inc_minkowski_sums; }
   //@}
 
   /*! Set the attributes of this node. */

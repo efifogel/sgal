@@ -136,6 +136,11 @@ public:
 
   /// \name field handlers
   //@{
+  // coord
+  Shared_coord_array* coord_array_handle(Field_info*) { return &m_coord_array; }
+  Float* line_width_handle(Field_info*) { return &m_line_width; }
+  Boolean* draw_haloed_handle(Field_info*) { return &m_draw_haloed; }
+
   //@}
 
   /*! Set the attributes of this node */

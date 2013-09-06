@@ -147,6 +147,16 @@ public:
 
   /// \name field handlers
   //@{
+  // beginCap
+  Boolean* begin_cap_handle(Field_info*) { return &m_begin_cap; }
+  Boolean* end_cap_handle(Field_info*) { return &m_end_cap; }
+  Boolean* loop_handle(Field_info*) { return &m_loop; }
+  SGAL::Array<Vector2f>* cross_section_handle(Field_info*)
+  { return &m_cross_section; }
+  SGAL::Array<Rotation>* orientation_handle(Field_info*)
+  { return &m_orientation; }
+  SGAL::Array<Vector2f>* scale_handle(Field_info*) { return &m_scale; }
+  SGAL::Array<Vector3f>* spine_handle(Field_info*) { return &m_spine; }
   //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.

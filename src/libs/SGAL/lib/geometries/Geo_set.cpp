@@ -74,34 +74,43 @@ void Geo_set::init_prototype()
 
   // Add the field-info records to the prototype:
   Execution_function exec_func;
+
   // coord
   exec_func = static_cast<Execution_function>(&Geo_set::coord_changed);
-  SF_shared_container* field;
-  field = new SF_shared_container(COORD_ARRAY, "coord",
-                                  get_member_offset(&m_coord_array),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function coord_array_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Geo_set::coord_array_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD_ARRAY, "coord",
+                                                      coord_array_func,
+                                                      exec_func));
 
   // normal
   exec_func = static_cast<Execution_function>(&Geo_set::normal_changed);
-  field = new SF_shared_container(NORMAL_ARRAY, "normal",
-                                  get_member_offset(&m_normal_array),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function normal_array_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Geo_set::normal_array_handle);
+  s_prototype->add_field_info(new SF_shared_container(NORMAL_ARRAY, "normal",
+                                                      normal_array_func,
+                                                      exec_func));
 
   // color
   exec_func = static_cast<Execution_function>(&Geo_set::color_changed);
-  field = new SF_shared_container(COLOR_ARRAY, "color",
-                                  get_member_offset(&m_color_array),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function color_array_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Geo_set::color_array_handle);
+  s_prototype->add_field_info(new SF_shared_container(COLOR_ARRAY, "color",
+                                                      color_array_func,
+                                                      exec_func));
 
   // texCoord
   exec_func = static_cast<Execution_function>(&Geo_set::tex_coord_changed);
-  field = new SF_shared_container(TEX_COORD_ARRAY, "texCoord",
-                                  get_member_offset(&m_tex_coord_array),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function tex_coord_array_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Geo_set::tex_coord_array_handle);
+  s_prototype->add_field_info(new SF_shared_container(TEX_COORD_ARRAY,
+                                                      "texCoord",
+                                                      tex_coord_array_func,
+                                                      exec_func));
 }
 
 /*! \brief deletes the container prototype. */

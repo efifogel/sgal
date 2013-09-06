@@ -234,8 +234,8 @@ void Camera::init_prototype()
     static_cast<Execution_function>(&Camera::update_field_of_view);
   Float_handle_function fov_func =
     static_cast<Float_handle_function>(&Camera::fov_handle);
-  s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView", fov_func,
-                                           exec_func));
+  s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
+                                           fov_func, exec_func));
 
   // description
   String_handle_function description_func =

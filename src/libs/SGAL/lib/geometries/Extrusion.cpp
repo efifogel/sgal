@@ -444,40 +444,46 @@ void Extrusion::init_prototype()
   // beginCap
   Execution_function exec_func =
     static_cast<Execution_function>(&Extrusion::structure_changed);
+  Boolean_handle_function begin_cap_func =
+    static_cast<Boolean_handle_function>(&Extrusion::begin_cap_handle);
   s_prototype->add_field_info(new SF_bool(BEGIN_CAP, "beginCap",
-                                          get_member_offset(&m_begin_cap),
-                                          exec_func));
+                                          begin_cap_func, exec_func));
 
   // endCap
+  Boolean_handle_function end_cap_func =
+    static_cast<Boolean_handle_function>(&Extrusion::end_cap_handle);
   s_prototype->add_field_info(new SF_bool(END_CAP, "endCap",
-                                          get_member_offset(&m_end_cap),
-                                          exec_func));
+                                          end_cap_func, exec_func));
 
   // loop
-  s_prototype->add_field_info(new SF_bool(LOOP, "loop",
-                                          get_member_offset(&m_loop),
-                                          exec_func));
+  Boolean_handle_function loop_func =
+    static_cast<Boolean_handle_function>(&Extrusion::loop_handle);
+  s_prototype->add_field_info(new SF_bool(LOOP, "loop", loop_func, exec_func));
 
   // crossSection
-  s_prototype->
-    add_field_info(new MF_vector2f(CROSS_SECTION, "crossSection",
-                                   get_member_offset(&m_cross_section),
-                                   exec_func));
+  Vector2f_array_handle_function cross_section_func =
+    static_cast<Vector2f_array_handle_function>
+    (&Extrusion::cross_section_handle);
+  s_prototype->add_field_info(new MF_vector2f(CROSS_SECTION, "crossSection",
+                                              cross_section_func, exec_func));
 
   // orientation
-  s_prototype->
-    add_field_info(new MF_rotation(ORIENTATION, "orientation",
-                                   get_member_offset(&m_orientation),
-                                   exec_func));
+  Rotation_array_handle_function orientation_func =
+    static_cast<Rotation_array_handle_function>
+    (&Extrusion::orientation_handle);
+  s_prototype->add_field_info(new MF_rotation(ORIENTATION, "orientation",
+                                              orientation_func, exec_func));
 
   // scale
-  s_prototype->add_field_info(new MF_vector2f(SCALE, "scale",
-                                              get_member_offset(&m_scale),
+  Vector2f_array_handle_function scale_func =
+    static_cast<Vector2f_array_handle_function>(&Extrusion::scale_handle);
+  s_prototype->add_field_info(new MF_vector2f(SCALE, "scale", scale_func,
                                               exec_func));
 
   // spine
-  s_prototype->add_field_info(new MF_vector3f(SPINE, "spine",
-                                              get_member_offset(&m_spine),
+  Vector3f_array_handle_function spine_func =
+    static_cast<Vector3f_array_handle_function>(&Extrusion::spine_handle);
+  s_prototype->add_field_info(new MF_vector3f(SPINE, "spine", spine_func,
                                               exec_func));
 }
 

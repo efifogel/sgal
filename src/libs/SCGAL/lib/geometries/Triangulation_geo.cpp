@@ -311,19 +311,25 @@ void Triangulation_geo::init_prototype()
   // coord
   Execution_function exec_func =
     static_cast<Execution_function>(&Triangulation_geo::coord_changed);
-  SF_shared_container* field =
-    new SF_shared_container(COORD, "coord",
-                            get_member_offset(&m_coord_array),
-                            exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function coord_array_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Triangulation_geo::coord_array_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD, "coord",
+                                                      coord_array_func,
+                                                      exec_func));
 
   // lineWidth
+  Float_handle_function line_width_func =
+    static_cast<Float_handle_function>(&Triangulation_geo::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
-                                           get_member_offset(&m_line_width)));
+                                           line_width_func));
 
   // drawHaloed
+  Boolean_handle_function draw_haloed_func =
+    static_cast<Boolean_handle_function>
+    (&Triangulation_geo::draw_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_HALOED, "drawHaloed",
-                                          get_member_offset(&m_draw_haloed)));
+                                          draw_haloed_func));
 
 }
 

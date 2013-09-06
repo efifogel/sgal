@@ -74,6 +74,9 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* execute_handle(Field_info*) { return &m_execute; }
+  // shared_container &m_coord_array1;
+  // shared_container &m_coord_array2;
   //@}
 
   /*! Set the attributes of this node.

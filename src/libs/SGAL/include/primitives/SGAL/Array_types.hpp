@@ -36,6 +36,7 @@ class Container;
 
 typedef boost::shared_ptr<Container>                   Shared_container;
 
+typedef SGAL::Array<Boolean>                           Boolean_array;
 typedef SGAL::Array<Float>                             Float_array;
 typedef SGAL::Array<Uint>                              Uint_array;
 typedef SGAL::Array<Int>                               Int_array;

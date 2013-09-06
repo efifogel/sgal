@@ -71,6 +71,7 @@ typedef Field_info_template<Shared_container, SF_SHARED_CONTAINER>
                                                        SF_shared_container;
 
 // Multi field
+typedef Field_info_template<Boolean_array, MF_FLOAT>   MF_boolean;
 typedef Field_info_template<Float_array, MF_FLOAT>     MF_float;
 typedef Field_info_template<Uint_array, MF_INT32>      MF_uint;
 typedef Field_info_template<Int_array, MF_INT32>       MF_int;
@@ -107,6 +108,22 @@ typedef Handle_function<Shared_container>::type
                                               Shared_container_handle_function;
 
 // Multi field handle functions
+typedef Handle_function<Boolean_array>::type  Boolean_array_handle_function;
+typedef Handle_function<Float_array>::type    Float_array_handle_function;
+typedef Handle_function<Uint_array>::type     Uint_array_handle_function;
+typedef Handle_function<Int_array>::type      Int_array_handle_function;
+typedef Handle_function<Scene_time_array>::type
+                                              Scene_time_array_handle_function;
+typedef Handle_function<Vector2f_array>::type Vector2f_array_handle_function;
+typedef Handle_function<Vector3f_array>::type Vector3f_array_handle_function;
+typedef Handle_function<Vector3f_array>::type Vector3f_array_handle_function;
+typedef Handle_function<Vector4f_array>::type Vector4f_array_handle_function;
+typedef Handle_function<Rotation_array>::type Rotation_array_handle_function;
+typedef Handle_function<Sphere_bound_array>::type
+  Sphere_bound_array_handle_function;
+typedef Handle_function<String_array>::type   String_array_handle_function;
+typedef Handle_function<Shared_container_array>::type
+  Shared_container_array_handle_function;
 
 #if 0
 class Field_info_utils {

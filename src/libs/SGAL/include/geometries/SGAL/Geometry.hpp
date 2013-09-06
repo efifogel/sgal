@@ -45,6 +45,7 @@ class Draw_action;
 class Isect_action;
 class Container_proto;
 class Element;
+class Field_info;
 
 class SGAL_SGAL_DECL Geometry : public Container {
 public:
@@ -78,6 +79,9 @@ public:
 
   /// \name field handlers
   //@{
+  Sphere_bound* sphere_bound_handle(Field_info*) { return &m_sphere_bound; }
+  Boolean* generated_tex_coord_handle(Field_info*)
+  { return &m_generated_tex_coord; }
   //@}
 
   /*! Set the attributes of this node. */

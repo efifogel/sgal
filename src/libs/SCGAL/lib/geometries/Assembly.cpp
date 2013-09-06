@@ -179,45 +179,49 @@ void Assembly::init_prototype()
   s_prototype = new Container_proto(Group::get_prototype());
 
   // Add the field-info records to the prototype:
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Assembly::solve);
+  Execution_function exec_func;
 
   // trigger
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          get_member_offset(&m_trigger),
+  exec_func = static_cast<Execution_function>(&Assembly::solve);
+  Boolean_handle_function trigger_func =
+    static_cast<Boolean_handle_function>(&Assembly::trigger_handle);
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
                                           exec_func));
 
   // drawAlternate
-  exec_func =
-    static_cast<Execution_function>(&Assembly::draw_alt_changed);
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_ALT, "drawAlternate",
-                               get_member_offset(&m_draw_alternate),
-                               exec_func));
+  exec_func = static_cast<Execution_function>(&Assembly::draw_alt_changed);
+  Boolean_handle_function draw_alternate_func =
+    static_cast<Boolean_handle_function>(&Assembly::draw_alternate_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_ALT, "drawAlternate",
+                                          draw_alternate_func, exec_func));
 
   // incAlternate
-  exec_func =
-    static_cast<Execution_function>(&Assembly::inc_alt_changed);
-  s_prototype->
-    add_field_info(new SF_bool(INC_ALT, "incAlternate",
-                               get_member_offset(&m_inc_alternate),
-                               exec_func));
+  exec_func = static_cast<Execution_function>(&Assembly::inc_alt_changed);
+  Boolean_handle_function inc_alternate_func =
+    static_cast<Boolean_handle_function>(&Assembly::inc_alternate_handle);
+  s_prototype->add_field_info(new SF_bool(INC_ALT, "incAlternate",
+                                          inc_alternate_func, exec_func));
 
   // drawAosMinkowskiSums
   exec_func =
     static_cast<Execution_function>(&Assembly::draw_aos_minkowski_sums_changed);
-  s_prototype->
-    add_field_info(new SF_bool(DRAW_AOS_MINKOWSKI_SUMS, "drawAosMinkowskiSums",
-                               get_member_offset(&m_draw_aos_minkowski_sums),
-                               exec_func));
+  Boolean_handle_function draw_aos_minkowski_sums_func =
+    static_cast<Boolean_handle_function>
+    (&Assembly::draw_aos_minkowski_sums_handle);
+  s_prototype->add_field_info(new SF_bool(DRAW_AOS_MINKOWSKI_SUMS,
+                                          "drawAosMinkowskiSums",
+                                          draw_aos_minkowski_sums_func,
+                                          exec_func));
 
   // incMinkowskiSums
   exec_func =
     static_cast<Execution_function>(&Assembly::inc_minkowski_sums_changed);
-  s_prototype->
-    add_field_info(new SF_bool(INC_MINKOWSKI_SUMS, "incMinkowskiSums",
-                               get_member_offset(&m_inc_minkowski_sums),
-                               exec_func));
+  Boolean_handle_function inc_minkowski_sums_func =
+    static_cast<Boolean_handle_function>(&Assembly::inc_minkowski_sums_handle);
+  s_prototype->add_field_info(new SF_bool(INC_MINKOWSKI_SUMS,
+                                          "incMinkowskiSums",
+                                          inc_minkowski_sums_func,
+                                          exec_func));
 }
 
 /*! \brief deletes the node prototype. */

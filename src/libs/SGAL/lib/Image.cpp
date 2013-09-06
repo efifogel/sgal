@@ -65,8 +65,9 @@ void Image::init_prototype()
   s_prototype = new Container_proto(Image_base::get_prototype());
 
   // url
-  s_prototype->add_field_info(new SF_string(URL, "url",
-                                            get_member_offset(&m_url)));
+  String_handle_function url_func =
+    static_cast<String_handle_function>(&Image::url_handle);
+  s_prototype->add_field_info(new SF_string(URL, "url", url_func));
 }
 
 /*! \brief deletes the prototype. */

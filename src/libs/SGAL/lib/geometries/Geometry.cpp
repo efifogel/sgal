@@ -52,19 +52,19 @@ void Geometry::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto();
 
-  // Add the field-info records to the prototype:
-  // Execution_function exec_func;
-  SF_sphere_bound* sphere_bound_fi;
-  SF_bool* bool_field;
+  // sphereBound
+  Sphere_bound_handle_function sphere_bound_func =
+    static_cast<Sphere_bound_handle_function>(&Geometry::sphere_bound_handle);
+  s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
+                                                  sphere_bound_func));
 
-  // exec_func = static_cast<Execution_function>(&Transform::parts_changed);
-  sphere_bound_fi = new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
-                                        get_member_offset(&m_sphere_bound));
-  s_prototype->add_field_info(sphere_bound_fi);
-
-  bool_field = new SF_bool(GENERATED_TEX_COORD, "generatedTexCoord",
-                           get_member_offset(&m_generated_tex_coord));
-  s_prototype->add_field_info(bool_field);
+  // generatedTexCoord
+  Boolean_handle_function generated_tex_coord_func =
+    static_cast<Boolean_handle_function>
+    (&Geometry::generated_tex_coord_handle);
+  s_prototype->add_field_info(new SF_bool(GENERATED_TEX_COORD,
+                                          "generatedTexCoord",
+                                          generated_tex_coord_func));
 }
 
 /*! \brief deletes the geometry prototype. */
@@ -145,16 +145,12 @@ Attribute_list Geometry::get_attributes()
 }
 
 /*! \brief obtains the parent node from the scene graph and add the geometry
- * to it.
- * \param sg a pointer to the scene graph.
- * \param parentName the name of the parent object.
  */
-void Geometry::add_to_scene(Scene_graph* sg, XML_entity* parent)
+void Geometry::add_to_scene(Scene_graph* sg)
 {
   Container::add_to_scene(sg, parent);
-  Shape *shape = dynamic_cast<Shape *>(parent);
-  if (shape)
-    shape->set_geometry(this);
+  Shape* shape = dynamic_cast<Shape*>(parent);
+  if (shape) shape->set_geometry(this);
 
   // insert the geometry to the geometry pool
   sg->add_container(this);

@@ -47,30 +47,29 @@ REGISTER_TO_FACTORY(Exact_coord_minkowski, "Exact_coord_minkowski");
 void Exact_coord_minkowski::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Coord_minkowski::get_prototype());
 
   Execution_function exec_func =
     static_cast<Execution_function>(&Exact_coord_minkowski::execute);
 
   // exactExecute
+  Boolean_handle_function execute_func =
+    static_cast<Boolean_handle_function>
+    (&Exact_coord_minkowski::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXACT_EXECUTE, "exactExecute",
-                                          get_member_offset(&m_execute),
-                                          exec_func));
+                                          execute_func, exec_func));
 
-  // exactCoord1
-  SF_shared_container* field;
-  field = new SF_shared_container(EXACT_COORD1, "exactCoord1",
-                                  get_member_offset(&m_coord_array1),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  // // exactCoord1
+  // s_prototype->add_field_info(new SF_shared_container(EXACT_COORD1,
+  //                                                     "exactCoord1",
+  //                                 get_member_offset(&m_coord_array1),
+  //                                                     exec_func));
 
-  // exactCoord2
-  field = new SF_shared_container(EXACT_COORD2, "exactCoord2",
-                                  get_member_offset(&m_coord_array2),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  // // exactCoord2
+  // s_prototype->add_field_info(new SF_shared_container(EXACT_COORD2,
+  //                                                     "exactCoord2",
+  //                                 get_member_offset(&m_coord_array2),
+  //                                                     exec_func));
 }
 
 /*! \brief deletes the node prototype. */
