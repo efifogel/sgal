@@ -436,7 +436,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
 //     static_cast<Boolean_handle_function>
 //     (&Spherical_gaussian_map_base_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_AOS, "trueDrawAos",
-                                         get_member_offset(&m_draw_aos)));
+                                          draw_aos_func));
 
   // export
   exec_func =

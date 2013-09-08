@@ -66,38 +66,51 @@ void Key_sensor::init_prototype()
 
   // Add the field-info records to the prototype:
   // keyPress
-  s_prototype->add_field_info(new SF_int(KEY_PRESS, "keyPress",
-                                         get_member_offset(&m_key)));
+  Int_handle_function key_func =
+    static_cast<Int_handle_function>(&Key_sensor::key_handle);
+  s_prototype->add_field_info(new SF_int(KEY_PRESS, "keyPress", key_func));
 
   // keyRelease
-  s_prototype->add_field_info(new SF_int(KEY_RELEASE, "keyRelease",
-                                         get_member_offset(&m_key)));
+  // Int_handle_function key_func =
+  //   static_cast<Int_handle_function>(&Key_sensor::key_handle);
+  s_prototype->add_field_info(new SF_int(KEY_RELEASE, "keyRelease", key_func));
 
   // actionKeyPress
+  Int_handle_function action_key_func =
+    static_cast<Int_handle_function>(&Key_sensor::action_key_handle);
   s_prototype->add_field_info(new SF_int(ACTION_KEY_PRESS, "actionKeyPress",
-                                         get_member_offset(&m_action_key)));
+                                         action_key_func));
 
   // actionKeyRelease
-  s_prototype->add_field_info(new SF_int(ACTION_KEY_RELEASE, "actionKeyRelease",
-                                         get_member_offset(&m_action_key)));
+  // Int_handle_function action_key_func =
+  //   static_cast<Int_handle_function>(&Key_sensor::action_key_handle);
+  s_prototype->add_field_info(new SF_int(ACTION_KEY_RELEASE,
+                                         "actionKeyRelease",
+                                         action_key_func));
 
   // shiftKey
+  Boolean_handle_function shift_key_func =
+    static_cast<Boolean_handle_function>(&Key_sensor::shift_key_handle);
   s_prototype->add_field_info(new SF_bool(SHIFT_KEY, "shiftKey",
-                                          get_member_offset(&m_shift_key)));
+                                          shift_key_func));
 
   // controlKey
+  Boolean_handle_function control_key_func =
+    static_cast<Boolean_handle_function>(&Key_sensor::control_key_handle);
   s_prototype->add_field_info(new SF_bool(CONTROL_KEY, "controlKey",
-                                          get_member_offset(&m_control_key)));
+                                          control_key_func));
 
   // altKey
-  s_prototype->add_field_info(new SF_bool(ALT_KEY, "altKey",
-                                          get_member_offset(&m_alt_key)));
+  Boolean_handle_function alt_key_func =
+    static_cast<Boolean_handle_function>(&Key_sensor::alt_key_handle);
+  s_prototype->add_field_info(new SF_bool(ALT_KEY, "altKey", alt_key_func));
 
   // isActive
   Execution_function exec_func =
     static_cast<Execution_function>(&Key_sensor::activate);
-  s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive",
-                                          get_member_offset(&m_active),
+  Boolean_handle_function active_func =
+    static_cast<Boolean_handle_function>(&Key_sensor::active_handle);
+  s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive", active_func,
                                           exec_func));
 }
 

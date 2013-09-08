@@ -62,8 +62,11 @@ void Rotation_interpolator::init_prototype()
   s_prototype = new Container_proto(Interpolator::get_prototype());
 
   // value
+  Rotation_handle_function value_func =
+    static_cast<Rotation_handle_function>
+    (&Rotation_interpolator::value_handle);
   s_prototype->add_field_info(new SF_rotation(VALUE, "value_changed",
-                                              get_member_offset(&m_value)));
+                                              value_func));
 }
 
 /*! \brief deletes the node prototype */

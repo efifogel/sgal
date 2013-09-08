@@ -62,10 +62,10 @@ void Coord_array::init_prototype()
     static_cast<Execution_function>(&Coord_array::point_changed);
 
   // point
+  Vector3f_array_handle_function array_func =
+    static_cast<Vector3f_array_handle_function>(&Coord_array::array_handle);
   s_prototype->add_field_info(new MF_vector3f(POINT, "set_point",
-                                              get_member_offset(&m_array),
-                                              exec_func));
-
+                                              array_func, exec_func));
 }
 
 /*! \brief processes change of points. */

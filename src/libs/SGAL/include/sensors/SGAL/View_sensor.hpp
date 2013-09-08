@@ -83,6 +83,19 @@ public:
 
   /// \name field handlers
   //@{
+  Vector3f* &m_translation;
+  Rotation* &m_rotation;
+  Float* (FOV, "fieldOfView",
+                                         get_member_offset(&m_FOV)));
+
+  // localViewName
+  s_prototype->AddFieldInfo(new SF_string(LOCALVIEWNAME, "localViewName",
+                                          get_member_offset(&m_local_view_name)));
+
+  // currentViewName
+  s_prototype->
+    AddFieldInfo(new SF_string(CURRENTVIEWNAME, "currentViewName",
+                               get_member_offset(&m_current_view_name)));
   //@}
 
   // Initialize the object

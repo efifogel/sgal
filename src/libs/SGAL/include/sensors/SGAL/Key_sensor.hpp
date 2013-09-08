@@ -75,11 +75,19 @@ public:
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
   //@{
+  Int* key_handle(Field_info*) { return &m_key; }
+  Int* action_key_handle(Field_info*) { return &m_action_key; }
+  Boolean* shift_key_handle(Field_info*) { return &m_shift_key; }
+  Boolean* control_key_handle(Field_info*) { return &m_control_key; }
+  Boolean* alt_key_handle(Field_info*) { return &m_alt_key; }
+  Boolean* active_handle(Field_info*) { return &m_active; }
   //@}
 
   /*! Set the attributes of this node */

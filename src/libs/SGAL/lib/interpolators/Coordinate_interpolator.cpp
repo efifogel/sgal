@@ -60,8 +60,11 @@ void Coordinate_interpolator::init_prototype()
   s_prototype = new Container_proto(Interpolator::get_prototype());
 
   // value
+  Vector3f_array_handle_function value_func =
+    static_cast<Vector3f_array_handle_function>
+    (&Coordinate_interpolator::value_handle);
   s_prototype->add_field_info(new MF_vector3f(VALUE,"value_changed",
-                                              get_member_offset(&m_value)));
+                                              value_func));
 }
 
 /*! \brief deletes the container prototype */

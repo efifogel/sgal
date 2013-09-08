@@ -87,7 +87,7 @@ void Flow_sensor::SetSnapshotDone(Boolean flag)
 }
 
 /*! \brief */
-void Flow_sensor::AddNumPolygons(const Int n)
+void Flow_sensor::AddNumPolygons(const Uint n)
 {
   m_num_polygons += n;
   if (n > 0) m_accumNumPolygons += n;
@@ -113,7 +113,7 @@ void Flow_sensor::AddNumPolygons(const Int n)
 }
 
 /*! \brief */
-void Flow_sensor::AddGeometryMemory(const Int n)
+void Flow_sensor::AddGeometryMemory(const Uint n)
 {
   m_geomMemory += n;
   Field field = get_field(GEOM_MEMORY);
@@ -121,7 +121,7 @@ void Flow_sensor::AddGeometryMemory(const Int n)
 }
 
 /*! \brief sets the attributes of this container. */
-void Flow_sensor::set_attributes(Element * elem)
+void Flow_sensor::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
@@ -147,46 +147,62 @@ void Flow_sensor::init_prototype()
   s_prototype = new Container_proto();
 
   // Add the object fields to the prototype
-  s_prototype->
-    add_field_info(new SF_bool(ANIMATION_LOAD_DONE, "isAnimationLoadingDone",
-                               get_member_offset(&m_isAnimationLoadingDone)));
+  Boolean_handle_function is_animation_loading_done_func =
+    static_cast<Boolean_handle_function>
+    (&Flow_sensor::is_animation_loading_done_handle);
+  s_prototype->add_field_info(new SF_bool(ANIMATION_LOAD_DONE,
+                                          "isAnimationLoadingDone",
+                                          is_animation_loading_done_func));
 
-  s_prototype->
-    add_field_info(new SF_bool(LEVEL0_LOAD_DONE, "isLevel0LoadingDone",
-                               get_member_offset(&m_isLevel0LoadingDone)));
+  Boolean_handle_function is_level_0_loading_done_func =
+    static_cast<Boolean_handle_function>
+    (&Flow_sensor::is_level_0_loading_done_handle_handle);
+  s_prototype->add_field_info(new SF_bool(LEVEL0_LOAD_DONE,
+                                          "isLevel0LoadingDone",
+                                          is_level_0_loading_done_func));
 
-  // Add the object fields to the prototype
-  s_prototype->
-    add_field_info(new SF_bool(LOAD_DONE, "isLoadingDone",
-                               get_member_offset(&m_isLoadingDone)));
+  //
+  Boolean_handle_function is_loading_done_func =
+    static_cast<Boolean_handle_function>(&Flow_sensor::_handle);
+  s_prototype->add_field_info(new SF_bool(LOAD_DONE, "isLoadingDone",
+                                          is_loading_done_func));
 
-  // Add the object fields to the prototype
-  s_prototype->
-    add_field_info(new SF_bool(SNAPSHOT_DONE, "isSnapshotDone",
-                               get_member_offset(&m_isSnapshotDone)));
+  //
+  Boolean_handle_function is_snapshot_done_func =
+    static_cast<Boolean_handle_function>
+    (&Flow_sensor::is_snapshot_done_handle);
+  s_prototype->add_field_info(new SF_bool(SNAPSHOT_DONE, "isSnapshotDone",
+                                          is_snapshot_done_func));
 
-  // Add the object fields to the prototype
-  s_prototype->
-    add_field_info(new SF_bool(COLLABORATED, "collaborated",
-                               get_member_offset(&m_collaborated)));
+  //
+  Boolean_handle_function collaborated_func =
+    static_cast<Boolean_handle_function>(&Flow_sensor::collaborated_handle);
+  s_prototype->add_field_info(new SF_bool(COLLABORATED, "collaborated",
+                                          collaborated_func));
 
-  // Add the object fields to the prototype
-  s_prototype->
-    add_field_info(new SF_int(NUM_POLYGONS, "numPolygons",
-                              get_member_offset(&m_num_polygons)));
+  //
+  Uint_handle_function num_polygons_func =
+    static_cast<Uint_handle_function>(&Flow_sensor::num_polygons_handle);
+  s_prototype->add_field_info(new SF_uint(NUM_POLYGONS, "numPolygons",
+                                          num_polygons_func));
 
-  // Add the object fields to the prototype
-  s_prototype->
-    add_field_info(new SF_int(ACCUM_NUM_POLYGONS, "accumNumPolygons",
-                              get_member_offset(&m_accumNumPolygons)));
+  //
+  Uint_handle_function accum_num_polygons_func =
+    static_cast<Uint_handle_function>(&Flow_sensor::_handle);
+  s_prototype->add_field_info(new SF_uint(ACCUM_NUM_POLYGONS,
+                                          "accumNumPolygons",
+                                          accum_num_polygons_func));
 
-  // Add the object fields to the prototype
-  s_prototype->add_field_info(new SF_float(RATE, "rate",
-                                           get_member_offset(&m_rate)));
+  //
+  Float_handle_function rate_func =
+    static_cast<Float_handle_function>(&Flow_sensor::rate_handle);
+  s_prototype->add_field_info(new SF_float(RATE, "rate", rate_func));
 
-  // Add the object fields to the prototype
-  s_prototype->add_field_info(new SF_int(GEOM_MEMORY, "geomMemory",
-                                         get_member_offset(&m_geomMemory)));
+  //
+  Uint_handle_function geom_memory_func =
+    static_cast<Uint_handle_function>(&Flow_sensor::geom_memory_handle);
+  s_prototype->add_field_info(new SF_uint(GEOM_MEMORY, "geomMemory",
+                                         geom_memory_func));
 }
 
 /*! \brief */

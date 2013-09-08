@@ -32,6 +32,7 @@
 #include "SGAL/Container.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Array.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -73,6 +74,7 @@ public:
 
   /// \name field handlers
   //@{
+  Vector3f_array* array_handle(Field_info*) { return &m_array; }
   //@}
 
   /*! Set the attributes of this node.
@@ -125,7 +127,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! The coordinate array. */
-  SGAL::Array<Vector3f> m_array;
+  Vector3f_array m_array;
 };
 
 /* \brief constructs the prototype. */

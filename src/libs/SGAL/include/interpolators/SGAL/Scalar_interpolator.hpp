@@ -81,6 +81,7 @@ public:
 
   /// \name field handlers
   //@{
+  Float* value_handle(Field_info*) { return &m_value; }
   //@}
 
   // Functions that handles the creation of an instance in the scene graph

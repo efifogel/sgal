@@ -82,11 +82,24 @@ public:
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
+
   virtual void delete_prototype();
+
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
   //@{
+  Boolean* is_animation_loading_done_handle(Field_info*)
+  { return &m_is_animation_loading_done; }
+  Boolean* is_level_0_loading_done_handle(Field_info*)
+  { return &m_is_level_0_loading_done; }
+  Boolean* is_loading_done_handle(Field_info*) { return &m_is_loading_done; }
+  Boolean* is_snapshot_done_handle(Field_info*) { return &m_is_snapshot_done; }
+  Boolean* collaborated_handle(Field_info*) { return &m_collaborated; }
+  Uint* num_polygons_handle(Field_info*) { return &m_num_polygons; }
+  Uint* accum_num_polygons_handle(Field_info*) { return &m_accum_num_polygons; }
+  Float* rate_handle(Field_info*) { return &m_rate; }
+  Uint* geom_memory_handle(Field_info*) { return &m_geom_memory; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -128,13 +141,13 @@ private:
   Boolean m_collaborated;
 
   /*! total number of polygons. */
-  Int m_num_polygons;
+  Uint m_num_polygons;
 
   /*! total number of polygons produced. */
-  Int m_accum_num_polygons;
+  Uint m_accum_num_polygons;
 
   /*! total memory allocated for geometry. */
-  Int m_geomMemory;
+  Uint m_geomMemory;
 
   Int_queue m_polygon_count_q;
   Ulong_queue m_time_Q;
