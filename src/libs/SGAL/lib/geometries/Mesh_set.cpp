@@ -180,30 +180,33 @@ void Mesh_set::init_prototype()
   // ccw
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_bool(CCW, "ccw",
-                                          get_member_offset(&m_is_ccw),
-                                          exec_func));
+  Boolean_handle_function is_ccw_func =
+    static_cast<Boolean_handle_function>(&Mesh_set::is_ccw_handle);
+  s_prototype->add_field_info(new SF_bool(CCW, "ccw", is_ccw_func, exec_func));
 
   // solid
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_bool(SOLID, "solid",
-                                          get_member_offset(&m_is_solid),
+  Boolean_handle_function is_solid_func =
+    static_cast<Boolean_handle_function>(&Mesh_set::is_solid_handle);
+  s_prototype->add_field_info(new SF_bool(SOLID, "solid", is_solid_func,
                                           exec_func));
 
   // convex
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_bool(CONVEX, "convex",
-                                          get_member_offset(&m_is_convex),
+  Boolean_handle_function is_convex_func =
+    static_cast<Boolean_handle_function>(&Mesh_set::is_convex_handle);
+  s_prototype->add_field_info(new SF_bool(CONVEX, "convex", is_convex_func,
                                           exec_func));
 
   // creaseAngle
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
+  Float_handle_function crease_angle_func =
+    static_cast<Float_handle_function>(&Mesh_set::crease_angle_handle);
   s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
-                                          get_member_offset(&m_crease_angle),
-                                          exec_func));
+                                           crease_angle_func, exec_func));
 }
 
 /*! \brief deletes the container prototype. */

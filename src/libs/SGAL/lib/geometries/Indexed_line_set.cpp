@@ -91,7 +91,7 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
  * draw geometries with different kinds of data (texture/normal/color).
  */
 void Indexed_line_set::draw(Draw_action* action)
-{  
+{
   Context* context = action->get_context();
   if (!m_elliminate_hiden) {
     context->draw_depth_mask(false);
@@ -231,8 +231,10 @@ void Indexed_line_set::init_prototype()
   if (s_prototype) return;
   s_prototype = new Container_proto(Geo_set::get_prototype());
 
+  Float_handle_function line_width_func =
+    static_cast<Float_handle_function>(&Indexed_line_set::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
-                                           get_member_offset(&m_line_width)));
+                                           line_width_func));
 }
 
 /*! \brief deletes the prototype. */

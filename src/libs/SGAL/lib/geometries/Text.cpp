@@ -85,8 +85,9 @@ void Text::init_prototype()
   // string
   Execution_function exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
-  s_prototype->add_field_info(new SF_string(STRING, "string",
-                                            get_member_offset(&m_string),
+  String_handle_function string_func =
+    static_cast<String_handle_function>(&Text::string_handle);
+  s_prototype->add_field_info(new SF_string(STRING, "string", string_func,
                                             exec_func));
 }
 

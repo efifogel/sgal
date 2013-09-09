@@ -147,25 +147,33 @@ void View_sensor::init_prototype()
 
   // Add the object field infos to the prototype
   // translation
+  Vector3f_handle_function translation_func =
+    static_cast<Vector3f_handle_function>(&View_sensor::translation_handle);
   s_prototype->AddFieldInfo(new SF_vector3f(TRANSLATION, "translation",
-                                            get_member_offset(&m_translation)));
+                                            translation_func));
 
   // rotation
+  _handle_function rotation_func =
+    static_cast<_handle_function>(&View_sensor::rotation_handle);
   s_prototype->AddFieldInfo(new SF_rotation(ROTATION, "rotation",
-                                            get_member_offset(&m_rotation)));
+                                            rotation_func));
 
   // fieldOfView
-  s_prototype->AddFieldInfo(new SF_float(FOV, "fieldOfView",
-                                         get_member_offset(&m_FOV)));
+  _handle_function fov_func =
+    static_cast<_handle_function>(&View_sensor::fov_handle);
+  s_prototype->AddFieldInfo(new SF_float(FOV, "fieldOfView", fov_func));
 
   // localViewName
+  _handle_function local_view_name_func =
+    static_cast<_handle_function>(&View_sensor::local_view_name_handle);
   s_prototype->AddFieldInfo(new SF_string(LOCALVIEWNAME, "localViewName",
-                                          get_member_offset(&m_local_view_name)));
+                                          local_view_name_func));
 
   // currentViewName
-  s_prototype->
-    AddFieldInfo(new SF_string(CURRENTVIEWNAME, "currentViewName",
-                               get_member_offset(&m_current_view_name)));
+  _handle_function current_view_name_func =
+    static_cast<_handle_function>(&View_sensor::current_view_name_handle);
+  s_prototype-> AddFieldInfo(new SF_string(CURRENTVIEWNAME, "currentViewName",
+                                           current_view_name_func));
 }
 
 /*! */

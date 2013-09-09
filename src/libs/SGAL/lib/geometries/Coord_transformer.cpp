@@ -136,48 +136,61 @@ void Coord_transformer::init_prototype()
 
   // Add the field-info records to the prototype:
   // enabled
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          get_member_offset(&m_enabled)));
+  Boolean_handle_function enabled_func =
+    static_cast<Boolean_handle_function>(&Coord_transformer::enabled_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func));
 
   // changed
-  s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          get_member_offset(&m_changed)));
+  Boolean_handle_function changed_func =
+    static_cast<Boolean_handle_function>(&Coord_transformer::changed_handle);
+  s_prototype->add_field_info(new SF_bool(CHANGED, "changed", changed_func));
 
+  Boolean_handle_function translated_func =
+    static_cast<Boolean_handle_function>(&Coord_transformer::translated_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
-                                          get_member_offset(&m_translated)));
+                                          translated_func));
 
   // rotated
-  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
-                                          get_member_offset(&m_rotated)));
+  Boolean_handle_function rotated_func =
+    static_cast<Boolean_handle_function>(&Coord_transformer::rotated_handle);
+  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated", rotated_func));
 
+  // translation
   exec_func = static_cast<Execution_function>(&Coord_transformer::translate);
+  Vector3f_handle_function translation_func =
+    static_cast<Vector3f_handle_function>
+    (&Coord_transformer::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
-                                              get_member_offset(&m_translation),
-                                              exec_func));
+                                              translation_func, exec_func));
 
   // rotation
   exec_func = static_cast<Execution_function>(&Coord_transformer::rotate);
+  Rotation_handle_function rotation_func =
+    static_cast<Rotation_handle_function>(&Coord_transformer::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
-                                              get_member_offset(&m_rotation),
-                                              exec_func));
+                                              rotation_func, exec_func));
 
   // execute
   exec_func = static_cast<Execution_function>(&Coord_transformer::execute);
-  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          get_member_offset(&m_execute),
+  Boolean_handle_function execute_func =
+    static_cast<Boolean_handle_function>(&Coord_transformer::execute_handle);
+  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute", execute_func,
                                           exec_func));
 
-  // coordArray
-  SF_shared_container* field;
-  field = new SF_shared_container(COORD, "coord",
-                                  get_member_offset(&m_coord_array),
-                                  exec_func);
-  s_prototype->add_field_info(field);
-
   // coord
-  field = new SF_shared_container(COORD_CHANGED, "coord_changed",
-                                  get_member_offset(&m_coord_array_changed));
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function coord_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Coord_transformer::coord_array_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD, "coord",
+                                                      coord_func, exec_func));
+
+  // coord_changed
+  Shared_container_handle_function coord_changed_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Coord_transformer::coord_array_changed_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
+                                                      "coord_changed",
+                                                      coord_changed_func));
 }
 
 /*! \brief deletes the prototype. */

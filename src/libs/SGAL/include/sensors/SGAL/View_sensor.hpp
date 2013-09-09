@@ -73,8 +73,21 @@ public:
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
+
   virtual void delete_prototyp();
+
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Vector3f* translation_handle(Field_info*) { return &m_translation; }
+  Rotation* rotation_handle(Field_info*) { return &m_rotation; }
+  Float* fov_handle(Field_info*) { return &m_fov; }
+  std::string* local_view_name_handle(Field_info*)
+  { return &m_local_view_name; }
+  std::string* current_view_name_handle(Field_info*)
+  { return &m_current_view_name; }
+  //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);

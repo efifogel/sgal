@@ -58,6 +58,10 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* is_ccw_handle(Field_info*) { return &m_is_ccw; }
+  Boolean* is_solid_handle(Field_info*) { return &m_is_solid; }
+  Boolean* is_convex_handle(Field_info*) { return &m_is_convex; }
+  Float* crease_angle_handle(Field_info*) { return &m_crease_angle; }
   //@}
 
   /*! Set the attributes of this node. */

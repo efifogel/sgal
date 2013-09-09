@@ -180,22 +180,30 @@ void Gradient_background::init_prototype()
   if (s_prototype != NULL) return;
   s_prototype = new Container_proto(Node::get_prototype());
 
+  Execution_function exec_func;
+
   // Add the object fields to the prototype
-  s_prototype->add_field_info(new SF_Vector3f(ULCOLOR, "ulColor",
-                                              get_member_offset(&m_ulColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));
+  exec_func = static_cast<Execution_function>
+    (&Gradient_background::SetRenderingRequired);
+  Vector3f_handle_function ul_color_func =
+    static_cast<Vector3f_handle_function>(&Gradient_background::ul_color_handle);
+  s_prototype->add_field_info(new SF_Vector3f(ULCOLOR, "ul_color",
+                                              ul_color_func, exec_func));
 
-  s_prototype->add_field_info(new SF_Vector3f(URCOLOR, "urColor",
-                                              get_member_offset(&m_urColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));
+  Vector3f_handle_function ur_color_func =
+    static_cast<Vector3f_handle_function>(&Gradient_background::ur_color_handle);
+  s_prototype->add_field_info(new SF_Vector3f(URCOLOR, "ur_color",
+                                              ur_color_func, exec_func));
 
-  s_prototype->add_field_info(new SF_Vector3f(LLCOLOR, "llColor",
-                                              get_member_offset(&m_llColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));
+  Vector3f_handle_function ll_color_func =
+    static_cast<Vector3f_handle_function>(&Gradient_background::ll_color_handle);
+  s_prototype->add_field_info(new SF_Vector3f(LLCOLOR, "ll_color",
+                                              ll_color_func, exec_func));
 
-  s_prototype->add_field_info(new SF_Vector3f(LRCOLOR, "lrColor",
-                                              get_member_offset(&m_lrColor),
-                      (Execution_func_type)&Container::SetRenderingRequired));
+  Vector3f_handle_function lr_color_func =
+    static_cast<Vector3f_handle_function>(&Gradient_background::lr_color_handle);
+  s_prototype->add_field_info(new SF_Vector3f(LRCOLOR, "lr_color",
+                                              lr_color_func, exec_func));
 }
 
 /*! \brief */

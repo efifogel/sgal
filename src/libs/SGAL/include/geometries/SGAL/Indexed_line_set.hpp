@@ -73,6 +73,7 @@ public:
 
   /// \name field handlers
   //@{
+  Float* line_width_handle(Field_info*) { return &m_line_width; }
   //@}
 
   /*! Draw the geometry.

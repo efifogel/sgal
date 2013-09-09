@@ -108,37 +108,43 @@ void Coord_minkowski::init_prototype()
 
   // Add the field-info records to the prototype:
   // enabled
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          get_member_offset(&m_enabled)));
+  Boolean_handle_function enabled_func =
+    static_cast<Boolean_handle_function>(&Coord_minkowski::enabled_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func));
 
   // changed
-  s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          get_member_offset(&m_changed)));
+  Boolean_handle_function changed_func =
+    static_cast<Boolean_handle_function>(&Coord_minkowski::changed_handle);
+  s_prototype->add_field_info(new SF_bool(CHANGED, "changed", changed_func));
 
   // execute
   exec_func = static_cast<Execution_function>(&Coord_minkowski::execute);
-
-  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          get_member_offset(&m_execute),
+  Boolean_handle_function execute_func =
+    static_cast<Boolean_handle_function>(&Coord_minkowski::execute_handle);
+  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute", execute_func,
                                           exec_func));
 
   // coord1
-  SF_shared_container* field;
-  field = new SF_shared_container(COORD1, "coord1",
-                                  get_member_offset(&m_coord_array1),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function coord1_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Coord_minkowski::coord_array1_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD1, "coord1",
+                                                      coord1_func, exec_func));
 
   // coord2
-  field = new SF_shared_container(COORD2, "coord2",
-                                  get_member_offset(&m_coord_array2),
-                                  exec_func);
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function coord2_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Coord_minkowski::coord_array2_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD2, "coord2",
+                                                      coord2_func, exec_func));
 
   // coord
-  field = new SF_shared_container(COORD_CHANGED, "coord_changed",
-                                  get_member_offset(&m_coord_array_changed));
-  s_prototype->add_field_info(field);
+  Shared_container_handle_function coord_changed_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Coord_minkowski::coord_array_changed_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
+                                                      "coord_changed",
+                                                      coord_changed_func));
 }
 
 /*! \brief deletes the node prototype. */

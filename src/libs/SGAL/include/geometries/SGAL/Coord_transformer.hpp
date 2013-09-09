@@ -81,6 +81,16 @@ public:
 
   /// \name field handlers
   //@{
+  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
+  Boolean* changed_handle(Field_info*) { return &m_changed; }
+  Boolean* translated_handle(Field_info*) { return &m_translated; }
+  Boolean* rotated_handle(Field_info*) { return &m_rotated; }
+  Vector3f* translation_handle(Field_info*) { return &m_translation; }
+  Rotation* rotation_handle(Field_info*) { return &m_rotation; }
+  Boolean* execute_handle(Field_info*) { return &m_execute; }
+  Shared_coord_array* coord_array_handle(Field_info*) { return &m_coord_array; }
+  Shared_coord_array* coord_array_changed_handle(Field_info*)
+  { return &m_coord_array_changed; }
   //@}
 
   /*! Apply the current transformation on the coordinates. */

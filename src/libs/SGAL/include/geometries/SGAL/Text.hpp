@@ -73,6 +73,7 @@ public:
 
   /// \name field handlers
   //@{
+  std::string* string_handle(Field_info*) { return &m_string; }
   //@}
 
   /*! Set the attributes of this node */

@@ -310,8 +310,11 @@ void Indexed_geodesic_set::init_prototype()
   s_prototype = new Container_proto(Geo_set::get_prototype());
 
   // lineWidth
+  Float_handle_function line_width_func =
+    static_cast<Float_handle_function>
+    (&Indexed_geodesic_set::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
-                                           get_member_offset(&m_line_width)));
+                                           line_width_func));
 }
 
 /*! \brief deletes the prototype. */
