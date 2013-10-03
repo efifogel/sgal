@@ -61,14 +61,9 @@ STD_ROOT = $(shell cygpath -m $(ROOT))
 GCINCS = -I$(STD_ROOT)/include
 GCPPINCS+= -I$(STD_ROOT)/include
 
-# If GMP_INC_DIR is defined, add it to the list of include directories
-ifdef GMP_INC_DIR
-GCPPINCS+= -I"$(GMP_INC_DIR)"
-endif
-
 UNICODE_DEFS = -D_MBCS
-GCDEFS =-D_WIN32 -DWIN32 # -DENBAYA_MSVC -DENBAYA_WINDOWS
-GCPPDEFS =-D_WIN32 -DWIN32 # -DENBAYA_MSVC -DENBAYA_WINDOWS
+# GCDEFS =-D_WIN32 -DWIN32
+# GCPPDEFS =-D_WIN32 -DWIN32
 GCDEFS += $(UNICODE_DEFS)
 GCPPDEFS += $(UNICODE_DEFS)
 
@@ -99,6 +94,11 @@ else
 ifeq ($(COMPILER_VER), 1600)
 GCDEFS += -D_CRT_SECURE_NO_DEPRECATE
 GCPPDEFS += -D_CRT_SECURE_NO_DEPRECATE
+else
+ifeq ($(COMPILER_VER), 1700)
+GCDEFS += -D_CRT_SECURE_NO_DEPRECATE
+GCPPDEFS += -D_CRT_SECURE_NO_DEPRECATE
+endif
 endif
 endif
 endif
@@ -158,8 +158,11 @@ ifeq ($(COMPILER_VER), 1500)
 else
 ifeq ($(COMPILER_VER), 1600)
 else
+ifeq ($(COMPILER_VER), 1700)
+else
 GCMDOPTS = -MLd
 GCPPMDOPTS+= -MLd
+endif
 endif
 endif
 endif
@@ -171,8 +174,11 @@ ifeq ($(COMPILER_VER), 1500)
 else
 ifeq ($(COMPILER_VER), 1600)
 else
+ifeq ($(COMPILER_VER), 1700)
+else
 GCMDOPTS = -ML
 GCPPMDOPTS+= -ML
+endif
 endif
 endif
 endif
@@ -189,8 +195,8 @@ DEBUG_PDB =0
 endif
 
 ifeq ($(DEBUG), 1)
-GCDEBUGOPTS =-Gm -Zi
-GCPPDEBUGOPTS =-Gm -Zi
+GCDEBUGOPTS =-Gm -ZI
+GCPPDEBUGOPTS =-Gm -ZI
 
 ifeq ($(COMPILER_VER), 1400)
 GCDEBUGOPTS+= -RTC1
@@ -204,8 +210,13 @@ ifeq ($(COMPILER_VER), 1600)
 GCDEBUGOPTS+= -RTC1
 GCPPDEBUGOPTS+= -RTC1
 else
+ifeq ($(COMPILER_VER), 1700)
+GCDEBUGOPTS+= -RTC1
+GCPPDEBUGOPTS+= -RTC1
+else
 GCDEBUGOPTS+= -GZ
 GCPPDEBUGOPTS+= -GZ
+endif
 endif
 endif
 endif
@@ -213,8 +224,16 @@ endif
 GCOPTOPTS =-Od
 GCPPOPTOPTS =-Od
 GLDDEBUGOPTS = -debug
-GLDDEBUGOPTS+= -incremental:yes
 
+ifeq ($(COMPILER_VER), 1400)
+GLDDEBUGOPTS+= -incremental:yes
+else
+ifeq ($(COMPILER_VER), 1500)
+GLDDEBUGOPTS+= -incremental:yes
+else
+GLDDEBUGOPTS+= -incremental
+endif
+endif
 
 ifeq ($(COMPILER_VER), 1200)
 ifeq ($(DEBUG_PDB), 1)
@@ -249,6 +268,10 @@ GERRORPROMP = -errorReport:prompt
 else
 ifeq ($(COMPILER_VER), 1600)
 GERRORPROMP = -errorReport:prompt
+else
+ifeq ($(COMPILER_VER), 1700)
+GERRORPROMP = -errorReport:prompt
+endif
 endif
 endif
 endif
@@ -258,7 +281,7 @@ GCPPERRORPROMP = $(GERRORPROMP)
 GLDERRORPROMP = $(GERRORPROMP)
 
 # Code Generation:
-GCPPCODEOPTS = -GR
+# GCPPCODEOPTS = -GR
 # enable C++ EH
 ifeq ($(COMPILER_VER), 1400)
 GCPPCODEOPTS+= -EHsc
@@ -269,7 +292,11 @@ else
 ifeq ($(COMPILER_VER), 1600)
 GCPPCODEOPTS+= -EHsc
 else
+ifeq ($(COMPILER_VER), 1700)
+GCPPCODEOPTS+= -EHsc
+else
 GCPPCODEOPTS+= -GX
+endif
 endif
 endif
 endif
@@ -300,9 +327,6 @@ LIBDIRPREFIX = -libpath:
 GLIBPATHOPTS = -libpath:$(STD_ROOT)/lib
 ifdef BOOST_LIB_DIR
 GLIBPATHOPTS+= -libpath:"$(BOOST_LIB_DIR)"
-endif
-ifdef GMP_LIB_DIR
-GLIBPATHOPTS+= -libpath:"$(GMP_LIB_DIR)"
 endif
 
 LDDLLLIBS =
@@ -451,6 +475,10 @@ GLDOPTS+= -manifest
 else
 ifeq ($(COMPILER_VER), 1600)
 GLDOPTS+= -manifest
+else
+ifeq ($(COMPILER_VER), 1700)
+GLDOPTS+= -manifest
+endif
 endif
 endif
 endif

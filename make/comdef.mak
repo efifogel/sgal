@@ -482,6 +482,16 @@ GL2PS_LIB_DIR="$(GL2PS_DIR)/lib"
 endif
 endif
 
+# extract MAGICK include directories:
+ifdef OPENCV_DIR
+ifndef OPENCV_INC_DIR
+OPENCV_INC_DIR="$(OPENCV_DIR)/include"
+endif
+ifndef OPENCV_LIB_DIR
+OPENCV_LIB_DIR="$(OPENCV_DIR)/lib"
+endif
+endif
+
 # extract CGAL directories:
 ifdef CGAL_DIR
 ifndef CGAL_INC_DIR
