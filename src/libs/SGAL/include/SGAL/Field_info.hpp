@@ -46,7 +46,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Member_offset_type.hpp"
 #include "SGAL/Execution_function.hpp"
 
 SGAL_BEGIN_NAMESPACE

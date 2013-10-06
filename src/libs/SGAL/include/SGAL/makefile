@@ -67,7 +67,6 @@ FILES+= Load_int.hpp
 FILES+= Loader.hpp
 FILES+= Lod.hpp
 FILES+= Material.hpp
-FILES+= Member_offset_type.hpp
 FILES+= memory.hpp
 FILES+= Movie_recorder.hpp
 FILES+= MSVC_standard_header_fixes.hpp

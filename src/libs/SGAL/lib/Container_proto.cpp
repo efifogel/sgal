@@ -20,7 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * Container_proto - implementation                           
+ * Container_proto - implementation
  */
 
 #include "SGAL/basic.hpp"
@@ -41,7 +41,7 @@ Container_proto::Container_proto(Container_proto * ancestor) :
 
 /*! Destructor
  * Deletes the field-info instances and search structures
- */ 
+ */
 Container_proto::~Container_proto()
 {
   Field_info_id_iter fi;
@@ -60,7 +60,7 @@ Container_proto::~Container_proto()
  * identification numbers of the field-information records of B.
  * Insert the id of the new field-information record into the container of ids,
  * and its name into the name container.
- * \param field_info (in) a pointer to a field-information record to be added  
+ * \param field_info (in) a pointer to a field-information record to be added
  */
 void Container_proto::add_field_info(Field_info * field_info)
 {
@@ -76,50 +76,6 @@ void Container_proto::add_field_info(Field_info * field_info)
   m_field_info_names.insert
     (Field_info_name_map::value_type(field_info->get_name(), field_info));
 }
-
-#if 0
-/*! add_field_info() adds a field info to the container-type prototype.
- * Updates the first id on the map (the smallest number id).
- * Inserts the added field info into the search structures m_field_info_ids and
- * m_field_info_names.
- * Params are used to allocate a suitable field info
- * \param id (in)
- * \param name (in)   
- * \param type (in) 
- * \param value (in)
- * \param offset (in)
- * \param execution (in)
- */
-void Container_proto::add_field_info(Uint id, const std::string & name,
-                                     const std::string & type,
-                                     const std::string & value,
-                                     Ulong offset,
-                                     Execution_func_type execution)
-{
-  add_field_info(Field_info_utils::allocate_field_info(id, name, type, value,
-                                                       offset, execution));
-}
-
-/*! add_field_info() adds a field info to the container type prototype.
- * Updates the first id on the map (the smallest number id).
- * Inserts the added field info into the search structure m_field_info_ids and
- * and m_field_info_names.
- * Params are used to allocate a suitable field info
- * \param id (in)
- * \param name (in)   
- * \param type (in) 
- * \param value (in)
- * \param offset (in)
- * \param execution (in)
- */
-void Container_proto::add_field_info(Uint id, const std::string & name,
-                                     const std::string & type,
-                                     Container * value, Ulong offset,
-                                     Execution_func_type execution)
-{
-  add_field_info(new SFNode(id, name, offset, execution, false, true, value));
-}
-#endif
 
 /*! \brief obtains a field info given by its id from the current prototype or
  * from one of its ancestors. If the given id is in the current prototype
@@ -162,7 +118,7 @@ Field_info * Container_proto::get_field_info(const std::string & name) const
 
   // if not found till now activate on ancestor if exists
   if (m_ancestor) return m_ancestor->get_field_info(name);
-  
+
   // if ancestor is null there is no field info with the requested info
   // in this proto nor in its ancestors -> return NULL
   return NULL;

@@ -33,7 +33,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Field_info.hpp"
-#include "SGAL/Member_offset_type.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
 //! \todo #include "SAI_field_template.h"
@@ -58,9 +57,6 @@ private:
   /*! The field handle function. */
   Handle m_handle;
 
-  /*! The field offset */
-  Member_offset_type m_offset;
-
   /*! The field initial value. */
   T m_initial_value;
 
@@ -77,21 +73,6 @@ public:
                       T initial_value = T()) :
     Field_info(id, name, execution, initially_blocked),
     m_handle(handle),
-    m_offset(0),
-    m_initial_value(initial_value),
-    m_use_initial_value(use_initial_value)
-  {}
-
-  /*! Constructor. */
-  Field_info_template(Uint id, const std::string& name,
-                      Member_offset_type offset,
-                      Execution_function execution = NULL,
-                      bool initially_blocked = false,
-                      bool use_initial_value = false,
-                      T initial_value = T()) :
-    Field_info(id, name, execution, initially_blocked),
-    m_handle(NULL),
-    m_offset(offset),
     m_initial_value(initial_value),
     m_use_initial_value(use_initial_value)
   {}
@@ -101,9 +82,6 @@ public:
 
   /*! Obtain the field-info type id. */
   virtual Uint get_type_id() const { return type_id; }
-
-  /*! Obtain the field offset. */
-  Member_offset_type get_offset() const { return m_offset; }
 
   /*! Create a Value_holder instance using the field info for the given
    * container.

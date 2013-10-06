@@ -62,7 +62,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Execution_coordinator.hpp"
-#include "SGAL/Member_offset_type.hpp"
 #include "SGAL/Container_observer.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -178,10 +177,6 @@ public:
    */
   Field* get_field(Field_info* field_info);
 
-  /*! Calculate the pointer of a data member according to a given offset. */
-  void* get_member_pointer(Ulong offset)
-  { return (void*)((Ulong)(&m_base) + offset); }
-
   /*! Force re-rendering. */
   virtual void set_rendering_required(Field_info* /* field_info */ = 0)
   {
@@ -224,10 +219,6 @@ public:
 protected:
   /*! A pointer to the execution coordinator. */
   Execution_coordinator* m_execution_coordinator;
-
-  /*! Calculate and obtain the ofsset of a data member. */
-  Member_offset_type get_member_offset(void* data_member)
-  { return (Member_offset_type)data_member - (Member_offset_type)&(m_base); }
 
 private:
   typedef std::map<Field_info*,Field*>                  Field_map;
