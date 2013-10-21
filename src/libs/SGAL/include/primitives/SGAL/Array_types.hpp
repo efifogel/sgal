@@ -48,7 +48,6 @@ typedef SGAL::Array<Vector4f>                          Vector4f_array;
 typedef SGAL::Array<Rotation>                          Rotation_array;
 typedef SGAL::Array<Sphere_bound>                      Sphere_bound_array;
 typedef SGAL::Array<std::string>                       String_array;
-typedef SGAL::Array<Container*>                        Container_array;
 typedef SGAL::Array<Shared_container>                  Shared_container_array;
 
 SGAL_END_NAMESPACE
