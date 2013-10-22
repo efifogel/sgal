@@ -1,7 +1,3 @@
-MAKEDEPEND_CPPINCS=$(CPPINCS)
-MAKEDEPEND_CINCS=$(CINCS)
-MAKEDEPEND_ASMINCS=$(ASMINCS)
-
 ifeq ($(DE), msvc)
 %.tlb : %.idl
 	$(MTLF) -tlb $@ $<

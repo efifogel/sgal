@@ -257,7 +257,7 @@ GCOPTS+= $(GCOPTOPTS)
 GCOPTS+= $(GCMDOPTS)
 GCOPTS+= $(GCDEBUGOPTS)
 GCPPOPTS =-nologo
-# GCPPOPTS+= -W3
+CPPWARNINGOPTS+= -W3
 
 # error prompting:
 ifeq ($(COMPILER_VER), 1400)
@@ -419,7 +419,7 @@ MPFR_INC_DIR_TMP = $(subst ",,$(MPFR_INC_DIR))
 MPFR_INC_DIR_REG = $(subst /,\/,$(MPFR_INC_DIR_TMP))
 
 define run-makedepend-cpp
-$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $(CPPOPTS) $< | \
+$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(MAKEDEPEND_CPPDEFS) $(MAKEDEPEND_CPPOPTS) $< | \
 sed -e '1 c $(basename $@).o: $< \\' \
 -e 's/Note: including file: *//' \
 -e 's/\\/\//g' \
@@ -431,7 +431,7 @@ sed -e '1 c $(basename $@).o: $< \\' \
 endef
 
 define run-makedepend-c
-$(MAKEDEPENDF) $(MAKEDEPEND_CINCS) $(CDEFS) $(COPTS) $< | \
+$(MAKEDEPENDF) $(MAKEDEPEND_CINCS) $(MAKEDEPEND_CDEFS) $(MAKEDEPEND_COPTS) $< | \
 sed -e '1 c $(basename $@).o: $< \\' \
 -e 's/Note: including file: *//' \
 -e 's/\\/\//g' \
@@ -443,7 +443,7 @@ sed -e '1 c $(basename $@).o: $< \\' \
 endef
 
 define run-makedepend-a
-$(MAKEDEPENDF) $(MAKEDEPEND_ASMINCS) $(ASMDEFS) $(ASMOPTS) $< | \
+$(MAKEDEPENDF) $(MAKEDEPEND_ASMINCS) $(MAKEDEPEND_ASMDEFS) $(MAKEDEPEND_ASMOPTS) $< | \
 sed -e '1 c $(basename $@).o: $< \\' \
 -e 's/Note: including file: *//' \
 -e 's/\\/\//g' \
