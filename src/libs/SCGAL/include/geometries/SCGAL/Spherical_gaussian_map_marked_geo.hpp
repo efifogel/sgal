@@ -261,11 +261,11 @@ protected:
   };
 
   // List of pointers to Spherical_gaussian_map_marked_geo objects. */
-  typedef std::list<Shared_spherical_gaussian_map_marked_geo>   Sgm_node_list;
-  typedef Sgm_node_list::iterator                               Sgm_node_iter;
+  typedef SGAL::Array<Shared_spherical_gaussian_map_marked_geo> Sgm_node_array;
+  typedef Sgm_node_array::iterator                              Sgm_node_iter;
 
   /*! The minkowski sum operands. */
-  Sgm_node_list m_sgm_nodes;
+  Sgm_node_array m_sgm_nodes;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -519,6 +519,7 @@ public:
   { return &m_increase_edge_index; }
   Boolean* increase_facet_index_handle(Field_info*)
   { return &m_increase_facet_index; }
+  Sgm_node_array* sgm_nodes_handle(Field_info*) { return &m_sgm_nodes; }
   //@}
 
   /*! Set the attributes of this node.

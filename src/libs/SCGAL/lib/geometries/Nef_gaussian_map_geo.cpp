@@ -156,8 +156,9 @@ void Nef_gaussian_map_geo::clean()
 {
   clock_t start_time = clock();
   if (m_minkowski_sum) {
-    Nef_gaussian_map_geo* ngm_geo1 = &*(*(m_ngm_nodes.begin()));
-    Nef_gaussian_map_geo* ngm_geo2 = &*(*(++m_ngm_nodes.begin()));
+    Ngm_node_iter ni = m_ngm_nodes.begin();
+    Shared_nef_gaussian_map_geo ngm_geo1 = *ni++;
+    Shared_nef_gaussian_map_geo ngm_geo2 = *ni;
     const Nef_gaussian_map& ngm1 = ngm_geo1->get_ngm();
     const Nef_gaussian_map& ngm2 = ngm_geo2->get_ngm();
     m_nef_gaussian_map.minkowski_sum(ngm1, ngm2);
@@ -168,7 +169,8 @@ void Nef_gaussian_map_geo::clean()
     m_polyhedron.delegate(Converter);
     std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                    m_polyhedron.planes_begin(), Plane_equation());
-  } else {
+  }
+  else {
     if (m_dirty_polyhedron) clean_polyhedron();
     m_nef_gaussian_map = Nef_gaussian_map(m_polyhedron);
   }
@@ -439,7 +441,8 @@ void Nef_gaussian_map_geo::draw_dual(Draw_action* action)
     context->draw_cull_face(SGAL::Gfx::BACK_CULL);
     context->draw_light_model_sides(SGAL::Gfx::ONE_SIDE);
     context->draw_depth_enable(true);
-  } else {
+  }
+  else {
     context->draw_depth_enable(true);
     context->draw_line_width(m_dual_line_width * 8);
     context->draw_color_mask(Vector4ub(0x0, 0x0, 0x0, 0x0));
@@ -852,10 +855,12 @@ void Nef_gaussian_map_geo::init_prototype()
                                           exec_func));
 
   // // geometries
-  //! \todo change to MF_shared_container and change m_ngm_nodes respectively.
-  // MF_container* field = new MF_container(GEOMETRIES, "geometries",
-  //                                        get_member_offset(&m_ngm_nodes));
-  // s_prototype->add_field_info(field);
+  Shared_container_array_handle_function ngm_nodes_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Nef_gaussian_map_geo::ngm_nodes_handle);
+  s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      ngm_nodes_func));
+
 }
 
 /*! \brief */

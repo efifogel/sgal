@@ -432,10 +432,12 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
   s_prototype =
     new Container_proto(Spherical_gaussian_map_base_geo::get_prototype());
 
-  // // Add the object fields to the prototype
-  //! \todo change to MF_shared_container and change m_sgm_nodes respectively.
-  // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
-  //                                              get_member_offset(&m_sgm_nodes)));
+  // Add the object fields to the prototype
+  Shared_container_array_handle_function sgm_nodes_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Spherical_gaussian_map_marked_geo::sgm_nodes_handle);
+  s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      sgm_nodes_func));
 
   Execution_function exec_func =
     static_cast<Execution_function>

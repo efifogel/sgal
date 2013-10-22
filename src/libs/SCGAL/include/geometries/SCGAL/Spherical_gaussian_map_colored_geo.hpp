@@ -182,8 +182,8 @@ protected:
   };
 
   // List of pointers to Spherical_gaussian_map_colored_geo objects. */
-  typedef std::list<Shared_spherical_gaussian_map_colored_geo>  Sgm_node_list;
-  typedef Sgm_node_list::iterator                               Sgm_node_iter;
+  typedef Array<Shared_spherical_gaussian_map_colored_geo>      Sgm_node_array;
+  typedef Sgm_node_array::iterator                              Sgm_node_iter;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -214,7 +214,7 @@ private:
   Polyhedron* m_polyhedron;
 
   /*! The minkowski sum operands. */
-  Sgm_node_list m_sgm_nodes;
+  Sgm_node_array m_sgm_nodes;
 
   /*! Indicates whether to compute the minkowski sum. */
   Boolean m_minkowski_sum;
@@ -289,6 +289,7 @@ public:
 
   /// \name field handlers
   //@{
+  Sgm_node_array* sgm_nodes_handle(Field_info*) { return &m_sgm_nodes; }
   //@}
 
   /*! Set the attributes of this node.

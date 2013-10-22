@@ -236,17 +236,17 @@ Cubical_gaussian_map_geo::~Cubical_gaussian_map_geo()
 void Cubical_gaussian_map_geo::clean()
 {
   if (m_minkowski_sum) {
-    Cgm_node_iter ni;
-    for (ni = m_cgm_nodes.begin(); ni != m_cgm_nodes.end(); ++ni) {
-      Shared_cubical_gaussian_map_geo cgm_node = *ni;
-      if (cgm_node->is_dirty()) cgm_node->clean();
-    }
+    Cgm_node_iter ni = m_cgm_nodes.begin();
+    Shared_cubical_gaussian_map_geo geo1 = *ni++;
+    Shared_cubical_gaussian_map_geo geo2 = *ni;
+    if (geo1->is_dirty()) geo1->clean();
+    if (geo2->is_dirty()) geo2->clean();
     clock_t start_time = clock();
-    m_cgm.minkowski_sum<Cgm_iter>(Cgm_iter(m_cgm_nodes.begin()),
-                                  Cgm_iter(m_cgm_nodes.end()));
+    m_cgm.minkowski_sum(geo1->get_cgm(), geo2->get_cgm());
     clock_t end_time = clock();
     m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
-  } else {
+  }
+  else {
     clock_t start_time = clock();
     CGAL::Polyhedral_cgm_initializer<Cgm> cgm_initializer(m_cgm);
     Cgm_geo_initializer_visitor visitor;
@@ -782,12 +782,11 @@ void Cubical_gaussian_map_geo::init_prototype()
                                               aos_edge_color1_func));
 
   // geometries
-//   Boolean_handle_function geometries_func =
-//     static_cast<Boolean_handle_function>
-//     (&Cubical_gaussian_map_geo::geometries_handle);
-  //! \todo change to MF_shared_container and change m_cgm_nodes respectively.
-  // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
-  //                                              geometries_func));
+  Shared_container_array_handle_function cgm_nodes_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Cubical_gaussian_map_geo::cgm_nodes_handle);
+  s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      cgm_nodes_func));
 }
 
 /*! \brief */

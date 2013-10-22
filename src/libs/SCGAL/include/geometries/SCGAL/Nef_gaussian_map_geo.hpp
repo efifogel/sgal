@@ -189,8 +189,8 @@ public:
     Shared_nef_gaussian_map_geo;
 
   // List of pointers to Nef_gaussian_map_geo objects */
-  typedef std::list<Shared_nef_gaussian_map_geo>        Ngm_node_list;
-  typedef Ngm_node_list::iterator                       Ngm_node_iter;
+  typedef Array<Shared_nef_gaussian_map_geo>            Ngm_node_array;
+  typedef Ngm_node_array::iterator                      Ngm_node_iter;
 
 public:
   enum {
@@ -245,7 +245,7 @@ public:
   { return &m_increase_edge_index; }
   Boolean* increase_facet_index_handle(Field_info*)
   { return &m_increase_facet_index; }
-  // Shared_... &m_ngm_nodes;
+  Ngm_node_array* ngm_nodes_handle(Field_info*) { return &m_ngm_nodes; }
   //@}
 
   virtual void cull(Cull_context& cull_context);
@@ -426,7 +426,7 @@ private:
   bool m_minkowski_sum;
 
   /*! The minkowski sum operands. */
-  Ngm_node_list m_ngm_nodes;
+  Ngm_node_array m_ngm_nodes;
 
   /*! The shape of a marked vertex. */
   Sphere* m_sphere;

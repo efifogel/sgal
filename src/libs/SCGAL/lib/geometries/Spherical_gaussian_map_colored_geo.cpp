@@ -235,9 +235,11 @@ void Spherical_gaussian_map_colored_geo::init_prototype()
     new Container_proto(Spherical_gaussian_map_base_geo::get_prototype());
 
   // geometries
-  //! \todo change to MF_shared_container and change m_sgm_nodes respectively.
-  // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
-  //                                              get_member_offset(&m_sgm_nodes)));
+  Shared_container_array_handle_function sgm_nodes_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Spherical_gaussian_map_colored_geo::sgm_nodes_handle);
+  s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      sgm_nodes_func));
 }
 
 /*! \brief */

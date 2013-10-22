@@ -59,17 +59,23 @@ void Exact_coord_minkowski::init_prototype()
   s_prototype->add_field_info(new SF_bool(EXACT_EXECUTE, "exactExecute",
                                           execute_func, exec_func));
 
-  // // exactCoord1
-  // s_prototype->add_field_info(new SF_shared_container(EXACT_COORD1,
-  //                                                     "exactCoord1",
-  //                                 get_member_offset(&m_coord_array1),
-  //                                                     exec_func));
+  // exactCoord1
+//   Shared_container_handle_function coord_array1_func =
+//     reinterpret_cast<Shared_container_handle_function>
+//     (&Spherical_gaussian_map_marked_geo::coord_array1_handle);
+//   s_prototype->add_field_info(new SF_shared_container(EXACT_COORD1,
+//                                                       "exactCoord1",
+//                                                       coord_array1_func,
+//                                                       exec_func));
 
-  // // exactCoord2
-  // s_prototype->add_field_info(new SF_shared_container(EXACT_COORD2,
-  //                                                     "exactCoord2",
-  //                                 get_member_offset(&m_coord_array2),
-  //                                                     exec_func));
+//   // exactCoord2
+//   Shared_container_handle_function coord_array2_func =
+//     reinterpret_cast<Shared_container_handle_function>
+//     (&Spherical_gaussian_map_marked_geo::coord_array2_handle);
+//   s_prototype->add_field_info(new SF_shared_container(EXACT_COORD2,
+//                                                       "exactCoord2",
+//                                                       coord_array1_func,
+//                                                       exec_func));
 }
 
 /*! \brief deletes the node prototype. */
