@@ -142,13 +142,13 @@ ifeq ($(GCC_VER),3.0.3)
 output_operatior=>
 endif
 define run-makedepend-cpp
-$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(CPPDEFS) $< $(output_operatior) $@
+$(MAKEDEPENDF) $(MAKEDEPEND_CPPINCS) $(MAKEDEPEND_CPPDEFS) $< $(output_operatior) $@
 endef
 
 define run-makedepend-c
-$(MAKEDEPENDF) $(MAKEDEPEND_CINCS) $(CDEFS) $< $(output_operatior) $@
+$(MAKEDEPENDF) $(MAKEDEPEND_CINCS) $(MAKEDEPEND_CDEFS) $< $(output_operatior) $@
 endef
 
 define run-makedepend-a
-$(MAKEDEPENDF) $(MAKEDEPEND_ASMINCS) $(ASMDEFS) $< $(output_operatior) $@
+$(MAKEDEPENDF) $(MAKEDEPEND_ASMINCS) $(MAKEDEPEND_ASMDEFS) $< $(output_operatior) $@
 endef
