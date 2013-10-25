@@ -22,8 +22,129 @@
 #ifndef SGAL_VALUE_HOLDER_HPP
 #define SGAL_VALUE_HOLDER_HPP
 
-/*! \file
- * Holds a field value.
+/*! \file This file contains the implementation of a double dispatch. The need
+ * for a double dispatch arises from the desire to assign the value of a
+ * destination field with the value of a source field. Both destination
+ * and source values are held by corresponding Value_holder objects. In other
+ * words, this file contains code that delegates the value of a source
+ * Value_holder object to a destination Value_holder object.
+ *
+ * Virtual functions allow polymorphism on a single argument; however, sometimes
+ * there is a need for multi-argument polymorphism. Double dispatch, commonly
+ * used in C++ to implement multi-methods, does not lend easily extensible
+ * code. Solutions based on function tables are difficult to implement and
+ * prevent repeated derivation.
+
+ * A viable alternative consists in storing pointers to functions into an
+ * associative table, using the type_info of the classes as indexes as suggested
+ * by Bjarne Stroustrup, or the name of the classes as discussed by Scott
+ * Meyers. Meyers goes into the details of a table-driven implementation, but
+ * the solution is rather complex and does not allow to further derive a class
+ * from while still enjoying polymorphic behavior.
+ *
+ * Note: If you are interested in the continuous improvement of existing
+ * solutions, made possible from language extensions, you may want to consider
+ * the interplay of a currently unsupported feature, namely virtual member
+ * template functions.Equipped with this feature the good-old double dispatch
+ * becomes trivial to implement.
+ *
+ * A preprocessor-based solution has been implemented by Chatterton and Conway
+ * to show the viability of multimethods in C++, but whenever is possible, we
+ * prefer to stay within the language for real-world programming.
+ *
+ * The solution adopted has a deficiency, namely, extension is problematic and
+ * the technique is mostly useful for cases where the base class cannot be
+ * modified, for instance because it is in a shared library or the source code
+ * is unavailable. Indeed, we do not want to change the base class.
+ * If adding several derived classes is not expected, a dependency between base
+ * and derived classes may be accepted in exchange for speed. What is normally
+ * unacceptable, however, is to have a dependency between a base class used
+ * across several projects and some project-specific derived classes.
+ * In that case, a simple solution is to move the circular dependency inside
+ * the project-specific code, making the base class reusable in different
+ * contexts. That's the strategy behind the adopted technique.
+ *
+ * The underlying idea is simple: the class Base is expected to have a stable
+ * interface, since it is reused in several projects. Therefore, it declares
+ * only the pure virtual function delegate(Value_holder_base&), that will be
+ * subjected to multiple dispatch. Now you need a place for all the
+ * project-specific versions of delegate() that have been removed from
+ * Value_holder_base. This role is played by another base class,
+ * Value_holder_target, which defines a virtual function delegate_impl(D&) for
+ * each (project-specific) derived class D, e.g., Value_holder<Boolean>&. These
+ * are the functions were the multiple polymorphism ultimately land on. Note
+ * that only the implementors of derived classes need to know about
+ * delegate_impl() and users only need to know about delegate().
+ * Concrete classes, here Value_middle, derive from both Value_holder_base and
+ * Value_holder_target, and implement Value_holder_base::delegate() so that
+ * the proper delegate_impl() is called. This requires casting from a
+ * Value_holder_base& (the parameter of delegate()) to a Value_holder_target&
+ * (where delegate_impl is declared), a case known as cross-casting, as it
+ * crosses the boundaries of a single inheritance hierarchy. Usually
+ * cross-casting requires a dynamic_cast, but we can dispense with that by
+ * providing a common derived class (Value_holder_middle). Since
+ * Value_holder_middle derives from Value_holder_base and from
+ * Value_holder_target, any reference to Value_holder_base (that we know is
+ * really a reference to a derived class like A and B) can be converted into
+ * a reference to Value_holder_target using two static_cast: from
+ * Value_holder_base& to Value_holder_middle&, then from Value_holder_middle&
+ * to Value_holder_target&. Note that static_cast is resolved at compile-time,
+ * while dynamic_cast would incur a run-time performance penalty.
+ * The final step is to avoid the manual implementation of delegate() (where
+ * the multiple dispatch takes place) in each concrete class. A general
+ * implementation of delegate() requires type information about either the
+ * parameter (that we only know being a Value_holder_base&) or about the
+ * receiver itself. Inside each derived class, we know the actual type of
+ * *this, but how can we move the implementation of delegate() outside the
+ * derived classes without losing type information?
+ * In C++, type-safe reuse is often accomplished through templates. In this
+ * case, we need to derive a template class Velue_delegator from
+ * Value_holder_middle (so to redefine Value_holder_base::delegate()) and the
+ * parameter of the template must provide the necessary type information.
+ * Therefore, each concrete class is expected to derive from Velue_delegator
+ * (to inherit the implementation of delegate()) and also to provide its own
+ * type to Velue_delegator as a parameter. This lead to a somewhat unusual,
+ * "recursive" declaration for all the derived classes:
+ *
+ * template <typename ValueType>
+ * class Value_holder : public Velue_delegator<Value_holder<ValueType> > {
+ * public:
+ *   // implements all the functions
+ *   // delegate_impl declared in Target
+ * } ;
+ *
+ * The template class Velue_delegator plays two roles in this scheme: It
+ * statically encodes the dynamic type of one parameter, and implements the
+ * multiple dispatch using two static_cast, avoiding the replication of
+ * boiler-plate code typical of double dispatch.
+ * Consider now what happens when the following code is executed:
+ *
+ * Value_holder<Float> f;
+ * Value_holder<Int>   i;
+ * Value_holder_base& theF = a;
+ * Value_holder_base& theI = b;
+ * theF.delegate(theI);
+ *
+ * First, Value_holder<Float>::delegate(theI) is called. This function call is
+ * dispatched to Velue_delegator<Value_holder<Float>>::delegate(theI) through
+ * normal polymorphism. Inside delegate(), theI is cast to a reference to
+ * Value_holder_middle, then
+ * Value_holder_middle::delegate_impl(Value_holder<Float>&) is called. Since
+ * delegate_impl() is virtual, that means calling
+ * Value_holder<Int>::delegate_impl(Value_holder<Float>&), fully resolving our
+ * call via multiple polymorphism.
+ * To conclude, note the use of virtual inheritance from Value_holder_middle:
+ * this is necessary to allow further derivation from a derived class. Without
+ * virtual inheritance, a class C, as follows, would have two subobjects of
+ * class Value_holder_base, and this does not correspond to the concept of
+ * IS-A (a relationship where one class A is a subclass of another class B).
+ *
+ * class C : public Velue_delegator<C>, public Value_holder<Float>
+ * {
+ * public:
+ *   // implements all the functions
+ *   // delegate_impl declared in Value_holder_target
+ * };
  */
 
 #include <string>
@@ -38,16 +159,18 @@ SGAL_BEGIN_NAMESPACE
 
 typedef boost::shared_ptr<Container>                   Shared_container;
 
-/*! Value_holder holds a single value. The value type can be any basic type,
- * a complex type, or an array of the above. It is an abstract class, which
- * is used as the base for a holder of a value of a specific type.
+/*! Value_holder_base holds a single value. The value type can be any basic
+ * type, a complex type, or an array of the above. It is an abstract class,
+ * which is used as the base for a holder of a value of a specific type.
  */
 class Value_holder_base {
 public:
   /*! Destructor */
   virtual ~Value_holder_base() {}
 
-  /*! Delegate the value to the value of another Value instance */
+  /*! Delegate the value of a Value_holder source object to the value of a
+   * destination (other) Value_holder object.
+   */
   virtual void delegate(Value_holder_base& other) = 0;
 
   /*! Virtual copy constructor */
@@ -105,22 +228,113 @@ public:
 template <class ValueType>
 class Delegate_dispatcher<ValueType, ValueType> {
 public:
-  void operator()(ValueType* value1, ValueType* value2)
-  { *value2 = *value1; }
+  void operator()(ValueType* value1, ValueType* value2) { *value2 = *value1; }
 };
 
+// Int <- Uint
 template <>
-class Delegate_dispatcher<Int, Float> {
+class Delegate_dispatcher<Uint, Int> {
 public:
-  void operator()(Int* value1, Float* value2)
-  { *value2 = *value1; }
+  void operator()(Uint* value1, Int* value2) { *value2 = *value1; }
 };
 
+// Uint <- Int
+template <>
+class Delegate_dispatcher<Int, Uint> {
+public:
+  void operator()(Int* value1, Uint* value2) { *value2 = *value1; }
+};
+
+// Int <- Float
 template <>
 class Delegate_dispatcher<Float, Int> {
 public:
-  void operator()(Float* value1, Int* value2)
-  { *value2 = *value1; }
+  void operator()(Float* value1, Int* value2) { *value2 = *value1; }
+};
+
+// Float <- Int
+template <>
+class Delegate_dispatcher<Int, Float> {
+public:
+  void operator()(Int* value1, Float* value2) { *value2 = *value1; }
+};
+
+// Int <- Boolean
+template <>
+class Delegate_dispatcher<Boolean, Int> {
+public:
+  void operator()(Boolean* value1, Int* value2) { *value2 = (*value1) ? 0 : 1; }
+};
+
+// Boolean <- Int
+template <>
+class Delegate_dispatcher<Int, Boolean> {
+public:
+  void operator()(Int* value1, Boolean* value2) { *value2 = (*value1 != 0); }
+};
+
+// Uint <- Float
+template <>
+class Delegate_dispatcher<Float, Uint> {
+public:
+  void operator()(Float* value1, Uint* value2) { *value2 = *value1; }
+};
+
+// Float <- Uint
+template <>
+class Delegate_dispatcher<Uint, Float> {
+public:
+  void operator()(Uint* value1, Float* value2) { *value2 = *value1; }
+};
+
+// Uint <- Boolean
+template <>
+class Delegate_dispatcher<Boolean, Uint> {
+public:
+  void operator()(Boolean* value1, Uint* value2) { *value2 = *value1; }
+};
+
+// Boolean <- Uint
+template <>
+class Delegate_dispatcher<Uint, Boolean> {
+public:
+  void operator()(Uint* value1, Boolean* value2) { *value2 = *value1; }
+};
+
+// Float <- Boolean
+template <>
+class Delegate_dispatcher<Boolean, Float> {
+public:
+  void operator()(Boolean* value1, Float* value2)
+  { *value2 = (*value1) ? 0.0f : 1.0; }
+};
+
+// Boolean <- Float
+template <>
+class Delegate_dispatcher<Float, Boolean> {
+public:
+  void operator()(Float* value1, Boolean* value2)
+  { *value2 = (*value1 != 0.0f); }
+};
+
+// Vector3f <- Vector2f
+template <>
+class Delegate_dispatcher<Vector2f, Vector3f> {
+public:
+  void operator()(Vector2f* value1, Vector3f* value2)
+  {
+    value2->set((*value1)[0], (*value1)[1], 0.0f);
+  }
+};
+
+// Vector2f <- Vector3f
+template <>
+class Delegate_dispatcher<Vector3f, Vector2f> {
+public:
+  void operator()(Vector3f* value1, Vector2f* value2)
+  {
+    value2->set((*value1)[0], (*value1)[1]);
+  }
 };
 
 // This is only for debugging

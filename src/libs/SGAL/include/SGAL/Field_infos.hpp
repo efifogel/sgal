@@ -66,7 +66,6 @@ typedef Field_info_template<Vector4f, SF_VEC4F>        SF_vector4f;
 typedef Field_info_template<Rotation, SF_ROTATION>     SF_rotation;
 typedef Field_info_template<Sphere_bound, SF_SB>       SF_sphere_bound;
 typedef Field_info_template<std::string, SF_STR>       SF_string;
-typedef Field_info_template<Container*, SF_CONTAINER>  SF_container;
 typedef Field_info_template<Shared_container, SF_SHARED_CONTAINER>
                                                        SF_shared_container;
 
@@ -84,8 +83,6 @@ typedef Field_info_template<Rotation_array, MF_ROTATION>
                                                        MF_rotation;
 typedef Field_info_template<Sphere_bound_array, MF_SB> MF_sphere_bound;
 typedef Field_info_template<String_array, MF_STR>      MF_string;
-typedef Field_info_template<Container_array, MF_CONTAINER>
-                                                       MF_container;
 typedef Field_info_template<Shared_container_array, MF_SHARED_CONTAINER>
                                                        MF_shared_container;
 
@@ -103,7 +100,6 @@ typedef Handle_function<Vector4f>::type       Vector4f_handle_function;
 typedef Handle_function<Rotation>::type       Rotation_handle_function;
 typedef Handle_function<Sphere_bound>::type   Sphere_bound_handle_function;
 typedef Handle_function<std::string>::type    String_handle_function;
-typedef Handle_function<Container*>::type     Container_pointer_handle_function;
 typedef Handle_function<Shared_container>::type
                                               Shared_container_handle_function;
 
@@ -169,10 +165,6 @@ public:
                              Vector4f(value));
     else if (type_enum == SF_STRING)
       return new SF_string(id, name, offset, execution, false, true, value);
-    else if (type_enum == SF_CONTAINER)
-      return new SF_container(id, name, offset, execution, false, true, NULL);
-    else if (type_enum == SF_CONTAINER)
-      return new SF_container(id, name, offset, execution, false, true, NULL);
     else if (type_enum == SF_SHARED_CONTAINER)
       return new SF_shared_container(id, name, offset, execution,
                                      false, true, Shared_container());

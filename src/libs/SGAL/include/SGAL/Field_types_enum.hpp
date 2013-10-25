@@ -57,8 +57,7 @@ enum Field_type_enum {
   SF_SB = 11,
   SF_IMAGE = 12,
   SF_STR = 13,
-  SF_CONTAINER = 14,
-  SF_SHARED_CONTAINER = 15,
+  SF_SHARED_CONTAINER = 14,
   MF_FLOAT = 22,
   MF_UINT32 = 23,
   MF_INT32 = 24,
@@ -69,8 +68,7 @@ enum Field_type_enum {
   MF_VEC4F = 29,
   MF_ROTATION = 30,
   MF_SB = 31,
-  MF_STR = 32,
-  MF_CONTAINER = 33,
+  MF_STR = 33,
   MF_SHARED_CONTAINER = 34
 };
 
@@ -83,7 +81,6 @@ public:
     else if (type == "SFFloat" || type == "Float") return SF_FLOAT;
     else if (type == "SFImage" || type == "Image") return SF_IMAGE;
     else if (type == "SFInt32" || type == "Integer") return SF_INT32;
-    else if (type == "SFNode" || type == "Container") return SF_CONTAINER;
     else if (type == "SFSharedContainer" || type == "SharedContainer")
       return SF_SHARED_CONTAINER;
     else if (type == "SFRotation" || type == "Rotation") return SF_ROTATION;
@@ -96,7 +93,6 @@ public:
     else if (type == "MFColor" || type == "Colors") return MF_VEC3F;
     else if (type == "MFFloat" || type == "Floats") return MF_FLOAT;
     else if (type == "MFInt32" || type == "Integers") return MF_INT32;
-    else if (type == "MFNode" || type == "Containers") return MF_CONTAINER;
     else if (type == "MFSharedNode" || type == "SharedContainers")
       return MF_SHARED_CONTAINER;
     else if (type == "MFRotation" || type == "Rotations") return MF_ROTATION;

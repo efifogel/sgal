@@ -59,7 +59,7 @@ public:
   Array(Uint n) : m_size(0), m_capacity(0), m_vector(NULL)  { resize(n); }
 
   /*! Copy Constructor. */
-  Array(const Array& other) : m_size(0), m_capacity(0), m_vector(NULL)  
+  Array(const Array& other) : m_size(0), m_capacity(0), m_vector(NULL)
   { set(other); }
 
   /*! assignment operator. */
@@ -69,7 +69,7 @@ public:
     if (this != &other) set(other);
     return *this;
   }
-  
+
   /*! Destructor. */
   virtual ~Array() { clear(); }
 
@@ -78,7 +78,7 @@ public:
 
   /*! Determine whether the array is empty. */
   Boolean empty() const { return (m_size == 0); }
-  
+
   /*! Resize the capacity. */
   void resize(Uint n) {
     if (n > m_capacity) {
@@ -93,7 +93,7 @@ public:
     }
     m_size = n;
   }
-  
+
   /*! Clear the structure, delete the vector is necessary */
   void clear() {
     if (m_vector) {
@@ -102,6 +102,14 @@ public:
       m_capacity = 0;
     }
     m_size = 0;
+  }
+
+  /*! Push a new element at the back */
+  void push_back(const Attribute& val)
+  {
+    Uint size = m_size;
+    if (size == m_capacity) resize(size+1);
+    m_vector[size] = val;
   }
 
   typedef Attribute* iterator;
@@ -114,7 +122,7 @@ public:
   /*! The iterator to the past-the-end element. */
   Attribute* end() { return begin() + m_size; }
   const Attribute* end() const { return begin() + m_size; }
-  
+
   /*! Obtain the vector. */
   Attribute* get_vector() { return m_vector; }
   const Attribute* get_vector() const { return m_vector; }
@@ -122,7 +130,7 @@ public:
   /*! Indexing operator. */
   Attribute& operator[](Uint n) { return *(begin() + n); }
   const Attribute& operator[](Uint n) const { return *(begin() + n); }
-  
+
   // virtual void FieldChanged(short fieldId);
   //! \todo virtual Attribute_list get_attributes();
 
@@ -133,7 +141,7 @@ private:
   void set(const Array& other)
   {
     resize(other.size());
-      
+
     // std::copy already uses MEMMOVE (ranges can overlap) whenever possible.
     std::copy(other.m_vector, other.m_vector + m_size, m_vector);
   }
@@ -143,7 +151,7 @@ private:
 
   /*! The capacity of the vector. */
   Uint m_capacity;
-  
+
   /*! The coordinates. */
   Attribute* m_vector;
 };

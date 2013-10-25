@@ -115,7 +115,7 @@ void Spherical_gaussian_map_geo::clean_sgm()
   }
   if (m_minkowski_sum) {
     clock_t start_time = clock();
-    Sgm_node_iter  ni = m_sgm_nodes.begin();
+    Sgm_node_iter ni = m_sgm_nodes.begin();
     Shared_spherical_gaussian_map_geo geo1 = *ni++;
     Shared_spherical_gaussian_map_geo geo2 = *ni;
     m_sgm->minkowski_sum(*(geo1->get_sgm()), *(geo2->get_sgm()));
@@ -206,9 +206,11 @@ void Spherical_gaussian_map_geo::init_prototype()
     new Container_proto(Spherical_gaussian_map_base_geo::get_prototype());
 
   // geometries
-  //! \todo change to MF_shared_container and change m_sgm_nodes respectively.
-  // s_prototype->add_field_info(new MF_container(GEOMETRIES, "geometries",
-  //                                              get_member_offset(&m_sgm_nodes)));
+  Shared_container_array_handle_function sgm_nodes_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Spherical_gaussian_map_geo::sgm_nodes_handle);
+  s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      sgm_nodes_func));
 }
 
 /*! \brief */

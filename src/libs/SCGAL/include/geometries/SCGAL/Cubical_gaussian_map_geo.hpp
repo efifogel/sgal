@@ -35,6 +35,7 @@
 #include <list>
 #include <iostream>
 #include <fstream>
+#include <boost/shared_ptr.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Arr_iostream.h>
@@ -46,6 +47,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
+#include "SGAL/Array.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
@@ -231,8 +233,8 @@ private:
   typedef Cgm::Arr_face_const_handle                    Arr_face_const_handle;
 
   // List of pointers to Cubical_gaussian_map_geo objects */
-  typedef std::list<Shared_cubical_gaussian_map_geo>    Cgm_node_list;
-  typedef Cgm_node_list::iterator                       Cgm_node_iter;
+  typedef Array<Shared_cubical_gaussian_map_geo>        Cgm_node_array;
+  typedef Cgm_node_array::iterator                      Cgm_node_iter;
 
   /*! A function object that converts Point_3 into Vector3f */
   struct Point_to_vector3f {
@@ -374,7 +376,10 @@ private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 
-  /*! */
+  /*! \todo The following is not in used and does not compile, cause we use now
+   * SGAL::Array (instead of an stl container, for example). Either enhance
+   * SGAL::Array with real iterator types, or replace with std::vector.
+   */
   template <typename Iterator>
   class Cgm_iterator {
   private:
@@ -705,7 +710,7 @@ private:
   Boolean m_minkowski_sum;
 
   /*! The minkowski sum operands. */
-  Cgm_node_list m_cgm_nodes;
+  Cgm_node_array m_cgm_nodes;
 
   /*! For benchmarking. */
   float m_time;
@@ -932,7 +937,7 @@ public:
     { return &m_increase_facet_index; }
   Vector3f* aos_edge_color1_handle(Field_info*) { return &m_aos_edge_color[0]; }
   Vector3f* aos_edge_color2_handle(Field_info*) { return &m_aos_edge_color[1]; }
-//   MF_container cgm_nodes_handle(Field_info*) { return &m_cgm_nodes); }
+  Cgm_node_array* cgm_nodes_handle(Field_info*) { return &m_cgm_nodes; }
   //@}
 
   /*! Set the attributes of this node. */
