@@ -77,8 +77,6 @@ class Formatter;
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4251 )
-template class SGAL_SGAL_DECL std::allocator<char>;
-template class SGAL_SGAL_DECL std::basic_string<char, std::char_traits<char>, std::allocator<char> >;
 #endif
 
 class SGAL_SGAL_DECL Container : public Container_observer {

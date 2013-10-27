@@ -35,8 +35,8 @@
 SGAL_BEGIN_NAMESPACE
 
 #if defined(_MSC_VER)
-template class SGAL_SGAL_DECL std::allocator<std::string>;
-template class SGAL_SGAL_DECL std::vector<std::string>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Item_primitive {
@@ -61,6 +61,10 @@ protected:
 
   String_vector m_attributes;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

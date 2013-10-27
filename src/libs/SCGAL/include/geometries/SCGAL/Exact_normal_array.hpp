@@ -41,8 +41,8 @@ class Scene_graph;
 class Container_proto;
 
 #if defined(_MSC_VER)
-template class SGAL_SGAL_DECL std::allocator<Exact_vector_3>;
-template class SGAL_SGAL_DECL std::vector<Exact_vector_3>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 /*! Maintains an array of 3D normals */
@@ -129,6 +129,10 @@ private:
   /*! The exact normal array */
   Exact_vector_vector m_array;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Exact_normal_array* Exact_normal_array::prototype()

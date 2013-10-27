@@ -47,8 +47,8 @@ SGAL_BEGIN_NAMESPACE
 #define SGAL_DEF_WINDOW_STENCIL_BITS            0
 
 #if defined(_MSC_VER)
-template class SGAL_SGAL_DECL std::allocator<char>;
-template class SGAL_SGAL_DECL std::basic_string<char, std::char_traits<char>, std::allocator<char> >;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Window_item {
@@ -229,6 +229,10 @@ public:
    */
   virtual Uint get_number_of_samples() const = 0;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief determines whether the window requires redrawing, */
 inline Boolean Window_item::do_redraw() const { return m_redraw; }

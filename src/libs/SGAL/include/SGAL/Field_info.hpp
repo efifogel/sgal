@@ -57,8 +57,8 @@ class Value_holder_base;
 class Field;
 
 #if defined(_MSC_VER)
-template class SGAL_SGAL_DECL std::allocator<char>;
-template class SGAL_SGAL_DECL std::basic_string<char, std::char_traits<char>, std::allocator<char> >;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Field_info {
@@ -120,6 +120,10 @@ public:
   virtual SAI_field_services * create_sai_field() = 0;
   */
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*!
  */
