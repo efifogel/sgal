@@ -19,7 +19,7 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#if (defined _MSC_VER)
+#if defined(_MSC_VER)
 #include <windows.h>
 #endif
 #include <GL/gl.h>
@@ -179,7 +179,7 @@ void Texture::mag_filter_changed(Field_info* /* field_info */)
 }
 
 /*! \brief draws the texture. */
-void Texture::draw(Context* ctx)
+void Texture::draw(Context* /* context */)
 {
   if (m_dirty) {
     clean();

@@ -37,11 +37,16 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Gl_wrapper {
 private:
   typedef std::map<GLenum, const char*> Name_map;
   typedef Name_map::const_iterator      Name_const_iter;
-  
+
   /*! The singletone. */
   static Gl_wrapper* s_instance;
 
@@ -56,10 +61,10 @@ private:
 
   /*! Find the name of a Boolean token. */
   const char* find_boolean_name(GLboolean flag);
-  
-  /*! Check whether openGl errors have occured. */ 
+
+  /*! Check whether openGl errors have occured. */
   void check_error();
-  
+
 public:
   /*! Obtain the singletone. */
   static Gl_wrapper* get_instance();
@@ -72,10 +77,14 @@ public:
 
   /*! Find the name of a token. */
   static const char* find_boolean(GLboolean flag);
-  
+
   /*! Check for GL errors. */
   static void check();
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 #if defined(NDEBUG)
 #define SGAL_CHECK_GL()
@@ -94,7 +103,7 @@ inline const char* Gl_wrapper::find(GLenum num)
 /*! \brief finds the name of a token. */
 inline const char* Gl_wrapper::find_boolean(GLboolean flag)
 { return get_instance()->find_boolean_name(flag); }
-  
+
 /*! \brief checks for GL errors. */
 inline void Gl_wrapper::check() { get_instance()->check_error(); }
 
@@ -198,7 +207,7 @@ inline void glCallList(GLuint list)
 /*! glCallLists wrapper */
 inline void glCallLists(GLsizei n, GLenum type, const GLvoid* lists)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glCallLists(" << n << ", " 
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glCallLists(" << n << ", "
                   << Gl_wrapper::find(type) << ");"
                   << std::endl;);
   ::glCallLists(n, type, lists);
@@ -317,7 +326,7 @@ inline void glColor3dv(const GLdouble* v)
 /*! glColor3f wrapper */
 inline void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3f(" 
+  SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glColor3f("
                   << red << ", " << green << ", " << blue << ");"
                   << std::endl;);
   ::glColor3f(red, green, blue);
@@ -1587,7 +1596,7 @@ inline void glLightModelfv(GLenum pname, const GLfloat* params)
 /*! glLightModeli wrapper */
 inline void glLightModeli(GLenum pname, GLint param)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, 
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
                   if (pname == GL_LIGHT_MODEL_COLOR_CONTROL) {
                     std::cout << "glLightModeli("
                               << Gl_wrapper::find(pname) << ", "
@@ -1701,7 +1710,7 @@ inline void glLoadMatrixd(const GLdouble* m)
 /*! glLoadMatrixf wrapper */
 inline void glLoadMatrixf(const GLfloat* m)
 {
-    SGAL_TRACE_CODE(Trace::GRAPHICS, 
+    SGAL_TRACE_CODE(Trace::GRAPHICS,
                     std::cout << "glLoadMatrixf(";
                     for (Uint i = 0; i < 16; ++i) {
                       std::cout << m[i];
@@ -1859,11 +1868,11 @@ inline void glMaterialfv(GLenum face, GLenum pname, const GLfloat* params)
                               << params[2] << "," << params[3]
                               << std::endl;
                     break;
-               
+
                    case GL_SHININESS:
                     std::cout << params[0] << std::endl;
                     break;
-               
+
                    case GL_COLOR_INDEXES:
                     std::cout << params[0] << "," << params[1] << ","
                               << params[2]
@@ -2947,7 +2956,7 @@ inline void glTexCoord4f(GLfloat s, GLfloat t, GLfloat r, GLfloat q)
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexCoord4f("
                   << s << ", " << t << ", " << r << ", " << q << ");"
                   << std::endl;);
-  SGAL_CHECK_GL();
+  ::glTexCoord4f(s, t, r, q);
   // Cannot check for errors between glBegin() and glEnd()
 }
 
@@ -3147,7 +3156,7 @@ inline void glTexImage2D(GLenum target, GLint level, GLint internalformat,
                          GLsizei width, GLsizei height, GLint border,
                          GLenum format, GLenum type, const GLvoid* pixels)
 {
-  SGAL_TRACE_CODE(Trace::GRAPHICS, 
+  SGAL_TRACE_CODE(Trace::GRAPHICS,
                   // Is the internal format the number of components?
                   if ((0 < internalformat) && (internalformat <= 4)) {
                     std::cout << "glTexImage2D("

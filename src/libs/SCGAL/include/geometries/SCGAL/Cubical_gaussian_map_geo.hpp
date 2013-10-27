@@ -71,6 +71,11 @@ class Scene_graph;
 class Sphere;
 class Cylinder;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Cubical_gaussian_map_geo : public SGAL::Mesh_set {
 public:
   typedef boost::shared_ptr<Cubical_gaussian_map_geo>
@@ -1205,6 +1210,10 @@ public:
   /*! Increase the face index. */
   void increase_facet_index(Field_info* field_info = NULL);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Cubical_gaussian_map_geo* Cubical_gaussian_map_geo::prototype()

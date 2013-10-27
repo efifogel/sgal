@@ -36,12 +36,12 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor. */
-Container::Container(Boolean proto) :
-  m_base(0), 
+Container::Container(Boolean /* proto */) :
+  m_base(0),
   m_execution_coordinator(0)
 {}
 
-/*! Destructor. */ 
+/*! Destructor. */
 Container::~Container()
 {
   for (Field_iter fi = m_fields.begin(); fi != m_fields.end(); ++fi)
@@ -126,7 +126,7 @@ Field_info* Container::get_field_info(const std::string& name)
 /*! Obtains  the attributes */
 Attribute_list Container::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   // attribs = Background::get_attributes();
   Attribue attrib;
 
@@ -139,7 +139,7 @@ Attribute_list Container::get_attributes()
 }
 
 /*! \brief Add a child object to the scene. */
-void Container::add_to_scene(Scene_graph* sg, XML_entity* parent) 
+void Container::add_to_scene(Scene_graph* sg, XML_entity* parent)
 { m_execution_coordinator = sg->get_execution_coordinator(); }
 #endif
 
@@ -148,7 +148,7 @@ Field* Container::get_source_field(const std::string& src_field_name)
 {
   Field* src_field = add_field(src_field_name);
   if (src_field) return src_field;
-  
+
   Uint start = src_field_name.size() - 8;
   if (src_field_name.compare(start, 8, "_changed") == 0) {
     std::string tmp = src_field_name;
@@ -200,7 +200,7 @@ void Container::process_content_changed()
 }
 
 /*! \brief Processes change of field. */
-void Container::field_changed(Field_info* field_info)
+void Container::field_changed(Field_info* /* field_info */)
 { process_content_changed(); }
 
 SGAL_END_NAMESPACE

@@ -112,6 +112,7 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
 
   m_geometry_drawing_mode = def_geometry_drawing_mode;
   m_are_global_lights_stationary = def_are_global_lights_stationary;
+  m_texture_map = def_texture_map;
   m_is_fixed_head_light = def_is_fixed_head_light;
   m_stencil_bits = def_stencil_bits;
   m_depth_bits = def_depth_bits;
@@ -119,6 +120,7 @@ void Configuration::reset(Geometry_drawing_mode def_geometry_drawing_mode,
   m_poly_mode = def_poly_mode;
   m_display_fps = def_display_fps;
   m_min_zoom_distance = def_min_zoom_distance;
+  m_speed_factor = def_speed_factor;
   m_seamless_cube_map = def_seamless_cube_map;
 }
 

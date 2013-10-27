@@ -37,6 +37,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Agent;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Tick_event: public Event {
@@ -46,7 +51,7 @@ private:
 
   /*! */
   static Uint s_num_ticks;
-  
+
   /*! */
   clock_t m_est_tick_duration;
 
@@ -58,7 +63,7 @@ protected:
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
   /*! Obtain the set of agents registered to process this type of event.
    * \return the set of agents.
    */
@@ -69,18 +74,18 @@ public:
    * \param agent the agent.
    */
   static void doregister(Agent* agent);
-  
+
   /*! Unregister this event for a particular agent.
    * \param agent the agent.
    */
   static void unregister(Agent* agent);
-  
+
   /*! Constructor */
   Tick_event(void);
 
   /*! Destructor */
   virtual ~Tick_event(void) {}
-  
+
   /*! Export an identification message to standard output. */
   virtual void identify(void);
 
@@ -104,6 +109,10 @@ public:
    */
   unsigned int get_num_ticks() const;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief */
 inline Uint Tick_event::get_num_ticks() const { return s_num_ticks; }

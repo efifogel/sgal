@@ -39,6 +39,11 @@ SGAL_BEGIN_NAMESPACE
 class Agent;
 class Window_item;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Mouse_event : public Event {
@@ -47,7 +52,7 @@ public:
     DOWN = 1,
     UP =   0
   };
-  
+
   enum Mouse_button {
     LEFT_BUTTON =   0x1,
     MIDDLE_BUTTON = 0x2,
@@ -57,7 +62,7 @@ public:
 private:
   /*! A set of agents registered to process this type of event */
   static std::set<Agent*> s_set;
-  
+
   /*! The window where the event took place */
   Window_item* m_window_item;
 
@@ -78,7 +83,7 @@ protected:
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
   /*! Obtain the set of agents registered to process this type of event.
    * \return the set of agents.
    */
@@ -103,7 +108,7 @@ public:
 
   /*! Export an identification message to standard output. */
   virtual void identify(void);
-  
+
   /*! Set the window where the event took place */
   void set_window_item(Window_item* item);
 
@@ -134,6 +139,10 @@ public:
   /*! Obtain the x-coordinate of the cursor at the time of the event */
   Uint get_y() const;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the set of agents registered to process this type of event.
  */

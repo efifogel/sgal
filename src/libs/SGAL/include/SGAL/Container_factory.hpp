@@ -52,13 +52,18 @@ struct Reg_##class_name {                                             \
 
 #endif
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! Produces containers. */
 class SGAL_SGAL_DECL Container_factory {
 public:
   typedef boost::shared_ptr<Container>            Shared_container;
 
   /*! Obtain the factory singletone. */
-  static Container_factory* get_instance();  
+  static Container_factory* get_instance();
 
   /*! Register the given container type. */
   void doregister(Container* container);
@@ -67,7 +72,7 @@ public:
    * \param type the type of the container to be created.
    */
   Shared_container create(const std::string& type);
-  
+
 private:
   /*! The container-factory singletone. */
   static Container_factory* m_instance;
@@ -84,6 +89,10 @@ private:
   /*! Register all containers in the container factory. */
   void initialize();
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

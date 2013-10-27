@@ -34,16 +34,16 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Group.hpp"
-#include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Container_proto.hpp"
 #include "SGAL/Container_factory.hpp"
+#include "SGAL/Container_proto.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Mouse_event.hpp"
 #include "SGAL/Tick_event.hpp"
 #include "SGAL/Motion_event.hpp"
 #include "SGAL/Passive_motion_event.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Execution_function.hpp"
 
 // #include "Os.h"
 // #include "Event_manager_int.h"
@@ -150,17 +150,16 @@ void Touch_sensor::init_prototype()
   // overSelectionId
   Uint_handle_function over_selection_id_func =
     static_cast<Uint_handle_function>(&Touch_sensor::over_selection_id_handle);
-  s_prototype->
-    add_field_info(new SF_uint(OVER_SELECTION_ID, "overSelectionId",
-                               over_selection_id_func));
+  s_prototype->add_field_info(new SF_uint(OVER_SELECTION_ID, "overSelectionId",
+                                          over_selection_id_func));
 
   // activeSelectionId
   Uint_handle_function active_selection_id_func =
     static_cast<Uint_handle_function>
     (&Touch_sensor::active_selection_id_handle);
-  s_prototype->
-    add_field_info(new SF_uint(ACTIVE_SELECTION_ID, "activeSelectionId",
-                               active_selection_id_func));
+  s_prototype->add_field_info(new SF_uint(ACTIVE_SELECTION_ID,
+                                          "activeSelectionId",
+                                          active_selection_id_func));
 
   // RoutedNode
   // exec_func =

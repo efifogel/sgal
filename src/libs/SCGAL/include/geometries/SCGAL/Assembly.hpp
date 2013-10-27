@@ -50,6 +50,11 @@ class Element;
 class Container_proto;
 class Field_info;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Assembly : public Group {
 public:
   enum {
@@ -428,6 +433,10 @@ private:
   /*! Print information to an output stream. */
   void print_info(std::ostream& out);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 // template <typename PartIterator>
 // compute_minkowski_sums(PartIterator begin, PartIterator end)

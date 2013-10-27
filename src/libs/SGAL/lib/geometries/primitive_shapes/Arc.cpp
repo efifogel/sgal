@@ -208,7 +208,7 @@ void Arc::draw(Draw_action* action)
 }
 
 /*! \brief draws the object in selection mode */
-void Arc::isect(Isect_action* action)
+void Arc::isect(Isect_action* /* action */)
 {
   // Calculate lower left vertex:
   Vector3f vbl, vtl, vtr, vbr;

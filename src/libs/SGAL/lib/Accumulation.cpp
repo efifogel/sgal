@@ -395,7 +395,7 @@ void Accumulation::set_num_iters(Uint num_iters)
 }
 
 /*! \brief applies Actions when accumulation starts. */
-void Accumulation::pre_render(Draw_action* draw_action)
+void Accumulation::pre_render(Draw_action* /* draw_action */)
 {
   if (m_iteration_no == 0) {
     glClearAccum(0, 0, 0, 0);
@@ -404,7 +404,7 @@ void Accumulation::pre_render(Draw_action* draw_action)
 }
 
 /*! \brief applies actions when accumulation ends. */
-void Accumulation::post_render(Draw_action* draw_action)
+void Accumulation::post_render(Draw_action* /* draw_action */)
 {
   Boolean blendMode = (glIsEnabled(GL_BLEND) == GL_TRUE);
   if (blendMode) glDisable(GL_BLEND);

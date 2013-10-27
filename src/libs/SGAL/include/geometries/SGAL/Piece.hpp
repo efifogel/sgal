@@ -34,6 +34,10 @@ SGAL_BEGIN_NAMESPACE
 
 class Formatter;
 
+#if defined(_MSC_VER)
+template class SGAL_SGAL_DECL Array<Uint>;
+#endif
+
 class SGAL_SGAL_DECL Piece : public Indexed_face_set {
 public:
   enum {

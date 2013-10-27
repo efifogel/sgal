@@ -51,10 +51,10 @@ Box::Box(Boolean proto) : Geometry(proto), m_size(s_def_size) {}
 Box::~Box() {}
 
 /* \brief draws the box by calling the display list. */
-void Box::draw(Draw_action* action) { draw_box(); }
+void Box::draw(Draw_action* /* action */) { draw_box(); }
 
 /*! \brief draws the box for selection. */
-void Box::isect(Isect_action* action)
+void Box::isect(Isect_action* /* action */)
 {
   float w = m_size[0] * 0.5f;
   float h = m_size[1] * 0.5f;

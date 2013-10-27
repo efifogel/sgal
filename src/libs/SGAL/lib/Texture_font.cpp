@@ -57,7 +57,7 @@ Texture_font::Texture_font(const std::string& name, Boolean antialias,
   m_chars.resize(256);
 
 #if 0
-#if (defined _MSC_VER)  
+#if (defined _MSC_VER)
   m_hfont = NULL;
   HWND hwnd = GetDesktopWindow();
   m_hdc = CreateCompatibleDC(GetDC(hwnd));
@@ -69,7 +69,7 @@ Texture_font::Texture_font(const std::string& name, Boolean antialias,
 Texture_font::~Texture_font()
 {
 #if 0
-#if (defined _MSC_VER)    
+#if (defined _MSC_VER)
   DeleteObject(m_hfont);
   DeleteDC((HDC)m_hdc);
 #endif
@@ -211,7 +211,7 @@ void Texture_font::draw_chars()
     r.right = m_bitmap_width;
     r.bottom = m_bitmap_height;
 
-    // Drawing the text into the bitmap. 
+    // Drawing the text into the bitmap.
     // TextOut() is not good for this purpose since it has problems with
     // antialiasing
     DrawText((HDC)m_hdc, str, 1, &r, DT_NOCLIP | DT_NOPREFIX | DT_SINGLELINE);
@@ -231,8 +231,8 @@ void Texture_font::get_bitmap_size(Uint& x, Uint& y)
  * \todo Handle text that always appears - the material must be transparent and
  * the depth test must be disabled.
  */
-void Texture_font::set_appearance(Appearance* app) { 
-  m_appearance = app; 
+void Texture_font::set_appearance(Appearance* app) {
+  m_appearance = app;
   if (m_appearance) {
     m_appearance->set_light_enable(false);
     m_appearance->set_depth_enable(false);
@@ -252,7 +252,7 @@ void  Texture_font::calc_bitmap_size()
   Uint max_dim = 1024;
 
   // Check if renderer returned a valid value
-  Uint  max_dim_idx;
+  Uint  max_dim_idx = 0;
   bool valid_max_dim = false;
 
   // Find index to max_dim in array of valid dimensions
@@ -298,11 +298,11 @@ void  Texture_font::calc_bitmap_size()
   // Calculate final width and height
   if (width > max_dim) {
     Uint min = (Uint) (height * ceil((float)(width - max_dim) / max_dim));
-  
+
     while ((height *= 2) < min+1);
 
     width = max_dim;
-  
+
     if (height > max_dim) {
       load_font(m_name, m_size - 10);
       calc_bitmap_size();
@@ -388,7 +388,7 @@ void Texture_font::create_image_texture(void* pixels)
   if (!m_appearance) return;
 
   /* Handle Alpha Values for Texture.
-   * For each pixel in the surface buffer, copy the 8 red bits 
+   * For each pixel in the surface buffer, copy the 8 red bits
    * (pixel is ABGR) to the alpha bits, by a left shift of 24 bits.
    * Consequently all pixels in texture become transparent (Alpha=0)
    * except those that had a non zero value for red (red is chosen arbitrarily)
@@ -406,18 +406,18 @@ void Texture_font::create_image_texture(void* pixels)
     Image::get_size(m_bitmap_width, m_bitmap_height, Image_base::kRGB8_8_8);
   void* new_pixels = new char[size];
   image->set_pixels(new_pixels);
-  
+
 #if 0
   // Instantiate a new surface for the texture object
   {
     Uint* src = (Uint*)data;
-    
+
     int sz = srf->sizeY*srf->sizeX;
-    for (int i = 0; i < sz; ++i, ++src, ++buf) 
+    for (int i = 0; i < sz; ++i, ++src, ++buf)
       *buf = (((*src >> 4) & 0xF) << 12) | 0xFFF;
   }
 #endif
-  
+
   Uint* src = (Uint *) pixels;
   Uint* trg = (Uint *) new_pixels;
   for (Uint i = 0; i < m_bitmap_width * m_bitmap_height; ++i) {
@@ -454,7 +454,7 @@ void Texture_font::set_scale(Float x, Float y)
   m_scalex = x;
   m_scaley = y;
 }
-  
+
 /*! \brief */
 void Texture_font::get_scale(Float& x, Float& y)
 {

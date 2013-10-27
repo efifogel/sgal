@@ -56,6 +56,11 @@ class SAI_field_services;
 class Value_holder_base;
 class Field;
 
+#if defined(_MSC_VER)
+template class SGAL_SGAL_DECL std::allocator<char>;
+template class SGAL_SGAL_DECL std::basic_string<char, std::char_traits<char>, std::allocator<char> >;
+#endif
+
 class SGAL_SGAL_DECL Field_info {
 protected:
   /*! The field id (e.g, Group::ISVISIBLE). */

@@ -20,7 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * Container - implementation                              
+ * Container - implementation
  */
 
 #include "SGAL/Drag_sensor.hpp"
@@ -46,14 +46,14 @@ Drag_sensor::~Drag_sensor() {}
 void Drag_sensor::left_button_down(int x, int y)
 {
   m_is_left_mouse_down = true;
-  m_from_point[0] = m_to_point[0] = x;
-  m_from_point[1] = m_to_point[1] = y;
+  m_from_point[0] = m_to_point[0] = static_cast<Short>(x);
+  m_from_point[1] = m_to_point[1] = static_cast<Short>(y);
 
   /*! \todo
    * get_win_handle()->set_capture();
    * get_win_handle()->set_focus();
    */
-  
+
   // Activates the virtual start dragging functions
   start_dragging(m_to_point);
   start_left_dragging(m_to_point);
@@ -65,8 +65,8 @@ void Drag_sensor::left_button_down(int x, int y)
 void Drag_sensor::left_button_up(int x, int y)
 {
   m_from_point = m_to_point;
-  m_to_point[0] = x;
-  m_to_point[1] = y;
+  m_to_point[0] = static_cast<Short>(x);
+  m_to_point[1] = static_cast<Short>(y);
 
   // Activates the virtual dragging done functions
   //! \todo get_win_handle ()->release_capture();
@@ -81,14 +81,14 @@ void Drag_sensor::left_button_up(int x, int y)
 void Drag_sensor::right_button_down(int x, int y)
 {
   m_is_right_mouse_down = true;
-  m_from_point[0] = m_to_point[0] = x;
-  m_from_point[1] = m_to_point[1] = y;
+  m_from_point[0] = m_to_point[0] = static_cast<Short>(x);
+  m_from_point[1] = m_to_point[1] = static_cast<Short>(y);
 
   /*! \todo
    * get_win_handle()->set_capture();
    * get_win_handle()->set_focus();
    */
-  
+
   // Activates the virtual start dragging function
   start_dragging(m_to_point);
   start_right_dragging(m_to_point);
@@ -100,8 +100,8 @@ void Drag_sensor::right_button_down(int x, int y)
 void Drag_sensor::right_button_up(int x, int y)
 {
   m_from_point = m_to_point;
-  m_to_point[0] = x;
-  m_to_point[1] = y;
+  m_to_point[0] = static_cast<Short>(x);
+  m_to_point[1] = static_cast<Short>(y);
 
   // Activates the virtual dragging done function
   //! \todo get_win_handle()->release_capture();
@@ -110,7 +110,7 @@ void Drag_sensor::right_button_up(int x, int y)
   m_is_right_mouse_down = false;
 }
 
-/*! Handles the mouse event - 
+/*! Handles the mouse event -
  * @param event (in) the activated event
  */
 void Drag_sensor::mouse_move(int x, int y)
@@ -118,8 +118,8 @@ void Drag_sensor::mouse_move(int x, int y)
   // updates the points between which the mouse move was performed
   m_from_point = m_to_point;
 
-  m_to_point[0] = x;
-  m_to_point[1] = y;
+  m_to_point[0] = static_cast<Short>(x);
+  m_to_point[1] = static_cast<Short>(y);
 
   // Activates dragging if left or right button is down
   if (is_left_mouse_down() || is_right_mouse_down()) {
@@ -132,7 +132,7 @@ void Drag_sensor::mouse_move(int x, int y)
     // mouse dragging function
     if (is_left_mouse_down()) left_mouse_drag(m_from_point, m_to_point);
     if (is_right_mouse_down()) right_mouse_drag(m_from_point, m_to_point);
-  } 
+  }
 }
 
 SGAL_END_NAMESPACE

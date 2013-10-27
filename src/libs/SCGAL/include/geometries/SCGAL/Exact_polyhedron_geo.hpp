@@ -62,6 +62,11 @@ class Color_array;
 class Draw_action;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Exact_polyhedron_geo : public Mesh_set {
 public:
   typedef Exact_number_type                             Number_type;
@@ -290,6 +295,10 @@ private:
   /*! Computes the convex hull of the coordinate set. */
   void convex_hull();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Exact_polyhedron_geo* Exact_polyhedron_geo::prototype()

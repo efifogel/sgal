@@ -32,6 +32,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Bindable_stack {
 private:
   typedef std::vector<Bindable_node*>           Bindable_vector;
@@ -43,14 +48,14 @@ private:
 public:
   /*! Bind the top-stack bindable element */
   void bind_top();
-  
+
   /*! Obtain the bindable at the top os the stack */
   Bindable_node* top()
   { return m_bindable_stack.empty() ? NULL : m_bindable_stack.back(); }
 
   /*! Erase the bindable */
   void erase(Bindable_node* bindable);
-  
+
   /*! Pop the bindable at the top of the stack */
   void pop() { m_bindable_stack.pop_back(); }
 
@@ -66,6 +71,10 @@ public:
   void delegate(Unary_func& uf)
   { uf = std::for_each(m_bindable_stack.begin(), m_bindable_stack.end(), uf); }
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

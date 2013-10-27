@@ -27,7 +27,14 @@
  *
  */
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4244 )
+#endif
 #include <Magick++.h>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/Font.hpp"
 #include "SGAL/Texture_2d.hpp"
@@ -75,7 +82,7 @@ private:
 
   /*! */
   Image m_image;
-  
+
   /*! */
   Uint m_text_width;
 
@@ -87,7 +94,7 @@ private:
 
   /*! The texture image height (number of rows) */
   Uint m_height;
-  
+
   /*! Is the image dirty? */
   Boolean m_dirty;
 };

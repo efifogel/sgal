@@ -14,10 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 12369 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4512 )
+#endif
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Bench_option_parser.hpp"
@@ -30,7 +34,7 @@ Bench_option_parser::Bench_option_parser() :
   m_print_header(true),
   m_name_length(32),
   m_seconds(1),
-  m_samples(10),  
+  m_samples(10),
   m_iterations(1)
 {
   // Generic options:

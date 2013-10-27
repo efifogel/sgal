@@ -22,8 +22,11 @@
 
 %{
 
-#if (defined _MSC_VER)
+#if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
+#pragma warning ( disable : 4127 )
+#pragma warning ( disable : 4244 )
+#pragma warning ( disable : 4146 )
 #endif
 
 #include <stdio.h>
@@ -45,7 +48,7 @@
 SGAL_BEGIN_NAMESPACE
 
 typedef Element::Str_attr		Str_attr;
-typedef Element::Cont_list		Cont_list; 
+typedef Element::Cont_list		Cont_list;
 
 #undef yywrap
 #define yywrap() 1
@@ -55,10 +58,10 @@ SGAL_END_NAMESPACE
 #define YY_NO_UNISTD_H
 %}
 
-%option debug 
+%option debug
 %option yyclass="SGAL::Vrml_scanner"
 %option never-interactive
-%option noyywrap 
+%option noyywrap
 %option c++
 
 I			[1-9]
@@ -183,7 +186,7 @@ loc.step();		// reset location
 "!="            { return Vrml_parser::make_NE(loc); }
 
 [ \t\r\v\f,]+	{ loc.step(); }                    /* skip blanks and tabs */
-\n		{ loc.lines(yyleng); loc.step(); } /* new line */ 
+\n		{ loc.lines(yyleng); loc.step(); } /* new line */
 .		{ ; }                              /* everything else */
 <<EOF>>         { return Vrml_parser::make_END(loc); }
 %%
@@ -223,7 +226,7 @@ void Vrml_scanner::comment()
 void Vrml_scanner::comment_to_eol()
 {
   char c;
-  while ((c = yyinput()) != '\n' && c != 0) /* putchar(c) */ ;
+  while (((c = yyinput()) != '\n') && (c != 0)) /* putchar(c) */ ;
   if (c == '\n') unput(c);
   else { /* putchar(c) */; }
 }

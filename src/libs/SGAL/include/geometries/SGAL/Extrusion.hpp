@@ -26,7 +26,7 @@
 #ifndef SGAL_EXTRUSION_HPP
 #define SGAL_EXTRUSION_HPP
 
-#if (defined _MSC_VER)
+#if defined(_MSC_VER)
 #include <windows.h>
 #endif
 #include <GL/glu.h>
@@ -43,6 +43,11 @@ class Draw_action;
 class Isec_action;
 class Container_proto;
 class Element;
+
+#if defined(_MSC_VER)
+template class SGAL_SGAL_DECL Array<Vector2f>;
+template class SGAL_SGAL_DECL Array<Rotation>;
+#endif
 
 class SGAL_SGAL_DECL Extrusion : public Indexed_face_set {
 public:

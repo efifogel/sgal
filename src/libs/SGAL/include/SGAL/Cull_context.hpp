@@ -42,6 +42,11 @@ class Shape;
 class Light;
 class Draw_action;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Cull_context {
 public:
   class Render_node {
@@ -76,14 +81,14 @@ public:
 
   void add_shape(Shape* shape);
 
-  /*! 
+  /*!
    * \param light a pointer to the Light.
    */
   void add_light(Light* light);
 
   /*! */
   void set_head_light(Shared_light light);
-  
+
   void push_matrix(const Matrix4f& mat);
 
   void pop_matrix();
@@ -101,7 +106,7 @@ protected:
 
   typedef std::vector<Render_node>      Render_node_vector;
   typedef Render_node_vector::iterator  Render_node_iter;
-  
+
   typedef std::vector<Light_node>       Light_vector;
   typedef Light_vector::iterator        Light_iter;
 
@@ -109,7 +114,7 @@ protected:
 
 private:
   float compute_distance(const Cull_context::Render_node& rn);
-  
+
   Render_node_vector m_nodes;
 
   Render_node_vector m_2ndpass;
@@ -122,7 +127,7 @@ private:
 
   // Matrix stack (similar to opengl).
   Matrix_stack m_matrix_stack;
-  
+
   // Current world to view transformation matrix (Camera matrix).
   // Matrix4f m_viewTM;
 
@@ -134,6 +139,10 @@ private:
   /*! A flag indicating whether sort is needed */
   Boolean m_sort;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

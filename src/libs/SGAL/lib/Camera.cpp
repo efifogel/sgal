@@ -30,7 +30,6 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Math_defs.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"

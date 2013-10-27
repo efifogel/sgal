@@ -215,7 +215,7 @@ void Geodesic::draw(Draw_action * action)
 }
 
 /*! \brief draws the object in selection mode */
-void Geodesic::isect(Isect_action* action)
+void Geodesic::isect(Isect_action* /* action */)
 {
   // // if (!is_dirty()) clean();
 

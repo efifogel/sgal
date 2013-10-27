@@ -110,7 +110,7 @@ const Cubical_gaussian_map_geo::Edge_style
   Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_style(Edge_shape::TUBE);
 const Int Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_count(1);
 const Boolean Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_directed(false);
-const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_radius(.015);
+const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_radius(.015f);
 const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_line_width(1);
 const Vector3f Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_color(0, 0, 0);
 
@@ -123,7 +123,7 @@ const float Cubical_gaussian_map_geo::s_def_marked_edge_radius(0.1f);
 const Cubical_gaussian_map_geo::Vertex_style
   Cubical_gaussian_map_geo::
   s_def_aos_marked_vertex_style(Vertex_shape::DISC);
-const Float Cubical_gaussian_map_geo::s_def_aos_marked_vertex_radius(0.03);
+const Float Cubical_gaussian_map_geo::s_def_aos_marked_vertex_radius(0.03f);
 const Float Cubical_gaussian_map_geo::s_def_aos_marked_vertex_point_size(1);
 
 const bool Cubical_gaussian_map_geo::s_def_draw_marked_vertex(false);
@@ -1902,7 +1902,7 @@ void Cubical_gaussian_map_geo::Marked_face_renderer::
 operator()(Draw_action* action)
 {
   const Vector3f& color = m_geo.get_marked_vertex_color();
-  glColor4f(color[0], color[1], color[2], 0.6);
+  glColor4f(color[0], color[1], color[2], 0.6f);
   for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i)
     m_geo.draw_aos_marked_face(i);
 }

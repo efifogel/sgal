@@ -41,6 +41,11 @@ class Value_holder_base;
 class Container;
 class Field_info;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /* Hold a pointer to the suitable field-info records and a list of connected
  * fields, which this field is connected to.
  */
@@ -104,6 +109,10 @@ public:
   /*! Obtain the value member. */
   virtual Value_holder_base* get_value_holder() { return m_value_holder; }
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the field info. */
 inline Field_info* Field::get_field_info() const { return m_field_info; }

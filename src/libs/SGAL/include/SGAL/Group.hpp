@@ -61,6 +61,11 @@ class Touch_sensor;
 class Light;
 class Scene_graph;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Group : public Node {
 public:
   enum {
@@ -248,6 +253,10 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Group* Group::prototype() { return new Group(true); }

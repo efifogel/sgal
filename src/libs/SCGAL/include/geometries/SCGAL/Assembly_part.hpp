@@ -44,6 +44,11 @@ class Element;
 class Container_proto;
 class Appearance;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Assembly_part : public Group {
   typedef Spherical_gaussian_map_colored_geo        Sgm_geo;
   typedef Spherical_gaussian_map_colored            Sgm;
@@ -83,10 +88,6 @@ class SGAL_SCGAL_DECL Assembly_part : public Group {
 
   /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
-
-  /// \name field handlers
-  //@{
-  //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
@@ -147,6 +148,10 @@ private:
   Boolean_list m_owned_sgm_aps;
 
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Assembly_part* Assembly_part::prototype()

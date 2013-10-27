@@ -39,6 +39,10 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
+#if (defined _MSC_VER)
+template class SGAL_SGAL_DECL Array<Vector3f>;
+#endif
+
 /*! Maintains an array of 3D vertex-coordinate. */
 class SGAL_SGAL_DECL Coord_array : public Container {
 public:

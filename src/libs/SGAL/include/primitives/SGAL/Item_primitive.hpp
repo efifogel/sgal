@@ -20,7 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * Base class for async. loaded primitive items	
+ * Base class for async. loaded primitive items
  */
 
 #ifndef SGAL_ITEM_PRIMITIVE_HPP
@@ -33,6 +33,11 @@
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+#if defined(_MSC_VER)
+template class SGAL_SGAL_DECL std::allocator<std::string>;
+template class SGAL_SGAL_DECL std::vector<std::string>;
+#endif
 
 class SGAL_SGAL_DECL Item_primitive {
 public:
@@ -53,7 +58,7 @@ protected:
 
   /*! Constructor */
   Item_primitive() {}
-  
+
   String_vector m_attributes;
 };
 

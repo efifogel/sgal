@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -47,6 +47,10 @@
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
+
+#if (defined _MSC_VER)
+template class SGAL_SGAL_DECL Array<Rotation>;
+#endif
 
 class SGAL_SGAL_DECL Rotation_interpolator : public Interpolator {
 public:

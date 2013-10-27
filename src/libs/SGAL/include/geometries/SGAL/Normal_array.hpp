@@ -42,6 +42,10 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
+#if (defined _MSC_VER)
+template class SGAL_SGAL_DECL Array<Vector3f>;
+#endif
+
 /*! This class maintains an array of vertex-normals */
 class SGAL_SGAL_DECL Normal_array : public Container {
 public:

@@ -54,7 +54,7 @@ Windows_window_manager::Windows_window_manager() :
 {}
 
 /*! \brief obtains a pointer to the manager */
-Windows_window_manager* Windows_window_manager::instance() 
+Windows_window_manager* Windows_window_manager::instance()
 {
   if (!s_instance) s_instance = new Windows_window_manager();
   return s_instance;
@@ -68,7 +68,7 @@ void Windows_window_manager::register_window_class()
   ::ZeroMemory(&wc, sizeof(wc));                    // clear memory
   wc.cbSize        = sizeof(WNDCLASSEX);            // size of structure
   // Redraws The Window For Any Movement / Resizing:
-  // wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;  
+  // wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
   wc.style         = 0;                             // no special styles
   wc.lpfnWndProc   = (WNDPROC)(WindowProc);         // event handler
   wc.cbClsExtra    = 0;                             // no extra class data
@@ -89,7 +89,7 @@ void Windows_window_manager::register_window_class()
 }
 
 /*! \brief initializes the window manager */
-void Windows_window_manager::init(Uint argc, char* argv[])
+void Windows_window_manager::init(Uint /* argc */, char* /* argv */ [])
 {
   // Get this module instance:
   m_hInstance = GetModuleHandle(NULL);
@@ -114,11 +114,11 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
 {
   SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                   std::cout << "WindowProc()" << std::endl;);
-    
+
   // Get The Window Context
   Windows_window_manager* wm = Windows_window_manager::instance();
   Windows_window_item* current_window;
-  
+
   LONG lRet = 1;
   PAINTSTRUCT ps;
   Mouse_event::Mouse_button button;
@@ -130,7 +130,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
   Passive_motion_event* passive_motion_event;
   CREATESTRUCT* creation;
   Uint key;
-  
+
   switch (uMsg) {
    case WM_CREATE:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
@@ -179,7 +179,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
       break;
     }
     break;
-    
+
    case WM_PAINT:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_PAINT" << std::endl;);
@@ -271,7 +271,7 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     state = Mouse_event::UP;
     wm->m_button_state &= ~(0x1 << 1);
     goto process_mouse;
-    
+
    case WM_MBUTTONDOWN:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_MBUTTONDOWN" << std::endl;);
@@ -335,17 +335,17 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_CAPTURECHANGED" << std::endl;)
     break;
-    
+
    default:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "default" << std::endl;)
     // Pass it on if unproccessed:
-    lRet = DefWindowProc(hWnd, uMsg, wParam, lParam); 
-    break; 
+    lRet = DefWindowProc(hWnd, uMsg, wParam, lParam);
+    break;
   }
 
   return lRet;
-} 
+}
 
 /*! \brief creates a new window */
 void Windows_window_manager::create_window(Windows_window_item* window_item)
@@ -366,12 +366,12 @@ void Windows_window_manager::destroy_window(Windows_window_item* window_item)
 void Windows_window_manager::event_loop(Boolean simulating)
 {
   Boolean done = false;
-  
+
   // Handle events while not done:
   do {
     // Stage 1 - Generate Tick event:
 
-    // Chech whether simulation is required: 
+    // Chech whether simulation is required:
     if (simulating) {
       // Measure the ellapsed time:
       clock_t end_tick_time = clock();
@@ -419,7 +419,7 @@ void Windows_window_manager::event_loop(Boolean simulating)
     }
 
     // Stage 2 - Process Windows window events:
-    
+
     /* If
      * 1. the event queue is empty, and
      * 2. none of the windows has to be redrawn, then
@@ -443,7 +443,7 @@ void Windows_window_manager::event_loop(Boolean simulating)
       if (rc == 0) {
         DWORD dw = GetLastError();
         LPVOID lpMsgBuf;
-        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
                       FORMAT_MESSAGE_FROM_SYSTEM |
                       FORMAT_MESSAGE_IGNORE_INSERTS,
                       NULL,
@@ -456,7 +456,7 @@ void Windows_window_manager::event_loop(Boolean simulating)
         return;
       }
     }
-    
+
     MSG msg;
     while (PeekMessage(&msg, NULL, 0, 0, TRUE) != 0) {
       if (msg.message == WM_QUIT) {

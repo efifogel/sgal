@@ -39,6 +39,11 @@ SGAL_BEGIN_NAMESPACE
 class Agent;
 class Window_item;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! The keyboard event. Holds data related to the event of pressing or
  * releasing a key by the user.
  */
@@ -68,13 +73,13 @@ private:
 
   /*! Indicates whether the key is pressed or released. */
   Boolean m_pressed;
-  
+
 protected:
   /*! Deligate the handling of the current event to the given agent.
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
   /*! Obtain the set of agents registered to process this type of event.
    * \return the set of agents.
    */
@@ -105,7 +110,7 @@ public:
 
   /*! Obtain the window where the event took place. */
   Window_item* get_window_item() const;
-  
+
   /*! Set the key pressed or released. */
   void set_key(Uint key);
 
@@ -131,6 +136,10 @@ public:
   Boolean get_pressed() const;
 };
 
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
+
 /*! \brief destructor */
 inline Keyboard_event::~Keyboard_event(void) {}
 
@@ -145,7 +154,7 @@ inline void Keyboard_event::set_window_item(Window_item* item)
 /*! \brief obtains the window where the event took place. */
 inline Window_item* Keyboard_event::get_window_item() const
 { return m_window_item; }
-  
+
 /*! \brief sets the key pressed or released. */
 inline void Keyboard_event::set_key(Uint key) { m_key = key; }
 

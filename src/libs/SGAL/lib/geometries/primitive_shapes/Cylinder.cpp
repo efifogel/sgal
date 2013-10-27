@@ -72,7 +72,7 @@ Cylinder::~Cylinder()
 }
 
 /*! \brief draws the cylinder. */
-void Cylinder::draw(Draw_action* action)
+void Cylinder::draw(Draw_action* /* action */)
 {
   if (is_dirty()) clean();
 
@@ -119,7 +119,7 @@ void Cylinder::draw(Draw_action* action)
 }
 
 /*! \brief draws the cylinder in selection mode. */
-void Cylinder::isect(Isect_action* action)
+void Cylinder::isect(Isect_action* /* action */)
 {
   if (m_dirty) clean();
 

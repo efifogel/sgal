@@ -48,7 +48,7 @@ Fragment_shader::Fragment_shader(Boolean proto) :  Shader(proto) { }
 Fragment_shader::~Fragment_shader() {}
 
 /*! \brief applies the shader. */
-void Fragment_shader::draw(Context* ctx)
+void Fragment_shader::draw(Context* /* context */)
 {
   if (m_dirty) clean();
 

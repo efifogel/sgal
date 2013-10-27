@@ -36,7 +36,12 @@ class Element;
 class Container_proto;
 class Coord_array;
 
-class Coord_transformer : public Container {
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
+class SGAL_SGAL_DECL Coord_transformer : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
@@ -179,6 +184,10 @@ private:
   // default values
   static Boolean s_def_enabled;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Coord_transformer* Coord_transformer::prototype()

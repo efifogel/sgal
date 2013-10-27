@@ -920,7 +920,7 @@ Gl_wrapper::Gl_wrapper()
     "GL_TEXTURE_CUBE_MAP_POSITIVE_Z";
   m_gl_token_names[GL_TEXTURE_CUBE_MAP_NEGATIVE_Z] =
     "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z";
-  
+
   /* TextureGenParameter */
   m_gl_token_names[GL_TEXTURE_GEN_MODE] = "GL_TEXTURE_GEN_MODE";
   m_gl_token_names[GL_OBJECT_PLANE] = "GL_OBJECT_PLANE";
@@ -1131,7 +1131,7 @@ Gl_wrapper::Gl_wrapper()
 #if defined(GL_DOUBLE_EXT)
   m_gl_token_names[GL_DOUBLE_EXT] = "GL_DOUBLE_EXT";
 #endif
-  
+
   /* EXT_bgra */
   m_gl_token_names[GL_BGR_EXT] = "GL_BGR_EXT";
   m_gl_token_names[GL_BGRA_EXT] = "GL_BGRA_EXT";
@@ -1156,27 +1156,27 @@ Gl_wrapper::Gl_wrapper()
   m_gl_token_names[GL_COLOR_TABLE_GREEN_SIZE_EXT] =
     "GL_COLOR_TABLE_GREEN_SIZE_EXT";
 #endif
-  
+
 #if defined(GL_COLOR_TABLE_BLUE_SIZE_EXT)
   m_gl_token_names[GL_COLOR_TABLE_BLUE_SIZE_EXT] =
     "GL_COLOR_TABLE_BLUE_SIZE_EXT";
 #endif
-  
+
 #if defined(GL_COLOR_TABLE_ALPHA_SIZE_EXT)
   m_gl_token_names[GL_COLOR_TABLE_ALPHA_SIZE_EXT] =
     "GL_COLOR_TABLE_ALPHA_SIZE_EXT";
 #endif
-  
+
 #if defined(GL_COLOR_TABLE_LUMINANCE_SIZE_EXT)
   m_gl_token_names[GL_COLOR_TABLE_LUMINANCE_SIZE_EXT] =
     "GL_COLOR_TABLE_LUMINANCE_SIZE_EXT";
 #endif
-  
+
 #if defined(GL_COLOR_TABLE_INTENSITY_SIZE_EXT)
   m_gl_token_names[GL_COLOR_TABLE_INTENSITY_SIZE_EXT] =
     "GL_COLOR_TABLE_INTENSITY_SIZE_EXT";
 #endif
-  
+
   m_gl_token_names[GL_COLOR_INDEX1_EXT] = "GL_COLOR_INDEX1_EXT";
   m_gl_token_names[GL_COLOR_INDEX2_EXT] = "GL_COLOR_INDEX2_EXT";
   m_gl_token_names[GL_COLOR_INDEX4_EXT] = "GL_COLOR_INDEX4_EXT";
@@ -1189,12 +1189,12 @@ Gl_wrapper::Gl_wrapper()
   m_gl_token_names[GL_MAX_ELEMENTS_VERTICES_WIN] =
     "GL_MAX_ELEMENTS_VERTICES_WIN";
 #endif
-  
+
 #if defined(GL_MAX_ELEMENTS_INDICES_WIN)
   m_gl_token_names[GL_MAX_ELEMENTS_INDICES_WIN] =
     "GL_MAX_ELEMENTS_INDICES_WIN";
 #endif
-  
+
 
   /* WIN_phong_shading */
   m_gl_token_names[GL_PHONG_WIN] = "GL_PHONG_WIN";
@@ -1295,29 +1295,29 @@ Gl_wrapper::~Gl_wrapper()
 }
 
 /*! Obtain the singletone */
-Gl_wrapper * Gl_wrapper::get_instance()
+Gl_wrapper* Gl_wrapper::get_instance()
 {
   if (s_instance == NULL) s_instance = new Gl_wrapper();
   return s_instance;
 }
 
 /*! Find the name of a token */
-const char * Gl_wrapper::find_name(GLenum num)
+const char* Gl_wrapper::find_name(GLenum num)
 {
   Name_const_iter it = m_gl_token_names.find(num);
   if (it == m_gl_token_names.end()) return "";
   else return (*it).second;
 }
 
-/*! \brief checks whether openGl errors have occured. */ 
+/*! \brief checks whether openGl errors have occured. */
 void Gl_wrapper::check_error()
 {
   GLenum err = glGetError();
   while (err != GL_NO_ERROR) {
     std::cerr << "OpenGL Error: " << gluErrorString(err) << std::endl;
     break;
-    err = glGetError();
-  } 
+    // err = glGetError();
+  }
 }
 
 SGAL_END_NAMESPACE

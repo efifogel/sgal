@@ -137,7 +137,7 @@ void Cylindrical_patch::draw(Draw_action* action)
 }
 
 /*! \brief draws the cylindrical patch in selection mode. */
-void Cylindrical_patch::isect(Isect_action* action)
+void Cylindrical_patch::isect(Isect_action* /* action */)
 {
   Float top = m_height / 2;
   Float bottom = -top;

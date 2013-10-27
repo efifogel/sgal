@@ -49,10 +49,18 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
-typedef std::queue<int>         Int_queue;
+typedef std::queue<Int>         Int_queue;
 typedef std::queue<Ulong>       Ulong_queue;
 
-class SGAL_SGAL_DECL Flow_sensor : public Container {
+/*!
+ * This class is used as a container of fields. That is, it (indirectly)
+ * derives from 'Container' through 'Node'. As such, for each field f a
+ * pointer to a member function that obtains a pointer to the data member
+ * that stores the value of the field f is used. This member function is
+ * invoked relative to the based 'Container' class.
+ * Keep 'Node' as the first derived class. Otherwise, MSVC complains.
+ */
+class SGAL_SGAL_DECL Flow_sensor : public Node, public Agent {
 public:
   enum {
     FIRST = Container::LAST - 1,

@@ -32,7 +32,14 @@
 #define __WIN32__
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4244 )
+#endif
 #include <Magick++.h>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -187,7 +194,7 @@ void Image::clean()
     }
     Image_base::Format format = kIllegal;
     std::string magick_map;
-    Magick::StorageType magick_type;
+    Magick::StorageType magick_type = Magick::CharPixel;
     Magick::ImageType type = image.type();
     switch (type) {
      case Magick::GrayscaleType:       // Grayscale img

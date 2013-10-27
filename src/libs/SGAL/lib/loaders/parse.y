@@ -34,8 +34,12 @@
 %code requires // *.hh
 {
 
-#if (defined _MSC_VER)
+#if defined(_MSC_VER)
 #pragma warning ( disable : 4786 )
+#pragma warning ( disable : 4127 )
+#pragma warning ( disable : 4065 )
+#pragma warning ( disable : 4146 )
+#pragma warning ( disable : 4512 )
 #endif
 
 #include <stdio.h>

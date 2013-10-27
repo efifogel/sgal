@@ -41,6 +41,11 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Container_proto;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Accumulation : public Container {
 public:
   typedef struct jitter { Float x, y; } Jitter;
@@ -251,6 +256,10 @@ private:
 
   static const Char* s_quality_names[];
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Accumulation* Accumulation::prototype()

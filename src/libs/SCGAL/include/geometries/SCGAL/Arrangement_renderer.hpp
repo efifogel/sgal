@@ -39,6 +39,11 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Vector3f;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Arrangement_renderer {
 public:
   /*! A function object that renders something */
@@ -144,6 +149,10 @@ public:
   /*! Set the stencil reference value */
   void set_stencil_ref(Int stencil_ref) { m_stencil_ref = stencil_ref; }
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

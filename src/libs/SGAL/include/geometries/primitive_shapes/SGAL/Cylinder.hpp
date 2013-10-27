@@ -202,7 +202,7 @@ private:
   static const Boolean s_def_is_top_visible;
   static const Boolean s_def_is_body_visible;
 
-  Cylinder(const Cylinder& cylinder) {}
+  Cylinder(const Cylinder& /* cylinder */) {}
 
   /*! Clean the cylinder. */
   void clean();

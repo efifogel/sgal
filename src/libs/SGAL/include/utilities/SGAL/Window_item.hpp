@@ -46,6 +46,11 @@ SGAL_BEGIN_NAMESPACE
 #define SGAL_DEF_WINDOW_DEPTH_BITS              24
 #define SGAL_DEF_WINDOW_STENCIL_BITS            0
 
+#if defined(_MSC_VER)
+template class SGAL_SGAL_DECL std::allocator<char>;
+template class SGAL_SGAL_DECL std::basic_string<char, std::char_traits<char>, std::allocator<char> >;
+#endif
+
 class SGAL_SGAL_DECL Window_item {
 protected:
   /*! The window requires redrawing. */
@@ -56,7 +61,7 @@ protected:
 
   /*! Indicates whether the window color frame-bufferis  being accumulated. */
   Boolean m_accumulating;
-    
+
   /*! The window title. */
   std::string m_title;
 
@@ -75,12 +80,12 @@ public:
    * \return a Boolean indicates whether the window requires redrawing.
    */
   Boolean do_redraw() const;
-  
+
   /*! Set the redraw flag.
    * \param redraw indicates whether the window requires redrawing
    */
   void set_redraw(Boolean redraw);
-  
+
   /*! Determine whether the window is visible. */
   virtual Boolean is_visible() const;
 
@@ -94,7 +99,7 @@ public:
    * being accumulated.
    */
   virtual void set_accumulating(Boolean flag);
-  
+
   /*! Show the window. Make the window current if it is not already. */
   virtual void show() = 0;
 
@@ -108,7 +113,7 @@ public:
    * the calling thread.
    */
   virtual void make_current() = 0;
-  
+
   /*! Set the window title */
   void set_title(const std::string& title);
 
@@ -127,7 +132,7 @@ public:
    * \param height the new height of the window.
    */
   virtual void set_height(Uint height) = 0;
-  
+
   /*! Set the width and height of the window.
    * \param width the new width of the window.
    * \param height the new height of the window.
@@ -159,7 +164,7 @@ public:
                                         Uint& blue_bits) const = 0;
 
   /*! Set the number of alpha bits.
-   * \param alpha_bits the number of alpha bits. 
+   * \param alpha_bits the number of alpha bits.
    */
   virtual void set_number_of_alpha_bits(Uint alpha_bits) = 0;
 
@@ -208,14 +213,14 @@ public:
    * \param stencil_bits the number of stencil bits.
    */
   virtual void set_number_of_stencil_bits(Uint stencil_bits) = 0;
-  
+
   /*! Obtain the number of stencil bits.
    * \return the number of stencil bits.
    */
   virtual Uint get_number_of_stencil_bits() const = 0;
 
   /*! Set the number of samples for multisampling
-   * \param samples the number of samples 
+   * \param samples the number of samples
    */
   virtual void set_number_of_samples(Uint samples) = 0;
 
@@ -230,7 +235,7 @@ inline Boolean Window_item::do_redraw() const { return m_redraw; }
 
 /*! \brief sets the redraw flag. */
 inline void Window_item::set_redraw(Boolean redraw) { m_redraw = redraw; }
-  
+
 /*! \brief determines whether the window is visible. */
 inline Boolean Window_item::is_visible() const { return m_visible; }
 
@@ -247,7 +252,7 @@ inline Boolean Window_item::is_accumulating() const { return m_accumulating; }
  */
 inline void Window_item::set_accumulating(Boolean flag)
 { m_accumulating = flag; }
-  
+
 /*! \brief sets the window title */
 inline void Window_item::set_title(const std::string& title)
 { m_title = title; }

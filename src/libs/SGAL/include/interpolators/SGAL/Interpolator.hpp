@@ -46,6 +46,10 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
+#if (defined _MSC_VER)
+template class SGAL_SGAL_DECL Array<Float>;
+#endif
+
 class SGAL_SGAL_DECL Interpolator : public Node {
 public:
   enum {

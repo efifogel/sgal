@@ -32,6 +32,10 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
+#if (defined _MSC_VER)
+template class SGAL_SGAL_DECL Array<Vector2f>;
+#endif
+
 /*! This class maintains an array of vertex-texture-coordinates pairs */
 class SGAL_SGAL_DECL Tex_coord_array_2d : public Tex_coord_array {
 public:

@@ -33,7 +33,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Context;
 
-class Color_map {
+class SGAL_SGAL_DECL Color_map {
 public:
   /*! Initialize the color map. */
   void init(Context* context);

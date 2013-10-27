@@ -36,6 +36,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Agent;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Simulate_event : public Event {
@@ -44,13 +49,13 @@ private:
   static std::set<Agent*> s_set;
 
   Boolean m_simulate;
-  
+
 protected:
   /*! Deligate the handling of the current event to the given agent.
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
   /*! Obtain the set of agents registered to process this type of event.
    * \return the set of agents.
    */
@@ -79,6 +84,10 @@ public:
   /*! */
   Boolean get_simulate(void) const;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the set of agents registered to process this type of event.
  */

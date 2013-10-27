@@ -38,6 +38,10 @@ class Element;
 class Image;
 class Scene_graph;
 
+#if (defined _MSC_VER)
+template struct SGAL_SGAL_DECL std::pair<Image*, Boolean>;
+#endif
+
 class SGAL_SGAL_DECL Sphere_environment : public Texture {
 public:
   enum {

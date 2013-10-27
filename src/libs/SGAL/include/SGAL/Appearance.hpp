@@ -48,6 +48,11 @@ class Element;
 class Formatter;
 class Halftone;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! \brief A represenation of an appearance of a shape */
 class SGAL_SGAL_DECL Appearance : public Container {
 public:
@@ -414,6 +419,10 @@ private:
 
   friend class Context;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Appearance* Appearance::prototype() { return new Appearance(true); }

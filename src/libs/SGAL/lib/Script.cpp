@@ -221,7 +221,7 @@ void Script::add_field_def(const String& name, const String& type,
 
 // Execution function - executes the suitable script function according to the
 // event
-void Script::execute(Field_info* field_info)
+void Script::execute(Field_info* /* field_info */)
 {
 #if 0
   // if this is the first time the script is executed -

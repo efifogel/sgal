@@ -48,7 +48,7 @@ Composed_shader::Composed_shader(Boolean proto) :  Container(proto) { }
 Composed_shader::~Composed_shader() {}
 
 /*! \brief applies the shader. */
-void Composed_shader::draw(Context* ctx)
+void Composed_shader::draw(Context* /* context */)
 {
   if (m_dirty) clean();
 

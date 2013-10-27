@@ -221,7 +221,7 @@ protected :
 template <class ValueType1, class ValueType2>
 class Delegate_dispatcher {
 public:
-  void operator()(ValueType1* value1, ValueType2* value2)
+  void operator()(ValueType1* /* value1 */, ValueType2* /* value2 */)
   { SGAL_error(); }
 };
 
@@ -249,14 +249,16 @@ public:
 template <>
 class Delegate_dispatcher<Float, Int> {
 public:
-  void operator()(Float* value1, Int* value2) { *value2 = *value1; }
+  void operator()(Float* value1, Int* value2)
+  { *value2 = static_cast<Int>(*value1); }
 };
 
 // Float <- Int
 template <>
 class Delegate_dispatcher<Int, Float> {
 public:
-  void operator()(Int* value1, Float* value2) { *value2 = *value1; }
+  void operator()(Int* value1, Float* value2)
+  { *value2 = static_cast<Float>(*value1); }
 };
 
 // Int <- Boolean
@@ -277,28 +279,31 @@ public:
 template <>
 class Delegate_dispatcher<Float, Uint> {
 public:
-  void operator()(Float* value1, Uint* value2) { *value2 = *value1; }
+  void operator()(Float* value1, Uint* value2)
+  { *value2 = static_cast<Uint>(*value1); }
 };
 
 // Float <- Uint
 template <>
 class Delegate_dispatcher<Uint, Float> {
 public:
-  void operator()(Uint* value1, Float* value2) { *value2 = *value1; }
+  void operator()(Uint* value1, Float* value2)
+  { *value2 = static_cast<Float>(*value1); }
 };
 
 // Uint <- Boolean
 template <>
 class Delegate_dispatcher<Boolean, Uint> {
 public:
-  void operator()(Boolean* value1, Uint* value2) { *value2 = *value1; }
+  void operator()(Boolean* value1, Uint* value2)
+  { *value2 = (*value1) ? 0 : 1; }
 };
 
 // Boolean <- Uint
 template <>
 class Delegate_dispatcher<Uint, Boolean> {
 public:
-  void operator()(Uint* value1, Boolean* value2) { *value2 = *value1; }
+  void operator()(Uint* value1, Boolean* value2) { *value2 = (*value1 != 0); }
 };
 
 // Float <- Boolean
@@ -306,7 +311,7 @@ template <>
 class Delegate_dispatcher<Boolean, Float> {
 public:
   void operator()(Boolean* value1, Float* value2)
-  { *value2 = (*value1) ? 0.0f : 1.0; }
+  { *value2 = (*value1) ? 0.0f : 1.0f; }
 };
 
 // Boolean <- Float

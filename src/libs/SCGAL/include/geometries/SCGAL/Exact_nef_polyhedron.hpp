@@ -61,6 +61,11 @@ class Color_array;
 class Draw_action;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Exact_nef_polyhedron : public Mesh_set {
 public:
   typedef CGAL::Tag_true                                Tag_true;
@@ -411,6 +416,10 @@ protected:
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Exact_nef_polyhedron* Exact_nef_polyhedron::prototype()

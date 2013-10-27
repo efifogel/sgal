@@ -35,6 +35,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Agent;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Start_event : public Event {
@@ -52,7 +57,7 @@ protected:
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
 public:
   /*! Register this event for a particular agent.
    * \param agent the agent.
@@ -70,6 +75,10 @@ public:
   /*! Export an identification message to standard output. */
   virtual void identify(void);
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the set of agents registered to process this type of event.
  */

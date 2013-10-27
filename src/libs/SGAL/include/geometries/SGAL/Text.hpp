@@ -40,6 +40,11 @@ class Container_proto;
 class Element;
 class Cull_context;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Text : public Geometry {
 public:
   enum {
@@ -116,6 +121,10 @@ private:
   /*! Indicates whether a default fontStyle was constructed */
   Shared_font_style m_default_font_style;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

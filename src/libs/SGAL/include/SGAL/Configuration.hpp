@@ -43,6 +43,11 @@ class Scene_graph;
 class Accumulation;
 class Multisample;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Configuration : public Container {
   friend class Indexed_face_set;
   friend class Shape;
@@ -411,6 +416,10 @@ private:
 
   static const Char* s_geometry_drawing_mode_names[];
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief lsConstruct the prototype. */
 inline Configuration* Configuration::prototype()

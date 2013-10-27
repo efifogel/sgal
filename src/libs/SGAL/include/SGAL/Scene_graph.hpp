@@ -95,6 +95,11 @@ class Route;
 class Isect_action;
 class Simulation;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Scene_graph {
 public:
   typedef boost::shared_ptr<Container>            Shared_container;
@@ -374,7 +379,7 @@ public:
   /*! Find containers of a particular type and inserts them into a given
    * container
    */
-  template <class T, class OutputIterator>
+  template <typename T, typename OutputIterator>
   OutputIterator find(OutputIterator oi)
   {
     Container_list_iter ci;
@@ -552,6 +557,10 @@ private:
   /*! Obtain the active navigation-info node. */
   Navigation_info* get_active_navigation_info();
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the scene configuration container. */
 inline Configuration* Scene_graph::get_configuration() const

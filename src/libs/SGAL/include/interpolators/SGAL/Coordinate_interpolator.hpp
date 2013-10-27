@@ -46,6 +46,10 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
+#if (defined _MSC_VER)
+template class SGAL_SGAL_DECL Array<Vector3f>;
+#endif
+
 class SGAL_SGAL_DECL Coordinate_interpolator : public Interpolator {
 public:
   enum {

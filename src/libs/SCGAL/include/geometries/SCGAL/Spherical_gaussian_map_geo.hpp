@@ -54,6 +54,11 @@ class Draw_action;
 class Scene_graph;
 class Cylinder;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Spherical_gaussian_map_geo :
   public Spherical_gaussian_map_base_geo {
 public:
@@ -228,6 +233,10 @@ public:
   void update_facets()
   { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Spherical_gaussian_map_geo* Spherical_gaussian_map_geo::prototype()

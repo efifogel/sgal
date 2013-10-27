@@ -39,13 +39,18 @@ SGAL_BEGIN_NAMESPACE
 class Agent;
 class Window_item;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Motion_event : public Event {
 private:
   /*! A set of agents registered to process this type of event */
   static std::set<Agent*> s_set;
-  
+
   /*! The window where the event took place */
   Window_item* m_window_item;
 
@@ -85,7 +90,7 @@ public:
 
   /*! Export an identification message to standard output. */
   virtual void identify(void);
-  
+
   /*! Set the window where the event took place */
   void set_window_item(Window_item* item);
 
@@ -104,6 +109,10 @@ public:
   /*! Obtain the x-coordinate of the cursor at the time of the event */
   int get_y() const;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the set of agents registered to process this type of event.
  */

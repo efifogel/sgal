@@ -38,6 +38,11 @@ SGAL_BEGIN_NAMESPACE
 class Agent;
 class Window_item;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Reshape_event : public Event {
@@ -59,7 +64,7 @@ protected:
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
   /*! Obtain the set of agents registered to process this type of event.
    * \return the set of agents.
    */
@@ -88,7 +93,7 @@ public:
 
   /*! Obtain the window where the event took place */
   Window_item* get_window_item() const;
-  
+
   /*! Set the window width */
   void set_width(Uint width);
 
@@ -101,6 +106,10 @@ public:
   /*! Obtain the window height */
   Uint get_height() const;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the set of agents registered to process this type of event.
  */

@@ -35,6 +35,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Agent;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Stop_event : public Event {
@@ -46,13 +51,13 @@ private:
    * \return the set of agents.
    */
   virtual const std::set<Agent*>& get_set(void) const;
-  
+
 protected:
   /*! Deligate the handling of the current event to the given agent.
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
 public:
   /*! Register this event for a particular agent.
    * \param agent the agent.
@@ -71,10 +76,14 @@ public:
   virtual void identify(void);
 };
 
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
+
 /*! \brief obtains the set of agents registered to process this type of event.
  */
 inline const std::set<Agent*>& Stop_event::get_set(void) const { return s_set; }
-  
+
 SGAL_END_NAMESPACE
 
 #endif

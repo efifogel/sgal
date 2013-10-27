@@ -33,11 +33,20 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4275 )
+#endif
+
 /*! Base class for all errors in the library */
 class SGAL_SGAL_DECL error : public std::logic_error {
 public:
   error(const std::string& what) : std::logic_error(what) {}
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! Class thrown when the input file cannot be found. */
 class SGAL_SGAL_DECL File_not_found_error : public error {

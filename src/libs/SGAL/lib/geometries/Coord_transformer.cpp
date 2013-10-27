@@ -262,7 +262,7 @@ void Coord_transformer::rotate(Field_info* field_info)
 /*! \brief transforms the input vertices and store the results in the output
  * vertices.
  */
-void Coord_transformer::execute(Field_info* field_info)
+void Coord_transformer::execute(Field_info* /* field_info */)
 {
   if (!m_enabled) return;
   if (!m_coord_array) return;

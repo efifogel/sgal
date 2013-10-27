@@ -40,6 +40,13 @@ class Element;
 class Scene_graph;
 class Container_proto;
 
+#if defined(_MSC_VER)
+template class SGAL_SGAL_DECL std::allocator<Exact_point_3>;
+template class SGAL_SGAL_DECL std::vector<Exact_point_3>;
+template class SGAL_SGAL_DECL std::allocator<Exact_vector_3>;
+template class SGAL_SGAL_DECL std::vector<Exact_vector_3>;
+#endif
+
 /*! Maintains an array of 3D vertex-coordinate */
 class SGAL_SCGAL_DECL Exact_coord_array : public Coord_array {
 public:

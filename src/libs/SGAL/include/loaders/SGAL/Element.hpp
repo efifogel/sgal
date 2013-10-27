@@ -35,6 +35,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Element {
 public:
   typedef boost::shared_ptr<Container>              Shared_container;
@@ -215,6 +220,10 @@ protected:
   /*! The container of the field attributes. */
   Field_attr_list m_field_attrs;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the name of an attribute pointed by a given iterator.
  */

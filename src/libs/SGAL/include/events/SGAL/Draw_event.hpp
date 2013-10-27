@@ -23,7 +23,7 @@
 #define SGAL_DRAW_EVENT_HPP
 
 /*! \file
- * A record of an event that indicates that the scene should be drawn 
+ * A record of an event that indicates that the scene should be drawn
  */
 
 #include <set>
@@ -37,6 +37,11 @@ SGAL_BEGIN_NAMESPACE
 class Agent;
 class Window_item;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Draw_event : public Event {
@@ -49,13 +54,13 @@ private:
 
   /*! Do suppress accumulation? */
   Boolean m_suppress_accumulation;
-  
+
 protected:
   /*! Deligate the handling of the current event to the given agent.
    * \param agent the agent.
    */
   virtual void handle(Agent* agent);
-  
+
   /*! Obtain the set of agents registered to process this type of event.
    * \return the set of agents.
    */
@@ -93,6 +98,10 @@ public:
   /*! Obtain the flag that indicates whether to suppress accumulation. */
   Boolean get_suppress_accumulation() const;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains set of agents registered to process this type of event. */
 inline const std::set<Agent*>& Draw_event::get_set(void) const

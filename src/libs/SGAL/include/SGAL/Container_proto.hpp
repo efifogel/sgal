@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7204 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -48,12 +48,17 @@ SGAL_BEGIN_NAMESPACE
 
 class Field_info;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Container_proto {
 private:
   typedef std::map<Uint,Field_info*>            Field_info_id_map;
   typedef Field_info_id_map::const_iterator     Field_info_id_const_iter;
   typedef Field_info_id_map::iterator           Field_info_id_iter;
-  
+
   typedef std::map<std::string, Field_info*>    Field_info_name_map;
   typedef Field_info_name_map::const_iterator   Field_info_name_const_iter;
 
@@ -102,21 +107,25 @@ public:
                       const std::string& type, Container* value,
                       Ulong offset, Execution_function execution = NULL);
 #endif
-  
+
   /*! @} */ // end of field_info_additions
-  
+
   /*! Obtain the field info by id
    * \param id the id of the field info
-   * \return the requested field info  
+   * \return the requested field info
    */
   Field_info* get_field_info(Uint id) const;
 
   /*! Obtain the field info by name
    * \param name (in) the name of the field info
-   * \return A pointer to the requested field info  
+   * \return A pointer to the requested field info
    */
   Field_info * get_field_info(const std::string& name) const;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

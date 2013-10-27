@@ -56,6 +56,11 @@ class Container_proto;
 class Scene_graph;
 class Element;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere.
  */
@@ -393,6 +398,10 @@ private:
   /*! Create the renderers. */
   void create_renderers();
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the coordinate array. */
 inline Arrangement_on_sphere_base_geo::Shared_coord_array

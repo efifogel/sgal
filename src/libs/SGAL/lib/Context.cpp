@@ -1081,7 +1081,8 @@ void Context::draw_line_stipple_pattern(Uint pattern)
   if (pattern == 0xffff) glDisable(GL_LINE_STIPPLE);
   else {
     glEnable(GL_LINE_STIPPLE);
-    glLineStipple(m_current_state->m_line_stipple_factor, pattern);
+    glLineStipple(m_current_state->m_line_stipple_factor,
+                  static_cast<GLushort>(pattern));
   }
 }
 
@@ -1099,7 +1100,9 @@ void Context::draw_line_stipple_factor(Uint factor)
   if (m_current_state->m_line_stipple_factor == factor) return;
   m_current_state->m_line_stipple_factor = factor;
   if (m_current_state->m_line_stipple_pattern != 0xffff) {
-    glLineStipple(factor, m_current_state->m_line_stipple_pattern);
+    glLineStipple(factor,
+                  static_cast<GLushort>
+                  (m_current_state->m_line_stipple_pattern));
   }
 }
 

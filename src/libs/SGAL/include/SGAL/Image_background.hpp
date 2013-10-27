@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -36,6 +36,11 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Appearance;
 class Element;
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
 
 class SGAL_SGAL_DECL Image_background : public Background {
 public:
@@ -107,6 +112,10 @@ inline Container* Image_background::clone() { return new Image_background(); }
 
 /*! \brief obtains the tag (type) of the container */
 inline const std::string& Image_background::get_tag() const { return s_tag; }
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

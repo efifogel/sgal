@@ -20,11 +20,24 @@
 // Author(s)     : Ophir Setter      <ophir.setter@gmail.com>
 //                 Efi Fogel         <efifogel@gmail.com>
 
+#if defined(_MSC_VER)
+#pragma warning( disable: 4244 )
+#pragma warning( disable: 4251 )
+#endif
+
 #if defined(_WIN32)
 #include <windows.h>
 #endif
 #include <GL/gl.h>
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4244 )
+#endif
 #include <Magick++.h>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/Image.hpp"
 #include "SGAL/Texture.hpp"
@@ -36,7 +49,7 @@ SGAL_BEGIN_NAMESPACE
 /*! Constructor */
 Imagemagick_font::Imagemagick_font(const std::string & name, Boolean antialias,
                                    Boolean left_to_right,
-                                   Boolean top_to_bottom) :                  
+                                   Boolean top_to_bottom) :
   Font(name, antialias, left_to_right, top_to_bottom),
   m_magick_image(Magick::Geometry(0, 0), Magick::ColorMono()),
   m_point_size(120),
@@ -51,7 +64,7 @@ Imagemagick_font::Imagemagick_font(const std::string & name, Boolean antialias,
   // mimage.font();
   // mimage.density("72x72");
   m_magick_image.fontPointsize(m_point_size);
-  m_magick_image.antiAlias(false);  
+  m_magick_image.antiAlias(false);
 
   m_texture.set_image(&m_image);
   m_texture.set_min_filter(Texture::NEAREST_MIN);
@@ -92,7 +105,7 @@ void Imagemagick_font::draw_string(Context * context, const std::string & str,
     // m_height = mimage.rows();
     // std::cout << "width: " << m_width << std::endl;
     // std::cout << "height: " << m_height << std::endl;
-  
+
     // Create the texture:
     m_image.set_width(m_width);
     m_image.set_height(m_height);
@@ -110,7 +123,7 @@ void Imagemagick_font::draw_string(Context * context, const std::string & str,
   }
 
   m_texture.draw(context);
-  
+
   context->draw_tex_enable(true);
   context->draw_tex_env(Gfx::MODULATE_TENV);
   context->draw_alpha_func(Gfx::GREATER_AFUNC);

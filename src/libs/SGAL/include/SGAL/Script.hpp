@@ -80,7 +80,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Apply the script. */
-  virtual Action::Trav_directive Draw(Draw_action* draw_action)
+  virtual Action::Trav_directive Draw(Draw_action* /* draw_action */)
   { return Action::TRAV_CONT; }
 
   // virtual void add_field_def(const std::string& name, const std::string& type,

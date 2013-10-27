@@ -25,10 +25,14 @@
  * ImageMagick library.
  */
 
-#ifndef SGAL_INITIALIZE_HPP
-#define SGAL_INITIALIZE_HPP
-
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4244 )
+#endif
 #include <Magick++.h>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/basic.hpp"
 
@@ -40,6 +44,3 @@ void initialize(int /* argc */, char* argv[])
 }
 
 SGAL_END_NAMESPACE
-
-#endif
-

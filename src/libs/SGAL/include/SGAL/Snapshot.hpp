@@ -42,6 +42,11 @@ class Element;
 class Scene_graph;
 class ofstream;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Snapshot : public Node {
 public:
   enum {
@@ -198,6 +203,10 @@ private:
   /*! Open a file and writes the image into it */
   virtual void write_image();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

@@ -73,7 +73,7 @@ Cone::~Cone()
  * Draws the Cone.
  * @param draw_action the draw action
  */
-void Cone::draw(Draw_action* action)
+void Cone::draw(Draw_action* /* action */)
 {
   if (is_dirty()) clean();
 
@@ -104,7 +104,7 @@ void Cone::draw(Draw_action* action)
 }
 
 /*! \brief draws the object in selection mode. */
-void Cone::isect(Isect_action* action)
+void Cone::isect(Isect_action* /* action */)
 {
   if (is_dirty()) clean();
 

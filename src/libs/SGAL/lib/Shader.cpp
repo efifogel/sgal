@@ -47,7 +47,7 @@ Shader::Shader(Boolean proto) :  Container(proto) { }
 Shader::~Shader() {}
 
 /*! \brief applies the shader. */
-void Shader::draw(Context* ctx)
+void Shader::draw(Context* /* context */)
 {
   if (m_dirty) clean();
 

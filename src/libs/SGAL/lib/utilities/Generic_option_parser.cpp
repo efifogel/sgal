@@ -14,10 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 4999 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#if defined(_MSC_VER)
+#pragma warning ( disable : 4512 )
+#endif
 
 #include <iostream>
 #include <fstream>

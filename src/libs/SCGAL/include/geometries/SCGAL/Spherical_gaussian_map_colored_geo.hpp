@@ -62,6 +62,11 @@ class Draw_action;
 class Scene_graph;
 class Cylinder;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Spherical_gaussian_map_colored_geo :
   public Spherical_gaussian_map_base_geo
 {
@@ -346,6 +351,10 @@ public:
   /*! Set an intermediate polyhedron. */
   void set_polyhedron(Polyhedron* polyhedron);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Spherical_gaussian_map_colored_geo*

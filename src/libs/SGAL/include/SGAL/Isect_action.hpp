@@ -24,15 +24,15 @@
 
 /*! \file
  * Isect_action is a class used while traversing the scene graph for selection.
- * It holds information about the current group color used to identify the 
+ * It holds information about the current group color used to identify the
  * object.
  *
- * To implement the selection, we use the back frame buffer to store 
+ * To implement the selection, we use the back frame buffer to store
  * information on the objects rendered. Each group that may perform selections
  * (e.g., has a touch sensor) obtains a continuous sequence of unique ids, one
  * id for each child, starting at base-id. If the group does need to apply
- * selections, its base-id is 0. When traversing the tree, instead of 
- * rendering the objects with the material, we use the id as color and 
+ * selections, its base-id is 0. When traversing the tree, instead of
+ * rendering the objects with the material, we use the id as color and
  * write it to the frame buffer. When the traversal is complete, we read the
  * buffer and check the ids of the objects stored in pixels. While rendering,
  * lighting, texturing, blending operations, etc. must be disabled.
@@ -75,7 +75,7 @@ public:
 
   /*! Convert the pixel color into an index. */
   Uint get_index(const Uchar* color) const;
-  
+
   /*! Convert the index into a color. */
   void get_color(Uint index, Uchar* color) const;
 

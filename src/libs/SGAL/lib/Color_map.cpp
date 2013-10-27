@@ -34,7 +34,7 @@ void Color_map::init(Context* context)
   m_green_bits = context->get_green_bits();
   m_blue_bits = context->get_blue_bits();
   m_alpha_bits = context->get_alpha_bits();
-  
+
   Uint i = 0;
   Uint mask;
 
@@ -83,13 +83,13 @@ Uint Color_map::get_index(const Uchar* color, Uint size) const
 }
 
 /*! \brief converts the index into a pixel color. */
-void Color_map::get_color(Uint index, Uchar* color, Uint size) const 
+void Color_map::get_color(Uint index, Uchar* color, Uint size) const
 {
-  color[0] = ((index & m_red_mask) >> m_red_shift);
-  color[1] = ((index & m_green_mask) >> m_green_shift);
-  color[2] = ((index & m_blue_mask) >> m_blue_shift);
+  color[0] = static_cast<Uchar>((index & m_red_mask) >> m_red_shift);
+  color[1] = static_cast<Uchar>((index & m_green_mask) >> m_green_shift);
+  color[2] = static_cast<Uchar>((index & m_blue_mask) >> m_blue_shift);
   if (size == 3) return;
-  color[3] = ((index & m_alpha_mask) >> m_alpha_shift);
+  color[3] = static_cast<Uchar>((index & m_alpha_mask) >> m_alpha_shift);
 }
 
 SGAL_END_NAMESPACE

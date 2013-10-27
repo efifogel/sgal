@@ -34,6 +34,11 @@ namespace fi = boost::filesystem;
 
 SGAL_BEGIN_NAMESPACE
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Image : public Image_base {
 public:
   typedef std::list<fi::path>                   Path_list;
@@ -123,6 +128,10 @@ private:
   /*! A collection of directories to search files in. */
   Path_list m_dirs;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Image* Image::prototype() { return new Image(true); }

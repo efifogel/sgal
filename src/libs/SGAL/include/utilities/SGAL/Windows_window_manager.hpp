@@ -37,6 +37,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class Scene;
 
 class SGAL_SGAL_DECL Windows_window_manager :
@@ -48,7 +53,7 @@ private:
 
   /*! The window class name. */
   char* m_window_class_name;
-  
+
   /*! The window-manager singleton. */
   static Windows_window_manager* s_instance;
 
@@ -57,7 +62,7 @@ private:
 
   /*! Has the shift key pressed. */
   static Boolean s_capital;
-  
+
   /* Process messages sent to a window (the event handler).
    * \param hWnd
    * \param uMsg
@@ -66,17 +71,17 @@ private:
    */
   static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg,
                                      WPARAM wParam, LPARAM lParam);
-  
+
   /*! Register a window class for this application.
    */
   void register_window_class();
-  
+
 public:
   /*! Obtain the window-manager singleton.
    * \return the window-manager.
    */
-  static Windows_window_manager* instance();  
-  
+  static Windows_window_manager* instance();
+
   /*! Constructor */
   Windows_window_manager();
 
@@ -85,13 +90,13 @@ public:
    * \param argv the array of ASCII arrguments.
    */
   void init(Uint argc, char* argv[]);
-  
+
   /*! Clear the window manager */
   void clear();
 
   /*! Destructor */
   virtual ~Windows_window_manager() {}
-  
+
   /*! Create a new window.
    * \param window_item the window item that holds the window to create .
    */
@@ -107,6 +112,10 @@ public:
    */
   virtual void event_loop(Boolean simulating = false);
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

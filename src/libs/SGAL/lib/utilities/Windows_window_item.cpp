@@ -51,7 +51,7 @@ void Windows_window_item::make_current()
 { wglMakeCurrent(m_hDC, m_hRC); }
 
 /*! \brief queries the multisample frequencies */
-Boolean Windows_window_item::init_multisample(HINSTANCE& hInstance)
+Boolean Windows_window_item::init_multisample(HINSTANCE& /* hInstance */)
 {
   if (!Gfx_conf::get_instance()->is_multisample_supported()) return false;
   float fAttributes[] = {0,0};
@@ -151,21 +151,21 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
                         PFD_SUPPORT_OPENGL | // draw using opengl
                         PFD_DOUBLEBUFFER;    // double buffered
   pfd.iPixelType      = PFD_TYPE_RGBA;       // PFD_TYPE_RGBA or COLORINDEX
-  pfd.cColorBits      = color_bits;          // color bitplanes excluding alpha
-  pfd.cRedBits        = m_red_bits;          // ignored
-  pfd.cRedShift       = 0;                   // ignored
-  pfd.cGreenBits      = m_green_bits;        // ignored
-  pfd.cGreenShift     = 0;                   // ignored
-  pfd.cBlueBits       = m_blue_bits;         // ignored
-  pfd.cBlueShift      = 0;                   // ignored
-  pfd.cAlphaBits      = m_alpha_bits;        // alpha bitplanes
-  pfd.cAccumBits      = accum_bits;          // total accumulation bitplanes
-  pfd.cAccumRedBits   = m_accum_red_bits;    // ignored
-  pfd.cAccumGreenBits = m_accum_green_bits;  // ignored
-  pfd.cAccumBlueBits  = m_accum_blue_bits;   // ignored
-  pfd.cAccumAlphaBits = m_accum_alpha_bits;  // ignored
-  pfd.cDepthBits      = m_depth_bits;        // depth bitplanes
-  pfd.cStencilBits    = m_stencil_bits;      // stencil bitplanes
+  pfd.cColorBits      = static_cast<BYTE>(color_bits); // color bitplanes excluding alpha
+  pfd.cRedBits        = static_cast<BYTE>(m_red_bits);    // ignored
+  pfd.cRedShift       = 0;                                // ignored
+  pfd.cGreenBits      = static_cast<BYTE>(m_green_bits);  // ignored
+  pfd.cGreenShift     = 0;                                // ignored
+  pfd.cBlueBits       = static_cast<BYTE>(m_blue_bits);   // ignored
+  pfd.cBlueShift      = 0;                                // ignored
+  pfd.cAlphaBits      = static_cast<BYTE>(m_alpha_bits);  // alpha bitplanes
+  pfd.cAccumBits      = static_cast<BYTE>(accum_bits);    // total accumulation bitplanes
+  pfd.cAccumRedBits   = static_cast<BYTE>(m_accum_red_bits);   // ignored
+  pfd.cAccumGreenBits = static_cast<BYTE>(m_accum_green_bits); // ignored
+  pfd.cAccumBlueBits  = static_cast<BYTE>(m_accum_blue_bits);  // ignored
+  pfd.cAccumAlphaBits = static_cast<BYTE>(m_accum_alpha_bits); // ignored
+  pfd.cDepthBits      = static_cast<BYTE>(m_depth_bits);   // depth bitplanes
+  pfd.cStencilBits    = static_cast<BYTE>(m_stencil_bits); // stencil bitplanes
   pfd.cAuxBuffers     = 0;
   pfd.iLayerType      = PFD_MAIN_PLANE;      // main drawing layer
 

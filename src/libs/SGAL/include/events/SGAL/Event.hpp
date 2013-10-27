@@ -38,6 +38,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Agent;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  */
 class SGAL_SGAL_DECL Event {
@@ -59,7 +64,7 @@ public:
   /*!
    */
   virtual void identify(void) = 0;
-  
+
   /*!
    */
   void handle(void);
@@ -68,6 +73,10 @@ public:
    */
   void set_verbose_level(int verbose_level) { m_verbose_level = verbose_level; }
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

@@ -48,7 +48,7 @@ Vertex_shader::Vertex_shader(Boolean proto) :  Shader(proto) { }
 Vertex_shader::~Vertex_shader() {}
 
 /*! \brief applies the shader. */
-void Vertex_shader::draw(Context* ctx)
+void Vertex_shader::draw(Context* /* context */)
 {
   if (m_dirty) clean();
 

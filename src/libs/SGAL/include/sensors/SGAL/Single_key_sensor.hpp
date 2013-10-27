@@ -38,7 +38,15 @@ class Element;
 class Keyboard_event;
 class Container_proto;
 
-class SGAL_SGAL_DECL Single_key_sensor : public Agent, public Node {
+/*!
+ * This class is used as a container of fields. That is, it (indirectly)
+ * derives from 'Container' through 'Node'. As such, for each field f a
+ * pointer to a member function that obtains a pointer to the data member
+ * that stores the value of the field f is used. This member function is
+ * invoked relative to the based 'Container' class.
+ * Keep 'Node' as the first derived class. Otherwise, MSVC complains.
+ */
+class SGAL_SGAL_DECL Single_key_sensor : public Node, public Agent {
 public:
   enum {
     FIRST = Container::LAST - 1,

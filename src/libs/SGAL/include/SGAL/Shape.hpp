@@ -55,6 +55,11 @@ class Geometry;
 class Formatter;
 class Scene_graph;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! \brief A representation of a shape node */
 class SGAL_SGAL_DECL Shape : public Node {
 public:
@@ -399,6 +404,10 @@ private:
   static const Char* s_depth_function_names[];
   static const Char* s_cull_face_names[];
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Shape* Shape::prototype() { return new Shape(true); }

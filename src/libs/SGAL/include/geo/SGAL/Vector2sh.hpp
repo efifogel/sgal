@@ -33,7 +33,7 @@ SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Vector2sh {
 private:
-  short m_vector[2];
+  Short m_vector[2];
 
 public:
   // Constructors
@@ -47,7 +47,7 @@ public:
   // Accessor functions
   void set(short a, short b);
   void get(short * a, short * b) const;
-   
+
   short get(int i) const;
   void set(const Vector2sh & v);
   void get(Vector2sh & v) const;
@@ -61,7 +61,7 @@ public:
   short dot(const Vector2sh & v) const;
   void mul(const Vector2sh & v1, const Vector2sh & v2);
   short sqr_distance(const Vector2sh & v) const;
-  
+
 public:
   // Opertors
   Vector2sh & operator=(const Vector2sh & v);

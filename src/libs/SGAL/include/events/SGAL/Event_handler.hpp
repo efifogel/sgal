@@ -36,8 +36,13 @@ SGAL_BEGIN_NAMESPACE
 
 class Event;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
- */ 
+ */
 class SGAL_SGAL_DECL Event_handler {
 public:
   void process();
@@ -53,7 +58,7 @@ public:
    * \return true if the event queue is empty and false otherwise.
    */
   static Boolean is_empty(void);
-  
+
 private:
   /*! The verbosity level. */
   static Uint s_verbose_level;
@@ -61,6 +66,10 @@ private:
   typedef std::queue<Event*> Event_queue;
   static Event_queue s_queue;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief sets the verbosity level. */
 inline void Event_handler::set_verbose_level(Uint verbose_level)

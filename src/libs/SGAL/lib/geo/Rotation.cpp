@@ -103,18 +103,18 @@ void Rotation::slerp(Float t, const Rotation& r1, const Rotation& r2)
   if (abs(cos_half_theta) >= 1) qr = q1;
   else {
     // Calculate temporary values.
-    Float sin_half_theta = sqrtf(1.0 - cos_half_theta * cos_half_theta);
+    Float sin_half_theta = sqrtf(1.0f - cos_half_theta * cos_half_theta);
     // if theta = 180 degrees then result is not fully defined
     // we could rotate around any axis normal to q1 or q2
-    if (abs(sin_half_theta) < SGAL_EPSILON) qr.combine(0.5, q1, 0.5, q2);
+    if (abs(sin_half_theta) < SGAL_EPSILON) qr.combine(0.5f, q1, 0.5, q2);
     else {
       Float half_theta = acosf(cos_half_theta);
       Float ratio1 = sinf((1 - t) * half_theta) / sin_half_theta;
-      Float ratio2 = sinf(t * half_theta) / sin_half_theta; 
+      Float ratio2 = sinf(t * half_theta) / sin_half_theta;
       qr.combine(ratio1, q1, ratio2, q2);
     }
   }
-  
+
   set_quaternion(qr);
 }
 
@@ -126,7 +126,7 @@ void Rotation::make(const Vector3f& src, const Vector3f& dst)
   float dot_product = src.dot(dst) ;
   m_axis.cross(src,dst);
   float size = m_axis.normalize() ;
-    
+
   if (size == 0.0f) {
     Vector3f tmp ;
     tmp.scale(-1.0,dst)  ;
