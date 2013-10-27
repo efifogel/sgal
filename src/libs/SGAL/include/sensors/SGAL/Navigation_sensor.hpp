@@ -51,6 +51,11 @@ class Mouse_event;
 class Motion_event;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  * This class is used as a container of fields. That is, it (indirectly)
  * derives from 'Container' through 'Node'. As such, for each field f a
@@ -288,6 +293,10 @@ private:
 
   bool allow_zoom_in(const Vector3f& trans);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Navigation_sensor* Navigation_sensor::prototype()

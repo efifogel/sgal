@@ -55,6 +55,11 @@ class Tick_event;
 class Formatter;
 class Draw_action;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  * This class is used as a container of fields. That is, it (indirectly)
  * derives from 'Container' through 'Node'. As such, for each field f a
@@ -340,6 +345,10 @@ inline void Touch_sensor::get_selection_ids(Uint& start_id, Uint& num_ids)
   start_id = m_start_selection_id;
   num_ids = m_num_selection_ids;
 }
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief sets the range of ids used for selection. */
 inline void Touch_sensor::set_selection_ids(Uint start_id, Uint num_ids)

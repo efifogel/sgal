@@ -52,6 +52,8 @@ class Element;
 
 #if (defined _MSC_VER)
 template class SGAL_SGAL_DECL Array<Vector3f>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Vector3f_interpolator : public Interpolator {
@@ -130,6 +132,10 @@ private:
   /*! The interpolator value. */
   Vector3f m_value;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Vector3f_interpolator* Vector3f_interpolator::prototype()

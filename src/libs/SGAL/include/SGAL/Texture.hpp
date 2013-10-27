@@ -41,6 +41,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Image;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Texture : public Container {
 public:
   enum {
@@ -342,6 +347,10 @@ inline void Texture::set_mag_filter(Texture::Mag_filter mag_filter)
 /*! \brief obtains the magnification filter. */
 inline Texture::Mag_filter Texture::get_mag_filter() const
 { return m_mag_filter; }
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief determines whether the object is dirty, and thus needs cleaning. */
 inline Boolean Texture::is_dirty() const { return m_dirty; }

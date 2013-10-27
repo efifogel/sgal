@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 5860 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -32,6 +32,11 @@
 #include "SGAL/Vector3f_interpolator.hpp"
 
 SGAL_BEGIN_NAMESPACE
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
 
 class SGAL_SGAL_DECL Color_interpolator : public Vector3f_interpolator {
 public:
@@ -57,6 +62,10 @@ private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

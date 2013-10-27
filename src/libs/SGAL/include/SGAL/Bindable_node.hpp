@@ -37,6 +37,11 @@ class Element;
 class Bindable_stack;
 class Field_info;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Bindable_node : public Container {
 public:
   enum {
@@ -123,6 +128,10 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief clones. */
 inline Container* Bindable_node::clone() { return new Bindable_node(); }

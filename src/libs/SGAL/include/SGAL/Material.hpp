@@ -50,6 +50,11 @@ class Container_proto;
 class Element;
 class Formatter;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! \brief A representation of a material */
 class SGAL_SGAL_DECL Material : public Container {
 public:
@@ -208,6 +213,10 @@ private:
   /*! the transparancy */
   Float m_transparency;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief construct the prototype. */
 inline Material* Material::prototype() { return new Material(true); }

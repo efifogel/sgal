@@ -38,6 +38,11 @@ class Container_proto;
 class Font;
 class Context;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Font_style : public Node {
 public:
   enum {
@@ -197,11 +202,13 @@ private:
   void create_font();
 };
 
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
 /*! Draw the node while traversing the scene graph */
 inline Action::Trav_directive Font_style::draw(Draw_action *)
-{
-  return Action::TRAV_CONT;
-}
+{ return Action::TRAV_CONT; }
 
 SGAL_END_NAMESPACE
 

@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1308 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -33,12 +33,17 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Position_interpolator : public Vector3f_interpolator {
 public:
   /*! Constructor */
   Position_interpolator(Boolean interpolate_flag = true,
                         Boolean proto = false);
-  
+
   /*! Destructor */
   virtual ~Position_interpolator() {};
 
@@ -57,6 +62,10 @@ private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

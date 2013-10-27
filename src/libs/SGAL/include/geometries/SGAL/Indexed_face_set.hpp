@@ -37,6 +37,11 @@ class Element;
 class Container_proto;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! This class describes a general mesh made of facets.
  * A class that derives from this class, typically generates the coordinates
  * and the cordinate indices. In that case the following must be done:
@@ -695,6 +700,10 @@ private:
    */
   void calculate_vertices_info(Vertices_info& vertices_info);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Indexed_face_set* Indexed_face_set::prototype()

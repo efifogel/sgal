@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 1366 $
 //
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
@@ -48,6 +48,8 @@ class Element;
 
 #if (defined _MSC_VER)
 template class SGAL_SGAL_DECL Array<Vector3f>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Coordinate_interpolator : public Interpolator {
@@ -123,6 +125,10 @@ private:
   /*! The interpolator value */
   Vector3f_array m_value;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

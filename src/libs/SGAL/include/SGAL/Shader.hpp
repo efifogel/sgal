@@ -34,6 +34,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Shader : public Container {
 public:
   enum {
@@ -102,6 +107,10 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the URL. */
 inline const std::string& Shader::get_url() const { return m_url; }

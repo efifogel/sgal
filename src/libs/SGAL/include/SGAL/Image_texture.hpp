@@ -44,6 +44,11 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Image_texture : public Texture_2d {
 public:
   typedef Image::Path_list                          Path_list;
@@ -126,6 +131,10 @@ private:
   /*! The image. */
   Image m_image;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Image_texture* Image_texture::prototype()

@@ -49,6 +49,11 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Scalar_interpolator : public Interpolator {
 public:
   enum {
@@ -108,6 +113,10 @@ private:
   Int m_last_location;
   Float m_value;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

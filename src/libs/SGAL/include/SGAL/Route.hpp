@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 6147 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -42,11 +42,16 @@ class Draw_action;
 class Field;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Route : public Container {
 public:
   /*! Constructor */
   Route(Boolean proto = false);
-  
+
   /*! Destructor */
   virtual ~Route() {};
 
@@ -59,7 +64,7 @@ public:
   /*! Set the connection */
   void set(Container* src_node, Field* src_field,
            Container* dst_node, Field* dst_field);
-  
+
   /*! Set the attributes of this node */
   virtual void set_attributes(Element* elem);
 
@@ -85,6 +90,10 @@ private:
   /*! The route destination-field */
   Field* m_dst_field;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

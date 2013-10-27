@@ -22,7 +22,14 @@
 #ifndef SGAL_WINDOW_OPTION_PARSER_HPP
 #define SGAL_WINDOW_OPTION_PARSER_HPP
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4100 )
+#endif
 #include <boost/program_options.hpp>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -70,7 +77,7 @@ public:
    */
   Boolean get_window_y(const po::variables_map& variable_map,
                        Uint& y) const;
-  
+
   /*! Obtain the requested position of the window origin
    * \param x the requested x-coordinate of the window lower-left corner
    * \param y the requested y-coordinate  of the window lower-left corner
@@ -79,8 +86,8 @@ public:
   Boolean get_window_position(const po::variables_map& variable_map,
                               Uint& x, Uint& y) const;
 
-  /*! Obtain the boolean flag that indicates whether full screen is requested 
-   * \param full_sreen indicates whether full screen is requested 
+  /*! Obtain the boolean flag that indicates whether full screen is requested
+   * \param full_sreen indicates whether full screen is requested
    * \return true if a prticular value is requested, and false otherwise.
    */
   Boolean get_window_full_screen(const po::variables_map& variable_map,
@@ -98,18 +105,18 @@ public:
     Uint height;
     if (get_window_height(variable_map, height))
       window_manager->set_window_height(height);
-    
+
     Uint x;
     if (get_window_x(variable_map, x)) window_manager->set_window_x(x);
 
     Uint y;
     if (get_window_y(variable_map, y)) window_manager->set_window_y(y);
-    
+
     Boolean full_screen;
     if (get_window_full_screen(variable_map, full_screen))
       window_manager->set_full_screen(full_screen);
   }
-  
+
 protected:
   /*! The window options */
   po::options_description m_window_opts;

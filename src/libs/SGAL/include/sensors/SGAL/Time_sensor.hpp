@@ -39,6 +39,11 @@ class Element;
 class Scene_graph;
 class Tick_event;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  * This class is used as a container of fields. That is, it (indirectly)
  * derives from 'Container' through 'Node'. As such, for each field f a
@@ -238,12 +243,14 @@ private:
   void set_blocking_of_fields_for_active(Boolean block);
 };
 
-/*! Draws the node while traversing the scene graph
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
+/*! \brief draws the node while traversing the scene graph
  */
 inline Action::Trav_directive Time_sensor::draw(Draw_action* /* draw_action */)
-{
-  return Action::TRAV_CONT;
-}
+{ return Action::TRAV_CONT; }
 
 SGAL_END_NAMESPACE
 

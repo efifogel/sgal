@@ -27,6 +27,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Vertex_shader : public Shader {
 public:
   enum {
@@ -92,6 +97,10 @@ inline Container* Vertex_shader::clone() { return new Vertex_shader(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Vertex_shader::get_tag() const { return s_tag; }
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

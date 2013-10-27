@@ -43,6 +43,11 @@ class Element;
 class Container_proto;
 class Formatter;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Transform : public Group {
 public:
   enum {
@@ -195,6 +200,10 @@ private:
 
   void reset(Field_info* field_info);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Transform* Transform::prototype() { return new Transform(true); }

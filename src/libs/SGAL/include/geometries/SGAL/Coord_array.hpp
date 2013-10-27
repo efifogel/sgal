@@ -41,6 +41,8 @@ class Container_proto;
 
 #if (defined _MSC_VER)
 template class SGAL_SGAL_DECL Array<Vector3f>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 /*! Maintains an array of 3D vertex-coordinate. */
@@ -133,6 +135,10 @@ private:
   /*! The coordinate array. */
   Vector3f_array m_array;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Coord_array* Coord_array::prototype() { return new Coord_array(true); }

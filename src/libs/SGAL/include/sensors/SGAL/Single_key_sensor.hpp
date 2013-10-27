@@ -38,6 +38,11 @@ class Element;
 class Keyboard_event;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  * This class is used as a container of fields. That is, it (indirectly)
  * derives from 'Container' through 'Node'. As such, for each field f a
@@ -155,6 +160,10 @@ private:
   static Uint s_def_num_states;
   static Boolean s_def_trigger_on_release;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Single_key_sensor* Single_key_sensor::prototype()

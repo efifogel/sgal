@@ -51,6 +51,11 @@ class Element;
 class Container_proto;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Texture_2d : public Texture {
 public:
   enum {
@@ -150,6 +155,10 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Texture_2d* Texture_2d::prototype() { return new Texture_2d(true); }

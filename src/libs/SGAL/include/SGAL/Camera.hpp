@@ -54,6 +54,11 @@ class Scene_graph;
 class Container;
 class Bindable_stack;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Camera : public Bindable_node {
 public:
   enum {
@@ -263,6 +268,10 @@ private:
 
   // static Isect_action * m_picker;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Camera* Camera::prototype() { return new Camera(true); }

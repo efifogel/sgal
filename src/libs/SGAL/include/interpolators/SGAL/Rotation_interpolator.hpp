@@ -50,6 +50,8 @@ class Container_proto;
 
 #if (defined _MSC_VER)
 template class SGAL_SGAL_DECL Array<Rotation>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Rotation_interpolator : public Interpolator {
@@ -118,6 +120,10 @@ private:
 
   Rotation m_value;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

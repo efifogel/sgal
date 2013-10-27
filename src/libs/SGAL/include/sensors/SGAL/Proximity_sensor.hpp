@@ -38,6 +38,11 @@ class Element;
 class Scene_graph;
 class Passive_motion_event;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*!
  * This class is used as a container of fields. That is, it (indirectly)
  * derives from 'Container' through 'Node'. As such, for each field f a
@@ -149,6 +154,10 @@ private:
   // default values
   static Boolean s_def_enabled;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Proximity_sensor* Proximity_sensor::prototype()
