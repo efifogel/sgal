@@ -22,7 +22,14 @@
 #ifndef SGAL_GENERIC_OPTION_PARSER_HPP
 #define SGAL_GENERIC_OPTION_PARSER_HPP
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4100 )
+#endif
 #include <boost/program_options.hpp>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/basic.hpp"
 
@@ -37,25 +44,25 @@ public:
     Generic_option_exception(Generic_option_id option) : m_option(option) {}
     Generic_option_id m_option;
   };
-  
+
   /*! Constructor */
   Generic_option_parser();
 
   /*! Destructor */
   virtual ~Generic_option_parser();
-  
+
   /*! Apply the options
    */
   void apply(po::variables_map& variable_map);
-  
+
   /*! Obtain the generic-option description */
   const po::options_description& get_generic_opts() const
   { return m_generic_opts; }
-  
+
 protected:
   /*! The generic options */
   po::options_description m_generic_opts;
-  
+
 private:
   virtual const po::options_description& get_visible_opts() const = 0;
 };

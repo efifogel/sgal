@@ -25,7 +25,14 @@
 #include <vector>
 #include <string>
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4100 )
+#endif
 #include <boost/program_options.hpp>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -52,11 +59,11 @@ public:
 
   typedef std::vector<Trace_id>         Vector_trace_id;
   typedef Vector_trace_id::iterator     Vector_trace_id_iter;
-  
+
   struct Input_file_missing_error : public po::error {
     Input_file_missing_error(std::string & str) : error(str) {}
   };
-  
+
   /*! Constructor */
   Option_parser();
 
@@ -69,16 +76,16 @@ public:
   /*! Apply the options
    */
   void apply();
-  
+
   /*! Configure */
   void configure(Scene_graph * scene_graph);
-  
+
   /*! Add options to command line options */
   void add_command_line_options(po::options_description & options)
   {
     m_cmd_line_opts.add(options);
   }
-  
+
   /*! Add options to config file options */
   void add_config_file_options(po::options_description & options)
   {
@@ -96,7 +103,7 @@ public:
   {
     m_visible_opts.add(options);
   }
-  
+
   /* Obtain the 'quite' mode */
   Boolean get_quite_mode() const { return m_quite; }
 
@@ -112,7 +119,7 @@ public:
 
   /*! Obtain the variable map */
   const po::variables_map & get_variable_map() const { return m_variable_map; }
-  
+
 protected:
   /*! Command line options */
   po::options_description m_cmd_line_opts;
@@ -125,22 +132,22 @@ protected:
 
   /*! Visible options */
   po::options_description m_visible_opts;
-  
+
   /*! The configuration option description */
   po::options_description m_config_opts;
 
   /*! The hidden option description */
-  po::options_description m_hidden_opts;    
+  po::options_description m_hidden_opts;
 
   /*! Positional option description */
   po::positional_options_description m_positional_opts;
 
   /*! The variable map */
   po::variables_map m_variable_map;
-  
+
 #if 0
   std::pair<Char*,Char*> m_env_var_option_names;
-  
+
   const std::string & name_mapper<std::string, std::string>(std::string & src)
   {
   }
@@ -148,7 +155,7 @@ protected:
 
   virtual const po::options_description & get_visible_opts() const
   { return m_visible_opts; }
-  
+
 private:
   /*! Trace options */
   static const char * s_trace_opts[];
@@ -157,7 +164,7 @@ private:
   Boolean m_quite;
 
   /*! Verbose level */
-  Uint m_verbose;  
+  Uint m_verbose;
 };
 
 SGAL_END_NAMESPACE

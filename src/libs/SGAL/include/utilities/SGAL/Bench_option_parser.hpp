@@ -22,7 +22,14 @@
 #ifndef SGAL_BENCH_OPTION_PARSER_HPP
 #define SGAL_BENCH_OPTION_PARSER_HPP
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4100 )
+#endif
 #include <boost/program_options.hpp>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -43,7 +50,7 @@ public:
    * \param variable_map
    */
   void apply(po::variables_map& variable_map);
-  
+
   /*! Obtain the bench-option description */
   const po::options_description& get_bench_opts() const
   { return m_bench_opts; }
@@ -62,7 +69,7 @@ public:
 
   /*! Obtain the number of iterations */
   Uint get_iterations()  const { return m_iterations; }
-  
+
 protected:
   /*! The bench options */
   po::options_description m_bench_opts;
@@ -81,7 +88,7 @@ private:
   Uint m_samples;
 
   /*! Number of iterations */
-  Uint m_iterations;  
+  Uint m_iterations;
 };
 
 SGAL_END_NAMESPACE

@@ -26,7 +26,15 @@
 #include <boost/version.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4146 )
+#endif
 #include <boost/lexical_cast.hpp>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #if (defined _MSC_VER)
 #define __WIN32__

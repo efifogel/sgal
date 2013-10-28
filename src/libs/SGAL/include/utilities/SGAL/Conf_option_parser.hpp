@@ -22,7 +22,14 @@
 #ifndef SGAL_CONF_OPTION_PARSER_HPP
 #define SGAL_CONF_OPTION_PARSER_HPP
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4100 )
+#endif
 #include <boost/program_options.hpp>
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -45,19 +52,19 @@ public:
    * \param variable_map
    */
   void apply(po::variables_map& variable_map);
-  
+
   /*! Obtain the conf-option description */
   const po::options_description& get_conf_opts() const { return m_conf_opts; }
 
   /*! Configure */
   void configure(po::variables_map& variable_map, Configuration * conf);
-  
+
   /*! Is the accumulate option set? */
   Boolean get_accumulate() const { return m_accumulate; }
-  
+
   /*! Is the vertex_array option set? */
   Boolean get_use_vertex_array() const { return m_use_vertex_array; }
-  
+
   /*! Is the vertex_buffer_object option set? */
   Boolean get_use_vertex_buffer_object() const
   { return m_use_vertex_buffer_object; }
@@ -67,7 +74,7 @@ public:
 
   /*! Is the display_fps option set? */
   Boolean get_display_fps(Boolean& flag);
-  
+
 protected:
   /*! The conf options */
   po::options_description m_conf_opts;
