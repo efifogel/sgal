@@ -46,6 +46,11 @@ class Element;
 class Container_proto;
 class Isect_action;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Switch : public Group {
 public:
   enum {
@@ -116,6 +121,10 @@ private:
   /*! Specifies the index of the child to traverse */
   Uint m_which_choice;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! Set the index of the child to traverse */
 inline void Switch::set_which_choice(Uint index)

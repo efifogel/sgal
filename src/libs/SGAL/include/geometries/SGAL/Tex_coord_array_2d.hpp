@@ -34,6 +34,8 @@ class Container_proto;
 
 #if (defined _MSC_VER)
 template class SGAL_SGAL_DECL Array<Vector2f>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 /*! This class maintains an array of vertex-texture-coordinates pairs */
@@ -122,6 +124,10 @@ private:
   /*! The normal array. */
   SGAL::Array<Vector2f> m_array;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Tex_coord_array_2d* Tex_coord_array_2d::prototype()

@@ -42,6 +42,11 @@ class Isec_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Cylindrical_patch : public Geometry {
 public:
   enum {
@@ -228,6 +233,10 @@ private:
   void draw_quad(Float cos_left, Float sin_left,
                  Float cos_right, Float sin_right);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Cylindrical_patch* Cylindrical_patch::prototype()

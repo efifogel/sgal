@@ -41,6 +41,11 @@ class Draw_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Arc : public Geometry {
 public:
   enum {
@@ -237,6 +242,10 @@ inline void Arc::set_radius(Float radius)
   m_radius = radius;
   m_dirty_sphere_bound = true;
 }
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the arc radius. */
 inline Float Arc::get_radius() const { return m_radius; }

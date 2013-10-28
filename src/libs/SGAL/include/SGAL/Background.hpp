@@ -38,6 +38,11 @@ class Draw_action;
 class Bindable_stack;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! Virtual base class for backgrounds */
 class SGAL_SGAL_DECL Background : public Bindable_node {
 public:
@@ -128,6 +133,10 @@ private:
   /*! Indicates whether the stencil buffer should be cleared */
   Boolean m_clear_stencil;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Background* Background::prototype() { return new Background(true); }

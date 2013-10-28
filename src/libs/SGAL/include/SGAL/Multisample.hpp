@@ -39,6 +39,11 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Multisample : public Container {
 public:
   enum {
@@ -118,6 +123,10 @@ private:
   static Boolean s_def_enabled;
   static Uint s_def_number_of_samples;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Multisample* Multisample::prototype() { return new Multisample(true); }

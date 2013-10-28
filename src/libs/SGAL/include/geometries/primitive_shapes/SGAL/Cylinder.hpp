@@ -47,6 +47,11 @@ class Isec_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Cylinder : public Geometry {
 public:
   enum {
@@ -207,6 +212,10 @@ private:
   /*! Clean the cylinder. */
   void clean();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Cylinder* Cylinder::prototype() { return new Cylinder(true); }

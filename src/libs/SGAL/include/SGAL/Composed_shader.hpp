@@ -34,6 +34,11 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Composed_shader : public Container {
 public:
   enum {
@@ -114,6 +119,10 @@ private:
   /*! Determine whether the shader is dirty, and thus needs cleaning. */
   Boolean m_dirty;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Composed_shader* Composed_shader::prototype()

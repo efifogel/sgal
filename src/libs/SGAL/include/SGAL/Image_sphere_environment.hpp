@@ -35,6 +35,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Image_sphere_environment : public Sphere_environment {
 public:
   typedef Image::Path_list                          Path_list;
@@ -96,6 +101,10 @@ private:
   /*! The image. */
   Image m_images[2];
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Image_sphere_environment* Image_sphere_environment::prototype()

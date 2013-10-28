@@ -46,6 +46,11 @@ class Isec_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Cone : public Geometry {
 public:
   enum {
@@ -179,6 +184,10 @@ private:
 
   Cone(const Cone& /* cone */) {}
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Cone* Cone::prototype() { return new Cone(true); }

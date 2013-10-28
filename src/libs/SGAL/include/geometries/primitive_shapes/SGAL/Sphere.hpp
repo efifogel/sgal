@@ -44,6 +44,11 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Sphere : public Geometry {
 public:
   /*! Fields */
@@ -163,6 +168,10 @@ private:
   static const Uint s_def_stacks;
   static const Uint s_def_slices;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* C\brief onstructs the prototype. */
 inline Sphere* Sphere::prototype() { return new Sphere(true); }

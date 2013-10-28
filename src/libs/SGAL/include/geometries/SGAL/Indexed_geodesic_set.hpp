@@ -34,6 +34,11 @@ class Coord_array;
 class Normal_array;
 class Tex_coord_array;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Indexed_geodesic_set : public Geo_set {
 public:
   enum {
@@ -167,6 +172,10 @@ private:
   static const Boolean m_def_normal_per_vertex;
   static const Float s_def_line_width;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Indexed_geodesic_set* Indexed_geodesic_set::prototype()

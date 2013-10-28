@@ -32,6 +32,11 @@ class Container_proto;
 class Element;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Navigation_info : public Navigation_sensor {
 public:
   enum {
@@ -99,6 +104,10 @@ private:
   /*! Parse the type string-attribute. */
   int parse_type(const std::string& type);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Navigation_info* Navigation_info::prototype()

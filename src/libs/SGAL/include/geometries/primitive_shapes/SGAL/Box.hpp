@@ -40,6 +40,11 @@ class Draw_action;
 class Isect_action;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Box : public Geometry {
 public:
   /*! Fields */
@@ -122,6 +127,10 @@ private:
   /*! the default size of the box. */
   static const Vector3f s_def_size;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype.. */
 inline Box* Box::prototype() { return new Box(true); }

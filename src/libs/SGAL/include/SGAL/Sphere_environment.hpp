@@ -40,6 +40,8 @@ class Scene_graph;
 
 #if (defined _MSC_VER)
 template struct SGAL_SGAL_DECL std::pair<Image*, Boolean>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Sphere_environment : public Texture {
@@ -138,6 +140,10 @@ private:
   static const Float m_def_alpha;
   static const Boolean m_def_quality;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Sphere_environment* Sphere_environment::prototype()

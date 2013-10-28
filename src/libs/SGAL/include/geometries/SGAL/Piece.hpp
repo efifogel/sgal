@@ -36,6 +36,8 @@ class Formatter;
 
 #if defined(_MSC_VER)
 template class SGAL_SGAL_DECL Array<Uint>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Piece : public Indexed_face_set {
@@ -145,6 +147,10 @@ private:
   static const Uint s_def_depth;
   static const Uint s_def_unit_size;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Piece* Piece::prototype() { return new Piece(true); }

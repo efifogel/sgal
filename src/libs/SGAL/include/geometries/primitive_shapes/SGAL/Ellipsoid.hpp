@@ -41,6 +41,11 @@ class Isec_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Ellipsoid : public Indexed_face_set {
 public:
   enum {
@@ -157,6 +162,10 @@ private:
   static const Uint s_def_slices;
   static const Uint s_def_stacks;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Ellipsoid* Ellipsoid::prototype() { return new Ellipsoid(true); }

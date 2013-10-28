@@ -27,6 +27,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Fragment_shader : public Shader {
 public:
   enum {
@@ -83,6 +88,10 @@ private:
   static Container_proto* s_prototype;
 };
 
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
 /*! \brief constructs the prototype. */
 inline Fragment_shader* Fragment_shader::prototype()
 { return new Fragment_shader(true); }
@@ -96,4 +105,3 @@ inline const std::string& Fragment_shader::get_tag() const { return s_tag; }
 SGAL_END_NAMESPACE
 
 #endif
-

@@ -36,6 +36,8 @@ class Container_proto;
 
 #if (defined _MSC_VER)
 template class SGAL_SGAL_DECL Array<Vector3f>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 /*! This class maintains an array of vertex-texture-coordinates pairs */
@@ -124,6 +126,10 @@ private:
   /*! The normal array. */
   SGAL::Array<Vector3f> m_array;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the array size. */
 inline Uint Tex_coord_array_3d::size() const { return m_array.size(); }

@@ -39,6 +39,11 @@ class Draw_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Geodesic : public Geometry {
 public:
   enum {
@@ -214,6 +219,10 @@ private:
   static const Boolean s_def_is_solid;
   static const Boolean s_def_is_complement;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Geodesic* Geodesic::prototype() {  return new Geodesic(true); }

@@ -33,6 +33,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Collision : public Group {
 public:
   enum {
@@ -79,6 +84,10 @@ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Collision* Collision::prototype() { return new Collision(true); }

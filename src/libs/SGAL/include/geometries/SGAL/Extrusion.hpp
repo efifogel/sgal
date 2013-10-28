@@ -47,6 +47,8 @@ class Element;
 #if defined(_MSC_VER)
 template class SGAL_SGAL_DECL Array<Vector2f>;
 template class SGAL_SGAL_DECL Array<Rotation>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 class SGAL_SGAL_DECL Extrusion : public Indexed_face_set {
@@ -226,6 +228,10 @@ private:
   static const Float s_def_cross_section_radius;
   static const Uint s_def_cross_section_slices;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Extrusion* Extrusion::prototype() { return new Extrusion(true); }

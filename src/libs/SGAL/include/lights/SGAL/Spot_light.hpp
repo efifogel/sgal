@@ -42,6 +42,11 @@ class Draw_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Spot_light : public Light {
 public:
   enum {
@@ -155,6 +160,10 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Spot_light* Spot_light::prototype() { return new Spot_light(true); }

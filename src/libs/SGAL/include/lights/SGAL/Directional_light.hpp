@@ -45,6 +45,11 @@ class Draw_action;
 class Element;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Directional_light : public Light {
 public:
   enum {
@@ -106,6 +111,10 @@ private:
   /*! The direction of the light */
   Vector3f m_direction;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Directional_light* Directional_light::prototype()
