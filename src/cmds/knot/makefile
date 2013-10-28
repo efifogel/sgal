@@ -58,9 +58,18 @@ endif
 
 ifeq ($(DE), msvc)
 LCPPDEFS+= -DBOOST_ALL_DYN_LINK
-LCPPOPTS+= -GR
-LCPPOPTS+= -vmg
-LCPPOPTS+= -errorReport:prompt
+LCPPOPTS+= -GR  # Enables run-time type information (RTTI).
+LCPPOPTS+= -vmg # Uses full generality for pointers to members.
+LCPPOPTS+= -GS  # Apply buffers security check.
+LCPPOPTS+= -Oy- # Disable Omission of frame pointer (x86 only).
+LCPPOPTS+= -WX  # Treat all compiler warnings as errors
+LCPPOPTS+= -Zc:wchar_t -Zc:forScope # Specify standard behavior
+CPPWARNINGOPTS = -W4  # Specify the level of warning; 0 to 4
+
+ifeq ($(DEBUG), 0)
+LCPPOPTS+= -Gy  # Enable function-level linking
+LCPPOPTS+= -Oi  # Generate intrinsic functions
+endif
 
 # Add BOOST, GL2PS, and Magick lib directories:
 ifdef BOOST_LIB_DIR

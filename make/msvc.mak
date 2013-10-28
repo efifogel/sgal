@@ -107,8 +107,13 @@ GENVELOPEFLAGS =-P$(BINDIR)/
 
 GCDEBUGOPTS =
 GCPPDEBUGOPTS =
-GCOPTOPTS =-O2 -Ox     # optimize for maximal speed
-GCPPOPTOPTS =-O2 -Ox   # optimize for maximal speed
+GCOPTOPTS = -O2  # Creates fast code.
+GCOPTOPTS+= -Ox  # optimize for maximal speed
+GCOPTOPTS+= -GL  # Enable whole program optimization.
+
+GCPPOPTOPTS = -O2 # Creates fast code.
+GCPPOPTOPTS+= -Ox # optimize for maximal speed
+GCPPOPTOPTS+= -GL # Enable whole program optimization.
 GLDDEBUGOPTS = -release
 
 # The single-threaded CRT (libc.lib, libcd.lib) (formerly the /ML or /MLd
@@ -195,8 +200,10 @@ DEBUG_PDB =0
 endif
 
 ifeq ($(DEBUG), 1)
-GCDEBUGOPTS =-Gm -ZI
-GCPPDEBUGOPTS =-Gm -ZI
+GCDEBUGOPTS = -Gm  # Enables minimal rebuild.
+GCDEBUGOPTS+= -Zi  # Generates complete debugging information.
+GCPPDEBUGOPTS = -Gm # Enables minimal rebuild.
+GCPPDEBUGOPTS+= -Zi # Generates complete debugging information.
 
 ifeq ($(COMPILER_VER), 1400)
 GCDEBUGOPTS+= -RTC1
@@ -221,8 +228,8 @@ endif
 endif
 endif
 
-GCOPTOPTS =-Od
-GCPPOPTOPTS =-Od
+GCOPTOPTS =-Od # Disables optimization.
+GCPPOPTOPTS =-Od # Disables optimization.
 GLDDEBUGOPTS = -debug
 
 ifeq ($(COMPILER_VER), 1400)
@@ -241,6 +248,8 @@ GLDDEBUGOPTS+= -pdbtype:sept
 endif
 endif
 
+GCDEBUGOPTS = -Gm- # Disables minimal rebuild.
+GCPPDEBUGOPTS = -Gm- # Disables minimal rebuild.
 # enable old-style debug info
 # GCDEBUGOPTS += -Z7
 # GCPPDEBUGOPTS += -Z7

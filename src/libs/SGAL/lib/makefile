@@ -305,11 +305,8 @@ LLDOPTS+= -libpath:"$(MAGICK_LIB_DIR)"
 endif
 
 ifeq ($(DEBUG), 1)
-LCPPOPTS+= -Gm # Enable minimal rebuild
 LLDLIBS+= CORE_DB_Magick++_.lib
 else
-LCPPOPTS+= -GL  # Enable whole program optimization.
-LCPPOPTS+= -Gm- # Disable minimal rebuild.
 LCPPOPTS+= -Gy  # Enable function-level linking
 LCPPOPTS+= -Oi  # Generate intrinsic functions
 LLDLIBS+= CORE_RL_Magick++_.lib

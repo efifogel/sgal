@@ -103,10 +103,13 @@ LCPPDEFS+= -DUSE_CGAL
 
 ifeq ($(DE), msvc)
 LCPPDEFS+= -DBOOST_ALL_DYN_LINK
-LCPPOPTS+= -GR
-LCPPOPTS+= -vmg
-LCPPOPTS+= -errorReport:prompt
-# LCPPOPTS+= -W3
+LCPPOPTS+= -GR  # Enables run-time type information (RTTI).
+LCPPOPTS+= -vmg # Uses full generality for pointers to members.
+LCPPOPTS+= -GS  # Apply buffers security check.
+LCPPOPTS+= -Oy- # Disable Omission of frame pointer (x86 only).
+LCPPOPTS+= -WX  # Treat all compiler warnings as errors
+LCPPOPTS+= -Zc:wchar_t -Zc:forScope # Specify standard behavior
+CPPWARNINGOPTS = -W4  # Specify the level of warning; 0 to 4
 
 ifdef BOOST_LIB_DIR
 LLDOPTS+= -libpath:"$(BOOST_LIB_DIR)"
@@ -130,6 +133,8 @@ LLDLIBS+= SGAL.lib
 ifeq ($(DEBUG), 1)
 LLDLIBS+= CORE_DB_Magick++_.lib
 else
+LCPPOPTS+= -Gy  # Enable function-level linking
+LCPPOPTS+= -Oi  # Generate intrinsic functions
 LLDLIBS+= CORE_RL_Magick++_.lib
 endif
 VC_NUM=80
