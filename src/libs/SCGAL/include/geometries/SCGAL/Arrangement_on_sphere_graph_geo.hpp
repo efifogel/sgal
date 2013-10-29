@@ -115,7 +115,7 @@ public:
   virtual void clean();
 
   /*! */
-  virtual void cull(Cull_context& cull_context) {}
+  virtual void cull(Cull_context& /* cull_context */) {}
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();

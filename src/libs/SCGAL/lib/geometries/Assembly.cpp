@@ -1523,7 +1523,7 @@ void Assembly::draw_alt_changed(Field_info* field_info)
 /* \brief processes change of the flag that indicates whether to increment the
  * alternate geometry
  */
-void Assembly::inc_alt_changed(Field_info* field_info)
+void Assembly::inc_alt_changed(Field_info* /* field_info */)
 {
   Uint which_choice = m_switch->get_which_choice();
   if (++which_choice == m_switch->children_size()) which_choice = 0;
@@ -1554,7 +1554,7 @@ void Assembly::draw_aos_minkowski_sums_changed(Field_info* field_info)
 /* \brief processes change of the flag that indicates whether  to increment
  * the Minkowski sums of the parts.
  */
-void Assembly::inc_minkowski_sums_changed(Field_info* field_info)
+void Assembly::inc_minkowski_sums_changed(Field_info* /* field_info */)
 {
   Uint which_choice = m_ms_sgm_geo_node->get_which_choice();
   if (++which_choice == m_ms_sgm_geo_node->children_size())

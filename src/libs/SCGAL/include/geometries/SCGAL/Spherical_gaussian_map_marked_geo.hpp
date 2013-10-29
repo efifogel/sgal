@@ -183,6 +183,13 @@ protected:
   protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_edges_renderer& operator=(const Colored_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_edges_renderer& operator=(const Colored_edges_renderer&) = delete;
   };
 
   /*! A function object that renders the marked vertices with color. */
@@ -199,6 +206,14 @@ protected:
   protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Marked_vertices_renderer& operator=(const Marked_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Marked_vertices_renderer& operator=(const Marked_vertices_renderer&) =
+    //   delete;
   };
 
   /*! A function object that renders the marked vertices with color. */
@@ -212,6 +227,15 @@ protected:
 
     /*! Render the vertex. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_marked_vertices_renderer&
+    operator=(const Colored_marked_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_marked_vertices_renderer&
+    //   operator=(const Colored_marked_vertices_renderer&) = delete;
   };
 
   /*! A function object that renders the marked edges. */
@@ -228,6 +252,13 @@ protected:
   protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Marked_edges_renderer& operator=(const Marked_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Marked_edges_renderer& operator=(const Marked_edges_renderer&) = delete;
   };
 
   /*! A function object that renders the marked edges with color. */
@@ -241,6 +272,15 @@ protected:
 
     /*! Render the vertex. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_marked_edges_renderer&
+    operator=(const Colored_marked_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_marked_edges_renderer&
+    //   operator=(const Colored_marked_edges_renderer&) = delete;
   };
 
   /*! A function object that renders the marked primal vertex. */
@@ -257,6 +297,13 @@ protected:
   protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Marked_face_renderer& operator=(const Marked_face_renderer&);
+
+    // In C++11, the following is supported:
+    // Marked_face_renderer& operator=(const Marked_face_renderer&) = delete;
   };
 
   /*! A functor with an operator that sets the "marked" flag. */

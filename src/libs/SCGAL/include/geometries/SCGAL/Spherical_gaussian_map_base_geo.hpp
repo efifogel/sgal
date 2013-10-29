@@ -379,13 +379,13 @@ protected:
   /*! Transform the coordinates of the SGM into spheres.
    * \param spheres (out) the transformed coordinates.
    */
-  virtual void transform_coords(Approximate_sphere_vector& spheres) {}
+  virtual void transform_coords(Approximate_sphere_vector& /* spheres */) {}
 
   /*! Draw the primal representation of the polyhedron. */
-  virtual void draw_primal(Draw_action* action) {}
+  virtual void draw_primal(Draw_action* /* action */) {}
 
   /*! Draw the Gausian representation of the polyhedron opaque. */
-  virtual void draw_aos_opaque(Draw_action* action) {}
+  virtual void draw_aos_opaque(Draw_action* /* action */) {}
 
   /*! Draw an arrangement on sphere vertex.
    * param action
@@ -412,7 +412,7 @@ protected:
 
   /*! Export the planar maps associated with the faces of the unit sphere.
    */
-  void output(Field_info* field_info)
+  void output(Field_info* /* field_info */)
   { SGAL_assertion_msg(0, "Not implemented yet!"); }
 
   /*! \brief imports  the planar maps associated with the faces of the unit
@@ -506,12 +506,12 @@ public:
   /*! Draw the arrangement on sphere vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action* action) {}
+  virtual void draw_aos_vertices(Draw_action* /* action */) {}
 
   /*! Draw the arrangement on sphere edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action* action) {}
+  virtual void draw_aos_edges(Draw_action* /* action */) {}
 
   /*! Obtain the aos surface color. */
   const Vector3f& get_aos_surface_color(void) const;

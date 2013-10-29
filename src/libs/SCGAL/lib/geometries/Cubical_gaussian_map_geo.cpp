@@ -1618,7 +1618,8 @@ void Cubical_gaussian_map_geo::insert_cgm(Shared_cubical_gaussian_map_geo cgm)
 }
 
 /*! \brief increases the vertex index. */
-void Cubical_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
+void Cubical_gaussian_map_geo::
+increase_vertex_index(Field_info* /* field_info */)
 {
   m_marked_vertex_index++;
   if (m_marked_vertex_index == m_cgm.number_of_vertices())
@@ -1627,7 +1628,8 @@ void Cubical_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
 }
 
 /*! \brief increases the face index. */
-void Cubical_gaussian_map_geo::increase_edge_index(Field_info* field_info)
+void Cubical_gaussian_map_geo::
+increase_edge_index(Field_info* /* field_info */)
 {
   m_marked_edge_index++;
   if (m_marked_edge_index == m_cgm.number_of_edges())
@@ -1636,7 +1638,8 @@ void Cubical_gaussian_map_geo::increase_edge_index(Field_info* field_info)
 }
 
 /*! \brief increases the face index. */
-void Cubical_gaussian_map_geo::increase_facet_index(Field_info* field_info)
+void Cubical_gaussian_map_geo::
+increase_facet_index(Field_info* /* field_info */)
 {
   m_marked_facet_index++;
   if (m_marked_facet_index == m_cgm.number_of_facets())

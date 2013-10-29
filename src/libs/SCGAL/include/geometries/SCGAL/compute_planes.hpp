@@ -83,6 +83,13 @@ public:
     while (collinear(p1, p2, h->vertex()->point())) h = h->next();
     return m_kernel.construct_plane_3_object()(p1, p2, h->vertex()->point());
   }
+
+private:
+  // Assignment operator cannot be generated.
+  Plane_equation& operator=(const Plane_equation&);
+
+  // In C++11, the following is supported:
+  // Plane_equation& operator=(const Plane_equation&) = delete;
 };
 
 template <typename Kernel, typename T_Polyhedron>

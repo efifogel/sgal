@@ -184,7 +184,7 @@ public:
   virtual void cull(Cull_context& cull_context);
 
   /*! */
-  virtual void isect(Isect_action* action) {}
+  virtual void isect(Isect_action* /* action */) {}
 
   /*! */
   virtual Boolean clean_sphere_bound() { return false; }
@@ -205,20 +205,24 @@ public:
    * \param action
    * \param center the vertex center.
    */
-  virtual void draw_aos_vertex(Draw_action* action, Vector3f& center) {}
+  virtual void draw_aos_vertex(Draw_action* /* action */,
+                               Vector3f& /* center */)
+  {}
 
   /*! Draw an arrangement on surface isolated vertex.
    * \param action
    * \param center the vertex center.
    */
-  virtual void draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
+  virtual void draw_aos_isolated_vertex(Draw_action* /* action */,
+                                        Vector3f& /* center */)
   {}
 
   /*! Draw an arrangement on surface boundary_vertex.
    * \param action
    * \param center the vertex center.
    */
-  virtual void draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
+  virtual void draw_aos_boundary_vertex(Draw_action* /* action */,
+                                        Vector3f& /* center */)
   {}
 
   /*! Draw an arrangement on surface edge.
@@ -226,8 +230,8 @@ public:
    * \param source the edge source point.
    * \param target the edge target point.
    */
-  virtual void draw_aos_edge(Draw_action* action, Vector3f& source,
-                             Vector3f& target, Vector3f& normal)
+  virtual void draw_aos_edge(Draw_action* /* action */, Vector3f& /* source */,
+                             Vector3f& /* target */, Vector3f& /* normal */)
   {}
 
   /*! Clean the renderer. */
@@ -236,17 +240,17 @@ public:
   /*! Draw the arrangement on surface edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action* action) {}
+  virtual void draw_aos_edges(Draw_action* /* action */) {}
 
   /*! Draw the arrangement on surface vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action* action) {}
+  virtual void draw_aos_vertices(Draw_action* /* action */) {}
 
   /*! Draw the arrangement on surface isolated vertices.
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action* action) {}
+  virtual void draw_aos_isolated_vertices(Draw_action* /* action */) {}
 
   /*! Raise the flag that indicates that the renderer changed. */
   void renderer_changed(Field_info* field_info = NULL);

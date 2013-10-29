@@ -55,6 +55,11 @@ class Cull_context;
 class Indexed_line_set;
 class Field_info;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents all lines that intersect tupples
  * of 4 segments, given a container of segments
  */
@@ -206,6 +211,10 @@ private:
 
   /*! Default values */
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Lines_through_segments_geo* Lines_through_segments_geo::prototype()

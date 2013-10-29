@@ -136,7 +136,7 @@ public:
   virtual void clean();
 
   /*! */
-  virtual void cull(Cull_context& cull_context) {}
+  virtual void cull(Cull_context& /* cull_context */) {}
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
@@ -278,6 +278,15 @@ protected:
 
     /*! Render the edges. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Sphere_marked_colored_vertices_renderer&
+    operator=(const Sphere_marked_colored_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Sphere_marked_colored_vertices_renderer&
+    //   operator=(const Sphere_marked_colored_vertices_renderer&) = delete;
   };
 
   /*! A function object that renders the isolated vertices with color. */
@@ -297,6 +306,16 @@ protected:
 
     /*! Render the edges. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Sphere_marked_colored_isolated_vertices_renderer&
+    operator=(const Sphere_marked_colored_isolated_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Sphere_marked_colored_isolated_vertices_renderer&
+    //   operator=(const Sphere_marked_colored_isolated_vertices_renderer&) =
+    //   delete;
   };
 
   /*! A function object that renders the edges with color. */
@@ -331,6 +350,13 @@ protected:
   protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Marked_face_renderer& operator=(const Marked_face_renderer&);
+
+    // In C++11, the following is supported:
+    // Marked_face_renderer& operator=(const Marked_face_renderer&) = delete;
   };
 
   typedef SGAL::Line_colored_edges_renderer

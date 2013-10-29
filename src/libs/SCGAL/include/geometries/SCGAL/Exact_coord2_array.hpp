@@ -39,6 +39,11 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! Maintains an array of 2D vertex-coordinate. */
 class SGAL_SCGAL_DECL Exact_coord2_array : public Container {
 public:
@@ -125,6 +130,10 @@ private:
   /*! The exact coordinate array. */
   Exact_point_vector m_array;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Exact_coord2_array* Exact_coord2_array::prototype()

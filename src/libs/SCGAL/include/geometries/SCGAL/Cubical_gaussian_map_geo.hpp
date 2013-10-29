@@ -279,6 +279,13 @@ protected:
 
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_edges_renderer& operator=(const Colored_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_edges_renderer& operator=(const Colored_edges_renderer&) = delete;
   };
 
   /*! A function object that renders the vertices with color. */
@@ -292,6 +299,14 @@ protected:
 
     /*! Render the face */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_vertices_renderer& operator=(const Colored_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_vertices_renderer& operator=(const Colored_vertices_renderer&) =
+    //   delete;
   };
 
   /*! A function object that renders the marked vertices */
@@ -308,6 +323,14 @@ protected:
   protected:
     /*! The arrangement geometry */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Marked_vertices_renderer& operator=(const Marked_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Marked_vertices_renderer& operator=(const Marked_vertices_renderer&) =
+    //   delete;
   };
 
   /*! A function object that renders the vertices with color */
@@ -321,6 +344,15 @@ protected:
 
     /*! Render the face */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_marked_vertices_renderer&
+      operator=(const Colored_marked_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_marked_vertices_renderer&
+    //   operator=(const Colored_marked_vertices_renderer&) = delete;
   };
 
   /*! A function object that renders the nonreal vertices */
@@ -337,6 +369,14 @@ protected:
   protected:
     /*! The arrangement geometry */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Nonreal_vertices_renderer& operator=(const Nonreal_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Nonreal_vertices_renderer& operator=(const Nonreal_vertices_renderer&) =
+    //   delete;
   };
 
   /*! A function object that renders the nonreal vertices with color. */
@@ -350,6 +390,15 @@ protected:
 
     /*! Render the face. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_nonreal_vertices_renderer&
+      operator=(const Colored_nonreal_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_nonreal_vertices_renderer&
+    //   operator=(const Colored_nonreal_vertices_renderer&) = delete;
   };
 
   /*! A function object that renders the marked primal vertex. */
@@ -366,6 +415,13 @@ protected:
   protected:
     /*! The arrangement geometry. */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Marked_face_renderer& operator=(const Marked_face_renderer&);
+
+    // In C++11, the following is supporte:
+    // Marked_face_renderer& operator=(const Marked_face_renderer&) = delete;
   };
 
   /*! Obtain the tag (type) of the container */
@@ -878,7 +934,7 @@ private:
                        float non_edge_line_width);
 
   /*! Export the planar maps associated with the faces of the unit cube. */
-  void output(SGAL::Field_info* field_info)
+  void output(SGAL::Field_info* /* field_info */)
   {
     // std::cout << m_cgm << std::endl;
     for (Uint i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {

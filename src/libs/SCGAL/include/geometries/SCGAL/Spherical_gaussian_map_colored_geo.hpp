@@ -133,8 +133,8 @@ private:
     virtual ~Sgm_geo_initializer_visitor() {}
 
     /*! Pass information from the polyhedron vertex to its dual - an aos face */
-    virtual void update_dual_vertex(Polyhedron_vertex_const_handle src,
-                                    Sgm_face_handle trg)
+    virtual void update_dual_vertex(Polyhedron_vertex_const_handle /* src */,
+                                    Sgm_face_handle /* trg */)
     {
       // trg->set_color(src->color());
     }
@@ -147,8 +147,8 @@ private:
     { trg->set_color(src->color()); }
 
     /*! Pass information from a polyhedron facet to its dual - an aos vertex */
-    virtual void update_dual_face(Polyhedron_facet_const_handle src,
-                                  Sgm_vertex_handle trg)
+    virtual void update_dual_face(Polyhedron_facet_const_handle /* src */,
+                                  Sgm_vertex_handle /* trg */)
     {
       // trg->set_color(src->color());
     }
@@ -156,8 +156,8 @@ private:
     /*! Pass information from a polyhedron halfedge to its dual - an aos
      * halfedge
      */
-    virtual void update_dual_halfedge(Polyhedron_halfedge_const_handle src,
-                                      Sgm_halfedge_handle trg)
+    virtual void update_dual_halfedge(Polyhedron_halfedge_const_handle /* src */,
+                                      Sgm_halfedge_handle /* trg */)
     {
       // trg->set_color(src->color());
     }
@@ -184,6 +184,13 @@ protected:
   protected:
     /*! The arrangement geometry */
     Geometry& m_geo;
+
+  private:
+    // Assignment operator cannot be generated.
+    Colored_edges_renderer& operator=(const Colored_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Colored_edges_renderer& operator=(const Colored_edges_renderer&) = delete;
   };
 
   // List of pointers to Spherical_gaussian_map_colored_geo objects. */

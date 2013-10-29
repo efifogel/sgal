@@ -441,7 +441,7 @@ Container_proto* Arrangement_on_surface_geo::get_prototype()
 }
 
 /*! \brief */
-void Arrangement_on_surface_geo::cull(Cull_context& cull_context) {}
+void Arrangement_on_surface_geo::cull(Cull_context& /* cull_context */) {}
 
 /*! \brief draws the geometry */
 void Arrangement_on_surface_geo::draw(Draw_action* action)
@@ -580,7 +580,7 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
 }
 
 /*! \brief raises the flag that indicates that the renderer changed. */
-void Arrangement_on_surface_geo::renderer_changed(Field_info* field_info)
+void Arrangement_on_surface_geo::renderer_changed(Field_info* /* field_info */)
 {
   m_renderer.clear();
   m_renderer_dirty = true;
