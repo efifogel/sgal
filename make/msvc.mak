@@ -248,12 +248,12 @@ GLDDEBUGOPTS+= -pdbtype:sept
 endif
 endif
 
-GCDEBUGOPTS = -Gm- # Disables minimal rebuild.
-GCPPDEBUGOPTS = -Gm- # Disables minimal rebuild.
 # enable old-style debug info
 # GCDEBUGOPTS += -Z7
 # GCPPDEBUGOPTS += -Z7
-
+else
+GCDEBUGOPTS = -Gm- # Disables minimal rebuild.
+GCPPDEBUGOPTS = -Gm- # Disables minimal rebuild.
 endif
 
 #GCOPTS += -YX          # automates precompiled headers
