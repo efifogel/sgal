@@ -44,14 +44,37 @@ public:
   /*! Destructor */
   virtual ~Item_primitive() {}
 
-  std::string get_value(unsigned int param_id) const;
-  void get_value(unsigned int param_id, float& value) const;
-  void get_value(unsigned int param_id, int& value) const;
-  void get_value(unsigned int param_id, bool& value) const;
-  void set_value(unsigned int param_id, const std::string& value);
-  void set_value(unsigned int param_id, int value);
-  void set_value(unsigned int param_id, float value);
-  void set_value(unsigned int param_id, bool value);
+  std::string get_value(Uint param_id) const;
+
+  void get_value(Uint param_id, float& value) const;
+
+  void get_value(Uint param_id, int& value) const;
+
+  void get_value(Uint param_id, bool& value) const;
+
+  /*! Set a value of a parameter.
+   * \param paramName (in) the id of the parameter
+   * \param value (in) the value of the parameter in string format
+   */
+  void set_value(Uint param_id, const std::string& value);
+
+  /*! Set a value of a parameter.
+   * \param paramName (in) the id of the parameter.
+   * \param value (in) the value of an integer parameter.
+   */
+  void set_value(Uint param_id, int value);
+
+  /*! Set a value of a parameter.
+   * \param paramName (in) the id of the parameter.
+   * \param value (in) the value of an float parameter.
+   */
+  void set_value(Uint param_id, float value);
+
+  /*! Set a value of a parameter.
+   * \param paramName (in) the id of the parameter.
+   * \param value (in) the value of a Boolean parameter.
+   */
+  void set_value(Uint param_id, bool value);
 
 protected:
   typedef std::vector <std::string> String_vector;
