@@ -109,6 +109,16 @@ public:
 
   Boolean get_color_per_vertex() const;
 
+  /*! Set the line width.
+   * \param width (in) The line width.
+   */
+  void set_line_width(Float width);
+
+  /*! Obtain the line width.
+   * \param width (in) The line width.
+   */
+  Float get_line_width();
+
 protected:
   /*! Indicates whether a single color is specified per vertex. */
   Boolean m_color_per_vertex;
@@ -172,6 +182,14 @@ inline Boolean Indexed_line_set::get_color_per_vertex() const
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Indexed_line_set::get_tag() const { return s_tag; }
+
+/*! \brief sets the line width. */
+inline void Indexed_line_set::set_line_width(Float width)
+{ m_line_width = width; }
+
+/*! \brief obtains the line width. */
+inline Float Indexed_line_set::get_line_width()
+{ return m_line_width; }
 
 SGAL_END_NAMESPACE
 
