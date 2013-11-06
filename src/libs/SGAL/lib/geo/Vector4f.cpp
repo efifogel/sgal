@@ -20,6 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -29,12 +30,12 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! \brief */
-std::string Vector4f::get_text() 
+std::string Vector4f::get_text()
 {
-  char buf[64];
-  sprintf(buf, "%g %g %g %g",
-          m_vector[0], m_vector[1], m_vector[2], m_vector[3]);
-  std::string str(buf);
+  std::string str(boost::lexical_cast<std::string>(m_vector[0]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_vector[1]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_vector[2]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_vector[3]));
   return str;
 }
 
@@ -51,7 +52,7 @@ void Vector4f::xform(const Vector4f& v, const Matrix4f& m)
 
 /*! \brief computes the length of the vector.
  * DO NOT MAKE INLINE! (Do not move to Vector4f.hp.) to avoid inclusion
- * of Math_depth.hpp in Vector4f.hpp. 
+ * of Math_depth.hpp in Vector4f.hpp.
  */
 float Vector4f::length() const
 { return squarerootf(dot(*this)); }

@@ -20,6 +20,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -29,11 +30,11 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! \brief */
-std::string Vector3f::get_text() 
+std::string Vector3f::get_text()
 {
-  char buf[64];
-  sprintf(buf, "%g %g %g", m_vector[0], m_vector[1], m_vector[2]);
-  std::string str(buf);
+  std::string str(boost::lexical_cast<std::string>(m_vector[0]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_vector[1]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_vector[2]));
   return str;
 }
 
@@ -96,7 +97,7 @@ void Vector3f::clamp(const Vector3f & v,
 }
 
 /*! \brief sets this vector to be the inhomogeneous coordinates (that, divided
- * by w) of (v,1) * m where v is treated as a row vector. 
+ * by w) of (v,1) * m where v is treated as a row vector.
  */
 void Vector3f::full_xform_pt(const Vector3f & v, const Matrix4f & m)
 {
@@ -125,14 +126,14 @@ bool Vector3f::collinear(const Vector3f& v1, const Vector3f& v2,
 
 /*! \brief computes the reciprocal of the length of the vector.
  * DO NOT MAKE INLINE! (Do not move to Vector3f.hp.) to avoid inclusion
- * of Math_depth.hpp in Vector3f.hpp. 
+ * of Math_depth.hpp in Vector3f.hpp.
  */
 Float Vector3f::length_reciprocal() const
 { return Math::sqrt_reciprocalf(dot(*this)); }
 
 /*! \brief computes the length of the vector.
  * DO NOT MAKE INLINE! (Do not move to Vector3f.hp.) to avoid inclusion
- * of Math_depth.hpp in Vector3f.hpp. 
+ * of Math_depth.hpp in Vector3f.hpp.
  */
 Float Vector3f::length() const
 {
@@ -143,7 +144,7 @@ Float Vector3f::length() const
 
 /*! \brief computes the distance from a given point.
  * DO NOT MAKE INLINE! (Do not move to Vector3f.hp.) to avoid inclusion
- * of Math_depth.hpp in Vector3f.hpp. 
+ * of Math_depth.hpp in Vector3f.hpp.
  */
 Float Vector3f::distance(const Vector3f& v) const
 {

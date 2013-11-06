@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_line_set.hpp"
@@ -210,7 +211,7 @@ void Indexed_line_set::set_attributes(Element* elem)
       continue;
     }
     if (name == "lineWidth") {
-      sscanf(value.c_str(), "%f", &m_line_width);
+      set_line_width(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }

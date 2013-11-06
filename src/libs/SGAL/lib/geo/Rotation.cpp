@@ -19,6 +19,9 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <string>
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
@@ -30,9 +33,10 @@ SGAL_BEGIN_NAMESPACE
 /*! \brief */
 std::string Rotation::get_text()
 {
-  char buf[64];
-  sprintf(buf, "%g %g %g %g", m_axis[0], m_axis[1], m_axis[2], m_angle);
-  std::string str(buf);
+  std::string str(boost::lexical_cast<std::string>(m_axis[0]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_axis[1]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_axis[2]));
+  str.append(" ").append(boost::lexical_cast<std::string>(m_angle));
   return str;
 }
 

@@ -14,10 +14,12 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 4966 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
+
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -30,7 +32,7 @@ SGAL_BEGIN_NAMESPACE
  * @param paramName (in) the parameter's id
  * @return the value in string format
  */
-std::string Item_primitive::get_value(unsigned int param_id) const
+std::string Item_primitive::get_value(Uint param_id) const
 {
   if (param_id >= m_attributes.size()) {
     return std::string("");
@@ -43,7 +45,7 @@ std::string Item_primitive::get_value(unsigned int param_id) const
  * @param (in) the parameter's id.
  * param (out) the integer value.
  */
-void Item_primitive::get_value(unsigned int param_id, int & value) const
+void Item_primitive::get_value(Uint param_id, int & value) const
 {
   if (m_attributes.empty() || (param_id >= m_attributes.size())) {
     SGAL_assertion(0);
@@ -58,7 +60,7 @@ void Item_primitive::get_value(unsigned int param_id, int & value) const
  * @param (in) the parameter's id.
  * param (out) the float value.
  */
-void Item_primitive::get_value(unsigned int param_id, float & value) const 
+void Item_primitive::get_value(Uint param_id, float & value) const
 {
   if (param_id >= m_attributes.size()) {
     SGAL_assertion(0);
@@ -72,7 +74,7 @@ void Item_primitive::get_value(unsigned int param_id, float & value) const
  * @param (in) the parameter's id.
  * param (out) the float value.
  */
-void Item_primitive::get_value(unsigned int param_id, bool & value) const 
+void Item_primitive::get_value(Uint param_id, bool & value) const
 {
   if (param_id >= m_attributes.size()) {
     SGAL_assertion(0);
@@ -81,60 +83,32 @@ void Item_primitive::get_value(unsigned int param_id, bool & value) const
   value = (m_attributes[param_id] == "TRUE" ? true : false);
 }
 
-/*! Set a value of a parameter.
- * @param paramName (in) the id of the parameter
- * @param value (in) the value of the parameter in string format
- */
-void Item_primitive::set_value(unsigned int param_id, const std::string & value)
+/*! \brief sets a value of a parameter. */
+void Item_primitive::set_value(Uint param_id, const std::string & value)
 {
-  if (param_id < m_attributes.size()) {
-    m_attributes[param_id] = value;
-  } else {
-    SGAL_assertion(0);
-  }
+  SGAL_assertion(param_id < m_attributes.size());
+  m_attributes[param_id] = value;
 }
 
-/*! Set a value of a parameter.
- * @param paramName (in) the id of the parameter.
- * @param value (in) the value of an integer parameter.
- */
-void Item_primitive::set_value(unsigned int param_id, int value)
+/*! \brief sets a value of a parameter. */
+void Item_primitive::set_value(Uint param_id, int value)
 {
-  char buf[32];
-  sprintf(buf, "%d", value);
-  if (param_id < m_attributes.size()) {
-    m_attributes[param_id] = buf;
-  } else {
-    SGAL_assertion(0);
-  }
+  SGAL_assertion(param_id < m_attributes.size());
+  m_attributes[param_id] = boost::lexical_cast<std::string>(value);
 }
 
-/*! Set a value of a parameter.
- * @param paramName (in) the id of the parameter.
- * @param value (in) the value of an float parameter.
- */
-void Item_primitive::set_value(unsigned int param_id, float value)
+/*! \brief sets a value of a parameter. */
+void Item_primitive::set_value(Uint param_id, float value)
 {
-  char buf[32];
-  sprintf(buf, "%g", value);
-  if (param_id < m_attributes.size()) {
-    m_attributes[param_id] = buf;
-  } else {
-    SGAL_assertion(0);
-  }
+  SGAL_assertion(param_id < m_attributes.size());
+  m_attributes[param_id] = boost::lexical_cast<std::string>(value);
 }
 
-/*! Set a boolean value of a parameter.
- * @param paramName (in) the id of the parameter.
- * @param value (in) the value of a boolean parameter.
- */
-void Item_primitive::set_value(unsigned int param_id, bool value)
+/*! \brief sets a boolean value of a parameter. */
+void Item_primitive::set_value(Uint param_id, bool value)
 {
-  if (param_id < m_attributes.size()) {
-    m_attributes[param_id] = (value ? "TRUE" : "FALSE");
-  } else {
-    SGAL_assertion(0);
-  }
+  SGAL_assertion(param_id < m_attributes.size());
+  m_attributes[param_id] = (value ? "TRUE" : "FALSE");
 }
 
 SGAL_END_NAMESPACE
