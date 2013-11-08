@@ -24,7 +24,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning( push )
-#pragma warning( disable: 4100 )
+#pragma warning( disable: 4100 4512 )
 #endif
 #include <boost/program_options.hpp>
 #if defined(_MSC_VER)
@@ -65,6 +65,16 @@ protected:
 
 private:
   virtual const po::options_description& get_visible_opts() const = 0;
+
+  // The assignment operator cannot be generated (because some of the data
+  // members are const pointers), so we suppress it explicitly.
+  // We also suppress the copy constructor.
+  Generic_option_parser& operator=(const Generic_option_parser&);
+  Generic_option_parser(const Generic_option_parser&);
+
+  // In C++11, VC2013, the following is supported:
+  // Generic_option_parser& operator=(const Generic_option_parser&) = delete;
+  // Generic_option_parser(const Generic_option_parser&) = delete;
 };
 
 SGAL_END_NAMESPACE

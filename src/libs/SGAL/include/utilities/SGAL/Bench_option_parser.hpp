@@ -24,7 +24,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning( push )
-#pragma warning( disable: 4100 )
+#pragma warning( disable: 4100 4512 )
 #endif
 #include <boost/program_options.hpp>
 #if defined(_MSC_VER)
@@ -89,6 +89,16 @@ private:
 
   /*! Number of iterations */
   Uint m_iterations;
+
+  // The assignment operator cannot be generated (because some of the data
+  // members are const pointers), so we suppress it explicitly.
+  // We also suppress the copy constructor.
+  Bench_option_parser& operator=(const Bench_option_parser&);
+  Bench_option_parser(const Bench_option_parser&);
+
+  // In C++11, VC2013, the following is supported:
+  // Bench_option_parser& operator=(const Bench_option_parser&) = delete;
+  // Bench_option_parser(const Bench_option_parser&) = delete;
 };
 
 SGAL_END_NAMESPACE

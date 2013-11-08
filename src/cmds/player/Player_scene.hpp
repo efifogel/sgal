@@ -120,16 +120,16 @@ public:
 
   /*! Destroy the scene. */
   virtual void destroy_scene();
-  
+
   /*! Initialize the secene. */
   virtual void init_scene();
 
   /*! Check if the scene is initialized. */
   virtual bool is_scene_initiated() { return m_window_item != NULL; }
 
-  /*! Clear the scene */  
+  /*! Clear the scene */
   virtual void clear_scene();
-  
+
   /*! Reshape the viewport of a window of the scene.
    * It is assumed that the window context is the current context.
    * \param window_item the window to reshape
@@ -149,10 +149,10 @@ public:
 
   /*! Handle a reshape event. */
   virtual void handle(SGAL::Reshape_event* event);
-  
+
   /*! Handle a draw event. */
   virtual void handle(SGAL::Draw_event* event);
-    
+
   /*! Handle a tick event. */
   virtual void handle(SGAL::Tick_event* event);
 
@@ -167,7 +167,7 @@ public:
 
   /*! Handle a passive motion event. */
   virtual void handle(SGAL::Passive_motion_event* event);
-  
+
   /*! Print out the name of this agent (for debugging purposes). */
   virtual void identify(void);
 
@@ -175,7 +175,7 @@ public:
   template <typename Window_manager>
   void set_window_manager(Window_manager* manager)
   { m_window_manager = manager; }
-  
+
   /*! Set the option parser. */
   void set_option_parser(Player_option_parser *option_parser)
   { m_option_parser = option_parser; }
@@ -192,7 +192,7 @@ protected:
 
   /*! The window item. */
   Window_item* m_window_item;
-  
+
   /*! The width of the window. */
   SGAL::Uint m_win_width;
 
@@ -203,13 +203,13 @@ protected:
   SGAL::Scene_graph* m_scene_graph;
 
   /*! The context. */
-  SGAL::Context* m_context;  
+  SGAL::Context* m_context;
 
   /*! Option parser. */
   Player_option_parser* m_option_parser;
 
   SGAL::Boolean m_simulate;
-  
+
   /*! \brief draws guides that separate the window into 4x5 rectangles. */
   void draw_grid();
 
@@ -231,31 +231,38 @@ protected:
 private:
   typedef std::list<fi::path>                                   Path_list;
   typedef Path_list::iterator                                   Path_iter;
-    
+
   struct Add_dir {
     Path_list& m_dirs;
     Add_dir(Path_list& dirs) : m_dirs(dirs) {}
     void operator()(const std::string& dir) { m_dirs.push_back(dir); }
+
+    // The assignment operator cannot be generated (because some of the data
+    // members are const pointers), so we suppress it explicitly.
+    Add_dir& operator=(const Add_dir&);
+
+    // In C++11, VC2013, the following is supported:
+    // Add_dir& operator=(const Add_dir&) = delete;
   };
 
   enum Error_id { FILE_NOT_FOUND, ILLEGAL_EXTENSION, UNABLE_TO_LOAD };
   struct Illegal_input : public std::logic_error {
-    Illegal_input(Error_id err, const std::string& msg,
+    Illegal_input(Error_id /* err */, const std::string& msg,
                   const std::string& filename) :
-      std::logic_error(std::string(msg).append(" (").append(filename).append(")!"))       
+      std::logic_error(std::string(msg).append(" (").append(filename).append(")!"))
     {}
   };
 
   struct Input_file_missing_error : public std::logic_error {
     Input_file_missing_error(std::string& str) : std::logic_error(str) {}
   };
-  
+
   /*! The input file full-name. */
   std::string m_fullname;
-  
+
   /*! A collection of directories to search files in. */
   Path_list m_dirs;
-  
+
   /*! Valid file format names */
   static const char* s_file_format_names[];
 };

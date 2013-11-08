@@ -56,6 +56,11 @@ class Scene_graph;
 class Element;
 class Sphere;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere.
  */
@@ -159,6 +164,10 @@ private:
    */
   void increase_face_index(Field_info* field_info = NULL);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief obtains the site index array. */
 inline const std::vector<Uint>&

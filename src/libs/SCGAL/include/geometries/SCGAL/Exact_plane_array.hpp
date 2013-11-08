@@ -40,6 +40,11 @@ class Element;
 class Scene_graph;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! Maintains an array of 3D vertex-coordinate */
 class SGAL_SCGAL_DECL Exact_plane_array : public Container {
 public:
@@ -124,6 +129,10 @@ private:
   /*! The exact coordinate array */
   Exact_plane_vector m_array;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Exact_plane_array* Exact_plane_array::prototype()

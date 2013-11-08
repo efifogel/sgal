@@ -58,6 +58,11 @@ class Coord_array;
 class Draw_action;
 class Scene_graph;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Polyhedron_geo : public Mesh_set {
 public:
   // A halfedge type with a flag member variable.
@@ -215,6 +220,10 @@ private:
   /*! The builder. */
   Polyhedron_geo_builder<HalfedgeDS> m_surface;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Polyhedron_geo* Polyhedron_geo::prototype()

@@ -173,7 +173,7 @@ void Exact_polyhedron_geo::clear()
 }
 
 /*! \brief */
-void Exact_polyhedron_geo::cull(Cull_context& cull_context) {}
+void Exact_polyhedron_geo::cull(Cull_context& /* cull_context */) {}
 
 /*! \brief draws the internal representation. */
 void Exact_polyhedron_geo::draw_geometry(Draw_action* /* action */)
@@ -197,7 +197,7 @@ void Exact_polyhedron_geo::draw_geometry(Draw_action* /* action */)
 }
 
 /*! \brief */
-void Exact_polyhedron_geo::isect(Isect_action* action)
+void Exact_polyhedron_geo::isect(Isect_action* /* action */)
 {
   if (is_dirty_coord_indices()) clean_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();

@@ -24,7 +24,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning( push )
-#pragma warning( disable: 4100 )
+#pragma warning( disable: 4100 4512 )
 #endif
 #include <boost/program_options.hpp>
 #if defined(_MSC_VER)
@@ -94,6 +94,16 @@ private:
 
   /*! Indicate whether to display Frames-Per-Seconds (FPS) */
   Boolean m_display_fps;
+
+  // The assignment operator cannot be generated (because some of the data
+  // members are const pointers), so we suppress it explicitly.
+  // We also suppress the copy constructor.
+  Conf_option_parser& operator=(const Conf_option_parser&);
+  Conf_option_parser(const Conf_option_parser&);
+
+  // In C++11, VC2013, the following is supported:
+  // Conf_option_parser& operator=(const Conf_option_parser&) = delete;
+  // Conf_option_parser(const Conf_option_parser&) = delete;
 };
 
 SGAL_END_NAMESPACE

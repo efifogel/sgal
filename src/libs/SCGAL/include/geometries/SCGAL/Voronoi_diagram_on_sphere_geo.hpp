@@ -55,6 +55,11 @@ class Scene_graph;
 class Element;
 class Sphere;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere.
  */
@@ -219,6 +224,14 @@ private:
 
     /*! Draw the sites. */
     virtual void operator()(Draw_action* action) { m_geo.draw_sites(action); }
+
+  private:
+    // Assignment operator cannot be generated.
+    Site_renderer& operator=(const Site_renderer&);
+
+    // In C++11, the following is supported:
+    // Site_renderer&
+    //   operator=(const Site_renderer&) = delete;
   };
 
   class Site_other_renderer : public Arrangement_renderer::Renderer {
@@ -232,6 +245,14 @@ private:
 
     /*! Drawer operator. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Site_other_renderer& operator=(const Site_other_renderer&);
+
+    // In C++11, the following is supported:
+    // Site_other_renderer&
+    //   operator=(const Site_other_renderer&) = delete;
   };
 
   /*! The tag that identifies this container type. */
@@ -301,6 +322,10 @@ private:
   /*! Detsroy the renderers. */
   void destroy_renderers();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Voronoi_diagram_on_sphere_geo*

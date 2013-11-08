@@ -40,6 +40,11 @@ class Element;
 class Scene_graph;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! Add two coord arrays. */
 class SGAL_SCGAL_DECL Exact_coord_minkowski : public Coord_minkowski {
 public:
@@ -101,6 +106,10 @@ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Exact_coord_minkowski* Exact_coord_minkowski::prototype()

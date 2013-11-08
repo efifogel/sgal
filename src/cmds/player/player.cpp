@@ -113,15 +113,14 @@ void load_shared_library(std::string& library_name, std::string& function_name)
     return;
   }
 
-  // Call the function from the shared library 
-  init();  
+  // Call the function from the shared library
+  init();
 }
 
 /*! Main entry */
 int main(int argc, char* argv[])
 {
   // SGAL::initialize(argc, argv);
-  
 #if (defined USE_CGAL)
   // try {
   //   std::string library_name = "libSCGAL.so";
@@ -134,7 +133,7 @@ int main(int argc, char* argv[])
   // }
   SGAL::scgal_init();
 #endif
-  
+
 #if (defined USE_EGO)
   try {
 #if (defined _MSC_VER)
@@ -180,7 +179,7 @@ int main(int argc, char* argv[])
   Player_scene scene(&option_parser);
   scene.set_window_manager(wm);
   wm->set_scene(&scene);
-  
+
   try {
     scene.create_scene();
   }

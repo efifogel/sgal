@@ -82,14 +82,14 @@ void Assembly_part::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Assembly_part::get_prototype() 
-{  
+Container_proto* Assembly_part::get_prototype()
+{
   if (!s_prototype) Assembly_part::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Assembly_part::set_attributes(Element* elem) 
+void Assembly_part::set_attributes(Element* elem)
 { Group::set_attributes(elem); }
 
 /*! \brief prints information to an output stream. */
@@ -128,7 +128,7 @@ Assembly_part::Appearance_list& Assembly_part::get_sgm_apps()
 }
 
 /*! \brief constructs all the SGM's that comprise this part. */
-void Assembly_part::clean_sgm_geos(Group* group)
+void Assembly_part::clean_sgm_geos(Group* /* group */)
 {
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
     Shared_node node = *it;
@@ -164,7 +164,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
       typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
                                                         Nef_polyhedron;
       typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
-      
+
       clock_t start_time = clock();
       Polyhedron& polyhedron = polyhedron_geo->get_polyhedron();
       Nef_polyhedron nef_polyhedron = Nef_polyhedron(polyhedron);
@@ -175,7 +175,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
       total_duration_time += duration_time;
       // The first volume is the outer volume, which is ignored in the
       // decomposition
-      Volume_const_iterator ci = ++nef_polyhedron.volumes_begin();      
+      Volume_const_iterator ci = ++nef_polyhedron.volumes_begin();
       Uint number_of_vertices = 0;
       Uint number_of_edges = 0;
       Uint number_of_facets = 0;
@@ -206,19 +206,19 @@ void Assembly_part::clean_sgm_geos(Node* node)
       total_number_of_edges += number_of_edges;
       total_number_of_facets += number_of_facets;
       std::cout << "# pieces: " << m_sgm_apps.size()
-                << " <" << number_of_vertices 
-                << ", " << number_of_edges 
+                << " <" << number_of_vertices
+                << ", " << number_of_edges
                 << ", " << number_of_facets << ">"
-                << " (<" << total_number_of_vertices 
-                << ", " << total_number_of_edges 
-                << ", " << total_number_of_facets << ">)" 
+                << " (<" << total_number_of_vertices
+                << ", " << total_number_of_edges
+                << ", " << total_number_of_facets << ">)"
                 << ", " << duration_time << " (" << total_duration_time << ")"
                 << std::endl;
       return;
     }
 
     typedef boost::shared_ptr<Exact_nef_polyhedron>
-      Shared_exact_nef_polyhedron;    
+      Shared_exact_nef_polyhedron;
     Shared_exact_nef_polyhedron nef_geo =
       boost::dynamic_pointer_cast<Exact_nef_polyhedron>(shape->get_geometry());
     if (nef_geo) {
@@ -246,14 +246,14 @@ void Assembly_part::clean_sgm_geos(Node* node)
     std::cerr << "!" << std::endl;
     return;
   }
-    
+
   Switch* my_switch = dynamic_cast<Switch*>(node);
   if (my_switch) {
     Shared_node choice = my_switch->get_choice();
     if (!choice) return;
     return clean_sgm_geos(&*choice);
   }
-  
+
   Group* group = dynamic_cast<Group*>(node);
   if (group) return clean_sgm_geos(group);
 }

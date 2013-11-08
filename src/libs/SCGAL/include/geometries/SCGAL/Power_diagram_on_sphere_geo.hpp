@@ -57,6 +57,11 @@ class Scene_graph;
 class Element;
 class Sphere;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents a power diagram os a sphere.
  */
 class SGAL_SCGAL_DECL Power_diagram_on_sphere_geo :
@@ -381,6 +386,10 @@ private:
   /*! Detsroy the renderers. */
   void destroy_renderers();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Power_diagram_on_sphere_geo* Power_diagram_on_sphere_geo::prototype()

@@ -45,6 +45,11 @@ SGAL_BEGIN_NAMESPACE
 class Field_info;
 class Tick_event;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere
  */
@@ -223,6 +228,15 @@ protected:
 
     /*! Render the edges */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Sphere_sim_colored_vertices_renderer&
+    operator=(const Sphere_sim_colored_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Sphere_sim_colored_vertices_renderer&
+    //   operator=(const Sphere_sim_colored_vertices_renderer&) = delete;
   };
 
   /*! A function object that renders the edges with color */
@@ -241,6 +255,15 @@ protected:
 
     /*! Render the edges */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Sphere_sim_colored_edges_renderer&
+    operator=(const Sphere_sim_colored_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Sphere_sim_colored_edges_renderer&
+    //   operator=(const Sphere_sim_colored_edges_renderer&) = delete;
   };
 
   typedef SGAL::Line_colored_edges_renderer
@@ -424,6 +447,10 @@ private:
   /*! Detsroy the renderers */
   void destroy_renderers();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

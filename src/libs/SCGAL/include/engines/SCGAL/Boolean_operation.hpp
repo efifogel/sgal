@@ -45,6 +45,11 @@ class Isect_action;
 class Container_proto;
 class Element;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Boolean_operation : public Node {
 public:
   enum {
@@ -161,6 +166,10 @@ private:
   /*! The array of operation names. */
   static const char* s_operation_names[];
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype */
 inline Boolean_operation* Boolean_operation::prototype()

@@ -467,7 +467,7 @@ void Player_scene::indulge_user()
 }
 
 /*! \brief print geometry information of Box */
-void Player_scene::print_geometry_info(SGAL::Box* box)
+void Player_scene::print_geometry_info(SGAL::Box* /* box */)
 {
   std::cout << "Geometry: Box" << std::endl;
 }
@@ -574,7 +574,7 @@ void Player_scene::identify(void)
 { std::cout << "Agent: Player_scene" << std::endl; }
 
 /*! \brief handles a mouse event. */
-void Player_scene::handle(SGAL::Mouse_event* event)
+void Player_scene::handle(SGAL::Mouse_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
@@ -584,7 +584,7 @@ void Player_scene::handle(SGAL::Mouse_event* event)
 }
 
 /*! \brief handles a motion event. */
-void Player_scene::handle(SGAL::Motion_event* event)
+void Player_scene::handle(SGAL::Motion_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
@@ -594,7 +594,7 @@ void Player_scene::handle(SGAL::Motion_event* event)
 }
 
 /*! \brief handles a passive motion event. */
-void Player_scene::handle(SGAL::Passive_motion_event* event)
+void Player_scene::handle(SGAL::Passive_motion_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
@@ -720,7 +720,7 @@ void Player_scene::draw_grid()
 }
 
 /*! \brief reshapes the viewport of a window of the scene. */
-void Player_scene::reshape_window(SGAL::Window_item* window_item,
+void Player_scene::reshape_window(SGAL::Window_item* /* window_item */,
                                   SGAL::Uint width, SGAL::Uint height)
 {
   m_win_width = width;

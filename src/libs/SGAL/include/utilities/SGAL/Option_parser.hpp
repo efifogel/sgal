@@ -27,7 +27,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning( push )
-#pragma warning( disable: 4100 )
+#pragma warning( disable: 4100 4512 )
 #endif
 #include <boost/program_options.hpp>
 #if defined(_MSC_VER)

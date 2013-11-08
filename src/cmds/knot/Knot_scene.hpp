@@ -92,7 +92,7 @@ public:
   typedef boost::shared_ptr<SGAL::Time_sensor>  Shared_time_sensor;
   typedef boost::shared_ptr<SGAL::Position_interpolator>
     Shared_position_interpolator;
-  
+
   /*! The piece colors (ids) */
   enum Color {
     INVALID = -1, ORANGE, BLUE, RED, YELLOW, PURPLE, GREEN, NUMBER_OF_COLORS
@@ -151,11 +151,11 @@ public:
 
   /*! \brief destroys the scene. */
   virtual void destroy_scene();
-  
+
   /*! \brief initializes the secene. */
   virtual void init_scene();
 
-  /*! \brief clears the scene. */  
+  /*! \brief clears the scene. */
   virtual void clear_scene();
 
   /*! Reshape the viewport of a window of the scene.
@@ -183,7 +183,7 @@ public:
 
   /*! Handle a keyboard event. */
   virtual void handle(SGAL::Keyboard_event* event);
-   
+
   /*! Set the window manager. */
   template <typename Window_manager>
   void set_window_manager(Window_manager* manager)
@@ -200,18 +200,18 @@ public:
 
   /*! Obtain the name of a given color. */
   static const char* get_color_name(Uint color) { return s_color_names[color]; }
-  
+
 private:
   typedef SGAL::Array<SGAL::Vector3f>   Vector3f_array;
   typedef SGAL::Array<SGAL::Float>      Float_array;
   typedef SGAL::Array<Uint>             Uint_array;
-  
+
   /*! The window manager. */
   Window_manager* m_window_manager;
 
   /*! The window item. */
   Window_item* m_window_item;
-  
+
   /*! The scene graph. */
   SGAL::Scene_graph* m_scene_graph;
 
@@ -220,10 +220,10 @@ private:
 
   /*! The scene navigation root. */
   Shared_transform m_navigation;
-  
+
   /*! The context of the scene. */
   SGAL::Context* m_context;
-  
+
   /*! Option parser. */
   Knot_option_parser& m_option_parser;
 
@@ -238,7 +238,7 @@ private:
 
   /*! Pointers to the piece transforms. */
   Shared_transform m_transforms[NUMBER_OF_COLORS];
-  
+
   /*! The width of the volume where all the pieces reside. */
   Uint m_volume_width;
 
@@ -265,7 +265,7 @@ private:
 
   /*! The tail padding of the pieces within the volume along the z-coord. */
   Uint m_tail_pad_z;
-  
+
   /*! The volume transform. */
   SGAL::Transform* m_volume_trans;
 
@@ -283,7 +283,7 @@ private:
     inline bool operator( )(const Piece_state* key1, const Piece_state* key2)
       const;
   };
-  
+
   /*! Stores all visited states. Used to prevent visiting the same state
    * more than once.
    */
@@ -303,10 +303,10 @@ private:
 
   /*! Pointer to the next step in the solution. */
   Solution::iterator                            m_solution_iterator;
-  
+
   typedef std::list<State*>                     List_state_blocks;
   typedef List_state_blocks::iterator           List_states_iter;
-  
+
   /*! A link list of free state. */
   List_state_blocks m_state_blocks;
 
@@ -314,10 +314,10 @@ private:
 
   /*! Next free state index. */
   Uint m_next_free_state_index;
-  
+
   /*! Next free state block. */
   State* m_next_free_state_block;
-  
+
   /*! Number of times solve() is invoked. */
   Uint m_num_invocations;
 
@@ -346,7 +346,7 @@ private:
   /*! Encode 3 colors. */
   Uint encode(Uint color1, Uint color2, Uint color3) const
   { return (color3+1) + (NUMBER_OF_COLORS+1)* encode(color1, color2); }
-  
+
   /*! Indulge user requests from the command line */
   void indulge_user();
 
@@ -355,7 +355,7 @@ private:
 
   /*! Update the volume. */
   void update(const State state);
-  
+
   /*! Reduce the number of pieces if possible. */
   Boolean reduce(State state);
 
@@ -369,7 +369,7 @@ private:
   /*! Advance three pieces (one step), if possible. */
   Boolean advance3(State state, Uint color1, Uint color2, Uint color3,
                    Uint dir, State& next_state);
-  
+
   /*! Determine whether the expected move cause a conflict. */
   Boolean conflict(State state, Uint color, Uint dir);
 
@@ -394,6 +394,16 @@ private:
 
   /*! Animate. */
   void animate(Scene_time cur_time, Uint color, Uint dir, Uint route);
+
+  // The assignment operator cannot be generated (because some of the data
+  // members are const pointers), so we suppress it explicitly.
+  // We also suppress the copy constructor.
+  Knot_scene& operator=(const Knot_scene&);
+  Knot_scene(const Knot_scene&);
+
+  // In C++11, VC2013, the following is supported:
+  // Knot_scene& operator=(const Knot_scene&) = delete;
+  // Knot_scene(const Knot_scene&) = delete;
 };
 
 /*! Exporter. */
@@ -418,7 +428,7 @@ inline std::ostream& operator<<(std::ostream& os,
     os << ";" << Knot_scene::get_color_name(color) << ":"
        << x << "," << y << "," << z;
   }
-  
+
   return os;
 }
 

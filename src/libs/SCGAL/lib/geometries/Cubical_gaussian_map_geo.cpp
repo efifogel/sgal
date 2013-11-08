@@ -311,7 +311,7 @@ void Cubical_gaussian_map_geo::clear()
 }
 
 /*! \brief */
-void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& cull_context) {}
+void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& /* cull_context */) {}
 
 /*! \brief */
 void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
@@ -1290,7 +1290,8 @@ void Cubical_gaussian_map_geo::draw_aos_marked_edge(unsigned int id)
     if (true || source_vertex->get_location() == Arr_vertex::Interior) {
       vec0.add(ext);
       vec3.sub(ext);
-    } else if (source_vertex->get_location() == Arr_vertex::Corner) {
+    }
+    else if (source_vertex->get_location() == Arr_vertex::Corner) {
       Vector3f par0;
       par0[j] = -src[k];
       float a0 = radius / par0.dot(perp);
@@ -1902,7 +1903,7 @@ operator()(Draw_action* action)
 
 /*! \brief renders the marked primal vertex. */
 void Cubical_gaussian_map_geo::Marked_face_renderer::
-operator()(Draw_action* action)
+operator()(Draw_action* /* action */)
 {
   const Vector3f& color = m_geo.get_marked_vertex_color();
   glColor4f(color[0], color[1], color[2], 0.6f);

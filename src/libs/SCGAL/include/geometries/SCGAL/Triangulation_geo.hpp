@@ -63,6 +63,11 @@ class Cull_context;
 class Isect_action;
 class Draw_action;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SCGAL_DECL Triangulation_geo : public SGAL::Geometry {
 public:
   typedef boost::shared_ptr<Coord_array>                Shared_coord_array;
@@ -254,6 +259,10 @@ protected:
   /*! Draw the geometry. */
   void draw_geometry(Draw_action* action);
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype. */
 inline Triangulation_geo* Triangulation_geo::prototype()
