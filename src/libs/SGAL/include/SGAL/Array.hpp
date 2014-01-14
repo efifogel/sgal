@@ -109,7 +109,7 @@ public:
   {
     Uint size = m_size;
     if (size == m_capacity) resize(size+1);
-    m_vector[size] = val;
+    m_vector[size++] = val;
   }
 
   typedef Attribute* iterator;
@@ -130,6 +130,12 @@ public:
   /*! Indexing operator. */
   Attribute& operator[](Uint n) { return *(begin() + n); }
   const Attribute& operator[](Uint n) const { return *(begin() + n); }
+
+  /*! Return a reference to the first element. */
+  const Attribute& front() const { return operator[](0); }
+
+  /*! Return a reference to the last element. */
+  const Attribute& back() const { return operator[](m_size-1); }
 
   // virtual void FieldChanged(short fieldId);
   //! \todo virtual Attribute_list get_attributes();

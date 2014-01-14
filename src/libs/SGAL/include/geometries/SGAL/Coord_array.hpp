@@ -107,6 +107,9 @@ public:
   Vector3f* end();
   const Vector3f* end() const;
 
+  /*! Push a new element at the back */
+  void push_back(const Vector3f& val);
+
   /*! Array indexing operator. */
   Vector3f& operator[](Uint n);
 
@@ -162,6 +165,10 @@ inline const Vector3f* Coord_array::begin() const { return m_array.begin(); }
 /*! \brief obtains the iterator to the Array past-the-end element */
 inline Vector3f* Coord_array::end() { return m_array.end(); }
 inline const Vector3f* Coord_array::end() const { return m_array.end(); }
+
+/*! \brief pushes a new element at the back */
+inline void Coord_array::push_back(const Vector3f& val)
+{ m_array.push_back(val); }
 
 /*! \brief array indexing operator. */
 inline Vector3f& Coord_array::operator[](Uint n) { return m_array[n]; }

@@ -46,6 +46,7 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
@@ -57,6 +58,10 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Route.hpp"
+#include "SGAL/Array.hpp"
+#include "SGAL/Coord_array.hpp"
+#include "SGAL/Shape.hpp"
+#include "SGAL/Indexed_face_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -79,11 +84,14 @@ typedef Element::Field_attr_iter        Field_attr_iter;
 
 class Vrml_scanner;
 
-typedef boost::shared_ptr<Container>    Shared_container;
-typedef boost::shared_ptr<Node>         Shared_node;
-typedef boost::shared_ptr<Group>        Shared_group;
-typedef boost::shared_ptr<Transform>    Shared_transform;
-typedef boost::shared_ptr<Route>        Shared_route;
+typedef boost::shared_ptr<Container>          Shared_container;
+typedef boost::shared_ptr<Node>               Shared_node;
+typedef boost::shared_ptr<Group>              Shared_group;
+typedef boost::shared_ptr<Transform>          Shared_transform;
+typedef boost::shared_ptr<Route>              Shared_route;
+typedef boost::shared_ptr<Shape>              Shared_shape;
+typedef boost::shared_ptr<Coord_array>        Shared_coord_array;
+typedef boost::shared_ptr<Indexed_face_set>   Shared_indexed_face_set;
 
 SGAL_END_NAMESPACE
 }
@@ -130,7 +138,24 @@ SGAL_END_NAMESPACE
 %type <Element*> scriptBodyElement
 %type <Element*> restrictedInterfaceDeclaration
 
+%type <Vector3f> normal
+%type <Vector3f> vertex
+%type <std::vector<Vector3f>*> vertices
+%type <std::vector<Vector3f>*> vertexLoop
+%type <std::vector<Vector3f>*> facet
+%type <std::pair<Shared_indexed_face_set, std::vector<Uint>* > > facets
+
 %define api.token.prefix {TOK_}
+
+%token VRML
+%token K_SOLID
+%token K_SOLID_END
+%token K_FACET
+%token K_FACET_END
+%token K_NORMAL
+%token K_LOOP
+%token K_LOOP_END
+%token K_VERTEX
 
 %token
   END               0   "end of file"
@@ -211,21 +236,115 @@ SGAL_END_NAMESPACE
 
 /* General: */
 
-Start           : vrmlScene { scene_graph->set_root($1); } ;
+Start           : VRML vrmlScene { scene_graph->set_root($2); }
+                | K_SOLID IDENTIFIER facets K_SOLID_END IDENTIFIER
+                {
+                  /* STL */
+                  if ($2.compare($5) != 0)
+                    error(yyla.location,
+                          std::string("Non matching solid names \"") +
+                          $2 + "\" and \"" + $5 + "\"!");
+                  Group* group = new Group;
+                  scene_graph->set_root(Shared_group(group));
+                  Transform* transform = new Transform;
+                  Shared_transform shared_transform(transform);
+                  scene_graph->add_container(shared_transform,
+                                             g_navigation_root_name);
+                  scene_graph->set_navigation_root(shared_transform);
+                  group->add_child(shared_transform);
+                  Shape* shape = new Shape;
+                  Shared_shape shared_shape(shape);
+                  transform->add_child(shared_shape);
+                  Shared_indexed_face_set shared_ifs = $3.first;
+                  shared_ifs->set_coord_indices($3.second->begin(),
+                                                $3.second->end());
+
+                  shape->set_geometry(shared_ifs);
+                  shape->add_to_scene(scene_graph);
+                  scene_graph->add_container(shared_shape);
+
+                  /* Clear */
+                  $3.second->clear();
+                  delete $3.second;
+                  $3.second = NULL;
+                }
+                ;
+
+facets          : /* empty */
+                {
+                  Indexed_face_set* indexed_face_set = new Indexed_face_set;
+                  Shared_indexed_face_set shared_ifs(indexed_face_set);
+                  std::vector<Uint>* num_verts = new std::vector<Uint>;
+                  $$ = std::make_pair(shared_ifs, num_verts);
+                  Coord_array* coords = new Coord_array;
+                  Shared_coord_array shared_coords(coords);
+                  indexed_face_set->set_coord_array(shared_coords);
+                }
+                | facets facet
+                {
+                  std::swap($$, $1);
+
+                  /* Splice coordinates */
+                  Shared_coord_array coords = $$.first->get_coord_array();
+                  std::vector<Vector3f>& vertices = *$2;
+                  Uint size = coords->size();
+                  coords->resize(size + vertices.size());
+                  std::copy(vertices.begin(), vertices.end(),
+                            coords->begin() + size);
+
+                  /* Insert vertex number */
+                  $$.second->push_back(vertices.size());
+
+                  /* Clear */
+                  $2->clear();
+                  delete $2;
+                  $2 = NULL;
+                }
+                ;
+
+facet           : K_FACET normal vertexLoop K_FACET_END { std::swap($$, $3); }
+                ;
+
+normal          : K_NORMAL NUMBER NUMBER NUMBER
+                { $$ = Vector3f(boost::lexical_cast<Float>($2),
+                                boost::lexical_cast<Float>($3),
+                                boost::lexical_cast<Float>($4)); }
+                ;
+
+vertexLoop      : K_LOOP vertices K_LOOP_END { std::swap($$, $2); }
+                ;
+
+vertices        : /* empty */
+                { $$ = new std::vector<Vector3f>; }
+                | vertices vertex
+                {
+                  std::swap($$, $1);
+                  $$->push_back($2);
+                }
+                ;
+
+vertex          : K_VERTEX NUMBER NUMBER NUMBER
+                { $$ = Vector3f(boost::lexical_cast<Float>($2),
+                                boost::lexical_cast<Float>($3),
+                                boost::lexical_cast<Float>($4)); }
+                ;
 
 vrmlScene       : statements
                 {
-                  $$ = Shared_group(new Group);
+                  Group* group = new Group;
+                  $$ = Shared_group(group);
                   $$->add_child($1);
                 } ;
 
 statements      : /* empty */
                 {
-                  $$ = Shared_transform(new Transform);
+                  Transform* transform = new Transform;
+                  $$ = Shared_transform(transform);
                   scene_graph->add_container($$, g_navigation_root_name);
                   scene_graph->set_navigation_root($$);
                 }
-                | statements statement { std::swap($$, $1); if ($2) $$->add_child($2); }
+                | statements statement
+                { std::swap($$, $1); if ($2) $$->add_child($2); }
                 ;
 
 statement       : nodeStatement { $$ = boost::dynamic_pointer_cast<Node>($1); }

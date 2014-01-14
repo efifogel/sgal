@@ -42,13 +42,13 @@ Container_proto* Coord_array::s_prototype(NULL);
 /*! Register to the container factory. */
 REGISTER_TO_FACTORY(Coord_array, "Coord_array");
 
-/*! Constructor. */
+/*! \brief constructor. */
 Coord_array::Coord_array(Boolean proto) : Container(proto) {}
 
-/*! Constructor. */
+/*! \brief constructor. */
 Coord_array::Coord_array(Uint n) { m_array.resize(n); }
 
-/*! Destructor. */
+/*! \brief destructor. */
 Coord_array::~Coord_array() { clear(); }
 
 /*! Initialize the node prototype. */
