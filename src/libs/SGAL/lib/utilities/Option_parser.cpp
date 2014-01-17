@@ -100,7 +100,6 @@ Option_parser::Option_parser() :
      "quite mode")
     ("verbose,v", po::value<Uint>(&m_verbose)->default_value(0),
      "verbose level")
-    ("input-path,I", po::value<vs>()->composing(), "input path")
     ("trace,T", po::value<std::vector<Trace_id> >()->composing(),
      "trace options\n"
      "  graphics\n"
@@ -120,10 +119,10 @@ Option_parser::Option_parser() :
 
   // m_visible_opts.set_name("Allowed options");
   m_config_opts.add(m_conf_opts);
-  m_visible_opts.add(m_generic_opts).add(m_config_opts).add(m_bench_opts);
+  m_visible_opts.add(m_generic_opts).add(m_config_opts).add(m_io_opts).add(m_bench_opts);
   m_cmd_line_opts.add(m_visible_opts).add(m_hidden_opts);
-  m_config_file_opts.add(m_config_opts).add(m_bench_opts);
-  m_environment_opts.add(m_config_opts).add(m_bench_opts);
+  m_config_file_opts.add(m_config_opts).add(m_io_opts).add(m_bench_opts);
+  m_environment_opts.add(m_config_opts).add(m_io_opts).add(m_bench_opts);
 
   m_positional_opts.add("input-file", -1);
 }
@@ -149,8 +148,9 @@ void Option_parser::operator()(Int argc, Char* argv[])
 void Option_parser::apply()
 {
   Generic_option_parser::apply(m_variable_map);
-  Bench_option_parser::apply(m_variable_map);
   Conf_option_parser::apply(m_variable_map);
+  IO_option_parser::apply(m_variable_map);
+  Bench_option_parser::apply(m_variable_map);
 
   if (m_variable_map.count("trace")) {
     Vector_trace_id traces = m_variable_map["trace"].as<Vector_trace_id>();
