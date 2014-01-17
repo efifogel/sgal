@@ -444,7 +444,11 @@ void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
   Boolean tris(true);
   Boolean quads(true);
   std::vector<Uint>::iterator it;
+  Uint size = 0;
+  Uint num = 0;
   for (it = begin; it != end; ++it) {
+    ++num;
+    size += *it;
     if (*it == 3) quads = false;
     else if (*it == 4) tris = false;
     else {
@@ -457,17 +461,15 @@ void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
   if (tris || quads) {
     if (tris)
       set_primitive_type(Geo_set::PT_TRIANGLES);
-    else if (quads)
+    else // quads
       set_primitive_type(Geo_set::PT_QUADS);
-    Uint size = get_coord_array()->size();
     m_coord_indices.resize(size);
     for (Uint i = 0; i < size; ++i) m_coord_indices[i] = i;
     set_coord_indices_flat(true);
   }
   else {
     set_primitive_type(Geo_set::PT_POLYGONS);
-    Uint size = 0;
-    for (it = begin; it != end; ++it) size += *it;
+    size += num;
     m_coord_indices.resize(size);
     Uint i = 0;
     Uint index = 0;
@@ -477,7 +479,7 @@ void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
     }
   }
   set_flatten_indices(false);
-  set_num_primitives(distance(begin, end));
+  set_num_primitives(num);
 }
 
 SGAL_END_NAMESPACE
