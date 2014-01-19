@@ -187,6 +187,7 @@ CPPSOURCES+= Vector4f.cpp
 CPPSOURCES+= Generic_option_parser.cpp
 CPPSOURCES+= Bench_option_parser.cpp
 CPPSOURCES+= Conf_option_parser.cpp
+CPPSOURCES+= File_format.cpp
 CPPSOURCES+= IO_option_parser.cpp
 CPPSOURCES+= Option_parser.cpp
 CPPSOURCES+= Native_window_item.cpp

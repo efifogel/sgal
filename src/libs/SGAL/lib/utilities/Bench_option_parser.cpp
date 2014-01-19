@@ -42,13 +42,13 @@ Bench_option_parser::Bench_option_parser() :
     ("header,p", po::value<bool>(&m_print_header)->default_value(true),
      "print header")
     ("name-length,n",
-     po::value<unsigned int>(&m_name_length)->default_value(32),
+     po::value<Uint>(&m_name_length)->default_value(32),
      "name-field length")
-    ("samples,s", po::value<unsigned int>(&m_samples)->default_value(10),
+    ("samples,s", po::value<Uint>(&m_samples)->default_value(10),
      "number of samples")
-    ("seconds,t", po::value<unsigned int>(&m_seconds)->default_value(1),
+    ("seconds,t", po::value<Uint>(&m_seconds)->default_value(1),
      "number of seconds")
-    ("iterations,i", po::value<unsigned int>(&m_iterations)->default_value(1),
+    ("iterations,i", po::value<Uint>(&m_iterations)->default_value(1),
      "number of iterations")
     ;
 }

@@ -101,7 +101,8 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_is_camera_in_focus(false),
   m_owned_configuration(false),
   m_owned_navigation_info(false),
-  m_owned_camera(false)
+  m_owned_camera(false),
+  m_input_format_id(File_format::NONE)
 {
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();

@@ -53,13 +53,11 @@ const Char* Option_parser::s_trace_opts[] = {
 
 /*! Obtain number of trace options */
 Uint Option_parser::number_trace_opts()
-{
-  return sizeof(s_trace_opts) / sizeof(char *);
-}
+{ return sizeof(s_trace_opts) / sizeof(char*); }
 
 /* Overload the 'validate' function for the user-defined class */
 void validate(boost::any& v, const std::vector<std::string> & values,
-              SGAL::Option_parser::Vector_trace_id* /* target_type */, int)
+              Option_parser::Vector_trace_id* /* target_type */, int)
 {
   typedef Option_parser::Trace_id               Trace_id;
   typedef Option_parser::Vector_trace_id        Vector_trace_id;
@@ -70,7 +68,8 @@ void validate(boost::any& v, const std::vector<std::string> & values,
         Vector_trace_id vec;
         vec.push_back(Trace_id(i));
         v = boost::any(vec);
-      } else {
+      }
+      else {
         Vector_trace_id vec = boost::any_cast<Vector_trace_id>(v);
         vec.push_back(Trace_id(i));
         v = boost::any(vec);
@@ -160,13 +159,12 @@ void Option_parser::apply()
   }
 }
 
-/*! Configure */
+//! \brief configures the scene graph.
 void Option_parser::configure(Scene_graph* scene_graph)
 {
-  if (!scene_graph) return;
-
+if (!scene_graph) return;
   SGAL::Configuration* conf = scene_graph->get_configuration();
-  Conf_option_parser::configure(m_variable_map, conf);
+  if (conf) Conf_option_parser::configure(m_variable_map, conf);
 }
 
 SGAL_END_NAMESPACE

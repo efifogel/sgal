@@ -177,14 +177,19 @@ public:
   { m_window_manager = manager; }
 
   /*! Set the option parser. */
-  void set_option_parser(Player_option_parser *option_parser)
+  void set_option_parser(Player_option_parser* option_parser)
   { m_option_parser = option_parser; }
 
   /*! Obtain the scene scene-graph. */
-  SGAL::Scene_graph* get_scene_graph() { return m_scene_graph; }
+  SGAL::Scene_graph* get_scene_graph() const;
 
   /*! Determine whether the scene does simulate something. */
-  SGAL::Boolean is_simulating(void);
+  SGAL::Boolean is_simulating(void) const;
+
+  /*! Determine whether there is a visual.
+   * \return true if theere is a visual; false otherwise.
+   */
+  SGAL::Boolean has_visual() const;
 
 protected:
   /*! The window manager. */
@@ -228,6 +233,11 @@ protected:
   /*! \brief print geometry information of Box. */
   void print_geometry_info(SGAL::Box* box);
 
+  /*! saves the scene to a file in a given format.
+   * \param format_id The id of the given format.
+   */
+  void save(const std::string& filename, SGAL::File_format::Id format_id);
+
 private:
   typedef std::list<fi::path>                                   Path_list;
   typedef Path_list::iterator                                   Path_iter;
@@ -266,5 +276,10 @@ private:
   /*! Valid file format names */
   static const char* s_file_format_names[];
 };
+
+/*! \brief obtains the scene scene-graph. */
+inline SGAL::Scene_graph* Player_scene::get_scene_graph() const
+{ return m_scene_graph; }
+
 
 #endif

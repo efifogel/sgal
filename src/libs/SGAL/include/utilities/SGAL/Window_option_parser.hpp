@@ -50,53 +50,16 @@ public:
   inline const po::options_description& get_window_opts() const
   { return m_window_opts; }
 
-  /*! Obtain the requested window width
-   * \param width the requested width
-   * \return true if a particular width is requested, and false otherwise.
+  /*! Apply the options
+   * \param variable_map
    */
-  Boolean get_window_width(const po::variables_map& variable_map,
-                           Uint& width) const;
+  void apply(po::variables_map& variable_map);
 
-  /*! Obtain the requested window height
-   * \param height the requested height
-   * \return true if a particular height is requested, and false otherwise.
+  /*! Configure the given window manager.
    */
-  Boolean get_window_height(const po::variables_map& variable_map,
-                            Uint& height) const;
-
-  /*! Obtain the requested x-position of the window origin
-   * \param x the requested x-coordinate of the window lower-left corner
-   * \return true if a particular position is requested, and false otherwise.
-   */
-  Boolean get_window_x(const po::variables_map& variable_map,
-                       Uint& x) const;
-
-  /*! Obtain the requested y-position of the window origin
-   * \param y the requested y-coordinate of the window lower-left corner
-   * \return true if a particular position is requested, and false otherwise.
-   */
-  Boolean get_window_y(const po::variables_map& variable_map,
-                       Uint& y) const;
-
-  /*! Obtain the requested position of the window origin
-   * \param x the requested x-coordinate of the window lower-left corner
-   * \param y the requested y-coordinate  of the window lower-left corner
-   * \return true if a particular position is requested, and false otherwise.
-   */
-  Boolean get_window_position(const po::variables_map& variable_map,
-                              Uint& x, Uint& y) const;
-
-  /*! Obtain the boolean flag that indicates whether full screen is requested
-   * \param full_sreen indicates whether full screen is requested
-   * \return true if a prticular value is requested, and false otherwise.
-   */
-  Boolean get_window_full_screen(const po::variables_map& variable_map,
-                                 Boolean& full_sreen) const;
-
-  /*! Parse the options */
   template <typename Window_manager>
-  void apply(const po::variables_map& variable_map,
-             Window_manager* window_manager)
+  void configure(const po::variables_map& variable_map,
+                 Window_manager* window_manager)
   {
     Uint width;
     if (get_window_width(variable_map, width))
@@ -116,6 +79,47 @@ public:
     if (get_window_full_screen(variable_map, full_screen))
       window_manager->set_full_screen(full_screen);
   }
+
+  /*! Obtain the requested window width
+   * \param width the requested width
+   * \return true if a particular width is requested, and false otherwise.
+   */
+  Boolean get_window_width(const po::variables_map& variable_map,
+                           Uint& width) const;
+
+  /*! Obtain the requested window height
+   * \param height the requested height
+   * \return true if a particular height is requested, and false otherwise.
+   */
+  Boolean get_window_height(const po::variables_map& variable_map,
+                            Uint& height) const;
+
+  /*! Obtain the requested x-position of the window origin
+   * \param x the requested x-coordinate of the window lower-left corner
+   * \return true if a particular position is requested, and false otherwise.
+   */
+  Boolean get_window_x(const po::variables_map& variable_map, Uint& x) const;
+
+  /*! Obtain the requested y-position of the window origin
+   * \param y the requested y-coordinate of the window lower-left corner
+   * \return true if a particular position is requested, and false otherwise.
+   */
+  Boolean get_window_y(const po::variables_map& variable_map, Uint& y) const;
+
+  /*! Obtain the requested position of the window origin
+   * \param x the requested x-coordinate of the window lower-left corner
+   * \param y the requested y-coordinate  of the window lower-left corner
+   * \return true if a particular position is requested, and false otherwise.
+   */
+  Boolean get_window_position(const po::variables_map& variable_map,
+                              Uint& x, Uint& y) const;
+
+  /*! Obtain the boolean flag that indicates whether full screen is requested
+   * \param full_sreen indicates whether full screen is requested
+   * \return true if a prticular value is requested, and false otherwise.
+   */
+  Boolean get_window_full_screen(const po::variables_map& variable_map,
+                                 Boolean& full_sreen) const;
 
 protected:
   /*! The window options */
@@ -147,6 +151,10 @@ private:
   // Window_option_parser& operator=(const Window_option_parser&) = delete;
   // Window_option_parser(const Window_option_parser&) = delete;
 };
+
+//! \brief applies the options
+inline void Window_option_parser::apply(po::variables_map& /* variable_map */)
+{}
 
 SGAL_END_NAMESPACE
 

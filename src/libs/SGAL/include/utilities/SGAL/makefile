@@ -4,6 +4,7 @@ FILES = App_error_handle_int.hpp
 FILES+= Bench_option_parser.hpp
 FILES+= Conf_option_parser.hpp
 FILES+= Generic_option_parser.hpp
+FILES+= File_format.hpp
 FILES+= IO_option_parser.hpp
 FILES+= Native_window_item.hpp
 FILES+= Native_window_manager.hpp

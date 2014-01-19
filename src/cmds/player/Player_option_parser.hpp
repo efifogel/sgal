@@ -32,13 +32,7 @@ namespace po = boost::program_options;
 
 SGAL_BEGIN_NAMESPACE
 
-#if (defined USE_GLUT)
-class Glut_window_manager;
-#elif defined(_WIN32)
-class Windows_window_manager;
-#else
-class X11_window_manager;
-#endif
+class scene_graph;
 
 SGAL_END_NAMESPACE
 
@@ -52,11 +46,6 @@ public:
   /*! Destructor */
   virtual ~Player_option_parser() {}
 
-  /*! Set the window manager */
-  template <typename Window_manager>
-  void set_window_manager(Window_manager * window_manager)
-  { m_window_manager = window_manager; }
-  
   /*! Initialize */
   void init();
 
@@ -64,20 +53,28 @@ public:
    * \param argc
    * \param argv
    */
-  void operator()(int argc, char * argv[]);
+  void operator()(int argc, char* argv[]);
 
   /*! Apply the options */
   void apply();
-  
+
+  /*! Configure the window manager and the scene graph.
+   * \param window_manage The window manager.
+   * \param scene_graph The scene graph.
+   */
+  template <typename Window_manager>
+  void configure(Window_manager* window_manage,
+                 SGAL::Scene_graph* scene_graph);
+
   /*! Obtain the base file-name
    * \param name the returned file name
    * \return true if a name was specified on the command line, false otherwise
    */
-  bool get_file_name(std::string & name) const;
+  bool get_file_name(std::string& name) const;
 
   typedef std::vector<std::string>      Input_path;
   typedef Input_path::const_iterator    Input_path_const_iterator;
-  
+
   Input_path_const_iterator dirs_begin()
   { return m_variable_map["input-path"].as<Input_path>().begin(); }
 
@@ -90,7 +87,7 @@ public:
     if (!m_variable_map.count("input-path")) return func;
     return std::for_each(dirs_begin(), dirs_end(), func);
   }
-  
+
   /*! Display a grid? */
   bool get_draw_grid() const { return m_grid; }
 
@@ -101,28 +98,21 @@ public:
   /*! Do display geometry information? */
   SGAL::Boolean get_display_geometry_info() const
   { return m_display_geometry_info; }
-  
+
   /*! Do perform a benchmark? */
   SGAL::Boolean get_bench() const { return m_bench; }
-  
+
   /*! \brief is the maximum number of vertices in the index array set? */
   SGAL::Boolean get_sub_index_buffer_size(SGAL::Uint & size) const;
-  
+
+  /*! Determine whether the operation is interactive.
+   * \return true if the operation is interactive; false otherwise.
+   */
+  SGAL::Boolean is_interactive() const;
+
 protected:
   /*! The player option description */
   boost::program_options::options_description m_player_opts;
-  
-private:
-#if (defined USE_GLUT)
-  typedef SGAL::Glut_window_manager             Window_manager;
-#elif defined(_WIN32)
-  typedef SGAL::Windows_window_manager          Window_manager;
-#else
-  typedef SGAL::X11_window_manager              Window_manager;
-#endif
-
-  /*! The window manager */
-  Window_manager * m_window_manager;
 
   /*! Indicate whether to draw a grid */
   SGAL::Boolean m_grid;
@@ -139,5 +129,14 @@ private:
   /*! The maximum number of vertices in the index array */
   SGAL::Uint m_sub_index_buffer_size;
 };
+
+//! \brief configures the window manager.
+template <typename Window_manager>
+void Player_option_parser::configure(Window_manager* window_manager,
+                                     SGAL::Scene_graph* scene_graph)
+{
+  Window_option_parser::configure(m_variable_map, window_manager);
+  Option_parser::configure(scene_graph);
+}
 
 #endif

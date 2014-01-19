@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 7205 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -66,7 +66,7 @@ public:
     Input_file_missing_error(std::string& str) : error(str) {}
   };
 
-  /*! Constructor */
+  /*! Default constructor */
   Option_parser();
 
   /*! Parse the options
@@ -75,28 +75,34 @@ public:
    */
   void operator()(Int argc, Char* argv[]);
 
-  /*! Apply the options
+  /*! Apply the options.
    */
   void apply();
 
-  /*! Configure */
+  /*! Add options to command line options.
+   * \param options
+   */
+  void add_command_line_options(po::options_description& options);
+
+  /*! Add options to config file options.
+   * \param options
+   */
+  void add_config_file_options(po::options_description& options);
+
+  /*! Add options to environment variable options.
+   * \param options
+   */
+  void add_environment_options(po::options_description& options);
+
+  /*! Add options to visible options.
+   * \param options
+   */
+  void add_visible_options(po::options_description& options);
+
+  /*! Configure the scene graph.
+   * \param conf The scene graph.
+   */
   void configure(Scene_graph* scene_graph);
-
-  /*! Add options to command line options */
-  void add_command_line_options(po::options_description& options)
-  { m_cmd_line_opts.add(options); }
-
-  /*! Add options to config file options */
-  void add_config_file_options(po::options_description& options)
-  { m_config_file_opts.add(options); }
-
-  /*! Add options to environment variable options */
-  void add_environment_options(po::options_description& options)
-  { m_environment_opts.add(options); }
-
-  /*! Add options to visible options */
-  void add_visible_options(po::options_description& options)
-  { m_visible_opts.add(options); }
 
   /* Obtain the 'quite' mode */
   Boolean get_quite_mode() const { return m_quite; }
@@ -108,11 +114,10 @@ public:
   static Uint number_trace_opts();
 
   /*! Compare the i-th option to a given option */
-  static Boolean compare_trace_opt(Uint i, const Char* opt)
-  { return strcmp(s_trace_opts[i], opt) == 0; }
+  static Boolean compare_trace_opt(Uint i, const Char* opt);
 
   /*! Obtain the variable map */
-  const po::variables_map & get_variable_map() const { return m_variable_map; }
+  const po::variables_map& get_variable_map() const;
 
 protected:
   /*! Command line options */
@@ -140,19 +145,17 @@ protected:
   po::variables_map m_variable_map;
 
 #if 0
-  std::pair<Char*,Char*> m_env_var_option_names;
+  std::pair<Char*, Char*> m_env_var_option_names;
 
-  const std::string & name_mapper<std::string, std::string>(std::string & src)
-  {
-  }
+  const std::string& name_mapper<std::string, std::string>(std::string& src) { }
 #endif
 
-  virtual const po::options_description & get_visible_opts() const
+  virtual const po::options_description& get_visible_opts() const
   { return m_visible_opts; }
 
 private:
   /*! Trace options */
-  static const char * s_trace_opts[];
+  static const char* s_trace_opts[];
 
   /*! Indicates whether to run in quite mode */
   Boolean m_quite;
@@ -160,6 +163,33 @@ private:
   /*! Verbose level */
   Uint m_verbose;
 };
+
+//! \brief adds options to command line options.
+inline
+void Option_parser::add_command_line_options(po::options_description& options)
+{ m_cmd_line_opts.add(options); }
+
+//! \brief adds options to config file options.
+inline
+void Option_parser::add_config_file_options(po::options_description& options)
+{ m_config_file_opts.add(options); }
+
+//! \brief adds options to environment variable options.
+inline
+void Option_parser::add_environment_options(po::options_description& options)
+{ m_environment_opts.add(options); }
+
+//! \brief adds options to visible options.
+inline void Option_parser::add_visible_options(po::options_description& options)
+{ m_visible_opts.add(options); }
+
+//! \brief compares the i-th option to a given option.
+inline Boolean Option_parser::compare_trace_opt(Uint i, const Char* opt)
+{ return strcmp(s_trace_opts[i], opt) == 0; }
+
+//! \brief obtains the variable map.
+inline const po::variables_map& Option_parser::get_variable_map() const
+{ return m_variable_map; }
 
 SGAL_END_NAMESPACE
 

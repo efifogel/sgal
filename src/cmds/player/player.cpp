@@ -150,18 +150,8 @@ int main(int argc, char* argv[])
   }
 #endif
 
-  // Create a window manager:
-#if (defined USE_GLUT)
-  SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
-#elif defined(_WIN32)
-  SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
-#else
-  SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
-#endif
-
   // Parse program options:
   Player_option_parser option_parser;
-  option_parser.set_window_manager(wm);
   option_parser.init();
   try {
     option_parser(argc, argv);
@@ -175,11 +165,8 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  // Initialize the scene:
+  // Create the scene:
   Player_scene scene(&option_parser);
-  scene.set_window_manager(wm);
-  wm->set_scene(&scene);
-
   try {
     scene.create_scene();
   }
@@ -188,15 +175,32 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  try {
-    wm->init(static_cast<SGAL::Uint>(argc), argv);
-    scene.init_scene();
+  // Create a window manager:
+#if (defined USE_GLUT)
+  SGAL::Glut_window_manager* wm = SGAL::Glut_window_manager::instance();
+#elif defined(_WIN32)
+  SGAL::Windows_window_manager* wm = SGAL::Windows_window_manager::instance();
+#else
+  SGAL::X11_window_manager* wm = SGAL::X11_window_manager::instance();
+#endif
+
+  // Initialize the visual:
+  if (scene.has_visual()) {
+    scene.set_window_manager(wm);
+    wm->set_scene(&scene);
+
+    try {
+      wm->init(static_cast<SGAL::Uint>(argc), argv);
+      scene.init_scene();
+    }
+    catch(std::exception& e) {
+      std::cerr << e.what() << std::endl;
+      scene.destroy_scene();
+      return -1;
+    }
+    wm->event_loop(scene.is_simulating());
+    wm->clear();
   }
-  catch(std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
-  wm->event_loop(scene.is_simulating());
-  wm->clear();
+  scene.destroy_scene();
   return 0;
 }
