@@ -55,7 +55,8 @@ public:
    */
   void operator()(int argc, char* argv[]);
 
-  /*! Apply the options */
+  /*! Apply the options.
+   */
   void apply();
 
   /*! Configure the window manager and the scene graph.

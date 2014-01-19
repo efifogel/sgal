@@ -37,18 +37,8 @@
 /*! Main entry */
 int main(int argc, char * argv[])
 {
-  // Create a window manager:
-#if (defined USE_GLUT)
-  SGAL::Glut_window_manager * wm = SGAL::Glut_window_manager::instance();
-#elif defined(_WIN32)
-  SGAL::Windows_window_manager * wm = SGAL::Windows_window_manager::instance();
-#else
-  SGAL::X11_window_manager * wm = SGAL::X11_window_manager::instance();
-#endif
-
   // Parse program options:
   Knot_option_parser option_parser;
-  option_parser.set_window_manager(wm);
   option_parser.init();
   try {
     option_parser(argc, argv);
@@ -61,26 +51,40 @@ int main(int argc, char * argv[])
     std::cerr << e.what() << std::endl;
     return 1;
   }
-  
-  // Construct all scenes:
+
+  // Create the scene:
   Knot_scene scene(option_parser);
-  scene.set_window_manager(wm);
-  wm->set_scene(&scene);
-  
   try {
     scene.create_scene();
-  } catch (Knot_scene::Illegal_input & e) {
+  }
+  catch (Knot_scene::Illegal_input & e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }
 
+  // Create a window manager:
+#if (defined USE_GLUT)
+  SGAL::Glut_window_manager * wm = SGAL::Glut_window_manager::instance();
+#elif defined(_WIN32)
+  SGAL::Windows_window_manager * wm = SGAL::Windows_window_manager::instance();
+#else
+  SGAL::X11_window_manager * wm = SGAL::X11_window_manager::instance();
+#endif
+
+  // Initialize the visual:
+  scene.set_window_manager(wm);
+  wm->set_scene(&scene);
+
   try {
     wm->init(static_cast<SGAL::Uint>(argc), argv);
     scene.init_scene();
-  } catch(std::exception & e) {
+  }
+  catch(std::exception & e) {
     std::cerr << e.what() << std::endl;
+    scene.destroy_scene();
     return -1;
   }
   wm->event_loop(scene.is_simulating());
+  scene.destroy_scene();
   return 0;
 }

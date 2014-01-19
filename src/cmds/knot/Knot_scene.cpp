@@ -742,12 +742,14 @@ SGAL::Boolean Knot_scene::solve(State state, Uint level)
 /*! \brie initializes the secene. */
 void Knot_scene::init_scene()
 {
+  // Configure the window manager and the scene graph.
+  m_option_parser.configure(m_window_manager, m_scene_graph);
+
   m_window_item = new Window_item;
   m_window_item->set_title("Knot");
   m_window_manager->create_window(m_window_item);
 
   m_scene_graph->create_defaults();
-  indulge_user();
 
   m_context = new SGAL::Context();
   m_scene_graph->set_context(m_context);
@@ -766,10 +768,6 @@ void Knot_scene::init_scene()
 
   m_window_item->show();
 }
-
-/*! \brief indulges user requests from the command line. */
-void Knot_scene::indulge_user()
-{ m_option_parser.configure(m_scene_graph); }
 
 /*! \brief clears the scene. */
 void Knot_scene::clear_scene()

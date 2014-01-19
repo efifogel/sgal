@@ -347,9 +347,6 @@ private:
   Uint encode(Uint color1, Uint color2, Uint color3) const
   { return (color3+1) + (NUMBER_OF_COLORS+1)* encode(color1, color2); }
 
-  /*! Indulge user requests from the command line */
-  void indulge_user();
-
   /*! Solve the puzzle. */
   Boolean solve(State state, Uint level);
 

@@ -37,7 +37,6 @@ namespace po = boost::program_options;
 /*! Constructor */
 Knot_option_parser::Knot_option_parser() :
   m_knot_opts("Knot options"),
-  m_window_manager(NULL),
   m_solve(false),
   m_export(false),
   m_cycle_interval(1)
@@ -68,16 +67,14 @@ void Knot_option_parser::init()
 }
 
 /*! \brief parses the options */
-void Knot_option_parser::operator()(int argc, char * argv[])
-{
-  SGAL::Option_parser::operator()(argc, argv);
-}
+void Knot_option_parser::operator()(int argc, char* argv[])
+{ SGAL::Option_parser::operator()(argc, argv); }
 
 /*! \brief applies the options */
 void Knot_option_parser::apply()
 {
   SGAL::Option_parser::apply();
-  SGAL::Window_option_parser::apply(m_variable_map, m_window_manager);
+  SGAL::Window_option_parser::apply(m_variable_map);
 }
 
 /*! Obtain the head padding of the pieces within the volume along the

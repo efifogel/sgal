@@ -73,7 +73,11 @@ void Player_option_parser::operator()(int argc, char * argv[])
 }
 
 //! \brief applies the options.
-void Player_option_parser::apply() { SGAL::Option_parser::apply(); }
+void Player_option_parser::apply()
+{
+  SGAL::Option_parser::apply();
+  SGAL::Window_option_parser::apply(m_variable_map);
+}
 
 //! \brief obtains the base file-name.
 bool Player_option_parser::get_file_name(std::string & name) const
