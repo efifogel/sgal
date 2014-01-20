@@ -97,10 +97,10 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
-  std::string* dir_name_handle(Field_info*) { return &m_dir_name; }
-  std::string* file_name_handle(Field_info*) { return &m_file_name; }
-  File_format* file_format_handle(Field_info*) { return &m_file_format; }
+  Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
+  std::string* file_name_handle(const Field_info*) { return &m_file_name; }
+  File_format* file_format_handle(const Field_info*) { return &m_file_format; }
   //@}
 
   /*! Set the attributes of this node */

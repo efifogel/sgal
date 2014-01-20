@@ -35,13 +35,14 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Element.hpp"
 //! \todo #include "SAI_field_template.h"
 
 SGAL_BEGIN_NAMESPACE
 
 template <typename T>
 struct Handle_function {
-  typedef T* (Container::* type)(Field_info*);
+  typedef T* (Container::* type)(const Field_info*);
 };
 
 /*! An instance of Field_info_template holds information about a field that
@@ -83,9 +84,9 @@ public:
   /*! Obtain the field-info type id. */
   virtual Uint get_type_id() const { return type_id; }
 
-  /*! Create a Value_holder instance using the field info for the given
-   * container.
-   * \param container the container.
+  /*! Create an object that holds a pointer to the value of an actual field
+   * with this info.
+   * \param container the container of the field.
    */
   virtual Value_holder_base* create_value_holder(Container* container)
   {
@@ -93,6 +94,15 @@ public:
     Value_holder<T>* holder = new Value_holder<T>(handle);
     if (m_use_initial_value) holder->set_value(m_initial_value);
     return holder;
+  }
+
+  /*! Obtain the attribute of a field in a given container, where this field
+   * info contains the information of the field.
+   */
+  virtual void get_attribute(Container* container, Element* element) const
+  {
+    const T* handle = (container->*m_handle)(this);
+    add_attribute(container, element, *handle);
   }
 
   /*! \todo

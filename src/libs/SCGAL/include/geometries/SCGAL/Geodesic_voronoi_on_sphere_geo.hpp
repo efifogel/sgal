@@ -102,7 +102,7 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* draw_sites_handle(Field_info*) { return &m_draw_sites; }
+  Boolean* draw_sites_handle(const Field_info*) { return &m_draw_sites; }
   //@}
 
   /*! Set the ellpsoid attributes */

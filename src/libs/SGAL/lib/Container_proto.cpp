@@ -31,7 +31,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
-Container_proto::Container_proto(Container_proto * ancestor) :
+Container_proto::Container_proto(Container_proto* ancestor) :
   m_ancestor(ancestor),
   m_first_id(0)
 {

@@ -54,7 +54,7 @@ class Field_info;
 #endif
 
 class SGAL_SGAL_DECL Container_proto {
-private:
+public:
   typedef std::map<Uint,Field_info*>            Field_info_id_map;
   typedef Field_info_id_map::const_iterator     Field_info_id_const_iter;
   typedef Field_info_id_map::iterator           Field_info_id_iter;
@@ -62,19 +62,6 @@ private:
   typedef std::map<std::string, Field_info*>    Field_info_name_map;
   typedef Field_info_name_map::const_iterator   Field_info_name_const_iter;
 
-  /*! A search structure for field-infos by field-info ids */
-  Field_info_id_map m_field_info_ids;
-
-  /*! A search structure for field-infos by field-info names */
-  Field_info_name_map m_field_info_names;
-
-  /*! The ancestor container-prototype */
-  Container_proto * m_ancestor;
-
-  /*! The first id */
-  Uint m_first_id;
-
-public:
   /*! Constructor */
   Container_proto(Container_proto* ancestor = NULL);
 
@@ -121,11 +108,44 @@ public:
    * \return A pointer to the requested field info
    */
   Field_info * get_field_info(const std::string& name) const;
+
+  /*! \brief obtains the begin iterator of the filed info ids container.
+   * \return the begin iterator.
+   */
+  Field_info_id_const_iter field_info_ids_begin() const;
+
+  /*! \brief obtains the past-the-end iterator of the filed info ids container.
+   * \return the past-the-end iterator.
+   */
+  Field_info_id_const_iter field_info_ids_end() const;
+
+private:
+  /*! A search structure for field-infos by field-info ids */
+  Field_info_id_map m_field_info_ids;
+
+  /*! A search structure for field-infos by field-info names */
+  Field_info_name_map m_field_info_names;
+
+  /*! The ancestor container-prototype */
+  Container_proto * m_ancestor;
+
+  /*! The first id */
+  Uint m_first_id;
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the begin iterator of the filed info ids container.
+inline Container_proto::Field_info_id_const_iter
+Container_proto::field_info_ids_begin() const
+{ return m_field_info_ids.begin(); }
+
+//! \brief obtains the past-the-end iterator of the filed info ids container.
+inline Container_proto::Field_info_id_const_iter
+Container_proto::field_info_ids_end() const
+{ return m_field_info_ids.end(); }
 
 SGAL_END_NAMESPACE
 

@@ -142,9 +142,10 @@ public:
   /// \name field handlers
   //@{
   // coord
-  Shared_coord_array* coord_array_handle(Field_info*) { return &m_coord_array; }
-  Float* line_width_handle(Field_info*) { return &m_line_width; }
-  Boolean* draw_haloed_handle(Field_info*) { return &m_draw_haloed; }
+  Shared_coord_array* coord_array_handle(const Field_info*)
+  { return &m_coord_array; }
+  Float* line_width_handle(const Field_info*) { return &m_line_width; }
+  Boolean* draw_haloed_handle(const Field_info*) { return &m_draw_haloed; }
 
   //@}
 

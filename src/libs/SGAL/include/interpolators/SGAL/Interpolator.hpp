@@ -79,7 +79,7 @@ public:
 
   /// \name field handlers
   //@{
-  Float* fraction_handle(Field_info*) { return &m_fraction; }
+  Float* fraction_handle(const Field_info*) { return &m_fraction; }
   //@}
 
   // Functions that handles the creation of an instance in the scene graph

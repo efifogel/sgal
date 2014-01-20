@@ -78,9 +78,9 @@ public:
 
   /// \name field handlers
   //@{
-  Float* fraction_handle(Field_info*) { return &m_fraction; }
-  Rotation* value_handle(Field_info*) { return &m_value; }
-  Float* angle_handle(Field_info*) { return &m_angle; }
+  Float* fraction_handle(const Field_info*) { return &m_fraction; }
+  Rotation* value_handle(const Field_info*) { return &m_value; }
+  Float* angle_handle(const Field_info*) { return &m_angle; }
   //@}
 
   /*! Sets the attributes of this node */

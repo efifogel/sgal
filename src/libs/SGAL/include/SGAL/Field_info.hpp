@@ -47,10 +47,13 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Execution_function.hpp"
+#include "SGAL/Array_types.hpp"
+#include "SGAL/Element.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Container;
+class Element;
 class Field_info;
 class SAI_field_services;
 class Value_holder_base;
@@ -82,35 +85,96 @@ public:
              Boolean initially_blocked = false) :
     m_id(id),
     m_name(name),
+    m_exec_func(exec_func),
     m_initially_blocked(initially_blocked)
-  {
-    m_exec_func = exec_func;
-  }
+  { }
 
   /*! Destructor */
   virtual ~Field_info() {};
 
-  /*! Obtaint the field id */
-  Uint get_id() const { return m_id; }
+  /*! Obtain the field id.
+   */
+  Uint get_id() const;
 
-  /*! Obtaint the field name */
-  const std::string& get_name() const { return m_name; }
+  /*! Obtain the field name.
+   */
+  const std::string& get_name() const;
 
   /*! Obtain the execution function */
-  Execution_function execution_function() const { return m_exec_func; }
+  Execution_function execution_function() const;
 
-  // opetator
-  Boolean operator==(const Field_info& other)
-  { return (m_id == other.m_id); }
+  /*! Equality opetator.
+   */
+  Boolean operator==(const Field_info& other) const;
 
-  /*! Obtain */
-  Boolean is_initially_blocked() { return m_initially_blocked; }
+  /*! Determine whether
+   */
+  Boolean is_initially_blocked() const;
 
-  // Get the field info type.
+  /* Obtain the field info type.
+   */
   virtual Uint get_type_id() const = 0;
 
-  // Returns an Value_holder object of the field info for the given container.
+  /*! Create an object that holds a pointer to the value of an actual field
+   * with this info.
+   * \param container the container of the field.
+   */
   virtual Value_holder_base* create_value_holder(Container* container) = 0;
+
+  /*! Obtain the attribute of a field in a given container, where this field
+   * info contains the information of the field.
+   */
+  virtual void get_attribute(Container* container, Element* element) const = 0;
+
+  /*! Obtain the attribute of a field in a given container, where this field
+   * info contains the information of the field.
+   */
+  void add_attribute(Container* container, Element* element,
+                     const Boolean& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Float& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Uint& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Int& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Scene_time& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Vector2f& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Vector3f& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Vector4f& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Rotation& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Sphere_bound& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const std::string& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Boolean_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Float_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Uint_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Int_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Scene_time_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Vector2f_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Vector3f_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Vector4f_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Rotation_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Sphere_bound_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const String_array& value) const;
+  void add_attribute(Container* container, Element* element,
+                     const Shared_container_array& value) const;
 
   /*! \todo
   // Creates an SAI_field of the same type id and name
@@ -124,6 +188,24 @@ public:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the field id.
+inline Uint Field_info::get_id() const { return m_id; }
+
+//! \brief obtains the field name.
+inline const std::string& Field_info::get_name() const { return m_name; }
+
+//! \brief obtains the execution function.
+inline Execution_function Field_info::execution_function() const
+{ return m_exec_func; }
+
+//*! \brief equality opetator.
+inline Boolean Field_info::operator==(const Field_info& other) const
+{ return (m_id == other.m_id); }
+
+//! \brief determines whether
+inline Boolean Field_info::is_initially_blocked() const
+{ return m_initially_blocked; }
 
 /*!
  */

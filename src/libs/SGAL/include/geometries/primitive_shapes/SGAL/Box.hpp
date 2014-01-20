@@ -77,7 +77,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f* size_handle(Field_info*) { return &m_size; }
+  Vector3f* size_handle(const Field_info*) { return &m_size; }
   //@}
 
   /*! Set the attributes of this node. */

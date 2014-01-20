@@ -81,11 +81,11 @@ public:
 
   /// \name field handlers
   //@{
-  Float* width_handle(Field_info*) { return &m_width; }
-  Float* height_handle(Field_info*) { return &m_height; }
-  Float* depth_handle(Field_info*) { return &m_depth; }
-  Uint* slices_handle(Field_info*) { return &m_slices; }
-  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  Float* width_handle(const Field_info*) { return &m_width; }
+  Float* height_handle(const Field_info*) { return &m_height; }
+  Float* depth_handle(const Field_info*) { return &m_depth; }
+  Uint* slices_handle(const Field_info*) { return &m_slices; }
+  Uint* stacks_handle(const Field_info*) { return &m_stacks; }
   //@}
 
   /*! Set the ellpsoid attributes */

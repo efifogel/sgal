@@ -79,8 +79,9 @@ public:
 
   /// \name field handlers
   //@{
-  Sphere_bound* sphere_bound_handle(Field_info*) { return &m_sphere_bound; }
-  Boolean* generated_tex_coord_handle(Field_info*)
+  Sphere_bound* sphere_bound_handle(const Field_info*)
+  { return &m_sphere_bound; }
+  Boolean* generated_tex_coord_handle(const Field_info*)
   { return &m_generated_tex_coord; }
   //@}
 

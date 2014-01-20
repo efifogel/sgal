@@ -182,7 +182,7 @@ public:
 
   /// \name field handlers
   //@{
-  Sgm_node_array* sgm_nodes_handle(Field_info*) { return &m_sgm_nodes; }
+  Sgm_node_array* sgm_nodes_handle(const Field_info*) { return &m_sgm_nodes; }
   //@}
 
   /*! Set the attributes of this node.

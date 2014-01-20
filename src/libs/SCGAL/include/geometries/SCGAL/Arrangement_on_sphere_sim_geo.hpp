@@ -150,14 +150,14 @@ public:
 
   /// \name field handlers
   //@{
-  Float* time_handle(Field_info*) { return &m_time; }
-  Boolean* resume_handle(Field_info*) { return &m_resume; }
-  Boolean* suspend_handle(Field_info*) { return &m_suspend; }
-  Boolean* increase_vertex_label_handle(Field_info*)
+  Float* time_handle(const Field_info*) { return &m_time; }
+  Boolean* resume_handle(const Field_info*) { return &m_resume; }
+  Boolean* suspend_handle(const Field_info*) { return &m_suspend; }
+  Boolean* increase_vertex_label_handle(const Field_info*)
   { return &m_increase_vertex_label; }
-  Boolean* increase_edge_label_handle(Field_info*)
+  Boolean* increase_edge_label_handle(const Field_info*)
   { return &m_increase_edge_label; }
-  Boolean* increase_face_label_handle(Field_info*)
+  Boolean* increase_face_label_handle(const Field_info*)
   { return &m_increase_face_label; }
   //@}
 

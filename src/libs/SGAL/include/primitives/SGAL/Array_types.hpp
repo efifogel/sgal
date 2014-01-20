@@ -22,6 +22,8 @@
 #ifndef SGAL_ARRAY_TYPES_HPP
 #define SGAL_ARRAY_TYPES_HPP
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Array.hpp"
 #include "SGAL/Vector2f.hpp"

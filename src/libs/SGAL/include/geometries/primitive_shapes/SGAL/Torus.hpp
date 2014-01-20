@@ -79,9 +79,9 @@ public:
 
   /// \name field handlers
   //@{
-  Float* spine_radius_handle(Field_info*) { return &m_spine_radius; }
-  Uint* stacks_handle(Field_info*) { return &m_stacks; }
-  Uint* slices_handle(Field_info*) { return &m_slices; }
+  Float* spine_radius_handle(const Field_info*) { return &m_spine_radius; }
+  Uint* stacks_handle(const Field_info*) { return &m_stacks; }
+  Uint* slices_handle(const Field_info*) { return &m_slices; }
   //@}
 
   /*! Set the ellpsoid attributes */

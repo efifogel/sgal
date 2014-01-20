@@ -85,7 +85,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f_array* value_handle(Field_info*) { return &m_value; }
+  Vector3f_array* value_handle(const Field_info*) { return &m_value; }
   //@}
 
   // Functions that handles the creation of an instance in the scene graph

@@ -85,12 +85,12 @@ public:
 
   /// \name field handlers
   //@{
-  Float* bottom_radius_handle(Field_info*) { return &m_bottom_radius; }
-  Float* height_handle(Field_info*) { return &m_height; }
-  Boolean* side_visible_handle(Field_info*) { return &m_side_visible; }
-  Boolean* bottom_visible_handle(Field_info*) { return &m_bottom_visible; }
-  Uint* slices_handle(Field_info*) { return &m_slices; }
-  Uint* stacks_handle(Field_info*) { return &m_stacks; }
+  Float* bottom_radius_handle(const Field_info*) { return &m_bottom_radius; }
+  Float* height_handle(const Field_info*) { return &m_height; }
+  Boolean* side_visible_handle(const Field_info*) { return &m_side_visible; }
+  Boolean* bottom_visible_handle(const Field_info*) { return &m_bottom_visible; }
+  Uint* slices_handle(const Field_info*) { return &m_slices; }
+  Uint* stacks_handle(const Field_info*) { return &m_stacks; }
   //@}
 
   virtual void set_attributes(Element* elem);

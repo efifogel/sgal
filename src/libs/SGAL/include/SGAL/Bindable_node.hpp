@@ -74,8 +74,8 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* bind_handle(Field_info*) { return &m_set_bind; }
-  Boolean* is_bound_handle(Field_info*) { return &m_is_bound; }
+  Boolean* bind_handle(const Field_info*) { return &m_set_bind; }
+  Boolean* is_bound_handle(const Field_info*) { return &m_is_bound; }
   //@}
 
   /*! Obtain the Navigation_info at the top os the stack */

@@ -80,7 +80,7 @@ public:
 
   /// \name field handlers
   //@{
-  Uint* which_choice_handle(Field_info*) { return &m_which_choice; }
+  Uint* which_choice_handle(const Field_info*) { return &m_which_choice; }
   //@}
 
   /*! Set the attributes of this node */

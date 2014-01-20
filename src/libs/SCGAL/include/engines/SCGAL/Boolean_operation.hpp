@@ -93,11 +93,12 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
-  Operation* operation_handle(Field_info*) { return &m_operation; }
-  Shared_mesh_set* operand1_handle(Field_info*) { return &m_operand1; }
-  Shared_mesh_set* operand2_handle(Field_info*) { return &m_operand2; }
-  Shared_exact_polyhedron_geo* result_handle(Field_info*) { return &m_result; }
+  Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  Operation* operation_handle(const Field_info*) { return &m_operation; }
+  Shared_mesh_set* operand1_handle(const Field_info*) { return &m_operand1; }
+  Shared_mesh_set* operand2_handle(const Field_info*) { return &m_operand2; }
+  Shared_exact_polyhedron_geo* result_handle(const Field_info*)
+  { return &m_result; }
   //@}
 
   /*! Set the attributes of this node. */

@@ -87,11 +87,11 @@ public:
   /// \name field handlers
   //@{
   // press
-  Boolean* press_handle(Field_info*) { return &m_press; }
-  Scene_time* time_handle(Field_info*) { return &m_time; }
-  Boolean* state_handle(Field_info*) { return &m_state; }
-  Int* int_state_handle(Field_info*) { return &m_int_state; }
-  Uint* num_states_handle(Field_info*) { return &m_num_states; }
+  Boolean* press_handle(const Field_info*) { return &m_press; }
+  Scene_time* time_handle(const Field_info*) { return &m_time; }
+  Boolean* state_handle(const Field_info*) { return &m_state; }
+  Int* int_state_handle(const Field_info*) { return &m_int_state; }
+  Uint* num_states_handle(const Field_info*) { return &m_num_states; }
   //@}
 
   /*! Set the attributes of this node. */

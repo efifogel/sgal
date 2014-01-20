@@ -90,12 +90,12 @@ public:
 
   /// \name field handlers
   //@{
-  Shared_material* material_handle(Field_info*) { return &m_material; }
-  Shared_texture* texture_handle(Field_info*) { return &m_texture; }
-  Shared_tex_gen* tex_gen_handle(Field_info*) { return &m_tex_gen; }
-  Shared_halftone* halftone_handle(Field_info*) { return &m_halftone; }
-  Shared_material* back_material_handle(Field_info*)
-    { return &m_back_material; }
+  Shared_material* material_handle(const Field_info*) { return &m_material; }
+  Shared_texture* texture_handle(const Field_info*) { return &m_texture; }
+  Shared_tex_gen* tex_gen_handle(const Field_info*) { return &m_tex_gen; }
+  Shared_halftone* halftone_handle(const Field_info*) { return &m_halftone; }
+  Shared_material* back_material_handle(const Field_info*)
+  { return &m_back_material; }
   //@}
 
   /*! Set the attributes of this node. */

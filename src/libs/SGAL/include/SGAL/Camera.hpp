@@ -96,11 +96,11 @@ public:
   /// \name field handlers
   //@{
   // position
-  Vector3f* position_handle(Field_info*) { return &m_position; }
-  Rotation* orientation_handle(Field_info*) { return &m_orientation; }
-  Float* fov_handle(Field_info*) { return &m_field_of_view; }
-  std::string* description_handle(Field_info*) { return &m_description; }
-  Float* radius_scale_handle(Field_info*) { return &m_radius_scale; }
+  Vector3f* position_handle(const Field_info*) { return &m_position; }
+  Rotation* orientation_handle(const Field_info*) { return &m_orientation; }
+  Float* fov_handle(const Field_info*) { return &m_field_of_view; }
+  std::string* description_handle(const Field_info*) { return &m_description; }
+  Float* radius_scale_handle(const Field_info*) { return &m_radius_scale; }
   //@}
 
   /*! Set the attributes of this container. */

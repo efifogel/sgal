@@ -101,9 +101,10 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* normal_per_vertex_handle(Field_info*)
-    { return &m_normal_per_vertex; }
-  Boolean* color_per_vertex_handle(Field_info*) { return &m_color_per_vertex; }
+  Boolean* normal_per_vertex_handle(const Field_info*)
+  { return &m_normal_per_vertex; }
+  Boolean* color_per_vertex_handle(const Field_info*)
+  { return &m_color_per_vertex; }
   //@}
 
   /*! Sets the attributes of this node extracted from the VRML or X3D file.

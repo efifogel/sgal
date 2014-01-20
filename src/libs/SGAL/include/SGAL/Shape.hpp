@@ -103,9 +103,10 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* is_visible_handle(Field_info*) { return &m_is_visible; }
-  Shared_geometry* geometry_handle(Field_info*) { return &m_geometry; }
-  Shared_appearance* appearance_handle(Field_info*) { return &m_appearance; }
+  Boolean* is_visible_handle(const Field_info*) { return &m_is_visible; }
+  Shared_geometry* geometry_handle(const Field_info*) { return &m_geometry; }
+  Shared_appearance* appearance_handle(const Field_info*)
+  { return &m_appearance; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -129,8 +130,8 @@ public:
    */
   virtual void isect(Isect_action* isect_action);
 
-  /*! Write this container. */
-  virtual void write(Formatter* formatter);
+  // /*! Write this container. */
+  // virtual void write(Formatter* formatter);
 
   /*! Add the container to the given scene. */
   void add_to_scene(Scene_graph* sg);

@@ -81,14 +81,14 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Boolean* changed_handle(Field_info*) { return &m_changed; }
-  Boolean* execute_handle(Field_info*) { return &m_execute; }
-  Shared_coord_array* coord_array1_handle(Field_info*)
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Boolean* changed_handle(const Field_info*) { return &m_changed; }
+  Boolean* execute_handle(const Field_info*) { return &m_execute; }
+  Shared_coord_array* coord_array1_handle(const Field_info*)
   { return &m_coord_array1; }
-  Shared_coord_array* coord_array2_handle(Field_info*)
+  Shared_coord_array* coord_array2_handle(const Field_info*)
   { return &m_coord_array2; }
-  Shared_coord_array* coord_array_changed_handle(Field_info*)
+  Shared_coord_array* coord_array_changed_handle(const Field_info*)
   { return &m_coord_array_changed; }
   //@}
 

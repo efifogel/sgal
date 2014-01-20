@@ -185,6 +185,17 @@ Field* Container::get_destination_field(const std::string& dst_field_name)
 void Container::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
+
+  // Travese prototype field-info records
+  Container_proto* proto = get_prototype();
+  Container_proto::Field_info_id_const_iter it = proto->field_info_ids_begin();
+  for (; it != proto->field_info_ids_end(); ++it) {
+    const Field_info* field_info = (*it).second;
+    std::cout << "name: " << field_info->get_name() << std::endl;
+    Element elem;
+    field_info->get_attribute(this, &elem);
+  }
+
   formatter->container_end();
 }
 

@@ -79,7 +79,7 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* execute_handle(Field_info*) { return &m_execute; }
+  Boolean* execute_handle(const Field_info*) { return &m_execute; }
   // shared_container &m_coord_array1;
   // shared_container &m_coord_array2;
   //@}

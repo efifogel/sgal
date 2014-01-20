@@ -104,11 +104,13 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f* translation_handle(Field_info*) { return &m_translation; }
-  Rotation* rotation_handle(Field_info*) { return &m_rotation; }
-  Float* min_zoom_distance_handle(Field_info*) { return &m_min_zoom_distance; }
-  Boolean* translation_done_handle(Field_info*) { return &m_translation_done; }
-  Boolean* rotation_done_handle(Field_info*) { return &m_rotation_done; }
+  Vector3f* translation_handle(const Field_info*) { return &m_translation; }
+  Rotation* rotation_handle(const Field_info*) { return &m_rotation; }
+  Float* min_zoom_distance_handle(const Field_info*)
+  { return &m_min_zoom_distance; }
+  Boolean* translation_done_handle(const Field_info*)
+  { return &m_translation_done; }
+  Boolean* rotation_done_handle(const Field_info*) { return &m_rotation_done; }
   //@}
 
   /*! Set the attributes of this node */

@@ -125,13 +125,13 @@ public:
 
   /// \name field handlers
   //@{
-  Shared_coord_array* coord_array_handle(Field_info*)
+  Shared_coord_array* coord_array_handle(const Field_info*)
   { return &m_coord_array; }
-  Shared_normal_array* normal_array_handle(Field_info*)
+  Shared_normal_array* normal_array_handle(const Field_info*)
   { return &m_normal_array; }
-  Shared_color_array* color_array_handle(Field_info*)
+  Shared_color_array* color_array_handle(const Field_info*)
   { return &m_color_array; }
-  Shared_tex_coord_array* tex_coord_array_handle(Field_info*)
+  Shared_tex_coord_array* tex_coord_array_handle(const Field_info*)
   { return &m_tex_coord_array; }
   //@}
 

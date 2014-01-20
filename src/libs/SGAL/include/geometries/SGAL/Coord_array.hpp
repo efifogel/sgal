@@ -80,7 +80,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f_array* array_handle(Field_info*) { return &m_array; }
+  Vector3f_array* array_handle(const Field_info*) { return &m_array; }
   //@}
 
   /*! Set the attributes of this node.

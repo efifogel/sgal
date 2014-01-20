@@ -379,21 +379,21 @@ Attribute_list Shape::get_attributes()
 }
 #endif
 
-/*! \brief writes this container. */
-void Shape::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
+// /*! \brief writes this container. */
+// void Shape::write(Formatter* formatter)
+// {
+//   formatter->container_begin(get_tag());
 
-  formatter->single_container_begin("appearance");
-  formatter->write(&*m_appearance);
-  formatter->single_container_end();
+//   formatter->single_container_begin("appearance");
+//   formatter->write(&*m_appearance);
+//   formatter->single_container_end();
 
-  formatter->single_container_begin("geometry");
-  formatter->write(&*m_geometry);
-  formatter->single_container_end();
+//   formatter->single_container_begin("geometry");
+//   formatter->write(&*m_geometry);
+//   formatter->single_container_end();
 
-  formatter->container_end();
-}
+//   formatter->container_end();
+// }
 
 /*! \brief initializes the node prototype. */
 void Shape::init_prototype()

@@ -71,7 +71,7 @@ public:
 
   /// \name field handlers
   //@{
-  Uint* unit_size_handle(Field_info*) { return &m_unit_size; }
+  Uint* unit_size_handle(const Field_info*) { return &m_unit_size; }
   //@}
 
   /*! Set the attributes of this node. */

@@ -155,20 +155,23 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* draw_opaque_handle(Field_info*) { return &m_draw_opaque; }
-  Boolean* draw_haloed_handle(Field_info*) { return &m_draw_haloed; }
-  Boolean* draw_halftone_handle(Field_info*) { return &m_draw_halftone; }
-  Boolean* draw_aos_surface_handle(Field_info*) { return &m_draw_aos_surface; }
-  Vertex_style* aos_vertex_style_handle(Field_info*)
+  Boolean* draw_opaque_handle(const Field_info*) { return &m_draw_opaque; }
+  Boolean* draw_haloed_handle(const Field_info*) { return &m_draw_haloed; }
+  Boolean* draw_halftone_handle(const Field_info*) { return &m_draw_halftone; }
+  Boolean* draw_aos_surface_handle(const Field_info*)
+  { return &m_draw_aos_surface; }
+  Vertex_style* aos_vertex_style_handle(const Field_info*)
   { return &m_aos_vertex_style; }
-  Vertex_style* aos_isolated_vertex_style_handle(Field_info*)
+  Vertex_style* aos_isolated_vertex_style_handle(const Field_info*)
   { return &m_aos_isolated_vertex_style; }
-  Float* aos_isolated_vertex_radius_handle(Field_info*)
+  Float* aos_isolated_vertex_radius_handle(const Field_info*)
   { return &m_aos_isolated_vertex_radius; }
-  Boolean* aos_edge_enabled_handle(Field_info*) { return &m_aos_edge_enabled; }
-  Edge_style* aos_edge_style_handle(Field_info*) { return &m_aos_edge_style; }
-  Uint* aos_edge_count_handle(Field_info*) { return &m_aos_edge_count; }
-  Boolean* aos_edge_directed_handle(Field_info*)
+  Boolean* aos_edge_enabled_handle(const Field_info*)
+  { return &m_aos_edge_enabled; }
+  Edge_style* aos_edge_style_handle(const Field_info*)
+  { return &m_aos_edge_style; }
+  Uint* aos_edge_count_handle(const Field_info*) { return &m_aos_edge_count; }
+  Boolean* aos_edge_directed_handle(const Field_info*)
   { return &m_aos_edge_directed; }
   //@}
 

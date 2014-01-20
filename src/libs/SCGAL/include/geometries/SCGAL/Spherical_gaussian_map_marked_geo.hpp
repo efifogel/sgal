@@ -565,13 +565,13 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* increase_vertex_index_handle(Field_info*)
+  Boolean* increase_vertex_index_handle(const Field_info*)
   { return &m_increase_vertex_index; }
-  Boolean* increase_edge_index_handle(Field_info*)
+  Boolean* increase_edge_index_handle(const Field_info*)
   { return &m_increase_edge_index; }
-  Boolean* increase_facet_index_handle(Field_info*)
+  Boolean* increase_facet_index_handle(const Field_info*)
   { return &m_increase_facet_index; }
-  Sgm_node_array* sgm_nodes_handle(Field_info*) { return &m_sgm_nodes; }
+  Sgm_node_array* sgm_nodes_handle(const Field_info*) { return &m_sgm_nodes; }
   //@}
 
   /*! Set the attributes of this node.

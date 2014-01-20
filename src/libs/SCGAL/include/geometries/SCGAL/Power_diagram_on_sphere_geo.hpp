@@ -153,10 +153,10 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* site_enabled_handle(Field_info*) { return &m_site_enabled; }
-  Site_style* site_style_handle(Field_info*) { return &m_site_style; }
-  Int* site_count_handle(Field_info*) { return &m_site_count; }
-  Boolean* site_directed_handle(Field_info*) { return &m_site_directed; }
+  Boolean* site_enabled_handle(const Field_info*) { return &m_site_enabled; }
+  Site_style* site_style_handle(const Field_info*) { return &m_site_style; }
+  Int* site_count_handle(const Field_info*) { return &m_site_count; }
+  Boolean* site_directed_handle(const Field_info*) { return &m_site_directed; }
   //@}
 
   /*! Set the node attributes. */

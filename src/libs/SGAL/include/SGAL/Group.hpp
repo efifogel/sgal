@@ -114,7 +114,7 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* is_visible_handle(Field_info*) { return &m_is_visible; }
+  Boolean* is_visible_handle(const Field_info*) { return &m_is_visible; }
   //@}
 
   /*! Set the attributes of the group  extracted from the VRML or X3D file.

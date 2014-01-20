@@ -84,9 +84,9 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Vector3f* position_handle(Field_info*) { return &m_position; }
-  Rotation* orientation_handle(Field_info*) { return &m_orientation; }
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Vector3f* position_handle(const Field_info*) { return &m_position; }
+  Rotation* orientation_handle(const Field_info*) { return &m_orientation; }
   //@}
 
   /*! Set the attributes of this node */

@@ -64,7 +64,7 @@ public:
 
   /// \name field handlers
   //@{
-  std::string* url_handle(Field_info*) { return &m_url; }
+  std::string* url_handle(const Field_info*) { return &m_url; }
   //@}
 
   /*! Set the attributes of the shader extracted from the VRML or X3D file.

@@ -80,7 +80,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vector4f* color_handle(Field_info*) { return &m_color; }
+  Vector4f* color_handle(const Field_info*) { return &m_color; }
   //@}
 
   /*! Set the color of the background */

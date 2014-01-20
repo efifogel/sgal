@@ -87,7 +87,7 @@ public:
 
   /// \name field handlers
   //@{
-  Rotation* value_handle(Field_info*) { return &m_value; }
+  Rotation* value_handle(const Field_info*) { return &m_value; }
   //@}
 
   /*! Sets the attributes of this node */

@@ -84,11 +84,11 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f* center_handle(Field_info*) { return &m_center; }
-  Vector3f* translation_handle(Field_info*) { return &m_translation; }
-  Rotation* rotation_handle(Field_info*) { return &m_rotation; }
-  Vector3f* scale_handle(Field_info*) { return &m_scale; }
-  Boolean* reset_handle(Field_info*) { return &m_reset; }
+  Vector3f* center_handle(const Field_info*) { return &m_center; }
+  Vector3f* translation_handle(const Field_info*) { return &m_translation; }
+  Rotation* rotation_handle(const Field_info*) { return &m_rotation; }
+  Vector3f* scale_handle(const Field_info*) { return &m_scale; }
+  Boolean* reset_handle(const Field_info*) { return &m_reset; }
   //@}
 
   /*! Set the attributes of this node. */

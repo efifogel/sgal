@@ -72,10 +72,10 @@ public:
 
   /// \name field handlers
   //@{
-  Int* min_value_handle(Field_info*) { return &m_min_value; }
-  Int* max_value_handle(Field_info*) { return &m_max_value; }
-  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
-  Int* value_handle(Field_info*) { return &m_value; }
+  Int* min_value_handle(const Field_info*) { return &m_min_value; }
+  Int* max_value_handle(const Field_info*) { return &m_max_value; }
+  Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  Int* value_handle(const Field_info*) { return &m_value; }
   //@}
 
   /*! Set the attributes of the object extracted from the input file.
