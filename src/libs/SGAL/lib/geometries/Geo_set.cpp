@@ -170,7 +170,6 @@ void Geo_set::set_attributes(Element* elem)
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
@@ -290,6 +289,7 @@ void Geo_set::set_attributes(Element* elem)
     }
   }
 
+  typedef Element::Cont_attr_iter       Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);

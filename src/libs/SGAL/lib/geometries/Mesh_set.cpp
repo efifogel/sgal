@@ -19,6 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -99,12 +101,12 @@ void Mesh_set::set_attributes(Element* elem)
       continue;
     }
     if (name == "creaseAngle") {
-      m_crease_angle = atoff(value.c_str());
+      m_crease_angle = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "polygonOffsetFactor") {
-      m_polygon_offset_factor = atoff(value.c_str());
+      m_polygon_offset_factor = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
