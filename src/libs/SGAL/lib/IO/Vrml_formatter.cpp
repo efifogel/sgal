@@ -64,14 +64,14 @@ void Vrml_formatter::end()
   // set_mode(*m_out, m_old_out_mode);
 }
 
-/*! Write a scene-graph node */  
-void Vrml_formatter::write(Container * container)
+/*! Write a scene-graph node */
+void Vrml_formatter::write(Container* container)
 {
   container->write(this);
 }
 
 /*! Write the container header */
-void Vrml_formatter::container_begin(const std::string & tag)
+void Vrml_formatter::container_begin(const std::string& tag)
 {
   indent();
   out() << tag << " {";
@@ -84,11 +84,11 @@ void Vrml_formatter::container_end()
   pop_indent();
   indent();
   out() << "}";
-  new_line();  
+  new_line();
 }
 
 /*! Write the header of a container multi-field */
-void Vrml_formatter::multi_container_begin(const std::string & name)
+void Vrml_formatter::multi_container_begin(const std::string& name)
 {
   new_line();
   indent();
@@ -107,7 +107,7 @@ void Vrml_formatter::multi_container_end()
 }
 
 /*! Write the header of a container single-field */
-void Vrml_formatter::single_container_begin(const std::string & name)
+void Vrml_formatter::single_container_begin(const std::string& name)
 {
   new_line();
   indent();
@@ -118,10 +118,10 @@ void Vrml_formatter::single_container_begin(const std::string & name)
 void Vrml_formatter::single_container_end() {}
 
 /*! Write a multi Uint field */
-void Vrml_formatter::multi_uint(const std::string & name,
-                                const Array<Uint> & value)
+void Vrml_formatter::multi_uint(const std::string& name,
+                                const Array<Uint>& value)
 {
-  const Uint * vec = value.get_vector();
+  const Uint* vec = value.get_vector();
   new_line();
   indent();
   out() << name << " [";
