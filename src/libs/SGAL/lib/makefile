@@ -91,6 +91,7 @@ CPPSOURCES+= Ellipsoid.cpp
 CPPSOURCES+= Environment_background.cpp
 CPPSOURCES+= Extrusion.cpp
 CPPSOURCES+= Field.cpp
+CPPSOURCES+= Field_info.cpp
 CPPSOURCES+= Font.cpp
 CPPSOURCES+= Font_style.cpp
 CPPSOURCES+= Fragment_shader.cpp
