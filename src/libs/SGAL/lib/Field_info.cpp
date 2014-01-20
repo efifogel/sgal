@@ -19,6 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Field_info.hpp"
@@ -33,74 +35,98 @@ SGAL_BEGIN_NAMESPACE
 void Field_info::add_attribute(Container* container, Element* element,
                                const Boolean& value) const
 {
-  Element::Str_attr attr(new std::string(get_name()), new std::string("xxx"));
+  std::string* value_str = new std::string;
+  *value_str = boost::lexical_cast<std::string>(value);
+  Element::Str_attr attr(&(get_name()), value_str);
   element->add_attribute(attr);
 }
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Float& value) const {}
+                               const Float& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Uint& value) const {}
+                               const Uint& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Int& value) const {}
+                               const Int& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Scene_time& value) const {}
+                               const Scene_time& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector2f& value) const {}
+                               const Vector2f& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector3f& value) const {}
+                               const Vector3f& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector4f& value) const {}
+                               const Vector4f& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Rotation& value) const {}
+                               const Rotation& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Sphere_bound& value) const {}
+                               const Sphere_bound& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const std::string& value) const {}
+                               const std::string& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Boolean_array& value) const {}
+                               const Boolean_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Float_array& value) const {}
+                               const Float_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Uint_array& value) const {}
+                               const Uint_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Int_array& value) const {}
+                               const Int_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Scene_time_array& value) const {}
+                               const Scene_time_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector2f_array& value) const {}
+                               const Vector2f_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector3f_array& value) const {}
+                               const Vector3f_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector4f_array& value) const {}
+                               const Vector4f_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Rotation_array& value) const {}
+                               const Rotation_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Sphere_bound_array& value) const {}
+                               const Sphere_bound_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const String_array& value) const {}
+                               const String_array& value) const
+{}
 
 void Field_info::add_attribute(Container* container, Element* element,
-                               const Shared_container_array& value) const {}
+                               const Shared_container_array& value) const
+{}
 
 SGAL_END_NAMESPACE
