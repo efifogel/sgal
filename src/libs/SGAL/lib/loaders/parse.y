@@ -377,29 +377,26 @@ interfaceDeclarations   : /* empty */ { /*! \todo */ }
 restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                 {
                   $$ = new Element;
-                  Field_attr* field_attr =
-                    new Field_attr(new std::string($3),
-                                   std::make_pair(new std::string($2),
-                                                  new std::string("")));
-                  $$->add_attribute(field_attr);
+                  Field_attr attr(new std::string($3),
+                                  std::make_pair(new std::string($2),
+                                                 new std::string("")));
+                  $$->add_attribute(attr);
                 }
                 | K_EVENTOUT fieldType eventOutId
                 {
                   $$ = new Element;
-                  Field_attr* field_attr =
-                    new Field_attr(new std::string($3),
-                                   std::make_pair(new std::string($3),
-                                                  new std::string("")));
-                  $$->add_attribute(field_attr);
+                  Field_attr attr(new std::string($3),
+                                  std::make_pair(new std::string($3),
+                                                 new std::string("")));
+                  $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId sfValue
                 {
                   $$ = new Element;
-                  Field_attr* field_attr =
-                    new Field_attr(new std::string($3),
-                                   std::make_pair(new std::string($2),
-                                                  new std::string($4)));
-                  $$->add_attribute(field_attr);
+                  Field_attr attr(new std::string($3),
+                                  std::make_pair(new std::string($2),
+                                                 new std::string($4)));
+                  $$->add_attribute(attr);
                 }
                 ;
 
@@ -476,27 +473,32 @@ nodeBody        : /* empty */ { $$ = new Element; }
                 | nodeBody fieldId sfValue
                 {
                   std::swap($$, $1);
-                  $$->add_attribute(new Str_attr(new std::string($2), new std::string($3)));
+                  Str_attr str_attr(new std::string($2), new std::string($3));
+                  $$->add_attribute(str_attr);
                 }
                 | nodeBody fieldId "[" sfValues "]"
                 {
                   std::swap($$, $1);
-                  $$->add_attribute(new Str_attr(new std::string($2), new std::string($4)));
+                  Str_attr attr(new std::string($2), new std::string($4));
+                  $$->add_attribute(attr);
                 }
                 | nodeBody fieldId sfnodeValue
                 {
                   std::swap($$, $1);
-                  $$->add_attribute(new Cont_attr(new std::string($2), $3));
+                  Cont_attr attr(new std::string($2), $3);
+                  $$->add_attribute(attr);
                 }
                 | nodeBody fieldId "[" "]"
                 {
                   std::swap($$, $1);
-                  $$->add_attribute(new Multi_cont_attr(new std::string($2), new Cont_list));
+                  Multi_cont_attr attr(new std::string($2), new Cont_list);
+                  $$->add_attribute(attr);
                 }
                 | nodeBody fieldId "[" nodeStatements "]"
                 {
                   std::swap($$, $1);
-                  $$->add_attribute(new Multi_cont_attr(new std::string($2), $4));
+                  Multi_cont_attr attr(new std::string($2), $4);
+                  $$->add_attribute(attr);
                 }
                 | nodeBody fieldId K_IS fieldId { $$ = 0; /*! \todo */ }
                 /* | nodeBody eventInId K_IS eventInId */
@@ -517,7 +519,8 @@ scriptBody      : /* empty */ { $$ = new Element; }
 scriptBodyElement : fieldId sfValue
                 {
                   $$ = new Element;
-                  $$->add_attribute(new Str_attr(new std::string($1), new std::string($2)));
+                  Str_attr attr(new std::string($1), new std::string($2));
+                  $$->add_attribute(attr);
                 }
 
                 | restrictedInterfaceDeclaration { std::swap($$, $1); }

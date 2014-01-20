@@ -33,10 +33,8 @@ SGAL_BEGIN_NAMESPACE
 void Field_info::add_attribute(Container* container, Element* element,
                                const Boolean& value) const
 {
-  Element::Str_attr* attr = new Element::Str_attr;
+  Element::Str_attr attr(new std::string(get_name()), new std::string("xxx"));
   element->add_attribute(attr);
-  attr->first = new std::string(get_name());
-  attr->second = new std::string("xxx");
 }
 
 void Field_info::add_attribute(Container* container, Element* element,
