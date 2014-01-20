@@ -273,8 +273,9 @@ void Shape::clean_appearance()
 /*! \brief sets the attributes of the shape. */
 void Shape::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
   Node::set_attributes(elem);
+
+  typedef Element::Str_attr_iter          Str_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
