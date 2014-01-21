@@ -27,7 +27,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning( push )
-#pragma warning( disable: 4100 4512 )
+#pragma warning( disable: 4100 4512)
 #endif
 #include <boost/program_options.hpp>
 #if defined(_MSC_VER)
@@ -41,6 +41,11 @@
 SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
 
 class SGAL_SGAL_DECL IO_option_parser {
 public:
@@ -121,6 +126,10 @@ private:
   // IO_option_parser& operator=(const IO_option_parser&) = delete;
   // IO_option_parser(const IO_option_parser&) = delete;
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief obtains the IO-option description.
 inline const po::options_description& IO_option_parser::get_io_opts() const
