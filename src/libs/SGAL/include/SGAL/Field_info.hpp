@@ -124,57 +124,58 @@ public:
   /*! Obtain the attribute of a field in a given container, where this field
    * info contains the information of the field.
    */
-  virtual void get_attribute(Container* container, Element* element) const = 0;
+  virtual void write(Container* container, Formatter* formatter) const = 0;
 
   /*! Obtain the attribute of a field in a given container, where this field
    * info contains the information of the field.
    */
-  void add_attribute(Container* container, Element* element,
-                     const Boolean& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Float& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Uint& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Int& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Scene_time& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Vector2f& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Vector3f& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Vector4f& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Rotation& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Sphere_bound& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const std::string& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Boolean_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Float_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Uint_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Int_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Scene_time_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Vector2f_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Vector3f_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Vector4f_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Rotation_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Sphere_bound_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const String_array& value) const;
-  void add_attribute(Container* container, Element* element,
-                     const Shared_container_array& value) const;
+  void write(Formatter* formatter, Boolean value) const;
+
+  void write(Formatter* formatter, const Float& value) const;
+
+  void write(Formatter* formatter, const Uint& value) const;
+
+  void write(Formatter* formatter, const Int& value) const;
+
+  void write(Formatter* formatter, const Scene_time& value) const;
+
+  void write(Formatter* formatter, const Vector2f& value) const;
+
+  void write(Formatter* formatter, const Vector3f& value) const;
+
+  void write(Formatter* formatter, const Vector4f& value) const;
+
+  void write(Formatter* formatter, const Rotation& value) const;
+
+  void write(Formatter* formatter, const Sphere_bound& value) const;
+
+  void write(Formatter* formatter, const std::string& value) const;
+
+  void write(Formatter* formatter, Shared_container value) const;
+
+  void write(Formatter* formatter, const Boolean_array& value) const;
+
+  void write(Formatter* formatter, const Float_array& value) const;
+
+  void write(Formatter* formatter, const Uint_array& value) const;
+
+  void write(Formatter* formatter, const Int_array& value) const;
+
+  void write(Formatter* formatter, const Scene_time_array& value) const;
+
+  void write(Formatter* formatter, const Vector2f_array& value) const;
+
+  void write(Formatter* formatter, const Vector3f_array& value) const;
+
+  void write(Formatter* formatter, const Vector4f_array& value) const;
+
+  void write(Formatter* formatter, const Rotation_array& value) const;
+
+  void write(Formatter* formatter, const Sphere_bound_array& value) const;
+
+  void write(Formatter* formatter, const String_array& value) const;
+
+  void write(Formatter* formatter, const Shared_container_array& value) const;
 
   /*! \todo
   // Creates an SAI_field of the same type id and name

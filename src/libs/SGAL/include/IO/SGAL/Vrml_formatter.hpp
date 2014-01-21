@@ -50,7 +50,7 @@ public:
 
   /*! Destructor */
   virtual ~Vrml_formatter() {}
-  
+
   /// \name Write functions
   //@{
 
@@ -60,7 +60,7 @@ public:
   /*! Write the routing statements */
   virtual void end();
 
-  /*! Write a scene-graph node */  
+  /*! Write a scene-graph node */
   virtual void write(Container* container);
 
   /*! Write the container header */
@@ -71,19 +71,18 @@ public:
 
   /*! Write a single Boolean field */
   virtual void single_boolean(const std::string& name,
-                              Boolean value, Boolean default_value)
-  { single_field(name, value, default_value); }
+                              Boolean value, Boolean default_value);
 
   /*! Write a single Int field */
   virtual void single_int(const std::string& name,
                           Int value, Int default_value)
-  { single_field(name, value, default_value); }    
-  
+  { single_field(name, value, default_value); }
+
   /*! Write a single Vector3d field */
   virtual void single_vector3f(const std::string& name,
                                const Vector3f& value,
                                const Vector3f& default_value)
-  { single_field(name, value, default_value); }    
+  { single_field(name, value, default_value); }
 
   /*! Write the header of a single-container field */
   virtual void single_container_begin(const std::string& name);
@@ -99,7 +98,7 @@ public:
 
   /*! Write the tailer of a multi-container field */
   virtual void multi_container_end();
-  
+
   //@}
 
 private:
@@ -135,7 +134,7 @@ private:
 
   /*! Indicates whether indentation has been applied */
   Boolean m_indented;
-  
+
   /*! Space holder for the output stream mode */
   // std::IO::Mode m_old_out_mode;
 

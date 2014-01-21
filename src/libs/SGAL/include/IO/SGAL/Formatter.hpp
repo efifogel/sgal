@@ -51,7 +51,7 @@ public:
 
   /*! Destructor */
   virtual ~Formatter() {}
-  
+
   /*! Set the output stream */
   void set_out(std::ostream& os) { m_out = &os; }
 
@@ -81,7 +81,7 @@ public:
   /*! Write the routing statements */
   virtual void end() = 0;
 
-  /*! Write a scene-graph container */  
+  /*! Write a scene-graph container */
   virtual void write(Container* container) = 0;
 
   /*! Write the container beginning section */
@@ -90,19 +90,22 @@ public:
   /*! Write the container ending section */
   virtual void container_end() = 0;
 
-  /*! Write a single Boolean field */
+  /*! Write a single Boolean field.
+   */
   virtual void single_boolean(const std::string& name,
                               Boolean value, Boolean default_value) = 0;
 
-  /*! Write a single Int field */
+  /*! Write a single Int field.
+   */
   virtual void single_int(const std::string& name,
                           Int value, Int default_value) = 0;
-  
-  /*! Write a single Vector3d field */
+
+  /*! Write a single Vector3d field.
+   */
   virtual void single_vector3f(const std::string& name,
                                const Vector3f& value,
                                const Vector3f& default_value) = 0;
-  
+
   /*! Write the single-container field beginning section */
   virtual void single_container_begin(const std::string& name) = 0;
 
@@ -118,7 +121,7 @@ public:
 
   /*! Write the multi-container field ending section */
   virtual void multi_container_end() = 0;
-  
+
   //@}
 
 protected:

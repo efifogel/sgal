@@ -114,10 +114,21 @@ void Vrml_formatter::single_container_begin(const std::string& name)
   out() << name << " ";
 }
 
-/*! Write the tailer of a container single-field */
+//! \brief writes the tailer of a container single-field.
 void Vrml_formatter::single_container_end() {}
 
-/*! Write a multi Uint field */
+/*! Write a single Boolean field */
+void Vrml_formatter::single_boolean(const std::string& name,
+                                    Boolean value, Boolean default_value)
+{
+  if (value == default_value) return;
+  new_line();
+  indent();
+  out() << name << " " << (value ? "TRUE" : "FALSE");
+  new_line();
+}
+
+//! \brief writes a multi Uint field.
 void Vrml_formatter::multi_uint(const std::string& name,
                                 const Array<Uint>& value)
 {

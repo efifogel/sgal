@@ -35,10 +35,11 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
-#include "SGAL/Element.hpp"
 //! \todo #include "SAI_field_template.h"
 
 SGAL_BEGIN_NAMESPACE
+
+class Formatter;
 
 template <typename T>
 struct Handle_function {
@@ -99,10 +100,10 @@ public:
   /*! Obtain the attribute of a field in a given container, where this field
    * info contains the information of the field.
    */
-  virtual void get_attribute(Container* container, Element* element) const
+  virtual void write(Container* container, Formatter* formatter) const
   {
     const T* handle = (container->*m_handle)(this);
-    add_attribute(container, element, *handle);
+    Field_info::write(formatter, *handle);
   }
 
   /*! \todo

@@ -25,108 +25,87 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Array_types.hpp"
-#include "SGAL/Element.hpp"
+#include "SGAL/Formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 /*! \brief obtains the attribute of a field in a given container, where this
  * field info contains the information of the field.
  */
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Boolean& value) const
+void Field_info::write(Formatter* formatter, Boolean value) const
+{ formatter->single_boolean(get_name(), value, false); }
+
+void Field_info::write(Formatter* formatter, const Float& value) const
+{}
+
+void Field_info::write(Formatter* formatter, const Uint& value) const
+{}
+
+void Field_info::write(Formatter* formatter, const Int& value) const
+{ formatter->single_int(get_name(), value, 0); }
+
+void Field_info::write(Formatter* formatter, const Scene_time& value) const
+{}
+
+void Field_info::write(Formatter* formatter, const Vector2f& value) const
+{}
+
+void Field_info::write(Formatter* formatter, const Vector3f& value) const
+{ formatter->single_vector3f(get_name(), value, Vector3f()); }
+
+void Field_info::write(Formatter* formatter, const Vector4f& value) const
+{}
+
+void Field_info::write(Formatter* formatter, const Rotation& value) const
+{}
+
+void Field_info::write(Formatter* formatter, const Sphere_bound& value) const
+{}
+
+void Field_info::write(Formatter* formatter, const std::string& value) const
+{}
+
+void Field_info::write(Formatter* formatter, Shared_container value) const
 {
-  std::string* value_str = new std::string;
-  *value_str = boost::lexical_cast<std::string>(value);
-  Element::Str_attr attr(&(get_name()), value_str);
-  element->add_attribute(attr);
+  formatter->single_container_begin(get_name());
+  formatter->write(&*value);
+  formatter->single_container_end();
 }
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Float& value) const
+void Field_info::write(Formatter* formatter, const Boolean_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Uint& value) const
+void Field_info::write(Formatter* formatter, const Float_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Int& value) const
+void Field_info::write(Formatter* formatter, const Uint_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Scene_time& value) const
+void Field_info::write(Formatter* formatter, const Int_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector2f& value) const
+void Field_info::write(Formatter* formatter, const Scene_time_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector3f& value) const
+void Field_info::write(Formatter* formatter, const Vector2f_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector4f& value) const
+void Field_info::write(Formatter* formatter, const Vector3f_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Rotation& value) const
+void Field_info::write(Formatter* formatter, const Vector4f_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Sphere_bound& value) const
+void Field_info::write(Formatter* formatter, const Rotation_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const std::string& value) const
+void Field_info::write(Formatter* formatter, const Sphere_bound_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Boolean_array& value) const
+void Field_info::write(Formatter* formatter, const String_array& value) const
 {}
 
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Float_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Uint_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Int_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Scene_time_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector2f_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector3f_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Vector4f_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Rotation_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Sphere_bound_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const String_array& value) const
-{}
-
-void Field_info::add_attribute(Container* container, Element* element,
-                               const Shared_container_array& value) const
+void Field_info::write(Formatter* formatter, const Shared_container_array& value) const
 {}
 
 SGAL_END_NAMESPACE

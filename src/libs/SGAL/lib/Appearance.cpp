@@ -49,7 +49,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Appearance::s_tag = "sgalAppearance";
+std::string Appearance::s_tag = "Appearance";
 Container_proto* Appearance::s_prototype(NULL);
 
 // Default values:

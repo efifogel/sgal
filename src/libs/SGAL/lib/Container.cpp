@@ -189,18 +189,10 @@ void Container::write(Formatter* formatter)
   // Travese prototype field-info records
   Container_proto* proto = get_prototype();
   Container_proto::Field_info_id_const_iter it = proto->field_info_ids_begin();
-  Element elem;
   for (; it != proto->field_info_ids_end(); ++it) {
     const Field_info* field_info = (*it).second;
-    field_info->get_attribute(this, &elem);
+    field_info->write(this, formatter);
   }
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
-  }
-
   formatter->container_end();
 }
 
