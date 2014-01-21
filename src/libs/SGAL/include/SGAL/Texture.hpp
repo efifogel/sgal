@@ -22,8 +22,6 @@
 #ifndef SGAL_TEXTURE_HPP
 #define SGAL_TEXTURE_HPP
 
-#include <string>
-
 #if (defined _MSC_VER)
 #pragma warning( disable : 4786 )
 #endif
