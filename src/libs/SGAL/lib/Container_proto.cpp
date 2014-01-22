@@ -124,6 +124,21 @@ Field_info * Container_proto::get_field_info(const std::string & name) const
   return NULL;
 }
 
+//! \brief obtains the begin iterator of the extended range of field info ids.
+Container_proto::Id_const_iterator
+Container_proto::ids_begin(const Container_proto* prototype) const
+{ return Id_const_iterator(prototype, prototype->field_info_ids_begin()); }
+
+/*! \brief obtains the past-the-end iterator of the extended range of field
+ * info ids.
+ */
+Container_proto::Id_const_iterator
+Container_proto::ids_end(const Container_proto* prototype) const
+{
+  while (prototype->m_ancestor != nullptr) prototype = prototype->m_ancestor;
+  return Id_const_iterator(prototype, prototype->field_info_ids_end());
+}
+
 #if 0
 /*! \brief returns a list of name and ID pairs - one for each field info
  * Builds the list into the given IDsList using m_field_info_ids

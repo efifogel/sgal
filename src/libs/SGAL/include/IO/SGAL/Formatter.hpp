@@ -95,6 +95,16 @@ public:
   virtual void single_boolean(const std::string& name,
                               Boolean value, Boolean default_value) = 0;
 
+  /*! Write a single Float field.
+   */
+  virtual void single_float(const std::string& name,
+                            Float value, Float default_value) = 0;
+
+  /*! Write a single Uint field.
+   */
+  virtual void single_uint(const std::string& name,
+                           Uint value, Uint default_value) = 0;
+
   /*! Write a single Int field.
    */
   virtual void single_int(const std::string& name,

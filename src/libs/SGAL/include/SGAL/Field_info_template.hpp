@@ -68,6 +68,20 @@ private:
 public:
   /*! Constructor. */
   Field_info_template(Uint id, const std::string& name,
+                      Handle handle, T initial_value,
+                      Execution_function execution = NULL,
+                      bool initially_blocked = false,
+                      bool use_initial_value = false) :
+    Field_info(id, name, execution, initially_blocked),
+    m_handle(handle),
+    m_initial_value(initial_value),
+    m_use_initial_value(use_initial_value)
+  {}
+
+  /*! Temporary constructor.
+   * \todo remove this constructor when no longer needed.
+   */
+  Field_info_template(Uint id, const std::string& name,
                       Handle handle,
                       Execution_function execution = NULL,
                       bool initially_blocked = false,

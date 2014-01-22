@@ -36,10 +36,10 @@ void Field_info::write(Formatter* formatter, Boolean value) const
 { formatter->single_boolean(get_name(), value, false); }
 
 void Field_info::write(Formatter* formatter, const Float& value) const
-{}
+{ formatter->single_float(get_name(), value, 0); }
 
 void Field_info::write(Formatter* formatter, const Uint& value) const
-{}
+{ formatter->single_uint(get_name(), value, 0); }
 
 void Field_info::write(Formatter* formatter, const Int& value) const
 { formatter->single_int(get_name(), value, 0); }
@@ -67,6 +67,7 @@ void Field_info::write(Formatter* formatter, const std::string& value) const
 
 void Field_info::write(Formatter* formatter, Shared_container value) const
 {
+  if (!value) return;
   formatter->single_container_begin(get_name());
   formatter->write(&*value);
   formatter->single_container_end();

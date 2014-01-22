@@ -188,8 +188,8 @@ void Container::write(Formatter* formatter)
 
   // Travese prototype field-info records
   Container_proto* proto = get_prototype();
-  Container_proto::Field_info_id_const_iter it = proto->field_info_ids_begin();
-  for (; it != proto->field_info_ids_end(); ++it) {
+  Container_proto::Id_const_iterator it = proto->ids_begin(proto);
+  for (; it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
     field_info->write(this, formatter);
   }
