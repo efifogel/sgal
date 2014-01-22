@@ -45,10 +45,13 @@ public:
    * \param i The index of the format to compare against.
    * \param token The token string to compare.
    */
-  static Boolean compare_name(Uint i, const std::string& token)
-  { return (token.compare(s_names[i]) == 0); }
+  static Boolean compare_name(Uint i, const std::string& token);
 
-  static const Char* get_name(Uint i) { return s_names[i]; }
+  /*! obtains the ith format name.
+   * \param i The index of the format.
+   * \return the name of the ith format.
+   */
+  static const Char* get_name(Uint i);
 
 private:
   //! file format names also used as file extensions.

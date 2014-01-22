@@ -33,4 +33,11 @@ const Char* File_format::s_names[] = {
   "obj"
 };
 
+//! \brief compares the name of the ith format to a given token.
+Boolean File_format::compare_name(Uint i, const std::string& token)
+{ return (token.compare(s_names[i]) == 0); }
+
+//! obtains the ith format name.
+const Char* File_format::get_name(Uint i) { return s_names[i]; }
+
 SGAL_END_NAMESPACE
