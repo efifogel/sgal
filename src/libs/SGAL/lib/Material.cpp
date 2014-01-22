@@ -258,15 +258,6 @@ void Material::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief writes this container. */
-void Material::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-  formatter->single_vector3f("diffuseColor",
-                             m_diffuse_color, m_def_diffuse_color);
-  formatter->container_end();
-}
-
 #if 0
 /*! Get the attributes of the box. */
 Attribute_list Material::get_attributes()

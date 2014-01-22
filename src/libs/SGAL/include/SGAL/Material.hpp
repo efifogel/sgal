@@ -174,9 +174,6 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Write this container */
-  virtual void write(Formatter* formatter);
-
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;

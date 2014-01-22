@@ -130,9 +130,6 @@ public:
    */
   virtual void isect(Isect_action* isect_action);
 
-  // /*! Write this container. */
-  // virtual void write(Formatter* formatter);
-
   /*! Add the container to the given scene. */
   void add_to_scene(Scene_graph* sg);
 
