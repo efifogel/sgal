@@ -133,6 +133,14 @@ public:
   { return &m_color_array; }
   Shared_tex_coord_array* tex_coord_array_handle(const Field_info*)
   { return &m_tex_coord_array; }
+  Array<Uint>* coord_indices_handle(const Field_info*)
+  { return &m_coord_indices; }
+  Array<Uint>* normal_indices_handle(const Field_info*)
+  { return &m_normal_indices; }
+  Array<Uint>* color_indices_handle(const Field_info*)
+  { return &m_color_indices; }
+  Array<Uint>* tex_coord_indices_handle(const Field_info*)
+  { return &m_tex_coord_indices; }
   //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.

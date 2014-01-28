@@ -29,43 +29,64 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! \brief obtains the attribute of a field in a given container, where this
- * field info contains the information of the field.
- */
-void Field_info::write(Formatter* formatter, Boolean value) const
-{ formatter->single_boolean(get_name(), value, false); }
+//! \brief writes the (single) Boolean field.
+void Field_info::write(Formatter* formatter, Boolean value,
+                       Boolean default_value) const
+{ formatter->single_boolean(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Float& value) const
-{ formatter->single_float(get_name(), value, 0); }
+//! \brief writes the (single) Float field.
+void Field_info::write(Formatter* formatter, Float value,
+                       Float default_value) const
+{ formatter->single_float(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Uint& value) const
-{ formatter->single_uint(get_name(), value, 0); }
+//! \brief writes the (single) Uint field.
+void Field_info::write(Formatter* formatter, Uint value,
+                       Uint default_value) const
+{ formatter->single_uint(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Int& value) const
-{ formatter->single_int(get_name(), value, 0); }
+//! \brief writes the (single) Int field.
+void Field_info::write(Formatter* formatter, Int value,
+                       Int default_value) const
+{ formatter->single_int(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Scene_time& value) const
-{}
+//! \brief writes the (single) Scene-time field.
+void Field_info::write(Formatter* formatter, const Scene_time& value,
+                       const Scene_time& default_value) const
+{ formatter->single_scene_time(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Vector2f& value) const
-{}
+//! \brief writes the (single) Vector2f field.
+void Field_info::write(Formatter* formatter, const Vector2f& value,
+                       const Vector2f& default_value) const
+{ formatter->single_vector2f(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Vector3f& value) const
-{ formatter->single_vector3f(get_name(), value, Vector3f()); }
+//! \brief writes the (single) Vector3f field.
+void Field_info::write(Formatter* formatter, const Vector3f& value,
+                       const Vector3f& default_value) const
+{ formatter->single_vector3f(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Vector4f& value) const
-{}
+//! \brief writes the (single) Vector4f field.
+void Field_info::write(Formatter* formatter, const Vector4f& value,
+                       const Vector4f& default_value) const
+{ formatter->single_vector4f(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Rotation& value) const
-{}
+//! \brief writes the (single) rotation field.
+void Field_info::write(Formatter* formatter, const Rotation& value,
+                       const Rotation& default_value) const
+{ formatter->single_rotation(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Sphere_bound& value) const
-{}
+//! \brief writes the (single) sphere-bound field.
+void Field_info::write(Formatter* formatter, const Sphere_bound& value,
+                       const Sphere_bound& default_value) const
+{ formatter->single_sphere_bound(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const std::string& value) const
-{}
+//! \brief writes the (single) string field.
+void Field_info::write(Formatter* formatter, const std::string& value,
+                       const std::string& default_value) const
+{ formatter->single_string(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, Shared_container value) const
+//! \brief writes the (single) shared-container field.
+void Field_info::write(Formatter* formatter, Shared_container value,
+                       Shared_container default_value) const
 {
   if (!value) return;
   formatter->single_container_begin(get_name());
@@ -73,40 +94,67 @@ void Field_info::write(Formatter* formatter, Shared_container value) const
   formatter->single_container_end();
 }
 
-void Field_info::write(Formatter* formatter, const Boolean_array& value) const
-{}
+//! \brief writes the multi-Boolean field.
+void Field_info::write(Formatter* formatter, const Boolean_array& value,
+                       const Boolean_array& default_value) const
+{ formatter->multi_boolean(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Float_array& value) const
-{}
+//! \brief writes the multi-Float field.
+void Field_info::write(Formatter* formatter, const Float_array& value,
+                       const Float_array& default_value) const
+{ formatter->multi_float(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Uint_array& value) const
-{}
+//! \brief writes the multi-Uint field.
+void Field_info::write(Formatter* formatter, const Uint_array& value,
+                       const Uint_array& default_value) const
+{ formatter->multi_uint(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Int_array& value) const
-{}
+//! \brief writes the multi-Int field.
+void Field_info::write(Formatter* formatter, const Int_array& value,
+                       const Int_array& default_value) const
+{ formatter->multi_int(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Scene_time_array& value) const
-{}
+//! \brief writes the multi-Scene_time field.
+void Field_info::write(Formatter* formatter, const Scene_time_array& value,
+                       const Scene_time_array& default_value) const
+{ formatter->multi_scene_time(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Vector2f_array& value) const
-{}
+//! \brief writes the multi-Vector2f field.
+void Field_info::write(Formatter* formatter, const Vector2f_array& value,
+                       const Vector2f_array& default_value) const
+{ formatter->multi_vector2f(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Vector3f_array& value) const
-{}
+//! \brief writes the multi-Vector3f field.
+void Field_info::write(Formatter* formatter, const Vector3f_array& value,
+                       const Vector3f_array& default_value) const
+{ formatter->multi_vector3f(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Vector4f_array& value) const
-{}
+//! \brief writes the multi-Vector4f field.
+void Field_info::write(Formatter* formatter, const Vector4f_array& value,
+                       const Vector4f_array& default_value) const
+{ formatter->multi_vector4f(get_name(), value, default_value);}
 
-void Field_info::write(Formatter* formatter, const Rotation_array& value) const
-{}
+//! \brief writes the multi-Rotation field.
+void Field_info::write(Formatter* formatter, const Rotation_array& value,
+                       const Rotation_array& default_value) const
+{ formatter->multi_rotation(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Sphere_bound_array& value) const
-{}
+//! \brief writes the multi-Sphere_bound field.
+void Field_info::write(Formatter* formatter, const Sphere_bound_array& value,
+                       const Sphere_bound_array& default_value) const
+{ formatter->multi_sphere_bound(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const String_array& value) const
-{}
+//! \brief writes the multi-string field.
+void Field_info::write(Formatter* formatter, const String_array& value,
+                       const String_array& default_value) const
+{ formatter->multi_string(get_name(), value, default_value); }
 
-void Field_info::write(Formatter* formatter, const Shared_container_array& value) const
-{}
+//! \brief writes the multi-shared-container field.
+void Field_info::write(Formatter* formatter,
+                       const Shared_container_array& value,
+                       const Shared_container_array& default_value) const
+{
+  //! \todo not implemented yet
+}
 
 SGAL_END_NAMESPACE

@@ -57,6 +57,7 @@ const std::string Shape::s_tag = "Shape";
 Container_proto* Shape::s_prototype(NULL);
 
 // Default values:
+const Boolean Shape::s_def_is_visible(true);
 const Vector2f Shape::s_def_depth_range(0, 1);
 const Vector4ub Shape::s_def_color_mask(0xff, 0xff, 0xff, 0xff);
 const Gfx::Depth_func Shape::s_def_depth_function(Gfx::LESS_DFUNC);
@@ -79,7 +80,7 @@ Shape::Shape(Boolean proto) :
   m_depth_function(s_def_depth_function),
   m_color_mask(s_def_color_mask),
   m_cull_face(s_def_cull_face),
-  m_is_visible(true),
+  m_is_visible(s_def_is_visible),
   m_priority(0),
   m_draw_backface(false),
   m_dirty(true),
@@ -392,7 +393,8 @@ void Shape::init_prototype()
   Boolean_handle_function is_visible_func =
     static_cast<Boolean_handle_function>(&Shape::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE, "visible",
-                                          is_visible_func, exec_func));
+                                          is_visible_func, s_def_is_visible,
+                                          exec_func));
 
   // geometry
   exec_func = static_cast<Execution_function>(&Shape::geometry_changed);

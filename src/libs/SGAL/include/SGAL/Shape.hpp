@@ -394,6 +394,7 @@ private:
   /*! Cleane the appearance. */
   void clean_appearance();
 
+  static const Boolean s_def_is_visible;
   static const Vector2f s_def_depth_range;
   static const Vector4ub s_def_color_mask;
   static const Gfx::Depth_func s_def_depth_function;

@@ -248,17 +248,6 @@ void Piece::clean_coord_indices()
   Indexed_face_set::clean_coord_indices();
 }
 
-/*! Write this container. */
-void Piece::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-  formatter->single_int("width", m_width, s_def_width);
-  formatter->single_int("height", m_height, s_def_height);
-  formatter->single_int("depth", m_depth, s_def_depth);
-  formatter->multi_uint("composition", m_composition);
-  formatter->container_end();
-}
-
 /*! \brief processes change of structure. */
 void Piece::structure_changed(Field_info* field_info)
 {

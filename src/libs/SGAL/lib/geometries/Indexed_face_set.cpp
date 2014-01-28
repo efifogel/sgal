@@ -1281,14 +1281,16 @@ void Indexed_face_set::init_prototype()
     static_cast<Boolean_handle_function>
     (&Indexed_face_set::normal_per_vertex_handle);
   s_prototype->add_field_info(new SF_bool(NORMAL_PER_VERTEX, "normalPerVertex",
-                                          normal_per_vertex_func, exec_func));
+                                          normal_per_vertex_func,
+                                          s_def_normal_per_vertex, exec_func));
 
   // colorPerVertex
   Boolean_handle_function color_per_vertex_func =
     static_cast<Boolean_handle_function>
     (&Indexed_face_set::color_per_vertex_handle);
   s_prototype->add_field_info(new SF_bool(COLOR_PER_VERTEX, "colorPerVertex",
-                                          color_per_vertex_func, exec_func));
+                                          color_per_vertex_func,
+                                          s_def_color_per_vertex, exec_func));
 }
 
 /*! \brief deletes the container prototype. */

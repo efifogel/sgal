@@ -30,7 +30,21 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Begin a new line */
+//! \brief constructor.
+Vrml_formatter::Vrml_formatter() : m_indent(0), m_indented(false) {}
+
+//! \brief constructs an output formatter.
+Vrml_formatter::Vrml_formatter(std::ostream& os) :
+  Formatter(os), m_indent(0), m_indented(false) {}
+
+//! \brief constructs an input formatter.
+Vrml_formatter::Vrml_formatter(std::istream& is) :
+  Formatter(is), m_indent(0), m_indented(false) {}
+
+//! \brief destructor
+Vrml_formatter::~Vrml_formatter() {}
+
+//! \brief begins a new line.
 void Vrml_formatter::new_line()
 {
   if (m_indented) {
@@ -39,14 +53,14 @@ void Vrml_formatter::new_line()
   }
 }
 
-/*! Writes an indentation */
+//! \brief writes an indentation.
 void Vrml_formatter::indent()
 {
   if (!m_indented) for (Uint i = 0; i < m_indent; ++i) out() << "  ";
   m_indented = true;
 }
 
-/*! Write the headers of the scene graph */
+//! \brief writes the headers of the scene graph.
 void Vrml_formatter::begin()
 {
   SGAL_assertion(m_out != NULL);
@@ -58,19 +72,16 @@ void Vrml_formatter::begin()
   new_line();
 }
 
-/*! Write the routing statements */
+//! \brief writes the routing statements.
 void Vrml_formatter::end()
 {
   // set_mode(*m_out, m_old_out_mode);
 }
 
-/*! Write a scene-graph node */
-void Vrml_formatter::write(Container* container)
-{
-  container->write(this);
-}
+//! \brief writes a scene-graph node.
+void Vrml_formatter::write(Container* container) { container->write(this); }
 
-/*! Write the container header */
+//! \brief writes the container header.
 void Vrml_formatter::container_begin(const std::string& tag)
 {
   indent();
@@ -78,7 +89,7 @@ void Vrml_formatter::container_begin(const std::string& tag)
   push_indent();
 }
 
-/*! Write the container tailer */
+//! \brief writes the container tailer.
 void Vrml_formatter::container_end()
 {
   pop_indent();
@@ -87,7 +98,7 @@ void Vrml_formatter::container_end()
   new_line();
 }
 
-/*! Write the header of a container multi-field */
+//! \brief writes the header of a container multi-field.
 void Vrml_formatter::multi_container_begin(const std::string& name)
 {
   new_line();
@@ -97,7 +108,7 @@ void Vrml_formatter::multi_container_begin(const std::string& name)
   push_indent();
 }
 
-/*! Write the tailer of a container multi-field */
+//! \brief writes the tailer of a container multi-field.
 void Vrml_formatter::multi_container_end()
 {
   pop_indent();
@@ -106,7 +117,7 @@ void Vrml_formatter::multi_container_end()
   new_line();
 }
 
-/*! Write the header of a container single-field */
+//! \brief writes the header of a container single-field.
 void Vrml_formatter::single_container_begin(const std::string& name)
 {
   new_line();
@@ -128,18 +139,24 @@ void Vrml_formatter::single_boolean(const std::string& name,
   new_line();
 }
 
-//! \brief writes a multi Uint field.
-void Vrml_formatter::multi_uint(const std::string& name,
-                                const Array<Uint>& value)
+//! \brief writes a multi-Boolean field.
+void Vrml_formatter::multi_boolean(const std::string& name,
+                                   const Array<Boolean>& value,
+                                   const Array<Boolean>& default_value)
 {
-  const Uint* vec = value.get_vector();
+  const Boolean* vec = value.get_vector();
+  const Boolean* default_vec = default_value.get_vector();
+  if ((value.size() == 0) || (value.size() != default_value.size())) return;
+  if (! std::equal(&vec[0], &vec[value.size()], &default_vec[value.size()]))
+    return;
+
   new_line();
   indent();
   out() << name << " [";
   new_line();
   push_indent();
   indent();
-  std::copy(vec, &vec[value.size()], std::ostream_iterator<Uint>(out(), " "));
+  std::copy(vec, &vec[value.size()], std::ostream_iterator<Boolean>(out(), " "));
   new_line();
   pop_indent();
   indent();

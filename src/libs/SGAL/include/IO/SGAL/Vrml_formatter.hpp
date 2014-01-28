@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12347 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -26,9 +26,15 @@
  */
 
 #include <iostream>
+#include <string>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Vector2f.hpp"
+#include "SGAL/Vector3f.hpp"
+#include "SGAL/Vector4f.hpp"
+#include "SGAL/Rotation.hpp"
+#include "SGAL/Sphere_bound.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -38,72 +44,245 @@ class Container;
 class SGAL_SGAL_DECL Vrml_formatter : public Formatter {
 public:
   /*! Constructor */
-  Vrml_formatter() : m_indent(0), m_indented(false) {}
+  Vrml_formatter();
 
-  /*! Construct an output formatter. */
-  Vrml_formatter(std::ostream& os) :
-    Formatter(os), m_indent(0), m_indented(false) {}
+  /*! Construct an output formatter.
+   */
+  Vrml_formatter(std::ostream& os);
 
-  /*! Construct an input formatter. */
-  Vrml_formatter(std::istream& is) :
-    Formatter(is), m_indent(0), m_indented(false) {}
+  /*! Construct an input formatter.
+   */
+  Vrml_formatter(std::istream& is);
 
   /*! Destructor */
-  virtual ~Vrml_formatter() {}
+  virtual ~Vrml_formatter();
 
   /// \name Write functions
   //@{
 
-  /*! Write the headers of the scene graph */
+  /*! Write the headers of the scene graph.
+   */
   virtual void begin();
 
-  /*! Write the routing statements */
+  /*! Write the routing statements.
+   */
   virtual void end();
 
-  /*! Write a scene-graph node */
+  /*! Write a scene-graph node.
+   */
   virtual void write(Container* container);
 
-  /*! Write the container header */
+  /*! Write the container header.
+   */
   virtual void container_begin(const std::string& tag);
 
-  /*! Write the container tailer */
+  /*! Write the container tailer.
+   */
   virtual void container_end();
 
-  /*! Write a single Boolean field */
+  /*! Write a single Boolean field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
   virtual void single_boolean(const std::string& name,
                               Boolean value, Boolean default_value);
 
-  /*! Write a single Float field */
+  /*! Write a single Float field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
   virtual void single_float(const std::string& name,
-                            Float value, Float default_value)
-  { single_field(name, value, default_value); }
+                            Float value, Float default_value);
 
-  /*! Write a single Uint field */
+  /*! Write a single Uint field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
   virtual void single_uint(const std::string& name,
-                           Uint value, Uint default_value)
-  { single_field(name, value, default_value); }
+                           Uint value, Uint default_value);
 
-  /*! Write a single Int field */
+  /*! Write a single Int field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
   virtual void single_int(const std::string& name,
-                          Int value, Int default_value)
-  { single_field(name, value, default_value); }
+                          Int value, Int default_value);
 
-  /*! Write a single Vector3d field */
+  /*! Write a single Scene_time field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_scene_time(const std::string& name,
+                                 Scene_time value,
+                                 Scene_time default_value);
+
+  /*! Write a single Vector2f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_vector2f(const std::string& name,
+                               const Vector2f& value,
+                               const Vector2f& default_value);
+
+  /*! Write a single Vector3f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
   virtual void single_vector3f(const std::string& name,
                                const Vector3f& value,
-                               const Vector3f& default_value)
-  { single_field(name, value, default_value); }
+                               const Vector3f& default_value);
 
-  /*! Write the header of a single-container field */
+  /*! Write a single Vector4f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_vector4f(const std::string& name,
+                               const Vector4f& value,
+                               const Vector4f& default_value);
+
+  /*! Write a single Rotation field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_rotation(const std::string& name,
+                               const Rotation& value,
+                               const Rotation& default_value);
+
+  /*! Write a single sphere-bound field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_sphere_bound(const std::string& name,
+                                   const Sphere_bound& value,
+                                   const Sphere_bound& default_value);
+
+  /*! Write a single string field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void single_string(const std::string& name,
+                             const std::string& value,
+                             const std::string& default_value);
+  /*! Write the header of a single-container field.
+   */
   virtual void single_container_begin(const std::string& name);
 
-  /*! Write the tailer of a single-container field */
+  /*! Write the tailer of a single-container field.
+   */
   virtual void single_container_end();
 
-  /*! Write a multi Uint field */
-  virtual void multi_uint(const std::string& name, const Array<Uint>& value);
+  /*! Write a multi-Boolean field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_boolean(const std::string& name,
+                             const Array<Boolean>& value,
+                             const Array<Boolean>& default_value);
 
-  /*! Write the header of a multi-container field */
+  /*! Write a multi-Float field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_float(const std::string& name,
+                           const Array<Float>& value,
+                           const Array<Float>& default_value);
+
+  /*! Write a multi-Uint field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_uint(const std::string& name,
+                          const Array<Uint>& value,
+                          const Array<Uint>& default_value);
+
+  /*! Write a multi-Int field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_int(const std::string& name,
+                         const Array<Int>& value,
+                         const Array<Int>& default_value);
+
+  /*! Write a multi-Scene_time field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_scene_time(const std::string& name,
+                                const Array<Scene_time>& value,
+                                const Array<Scene_time>& default_value);
+
+  /*! Write a multi-Vector2f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_vector2f(const std::string& name,
+                              const Array<Vector2f>& value,
+                              const Array<Vector2f>& default_value);
+
+  /*! Write a multi-Vector3f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_vector3f(const std::string& name,
+                              const Array<Vector3f>& value,
+                              const Array<Vector3f>& default_value);
+
+  /*! Write a multi-Vector4f field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_vector4f(const std::string& name,
+                              const Array<Vector4f>& value,
+                              const Array<Vector4f>& default_value);
+
+  /*! Write a multi-Rotation field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_rotation(const std::string& name,
+                              const Array<Rotation>& value,
+                              const Array<Rotation>& default_value);
+
+  /*! Write a multi-Sphere_bound field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_sphere_bound(const std::string& name,
+                                  const Array<Sphere_bound>& value,
+                                  const Array<Sphere_bound>& default_value);
+
+  /*! Write a multi-string field.
+   * \param name The attribute name.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  virtual void multi_string(const std::string& name,
+                            const Array<std::string>& value,
+                            const Array<std::string>& default_value);
+
+  /*! Write the header of a multi-container field.
+   */
   virtual void multi_container_begin(const std::string& name);
 
   /*! Write the tailer of a multi-container field */
@@ -112,7 +291,8 @@ public:
   //@}
 
 private:
-  /*! Write a single field of type T */
+  /*! Write a single field of type T.
+   */
   template <typename T>
   void single_field(const std::string& name, const T& value,
                     const T& default_value)
@@ -124,20 +304,52 @@ private:
     new_line();
   }
 
-  /*! Obtain the indentation level */
-  Uint get_indent() const { return m_indent; }
+  /*! Write a multi field of Array of type T.
+   */
+  template <typename T>
+  void multi_field(const std::string& name, const Array<T>& value,
+                   const Array<T>& default_value)
+  {
+    const T* vec = value.get_vector();
+    const T* default_vec = default_value.get_vector();
+    if (value.size() == 0) return;
+    if ((value.size() == default_value.size()) &&
+        std::equal(&vec[0], &vec[value.size()], &default_vec[value.size()]))
+      return;
 
-  /*! Write an indentation */
+    new_line();
+    indent();
+    out() << name << " [";
+    new_line();
+    push_indent();
+    indent();
+    std::copy(vec, &vec[value.size()], std::ostream_iterator<T>(out(), " "));
+    new_line();
+    pop_indent();
+    indent();
+    out() << "]";
+    new_line();
+  }
+
+  /*! Obtain the indentation level.
+   */
+  Uint get_indent() const;
+
+  /*! Write an indentation.
+   */
   void indent();
 
-  /*! Begin a new line */
+  /*! Begin a new line.
+   */
   void new_line();
 
-  /*! Pop the indentation level */
-  void pop_indent() { --m_indent; }
+  /*! Pop the indentation level.
+   */
+  void pop_indent();
 
-  /*! Pushes the indentation level */
-  void push_indent() { ++m_indent; }
+  /*! Push the indentation level.
+   */
+  void push_indent();
 
   /*! The indentation level */
   Uint m_indent;
@@ -151,6 +363,137 @@ private:
   /*! Space holder for the input stream mode */
   // IO::Mode m_old_in_mode;
 };
+
+//! \brief writes a single Float field.
+inline void Vrml_formatter::single_float(const std::string& name,
+                                         Float value, Float default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Uint field.
+inline void Vrml_formatter::single_uint(const std::string& name,
+                                        Uint value, Uint default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Int field.
+inline void Vrml_formatter::single_int(const std::string& name,
+                                       Int value, Int default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Scene_time field.
+inline void Vrml_formatter::single_scene_time(const std::string& name,
+                                              Scene_time value,
+                                              Scene_time default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Vector2f field.
+inline void Vrml_formatter::single_vector2f(const std::string& name,
+                                            const Vector2f& value,
+                                            const Vector2f& default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Vector3f field.
+inline void Vrml_formatter::single_vector3f(const std::string& name,
+                                            const Vector3f& value,
+                                            const Vector3f& default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Vector4f field.
+inline void Vrml_formatter::single_vector4f(const std::string& name,
+                                            const Vector4f& value,
+                                            const Vector4f& default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Rotation field.
+inline void Vrml_formatter::single_rotation(const std::string& name,
+                                            const Rotation& value,
+                                            const Rotation& default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single Sphere_bound field.
+inline void
+Vrml_formatter::single_sphere_bound(const std::string& name,
+                                    const Sphere_bound& value,
+                                    const Sphere_bound& default_value)
+{ single_field(name, value, default_value); }
+
+//! \brief writes a single string field.
+inline void Vrml_formatter::single_string(const std::string& name,
+                                          const std::string& value,
+                                          const std::string& default_value)
+{ single_field(name, value, default_value); }
+
+// Multi-field
+//! \brief writes a single Float field.
+inline void Vrml_formatter::multi_float(const std::string& name,
+                                        const Array<Float>& value,
+                                        const Array<Float>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Uint field.
+inline void Vrml_formatter::multi_uint(const std::string& name,
+                                       const Array<Uint>& value,
+                                       const Array<Uint>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Int field.
+inline void Vrml_formatter::multi_int(const std::string& name,
+                                      const Array<Int>& value,
+                                      const Array<Int>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Scene_time field.
+inline void
+Vrml_formatter::multi_scene_time(const std::string& name,
+                                 const Array<Scene_time>& value,
+                                 const Array<Scene_time>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Vector2f field.
+inline void Vrml_formatter::multi_vector2f(const std::string& name,
+                                           const Array<Vector2f>& value,
+                                           const Array<Vector2f>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Vector3f field.
+inline void Vrml_formatter::multi_vector3f(const std::string& name,
+                                           const Array<Vector3f>& value,
+                                           const Array<Vector3f>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Vector4f field.
+inline void Vrml_formatter::multi_vector4f(const std::string& name,
+                                           const Array<Vector4f>& value,
+                                           const Array<Vector4f>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Rotation field.
+inline void Vrml_formatter::multi_rotation(const std::string& name,
+                                           const Array<Rotation>& value,
+                                           const Array<Rotation>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single Sphere_bound field.
+inline void
+Vrml_formatter::multi_sphere_bound(const std::string& name,
+                                   const Array<Sphere_bound>& value,
+                                   const Array<Sphere_bound>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief writes a single string field.
+inline void
+Vrml_formatter::multi_string(const std::string& name,
+                             const Array<std::string>& value,
+                             const Array<std::string>& default_value)
+{ multi_field(name, value, default_value); }
+
+//! \brief obtains the indentation level.
+inline Uint Vrml_formatter::get_indent() const { return m_indent; }
+
+//! \brief pops the indentation level.
+inline void Vrml_formatter::pop_indent() { --m_indent; }
+
+//! \brief pushes the indentation level.
+inline void Vrml_formatter::push_indent() { ++m_indent; }
 
 SGAL_END_NAMESPACE
 

@@ -184,7 +184,8 @@ void Mesh_set::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Boolean_handle_function is_ccw_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_ccw_handle);
-  s_prototype->add_field_info(new SF_bool(CCW, "ccw", is_ccw_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(CCW, "ccw", is_ccw_func,
+                                          s_def_is_ccw, exec_func));
 
   // solid
   exec_func =
@@ -192,7 +193,7 @@ void Mesh_set::init_prototype()
   Boolean_handle_function is_solid_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_solid_handle);
   s_prototype->add_field_info(new SF_bool(SOLID, "solid", is_solid_func,
-                                          exec_func));
+                                          s_def_is_solid, exec_func));
 
   // convex
   exec_func =
@@ -200,7 +201,7 @@ void Mesh_set::init_prototype()
   Boolean_handle_function is_convex_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_convex_handle);
   s_prototype->add_field_info(new SF_bool(CONVEX, "convex", is_convex_func,
-                                          exec_func));
+                                          s_def_is_convex, exec_func));
 
   // creaseAngle
   exec_func =
@@ -208,7 +209,8 @@ void Mesh_set::init_prototype()
   Float_handle_function crease_angle_func =
     static_cast<Float_handle_function>(&Mesh_set::crease_angle_handle);
   s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
-                                           crease_angle_func, exec_func));
+                                           crease_angle_func,
+                                           s_def_crease_angle, exec_func));
 }
 
 /*! \brief deletes the container prototype. */

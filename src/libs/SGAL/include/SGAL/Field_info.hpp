@@ -121,61 +121,197 @@ public:
    */
   virtual Value_holder_base* create_value_holder(Container* container) = 0;
 
-  /*! Obtain the attribute of a field in a given container, where this field
-   * info contains the information of the field.
+  /*! .
    */
   virtual void write(Container* container, Formatter* formatter) const = 0;
 
-  /*! Obtain the attribute of a field in a given container, where this field
-   * info contains the information of the field.
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
    */
-  void write(Formatter* formatter, Boolean value) const;
+  void write(Formatter* formatter, Boolean value, Boolean default_value) const;
 
-  void write(Formatter* formatter, const Float& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, Float value, Float default_value) const;
 
-  void write(Formatter* formatter, const Uint& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, Uint value, Uint default_value) const;
 
-  void write(Formatter* formatter, const Int& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, Int value, Int default_value) const;
 
-  void write(Formatter* formatter, const Scene_time& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Scene_time& value,
+             const Scene_time& default_value) const;
 
-  void write(Formatter* formatter, const Vector2f& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Vector2f& value,
+             const Vector2f& default_value) const;
 
-  void write(Formatter* formatter, const Vector3f& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Vector3f& value,
+             const Vector3f& default_value) const;
 
-  void write(Formatter* formatter, const Vector4f& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Vector4f& value,
+             const Vector4f& default_value) const;
 
-  void write(Formatter* formatter, const Rotation& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Rotation& value,
+             const Rotation& default_value) const;
 
-  void write(Formatter* formatter, const Sphere_bound& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Sphere_bound& value,
+             const Sphere_bound& default_value) const;
 
-  void write(Formatter* formatter, const std::string& value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const std::string& value,
+             const std::string& default_value) const;
 
-  void write(Formatter* formatter, Shared_container value) const;
+  /*! Write the (single) Boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, Shared_container value,
+             Shared_container default_value) const;
 
-  void write(Formatter* formatter, const Boolean_array& value) const;
+  /*! Write the multi-boolean field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Boolean_array& value,
+             const Boolean_array& default_value) const;
 
-  void write(Formatter* formatter, const Float_array& value) const;
+  /*! Write the multi-float field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Float_array& value,
+             const Float_array& default_value) const;
 
-  void write(Formatter* formatter, const Uint_array& value) const;
+  /*! Write the multi Uint field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Uint_array& value,
+             const Uint_array& default_value) const;
 
-  void write(Formatter* formatter, const Int_array& value) const;
+  /*! Write the multi-int field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Int_array& value,
+             const Int_array& default_value) const;
 
-  void write(Formatter* formatter, const Scene_time_array& value) const;
+  /*! Write the multi-scene-time field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Scene_time_array& value,
+             const Scene_time_array& default_value) const;
 
-  void write(Formatter* formatter, const Vector2f_array& value) const;
+  /*! Write the multi-vector2f field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Vector2f_array& value,
+             const Vector2f_array& default_value) const;
 
-  void write(Formatter* formatter, const Vector3f_array& value) const;
+  /*! Write the multi-vector3f field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Vector3f_array& value,
+             const Vector3f_array& default_value) const;
 
-  void write(Formatter* formatter, const Vector4f_array& value) const;
+  /*! Write the multi-vector4f field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Vector4f_array& value,
+             const Vector4f_array& default_value) const;
 
-  void write(Formatter* formatter, const Rotation_array& value) const;
+  /*! Write the multi-rotation field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Rotation_array& value,
+             const Rotation_array& default_value) const;
 
-  void write(Formatter* formatter, const Sphere_bound_array& value) const;
+  /*! Write the multisphere-bound field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Sphere_bound_array& value,
+             const Sphere_bound_array& default_value) const;
 
-  void write(Formatter* formatter, const String_array& value) const;
+  /*! Write the multi-string field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const String_array& value,
+             const String_array& default_value) const;
 
-  void write(Formatter* formatter, const Shared_container_array& value) const;
+  /*! Write the multi-shared container field.
+   * \param formatter The formatter.
+   * \param value The attribute value.
+   * \param default_value The attribute default value.
+   */
+  void write(Formatter* formatter, const Shared_container_array& value,
+             const Shared_container_array& default_value) const;
 
   /*! \todo
   // Creates an SAI_field of the same type id and name
@@ -208,8 +344,7 @@ inline Boolean Field_info::operator==(const Field_info& other) const
 inline Boolean Field_info::is_initially_blocked() const
 { return m_initially_blocked; }
 
-/*!
- */
+//! \brief export a field info.
 inline std::ostream& operator<<(std::ostream& os, const Field_info& fi)
 {
   os << fi.get_name().c_str() << ", " << fi.get_id();

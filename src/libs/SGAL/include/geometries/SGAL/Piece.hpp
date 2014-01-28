@@ -79,9 +79,6 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Write this container. */
-  virtual void write(Formatter* formatter);
-
   /*! Clean the representation. */
   virtual void clean();
 

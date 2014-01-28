@@ -188,12 +188,12 @@ private:
   static Container_proto* s_prototype;
 
   /*! Default Values */
-  static Float m_def_ambient_intensity;
-  static Vector3f m_def_diffuse_color;
-  static Vector3f m_def_specular_color;
-  static Vector3f m_def_emissive_color;
-  static Float m_def_shininess;
-  static Float m_def_transparency;
+  static const Float s_def_ambient_intensity;
+  static const Vector3f s_def_diffuse_color;
+  static const Vector3f s_def_specular_color;
+  static const Vector3f s_def_emissive_color;
+  static const Float s_def_shininess;
+  static const Float s_def_transparency;
 
   /*! the ambient intensity */
   Float m_ambient_intensity;

@@ -104,13 +104,42 @@ void Geo_set::init_prototype()
 
   // texCoord
   exec_func = static_cast<Execution_function>(&Geo_set::tex_coord_changed);
-  Shared_container_handle_function tex_coord_array_func =
+  auto tex_coord_array_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::tex_coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(TEX_COORD_ARRAY,
                                                       "texCoord",
                                                       tex_coord_array_func,
                                                       exec_func));
+
+  // coordIndex
+  exec_func = static_cast<Execution_function>(&Geo_set::field_changed);
+  auto coord_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::coord_indices_handle);
+  s_prototype->add_field_info(new MF_uint(COORD_INDEX_ARRAY, "coordIndex",
+                                          coord_index_func, exec_func));
+
+  // normalIndex
+  auto normal_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::normal_indices_handle);
+  s_prototype->add_field_info(new MF_uint(NORMAL_INDEX_ARRAY, "normalIndex",
+                                          normal_index_func, exec_func));
+
+  // colorIndex
+  auto color_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::color_indices_handle);
+  s_prototype->add_field_info(new MF_uint(COLOR_INDEX_ARRAY, "colorIndex",
+                                          color_index_func, exec_func));
+
+  // texCoordIndex
+  auto tex_coord_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::tex_coord_indices_handle);
+  s_prototype->add_field_info(new MF_uint(TEX_COORD_INDEX_ARRAY, "texCoordIndex",
+                                          tex_coord_index_func, exec_func));
 }
 
 /*! \brief deletes the container prototype. */

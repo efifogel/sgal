@@ -117,7 +117,7 @@ public:
   virtual void write(Container* container, Formatter* formatter) const
   {
     const T* handle = (container->*m_handle)(this);
-    Field_info::write(formatter, *handle);
+    Field_info::write(formatter, *handle, m_initial_value);
   }
 
   /*! \todo
