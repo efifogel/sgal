@@ -129,6 +129,7 @@ public:
   virtual void add_to_scene(Scene_graph* /* scene_graph */) {}
 
   /*! Write this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
