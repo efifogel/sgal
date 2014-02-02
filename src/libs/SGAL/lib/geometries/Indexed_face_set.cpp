@@ -67,7 +67,7 @@ Boolean Indexed_face_set::m_draws_initialized(false);
 
 REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 
-/*! A parameter-less constructor */
+//! \brief constructor.
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Mesh_set(proto),
   m_max_rank(0),
@@ -94,7 +94,6 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_dirty_vertex_tex_coord_buffer(true)
 {
   m_primitive_type = PT_POLYGONS;
-  m_flatten_indices = true;
 
   if (m_draws_initialized) return;
   m_draws_initialized = true;
@@ -674,11 +673,10 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
     &Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO;
 }
 
-/*! Destructor */
+//! \brief destructor.
 Indexed_face_set::~Indexed_face_set()
 {
   clear_vertex_arrays();
-  clear_vertex_index_arrays();
   destroy_display_list();
   destroy_vertex_buffer_object();
 }
@@ -701,7 +699,7 @@ void Indexed_face_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
 }
 
-/*! \brief claculates the normals in case they are invalidated. */
+//! \brief claculates the normals in case they are invalidated.
 void Indexed_face_set::clean_normals()
 {
   if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
@@ -712,7 +710,7 @@ void Indexed_face_set::clean_normals()
   m_dirty_vertex_normal_buffer = true;
 }
 
-/*! \brief Compute the normal to a facet from 3 points lying on the facet. */
+//! \brief Compute the normal to a facet from 3 points lying on the facet.
 void Indexed_face_set::compute_normal(const Vector3f& v1, const Vector3f& v2,
                                       const Vector3f& v3, Vector3f& normal)
   const
@@ -725,22 +723,22 @@ void Indexed_face_set::compute_normal(const Vector3f& v1, const Vector3f& v2,
   normal.normalize();
 }
 
-/*! \brief computes the normalized normal to a triangle. */
+//! \brief computes the normalized normal to a triangle.
 void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& normal) const
 {
-  Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
-  Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
-  Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+2]];
+  Vector3f& v0 = (*m_coord_array)[m_flat_coord_indices[j]];
+  Vector3f& v1 = (*m_coord_array)[m_flat_coord_indices[j+1]];
+  Vector3f& v2 = (*m_coord_array)[m_flat_coord_indices[j+2]];
   SGAL_assertion(!v0.collinear(v0, v1, v2));
   compute_normal(v0, v1, v2, normal);
 }
 
-/*! \brief computes the center point of a triangle. */
+//! \brief computes the center point of a triangle.
 void Indexed_face_set::compute_triangle_center(Uint j, Vector3f& center) const
 {
-  center.add((*m_coord_array)[m_coord_indices[j+0]]);
-  center.add((*m_coord_array)[m_coord_indices[j+1]]);
-  center.add((*m_coord_array)[m_coord_indices[j+2]]);
+  center.add((*m_coord_array)[m_flat_coord_indices[j+0]]);
+  center.add((*m_coord_array)[m_flat_coord_indices[j+1]]);
+  center.add((*m_coord_array)[m_flat_coord_indices[j+2]]);
   center.scale(1.0f / 3);
 }
 
@@ -752,13 +750,13 @@ compute_triangle_vertex_info(Uint j, Uint facet_index,
                              const Vector3f& center,
                              Vertices_info& vertices_info) const
 {
-  Uint vertex_index = m_coord_indices[j+0];
+  Uint vertex_index = m_flat_coord_indices[j+0];
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_coord_indices[j+1];
+  vertex_index = m_flat_coord_indices[j+1];
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_coord_indices[j+2];
+  vertex_index = m_flat_coord_indices[j+2];
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
 }
@@ -769,25 +767,25 @@ compute_triangle_vertex_info(Uint j, Uint facet_index,
  */
 void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& normal) const
 {
-  Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
-  Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
-  Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+2]];
+  Vector3f& v0 = (*m_coord_array)[m_flat_coord_indices[j]];
+  Vector3f& v1 = (*m_coord_array)[m_flat_coord_indices[j+1]];
+  Vector3f& v2 = (*m_coord_array)[m_flat_coord_indices[j+2]];
   if (!v0.collinear(v0, v1, v2)) {
     compute_normal(v0, v1, v2, normal);
     return;
   }
-  Vector3f& v3 = (*m_coord_array)[m_coord_indices[j+3]];
+  Vector3f& v3 = (*m_coord_array)[m_flat_coord_indices[j+3]];
   SGAL_assertion(!v0.collinear(v0, v1, v3));
   compute_normal(v0, v1, v3, normal);
 }
 
-/*! \brief computes the center point of a quadrilateral. */
+//! \brief computes the center point of a quadrilateral.
 void Indexed_face_set::compute_quad_center(Uint j, Vector3f& center) const
 {
-  center.add((*m_coord_array)[m_coord_indices[j+0]]);
-  center.add((*m_coord_array)[m_coord_indices[j+1]]);
-  center.add((*m_coord_array)[m_coord_indices[j+2]]);
-  center.add((*m_coord_array)[m_coord_indices[j+3]]);
+  center.add((*m_coord_array)[m_flat_coord_indices[j+0]]);
+  center.add((*m_coord_array)[m_flat_coord_indices[j+1]]);
+  center.add((*m_coord_array)[m_flat_coord_indices[j+2]]);
+  center.add((*m_coord_array)[m_flat_coord_indices[j+3]]);
   center.scale(1.0f / 4);
 }
 
@@ -799,16 +797,16 @@ Indexed_face_set::compute_quad_vertex_info(Uint j, Uint facet_index,
                                            const Vector3f& center,
                                            Vertices_info& vertices_info) const
 {
-  Uint vertex_index = m_coord_indices[j+0];
+  Uint vertex_index = m_flat_coord_indices[j+0];
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_coord_indices[j+1];
+  vertex_index = m_flat_coord_indices[j+1];
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_coord_indices[j+2];
+  vertex_index = m_flat_coord_indices[j+2];
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
-  vertex_index = m_coord_indices[j+3];
+  vertex_index = m_flat_coord_indices[j+3];
   compute_vertex_info(vertex_index, facet_index, center,
                       std::back_inserter(vertices_info[vertex_index]));
 }
@@ -829,7 +827,7 @@ void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& normal) const
   SGAL_assertion_msg(0, "All vertices are collinear!");
 }
 
-/*! \brief computes the center point of a polygon. */
+//! \brief computes the center point of a polygon.
 Uint Indexed_face_set::compute_polygon_center(Uint j, Vector3f& center) const
 {
   Uint k;
@@ -839,7 +837,7 @@ Uint Indexed_face_set::compute_polygon_center(Uint j, Vector3f& center) const
   return k;
 }
 
-/*! \brief computes the vertex information for the all vertices of a polygon. */
+//! \brief computes the vertex information for the all vertices of a polygon.
 void Indexed_face_set::
 compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
                             const Vector3f& center,
@@ -852,7 +850,7 @@ compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
   }
 }
 
-/*! \brief calculates vertex information. */
+//! \brief calculates vertex information.
 void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
 {
   SGAL_assertion(m_coord_array);
@@ -896,7 +894,7 @@ void Indexed_face_set::calculate_vertices_info(Vertices_info& vertices_info)
   }
 }
 
-/*! \brief calculates a single normal per vertex for all vertices. */
+//! \brief calculates a single normal per vertex for all vertices.
 void Indexed_face_set::calculate_single_normal_per_vertex()
 {
   SGAL_assertion(m_coord_array);
@@ -909,7 +907,7 @@ void Indexed_face_set::calculate_single_normal_per_vertex()
   set_normal_per_vertex(true);
 }
 
-/*! \brief determines whether the surface is smooth. */
+//! \brief determines whether the surface is smooth.
 Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
                                     const Vector3f& normal2) const
 {
@@ -917,11 +915,11 @@ Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
   return (angle > m_crease_angle);
 }
 
-/*! \brief calculates multiple normals per vertex for all vertices. */
+//! \brief calculates multiple normals per vertex for all vertices.
 void Indexed_face_set::calculate_multiple_normals_per_vertex()
 { calculate_single_normal_per_vertex(); }
 
-/*! \brief calculates a single normal per polygon for all polygons. */
+//! \brief calculates a single normal per polygon for all polygons.
 void Indexed_face_set::
 calculate_normal_per_polygon(Normal_array& normals)
 {
@@ -955,7 +953,7 @@ calculate_normal_per_polygon(Normal_array& normals)
   }
 }
 
-/*! \brief calculates a single normal per polygon for all polygons. */
+//! \brief calculates a single normal per polygon for all polygons.
 void Indexed_face_set::calculate_normal_per_polygon()
 {
   SGAL_assertion(m_coord_array);
@@ -1004,14 +1002,14 @@ void Indexed_face_set::clean_tex_coords()
   m_dirty_vertex_tex_coord_buffer = true;
 }
 
-/*! \brief draws the mesh conditionaly. */
+//! \brief draws the mesh conditionaly.
 void Indexed_face_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
-  if (is_dirty_coord_indices()) clean_coord_indices();
-  if (is_dirty_normal_indices()) clean_normal_indices();
-  if (is_dirty_color_indices()) clean_color_indices();
-  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   if (is_empty()) return;
 
   // Clean the normals:
@@ -1064,19 +1062,19 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
 /*! \brief dispatches the appropriate drawing routine. */
 void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
 {
-  // When using vertex array, the index arrays must be flat:
+   // When using vertex array, the index arrays must be flat:
   SGAL_assertion_code(Boolean uva = use_vertex_array(););
   SGAL_assertion(!uva || m_coord_indices_flat);
 
   Fragment_source fragment_source = resolve_fragment_source();
   Boolean fragment_indexed = (fragment_source == FS_NORMAL) ?
-    (m_normal_indices.size() ? true : false) :
-    (m_color_indices.size() ? true : false);
+    (m_flat_normal_indices.size() ? true : false) :
+    (m_flat_color_indices.size() ? true : false);
   Attachment fragment_attached = (fragment_source == FS_NORMAL) ?
     ((m_normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE) :
     ((m_color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE);
   Boolean texture_enbaled = m_tex_coord_array ? true : false;
-  Boolean texture_indexed = m_tex_coord_indices.size() ? true : false;
+  Boolean texture_indexed = m_flat_tex_coord_indices.size() ? true : false;
   Boolean va = use_vertex_array();
 
   Uint mask =
@@ -1091,7 +1089,7 @@ void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
   (this->*draws[mask])();
 }
 
-/*! \brief isects direct drawing-mode. */
+//! \brief isects direct drawing-mode.
 void Indexed_face_set::isect_direct()
 {
   Uint i, j;
@@ -1100,13 +1098,12 @@ void Indexed_face_set::isect_direct()
     if (m_coord_array->size()) {
       int num_tri_strips = m_tri_strip_lengths[0];
       int index = 0;
-      for (int strip = 0 ; strip < num_tri_strips ; strip++) {
+      for (int strip = 0; strip < num_tri_strips; ++strip) {
         int tmp = strip + 1;
         glBegin(GL_TRIANGLE_STRIP);
         for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i) {
-          Vector3f& v = (*m_coord_array)[m_coord_indices[index]];
+          Vector3f& v = (*m_coord_array)[m_flat_coord_indices[index++]];
           glVertex3fv((float*)&v);
-          index++;
         }
         glEnd();
       }
@@ -1116,9 +1113,9 @@ void Indexed_face_set::isect_direct()
    case PT_TRIANGLES:
     glBegin(GL_TRIANGLES);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
     }
     glEnd();
     return;
@@ -1126,10 +1123,10 @@ void Indexed_face_set::isect_direct()
    case PT_QUADS:
     glBegin(GL_QUADS);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
     }
     glEnd();
     return;
@@ -1154,11 +1151,11 @@ void Indexed_face_set::isect_direct()
   }
 }
 
-/*! \brief draws the sphere in selection mode. */
+//! \brief draws the mesh in selection mode.
 void Indexed_face_set::isect(Isect_action* action)
 {
   if (is_dirty()) clean();
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (is_empty()) return;
 
   Context* context = action->get_context();
@@ -1185,7 +1182,7 @@ void Indexed_face_set::isect(Isect_action* action)
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-/*! \brief creates a new display list. This is called after each update. */
+//! \brief creates a new display list. This is called after each update.
 int Indexed_face_set::create_display_list(Draw_action* action)
 {
   int id = glGenLists(1);
@@ -1195,7 +1192,7 @@ int Indexed_face_set::create_display_list(Draw_action* action)
   return id;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Indexed_face_set::set_attributes(Element* elem)
 {
   Mesh_set::set_attributes(elem);
@@ -1227,7 +1224,7 @@ void Indexed_face_set::set_attributes(Element* elem)
   // in case normalPerVertex or colorPerVertex is false resp.
 }
 
-/*! \brief adds the container to a given scene. */
+//! \brief adds the container to a given scene.
 void Indexed_face_set::add_to_scene(Scene_graph* sg)
 {
   Configuration* config = sg->get_configuration();
@@ -1267,7 +1264,7 @@ Attribute_list Indexed_face_set::get_attributes()
 
 #endif
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Indexed_face_set::init_prototype()
 {
   if (s_prototype) return;
@@ -1293,21 +1290,21 @@ void Indexed_face_set::init_prototype()
                                           s_def_color_per_vertex, exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Indexed_face_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Indexed_face_set::get_prototype()
 {
   if (s_prototype == NULL) Indexed_face_set::init_prototype();
   return s_prototype;
 }
 
-/*! \brief destroys the data structure of the vertex buffer object. */
+//! \brief destroys the data structure of the vertex buffer object.
 void Indexed_face_set::destroy_vertex_buffer_object()
 {
 #if defined(GL_ARB_vertex_buffer_object)
@@ -1337,7 +1334,7 @@ void Indexed_face_set::destroy_vertex_buffer_object()
   m_dirty_vertex_tex_coord_buffer = true;
 }
 
-/*! \brief destroys the data structure of the display_list. */
+//! \brief destroys the data structure of the display_list.
 void Indexed_face_set::destroy_display_list()
 {
   if (m_display_list_id != 0) {
@@ -1346,7 +1343,7 @@ void Indexed_face_set::destroy_display_list()
   }
 }
 
-/*! \brief destroys the vertex arrays. */
+//! \brief destroys the vertex arrays.
 void Indexed_face_set::clear_vertex_arrays()
 {
   if (m_coord_array) m_coord_array->clear();
@@ -1355,16 +1352,7 @@ void Indexed_face_set::clear_vertex_arrays()
   if (m_color_array) m_color_array->clear();
 }
 
-/*! \brief clears the vertex-index arrays. */
-void Indexed_face_set::clear_vertex_index_arrays()
-{
-  m_coord_indices.clear();
-  m_tex_coord_indices.clear();
-  m_normal_indices.clear();
-  m_color_indices.clear();
-}
-
-/*! \brief processes change of coordinate points. */
+//! \brief processes change of coordinate points.
 void Indexed_face_set::coord_point_changed()
 {
   destroy_display_list();
@@ -1373,7 +1361,7 @@ void Indexed_face_set::coord_point_changed()
   if (m_tex_coords_cleaned || !m_tex_coord_array) m_dirty_tex_coords = true;
 }
 
-/*! \brief returns true if the representation is empty. */
+//! \brief returns true if the representation is empty.
 Boolean Indexed_face_set::is_empty() const
 {
   if (m_drawing_mode == Configuration::GDM_DISPLAY_LIST)
@@ -1387,7 +1375,7 @@ Boolean Indexed_face_set::is_empty() const
   return Geo_set::is_empty();
 }
 
-/*! \brief Calculate a single normal per vertex for all vertices. */
+//! \brief Calculate a single normal per vertex for all vertices.
 void Indexed_face_set::
 calculate_single_normal_per_vertex(Shared_normal_array normals)
 {
@@ -1425,7 +1413,7 @@ calculate_single_normal_per_vertex(Shared_normal_array normals)
   vertices_info.clear();
 }
 
-/*! \brief cleans the data structure of the vertex coordinate buffer object. */
+//! \brief cleans the data structure of the vertex coordinate buffer object.
 void Indexed_face_set::clean_vertex_coord_buffer()
 {
   if (!m_coord_array) return;
@@ -1451,7 +1439,7 @@ void Indexed_face_set::clean_vertex_coord_buffer()
   m_dirty_vertex_coord_buffer = false;
 }
 
-/*! \brief cleans the data structure of the vertex normal buffer object. */
+//! \brief cleans the data structure of the vertex normal buffer object.
 void Indexed_face_set::clean_vertex_normal_buffer()
 {
   if (!m_normal_array) return;
@@ -1476,7 +1464,7 @@ void Indexed_face_set::clean_vertex_normal_buffer()
   m_dirty_vertex_normal_buffer = false;
 }
 
-/*! \brief cleans the data structure of the vertex color buffer object. */
+//! \brief cleans the data structure of the vertex color buffer object.
 void Indexed_face_set::clean_vertex_color_buffer()
 {
   if (!m_color_array) return;
@@ -1535,14 +1523,14 @@ void Indexed_face_set::clean_vertex_tex_coord_buffer()
   m_dirty_vertex_tex_coord_buffer = false;
 }
 
-/*! \brief sets the coordinate array. */
+//! \brief sets the coordinate array.
 void Indexed_face_set::set_coord_array(Shared_coord_array coord_array)
 {
   Mesh_set::set_coord_array(coord_array);
   coord_point_changed();
 }
 
-/*! \brief sets the normal array. */
+//! \brief sets the normal array.
 void Indexed_face_set::set_normal_array(Shared_normal_array normal_array)
 {
   Mesh_set::set_normal_array(normal_array);
@@ -1552,7 +1540,7 @@ void Indexed_face_set::set_normal_array(Shared_normal_array normal_array)
   m_normals_cleaned = false;
 }
 
-/*! \brief sets the color field. */
+//! \brief sets the color field.
 void Indexed_face_set::set_color_array(Shared_color_array color_array)
 {
   Mesh_set::set_color_array(color_array);
@@ -1560,7 +1548,7 @@ void Indexed_face_set::set_color_array(Shared_color_array color_array)
   m_dirty_vertex_color_buffer = true;
 }
 
-/*! \brief sets the texture-coordinate array. */
+//! \brief sets the texture-coordinate array.
 void
 Indexed_face_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 {
@@ -1571,7 +1559,7 @@ Indexed_face_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
   m_tex_coords_cleaned = false;
 }
 
-/*! \brief Process change of field. */
+//! \brief Process change of field.
 void Indexed_face_set::field_changed(Field_info* field_info)
 {
   switch (field_info->get_id()) {
@@ -1601,12 +1589,11 @@ void Indexed_face_set::field_changed(Field_info* field_info)
   Mesh_set::field_changed(field_info);
 }
 
-/*! \brief determines whether colors are generated by the geometry. */
+//! \brief determines whether colors are generated by the geometry.
 inline Boolean Indexed_face_set::are_generated_color()
 { return (m_generated_color); }
 
-/*! \brief determines whether texture coordinates are generated by the geometry.
- */
+//! \brief determines whether texture coordinates are generated by the geometry.
 inline Boolean Indexed_face_set::are_generated_tex_coord()
 { return (m_generated_tex_coord); }
 

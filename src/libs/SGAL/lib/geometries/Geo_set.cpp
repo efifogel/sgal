@@ -57,9 +57,9 @@ Geo_set::Geo_set(Boolean proto) :
   m_normal_attachment(PER_VERTEX),
   m_color_attachment(PER_VERTEX),
   m_coord_indices(),
-  m_tex_coord_indices(),
   m_normal_indices(),
   m_color_indices(),
+  m_tex_coord_indices(),
   m_primitive_type(s_def_primitive_type)
 {}
 

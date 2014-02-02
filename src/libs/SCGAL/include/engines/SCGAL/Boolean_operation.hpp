@@ -172,39 +172,39 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype */
+//! \brief constructs the prototype.
 inline Boolean_operation* Boolean_operation::prototype()
 { return new Boolean_operation(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Boolean_operation::clone() { return new Boolean_operation(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Boolean_operation::get_tag() const { return s_tag; }
 
-/*! \brief obtains the operation. */
+//! \brief obtains the operation.
 inline Boolean_operation::Operation Boolean_operation::get_operation() const
 { return m_operation; }
 
-/*! \brief sets the operation. */
+//! \brief sets the operation.
 inline void Boolean_operation::set_operation(Operation operation)
 { m_operation = operation; }
 
-/*! \brief obtains the 1st operand. */
+//! \brief obtains the 1st operand.
 inline Boolean_operation::Shared_mesh_set Boolean_operation::get_operand1()
   const
 { return m_operand1; }
 
-/*! \brief sets the 1st operand. */
+//! \brief sets the 1st operand.
 inline void Boolean_operation::set_operand1(Shared_mesh_set operand)
 { m_operand1 = operand; }
 
-/*! \brief obtains the 2nd operand. */
+//! \brief obtains the 2nd operand.
 inline Boolean_operation::Shared_mesh_set Boolean_operation::set_operand2()
   const
 { return m_operand2; }
 
-/*! \brief sets the 2nd operand. */
+//! \brief sets the 2nd operand.
 inline void Boolean_operation::set_operand2(Shared_mesh_set operand)
 { m_operand2 = operand; }
 

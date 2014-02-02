@@ -266,14 +266,14 @@ void Cubical_gaussian_map_geo::clean()
       cgm_initializer(exact_coord_array->begin(),
                       exact_coord_array->end(),
                       exact_coord_array->size(),
-                      m_coord_indices.begin(), m_coord_indices.end(),
+                      m_flat_coord_indices.begin(), m_flat_coord_indices.end(),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     else {
       // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
       cgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
-                      m_coord_indices.begin(), m_coord_indices.end(),
+                      m_flat_coord_indices.begin(), m_flat_coord_indices.end(),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     clock_t end_time = clock();
@@ -1578,7 +1578,7 @@ void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
 void Cubical_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (is_dirty()) clean();
 
   if (m_minkowski_sum)
@@ -1928,10 +1928,10 @@ void Cubical_gaussian_map_geo::coord_changed(Field_info* field_info)
 /*! \brief draws the geometry. */
 void Cubical_gaussian_map_geo::draw(Draw_action* action)
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
-  if (is_dirty_normal_indices()) clean_normal_indices();
-  if (is_dirty_color_indices()) clean_color_indices();
-  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   if (is_dirty()) clean();
   if (is_empty()) return;
 

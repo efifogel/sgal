@@ -43,7 +43,7 @@ const Uint  Ellipsoid::s_def_stacks(4);
 
 REGISTER_TO_FACTORY(Ellipsoid, "Ellipsoid");
 
-/*! Constructor */
+//! \brief constructor.
 Ellipsoid::Ellipsoid(Boolean proto) :
   Indexed_face_set(proto),
   m_width(s_def_width),
@@ -53,10 +53,10 @@ Ellipsoid::Ellipsoid(Boolean proto) :
   m_stacks(s_def_stacks)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Ellipsoid::~Ellipsoid(){}
 
-/*! Clean the ellipsoid internal representation */
+//! \brief cleans the ellipsoid internal representation.
 void Ellipsoid::clean()
 {
   // Clear internal representation:
@@ -143,11 +143,13 @@ void Ellipsoid::clean()
     m_coord_indices[k++] = static_cast<Uint>(-1);
   }
 
+  clear_flat_normal_indices();
+
   Indexed_face_set::clean();
   Indexed_face_set::coord_point_changed();
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Ellipsoid::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
@@ -155,8 +157,8 @@ void Ellipsoid::set_attributes(Element* elem)
   typedef Element::Str_attr_iter          Str_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string & name = elem->get_name(ai);
-    const std::string & value = elem->get_value(ai);
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
     if (name == "width") {
       set_width(atoff(value.c_str()));
       elem->mark_delete(ai);
@@ -235,7 +237,7 @@ Attribute_list Ellipsoid::get_attributes()
 }
 #endif
 
-/* Initilalize the container prototype */
+//! \brief initilalizes the container prototype.
 void Ellipsoid::init_prototype()
 {
   if (s_prototype) return;
@@ -248,69 +250,69 @@ void Ellipsoid::init_prototype()
   Float_handle_function width_func =
     static_cast<Float_handle_function>(&Ellipsoid::width_handle);
   s_prototype->add_field_info(new SF_float(WIDTH, "width", width_func,
-                                           exec_func));
+                                           s_def_width, exec_func));
 
   // height
   Float_handle_function height_func =
     static_cast<Float_handle_function>(&Ellipsoid::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
-                                           exec_func));
+                                           s_def_height, exec_func));
 
   // depth
   Float_handle_function depth_func =
     static_cast<Float_handle_function>(&Ellipsoid::depth_handle);
   s_prototype->add_field_info(new SF_float(DEPTH, "depth", depth_func,
-                                           exec_func));
+                                           s_def_depth, exec_func));
 
   // slices
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Ellipsoid::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
-                                          exec_func));
+                                          s_def_slices, exec_func));
 
   // stacks
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Ellipsoid::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
-                                          exec_func));
+                                          s_def_stacks, exec_func));
 }
 
-/*! Delete the container prototype */
+//! \brief deletes the container prototype.
 void Ellipsoid::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the container prototype */
+//! \brief obtains the container prototype.
 Container_proto* Ellipsoid::get_prototype()
 {
   if (!s_prototype) Ellipsoid::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the width of the ellipsoid. */
+//! \brief sets the width of the ellipsoid.
 void Ellipsoid::set_width(Float width)
 {
   m_width = width;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the height of the ellipsoid. */
+//! \brief sets the height of the ellipsoid.
 void Ellipsoid::set_height(Float height)
 {
   m_height = height;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the depth of the ellipsoid. */
+//! \brief sets the depth of the ellipsoid.
 void Ellipsoid::set_depth(Float depth)
 {
   m_depth = depth;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief processes change of structure. */
+//! \brief processes change of structure.
 void Ellipsoid::structure_changed(Field_info* field_info)
 {
   clear();

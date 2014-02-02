@@ -82,9 +82,6 @@ public:
   /*! Clean the representation. */
   virtual void clean();
 
-  /*! Clean the coordinate index array. */
-  virtual void clean_coord_indices();
-
   /*! Set the width. */
   void set_width(Uint width);
 
@@ -132,6 +129,9 @@ protected:
   Array<Uint> m_composition;
 
 private:
+  /*! Generate the coordinate index array. */
+  void generate_coord_indices();
+
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -149,38 +149,38 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Piece* Piece::prototype() { return new Piece(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Piece::clone() { return new Piece(); }
 
-/*! \brief sets the width. */
+//! \brief sets the width.
 inline void Piece::set_width(Uint width) { m_width = width; }
 
-/*! \brief obtains the width. */
+//! \brief obtains the width.
 inline Uint Piece::get_width() const { return m_width; }
 
-/*! \brief sets the height. */
+//! \brief sets the height.
 inline void Piece::set_height(Uint height) { m_height = height; }
 
-/*! \brief obtains the height. */
+//! \brief obtains the height.
 inline Uint Piece::get_height() const { return m_height; }
 
-/*! \brief sets the depth. */
+//! \brief sets the depth.
 inline void Piece::set_depth(Uint depth) { m_depth = depth; }
 
-/*! \brief obtains the depth. */
+//! \brief obtains the depth.
 inline Uint Piece::get_depth() const { return m_depth; }
 
-/*! \brief obtains the composition. */
+//! \brief obtains the composition.
 inline const Array<Uint>& Piece::get_composition() const
 { return m_composition; }
 
-/*! \brief obtains the composition. */
+//! \brief obtains the composition.
 inline Array<Uint>& Piece::get_composition() { return m_composition; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Piece::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

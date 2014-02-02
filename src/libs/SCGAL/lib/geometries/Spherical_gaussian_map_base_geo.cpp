@@ -173,7 +173,7 @@ void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
 /*! \brief */
 void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_sgm) clean_sgm();
 
   Context* context = action->get_context();
@@ -188,7 +188,7 @@ void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_sgm) clean_sgm();
   if (m_bb_is_pre_set) return true;
 
@@ -601,10 +601,10 @@ void Spherical_gaussian_map_base_geo::clean_sgm() {}
 /*! \brief draws the geometry. */
 void Spherical_gaussian_map_base_geo::draw(Draw_action* action)
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
-  if (is_dirty_normal_indices()) clean_normal_indices();
-  if (is_dirty_color_indices()) clean_color_indices();
-  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   if (m_dirty_sgm) clean_sgm();
   if (is_empty()) return;
 

@@ -53,7 +53,7 @@ Container_proto* Polyhedron_geo::m_prototype(NULL);
 
 REGISTER_TO_FACTORY(Polyhedron_geo, "Polyhedron_geo");
 
-/*! Constructor */
+//! \brief constructor.
 Polyhedron_geo::Polyhedron_geo(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
@@ -61,19 +61,18 @@ Polyhedron_geo::Polyhedron_geo(Boolean proto) :
 {
   if (proto) return;
   m_surface.set_mesh_set(this);
-  m_flatten_indices = true;
 }
 
-/*! Destructor */
+//! \brief destructor.
 Polyhedron_geo::~Polyhedron_geo() { clear(); }
 
-/*! \brief draws the geometry. */
+//! \brief draws the geometry.
 void Polyhedron_geo::draw(Draw_action* action)
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
-  if (is_dirty_normal_indices()) clean_normal_indices();
-  if (is_dirty_color_indices()) clean_color_indices();
-  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_facets) clean_facets();
   if (is_empty()) return;
@@ -81,7 +80,7 @@ void Polyhedron_geo::draw(Draw_action* action)
   draw_mesh(action);
 }
 
-/*! Clean the data structure */
+//! \brief cleans the data structure.
 void Polyhedron_geo::clean_polyhedron()
 {
   m_polyhedron.delegate(m_surface);
@@ -97,7 +96,7 @@ void Polyhedron_geo::clean_polyhedron()
   m_dirty_facets = true;
 }
 
-/*! \brief cleans the facets. */
+//! \brief cleans the facets.
 void Polyhedron_geo::clean_facets()
 {
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
@@ -113,10 +112,10 @@ void Polyhedron_geo::clear()
   m_dirty_facets = true;
 }
 
-/*! \brief */
+//! \brief
 void Polyhedron_geo::cull(Cull_context& /* cull_context */) {}
 
-/*! \brief draws the internal representation. */
+//! \brief draws the internal representation.
 void Polyhedron_geo::draw_geometry(Draw_action* /* action */)
 {
   Facet_iterator i;
@@ -136,10 +135,10 @@ void Polyhedron_geo::draw_geometry(Draw_action* /* action */)
   SGAL_TRACE_MSG(Trace::POLYHEDRON, "completed\n");
 }
 
-/*! \brief */
+//! \brief
 void Polyhedron_geo::isect(Isect_action* /* action */)
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_facets) clean_facets();
   if (is_empty()) return;
@@ -158,11 +157,11 @@ void Polyhedron_geo::isect(Isect_action* /* action */)
   }
 }
 
-/*! \brief */
+//! \brief
 Boolean Polyhedron_geo::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_bb_is_pre_set) return true;
 
@@ -197,42 +196,42 @@ Boolean Polyhedron_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Polyhedron_geo::set_attributes(Element* elem)
 {
   Mesh_set::set_attributes(elem);
 }
 
-/*! sets the attributes of this node */
+//! \brief sets the attributes of this node.
 void Polyhedron_geo::init_prototype()
 {
   if (m_prototype) return;
   m_prototype = new Container_proto(Mesh_set::get_prototype());
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Polyhedron_geo::delete_prototype()
 {
   delete m_prototype;
   m_prototype = NULL;
 }
 
-/*! \brief obtaisn the prototype. */
+//! \brief obtaisn the prototype.
 Container_proto* Polyhedron_geo::get_prototype()
 {
   if (!m_prototype) Polyhedron_geo::init_prototype();
   return m_prototype;
 }
 
-/*! \brief obtains the polyhedron data-structure. */
+//! \brief obtains the polyhedron data-structure.
 Polyhedron_geo::Polyhedron& Polyhedron_geo::get_polyhedron()
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   return m_polyhedron;
 }
 
-/*! \brief sets the polyhedron data-structure. */
+//! \brief sets the polyhedron data-structure.
 void Polyhedron_geo::set_polyhedron(Polyhedron& polyhedron)
 {
   m_dirty_polyhedron = false;

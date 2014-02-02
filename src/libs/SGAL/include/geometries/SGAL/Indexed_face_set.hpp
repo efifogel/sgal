@@ -26,7 +26,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Indexed_face_set_geometry.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Normal_array.hpp"
@@ -555,9 +554,6 @@ protected:
   /*! Clear the vertex arrays */
   void clear_vertex_arrays();
 
-  /*! Clear the vertex-index arrays */
-  void clear_vertex_index_arrays();
-
   /*! Isect direct drawing-mode */
   void isect_direct();
 
@@ -672,7 +668,7 @@ protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  /*! Determines whether the angle between two given vectors is smooth.
+  /*! Determine whether the angle between two given vectors is smooth.
    */
   Boolean is_smooth(const Vector3f& normal1, const Vector3f& normal2) const;
 
@@ -686,13 +682,13 @@ protected:
   void calculate_single_normal_per_vertex(Shared_normal_array normal_array);
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Default value */
+  /*! Default values */
   static const Boolean s_def_normal_per_vertex;
   static const Boolean s_def_color_per_vertex;
 
@@ -706,14 +702,15 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Indexed_face_set* Indexed_face_set::prototype()
 { return new Indexed_face_set(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Indexed_face_set::clone() { return new Indexed_face_set(); }
 
-/*! Do the conditions allow for the use of openGl vertex array?
+/*! \brief determines whether the conditions allow for the use of openGl vertex
+ * array.
  * Configuration specifies VERTEX_ARRAY, and
  * Primitive types supported so far: QUADS and TRIANGLES, and
  * Attachment or color/normal is PER_VERTEX, and
@@ -729,9 +726,10 @@ inline Boolean Indexed_face_set::use_vertex_array() const
           ((fragment_source == FS_COLOR) ?
            (m_color_attachment == PER_VERTEX) :
            (m_normal_attachment == PER_VERTEX)) &&
-          (m_tex_coord_indices.size() == 0) &&
+          (m_flat_tex_coord_indices.size() == 0) &&
           ((fragment_source == FS_COLOR) ?
-           (m_color_indices.size() == 0) : (m_normal_indices.size() == 0))
+           (m_flat_color_indices.size() == 0) :
+           (m_flat_normal_indices.size() == 0))
           );
 }
 

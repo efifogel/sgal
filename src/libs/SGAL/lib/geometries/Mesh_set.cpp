@@ -35,6 +35,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -46,7 +47,7 @@ const Boolean Mesh_set::s_def_is_ccw(true);
 const Float Mesh_set::s_def_crease_angle(0);
 const Float Mesh_set::s_def_polygon_offset_factor(0);
 
-/*! A parameter-less constructor */
+//! \brief constructor from prototype.
 Mesh_set::Mesh_set(Boolean proto) :
   Geo_set(proto),
   m_dirty(true),
@@ -55,27 +56,29 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_is_convex(s_def_is_convex),
   m_crease_angle(s_def_crease_angle),
   m_polygon_offset_factor(s_def_polygon_offset_factor),
-  m_dirty_coord_indices(true),
-  m_dirty_normal_indices(true),
-  m_dirty_color_indices(true),
-  m_dirty_tex_coord_indices(true),
-  m_flatten_indices(false),
+  m_dirty_flat_coord_indices(true),
+  m_dirty_flat_normal_indices(true),
+  m_dirty_flat_color_indices(true),
+  m_dirty_flat_tex_coord_indices(true),
   m_coord_indices_flat(false),
   m_normal_indices_flat(false),
   m_color_indices_flat(false),
   m_tex_coord_indices_flat(false)
 {}
 
-/*! \brief clears the indices arrays, e.g., forces their cleaning. */
-void Mesh_set::clear_indices()
+//! Destructor.
+Mesh_set::~Mesh_set() { clear_flat_indices(); }
+
+//! \brief clears the indices arrays, e.g., forces their cleaning.
+void Mesh_set::clear_flat_indices()
 {
-  clear_coord_indices();
-  clear_normal_indices();
-  clear_color_indices();
-  clear_tex_coord_indices();
+  clear_flat_coord_indices();
+  clear_flat_normal_indices();
+  clear_flat_color_indices();
+  clear_flat_tex_coord_indices();
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Mesh_set::set_attributes(Element* elem)
 {
   Geo_set::set_attributes(elem);
@@ -116,20 +119,20 @@ void Mesh_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief draws the mesh conditionaly. */
+//! \brief draws the mesh conditionaly.
 void Mesh_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
-  if (is_dirty_coord_indices()) clean_coord_indices();
-  if (is_dirty_normal_indices()) clean_normal_indices();
-  if (is_dirty_color_indices()) clean_color_indices();
-  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   if (is_empty()) return;
 
   draw_mesh(action);
 }
 
-/*! \brief draws the mesh. */
+//! \brief draws the mesh.
 void Mesh_set::draw_mesh(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -163,7 +166,7 @@ void Mesh_set::draw_mesh(Draw_action* action)
   if (has_scale()) glDisable(GL_NORMALIZE);
 }
 
-/*! \brief calculates the sphere bound. */
+//! \brief calculates the sphere bound.
 Boolean Mesh_set::clean_sphere_bound()
 {
   if (is_dirty()) clean();
@@ -172,7 +175,7 @@ Boolean Mesh_set::clean_sphere_bound()
   return Geo_set::clean_sphere_bound();
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Mesh_set::init_prototype()
 {
   if (s_prototype) return;
@@ -213,41 +216,41 @@ void Mesh_set::init_prototype()
                                            s_def_crease_angle, exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Mesh_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Mesh_set::get_prototype()
 {
   if (!s_prototype) Mesh_set::init_prototype();
   return s_prototype;
 }
 
-/*! \brief obtains the coord-index array. */
-Array<Uint>& Mesh_set::get_coord_indices()
+//! \brief obtains the coord-index array.
+Array<Uint>& Mesh_set::get_flat_coord_indices()
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
-  return Geo_set::get_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  return m_flat_coord_indices;
 }
 
-/*! \brief sets the coordinate-index array. */
-void Mesh_set::set_coord_indices(Array<Uint>& indices)
-{
-  m_coord_indices = indices;
-  m_coord_indices_flat = false;
-  m_dirty_coord_indices = true;
-}
-
-/*! \brief sets the flat coordinate-index array. */
+//! \brief sets the flat coordinate-index array.
 void Mesh_set::set_flat_coord_indices(Array<Uint>& indices)
 {
-  m_coord_indices = indices;
+  m_flat_coord_indices = indices;
   m_coord_indices_flat = true;
-  m_dirty_coord_indices = false;
+  m_dirty_flat_coord_indices = false;
+}
+
+//! \brief sets the coordinate-index array.
+void Mesh_set::set_coord_indices(Array<Uint>& indices)
+{
+  Geo_set::set_coord_indices(indices);
+  m_coord_indices_flat = false;
+  m_dirty_flat_coord_indices = true;
 }
 
 /*! \brief flatten the coordinate index array.
@@ -255,42 +258,38 @@ void Mesh_set::set_flat_coord_indices(Array<Uint>& indices)
  * from the index buffers. This operation changes the structure of the
  * index buffer, and must be reflected in the drawing routines.
  */
-void Mesh_set::clean_coord_indices()
+void Mesh_set::clean_flat_coord_indices()
 {
-  if (!m_coord_indices_flat && m_flatten_indices && !m_coord_indices.empty()) {
-    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
-      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-    if (size) {
-      Uint* indices = m_coord_indices.get_vector();
-      flatten_indices(indices, indices, m_num_primitives);
-      m_coord_indices.resize(size);
-      m_coord_indices_flat = true;
-    }
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_coord_indices_flat && !m_coord_indices.empty())
+  {
+    flatten_indices(m_coord_indices, m_flat_coord_indices);
+    m_coord_indices_flat = true;
   }
-  m_dirty_coord_indices = false;
+  m_dirty_flat_coord_indices = false;
 }
 
-/*! \brief sets the normal-index array. */
-void Mesh_set::set_normal_indices(Array<Uint>& indices)
-{
-  m_normal_indices = indices;
-  m_normal_indices_flat = false;
-  m_dirty_normal_indices = true;
-}
-
-/*! \brief sets the normal-index array. */
+//! \brief sets the flat normal-index array.
 void Mesh_set::set_flat_normal_indices(Array<Uint>& indices)
 {
-  m_normal_indices = indices;
+  m_flat_normal_indices = indices;
   m_normal_indices_flat = true;
-  m_dirty_normal_indices = false;
+  m_dirty_flat_normal_indices = false;
 }
 
-/*! \brief obtains the normal-index array. */
-Array<Uint>& Mesh_set::get_normal_indices()
+//! \brief sets the normal-index array.
+void Mesh_set::set_normal_indices(Array<Uint>& indices)
 {
-  if (is_dirty_normal_indices()) clean_normal_indices();
-  return Geo_set::get_normal_indices();
+  Geo_set::set_normal_indices(indices);
+  m_normal_indices_flat = false;
+  m_dirty_flat_normal_indices = true;
+}
+
+//! \brief obtains the normal-index array.
+Array<Uint>& Mesh_set::get_flat_normal_indices()
+{
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  return m_flat_normal_indices;
 }
 
 /*! \brief flatten the normal index array.
@@ -298,44 +297,39 @@ Array<Uint>& Mesh_set::get_normal_indices()
  * from the index buffers. This operation changes the structure of the
  * index buffer, and must be reflected in the drawing routines.
  */
-void Mesh_set::clean_normal_indices()
+void Mesh_set::clean_flat_normal_indices()
 {
-  if (!m_normal_indices_flat && m_flatten_indices &&
-      !m_normal_indices.empty() && (m_normal_attachment == PER_VERTEX))
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_normal_indices_flat && !m_normal_indices.empty() &&
+      (m_normal_attachment == PER_VERTEX))
   {
-    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
-      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-    if (size) {
-      Uint* indices = m_normal_indices.get_vector();
-      flatten_indices(indices, indices, m_num_primitives);
-      m_normal_indices.resize(size);
-      m_normal_indices_flat = true;
-    }
+    flatten_indices(m_normal_indices, m_flat_normal_indices);
+    m_normal_indices_flat = true;
   }
-  m_dirty_normal_indices = false;
+  m_dirty_flat_normal_indices = false;
 }
 
-/*! \brief sets the color-index array. */
-void Mesh_set::set_color_indices(Array<Uint>& indices)
-{
-  m_color_indices = indices;
-  m_color_indices_flat = false;
-  m_dirty_color_indices = true;
-}
-
-/*! \brief sets the color-index array. */
+//! \brief sets the flat color-index array.
 void Mesh_set::set_flat_color_indices(Array<Uint>& indices)
 {
-  m_color_indices = indices;
+  m_flat_color_indices = indices;
   m_color_indices_flat = true;
-  m_dirty_color_indices = false;
+  m_dirty_flat_color_indices = false;
+}
+
+//! \brief sets the color-index array.
+void Mesh_set::set_color_indices(Array<Uint>& indices)
+{
+  Geo_set::set_color_indices(indices);
+  m_color_indices_flat = false;
+  m_dirty_flat_color_indices = true;
 }
 
 /*! \brief obtains the color-index array. */
-Array<Uint>& Mesh_set::get_color_indices()
+Array<Uint>& Mesh_set::get_flat_color_indices()
 {
-  if (is_dirty_color_indices()) clean_color_indices();
-  return Geo_set::get_color_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  return m_flat_color_indices;
 }
 
 /*! \brief flatten the color index array.
@@ -343,44 +337,39 @@ Array<Uint>& Mesh_set::get_color_indices()
  * from the index buffers. This operation changes the structure of the
  * index buffer, and must be reflected in the drawing routines.
  */
-void Mesh_set::clean_color_indices()
+void Mesh_set::clean_flat_color_indices()
 {
-  if (!m_color_indices_flat && m_flatten_indices &&
-      !m_color_indices.empty() && (m_color_attachment == PER_VERTEX))
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_color_indices_flat && !m_color_indices.empty() &&
+      (m_color_attachment == PER_VERTEX))
   {
-    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
-      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-    if (size) {
-      Uint* indices = m_color_indices.get_vector();
-      flatten_indices(indices, indices, m_num_primitives);
-      m_color_indices.resize(size);
-      m_color_indices_flat = true;
-    }
+    flatten_indices(m_color_indices, m_flat_color_indices);
+    m_color_indices_flat = true;
   }
-  m_dirty_color_indices = false;
+  m_dirty_flat_color_indices = false;
 }
 
-/*! \brief sets the texture coordinate-index array. */
-void Mesh_set::set_tex_coord_indices(Array<Uint>& indices)
-{
-  m_tex_coord_indices = indices;
-  m_tex_coord_indices_flat = false;
-  m_dirty_tex_coord_indices = true;
-}
-
-/*! \brief sets the texture coordinate-index array. */
+//! \brief sets the flat texture coordinate-index array.
 void Mesh_set::set_flat_tex_coord_indices(Array<Uint>& indices)
 {
-  m_tex_coord_indices = indices;
+  m_flat_tex_coord_indices = indices;
   m_tex_coord_indices_flat = true;
-  m_dirty_tex_coord_indices = false;
+  m_dirty_flat_tex_coord_indices = false;
 }
 
-/*! \brief obtains the texture coordinate-index array. */
-Array<Uint>& Mesh_set::get_tex_coord_indices()
+//! \brief sets the texture coordinate-index array.
+void Mesh_set::set_tex_coord_indices(Array<Uint>& indices)
 {
-  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
-  return Geo_set::get_tex_coord_indices();
+  Geo_set::set_tex_coord_indices(indices);
+  m_tex_coord_indices_flat = false;
+  m_dirty_flat_tex_coord_indices = true;
+}
+
+//! \brief obtains the texture coordinate-index array.
+Array<Uint>& Mesh_set::get_flat_tex_coord_indices()
+{
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  return m_flat_tex_coord_indices;
 }
 
 /*! \brief flatten the texture coordinate index array.
@@ -388,24 +377,30 @@ Array<Uint>& Mesh_set::get_tex_coord_indices()
  * from the index buffers. This operation changes the structure of the
  * index buffer, and must be reflected in the drawing routines.
  */
-void Mesh_set::clean_tex_coord_indices()
+void Mesh_set::clean_flat_tex_coord_indices()
 {
-  if (!m_tex_coord_indices_flat && m_flatten_indices &&
-      !m_tex_coord_indices.empty())
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_tex_coord_indices_flat && !m_tex_coord_indices.empty())
   {
-    Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
-      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
-    if (!size) return;
-    Uint* indices = m_tex_coord_indices.get_vector();
-    flatten_indices(indices, indices, m_num_primitives);
-    m_tex_coord_indices.resize(size);
+    flatten_indices(m_tex_coord_indices, m_flat_tex_coord_indices);
     m_tex_coord_indices_flat = true;
   }
-  m_dirty_tex_coord_indices = false;
+  m_dirty_flat_tex_coord_indices = false;
 }
 
-/*! \brief proceses the indices (in places). */
-void Mesh_set::flatten_indices(Uint* src, Uint* dst, Uint num)
+//! \brief proceses the indices.
+void  Mesh_set::flatten_indices(const Array<Uint>& src, Array<Uint>& dst)
+{
+  Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
+      (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
+  dst.resize(size);
+  const Uint* src_vector = src.get_vector();
+  Uint* dst_vector = dst.get_vector();
+  flatten_indices(src_vector, dst_vector, m_num_primitives);
+}
+
+//! \brief proceses the indices (in places).
+void Mesh_set::flatten_indices(const Uint* src, Uint* dst, Uint num)
 {
   if (m_primitive_type == PT_TRIANGLES) {
     Uint i, j, k;
@@ -413,7 +408,7 @@ void Mesh_set::flatten_indices(Uint* src, Uint* dst, Uint num)
       dst[i++] = src[k++];
       dst[i++] = src[k++];
       dst[i++] = src[k++];
-      k++;
+      ++k;
     }
     return;
   }
@@ -424,14 +419,14 @@ void Mesh_set::flatten_indices(Uint* src, Uint* dst, Uint num)
       dst[i++] = src[k++];
       dst[i++] = src[k++];
       dst[i++] = src[k++];
-      k++;
+      ++k;
     }
     return;
   }
 }
 
-/*! \brief reverses the coordinate indices. */
-void Mesh_set::set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
+//! \brief reverses the coordinate indices.
+void Mesh_set::set_reverse_coord_indices(const Array<Uint>& indices)
 {
   m_coord_indices.resize(indices.size());
   Uint i = 0;
@@ -441,18 +436,43 @@ void Mesh_set::set_reverse_coord_indices(const SGAL::Array<Uint>& indices)
   }
   m_coord_indices[i++] = (Uint) -1;
   m_coord_indices_flat = false;
-  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = true;
 }
 
-/*! \brief reverses the flat coordinate indices. */
-void Mesh_set::set_reverse_flat_coord_indices(const SGAL::Array<Uint>& indices)
+//! \brief reverses the flat coordinate indices.
+void Mesh_set::set_reverse_flat_coord_indices(const Array<Uint>& indices)
 {
-  m_coord_indices.resize(indices.size());
+  m_flat_coord_indices.resize(indices.size());
   Uint i = 0;
   Uint j = indices.size();
-  while (i < indices.size()) m_coord_indices[i++] = indices[--j];
+  while (i < indices.size()) m_flat_coord_indices[i++] = indices[--j];
   m_coord_indices_flat = true;
-  m_dirty_coord_indices = false;
+  m_dirty_flat_coord_indices = false;
+}
+
+//! \brief writes this container.
+void Mesh_set::write(Formatter* formatter)
+{
+  formatter->container_begin(get_tag());
+
+  // Travese prototype field-info records
+  Container_proto* proto = get_prototype();
+  Container_proto::Id_const_iterator it = proto->ids_begin(proto);
+  for (; it != proto->ids_end(proto); ++it) {
+    const Field_info* field_info = (*it).second;
+    if (COORD_INDEX_ARRAY == field_info->get_id()) {
+      const Array<Uint>& indices = get_coord_indices();
+      Uint size = indices.size();
+      Array<int> value(size), default_value;
+      Array<Uint>::const_iterator it;
+      Array<Int>::iterator rit = value.begin();
+      for (it = indices.begin(); it != indices.end(); ++it)
+        *rit++ = *it;
+      formatter->multi_int(field_info->get_name(), value, default_value);
+    }
+    else field_info->write(this, formatter);
+  }
+  formatter->container_end();
 }
 
 SGAL_END_NAMESPACE

@@ -300,11 +300,11 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Exact_polyhedron_geo* Exact_polyhedron_geo::prototype()
 { return new Exact_polyhedron_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Exact_polyhedron_geo::clone()
 { return new Exact_polyhedron_geo(); }
 
