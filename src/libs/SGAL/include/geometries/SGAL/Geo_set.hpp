@@ -468,6 +468,7 @@ private:
   /*! The name of the attachments. */
   static const Char* s_attachment_names[];
 
+  // Default values
   static const Primitive_type s_def_primitive_type;
 
   /*! Intialize. */

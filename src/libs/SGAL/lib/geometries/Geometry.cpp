@@ -37,13 +37,16 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Geometry::s_prototype(NULL);
 
+const Boolean Geometry::s_def_generated_tex_coord(true);
+const Boolean Geometry::s_def_generated_color(false);
+
 /*! Constructor */
 Geometry::Geometry(Boolean proto) :
   Container(proto),
   m_dirty_sphere_bound(true),
   m_bb_is_pre_set(false),
-  m_generated_color(false),
-  m_generated_tex_coord(true)
+  m_generated_color(s_def_generated_color),
+  m_generated_tex_coord(s_def_generated_tex_coord)
 {}
 
 /*! \brief initializes the geometry prototype. */
@@ -64,7 +67,8 @@ void Geometry::init_prototype()
     (&Geometry::generated_tex_coord_handle);
   s_prototype->add_field_info(new SF_bool(GENERATED_TEX_COORD,
                                           "generatedTexCoord",
-                                          generated_tex_coord_func));
+                                          generated_tex_coord_func,
+                                          s_def_generated_tex_coord));
 }
 
 /*! \brief deletes the geometry prototype. */
