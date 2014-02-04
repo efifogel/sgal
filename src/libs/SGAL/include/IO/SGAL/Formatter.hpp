@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
+// $Id: $
 // $Revision: 12348 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -30,7 +30,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Formatter.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
@@ -42,7 +41,9 @@ SGAL_BEGIN_NAMESPACE
 
 class Container;
 
-/*! Writes a scene graph to an output stream in the VRML format */
+/*! A pure class that can be the base of specific formatter that exports a
+ * scene graph to an output stream.
+ */
 class SGAL_SGAL_DECL Formatter {
 public:
   /*! Constructor

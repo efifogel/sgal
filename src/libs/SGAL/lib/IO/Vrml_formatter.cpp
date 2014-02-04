@@ -31,34 +31,16 @@
 SGAL_BEGIN_NAMESPACE
 
 //! \brief constructor.
-Vrml_formatter::Vrml_formatter() : m_indent(0), m_indented(false) {}
+Vrml_formatter::Vrml_formatter() {}
 
 //! \brief constructs an output formatter.
-Vrml_formatter::Vrml_formatter(std::ostream& os) :
-  Formatter(os), m_indent(0), m_indented(false) {}
+Vrml_formatter::Vrml_formatter(std::ostream& os) : Text_formatter(os) {}
 
 //! \brief constructs an input formatter.
-Vrml_formatter::Vrml_formatter(std::istream& is) :
-  Formatter(is), m_indent(0), m_indented(false) {}
+Vrml_formatter::Vrml_formatter(std::istream& is) : Text_formatter(is) {}
 
 //! \brief destructor
 Vrml_formatter::~Vrml_formatter() {}
-
-//! \brief begins a new line.
-void Vrml_formatter::new_line()
-{
-  if (m_indented) {
-    out() << std::endl;
-    m_indented = false;
-  }
-}
-
-//! \brief writes an indentation.
-void Vrml_formatter::indent()
-{
-  if (!m_indented) for (Uint i = 0; i < m_indent; ++i) out() << "  ";
-  m_indented = true;
-}
 
 //! \brief writes the headers of the scene graph.
 void Vrml_formatter::begin()

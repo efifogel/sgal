@@ -212,6 +212,8 @@ CPPSOURCES+= Scalar_interpolator.cpp
 CPPSOURCES+= Color_interpolator.cpp
 
 # IO
+CPPSOURCES+= Stl_formatter.cpp
+CPPSOURCES+= Text_formatter.cpp
 CPPSOURCES+= Vrml_formatter.cpp
 
 LCPPDEFS =

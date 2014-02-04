@@ -1,4 +1,4 @@
-// Copyright (c) 2004 Israel.
+// Copyright (c) 2014 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -15,12 +15,12 @@
 // PARTICULAR PURPOSE.
 //
 // $Id: $
-// $Revision: 12347 $
+// $Revision: $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_VRML_FORMATTER_HPP
-#define SGAL_VRML_FORMATTER_HPP
+#ifndef SGAL_STL_FORMATTER_HPP
+#define SGAL_STL_FORMATTER_HPP
 
 /*! \file
  */
@@ -41,23 +41,23 @@ SGAL_BEGIN_NAMESPACE
 class Container;
 
 /*! Writes a scene graph to an output stream in the VRML format */
-class SGAL_SGAL_DECL Vrml_formatter : public Text_formatter {
+class SGAL_SGAL_DECL Stl_formatter : public Text_formatter {
 public:
   /*! Constructor */
-  Vrml_formatter();
+  Stl_formatter();
 
   /*! Construct an output formatter from an output stream.
    * \param os the output stream.
    */
-  Vrml_formatter(std::ostream& os);
+  Stl_formatter(std::ostream& os);
 
   /*! Construct an input formatter from an input stream.
    * \param is the input stream.
    */
-  Vrml_formatter(std::istream& is);
+  Stl_formatter(std::istream& is);
 
   /*! Destructor */
-  virtual ~Vrml_formatter();
+  virtual ~Stl_formatter();
 
   /// \name Write functions
   //@{
@@ -332,135 +332,129 @@ private:
     out() << "]";
     new_line();
   }
-
-  /*! Space holder for the output stream mode */
-  // std::IO::Mode m_old_out_mode;
-
-  /*! Space holder for the input stream mode */
-  // IO::Mode m_old_in_mode;
 };
 
 //! \brief writes a single Float field.
-inline void Vrml_formatter::single_float(const std::string& name,
-                                         Float value, Float default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_float(const std::string& name,
+                                        Float value, Float default_value)
+{}
 
 //! \brief writes a single Uint field.
-inline void Vrml_formatter::single_uint(const std::string& name,
-                                        Uint value, Uint default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_uint(const std::string& name,
+                                       Uint value, Uint default_value)
+{}
 
 //! \brief writes a single Int field.
-inline void Vrml_formatter::single_int(const std::string& name,
-                                       Int value, Int default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_int(const std::string& name,
+                                      Int value, Int default_value)
+{}
 
 //! \brief writes a single Scene_time field.
-inline void Vrml_formatter::single_scene_time(const std::string& name,
-                                              Scene_time value,
-                                              Scene_time default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_scene_time(const std::string& name,
+                                             Scene_time value,
+                                             Scene_time default_value)
+{}
 
 //! \brief writes a single Vector2f field.
-inline void Vrml_formatter::single_vector2f(const std::string& name,
-                                            const Vector2f& value,
-                                            const Vector2f& default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_vector2f(const std::string& name,
+                                           const Vector2f& value,
+                                           const Vector2f& default_value)
+{}
 
 //! \brief writes a single Vector3f field.
-inline void Vrml_formatter::single_vector3f(const std::string& name,
-                                            const Vector3f& value,
-                                            const Vector3f& default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_vector3f(const std::string& name,
+                                           const Vector3f& value,
+                                           const Vector3f& default_value)
+{}
 
 //! \brief writes a single Vector4f field.
-inline void Vrml_formatter::single_vector4f(const std::string& name,
-                                            const Vector4f& value,
-                                            const Vector4f& default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_vector4f(const std::string& name,
+                                           const Vector4f& value,
+                                           const Vector4f& default_value)
+{}
 
 //! \brief writes a single Rotation field.
-inline void Vrml_formatter::single_rotation(const std::string& name,
-                                            const Rotation& value,
-                                            const Rotation& default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_rotation(const std::string& name,
+                                           const Rotation& value,
+                                           const Rotation& default_value)
+{}
 
 //! \brief writes a single Sphere_bound field.
 inline void
-Vrml_formatter::single_sphere_bound(const std::string& name,
-                                    const Sphere_bound& value,
-                                    const Sphere_bound& default_value)
-{ single_field(name, value, default_value); }
+Stl_formatter::single_sphere_bound(const std::string& name,
+                                   const Sphere_bound& value,
+                                   const Sphere_bound& default_value)
+{}
 
 //! \brief writes a single string field.
-inline void Vrml_formatter::single_string(const std::string& name,
-                                          const std::string& value,
-                                          const std::string& default_value)
-{ single_field(name, value, default_value); }
+inline void Stl_formatter::single_string(const std::string& name,
+                                         const std::string& value,
+                                         const std::string& default_value)
+{}
 
 // Multi-field
 //! \brief writes a single Float field.
-inline void Vrml_formatter::multi_float(const std::string& name,
-                                        const Array<Float>& value,
-                                        const Array<Float>& default_value)
-{ multi_field(name, value, default_value); }
+inline void Stl_formatter::multi_float(const std::string& name,
+                                       const Array<Float>& value,
+                                       const Array<Float>& default_value)
+{}
 
 //! \brief writes a single Uint field.
-inline void Vrml_formatter::multi_uint(const std::string& name,
-                                       const Array<Uint>& value,
-                                       const Array<Uint>& default_value)
-{ multi_field(name, value, default_value); }
+inline void Stl_formatter::multi_uint(const std::string& name,
+                                      const Array<Uint>& value,
+                                      const Array<Uint>& default_value)
+{}
 
 //! \brief writes a single Int field.
-inline void Vrml_formatter::multi_int(const std::string& name,
-                                      const Array<Int>& value,
-                                      const Array<Int>& default_value)
-{ multi_field(name, value, default_value); }
+inline void Stl_formatter::multi_int(const std::string& name,
+                                     const Array<Int>& value,
+                                     const Array<Int>& default_value)
+{}
 
 //! \brief writes a single Scene_time field.
 inline void
-Vrml_formatter::multi_scene_time(const std::string& name,
-                                 const Array<Scene_time>& value,
-                                 const Array<Scene_time>& default_value)
-{ multi_field(name, value, default_value); }
+Stl_formatter::multi_scene_time(const std::string& name,
+                                const Array<Scene_time>& value,
+                                const Array<Scene_time>& default_value)
+{}
 
 //! \brief writes a single Vector2f field.
-inline void Vrml_formatter::multi_vector2f(const std::string& name,
-                                           const Array<Vector2f>& value,
-                                           const Array<Vector2f>& default_value)
-{ multi_field(name, value, default_value); }
+inline void Stl_formatter::multi_vector2f(const std::string& name,
+                                          const Array<Vector2f>& value,
+                                          const Array<Vector2f>& default_value)
+{}
 
 //! \brief writes a single Vector3f field.
-inline void Vrml_formatter::multi_vector3f(const std::string& name,
-                                           const Array<Vector3f>& value,
-                                           const Array<Vector3f>& default_value)
-{ multi_field(name, value, default_value); }
+inline void Stl_formatter::multi_vector3f(const std::string& name,
+                                          const Array<Vector3f>& value,
+                                          const Array<Vector3f>& default_value)
+{}
 
 //! \brief writes a single Vector4f field.
-inline void Vrml_formatter::multi_vector4f(const std::string& name,
-                                           const Array<Vector4f>& value,
-                                           const Array<Vector4f>& default_value)
-{ multi_field(name, value, default_value); }
+inline void Stl_formatter::multi_vector4f(const std::string& name,
+                                          const Array<Vector4f>& value,
+                                          const Array<Vector4f>& default_value)
+{}
 
 //! \brief writes a single Rotation field.
-inline void Vrml_formatter::multi_rotation(const std::string& name,
-                                           const Array<Rotation>& value,
-                                           const Array<Rotation>& default_value)
-{ multi_field(name, value, default_value); }
+inline void Stl_formatter::multi_rotation(const std::string& name,
+                                          const Array<Rotation>& value,
+                                          const Array<Rotation>& default_value)
+{}
 
 //! \brief writes a single Sphere_bound field.
 inline void
-Vrml_formatter::multi_sphere_bound(const std::string& name,
-                                   const Array<Sphere_bound>& value,
-                                   const Array<Sphere_bound>& default_value)
-{ multi_field(name, value, default_value); }
+Stl_formatter::multi_sphere_bound(const std::string& name,
+                                  const Array<Sphere_bound>& value,
+                                  const Array<Sphere_bound>& default_value)
+{}
 
 //! \brief writes a single string field.
 inline void
-Vrml_formatter::multi_string(const std::string& name,
-                             const Array<std::string>& value,
-                             const Array<std::string>& default_value)
-{ multi_field(name, value, default_value); }
+Stl_formatter::multi_string(const std::string& name,
+                            const Array<std::string>& value,
+                            const Array<std::string>& default_value)
+{}
 
 SGAL_END_NAMESPACE
 
