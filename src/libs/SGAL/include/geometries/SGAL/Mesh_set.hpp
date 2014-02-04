@@ -30,6 +30,11 @@ SGAL_BEGIN_NAMESPACE
 class Draw_action;
 class Field_info;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Mesh_set : public Geo_set {
 public:
   enum {
@@ -414,6 +419,10 @@ private:
   static const Float s_def_crease_angle;
   static const Float s_def_polygon_offset_factor;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief clears the representation.
 inline void Mesh_set::clear() { m_dirty = true; }
