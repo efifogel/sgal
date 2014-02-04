@@ -91,6 +91,11 @@ void Camera::set_position(const Vector3f& position)
 /*! \brief sets the camera orientation. */
 void Camera::set_orientation(const Rotation& orientation)
 {
+  const Vector3f& axis = orientation.get_axis();
+  if ((axis[0] == 0) && (axis[1] == 0) && (axis[2] == 0)) {
+    SGAL_warning_msg(0, "Camera: Invalid orientation!");
+    return;
+  }
   m_orientation = orientation;
   m_dirty_matrix = true;
 }
@@ -273,62 +278,13 @@ const Matrix4f& Camera::get_view_mat()
 /*! \brief cleans the camera viewing matrix. */
 void Camera::clean_matrix()
 {
-  Vector3f newz;
-  Vector3f newx;
-  Vector3f newy;
-
-  m_orientation.get_axis(newz);      // asured normalized
-  float angle = m_orientation.get_angle();
-  if (newz[0] == 1.0f) {
-    // The camera points twards the -X axis:
-    newx.set(0.0f, 0.0f, -1.0f);
-    newy.set(0.0f, 1.0f, 0.0f);
-  }
-  else if (newz[0] == -1.0f) {
-    // The camera points twards the X axis:
-    newx.set(0.0f, 0.0f, 1.0f);
-    newy.set(0.0f, 1.0f, 0.0f);
-  }
-  else if (newz[1] == 1.0f) {
-    // The camera points twards the -Y axis:
-    newx.set(1.0f, 0.0f, 0.0f);
-    newy.set(0.0f, 0.0f, -1.0f);
-  }
-  else if (newz[1] == -1.0f) {
-    // The camera points twards the Y axis:
-    newx.set(1.0f, 0.0f, 0.0f);
-    newy.set(0.0f, 0.0f, 1.0f);
-  }
-  else
-    if (newz[2] == 1.0f) {
-    // The camera points twards the -Z axis:
-    newx.set(1.0f, 0.0f, 0.0f);
-    newy.set(0.0f, 1.0f, 0.0f);
-  }
-  else if (newz[2] == -1.0f) {
-    // The camera points twards the Z axis:
-    newx.set(-1.0f, 0.0f, 0.0f);
-    newy.set(0.0f, 1.0f, 0.0f);
-  }
-  else {
-    Vector3f up(0.0f, 1.0f, 0.0f);
-    // newz.scale(-1.0f, newz);
-    newx.cross(up, newz);
-    newx.normalize();
-
-    // compute the new, real (corrected) up vector
-    newy.cross(newz, newx);
-    newy.normalize();
-  }
-
   m_view_mat.make_identity();
-  m_view_mat.set_col(0, newx);
-  m_view_mat.set_col(1, newy);
-  m_view_mat.set_col(2, newz);
 
   // rotation:
-  // m_view_mat.post_rot(m_view_mat, 0, 0, 1, SGAL_TWO_PI - angle);
-  m_view_mat.post_rot(m_view_mat, 0, 0, 1, angle);
+  Vector3f newz;
+  m_orientation.get_axis(newz);      // asured normalized
+  float angle = m_orientation.get_angle();
+  m_view_mat.post_rot(m_view_mat, newz[0], newz[1], newz[2], -angle);
 
   Vector3f new_pos;
   new_pos.scale(-1.0f, m_position);
