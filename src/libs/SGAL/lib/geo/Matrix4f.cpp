@@ -14,7 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
+// $Id: $
 // $Revision: 14220 $
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
@@ -24,8 +24,9 @@
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Matrix4f.hpp"
 
-using namespace SGAL;
+SGAL_BEGIN_NAMESPACE
 
+//! \brief
 void Matrix4f::make_identity()
 {
   m_matrix[0][0] = m_matrix[1][1] = m_matrix[2][2] = m_matrix[3][3] = 1.0f;
@@ -35,6 +36,7 @@ void Matrix4f::make_identity()
   m_matrix[3][0] = m_matrix[3][1] = m_matrix[3][2] = 0.0f;
 }
 
+//! \brief
 Boolean Matrix4f::is_identity() const
 {
   return ((m_matrix[0][0] == 1.0f) && (m_matrix[1][1] == 1.0f) &&
@@ -49,7 +51,7 @@ Boolean Matrix4f::is_identity() const
           (m_matrix[3][2] == 0.0f));
 }
 
-/*! sets this matrix to be m1 * m2, assuming m1 and m2 are both affine
+/*! \brief sets this matrix to be m1 * m2, assuming m1 and m2 are both affine
  * transformation matrices, that is, the last column is 0,0,0,1,
  */
 void Matrix4f::mult(const Matrix4f& m1, const Matrix4f& m2)
@@ -81,8 +83,7 @@ void Matrix4f::mult(const Matrix4f& m1, const Matrix4f& m2)
   set(tmp);
 }
 
-/*! this =  m * this
- */
+//! \brief this =  m * this.
 void Matrix4f::pre_mult(const Matrix4f& m)
 {
   Matrix4f tmp;
@@ -97,11 +98,7 @@ void Matrix4f::pre_mult(const Matrix4f& m)
   set(tmp);
 }
 
-// =======================================================================
-// Matrix4f::PostMult
-//
-// this = this* m
-// =======================================================================
+//! \brief this = this * m.
 void Matrix4f::post_mult(const Matrix4f& m)
 {
   Matrix4f tmp;
@@ -116,9 +113,7 @@ void Matrix4f::post_mult(const Matrix4f& m)
   set(tmp);
 }
 
-// =======================================================================
-// Matrix4f::Transpose
-// =======================================================================
+//! \brief transposes a given matrix.
 void Matrix4f::transpose(const Matrix4f& m)
 {
   Matrix4f tmp;
@@ -130,6 +125,7 @@ void Matrix4f::transpose(const Matrix4f& m)
   set(tmp);
 }
 
+//! \brief transposes this matrix.
 void Matrix4f::transpose()
 {
   Matrix4f tmp(*this);
@@ -141,7 +137,7 @@ void Matrix4f::transpose()
   set(tmp);
 }
 
-/*! sets this matrix to be a rotation matrix which rotates around axis
+/*! \brief  sets this matrix to be a rotation matrix which rotates around axis
  * (x, y, z) by radians.
  */
 void Matrix4f::make_rot(float x, float y, float z, float radians)
@@ -168,14 +164,14 @@ void Matrix4f::make_rot(float x, float y, float z, float radians)
   m_matrix[2][1] = tmp * y * z - x * mySin;
   m_matrix[2][2] = myCos + tmp * z * z;
   m_matrix[2][3] = 0.0f;
-  
+
   m_matrix[3][0] = 0.0f;
   m_matrix[3][1] = 0.0f;
   m_matrix[3][2] = 0.0f;
   m_matrix[3][3] = 1.0f;
 }
 
-/*! sets this matrix to be a rotation matrix which rotates around axis
+/*! \brief sets this matrix to be a rotation matrix which rotates around axis
  * v by radians.
  */
 void Matrix4f::make_rot(const Vector3f &v, float radians)
@@ -183,8 +179,7 @@ void Matrix4f::make_rot(const Vector3f &v, float radians)
   make_rot(v[0], v[1], v[2], radians);
 }
 
-/*! this = Rotation(x,y,z,radians) * m
- */
+//! \brief this = Rotation(x,y,z,radians) * m
 void Matrix4f::pre_rot(float x, float y, float z, float radians, Matrix4f& m)
 {
   Matrix4f rot_mat;
@@ -192,11 +187,7 @@ void Matrix4f::pre_rot(float x, float y, float z, float radians, Matrix4f& m)
   mult(rot_mat, m);
 }
 
-// =======================================================================
-// PostRot
-//
-// this = m * Rotation(x,y,z,radians)
-// =======================================================================
+//! \brief this = m * Rotation(x,y,z,radians)
 void Matrix4f::post_rot(const Matrix4f& m, float x, float y, float z,
                        float radians)
 {
@@ -205,7 +196,7 @@ void Matrix4f::post_rot(const Matrix4f& m, float x, float y, float z,
   mult(m, rot_mat);
 }
 
-/*! sets this matrix to be the translation matrix which translates by
+/*! \brief sets this matrix to be the translation matrix which translates by
  * (x, y, z).
  */
 void Matrix4f::make_trans(float x, float y, float z)
@@ -231,15 +222,13 @@ void Matrix4f::make_trans(float x, float y, float z)
   m_matrix[3][3] = 1.0f;
 }
 
-/*! sets this matrix to be the translation matrix which translates by v.
- */
+//! \brief sets this matrix to be the translation matrix which translates by v.
 void Matrix4f::make_trans(const Vector3f& v)
 {
   make_trans(v[0], v[1], v[2]);
 }
 
-/*! this = translationMatrix(x,y,z) * m
- */
+//! \brief this = translationMatrix(x,y,z) * m
 void Matrix4f::pre_trans(float x, float y, float z, Matrix4f& m)
 {
   Matrix4f trans_mat;
@@ -247,8 +236,7 @@ void Matrix4f::pre_trans(float x, float y, float z, Matrix4f& m)
   mult(trans_mat, m);
 }
 
-/*! this = m * translationMatrix(x,y,z)
- */
+//! \brief this = m * translationMatrix(x,y,z)
 void Matrix4f::post_trans(const Matrix4f& m, float x, float y, float z)
 {
   Matrix4f trans_mat;
@@ -256,8 +244,7 @@ void Matrix4f::post_trans(const Matrix4f& m, float x, float y, float z)
   mult(m, trans_mat);
 }
 
-/*!
- */
+//! \brief
 void Matrix4f::make_scale(float x, float y, float z)
 {
   m_matrix[0][0] = x;
@@ -281,15 +268,10 @@ void Matrix4f::make_scale(float x, float y, float z)
   m_matrix[3][3] = 1.0f;
 }
 
-/*!
- */
-void Matrix4f::make_scale(const Vector3f& v)
-{
-  make_scale(v[0], v[1], v[2]);
-}
- 
-/*! this = scaleMatrix(xs ,ys, zs) * m
- */
+//! \brief
+void Matrix4f::make_scale(const Vector3f& v) { make_scale(v[0], v[1], v[2]); }
+
+//! \brief this = scaleMatrix(xs ,ys, zs) * m
 void Matrix4f::pre_scale(float xs, float ys, float zs, Matrix4f& m)
 {
   Matrix4f scale_mat;
@@ -297,8 +279,7 @@ void Matrix4f::pre_scale(float xs, float ys, float zs, Matrix4f& m)
   mult(scale_mat, m);
 }
 
-/*! this = m * scaleMatrix(xs ,ys, zs)
- */
+//! \brief this = m * scaleMatrix(xs ,ys, zs)
 void Matrix4f::post_scale(const Matrix4f& m, float xs, float ys, float zs)
 {
   Matrix4f scale_mat;
@@ -306,15 +287,14 @@ void Matrix4f::post_scale(const Matrix4f& m, float xs, float ys, float zs)
   mult(m, scale_mat);
 }
 
-/*! sets this matrix to be the inverse of m.
- */
+//! \brief sets this matrix to be the inverse of m.
 int Matrix4f::invert_full(Matrix4f& /* m */)
 {
   assert(0);
   return 0;
 }
 
-/*! sets this matrix to be the inverse of m, with the assumption that
+/*! \brief sets this matrix to be the inverse of m, with the assumption that
  * m is an affine matrix.
  *
  *            -1     -1
@@ -373,8 +353,8 @@ void Matrix4f::invert_ortho(const Matrix4f& /* m */)
   assert(0);
 }
 
-/*! sets this matrix to be the inverse of m, with the assumption that the
- * top left 3x3 submatrix is an orthonormal matrix (the columns are
+/*! \brief sets this matrix to be the inverse of m, with the assumption that
+ * the top left 3x3 submatrix is an orthonormal matrix (the columns are
  * orthogonal to each other, and each column is a unit vector).
  */
 void Matrix4f::invert_ortho_norm(Matrix4f& /* m */)
@@ -382,3 +362,4 @@ void Matrix4f::invert_ortho_norm(Matrix4f& /* m */)
   assert(0);
 }
 
+SGAL_END_NAMESPACE

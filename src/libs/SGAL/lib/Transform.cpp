@@ -56,7 +56,7 @@ Vector3f Transform::s_def_bbox_size(-1, -1, -1);
 
 REGISTER_TO_FACTORY(Transform, "Transform");
 
-/*! Constructor */
+//! \brief constructor.
 Transform::Transform(Boolean proto) :
   Group(proto),
   m_translation(s_def_translation),
@@ -69,10 +69,10 @@ Transform::Transform(Boolean proto) :
   m_dirty_parts(false)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Transform::~Transform() {}
 
-/*! \brief sets the affine transform 4x4 matrix. */
+//! \brief sets the affine transform 4x4 matrix.
 void Transform::set_matrix(const Matrix4f& matrix)
 {
   m_matrix.set(matrix);
@@ -82,24 +82,24 @@ void Transform::set_matrix(const Matrix4f& matrix)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains (a copy of) the matrix */
+//! \brief obtains (a copy of) the matrix.
 void Transform::get_matrix(Matrix4f& matrix)
 {
   if (m_dirty_matrix) clean_matrix();
   m_matrix.get(matrix);
 }
 
-/*! \brief obtains (a const reference to) the matrix */
+//! \brief obtains (a const reference to) the matrix.
 const Matrix4f& Transform::get_matrix()
 {
   if (m_dirty_matrix) clean_matrix();
   return m_matrix;
 }
 
-/*! \brief builds the matrix out of the individual transforms. */
+//! \brief builds the matrix out of the individual transforms.
 void Transform::clean_matrix()
 {
-  Vector3f& axis = m_rotation.get_axis();
+  const Vector3f& axis = m_rotation.get_axis();
   float angle = m_rotation.get_angle();
   float mySin = sinf(angle);
   float myCos = cosf(angle);
@@ -152,7 +152,7 @@ void Transform::clean_matrix()
   m_dirty_matrix = false;
 }
 
-/*! \brief extracts the individual Transforms from the matrix. */
+//! \brief extracts the individual Transforms from the matrix.
 void Transform::clean_parts()
 {
   m_translation.set(m_matrix[3][0], m_matrix[3][1], m_matrix[3][2]);
@@ -214,9 +214,9 @@ void Transform::clean_parts()
   float trac = ustar[0] + vstar[1] + wstar[2];
 
   // if trace is 3 - R33 is unit matrix and this is null rotation
-  // trying to solve the equation will fail anyway since W can be any unit vector.
+  // trying to solve the equation will fail anyway since W can be any unit
+  // vector.
   if (trac != 3.0f) {
-
     // Solve the equation system:
     //
     //    (R_33 - I) * w = 0
@@ -294,7 +294,7 @@ void Transform::clean_parts()
   m_dirty_parts = false;
 }
 
-/*! \brief sets the translation. */
+//! \brief sets the translation.
 void Transform::get_translation(float* v0, float* v1, float* v2)
 {
   if (m_dirty_parts) {
@@ -306,7 +306,7 @@ void Transform::get_translation(float* v0, float* v1, float* v2)
   m_translation.get(v0, v1, v2);
 }
 
-/*! \brief sets the translation. */
+//! \brief sets the translation.
 void Transform::set_translation(float v0, float v1, float v2)
 {
   if (m_dirty_parts) clean_parts();
@@ -316,7 +316,7 @@ void Transform::set_translation(float v0, float v1, float v2)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the rotation. */
+//! \brief sets the rotation.
 void Transform::set_rotation(float v0, float v1, float v2, float angle)
 {
   if (m_dirty_parts) clean_parts();
@@ -327,7 +327,7 @@ void Transform::set_rotation(float v0, float v1, float v2, float angle)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the scale factors */
+//! \brief sets the scale factors.
 void Transform::set_scale(float s0, float s1, float s2)
 {
   if (m_dirty_parts) clean_parts();
@@ -339,33 +339,33 @@ void Transform::set_scale(float s0, float s1, float s2)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the translation. */
+//! \brief sets the translation.
 void Transform::set_translation(const Vector3f& translation)
 { set_translation(translation[0], translation[1], translation[2]); }
 
-/*! \brief sets the translation. */
+//! \brief sets the translation.
 void Transform::get_translation(Vector3f& translation)
 { get_translation(&translation[0], &translation[1], &translation[2]); }
 
-/*! \brief sets the rotation. */
+//! \brief sets the rotation.
 void Transform::set_rotation(const Rotation& rotation)
 { set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle()); }
 
-/*! \brief obtains the rotation. */
+//! \brief obtains the rotation.
 void Transform::get_rotation(float* v0, float* v1, float* v2, float* v3)
 {
   if (m_dirty_parts) clean_parts();
   m_rotation.get(v0,v1,v2,v3);
 }
 
-/*! \brief obtains the rotation. */
+//! \brief obtains the rotation.
 void Transform::get_rotation(Rotation& rotation)
 {
   if (m_dirty_parts) clean_parts();
   m_rotation.get(rotation);
 }
 
-/*! \brief obtains the scale factors. */
+//! \brief obtains the scale factors.
 void Transform::get_scale(float* v0, float* v1, float* v2)
 {
   if (m_dirty_parts) clean_parts();
@@ -374,15 +374,15 @@ void Transform::get_scale(float* v0, float* v1, float* v2)
   *v2 = m_scale[2];
 }
 
-/*! \brief sets the scale factors. */
+//! \brief sets the scale factors.
 void Transform::set_scale(const Vector3f& scale)
 { set_scale(scale[0], scale[1], scale[2]); }
 
-/*! \brief sets the scale factors. */
+//! \brief sets the scale factors.
 void Transform::get_scale(Vector3f& scale)
 { get_scale(&scale[0], &scale[1], &scale[2]); }
 
-/*! \brief sets the scale-orientation. */
+//! \brief sets the scale-orientation.
 void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
 {
   if (m_dirty_parts) clean_parts();
@@ -392,7 +392,7 @@ void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the scale-orientation. */
+//! \brief obtains the scale-orientation.
 void
 Transform::get_scale_orientation(float* v0, float* v1, float* v2, float* v3)
 {
@@ -400,7 +400,7 @@ Transform::get_scale_orientation(float* v0, float* v1, float* v2, float* v3)
   m_scale_orientation.get(v0,v1,v2,v3);
 }
 
-/*! \brief sets the scale-orientation. */
+//! \brief sets the scale-orientation.
 void Transform::set_scale_orientation(const Rotation& scale_orientation)
 {
   set_scale_orientation(scale_orientation[0],
@@ -409,14 +409,14 @@ void Transform::set_scale_orientation(const Rotation& scale_orientation)
                         scale_orientation.get_angle());
 }
 
-/*! \brief obtains the scale-orientation. */
+//! \brief obtains the scale-orientation.
 void Transform::get_scale_orientation(Rotation& scale_orientation)
 {
   if (m_dirty_parts) clean_parts();
   m_scale_orientation.get(scale_orientation);
 }
 
-/*! \brief sets the center of rotation. */
+//! \brief sets the center of rotation.
 void Transform::set_center(float v0, float v1, float v2)
 {
   if (m_dirty_parts) clean_parts();
@@ -428,7 +428,7 @@ void Transform::set_center(float v0, float v1, float v2)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the center of rotation. */
+//! \brief obtains the center of rotation.
 void Transform::get_center(float* v0, float* v1, float* v2)
 {
   if (m_dirty_parts) clean_parts();
@@ -437,11 +437,11 @@ void Transform::get_center(float* v0, float* v1, float* v2)
   *v2 = m_center[2];
 }
 
-/*! \brief sets the center of rotation. */
+//! \brief sets the center of rotation.
 void Transform::set_center(const Vector3f& center)
 { set_center(center[0], center[1], center[2]); }
 
-/*! \brief obtains the center of rotation. */
+//! \brief obtains the center of rotation.
 void Transform::get_center(Vector3f& center)
 { get_center(&center[0], &center[1], &center[2]); }
 
@@ -458,7 +458,6 @@ void Transform::parts_changed(Field_info* /* field_info */)
 
 /*! Cull transform node.
  * If this node should be rendered, its matrices is passed to cull_context.
- * @param cull_context
  */
 void Transform::cull(Cull_context& cull_context)
 {
@@ -469,9 +468,7 @@ void Transform::cull(Cull_context& cull_context)
   cull_context.pop_matrix();
 }
 
-/*! Traverses the tree of the group for selections.
- * @param isect_action
- */
+//! Traverses the tree of the group for selections.
 void Transform::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
@@ -482,7 +479,7 @@ void Transform::isect(Isect_action* isect_action)
   glPopMatrix();
 }
 
-/*! \brief resets the transform */
+//! \brief resets the transform.
 void Transform::reset(Field_info* /* field_info */)
 {
   set_translation(s_def_translation);
@@ -492,7 +489,7 @@ void Transform::reset(Field_info* /* field_info */)
   set_scale_orientation(s_def_scale_orientation);
 }
 
-/*! \brief cleans the bounding sphereof the transformation node. */
+//! \brief cleans the bounding sphereof the transformation node.
 Boolean Transform::clean_sphere_bound()
 {
   if (m_locked_sphere_bound) return false;
@@ -512,7 +509,7 @@ Boolean Transform::clean_sphere_bound()
   return true;
 }
 
-/*! \brief initializes the node prototype */
+//! \brief initializes the node prototype.
 void Transform::init_prototype()
 {
   if (s_prototype) return;
@@ -554,21 +551,21 @@ void Transform::init_prototype()
                                           exec_func));
 }
 
-/*! \brief deletes the node prototype */
+//! \brief deletes the node prototype.
 void Transform::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype */
+//! \brief obtains the node prototype.
 Container_proto* Transform::get_prototype()
 {
   if (!s_prototype) Transform::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
+//! \brief sets the attributes of the object extracted from the input file.
 void Transform::set_attributes(Element* elem)
 {
   Group::set_attributes(elem);
@@ -677,7 +674,7 @@ Attribute_list Transform::get_attributes()
 }
 #endif
 
-/*! \brief writes this container */
+//! \brief writes this container.
 void Transform::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
