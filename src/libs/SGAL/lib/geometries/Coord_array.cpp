@@ -39,19 +39,19 @@ SGAL_BEGIN_NAMESPACE
 const std::string Coord_array::s_tag = "Coordinate";
 Container_proto* Coord_array::s_prototype(NULL);
 
-/*! Register to the container factory. */
+//! Register to the container factory.
 REGISTER_TO_FACTORY(Coord_array, "Coord_array");
 
-/*! \brief constructor. */
+//! \brief constructor.
 Coord_array::Coord_array(Boolean proto) : Container(proto) {}
 
-/*! \brief constructor. */
+//! \brief constructor.
 Coord_array::Coord_array(Uint n) { m_array.resize(n); }
 
-/*! \brief destructor. */
+//! \brief destructor.
 Coord_array::~Coord_array() { clear(); }
 
-/*! Initialize the node prototype. */
+//! Initialize the node prototype.
 void Coord_array::init_prototype()
 {
   if (s_prototype) return;
@@ -64,41 +64,39 @@ void Coord_array::init_prototype()
   // point
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>(&Coord_array::array_handle);
-  s_prototype->add_field_info(new MF_vector3f(POINT, "set_point",
+  s_prototype->add_field_info(new MF_vector3f(POINT, "point",
                                               array_func, exec_func));
 }
 
-/*! \brief processes change of points. */
+//! \brief processes change of points.
 void Coord_array::point_changed(Field_info* field_info)
 {
   set_rendering_required();
   field_changed(field_info);
 }
 
-/*! \brief deletes the node prototype */
+//! \brief deletes the node prototype.
 void Coord_array::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Coord_array::get_prototype()
 {
   if (s_prototype == NULL) Coord_array::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from an input file. */
+//! \brief sets the attributes of the object extracted from an input file.
 void Coord_array::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
   typedef Element::Str_attr_iter          Str_attr_iter;
-
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "point") {
@@ -107,7 +105,7 @@ void Coord_array::set_attributes(Element* elem)
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0 ; i < size ; i++) {
+      for (Uint i = 0; i < size; ++i) {
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       }
       elem->mark_delete(ai);
