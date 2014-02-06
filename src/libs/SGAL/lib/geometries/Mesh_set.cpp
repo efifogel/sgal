@@ -63,7 +63,11 @@ Mesh_set::Mesh_set(Boolean proto) :
   m_coord_indices_flat(false),
   m_normal_indices_flat(false),
   m_color_indices_flat(false),
-  m_tex_coord_indices_flat(false)
+  m_tex_coord_indices_flat(false),
+  m_dirty_coord_indices(false),
+  m_dirty_normal_indices(false),
+  m_dirty_color_indices(false),
+  m_dirty_tex_coord_indices(false)
 {}
 
 //! Destructor.
@@ -243,6 +247,7 @@ void Mesh_set::set_flat_coord_indices(Array<Uint>& indices)
   m_flat_coord_indices = indices;
   m_coord_indices_flat = true;
   m_dirty_flat_coord_indices = false;
+  m_dirty_coord_indices = true;
 }
 
 //! \brief sets the coordinate-index array.
@@ -251,6 +256,7 @@ void Mesh_set::set_coord_indices(Array<Uint>& indices)
   Geo_set::set_coord_indices(indices);
   m_coord_indices_flat = false;
   m_dirty_flat_coord_indices = true;
+  m_dirty_coord_indices = false;
 }
 
 /*! \brief flatten the coordinate index array.
@@ -275,6 +281,7 @@ void Mesh_set::set_flat_normal_indices(Array<Uint>& indices)
   m_flat_normal_indices = indices;
   m_normal_indices_flat = true;
   m_dirty_flat_normal_indices = false;
+  m_dirty_normal_indices = true;
 }
 
 //! \brief sets the normal-index array.
@@ -283,6 +290,7 @@ void Mesh_set::set_normal_indices(Array<Uint>& indices)
   Geo_set::set_normal_indices(indices);
   m_normal_indices_flat = false;
   m_dirty_flat_normal_indices = true;
+  m_dirty_normal_indices = false;
 }
 
 //! \brief obtains the normal-index array.
@@ -315,6 +323,7 @@ void Mesh_set::set_flat_color_indices(Array<Uint>& indices)
   m_flat_color_indices = indices;
   m_color_indices_flat = true;
   m_dirty_flat_color_indices = false;
+  m_dirty_color_indices = true;
 }
 
 //! \brief sets the color-index array.
@@ -323,6 +332,7 @@ void Mesh_set::set_color_indices(Array<Uint>& indices)
   Geo_set::set_color_indices(indices);
   m_color_indices_flat = false;
   m_dirty_flat_color_indices = true;
+  m_dirty_color_indices = false;
 }
 
 /*! \brief obtains the color-index array. */
@@ -355,6 +365,7 @@ void Mesh_set::set_flat_tex_coord_indices(Array<Uint>& indices)
   m_flat_tex_coord_indices = indices;
   m_tex_coord_indices_flat = true;
   m_dirty_flat_tex_coord_indices = false;
+  m_dirty_tex_coord_indices = true;
 }
 
 //! \brief sets the texture coordinate-index array.
@@ -363,6 +374,7 @@ void Mesh_set::set_tex_coord_indices(Array<Uint>& indices)
   Geo_set::set_tex_coord_indices(indices);
   m_tex_coord_indices_flat = false;
   m_dirty_flat_tex_coord_indices = true;
+  m_dirty_tex_coord_indices = false;
 }
 
 //! \brief obtains the texture coordinate-index array.
@@ -388,7 +400,7 @@ void Mesh_set::clean_flat_tex_coord_indices()
   m_dirty_flat_tex_coord_indices = false;
 }
 
-//! \brief proceses the indices.
+//! \brief converts non-flat indices (VRML style) to flat indices.
 void  Mesh_set::flatten_indices(const Array<Uint>& src, Array<Uint>& dst)
 {
   Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
@@ -396,15 +408,15 @@ void  Mesh_set::flatten_indices(const Array<Uint>& src, Array<Uint>& dst)
   dst.resize(size);
   const Uint* src_vector = src.get_vector();
   Uint* dst_vector = dst.get_vector();
-  flatten_indices(src_vector, dst_vector, m_num_primitives);
+  flatten_indices(src_vector, dst_vector);
 }
 
-//! \brief proceses the indices (in places).
-void Mesh_set::flatten_indices(const Uint* src, Uint* dst, Uint num)
+//! \brief converts non-flat indices (VRML style) to flat indices.
+void Mesh_set::flatten_indices(const Uint* src, Uint* dst)
 {
   if (m_primitive_type == PT_TRIANGLES) {
     Uint i, j, k;
-    for (j = 0, i = 0, k = 0; j < num; ++j) {
+    for (j = 0, i = 0, k = 0; j < m_num_primitives; ++j) {
       dst[i++] = src[k++];
       dst[i++] = src[k++];
       dst[i++] = src[k++];
@@ -414,7 +426,7 @@ void Mesh_set::flatten_indices(const Uint* src, Uint* dst, Uint num)
   }
   if (m_primitive_type == PT_QUADS) {
     Uint i, j, k;
-    for (j = 0, i = 0, k = 0; j < num; ++j) {
+    for (j = 0, i = 0, k = 0; j < m_num_primitives; ++j) {
       dst[i++] = src[k++];
       dst[i++] = src[k++];
       dst[i++] = src[k++];
@@ -425,21 +437,16 @@ void Mesh_set::flatten_indices(const Uint* src, Uint* dst, Uint num)
   }
 }
 
-//! \brief reverses the coordinate indices.
+//! \brief assigns the coord indices with the reverse of given indices.
 void Mesh_set::set_reverse_coord_indices(const Array<Uint>& indices)
 {
-  m_coord_indices.resize(indices.size());
-  Uint i = 0;
-  const Uint* ii = indices.end() - 2;
-  for (; ii >= indices.begin(); --ii) {
-    m_coord_indices[i++] = *ii;
-  }
-  m_coord_indices[i++] = (Uint) -1;
+  Geo_set::set_reverse_coord_indices(indices);
   m_coord_indices_flat = false;
   m_dirty_flat_coord_indices = true;
+  m_dirty_coord_indices = false;
 }
 
-//! \brief reverses the flat coordinate indices.
+//! \brief assigns the flat coord indices with the reverse of given indices.
 void Mesh_set::set_reverse_flat_coord_indices(const Array<Uint>& indices)
 {
   m_flat_coord_indices.resize(indices.size());
@@ -448,13 +455,89 @@ void Mesh_set::set_reverse_flat_coord_indices(const Array<Uint>& indices)
   while (i < indices.size()) m_flat_coord_indices[i++] = indices[--j];
   m_coord_indices_flat = true;
   m_dirty_flat_coord_indices = false;
+  m_dirty_coord_indices = true;
+}
+
+//! \brief converts flat indices to flat non-indices (VRML style).
+void  Mesh_set::deflatten_indices(const Array<Uint>& src, Array<Uint>& dst)
+{
+  Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 4 :
+    (m_primitive_type == PT_QUADS) ? m_num_primitives * 5 : 0;
+  dst.resize(size);
+  // const Uint* src_vector = src.get_vector();
+  // Uint* dst_vector = dst.get_vector();
+  if (m_primitive_type == PT_TRIANGLES) {
+    Uint i, j, k;
+    for (j = 0, i = 0, k = 0; j < m_num_primitives; ++j) {
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = -1;
+    }
+    return;
+  }
+  if (m_primitive_type == PT_QUADS) {
+    Uint i, j, k;
+    for (j = 0, i = 0, k = 0; j < m_num_primitives; ++j) {
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = src[k++];
+      dst[i++] = -1;
+    }
+    return;
+  }
+}
+
+//! \brief cleans the coord-index array.
+void Mesh_set::clean_coord_indices()
+{
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_flat_coord_indices.empty())
+    deflatten_indices(m_flat_coord_indices, m_coord_indices);
+  m_dirty_coord_indices = false;
+}
+
+//! \brief cleans the normal-index array.
+void Mesh_set::clean_normal_indices()
+{
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_flat_normal_indices.empty())
+    deflatten_indices(m_flat_normal_indices, m_normal_indices);
+  m_dirty_normal_indices = false;
+}
+
+//! \brief cleans the color-index array.
+void Mesh_set::clean_color_indices()
+{
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_flat_color_indices.empty())
+    deflatten_indices(m_flat_color_indices, m_color_indices);
+  m_dirty_color_indices = false;
+}
+
+//! \brief cleans the texture coord-index array.
+void Mesh_set::clean_tex_coord_indices()
+{
+  if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
+      !m_flat_tex_coord_indices.empty())
+    deflatten_indices(m_flat_tex_coord_indices, m_tex_coord_indices);
+  m_dirty_tex_coord_indices = false;
 }
 
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
-  formatter->container_begin(get_tag());
+  if (m_dirty_coord_indices) clean_coord_indices();
+  if (m_dirty_color_indices) clean_color_indices();
+  if (m_dirty_normal_indices) clean_normal_indices();
+  if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
 
+  /*! \todo the following can be replaced with the call to
+   * Geo_set::write(Formatter* formatter)
+   * after m_coord_indices is make Array<Int> (and not Array<Uint>).
+   */
+  formatter->container_begin(get_tag());
   // Travese prototype field-info records
   Container_proto* proto = get_prototype();
   Container_proto::Id_const_iterator it = proto->ids_begin(proto);

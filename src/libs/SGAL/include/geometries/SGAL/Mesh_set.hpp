@@ -82,7 +82,8 @@ public:
    */
   virtual void draw_mesh(Draw_action* action);
 
-  /*! Clean the mesh. */
+  /*! Clean the mesh.
+   */
   virtual void clean();
 
   /*! Calculate the sphere bound.
@@ -108,21 +109,29 @@ public:
    */
   virtual void write(Formatter* formatter);
 
-  /*! Clean the coord-index array.
-   */
+  /*! Clean the flat coord-index array. */
   void clean_flat_coord_indices();
 
-  /*! Clean the normal-index array.
-   */
+  /*! Clean the flat normal-index array. */
   void clean_flat_normal_indices();
 
-  /*! Clean the color-index array.
-   */
+  /*! Clean the flat color-index array. */
   void clean_flat_color_indices();
 
-  /*! Clean the texture coord-index array.
-   */
+  /*! Clean the flat texture coord-index array. */
   void clean_flat_tex_coord_indices();
+
+  /*! Clean the coord-index array. */
+  void clean_coord_indices();
+
+  /*! Clean the normal-index array. */
+  void clean_normal_indices();
+
+  /*! Clean the color-index array. */
+  void clean_color_indices();
+
+  /*! Clean the texture coord-index array. */
+  void clean_tex_coord_indices();
 
   /*! Set the counter-clockwise flag.
    */
@@ -189,11 +198,13 @@ public:
    */
   void set_coord_indices(Array<Uint>& indices);
 
-  /*! Reverse the coordinate indices.
+  /*! Assign the coord indices with the reverse of given indices.
+   * \param indices the indices to reverse.
    */
   void set_reverse_coord_indices(const Array<Uint>& indices);
 
-  /*! Reverse the flat coordinate indices.
+  /*! Assign the flat coord indices with the reverse of given indices.
+   * \param indices the indices to reverse.
    */
   void set_reverse_flat_coord_indices(const Array<Uint>& indices);
 
@@ -249,9 +260,19 @@ public:
    */
   void set_tex_coord_indices(Array<Uint>& indices);
 
-  /*! Proces the indices.
+  /*! Convert non-flat indices (VRML style) to flat indices.
+   * \param src the non-flat indices.
+   * \param dst the flat indices.
+   * \pre the primitive type is either triangle or quad.
    */
   void flatten_indices(const Array<Uint>& src, Array<Uint>& dst);
+
+  /*! Convert flat indices to flat non-indices (VRML style).
+   * \param dst the non-flat indices.
+   * \param src the flat indices.
+   * \pre the primitive type is either triangle or quad.
+   */
+  void  deflatten_indices(const Array<Uint>& src, Array<Uint>& dst);
 
   /*! Obtain the ith flat coord index.
    * \return the ith flat coord index.
@@ -332,16 +353,18 @@ public:
   /*! An array of indices into the vertex-normal array. */
   Array<Uint> m_flat_tex_coord_indices;
 
-  /*! Indicates whether the coordinate-index array be cleaned. */
+  /*! Indicates whether the flat coordinate-index array should be cleaned. */
   Boolean m_dirty_flat_coord_indices;
 
-  /*! Indicates whether the normal-index array be cleaned. */
+  /*! Indicates whether the flat normal-index array should be cleaned. */
   Boolean m_dirty_flat_normal_indices;
 
-  /*! Indicates whether the color-index array be cleaned. */
+  /*! Indicates whether the flat color-index array should be cleaned. */
   Boolean m_dirty_flat_color_indices;
 
-  /*! Indicates whether the texture coordinate-index array be cleaned. */
+  /*! Indicates whether the flat texture coordinate-index array should be
+   * cleaned.
+   */
   Boolean m_dirty_flat_tex_coord_indices;
 
   /*! Indicates whether the coordinate index array is "flat". In a "flat"
@@ -363,6 +386,18 @@ public:
   /*! Indicates whether the texture coordinate index array is "flat".
    */
   Boolean m_tex_coord_indices_flat;
+
+  /*! Indicates whether the coordinate-index array should be cleaned. */
+  Boolean m_dirty_coord_indices;
+
+  /*! Indicates whether the normal-index array should be cleaned. */
+  Boolean m_dirty_normal_indices;
+
+  /*! Indicates whether the color-index array should be cleaned. */
+  Boolean m_dirty_color_indices;
+
+  /*! Indicates whether the texture coordinate-index array should be cleaned. */
+  Boolean m_dirty_tex_coord_indices;
 
   /*! Clear the indices arrays, e.g., forces their cleaning.
    */
@@ -404,9 +439,12 @@ public:
    */
   Boolean is_dirty_flat_tex_coord_indices() const;
 
-  /*! Proces the indices.
+  /*! Convert non-flat indices (VRML style) to flat indices.
+   * \param src the non-flat indices.
+   * \param dst the flat indices.
+   * \pre the primitive type is either triangle or quad.
    */
-  void flatten_indices(const Uint* src, Uint* dst, Uint num);
+  void flatten_indices(const Uint* src, Uint* dst);
 
 private:
   /*! The node prototype. */
@@ -611,6 +649,7 @@ void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
     m_flat_coord_indices.resize(size);
     for (Uint i = 0; i < size; ++i) m_flat_coord_indices[i] = i;
     set_coord_indices_flat(true);
+    m_dirty_coord_indices = true;
   }
   else {
     set_primitive_type(Geo_set::PT_POLYGONS);

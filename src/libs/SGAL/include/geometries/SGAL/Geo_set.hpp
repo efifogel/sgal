@@ -415,8 +415,14 @@ public:
    */
   virtual void tex_coord_changed(Field_info* field_info);
 
-  /*! Process change of field. */
+  /*! Process change of field.
+   */
   virtual void field_changed(Field_info* field_info);
+
+  /*! Assign the coord indices with the reverse of given indices.
+   * \param indices the indices to reverse.
+   */
+  void set_reverse_coord_indices(const Array<Uint>& indices);
 
 protected:
   /*! The number of primitives in this Geo_set. */
