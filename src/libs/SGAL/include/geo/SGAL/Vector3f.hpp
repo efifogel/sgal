@@ -55,7 +55,7 @@ public:
   std::string get_text();
 
   Float get_max_comp();
-  bool equal(const Vector3f&  v) const;
+  Boolean equal(const Vector3f&  v) const;
   void sub(const Vector3f& v1, const Vector3f& v2);
   void sub(const Vector3sh& v1, const Vector3sh& v2);
   void sub(const Vector3f& v);
@@ -82,9 +82,9 @@ public:
   void xform_pt(const Vector3f& v, const Matrix4f& m);
   void div(Float, const Vector3f& v);
   void round();
-    
-  bool less(const Vector3f&  v) const;
-  bool almost_equal(const Vector3f& v, Float tol) const;
+
+  Boolean less(const Vector3f& v) const;
+  Boolean almost_equal(const Vector3f& v, Float tol) const;
   void combine(Float a, const Vector3f& v1, Float b, const Vector3f& v2);
   void full_xform_pt(const Vector3f& v, const Matrix4f& m);
   void clamp(const Vector3f& v, const Vector3f& my_min, const Vector3f& my_max);
@@ -93,11 +93,11 @@ public:
   Vector3f& operator=(Float v);
   Float& operator[](int i);
   Float operator[](int i) const;
-  bool operator==(const Vector3f& v) const;
-  bool operator!=(const Vector3f& v) const;
+  Boolean operator==(const Vector3f& v) const;
+  Boolean operator!=(const Vector3f& v) const;
 
   /*! Are three given points collinear? */
-  bool collinear(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
+  Boolean collinear(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
 };
 
 /*! \brief */
@@ -109,16 +109,16 @@ inline Float Vector3f::operator[](int i) const { return m_vector[i]; }
 /*! \brief */
 inline void Vector3f::set(Float a, Float b, Float c)
 {
-  m_vector[0] = a; 
-  m_vector[1] = b; 
+  m_vector[0] = a;
+  m_vector[1] = b;
   m_vector[2] = c;
 }
 
 /*! \brief */
 inline void Vector3f::get(Float* a, Float* b, Float* c)  const
 {
-  *a = m_vector[0]; 
-  *b = m_vector[1]; 
+  *a = m_vector[0];
+  *b = m_vector[1];
   *c = m_vector[2];
 }
 
@@ -182,13 +182,13 @@ inline void Vector3f::sub(const Vector3sh& v1, const Vector3sh& v2)
 /*! \brief sets this vector to be this - v */
 inline void Vector3f::sub(const Vector3f& v)
 {
-  m_vector[0] -= v[0];   
+  m_vector[0] -= v[0];
   m_vector[1] -= v[1];
   m_vector[2] -= v[2];
 }
 
 /*! \brief */
-inline bool Vector3f::equal(const Vector3f& v) const
+inline Boolean Vector3f::equal(const Vector3f& v) const
 {
   return((m_vector[0] == v[0]) && (m_vector[1] == v[1]) &&
          (m_vector[2] == v[2]));
@@ -204,17 +204,17 @@ inline Vector3f& Vector3f::operator=(const Vector3f& v)
 /*! \brief */
 inline Vector3f& Vector3f::operator=(Float v)
 {
-  m_vector[0] = v; 
-  m_vector[1] = v; 
+  m_vector[0] = v;
+  m_vector[1] = v;
   m_vector[2] = v;
   return *this;
 }
 
 /*! \brief */
-inline bool Vector3f::operator==(const Vector3f& v) const { return equal(v); }
+inline Boolean Vector3f::operator==(const Vector3f& v) const { return equal(v); }
 
 /*! \brief */
-inline bool Vector3f::operator!=(const Vector3f& v) const { return !equal(v); }
+inline Boolean Vector3f::operator!=(const Vector3f& v) const { return !equal(v); }
 
 /*! \brief */
 inline void Vector3f::scale(Float s, const Vector3f& v)
@@ -273,7 +273,7 @@ inline void Vector3f::negate(const Vector3f& v)
 }
 
 /*! \brief obtains the dot product of this vector with v. */
-inline Float Vector3f::dot(const Vector3f&  v) const
+inline Float Vector3f::dot(const Vector3f& v) const
 { return(m_vector[0] * v[0] + m_vector[1] * v[1] + m_vector[2] * v[2]); }
 
 /*! \brief */
@@ -342,22 +342,23 @@ inline void Vector3f::div(Float c, const Vector3f& v)
 /*! \brief */
 inline void Vector3f::round()
 {
-  m_vector[0] = (Float) ((int)m_vector[0]); 
-  m_vector[1] = (Float) ((int)m_vector[1]); 
+  m_vector[0] = (Float) ((int)m_vector[0]);
+  m_vector[1] = (Float) ((int)m_vector[1]);
   m_vector[2] = (Float) ((int)m_vector[2]);
 }
 
 /*! \brief */
-inline bool Vector3f::less(const Vector3f& v) const
+inline Boolean Vector3f::less(const Vector3f& v) const
 {
-  if (m_vector[0] != v[0]) return(m_vector[0] < v[0]);
-  if (m_vector[1] != v[1]) return(m_vector[1] < v[1]);
-  if (m_vector[2] != v[2]) return(m_vector[2] < v[2]);
-  return false;    
+  return ((m_vector[0] < v[0]) ? true :
+          ((m_vector[0] > v[0]) ? false :
+           ((m_vector[1] < v[1]) ? true :
+            ((m_vector[1] > v[1]) ? false :
+             ((m_vector[2] < v[2]) ? true : false)))));
 }
 
 /*! \brief */
-inline bool Vector3f::almost_equal(const Vector3f& v, Float tol) const
+inline Boolean Vector3f::almost_equal(const Vector3f& v, Float tol) const
 {
   Float neg_tol = -tol;
   Float diff = m_vector[0] - v[0];
@@ -378,37 +379,39 @@ inline void Vector3f::combine(Float a, const Vector3f& v1, Float b,
   m_vector[2] = a * v1[2] + b * v2[2];
 }
 
+Boolean operator>(const Vector3f& v1, const Vector3f& v2);
+Boolean operator<(const Vector3f& v1, const Vector3f& v2);
+
+/*! \brief */
+inline Boolean operator<(const Vector3f& v1, const Vector3f& v2)
+{ return ((v1[0] < v2[0]) && (v1[1] < v2[1]) && (v1[2] < v2[2])); }
+
+/*! \brief */
+inline Boolean operator>(const Vector3f& v1, const Vector3f& v2)
+{ return ((v1[0] > v2[0]) && (v1[1] > v2[1]) && (v1[2] > v2[2])); }
+
 #if defined(SOLARIS_251)
-Vector3f operator+(const Vector3f& _v1, const Vector3f& _v2);
+
+Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
 Vector3f operator*(const Float f, const Vector3f& v);
 Vector3f operator*(const Vector3f& v, const Float f);
-bool operator>(const Vector3f& _v1, const Vector3f& _v2);
-bool operator<(const Vector3f& _v1, const Vector3f& _v2);
 
 /*! \brief */
-inline bool operator<(const Vector3f& _v1, const Vector3f& _v2)
-{ return ((_v1[0] < _v2[0]) && (_v1[1] < _v2[1]) && (_v1[2] < _v2[2])); }
-
-/*! \brief */
-inline bool operator>(const Vector3f& _v1, const Vector3f& _v2)
-{ return ((_v1[0] > _v2[0]) && (_v1[1] > _v2[1]) && (_v1[2] > _v2[2])); }
-
-/*! \brief */
-inline Vector3f operator+(const Vector3f& _v1, const Vector3f& _v2)
-{                                 
-  Vector3f* c = new Vector3f;     
-  c->set(_v1[0] + _v2[0], _v1[1] + _v2[1], _v1[2] + _v2[2]);
-  return(*c);                   
+inline Vector3f operator+(const Vector3f& v1, const Vector3f& v2)
+{
+  Vector3f* c = new Vector3f;
+  c->set(v1[0] + v2[0], v1[1] + v2[1], v1[2] + v2[2]);
+  return(*c);
 }
 
 /*! \brief */
-inline Vector3f operator*(const Vector3f v, const Float f)     
-{                                 
-  Vector3f* c = new Vector3f;     
-  c->set(v[0] * f, v[1] + f);   
-  return(*c);                   
-}                                 
-                                  
+inline Vector3f operator*(const Vector3f v, const Float f)
+{
+  Vector3f* c = new Vector3f;
+  c->set(v[0] * f, v[1] + f);
+  return(*c);
+}
+
 /*! \brief */
 inline Vector3f operator*(const Float f, const Vector3f v)
 {
@@ -424,10 +427,10 @@ inline std::ostream& operator<<(std::ostream& os, const Vector3f& vec)
 {
   os << vec[0] << ", " << vec[1] << ", " << vec[2];
   return os;
-}  
+}
 
 /*! Importer */
-inline std::istream& operator >>(std::istream& in, Vector3f& vec)
+inline std::istream& operator>>(std::istream& in, Vector3f& vec)
 {
   Float x, y, z;
   in >> x >> y >> z;

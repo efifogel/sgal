@@ -302,6 +302,10 @@ public:
   template <typename InputIterator>
   void set_coord_indices(InputIterator begin, InputIterator end);
 
+  /*! Colapse identical coordinates.
+   */
+  void collapse_identical_coordinates();
+
   /*! Obtain a pointer to an element through the coord indices. */
   template <typename T_Vector>
   GLfloat* get_by_flat_coord_index(T_Vector& array, Uint i) const;
@@ -318,7 +322,7 @@ public:
   template <typename T_Vector>
   GLfloat* get_by_flat_tex_coord_index(T_Vector & array, Uint i) const;
 
- protected:
+protected:
   /*! Indicates whether the mesh must be cleaned. */
   Boolean m_dirty;
 
@@ -445,6 +449,10 @@ public:
    * \pre the primitive type is either triangle or quad.
    */
   void flatten_indices(const Uint* src, Uint* dst);
+
+  /*! Colapse identical coordinates.
+   */
+  void collapse_identical_coordinates(Array<Uint>& indices);
 
 private:
   /*! The node prototype. */

@@ -19,6 +19,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <vector>
+#include <utility>
 #include <boost/lexical_cast.hpp>
 
 #if defined(_WIN32)
@@ -36,6 +38,8 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Vector3f.hpp"
+#include "SGAL/Coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -556,6 +560,81 @@ void Mesh_set::write(Formatter* formatter)
     else field_info->write(this, formatter);
   }
   formatter->container_end();
+}
+
+//! \brief colapses identical coordinates.
+void Mesh_set::collapse_identical_coordinates()
+{
+  if (m_coord_indices_flat) {
+    Array<Uint>& indices = get_flat_coord_indices();
+    collapse_identical_coordinates(indices);
+    m_dirty_flat_coord_indices = false;
+    m_dirty_coord_indices = true;
+  }
+  else {
+    Array<Uint>& indices = get_coord_indices();
+    collapse_identical_coordinates(indices);
+    m_dirty_flat_coord_indices = true;
+    m_dirty_coord_indices = false;
+  }
+}
+
+//! \brief colapses identical coordinates.
+void Mesh_set::collapse_identical_coordinates(Array<Uint>& indices)
+{
+  typedef std::pair<const Vector3f*, Uint>      Coord_index_pair;
+  if (indices.empty()) return;
+
+  // Construct a vector of pairs of item, where each item is a point and the
+  // index into the indices array where the point was indexed.
+  std::vector<Coord_index_pair> vec(indices.size());
+  std::vector<Coord_index_pair>::iterator it;
+  Uint i = 0;
+  for (it = vec.begin(); it != vec.end(); ++it) {
+    const Vector3f& vecf = (*m_coord_array)[m_flat_coord_indices[i]];
+    *it = std::make_pair(&vecf, i++);
+  }
+
+  // Sort the vector lexicographically.
+  std::sort(vec.begin(), vec.end(),
+            [](const Coord_index_pair& a, const Coord_index_pair& b)
+            {
+              return ((b.first->less(*(a.first))) ? true :
+                      ((*(a.first) == (*b.first)) ?
+                       (a.second > b.second) : false));
+            });
+
+  // Count the number of distinct points.
+  Uint num = 1;
+  it = vec.begin();
+  const Vector3f* prev = it->first;
+  for (++it; it != vec.end(); ++it) {
+    const Vector3f* curr = it->first;
+    if ((*curr) != (*prev)) ++num;
+    prev = curr;
+  }
+
+  // Allocate a new coords structure
+  Coord_array* coords = new Coord_array(num);
+  Shared_coord_array shared_coords(coords);
+
+  // Initialize the newly created coords structure and update the indices
+  i = 0;
+  it = vec.begin();
+  prev = it->first;
+  Uint index = it->second;
+  (*coords)[i] = *prev;
+  indices[index] = i;
+  for (++it; it != vec.end(); ++it) {
+    const Vector3f* curr = it->first;
+    index = it->second;
+    if ((*curr) != (*prev)) (*coords)[++i] = *curr;
+    indices[index] = i;
+    prev = curr;
+  }
+  Shared_coord_array old_shared_coord = get_coord_array();
+  old_shared_coord->clear();
+  set_coord_array(shared_coords);
 }
 
 SGAL_END_NAMESPACE
