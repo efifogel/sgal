@@ -47,7 +47,6 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Formatter.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Scene_graph.hpp"
 

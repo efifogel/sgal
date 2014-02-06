@@ -37,7 +37,6 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

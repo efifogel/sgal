@@ -45,7 +45,6 @@ class Tex_gen;
 class Draw_action;
 class Container_proto;
 class Element;
-class Formatter;
 class Halftone;
 
 #if (defined _MSC_VER)
@@ -108,9 +107,6 @@ public:
 
   /*! Detache a given context. */
   virtual Boolean detach_context(Context* context = 0);
-
-  /*! Write this container. */
-  virtual void write(Formatter* formatter);
 
   /*! Set the appearance with the content of another appearance. */
   void set(Appearance* app);
