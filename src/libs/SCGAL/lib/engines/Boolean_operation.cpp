@@ -95,7 +95,7 @@ void Boolean_operation::execute()
   geometry1.set_num_primitives(m_operand1->get_num_primitives());
   geometry1.set_primitive_type(m_operand1->get_primitive_type());
   Polyhedron& polyhedron1 = geometry1.get_polyhedron();
-  geometry1.print_stat();
+  // geometry1.print_stat();
   Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(polyhedron1);
 
   Exact_polyhedron_geo geometry2;

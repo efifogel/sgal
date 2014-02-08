@@ -116,13 +116,10 @@ void Exact_polyhedron_geo::draw(Draw_action* action)
 //! \brief cleans the data structure.
 void Exact_polyhedron_geo::clean_polyhedron()
 {
-  std::cout << "Exact_polyhedron_geo::clean_polyhedron()" << std::endl;
   clock_t start_time = clock();
   if (m_convex_hull) convex_hull();
   else {
-    std::cout << "Exact_polyhedron_geo::clean_polyhedron() 1" << std::endl;
     m_polyhedron.delegate(m_surface);
-    std::cout << "Exact_polyhedron_geo::clean_polyhedron() 2" << std::endl;
 #if 0
     if (!m_polyhedron.normalized_border_is_valid())
       m_polyhedron.normalize_border();
