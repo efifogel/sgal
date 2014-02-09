@@ -372,6 +372,7 @@ void Group::write(Formatter* formatter)
 }
 
 /*! \brief writes the children. */
+//! \todo remove this member once "children" becomes a valid multi-container.
 void Group::write_children(Formatter* formatter)
 {
   formatter->multi_container_begin("children");
