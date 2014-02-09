@@ -42,7 +42,7 @@ Vrml_formatter::Vrml_formatter(std::istream& is) : Text_formatter(is) {}
 //! \brief destructor
 Vrml_formatter::~Vrml_formatter() {}
 
-//! \brief writes the headers of the scene graph.
+//! \brief exports the headers of the scene graph.
 void Vrml_formatter::begin()
 {
   SGAL_assertion(m_out != NULL);
@@ -54,16 +54,16 @@ void Vrml_formatter::begin()
   new_line();
 }
 
-//! \brief writes the routing statements.
+//! \brief exports the routing statements.
 void Vrml_formatter::end()
 {
   // set_mode(*m_out, m_old_out_mode);
 }
 
-//! \brief writes a scene-graph node.
+//! \brief exports a scene-graph node.
 void Vrml_formatter::write(Container* container) { container->write(this); }
 
-//! \brief writes the container header.
+//! \brief exports the container header.
 void Vrml_formatter::container_begin(const std::string& tag)
 {
   indent();
@@ -71,7 +71,7 @@ void Vrml_formatter::container_begin(const std::string& tag)
   push_indent();
 }
 
-//! \brief writes the container tailer.
+//! \brief exports the container tailer.
 void Vrml_formatter::container_end()
 {
   pop_indent();
@@ -80,7 +80,7 @@ void Vrml_formatter::container_end()
   new_line();
 }
 
-//! \brief writes the header of a container multi-field.
+//! \brief exports the header of a container multi-field.
 void Vrml_formatter::multi_container_begin(const std::string& name)
 {
   new_line();
@@ -90,7 +90,7 @@ void Vrml_formatter::multi_container_begin(const std::string& name)
   push_indent();
 }
 
-//! \brief writes the tailer of a container multi-field.
+//! \brief exports the tailer of a container multi-field.
 void Vrml_formatter::multi_container_end()
 {
   pop_indent();
@@ -99,7 +99,7 @@ void Vrml_formatter::multi_container_end()
   new_line();
 }
 
-//! \brief writes the header of a container single-field.
+//! \brief exports the header of a container single-field.
 void Vrml_formatter::single_container_begin(const std::string& name)
 {
   new_line();
@@ -107,10 +107,22 @@ void Vrml_formatter::single_container_begin(const std::string& name)
   out() << name << " ";
 }
 
-//! \brief writes the tailer of a container single-field.
+//! \brief exports the tailer of a container single-field.
 void Vrml_formatter::single_container_end() {}
 
-/*! Write a single Boolean field */
+//! \brief exports a single string field.
+inline void Vrml_formatter::single_string(const std::string& name,
+                                          const std::string& value,
+                                          const std::string& default_value)
+{
+  if (value == default_value) return;
+  new_line();
+  indent();
+  out() << name << " \"" << value << "\"";
+  new_line();
+}
+
+//! \brief exports a single Boolean field.
 void Vrml_formatter::single_boolean(const std::string& name,
                                     Boolean value, Boolean default_value)
 {
@@ -121,7 +133,7 @@ void Vrml_formatter::single_boolean(const std::string& name,
   new_line();
 }
 
-//! \brief writes a multi-Boolean field.
+//! \brief exports a multi-Boolean field.
 void Vrml_formatter::multi_boolean(const std::string& name,
                                    const Array<Boolean>& value,
                                    const Array<Boolean>& default_value)

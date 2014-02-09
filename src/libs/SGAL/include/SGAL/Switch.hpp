@@ -45,6 +45,7 @@ class Draw_action;
 class Element;
 class Container_proto;
 class Isect_action;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -98,6 +99,10 @@ public:
   /*! Calculate the sphere bound of the group */
   virtual bool clean_sphere_bound();
 
+  /*! Write this container.
+   */
+  virtual void write(Formatter* formatter);
+
   /*! Set the index of the child to traverse */
   void set_which_choice(Uint which_choice);
 
@@ -120,6 +125,9 @@ private:
 
   /*! Specifies the index of the child to traverse */
   Uint m_which_choice;
+
+  // Default values
+  static const Uint s_def_which_choice;
 };
 
 #if defined(_MSC_VER)

@@ -28,6 +28,7 @@
 #include "SGAL/version.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Transform.hpp"
+#include "SGAL/Switch.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array.hpp"
 
@@ -158,6 +159,12 @@ void Stl_formatter::facet(const Vector3f& local_p1, const Vector3f& local_p2,
 //! \brief writes a scene-graph container.
 void Stl_formatter::write(Container* container)
 {
+  Switch* sw = dynamic_cast<Switch*>(container);
+  if (sw) {
+    Switch::Shared_node node = sw->get_choice();
+    if (node) node->write(this);
+    return;
+  }
   Transform* transform = dynamic_cast<Transform*>(container);
   if (transform) {
     // Push the transform matrix
