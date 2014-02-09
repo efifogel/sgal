@@ -312,10 +312,11 @@ void Player_scene::save_vrml(const std::string& filename)
     Shared_node node = root->get_child(0);
     Shared_transform transform =
       boost::dynamic_pointer_cast<SGAL::Transform>(node);
-    if (transform->children_size() > 1) transform->write(&formatter);
-    else {
-      Shared_node node = transform->get_child(0);
-      node->write(&formatter);
+    SGAL::Transform::Node_iterator it;
+    for (it = transform->children_begin(); it != transform->children_end(); ++it)
+    {
+      Shared_node node = *it;
+      formatter.write(&*node);
     }
   }
   formatter.end();
@@ -336,9 +337,10 @@ void Player_scene::save_stl(const std::string& filename)
     Shared_node node = root->get_child(0);
     Shared_transform transform =
       boost::dynamic_pointer_cast<SGAL::Transform>(node);
-    if (transform->children_size() > 1) transform->write(&formatter);
-    else {
-      Shared_node node = transform->get_child(0);
+    SGAL::Transform::Node_iterator it;
+    for (it = transform->children_begin(); it != transform->children_end(); ++it)
+    {
+      Shared_node node = *it;
       formatter.write(&*node);
     }
   }
