@@ -30,14 +30,14 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Text_formatter.hpp"
-#include "SGAL/Vector2f.hpp"
-#include "SGAL/Vector3f.hpp"
-#include "SGAL/Vector4f.hpp"
-#include "SGAL/Rotation.hpp"
-#include "SGAL/Sphere_bound.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
+class Vector2f;
+class Vector3f;
+class Vector4f;
+class Rotation;
+class Sphere_bound;
 class Container;
 
 /*! Writes a scene graph to an output stream in the VRML format */

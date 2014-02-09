@@ -42,6 +42,9 @@ Text_formatter::Text_formatter(std::istream& is) :
   m_indented(false)
 {}
 
+//! \brief destructor.
+Text_formatter::~Text_formatter() {}
+
 //! \brief begins a new line.
 void Text_formatter::new_line()
 {

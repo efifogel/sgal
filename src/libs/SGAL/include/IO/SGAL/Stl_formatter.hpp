@@ -27,17 +27,19 @@
 
 #include <iostream>
 #include <string>
+#include <stack>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Text_formatter.hpp"
-#include "SGAL/Vector2f.hpp"
-#include "SGAL/Vector3f.hpp"
-#include "SGAL/Vector4f.hpp"
-#include "SGAL/Rotation.hpp"
-#include "SGAL/Sphere_bound.hpp"
+#include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
+class Vector2f;
+class Vector3f;
+class Vector4f;
+class Rotation;
+class Sphere_bound;
 class Container;
 
 /*! Writes a scene graph to an output stream in the VRML format */
@@ -70,7 +72,7 @@ public:
    */
   virtual void end();
 
-  /*! Write a scene-graph node.
+  /*! Write a scene-graph container.
    */
   virtual void write(Container* container);
 
@@ -293,45 +295,8 @@ public:
   //@}
 
 private:
-  /*! Write a single field of type T.
-   */
-  template <typename T>
-  void single_field(const std::string& name, const T& value,
-                    const T& default_value)
-  {
-    if (value == default_value) return;
-    new_line();
-    indent();
-    out() << name << " " << value;
-    new_line();
-  }
-
-  /*! Write a multi field of Array of type T.
-   */
-  template <typename T>
-  void multi_field(const std::string& name, const Array<T>& value,
-                   const Array<T>& default_value)
-  {
-    const T* vec = value.get_vector();
-    const T* default_vec = default_value.get_vector();
-    if (value.size() == 0) return;
-    if ((value.size() == default_value.size()) &&
-        std::equal(&vec[0], &vec[value.size()], &default_vec[value.size()]))
-      return;
-
-    new_line();
-    indent();
-    out() << name << " [";
-    new_line();
-    push_indent();
-    indent();
-    std::copy(vec, &vec[value.size()], std::ostream_iterator<T>(out(), " "));
-    new_line();
-    pop_indent();
-    indent();
-    out() << "]";
-    new_line();
-  }
+  //! The stack of viewing matrices.
+  std::stack<Matrix4f> m_matrices;
 };
 
 //! \brief writes a single Float field.

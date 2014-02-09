@@ -244,6 +244,11 @@ protected:
    */
   void save_vrml(const std::string& filename);
 
+  /*! saves the scene to a file in STL format.
+   * \param filename The file name.
+   */
+  void save_stl(const std::string& filename);
+
 private:
   typedef std::list<fi::path>                                   Path_list;
   typedef Path_list::iterator                                   Path_iter;

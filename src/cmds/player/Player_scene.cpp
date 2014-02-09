@@ -76,6 +76,7 @@
 #include "SGAL/Image.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
 
@@ -242,7 +243,7 @@ void Player_scene::create_scene()
     return;
   }
 
-  std::cout << m_fullname.c_str() << std::endl;
+  // std::cout << m_fullname.c_str() << std::endl;
 
   // Construct a Scene_graph:
   m_scene_graph = new SGAL::Scene_graph;
@@ -321,6 +322,30 @@ void Player_scene::save_vrml(const std::string& filename)
 }
 
 //! \brief saves the scene to a file in a given format.
+void Player_scene::save_stl(const std::string& filename)
+{
+  typedef boost::shared_ptr<SGAL::Group>                Shared_group;
+  typedef boost::shared_ptr<SGAL::Node>                 Shared_node;
+  typedef boost::shared_ptr<SGAL::Transform>            Shared_transform;
+
+  SGAL::Stl_formatter formatter(std::cout);
+  SGAL::Scene_graph::Shared_group root = m_scene_graph->get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    Shared_node node = root->get_child(0);
+    Shared_transform transform =
+      boost::dynamic_pointer_cast<SGAL::Transform>(node);
+    if (transform->children_size() > 1) transform->write(&formatter);
+    else {
+      Shared_node node = transform->get_child(0);
+      formatter.write(&*node);
+    }
+  }
+  formatter.end();
+}
+
+//! \brief saves the scene to a file in a given format.
 void Player_scene::save(const std::string& filename,
                         SGAL::File_format::Id format_id)
 {
@@ -329,7 +354,7 @@ void Player_scene::save(const std::string& filename,
 
    case SGAL::File_format::ID_X3D: break;
 
-   case SGAL::File_format::ID_STL: break;
+   case SGAL::File_format::ID_STL: save_stl(filename); break;
 
    case SGAL::File_format::ID_OBJ: break;
 

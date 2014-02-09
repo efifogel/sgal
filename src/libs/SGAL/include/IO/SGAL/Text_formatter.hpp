@@ -50,6 +50,9 @@ public:
    */
   Text_formatter(std::istream& is);
 
+  /*! Destructor */
+  virtual ~Text_formatter();
+
 protected:
   /*! Obtain the indentation level.
    */
