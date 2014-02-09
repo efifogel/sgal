@@ -675,11 +675,12 @@ Attribute_list Transform::get_attributes()
 #endif
 
 //! \brief writes this container.
+//! \todo remove this member once "children" becomes a valid multi-container.
 void Transform::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
   formatter->single_vector3f("translation", m_translation, s_def_translation);
-  Group::write_children(formatter);
+  write_children(formatter);
   formatter->container_end();
 }
 
