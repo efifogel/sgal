@@ -170,9 +170,7 @@ void Stl_formatter::write(Container* container)
     // Push the transform matrix
     const Matrix4f& new_matrix = transform->get_matrix();
     const Matrix4f& top_matrix = m_matrices.top();
-    Matrix4f m;
-    m.mult(top_matrix, new_matrix);
-    m_matrices.push(m);
+    m_matrices.emplace(Matrix4f(top_matrix, new_matrix));
 
     // Process the children.
     transform->write(this);

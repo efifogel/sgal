@@ -26,7 +26,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief
+//! \brief sets this matrix to be the identity matrix.
 void Matrix4f::make_identity()
 {
   m_matrix[0][0] = m_matrix[1][1] = m_matrix[2][2] = m_matrix[3][3] = 1.0f;
@@ -36,7 +36,7 @@ void Matrix4f::make_identity()
   m_matrix[3][0] = m_matrix[3][1] = m_matrix[3][2] = 0.0f;
 }
 
-//! \brief
+//! \brief determines whether this matrix is the identity matrix.
 Boolean Matrix4f::is_identity() const
 {
   return ((m_matrix[0][0] == 1.0f) && (m_matrix[1][1] == 1.0f) &&
