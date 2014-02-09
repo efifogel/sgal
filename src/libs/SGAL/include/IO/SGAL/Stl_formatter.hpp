@@ -61,30 +61,31 @@ public:
   /*! Destructor */
   virtual ~Stl_formatter();
 
-  /// \name Write functions
+  /// \name Export functions
   //@{
 
-  /*! Write the headers of the scene graph.
+  /*! Export the headers of the scene graph.
    */
   virtual void begin();
 
-  /*! Write the routing statements.
+  /*! Export the routing statements.
    */
   virtual void end();
 
-  /*! Write a scene-graph container.
+  /*! Export a scene-graph container.
    */
   virtual void write(Container* container);
 
-  /*! Write the container header.
+  /*! Export the container header.
+   * \param tag (in) the container tag.
    */
   virtual void container_begin(const std::string& tag);
 
-  /*! Write the container tailer.
+  /*! Export the container tailer.
    */
   virtual void container_end();
 
-  /*! Write a single Boolean field.
+  /*! Export a single Boolean field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -92,7 +93,7 @@ public:
   virtual void single_boolean(const std::string& name,
                               Boolean value, Boolean default_value);
 
-  /*! Write a single Float field.
+  /*! Export a single Float field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -100,7 +101,7 @@ public:
   virtual void single_float(const std::string& name,
                             Float value, Float default_value);
 
-  /*! Write a single Uint field.
+  /*! Export a single Uint field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -108,7 +109,7 @@ public:
   virtual void single_uint(const std::string& name,
                            Uint value, Uint default_value);
 
-  /*! Write a single Int field.
+  /*! Export a single Int field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -116,7 +117,7 @@ public:
   virtual void single_int(const std::string& name,
                           Int value, Int default_value);
 
-  /*! Write a single Scene_time field.
+  /*! Export a single Scene_time field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -125,7 +126,7 @@ public:
                                  Scene_time value,
                                  Scene_time default_value);
 
-  /*! Write a single Vector2f field.
+  /*! Export a single Vector2f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -134,7 +135,7 @@ public:
                                const Vector2f& value,
                                const Vector2f& default_value);
 
-  /*! Write a single Vector3f field.
+  /*! Export a single Vector3f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -143,7 +144,7 @@ public:
                                const Vector3f& value,
                                const Vector3f& default_value);
 
-  /*! Write a single Vector4f field.
+  /*! Export a single Vector4f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -152,7 +153,7 @@ public:
                                const Vector4f& value,
                                const Vector4f& default_value);
 
-  /*! Write a single Rotation field.
+  /*! Export a single Rotation field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -161,7 +162,7 @@ public:
                                const Rotation& value,
                                const Rotation& default_value);
 
-  /*! Write a single sphere-bound field.
+  /*! Export a single sphere-bound field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -170,7 +171,7 @@ public:
                                    const Sphere_bound& value,
                                    const Sphere_bound& default_value);
 
-  /*! Write a single string field.
+  /*! Export a single string field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -178,15 +179,16 @@ public:
   virtual void single_string(const std::string& name,
                              const std::string& value,
                              const std::string& default_value);
-  /*! Write the header of a single-container field.
+
+  /*! Export the header of a single-container field.
    */
   virtual void single_container_begin(const std::string& name);
 
-  /*! Write the tailer of a single-container field.
+  /*! Export the tailer of a single-container field.
    */
   virtual void single_container_end();
 
-  /*! Write a multi-Boolean field.
+  /*! Export a multi-Boolean field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -195,7 +197,7 @@ public:
                              const Array<Boolean>& value,
                              const Array<Boolean>& default_value);
 
-  /*! Write a multi-Float field.
+  /*! Export a multi-Float field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -204,7 +206,7 @@ public:
                            const Array<Float>& value,
                            const Array<Float>& default_value);
 
-  /*! Write a multi-Uint field.
+  /*! Export a multi-Uint field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -213,7 +215,7 @@ public:
                           const Array<Uint>& value,
                           const Array<Uint>& default_value);
 
-  /*! Write a multi-Int field.
+  /*! Export a multi-Int field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -222,7 +224,7 @@ public:
                          const Array<Int>& value,
                          const Array<Int>& default_value);
 
-  /*! Write a multi-Scene_time field.
+  /*! Export a multi-Scene_time field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -231,7 +233,7 @@ public:
                                 const Array<Scene_time>& value,
                                 const Array<Scene_time>& default_value);
 
-  /*! Write a multi-Vector2f field.
+  /*! Export a multi-Vector2f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -240,7 +242,7 @@ public:
                               const Array<Vector2f>& value,
                               const Array<Vector2f>& default_value);
 
-  /*! Write a multi-Vector3f field.
+  /*! Export a multi-Vector3f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -249,7 +251,7 @@ public:
                               const Array<Vector3f>& value,
                               const Array<Vector3f>& default_value);
 
-  /*! Write a multi-Vector4f field.
+  /*! Export a multi-Vector4f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -258,7 +260,7 @@ public:
                               const Array<Vector4f>& value,
                               const Array<Vector4f>& default_value);
 
-  /*! Write a multi-Rotation field.
+  /*! Export a multi-Rotation field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -267,7 +269,7 @@ public:
                               const Array<Rotation>& value,
                               const Array<Rotation>& default_value);
 
-  /*! Write a multi-Sphere_bound field.
+  /*! Export a multi-Sphere_bound field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -276,7 +278,7 @@ public:
                                   const Array<Sphere_bound>& value,
                                   const Array<Sphere_bound>& default_value);
 
-  /*! Write a multi-string field.
+  /*! Export a multi-string field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
@@ -285,11 +287,11 @@ public:
                             const Array<std::string>& value,
                             const Array<std::string>& default_value);
 
-  /*! Write the header of a multi-container field.
+  /*! Export the header of a multi-container field.
    */
   virtual void multi_container_begin(const std::string& name);
 
-  /*! Write the tailer of a multi-container field */
+  /*! Export the tailer of a multi-container field */
   virtual void multi_container_end();
 
   //@}
@@ -297,6 +299,57 @@ public:
 private:
   //! The stack of viewing matrices.
   std::stack<Matrix4f> m_matrices;
+
+  /*! Compute the normal of a plane given by three points.
+   * \param p1 (in) the first point.
+   * \param p2 (in) the second point.
+   * \param p3 (in) the third point.
+   * \param normal (out) the output normal.
+   */
+  void compute_normal(const Vector3f& p1, const Vector3f& p2,
+                      const Vector3f& p3, Vector3f& normal);
+
+  /*! Export a vertex.
+   * \param p the vertex point.
+   */
+  void vertex(const Vector3f& p);
+
+  /*! Export a facet header.
+   * \param normal (in) the facet normal.
+   */
+  void facet_begin(const Vector3f& normal);
+
+  /*! Export a facet trailer.
+   */
+  void facet_end();
+
+  /*! Export a facet.
+   * \param p1 (in) the point (in world coordinate system) of the first vertex.
+   * \param p2 (in) the point (in world coordinate system) of the second vertex.
+   * \param p3 (in) the point (in world coordinate system) of the third vertex.
+   * \param normal (in) the facet normal.
+   */
+  void facet(const Vector3f& local_p1, const Vector3f& local_p2,
+             const Vector3f& local_p3, const Vector3f& normal);
+
+  /*! Export a triangular facet.
+   * \param p1 (in) the point, in local coordinate system, of the first vertex.
+   * \param p2 (in) the point, in local coordinate system, of the second vertex.
+   * \param p3 (in) the point, in local coordinate system, of the third vertex.
+   * \param matrix (in) the transform viewing matrix.
+   */
+  void facet(const Vector3f& local_p1, const Vector3f& local_p2,
+             const Vector3f& local_p3, const Matrix4f& matrix);
+
+  /*! Export a quadrilateral facet.
+   * \param p1 (in) the point of the first vertex.
+   * \param p2 (in) the point of the second vertex.
+   * \param p3 (in) the point of the third vertex.
+   * \param p4 (in) the point of the forth vertex.
+   */
+  void facet(const Vector3f& local_p1, const Vector3f& local_p2,
+             const Vector3f& local_p3, const Vector3f& local_p4,
+             const Matrix4f& matrix);
 };
 
 //! \brief writes a single Float field.

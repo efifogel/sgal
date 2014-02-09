@@ -65,6 +65,96 @@ void Stl_formatter::end()
   new_line();
 }
 
+//! \brief computes the normal of a plane given by three points.
+void Stl_formatter::compute_normal(const Vector3f& p1, const Vector3f& p2,
+                                   const Vector3f& p3, Vector3f& normal)
+{
+  Vector3f l1, l2;
+  l1.sub(p2, p1);
+  l2.sub(p3, p2);
+  normal.cross(l1, l2);
+  normal.normalize();
+}
+
+//! \brief exports a vertex.
+void Stl_formatter::vertex(const Vector3f& p)
+{
+  indent();
+  out() << "vertex " << p[0] << " " << p[1] << " " << p[2];
+  new_line();
+}
+
+//! \brief exports a facet header.
+void Stl_formatter::facet_begin(const Vector3f& n)
+{
+  indent();
+  out() << "facet normal " << n[0] << " " << n[1] << " " << n[2];
+  new_line();
+  push_indent();
+  indent();
+  out() << "outer loop";
+  new_line();
+  push_indent();
+}
+
+//! \brief exports a facet trailer.
+void Stl_formatter::facet_end()
+{
+  pop_indent();
+  indent();
+  out() << "endloop";
+  new_line();
+  pop_indent();
+  indent();
+  out() << "endfacet";
+  new_line();
+}
+
+//! \brief exports a facet.
+void Stl_formatter::facet(const Vector3f& p1, const Vector3f& p2,
+                          const Vector3f& p3, const Vector3f& normal)
+{
+  facet_begin(normal);
+  vertex(p1);
+  vertex(p2);
+  vertex(p3);
+  facet_end();;
+}
+
+//! \brief exports a facet.
+void Stl_formatter::facet(const Vector3f& local_p1, const Vector3f& local_p2,
+                          const Vector3f& local_p3, const Matrix4f& matrix)
+{
+  Vector3f p1, p2, p3;
+  p1.xform_pt(local_p1, matrix);
+  p2.xform_pt(local_p2, matrix);
+  p3.xform_pt(local_p3, matrix);
+  Vector3f n;
+  compute_normal(p1, p2, p3, n);
+  facet(p1, p2, p3, n);
+}
+
+//! \brief exports a quadrilateral facet.
+void Stl_formatter::facet(const Vector3f& local_p1, const Vector3f& local_p2,
+                          const Vector3f& local_p3, const Vector3f& local_p4,
+                          const Matrix4f& matrix)
+{
+  Vector3f p1, p2, p3, p4;
+  p1.xform_pt(local_p1, matrix);
+  p2.xform_pt(local_p2, matrix);
+  p3.xform_pt(local_p3, matrix);
+  p4.xform_pt(local_p4, matrix);
+
+  //! \todo split the quadrilateral based on its shape.
+  Vector3f n1;
+  compute_normal(p1, p2, p3, n1);
+  facet(p1, p2, p3, n1);
+
+  Vector3f n2;
+  compute_normal(p1, p3, p4, n2);
+  facet(p1, p3, p4, n2);
+}
+
 //! \brief writes a scene-graph container.
 void Stl_formatter::write(Container* container)
 {
@@ -89,49 +179,31 @@ void Stl_formatter::write(Container* container)
     // Apply the active (top) transform matrix and export the facets.
     const Matrix4f& matrix = m_matrices.top();
     const Mesh_set::Shared_coord_array coords = mesh->get_coord_array();
-    if (Geo_set::PT_TRIANGLES == mesh->get_primitive_type()) {
+    if ((Geo_set::PT_TRIANGLES == mesh->get_primitive_type()) ||
+        (Geo_set::PT_QUADS == mesh->get_primitive_type()))
+    {
       Vector3f vert;
       const Array<Uint>& indices = mesh->get_flat_coord_indices();
       Uint j = 0;
       for (Uint i = 0; i < mesh->get_num_primitives(); ++i) {
-        indent();
-        out() << "facet normal 0 0 1";
-        new_line();
-        push_indent();
-        indent();
-        out() << "outer loop";
-        new_line();
-        push_indent();
-
-        Uint index = indices[j++];
-        const Vector3f& vertex1 = (*coords)[index];
-        vert.xform_pt(vertex1, matrix);
-        indent();
-        out() << "vertex " << vert[0] << " " << vert[1] << " " << vert[2];
-        new_line();
-
-        index = indices[j++];
-        const Vector3f& vertex2 = (*coords)[index];
-        vert.xform_pt(vertex2, matrix);
-        indent();
-        out() << "vertex " << vert[0] << " " << vert[1] << " " << vert[2];
-        new_line();
-
-        index = indices[j++];
-        const Vector3f& vertex3 = (*coords)[index];
-        vert.xform_pt(vertex3, matrix);
-        indent();
-        out() << "vertex " << vert[0] << " " << vert[1] << " " << vert[2];
-        new_line();
-        pop_indent();
-        indent();
-        out() << "endloop";
-        new_line();
-        pop_indent();
-        indent();
-        out() << "endfacet";
-        new_line();
+        const Vector3f& v1 = (*coords)[indices[j++]];
+        const Vector3f& v2 = (*coords)[indices[j++]];
+        const Vector3f& v3 = (*coords)[indices[j++]];
+        if (Geo_set::PT_TRIANGLES == mesh->get_primitive_type()) {
+          if (mesh->is_ccw()) facet(v1, v2, v3, matrix);
+          else facet(v3, v2, v1, matrix);
+        }
+        else {
+          const Vector3f& v4 = (*coords)[indices[j++]];
+          SGAL_assertion(Geo_set::PT_QUADS == mesh->get_primitive_type());
+          if (mesh->is_ccw()) facet(v1, v2, v3, v4, matrix);
+          else facet(v4, v3, v2, v1, matrix);
+        }
       }
+    }
+    else {
+      //! \todo triangulate and export.
+      SGAL_error_msg("Not impelmented yet!");
     }
   }
   container->write(this);
