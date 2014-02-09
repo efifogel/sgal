@@ -456,7 +456,7 @@ void Transform::parts_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! Cull transform node.
+/*! \brief culls the transform node.
  * If this node should be rendered, its matrices is passed to cull_context.
  */
 void Transform::cull(Cull_context& cull_context)
@@ -468,7 +468,7 @@ void Transform::cull(Cull_context& cull_context)
   cull_context.pop_matrix();
 }
 
-//! Traverses the tree of the group for selections.
+//! \brief traverses the children for selections.
 void Transform::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
@@ -523,25 +523,27 @@ void Transform::init_prototype()
   Vector3f_handle_function center_func =
     static_cast<Vector3f_handle_function>(&Transform::center_handle);
   s_prototype->add_field_info(new SF_vector3f(CENTER, "center", center_func,
-                                              exec_func));
+                                              s_def_center, exec_func));
 
   // translation
   Vector3f_handle_function translation_func =
     static_cast<Vector3f_handle_function>(&Transform::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
-                                              translation_func, exec_func));
+                                              translation_func,
+                                              s_def_translation, exec_func));
 
   // rotation
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>(&Transform::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
-                                              rotation_func, exec_func));
+                                              rotation_func, s_def_rotation,
+                                              exec_func));
 
   // scale
   Vector3f_handle_function scale_func =
     static_cast<Vector3f_handle_function>(&Transform::scale_handle);
   s_prototype->add_field_info(new SF_vector3f(SCALE, "scale", scale_func,
-                                              exec_func));
+                                              s_def_scale, exec_func));
 
   // reset
   exec_func = static_cast<Execution_function>(&Transform::reset);
@@ -679,7 +681,7 @@ Attribute_list Transform::get_attributes()
 void Transform::write(Formatter* formatter)
 {
   formatter->container_begin(get_tag());
-  formatter->single_vector3f("translation", m_translation, s_def_translation);
+  write_fields(formatter);
   write_children(formatter);
   formatter->container_end();
 }
