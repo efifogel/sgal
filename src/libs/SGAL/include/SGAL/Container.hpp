@@ -232,6 +232,11 @@ public:
   /*! Processe change of content. */
   void process_content_changed();
 
+  /*! Write all fields of this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  void write_fields(Formatter* formatter);
+
 protected:
   /*! A pointer to the execution coordinator. */
   Execution_coordinator* m_execution_coordinator;
@@ -274,11 +279,10 @@ inline void Container::set_attributes(Element* /* elem */) {}
 //! \brief obtains the attributes of this container.
 inline void Container::get_attributes(Element* /* elem */) {}
 
-/*! \brief obtains the name of the container provided in the USE and DEF tags.
- */
+//! \brief obtains the name of the container provided in the USE and DEF tags.
 inline const std::string& Container::get_name() const { return m_name; }
 
-/*! \brief sets the name of the container provided in the USE and DEF tags. */
+//! \brief sets the name of the container provided in the USE and DEF tags.
 inline void Container::set_name(const std::string& name) { m_name = name; }
 
 SGAL_END_NAMESPACE
