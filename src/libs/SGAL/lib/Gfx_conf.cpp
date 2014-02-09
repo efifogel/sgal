@@ -231,8 +231,8 @@ void Gfx_conf::init()
     m_vertex_buffer_object_supported = false;
 
 #endif
-  std::cout << "m_vertex_buffer_object_supported: "
-            << m_vertex_buffer_object_supported << std::endl;
+  // std::cout << "m_vertex_buffer_object_supported: "
+  //           << m_vertex_buffer_object_supported << std::endl;
 }
 
 /*! Is the the extension given by a name supported? */
