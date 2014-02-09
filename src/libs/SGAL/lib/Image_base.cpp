@@ -759,5 +759,4 @@ Boolean Image_base::empty()
 Uint Image_base::get_component_count()
 { return Image_base::get_format_components(get_format()); }
 
-
 SGAL_END_NAMESPACE

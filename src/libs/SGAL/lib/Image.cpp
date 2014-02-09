@@ -67,13 +67,13 @@ const std::string Image::s_tag = "Image";
 
 REGISTER_TO_FACTORY(Image, "Image");
 
-/*! Constructor */
+//! \brief constructor
 Image::Image(Boolean proto) : Image_base(proto) {}
 
-/*! Destructor */
+//! \brief destructor
 Image::~Image() {}
 
-/*! \brief initializess the node prototype. */
+//! \brief initializess the node prototype.
 void Image::init_prototype()
 {
   if (s_prototype) return;
@@ -85,21 +85,21 @@ void Image::init_prototype()
   s_prototype->add_field_info(new SF_string(URL, "url", url_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Image::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Image::get_prototype()
 {
   if (!s_prototype) Image::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the image. */
+//! \brief sets the attributes of the image.
 void Image::set_attributes(Element* elem)
 {
   Image_base::set_attributes(elem);
@@ -122,35 +122,35 @@ void Image::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief obtains the image width. */
+//! \brief obtains the image width.
 Uint Image::get_width()
 {
   if (m_dirty) clean();
   return m_width;
 }
 
-/*! \brief obtains the image height. */
+//! \brief obtains the image height.
 Uint Image::get_height()
 {
   if (m_dirty) clean();
   return m_height;
 }
 
-/*! \brief obtains the image format. */
+//! \brief obtains the image format.
 Image_base::Format Image::get_format()
 {
   if (m_dirty) clean();
   return m_format;
 }
 
-/*! \brief obtains the image pixel data. */
+//! \brief obtains the image pixel data.
 void* Image::get_pixels()
 {
   if (m_dirty) clean();
   return m_pixels;
 }
 
-/*! \brief cleans the image. */
+//! \brief cleans the image.
 void Image::clean()
 {
   if (m_url.empty()) return;
@@ -254,7 +254,7 @@ void Image::clean()
   m_dirty = false;
 }
 
-/*! \brief sets the URL. */
+//! \brief sets the URL.
 void Image::set_url(const std::string& url)
 {
   m_url = url;
