@@ -66,7 +66,7 @@ REGISTER_TO_FACTORY(Snapshot, "Snapshot");
 const char* Snapshot::s_file_format_names[] =
   { "", "jpg", "png", "gif", "tiff", "bmp", "ppm", "pgm", "pbm" };
 
-/*! Constructor */
+//! \brief constructor
 Snapshot::Snapshot(Boolean proto) :
   Node(proto),
   m_dir_name(s_def_dir_name),
@@ -81,7 +81,7 @@ Snapshot::Snapshot(Boolean proto) :
   m_flip(true)
 {}
 
-/*! Destructor */
+//! \brief destructor
 Snapshot::~Snapshot()
 {
   if (m_image) {
@@ -94,7 +94,7 @@ Snapshot::~Snapshot()
   }
 }
 
-/*! \brief takes a snapshot and write to a file if triggered. */
+//! \brief takes a snapshot and write to a file if triggered.
 Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
 {
   if (!m_trigger) return Action::TRAV_CONT;
@@ -107,7 +107,7 @@ Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! \brief allocates space for the image. */
+//! \brief allocates space for the image.
 Boolean Snapshot::allocate_space(Draw_action* action)
 {
   Uint width = m_image->get_width();
@@ -143,7 +143,7 @@ Boolean Snapshot::allocate_space(Draw_action* action)
   return true;
 }
 
-/*! \brief takes a snapshot of the window. */
+//! \brief takes a snapshot of the window.
 void Snapshot::take_snapshot()
 {
   Uint width = m_image->get_width();
@@ -161,7 +161,7 @@ void Snapshot::take_snapshot()
   glReadBuffer(read_buffer_mode);
 }
 
-/*! \brief writes the image into a file. */
+//! \brief writes the image into a file.
 void Snapshot::write_image()
 {
   std::string file_name = m_dir_name + "/" + m_file_name;
@@ -181,7 +181,7 @@ void Snapshot::write_image()
   image.write(file_name);
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Snapshot::init_prototype()
 {
   if (s_prototype)  return;
@@ -219,21 +219,21 @@ void Snapshot::init_prototype()
                                                       image_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Snapshot::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Snapshot::get_prototype()
 {
   if (!s_prototype) Snapshot::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Snapshot::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -300,11 +300,11 @@ void Snapshot::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Snapshot::add_to_scene(Scene_graph* sg) { sg->add_snaphot(this); }
 
 #if 0
-/*! \brief */
+//! \brief
 Attribute_list Snapshot::get_attributes()
 {
   Attribute_list attribs;
