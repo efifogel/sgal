@@ -554,26 +554,32 @@ const char* Image_base::s_format_names[] = {
   "DepthStencil24_8"
 };
 
-/*! Default value */
-const Image_base::Format Image_base::s_def_format = Image_base::kRGB8_8_8;
+// Default values
+const Uint Image_base::s_def_width(0);
+const Uint Image_base::s_def_height(0);
+const Image_base::Format Image_base::s_def_format(Image_base::kRGB8_8_8);
+const Boolean Image_base::s_def_flip(false);
+const Float Image_base::s_def_rotation(0);
+const Boolean Image_base::s_def_alpha(false);
+const Float Image_base::s_def_transparency(1);
 
-/*! Constructor */
+//! \brief constructor
 Image_base::Image_base(Boolean proto) :
   Container(proto),
-  m_width(0),
-  m_height(0),
+  m_width(s_def_width),
+  m_height(s_def_height),
   m_format(s_def_format),
   m_pixels(NULL),
   m_pack_row_length(0),
   m_dirty(true),
-  m_flip(true),
-  m_rotation(0),
-  m_alpha(false),
-  m_transparency(1),
+  m_flip(s_def_flip),
+  m_rotation(s_def_rotation),
+  m_alpha(s_def_alpha),
+  m_transparency(s_def_transparency),
   m_owned_pixels(false)
 {}
 
-/*! Destructor */
+//! \brief destructor
 Image_base::~Image_base()
 {
   if (m_owned_pixels) {
@@ -585,7 +591,7 @@ Image_base::~Image_base()
   }
 }
 
-/*! \brief initializess the node prototype. */
+//! \brief initializess the node prototype.
 void Image_base::init_prototype()
 {
   if (s_prototype)  return;
@@ -593,50 +599,56 @@ void Image_base::init_prototype()
 
   Uint_handle_function width_func =
     static_cast<Uint_handle_function>(&Image_base::width_handle);
-  s_prototype->add_field_info(new SF_uint(WIDTH, "width", width_func));
+  s_prototype->add_field_info(new SF_uint(WIDTH, "width", width_func,
+                                          s_def_width));
 
   Uint_handle_function height_func =
     static_cast<Uint_handle_function>(&Image_base::height_handle);
-  s_prototype->add_field_info(new SF_uint(HEIGHT, "height", height_func));
+  s_prototype->add_field_info(new SF_uint(HEIGHT, "height", height_func,
+                                          s_def_height));
 
   Uint_handle_function format_func =
     reinterpret_cast<Uint_handle_function>(&Image_base::format_handle);
-  s_prototype->add_field_info(new SF_uint(FORMAT, "format", format_func));
+  s_prototype->add_field_info(new SF_uint(FORMAT, "format", format_func,
+                                          s_def_format));
 
   Boolean_handle_function flip_func =
     static_cast<Boolean_handle_function>(&Image_base::flip_handle);
-  s_prototype->add_field_info(new SF_bool(FLIP, "flip", flip_func));
+  s_prototype->add_field_info(new SF_bool(FLIP, "flip", flip_func,
+                                          s_def_flip));
 
   Float_handle_function rotation_func =
     static_cast<Float_handle_function>(&Image_base::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
-                                           rotation_func));
+                                           rotation_func, s_def_rotation));
 
   Boolean_handle_function alpha_func =
     static_cast<Boolean_handle_function>(&Image_base::alpha_handle);
-  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha", alpha_func));
+  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha", alpha_func,
+                                          s_def_alpha));
 
   Float_handle_function transparency_func =
     static_cast<Float_handle_function>(&Image_base::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
-                                           transparency_func));
+                                           transparency_func,
+                                           s_def_transparency));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Image_base::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Image_base::get_prototype()
 {
   if (!s_prototype) Image_base::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the image. */
+//! \brief sets the attributes of the image.
 void Image_base::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
@@ -694,7 +706,7 @@ void Image_base::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief draws the image. */
+//! \brief draws the image.
 void Image_base::draw()
 {
   if ((m_format <= kIllegal) || (m_format >= kNumFormats)) {
@@ -719,14 +731,14 @@ void Image_base::draw()
                (GLvoid *) m_pixels);
 }
 
-/*! \brief obtains the memory that is used by the image (in bytes). */
+//! \brief obtains the memory that is used by the image (in bytes).
 Uint Image_base::get_size() const
 {
   if (m_pack_row_length == 0) return get_size(m_width, m_height, m_format);
   else return m_pack_row_length * m_height;
 }
 
-/*! \brief sets the image pixel data. */
+//! \brief sets the image pixel data.
 void Image_base::set_pixels(void* pixels)
 {
   if (m_owned_pixels) {
@@ -737,13 +749,13 @@ void Image_base::set_pixels(void* pixels)
   m_dirty = false;
 }
 
-/*! \brief determines whether the image is empty. */
+//! \brief determines whether the image is empty.
 Boolean Image_base::empty()
 {
   return ((get_width() == 0) || (get_height() == 0) || (get_pixels() == NULL));
 }
 
-/*! \brief obtain the texture number of components. */
+//! \brief obtain the texture number of components.
 Uint Image_base::get_component_count()
 { return Image_base::get_format_components(get_format()); }
 
