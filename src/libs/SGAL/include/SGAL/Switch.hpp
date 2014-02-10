@@ -151,7 +151,7 @@ private:
 inline Switch* Switch::prototype() { return new Switch(true); }
 
 //! \brief clones.
-inline Switch::Container* clone() { return new Switch(); }
+inline Switch::Container* Switch::clone() { return new Switch(); }
 
 //! \brief sets the index of the child to traverse.
 inline void Switch::set_which_choice(Uint index)
