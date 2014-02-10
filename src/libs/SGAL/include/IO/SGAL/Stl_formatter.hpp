@@ -38,6 +38,11 @@ SGAL_BEGIN_NAMESPACE
 class Vector3f;
 class Container;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! Writes a scene graph to an output stream in the VRML format */
 class SGAL_SGAL_DECL Stl_formatter : public Text_formatter {
 public:
@@ -106,6 +111,10 @@ private:
    */
   void facet_end();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief obtains the viewing matrix at the top of the stack.
 inline const Matrix4f& Stl_formatter::top_matrix() const
