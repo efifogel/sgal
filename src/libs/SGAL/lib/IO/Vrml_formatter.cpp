@@ -60,9 +60,6 @@ void Vrml_formatter::end()
   // set_mode(*m_out, m_old_out_mode);
 }
 
-//! \brief exports a scene-graph node.
-void Vrml_formatter::write(Container* container) { container->write(this); }
-
 //! \brief exports the container header.
 void Vrml_formatter::container_begin(const std::string& tag)
 {

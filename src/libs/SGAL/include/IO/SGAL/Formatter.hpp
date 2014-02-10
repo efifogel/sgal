@@ -36,6 +36,7 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Sphere_bound.hpp"
 #include "SGAL/Array.hpp"
+#include "SGAL/Container.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -79,20 +80,23 @@ public:
   /// \name Write functions
   //@{
 
-  /*! Write the headers of the scene graph */
+  /*! Write the headers of the scene graph.
+   */
   virtual void begin() = 0;
 
-  /*! Write the routing statements */
+  /*! Write the routing statements.
+   */
   virtual void end() = 0;
 
-  /*! Write a scene-graph container */
-  virtual void write(Container* container) = 0;
+  /*! Write a scene-graph container.
+   */
+  virtual void write(Container* container);
 
   /*! Write the container beginning section */
-  virtual void container_begin(const std::string& tag) = 0;
+  virtual void container_begin(const std::string& tag) {}
 
   /*! Write the container ending section */
-  virtual void container_end() = 0;
+  virtual void container_end() {}
 
   /*! Write a single Boolean field.
    * \param name The attribute name.
@@ -100,7 +104,7 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void single_boolean(const std::string& name,
-                              Boolean value, Boolean default_value) = 0;
+                              Boolean value, Boolean default_value) {}
 
   /*! Write a single Float field.
    * \param name The attribute name.
@@ -108,7 +112,7 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void single_float(const std::string& name,
-                            Float value, Float default_value) = 0;
+                            Float value, Float default_value) {};
 
   /*! Write a single Uint field.
    * \param name The attribute name.
@@ -116,7 +120,7 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void single_uint(const std::string& name,
-                           Uint value, Uint default_value) = 0;
+                           Uint value, Uint default_value) {}
 
   /*! Write a single Int field.
    * \param name The attribute name.
@@ -124,7 +128,7 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void single_int(const std::string& name,
-                          Int value, Int default_value) = 0;
+                          Int value, Int default_value) {}
 
   /*! Write a single Scene_time field.
    * \param name The attribute name.
@@ -133,7 +137,7 @@ public:
    */
   virtual void single_scene_time(const std::string& name,
                                  Scene_time value,
-                                 Scene_time default_value) = 0;
+                                 Scene_time default_value) {}
 
   /*! Write a single Vector2f field.
    * \param name The attribute name.
@@ -142,7 +146,7 @@ public:
    */
   virtual void single_vector2f(const std::string& name,
                                const Vector2f& value,
-                               const Vector2f& default_value) = 0;
+                               const Vector2f& default_value) {}
 
   /*! Write a single Vector3f field.
    * \param name The attribute name.
@@ -151,7 +155,7 @@ public:
    */
   virtual void single_vector3f(const std::string& name,
                                const Vector3f& value,
-                               const Vector3f& default_value) = 0;
+                               const Vector3f& default_value) {}
 
   /*! Write a single Vector4f field.
    * \param name The attribute name.
@@ -160,7 +164,7 @@ public:
    */
   virtual void single_vector4f(const std::string& name,
                                const Vector4f& value,
-                               const Vector4f& default_value) = 0;
+                               const Vector4f& default_value) {}
 
   /*! Write a single Rotation field.
    * \param name The attribute name.
@@ -169,7 +173,7 @@ public:
    */
   virtual void single_rotation(const std::string& name,
                                const Rotation& value,
-                               const Rotation& default_value) = 0;
+                               const Rotation& default_value) {}
 
   /*! Write a single Sphere_bound field.
    * \param name The attribute name.
@@ -178,7 +182,7 @@ public:
    */
   virtual void single_sphere_bound(const std::string& name,
                                    const Sphere_bound& value,
-                                   const Sphere_bound& default_value) = 0;
+                                   const Sphere_bound& default_value) {}
 
   /*! Write a single string field.
    * \param name The attribute name.
@@ -187,15 +191,16 @@ public:
    */
   virtual void single_string(const std::string& name,
                              const std::string& value,
-                             const std::string& default_value) = 0;
+                             const std::string& default_value) {}
 
   /*! Write the single-container field beginning section.
    * \param name The attribute name.
    */
-  virtual void single_container_begin(const std::string& name) = 0;
+  virtual void single_container_begin(const std::string& name) {}
 
-  /*! Write the single-container field ending section */
-  virtual void single_container_end() = 0;
+  /*! Write the single-container field ending section.
+   */
+  virtual void single_container_end() {}
 
   /*! Write a multi-Boolean field.
    * \param name The attribute name.
@@ -204,7 +209,7 @@ public:
    */
   virtual void multi_boolean(const std::string& name,
                              const Array<Boolean>& value,
-                             const Array<Boolean>& default_value) = 0;
+                             const Array<Boolean>& default_value) {}
 
   /*! Write a multi-Float field.
    * \param name The attribute name.
@@ -213,7 +218,7 @@ public:
    */
   virtual void multi_float(const std::string& name,
                            const Array<Float>& value,
-                           const Array<Float>& default_value) = 0;
+                           const Array<Float>& default_value) {}
 
   /*! Write a multi-Uint field.
    * \param name The attribute name.
@@ -222,7 +227,7 @@ public:
    */
   virtual void multi_uint(const std::string& name,
                           const Array<Uint>& value,
-                          const Array<Uint>& default_value) = 0;
+                          const Array<Uint>& default_value) {}
 
   /*! Write a multi-Int field.
    * \param name The attribute name.
@@ -231,7 +236,7 @@ public:
    */
   virtual void multi_int(const std::string& name,
                          const Array<Int>& value,
-                         const Array<Int>& default_value) = 0;
+                         const Array<Int>& default_value) {}
 
   /*! Write a multi-Scene_time field.
    * \param name The attribute name.
@@ -240,7 +245,7 @@ public:
    */
   virtual void multi_scene_time(const std::string& name,
                                 const Array<Scene_time>& value,
-                                const Array<Scene_time>& default_value) = 0;
+                                const Array<Scene_time>& default_value) {}
 
   /*! Write a multi-Vector2f field.
    * \param name The attribute name.
@@ -249,7 +254,7 @@ public:
    */
   virtual void multi_vector2f(const std::string& name,
                               const Array<Vector2f>& value,
-                              const Array<Vector2f>& default_value) = 0;
+                              const Array<Vector2f>& default_value) {}
 
   /*! Write a multi-Vector3f field.
    * \param name The attribute name.
@@ -258,7 +263,7 @@ public:
    */
   virtual void multi_vector3f(const std::string& name,
                               const Array<Vector3f>& value,
-                              const Array<Vector3f>& default_value) = 0;
+                              const Array<Vector3f>& default_value) {}
 
   /*! Write a multi-Vector4f field.
    * \param name The attribute name.
@@ -267,7 +272,7 @@ public:
    */
   virtual void multi_vector4f(const std::string& name,
                               const Array<Vector4f>& value,
-                              const Array<Vector4f>& default_value) = 0;
+                              const Array<Vector4f>& default_value) {}
 
   /*! Write a multi-Rotation field.
    * \param name The attribute name.
@@ -276,7 +281,7 @@ public:
    */
   virtual void multi_rotation(const std::string& name,
                               const Array<Rotation>& value,
-                              const Array<Rotation>& default_value) = 0;
+                              const Array<Rotation>& default_value) {}
 
   /*! Write a multi-Sphere_bound field.
    * \param name The attribute name.
@@ -285,7 +290,7 @@ public:
    */
   virtual void multi_sphere_bound(const std::string& name,
                                   const Array<Sphere_bound>& value,
-                                  const Array<Sphere_bound>& default_value) = 0;
+                                  const Array<Sphere_bound>& default_value) {}
 
   /*! Write a multi-string field.
    * \param name The attribute name.
@@ -294,16 +299,25 @@ public:
    */
   virtual void multi_string(const std::string& name,
                             const Array<std::string>& value,
-                            const Array<std::string>& default_value) = 0;
+                            const Array<std::string>& default_value) {}
 
   /*! Write the multi-container field beginning section.
    * \param name The attribute name.
    */
-  virtual void multi_container_begin(const std::string& name) = 0;
+  virtual void multi_container_begin(const std::string& name) {}
 
   /*! Write the multi-container field ending section.
    */
-  virtual void multi_container_end() = 0;
+  virtual void multi_container_end() {}
+
+  /*! Export a triangular facet.
+   * \param p1 (in) the point (in world coordinate system) of the first vertex.
+   * \param p2 (in) the point (in world coordinate system) of the second vertex.
+   * \param p3 (in) the point (in world coordinate system) of the third vertex.
+   * \param normal (in) the facet normal.
+   */
+  virtual void facet(const Vector3f& local_p1, const Vector3f& local_p2,
+                     const Vector3f& local_p3, const Vector3f& normal) {}
 
   //@}
 
@@ -346,6 +360,9 @@ inline std::istream& Formatter::in()
   SGAL_assertion(m_in != NULL);
   return *m_in;
 }
+
+//! \brief exports a scene-graph node.
+inline void Formatter::write(Container* container) { container->write(this); }
 
 SGAL_END_NAMESPACE
 

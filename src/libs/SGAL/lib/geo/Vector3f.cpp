@@ -29,7 +29,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! \brief */
+//! \brief
 std::string Vector3f::get_text()
 {
   std::string str(boost::lexical_cast<std::string>(m_vector[0]));
@@ -38,7 +38,7 @@ std::string Vector3f::get_text()
   return str;
 }
 
-/*! \brief */
+//! \brief
 float Vector3f::get_max_comp()
 {
   float max = (m_vector[0] > m_vector[1] ? m_vector[0] : m_vector[1]);
@@ -46,7 +46,7 @@ float Vector3f::get_max_comp()
   return max;
 }
 
-/*! \brief normalizes with one iteration of precision. */
+//! \brief normalizes with one iteration of precision.
 void Vector3f::normalize1()
 {
   float lr = length_reciprocal();
@@ -67,7 +67,7 @@ void Vector3f::xform_vec(const Vector3f & v, const Matrix4f & m)
   m_vector[2] = t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2];
 }
 
-/*! \brief sets this vector to be the cross product of v1 and v2. */
+//! \brief sets this vector to be the cross product of v1 and v2.
 void Vector3f::cross(const Vector3f & v1, const Vector3f & v2)
 {
     m_vector[0] = v1[1] * v2[2] - v1[2] * v2[1];
@@ -87,7 +87,7 @@ void Vector3f::xform_pt(const Vector3f & v, const Matrix4f & m)
   m_vector[2] = t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2] + m[3][2];
 }
 
-/*! \brief */
+//! \brief
 void Vector3f::clamp(const Vector3f & v,
                      const Vector3f & min, const Vector3f & max)
 {
@@ -109,7 +109,7 @@ void Vector3f::full_xform_pt(const Vector3f & v, const Matrix4f & m)
   m_vector[2] = (t[0]*m[0][2] + t[1]*m[1][2] + t[2]*m[2][2] + m[3][2]) / w;
 }
 
-/*! \brief determines whether ther three given points are collinear. */
+//! \brief determines whether ther three given points are collinear.
 bool Vector3f::collinear(const Vector3f& v1, const Vector3f& v2,
                          const Vector3f& v3)
 {
@@ -122,6 +122,18 @@ bool Vector3f::collinear(const Vector3f& v1, const Vector3f& v2,
   return (((x1 * y2) == (x2 * y1)) &&
           ((y1 * z2) == (y2 * z1)) &&
           ((z1 * x2) == (z2 * x1)));
+}
+
+//! \brief computes the normal of a plane given by three points.
+void Vector3f::normal(const Vector3f& p1, const Vector3f& p2,
+                      const Vector3f& p3)
+{
+  SGAL_assertion(!collinear(p1, p2, p3));
+  Vector3f v1, v2;
+  v1.sub(p2, p1);
+  v2.sub(p3, p2);
+  cross(v1, v2);
+  normalize();
 }
 
 /*! \brief computes the reciprocal of the length of the vector.

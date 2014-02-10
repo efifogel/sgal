@@ -710,27 +710,15 @@ void Indexed_face_set::clean_normals()
   m_dirty_vertex_normal_buffer = true;
 }
 
-//! \brief Compute the normal to a facet from 3 points lying on the facet.
-void Indexed_face_set::compute_normal(const Vector3f& v1, const Vector3f& v2,
-                                      const Vector3f& v3, Vector3f& normal)
-  const
-{
-  Vector3f l1, l2;
-  l1.sub(v2, v1);
-  l2.sub(v3, v2);
-  if (m_is_ccw) normal.cross(l1, l2);
-  else normal.cross(l2, l1);
-  normal.normalize();
-}
-
 //! \brief computes the normalized normal to a triangle.
-void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& normal) const
+void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& n) const
 {
   Vector3f& v0 = (*m_coord_array)[m_flat_coord_indices[j]];
   Vector3f& v1 = (*m_coord_array)[m_flat_coord_indices[j+1]];
   Vector3f& v2 = (*m_coord_array)[m_flat_coord_indices[j+2]];
   SGAL_assertion(!v0.collinear(v0, v1, v2));
-  compute_normal(v0, v1, v2, normal);
+  if (is_ccw()) n.normal(v0, v1, v2);
+  else n.normal(v2, v1, v0);
 }
 
 //! \brief computes the center point of a triangle.
@@ -765,18 +753,20 @@ compute_triangle_vertex_info(Uint j, Uint facet_index,
  * This implementation assumes that 3 (out of the 4) vertices might be
  * collinear.
  */
-void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& normal) const
+void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& n) const
 {
   Vector3f& v0 = (*m_coord_array)[m_flat_coord_indices[j]];
   Vector3f& v1 = (*m_coord_array)[m_flat_coord_indices[j+1]];
   Vector3f& v2 = (*m_coord_array)[m_flat_coord_indices[j+2]];
   if (!v0.collinear(v0, v1, v2)) {
-    compute_normal(v0, v1, v2, normal);
+    if (is_ccw()) n.normal(v0, v1, v2);
+    else n.normal(v2, v1, v0);
     return;
   }
   Vector3f& v3 = (*m_coord_array)[m_flat_coord_indices[j+3]];
   SGAL_assertion(!v0.collinear(v0, v1, v3));
-  compute_normal(v0, v1, v3, normal);
+  if (is_ccw()) n.normal(v0, v1, v3);
+  else n.normal(v3, v1, v0);
 }
 
 //! \brief computes the center point of a quadrilateral.
@@ -814,14 +804,15 @@ Indexed_face_set::compute_quad_vertex_info(Uint j, Uint facet_index,
 /*! \brief computes the normalized normal to a polygon.
  * This implementation assumes that consecuitive vertices might be collinear.
  */
-void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& normal) const
+void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& n) const
 {
   Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
   Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
   for (Uint k = 2; m_coord_indices[j+k] != (Uint) -1; ++k) {
     Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+k]];
     if (v0.collinear(v0, v1, v2)) continue;
-    compute_normal(v0, v1, v2, normal);
+    if (is_ccw()) n.normal(v0, v1, v2);
+    else n.normal(v2, v1, v0);
     return;
   }
   SGAL_assertion_msg(0, "All vertices are collinear!");

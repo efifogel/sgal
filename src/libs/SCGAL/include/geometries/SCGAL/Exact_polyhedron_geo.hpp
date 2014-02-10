@@ -61,6 +61,7 @@ class Coord_array;
 class Color_array;
 class Draw_action;
 class Scene_graph;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -180,6 +181,11 @@ public:
 
   /*! */
   virtual bool clean_sphere_bound();
+
+  /*! Write this container.
+   * \param formatter (in) the formatter to use; e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! Set the polyhedron data-structure. */
   void set_polyhedron(Polyhedron& polyhedron);

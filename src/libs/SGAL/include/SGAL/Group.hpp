@@ -148,10 +148,13 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write this container */
+  /*! Write this container
+   */
   virtual void write(Formatter* formatter);
 
-  /*! Write the children */
+  /*! Write the children.
+   * \param formatter (in) the formatter to use; e.g., VRML.
+   */
   void write_children(Formatter* formatter);
 
   virtual Boolean attach_context(Context* context );

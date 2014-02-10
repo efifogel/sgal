@@ -103,7 +103,9 @@ public:
   /*! Clean the bounding sphere of the transformation node. */
   virtual Boolean clean_sphere_bound();
 
-  /*! \bried writes this container. */
+  /*! Write this container.
+   * \param formatter (in) the formatter to use; e.g., VRML.
+   */
   virtual void write(Formatter* formatter);
 
   void set_translation(const Vector3f& translation);

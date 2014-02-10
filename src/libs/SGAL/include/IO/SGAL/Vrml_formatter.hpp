@@ -38,7 +38,6 @@ class Vector3f;
 class Vector4f;
 class Rotation;
 class Sphere_bound;
-class Container;
 
 /*! Exports a scene graph to an output stream in the VRML format */
 class SGAL_SGAL_DECL Vrml_formatter : public Text_formatter {
@@ -69,10 +68,6 @@ public:
   /*! Export the routing statements.
    */
   virtual void end();
-
-  /*! Export a scene-graph node.
-   */
-  virtual void write(Container* container);
 
   /*! Export the container header.
    */

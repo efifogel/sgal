@@ -113,6 +113,20 @@ void Exact_polyhedron_geo::draw(Draw_action* action)
   draw_mesh(action);
 }
 
+//! \brief writes this container.
+void Exact_polyhedron_geo::write(Formatter* formatter)
+{
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_facets) clean_facets();
+  if (is_empty()) return;
+
+  Mesh_set::write(formatter);
+}
+
 //! \brief cleans the data structure.
 void Exact_polyhedron_geo::clean_polyhedron()
 {

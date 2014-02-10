@@ -564,11 +564,6 @@ protected:
    */
   Boolean use_vertex_array() const;
 
-  /*! Compute the normalized normal to a facet from 3 points lying on the facet.
-   */
-  void compute_normal(const Vector3f& v1, const Vector3f& v2,
-                      const Vector3f& v3, Vector3f& normal) const;
-
   /*! Compute the normalized normal to a triangle.
    * \param j The starting index of the triangular facet in the coord indices
    *     array.

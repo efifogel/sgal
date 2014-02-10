@@ -38,6 +38,7 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Coord_array.hpp"
 
@@ -537,6 +538,51 @@ void Mesh_set::write(Formatter* formatter)
   if (m_dirty_normal_indices) clean_normal_indices();
   if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
 
+  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (stl_formatter) {
+    // Apply the active (top) transform matrix to the coordinates.
+    const Matrix4f& matrix = stl_formatter->top_matrix();
+    const Shared_coord_array coords = get_coord_array();
+    std::vector<Vector3f> world_coords(coords->size());
+    std::vector<Vector3f>::iterator it;
+    Uint i = 0;
+    for (it = world_coords.begin(); it != world_coords.end(); ++it)
+      it->xform_pt((*coords)[i++], matrix);
+
+    // Export the facets.
+    if ((PT_TRIANGLES == get_primitive_type()) ||
+        (PT_QUADS == get_primitive_type()))
+    {
+      Vector3f vert;
+      const Array<Uint>& indices = get_flat_coord_indices();
+      Uint j = 0;
+      for (Uint i = 0; i < get_num_primitives(); ++i) {
+        const Vector3f& v1 = world_coords[indices[j++]];
+        const Vector3f& v2 = world_coords[indices[j++]];
+        const Vector3f& v3 = world_coords[indices[j++]];
+        if (PT_TRIANGLES == get_primitive_type()) {
+          if (is_ccw()) write_facet(v1, v2, v3, stl_formatter);
+          else write_facet(v3, v2, v1, stl_formatter);
+        }
+        else {
+          const Vector3f& v4 = world_coords[indices[j++]];
+          SGAL_assertion(PT_QUADS == get_primitive_type());
+          if (is_ccw()) write_facet(v1, v2, v3, v4, stl_formatter);
+          else write_facet(v4, v3, v2, v1, stl_formatter);
+        }
+      }
+    }
+    else {
+      //! \todo triangulate and export.
+      const Array<Uint>& indices = get_coord_indices();
+      std::cout << "size: " << indices.size() << std::endl;
+      const Array<Uint>& flat_indices = get_flat_coord_indices();
+      std::cout << "flat size: " << flat_indices.size() << std::endl;
+      SGAL_error_msg("Not impelmented yet!");
+    }
+    return;
+  }
+
   /*! \todo the following can be replaced with the call to
    * Geo_set::write(Formatter* formatter)
    * after m_coord_indices is make Array<Int> (and not Array<Uint>).
@@ -635,6 +681,43 @@ void Mesh_set::collapse_identical_coordinates(Array<Uint>& indices)
   Shared_coord_array old_shared_coord = get_coord_array();
   old_shared_coord->clear();
   set_coord_array(shared_coords);
+}
+
+//! \brief exports a triangular facet.
+void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
+                           const Vector3f& p3, Formatter* formatter)
+{
+  if (Vector3f::collinear(p1, p2, p3)) {
+    std::cerr << "Cannot export a triangular facet using collinear points!"
+              << std::endl;
+    return;
+  }
+  Vector3f n;
+  n.normal(p1, p2, p3);
+  formatter->facet(p1, p2, p3, n);
+}
+
+//! \brief exports a quadrilateral facet.
+void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
+                           const Vector3f& p3, const Vector3f& p4,
+                           Formatter* formatter)
+{
+  Vector3f l11, l12;
+  l11.sub(p3, p2);
+  l12.sub(p1, p2);
+
+  Vector3f l21, l22;
+  l21.sub(p2, p1);
+  l22.sub(p4, p1);
+
+  if (abs(l11.dot(l12)) < abs(l21.dot(l22))) {
+    write_facet(p1, p2, p3, formatter);
+    write_facet(p1, p3, p4, formatter);
+  }
+  else {
+    write_facet(p1, p2, p4, formatter);
+    write_facet(p2, p3, p4, formatter);
+  }
 }
 
 SGAL_END_NAMESPACE

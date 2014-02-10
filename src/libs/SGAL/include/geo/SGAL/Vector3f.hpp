@@ -96,8 +96,20 @@ public:
   Boolean operator==(const Vector3f& v) const;
   Boolean operator!=(const Vector3f& v) const;
 
-  /*! Are three given points collinear? */
-  Boolean collinear(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
+  /*! Compute the normal to a plane given by three points.
+   * \param p1 (in) the first point.
+   * \param p2 (in) the second point.
+   * \param p3 (in) the third point.
+   */
+  void normal(const Vector3f& v1, const Vector3f& v2, const Vector3f& v3);
+
+  /*! Determine whether three given points are collinear.
+   * \param p1 (in) the first point.
+   * \param p1 (in) the second point.
+   * \param p1 (in) the third point.
+   */
+  static Boolean collinear(const Vector3f& p1, const Vector3f& p2,
+                           const Vector3f& p3);
 };
 
 /*! \brief */

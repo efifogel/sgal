@@ -29,6 +29,8 @@ SGAL_BEGIN_NAMESPACE
 
 class Draw_action;
 class Field_info;
+class Formatter;
+class Stl_formatter;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -453,6 +455,26 @@ protected:
   /*! Colapse identical coordinates.
    */
   void collapse_identical_coordinates(Array<Uint>& indices);
+
+  /*! Export a triangular facet.
+   * \param p1 (in) the point of the first vertex.
+   * \param p2 (in) the point of the second vertex.
+   * \param p3 (in) the point of the third vertex.
+   * \param stl_formater (in) the formatter.
+   */
+  void write_facet(const Vector3f& p1, const Vector3f& p2,
+                   const Vector3f& p3, Formatter* formatter);
+
+  /*! Export a quadrilateral facet.
+   * \param p1 (in) the point of the first vertex.
+   * \param p2 (in) the point of the second vertex.
+   * \param p3 (in) the point of the third vertex.
+   * \param p4 (in) the point of the forth vertex.
+   * \param stl_formater (in) the formatter.
+   */
+  void write_facet(const Vector3f& p1, const Vector3f& p2,
+                   const Vector3f& p3, const Vector3f& p4,
+                   Formatter* formatter);
 
 private:
   /*! The node prototype. */

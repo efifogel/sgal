@@ -32,6 +32,7 @@
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Stl_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -222,11 +223,20 @@ Attribute_list Switch::get_attributes()
 #endif
 
 //! \brief writes this container.
-//! \todo remove this member once "children" becomes a valid multi-container.
 void Switch::write(Formatter* formatter)
 {
+  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (stl_formatter) {
+    Shared_node node = get_choice();
+    if (node) node->write(formatter);
+    return;
+  }
+
+  /*! \todo replace the following a call Container::write() once "children"
+   * becomes a valid multi-container.
+   */
   formatter->container_begin(get_tag());
-  formatter->single_uint("whichChoice", m_which_choice, s_def_which_choice);
+  write_fields(formatter);
   write_children(formatter);
   formatter->container_end();
 }
