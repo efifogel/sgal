@@ -49,6 +49,8 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -124,7 +126,27 @@ void Exact_polyhedron_geo::write(Formatter* formatter)
   if (m_dirty_facets) clean_facets();
   if (is_empty()) return;
 
-  Mesh_set::write(formatter);
+  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (stl_formatter) {
+    const Matrix4f& matrix = stl_formatter->top_matrix();
+    Facet_iterator fit = m_polyhedron.facets_begin();
+    for (; fit != m_polyhedron.facets_end(); ++fit) {
+      Polyhedron::Halfedge_around_facet_circulator j = fit->facet_begin();
+      // Facets in polyhedral surfaces are at least triangles.
+      CGAL_assertion(CGAL::circulator_size(j) >= 3);
+      if (CGAL::circulator_size(j) >= 3) {
+        const Vector3f& local_p1 = j++->vertex()->m_vertex;
+        const Vector3f& local_p2 = j++->vertex()->m_vertex;
+        const Vector3f& local_p3 = j++->vertex()->m_vertex;
+        Vector3f p1, p2, p3;
+        p1.xform_pt(local_p1, matrix);
+        p2.xform_pt(local_p2, matrix);
+        p3.xform_pt(local_p3, matrix);
+        write_facet(p1, p2, p3, stl_formatter);
+      }
+    }
+    return;
+  }
 }
 
 //! \brief cleans the data structure.

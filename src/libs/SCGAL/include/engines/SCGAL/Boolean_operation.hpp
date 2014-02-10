@@ -44,6 +44,7 @@ class Draw_action;
 class Isect_action;
 class Container_proto;
 class Element;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -105,6 +106,11 @@ public:
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
+
+  /*! Write this container.
+   * \param formatter (in) the formatter to use; e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! . */
   void trigger_changed(Field_info* field_info);

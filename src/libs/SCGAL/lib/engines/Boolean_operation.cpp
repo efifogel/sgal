@@ -40,6 +40,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Stl_formatter.hpp"
 
 #include "SCGAL/compute_planes.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
@@ -242,6 +243,13 @@ Container_proto* Boolean_operation::get_prototype()
 {
   if (!s_prototype) Boolean_operation::init_prototype();
   return s_prototype;
+}
+
+//! \brief writes this container.
+void Boolean_operation::write(Formatter* formatter)
+{
+  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (stl_formatter) return;
 }
 
 SGAL_END_NAMESPACE

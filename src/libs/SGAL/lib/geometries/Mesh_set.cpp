@@ -39,6 +39,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Coord_array.hpp"
 
@@ -533,11 +534,6 @@ void Mesh_set::clean_tex_coord_indices()
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
-  if (m_dirty_coord_indices) clean_coord_indices();
-  if (m_dirty_color_indices) clean_color_indices();
-  if (m_dirty_normal_indices) clean_normal_indices();
-  if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
-
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   if (stl_formatter) {
     // Apply the active (top) transform matrix to the coordinates.
@@ -583,29 +579,39 @@ void Mesh_set::write(Formatter* formatter)
     return;
   }
 
-  /*! \todo the following can be replaced with the call to
-   * Geo_set::write(Formatter* formatter)
-   * after m_coord_indices is make Array<Int> (and not Array<Uint>).
-   */
-  formatter->container_begin(get_tag());
-  // Travese prototype field-info records
-  Container_proto* proto = get_prototype();
-  Container_proto::Id_const_iterator it = proto->ids_begin(proto);
-  for (; it != proto->ids_end(proto); ++it) {
-    const Field_info* field_info = (*it).second;
-    if (COORD_INDEX_ARRAY == field_info->get_id()) {
-      const Array<Uint>& indices = get_coord_indices();
-      Uint size = indices.size();
-      Array<int> value(size), default_value;
-      Array<Uint>::const_iterator it;
-      Array<Int>::iterator rit = value.begin();
-      for (it = indices.begin(); it != indices.end(); ++it)
-        *rit++ = *it;
-      formatter->multi_int(field_info->get_name(), value, default_value);
+  Vrml_formatter* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    if (m_dirty_coord_indices) clean_coord_indices();
+    if (m_dirty_color_indices) clean_color_indices();
+    if (m_dirty_normal_indices) clean_normal_indices();
+    if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
+
+    /*! \todo the following can be replaced with the call to
+     * Geo_set::write(Formatter* formatter)
+     * after m_coord_indices is make Array<Int> (and not Array<Uint>).
+     */
+    formatter->container_begin(get_tag());
+    // Travese prototype field-info records
+    Container_proto* proto = get_prototype();
+    Container_proto::Id_const_iterator it = proto->ids_begin(proto);
+    for (; it != proto->ids_end(proto); ++it) {
+      const Field_info* field_info = (*it).second;
+      if (COORD_INDEX_ARRAY == field_info->get_id()) {
+        const Array<Uint>& indices = get_coord_indices();
+        Uint size = indices.size();
+        Array<int> value(size), default_value;
+        Array<Uint>::const_iterator it;
+        Array<Int>::iterator rit = value.begin();
+        for (it = indices.begin(); it != indices.end(); ++it)
+          *rit++ = *it;
+        formatter->multi_int(field_info->get_name(), value, default_value);
+      }
+      else field_info->write(this, formatter);
     }
-    else field_info->write(this, formatter);
+    formatter->container_end();
+    return;
   }
-  formatter->container_end();
+  Geo_set::write(formatter);
 }
 
 //! \brief colapses identical coordinates.
