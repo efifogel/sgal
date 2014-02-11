@@ -112,7 +112,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_float(const std::string& name,
+  virtual void single_float(const std::string& /* name */,
                             Float /* value */, Float /* default_value */) {};
 
   /*! Write a single Uint field.
@@ -181,9 +181,9 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_sphere_bound(const std::string& name,
-                                   const Sphere_bound& value,
-                                   const Sphere_bound& default_value) {}
+  virtual void single_sphere_bound(const std::string& /* name */,
+                                   const Sphere_bound& /* value */,
+                                   const Sphere_bound& /* default_value */) {}
 
   /*! Write a single string field.
    * \param name The attribute name.
@@ -208,9 +208,9 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_boolean(const std::string& name,
-                             const Array<Boolean>& value,
-                             const Array<Boolean>& default_value) {}
+  virtual void multi_boolean(const std::string& /* name */,
+                             const Array<Boolean>& /* value */,
+                             const Array<Boolean>& /* default_value */) {}
 
   /*! Write a multi-Float field.
    * \param name The attribute name.
@@ -253,9 +253,9 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector2f(const std::string& name,
-                              const Array<Vector2f>& value,
-                              const Array<Vector2f>& default_value) {}
+  virtual void multi_vector2f(const std::string& /* name */,
+                              const Array<Vector2f>& /* value */,
+                              const Array<Vector2f>& /* default_value */) {}
 
   /*! Write a multi-Vector3f field.
    * \param name The attribute name.
@@ -289,9 +289,9 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_sphere_bound(const std::string& name,
-                                  const Array<Sphere_bound>& value,
-                                  const Array<Sphere_bound>& default_value) {}
+  virtual void multi_sphere_bound(const std::string& /* name */,
+                                  const Array<Sphere_bound>& /* value */,
+                                  const Array<Sphere_bound>& /* default_value */) {}
 
   /*! Write a multi-string field.
    * \param name The attribute name.
@@ -317,8 +317,8 @@ public:
    * \param p3 (in) the point (in world coordinate system) of the third vertex.
    * \param normal (in) the facet normal.
    */
-  virtual void facet(const Vector3f& local_p1, const Vector3f& local_p2,
-                     const Vector3f& local_p3, const Vector3f& normal) {}
+  virtual void facet(const Vector3f& /* p1 */, const Vector3f& /* p2 */,
+                     const Vector3f& /* p3 */, const Vector3f& /* normal */) {}
 
   //@}
 
