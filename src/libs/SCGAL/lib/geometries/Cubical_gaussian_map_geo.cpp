@@ -266,14 +266,16 @@ void Cubical_gaussian_map_geo::clean()
       cgm_initializer(exact_coord_array->begin(),
                       exact_coord_array->end(),
                       exact_coord_array->size(),
-                      m_flat_coord_indices.begin(), m_flat_coord_indices.end(),
+                      &(*(m_flat_coord_indices.begin())),
+                      &(*(m_flat_coord_indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     else {
       // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
       cgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
-                      m_flat_coord_indices.begin(), m_flat_coord_indices.end(),
+                      &(*(m_flat_coord_indices.begin())),
+                      &(*(m_flat_coord_indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     clock_t end_time = clock();

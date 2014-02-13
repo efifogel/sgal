@@ -32,16 +32,17 @@
  * Renderers of arrangement on sphere
  */
 
-#include <math.h>
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
 #include "GL/gl.h"
+#include <math.h>
+#include <vector>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
 
-#include "SGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -94,7 +95,7 @@ void draw_disc_vertex_on_sphere(Draw_action* action, Vector3f& center,
   vec.scale(radius);
   vec.add(center);
   vec.normalize();
-      
+
   glVertex3fv((float*)&vec);
   Rotation rot(center, 0);
   float angle;
@@ -114,10 +115,10 @@ void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
                            Float radius, Float delta_angle)
 {
   typedef Arrangement_renderer::Vertex_shape    Vertex_shape;
-  
+
   switch (style) {
    case Vertex_shape::NONE: break;
-    
+
    case Vertex_shape::BALL:                 // draw a ball
     {
      Sphere sphere;
@@ -126,7 +127,7 @@ void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
      sphere.draw(action);
     }
     break;
-    
+
    case Vertex_shape::POINT:                // draw a point
     glBegin(GL_POINTS);
     glVertex3fv((float*)&center);
@@ -134,7 +135,7 @@ void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
     break;
 
    case Vertex_shape::DISC:
-    draw_disc_vertex_on_sphere(action, center, radius, delta_angle);      
+    draw_disc_vertex_on_sphere(action, center, radius, delta_angle);
     break;
 
    case Vertex_shape::RING:
@@ -162,7 +163,7 @@ void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
      glEnd();
     }
     break;
-    
+
    default: break;
   }
 }
@@ -182,7 +183,7 @@ void draw_strip_edge_on_sphere(Draw_action* action,
   else
     rot.make(source, target);
   float angle = rot.get_angle();
-  
+
   glBegin(GL_QUAD_STRIP);
   Vector3f vec1 = source;
   Vector3f dif;
@@ -196,7 +197,7 @@ void draw_strip_edge_on_sphere(Draw_action* action,
     Vector3f vec3;
     vec3.cross(vec1, dif);
     vec3.normalize();
-    
+
     Vector3f c1;
     c1.scale(radius, vec3);
     c1.add(vec1);
@@ -229,7 +230,7 @@ void draw_strip_edge_on_sphere(Draw_action* action,
   glNormal3fv((float*)&target);
   glVertex3fv((float*)&c1);
   glVertex3fv((float*)&c2);
-  
+
   glEnd();
 }
 
@@ -242,7 +243,7 @@ void draw_edge_on_sphere(Draw_action* action,
                          Float source_vertex_radius, Float target_vertex_radius)
 {
   typedef Arrangement_renderer::Edge_shape              Edge_shape;
-  
+
   Rotation rot;
   Vector3f diff;
   diff.add(target, source);
@@ -274,12 +275,12 @@ void draw_edge_on_sphere(Draw_action* action,
                               count, directed, radius, delta_angle,
                               source_vertex_radius, target_vertex_radius);
     break;
-      
+
    case Edge_shape::TUBE:
     {
      Extrusion tube;
      tube.set_cross_section_radius(radius);
-     SGAL::Array<Vector3f>& spine = tube.get_spine();
+     std::vector<Vector3f>& spine = tube.get_spine();
      spine.resize(static_cast<Uint>(ceil(angle / delta_angle)) + 1);
      unsigned int i = 0;
      spine[i++] = source;
@@ -295,7 +296,7 @@ void draw_edge_on_sphere(Draw_action* action,
      tube.draw(action);
     }
     break;
-    
+
    default: break;
   }
 }
@@ -314,7 +315,7 @@ void draw_strip_edge_on_sphere(Draw_action* action,
   dif.normalize();
   vec.cross(source, dif);
   vec.normalize();
- 
+
   Float new_radius = radius / (2 * count - 1);
   start_vec.scale(new_radius * 2 * (1 - count), vec);
   start_source.add(source, start_vec);
@@ -435,7 +436,7 @@ void draw_aos_convex_face(Draw_action* action,
     mid.add(vec);
   }
   SGAL_assertion(std::distance(begin, end) != 0);
-  
+
   mid.scale(1.0f / std::distance(begin, end));
   mid.normalize();
   draw_aos_convex_face(action, begin, end, mid);

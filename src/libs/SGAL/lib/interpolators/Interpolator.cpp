@@ -36,18 +36,17 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Interpolator::s_prototype(NULL);
 
-/*! Constructor
- */
+//! \brief constructor.
 Interpolator::Interpolator(Boolean interpolate_flag, Boolean proto) :
   Node(proto),
   m_fraction(0),
   m_interpolate_flag(interpolate_flag)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Interpolator::~Interpolator() { m_keys.clear(); }
 
-/*! Initializes the container prototype */
+//! \brief initializes the container prototype.
 void Interpolator::init_prototype()
 {
   if (s_prototype) return;
@@ -63,14 +62,14 @@ void Interpolator::init_prototype()
                                            fraction_func, exec_func));
 }
 
-/*! Delete the container prototype */
+//! \brief deletes the container prototype.
 void Interpolator::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the container prototype */
+//! \brief obtains the container prototype.
 Container_proto* Interpolator::get_prototype()
 {
   if (!s_prototype) Interpolator::init_prototype();
@@ -78,7 +77,7 @@ Container_proto* Interpolator::get_prototype()
 }
 
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Interpolator::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -109,11 +108,7 @@ void Interpolator::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get a list of attributes in this object. This method is called only
- * from the Builder side.
- *
- * \return a list of attributes
- */
+//! \brief obtains a list of attributes in this object.
 Attribute_list Vector3f_interpolator::get_attributes()
 {
   Attribute_list attribs;

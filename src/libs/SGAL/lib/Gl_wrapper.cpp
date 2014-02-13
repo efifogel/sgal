@@ -24,7 +24,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Gl_wrapper * Gl_wrapper::s_instance = NULL;
+Gl_wrapper* Gl_wrapper::s_instance = NULL;
 
 /*! Constructor */
 Gl_wrapper::Gl_wrapper()

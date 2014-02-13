@@ -28,16 +28,16 @@
  *  Inherits from Geometry.
  */
 
-#include <sys/types.h>
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
 #include <GL/gl.h>
+#include <sys/types.h>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Color_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -133,13 +133,13 @@ public:
   { return &m_color_array; }
   Shared_tex_coord_array* tex_coord_array_handle(const Field_info*)
   { return &m_tex_coord_array; }
-  Array<Uint>* coord_indices_handle(const Field_info*)
+  std::vector<Uint>* coord_indices_handle(const Field_info*)
   { return &m_coord_indices; }
-  Array<Uint>* normal_indices_handle(const Field_info*)
+  std::vector<Uint>* normal_indices_handle(const Field_info*)
   { return &m_normal_indices; }
-  Array<Uint>* color_indices_handle(const Field_info*)
+  std::vector<Uint>* color_indices_handle(const Field_info*)
   { return &m_color_indices; }
-  Array<Uint>* tex_coord_indices_handle(const Field_info*)
+  std::vector<Uint>* tex_coord_indices_handle(const Field_info*)
   { return &m_tex_coord_indices; }
   //@}
 
@@ -224,62 +224,62 @@ public:
   /*! Set the coordinate-index array.
    * \param indices (in)
    */
-  void set_coord_indices(const Array<Uint>& indices);
+  void set_coord_indices(const std::vector<Uint>& indices);
 
   /*! Obtain the (const) coordinate-index array.
    * \return the coordinate-index array.
    */
-  const Array<Uint>& get_coord_indices() const;
+  const std::vector<Uint>& get_coord_indices() const;
 
   /*! Obtain the (non-const) coordinate-index array.
    * \return the coordinate-index array.
    */
-  Array<Uint>& get_coord_indices();
+  std::vector<Uint>& get_coord_indices();
 
   /*! Set the color-index array.
    * \param indices (in)
    */
-  void set_color_indices(const Array<Uint>& indices);
+  void set_color_indices(const std::vector<Uint>& indices);
 
   /*! Obtain the (const) color-index array.
    * \return the color-index array.
    */
-  const Array<Uint>& get_color_indices() const;
+  const std::vector<Uint>& get_color_indices() const;
 
   /*! Obtain the (non-const) color-index array.
    * \return the color-index array.
    */
-  Array<Uint>& get_color_indices();
+  std::vector<Uint>& get_color_indices();
 
   /*! Set the normal-index array.
    * \param indices (in)
    */
-  void set_normal_indices(const Array<Uint>& indices);
+  void set_normal_indices(const std::vector<Uint>& indices);
 
   /*! Obtain the (const) normal-index array.
    * \return the normal-index array.
    */
-  const Array<Uint>& get_normal_indices() const;
+  const std::vector<Uint>& get_normal_indices() const;
 
   /*! Obtain the (non-const) normal-index array.
    * \return the normal-index array.
    */
-  Array<Uint>& get_normal_indices();
+  std::vector<Uint>& get_normal_indices();
 
   /*! Set the texture_coordinate-index array.
    * \param indices (in)
    */
-  void set_tex_coord_indices(const Array<Uint>& indices);
+  void set_tex_coord_indices(const std::vector<Uint>& indices);
 
   /*! Obtain the (const) texture-coordinate-index array.
    * \return the texture-coordinate-index array.
    */
-  const Array<Uint>& get_tex_coord_indices() const;
+  const std::vector<Uint>& get_tex_coord_indices() const;
 
   /*! Obtain the (non-const) texture-coordinate-index array.
    * \return the texture-coordinate-index array.
    */
-  Array<Uint>& get_tex_coord_indices();
+  std::vector<Uint>& get_tex_coord_indices();
 
   /*! Obtain the (const) coordinate-index vector.
    * \return the coordinate-index array.
@@ -422,7 +422,7 @@ public:
   /*! Assign the coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_coord_indices(const Array<Uint>& indices);
+  void set_reverse_coord_indices(const std::vector<Uint>& indices);
 
 protected:
   /*! The number of primitives in this Geo_set. */
@@ -447,16 +447,16 @@ protected:
   Shared_color_array m_color_array;
 
   /*! An array of indices into the vertex-coordinate array. */
-  Array<Uint> m_coord_indices;
+  std::vector<Uint> m_coord_indices;
 
   /*! An array of indices into the vertex-texture-coordinate array. */
-  Array<Uint> m_normal_indices;
+  std::vector<Uint> m_normal_indices;
 
   /*! An array of indices into the vertex-color array. */
-  Array<Uint> m_color_indices;
+  std::vector<Uint> m_color_indices;
 
   /*! An array of indices into the vertex-normal array. */
-  Array<Uint> m_tex_coord_indices;
+  std::vector<Uint> m_tex_coord_indices;
 
   /*! Indicates the geometry mode (triangles, quads, or general polygons). */
   Primitive_type m_primitive_type;
@@ -495,84 +495,84 @@ inline Boolean Geo_set::are_generated_tex_coord()
 { return (m_generated_tex_coord && m_tex_coord_array); }
 
 //! \brief sets the coordinate-index array.
-inline void Geo_set::set_coord_indices(const Array<Uint>& indices)
+inline void Geo_set::set_coord_indices(const std::vector<Uint>& indices)
 { m_coord_indices = indices; }
 
 //! \brief obtains the (const) coordinate-index array.
-inline const Array<Uint>& Geo_set::get_coord_indices() const
+inline const std::vector<Uint>& Geo_set::get_coord_indices() const
 { return m_coord_indices; }
 
 //! \brief obtains the (non-const) coordinate-index array.
-inline Array<Uint>& Geo_set::get_coord_indices()
+inline std::vector<Uint>& Geo_set::get_coord_indices()
 { return m_coord_indices; }
 
 //! \brief sets the color-index array.
-inline void Geo_set::set_color_indices(const Array<Uint>& indices)
+inline void Geo_set::set_color_indices(const std::vector<Uint>& indices)
 { m_color_indices = indices; }
 
 //! \brief obtains the (const) color-index array.
-inline const Array<Uint>& Geo_set::get_color_indices() const
+inline const std::vector<Uint>& Geo_set::get_color_indices() const
 { return m_color_indices; }
 
 //! \brief obtains the (non-const) color-index array.
-inline Array<Uint>& Geo_set::get_color_indices()
+inline std::vector<Uint>& Geo_set::get_color_indices()
 { return m_color_indices; }
 
 //! \brief sets the normal-index array.
-inline void Geo_set::set_normal_indices(const Array<Uint>& indices)
+inline void Geo_set::set_normal_indices(const std::vector<Uint>& indices)
 { m_normal_indices = indices; }
 
 //! \brief obtains the (const) normal-index array.
-inline const Array<Uint>& Geo_set::get_normal_indices() const
+inline const std::vector<Uint>& Geo_set::get_normal_indices() const
 { return m_normal_indices; }
 
 //! \brief obtains the (non-const) normal-index array.
-inline Array<Uint>& Geo_set::get_normal_indices()
+inline std::vector<Uint>& Geo_set::get_normal_indices()
 { return m_normal_indices; }
 
 //! \brief sets the texture-coordinate-index array.
-inline void Geo_set::set_tex_coord_indices(const Array<Uint>& indices)
+inline void Geo_set::set_tex_coord_indices(const std::vector<Uint>& indices)
 { m_tex_coord_indices = indices; }
 
 //! \brief obtains the (const) texture-coordinate-index array.
-inline const Array<Uint>& Geo_set::get_tex_coord_indices() const
+inline const std::vector<Uint>& Geo_set::get_tex_coord_indices() const
 { return m_tex_coord_indices; }
 
 //! \brief obtains the (non-const) texture-coordinate-index array.
-inline Array<Uint>& Geo_set::get_tex_coord_indices()
+inline std::vector<Uint>& Geo_set::get_tex_coord_indices()
 { return m_tex_coord_indices; }
 
 //! \brief obtains the (const) coordinate-index vector.
 inline const Uint* Geo_set::get_coord_indices_vector() const
-{ return m_coord_indices.get_vector(); }
+{ return &(*(m_coord_indices.begin())); }
 
 //! \brief obtains the (non-const) coordinate-index vector.
 inline Uint* Geo_set::get_coord_indices_vector()
-{ return m_coord_indices.get_vector(); }
+{ return &(*(m_coord_indices.begin())); }
 
 //! \brief obtains the (const) color-index vector.
 inline const Uint* Geo_set::get_color_indices_vector() const
-{ return m_color_indices.get_vector(); }
+{ return &(*(m_color_indices.begin())); }
 
 //! \brief obtains the (non-const) color-index vector.
 inline Uint* Geo_set::get_color_indices_vector()
-{ return m_color_indices.get_vector(); }
+{ return &(*(m_color_indices.begin())); }
 
 //! \brief obtains the (const) normal-index vector.
 inline const Uint* Geo_set::get_normal_indices_vector() const
-{ return m_normal_indices.get_vector(); }
+{ return &(*(m_normal_indices.begin())); }
 
 //! \brief obtains the (non-const) normal-index vector.
 inline Uint* Geo_set::get_normal_indices_vector()
-{ return m_normal_indices.get_vector(); }
+  { return &(*(m_normal_indices.begin())); }
 
 //! \brief obtains the (const) texture-coordinate-index vector.
 inline const Uint* Geo_set::get_tex_coord_indices_vector() const
-{ return m_tex_coord_indices.get_vector(); }
+{ return &(*(m_tex_coord_indices.begin())); }
 
 //! \brief obtains the (non-const) texture-coordinate-index vector.
 inline Uint* Geo_set::get_tex_coord_indices_vector()
-{ return m_tex_coord_indices.get_vector(); }
+{ return &(*(m_tex_coord_indices.begin())); }
 
 //! \brief Obtain the i-th coord index.
 inline Uint Geo_set::get_coord_index(Uint i) const

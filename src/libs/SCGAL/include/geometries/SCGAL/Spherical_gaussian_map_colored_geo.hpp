@@ -194,7 +194,8 @@ protected:
   };
 
   // List of pointers to Spherical_gaussian_map_colored_geo objects. */
-  typedef Array<Shared_spherical_gaussian_map_colored_geo>      Sgm_node_array;
+  typedef std::vector<Shared_spherical_gaussian_map_colored_geo>
+                                                                Sgm_node_array;
   typedef Sgm_node_array::iterator                              Sgm_node_iter;
 
   /*! Obtain the tag (type) of the container. */
@@ -363,16 +364,16 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Spherical_gaussian_map_colored_geo*
 Spherical_gaussian_map_colored_geo::prototype()
 { return new Spherical_gaussian_map_colored_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Spherical_gaussian_map_colored_geo::clone()
 { return new Spherical_gaussian_map_colored_geo(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Spherical_gaussian_map_colored_geo::get_tag() const
 { return s_tag; }
 

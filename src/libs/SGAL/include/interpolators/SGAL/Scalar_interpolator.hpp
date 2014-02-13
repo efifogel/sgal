@@ -40,9 +40,10 @@
 #ifndef SGAL_SCALAR_INTERPOLATOR_HPP
 #define SGAL_SCALAR_INTERPOLATOR_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Interpolator.hpp"
-#include "SGAL/Array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -98,7 +99,7 @@ public:
   virtual void execute(Field_info*);
 
 protected:
-  Array<Float> m_values;
+  std::vector<Float> m_values;
 
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }

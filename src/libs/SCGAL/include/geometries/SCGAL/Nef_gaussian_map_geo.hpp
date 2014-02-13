@@ -189,7 +189,7 @@ public:
     Shared_nef_gaussian_map_geo;
 
   // List of pointers to Nef_gaussian_map_geo objects */
-  typedef Array<Shared_nef_gaussian_map_geo>            Ngm_node_array;
+  typedef std::vector<Shared_nef_gaussian_map_geo>      Ngm_node_array;
   typedef Ngm_node_array::iterator                      Ngm_node_iter;
 
 public:

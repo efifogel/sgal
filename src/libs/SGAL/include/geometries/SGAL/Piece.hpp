@@ -25,9 +25,10 @@
 /*! \file
  */
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -35,7 +36,7 @@ SGAL_BEGIN_NAMESPACE
 class Formatter;
 
 #if defined(_MSC_VER)
-template class SGAL_SGAL_DECL Array<Uint>;
+template class SGAL_SGAL_DECL std::vector<Uint>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -101,10 +102,10 @@ public:
   Uint get_depth() const;
 
   /*! Obtain the composition. */
-  const Array<Uint>& get_composition() const;
+  const std::vector<Uint>& get_composition() const;
 
   /*! Obtain the composition. */
-  Array<Uint>& get_composition();
+  std::vector<Uint>& get_composition();
 
   /*! Process change of structure. */
   void structure_changed(Field_info* field_info);
@@ -126,7 +127,7 @@ protected:
   Uint m_depth;
 
   /*! The piece composition array. */
-  Array<Uint> m_composition;
+  std::vector<Uint> m_composition;
 
 private:
   /*! Generate the coordinate index array. */
@@ -174,11 +175,11 @@ inline void Piece::set_depth(Uint depth) { m_depth = depth; }
 inline Uint Piece::get_depth() const { return m_depth; }
 
 //! \brief obtains the composition.
-inline const Array<Uint>& Piece::get_composition() const
+inline const std::vector<Uint>& Piece::get_composition() const
 { return m_composition; }
 
 //! \brief obtains the composition.
-inline Array<Uint>& Piece::get_composition() { return m_composition; }
+inline std::vector<Uint>& Piece::get_composition() { return m_composition; }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Piece::get_tag() const { return s_tag; }

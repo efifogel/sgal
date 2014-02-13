@@ -27,18 +27,19 @@
 #pragma warning(disable: 4996)
 #endif
 
-#include <time.h>
-#include <boost/lexical_cast.hpp>
-
-#include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Point_3.h>
-
 #if defined(_WIN32)
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#include <time.h>
+#include <boost/lexical_cast.hpp>
+#include <vector>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Point_3.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -64,7 +65,7 @@ SGAL_BEGIN_NAMESPACE
 const std::string Spherical_gaussian_map_geo::s_tag = "SphericalGaussianMap";
 Container_proto* Spherical_gaussian_map_geo::s_prototype(NULL);
 
-/*! Default values */
+// Default values
 REGISTER_TO_FACTORY(Spherical_gaussian_map_geo,
                     "Spherical_gaussian_map_geo");
 
@@ -124,7 +125,7 @@ void Spherical_gaussian_map_geo::clean_sgm()
   else if (m_coord_array) {
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
-    Array<Uint>& indices = (are_coord_indices_flat()) ?
+    std::vector<Uint>& indices = (are_coord_indices_flat()) ?
       get_flat_coord_indices() : get_coord_indices();
     Uint num_vertices_per_facet = 0;
     if (are_coord_indices_flat())
@@ -137,13 +138,13 @@ void Spherical_gaussian_map_geo::clean_sgm()
       sgm_initializer(exact_coord_array->begin(),
                       exact_coord_array->end(),
                       exact_coord_array->size(),
-                      indices.begin(), indices.end(),
+                      &(*(indices.begin())), &(*(indices.end())),
                       m_num_primitives, num_vertices_per_facet);
     }
     else {
       sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
-                      indices.begin(), indices.end(),
+                      &(*(indices.begin())), &(*(indices.end())),
                       m_num_primitives, num_vertices_per_facet);
     }
     clock_t end_time = clock();

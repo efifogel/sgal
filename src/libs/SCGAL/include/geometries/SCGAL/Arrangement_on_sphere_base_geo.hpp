@@ -144,22 +144,22 @@ public:
   /*! Obtain the point index array. */
   const std::vector<Uint>& get_point_indices() const;
 
-  /*! Obtain the i-th x-monotone curve index. */
+  /*! Obtain the ith x-monotone curve index. */
   Uint get_x_monotone_curve_index(Uint i) const;
 
-  /*! Obtain the i-th curve index. */
+  /*! Obtain the ith curve index. */
   Uint get_curve_index(Uint i) const;
 
-  /*! Obtain the i-th normal index. */
+  /*! Obtain the ith normal index. */
   Uint get_normal_index(Uint i) const;
 
-  /*! Obtain the i-th point index. */
+  /*! Obtain the ith point index. */
   Uint get_point_index(Uint i) const;
 
   /*! Obtain the point location index array. */
   const std::vector<Uint>& get_point_location_indices() const;
 
-  /*! Obtain the i-th point index. */
+  /*! Obtain the ith point index. */
   Uint get_point_location_index(Uint i) const;
 
   /*! Draw an arrangement on surface vertex.
@@ -403,57 +403,57 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the coordinate array. */
+//! \brief obtains the coordinate array.
 inline Arrangement_on_sphere_base_geo::Shared_coord_array
 Arrangement_on_sphere_base_geo::get_coord_array() const
 { return m_coord_array; }
 
-/*! \brief obtains the x-monotone curve index array. */
+//! \brief obtains the x-monotone curve index array.
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_x_monotone_curve_indices() const
 { return m_x_monotone_curve_indices; }
 
-/*! \brief obtains the curve index array. */
+//! \brief obtains the curve index array.
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_curve_indices() const
 { return m_curve_indices; }
 
-/*! \brief obtains the normal index array. */
+//! \brief obtains the normal index array.
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_normal_indices() const
 { return m_normal_indices; }
 
-/*! \brief obtains the point index array. */
+//! \brief obtains the point index array.
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_point_indices() const
 { return m_point_indices; }
 
-/*! \brief obtains the i-th x-monotone curve index. */
+//! \brief obtains the ith x-monotone curve index.
 inline Uint
 Arrangement_on_sphere_base_geo::get_x_monotone_curve_index(Uint i) const
 { return m_x_monotone_curve_indices[i]; }
 
-/*! \brief obtains the i-th curve index. */
+//! \brief obtains the ith curve index.
 inline Uint
 Arrangement_on_sphere_base_geo::get_curve_index(Uint i) const
 { return m_curve_indices[i]; }
 
-/*! \brief obtains the i-th normal index. */
+//! \brief obtains the ith normal index.
 inline Uint
 Arrangement_on_sphere_base_geo::get_normal_index(Uint i) const
 { return m_normal_indices[i]; }
 
-/*! \brief obtains the i-th point index. */
+//! \brief obtains the ith point index.
 inline Uint
 Arrangement_on_sphere_base_geo::get_point_index(Uint i) const
 { return m_point_indices[i]; }
 
-/*! \brief obtains the point location index array. */
+//! \brief obtains the point location index array.
 inline const std::vector<Uint>&
 Arrangement_on_sphere_base_geo::get_point_location_indices() const
 { return m_point_location_indices; }
 
-/*! \brief obtains the i-th point location index. */
+//! \brief obtains the ith point location index.
 inline Uint
 Arrangement_on_sphere_base_geo::get_point_location_index(Uint i) const
 { return m_point_location_indices[i]; }

@@ -47,7 +47,6 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
@@ -238,7 +237,7 @@ private:
   typedef Cgm::Arr_face_const_handle                    Arr_face_const_handle;
 
   // List of pointers to Cubical_gaussian_map_geo objects */
-  typedef Array<Shared_cubical_gaussian_map_geo>        Cgm_node_array;
+  typedef std::vector<Shared_cubical_gaussian_map_geo>  Cgm_node_array;
   typedef Cgm_node_array::iterator                      Cgm_node_iter;
 
   /*! A function object that converts Point_3 into Vector3f */

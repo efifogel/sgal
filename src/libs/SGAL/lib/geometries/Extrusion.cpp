@@ -498,7 +498,7 @@ void Extrusion::delete_prototype()
 }
 
 //! \brief sets the path that the cross section travels to create the shape.
-void Extrusion::set_spine(Array<Vector3f>& spine)
+void Extrusion::set_spine(std::vector<Vector3f>& spine)
 {
   m_spine = spine;
   clear();
@@ -514,7 +514,7 @@ void Extrusion::set_loop(Boolean loop)
 /*! \brief sets the 2-D cross section of the final shape defined in the XZ
  * plane.
  */
-void Extrusion::set_cross_section(Array<Vector2f>& cross_section)
+void Extrusion::set_cross_section(std::vector<Vector2f>& cross_section)
 {
   m_cross_section = cross_section;
   clear();
@@ -535,14 +535,14 @@ void Extrusion::set_cross_section_slices(Uint slices)
 }
 
 //! \brief sets the orientation of the cross section.
-void Extrusion::set_orientation(Array<Rotation>& orientation)
+void Extrusion::set_orientation(std::vector<Rotation>& orientation)
 {
   m_orientation = orientation;
   clear();
 }
 
 //! \brief sets the scale of the cross section.
-void Extrusion::set_scale(Array<Vector2f>& scale)
+void Extrusion::set_scale(std::vector<Vector2f>& scale)
 {
   m_scale = scale;
   clear();

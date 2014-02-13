@@ -40,6 +40,8 @@
 #ifndef SGAL_ROTATION_INTERPOLATOR_HPP
 #define SGAL_ROTATION_INTERPOLATOR_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Interpolator.hpp"
 #include "SGAL/Rotation.hpp"
@@ -49,7 +51,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL Array<Rotation>;
+template class SGAL_SGAL_DECL std::vecotr<Rotation>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -100,20 +102,20 @@ public:
   virtual void execute(Field_info*);
 
 protected:
-  /*! Indicates whether to interpolate between keys */
+  /*! Indicates whether to interpolate between keys. */
   Boolean m_interpolate_flag;
 
-  /*! The interpolator domain key-values */
-  Array<Rotation> m_values;
+  /*! The interpolator domain key-values. */
+  std::vector<Rotation> m_values;
 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
   Uint m_last_location;
@@ -124,6 +126,10 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Rotation_interpolator::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

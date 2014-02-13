@@ -217,11 +217,11 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Lines_through_segments_geo* Lines_through_segments_geo::prototype()
 { return new Lines_through_segments_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Lines_through_segments_geo::clone()
 { return new Lines_through_segments_geo(); }
 

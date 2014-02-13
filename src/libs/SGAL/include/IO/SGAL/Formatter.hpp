@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -35,7 +36,6 @@
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Sphere_bound.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Container.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -208,8 +208,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_boolean(const std::string& name,
-                             const Array<Boolean>& value,
-                             const Array<Boolean>& default_value) {}
+                             const std::vector<Boolean>& value,
+                             const std::vector<Boolean>& default_value) {}
 
   /*! Write a multi-Float field.
    * \param name The attribute name.
@@ -217,8 +217,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_float(const std::string& name,
-                           const Array<Float>& value,
-                           const Array<Float>& default_value) {}
+                           const std::vector<Float>& value,
+                           const std::vector<Float>& default_value) {}
 
   /*! Write a multi-Uint field.
    * \param name The attribute name.
@@ -226,8 +226,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_uint(const std::string& name,
-                          const Array<Uint>& value,
-                          const Array<Uint>& default_value) {}
+                          const std::vector<Uint>& value,
+                          const std::vector<Uint>& default_value) {}
 
   /*! Write a multi-Int field.
    * \param name The attribute name.
@@ -235,8 +235,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_int(const std::string& name,
-                         const Array<Int>& value,
-                         const Array<Int>& default_value) {}
+                         const std::vector<Int>& value,
+                         const std::vector<Int>& default_value) {}
 
   /*! Write a multi-Scene_time field.
    * \param name The attribute name.
@@ -244,8 +244,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_scene_time(const std::string& name,
-                                const Array<Scene_time>& value,
-                                const Array<Scene_time>& default_value) {}
+                                const std::vector<Scene_time>& value,
+                                const std::vector<Scene_time>& default_value) {}
 
   /*! Write a multi-Vector2f field.
    * \param name The attribute name.
@@ -253,8 +253,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_vector2f(const std::string& name,
-                              const Array<Vector2f>& value,
-                              const Array<Vector2f>& default_value) {}
+                              const std::vector<Vector2f>& value,
+                              const std::vector<Vector2f>& default_value) {}
 
   /*! Write a multi-Vector3f field.
    * \param name The attribute name.
@@ -262,8 +262,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_vector3f(const std::string& name,
-                              const Array<Vector3f>& value,
-                              const Array<Vector3f>& default_value) {}
+                              const std::vector<Vector3f>& value,
+                              const std::vector<Vector3f>& default_value) {}
 
   /*! Write a multi-Vector4f field.
    * \param name The attribute name.
@@ -271,8 +271,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_vector4f(const std::string& name,
-                              const Array<Vector4f>& value,
-                              const Array<Vector4f>& default_value) {}
+                              const std::vector<Vector4f>& value,
+                              const std::vector<Vector4f>& default_value) {}
 
   /*! Write a multi-Rotation field.
    * \param name The attribute name.
@@ -280,8 +280,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_rotation(const std::string& name,
-                              const Array<Rotation>& value,
-                              const Array<Rotation>& default_value) {}
+                              const std::vector<Rotation>& value,
+                              const std::vector<Rotation>& default_value) {}
 
   /*! Write a multi-Sphere_bound field.
    * \param name The attribute name.
@@ -289,8 +289,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_sphere_bound(const std::string& name,
-                                  const Array<Sphere_bound>& value,
-                                  const Array<Sphere_bound>& default_value) {}
+                                  const std::vector<Sphere_bound>& value,
+                                  const std::vector<Sphere_bound>& default_value) {}
 
   /*! Write a multi-string field.
    * \param name The attribute name.
@@ -298,8 +298,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_string(const std::string& name,
-                            const Array<std::string>& value,
-                            const Array<std::string>& default_value) {}
+                            const std::vector<std::string>& value,
+                            const std::vector<std::string>& default_value) {}
 
   /*! Write the multi-container field beginning section.
    * \param name The attribute name.

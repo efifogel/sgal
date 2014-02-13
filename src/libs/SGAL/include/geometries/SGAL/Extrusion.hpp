@@ -30,6 +30,7 @@
 #include <windows.h>
 #endif
 #include <GL/glu.h>
+#include <vector>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -45,8 +46,8 @@ class Container_proto;
 class Element;
 
 #if defined(_MSC_VER)
-template class SGAL_SGAL_DECL Array<Vector2f>;
-template class SGAL_SGAL_DECL Array<Rotation>;
+template class SGAL_SGAL_DECL std::vector<Vector2f>;
+template class SGAL_SGAL_DECL std::vector<Rotation>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -104,32 +105,32 @@ public:
   Boolean get_loop() const;
 
   /*! Set the 2-D cross section of the final shape defined in the XZ plane. */
-  void set_cross_section(Array<Vector2f>& cross_section);
+  void set_cross_section(std::vector<Vector2f>& cross_section);
 
   /*! Obtain the 2-D cross section of the final shape defined in the XZ plane.
    */
-  const Array<Vector2f>& get_cross_section() const;
+  const std::vector<Vector2f>& get_cross_section() const;
 
   /*! Set the orientation of the cross section. */
-  void set_orientation(Array<Rotation>& orientation);
+  void set_orientation(std::vector<Rotation>& orientation);
 
   /*! Obtain the orientation of the cross section. */
-  const Array<Rotation>& get_orientation() const;
+  const std::vector<Rotation>& get_orientation() const;
 
   /*! Set the scale of the cross section. */
-  void set_scale(Array<Vector2f>& scale);
+  void set_scale(std::vector<Vector2f>& scale);
 
   /*! Obtain the scale of the cross section. */
-  const Array<Vector2f>& get_scale() const;
+  const std::vector<Vector2f>& get_scale() const;
 
   /*! Set the path that the cross section travels to create the shape. */
-  void set_spine(Array<Vector3f>& spine);
+  void set_spine(std::vector<Vector3f>& spine);
 
   /*! Obtains the path that the cross section travels to create the shape. */
-  const Array<Vector3f>& get_spine() const;
+  const std::vector<Vector3f>& get_spine() const;
 
   /*! Obtains the path that the cross section travels to create the shape. */
-  Array<Vector3f>& get_spine();
+  std::vector<Vector3f>& get_spine();
 
   /*! Set the cross section radius. */
   void set_cross_section_radius(Float radius);
@@ -158,12 +159,12 @@ public:
   Boolean* begin_cap_handle(const Field_info*) { return &m_begin_cap; }
   Boolean* end_cap_handle(const Field_info*) { return &m_end_cap; }
   Boolean* loop_handle(const Field_info*) { return &m_loop; }
-  Array<Vector2f>* cross_section_handle(const Field_info*)
+  std::vector<Vector2f>* cross_section_handle(const Field_info*)
   { return &m_cross_section; }
-  Array<Rotation>* orientation_handle(const Field_info*)
+  std::vector<Rotation>* orientation_handle(const Field_info*)
   { return &m_orientation; }
-  Array<Vector2f>* scale_handle(const Field_info*) { return &m_scale; }
-  Array<Vector3f>* spine_handle(const Field_info*) { return &m_spine; }
+  std::vector<Vector2f>* scale_handle(const Field_info*) { return &m_scale; }
+  std::vector<Vector3f>* spine_handle(const Field_info*) { return &m_spine; }
   //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.
@@ -193,16 +194,16 @@ protected:
   Boolean m_loop;
 
   /*! A 2-D cross section of the final shape defined in the XZ plane. */
-  Array<Vector2f> m_cross_section;
+  std::vector<Vector2f> m_cross_section;
 
   /*! The orientation of the cross section. */
-  Array<Rotation> m_orientation;
+  std::vector<Rotation> m_orientation;
 
   /*! The scale of the cross section. */
-  Array<Vector2f> m_scale;
+  std::vector<Vector2f> m_scale;
 
   /*! Defines the path that the cross section travels to create the shape. */
-  Array<Vector3f> m_spine;
+  std::vector<Vector3f> m_spine;
 
   /*! obtains the tag (type) of the container.
    */
@@ -261,27 +262,27 @@ inline Boolean Extrusion::get_loop() const { return m_loop; }
 /*! \brief obtains the 2-D cross section of the final shape defined in the
  * XZ plane.
  */
-inline const Array<Vector2f>& Extrusion::get_cross_section() const
+inline const std::vector<Vector2f>& Extrusion::get_cross_section() const
 { return m_cross_section; }
 
 //! \brief obtains the orientation of the cross section.
-inline const Array<Rotation>& Extrusion::get_orientation() const
+inline const std::vector<Rotation>& Extrusion::get_orientation() const
 { return m_orientation; }
 
 //! \brief obtains the scale of the cross section.
-inline const Array<Vector2f>& Extrusion::get_scale() const
+inline const std::vector<Vector2f>& Extrusion::get_scale() const
 { return m_scale; }
 
 /*! \brief obtains the path that the cross section travels to create the
  * shape.
  */
-inline const Array<Vector3f>& Extrusion::get_spine() const
+inline const std::vector<Vector3f>& Extrusion::get_spine() const
 { return m_spine; }
 
 /*! \brief obtains the path that the cross section travels to create the
  * shape.
  */
-inline Array<Vector3f>& Extrusion::get_spine() { return m_spine; }
+inline std::vector<Vector3f>& Extrusion::get_spine() { return m_spine; }
 
 //! \brief obtains the cross section radius.
 inline Float Extrusion::get_cross_section_radius() const

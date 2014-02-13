@@ -313,7 +313,7 @@ protected:
   };
 
   // List of pointers to Spherical_gaussian_map_marked_geo objects. */
-  typedef SGAL::Array<Shared_spherical_gaussian_map_marked_geo> Sgm_node_array;
+  typedef std::vector<Shared_spherical_gaussian_map_marked_geo> Sgm_node_array;
   typedef Sgm_node_array::iterator                              Sgm_node_iter;
 
   /*! The minkowski sum operands. */

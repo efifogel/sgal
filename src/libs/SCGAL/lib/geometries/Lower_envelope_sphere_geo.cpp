@@ -30,7 +30,7 @@
 #include <time.h>
 #include <GL/gl.h>
 #include <list>
-
+#include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -98,7 +98,7 @@ void Lower_envelope_sphere_geo::clean()
     eit->set_points(points);
     eit->twin()->set_points(points);
   }
-  
+
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
   Lower_envelope_geo::clean();
@@ -130,8 +130,8 @@ void Lower_envelope_sphere_geo::delete_prototype()
 }
 
 /*! \brief obtains the prototype of this container. */
-Container_proto* Lower_envelope_sphere_geo::get_prototype() 
-{  
+Container_proto* Lower_envelope_sphere_geo::get_prototype()
+{
   if (!s_prototype) Lower_envelope_sphere_geo::init_prototype();
   return s_prototype;
 }
@@ -144,7 +144,7 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action* action)
   context->draw_light_model_sides(SGAL::Gfx::TWO_SIDE);
   context->draw_cull_face(Gfx::NO_CULL);
   context->draw_transp_enable(true);
-  
+
   Envelope_diagram_2::Face_const_iterator fit;
   for (fit = m_envelope->faces_begin(); fit != m_envelope->faces_end(); ++fit) {
     if (fit->number_of_surfaces() == 0) continue;
@@ -177,7 +177,7 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action* action)
         } else {
           const Double_point_list* points = curr->get_points();
           SGAL_assertion(points);
-          if (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) {            
+          if (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT) {
             Double_point_list::const_iterator it_next = points->begin();
             Double_point_list::const_iterator it = it_next++;
             for (; it_next != points->end(); it = it_next++)
@@ -228,7 +228,7 @@ void Lower_envelope_sphere_geo::draw_envelope_faces(Draw_action* action)
       glEnd();
     }
   }
-  
+
   context->draw_transp_enable(false);
   context->draw_cull_face(Gfx::BACK_CULL);
   context->draw_light_model_sides(Gfx::ONE_SIDE);
@@ -242,10 +242,10 @@ void Lower_envelope_sphere_geo::draw_envelope_edges(Draw_action* action)
   for (eit = m_envelope->edges_begin(); eit != m_envelope->edges_end(); ++eit) {
     const Rational& r = eit->curve().r();
     const Rational& s = eit->curve().s();
-    
+
     SGAL_assertion((eit->curve().t() == 0) && (r == s));
     Extrusion tube;
-    SGAL::Array<Vector3f>& spine = tube.get_spine();
+    std::vector<Vector3f>& spine = tube.get_spine();
     tube.set_cross_section_radius(m_edge_radius);
     if ((r == 0) && (s == 0)) {
       // Segment:

@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Text_formatter.hpp"
@@ -186,8 +187,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_boolean(const std::string& name,
-                             const Array<Boolean>& value,
-                             const Array<Boolean>& default_value);
+                             const std::vector<Boolean>& value,
+                             const std::vector<Boolean>& default_value);
 
   /*! Export a multi-Float field.
    * \param name The attribute name.
@@ -195,8 +196,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_float(const std::string& name,
-                           const Array<Float>& value,
-                           const Array<Float>& default_value);
+                           const std::vector<Float>& value,
+                           const std::vector<Float>& default_value);
 
   /*! Export a multi-Uint field.
    * \param name The attribute name.
@@ -204,8 +205,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_uint(const std::string& name,
-                          const Array<Uint>& value,
-                          const Array<Uint>& default_value);
+                          const std::vector<Uint>& value,
+                          const std::vector<Uint>& default_value);
 
   /*! Export a multi-Int field.
    * \param name The attribute name.
@@ -213,8 +214,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_int(const std::string& name,
-                         const Array<Int>& value,
-                         const Array<Int>& default_value);
+                         const std::vector<Int>& value,
+                         const std::vector<Int>& default_value);
 
   /*! Export a multi-Scene_time field.
    * \param name The attribute name.
@@ -222,8 +223,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_scene_time(const std::string& name,
-                                const Array<Scene_time>& value,
-                                const Array<Scene_time>& default_value);
+                                const std::vector<Scene_time>& value,
+                                const std::vector<Scene_time>& default_value);
 
   /*! Export a multi-Vector2f field.
    * \param name The attribute name.
@@ -231,8 +232,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_vector2f(const std::string& name,
-                              const Array<Vector2f>& value,
-                              const Array<Vector2f>& default_value);
+                              const std::vector<Vector2f>& value,
+                              const std::vector<Vector2f>& default_value);
 
   /*! Export a multi-Vector3f field.
    * \param name The attribute name.
@@ -240,8 +241,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_vector3f(const std::string& name,
-                              const Array<Vector3f>& value,
-                              const Array<Vector3f>& default_value);
+                              const std::vector<Vector3f>& value,
+                              const std::vector<Vector3f>& default_value);
 
   /*! Export a multi-Vector4f field.
    * \param name The attribute name.
@@ -249,8 +250,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_vector4f(const std::string& name,
-                              const Array<Vector4f>& value,
-                              const Array<Vector4f>& default_value);
+                              const std::vector<Vector4f>& value,
+                              const std::vector<Vector4f>& default_value);
 
   /*! Export a multi-Rotation field.
    * \param name The attribute name.
@@ -258,8 +259,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_rotation(const std::string& name,
-                              const Array<Rotation>& value,
-                              const Array<Rotation>& default_value);
+                              const std::vector<Rotation>& value,
+                              const std::vector<Rotation>& default_value);
 
   /*! Export a multi-Sphere_bound field.
    * \param name The attribute name.
@@ -267,8 +268,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_sphere_bound(const std::string& name,
-                                  const Array<Sphere_bound>& value,
-                                  const Array<Sphere_bound>& default_value);
+                                  const std::vector<Sphere_bound>& value,
+                                  const std::vector<Sphere_bound>& default_value);
 
   /*! Export a multi-string field.
    * \param name The attribute name.
@@ -276,8 +277,8 @@ public:
    * \param default_value The attribute default value.
    */
   virtual void multi_string(const std::string& name,
-                            const Array<std::string>& value,
-                            const Array<std::string>& default_value);
+                            const std::vector<std::string>& value,
+                            const std::vector<std::string>& default_value);
 
   /*! Export the header of a multi-container field.
    */
@@ -305,14 +306,12 @@ private:
   /*! Export a multi field of Array of type T.
    */
   template <typename T>
-  void multi_field(const std::string& name, const Array<T>& value,
-                   const Array<T>& default_value)
+  void multi_field(const std::string& name, const std::vector<T>& value,
+                   const std::vector<T>& default_value)
   {
-    const T* vec = value.get_vector();
-    const T* default_vec = default_value.get_vector();
     if (value.size() == 0) return;
     if ((value.size() == default_value.size()) &&
-        std::equal(&vec[0], &vec[value.size()], &default_vec[value.size()]))
+        std::equal(value.begin(), value.end(), default_value.begin()))
       return;
 
     new_line();
@@ -321,7 +320,7 @@ private:
     new_line();
     push_indent();
     indent();
-    std::copy(vec, &vec[value.size()], std::ostream_iterator<T>(out(), " "));
+    std::copy(value.begin(), value.end(), std::ostream_iterator<T>(out(), " "));
     new_line();
     pop_indent();
     indent();
@@ -391,65 +390,65 @@ Vrml_formatter::single_sphere_bound(const std::string& name,
 // Multi-field
 //! \brief writes a single Float field.
 inline void Vrml_formatter::multi_float(const std::string& name,
-                                        const Array<Float>& value,
-                                        const Array<Float>& default_value)
+                                        const std::vector<Float>& value,
+                                        const std::vector<Float>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Uint field.
 inline void Vrml_formatter::multi_uint(const std::string& name,
-                                       const Array<Uint>& value,
-                                       const Array<Uint>& default_value)
+                                       const std::vector<Uint>& value,
+                                       const std::vector<Uint>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Int field.
 inline void Vrml_formatter::multi_int(const std::string& name,
-                                      const Array<Int>& value,
-                                      const Array<Int>& default_value)
+                                      const std::vector<Int>& value,
+                                      const std::vector<Int>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Scene_time field.
 inline void
 Vrml_formatter::multi_scene_time(const std::string& name,
-                                 const Array<Scene_time>& value,
-                                 const Array<Scene_time>& default_value)
+                                 const std::vector<Scene_time>& value,
+                                 const std::vector<Scene_time>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Vector2f field.
 inline void Vrml_formatter::multi_vector2f(const std::string& name,
-                                           const Array<Vector2f>& value,
-                                           const Array<Vector2f>& default_value)
+                                           const std::vector<Vector2f>& value,
+                                           const std::vector<Vector2f>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Vector3f field.
 inline void Vrml_formatter::multi_vector3f(const std::string& name,
-                                           const Array<Vector3f>& value,
-                                           const Array<Vector3f>& default_value)
+                                           const std::vector<Vector3f>& value,
+                                           const std::vector<Vector3f>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Vector4f field.
 inline void Vrml_formatter::multi_vector4f(const std::string& name,
-                                           const Array<Vector4f>& value,
-                                           const Array<Vector4f>& default_value)
+                                           const std::vector<Vector4f>& value,
+                                           const std::vector<Vector4f>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Rotation field.
 inline void Vrml_formatter::multi_rotation(const std::string& name,
-                                           const Array<Rotation>& value,
-                                           const Array<Rotation>& default_value)
+                                           const std::vector<Rotation>& value,
+                                           const std::vector<Rotation>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Sphere_bound field.
 inline void
 Vrml_formatter::multi_sphere_bound(const std::string& name,
-                                   const Array<Sphere_bound>& value,
-                                   const Array<Sphere_bound>& default_value)
+                                   const std::vector<Sphere_bound>& value,
+                                   const std::vector<Sphere_bound>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single string field.
 inline void
 Vrml_formatter::multi_string(const std::string& name,
-                             const Array<std::string>& value,
-                             const Array<std::string>& default_value)
+                             const std::vector<std::string>& value,
+                             const std::vector<std::string>& default_value)
 { multi_field(name, value, default_value); }
 
 SGAL_END_NAMESPACE

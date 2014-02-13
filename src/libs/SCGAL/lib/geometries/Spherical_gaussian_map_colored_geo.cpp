@@ -27,19 +27,19 @@
 #pragma warning(disable: 4996)
 #endif
 
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <time.h>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Point_3.h>
-
-#if defined(_WIN32)
-#include <windows.h>
-#endif
-#include <GL/gl.h>
-#include <GL/glu.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -152,7 +152,7 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
     Sgm_geo_initializer_visitor visitor;
-    Array<Uint>& indices = (are_coord_indices_flat()) ?
+    std::vector<Uint>& indices = (are_coord_indices_flat()) ?
       get_flat_coord_indices() : get_coord_indices();
     Uint num_vertices_per_facet = 0;
     if (are_coord_indices_flat())
@@ -165,13 +165,13 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
       sgm_initializer(exact_coord_array->begin(),
                       exact_coord_array->end(),
                       exact_coord_array->size(),
-                      indices.begin(), indices.end(),
+                      &(*(indices.begin())), &(*(indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     else {
       sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
-                      indices.begin(), indices.end(),
+                      &(*(indices.begin())), &(*(indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     Sgm_halfedge_iterator hei;

@@ -26,7 +26,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <string.h>
+#include <vector>
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -202,9 +202,9 @@ public:
   static const char* get_color_name(Uint color) { return s_color_names[color]; }
 
 private:
-  typedef SGAL::Array<SGAL::Vector3f>   Vector3f_array;
-  typedef SGAL::Array<SGAL::Float>      Float_array;
-  typedef SGAL::Array<Uint>             Uint_array;
+  typedef std::vector<SGAL::Vector3f>   Vector3f_array;
+  typedef std::vector<SGAL::Float>      Float_array;
+  typedef std::vector<Uint>             Uint_array;
 
   /*! The window manager. */
   Window_manager* m_window_manager;

@@ -39,13 +39,13 @@ Container_proto* Coordinate_interpolator::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Coordinate_interpolator, "Coordinate_interpolator");
 
-/*! Constructor */
+//! \brief constructor.
 Coordinate_interpolator::Coordinate_interpolator(Boolean proto) :
   Interpolator(proto),
   m_last_location(0)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Coordinate_interpolator::~Coordinate_interpolator()
 {
   m_keys.clear();
@@ -53,7 +53,7 @@ Coordinate_interpolator::~Coordinate_interpolator()
   m_value.clear();
 }
 
-/*! \brief initializes the container prototype */
+//! \brief initializes the container prototype.
 void Coordinate_interpolator::init_prototype()
 {
   if (s_prototype) return;
@@ -67,14 +67,14 @@ void Coordinate_interpolator::init_prototype()
                                               value_func));
 }
 
-/*! \brief deletes the container prototype */
+//! \brief deletes the container prototype.
 void Coordinate_interpolator::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
+//! \brief obtains the container prototype.
 Container_proto * Coordinate_interpolator::get_prototype()
 {
   if (!s_prototype) Coordinate_interpolator::init_prototype();
@@ -128,42 +128,42 @@ void Coordinate_interpolator::execute(Field_info* /* field_info */)
   Uint location = m_last_location;
 
   // Loop up the array to find the closest key which is bigger than fraction
-  while (location + 1 < m_keys.size() && m_fraction > m_keys[location+1])
-    ++location;
+  while (((location + 1) < m_keys.size()) && (m_fraction > m_keys[location+1]))
+    location++;
 
   // Loop down the array to find the closest key which is smaller than fraction
-  while (location > 0 && m_fraction < m_keys[location])
-    location--;
+  while ((location > 0) && (m_fraction < m_keys[location])) --location;
 
   // Set the last location to the current one for next execution
   m_last_location = location;
 
   // Set m_value by interpolating between two values
   Uint size_of_array = m_values.size() / m_keys.size();
-  Vector3f *location_value = m_values.begin() + location * size_of_array;
-  Vector3f *next_location_value = m_values.begin() +
-    (location + 1) * size_of_array;
+  std::vector<Vector3f>::iterator location_value = m_values.begin();
+  std::advance(location_value, location * size_of_array);
+  std::vector<Vector3f>::iterator next_location_value = m_values.begin();
+  std::advance(next_location_value, (location + 1) * size_of_array);
 
   Float key_delta = m_keys[location + 1] - m_keys[location];
   Float fration_delta = m_fraction - m_keys[location];
 
   m_value = Vector3f_array(size_of_array);
-  for (unsigned int j = 0; j < size_of_array; ++j) {
-    for (unsigned int i = 0; i < 3; ++i) {
-      Float delta = next_location_value[j][i] - location_value[j][i];
-      m_value[j][i] = location_value[j][i] +
-        (fration_delta * delta) / key_delta;
+  for (Uint j = 0; j < size_of_array; ++j) {
+    for (Uint i = 0; i < 3; ++i) {
+      Float delta = (*next_location_value)[i] - (*location_value)[i];
+      m_value[j][i] =
+        (*location_value)[i] + (fration_delta * delta) / key_delta;
     }
+    ++next_location_value;
+    ++location_value;
   }
 
   // Cascade the updated value
   value->cascade();
 }
 
-/*! returns a copy of the value in a specific location
- * \param location The location of the sub array that needs to be returned.
- */
-Vector3f_array Coordinate_interpolator::get_value (Uint location)
+//! \brief obtains a copy of the value in a specific location.
+Vector3f_array Coordinate_interpolator::get_value(Uint location)
 {
   Int size_of_array = m_values.size() / m_keys.size();
   Vector3f_array ret = Vector3f_array(size_of_array);

@@ -30,6 +30,7 @@
 #include <time.h>
 #include <GL/gl.h>
 #include <list>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 
 #include <CGAL/Cartesian.h>
@@ -132,7 +133,7 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   typedef Element::Cont_attr_iter       Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
@@ -160,7 +161,7 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
       continue;
     }
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
@@ -180,8 +181,8 @@ void Lower_envelope_plane_geo::delete_prototype()
 }
 
 /*! \brief obtains the prototype of this container. */
-Container_proto* Lower_envelope_plane_geo::get_prototype() 
-{  
+Container_proto* Lower_envelope_plane_geo::get_prototype()
+{
   if (!s_prototype) Lower_envelope_plane_geo::init_prototype();
   return s_prototype;
 }
@@ -196,7 +197,7 @@ void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
   }
   context->draw_cull_face(Gfx::NO_CULL);
   context->draw_transp_enable(true);
-  
+
   Envelope_diagram_2::Face_const_iterator fit;
   for (fit = m_envelope->faces_begin(); fit != m_envelope->faces_end(); ++fit) {
     SGAL_assertion(fit->number_of_surfaces() > 0);
@@ -261,7 +262,7 @@ void Lower_envelope_plane_geo::draw_envelope_edges(Draw_action* action)
 
     Extrusion tube;
     tube.set_cross_section_radius(m_edge_radius);
-    SGAL::Array<Vector3f>& spine = tube.get_spine();
+    std::vector<Vector3f>& spine = tube.get_spine();
     spine.resize(2);
     spine[0].set(src[0], src[1], 0);
     spine[1].set(trg[0], trg[1], 0);
@@ -303,7 +304,7 @@ void Lower_envelope_plane_geo::draw_patches(Draw_action* action)
     context->draw_light_model_sides(SGAL::Gfx::TWO_SIDE);
   }
   context->draw_cull_face(Gfx::NO_CULL);
-  
+
   Envelope_diagram_2::Face_const_iterator fit;
   for (fit = m_envelope->faces_begin(); fit != m_envelope->faces_end(); ++fit) {
     SGAL_assertion(fit->number_of_surfaces() > 0);

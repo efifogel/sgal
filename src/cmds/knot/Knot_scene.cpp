@@ -37,6 +37,7 @@
 #include <fstream>
 #include <string>
 #include <time.h>
+#include <vector>
 #include <limits.h>
 
 #include "SGAL/basic.hpp"
@@ -56,7 +57,6 @@
 #include "SGAL/Writer.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Piece.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Time_sensor.hpp"
 #include "SGAL/Position_interpolator.hpp"
 #include "SGAL/Route.hpp"
@@ -322,7 +322,7 @@ void Knot_scene::create_scene()
     Shared_piece piece(new SGAL::Piece);
     m_pieces[n] = piece;
     Uint size = WIDTH * HEIGHT * DEPTH;
-    SGAL::Array<Uint>& composition = piece->get_composition();
+    std::vector<Uint>& composition = piece->get_composition();
     composition.resize(size);
 
     Uint i, j, k;
@@ -386,7 +386,7 @@ void Knot_scene::create_scene()
     Uint_array& composition = m_volume->get_composition();
     Uint size = m_volume_width * m_volume_height * m_volume_depth;
     composition.resize(size);
-    Uint* volume_vec = composition.get_vector();
+    Uint* volume_vec = &(*(composition.begin()));
     memset(volume_vec, 0, size * sizeof(Uint));
     m_volume->set_width(m_volume_width);
     m_volume->set_height(m_volume_height);
@@ -481,7 +481,7 @@ void Knot_scene::update(const State state)
 {
   m_volume->clear();
   Uint_array& volume_composition = m_volume->get_composition();
-  Uint* volume_vec = volume_composition.get_vector();
+  Uint* volume_vec = &(*(volume_composition.begin()));
   memset(volume_vec, 0, volume_composition.size() * sizeof(Uint));
   Uint color;
   for (color = 0; color < NUMBER_OF_COLORS; ++color) {

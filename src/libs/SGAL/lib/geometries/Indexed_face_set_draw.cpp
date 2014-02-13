@@ -2850,7 +2850,7 @@ void Indexed_face_set::draw_FAPV_VAYE()
 
   glEnableClientState(GL_VERTEX_ARRAY);
 
-  const GLvoid* indices = (GLvoid*) m_flat_coord_indices.get_vector();
+  const GLvoid* indices = (GLvoid*) &(*(m_flat_coord_indices.begin()));
   SGAL_assertion(m_primitive_type == PT_TRIANGLES ||
                  m_primitive_type == PT_QUADS);
   Uint count = m_num_primitives * ((m_primitive_type == PT_TRIANGLES) ? 3 : 4);

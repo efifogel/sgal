@@ -132,14 +132,11 @@ void Vrml_formatter::single_boolean(const std::string& name,
 
 //! \brief exports a multi-Boolean field.
 void Vrml_formatter::multi_boolean(const std::string& name,
-                                   const Array<Boolean>& value,
-                                   const Array<Boolean>& default_value)
+                                   const std::vector<Boolean>& value,
+                                   const std::vector<Boolean>& default_value)
 {
-  const Boolean* vec = value.get_vector();
-  const Boolean* default_vec = default_value.get_vector();
   if ((value.size() == 0) || (value.size() != default_value.size())) return;
-  if (! std::equal(&vec[0], &vec[value.size()], &default_vec[value.size()]))
-    return;
+  if (! std::equal(value.begin(), value.end(), default_value.begin())) return;
 
   new_line();
   indent();
@@ -147,7 +144,8 @@ void Vrml_formatter::multi_boolean(const std::string& name,
   new_line();
   push_indent();
   indent();
-  std::copy(vec, &vec[value.size()], std::ostream_iterator<Boolean>(out(), " "));
+  std::copy(value.begin(), value.end(),
+            std::ostream_iterator<Boolean>(out(), " "));
   new_line();
   pop_indent();
   indent();

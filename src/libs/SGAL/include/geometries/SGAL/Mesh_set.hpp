@@ -169,19 +169,19 @@ public:
 
   /*! Obtain the coordinate-index array.
    */
-  Array<Uint>& get_flat_coord_indices();
+  std::vector<Uint>& get_flat_coord_indices();
 
   /*! Obtain the normal-index array.
    */
-  Array<Uint>& get_flat_normal_indices();
+  std::vector<Uint>& get_flat_normal_indices();
 
   /*! Obtain the color-index array.
    */
-  Array<Uint>& get_flat_color_indices();
+  std::vector<Uint>& get_flat_color_indices();
 
   /*! Obtain the texture coordinate-index array.
    */
-  Array<Uint>& get_flat_tex_coord_indices();
+  std::vector<Uint>& get_flat_tex_coord_indices();
 
   /*! Set the flag that indicates whether the coordinate-index array is "flat".
    * \param flag indicates whether the coordinate-index array is "flat".
@@ -194,21 +194,21 @@ public:
 
   /*! Set the flat coordinate-index array.
    */
-  void set_flat_coord_indices(Array<Uint>& indices);
+  void set_flat_coord_indices(std::vector<Uint>& indices);
 
   /*! Set the coordinate-index array.
    */
-  void set_coord_indices(Array<Uint>& indices);
+  void set_coord_indices(std::vector<Uint>& indices);
 
   /*! Assign the coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_coord_indices(const Array<Uint>& indices);
+  void set_reverse_coord_indices(const std::vector<Uint>& indices);
 
   /*! Assign the flat coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_flat_coord_indices(const Array<Uint>& indices);
+  void set_reverse_flat_coord_indices(const std::vector<Uint>& indices);
 
   /*! Set the flag that indicates whether the normal-index array is "flat".
    * \param flag indicates whether the normal-index array is "flat".
@@ -221,11 +221,11 @@ public:
 
   /*! Set the flat normal-index array.
    */
-  void set_flat_normal_indices(Array<Uint>& indices);
+  void set_flat_normal_indices(std::vector<Uint>& indices);
 
   /*! Set the normal-index array.
    */
-  void set_normal_indices(Array<Uint>& indices);
+  void set_normal_indices(std::vector<Uint>& indices);
 
   /*! Set the flag that indicates whether the color-index array is "flat".
    * \param flag indicates whether the color-index array is "flat".
@@ -238,11 +238,11 @@ public:
 
   /*! Set the flat color-index array.
    */
-  void set_flat_color_indices(Array<Uint>& indices);
+  void set_flat_color_indices(std::vector<Uint>& indices);
 
   /*! Set the color-index array.
    */
-  void set_color_indices(Array<Uint>& indices);
+  void set_color_indices(std::vector<Uint>& indices);
 
   /*! Set the flag that indicates whether the textuture coordinate-index array
    * is "flat".
@@ -256,25 +256,25 @@ public:
 
   /*! Set the flat texture coordinate-index array.
    */
-  void set_flat_tex_coord_indices(Array<Uint>& indices);
+  void set_flat_tex_coord_indices(std::vector<Uint>& indices);
 
   /*! Set the texture coordinate-index array.
    */
-  void set_tex_coord_indices(Array<Uint>& indices);
+  void set_tex_coord_indices(std::vector<Uint>& indices);
 
   /*! Convert non-flat indices (VRML style) to flat indices.
    * \param src the non-flat indices.
    * \param dst the flat indices.
    * \pre the primitive type is either triangle or quad.
    */
-  void flatten_indices(const Array<Uint>& src, Array<Uint>& dst);
+  void flatten_indices(const std::vector<Uint>& src, std::vector<Uint>& dst);
 
   /*! Convert flat indices to flat non-indices (VRML style).
    * \param dst the non-flat indices.
    * \param src the flat indices.
    * \pre the primitive type is either triangle or quad.
    */
-  void  deflatten_indices(const Array<Uint>& src, Array<Uint>& dst);
+  void  deflatten_indices(const std::vector<Uint>& src, std::vector<Uint>& dst);
 
   /*! Obtain the ith flat coord index.
    * \return the ith flat coord index.
@@ -348,16 +348,16 @@ protected:
   Float m_polygon_offset_factor;
 
   /*! An array of indices into the vertex-coordinate array. */
-  Array<Uint> m_flat_coord_indices;
+  std::vector<Uint> m_flat_coord_indices;
 
   /*! An array of indices into the vertex-texture-coordinate array. */
-  Array<Uint> m_flat_normal_indices;
+  std::vector<Uint> m_flat_normal_indices;
 
   /*! An array of indices into the vertex-color array. */
-  Array<Uint> m_flat_color_indices;
+  std::vector<Uint> m_flat_color_indices;
 
   /*! An array of indices into the vertex-normal array. */
-  Array<Uint> m_flat_tex_coord_indices;
+  std::vector<Uint> m_flat_tex_coord_indices;
 
   /*! Indicates whether the flat coordinate-index array should be cleaned. */
   Boolean m_dirty_flat_coord_indices;
@@ -445,16 +445,9 @@ protected:
    */
   Boolean is_dirty_flat_tex_coord_indices() const;
 
-  /*! Convert non-flat indices (VRML style) to flat indices.
-   * \param src the non-flat indices.
-   * \param dst the flat indices.
-   * \pre the primitive type is either triangle or quad.
-   */
-  void flatten_indices(const Uint* src, Uint* dst);
-
   /*! Colapse identical coordinates.
    */
-  void collapse_identical_coordinates(Array<Uint>& indices);
+  void collapse_identical_coordinates(std::vector<Uint>& indices);
 
   /*! Export a triangular facet.
    * \param p1 (in) the point of the first vertex.
