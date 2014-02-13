@@ -46,7 +46,11 @@ class Container_proto;
 class Element;
 
 #if defined(_MSC_VER)
+template class SGAL_SGAL_DECL std::allocator<Vector3f>;
+template class SGAL_SGAL_DECL std::vector<Vector3f>;
+template class SGAL_SGAL_DECL std::allocator<Vector2f>;
 template class SGAL_SGAL_DECL std::vector<Vector2f>;
+template class SGAL_SGAL_DECL std::allocator<Rotation>;
 template class SGAL_SGAL_DECL std::vector<Rotation>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )

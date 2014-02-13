@@ -36,6 +36,7 @@ SGAL_BEGIN_NAMESPACE
 class Formatter;
 
 #if defined(_MSC_VER)
+template class SGAL_SGAL_DECL std::allocator<Uint>;
 template class SGAL_SGAL_DECL std::vector<Uint>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
