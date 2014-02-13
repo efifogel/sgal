@@ -93,7 +93,7 @@ public:
   virtual void write(Container* container);
 
   /*! Write the container beginning section */
-  virtual void container_begin(const std::string& tag) {}
+  virtual void container_begin(const std::string& /* tag */) {}
 
   /*! Write the container ending section */
   virtual void container_end() {}
@@ -103,100 +103,101 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_boolean(const std::string& name,
-                              Boolean value, Boolean default_value) {}
+  virtual void single_boolean(const std::string& /* name */,
+                              Boolean /* value */,
+                              Boolean /* default_value */) {}
 
   /*! Write a single Float field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_float(const std::string& name,
-                            Float value, Float default_value) {};
+  virtual void single_float(const std::string& /* name */,
+                            Float /* value */, Float /* default_value */) {};
 
   /*! Write a single Uint field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_uint(const std::string& name,
-                           Uint value, Uint default_value) {}
+  virtual void single_uint(const std::string& /* name */,
+                           Uint /* value */, Uint /* default_value */) {}
 
   /*! Write a single Int field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_int(const std::string& name,
-                          Int value, Int default_value) {}
+  virtual void single_int(const std::string& /* name */,
+                          Int /* value */, Int /* default_value */) {}
 
   /*! Write a single Scene_time field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_scene_time(const std::string& name,
-                                 Scene_time value,
-                                 Scene_time default_value) {}
+  virtual void single_scene_time(const std::string& /* name */,
+                                 Scene_time /* value */,
+                                 Scene_time /* default_value */) {}
 
   /*! Write a single Vector2f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector2f(const std::string& name,
-                               const Vector2f& value,
-                               const Vector2f& default_value) {}
+  virtual void single_vector2f(const std::string& /* name */,
+                               const Vector2f& /* value */,
+                               const Vector2f& /* default_value */) {}
 
   /*! Write a single Vector3f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector3f(const std::string& name,
-                               const Vector3f& value,
-                               const Vector3f& default_value) {}
+  virtual void single_vector3f(const std::string& /* name */,
+                               const Vector3f& /* value */,
+                               const Vector3f& /* default_value */) {}
 
   /*! Write a single Vector4f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_vector4f(const std::string& name,
-                               const Vector4f& value,
-                               const Vector4f& default_value) {}
+  virtual void single_vector4f(const std::string& /* name */,
+                               const Vector4f& /* value */,
+                               const Vector4f& /* default_value */) {}
 
   /*! Write a single Rotation field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_rotation(const std::string& name,
-                               const Rotation& value,
-                               const Rotation& default_value) {}
+  virtual void single_rotation(const std::string& /* name */,
+                               const Rotation& /* value */,
+                               const Rotation& /* default_value */) {}
 
   /*! Write a single Sphere_bound field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_sphere_bound(const std::string& name,
-                                   const Sphere_bound& value,
-                                   const Sphere_bound& default_value) {}
+  virtual void single_sphere_bound(const std::string& /* name */,
+                                   const Sphere_bound& /* value */,
+                                   const Sphere_bound& /* default_value */) {}
 
   /*! Write a single string field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_string(const std::string& name,
-                             const std::string& value,
-                             const std::string& default_value) {}
+  virtual void single_string(const std::string& /* name */,
+                             const std::string& /* value */,
+                             const std::string& /* default_value */) {}
 
   /*! Write the single-container field beginning section.
    * \param name The attribute name.
    */
-  virtual void single_container_begin(const std::string& name) {}
+  virtual void single_container_begin(const std::string& /* name */) {}
 
   /*! Write the single-container field ending section.
    */
@@ -207,104 +208,104 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_boolean(const std::string& name,
-                             const std::vector<Boolean>& value,
-                             const std::vector<Boolean>& default_value) {}
+  virtual void multi_boolean(const std::string& /* name */,
+                             const std::vector<Boolean>& /* value */,
+                             const std::vector<Boolean>& /* default_value */) {}
 
   /*! Write a multi-Float field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_float(const std::string& name,
-                           const std::vector<Float>& value,
-                           const std::vector<Float>& default_value) {}
+  virtual void multi_float(const std::string& /* name */,
+                           const std::vector<Float>& /* value */,
+                           const std::vector<Float>& /* default_value */) {}
 
   /*! Write a multi-Uint field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_uint(const std::string& name,
-                          const std::vector<Uint>& value,
-                          const std::vector<Uint>& default_value) {}
+  virtual void multi_uint(const std::string& /* name */,
+                          const std::vector<Uint>& /* value */,
+                          const std::vector<Uint>& /* default_value */) {}
 
   /*! Write a multi-Int field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_int(const std::string& name,
-                         const std::vector<Int>& value,
-                         const std::vector<Int>& default_value) {}
+  virtual void multi_int(const std::string& /* name */,
+                         const std::vector<Int>& /* value */,
+                         const std::vector<Int>& /* default_value */) {}
 
   /*! Write a multi-Scene_time field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_scene_time(const std::string& name,
-                                const std::vector<Scene_time>& value,
-                                const std::vector<Scene_time>& default_value) {}
+  virtual void multi_scene_time(const std::string& /* name */,
+                                const std::vector<Scene_time>& /* value */,
+                                const std::vector<Scene_time>& /* default_value */) {}
 
   /*! Write a multi-Vector2f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector2f(const std::string& name,
-                              const std::vector<Vector2f>& value,
-                              const std::vector<Vector2f>& default_value) {}
+  virtual void multi_vector2f(const std::string& /* name */,
+                              const std::vector<Vector2f>& /* value */,
+                              const std::vector<Vector2f>& /* default_value */) {}
 
   /*! Write a multi-Vector3f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector3f(const std::string& name,
-                              const std::vector<Vector3f>& value,
-                              const std::vector<Vector3f>& default_value) {}
+  virtual void multi_vector3f(const std::string& /* name */,
+                              const std::vector<Vector3f>& /* value */,
+                              const std::vector<Vector3f>& /* default_value */) {}
 
   /*! Write a multi-Vector4f field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_vector4f(const std::string& name,
-                              const std::vector<Vector4f>& value,
-                              const std::vector<Vector4f>& default_value) {}
+  virtual void multi_vector4f(const std::string& /* name */,
+                              const std::vector<Vector4f>& /* value */,
+                              const std::vector<Vector4f>& /* default_value */) {}
 
   /*! Write a multi-Rotation field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_rotation(const std::string& name,
-                              const std::vector<Rotation>& value,
-                              const std::vector<Rotation>& default_value) {}
+  virtual void multi_rotation(const std::string& /* name */,
+                              const std::vector<Rotation>& /* value */,
+                              const std::vector<Rotation>& /* default_value */) {}
 
   /*! Write a multi-Sphere_bound field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_sphere_bound(const std::string& name,
-                                  const std::vector<Sphere_bound>& value,
-                                  const std::vector<Sphere_bound>& default_value) {}
+  virtual void multi_sphere_bound(const std::string& /* name */,
+                                  const std::vector<Sphere_bound>& /* value */,
+                                  const std::vector<Sphere_bound>& /* default_value */) {}
 
   /*! Write a multi-string field.
    * \param name The attribute name.
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_string(const std::string& name,
-                            const std::vector<std::string>& value,
-                            const std::vector<std::string>& default_value) {}
+  virtual void multi_string(const std::string& /* name */,
+                            const std::vector<std::string>& /* value */,
+                            const std::vector<std::string>& /* default_value */) {}
 
   /*! Write the multi-container field beginning section.
    * \param name The attribute name.
    */
-  virtual void multi_container_begin(const std::string& name) {}
+  virtual void multi_container_begin(const std::string& /* name */) {}
 
   /*! Write the multi-container field ending section.
    */
@@ -316,8 +317,8 @@ public:
    * \param p3 (in) the point (in world coordinate system) of the third vertex.
    * \param normal (in) the facet normal.
    */
-  virtual void facet(const Vector3f& local_p1, const Vector3f& local_p2,
-                     const Vector3f& local_p3, const Vector3f& normal) {}
+  virtual void facet(const Vector3f& /* p1 */, const Vector3f& /* p2 */,
+                     const Vector3f& /* p3 */, const Vector3f& /* normal */) {}
 
   //@}
 
