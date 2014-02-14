@@ -37,6 +37,7 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Stl_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -45,7 +46,7 @@ const std::string Group::s_tag = "Group";
 
 REGISTER_TO_FACTORY(Group, "Group");
 
-/*! Constructor */
+//! \brief constructor.
 Group::Group(Boolean proto) :
   Node(proto),
   m_is_visible(true),
@@ -55,18 +56,18 @@ Group::Group(Boolean proto) :
   m_scene_graph(NULL)
 {}
 
-/*! Copy constructor */
-Group::Group(const Group& group) :
-  Node(group),
-  m_is_visible(group.m_is_visible),
-  m_touch_sensor(m_touch_sensor),
-  m_num_lights(group.m_num_lights)
-{
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
-    m_childs.push_back(*it);
-}
+//! \brief copy constructor.
+Group::Group(const Group& other) :
+  Node(other),
+  m_is_visible(other.m_is_visible),
+  m_touch_sensor(other.m_touch_sensor),
+  m_num_lights(other.m_num_lights),
+  m_start_selection_id(0),
+  m_num_selection_ids(0),
+  m_scene_graph(other.m_scene_graph)
+{ m_childs = other.m_childs; }
 
-/*! Destructor */
+//! \brief destructor.
 Group::~Group()
 {
   m_childs.clear();
@@ -78,17 +79,14 @@ Group::~Group()
   }
 }
 
-/*! \brief obtains a child according to its position in the children sequence.
- */
+//! \brief obtains a child according to its position in the children array.
 Group::Shared_node Group::get_child(Uint index)
 {
   if (index >= m_childs.size()) return Group::Shared_node();
-  Node_iterator it = m_childs.begin();
-  for (Uint i = 0; i < index; ++i) ++it;
-  return *it;
+  return m_childs[index];
 }
 
-/*! \brief adds a child to the sequence of children of the group. */
+//! \brief adds a child to the sequence of children of the group.
 void Group::add_child(Shared_node node)
 {
   // Lights are inserted at the begining of the sequence, the engines, and
@@ -111,7 +109,7 @@ void Group::add_child(Shared_node node)
   node->register_observer(observer);
 }
 
-/*! \brief removes a given child from the sequence of children of the group. */
+//! \brief removes a given child from the sequence of children of the group.
 void Group::remove_child(Shared_node node)
 {
   Shared_light light = boost::dynamic_pointer_cast<Light>(node);
@@ -127,13 +125,14 @@ void Group::remove_child(Shared_node node)
     return;
   }
 
-  m_childs.remove(node);
+  m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), node),
+                 m_childs.end());
   m_dirty_sphere_bound = true;
   Observer observer(this, get_field_info(SPHERE_BOUND));
   node->register_observer(observer);
 }
 
-/*! \brief draws the children of the group. */
+//! \brief draws the children of the group.
 Action::Trav_directive Group::draw(Draw_action* draw_action)
 {
   if (!is_visible() || (draw_action == 0) || (draw_action->get_context() == 0))
@@ -155,7 +154,7 @@ void Group::cull(Cull_context& cull_context)
     (*it)->cull(cull_context);
 }
 
-/*! \brief allocates the selection ids for this group. */
+//! \brief allocates the selection ids for this group.
 void Group::allocate_selection_ids()
 {
   if ((m_num_selection_ids != 0) && m_num_selection_ids != children_size()) {
@@ -172,7 +171,7 @@ void Group::allocate_selection_ids()
   }
 }
 
-/*! \brief draws the node for selection. */
+//! \brief draws the node for selection.
 void Group::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
@@ -239,7 +238,7 @@ Boolean Group::clean_sphere_bound()
   return false;
 }
 
-/*! \brief sets the attributes of the group. */
+//! \brief sets the attributes of the group.
 void Group::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -295,7 +294,7 @@ void Group::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief gets the attributes of the object. */
+//! \brief gets the attributes of the object.
 Attribute_list Group::get_attributes()
 {
   Attribute_list attrs;
@@ -312,7 +311,7 @@ Attribute_list Group::get_attributes()
 }
 #endif
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Group::init_prototype()
 {
   if (s_prototype) return;
@@ -324,26 +323,34 @@ void Group::init_prototype()
     static_cast<Execution_function>(&Node::sphere_bound_changed);
   Boolean_handle_function is_visible_func =
     static_cast<Boolean_handle_function>(&Group::is_visible_handle);
-  SF_bool* field_info = new SF_bool(ISVISIBLE, "visible", is_visible_func,
-                                    exec_func);
-  s_prototype->add_field_info(field_info);
+  SF_bool* is_visible_field_info =
+    new SF_bool(IS_VISIBLE, "visible", is_visible_func, true, exec_func);
+  s_prototype->add_field_info(is_visible_field_info);
+
+  // children
+  Shared_container_array_handle_function childs_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Group::childs_handle);
+  MF_shared_container* childs_field_info =
+    new MF_shared_container(CHILDREN, "children", childs_func, exec_func);
+  s_prototype->add_field_info(childs_field_info);
 }
 
-/*! \brief deletes the node prototype */
+//! \brief deletes the node prototype.
 void Group::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Group::get_prototype()
 {
   if (!s_prototype) Group::init_prototype();
   return s_prototype;
 }
 
-/*! \brief */
+//! \brief .
 Boolean Group::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
@@ -353,7 +360,7 @@ Boolean Group::attach_context(Context* context)
   return result;
 }
 
-/*! \brief */
+//! \brief .
 Boolean Group::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
@@ -363,24 +370,15 @@ Boolean Group::detach_context(Context* context)
   return result;
 }
 
-/*! \brief writes this container. */
+//! \brief writes this container.
 void Group::write(Formatter* formatter)
 {
-  formatter->container_begin(get_tag());
-  Group::write_children(formatter);
-  formatter->container_end();
-}
-
-/*! \brief writes the children. */
-//! \todo remove this member once "children" becomes a valid multi-container.
-void Group::write_children(Formatter* formatter)
-{
-  formatter->multi_container_begin("children");
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Shared_node node = *it;
-    formatter->write(&*node);
+  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (stl_formatter) {
+    if (!is_visible()) return;
   }
-  formatter->multi_container_end();
+
+  Container::write(formatter);
 }
 
 /*! \brief turns on the flag that indicates whether the shape should be
@@ -417,14 +415,16 @@ void Group::set_visible(Boolean flag)
 /*! \brief adds a light source to the group. */
 void Group::add_light(Shared_light light)
 {
-  m_childs.push_front(light);
+  // Insert the light at the front of the array.
+  m_childs.insert(m_childs.begin(), light);
   ++m_num_lights;
 }
 
 /*! \brief removes a light source from the group. */
 void Group::remove_light(Shared_light light)
 {
-  m_childs.remove(light);
+  m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), light),
+                 m_childs.end());
   --m_num_lights;
 }
 
@@ -443,7 +443,8 @@ void Group::add_touch_sensor(Shared_touch_sensor touch_sensor)
 void Group::remove_touch_sensor(Shared_touch_sensor touch_sensor)
 {
   m_touch_sensor.reset();
-  m_childs.remove(touch_sensor);
+  m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), touch_sensor),
+                 m_childs.end());
 }
 
 SGAL_END_NAMESPACE

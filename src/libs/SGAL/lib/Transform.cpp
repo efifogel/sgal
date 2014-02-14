@@ -676,16 +676,6 @@ Attribute_list Transform::get_attributes()
 }
 #endif
 
-//! \brief writes this container.
-//! \todo remove this member once "children" becomes a valid multi-container.
-void Transform::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-  write_fields(formatter);
-  write_children(formatter);
-  formatter->container_end();
-}
-
 #if 0
 void Transform::pr_transform(Transform_handle Transform)
 {

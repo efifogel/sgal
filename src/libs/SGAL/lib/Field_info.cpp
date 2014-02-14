@@ -154,7 +154,13 @@ void Field_info::write(Formatter* formatter,
                        const Shared_container_array& value,
                        const Shared_container_array& default_value) const
 {
-  //! \todo not implemented yet
+  formatter->multi_container_begin(get_name());
+  Shared_container_array::const_iterator it;
+  for (it = value.begin(); it != value.end(); ++it) {
+    Shared_container cont = *it;
+    formatter->write(&*cont);
+  }
+  formatter->multi_container_end();
 }
 
 SGAL_END_NAMESPACE

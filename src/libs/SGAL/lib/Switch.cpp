@@ -232,13 +232,7 @@ void Switch::write(Formatter* formatter)
     return;
   }
 
-  /*! \todo replace the following a call Container::write() once "children"
-   * becomes a valid multi-container.
-   */
-  formatter->container_begin(get_tag());
-  write_fields(formatter);
-  write_children(formatter);
-  formatter->container_end();
+  Group::write(formatter);
 }
 
 SGAL_END_NAMESPACE

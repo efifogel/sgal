@@ -304,7 +304,7 @@ private:
   Boolean m_inc_alternate;
 
   /*! Space holder. */
-  Node_list m_childs_save;
+  Node_array m_childs_save;
 
   /*! Indicates whether to draw the Gausian maps of the Minkowski sums of the
    * parts.
