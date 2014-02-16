@@ -70,7 +70,15 @@ Group::Group(const Group& other) :
 //! \brief destructor.
 Group::~Group()
 {
+  // Unregister observers
+  Observer observer(this, get_field_info(SPHERE_BOUND));
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+    (*it)->unregister_observer(observer);
+
+  // Clear children
   m_childs.clear();
+
+  // Clear selection ids
   if (m_num_selection_ids > 0) {
     m_scene_graph->free_selection_ids(m_start_selection_id,
                                       m_num_selection_ids);
@@ -125,11 +133,11 @@ void Group::remove_child(Shared_node node)
     return;
   }
 
+  Observer observer(this, get_field_info(SPHERE_BOUND));
+  node->unregister_observer(observer);
+  m_dirty_sphere_bound = true;
   m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), node),
                  m_childs.end());
-  m_dirty_sphere_bound = true;
-  Observer observer(this, get_field_info(SPHERE_BOUND));
-  node->register_observer(observer);
 }
 
 //! \brief draws the children of the group.

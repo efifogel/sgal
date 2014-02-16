@@ -50,7 +50,7 @@ const Char* Geo_set::s_attachment_names[] =
 const
 Geo_set::Primitive_type Geo_set::s_def_primitive_type(Geo_set::PT_POLYGONS);
 
-/*! Constructor */
+//! \brief constructor.
 Geo_set::Geo_set(Boolean proto) :
   Geometry(proto),
   m_num_primitives(0),
@@ -63,10 +63,14 @@ Geo_set::Geo_set(Boolean proto) :
   m_primitive_type(s_def_primitive_type)
 {}
 
-/*! Destructor */
-Geo_set::~Geo_set() {}
+//! \brief destructor.
+Geo_set::~Geo_set()
+{
+  Observer observer(this, get_field_info(COORD_ARRAY));
+  if (m_coord_array) m_coord_array->unregister_observer(observer);
+}
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Geo_set::init_prototype()
 {
   if (s_prototype) return;
@@ -142,21 +146,21 @@ void Geo_set::init_prototype()
                                           tex_coord_index_func, exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Geo_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Geo_set::get_prototype()
 {
   if (s_prototype == NULL) Geo_set::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the coordinate array. */
+//! \brief sets the coordinate array.
 void Geo_set::set_coord_array(Shared_coord_array coord_array)
 {
   Observer observer(this, get_field_info(COORD_ARRAY));
@@ -166,23 +170,23 @@ void Geo_set::set_coord_array(Shared_coord_array coord_array)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the normal array. */
+//! \brief sets the normal array.
 void Geo_set::set_normal_array(Shared_normal_array normal_array)
 { m_normal_array = normal_array; }
 
-/*! \brief sets the texture-coordinate array. */
+//! \brief sets the texture-coordinate array.
 void Geo_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 { m_tex_coord_array = tex_coord_array; }
 
-/*! \brief sets the color array. */
+//! \brief sets the color array.
 void Geo_set::set_color_array(Shared_color_array color_array)
 { m_color_array = color_array; }
 
-/*! \brief returns true if the representation is empty. */
+//! \brief returns true if the representation is empty.
 Boolean Geo_set::is_empty() const
 { return (!m_coord_array || (m_coord_array->size() == 0) ); }
 
-/*! \brief calculates the sphere bound of the geometry set. */
+//! \brief calculates the sphere bound of the geometry set.
 Boolean Geo_set::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
@@ -193,7 +197,7 @@ Boolean Geo_set::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Geo_set::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -357,7 +361,7 @@ void Geo_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief processes change of coordinates. */
+//! \brief processes change of coordinates.
 void Geo_set::coord_changed(Field_info* field_info)
 {
   //! \todo Need to unregisted the previous observer. This is impossible to
@@ -373,19 +377,19 @@ void Geo_set::coord_changed(Field_info* field_info)
   field_changed(field_info);
 }
 
-/*! \brief processes change of normals. */
+//! \brief processes change of normals.
 void Geo_set::normal_changed(Field_info* field_info)
 { field_changed(field_info); }
 
-/*! \brief processes change of colors. */
+//! \brief processes change of colors.
 void Geo_set::color_changed(Field_info* field_info)
 { field_changed(field_info); }
 
-/*! \brief processes change of texture coordinates. */
+//! \brief processes change of texture coordinates.
 void Geo_set::tex_coord_changed(Field_info* field_info)
 { field_changed(field_info); }
 
-/*! \brief Process change of field. */
+//! \brief Process change of field.
 void Geo_set::field_changed(Field_info* field_info)
 {
   switch (field_info->get_id()) {
@@ -401,9 +405,8 @@ void Geo_set::set_reverse_coord_indices(const std::vector<Uint>& indices)
   m_coord_indices.resize(indices.size());
   Uint i = 0;
   std::vector<Uint>::const_reverse_iterator rit;
-  for (rit = indices.rbegin(); rit < indices.rend(); ++rit) {
+  for (rit = indices.rbegin(); rit < indices.rend(); ++rit)
     m_coord_indices[i++] = *rit;
-  }
   m_coord_indices[i++] = (Uint) -1;
 }
 
