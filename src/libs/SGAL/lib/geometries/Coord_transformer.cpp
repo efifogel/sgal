@@ -60,7 +60,7 @@ Boolean Coord_transformer::s_def_enabled = true;
  */
 REGISTER_TO_FACTORY(Coord_transformer, "Coord_transformer");
 
-/*! \brief A parameter-less constructor. */
+//! \brief constructor.
 Coord_transformer::Coord_transformer(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
@@ -72,7 +72,7 @@ Coord_transformer::Coord_transformer(Boolean proto) :
   m_transform(NULL)
 {}
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Coord_transformer::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
@@ -126,7 +126,7 @@ void Coord_transformer::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Coord_transformer::init_prototype()
 {
   if (s_prototype) return;
@@ -193,40 +193,40 @@ void Coord_transformer::init_prototype()
                                                       coord_changed_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Coord_transformer::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Coord_transformer::get_prototype()
 {
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the translation field. */
+//! \brief sets the translation field.
 void Coord_transformer::set_translation(const Vector3f& translation)
 {
   set_translation(translation[0], translation[1], translation[2]);
 }
 
-/*! \brief sets the translation field. */
+//! \brief sets the translation field.
 void Coord_transformer::set_translation(Float v0, Float v1, Float v2)
 {
   m_translation.set(v0, v1, v2);
   translate();
 }
 
-/*! \brief sets the rotation field. */
+//! \brief sets the rotation field.
 void Coord_transformer::set_rotation(const Rotation& rotation)
 {
   set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle());
 }
 
-/*! \brief sets the rotation field. */
+//! \brief sets the rotation field.
 void Coord_transformer::set_rotation(Float v0, Float v1, Float v2, Float angle)
 {
   m_rotation.set(v0, v1, v2, angle);
