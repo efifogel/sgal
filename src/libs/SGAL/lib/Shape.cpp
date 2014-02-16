@@ -84,7 +84,6 @@ Shape::Shape(Boolean proto) :
   m_draw_backface(false),
   m_dirty(true),
   m_dirty_appearance(true),
-  m_dirty_geometry(true),
   m_texture_map(Configuration::s_def_texture_map),
   m_override_material(Configuration::s_def_override_material),
   m_override_tex_enable(Configuration::s_def_override_tex_enable),
@@ -98,8 +97,10 @@ Shape::Shape(Boolean proto) :
 //! \brief destructor.
 Shape::~Shape()
 {
-  Observer observer(this, get_field_info(SPHERE_BOUND));
-  if (m_geometry) m_geometry->unregister_observer(observer);
+  if (m_geometry) {
+    Observer observer(this, get_field_info(GEOMETRY));
+    m_geometry->unregister_observer(observer);
+  }
 }
 
 //! \brief sets the appearance of the object.
@@ -113,9 +114,12 @@ void Shape::set_appearance(Shared_appearance app)
 //! \brief adds a geometry to the shape at the end of the list.
 void Shape::set_geometry(Shared_geometry geometry)
 {
+  Observer observer(this, get_field_info(GEOMETRY));
+  if (m_geometry) m_geometry->unregister_observer(observer);
   m_geometry = geometry;
+  if (m_geometry) m_geometry->register_observer(observer);
   m_dirty = true;
-  m_dirty_geometry = true;
+  m_dirty_sphere_bound = true;
 
 #if 0
   //! \todo
@@ -211,11 +215,6 @@ void Shape::isect(Isect_action* isect_action)
 //! \brief cleans the apperances.
 void Shape::clean()
 {
-  if (!m_dirty_appearance && !m_dirty_geometry) {
-    m_dirty = false;
-    return;
-  }
-
   // Create an appearance if missing:
   if (m_dirty_appearance) clean_appearance();
   // Create a material if missing:
@@ -243,15 +242,6 @@ void Shape::clean()
   }
 
   if (m_dirty_appearance) m_dirty_appearance = false;
-
-  if (m_dirty_geometry) {
-    // \todo unregister observer!
-    // if (m_geometry_prev) m_geometry_prev->unregister_observer(observer);
-    // m_geometry_prev = m_geometry;
-    Observer observer(this, get_field_info(SPHERE_BOUND));
-    if (m_geometry) m_geometry->register_observer(observer);
-    m_dirty_geometry = false;
-  }
 
 #if 0
   //! \todo
@@ -464,10 +454,15 @@ void Shape::appearance_changed(Field_info* /* field_info. */)
 }
 
 //! \brief processes change of geometry.
-void Shape::geometry_changed(Field_info* /* field_info. */)
+void Shape::geometry_changed(Field_info* field_info)
 {
-  m_dirty = true;
-  m_dirty_geometry = true;
+  //! \todo Need to unregisted the previous observer.
+  if (m_geometry) {
+    Observer observer(this, get_field_info(GEOMETRY));
+    if (m_geometry) m_geometry->register_observer(observer);
+  }
+  m_dirty_sphere_bound = true;
+  Container::field_changed(field_info);
 }
 
 /*! \brief turns on the flag that indicates whether the shape should be

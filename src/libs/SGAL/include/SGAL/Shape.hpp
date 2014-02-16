@@ -328,9 +328,6 @@ private:
    */
   Boolean m_dirty_appearance;
 
-  /*! Indicates whether the shape geometry is dirty, and thus needs cleaning. */
-  Boolean m_dirty_geometry;
-
   /*! Indicates whether to apply texture mapping. */
   Boolean m_texture_map;
 
