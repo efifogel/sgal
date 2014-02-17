@@ -364,12 +364,9 @@ void Geo_set::set_attributes(Element* elem)
 //! \brief processes change of coordinates.
 void Geo_set::coord_changed(Field_info* field_info)
 {
-  //! \todo Need to unregisted the previous observer. This is impossible to
-  // do in the current settings.
-  //! \todo Need to decide on a global strategy regarding obeservers:
-  // 1. All nodes observe all their fields automatically, or
-  // 2. Specified nodes observe all their fields automatically, or
-  // 3. Specified nodes observe allspecified fields.
+  // Observe that the observer, being a pair of this container object and the
+  // field_info argument, is automatically unregistered as an observer
+  // of the previous value of the m_coord_array.
   if (m_coord_array) {
     Observer observer(this, field_info);
     m_coord_array->register_observer(observer);

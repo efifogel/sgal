@@ -41,6 +41,34 @@ SGAL_BEGIN_NAMESPACE
 
 class Formatter;
 
+/*! \class Detacher Field_info_template.hpp
+ * Detacher is a generic class that detaches a value of a field from the
+ * container that contains the field before the field is overriden with a new
+ * value. Essentially, there is nothing to for most type of field.
+ * If the field is a container (shared container to be precise) itself, then
+ * the container that contains the field might have been registered as an
+ * observer. In this case, it must be unregistered just before it is overriden.
+ * Observe that if the new field value (that is a container) should register
+ * the containing container, it should be carried out by the dedicated
+ * execution function stored in the field-info record.
+ */
+template <typename T>
+struct Detacher {
+  void operator()(T& value, Container* container, Field_info* field_info) {}
+};
+
+template <>
+struct Detacher<Shared_container> {
+  void operator()(Shared_container& value,
+                  Container* container, Field_info* field_info)
+  {
+    if (value) {
+      Container::Observer observer(container, field_info);
+      value->unregister_observer(observer);
+    }
+  }
+};
+
 template <typename T>
 struct Handle_function {
   typedef T* (Container::* type)(const Field_info*);
@@ -111,8 +139,20 @@ public:
     return holder;
   }
 
-  /*! Obtain the attribute of a field in a given container, where this field
-   * info contains the information of the field.
+  /*! Detach the value of a field, the (field) info of which is this object,
+   * from the container that contains the field before the field is overriden.
+   * \param container (in) The container that contains the field.
+   */
+  virtual void detach(Container* container)
+  {
+    T* handle = (container->*m_handle)(this);     // Obtain the value
+    Detacher<T> detacher;
+    detacher(*handle, container, this);
+  }
+
+  /*! Write a field using a given formatter.
+   * \param container (in) The container that contains the field.
+   * \param formatter (in) The given formatter, e.g., VRML.
    */
   virtual void write(Container* container, Formatter* formatter) const
   {

@@ -456,9 +456,11 @@ void Shape::appearance_changed(Field_info* /* field_info. */)
 //! \brief processes change of geometry.
 void Shape::geometry_changed(Field_info* field_info)
 {
-  //! \todo Need to unregisted the previous observer.
+  // Observe that the observer, being a pair of this container object and the
+  // field_info argument, is automatically unregistered as an observer
+  // of the previous value of the m_geometry.
   if (m_geometry) {
-    Observer observer(this, get_field_info(GEOMETRY));
+    Observer observer(this, field_info);
     if (m_geometry) m_geometry->register_observer(observer);
   }
   m_dirty_sphere_bound = true;

@@ -121,7 +121,15 @@ public:
    */
   virtual Value_holder_base* create_value_holder(Container* container) = 0;
 
-  /*! .
+  /*! Detach the value of a field, the (field) info of which is this object,
+   * from the container that contains the field before the field is overriden.
+   * \param container (in) The container that contains the field.
+   */
+  virtual void detach(Container* container) = 0;
+
+  /*! Write a field using a given formatter.
+   * \param container (in) The container that contains the field.
+   * \param formatter (in) The given formatter, e.g., VRML.
    */
   virtual void write(Container* container, Formatter* formatter) const = 0;
 
