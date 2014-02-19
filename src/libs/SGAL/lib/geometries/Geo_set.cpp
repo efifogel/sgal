@@ -401,8 +401,8 @@ void Geo_set::set_reverse_coord_indices(const std::vector<Uint>& indices)
 {
   m_coord_indices.resize(indices.size());
   Uint i = 0;
-  std::vector<Uint>::const_reverse_iterator rit;
-  for (rit = indices.rbegin(); rit < indices.rend(); ++rit)
+  std::vector<Uint>::const_reverse_iterator rit = indices.rbegin();
+  for (++rit; rit < indices.rend(); ++rit)
     m_coord_indices[i++] = *rit;
   m_coord_indices[i++] = (Uint) -1;
 }
