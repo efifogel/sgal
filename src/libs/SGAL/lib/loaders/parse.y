@@ -58,7 +58,6 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Route.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"

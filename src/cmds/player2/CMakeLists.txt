@@ -34,8 +34,4 @@ include_directories(../../libs/SCGAL/include/primitives)
 
 #Add our executable (disabled for now...)
 add_executable (player2 ${PLAYER2_SOURCE_FILES})
-target_link_libraries(player2
-  SGAL
-  SCGAL
-  ${CGAL_LIBRARY}
-)
+target_link_libraries(player2 SGAL SCGAL ${CGAL_LIBRARY})

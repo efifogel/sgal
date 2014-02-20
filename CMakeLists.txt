@@ -30,6 +30,12 @@ set( SGAL_SOVERSION      "0.1.0" )
 message( STATUS "SGAL_SONAME_VERSION=${SGAL_SONAME_VERSION}" )
 message( STATUS "SGAL_SOVERSION     =${SGAL_SOVERSION}" )
 
+# General
+set(SGAL_MODULES_REL_DIR cmake/modules)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/${SGAL_MODULES_REL_DIR})
+include(SGAL_Macros)
+include(SGAL_Common)
+
 #Add src subdirectory
 add_subdirectory(src)
 

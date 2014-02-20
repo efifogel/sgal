@@ -129,7 +129,6 @@ set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometr
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Geo_set.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Geometry.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Indexed_face_set.hpp)
-set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Indexed_face_set_geometry.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Indexed_face_set_mask.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Indexed_geodesic_set.hpp)
 set(SGAL_GEOMETRIES_HEADER_FILES ${SGAL_GEOMETRIES_HEADER_FILES} include/geometries/SGAL/Indexed_line_set.hpp)
@@ -297,9 +296,13 @@ set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${SGAL_INTERPOLATORS_SOURCE_FILES} ${
 source_group(src\\interpolators FILES ${SGAL_INTERPOLATORS_SOURCE_FILES} ${SGAL_INTERPOLATORS_HEADER_FILES})
 
 #IO
+set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Text_formatter.cpp)
 set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Vrml_formatter.cpp)
+set(SGAL_IO_SOURCE_FILES ${SGAL_IO_SOURCE_FILES} lib/IO/Stl_formatter.cpp)
 set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Formatter.hpp)
+set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Text_formatter.hpp)
 set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Vrml_formatter.hpp)
+set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Stl_formatter.hpp)
 set(SGAL_IO_HEADER_FILES ${SGAL_IO_HEADER_FILES} include/IO/SGAL/Writer.hpp)
 set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${SGAL_IO_SOURCE_FILES} ${SGAL_IO_HEADER_FILES})
 source_group(src\\io FILES ${SGAL_IO_SOURCE_FILES} ${SGAL_IO_HEADER_FILES})
@@ -425,33 +428,49 @@ set_target_properties(SGAL PROPERTIES
   SOVERSION "${SGAL_SONAME_VERSION}"
 )
 
-#Add links
+# Add links
 if (NOT WIN32)
-  set (NON_WIN32_LIBRARIES
-       ${X11_LIBRARIES}
-       ${X11_Xxf86vm_LIB}
-  )
+  set (NON_WIN32_LIBRARIES ${X11_LIBRARIES} ${X11_Xxf86vm_LIB})
   if (APPLE)
     set (NON_WIN32_LIBRARIES ${NON_WIN32_LIBRARIES} /opt/X11/lib/libGL.dylib)
   endif(APPLE)
 endif(NOT WIN32)
 
 target_link_libraries(SGAL
-	${Boost_FILESYSTEM_LIBRARY}
-	${Boost_SYSTEM_LIBRARY}
-	${Boost_PROGRAM_OPTIONS_LIBRARY}
-	${ImageMagick_Magick++_LIBRARY}
-    ${OPENGL_LIBRARIES}
-    ${NON_WIN32_LIBRARIES}
-)
+                      ${Boost_FILESYSTEM_LIBRARY}
+                      ${Boost_SYSTEM_LIBRARY}
+                      ${Boost_PROGRAM_OPTIONS_LIBRARY}
+                      ${ImageMagick_Magick++_LIBRARY}
+                      ${OPENGL_LIBRARIES}
+                      ${NON_WIN32_LIBRARIES})
 
 # Installation
-install(
-    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-    DESTINATION "include"
-    FILES_MATCHING
-    PATTERN "*.hpp"
-#   PATTERN ".git" EXCLUDE
-#   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
-)
-install(TARGETS SGAL DESTINATION "lib")
+set(SGAL_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/engines
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/events
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/geo
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries/primitive_shapes
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/interpolators
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/IO
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/lights
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/loaders
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/sensors
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/utilities)
+
+foreach (dir ${SGAL_INCLUDE_DIRS})
+  if (EXISTS ${dir}/SGAL)
+    install(DIRECTORY ${dir}/SGAL
+            DESTINATION ${SGAL_INSTALL_INC_DIR}
+            FILES_MATCHING PATTERN "*.hpp"
+            # PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+    )
+  endif()
+endforeach()
+
+install(TARGETS SGAL
+        RUNTIME DESTINATION ${SGAL_INSTALL_BIN_DIR}
+        LIBRARY DESTINATION ${SGAL_INSTALL_LIB_DIR}
+        ARCHIVE DESTINATION ${SGAL_INSTALL_LIB_DIR})
