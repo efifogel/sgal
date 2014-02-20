@@ -35,8 +35,6 @@ Ideally, building SGAL amounts to:
   cmake .                                     # configure SGAL
   make                                        # build the SGAL libraries
 
-However, cmake is not supported yet...
-
 2.1. Prerequisites
 Installing SGAL requires a few components to be installed apriori: a
 supported compiler (see Section 2.3.), bison (see Section 2.5.2), flex,
@@ -49,9 +47,7 @@ at https://bitbucket.org/.
 
 You need to register and obtain a user account. You also need to add an
 ssh key for every machine you would like to access the repository from
-via the clone command below. Once you have an account, an admin of the
-repository, e.g., Efi (efifogel@gmail.com), can grant you the appropriate
-access permissions. Currently, the repository is closed to the public.
+via the clone command below.
 
   git clone git@bitbucket.org:efogel/sgal.git
 
@@ -151,16 +147,6 @@ http://www.boostpro.com/download/. Since Boost.Thread is required, make
 sure to either install the precompiled libraries for your compiler or
 build libboost-thread and libboost-system.
 
-If Boost is not installed in a standard place, you must set the
-environment variable BOOST_DIR to point at the directory where Boost is
-installed. The header source files of Boost are installed by default
-immediately under the main directory (and not under the 'include'
-subdirectory. Therefore, you also need to set BOOST_INC_DIR to point at
-that directory where the header source files are installed. For example:
-
-  BOOST_DIR=D:/boost/boost_1_50
-  BOOST_INC_DIR=D:/boost/boost_1_50
-
 2.5.2. bison and flex
 
 2.5.2.1. bison
@@ -236,7 +222,7 @@ remove the '--symlink' option. Then, run the bootstrap script while forcing
 Finally, bison requires m4 among the others. If you build bison via
 cygwin, you need to set the environment variable BISON_PKGDATADIR to
 point to the bison data directory (otherwise m4sugar/m4sugar.m4 is not
-found):
+found) before running cmake:
 
 export BISON_PKGDATADIR=${BISON}/data
 
@@ -250,12 +236,6 @@ page at http://flex.sourceforge.net/.
 2.5.3. Magick++ (ImageMagick)
 ImageMagick® is a software suite to create, edit, compose, or convert
 bitmap images; see http://www.imagemagick.org/
-
-If ImageMagick is not installed in a standard place, you must set the
-environment variable MAGICK_DIR to point at the directory where
-ImageMagick is installed, e.g.,
-
-  MAGICK_DIR=d:/ImageMagick-6.8.6-Q16
 
 2.5.4. CGAL
 The Computational Geometry Algorithms Library (CGAL) is an open
@@ -290,12 +270,6 @@ used to develope relevant CGAL features.
   git merge origin/Envelope_voronoi_2-ophirset
   git merge origin/Cubical_gaussian_map-efif
 
-If CGAL is not installed in a standard place (and it is probably nor in
-Linux neither in Windows), you must set the environment variable CGAL_DIR
-to point at the directory where CGAL is installed, e.g.,
-
-  CGAL_DIR=/usr/local/CGAL/CGAL-combined
-
 2.5.5. GMP and MPFR
 The SGAL library SCGAL requires CGAL, and CGAL in turn requires GMP and
 MPFR, which are libraries for multi precision integers and rational
@@ -313,15 +287,6 @@ As Visual C++ is not properly supported by the GMP and MPFR projects,
 CGAL provides precompiled versions of GMP and MPFR, which can be downloaded
 with the installer of CGAL-4.2-Setup.exe.
 
-If GMP and MPFR are not installed in a standard place, you must set the
-environment variables GMP_DIR and MPFR to point at the directories where
-GMP and MPFR are installed, e.g.,
-
-  GMP_DIR=D:/GMP/5_0_1
-
-If GMP and MPFR are installed under the same directory, it is sufficient
-to set only one of environment variables.
-
 2.5.6. OpenGL
 OpenGL (Open Graphics Library) provides an API for applications that produce
 2D and 3D computer graphics. SGAL depends on OpenGL. There is no alternative.
@@ -335,63 +300,21 @@ from http://www.opengl.org/.
 GL2PS is a C library providing vector output for any OpenGL application.
 For more information see http://www.geuz.org/gl2ps/.
 
-If GL2PS is not installed in a standard place, you must set the
-environment variable GL2PS_DIR to point at the directory where GL2PS
-is installed, e.g.,
-
-  GL2PS_DIR=D:/GL2PS/1_3_8
-
 2.5.8 Some X libraries (forgot the name)
 This applies to Linux only. These libraries are not installed by default.
 You will get an error message during link if they are not installed.
 
 2.6. Building SGAL
 
-2.6.1. Environment Variables
-
-2.6.1.2. PLATFORM
-The PLATFORM environment variable indicates the combination of operating
-system and development environment. Theoretically there are four options
-listed below. In practice only the first two are trully supported.
-
-1. linux - Linux + GNU (g++, etc).
-2. console - Windows + MSVC (cl, etc) console application
-3. cygwin - Windows + GNU
-4. windows - Windows + MSVC windows application
-
-Note: In Visual Studio there are two kinds of *.exe binaries, a windows
-application and a console application. A Windows Application is a Windows
-program that typically has a GUI. Console applications, on the other
-hand, are supposed to be run from the console. For developers, the main
-difference is that a windows application's entry point is WinMain(),
-whereas a console application's entry point is main().
-
-Under Linux I set PLATFORM as follows:
-
-  PLATFORM=linux
-
-2.6.1.2. ROOT
-The ROOT environment variable points at the root directory of the
-directory structure where all files generated during the build are
-installed into. You can have several roots and switch between them.
-
-Under Linux I set ROOT as follows:
-
-  ROOT=$HOME//roots/$PLATFORM
-
-Using different roots for different platforms allows using a file
-system that is shared between different platforms (for example, if the
-Windows root and the Linux root end up on the same disk.)
-
-2.6.1.3. USE_<some-feature>
 Recall that the environment variable CGAL_DIR points at the directory
 where CGAL is installed. The version of CGAL installed may combine
 several features that are possibly developed in different branches.
 
-Let FTR ne an acronym of a feature. Set the environment variable
-USE_FTR to enable the feature. If the feature requires a corresponding
-CGAL feature, you must also install an appropriate version of CGAL that
-supports the corresponding CGAL feature.
+Let FTR ne an acronym of a feature. Set the corresponding Boolean flag
+as an input argument to cmake to enable the feature. If the feature
+requires a corresponding CGAL feature, you must also install an
+appropriate version of CGAL that supports the corresponding CGAL
+feature.
 
    USE_NGM=1  # Nef Gaussian Map (CGAL)
    USE_LTS=1  # Lines Through Segments
@@ -408,10 +331,17 @@ supports the corresponding CGAL feature.
    USE_VOS=1 requires remotes/origin/Envelope_voronoi_2-ophirset
    USE_AOS=1 requires origin/Aos_2-remove_opt-efif
 
-2.6.2. Script
-
-cd make && make install && cd -
-cd src/libs && make install && cd -
-cd src/cmds && make install && cd -
+For example:
+cmake -G"NMake Makefiles" \
+  -DCMAKE_VERBOSE_MAKEFILE=ON \
+  -DUSE_EGO=1 \
+  -DUSE_NGM=0 \
+  -DUSE_LTS=0 \
+  -DUSE_AOS=1 \
+  -DUSE_VOS=1 \
+  -DUSE_SGM=1 \
+  -DUSE_NEF=1 \
+  -DUSE_CGM=1 \
+  ${SGAL_SOURCE_DIR}
 
 2.7. Testing
