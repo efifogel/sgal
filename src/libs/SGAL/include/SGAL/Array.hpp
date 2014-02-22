@@ -108,7 +108,11 @@ public:
   void push_back(const Attribute& val)
   {
     Uint size = m_size;
-    if (size == m_capacity) resize(size+1);
+    if (size == m_capacity) 
+		resize(size+1);
+	else
+		++m_size;
+
     m_vector[size] = val;
   }
 

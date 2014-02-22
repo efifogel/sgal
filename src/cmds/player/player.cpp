@@ -173,7 +173,8 @@ int main(int argc, char* argv[])
   }
   catch(std::exception& e) {
     std::cerr << e.what() << std::endl;
-    return 1;
+    //return 1;
+	throw;
   }
 
   // Initialize the scene:
@@ -186,7 +187,8 @@ int main(int argc, char* argv[])
   }
   catch (std::exception& e) {
     std::cerr << e.what() << std::endl;
-    return -1;
+    //return -1;
+	throw;
   }
 
   try {
@@ -195,7 +197,8 @@ int main(int argc, char* argv[])
   }
   catch(std::exception& e) {
     std::cerr << e.what() << std::endl;
-    return -1;
+    //return -1;
+	throw;
   }
   wm->event_loop(scene.is_simulating());
   wm->clear();

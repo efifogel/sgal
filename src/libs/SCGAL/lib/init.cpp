@@ -84,7 +84,10 @@
 #include "SCGAL/Quadric_geo.hpp"
 #include "SCGAL/Arrangement_on_quadric_geo.hpp"
 #endif
-
+#define USE_SSC
+#if defined(USE_SSC)
+#include "SCGAL/Smallest_stabbing_cube.hpp"
+#endif
 SGAL_BEGIN_NAMESPACE
 
 // extern "C" void BOOST_EXTENSION_EXPORT_DECL scgal_init()
@@ -141,6 +144,9 @@ SGAL_SCGAL_DECL void scgal_init()
 #if defined(USE_QUADRIC)
   Container_factory::get_instance()->doregister(Quadric_geo::prototype());
   Container_factory::get_instance()->doregister(Arrangement_on_quadric_geo::prototype());
+#endif
+#if defined(USE_SSC)
+  Container_factory::get_instance()->doregister(Smallest_stabbing_cube::prototype());
 #endif
 }
 

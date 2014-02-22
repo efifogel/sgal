@@ -29,6 +29,9 @@
 #pragma warning( disable : 4996 )
 #endif
 
+//Ignore in debug
+#ifndef _DEBUG
+
 /*! \file
  * A geometry container that represents a general polygon set embedded on a
  * sphere bounded by geodesic arcs.
@@ -375,3 +378,5 @@ Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1,
 }
 
 SGAL_END_NAMESPACE
+
+#endif
