@@ -84,7 +84,6 @@
 #include "SCGAL/Quadric_geo.hpp"
 #include "SCGAL/Arrangement_on_quadric_geo.hpp"
 #endif
-#define USE_SSC
 #if defined(USE_SSC)
 #include "SCGAL/Smallest_stabbing_cube.hpp"
 #endif

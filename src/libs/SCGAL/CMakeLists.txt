@@ -54,6 +54,11 @@ if (USE_VOS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Power_diagram_on_sphere_geo.cpp)
 endif()
 
+if (USE_SSC)
+  add_definitions(-DUSE_SSC)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/engines/Smallest_stabbing_cube.cpp)
+endif()
+
 if (USE_QUADRIC)
   add_definitions(-DUSE_QUADRIC)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Vector3d.cpp)

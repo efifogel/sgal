@@ -83,7 +83,7 @@ public:
   };
 
   typedef boost::shared_ptr<Coord_array> Shared_coord_array;
-  typedef Array<boost::shared_ptr<Coord_transformer>> Coord_node_array;
+  typedef std::vector<boost::shared_ptr<Coord_transformer>> Coord_node_array;
 
   /*! Constructor. */
   Smallest_stabbing_cube(Boolean proto = false);
@@ -111,9 +111,9 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Boolean* changed_handle(Field_info*) { return &m_changed; }
-  Boolean* execute_handle(Field_info*) { return &m_execute; }
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Boolean* changed_handle(const Field_info*) { return &m_changed; }
+  Boolean* execute_handle(const Field_info*) { return &m_execute; }
   Shared_coord_array* result_handle(Field_info*) { return &m_result; };
   Coord_node_array* coord_nodes_handle(Field_info*) { return &m_coord_nodes; }
   //@}
