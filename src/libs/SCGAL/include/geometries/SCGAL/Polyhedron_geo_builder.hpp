@@ -43,7 +43,7 @@ public:
   Polyhedron_geo_builder() {}
 
   void set_mesh_set(const Mesh_set* mesh_set) { m_mesh_set = mesh_set; }
-  
+
   /*! */
   void operator()(HDS& hds)
   {
@@ -64,16 +64,16 @@ public:
       const Vector3f& v = (*coord_array)[i];
       B.add_vertex(Point(v[0], v[1], v[2]));
     }
-    
+
     // Add the faces:
     if (m_mesh_set->are_coord_indices_flat()) {
       if (m_mesh_set->get_primitive_type() == Geo_set::PT_TRIANGLES) {
         Uint j = 0;
         for (i = 0; i < num_facets; ++i) {
           B.begin_facet();
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+1));
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+2));
+          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
+          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
+          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
           B.end_facet();
           j += 3;
         }
@@ -82,10 +82,10 @@ public:
         Uint j = 0;
         for (i = 0; i < num_facets; ++i) {
           B.begin_facet();
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+1));
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+2));
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j+3));
+          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
+          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
+          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
+          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+3));
           B.end_facet();
           j += 4;
         }

@@ -71,8 +71,8 @@ public:
 
   /// \name field handlers
   //@{
-  Shared_texture* texture_handle(Field_info*) { return &m_texture; }
-  Float* alpha_handle(Field_info*) { return &m_alpha; }
+  Shared_texture* texture_handle(const Field_info*) { return &m_texture; }
+  Float* alpha_handle(const Field_info*) { return &m_alpha; }
   //@}
 
   /*! Set the attributes of this node */

@@ -37,6 +37,7 @@
 #include <fstream>
 #include <string>
 #include <time.h>
+#include <vector>
 #include <limits.h>
 
 #include "SGAL/basic.hpp"
@@ -56,7 +57,6 @@
 #include "SGAL/Writer.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Piece.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Time_sensor.hpp"
 #include "SGAL/Position_interpolator.hpp"
 #include "SGAL/Route.hpp"
@@ -227,7 +227,7 @@ void Knot_scene::destroy_scene()
 
   m_root.reset();
   m_navigation.reset();
-  
+
   m_solution.clear();
 
   for (Uint i = 0; i < 3; ++i) {
@@ -237,7 +237,7 @@ void Knot_scene::destroy_scene()
     delete m_pos_interpolator_routers[i];
   }
 }
-  
+
 /*! \brie creates the scene. */
 void Knot_scene::create_scene()
 {
@@ -247,7 +247,7 @@ void Knot_scene::create_scene()
   puzzle.m_pieces[YELLOW] = &yellow;
   puzzle.m_pieces[PURPLE] = &purple;
   puzzle.m_pieces[GREEN] = &green;
-     
+
   std::vector<SGAL::Vector3f> colors;
   colors.resize(NUMBER_OF_COLORS);
   colors[ORANGE].set(1, 0.65f, 0);
@@ -256,7 +256,7 @@ void Knot_scene::create_scene()
   colors[YELLOW].set(1, 1, 0);
   colors[PURPLE].set(0.7f, 0, 0.7f);
   colors[GREEN].set(0, 1, 0);
-  
+
   // Construct a Scene_graph:
   m_scene_graph = new SGAL::Scene_graph;
   m_root.reset(new SGAL::Group);
@@ -283,17 +283,17 @@ void Knot_scene::create_scene()
   m_option_parser.get_head_pad_x(m_head_pad_x);
   m_option_parser.get_head_pad_y(m_head_pad_y);
   m_option_parser.get_head_pad_z(m_head_pad_z);
-  
+
   m_option_parser.get_tail_pad_x(m_tail_pad_x);
   m_option_parser.get_tail_pad_y(m_tail_pad_y);
   m_option_parser.get_tail_pad_z(m_tail_pad_z);
-  
+
   for (n = 0; n < NUMBER_OF_COLORS; ++n) {
     puzzle.m_pieces[n]->m_position[0] += m_head_pad_x;
     puzzle.m_pieces[n]->m_position[1] += m_head_pad_y;
     puzzle.m_pieces[n]->m_position[2] += m_head_pad_z;
   }
-  
+
   m_volume_width = m_head_pad_x + max_size + m_tail_pad_x;
   m_volume_height = m_head_pad_y + max_size + m_tail_pad_y;
   m_volume_depth = m_head_pad_z + max_size + m_tail_pad_z;
@@ -311,7 +311,7 @@ void Knot_scene::create_scene()
     boost::shared_ptr<SGAL::Touch_sensor> touch_sensor(new SGAL::Touch_sensor);
     transform->add_child(touch_sensor);
     touch_sensor->add_to_scene(m_scene_graph);
-    
+
     boost::shared_ptr<SGAL::Shape> shape(new SGAL::Shape);
     transform->add_child(shape);
     boost::shared_ptr<SGAL::Appearance> app(new SGAL::Appearance);
@@ -322,7 +322,7 @@ void Knot_scene::create_scene()
     Shared_piece piece(new SGAL::Piece);
     m_pieces[n] = piece;
     Uint size = WIDTH * HEIGHT * DEPTH;
-    SGAL::Array<Uint>& composition = piece->get_composition();
+    std::vector<Uint>& composition = piece->get_composition();
     composition.resize(size);
 
     Uint i, j, k;
@@ -346,7 +346,7 @@ void Knot_scene::create_scene()
     piece->set_width(width);
     piece->set_height(height);
     piece->set_depth(depth);
-    
+
     for (k = 0; k < DEPTH; ++k) {
       for (j = 0; j < HEIGHT; ++j) {
         for (i = 0; i < WIDTH; ++i) {
@@ -386,7 +386,7 @@ void Knot_scene::create_scene()
     Uint_array& composition = m_volume->get_composition();
     Uint size = m_volume_width * m_volume_height * m_volume_depth;
     composition.resize(size);
-    Uint* volume_vec = composition.get_vector();
+    Uint* volume_vec = &(*(composition.begin()));
     memset(volume_vec, 0, size * sizeof(Uint));
     m_volume->set_width(m_volume_width);
     m_volume->set_height(m_volume_height);
@@ -419,7 +419,7 @@ void Knot_scene::create_scene()
     for (bi = m_state_blocks.begin(); bi != m_state_blocks.end(); ++bi)
       delete [] (*bi);
     m_visited.clear();
-      
+
     if (success) {
       if (m_option_parser.get_verbosity_level() > 2) {
         Solution_iter si;
@@ -481,7 +481,7 @@ void Knot_scene::update(const State state)
 {
   m_volume->clear();
   Uint_array& volume_composition = m_volume->get_composition();
-  Uint* volume_vec = volume_composition.get_vector();
+  Uint* volume_vec = &(*(volume_composition.begin()));
   memset(volume_vec, 0, volume_composition.size() * sizeof(Uint));
   Uint color;
   for (color = 0; color < NUMBER_OF_COLORS; ++color) {
@@ -512,7 +512,7 @@ void Knot_scene::update(const State state)
 Knot_scene::Boolean Knot_scene::reduce(State state)
 {
   update(state);
-  
+
   // Check whether any piece is apart from the rest
   Boolean ret_value = false;
   Uint_array& volume_composition = m_volume->get_composition();
@@ -593,7 +593,7 @@ SGAL::Boolean Knot_scene::advance1(State state, Uint color, Uint dir,
 
   // If there is a conflict, return false:
   if (conflict(state, color, dir)) return false;
-  
+
   // Construct the next state:
   memcpy(next_state, state, sizeof(State));
   next_state[color].m_position[0] += s_directions[dir][0];
@@ -607,7 +607,7 @@ SGAL::Boolean Knot_scene::advance1(State state, Uint color, Uint dir,
 }
 
 /*! \brie advance 2 pieces 1 step if possible. */
-SGAL::Boolean Knot_scene::advance2(State state, Uint color1, Uint color2, 
+SGAL::Boolean Knot_scene::advance2(State state, Uint color1, Uint color2,
                                    Uint dir, State& next_state)
 {
   SGAL_assertion(state[color1].m_active);
@@ -623,7 +623,7 @@ SGAL::Boolean Knot_scene::advance2(State state, Uint color1, Uint color2,
   // If there is a conflict, return false:
   if (conflict(state, color1, dir)) return false;
   if (conflict(state, color2, dir)) return false;
-  
+
   // Construct the next state:
   memcpy(next_state, state, sizeof(State));
   next_state[color1].m_position[0] += s_directions[dir][0];
@@ -659,7 +659,7 @@ SGAL::Boolean Knot_scene::advance3(State state, Uint color1, Uint color2,
   if (conflict(state, color1, dir)) return false;
   if (conflict(state, color2, dir)) return false;
   if (conflict(state, color3, dir)) return false;
-  
+
   // Construct the next state:
   memcpy(next_state, state, sizeof(State));
   next_state[color1].m_position[0] += s_directions[dir][0];
@@ -695,9 +695,9 @@ SGAL::Boolean Knot_scene::solve(State state, Uint level)
     std::cout << indent(level) << state << std::endl;
   ++m_num_invocations;
   if (level > m_max_level) m_max_level = level;
-  
+
   mark(state);                      // mark state as visited
-  if (reduce(state)) mark(state);   // remove loose pieces    
+  if (reduce(state)) mark(state);   // remove loose pieces
   if (empty(state)) return true;    // if empty, we are done
 
   // Move one at a time:
@@ -712,7 +712,7 @@ SGAL::Boolean Knot_scene::solve(State state, Uint level)
           m_solution.push_front(Step(encode(color1), dir));
           return true;
         }
-        
+
       Uint color2;
       for (color2 = color1+1; color2 < NUMBER_OF_COLORS; ++color2) {
         if (!state[color2].m_active) continue;
@@ -742,12 +742,14 @@ SGAL::Boolean Knot_scene::solve(State state, Uint level)
 /*! \brie initializes the secene. */
 void Knot_scene::init_scene()
 {
+  // Configure the window manager and the scene graph.
+  m_option_parser.configure(m_window_manager, m_scene_graph);
+
   m_window_item = new Window_item;
   m_window_item->set_title("Knot");
   m_window_manager->create_window(m_window_item);
-  
+
   m_scene_graph->create_defaults();
-  indulge_user();
 
   m_context = new SGAL::Context();
   m_scene_graph->set_context(m_context);
@@ -767,10 +769,6 @@ void Knot_scene::init_scene()
   m_window_item->show();
 }
 
-/*! \brief indulges user requests from the command line. */
-void Knot_scene::indulge_user()
-{ m_option_parser.configure(m_scene_graph); }
-
 /*! \brief clears the scene. */
 void Knot_scene::clear_scene()
 {
@@ -788,7 +786,7 @@ void Knot_scene::identify(void)
 
 /*! \brief draws the scene. */
 void Knot_scene::draw_window(SGAL::Window_item* window_item,
-                             SGAL::Boolean dont_accumulate)
+                             SGAL::Boolean /* dont_accumulate */)
 {
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
@@ -796,13 +794,13 @@ void Knot_scene::draw_window(SGAL::Window_item* window_item,
   draw_action.set_context(m_context);
   draw_action.set_snap(false);
   m_scene_graph->draw(&draw_action);
-  
+
   // m_context->swap_buffers();
   window_item->swap_buffers();
 }
 
 /*! \brief reshapes the viewport. */
-void Knot_scene::reshape_window(SGAL::Window_item* window_item,
+void Knot_scene::reshape_window(SGAL::Window_item* /* window_item */,
                                 SGAL::Uint width, SGAL::Uint height)
 {
   SGAL::Context* context = m_scene_graph->get_context();
@@ -880,13 +878,13 @@ void Knot_scene::mark_all(State state)
 {
   Uint min_x, min_y, min_z;
   find_min(state, min_x, min_y, min_z);         // find the min values
-  
+
   // Set the active flag:
   State eqv_state;
   Uint color;
   for (color = 0; color < NUMBER_OF_COLORS; ++color)
     eqv_state[color].m_active = state[color].m_active;
-  
+
   // Iterate over equivalent states:
   Uint i, j, k;
   Boolean overflow_z = false;
@@ -903,7 +901,7 @@ void Knot_scene::mark_all(State state)
       eqv_state[color].m_position[2] = z;
     }
     if (overflow_z) break;
-    
+
     Boolean overflow_y = false;
     for (j = 0; j < m_volume_height; ++j) {
       for (color = 0; color < NUMBER_OF_COLORS; ++color) {
@@ -984,7 +982,7 @@ void Knot_scene::animate(Scene_time cur_time, Uint color, Uint dir, Uint route)
   puzzle.m_pieces[color]->m_position[0] += s_directions[dir][0];
   puzzle.m_pieces[color]->m_position[1] += s_directions[dir][1];
   puzzle.m_pieces[color]->m_position[2] += s_directions[dir][2];
-    
+
   // Route the interpolator to the transform:
   if (!m_scene_graph->route(&*(m_pos_interpolators[route]), "value_changed",
                             &*(m_transforms[color]), "set_translation",

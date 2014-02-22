@@ -83,7 +83,7 @@ void Lower_envelope_tri_geo::clean()
   std::list<Triangle_3> triangles;
   get_triangles(std::back_inserter(triangles));
   CGAL::lower_envelope_3(triangles.begin(), triangles.end(), *m_envelope);
-  
+
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
   Lower_envelope_geo::clean();
@@ -115,8 +115,8 @@ void Lower_envelope_tri_geo::delete_prototype()
 }
 
 /*! \brief obtains the prototype of this container. */
-Container_proto* Lower_envelope_tri_geo::get_prototype() 
-{  
+Container_proto* Lower_envelope_tri_geo::get_prototype()
+{
   if (!s_prototype) Lower_envelope_tri_geo::init_prototype();
   return s_prototype;
 }
@@ -129,7 +129,7 @@ void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action* action)
   context->draw_light_model_sides(SGAL::Gfx::TWO_SIDE);
   context->draw_cull_face(Gfx::NO_CULL);
   context->draw_transp_enable(true);
-  
+
   Envelope_diagram_2::Face_const_iterator fit;
   for (fit = m_envelope->faces_begin(); fit != m_envelope->faces_end(); ++fit) {
     if (fit->number_of_surfaces() == 0) continue;
@@ -188,7 +188,7 @@ void Lower_envelope_tri_geo::draw_envelope_edges(Draw_action* action)
 
     Extrusion tube;
     tube.set_cross_section_radius(m_edge_radius);
-    SGAL::Array<Vector3f>& spine = tube.get_spine();
+    std::vector<Vector3f>& spine = tube.get_spine();
     spine.resize(2);
     spine[0].set(src[0], src[1], 0);
     spine[1].set(trg[0], trg[1], 0);

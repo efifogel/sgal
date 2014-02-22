@@ -50,23 +50,27 @@ const Char* Geo_set::s_attachment_names[] =
 const
 Geo_set::Primitive_type Geo_set::s_def_primitive_type(Geo_set::PT_POLYGONS);
 
-/*! Constructor */
+//! \brief constructor.
 Geo_set::Geo_set(Boolean proto) :
   Geometry(proto),
   m_num_primitives(0),
   m_normal_attachment(PER_VERTEX),
   m_color_attachment(PER_VERTEX),
   m_coord_indices(),
-  m_tex_coord_indices(),
   m_normal_indices(),
   m_color_indices(),
+  m_tex_coord_indices(),
   m_primitive_type(s_def_primitive_type)
 {}
 
-/*! Destructor */
-Geo_set::~Geo_set() {}
+//! \brief destructor.
+Geo_set::~Geo_set()
+{
+  Observer observer(this, get_field_info(COORD_ARRAY));
+  if (m_coord_array) m_coord_array->unregister_observer(observer);
+}
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Geo_set::init_prototype()
 {
   if (s_prototype) return;
@@ -104,30 +108,59 @@ void Geo_set::init_prototype()
 
   // texCoord
   exec_func = static_cast<Execution_function>(&Geo_set::tex_coord_changed);
-  Shared_container_handle_function tex_coord_array_func =
+  auto tex_coord_array_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::tex_coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(TEX_COORD_ARRAY,
                                                       "texCoord",
                                                       tex_coord_array_func,
                                                       exec_func));
+
+  // coordIndex
+  exec_func = static_cast<Execution_function>(&Geo_set::field_changed);
+  auto coord_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::coord_indices_handle);
+  s_prototype->add_field_info(new MF_uint(COORD_INDEX_ARRAY, "coordIndex",
+                                          coord_index_func, exec_func));
+
+  // normalIndex
+  auto normal_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::normal_indices_handle);
+  s_prototype->add_field_info(new MF_uint(NORMAL_INDEX_ARRAY, "normalIndex",
+                                          normal_index_func, exec_func));
+
+  // colorIndex
+  auto color_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::color_indices_handle);
+  s_prototype->add_field_info(new MF_uint(COLOR_INDEX_ARRAY, "colorIndex",
+                                          color_index_func, exec_func));
+
+  // texCoordIndex
+  auto tex_coord_index_func =
+    reinterpret_cast<Uint_array_handle_function>
+    (&Geo_set::tex_coord_indices_handle);
+  s_prototype->add_field_info(new MF_uint(TEX_COORD_INDEX_ARRAY, "texCoordIndex",
+                                          tex_coord_index_func, exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Geo_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Geo_set::get_prototype()
 {
   if (s_prototype == NULL) Geo_set::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the coordinate array. */
+//! \brief sets the coordinate array.
 void Geo_set::set_coord_array(Shared_coord_array coord_array)
 {
   Observer observer(this, get_field_info(COORD_ARRAY));
@@ -137,23 +170,23 @@ void Geo_set::set_coord_array(Shared_coord_array coord_array)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the normal array. */
+//! \brief sets the normal array.
 void Geo_set::set_normal_array(Shared_normal_array normal_array)
 { m_normal_array = normal_array; }
 
-/*! \brief sets the texture-coordinate array. */
+//! \brief sets the texture-coordinate array.
 void Geo_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 { m_tex_coord_array = tex_coord_array; }
 
-/*! \brief sets the color array. */
+//! \brief sets the color array.
 void Geo_set::set_color_array(Shared_color_array color_array)
 { m_color_array = color_array; }
 
-/*! \brief returns true if the representation is empty. */
+//! \brief returns true if the representation is empty.
 Boolean Geo_set::is_empty() const
 { return (!m_coord_array || (m_coord_array->size() == 0) ); }
 
-/*! \brief calculates the sphere bound of the geometry set. */
+//! \brief calculates the sphere bound of the geometry set.
 Boolean Geo_set::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
@@ -164,13 +197,12 @@ Boolean Geo_set::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Geo_set::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
@@ -290,6 +322,7 @@ void Geo_set::set_attributes(Element* elem)
     }
   }
 
+  typedef Element::Cont_attr_iter       Cont_attr_iter;
   Cont_attr_iter cai;
   for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
     const std::string& name = elem->get_name(cai);
@@ -328,15 +361,12 @@ void Geo_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief processes change of coordinates. */
+//! \brief processes change of coordinates.
 void Geo_set::coord_changed(Field_info* field_info)
 {
-  //! \todo Need to unregisted the previous observer. This is impossible to
-  // do in the current settings.
-  //! \todo Need to decide on a global strategy regarding obeservers:
-  // 1. All nodes observe all their fields automatically, or
-  // 2. Specified nodes observe all their fields automatically, or
-  // 3. Specified nodes observe allspecified fields.
+  // Observe that the observer, being a pair of this container object and the
+  // field_info argument, is automatically unregistered as an observer
+  // of the previous value of the m_coord_array.
   if (m_coord_array) {
     Observer observer(this, field_info);
     m_coord_array->register_observer(observer);
@@ -344,19 +374,19 @@ void Geo_set::coord_changed(Field_info* field_info)
   field_changed(field_info);
 }
 
-/*! \brief processes change of normals. */
+//! \brief processes change of normals.
 void Geo_set::normal_changed(Field_info* field_info)
 { field_changed(field_info); }
 
-/*! \brief processes change of colors. */
+//! \brief processes change of colors.
 void Geo_set::color_changed(Field_info* field_info)
 { field_changed(field_info); }
 
-/*! \brief processes change of texture coordinates. */
+//! \brief processes change of texture coordinates.
 void Geo_set::tex_coord_changed(Field_info* field_info)
 { field_changed(field_info); }
 
-/*! \brief Process change of field. */
+//! \brief Process change of field.
 void Geo_set::field_changed(Field_info* field_info)
 {
   switch (field_info->get_id()) {
@@ -364,6 +394,17 @@ void Geo_set::field_changed(Field_info* field_info)
    default: break;
   }
   Container::field_changed(field_info);
+}
+
+//! \brief assigns the coord indices with the reverse of given indices.
+void Geo_set::set_reverse_coord_indices(const std::vector<Uint>& indices)
+{
+  m_coord_indices.resize(indices.size());
+  Uint i = 0;
+  std::vector<Uint>::const_reverse_iterator rit = indices.rbegin();
+  for (++rit; rit < indices.rend(); ++rit)
+    m_coord_indices[i++] = *rit;
+  m_coord_indices[i++] = (Uint) -1;
 }
 
 SGAL_END_NAMESPACE

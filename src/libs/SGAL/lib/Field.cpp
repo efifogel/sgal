@@ -67,7 +67,7 @@ void Field::disconnect(Field* field)
 void Field::cascade()
 {
   // Activate execution if the field info has one:
-  if (m_field_info != NULL) {
+  if (m_field_info) {
     Execution_function execution_func = m_field_info->execution_function();
     if (execution_func) (m_container->*execution_func)(m_field_info);
   }
@@ -84,6 +84,9 @@ void Field::cascade()
 
     // Continue the cascade into a connected field only if it is not blocked:
     if (!connected_field->is_blocked()) {
+      // Detach the old field value from the container
+      if (m_field_info) m_field_info->detach(m_container);
+
       // Set the connected field's value to this field's value:
       (connected_field->get_value_holder())->delegate(*m_value_holder);
 

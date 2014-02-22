@@ -14,34 +14,13 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12512 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GROUP_HPP
 #define SGAL_GROUP_HPP
 
-/*! \file
- * A node in the scene graph that can have child objects.
- *
- * A group is a node in the scene graph that can have one or more
- * child objects in the scene graph. There are several types of
- * group objects that inherit from this class. e.g. Transform.
- *
- * The child objects of a group can be of any node type. Among
- * these are light objects, engines, shapes and groups. In order
- * to get the right result, the child objects have to be stored
- * in a particular order. In the head of the list of child objects
- * wee need to store the light objects. Then the engines (not
- * implemented yet) and finally the rest of the group/shape objects.
- * The sorting is done in the process of adding a new child to the
- * group.
- *
- * Inherits from Node.
- */
-
 #include <string>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
@@ -66,11 +45,26 @@ class Scene_graph;
 #pragma warning( disable: 4251 )
 #endif
 
+/*! \class Group Group.hpp
+ * Group is a node in the scene graph that has zero or more child nodes.
+ * Actions applied to a group node are typically passed on to all of its
+ * children. The bounding sphere of a group node contains the bounding
+ * spheres of all its children.
+ *
+ * There are several types of group objects (types that inherit from this
+ * type), e.g., Transform and Switch.
+ *
+ * A group node is associated with a single scene graph.
+ * Light nodes and touch sensor nodes require special handling.
+ * A group node may have at most one touch sensor node. The touch sensor
+ * (if exists as a child node of the group) must be registered with the
+ * scene graph.
+ */
 class SGAL_SGAL_DECL Group : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,
-    ISVISIBLE,
+    IS_VISIBLE,
     CHILDREN,
     LAST
   };
@@ -79,23 +73,31 @@ public:
   typedef boost::shared_ptr<Light>              Shared_light;
   typedef boost::shared_ptr<Touch_sensor>       Shared_touch_sensor;
 
-  typedef std::list<Shared_node>                Node_list;
-  typedef Node_list::iterator                   Node_iterator;
-  typedef Node_list::const_iterator             Node_const_iterator;
+  typedef std::vector<Shared_node>              Node_array;
+  typedef Node_array::iterator                  Node_iterator;
+  typedef Node_array::const_iterator            Node_const_iterator;
 
-  /*! Constructor */
+  /*! Constructor.
+   * \param proto determines whether to construct a prototype.
+   */
   Group(Boolean proto = false);
 
-  /*! Copy constructor */
-  Group(const Group& groop);
+  /*! Copy constructor.
+   * \param other The other object.
+   */
+  Group(const Group& other);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Group();
 
-  /*! Construct the prototype. */
+  /*! Construct the prototype.
+   * \return the prototype.
+   */
   static Group* prototype();
 
-  /*! Clone. */
+  /*! Clone this object.
+   * \return the clone.
+   */
   virtual Container* clone();
 
   /// \name Protoype handling
@@ -107,32 +109,38 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
 
   //@}
 
   /// \name field handlers
   //@{
-  Boolean* is_visible_handle(Field_info*) { return &m_is_visible; }
+  Boolean* is_visible_handle(const Field_info*) { return &m_is_visible; }
+  Node_array* childs_handle(const Field_info*) { return &m_childs; }
   //@}
 
-  /*! Set the attributes of the group  extracted from the VRML or X3D file.
-   * \param elem contains lists of attribute names and values
-   * \param sg a pointer to the scene graph
+  /*! Set the attributes of the group extracted, for example, from a VRML file.
+   * \param elem contains lists of attribute name and value pairs.
    */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Draw the node while traversing the scene graph. */
+  /*! Draw the node while traversing the scene graph.
+   * \param draw_action The drawing action record.
+   */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Cull the node if invisible and prepare for rendering. */
+  /*! Cull the node if invisible and prepare for rendering.
+   * \param cull_context The culling context record.
+   */
   virtual void cull(Cull_context& cull_context);
 
   /*! Prepare the node for selection.
-   * \param isect_action
+   * \param isect_action The selection action record.
    */
   virtual void isect(Isect_action* isect_action);
 
@@ -141,18 +149,16 @@ public:
    */
   virtual Boolean clean_sphere_bound();
 
-  /*! Add the touch sensor object to a given scene.
-   * This includes adding it to the container of touch sensors in the
-   * scene graph.
-   * \param scene_graph the given scene.
+  /*! Associate the group node with a scene graph, so that the touch sensor
+   * node, if exists, is registered with the scene graph.
+   * \param scene_graph (in) The scene graph.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Write this container */
+  /*! Write this container.
+   * \param formatter (in) The formatter to use, e.g., VRML.
+   */
   virtual void write(Formatter* formatter);
-
-  /*! Write the children */
-  void write_children(Formatter* formatter);
 
   virtual Boolean attach_context(Context* context );
 
@@ -163,16 +169,20 @@ public:
    */
   Uint children_size();
 
-  /*! Obtain a child according to its position in the children sequence.
+  /*! Obtain a child according to its position in the children array.
    * \param index the index of the child.
-   * \return a pointer to the child object.
+   * \return the child node.
    */
   Shared_node get_child(Uint index);
 
-  /*! Obtain the beginning iterator of the children. */
+  /*! Obtain the begin iterator of the children.
+   * \return The begin iterator of the children.
+   */
   Node_iterator children_begin();
 
-  /*! Obtain the pass-the-end iterator of the children. */
+  /*! Obtain the pass-the-end iterator of the children.
+   * \return The pass-the-end iterator of the children.
+   */
   Node_iterator children_end();
 
   /*! Turn on the flag that indicates whether the shape should be rendered. */
@@ -181,33 +191,45 @@ public:
   /*! Turn off the flag that indicates whether the shape should be rendered. */
   void set_invisible();
 
-  /*! Set the flag that indicates whether the shape should be rendered. */
+  /*! Set the flag that indicates whether the shape should be rendered.
+   * \param flag (in) The input flag.
+   */
   void set_visible(Boolean flag);
 
-  /*! Determine whether the group is visible */
+  /*! Determine whether the group is visible.
+   * \return a Boolean flag that indicates whether the group is visible.
+   */
   Boolean is_visible() const;
 
-  /* Add a child to the sequence of children of the group.
+  /* Add a child to the array of children of the group.
    * Lights appear in front of the sequence followed by all the rest.
-   * \param node (in) the child object
+   * \param node (in) the child node to add.
    */
   void add_child(Shared_node node);
 
   /* Remove a given child from the sequence of children of the group.
-   * \param node (in) the child object
+   * \param node (in) the child node to remove.
    */
   void remove_child(Shared_node node);
 
-  /*! Add a touch sensor to the group. */
+  /*! Add a touch sensor to the group.
+   * \param (in) touch_sensor The touch sensor node to add.
+   */
   void add_touch_sensor(Shared_touch_sensor touch_sensor);
 
-  /*! Remove a touch sensor from the group. */
+  /*! Remove a touch sensor from the group.
+   * \param (in) touch_sensor The touch sensor node to remove.
+   */
   void remove_touch_sensor(Shared_touch_sensor touch_sensor);
 
-  /*! Determine whether the group has a touch sensor. */
+  /*! Determine whether the group has a touch sensor.
+   * \return a Boolean that indicates whether the group has a touch sensor.
+   */
   Boolean has_touch_sensor() const;
 
-  /*! Add a light source to the group. */
+  /*! Add a light source to the group.
+   * \param light (in) The ligh node to add.
+   */
   void add_light(Shared_light light);
 
   /*! Remove a light source from the group. */
@@ -223,7 +245,7 @@ protected:
   Boolean m_is_visible;
 
   /*! The list of child objects. */
-  Node_list m_childs;
+  Node_array m_childs;
 
   /*! Indicates whether the group has a touch sensor. */
   Shared_touch_sensor m_touch_sensor;
@@ -231,13 +253,13 @@ protected:
   /*! The number of light sources in the group. */
   Uint m_num_lights;
 
-  /*! The start id of a unique range of color ids used for selection */
+  /*! The start id of a unique range of color ids used for selection. */
   Uint m_start_selection_id;
 
-  /*! The number of ids of a unique range of color ids used for selection */
+  /*! The number of ids of a unique range of color ids used for selection. */
   Uint m_num_selection_ids;
 
-  /*! The scene graph */
+  /*! The scene graph. */
   Scene_graph* m_scene_graph;
 
   /*! Allocate the selection ids for this group. */
@@ -250,7 +272,7 @@ private:
   /*! The tag that represents the container. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 };
 
@@ -258,34 +280,34 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Group* Group::prototype() { return new Group(true); }
 
-/*! \brief clone. */
+//! \brief clone.
 inline Container* Group::clone() { return new Group(); }
 
-/*! \brief obtains the beginning iterator of the children. */
+//! \brief obtains the beginning iterator of the children.
 inline Group::Node_iterator Group::children_begin() { return m_childs.begin(); }
 
-/*! \brief obtains the pass-the-end iterator of the children. */
+//! \brief obtains the pass-the-end iterator of the children.
 inline Group::Node_iterator Group::children_end() { return m_childs.end(); }
 
-/*! \brief obtains the number of children of the group. */
+//! \brief obtains the number of children of the group.
 inline unsigned int Group::children_size() { return m_childs.size(); }
 
-/*! \brief determines whether the group is visible */
+//! \brief determines whether the group is visible.
 inline Boolean Group::is_visible() const { return m_is_visible; }
 
-/*! \brief determines whether the group has light sources. */
+//! \brief determines whether the group has light sources.
 inline Boolean Group::has_lights() const { return (m_num_lights != 0); }
 
-/*! \brief determines whether the group has a touch sensor. */
+//! \brief determines whether the group has a touch sensor.
 inline Boolean Group::has_touch_sensor() const { return (m_touch_sensor); }
 
-/*! \brief adds the touch sensor to a given scene. */
+//! \brief adds the touch sensor to a given scene.
 inline void Group::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Group::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

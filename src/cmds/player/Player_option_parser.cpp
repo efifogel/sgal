@@ -41,7 +41,6 @@ namespace po = boost::program_options;
 /*! Constructor */
 Player_option_parser::Player_option_parser() :
   m_player_opts("Player options"),
-  m_window_manager(NULL),
   m_grid(false)
 {
   m_player_opts.add_options()
@@ -67,20 +66,20 @@ void Player_option_parser::init()
   m_environment_opts.add(m_window_opts).add(m_player_opts);
 }
 
-/*! \brief parse the options */
+//! \brief parses the options.
 void Player_option_parser::operator()(int argc, char * argv[])
 {
   SGAL::Option_parser::operator()(argc, argv);
 }
 
-/*! \brief applies the options */
+//! \brief applies the options.
 void Player_option_parser::apply()
 {
   SGAL::Option_parser::apply();
-  SGAL::Window_option_parser::apply(m_variable_map, m_window_manager);
+  SGAL::Window_option_parser::apply(m_variable_map);
 }
 
-/*! \brief obtains the base file-name */
+//! \brief obtains the base file-name.
 bool Player_option_parser::get_file_name(std::string & name) const
 {
   if (!m_variable_map.count("input-file")) return false;
@@ -97,3 +96,12 @@ Player_option_parser::get_sub_index_buffer_size(SGAL::Uint & size) const
   size = m_variable_map["sub-index-buffer-size"].as<SGAL::Uint>();
   return true;
 }
+
+//! \brief determines whether the operation is interactive.
+SGAL::Boolean Player_option_parser::is_interactive() const
+{
+  if (m_variable_map["interactive"].defaulted())
+    return (do_save()) ? false : IO_option_parser::is_interactive();
+  return IO_option_parser::is_interactive();
+}
+

@@ -23,10 +23,10 @@
 #define SGAL_TEX_COORD_ARRAY_3D_HPP
 
 #include <string>
+#include <vector>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -35,7 +35,8 @@ class Element;
 class Container_proto;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL Array<Vector3f>;
+template class SGAL_SGAL_DECL std::allocator<Vector3f>;
+template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -96,12 +97,12 @@ public:
   virtual void clear();
 
   /*! Obtain the iterator to the Array first element. */
-  Vector3f* begin();
-  const Vector3f* begin() const;
+  std::vector<Vector3f>::iterator begin();
+  const std::vector<Vector3f>::const_iterator begin() const;
 
   /*! Obtain the iterator to the Array past-the-end element. */
-  Vector3f* end();
-  const Vector3f* end() const;
+  std::vector<Vector3f>::iterator end();
+  const std::vector<Vector3f>::const_iterator end() const;
 
   /*! Obtain the nth element in the array (non-const). */
   Vector3f& operator[](Uint n);
@@ -124,47 +125,54 @@ private:
   static Container_proto* s_prototype;
 
   /*! The normal array. */
-  SGAL::Array<Vector3f> m_array;
+  std::vector<Vector3f> m_array;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the array size. */
+//! \brief obtains the array size.
 inline Uint Tex_coord_array_3d::size() const { return m_array.size(); }
 
-/*! \brief Obtain the GL data. */
+//! \brief Obtain the GL data.
 inline GLfloat* Tex_coord_array_3d::get_gl_data()
 { return (GLfloat*)(get_vector()); }
 
-/*! \brief Resize the array capacity */
+//! \brief Resize the array capacity.
 inline void Tex_coord_array_3d::resize(Uint n) { m_array.resize(n); }
 
-/*! \brief Clear the array */
+//! \brief Clear the array.
 inline void Tex_coord_array_3d::clear() { m_array.clear(); }
 
-/*! \brief obtains the iterator to the Array first element */
-inline Vector3f* Tex_coord_array_3d::begin() { return m_array.begin(); }
-inline const Vector3f* Tex_coord_array_3d::begin() const
+//! \brief obtains the iterator to the Array first element.
+inline std::vector<Vector3f>::iterator Tex_coord_array_3d::begin()
 { return m_array.begin(); }
 
-/*! \brief obtains the iterator to the Array past-the-end element */
-inline Vector3f* Tex_coord_array_3d::end() { return m_array.end(); }
-inline const Vector3f* Tex_coord_array_3d::end() const { return m_array.end(); }
+inline const std::vector<Vector3f>::const_iterator Tex_coord_array_3d::begin()
+  const
+{ return m_array.begin(); }
 
-/*! \brief obtains the Array indexing (non-const) operator */
+//! \brief obtains the iterator to the Array past-the-end element.
+inline std::vector<Vector3f>::iterator Tex_coord_array_3d::end()
+{ return m_array.end(); }
+
+inline const std::vector<Vector3f>::const_iterator Tex_coord_array_3d::end()
+  const
+{ return m_array.end(); }
+
+//! \brief obtains the Array indexing (non-const) operator.
 inline Vector3f& Tex_coord_array_3d::operator[](Uint n) { return m_array[n]; }
 
-/*! \brief obtains the Array indexing (const) operator */
+//! \brief obtains the Array indexing (const) operator.
 inline const Vector3f& Tex_coord_array_3d::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief Obtain the vector */
+//! \brief Obtain the vector.
 inline Vector3f* Tex_coord_array_3d::get_vector()
-{ return m_array.get_vector(); }
+{ return &(*(m_array.begin())); }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Tex_coord_array_3d::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

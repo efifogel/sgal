@@ -53,20 +53,20 @@ const Float Indexed_line_set::s_def_line_width(1);
 
 REGISTER_TO_FACTORY(Indexed_line_set, "Indexed_line_set");
 
-/*! A parameter-less constructor */
+//! \brief constructor.
 Indexed_line_set::Indexed_line_set(Boolean proto) :
   Geo_set(proto),
   m_color_per_vertex(m_def_color_per_vertex),
   m_normal_per_vertex(m_def_normal_per_vertex),
   m_line_width(s_def_line_width),
-  m_elliminate_hiden(false),
+  m_elliminate_hiden(true),
   m_has_texture(false),
   m_bb_is_pre_set(false),
   m_use_display_list(false),
   m_display_list_id(-1)
 { m_primitive_type = PT_LINE_STRIPS; }
 
-/*! Destructor */
+//! \brief destructor.
 Indexed_line_set::~Indexed_line_set() {}
 
 /* \brief sets the flag that indicates whether normals are bound per vertex
@@ -175,7 +175,7 @@ void Indexed_line_set::draw(Draw_action* action)
   if (fragment_source) context->draw_light_enable(true);
 }
 
-/*! \brief */
+//! \brief
 void Indexed_line_set::isect(Isect_action* /* action */) { }
 
 /*! \brief calculates the sphere bound of the mesh. Returns true if the BS has
@@ -189,7 +189,7 @@ bool Indexed_line_set::clean_sphere_bound()
   return true;
 }
 
-/*! \brief setss the attributes of the geometry object. */
+//! \brief setss the attributes of the geometry object.
 void Indexed_line_set::set_attributes(Element* elem)
 {
   Geo_set::set_attributes(elem);
@@ -226,7 +226,7 @@ void Indexed_line_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief sets the attributes of this node */
+//! \brief sets the attributes of this node.
 void Indexed_line_set::init_prototype()
 {
   if (s_prototype) return;
@@ -238,14 +238,14 @@ void Indexed_line_set::init_prototype()
                                            line_width_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Indexed_line_set::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Indexed_line_set::get_prototype()
 {
   if (!s_prototype) Indexed_line_set::init_prototype();

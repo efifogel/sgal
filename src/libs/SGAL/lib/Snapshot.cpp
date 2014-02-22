@@ -47,6 +47,7 @@
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Vrml_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -65,7 +66,7 @@ REGISTER_TO_FACTORY(Snapshot, "Snapshot");
 const char* Snapshot::s_file_format_names[] =
   { "", "jpg", "png", "gif", "tiff", "bmp", "ppm", "pgm", "pbm" };
 
-/*! Constructor */
+//! \brief constructor
 Snapshot::Snapshot(Boolean proto) :
   Node(proto),
   m_dir_name(s_def_dir_name),
@@ -80,18 +81,20 @@ Snapshot::Snapshot(Boolean proto) :
   m_flip(true)
 {}
 
-/*! Destructor */
+//! \brief destructor
 Snapshot::~Snapshot()
 {
-  Uchar* pixels = (Uchar *) m_image->get_pixels();
-  if (pixels) delete [] pixels;
-  m_image->set_pixels(NULL);
-  m_image->set_width(0);
-  m_image->set_height(0);
-  m_size = 0;
+  if (m_image) {
+    Uchar* pixels = (Uchar *) m_image->get_pixels();
+    if (pixels) delete [] pixels;
+    m_image->set_pixels(NULL);
+    m_image->set_width(0);
+    m_image->set_height(0);
+    m_size = 0;
+  }
 }
 
-/*! \brief takes a snapshot and write to a file if triggered. */
+//! \brief takes a snapshot and write to a file if triggered.
 Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
 {
   if (!m_trigger) return Action::TRAV_CONT;
@@ -104,7 +107,7 @@ Action::Trav_directive Snapshot::draw(Draw_action* draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! \brief allocates space for the image. */
+//! \brief allocates space for the image.
 Boolean Snapshot::allocate_space(Draw_action* action)
 {
   Uint width = m_image->get_width();
@@ -140,7 +143,7 @@ Boolean Snapshot::allocate_space(Draw_action* action)
   return true;
 }
 
-/*! \brief takes a snapshot of the window. */
+//! \brief takes a snapshot of the window.
 void Snapshot::take_snapshot()
 {
   Uint width = m_image->get_width();
@@ -158,7 +161,7 @@ void Snapshot::take_snapshot()
   glReadBuffer(read_buffer_mode);
 }
 
-/*! \brief writes the image into a file. */
+//! \brief writes the image into a file.
 void Snapshot::write_image()
 {
   std::string file_name = m_dir_name + "/" + m_file_name;
@@ -178,7 +181,7 @@ void Snapshot::write_image()
   image.write(file_name);
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Snapshot::init_prototype()
 {
   if (s_prototype)  return;
@@ -187,42 +190,50 @@ void Snapshot::init_prototype()
   // trigger
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Snapshot::trigger_handle);
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func));
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
+                                          false));
 
   // dirName
   String_handle_function dir_name_func =
     static_cast<String_handle_function>(&Snapshot::dir_name_handle);
   s_prototype->add_field_info(new SF_string(DIR_NAME, "dirName",
-                                            dir_name_func));
+                                            dir_name_func, s_def_dir_name));
 
   // fileName
   String_handle_function file_name_func =
     static_cast<String_handle_function>(&Snapshot::file_name_handle);
   s_prototype->add_field_info(new SF_string(FILE_NAME, "fileName",
-                                            file_name_func));
+                                            file_name_func, s_def_file_name));
 
   // fileFormat
   Uint_handle_function file_format_func =
     reinterpret_cast<Uint_handle_function>(&Snapshot::file_format_handle);
   s_prototype->add_field_info(new SF_uint(FILE_FORMAT, "fileFormat",
-                                          file_format_func));
+                                          file_format_func, s_def_file_format));
+
+  // Image
+  Shared_container_handle_function image_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Snapshot::image_handle);
+  s_prototype->add_field_info(new SF_shared_container(IMAGE, "image",
+                                                      image_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Snapshot::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Snapshot::get_prototype()
 {
   if (!s_prototype) Snapshot::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Snapshot::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -251,7 +262,7 @@ void Snapshot::set_attributes(Element* elem)
       Uint i;
       for (i = 0; i < FF_num; ++i) {
         if (str == s_file_format_names[i]) {
-          m_file_format = (File_format) i;
+          set_file_format(static_cast<File_format>(i));
           break;
         }
       }
@@ -289,11 +300,11 @@ void Snapshot::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Snapshot::add_to_scene(Scene_graph* sg) { sg->add_snaphot(this); }
 
 #if 0
-/*! \brief */
+//! \brief
 Attribute_list Snapshot::get_attributes()
 {
   Attribute_list attribs;
@@ -311,5 +322,31 @@ Attribute_list Snapshot::get_attributes()
 }
 
 #endif
+
+//! \breif writes this container.
+void Snapshot::write(Formatter* formatter)
+{
+  Vrml_formatter* vrml_formatter = static_cast<Vrml_formatter*>(formatter);
+  if (vrml_formatter) {
+    formatter->container_begin(get_tag());
+
+    // Travese prototype field-info records
+    Container_proto* proto = get_prototype();
+    Container_proto::Id_const_iterator it = proto->ids_begin(proto);
+    for (; it != proto->ids_end(proto); ++it) {
+      const Field_info* field_info = (*it).second;
+      if (FILE_FORMAT == field_info->get_id()) {
+        vrml_formatter->single_string(field_info->get_name(),
+                                      s_file_format_names[m_file_format],
+                                      s_file_format_names[s_def_file_format]);
+        continue;
+      }
+      field_info->write(this, formatter);
+    }
+    formatter->container_end();
+    return;
+  }
+  Container::write(formatter);
+}
 
 SGAL_END_NAMESPACE

@@ -87,11 +87,11 @@ public:
 
   /// \name field handlers
   //@{
-  Float* radius_handle(Field_info*) { return &m_radius; }
-  Float* height_handle(Field_info*) { return &m_height; }
-  Uint* slices_handle(Field_info*) { return &m_slices; }
-  Float* alpha_handle(Field_info*) { return &m_alpha; }
-  Float* beta_handle(Field_info*) { return &m_beta; }
+  Float* radius_handle(const Field_info*) { return &m_radius; }
+  Float* height_handle(const Field_info*) { return &m_height; }
+  Uint* slices_handle(const Field_info*) { return &m_slices; }
+  Float* alpha_handle(const Field_info*) { return &m_alpha; }
+  Float* beta_handle(const Field_info*) { return &m_beta; }
   //@}
 
   /*! Sets the attributes of the object extracted from the VRML or X3D file.

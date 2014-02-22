@@ -31,7 +31,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor */
-Container_proto::Container_proto(Container_proto * ancestor) :
+Container_proto::Container_proto(Container_proto* ancestor) :
   m_ancestor(ancestor),
   m_first_id(0)
 {
@@ -122,6 +122,26 @@ Field_info * Container_proto::get_field_info(const std::string & name) const
   // if ancestor is null there is no field info with the requested info
   // in this proto nor in its ancestors -> return NULL
   return NULL;
+}
+
+//! \brief obtains the begin iterator of the extended range of field info ids.
+Container_proto::Id_const_iterator
+Container_proto::ids_begin(const Container_proto* prototype) const
+{
+  while ((field_info_ids_begin() == prototype->field_info_ids_end()) &&
+         (prototype->m_ancestor != nullptr))
+    prototype = prototype->m_ancestor;
+  return Id_const_iterator(prototype, prototype->field_info_ids_begin());
+}
+
+/*! \brief obtains the past-the-end iterator of the extended range of field
+ * info ids.
+ */
+Container_proto::Id_const_iterator
+Container_proto::ids_end(const Container_proto* prototype) const
+{
+  while (prototype->m_ancestor != nullptr) prototype = prototype->m_ancestor;
+  return Id_const_iterator(prototype, prototype->field_info_ids_end());
 }
 
 #if 0

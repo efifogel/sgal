@@ -40,9 +40,10 @@
 #ifndef SGAL_SCALAR_INTERPOLATOR_HPP
 #define SGAL_SCALAR_INTERPOLATOR_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Interpolator.hpp"
-#include "SGAL/Array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -86,7 +87,7 @@ public:
 
   /// \name field handlers
   //@{
-  Float* value_handle(Field_info*) { return &m_value; }
+  Float* value_handle(const Field_info*) { return &m_value; }
   //@}
 
   // Functions that handles the creation of an instance in the scene graph
@@ -98,7 +99,7 @@ public:
   virtual void execute(Field_info*);
 
 protected:
-  Array<Float> m_values;
+  std::vector<Float> m_values;
 
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }

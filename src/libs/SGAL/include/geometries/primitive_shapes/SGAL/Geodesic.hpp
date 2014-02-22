@@ -83,12 +83,12 @@ public:
 
   /// \name field handlers
   //@{
-  Float* radius_handle(Field_info*) { return &m_radius; }
-  Vector2f* start_handle(Field_info*) { return &m_start; }
-  Vector2f* end_handle(Field_info*) { return &m_end; }
-  Uint* stacks_handle(Field_info*) { return &m_stacks; }
-  Uint* breaks_handle(Field_info*) { return &m_breaks; }
-  Boolean* is_complement_handle(Field_info*) { return &m_is_complement; }
+  Float* radius_handle(const Field_info*) { return &m_radius; }
+  Vector2f* start_handle(const Field_info*) { return &m_start; }
+  Vector2f* end_handle(const Field_info*) { return &m_end; }
+  Uint* stacks_handle(const Field_info*) { return &m_stacks; }
+  Uint* breaks_handle(const Field_info*) { return &m_breaks; }
+  Boolean* is_complement_handle(const Field_info*) { return &m_is_complement; }
   //@}
 
   /*! Draw the geodesic in selection mode

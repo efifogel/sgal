@@ -22,8 +22,10 @@
 #ifndef SGAL_ARRAY_TYPES_HPP
 #define SGAL_ARRAY_TYPES_HPP
 
+#include <vector>
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
@@ -34,21 +36,21 @@ SGAL_BEGIN_NAMESPACE
 
 class Container;
 
-typedef boost::shared_ptr<Container>                   Shared_container;
+typedef boost::shared_ptr<Container>                    Shared_container;
 
-typedef SGAL::Array<Boolean>                           Boolean_array;
-typedef SGAL::Array<Float>                             Float_array;
-typedef SGAL::Array<Uint>                              Uint_array;
-typedef SGAL::Array<Int>                               Int_array;
-typedef SGAL::Array<Scene_time>                        Scene_time_array;
-typedef SGAL::Array<Vector2f>                          Vector2f_array;
-typedef SGAL::Array<Vector3f>                          Vector3f_array;
-typedef SGAL::Array<Vector3f>                          Vector3f_array;
-typedef SGAL::Array<Vector4f>                          Vector4f_array;
-typedef SGAL::Array<Rotation>                          Rotation_array;
-typedef SGAL::Array<Sphere_bound>                      Sphere_bound_array;
-typedef SGAL::Array<std::string>                       String_array;
-typedef SGAL::Array<Shared_container>                  Shared_container_array;
+typedef std::vector<Boolean>                            Boolean_array;
+typedef std::vector<Float>                              Float_array;
+typedef std::vector<Uint>                               Uint_array;
+typedef std::vector<Int>                                Int_array;
+typedef std::vector<Scene_time>                         Scene_time_array;
+typedef std::vector<Vector2f>                           Vector2f_array;
+typedef std::vector<Vector3f>                           Vector3f_array;
+typedef std::vector<Vector3f>                           Vector3f_array;
+typedef std::vector<Vector4f>                           Vector4f_array;
+typedef std::vector<Rotation>                           Rotation_array;
+typedef std::vector<Sphere_bound>                       Sphere_bound_array;
+typedef std::vector<std::string>                        String_array;
+typedef std::vector<Shared_container>                   Shared_container_array;
 
 SGAL_END_NAMESPACE
 

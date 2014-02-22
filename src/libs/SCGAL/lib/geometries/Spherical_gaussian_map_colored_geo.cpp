@@ -27,19 +27,19 @@
 #pragma warning(disable: 4996)
 #endif
 
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <time.h>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Point_3.h>
-
-#if defined(_WIN32)
-#include <windows.h>
-#endif
-#include <GL/gl.h>
-#include <GL/glu.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -72,7 +72,7 @@ Container_proto* Spherical_gaussian_map_colored_geo::s_prototype(NULL);
 REGISTER_TO_FACTORY(Spherical_gaussian_map_colored_geo,
                     "Spherical_gaussian_map_colored_geo");
 
-/*! Constructor */
+//! \brief constructor.
 Spherical_gaussian_map_colored_geo::
 Spherical_gaussian_map_colored_geo(Boolean proto) :
   Spherical_gaussian_map_base_geo(proto),
@@ -90,15 +90,14 @@ Spherical_gaussian_map_colored_geo(Boolean proto) :
 {
   if (proto) return;
   create_renderers();
-  m_flatten_indices = true;
 }
 
-/*! Copy Constructor. Not implemented yet! */
+//! \brief copy constructor. Not implemented yet!
 Spherical_gaussian_map_colored_geo::
 Spherical_gaussian_map_colored_geo(const Spherical_gaussian_map_colored_geo& gm)
 { SGAL_assertion(0); }
 
-/*! Destructor. */
+//! \brief Destructor.
 Spherical_gaussian_map_colored_geo::~Spherical_gaussian_map_colored_geo()
 {
   clear();
@@ -112,7 +111,7 @@ Spherical_gaussian_map_colored_geo::~Spherical_gaussian_map_colored_geo()
   }
 }
 
-/*! \brief cleans the data structure. */
+//! \brief cleans the data structure.
 void Spherical_gaussian_map_colored_geo::clean_sgm()
 {
   if (!m_sgm) {
@@ -153,6 +152,8 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
     Sgm_geo_initializer_visitor visitor;
+    std::vector<Uint>& indices = (are_coord_indices_flat()) ?
+      get_flat_coord_indices() : get_coord_indices();
     Uint num_vertices_per_facet = 0;
     if (are_coord_indices_flat())
       num_vertices_per_facet =
@@ -164,13 +165,13 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
       sgm_initializer(exact_coord_array->begin(),
                       exact_coord_array->end(),
                       exact_coord_array->size(),
-                      m_coord_indices.begin(), m_coord_indices.end(),
+                      &(*(indices.begin())), &(*(indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     else {
       sgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
-                      m_coord_indices.begin(), m_coord_indices.end(),
+                      &(*(indices.begin())), &(*(indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     Sgm_halfedge_iterator hei;
@@ -184,14 +185,14 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
   m_dirty_sgm = false;
 }
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Spherical_gaussian_map_colored_geo::clear()
 {
   if (m_sgm) m_sgm->clear();
   m_dirty_sgm = true;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Spherical_gaussian_map_colored_geo::set_attributes(Element* elem)
 {
   Spherical_gaussian_map_base_geo::set_attributes(elem);
@@ -227,7 +228,7 @@ void Spherical_gaussian_map_colored_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief */
+//! \brief
 void Spherical_gaussian_map_colored_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -242,22 +243,21 @@ void Spherical_gaussian_map_colored_geo::init_prototype()
                                                       sgm_nodes_func));
 }
 
-/*! \brief */
+//! \brief
 void Spherical_gaussian_map_colored_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief */
+//! \brief
 Container_proto* Spherical_gaussian_map_colored_geo::get_prototype()
 {
   if (!s_prototype) Spherical_gaussian_map_colored_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief draws the polyhedron directly from the gaussian map representation.
- */
+//! \brief draws the polyhedron directly from the gaussian map representation.
 void Spherical_gaussian_map_colored_geo::draw_primal(Draw_action* action)
 {
   SGAL_TRACE_MSG(Trace::GAUSSIAN_MAP, "draw_primal()\n");
@@ -319,7 +319,7 @@ void Spherical_gaussian_map_colored_geo::draw_primal(Draw_action* action)
   glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-/*! \brief */
+//! \brief
 void Spherical_gaussian_map_colored_geo::isect_primary()
 {
   Sgm_vertex_const_iterator vit;
@@ -339,11 +339,11 @@ void Spherical_gaussian_map_colored_geo::isect_primary()
   }
 }
 
-/*! \brief prints statistics. */
+//! \brief prints statistics.
 void Spherical_gaussian_map_colored_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_sgm) clean_sgm();
 
   if (m_minkowski_sum)
@@ -353,7 +353,7 @@ void Spherical_gaussian_map_colored_geo::print_stat()
   m_sgm->print_stat();
 }
 
-/*! \brief draws the arrangement on sphere opaque */
+//! \brief draws the arrangement on sphere opaque.
 void Spherical_gaussian_map_colored_geo::draw_aos_opaque(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -415,7 +415,7 @@ void Spherical_gaussian_map_colored_geo::draw_aos_opaque(Draw_action* action)
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-/*! \brief draws the arrangement vertices. */
+//! \brief draws the arrangement vertices.
 void Spherical_gaussian_map_colored_geo::draw_aos_vertices(Draw_action* action)
 {
   Sgm_vertex_const_iterator vi;
@@ -426,7 +426,7 @@ void Spherical_gaussian_map_colored_geo::draw_aos_vertices(Draw_action* action)
   }
 }
 
-/*! \brief draws the arrangement vertices. */
+//! \brief draws the arrangement vertices.
 void Spherical_gaussian_map_colored_geo::draw_aos_edges(Draw_action* action)
 {
   Sgm_edge_const_iterator hei;
@@ -441,7 +441,7 @@ void Spherical_gaussian_map_colored_geo::draw_aos_edges(Draw_action* action)
   }
 }
 
-/*! \brief renders the edges with color. */
+//! \brief renders the edges with color.
 void Spherical_gaussian_map_colored_geo::Colored_edges_renderer::
 operator()(Draw_action* action)
 {
@@ -460,7 +460,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief creates the renderers */
+//! \brief creates the renderers.
 void Spherical_gaussian_map_colored_geo::create_renderers()
 {
   m_vertices_renderer = new Vertices_renderer(*this);
@@ -474,7 +474,7 @@ void Spherical_gaussian_map_colored_geo::create_renderers()
   m_inflated_tube_edges_renderer = new Inflated_tube_edges_renderer(*this);
 }
 
-/*! \brief destroys the renderers */
+//! \brief destroys the renderers.
 void Spherical_gaussian_map_colored_geo::destroy_renderers()
 {
   if (m_vertices_renderer) delete m_vertices_renderer;
@@ -488,7 +488,7 @@ void Spherical_gaussian_map_colored_geo::destroy_renderers()
   if (m_inflated_tube_edges_renderer) delete m_inflated_tube_edges_renderer;
 }
 
-/*! \brief cleans the renderer */
+//! \brief cleans the renderer.
 void Spherical_gaussian_map_colored_geo::clean_renderer()
 {
   Spherical_gaussian_map_base_geo::clean_renderer();
@@ -549,7 +549,7 @@ void Spherical_gaussian_map_colored_geo::clean_renderer()
     m_renderer.push_back(m_vertices_renderer, Arrangement_renderer::DEPTH);
 }
 
-/*! \brief sets the source gausian maps of the minkowski sum. */
+//! \brief sets the source gausian maps of the minkowski sum.
 void Spherical_gaussian_map_colored_geo::
 insert_sgm(Shared_spherical_gaussian_map_colored_geo sgm)
 {
@@ -559,21 +559,21 @@ insert_sgm(Shared_spherical_gaussian_map_colored_geo sgm)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets an intermediate polyhedron */
+//! \brief sets an intermediate polyhedron.
 void Spherical_gaussian_map_colored_geo::set_polyhedron(Polyhedron* polyhedron)
 {
   m_polyhedron = polyhedron;
   clear();
 }
 
-/*! \brief obrains a reference to the Gaussian map. */
+//! \brief obrains a reference to the Gaussian map.
 Spherical_gaussian_map_colored* Spherical_gaussian_map_colored_geo::get_sgm()
 {
   if (m_dirty_sgm) clean_sgm();
   return m_sgm;
 }
 
-/*! \brief sets the Gaussian map. */
+//! \brief sets the Gaussian map.
 void Spherical_gaussian_map_colored_geo::
 set_sgm(Spherical_gaussian_map_colored* sgm)
 {

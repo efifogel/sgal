@@ -194,13 +194,13 @@ public:
 
   /// \name field handlers
   //@{
-  Uint* width_handle(Field_info*) { return &m_width; }
-  Uint* height_handle(Field_info*) { return &m_height; }
-  Format* format_handle(Field_info*) { return &m_format; }
-  Boolean* flip_handle(Field_info*) { return &m_flip; }
-  Float* rotation_handle(Field_info*) { return &m_rotation; }
-  Boolean* alpha_handle(Field_info*) { return &m_alpha; }
-  Float* transparency_handle(Field_info*) { return &m_transparency; }
+  Uint* width_handle(const Field_info*) { return &m_width; }
+  Uint* height_handle(const Field_info*) { return &m_height; }
+  Format* format_handle(const Field_info*) { return &m_format; }
+  Boolean* flip_handle(const Field_info*) { return &m_flip; }
+  Float* rotation_handle(const Field_info*) { return &m_rotation; }
+  Boolean* alpha_handle(const Field_info*) { return &m_alpha; }
+  Float* transparency_handle(const Field_info*) { return &m_transparency; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -368,40 +368,48 @@ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Default value. */
+  /// \name Default values
+  //@{
+  static const Uint s_def_width;
+  static const Uint s_def_height;
   static const Format s_def_format;
+  static const Boolean s_def_flip;
+  static const Float s_def_rotation;
+  static const Boolean s_def_alpha;
+  static const Float s_def_transparency;
+  //@}
 };
 
-/*! \brief sets the image width. */
+//! \brief sets the image width.
 inline void Image_base::set_width(Uint width) { m_width = width; }
 
-/*! \brief obtains the image width. */
+//! \brief obtains the image width.
 inline Uint Image_base::get_width() { return m_width; }
 
-/*! \brief sets the image height. */
+//! \brief sets the image height.
 inline void Image_base::set_height(Uint height) { m_height = height; }
 
-/*! \brief obtains the image height. */
+//! \brief obtains the image height.
 inline Uint Image_base::get_height() { return m_height; }
 
-/*! \brief sets the image format. */
+//! \brief sets the image format.
 inline void Image_base::set_format(Format format) { m_format = format; }
 
-/*! \brief obtains the image format. */
+//! \brief obtains the image format.
 inline Image_base::Format Image_base::get_format() { return m_format; }
 
-/*! \brief sets the number of pixels in a row. */
+//! \brief sets the number of pixels in a row.
 inline void Image_base::set_pack_row_length(Uint length)
 { m_pack_row_length = length; }
 
-/*! \brief obtains the number of pixels in a row. */
+//! \brief obtains the number of pixels in a row.
 inline Uint Image_base::get_pack_row_length() const
 { return m_pack_row_length; }
 
-/*! \brief obtains the image pixel data. */
+//! \brief obtains the image pixel data.
 inline void* Image_base::get_pixels() { return m_pixels; }
 
-/*! \brief returns true if image hasn't been updated yet and false otherwise. */
+//! \brief returns true if image hasn't been updated yet and false otherwise.
 inline Boolean Image_base::is_dirty() { return m_dirty; }
 
 /*! \brief cleans the image in case it is dirty. */
@@ -413,32 +421,31 @@ inline void Image_base::clean() {}
 inline Uint Image_base::get_size(Uint width, Uint height, Format format)
 { return width * height * bits2bytes(s_format_sizes[format]); }
 
-/*! \brief obtains the number of bits. */
+//! \brief obtains the number of bits.
 inline Uint Image_base::get_format_size(Format format)
 { return s_format_sizes[format]; }
 
-/*! \brief obtains the openGl format. */
+//! \brief obtains the openGl format.
 inline GLenum Image_base::get_format_format(Format format)
 { return s_format_formats[format]; }
 
-/*! \brief obtains the storage type of component. */
+//! \brief obtains the storage type of component.
 inline GLenum Image_base::get_format_type(Format format)
 { return s_format_types[format]; }
 
-/*! \brief obtains the number of components. */
+//! \brief obtains the number of components.
 inline Uint Image_base::get_format_components(Format format)
 { return s_format_components[format]; }
 
-/*! \brief obtains the openGl internal format. */
+//! \brief obtains the openGl internal format.
 inline GLenum Image_base::get_format_internal_format(Format format)
 { return s_format_internal_formats[format]; }
 
-/*! \brief obtains the format name (string). */
+//! \brief obtains the format name (string).
 inline const char* Image_base::get_format_name(Format format)
 { return s_format_names[format]; }
 
-/*! \brief sets the flag that indicates whether the image should be reflected.
- */
+//! \brief sets the flag that indicates whether the image should be reflected.
 inline void Image_base::set_flip(Boolean flag) { m_flip = flag; }
 
 /*! \brief obtains the flag that indicates whether the image should be
@@ -446,10 +453,10 @@ inline void Image_base::set_flip(Boolean flag) { m_flip = flag; }
  */
 inline Boolean Image_base::get_flip() const { return m_flip; }
 
-/*! \brief sets the rotation angle. */
+//! \brief sets the rotation angle.
 inline void Image_base::set_rotation(Float rotation) { m_rotation = rotation; }
 
-/*! \brief obtains the rotation angle. */
+//! \brief obtains the rotation angle.
 inline Float Image_base::get_rotation() const { return m_rotation; }
 
 /*! \brief sets the flag that indicates whether to add (or retain) the alpha
@@ -457,15 +464,14 @@ inline Float Image_base::get_rotation() const { return m_rotation; }
  */
 inline void Image_base::set_alpha(Boolean flag) { m_alpha = flag; }
 
-/*! \brief determines whether to add (or retain) the alpha channel or remove it.
- */
+//! \brief determines whether to add (or retain) the alpha channel or remove it.
 inline Boolean Image_base::get_alpha() const { return m_alpha; }
 
-/*! \brief set the transparency of the image. */
+//! \brief set the transparency of the image.
 inline void Image_base::set_transparency(Float transparency)
 { m_transparency = transparency; }
 
-/*! \brief obtain the transparency of the image. */
+//! \brief obtain the transparency of the image.
 inline Float Image_base::get_transparency() const { return m_transparency; }
 
 SGAL_END_NAMESPACE

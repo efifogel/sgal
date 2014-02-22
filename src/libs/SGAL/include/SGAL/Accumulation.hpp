@@ -86,9 +86,9 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Quality* quality_handle(Field_info*) { return &m_quality; }
-  Uint* delay_handle(Field_info*) { return &m_delay; }
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Quality* quality_handle(const Field_info*) { return &m_quality; }
+  Uint* delay_handle(const Field_info*) { return &m_delay; }
   //@}
 
   /*! Set the attributes of this node. */

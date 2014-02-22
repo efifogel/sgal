@@ -97,17 +97,20 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* is_animation_loading_done_handle(Field_info*)
+  Boolean* is_animation_loading_done_handle(const Field_info*)
   { return &m_is_animation_loading_done; }
-  Boolean* is_level_0_loading_done_handle(Field_info*)
+  Boolean* is_level_0_loading_done_handle(const Field_info*)
   { return &m_is_level_0_loading_done; }
-  Boolean* is_loading_done_handle(Field_info*) { return &m_is_loading_done; }
-  Boolean* is_snapshot_done_handle(Field_info*) { return &m_is_snapshot_done; }
-  Boolean* collaborated_handle(Field_info*) { return &m_collaborated; }
-  Uint* num_polygons_handle(Field_info*) { return &m_num_polygons; }
-  Uint* accum_num_polygons_handle(Field_info*) { return &m_accum_num_polygons; }
-  Float* rate_handle(Field_info*) { return &m_rate; }
-  Uint* geom_memory_handle(Field_info*) { return &m_geom_memory; }
+  Boolean* is_loading_done_handle(const Field_info*)
+  { return &m_is_loading_done; }
+  Boolean* is_snapshot_done_handle(const Field_info*)
+  { return &m_is_snapshot_done; }
+  Boolean* collaborated_handle(const Field_info*) { return &m_collaborated; }
+  Uint* num_polygons_handle(const Field_info*) { return &m_num_polygons; }
+  Uint* accum_num_polygons_handle(const Field_info*)
+  { return &m_accum_num_polygons; }
+  Float* rate_handle(const Field_info*) { return &m_rate; }
+  Uint* geom_memory_handle(const Field_info*) { return &m_geom_memory; }
   //@}
 
   /*! Set the attributes of this node. */

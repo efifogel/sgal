@@ -44,6 +44,12 @@ class Draw_action;
 class Isect_action;
 class Container_proto;
 class Element;
+class Formatter;
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
 
 class SGAL_SCGAL_DECL Boolean_operation : public Node {
 public:
@@ -88,17 +94,23 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
-  Operation* operation_handle(Field_info*) { return &m_operation; }
-  Shared_mesh_set* operand1_handle(Field_info*) { return &m_operand1; }
-  Shared_mesh_set* operand2_handle(Field_info*) { return &m_operand2; }
-  Shared_exact_polyhedron_geo* result_handle(Field_info*) { return &m_result; }
+  Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  Operation* operation_handle(const Field_info*) { return &m_operation; }
+  Shared_mesh_set* operand1_handle(const Field_info*) { return &m_operand1; }
+  Shared_mesh_set* operand2_handle(const Field_info*) { return &m_operand2; }
+  Shared_exact_polyhedron_geo* result_handle(const Field_info*)
+  { return &m_result; }
   //@}
 
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
+
+  /*! Write this container.
+   * \param formatter (in) the formatter to use; e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! . */
   void trigger_changed(Field_info* field_info);
@@ -162,39 +174,43 @@ private:
   static const char* s_operation_names[];
 };
 
-/* \brief constructs the prototype */
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
+//! \brief constructs the prototype.
 inline Boolean_operation* Boolean_operation::prototype()
 { return new Boolean_operation(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Boolean_operation::clone() { return new Boolean_operation(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Boolean_operation::get_tag() const { return s_tag; }
 
-/*! \brief obtains the operation. */
+//! \brief obtains the operation.
 inline Boolean_operation::Operation Boolean_operation::get_operation() const
 { return m_operation; }
 
-/*! \brief sets the operation. */
+//! \brief sets the operation.
 inline void Boolean_operation::set_operation(Operation operation)
 { m_operation = operation; }
 
-/*! \brief obtains the 1st operand. */
+//! \brief obtains the 1st operand.
 inline Boolean_operation::Shared_mesh_set Boolean_operation::get_operand1()
   const
 { return m_operand1; }
 
-/*! \brief sets the 1st operand. */
+//! \brief sets the 1st operand.
 inline void Boolean_operation::set_operand1(Shared_mesh_set operand)
 { m_operand1 = operand; }
 
-/*! \brief obtains the 2nd operand. */
+//! \brief obtains the 2nd operand.
 inline Boolean_operation::Shared_mesh_set Boolean_operation::set_operand2()
   const
 { return m_operand2; }
 
-/*! \brief sets the 2nd operand. */
+//! \brief sets the 2nd operand.
 inline void Boolean_operation::set_operand2(Shared_mesh_set operand)
 { m_operand2 = operand; }
 

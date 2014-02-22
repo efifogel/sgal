@@ -103,9 +103,10 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* is_visible_handle(Field_info*) { return &m_is_visible; }
-  Shared_geometry* geometry_handle(Field_info*) { return &m_geometry; }
-  Shared_appearance* appearance_handle(Field_info*) { return &m_appearance; }
+  Boolean* is_visible_handle(const Field_info*) { return &m_is_visible; }
+  Shared_geometry* geometry_handle(const Field_info*) { return &m_geometry; }
+  Shared_appearance* appearance_handle(const Field_info*)
+  { return &m_appearance; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -128,9 +129,6 @@ public:
    * encoded as color in the frame buffer.
    */
   virtual void isect(Isect_action* isect_action);
-
-  /*! Write this container. */
-  virtual void write(Formatter* formatter);
 
   /*! Add the container to the given scene. */
   void add_to_scene(Scene_graph* sg);
@@ -330,9 +328,6 @@ private:
    */
   Boolean m_dirty_appearance;
 
-  /*! Indicates whether the shape geometry is dirty, and thus needs cleaning. */
-  Boolean m_dirty_geometry;
-
   /*! Indicates whether to apply texture mapping. */
   Boolean m_texture_map;
 
@@ -396,6 +391,7 @@ private:
   /*! Cleane the appearance. */
   void clean_appearance();
 
+  static const Boolean s_def_is_visible;
   static const Vector2f s_def_depth_range;
   static const Vector4ub s_def_color_mask;
   static const Gfx::Depth_func s_def_depth_function;

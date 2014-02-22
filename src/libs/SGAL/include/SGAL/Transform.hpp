@@ -14,22 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TRANSFORM_HPP
 #define SGAL_TRANSFORM_HPP
-
-/*! \file
- * A class representing transformation in the scene graph.
- *
- * This is a transformation node in the scene graph. It inherits
- * from Group and therefore can have multiple child objects. It
- * contains a tranlation vector, a rotation and a scale vector. It
- * also contains a matrix representation of the transformation.
- */
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Group.hpp"
@@ -48,6 +36,19 @@ class Formatter;
 #pragma warning( disable: 4251 )
 #endif
 
+/*! \class Transform Transform.h
+ * Transform is a node in the scene graph that represents a transformation
+ * applied to geomteric objects. It inherits from Group and as such can have
+ * multiple child nodes. It applies the transformation it represents to all
+ * of its children. An object is first translated, then rotated around a
+ * center, then scaled in the direction of a scaling orientation.
+ *
+ * When a an action (such as a drawing action) is applied to a transform node
+ *   (i) the action matrix stack is pushed down, next
+ *  (ii) the transform is applied to the top of the stack, next
+ * (iii) the action is applied to all child nodes, finally
+ *  (iv) action matrix stack is poped.
+ */
 class SGAL_SGAL_DECL Transform : public Group {
 public:
   enum {
@@ -61,17 +62,26 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor.
+   * \param proto determines whether to construct a prototype.
+   */
   Transform(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Transform();
 
-  /* Construct the prototype. */
+  /* Construct the prototype.
+   * \return the prototype.
+   */
   static Transform* prototype();
 
-  /*! Clone. */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
+
+  /// \name Protoype handling
+  //@{
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -79,19 +89,25 @@ public:
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
+
+  //@}
 
   /// \name field handlers
   //@{
-  Vector3f* center_handle(Field_info*) { return &m_center; }
-  Vector3f* translation_handle(Field_info*) { return &m_translation; }
-  Rotation* rotation_handle(Field_info*) { return &m_rotation; }
-  Vector3f* scale_handle(Field_info*) { return &m_scale; }
-  Boolean* reset_handle(Field_info*) { return &m_reset; }
+  Vector3f* center_handle(const Field_info*) { return &m_center; }
+  Vector3f* translation_handle(const Field_info*) { return &m_translation; }
+  Rotation* rotation_handle(const Field_info*) { return &m_rotation; }
+  Vector3f* scale_handle(const Field_info*) { return &m_scale; }
+  Boolean* reset_handle(const Field_info*) { return &m_reset; }
   //@}
 
-  /*! Set the attributes of this node. */
+  /*! Set the attributes of the transform.
+   * \param elem contains lists of attribute name and value pairs.
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -102,9 +118,6 @@ public:
 
   /*! Clean the bounding sphere of the transformation node. */
   virtual Boolean clean_sphere_bound();
-
-  /*! \bried writes this container. */
-  virtual void write(Formatter* formatter);
 
   void set_translation(const Vector3f& translation);
   void get_translation(Vector3f& translation);
@@ -117,12 +130,14 @@ public:
   void set_center(const Vector3f& center);
   void get_center(Vector3f& center);
 
-  /*! Set the affine transform 4x4 matrix.
-   * \param matrix the matrix.
+  /*! Set the affine transformation 4x4 matrix.
+   * \param matrix (in) the matrix.
    */
   void set_matrix(const Matrix4f& matrix);
 
-  /*! Obtain (a copy of) the matrix. */
+  /*! Obtain (a copy of) the matrix.
+   * \return the matrix.
+   */
   void get_matrix(Matrix4f& matrix);
 
   /*! Obtain (a const reference to) the matrix. */
@@ -205,13 +220,13 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Transform* Transform::prototype() { return new Transform(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Transform::clone() { return new Transform(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Transform::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

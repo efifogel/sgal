@@ -41,7 +41,6 @@
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Tex_gen.hpp"
-#include "SGAL/Formatter.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Sphere_environment.hpp"
 #include "SGAL/Cube_environment.hpp"
@@ -49,7 +48,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Appearance::s_tag = "sgalAppearance";
+std::string Appearance::s_tag = "Appearance";
 Container_proto* Appearance::s_prototype(NULL);
 
 // Default values:
@@ -688,16 +687,6 @@ void Appearance::set_attributes(Element* elem)
 
   // Remove all the deleted attributes:
   elem->delete_marked();
-}
-
-/*! \brief writes this container. */
-void Appearance::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-  formatter->single_container_begin("material");
-  formatter->write(&*m_material);
-  formatter->single_container_end();
-  formatter->container_end();
 }
 
 #if 0

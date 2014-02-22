@@ -54,7 +54,7 @@ Gfx_conf* Gfx_conf::m_instance = 0;
 //! \todo Gfx_conf::Gfx_Conf_destroyer Gfx_conf::m_Gfx_conf_destroyer;
 
 // !!!! NOTE !!!!
-// If you add any new entries the one of the follwoing arrays, make sure you update the 
+// If you add any new entries the one of the follwoing arrays, make sure you update the
 // enums in the Gfx_conf class. The enums and the arrays must be syncronized.
 // !!!! NOTE !!!!
 
@@ -77,7 +77,7 @@ const char* Gfx_conf::s_renderers[] = {
   "RAGE 128 A21 AGP 2x x86/SSE",
   "RADEON 9700 PRO x86/SSE2",
   "RADEON IGP 340M DDR x86/SSE2",
-  "MOBILITY RADEON X300 x86/SSE2", 
+  "MOBILITY RADEON X300 x86/SSE2",
   "3Dfx/Voodoo3 (tm)/2 TMUs/16 MB",
   "Matrox G400",
   "Matrox G200",
@@ -93,7 +93,7 @@ const char* Gfx_conf::s_versions[] = {
   "1.1.0"
 };
 
-Gfx_conf* Gfx_conf::get_instance() 
+Gfx_conf* Gfx_conf::get_instance()
 {
   if (!m_instance) {
     m_instance = new Gfx_conf();
@@ -103,8 +103,8 @@ Gfx_conf* Gfx_conf::get_instance()
 }
 
 Gfx_conf::Gfx_conf() :
-  m_vendor(veUnknown), 
-  m_renderer(reUnknown), 
+  m_vendor(veUnknown),
+  m_renderer(reUnknown),
   m_bump_map_supported(true),
   m_vertex_buffer_object_supported(true),
   m_packed_depth_stencil_supported(true),
@@ -118,14 +118,14 @@ Gfx_conf::~Gfx_conf() {}
 void Gfx_conf::init()
 {
   int i;
-    
+
   const Uchar* vendor = glGetString(GL_VENDOR);
   for (i = 0; i < veNum; ++i) {
     if (strncmp(s_vendors[i], reinterpret_cast<const char *>(vendor),
                 strlen(s_vendors[i])) == 0)
       break;
   }
-  if (i != veNum) m_vendor = static_cast<Vendor>(i);  
+  if (i != veNum) m_vendor = static_cast<Vendor>(i);
   SGAL_TRACE_CODE(Trace::GRAPHICS,
                   std::cout << "Vendor: " << vendor << " (" << m_vendor << ")"
                   << std::endl;);
@@ -135,7 +135,7 @@ void Gfx_conf::init()
                 strlen(s_renderers[i])) == 0)
       break;
   }
-  if (i != reNum) m_renderer = static_cast<Renderer>(i);  
+  if (i != reNum) m_renderer = static_cast<Renderer>(i);
   SGAL_TRACE_CODE(Trace::GRAPHICS,
                   std::cout << "Renderer: " << renderer << " ("
                   << m_renderer << ")"
@@ -178,7 +178,7 @@ void Gfx_conf::init()
 
   m_seamless_cube_map_supported =
     is_extension_supported(extensions, "GL_ARB_seamless_cube_map");
-  
+
 #if defined(_WIN32)
   glBindBufferARB =
     (PFNGLBINDBUFFERARBPROC)wglGetProcAddress("glBindBufferARB");
@@ -202,7 +202,7 @@ void Gfx_conf::init()
     (PFNGLGETBUFFERPARAMETERIVARBPROC)wglGetProcAddress("glGetBufferParameterivARB");
   glGetBufferPointervARB =
     (PFNGLGETBUFFERPOINTERVARBPROC)wglGetProcAddress("glGetBufferPointervARB");
-    
+
   // Try To Use wglGetExtensionStringARB On Current DC, If Possible
   PROC wglGetExtString = wglGetProcAddress("wglGetExtensionsStringARB");
   const Uchar* wgl_extensions =
@@ -224,15 +224,15 @@ void Gfx_conf::init()
   std::cout << "m_multisample_supported: "
             << m_multisample_supported << std::endl;
 
-  if (!glBindBufferARB || !glDeleteBuffersARB || !glGenBuffersARB || 
-      !glIsBufferARB || !glBufferDataARB || !glBufferSubDataARB || 
-      !glGetBufferSubDataARB || !glMapBufferARB || !glUnmapBufferARB || 
+  if (!glBindBufferARB || !glDeleteBuffersARB || !glGenBuffersARB ||
+      !glIsBufferARB || !glBufferDataARB || !glBufferSubDataARB ||
+      !glGetBufferSubDataARB || !glMapBufferARB || !glUnmapBufferARB ||
       !glGetBufferParameterivARB || !glGetBufferPointervARB)
     m_vertex_buffer_object_supported = false;
 
-  std::cout << "m_vertex_buffer_object_supported: "
-            << m_vertex_buffer_object_supported << std::endl;
 #endif
+  // std::cout << "m_vertex_buffer_object_supported: "
+  //           << m_vertex_buffer_object_supported << std::endl;
 }
 
 /*! Is the the extension given by a name supported? */

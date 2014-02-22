@@ -45,7 +45,6 @@ class Tex_gen;
 class Draw_action;
 class Container_proto;
 class Element;
-class Formatter;
 class Halftone;
 
 #if (defined _MSC_VER)
@@ -90,12 +89,12 @@ public:
 
   /// \name field handlers
   //@{
-  Shared_material* material_handle(Field_info*) { return &m_material; }
-  Shared_texture* texture_handle(Field_info*) { return &m_texture; }
-  Shared_tex_gen* tex_gen_handle(Field_info*) { return &m_tex_gen; }
-  Shared_halftone* halftone_handle(Field_info*) { return &m_halftone; }
-  Shared_material* back_material_handle(Field_info*)
-    { return &m_back_material; }
+  Shared_material* material_handle(const Field_info*) { return &m_material; }
+  Shared_texture* texture_handle(const Field_info*) { return &m_texture; }
+  Shared_tex_gen* tex_gen_handle(const Field_info*) { return &m_tex_gen; }
+  Shared_halftone* halftone_handle(const Field_info*) { return &m_halftone; }
+  Shared_material* back_material_handle(const Field_info*)
+  { return &m_back_material; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -108,9 +107,6 @@ public:
 
   /*! Detache a given context. */
   virtual Boolean detach_context(Context* context = 0);
-
-  /*! Write this container. */
-  virtual void write(Formatter* formatter);
 
   /*! Set the appearance with the content of another appearance. */
   void set(Appearance* app);

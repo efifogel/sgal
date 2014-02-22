@@ -58,6 +58,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Navigation_info_types.hpp"
 #include "SGAL/Bindable_stack.hpp"
+#include "SGAL/File_format.hpp"
 
 //! \todo #include "Event_filter.h"
 //! \todo #include "Model_stats.h"
@@ -395,6 +396,16 @@ public:
     return oi;
   }
 
+  /*! Obtain the input file format.
+   * \return The input file format.
+   */
+  File_format::Id get_input_format_id() const;
+
+  /*! Set the input file format.
+   * \param format The input file format.
+   */
+  void set_input_format_id(File_format::Id format_id);
+
 private:
   /*! Binadable stacks */
 
@@ -538,8 +549,8 @@ private:
   /*! Indicates whether the camera node is owned. */
   Boolean m_owned_camera;
 
-  /*! Copy constructor. */
-  Scene_graph(const Scene_graph &) {}
+  //! The id of the input format.
+  File_format::Id m_input_format_id;
 
   void set_head_light(Configuration* config);
 
@@ -556,30 +567,42 @@ private:
 
   /*! Obtain the active navigation-info node. */
   Navigation_info* get_active_navigation_info();
+
+  /*! Copy constructor. */
+  Scene_graph(const Scene_graph &) {}
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the scene configuration container. */
+//! \brief obtains the scene configuration container.
 inline Configuration* Scene_graph::get_configuration() const
 { return m_configuration; }
 
-/*! Obtain the navigation info bindable stack. */
+//! \brief obtains the navigation info bindable stack.
 inline Bindable_stack* Scene_graph::get_navigation_info_stack()
 { return &m_navigation_info_stack; }
 
-/*! Obtain the background bindable stack. */
+//! \brief obtains the background bindable stack.
 inline Bindable_stack* Scene_graph::get_background_stack()
 { return &m_background_stack; }
 
-/*! Obtain the camera bindable stack. */
+//! \brief obtains the camera bindable stack.
 inline Bindable_stack* Scene_graph::get_camera_stack()
 { return &m_camera_stack; }
 
-/*! \brief obtains the root of the scene graph. */
-inline Scene_graph::Shared_group Scene_graph::get_root() const { return m_root; }
+//! \brief obtains the root of the scene graph.
+inline Scene_graph::Shared_group Scene_graph::get_root() const
+{ return m_root; }
+
+//! \brief obtains the input file format.
+inline File_format::Id Scene_graph::get_input_format_id() const
+{ return m_input_format_id; }
+
+//! \brief sets the input file format.
+inline void Scene_graph::set_input_format_id(File_format::Id format_id)
+{ m_input_format_id = format_id; }
 
 SGAL_END_NAMESPACE
 

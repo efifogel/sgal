@@ -47,7 +47,6 @@
 #include "SGAL/Context.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Formatter.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Scene_graph.hpp"
 
@@ -57,6 +56,7 @@ const std::string Shape::s_tag = "Shape";
 Container_proto* Shape::s_prototype(NULL);
 
 // Default values:
+const Boolean Shape::s_def_is_visible(true);
 const Vector2f Shape::s_def_depth_range(0, 1);
 const Vector4ub Shape::s_def_color_mask(0xff, 0xff, 0xff, 0xff);
 const Gfx::Depth_func Shape::s_def_depth_function(Gfx::LESS_DFUNC);
@@ -70,7 +70,7 @@ const Char* Shape::s_cull_face_names[] = { "no", "front", "back", "both" };
 
 REGISTER_TO_FACTORY(Shape, "Shape");
 
-/* Constructor */
+//! brief constructor.
 Shape::Shape(Boolean proto) :
   Node(proto),
   m_draw_depth(true),
@@ -79,12 +79,11 @@ Shape::Shape(Boolean proto) :
   m_depth_function(s_def_depth_function),
   m_color_mask(s_def_color_mask),
   m_cull_face(s_def_cull_face),
-  m_is_visible(true),
+  m_is_visible(s_def_is_visible),
   m_priority(0),
   m_draw_backface(false),
   m_dirty(true),
   m_dirty_appearance(true),
-  m_dirty_geometry(true),
   m_texture_map(Configuration::s_def_texture_map),
   m_override_material(Configuration::s_def_override_material),
   m_override_tex_enable(Configuration::s_def_override_tex_enable),
@@ -95,10 +94,16 @@ Shape::Shape(Boolean proto) :
   m_override_light_enable(Configuration::s_def_override_light_enable)
 {}
 
-/*! Destructor */
-Shape::~Shape() {}
+//! \brief destructor.
+Shape::~Shape()
+{
+  if (m_geometry) {
+    Observer observer(this, get_field_info(GEOMETRY));
+    m_geometry->unregister_observer(observer);
+  }
+}
 
-/*! \brief sets the appearance of the object. */
+//! \brief sets the appearance of the object.
 void Shape::set_appearance(Shared_appearance app)
 {
   m_appearance = app;
@@ -106,12 +111,15 @@ void Shape::set_appearance(Shared_appearance app)
   m_dirty_appearance = true;
 }
 
-/*! \brief adds a geometry to the shape at the end of the list. */
+//! \brief adds a geometry to the shape at the end of the list.
 void Shape::set_geometry(Shared_geometry geometry)
 {
+  Observer observer(this, get_field_info(GEOMETRY));
+  if (m_geometry) m_geometry->unregister_observer(observer);
   m_geometry = geometry;
+  if (m_geometry) m_geometry->register_observer(observer);
   m_dirty = true;
-  m_dirty_geometry = true;
+  m_dirty_sphere_bound = true;
 
 #if 0
   //! \todo
@@ -125,7 +133,7 @@ void Shape::set_geometry(Shared_geometry geometry)
 #endif
 }
 
-/*! \brief calculates the bounding sphere of all geometries in the shape. */
+//! \brief calculates the bounding sphere of all geometries in the shape.
 Boolean Shape::clean_sphere_bound()
 {
   if (!is_visible()) {
@@ -140,7 +148,7 @@ Boolean Shape::clean_sphere_bound()
   return changed;
 }
 
-/*! \brief draws the appearance and then all the geometries. */
+//! \brief draws the appearance and then all the geometries.
 Action::Trav_directive Shape::draw(Draw_action* draw_action)
 {
   if (!m_geometry || !is_visible()) return Action::TRAV_CONT;
@@ -158,10 +166,10 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! \brief culls the node if invisible and prepare for rendering. */
+//! \brief culls the node if invisible and prepare for rendering.
 void Shape::cull(Cull_context& cull_context) { cull_context.add_shape(this); }
 
-/*! \brief draws the geometry. */
+//! \brief draws the geometry.
 void Shape::draw_geometry(Draw_action* action)
 {
   if (m_geometry) {
@@ -191,7 +199,7 @@ void Shape::draw_geometry(Draw_action* action)
     if (!m_draw_depth) context->draw_depth_mask(true);  }
 }
 
-/*! \brief draws the shape for selection. */
+//! \brief draws the shape for selection.
 void Shape::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
@@ -204,14 +212,9 @@ void Shape::isect(Isect_action* isect_action)
   m_geometry->isect(isect_action);
 }
 
-/*! \brief cleans the apperances. */
+//! \brief cleans the apperances.
 void Shape::clean()
 {
-  if (!m_dirty_appearance && !m_dirty_geometry) {
-    m_dirty = false;
-    return;
-  }
-
   // Create an appearance if missing:
   if (m_dirty_appearance) clean_appearance();
   // Create a material if missing:
@@ -240,15 +243,6 @@ void Shape::clean()
 
   if (m_dirty_appearance) m_dirty_appearance = false;
 
-  if (m_dirty_geometry) {
-    // \todo unregister observer!
-    // if (m_geometry_prev) m_geometry_prev->unregister_observer(observer);
-    // m_geometry_prev = m_geometry;
-    Observer observer(this, get_field_info(SPHERE_BOUND));
-    if (m_geometry) m_geometry->register_observer(observer);
-    m_dirty_geometry = false;
-  }
-
 #if 0
   //! \todo
   Shared_text text = boost::dynamic_pointer_cast<Text>(m_geometry);
@@ -261,7 +255,7 @@ void Shape::clean()
   m_dirty = false;
 }
 
-/*! \brief cleans the apperance. */
+//! \brief cleans the apperance.
 void Shape::clean_appearance()
 {
   if (!m_appearance) {
@@ -270,11 +264,12 @@ void Shape::clean_appearance()
   }
 }
 
-/*! \brief sets the attributes of the shape. */
+//! \brief sets the attributes of the shape.
 void Shape::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
   Node::set_attributes(elem);
+
+  typedef Element::Str_attr_iter          Str_attr_iter;
   Str_attr_iter ai;
   for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
@@ -362,7 +357,7 @@ void Shape::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief obtains a list of attributes (called in the save process). */
+//! \brief obtains a list of attributes (called in the save process).
 Attribute_list Shape::get_attributes()
 {
   Attribute_list attrs;
@@ -379,23 +374,7 @@ Attribute_list Shape::get_attributes()
 }
 #endif
 
-/*! \brief writes this container. */
-void Shape::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-
-  formatter->single_container_begin("appearance");
-  formatter->write(&*m_appearance);
-  formatter->single_container_end();
-
-  formatter->single_container_begin("geometry");
-  formatter->write(&*m_geometry);
-  formatter->single_container_end();
-
-  formatter->container_end();
-}
-
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Shape::init_prototype()
 {
   if (s_prototype) return;
@@ -407,7 +386,8 @@ void Shape::init_prototype()
   Boolean_handle_function is_visible_func =
     static_cast<Boolean_handle_function>(&Shape::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(ISVISIBLE, "visible",
-                                          is_visible_func, exec_func));
+                                          is_visible_func, s_def_is_visible,
+                                          exec_func));
 
   // geometry
   exec_func = static_cast<Execution_function>(&Shape::geometry_changed);
@@ -427,28 +407,28 @@ void Shape::init_prototype()
                                                       exec_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Shape::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Shape::get_prototype()
 {
   if (s_prototype == NULL) Shape::init_prototype();
   return s_prototype;
 }
 
-/*! \brief adds the container to the given scene. */
+//! \brief adds the container to the given scene.
 void Shape::add_to_scene(Scene_graph* sg)
 {
   Configuration* config = sg->get_configuration();
   if (config) m_texture_map = config->is_texture_map();
 }
 
-/*! \brief */
+//! \brief
 Boolean Shape::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
@@ -457,7 +437,7 @@ Boolean Shape::attach_context(Context* context)
   return result;
 }
 
-/*! \brief */
+//! \brief
 Boolean Shape::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
@@ -466,18 +446,25 @@ Boolean Shape::detach_context(Context* context)
   return result;
 }
 
-/*! \brief processes change of appearance. */
+//! \brief processes change of appearance.
 void Shape::appearance_changed(Field_info* /* field_info. */)
 {
   m_dirty = true;
   m_dirty_appearance = true;
 }
 
-/*! \brief processes change of geometry. */
-void Shape::geometry_changed(Field_info* /* field_info. */)
+//! \brief processes change of geometry.
+void Shape::geometry_changed(Field_info* field_info)
 {
-  m_dirty = true;
-  m_dirty_geometry = true;
+  // Observe that the observer, being a pair of this container object and the
+  // field_info argument, is automatically unregistered as an observer
+  // of the previous value of the m_geometry.
+  if (m_geometry) {
+    Observer observer(this, field_info);
+    if (m_geometry) m_geometry->register_observer(observer);
+  }
+  m_dirty_sphere_bound = true;
+  Container::field_changed(field_info);
 }
 
 /*! \brief turns on the flag that indicates whether the shape should be

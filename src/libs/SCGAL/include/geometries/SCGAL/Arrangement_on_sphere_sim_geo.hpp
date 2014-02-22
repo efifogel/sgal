@@ -45,6 +45,11 @@ SGAL_BEGIN_NAMESPACE
 class Field_info;
 class Tick_event;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents an arrangement induced by arcs of
  * great circles embeded on a sphere
  */
@@ -145,14 +150,14 @@ public:
 
   /// \name field handlers
   //@{
-  Float* time_handle(Field_info*) { return &m_time; }
-  Boolean* resume_handle(Field_info*) { return &m_resume; }
-  Boolean* suspend_handle(Field_info*) { return &m_suspend; }
-  Boolean* increase_vertex_label_handle(Field_info*)
+  Float* time_handle(const Field_info*) { return &m_time; }
+  Boolean* resume_handle(const Field_info*) { return &m_resume; }
+  Boolean* suspend_handle(const Field_info*) { return &m_suspend; }
+  Boolean* increase_vertex_label_handle(const Field_info*)
   { return &m_increase_vertex_label; }
-  Boolean* increase_edge_label_handle(Field_info*)
+  Boolean* increase_edge_label_handle(const Field_info*)
   { return &m_increase_edge_label; }
-  Boolean* increase_face_label_handle(Field_info*)
+  Boolean* increase_face_label_handle(const Field_info*)
   { return &m_increase_face_label; }
   //@}
 
@@ -223,6 +228,15 @@ protected:
 
     /*! Render the edges */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Sphere_sim_colored_vertices_renderer&
+    operator=(const Sphere_sim_colored_vertices_renderer&);
+
+    // In C++11, the following is supported:
+    // Sphere_sim_colored_vertices_renderer&
+    //   operator=(const Sphere_sim_colored_vertices_renderer&) = delete;
   };
 
   /*! A function object that renders the edges with color */
@@ -241,6 +255,15 @@ protected:
 
     /*! Render the edges */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Sphere_sim_colored_edges_renderer&
+    operator=(const Sphere_sim_colored_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Sphere_sim_colored_edges_renderer&
+    //   operator=(const Sphere_sim_colored_edges_renderer&) = delete;
   };
 
   typedef SGAL::Line_colored_edges_renderer
@@ -424,6 +447,10 @@ private:
   /*! Detsroy the renderers */
   void destroy_renderers();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 SGAL_END_NAMESPACE
 

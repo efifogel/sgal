@@ -25,9 +25,10 @@
 /*! \file
  */
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -35,7 +36,8 @@ SGAL_BEGIN_NAMESPACE
 class Formatter;
 
 #if defined(_MSC_VER)
-template class SGAL_SGAL_DECL Array<Uint>;
+template class SGAL_SGAL_DECL std::allocator<Uint>;
+template class SGAL_SGAL_DECL std::vector<Uint>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -71,7 +73,7 @@ public:
 
   /// \name field handlers
   //@{
-  Uint* unit_size_handle(Field_info*) { return &m_unit_size; }
+  Uint* unit_size_handle(const Field_info*) { return &m_unit_size; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -79,14 +81,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Write this container. */
-  virtual void write(Formatter* formatter);
-
   /*! Clean the representation. */
   virtual void clean();
-
-  /*! Clean the coordinate index array. */
-  virtual void clean_coord_indices();
 
   /*! Set the width. */
   void set_width(Uint width);
@@ -107,10 +103,10 @@ public:
   Uint get_depth() const;
 
   /*! Obtain the composition. */
-  const Array<Uint>& get_composition() const;
+  const std::vector<Uint>& get_composition() const;
 
   /*! Obtain the composition. */
-  Array<Uint>& get_composition();
+  std::vector<Uint>& get_composition();
 
   /*! Process change of structure. */
   void structure_changed(Field_info* field_info);
@@ -132,9 +128,12 @@ protected:
   Uint m_depth;
 
   /*! The piece composition array. */
-  Array<Uint> m_composition;
+  std::vector<Uint> m_composition;
 
 private:
+  /*! Generate the coordinate index array. */
+  void generate_coord_indices();
+
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -152,38 +151,38 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Piece* Piece::prototype() { return new Piece(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Piece::clone() { return new Piece(); }
 
-/*! \brief sets the width. */
+//! \brief sets the width.
 inline void Piece::set_width(Uint width) { m_width = width; }
 
-/*! \brief obtains the width. */
+//! \brief obtains the width.
 inline Uint Piece::get_width() const { return m_width; }
 
-/*! \brief sets the height. */
+//! \brief sets the height.
 inline void Piece::set_height(Uint height) { m_height = height; }
 
-/*! \brief obtains the height. */
+//! \brief obtains the height.
 inline Uint Piece::get_height() const { return m_height; }
 
-/*! \brief sets the depth. */
+//! \brief sets the depth.
 inline void Piece::set_depth(Uint depth) { m_depth = depth; }
 
-/*! \brief obtains the depth. */
+//! \brief obtains the depth.
 inline Uint Piece::get_depth() const { return m_depth; }
 
-/*! \brief obtains the composition. */
-inline const Array<Uint>& Piece::get_composition() const
+//! \brief obtains the composition.
+inline const std::vector<Uint>& Piece::get_composition() const
 { return m_composition; }
 
-/*! \brief obtains the composition. */
-inline Array<Uint>& Piece::get_composition() { return m_composition; }
+//! \brief obtains the composition.
+inline std::vector<Uint>& Piece::get_composition() { return m_composition; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Piece::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

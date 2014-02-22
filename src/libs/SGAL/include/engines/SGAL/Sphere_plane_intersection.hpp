@@ -76,13 +76,14 @@ public:
 
   /// \name field handlers
   //@{
-  Float* sphere_radius_handle(Field_info*) { return &m_sphere_radius; }
-  Vector4f* plane_handle(Field_info*) { return &m_plane; }
-  Boolean* trigger_handle(Field_info*) { return &m_trigger; }
-  Vector3f* circle_translation_handle(Field_info*)
-    { return &m_circle_translation; }
-  Rotation* circle_rotation_handle(Field_info*) { return &m_circle_rotation; }
-  Float* circle_radius_handle(Field_info*) { return &m_circle_radius; }
+  Float* sphere_radius_handle(const Field_info*) { return &m_sphere_radius; }
+  Vector4f* plane_handle(const Field_info*) { return &m_plane; }
+  Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  Vector3f* circle_translation_handle(const Field_info*)
+  { return &m_circle_translation; }
+  Rotation* circle_rotation_handle(const Field_info*)
+  { return &m_circle_rotation; }
+  Float* circle_radius_handle(const Field_info*) { return &m_circle_radius; }
   //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.

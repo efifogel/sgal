@@ -45,6 +45,7 @@ class Draw_action;
 class Element;
 class Container_proto;
 class Isect_action;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -66,75 +67,104 @@ public:
   virtual ~Switch();
 
   /*! Construct the prototype */
-  static Switch* prototype() { return new Switch(true); }
+  static Switch* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Switch(); }
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype();
 
+  /*! Delete the node prototype.
+   */
   virtual void delete_prototype();
 
+  /*! Obtain the node prototype.
+   */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
   //@{
-  Uint* which_choice_handle(Field_info*) { return &m_which_choice; }
+  Uint* which_choice_handle(const Field_info*) { return &m_which_choice; }
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node.
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Draw the node while traversing the scene graph */
+  /*! Draw the node while traversing the scene graph.
+   */
   virtual Action::Trav_directive draw(Draw_action* action);
 
   virtual void cull(Cull_context& cull_context);
 
   virtual void isect(Isect_action* isect_action);
 
-  /*! Calculate the sphere bound of the group */
+  /*! Calculate the sphere bound of the group.
+   */
   virtual bool clean_sphere_bound();
 
-  /*! Set the index of the child to traverse */
+  /*! Write this container.
+   * \param formatter (in) the formatter to use; e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
+
+  /*! Set the index of the child to traverse.
+   */
   void set_which_choice(Uint which_choice);
 
-  /*! Obtain the index of the child to traverse */
+  /*! Obtain the index of the child to traverse.
+   */
   Uint get_which_choice() const;
 
-  /*! Return the node to traverse */
+  /*! Return the node to traverse.
+   */
   virtual Shared_node get_choice();
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container.
+   */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that represents the container */
+  /*! The tag that represents the container. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! Specifies the index of the child to traverse */
+  /*! Specifies the index of the child to traverse. */
   Uint m_which_choice;
+
+  // Default values
+  static const Uint s_def_which_choice;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! Set the index of the child to traverse */
+//! \brief construct the prototype.
+inline Switch* Switch::prototype() { return new Switch(true); }
+
+//! \brief clones.
+inline Switch::Container* Switch::clone() { return new Switch(); }
+
+//! \brief sets the index of the child to traverse.
 inline void Switch::set_which_choice(Uint index)
 {
   m_which_choice = index;
   m_dirty_sphere_bound = true;
 }
 
-/*! Obtain the index of the child to traverse */
+//! \brief  obtains the index of the child to traverse.
 inline Uint Switch::get_which_choice() const { return m_which_choice; }
+
+//! \brief  obtains the tag (type) of the container.
+inline const std::string& Switch::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

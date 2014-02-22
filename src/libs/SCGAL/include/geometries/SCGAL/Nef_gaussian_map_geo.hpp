@@ -189,7 +189,7 @@ public:
     Shared_nef_gaussian_map_geo;
 
   // List of pointers to Nef_gaussian_map_geo objects */
-  typedef Array<Shared_nef_gaussian_map_geo>            Ngm_node_array;
+  typedef std::vector<Shared_nef_gaussian_map_geo>      Ngm_node_array;
   typedef Ngm_node_array::iterator                      Ngm_node_iter;
 
 public:
@@ -234,18 +234,21 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* draw_dual_handle(Field_info*) { return &m_draw_dual; }
-  Boolean* draw_dual_sphere_handle(Field_info*) { return &m_draw_dual_sphere; }
-  Boolean* draw_primal_handle(Field_info*) { return &m_draw_primal; }
-  Boolean* draw_dual_opaque_handle(Field_info*) { return &m_draw_dual_opaque; }
-  Boolean* draw_dual_haloed_handle(Field_info*) { return &m_draw_dual_haloed; }
-  Boolean* increase_vertex_index_handle(Field_info*)
+  Boolean* draw_dual_handle(const Field_info*) { return &m_draw_dual; }
+  Boolean* draw_dual_sphere_handle(const Field_info*)
+  { return &m_draw_dual_sphere; }
+  Boolean* draw_primal_handle(const Field_info*) { return &m_draw_primal; }
+  Boolean* draw_dual_opaque_handle(const Field_info*)
+  { return &m_draw_dual_opaque; }
+  Boolean* draw_dual_haloed_handle(const Field_info*)
+  { return &m_draw_dual_haloed; }
+  Boolean* increase_vertex_index_handle(const Field_info*)
   { return &m_increase_vertex_index; }
-  Boolean* increase_edge_index_handle(Field_info*)
+  Boolean* increase_edge_index_handle(const Field_info*)
   { return &m_increase_edge_index; }
-  Boolean* increase_facet_index_handle(Field_info*)
+  Boolean* increase_facet_index_handle(const Field_info*)
   { return &m_increase_facet_index; }
-  Ngm_node_array* ngm_nodes_handle(Field_info*) { return &m_ngm_nodes; }
+  Ngm_node_array* ngm_nodes_handle(const Field_info*) { return &m_ngm_nodes; }
   //@}
 
   virtual void cull(Cull_context& cull_context);

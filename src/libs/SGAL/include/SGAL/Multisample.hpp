@@ -75,8 +75,9 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Uint* number_of_samples_handle(Field_info*) { return &m_number_of_samples; }
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Uint* number_of_samples_handle(const Field_info*)
+  { return &m_number_of_samples; }
   //@}
 
   /*! Set the attributes of the object extracted from the input file.

@@ -69,9 +69,7 @@ Conf_option_parser::Conf_option_parser() :
 Conf_option_parser::~Conf_option_parser() {}
 
 /*! \brief applies the options */
-void Conf_option_parser::apply(po::variables_map& /* variable_map */)
-{
-}
+void Conf_option_parser::apply(po::variables_map& /* variable_map */) {}
 
 /*! \brief sets the Configuration node */
 void Conf_option_parser::configure(po::variables_map& variable_map,

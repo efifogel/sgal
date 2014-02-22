@@ -73,14 +73,14 @@ public:
   };
 
 private:
-  typedef Spherical_gaussian_map                        Sgm;
+  typedef Spherical_gaussian_map                         Sgm;
 
 protected:
-  typedef Spherical_gaussian_map_geo                    Self;
+  typedef Spherical_gaussian_map_geo                     Self;
 
   // List of pointers to Spherical_gaussian_map_geo objects. */
-  typedef Array<Shared_spherical_gaussian_map_geo>      Sgm_node_array;
-  typedef Sgm_node_array::iterator                      Sgm_node_iter;
+  typedef std::vector<Shared_spherical_gaussian_map_geo> Sgm_node_array;
+  typedef Sgm_node_array::iterator                       Sgm_node_iter;
 
   /*! The minkowski sum operands. */
   Sgm_node_array m_sgm_nodes;
@@ -182,7 +182,7 @@ public:
 
   /// \name field handlers
   //@{
-  Sgm_node_array* sgm_nodes_handle(Field_info*) { return &m_sgm_nodes; }
+  Sgm_node_array* sgm_nodes_handle(const Field_info*) { return &m_sgm_nodes; }
   //@}
 
   /*! Set the attributes of this node.

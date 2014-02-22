@@ -113,18 +113,19 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Vector3f* hit_normal_handle(Field_info*) { return &m_hit_normal; }
-  Vector3f* hit_point_handle(Field_info*) { return &m_hit_point; }
-  Vector2f* hit_tex_coord_handle(Field_info*) { return &m_hit_tex_coord; }
-  Boolean* is_active_handle(Field_info*) { return &m_is_active; }
-  Boolean* ex_activate_handle(Field_info*) { return &m_ex_activate; }
-  Boolean* is_over_handle(Field_info*) { return &m_is_over; }
-  Scene_time* touch_time_handle(Field_info*) { return &m_touch_time; }
-  Uint* over_selection_id_handle(Field_info*) { return &m_over_selection_id; }
-  Uint* active_selection_id_handle(Field_info*)
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Vector3f* hit_normal_handle(const Field_info*) { return &m_hit_normal; }
+  Vector3f* hit_point_handle(const Field_info*) { return &m_hit_point; }
+  Vector2f* hit_tex_coord_handle(const Field_info*) { return &m_hit_tex_coord; }
+  Boolean* is_active_handle(const Field_info*) { return &m_is_active; }
+  Boolean* ex_activate_handle(const Field_info*) { return &m_ex_activate; }
+  Boolean* is_over_handle(const Field_info*) { return &m_is_over; }
+  Scene_time* touch_time_handle(const Field_info*) { return &m_touch_time; }
+  Uint* over_selection_id_handle(const Field_info*)
+  { return &m_over_selection_id; }
+  Uint* active_selection_id_handle(const Field_info*)
     { return &m_active_selection_id; }
-  // Shared_container* routed_node_handle(Field_info*)
+  // Shared_container* routed_node_handle(const Field_info*)
   //   { return &m_routed_node; }
   //@}
 

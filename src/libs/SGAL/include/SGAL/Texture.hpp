@@ -22,8 +22,6 @@
 #ifndef SGAL_TEXTURE_HPP
 #define SGAL_TEXTURE_HPP
 
-#include <string>
-
 #if (defined _MSC_VER)
 #pragma warning( disable : 4786 )
 #endif
@@ -108,10 +106,10 @@ public:
 
   /// \name field handlers
   //@{
-  Min_filter* min_filter_handle(Field_info*) { return &m_min_filter; }
-  Mag_filter* mag_filter_handle(Field_info*) { return &m_mag_filter; }
-  Boolean* repeat_s_handle(Field_info*) { return &m_repeat_s; }
-  Boolean* repeat_t_handle(Field_info*) { return &m_repeat_t; }
+  Min_filter* min_filter_handle(const Field_info*) { return &m_min_filter; }
+  Mag_filter* mag_filter_handle(const Field_info*) { return &m_mag_filter; }
+  Boolean* repeat_s_handle(const Field_info*) { return &m_repeat_s; }
+  Boolean* repeat_t_handle(const Field_info*) { return &m_repeat_t; }
   //@}
 
   /*! Set the attributes of the texture extracted from the VRML or X3D file.

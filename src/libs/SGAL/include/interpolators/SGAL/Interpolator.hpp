@@ -36,9 +36,10 @@
 #ifndef SGAL_INTERPOLATOR_HPP
 #define SGAL_INTERPOLATOR_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -47,7 +48,8 @@ class Container_proto;
 class Element;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL Array<Float>;
+template class SGAL_SGAL_DECL std::allocator<Float>;
+template class SGAL_SGAL_DECL std::vector<Float>;
 #endif
 
 class SGAL_SGAL_DECL Interpolator : public Node {
@@ -79,7 +81,7 @@ public:
 
   /// \name field handlers
   //@{
-  Float* fraction_handle(Field_info*) { return &m_fraction; }
+  Float* fraction_handle(const Field_info*) { return &m_fraction; }
   //@}
 
   // Functions that handles the creation of an instance in the scene graph
@@ -111,7 +113,7 @@ private:
   static Container_proto* s_prototype;
 };
 
-/*! \brief clones */
+//! \brief clones.
 inline Container* Interpolator::clone() { SGAL_error(); return 0; }
 
 SGAL_END_NAMESPACE

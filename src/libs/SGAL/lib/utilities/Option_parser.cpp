@@ -53,13 +53,11 @@ const Char* Option_parser::s_trace_opts[] = {
 
 /*! Obtain number of trace options */
 Uint Option_parser::number_trace_opts()
-{
-  return sizeof(s_trace_opts) / sizeof(char *);
-}
+{ return sizeof(s_trace_opts) / sizeof(char*); }
 
 /* Overload the 'validate' function for the user-defined class */
 void validate(boost::any& v, const std::vector<std::string> & values,
-              SGAL::Option_parser::Vector_trace_id* /* target_type */, int)
+              Option_parser::Vector_trace_id* /* target_type */, int)
 {
   typedef Option_parser::Trace_id               Trace_id;
   typedef Option_parser::Vector_trace_id        Vector_trace_id;
@@ -70,7 +68,8 @@ void validate(boost::any& v, const std::vector<std::string> & values,
         Vector_trace_id vec;
         vec.push_back(Trace_id(i));
         v = boost::any(vec);
-      } else {
+      }
+      else {
         Vector_trace_id vec = boost::any_cast<Vector_trace_id>(v);
         vec.push_back(Trace_id(i));
         v = boost::any(vec);
@@ -100,7 +99,6 @@ Option_parser::Option_parser() :
      "quite mode")
     ("verbose,v", po::value<Uint>(&m_verbose)->default_value(0),
      "verbose level")
-    ("input-path,I", po::value<vs>()->composing(), "input path")
     ("trace,T", po::value<std::vector<Trace_id> >()->composing(),
      "trace options\n"
      "  graphics\n"
@@ -120,10 +118,10 @@ Option_parser::Option_parser() :
 
   // m_visible_opts.set_name("Allowed options");
   m_config_opts.add(m_conf_opts);
-  m_visible_opts.add(m_generic_opts).add(m_config_opts).add(m_bench_opts);
+  m_visible_opts.add(m_generic_opts).add(m_config_opts).add(m_io_opts).add(m_bench_opts);
   m_cmd_line_opts.add(m_visible_opts).add(m_hidden_opts);
-  m_config_file_opts.add(m_config_opts).add(m_bench_opts);
-  m_environment_opts.add(m_config_opts).add(m_bench_opts);
+  m_config_file_opts.add(m_config_opts).add(m_io_opts).add(m_bench_opts);
+  m_environment_opts.add(m_config_opts).add(m_io_opts).add(m_bench_opts);
 
   m_positional_opts.add("input-file", -1);
 }
@@ -149,8 +147,9 @@ void Option_parser::operator()(Int argc, Char* argv[])
 void Option_parser::apply()
 {
   Generic_option_parser::apply(m_variable_map);
-  Bench_option_parser::apply(m_variable_map);
   Conf_option_parser::apply(m_variable_map);
+  IO_option_parser::apply(m_variable_map);
+  Bench_option_parser::apply(m_variable_map);
 
   if (m_variable_map.count("trace")) {
     Vector_trace_id traces = m_variable_map["trace"].as<Vector_trace_id>();
@@ -160,13 +159,12 @@ void Option_parser::apply()
   }
 }
 
-/*! Configure */
+//! \brief configures the scene graph.
 void Option_parser::configure(Scene_graph* scene_graph)
 {
-  if (!scene_graph) return;
-
+if (!scene_graph) return;
   SGAL::Configuration* conf = scene_graph->get_configuration();
-  Conf_option_parser::configure(m_variable_map, conf);
+  if (conf) Conf_option_parser::configure(m_variable_map, conf);
 }
 
 SGAL_END_NAMESPACE

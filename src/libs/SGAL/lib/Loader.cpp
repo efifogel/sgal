@@ -41,7 +41,7 @@ int Loader::load(const char* filename, Scene_graph* sg)
   // scanner.set_debug(1);
 
   // Parse & export:
-  Vrml_parser parser(scanner, sg);  
+  Vrml_parser parser(scanner, sg);
   if (parser.parse()) {
     std::cerr << "Failed to parse " << filename << "!" << std::endl;
     return -1;

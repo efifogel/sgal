@@ -99,39 +99,50 @@ public:
   /*! Destructor. */
   virtual ~Container();
 
-  /*! Clone the container. */
+  /*! Clone the container.
+   */
   virtual Container* clone() = 0;
 
-  /*! Initialize the node prototype. */
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype() {};
 
-  /*! Delete the node prototype. */
+  /*! Delete the node prototype.
+   */
   virtual void delete_prototype() {};
 
-  /*! Obtain the node prototype. */
-  virtual Container_proto* get_prototype() { return NULL; }
+  /*! Obtain the node prototype.
+   */
+  virtual Container_proto* get_prototype();
 
-  /*! Set the attributes of this container. */
-  virtual void set_attributes(Element* /* elem */) {}
+  /*! Set the attributes of this container.
+   */
+  virtual void set_attributes(Element* element);
 
-  /*! Obtain the attributes of this container. */
-  virtual void get_attributes(Element* /* elem */, Scene_graph* /* sg */) {}
+  /*! Obtain the attributes of this container.
+   */
+  virtual void get_attributes(Element* element);
 
   /*! Add the container to a given scene.
    * \param scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* /* scene_graph */) {}
 
-  /*! Write this container. */
+  /*! Write this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
   virtual void write(Formatter* formatter);
 
-  /*! Obtain the name of the container provided in the USE and DEF tags. */
+  /*! Obtain the name of the container provided in the USE and DEF tags.
+   */
   const std::string& get_name() const;
 
-  /*! Set the name of the container provided in the USE and DEF tags. */
+  /*! Set the name of the container provided in the USE and DEF tags.
+   */
   void set_name(const std::string& name);
 
-  /*! Obtain the tag (type) of the container */
+  /*! Obtain the tag (type) of the container
+   */
   virtual const std::string& get_tag() const = 0;
 
   /*! Add a field of a given id. Obtains the appropriate field info, and use it
@@ -221,6 +232,11 @@ public:
   /*! Processe change of content. */
   void process_content_changed();
 
+  /*! Write all fields of this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  void write_fields(Formatter* formatter);
+
 protected:
   /*! A pointer to the execution coordinator. */
   Execution_coordinator* m_execution_coordinator;
@@ -254,11 +270,19 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the name of the container provided in the USE and DEF tags.
- */
+//! \brief obtains the node prototype.
+inline Container_proto* Container::get_prototype() { return NULL; }
+
+//! \brief sets the attributes of this container.
+inline void Container::set_attributes(Element* /* elem */) {}
+
+//! \brief obtains the attributes of this container.
+inline void Container::get_attributes(Element* /* elem */) {}
+
+//! \brief obtains the name of the container provided in the USE and DEF tags.
 inline const std::string& Container::get_name() const { return m_name; }
 
-/*! \brief sets the name of the container provided in the USE and DEF tags. */
+//! \brief sets the name of the container provided in the USE and DEF tags.
 inline void Container::set_name(const std::string& name) { m_name = name; }
 
 SGAL_END_NAMESPACE

@@ -84,9 +84,9 @@ public:
 
   /// \name field handlers
   //@{
-  Float* radius_handle(Field_info*) { return &m_radius; }
-  Uint* stacks_handle(Field_info*) { return &m_stacks; }
-  Uint* slices_handle(Field_info*) { return &m_slices; }
+  Float* radius_handle(const Field_info*) { return &m_radius; }
+  Uint* stacks_handle(const Field_info*) { return &m_stacks; }
+  Uint* slices_handle(const Field_info*) { return &m_slices; }
   //@}
 
   /*! Set the attributes of this node. */

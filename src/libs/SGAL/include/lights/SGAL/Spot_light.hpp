@@ -80,12 +80,12 @@ public:
   /// \name field handlers
   //@{
   // location
-  Vector3f* location_handle(Field_info*) { return &m_location; }
-  Vector3f* direction_handle(Field_info*) { return &m_direction; }
-  Vector3f* attenuation_handle(Field_info*) { return &m_attenuation; }
-  float* radius_handle(Field_info*) { return &m_radius; }
-  Float* beam_width_handle(Field_info*) { return &m_beam_width; }
-  Float* cutoff_angle_handle(Field_info*) { return &m_cutoff_angle; }
+  Vector3f* location_handle(const Field_info*) { return &m_location; }
+  Vector3f* direction_handle(const Field_info*) { return &m_direction; }
+  Vector3f* attenuation_handle(const Field_info*) { return &m_attenuation; }
+  float* radius_handle(const Field_info*) { return &m_radius; }
+  Float* beam_width_handle(const Field_info*) { return &m_beam_width; }
+  Float* cutoff_angle_handle(const Field_info*) { return &m_cutoff_angle; }
   //@}
 
   /*! Set the attributes of this node */

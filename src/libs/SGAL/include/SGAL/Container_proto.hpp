@@ -54,7 +54,7 @@ class Field_info;
 #endif
 
 class SGAL_SGAL_DECL Container_proto {
-private:
+public:
   typedef std::map<Uint,Field_info*>            Field_info_id_map;
   typedef Field_info_id_map::const_iterator     Field_info_id_const_iter;
   typedef Field_info_id_map::iterator           Field_info_id_iter;
@@ -62,21 +62,79 @@ private:
   typedef std::map<std::string, Field_info*>    Field_info_name_map;
   typedef Field_info_name_map::const_iterator   Field_info_name_const_iter;
 
-  /*! A search structure for field-infos by field-info ids */
-  Field_info_id_map m_field_info_ids;
+  class Id_const_iterator {
+  public:
+    typedef Field_info_id_const_iter            Iterator;
 
-  /*! A search structure for field-infos by field-info names */
-  Field_info_name_map m_field_info_names;
+    typedef Iterator::iterator_category         iterator_category;
+    typedef Iterator::value_type                value_type;
+    typedef Iterator::difference_type           difference_type;
+    typedef Iterator::pointer                   pointer;
+    typedef Iterator::reference                 reference;
 
-  /*! The ancestor container-prototype */
-  Container_proto * m_ancestor;
+  public:
+    /*! Constructor. */
+    Id_const_iterator(const Container_proto* prototype) :
+      m_prototype(prototype),
+      m_it()
+    {}
 
-  /*! The first id */
-  Uint m_first_id;
+    /*! Constructor. */
+    Id_const_iterator(const Container_proto* prototype, Iterator it) :
+      m_prototype(prototype),
+      m_it(it)
+    {}
 
-public:
+    /*! operator* */
+    const value_type operator*() const { return *m_it; }
+
+    // value_type operator*() { return *m_it; }
+
+    /*! Operator pre ++ */
+    Id_const_iterator& operator++()
+    {
+      ++m_it;
+      if (m_it == m_prototype->field_info_ids_end()) {
+        const Container_proto* ancestor = m_prototype->get_ancestor();
+        if (ancestor) {
+          m_prototype = ancestor;
+          m_it = m_prototype->field_info_ids_begin();
+        }
+      }
+      return *this;
+    }
+
+    /*! Operator == */
+    bool operator==(const Id_const_iterator& other)
+    { return (m_it == other.m_it); }
+
+    /*! Operator != */
+    bool operator!=(const Id_const_iterator& other)
+    { return (m_it != other.m_it); }
+
+    /*! Operator post ++ */
+    Id_const_iterator operator++(int)
+    {
+      Id_const_iterator tmp = *this;
+      ++*this;
+      return tmp;
+    }
+
+  private:
+    const Container_proto* m_prototype;
+    Iterator m_it;
+  };
+
+  /*! Obtain the begin iterator of the extended range of field info ids.
+   */
+  Id_const_iterator ids_begin(const Container_proto* prototype) const;
+
+  /*! Obtain the past-the-end iterator of the extended range of field info ids.
+   */
+  Id_const_iterator ids_end(const Container_proto* prototype) const;
+
   /*! Constructor */
-  Container_proto(Container_proto* ancestor = NULL);
+  Container_proto(Container_proto* ancestor = nullptr);
 
   /*! Destructor - deletes each added field info */
   virtual ~Container_proto();
@@ -121,11 +179,62 @@ public:
    * \return A pointer to the requested field info
    */
   Field_info * get_field_info(const std::string& name) const;
+
+  /*! Obtain the size of the filed info ids container.
+   * \return size of the filed info ids container.
+   */
+  Uint field_info_ids_size() const;
+
+  /*! Obtain the begin iterator of the filed info ids container.
+   * \return the begin iterator.
+   */
+  Field_info_id_const_iter field_info_ids_begin() const;
+
+  /*! Obtain the past-the-end iterator of the filed info ids container.
+   * \return the past-the-end iterator.
+   */
+  Field_info_id_const_iter field_info_ids_end() const;
+
+  /*! Obtain the ancestor.
+   * \return The ancestor
+   */
+  const Container_proto* get_ancestor() const;
+
+private:
+  /*! A search structure for field-infos by field-info ids */
+  Field_info_id_map m_field_info_ids;
+
+  /*! A search structure for field-infos by field-info names */
+  Field_info_name_map m_field_info_names;
+
+  /*! The ancestor container-prototype */
+  Container_proto* m_ancestor;
+
+  /*! The first id */
+  Uint m_first_id;
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief obtains the size of the filed info ids container.
+inline Uint Container_proto::field_info_ids_size() const
+{ return m_field_info_ids.size(); }
+
+//! \brief obtains the begin iterator of the filed info ids container.
+inline Container_proto::Field_info_id_const_iter
+Container_proto::field_info_ids_begin() const
+{ return m_field_info_ids.begin(); }
+
+//! \brief obtains the past-the-end iterator of the filed info ids container.
+inline Container_proto::Field_info_id_const_iter
+Container_proto::field_info_ids_end() const
+{ return m_field_info_ids.end(); }
+
+//! \brief obtains the ancestor.
+inline const Container_proto* Container_proto::get_ancestor() const
+{ return m_ancestor; }
 
 SGAL_END_NAMESPACE
 

@@ -351,10 +351,17 @@ void Assembly::construct_reflected_sgms()
         reflected_sgm_geo->set_coord_array(inverse_coord_array);
         reflected_sgm_geo->set_primitive_type(sgm_geo->get_primitive_type());
         reflected_sgm_geo->set_num_primitives(sgm_geo->get_num_primitives());
-        const Array<Uint>& indices = sgm_geo->get_coord_indices();
+        const std::vector<Uint>& indices = sgm_geo->get_flat_coord_indices();
+        /* Observe that the call to get_flat_coord_indices() may trigger the
+         * "cleaning" of the coord indices. Thus, the following query must
+         * succeed the previous statement.
+         */
         if (sgm_geo->are_coord_indices_flat())
           reflected_sgm_geo->set_reverse_flat_coord_indices(indices);
-        else reflected_sgm_geo->set_reverse_coord_indices(indices);
+        else {
+          const std::vector<Uint>& indices = sgm_geo->get_coord_indices();
+          reflected_sgm_geo->set_reverse_coord_indices(indices);
+        }
       }
       else {
         Sgm_geo::Polyhedron* reflected_polyhedron = new Sgm_geo::Polyhedron;

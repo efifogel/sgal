@@ -9,7 +9,6 @@ FILES+= Geometry.hpp
 FILES+= Geo_set.hpp
 FILES+= Indexed_face_set.hpp
 FILES+= Indexed_line_set.hpp
-FILES+= Indexed_face_set_geometry.hpp
 FILES+= Indexed_face_set_mask.hpp
 FILES+= Mesh_set.hpp
 FILES+= Normal_array.hpp

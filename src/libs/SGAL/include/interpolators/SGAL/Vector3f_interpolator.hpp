@@ -40,10 +40,11 @@
 #ifndef SGAL_VECTOR3F_INTERPOLATOR_HPP
 #define SGAL_VECTOR3F_INTERPOLATOR_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Interpolator.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -51,7 +52,8 @@ class Container_proto;
 class Element;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL Array<Vector3f>;
+template class SGAL_SGAL_DECL std::allocator<Vector3f>;
+template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -89,7 +91,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f* value_handle(Field_info*) { return &m_value; }
+  Vector3f* value_handle(const Field_info*) { return &m_value; }
   //@}
 
   // Functions that handles the creation of an instance in the scene graph.
@@ -101,20 +103,20 @@ public:
   virtual void execute(Field_info* field_info);
 
   /*! Obtain the range keys. */
-  const Array<Float>& get_keys() const;
+  const std::vector<Float>& get_keys() const;
 
   /*! Obtain the range keys. */
-  Array<Float>& get_keys();
+  std::vector<Float>& get_keys();
 
   /*! Obtain the domain values. */
-  const Array<Vector3f>& get_values() const;
+  const std::vector<Vector3f>& get_values() const;
 
   /*! Obtain the domain values. */
-  Array<Vector3f>& get_values();
+  std::vector<Vector3f>& get_values();
 
 protected:
   /*! The interpolator domain key-values. */
-  Array<Vector3f> m_values;
+  std::vector<Vector3f> m_values;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -146,18 +148,19 @@ inline Container* Vector3f_interpolator::clone()
 { return new Vector3f_interpolator (); }
 
 /*! \brief obtains the range keys. */
-inline const Array<Float>& Vector3f_interpolator::get_keys() const
+inline const std::vector<Float>& Vector3f_interpolator::get_keys() const
 { return m_keys; }
 
 /*! \brief obtains the range keys. */
-inline Array<Float>& Vector3f_interpolator::get_keys() { return m_keys; }
+inline std::vector<Float>& Vector3f_interpolator::get_keys() { return m_keys; }
 
 /*! \brief obtains the domain values. */
-inline const Array<Vector3f>& Vector3f_interpolator::get_values() const
+inline const std::vector<Vector3f>& Vector3f_interpolator::get_values() const
 { return m_values; }
 
 /*! \brief obtains the domain values. */
-inline Array<Vector3f>& Vector3f_interpolator::get_values() { return m_values; }
+inline std::vector<Vector3f>& Vector3f_interpolator::get_values()
+{ return m_values; }
 
 /*! Obtain the tag (type) of the container. */
 inline const std::string& Vector3f_interpolator::get_tag() const

@@ -80,7 +80,7 @@ void Native_window_item::set_width(Uint width) { m_width = width; }
 
 /*! \brief Sets the height of the window. */
 void Native_window_item::set_height(Uint height) { m_height = height; }
-  
+
 /*! \brief sets the width and height of the window. */
 void Native_window_item::set_size(Uint width, Uint height)
 {
@@ -152,7 +152,7 @@ void Native_window_item::get_number_of_accumulation_bits(Uint& red_bits,
 /*! \brief sets the number of depth bits. */
 void Native_window_item::set_number_of_depth_bits(Uint depth_bits)
 { m_depth_bits = depth_bits; }
-  
+
 /*! \brief obtains the number of depth bits .*/
 Uint Native_window_item::get_number_of_depth_bits() const
 { return m_depth_bits; }
@@ -160,7 +160,7 @@ Uint Native_window_item::get_number_of_depth_bits() const
 /*! \brief sets the number of stencil bits in the accumulation buffer. */
 void Native_window_item::set_number_of_stencil_bits(Uint bits)
 { m_stencil_bits = bits; }
-  
+
 /*! \brief obtains the number of stencil bits in the accumulation buffer. */
 Uint Native_window_item::get_number_of_stencil_bits() const
 { return m_stencil_bits; }

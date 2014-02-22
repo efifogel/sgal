@@ -74,10 +74,11 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* is_on_handle(Field_info*) { return &m_is_on; }
-  Vector3f* color_handle(Field_info*) { return &m_color; }
-  Float* intensity_handle(Field_info*) { return &m_intensity; }
-  Float* ambient_intensity_handle(Field_info*) { return &m_ambient_intensity; }
+  Boolean* is_on_handle(const Field_info*) { return &m_is_on; }
+  Vector3f* color_handle(const Field_info*) { return &m_color; }
+  Float* intensity_handle(const Field_info*) { return &m_intensity; }
+  Float* ambient_intensity_handle(const Field_info*)
+  { return &m_ambient_intensity; }
   //@}
 
   /*! Set the attributes of this node */

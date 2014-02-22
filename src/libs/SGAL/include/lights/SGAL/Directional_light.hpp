@@ -81,7 +81,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f* direction_handle(Field_info*) { return &m_direction; }
+  Vector3f* direction_handle(const Field_info*) { return &m_direction; }
   //@}
 
   /*! \biref sets the attributes of this node */

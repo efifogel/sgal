@@ -86,15 +86,16 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Boolean* changed_handle(Field_info*) { return &m_changed; }
-  Boolean* translated_handle(Field_info*) { return &m_translated; }
-  Boolean* rotated_handle(Field_info*) { return &m_rotated; }
-  Vector3f* translation_handle(Field_info*) { return &m_translation; }
-  Rotation* rotation_handle(Field_info*) { return &m_rotation; }
-  Boolean* execute_handle(Field_info*) { return &m_execute; }
-  Shared_coord_array* coord_array_handle(Field_info*) { return &m_coord_array; }
-  Shared_coord_array* coord_array_changed_handle(Field_info*)
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Boolean* changed_handle(const Field_info*) { return &m_changed; }
+  Boolean* translated_handle(const Field_info*) { return &m_translated; }
+  Boolean* rotated_handle(const Field_info*) { return &m_rotated; }
+  Vector3f* translation_handle(const Field_info*) { return &m_translation; }
+  Rotation* rotation_handle(const Field_info*) { return &m_rotation; }
+  Boolean* execute_handle(const Field_info*) { return &m_execute; }
+  Shared_coord_array* coord_array_handle(const Field_info*)
+  { return &m_coord_array; }
+  Shared_coord_array* coord_array_changed_handle(const Field_info*)
   { return &m_coord_array_changed; }
   //@}
 
@@ -189,36 +190,36 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Coord_transformer* Coord_transformer::prototype()
   { return new Coord_transformer(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Coord_transformer::clone()
 { return new Coord_transformer(); }
 
-/*! \brief sets the reflection indication-flag. */
+//! \brief sets the reflection indication-flag.
 inline void Coord_transformer::set_reflect(Boolean reflect)
 { m_reflect = reflect; }
 
-/*! \brief obtains the reflection indication-flag. */
+//! \brief obtains the reflection indication-flag.
 inline Boolean Coord_transformer::get_reflect() const { return m_reflect; }
 
-/*! \brief sets the coordinate-set node. */
+//! \brief sets the coordinate-set node.
 inline void Coord_transformer::set_coord_array(Shared_coord_array coord)
 { m_coord_array = coord; }
 
-/*! \brief obtains the coordinate-set node. */
+//! \brief obtains the coordinate-set node.
 inline Coord_transformer::Shared_coord_array
 Coord_transformer::get_coord_array() const
 { return m_coord_array; }
 
-/*! \brief obtains the changed coordinate-set node. */
+//! \brief obtains the changed coordinate-set node.
 inline Coord_transformer::Shared_coord_array
 Coord_transformer::get_coord_array_changed() const
 { return m_coord_array_changed; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Coord_transformer::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

@@ -46,17 +46,12 @@ public:
   typedef SGAL::Uint                    Uint;
   typedef SGAL::Boolean                 Boolean;
   typedef SGAL::Scene_time              Scene_time;
-  
+
   /*! Constructor */
   Knot_option_parser();
 
   /*! Destructor */
   virtual ~Knot_option_parser() {}
-
-  /*! Set the window manager */
-  template <typename Window_manager>
-  void set_window_manager(Window_manager * window_manager)
-  { m_window_manager = window_manager; }
 
   /*! Initialize */
   void init();
@@ -67,8 +62,17 @@ public:
    */
   void operator()(int argc, char * argv[]);
 
-  /*! Apply the options */
+  /*! Apply the options.
+   */
   void apply();
+
+  /*! Configure the window manager and the scene graph.
+   * \param window_manage The window manager.
+   * \param scene_graph The scene graph.
+   */
+  template <typename Window_manager>
+  void configure(Window_manager* window_manage,
+                 SGAL::Scene_graph* scene_graph);
 
   /*! Solve the puzzle? */
   Boolean solve() const { return m_solve; }
@@ -78,7 +82,7 @@ public:
 
   /*! Obtain the animation cycle-interval */
   Scene_time get_cycle_interval() const { return m_cycle_interval; }
-  
+
   /*! \brief obtains the head padding of the pieces within the volume along
    * the x-coordinate, and returns true only if appears on the command line
    */
@@ -108,23 +112,12 @@ public:
    * the z-coordinate, and returns true only if appears on the command line
    */
   Boolean get_tail_pad_z(Uint & tail_pad_z);
-  
+
 protected:
   /*! The knot option description */
   boost::program_options::options_description m_knot_opts;
-  
+
 private:
-#if (defined USE_GLUT)
-  typedef SGAL::Glut_window_manager             Window_manager;
-#elif defined(_WIN32)
-  typedef SGAL::Windows_window_manager          Window_manager;
-#else
-  typedef SGAL::X11_window_manager              Window_manager;
-#endif
-
-  /*! The window manager */
-  Window_manager * m_window_manager;
-
   /*! Indicates whether to solve the puzzle */
   Boolean m_solve;
 
@@ -134,5 +127,14 @@ private:
   /*! The cycle interval of the time sensors */
   Scene_time m_cycle_interval;
 };
+
+//! \brief configures the window manager.
+template <typename Window_manager>
+void Knot_option_parser::configure(Window_manager* window_manager,
+                                   SGAL::Scene_graph* scene_graph)
+{
+  Window_option_parser::configure(m_variable_map, window_manager);
+  Option_parser::configure(scene_graph);
+}
 
 #endif

@@ -35,10 +35,11 @@
 #ifndef SGAL_COORDINATE_INTERPOLATOR_HPP
 #define SGAL_COORDINATE_INTERPOLATOR_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Interpolator.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -47,7 +48,8 @@ class Container_proto;
 class Element;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL Array<Vector3f>;
+template class SGAL_SGAL_DECL std::allocator<Vector3f>;
+template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -85,7 +87,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vector3f_array* value_handle(Field_info*) { return &m_value; }
+  Vector3f_array* value_handle(const Field_info*) { return &m_value; }
   //@}
 
   // Functions that handles the creation of an instance in the scene graph
@@ -103,14 +105,16 @@ public:
   Vector3f_array& get_values() { return m_values; }
 
 protected:
-  /*! The interpolator domain key-values */
+  /*! The interpolator domain key-values. */
   Vector3f_array m_values;
 
   /*! obtains the tag (type) of the container */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  /*! returns a copy of the value in a specific location */
-  Vector3f_array get_value (Uint location);
+  /*! Obtain a copy of the value in a specific location.
+   * \param location (in) The location of the sub array.
+   */
+  Vector3f_array get_value(Uint location);
 
 private:
   /*! The tag that identifies this container type */

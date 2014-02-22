@@ -91,6 +91,7 @@ CPPSOURCES+= Ellipsoid.cpp
 CPPSOURCES+= Environment_background.cpp
 CPPSOURCES+= Extrusion.cpp
 CPPSOURCES+= Field.cpp
+CPPSOURCES+= Field_info.cpp
 CPPSOURCES+= Font.cpp
 CPPSOURCES+= Font_style.cpp
 CPPSOURCES+= Fragment_shader.cpp
@@ -187,6 +188,8 @@ CPPSOURCES+= Vector4f.cpp
 CPPSOURCES+= Generic_option_parser.cpp
 CPPSOURCES+= Bench_option_parser.cpp
 CPPSOURCES+= Conf_option_parser.cpp
+CPPSOURCES+= File_format.cpp
+CPPSOURCES+= IO_option_parser.cpp
 CPPSOURCES+= Option_parser.cpp
 CPPSOURCES+= Native_window_item.cpp
 CPPSOURCES+= Window_option_parser.cpp
@@ -209,6 +212,8 @@ CPPSOURCES+= Scalar_interpolator.cpp
 CPPSOURCES+= Color_interpolator.cpp
 
 # IO
+CPPSOURCES+= Stl_formatter.cpp
+CPPSOURCES+= Text_formatter.cpp
 CPPSOURCES+= Vrml_formatter.cpp
 
 LCPPDEFS =
@@ -287,12 +292,12 @@ LCPPDEFS+= -DBOOST_ALL_DYN_LINK
 LCPPDEFS+= -DSGAL_ALL_DYN_LINK
 # LCPPOPTS+= -fp:precise
 LCPPOPTS+= -GR  # Enables run-time type information (RTTI).
-LCPPOPTS+= -Gd  # Use the __cdecl calling convention (x86 only).
+LCPPOPTS+= -vmg # Uses full generality for pointers to members.
 LCPPOPTS+= -GS  # Apply buffers security check.
 LCPPOPTS+= -Oy- # Disable Omission of frame pointer (x86 only).
-LCPPOPTS+= -WX  # Treat all compiler warnings as errors
+# LCPPOPTS+= -WX  # Treat all compiler warnings as errors
 LCPPOPTS+= -Zc:wchar_t -Zc:forScope # Specify standard behavior
-CPPWARNINGOPTS = -W4  # Specify the level of warning; 0 to 4
+# CPPWARNINGOPTS = -W4  # Specify the level of warning; 0 to 4
 
 ifeq ($(DEF_SHARED), 1)
 LCPPDEFS+= -DGL2PSDLL

@@ -158,21 +158,21 @@ public:
 
   /// \name field handlers
   //@{
-  Float* ambient_intensity_handle(Field_info*) { return &m_ambient_intensity; }
-  Vector3f* diffuse_color_handle(Field_info*) { return &m_diffuse_color; }
-  Vector3f* specular_color_handle(Field_info*) { return &m_specular_color; }
-  Vector3f* emissive_color_handle(Field_info*) { return &m_emissive_color; }
-  Float* shininess_handle(Field_info*) { return &m_shininess; }
-  Float* transparency_handle(Field_info*) { return &m_transparency; }
+  Float* ambient_intensity_handle(const Field_info*)
+  { return &m_ambient_intensity; }
+  Vector3f* diffuse_color_handle(const Field_info*) { return &m_diffuse_color; }
+  Vector3f* specular_color_handle(const Field_info*)
+  { return &m_specular_color; }
+  Vector3f* emissive_color_handle(const Field_info*)
+  { return &m_emissive_color; }
+  Float* shininess_handle(const Field_info*) { return &m_shininess; }
+  Float* transparency_handle(const Field_info*) { return &m_transparency; }
   //@}
 
   /*! Set the attributes of this container */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
-
-  /*! Write this container */
-  virtual void write(Formatter* formatter);
 
 protected:
   /*! Obtain the tag (type) of the container */
@@ -188,12 +188,12 @@ private:
   static Container_proto* s_prototype;
 
   /*! Default Values */
-  static Float m_def_ambient_intensity;
-  static Vector3f m_def_diffuse_color;
-  static Vector3f m_def_specular_color;
-  static Vector3f m_def_emissive_color;
-  static Float m_def_shininess;
-  static Float m_def_transparency;
+  static const Float s_def_ambient_intensity;
+  static const Vector3f s_def_diffuse_color;
+  static const Vector3f s_def_specular_color;
+  static const Vector3f s_def_emissive_color;
+  static const Float s_def_shininess;
+  static const Float s_def_transparency;
 
   /*! the ambient intensity */
   Float m_ambient_intensity;

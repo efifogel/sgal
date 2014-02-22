@@ -57,14 +57,14 @@ Container_proto* Arrangement_on_sphere_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Arrangement_on_sphere_geo, "Arrangement_on_sphere_geo");
 
-/*! Constructor. */
+//! \brief constructor.
 Arrangement_on_sphere_geo::Arrangement_on_sphere_geo(Boolean proto) :
   Arrangement_on_sphere_base_geo(proto),
   m_owned_aos(false),
   m_aos(NULL)
 { if (!proto) create_renderers(); }
 
-/*! Destructor. */
+//! \brief destructor.
 Arrangement_on_sphere_geo::~Arrangement_on_sphere_geo()
 {
   clear();
@@ -77,7 +77,7 @@ Arrangement_on_sphere_geo::~Arrangement_on_sphere_geo()
   }
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Arrangement_on_sphere_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -85,21 +85,21 @@ void Arrangement_on_sphere_geo::init_prototype()
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Arrangement_on_sphere_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Arrangement_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_sphere_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes. */
+//! \brief sets the ellpsoid attributes.
 void Arrangement_on_sphere_geo::set_attributes(Element* elem)
 {
   Arrangement_on_sphere_base_geo::set_attributes(elem);
@@ -139,12 +139,12 @@ void Arrangement_on_sphere_geo::set_attributes(Element* elem)
     }
     continue;
   }
-  
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation. */
+//! \brief cleans the representation.
 void Arrangement_on_sphere_geo::clean()
 {
   m_dirty = false;
@@ -158,7 +158,7 @@ void Arrangement_on_sphere_geo::clean()
               std::distance(m_aoses.begin(), m_aoses.end()), this);
 }
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Arrangement_on_sphere_geo::clear()
 {
   if (m_aos) m_aos->clear();
@@ -166,7 +166,7 @@ void Arrangement_on_sphere_geo::clear()
   m_dirty = true;
 }
 
-/*! \brief creates the renderers. */
+//! \brief creates the renderers.
 void Arrangement_on_sphere_geo::create_renderers()
 {
   m_edges_renderer = new Sphere_edges_renderer(*this);
@@ -196,7 +196,7 @@ void Arrangement_on_sphere_geo::create_renderers()
     new Sphere_inflated_tube_edges_renderer(*this);
 }
 
-/*! \brief destroys the renderers. */
+//! \brief destroys the renderers.
 void Arrangement_on_sphere_geo::destroy_renderers()
 {
   if (m_edges_renderer) delete m_edges_renderer;
@@ -220,18 +220,18 @@ void Arrangement_on_sphere_geo::destroy_renderers()
   if (m_inflated_tube_edges_renderer) delete m_inflated_tube_edges_renderer;
 }
 
-/*! \brief obrains the arrangement. */
+//! \brief obrains the arrangement.
 Arrangement_on_sphere* Arrangement_on_sphere_geo::get_aos()
 {
   if (m_dirty) clean();
   return m_aos;
 }
 
-/*! \brief sets the arrangement. */
+//! \brief sets the arrangement.
 void Arrangement_on_sphere_geo::set_aos(Arrangement_on_sphere* aos)
 {
   m_dirty = false;
   m_aos = aos;
 }
-  
+
 SGAL_END_NAMESPACE

@@ -84,7 +84,8 @@ public:
 
   /// \name field handlers
   //@{
-  Sphere_bound* sphere_bound_handle(Field_info*) { return &m_sphere_bound; }
+  Sphere_bound* sphere_bound_handle(const Field_info*)
+  { return &m_sphere_bound; }
   //@}
 
   /*! Draw the object. */

@@ -112,18 +112,19 @@ public:
 
   /// \name field handlers
   //@{
-  Gfx::Poly_mode* poly_mode_handle(Field_info*) { return &m_poly_mode; }
-  Boolean* display_fps_handle(Field_info*) { return &m_display_fps; }
-  Boolean* is_fixed_head_light_handle(Field_info*)
+  Gfx::Poly_mode* poly_mode_handle(const Field_info*) { return &m_poly_mode; }
+  Boolean* display_fps_handle(const Field_info*) { return &m_display_fps; }
+  Boolean* is_fixed_head_light_handle(const Field_info*)
   { return &m_is_fixed_head_light; }
-  Uint* stencil_bits_handle(Field_info*) { return &m_stencil_bits; }
-  Uint* depth_bits_handle(Field_info*) { return &m_depth_bits; }
-  Float* min_frame_rate_handle(Field_info*) { return &m_min_frame_rate; }
-  Float* min_zoom_distance_handle(Field_info*) { return &m_min_zoom_distance; }
-  Float* speed_factor_handle(Field_info*) { return &m_speed_factor; }
-  Boolean* texture_map_handle(Field_info*) { return &m_texture_map; }
-  Uint* verbosity_level_handle(Field_info*) { return &m_verbosity_level; }
-  Boolean* seamless_cube_map_handle(Field_info*)
+  Uint* stencil_bits_handle(const Field_info*) { return &m_stencil_bits; }
+  Uint* depth_bits_handle(const Field_info*) { return &m_depth_bits; }
+  Float* min_frame_rate_handle(const Field_info*) { return &m_min_frame_rate; }
+  Float* min_zoom_distance_handle(const Field_info*)
+  { return &m_min_zoom_distance; }
+  Float* speed_factor_handle(const Field_info*) { return &m_speed_factor; }
+  Boolean* texture_map_handle(const Field_info*) { return &m_texture_map; }
+  Uint* verbosity_level_handle(const Field_info*) { return &m_verbosity_level; }
+  Boolean* seamless_cube_map_handle(const Field_info*)
   { return &m_seamless_cube_map; }
   //@}
 

@@ -66,7 +66,7 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* start_handle(Field_info*) { return &m_start; }
+  Boolean* start_handle(const Field_info*) { return &m_start; }
   //@}
 
   /*! Set the attributes of this node. */

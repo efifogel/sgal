@@ -75,6 +75,10 @@
 #include "SGAL/Texture_2d.hpp"
 #include "SGAL/Image.hpp"
 #include "SGAL/Context.hpp"
+#include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Group.hpp"
+#include "SGAL/Node.hpp"
 
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_item.hpp"
@@ -193,6 +197,7 @@ Player_scene::~Player_scene(void)
 /*! \brief creates the scene. */
 void Player_scene::create_scene()
 {
+  // Obtain the input file full name.
   std::string filename;
   if (!m_option_parser->get_file_name(filename) || filename.empty()) {
     std::string str("input file missing!");
@@ -238,13 +243,126 @@ void Player_scene::create_scene()
     return;
   }
 
-  std::cout << m_fullname.c_str() << std::endl;
+  // std::cout << m_fullname.c_str() << std::endl;
 
   // Construct a Scene_graph:
   m_scene_graph = new SGAL::Scene_graph;
   SGAL_assertion(m_scene_graph);
 
   update_data_dirs();
+
+  // Load the input file.
+  SGAL::Loader loader;
+  int rc = loader.load(m_fullname.c_str(), m_scene_graph);
+  if (rc < 0) {
+    throw Illegal_input(UNABLE_TO_LOAD, "Cannot load file", filename);
+    return;
+  }
+  print_stat();
+
+  // Save to output files.
+  if (m_option_parser->do_save()) {
+    SGAL::File_format::Id input_format_id = m_scene_graph->get_input_format_id();
+
+    if (0 == m_option_parser->formats_size()) {
+      const std::string& output_filename = m_option_parser->get_output_file();
+      if (output_filename.empty())
+        save(filename, input_format_id);
+      else {
+        fi::path output_filename_path(output_filename);
+        if (! output_filename_path.has_extension()) {
+          const std::string& new_extension =
+            SGAL::File_format::get_name(input_format_id);
+          output_filename_path.replace_extension(new_extension);
+        }
+        save(output_filename_path.string(), input_format_id);
+      }
+    }
+    else {
+      // Iterate over all requested formats.
+      SGAL::IO_option_parser::Format_const_iter it;
+      for (it = m_option_parser->formats_begin();
+           it != m_option_parser->formats_end(); ++it)
+      {
+        SGAL::File_format::Id format_id = *it;
+        const std::string& tmp = m_option_parser->get_output_file();
+        const std::string& output_filename = (tmp.empty()) ? filename : tmp;
+        fi::path output_filename_path(output_filename);
+        const std::string& new_extension =
+          SGAL::File_format::get_name(format_id);
+        output_filename_path.replace_extension(new_extension);
+        save(output_filename_path.string(), format_id);
+      }
+    }
+  }
+}
+
+//! \brief saves the scene to a file in a given format.
+void Player_scene::save_vrml(const std::string& filename)
+{
+  typedef boost::shared_ptr<SGAL::Group>                Shared_group;
+  typedef boost::shared_ptr<SGAL::Node>                 Shared_node;
+  typedef boost::shared_ptr<SGAL::Transform>            Shared_transform;
+
+  SGAL::Vrml_formatter formatter(std::cout);
+  SGAL::Scene_graph::Shared_group root = m_scene_graph->get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    Shared_node node = root->get_child(0);
+    Shared_transform transform =
+      boost::dynamic_pointer_cast<SGAL::Transform>(node);
+    SGAL::Transform::Node_iterator it;
+    for (it = transform->children_begin(); it != transform->children_end(); ++it)
+    {
+      Shared_node node = *it;
+      formatter.write(&*node);
+    }
+  }
+  formatter.end();
+}
+
+//! \brief saves the scene to a file in a given format.
+void Player_scene::save_stl(const std::string& filename)
+{
+  typedef boost::shared_ptr<SGAL::Group>                Shared_group;
+  typedef boost::shared_ptr<SGAL::Node>                 Shared_node;
+  typedef boost::shared_ptr<SGAL::Transform>            Shared_transform;
+
+  SGAL::Stl_formatter formatter(std::cout);
+  SGAL::Scene_graph::Shared_group root = m_scene_graph->get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    Shared_node node = root->get_child(0);
+    Shared_transform transform =
+      boost::dynamic_pointer_cast<SGAL::Transform>(node);
+    SGAL::Transform::Node_iterator it;
+    for (it = transform->children_begin(); it != transform->children_end(); ++it)
+    {
+      Shared_node node = *it;
+      formatter.write(&*node);
+    }
+  }
+  formatter.end();
+}
+
+//! \brief saves the scene to a file in a given format.
+void Player_scene::save(const std::string& filename,
+                        SGAL::File_format::Id format_id)
+{
+  switch (format_id) {
+   case SGAL::File_format::ID_WRL: save_vrml(filename); break;
+
+   case SGAL::File_format::ID_X3D: break;
+
+   case SGAL::File_format::ID_STL: save_stl(filename); break;
+
+   case SGAL::File_format::ID_OBJ: break;
+
+   case SGAL::File_format::NONE:
+   case SGAL::File_format::NUM_IDS: return;
+  }
 }
 
 /*! \brief destroys the scene. */
@@ -264,7 +382,13 @@ void Player_scene::destroy_scene()
 /*! \brief initializes the secene. */
 void Player_scene::init_scene()
 {
-  // Obtain the input file full name.
+  // Create the missing nodes.
+  m_scene_graph->create_defaults();
+
+  // Configure the window manager and the scene graph.
+  m_option_parser->configure(m_window_manager, m_scene_graph);
+
+  // Prepare the window item.
   std::string filename;
   if (!m_option_parser->get_file_name(filename) || filename.empty()) {
     std::string str("input file missing!");
@@ -272,19 +396,6 @@ void Player_scene::init_scene()
     return;
   }
 
-  // Load the input file.
-  SGAL::Loader loader;
-  int rc = loader.load(m_fullname.c_str(), m_scene_graph);
-  if (rc < 0) {
-    throw Illegal_input(UNABLE_TO_LOAD, "Cannot load file", filename);
-    return;
-  }
-  print_stat();
-
-  // Create the missing nodes.
-  m_scene_graph->create_defaults();
-
-  // Prepare the window item.
   m_window_item = new Window_item;
   m_window_item->set_title(filename);
   m_window_item->set_number_of_stencil_bits(1);
@@ -370,8 +481,6 @@ void Player_scene::init_scene()
 /*! \brief indulges user requests from the command line. */
 void Player_scene::indulge_user()
 {
-  m_option_parser->configure(m_scene_graph);
-
   // Local options:
   if (m_option_parser->get_display_texture_info()) {
     SGAL_assertion(m_scene_graph);
@@ -467,7 +576,7 @@ void Player_scene::indulge_user()
 }
 
 /*! \brief print geometry information of Box */
-void Player_scene::print_geometry_info(SGAL::Box* box)
+void Player_scene::print_geometry_info(SGAL::Box* /* box */)
 {
   std::cout << "Geometry: Box" << std::endl;
 }
@@ -574,7 +683,7 @@ void Player_scene::identify(void)
 { std::cout << "Agent: Player_scene" << std::endl; }
 
 /*! \brief handles a mouse event. */
-void Player_scene::handle(SGAL::Mouse_event* event)
+void Player_scene::handle(SGAL::Mouse_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
@@ -584,7 +693,7 @@ void Player_scene::handle(SGAL::Mouse_event* event)
 }
 
 /*! \brief handles a motion event. */
-void Player_scene::handle(SGAL::Motion_event* event)
+void Player_scene::handle(SGAL::Motion_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
@@ -594,7 +703,7 @@ void Player_scene::handle(SGAL::Motion_event* event)
 }
 
 /*! \brief handles a passive motion event. */
-void Player_scene::handle(SGAL::Passive_motion_event* event)
+void Player_scene::handle(SGAL::Passive_motion_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
   SGAL::Configuration* conf = m_scene_graph->get_configuration();
@@ -720,7 +829,7 @@ void Player_scene::draw_grid()
 }
 
 /*! \brief reshapes the viewport of a window of the scene. */
-void Player_scene::reshape_window(SGAL::Window_item* window_item,
+void Player_scene::reshape_window(SGAL::Window_item* /* window_item */,
                                   SGAL::Uint width, SGAL::Uint height)
 {
   m_win_width = width;
@@ -735,8 +844,12 @@ void Player_scene::reshape_window(SGAL::Window_item* window_item,
 /*! Return true iff the scene does simulate something. In other words,
  * return true iff tick evenets must be generated to perform the simulation.
  */
-SGAL::Boolean Player_scene::is_simulating(void)
+SGAL::Boolean Player_scene::is_simulating(void) const
 {
-  SGAL::Scene_graph* sg = get_scene_graph();
+  const SGAL::Scene_graph* sg = get_scene_graph();
   return sg && sg->has_time_sensors();
 }
+
+//! \brief determines whether the operation is interactive.
+SGAL::Boolean Player_scene::has_visual() const
+{ return m_option_parser->is_interactive() || is_simulating(); }

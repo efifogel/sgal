@@ -3,7 +3,6 @@ include $(ROOT)/make/comdef.mak
 FILES = Accumulation.hpp
 FILES+= Action.hpp
 FILES+= Appearance.hpp
-FILES+= Array.hpp
 FILES+= assertions.hpp
 FILES+= Background.hpp
 FILES+= basic.hpp

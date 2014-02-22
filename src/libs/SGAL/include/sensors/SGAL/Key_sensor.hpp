@@ -90,12 +90,12 @@ public:
 
   /// \name field handlers
   //@{
-  Int* key_handle(Field_info*) { return &m_key; }
-  Int* action_key_handle(Field_info*) { return &m_action_key; }
-  Boolean* shift_key_handle(Field_info*) { return &m_shift_key; }
-  Boolean* control_key_handle(Field_info*) { return &m_control_key; }
-  Boolean* alt_key_handle(Field_info*) { return &m_alt_key; }
-  Boolean* active_handle(Field_info*) { return &m_active; }
+  Int* key_handle(const Field_info*) { return &m_key; }
+  Int* action_key_handle(const Field_info*) { return &m_action_key; }
+  Boolean* shift_key_handle(const Field_info*) { return &m_shift_key; }
+  Boolean* control_key_handle(const Field_info*) { return &m_control_key; }
+  Boolean* alt_key_handle(const Field_info*) { return &m_alt_key; }
+  Boolean* active_handle(const Field_info*) { return &m_active; }
   //@}
 
   /*! Set the attributes of this node */

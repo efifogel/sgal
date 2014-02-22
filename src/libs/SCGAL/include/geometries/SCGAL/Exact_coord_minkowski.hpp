@@ -40,6 +40,11 @@ class Element;
 class Scene_graph;
 class Container_proto;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! Add two coord arrays. */
 class SGAL_SCGAL_DECL Exact_coord_minkowski : public Coord_minkowski {
 public:
@@ -74,9 +79,11 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* execute_handle(Field_info*) { return &m_execute; }
-  // shared_container &m_coord_array1;
-  // shared_container &m_coord_array2;
+  Boolean* execute_handle(const Field_info*) { return &m_execute; }
+  // shared_container* coord_array1_handle (const Field_info*)
+  // { return &m_coord_array1; }
+  // shared_container* coord_array2_handle (const Field_info*)
+  // { return &m_coord_array2; }
   //@}
 
   /*! Set the attributes of this node.
@@ -102,15 +109,19 @@ private:
   static Container_proto* s_prototype;
 };
 
-/* \brief constructs the prototype. */
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
+//! \brief constructs the prototype.
 inline Exact_coord_minkowski* Exact_coord_minkowski::prototype()
 { return new Exact_coord_minkowski(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Exact_coord_minkowski::clone()
 { return new Exact_coord_minkowski(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Exact_coord_minkowski::get_tag() const
 { return s_tag; }
 

@@ -20,6 +20,7 @@ set(SCGAL_ARRANGEMENT_ON_SURFACE 0)
 if (SCGAL_AOS_BASE)
   set(SCGAL_ARRANGEMENT_ON_SURFACE 1)
 endif()
+
 if (USE_QUADRIC)
   set(SCGAL_ARRANGEMENT_ON_SURFACE 1)
 endif()
@@ -36,24 +37,25 @@ if (SCGAL_AOS_BASE)
 endif()
 
 if (USE_AOS)
+  add_definitions(-DUSE_AOS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_graph_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_marked_geo.cpp)
   # Ignore in Debug mode, cause is_valid() on the sphere does not compile
-  #ifneq ($(DEBUG), 1)
-  #  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Polygon_set_on_sphere_geo.cpp
-  #endif
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Polygon_set_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_overlay_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_sim_geo.cpp)
 endif()
 
 if (USE_VOS)
+  add_definitions(-DUSE_VOS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Geodesic_voronoi_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Voronoi_diagram_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Power_diagram_on_sphere_geo.cpp)
 endif()
 
 if (USE_QUADRIC)
+  add_definitions(-DUSE_QUADRIC)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Vector3d.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Quadric.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Quadric_geo.cpp)
@@ -72,6 +74,7 @@ set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_polyhedron_geo
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Triangulation_geo.cpp)
 
 if (USE_ENV)
+  add_definitions(-DUSE_ENV)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Lower_envelope_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Lower_envelope_tri_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Lower_envelope_sphere_geo.cpp)
@@ -79,11 +82,13 @@ if (USE_ENV)
 endif(USE_ENV)
 
 if (USE_CGM)
+  add_definitions(-DUSE_CGM)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Cubical_gaussian_map_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_cube_renderers.cpp)
 endif(USE_CGM)
 
 if (USE_SGM)
+  add_definitions(-DUSE_SGM)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Spherical_gaussian_map_base_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Spherical_gaussian_map_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Spherical_gaussian_map_colored_geo.cpp)
@@ -93,11 +98,18 @@ if (USE_SGM)
 endif()
 
 if (USE_NEF)
+  add_definitions(-DUSE_NEF)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_nef_polyhedron.cpp)
   if (USE_NGM)
+    add_definitions(-DUSE_NGM)
     set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Nef_gaussian_map_geo.cpp)
   endif(USE_NGM)
 endif(USE_NEF)
+
+if (USE_LTS)
+  add_definitions(-DUSE_LTS)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} Lines_through_segments_geo.cpp)
+endif(USE_LTS)
 
 #Add all include directories
 include_directories(include/)
@@ -151,27 +163,33 @@ set_target_properties(SCGAL PROPERTIES
 
 #Add links
 if (NOT WIN32)
-  set (NON_WIN32_LIBRARIES
-    ${X11_LIBRARIES}
-    ${X11_Xxf86vm_LIB}
-  )
+  set (NON_WIN32_LIBRARIES ${X11_LIBRARIES} ${X11_Xxf86vm_LIB})
   if (APPLE)
     set (NON_WIN32_LIBRARIES ${NON_WIN32_LIBRARIES} /opt/X11/lib/libGL.dylib)
   endif(APPLE)
 endif(NOT WIN32)
 
-target_link_libraries(SCGAL
-  SGAL
-  ${CGAL_LIBRARY}
-  ${NON_WIN32_LIBRARIES}
-)
+target_link_libraries(SCGAL SGAL ${CGAL_LIBRARY} ${NON_WIN32_LIBRARIES})
 
 # Installation
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
-  DESTINATION "include"
-  FILES_MATCHING
-  PATTERN "*.hpp"
-  PATTERN ".git" EXCLUDE
-  # PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
-)
-install(TARGETS SCGAL DESTINATION "lib")
+set(SCGAL_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/engines
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/geo
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/geometries
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/primitives)
+
+foreach (dir ${SCGAL_INCLUDE_DIRS})
+  if (EXISTS ${dir}/SCGAL)
+    install(DIRECTORY ${dir}/SCGAL
+            DESTINATION ${SGAL_INSTALL_INC_DIR}
+	    FILES_MATCHING PATTERN "*.hpp"
+            # PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ
+    )
+  endif()
+endforeach()
+
+install(TARGETS SCGAL
+        RUNTIME DESTINATION ${SGAL_INSTALL_BIN_DIR}
+        LIBRARY DESTINATION ${SGAL_INSTALL_LIB_DIR}
+        ARCHIVE DESTINATION ${SGAL_INSTALL_LIB_DIR})

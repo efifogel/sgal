@@ -30,23 +30,19 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Begin a new line */
-void Vrml_formatter::new_line()
-{
-  if (m_indented) {
-    out() << std::endl;
-    m_indented = false;
-  }
-}
+//! \brief constructor.
+Vrml_formatter::Vrml_formatter() {}
 
-/*! Writes an indentation */
-void Vrml_formatter::indent()
-{
-  if (!m_indented) for (Uint i = 0; i < m_indent; ++i) out() << "  ";
-  m_indented = true;
-}
+//! \brief constructs an output formatter.
+Vrml_formatter::Vrml_formatter(std::ostream& os) : Text_formatter(os) {}
 
-/*! Write the headers of the scene graph */
+//! \brief constructs an input formatter.
+Vrml_formatter::Vrml_formatter(std::istream& is) : Text_formatter(is) {}
+
+//! \brief destructor
+Vrml_formatter::~Vrml_formatter() {}
+
+//! \brief exports the headers of the scene graph.
 void Vrml_formatter::begin()
 {
   SGAL_assertion(m_out != NULL);
@@ -58,37 +54,31 @@ void Vrml_formatter::begin()
   new_line();
 }
 
-/*! Write the routing statements */
+//! \brief exports the routing statements.
 void Vrml_formatter::end()
 {
   // set_mode(*m_out, m_old_out_mode);
 }
 
-/*! Write a scene-graph node */  
-void Vrml_formatter::write(Container * container)
-{
-  container->write(this);
-}
-
-/*! Write the container header */
-void Vrml_formatter::container_begin(const std::string & tag)
+//! \brief exports the container header.
+void Vrml_formatter::container_begin(const std::string& tag)
 {
   indent();
   out() << tag << " {";
   push_indent();
 }
 
-/*! Write the container tailer */
+//! \brief exports the container tailer.
 void Vrml_formatter::container_end()
 {
   pop_indent();
   indent();
   out() << "}";
-  new_line();  
+  new_line();
 }
 
-/*! Write the header of a container multi-field */
-void Vrml_formatter::multi_container_begin(const std::string & name)
+//! \brief exports the header of a container multi-field.
+void Vrml_formatter::multi_container_begin(const std::string& name)
 {
   new_line();
   indent();
@@ -97,7 +87,7 @@ void Vrml_formatter::multi_container_begin(const std::string & name)
   push_indent();
 }
 
-/*! Write the tailer of a container multi-field */
+//! \brief exports the tailer of a container multi-field.
 void Vrml_formatter::multi_container_end()
 {
   pop_indent();
@@ -106,29 +96,56 @@ void Vrml_formatter::multi_container_end()
   new_line();
 }
 
-/*! Write the header of a container single-field */
-void Vrml_formatter::single_container_begin(const std::string & name)
+//! \brief exports the header of a container single-field.
+void Vrml_formatter::single_container_begin(const std::string& name)
 {
   new_line();
   indent();
   out() << name << " ";
 }
 
-/*! Write the tailer of a container single-field */
+//! \brief exports the tailer of a container single-field.
 void Vrml_formatter::single_container_end() {}
 
-/*! Write a multi Uint field */
-void Vrml_formatter::multi_uint(const std::string & name,
-                                const Array<Uint> & value)
+//! \brief exports a single string field.
+inline void Vrml_formatter::single_string(const std::string& name,
+                                          const std::string& value,
+                                          const std::string& default_value)
 {
-  const Uint * vec = value.get_vector();
+  if (value == default_value) return;
+  new_line();
+  indent();
+  out() << name << " \"" << value << "\"";
+  new_line();
+}
+
+//! \brief exports a single Boolean field.
+void Vrml_formatter::single_boolean(const std::string& name,
+                                    Boolean value, Boolean default_value)
+{
+  if (value == default_value) return;
+  new_line();
+  indent();
+  out() << name << " " << (value ? "TRUE" : "FALSE");
+  new_line();
+}
+
+//! \brief exports a multi-Boolean field.
+void Vrml_formatter::multi_boolean(const std::string& name,
+                                   const std::vector<Boolean>& value,
+                                   const std::vector<Boolean>& default_value)
+{
+  if ((value.size() == 0) || (value.size() != default_value.size())) return;
+  if (! std::equal(value.begin(), value.end(), default_value.begin())) return;
+
   new_line();
   indent();
   out() << name << " [";
   new_line();
   push_indent();
   indent();
-  std::copy(vec, &vec[value.size()], std::ostream_iterator<Uint>(out(), " "));
+  std::copy(value.begin(), value.end(),
+            std::ostream_iterator<Boolean>(out(), " "));
   new_line();
   pop_indent();
   indent();

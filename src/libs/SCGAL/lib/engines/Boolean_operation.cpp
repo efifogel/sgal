@@ -40,6 +40,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Stl_formatter.hpp"
 
 #include "SCGAL/compute_planes.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
@@ -57,21 +58,21 @@ const char* Boolean_operation::s_operation_names[] =
 // Default values:
 REGISTER_TO_FACTORY(Boolean_operation, "Boolean_operation");
 
-/*! Constructor */
+//! \brief constructor.
 Boolean_operation::Boolean_operation(Boolean proto) :
   Node(proto),
   m_operation(OP_NOP),
   m_trigger(false)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Boolean_operation::~Boolean_operation() {}
 
-/*! \brief . */
+//! \brief .
 void Boolean_operation::trigger_changed(Field_info* /* field_info */)
 { execute(); }
 
-/*! \brief executes the engine. */
+//! \brief executes the engine.
 void Boolean_operation::execute()
 {
   typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
@@ -80,21 +81,38 @@ void Boolean_operation::execute()
 
   Exact_polyhedron_geo geometry1;
   geometry1.set_coord_array(m_operand1->get_coord_array());
-  Array<Uint>& indices1 = m_operand1->get_coord_indices();
+  std::vector<Uint>& indices1 = m_operand1->get_flat_coord_indices();
+  /* Observe that the call to get_flat_coord_indices() may trigger the
+   * "cleaning" of the coord indices. Thus, the following query must succeed
+   * the previous statement.
+   */
   if (m_operand1->are_coord_indices_flat())
     geometry1.set_flat_coord_indices(indices1);
-  else geometry1.set_coord_indices(indices1);
+  else {
+    std::vector<Uint>& indices1 = m_operand1->get_coord_indices();
+    Geo_set& geo_set1 = geometry1;
+    geo_set1.set_coord_indices(indices1);
+  }
   geometry1.set_num_primitives(m_operand1->get_num_primitives());
   geometry1.set_primitive_type(m_operand1->get_primitive_type());
   Polyhedron& polyhedron1 = geometry1.get_polyhedron();
+  // geometry1.print_stat();
   Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(polyhedron1);
 
   Exact_polyhedron_geo geometry2;
   geometry2.set_coord_array(m_operand2->get_coord_array());
-  Array<Uint>& indices2 = m_operand2->get_coord_indices();
+  std::vector<Uint>& indices2 = m_operand2->get_flat_coord_indices();
+  /* Observe that the call to get_flat_coord_indices() may trigger the
+   * "cleaning" of the coord indices. Thus, the following query must succeed
+   * the previous statement.
+   */
   if (m_operand2->are_coord_indices_flat())
     geometry2.set_flat_coord_indices(indices2);
-  else geometry2.set_coord_indices(indices2);
+  else {
+    std::vector<Uint>& indices2 = m_operand2->get_coord_indices();
+    Geo_set& geo_set2 = geometry2;
+    geo_set2.set_coord_indices(indices2);
+  }
   geometry2.set_num_primitives(m_operand2->get_num_primitives());
   geometry2.set_primitive_type(m_operand2->get_primitive_type());
   Polyhedron& polyhedron2 = geometry2.get_polyhedron();
@@ -114,7 +132,7 @@ void Boolean_operation::execute()
   if (field) field->cascade();
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Boolean_operation::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
@@ -166,7 +184,7 @@ void Boolean_operation::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief initilalizes the container prototype. */
+//! \brief initilalizes the container prototype.
 void Boolean_operation::init_prototype()
 {
   if (s_prototype) return;
@@ -213,18 +231,25 @@ void Boolean_operation::init_prototype()
                                                       result_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Boolean_operation::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Boolean_operation::get_prototype()
 {
   if (!s_prototype) Boolean_operation::init_prototype();
   return s_prototype;
+}
+
+//! \brief writes this container.
+void Boolean_operation::write(Formatter* formatter)
+{
+  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (stl_formatter) return;
 }
 
 SGAL_END_NAMESPACE

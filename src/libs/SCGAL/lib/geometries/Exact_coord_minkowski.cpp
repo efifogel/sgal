@@ -43,7 +43,7 @@ Container_proto* Exact_coord_minkowski::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Exact_coord_minkowski, "Exact_coord_minkowski");
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Exact_coord_minkowski::init_prototype()
 {
   if (s_prototype) return;
@@ -59,40 +59,40 @@ void Exact_coord_minkowski::init_prototype()
   s_prototype->add_field_info(new SF_bool(EXACT_EXECUTE, "exactExecute",
                                           execute_func, exec_func));
 
-  // exactCoord1
-//   Shared_container_handle_function coord_array1_func =
-//     reinterpret_cast<Shared_container_handle_function>
-//     (&Spherical_gaussian_map_marked_geo::coord_array1_handle);
-//   s_prototype->add_field_info(new SF_shared_container(EXACT_COORD1,
-//                                                       "exactCoord1",
-//                                                       coord_array1_func,
-//                                                       exec_func));
+  // // exactCoord1
+  // Shared_container_handle_function coord_array1_func =
+  //   reinterpret_cast<Shared_container_handle_function>
+  //   (&Spherical_gaussian_map_marked_geo::coord_array1_handle);
+  // s_prototype->add_field_info(new SF_shared_container(EXACT_COORD1,
+  //                                                     "exactCoord1",
+  //                                                     coord_array1_func,
+  //                                                     exec_func));
 
-//   // exactCoord2
-//   Shared_container_handle_function coord_array2_func =
-//     reinterpret_cast<Shared_container_handle_function>
-//     (&Spherical_gaussian_map_marked_geo::coord_array2_handle);
-//   s_prototype->add_field_info(new SF_shared_container(EXACT_COORD2,
-//                                                       "exactCoord2",
-//                                                       coord_array1_func,
-//                                                       exec_func));
+  // // exactCoord2
+  // Shared_container_handle_function coord_array2_func =
+  //   reinterpret_cast<Shared_container_handle_function>
+  //   (&Spherical_gaussian_map_marked_geo::coord_array2_handle);
+  // s_prototype->add_field_info(new SF_shared_container(EXACT_COORD2,
+  //                                                     "exactCoord2",
+  //                                                     coord_array1_func,
+  //                                                     exec_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Exact_coord_minkowski::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Exact_coord_minkowski::get_prototype()
 {
   if (s_prototype == NULL) Exact_coord_minkowski::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Exact_coord_minkowski::set_attributes(Element* elem)
 { Coord_minkowski::set_attributes(elem); }
 
@@ -105,7 +105,7 @@ Attribute_list Exact_coord_minkowski::get_attributes()
 }
 #endif
 
-/*! \brief transforms the input vertices. */
+//! \brief transforms the input vertices.
 void Exact_coord_minkowski::execute(Field_info* field_info)
 {
   if (!m_enabled) return;

@@ -57,6 +57,11 @@ class Scene_graph;
 class Element;
 class Sphere;
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! A geometry container that represents a power diagram os a sphere.
  */
 class SGAL_SCGAL_DECL Power_diagram_on_sphere_geo :
@@ -148,10 +153,10 @@ public:
 
   /// \name field handlers
   //@{
-  Boolean* site_enabled_handle(Field_info*) { return &m_site_enabled; }
-  Site_style* site_style_handle(Field_info*) { return &m_site_style; }
-  Int* site_count_handle(Field_info*) { return &m_site_count; }
-  Boolean* site_directed_handle(Field_info*) { return &m_site_directed; }
+  Boolean* site_enabled_handle(const Field_info*) { return &m_site_enabled; }
+  Site_style* site_style_handle(const Field_info*) { return &m_site_style; }
+  Int* site_count_handle(const Field_info*) { return &m_site_count; }
+  Boolean* site_directed_handle(const Field_info*) { return &m_site_directed; }
   //@}
 
   /*! Set the node attributes. */
@@ -381,6 +386,10 @@ private:
   /*! Detsroy the renderers. */
   void destroy_renderers();
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /* \brief constructs the prototype. */
 inline Power_diagram_on_sphere_geo* Power_diagram_on_sphere_geo::prototype()

@@ -59,15 +59,15 @@ void Stencil_cube_renderer::operator()(Draw_action * action)
 
 /*! \brief draws an arrangement on cube vertex */
 void draw_vertex_on_cube(Draw_action * action,
-                         const Vector3f & center, const Vector3f & normal,  
+                         const Vector3f & center, const Vector3f & normal,
                          Arrangement_renderer::Vertex_shape::Style style,
                          Float radius, Float delta_angle)
 {
   typedef Arrangement_renderer::Vertex_shape      Vertex_shape;
-  
+
   switch (style) {
    case Vertex_shape::NONE: break;
-    
+
    case Vertex_shape::BALL:       // draw a ball
     {
      Sphere sphere;
@@ -76,7 +76,7 @@ void draw_vertex_on_cube(Draw_action * action,
      sphere.draw(action);
     }
     break;
-    
+
    case Vertex_shape::POINT:      // draw a point
     glBegin(GL_POINTS);
     glVertex3fv((float*)&center);
@@ -92,7 +92,7 @@ void draw_vertex_on_cube(Draw_action * action,
      else if (normal[1] == 1) vec.set(0, 0, radius);
      else if (normal[2] == -1) vec.set(0, radius, 0);
      else if (normal[2] == 1) vec.set(radius, 0, 0);
-            
+
      Rotation rot(normal, 0);
 
      glBegin(GL_TRIANGLE_FAN);
@@ -121,7 +121,7 @@ void draw_vertex_on_cube(Draw_action * action,
      else if (normal[1] == 1) vec.set(0, 0, radius);
      else if (normal[2] == -1) vec.set(0, radius, 0);
      else if (normal[2] == 1) vec.set(radius, 0, 0);
-            
+
      Rotation rot(normal, 0);
 
      glBegin(GL_LINE_LOOP);
@@ -136,7 +136,7 @@ void draw_vertex_on_cube(Draw_action * action,
      glEnd();
     }
     break;
-    
+
    default: break;
   }
 }
@@ -149,7 +149,7 @@ void draw_edge_on_cube(Draw_action * action,
                        Float radius)
 {
   typedef Arrangement_renderer::Edge_shape      Edge_shape;
-  
+
   Vector3f dif, cross, offset, tmp;
 
   switch (style) {
@@ -159,13 +159,13 @@ void draw_edge_on_cube(Draw_action * action,
     glVertex3fv((float*)&trg);
     glEnd();
     break;
-        
+
    case Edge_shape::STRIP:
     dif.sub(trg, src);
     cross.cross(normal, dif);
     cross.normalize();
     offset.scale(radius, cross);
-    
+
     glBegin(GL_POLYGON);
     glNormal3fv((float*)&normal);
     tmp.add(src, offset);
@@ -178,19 +178,19 @@ void draw_edge_on_cube(Draw_action * action,
     glVertex3fv((float*)&tmp);
     glEnd();
     break;
-        
+
    case Edge_shape::TUBE:
     {
       Extrusion tube;
       tube.set_cross_section_radius(radius);
-      SGAL::Array<Vector3f> & spine = tube.get_spine();
+      std::vector<Vector3f>& spine = tube.get_spine();
       spine.resize(2);
       spine[0] = src;
       spine[1] = trg;
       tube.draw(action);
     }
     break;
-        
+
    default: break;
   }
 }

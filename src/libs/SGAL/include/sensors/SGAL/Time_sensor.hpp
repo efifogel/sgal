@@ -97,23 +97,24 @@ public:
 
   /// \name field handlers
   //@{
-  Scene_time* cycle_interval_handle(Field_info*) { return &m_cycle_interval; }
-  Uint* frequency_handle(Field_info*) { return &m_frequency; }
-  Boolean* enabled_handle(Field_info*) { return &m_enabled; }
-  Boolean* loop_handle(Field_info*) { return &m_loop; }
-  Scene_time* start_time_handle(Field_info*) { return &m_start_time; }
-  Scene_time* stop_time_handle(Field_info*) { return &m_stop_time; }
-  Scene_time* cycle_time_handle(Field_info*) { return &m_cycle_time; }
-  Float* fraction_handle(Field_info*) { return &m_fraction; }
-  Boolean* is_active_handle(Field_info*) { return &m_is_active; }
+  Scene_time* cycle_interval_handle(const Field_info*)
+  { return &m_cycle_interval; }
+  Uint* frequency_handle(const Field_info*) { return &m_frequency; }
+  Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
+  Boolean* loop_handle(const Field_info*) { return &m_loop; }
+  Scene_time* start_time_handle(const Field_info*) { return &m_start_time; }
+  Scene_time* stop_time_handle(const Field_info*) { return &m_stop_time; }
+  Scene_time* cycle_time_handle(const Field_info*) { return &m_cycle_time; }
+  Float* fraction_handle(const Field_info*) { return &m_fraction; }
+  Boolean* is_active_handle(const Field_info*) { return &m_is_active; }
 
-  Boolean* true_fraction_handle(Field_info*) { return &m_true_fraction; }
-  Float* fraction_bias_handle(Field_info*) { return &m_fraction_bias; }
-  Float* fraction_scale_handle(Field_info*) { return &m_fraction_scale; }
+  Boolean* true_fraction_handle(const Field_info*) { return &m_true_fraction; }
+  Float* fraction_bias_handle(const Field_info*) { return &m_fraction_bias; }
+  Float* fraction_scale_handle(const Field_info*) { return &m_fraction_scale; }
 
-  Scene_time* time_handle(Field_info*) { return &m_time; }
-  Scene_time* start_handle(Field_info*) { return &m_start; }
-  Scene_time* stop_handle(Field_info*) { return &m_stop; }
+  Scene_time* time_handle(const Field_info*) { return &m_time; }
+  Scene_time* start_handle(const Field_info*) { return &m_start; }
+  Scene_time* stop_handle(const Field_info*) { return &m_stop; }
   //@}
 
   /*! Set the attributes of this node */

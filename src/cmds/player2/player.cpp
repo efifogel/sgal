@@ -42,7 +42,31 @@ SGAL_END_NAMESPACE
 int main(int argc, char * argv[])
 {
   SGAL::scgal_init();
-  
+
+  // Parse program options:
+  Player2_option_parser option_parser;
+  option_parser.init();
+  try {
+    option_parser(argc, argv);
+    option_parser.apply();
+  }
+  catch(Player_option_parser::Generic_option_exception & /* e */) {
+    return 0;
+  }
+  catch(std::exception & e) {
+    std::cerr << e.what() << std::endl;
+    return 1;
+  }
+
+  // Create the scene:
+  Player2_scene scene(&option_parser);
+  try {
+    scene.create_scene();
+  } catch (std::exception & e) {
+    std::cerr << e.what() << std::endl;
+    return -1;
+  }
+
   // Create a window manager:
 #if (defined USE_GLUT)
   SGAL::Glut_window_manager * wm = SGAL::Glut_window_manager::instance();
@@ -52,41 +76,20 @@ int main(int argc, char * argv[])
   SGAL::X11_window_manager * wm = SGAL::X11_window_manager::instance();
 #endif
 
-  // Parse program options:
-  Player2_option_parser option_parser;
-  option_parser.set_window_manager(wm);
-  option_parser.init();
-  try {
-    option_parser(argc, argv);
-    option_parser.apply();
-  } catch(Player_option_parser::Generic_option_exception & /* e */) {
-    return 0;
-  } catch(std::exception & e) {
-    std::cerr << e.what() << std::endl;
-    return 1;
-  }
-
-  // Construct all scenes:
-  Player2_scene scene(&option_parser);
+  // Initialize the visual:
   scene.set_window_manager(wm);
   wm->set_scene(&scene);
-
-  try {
-    scene.create_scene();
-  } catch (std::exception & e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
-
-  // Construct simulator
   try {
     wm->init(static_cast<SGAL::Uint>(argc), argv);
     scene.init_scene();
-  } catch(std::exception & e) {
+  }
+  catch(std::exception & e) {
     std::cerr << e.what() << std::endl;
+    scene.destroy_scene();
     return -1;
   }
   wm->event_loop(scene.is_simulating());
   wm->clear();
+  scene.destroy_scene();
   return 0;
 }

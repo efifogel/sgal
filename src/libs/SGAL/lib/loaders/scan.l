@@ -86,7 +86,7 @@ anynumber 		([+-]?{number}|{hexnumber}|{octnumber})
 idStartChar		([a-zA-Z\$_\x80-\xFF])
 idRestChar      	({idStartChar}|[0-9]|\-)
 
-%s vrml js
+%s vrml js stl
 
 /* The following paragraph suffices to track locations accurately. Each time
  * yylex is invoked, the begin position is moved onto the end position.
@@ -101,7 +101,17 @@ idRestChar      	({idStartChar}|[0-9]|\-)
 loc.step();		// reset location
 %}
 
-<INITIAL>"#VRML V2.0"[^\n]*	{ BEGIN(vrml); }
+<INITIAL>"#VRML V2.0"[^\n]*	{ BEGIN(vrml); return Vrml_parser::make_VRML(loc); }
+
+<INITIAL>"solid"	{ BEGIN(stl); return Vrml_parser::make_K_SOLID(loc); }
+
+<stl>"endsolid"		{ return Vrml_parser::make_K_SOLID_END(loc); }
+<stl>"facet"		{ return Vrml_parser::make_K_FACET(loc); }
+<stl>"endfacet"		{ return Vrml_parser::make_K_FACET_END(loc); }
+<stl>"normal"		{ return Vrml_parser::make_K_NORMAL(loc); }
+<stl>"vertex"		{ return Vrml_parser::make_K_VERTEX(loc); }
+<stl>"outer loop"	{ return Vrml_parser::make_K_LOOP(loc); }
+<stl>"endloop"	        { return Vrml_parser::make_K_LOOP_END(loc); }
 
 <vrml>"/*"		{ comment(); }
 <vrml>"#"		{ comment_to_eol(); }
@@ -145,10 +155,10 @@ loc.step();		// reset location
 <vrml>"SFVec2f"		{ return Vrml_parser::make_SFVec2f(loc); }
 <vrml>"SFVec3f"		{ return Vrml_parser::make_SFVec3f(loc); }
 
-<vrml>{quotion}		{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
-<vrml>{anynumber}	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
+<vrml,stl>{quotion}	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
+<vrml,stl>{anynumber}	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_NUMBER(*yylval, loc); }
 
-<vrml>{idStartChar}{idRestChar}*	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_IDENTIFIER(*yylval, loc); }
+<vrml,stl>{idStartChar}{idRestChar}*	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_IDENTIFIER(*yylval, loc); }
 
 <vrml>\"(\\.|[^\\"])*\"	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }
 <vrml>\'(\\.|[^\\'])*\'	{ std::string* yylval = new std::string(YYText()); return Vrml_parser::make_STRING_LITERAL(*yylval, loc); }

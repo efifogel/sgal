@@ -117,7 +117,8 @@ public:
 
   /// \name field handlers
   //@{
-  Shared_indexed_line_set* segments_handle(Field_info*) { return &m_segments; }
+  Shared_indexed_line_set* segments_handle(const Field_info*)
+  { return &m_segments; }
   //@}
 
   /*! Set the attributes of this node */
@@ -216,11 +217,11 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Lines_through_segments_geo* Lines_through_segments_geo::prototype()
 { return new Lines_through_segments_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Lines_through_segments_geo::clone()
 { return new Lines_through_segments_geo(); }
 

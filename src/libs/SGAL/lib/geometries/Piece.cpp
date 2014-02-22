@@ -35,7 +35,6 @@
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Formatter.hpp"
 #include "SGAL/Piece.hpp"
 #include "SGAL/Utilities.hpp"
 
@@ -177,13 +176,15 @@ void Piece::clean()
   m_num_primitives = size;
 
   set_solid(true);
+
+  generate_coord_indices();
+
   Indexed_face_set::clean();
   Indexed_face_set::coord_point_changed();
-  Indexed_face_set::clear_indices();
 }
 
-/*! \brief cleans the coordinate index array. */
-void Piece::clean_coord_indices()
+/*! \brief generates the coordinate index array. */
+void Piece::generate_coord_indices()
 {
   //! \todo generate the indices flat to start with.
   m_coord_indices.resize(m_num_primitives * 5);
@@ -245,18 +246,8 @@ void Piece::clean_coord_indices()
       }
     }
   }
-  Indexed_face_set::clean_coord_indices();
-}
 
-/*! Write this container. */
-void Piece::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-  formatter->single_int("width", m_width, s_def_width);
-  formatter->single_int("height", m_height, s_def_height);
-  formatter->single_int("depth", m_depth, s_def_depth);
-  formatter->multi_uint("composition", m_composition);
-  formatter->container_end();
+  clear_flat_coord_indices();
 }
 
 /*! \brief processes change of structure. */

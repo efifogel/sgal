@@ -39,7 +39,7 @@ class SGAL_SGAL_DECL Rotation {
 public:
   /*! Default Constructor */
   Rotation();
-  
+
   /*! Constructor */
   Rotation(float x, float y, float z, float radians);
 
@@ -53,11 +53,19 @@ public:
   Rotation(const std::string& text);
 
   void set_angle(float angle);
+
   float get_angle() const;
+
   void set_axis(float x, float y, float z);
+
   void set_axis(const Vector3f& axis);
+
   void get_axis(Vector3f& axis) const;
-  Vector3f& get_axis() { return m_axis; }
+
+  /*! Obtain the axis.
+   * \return the axis.
+   */
+  const Vector3f& get_axis() const;
 
   void set(float x, float y, float z, float radians);
   void get(float* x, float* y, float* z, float* radians) const;
@@ -71,7 +79,7 @@ public:
   void slerp(float t, const Rotation& q1, const Rotation& q2);
   void make(const Vector3f& src, const Vector3f& dst);
   void rotate(const Vector3f& src, Vector3f& dst) const;
-    
+
   float& operator[](int i);
   float operator[](int i) const;
 
@@ -89,23 +97,23 @@ private:
   void set_quaternion(const Vector4f& q);
 };
 
-/*! Default Constructor */
+//! \brief default Constructor.
 inline Rotation::Rotation() : m_axis(0, 0, 1), m_angle(0) {}
 
-/*! Constructor */
+//! \brief constructor.
 inline Rotation::Rotation(float x, float y, float z, float radians) :
   m_axis(x, y, z), m_angle(radians)
 { m_axis.normalize(); }
 
-/*! Constructor -  notice that axis is not normalized */
+//! \brief constructor---notice that axis is not normalized.
 inline Rotation::Rotation(const Vector3f& axis, float radians) :
   m_axis(axis), m_angle(radians)
 {}
 
-/*! Copy Constructor */
+//! \brief copy Constructor.
 inline Rotation::Rotation(const Rotation& r) { set(r); }
 
-/*! Constructor */
+//! Constructor from string.
 inline Rotation::Rotation(const std::string& text)
 {
   std::istringstream tmp(text, std::istringstream::in);
@@ -113,21 +121,21 @@ inline Rotation::Rotation(const std::string& text)
   m_axis.normalize();
 }
 
-/*! \brief */
+//! \brief sets the rotation.
 inline void Rotation::set(float x, float y, float z, float radians)
 {
   set_axis(x, y, z);
   set_angle(radians);
 }
 
-/*! \brief */
+//! \brief sets the rotation.
 inline void Rotation::set(const Vector3f& axis, float radians)
 {
   set_axis(axis);
   set_angle(radians);
 }
 
-/*! \brief */
+//! \brief obtain the rotation.
 inline void Rotation::get(float* x, float* y, float* z, float* radians) const
 {
   *x = m_axis[0];
@@ -136,10 +144,10 @@ inline void Rotation::get(float* x, float* y, float* z, float* radians) const
   *radians = m_angle;
 }
 
-/*! \brief */
+//! \brief set the rotation angle.
 inline void Rotation::set_angle(float angle) { m_angle = angle; }
 
-/*! \brief */
+//! \brief set the rotation axis.
 inline void Rotation::set_axis(float x, float y, float z)
 {
   m_axis[0] = x;
@@ -148,60 +156,63 @@ inline void Rotation::set_axis(float x, float y, float z)
   (void) m_axis.normalize();
 }
 
-/*! \brief */
+//! \brief obtain the rotation angle.
 inline float Rotation::get_angle() const { return m_angle; }
 
-/*! \brief */
+//! \brief set the rotation axis.
 inline void Rotation::set_axis(const Vector3f& axis)
 { set_axis(axis[0], axis[1], axis[2]); }
 
-/*! \brief */
+//! \brief obtain the rotation axis.
 inline void Rotation::get_axis(Vector3f& axis) const { axis = m_axis; }
 
-/*! \brief */
+//! \brief set the rotation.
 inline void Rotation::set(const Rotation& r)
 {
   m_axis = r.m_axis;
   m_angle = r.m_angle;
 }
 
-/*! \brief */
+//! \brief obtain the rotation.
 inline void Rotation::get(Rotation& r) const
 {
   r.m_axis = m_axis;
   r.m_angle = m_angle;
 }
 
-/*! \brief */
+//! \brief obtain the reference to a rotation component.
 inline float& Rotation::operator[](int i)
 {
   if (i == 3) return m_angle;
   return m_axis[i];
 }
 
-/*! \brief */
+//! \brief obtain a rotation component.
 inline float Rotation::operator[](int i) const
 {
   if (i == 3) return m_angle;
   return m_axis[i];
 }
 
-/*! \brief */
+//! \brief determines whether the rotation is not equal to another.
 inline bool Rotation::operator!=(const Rotation& r) const
-{ return m_axis != r.m_axis || m_angle != r.m_angle; }
+{ return ((m_axis != r.m_axis) || (m_angle != r.m_angle)); }
 
-/*! \brief */
+//! \brief determines whether the rotation is equal to another.
 inline int Rotation::operator==(const Rotation& r) const
-{ return m_axis == r.m_axis && m_angle == r.m_angle; }
+{ return ((m_axis == r.m_axis) && (m_angle == r.m_angle)); }
 
-/*! Exporter */
+//! \brief obtains the rotation axis.
+inline const Vector3f& Rotation::get_axis() const { return m_axis; }
+
+//! \brief exports the rotation.
 inline std::ostream& operator<<(std::ostream& os, const Rotation& rot)
 {
   os << rot[0] << ", " << rot[1] << ", " << rot[2] << ", " << rot[3];
   return os;
 }
 
-/*! Importer */
+//! \brief imports the rotation.
 inline std::istream& operator >>(std::istream& in, Rotation& rot)
 {
   float x, y, z, angle;

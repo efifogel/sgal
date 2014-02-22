@@ -136,9 +136,9 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_CREATE" << std::endl;);
     // Store Window Structure Pointer:
-    creation = (CREATESTRUCT*)(lParam);
+    creation = reinterpret_cast<CREATESTRUCT*>(lParam);
     current_window = (Windows_window_item*)(creation->lpCreateParams);
-    SetWindowLong(hWnd, GWL_USERDATA,(LONG)(current_window));
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)(current_window));
     wm->set_current_window(current_window);
     wm->insert_window(current_window);
     break;
@@ -146,8 +146,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_DESTROY:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_DESTROY" << std::endl;);
-    current_window =
-      (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->remove_window(current_window);
     wm->set_current_window(NULL);
     break;
@@ -155,8 +155,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_SIZE:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_SIZE" << std::endl;);
-    current_window =
-      (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     switch (wParam) {                   // Evaluate Size Action
      case SIZE_MINIMIZED:               // Was Window Minimized?
@@ -184,7 +184,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_PAINT" << std::endl;);
     BeginPaint(hWnd, &ps);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     // Don't delay the redraw:
 #if 0
@@ -200,7 +201,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_KEYDOWN:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_KEYDOWN" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     switch (wParam) {
      case VK_SHIFT: s_capital = true; break;
@@ -227,7 +229,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_KEYUP:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_KEYUP" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     switch (wParam) {
       // case VK_ESCAPE:
@@ -245,7 +248,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_LBUTTONDOWN:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_LBUTTONDOWN" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::LEFT_BUTTON;
     state = Mouse_event::DOWN;
@@ -265,7 +269,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_LBUTTONUP:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_LBUTTONUP" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::LEFT_BUTTON;
     state = Mouse_event::UP;
@@ -275,7 +280,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_MBUTTONDOWN:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_MBUTTONDOWN" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::MIDDLE_BUTTON;
     state = Mouse_event::DOWN;
@@ -285,7 +291,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_MBUTTONUP:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_MBUTTONUP" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::MIDDLE_BUTTON;
     state = Mouse_event::UP;
@@ -293,7 +300,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
     goto process_mouse;
 
    case WM_RBUTTONDOWN:
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::RIGHT_BUTTON;
     state = Mouse_event::DOWN;
@@ -303,7 +311,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_RBUTTONUP:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_RBUTTONUP" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     button = Mouse_event::RIGHT_BUTTON;
     state = Mouse_event::UP;
@@ -313,7 +322,8 @@ Windows_window_manager::WindowProc(HWND hWnd, UINT uMsg,
    case WM_MOUSEMOVE:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "WM_MOUSEMOVE" << std::endl;);
-    current_window = (Windows_window_item*)(GetWindowLong(hWnd, GWL_USERDATA));
+    current_window = reinterpret_cast<Windows_window_item*>
+      (GetWindowLongPtr(hWnd, GWLP_USERDATA));
     wm->set_current_window(current_window);
     if (wm->m_button_state == 0) {
       passive_motion_event = new Passive_motion_event;

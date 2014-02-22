@@ -37,16 +37,19 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Geometry::s_prototype(NULL);
 
-/*! Constructor */
+const Boolean Geometry::s_def_generated_tex_coord(true);
+const Boolean Geometry::s_def_generated_color(false);
+
+//! \brief constructor.
 Geometry::Geometry(Boolean proto) :
   Container(proto),
   m_dirty_sphere_bound(true),
   m_bb_is_pre_set(false),
-  m_generated_color(false),
-  m_generated_tex_coord(true)
+  m_generated_color(s_def_generated_color),
+  m_generated_tex_coord(s_def_generated_tex_coord)
 {}
 
-/*! \brief initializes the geometry prototype. */
+//! \brief initializes the geometry prototype.
 void Geometry::init_prototype()
 {
   if (s_prototype) return;
@@ -64,24 +67,25 @@ void Geometry::init_prototype()
     (&Geometry::generated_tex_coord_handle);
   s_prototype->add_field_info(new SF_bool(GENERATED_TEX_COORD,
                                           "generatedTexCoord",
-                                          generated_tex_coord_func));
+                                          generated_tex_coord_func,
+                                          s_def_generated_tex_coord));
 }
 
-/*! \brief deletes the geometry prototype. */
+//! \brief deletes the geometry prototype.
 void Geometry::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the geometry prototype. */
+//! \brief obtains the geometry prototype.
 Container_proto* Geometry::get_prototype()
 {
   if (!s_prototype) Geometry::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the geometric object. */
+//! \brief sets the attributes of the geometric object.
 void Geometry::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
@@ -136,7 +140,7 @@ const Sphere_bound* Geometry::get_sphere_bound(bool& changed)
 }
 
 #if 0
-/*! \brief obtains the attributes of the box */
+//! \brief obtains the attributes of the box.
 Attribute_list Geometry::get_attributes()
 {
   Attribute_list attribs;
@@ -144,8 +148,7 @@ Attribute_list Geometry::get_attributes()
   return attribs;
 }
 
-/*! \brief obtains the parent node from the scene graph and add the geometry
- */
+//! \brief obtains the parent node from the scene graph and add the geometry.
 void Geometry::add_to_scene(Scene_graph* sg)
 {
   Container::add_to_scene(sg, parent);

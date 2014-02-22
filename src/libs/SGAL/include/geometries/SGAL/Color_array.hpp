@@ -22,9 +22,10 @@
 #ifndef SGAL_COLOR_ARRAY_HPP
 #define SGAL_COLOR_ARRAY_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -33,7 +34,8 @@ class Element;
 class Container_proto;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL Array<Vector3f>;
+template class SGAL_SGAL_DECL std::allocator<Vector3f>;
+template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -86,16 +88,16 @@ public:
   void clear();
 
   /*! Obtain the iterator to the Array first element. */
-  Vector3f* begin();
+  std::vector<Vector3f>::iterator begin();
 
   /*! Obtain the const iterator to the Array first element. */
-  const Vector3f * begin() const;
+  const std::vector<Vector3f>::const_iterator begin() const;
 
   /*! Obtain the iterator to the Array past-the-end element. */
-  Vector3f* end();
+  std::vector<Vector3f>::iterator end();
 
   /*! Obtain the const iterator to the Array past-the-end element. */
-  const Vector3f* end() const ;
+  const std::vector<Vector3f>::const_iterator end() const ;
 
   /*! Array indexing operator. */
   Vector3f& operator[](Uint n);
@@ -118,51 +120,55 @@ private:
   static Container_proto* s_prototype;
 
   /*! The array of colors. */
-  Array<Vector3f> m_array;
+  std::vector<Vector3f> m_array;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Color_array* Color_array::prototype() { return new Color_array(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Color_array::clone() { return new Color_array(); }
 
-/*! \brief obtains the array size. */
+//! \brief obtains the array size.
 inline Uint Color_array::size() const { return m_array.size(); }
 
-/*! \brief resizes the array capacity. */
+//! \brief resizes the array capacity.
 inline void Color_array::resize(Uint n) { m_array.resize(n); }
 
-/*! \brief clears the array. */
+//! \brief clears the array.
 inline void Color_array::clear() { m_array.clear(); }
 
-/*! \brief obtains the iterator to the Array first element. */
-inline Vector3f* Color_array::begin() { return m_array.begin(); }
+//! \brief obtains the iterator to the Array first element.
+inline std::vector<Vector3f>::iterator Color_array::begin()
+{ return m_array.begin(); }
 
-/*! \brief obtains the const iterator to the Array first element. */
-inline const Vector3f * Color_array::begin() const { return m_array.begin(); }
+//! \brief obtains the const iterator to the Array first element.
+inline const std::vector<Vector3f>::const_iterator Color_array::begin() const
+{ return m_array.begin(); }
 
-/*! \brief obtains the iterator to the Array past-the-end element. */
-inline Vector3f* Color_array::end() { return m_array.end(); }
+//! \brief obtains the iterator to the Array past-the-end element.
+inline std::vector<Vector3f>::iterator Color_array::end()
+{ return m_array.end(); }
 
-/*! \brief obtains the const iterator to the Array first element. */
-inline const Vector3f* Color_array::end() const { return m_array.end(); }
+//! \brief obtains the const iterator to the Array first element.
+inline const std::vector<Vector3f>::const_iterator Color_array::end() const
+{ return m_array.end(); }
 
-/*! \brief Array indexing operator. */
+//! \brief Array indexing operator.
 inline Vector3f& Color_array::operator[](Uint n) { return m_array[n]; }
 
-/*! \brief Array indexing operator. */
+//! \brief Array indexing operator.
 inline const Vector3f& Color_array::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief obtains the vector. */
-inline Vector3f* Color_array::get_vector() { return m_array.get_vector(); }
+//! \brief obtains the vector.
+inline Vector3f* Color_array::get_vector() { return &(*(m_array.begin())); }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Color_array::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

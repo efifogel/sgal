@@ -53,8 +53,8 @@ Window_option_parser::~Window_option_parser() {}
 
 /*! \brief obtains the requested window width */
 Boolean
-Window_option_parser::get_window_width(const po::variables_map & variable_map,
-                                       Uint & width) const
+Window_option_parser::get_window_width(const po::variables_map& variable_map,
+                                       Uint& width) const
 {
   if (variable_map.count("window-width") <= 0) return false;
   width = m_win_width;
@@ -63,8 +63,8 @@ Window_option_parser::get_window_width(const po::variables_map & variable_map,
 
 /*! \brief obtains the requested window height */
 Boolean
-Window_option_parser::get_window_height(const po::variables_map & variable_map,
-                                        Uint & height) const
+Window_option_parser::get_window_height(const po::variables_map& variable_map,
+                                        Uint& height) const
 {
   if (variable_map.count("window-height") <= 0) return false;
   height = m_win_height;
@@ -72,9 +72,8 @@ Window_option_parser::get_window_height(const po::variables_map & variable_map,
 }
 
 /*! \breif obtains the requested x-position of the window origin */
-Boolean Window_option_parser::get_window_x(const po::variables_map &
-                                           variable_map,
-                                           Uint & x) const
+Boolean Window_option_parser::get_window_x(const po::variables_map& variable_map,
+                                           Uint& x) const
 {
   if (variable_map.count("window-x")) return false;
   x = m_win_x;
@@ -82,9 +81,8 @@ Boolean Window_option_parser::get_window_x(const po::variables_map &
 }
 
 /*! \breif obtains the requested y-position of the window origin */
-Boolean Window_option_parser::get_window_y(const po::variables_map &
-                                           variable_map,
-                                           Uint & y) const
+Boolean Window_option_parser::get_window_y(const po::variables_map& variable_map,
+                                           Uint& y) const
 {
   if (variable_map.count("window-y")) return false;
   y = m_win_y;
@@ -92,9 +90,9 @@ Boolean Window_option_parser::get_window_y(const po::variables_map &
 }
 
 /*! \breif obtains the requested position of the window origin */
-Boolean Window_option_parser::get_window_position(const po::variables_map &
+Boolean Window_option_parser::get_window_position(const po::variables_map&
                                                   variable_map,
-                                                  Uint & x, Uint & y) const
+                                                  Uint& x, Uint &y) const
 {
   if ((variable_map.count("window-x") <= 0) &&
       (variable_map.count("window-y") <= 0))
@@ -106,9 +104,9 @@ Boolean Window_option_parser::get_window_position(const po::variables_map &
 
 /*! \breif obtains the flag that indicates whether full screen is requested */
 Boolean
-Window_option_parser::get_window_full_screen(const po::variables_map &
+Window_option_parser::get_window_full_screen(const po::variables_map&
                                                variable_map,
-                                             Boolean & full_sreen) const
+                                             Boolean& full_sreen) const
 {
   if (variable_map.count("full-screen") <= 0) return false;
   full_sreen = m_full_screen;

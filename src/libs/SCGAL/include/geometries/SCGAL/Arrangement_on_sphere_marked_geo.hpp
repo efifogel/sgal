@@ -121,9 +121,9 @@ public:
 
   /// \name field handlers
   //@{
-  Float* aos_marked_vertex_radius_handle(Field_info*)
+  Float* aos_marked_vertex_radius_handle(const Field_info*)
   { return &m_aos_marked_vertex_radius; }
-  Float* aos_marked_edge_radius_handle(Field_info*)
+  Float* aos_marked_edge_radius_handle(const Field_info*)
   { return &m_aos_marked_edge_radius; }
   //@}
 
@@ -334,6 +334,16 @@ protected:
 
     /*! Render the edges. */
     virtual void operator()(Draw_action* action);
+
+  private:
+    // Assignment operator cannot be generated.
+    Sphere_marked_colored_edges_renderer&
+    operator=(const Sphere_marked_colored_edges_renderer&);
+
+    // In C++11, the following is supported:
+    // Sphere_marked_colored_edges_renderer&
+    //   operator=(const Sphere_marked_colored_edges_renderer&) =
+    //   delete;
   };
 
   /*! A function object that renders the marked primal vertex. */

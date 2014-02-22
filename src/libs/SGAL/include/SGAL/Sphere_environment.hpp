@@ -82,7 +82,7 @@ public:
 
   /// \name field handlers
   //@{
-  Float* alpha_handle(Field_info*) { return &m_alpha; }
+  Float* alpha_handle(const Field_info*) { return &m_alpha; }
   //@}
 
   /*! Set the attributes of this node */

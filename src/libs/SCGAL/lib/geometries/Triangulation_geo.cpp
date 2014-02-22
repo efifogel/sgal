@@ -139,7 +139,7 @@ void Triangulation_geo::clear()
 }
 
 /*! \brief */
-void Triangulation_geo::cull(SGAL::Cull_context& cull_context) {}
+void Triangulation_geo::cull(SGAL::Cull_context& /* cull_context */) {}
 
 /*! \brief */
 void Triangulation_geo::draw(SGAL::Draw_action* action)
@@ -216,7 +216,7 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 }
 
 /*! \brief */
-void Triangulation_geo::isect(SGAL::Isect_action* action) {}
+void Triangulation_geo::isect(SGAL::Isect_action* /* action */) {}
 
 /*! \brief */
 Boolean Triangulation_geo::clean_sphere_bound()
@@ -294,7 +294,7 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
 }
 
 /*! \brief updates the internal representation in a cascade chain. */
-void Triangulation_geo::coord_changed(SGAL::Field_info* field_info)
+void Triangulation_geo::coord_changed(SGAL::Field_info* /* field_info */)
 {
   SGAL_TRACE_CODE(SGAL::Trace::POLYHEDRON,
                   for (Uint i = 0; i < m_coord_array->size(); ++i)

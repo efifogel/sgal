@@ -31,18 +31,22 @@
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Formatter.hpp"
+#include "SGAL/Stl_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 const std::string Switch::s_tag = "Switch";
 Container_proto* Switch::s_prototype(NULL);
 
+const Uint Switch::s_def_which_choice(static_cast<Uint>(-1));
+
 REGISTER_TO_FACTORY(Switch, "Switch");
 
 /*! Constructor */
 Switch::Switch(Boolean proto) :
   Group(proto),
-  m_which_choice(static_cast<Uint>(-1))
+  m_which_choice(s_def_which_choice)
 {}
 
 /*! Destructor */
@@ -155,7 +159,8 @@ void Switch::init_prototype()
   Uint_handle_function which_choice_func =
     static_cast<Uint_handle_function>(&Switch::which_choice_handle);
   s_prototype->add_field_info(new SF_uint(WHICH_CHOICE, "whichChoice",
-                                          which_choice_func, exec_func));
+                                          which_choice_func, s_def_which_choice,
+                                          exec_func));
 }
 
 /*! */
@@ -182,9 +187,8 @@ void Switch::set_attributes(Element* elem)
   typedef Element::Str_attr_iter Str_attr_iter;
 
   Group::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "whichChoice") {
@@ -217,5 +221,18 @@ Attribute_list Switch::get_attributes()
   return attribs;
 }
 #endif
+
+//! \brief writes this container.
+void Switch::write(Formatter* formatter)
+{
+  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  if (stl_formatter) {
+    Shared_node node = get_choice();
+    if (node) node->write(formatter);
+    return;
+  }
+
+  Group::write(formatter);
+}
 
 SGAL_END_NAMESPACE

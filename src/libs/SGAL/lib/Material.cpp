@@ -37,7 +37,6 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
-#include "SGAL/Formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -45,24 +44,24 @@ const std::string Material::s_tag = "Material";
 Container_proto* Material::s_prototype(NULL);
 
 // Default values:
-Float Material::m_def_ambient_intensity = 0.2f;
-Vector3f Material::m_def_diffuse_color(0.8f, 0.8f,0.8f);
-Vector3f Material::m_def_emissive_color(0, 0, 0);
-Float Material::m_def_shininess = 0.2f;
-Vector3f Material::m_def_specular_color(0, 0, 0);
-Float Material::m_def_transparency = 0;
+const Float Material::s_def_ambient_intensity = 0.2f;
+const Vector3f Material::s_def_diffuse_color(0.8f, 0.8f,0.8f);
+const Vector3f Material::s_def_emissive_color(0, 0, 0);
+const Float Material::s_def_shininess = 0.2f;
+const Vector3f Material::s_def_specular_color(0, 0, 0);
+const Float Material::s_def_transparency = 0;
 
 REGISTER_TO_FACTORY(Material, "Material");
 
 /*! Constructor */
 Material::Material(Boolean proto) :
   Container(proto),
-  m_ambient_intensity(m_def_ambient_intensity),
-  m_diffuse_color(m_def_diffuse_color),
-  m_specular_color(m_def_specular_color),
-  m_emissive_color(m_def_emissive_color),
-  m_shininess(m_def_shininess),
-  m_transparency(m_def_transparency)
+  m_ambient_intensity(s_def_ambient_intensity),
+  m_diffuse_color(s_def_diffuse_color),
+  m_specular_color(s_def_specular_color),
+  m_emissive_color(s_def_emissive_color),
+  m_shininess(s_def_shininess),
+  m_transparency(s_def_transparency)
 {}
 
 /*! Destructor */
@@ -158,6 +157,7 @@ void Material::init_prototype()
   s_prototype->add_field_info(new SF_float(AMBIENT_INTENSITY,
                                            "ambientIntensity",
                                            ambient_intensity_func,
+                                           s_def_ambient_intensity,
                                            exec_func));
 
   // diffuseColor
@@ -165,35 +165,40 @@ void Material::init_prototype()
   Vector3f_handle_function diffuse_color_func =
     static_cast<Vector3f_handle_function>(&Material::diffuse_color_handle);
   s_prototype->add_field_info(new SF_vector3f(DIFFUSE_COLOR, "diffuseColor",
-                                              diffuse_color_func, exec_func));
+                                              diffuse_color_func,
+                                              s_def_diffuse_color, exec_func));
 
   // specularColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Vector3f_handle_function specular_color_func =
     static_cast<Vector3f_handle_function>(&Material::specular_color_handle);
   s_prototype->add_field_info(new SF_vector3f(SPECULAR_COLOR, "specularColor",
-                                              specular_color_func, exec_func));
+                                              specular_color_func,
+                                              s_def_specular_color, exec_func));
 
   // emissiveColor
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Vector3f_handle_function emissive_color_func =
     static_cast<Vector3f_handle_function>(&Material::emissive_color_handle);
   s_prototype->add_field_info(new SF_vector3f(EMISSIVE_COLOR, "emissiveColor",
-                                              emissive_color_func, exec_func));
+                                              emissive_color_func,
+                                              s_def_emissive_color, exec_func));
 
   // shininess
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Float_handle_function shininess_func =
     static_cast<Float_handle_function>(&Material::shininess_handle);
   s_prototype->add_field_info(new SF_float(SHININESS, "shininess",
-                                           shininess_func, exec_func));
+                                           shininess_func,
+                                           s_def_shininess, exec_func));
 
   // transparency
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Float_handle_function transparency_func =
     static_cast<Float_handle_function>(&Material::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
-                                           transparency_func, exec_func));
+                                           transparency_func,
+                                           s_def_transparency, exec_func));
 }
 
 /*! \brief deletes the prototype node. */
@@ -258,15 +263,6 @@ void Material::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief writes this container. */
-void Material::write(Formatter* formatter)
-{
-  formatter->container_begin(get_tag());
-  formatter->single_vector3f("diffuseColor",
-                             m_diffuse_color, m_def_diffuse_color);
-  formatter->container_end();
-}
-
 #if 0
 /*! Get the attributes of the box. */
 Attribute_list Material::get_attributes()
@@ -278,37 +274,37 @@ Attribute_list Material::get_attributes()
 
   attribs = Container::get_attributes();
 
-  if (m_ambient_intensity != m_def_ambient_intensity) {
+  if (m_ambient_intensity != s_def_ambient_intensity) {
     attrib.first = "ambientIntensity";
     sprintf(buf, "%g",   get_ambient_intensity());
     attrib.second = buf;
     attribs.push_back(attrib);
   }
-  if (m_diffuse_color != m_def_diffuse_color) {
+  if (m_diffuse_color != s_def_diffuse_color) {
     attrib.first = "diffuseColor";
     get_diffuse_color(col);
     attrib.second = col.get_text();
     attribs.push_back(attrib);
   }
-  if (m_specular_color != m_def_specular_color) {
+  if (m_specular_color != s_def_specular_color) {
     attrib.first = "specularColor";
     get_specular_color(col);
     attrib.second = col.get_text();
     attribs.push_back(attrib);
   }
-  if (m_emissive_color != m_def_emissive_color) {
+  if (m_emissive_color != s_def_emissive_color) {
     attrib.first = "emissiveColor";
     get_emissive_color(col);
     attrib.second = col.get_text();
     attribs.push_back(attrib);
   }
-  if (m_shininess != m_def_shininess) {
+  if (m_shininess != s_def_shininess) {
     attrib.first = "shininess";
     sprintf(buf, "%g", (Float)get_shininess());
     attrib.second = buf;
     attribs.push_back(attrib);
   }
-  if (m_transparency != m_def_transparency) {
+  if (m_transparency != s_def_transparency) {
     attrib.first = "transparency";
     sprintf(buf, "%f", (Float)get_transparency());
     attrib.second = buf;

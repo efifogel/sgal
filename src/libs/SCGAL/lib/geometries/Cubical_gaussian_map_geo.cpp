@@ -266,14 +266,16 @@ void Cubical_gaussian_map_geo::clean()
       cgm_initializer(exact_coord_array->begin(),
                       exact_coord_array->end(),
                       exact_coord_array->size(),
-                      m_coord_indices.begin(), m_coord_indices.end(),
+                      &(*(m_flat_coord_indices.begin())),
+                      &(*(m_flat_coord_indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     else {
       // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
       cgm_initializer(m_coord_array->begin(), m_coord_array->end(),
                       m_coord_array->size(),
-                      m_coord_indices.begin(), m_coord_indices.end(),
+                      &(*(m_flat_coord_indices.begin())),
+                      &(*(m_flat_coord_indices.end())),
                       m_num_primitives, num_vertices_per_facet, &visitor);
     }
     clock_t end_time = clock();
@@ -311,7 +313,7 @@ void Cubical_gaussian_map_geo::clear()
 }
 
 /*! \brief */
-void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& cull_context) {}
+void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& /* cull_context */) {}
 
 /*! \brief */
 void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
@@ -1290,7 +1292,8 @@ void Cubical_gaussian_map_geo::draw_aos_marked_edge(unsigned int id)
     if (true || source_vertex->get_location() == Arr_vertex::Interior) {
       vec0.add(ext);
       vec3.sub(ext);
-    } else if (source_vertex->get_location() == Arr_vertex::Corner) {
+    }
+    else if (source_vertex->get_location() == Arr_vertex::Corner) {
       Vector3f par0;
       par0[j] = -src[k];
       float a0 = radius / par0.dot(perp);
@@ -1577,7 +1580,7 @@ void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
 void Cubical_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty_coord_indices()) clean_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (is_dirty()) clean();
 
   if (m_minkowski_sum)
@@ -1902,7 +1905,7 @@ operator()(Draw_action* action)
 
 /*! \brief renders the marked primal vertex. */
 void Cubical_gaussian_map_geo::Marked_face_renderer::
-operator()(Draw_action* action)
+operator()(Draw_action* /* action */)
 {
   const Vector3f& color = m_geo.get_marked_vertex_color();
   glColor4f(color[0], color[1], color[2], 0.6f);
@@ -1927,10 +1930,10 @@ void Cubical_gaussian_map_geo::coord_changed(Field_info* field_info)
 /*! \brief draws the geometry. */
 void Cubical_gaussian_map_geo::draw(Draw_action* action)
 {
-  if (is_dirty_coord_indices()) clean_coord_indices();
-  if (is_dirty_normal_indices()) clean_normal_indices();
-  if (is_dirty_color_indices()) clean_color_indices();
-  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   if (is_dirty()) clean();
   if (is_empty()) return;
 

@@ -22,9 +22,10 @@
 #ifndef SGAL_TEX_COORD_ARRAY_2D_HPP
 #define SGAL_TEX_COORD_ARRAY_2D_HPP
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Tex_coord_array.hpp"
-#include "SGAL/Array.hpp"
 #include "SGAL/Vector2f.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -33,7 +34,8 @@ class Element;
 class Container_proto;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL Array<Vector2f>;
+template class SGAL_SGAL_DECL std::allocator<Vector2f>;
+template class SGAL_SGAL_DECL std::vector<Vector2f>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
@@ -94,12 +96,12 @@ public:
   virtual void clear();
 
   /*! Obtain the iterator to the Array first element. */
-  Vector2f* begin();
-  const Vector2f* begin() const;
+  std::vector<Vector2f>::iterator begin();
+  const std::vector<Vector2f>::const_iterator begin() const;
 
   /*! Obtain the iterator to the Array past-the-end element. */
-  Vector2f* end();
-  const Vector2f* end() const;
+  std::vector<Vector2f>::iterator end();
+  const std::vector<Vector2f>::const_iterator end() const;
 
   /*! Obtain the nth element in the array (non-const). */
   Vector2f& operator[](Uint n);
@@ -122,55 +124,60 @@ private:
   static Container_proto* s_prototype;
 
   /*! The normal array. */
-  SGAL::Array<Vector2f> m_array;
+  std::vector<Vector2f> m_array;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Tex_coord_array_2d* Tex_coord_array_2d::prototype()
 { return new Tex_coord_array_2d(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Tex_coord_array_2d::clone()
 { return new Tex_coord_array_2d(); }
 
-/*! \brief obtains the array size. */
+//! \brief obtains the array size.
 inline Uint Tex_coord_array_2d::size() const { return m_array.size(); }
 
-/*! \brief obtains the GL data. */
+//! \brief obtains the GL data.
 inline GLfloat* Tex_coord_array_2d::get_gl_data()
 { return (GLfloat*)(get_vector()); }
 
-/*! \brief resizes the array capacity .*/
+//! \brief resizes the array capacity.
 inline void Tex_coord_array_2d::resize(Uint n) { m_array.resize(n); }
 
-/*! \brief clears the array. */
+//! \brief clears the array.
 inline void Tex_coord_array_2d::clear() { m_array.clear(); }
 
-/*! \brief obtains the iterator to the Array first element. */
-inline Vector2f* Tex_coord_array_2d::begin() { return m_array.begin(); }
-inline const Vector2f* Tex_coord_array_2d::begin() const
+//! \brief obtains the iterator to the Array first element.
+inline std::vector<Vector2f>::iterator Tex_coord_array_2d::begin()
+{ return m_array.begin(); }
+inline const std::vector<Vector2f>::const_iterator Tex_coord_array_2d::begin()
+  const
 { return m_array.begin(); }
 
-/*! \brief obtains the iterator to the Array past-the-end element. */
-inline Vector2f* Tex_coord_array_2d::end() { return m_array.end(); }
-inline const Vector2f* Tex_coord_array_2d::end() const { return m_array.end(); }
+//! \brief obtains the iterator to the Array past-the-end element.
+inline std::vector<Vector2f>::iterator Tex_coord_array_2d::end()
+{ return m_array.end(); }
+inline const std::vector<Vector2f>::const_iterator Tex_coord_array_2d::end()
+  const
+{ return m_array.end(); }
 
-/*! \brief obtains the nth element in the array (non-const). */
+//! \brief obtains the nth element in the array (non-const).
 inline Vector2f& Tex_coord_array_2d::operator[](Uint n) { return m_array[n]; }
 
-/*! \brief obtains the nth element in the array (const). */
+//! \brief obtains the nth element in the array (const).
 inline const Vector2f& Tex_coord_array_2d::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief obtains the vector. */
+//! \brief obtains the vector.
 inline Vector2f* Tex_coord_array_2d::get_vector()
-{ return m_array.get_vector(); }
+{ return &(*(m_array.begin())); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Tex_coord_array_2d::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

@@ -62,7 +62,7 @@ Container_proto* Lines_through_segments_geo::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Lines_through_segments_geo, "Lines_through_segments_geo");
 
-/*! Constructor */
+//! \brief constructor.
 Lines_through_segments_geo::Lines_through_segments_geo(Boolean proto) :
   Geometry(proto),
   m_owned_lts(false),
@@ -71,7 +71,7 @@ Lines_through_segments_geo::Lines_through_segments_geo(Boolean proto) :
   m_in_segments_dirty(true)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Lines_through_segments_geo::~Lines_through_segments_geo()
 {
   clear();
@@ -84,7 +84,7 @@ Lines_through_segments_geo::~Lines_through_segments_geo()
   }
 }
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Lines_through_segments_geo::clear()
 {
   m_in_segments.clear();
@@ -94,7 +94,7 @@ void Lines_through_segments_geo::clear()
   m_dirty = true;
 }
 
-/*! \brief initializes the container prototype */
+//! \brief initializes the container prototype.
 void Lines_through_segments_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -109,21 +109,21 @@ void Lines_through_segments_geo::init_prototype()
   s_prototype->add_field_info(field);
 }
 
-/*! \brief deletes the container prototype */
+//! \brief deletes the container prototype.
 void Lines_through_segments_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype */
+//! \brief obtains the container prototype.
 Container_proto* Lines_through_segments_geo::get_prototype()
 {
   if (!s_prototype) Lines_through_segments_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this node */
+//! \brief sets the attributes of this node.
 void Lines_through_segments_geo::set_attributes(Element* elem)
 {
   typedef Element::Cont_attr_iter         Cont_attr_iter;
@@ -144,10 +144,10 @@ void Lines_through_segments_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief determines whether the representation empty. */
+//! \brief determines whether the representation empty.
 Boolean Lines_through_segments_geo::is_empty() { return true; }
 
-/*! \brief clean the representation. */
+//! \brief clean the representation.
 void Lines_through_segments_geo::clean()
 {
   // std::cout << "Lines_through_segments_geo::clean()" << std::endl;
@@ -165,9 +165,9 @@ void Lines_through_segments_geo::clean()
     Indexed_line_set::Shared_coord_array coord_array =
       m_segments->get_coord_array();
     if (!coord_array) return;
-    const SGAL::Array<Uint>& coord_indices = m_segments->get_coord_indices();
+    const std::vector<Uint>& coord_indices = m_segments->get_coord_indices();
 
-    for (unsigned int i = 0; i < coord_indices.size(); i += 2) {
+    for (Uint i = 0; i < coord_indices.size(); i += 2) {
       const Vector3f& ep1 = (*coord_array)[i];
       const Vector3f& ep2 = (*coord_array)[i+1];
       Rat_point_3 p1(ep1[0], ep1[1], ep1[2]);
@@ -267,7 +267,7 @@ void Lines_through_segments_geo::clean()
   }
 }
 
-/*! \brief draws a single line. */
+//! \brief draws a single line.
 template <typename Line_type>
 void Lines_through_segments_geo::draw_line(Draw_action* action,
                                            Line_type& line_obj,
@@ -522,7 +522,7 @@ void Lines_through_segments_geo::isect(Isect_action* action)
   //! \todo isect with a sphere
 }
 
-/*! \brief */
+//! \brief
 Boolean Lines_through_segments_geo::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
@@ -534,7 +534,7 @@ Boolean Lines_through_segments_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \biref sets the segments. */
+//! \biref sets the segments.
 void Lines_through_segments_geo::set_segments(Shared_indexed_line_set segments)
 {
   clear();
@@ -543,7 +543,7 @@ void Lines_through_segments_geo::set_segments(Shared_indexed_line_set segments)
   segments->register_observer(observer);
 }
 
-/*! \biref processes change of points. */
+//! \biref processes change of points.
 void Lines_through_segments_geo::field_changed(Field_info* field_info)
 {
   Container::field_changed(field_info);
