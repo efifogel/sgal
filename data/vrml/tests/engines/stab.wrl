@@ -9,25 +9,14 @@ ColorBackground {
   clearStencil TRUE
 }
 
-# Viewpoint {
+DEF VIEWPOINT Viewpoint {
 #   type "SIMPLE"
 #   radiusScale 5.74
 #   fieldOfView 0.5
 #   positionTranslation 0.4 0 0
-# }
-
-DEF MINK_SWITCH_KEY SingleKeySensor {
-  boolean FALSE
-  key "H"
-  numberOfStates 2
 }
 
 DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
-
-DEF DRAW_DUAL_MINK_KEY SingleKeySensor {
-  boolean TRUE
-  key "c"
-}
 
 DEF GEOM1_NAVIGATION NavigationInfo {
   type [ "TRANSFORM" ]
@@ -143,7 +132,7 @@ DEF STABBING_CUBE SmallestStabbingCube {
 	     ]
 }
 
-Transform {
+DEF MAIN_TRANSFORM Transform {
   rotation 1 -1 0 0.3
   children [
     DEF GEOM1_SWITCH Switch {
@@ -152,7 +141,7 @@ Transform {
 	DEF TRANSFORM_GEOM1 Transform {
 	  children [
 	    DEF SELECT_GEOM1 TouchSensor { enabled TRUE }
-	    Shape {
+	    DEF GEOM1_SHAPE Shape {
 	      appearance Appearance {
 		material Material { diffuseColor 0.2 0.3 0.6 }
 	      }
@@ -168,88 +157,88 @@ Transform {
     DEF GEOM2_SWITCH Switch {
       whichChoice 0
       children [
-	DEF TRANSFORM_GEOM2 Transform {
-	  children [
-	    DEF SELECT_GEOM2 TouchSensor { enabled TRUE }
-	    Shape {
-	      appearance Appearance {
-		material Material { diffuseColor 0.6 0.3 0.2 }
-	      }
-	      geometry DEF GEOM2 SphericalGaussianMapColored {
-		drawAos FALSE
-		aosEdgeColor 0.6 0.3 0.2
-		coord USE GEOM2_COORD
-		coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
-	      }
-	    }
-	   ]
-	}
+    	DEF TRANSFORM_GEOM2 Transform {
+    	  children [
+    	    DEF SELECT_GEOM2 TouchSensor { enabled TRUE }
+    	    Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.6 0.3 0.2 }
+    	      }
+    	      geometry DEF GEOM2 SphericalGaussianMapColored {
+    		drawAos FALSE
+    		aosEdgeColor 0.6 0.3 0.2
+    		coord USE GEOM2_COORD
+    		coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
+    	      }
+    	    }
+    	   ]
+    	}
        ]
     }
 
     DEF GEOM3_SWITCH Switch {
       whichChoice 0
       children [
-	DEF TRANSFORM_GEOM3 Transform {
-	  children [
-	    DEF SELECT_GEOM3 TouchSensor { enabled TRUE }
-	    Shape {
-	      appearance Appearance {
-		material Material { diffuseColor 0.1 0.4 0.2 }
-	      }
-	      geometry DEF GEOM3 ExactPolyhedron {
-		convexHull TRUE
-	      }
-	    }
-	   ]
-	}
+    	DEF TRANSFORM_GEOM3 Transform {
+    	  children [
+    	    DEF SELECT_GEOM3 TouchSensor { enabled TRUE }
+    	    Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.1 0.4 0.2 }
+    	      }
+    	      geometry DEF GEOM3 ExactPolyhedron {
+    		convexHull TRUE
+    	      }
+    	    }
+    	   ]
+    	}
        ]
     }
 
     DEF GEOM4_SWITCH Switch {
       whichChoice 0
       children [
-	DEF TRANSFORM_GEOM4 Transform {
-	  children [
-	    DEF SELECT_GEOM4 TouchSensor { enabled TRUE }
-	    Shape {
-	      appearance Appearance {
-		material Material { diffuseColor 0.2 0.2 0.2 }
-	      }
-	      geometry DEF GEOM4 ExactPolyhedron {
-		convexHull TRUE
-	      }
-	    }
-	   ]
-	}
+    	DEF TRANSFORM_GEOM4 Transform {
+    	  children [
+    	    DEF SELECT_GEOM4 TouchSensor { enabled TRUE }
+    	    Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.2 0.2 0.2 }
+    	      }
+    	      geometry DEF GEOM4 ExactPolyhedron {
+    		convexHull TRUE
+    	      }
+    	    }
+    	   ]
+    	}
        ]
     }
 
     DEF GEOM5_SWITCH Switch {
       whichChoice 0
       children [
-	DEF TRANSFORM_GEOM5 Transform {
-	  children [
-	    DEF SELECT_GEOM5 TouchSensor { enabled TRUE }
-	    Shape {
-	      appearance Appearance {
-		material Material { diffuseColor 0.8 0.4 0.8 }
-	      }
-	      geometry DEF GEOM5 ExactPolyhedron {
-		convexHull TRUE
-	      }
-	    }
-	   ]
-	}
+    	DEF TRANSFORM_GEOM5 Transform {
+    	  children [
+    	    DEF SELECT_GEOM5 TouchSensor { enabled TRUE }
+    	    DEF GEOM5_SHAPE Shape {
+    	      appearance Appearance {
+    		material Material { diffuseColor 0.8 0.4 0.8 }
+    	      }
+    	      geometry DEF GEOM5 ExactPolyhedron {
+    		convexHull TRUE
+    	      }
+    	    }
+    	   ]
+    	}
        ]
     }
 
     Shape {
       appearance Appearance {
-	material Material { diffuseColor 0.7 0.1 0.8 }
+    	material Material { diffuseColor 0.7 0.1 0.8 }
       }
       geometry DEF STAB_CH ExactPolyhedron {
-	convexHull TRUE
+    	convexHull TRUE
       }
     }
    ]

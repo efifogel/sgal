@@ -14,23 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_SHAPE_HPP
 #define SGAL_SHAPE_HPP
-
-/*! \file
- * \brief A representation of a shape node.
- * A shape node holds a geometry and an appearance attributes
- *
- * A shape is a node in the scene graph that is holding references to one or
- * more geometries and a single apperance.
- *
- * Inherits from Node.
- */
 
 #if (defined _MSC_VER)
 #pragma warning ( disable : 4786 )
@@ -60,7 +47,12 @@ class Scene_graph;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! \brief A representation of a shape node */
+/*! \class Shape Shape.hpp
+ * Shape is a node in the scene graph that encaptulates a geometric shape.
+ * A shape node has a geometry and an appearance fields.
+ *
+ * Inherits from Node.
+ */
 class SGAL_SGAL_DECL Shape : public Node {
 public:
   enum {
@@ -80,26 +72,37 @@ public:
   typedef boost::shared_ptr<Appearance>         Shared_appearance;
   typedef boost::shared_ptr<Geometry>           Shared_geometry;
 
-  /*! Constructor */
+  /*! Constructor.
+   * \param proto determines whether to construct a prototype.
+   */
   Shape(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Shape();
 
-  /*! Construct the prototype. */
+  /*! Construct the prototype.
+   * \return the prototype.
+   */
   static Shape* prototype();
 
-  /*! Clone. */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
@@ -109,7 +112,9 @@ public:
   { return &m_appearance; }
   //@}
 
-  /*! Set the attributes of this node. */
+  /*! Set the attributes of this node.
+   * \param elem contains lists of attribute name and value pairs.
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -129,6 +134,11 @@ public:
    * encoded as color in the frame buffer.
    */
   virtual void isect(Isect_action* isect_action);
+
+  /*! Process change of field.
+   * \param field_info The information record of the field that changed.
+   */
+  virtual void field_changed(Field_info* field_info);
 
   /*! Add the container to the given scene. */
   void add_to_scene(Scene_graph* sg);

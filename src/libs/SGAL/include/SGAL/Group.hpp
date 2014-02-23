@@ -102,7 +102,6 @@ public:
 
   /// \name Protoype handling
   //@{
-
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -113,7 +112,6 @@ public:
    * \return the node prototype.
    */
   virtual Container_proto* get_prototype();
-
   //@}
 
   /// \name field handlers
@@ -159,6 +157,11 @@ public:
    * \param formatter (in) The formatter to use, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
+
+  /*! Process change of field.
+   * \param field_info The information record of the field that changed.
+   */
+  virtual void field_changed(Field_info* field_info);
 
   virtual Boolean attach_context(Context* context );
 

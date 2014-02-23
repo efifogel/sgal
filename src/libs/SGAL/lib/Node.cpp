@@ -29,14 +29,14 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Node::s_prototype(NULL);
 
-/*! Constructor */
+//! Constructor.
 Node::Node(Boolean proto) :
   Container(proto),
   m_dirty_sphere_bound(true),
   m_locked_sphere_bound(false)
 {}
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Node::init_prototype()
 {
   if (s_prototype) return;
@@ -51,38 +51,36 @@ void Node::init_prototype()
                                                   sphere_bound_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Node::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Node::get_prototype()
 {
   if (!s_prototype) Node::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the flag that indicates that the sphere bound should be
- * cleaned.
- */
+//! \brief sets the flag that indicates that the sphere bound should be cleaned.
 void Node::sphere_bound_changed(Field_info* /* field_info */)
 { m_dirty_sphere_bound = true; }
 
-/*! \brief obtains the sphere bound. */
+//! \brief obtains the sphere bound.
 const Sphere_bound& Node::get_sphere_bound()
 {
   if (m_dirty_sphere_bound) clean_sphere_bound();
   return m_sphere_bound;
 }
 
-/*! \brief sets the attributes of the node. */
+//! \brief sets the attributes of the node.
 void Node::set_attributes(Element* elem) { Container::set_attributes(elem); }
 
 #if 0
-/*! \brief gets the attributes of the node. */
+//! \brief gets the attributes of the node.
 Attribute_list Node::get_attributes()
 {
   Attribute_list attribs;

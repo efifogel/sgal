@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 13487 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_POLYHEDRON_GEO_HPP
@@ -140,26 +137,37 @@ public:
     LAST
   };
 
-  /*! Constructor. */
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Exact_polyhedron_geo(Boolean proto = false);
 
   /*! Destructor. */
   ~Exact_polyhedron_geo();
 
-  /*! Construct the prototype. */
+  /*! Construct the prototype.
+   * \return the prototype.
+   */
   static Exact_polyhedron_geo* prototype();
 
-  /*! Clone. */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{

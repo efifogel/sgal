@@ -36,7 +36,7 @@ class Formatter;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! \class Transform Transform.h
+/*! \class Transform Transform.hpp
  * Transform is a node in the scene graph that represents a transformation
  * applied to geomteric objects. It inherits from Group and as such can have
  * multiple child nodes. It applies the transformation it represents to all
@@ -63,7 +63,7 @@ public:
   };
 
   /*! Constructor.
-   * \param proto determines whether to construct a prototype.
+   * \param proto (in) determines whether to construct a prototype.
    */
   Transform(Boolean proto = false);
 
@@ -82,7 +82,6 @@ public:
 
   /// \name Protoype handling
   //@{
-
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -93,7 +92,6 @@ public:
    * \return the node prototype.
    */
   virtual Container_proto* get_prototype();
-
   //@}
 
   /// \name field handlers

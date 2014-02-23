@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 13487 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -256,7 +253,7 @@ void Exact_polyhedron_geo::isect(Isect_action* /* action */)
 //! \brief
 Boolean Exact_polyhedron_geo::clean_sphere_bound()
 {
-  if (!m_dirty_sphere_bound) return false;
+  m_dirty_sphere_bound = false;
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_bb_is_pre_set) return true;
@@ -277,7 +274,6 @@ Boolean Exact_polyhedron_geo::clean_sphere_bound()
     m_sphere_bound.set_center(center_vec);
     m_sphere_bound.set_radius(min_sphere.radius());
   }
-  m_dirty_sphere_bound = false;
   return true;
 }
 
@@ -381,7 +377,7 @@ void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
   m_dirty_polyhedron = true;
 }
 
-//! Process change of field.
+//! \brief processes change of field.
 void Exact_polyhedron_geo::field_changed(Field_info* field_info)
 {
   switch (field_info->get_id()) {

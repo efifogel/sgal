@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12554 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -136,6 +133,7 @@ void Shape::set_geometry(Shared_geometry geometry)
 //! \brief calculates the bounding sphere of all geometries in the shape.
 Boolean Shape::clean_sphere_bound()
 {
+  m_dirty_sphere_bound = false;
   if (!is_visible()) {
     if (m_sphere_bound.get_radius() == 0) return false;
     m_sphere_bound.set_radius(0);
@@ -489,13 +487,25 @@ void Shape::set_invisible()
   }
 }
 
-/*! \brief set the flag that indicates whether the shape should be rendered. */
+//! \brief set the flag that indicates whether the shape should be rendered.
 void Shape::set_visible(Boolean flag)
 {
   if (flag != m_is_visible) {
     m_is_visible = flag;
     m_dirty_sphere_bound = true;
   }
+}
+
+//! \brief processes change of field.
+void Shape::field_changed(Field_info* field_info)
+{
+  switch (field_info->get_id()) {
+   case GEOMETRY:
+    m_dirty_sphere_bound = true;
+    break;
+   default: break;
+  }
+  Node::field_changed(field_info);
 }
 
 SGAL_END_NAMESPACE

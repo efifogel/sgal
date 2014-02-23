@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <algorithm>
@@ -362,9 +359,8 @@ Container_proto* Group::get_prototype()
 Boolean Group::attach_context(Context* context)
 {
   Boolean result = Node::attach_context(context);
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
     result &= (*it)->attach_context(context);
-  }
   return result;
 }
 
@@ -372,9 +368,8 @@ Boolean Group::attach_context(Context* context)
 Boolean Group::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
+  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
     result &= (*it)->detach_context(context);
-  }
   return result;
 }
 
@@ -411,7 +406,7 @@ void Group::set_invisible()
   }
 }
 
-/*! \brief sets the flag that indicates whether the shape should be rendered. */
+//! \brief sets the flag that indicates whether the shape should be rendered.
 void Group::set_visible(Boolean flag)
 {
   if (flag != m_is_visible) {
@@ -420,7 +415,7 @@ void Group::set_visible(Boolean flag)
   }
 }
 
-/*! \brief adds a light source to the group. */
+//! \brief adds a light source to the group.
 void Group::add_light(Shared_light light)
 {
   // Insert the light at the front of the array.
@@ -428,7 +423,7 @@ void Group::add_light(Shared_light light)
   ++m_num_lights;
 }
 
-/*! \brief removes a light source from the group. */
+//! \brief removes a light source from the group.
 void Group::remove_light(Shared_light light)
 {
   m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), light),
@@ -436,7 +431,7 @@ void Group::remove_light(Shared_light light)
   --m_num_lights;
 }
 
-/*! \brief adds a touch sensor to the group. */
+//! \brief adds a touch sensor to the group.
 void Group::add_touch_sensor(Shared_touch_sensor touch_sensor)
 {
   if (m_touch_sensor) {
@@ -447,12 +442,24 @@ void Group::add_touch_sensor(Shared_touch_sensor touch_sensor)
   m_childs.push_back(touch_sensor);
 }
 
-/*! \brief removes a touch sensor from the group. */
+//! \brief removes a touch sensor from the group.
 void Group::remove_touch_sensor(Shared_touch_sensor touch_sensor)
 {
   m_touch_sensor.reset();
   m_childs.erase(std::remove(m_childs.begin(), m_childs.end(), touch_sensor),
                  m_childs.end());
+}
+
+//! \brief processes change of field.
+void Group::field_changed(Field_info* field_info)
+{
+  switch (field_info->get_id()) {
+   case SPHERE_BOUND:
+    m_dirty_sphere_bound = true;
+    break;
+   default: break;
+  }
+  Node::field_changed(field_info);
 }
 
 SGAL_END_NAMESPACE
