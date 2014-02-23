@@ -187,6 +187,14 @@ public:
    */
   virtual void write(Formatter* formatter);
 
+  /*! Process change of field.
+   * \param field_info The information record of the field that changed.
+   * Notice that Mesh::coord_changed() is invoked when a new coordinate field
+   * is set, while field_changed() is invoked either when a new coordinate
+   * field is set or when the content of the current coordinate field changes.
+   */
+  virtual void field_changed(Field_info* field_info);
+
   /*! Set the polyhedron data-structure. */
   void set_polyhedron(Polyhedron& polyhedron);
 

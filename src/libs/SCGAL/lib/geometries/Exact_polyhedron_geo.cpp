@@ -381,4 +381,17 @@ void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
   m_dirty_polyhedron = true;
 }
 
+//! Process change of field.
+void Exact_polyhedron_geo::field_changed(Field_info* field_info)
+{
+  switch (field_info->get_id()) {
+   case COORD_ARRAY:
+    m_dirty_polyhedron = true;
+    m_dirty_facets = true;
+    break;
+   default: break;
+  }
+  Mesh_set::field_changed(field_info);
+}
+
 SGAL_END_NAMESPACE
