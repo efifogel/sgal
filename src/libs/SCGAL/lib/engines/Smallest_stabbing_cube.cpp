@@ -229,8 +229,8 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
   compute_planes(kernel, cube2, boost::true_type());
   merge_coplanar_facets(kernel, cube2, boost::true_type());
 
-  std::cout << "Starting stabbing cube..." << std::endl;
-  auto start = boost::posix_time::microsec_clock::local_time();
+  // std::cout << "Starting stabbing cube..." << std::endl;
+  // auto start = boost::posix_time::microsec_clock::local_time();
 
   //Create a polyhedron from each of our coordinates
   for(auto& obj : m_coord_nodes)
@@ -302,10 +302,10 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
     (*m_result)[7].set(x - dist, y - dist, z - dist);
   }
 
-  std::cout << "Finished stabbing cube." << std::endl;
-  std::cout << "Time: "
-            << boost::posix_time::microsec_clock::local_time() - start
-            << std::endl;
+  // std::cout << "Finished stabbing cube." << std::endl;
+  // std::cout << "Time: "
+  //           << boost::posix_time::microsec_clock::local_time() - start
+  //           << std::endl;
 
   //Send all events
   Field* coord_changed_field = get_field(COORD_CHANGED);
