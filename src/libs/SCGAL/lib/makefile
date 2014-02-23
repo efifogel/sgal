@@ -66,9 +66,7 @@ CPPSOURCES+= Arrangement_on_sphere_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_graph_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_marked_geo.cpp
 # Ignore in Debug mode, cause is_valid() on the sphere does not compile
-ifneq ($(DEBUG), 1)
 CPPSOURCES+= Polygon_set_on_sphere_geo.cpp
-endif
 CPPSOURCES+= Arrangement_on_sphere_overlay_geo.cpp
 CPPSOURCES+= Arrangement_on_sphere_sim_geo.cpp
 endif
@@ -93,6 +91,7 @@ CPPSOURCES+= Exact_coord_minkowski.cpp
 CPPSOURCES+= Exact_normal_array.cpp
 CPPSOURCES+= Exact_plane_array.cpp
 CPPSOURCES+= Exact_polyhedron_geo.cpp
+CPPSOURCES+= Smallest_stabbing_cube.cpp
 CPPSOURCES+= Triangulation_geo.cpp
 ifeq ($(USE_ENV), 1)
 CPPSOURCES+= Lower_envelope_geo.cpp
