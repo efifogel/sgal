@@ -68,12 +68,12 @@ Smallest_stabbing_cube::Smallest_stabbing_cube(Boolean proto) :
 void Smallest_stabbing_cube::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
-  
-  for(auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) 
+
+  for(auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai)
   {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-    if (name == "enabled") 
+    if (name == "enabled")
     {
       m_enabled = compare_to_true(value);
       elem->mark_delete(ai);
@@ -82,13 +82,14 @@ void Smallest_stabbing_cube::set_attributes(Element* elem)
   }
 
   // Sets the multi-container attributes of this node:
-  for (auto mcai = elem->multi_cont_attrs_begin(); mcai != elem->multi_cont_attrs_end(); mcai++)
+  for (auto mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
     const std::string& name = elem->get_name(mcai);
     auto& cont_list = elem->get_value(mcai);
-    if (name == "geometries") 
+    if (name == "geometries")
     {
-      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) 
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++)
       {
         Element::Shared_container cont = *ci;
         auto coords = boost::dynamic_pointer_cast<Coord_transformer>(cont);
@@ -96,7 +97,7 @@ void Smallest_stabbing_cube::set_attributes(Element* elem)
         {
           m_coord_nodes.push_back(coords);
         }
-        else 
+        else
         {
           std::cerr << "Invalid " << s_tag << " geometry nodes!" << std::endl;
         }
@@ -113,33 +114,50 @@ void Smallest_stabbing_cube::set_attributes(Element* elem)
 /*! \brief sets the attributes of this node. */
 void Smallest_stabbing_cube::init_prototype()
 {
-  if (s_prototype) 
+  if (s_prototype)
     return;
 
   s_prototype = new Container_proto();
 
-  Execution_function exec_func = static_cast<Execution_function>(&Smallest_stabbing_cube::execute);
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Smallest_stabbing_cube::execute);
 
   // Add the field-info records to the prototype:
   // enabled
-  Boolean_handle_function enabled_func = static_cast<Boolean_handle_function>(&Smallest_stabbing_cube::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func, exec_func));
+  Boolean_handle_function enabled_func =
+    static_cast<Boolean_handle_function>
+    (&Smallest_stabbing_cube::enabled_handle);
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func,
+                                          exec_func));
 
   // changed
-  Boolean_handle_function changed_func = static_cast<Boolean_handle_function>(&Smallest_stabbing_cube::changed_handle);
+  Boolean_handle_function changed_func =
+    static_cast<Boolean_handle_function>
+    (&Smallest_stabbing_cube::changed_handle);
   s_prototype->add_field_info(new SF_bool(CHANGED, "changed", changed_func));
 
   // execute
-  Boolean_handle_function execute_func = static_cast<Boolean_handle_function>(&Smallest_stabbing_cube::execute_handle);
-  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute", execute_func, exec_func));
+  Boolean_handle_function execute_func =
+    static_cast<Boolean_handle_function>
+    (&Smallest_stabbing_cube::execute_handle);
+  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute", execute_func,
+                                          exec_func));
 
   // geometries
-  Shared_container_array_handle_function geometries_func = reinterpret_cast<Shared_container_array_handle_function>(&Smallest_stabbing_cube::coord_nodes_handle);
-  s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries", geometries_func, exec_func));
+  Shared_container_array_handle_function geometries_func =
+    reinterpret_cast<Shared_container_array_handle_function>
+    (&Smallest_stabbing_cube::coord_nodes_handle);
+  s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      geometries_func,
+                                                      exec_func));
 
   // coord
-  Shared_container_handle_function coord_changed_func = reinterpret_cast<Shared_container_handle_function>(&Smallest_stabbing_cube::result_handle);
-  s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED, "coord_changed", coord_changed_func));
+  Shared_container_handle_function coord_changed_func =
+    reinterpret_cast<Shared_container_handle_function>
+    (&Smallest_stabbing_cube::result_handle);
+  s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
+                                                      "coord_changed",
+                                                      coord_changed_func));
 }
 
 /*! \brief deletes the node prototype. */
@@ -152,7 +170,7 @@ void Smallest_stabbing_cube::delete_prototype()
 /*! \brief obtains the node prototype. */
 Container_proto* Smallest_stabbing_cube::get_prototype()
 {
-  if (!s_prototype) 
+  if (!s_prototype)
     init_prototype();
 
   return s_prototype;
@@ -163,15 +181,15 @@ Container_proto* Smallest_stabbing_cube::get_prototype()
  */
 void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
 {
-  if (!m_enabled) 
+  if (!m_enabled)
     return;
 
   if (m_coord_nodes.size() == 0)
     return;
 
-  const int X = 0; 
-  const int Y = 1;
-  const int Z = 2; 
+  // const int X = 0;
+  // const int Y = 1;
+  // const int Z = 2;
   const int W = 3;
 
   Program lp(CGAL::SMALLER, true, 0, false, 0);
@@ -285,22 +303,25 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
   }
 
   std::cout << "Finished stabbing cube." << std::endl;
-  std::cout << "Time: " << boost::posix_time::microsec_clock::local_time() - start << std::endl;
+  std::cout << "Time: "
+            << boost::posix_time::microsec_clock::local_time() - start
+            << std::endl;
 
   //Send all events
   Field* coord_changed_field = get_field(COORD_CHANGED);
-  if (coord_changed_field) 
+  if (coord_changed_field)
     coord_changed_field->cascade();
 
   m_changed = true;
   Field* changed_field = get_field(CHANGED);
-  if (changed_field) 
+  if (changed_field)
     changed_field->cascade();
 
   m_result->process_content_changed();
 }
 
-Polyhedron Smallest_stabbing_cube::calculateSum(const Polyhedron& p1, const Polyhedron& p2) const
+Polyhedron Smallest_stabbing_cube::calculateSum(const Polyhedron& p1,
+                                                const Polyhedron& p2) const
 {
   Kernel kernel;
 
@@ -320,15 +341,15 @@ Polyhedron Smallest_stabbing_cube::calculateSum(const Polyhedron& p1, const Poly
 
   //Calculate the sum as a polyhedron
   std::vector<Point_3> sumPoints;
-  for(auto vit = sgmSum.vertices_begin(); vit != sgmSum.vertices_end(); ++vit) 
+  for(auto vit = sgmSum.vertices_begin(); vit != sgmSum.vertices_end(); ++vit)
   {
     // Vertices with boundary conditions may have degree 2. Skip them:
-    if (vit->degree() < 3) 
+    if (vit->degree() < 3)
       continue;
 
     auto hec = vit->incident_halfedges();
     auto begin_hec = hec;
-    do 
+    do
     {
       sumPoints.push_back((*hec).face()->point());
       ++hec;
@@ -343,11 +364,13 @@ Polyhedron Smallest_stabbing_cube::calculateSum(const Polyhedron& p1, const Poly
   return sum;
 }
 
-void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1, const Polyhedron& minkCube2, Program& lp, int& count)
+void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
+                                            const Polyhedron& minkCube2,
+                                            Program& lp, int& count)
 {
-  const int X = 0; 
+  const int X = 0;
   const int Y = 1;
-  const int Z = 2; 
+  const int Z = 2;
   const int W = 3;
 
   //std::cout << "Planes of cube1: " << std::endl;
@@ -366,7 +389,7 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1, const P
     //std::cout << "Plane: " << it->plane() << std::endl;
   }
 
-  for(int i = 0; i < sum1Planes.size(); ++i)
+  for(size_t i = 0; i < sum1Planes.size(); ++i)
   {
     auto a1 = sum1Planes[i].a();
     auto b1 = sum1Planes[i].b();
@@ -375,30 +398,30 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1, const P
 
     //Look for the matching index in the other vector
     int found = 0;
-    int res;
-    for(int j = 0; j < sum2Planes.size(); ++j)
+    int res(0);
+    for(size_t j = 0; j < sum2Planes.size(); ++j)
     {
       auto a2 = sum2Planes[j].a();
       auto b2 = sum2Planes[j].b();
       auto c2 = sum2Planes[j].c();
       auto d2 = sum2Planes[j].d();
 
-	  //Find first non zero coefficient in each
-	  CGAL::Gmpq norm1;
-	  if (a1 != 0)
-		  norm1 = a1;
-	  else if (b1 != 0)
-		  norm1 = b1;
-	  else
-		  norm1 = c1;
+          //Find first non zero coefficient in each
+          CGAL::Gmpq norm1;
+          if (a1 != 0)
+                  norm1 = a1;
+          else if (b1 != 0)
+                  norm1 = b1;
+          else
+                  norm1 = c1;
 
-	  CGAL::Gmpq norm2;
-	  if (a2 != 0)
+          CGAL::Gmpq norm2;
+          if (a2 != 0)
         norm2 = a2;
-	  else if (b2 != 0)
-		  norm2 = b2;
-	  else
-		  norm2 = c2;
+          else if (b2 != 0)
+                  norm2 = b2;
+          else
+                  norm2 = c2;
 
       //Compare
       auto a1norm = a1 / norm1;
@@ -436,13 +459,13 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1, const P
         }
 
         //Check if some transformation of it is on the other plane
-        if (((x + 1)*a2norm + (y + 1)*b2norm + (z + 1)*c2norm + d2norm == 0) || 
-            ((x + 1)*a2norm + (y + 1)*b2norm + (z - 1)*c2norm + d2norm == 0) || 
-            ((x + 1)*a2norm + (y - 1)*b2norm + (z + 1)*c2norm + d2norm == 0) || 
-            ((x + 1)*a2norm + (y - 1)*b2norm + (z - 1)*c2norm + d2norm == 0) || 
-            ((x - 1)*a2norm + (y + 1)*b2norm + (z + 1)*c2norm + d2norm == 0) || 
-            ((x - 1)*a2norm + (y + 1)*b2norm + (z - 1)*c2norm + d2norm == 0) || 
-            ((x - 1)*a2norm + (y - 1)*b2norm + (z + 1)*c2norm + d2norm == 0) || 
+        if (((x + 1)*a2norm + (y + 1)*b2norm + (z + 1)*c2norm + d2norm == 0) ||
+            ((x + 1)*a2norm + (y + 1)*b2norm + (z - 1)*c2norm + d2norm == 0) ||
+            ((x + 1)*a2norm + (y - 1)*b2norm + (z + 1)*c2norm + d2norm == 0) ||
+            ((x + 1)*a2norm + (y - 1)*b2norm + (z - 1)*c2norm + d2norm == 0) ||
+            ((x - 1)*a2norm + (y + 1)*b2norm + (z + 1)*c2norm + d2norm == 0) ||
+            ((x - 1)*a2norm + (y + 1)*b2norm + (z - 1)*c2norm + d2norm == 0) ||
+            ((x - 1)*a2norm + (y - 1)*b2norm + (z + 1)*c2norm + d2norm == 0) ||
             ((x - 1)*a2norm + (y - 1)*b2norm + (z - 1)*c2norm + d2norm == 0))
         {
           found++;
@@ -459,7 +482,8 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1, const P
     auto c2 = sum2Planes[res].c();
     auto d2 = sum2Planes[res].d();
 
-    assert((a1 != 0 && a2 != 0) || (b1 != 0 && b2 != 0) || (c1 != 0 && c2 != 0));
+    assert((a1 != 0 && a2 != 0) || (b1 != 0 && b2 != 0) ||
+           (c1 != 0 && c2 != 0));
 
     CGAL::Gmpq ratio;
     if (a1 != 0)
@@ -491,32 +515,32 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1, const P
     //cout << "D: " << constraintD << endl;
     //cout << "E: " << constraintE << endl;
 
-    lp.set_a(X, count, a1); 
-    lp.set_a(Y, count, b1); 
-    lp.set_a(Z, count, c1); 
-    lp.set_a(W, count, constraintD); 
+    lp.set_a(X, count, a1);
+    lp.set_a(Y, count, b1);
+    lp.set_a(Z, count, c1);
+    lp.set_a(W, count, constraintD);
     lp.set_b(count, -1 * constraintE);
 
-    count++;
+    ++count;
   }
 }
 
 /* \brief constructs the prototype. */
 Smallest_stabbing_cube* Smallest_stabbing_cube::prototype()
-{ 
-  return new Smallest_stabbing_cube(true); 
+{
+  return new Smallest_stabbing_cube(true);
 }
 
 /*! \brief clones. */
-Container* Smallest_stabbing_cube::clone() 
-{ 
-  return new Smallest_stabbing_cube(); 
+Container* Smallest_stabbing_cube::clone()
+{
+  return new Smallest_stabbing_cube();
 }
 
 /*! \brief obtains the tag (type) of the container. */
-const std::string& Smallest_stabbing_cube::get_tag() const 
-{ 
-  return s_tag; 
+const std::string& Smallest_stabbing_cube::get_tag() const
+{
+  return s_tag;
 }
 
 SGAL_END_NAMESPACE
