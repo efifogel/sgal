@@ -24,10 +24,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "SGAL/basic.hpp"
-#include "SGAL/Container.hpp"
-#include "SGAL/Rotation.hpp"
-
 //CGAL includes
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Nef_polyhedron_3.h>
@@ -42,6 +38,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
+
+#include "SGAL/basic.hpp"
+#include "SGAL/Container.hpp"
+#include "SGAL/Rotation.hpp"
+
+#include "SCGAL/basic.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -68,7 +70,7 @@ class Coord_transformer;
 #pragma warning( disable: 4251 )
 #endif
 
-class SGAL_SCGAL_DECL Smallest_stabbing_cube : public Container 
+class SGAL_SCGAL_DECL Smallest_stabbing_cube : public Container
 {
 
 public:
@@ -142,7 +144,7 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
-  
+
   Polyhedron calculateSum(const Polyhedron& p1, const Polyhedron& p2) const;
   void addConstraints(const Polyhedron& minkCube1, const Polyhedron& minkCube2, Program& lp, int& count);
 

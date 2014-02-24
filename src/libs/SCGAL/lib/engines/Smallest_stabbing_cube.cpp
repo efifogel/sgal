@@ -23,6 +23,8 @@
 #include <windows.h>
 #endif
 #include <string>
+#include <boost/date_time.hpp>
+#include <boost/foreach.hpp>
 
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -34,15 +36,12 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
-#include "SCGAL/basic.hpp"
-#include "SCGAL/Smallest_stabbing_cube.hpp"
 #include "SGAL/Coord_transformer.hpp"
 
-//SCGAL includes
+#include "SCGAL/basic.hpp"
+#include "SCGAL/Smallest_stabbing_cube.hpp"
 #include "SCGAL/compute_planes.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
-
-#include <boost/date_time.hpp>
 
 SGAL_BEGIN_NAMESPACE
 
@@ -128,7 +127,7 @@ void Smallest_stabbing_cube::init_prototype()
     static_cast<Boolean_handle_function>
     (&Smallest_stabbing_cube::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func,
-                                          exec_func));
+                                          s_def_enabled, exec_func));
 
   // changed
   Boolean_handle_function changed_func =
@@ -232,8 +231,12 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
   // std::cout << "Starting stabbing cube..." << std::endl;
   // auto start = boost::posix_time::microsec_clock::local_time();
 
-  //Create a polyhedron from each of our coordinates
+  // Create a polyhedron from each of our coordinates
+#if (_MSC_VER <= 1600)
+  BOOST_FOREACH(auto& obj, m_coord_nodes)
+#else
   for(auto& obj : m_coord_nodes)
+#endif
   {
     Polyhedron polyhedron;
     std::vector<Point_3> points;
@@ -241,7 +244,11 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
     //std::cout << "Adding polyhedron..." << std::endl;
     if (obj->get_coord_array_changed())
     {
+#if (_MSC_VER <= 1600)
+      BOOST_FOREACH(auto& point, *(obj->get_coord_array_changed()))
+#else
       for(auto& point : *(obj->get_coord_array_changed()))
+#endif
       {
         auto p = Point_3(point.get(0), point.get(1), point.get(2));
         //std::cout << "Adding point: " << p << std::endl;
@@ -250,7 +257,11 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
     }
     else
     {
+#if (_MSC_VER <= 1600)
+      BOOST_FOREACH(auto& point, *(obj->get_coord_array()))
+#else
       for(auto& point : *(obj->get_coord_array()))
+#endif
       {
         auto p = Point_3(point.get(0), point.get(1), point.get(2));
         //std::cout << "Adding point: " << p << std::endl;
@@ -281,17 +292,17 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
   auto dist = CGAL::to_double(*(++p));
   //auto dist = CGAL::to_double(s.objective_value());
 
-  if (s.status() == CGAL::QP_INFEASIBLE || dist <= 0)
+  if ((s.status() == CGAL::QP_INFEASIBLE) || (dist <= 0))
   {
-    m_result = Shared_coord_array(new Coord_array((unsigned int)4));
+  m_result = Shared_coord_array(new Coord_array((Uint)4));
     (*m_result)[0].set(0, 0, 0);
-    (*m_result)[1].set(0.01, 0, 0);
-    (*m_result)[2].set(0, 0.01, 0);
-    (*m_result)[3].set(0, 0, 0.01);
+    (*m_result)[1].set(0.01f, 0, 0);
+    (*m_result)[2].set(0, 0.01f, 0);
+    (*m_result)[3].set(0, 0, 0.01f);
   }
   else
   {
-    m_result = Shared_coord_array(new Coord_array((unsigned int)8));
+    m_result = Shared_coord_array(new Coord_array((Uint)8));
     (*m_result)[0].set(x + dist, y + dist, z + dist);
     (*m_result)[1].set(x + dist, y + dist, z - dist);
     (*m_result)[2].set(x + dist, y - dist, z + dist);
@@ -406,22 +417,22 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
       auto c2 = sum2Planes[j].c();
       auto d2 = sum2Planes[j].d();
 
-          //Find first non zero coefficient in each
-          CGAL::Gmpq norm1;
-          if (a1 != 0)
-                  norm1 = a1;
-          else if (b1 != 0)
-                  norm1 = b1;
-          else
-                  norm1 = c1;
+      //Find first non zero coefficient in each
+      CGAL::Gmpq norm1;
+      if (a1 != 0)
+        norm1 = a1;
+      else if (b1 != 0)
+        norm1 = b1;
+      else
+        norm1 = c1;
 
-          CGAL::Gmpq norm2;
-          if (a2 != 0)
+      CGAL::Gmpq norm2;
+      if (a2 != 0)
         norm2 = a2;
-          else if (b2 != 0)
-                  norm2 = b2;
-          else
-                  norm2 = c2;
+      else if (b2 != 0)
+        norm2 = b2;
+      else
+        norm2 = c2;
 
       //Compare
       auto a1norm = a1 / norm1;
