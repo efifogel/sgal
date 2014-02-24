@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7780 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_COORD_ARRAY_HPP
@@ -26,7 +23,6 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include <list>
 #include <vector>
 
 #include "SGAL/basic.hpp"
@@ -45,7 +41,10 @@ template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! Maintains an array of 3D vertex-coordinate. */
+/*! \class Coord_array Coord_array.hpp
+ * Coord_array maintains an array of 3D vertex-coordinates of floating point
+ * type.
+ */
 class SGAL_SGAL_DECL Coord_array : public Container {
 public:
   enum {
@@ -54,7 +53,12 @@ public:
     LAST
   };
 
-  /*! Constructor. */
+  typedef std::vector<Vector3f>::iterator       iterator;
+  typedef std::vector<Vector3f>::const_iterator const_iterator;
+
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Coord_array(Boolean proto = false);
 
   /*! Constructor. */
@@ -63,12 +67,18 @@ public:
   /*! Destructor. */
   virtual ~Coord_array();
 
-  /* Construct the prototype. */
+  /* Construct the prototype.
+   * \return the prototype.
+   */
   static Coord_array* prototype();
 
-  /*! Clone. */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -77,6 +87,7 @@ public:
 
   /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{

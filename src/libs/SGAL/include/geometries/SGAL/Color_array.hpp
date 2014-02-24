@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_COLOR_ARRAY_HPP
@@ -40,7 +37,10 @@ template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! This class maintains an array of vertex-colors */
+/*! \class Color_array Color_array.hpp
+ * Coord_array maintains an array of 3D vertex-colors of floating point
+ * type.
+ */
 class SGAL_SGAL_DECL Color_array : public Container {
 public:
   enum {
@@ -49,32 +49,52 @@ public:
     LAST
   };
 
-  /*! Constructor */
-  Color_array(Boolean proto = false) : Container(proto) {}
+  typedef std::vector<Vector3f>::iterator       iterator;
+  typedef std::vector<Vector3f>::const_iterator const_iterator;
 
-  /*! Constructor */
-  Color_array(Int n) { m_array.resize(n); }
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
+  Color_array(Boolean proto = false);
 
-  /*! Destructor */
-  virtual ~Color_array() {}
+  /*! Constructor. */
+  Color_array(Int n);
 
-  /*! Construct the prototype. */
+  /*! Destructor. */
+  virtual ~Color_array();
+
+  /*! Construct the prototype.
+   * \return the prototype.
+   */
   static Color_array* prototype();
 
-  /*! Clone. */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
+  //@}
 
-  /*! Sets the attributes of this node. */
-  virtual void set_attributes(Element * elem);
+  /// \name field handlers
+  //@{
+  std::vector<Vector3f>* array_handle(const Field_info*) { return &m_array; }
+  //@}
+
+  /*! Set the attributes of this node.
+   */
+  virtual void set_attributes(Element* elem);
 
   //! \todo virtual Attribute_list get_attributes();
 
@@ -114,7 +134,7 @@ protected:
 
 private:
   /*! The tag that identifies this container type. */
-  static std::string s_tag;
+  static const std::string s_tag;
 
   /*! The node prototype. */
   static Container_proto* s_prototype;
@@ -126,6 +146,15 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief constructor.
+inline Color_array::Color_array(Boolean proto) : Container(proto) {}
+
+//!\brief constructor.
+inline Color_array::Color_array(Int n) { m_array.resize(n); }
+
+//! \brief destructor.
+inline Color_array::~Color_array() {}
 
 //! \brief constructs the prototype.
 inline Color_array* Color_array::prototype() { return new Color_array(true); }

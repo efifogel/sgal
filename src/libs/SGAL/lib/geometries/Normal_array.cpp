@@ -14,54 +14,52 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Normal_array.hpp"
-#include "SGAL/Geo_set.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 const std::string Normal_array::s_tag = "Normal";
-Container_proto* Normal_array::s_prototype(NULL);
+Container_proto* Normal_array::s_prototype(nullptr);
 
-/*! Register to the container factory */
+//! Register to the container factory.
 REGISTER_TO_FACTORY(Normal_array, "Normal_array");
 
-/*! Initialize the node prototype */
+//! \brief initializes the node prototype.
 void Normal_array::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
+
+  // vector
+  Vector3f_array_handle_function array_func =
+    static_cast<Vector3f_array_handle_function>(&Normal_array::array_handle);
+  s_prototype->add_field_info(new MF_vector3f(VECTOR, "vector", array_func));
 }
 
-/*! Delete the node prototype */
+//! \brief deletes the node prototype.
 void Normal_array::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
-Container_proto * Normal_array::get_prototype()
+//! \brief obtains the node prototype.
+Container_proto* Normal_array::get_prototype()
 {
   if (s_prototype == NULL) Normal_array::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
-void Normal_array::set_attributes(Element * elem)
+//! \brief sets the attributes of the object extracted from an input file.
+void Normal_array::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
@@ -76,9 +74,8 @@ void Normal_array::set_attributes(Element * elem)
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0 ; i < size ; i++) {
+      for (Uint i = 0; i < size; ++i)
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
-      }
       elem->mark_delete(ai);
     }
   }

@@ -14,49 +14,50 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Color_array.hpp"
-#include "SGAL/Geo_set.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Color_array::s_tag = "Color";
-Container_proto* Color_array::s_prototype(NULL);
+const std::string Color_array::s_tag = "Color";
+Container_proto* Color_array::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Color_array, "Color_array");
 
-/*! Initialize the node prototype. */
+//! \brief initializes the node prototype.
 void Color_array::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Container::get_prototype());
+
+  // color
+  Vector3f_array_handle_function array_func =
+    static_cast<Vector3f_array_handle_function>(&Color_array::array_handle);
+  s_prototype->add_field_info(new MF_vector3f(COLOR, "color", array_func));
 }
 
-/*! Delete the node prototype. */
+//! \brief deletes the node prototype.
 void Color_array::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Color_array::get_prototype()
 {
   if (s_prototype == NULL) Color_array::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Color_array::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;

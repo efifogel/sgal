@@ -14,38 +14,36 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 
 #include "SGAL/Tex_coord_array_3d.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 const std::string Tex_coord_array_3d::s_tag = "TextureCoordinate3D";
-Container_proto* Tex_coord_array_3d::s_prototype(NULL);
+Container_proto* Tex_coord_array_3d::s_prototype(nullptr);
 
 /*! Register to the container factory. This will enable automatic creation
  * through the name provided as a parameter.
  */
 REGISTER_TO_FACTORY(Tex_coord_array_3d, "Tex_coord_array_3d");
 
-/*! Constructor */
-Tex_coord_array_3d::Tex_coord_array_3d(Boolean proto) : Tex_coord_array(proto){}
+//! \brief constructor.
+Tex_coord_array_3d::Tex_coord_array_3d(Boolean proto) : Tex_coord_array(proto)
+{}
 
-/*! Constructor */
+//! \brief constructor.
 Tex_coord_array_3d::Tex_coord_array_3d(Uint n) { m_array.resize(n); }
 
-/*! Destructor */
+//! \brief destructor.
 Tex_coord_array_3d::~Tex_coord_array_3d() {}
 
 /*! Initialize the node prototype */
@@ -53,25 +51,29 @@ void Tex_coord_array_3d::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Tex_coord_array::get_prototype());
+
+  // point
+  Vector3f_array_handle_function array_func =
+    static_cast<Vector3f_array_handle_function>
+    (&Tex_coord_array_3d::array_handle);
+  s_prototype->add_field_info(new MF_vector3f(POINT, "point", array_func));
 }
 
-/*! Delete the node prototype */
+//! \brief deletes the node prototype.
 void Tex_coord_array_3d::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! Obtain the node prototype */
+//! \brief obtains the node prototype.
 Container_proto* Tex_coord_array_3d::get_prototype()
 {
   if (s_prototype == NULL) Tex_coord_array_3d::init_prototype();
   return s_prototype;
 }
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- */
+//! \brief sets the attributes of the object extracted from an input file.
 void Tex_coord_array_3d::set_attributes(Element* elem)
 {
   Tex_coord_array::set_attributes(elem);
@@ -87,8 +89,7 @@ void Tex_coord_array_3d::set_attributes(Element* elem)
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0 ; i < size ; i++)
-        svalue >> m_array[i][0] >> m_array[i][1];
+      for (Uint i = 0; i < size; ++i) svalue >> m_array[i][0] >> m_array[i][1];
       elem->mark_delete(ai);
     }
   }
@@ -98,7 +99,7 @@ void Tex_coord_array_3d::set_attributes(Element* elem)
 }
 
 #if 0
-/*! */
+//! \brief
 Attribute_list Tex_coord_array_3d::get_attributes()
 {
   Attribute_list attribs;

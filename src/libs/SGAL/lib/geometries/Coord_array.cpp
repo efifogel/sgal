@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7829 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -37,7 +34,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Coord_array::s_tag = "Coordinate";
-Container_proto* Coord_array::s_prototype(NULL);
+Container_proto* Coord_array::s_prototype(nullptr);
 
 //! Register to the container factory.
 REGISTER_TO_FACTORY(Coord_array, "Coord_array");
@@ -105,9 +102,8 @@ void Coord_array::set_attributes(Element* elem)
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; ++i) {
+      for (Uint i = 0; i < size; ++i)
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
-      }
       elem->mark_delete(ai);
     }
   }

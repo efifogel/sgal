@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TEX_COORD_ARRAY_2D_HPP
@@ -40,7 +37,10 @@ template class SGAL_SGAL_DECL std::vector<Vector2f>;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! This class maintains an array of vertex-texture-coordinates pairs */
+/*! \class Tex_coord_array_2d Tex_coord_array_2d.hpp
+ * Tex_coord_array maintains an array of 2D texture-coordinates of floating
+ * point type.
+ */
 class SGAL_SGAL_DECL Tex_coord_array_2d : public Tex_coord_array {
 public:
   enum {
@@ -49,35 +49,48 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  typedef std::vector<Vector2f>::iterator       iterator;
+  typedef std::vector<Vector2f>::const_iterator const_iterator;
+
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Tex_coord_array_2d(Boolean proto = false);
 
-  /*! Constructor */
+  /*! Constructor. */
   Tex_coord_array_2d(Uint n);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Tex_coord_array_2d();
 
-  /* Construct the prototype */
+  /* Construct the prototype.
+   * \return the prototype.
+   */
   static Tex_coord_array_2d* prototype();
 
-  /*! Clone */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /// \name Protoype handling
+  //@{
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
+  std::vector<Vector2f>* array_handle(const Field_info*) { return &m_array; }
   //@}
 
-  /*! Sets the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual void FieldChanged(short fieldId);

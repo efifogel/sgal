@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TEX_COORD_ARRAY_3D_HPP
@@ -41,7 +38,10 @@ template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! This class maintains an array of vertex-texture-coordinates pairs */
+/*! \class Tex_coord_array_3d Tex_coord_array_3d.hpp
+ * Tex_coord_array maintains an array of 3D texture-coordinates of floating
+ * point type.
+ */
 class SGAL_SGAL_DECL Tex_coord_array_3d : public Tex_coord_array {
 public:
   enum {
@@ -50,35 +50,48 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  typedef std::vector<Vector3f>::iterator       iterator;
+  typedef std::vector<Vector3f>::const_iterator const_iterator;
+
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Tex_coord_array_3d(Boolean proto = false);
 
-  /*! Constructor */
+  /*! Constructor. */
   Tex_coord_array_3d(Uint n);
 
   /*! Destructor */
   ~Tex_coord_array_3d();
 
-  /* Construct the prototype. */
-  static Tex_coord_array_3d* prototype() { return new Tex_coord_array_3d(true); }
+  /* Construct the prototype.
+   * \return the prototype.
+   */
+  static Tex_coord_array_3d* prototype();
 
-  /*! Clone. */
-  virtual Container* clone() { return new Tex_coord_array_3d(); }
+  /*! Clone.
+   * \return the clone.
+   */
+  virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
+  std::vector<Vector3f>* array_handle(const Field_info*) { return &m_array; }
   //@}
 
-  /*! Sets the attributes of this node. */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual void FieldChanged(short fieldId);
@@ -131,6 +144,14 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief constructs.
+inline Tex_coord_array_3d* Tex_coord_array_3d::prototype()
+{ return new Tex_coord_array_3d(true); }
+
+//! \brief clones.
+inline Container* Tex_coord_array_3d::clone()
+{ return new Tex_coord_array_3d(); }
 
 //! \brief obtains the array size.
 inline Uint Tex_coord_array_3d::size() const { return m_array.size(); }

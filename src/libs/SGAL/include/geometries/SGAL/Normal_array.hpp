@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_NORMAL_ARRAY_HPP
@@ -50,7 +47,10 @@ template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! This class maintains an array of vertex-normals */
+/*! \class Normal_array Normal_array.hpp
+ * Coord_array maintains an array of 3D vertex-normals of floating point
+ * type.
+ */
 class SGAL_SGAL_DECL Normal_array : public Container {
 public:
   enum {
@@ -59,79 +59,94 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  typedef std::vector<Vector3f>::iterator       iterator;
+  typedef std::vector<Vector3f>::const_iterator const_iterator;
+
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Normal_array(Boolean proto = false);
 
-  /*! Constructor */
+  /*! Constructor. */
   Normal_array(Uint n);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Normal_array();
 
-  /* Construct the prototype */
+  /* Construct the prototype.
+   * \return the prototype.
+   */
   static Normal_array* prototype();
 
-  /*! Clone */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /// \name Protoype handling
+  //@{
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
+  std::vector<Vector3f>* array_handle(const Field_info*) { return &m_array; }
   //@}
 
-  /*! Sets the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   //! \todo virtual Attribute_list get_attributes();
 
-  /*! Obtain the array size */
+  /*! Obtain the array size. */
   Uint size() const;
 
-  /*! Resize the array capacity */
+  /*! Resize the array capacity. */
   void resize(Uint n);
 
-  /*! Clear the array */
+  /*! Clear the array. */
   void clear();
 
-  /*! The iterator to the Array first element */
+  /*! The iterator to the Array first element. */
   std::vector<Vector3f>::iterator begin();
 
   const std::vector<Vector3f>::const_iterator begin() const;
 
-  /*! The iterator to the Array past-the-end element */
+  /*! The iterator to the Array past-the-end element. */
   std::vector<Vector3f>::iterator end();
 
   const std::vector<Vector3f>::const_iterator end() const;
 
-  /*! Array indexing operator */
+  /*! Array indexing operator. */
   Vector3f& operator[](Uint n);
 
-  /*! Array indexing operator */
+  /*! Array indexing operator. */
   const Vector3f& operator[](Uint n) const;
 
   /*! Obtain the vector */
   Vector3f* get_vector();
 
 protected:
-  /*! obtains the tag (type) of the container */
+  /*! obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! The normal array */
+  /*! The normal array. */
   std::vector<Vector3f> m_array;
 };
 

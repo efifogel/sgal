@@ -14,63 +14,67 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
 #include <sstream>
 
 #include "SGAL/Tex_coord_array_2d.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 const std::string Tex_coord_array_2d::s_tag = "TextureCoordinate";
-Container_proto* Tex_coord_array_2d::s_prototype(NULL);
+Container_proto* Tex_coord_array_2d::s_prototype(nullptr);
 
 /*! Register to the container factory. This will enable automatic creation
  * through the name provided as a parameter.
  */
 REGISTER_TO_FACTORY(Tex_coord_array_2d, "Tex_coord_array_2d");
 
-/*! \brief Constructor */
-Tex_coord_array_2d::Tex_coord_array_2d(Boolean proto) : Tex_coord_array(proto){}
+//! \brief Constructor.
+Tex_coord_array_2d::Tex_coord_array_2d(Boolean proto) : Tex_coord_array(proto)
+{}
 
-/*! \brief Constructor */
+//! \brief Constructor.
 Tex_coord_array_2d::Tex_coord_array_2d(Uint n) { m_array.resize(n); }
 
-/*! \brief Destructor */
+//! \brief Destructor.
 Tex_coord_array_2d::~Tex_coord_array_2d() {}
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Tex_coord_array_2d::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Tex_coord_array::get_prototype());
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Tex_coord_array_2d::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
+
+  // point
+  Vector2f_array_handle_function array_func =
+    static_cast<Vector2f_array_handle_function>
+    (&Tex_coord_array_2d::array_handle);
+  s_prototype->add_field_info(new MF_vector2f(POINT, "point", array_func));
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Tex_coord_array_2d::get_prototype()
 {
   if (s_prototype == NULL) Tex_coord_array_2d::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Tex_coord_array_2d::set_attributes(Element* elem)
 {
   Tex_coord_array::set_attributes(elem);
@@ -86,8 +90,7 @@ void Tex_coord_array_2d::set_attributes(Element* elem)
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0 ; i < size ; i++)
-        svalue >> m_array[i][0] >> m_array[i][1];
+      for (Uint i = 0; i < size; ++i) svalue >> m_array[i][0] >> m_array[i][1];
       elem->mark_delete(ai);
     }
   }
@@ -97,7 +100,7 @@ void Tex_coord_array_2d::set_attributes(Element* elem)
 }
 
 #if 0
-/*! */
+//! \brief
 Attribute_list Tex_coord_array_2d::get_attributes()
 {
   Attribute_list attribs;
