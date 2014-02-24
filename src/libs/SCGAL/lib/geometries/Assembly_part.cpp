@@ -57,46 +57,46 @@ std::string Assembly_part::s_tag = "AssemblyPart";
 
 REGISTER_TO_FACTORY(Assembly_part, "Assembly_part");
 
-/*! Constructor */
+//! \brief constructor.
 Assembly_part::Assembly_part(Boolean proto) :
   Group(proto),
   m_dirty(true),
   m_id(0xffffffff)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Assembly_part::~Assembly_part() { clear(); }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Assembly_part::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Group::get_prototype());
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Assembly_part::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Assembly_part::get_prototype()
 {
   if (!s_prototype) Assembly_part::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Assembly_part::set_attributes(Element* elem)
 { Group::set_attributes(elem); }
 
-/*! \brief prints information to an output stream. */
+//! \brief prints information to an output stream.
 void Assembly_part::print_info(std::ostream& out)
 { out << "Part id[" << m_id << "]" << std::endl; }
 
-/*! \brief clears the representation. */
+//! \brief clears the representation.
 void Assembly_part::clear()
 {
   m_sgm_geos.clear();
@@ -104,30 +104,28 @@ void Assembly_part::clear()
   m_dirty = true;
 }
 
-/*! \brief cleans internal representation. */
+//! \brief cleans internal representation.
 void Assembly_part::clean()
 {
   clean_sgm_geos(this);
   m_dirty = false;
 }
 
-/*! \brief obtains the container of the Sgm geometries that comprise this part.
- */
+//! \brief obtains the container of the Sgm geometries that comprise this part.
 Assembly_part::Sgm_geo_list& Assembly_part::get_sgm_geos()
 {
   if (m_dirty) clean();
   return m_sgm_geos;
 }
 
-/*! \brief obtains the container of the SGM appearances that comprise this part.
- */
+//! \brief obtains the container of the SGM appearances that comprise this part.
 Assembly_part::Appearance_list& Assembly_part::get_sgm_apps()
 {
   if (m_dirty) clean();
   return m_sgm_apps;
 }
 
-/*! \brief constructs all the SGM's that comprise this part. */
+//! \brief constructs all the SGM's that comprise this part.
 void Assembly_part::clean_sgm_geos(Group* /* group */)
 {
   for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
@@ -136,7 +134,7 @@ void Assembly_part::clean_sgm_geos(Group* /* group */)
   }
 }
 
-/*! \brief constructs all the SGM's that comprise this part. */
+//! \brief constructs all the SGM's that comprise this part.
 void Assembly_part::clean_sgm_geos(Node* node)
 {
   static float total_duration_time = 0;
