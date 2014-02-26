@@ -66,6 +66,10 @@
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Group.hpp"
+#include "SGAL/Node.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -958,5 +962,51 @@ Camera* Scene_graph::get_active_camera()
 /*! \brief obtains the active background. */
 Background* Scene_graph::get_active_background()
 { return static_cast<Background*>(m_background_stack.top()); }
+
+//! \brief writes the scene to a file in a given format.
+void Scene_graph::write_vrml(const std::string& filename)
+{
+  typedef boost::shared_ptr<Group>                Shared_group;
+  typedef boost::shared_ptr<Node>                 Shared_node;
+  typedef boost::shared_ptr<Transform>            Shared_transform;
+
+  Vrml_formatter formatter(std::cout);
+  Shared_group root = get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    Shared_node node = root->get_child(0);
+    Shared_transform transform = boost::dynamic_pointer_cast<Transform>(node);
+    Transform::Node_iterator it = transform->children_begin();
+    for (; it != transform->children_end(); ++it) {
+      Shared_node node = *it;
+      formatter.write(&*node);
+    }
+  }
+  formatter.end();
+}
+
+//! \brief writes the scene to a file in a given format.
+void Scene_graph::write_stl(const std::string& filename)
+{
+  typedef boost::shared_ptr<Group>                Shared_group;
+  typedef boost::shared_ptr<Node>                 Shared_node;
+  typedef boost::shared_ptr<Transform>            Shared_transform;
+
+  Stl_formatter formatter(std::cout);
+  Shared_group root = get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    Shared_node node = root->get_child(0);
+    Shared_transform transform = boost::dynamic_pointer_cast<Transform>(node);
+    Transform::Node_iterator it = transform->children_begin();
+    for (; it != transform->children_end(); ++it) {
+      Shared_node node = *it;
+      formatter.write(&*node);
+    }
+  }
+  formatter.end();
+}
 
 SGAL_END_NAMESPACE

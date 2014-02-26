@@ -406,6 +406,19 @@ public:
    */
   void set_input_format_id(File_format::Id format_id);
 
+  /// \name Writters
+  //@{
+  /*! Write the scene to a file in VRML format.
+   * \param filename The file name.
+   */
+  void write_vrml(const std::string& filename);
+
+  /*! Write the scene to a file in STL format.
+   * \param filename The file name.
+   */
+  void write_stl(const std::string& filename);
+  //@}
+
 private:
   /*! Binadable stacks */
 

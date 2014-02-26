@@ -122,9 +122,6 @@
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 
-/*! Valid file format names. */
-const char* Player_scene::s_file_format_names[] = { "wrl" };
-
 /*! Constructor. */
 Player_scene::Player_scene(Player_option_parser* option_parser) :
   m_window_manager(NULL),

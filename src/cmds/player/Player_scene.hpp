@@ -283,9 +283,6 @@ private:
 
   /*! A collection of directories to search files in. */
   Path_list m_dirs;
-
-  /*! Valid file format names */
-  static const char* s_file_format_names[];
 };
 
 /*! \brief obtains the scene scene-graph. */

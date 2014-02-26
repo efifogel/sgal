@@ -29,6 +29,7 @@ FILES+= Environment_background.hpp
 FILES+= errors.hpp
 FILES+= Execution_function.hpp
 FILES+= Execution_coordinator.hpp
+FILES+= Exporter.hpp
 FILES+= failures.hpp
 FILES+= Field_def.hpp
 FILES+= Field.hpp
