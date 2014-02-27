@@ -31,6 +31,10 @@ if (WIN32)
   add_definitions(-vmg)
 endif()
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+  add_definitions(-std=c++0x)
+endif()
+
 add_definitions(-DBOOST_ALL_DYN_LINK)
 
 # Installation

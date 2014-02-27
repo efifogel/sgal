@@ -102,7 +102,6 @@ SGAL_SCGAL_DECL void scgal_init()
   Container_factory::get_instance()->doregister(Exact_plane_array::prototype());
   Container_factory::get_instance()->doregister(Exact_coord_minkowski::prototype());
   Container_factory::get_instance()->doregister(Exact_polyhedron_geo::prototype());
-  Container_factory::get_instance()->doregister(Smallest_stabbing_cube::prototype());
   Container_factory::get_instance()->doregister(Triangulation_geo::prototype());
 #if defined(USE_ENV)
   Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());

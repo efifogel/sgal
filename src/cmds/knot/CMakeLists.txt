@@ -1,16 +1,14 @@
-find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
-
 # Add source files
 set(KNOT_SOURCE_FILES ${KNOT_SOURCE_FILES} knot.cpp)
 set(KNOT_SOURCE_FILES ${KNOT_SOURCE_FILES} Knot_scene.cpp)
 set(KNOT_SOURCE_FILES ${KNOT_SOURCE_FILES} Knot_option_parser.cpp)
 
 #Add defines
-add_definitions(-DBOOST_ALL_DYN_LINK )
+if (NOT WIN32)
+  add_definitions(-DGL_GLEXT_PROTOTYPES)
+endif (NOT WIN32)
 
 #Add include dirs
-include_directories(../player)
 include_directories(../../libs/SGAL/include)
 include_directories(../../libs/SGAL/include/engines)
 include_directories(../../libs/SGAL/include/events)
