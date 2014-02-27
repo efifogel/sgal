@@ -233,21 +233,11 @@ protected:
   /*! \brief print geometry information of Box. */
   void print_geometry_info(SGAL::Box* box);
 
-  /*! saves the scene to a file in a given format.
+  /*! Write the scene to a file in a given format.
    * \param filename The file name.
    * \param format_id The id of the given format.
    */
-  void save(const std::string& filename, SGAL::File_format::Id format_id);
-
-  /*! saves the scene to a file in VRML format.
-   * \param filename The file name.
-   */
-  void save_vrml(const std::string& filename);
-
-  /*! saves the scene to a file in STL format.
-   * \param filename The file name.
-   */
-  void save_stl(const std::string& filename);
+  void write(const std::string& filename, SGAL::File_format::Id format_id);
 
 private:
   typedef std::list<fi::path>                                   Path_list;

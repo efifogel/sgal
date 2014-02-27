@@ -30,7 +30,7 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 class Scene_graph;
-class draw_action;
+class Field_info;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -97,17 +97,8 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Draw the node while traversing the scene graph.
-   */
-  virtual Action::Trav_directive draw(Draw_action* draw_action);
-
-  /*! Trigger the exporter.
-   */
-  void trigger();
-
-  /*! Set the triger field.
-   */
-  void set_trigger(Field_info* field_info = nullptr);
+  /*! Execute the engine---write the content of the scene graph to a file. */
+  virtual void execute(Field_info* field_info);
 
   /*! Set the name of the file where the snapshot is written to.
    */
@@ -129,9 +120,6 @@ protected:
   /*! Obtain the tag (type) of the container.
    */
   virtual const std::string& get_tag() const;
-
-  /*! Write the scene to a file in a given format. */
-  void write();
 
   /*! The name of the file the image is written to. */
   std::string m_file_name;
@@ -166,9 +154,6 @@ inline Exporter* Exporter::prototype() { return new Exporter(true); }
 
 //! \brief clones.
 inline Container* Exporter::clone() { return new Exporter(); }
-
-//! \brief triggers the snapshot.
-inline void Exporter::trigger() { m_trigger = true; }
 
 inline void Exporter::set_file_name(std::string& file_name)
 { m_file_name = file_name; }

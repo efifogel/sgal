@@ -533,6 +533,7 @@ void Mesh_set::write(Formatter* formatter)
     // Apply the active (top) transform matrix to the coordinates.
     const Matrix4f& matrix = stl_formatter->top_matrix();
     const Shared_coord_array coords = get_coord_array();
+    if (!coords) return;
     std::vector<Vector3f> world_coords(coords->size());
     std::vector<Vector3f>::iterator it;
     Uint i = 0;

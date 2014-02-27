@@ -60,6 +60,7 @@
 #include "SGAL/Coord_minkowski.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Exporter.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Indexed_line_set.hpp"
@@ -99,7 +100,7 @@
 #include "SGAL/Rotation_interpolator.hpp"
 #include "SGAL/Scalar_interpolator.hpp"
 // #include "SGAL/Vector3f_interpolator.hpp"
-  
+
 #include "SGAL/Background.hpp"
 #include "SGAL/Environment_background.hpp"
 #include "SGAL/Color_background.hpp"
@@ -126,7 +127,7 @@ SGAL_BEGIN_NAMESPACE
 Container_factory* Container_factory::m_instance = 0;
 
 /*! Returns a pointer to the factory and makes sure only one instance exits */
-Container_factory* Container_factory::get_instance() 
+Container_factory* Container_factory::get_instance()
 {
   if (!m_instance) {
     m_instance = new Container_factory();
@@ -136,7 +137,7 @@ Container_factory* Container_factory::get_instance()
 }
 
 /*! \brief registers a container to the factory. */
-void Container_factory::doregister(Container* container) 
+void Container_factory::doregister(Container* container)
 {
   container->init_prototype();
   m_map[container->get_tag()] = container;
@@ -158,7 +159,7 @@ Shared_container Container_factory::create(const std::string& type)
 }
 
 /*! \brief registers all containers. */
-void Container_factory::initialize() 
+void Container_factory::initialize()
 {
   REGISTER_OBJECT(Accumulation);
   REGISTER_OBJECT(Appearance);
@@ -179,6 +180,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Cylindrical_patch);
   REGISTER_OBJECT(Directional_light);
   REGISTER_OBJECT(Ellipsoid);
+  REGISTER_OBJECT(Exporter);
   REGISTER_OBJECT(Extrusion);
   REGISTER_OBJECT(Environment_background);
   REGISTER_OBJECT(Font_style);

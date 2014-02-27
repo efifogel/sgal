@@ -53,17 +53,8 @@ Exporter::Exporter(Boolean proto) :
 //! \brief destructor.
 Exporter::~Exporter() {}
 
-//! \brief takes a snapshot and write to a file if triggered.
-Action::Trav_directive Exporter::draw(Draw_action* /* draw_action */)
-{
-  if (!m_trigger) return Action::TRAV_CONT;
-  m_trigger = false;
-  write();
-  return Action::TRAV_CONT;
-}
-
-//! \brief writes the image into a file.
-void Exporter::write()
+//! \brief executes the engine---writes the content of the scene graph to a file.
+void Exporter::execute(Field_info* /* field_info */)
 {
   if (!m_scene_graph) return;
   std::string filename =
@@ -89,10 +80,13 @@ void Exporter::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // trigger
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Exporter::execute);
+
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Exporter::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
-                                          false));
+                                          false, exec_func));
 
   // fileName
   String_handle_function file_name_func =
