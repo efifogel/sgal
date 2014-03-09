@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Israel.
+// Copyright (c) 2014 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -14,62 +14,119 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
-
-/*!
- * This node is the implementation of the VRML script node
- */
 
 #ifndef SGAL_SCRIPT_HPP
 #define SGAL_SCRIPT_HPP
+
+#include <list>
+#include <string>
+#include <boost/variant.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
-
-// #include "JSWClientObject.h"
-// #include "SAINodeServices.h"
+#include "SGAL/Vector2f.hpp"
+#include "SGAL/Vector3f.hpp"
+#include "SGAL/Rotation.hpp"
+#include "SGAL/Field_info.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Container_proto;
-class Field_info;
 
+/*! \class Script Script.hpp
+ * Script is a node used to program behaviour in a scene. Script nodes typically
+ * 1. signify a change or user action;
+ * 2. receive events from other nodes;
+ * 3. contain a program module that performs some computation;
+ * 4. effect change somewhere else in the scene by sending events.
+ * Each Script node has associated programming language code, referenced by the
+ * url field, that is executed to carry out the Script node's function.
+ */
 class Script : public Node {
 public:
   enum {
     FIRST = Node::LAST-1,
+    URL,
+    DIRECT_OUTPUT,
+    MUST_EVALUATE,
     LAST
   };
 
-  /*! Constructor */
+  typedef boost::shared_ptr<Container>                  Shared_container;
+
+  typedef boost::variant<Boolean,
+                         Float,
+                         Int,
+                         Vector2f,
+                         Vector3f,
+                         Rotation,
+                         std::string,
+                         Shared_container,
+                         std::vector<Boolean>,
+                         std::vector<Float>,
+                         std::vector<Int>,
+                         std::vector<Vector2f>,
+                         std::vector<Vector3f>,
+                         std::vector<Rotation>,
+                         std::vector<std::string>,
+                         std::vector<Shared_container> > Variant_field;
+
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Script(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Script();
 
-  /*! Construct the prototype */
+  /*! Construct the prototype.
+   * \return the prototype.
+   */
   static Script* prototype();
 
-  /*! Clone. */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   /*! Delete the container prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the container prototype. */
+  /*! Obtain the container prototype.
+   * \return the node prototype.
+   */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
+  std::string* url_handle(const Field_info*) { return &m_url; }
+  Boolean* direct_output_handle(const Field_info*) { return &m_direct_output; }
+  Boolean* must_evaluate_handle(const Field_info*) { return &m_must_evaluate; }
+
+  /*! Obtain a handle to a dynamically generated field.
+   * \param field_info (in) the field information record.
+   * \return a pointer to the field.
+   */
+  template <typename T>
+  T* field_handle(const Field_info* field_info)
+  {
+    Uint id = field_info->get_id();
+    std::list<Variant_field>::iterator it = m_fields.begin();
+    std::advance(it, id - LAST);
+    T& field = boost::get<T>(*it);
+    return &field;
+  }
   //@}
 
   /*! Set the attributes of the object extracted from the input file.
@@ -83,11 +140,16 @@ public:
   virtual Action::Trav_directive Draw(Draw_action* /* draw_action */)
   { return Action::TRAV_CONT; }
 
-  // virtual void add_field_def(const std::string& name, const std::string& type,
-  //                            const std::string& value, Node* field);
+  /*! Add a field information record to the script node.
+   * \param type (in) the type of the field.
+   * \param name (in) the name of the field.
+   * \param value (in) the initial value of the field.
+   */
+  void add_field_info(Field_type_enum type, const std::string& name,
+                      const std::string& value);
 
-  // virtual void add_field_def(const std::string& name, const std::string& type,
-  //                            Container* value, Node* field);
+  // virtual void add_field(const std::string& name, const std::string& type,
+  //                        Container* value, Node* field);
 
   /*! Set the URL. */
   void set_url(const std::string& url);
@@ -103,10 +165,6 @@ public:
 
   /*! Execute the script function according to the event. */
   virtual void execute(Field_info* field_info);
-
-  // int get_child_count();
-
-  // Node* get_child(int i);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -140,8 +198,9 @@ private:
    */
   Boolean m_must_evaluate;
 
-  // NodeList m_child_list;
-  // Int m_field_infoIDCount;
+  /*! Additional fields. */
+  std::list<Variant_field> m_fields;
+
   // JSWObjectInt* m_JSWObject;
   // Boolean m_engineInitialized;
   // ESAI* m_SAI;

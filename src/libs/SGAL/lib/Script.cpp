@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Israel.
+// Copyright (c) 2014 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -14,14 +14,9 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*!
- * Script - implementation
- */
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
@@ -30,6 +25,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Script.hpp"
+#include "SGAL/Field_infos.hpp"
 
 // #include "JSWObjectInt.h"
 // #include "SG_JSObject.h"
@@ -45,7 +41,6 @@ REGISTER_TO_FACTORY(Script, "Script");
 /*! Constructor */
 Script::Script(Boolean proto) :
   Node(proto)
-  // m_field_infoIDCount(0),
   // m_JSWObject(NULL),
   // m_engineInitialized(false),
   // m_SAI(NULL),
@@ -61,8 +56,22 @@ Script::~Script()
 /*! \brief initializes the container prototype. */
 void Script::init_prototype()
 {
-  if (!s_prototype) return;
+  if (s_prototype) return;
   s_prototype = new Container_proto(Node::get_prototype());
+
+  String_handle_function url_func =
+    static_cast<String_handle_function>(&Script::url_handle);
+  s_prototype->add_field_info(new SF_string(URL, "url", url_func));
+
+  Boolean_handle_function direct_output_func =
+    static_cast<Boolean_handle_function>(&Script::direct_output_handle);
+  s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
+                                          direct_output_func));
+
+  Boolean_handle_function must_evaluate_func =
+    static_cast<Boolean_handle_function>(&Script::must_evaluate_handle);
+  s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
+                                          must_evaluate_func));
 }
 
 /*! \brief deletes the container prototype. */
@@ -70,7 +79,7 @@ void Script::delete_prototype()
 {
   if (!s_prototype) return;
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! \brief obtains the container prototype. */
@@ -109,23 +118,19 @@ void Script::set_attributes(Element* elem)
     }
   }
 
-  // Element::Field_attr_iter fi;
-  // for (fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi) {
-  //   const std::string& name = elem->get_name(fi);
-  //   const std::string& value = elem->get_value(fi);
-  //   const std::string& type = elem->get_type(fi);
-  // }
+  Element::Field_attr_iter fi;
+  for (fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi) {
+    Field_type_enum type = elem->get_type(fi);
+    const std::string& name = elem->get_name(fi);
+    const std::string& value = elem->get_value(fi);
+    add_field_info(type, name, value);
+  }
 
   // Remove all the marked attributes:
   elem->delete_marked();
 }
 
 #if 0
-/*! Get a list of atributes in this object. This method is called only
- * from the Builder side.
- *
- * @return a list of attributes
- */
 Attribute_list Script::get_attributes()
 {
   Attribute_list attribs;
@@ -139,7 +144,9 @@ Attribute_list Script::get_attributes()
 
   return attribs;
 }
+#endif
 
+#if 0
 void Script::add_to_scene(Scene_graph* sg)
 {
   Node::add_to_scene(sg);
@@ -160,62 +167,142 @@ void Script::add_to_scene(Scene_graph* sg)
   m_JSWObject = (sg->GetJSWEngine())->
     CreateObject(new ESG_JSObject(m_SAI, m_SAINode,m_SAINode->get_name()));
 }
+#endif
 
-/*! Return the number of children the object has .
- * @return number of childrent in the group.
- */
-int Script::get_childCount() { return m_child_list.size(); }
-
-/* Get a child according to its position in the child list.
- * @param index the index of the child.
- * @return a pointer to the child object.
- */
-Node* Script::get_child(int index)
+/*! \brief adds a field info record to the script node. */
+void Script::add_field_info(Field_type_enum type, const std::string& name,
+                            const std::string& value)
 {
-  if (index >= m_child_list.size()) return 0;
-  NodeListIter iter = m_child_list.begin();
-  for (Uint i = 0; i < index; ++i) ++iter;
-  return *iter;
+  Container_proto* prototype = get_prototype();
+
+  Variant_field variant_field;
+  Uint id = LAST + m_fields.size();
+  switch (type) {
+   case SF_BOOL:
+    {
+     Boolean initial_value =
+       value.empty() ? false : boost::lexical_cast<Boolean>(value);
+     variant_field = initial_value;
+     Boolean_handle_function field_func =
+       static_cast<Boolean_handle_function>(&Script::field_handle<Boolean>);
+     SF_bool* field = new SF_bool(id, name, field_func, initial_value);
+     prototype->add_field_info(field);
+    }
+    break;
+
+   case SF_FLOAT:
+    {
+     Float initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
+     variant_field = initial_value;
+     Float_handle_function field_func =
+       static_cast<Float_handle_function>(&Script::field_handle<Float>);
+     SF_float* field = new SF_float(id, name, field_func, initial_value);
+     prototype->add_field_info(field);
+    }
+    break;
+
+   case SF_INT32:
+    {
+     Int initial_value = value.empty() ? 0 : boost::lexical_cast<Int>(value);
+     variant_field = initial_value;
+     Int_handle_function field_func =
+       static_cast<Int_handle_function>(&Script::field_handle<Int>);
+     SF_int* field = new SF_int(id, name, field_func, initial_value);
+     prototype->add_field_info(field);
+    }
+    break;
+
+   case SF_VEC2F:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_VEC3F:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_COLOR:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_ROTATION:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_TIME:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_STR:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_FLOAT:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_INT32:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_VEC2F:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_VEC3F:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_COLOR:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_ROTATION:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_TIME:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_STR:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_IMAGE:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   default:
+    std::cerr << "Unrecognized type (" << type << ")!" << std::endl;
+    break;
+  }
+
+  m_fields.push_back(variant_field);
 }
 
-/*! Adds a field definition to the script
- * @param name (in) the name of the field
- * @param type (in) the type of the field
- */
-void Script::add_field_def(const String& name, const String& type,
-                           const String& value, Node* field)
-{
-  m_child_list.push_back(field);
-
-  // Get the node's prototype - use the function - this way if s_prototype is not
-  // allocated yet, init_prototype will be activated
-  Container_proto *prototype = get_prototype();
-
-  // Add the object fields to the prototype
-  s_prototype->add_field_info(m_field_infoIDCount, name, type, value, 0,
-                              (Execution_func_type)&Script::execute);
-  ++m_field_infoIDCount;
-}
-
-
-/*! Adds a field definition to the script
- * @param name (in) the name of the field
- * @param type (in) the type of the field
+#if 0
+/*! \brief adds a field definition to the script node.
+ * \param name (in) the name of the field.
+ * \param type (in) the type of the field.
  */
 void Script::add_field_def(const String& name, const String& type,
                            Container* value, Node* field)
 {
   m_child_list.push_back(field);
 
-  // Get the node's prototype - use the function - this way if s_prototype is not
-  // allocated yet, init_prototype will be activated
   Container_proto* prototype = get_prototype();
 
   // Add the object fields to the prototype
   s_prototype->add_field_info(m_field_infoIDCount, name, type, value, 0,
                               (Execution_func_type)&Script::execute);
-
-  ++m_field_infoIDCount;
 }
 #endif
 

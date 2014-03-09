@@ -130,7 +130,7 @@ SGAL_END_NAMESPACE
 %type <std::string> sfint32Values
 %type <std::string> sfboolValue
 %type <std::string> fieldValue
-%type <std::string> fieldType
+%type <Field_type_enum> fieldType
 %type <Cont_list*> nodeStatements
 %type <Element*> nodeBody
 %type <Element*> scriptBody
@@ -377,24 +377,21 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_pair(new std::string($2),
-                                                 new std::string("")));
+                                  std::make_pair($2, new std::string("")));
                   $$->add_attribute(attr);
                 }
                 | K_EVENTOUT fieldType eventOutId
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_pair(new std::string($3),
-                                                 new std::string("")));
+                                  std::make_pair($2, new std::string("")));
                   $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId sfValue
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_pair(new std::string($2),
-                                                 new std::string($4)));
+                                  std::make_pair($2, new std::string($4)));
                   $$->add_attribute(attr);
                 }
                 ;
@@ -558,26 +555,26 @@ IdRestChars     : Any number of ISO-10646 characters except: 0x0-0x20, 0x22, 0x2
 
 /* Fields: */
 
-fieldType       : MFColor { $$ = std::string("Colors"); }
-                | MFFloat { $$ = std::string("Floats"); }
-                | MFInt32 { $$ = std::string("Integers"); }
-                | MFNode { $$ = std::string("Nodes"); }
-                | MFRotation { $$ = std::string("Rotations"); }
-                | MFString { $$ = std::string("Strings"); }
-                | MFTime { $$ = std::string("Times"); }
-                | MFVec2f { $$ = std::string("Vector2Floats"); }
-                | MFVec3f { $$ = std::string("Vector2Floats"); }
-                | SFBool { $$ = std::string("Boolean"); }
-                | SFColor { $$ = std::string("Color"); }
-                | SFFloat { $$ = std::string("Float"); }
-                | SFImage { $$ = std::string("Image"); }
-                | SFInt32 { $$ = std::string("Integer"); }
-                | SFNode { $$ = std::string("Node"); }
-                | SFRotation { $$ = std::string("Rotation"); }
-                | SFString { $$ = std::string("String"); }
-                | SFTime { $$ = std::string("Time"); }
-                | SFVec2f { $$ = std::string("Vector2Float"); }
-                | SFVec3f { $$ = std::string("Vector3Float"); }
+fieldType       : MFColor { $$ = MF_COLOR; }
+                | MFFloat { $$ = MF_FLOAT; }
+                | MFInt32 { $$ = MF_INT32; }
+                | MFNode { $$ = MF_SHARED_CONTAINER; }
+                | MFRotation { $$ = MF_ROTATION; }
+                | MFString { $$ = MF_STR; }
+                | MFTime { $$ = MF_TIME; }
+                | MFVec2f { $$ = MF_VEC2F; }
+                | MFVec3f { $$ = MF_VEC3F; }
+                | SFBool { $$ = SF_BOOL; }
+                | SFColor { $$ = SF_COLOR; }
+                | SFFloat { $$ = SF_FLOAT; }
+                | SFImage { $$ = SF_IMAGE; }
+                | SFInt32 { $$ = SF_INT32; }
+                | SFNode { $$ = SF_SHARED_CONTAINER; }
+                | SFRotation { $$ = SF_ROTATION; }
+                | SFString { $$ = SF_STR; }
+                | SFTime { $$ = SF_TIME; }
+                | SFVec2f { $$ = SF_VEC2F; }
+                | SFVec3f { $$ = SF_VEC3F; }
                 ;
 
 fieldValue      : sfValue { std::swap($$, $1); }

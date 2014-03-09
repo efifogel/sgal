@@ -89,8 +89,7 @@ void Element::mark_delete(Field_attr_iter ai)
 {
   delete ai->first;
   ai->first = nullptr;
-  delete ai->second.first;
-  ai->second.first = nullptr;
+  ai->second.first = static_cast<Field_type_enum>(0);
   delete ai->second.second;
   ai->second.second = nullptr;
 }

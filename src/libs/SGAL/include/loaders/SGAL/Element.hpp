@@ -32,6 +32,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
+#include "SGAL/Field_types_enum.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -58,7 +59,8 @@ public:
   typedef std::list<Multi_cont_attr>                      Multi_cont_attr_list;
   typedef Multi_cont_attr_list::iterator                  Multi_cont_attr_iter;
 
-  typedef std::pair<const std::string*, std::pair<std::string*, std::string*> >
+  typedef std::pair<const std::string*, std::pair<Field_type_enum,
+                                                  std::string*> >
                                                           Field_attr;
   typedef std::list<Field_attr>                           Field_attr_list;
   typedef Field_attr_list::iterator                       Field_attr_iter;
@@ -181,7 +183,7 @@ public:
   /*! Obtain the type of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  const std::string& get_type(Field_attr_iter ai) const;
+  Field_type_enum get_type(Field_attr_iter ai) const;
 
   /*! Delete all attributes. */
   void delete_marked();
@@ -290,8 +292,8 @@ inline const std::string& Element::get_value(Field_attr_iter ai) const
 
 /*! \brief obtains the type of a field-attribute pointed by a given iterator.
  */
-inline const std::string& Element::get_type(Field_attr_iter ai) const
-{ return *(ai->second.first); }
+inline Field_type_enum Element::get_type(Field_attr_iter ai) const
+{ return ai->second.first; }
 
 SGAL_END_NAMESPACE
 
