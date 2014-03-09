@@ -139,34 +139,12 @@ public:
   /*! Destructor - deletes each added field info */
   virtual ~Container_proto();
 
-  /*! @defgroup field_info_additions Field_info addition
-   * \brief adds() a field info to the container prototype
-   *  @{
-   */
-
-  /*! The using class should allocate the added field info
-   * The destructor will delete it when the container prototype is deleted
-   * \todo this is not right!
+  /*! Add a field information record.
+   * \param field_info (in) the field information record to be added.
+   * The using class should allocate the added field info record.
+   * The destructor will delete it when the container prototype is deleted.
    */
   void add_field_info(Field_info* field_info);
-
-#if 0
-  /*! The field info will be allocated according to the given params
-   * The destructor will delete it when the container prototype is deleted
-   */
-  void add_field_info(Uint id, const std::string& name,
-                      const std::string& type, const std::string& value,
-                      Ulong offset, Execution_function execution = NULL);
-
-  /*! The field info will be allocated according to the given params
-   * The destructor will delete it when the container prototype is deleted
-   */
-  void add_field_info(Uint id,  const std::string& name,
-                      const std::string& type, Container* value,
-                      Ulong offset, Execution_function execution = NULL);
-#endif
-
-  /*! @} */ // end of field_info_additions
 
   /*! Obtain the field info by id
    * \param id the id of the field info
