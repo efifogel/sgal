@@ -1,3 +1,6 @@
 [submodule "bison"]
 	path = bison
 	url = git://git.savannah.gnu.org/bison.git
+[submodule "v8"]
+	path = v8
+	url = git://github.com/v8/v8.git

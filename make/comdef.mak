@@ -513,3 +513,13 @@ ifndef CGAL_LIB_DIR
 CGAL_LIB_DIR="$(CGAL_DIR)/lib"
 endif
 endif
+
+# extract V8 directories:
+ifdef V8_DIR
+ifndef V8_INC_DIR
+V8_INC_DIR="$(V8_DIR)/include"
+endif
+ifndef V8_LIB_DIR
+V8_LIB_DIR="$(V8_DIR)/lib"
+endif
+endif

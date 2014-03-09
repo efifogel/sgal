@@ -73,6 +73,10 @@ ifdef GL2PS_INC_DIR
 LCPPINCS+= -I"$(GL2PS_INC_DIR)"
 endif
 
+ifdef V8_INC_DIR
+LCPPINCS+= -I"$(V8_INC_DIR)"
+endif
+
 LCPPDEFS =
 ifeq ($(TRACE), 1)
 LCPPDEFS+= -DSGAL_TRACE
@@ -189,6 +193,12 @@ endif
 ifdef MPFR_LIB_DIR
 LLDOPTS+= -libpath:"$(MPFR_LIB_DIR)"
 endif
+ifdef V8_LIB_DIR
+LLDOPTS+= -libpath:"$(V8_LIB_DIR)"
+endif
+ifdef ICU_LIB_DIR
+LLDOPTS+= -libpath:"$(ICU_LIB_DIR)"
+endif
 
 ifeq ($(USE_EGO), 1)
 ifneq ($(USE_DYNAMIC_SEGO), 1)
@@ -258,6 +268,12 @@ LCPPOPTS+= -Wall
 LCPPOPTS+= `Magick++-config --cxxflags --cppflags`
 LCPPOPTS+= -frounding-math
 LLDOPTS+= -rdynamic -ldl
+ifdef V8_LIB_DIR
+LLDOPTS+= -L$(V8_LIB_DIR)
+endif
+ifdef ICU_LIB_DIR
+LLDOPTS+= -L$(ICU_LIB_DIR)
+endif
 
 ifeq ($(USE_CGAL), 1)
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
@@ -282,6 +298,14 @@ endif
 ifeq ($(USE_GMP), 1)
 LLDLIBS+= -lgmp -lmpfr -lgmpxx
 endif
+
+# V8 engine stuff:
+LLDLIBS+= -lv8_base.x64
+LLDLIBS+= -lv8_nosnapshot.x64
+LLDLIBS+= -licui18n
+LLDLIBS+= -licuuc
+LLDLIBS+= -licudata
+LLDLIBS+= -lrt
 
 LLDLIBS+= -lgl2ps
 LLDLIBS+= -lMagick++
