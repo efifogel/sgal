@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Transform.cpp 12369 2011-12-26 13:42:24Z efif $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -556,8 +553,9 @@ void Transform::init_prototype()
 //! \brief deletes the node prototype.
 void Transform::delete_prototype()
 {
+  if (!s_prototype) return;
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.
