@@ -113,7 +113,7 @@ endif(USE_NEF)
 
 if (USE_LTS)
   add_definitions(-DUSE_LTS)
-  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} Lines_through_segments_geo.cpp)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Lines_through_segments_geo.cpp)
 endif(USE_LTS)
 
 #Add all include directories
