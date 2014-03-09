@@ -175,6 +175,9 @@ void Script::add_field_info(Field_type_enum type, const std::string& name,
 {
   Container_proto* prototype = get_prototype();
 
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Script::execute);
+
   Variant_field variant_field;
   Uint id = LAST + m_fields.size();
   switch (type) {
@@ -185,7 +188,8 @@ void Script::add_field_info(Field_type_enum type, const std::string& name,
      variant_field = initial_value;
      Boolean_handle_function field_func =
        static_cast<Boolean_handle_function>(&Script::field_handle<Boolean>);
-     SF_bool* field = new SF_bool(id, name, field_func, initial_value);
+     SF_bool* field =
+       new SF_bool(id, name, field_func, initial_value, exec_func);
      prototype->add_field_info(field);
     }
     break;
@@ -196,7 +200,8 @@ void Script::add_field_info(Field_type_enum type, const std::string& name,
      variant_field = initial_value;
      Float_handle_function field_func =
        static_cast<Float_handle_function>(&Script::field_handle<Float>);
-     SF_float* field = new SF_float(id, name, field_func, initial_value);
+     SF_float* field =
+       new SF_float(id, name, field_func, initial_value, exec_func);
      prototype->add_field_info(field);
     }
     break;
@@ -207,7 +212,7 @@ void Script::add_field_info(Field_type_enum type, const std::string& name,
      variant_field = initial_value;
      Int_handle_function field_func =
        static_cast<Int_handle_function>(&Script::field_handle<Int>);
-     SF_int* field = new SF_int(id, name, field_func, initial_value);
+     SF_int* field = new SF_int(id, name, field_func, initial_value, exec_func);
      prototype->add_field_info(field);
     }
     break;
@@ -308,8 +313,11 @@ void Script::add_field_def(const String& name, const String& type,
 
 // Execution function - executes the suitable script function according to the
 // event
-void Script::execute(Field_info* /* field_info */)
+void Script::execute(Field_info* field_info)
 {
+  const std::string& name = field_info->get_name();
+  std::cout << "Script::execute() " << name << std::endl;
+
 #if 0
   // if this is the first time the script is executed -
   // initialize the suitable script engine object

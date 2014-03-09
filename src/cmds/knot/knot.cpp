@@ -22,7 +22,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "SGAL/basic.hpp"
+#include "SGAL/sgal.hpp"
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
@@ -35,8 +35,10 @@
 #include "Knot_option_parser.hpp"
 
 /*! Main entry */
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
+  SGAL::initialize(argc, argv);
+
   // Parse program options:
   Knot_option_parser option_parser;
   option_parser.init();

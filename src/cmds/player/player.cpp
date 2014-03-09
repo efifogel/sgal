@@ -26,7 +26,7 @@
 #include <boost/extension/shared_library.hpp>
 #include <boost/function.hpp>
 
-#include "SGAL/basic.hpp"
+#include "SGAL/sgal.hpp"
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
@@ -120,7 +120,7 @@ void load_shared_library(std::string& library_name, std::string& function_name)
 /*! Main entry */
 int main(int argc, char* argv[])
 {
-  // SGAL::initialize(argc, argv);
+  SGAL::initialize(argc, argv);
 #if (defined USE_CGAL)
   // try {
   //   std::string library_name = "libSCGAL.so";

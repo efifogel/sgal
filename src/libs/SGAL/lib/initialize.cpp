@@ -34,13 +34,29 @@
 #pragma warning( pop )
 #endif
 
+#include <v8.h>
+
 #include "SGAL/basic.hpp"
+// #include "SGAL/Container_factory.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 void initialize(int /* argc */, char* argv[])
 {
   Magick::InitializeMagick(*argv);
+  v8::V8::InitializeICU();
+
+  /*! Container factory initialization.
+   * During initialization of the container factory an instance of every
+   * container is constructed and registered. This is done automatically
+   * through the REGISTER_TO_FACTORY() macro (provided in
+   * Container_factory.h). An alternative way is to call the initialize()
+   * method of the factory explicitly, in case allocation is desired to be
+   * concentrated elsewhere.
+   *
+   * Container_factory* factory = Container_factory::get_instance();
+   * factory->initialize();
+   */
 }
 
 SGAL_END_NAMESPACE

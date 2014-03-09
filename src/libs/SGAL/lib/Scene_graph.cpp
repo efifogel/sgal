@@ -54,7 +54,6 @@
 #include "SGAL/GL_error.hpp"
 // #include "SGAL/Flow_sensor.hpp"
 #include "SGAL/Scene_graph_int.hpp"
-#include "SGAL/Container_factory.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Snapshot.hpp"
@@ -111,18 +110,6 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
   m_time_sensors.clear();
-
-  /*! \todo container factory initialization.
-   * During initialization of the container factory an instance of every
-   * container is constructed and registered. This is done automatically
-   * through the REGISTER_TO_FACTORY() macro (provided in
-   * Container_factory.h). An alternative way is to call the initialize()
-   * method of the factory explicitly, in case allocation is desired to be
-   * concentrated elsewhere.
-   *
-   * Container_factory* factory = Container_factory::get_instance();
-   * factory->initialize();
-   */
 }
 
 /*! Destructor */

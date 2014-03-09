@@ -91,6 +91,7 @@ FILES+= Scene_manager.hpp
 FILES+= Script.hpp
 FILES+= SG_JS_err_reporter.hpp
 FILES+= SG_JS_object.hpp
+FILES+= sgal.hpp
 FILES+= Shape.hpp
 FILES+= Shader.hpp
 FILES+= Simulation.hpp

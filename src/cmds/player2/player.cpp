@@ -22,7 +22,7 @@
 /*! \file
  */
 
-#include "SGAL/basic.hpp"
+#include "SGAL/sgal.hpp"
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
 #elif defined(_WIN32)
@@ -39,8 +39,9 @@ extern void scgal_init();
 SGAL_END_NAMESPACE
 
 /*! Main entry */
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
+  SGAL::initialize(argc, argv);
   SGAL::scgal_init();
 
   // Parse program options:
