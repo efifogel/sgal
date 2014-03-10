@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 4971 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * Comp_positionInterpolator - implementation                              
+ * Comp_positionInterpolator - implementation
  */
 
 #include "SGAL/Comp_position_interpolator.hpp"
@@ -32,19 +29,20 @@ std::string Comp_position_interpolator::s_tag =
 
 // Default values:
 const float Comp_position_interpolator::m_default_key_bin = (float)1e-4;
-const float Comp_position_interpolator::m_value_bin_factor = (float)2e-4;      
+const float Comp_position_interpolator::m_value_bin_factor = (float)2e-4;
 
 REGISTER_TO_FACTORY(Comp_positionInterpolator, "Comp_position_interpolator");
 
 /*! Constructor */
-Comp_position_interpolator::Comp_position_interpolator(Boolean flag, Boolean proto) :
+Comp_position_interpolator::Comp_position_interpolator(Boolean flag,
+                                                       Boolean proto) :
   Comp_vector3f_interpolator(interpolate_flag, proto)
 {
 }
 
 /*
 float Comp_positionInterpolator::get_value_bin(float *vals)
-{ 
+{
   float radiusBin;
   if (m_pExecutionCoordinator)
   {
@@ -59,7 +57,7 @@ float Comp_positionInterpolator::get_value_bin(float *vals)
   if (rangeBin < radiusBin)
     return rangeBin;
   else
-    return radiusBin; 
+    return radiusBin;
 }
 */
 

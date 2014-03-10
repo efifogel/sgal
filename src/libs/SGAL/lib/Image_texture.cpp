@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -50,14 +47,14 @@ void Image_texture::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Image_texture::get_prototype() 
-{  
+Container_proto* Image_texture::get_prototype()
+{
   if (!s_prototype) Image_texture::init_prototype();
   return s_prototype;
 }
 
 /*! \brief sets the attributes of the image texture. */
-void Image_texture::set_attributes(Element* elem) 
+void Image_texture::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
 
@@ -111,9 +108,9 @@ void Image_texture::set_attributes(Element* elem)
 
 #if 0
 /*! \brief */
-Attribute_list Image_texture::get_attributes() 
-{ 
-  Attribute_list attribs; 
+Attribute_list Image_texture::get_attributes()
+{
+  Attribute_list attribs;
   Attribue attrib;
 
   attribs = Texture_2d::get_attributes();
@@ -122,11 +119,11 @@ Attribute_list Image_texture::get_attributes()
   attrib.second = get_fileName();
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 }
 #endif
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 void Image_texture::add_to_scene(Scene_graph* scene_graph)
 { Texture_2d::add_to_scene(scene_graph); }
 

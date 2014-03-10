@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Id: $
-// $Revision: 4966 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Vector3sh.hpp"
@@ -99,7 +96,7 @@ float Vector3f::distance(const Vector3f& v) const
 /*! \brief */
 Vector3f::vector3f(const std::string &text)
 {
-  String_vector vals = std::stringUtils::SplitStringByToken(text, " "); 
+  String_vector vals = std::stringUtils::SplitStringByToken(text, " ");
   if (vals.size() != 3) m_vector[0] = m_vector[1] = m_vector[2] = 0.0;
   m_vector[0] = atof(vals[0].c_str());
   m_vector[1] = atof(vals[1].c_str());

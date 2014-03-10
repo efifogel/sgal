@@ -134,6 +134,7 @@ MAKEDEPEND =gcc
 GMAKEDEPENDFLAGS+= -MM
 # Treat missing header files as generated files:
 GMAKEDEPENDFLAGS+= -MG
+GMAKEDEPENDFLAGS+= -std=c++0x
 
 output_operatior=-o
 # Due to a bug in gcc 3.0.3

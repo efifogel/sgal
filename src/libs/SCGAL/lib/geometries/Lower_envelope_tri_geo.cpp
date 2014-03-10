@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lower_envelope_tri_geo.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -54,22 +51,22 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Lower_envelope_tri_geo::s_tag = "LowerEnvelopeTri";
-Container_proto* Lower_envelope_tri_geo::s_prototype(NULL);
+Container_proto* Lower_envelope_tri_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Lower_envelope_tri_geo, "Lower_envelope_tri_geo");
 
-/*! Constructor. */
+//! \brief constructor.
 Lower_envelope_tri_geo::Lower_envelope_tri_geo(Boolean proto) :
   Lower_envelope_geo(proto),
   m_owned_envelope(false),
-  m_envelope(NULL)
+  m_envelope(nullptr)
 {}
 
-/*! Destructor. */
+//! \brief destructor.
 Lower_envelope_tri_geo::~Lower_envelope_tri_geo()
 { if (m_envelope && m_owned_envelope) delete m_envelope; }
 
-/*! \brief cleans the polyhedron data structure. */
+//! \brief cleans the polyhedron data structure.
 void Lower_envelope_tri_geo::clean()
 {
   clock_t start_time = clock();
@@ -89,39 +86,39 @@ void Lower_envelope_tri_geo::clean()
   Lower_envelope_geo::clean();
 }
 
-/*! \brief clears the internal representation. */
+//! \brief clears the internal representation.
 void Lower_envelope_tri_geo::clear()
 {
   Lower_envelope_geo::clear();
   if (m_envelope) m_envelope->clear();
 }
 
-/*! \brief sets the attributes of the object extracted from an input file. */
+//! \brief sets the attributes of the object extracted from an input file.
 void Lower_envelope_tri_geo::set_attributes(SGAL::Element* elem)
 { Lower_envelope_geo::set_attributes(elem); }
 
-/*! \brief initializes the prototype of this container. */
+//! \brief initializes the prototype of this container.
 void Lower_envelope_tri_geo::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Lower_envelope_geo::get_prototype());
 }
 
-/*! \brief deletes the prototype of this container. */
+//! \brief deletes the prototype of this container.
 void Lower_envelope_tri_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype of this container. */
+//! \brief obtains the prototype of this container.
 Container_proto* Lower_envelope_tri_geo::get_prototype()
 {
   if (!s_prototype) Lower_envelope_tri_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief draws the envelope faces. */
+//! \brief draws the envelope faces.
 void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -178,7 +175,7 @@ void Lower_envelope_tri_geo::draw_envelope_faces(Draw_action* action)
   context->draw_material_mode_enable(SGAL::Gfx::NO_COLOR_MATERIAL);
 }
 
-/*! \brief draws the envelope edges. */
+//! \brief draws the envelope edges.
 void Lower_envelope_tri_geo::draw_envelope_edges(Draw_action* action)
 {
   Envelope_diagram_2::Edge_const_iterator eit;
@@ -196,7 +193,7 @@ void Lower_envelope_tri_geo::draw_envelope_edges(Draw_action* action)
   }
 }
 
-/*! \brief draws the envelope vertices. */
+//! \brief draws the envelope vertices.
 void Lower_envelope_tri_geo::draw_envelope_vertices(Draw_action* action)
 {
   Envelope_diagram_2::Vertex_const_iterator vit;

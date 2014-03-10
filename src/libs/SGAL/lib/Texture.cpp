@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_MSC_VER)
@@ -50,7 +47,7 @@ const Texture::Wrap Texture::m_def_wrap_s(Texture::REPEAT);
 const Texture::Wrap Texture::m_def_wrap_t(Texture::REPEAT);
 const Texture::Wrap Texture::m_def_wrap_r(Texture::REPEAT);
 
-Container_proto* Texture::s_prototype(NULL);
+Container_proto* Texture::s_prototype(nullptr);
 
 const char* Texture::s_min_filter_names[] = {
   "nearest",                  // NEAREST_MIN,
@@ -102,7 +99,7 @@ const GLenum Texture::s_min_filter_tokens[] = {
 
 const GLenum Texture::s_mag_filter_tokens[] = {GL_NEAREST, GL_LINEAR};
 
-/*! Constructor */
+//! \brief constructor.
 Texture::Texture(Boolean proto) :
   Container(proto),
   m_target(TEXTURE_2D),
@@ -115,10 +112,10 @@ Texture::Texture(Boolean proto) :
   m_dirty(true)
 { }
 
-/*! Destructor */
+//! \brief destructor.
 Texture::~Texture() {}
 
-/*! \brief sets the wrapping factor on the S. */
+//! \brief sets the wrapping factor on the S.
 void Texture::wrap_s_changed(Field_info* /* field_info */)
 {
   set_wrap_s(m_repeat_s);
@@ -126,7 +123,7 @@ void Texture::wrap_s_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! \brief sets the wrapping factor on the T. */
+//! \brief sets the wrapping factor on the T.
 void Texture::wrap_t_changed(Field_info* /* field_info */)
 {
   set_wrap_t(m_repeat_t);
@@ -134,7 +131,7 @@ void Texture::wrap_t_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! \brief sets the wrapping factor on the Q. */
+//! \brief sets the wrapping factor on the Q.
 void Texture::wrap_r_changed(Field_info* /* field_info */)
 {
   set_wrap_r(m_repeat_r);
@@ -142,7 +139,7 @@ void Texture::wrap_r_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! \brief sets the minimization filter. */
+//! \brief sets the minimization filter.
 void Texture::set_min_filter(const std::string& value)
 {
   unsigned int i;
@@ -152,7 +149,7 @@ void Texture::set_min_filter(const std::string& value)
     set_min_filter((Min_filter) i);
 }
 
-/*! \brief notifies that the minimization filter has changed. */
+//! \brief notifies that the minimization filter has changed.
 void Texture::min_filter_changed(Field_info* /* field_info */)
 {
   set_min_filter(m_min_filter_str);
@@ -160,7 +157,7 @@ void Texture::min_filter_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! \brief sets the magnification filter. */
+//! \brief sets the magnification filter.
 void Texture::set_mag_filter(const std::string& value)
 {
   unsigned int i;
@@ -170,7 +167,7 @@ void Texture::set_mag_filter(const std::string& value)
     set_mag_filter((Mag_filter) i);
 }
 
-/*! \brief notifies that the magnification filter has changed. */
+//! \brief notifies that the magnification filter has changed.
 void Texture::mag_filter_changed(Field_info* /* field_info */)
 {
   set_mag_filter(m_mag_filter_str);
@@ -178,7 +175,7 @@ void Texture::mag_filter_changed(Field_info* /* field_info */)
   set_rendering_required();
 }
 
-/*! \brief draws the texture. */
+//! \brief draws the texture.
 void Texture::draw(Context* /* context */)
 {
   if (m_dirty) {
@@ -188,7 +185,7 @@ void Texture::draw(Context* /* context */)
   glBindTexture(s_targets[m_target], m_id);
 }
 
-/*! \brief cleans the object using the new decoded data. */
+//! \brief cleans the object using the new decoded data.
 void Texture::clean()
 {
   glGenTextures(1, &m_id);
@@ -220,7 +217,7 @@ void Texture::clean()
   m_dirty = false;
 }
 
-/*! \brief sets the attributes of the texture. */
+//! \brief sets the attributes of the texture.
 void Texture::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
@@ -323,7 +320,7 @@ void Texture::AddToScene(Scene_graph* sg, XML_entity* parent)
 }
 #endif
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Texture::init_prototype()
 {
   if (s_prototype) return;
@@ -336,42 +333,50 @@ void Texture::init_prototype()
   Uint_handle_function min_filter_func =
     reinterpret_cast<Uint_handle_function>(&Texture::min_filter_handle);
   s_prototype->add_field_info(new SF_uint(MIN_FILTER, "minFilter",
-                                          min_filter_func, exec_func));
+                                          RULE_EXPOSED_FIELD,
+                                          min_filter_func,
+                                          exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::mag_filter_changed);
   Uint_handle_function mag_filter_func =
     reinterpret_cast<Uint_handle_function>(&Texture::mag_filter_handle);
   s_prototype->add_field_info(new SF_uint(MAG_FILTER, "magFilter",
-                                          mag_filter_func, exec_func));
+                                          RULE_EXPOSED_FIELD,
+                                          mag_filter_func,
+                                          exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::wrap_s_changed);
   Boolean_handle_function repeat_s_func =
     static_cast<Boolean_handle_function>(&Texture::repeat_s_handle);
-  s_prototype->add_field_info(new SF_bool(REPEAT_S, "repeatS", repeat_s_func,
+  s_prototype->add_field_info(new SF_bool(REPEAT_S, "repeatS",
+                                          RULE_EXPOSED_FIELD,
+                                          repeat_s_func,
                                           exec_func));
 
   exec_func = static_cast<Execution_function>(&Texture::wrap_t_changed);
   Boolean_handle_function repeat_t_func =
     static_cast<Boolean_handle_function>(&Texture::repeat_t_handle);
-  s_prototype->add_field_info(new SF_bool(REPEAT_T, "repeatT", repeat_t_func,
+  s_prototype->add_field_info(new SF_bool(REPEAT_T, "repeatT",
+                                          RULE_EXPOSED_FIELD,
+                                          repeat_t_func,
                                           exec_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Texture::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Texture::get_prototype()
 {
   if (!s_prototype) Texture::init_prototype();
   return s_prototype;
 }
 
-/*! \brief downloads the image as a 2D color map to the graphics pipe. */
+//! \brief downloads the image as a 2D color map to the graphics pipe.
 void Texture::load_color_map(Image* image, GLenum target)
 {
   Uint width = image->get_width();

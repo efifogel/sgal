@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1658 $
-//
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
 /*!
@@ -63,7 +60,9 @@ void Coordinate_interpolator::init_prototype()
   Vector3f_array_handle_function value_func =
     static_cast<Vector3f_array_handle_function>
     (&Coordinate_interpolator::value_handle);
-  s_prototype->add_field_info(new MF_vector3f(VALUE,"value_changed",
+  s_prototype->add_field_info(new MF_vector3f(VALUE,
+                                              "value_changed",
+                                              RULE_EXPOSED_FIELD,
                                               value_func));
 }
 

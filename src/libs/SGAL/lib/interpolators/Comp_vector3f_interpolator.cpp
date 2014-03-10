@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 4966 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! Implements Vector3f interpolator with asynchronic loading of compressed
- * data  
+ * data
  */
 
 #include "SGAL/Comp_vector3f_interpolator.hpp"
@@ -33,7 +30,7 @@ std::string Comp_vector3f_interpolator::s_tag =
 
 // Default values:
 const float Comp_vector3f_interpolator::m_default_key_bin = (float)1e-4;
-const float Comp_vector3f_interpolator::m_value_bin_factor = (float)2e-4;      
+const float Comp_vector3f_interpolator::m_value_bin_factor = (float)2e-4;
 
 REGISTER_TO_FACTORY(Comp_vector3f_interpolator, "Comp_vector3f_interpolator");
 
@@ -58,7 +55,7 @@ Comp_vector3f_interpolator::~Comp_vector3f_interpolator()
 // Get all attributes except the key and key_value
 Attribute_list Comp_vector3f_interpolator::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
   attribs = Node::get_attributes();
 
@@ -67,7 +64,7 @@ Attribute_list Comp_vector3f_interpolator::get_attributes()
   attrib.second = (m_interpolate_flag) ? TRUE_STR : FALSE_STR;
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 }
 
 // Load_int methods - used only by the player
@@ -82,12 +79,12 @@ Item_primitive * Comp_vector3f_interpolator::get_data()
 
 void Comp_vector3f_interpolator::Update(Boolean is_last)
 {
-  if (m_pInterpolator_data == 0) {  
+  if (m_pInterpolator_data == 0) {
     assert(0);
     return;
   }
 
-  m_no_keys = m_pInterpolator_data->get_size();  
+  m_no_keys = m_pInterpolator_data->get_size();
   assert((m_no_keys > 0) && (m_no_keys < 10e6));
 
   float * pKey = m_pInterpolator_data->get_keyData();
@@ -105,7 +102,7 @@ void Comp_vector3f_interpolator::Update(Boolean is_last)
     pValueVec = m_values;
     float *pValues = Values[valueIdx];
     for (int i = 0; i < m_no_keys; i++, pValues++, pValueVec++) {
-      (*pValueVec)[valueIdx] = *pValues;    
+      (*pValueVec)[valueIdx] = *pValues;
     }
   }
 
@@ -120,11 +117,11 @@ void Comp_vector3f_interpolator::Update(Boolean is_last)
 Interpolator_data * Comp_vector3f_interpolator::get_interpolator_data()
 {
   if (m_pInterpolator_data != 0) {
-    return m_pInterpolator_data; 
+    return m_pInterpolator_data;
   }
 
   m_pInterpolator_data = new Interpolator_data(3); // Scalar
-  
+
   // Allocate data memory
   assert((m_no_keys > 0) && (m_no_keys < 10e6));
   m_pInterpolator_data->allocate(m_no_keys);
@@ -141,7 +138,7 @@ Interpolator_data * Comp_vector3f_interpolator::get_interpolator_data()
     pValueVec = m_values;
     float * pValues = Values[valueIdx];
     for (int i = 0; i < m_no_keys; i++, pValues++, pValueVec++) {
-      *pValues = (*pValueVec)[valueIdx];    
+      *pValues = (*pValueVec)[valueIdx];
     }
   }
 
@@ -158,7 +155,7 @@ Interpolator_data * Comp_vector3f_interpolator::get_interpolator_data()
     pValAttr->m_bin =
       get_value_bin_factor() * get_valueRange(Values[valueIdx], m_no_keys);
   }
-  
+
   return m_pInterpolator_data;
 }
 

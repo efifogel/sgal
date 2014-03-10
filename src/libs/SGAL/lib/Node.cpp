@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -27,7 +24,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Node::s_prototype(NULL);
+Container_proto* Node::s_prototype(nullptr);
 
 //! Constructor.
 Node::Node(Boolean proto) :
@@ -48,6 +45,7 @@ void Node::init_prototype()
   Sphere_bound_handle_function sphere_bound_func =
     static_cast<Sphere_bound_handle_function>(&Node::sphere_bound_handle);
   s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
+                                                  RULE_EXPOSED_FIELD,
                                                   sphere_bound_func));
 }
 
@@ -55,7 +53,7 @@ void Node::init_prototype()
 void Node::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.

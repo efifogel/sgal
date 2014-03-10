@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -47,14 +44,14 @@ void Route::set(Container * src_node, Field * src_field,
 {
   // Disconnect old connections if exists:
   if (m_src_field && m_dst_field) m_src_field->disconnect(m_dst_field);
-  
+
   // Connect new connections:
   m_src_node = src_node;
   m_src_field = src_field;
   m_dst_node = dst_node;
   m_dst_field = dst_field;
 
-  if (!src_node || !dst_node || !src_field || !dst_field 
+  if (!src_node || !dst_node || !src_field || !dst_field
 #if !(defined _MSC_VER) || (_MSC_VER >= 1300)
       || (typeid(src_field->get_field_info()) !=
           typeid(dst_field->get_field_info()))
@@ -108,14 +105,14 @@ void Route::set_attributes(Element * elem)
 
 #if 0
 /**
- * Get a list of atytributes in this object. This method is called only 
- * from the Builder side. 
+ * Get a list of atytributes in this object. This method is called only
+ * from the Builder side.
  *
- * @return a list of attributes 
+ * @return a list of attributes
  */
 Attribute_list Route::get_attributes()
-{ 
-  Attribute_list attribs; 
+{
+  Attribute_list attribs;
   attribs = Container::get_attributes();
   Attribue attrib;
 
@@ -136,16 +133,16 @@ Attribute_list Route::get_attributes()
   attrib.second = m_toField;
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 }
 
-/** 
- * Add a route object to the scene 
+/**
+ * Add a route object to the scene
  * @param sg (in) a reference to the scene graph
  * @param parentName (in) the name of the parent object.
 */
-void Route::AddToScene(Scene_graph *sg, XML_entity *parent) 
-{ 
+void Route::AddToScene(Scene_graph *sg, XML_entity *parent)
+{
   Container::AddToScene(sg,parent);
 
   // Get the containers from the scene graph
@@ -176,7 +173,7 @@ void Route::AddToScene(Scene_graph *sg, XML_entity *parent)
     return;
   }
 
-  
+
   // Assert that the fields can be connected (their field infos are of the
   // same type)
   if (typeid(fromField->get_field_info()) != typeid(toField->get_field_info()))
@@ -185,7 +182,7 @@ void Route::AddToScene(Scene_graph *sg, XML_entity *parent)
     return;
   }
 
-  
+
   // Connect the fields
   fromField->Connect(toField);
 

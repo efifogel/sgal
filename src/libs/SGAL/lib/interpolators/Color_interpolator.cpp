@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Color_interpolator.cpp 5860 2008-02-10 12:34:33Z ophirset $
-// $Revision: 5860 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- *  Color_interpolator - implementation                              
+ *  Color_interpolator - implementation
  */
 
 #include "SGAL/Container_factory.hpp"

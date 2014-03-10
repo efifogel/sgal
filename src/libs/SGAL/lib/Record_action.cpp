@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -34,20 +31,20 @@ Record_action::~Record_action() {}
 
 /*!
  */
-Action::Trav_directive Record_action::pre_visit(Node* node) 
-{ 
+Action::Trav_directive Record_action::pre_visit(Node* node)
+{
   Shape * shape = dynamic_cast<Shape *>(node);
   if (shape && !shape->is_background()) m_current_id = 1;
-  return Action::TRAV_CONT; 
+  return Action::TRAV_CONT;
 }
 
 /*!
  */
 Action::Trav_directive Record_action::post_visit(Node* node)
-{ 
+{
   Shape * shape = dynamic_cast<Shape *>(node);
   if (shape) m_current_id = 0;
-  return Action::TRAV_CONT; 
+  return Action::TRAV_CONT;
 }
 
 SGAL_END_NAMESPACE

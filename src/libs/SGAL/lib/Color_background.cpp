@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -116,7 +113,9 @@ void Color_background::init_prototype()
   // color
   Vector4f_handle_function color_func =
     static_cast<Vector4f_handle_function>(&Color_background::color_handle);
-  s_prototype->add_field_info(new SF_vector4f(COLOR, "color", color_func));
+  s_prototype->add_field_info(new SF_vector4f(COLOR, "color",
+                                              RULE_EXPOSED_FIELD,
+                                              color_func));
 }
 
 /*! \brief */

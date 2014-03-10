@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -80,8 +77,11 @@ void Directional_light::init_prototype()
   Vector3f_handle_function direction_func =
     static_cast<Vector3f_handle_function>
     (&Directional_light::direction_handle);
-  s_prototype->add_field_info(new SF_vector3f(DIRECTION, "direction",
-                                              direction_func, exec_func));
+  s_prototype->add_field_info(new SF_vector3f(DIRECTION,
+                                              "direction",
+                                              RULE_EXPOSED_FIELD,
+                                              direction_func,
+                                              exec_func));
 }
 
 /*! Delete the node prototype */

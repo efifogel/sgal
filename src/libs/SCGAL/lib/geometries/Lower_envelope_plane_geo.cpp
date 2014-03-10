@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lower_envelope_plane_geo.cpp 7681 2009-06-08 16:52:09Z ophirset $
-// $Revision: 7681 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -60,7 +57,7 @@ bool Lower_envelope_plane_geo::s_def_draw_patches(true);
 
 REGISTER_TO_FACTORY(Lower_envelope_plane_geo, "Lower_envelope_plane_geo");
 
-/*! Constructor. */
+//! \brief constructor.
 Lower_envelope_plane_geo::Lower_envelope_plane_geo(Boolean proto) :
   Lower_envelope_geo(proto),
   m_owned_envelope(false),
@@ -68,11 +65,11 @@ Lower_envelope_plane_geo::Lower_envelope_plane_geo(Boolean proto) :
   m_draw_patches(s_def_draw_patches)
 {}
 
-/*! Destructor. */
+//! \brief destructor.
 Lower_envelope_plane_geo::~Lower_envelope_plane_geo()
 { if (m_envelope && m_owned_envelope) delete m_envelope; }
 
-/*! \brief cleans the polyhedron data structure. */
+//! \brief cleans the polyhedron data structure.
 void Lower_envelope_plane_geo::clean()
 {
   clock_t start_time = clock();
@@ -110,14 +107,14 @@ void Lower_envelope_plane_geo::clean()
   Lower_envelope_geo::clean();
 }
 
-/*! \brief clears the internal representation. */
+//! \brief clears the internal representation.
 void Lower_envelope_plane_geo::clear()
 {
   Lower_envelope_geo::clear();
   if (m_envelope) m_envelope->clear();
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Lower_envelope_plane_geo::set_attributes(Element* elem)
 {
   Lower_envelope_geo::set_attributes(elem);
@@ -166,28 +163,28 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief initializes the prototype of this container. */
+//! \brief initializes the prototype of this container.
 void Lower_envelope_plane_geo::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Lower_envelope_geo::get_prototype());
 }
 
-/*! \brief deletes the prototype of this container. */
+//! \brief deletes the prototype of this container.
 void Lower_envelope_plane_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype of this container. */
+//! \brief obtains the prototype of this container.
 Container_proto* Lower_envelope_plane_geo::get_prototype()
 {
   if (!s_prototype) Lower_envelope_plane_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief draws the envelope faces. */
+//! \brief draws the envelope faces.
 void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -288,14 +285,14 @@ void Lower_envelope_plane_geo::draw_envelope_vertices(Draw_action* action)
   }
 }
 
-/*! \brief draws the geometry of the lower envelope. */
+//! \brief draws the geometry of the lower envelope.
 void Lower_envelope_plane_geo::draw(Draw_action* action)
 {
   if (m_draw_patches) draw_patches(action);
   Lower_envelope_geo::draw(action);
 }
 
-/*! \brief draws the patches of the plane that induce the envelope. */
+//! \brief draws the patches of the plane that induce the envelope.
 void Lower_envelope_plane_geo::draw_patches(Draw_action* action)
 {
   Context* context = action->get_context();

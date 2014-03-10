@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -36,12 +33,12 @@ Instance::Instance() : XML_entity()
 /*! Destructor */
 Instance::~Instance() {}
 
-void Instance::SetInstanceName(const String &name) 
+void Instance::SetInstanceName(const String &name)
 {
   m_instanceName = name;
 }
 
-String Instance::get_instanceName() const 
+String Instance::get_instanceName() const
 {
   return m_instanceName;
 }
@@ -66,14 +63,14 @@ void Instance::set_attributes(Element * elem, Scene_graph * /* sg */)
   elem->delete_marked();
 }
 
-/** 
+/**
 Get the attributes of the box.
 
 @return a list of attributes and their values
 */
 Attribute_list Instance::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
 
   attrib.first = "name";
@@ -84,7 +81,7 @@ Attribute_list Instance::get_attributes()
 }
 
 /**
-Add the object to the scene.  
+Add the object to the scene.
 First we find the object by its name in one of the pools in
 the scene graph. Once found we call ther AddToScen method on this object.
 
@@ -100,7 +97,7 @@ void Instance::AddToScene(Scene_graph *sg, XML_entity *parent)
         // If the parent is a touch sensor add the node as its routed node
         // (see documentation in TouchSensor.h)
       ETouchSensor *touchSensor = dynamic_cast<ETouchSensor *>(parent);
-      if (touchSensor) 
+      if (touchSensor)
       {
              Container *routedNode = dynamic_cast<Container *>(node);
         touchSensor->SetRoutedNode(routedNode);
@@ -110,7 +107,7 @@ void Instance::AddToScene(Scene_graph *sg, XML_entity *parent)
         // If the parent is a Field (of script or proto) set the instance as its value
         // (see documentation in TouchSensor.h)
       FieldDef *fieldDef = dynamic_cast<FieldDef *>(parent);
-      if (fieldDef) 
+      if (fieldDef)
       {
         fieldDef->set_value(node);
       }

@@ -96,11 +96,11 @@ private:
 public:
   /*! Constructor. */
   Field_info_template(Uint id, const std::string& name,
-                      Handle handle, T initial_value,
-                      Execution_function execution = NULL,
+                      Field_rule rule, Handle handle, T initial_value,
+                      Execution_function execution = nullptr,
                       bool initially_blocked = false,
                       bool use_initial_value = false) :
-    Field_info(id, name, execution, initially_blocked),
+    Field_info(id, name, rule, execution, initially_blocked),
     m_handle(handle),
     m_initial_value(initial_value),
     m_use_initial_value(use_initial_value)
@@ -109,13 +109,13 @@ public:
   /*! Temporary constructor.
    * \todo remove this constructor when no longer needed.
    */
-  Field_info_template(Uint id, const std::string& name,
+  Field_info_template(Uint id, const std::string& name, Field_rule rule,
                       Handle handle,
-                      Execution_function execution = NULL,
+                      Execution_function execution = nullptr,
                       bool initially_blocked = false,
                       bool use_initial_value = false,
                       T initial_value = T()) :
-    Field_info(id, name, execution, initially_blocked),
+    Field_info(id, name, rule, execution, initially_blocked),
     m_handle(handle),
     m_initial_value(initial_value),
     m_use_initial_value(use_initial_value)

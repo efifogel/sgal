@@ -40,7 +40,9 @@ void Color_array::init_prototype()
   // color
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>(&Color_array::array_handle);
-  s_prototype->add_field_info(new MF_vector3f(COLOR, "color", array_func));
+  s_prototype->add_field_info(new MF_vector3f(COLOR, "color",
+                                              RULE_EXPOSED_FIELD,
+                                              array_func));
 }
 
 //! \brief deletes the node prototype.

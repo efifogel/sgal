@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/cstdint.hpp>
@@ -32,7 +29,7 @@ float FASTCALL Math::sqrt_reciprocalf(float number)
 {
   typedef boost::uint32_t Bits32;
   BOOST_STATIC_ASSERT(sizeof(float) == sizeof(Bits32));
-  
+
   union Turner {
     float m_float;
     Bits32 m_bits;
@@ -49,7 +46,7 @@ float FASTCALL Math::sqrt_reciprocalf(float number)
   y = turner.m_float;
   y = y * (threehalfs - (x2 * y * y));  // 1st iteration
   // y  = y * (threehalfs - (x2 * y * y)); // 2nd iteration, this can be removed
-  return y;  
+  return y;
 }
 
 void Math::make_inverse_sqrt_lookup_table(void)

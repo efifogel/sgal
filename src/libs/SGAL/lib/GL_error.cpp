@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
@@ -38,9 +35,9 @@ GL_error::GL_error() : m_execution_coordinator(0)
 
 /*!
  */
-GL_error * GL_error::get_instance() 
+GL_error * GL_error::get_instance()
 {
-  if (!m_instance) 
+  if (!m_instance)
     m_instance = new GL_error();
   return m_instance;
 }

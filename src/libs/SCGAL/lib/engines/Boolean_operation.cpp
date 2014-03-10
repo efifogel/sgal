@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -198,6 +195,7 @@ void Boolean_operation::init_prototype()
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Boolean_operation::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
+                                          RULE_EXPOSED_FIELD,
                                           trigger_func, exec_func));
 
   // operation
@@ -205,6 +203,7 @@ void Boolean_operation::init_prototype()
     reinterpret_cast<Uint_handle_function>
     (&Boolean_operation::operation_handle);
   s_prototype->add_field_info(new SF_uint(OPERATION, "operation",
+                                          RULE_EXPOSED_FIELD,
                                           operation_func, exec_func));
 
   // operand1
@@ -212,6 +211,7 @@ void Boolean_operation::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Boolean_operation::operand1_handle);
   s_prototype->add_field_info(new SF_shared_container(OPERAND1, "operand1",
+                                                      RULE_EXPOSED_FIELD,
                                                       operand1_func,
                                                       exec_func));
 
@@ -220,6 +220,7 @@ void Boolean_operation::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Boolean_operation::operand2_handle);
   s_prototype->add_field_info(new SF_shared_container(OPERAND2, "operand2",
+                                                      RULE_EXPOSED_FIELD,
                                                       operand2_func,
                                                       exec_func));
 
@@ -228,6 +229,7 @@ void Boolean_operation::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Boolean_operation::result_handle);
   s_prototype->add_field_info(new SF_shared_container(RESULT, "result",
+                                                      RULE_EXPOSED_FIELD,
                                                       result_func));
 }
 

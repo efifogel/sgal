@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Rotation_interpolator.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -66,6 +63,7 @@ void Rotation_interpolator::init_prototype()
     static_cast<Rotation_handle_function>
     (&Rotation_interpolator::value_handle);
   s_prototype->add_field_info(new SF_rotation(VALUE, "value_changed",
+                                              RULE_EXPOSED_FIELD,
                                               value_func));
 }
 

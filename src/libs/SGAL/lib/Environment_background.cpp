@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -65,7 +62,7 @@ Environment_background::~Environment_background()
 }
 
 /*! \brief sets the attributes of the object extracted from the input file */
-void Environment_background::set_attributes(Element * elem)
+void Environment_background::set_attributes(Element* elem)
 {
   Background::set_attributes(elem);
 
@@ -128,7 +125,7 @@ Container_proto * Environment_background::get_prototype()
 /*! Set the appearance of the object
  * @param app the appearance
  */
-void Environment_background::set_back_appearance(Appearance * app)
+void Environment_background::set_back_appearance(Appearance* app)
 {
   m_back_appearance = app;
   m_back_appearance->set_light_enable(false);
@@ -137,7 +134,7 @@ void Environment_background::set_back_appearance(Appearance * app)
 }
 
 /*! Drwa the background */
-void Environment_background::draw(Draw_action * draw_action)
+void Environment_background::draw(Draw_action* draw_action)
 {
   //! \todo this is not right at all!!!
   if (m_back_appearance) {

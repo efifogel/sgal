@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <algorithm>
@@ -65,7 +62,10 @@ void Sphere_environment::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Sphere_environment::alpha_handle);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
+  s_prototype->add_field_info(new SF_float(ALPHA,
+                                           "alpha",
+                                           RULE_EXPOSED_FIELD,
+                                           alpha_func,
                                            exec_func));
 }
 

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -188,21 +185,25 @@ void Gradient_background::init_prototype()
   Vector3f_handle_function ul_color_func =
     static_cast<Vector3f_handle_function>(&Gradient_background::ul_color_handle);
   s_prototype->add_field_info(new SF_Vector3f(ULCOLOR, "ul_color",
+                                              RULE_EXPOSED_FIELD,
                                               ul_color_func, exec_func));
 
   Vector3f_handle_function ur_color_func =
     static_cast<Vector3f_handle_function>(&Gradient_background::ur_color_handle);
   s_prototype->add_field_info(new SF_Vector3f(URCOLOR, "ur_color",
+                                              RULE_EXPOSED_FIELD,
                                               ur_color_func, exec_func));
 
   Vector3f_handle_function ll_color_func =
     static_cast<Vector3f_handle_function>(&Gradient_background::ll_color_handle);
   s_prototype->add_field_info(new SF_Vector3f(LLCOLOR, "ll_color",
+                                              RULE_EXPOSED_FIELD,
                                               ll_color_func, exec_func));
 
   Vector3f_handle_function lr_color_func =
     static_cast<Vector3f_handle_function>(&Gradient_background::lr_color_handle);
   s_prototype->add_field_info(new SF_Vector3f(LRCOLOR, "lr_color",
+                                              RULE_EXPOSED_FIELD,
                                               lr_color_func, exec_func));
 }
 

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -190,32 +187,46 @@ void Snapshot::init_prototype()
   // trigger
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Snapshot::trigger_handle);
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
+  s_prototype->add_field_info(new SF_bool(TRIGGER,
+                                          "trigger",
+                                          RULE_EXPOSED_FIELD,
+                                          trigger_func,
                                           false));
 
   // dirName
   String_handle_function dir_name_func =
     static_cast<String_handle_function>(&Snapshot::dir_name_handle);
-  s_prototype->add_field_info(new SF_string(DIR_NAME, "dirName",
-                                            dir_name_func, s_def_dir_name));
+  s_prototype->add_field_info(new SF_string(DIR_NAME,
+                                            "dirName",
+                                            RULE_EXPOSED_FIELD,
+                                            dir_name_func,
+                                            s_def_dir_name));
 
   // fileName
   String_handle_function file_name_func =
     static_cast<String_handle_function>(&Snapshot::file_name_handle);
-  s_prototype->add_field_info(new SF_string(FILE_NAME, "fileName",
-                                            file_name_func, s_def_file_name));
+  s_prototype->add_field_info(new SF_string(FILE_NAME,
+                                            "fileName",
+                                            RULE_EXPOSED_FIELD,
+                                            file_name_func,
+                                            s_def_file_name));
 
   // fileFormat
   Uint_handle_function file_format_func =
     reinterpret_cast<Uint_handle_function>(&Snapshot::file_format_handle);
-  s_prototype->add_field_info(new SF_uint(FILE_FORMAT, "fileFormat",
-                                          file_format_func, s_def_file_format));
+  s_prototype->add_field_info(new SF_uint(FILE_FORMAT,
+                                          "fileFormat",
+                                          RULE_EXPOSED_FIELD,
+                                          file_format_func,
+                                          s_def_file_format));
 
   // Image
   Shared_container_handle_function image_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Snapshot::image_handle);
-  s_prototype->add_field_info(new SF_shared_container(IMAGE, "image",
+  s_prototype->add_field_info(new SF_shared_container(IMAGE,
+                                                      "image",
+                                                      RULE_EXPOSED_FIELD,
                                                       image_func));
 }
 

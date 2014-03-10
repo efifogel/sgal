@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -134,22 +131,22 @@ void Torus::init_prototype()
   Float_handle_function spine_radius_func =
     static_cast<Float_handle_function>(&Torus::spine_radius_handle);
   s_prototype->add_field_info(new SF_float(SPINE_RADIUS, "spineRadius",
-                                           spine_radius_func,
-                                           exec_func));
+                                           RULE_EXPOSED_FIELD,
+                                           spine_radius_func, exec_func));
 
   // stacks
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Torus::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
-                                          exec_func));
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", RULE_EXPOSED_FIELD,
+                                          stacks_func, exec_func));
 
   // slices
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Torus::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
-                                          exec_func));
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", RULE_EXPOSED_FIELD,
+                                          slices_func, exec_func));
 }
 
 /*! \brief deletes the container prototype. */

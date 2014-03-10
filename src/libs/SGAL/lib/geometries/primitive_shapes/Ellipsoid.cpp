@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Ellipsoid.hpp"
@@ -249,31 +246,41 @@ void Ellipsoid::init_prototype()
     static_cast<Execution_function>(&Ellipsoid::structure_changed);
   Float_handle_function width_func =
     static_cast<Float_handle_function>(&Ellipsoid::width_handle);
-  s_prototype->add_field_info(new SF_float(WIDTH, "width", width_func,
+  s_prototype->add_field_info(new SF_float(WIDTH, "width",
+                                           RULE_EXPOSED_FIELD,
+                                           width_func,
                                            s_def_width, exec_func));
 
   // height
   Float_handle_function height_func =
     static_cast<Float_handle_function>(&Ellipsoid::height_handle);
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
+                                           RULE_EXPOSED_FIELD,
+                                           height_func,
                                            s_def_height, exec_func));
 
   // depth
   Float_handle_function depth_func =
     static_cast<Float_handle_function>(&Ellipsoid::depth_handle);
-  s_prototype->add_field_info(new SF_float(DEPTH, "depth", depth_func,
+  s_prototype->add_field_info(new SF_float(DEPTH, "depth",
+                                           RULE_EXPOSED_FIELD,
+                                           depth_func,
                                            s_def_depth, exec_func));
 
   // slices
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Ellipsoid::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
+                                          RULE_EXPOSED_FIELD,
+                                          slices_func,
                                           s_def_slices, exec_func));
 
   // stacks
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Ellipsoid::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
+                                          RULE_EXPOSED_FIELD,
+                                          stacks_func,
                                           s_def_stacks, exec_func));
 }
 

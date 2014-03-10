@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Player_scene.cpp 13681 2012-07-04 15:39:29Z efif $
-// $Revision: 13681 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(PLAYER_CONTROL)

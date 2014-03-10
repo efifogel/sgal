@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14184 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -235,6 +232,7 @@ void Indexed_line_set::init_prototype()
   Float_handle_function line_width_func =
     static_cast<Float_handle_function>(&Indexed_line_set::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
+                                           RULE_EXPOSED_FIELD,
                                            line_width_func));
 }
 

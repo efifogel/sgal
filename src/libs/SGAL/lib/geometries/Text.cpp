@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -87,7 +84,9 @@ void Text::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   String_handle_function string_func =
     static_cast<String_handle_function>(&Text::string_handle);
-  s_prototype->add_field_info(new SF_string(STRING, "string", string_func,
+  s_prototype->add_field_info(new SF_string(STRING, "string",
+                                            RULE_EXPOSED_FIELD,
+                                            string_func,
                                             exec_func));
 }
 

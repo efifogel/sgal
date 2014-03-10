@@ -56,7 +56,9 @@ void Tex_coord_array_3d::init_prototype()
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>
     (&Tex_coord_array_3d::array_handle);
-  s_prototype->add_field_info(new MF_vector3f(POINT, "point", array_func));
+  s_prototype->add_field_info(new MF_vector3f(POINT, "point",
+                                              RULE_EXPOSED_FIELD,
+                                              array_func));
 }
 
 //! \brief deletes the node prototype.

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <CGAL/basic.h>
@@ -69,7 +66,7 @@ void Exact_plane_array::delete_prototype()
 /*! \brief obtains the node prototype. */
 Container_proto* Exact_plane_array::get_prototype()
 {
-  if (s_prototype == NULL) Exact_plane_array::init_prototype();
+  if (!s_prototype) Exact_plane_array::init_prototype();
   return s_prototype;
 }
 

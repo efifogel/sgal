@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Multisample.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -72,13 +69,17 @@ void Multisample::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Boolean_handle_function enabled_handle =
     static_cast<Boolean_handle_function>(&Multisample::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_handle,
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
+                                          RULE_EXPOSED_FIELD,
+                                          enabled_handle,
                                           exec_func));
 
   // numberOfSamples
   Uint_handle_function number_of_samples_handle =
     static_cast<Uint_handle_function>(&Multisample::number_of_samples_handle);
-  s_prototype->add_field_info(new SF_uint(NUMBER_OF_SAMPLES, "numberOfSamples",
+  s_prototype->add_field_info(new SF_uint(NUMBER_OF_SAMPLES,
+                                          "numberOfSamples",
+                                          RULE_EXPOSED_FIELD,
                                           number_of_samples_handle));
 
 }

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -68,21 +65,27 @@ void Incrementor::init_prototype()
   Int_handle_function min_value_func =
     static_cast<Int_handle_function>(&Incrementor::min_value_handle);
   s_prototype->add_field_info(new SF_int(MIN_VALUE, "minValue",
+                                         RULE_EXPOSED_FIELD,
                                          min_value_func, exec_func));
 
   Int_handle_function max_value_func =
     static_cast<Int_handle_function>(&Incrementor::max_value_handle);
   s_prototype->add_field_info(new SF_int(MAX_VALUE, "maxValue",
+                                         RULE_EXPOSED_FIELD,
                                          max_value_func, exec_func));
 
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Incrementor::trigger_handle);
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
+                                          RULE_EXPOSED_FIELD,
+                                          trigger_func,
                                           exec_func));
 
   Int_handle_function value_func =
     static_cast<Int_handle_function>(&Incrementor::value_handle);
-  s_prototype->add_field_info(new SF_int(VALUE, "value", value_func));
+  s_prototype->add_field_info(new SF_int(VALUE, "value",
+                                         RULE_EXPOSED_FIELD,
+                                         value_func));
 }
 
 /*! \brief deletes the container prototype. */

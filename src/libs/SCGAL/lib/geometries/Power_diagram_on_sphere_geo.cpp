@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Power_diagram_on_sphere_geo.cpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -131,6 +128,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Power_diagram_on_sphere_geo::site_enabled_handle);
   s_prototype->add_field_info(new SF_bool(SITE_ENABLED, "siteEnabled",
+                                          RULE_EXPOSED_FIELD,
                                           site_enabled_func, exec_func));
 
   // siteStyleId
@@ -138,6 +136,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     reinterpret_cast<Uint_handle_function>
     (&Power_diagram_on_sphere_geo::site_style_handle);
   s_prototype->add_field_info(new SF_uint(SITE_STYLE_ID, "siteStyleId",
+                                          RULE_EXPOSED_FIELD,
                                           site_style_func, exec_func));
 
   // siteCountId
@@ -145,6 +144,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     static_cast<Int_handle_function>
     (&Power_diagram_on_sphere_geo::site_count_handle);
   s_prototype->add_field_info(new SF_int(SITE_COUNT_ID, "siteCountId",
+                                         RULE_EXPOSED_FIELD,
                                          site_count_func, exec_func));
 
   // siteDirected
@@ -152,6 +152,7 @@ void Power_diagram_on_sphere_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Power_diagram_on_sphere_geo::site_directed_handle);
   s_prototype->add_field_info(new SF_bool(SITE_DIRECTED, "siteDirected",
+                                          RULE_EXPOSED_FIELD,
                                           site_directed_func, exec_func));
 }
 

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <direct.h>
@@ -425,12 +422,16 @@ void Movie_recorder::init_prototype()
 
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Camera::alpha_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", is_enabled_func,
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
+                                          RULE_EXPOSED_FIELD,
+                                          is_enabled_func,
                       (Execution_func_type)&Movie_recorder::set_enabled));
 
   String_handle_function status_func =
     static_cast<String_handle_function>(&Camera::status_handle);
-  s_prototype->add_field_info(new SF_string(STATUS, "status", status_func));
+  s_prototype->add_field_info(new SF_string(STATUS, "status",
+                                            RULE_EXPOSED_FIELD,
+                                            status_func));
 }
 
 /*!

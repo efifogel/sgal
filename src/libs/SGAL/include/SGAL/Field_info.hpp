@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FIELD_INFO_HPP
@@ -72,6 +69,9 @@ protected:
   /*! The field name. */
   std::string m_name;
 
+  /*! The field rule. */
+  Field_rule m_rule;
+
   /*! The function to execute when the field changes. */
   Execution_function m_exec_func;
 
@@ -80,11 +80,12 @@ protected:
 
 public:
   /*! Constructor. */
-  Field_info(Uint id, const std::string& name,
-             Execution_function exec_func = NULL,
+  Field_info(Uint id, const std::string& name, Field_rule rule,
+             Execution_function exec_func = nullptr,
              Boolean initially_blocked = false) :
     m_id(id),
     m_name(name),
+    m_rule(rule),
     m_exec_func(exec_func),
     m_initially_blocked(initially_blocked)
   { }
@@ -99,6 +100,11 @@ public:
   /*! Obtain the field name.
    */
   const std::string& get_name() const;
+
+  /*! Obtain the field rule.
+   * \return the field rule.
+   */
+  Field_rule get_rule() const;
 
   /*! Obtain the execution function */
   Execution_function execution_function() const;
@@ -347,6 +353,9 @@ inline Execution_function Field_info::execution_function() const
 //*! \brief equality opetator.
 inline Boolean Field_info::operator==(const Field_info& other) const
 { return (m_id == other.m_id); }
+
+//! \brief obtains the field rule.
+inline Field_rule Field_info::get_rule() const { return m_rule; }
 
 //! \brief determines whether
 inline Boolean Field_info::is_initially_blocked() const

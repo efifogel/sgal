@@ -62,9 +62,12 @@
 
 //! \todo #include "Event_filter.h"
 //! \todo #include "Model_stats.h"
-//! \todo #include "SG_JS_err_reporter.h"
 
 namespace fi = boost::filesystem;
+
+namespace v8 {
+class Isolate;
+};
 
 SGAL_BEGIN_NAMESPACE
 
@@ -78,7 +81,6 @@ class Point_light;
 class Viewpoint;
 class Fog;
 class Background;
-class JSW_engine_int;
 class Window_handle;
 class Context;
 class Light;
@@ -88,7 +90,6 @@ class Stream;
 class Draw_action;
 class Execution_coordinator;
 class Configuration;
-class SAI;
 // class View_sensor;
 class Text_screen;
 class Event_filter;
@@ -290,32 +291,36 @@ public:
    */
   void set_root(Shared_group root);
 
-  /*! Return the begin pointer of the containers */
-  Container_list_iter containers_begin() { return m_containers.begin(); }
+  /*! Obtain the begin pointer of the containers.
+   * \return the begin pointer of the containers.
+   */
+  Container_list_iter containers_begin();
 
-  /*! Return the past-the-end pointer of the containers */
-  Container_list_iter containers_end() { return m_containers.end(); }
+  /*! Obtain the past-the-end pointer of the containers.
+   * \return
+   */
+  Container_list_iter containers_end();
 
-  /*! Return the begin pointer of the containers */
-  Container_map_iter instances_begin() { return m_instances.begin(); }
+  /*! Obtain the begin pointer of the containers.
+   * \return the begin pointer of the containers.
+   */
+  Container_map_iter instances_begin();
 
-  /*! Return the past-the-end pointer of the containers */
-  Container_map_iter instances_end() { return m_instances.end(); }
+  /*! Obtain the past-the-end pointer of the containers.
+   * \return the past-the-end pointer of the containers.
+   */
+  Container_map_iter instances_end();
 
-  /*! Obtain the navigation root. It's a node of type Transform */
-  Shared_transform get_navigation_root() { return m_navigation_root; }
+  /*! Obtain the navigation root. It's a node of type Transform.
+   * \return the navigation root.
+   */
+  Shared_transform get_navigation_root();
 
   /*! Set the navigation root. The navigation root node is a child
    * of the root of the scene graph. It is a node of type Transform.
-   * \param nav_root (in) a pointer to the navigation root node
+   * \param nr (in) a pointer to the navigation root node.
    */
   void set_navigation_root(Shared_transform nr);
-
-  /*! Perform pre cascade activity. */
-  void signal_cascade_start();
-
-  /*! Perform post cascade activity. */
-  void signal_cascade_end();
 
   /*! Returns true if the scene creation is complete */
   bool is_scene_done() { return m_is_scene_done; }
@@ -336,11 +341,6 @@ public:
 
   /*! \breif obtains the active key-sensor */
   Key_sensor* get_active_key_sensor() const { return m_active_key_sensor; }
-
-  /*! todo sai
-  JSW_engine_int* get_jsw_engine();
-  SAI* get_scripts_sai();
-  */
 
   // Text screen operations.
   // Clear all text lines.
@@ -418,6 +418,11 @@ public:
    */
   void write_stl(const std::string& filename);
   //@}
+
+  /*! Obtain an isolated instance of the V8 engine.
+   * \return an isolated instance of the V8 engine.
+   */
+  v8::Isolate* get_isolate();
 
 private:
   /*! Binadable stacks */
@@ -527,17 +532,8 @@ private:
   /*! a pointer to the statistics object. */
   //! \todo Model_stats m_statistics;
 
-  /*! a pointer to the JScript Interpreter engine. */
-  JSW_engine_int* m_jsw_engine;
-
-  /*! a pointer to SAI that serves the script nodes. */
-  SAI* m_scripts_sai;
-
   /*! an object that is used to display the FPS on the screen. */
   Text_screen* m_text_screen;
-
-  /*! */
-  //! \todo SG_JS_err_reporter m_js_error_reporter;
 
   /*! a critical section used in rendering and context creation. */
   //! \todo static Critical_section s_render_cs;
@@ -552,6 +548,9 @@ private:
 
   /*! A collection of directories to search files in. */
   Path_list m_data_dirs;
+
+  /*! An isolated instance of the V8 engine. */
+  v8::Isolate* m_isolate;
 
   /*! Indicates whether the configuration node is owned. */
   Boolean m_owned_configuration;
@@ -616,6 +615,29 @@ inline File_format::Id Scene_graph::get_input_format_id() const
 //! \brief sets the input file format.
 inline void Scene_graph::set_input_format_id(File_format::Id format_id)
 { m_input_format_id = format_id; }
+
+//! \brief obtains the begin pointer of the containers.
+inline Scene_graph::Container_list_iter Scene_graph::containers_begin()
+{ return m_containers.begin(); }
+
+//! \brief obtains the past-the-end pointer of the containers.
+inline Scene_graph::Container_list_iter Scene_graph::containers_end()
+{ return m_containers.end(); }
+
+//! \brief obtains the begin pointer of the containers.
+inline Scene_graph::Container_map_iter Scene_graph::instances_begin()
+{ return m_instances.begin(); }
+
+//! \brief obtains the past-the-end pointer of the containers.
+inline Scene_graph::Container_map_iter Scene_graph::instances_end()
+{ return m_instances.end(); }
+
+//! \brief obtains the navigation root. It's a node of type Transform.
+inline Scene_graph::Shared_transform Scene_graph::get_navigation_root()
+{ return m_navigation_root; }
+
+//! \brief obtains an isolated instance of the V8 engine.
+inline v8::Isolate* Scene_graph::get_isolate() { return m_isolate; }
 
 SGAL_END_NAMESPACE
 

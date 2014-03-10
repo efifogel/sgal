@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_FIELD_TYPE_ENUM
-#define SGAL_FIELD_TYPE_ENUM
+#ifndef SGAL_FIELD_ENUMS
+#define SGAL_FIELD_ENUMS
 
 /*! \file
  * Fields are the elemental data types used to define the properties of
@@ -43,7 +40,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-enum Field_type_enum {
+enum Field_type {
   SF_BOOL = 1,
   SF_FLOAT = 2,
   SF_UINT32 = 3,
@@ -72,9 +69,16 @@ enum Field_type_enum {
   MF_SHARED_CONTAINER = 34
 };
 
+enum Field_rule {
+  RULE_IN = 1,
+  RULE_OUT,
+  RULE_FIELD,
+  RULE_EXPOSED_FIELD,
+};
+
 class Field_types_utils {
 public:
-  static Field_type_enum get_field_type(const std::string& type)
+  static Field_type get_field_type(const std::string& type)
   {
     if (type == "SF_Bool" || type == "Boolean") return SF_BOOL;
     else if (type == "SFColor" || type == "Color") return SF_COLOR;
@@ -104,7 +108,7 @@ public:
     else if (type == "MFVec4F" || type == "Vector4Floats") return MF_VEC4F;
     else {
       assert(false);
-      return (Field_type_enum)0;
+      return (Field_type)0;
     }
   }
 };

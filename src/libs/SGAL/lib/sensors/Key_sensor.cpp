@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -68,17 +65,23 @@ void Key_sensor::init_prototype()
   // keyPress
   Int_handle_function key_func =
     static_cast<Int_handle_function>(&Key_sensor::key_handle);
-  s_prototype->add_field_info(new SF_int(KEY_PRESS, "keyPress", key_func));
+  s_prototype->add_field_info(new SF_int(KEY_PRESS, "keyPress",
+                                         RULE_EXPOSED_FIELD,
+                                         key_func));
 
   // keyRelease
   // Int_handle_function key_func =
   //   static_cast<Int_handle_function>(&Key_sensor::key_handle);
-  s_prototype->add_field_info(new SF_int(KEY_RELEASE, "keyRelease", key_func));
+  s_prototype->add_field_info(new SF_int(KEY_RELEASE, "keyRelease",
+                                         RULE_EXPOSED_FIELD,
+                                         key_func));
 
   // actionKeyPress
   Int_handle_function action_key_func =
     static_cast<Int_handle_function>(&Key_sensor::action_key_handle);
-  s_prototype->add_field_info(new SF_int(ACTION_KEY_PRESS, "actionKeyPress",
+  s_prototype->add_field_info(new SF_int(ACTION_KEY_PRESS,
+                                         "actionKeyPress",
+                                         RULE_EXPOSED_FIELD,
                                          action_key_func));
 
   // actionKeyRelease
@@ -86,31 +89,38 @@ void Key_sensor::init_prototype()
   //   static_cast<Int_handle_function>(&Key_sensor::action_key_handle);
   s_prototype->add_field_info(new SF_int(ACTION_KEY_RELEASE,
                                          "actionKeyRelease",
+                                         RULE_EXPOSED_FIELD,
                                          action_key_func));
 
   // shiftKey
   Boolean_handle_function shift_key_func =
     static_cast<Boolean_handle_function>(&Key_sensor::shift_key_handle);
   s_prototype->add_field_info(new SF_bool(SHIFT_KEY, "shiftKey",
+                                          RULE_EXPOSED_FIELD,
                                           shift_key_func));
 
   // controlKey
   Boolean_handle_function control_key_func =
     static_cast<Boolean_handle_function>(&Key_sensor::control_key_handle);
   s_prototype->add_field_info(new SF_bool(CONTROL_KEY, "controlKey",
+                                          RULE_EXPOSED_FIELD,
                                           control_key_func));
 
   // altKey
   Boolean_handle_function alt_key_func =
     static_cast<Boolean_handle_function>(&Key_sensor::alt_key_handle);
-  s_prototype->add_field_info(new SF_bool(ALT_KEY, "altKey", alt_key_func));
+  s_prototype->add_field_info(new SF_bool(ALT_KEY, "altKey",
+                                          RULE_EXPOSED_FIELD,
+                                          alt_key_func));
 
   // isActive
   Execution_function exec_func =
     static_cast<Execution_function>(&Key_sensor::activate);
   Boolean_handle_function active_func =
     static_cast<Boolean_handle_function>(&Key_sensor::active_handle);
-  s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive", active_func,
+  s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive",
+                                          RULE_EXPOSED_FIELD,
+                                          active_func,
                                           exec_func));
 }
 

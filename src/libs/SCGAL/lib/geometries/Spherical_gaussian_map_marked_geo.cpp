@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_marked_geo.cpp 7805 2009-07-19 22:21:38Z efif $
-// $Revision: 7805 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -433,6 +430,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Spherical_gaussian_map_marked_geo::sgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      RULE_EXPOSED_FIELD,
                                                       sgm_nodes_func));
 
   Execution_function exec_func =
@@ -443,6 +441,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     (&Spherical_gaussian_map_marked_geo::increase_vertex_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
                                           "increaseVertexIndex",
+                                          RULE_EXPOSED_FIELD,
                                           increase_vertex_index_func,
                                           exec_func));
 
@@ -453,6 +452,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     (&Spherical_gaussian_map_marked_geo::increase_edge_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
                                           "increaseEdgeIndex",
+                                          RULE_EXPOSED_FIELD,
                                           increase_edge_index_func,
                                           exec_func));
 
@@ -463,6 +463,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
     (&Spherical_gaussian_map_marked_geo::increase_facet_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
                                           "increaseFacetIndex",
+                                          RULE_EXPOSED_FIELD,
                                           increase_facet_index_func,
                                           exec_func));
 }

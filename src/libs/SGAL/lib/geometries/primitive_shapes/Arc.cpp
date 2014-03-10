@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 8692 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -418,7 +415,9 @@ void Arc::init_prototype()
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Arc::radius_handle);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
+                                           RULE_EXPOSED_FIELD,
+                                           radius_func,
                                            exec_func));
 
   // stacks
@@ -426,7 +425,9 @@ void Arc::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Arc::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
+                                          RULE_EXPOSED_FIELD,
+                                          stacks_func,
                                           exec_func));
 
   // slices
@@ -434,7 +435,9 @@ void Arc::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Arc::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
+                                          RULE_EXPOSED_FIELD,
+                                          slices_func,
                                           exec_func));
 
   // alpha
@@ -442,7 +445,9 @@ void Arc::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Arc::alpha_handle);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
+                                           RULE_EXPOSED_FIELD,
+                                           alpha_func,
                                            exec_func));
 
   // beta
@@ -450,7 +455,9 @@ void Arc::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function beta_func =
     static_cast<Float_handle_function>(&Arc::beta_handle);
-  s_prototype->add_field_info(new SF_float(BETA, "beta", beta_func,
+  s_prototype->add_field_info(new SF_float(BETA, "beta",
+                                           RULE_EXPOSED_FIELD,
+                                           beta_func,
                                            exec_func));
 
   // gamma
@@ -458,7 +465,9 @@ void Arc::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function gamma_func =
     static_cast<Float_handle_function>(&Arc::gamma_handle);
-  s_prototype->add_field_info(new SF_float(GAMMA, "gamma", gamma_func,
+  s_prototype->add_field_info(new SF_float(GAMMA, "gamma",
+                                           RULE_EXPOSED_FIELD,
+                                           gamma_func,
                                            exec_func));
 
   // delta
@@ -466,7 +475,9 @@ void Arc::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function delta_func =
     static_cast<Float_handle_function>(&Arc::delta_handle);
-  s_prototype->add_field_info(new SF_float(DELTA, "delta", delta_func,
+  s_prototype->add_field_info(new SF_float(DELTA, "delta",
+                                           RULE_EXPOSED_FIELD,
+                                           delta_func,
                                            exec_func));
 }
 

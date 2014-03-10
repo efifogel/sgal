@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -30,6 +27,8 @@
 #include <time.h>
 #include <iostream>
 
+#include <v8.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -42,18 +41,14 @@
 #include "SGAL/Load_int.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
-// #include "SGAL/Record_action.hpp"
 #include "SGAL/Execution_coordinator.hpp"
 #include "SGAL/Sphere_bound.hpp"
 #include "SGAL/Touch_sensor.hpp"
 #include "SGAL/Time_sensor.hpp"
 #include "SGAL/Configuration.hpp"
-// #include "SGAL/View_sensor.hpp"
 #include "SGAL/Text_screen.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/GL_error.hpp"
-// #include "SGAL/Flow_sensor.hpp"
-#include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Route.hpp"
 #include "SGAL/Trace.hpp"
 #include "SGAL/Snapshot.hpp"
@@ -81,24 +76,22 @@ unsigned int Scene_graph::s_min_redraw_period = 500;
  * is created and rendered by two different threads
  */
 Scene_graph::Scene_graph(bool syncronize) :
-  m_camera(NULL),
-  m_navigation_info(NULL),
-  m_context(NULL),
+  m_camera(nullptr),
+  m_navigation_info(nullptr),
+  m_context(nullptr),
   m_is_scene_done(!syncronize),
   m_does_have_lights(false),
   m_current_light_id(0),
-  m_isect_action(NULL),
-  m_execution_coordinator(0),
-  m_default_event_filter(0),
-  m_configuration(NULL),
-  // m_view_sensor(NULL),
-  m_active_key_sensor(NULL),
+  m_isect_action(nullptr),
+  m_execution_coordinator(nullptr),
+  m_default_event_filter(nullptr),
+  m_configuration(nullptr),
+  // m_view_sensor(nullptr),
+  m_active_key_sensor(nullptr),
   m_fps(0),
   m_fps_counter(0),
   m_fps_start_time(0),
   m_last_render_time(0),
-  m_jsw_engine(0),
-  //! \todo m_scripts_sai(0),
   //! \todo m_text_screen(0),
   m_is_isect_required(true),
   m_is_camera_in_focus(false),
@@ -110,14 +103,12 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
   m_time_sensors.clear();
+  m_isolate = v8::Isolate::New();
 }
 
 /*! Destructor */
 Scene_graph::~Scene_graph()
 {
-  // \todo sai
-  // if (m_scripts_sai != NULL) delete m_scripts_sai;
-
   m_containers.clear();
   m_instances.clear();
 
@@ -125,40 +116,15 @@ Scene_graph::~Scene_graph()
   delete m_execution_coordinator;
   //! \todo delete m_text_screen;
 
-#ifdef JAVA_SCRIPT
-  if (m_jsw_engine != NULL) m_jsw_engine->destroy();
-#endif
-
   Navigation_info* nav = get_active_navigation_info();
   if (nav) nav->unregister_events();
+
+  if (m_isolate) m_isolate->Dispose();
 
   destroy_defaults();
 
   //! \todo destroy stacks
 }
-
-/*! \brief obtains a pointer to the JScript Interpreter engine.
- * If needed - creates the engine (if it is the first call first time).
- */
-//! \todo sai
-// JSW_engine_int* Scene_graph::get_jsw_engine()
-// {
-// #ifdef JAVA_SCRIPT
-//   if (m_jsw_engine == NULL)
-//     m_jsw_engine = JSW_engine_int::create(&m_js_error_reporter);
-// #endif
-//   return m_jsw_engine;
-// }
-
-/*! \brief obtains a pointer to the SAI serving the script nodes
- * If needed - allocate a new instance
- */
-//! \todo sai
-// SAI * Scene_graph::get_scripts_sai()
-// {
-//   if (m_scripts_sai == 0) m_scripts_SAI = new SAI(this);
-//   return m_scripts_SAI;
-// }
 
 /*! \brief sets the context in the scene graph and in all relevant
  * nodes accessible from the scene graph.
@@ -368,10 +334,9 @@ void Scene_graph::render_scene_graph(Draw_action* draw_action)
   cull_context.cull(&*m_root, act_camera);
   cull_context.draw(draw_action);
 
-  // Draw Text screen.
 #if 0
-  if (m_text_screen)
-    m_text_screen->draw(draw_action);
+  // Draw Text screen.
+  if (m_text_screen) m_text_screen->draw(draw_action);
 #endif
 
   //! \todo m_execution_coordinator->reset_rendering_required();
@@ -728,31 +693,13 @@ void Scene_graph::set_head_light(Configuration* config)
   */
 }
 
-/*! \brief performs pre cascade activity. */
-void Scene_graph::signal_cascade_start()
-{
-  /*! \todo if (m_scripts_sai != NULL)
-   * m_scripts_sai->signal_cascade_start();
-   */
-}
-
-/*! \brief performs post cascade activity. */
-void Scene_graph::signal_cascade_end()
-{
-  // if (m_view_sensor != NULL) m_view_sensor->update();
-
-  /*! \todo if (m_scripts_sai != NULL)
-    m_scripts_sai->signal_cascade_end();
-  */
-}
-
 /* \brief destroys default (owned) nodes. */
 void Scene_graph::destroy_defaults()
 {
   if (m_owned_configuration) {
     if (m_configuration) {
       delete m_configuration;
-      m_configuration = NULL;
+      m_configuration = nullptr;
     }
     m_owned_configuration = false;
   }
@@ -760,7 +707,7 @@ void Scene_graph::destroy_defaults()
   if (m_owned_navigation_info) {
     if (m_navigation_info) {
       delete m_navigation_info;
-      m_navigation_info = NULL;
+      m_navigation_info = nullptr;
     }
     m_owned_navigation_info = false;
   }
@@ -768,7 +715,7 @@ void Scene_graph::destroy_defaults()
   if (m_owned_camera) {
     if (m_camera) {
       delete m_camera;
-      m_camera = NULL;
+      m_camera = nullptr;
     }
     m_owned_camera = false;
   }
@@ -845,7 +792,7 @@ void Scene_graph::bind()
   m_navigation_info_stack.bind_top();
   m_camera_stack.bind_top();
   m_background_stack.bind_top();
-  if (m_active_key_sensor != NULL) m_active_key_sensor->activate();
+  if (m_active_key_sensor != nullptr) m_active_key_sensor->activate();
 }
 
 /*! \brief */

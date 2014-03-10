@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_geo.cpp 14183 2012-11-21 22:58:50Z efif $
-// $Revision: 14183 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -210,6 +207,7 @@ void Spherical_gaussian_map_geo::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Spherical_gaussian_map_geo::sgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      RULE_EXPOSED_FIELD,
                                                       sgm_nodes_func));
 }
 

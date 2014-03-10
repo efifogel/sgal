@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $id: $
-// $Revision: 13463 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -55,14 +52,14 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Triangulation_geo::s_tag = "Triangulation";
-SGAL::Container_proto* Triangulation_geo::s_prototype(NULL);
+SGAL::Container_proto* Triangulation_geo::s_prototype(nullptr);
 
 const Float Triangulation_geo::s_def_line_width(1.0f);
 const Boolean Triangulation_geo::s_def_draw_haloed(true);
 
 REGISTER_TO_FACTORY(Triangulation_geo, "Triangulation_geo");
 
-/*! Constructor */
+//! \brief constructor.
 Triangulation_geo::Triangulation_geo(Boolean proto) :
   Geometry(proto),
   m_dirty(true),
@@ -72,10 +69,10 @@ Triangulation_geo::Triangulation_geo(Boolean proto) :
   m_time(0)
 { set_generated_tex_coord(false); }
 
-/*! Destructor */
+//! \brief destructor.
 Triangulation_geo::~Triangulation_geo() {}
 
-/*! \brief cleans the polyhedron data structure. */
+//! \brief cleans the polyhedron data structure.
 void Triangulation_geo::clean()
 {
   clock_t start_time = clock();
@@ -131,17 +128,17 @@ void Triangulation_geo::clean()
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
 }
 
-/*! \brief clears the internal representation. */
+//! \brief clears the internal representation.
 void Triangulation_geo::clear()
 {
   m_triangulation.clear();
   m_dirty = true;
 }
 
-/*! \brief */
+//! \brief
 void Triangulation_geo::cull(SGAL::Cull_context& /* cull_context */) {}
 
-/*! \brief */
+//! \brief
 void Triangulation_geo::draw(SGAL::Draw_action* action)
 {
   if (is_dirty()) clean();
@@ -169,7 +166,7 @@ void Triangulation_geo::draw(SGAL::Draw_action* action)
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-/*! \brief */
+//! \brief
 void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 {
   SGAL::Context* context = action->get_context();
@@ -215,10 +212,10 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
   }
 }
 
-/*! \brief */
+//! \brief
 void Triangulation_geo::isect(SGAL::Isect_action* /* action */) {}
 
-/*! \brief */
+//! \brief
 Boolean Triangulation_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
@@ -245,7 +242,7 @@ Boolean Triangulation_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Triangulation_geo::set_attributes(SGAL::Element* elem)
 {
   SGAL::Geometry::set_attributes(elem);
@@ -293,7 +290,7 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief updates the internal representation in a cascade chain. */
+//! \brief updates the internal representation in a cascade chain.
 void Triangulation_geo::coord_changed(SGAL::Field_info* /* field_info */)
 {
   SGAL_TRACE_CODE(SGAL::Trace::POLYHEDRON,
@@ -302,7 +299,7 @@ void Triangulation_geo::coord_changed(SGAL::Field_info* /* field_info */)
   clear();
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Triangulation_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -314,40 +311,46 @@ void Triangulation_geo::init_prototype()
   Shared_container_handle_function coord_array_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Triangulation_geo::coord_array_handle);
-  s_prototype->add_field_info(new SF_shared_container(COORD, "coord",
+  s_prototype->add_field_info(new SF_shared_container(COORD,
+                                                      "coord",
+                                                      RULE_EXPOSED_FIELD,
                                                       coord_array_func,
                                                       exec_func));
 
   // lineWidth
   Float_handle_function line_width_func =
     static_cast<Float_handle_function>(&Triangulation_geo::line_width_handle);
-  s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
+  s_prototype->add_field_info(new SF_float(LINE_WIDTH,
+                                           "lineWidth",
+                                           RULE_EXPOSED_FIELD,
                                            line_width_func));
 
   // drawHaloed
   Boolean_handle_function draw_haloed_func =
     static_cast<Boolean_handle_function>
     (&Triangulation_geo::draw_haloed_handle);
-  s_prototype->add_field_info(new SF_bool(DRAW_HALOED, "drawHaloed",
+  s_prototype->add_field_info(new SF_bool(DRAW_HALOED,
+                                          "drawHaloed",
+                                          RULE_EXPOSED_FIELD,
                                           draw_haloed_func));
 
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Triangulation_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 SGAL::Container_proto* Triangulation_geo::get_prototype()
 {
   if (!s_prototype) Triangulation_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief prints statistics. */
+//! \brief prints statistics.
 void Triangulation_geo::print_stat()
 {
   if (is_dirty()) clean();

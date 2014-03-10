@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1311 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ELEMENT_HPP
@@ -28,11 +25,12 @@
 
 #include <list>
 #include <string>
+#include <tuple>
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Field_types_enum.hpp"
+#include "SGAL/Field_enums.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -59,9 +57,11 @@ public:
   typedef std::list<Multi_cont_attr>                      Multi_cont_attr_list;
   typedef Multi_cont_attr_list::iterator                  Multi_cont_attr_iter;
 
-  typedef std::pair<const std::string*, std::pair<Field_type_enum,
-                                                  std::string*> >
+  // <name, <rule, type, value> >
+  typedef std::pair<const std::string*,
+                    std::tuple<Field_rule, Field_type, std::string*> >
                                                           Field_attr;
+
   typedef std::list<Field_attr>                           Field_attr_list;
   typedef Field_attr_list::iterator                       Field_attr_iter;
 
@@ -180,10 +180,15 @@ public:
    */
   const std::string& get_value(Field_attr_iter ai) const;
 
+  /*! Obtain the rule of a field-attribute pointed by a given iterator.
+   * \param ai the field-attribute iterator.
+   */
+  Field_rule get_rule(Field_attr_iter ai) const;
+
   /*! Obtain the type of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  Field_type_enum get_type(Field_attr_iter ai) const;
+  Field_type get_type(Field_attr_iter ai) const;
 
   /*! Delete all attributes. */
   void delete_marked();
@@ -285,15 +290,20 @@ inline Element::Field_attr_iter Element::field_attrs_begin()
 inline Element::Field_attr_iter Element::field_attrs_end()
 { return m_field_attrs.end(); }
 
-/*! \brief obtains the value of a field-attribute pointed by a given iterator.
+/*! \brief obtains the rule of a field-attribute pointed by a given iterator.
  */
-inline const std::string& Element::get_value(Field_attr_iter ai) const
-{ return *(ai->second.second); }
+inline Field_rule Element::get_rule(Field_attr_iter ai) const
+{ return std::get<0>(ai->second); }
 
 /*! \brief obtains the type of a field-attribute pointed by a given iterator.
  */
-inline Field_type_enum Element::get_type(Field_attr_iter ai) const
-{ return ai->second.first; }
+inline Field_type Element::get_type(Field_attr_iter ai) const
+{ return std::get<1>(ai->second); }
+
+/*! \brief obtains the value of a field-attribute pointed by a given iterator.
+ */
+inline const std::string& Element::get_value(Field_attr_iter ai) const
+{ return *(std::get<2>(ai->second)); }
 
 SGAL_END_NAMESPACE
 

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12354 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <stdlib.h>
@@ -70,7 +67,9 @@ void Piece::init_prototype()
     static_cast<Execution_function>(&Piece::structure_changed);
   Uint_handle_function unit_size_func =
     static_cast<Uint_handle_function>(&Piece::unit_size_handle);
-  s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size", unit_size_func,
+  s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size",
+                                          RULE_EXPOSED_FIELD,
+                                          unit_size_func,
                                           exec_func));
 }
 

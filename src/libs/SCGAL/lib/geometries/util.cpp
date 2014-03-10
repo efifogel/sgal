@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1313 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <stdio.h>
@@ -54,7 +51,7 @@ void get_next_pm_vertex_ids(unsigned int cur_pm_id,
      case 1: *pm_id = (cur_pm_id + 2) % 3; *vertex_id = 2; return;
      case 2: *pm_id = ((cur_pm_id + 2) % 3) + 3; *vertex_id = 0; return;
      case 3: *pm_id = ((cur_pm_id + 1) % 3) + 3; *vertex_id = 2; return;
-    } 
+    }
   } else {
     switch(cur_vertex_id) {
      case 0: *pm_id = (cur_pm_id + 2) % 3; *vertex_id = 1; return;
@@ -113,7 +110,7 @@ int main(int argc, char * argv[])
   table[12] = Mask_id_pair(0x38,3);
   table[13] = Mask_id_pair(0x38,4);
   table[14] = Mask_id_pair(0x38,5);
-  
+
   table[15] = Mask_id_pair(0x1c,2);
   table[16] = Mask_id_pair(0x1c,3);
   table[17] = Mask_id_pair(0x1c,4);
@@ -133,7 +130,7 @@ int main(int argc, char * argv[])
               << " -> " << get_index(table[i].first, table[i].second)
               << std::endl;
   }
-  
+
   std::cout << std::endl;
 
   for (i = 0; i < 6; i++) {
@@ -146,6 +143,6 @@ int main(int argc, char * argv[])
                 << std::endl;
     }
   }
-  
+
   return 0;
 }

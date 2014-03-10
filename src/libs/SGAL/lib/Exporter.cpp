@@ -85,19 +85,23 @@ void Exporter::init_prototype()
 
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Exporter::trigger_handle);
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
+                                          RULE_EXPOSED_FIELD,
+                                          trigger_func,
                                           false, exec_func));
 
   // fileName
   String_handle_function file_name_func =
     static_cast<String_handle_function>(&Exporter::file_name_handle);
   s_prototype->add_field_info(new SF_string(FILE_NAME, "fileName",
+                                            RULE_EXPOSED_FIELD,
                                             file_name_func, s_def_file_name));
 
   // fileFormat
   Uint_handle_function file_format_func =
     reinterpret_cast<Uint_handle_function>(&Exporter::file_format_handle);
   s_prototype->add_field_info(new SF_uint(FILE_FORMAT, "fileFormat",
+                                          RULE_EXPOSED_FIELD,
                                           file_format_func, s_def_file_format));
 }
 

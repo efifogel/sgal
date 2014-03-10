@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7261 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -448,19 +445,25 @@ void Extrusion::init_prototype()
     static_cast<Execution_function>(&Extrusion::structure_changed);
   Boolean_handle_function begin_cap_func =
     static_cast<Boolean_handle_function>(&Extrusion::begin_cap_handle);
-  s_prototype->add_field_info(new SF_bool(BEGIN_CAP, "beginCap", begin_cap_func,
+  s_prototype->add_field_info(new SF_bool(BEGIN_CAP, "beginCap",
+                                          RULE_EXPOSED_FIELD,
+                                          begin_cap_func,
                                           s_def_begin_cap, exec_func));
 
   // endCap
   Boolean_handle_function end_cap_func =
     static_cast<Boolean_handle_function>(&Extrusion::end_cap_handle);
-  s_prototype->add_field_info(new SF_bool(END_CAP, "endCap", end_cap_func,
+  s_prototype->add_field_info(new SF_bool(END_CAP, "endCap",
+                                          RULE_EXPOSED_FIELD,
+                                          end_cap_func,
                                           s_def_end_cap, exec_func));
 
   // loop
   Boolean_handle_function loop_func =
     static_cast<Boolean_handle_function>(&Extrusion::loop_handle);
-  s_prototype->add_field_info(new SF_bool(LOOP, "loop", loop_func,
+  s_prototype->add_field_info(new SF_bool(LOOP, "loop",
+                                          RULE_EXPOSED_FIELD,
+                                          loop_func,
                                           s_def_loop, exec_func));
 
   // crossSection
@@ -468,6 +471,7 @@ void Extrusion::init_prototype()
     static_cast<Vector2f_array_handle_function>
     (&Extrusion::cross_section_handle);
   s_prototype->add_field_info(new MF_vector2f(CROSS_SECTION, "crossSection",
+                                              RULE_EXPOSED_FIELD,
                                               cross_section_func, exec_func));
 
   // orientation
@@ -475,18 +479,23 @@ void Extrusion::init_prototype()
     static_cast<Rotation_array_handle_function>
     (&Extrusion::orientation_handle);
   s_prototype->add_field_info(new MF_rotation(ORIENTATION, "orientation",
+                                              RULE_EXPOSED_FIELD,
                                               orientation_func, exec_func));
 
   // scale
   Vector2f_array_handle_function scale_func =
     static_cast<Vector2f_array_handle_function>(&Extrusion::scale_handle);
-  s_prototype->add_field_info(new MF_vector2f(SCALE, "scale", scale_func,
+  s_prototype->add_field_info(new MF_vector2f(SCALE, "scale",
+                                              RULE_EXPOSED_FIELD,
+                                              scale_func,
                                               exec_func));
 
   // spine
   Vector3f_array_handle_function spine_func =
     static_cast<Vector3f_array_handle_function>(&Extrusion::spine_handle);
-  s_prototype->add_field_info(new MF_vector3f(SPINE, "spine", spine_func,
+  s_prototype->add_field_info(new MF_vector3f(SPINE, "spine",
+                                              RULE_EXPOSED_FIELD,
+                                              spine_func,
                                               exec_func));
 }
 

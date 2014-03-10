@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -101,7 +98,7 @@ Uint Texture_2d::get_component_count() const
 }
 
 /*! \brief sets the attributes of the texture. */
-void Texture_2d::set_attributes(Element* elem) 
+void Texture_2d::set_attributes(Element* elem)
 { Texture::set_attributes(elem); }
 
 /*! \brief initializes the node prototype. */
@@ -119,13 +116,13 @@ void Texture_2d::delete_prototype()
 }
 
 /*! \brief obtains the node prototype. */
-Container_proto* Texture_2d::get_prototype() 
-{  
+Container_proto* Texture_2d::get_prototype()
+{
   if (!s_prototype) Texture_2d::init_prototype();
   return s_prototype;
 }
 
-/*! \brief adds the container to a given scene. */  
+/*! \brief adds the container to a given scene. */
 void Texture_2d::add_to_scene(Scene_graph* scene_graph)
 { m_image->set_dirs(scene_graph->get_data_dirs()); }
 

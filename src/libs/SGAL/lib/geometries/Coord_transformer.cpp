@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7780 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -138,22 +135,29 @@ void Coord_transformer::init_prototype()
   // enabled
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func));
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
+                                          RULE_EXPOSED_FIELD,
+                                          enabled_func));
 
   // changed
   Boolean_handle_function changed_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::changed_handle);
-  s_prototype->add_field_info(new SF_bool(CHANGED, "changed", changed_func));
+  s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
+                                          RULE_EXPOSED_FIELD,
+                                          changed_func));
 
   Boolean_handle_function translated_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::translated_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
+                                          RULE_EXPOSED_FIELD,
                                           translated_func));
 
   // rotated
   Boolean_handle_function rotated_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::rotated_handle);
-  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated", rotated_func));
+  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
+                                          RULE_EXPOSED_FIELD,
+                                          rotated_func));
 
   // translation
   exec_func = static_cast<Execution_function>(&Coord_transformer::translate);
@@ -161,6 +165,7 @@ void Coord_transformer::init_prototype()
     static_cast<Vector3f_handle_function>
     (&Coord_transformer::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
+                                              RULE_EXPOSED_FIELD,
                                               translation_func, exec_func));
 
   // rotation
@@ -168,13 +173,16 @@ void Coord_transformer::init_prototype()
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>(&Coord_transformer::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
+                                              RULE_EXPOSED_FIELD,
                                               rotation_func, exec_func));
 
   // execute
   exec_func = static_cast<Execution_function>(&Coord_transformer::execute);
   Boolean_handle_function execute_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::execute_handle);
-  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute", execute_func,
+  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
+                                          RULE_EXPOSED_FIELD,
+                                          execute_func,
                                           exec_func));
 
   // coord
@@ -182,6 +190,7 @@ void Coord_transformer::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Coord_transformer::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD, "coord",
+                                                      RULE_EXPOSED_FIELD,
                                                       coord_func, exec_func));
 
   // coord_changed
@@ -190,6 +199,7 @@ void Coord_transformer::init_prototype()
     (&Coord_transformer::coord_array_changed_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
+                                                      RULE_EXPOSED_FIELD,
                                                       coord_changed_func));
 }
 

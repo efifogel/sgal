@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Sphere_plane_intersection.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -73,20 +70,25 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Float_handle_function>
     (&Sphere_plane_intersection::sphere_radius_handle);
   s_prototype->add_field_info(new SF_float(SPHERE_RADIUS, "sphereRadius",
+                                           RULE_EXPOSED_FIELD,
                                            sphere_radius_func, exec_func));
 
   // plane
   Vector4f_handle_function plane_func =
     static_cast<Vector4f_handle_function>
     (&Sphere_plane_intersection::plane_handle);
-  s_prototype->add_field_info(new SF_vector4f(PLANE, "plane", plane_func,
+  s_prototype->add_field_info(new SF_vector4f(PLANE, "plane",
+                                              RULE_EXPOSED_FIELD,
+                                              plane_func,
                                               exec_func));
 
   // trigger
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>
     (&Sphere_plane_intersection::trigger_handle);
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
+                                          RULE_EXPOSED_FIELD,
+                                          trigger_func,
                                           exec_func));
 
   // circleTranslation
@@ -95,6 +97,7 @@ void Sphere_plane_intersection::init_prototype()
     (&Sphere_plane_intersection::circle_translation_handle);
   s_prototype->add_field_info(new SF_vector3f(CIRCLE_TRANSLATION,
                                               "circleTranslation",
+                                              RULE_EXPOSED_FIELD,
                                               circle_translation_func));
 
   // circleRotation
@@ -103,6 +106,7 @@ void Sphere_plane_intersection::init_prototype()
     (&Sphere_plane_intersection::circle_rotation_handle);
   s_prototype->add_field_info(new SF_rotation(CIRCLE_ROTATION,
                                               "circleRotation",
+                                              RULE_EXPOSED_FIELD,
                                               circle_rotation_func));
 
   // circleRadius
@@ -110,6 +114,7 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Float_handle_function>
     (&Sphere_plane_intersection::circle_radius_handle);
   s_prototype->add_field_info(new SF_float(CIRCLE_RADIUS, "circleRadius",
+                                           RULE_EXPOSED_FIELD,
                                            circle_radius_func));
 }
 

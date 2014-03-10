@@ -383,15 +383,20 @@ void Shape::init_prototype()
     static_cast<Execution_function>(&Node::sphere_bound_changed);
   Boolean_handle_function is_visible_func =
     static_cast<Boolean_handle_function>(&Shape::is_visible_handle);
-  s_prototype->add_field_info(new SF_bool(ISVISIBLE, "visible",
-                                          is_visible_func, s_def_is_visible,
+  s_prototype->add_field_info(new SF_bool(ISVISIBLE,
+                                          "visible",
+                                          RULE_EXPOSED_FIELD,
+                                          is_visible_func,
+                                          s_def_is_visible,
                                           exec_func));
 
   // geometry
   exec_func = static_cast<Execution_function>(&Shape::geometry_changed);
   Shared_container_handle_function geometry_func =
     reinterpret_cast<Shared_container_handle_function>(&Shape::geometry_handle);
-  s_prototype->add_field_info(new SF_shared_container(GEOMETRY, "geometry",
+  s_prototype->add_field_info(new SF_shared_container(GEOMETRY,
+                                                      "geometry",
+                                                      RULE_EXPOSED_FIELD,
                                                       geometry_func,
                                                       exec_func));
 
@@ -400,7 +405,9 @@ void Shape::init_prototype()
   Shared_container_handle_function appearance_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Shape::appearance_handle);
-  s_prototype->add_field_info(new SF_shared_container(APPEARANCE, "appearance",
+  s_prototype->add_field_info(new SF_shared_container(APPEARANCE,
+                                                      "appearance",
+                                                      RULE_EXPOSED_FIELD,
                                                       appearance_func,
                                                       exec_func));
 }

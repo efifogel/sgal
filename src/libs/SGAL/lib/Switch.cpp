@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -159,7 +156,9 @@ void Switch::init_prototype()
   Uint_handle_function which_choice_func =
     static_cast<Uint_handle_function>(&Switch::which_choice_handle);
   s_prototype->add_field_info(new SF_uint(WHICH_CHOICE, "whichChoice",
-                                          which_choice_func, s_def_which_choice,
+                                          RULE_EXPOSED_FIELD,
+                                          which_choice_func,
+                                          s_def_which_choice,
                                           exec_func));
 }
 

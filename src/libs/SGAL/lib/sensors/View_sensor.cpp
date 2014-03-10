@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -150,29 +147,36 @@ void View_sensor::init_prototype()
   Vector3f_handle_function translation_func =
     static_cast<Vector3f_handle_function>(&View_sensor::translation_handle);
   s_prototype->AddFieldInfo(new SF_vector3f(TRANSLATION, "translation",
+                                            RULE_EXPOSED_FIELD,
                                             translation_func));
 
   // rotation
   _handle_function rotation_func =
     static_cast<_handle_function>(&View_sensor::rotation_handle);
   s_prototype->AddFieldInfo(new SF_rotation(ROTATION, "rotation",
+                                            RULE_EXPOSED_FIELD,
                                             rotation_func));
 
   // fieldOfView
   _handle_function fov_func =
     static_cast<_handle_function>(&View_sensor::fov_handle);
-  s_prototype->AddFieldInfo(new SF_float(FOV, "fieldOfView", fov_func));
+  s_prototype->AddFieldInfo(new SF_float(FOV, "fieldOfView",
+                                         RULE_EXPOSED_FIELD,
+                                         fov_func));
 
   // localViewName
   _handle_function local_view_name_func =
     static_cast<_handle_function>(&View_sensor::local_view_name_handle);
   s_prototype->AddFieldInfo(new SF_string(LOCALVIEWNAME, "localViewName",
+                                          RULE_EXPOSED_FIELD,
                                           local_view_name_func));
 
   // currentViewName
   _handle_function current_view_name_func =
     static_cast<_handle_function>(&View_sensor::current_view_name_handle);
-  s_prototype-> AddFieldInfo(new SF_string(CURRENTVIEWNAME, "currentViewName",
+  s_prototype-> AddFieldInfo(new SF_string(CURRENTVIEWNAME,
+                                           "currentViewName",
+                                           RULE_EXPOSED_FIELD,
                                            current_view_name_func));
 }
 

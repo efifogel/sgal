@@ -14,13 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 6019 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
-
-/*! \file
- */
 
 #include "SGAL/sgal.hpp"
 #if (defined USE_GLUT)

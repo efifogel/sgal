@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -112,21 +109,21 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   const Sphere_bound& sphere_bound = rn.node->get_sphere_bound();
 
   // the center of the sphere bound in world coordinate system
-  Vector3f w_center; 
+  Vector3f w_center;
   w_center.xform_pt(sphere_bound.get_center(), rn.wtm);
 
   // Extract the scale factor from the matrix:
   //! \todo Elliminate the calculation of the scale, as the scale
   // already resides in the original transform object.
   Vector3f scale;
-        
+
   Vector3f ustar;
   rn.wtm.get_row(0, ustar);
   scale[0] = ustar.length();
   SGAL_assertion(scale[0]);
-        
+
   ustar.scale(1.0f / scale[0], ustar);
-      
+
   // v* = (v - (v . u*)u*)/|v - (v . u*)u*|
   Vector3f v;
   rn.wtm.get_row(1, v);
@@ -150,10 +147,10 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   wstar.sub(w, tmp);
   scale[2] = wstar.length();
   SGAL_assertion(scale[2]);
- 
+
   float factor = scale.get_max_comp();
   float radius = factor * sphere_bound.get_radius();
-        
+
   // calculate the distance between the camera and the center ofthe object
   Vector3f p;
   p.sub(w_center, m_camera->get_position());
@@ -172,7 +169,7 @@ void Cull_context::draw(Draw_action* draw_action)
     m_head_light->draw(draw_action);
     glPopMatrix();
   }
-  
+
   // Draw lights.
   for (Light_iter lit = m_lights.begin(); lit != m_lights.end(); ++lit) {
     Light_node& ln = *lit;
@@ -187,7 +184,7 @@ void Cull_context::draw(Draw_action* draw_action)
 
   if (m_sort)
     std::sort(m_nodes.begin(), m_nodes.end(), compare_render_nodes);
-  
+
   // Draw nodes in first pass.
   for (Render_node_iter nit = m_nodes.begin(); nit != m_nodes.end(); ++nit) {
     Render_node& rn = *nit;
@@ -199,7 +196,7 @@ void Cull_context::draw(Draw_action* draw_action)
       m_2ndpass.push_back(rn);
 
       //! \todo Should Text nodes be assigned the highest priority?
-      if (rn.priority == 0) rn.priority = compute_distance(rn);      
+      if (rn.priority == 0) rn.priority = compute_distance(rn);
     }
   }
 
@@ -212,7 +209,7 @@ void Cull_context::draw(Draw_action* draw_action)
 
     // Draw nodes in second pass.
     for (Render_node_iter nit = m_2ndpass.begin();
-         nit != m_2ndpass.end(); ++nit) 
+         nit != m_2ndpass.end(); ++nit)
     {
       Render_node& rn = *nit;
       draw_node(draw_action, rn);
@@ -231,7 +228,7 @@ void Cull_context::push_matrix(const Matrix4f& mat)
   }
   m_world_tm.mult(wtm, mat);
 }
-  
+
 /*! \brief pops the transform matrix. */
 void Cull_context::pop_matrix()
 {

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -38,7 +35,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Composed_shader::s_prototype(NULL);
+Container_proto* Composed_shader::s_prototype(nullptr);
 const std::string Composed_shader::s_tag = "ComposedShader";
 
 /*! Constructor */
@@ -96,6 +93,7 @@ void Composed_shader::init_prototype()
   String_handle_function language_func =
     static_cast<String_handle_function>(&Composed_shader::language_handle);
   s_prototype->add_field_info(new SF_string(LANGUAGE, "language",
+                                            RULE_EXPOSED_FIELD,
                                             language_func));
 }
 
@@ -103,7 +101,7 @@ void Composed_shader::init_prototype()
 void Composed_shader::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! \brief obtains the shader node prototype. */

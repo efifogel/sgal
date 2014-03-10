@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $SId: $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string>

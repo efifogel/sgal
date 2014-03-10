@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1808 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Context.hpp"
@@ -54,7 +51,7 @@ void Window_obj::init(const std::string & name)
   m_title = name;
   m_frame_func = NULL;
   m_event_func = NULL;
-  
+
 #if 0
   m_window_list.append(_item = new Window_item(this));
 #endif
@@ -78,7 +75,7 @@ void Window_obj::init(const std::string & name)
   _sgal_glut_set_user_data(m_id, this);
 
   if (name.empty()) _sgal_glut_set_borders(false);
-  if (s_init_x == 0 && s_init_y == 0 && 
+  if (s_init_x == 0 && s_init_y == 0 &&
       s_init_width == s_screen_width && s_init_height == s_screen_height)
     _sgal_glut_full_screen();
 
@@ -92,7 +89,7 @@ void Window_obj::init(const std::string & name)
   _sgal_glut_special_up_func(&Window_obj::special_up_func);
   _sgal_glut_keyboard_func(&Window_obj::keyboard_func);
   _sgal_glut_keyboard_up_func(&Window_obj::keyboard_up_func);
-    
+
 #if defined(_WIN32)
   m_hwnd = _sgal_glut_get_HWND();
   m_hdc = _sgal_glut_get_HDC();
@@ -120,7 +117,7 @@ void Window_obj::init(const std::string & name)
 /*! Constructor */
 Window_obj::Window_obj(const std::string & name)
 #if 0
-  : 
+  :
   m_event_list(16),
   m_free_events(16)
 #endif
@@ -235,12 +232,12 @@ void Window_obj::idle_func()
 #if 0
   Window_item * item;
 #endif
-  
+
 #if 0
   //! \todo Handle time sensors
   Time_sensor::update_sensors();
 #endif
-  
+
 #if 0
   while (item = iter.next()) {
     Window_obj * window = item->get_window();
@@ -248,7 +245,7 @@ void Window_obj::idle_func()
     window->process_events();
   }
 #endif
-  
+
   if (s_render_func) (this->*s_render_func)(s_render_user_data);
 }
 
@@ -258,7 +255,7 @@ void Window_obj::process_events()
 #if 0
   //! \todo Handle time sensors
   if (!s_free_run) Time_sensor::update_sensors();
-  
+
   if (m_frame_func) {
     set_free_run(m_frame_func(m_frame_user_data) == CONTINUE);
     reset_events();
@@ -277,7 +274,7 @@ void Window_obj::reshape_func(unsigned int w, unsigned int h)
 {
   Window_obj * cur_win = Window_obj::get_current();
   cur_win->m_height = _sgal_glut_get(WINDOW_HEIGHT);
-    
+
   // do the reshape for the user if the context is current
   Context * ctx = cur_win->m_context;
   if (ctx == Context::get_current()) ctx->set_viewport(0, 0, w, h);
@@ -288,7 +285,7 @@ void Window_obj::reshape_func(unsigned int w, unsigned int h)
   event->x = w;
   event->y = h;
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -302,10 +299,10 @@ bool Window_obj::close_func()
   Event * event = cur_win->add_event();
   event->id = Event::WINDOW_CLOSE;
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
-    
+
   return cur_win->m_delete_on_close;
 }
 
@@ -323,7 +320,7 @@ void Window_obj::keyboard_func(unsigned char key, unsigned int x, unsigned int y
   event->button = s_mouse_buttons;
   event->modifier = _sgal_glut_get_modifiers();
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -342,7 +339,7 @@ void Window_obj::keyboard_up_func(unsigned char key, unsigned int x, unsigned in
   event->button = s_mouse_buttons;
   event->modifier = _sgal_glut_get_modifiers();
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -356,7 +353,7 @@ void Window_obj::display_func()
   Event * event = cur_win->add_event();
   event->id = Event::WINDOW_REDRAW;
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -372,7 +369,7 @@ void Window_obj::mouse_func(unsigned int button, Press press, unsigned int x,
     Window_obj::MIDDLE_BUTTON,
     Window_obj::RIGHT_BUTTON
   };
-        
+
   Event * event = cur_win->add_event();
   s_mouse_x = x;
   s_mouse_y = cur_win->m_height-1 - y;
@@ -388,7 +385,7 @@ void Window_obj::mouse_func(unsigned int button, Press press, unsigned int x,
   event->button = map_button[button];
   event->modifier = _sgal_glut_get_modifiers();
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -407,7 +404,7 @@ void Window_obj::motion_func(unsigned int x, unsigned int y)
   event->button = s_mouse_buttons;
   event->modifier = _sgal_glut_get_modifiers();
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -426,7 +423,7 @@ void Window_obj::passive_motion_func(unsigned int x, unsigned int y)
   event->button = 0;
   event->modifier = _sgal_glut_get_modifiers();
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -444,7 +441,7 @@ void Window_obj::special_func(int key, unsigned int x, unsigned int y)
   event->button = s_mouse_buttons;
   event->modifier = _sgal_glut_get_modifiers();
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -462,7 +459,7 @@ void Window_obj::special_up_func(int key, unsigned int x, unsigned int y)
   event->button = s_mouse_buttons;
   event->modifier = _sgal_glut_get_modifiers();
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) cur_win->process_events();
 }
@@ -694,7 +691,7 @@ void Window_obj::timer_callback_func(void * value)
   Event * event = win->add_event();
   event->id = Event::TIMER;
 #endif
-  
+
   // Notify app if in BLOCK mode
   if (!s_free_run) win->process_events();
 }
@@ -720,7 +717,7 @@ void Window_obj::update_sensors(Node * root, Camera * cam)
 
   static int mouse_down = 0;
   int do_update;
-  
+
   // See if mouse button is pressed or released.
   const Event_array & events = cur_win->_event_list;
   for (i = 0; i < events.get_count(); ++i) {
@@ -742,7 +739,7 @@ void Window_obj::update_sensors(Node * root, Camera * cam)
     }
     if (do_update)
     {
-      Pick_sensor::update_sensors(root, cam, events[i]->x, events[i]->y, 
+      Pick_sensor::update_sensors(root, cam, events[i]->x, events[i]->y,
                                   mouse_down);
     }
   }

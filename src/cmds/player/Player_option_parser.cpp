@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Player_option_parser.cpp 6010 2008-03-05 13:37:35Z ophirset $
-// $Revision: 6010 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(PLAYER_CONTROL)

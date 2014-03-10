@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 4966 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Vector2sh.hpp"
@@ -25,35 +22,35 @@ using namespace SGAL;
 
 /*!
  */
-short & Vector2sh::operator[](int i) 
+short & Vector2sh::operator[](int i)
 {
   return m_vector[i];
 }
 
 /*!
  */
-short Vector2sh::operator[](int i) const 
+short Vector2sh::operator[](int i) const
 {
   return m_vector[i];
 }
 
 /*!
  */
-void Vector2sh::set(short a, short b) 
+void Vector2sh::set(short a, short b)
 {
-  m_vector[0] = a; m_vector[1] = b; 
+  m_vector[0] = a; m_vector[1] = b;
 }
 
 /*!
  */
-void Vector2sh::get(short *a, short *b)  const 
+void Vector2sh::get(short *a, short *b)  const
 {
   *a = m_vector[0]; *b = m_vector[1];
 }
 
 /*!
  */
-short Vector2sh::get(int i) const 
+short Vector2sh::get(int i) const
 {
   if (i == 0 || i == 1) return m_vector[i];
   //! \todo should warn!
@@ -62,7 +59,7 @@ short Vector2sh::get(int i) const
 
 /*!
  */
-void Vector2sh::set(const Vector2sh & v) 
+void Vector2sh::set(const Vector2sh & v)
 {
   m_vector[0] = v.m_vector[0]; m_vector[1] = v.m_vector[1];
 }
@@ -76,10 +73,10 @@ void Vector2sh::get(Vector2sh & v) const
 
 /*!
  */
-void Vector2sh::add(const Vector2sh & v1, const Vector2sh & v2) 
-{ 
-  m_vector[0] = v1[0] + v2[0]; 
-  m_vector[1] = v1[1] + v2[1]; 
+void Vector2sh::add(const Vector2sh & v1, const Vector2sh & v2)
+{
+  m_vector[0] = v1[0] + v2[0];
+  m_vector[1] = v1[1] + v2[1];
 }
 
 /*!
@@ -105,54 +102,54 @@ Vector2sh::Vector2sh(const Vector2sh & v)
 
 /*!
  */
-void Vector2sh::sub(const Vector2sh & v1, const Vector2sh & v2) 
-{ 
-  m_vector[0] = v1[0] - v2[0]; 
-  m_vector[1] = v1[1] - v2[1]; 
+void Vector2sh::sub(const Vector2sh & v1, const Vector2sh & v2)
+{
+  m_vector[0] = v1[0] - v2[0];
+  m_vector[1] = v1[1] - v2[1];
 }
 
 /*!
  */
-void Vector2sh::sub(const Vector2sh & v) 
-{ 
-  m_vector[0] -= v[0]; 
-  m_vector[1] -= v[1]; 
+void Vector2sh::sub(const Vector2sh & v)
+{
+  m_vector[0] -= v[0];
+  m_vector[1] -= v[1];
 }
 
 /*!
  */
-void Vector2sh::add(const Vector2sh & v) 
-{ 
-  m_vector[0] += v[0]; 
-  m_vector[1] += v[1]; 
+void Vector2sh::add(const Vector2sh & v)
+{
+  m_vector[0] += v[0];
+  m_vector[1] += v[1];
 }
 
 /*!
  */
-bool Vector2sh::equal(const Vector2sh & v) const 
-{ 
+bool Vector2sh::equal(const Vector2sh & v) const
+{
   return (m_vector[0] == v[0] && m_vector[1] == v[1]);
 }
 
 /*!
  */
-void Vector2sh::negate(const Vector2sh & v) 
-{ 
+void Vector2sh::negate(const Vector2sh & v)
+{
   m_vector[0] = -v[0];
-  m_vector[1] = -v[1]; 
+  m_vector[1] = -v[1];
 }
 
 /*!
  */
-short Vector2sh::dot(const Vector2sh & v) const 
+short Vector2sh::dot(const Vector2sh & v) const
 {
   return (m_vector[0] * v[0] + m_vector[1] * v[1]);
 }
 
 /*!
  */
-short Vector2sh::sqr_distance(const Vector2sh & v) const 
-{ 
+short Vector2sh::sqr_distance(const Vector2sh & v) const
+{
   short d0, d1;
   d0 = m_vector[0] - v.m_vector[0];
   d1 = m_vector[1] - v.m_vector[1];
@@ -161,14 +158,14 @@ short Vector2sh::sqr_distance(const Vector2sh & v) const
 
 /*!
  */
-Vector2sh & Vector2sh::operator=(const Vector2sh & v) 
+Vector2sh & Vector2sh::operator=(const Vector2sh & v)
 {
   set(v); return *this;
 }
 
 /*!
  */
-Vector2sh & Vector2sh::operator=(short v) 
+Vector2sh & Vector2sh::operator=(short v)
 {
   m_vector[0] = v; m_vector[1] = v;
   return *this;
@@ -183,7 +180,7 @@ bool Vector2sh::operator==(const Vector2sh & v) const
 
 /*!
  */
-bool Vector2sh::operator!=(const Vector2sh & v) const 
+bool Vector2sh::operator!=(const Vector2sh & v) const
 {
   return !equal(v);
 }

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -303,19 +300,25 @@ void Cylinder::init_prototype()
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Cylinder::radius_handle);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
+                                           RULE_EXPOSED_FIELD,
+                                           radius_func,
                                            exec_func));
 
   // height
   Float_handle_function height_func =
     static_cast<Float_handle_function>(&Cylinder::height_handle);
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
+                                           RULE_EXPOSED_FIELD,
+                                           height_func,
                                            exec_func));
 
   // side
   Boolean_handle_function is_body_visible_func =
     static_cast<Boolean_handle_function>(&Cylinder::is_body_visible_handle);
-  s_prototype->add_field_info(new SF_bool(SIDE, "side", is_body_visible_func,
+  s_prototype->add_field_info(new SF_bool(SIDE, "side",
+                                          RULE_EXPOSED_FIELD,
+                                          is_body_visible_func,
                                           exec_func));
 
   // bottom
@@ -323,6 +326,7 @@ void Cylinder::init_prototype()
     static_cast<Boolean_handle_function>
     (&Cylinder::is_bottom_visible_handle);
   s_prototype->add_field_info(new SF_bool(BOTTOM, "bottom",
+                                          RULE_EXPOSED_FIELD,
                                           is_bottom_visible_func, exec_func));
 
   // Rendering required
@@ -330,7 +334,9 @@ void Cylinder::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Boolean_handle_function is_top_visible_func =
     static_cast<Boolean_handle_function>(&Cylinder::is_top_visible_handle);
-  s_prototype->add_field_info(new SF_bool(TOP, "top", is_top_visible_func,
+  s_prototype->add_field_info(new SF_bool(TOP, "top",
+                                          RULE_EXPOSED_FIELD,
+                                          is_top_visible_func,
                                           exec_func));
 
   // slices
@@ -338,7 +344,9 @@ void Cylinder::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Cylinder::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
+                                          RULE_EXPOSED_FIELD,
+                                          slices_func,
                                           exec_func));
 
   // stacks
@@ -346,7 +354,9 @@ void Cylinder::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Cylinder::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
+                                          RULE_EXPOSED_FIELD,
+                                          stacks_func,
                                           exec_func));
 }
 

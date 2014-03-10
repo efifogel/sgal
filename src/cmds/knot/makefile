@@ -56,6 +56,10 @@ ifdef GL2PS_INC_DIR
 LCPPINCS+= -I"$(GL2PS_INC_DIR)"
 endif
 
+ifdef V8_INC_DIR
+LCPPINCS+= -I"$(V8_INC_DIR)"
+endif
+
 ifeq ($(DE), msvc)
 LCPPDEFS+= -DBOOST_ALL_DYN_LINK
 LCPPOPTS+= -GR  # Enables run-time type information (RTTI).
@@ -81,6 +85,12 @@ endif
 ifdef GL2PS_LIB_DIR
 LLDOPTS+= -libpath:"$(GL2PS_LIB_DIR)"
 endif
+ifdef V8_LIB_DIR
+LLDOPTS+= -libpath:"$(V8_LIB_DIR)"
+endif
+ifdef ICU_LIB_DIR
+LLDOPTS+= -libpath:"$(ICU_LIB_DIR)"
+endif
 
 ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= SGAL.lib
@@ -103,10 +113,24 @@ LCPPOPTS+= -Wall
 # LCPPOPTS+= -Werror
 # LCPPOPTS+= -pedantic
 LLDOPTS+= -rdynamic -ldl
+ifdef V8_LIB_DIR
+LLDOPTS+= -L$(V8_LIB_DIR)
+endif
+ifdef ICU_LIB_DIR
+LLDOPTS+= -L$(ICU_LIB_DIR)
+endif
 
 ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= -lSGAL
 endif
+
+# V8 engine stuff:
+LLDLIBS+= -lv8_base.x64
+LLDLIBS+= -lv8_nosnapshot.x64
+LLDLIBS+= -licui18n
+LLDLIBS+= -licuuc
+LLDLIBS+= -licudata
+LLDLIBS+= -lrt
 
 LLDLIBS+= -lgl2ps
 LLDLIBS+= -lMagick++

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -45,7 +42,7 @@ const Uint Sphere::s_def_slices(16);
 
 REGISTER_TO_FACTORY(Sphere, "Sphere");
 
-/*! Constructor */
+//! \brief constructor.
 Sphere::Sphere(Boolean proto) :
   Geometry(proto),
   m_dirty(true),
@@ -56,10 +53,10 @@ Sphere::Sphere(Boolean proto) :
   m_slices(s_def_slices)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Sphere::~Sphere() { gluDeleteQuadric(m_sphere); }
 
-/*! \brief drawss the sphere. */
+//! \brief drawss the sphere.
 void Sphere::draw(Draw_action* /* action */)
 {
   if (is_dirty()) init();
@@ -76,7 +73,7 @@ void Sphere::draw(Draw_action* /* action */)
   glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the object in selection mode. */
+//! \brief draws the object in selection mode.
 void Sphere::isect(Isect_action* /* action */)
 {
   if (is_dirty()) init();
@@ -86,7 +83,7 @@ void Sphere::isect(Isect_action* /* action */)
   glPopMatrix();
 }
 
-/*! Initialize the quadric object */
+//! Initialize the quadric object.
 void Sphere::init()
 {
   m_sphere = gluNewQuadric();
@@ -106,7 +103,7 @@ Boolean Sphere::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Sphere::set_attributes(Element * elem)
 {
   Geometry::set_attributes(elem);
@@ -186,7 +183,7 @@ Attribute_list Sphere::get_attributes()
 }
 #endif
 
-/*! \brief initilalizes the prototype object in the class. */
+//! \brief initilalizes the prototype object in the class.
 void Sphere::init_prototype()
 {
   if (s_prototype) return;
@@ -198,7 +195,9 @@ void Sphere::init_prototype()
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Sphere::radius_handle);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
+                                           RULE_EXPOSED_FIELD,
+                                           radius_func,
                                            exec_func));
 
   // Rendering required
@@ -206,21 +205,25 @@ void Sphere::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Sphere::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func));
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
+                                          RULE_EXPOSED_FIELD,
+                                          stacks_func));
 
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Sphere::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func));
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
+                                          RULE_EXPOSED_FIELD,
+                                          slices_func));
 }
 
-/*! \brief deletes the sphere prototype. */
+//! \brief deletes the sphere prototype.
 void Sphere::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the sphere prototype. */
+//! \brief obtains the sphere prototype.
 Container_proto* Sphere::get_prototype()
 {
   if (s_prototype == NULL) Sphere::init_prototype();

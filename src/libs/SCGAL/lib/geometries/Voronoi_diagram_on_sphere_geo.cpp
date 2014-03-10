@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Voronoi_diagram_on_sphere_geo.cpp 7792 2009-07-19 13:31:00Z efif $
-// $Revision: 7792 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -117,6 +114,7 @@ void Voronoi_diagram_on_sphere_geo::init_prototype()
     reinterpret_cast<Uint_handle_function>
     (&Voronoi_diagram_on_sphere_geo::site_style_handle);
   s_prototype->add_field_info(new SF_uint(SITE_STYLE_ID, "siteStyleId",
+                                          RULE_EXPOSED_FIELD,
                                           site_style_func, exec_func));
 }
 

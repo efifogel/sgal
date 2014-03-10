@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7791 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -58,7 +55,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Nef_gaussian_map_geo::s_tag = "NefGaussianMap";
-SGAL::Container_proto* Nef_gaussian_map_geo::s_prototype(NULL);
+SGAL::Container_proto* Nef_gaussian_map_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Nef_gaussian_map_geo, "Nef_gaussian_map_geo");
 
@@ -82,14 +79,14 @@ const Vector3f Nef_gaussian_map_geo::s_def_marked_facet_color(0, 0, 0.5f);
 const Float Nef_gaussian_map_geo::s_def_vertex_radius_scale(0.06f);
 const Float Nef_gaussian_map_geo::s_def_edge_radius_scale(0.04f);
 
-/*! Constructor. */
+//! \brief constructor.
 Nef_gaussian_map_geo::Nef_gaussian_map_geo(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
   m_bb_is_pre_set(false),
   m_time(0),
   m_minkowski_sum(false),
-  m_sphere(NULL),
+  m_sphere(nullptr),
   m_draw_dual(s_def_draw_dual), m_draw_primal(!s_def_draw_dual),
   m_draw_dual_opaque(s_def_draw_dual_opaque),
   m_draw_dual_haloed(s_def_draw_dual_haloed),
@@ -117,16 +114,16 @@ Nef_gaussian_map_geo::Nef_gaussian_map_geo(Boolean proto) :
   m_sphere->set_slices(32);
 }
 
-/*! Destructor. */
+//! \brief destructor.
 Nef_gaussian_map_geo::~Nef_gaussian_map_geo()
 {
   if (m_sphere) {
     delete m_sphere;
-    m_sphere = NULL;
+    m_sphere = nullptr;
   }
 }
 
-/*! \brief cleans the polyhedron data structure. */
+//! \brief cleans the polyhedron data structure.
 void Nef_gaussian_map_geo::clean_polyhedron()
 {
   // Construct the polyhedron:
@@ -151,7 +148,7 @@ void Nef_gaussian_map_geo::clean_polyhedron()
   m_dirty_polyhedron = false;
 }
 
-/*! \brief cleans the nef polyhedron data structure. */
+//! \brief cleans the nef polyhedron data structure.
 void Nef_gaussian_map_geo::clean()
 {
   clock_t start_time = clock();
@@ -181,7 +178,7 @@ void Nef_gaussian_map_geo::clean()
   Mesh_set::clean();
 }
 
-/*! \brief clears the internal representation. */
+//! \brief clears the internal representation.
 void Nef_gaussian_map_geo::clear()
 {
   m_polyhedron.clear();
@@ -190,10 +187,10 @@ void Nef_gaussian_map_geo::clear()
   Mesh_set::clear();
 }
 
-/*! \brief */
+//! \brief
 void Nef_gaussian_map_geo::cull(SGAL::Cull_context& cull_context) {}
 
-/*! \brief draws the intermediate polyhedron (for debugging purpose). */
+//! \brief draws the intermediate polyhedron (for debugging purpose).
 void Nef_gaussian_map_geo::draw_polyhedron(Draw_action* action)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
@@ -226,7 +223,7 @@ void Nef_gaussian_map_geo::draw_polyhedron(Draw_action* action)
   }
 }
 
-/*! \brief draws the dual edges. */
+//! \brief draws the dual edges.
 void Nef_gaussian_map_geo::draw_dual_edges()
 {
   glColor3fv((float*)&m_dual_line_color);
@@ -584,14 +581,14 @@ void Nef_gaussian_map_geo::draw_primal(Draw_action* action)
   */
 }
 
-/*! \brief draws the nef polyhedron. */
+//! \brief draws the nef polyhedron.
 void Nef_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
 {
   if (m_draw_dual) draw_dual(action);
   else draw_primal(action);
 }
 
-/*! \brief */
+//! \brief
 void Nef_gaussian_map_geo::isect(SGAL::Isect_action* action)
 {
   if (is_dirty()) clean();
@@ -771,7 +768,7 @@ void Nef_gaussian_map_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Nef_gaussian_map_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -787,6 +784,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL, "drawDual",
+                                          RULE_EXPOSED_FIELD,
                                           draw_dual_func, exec_func));
 
   // drawDualSphere
@@ -794,6 +792,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_sphere_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_SPHERE, "drawDualSphere",
+                                          RULE_EXPOSED_FIELD,
                                           draw_dual_sphere_func));
 
   // trueDrawPrimal
@@ -801,10 +800,12 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL, "trueDrawPrimal",
+                                          RULE_EXPOSED_FIELD,
                                           draw_primal_func));
 
   // trueDrawDual
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL, "trueDrawDual",
+                                          RULE_EXPOSED_FIELD,
                                           draw_dual_func));
 
   // drawDualOpaque
@@ -812,6 +813,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_opaque_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_OPAQUE, "drawDualOpaque",
+                                          RULE_EXPOSED_FIELD,
                                           draw_dual_opaque_func));
 
   // drawDualHaloed
@@ -819,6 +821,7 @@ void Nef_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Nef_gaussian_map_geo::draw_dual_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_HALOED, "drawDualHaloed",
+                                          RULE_EXPOSED_FIELD,
                                           draw_dual_haloed_func));
 
   // increaseVertexIndex
@@ -829,6 +832,7 @@ void Nef_gaussian_map_geo::init_prototype()
     (&Nef_gaussian_map_geo::increase_vertex_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
                                           "increaseVertexIndex",
+                                          RULE_EXPOSED_FIELD,
                                           increase_vertex_index_func,
                                           exec_func));
 
@@ -840,6 +844,7 @@ void Nef_gaussian_map_geo::init_prototype()
     (&Nef_gaussian_map_geo::increase_edge_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
                                           "increaseEdgeIndex",
+                                          RULE_EXPOSED_FIELD,
                                           increase_edge_index_func,
                                           exec_func));
 
@@ -851,6 +856,7 @@ void Nef_gaussian_map_geo::init_prototype()
     (&Nef_gaussian_map_geo::increase_facet_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
                                           "increaseFacetIndex",
+                                          RULE_EXPOSED_FIELD,
                                           increase_facet_index_func,
                                           exec_func));
 
@@ -859,25 +865,26 @@ void Nef_gaussian_map_geo::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Nef_gaussian_map_geo::ngm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      RULE_EXPOSED_FIELD,
                                                       ngm_nodes_func));
 
 }
 
-/*! \brief */
+//! \brief
 void Nef_gaussian_map_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief */
+//! \brief
 SGAL::Container_proto* Nef_gaussian_map_geo::get_prototype()
 {
   if (!s_prototype) Nef_gaussian_map_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief prints statistics. */
+//! \brief prints statistics.
 void Nef_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
@@ -886,7 +893,7 @@ void Nef_gaussian_map_geo::print_stat()
             << std::endl;
 }
 
-/*! \brief raises the flag that indicates that the sphere bound changed. */
+//! \brief raises the flag that indicates that the sphere bound changed.
 void Nef_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_dual;
@@ -902,7 +909,7 @@ void Nef_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
   }
 }
 
-/*! \brief increase the vertex index. */
+//! \brief increase the vertex index.
 void Nef_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
 {
   m_marked_vertex_index++;
@@ -910,7 +917,7 @@ void Nef_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
     m_marked_vertex_index = 0;
 }
 
-/*! \brief increase the face index. */
+//! \brief increase the face index.
 void Nef_gaussian_map_geo::increase_edge_index(Field_info* field_info)
 {
   m_marked_edge_index++;
@@ -918,7 +925,7 @@ void Nef_gaussian_map_geo::increase_edge_index(Field_info* field_info)
     m_marked_edge_index = 0;
 }
 
-/*! \brief increases the face index. */
+//! \brief increases the face index.
 void Nef_gaussian_map_geo::increase_facet_index(Field_info* field_info)
 {
   m_marked_facet_index++;
@@ -926,7 +933,7 @@ void Nef_gaussian_map_geo::increase_facet_index(Field_info* field_info)
     m_marked_facet_index = 0;
 }
 
-/*! \brief obtains he Nef_gaussian_map. */
+//! \brief obtains he Nef_gaussian_map.
 Nef_gaussian_map_geo::Nef_gaussian_map& Nef_gaussian_map_geo::get_ngm()
 {
   if (m_dirty) clean();

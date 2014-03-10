@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -599,37 +596,49 @@ void Image_base::init_prototype()
 
   Uint_handle_function width_func =
     static_cast<Uint_handle_function>(&Image_base::width_handle);
-  s_prototype->add_field_info(new SF_uint(WIDTH, "width", width_func,
+  s_prototype->add_field_info(new SF_uint(WIDTH, "width",
+                                          RULE_EXPOSED_FIELD,
+                                          width_func,
                                           s_def_width));
 
   Uint_handle_function height_func =
     static_cast<Uint_handle_function>(&Image_base::height_handle);
-  s_prototype->add_field_info(new SF_uint(HEIGHT, "height", height_func,
+  s_prototype->add_field_info(new SF_uint(HEIGHT, "height",
+                                          RULE_EXPOSED_FIELD,
+                                          height_func,
                                           s_def_height));
 
   Uint_handle_function format_func =
     reinterpret_cast<Uint_handle_function>(&Image_base::format_handle);
-  s_prototype->add_field_info(new SF_uint(FORMAT, "format", format_func,
+  s_prototype->add_field_info(new SF_uint(FORMAT, "format",
+                                          RULE_EXPOSED_FIELD,
+                                          format_func,
                                           s_def_format));
 
   Boolean_handle_function flip_func =
     static_cast<Boolean_handle_function>(&Image_base::flip_handle);
-  s_prototype->add_field_info(new SF_bool(FLIP, "flip", flip_func,
+  s_prototype->add_field_info(new SF_bool(FLIP, "flip",
+                                          RULE_EXPOSED_FIELD,
+                                          flip_func,
                                           s_def_flip));
 
   Float_handle_function rotation_func =
     static_cast<Float_handle_function>(&Image_base::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
+                                           RULE_EXPOSED_FIELD,
                                            rotation_func, s_def_rotation));
 
   Boolean_handle_function alpha_func =
     static_cast<Boolean_handle_function>(&Image_base::alpha_handle);
-  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha", alpha_func,
+  s_prototype->add_field_info(new SF_bool(ALPHA, "alpha",
+                                          RULE_EXPOSED_FIELD,
+                                          alpha_func,
                                           s_def_alpha));
 
   Float_handle_function transparency_func =
     static_cast<Float_handle_function>(&Image_base::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
+                                           RULE_EXPOSED_FIELD,
                                            transparency_func,
                                            s_def_transparency));
 }

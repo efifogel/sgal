@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -29,7 +26,7 @@ SGAL_BEGIN_NAMESPACE
 Trace * Trace::s_instance = 0;
 
 /*! Returns a pointer to the factory and makes sure only one instance exits */
-Trace * Trace::get_instance() 
+Trace * Trace::get_instance()
 {
   if (!s_instance) s_instance = new Trace();
   return s_instance;

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1309 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /**
@@ -38,7 +35,7 @@ SAI::SAI(Scene_graph* sceneGraph):
   m_time(Execution_coordinator::get_sceneTime())
 {}
 
-/*! Destructor */ 
+/*! Destructor */
 SAI::~SAI()
 {
   TRACE_MSG(Trace::DESTRUCTOR, "~SAI ...");
@@ -51,7 +48,7 @@ SAI::~SAI()
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
-/** 
+/**
   Returns a suitable SAI node for a given node name
   Searches for a node with the given name in m_nodes.
   If found returns it.
@@ -74,7 +71,7 @@ SAI_node_services* SAI::get_node(const String& name)
         if (container==ENULL)
             return ENULL;
 
-      // Allocate a new SAI node instance - initialize it with the suitable 
+      // Allocate a new SAI node instance - initialize it with the suitable
       // scene graph container pointer
       node = new SAI_node(container,this);
 
@@ -88,7 +85,7 @@ SAI_node_services* SAI::get_node(const String& name)
 }
 
 
-/** 
+/**
   Returns a suitable SAI node for a given container
   @param cont (in) a pointer to the suitable container
 */
@@ -107,8 +104,8 @@ SAI_node_services* SAI::get_node(ContainerPnt cont)
     }
     else
     {
- 
-  // Allocate a new SAI node instance - initialize it with the suitable 
+
+  // Allocate a new SAI node instance - initialize it with the suitable
   // scene graph container pointer
   node = new SAI_node(cont,this);
 
@@ -119,14 +116,14 @@ SAI_node_services* SAI::get_node(ContainerPnt cont)
 
     node->IncrementReference();
 
-  return node;  
-  
+  return node;
+
 }
 
 
 
-/** 
-  Decrements the reference counter of the node with the given name - 
+/**
+  Decrements the reference counter of the node with the given name -
   if after decrementing it is zero - deletes the node's instance
   @param name (in) the scene graph name of the requested node
 */
@@ -157,7 +154,7 @@ void SAI::DisposeNode(const String& name)
   Create a new node in the scene graph
   @param type (in) type of the node which is going to be created
   @param name (in) name for the node which is going to be created
-  @param father (in) name of the node which should be the father of the new 
+  @param father (in) name of the node which should be the father of the new
                      created node
 */
 Boolean SAI::CreateNode(const String& type, const String& name, const String& father)
@@ -189,7 +186,7 @@ Boolean SAI::CreateNode(const String& type, const String& name, const String& fa
     fatherNode = m_sceneGraph->get_container(father);
 
   // Add the new created node to the scene graph
-  m_sceneGraph->AddToScene(fatherNode, node);  
+  m_sceneGraph->AddToScene(fatherNode, node);
 
   return true;
 }
@@ -218,7 +215,7 @@ void SAI::SignalCascadeStart()
   if ( m_eventListenerList.empty())
     return;
 
-  EventListenerListType::iterator eventListenerIterator = 
+  EventListenerListType::iterator eventListenerIterator =
     m_eventListenerList.begin();
 
   // Loop over the connected event listeners
@@ -246,7 +243,7 @@ void SAI::SignalEventListeners()
   if ( m_eventListenerList.empty())
     return;
 
-  EventListenerListType::iterator eventListenerIterator = 
+  EventListenerListType::iterator eventListenerIterator =
     m_eventListenerList.begin();
 
   // Loop over the connected event listeners
@@ -260,7 +257,7 @@ void SAI::SignalEventListeners()
 
 
 /**
-  Activates CascadeIntoScene_graph for every SAI field in the 
+  Activates CascadeIntoScene_graph for every SAI field in the
   m_updatedFieldsLists.
   Removes each such field from m_updatedFieldsLists until it is empty.
 */
@@ -268,21 +265,21 @@ void SAI::CascadeIntoSGUpdatedFields()
 {
     // lock m_fieldsUpdatesCS (will unlock automaticaly at end of function)
     TAutoLock AutoLock(&m_fieldsUpdatesCS);
-    
+
     // If no list of fields exists return
   if ( m_updatedFieldsLists.empty())
     return;
 
   // Loop over the updated fields lists
-  SAIFieldListsType::iterator FieldsListsIterator = 
+  SAIFieldListsType::iterator FieldsListsIterator =
     m_updatedFieldsLists.begin();
 
   while (FieldsListsIterator != m_updatedFieldsLists.end())
   {
         SAIFieldListType* FieldsList = (*FieldsListsIterator);
-      SAIFieldListType::iterator FieldIterator = 
+      SAIFieldListType::iterator FieldIterator =
         FieldsList->begin();
-        
+
         // for each list - loop over the fields
         while (FieldIterator != FieldsList->end())
         {
@@ -293,7 +290,7 @@ void SAI::CascadeIntoSGUpdatedFields()
     FieldsListsIterator++;
 
         // After the cascade of the current list (pointed by FieldsListIterator)
-        // Remove all items of the list 
+        // Remove all items of the list
         FieldsList->clear();
         // Delete the list
         delete FieldsList;
@@ -326,7 +323,7 @@ Scene_time SAI::get_time() const
 
 
 /**
-  Registers interest in the scene graph general 
+  Registers interest in the scene graph general
   events - cascade start, cascade end ...
   Adds the given event listener to the event listeners list.
 */
@@ -363,7 +360,7 @@ void SAI::add_update(SAI_field* field)
   fields in the scene graph.
   This function starts a new buffer of updated fields which will be cascade
   into the scene graph only after EndUpdate() will be called.
-  All set_value() on SAI fields should be called between a call to 
+  All set_value() on SAI fields should be called between a call to
   BeginUpdate() and a call to EndUpdate().
   The function allocated a new list of updated fields.
 */
@@ -379,16 +376,16 @@ void SAI::BeginUpdate()
         return;
     }
 
-    m_currentUpdateFields = new SAIFieldListType; 
-        
+    m_currentUpdateFields = new SAIFieldListType;
+
 }
 
 
 /**
   Activated by external users of the SAI after ending the update of fields
   in the scene graph - only after EndUpdate is activated the new values
-  which were set to SAI fields will be cascade into the scene graph. 
-  All set_value() on SAI fields should be called between a call to 
+  which were set to SAI fields will be cascade into the scene graph.
+  All set_value() on SAI fields should be called between a call to
   BeginUpdate() and a call to EndUpdate().
   The function takes the list pointed by m_currentUpdateFields and
   adds it to m_updatedFieldsLists.
@@ -399,13 +396,13 @@ void SAI::EndUpdate()
 {
     // Lock m_fieldsUpdatesCS (will unlock automaticaly at end of function)
     TAutoLock AutoLock(&m_fieldsUpdatesCS);
-   
+
     // Insert m_currentUpdateFields in the end of the list
     m_updatedFieldsLists.insert(m_updatedFieldsLists.end(),
                                     m_currentUpdateFields);
 
     // Set m_currentUpdateFields with ENULL
-    m_currentUpdateFields = ENULL;   
+    m_currentUpdateFields = ENULL;
 }
 
 
@@ -423,10 +420,10 @@ void SAI::RegisterNodeCreationInterest(const String& type,
 
     ContainerList containers;
     m_sceneGraph->get_containers(type,containers);
-        
-    for ( ContainerListIter iter=containers.begin(); 
+
+    for ( ContainerListIter iter=containers.begin();
       iter!=containers.end();
-          ++iter ) 
+          ++iter )
     {
     Container* c = *iter;
         eventListener->EventActivated(

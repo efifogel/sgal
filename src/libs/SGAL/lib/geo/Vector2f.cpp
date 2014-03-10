@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 10791 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Math_defs.hpp"
@@ -47,35 +44,35 @@ Vector2f::Vector2f(const Vector2f & v)
 
 /*!
  */
-Float & Vector2f::operator[](int i) 
+Float & Vector2f::operator[](int i)
 {
   return m_vector[i];
 }
 
 /*!
  */
-Float Vector2f::operator[](int i) const 
+Float Vector2f::operator[](int i) const
 {
   return m_vector[i];
 }
 
 /*!
  */
-void Vector2f::set(Float a, Float b) 
+void Vector2f::set(Float a, Float b)
 {
-  m_vector[0] = a; m_vector[1] = b; 
+  m_vector[0] = a; m_vector[1] = b;
 }
 
 /*!
  */
-void Vector2f::get(Float *a, Float *b)  const 
+void Vector2f::get(Float *a, Float *b)  const
 {
   *a = m_vector[0]; *b = m_vector[1];
 }
 
 /*!
  */
-Float Vector2f::get(int i) const 
+Float Vector2f::get(int i) const
 {
   if (i == 0 || i == 1) return m_vector[i];
   else return 0.0f;   // !!!!!!!! SHould WARN !!!!!!!!!!
@@ -83,7 +80,7 @@ Float Vector2f::get(int i) const
 
 /*!
  */
-void Vector2f::set(const Vector2f &v) 
+void Vector2f::set(const Vector2f &v)
 {
   m_vector[0] = v.m_vector[0]; m_vector[1] = v.m_vector[1];
 }
@@ -97,40 +94,40 @@ void Vector2f::get(Vector2f &v) const
 
 /*!
  */
-void Vector2f::add(const Vector2f & _v) 
-{ 
-  m_vector[0] += _v[0]; 
-  m_vector[1] += _v[1]; 
+void Vector2f::add(const Vector2f & _v)
+{
+  m_vector[0] += _v[0];
+  m_vector[1] += _v[1];
 }
 
 /*!
  */
-void Vector2f::add(const Vector2sh & _v) 
-{ 
-  m_vector[0] += _v[0]; 
-  m_vector[1] += _v[1]; 
+void Vector2f::add(const Vector2sh & _v)
+{
+  m_vector[0] += _v[0];
+  m_vector[1] += _v[1];
 }
 
 /*!
  */
-void Vector2f::scale(Float _s) 
-{ 
+void Vector2f::scale(Float _s)
+{
   m_vector[0] *= _s ;
   m_vector[1] *= _s ;
 }
 
 /*!
  */
-void Vector2f::scale(Float _s, const Vector2f & _v) 
-{ 
+void Vector2f::scale(Float _s, const Vector2f & _v)
+{
   m_vector[0] = _s * _v[0];
   m_vector[1] = _s * _v[1];
 }
 
 /*!
  */
-bool Vector2f::equal(const Vector2f &  _v) const 
-{ 
+bool Vector2f::equal(const Vector2f &  _v) const
+{
   return (m_vector[0] == _v[0] && m_vector[1] == _v[1]);
 }
 
@@ -143,21 +140,21 @@ bool Vector2f::operator==(const Vector2f & v) const
 
 /*!
  */
-bool Vector2f::operator!=(const Vector2f & v) const 
+bool Vector2f::operator!=(const Vector2f & v) const
 {
   return !equal(v);
 }
 
 /*!
  */
-Vector2f & Vector2f::operator=(const Vector2f & v) 
+Vector2f & Vector2f::operator=(const Vector2f & v)
 {
   set(v); return *this;
 }
 
 /*!
  */
-Vector2f & Vector2f::operator=(Float v) 
+Vector2f & Vector2f::operator=(Float v)
 {
   m_vector[0] = v; m_vector[1] = v;
   return *this;
@@ -167,9 +164,9 @@ Vector2f & Vector2f::operator=(Float v)
  */
 void Vector2f::round()
 {
-  m_vector[0] = (float) ((int)m_vector[0]); 
-  m_vector[1] = (float) ((int)m_vector[1]); 
-  
+  m_vector[0] = (float) ((int)m_vector[0]);
+  m_vector[1] = (float) ((int)m_vector[1]);
+
 }
 
 /*!
@@ -182,63 +179,63 @@ void Vector2f::div(float c, const Vector2f & v)
 
 /*!
  */
-void Vector2f::sub(const Vector2f & v) 
-{ 
-  m_vector[0] -= v[0]; 
-  m_vector[1] -= v[1]; 
+void Vector2f::sub(const Vector2f & v)
+{
+  m_vector[0] -= v[0];
+  m_vector[1] -= v[1];
 }
 
 /*!
  */
-void Vector2f::negate(const Vector2f & v) 
-{ 
+void Vector2f::negate(const Vector2f & v)
+{
   m_vector[0] = -v[0];
-  m_vector[1] = -v[1]; 
+  m_vector[1] = -v[1];
 }
 
 /*!
  */
-Float Vector2f::dot(const Vector2f & v) const 
+Float Vector2f::dot(const Vector2f & v) const
 {
   return (m_vector[0] * v[0] + m_vector[1] * v[1]);
 }
 
 /*!
  */
-void Vector2f::add(const Vector2f & v1, const Vector2f & v2) 
-{ 
-  m_vector[0] = v1[0] + v2[0]; 
-  m_vector[1] = v1[1] + v2[1]; 
+void Vector2f::add(const Vector2f & v1, const Vector2f & v2)
+{
+  m_vector[0] = v1[0] + v2[0];
+  m_vector[1] = v1[1] + v2[1];
 }
 
 /*!
  */
-void Vector2f::sub(const Vector2f & v1, const Vector2f & v2) 
-{ 
-  m_vector[0] = v1[0] - v2[0]; 
-  m_vector[1] = v1[1] - v2[1]; 
+void Vector2f::sub(const Vector2f & v1, const Vector2f & v2)
+{
+  m_vector[0] = v1[0] - v2[0];
+  m_vector[1] = v1[1] - v2[1];
 }
 
 void Vector2f::add_scaled(const Vector2f & v1, Float s,
-                          const Vector2f & v2) 
-{ 
-  m_vector[0] = v1[0] + s * v2[0]; 
-  m_vector[1] = v1[1] + s * v2[1]; 
+                          const Vector2f & v2)
+{
+  m_vector[0] = v1[0] + s * v2[0];
+  m_vector[1] = v1[1] + s * v2[1];
 }
 
 /*!
  */
 void Vector2f::combine(Float a, const Vector2f & v1,
-                       Float b, const Vector2f & v2) 
-{ 
-  m_vector[0] = a * v1[0] + b * v2[0]; 
-  m_vector[1] = a * v1[1] + b * v2[1]; 
+                       Float b, const Vector2f & v2)
+{
+  m_vector[0] = a * v1[0] + b * v2[0];
+  m_vector[1] = a * v1[1] + b * v2[1];
 }
 
 /*!
  */
-Float Vector2f::sqr_distance(const Vector2f & v) const 
-{ 
+Float Vector2f::sqr_distance(const Vector2f & v) const
+{
   Float d0, d1;
   d0 = m_vector[0] - v.m_vector[0];
   d1 = m_vector[1] - v.m_vector[1];

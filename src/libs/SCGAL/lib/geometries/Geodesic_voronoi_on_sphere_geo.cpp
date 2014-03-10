@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Geodesic_voronoi_on_sphere_geo.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -91,6 +88,7 @@ void Geodesic_voronoi_on_sphere_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Geodesic_voronoi_on_sphere_geo::draw_sites_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_SITES, "drawSites",
+                                          RULE_EXPOSED_FIELD,
                                           draw_sites_func));
 }
 

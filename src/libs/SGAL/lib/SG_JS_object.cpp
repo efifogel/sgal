@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /**
@@ -33,7 +30,7 @@ using namespace SGAL;
 #define PROP_PREFIX 100
 
 
-SG_JSObject::SG_JSObject(ESAIServices* SAI, 
+SG_JSObject::SG_JSObject(ESAIServices* SAI,
                SAI_node_services* node,
                // if the node is referenced as a field of its father -
                // it's name is going to be the name it has as a field
@@ -98,7 +95,7 @@ JSWClientObject::propType SG_JSObject::get_propType(int id)
     return DOUBLE;
   else if (type==SFINT32)
     return INTEGER;
-  else if (type==SFVEC2F || type==SFVEC3F || 
+  else if (type==SFVEC2F || type==SFVEC3F ||
        type==SFROTATION || type==SFVEC4F ||
        type==SFNODE)
     return OBJECT;
@@ -119,7 +116,7 @@ void SG_JSObject::get_propValue(int id, bool& value)
     assert(false);
     return;
   }
-  SAI_fieldSpecificServicesTemplate<Boolean,SFBOOL>* boolField = 
+  SAI_fieldSpecificServicesTemplate<Boolean,SFBOOL>* boolField =
     dynamic_cast<SAI_fieldSpecificServicesTemplate<Boolean,SFBOOL>*>(field);
   if (boolField==ENULL)
   {
@@ -131,14 +128,14 @@ void SG_JSObject::get_propValue(int id, bool& value)
 
 
 void SG_JSObject::SetPropValue(int id, bool value)
-{  
+{
   SAI_fieldServices* field = get_field(id);
   if (field==ENULL)
   {
     assert(false);
     return;
   }
-  SAI_fieldSpecificServicesTemplate<Boolean,SFBOOL>* boolField = 
+  SAI_fieldSpecificServicesTemplate<Boolean,SFBOOL>* boolField =
     dynamic_cast<SAI_fieldSpecificServicesTemplate<Boolean,SFBOOL>*>(field);
   if (boolField==ENULL)
   {
@@ -157,7 +154,7 @@ void SG_JSObject::get_propValue(int id, int& value)
     assert(false);
     return;
   }
-  SAI_fieldSpecificServicesTemplate<Int,SFINT32>* intField = 
+  SAI_fieldSpecificServicesTemplate<Int,SFINT32>* intField =
     dynamic_cast<SAI_fieldSpecificServicesTemplate<Int,SFINT32>*>(field);
   if (intField==ENULL)
   {
@@ -176,7 +173,7 @@ void SG_JSObject::SetPropValue(int id, int value)
     assert(false);
     return;
   }
-  SAI_fieldSpecificServicesTemplate<Int,SFINT32>* intField = 
+  SAI_fieldSpecificServicesTemplate<Int,SFINT32>* intField =
     dynamic_cast<SAI_fieldSpecificServicesTemplate<Int,SFINT32>*>(field);
   if (intField==ENULL)
   {
@@ -198,7 +195,7 @@ void SG_JSObject::get_propValue(int id, double& value)
   Int type = field->get_type();
   if (type==SFFLOAT)
   {
-    SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>* floatField = 
+    SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>* floatField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>*>(field);
     if (floatField==ENULL)
     {
@@ -209,7 +206,7 @@ void SG_JSObject::get_propValue(int id, double& value)
   }
   else if (type==SFTIME)
   {
-    SAI_fieldSpecificServicesTemplate<Scene_time,SFTIME>* timeField = 
+    SAI_fieldSpecificServicesTemplate<Scene_time,SFTIME>* timeField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Scene_time,SFTIME>*>(field);
     if (timeField==ENULL)
     {
@@ -234,7 +231,7 @@ void SG_JSObject::SetPropValue(int id, double value)
   Int type = field->get_type();
   if (type==SFFLOAT)
   {
-    SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>* floatField = 
+    SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>* floatField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>*>(field);
     if (floatField==ENULL)
     {
@@ -245,7 +242,7 @@ void SG_JSObject::SetPropValue(int id, double value)
   }
   else if (type==SFTIME)
   {
-    SAI_fieldSpecificServicesTemplate<Scene_time,SFTIME>* timeField = 
+    SAI_fieldSpecificServicesTemplate<Scene_time,SFTIME>* timeField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Scene_time,SFTIME>*>(field);
     if (timeField==ENULL)
     {
@@ -267,7 +264,7 @@ void SG_JSObject::get_propValue(int id, String& value)
     assert(false);
     return;
   }
-  SAI_fieldSpecificServicesTemplate<String,SFSTRING>* stringField = 
+  SAI_fieldSpecificServicesTemplate<String,SFSTRING>* stringField =
     dynamic_cast<SAI_fieldSpecificServicesTemplate<String,SFSTRING>*>(field);
   if (stringField==ENULL)
   {
@@ -286,7 +283,7 @@ void SG_JSObject::SetPropValue(int id, const String& value)
     assert(false);
     return;
   }
-  SAI_fieldSpecificServicesTemplate<String,SFSTRING>* stringField = 
+  SAI_fieldSpecificServicesTemplate<String,SFSTRING>* stringField =
     dynamic_cast<SAI_fieldSpecificServicesTemplate<String,SFSTRING>*>(field);
   if (stringField==ENULL)
   {
@@ -310,7 +307,7 @@ void SG_JSObject::get_propValue(int id, JSWClientObjectPnt& value)
   // Handle SFNode field
   if (type==SFNODE)
   {
-    SAI_fieldSpecificServicesTemplate<SAI_node_servicesPnt,SFNODE>* nodeField = 
+    SAI_fieldSpecificServicesTemplate<SAI_node_servicesPnt,SFNODE>* nodeField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<SAI_node_servicesPnt,SFNODE>*>(field);
     if (nodeField==ENULL)
     {
@@ -332,7 +329,7 @@ void SG_JSObject::get_propValue(int id, JSWClientObjectPnt& value)
     else
     {
       // Cast the client to SG_JSObject
-      SG_JSObject* obj = 
+      SG_JSObject* obj =
         dynamic_cast<SG_JSObject*>(nodeValue->get_client());
       if (obj==ENULL)
       {
@@ -352,7 +349,7 @@ void SG_JSObject::get_propValue(int id, JSWClientObjectPnt& value)
     else
     {
       // Cast the client to SG_JSObject
-      ESGVec_JSObject* obj = 
+      ESGVec_JSObject* obj =
         dynamic_cast<ESGVec_JSObject*>(field->get_client());
       if (obj==ENULL)
       {
@@ -378,7 +375,7 @@ void SG_JSObject::SetPropValue(int id, JSWClientObjectPnt value)
   // Handle SFNode field
   if (type==SFNODE)
   {
-    SAI_fieldSpecificServicesTemplate<SAI_node_servicesPnt,SFNODE>* nodeField = 
+    SAI_fieldSpecificServicesTemplate<SAI_node_servicesPnt,SFNODE>* nodeField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<SAI_node_servicesPnt,SFNODE>*>(genField);
     if (nodeField==ENULL)
     {
@@ -395,7 +392,7 @@ void SG_JSObject::SetPropValue(int id, JSWClientObjectPnt value)
   }
   if (type==SFVEC2F)
   {
-    SAI_fieldSpecificServicesTemplate<Vector2f,SFVEC2F>* field = 
+    SAI_fieldSpecificServicesTemplate<Vector2f,SFVEC2F>* field =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Vector2f,SFVEC2F>*>(genField);
     if (field==ENULL)
     {
@@ -409,7 +406,7 @@ void SG_JSObject::SetPropValue(int id, JSWClientObjectPnt value)
   }
   else if (type==SFVEC3F)
   {
-    SAI_fieldSpecificServicesTemplate<Vector3f,SFVEC3F>* field = 
+    SAI_fieldSpecificServicesTemplate<Vector3f,SFVEC3F>* field =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Vector3f,SFVEC3F>*>(genField);
     if (field==ENULL)
     {
@@ -425,7 +422,7 @@ void SG_JSObject::SetPropValue(int id, JSWClientObjectPnt value)
   }
   else if (type==SFVEC4F)
   {
-    SAI_fieldSpecificServicesTemplate<Vector4f,SFVEC4F>* field = 
+    SAI_fieldSpecificServicesTemplate<Vector4f,SFVEC4F>* field =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Vector4f,SFVEC4F>*>(genField);
     if (field==ENULL)
     {
@@ -443,7 +440,7 @@ void SG_JSObject::SetPropValue(int id, JSWClientObjectPnt value)
   }
   else if (type==SFROTATION)
   {
-    SAI_fieldSpecificServicesTemplate<Rotation,SFROTATION>* field = 
+    SAI_fieldSpecificServicesTemplate<Rotation,SFROTATION>* field =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Rotation,SFROTATION>*>(genField);
     if (field==ENULL)
     {

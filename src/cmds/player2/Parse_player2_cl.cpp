@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 1314 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -41,7 +38,7 @@ void Parse_player2_cl::print_help(void)
             << "\t\t\t\tscale=<scale>\n"
             << "\t\t\t\tmargin=<margin>\n"
             << std::endl;
-  
+
 }
 
 /*! Parse the viewport options */
@@ -83,6 +80,6 @@ SGAL::Int Parse_player2_cl::operator()()
      default: break;
     }
   }
-  
+
   return 0;
 }

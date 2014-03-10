@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 4966 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "Scene_graphPch.h"
@@ -109,7 +106,7 @@ void Prog_indexed_tri_set::DestroyData()
 }
 
 /**
- * Allocate the memory for the geometries for both buffers 
+ * Allocate the memory for the geometries for both buffers
  */
 void Prog_indexed_tri_set::allocate_memory()
 {
@@ -128,7 +125,7 @@ void Prog_indexed_tri_set::allocate_memory()
   m_memoryBase += vertNum*sizeof(Vector3f);
   m_coordSet = new Coord_set(vertNum);
   m_geometry.SetCoordSet(m_coordSet->get_points());
-  
+
   if ( hasTexture ) {  // FIX this for multiple uv coordinates
     if ( m_isMultipleUV ) {
       m_memoryBase += (3*triNum+vertNum)*sizeof(Vector2f);
@@ -141,7 +138,7 @@ void Prog_indexed_tri_set::allocate_memory()
     }
     m_geometry.SetTexCoordSet(m_texCoordSet->get_points());
   }
-  
+
   // --  create the indices arrays
   m_decCoordIndices = new Int[3*triNum];
   m_geometry.SetCoordIndices(m_decCoordIndices);
@@ -170,7 +167,7 @@ void Prog_indexed_tri_set::allocate_memory()
   m_decTriStripLengths = new Int[triNum+1];
   m_geometry.SetTriStripLengths(m_decTriStripLengths);
 
-  // After we have used the vertex num and the triangle num to allocate 
+  // After we have used the vertex num and the triangle num to allocate
   // the necessary memory, we zero these values and they will be reset
   // after each level with the right value for each level.
   m_geometry.set_vertexNum(0);
@@ -189,7 +186,7 @@ void Prog_indexed_tri_set::Update(Boolean is_last)
   m_executionCoordinator->AddPolygons(m_geometry.get_triangleNum() - m_currNumPolygons);
   m_currNumPolygons = m_geometry.get_triangleNum();
 
-  // allocate memory for the next level and fill in the data 
+  // allocate memory for the next level and fill in the data
   // from what the decoder has produced
   AllocateLevel();
   int currentLevel = m_coordIndicesBuffers.size() - 1;
@@ -203,7 +200,7 @@ void Prog_indexed_tri_set::Update(Boolean is_last)
     memcpy(m_normalIndicesBuffers[currentLevel], m_decNormalIndices, 3*m_numPolygons*sizeof(Int));
   }
 
-  if ( m_isMultipleUV ) { 
+  if ( m_isMultipleUV ) {
     memcpy(m_texCoordIndicesBuffers[currentLevel], m_decTexCoordIndices, 3*m_numPolygons*sizeof(Int));
   }
   memcpy(m_triStripLengthsBuffers[currentLevel], m_decTriStripLengths, (m_numPolygons+1)*sizeof(Int));
@@ -232,8 +229,8 @@ void Prog_indexed_tri_set::Update(Boolean is_last)
   }
 
   // if this is the last level, we delete all the buffers used by the decoder alone.
-  // we also delete all the levels that need not to be stored 
-  if ( is_last ) 
+  // we also delete all the levels that need not to be stored
+  if ( is_last )
   {
     DELETE_ARRAY ( m_decCoordIndices );
     DELETE_ARRAY ( m_decTexCoordIndices );
@@ -263,9 +260,9 @@ void Prog_indexed_tri_set::Update(Boolean is_last)
 }
 
 /**
- * Allocate the next set of arrays for the level just benn updated 
+ * Allocate the next set of arrays for the level just benn updated
  */
-void Prog_indexed_tri_set::AllocateLevel() 
+void Prog_indexed_tri_set::AllocateLevel()
 {
   int triNum = m_geometry.get_triangleNum();
   int vertNum = m_geometry.get_vertexNum();
@@ -302,7 +299,7 @@ void Prog_indexed_tri_set::AllocateLevel()
   }
 
   // even if it is null, we put it in to keep the various buffers syncronized
-  m_normalset_buffers.push_back(normalSet); 
+  m_normalset_buffers.push_back(normalSet);
   m_normalIndicesBuffers.push_back(normalIndices);
 
   if ( m_isMultipleUV ) {
@@ -311,7 +308,7 @@ void Prog_indexed_tri_set::AllocateLevel()
     m_texCoordIndicesBuffers.push_back(texCoordIndices);
   } // else no need to allocate texture coordinate indices
 
-  // we allocate the maximum number of triangle strips possible 
+  // we allocate the maximum number of triangle strips possible
   // plus one to indicate the number
 
   Int *triStripLength = new Int[triNum+1];
@@ -322,18 +319,18 @@ void Prog_indexed_tri_set::AllocateLevel()
   // update the memory usage
   m_executionCoordinator->AddMemory(bytes);
   // keep the amount of memory per level so we can deduct it later
-  m_bytes.push_back(bytes); 
+  m_bytes.push_back(bytes);
 }
 
 /**
- * Deletes the last level in the buffers. This is used after a level 
+ * Deletes the last level in the buffers. This is used after a level
  * has been stored as a display list
  */
-void Prog_indexed_tri_set::DeleteLastLevel() 
+void Prog_indexed_tri_set::DeleteLastLevel()
 {
   int level = m_coordIndicesBuffers.size() - 1;
   DELETE_ARRAY(m_coordIndicesBuffers[level]);
-  
+
   DELETE_OBJECT(m_normalset_buffers[level]);
   DELETE_OBJECT(m_normalIndicesBuffers[level]);
   if ( m_isMultipleUV ) {
@@ -345,10 +342,10 @@ void Prog_indexed_tri_set::DeleteLastLevel()
 /**
  * Deletes the data (geometry and/or display list data of a given level
  */
-void Prog_indexed_tri_set::DeleteLevel(const int level) 
+void Prog_indexed_tri_set::DeleteLevel(const int level)
 {
   DELETE_ARRAY(m_coordIndicesBuffers[level]);
-  
+
   DELETE_OBJECT(m_normalset_buffers[level]);
   DELETE_OBJECT(m_normalIndicesBuffers[level]);
   if ( m_isMultipleUV ) {
@@ -378,7 +375,7 @@ Boolean Prog_indexed_tri_set::IsKeepLOD(Int level, Boolean is_last) const
   case lkDEFAULT:
     if ( is_last || (level == m_lowLevel) ) {
       return true;
-    } 
+    }
     break;
 
   case lkCUSTOMIZE:
@@ -400,13 +397,13 @@ Boolean Prog_indexed_tri_set::IsKeepLOD(Int level, Boolean is_last) const
  If the object is currently being manipulated (dragging is locked)
  we set the current geometry to the low level geometry. Otherwise,
  we set it to the last level that was loaded.
- If isDynamic is false, the most current level is set. Otherwise, 
+ If isDynamic is false, the most current level is set. Otherwise,
  framerate is taken into considiration.
  */
-void Prog_indexed_tri_set::SetRenderingPointers(Boolean isDynamic) 
+void Prog_indexed_tri_set::SetRenderingPointers(Boolean isDynamic)
 {
   int level = GetLevelToRender();
-  
+
   if ( !isDynamic ) {
     level = m_currentLevel;
   }
@@ -434,7 +431,7 @@ void Prog_indexed_tri_set::SetRenderingPointers(Boolean isDynamic)
 /**
  * Set the display list id to use for rendering.
  */
-void Prog_indexed_tri_set::SetDisplayListId() 
+void Prog_indexed_tri_set::SetDisplayListId()
 {
   int level = GetLevelToRender();
   m_displayListId = m_displayListArray[level];
@@ -442,17 +439,17 @@ void Prog_indexed_tri_set::SetDisplayListId()
 
 /**
  * Returns he current levelt o render.
- * if a level was explicitly specified, that is the level that is returned 
+ * if a level was explicitly specified, that is the level that is returned
  * (unless invalid, and then it is clamped).
- * Otherwise, determines whether to return the finest level or the lowLevel 
+ * Otherwise, determines whether to return the finest level or the lowLevel
  * according to the frame rate.
  */
 int Prog_indexed_tri_set::GetLevelToRender() const
 {
 
   bool useLowLevel = false;
-  useLowLevel =  m_lowLevel != -1 && 
-        m_currentLevel > m_lowLevel && 
+  useLowLevel =  m_lowLevel != -1 &&
+        m_currentLevel > m_lowLevel &&
         m_executionCoordinator->LowerLevel() &&
         m_executionCoordinator->IsDraggingLocked();
 

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -34,12 +31,12 @@ Isect_action::Isect_action() : m_current_id(0) {}
 /*! Destructor */
 Isect_action::~Isect_action() {}
 
-/*! \brief applies the draw action for selection on a given node. 
+/*! \brief applies the draw action for selection on a given node.
  * \param node (in) a pointer to the node to draw in selection mode.
  */
 Action::Trav_directive Isect_action::apply(Node* node)
 {
-  node->isect(this); 
+  node->isect(this);
   return Action::TRAV_CONT;
 }
 

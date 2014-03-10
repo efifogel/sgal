@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -49,7 +46,10 @@ void Simulation::init_prototype()
   // start
   Boolean_handle_function start_func =
     static_cast<Boolean_handle_function>(&Simulation::start_handle);
-  s_prototype->add_field_info(new SF_bool(START, "start", start_func));
+  s_prototype->add_field_info(new SF_bool(START,
+                                          "start",
+                                          RULE_EXPOSED_FIELD,
+                                          start_func));
 }
 
 /*! \brief deletes the node prototype. */

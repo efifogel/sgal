@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -44,7 +41,7 @@ Image_texture_wt::~Image_texture_wt() {}
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Image_texture_wt::set_attributes(Element * elem) 
+void Image_texture_wt::set_attributes(Element * elem)
 {
   Texture::set_attributes(elem);
   for (Str_attr_iter ai = elem->str_attrs_begin();
@@ -57,11 +54,11 @@ void Image_texture_wt::set_attributes(Element * elem)
   elem->delete_marked();
 }
 
-Attribute_list Image_texture_wt::get_attributes() 
-{ 
-    Attribute_list attribs; 
+Attribute_list Image_texture_wt::get_attributes()
+{
+    Attribute_list attribs;
     attribs = Texture::get_attributes();
-    return attribs; 
+    return attribs;
 }
 
 SGAL_END_NAMESPACE

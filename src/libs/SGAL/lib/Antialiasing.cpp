@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -52,12 +49,12 @@ Antialiasing::~Antialiasing()
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
-void Antialiasing::set_delay_duration(Int dur) 
+void Antialiasing::set_delay_duration(Int dur)
 {
   m_delay_duration = dur;
 }
 
-/*! Returns true if AA is in process, i.e., another pass of the 
+/*! Returns true if AA is in process, i.e., another pass of the
  * AA should be rendered.
  */
 Boolean Antialiasing::is_in_process()
@@ -67,13 +64,13 @@ Boolean Antialiasing::is_in_process()
     //ASSERT(0);
     return false;
   }
-  
+
   if (!m_ec->is_loading_done()) {
     m_is_in_process = false;
     m_is_in_delay = false;
-    return m_is_in_process; 
-  } 
-  
+    return m_is_in_process;
+  }
+
   if (m_ec->is_aa_interrupt() && m_is_in_process) {
     m_is_in_process = false;
 
@@ -94,10 +91,10 @@ Boolean Antialiasing::is_in_process()
   }
   */
 
-  return m_is_in_process; 
+  return m_is_in_process;
 }
 
-/*! Prepering the accumulation buffer for anti aliasing. 
+/*! Prepering the accumulation buffer for anti aliasing.
  * Should be called befor the render call.
  */
 void Antialiasing::pre_render(Draw_action * draw_action)
@@ -105,7 +102,7 @@ void Antialiasing::pre_render(Draw_action * draw_action)
   if (!draw_action)
     return;
 
-  if (m_pass_no == 0) {  
+  if (m_pass_no == 0) {
     m_accumulate = 0.0;
     glClearAccum(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_ACCUM_BUFFER_BIT);
@@ -126,17 +123,17 @@ void Antialiasing::pre_render(Draw_action * draw_action)
     float bottom = 0;
     float top = 0;
 
-    frust.get_corners(left, right, bottom, top, nearClip,farClip); 
-    acc_frustum(left, right, bottom, top, nearClip, farClip, 
+    frust.get_corners(left, right, bottom, top, nearClip,farClip);
+    acc_frustum(left, right, bottom, top, nearClip, farClip,
                 j8[m_pass_no].x, j8[m_pass_no].y, 0.0f, 0.0f, 1.0f);
-    
+
   }
 }
 
 /**
-  This is called after the scene has been rendered. 
+  This is called after the scene has been rendered.
   It takes what was rendered, adds it to the accumulation
-  buffer, and then dups it into the back buffer. 
+  buffer, and then dups it into the back buffer.
   This way we get progressive anti aliasing.
   */
 
@@ -147,11 +144,11 @@ void Antialiasing::post_render()
 
   bool blendMode = (glIsEnabled(GL_BLEND) == GL_TRUE);
   glDisable(GL_BLEND);
-    
+
   m_accumulate += (1.0f / (float)m_aalias_quality);
   glAccum(GL_ACCUM, (1.0f / (float)m_aalias_quality));
   if (m_pass_no == m_aalias_quality/2-1 ||
-    m_pass_no == m_aalias_quality-1) 
+    m_pass_no == m_aalias_quality-1)
   {
     glAccum(GL_RETURN, 1.0f / m_accumulate);
     m_render = true;
@@ -197,17 +194,17 @@ void Antialiasing::set_quality(Antialiasing::Antialias_quality q)
 
 /**
  * The first 6 arguments are identical to the glFrustum() call.
- *  
- * pixdx and pixdy are anti-alias jitter in pixels. 
+ *
+ * pixdx and pixdy are anti-alias jitter in pixels.
  * Set both equal to 0.0 for no anti-alias jitter.
- * eyedx and eyedy are depth-of field jitter in pixels. 
+ * eyedx and eyedy are depth-of field jitter in pixels.
  * Set both equal to 0.0 for no depth of field effects.
  *
- * focus is distance from eye to plane in focus. 
+ * focus is distance from eye to plane in focus.
  * focus must be greater than, but not equal to 0.0.
  *
- * Note that accFrustum() calls glTranslatef().  You will 
- * probably want to insure that your ModelView matrix has been 
+ * Note that accFrustum() calls glTranslatef().  You will
+ * probably want to insure that your ModelView matrix has been
  * initialized to identity before calling accFrustum().
  */
 void Antialiasing::acc_frustum(double left, double right,
@@ -218,10 +215,10 @@ void Antialiasing::acc_frustum(double left, double right,
 {
    GLint viewport[4];
    glGetIntegerv(GL_VIEWPORT, viewport);
-  
+
    double xwsize = right - left;
    double ywsize = top - bottom;
-  
+
    double dx = -(pixdx*xwsize/(double) viewport[2] + eyedx*zNear/focus);
    double dy = -(pixdy*ywsize/(double) viewport[3] + eyedy*zNear/focus);
 
@@ -232,19 +229,19 @@ void Antialiasing::acc_frustum(double left, double right,
 }
 
 /*! The first 4 arguments are identical to the gluPerspective() call.
- * pixdx and pixdy are anti-alias jitter in pixels. 
+ * pixdx and pixdy are anti-alias jitter in pixels.
  * Set both equal to 0.0 for no anti-alias jitter.
- * eyedx and eyedy are depth-of field jitter in pixels. 
+ * eyedx and eyedy are depth-of field jitter in pixels.
  * Set both equal to 0.0 for no depth of field effects.
  *
- * focus is distance from eye to plane in focus. 
+ * focus is distance from eye to plane in focus.
  * focus must be greater than, but not equal to 0.0.
  *
  * Note that accPerspective() calls accFrustum().
  */
-void Antialiasing::acc_perspective(double fovy, double aspect, 
+void Antialiasing::acc_perspective(double fovy, double aspect,
                                    double zNear, double zFar,
-                                   double pixdx, double pixdy, 
+                                   double pixdx, double pixdy,
                                    double eyedx, double eyedy,
                                    double focus)
 {

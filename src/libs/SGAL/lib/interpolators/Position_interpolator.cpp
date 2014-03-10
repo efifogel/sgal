@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 5624 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- *  Position_interpolator - implementation                              
+ *  Position_interpolator - implementation
  */
 
 #include "SGAL/Position_interpolator.hpp"

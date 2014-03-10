@@ -328,17 +328,17 @@ void Group::init_prototype()
     static_cast<Execution_function>(&Node::sphere_bound_changed);
   Boolean_handle_function is_visible_func =
     static_cast<Boolean_handle_function>(&Group::is_visible_handle);
-  SF_bool* is_visible_field_info =
-    new SF_bool(IS_VISIBLE, "visible", is_visible_func, true, exec_func);
-  s_prototype->add_field_info(is_visible_field_info);
+  s_prototype->add_field_info(new SF_bool(IS_VISIBLE, "visible",
+                                          RULE_EXPOSED_FIELD,
+                                          is_visible_func, true, exec_func));
 
   // children
   Shared_container_array_handle_function childs_func =
     reinterpret_cast<Shared_container_array_handle_function>
     (&Group::childs_handle);
-  MF_shared_container* childs_field_info =
-    new MF_shared_container(CHILDREN, "children", childs_func, exec_func);
-  s_prototype->add_field_info(childs_field_info);
+  s_prototype->add_field_info(new MF_shared_container(CHILDREN, "children",
+                                                      RULE_EXPOSED_FIELD,
+                                                      childs_func, exec_func));
 }
 
 //! \brief deletes the node prototype.

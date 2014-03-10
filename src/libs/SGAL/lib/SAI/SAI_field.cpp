@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1309 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /**
@@ -39,27 +36,27 @@ SAI_field::~SAI_field()
 
 /**
     Cascade the sai field into the scene graph
-    This function uses the SAIField_info set_valueFor function which is using 
+    This function uses the SAIField_info set_valueFor function which is using
     the SAI field value as critical section
 */
-void SAI_field::CascadeIntoScene_graph() 
+void SAI_field::CascadeIntoScene_graph()
 {
     // Set the originating cascade flag - to indicate the current cascade is originating
     // from the SAI
     m_originatingCascade = true;
 
-    // Use the base class's (Field) Cascade() - 
+    // Use the base class's (Field) Cascade() -
     // to cascade the update into the scene graph
     Field::Cascade();
 }
 
 
 
-  
+
 /**
     Set the SAIUpdatesInterface pointer
 */
-void SAI_field::SetSAIUpdatesInterface(ESAIUpdatesInterface* SAIUpdatesInterface) 
+void SAI_field::SetSAIUpdatesInterface(ESAIUpdatesInterface* SAIUpdatesInterface)
 {
     m_SAIUpdatesInterface = SAIUpdatesInterface;
 }
@@ -85,7 +82,7 @@ void SAI_field::Connect(Field* field)
 }
 
 
-/** 
+/**
     Disconnect the SAI field from the goal field
 */
 void SAI_field::Disconnect()
@@ -97,7 +94,7 @@ void SAI_field::Disconnect()
 
 /**
  Purpose: Add event listener to the SAI field
- Description: 
+ Description:
       Inserts the given event listener to the event listeners list
  @param  eventListener (in) the event listener to be registered
 */

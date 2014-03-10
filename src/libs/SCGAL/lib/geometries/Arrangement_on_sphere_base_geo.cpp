@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_sphere_base_geo.cpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -60,15 +57,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Arrangement_on_sphere_base_geo::s_prototype(NULL);
+Container_proto* Arrangement_on_sphere_base_geo::s_prototype(nullptr);
 
-/*! Constructor. */
+//! \brief constructor.
 Arrangement_on_sphere_base_geo::
 Arrangement_on_sphere_base_geo(Boolean proto) :
   Arrangement_on_surface_geo(proto)
 { if (!proto) create_renderers(); }
 
-/*! Destructor. */
+//! \brief destructor.
 Arrangement_on_sphere_base_geo::~Arrangement_on_sphere_base_geo()
 {
   if (m_surface_renderer) delete m_surface_renderer;
@@ -76,7 +73,7 @@ Arrangement_on_sphere_base_geo::~Arrangement_on_sphere_base_geo()
   if (m_stencil_surface_renderer) delete m_stencil_surface_renderer;
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Arrangement_on_sphere_base_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -84,21 +81,21 @@ void Arrangement_on_sphere_base_geo::init_prototype()
     new Container_proto(Arrangement_on_surface_geo::get_prototype());
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Arrangement_on_sphere_base_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Arrangement_on_sphere_base_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_sphere_base_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes. */
+//! \brief sets the ellpsoid attributes.
 void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
 {
   Arrangement_on_surface_geo::set_attributes(elem);
@@ -111,12 +108,12 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "pointLocationIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_point_location_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -130,12 +127,12 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "pointIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0) {
         m_point_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -150,12 +147,12 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     }
 
     if (name == "curveIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if ((size == 0) || (size & 0x1)) {
         m_curve_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -169,12 +166,12 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     }
 
     if (name == "xMonotoneCurveIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       if (size == 0 || size & 0x1) {
         m_x_monotone_curve_indices.clear();
         std::cerr << "Error!" << std::endl;
-        //! todo issue an error        
+        //! todo issue an error
         elem->mark_delete(ai);
         continue;               // Advance to next attribute
       }
@@ -189,7 +186,7 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     }
 
     if (name == "normalIndex") {
-      tokenizer tokens(value, sep);      
+      tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
       m_normal_indices.resize(size);
       Uint i = 0;
@@ -220,21 +217,21 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
       continue;
     }
   }
-    
+
   // Remove all the deleted attributes:
   elem->delete_marked();
 }
 
-/*! \brief */
+//! \brief
 void Arrangement_on_sphere_base_geo::cull(Cull_context& cull_context) {}
 
-/*! \brief */
+//! \brief
 void Arrangement_on_sphere_base_geo::isect(Isect_action* action)
 {
   //! \todo isect with a sphere
 }
 
-/*! \brief */
+//! \brief
 Boolean Arrangement_on_sphere_base_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
@@ -246,7 +243,7 @@ Boolean Arrangement_on_sphere_base_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the coordinate array. */
+//! \brief sets the coordinate array.
 void Arrangement_on_sphere_base_geo::
 set_coord_array(Shared_coord_array coord_array)
 {
@@ -254,12 +251,12 @@ set_coord_array(Shared_coord_array coord_array)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief sets the coordinate array. */
+//! \brief sets the coordinate array.
 void Arrangement_on_sphere_base_geo::
 set_normal_array(Shared_normal_array normal_array)
 { m_normal_array = normal_array; }
 
-/*! \brief creates the renderers. */
+//! \brief creates the renderers.
 void Arrangement_on_sphere_base_geo::create_renderers()
 {
   m_surface_renderer = new Surface_renderer();
@@ -272,7 +269,7 @@ void Arrangement_on_sphere_base_geo::create_renderers()
   m_stencil_surface_renderer = new Stencil_surface_renderer();
 }
 
-/*! \brief draws an arrangement on surface vertex. */
+//! \brief draws an arrangement on surface vertex.
 void Arrangement_on_sphere_base_geo::draw_aos_vertex(Draw_action* action,
                                                      Vector3f& center)
 {
@@ -280,7 +277,7 @@ void Arrangement_on_sphere_base_geo::draw_aos_vertex(Draw_action* action,
                        m_aos_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief draws an arrangement on surface isolated vertex. */
+//! \brief draws an arrangement on surface isolated vertex.
 void Arrangement_on_sphere_base_geo::
 draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
 {
@@ -288,7 +285,7 @@ draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
                         m_aos_isolated_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief Draw an arrangement on surface boundary_vertex. */
+//! \brief Draw an arrangement on surface boundary_vertex.
 void Arrangement_on_sphere_base_geo::
 draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
 {
@@ -296,7 +293,7 @@ draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
                         m_aos_boundary_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief draws an arrangement on surface edge. */
+//! \brief draws an arrangement on surface edge.
 void Arrangement_on_sphere_base_geo::draw_aos_edge(Draw_action* action,
                                                    Vector3f& src,
                                                    Vector3f& trg,

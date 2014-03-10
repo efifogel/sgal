@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1309 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /**
-  ESAINode - implementation                           
+  ESAINode - implementation
 */
 
 
@@ -39,7 +36,7 @@ SAI_node::SAI_node(Container* container,
     m_container(container),m_SAIUpdatesInterface(SAIUpdatesInterface),
     m_referenceCounter(0),m_client(ENULL){}
 
-/*! Destructor */ 
+/*! Destructor */
 SAI_node::~SAI_node()
 {
   TRACE_MSG(Trace::DESTRUCTOR, "~SAI_node ...");
@@ -57,9 +54,9 @@ SAI_node::~SAI_node()
 
 /**
  Purpose: Getting the name of the node
- Description: 
+ Description:
       Gets the name from the pointed scene graph container
-      
+
  @return the name string
 */
 const String& SAI_node::get_name() const
@@ -70,9 +67,9 @@ const String& SAI_node::get_name() const
 
 /**
  Purpose: Getting the type of the node
- Description: 
+ Description:
       Returns the pointed container tag as the sai nodes type
-      
+
  @return the tag string
 */
 const String& SAI_node::get_type() const
@@ -99,7 +96,7 @@ ESAIClient* SAI_node::get_client() const
 
 /**
  Purpose: Getting a SAI field of the node
- Description: 
+ Description:
   - Creates and adds a new sai field to the node.
   - Connect the sai field and the suitable original scene graph field
     in both ways - so every cascade on any of them - updates the other one
@@ -110,7 +107,7 @@ ESAIClient* SAI_node::get_client() const
 */
 SAI_fieldServices* SAI_node::get_field(Field* goalField)
 {
-  // Create a new SAI field 
+  // Create a new SAI field
     Field_info* goalField_info = goalField->get_field_info();
     SAI_fieldServices* SAIFieldServ;
     if (goalField_info->get_typeId()==SFNODE)
@@ -147,7 +144,7 @@ SAI_fieldServices* SAI_node::get_field(Field* goalField)
 
 /**
  Purpose: Getting a SAI field of the node
- Description: 
+ Description:
     Try to find a field with fieldID in m_fieldsServices - and return it if found.
     If not found - get the goal scene graph field and use get_field(Field* goalField).
 
@@ -187,7 +184,7 @@ SAI_fieldServices* SAI_node::get_field(int fieldID)
 
 /**
  Purpose: Getting a SAI field of the node
- Description: 
+ Description:
     Try to find a field with fieldName in m_fieldsServices - and return it if found.
     If not found - get the goal scene graph field and use get_field(Field* goalField).
 
@@ -225,7 +222,7 @@ SAI_fieldServices* SAI_node::get_field(const String& fieldName)
 
 /**
  Purpose: Getting a list of field Ids
- Description: 
+ Description:
     Puts in IDsList a list of name and Id pairs for each field the node has
 
  @param IDsList (out) the list of the ID & Name pairs

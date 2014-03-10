@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Exact_coord2_array.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <CGAL/basic.h>
@@ -59,7 +56,7 @@ void Exact_coord2_array::delete_prototype()
 /*! \brief obtains the node prototype */
 Container_proto * Exact_coord2_array::get_prototype()
 {
-  if (s_prototype == NULL) Exact_coord2_array::init_prototype();
+  if (!s_prototype) Exact_coord2_array::init_prototype();
   return s_prototype;
 }
 

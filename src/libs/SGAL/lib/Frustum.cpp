@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -46,30 +43,30 @@ SGAL_BEGIN_NAMESPACE
 /*! The frustum types (prespective, orthogonal, etc) */
 const char* Frustum::s_type_strings[] = {"SIMPLE", "ORTHOGONAL", "PERSPECTIVE"};
 
-/*! Constructor */
+//! \brief constructor.
 Frustum::Frustum() :
   m_type(Frustum::SIMPLE),
-  m_near_dist(0.1f), 
+  m_near_dist(0.1f),
   m_far_dist(1000.0f),
-  m_left(-30.0f), 
-  m_right(30.0f), 
-  m_top(22.5f), 
+  m_left(-30.0f),
+  m_right(30.0f),
+  m_top(22.5f),
   m_bottom(-22.5f),
-  m_horiz_fov(m_vert_fov / m_aspect_ratio), 
-  m_vert_fov(0.785398f),        //! \todo SGAL_PI * 0.25f), 
-  m_xcenter(0.0f), 
-  m_ycenter(0.0f), 
+  m_horiz_fov(m_vert_fov / m_aspect_ratio),
+  m_vert_fov(0.785398f),        //! \todo SGAL_PI * 0.25f),
+  m_xcenter(0.0f),
+  m_ycenter(0.0f),
   m_aspect_mode(Frustum::CALC_HORIZ),
-  m_aspect_ratio(1.333333f), 
+  m_aspect_ratio(1.333333f),
   m_dirty_corners(true),
   m_dirty_planes(true),
   m_x_perturbation_scale(0), m_y_perturbation_scale(0)
 {}
 
-/*! \brief destructor. */
+//! \brief destructor.
 Frustum::~Frustum() {}
 
-/*! \brief copy constructor. */
+//! \brief copy constructor.
 void Frustum::copy(const Frustum* src)
 {
   m_type = src->m_type;
@@ -81,7 +78,7 @@ void Frustum::copy(const Frustum* src)
   m_aspect_ratio = src->m_aspect_ratio;
   m_horiz_fov = src->m_horiz_fov;
   m_vert_fov = src->m_vert_fov;
-  
+
   if (!m_dirty_corners) {
     for (Uint i = 0; i < Frustum::NUM_CORNERS; i++) {
       m_corners[i] = src->m_corners[i];
@@ -95,7 +92,7 @@ void Frustum::copy(const Frustum* src)
   }
 }
 
-/*! \brief sets the distance from the origin to the near plane. */
+//! \brief sets the distance from the origin to the near plane.
 void Frustum::set_near(Float near_dist)
 {
   if (m_near_dist == near_dist) return;
@@ -104,7 +101,7 @@ void Frustum::set_near(Float near_dist)
   m_dirty_planes = true;
 }
 
-/*! \brief sets the distance from the origin to the far plane. */
+//! \brief sets the distance from the origin to the far plane.
 void Frustum::set_far(Float far_dist)
 {
   if (m_far_dist == far_dist) return;
@@ -118,12 +115,12 @@ void Frustum::set_far(Float far_dist)
  */
 void Frustum::get_near_far(Float& near_dist, Float& far_dist)
 {
-  if (m_dirty_corners) clean_corners(); 
-  near_dist = m_near_dist; 
-  far_dist = m_far_dist; 
+  if (m_dirty_corners) clean_corners();
+  near_dist = m_near_dist;
+  far_dist = m_far_dist;
 }
 
-/*! \brief sets the aspect recalculation mode. */
+//! \brief sets the aspect recalculation mode.
 void Frustum::set_aspect_mode(Frustum::Aspect_mode mode)
 {
   if (m_aspect_mode == mode) return;
@@ -132,7 +129,7 @@ void Frustum::set_aspect_mode(Frustum::Aspect_mode mode)
   m_dirty_planes = true;
 }
 
-/*! \brief sets the aspect ratio of the frustum dimensions. */
+//! \brief sets the aspect ratio of the frustum dimensions.
 void Frustum::set_aspect_ratio(float ratio)
 {
   if (m_aspect_ratio == ratio) return;
@@ -141,7 +138,7 @@ void Frustum::set_aspect_ratio(float ratio)
   m_dirty_planes = true;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::set_fov(float fov)
 {
   set_vert_fov(fov);
@@ -150,14 +147,14 @@ void Frustum::set_fov(float fov)
 //  set_vert_fov(fov / m_aspect_ratio);
 }
 
-/*! \brief */
+//! \brief
 Float Frustum::get_fov()
 {
   // FIX - what to do here?
   return m_horiz_fov;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::set_horiz_fov(Float horiz_fov)
 {
   if (m_horiz_fov == horiz_fov) return;
@@ -166,7 +163,7 @@ void Frustum::set_horiz_fov(Float horiz_fov)
   m_dirty_planes = true;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::set_vert_fov(Float vert_fov)
 {
   if (m_vert_fov == vert_fov) return;
@@ -175,7 +172,7 @@ void Frustum::set_vert_fov(Float vert_fov)
   m_dirty_planes = true;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::set_right(Float right)
 {
   m_right = right;
@@ -183,7 +180,7 @@ void Frustum::set_right(Float right)
   m_dirty_planes = true;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::set_left(Float left)
 {
   m_left = left;
@@ -191,7 +188,7 @@ void Frustum::set_left(Float left)
   m_dirty_planes = true;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::set_top(Float top)
 {
   m_top = top;
@@ -199,7 +196,7 @@ void Frustum::set_top(Float top)
   m_dirty_planes = true;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::set_bottom(Float bottom)
 {
   m_bottom = bottom;
@@ -207,7 +204,7 @@ void Frustum::set_bottom(Float bottom)
   m_dirty_planes = true;
 }
 
-/*! \brief makes this frustum orthogonal. */
+//! \brief makes this frustum orthogonal.
 void Frustum::make_ortho(float left, float right, float bottom, float top)
 {
   set_aspect_mode(CALC_NONE);
@@ -220,7 +217,7 @@ void Frustum::make_ortho(float left, float right, float bottom, float top)
   m_dirty_planes = true;
 }
 
-/*! \brief makes this frustum orthogonal. */
+//! \brief makes this frustum orthogonal.
 void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
                          Float near_dist, Float far_dist)
 {
@@ -236,7 +233,7 @@ void Frustum::make_ortho(Float left, Float right, Float bottom, Float top,
   m_dirty_planes = true;
 }
 
-/*! \brief makes this frustum perspective. */
+//! \brief makes this frustum perspective.
 void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
 {
   set_aspect_mode(CALC_NONE);
@@ -249,7 +246,7 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top)
   m_dirty_planes = true;
 }
 
-/*! \brief makes this frustum perspective. */
+//! \brief makes this frustum perspective.
 void Frustum::make_persp(Float left, Float right, Float bottom, Float top,
                          Float near_dist, Float far_dist)
 {
@@ -265,20 +262,20 @@ void Frustum::make_persp(Float left, Float right, Float bottom, Float top,
   m_dirty_planes = true;
 }
 
-/*! \brief gets the corners of the near plane. */
+//! \brief gets the corners of the near plane.
 void Frustum::get_near(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur)
 {
-  if (m_dirty_corners) clean_corners(); 
+  if (m_dirty_corners) clean_corners();
   ll = m_corners[Frustum::NEAR_LL];
   lr = m_corners[Frustum::NEAR_LR];
   ul = m_corners[Frustum::NEAR_UL];
   ur = m_corners[Frustum::NEAR_UR];
 }
 
-/*! \brief gets the corners of the far plane. */
+//! \brief gets the corners of the far plane.
 void Frustum::get_far(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur)
 {
-  if (m_dirty_corners) clean_corners(); 
+  if (m_dirty_corners) clean_corners();
   ll = m_corners[Frustum::FAR_LL];
   lr = m_corners[Frustum::FAR_LR];
   ul = m_corners[Frustum::FAR_UL];
@@ -291,7 +288,7 @@ void Frustum::get_far(Vector3f& ll, Vector3f& lr, Vector3f& ul, Vector3f& ur)
 void Frustum::get_diag_corners(float& left, float& right, float& bottom,
                                float& top, float& near_dist, float& far_dist)
 {
-  if (m_dirty_corners) clean_corners(); 
+  if (m_dirty_corners) clean_corners();
   left = m_corners[Frustum::NEAR_LL][0];
   bottom = m_corners[Frustum::NEAR_LL][1];
   near_dist = m_corners[Frustum::NEAR_LL][2];
@@ -306,12 +303,12 @@ void Frustum::get_diag_corners(float& left, float& right, float& bottom,
  */
 void Frustum::get_gl_proj_mat(Matrix4f& mat)
 {
-  if (m_dirty_corners) clean_corners(); 
+  if (m_dirty_corners) clean_corners();
   float left = m_corners[Frustum::NEAR_LL][0];
   float right = m_corners[Frustum::NEAR_UR][0];
   float bottom = m_corners[Frustum::NEAR_LL][1];
   float top = m_corners[Frustum::NEAR_UR][1];
-      
+
   mat[0][0] = 2.0f * m_near_dist / (right - left);
   mat[0][1] = 0.0f;
   mat[0][2] = (right + left) / (right - left);
@@ -326,19 +323,19 @@ void Frustum::get_gl_proj_mat(Matrix4f& mat)
   mat[2][1] = 0.0f;
   mat[2][2] = -(m_far_dist + m_near_dist) / (m_far_dist - m_near_dist);
   mat[2][3] = -2.0f * m_far_dist * m_near_dist / (m_far_dist - m_near_dist);
-      
+
   mat[3][0] = 0.0f;
   mat[3][1] = 0.0f;
   mat[3][2] = -1.0f;
   mat[3][3] = 0.0f;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::get_corners(float& left, float& right,
                           float& bottom, float& top,
                           float& near_dist, float& far_dist)
 {
-  if (m_dirty_corners) clean_corners(); 
+  if (m_dirty_corners) clean_corners();
   left = m_corners[Frustum::NEAR_LL][0];
   right = m_corners[Frustum::NEAR_LR][0];
   bottom = m_corners[Frustum::NEAR_LL][1];
@@ -347,15 +344,15 @@ void Frustum::get_corners(float& left, float& right,
   far_dist  = m_far_dist;
 }
 
-/*! \brief */
-Plane* Frustum::get_facets() 
+//! \brief
+Plane* Frustum::get_facets()
 {
   if (m_dirty_planes) clean_planes();
   return m_facets;
 }
 
-/*! \brief */
-void Frustum::clean_corners() 
+//! \brief
+void Frustum::clean_corners()
 {
   /* in case the near and far clipping planes are the same, nothing is to be
    * rendered. We shift the far plane a bit to avoid invalid values in OpenGL.
@@ -388,17 +385,17 @@ void Frustum::clean_corners()
     bottom = -top;
     break;
 #endif
-    
+
    case Frustum::CALC_NONE:
     left = m_left;
     right = m_right;
     top = m_top;
     bottom = m_bottom;
     break;
-    
+
    default: fprintf(stderr, "Illegal aspect mode %d", m_aspect_mode);
   }
-  
+
   m_corners[Frustum::NEAR_LL][0] = left;
   m_corners[Frustum::NEAR_LL][1] = bottom;
   m_corners[Frustum::NEAR_LL][2] = -m_near_dist;
@@ -410,7 +407,7 @@ void Frustum::clean_corners()
   m_corners[Frustum::NEAR_UL][0] = left;
   m_corners[Frustum::NEAR_UL][1] = top;
   m_corners[Frustum::NEAR_UL][2] = -m_near_dist;
-        
+
   m_corners[Frustum::NEAR_UR][0] = right;
   m_corners[Frustum::NEAR_UR][1] = top;
   m_corners[Frustum::NEAR_UR][2] = -m_near_dist;
@@ -428,15 +425,15 @@ void Frustum::clean_corners()
   m_corners[Frustum::FAR_LL][0] = left;
   m_corners[Frustum::FAR_LL][1] = bottom;
   m_corners[Frustum::FAR_LL][2] = -m_far_dist;
-        
+
   m_corners[Frustum::FAR_LR][0] = right;
   m_corners[Frustum::FAR_LR][1] = bottom;
   m_corners[Frustum::FAR_LR][2] = -m_far_dist;
-        
+
   m_corners[Frustum::FAR_UL][0] = left;
   m_corners[Frustum::FAR_UL][1] = top;
   m_corners[Frustum::FAR_UL][2] = -m_far_dist;
-        
+
   m_corners[Frustum::FAR_UR][0] = right;
   m_corners[Frustum::FAR_UR][1] = top;
   m_corners[Frustum::FAR_UR][2] = -m_far_dist;
@@ -444,28 +441,28 @@ void Frustum::clean_corners()
   m_dirty_corners = false;
 }
 
-/*! \brief */
+//! \brief
 Uint Frustum::contains(const Vector3f& /* pt */) const
 {
   assert(0);
   return 0;
 }
 
-/*! \brief */
+//! \brief
 Uint Frustum::contains(const Sphere_bound* /* sphere */) const
 {
   assert(0);
   return 0;
 }
 
-/*! \brief */
+//! \brief
 Uint Frustum::contains(const Box_bound* /* box */) const
 {
   assert(0);
   return 0;
 }
 
-/*! \brief */
+//! \brief
 void Frustum::apply()
 {
   glMatrixMode(GL_PROJECTION);
@@ -492,10 +489,10 @@ void Frustum::apply()
   }
 }
 
-/*! \brief */
+//! \brief
 void Frustum::clean_planes()
 {
-  if (m_dirty_corners) clean_corners(); 
+  if (m_dirty_corners) clean_corners();
 
   Vector3f origin;
   origin.set(0.0f, 0.0f, 0.0f);
@@ -536,7 +533,7 @@ void Frustum::clean_planes()
     m_facets[Frustum::TOP_PLANE].make_pts(origin,
                                           m_corners[Frustum::NEAR_UL],
                                           m_corners[Frustum::NEAR_UR]);
-      
+
     m_facets[Frustum::FAR_PLANE].make_pts(m_corners[Frustum::FAR_UR],
                                           m_corners[Frustum::FAR_UL],
                                           m_corners[Frustum::FAR_LL]);
@@ -563,7 +560,7 @@ void Frustum::clean_planes()
   m_dirty_planes = false;
 }
 
-/*! \brief sets the frustum type (orthogonal, perspective, etc). */
+//! \brief sets the frustum type (orthogonal, perspective, etc).
 void Frustum::set_type(Frustum_type type)
 {
   m_type = type;
@@ -571,7 +568,7 @@ void Frustum::set_type(Frustum_type type)
   m_dirty_planes = true;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Frustum::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;

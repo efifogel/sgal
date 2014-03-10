@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -27,7 +24,7 @@
 using namespace SGAL;
 
 /*********************************************************************************************************
-  ETranslucentObjManager holds two ETranslucentObj pointers list. One for depth sorting - m_translucentList, 
+  ETranslucentObjManager holds two ETranslucentObj pointers list. One for depth sorting - m_translucentList,
   and one in the traverse order - m_translucentRef.
 
   m_translucentList holds pointers to the objects in m_translucentRef.
@@ -37,7 +34,7 @@ using namespace SGAL;
                /\        /\       /\       /\
               _||_   _||_    _||_     _||_
   m_translucentRef:  -->|____|-->|____|-->|____|-->|____|
-            
+
 **********************************************************************************************************/
 
 bool Greater ( Translucent* Obj1, Translucent* Obj2);
@@ -68,7 +65,7 @@ Translucent_manager::~Translucent_manager()
   TRACE_MSG(Trace::DESTRUCTOR, " completed\n");
 }
 
-/** Call this function before the first pass. 
+/** Call this function before the first pass.
 */
 void Translucent_manager::Clean(Draw_action* drawA)
 {
@@ -91,7 +88,7 @@ void Translucent_manager::Clean(Draw_action* drawA)
 
 }
 
-/** Call this function before the second pass. 
+/** Call this function before the second pass.
 */
 void Translucent_manager::Reset(Draw_action* drawA)
 {
@@ -105,8 +102,8 @@ void Translucent_manager::Reset(Draw_action* drawA)
   }
 }
 
-/** Update the pointer to the current TranslucentObj during 
-  the traverse in first pass. 
+/** Update the pointer to the current TranslucentObj during
+  the traverse in first pass.
 */
 void Translucent_manager::UpdateIterator()
 {
@@ -118,8 +115,8 @@ void Translucent_manager::UpdateIterator()
   m_tvIter++;
 }
 
-/** Update the lights list for the current translucent object 
-  pointed by m_translPtr. 
+/** Update the lights list for the current translucent object
+  pointed by m_translPtr.
 */
 void Translucent_manager::UpdateTranslucentLights ()
 {
@@ -129,7 +126,7 @@ void Translucent_manager::UpdateTranslucentLights ()
 }
 
 /** Add new translucent object to the lists "m_translucentList" and
-  "m_translucentRef".  
+  "m_translucentRef".
 */
 void Translucent_manager::Add( Shape* shape )
 {
@@ -146,7 +143,7 @@ void Translucent_manager::Add( Shape* shape )
 
 // FIX - should remove also from m_translucentRef.
 /** Remove translucent object from the back of the lists
-  "m_translucentList" and "m_translucentRef". 
+  "m_translucentList" and "m_translucentRef".
 */
 void Translucent_manager::Remove( Shape* shape )
 {
@@ -184,7 +181,7 @@ void Translucent_manager::RemoveLightSource()
   m_currentLightsMask.OffBit( lightsMaskInd );
 }
 
-/** Set the fixed transformation matrix for the current 
+/** Set the fixed transformation matrix for the current
   translucent object pointed by  m_translPtr.
   */
 void Translucent_manager::SetFixedTransformation()
@@ -195,7 +192,7 @@ void Translucent_manager::SetFixedTransformation()
   }
 }
 
-/** Update the current modelview matrix of OpenGL. 
+/** Update the current modelview matrix of OpenGL.
 */
 void Translucent_manager::UpdateCurrentTransformation()
 {
@@ -203,7 +200,7 @@ void Translucent_manager::UpdateCurrentTransformation()
 }
 
 /** Calculate the depth value of the current translucent object
-  pointed by m_translPtr. 
+  pointed by m_translPtr.
   Calculate the distance between the origin of the active camera
   and the center of the bounding sphere of the object.
 */
@@ -263,7 +260,7 @@ void Translucent_manager::Sort()
 }
 
 /** Draw the (depth) sorted translucent objects with it's lights.
-*/  
+*/
 void Translucent_manager::Draw(Draw_action* drawA)
 {
   Shape * shape = NULL;

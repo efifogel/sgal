@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <stdlib.h>
@@ -235,32 +232,42 @@ void Text_texture::init_prototype()
     static_cast<Execution_function>(&Text_texture::OnFieldChanged);
   String_handle_function text_func =
     static_cast<String_handle_function>(&Color_background::text_handle);
-  s_prototype->add_field_info(new SF_string(TEXT, "text", text_func,
+  s_prototype->add_field_info(new SF_string(TEXT, "text",
+                                            RULE_EXPOSED_FIELD,
+                                            text_func,
                                             exec_func));
 
   exec_func =
     static_cast<Execution_function>(&Text_texture::OnFieldChanged);
   Vector3f_handle_function color_func =
     static_cast<Vector3f_handle_function>(&Color_background::color_handle);
-  s_prototype->add_field_info(new SF_vector3f(COLOR, "color", color_func,
+  s_prototype->add_field_info(new SF_vector3f(COLOR, "color",
+                                              RULE_EXPOSED_FIELD,
+                                              color_func,
                                               exec_func));
 
   exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
   String_handle_function font_func =
     static_cast<String_handle_function>(&Color_background::font_handle);
-  s_prototype->add_field_info(new SF_string(FONT, "font", font_func,
+  s_prototype->add_field_info(new SF_string(FONT, "font",
+                                            RULE_EXPOSED_FIELD,
+                                            font_func,
                                             exec_func));
 
   exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
   Uint_handle_function font_size_func =
     static_cast<Uint_handle_function>(&Color_background::font_size_handle);
-  s_prototype->add_field_info(new SF_uint(FONTSIZE, "fontSize", font_size_func,
+  s_prototype->add_field_info(new SF_uint(FONTSIZE, "fontSize",
+                                          RULE_EXPOSED_FIELD,
+                                          font_size_func,
                                           exec_func));
 
   exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
   Boolean_handle_function bold_func =
     static_cast<Boolean_handle_function>(&Color_background::bold_handle);
-  s_prototype->add_field_info(new SF_bool(BOLD, "bold", bold_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(BOLD, "bold",
+                                          RULE_EXPOSED_FIELD,
+                                          bold_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Text_texture::OnFieldChanged);
   Boolean_handle_function italic_func =
@@ -272,6 +279,7 @@ void Text_texture::init_prototype()
   Boolean_handle_function antialias_func =
     static_cast<Boolean_handle_function>(&Color_background::antialias_handle);
   s_prototype->add_field_info(new SF_bool(ANTIALIAS, "antialias",
+                                          RULE_EXPOSED_FIELD,
                                           antialias_func, exec_func));
 }
 

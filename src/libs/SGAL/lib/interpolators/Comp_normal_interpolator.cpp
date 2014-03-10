@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 4971 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * Comp_normal_interpolator - implementation                              
+ * Comp_normal_interpolator - implementation
  */
 
 #include "SGAL/Comp_normal_interpolator.hpp"
@@ -32,7 +29,7 @@ std::string Comp_normal_interpolator::s_tag =
 
 // Default values:
 const float Comp_normal_interpolator::m_default_key_bin = (float)1e-4;
-const float Comp_normal_interpolator::m_value_bin_factor = (float)5e-4;      
+const float Comp_normal_interpolator::m_value_bin_factor = (float)5e-4;
 
 REGISTER_TO_FACTORY(Comp_normal_interpolator, "Comp_normal_interpolator");
 

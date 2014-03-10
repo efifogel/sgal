@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -61,10 +58,10 @@ bool Sphere_bound::does_contain(const Vector3f& point) const
 /*! \brief sets the bounding sphere to contains all specified spheres.
  * If only one sphere is given, it becomes the bounding sphere.
  * Otherwise we do the following:
- *  
- * We set the bounding sphere to be the first sphere in the list. 
+ *
+ * We set the bounding sphere to be the first sphere in the list.
  * Then we calculate the bounding sphere between this and the next
- * sphere. We get a new bounding sphere, referred to as current. 
+ * sphere. We get a new bounding sphere, referred to as current.
  * We keep iterating on the spheres, calculating the bounding sphere
  * of the current sphere and the next one in the list, until
  * we exhaust the list.
@@ -74,7 +71,7 @@ bool Sphere_bound::does_contain(const Vector3f& point) const
  * and R2 are the radii of the spheres and d is the distance between
  * the centeres of the the two spheres.
  * # We find the middle of the line connecting between the two centers
- * when the line is continued on both sides until it hits the sphere 
+ * when the line is continued on both sides until it hits the sphere
  * border. This is the center of the sphere bound.
  *
  * @param spheres an array of sphere bound objects.

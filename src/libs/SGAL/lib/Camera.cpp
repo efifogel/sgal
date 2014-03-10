@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -223,6 +220,7 @@ void Camera::init_prototype()
   Vector3f_handle_function position_func =
     static_cast<Vector3f_handle_function>(&Camera::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
+                                              RULE_EXPOSED_FIELD,
                                               position_func, exec_func));
 
   // orientation
@@ -231,6 +229,7 @@ void Camera::init_prototype()
   Rotation_handle_function orientation_func =
     static_cast<Rotation_handle_function>(&Camera::orientation_handle);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
+                                              RULE_EXPOSED_FIELD,
                                               orientation_func, exec_func));
 
   // fieldOfView
@@ -239,18 +238,21 @@ void Camera::init_prototype()
   Float_handle_function fov_func =
     static_cast<Float_handle_function>(&Camera::fov_handle);
   s_prototype->add_field_info(new SF_float(FIELDOFVIEW, "fieldOfView",
+                                           RULE_EXPOSED_FIELD,
                                            fov_func, exec_func));
 
   // description
   String_handle_function description_func =
     static_cast<String_handle_function>(&Camera::description_handle);
   s_prototype->add_field_info(new SF_string(DESCRIPTION, "description",
+                                            RULE_FIELD,
                                             description_func));
 
   // radiusScale
   Float_handle_function radius_scale_func =
     static_cast<Float_handle_function>(&Camera::radius_scale_handle);
   s_prototype->add_field_info(new SF_float(RADIUS_SCALE, "radiusScale",
+                                           RULE_EXPOSED_FIELD,
                                            radius_scale_func));
 }
 

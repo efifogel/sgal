@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7773 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string.h>
@@ -68,7 +65,7 @@ int Navigation_info::parse_type(const std::string& type)
     // Compare with supported types:
     unsigned int j;
     Boolean found = false;
-    
+
     for (j = 0; j < SGAL::NUM_TYPES; ++j) {
       const char* nav_type = s_type_strings[j];
       if (type.compare(i, strlen(nav_type), nav_type) == 0) {
@@ -98,7 +95,7 @@ int Navigation_info::parse_type(const std::string& type)
 }
 
 /*! \brief sets the attributes of this node. */
-void Navigation_info::set_attributes(Element* elem) 
+void Navigation_info::set_attributes(Element* elem)
 {
   Navigation_sensor::set_attributes(elem);
 
@@ -118,11 +115,11 @@ void Navigation_info::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */  
+/*! \brief adds the container to a given scene */
 void Navigation_info::add_to_scene(Scene_graph* sg)
 {
   Navigation_sensor::add_to_scene(sg);
-  
+
   // Push this bindable Navigation_info node onto the respective stack:
   insert_stack(this);
 

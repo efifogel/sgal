@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 // Remote_controller.cpp: implementation of the Remote_controller class.
@@ -90,7 +87,7 @@ unsigned Remote_controller::ThreadHandlerProc(void)
 
   m_pSAIServices = get_sAIServices();
   SAI_node_services* pSAINodeServices = NULL;
-  
+
   pSAINodeServices = m_pSAIServices->get_node("NAVIGATION ROOT");
   if ( !pSAINodeServices ) {
     std::string msg = "NAVIGATION ROOT Remote_controller: Invalid node name";
@@ -132,7 +129,7 @@ ESAIServices* Remote_controller::get_sAIServices()
   RELEASE_ONLY(try)
   {
     if (m_SAIServices == NULL)
-    {   
+    {
       if (m_pScene)
       {
         pSAIServices = m_pScene->CreateSAI();
@@ -159,7 +156,7 @@ ESAIServices* Remote_controller::get_sAIServices()
       pSAIServices = NULL;
     }
   )
-  
+
   return pSAIServices;
 }
 
@@ -180,7 +177,7 @@ void Remote_controller::SetSpecificValue(const char* pValue, SAI_fieldServices* 
         ESABoolean* pTSAIField = dynamic_cast<ESABoolean*>(pSAIFieldServices);
         //Boolean RValue = (String(_strupr(pValue))=="TRUE"); // case insensitive
         Boolean RValue = (String(pValue)=="TRUE"); // case insensitive
-        pTSAIField->set_value(RValue);  
+        pTSAIField->set_value(RValue);
         break;
       }
       case SFFLOAT:
@@ -189,14 +186,14 @@ void Remote_controller::SetSpecificValue(const char* pValue, SAI_fieldServices* 
         char *mask = "0123456789.eE-+";
         if ( strspn(pValue, mask) != strlen(pValue) ) error = true;
         Float RValue = atof(pValue);
-        pTSAIField->set_value(RValue);  
+        pTSAIField->set_value(RValue);
         break;
       }
       case SFTIME:
       {
         ESATime* pTSAIField = dynamic_cast<ESATime*>(pSAIFieldServices);
         Scene_time RValue = atof(pValue);
-        pTSAIField->set_value(RValue);  
+        pTSAIField->set_value(RValue);
         break;
       }
       case SFINT32:
@@ -205,7 +202,7 @@ void Remote_controller::SetSpecificValue(const char* pValue, SAI_fieldServices* 
         char *mask = "0123456789.eE-+";
         if ( strspn(pValue, mask) != strlen(pValue) ) error = true;
         Int RValue = atoi(pValue);
-        pTSAIField->set_value(RValue);  
+        pTSAIField->set_value(RValue);
         break;
       }
       case SFVEC2F:
@@ -216,7 +213,7 @@ void Remote_controller::SetSpecificValue(const char* pValue, SAI_fieldServices* 
         if ( Vals.size() != 2 ) error = true;
         assert(Vals.size() == 2);
         Vector2f RValue( Vals[0], Vals[1] );
-        pTSAIField->set_value(RValue);  
+        pTSAIField->set_value(RValue);
         break;
       }
       case SFVEC3F:
@@ -227,7 +224,7 @@ void Remote_controller::SetSpecificValue(const char* pValue, SAI_fieldServices* 
         if ( Vals.size() != 3 ) error = true;
         assert(Vals.size() == 3);
         Vector3f RValue( Vals[0], Vals[1], Vals[2] );
-        pTSAIField->set_value(RValue);  
+        pTSAIField->set_value(RValue);
         break;
       }
       case SFROTATION:
@@ -238,7 +235,7 @@ void Remote_controller::SetSpecificValue(const char* pValue, SAI_fieldServices* 
         if ( Vals.size() != 4 ) error = true;
         assert(Vals.size() == 4); // (x, y, z, radians)
         Rotation RValue( Vals[0], Vals[1],Vals[2],Vals[3] );
-        pTSAIField->set_value(RValue);  
+        pTSAIField->set_value(RValue);
         break;
       }
       case SFVEC4F:
@@ -378,7 +375,7 @@ void Remote_controller::OnData(char *inBuff,int len)
       ExecuteKey(inMessage);
 /*      SAI_node_services* pSAINodeServices = NULL;
       SAI_fieldServices* m_pSAIFieldStart = NULL;
-      
+
       pSAINodeServices = m_pSAIServices->get_node("LidTouchSensor-SENSOR");
       if ( !pSAINodeServices ) {
         std::string msg = "LidTimeSensor-TIMER Remote_controller: Invalid node name";
@@ -394,7 +391,7 @@ void Remote_controller::OnData(char *inBuff,int len)
       }
       std::string pValue;
       pValue.format("true");
-      m_pSAIServices->BeginUpdate(); 
+      m_pSAIServices->BeginUpdate();
       SetSpecificValue(pValue.c_str(), m_pSAIFieldStart);
       m_pSAIServices->EndUpdate();*/
 /*      if (m_timerOn)
@@ -450,7 +447,7 @@ void Remote_controller::SetField(String nodeName, String fieldName,String value)
 {
   SAI_node_services* pSAINodeServices = NULL;
   SAI_fieldServices* m_pSAIFieldStart = NULL;
-  
+
   pSAINodeServices = m_pSAIServices->get_node(nodeName);
   if ( !pSAINodeServices ) {
     std::string msg = "LidTimeSensor-TIMER Remote_controller: Invalid node name";
@@ -464,7 +461,7 @@ void Remote_controller::SetField(String nodeName, String fieldName,String value)
     MessageBox(NULL,msg,"",MB_OK);
     return ;
   }
-  m_pSAIServices->BeginUpdate(); 
+  m_pSAIServices->BeginUpdate();
   SetSpecificValue(value.c_str(), m_pSAIFieldStart);
   m_pSAIServices->EndUpdate();
 }

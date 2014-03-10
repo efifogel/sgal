@@ -122,7 +122,7 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Add the container to a given scene
+  /*! Record the scene graph.
    * \param scene_graph the given scene
    */
   virtual void add_to_scene(Scene_graph* scene_graph);

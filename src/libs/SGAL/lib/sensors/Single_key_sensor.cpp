@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -75,28 +72,37 @@ void Single_key_sensor::init_prototype()
   // press
   Boolean_handle_function press_func =
     static_cast<Boolean_handle_function>(&Single_key_sensor::press_handle);
-  s_prototype->add_field_info(new SF_bool(PRESS, "press", press_func));
+  s_prototype->add_field_info(new SF_bool(PRESS, "press",
+                                          RULE_EXPOSED_FIELD,
+                                          press_func));
 
   // pressTime
   Scene_time_handle_function time_func =
     static_cast<Scene_time_handle_function>(&Single_key_sensor::time_handle);
-  s_prototype->add_field_info(new SF_time(TIME, "pressTime", time_func));
+  s_prototype->add_field_info(new SF_time(TIME, "pressTime",
+                                          RULE_EXPOSED_FIELD,
+                                          time_func));
 
   // state
   Boolean_handle_function state_func =
     static_cast<Boolean_handle_function>(&Single_key_sensor::state_handle);
-  s_prototype->add_field_info(new SF_bool(STATE, "state", state_func));
+  s_prototype->add_field_info(new SF_bool(STATE, "state",
+                                          RULE_EXPOSED_FIELD,
+                                          state_func));
 
   // intState
   Int_handle_function int_state_func =
     static_cast<Int_handle_function>(&Single_key_sensor::int_state_handle);
   s_prototype->add_field_info(new SF_int(INT_STATE, "intState",
+                                         RULE_EXPOSED_FIELD,
                                          int_state_func));
 
   // numberOfStates
   Uint_handle_function num_states_func =
     static_cast<Uint_handle_function>(&Single_key_sensor::num_states_handle);
-  s_prototype->add_field_info(new SF_uint(NUMBER_OF_STATES, "numberOfStates",
+  s_prototype->add_field_info(new SF_uint(NUMBER_OF_STATES,
+                                          "numberOfStates",
+                                          RULE_EXPOSED_FIELD,
                                           num_states_func));
 }
 

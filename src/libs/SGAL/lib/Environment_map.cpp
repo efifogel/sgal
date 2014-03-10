@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <algorithm>
@@ -101,6 +98,7 @@ void Environment_map::init_prototype()
   _handle_function texture_func =
     static_cast<_handle_function>(&Environment_map::texture_handle);
   s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
+                                                      RULE_EXPOSED_FIELD,
                                                       texture_func,
                                                       exec_func));
 
@@ -108,7 +106,9 @@ void Environment_map::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Environment_map::alpha_handle);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
+                                           RULE_EXPOSED_FIELD,
+                                           alpha_func,
                                            exec_func));
 }
 

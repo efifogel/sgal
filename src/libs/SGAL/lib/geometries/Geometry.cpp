@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -59,6 +56,7 @@ void Geometry::init_prototype()
   Sphere_bound_handle_function sphere_bound_func =
     static_cast<Sphere_bound_handle_function>(&Geometry::sphere_bound_handle);
   s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
+                                                  RULE_EXPOSED_FIELD,
                                                   sphere_bound_func));
 
   // generatedTexCoord
@@ -67,6 +65,7 @@ void Geometry::init_prototype()
     (&Geometry::generated_tex_coord_handle);
   s_prototype->add_field_info(new SF_bool(GENERATED_TEX_COORD,
                                           "generatedTexCoord",
+                                          RULE_EXPOSED_FIELD,
                                           generated_tex_coord_func,
                                           s_def_generated_tex_coord));
 }

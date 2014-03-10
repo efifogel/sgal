@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -86,12 +83,12 @@ void Execution_coordinator::SignalSnapshotDone()
     }
 }
 
-void Execution_coordinator::UpdateCompInterpolator() 
-{ 
-    m_CompressedInterpolatorsCount--; 
+void Execution_coordinator::UpdateCompInterpolator()
+{
+    m_CompressedInterpolatorsCount--;
     if (m_CompressedInterpolatorsCount <= 0)
     {
-        m_isUpdateTimeActive = true;        
+        m_isUpdateTimeActive = true;
         if (m_flowSensor)
         {
             m_flowSensor->set_animationLoadingDone();
@@ -99,12 +96,12 @@ void Execution_coordinator::UpdateCompInterpolator()
     }
 }
 
-void Execution_coordinator::SetFlowSensor(EFlowSensor *flowSensor) 
-{ 
-    m_flowSensor = flowSensor; 
+void Execution_coordinator::SetFlowSensor(EFlowSensor *flowSensor)
+{
+    m_flowSensor = flowSensor;
 }
 
-Boolean Execution_coordinator::IsAAInterrupt() 
+Boolean Execution_coordinator::IsAAInterrupt()
 {
     if ( m_isAAInterrupt ) {
         m_isAAInterrupt = false;
@@ -113,14 +110,14 @@ Boolean Execution_coordinator::IsAAInterrupt()
     return m_isAAInterrupt;
 }
 
-void Execution_coordinator::SendErrorMessage(EErrorType type, String &error) 
-{ 
+void Execution_coordinator::SendErrorMessage(EErrorType type, String &error)
+{
     if ( m_errorHandle ) {
-        m_errorHandle->SendErrorMessage(type, error); 
+        m_errorHandle->SendErrorMessage(type, error);
     }
 }
 
-void Execution_coordinator::AddPolygons(const int n) 
+void Execution_coordinator::AddPolygons(const int n)
 {
   m_flowSensor->AddNumPolygons(n);
 }

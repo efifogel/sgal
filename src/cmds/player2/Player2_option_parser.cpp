@@ -14,13 +14,7 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 1995 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
-
-/*! \file
- */
 
 #include "Player2_option_parser.hpp"
 

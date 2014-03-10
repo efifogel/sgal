@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Interpolator.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -58,7 +55,9 @@ void Interpolator::init_prototype()
     static_cast<Execution_function>(&Interpolator::execute);
   Float_handle_function fraction_func =
     static_cast<Float_handle_function>(&Interpolator::fraction_handle);
-  s_prototype->add_field_info(new SF_float(FRACTION, "set_fraction",
+  s_prototype->add_field_info(new SF_float(FRACTION,
+                                           "set_fraction",
+                                           RULE_EXPOSED_FIELD,
                                            fraction_func, exec_func));
 }
 

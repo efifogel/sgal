@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -38,7 +35,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Shader::s_prototype(NULL);
+Container_proto* Shader::s_prototype(nullptr);
 
 /*! Constructor */
 Shader::Shader(Boolean proto) :  Container(proto) { }
@@ -96,13 +93,15 @@ void Shader::init_prototype()
 void Shader::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 
   // Add the field-info records to the prototype:
   // url
   String_handle_function url_func =
     static_cast<String_handle_function>(&Shader::url_handle);
-  s_prototype->add_field_info(new SF_string(URL, "url", url_func));
+  s_prototype->add_field_info(new SF_string(URL, "url",
+                                            RULE_EXPOSED_FIELD,
+                                            url_func));
 }
 
 /*! \brief obtains the shader node prototype. */

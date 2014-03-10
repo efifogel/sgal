@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 4971 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- *  Normal_interpolator - implementation                              
+ *  Normal_interpolator - implementation
  */
 
 #include "SGAL/Normal_interpolator.hpp"
@@ -32,7 +29,8 @@ std::string Normal_interpolator::s_tag = "sgalNormalInterpolator";
 REGISTER_TO_FACTORY(Normal_interpolator, "Normal_interpolator");
 
 /*! Constructor */
-Normal_interpolator::Normal_interpolator(Boolean interpolate_flag, Boolean proto) :
+Normal_interpolator::Normal_interpolator(Boolean interpolate_flag,
+                                         Boolean proto) :
   Vector3f_interpolator(interpolate_flag, proto)
 {}
 

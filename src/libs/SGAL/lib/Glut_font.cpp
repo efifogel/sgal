@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -47,7 +44,7 @@ void Glut_font::draw_string(const std::string & str)
   // Init:
   GLdouble model_matrix[16];
   GLdouble proj_matrix[16];
-  GLint viewport[4];  
+  GLint viewport[4];
   glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
   glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
   glGetIntegerv(GL_VIEWPORT, viewport);
@@ -56,7 +53,7 @@ void Glut_font::draw_string(const std::string & str)
   GLdouble px, py, pz;
   gluProject(0, 0, 0, model_matrix, proj_matrix, viewport, &px, &py, &pz);
   // std::cout << "x,y,z: " << px << "," << py << "," << pz << std::endl;
-  
+
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();

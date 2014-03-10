@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_colored_geo.cpp 14195 2012-11-22 22:44:54Z efif $
-// $Revision: 14195 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -67,7 +64,7 @@ SGAL_BEGIN_NAMESPACE
 
 const std::string
 Spherical_gaussian_map_colored_geo::s_tag("SphericalGaussianMapColored");
-Container_proto* Spherical_gaussian_map_colored_geo::s_prototype(NULL);
+Container_proto* Spherical_gaussian_map_colored_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Spherical_gaussian_map_colored_geo,
                     "Spherical_gaussian_map_colored_geo");
@@ -77,16 +74,16 @@ Spherical_gaussian_map_colored_geo::
 Spherical_gaussian_map_colored_geo(Boolean proto) :
   Spherical_gaussian_map_base_geo(proto),
   m_owned_sgm(false),
-  m_sgm(NULL),
-  m_polyhedron(NULL),
+  m_sgm(nullptr),
+  m_polyhedron(nullptr),
   m_minkowski_sum(false),
-  m_vertices_renderer(NULL),
-  m_colored_vertices_renderer(NULL),
-  m_edges_renderer(NULL),
-  m_colored_edges_renderer(NULL),
-  m_inflated_line_edges_renderer(NULL),
-  m_inflated_strip_edges_renderer(NULL),
-  m_inflated_tube_edges_renderer(NULL)
+  m_vertices_renderer(nullptr),
+  m_colored_vertices_renderer(nullptr),
+  m_edges_renderer(nullptr),
+  m_colored_edges_renderer(nullptr),
+  m_inflated_line_edges_renderer(nullptr),
+  m_inflated_strip_edges_renderer(nullptr),
+  m_inflated_tube_edges_renderer(nullptr)
 {
   if (proto) return;
   create_renderers();
@@ -105,7 +102,7 @@ Spherical_gaussian_map_colored_geo::~Spherical_gaussian_map_colored_geo()
   if (m_owned_sgm) {
     if (m_sgm) {
       delete m_sgm;
-      m_sgm = NULL;
+      m_sgm = nullptr;
     }
     m_owned_sgm = false;
   }
@@ -240,6 +237,7 @@ void Spherical_gaussian_map_colored_geo::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Spherical_gaussian_map_colored_geo::sgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      RULE_EXPOSED_FIELD,
                                                       sgm_nodes_func));
 }
 
@@ -247,7 +245,7 @@ void Spherical_gaussian_map_colored_geo::init_prototype()
 void Spherical_gaussian_map_colored_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief

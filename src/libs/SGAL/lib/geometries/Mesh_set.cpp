@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14184 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -197,7 +194,8 @@ void Mesh_set::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Boolean_handle_function is_ccw_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_ccw_handle);
-  s_prototype->add_field_info(new SF_bool(CCW, "ccw", is_ccw_func,
+  s_prototype->add_field_info(new SF_bool(CCW, "ccw", RULE_EXPOSED_FIELD,
+                                          is_ccw_func,
                                           s_def_is_ccw, exec_func));
 
   // solid
@@ -205,7 +203,8 @@ void Mesh_set::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Boolean_handle_function is_solid_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_solid_handle);
-  s_prototype->add_field_info(new SF_bool(SOLID, "solid", is_solid_func,
+  s_prototype->add_field_info(new SF_bool(SOLID, "solid", RULE_EXPOSED_FIELD,
+                                          is_solid_func,
                                           s_def_is_solid, exec_func));
 
   // convex
@@ -213,7 +212,8 @@ void Mesh_set::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Boolean_handle_function is_convex_func =
     static_cast<Boolean_handle_function>(&Mesh_set::is_convex_handle);
-  s_prototype->add_field_info(new SF_bool(CONVEX, "convex", is_convex_func,
+  s_prototype->add_field_info(new SF_bool(CONVEX, "convex", RULE_EXPOSED_FIELD,
+                                          is_convex_func,
                                           s_def_is_convex, exec_func));
 
   // creaseAngle
@@ -222,6 +222,7 @@ void Mesh_set::init_prototype()
   Float_handle_function crease_angle_func =
     static_cast<Float_handle_function>(&Mesh_set::crease_angle_handle);
   s_prototype->add_field_info(new SF_float(CREASE_ANGLE, "creaseAngle",
+                                           RULE_EXPOSED_FIELD,
                                            crease_angle_func,
                                            s_def_crease_angle, exec_func));
 }

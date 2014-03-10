@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -51,7 +48,7 @@ Tex_gen::Tex_gen(Boolean proto) :
 Tex_gen::~Tex_gen() {}
 
 /*! \brief applies the texture generation attribute. */
-void Tex_gen::draw(Context* /* context */) 
+void Tex_gen::draw(Context* /* context */)
 {
   GLint params[] = {
     GL_OBJECT_LINEAR,

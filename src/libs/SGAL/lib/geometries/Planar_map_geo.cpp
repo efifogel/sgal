@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <GL/gl.h>
@@ -71,7 +68,7 @@ void Planar_map_geo::draw(Draw_action * draw_action)
   viewport[1] = vy;
   viewport[2] = vw;
   viewport[3] = vh;
-  
+
   glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
   glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
@@ -92,7 +89,7 @@ void Planar_map_geo::draw(Draw_action * draw_action)
   glOrtho(vx, vx + vw, vy, vy + vh, -1, 1);
 
   // Draw the planar map:
-  
+
   if (bCull) glEnable(GL_CULL_FACE);
   glPopMatrix();
 
@@ -135,7 +132,7 @@ void Planar_map_geo::set_attributes(Element * elem)
     const std::string & name = elem->get_name(cai);
     Container * cont = elem->get_value(cai);
     if (name == "coord") {
-      elem->mark_delete(cai);      
+      elem->mark_delete(cai);
     }
   }
 

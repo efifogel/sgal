@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 5848 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -50,7 +47,7 @@ Draw_action::~Draw_action() {}
  * @param node a pointer to the node to draw
  */
 Action::Trav_directive Draw_action::apply(Node * node)
-{  
+{
   if (node) {
     // Ignore some nodes:
     if ((dynamic_cast<Transform*>(node) == 0) &&
@@ -59,30 +56,30 @@ Action::Trav_directive Draw_action::apply(Node * node)
       node->draw(this);
     }
   }
-  return Action::TRAV_CONT; 
+  return Action::TRAV_CONT;
 }
 
 /*! Returns true if a second pass is required to render the transparent
  * objects.
  * @return true if a 2nd pass is required.
  */
-Boolean Draw_action::is_second_pass_required() 
-{ 
-  return m_second_pass_required; 
+Boolean Draw_action::is_second_pass_required()
+{
+  return m_second_pass_required;
 }
 
 /*! Set the flag to indicate whether a second pass is required. This flag
  * should be set when a transparent object is found.
  */
-void Draw_action::set_second_pass_required(Boolean flag) 
-{ 
-  m_second_pass_required = flag; 
+void Draw_action::set_second_pass_required(Boolean flag)
+{
+  m_second_pass_required = flag;
 }
 
 /*! Increment the pass number.
  */
-void Draw_action::inc_pass_no() 
-{ 
+void Draw_action::inc_pass_no()
+{
   m_pass_no++;
   m_current_lod = -1;
 }
@@ -90,17 +87,17 @@ void Draw_action::inc_pass_no()
 /*! Returns the current pass being rendered, assuming 0 to be the first one.
  * @return the pass number.
  */
-Int Draw_action::get_pass_no() 
-{ 
-  return m_pass_no; 
+Int Draw_action::get_pass_no()
+{
+  return m_pass_no;
 }
 
 /*! Resets the pass number to 0.
  */
-void Draw_action::reset_pass_no() 
-{ 
-  m_pass_no = 0; 
-  m_second_pass_required = false; 
+void Draw_action::reset_pass_no()
+{
+  m_pass_no = 0;
+  m_second_pass_required = false;
 
 }
 

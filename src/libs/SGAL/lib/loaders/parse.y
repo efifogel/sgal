@@ -130,7 +130,7 @@ SGAL_END_NAMESPACE
 %type <std::string> sfint32Values
 %type <std::string> sfboolValue
 %type <std::string> fieldValue
-%type <Field_type_enum> fieldType
+%type <Field_type> fieldType
 %type <Cont_list*> nodeStatements
 %type <Element*> nodeBody
 %type <Element*> scriptBody
@@ -377,21 +377,21 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_pair($2, new std::string("")));
+                                  std::make_tuple(RULE_IN, $2, new std::string("")));
                   $$->add_attribute(attr);
                 }
                 | K_EVENTOUT fieldType eventOutId
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_pair($2, new std::string("")));
+                                  std::make_tuple(RULE_OUT, $2, new std::string("")));
                   $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId sfValue
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_pair($2, new std::string($4)));
+                                  std::make_tuple(RULE_FIELD, $2, new std::string($4)));
                   $$->add_attribute(attr);
                 }
                 ;

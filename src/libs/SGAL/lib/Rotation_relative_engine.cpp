@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -71,18 +68,24 @@ void Rotation_relative_engine::init_prototype()
   Float_handle_function fraction_func =
     static_cast<Float_handle_function>
     (&Rotation_relative_engine::fraction_handle);
-  s_prototype->add_field_info(new SF_float(FRACTION, "fraction", fraction_func,
+  s_prototype->add_field_info(new SF_float(FRACTION, "fraction",
+                                           RULE_EXPOSED_FIELD,
+                                           fraction_func,
                                            exec_func));
 
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>
     (&Rotation_relative_engine::rotation_handle);
-  s_prototype->add_field_info(new SF_rotation(VALUE, "value", rotation_func));
+  s_prototype->add_field_info(new SF_rotation(VALUE, "value",
+                                              RULE_EXPOSED_FIELD,
+                                              rotation_func));
 
   Float_handle_function angle_func =
     static_cast<Float_handle_function>
     (&Rotation_relative_engine::angle_handle);
-  s_prototype->add_field_info(new SF_float(ANGLE, "angle", angle_func));
+  s_prototype->add_field_info(new SF_float(ANGLE, "angle",
+                                           RULE_EXPOSED_FIELD,
+                                           angle_func));
 }
 
 /*! \brief */

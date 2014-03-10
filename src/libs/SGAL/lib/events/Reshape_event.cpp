@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Reshape_event.cpp 5012 2007-09-03 07:24:36Z efif $
-// $Revision: 5012 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -49,7 +46,7 @@ void Reshape_event::set_window_item(Window_item* item) { m_window_item = item; }
 
 /*! \brief obtains the window where the event took place */
 Window_item* Reshape_event::get_window_item() const { return m_window_item; }
-  
+
 /*! \brief registersw this event for a particular agent. */
 void Reshape_event::doregister(Agent* agent) { s_set.insert(agent); }
 

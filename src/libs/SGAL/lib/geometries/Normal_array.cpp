@@ -41,7 +41,9 @@ void Normal_array::init_prototype()
   // vector
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>(&Normal_array::array_handle);
-  s_prototype->add_field_info(new MF_vector3f(VECTOR, "vector", array_func));
+  s_prototype->add_field_info(new MF_vector3f(VECTOR, "vector",
+                                              RULE_EXPOSED_FIELD,
+                                              array_func));
 }
 
 //! \brief deletes the node prototype.

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -109,7 +106,7 @@ void Text_screen::draw(Draw_action * draw_action)
   if (bCull) glDisable(GL_CULL_FACE);
 
   glOrtho(vx, vx + vw, vy,vy + vh, -1, 1);
-  
+
   m_font->DrawAppearance(draw_action);
 
   // Draw text lines.

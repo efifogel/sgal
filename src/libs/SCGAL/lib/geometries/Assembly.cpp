@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Assembly.cpp 14211 2012-11-26 16:46:31Z efif $
-// $Revision: 14211 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -185,7 +182,9 @@ void Assembly::init_prototype()
   exec_func = static_cast<Execution_function>(&Assembly::solve);
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Assembly::trigger_handle);
-  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger", trigger_func,
+  s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
+                                          RULE_EXPOSED_FIELD,
+                                          trigger_func,
                                           exec_func));
 
   // drawAlternate
@@ -193,6 +192,7 @@ void Assembly::init_prototype()
   Boolean_handle_function draw_alternate_func =
     static_cast<Boolean_handle_function>(&Assembly::draw_alternate_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_ALT, "drawAlternate",
+                                          RULE_EXPOSED_FIELD,
                                           draw_alternate_func, exec_func));
 
   // incAlternate
@@ -200,6 +200,7 @@ void Assembly::init_prototype()
   Boolean_handle_function inc_alternate_func =
     static_cast<Boolean_handle_function>(&Assembly::inc_alternate_handle);
   s_prototype->add_field_info(new SF_bool(INC_ALT, "incAlternate",
+                                          RULE_EXPOSED_FIELD,
                                           inc_alternate_func, exec_func));
 
   // drawAosMinkowskiSums
@@ -210,6 +211,7 @@ void Assembly::init_prototype()
     (&Assembly::draw_aos_minkowski_sums_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS_MINKOWSKI_SUMS,
                                           "drawAosMinkowskiSums",
+                                          RULE_EXPOSED_FIELD,
                                           draw_aos_minkowski_sums_func,
                                           exec_func));
 
@@ -220,6 +222,7 @@ void Assembly::init_prototype()
     static_cast<Boolean_handle_function>(&Assembly::inc_minkowski_sums_handle);
   s_prototype->add_field_info(new SF_bool(INC_MINKOWSKI_SUMS,
                                           "incMinkowskiSums",
+                                          RULE_EXPOSED_FIELD,
                                           inc_minkowski_sums_func,
                                           exec_func));
 }

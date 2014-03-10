@@ -16,7 +16,10 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <regex>
 #include <boost/lexical_cast.hpp>
+
+#include <v8.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
@@ -26,6 +29,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Script.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Scene_graph.hpp"
 
 // #include "JSWObjectInt.h"
 // #include "SG_JSObject.h"
@@ -34,17 +38,18 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Script::s_tag = "Script";
-Container_proto* Script::s_prototype(NULL);
+Container_proto* Script::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Script, "Script");
 
 /*! Constructor */
 Script::Script(Boolean proto) :
-  Node(proto)
-  // m_JSWObject(NULL),
+  Node(proto),
+  m_protocol(PROTOCOL_INVALID)
+  // m_JSWObject(nullptr),
   // m_engineInitialized(false),
-  // m_SAI(NULL),
-  // m_SAINode(NULL)
+  // m_SAI(nullptr),
+  // m_SAINode(nullptr)
 {}
 
 /*! Destructor */
@@ -61,16 +66,20 @@ void Script::init_prototype()
 
   String_handle_function url_func =
     static_cast<String_handle_function>(&Script::url_handle);
-  s_prototype->add_field_info(new SF_string(URL, "url", url_func));
+  s_prototype->add_field_info(new SF_string(URL, "url",
+                                            RULE_EXPOSED_FIELD,
+                                            url_func));
 
   Boolean_handle_function direct_output_func =
     static_cast<Boolean_handle_function>(&Script::direct_output_handle);
   s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
+                                          RULE_EXPOSED_FIELD,
                                           direct_output_func));
 
   Boolean_handle_function must_evaluate_func =
     static_cast<Boolean_handle_function>(&Script::must_evaluate_handle);
   s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
+                                          RULE_EXPOSED_FIELD,
                                           must_evaluate_func));
 }
 
@@ -120,10 +129,11 @@ void Script::set_attributes(Element* elem)
 
   Element::Field_attr_iter fi;
   for (fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi) {
-    Field_type_enum type = elem->get_type(fi);
+    Field_rule rule = elem->get_rule(fi);
+    Field_type type = elem->get_type(fi);
     const std::string& name = elem->get_name(fi);
     const std::string& value = elem->get_value(fi);
-    add_field_info(type, name, value);
+    add_field_info(rule, type, name, value);
   }
 
   // Remove all the marked attributes:
@@ -146,32 +156,12 @@ Attribute_list Script::get_attributes()
 }
 #endif
 
-#if 0
-void Script::add_to_scene(Scene_graph* sg)
-{
-  Node::add_to_scene(sg);
-
-  m_SAI = sg->get_scriptsSAI();
-  if (m_SAI == NULL) {
-    assert(false);
-    return;
-  }
-
-  m_SAINode = m_SAI->get_node(this);
-  if (m_SAINode == NULL) {
-    assert(false);
-    return;
-  }
-
-  // Create a suitable script engine object
-  m_JSWObject = (sg->GetJSWEngine())->
-    CreateObject(new ESG_JSObject(m_SAI, m_SAINode,m_SAINode->get_name()));
-}
-#endif
+/*! \brief records the scene graph. */
+void Script::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
 
 /*! \brief adds a field info record to the script node. */
-void Script::add_field_info(Field_type_enum type, const std::string& name,
-                            const std::string& value)
+void Script::add_field_info(Field_rule rule, Field_type type,
+                            const std::string& name, const std::string& value)
 {
   Container_proto* prototype = get_prototype();
 
@@ -188,9 +178,9 @@ void Script::add_field_info(Field_type_enum type, const std::string& name,
      variant_field = initial_value;
      Boolean_handle_function field_func =
        static_cast<Boolean_handle_function>(&Script::field_handle<Boolean>);
-     SF_bool* field =
-       new SF_bool(id, name, field_func, initial_value, exec_func);
-     prototype->add_field_info(field);
+     SF_bool* field_info =
+       new SF_bool(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
     }
     break;
 
@@ -200,9 +190,9 @@ void Script::add_field_info(Field_type_enum type, const std::string& name,
      variant_field = initial_value;
      Float_handle_function field_func =
        static_cast<Float_handle_function>(&Script::field_handle<Float>);
-     SF_float* field =
-       new SF_float(id, name, field_func, initial_value, exec_func);
-     prototype->add_field_info(field);
+     SF_float* field_info =
+       new SF_float(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
     }
     break;
 
@@ -212,8 +202,9 @@ void Script::add_field_info(Field_type_enum type, const std::string& name,
      variant_field = initial_value;
      Int_handle_function field_func =
        static_cast<Int_handle_function>(&Script::field_handle<Int>);
-     SF_int* field = new SF_int(id, name, field_func, initial_value, exec_func);
-     prototype->add_field_info(field);
+     SF_int* field_info =
+       new SF_int(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
     }
     break;
 
@@ -311,12 +302,89 @@ void Script::add_field_def(const String& name, const String& type,
 }
 #endif
 
-// Execution function - executes the suitable script function according to the
-// event
+// \brief executes the suitable script function according to the event.
 void Script::execute(Field_info* field_info)
 {
   const std::string& name = field_info->get_name();
   std::cout << "Script::execute() " << name << std::endl;
+
+  // Get the Isolate instance of the V8 engine from the scene graph.
+  v8::Isolate* isolate = m_scene_graph->get_isolate();
+  v8::Isolate::Scope isolate_scope(isolate);
+  v8::HandleScope handle_scope(isolate);        // stack-allocated handle scope
+  v8::Handle<v8::Context> context = v8::Context::New(isolate);
+  v8::Context::Scope context_scope(context);    // enter the contex
+
+  // Extract the script
+  size_t pos = m_url.find(':');
+  if (std::string::npos == pos) {
+    std::cerr << "Invalid script!" << std::endl;
+    return;
+  }
+  if (m_url.compare(0, pos, "javascript") == 0)
+    m_protocol = PROTOCOL_CUSTOM_ECMASCRIPT;
+  else if (std::regex_match(m_url, std::regex("http://.*\\.js")))
+    m_protocol = PROTOCOL_ECMASCRIPT;
+  else if (std::regex_match(m_url, std::regex("http://.*\\.class")))
+    m_protocol = PROTOCOL_JAVA_BYTECODE;
+  else {
+    std::cerr << "Invalid script!" << std::endl;
+    return;
+  }
+
+  pos = m_url.find_first_not_of(" \t\r\n", pos + 1);
+  std::string source_str = m_url.substr(pos);
+  std::cout << "script: " << source_str << std::endl;
+
+  // Create a string containing the JavaScript source code.
+  v8::Handle<v8::String> source =
+    v8::String::NewFromUtf8(isolate, source_str.c_str());
+
+  // set up an error handler to catch any exceptions the script might throw.
+  v8::TryCatch try_catch;
+
+  v8::Handle<v8::Script> script = v8::Script::Compile(source);
+  if (script.IsEmpty()) {
+    // The script failed to compile; bail out.
+    v8::String::Utf8Value error(try_catch.Exception());
+    std::cerr << *error << std::endl;
+    return;
+  }
+
+  v8::Handle<v8::Value> result = script->Run(); // run the script
+  if (result.IsEmpty()) {
+    // The TryCatch above is still in effect and will have caught the error.
+    v8::String::Utf8Value error(try_catch.Exception());
+    std::cerr << *error << std::endl;
+    return;
+  }
+
+  v8::Handle<v8::Object> global = context->Global();
+  v8::Handle<v8::Value> value =
+    global->Get(v8::String::NewFromUtf8(isolate, name.c_str()));
+
+  // If there is no such function, bail out.
+  if (!value->IsFunction()) {
+    std::cerr << "A function named " << name.c_str() << "does not exist!"
+              << std::endl;
+    return;
+  }
+
+  v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(value);
+  v8::Handle<v8::Value> args[2];
+  args[0] = v8::String::NewFromUtf8(isolate, "0");
+  args[1] = v8::String::NewFromUtf8(isolate, "0");
+
+  v8::Handle<v8::Value> func_result = func->Call(global, 2, args);
+  if (func_result.IsEmpty()) {
+    v8::String::Utf8Value error(try_catch.Exception());
+    std::cerr << *error << std::endl;
+    return;
+  }
+
+  // Convert the result to an UTF8 string and print it.
+  // v8::String::Utf8Value utf8(result);
+  // printf("%s\n", *utf8);
 
 #if 0
   // if this is the first time the script is executed -
@@ -330,7 +398,7 @@ void Script::execute(Field_info* field_info)
   }
 
   SAI_fieldServices* field = m_SAINode->get_field(field_info->get_id());
-  if (field == NULL) {
+  if (field == nullptr) {
     assert(false);
     return;
   }
@@ -341,7 +409,7 @@ void Script::execute(Field_info* field_info)
   if (arg_type == SFBOOL) {
     SAI_fieldSpecificServicesTemplate<Boolean, SFBOOL>* spField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Boolean, SFBOOL>*>(field);
-    if (spField == NULL) {
+    if (spField == nullptr) {
       assert(false);
       return;
     }
@@ -352,7 +420,7 @@ void Script::execute(Field_info* field_info)
   else if (arg_type == SFFLOAT) {
     SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>* spField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Float, SFFLOAT>*>(field);
-    if (spField == NULL) {
+    if (spField == nullptr) {
       assert(false);
       return;
     }
@@ -363,7 +431,7 @@ void Script::execute(Field_info* field_info)
   else if (arg_type == SFTIME) {
     SAI_fieldSpecificServicesTemplate<Scene_time, SFTIME>* spField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Scene_time, SFTIME>*>(field);
-    if (spField == NULL) {
+    if (spField == nullptr) {
       assert(false);
       return;
     }
@@ -375,7 +443,7 @@ void Script::execute(Field_info* field_info)
   {
     SAI_fieldSpecificServicesTemplate<Int, SFINT32>* spField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<Int, SFINT32>*>(field);
-    if (spField == NULL) {
+    if (spField == nullptr) {
       assert(false);
       return;
     }
@@ -386,7 +454,7 @@ void Script::execute(Field_info* field_info)
   else if (arg_type == SFSTRING) {
     SAI_fieldSpecificServicesTemplate<String, SFSTRING>* spField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<String, SFSTRING>*>(field);
-    if (spField == NULL) {
+    if (spField == nullptr) {
       assert(false);
       return;
     }
@@ -398,7 +466,7 @@ void Script::execute(Field_info* field_info)
   {
     SAI_fieldSpecificServicesTemplate<SAI_node_services*,SFNODE>* spField =
       dynamic_cast<SAI_fieldSpecificServicesTemplate<SAI_node_services*, SFNODE>*>(field);
-    if (spField == NULL) {
+    if (spField == nullptr) {
       assert(false);
       return;
     }
@@ -406,7 +474,7 @@ void Script::execute(Field_info* field_info)
 
     // If the SAI node has a client - it served a ESG_JSObject before -
     // use this client
-    if (nodeValue->get_client()==NULL)
+    if (nodeValue->get_client()==nullptr)
       // if the SAI node has no client - allocate a new object
       m_JSWObject->CallFunction(field_info->get_name(),
                                 new ESG_JSObject(m_SAI, nodeValue,
@@ -415,7 +483,7 @@ void Script::execute(Field_info* field_info)
     else {
       // Cast the client to ESG_JSObject
       ESG_JSObject* obj = dynamic_cast<ESG_JSObject*>(nodeValue->get_client());
-      if (obj == NULL) {
+      if (obj == nullptr) {
         assert(false);
         return;
       }
@@ -428,7 +496,7 @@ void Script::execute(Field_info* field_info)
   {
     // If the SAI field has a client - it served a ESGVec_JSObject before -
     // use this client
-    if (field->get_client() == NULL) {
+    if (field->get_client() == nullptr) {
       // if the SAI node has no client - allocate a new object and return it
       SAI_node_services* SAINode = m_SAI->get_node(this);
       m_JSWObject->CallFunction(field_info->get_name(),
@@ -439,7 +507,7 @@ void Script::execute(Field_info* field_info)
       // Cast the client to ESG_JSObject
       ESGVec_JSObject* obj =
         dynamic_cast<ESGVec_JSObject*>(field->get_client());
-      if (obj == NULL) {
+      if (obj == nullptr) {
         assert(false);
         return;
       }

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12533 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -37,7 +34,7 @@
  * videomodes and other information.
  */
 #include <X11/extensions/xf86vmode.h>
- 
+
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <GL/glu.h>
@@ -71,7 +68,7 @@ X11_window_manager::X11_window_manager() :
 X11_window_manager::~X11_window_manager() { clear(); }
 
 /*! \brief obtains a pointer to the manager */
-X11_window_manager* X11_window_manager::instance() 
+X11_window_manager* X11_window_manager::instance()
 {
   if (!s_instance) s_instance = new X11_window_manager();
   return s_instance;
@@ -101,7 +98,7 @@ void X11_window_manager::create_window(X11_window_item* window_item)
   window_item->create(m_display, m_screen);
   m_current_window = window_item;
 }
- 
+
 /*! \brief destroys an existing window */
 void X11_window_manager::destroy_window(X11_window_item* window_item)
 {
@@ -120,7 +117,7 @@ void X11_window_manager::event_loop(Boolean simulating)
 
   // Handle events while not done:
   do {
-    // Chech whether simulation is required: 
+    // Chech whether simulation is required:
     if (simulating) {
       // Measure the ellapsed time:
       clock_t end_tick_time = clock();
@@ -189,7 +186,7 @@ void X11_window_manager::event_loop(Boolean simulating)
     if (wait_for_xevent) {
       XEvent event;
       XNextEvent(m_display, &event);
-      
+
       process_xevent(event);
       if (m_created && (this->size_windows() == 0)) done = true;
     }
@@ -236,9 +233,9 @@ void X11_window_manager::process_xevent(XEvent& event)
   Boolean pressed;
   XComposeStatus status_in_out;
   Windows_iter it;
-  
+
   kc_values.key = -1;         // ALL keys
-  
+
   // std::cout << "event type: " << event_names[event.type] << std::endl;
   switch (event.type) {
    case Expose:
@@ -323,7 +320,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     m_event_handler.issue(mouse_event);
     m_current_window->set_redraw(true);
     break;
-        
+
    case KeyPress:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "KeyPress" << std::endl;);
@@ -336,7 +333,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     XLookupString(&event.xkey, buffer, 30, &keysym, &status_in_out);
     pressed = true;
   process_key:
-    
+
     keyboard_event = new Keyboard_event;
     keyboard_event->set_window_item(m_current_window);
     keyboard_event->set_key(buffer[0]);
@@ -402,7 +399,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     }
     m_current_window->set_redraw(true);
     break;
-    
+
    case ClientMessage:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "ClientMessage" << std::endl;);
@@ -448,7 +445,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     m_created = true;
     this->insert_window(m_current_window);
     break;
-    
+
    case DestroyNotify:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "DestroyNotify" << std::endl;);
@@ -482,7 +479,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     if (!m_current_window) break;
     m_current_window->set_visible(true);
     break;
-    
+
    case UnmapNotify:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "UnmapNotify" << std::endl;);
@@ -499,7 +496,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     if (!m_current_window) break;
     m_current_window->set_visible(false);
     break;
-    
+
    default:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "default" << std::endl;);

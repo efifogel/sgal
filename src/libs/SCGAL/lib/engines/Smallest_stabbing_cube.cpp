@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// Id: $
-// $Revision: 12554 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -126,20 +123,24 @@ void Smallest_stabbing_cube::init_prototype()
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>
     (&Smallest_stabbing_cube::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func,
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
+                                          RULE_EXPOSED_FIELD,
+                                          enabled_func,
                                           s_def_enabled, exec_func));
 
   // changed
   Boolean_handle_function changed_func =
     static_cast<Boolean_handle_function>
     (&Smallest_stabbing_cube::changed_handle);
-  s_prototype->add_field_info(new SF_bool(CHANGED, "changed", changed_func));
+  s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
+                                          RULE_EXPOSED_FIELD, changed_func));
 
   // execute
   Boolean_handle_function execute_func =
     static_cast<Boolean_handle_function>
     (&Smallest_stabbing_cube::execute_handle);
-  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute", execute_func,
+  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
+                                          RULE_EXPOSED_FIELD, execute_func,
                                           exec_func));
 
   // geometries
@@ -147,6 +148,7 @@ void Smallest_stabbing_cube::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Smallest_stabbing_cube::coord_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
+                                                      RULE_EXPOSED_FIELD,
                                                       geometries_func,
                                                       exec_func));
 
@@ -156,6 +158,7 @@ void Smallest_stabbing_cube::init_prototype()
     (&Smallest_stabbing_cube::result_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
+                                                      RULE_EXPOSED_FIELD,
                                                       coord_changed_func));
 }
 

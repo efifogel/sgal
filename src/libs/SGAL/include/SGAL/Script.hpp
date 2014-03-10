@@ -37,6 +37,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Container_proto;
+class Scene_graph;
 
 /*! \class Script Script.hpp
  * Script is a node used to program behaviour in a scene. Script nodes typically
@@ -55,6 +56,13 @@ public:
     DIRECT_OUTPUT,
     MUST_EVALUATE,
     LAST
+  };
+
+  enum Protocol {
+    PROTOCOL_INVALID = 0,
+    PROTOCOL_CUSTOM_ECMASCRIPT, // "javascript: ..."
+    PROTOCOL_ECMASCRIPT,        // "http://bar.com/foo.js"
+    PROTOCOL_JAVA_BYTECODE      // "http://bar.com/foo.class"
   };
 
   typedef boost::shared_ptr<Container>                  Shared_container;
@@ -136,6 +144,11 @@ public:
 
   // virtual Attribute_list get_attributes();
 
+  /*! Add the container to a given scene
+   * \param scene_graph the given scene
+   */
+  virtual void add_to_scene(Scene_graph* scene_graph);
+
   /*! Apply the script. */
   virtual Action::Trav_directive Draw(Draw_action* /* draw_action */)
   { return Action::TRAV_CONT; }
@@ -145,8 +158,8 @@ public:
    * \param name (in) the name of the field.
    * \param value (in) the initial value of the field.
    */
-  void add_field_info(Field_type_enum type, const std::string& name,
-                      const std::string& value);
+  void add_field_info(Field_rule rule, Field_type type,
+                      const std::string& name, const std::string& value);
 
   // virtual void add_field(const std::string& name, const std::string& type,
   //                        Container* value, Node* field);
@@ -200,6 +213,12 @@ private:
 
   /*! Additional fields. */
   std::list<Variant_field> m_fields;
+
+  /*! The script protocol. */
+  Protocol m_protocol;
+
+  /*! The scene graph */
+  Scene_graph* m_scene_graph;
 
   // JSWObjectInt* m_JSWObject;
   // Boolean m_engineInitialized;

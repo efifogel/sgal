@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11860 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/lexical_cast.hpp>
@@ -139,12 +136,14 @@ void Configuration::init_prototype()
   Uint_handle_function poly_mode_func =
     reinterpret_cast<Uint_handle_function>(&Configuration::poly_mode_handle);
   s_prototype->add_field_info(new SF_uint(POLY_MODE, "polyMode",
+                                          RULE_EXPOSED_FIELD,
                                           poly_mode_func, exec_func));
 
   // displayFPS
   Boolean_handle_function display_fps_func =
     static_cast<Boolean_handle_function>(&Configuration::display_fps_handle);
   s_prototype->add_field_info(new SF_bool(DISPLAY_FPS, "displayFPS",
+                                          RULE_EXPOSED_FIELD,
                                           display_fps_func, exec_func));
 
   // fixedHeadLight
@@ -152,24 +151,28 @@ void Configuration::init_prototype()
     static_cast<Boolean_handle_function>
     (&Configuration::is_fixed_head_light_handle);
   s_prototype->add_field_info(new SF_bool(FIXED_HEADLIGHT, "fixedHeadLight",
+                                          RULE_EXPOSED_FIELD,
                                           is_fixed_head_light_func, exec_func));
 
   // stencilBits
   Uint_handle_function stencil_bits_func =
     static_cast<Uint_handle_function>(&Configuration::stencil_bits_handle);
   s_prototype->add_field_info(new SF_uint(STENCIL_BITS, "stencilBits",
+                                          RULE_EXPOSED_FIELD,
                                           stencil_bits_func));
 
   // depthBits
   Uint_handle_function depth_bits_func =
     static_cast<Uint_handle_function>(&Configuration::depth_bits_handle);
   s_prototype->add_field_info(new SF_uint(DEPTH_BITS, "depthBits",
+                                          RULE_EXPOSED_FIELD,
                                           depth_bits_func));
 
   // minFrameRate
   Float_handle_function min_frame_rate_func =
     static_cast<Float_handle_function>(&Configuration::min_frame_rate_handle);
   s_prototype->add_field_info(new SF_float(MIN_FRAME_RATE, "minFrameRate",
+                                           RULE_EXPOSED_FIELD,
                                            min_frame_rate_func));
 
   // minZoomDistance
@@ -178,24 +181,28 @@ void Configuration::init_prototype()
     (&Configuration::min_zoom_distance_handle);
   s_prototype->add_field_info(new SF_float(MIN_ZOOM_DISTANCE,
                                            "minZoomDistance",
+                                           RULE_EXPOSED_FIELD,
                                            min_zoom_distance_func));
 
   // speedFacotor
   Float_handle_function speed_factor_func =
     static_cast<Float_handle_function>(&Configuration::speed_factor_handle);
   s_prototype->add_field_info(new SF_float(SPEED_FACTOR, "speedFacotor",
+                                           RULE_EXPOSED_FIELD,
                                            speed_factor_func));
 
   // textureMap
   Boolean_handle_function texture_map_func =
     static_cast<Boolean_handle_function>(&Configuration::texture_map_handle);
   s_prototype->add_field_info(new SF_bool(TEXTURE_MAP, "textureMap",
+                                          RULE_EXPOSED_FIELD,
                                           texture_map_func));
 
   // verbosityLevel
   Uint_handle_function verbosity_level_func =
     static_cast<Uint_handle_function>(&Configuration::verbosity_level_handle);
   s_prototype->add_field_info(new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
+                                          RULE_EXPOSED_FIELD,
                                           verbosity_level_func));
 
   // seamlessCubeMap
@@ -203,6 +210,7 @@ void Configuration::init_prototype()
     static_cast<Boolean_handle_function>
     (&Configuration::seamless_cube_map_handle);
   s_prototype->add_field_info(new SF_bool(SEAMLESS_CUBE_MAP, "seamlessCubeMap",
+                                          RULE_EXPOSED_FIELD,
                                           seamless_cube_map_func));
 }
 

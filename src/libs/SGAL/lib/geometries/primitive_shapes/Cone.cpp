@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -47,7 +44,7 @@ const Boolean  Cone::s_def_side_visible(true);
 
 REGISTER_TO_FACTORY(Cone, "Cone");
 
-/*! Constructor */
+//! \brief constructor.
 Cone::Cone(Boolean proto) :
   Geometry(proto),
   m_dirty(true),
@@ -62,17 +59,14 @@ Cone::Cone(Boolean proto) :
 {
 }
 
-/*! Destructor */
+//! \brief destructor.
 Cone::~Cone()
 {
   gluDeleteQuadric(m_cone);
   gluDeleteQuadric(m_cone_base);
 }
 
-/**
- * Draws the Cone.
- * @param draw_action the draw action
- */
+//! \brief draws the Cone.
 void Cone::draw(Draw_action* /* action */)
 {
   if (is_dirty()) clean();
@@ -103,7 +97,7 @@ void Cone::draw(Draw_action* /* action */)
   glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the object in selection mode. */
+//! \brief draws the object in selection mode.
 void Cone::isect(Isect_action* /* action */)
 {
   if (is_dirty()) clean();
@@ -127,7 +121,7 @@ void Cone::isect(Isect_action* /* action */)
   glPopMatrix();
 }
 
-/*! \brief calculates the sphere bound of the cone. */
+//! \brief calculates the sphere bound of the cone.
 Boolean Cone::clean_sphere_bound()
 {
   float radius = (m_height * m_height + m_bottom_radius * m_bottom_radius) /
@@ -137,7 +131,7 @@ Boolean Cone::clean_sphere_bound()
   return true;
 }
 
-/*! \brief initializes the quadric object. */
+//! \brief initializes the quadric object.
 void Cone::clean()
 {
   m_cone = gluNewQuadric();
@@ -153,7 +147,7 @@ void Cone::clean()
   m_dirty = false;
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Cone::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -262,7 +256,7 @@ Attribute_list Cone::get_attributes()
 }
 #endif
 
-/*! \brief initilalizes the prototype object in the class. */
+//! \brief initilalizes the prototype object in the class.
 void Cone::init_prototype()
 {
   if (s_prototype) return;
@@ -276,50 +270,61 @@ void Cone::init_prototype()
   Float_handle_function bottom_radius_func =
     static_cast<Float_handle_function>(&Cone::bottom_radius_handle);
   s_prototype->add_field_info(new SF_float(BOTTOM_RADIUS, "bottomRadius",
+                                           RULE_EXPOSED_FIELD,
                                            bottom_radius_func,
                                            exec_func));
 
   // height
   Float_handle_function height_func =
     static_cast<Float_handle_function>(&Cone::height_handle);
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
+                                           RULE_EXPOSED_FIELD,
+                                           height_func,
                                            exec_func));
 
   // side
   Boolean_handle_function side_visible_func =
     static_cast<Boolean_handle_function>(&Cone::side_visible_handle);
-  s_prototype->add_field_info(new SF_bool(SIDE, "side", side_visible_func,
+  s_prototype->add_field_info(new SF_bool(SIDE, "side",
+                                          RULE_EXPOSED_FIELD,
+                                          side_visible_func,
                                           exec_func));
 
   // bottom
   Boolean_handle_function bottom_visible_func =
     static_cast<Boolean_handle_function>(&Cone::bottom_visible_handle);
   s_prototype->add_field_info(new SF_bool(BOTTOM, "bottom",
-                                          bottom_visible_func, exec_func));
+                                          RULE_EXPOSED_FIELD,
+                                          bottom_visible_func,
+                                          exec_func));
 
   // slices
   exec_func =
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Cone::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
+                                          RULE_EXPOSED_FIELD,
+                                          slices_func,
                                           exec_func));
 
   // stacks
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Cone::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", stacks_func,
-                                         exec_func));
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
+                                          RULE_EXPOSED_FIELD,
+                                          stacks_func,
+                                          exec_func));
 }
 
-/*! */
+//! \brief
 void Cone::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+//! \brief
 Container_proto* Cone::get_prototype()
 {
   if (!s_prototype) Cone::init_prototype();

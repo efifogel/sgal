@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -117,7 +114,7 @@ void Translucent::DisableLights( Draw_action* da , Translucent* nextTransObj)
   {
     if ( disMask.get_bit(ind))
     {
-      context->DisableLight((*LItr)); 
+      context->DisableLight((*LItr));
       LItr++;
     }
     ind++;

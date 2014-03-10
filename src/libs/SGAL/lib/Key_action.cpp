@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -59,7 +56,7 @@ void KA_rotate::Init(int vx,int vy, int vz, int angle)
 }
 
 //////////////////////////////////////
-/// EKATranslate - class implementation 
+/// EKATranslate - class implementation
 //////////////////////////////////////
 
 EKATranslate::EKATranslate()
@@ -88,7 +85,7 @@ void EKATranslate::Init(int dx,int dy, int dz)
 }
 
 //////////////////////////////////////
-/// EKAField - class implementation 
+/// EKAField - class implementation
 //////////////////////////////////////
 
 EKAField::EKAField()
@@ -117,7 +114,7 @@ void EKAField::Init(String nodeName,String fieldName,String value)
 }
 
 //////////////////////////////////////
-/// EKASwitchFields - class implementation 
+/// EKASwitchFields - class implementation
 //////////////////////////////////////
 
 EKASwitchFields::EKASwitchFields()

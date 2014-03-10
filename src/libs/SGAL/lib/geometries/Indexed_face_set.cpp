@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -1268,7 +1265,9 @@ void Indexed_face_set::init_prototype()
   Boolean_handle_function normal_per_vertex_func =
     static_cast<Boolean_handle_function>
     (&Indexed_face_set::normal_per_vertex_handle);
-  s_prototype->add_field_info(new SF_bool(NORMAL_PER_VERTEX, "normalPerVertex",
+  s_prototype->add_field_info(new SF_bool(NORMAL_PER_VERTEX,
+                                          "normalPerVertex",
+                                          RULE_EXPOSED_FIELD,
                                           normal_per_vertex_func,
                                           s_def_normal_per_vertex, exec_func));
 
@@ -1276,7 +1275,9 @@ void Indexed_face_set::init_prototype()
   Boolean_handle_function color_per_vertex_func =
     static_cast<Boolean_handle_function>
     (&Indexed_face_set::color_per_vertex_handle);
-  s_prototype->add_field_info(new SF_bool(COLOR_PER_VERTEX, "colorPerVertex",
+  s_prototype->add_field_info(new SF_bool(COLOR_PER_VERTEX,
+                                          "colorPerVertex",
+                                          RULE_EXPOSED_FIELD,
                                           color_per_vertex_func,
                                           s_def_color_per_vertex, exec_func));
 }

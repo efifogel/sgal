@@ -14,18 +14,15 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 4972 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! Implements Rotation interpolator with asynchronic loading of compressed
- * data  
+ * data
  */
 
 #include "SGAL/Comp_rotation_interpolator.hpp"
 #include "SGAL/Trace.hpp"
- 
+
 SGAL_BEGIN_NAMESPACE
 
 std::string Comp_rotation_interpolator::s_tag =
@@ -33,13 +30,14 @@ std::string Comp_rotation_interpolator::s_tag =
 
 // Default values:
 const float Comp_rotation_interpolator::m_default_key_bin = (float)1e-4;
-const float Comp_rotation_interpolator::m_value_bin_factor = (float)2e-4;      
-const float Comp_rotation_interpolator::m_AngleBinFactor = (float)2e-4;      
+const float Comp_rotation_interpolator::m_value_bin_factor = (float)2e-4;
+const float Comp_rotation_interpolator::m_AngleBinFactor = (float)2e-4;
 
 REGISTER_TO_FACTORY(Comp_rotation_interpolator, "Comp_rotation_interpolator");
 
 /*! Constructor */
-Comp_rotation_interpolator::Comp_rotation_interpolator(Boolean flag, Boolean proto) :
+Comp_rotation_interpolator::Comp_rotation_interpolator(Boolean flag,
+                                                       Boolean proto) :
   Rotation_interpolator(flag, proto),
   m_pInterpolator_data(0),
   m_pExecution_coordinator(0)
@@ -58,7 +56,7 @@ Comp_rotation_interpolator::~Comp_rotation_interpolator()
 // Get all attributes except the key and key_value
 Attribute_list Comp_rotation_interpolator::get_attributes()
 {
-  Attribute_list attribs; 
+  Attribute_list attribs;
   Attribue attrib;
   attribs = Node::get_attributes();
 
@@ -67,7 +65,7 @@ Attribute_list Comp_rotation_interpolator::get_attributes()
   attrib.second = (m_interpolate_flag) ? TRUE_STR : FALSE_STR;
   attribs.push_back(attrib);
 
-  return attribs; 
+  return attribs;
 }
 
 // Load_int methods - used only by the player
@@ -82,12 +80,12 @@ Item_primitive * Comp_rotation_interpolator::get_data()
 
 void Comp_rotation_interpolator::update(Boolean is_last)
 {
-  if (m_pInterpolator_data == 0) {  
+  if (m_pInterpolator_data == 0) {
     assert(0);
     return;
   }
 
-  m_no_keys = m_pInterpolator_data->get_size();  
+  m_no_keys = m_pInterpolator_data->get_size();
   assert((m_no_keys > 0) && (m_no_keys < 10e6));
 
   float * pKey = m_pInterpolator_data->get_keyData();
@@ -105,7 +103,7 @@ void Comp_rotation_interpolator::update(Boolean is_last)
     pValueVec = m_values;
     float *pValues = Values[valueIdx];
     for (int i = 0; i < m_no_keys; i++, pValues++, pValueVec++) {
-      (*pValueVec)[valueIdx] = *pValues;    
+      (*pValueVec)[valueIdx] = *pValues;
     }
   }
 
@@ -120,11 +118,11 @@ void Comp_rotation_interpolator::update(Boolean is_last)
 Interpolator_data * Comp_rotation_interpolator::get_interpolator_data()
 {
   if (m_pInterpolator_data != 0) {
-    return m_pInterpolator_data; 
+    return m_pInterpolator_data;
   }
 
   m_pInterpolator_data = new Interpolator_data(4); // Scalar
-  
+
   // Allocate data memory
   assert((m_no_keys > 0) && (m_no_keys < 10e6));
   m_pInterpolator_data->Allocate(m_no_keys);
@@ -142,7 +140,7 @@ Interpolator_data * Comp_rotation_interpolator::get_interpolator_data()
     pValueVec = m_values;
     float *pValues = Values[valueIdx];
     for (int i = 0; i < m_no_keys; i++, pValues++, pValueVec++) {
-      *pValues = (*pValueVec)[valueIdx];    
+      *pValues = (*pValueVec)[valueIdx];
     }
   }
 

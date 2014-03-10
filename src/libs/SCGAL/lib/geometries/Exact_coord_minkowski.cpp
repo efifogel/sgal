@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <CGAL/basic.h>
@@ -39,7 +36,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_coord_minkowski::s_tag = "ExactCoordinateMinkowski";
-Container_proto* Exact_coord_minkowski::s_prototype(NULL);
+Container_proto* Exact_coord_minkowski::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Exact_coord_minkowski, "Exact_coord_minkowski");
 
@@ -57,6 +54,7 @@ void Exact_coord_minkowski::init_prototype()
     static_cast<Boolean_handle_function>
     (&Exact_coord_minkowski::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXACT_EXECUTE, "exactExecute",
+                                          RULE_EXPOSED_FIELD,
                                           execute_func, exec_func));
 
   // // exactCoord1
@@ -82,13 +80,13 @@ void Exact_coord_minkowski::init_prototype()
 void Exact_coord_minkowski::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.
 Container_proto* Exact_coord_minkowski::get_prototype()
 {
-  if (s_prototype == NULL) Exact_coord_minkowski::init_prototype();
+  if (!s_prototype) Exact_coord_minkowski::init_prototype();
   return s_prototype;
 }
 

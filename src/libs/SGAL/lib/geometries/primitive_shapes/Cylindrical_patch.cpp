@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -283,13 +280,17 @@ void Cylindrical_patch::init_prototype()
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::radius_handle);
-  s_prototype->add_field_info(new SF_float(RADIUS, "radius", radius_func,
+  s_prototype->add_field_info(new SF_float(RADIUS, "radius",
+                                           RULE_EXPOSED_FIELD,
+                                           radius_func,
                                            exec_func));
 
   // height
   Float_handle_function height_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::height_handle);
-  s_prototype->add_field_info(new SF_float(HEIGHT, "height", height_func,
+  s_prototype->add_field_info(new SF_float(HEIGHT, "height",
+                                           RULE_EXPOSED_FIELD,
+                                           height_func,
                                            exec_func));
 
   // slices
@@ -297,7 +298,9 @@ void Cylindrical_patch::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Cylindrical_patch::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", slices_func,
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices",
+                                          RULE_EXPOSED_FIELD,
+                                          slices_func,
                                           exec_func));
 
   // alpha
@@ -305,7 +308,9 @@ void Cylindrical_patch::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::alpha_handle);
-  s_prototype->add_field_info(new SF_float(ALPHA, "alpha", alpha_func,
+  s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
+                                           RULE_EXPOSED_FIELD,
+                                           alpha_func,
                                            exec_func));
 
   // beta
@@ -313,7 +318,9 @@ void Cylindrical_patch::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Float_handle_function beta_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::beta_handle);
-  s_prototype->add_field_info(new SF_float(BETA, "beta", beta_func,
+  s_prototype->add_field_info(new SF_float(BETA, "beta",
+                                           RULE_EXPOSED_FIELD,
+                                           beta_func,
                                            exec_func));
 }
 

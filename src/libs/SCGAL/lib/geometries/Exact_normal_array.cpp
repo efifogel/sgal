@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <CGAL/basic.h>
@@ -39,28 +36,28 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_normal_array::s_tag = "ExactNormal";
-Container_proto* Exact_normal_array::s_prototype(NULL);
+Container_proto* Exact_normal_array::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Exact_normal_array, "Exact_normal_array");
 
-/*! Initialize the node prototype */
+//! \brief initializes the node prototype.
 void Exact_normal_array::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Normal_array::get_prototype());
 }
 
-/*! Delete the node prototype */
+//! \brief deletes the node prototype.
 void Exact_normal_array::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! Obtain the node prototype */
+//! \brief obtains the node prototype.
 Container_proto* Exact_normal_array::get_prototype()
 {
-  if (s_prototype == NULL) Exact_normal_array::init_prototype();
+  if (!s_prototype) Exact_normal_array::init_prototype();
   return s_prototype;
 }
 

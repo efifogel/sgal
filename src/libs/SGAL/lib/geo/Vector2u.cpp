@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source: $
-// $Revision: 10791 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/Math_defs.hpp"
@@ -55,7 +52,7 @@ void Vector2u::get(Uint *a, Uint *b)  const
 
 /*!
  */
-Uint Vector2u::get(int i) const 
+Uint Vector2u::get(int i) const
 {
   if ((i == 0) || (i == 1)) return m_vector[i];
   else return 0;   // !!!!!!!! SHould WARN !!!!!!!!!!
@@ -63,7 +60,7 @@ Uint Vector2u::get(int i) const
 
 /*!
  */
-void Vector2u::set(const Vector2u &v) 
+void Vector2u::set(const Vector2u &v)
 { m_vector[0] = v.m_vector[0]; m_vector[1] = v.m_vector[1]; }
 
 /*!
@@ -73,23 +70,23 @@ void Vector2u::get(Vector2u &v) const
 
 /*!
  */
-void Vector2u::add(const Vector2u& _v) 
-{ 
-  m_vector[0] += _v[0]; 
-  m_vector[1] += _v[1]; 
+void Vector2u::add(const Vector2u& _v)
+{
+  m_vector[0] += _v[0];
+  m_vector[1] += _v[1];
 }
 
 /*!
  */
-void Vector2u::add(const Vector2sh& _v) 
-{ 
-  m_vector[0] += _v[0]; 
-  m_vector[1] += _v[1]; 
+void Vector2u::add(const Vector2sh& _v)
+{
+  m_vector[0] += _v[0];
+  m_vector[1] += _v[1];
 }
 
 /*!
  */
-bool Vector2u::equal(const Vector2u&  _v) const 
+bool Vector2u::equal(const Vector2u&  _v) const
 { return ((m_vector[0] == _v[0]) && (m_vector[1] == _v[1])); }
 
 /*!
@@ -106,7 +103,7 @@ Vector2u& Vector2u::operator=(const Vector2u& v) { set(v); return *this; }
 
 /*!
  */
-Vector2u& Vector2u::operator=(Uint v) 
+Vector2u& Vector2u::operator=(Uint v)
 {
   m_vector[0] = v; m_vector[1] = v;
   return *this;
@@ -114,31 +111,31 @@ Vector2u& Vector2u::operator=(Uint v)
 
 /*!
  */
-void Vector2u::sub(const Vector2u& v) 
-{ 
-  m_vector[0] -= v[0]; 
-  m_vector[1] -= v[1]; 
+void Vector2u::sub(const Vector2u& v)
+{
+  m_vector[0] -= v[0];
+  m_vector[1] -= v[1];
 }
 
 /*!
  */
-Uint Vector2u::dot(const Vector2u& v) const 
+Uint Vector2u::dot(const Vector2u& v) const
 { return (m_vector[0] * v[0] + m_vector[1] * v[1]); }
 
 /*!
  */
-void Vector2u::add(const Vector2u& v1, const Vector2u& v2) 
-{ 
-  m_vector[0] = v1[0] + v2[0]; 
-  m_vector[1] = v1[1] + v2[1]; 
+void Vector2u::add(const Vector2u& v1, const Vector2u& v2)
+{
+  m_vector[0] = v1[0] + v2[0];
+  m_vector[1] = v1[1] + v2[1];
 }
 
 /*!
  */
-void Vector2u::sub(const Vector2u& v1, const Vector2u& v2) 
-{ 
-  m_vector[0] = v1[0] - v2[0]; 
-  m_vector[1] = v1[1] - v2[1]; 
+void Vector2u::sub(const Vector2u& v1, const Vector2u& v2)
+{
+  m_vector[0] = v1[0] - v2[0];
+  m_vector[1] = v1[1] - v2[1];
 }
 
 SGAL_END_NAMESPACE

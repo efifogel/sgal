@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Accumulation.cpp 7628 2009-05-26 11:11:45Z efif $
-// $Revision: 7628 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! A data structure used to accumulate frame buffers produced in a sequence.
@@ -45,7 +42,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Accumulation::s_tag = "Accumulation";
-Container_proto* Accumulation::s_prototype(NULL);
+Container_proto* Accumulation::s_prototype(nullptr);
 
 /* jitter point arrays for 2,3,4,8,15,24 and 66 jitters.
  * The arrays are named j2, j3, etc.
@@ -267,26 +264,32 @@ void Accumulation::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Accumulation::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func,
+  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
+                                          RULE_EXPOSED_FIELD,
+                                          enabled_func,
                                           exec_func));
 
   // quality
   Uint_handle_function quality_func =
     reinterpret_cast<Uint_handle_function>(&Accumulation::quality_handle);
-  s_prototype->add_field_info(new SF_uint(QUALITY, "quality", quality_func,
+  s_prototype->add_field_info(new SF_uint(QUALITY, "quality",
+                                          RULE_EXPOSED_FIELD,
+                                          quality_func,
                                           exec_func));
 
   // delay
   Uint_handle_function delay_func =
     static_cast<Uint_handle_function>(&Accumulation::delay_handle);
-  s_prototype->add_field_info(new SF_uint(DELAY, "delay", delay_func));
+  s_prototype->add_field_info(new SF_uint(DELAY, "delay",
+                                          RULE_EXPOSED_FIELD,
+                                          delay_func));
 }
 
 /*! \brief deletes the node prototype. */
 void Accumulation::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! \brief obtains the node prototype. */

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -44,16 +41,16 @@ const Vector3f Box::s_def_size(2, 2, 2);
 
 REGISTER_TO_FACTORY(Box, "Box");
 
-/*! Constructor */
+//! \brief constructor.
 Box::Box(Boolean proto) : Geometry(proto), m_size(s_def_size) {}
 
-/*! Destructor */
+//! \brief destructor.
 Box::~Box() {}
 
-/* \brief draws the box by calling the display list. */
+//! \brief draws the box by calling the display list.
 void Box::draw(Draw_action* /* action */) { draw_box(); }
 
-/*! \brief draws the box for selection. */
+//! \brief draws the box for selection.
 void Box::isect(Isect_action* /* action */)
 {
   float w = m_size[0] * 0.5f;
@@ -110,8 +107,7 @@ void Box::isect(Isect_action* /* action */)
   glEnd();
 }
 
-/*! Calculate the bounding sphere of the box.
- */
+//! Calculate the bounding sphere of the box.
 Boolean Box::clean_sphere_bound()
 {
   float radius = sqrtf(m_size[0] * m_size[0] * 0.25f +
@@ -123,7 +119,7 @@ Boolean Box::clean_sphere_bound()
   return true;
 }
 
-/*! \brief initializes the display list that is used to draw the box. */
+//! \brief initializes the display list that is used to draw the box.
 void Box::init()
 {
 #if 0
@@ -135,7 +131,7 @@ void Box::init()
 #endif
 }
 
-/*! Draw the box */
+//! Draw the box.
 void Box::draw_box()
 {
   float w = m_size[0] * 0.5f;
@@ -203,7 +199,7 @@ void Box::draw_box()
   glDisable(GL_NORMALIZE);
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Box::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -227,7 +223,7 @@ void Box::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief obtains the attributes of the box. */
+//! \brief obtains the attributes of the box.
 Attribute_list Box::get_attributes()
 {
   Attribute_list attribs;
@@ -245,7 +241,7 @@ Attribute_list Box::get_attributes()
 }
 #endif
 
-/*! initializes the box prototype */
+//! initializes the box prototype.
 void Box::init_prototype()
 {
   if (s_prototype) return;
@@ -257,18 +253,20 @@ void Box::init_prototype()
     static_cast<Execution_function>(&Geometry::sphere_bound_changed);
   Vector3f_handle_function size_func =
     static_cast<Vector3f_handle_function>(&Box::size_handle);
-  s_prototype->add_field_info(new SF_vector3f(SIZE, "size", size_func,
+  s_prototype->add_field_info(new SF_vector3f(SIZE, "size",
+                                              RULE_EXPOSED_FIELD,
+                                              size_func,
                                               exec_func));
 }
 
-/*! */
+//! \brief
 void Box::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+//! \brief
 Container_proto* Box::get_prototype()
 {
   if (!s_prototype) init_prototype();

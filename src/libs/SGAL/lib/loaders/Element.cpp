@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -89,9 +86,11 @@ void Element::mark_delete(Field_attr_iter ai)
 {
   delete ai->first;
   ai->first = nullptr;
-  ai->second.first = static_cast<Field_type_enum>(0);
-  delete ai->second.second;
-  ai->second.second = nullptr;
+  std::string* value = std::get<2>(ai->second);
+  if (value) delete value;
+  ai->second = std::make_tuple(static_cast<Field_rule>(0),
+                               static_cast<Field_type>(0),
+                               nullptr);
 }
 
 /*! \brief deletes all attributes. */

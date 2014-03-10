@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1309 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <string>
@@ -69,7 +66,7 @@ Boolean Command_line_parser::is_valid(void) const
 
   // std::cout << "Command_line_parser::is_valid: "
   //           << "options: " << str.c_str() << std::endl;
-  
+
   optind = 1;
   int c;
   while ((c = getopt(s_argc, s_argv, str.c_str())) != EOF) {

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14198 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <boost/tokenizer.hpp>
@@ -85,6 +82,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_ARRAY, "coord",
+                                                      RULE_EXPOSED_FIELD,
                                                       coord_array_func,
                                                       exec_func));
 
@@ -94,6 +92,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::normal_array_handle);
   s_prototype->add_field_info(new SF_shared_container(NORMAL_ARRAY, "normal",
+                                                      RULE_EXPOSED_FIELD,
                                                       normal_array_func,
                                                       exec_func));
 
@@ -103,6 +102,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Geo_set::color_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COLOR_ARRAY, "color",
+                                                      RULE_EXPOSED_FIELD,
                                                       color_array_func,
                                                       exec_func));
 
@@ -113,6 +113,7 @@ void Geo_set::init_prototype()
     (&Geo_set::tex_coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(TEX_COORD_ARRAY,
                                                       "texCoord",
+                                                      RULE_EXPOSED_FIELD,
                                                       tex_coord_array_func,
                                                       exec_func));
 
@@ -122,6 +123,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::coord_indices_handle);
   s_prototype->add_field_info(new MF_uint(COORD_INDEX_ARRAY, "coordIndex",
+                                          RULE_EXPOSED_FIELD,
                                           coord_index_func, exec_func));
 
   // normalIndex
@@ -129,6 +131,7 @@ void Geo_set::init_prototype()
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::normal_indices_handle);
   s_prototype->add_field_info(new MF_uint(NORMAL_INDEX_ARRAY, "normalIndex",
+                                          RULE_EXPOSED_FIELD,
                                           normal_index_func, exec_func));
 
   // colorIndex
@@ -136,13 +139,16 @@ void Geo_set::init_prototype()
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::color_indices_handle);
   s_prototype->add_field_info(new MF_uint(COLOR_INDEX_ARRAY, "colorIndex",
+                                          RULE_EXPOSED_FIELD,
                                           color_index_func, exec_func));
 
   // texCoordIndex
   auto tex_coord_index_func =
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::tex_coord_indices_handle);
-  s_prototype->add_field_info(new MF_uint(TEX_COORD_INDEX_ARRAY, "texCoordIndex",
+  s_prototype->add_field_info(new MF_uint(TEX_COORD_INDEX_ARRAY,
+                                          "texCoordIndex",
+                                          RULE_EXPOSED_FIELD,
                                           tex_coord_index_func, exec_func));
 }
 

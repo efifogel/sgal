@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FIELD_INFOS_HPP
@@ -41,7 +38,7 @@
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Sphere_bound.hpp"
-#include "SGAL/Field_types_enum.hpp"
+#include "SGAL/Field_enums.hpp"
 #include "SGAL/Field_info_template.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Array_types.hpp"

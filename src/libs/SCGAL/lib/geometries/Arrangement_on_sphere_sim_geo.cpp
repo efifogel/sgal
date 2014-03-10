@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_sphere_sim_geo.cpp 7793 2009-07-19 13:31:22Z efif $
-// $Revision: 7793 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -126,8 +123,8 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
   Float_handle_function time_func =
     static_cast<Float_handle_function>
     (&Arrangement_on_sphere_sim_geo::time_handle);
-  s_prototype->add_field_info(new SF_float(TIME, "time", time_func,
-                                           exec_func));
+  s_prototype->add_field_info(new SF_float(TIME, "time", RULE_EXPOSED_FIELD,
+                                           time_func, exec_func));
 
   // resume
   exec_func =
@@ -135,8 +132,8 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
   Boolean_handle_function resume_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_sphere_sim_geo::resume_handle);
-  s_prototype->add_field_info(new SF_bool(RESUME, "resume", resume_func,
-                                          exec_func));
+  s_prototype->add_field_info(new SF_bool(RESUME, "resume", RULE_EXPOSED_FIELD,
+                                          resume_func, exec_func));
 
   // suspend
   exec_func =
@@ -144,8 +141,9 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
   Boolean_handle_function suspend_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_sphere_sim_geo::suspend_handle);
-  s_prototype->add_field_info(new SF_bool(SUSPEND, "suspend", suspend_func,
-                                          exec_func));
+  s_prototype->add_field_info(new SF_bool(SUSPEND, "suspend",
+                                          RULE_EXPOSED_FIELD,
+                                          suspend_func, exec_func));
 
   // increaseVertexLabel
   exec_func = static_cast<Execution_function>(&Arrangement_on_sphere_sim_geo::
@@ -155,6 +153,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
     (&Arrangement_on_sphere_sim_geo::increase_vertex_label_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_LABEL,
                                           "increaseVertexLabel",
+                                          RULE_EXPOSED_FIELD,
                                           increase_vertex_label_func,
                                           exec_func));
 
@@ -166,6 +165,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
     (&Arrangement_on_sphere_sim_geo::increase_edge_label_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_LABEL,
                                           "increaseEdgeLabel",
+                                          RULE_EXPOSED_FIELD,
                                           increase_edge_label_func,
                                           exec_func));
 
@@ -177,6 +177,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
     (&Arrangement_on_sphere_sim_geo::increase_face_label_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACE_LABEL,
                                           "increaseFaceLabel",
+                                          RULE_EXPOSED_FIELD,
                                           increase_face_label_func,
                                           exec_func));
 }

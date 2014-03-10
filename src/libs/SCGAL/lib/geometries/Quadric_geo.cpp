@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Url: $
-// $Id: Quadric_geo.cpp 7204 2009-01-24 21:43:15Z efif $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_sphere_marked_geo.cpp 7797 2009-07-19 13:33:01Z efif $
-// $Revision: 7797 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -151,6 +148,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     (&Arrangement_on_sphere_marked_geo::aos_marked_vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_VERTEX_RADIUS,
                                            "aosMarkedVertexRadius",
+                                           RULE_EXPOSED_FIELD,
                                            aos_marked_vertex_radius_func));
 
   // aosMarkedEdgeRadius
@@ -159,6 +157,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     (&Arrangement_on_sphere_marked_geo::aos_marked_edge_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_EDGE_RADIUS,
                                            "aosMarkedEdgeRadius",
+                                           RULE_EXPOSED_FIELD,
                                            aos_marked_edge_radius_func));
 }
 

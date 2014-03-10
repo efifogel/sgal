@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_surface_geo.cpp 7795 2009-07-19 13:32:21Z efif $
-// $Revision: 7795 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -57,7 +54,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Arrangement_on_surface_geo::s_prototype(NULL);
+Container_proto* Arrangement_on_surface_geo::s_prototype(nullptr);
 
 /*! Insertion strategy names */
 const char* Arrangement_on_surface_geo::s_insertion_strategy_names[] =
@@ -111,7 +108,7 @@ const Float Arrangement_on_surface_geo::s_def_aos_edge_line_width(1);
 const Float Arrangement_on_surface_geo::s_def_aos_delta_angle(.1f);
 const Vector3f Arrangement_on_surface_geo::s_def_aos_edge_color(0, 0, .5f);
 
-/*! Constructor. */
+//! \brief constructor.
 Arrangement_on_surface_geo::
 Arrangement_on_surface_geo(Boolean proto) :
   Geometry(proto),
@@ -149,29 +146,29 @@ Arrangement_on_surface_geo(Boolean proto) :
   m_aos_edge_color(s_def_aos_edge_color),
   // Other
   m_renderer_dirty(true),
-  m_surface_renderer(NULL),
-  m_colored_surface_renderer(NULL),
-  m_stencil_surface_renderer(NULL),
-  m_edges_renderer(NULL),
-  m_vertices_renderer(NULL),
-  m_isolated_vertices_renderer(NULL),
-  m_colored_edges_renderer(NULL),
-  m_colored_vertices_renderer(NULL),
-  m_colored_isolated_vertices_renderer(NULL),
-  m_line_colored_edges_renderer(NULL),
-  m_point_colored_vertices_renderer(NULL),
-  m_ring_colored_vertices_renderer(NULL),
-  m_point_colored_isolated_vertices_renderer(NULL),
-  m_ring_colored_isolated_vertices_renderer(NULL),
-  m_inflated_line_edges_renderer(NULL),
-  m_inflated_strip_edges_renderer(NULL),
-  m_inflated_tube_edges_renderer(NULL)
+  m_surface_renderer(nullptr),
+  m_colored_surface_renderer(nullptr),
+  m_stencil_surface_renderer(nullptr),
+  m_edges_renderer(nullptr),
+  m_vertices_renderer(nullptr),
+  m_isolated_vertices_renderer(nullptr),
+  m_colored_edges_renderer(nullptr),
+  m_colored_vertices_renderer(nullptr),
+  m_colored_isolated_vertices_renderer(nullptr),
+  m_line_colored_edges_renderer(nullptr),
+  m_point_colored_vertices_renderer(nullptr),
+  m_ring_colored_vertices_renderer(nullptr),
+  m_point_colored_isolated_vertices_renderer(nullptr),
+  m_ring_colored_isolated_vertices_renderer(nullptr),
+  m_inflated_line_edges_renderer(nullptr),
+  m_inflated_strip_edges_renderer(nullptr),
+  m_inflated_tube_edges_renderer(nullptr)
 {}
 
-/*! Destructor. */
+//! \brief destructor.
 Arrangement_on_surface_geo::~Arrangement_on_surface_geo() { clear(); }
 
-/*! \brief initializes the container prototype */
+//! \brief initializes the container prototype.
 void Arrangement_on_surface_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -185,29 +182,41 @@ void Arrangement_on_surface_geo::init_prototype()
   Boolean_handle_function draw_opaque_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_surface_geo::draw_opaque_handle);
-  s_prototype->add_field_info(new SF_bool(DRAW_OPAQUE, "drawOpaque",
-                                          draw_opaque_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(DRAW_OPAQUE,
+                                          "drawOpaque",
+                                          RULE_EXPOSED_FIELD,
+                                          draw_opaque_func,
+                                          exec_func));
 
   // drawHaloed
   Boolean_handle_function draw_haloed_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_surface_geo::draw_haloed_handle);
-  s_prototype->add_field_info(new SF_bool(DRAW_HALOED, "drawHaloed",
-                                          draw_haloed_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(DRAW_HALOED,
+                                          "drawHaloed",
+                                          RULE_EXPOSED_FIELD,
+                                          draw_haloed_func,
+                                          exec_func));
 
   // drawHalftone
   Boolean_handle_function draw_halftone_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_surface_geo::draw_halftone_handle);
-  s_prototype->add_field_info(new SF_bool(DRAW_HALFTONE, "drawHalftone",
-                                          draw_halftone_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(DRAW_HALFTONE,
+                                          "drawHalftone",
+                                          RULE_EXPOSED_FIELD,
+                                          draw_halftone_func,
+                                          exec_func));
 
   // drawSurface
   Boolean_handle_function draw_aos_surface_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_surface_geo::draw_aos_surface_handle);
-  s_prototype->add_field_info(new SF_bool(DRAW_AOS_SURFACE, "drawSurface",
-                                          draw_aos_surface_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(DRAW_AOS_SURFACE,
+                                          "drawSurface",
+                                          RULE_EXPOSED_FIELD,
+                                          draw_aos_surface_func,
+                                          exec_func));
 
   // aosVertexStyleId
   Uint_handle_function aos_vertex_style_func =
@@ -215,6 +224,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_vertex_style_handle);
   s_prototype->add_field_info(new SF_uint(AOS_VERTEX_STYLE_ID,
                                           "aosVertexStyleId",
+                                          RULE_EXPOSED_FIELD,
                                           aos_vertex_style_func,
                                           exec_func));
 
@@ -224,6 +234,7 @@ void Arrangement_on_surface_geo::init_prototype()
   // aosIsolatedVertexStyleId
   s_prototype->add_field_info(new SF_uint(AOS_ISOLATED_VERTEX_STYLE_ID,
                                           "aosIsolatedVertexStyleId",
+                                          RULE_EXPOSED_FIELD,
                                           aos_isolated_vertex_style_func,
                                           exec_func));
 
@@ -233,53 +244,66 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_isolated_vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_ISOLATED_VERTEX_RADIUS,
                                            "aosIsolatedVertexRadius",
+                                           RULE_EXPOSED_FIELD,
                                            aos_isolated_vertex_radius_func));
 
   // aosEdgeEnabled
   Boolean_handle_function aos_edge_enabled_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_surface_geo::aos_edge_enabled_handle);
-  s_prototype->add_field_info(new SF_bool(AOS_EDGE_ENABLED, "aosEdgeEnabled",
-                                          aos_edge_enabled_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(AOS_EDGE_ENABLED,
+                                          "aosEdgeEnabled",
+                                          RULE_EXPOSED_FIELD,
+                                          aos_edge_enabled_func,
+                                          exec_func));
 
   // aosEdgeStyleId
   Uint_handle_function aos_edge_style_func =
     reinterpret_cast<Uint_handle_function>
     (&Arrangement_on_surface_geo::aos_edge_style_handle);
-  s_prototype->add_field_info(new SF_uint(AOS_EDGE_STYLE_ID, "aosEdgeStyleId",
-                                          aos_edge_style_func, exec_func));
+  s_prototype->add_field_info(new SF_uint(AOS_EDGE_STYLE_ID,
+                                          "aosEdgeStyleId",
+                                          RULE_EXPOSED_FIELD,
+                                          aos_edge_style_func,
+                                          exec_func));
 
   // aosEdgeCountId
   Uint_handle_function aos_edge_count_func =
     static_cast<Uint_handle_function>
     (&Arrangement_on_surface_geo::aos_edge_count_handle);
-  s_prototype->add_field_info(new SF_uint(AOS_EDGE_COUNT_ID, "aosEdgeCountId",
-                                          aos_edge_count_func, exec_func));
+  s_prototype->add_field_info(new SF_uint(AOS_EDGE_COUNT_ID,
+                                          "aosEdgeCountId",
+                                          RULE_EXPOSED_FIELD,
+                                          aos_edge_count_func,
+                                          exec_func));
 
   // aosEdgeDirected
   Boolean_handle_function aos_edge_directed_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_surface_geo::aos_edge_directed_handle);
-  s_prototype->add_field_info(new SF_bool(AOS_EDGE_DIRECTED, "aosEdgeDirected",
-                                          aos_edge_directed_func, exec_func));
+  s_prototype->add_field_info(new SF_bool(AOS_EDGE_DIRECTED,
+                                          "aosEdgeDirected",
+                                          RULE_EXPOSED_FIELD,
+                                          aos_edge_directed_func,
+                                          exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Arrangement_on_surface_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Arrangement_on_surface_geo::get_prototype()
 {
   if (!s_prototype) Arrangement_on_surface_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes. */
- void Arrangement_on_surface_geo::set_attributes(Element* elem)
+//! \brief sets the ellpsoid attributes.
+void Arrangement_on_surface_geo::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
@@ -579,14 +603,14 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
   context->draw_material_mode_enable(Gfx::NO_COLOR_MATERIAL);
 }
 
-/*! \brief raises the flag that indicates that the renderer changed. */
+//! \brief raises the flag that indicates that the renderer changed.
 void Arrangement_on_surface_geo::renderer_changed(Field_info* /* field_info */)
 {
   m_renderer.clear();
   m_renderer_dirty = true;
 }
 
-/*! \brief cleans the renderer. */
+//! \brief cleans the renderer.
 void Arrangement_on_surface_geo::clean_renderer()
 {
   if (get_draw_aos_surface())

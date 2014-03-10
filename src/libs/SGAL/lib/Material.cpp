@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if (defined _MSC_VER)
@@ -156,6 +153,7 @@ void Material::init_prototype()
     static_cast<Float_handle_function>(&Material::ambient_intensity_handle);
   s_prototype->add_field_info(new SF_float(AMBIENT_INTENSITY,
                                            "ambientIntensity",
+                                           RULE_EXPOSED_FIELD,
                                            ambient_intensity_func,
                                            s_def_ambient_intensity,
                                            exec_func));
@@ -164,7 +162,9 @@ void Material::init_prototype()
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Vector3f_handle_function diffuse_color_func =
     static_cast<Vector3f_handle_function>(&Material::diffuse_color_handle);
-  s_prototype->add_field_info(new SF_vector3f(DIFFUSE_COLOR, "diffuseColor",
+  s_prototype->add_field_info(new SF_vector3f(DIFFUSE_COLOR,
+                                              "diffuseColor",
+                                              RULE_EXPOSED_FIELD,
                                               diffuse_color_func,
                                               s_def_diffuse_color, exec_func));
 
@@ -172,7 +172,9 @@ void Material::init_prototype()
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Vector3f_handle_function specular_color_func =
     static_cast<Vector3f_handle_function>(&Material::specular_color_handle);
-  s_prototype->add_field_info(new SF_vector3f(SPECULAR_COLOR, "specularColor",
+  s_prototype->add_field_info(new SF_vector3f(SPECULAR_COLOR,
+                                              "specularColor",
+                                              RULE_EXPOSED_FIELD,
                                               specular_color_func,
                                               s_def_specular_color, exec_func));
 
@@ -180,7 +182,9 @@ void Material::init_prototype()
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Vector3f_handle_function emissive_color_func =
     static_cast<Vector3f_handle_function>(&Material::emissive_color_handle);
-  s_prototype->add_field_info(new SF_vector3f(EMISSIVE_COLOR, "emissiveColor",
+  s_prototype->add_field_info(new SF_vector3f(EMISSIVE_COLOR,
+                                              "emissiveColor",
+                                              RULE_EXPOSED_FIELD,
                                               emissive_color_func,
                                               s_def_emissive_color, exec_func));
 
@@ -188,7 +192,9 @@ void Material::init_prototype()
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Float_handle_function shininess_func =
     static_cast<Float_handle_function>(&Material::shininess_handle);
-  s_prototype->add_field_info(new SF_float(SHININESS, "shininess",
+  s_prototype->add_field_info(new SF_float(SHININESS,
+                                           "shininess",
+                                           RULE_EXPOSED_FIELD,
                                            shininess_func,
                                            s_def_shininess, exec_func));
 
@@ -196,7 +202,9 @@ void Material::init_prototype()
   exec_func = static_cast<Execution_function>(&Material::material_changed);
   Float_handle_function transparency_func =
     static_cast<Float_handle_function>(&Material::transparency_handle);
-  s_prototype->add_field_info(new SF_float(TRANSPARENCY, "transparency",
+  s_prototype->add_field_info(new SF_float(TRANSPARENCY,
+                                           "transparency",
+                                           RULE_EXPOSED_FIELD,
                                            transparency_func,
                                            s_def_transparency, exec_func));
 }

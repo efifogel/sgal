@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -28,12 +25,12 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Scene_manager::Scene_manager() 
+Scene_manager::Scene_manager()
 {
   m_scene = new Scene_graph();
 }
 
-Scene_manager::Scene_manager(Boolean createScene) 
+Scene_manager::Scene_manager(Boolean createScene)
 {
   // if this is called with FALSE, need to make sure SetScene_graph() is called as well
   if ( createScene ) {
@@ -44,7 +41,7 @@ Scene_manager::Scene_manager(Boolean createScene)
 }
 
 /*! Destructor */
-Scene_manager::~Scene_manager() 
+Scene_manager::~Scene_manager()
 {
   TRACE_MSG(Trace::DESTRUCTOR, "~Scene_manage ...");
   // Delete all items in m_SAIs
@@ -77,7 +74,7 @@ void Scene_manager::ReleaseContext()
 
 void Scene_manager::MakeCurrent()
 {
-  if (m_scene!=NULL) 
+  if (m_scene!=NULL)
   {
     Context* pContext = NULL;
     pContext = m_scene->get_context();
@@ -92,7 +89,7 @@ XML_entity *Scene_manager::CreateNode(String tag, Load_int **loadInt, EEvent_fil
 {
   XML_entity_factory *factory = XML_entity_factory::get_instance();
   XML_entity *newObj = 0;
-  if ( factory ) 
+  if ( factory )
   {
     newObj = factory->CreateEntity(tag);
   }
@@ -101,7 +98,7 @@ XML_entity *Scene_manager::CreateNode(String tag, Load_int **loadInt, EEvent_fil
   if ( tmp ) {
     *loadInt = tmp;
   }
-  
+
   EEvent_filter *ef = dynamic_cast<EEvent_filter *>(newObj);
   if ( ef ) {
     *evenFilter = ef;
@@ -112,7 +109,7 @@ XML_entity *Scene_manager::CreateNode(String tag, Load_int **loadInt, EEvent_fil
   if (pInt) {
     Execution_coordinator *pEc = get_executionCoordinator();
     if (pEc) {
-      pEc->AddCompInterpolator(); 
+      pEc->AddCompInterpolator();
       pInt->set_executeCoordinator(pEc);
     }
   }
@@ -170,7 +167,7 @@ void Scene_manager::SignalCascadeEnd()
 {
   if (m_scene)
     m_scene->SignalCascadeEnd();
-    
+
   SAIListType::iterator iter = m_SAIs.begin();
     while( iter != m_SAIs.end())
     {
@@ -266,7 +263,7 @@ void Scene_manager::SetDefaultEvent_filter(EEvent_filter *ef)
 Boolean Scene_manager::ActiveNextCamera()
 {
   if( m_scene ) {
-    return m_scene->ActiveNextCamera(); 
+    return m_scene->ActiveNextCamera();
   }
   return false;
 }
@@ -274,7 +271,7 @@ Boolean Scene_manager::ActiveNextCamera()
 Boolean Scene_manager::ActivePrevCamera()
 {
   if( m_scene ) {
-    return m_scene->ActivePrevCamera(); 
+    return m_scene->ActivePrevCamera();
   }
 
   return false;
@@ -283,7 +280,7 @@ Boolean Scene_manager::ActivePrevCamera()
 Boolean Scene_manager::HasMoreThenOneCamera ()
 {
   if( m_scene && m_scene->get_camera_pool() ) {
-    return m_scene->get_camera_pool()->get_count() > 1; 
+    return m_scene->get_camera_pool()->get_count() > 1;
   }
   return false;
 }
@@ -291,7 +288,7 @@ Boolean Scene_manager::HasMoreThenOneCamera ()
 Boolean Scene_manager::IsLastCameraActivated()
 {
   if( m_scene && m_scene->get_camera_pool()) {
-    return m_scene->get_camera_pool()->IsLastCameraActivated(); 
+    return m_scene->get_camera_pool()->IsLastCameraActivated();
   }
   return false;
 }
@@ -299,7 +296,7 @@ Boolean Scene_manager::IsLastCameraActivated()
 Boolean Scene_manager::IsFirstCameraActivated()
 {
   if( m_scene && m_scene->get_camera_pool() ) {
-    return m_scene->get_camera_pool()->IsFirstCameraActivated(); 
+    return m_scene->get_camera_pool()->IsFirstCameraActivated();
   }
   return false;
 }
@@ -308,7 +305,7 @@ Boolean Scene_manager::IsFirstCameraActivated()
 Container *Scene_manager::GetRemoteKeys()
 {
   if( m_scene ) {
-    return m_scene->get_container("KeyConfig"); 
+    return m_scene->get_container("KeyConfig");
   }
 
   return 0;

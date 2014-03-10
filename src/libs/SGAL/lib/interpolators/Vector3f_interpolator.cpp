@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -64,7 +61,9 @@ void Vector3f_interpolator::init_prototype()
   // value
   Vector3f_handle_function value_func =
     static_cast<Vector3f_handle_function>(&Vector3f_interpolator::value_handle);
-  s_prototype->add_field_info(new SF_vector3f(VALUE,"value_changed",
+  s_prototype->add_field_info(new SF_vector3f(VALUE,
+                                              "value_changed",
+                                              RULE_EXPOSED_FIELD,
                                               value_func));
 }
 

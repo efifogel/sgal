@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -61,7 +58,10 @@ void Scalar_interpolator::init_prototype()
   // value
   Float_handle_function value_func =
     static_cast<Float_handle_function>(&Scalar_interpolator::value_handle);
-  s_prototype->add_field_info(new SF_float(VALUE, "value_changed", value_func));
+  s_prototype->add_field_info(new SF_float(VALUE,
+                                           "value_changed",
+                                           RULE_EXPOSED_FIELD,
+                                           value_func));
 }
 
 /*! */

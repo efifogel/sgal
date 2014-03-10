@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12369 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! The Touch_sensor tracks the location and state of the pointing device and
@@ -103,54 +100,74 @@ void Touch_sensor::init_prototype()
   // enabled
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::enabled_handle);
-  s_prototype->add_field_info(new SF_bool(ENABLED, "enabled", enabled_func));
+  s_prototype->add_field_info(new SF_bool(ENABLED,
+                                          "enabled",
+                                          RULE_EXPOSED_FIELD,
+                                          enabled_func));
 
   // hitNormal
   Vector3f_handle_function hit_normal_func =
     static_cast<Vector3f_handle_function>(&Touch_sensor::hit_normal_handle);
-  s_prototype->add_field_info(new SF_vector3f(HITNORMAL, "hitNormal",
+  s_prototype->add_field_info(new SF_vector3f(HITNORMAL,
+                                              "hitNormal",
+                                              RULE_EXPOSED_FIELD,
                                               hit_normal_func));
 
   // hitPoint
   Vector3f_handle_function hit_point_func =
     static_cast<Vector3f_handle_function>(&Touch_sensor::hit_point_handle);
-  s_prototype->add_field_info(new SF_vector3f(HITPOINT, "hitPoint",
+  s_prototype->add_field_info(new SF_vector3f(HITPOINT,
+                                              "hitPoint",
+                                              RULE_EXPOSED_FIELD,
                                               hit_point_func));
 
   // hitTexCoord
   Vector2f_handle_function hit_tex_coord_func =
     static_cast<Vector2f_handle_function>(&Touch_sensor::hit_tex_coord_handle);
-  s_prototype->add_field_info(new SF_vector2f(HITTEXCOORD, "hitTexCoord",
+  s_prototype->add_field_info(new SF_vector2f(HITTEXCOORD,
+                                              "hitTexCoord",
+                                              RULE_EXPOSED_FIELD,
                                               hit_tex_coord_func));
 
   // isActive
   Boolean_handle_function is_active_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::is_active_handle);
-  s_prototype->add_field_info(new SF_bool(IS_ACTIVE, "isActive",
+  s_prototype->add_field_info(new SF_bool(IS_ACTIVE,
+                                          "isActive",
+                                          RULE_EXPOSED_FIELD,
                                           is_active_func));
 
   // exActivate
   exec_func = static_cast<Execution_function>(&Touch_sensor::external_activate);
   Boolean_handle_function ex_activate_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::ex_activate_handle);
-  s_prototype->add_field_info(new SF_bool(EXACTIVATE, "exActivate",
+  s_prototype->add_field_info(new SF_bool(EXACTIVATE,
+                                          "exActivate",
+                                          RULE_EXPOSED_FIELD,
                                           ex_activate_func, exec_func));
 
   // isOver
   Boolean_handle_function is_over_func =
     static_cast<Boolean_handle_function>(&Touch_sensor::is_over_handle);
-  s_prototype->add_field_info(new SF_bool(IS_OVER, "isOver", is_over_func));
+  s_prototype->add_field_info(new SF_bool(IS_OVER,
+                                          "isOver",
+                                          RULE_EXPOSED_FIELD,
+                                          is_over_func));
 
   // touchTime
   Scene_time_handle_function touch_time_func =
     static_cast<Scene_time_handle_function>(&Touch_sensor::touch_time_handle);
-  s_prototype->add_field_info(new SF_time(TOUCH_TIME, "touchTime",
+  s_prototype->add_field_info(new SF_time(TOUCH_TIME,
+                                          "touchTime",
+                                          RULE_EXPOSED_FIELD,
                                           touch_time_func));
 
   // overSelectionId
   Uint_handle_function over_selection_id_func =
     static_cast<Uint_handle_function>(&Touch_sensor::over_selection_id_handle);
-  s_prototype->add_field_info(new SF_uint(OVER_SELECTION_ID, "overSelectionId",
+  s_prototype->add_field_info(new SF_uint(OVER_SELECTION_ID,
+                                          "overSelectionId",
+                                          RULE_EXPOSED_FIELD,
                                           over_selection_id_func));
 
   // activeSelectionId
@@ -159,6 +176,7 @@ void Touch_sensor::init_prototype()
     (&Touch_sensor::active_selection_id_handle);
   s_prototype->add_field_info(new SF_uint(ACTIVE_SELECTION_ID,
                                           "activeSelectionId",
+                                          RULE_EXPOSED_FIELD,
                                           active_selection_id_func));
 
   // RoutedNode

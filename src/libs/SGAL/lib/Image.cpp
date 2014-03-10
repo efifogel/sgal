@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <stdlib.h>
@@ -82,7 +79,9 @@ void Image::init_prototype()
   // url
   String_handle_function url_func =
     static_cast<String_handle_function>(&Image::url_handle);
-  s_prototype->add_field_info(new SF_string(URL, "url", url_func));
+  s_prototype->add_field_info(new SF_string(URL, "url",
+                                            RULE_EXPOSED_FIELD,
+                                            url_func));
 }
 
 //! \brief deletes the prototype.

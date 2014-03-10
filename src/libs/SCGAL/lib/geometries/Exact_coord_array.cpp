@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Exact_coord_array.cpp 7239 2009-02-22 17:46:29Z ophirset $
-// $Revision: 7239 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <CGAL/basic.h>
@@ -41,7 +38,7 @@ SGAL_BEGIN_NAMESPACE
 const std::string Exact_coord_array::s_tag = "ExactCoordinate";
 
 /*! The node prototype */
-Container_proto* Exact_coord_array::s_prototype(NULL);
+Container_proto* Exact_coord_array::s_prototype(nullptr);
 
 /*! Register to the container factory */
 REGISTER_TO_FACTORY(Exact_coord_array, "Exact_coord_array");
@@ -50,8 +47,6 @@ REGISTER_TO_FACTORY(Exact_coord_array, "Exact_coord_array");
 void Exact_coord_array::init_prototype()
 {
   if (s_prototype) return;
-
-  // Allocate a prototype instance:
   s_prototype = new Container_proto(Coord_array::get_prototype());
 }
 
@@ -59,13 +54,13 @@ void Exact_coord_array::init_prototype()
 void Exact_coord_array::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! Obtain the node prototype */
 Container_proto* Exact_coord_array::get_prototype()
 {
-  if (s_prototype == NULL) Exact_coord_array::init_prototype();
+  if (!s_prototype) Exact_coord_array::init_prototype();
   return s_prototype;
 }
 

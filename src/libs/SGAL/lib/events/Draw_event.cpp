@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Draw_event.cpp 5012 2007-09-03 07:24:36Z efif $
-// $Revision: 5012 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include<iostream>

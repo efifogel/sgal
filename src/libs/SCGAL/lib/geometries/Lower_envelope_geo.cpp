@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lower_envelope_geo.cpp 7204 2009-01-24 21:43:15Z efif $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -58,7 +55,7 @@ Float Lower_envelope_geo::s_def_vertex_radius(0.2f);
 Float Lower_envelope_geo::s_def_edge_radius(0.1f);
 Float Lower_envelope_geo::s_def_face_transparency(0.8f);
 
-/*! Constructor. */
+//! \brief constructor.
 Lower_envelope_geo::Lower_envelope_geo(Boolean proto) :
   Geometry(proto),
   m_dirty(true),
@@ -68,10 +65,10 @@ Lower_envelope_geo::Lower_envelope_geo(Boolean proto) :
   m_face_transparency(s_def_face_transparency)
 {}
 
-/*! Destructor. */
+//! \brief destructor.
 Lower_envelope_geo::~Lower_envelope_geo() { clear(); }
 
-/*! \brief draws the envelope */
+//! \brief draws the envelope.
 void Lower_envelope_geo::draw_envelope(Draw_action* action)
 {
   draw_envelope_faces(action);
@@ -79,7 +76,7 @@ void Lower_envelope_geo::draw_envelope(Draw_action* action)
   draw_envelope_vertices(action);
 }
 
-/*! \brief draws the geometry of the Mesh. */
+//! \brief draws the geometry of the Mesh.
 void Lower_envelope_geo::draw(Draw_action* action)
 {
   if (m_dirty) clean();
@@ -87,7 +84,7 @@ void Lower_envelope_geo::draw(Draw_action* action)
   draw_envelope(action);
 }
 
-/*! \brief calculates the bounding sphere. */
+//! \brief calculates the bounding sphere.
 bool Lower_envelope_geo::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
@@ -110,7 +107,7 @@ bool Lower_envelope_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of the object extracted from an input file. */
+//! \brief sets the attributes of the object extracted from an input file.
 void Lower_envelope_geo::set_attributes(SGAL::Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -176,7 +173,7 @@ void Lower_envelope_geo::set_attributes(SGAL::Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief initializes the prototype of this container. */
+//! \brief initializes the prototype of this container.
 void Lower_envelope_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -187,6 +184,7 @@ void Lower_envelope_geo::init_prototype()
     static_cast<Float_handle_function>
     (&Lower_envelope_geo::vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(VERTEX_RADIUS, "vertexRadius",
+                                           RULE_EXPOSED_FIELD,
                                            vertex_radius_func));
 
   // edgeRadius
@@ -194,6 +192,7 @@ void Lower_envelope_geo::init_prototype()
     static_cast<Float_handle_function>
     (&Lower_envelope_geo::edge_radius_handle);
   s_prototype->add_field_info(new SF_float(EDGE_RADIUS, "edgeRadius",
+                                           RULE_EXPOSED_FIELD,
                                            edge_radius_func));
 
   // faceTransparency
@@ -202,24 +201,25 @@ void Lower_envelope_geo::init_prototype()
     (&Lower_envelope_geo::face_transparency_handle);
   s_prototype->add_field_info(new SF_float(FACE_TRANSPARENCY,
                                            "faceTransparency",
+                                           RULE_EXPOSED_FIELD,
                                            face_transparency_func));
 }
 
-/*! \brief deletes the prototype of this container. */
+//! \brief deletes the prototype of this container.
 void Lower_envelope_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the prototype of this container. */
+//! \brief obtains the prototype of this container.
 Container_proto* Lower_envelope_geo::get_prototype()
 {
   if (!s_prototype) Lower_envelope_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief prints statistics. */
+//! \brief prints statistics.
 void Lower_envelope_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";

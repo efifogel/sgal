@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Assembly_part.cpp 14194 2012-11-22 22:44:26Z efif $
-// $Revision: 14194 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -52,7 +49,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Assembly_part::s_prototype(NULL);
+Container_proto* Assembly_part::s_prototype(nullptr);
 std::string Assembly_part::s_tag = "AssemblyPart";
 
 REGISTER_TO_FACTORY(Assembly_part, "Assembly_part");
@@ -78,7 +75,7 @@ void Assembly_part::init_prototype()
 void Assembly_part::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.

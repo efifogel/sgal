@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lines_through_segments_geo.cpp 14223 2012-11-29 22:33:55Z efif $
-// $Revision: 14223 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
@@ -104,9 +101,9 @@ void Lines_through_segments_geo::init_prototype()
   Shared_container_handle_function segments_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Lines_through_segments_geo::segments_handle);
-  SF_shared_container* field =
-    new SF_shared_container(SEGMENTS, "segments", segments_func);
-  s_prototype->add_field_info(field);
+  s_prototype->add_field_info(new SF_shared_container(SEGMENTS, "segments",
+                                                      RULE_EXPOSED_FIELD,
+                                                      segments_func));
 }
 
 //! \brief deletes the container prototype.

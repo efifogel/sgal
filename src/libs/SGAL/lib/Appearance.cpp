@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <iostream>
@@ -49,7 +46,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Appearance::s_tag = "Appearance";
-Container_proto* Appearance::s_prototype(NULL);
+Container_proto* Appearance::s_prototype(nullptr);
 
 // Default values:
 const Gfx::Light_model_color_control
@@ -60,10 +57,10 @@ const Gfx::Tex_env Appearance::s_def_tex_env(Gfx::MODULATE_TENV);
 
 REGISTER_TO_FACTORY(Appearance, "Appearance");
 
-/*! The parameter-less constructor */
+//! \brief constructor.
 Appearance::Appearance(Boolean proto) : Container(proto) { init(); }
 
-/*! Destructor */
+//! \brief destructor.
 Appearance::~Appearance() {}
 
 /*! \brief assigns the appearance with the content of another appearance;
@@ -107,7 +104,7 @@ void Appearance::set(Appearance* app)
   m_override = app->m_override;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::init()
 {
   m_texture.reset();            // shared pointer
@@ -146,7 +143,7 @@ void Appearance::init()
   m_override.off();
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_texture(Shared_texture texture)
 {
   Observer observer(this, get_field_info(TEXTURE));
@@ -161,7 +158,7 @@ void Appearance::set_texture(Shared_texture texture)
   m_dirty_flags.on_bit(Gfx::TEX_ENV);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_halftone(Shared_halftone halftone)
 {
   Observer observer(this, get_field_info(HALFTONE_PATTERN));
@@ -174,7 +171,7 @@ void Appearance::set_halftone(Shared_halftone halftone)
   m_dirty_flags.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_tex_enable(Boolean tex_enable)
 {
   m_pending.on_bit(Gfx::TEX_ENABLE);
@@ -182,7 +179,7 @@ void Appearance::set_tex_enable(Boolean tex_enable)
   m_tex_enable = tex_enable;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_tex_mode(Gfx::Tex_mode tex_mode)
 {
   m_pending.on_bit(Gfx::TEX_MODE);
@@ -190,14 +187,14 @@ void Appearance::set_tex_mode(Gfx::Tex_mode tex_mode)
   m_tex_mode = tex_mode;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_tex_blend_color(const Vector4f& tex_blend_color)
 {
   set_tex_blend_color(tex_blend_color[0], tex_blend_color[1],
                       tex_blend_color[2], tex_blend_color[3]);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_tex_blend_color(Float v0, Float v1, Float v2, Float v3)
 {
   m_pending.on_bit(Gfx::TEX_BLEND_COLOR);
@@ -224,7 +221,7 @@ void Appearance::set_tex_gen(Shared_tex_gen tex_gen)
   m_override.on_bit(Gfx::TEX_GEN);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
 {
   m_pending.on_bit(Gfx::TEX_GEN_ENABLE);
@@ -277,7 +274,7 @@ void Appearance::back_material_changed(Field_info* /* field_info */)
   process_content_changed();
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_back_material(Shared_material material)
 {
   Observer observer(this, get_field_info(BACK_MATERIAL));
@@ -288,7 +285,7 @@ void Appearance::set_back_material(Shared_material material)
   m_override.on_bit(Gfx::BACK_MATERIAL);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_light_enable(Boolean light_enable)
 {
   m_pending.on_bit(Gfx::LIGHT_ENABLE);
@@ -296,7 +293,7 @@ void Appearance::set_light_enable(Boolean light_enable)
   m_light_enable = light_enable;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_shade_model(Gfx::Shade_model shade_model)
 {
   m_pending.on_bit(Gfx::SHADE_MODEL);
@@ -304,7 +301,7 @@ void Appearance::set_shade_model(Gfx::Shade_model shade_model)
   m_shade_model = shade_model;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_transp_enable(Boolean transp_enable)
 {
   m_pending.on_bit(Gfx::TRANSP_ENABLE);
@@ -312,7 +309,7 @@ void Appearance::set_transp_enable(Boolean transp_enable)
   m_transp_enable = transp_enable;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_transp_mode(Gfx::Transparency_mode transp_mode)
 {
   m_pending.on_bit(Gfx::TRANSP_MODE);
@@ -320,7 +317,7 @@ void Appearance::set_transp_mode(Gfx::Transparency_mode transp_mode)
   m_transp_mode = transp_mode;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_alpha_func(Gfx::Alpha_func alpha_func)
 {
   m_pending.on_bit(Gfx::ALPHA_FUNC);
@@ -328,7 +325,7 @@ void Appearance::set_alpha_func(Gfx::Alpha_func alpha_func)
   m_alpha_func = alpha_func;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_alpha_ref(Float alpha_ref)
 {
   m_pending.on_bit(Gfx::ALPHA_REF);
@@ -336,14 +333,14 @@ void Appearance::set_alpha_ref(Float alpha_ref)
   m_alpha_ref = alpha_ref;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_blend_color(const Vector4f& blend_color)
 {
   set_blend_color(blend_color[0], blend_color[1],
                   blend_color[2], blend_color[3]);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_blend_color(Float v0, Float v1, Float v2, Float v3)
 {
   m_pending.on_bit(Gfx::BLEND_COLOR);
@@ -351,7 +348,7 @@ void Appearance::set_blend_color(Float v0, Float v1, Float v2, Float v3)
   m_blend_color.set(v0, v1, v2, v3);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_src_blend_func(Gfx::Src_blend_func src_blend_func)
 {
   m_pending.on_bit(Gfx::SRC_BLEND_FUNC);
@@ -359,7 +356,7 @@ void Appearance::set_src_blend_func(Gfx::Src_blend_func src_blend_func)
   m_src_blend_func = src_blend_func;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
 {
   m_pending.on_bit(Gfx::DST_BLEND_FUNC);
@@ -367,11 +364,11 @@ void Appearance::set_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
   m_dst_blend_func = dst_blend_func;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_color_mask(const Vector4ub& color_mask)
 { set_color_mask(color_mask[0], color_mask[1], color_mask[2], color_mask[3]); }
 
-/*! \brief */
+//! \brief
 void Appearance::set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3)
 {
   m_pending.on_bit(Gfx::COLOR_MASK);
@@ -379,7 +376,7 @@ void Appearance::set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3)
   m_color_mask.set(v0, v1, v2, v3);
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_depth_enable(Boolean depth_enable)
 {
   m_pending.on_bit(Gfx::DEPTH_ENABLE);
@@ -387,7 +384,7 @@ void Appearance::set_depth_enable(Boolean depth_enable)
   m_depth_enable = depth_enable;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_depth_func(Gfx::Depth_func depth_func)
 {
   m_pending.on_bit(Gfx::DEPTH_FUNC);
@@ -395,7 +392,7 @@ void Appearance::set_depth_func(Gfx::Depth_func depth_func)
   m_depth_func = depth_func;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_depth_mask(Boolean depth_mask)
 {
   m_pending.on_bit(Gfx::DEPTH_MASK);
@@ -403,7 +400,7 @@ void Appearance::set_depth_mask(Boolean depth_mask)
   m_depth_mask = depth_mask;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_fog_enable(Boolean fog_enable)
 {
   m_pending.on_bit(Gfx::FOG_ENABLE);
@@ -419,7 +416,7 @@ void Appearance::set_polygon_stipple_enable(Boolean enable)
   m_polygon_stipple_enable = enable;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_material_mode_enable(Gfx::Material_mode enable)
 {
   m_pending.on_bit(Gfx::MATERIAL_MODE_ENABLE);
@@ -427,7 +424,7 @@ void Appearance::set_material_mode_enable(Gfx::Material_mode enable)
   m_material_mode_enable = enable;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_poly_mode(Gfx::Poly_mode poly_mode)
 {
   m_pending.on_bit(Gfx::POLY_MODE);
@@ -435,7 +432,7 @@ void Appearance::set_poly_mode(Gfx::Poly_mode poly_mode)
   m_poly_mode = poly_mode;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_line_stipple_pattern(Uint pattern)
 {
   m_pending.on_bit(Gfx::LINE_STIPPLE_PATTERN);
@@ -443,7 +440,7 @@ void Appearance::set_line_stipple_pattern(Uint pattern)
   m_line_stipple_pattern = pattern;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_line_stipple_factor(Uint factor)
 {
   m_pending.on_bit(Gfx::LINE_STIPPLE_FACTOR);
@@ -470,17 +467,17 @@ Appearance::set_light_model_color_control(Gfx::Light_model_color_control model)
   m_light_model_color_control = model;
 }
 
-/*! \brief */
+//! \brief
 void Appearance::set_inherit(const Bit_mask& inherit) { m_pending = inherit; }
 
-/*! \brief */
+//! \brief
 void Appearance::get_inherit(Bit_mask& inherit) const { inherit = m_pending; }
 
 /*! \brief applies the appearance. */
 void Appearance::draw(Draw_action* action)
 {
   Context* context = action->get_context();
-  if (context == NULL) return;
+  if (context == nullptr) return;
   context->draw_app(this);
 }
 
@@ -524,7 +521,7 @@ void Appearance::tex_gen_changed(Field_info* /* field_info */)
   process_content_changed();
 }
 
-/*! \brief */
+//! \brief
 Boolean Appearance::attach_context(Context* context)
 {
   Boolean result = Container::attach_context(context);
@@ -533,7 +530,7 @@ Boolean Appearance::attach_context(Context* context)
   return result;
 }
 
-/*! \brief */
+//! \brief
 Boolean Appearance::detach_context(Context* context)
 {
   Boolean result = Container::detach_context(context);
@@ -556,6 +553,7 @@ void Appearance::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Appearance::material_handle);
   s_prototype->add_field_info(new SF_shared_container(MATERIAL, "material",
+                                                      RULE_EXPOSED_FIELD,
                                                       material_func,
                                                       exec_func));
 
@@ -564,6 +562,7 @@ void Appearance::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Appearance::texture_handle);
   s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
+                                                      RULE_EXPOSED_FIELD,
                                                       texture_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::tex_gen_changed);
@@ -572,6 +571,7 @@ void Appearance::init_prototype()
     (&Appearance::tex_gen_handle);
   s_prototype->add_field_info(new SF_shared_container(TEX_GEN,
                                                       "textureGeneration",
+                                                      RULE_EXPOSED_FIELD,
                                                       tex_gen_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::halftone_changed);
@@ -579,7 +579,9 @@ void Appearance::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Appearance::halftone_handle);
   s_prototype->add_field_info(new SF_shared_container(HALFTONE_PATTERN,
-                                                      "halftone", halftone_func,
+                                                      "halftone",
+                                                      RULE_EXPOSED_FIELD,
+                                                      halftone_func,
                                                       exec_func));
 
   exec_func =
@@ -589,6 +591,7 @@ void Appearance::init_prototype()
     (&Appearance::back_material_handle);
   s_prototype->add_field_info(new SF_shared_container(BACK_MATERIAL,
                                                       "backMaterial",
+                                                      RULE_EXPOSED_FIELD,
                                                       back_material_func,
                                                       exec_func));
 }
@@ -597,13 +600,13 @@ void Appearance::init_prototype()
 void Appearance::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! \brief obtains the appearance prototype. */
 Container_proto* Appearance::get_prototype()
 {
-  if (s_prototype == NULL) init_prototype();
+  if (s_prototype == nullptr) init_prototype();
   return s_prototype;
 }
 
@@ -690,7 +693,7 @@ void Appearance::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief */
+//! \brief
 Attribute_list Appearance::get_attributes()
 {
   Attribute_list attrs;
@@ -755,7 +758,7 @@ void Appearance::clean_tex_env()
     set_tex_env(Gfx::DECAL_TENV);
 }
 
-/*! \brief cleans the blend functions. */
+//! \brief cleans the blend functions.
 void Appearance::clean_blend_func()
 {
   // If texture is enabled and texture is either 2 components or 4 components,
@@ -777,7 +780,7 @@ void Appearance::clean_blend_func()
   }
 }
 
-/*! \brief cleans the light model. */
+//! \brief cleans the light model.
 void Appearance::clean_light_model()
 {
   if (!m_tex_enable) return;
@@ -793,11 +796,11 @@ void Appearance::clean_light_model()
   set_light_model_color_control(color_control);
 }
 
-/*! \brief cleans the material attribute. */
+//! \brief cleans the material attribute.
 void Appearance::clean_material()
 { if (!m_material) m_material = Shared_material(new Material()); }
 
-/*! \brief cleans the texture generation attribute. */
+//! \brief cleans the texture generation attribute.
 void Appearance::clean_tex_gen()
 {
   if (!m_tex_gen) m_tex_gen = Shared_tex_gen(new Tex_gen());
@@ -834,7 +837,7 @@ void Appearance::clean_tex_gen()
   }
 }
 
-/*! \brief Process change of field. */
+//! \brief Process change of field.
 void Appearance::field_changed(Field_info* field_info)
 {
   switch (field_info->get_id()) {

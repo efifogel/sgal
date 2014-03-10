@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -78,13 +75,17 @@ void Navigation_sensor::init_prototype()
   Vector3f_handle_function translation_func =
     static_cast<Vector3f_handle_function>
     (&Navigation_sensor::translation_handle);
-  s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
+  s_prototype->add_field_info(new SF_vector3f(TRANSLATION,
+                                              "translation",
+                                              RULE_EXPOSED_FIELD,
                                               translation_func));
 
   // rotation
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>(&Navigation_sensor::rotation_handle);
-  s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
+  s_prototype->add_field_info(new SF_rotation(ROTATION,
+                                              "rotation",
+                                              RULE_EXPOSED_FIELD,
                                               rotation_func));
 
   // minZoomDistance
@@ -93,20 +94,25 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::min_zoom_distance_handle);
   s_prototype->add_field_info(new SF_float(MIN_ZOOM_DISTANCE,
                                            "minZoomDistance",
+                                           RULE_EXPOSED_FIELD,
                                            min_zoom_distance_func));
 
   // translationDone
   Boolean_handle_function translation_done_func =
     static_cast<Boolean_handle_function>
     (&Navigation_sensor::translation_done_handle);
-  s_prototype->add_field_info(new SF_bool(TRANSLATION_DONE, "translationDone",
+  s_prototype->add_field_info(new SF_bool(TRANSLATION_DONE,
+                                          "translationDone",
+                                          RULE_EXPOSED_FIELD,
                                           translation_done_func));
 
   // rotationDone
   Boolean_handle_function rotation_done_func =
     static_cast<Boolean_handle_function>
     (&Navigation_sensor::rotation_done_handle);
-  s_prototype->add_field_info(new SF_bool(ROTATION_DONE, "rotationDone",
+  s_prototype->add_field_info(new SF_bool(ROTATION_DONE,
+                                          "rotationDone",
+                                          RULE_EXPOSED_FIELD,
                                           rotation_done_func));
 }
 

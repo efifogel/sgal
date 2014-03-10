@@ -62,6 +62,7 @@ void Coord_array::init_prototype()
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>(&Coord_array::array_handle);
   s_prototype->add_field_info(new MF_vector3f(POINT, "point",
+                                              RULE_EXPOSED_FIELD,
                                               array_func, exec_func));
 }
 

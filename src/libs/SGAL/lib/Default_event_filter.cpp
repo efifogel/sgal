@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -35,28 +32,28 @@ bool EDefaultEvent_filter::Draw( const EDrawData & data)
 {
   //DBG(get_debug()->DebugEmit(DBG_DEFAULTEVENTFILTER, "HDC = %h", data.get_dC()));
 
-  if ( m_executionCoordinator ) 
+  if ( m_executionCoordinator )
     m_executionCoordinator->SetRenderingRequired();
   return true;
 }
 
 bool EDefaultEvent_filter::Size( const ESizeData & )
 {
-  if ( m_executionCoordinator ) 
+  if ( m_executionCoordinator )
     m_executionCoordinator->SetRenderingRequired();
   return true;
 }
 
 bool EDefaultEvent_filter::EraseBkgnd( const EEraseBkgndData & )
 {
-  if ( m_executionCoordinator ) 
+  if ( m_executionCoordinator )
     m_executionCoordinator->SetRenderingRequired();
   return true;
 }
 
 bool EDefaultEvent_filter::PaletteChanged( const EPaletteChangedData & )
 {
-  if ( m_executionCoordinator ) 
+  if ( m_executionCoordinator )
     m_executionCoordinator->SetRenderingRequired();
   return true;
 }

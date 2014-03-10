@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 13560 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
@@ -117,55 +114,69 @@ void Font_style::init_prototype()
     static_cast<Execution_function>(&Font_style::on_field_change);
   String_handle_function family_func =
     static_cast<String_handle_function>(&Font_style::family_handle);
-  s_prototype->add_field_info(new SF_string(FAMILY, "family", family_func,
+  s_prototype->add_field_info(new SF_string(FAMILY, "family",
+                                            RULE_EXPOSED_FIELD,
+                                            family_func,
                                             exec_func));
 
   // style
   String_handle_function style_func =
     static_cast<String_handle_function>(&Font_style::style_handle);
-  s_prototype->add_field_info(new SF_string(STYLE, "style", style_func,
+  s_prototype->add_field_info(new SF_string(STYLE, "style",
+                                            RULE_EXPOSED_FIELD,
+                                            style_func,
                                             exec_func));
 
   // horizontal
   Boolean_handle_function horizontal_func =
     static_cast<Boolean_handle_function>(&Font_style::horizontal_handle);
   s_prototype->add_field_info(new SF_bool(HORIZONTAL, "horizontal",
+                                          RULE_EXPOSED_FIELD,
                                           horizontal_func, exec_func));
 
   // justify
   String_handle_function justify_func =
     static_cast<String_handle_function>(&Font_style::justify_handle);
-  s_prototype->add_field_info(new SF_string(JUSTIFY, "justify", justify_func,
+  s_prototype->add_field_info(new SF_string(JUSTIFY, "justify",
+                                            RULE_EXPOSED_FIELD,
+                                            justify_func,
                                             exec_func));
 
   // language
   String_handle_function language_func =
     static_cast<String_handle_function>(&Font_style::language_handle);
   s_prototype->add_field_info(new SF_string(LANGUAGE, "language",
+                                            RULE_EXPOSED_FIELD,
                                             language_func, exec_func));
 
   // leftToRight
   Boolean_handle_function l2r_func =
     static_cast<Boolean_handle_function>(&Font_style::l2r_handle);
   s_prototype->add_field_info(new SF_bool(LEFT_TO_RIGHT, "leftToRight",
+                                          RULE_EXPOSED_FIELD,
                                           l2r_func, exec_func));
 
   // size
   Float_handle_function size_func =
     static_cast<Float_handle_function>(&Font_style::size_handle);
-  s_prototype->add_field_info(new SF_float(SIZE, "size", size_func,
+  s_prototype->add_field_info(new SF_float(SIZE, "size",
+                                           RULE_EXPOSED_FIELD,
+                                           size_func,
                                            exec_func));
 
   // spacing
   Float_handle_function spacing_func =
     static_cast<Float_handle_function>(&Font_style::spacing_handle);
-  s_prototype->add_field_info(new SF_float(SPACING, "spacing", spacing_func,
+  s_prototype->add_field_info(new SF_float(SPACING, "spacing",
+                                           RULE_EXPOSED_FIELD,
+                                           spacing_func,
                                            exec_func));
 
   // topToBottom
   Boolean_handle_function t2b_func =
     static_cast<Boolean_handle_function>(&Font_style::t2b_handle);
   s_prototype->add_field_info(new SF_bool(TOP_TO_BOTTOM, "topToBottom",
+                                          RULE_EXPOSED_FIELD,
                                           t2b_func, exec_func));
 }
 
