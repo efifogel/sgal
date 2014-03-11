@@ -34,12 +34,14 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Field_info.hpp"
+#include "SGAL/Agent.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Container_proto;
 class Scene_graph;
+class Tick_event;
 
 /*! \class Script Script.hpp
  * Script is a node used to program behaviour in a scene. Script nodes typically
@@ -50,7 +52,7 @@ class Scene_graph;
  * Each Script node has associated programming language code, referenced by the
  * url field, that is executed to carry out the Script node's function.
  */
-class Script : public Node {
+class SGAL_SGAL_DECL Script : public Node, public Agent {
 public:
   enum {
     FIRST = Node::LAST-1,
@@ -71,6 +73,7 @@ public:
 
   typedef boost::variant<Boolean,
                          Float,
+                         Scene_time,
                          Int,
                          Vector2f,
                          Vector3f,
@@ -155,6 +158,12 @@ public:
   virtual Action::Trav_directive Draw(Draw_action* /* draw_action */)
   { return Action::TRAV_CONT; }
 
+  /*! Handle tick events. */
+  virtual void handle(Tick_event* event);
+
+  /*! Print out the name of this agent (for debugging purposes). */
+  virtual void identify();
+
   /*! Add a field information record to the script node.
    * \param type (in) the type of the field.
    * \param name (in) the name of the field.
@@ -179,7 +188,7 @@ public:
   void set_must_evaluate();
 
   /*! Execute the script function according to the event. */
-  virtual void execute(Field_info* field_info);
+  void execute(Field_info* field_info);
 
 protected:
   /*! The callback to invoke when an input field is used by the engine.
@@ -193,6 +202,16 @@ protected:
    */
   static void setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
                      const v8::PropertyCallbackInfo<void>& info);
+
+  static void
+  named_property_setter(v8::Local<v8::String> property,
+                        v8::Local<v8::Value> value,
+                        const v8::PropertyCallbackInfo<v8::Value>& info);
+
+  static void
+  indexed_property_setter(uint32_t index,
+                          v8::Local<v8::Value> value,
+                          const v8::PropertyCallbackInfo<v8::Value>& info);
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -234,10 +253,8 @@ private:
   /*! The scene graph */
   Scene_graph* m_scene_graph;
 
-  // JSWObjectInt* m_JSWObject;
-  // Boolean m_engineInitialized;
-  // ESAI* m_SAI;
-  // SAI_node_services * m_SAINode;
+  /*! Timestamp */
+  Scene_time m_time;
 };
 
 /*! \brief constructs the prototype */

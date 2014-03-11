@@ -31,6 +31,7 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Tick_event.hpp"
 
 // #include "JSWObjectInt.h"
 // #include "SG_JSObject.h"
@@ -47,17 +48,11 @@ REGISTER_TO_FACTORY(Script, "Script");
 Script::Script(Boolean proto) :
   Node(proto),
   m_protocol(PROTOCOL_INVALID)
-  // m_JSWObject(nullptr),
-  // m_engineInitialized(false),
-  // m_SAI(nullptr),
-  // m_SAINode(nullptr)
-{}
+{ if (!proto) Tick_event::doregister(this); }
 
 /*! Destructor */
 Script::~Script()
-{
-  // if (m_JSWObject) m_JSWObject->Destroy();
-}
+{ Tick_event::unregister(this); }
 
 /*! \brief initializes the container prototype. */
 void Script::init_prototype()
@@ -197,6 +192,20 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     }
     break;
 
+   case SF_TIME:
+    {
+     Scene_time initial_value =
+       value.empty() ? 0 : boost::lexical_cast<Scene_time>(value);
+     variant_field = initial_value;
+     Scene_time_handle_function field_func =
+       static_cast<Scene_time_handle_function>
+       (&Script::field_handle<Scene_time>);
+     SF_time* field_info =
+       new SF_time(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
+    }
+    break;
+
    case SF_INT32:
     {
      Int initial_value = value.empty() ? 0 : boost::lexical_cast<Int>(value);
@@ -210,27 +219,52 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     break;
 
    case SF_VEC2F:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Vector2f initial_value(value);
+     Vector2f_handle_function field_func =
+       static_cast<Vector2f_handle_function>(&Script::field_handle<Vector2f>);
+     variant_field = initial_value;
+     SF_vector2f* field_info =
+       new SF_vector2f(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
+    }
     break;
 
    case SF_VEC3F:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
    case SF_COLOR:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Vector3f initial_value(value);
+     Vector3f_handle_function field_func =
+       static_cast<Vector3f_handle_function>(&Script::field_handle<Vector3f>);
+     variant_field = initial_value;
+     SF_vector3f* field_info =
+       new SF_vector3f(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
+    }
     break;
 
    case SF_ROTATION:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
-   case SF_TIME:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Rotation initial_value(value);
+     Rotation_handle_function field_func =
+       static_cast<Rotation_handle_function>(&Script::field_handle<Rotation>);
+     variant_field = initial_value;
+     SF_rotation* field_info =
+       new SF_rotation(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
+    }
     break;
 
    case SF_STR:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     std::string initial_value(value);
+     String_handle_function field_func =
+       static_cast<String_handle_function>(&Script::field_handle<std::string>);
+     variant_field = initial_value;
+     SF_string* field_info =
+       new SF_string(id, name, rule, field_func, initial_value, exec_func);
+     prototype->add_field_info(field_info);
+    }
     break;
 
    case SF_SHARED_CONTAINER:
@@ -250,9 +284,6 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     break;
 
    case MF_VEC3F:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
    case MF_COLOR:
     std::cerr << "Not supported yet!" << std::endl;
     break;
@@ -312,6 +343,8 @@ void Script::getter(v8::Local<v8::String> /* name */,
 void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
                     const v8::PropertyCallbackInfo<void>& info)
 {
+  std::cout << "Script::setter()" << std::endl;
+
   v8::Local<v8::Value> data = info.Data();
   v8::String::Utf8Value utf8_value(value);
   v8::String::Utf8Value utf8_name(name);
@@ -325,15 +358,121 @@ void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
     // the content of this new value holder to the value holder of the actual
     // output field. Then, cascade.
     switch (field_info->get_type_id()) {
+     case SF_BOOL:
+      {
+       Boolean tmp = value->BooleanValue();
+       Value_holder<Boolean> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
+     case SF_FLOAT:
+      {
+       Float tmp = value->NumberValue();
+       Value_holder<Float> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
+     case SF_TIME:
+      {
+       Scene_time tmp = value->NumberValue();
+       Value_holder<Scene_time> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
      case SF_INT32:
       {
-       Int tmp = value->Uint32Value();
+       Int tmp = value->Int32Value();
        Value_holder<Int> value_holder(&tmp);
        (field->get_value_holder())->delegate(value_holder);
       }
       break;
 
+     case SF_VEC2F:
+      {
+       v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
+       Vector2f tmp(array->Get(0)->NumberValue(),
+                    array->Get(1)->NumberValue());
+       Value_holder<Vector2f> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
+     case SF_VEC3F:
      case SF_COLOR:
+      {
+       v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
+       Vector3f tmp(array->Get(0)->NumberValue(),
+                    array->Get(1)->NumberValue(),
+                    array->Get(2)->NumberValue());
+       Value_holder<Vector3f> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
+     case SF_ROTATION:
+      {
+       v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
+       Rotation tmp(array->Get(0)->NumberValue(),
+                    array->Get(1)->NumberValue(),
+                    array->Get(2)->NumberValue(),
+                    array->Get(3)->NumberValue());
+       Value_holder<Rotation> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
+     case SF_STR:
+      {
+       v8::Local<v8::String> str = v8::Local<v8::String>::Cast(value);
+       v8::String::Utf8Value utf8(str);
+       std::string tmp(*utf8);
+       Value_holder<std::string> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
+     case SF_SHARED_CONTAINER:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_FLOAT:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_INT32:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_VEC2F:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_VEC3F:
+     case MF_COLOR:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_ROTATION:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_TIME:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_STR:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case SF_IMAGE:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_SHARED_CONTAINER:
+      std::cerr << "Not supported yet!" << std::endl;
       break;
 
      default:
@@ -344,6 +483,29 @@ void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
     // Cascade
     field->cascade();
   }
+}
+
+void
+Script::named_property_setter(v8::Local<v8::String> property,
+                              v8::Local<v8::Value> value,
+                              const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+  v8::String::Utf8Value utf8(property);
+  std::cout << "Script::named_property_setter()"
+            << ", property: " << *utf8
+            << ", value: " << value->Int32Value()
+            << std::endl;
+}
+
+void
+Script::indexed_property_setter(uint32_t index,
+                                v8::Local<v8::Value> value,
+                                const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+  std::cout << "Script::indexed_property_setter()"
+            << ", index: " << index
+            << ", value: " << value->Int32Value()
+            << std::endl;
 }
 
 // \brief executes the suitable script function according to the event.
@@ -372,7 +534,11 @@ void Script::execute(Field_info* field_info)
       Field* field = get_field(field_info->get_id());
       v8::Handle<v8::Value> data = v8::External::New(isolate, field);
       global_template->SetAccessor(name, getter, setter, data);
-    }
+      global_template->SetNamedPropertyHandler(0, named_property_setter,
+                                               0, 0, 0, data);
+      global_template->SetIndexedPropertyHandler(0, indexed_property_setter,
+                                                 0, 0, 0, data);
+   }
   }
 
   v8::Handle<v8::Context> context =
@@ -440,11 +606,117 @@ void Script::execute(Field_info* field_info)
     args[0] = v8::Boolean::New(isolate, *(field_handle<Boolean>(field_info)));
     break;
 
+   case SF_FLOAT:
+    args[0] = v8::Number::New(isolate, *(field_handle<Float>(field_info)));
+    break;
+
+   case SF_TIME:
+    args[0] = v8::Number::New(isolate, *(field_handle<Scene_time>(field_info)));
+    break;
+
+   case SF_INT32:
+    args[0] = v8::Int32::New(isolate, *(field_handle<Int>(field_info)));
+    break;
+
+   case SF_VEC2F:
+    {
+     const Vector2f* tmp = field_handle<Vector2f>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, 2);
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
+     array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+     args[0] = array;
+    }
+    break;
+
+   case SF_VEC3F:
+   case SF_COLOR:
+    {
+     const Vector3f* tmp = field_handle<Vector3f>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, 3);
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
+     array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+     array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
+     args[0] = array;
+    }
+    break;
+
+   case SF_ROTATION:
+    {
+     const Rotation* tmp = field_handle<Rotation>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, 4);
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
+     array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+     array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
+     array->Set(3, v8::Number::New(isolate, (*tmp)[3]));
+     args[0] = array;
+    }
+    break;
+
+   case SF_STR:
+    {
+     const std::string* tmp = field_handle<std::string>(field_info);
+     args[0] = v8::String::NewFromUtf8(isolate, tmp->c_str());
+    }
+    break;
+
+   case SF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_FLOAT:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_INT32:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_VEC2F:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_VEC3F:
+   case MF_COLOR:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_ROTATION:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_TIME:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_STR:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_IMAGE:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
    default:
     std::cerr << "Unsupported type!" << std::endl;
     return;
   }
-  args[1] = v8::String::NewFromUtf8(isolate, "0");
+  args[1] = v8::Number::New(isolate, m_time);
 
   v8::Handle<v8::Value> func_result = func->Call(global, 2, args);
   if (func_result.IsEmpty()) {
@@ -452,144 +724,17 @@ void Script::execute(Field_info* field_info)
     std::cerr << *error << std::endl;
     return;
   }
-
-  // Convert the result to an UTF8 string and print it.
-  // v8::String::Utf8Value utf8(result);
-  // printf("%s\n", *utf8);
-
-#if 0
-  // if this is the first time the script is executed -
-  // initialize the suitable script engine object
-  if (!m_engineInitialized) {
-    m_JSWObject->Init(get_name().c_str());
-    bool compiled = m_JSWObject->CompileScript(m_url.c_str());
-    if (!compiled)
-      debug("JS Error - Object: %s, failed to compile script", m_name);
-    m_engineInitialized = true;
-  }
-
-  SAI_fieldServices* field = m_SAINode->get_field(field_info->get_id());
-  if (field == nullptr) {
-    assert(false);
-    return;
-  }
-  Int arg_type = field->get_type();
-
-  m_SAI->BeginUpdate();
-
-  if (arg_type == SFBOOL) {
-    SAI_fieldSpecificServicesTemplate<Boolean, SFBOOL>* spField =
-      dynamic_cast<SAI_fieldSpecificServicesTemplate<Boolean, SFBOOL>*>(field);
-    if (spField == nullptr) {
-      assert(false);
-      return;
-    }
-    m_JSWObject->CallFunction(field_info->get_name(),
-           spField->get_value(),
-           (double)m_executionCoordinator->get_sceneTime());
-  }
-  else if (arg_type == SFFLOAT) {
-    SAI_fieldSpecificServicesTemplate<Float,SFFLOAT>* spField =
-      dynamic_cast<SAI_fieldSpecificServicesTemplate<Float, SFFLOAT>*>(field);
-    if (spField == nullptr) {
-      assert(false);
-      return;
-    }
-    m_JSWObject->CallFunction(field_info->get_name(),
-           (double)spField->get_value(),
-           (double)m_executionCoordinator->get_sceneTime());
-  }
-  else if (arg_type == SFTIME) {
-    SAI_fieldSpecificServicesTemplate<Scene_time, SFTIME>* spField =
-      dynamic_cast<SAI_fieldSpecificServicesTemplate<Scene_time, SFTIME>*>(field);
-    if (spField == nullptr) {
-      assert(false);
-      return;
-    }
-    m_JSWObject->CallFunction(field_info->get_name(),
-           (double)spField->get_value(),
-           (double)m_executionCoordinator->get_sceneTime());
-  }
-  else if (arg_type == SFINT32)
-  {
-    SAI_fieldSpecificServicesTemplate<Int, SFINT32>* spField =
-      dynamic_cast<SAI_fieldSpecificServicesTemplate<Int, SFINT32>*>(field);
-    if (spField == nullptr) {
-      assert(false);
-      return;
-    }
-    m_JSWObject->CallFunction(field_info->get_name(),
-           (int)spField->get_value(),
-           (double)m_executionCoordinator->get_sceneTime());
-  }
-  else if (arg_type == SFSTRING) {
-    SAI_fieldSpecificServicesTemplate<String, SFSTRING>* spField =
-      dynamic_cast<SAI_fieldSpecificServicesTemplate<String, SFSTRING>*>(field);
-    if (spField == nullptr) {
-      assert(false);
-      return;
-    }
-    m_JSWObject->CallFunction(field_info->get_name(),
-           spField->get_value(),
-           (double)m_executionCoordinator->get_sceneTime());
-  }
-  else if (arg_type == SFNODE)
-  {
-    SAI_fieldSpecificServicesTemplate<SAI_node_services*,SFNODE>* spField =
-      dynamic_cast<SAI_fieldSpecificServicesTemplate<SAI_node_services*, SFNODE>*>(field);
-    if (spField == nullptr) {
-      assert(false);
-      return;
-    }
-    SAI_node_services* nodeValue = spField->get_value();
-
-    // If the SAI node has a client - it served a ESG_JSObject before -
-    // use this client
-    if (nodeValue->get_client()==nullptr)
-      // if the SAI node has no client - allocate a new object
-      m_JSWObject->CallFunction(field_info->get_name(),
-                                new ESG_JSObject(m_SAI, nodeValue,
-                                                 field_info->get_name()),
-                                (double)m_executionCoordinator->get_sceneTime());
-    else {
-      // Cast the client to ESG_JSObject
-      ESG_JSObject* obj = dynamic_cast<ESG_JSObject*>(nodeValue->get_client());
-      if (obj == nullptr) {
-        assert(false);
-        return;
-      }
-      m_JSWObject->CallFunction(field_info->get_name(), obj,
-                                (double)m_executionCoordinator->get_sceneTime());
-    }
-  }
-  else if ((arg_type == SFVEC2F) || (arg_type == SFVEC3F) ||
-           (arg_type == SFROTATION) || (arg_type == SFVEC4F))
-  {
-    // If the SAI field has a client - it served a ESGVec_JSObject before -
-    // use this client
-    if (field->get_client() == nullptr) {
-      // if the SAI node has no client - allocate a new object and return it
-      SAI_node_services* SAINode = m_SAI->get_node(this);
-      m_JSWObject->CallFunction(field_info->get_name(),
-                                new ESGVec_JSObject(m_SAI,SAINode,field),
-                                (double)m_executionCoordinator->get_sceneTime());
-    }
-    else {
-      // Cast the client to ESG_JSObject
-      ESGVec_JSObject* obj =
-        dynamic_cast<ESGVec_JSObject*>(field->get_client());
-      if (obj == nullptr) {
-        assert(false);
-        return;
-      }
-      m_JSWObject->CallFunction(field_info->get_name(), obj,
-                                (double)m_executionCoordinator->get_sceneTime());
-    }
-  }
-  else assert(false);
-
-  m_SAI->EndUpdate();
-#endif
 }
+
+/*! \brief handles tick events. */
+void Script::handle(Tick_event* event)
+{
+  clock_t sim_time = event->get_sim_time();
+  m_time = (Scene_time) sim_time / CLOCKS_PER_SEC;
+}
+
+/*! \brief prints an identification message. */
+void Script::identify()
+{ std::cout << "Agent: Script" << std::endl; }
 
 SGAL_END_NAMESPACE
