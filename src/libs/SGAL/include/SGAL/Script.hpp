@@ -24,6 +24,8 @@
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <v8.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Node.hpp"
@@ -180,6 +182,18 @@ public:
   virtual void execute(Field_info* field_info);
 
 protected:
+  /*! The callback to invoke when an input field is used by the engine.
+   * \param name (in) the field name.
+   */
+  static void getter(v8::Local<v8::String> name,
+                     const v8::PropertyCallbackInfo<v8::Value>& info);
+
+  /*! The callback to invoke when an output field is set by the engine.
+   * \param name (in) the field name.
+   */
+  static void setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
+                     const v8::PropertyCallbackInfo<void>& info);
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 

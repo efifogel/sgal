@@ -30,6 +30,7 @@
 #include "SGAL/Script.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Field.hpp"
 
 // #include "JSWObjectInt.h"
 // #include "SG_JSObject.h"
@@ -73,13 +74,13 @@ void Script::init_prototype()
   Boolean_handle_function direct_output_func =
     static_cast<Boolean_handle_function>(&Script::direct_output_handle);
   s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_FIELD,
                                           direct_output_func));
 
   Boolean_handle_function must_evaluate_func =
     static_cast<Boolean_handle_function>(&Script::must_evaluate_handle);
   s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
-                                          RULE_EXPOSED_FIELD,
+                                          RULE_FIELD,
                                           must_evaluate_func));
 }
 
@@ -165,8 +166,8 @@ void Script::add_field_info(Field_rule rule, Field_type type,
 {
   Container_proto* prototype = get_prototype();
 
-  Execution_function exec_func =
-    static_cast<Execution_function>(&Script::execute);
+  Execution_function exec_func =  (rule == RULE_IN) ?
+    static_cast<Execution_function>(&Script::execute) : nullptr;
 
   Variant_field variant_field;
   Uint id = LAST + m_fields.size();
@@ -302,17 +303,80 @@ void Script::add_field_def(const String& name, const String& type,
 }
 #endif
 
+//! \brief the callback to invoke when an input field is used by the engine.
+void Script::getter(v8::Local<v8::String> /* name */,
+                    const v8::PropertyCallbackInfo<v8::Value>& /* info */)
+{}
+
+//! \brief the callback to invoke when an output field is set by the engine.
+void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
+                    const v8::PropertyCallbackInfo<void>& info)
+{
+  v8::Local<v8::Value> data = info.Data();
+  v8::String::Utf8Value utf8_value(value);
+  v8::String::Utf8Value utf8_name(name);
+  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
+  Field* field = (Field*)(ext->Value());
+
+  if (field) {
+    // Update
+    Field_info* field_info = field->get_field_info();
+    // Create a temprary value holder with the new field value and delegate
+    // the content of this new value holder to the value holder of the actual
+    // output field. Then, cascade.
+    switch (field_info->get_type_id()) {
+     case SF_INT32:
+      {
+       Int tmp = value->Uint32Value();
+       Value_holder<Int> value_holder(&tmp);
+       (field->get_value_holder())->delegate(value_holder);
+      }
+      break;
+
+     case SF_COLOR:
+      break;
+
+     default:
+      std::cerr << "Unsupported type!" << std::endl;
+      return;
+    }
+
+    // Cascade
+    field->cascade();
+  }
+}
+
 // \brief executes the suitable script function according to the event.
 void Script::execute(Field_info* field_info)
 {
   const std::string& name = field_info->get_name();
-  std::cout << "Script::execute() " << name << std::endl;
 
   // Get the Isolate instance of the V8 engine from the scene graph.
   v8::Isolate* isolate = m_scene_graph->get_isolate();
   v8::Isolate::Scope isolate_scope(isolate);
   v8::HandleScope handle_scope(isolate);        // stack-allocated handle scope
-  v8::Handle<v8::Context> context = v8::Context::New(isolate);
+
+  // Create a new ObjectTemplate
+  v8::Handle<v8::ObjectTemplate> global_template =
+    v8::ObjectTemplate::New(isolate);
+
+  // Set an accessor for every output field.
+  Container_proto* proto = get_prototype();
+  Container_proto::Id_const_iterator it = proto->ids_begin(proto);
+  for (; it != proto->ids_end(proto); ++it) {
+    const Field_info* field_info = (*it).second;
+    if (field_info->get_rule() == RULE_OUT) {
+      v8::Handle<v8::String> name =
+        v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+                                v8::String::kInternalizedString);
+      Field* field = get_field(field_info->get_id());
+      v8::Handle<v8::Value> data = v8::External::New(isolate, field);
+      global_template->SetAccessor(name, getter, setter, data);
+    }
+  }
+
+  v8::Handle<v8::Context> context =
+    v8::Context::New(isolate, NULL, global_template);
   v8::Context::Scope context_scope(context);    // enter the contex
 
   // Extract the script
@@ -334,7 +398,6 @@ void Script::execute(Field_info* field_info)
 
   pos = m_url.find_first_not_of(" \t\r\n", pos + 1);
   std::string source_str = m_url.substr(pos);
-  std::cout << "script: " << source_str << std::endl;
 
   // Create a string containing the JavaScript source code.
   v8::Handle<v8::String> source =
@@ -365,14 +428,22 @@ void Script::execute(Field_info* field_info)
 
   // If there is no such function, bail out.
   if (!value->IsFunction()) {
-    std::cerr << "A function named " << name.c_str() << "does not exist!"
+    std::cerr << "A function named " << name.c_str() << " does not exist!"
               << std::endl;
     return;
   }
 
   v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(value);
   v8::Handle<v8::Value> args[2];
-  args[0] = v8::String::NewFromUtf8(isolate, "0");
+  switch (field_info->get_type_id()) {
+   case SF_BOOL:
+    args[0] = v8::Boolean::New(isolate, *(field_handle<Boolean>(field_info)));
+    break;
+
+   default:
+    std::cerr << "Unsupported type!" << std::endl;
+    return;
+  }
   args[1] = v8::String::NewFromUtf8(isolate, "0");
 
   v8::Handle<v8::Value> func_result = func->Call(global, 2, args);
