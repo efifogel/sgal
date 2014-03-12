@@ -154,7 +154,7 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Apply the script. */
+  /*! Dummy. */
   virtual Action::Trav_directive Draw(Draw_action* /* draw_action */)
   { return Action::TRAV_CONT; }
 

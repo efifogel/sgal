@@ -33,10 +33,6 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Tick_event.hpp"
 
-// #include "JSWObjectInt.h"
-// #include "SG_JSObject.h"
-// #include "SGVec_JSObject.h"
-
 SGAL_BEGIN_NAMESPACE
 
 const std::string Script::s_tag = "Script";
