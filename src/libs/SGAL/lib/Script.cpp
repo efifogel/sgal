@@ -31,7 +31,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Tick_event.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -42,37 +41,17 @@ REGISTER_TO_FACTORY(Script, "Script");
 
 /*! Constructor */
 Script::Script(Boolean proto) :
-  Node(proto),
-  m_protocol(PROTOCOL_INVALID)
-{ if (!proto) Tick_event::doregister(this); }
+  Script_base(proto)
+{ }
 
 /*! Destructor */
-Script::~Script()
-{ Tick_event::unregister(this); }
+Script::~Script() { }
 
 /*! \brief initializes the container prototype. */
 void Script::init_prototype()
 {
   if (s_prototype) return;
-  s_prototype = new Container_proto(Node::get_prototype());
-
-  String_handle_function url_func =
-    static_cast<String_handle_function>(&Script::url_handle);
-  s_prototype->add_field_info(new SF_string(URL, "url",
-                                            RULE_EXPOSED_FIELD,
-                                            url_func));
-
-  Boolean_handle_function direct_output_func =
-    static_cast<Boolean_handle_function>(&Script::direct_output_handle);
-  s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
-                                          RULE_FIELD,
-                                          direct_output_func));
-
-  Boolean_handle_function must_evaluate_func =
-    static_cast<Boolean_handle_function>(&Script::must_evaluate_handle);
-  s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
-                                          RULE_FIELD,
-                                          must_evaluate_func));
+  s_prototype = new Container_proto(Script_base::get_prototype());
 }
 
 /*! \brief deletes the container prototype. */
@@ -93,31 +72,7 @@ Container_proto* Script::get_prototype()
 /*! \brief sets the attributes of the object extracted from the input file. */
 void Script::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-
-  Node::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
-    if (name == "url") {
-      std::string url = strip_double_quotes(value);
-      set_url(url);
-      url.clear();
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "directOutput") {
-      if (compare_to_true(value)) set_direct_output();
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "mustEvaluate") {
-      if (compare_to_true(value)) set_must_evaluate();
-      elem->mark_delete(ai);
-      continue;
-    }
-  }
+  Script_base::set_attributes(elem);
 
   Element::Field_attr_iter fi;
   for (fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi) {
@@ -138,7 +93,7 @@ Attribute_list Script::get_attributes()
   Attribute_list attribs;
   Attribue attrib;
 
-  attribs = Node::get_attributes();
+  attribs = Script_base::get_attributes();
 
   attrib.first = "url";
   attrib.second = m_url;
@@ -721,16 +676,5 @@ void Script::execute(Field_info* field_info)
     return;
   }
 }
-
-/*! \brief handles tick events. */
-void Script::handle(Tick_event* event)
-{
-  clock_t sim_time = event->get_sim_time();
-  m_time = (Scene_time) sim_time / CLOCKS_PER_SEC;
-}
-
-/*! \brief prints an identification message. */
-void Script::identify()
-{ std::cout << "Agent: Script" << std::endl; }
 
 SGAL_END_NAMESPACE

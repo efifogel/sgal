@@ -28,20 +28,17 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Node.hpp"
-#include "SGAL/Action.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Field_info.hpp"
-#include "SGAL/Agent.hpp"
+#include "SGAL/Script_base.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Container_proto;
 class Scene_graph;
-class Tick_event;
 
 /*! \class Script Script.hpp
  * Script is a node used to program behaviour in a scene. Script nodes typically
@@ -52,13 +49,10 @@ class Tick_event;
  * Each Script node has associated programming language code, referenced by the
  * url field, that is executed to carry out the Script node's function.
  */
-class SGAL_SGAL_DECL Script : public Node, public Agent {
+class SGAL_SGAL_DECL Script : public Script_base {
 public:
   enum {
-    FIRST = Node::LAST-1,
-    URL,
-    DIRECT_OUTPUT,
-    MUST_EVALUATE,
+    FIRST = Script::LAST-1,
     LAST
   };
 
@@ -123,10 +117,6 @@ public:
 
   /// \name field handlers
   //@{
-  std::string* url_handle(const Field_info*) { return &m_url; }
-  Boolean* direct_output_handle(const Field_info*) { return &m_direct_output; }
-  Boolean* must_evaluate_handle(const Field_info*) { return &m_must_evaluate; }
-
   /*! Obtain a handle to a dynamically generated field.
    * \param field_info (in) the field information record.
    * \return a pointer to the field.
@@ -154,16 +144,6 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  /*! Dummy. */
-  virtual Action::Trav_directive Draw(Draw_action* /* draw_action */)
-  { return Action::TRAV_CONT; }
-
-  /*! Handle tick events. */
-  virtual void handle(Tick_event* event);
-
-  /*! Print out the name of this agent (for debugging purposes). */
-  virtual void identify();
-
   /*! Add a field information record to the script node.
    * \param type (in) the type of the field.
    * \param name (in) the name of the field.
@@ -175,20 +155,8 @@ public:
   // virtual void add_field(const std::string& name, const std::string& type,
   //                        Container* value, Node* field);
 
-  /*! Set the URL. */
-  void set_url(const std::string& url);
-
-  /*! Obtain the URL. */
-  const std::string get_url() const;
-
-  /*! Set the m_direct_output Boolean flag. */
-  void set_direct_output();
-
-  /*! Set the m_must_evaluate Boolean flag. */
-  void set_must_evaluate();
-
   /*! Execute the script function according to the event. */
-  void execute(Field_info* field_info);
+  virtual void execute(Field_info* field_info);
 
 protected:
   /*! The callback to invoke when an input field is used by the engine.
@@ -223,27 +191,6 @@ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
-  /*! The script. */
-  std::string m_url;
-
-  /*! Specifies how to evaluate the script.
-   * If TRUE, the script may also send events directly to any node to which it
-   * has access, and may dynamically establish or break routes. If
-   * m_direct_output is FALSE (the default), the script may only affect the rest
-   * of the world via events sent through its eventOuts.
-   */
-  Boolean m_direct_output;
-
-  /*! If the mustEvaluate field is FALSE, the browser may delay sending input
-   * events to the script until its outputs are needed by the browser. If the
-   * mustEvaluate field is TRUE, the browser shall send input events to the
-   * script as soon as possible, regardless of whether the outputs are
-   * needed. The mustEvaluate field shall be set to TRUE only if the Script node
-   * has effects that are not known to the browser (such as sending information
-   * across the network). Otherwise, poor performance may result.
-   */
-  Boolean m_must_evaluate;
-
   /*! Additional fields. */
   std::list<Variant_field> m_fields;
 
@@ -252,9 +199,6 @@ private:
 
   /*! The scene graph */
   Scene_graph* m_scene_graph;
-
-  /*! Timestamp */
-  Scene_time m_time;
 };
 
 /*! \brief constructs the prototype */
@@ -263,20 +207,8 @@ inline Script* Script::prototype() { return new Script(true); }
 /*! \brief clones */
 inline Container* Script::clone() { return new Script(); }
 
-/*! \brief sets the URL. */
-inline void Script::set_url(const std::string& url) { m_url = url; }
-
-/*! \brief obtains the URL. */
-inline const std::string Script::get_url() const { return m_url; }
-
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Script::get_tag() const { return s_tag; }
-
-/*! \brief sets the m_direct_output Boolean flag. */
-inline void Script::set_direct_output() { m_direct_output = true; }
-
-/*! \brief sets the m_must_evaluate Boolean flag. */
-inline void Script::set_must_evaluate() { m_must_evaluate = true; }
 
 SGAL_END_NAMESPACE
 

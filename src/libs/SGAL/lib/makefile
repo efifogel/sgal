@@ -137,6 +137,7 @@ CPPSOURCES+= Point_light.cpp
 CPPSOURCES+= Rotation.cpp
 CPPSOURCES+= Route.cpp
 CPPSOURCES+= Scene_graph.cpp
+CPPSOURCES+= Script_base.cpp
 CPPSOURCES+= Script.cpp
 CPPSOURCES+= Simulation.cpp
 CPPSOURCES+= Shader.cpp

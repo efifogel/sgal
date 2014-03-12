@@ -88,6 +88,7 @@ FILES+= Scene_graph_factory.hpp
 FILES+= Scene_graph.hpp
 FILES+= Scene_graph_int.hpp
 FILES+= Scene_manager.hpp
+FILES+= Script_base.hpp
 FILES+= Script.hpp
 FILES+= SG_JS_err_reporter.hpp
 FILES+= SG_JS_object.hpp
