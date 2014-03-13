@@ -31,17 +31,21 @@
 #pragma warning( pop )
 #endif
 
+#if defined(USE_V8)
 #include <v8.h>
+#endif
 
 #include "SGAL/basic.hpp"
 // #include "SGAL/Container_factory.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-void initialize(int /* argc */, char* argv[])
+SGAL_SGAL_DECL void initialize(int /* argc */, char* argv[])
 {
   Magick::InitializeMagick(*argv);
+#if defined(USE_V8)
   v8::V8::InitializeICU();
+#endif
 
   /*! Container factory initialization.
    * During initialization of the container factory an instance of every

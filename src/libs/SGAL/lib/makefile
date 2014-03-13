@@ -138,7 +138,9 @@ CPPSOURCES+= Rotation.cpp
 CPPSOURCES+= Route.cpp
 CPPSOURCES+= Scene_graph.cpp
 CPPSOURCES+= Script_base.cpp
+ifeq ($(USE_V8), 1)
 CPPSOURCES+= Script.cpp
+endif
 CPPSOURCES+= Simulation.cpp
 CPPSOURCES+= Shader.cpp
 CPPSOURCES+= Shape.cpp
@@ -264,6 +266,10 @@ LCPPDEFS+= -DSGAL_LIB
 LCPPDEFS+= -DSGAL_SGAL_SOURCE
 ifeq ($(TRACE), 1)
 LCPPDEFS+= -DSGAL_TRACE
+endif
+
+ifeq ($(USE_V8), 1)
+LCPPDEFS+= -DUSE_V8
 endif
 
 # Extract flex version

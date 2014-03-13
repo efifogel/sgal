@@ -19,8 +19,6 @@
 #include <regex>
 #include <boost/lexical_cast.hpp>
 
-#include <v8.h>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"

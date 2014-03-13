@@ -114,7 +114,9 @@
 // #include "SGAL/Comp_rotation_interpolator.hpp"
 
 // #include "SGAL/Prog_indexed_tri_set.hpp"
+#if defined(USE_V8)
 #include "SGAL/Script.hpp"
+#endif
 #include "SGAL/Snapshot.hpp"
 // #include "SGAL/Movie_recorder.hpp"
 // #include "SGAL/Field_def.hpp"
@@ -242,7 +244,9 @@ void Container_factory::initialize()
   // REGISTER_OBJECT(Comp_color_interpolator);
   // REGISTER_OBJECT(Comp_rotation_interpolator);
   // REGISTER_OBJECT(Prog_indexed_tri_set);
+#if defined(USE_V8)
   REGISTER_OBJECT(Script);
+#endif
   // REGISTER_OBJECT(Movie_recorder);
   // REGISTER_OBJECT(Field_def);
 }
