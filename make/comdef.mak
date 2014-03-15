@@ -447,79 +447,79 @@ GENMAINHTMLF = $(GENMAINHTML) $(GENMAINHTMLFLAGS)
 # extract BOOST directories:
 ifdef BOOST_DIR
 ifndef BOOST_INC_DIR
-BOOST_INC_DIR="$(BOOST_DIR)/include"
+BOOST_INC_DIR=$(BOOST_DIR)/include
 endif
 ifndef BOOST_LIB_DIR
-BOOST_LIB_DIR="$(BOOST_DIR)/lib"
+BOOST_LIB_DIR=$(BOOST_DIR)/lib
 endif
 endif
 
 # extract GMP include directories:
 ifdef GMP_DIR
 ifndef GMP_INC_DIR
-GMP_INC_DIR="$(GMP_DIR)/include"
+GMP_INC_DIR=$(GMP_DIR)/include
 endif
 ifndef GMP_LIB_DIR
-GMP_LIB_DIR="$(GMP_DIR)/lib"
+GMP_LIB_DIR=$(GMP_DIR)/lib
 endif
 endif
 
 # extract MPFR directories:
 ifdef MPFR_DIR
 ifndef MPFR_INC_DIR
-MPFR_INC_DIR="$(MPFR_DIR)/include"
+MPFR_INC_DIR=$(MPFR_DIR)/include
 endif
 ifndef MPFR_LIB_DIR
-MPFR_LIB_DIR="$(MPFR_DIR)/lib"
+MPFR_LIB_DIR=$(MPFR_DIR)/lib
 endif
 endif
 
 # extract MAGICK include directories:
 ifdef MAGICK_DIR
 ifndef MAGICK_INC_DIR
-MAGICK_INC_DIR="$(MAGICK_DIR)/include"
+MAGICK_INC_DIR=$(MAGICK_DIR)/include
 endif
 ifndef MAGICK_LIB_DIR
-MAGICK_LIB_DIR="$(MAGICK_DIR)/lib"
+MAGICK_LIB_DIR=$(MAGICK_DIR)/lib
 endif
 endif
 
 # extract GL2PS directories:
 ifdef GL2PS_DIR
 ifndef GL2PS_INC_DIR
-GL2PS_INC_DIR="$(GL2PS_DIR)/include"
+GL2PS_INC_DIR=$(GL2PS_DIR)/include
 endif
 ifndef GL2PS_LIB_DIR
-GL2PS_LIB_DIR="$(GL2PS_DIR)/lib"
+GL2PS_LIB_DIR=$(GL2PS_DIR)/lib
 endif
 endif
 
 # extract MAGICK include directories:
 ifdef OPENCV_DIR
 ifndef OPENCV_INC_DIR
-OPENCV_INC_DIR="$(OPENCV_DIR)/include"
+OPENCV_INC_DIR=$(OPENCV_DIR)/include
 endif
 ifndef OPENCV_LIB_DIR
-OPENCV_LIB_DIR="$(OPENCV_DIR)/lib"
+OPENCV_LIB_DIR=$(OPENCV_DIR)/lib
 endif
 endif
 
 # extract CGAL directories:
 ifdef CGAL_DIR
 ifndef CGAL_INC_DIR
-CGAL_INC_DIR="$(CGAL_DIR)/include"
+CGAL_INC_DIR=$(CGAL_DIR)/include
 endif
 ifndef CGAL_LIB_DIR
-CGAL_LIB_DIR="$(CGAL_DIR)/lib"
+CGAL_LIB_DIR=$(CGAL_DIR)/lib
 endif
 endif
 
 # extract V8 directories:
 ifdef V8_DIR
 ifndef V8_INC_DIR
-V8_INC_DIR="$(V8_DIR)/include"
+V8_INC_DIR=$(V8_DIR)/include
 endif
 ifndef V8_LIB_DIR
-V8_LIB_DIR="$(V8_DIR)/lib"
+V8_LIB_DIR=$(V8_DIR)/lib
 endif
 endif
