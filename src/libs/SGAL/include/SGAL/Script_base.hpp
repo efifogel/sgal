@@ -37,6 +37,11 @@ class Container_proto;
 class Tick_event;
 class Field_info;
 
+#if (defined _MSC_VER)
+template class SGAL_SGAL_DECL std::allocator<char>;
+template class SGAL_SGAL_DECL std::basic_string<char>;
+#endif
+
 /*! \class Script_base Script_base.hpp
  */
 class SGAL_SGAL_DECL Script_base : public Node, public Agent {
