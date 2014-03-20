@@ -68,7 +68,7 @@ LCPPOPTS+= -GS  # Apply buffers security check.
 LCPPOPTS+= -Oy- # Disable Omission of frame pointer (x86 only).
 LCPPOPTS+= -WX  # Treat all compiler warnings as errors
 LCPPOPTS+= -Zc:wchar_t -Zc:forScope # Specify standard behavior
-CPPWARNINGOPTS = -W4  # Specify the level of warning; 0 to 4
+# CPPWARNINGOPTS = -W4  # Specify the level of warning; 0 to 4
 
 ifeq ($(DEBUG), 0)
 LCPPOPTS+= -Gy  # Enable function-level linking
