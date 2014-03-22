@@ -319,7 +319,11 @@ LLDOPTS+= -libpath:"$(MAGICK_LIB_DIR)"
 endif
 
 ifeq ($(DEBUG), 1)
-LLDLIBS+= CORE_DB_Magick++_.lib
+# Using the debug version is not really necessary.
+# If the debug libraries are needed though, they must be compiled from sources
+# (as they are not installed).
+# LLDLIBS+= CORE_DB_Magick++_.lib
+LLDLIBS+= CORE_RL_Magick++_.lib
 else
 LCPPOPTS+= -Gy  # Enable function-level linking
 LCPPOPTS+= -Oi  # Generate intrinsic functions

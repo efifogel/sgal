@@ -235,6 +235,8 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
 /*! \brief cleans the representation. */
 void Power_diagram_on_sphere_geo::clean()
 {
+  //! \todo Fix it!
+#if defined(NDEBUG)
   Geodesic_voronoi_on_sphere_geo::clean();
 
   if (!m_vos) {
@@ -269,6 +271,7 @@ void Power_diagram_on_sphere_geo::clean()
       sites.clear();
     }
   }
+#endif
 }
 
 /*! \brief clears the internal representation and auxiliary data structures. */
