@@ -336,11 +336,7 @@ LCPPOPTS+= -Gy  # Enable function-level linking
 LCPPOPTS+= -Oi  # Generate intrinsic functions
 LLDLIBS+= CORE_RL_Magick++_.lib
 endif
-LLDLIBS+= v8_base.ia32.lib
-LLDLIBS+= v8_nosnapshot.ia32.lib
-LLDLIBS+= icui18n.lib
-LLDLIBS+= icuuc.lib
-LLDLIBS+= winmm.lib Ws2_32.lib
+LLDLIBS+= v8.lib
 LLDLIBS+= glu32.lib opengl32.lib
 LLDLIBS+= $(LDSYSLIBS)
 endif

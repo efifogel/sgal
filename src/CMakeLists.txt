@@ -11,9 +11,14 @@ if (USE_CGAL)
   include(${CGAL_USE_FILE})
 endif()
 
+if (USE_V8)
+  find_package(V8 REQUIRED)
+endif()
+
 # Add includes and libs
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${ImageMagick_Magick++_INCLUDE_DIR})
+include_directories(${V8_INCLUDE_DIR})
 if (NOT WIN32)
   include_directories(${X11_INCLUDE_DIR})
 endif(NOT WIN32)
@@ -40,7 +45,7 @@ add_definitions(-DBOOST_ALL_DYN_LINK)
 # Installation
 if (SGAL_WIN32_CMAKE_ON_CYGWIN)
   exec_program(cygpath ARGS -w "${CMAKE_INSTALL_PREFIX}"
-  OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
+               OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
   file(TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX)
 endif()
 
