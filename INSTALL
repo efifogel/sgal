@@ -38,7 +38,7 @@ Ideally, building SGAL amounts to:
 2.1. Prerequisites
 Installing SGAL requires a few components to be installed apriori: a
 supported compiler (see Section 2.3.), bison (see Section 2.5.2), flex,
-Boost, gl2ps, Magick++, CGAL, GMP, and MPFR; see Section 2.5. for more
+Boost, gl2ps, Magick++, V8, CGAL, GMP, and MPFR; see Section 2.5. for more
 details on essential third party software.
 
 2.2. Downloading
@@ -71,33 +71,25 @@ compilers and operating systems:
 Compiler                      | Operating System
 ------------------------------|-------------------------------------
 GNU g++ 4.2 or later          | Linux
-MS Visual C++ 9.0, 10.0, 12.0 | MS Windows 95/98/2000/XP/NT4/Vista/7
+MS Visual C++ 10, 11          | MS Windows 95/98/2000/XP/NT4/Vista/7
 
 2.4. SGAL Libraries
 SGAL is split into two libraries, namely SGAL and SCGAL. The former does
-not depend on CGAL (Computational Geometry Algorithm Library). This is
-going to change in the near future. The plan is still to split SGAL into
-two libraries, namely SLGAL and SUGAL, but using a different distinction
-criterion. Both libraries will depend on CGAL. However, SIGAL will use
-limited arithmetic precision, while SEGAL will use unlimited precision.
+not depend on CGAL (Computational Geometry Algorithm Library, GMP, and
+MPFR . This is going to change in the future. The plan is still to split
+SGAL into two libraries, namely SLGAL and SUGAL, but using a different
+distinction criterion. Both libraries will depend on CGAL. However, SGAL
+will use limited arithmetic precision, while SCGAL will use unlimited
+precision.
 
 2.5. Essential Third Party Libraries
 The focus of SGAL is on scene graph handling. It relies on other highly
 specialized libraries and software for other tasks. When an external
 library is used and the external library is not installed in a standard
 place (e.g.,, /usr/[local/]include and /usr/[local/]lib in Linux), the
-directories where the header source files and the library object file
-reside must be specified. urrently (until we switch to cmake) this is
-done using environment variables. On Windows, for example, there is no
-canonical directory for where to find external libraries. Thus, for each
-external library used one or more environment variables must be set as
-follows. For a given external libarary, say EXTLIB, set the environment
-variable EXTLIB_DIR to point at the directory where the external library
-is installed. If the header source and the library object files are not
-installed under $EXTLIB_DIR/include and $EXTLIB_DIR/lib, respectively,
-set the environment variables EXTLIB_INC_DIR and EXTLIB_LIB_DIR to point
-at the directories where the header sources and the library object file
-are installed, respectively.
+directories where the header source files and the library object files
+reside must be specified. On Windows, for example, there is no canonical
+directory for where to find external libraries.
 
 In addition to the header source and library object files, the shared
 library object files (.so on Linux and .dll on Windows) must be made
@@ -114,6 +106,7 @@ is in the LD_LIBRARY_PATH.
 * libgl2ps-dev
 * libxxf86vm-dev
 * libgmp-dev
+* libv8-dev
 
 2.5.1.2. Required items on Windows
 * Boost
@@ -123,6 +116,7 @@ is in the LD_LIBRARY_PATH.
 * MPFR
 * flex (cygwin)
 * bison (cygwin)
+* v8
 
 In fact, I needed more packages from cygwin to build bison (see
 Section 2.5.2.1.) , but I hope that this is temporary.
@@ -130,7 +124,7 @@ Section 2.5.2.1.) , but I hope that this is temporary.
 2.5.1. Boost
 Boost is a set of portable C++ source libraries. Most Boost libraries
 are library-less (headers only), but a few of them need to be compiled
-or installed as binaries.
+into binaries or installed.
 
 SGAL requires Boost version 1.39 or higher. In particular, the header
 files and the Boost.Thread, Boost.System, and Boost.Program_options
@@ -142,10 +136,12 @@ and used only at link-time: the SGAL libraries do not depend on the
 DLL's of those two libraries.
 
 If Boost is not installed on your system already, you can obtain it from
-http://www.boost.org/. For Windows you can download an installer from
-http://www.boostpro.com/download/. Since Boost.Thread is required, make
-sure to either install the precompiled libraries for your compiler or
-build libboost-thread and libboost-system.
+http://www.boost.org/. For Windows an installer from precompiled libraries
+is not available. (For old versions an installed can be obtained at
+http://www.boostpro.com/download/.) However, the procedure is faily easy:
+
+  ./bootstrap
+  ./b2 link=static,shared threading=single,multi variant=debug,release
 
 2.5.2. bison and flex
 
@@ -180,6 +176,9 @@ build bison via cygwin. First you need to update the bison sources.
 Assuming you are in the main SGAL directory, issue the following command:
 
   git submodule update
+
+The command above will populate the files in the bison submodule as well
+as in the v8 submodule; see Section 2.5.4.
 
 If, for some reason, you want the latest bison sources, issue the
 following command:
@@ -237,7 +236,38 @@ page at http://flex.sourceforge.net/.
 ImageMagick® is a software suite to create, edit, compose, or convert
 bitmap images; see http://www.imagemagick.org/
 
-2.5.4. CGAL
+2.5.4. V8
+V8 is Google's open source JavaScript engine. Ubuntu distribution includes
+a development package. However, the code of SGAL is using the most recent
+API, which is different than the API of the precompiled library object
+included in the standard distribution. Thus, you need to build v8 from
+sources of a certain version or later both in Linux and in Windows. For
+that purpose v8 is made a submodule of the SGAL git repository. You need
+to populate the sources of the submodule; see Section 2.5.2.1. Then, build
+the engine.
+
+You must install python before you start the build, as the build tool uses
+python.
+
+2.5.4.1. Linux
+
+  make dependencies
+  make native # automatically build in release mode for the host architecture
+
+2.5.4.1. Windows
+  svn co http://gyp.googlecode.com/svn/trunk build/gyp
+  svn co http://src.chromium.org/svn/trunk/deps/third_party/cygwin@231940 third_party/cygwin
+  svn co https://src.chromium.org/chrome/trunk/deps/third_party/icu46 third_party/icu
+  build/gyp_v8 -Dtarget_arch=ia32 -Dcomponent=shared_library
+
+  # The following 2 command are a required workaround!
+  unset TEMP
+  unset TMP
+
+  # Assuming you are using vc10:
+  /cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 10.0/Common7/IDE/devenv.com /build Release build/all.sln
+
+2.5.5. CGAL
 The Computational Geometry Algorithms Library (CGAL) is an open
 source software library that provides industrial and academic users
 with easy access to reliable implementations of efficient geometric
@@ -245,7 +275,7 @@ algorithms.
 
 Ideally, building CGAL amounts to:
 
-  cd CGAL-4.2                                 # go to CGAL directory
+  cd CGAL-4.4                                 # go to CGAL directory
   cmake .                                     # configure CGAL
   make                                        # build the CGAL libraries
 
@@ -270,7 +300,7 @@ used to develope relevant CGAL features.
   git merge origin/Lines_through_segments-pmoeller
   git merge origin/Aos_2-flatgeodesics_on_torus-tau
 
-2.5.5. GMP and MPFR
+2.5.6. GMP and MPFR
 The SGAL library SCGAL requires CGAL, and CGAL in turn requires GMP and
 MPFR, which are libraries for multi precision integers and rational
 numbers, and for multi precision floating point numbers.
@@ -287,7 +317,7 @@ As Visual C++ is not properly supported by the GMP and MPFR projects,
 CGAL provides precompiled versions of GMP and MPFR, which can be downloaded
 with the installer of CGAL-4.2-Setup.exe.
 
-2.5.6. OpenGL
+2.5.7. OpenGL
 OpenGL (Open Graphics Library) provides an API for applications that produce
 2D and 3D computer graphics. SGAL depends on OpenGL. There is no alternative.
 That is, SGAL does not use Direct 3D (on Windows) or any other proprietary
@@ -296,35 +326,38 @@ API.
 Typically, OpenGL is preinstalled on systems; if not, it can be downloaded
 from http://www.opengl.org/.
 
-2.5.7. gl2ps
+2.5.8. gl2ps
 GL2PS is a C library providing vector output for any OpenGL application.
 For more information see http://www.geuz.org/gl2ps/.
 
-2.5.8 Some X libraries (forgot the name)
+2.5.9. Some X libraries (forgot the name)
 This applies to Linux only. These libraries are not installed by default.
 You will get an error message during link if they are not installed.
 
 2.6. Building SGAL
 
+  USE_V8=1
+
 Recall that the environment variable CGAL_DIR points at the directory
 where CGAL is installed. The version of CGAL installed may combine
 several features that are possibly developed in different branches.
 
-Let FTR ne an acronym of a feature. Set the corresponding Boolean flag
+Let FTR be an acronym of a feature. Set the corresponding Boolean flag
 as an input argument to cmake to enable the feature. If the feature
 requires a corresponding CGAL feature, you must also install an
 appropriate version of CGAL that supports the corresponding CGAL
 feature.
 
+   USE_CGAL=1 # CGAL
    USE_NGM=1  # Nef Gaussian Map (CGAL)
    USE_LTS=1  # Lines Through Segments
    USE_AOS=1  # Arrangement On Surface
    USE_VOS=1  # Voronoi On Sphere
-   USE_CGAL=1 # CGAL
    USE_SGM=1  # Spherical Gaussian Map
    USE_NEF=1  # Nef
    USE_CGM=1  # Cubical Gaussian Map
    USE_GMP=1  # Link with GMP & MPFR
+   USE_SSC=1  # Smallest stabbing cube
 
    USE_LTS=1 requires origin/Lines_through_segments-pmoeller
    USE_CGM=1 requires origin/Cubical_gaussian_map-efif
@@ -334,7 +367,8 @@ feature.
 For example:
 cmake -G"NMake Makefiles" \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
-  -DUSE_EGO=1 \
+  -DUSE_V8=1 \
+  -DUSE_CGAL=1 \
   -DUSE_NGM=0 \
   -DUSE_LTS=0 \
   -DUSE_AOS=1 \
@@ -342,6 +376,7 @@ cmake -G"NMake Makefiles" \
   -DUSE_SGM=1 \
   -DUSE_NEF=1 \
   -DUSE_CGM=1 \
+  -DUSE_SSC=1 \
   ${SGAL_SOURCE_DIR}
 
 2.7. Testing
