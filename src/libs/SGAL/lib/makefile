@@ -317,6 +317,13 @@ endif
 ifdef MAGICK_LIB_DIR
 LLDOPTS+= -libpath:"$(MAGICK_LIB_DIR)"
 endif
+ifdef V8_LIB_DIR
+LLDOPTS+= -libpath:"$(V8_LIB_DIR)"
+endif
+ifdef ICU_LIB_DIR
+LLDOPTS+= -libpath:"$(ICU_LIB_DIR)"
+endif
+LLDOPTS+= -LTCG  # whole-program optimization
 
 ifeq ($(DEBUG), 1)
 # Using the debug version is not really necessary.
@@ -329,7 +336,11 @@ LCPPOPTS+= -Gy  # Enable function-level linking
 LCPPOPTS+= -Oi  # Generate intrinsic functions
 LLDLIBS+= CORE_RL_Magick++_.lib
 endif
-
+LLDLIBS+= v8_base.ia32.lib
+LLDLIBS+= v8_nosnapshot.ia32.lib
+LLDLIBS+= icui18n.lib
+LLDLIBS+= icuuc.lib
+LLDLIBS+= winmm.lib Ws2_32.lib
 LLDLIBS+= glu32.lib opengl32.lib
 LLDLIBS+= $(LDSYSLIBS)
 endif

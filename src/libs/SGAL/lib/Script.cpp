@@ -319,7 +319,7 @@ void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
 
      case SF_FLOAT:
       {
-       Float tmp = value->NumberValue();
+       Float tmp = static_cast<Float>(value->NumberValue());
        Value_holder<Float> value_holder(&tmp);
        (field->get_value_holder())->delegate(value_holder);
       }
@@ -344,8 +344,8 @@ void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
      case SF_VEC2F:
       {
        v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
-       Vector2f tmp(array->Get(0)->NumberValue(),
-                    array->Get(1)->NumberValue());
+       Vector2f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
+                    static_cast<Float>(array->Get(1)->NumberValue()));
        Value_holder<Vector2f> value_holder(&tmp);
        (field->get_value_holder())->delegate(value_holder);
       }
@@ -355,9 +355,9 @@ void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
      case SF_COLOR:
       {
        v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
-       Vector3f tmp(array->Get(0)->NumberValue(),
-                    array->Get(1)->NumberValue(),
-                    array->Get(2)->NumberValue());
+       Vector3f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
+                    static_cast<Float>(array->Get(1)->NumberValue()),
+                    static_cast<Float>(array->Get(2)->NumberValue()));
        Value_holder<Vector3f> value_holder(&tmp);
        (field->get_value_holder())->delegate(value_holder);
       }
@@ -366,10 +366,10 @@ void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
      case SF_ROTATION:
       {
        v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
-       Rotation tmp(array->Get(0)->NumberValue(),
-                    array->Get(1)->NumberValue(),
-                    array->Get(2)->NumberValue(),
-                    array->Get(3)->NumberValue());
+       Rotation tmp(static_cast<Float>(array->Get(0)->NumberValue()),
+                    static_cast<Float>(array->Get(1)->NumberValue()),
+                    static_cast<Float>(array->Get(2)->NumberValue()),
+                    static_cast<Float>(array->Get(3)->NumberValue()));
        Value_holder<Rotation> value_holder(&tmp);
        (field->get_value_holder())->delegate(value_holder);
       }

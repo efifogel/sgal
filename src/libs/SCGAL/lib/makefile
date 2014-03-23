@@ -308,6 +308,7 @@ endif
 ifdef MPFR_LIB_DIR
 LLDOPTS+= -libpath:"$(MPFR_LIB_DIR)"
 endif
+LLDOPTS+= -LTCG  # whole-program optimization
 
 LLDLIBS+= SGAL.lib
 ifeq ($(DEBUG), 1)

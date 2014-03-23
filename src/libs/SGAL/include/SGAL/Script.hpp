@@ -40,6 +40,11 @@ class Element;
 class Container_proto;
 class Scene_graph;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 /*! \class Script Script.hpp
  * Script is a node used to program behaviour in a scene. Script nodes typically
  * 1. signify a change or user action;
@@ -200,6 +205,10 @@ private:
   /*! The scene graph */
   Scene_graph* m_scene_graph;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief constructs the prototype */
 inline Script* Script::prototype() { return new Script(true); }
