@@ -381,6 +381,11 @@ set(SGAL_OTHER_SOURCE_FILES ${SGAL_OTHER_SOURCE_FILES} lib/World_info.cpp)
 set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${SGAL_OTHER_SOURCE_FILES} ${SGAL_OTHER_HEADER_FILES})
 source_group(src FILES ${SGAL_OTHER_SOURCE_FILES} ${SGAL_OTHER_HEADER_FILES})
 
+if (USE_V8)
+  add_definitions(-DUSE_V8)
+  set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} lib/Script.cpp)
+endif()
+
 #Add all include directories
 include_directories(include/)
 include_directories(include/SGAL)
