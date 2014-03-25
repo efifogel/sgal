@@ -8,9 +8,6 @@ if (NOT WIN32)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif (NOT WIN32)
 if (USE_CGAL)
-  find_package(CGAL REQUIRED)
-  include(${CGAL_USE_FILE})
-
   add_definitions(-DUSE_CGAL)
   add_definitions(-DSCGAL_NT=${SCGAL_NT})
   add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
@@ -42,7 +39,14 @@ add_executable(player ${PLAYER_SOURCE_FILES})
 
 target_link_libraries(player SGAL)
 if (USE_CGAL)
-  target_link_libraries(player SCGAL ${CGAL_LIBRARY})
+  # No need to add CGAL to the list of linked libraries
+  target_link_libraries(player SCGAL)
 endif()
 
+# set_property(TARGET player PROPERTY INSTALL_RPATH ${V8_LIBRARY_DIR})
+# set_property(TARGET player PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
+set_property(TARGET player PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 install(TARGETS player DESTINATION ${SGAL_INSTALL_BIN_DIR})
+
+

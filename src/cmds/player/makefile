@@ -196,9 +196,6 @@ endif
 ifdef V8_LIB_DIR
 LLDOPTS+= -libpath:"$(V8_LIB_DIR)"
 endif
-ifdef ICU_LIB_DIR
-LLDOPTS+= -libpath:"$(ICU_LIB_DIR)"
-endif
 
 ifeq ($(USE_EGO), 1)
 ifneq ($(USE_DYNAMIC_SEGO), 1)
@@ -274,11 +271,8 @@ LCPPOPTS+= -frounding-math
 LLDOPTS+= -rdynamic -ldl
 ifdef V8_LIB_DIR
 LLDOPTS+= -L$(V8_LIB_DIR)
+LLDOPTS+= -Wl,-rpath,$(V8_LIB_DIR)
 endif
-ifdef ICU_LIB_DIR
-LLDOPTS+= -L$(ICU_LIB_DIR)
-endif
-
 ifeq ($(USE_CGAL), 1)
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= -lSCGAL
@@ -304,12 +298,7 @@ LLDLIBS+= -lgmp -lmpfr -lgmpxx
 endif
 
 # V8 engine stuff:
-LLDLIBS+= -lv8_base.x64
-LLDLIBS+= -lv8_nosnapshot.x64
-LLDLIBS+= -licui18n
-LLDLIBS+= -licuuc
-LLDLIBS+= -licudata
-LLDLIBS+= -lrt
+LLDLIBS+= -lv8
 
 LLDLIBS+= -lgl2ps
 LLDLIBS+= -lMagick++

@@ -2,17 +2,18 @@
 set(Boost_USE_STATIC_LIBS OFF)
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
 find_package(ImageMagick REQUIRED COMPONENTS Magick++)
+if (USE_V8)
+  find_package(V8 REQUIRED)
+  link_directories(${V8_LIBRARY_DIR})
+endif()
+
 if (NOT WIN32)
   find_package(X11 REQUIRED)
 endif(NOT WIN32)
 
 if (USE_CGAL)
-  find_package(CGAL REQUIRED)
+  find_package(CGAL REQUIRED COMPONENTS Core)
   include(${CGAL_USE_FILE})
-endif()
-
-if (USE_V8)
-  find_package(V8 REQUIRED)
 endif()
 
 # Add includes and libs

@@ -449,7 +449,7 @@ target_link_libraries(SGAL
                       ${Boost_SYSTEM_LIBRARY}
                       ${Boost_PROGRAM_OPTIONS_LIBRARY}
                       ${ImageMagick_Magick++_LIBRARY}
-		      ${V8_LIBRARIES}
+		      ${V8_LIBRARY}
                       ${OPENGL_LIBRARIES}
                       ${NON_WIN32_LIBRARIES})
 

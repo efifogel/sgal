@@ -1,8 +1,4 @@
-find_package(CGAL REQUIRED)
-include(${CGAL_USE_FILE})
-
 #Set some values...
-
 set(SCGAL_AOS_BASE 0)
 if (USE_AOS)
   set(SCGAL_AOS_BASE 1)
@@ -174,7 +170,7 @@ if (NOT WIN32)
   endif(APPLE)
 endif(NOT WIN32)
 
-target_link_libraries(SCGAL SGAL ${CGAL_LIBRARY} ${NON_WIN32_LIBRARIES})
+target_link_libraries(SCGAL SGAL ${NON_WIN32_LIBRARIES})
 
 # Installation
 set(SCGAL_INCLUDE_DIRS
