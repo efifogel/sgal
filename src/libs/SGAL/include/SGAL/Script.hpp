@@ -173,8 +173,9 @@ protected:
   /*! The callback to invoke when an output field is set by the engine.
    * \param name (in) the field name.
    */
-  static void setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
-                     const v8::PropertyCallbackInfo<void>& info);
+  static void accessor_setter(v8::Local<v8::String> name,
+                              v8::Local<v8::Value> value,
+                              const v8::PropertyCallbackInfo<void>& info);
 
   static void
   named_property_setter(v8::Local<v8::String> property,
@@ -185,6 +186,9 @@ protected:
   indexed_property_setter(uint32_t index,
                           v8::Local<v8::Value> value,
                           const v8::PropertyCallbackInfo<v8::Value>& info);
+
+  static void
+  named_enumerator(const v8::PropertyCallbackInfo<v8::Array>& info);
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;

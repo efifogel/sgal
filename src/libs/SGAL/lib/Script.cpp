@@ -291,10 +291,11 @@ void Script::getter(v8::Local<v8::String> /* name */,
 {}
 
 //! \brief the callback to invoke when an output field is set by the engine.
-void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
-                    const v8::PropertyCallbackInfo<void>& info)
+void Script::accessor_setter(v8::Local<v8::String> name,
+                             v8::Local<v8::Value> value,
+                             const v8::PropertyCallbackInfo<void>& info)
 {
-  std::cout << "Script::setter()" << std::endl;
+  std::cout << "Script::accessor_setter()" << std::endl;
 
   v8::Local<v8::Value> data = info.Data();
   v8::String::Utf8Value utf8_value(value);
@@ -386,7 +387,6 @@ void Script::setter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
       break;
 
      case SF_SHARED_CONTAINER:
-      std::cerr << "Not supported yet!" << std::endl;
       break;
 
      case MF_FLOAT:
@@ -459,42 +459,113 @@ Script::indexed_property_setter(uint32_t index,
             << std::endl;
 }
 
+void Script::named_enumerator(const v8::PropertyCallbackInfo<v8::Array>& info)
+{
+  std::cout << "Script::named_enumerator()" << std::endl;
+}
+
 // \brief executes the suitable script function according to the event.
 void Script::execute(Field_info* field_info)
 {
-  const std::string& name = field_info->get_name();
-
   // Get the Isolate instance of the V8 engine from the scene graph.
   v8::Isolate* isolate = m_scene_graph->get_isolate();
   v8::Isolate::Scope isolate_scope(isolate);
   v8::HandleScope handle_scope(isolate);        // stack-allocated handle scope
 
   // Create a new ObjectTemplate
-  v8::Handle<v8::ObjectTemplate> global_template =
-    v8::ObjectTemplate::New(isolate);
+  v8::Handle<v8::ObjectTemplate> global_tmpl = v8::ObjectTemplate::New(isolate);
 
-  // Set an accessor for every output field.
+  // Set an accessor for every scalar field and output scalar field.
   Container_proto* proto = get_prototype();
   Container_proto::Id_const_iterator it = proto->ids_begin(proto);
   for (; it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
     if (field_info->get_rule() == RULE_OUT) {
-      v8::Handle<v8::String> name =
+      switch (field_info->get_type_id()) {
+       case SF_BOOL:
+       case SF_FLOAT:
+       case SF_TIME:
+       case SF_INT32:
+       case SF_STR:
+        {
+         v8::Handle<v8::String> field_name =
+           v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+                                   v8::String::kInternalizedString);
+         Field* field = get_field(field_info->get_id());
+         v8::Handle<v8::Value> data = v8::External::New(isolate, field);
+         global_tmpl->SetAccessor(field_name, getter, accessor_setter, data);
+        }
+      }
+    }
+  }
+
+  v8::Handle<v8::Context> context =
+    v8::Context::New(isolate, NULL, global_tmpl);
+  v8::Context::Scope context_scope(context);    // enter the contex
+  v8::Handle<v8::Object> global = context->Global();
+
+  const std::string& str = field_info->get_name();
+  v8::Handle<v8::String> name = v8::String::NewFromUtf8(isolate, str.c_str());
+
+  // Set an accessor for every vector field and output vector field
+  for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const Field_info* field_info = (*it).second;
+    if (field_info->get_rule() == RULE_OUT) {
+      v8::Handle<v8::String> field_name =
         v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
                                 v8::String::kInternalizedString);
       Field* field = get_field(field_info->get_id());
       v8::Handle<v8::Value> data = v8::External::New(isolate, field);
-      global_template->SetAccessor(name, getter, setter, data);
-      global_template->SetNamedPropertyHandler(0, named_property_setter,
-                                               0, 0, 0, data);
-      global_template->SetIndexedPropertyHandler(0, indexed_property_setter,
-                                                 0, 0, 0, data);
-   }
-  }
 
-  v8::Handle<v8::Context> context =
-    v8::Context::New(isolate, NULL, global_template);
-  v8::Context::Scope context_scope(context);    // enter the contex
+      switch (field_info->get_type_id()) {
+       case SF_BOOL:
+       case SF_FLOAT:
+       case SF_TIME:
+       case SF_INT32:
+       case SF_STR:
+        break;
+
+       case SF_VEC2F:
+       case SF_VEC3F:
+       case SF_COLOR:
+       case SF_ROTATION:
+        {
+         v8::Handle<v8::FunctionTemplate> tmpl =
+           v8::FunctionTemplate::New(isolate);
+         tmpl->SetClassName(field_name);
+         v8::Handle<v8::ObjectTemplate> inst = tmpl->InstanceTemplate();
+         inst->SetInternalFieldCount(1);
+         inst->SetIndexedPropertyHandler(0, indexed_property_setter,
+                                         0, 0, named_enumerator, data);
+         // v8::Local<v8::ObjectTemplate> proto = tmpl->PrototypeTemplate();
+         // (void) proto; // surpress unused warnings
+         v8::Handle<v8::Function> ctor = tmpl->GetFunction();
+         v8::Handle<v8::Object> obj = ctor->NewInstance();
+         obj->SetInternalField(0, data);
+         global->Set(field_name, obj);
+         break;
+        }
+
+       case SF_SHARED_CONTAINER:
+       case MF_FLOAT:
+       case MF_INT32:
+       case MF_VEC2F:
+       case MF_VEC3F:
+       case MF_ROTATION:
+       case MF_TIME:
+       case MF_STR:
+       case SF_IMAGE:
+       case MF_SHARED_CONTAINER:
+        std::cerr << "Not supported yet!" << std::endl;
+        break;
+
+       default:
+        std::cerr << "Unsupported type!" << std::endl;
+        return;
+      }
+    }
+  }
+  ////////
 
   // Extract the script
   size_t pos = m_url.find(':');
@@ -539,13 +610,11 @@ void Script::execute(Field_info* field_info)
     return;
   }
 
-  v8::Handle<v8::Object> global = context->Global();
-  v8::Handle<v8::Value> value =
-    global->Get(v8::String::NewFromUtf8(isolate, name.c_str()));
+  v8::Handle<v8::Value> value = global->Get(name);
 
   // If there is no such function, bail out.
   if (!value->IsFunction()) {
-    std::cerr << "A function named " << name.c_str() << " does not exist!"
+    std::cerr << "A function named " << str.c_str() << " does not exist!"
               << std::endl;
     return;
   }
