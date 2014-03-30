@@ -306,14 +306,20 @@ void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
   else
   {
     m_result = Shared_coord_array(new Coord_array((Uint)8));
-    (*m_result)[0].set(x + dist, y + dist, z + dist);
-    (*m_result)[1].set(x + dist, y + dist, z - dist);
-    (*m_result)[2].set(x + dist, y - dist, z + dist);
-    (*m_result)[3].set(x + dist, y - dist, z - dist);
-    (*m_result)[4].set(x - dist, y + dist, z + dist);
-    (*m_result)[5].set(x - dist, y + dist, z - dist);
-    (*m_result)[6].set(x - dist, y - dist, z + dist);
-    (*m_result)[7].set(x - dist, y - dist, z - dist);
+    Float xplus = static_cast<Float>(x + dist);
+    Float xminus = static_cast<Float>(x - dist);
+    Float yplus = static_cast<Float>(y + dist);
+    Float yminus = static_cast<Float>(y - dist);
+    Float zplus = static_cast<Float>(z + dist);
+    Float zminus = static_cast<Float>(z - dist);
+    (*m_result)[0].set(xplus, yplus, zplus);
+    (*m_result)[1].set(xplus, yplus, zminus);
+    (*m_result)[2].set(xplus, yminus, zplus);
+    (*m_result)[3].set(xplus, yminus, zminus);
+    (*m_result)[4].set(xminus, yplus, zplus);
+    (*m_result)[5].set(xminus, yplus, zminus);
+    (*m_result)[6].set(xminus, yminus, zplus);
+    (*m_result)[7].set(xminus, yminus, zminus);
   }
 
   // std::cout << "Finished stabbing cube." << std::endl;
