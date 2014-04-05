@@ -133,6 +133,11 @@ public:
    */
   virtual void detach(Container* container) = 0;
 
+  /*! Determine whether the field is a scalar
+   * \return \true if the field is a scalar and false otherwise.
+   */
+  virtual Boolean is_scalar() const = 0;
+
   /*! Write a field using a given formatter.
    * \param container (in) The container that contains the field.
    * \param formatter (in) The given formatter, e.g., VRML.

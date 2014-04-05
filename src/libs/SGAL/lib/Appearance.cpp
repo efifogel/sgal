@@ -254,7 +254,6 @@ void Appearance::set_material(Shared_material material)
 /*! \brief processes change of material. */
 void Appearance::material_changed(Field_info* /* field_info */)
 {
-  //! \todo what if material is set?
   if (m_material->get_transparency() != 0.0f) {
     set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
     set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
@@ -878,6 +877,7 @@ void Appearance::field_changed(Field_info* field_info)
 
    default: break;
   }
+  process_content_changed();
 }
 
 SGAL_END_NAMESPACE

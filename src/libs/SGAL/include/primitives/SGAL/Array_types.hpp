@@ -30,6 +30,7 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
+#include "SGAL/Image.hpp"
 #include "SGAL/Sphere_bound.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -50,6 +51,7 @@ typedef std::vector<Vector4f>                           Vector4f_array;
 typedef std::vector<Rotation>                           Rotation_array;
 typedef std::vector<Sphere_bound>                       Sphere_bound_array;
 typedef std::vector<std::string>                        String_array;
+typedef std::vector<Image>                              Image_array;
 typedef std::vector<Shared_container>                   Shared_container_array;
 
 SGAL_END_NAMESPACE

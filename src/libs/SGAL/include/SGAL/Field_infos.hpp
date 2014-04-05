@@ -67,7 +67,7 @@ typedef Field_info_template<Shared_container, SF_SHARED_CONTAINER>
                                                        SF_shared_container;
 
 // Multi field
-typedef Field_info_template<Boolean_array, MF_FLOAT>   MF_boolean;
+typedef Field_info_template<Boolean_array, MF_BOOLEAN> MF_boolean;
 typedef Field_info_template<Float_array, MF_FLOAT>     MF_float;
 typedef Field_info_template<Uint_array, MF_INT32>      MF_uint;
 typedef Field_info_template<Int_array, MF_INT32>       MF_int;

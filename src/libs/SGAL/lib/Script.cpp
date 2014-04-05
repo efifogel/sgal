@@ -120,101 +120,75 @@ void Script::add_field_info(Field_rule rule, Field_type type,
   switch (type) {
    case SF_BOOL:
     {
-     Boolean initial_value =
+     auto initial_value =
        value.empty() ? false : boost::lexical_cast<Boolean>(value);
      variant_field = initial_value;
-     Boolean_handle_function field_func =
-       static_cast<Boolean_handle_function>(&Script::field_handle<Boolean>);
-     SF_bool* field_info =
-       new SF_bool(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
    case SF_FLOAT:
     {
-     Float initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
+     auto initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
      variant_field = initial_value;
-     Float_handle_function field_func =
-       static_cast<Float_handle_function>(&Script::field_handle<Float>);
-     SF_float* field_info =
-       new SF_float(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
    case SF_TIME:
     {
-     Scene_time initial_value =
+     auto initial_value =
        value.empty() ? 0 : boost::lexical_cast<Scene_time>(value);
      variant_field = initial_value;
-     Scene_time_handle_function field_func =
-       static_cast<Scene_time_handle_function>
-       (&Script::field_handle<Scene_time>);
-     SF_time* field_info =
-       new SF_time(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_TIME>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
    case SF_INT32:
     {
-     Int initial_value = value.empty() ? 0 : boost::lexical_cast<Int>(value);
+     auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int>(value);
      variant_field = initial_value;
-     Int_handle_function field_func =
-       static_cast<Int_handle_function>(&Script::field_handle<Int>);
-     SF_int* field_info =
-       new SF_int(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_INT32>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
    case SF_VEC2F:
     {
      Vector2f initial_value(value);
-     Vector2f_handle_function field_func =
-       static_cast<Vector2f_handle_function>(&Script::field_handle<Vector2f>);
      variant_field = initial_value;
-     SF_vector2f* field_info =
-       new SF_vector2f(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
    case SF_VEC3F:
+    {
+     Vector3f initial_value(value);
+     variant_field = initial_value;
+     add_field<SF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
+    }
+    break;
+
    case SF_COLOR:
     {
      Vector3f initial_value(value);
-     Vector3f_handle_function field_func =
-       static_cast<Vector3f_handle_function>(&Script::field_handle<Vector3f>);
      variant_field = initial_value;
-     SF_vector3f* field_info =
-       new SF_vector3f(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_COLOR>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
    case SF_ROTATION:
     {
      Rotation initial_value(value);
-     Rotation_handle_function field_func =
-       static_cast<Rotation_handle_function>(&Script::field_handle<Rotation>);
      variant_field = initial_value;
-     SF_rotation* field_info =
-       new SF_rotation(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
    case SF_STR:
     {
      std::string initial_value(value);
-     String_handle_function field_func =
-       static_cast<String_handle_function>(&Script::field_handle<std::string>);
      variant_field = initial_value;
-     SF_string* field_info =
-       new SF_string(id, name, rule, field_func, initial_value, exec_func);
-     prototype->add_field_info(field_info);
+     add_field<SF_STR>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -267,203 +241,6 @@ void Script::add_field_info(Field_rule rule, Field_type type,
   m_fields.push_back(variant_field);
 }
 
-#if 0
-/*! \brief adds a field definition to the script node.
- * \param name (in) the name of the field.
- * \param type (in) the type of the field.
- */
-void Script::add_field_def(const String& name, const String& type,
-                           Container* value, Node* field)
-{
-  m_child_list.push_back(field);
-
-  Container_proto* prototype = get_prototype();
-
-  // Add the object fields to the prototype
-  s_prototype->add_field_info(m_field_infoIDCount, name, type, value, 0,
-                              (Execution_func_type)&Script::execute);
-}
-#endif
-
-//! \brief the callback to invoke when an input field is used by the engine.
-void Script::getter(v8::Local<v8::String> /* name */,
-                    const v8::PropertyCallbackInfo<v8::Value>& /* info */)
-{}
-
-//! \brief the callback to invoke when an output field is set by the engine.
-void Script::accessor_setter(v8::Local<v8::String> name,
-                             v8::Local<v8::Value> value,
-                             const v8::PropertyCallbackInfo<void>& info)
-{
-  std::cout << "Script::accessor_setter()" << std::endl;
-
-  v8::Local<v8::Value> data = info.Data();
-  v8::String::Utf8Value utf8_value(value);
-  v8::String::Utf8Value utf8_name(name);
-  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
-  Field* field = (Field*)(ext->Value());
-
-  if (field) {
-    // Update
-    Field_info* field_info = field->get_field_info();
-    // Create a temprary value holder with the new field value and delegate
-    // the content of this new value holder to the value holder of the actual
-    // output field. Then, cascade.
-    switch (field_info->get_type_id()) {
-     case SF_BOOL:
-      {
-       Boolean tmp = value->BooleanValue();
-       Value_holder<Boolean> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_FLOAT:
-      {
-       Float tmp = static_cast<Float>(value->NumberValue());
-       Value_holder<Float> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_TIME:
-      {
-       Scene_time tmp = value->NumberValue();
-       Value_holder<Scene_time> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_INT32:
-      {
-       Int tmp = value->Int32Value();
-       Value_holder<Int> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_VEC2F:
-      {
-       v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
-       Vector2f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
-                    static_cast<Float>(array->Get(1)->NumberValue()));
-       Value_holder<Vector2f> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_VEC3F:
-     case SF_COLOR:
-      {
-       v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
-       Vector3f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
-                    static_cast<Float>(array->Get(1)->NumberValue()),
-                    static_cast<Float>(array->Get(2)->NumberValue()));
-       Value_holder<Vector3f> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_ROTATION:
-      {
-       v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(value);
-       Rotation tmp(static_cast<Float>(array->Get(0)->NumberValue()),
-                    static_cast<Float>(array->Get(1)->NumberValue()),
-                    static_cast<Float>(array->Get(2)->NumberValue()),
-                    static_cast<Float>(array->Get(3)->NumberValue()));
-       Value_holder<Rotation> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_STR:
-      {
-       v8::Local<v8::String> str = v8::Local<v8::String>::Cast(value);
-       v8::String::Utf8Value utf8(str);
-       std::string tmp(*utf8);
-       Value_holder<std::string> value_holder(&tmp);
-       (field->get_value_holder())->delegate(value_holder);
-      }
-      break;
-
-     case SF_SHARED_CONTAINER:
-      break;
-
-     case MF_FLOAT:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_INT32:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_VEC2F:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_VEC3F:
-     case MF_COLOR:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_ROTATION:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_TIME:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_STR:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case SF_IMAGE:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_SHARED_CONTAINER:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     default:
-      std::cerr << "Unsupported type!" << std::endl;
-      return;
-    }
-
-    // Cascade
-    field->cascade();
-  }
-}
-
-void
-Script::named_property_setter(v8::Local<v8::String> property,
-                              v8::Local<v8::Value> value,
-                              const v8::PropertyCallbackInfo<v8::Value>& info)
-{
-  v8::String::Utf8Value utf8(property);
-  std::cout << "Script::named_property_setter()"
-            << ", property: " << *utf8
-            << ", value: " << value->Int32Value()
-            << std::endl;
-}
-
-void
-Script::indexed_property_setter(uint32_t index,
-                                v8::Local<v8::Value> value,
-                                const v8::PropertyCallbackInfo<v8::Value>& info)
-{
-  std::cout << "Script::indexed_property_setter()"
-            << ", index: " << index
-            << ", value: " << value->Int32Value()
-            << std::endl;
-}
-
-void Script::named_enumerator(const v8::PropertyCallbackInfo<v8::Array>& info)
-{
-  std::cout << "Script::named_enumerator()" << std::endl;
-}
-
 // \brief executes the suitable script function according to the event.
 void Script::execute(Field_info* field_info)
 {
@@ -473,31 +250,11 @@ void Script::execute(Field_info* field_info)
   v8::HandleScope handle_scope(isolate);        // stack-allocated handle scope
 
   // Create a new ObjectTemplate
-  v8::Handle<v8::ObjectTemplate> global_tmpl = v8::ObjectTemplate::New(isolate);
+  v8::Handle<v8::ObjectTemplate> global_tmpl =
+    v8::ObjectTemplate::New(isolate);
 
-  // Set an accessor for every scalar field and output scalar field.
   Container_proto* proto = get_prototype();
   Container_proto::Id_const_iterator it = proto->ids_begin(proto);
-  for (; it != proto->ids_end(proto); ++it) {
-    const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() == RULE_OUT) {
-      switch (field_info->get_type_id()) {
-       case SF_BOOL:
-       case SF_FLOAT:
-       case SF_TIME:
-       case SF_INT32:
-       case SF_STR:
-        {
-         v8::Handle<v8::String> field_name =
-           v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
-                                   v8::String::kInternalizedString);
-         Field* field = get_field(field_info->get_id());
-         v8::Handle<v8::Value> data = v8::External::New(isolate, field);
-         global_tmpl->SetAccessor(field_name, getter, accessor_setter, data);
-        }
-      }
-    }
-  }
 
   v8::Handle<v8::Context> context =
     v8::Context::New(isolate, NULL, global_tmpl);
@@ -510,62 +267,19 @@ void Script::execute(Field_info* field_info)
   // Set an accessor for every vector field and output vector field
   for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() == RULE_OUT) {
+    if (((field_info->get_rule() == RULE_OUT) ||
+        (field_info->get_rule() == RULE_FIELD)) &&
+        ! field_info->is_scalar())
+    {
       v8::Handle<v8::String> field_name =
         v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
                                 v8::String::kInternalizedString);
-      Field* field = get_field(field_info->get_id());
-      v8::Handle<v8::Value> data = v8::External::New(isolate, field);
-
-      switch (field_info->get_type_id()) {
-       case SF_BOOL:
-       case SF_FLOAT:
-       case SF_TIME:
-       case SF_INT32:
-       case SF_STR:
-        break;
-
-       case SF_VEC2F:
-       case SF_VEC3F:
-       case SF_COLOR:
-       case SF_ROTATION:
-        {
-         v8::Handle<v8::FunctionTemplate> tmpl =
-           v8::FunctionTemplate::New(isolate);
-         tmpl->SetClassName(field_name);
-         v8::Handle<v8::ObjectTemplate> inst = tmpl->InstanceTemplate();
-         inst->SetInternalFieldCount(1);
-         inst->SetIndexedPropertyHandler(0, indexed_property_setter,
-                                         0, 0, named_enumerator, data);
-         // v8::Local<v8::ObjectTemplate> proto = tmpl->PrototypeTemplate();
-         // (void) proto; // surpress unused warnings
-         v8::Handle<v8::Function> ctor = tmpl->GetFunction();
-         v8::Handle<v8::Object> obj = ctor->NewInstance();
-         obj->SetInternalField(0, data);
-         global->Set(field_name, obj);
-         break;
-        }
-
-       case SF_SHARED_CONTAINER:
-       case MF_FLOAT:
-       case MF_INT32:
-       case MF_VEC2F:
-       case MF_VEC3F:
-       case MF_ROTATION:
-       case MF_TIME:
-       case MF_STR:
-       case SF_IMAGE:
-       case MF_SHARED_CONTAINER:
-        std::cerr << "Not supported yet!" << std::endl;
-        break;
-
-       default:
-        std::cerr << "Unsupported type!" << std::endl;
-        return;
-      }
+      v8::Handle<v8::ObjectTemplate> field_tmpl =
+        v8::ObjectTemplate::New(isolate);
+      v8::Handle<v8::Object> field_obj = field_tmpl->NewInstance();
+      global->Set(field_name, field_obj);
     }
   }
-  ////////
 
   // Extract the script
   size_t pos = m_url.find(':');
@@ -586,6 +300,8 @@ void Script::execute(Field_info* field_info)
 
   pos = m_url.find_first_not_of(" \t\r\n", pos + 1);
   std::string source_str = m_url.substr(pos);
+
+  // std::cout << "source_str.c_str(): " << source_str.c_str() << std::endl;
 
   // Create a string containing the JavaScript source code.
   v8::Handle<v8::String> source =
@@ -669,19 +385,7 @@ void Script::execute(Field_info* field_info)
     break;
 
    case SF_ROTATION:
-    {
-     const Rotation* tmp = field_handle<Rotation>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, 4);
-     if (array.IsEmpty()) {
-       std::cerr << "failed to allocate v8 Array!" << std::endl;
-       break;
-     }
-     array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
-     array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
-     array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
-     array->Set(3, v8::Number::New(isolate, (*tmp)[3]));
-     args[0] = array;
-    }
+    std::cerr << "Not supported yet!" << std::endl;
     break;
 
    case SF_STR:
@@ -743,6 +447,102 @@ void Script::execute(Field_info* field_info)
     v8::String::Utf8Value error(try_catch.Exception());
     std::cerr << *error << std::endl;
     return;
+  }
+
+  for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const Field_info* field_info = (*it).second;
+    if (field_info->get_rule() == RULE_OUT) {
+      v8::Handle<v8::String> field_name =
+        v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+                                v8::String::kInternalizedString);
+      v8::Handle<v8::Value> value = global->Get(field_name);
+      Field* field = get_field(field_info->get_id());
+      switch (field_info->get_type_id()) {
+       case SF_BOOL:
+        {
+         Boolean tmp = value->BooleanValue();
+         Value_holder<Boolean> value_holder(&tmp);
+         (field->get_value_holder())->delegate(value_holder);
+        }
+        break;
+
+       case SF_FLOAT:
+        {
+         Float tmp = static_cast<Float>(value->NumberValue());
+         Value_holder<Float> value_holder(&tmp);
+         (field->get_value_holder())->delegate(value_holder);
+        }
+        break;
+
+       case SF_TIME:
+        {
+         Scene_time tmp = value->NumberValue();
+         Value_holder<Scene_time> value_holder(&tmp);
+         (field->get_value_holder())->delegate(value_holder);
+        }
+        break;
+
+       case SF_INT32:
+        {
+         Int tmp = value->Int32Value();
+         Value_holder<Int> value_holder(&tmp);
+         (field->get_value_holder())->delegate(value_holder);
+        }
+        break;
+
+       case SF_STR:
+        {
+         v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(value);
+         v8::String::Utf8Value utf8(str);
+         std::string tmp(*utf8);
+         Value_holder<std::string> value_holder(&tmp);
+         (field->get_value_holder())->delegate(value_holder);
+        }
+        break;
+
+       case SF_VEC2F:
+        {
+         v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+         Vector2f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
+                      static_cast<Float>(array->Get(1)->NumberValue()));
+         Value_holder<Vector2f> value_holder(&tmp);
+         (field->get_value_holder())->delegate(value_holder);
+        }
+        break;
+
+       case SF_VEC3F:
+       case SF_COLOR:
+        {
+         v8::HandleScope scope(isolate);
+         v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+         Vector3f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
+                      static_cast<Float>(array->Get(1)->NumberValue()),
+                      static_cast<Float>(array->Get(2)->NumberValue()));
+         Value_holder<Vector3f> value_holder(&tmp);
+         (field->get_value_holder())->delegate(value_holder);
+        }
+        break;
+
+       case SF_ROTATION:
+       case SF_SHARED_CONTAINER:
+       case MF_FLOAT:
+       case MF_INT32:
+       case MF_VEC2F:
+       case MF_VEC3F:
+       case MF_ROTATION:
+       case MF_TIME:
+       case MF_STR:
+       case SF_IMAGE:
+       case MF_SHARED_CONTAINER:
+        std::cerr << "Not supported yet!" << std::endl;
+        break;
+
+       default:
+        std::cerr << "Unsupported type!" << std::endl;
+        return;
+      }
+      field->cascade();
+    }
   }
 }
 

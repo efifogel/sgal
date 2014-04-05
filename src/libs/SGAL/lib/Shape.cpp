@@ -165,7 +165,10 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
 }
 
 //! \brief culls the node if invisible and prepare for rendering.
-void Shape::cull(Cull_context& cull_context) { cull_context.add_shape(this); }
+void Shape::cull(Cull_context& cull_context)
+{
+  cull_context.add_shape(this);
+}
 
 //! \brief draws the geometry.
 void Shape::draw_geometry(Draw_action* action)
@@ -509,6 +512,11 @@ void Shape::field_changed(Field_info* field_info)
   switch (field_info->get_id()) {
    case GEOMETRY:
     m_dirty_sphere_bound = true;
+    break;
+
+   case APPEARANCE:
+    m_dirty = true;
+    m_dirty_appearance = true;
     break;
    default: break;
   }

@@ -29,6 +29,7 @@
 #include "SGAL/Node.hpp"
 #include "SGAL/Agent.hpp"
 #include "SGAL/Action.hpp"
+#include "SGAL/Field_infos.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -146,6 +147,28 @@ protected:
 
   /*! Timestamp */
   Scene_time m_time;
+
+  /*! Add a field to the prototype---a generic implementation.
+   * \param id (in)
+   * \param name (in)
+   * \param rule (in)
+   * \param initial_value (in)
+   * \param exec_func (in)
+   * \param prototype (in)
+   */
+  template <Field_type type, typename ValueType_>
+  void add_field(Uint id, const std::string& name, Field_rule rule,
+                 const ValueType_& initial_value,
+                 Execution_function exec_func, Container_proto* prototype)
+  {
+    typedef ValueType_                                          Value_type;
+    typedef typename Handle_function<Value_type>::type          Handle_function;
+    typedef typename Field_info_template<Value_type, type>      Field_info_type;
+
+    auto field_func = static_cast<Handle_function>(&Script::field_handle<Value_type>);
+    auto field_info = new Field_info_type(id, name, rule, field_func, initial_value, exec_func);
+    prototype->add_field_info(field_info);
+  }
 
 private:
   /*! The node prototype. */

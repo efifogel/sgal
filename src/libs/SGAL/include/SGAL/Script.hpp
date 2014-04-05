@@ -39,6 +39,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Container_proto;
 class Scene_graph;
+class Field;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -164,32 +165,6 @@ public:
   virtual void execute(Field_info* field_info);
 
 protected:
-  /*! The callback to invoke when an input field is used by the engine.
-   * \param name (in) the field name.
-   */
-  static void getter(v8::Local<v8::String> name,
-                     const v8::PropertyCallbackInfo<v8::Value>& info);
-
-  /*! The callback to invoke when an output field is set by the engine.
-   * \param name (in) the field name.
-   */
-  static void accessor_setter(v8::Local<v8::String> name,
-                              v8::Local<v8::Value> value,
-                              const v8::PropertyCallbackInfo<void>& info);
-
-  static void
-  named_property_setter(v8::Local<v8::String> property,
-                        v8::Local<v8::Value> value,
-                        const v8::PropertyCallbackInfo<v8::Value>& info);
-
-  static void
-  indexed_property_setter(uint32_t index,
-                          v8::Local<v8::Value> value,
-                          const v8::PropertyCallbackInfo<v8::Value>& info);
-
-  static void
-  named_enumerator(const v8::PropertyCallbackInfo<v8::Array>& info);
-
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 

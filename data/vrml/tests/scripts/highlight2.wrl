@@ -5,14 +5,14 @@ DEF switchScript Script {
   url "javascript:
     function in2(value, timestamp) {
       if (value) {
-        out[0] = 0.5;
-        out[1] = 0.5;
-        out[2] = 0.5;
+        out[0] = 1;
+        out[1] = 0;
+        out[2] = 0;
       }
       else {
-        out[0] = 0.2;
-        out[1] = 0.2;
-        out[2] = 0.2;
+        out[0] = 0;
+        out[1] = 0;
+        out[2] = 1;
       }
     }"
 }
@@ -20,8 +20,8 @@ Group {
   children [
     Shape {
       appearance Appearance {
-	material DEF mat Material {
-	  emissiveColor 0.2 0.2 0.2} }
+	material DEF mat Material { emissiveColor 0 0 1}
+      }
       geometry Sphere {}
     }
     DEF ts TouchSensor {}

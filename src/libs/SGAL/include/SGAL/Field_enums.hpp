@@ -55,6 +55,7 @@ enum Field_type {
   SF_IMAGE = 12,
   SF_STR = 13,
   SF_SHARED_CONTAINER = 14,
+  MF_BOOLEAN = 21,
   MF_FLOAT = 22,
   MF_UINT32 = 23,
   MF_INT32 = 24,
@@ -65,6 +66,7 @@ enum Field_type {
   MF_VEC4F = 29,
   MF_ROTATION = 30,
   MF_SB = 31,
+  MF_IMAGE = 32,
   MF_STR = 33,
   MF_SHARED_CONTAINER = 34
 };

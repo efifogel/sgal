@@ -472,13 +472,11 @@ void Context::set_material(Shared_material material)
 void Context::draw_material(Shared_material material,
                             Shared_material back_material)
 {
-  if (m_current_state->m_material == material) return;
   m_current_state->m_material = material;
-  if (material) {
+  if (material)
     material->draw((back_material == material) ?
                    Material::FRONT_AND_BACK : Material::FRONT,
                    this);
-  }
 }
 
 /*! \brief */
@@ -1575,7 +1573,7 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
 
   // Loop through all the state element bits to determine which ones we need
   // to actually draw. Stop when all the bits have been turned off.
-  for (int i = 0; tmp_mask.get_mask(); i++) {
+  for (int i = 0; tmp_mask.get_mask(); ++i) {
     if (!tmp_mask.get_bit(i)) continue;
 
     tmp_mask.off_bit(i);
@@ -1659,10 +1657,8 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
 
   // Loop through all the state element bits to determine which ones we need
   // to actually draw. Stop when all the bits have been turned off.
-  for (int i = 0; tmp_mask.get_mask(); i++) {
-    if (!tmp_mask.get_bit(i)) {
-      continue;
-    }
+  for (int i = 0; tmp_mask.get_mask(); ++i) {
+    if (!tmp_mask.get_bit(i)) continue;
     tmp_mask.off_bit(i);
 
     switch (i) {
@@ -2017,33 +2013,31 @@ void Context::draw_app(Appearance* app)
   }
 
   // Otherwise use the new appearance:
-  Bit_mask def_draw(m_default_state->m_pending);
-  def_draw.or_equal(m_current_state->m_override);
-  def_draw.and_not_equal(new_app->m_override);
 
-  // If either:
-  // 1. The given appearance is not the same as the last appearance, or
-  // 2. At least one (relevant) new Appearnce field is pending, or
-  // 3. At least one relevant default field is pending
-  if (m_last_app != new_app ||
-      m_last_app->m_override.get_mask() != new_app->m_override.get_mask() ||
-      new_app->m_pending.get_mask() ||
-      def_draw.get_mask())
-  {
-    // Draw using Default state:
-    draw_state_elements(def_draw, m_default_state);
-    m_default_state->m_pending.and_not_equal(def_draw);
+  // def_mask = (default-pending || current-override) && ! appearance-override
+  Bit_mask def_mask(m_default_state->m_pending);
+  def_mask.or_equal(m_current_state->m_override);
+  def_mask.and_not_equal(new_app->m_override);
 
-    // Draw using new state:
-    draw_state_elements(new_app->m_override, new_app);
-    new_app->m_pending.and_not_equal(new_app->m_override);
-
-    // Set the override of the current state accordingly:
-    m_current_state->m_override.set(new_app->m_override);
-
-    m_last_app = (new_app == local_app) ? 0 : new_app;
-    return;
+  // Draw using Default state:
+  if (def_mask.get_mask()) {
+    draw_state_elements(def_mask, m_default_state);
+    // default-pending = default-pending && ! def-mask
+    m_default_state->m_pending.and_not_equal(def_mask);
   }
+
+  Bit_mask app_mask =
+    (m_last_app == new_app) ? new_app->m_pending : new_app->m_override;
+
+  // Draw using new state:
+  if (app_mask.get_mask()) {
+    draw_state_elements(new_app->m_override, new_app);
+    // appearance-pending = appearance-pending && ! app_mask
+    new_app->m_pending.and_not_equal(app_mask);
+  }
+
+  m_current_state->m_override.set(new_app->m_override);
+  m_last_app = (new_app == local_app) ? 0 : new_app;
 }
 
 /*! \brief obtains a light source. */

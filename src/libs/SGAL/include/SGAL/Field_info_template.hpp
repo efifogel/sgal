@@ -35,11 +35,28 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Value_holder.hpp"
 #include "SGAL/Execution_function.hpp"
-//! \todo #include "SAI_field_template.h"
 
 SGAL_BEGIN_NAMESPACE
 
 class Formatter;
+
+template <bool b> struct Selector { static const bool value() { return b; } };
+
+template <typename T> struct Is_scalar : Selector<true> {};
+template <> struct Is_scalar<Vector2f> : Selector<false> {};
+template <> struct Is_scalar<Vector3f> : Selector<false> {};
+template <> struct Is_scalar<Rotation> : Selector<false> {};
+template <> struct Is_scalar<Image> : Selector<false> {};
+template <> struct Is_scalar<Shared_container> : Selector<false> {};
+template <> struct Is_scalar<Boolean_array> : Selector<false> {};
+template <> struct Is_scalar<Float_array> : Selector<false> {};
+template <> struct Is_scalar<Int_array> : Selector<false> {};
+template <> struct Is_scalar<String_array> : Selector<false> {};
+template <> struct Is_scalar<Vector2f_array> : Selector<false> {};
+template <> struct Is_scalar<Vector3f_array> : Selector<false> {};
+template <> struct Is_scalar<Rotation_array> : Selector<false> {};
+template <> struct Is_scalar<Image_array> : Selector<false> {};
+template <> struct Is_scalar<Shared_container_array> : Selector<false> {};
 
 /*! \class Detacher Field_info_template.hpp
  * Detacher is a generic class that detaches a value of a field from the
@@ -149,6 +166,11 @@ public:
     Detacher<T> detacher;
     detacher(*handle, container, this);
   }
+
+  /*! Determine whether the field is a scalar
+   * \return \true if the field is a scalar and false otherwise.
+   */
+  virtual Boolean is_scalar() const { return Is_scalar<T>::value(); }
 
   /*! Write a field using a given formatter.
    * \param container (in) The container that contains the field.

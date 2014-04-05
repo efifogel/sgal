@@ -44,7 +44,7 @@ public:
 
   inline Bit_mask& and_not_bit(int bit) { return off_bit(bit); }
 
-  inline Boolean get_bit(int bit)
+  inline Boolean get_bit(int bit) const
   { return (m_mask& ((Double_word)1 << bit)) != 0; }
 
   inline void on() { m_mask = ~(Double_word)0; }
@@ -62,9 +62,9 @@ public:
   { m_mask = bm.m_mask; return* this; }
 
   inline Double_word get_mask() const { return m_mask; }
-    
+
   inline void set_mask(const Double_word mask) { m_mask = mask; }
-    
+
   inline Bit_mask& and_equal(const Bit_mask& bm)
   { m_mask &= bm.m_mask; return* this; }
 
