@@ -88,9 +88,6 @@ endif
 ifdef V8_LIB_DIR
 LLDOPTS+= -libpath:"$(V8_LIB_DIR)"
 endif
-ifdef ICU_LIB_DIR
-LLDOPTS+= -libpath:"$(ICU_LIB_DIR)"
-endif
 
 ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= SGAL.lib
@@ -115,9 +112,7 @@ LCPPOPTS+= -Wall
 LLDOPTS+= -rdynamic -ldl
 ifdef V8_LIB_DIR
 LLDOPTS+= -L$(V8_LIB_DIR)
-endif
-ifdef ICU_LIB_DIR
-LLDOPTS+= -L$(ICU_LIB_DIR)
+LLDOPTS+= -Wl,-rpath,$(V8_LIB_DIR)
 endif
 
 ifneq ($(USE_DYNAMIC_SGAL), 1)
@@ -125,12 +120,7 @@ LLDLIBS+= -lSGAL
 endif
 
 # V8 engine stuff:
-LLDLIBS+= -lv8_base.x64
-LLDLIBS+= -lv8_nosnapshot.x64
-LLDLIBS+= -licui18n
-LLDLIBS+= -licuuc
-LLDLIBS+= -licudata
-LLDLIBS+= -lrt
+LLDLIBS+= -lv8
 
 LLDLIBS+= -lgl2ps
 LLDLIBS+= -lMagick++

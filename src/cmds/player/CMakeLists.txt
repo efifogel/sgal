@@ -43,10 +43,18 @@ if (USE_CGAL)
   target_link_libraries(player SCGAL)
 endif()
 
-# set_property(TARGET player PROPERTY INSTALL_RPATH ${V8_LIBRARY_DIR})
+# Don't skip the full RPATH for the build tree
+# set_property(TARGET player PROPERTY SKIP_BUILD_RPATH FALSE)
+
+# when building, don't use the install RPATH already
+# (but later on when installing)
 # set_property(TARGET player PROPERTY BUILD_WITH_INSTALL_RPATH TRUE)
+
+# the RPATH to be used when installing
+set_property(TARGET player PROPERTY INSTALL_RPATH "${V8_LIBRARY_DIR}")
+
+# don't add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
 set_property(TARGET player PROPERTY INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 install(TARGETS player DESTINATION ${SGAL_INSTALL_BIN_DIR})
-
-
