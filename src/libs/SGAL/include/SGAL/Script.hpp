@@ -21,17 +21,11 @@
 
 #include <list>
 #include <string>
-#include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include <v8.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
-#include "SGAL/Vector2f.hpp"
-#include "SGAL/Vector3f.hpp"
-#include "SGAL/Rotation.hpp"
-#include "SGAL/Field_info.hpp"
 #include "SGAL/Script_base.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -40,6 +34,7 @@ class Element;
 class Container_proto;
 class Scene_graph;
 class Field;
+class Field_info;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -61,33 +56,6 @@ public:
     FIRST = Script::LAST-1,
     LAST
   };
-
-  enum Protocol {
-    PROTOCOL_INVALID = 0,
-    PROTOCOL_CUSTOM_ECMASCRIPT, // "javascript: ..."
-    PROTOCOL_ECMASCRIPT,        // "http://bar.com/foo.js"
-    PROTOCOL_JAVA_BYTECODE      // "http://bar.com/foo.class"
-  };
-
-  typedef boost::shared_ptr<Container>                  Shared_container;
-
-  typedef boost::variant<Boolean,
-                         Float,
-                         Scene_time,
-                         Int,
-                         Vector2f,
-                         Vector3f,
-                         Rotation,
-                         std::string,
-                         Shared_container,
-                         std::vector<Boolean>,
-                         std::vector<Float>,
-                         std::vector<Int>,
-                         std::vector<Vector2f>,
-                         std::vector<Vector3f>,
-                         std::vector<Rotation>,
-                         std::vector<std::string>,
-                         std::vector<Shared_container> > Variant_field;
 
   /*! Constructor.
    * \param proto (in) determines whether to construct a prototype.
@@ -119,23 +87,6 @@ public:
    * \return the node prototype.
    */
   virtual Container_proto* get_prototype();
-  //@}
-
-  /// \name field handlers
-  //@{
-  /*! Obtain a handle to a dynamically generated field.
-   * \param field_info (in) the field information record.
-   * \return a pointer to the field.
-   */
-  template <typename T>
-  T* field_handle(const Field_info* field_info)
-  {
-    Uint id = field_info->get_id();
-    std::list<Variant_field>::iterator it = m_fields.begin();
-    std::advance(it, id - LAST);
-    T& field = boost::get<T>(*it);
-    return &field;
-  }
   //@}
 
   /*! Set the attributes of the object extracted from the input file.
@@ -174,9 +125,6 @@ private:
 
   /*! The node prototype. */
   static Container_proto* s_prototype;
-
-  /*! Additional fields. */
-  std::list<Variant_field> m_fields;
 
   /*! The script protocol. */
   Protocol m_protocol;

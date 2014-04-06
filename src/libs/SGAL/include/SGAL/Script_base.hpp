@@ -30,6 +30,11 @@
 #include "SGAL/Agent.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Execution_function.hpp"
+#include "SGAL/Field_info_template.hpp"
+#include "SGAL/Vector2f.hpp"
+#include "SGAL/Vector3f.hpp"
+#include "SGAL/Rotation.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -62,6 +67,26 @@ public:
     PROTOCOL_JAVA_BYTECODE      // "http://bar.com/foo.class"
   };
 
+  typedef boost::shared_ptr<Container>                  Shared_container;
+
+  typedef boost::variant<Boolean,
+                         Float,
+                         Scene_time,
+                         Int,
+                         Vector2f,
+                         Vector3f,
+                         Rotation,
+                         std::string,
+                         Shared_container,
+                         std::vector<Boolean>,
+                         std::vector<Float>,
+                         std::vector<Int>,
+                         std::vector<Vector2f>,
+                         std::vector<Vector3f>,
+                         std::vector<Rotation>,
+                         std::vector<std::string>,
+                         std::vector<Shared_container> > Variant_field;
+
   /*! Constructor.
    * \param proto (in) determines whether to construct a prototype.
    */
@@ -89,6 +114,20 @@ public:
   std::string* url_handle(const Field_info*) { return &m_url; }
   Boolean* direct_output_handle(const Field_info*) { return &m_direct_output; }
   Boolean* must_evaluate_handle(const Field_info*) { return &m_must_evaluate; }
+
+  /*! Obtain a handle to a dynamically generated field.
+   * \param field_info (in) the field information record.
+   * \return a pointer to the field.
+   */
+  template <typename T>
+  T* field_handle(const Field_info* field_info)
+  {
+    Uint id = field_info->get_id();
+    std::list<Variant_field>::iterator it = m_fields.begin();
+    std::advance(it, id - LAST);
+    T& field = boost::get<T>(*it);
+    return &field;
+  }
   //@}
 
   /*! Set the attributes of the object extracted from the input file.
@@ -148,6 +187,9 @@ protected:
   /*! Timestamp */
   Scene_time m_time;
 
+  /*! Additional fields. */
+  std::list<Variant_field> m_fields;
+
   /*! Add a field to the prototype---a generic implementation.
    * \param id (in)
    * \param name (in)
@@ -161,16 +203,18 @@ protected:
                  const ValueType_& initial_value,
                  Execution_function exec_func, Container_proto* prototype)
   {
-    typedef ValueType_                                          Value_type;
-    typedef typename Handle_function<Value_type>::type          Handle_function;
-    typedef typename Field_info_template<Value_type, type>      Field_info_type;
+    typedef ValueType_                                  Value_type;
+    typedef typename Handle_function<Value_type>::type  Handle_function;
+    typedef Field_info_template<Value_type, type>       Field_info_type;
 
-    auto field_func = static_cast<Handle_function>(&Script::field_handle<Value_type>);
-    auto field_info = new Field_info_type(id, name, rule, field_func, initial_value, exec_func);
+    auto field_func =
+      static_cast<Handle_function>(&Script_base::field_handle<Value_type>);
+    auto field_info =
+      new Field_info_type(id, name, rule, field_func, initial_value, exec_func);
     prototype->add_field_info(field_info);
   }
 
-private:
+ private:
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
