@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_INDEXED_FACE_SET_HPP
@@ -443,7 +440,7 @@ public:
   virtual void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
 
   /*! Process change of field. */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   /*! Process change of coordinate points. */
   virtual void coord_point_changed();

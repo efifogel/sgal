@@ -501,7 +501,7 @@ Container_proto* Spherical_gaussian_map_base_geo::get_prototype()
 
 /*! \brief raises the flag that indicates that the sphere bound changed. */
 void Spherical_gaussian_map_base_geo::
-draw_changed(Field_info* /* field_info */)
+draw_changed(const Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_aos;
   m_dirty_sphere_bound = true;
@@ -605,14 +605,14 @@ void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
 }
 
 /*! \brief processes change of coordinate field. */
-void Spherical_gaussian_map_base_geo::coord_changed(Field_info* field_info)
+void Spherical_gaussian_map_base_geo::coord_changed(const Field_info* field_info)
 {
   clear();
   Mesh_set::coord_changed(field_info);
 }
 
 /*! \brief processes change of points. */
-void Spherical_gaussian_map_base_geo::field_changed(Field_info* field_info)
+void Spherical_gaussian_map_base_geo::field_changed(const Field_info* field_info)
 {
   clear();
   Container::field_changed(field_info);

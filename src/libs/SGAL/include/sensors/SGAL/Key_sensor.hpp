@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11857 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_KEY_SENSOR_HPP
@@ -79,7 +76,7 @@ public:
   void set_active(Boolean active);
 
   /*! Activate the key sensor. */
-  void activate(Field_info* field_info = NULL);
+  void activate(const Field_info* field_info = NULL);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();

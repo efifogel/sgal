@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_base_geo.hpp 14223 2012-11-29 22:33:55Z efif $
-// $Revision: 14223 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_BASE_GEO_HPP
@@ -412,7 +409,7 @@ protected:
 
   /*! Export the planar maps associated with the faces of the unit sphere.
    */
-  void output(Field_info* /* field_info */)
+  void output(const Field_info* /* field_info */)
   { SGAL_assertion_msg(0, "Not implemented yet!"); }
 
   /*! \brief imports  the planar maps associated with the faces of the unit
@@ -498,13 +495,13 @@ public:
    * (i.e., this container) consists of the processing of all observers of
    * that container.
    */
-  virtual void coord_changed(Field_info* field_info);
+  virtual void coord_changed(const Field_info* field_info);
 
   /*! Process change of geometry. */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   /*! Raise the flag that indicates that the sphere bound changed. */
-  void draw_changed(Field_info* field_info = NULL);
+  void draw_changed(const Field_info* field_info = NULL);
 
   /*! Draw the arrangement on sphere vertices.
    * \param action

@@ -125,13 +125,13 @@ public:
    * with this info.
    * \param container the container of the field.
    */
-  virtual Value_holder_base* create_value_holder(Container* container) = 0;
+  virtual Value_holder_base* create_value_holder(Container* container) const = 0;
 
   /*! Detach the value of a field, the (field) info of which is this object,
    * from the container that contains the field before the field is overriden.
    * \param container (in) The container that contains the field.
    */
-  virtual void detach(Container* container) = 0;
+  virtual void detach(Container* container) const = 0;
 
   /*! Determine whether the field is a scalar
    * \return \true if the field is a scalar and false otherwise.

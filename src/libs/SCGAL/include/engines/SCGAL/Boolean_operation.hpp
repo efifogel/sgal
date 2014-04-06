@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_BOOLEAN_OPERATION_HPP
@@ -113,7 +110,7 @@ public:
   virtual void write(Formatter* formatter);
 
   /*! . */
-  void trigger_changed(Field_info* field_info);
+  void trigger_changed(const Field_info* field_info);
 
   /*! Execute the engine. */
   void execute();

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CAMERA_HPP
@@ -132,7 +129,7 @@ public:
   /*! Obtain the fiewd-of-view of the camera. */
   float get_field_of_view();
 
-  void update_field_of_view(Field_info* info);
+  void update_field_of_view(const Field_info* info);
 
   /*! Set the textual description of the camera. */
   void set_description(const std::string& description);
@@ -148,7 +145,7 @@ public:
 
   const Matrix4f& get_view_mat();
 
-  void update_matrix_requiered(Field_info* info);
+  void update_matrix_requiered(const Field_info* info);
 
   void set_clipping_planes(float near_plane, float far_plane);
 

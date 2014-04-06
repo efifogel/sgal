@@ -25,7 +25,7 @@
 SGAL_BEGIN_NAMESPACE
 
 /*! Constructor. */
-Field::Field(Container* container, Field_info* field_info) :
+Field::Field(Container* container, const Field_info* field_info) :
   m_container(container),
   m_field_info(field_info)
 {

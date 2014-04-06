@@ -67,7 +67,7 @@ Material::~Material() {}
 /*! \brief sets the transparency. */
 void Material::set_transparency(Float transparency)
 {
-  Field_info* field_info = get_field_info(TRANSPARENCY);
+  const Field_info* field_info = get_field_info(TRANSPARENCY);
   field_changed(field_info);
   m_transparency = transparency;
 }
@@ -133,7 +133,7 @@ void Material::draw(Face which_face, Context* /* context */)
 }
 
 /*! \brief the callback invoked when the material chages. */
-void Material::material_changed(Field_info* field_info)
+void Material::material_changed(const Field_info* field_info)
 {
   set_rendering_required(field_info);
   field_changed(field_info);

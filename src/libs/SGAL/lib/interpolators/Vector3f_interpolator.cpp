@@ -86,7 +86,7 @@ Container_proto* Vector3f_interpolator::get_prototype()
  * The function calculates m_value, updates it and activate cascade on it
  * @param pointer (in) to the cascaded field's field info - not used for now
  */
-void Vector3f_interpolator::execute(Field_info* /* field_info */)
+void Vector3f_interpolator::execute(const Field_info* /* field_info */)
 {
   Field* value = get_field(VALUE);
   // if there is no connection to the value field there is no need to execute

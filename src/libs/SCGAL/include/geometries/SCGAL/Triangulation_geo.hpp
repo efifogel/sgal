@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 9188 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_TRIANGULATION_GEO_HPP
@@ -243,7 +240,7 @@ protected:
   Boolean is_dirty() const { return m_dirty; }
 
   /*! Mark the object as not initialized. */
-  void coord_changed(Field_info* field_info);
+  void coord_changed(const Field_info* field_info);
 
   /*! Set the coordinate set. */
   void set_coord_array(Shared_coord_array coord_array);

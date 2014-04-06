@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FIELD_INFO_TEMPLATE_HPP
@@ -71,13 +68,14 @@ template <> struct Is_scalar<Shared_container_array> : Selector<false> {};
  */
 template <typename T>
 struct Detacher {
-  void operator()(T& value, Container* container, Field_info* field_info) {}
+  void operator()(T& value, Container* container, const Field_info* field_info)
+  {}
 };
 
 template <>
 struct Detacher<Shared_container> {
   void operator()(Shared_container& value,
-                  Container* container, Field_info* field_info)
+                  Container* container, const Field_info* field_info)
   {
     if (value) {
       Container::Observer observer(container, field_info);
@@ -148,7 +146,7 @@ public:
    * with this info.
    * \param container the container of the field.
    */
-  virtual Value_holder_base* create_value_holder(Container* container)
+  virtual Value_holder_base* create_value_holder(Container* container) const
   {
     T* handle = (container->*m_handle)(this);
     Value_holder<T>* holder = new Value_holder<T>(handle);
@@ -160,7 +158,7 @@ public:
    * from the container that contains the field before the field is overriden.
    * \param container (in) The container that contains the field.
    */
-  virtual void detach(Container* container)
+  virtual void detach(Container* container) const
   {
     T* handle = (container->*m_handle)(this);     // Obtain the value
     Detacher<T> detacher;

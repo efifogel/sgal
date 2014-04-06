@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_marked_geo.hpp 9188 2010-05-25 14:40:57Z efif $
-// $Revision: 9188 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_MARKED_GEO_HPP
@@ -733,13 +730,13 @@ public:
   { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 
   /*! Increase the vertex index. */
-  void increase_vertex_index(Field_info* field_info = NULL);
+  void increase_vertex_index(const Field_info* field_info = NULL);
 
   /*! Increase the edge index. */
-  void increase_edge_index(Field_info* field_info = NULL);
+  void increase_edge_index(const Field_info* field_info = NULL);
 
   /*! Increase the face index. */
-  void increase_facet_index(Field_info* field_info = NULL);
+  void increase_facet_index(const Field_info* field_info = NULL);
 };
 
 #if defined(_MSC_VER)

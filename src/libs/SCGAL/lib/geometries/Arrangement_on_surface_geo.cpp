@@ -604,7 +604,8 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
 }
 
 //! \brief raises the flag that indicates that the renderer changed.
-void Arrangement_on_surface_geo::renderer_changed(Field_info* /* field_info */)
+void Arrangement_on_surface_geo::
+renderer_changed(const Field_info* /* field_info */)
 {
   m_renderer.clear();
   m_renderer_dirty = true;

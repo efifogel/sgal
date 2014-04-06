@@ -368,7 +368,7 @@ void Geo_set::set_attributes(Element* elem)
 }
 
 //! \brief processes change of coordinates.
-void Geo_set::coord_changed(Field_info* field_info)
+void Geo_set::coord_changed(const Field_info* field_info)
 {
   // Observe that the observer, being a pair of this container object and the
   // field_info argument, is automatically unregistered as an observer
@@ -381,19 +381,19 @@ void Geo_set::coord_changed(Field_info* field_info)
 }
 
 //! \brief processes change of normals.
-void Geo_set::normal_changed(Field_info* field_info)
+void Geo_set::normal_changed(const Field_info* field_info)
 { field_changed(field_info); }
 
 //! \brief processes change of colors.
-void Geo_set::color_changed(Field_info* field_info)
+void Geo_set::color_changed(const Field_info* field_info)
 { field_changed(field_info); }
 
 //! \brief processes change of texture coordinates.
-void Geo_set::tex_coord_changed(Field_info* field_info)
+void Geo_set::tex_coord_changed(const Field_info* field_info)
 { field_changed(field_info); }
 
 //! \brief Process change of field.
-void Geo_set::field_changed(Field_info* field_info)
+void Geo_set::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case COORD_ARRAY: m_dirty_sphere_bound = true; break;

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_surface_geo.hpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -256,7 +253,7 @@ public:
   virtual void draw_aos_isolated_vertices(Draw_action* /* action */) {}
 
   /*! Raise the flag that indicates that the renderer changed. */
-  void renderer_changed(Field_info* field_info = NULL);
+  void renderer_changed(const Field_info* field_info = NULL);
 
   /*! Obtain the flag that indicates whether to draw the embedding surface. */
   Boolean get_draw_aos_surface() const { return m_draw_aos_surface; }

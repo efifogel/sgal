@@ -830,7 +830,7 @@ SGAL::Container_proto* Cubical_gaussian_map_geo::get_prototype()
 }
 
 //! \brief raises the flag that indicates that the sphere bound changed.
-void Cubical_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
+void Cubical_gaussian_map_geo::draw_changed(const Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_aos;
   m_dirty_sphere_bound = true;
@@ -1646,7 +1646,7 @@ void Cubical_gaussian_map_geo::insert_cgm(Shared_cubical_gaussian_map_geo cgm)
 
 //! \brief increases the vertex index.
 void Cubical_gaussian_map_geo::
-increase_vertex_index(Field_info* /* field_info */)
+increase_vertex_index(const Field_info* /* field_info */)
 {
   m_marked_vertex_index++;
   if (m_marked_vertex_index == m_cgm.number_of_vertices())
@@ -1656,7 +1656,7 @@ increase_vertex_index(Field_info* /* field_info */)
 
 //! \brief increases the face index.
 void Cubical_gaussian_map_geo::
-increase_edge_index(Field_info* /* field_info */)
+increase_edge_index(const Field_info* /* field_info */)
 {
   m_marked_edge_index++;
   if (m_marked_edge_index == m_cgm.number_of_edges())
@@ -1666,7 +1666,7 @@ increase_edge_index(Field_info* /* field_info */)
 
 //! \brief increases the face index.
 void Cubical_gaussian_map_geo::
-increase_facet_index(Field_info* /* field_info */)
+increase_facet_index(const Field_info* /* field_info */)
 {
   m_marked_facet_index++;
   if (m_marked_facet_index == m_cgm.number_of_facets())
@@ -1938,14 +1938,14 @@ operator()(Draw_action* /* action */)
 }
 
 /*! \brief processes change of points. */
-void Cubical_gaussian_map_geo::field_changed(Field_info* field_info)
+void Cubical_gaussian_map_geo::field_changed(const Field_info* field_info)
 {
   clear();
   Mesh_set::field_changed(field_info);
 }
 
 //! \brief processes change of coordinate field.
-void Cubical_gaussian_map_geo::coord_changed(Field_info* field_info)
+void Cubical_gaussian_map_geo::coord_changed(const Field_info* field_info)
 {
   clear();
   Mesh_set::coord_changed(field_info);

@@ -320,7 +320,7 @@ void Ellipsoid::set_depth(Float depth)
 }
 
 //! \brief processes change of structure.
-void Ellipsoid::structure_changed(Field_info* field_info)
+void Ellipsoid::structure_changed(const Field_info* field_info)
 {
   clear();
   field_changed(field_info);

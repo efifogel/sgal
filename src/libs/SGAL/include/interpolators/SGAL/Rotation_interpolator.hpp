@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -100,7 +97,7 @@ public:
 
   // The execution function of the interpolator - calculates the interpolation
   // between two rotation fields according to the current m_fraction
-  virtual void execute(Field_info*);
+  virtual void execute(const Field_info*);
 
 protected:
   /*! Indicates whether to interpolate between keys. */

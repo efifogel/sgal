@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lower_envelope_geo.hpp 9188 2010-05-25 14:40:57Z efif $
-// $Revision: 9188 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_LOWER_ENVELOPE_GEO_HPP

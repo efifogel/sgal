@@ -246,7 +246,7 @@ void Coord_transformer::set_rotation(Float v0, Float v1, Float v2, Float angle)
 /*! \brief translates the input vertices and store the results in the output
  * vertices.
  */
-void Coord_transformer::translate(Field_info* field_info)
+void Coord_transformer::translate(const Field_info* field_info)
 {
   m_transform.set_translation(m_translation);
   execute(field_info);
@@ -259,7 +259,7 @@ void Coord_transformer::translate(Field_info* field_info)
 /*! \brief rotates the input vertices and store the results in the output
  * vertices.
  */
-void Coord_transformer::rotate(Field_info* field_info)
+void Coord_transformer::rotate(const Field_info* field_info)
 {
   m_transform.set_rotation(m_rotation);
   execute(field_info);
@@ -272,7 +272,7 @@ void Coord_transformer::rotate(Field_info* field_info)
 /*! \brief transforms the input vertices and store the results in the output
  * vertices.
  */
-void Coord_transformer::execute(Field_info* /* field_info */)
+void Coord_transformer::execute(const Field_info* /* field_info */)
 {
   if (!m_enabled) return;
   if (!m_coord_array) return;

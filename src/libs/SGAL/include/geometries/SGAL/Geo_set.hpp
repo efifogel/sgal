@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14184 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GEO_SET_HPP
@@ -386,7 +383,7 @@ public:
    * (i.e., this container) consists of the processing of all observers of
    * that container.
    */
-  virtual void coord_changed(Field_info* field_info);
+  virtual void coord_changed(const Field_info* field_info);
 
   /*! Process change of normal field.
    * Generally process the change of normal field.
@@ -395,7 +392,7 @@ public:
    * (i.e., this container) consists of the processing of all observers of
    * that container.
    */
-  virtual void normal_changed(Field_info* field_info);
+  virtual void normal_changed(const Field_info* field_info);
 
   /*! Process change of color field.
    * Generally process the change of color field.
@@ -404,7 +401,7 @@ public:
    * (i.e., this container) consists of the processing of all observers of
    * that container.
    */
-  virtual void color_changed(Field_info* field_info);
+  virtual void color_changed(const Field_info* field_info);
 
   /*! Process change of texture coordinate field.
    * Generally process the change of texture coordinate field.
@@ -413,11 +410,11 @@ public:
    * (i.e., this container) consists of the processing of all observers of
    * that container.
    */
-  virtual void tex_coord_changed(Field_info* field_info);
+  virtual void tex_coord_changed(const Field_info* field_info);
 
   /*! Process change of field.
    */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   /*! Assign the coord indices with the reverse of given indices.
    * \param indices the indices to reverse.

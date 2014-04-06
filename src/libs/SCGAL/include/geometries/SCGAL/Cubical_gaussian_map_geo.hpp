@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14223 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_CUBICAL_GAUSSIAN_MAP_GEO_HPP
@@ -933,7 +930,7 @@ private:
                        float non_edge_line_width);
 
   /*! Export the planar maps associated with the faces of the unit cube. */
-  void output(SGAL::Field_info* /* field_info */)
+  void output(const Field_info* /* field_info */)
   {
     // std::cout << m_cgm << std::endl;
     for (Uint i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
@@ -1070,10 +1067,10 @@ public:
    * (i.e., this container) consists of the processing of all observers of
    * that container.
    */
-  virtual void coord_changed(Field_info* field_info);
+  virtual void coord_changed(const Field_info* field_info);
 
   /*! Raise the flag that indicates that the sphere bound changed. */
-  void draw_changed(Field_info* field_info = NULL);
+  void draw_changed(const Field_info* field_info = NULL);
 
   /*! Draw the dual representation of the polyhedron in 2D. */
   void draw_aos_unfolded(Draw_action* action);
@@ -1258,19 +1255,19 @@ public:
   Polyhedral_cgm* get_cgm() { return &m_cgm; }
 
   /*! Process change of geometry. */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   /*! Set the flag that indicates whether to compute the minkowski sum. */
   void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
 
   /*! Increase the vertex index. */
-  void increase_vertex_index(Field_info* field_info = NULL);
+  void increase_vertex_index(const Field_info* field_info = NULL);
 
   /*! Increase the edge index. */
-  void increase_edge_index(Field_info* field_info = NULL);
+  void increase_edge_index(const Field_info* field_info = NULL);
 
   /*! Increase the face index. */
-  void increase_facet_index(Field_info* field_info = NULL);
+  void increase_facet_index(const Field_info* field_info = NULL);
 };
 
 #if defined(_MSC_VER)

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11857 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TIME_SENSOR_HPP
@@ -128,13 +125,13 @@ public:
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   // Execution function - executed input events on fields
-  virtual void execute_enabled(Field_info*);
+  virtual void execute_enabled(const Field_info*);
 
   // start function - starts the animation according to m_start
-  virtual void start(Field_info*);
+  virtual void start(const Field_info*);
 
   // stop function - stop the animation accordint to m_stop
-  virtual void stop(Field_info*);
+  virtual void stop(const Field_info*);
 
   /*! Invoke every tick while the sensor is enabled */
   virtual bool update_time(Scene_time current_time);

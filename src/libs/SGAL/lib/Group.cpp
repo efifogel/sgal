@@ -451,7 +451,7 @@ void Group::remove_touch_sensor(Shared_touch_sensor touch_sensor)
 }
 
 //! \brief processes change of field.
-void Group::field_changed(Field_info* field_info)
+void Group::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case SPHERE_BOUND:

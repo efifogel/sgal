@@ -104,7 +104,7 @@ Attribute_list Exact_coord_minkowski::get_attributes()
 #endif
 
 //! \brief transforms the input vertices.
-void Exact_coord_minkowski::execute(Field_info* field_info)
+void Exact_coord_minkowski::execute(const Field_info* field_info)
 {
   if (!m_enabled) return;
 

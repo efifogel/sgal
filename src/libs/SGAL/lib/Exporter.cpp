@@ -54,7 +54,7 @@ Exporter::Exporter(Boolean proto) :
 Exporter::~Exporter() {}
 
 //! \brief executes the engine---writes the content of the scene graph to a file.
-void Exporter::execute(Field_info* /* field_info */)
+void Exporter::execute(const Field_info* /* field_info */)
 {
   if (!m_scene_graph) return;
   std::string filename =

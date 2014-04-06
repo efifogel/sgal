@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_BINDABLE_NODE_HPP
@@ -100,7 +97,7 @@ public:
   void set_is_bound(bool is_bound);
 
   /*! Bind or unbinds this node */
-  void set_bind(Field_info* field_info);
+  void set_bind(const Field_info* field_info);
 
 protected:
   /*! Set this field to bind the node */

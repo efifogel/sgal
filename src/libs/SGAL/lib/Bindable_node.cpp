@@ -135,7 +135,7 @@ void Bindable_node::set_is_bound(Boolean is_bound)
  * \param field_info
  * If set_bind is true, push this node onto the top of the stack
  */
-void Bindable_node::set_bind(Field_info * /* field_info */)
+void Bindable_node::set_bind(const Field_info * /* field_info */)
 {
   if (m_set_bind) {
     Bindable_node * top = top_stack();

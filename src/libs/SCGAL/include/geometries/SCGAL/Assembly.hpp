@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Assembly.hpp 13463 2012-06-04 15:22:36Z efif $
-// $Revision: 13463 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_ASSEMBLY_HPP
@@ -201,27 +198,27 @@ protected:
   }
 
   /*! Solve the puzzle. */
-  void solve(Field_info* field_info);
+  void solve(const Field_info* field_info);
 
   /* Process change of the flag that indicates whether to draw the alternate
    * geometry.
    */
-  void draw_alt_changed(Field_info* field_info);
+  void draw_alt_changed(const Field_info* field_info);
 
   /* Process change of the flag that indicates whether to increment the
    * alternate geometry.
    */
-  void inc_alt_changed(Field_info* field_info);
+  void inc_alt_changed(const Field_info* field_info);
 
   /* Process change of the flag that indicates whether  to draw the Gausian
    * maps of the Minkowski sums of the parts.
    */
-  void draw_aos_minkowski_sums_changed(Field_info* field_info);
+  void draw_aos_minkowski_sums_changed(const Field_info* field_info);
 
   /* Process change of the flag that indicates whether  to increment
    * the Minkowski sums of the parts.
    */
-  void inc_minkowski_sums_changed(Field_info* field_info);
+  void inc_minkowski_sums_changed(const Field_info* field_info);
 
   /*! Find the next halfedge on the silhouette starting from a halfedge on the
    * silhouette.

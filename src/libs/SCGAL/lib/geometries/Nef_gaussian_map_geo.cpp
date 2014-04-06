@@ -894,7 +894,7 @@ void Nef_gaussian_map_geo::print_stat()
 }
 
 //! \brief raises the flag that indicates that the sphere bound changed.
-void Nef_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
+void Nef_gaussian_map_geo::draw_changed(const Field_info* /* field_info */)
 {
   m_draw_primal = !m_draw_dual;
   m_dirty_sphere_bound = true;
@@ -910,7 +910,7 @@ void Nef_gaussian_map_geo::draw_changed(Field_info* /* field_info */)
 }
 
 //! \brief increase the vertex index.
-void Nef_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
+void Nef_gaussian_map_geo::increase_vertex_index(const Field_info* field_info)
 {
   m_marked_vertex_index++;
   if (m_marked_vertex_index == m_nef_gaussian_map.number_of_sfaces())
@@ -918,7 +918,7 @@ void Nef_gaussian_map_geo::increase_vertex_index(Field_info* field_info)
 }
 
 //! \brief increase the face index.
-void Nef_gaussian_map_geo::increase_edge_index(Field_info* field_info)
+void Nef_gaussian_map_geo::increase_edge_index(const Field_info* field_info)
 {
   m_marked_edge_index++;
   if (m_marked_edge_index == m_nef_gaussian_map.number_of_sedges())
@@ -926,7 +926,7 @@ void Nef_gaussian_map_geo::increase_edge_index(Field_info* field_info)
 }
 
 //! \brief increases the face index.
-void Nef_gaussian_map_geo::increase_facet_index(Field_info* field_info)
+void Nef_gaussian_map_geo::increase_facet_index(const Field_info* field_info)
 {
   m_marked_facet_index++;
   if (m_marked_facet_index == m_nef_gaussian_map.number_of_svertices())

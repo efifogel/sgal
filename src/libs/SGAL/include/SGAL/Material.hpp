@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \brief The material container represents a material
@@ -142,7 +139,7 @@ public:
   Float get_transparency() const;
 
   /*! The callback invoked when the material chages. */
-  virtual void material_changed(Field_info* field_info = NULL);
+  virtual void material_changed(const Field_info* field_info = NULL);
 
   /*! Apply the material. */
   virtual void draw(Face which_face, Context* ctx);

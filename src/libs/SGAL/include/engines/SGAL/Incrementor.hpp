@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Incrementor.hpp 6147 2008-04-02 15:03:46Z efif $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -86,7 +83,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Increment the counter. */
-  virtual void execute(Field_info* field_info);
+  virtual void execute(const Field_info* field_info);
 
   /*! Obtain the minimum value. */
   Int get_min_value() const;

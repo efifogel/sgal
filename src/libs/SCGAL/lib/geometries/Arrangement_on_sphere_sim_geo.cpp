@@ -421,30 +421,34 @@ void Arrangement_on_sphere_sim_geo::identify()
 { std::cout << "Agent: Arrangement_on_sphere_sim_geo" << std::endl; }
 
 /*! \brief resumes the simulation. */
-void Arrangement_on_sphere_sim_geo::resume(Field_info* /* field_info */)
+void Arrangement_on_sphere_sim_geo::resume(const Field_info* /* field_info */)
 { Tick_event::doregister(this); }
 
 /*! \brief suspends the simulation. */
-void Arrangement_on_sphere_sim_geo::suspend(Field_info* /* field_info */)
+void Arrangement_on_sphere_sim_geo::suspend(const Field_info* /* field_info */)
 { Tick_event::unregister(this); }
 
 /*! Process change of simulation time. */
-void Arrangement_on_sphere_sim_geo::time_changed(Field_info* /* field_info */)
+void Arrangement_on_sphere_sim_geo::
+time_changed(const Field_info* /* field_info */)
 { m_label = static_cast<Uint>(m_time * (m_num_labels - 1)); }
 
 /*! \brief increases the vertex index. */
 void
-Arrangement_on_sphere_sim_geo::increase_vertex_label(Field_info* field_info)
+Arrangement_on_sphere_sim_geo::
+increase_vertex_label(const Field_info* /* field_info */)
 { ++m_vertex_label; }
 
 /*! \brief increases the face index. */
 void
-Arrangement_on_sphere_sim_geo::increase_edge_label(Field_info* field_info)
+Arrangement_on_sphere_sim_geo::
+increase_edge_label(const Field_info* /* field_info */)
 { ++m_edge_label; }
 
 /*! \brief increases the face index. */
 void
-Arrangement_on_sphere_sim_geo::increase_face_label(Field_info* field_info)
+Arrangement_on_sphere_sim_geo::
+increase_face_label(const Field_info* /* field_info */)
 { ++m_face_label; }
 
 /*! \brief creates the renderers. */

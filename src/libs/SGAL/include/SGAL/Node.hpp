@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11857 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_NODE_HPP
@@ -121,7 +118,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Set the flag that indicates that the sphere bound should be cleaned.*/
-  void sphere_bound_changed(Field_info* field_info = NULL);
+  void sphere_bound_changed(const Field_info* field_info = NULL);
 
 protected:
   /*! The sphere bound of the node. */

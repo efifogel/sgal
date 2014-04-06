@@ -98,7 +98,7 @@ public:
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Execute the engine---write the content of the scene graph to a file. */
-  virtual void execute(Field_info* field_info);
+  virtual void execute(const Field_info* field_info);
 
   /*! Set the name of the file where the snapshot is written to.
    */

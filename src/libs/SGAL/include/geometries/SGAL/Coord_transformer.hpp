@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7780 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_COORD_TRANSFORMER_HPP
@@ -103,13 +100,13 @@ public:
   void apply();
 
   /*! Translate the input vertices. */
-  void translate(Field_info* field_info = NULL);
+  void translate(const Field_info* field_info = NULL);
 
   /*! Rotate the input vertices. */
-  void rotate(Field_info* field_info = NULL);
+  void rotate(const Field_info* field_info = NULL);
 
   /*! Transform the input vertices. */
-  void execute(Field_info* field_info = NULL);
+  void execute(const Field_info* field_info = NULL);
 
   /*! Set the rotation field. */
   void set_rotation(const Rotation& rotation);

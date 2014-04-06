@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FONT_STYLE_HPP
@@ -113,7 +110,7 @@ public:
   Font * get_font();
 
   /*! */
-  virtual void on_field_change(Field_info * field_info = NULL);
+  virtual void on_field_change(const Field_info * field_info = NULL);
 
   /*! Set the flag that indicates whether the font is accentuated
    * \parameter b indicates whether the font is accentuated

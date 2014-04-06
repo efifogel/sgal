@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_EXECUTION_FUNCTION_HPP
@@ -34,7 +31,7 @@ class Container;
 class Field_info;
 
 //! type definition of a container execution function - used with engines
-typedef void (Container::* Execution_function)(Field_info*);
+typedef void (Container::* Execution_function)(const Field_info*);
 
 SGAL_END_NAMESPACE
 

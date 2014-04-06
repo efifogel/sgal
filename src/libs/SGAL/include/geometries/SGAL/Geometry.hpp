@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GEOMETRY_HPP
@@ -110,7 +107,7 @@ public:
   }
 
   /*! Set the flag that indicates that the sphere bound should be cleaned.*/
-  void sphere_bound_changed(Field_info* field_info = NULL);
+  void sphere_bound_changed(const Field_info* field_info = NULL);
 
   /*! Return true if the current matrix contains scaling.
    * \todo has_scale() doesn't belong to Geometry!

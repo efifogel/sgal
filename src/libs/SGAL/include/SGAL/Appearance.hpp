@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 10977 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_APPEARANCE_HPP
@@ -342,22 +339,22 @@ public:
   Boolean is_transparent() const;
 
   /*! Notify that the material has changed. */
-  void material_changed(Field_info* field_info = NULL);
+  void material_changed(const Field_info* field_info = NULL);
 
   /*! Notify that the back material has changed. */
-  void back_material_changed(Field_info* field_info = NULL);
+  void back_material_changed(const Field_info* field_info = NULL);
 
   /*! Notify that the texture has changed. */
-  void texture_changed(Field_info* field_info = NULL);
+  void texture_changed(const Field_info* field_info = NULL);
 
   /*! Notify that the halftone has changed. */
-  void halftone_changed(Field_info* field_info = NULL);
+  void halftone_changed(const Field_info* field_info = NULL);
 
   /*! Notify that the texture generation has changed. */
-  void tex_gen_changed(Field_info* field_info = NULL);
+  void tex_gen_changed(const Field_info* field_info = NULL);
 
   /*! Process change of field. */
-  void field_changed(Field_info* field_info);
+  void field_changed(const Field_info* field_info);
 
   /*! Clean the material attribute. */
   void clean_material();

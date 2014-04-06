@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_SMALLEST_STABBING_CUBE_HPP
@@ -121,7 +118,7 @@ public:
   //@}
 
   /*! Transform the input vertices. */
-  void execute(Field_info* field_info = NULL);
+  void execute(const Field_info* field_info = NULL);
 
 protected:
 

@@ -445,7 +445,7 @@ void Transform::get_center(Vector3f& center)
 /*! \brief raises the matrix dirty flag, and sets the flag that indicates that
  * rendering is required.
  */
-void Transform::parts_changed(Field_info* /* field_info */)
+void Transform::parts_changed(const Field_info* /* field_info */)
 {
   m_dirty_matrix = true;
   m_dirty_inverse = true;
@@ -477,7 +477,7 @@ void Transform::isect(Isect_action* isect_action)
 }
 
 //! \brief resets the transform.
-void Transform::reset(Field_info* /* field_info */)
+void Transform::reset(const Field_info* /* field_info */)
 {
   set_translation(s_def_translation);
   set_rotation(s_def_rotation);

@@ -250,7 +250,7 @@ void Piece::generate_coord_indices()
 }
 
 /*! \brief processes change of structure. */
-void Piece::structure_changed(Field_info* field_info)
+void Piece::structure_changed(const Field_info* field_info)
 {
   clear();
   field_changed(field_info);

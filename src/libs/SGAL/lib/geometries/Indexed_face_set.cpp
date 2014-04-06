@@ -1552,7 +1552,7 @@ Indexed_face_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 }
 
 //! \brief Process change of field.
-void Indexed_face_set::field_changed(Field_info* field_info)
+void Indexed_face_set::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case COORD_ARRAY: coord_point_changed(); break;

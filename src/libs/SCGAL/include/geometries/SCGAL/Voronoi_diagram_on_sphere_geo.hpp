@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Voronoi_diagram_on_sphere_geo.hpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -144,7 +141,7 @@ public:
 
   /// \name field handlers
   //@{
-  Vertex_style* site_style_handle(Field_info*) { return &m_site_style; }
+  Vertex_style* site_style_handle(const Field_info*) { return &m_site_style; }
   //@}
 
   /*! Set the node attributes. */

@@ -1,0 +1,33 @@
+#VRML V2.0 utf8
+DEF transform Transform {
+  translation 1 0 0
+}
+DEF group Group {
+  children [
+    DEF trans Transform {
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { }
+	  }
+	  geometry Box {}
+	}
+	DEF ts TouchSensor {}
+       ]
+    }
+   ]
+}
+DEF script Script {
+  eventIn SFBool translate
+  eventOut SFVec3f translation
+  url "javascript:
+    function translate(value, timestamp) {
+      if (value) {
+        translation[0] = 0.1;
+        translation[1] = 0;
+        translation[2] = 0;
+      }
+    }"
+}
+ROUTE ts.isOver TO script.translate
+ROUTE script.translation TO trans.set_translation

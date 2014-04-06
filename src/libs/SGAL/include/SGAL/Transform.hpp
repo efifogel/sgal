@@ -152,7 +152,7 @@ public:
   void set_center(Float v0, Float v1, Float v2);
   void get_center(Float* v0, Float* v1, Float* v2);
 
-  void parts_changed(Field_info* field_info = NULL);
+  void parts_changed(const Field_info* field_info = NULL);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -211,7 +211,7 @@ private:
 
   void clean_matrix();
 
-  void reset(Field_info* field_info);
+  void reset(const Field_info* field_info);
 };
 
 #if defined(_MSC_VER)

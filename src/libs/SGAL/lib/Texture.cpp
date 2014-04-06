@@ -116,7 +116,7 @@ Texture::Texture(Boolean proto) :
 Texture::~Texture() {}
 
 //! \brief sets the wrapping factor on the S.
-void Texture::wrap_s_changed(Field_info* /* field_info */)
+void Texture::wrap_s_changed(const Field_info* /* field_info */)
 {
   set_wrap_s(m_repeat_s);
   m_dirty = true;
@@ -124,7 +124,7 @@ void Texture::wrap_s_changed(Field_info* /* field_info */)
 }
 
 //! \brief sets the wrapping factor on the T.
-void Texture::wrap_t_changed(Field_info* /* field_info */)
+void Texture::wrap_t_changed(const Field_info* /* field_info */)
 {
   set_wrap_t(m_repeat_t);
   m_dirty = true;
@@ -132,7 +132,7 @@ void Texture::wrap_t_changed(Field_info* /* field_info */)
 }
 
 //! \brief sets the wrapping factor on the Q.
-void Texture::wrap_r_changed(Field_info* /* field_info */)
+void Texture::wrap_r_changed(const Field_info* /* field_info */)
 {
   set_wrap_r(m_repeat_r);
   m_dirty = true;
@@ -150,7 +150,7 @@ void Texture::set_min_filter(const std::string& value)
 }
 
 //! \brief notifies that the minimization filter has changed.
-void Texture::min_filter_changed(Field_info* /* field_info */)
+void Texture::min_filter_changed(const Field_info* /* field_info */)
 {
   set_min_filter(m_min_filter_str);
   m_dirty = true;
@@ -168,7 +168,7 @@ void Texture::set_mag_filter(const std::string& value)
 }
 
 //! \brief notifies that the magnification filter has changed.
-void Texture::mag_filter_changed(Field_info* /* field_info */)
+void Texture::mag_filter_changed(const Field_info* /* field_info */)
 {
   set_mag_filter(m_mag_filter_str);
   m_dirty = true;

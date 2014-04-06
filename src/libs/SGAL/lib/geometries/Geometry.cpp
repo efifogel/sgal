@@ -121,7 +121,7 @@ void Geometry::set_attributes(Element* elem)
 /*! \brief sets the flag that indicates that the sphere bound should be
  * cleaned.
  */
-void Geometry::sphere_bound_changed(Field_info* /* field_info */)
+void Geometry::sphere_bound_changed(const Field_info* /* field_info */)
 { m_dirty_sphere_bound = true; }
 
 

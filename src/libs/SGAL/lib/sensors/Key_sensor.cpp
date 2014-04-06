@@ -161,7 +161,7 @@ void Key_sensor::handle(Keyboard_event * event)
  * active key sensor inactive).
  * At most one KeySensor can be active at any given time.
  */
-void Key_sensor::activate(Field_info* /* field_info */)
+void Key_sensor::activate(const Field_info* /* field_info */)
 {
   // Get the current active key-sensor, and set this as the new active one:
   //! \todo use the execution coordinator instead of the scene graph

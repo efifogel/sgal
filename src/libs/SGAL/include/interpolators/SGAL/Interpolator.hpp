@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Interpolator.hpp 6147 2008-04-02 15:03:46Z efif $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -90,7 +87,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! The interpolation execution function */
-  virtual void execute(Field_info* field_info) = 0;
+  virtual void execute(const Field_info* field_info) = 0;
 
   /*! Obtain the range keys */
   const Float_array& get_keys() const { return m_keys; }

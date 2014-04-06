@@ -109,11 +109,8 @@ public:
   void add_field_info(Field_rule rule, Field_type type,
                       const std::string& name, const std::string& value);
 
-  // virtual void add_field(const std::string& name, const std::string& type,
-  //                        Container* value, Node* field);
-
   /*! Execute the script function according to the event. */
-  virtual void execute(Field_info* field_info);
+  virtual void execute(const Field_info* field_info);
 
 protected:
   /*! Obtain the tag (type) of the container. */

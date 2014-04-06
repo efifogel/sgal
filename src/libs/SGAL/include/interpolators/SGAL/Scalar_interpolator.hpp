@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -96,7 +93,7 @@ public:
 
   // The execution function - executes the intepolation for each cascade of
   // m_fraction, updated m_value and activate Cascade on it.
-  virtual void execute(Field_info*);
+  virtual void execute(const Field_info*);
 
 protected:
   std::vector<Float> m_values;

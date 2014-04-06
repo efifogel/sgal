@@ -455,14 +455,14 @@ Boolean Shape::detach_context(Context* context)
 }
 
 //! \brief processes change of appearance.
-void Shape::appearance_changed(Field_info* /* field_info. */)
+void Shape::appearance_changed(const Field_info* /* field_info. */)
 {
   m_dirty = true;
   m_dirty_appearance = true;
 }
 
 //! \brief processes change of geometry.
-void Shape::geometry_changed(Field_info* field_info)
+void Shape::geometry_changed(const Field_info* field_info)
 {
   // Observe that the observer, being a pair of this container object and the
   // field_info argument, is automatically unregistered as an observer
@@ -507,7 +507,7 @@ void Shape::set_visible(Boolean flag)
 }
 
 //! \brief processes change of field.
-void Shape::field_changed(Field_info* field_info)
+void Shape::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case GEOMETRY:

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11857 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TOUCH_SENSOR_HPP
@@ -164,7 +161,7 @@ public:
 
   // This function is executed when the exActivate field is cascaded from
   // another field.
-  virtual void external_activate(Field_info*);
+  virtual void external_activate(const Field_info*);
 
   /*! Register the mouse and mostion events. */
   void register_events();

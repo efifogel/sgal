@@ -138,7 +138,7 @@ protected:
   /*! Process change of points.
    * \param field_info
    */
-  void point_changed(Field_info* field_info);
+  void point_changed(const Field_info* field_info);
 
 private:
   /*! The tag that identifies this container type. */

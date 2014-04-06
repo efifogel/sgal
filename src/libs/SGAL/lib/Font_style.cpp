@@ -96,7 +96,7 @@ void Font_style::set_left_to_right(Boolean l2r) { m_left_to_right = l2r; }
 void Font_style::set_top_to_bottom(Boolean t2b) { m_top_to_bottom = t2b; }
 
 /*! \breif */
-void Font_style::on_field_change(Field_info* /* field_info */)
+void Font_style::on_field_change(const Field_info* /* field_info */)
 {
   m_dirty = true;
   set_rendering_required();

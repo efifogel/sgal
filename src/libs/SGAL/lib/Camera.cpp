@@ -156,7 +156,7 @@ void Camera::set_field_of_view(float fov)
 float Camera::get_field_of_view() { return m_field_of_view; }
 
 /*! \brief */
-void Camera::update_field_of_view(Field_info* /* info */)
+void Camera::update_field_of_view(const Field_info* /* info */)
 {
   m_frustum.set_fov(m_field_of_view);
   set_rendering_required();
@@ -197,7 +197,7 @@ void Camera::set_aspect_ratio(const Context* context)
 }
 
 /*! \brief */
-void Camera::update_matrix_requiered(Field_info* /* info */)
+void Camera::update_matrix_requiered(const Field_info* /* info */)
 {
 #if 0
   m_dirty_matrix = true;

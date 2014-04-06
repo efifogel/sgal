@@ -183,7 +183,7 @@ void Sphere_plane_intersection::set_attributes(Element* elem)
 }
 
 /*! \brief executes the engine */
-void Sphere_plane_intersection::execute(Field_info* /*! field_info */)
+void Sphere_plane_intersection::execute(const Field_info* /*! field_info */)
 {
   Field* circle_trans = get_field(CIRCLE_TRANSLATION);
   Field* circle_rot = get_field(CIRCLE_ROTATION);

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TEXTURE_HPP
@@ -135,7 +132,7 @@ public:
   Texture::Wrap get_wrap_s() const;
 
   /*! Notify that the wrapping factor on the S changed. */
-  void wrap_s_changed(Field_info* field_info);
+  void wrap_s_changed(const Field_info* field_info);
 
   /*! Set the wrapping factor on the T. */
   void set_wrap_t(Texture::Wrap wrap);
@@ -147,7 +144,7 @@ public:
   Texture::Wrap get_wrap_t() const;
 
   /*! Notify that the wrapping factor on the T changed. */
-  void wrap_t_changed(Field_info* field_info);
+  void wrap_t_changed(const Field_info* field_info);
 
   /*! Set the wrapping factor on the R. */
   void set_wrap_r(Texture::Wrap wrap);
@@ -159,7 +156,7 @@ public:
   Texture::Wrap get_wrap_r() const;
 
   /*! Notify that the wrapping factor on the R changed. */
-  void wrap_r_changed(Field_info* field_info);
+  void wrap_r_changed(const Field_info* field_info);
 
   /*! Set the minimization filter. */
   void set_min_filter(Texture::Min_filter min_filter);
@@ -168,7 +165,7 @@ public:
   void set_min_filter(const std::string& filter);
 
   /*! Set the minimization filter. */
-  void min_filter_changed(Field_info* field_info);
+  void min_filter_changed(const Field_info* field_info);
 
   /*! Obtain the minimization filter. */
   Texture::Min_filter get_min_filter() const;
@@ -180,7 +177,7 @@ public:
   void set_mag_filter(const std::string& filter);
 
   /*! Set the magnification filter. */
-  void mag_filter_changed(Field_info* field_info);
+  void mag_filter_changed(const Field_info* field_info);
 
   /*! Obtain the magnification filter. */
   Texture::Mag_filter get_mag_filter() const;

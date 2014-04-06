@@ -140,7 +140,7 @@ void Incrementor::set_attributes(Element* elem)
 }
 
 /*! \brief executes the engine */
-void Incrementor::execute(Field_info* /*! field_info */)
+void Incrementor::execute(const Field_info* /*! field_info */)
 {
   if (m_value == m_max_value) m_value = m_min_value;
   else ++m_value;

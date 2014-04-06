@@ -583,7 +583,7 @@ Container_proto* Extrusion::get_prototype()
 }
 
 //! \brief processes change of structure.
-void Extrusion::structure_changed(Field_info* field_info)
+void Extrusion::structure_changed(const Field_info* field_info)
 {
   clear();
   field_changed(field_info);

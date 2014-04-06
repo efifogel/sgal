@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_COORD_MINKOWSKI_HPP
@@ -93,7 +90,7 @@ public:
   //@}
 
   /*! Transform the input vertices. */
-  void execute(Field_info* field_info = NULL);
+  void execute(const Field_info* field_info = NULL);
 
   /*! Set the coordinate-set node. */
   void set_coord_array1(Shared_coord_array coord);

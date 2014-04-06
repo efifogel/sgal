@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_sphere_sim_geo.hpp 7789 2009-07-19 12:40:30Z efif $
-// $Revision: 7789 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -409,13 +406,13 @@ private:
   virtual void identify();
 
   /*! Process change of simulation time */
-  void time_changed(Field_info* field_info);
+  void time_changed(const Field_info* field_info);
 
   /*! Resume the simulation */
-  void resume(Field_info* field_info);
+  void resume(const Field_info* field_info);
 
   /*! Suspend the simulation */
-  void suspend(Field_info* field_info);
+  void suspend(const Field_info* field_info);
 
   /*! Draw the labeled vertex */
   void draw_labeled_vertex();
@@ -429,17 +426,17 @@ private:
   /*! Increase the vertex label
    * \param field_info
    */
-  void increase_vertex_label(Field_info* field_info = NULL);
+  void increase_vertex_label(const Field_info* field_info = NULL);
 
   /*! Increase the edge label
    * \param field_info
    */
-  void increase_edge_label(Field_info* field_info = NULL);
+  void increase_edge_label(const Field_info* field_info = NULL);
 
   /*! Increase the face label
    * \param field_info
    */
-  void increase_face_label(Field_info* field_info = NULL);
+  void increase_face_label(const Field_info* field_info = NULL);
 
   /*! Create the renderers */
   void create_renderers();

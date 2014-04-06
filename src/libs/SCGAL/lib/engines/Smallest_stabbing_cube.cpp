@@ -181,7 +181,7 @@ Container_proto* Smallest_stabbing_cube::get_prototype()
 /*! \brief transforms the input vertices and store the results in the output
  * vertices
  */
-void Smallest_stabbing_cube::execute(Field_info* /* field_info */)
+void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
 {
   if (!m_enabled)
     return;

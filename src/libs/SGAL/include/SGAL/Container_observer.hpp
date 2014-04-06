@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 11857 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -41,7 +38,7 @@ public:
   virtual ~Container_observer() {}
 
   /*! Process change of field */
-  virtual void field_changed(Field_info* /* field_info */) {}
+  virtual void field_changed(const Field_info* /* field_info */) {}
 };
 
 SGAL_END_NAMESPACE

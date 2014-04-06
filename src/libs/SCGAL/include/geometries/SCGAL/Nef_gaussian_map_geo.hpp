@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7803 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -540,7 +537,7 @@ protected:
   void clean_polyhedron();
 
   /*! Raise the flag that indicates that the sphere bound changed. */
-  void draw_changed(Field_info* field_info = NULL);
+  void draw_changed(const Field_info* field_info = NULL);
 
   /*! Draw the intermediate polyhedron (for debugging purpose). */
   void draw_polyhedron(Draw_action* action);
@@ -591,13 +588,13 @@ protected:
   const Vector3f& get_dual_sphere_color() const;
 
   /*! Increase the vertex index. */
-  void increase_vertex_index(Field_info* field_info = NULL);
+  void increase_vertex_index(const Field_info* field_info = NULL);
 
   /*! Increase the edge index. */
-  void increase_edge_index(Field_info* field_info = NULL);
+  void increase_edge_index(const Field_info* field_info = NULL);
 
   /*! Increase the face index. */
-  void increase_facet_index(Field_info* field_info = NULL);
+  void increase_facet_index(const Field_info* field_info = NULL);
 
   /*! Obtain the index of the marked vertex. */
   Uint marked_vertex_index() const { return m_marked_vertex_index; }

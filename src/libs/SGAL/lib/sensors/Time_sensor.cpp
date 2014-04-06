@@ -242,7 +242,7 @@ Container_proto* Time_sensor::get_prototype()
  * Updates m_is_active and cascade it if needed
  * @param pointer (in) to the cascaded field's field info - not used for now
  */
-void Time_sensor::execute_enabled(Field_info*)
+void Time_sensor::execute_enabled(const Field_info*)
 {
   //! \todo Fix the response fumction of the Time_sensor::enabled field
 #if 0
@@ -267,7 +267,7 @@ void Time_sensor::execute_enabled(Field_info*)
  * Used to start the animation in m_start value in seconds
  * @param pointer (in) to the cascaded field's field info - not used for now
  */
-void Time_sensor::start(Field_info *)
+void Time_sensor::start(const Field_info *)
 {
   m_start_time = m_time + m_start;
   Field* field = get_field(START_TIME);
@@ -278,7 +278,7 @@ void Time_sensor::start(Field_info *)
  * Used to stop the animation in m_stop value in seconds
  * @param pointer (in) to the cascaded field's field info - not used for now
  */
-void Time_sensor::stop(Field_info *)
+void Time_sensor::stop(const Field_info *)
 {
   m_stop_time = m_time + m_stop;
   Field* field = get_field(STOP_TIME);

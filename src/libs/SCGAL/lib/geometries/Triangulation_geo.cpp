@@ -291,7 +291,7 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
 }
 
 //! \brief updates the internal representation in a cascade chain.
-void Triangulation_geo::coord_changed(SGAL::Field_info* /* field_info */)
+void Triangulation_geo::coord_changed(const Field_info* /* field_info */)
 {
   SGAL_TRACE_CODE(SGAL::Trace::POLYHEDRON,
                   for (Uint i = 0; i < m_coord_array->size(); ++i)

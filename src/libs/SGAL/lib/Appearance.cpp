@@ -252,7 +252,7 @@ void Appearance::set_material(Shared_material material)
 }
 
 /*! \brief processes change of material. */
-void Appearance::material_changed(Field_info* /* field_info */)
+void Appearance::material_changed(const Field_info* /* field_info */)
 {
   if (m_material->get_transparency() != 0.0f) {
     set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
@@ -265,7 +265,7 @@ void Appearance::material_changed(Field_info* /* field_info */)
 }
 
 /*! \brief notifies that the back material has changed. */
-void Appearance::back_material_changed(Field_info* /* field_info */)
+void Appearance::back_material_changed(const Field_info* /* field_info */)
 {
   //! \todo need to unregister the old back material.
   m_pending.on_bit(Gfx::BACK_MATERIAL);
@@ -488,7 +488,7 @@ Boolean Appearance::is_transparent() const
 }
 
 /*! \brief notifies that the texture has been changed. */
-void Appearance::texture_changed(Field_info* /* field_info */)
+void Appearance::texture_changed(const Field_info* /* field_info */)
 {
   m_pending.on_bit(Gfx::TEXTURE);
   m_override.on_bit(Gfx::TEXTURE);
@@ -500,7 +500,7 @@ void Appearance::texture_changed(Field_info* /* field_info */)
 }
 
 /*! \brief notifies that halftone has been changed. */
-void Appearance::halftone_changed(Field_info* /* field_info */)
+void Appearance::halftone_changed(const Field_info* /* field_info */)
 {
   m_pending.on_bit(Gfx::HALFTONE_PATTERN);
   m_override.on_bit(Gfx::HALFTONE_PATTERN);
@@ -513,7 +513,7 @@ void Appearance::halftone_changed(Field_info* /* field_info */)
 }
 
 /*! \brief notifies that the texture generation has changed. */
-void Appearance::tex_gen_changed(Field_info* /* field_info */)
+void Appearance::tex_gen_changed(const Field_info* /* field_info */)
 {
   m_pending.on_bit(Gfx::TEX_GEN);
   m_override.on_bit(Gfx::TEX_GEN);
@@ -837,7 +837,7 @@ void Appearance::clean_tex_gen()
 }
 
 //! \brief Process change of field.
-void Appearance::field_changed(Field_info* field_info)
+void Appearance::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
    case MATERIAL:

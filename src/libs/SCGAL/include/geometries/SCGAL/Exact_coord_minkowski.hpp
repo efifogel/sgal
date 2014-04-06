@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 9188 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_COORD_MINKOWSKI_HPP
@@ -95,7 +92,7 @@ public:
    * vertices.
    * \param field_info the field information record.
    */
-  void execute(Field_info* field_info = NULL);
+  void execute(const Field_info* field_info = NULL);
 
 protected:
   /*! Obtain the tag (type) of the container. */

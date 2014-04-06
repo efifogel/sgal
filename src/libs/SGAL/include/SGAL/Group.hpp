@@ -161,7 +161,7 @@ public:
   /*! Process change of field.
    * \param field_info The information record of the field that changed.
    */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   virtual Boolean attach_context(Context* context );
 

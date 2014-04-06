@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1366 $
-//
 // Author(s)     : Ophir Setter         <ophir.setter@gmail.com>
 
 /*! \file
@@ -96,7 +93,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! The interpolation execution function */
-  virtual void execute(Field_info* field_info);
+  virtual void execute(const Field_info* field_info);
 
   /*! Obtain the domain values */
   const Vector3f_array& get_values() const { return m_values; }

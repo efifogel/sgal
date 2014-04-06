@@ -170,7 +170,7 @@ Container_proto* Coord_minkowski::get_prototype()
 /*! \brief transforms the input vertices and store the results in the output
  * vertices
  */
-void Coord_minkowski::execute(Field_info* /* field_info */)
+void Coord_minkowski::execute(const Field_info* /* field_info */)
 {
   if (!m_enabled) return;
   if (!m_coord_array1) return;

@@ -212,7 +212,7 @@ void Touch_sensor::set_enabled(bool enabled)
 /*! \brief this function is executed when the ex_activate field is cascaded from
  * another field
  */
-void Touch_sensor::external_activate(Field_info *)
+void Touch_sensor::external_activate(const Field_info *)
 {
   // Activate cascade on routed_node and touch_time only for mouse up
   if (m_ex_activate) return;

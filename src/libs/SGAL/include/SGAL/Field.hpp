@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FIELD_HPP
@@ -57,7 +54,7 @@ protected:
   Container* m_container;
 
   /*! The field info record. */
-  Field_info* m_field_info;
+  const Field_info* m_field_info;
 
   /*! A list of connected fields. */
   Field_list m_connected_fields;
@@ -72,13 +69,13 @@ protected:
 
 public:
   /*! Constructor */
-  Field(Container* container, Field_info* field_info);
+  Field(Container* container, const Field_info* field_info);
 
   /*! Destructor. */
   virtual ~Field();
 
   /*! Obtain the field info. */
-  Field_info* get_field_info() const;
+  const Field_info* get_field_info() const;
 
   /*! Connect this field to the given field.
    * Inserts the given field to the connected fields list.
@@ -115,7 +112,7 @@ public:
 #endif
 
 /*! \brief obtains the field info. */
-inline Field_info* Field::get_field_info() const { return m_field_info; }
+inline const Field_info* Field::get_field_info() const { return m_field_info; }
 
 /*! \brief sets the blocked flag to ignore cascading. */
 inline void Field::set_blocked(Boolean blocked) { m_blocked = blocked; }

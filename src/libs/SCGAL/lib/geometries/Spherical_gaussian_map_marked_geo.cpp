@@ -833,7 +833,7 @@ void Spherical_gaussian_map_marked_geo::draw_aos_edges(Draw_action* action)
 
 //! \biref increases the vertex index.
 void Spherical_gaussian_map_marked_geo::
-increase_vertex_index(Field_info* /* field_info */)
+increase_vertex_index(const Field_info* /* field_info */)
 {
   m_marked_vertex_index++;
   if (m_marked_vertex_index == m_sgm->number_of_vertices())
@@ -843,7 +843,7 @@ increase_vertex_index(Field_info* /* field_info */)
 
 //! \biref increases the face index.
 void Spherical_gaussian_map_marked_geo::
-increase_edge_index(Field_info* /* field_info */)
+increase_edge_index(const Field_info* /* field_info */)
 {
   m_marked_edge_index++;
   if (m_marked_edge_index == m_sgm->number_of_edges())
@@ -853,7 +853,7 @@ increase_edge_index(Field_info* /* field_info */)
 
 //! \biref increases the face index.
 void Spherical_gaussian_map_marked_geo::
-increase_facet_index(Field_info* field_info)
+increase_facet_index(const Field_info* field_info)
 {
   m_marked_facet_index++;
   if (m_marked_facet_index == m_sgm->number_of_facets())

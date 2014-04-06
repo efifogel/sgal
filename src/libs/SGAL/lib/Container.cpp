@@ -51,33 +51,33 @@ Container::~Container()
 //! \brief adds a field with the given id.
 Field* Container::add_field(Uint id)
 {
-  Field_info* field_info = get_field_info(id);
+  const Field_info* field_info = get_field_info(id);
   return add_field(field_info);
 }
 
 //! \brief adds a field with the given name.
-Field* Container::add_field(std::string name)
+Field* Container::add_field(const std::string& name)
 {
-  Field_info* field_info = get_field_info(name);
+  const Field_info* field_info = get_field_info(name);
   return add_field(field_info);
 }
 
 //! \brief obtains the field with the given id.
 Field* Container::get_field(Uint id)
 {
-  Field_info* field_info = get_field_info(id);
+  const Field_info* field_info = get_field_info(id);
   return get_field(field_info);
 }
 
 //! \brief obtains the field with the given name.
-Field* Container::get_field(std::string name)
+Field* Container::get_field(const std::string& name)
 {
-  Field_info* field_info = get_field_info(name);
+  const Field_info* field_info = get_field_info(name);
   return get_field(field_info);
 }
 
 //! \brief obtains a field by a field info.
-Field* Container::get_field(Field_info* field_info)
+Field* Container::get_field(const Field_info* field_info)
 {
   // Lock the fields critical section (will unlock autonmaticaly at the end of
   // function
@@ -89,7 +89,7 @@ Field* Container::get_field(Field_info* field_info)
 }
 
 //! \brief adds a field given its field-info.
-Field* Container::add_field(Field_info* field_info)
+Field* Container::add_field(const Field_info* field_info)
 {
   if (!field_info) return NULL;
 
@@ -203,13 +203,13 @@ void Container::process_content_changed()
   Observer_iter it;
   for (it = m_observers.begin(); it != m_observers.end(); ++it) {
     Container_observer* observer = (*it).first;
-    Field_info* field_info = (*it).second;
+    const Field_info* field_info = (*it).second;
     observer->field_changed(field_info);
   }
 }
 
 //! \brief Processes change of field.
-void Container::field_changed(Field_info* /* field_info */)
+void Container::field_changed(const Field_info* /* field_info */)
 { process_content_changed(); }
 
 SGAL_END_NAMESPACE

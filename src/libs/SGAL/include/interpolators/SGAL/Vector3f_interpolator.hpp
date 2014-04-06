@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -100,7 +97,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! The interpolation execution function. */
-  virtual void execute(Field_info* field_info);
+  virtual void execute(const Field_info* field_info);
 
   /*! Obtain the range keys. */
   const std::vector<Float>& get_keys() const;

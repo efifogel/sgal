@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -127,7 +124,7 @@ public:
   Uint get_stacks() const;
 
   /*! Process change of structure. */
-  void structure_changed(Field_info* field_info);
+  void structure_changed(const Field_info* field_info);
 
 protected:
   /*! The width of the ellipsoid */

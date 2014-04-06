@@ -67,7 +67,7 @@ void Coord_array::init_prototype()
 }
 
 //! \brief processes change of points.
-void Coord_array::point_changed(Field_info* field_info)
+void Coord_array::point_changed(const Field_info* field_info)
 {
   set_rendering_required();
   field_changed(field_info);

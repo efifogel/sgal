@@ -64,7 +64,7 @@ Container_proto* Node::get_prototype()
 }
 
 //! \brief sets the flag that indicates that the sphere bound should be cleaned.
-void Node::sphere_bound_changed(Field_info* /* field_info */)
+void Node::sphere_bound_changed(const Field_info* /* field_info */)
 { m_dirty_sphere_bound = true; }
 
 //! \brief obtains the sphere bound.

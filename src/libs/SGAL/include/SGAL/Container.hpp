@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14223 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONTAINER_HPP
@@ -84,9 +81,9 @@ private:
   int m_base;
 
 public:
-  typedef std::pair<Container_observer*, Field_info*>   Observer;
-  typedef std::list<Observer>                           Observer_list;
-  typedef Observer_list::iterator                       Observer_iter;
+  typedef std::pair<Container_observer*, const Field_info*>     Observer;
+  typedef std::list<Observer>                                   Observer_list;
+  typedef Observer_list::iterator                               Observer_iter;
 
   // Fields unique id enumeration
   enum {
@@ -159,7 +156,7 @@ public:
    * \param name the name of the field.
    * \return the added field or NULL if the requested name is invalid.
    */
-  Field* add_field(std::string name);
+  Field* add_field(const std::string& name);
 
   /*! Obtain a field by id.
    * \param id the requested field id.
@@ -171,7 +168,7 @@ public:
    * \param name the requested field name.
    * \return The obtained field pointer.
    */
-  Field* get_field(std::string name);
+  Field* get_field(const std::string& name);
 
   /*! Obtain a field info by id.
    * \param id the id of the field.
@@ -191,10 +188,10 @@ public:
    * \param field_info the requested field info.
    * \return The obtained field pointer.
    */
-  Field* get_field(Field_info* field_info);
+  Field* get_field(const Field_info* field_info);
 
   /*! Force re-rendering. */
-  virtual void set_rendering_required(Field_info* /* field_info */ = 0)
+  virtual void set_rendering_required(const Field_info* /* field_info */ = 0)
   {
     if (m_execution_coordinator)
       m_execution_coordinator->set_rendering_required();
@@ -207,7 +204,7 @@ public:
   /*! Process change of field.
    * \param field_info
    */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   /* Sets the execution coordinator.
    * \param ec
@@ -242,7 +239,7 @@ protected:
   Execution_coordinator* m_execution_coordinator;
 
 private:
-  typedef std::map<Field_info*,Field*>                  Field_map;
+  typedef std::map<const Field_info*,Field*>            Field_map;
   typedef Field_map::iterator                           Field_iter;
   typedef Field_map::const_iterator                     Field_const_iter;
 
@@ -255,7 +252,7 @@ private:
    * \param field_info the suitable field info for the field
    * \return the added field
    */
-  Field* add_field(Field_info* field_info);
+  Field* add_field(const Field_info* field_info);
 
   // A search structure to find Field_info's for fields. */
   Field_map m_fields;

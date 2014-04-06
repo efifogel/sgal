@@ -66,7 +66,7 @@ Boolean_operation::Boolean_operation(Boolean proto) :
 Boolean_operation::~Boolean_operation() {}
 
 //! \brief .
-void Boolean_operation::trigger_changed(Field_info* /* field_info */)
+void Boolean_operation::trigger_changed(const Field_info* /* field_info */)
 { execute(); }
 
 //! \brief executes the engine.

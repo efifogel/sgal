@@ -123,7 +123,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
      auto initial_value =
        value.empty() ? false : boost::lexical_cast<Boolean>(value);
      variant_field = initial_value;
-     add_field<SF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -131,7 +131,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     {
      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
      variant_field = initial_value;
-     add_field<SF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -140,7 +140,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
      auto initial_value =
        value.empty() ? 0 : boost::lexical_cast<Scene_time>(value);
      variant_field = initial_value;
-     add_field<SF_TIME>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_TIME>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -148,7 +148,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     {
      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int>(value);
      variant_field = initial_value;
-     add_field<SF_INT32>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_INT32>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -156,7 +156,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     {
      Vector2f initial_value(value);
      variant_field = initial_value;
-     add_field<SF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -164,7 +164,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     {
      Vector3f initial_value(value);
      variant_field = initial_value;
-     add_field<SF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -172,7 +172,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     {
      Vector3f initial_value(value);
      variant_field = initial_value;
-     add_field<SF_COLOR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_COLOR>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -180,7 +180,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     {
      Rotation initial_value(value);
      variant_field = initial_value;
-     add_field<SF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -188,7 +188,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     {
      std::string initial_value(value);
      variant_field = initial_value;
-     add_field<SF_STR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<SF_STR>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
@@ -242,7 +242,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
 }
 
 // \brief executes the suitable script function according to the event.
-void Script::execute(Field_info* field_info)
+void Script::execute(const Field_info* field_info)
 {
   // Get the Isolate instance of the V8 engine from the scene graph.
   v8::Isolate* isolate = m_scene_graph->get_isolate();
@@ -264,7 +264,7 @@ void Script::execute(Field_info* field_info)
   const std::string& str = field_info->get_name();
   v8::Handle<v8::String> name = v8::String::NewFromUtf8(isolate, str.c_str());
 
-  // Set an accessor for every vector field and output vector field
+  // Add an object for any non-scalar field.
   for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
     if (((field_info->get_rule() == RULE_OUT) ||
@@ -456,7 +456,15 @@ void Script::execute(Field_info* field_info)
         v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
                                 v8::String::kInternalizedString);
       v8::Handle<v8::Value> value = global->Get(field_name);
-      Field* field = get_field(field_info->get_id());
+
+      // Ignore any scalar field that has not been assigned by the script.
+      if (value->IsUndefined()) continue;
+
+      Field* field = get_field(field_info);
+
+      // Ignore any field that has not been routed out.
+      if (!field) continue;
+
       switch (field_info->get_type_id()) {
        case SF_BOOL:
         {
@@ -469,6 +477,7 @@ void Script::execute(Field_info* field_info)
        case SF_FLOAT:
         {
          Float tmp = static_cast<Float>(value->NumberValue());
+         if (std::isnan(tmp)) continue;         // Ignore the field if NaN
          Value_holder<Float> value_holder(&tmp);
          (field->get_value_holder())->delegate(value_holder);
         }
@@ -477,6 +486,7 @@ void Script::execute(Field_info* field_info)
        case SF_TIME:
         {
          Scene_time tmp = value->NumberValue();
+         if (std::isnan(tmp)) continue;         // Ignore the field if NaN
          Value_holder<Scene_time> value_holder(&tmp);
          (field->get_value_holder())->delegate(value_holder);
         }
@@ -502,9 +512,14 @@ void Script::execute(Field_info* field_info)
 
        case SF_VEC2F:
         {
+         v8::HandleScope scope(isolate);
          v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
          Vector2f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
                       static_cast<Float>(array->Get(1)->NumberValue()));
+
+        // Ignore the field if any one of the values is NaN
+         if (std::isnan(tmp[0]) || std::isnan(tmp[1])) continue;
+
          Value_holder<Vector2f> value_holder(&tmp);
          (field->get_value_holder())->delegate(value_holder);
         }
@@ -518,6 +533,11 @@ void Script::execute(Field_info* field_info)
          Vector3f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
                       static_cast<Float>(array->Get(1)->NumberValue()),
                       static_cast<Float>(array->Get(2)->NumberValue()));
+
+         // Ignore the field if any one of the values is NaN
+         if (std::isnan(tmp[0]) || std::isnan(tmp[1]) || std::isnan(tmp[0]))
+           continue;
+
          Value_holder<Vector3f> value_holder(&tmp);
          (field->get_value_holder())->delegate(value_holder);
         }

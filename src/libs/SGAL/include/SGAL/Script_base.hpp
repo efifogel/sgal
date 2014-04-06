@@ -160,7 +160,7 @@ public:
   void set_must_evaluate();
 
   /*! Execute the script function according to the event. */
-  virtual void execute(Field_info* field_info) = 0;
+  virtual void execute(const Field_info* field_info) = 0;
 
 protected:
   /*! The script. */
@@ -199,9 +199,9 @@ protected:
    * \param prototype (in)
    */
   template <Field_type type, typename ValueType_>
-  void add_field(Uint id, const std::string& name, Field_rule rule,
-                 const ValueType_& initial_value,
-                 Execution_function exec_func, Container_proto* prototype)
+  void add_fi(Uint id, const std::string& name, Field_rule rule,
+              const ValueType_& initial_value,
+              Execution_function exec_func, Container_proto* prototype)
   {
     typedef ValueType_                                  Value_type;
     typedef typename Handle_function<Value_type>::type  Handle_function;
