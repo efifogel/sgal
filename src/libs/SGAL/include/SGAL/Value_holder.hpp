@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_VALUE_HOLDER_HPP
@@ -213,8 +210,8 @@ class Value_middle :
 
 template <class T>
 class Velue_delegator : virtual public Value_middle {
-protected :
-  void delegate(Value_holder_base& other)
+public:
+  virtual void delegate(Value_holder_base& other)
   { static_cast<Value_middle&>(other).delegate_impl(static_cast<T&>(*this)); }
 };
 

@@ -261,27 +261,154 @@ void Script::execute(const Field_info* field_info)
   v8::Context::Scope context_scope(context);    // enter the contex
   v8::Handle<v8::Object> global = context->Global();
 
-  const std::string& str = field_info->get_name();
-  v8::Handle<v8::String> name = v8::String::NewFromUtf8(isolate, str.c_str());
-
-  // Add an object for any non-scalar field.
+  // Add an object for every non-scalar output field.
   for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if (((field_info->get_rule() == RULE_OUT) ||
-        (field_info->get_rule() == RULE_FIELD)) &&
-        ! field_info->is_scalar())
-    {
-      v8::Handle<v8::String> field_name =
-        v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
-                                v8::String::kInternalizedString);
-      v8::Handle<v8::ObjectTemplate> field_tmpl =
-        v8::ObjectTemplate::New(isolate);
-      v8::Handle<v8::Object> field_obj = field_tmpl->NewInstance();
-      global->Set(field_name, field_obj);
+    if ((field_info->get_rule() != RULE_OUT) || field_info->is_scalar())
+      continue;
+
+    v8::Handle<v8::String> field_name =
+      v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+                              v8::String::kInternalizedString);
+    v8::Handle<v8::ObjectTemplate> field_tmpl =
+      v8::ObjectTemplate::New(isolate);
+    v8::Handle<v8::Object> field_obj = field_tmpl->NewInstance();
+    global->Set(field_name, field_obj);
+  }
+
+  // Add an object for every field.
+  for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+    const Field_info* field_info = (*it).second;
+    if (field_info->get_rule() != RULE_FIELD) continue;
+
+    v8::Handle<v8::String> field_name =
+      v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+                              v8::String::kInternalizedString);
+    Field* field = get_field(field_info);
+    //! \todo need to introduce fields...
+    if (!field) continue;
+
+    // In the following we extract the value through a temporary value holder.
+    // Another option is to first extract values of static field and then
+    // extract values of dynamic fields, where the latter can be done by
+    // directly using field_handle(field_info)
+    switch (field_info->get_type_id()) {
+     case SF_BOOL:
+      {
+       Boolean tmp;
+       Value_holder<Boolean> vh_tmp(&tmp);
+       Value_holder_base* vh_field = field->get_value_holder();
+       vh_tmp.delegate(*vh_field);
+       bool* value_handle = vh_tmp.get_value();
+       global->Set(field_name, v8::Boolean::New(isolate, *value_handle));
+      }
+      break;
+
+     // case SF_FLOAT:
+     //  args[0] = v8::Number::New(isolate, *(field_handle<Float>(field_info)));
+     //  break;
+
+     // case SF_TIME:
+     //  args[0] = v8::Number::New(isolate, *(field_handle<Scene_time>(field_info)));
+     //  break;
+
+     // case SF_INT32:
+     //  args[0] = v8::Int32::New(isolate, *(field_handle<Int>(field_info)));
+     //  break;
+
+     // case SF_STR:
+     //  {
+     //   const std::string* tmp = field_handle<std::string>(field_info);
+     //   args[0] = v8::String::NewFromUtf8(isolate, tmp->c_str());
+     //  }
+     //  break;
+
+     // case SF_VEC2F:
+     //  {
+     //   const Vector2f* tmp = field_handle<Vector2f>(field_info);
+     //   v8::Handle<v8::Array> array = v8::Array::New(isolate, 2);
+     //   if (array.IsEmpty()) {
+     //     std::cerr << "failed to allocate v8 Array!" << std::endl;
+     //     break;
+     //   }
+     //   array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
+     //   array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+     //   args[0] = array;
+     //  }
+     //  break;
+
+     // case SF_VEC3F:
+     // case SF_COLOR:
+     //  {
+     //   const Vector3f* tmp = field_handle<Vector3f>(field_info);
+     //   v8::Handle<v8::Array> array = v8::Array::New(isolate, 3);
+     //   if (array.IsEmpty()) {
+     //     std::cerr << "failed to allocate v8 Array!" << std::endl;
+     //     break;
+     //   }
+     //   array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
+     //   array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+     //   array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
+     //   args[0] = array;
+     //  }
+     //  break;
+
+     case SF_ROTATION:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case SF_SHARED_CONTAINER:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_FLOAT:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_INT32:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_VEC2F:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_VEC3F:
+     case MF_COLOR:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_ROTATION:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_TIME:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_STR:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case SF_IMAGE:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_SHARED_CONTAINER:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     default:
+      std::cerr << "Unsupported type!" << std::endl;
+      return;
     }
   }
 
+  const std::string& str = field_info->get_name();
+  v8::Handle<v8::String> name = v8::String::NewFromUtf8(isolate, str.c_str());
+
   // Extract the script
+  std::cout << "Extracting" << std::endl;
   size_t pos = m_url.find(':');
   if (std::string::npos == pos) {
     std::cerr << "Invalid script!" << std::endl;
@@ -477,7 +604,7 @@ void Script::execute(const Field_info* field_info)
        case SF_FLOAT:
         {
          Float tmp = static_cast<Float>(value->NumberValue());
-         if (std::isnan(tmp)) continue;         // Ignore the field if NaN
+         if (std::isnan(tmp)) continue;         // ignore the field if NaN
          Value_holder<Float> value_holder(&tmp);
          (field->get_value_holder())->delegate(value_holder);
         }
@@ -486,7 +613,7 @@ void Script::execute(const Field_info* field_info)
        case SF_TIME:
         {
          Scene_time tmp = value->NumberValue();
-         if (std::isnan(tmp)) continue;         // Ignore the field if NaN
+         if (std::isnan(tmp)) continue;         // ignore the field if NaN
          Value_holder<Scene_time> value_holder(&tmp);
          (field->get_value_holder())->delegate(value_holder);
         }
