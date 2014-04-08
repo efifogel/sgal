@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TICK_EVENT_HPP
@@ -49,14 +46,14 @@ private:
   /*! A set of agents registered to process this type of event. */
   static std::set<Agent*> s_set;
 
-  /*! */
+  /*! Total number of ticks. */
   static Uint s_num_ticks;
 
-  /*! */
-  clock_t m_est_tick_duration;
+  /*! Estimated tick duration in seconds. */
+  Scene_time m_est_tick_duration;
 
-  /*! */
-  clock_t m_sim_time;
+  /*! Accumulated Simulation time in seconds. */
+  Scene_time m_sim_time;
 
 protected:
   /*! Deligate the handling of the current event to the given agent.
@@ -89,23 +86,28 @@ public:
   /*! Export an identification message to standard output. */
   virtual void identify(void);
 
-  /*!
+  /* Set the estimated tick duration.
+   * \param est_tick_duration (in) the estimated tick duration.
    */
-  void set_est_tick_duration(clock_t est_tick_duration);
+  void set_est_tick_duration(Scene_time est_tick_duration);
 
-  /*!
+  /*! Obtain the estimated tick duration.
+   * \return the estimated tick duration.
    */
-  clock_t get_est_tick_duration() const;
+  Scene_time get_est_tick_duration() const;
 
-  /*!
+  /*! Set the accumulated simulation time.
+   * \param sim_time (in) the accumulated simulation time.
    */
-  void set_sim_time(clock_t sim_time);
+  void set_sim_time(Scene_time sim_time);
 
-  /*!
+  /*! Obtain the accumulated simulation time.
+   * \return the accumulated simulation time.
    */
-  clock_t get_sim_time(void) const;
+  Scene_time get_sim_time(void) const;
 
-  /*!
+  /*! Obtain the total number of ticks.
+   * \return the total number of ticks.
    */
   unsigned int get_num_ticks() const;
 };
@@ -114,7 +116,7 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief */
+//! \brief obtains the total number of ticks.
 inline Uint Tick_event::get_num_ticks() const { return s_num_ticks; }
 
 /*! \brief obtains the set of agents registered to process this type of event.
@@ -122,20 +124,20 @@ inline Uint Tick_event::get_num_ticks() const { return s_num_ticks; }
 inline const std::set<Agent*>& Tick_event::get_set(void) const
 { return s_set; }
 
-/*! \brief */
-inline void Tick_event::set_est_tick_duration(clock_t est_tick_duration)
+//! \brief sets the estimated tick duration.
+inline void Tick_event::set_est_tick_duration(Scene_time est_tick_duration)
 { m_est_tick_duration = est_tick_duration; }
 
-/*! \brief */
-inline clock_t Tick_event::get_est_tick_duration() const
+//! \brief obtains the estimated tick duration.
+inline Scene_time Tick_event::get_est_tick_duration() const
 { return m_est_tick_duration; }
 
-/*! \brief */
-inline void Tick_event::set_sim_time(clock_t sim_time)
+//! \brief sets the accumulated simulation time.
+inline void Tick_event::set_sim_time(Scene_time sim_time)
 { m_sim_time = sim_time; }
 
-/*! \brief */
-inline clock_t Tick_event::get_sim_time(void) const { return m_sim_time; }
+//! \brief obtains the accumulated simulation time.
+inline Scene_time Tick_event::get_sim_time(void) const { return m_sim_time; }
 
 SGAL_END_NAMESPACE
 

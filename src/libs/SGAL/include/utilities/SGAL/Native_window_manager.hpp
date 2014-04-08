@@ -43,25 +43,25 @@ class Native_window_manager : public Window_manager<Window_item> {
 protected:
   /*! The attached scene. */
   Scene* m_scene;
-    
+
   /*! The current window. */
   Window_item* m_current_window;
-  
+
   /*! Mouse button states. */
   Uint m_button_state;
 
-  /*! The time when the current tick starts. */
-  clock_t m_start_tick_time;
+  /*! The time when the current tick starts in clock units. */
+  long int m_start_tick_time;
 
   /*! The accumulated simulation time. */
-  clock_t m_sim_time;
+  Scene_time m_sim_time;
 
   /*! The estimated tick duration. */
-  clock_t m_est_tick_duration;
+  Scene_time m_est_tick_duration;
 
   /*! The required tick duration. */
-  clock_t m_required_tick_duration;
-  
+  Scene_time m_required_tick_duration;
+
 public:
   typedef Window_manager<Window_item>    Base_window_manager;
 
@@ -76,12 +76,12 @@ public:
   {
     // Mouse button states:
     m_button_state = 0;
-    m_est_tick_duration = CLOCKS_PER_SEC / 30;
+    m_est_tick_duration = 1.0f / 30;
   }
 
   /*! Destructor */
   virtual ~Native_window_manager() {}
-  
+
   /*! Set the current window.
    * \param window_item the window to set.
    */
@@ -117,7 +117,7 @@ public:
    */
   void set_window_height(Uint height)
   { Native_window_item::set_init_height(height); }
-  
+
   /*! Set the initial size of windows.
    * \param width the new width of the windows.
    * \param heigh the new height of the windows.
@@ -134,14 +134,14 @@ public:
    * \param x the screen y-coordinate of the window origin.
    */
   void set_window_y(Uint y) { Native_window_item::set_init_y(y); }
-  
+
   /*! Set the initial position of window otigins.
    * \param x the screen X coordinate of the window origin.
    * \param y the screen Y coordinate of the window origin.
    */
   void set_window_position(Uint x, Uint y)
   { Native_window_item::set_init_position(x, y); }
-  
+
   /*! Attach a scene to the window manager. */
   void set_scene(Scene* scene) { m_scene = scene; }
 };
