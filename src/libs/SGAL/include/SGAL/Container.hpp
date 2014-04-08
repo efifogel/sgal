@@ -143,50 +143,57 @@ public:
   virtual const std::string& get_tag() const = 0;
 
   /*! Add a field of a given id. Obtains the appropriate field info, and use it
-   * to add the new field. Ignore the request, if a field with the given id
-   * already exists.
-   * \param id the id of the field
-   * \return the added field or NULL if the requested id is invalid
+   * to add the new field. If a field with the given id already exists simply
+   * return it. Otherwiese, create a new field first.
+   * \param id (in) the id of the field
+   * \return the resulting field or nullptr if the requested id is invalid
    */
   Field* add_field(Uint id);
 
   /*! Add a field of a given name. Obtains the suitable field info, and use it
-   * to add the new field. Ignore the request, if a field with the given id
-   * already exists.
-   * \param name the name of the field.
-   * \return the added field or NULL if the requested name is invalid.
+   * to add the new field. If a field with the given id already exists simply
+   * return it. Otherwiese, create a new field first.
+   * \param name (in) the name of the field.
+   * \return the resulting field or nullptr if the requested name is invalid.
    */
   Field* add_field(const std::string& name);
 
+  /*! Add a field for a field info. If a field with the given field info
+   * already exists, return it. Otherwiese, create a new field first.
+   * \param field_info (in) the suitable field info for the field
+   * \return the resulting field or nullptr if the requested name is invalid.
+   */
+  Field* add_field(const Field_info* field_info);
+
   /*! Obtain a field by id.
-   * \param id the requested field id.
+   * \param id (in) the requested field id.
    * \return The obtained field pointer.
    */
   Field* get_field(Uint id);
 
   /*! Obtain a field by name.
-   * \param name the requested field name.
-   * \return The obtained field pointer.
+   * \param name (in) the requested field name.
+   * \return The obtained field.
    */
   Field* get_field(const std::string& name);
 
   /*! Obtain a field info by id.
-   * \param id the id of the field.
-   * \return The requested field info pointer.
+   * \param id (in) the id of the field.
+   * \return The requested field info.
    */
   Field_info* get_field_info(Uint id);
 
   /*! Obtain a field info by name.
    *  Uses the node prototype to get the field info.
-   * \param name the name of the field.
-   * \return The obtained field info pointer.
+   * \param name (in) the name of the field.
+   * \return The obtained field info.
    */
   Field_info* get_field_info(const std::string& name);
 
   /*! Obtain a field by a field info.
    * It loops over the fields and finds the one with the requested info.
-   * \param field_info the requested field info.
-   * \return The obtained field pointer.
+   * \param (in) field_info the requested field info.
+   * \return The obtained field.
    */
   Field* get_field(const Field_info* field_info);
 
@@ -198,8 +205,7 @@ public:
   }
 
   virtual Boolean attach_context(Context* /* context */) { return false; }
-  virtual Boolean detach_context(Context* /* context */ = 0)
-  { return false; }
+  virtual Boolean detach_context(Context* /* context */ = 0) { return false; }
 
   /*! Process change of field.
    * \param field_info
@@ -212,17 +218,21 @@ public:
   void set_execution_coordinator(Execution_coordinator* ec)
   { m_execution_coordinator = ec; }
 
-  /*! Obtain a source field with a given name. */
+  /*! Obtain a source field with a given name.
+   */
   Field* get_source_field(const std::string& src_field_name);
 
-  /*! Obtain a destination field with a given name. */
+  /*! Obtain a destination field with a given name.
+   */
   Field* get_destination_field(const std::string& dst_field_name);
 
-  /*! Register an observer. */
+  /*! Register an observer.
+   */
   void register_observer(Observer& observer)
   { m_observers.push_back(observer); }
 
-  /*! Unregister an observer. */
+  /*! Unregister an observer.
+   */
   void unregister_observer(Observer& observer)
   { m_observers.remove(observer); }
 
@@ -239,20 +249,12 @@ protected:
   Execution_coordinator* m_execution_coordinator;
 
 private:
-  typedef std::map<const Field_info*,Field*>            Field_map;
+  typedef std::map<const Field_info*, Field*>           Field_map;
   typedef Field_map::iterator                           Field_iter;
   typedef Field_map::const_iterator                     Field_const_iter;
 
   /*! The name of the container. Given as the value of the DEF tag. */
   std::string m_name;
-
-  /*! Add a field for a field info. If a field with the given field info
-   * already exists, nothing is done. Otherwiese, a new field is created and
-   * added.
-   * \param field_info the suitable field info for the field
-   * \return the added field
-   */
-  Field* add_field(const Field_info* field_info);
 
   // A search structure to find Field_info's for fields. */
   Field_map m_fields;
@@ -268,7 +270,7 @@ private:
 #endif
 
 //! \brief obtains the node prototype.
-inline Container_proto* Container::get_prototype() { return NULL; }
+inline Container_proto* Container::get_prototype() { return nullptr; }
 
 //! \brief sets the attributes of this container.
 inline void Container::set_attributes(Element* /* elem */) {}

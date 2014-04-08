@@ -174,7 +174,7 @@ public:
   virtual Value_holder_base* clone() = 0;
 };
 
-template <class ValueType> class Value_holder;
+template <typename ValueType> class Value_holder;
 class Value_holder_target {
 public:
   // Single fields
@@ -208,21 +208,21 @@ public:
 class Value_middle :
   public Value_holder_target, public Value_holder_base {};
 
-template <class T>
+template <typename T>
 class Velue_delegator : virtual public Value_middle {
 public:
   virtual void delegate(Value_holder_base& other)
   { static_cast<Value_middle&>(other).delegate_impl(static_cast<T&>(*this)); }
 };
 
-template <class ValueType1, class ValueType2>
+template <typename ValueType1, typename ValueType2>
 class Delegate_dispatcher {
 public:
   void operator()(ValueType1* /* value1 */, ValueType2* /* value2 */)
   { SGAL_error(); }
 };
 
-template <class ValueType>
+template <typename ValueType>
 class Delegate_dispatcher<ValueType, ValueType> {
 public:
   void operator()(ValueType* value1, ValueType* value2) { *value2 = *value1; }
@@ -372,7 +372,7 @@ public:
     m_value(value),
     m_allocated_internally(false)
   {
-    if (value == NULL) {
+    if (value == nullptr) {
       m_value = new Value_type;
       m_allocated_internally = true;
     }
@@ -383,7 +383,7 @@ public:
   {
     if (m_allocated_internally) {
       delete m_value;
-      m_value = NULL;
+      m_value = nullptr;
     }
   }
 

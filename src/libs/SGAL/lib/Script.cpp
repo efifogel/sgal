@@ -241,6 +241,15 @@ void Script::add_field_info(Field_rule rule, Field_type type,
   m_fields.push_back(variant_field);
 }
 
+void setter(v8::Local<v8::String> property,
+            v8::Local<v8::Value> value,
+            const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+  v8::String::Utf8Value utf8_property(property);
+  std::cout << "Intersepted name: " << *utf8_property
+            << std::endl;
+}
+
 // \brief executes the suitable script function according to the event.
 void Script::execute(const Field_info* field_info)
 {
@@ -252,6 +261,7 @@ void Script::execute(const Field_info* field_info)
   // Create a new ObjectTemplate
   v8::Handle<v8::ObjectTemplate> global_tmpl =
     v8::ObjectTemplate::New(isolate);
+  // global_tmpl->SetNamedPropertyHandler(0, setter);
 
   Container_proto* proto = get_prototype();
   Container_proto::Id_const_iterator it = proto->ids_begin(proto);
@@ -261,32 +271,24 @@ void Script::execute(const Field_info* field_info)
   v8::Context::Scope context_scope(context);    // enter the contex
   v8::Handle<v8::Object> global = context->Global();
 
-  // Add an object for every non-scalar output field.
+  // Add an object for every field and every output field.
   for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if ((field_info->get_rule() != RULE_OUT) || field_info->is_scalar())
+    if ((field_info->get_rule() != RULE_FIELD) &&
+        (field_info->get_rule() != RULE_OUT))
       continue;
 
     v8::Handle<v8::String> field_name =
       v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
                               v8::String::kInternalizedString);
-    v8::Handle<v8::ObjectTemplate> field_tmpl =
-      v8::ObjectTemplate::New(isolate);
-    v8::Handle<v8::Object> field_obj = field_tmpl->NewInstance();
-    global->Set(field_name, field_obj);
-  }
 
-  // Add an object for every field.
-  for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-    const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() != RULE_FIELD) continue;
+    // v8::Handle<v8::ObjectTemplate> field_tmpl =
+    //   v8::ObjectTemplate::New(isolate);
+    // field_tmpl->SetInternalFieldCount(1);
+    // v8::Handle<v8::Object> field_obj = field_tmpl->NewInstance();
+    // field_obj->SetInternalField(0, v8::Boolean::New(isolate, false));
 
-    v8::Handle<v8::String> field_name =
-      v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
-                              v8::String::kInternalizedString);
-    Field* field = get_field(field_info);
-    //! \todo need to introduce fields...
-    if (!field) continue;
+    // std::cout << "In name: " << field_info->get_name() << std::endl;
 
     // In the following we extract the value through a temporary value holder.
     // Another option is to first extract values of static field and then
@@ -295,63 +297,78 @@ void Script::execute(const Field_info* field_info)
     switch (field_info->get_type_id()) {
      case SF_BOOL:
       {
-       Boolean tmp;
-       Value_holder<Boolean> vh_tmp(&tmp);
-       Value_holder_base* vh_field = field->get_value_holder();
-       vh_tmp.delegate(*vh_field);
-       bool* value_handle = vh_tmp.get_value();
-       global->Set(field_name, v8::Boolean::New(isolate, *value_handle));
+       Uint id = field_info->get_id();
+       Boolean* tmp =
+         (id == DIRECT_OUTPUT) ? direct_output_handle(field_info) :
+         (id == MUST_EVALUATE) ? must_evaluate_handle(field_info) :
+         field_handle<Boolean>(field_info);
+       global->Set(field_name, v8::Boolean::New(isolate, *tmp));
+       // std::cout << "  value: " << *tmp << std::endl;
       }
       break;
 
-     // case SF_FLOAT:
-     //  args[0] = v8::Number::New(isolate, *(field_handle<Float>(field_info)));
-     //  break;
+     case SF_FLOAT:
+      {
+       Float* tmp = field_handle<Float>(field_info);
+       global->Set(field_name, v8::Number::New(isolate, *tmp));
+       // std::cout << "  value: " << *tmp << std::endl;
+      }
+      break;
 
-     // case SF_TIME:
-     //  args[0] = v8::Number::New(isolate, *(field_handle<Scene_time>(field_info)));
-     //  break;
+     case SF_TIME:
+      {
+       Scene_time* tmp = field_handle<Scene_time>(field_info);
+       global->Set(field_name, v8::Number::New(isolate, *tmp));
+       // std::cout << "  value: " << *tmp << std::endl;
+      }
+      break;
 
-     // case SF_INT32:
-     //  args[0] = v8::Int32::New(isolate, *(field_handle<Int>(field_info)));
-     //  break;
+     case SF_INT32:
+      {
+       Int* tmp = field_handle<Int>(field_info);
+       global->Set(field_name, v8::Int32::New(isolate, *tmp));
+       // std::cout << "  value: " << *tmp << std::endl;
+      }
+      break;
 
-     // case SF_STR:
-     //  {
-     //   const std::string* tmp = field_handle<std::string>(field_info);
-     //   args[0] = v8::String::NewFromUtf8(isolate, tmp->c_str());
-     //  }
-     //  break;
+     case SF_STR:
+      {
+       Uint id = field_info->get_id();
+       std::string* tmp = (id == URL) ? url_handle(field_info) :
+         field_handle<std::string>(field_info);
+       global->Set(field_name, v8::String::NewFromUtf8(isolate, tmp->c_str()));
+      }
+      break;
 
-     // case SF_VEC2F:
-     //  {
-     //   const Vector2f* tmp = field_handle<Vector2f>(field_info);
-     //   v8::Handle<v8::Array> array = v8::Array::New(isolate, 2);
-     //   if (array.IsEmpty()) {
-     //     std::cerr << "failed to allocate v8 Array!" << std::endl;
-     //     break;
-     //   }
-     //   array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
-     //   array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
-     //   args[0] = array;
-     //  }
-     //  break;
+     case SF_VEC2F:
+      {
+       Vector2f* tmp = field_handle<Vector2f>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, 2);
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
+       array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+       global->Set(field_name, array);
+      }
+      break;
 
-     // case SF_VEC3F:
-     // case SF_COLOR:
-     //  {
-     //   const Vector3f* tmp = field_handle<Vector3f>(field_info);
-     //   v8::Handle<v8::Array> array = v8::Array::New(isolate, 3);
-     //   if (array.IsEmpty()) {
-     //     std::cerr << "failed to allocate v8 Array!" << std::endl;
-     //     break;
-     //   }
-     //   array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
-     //   array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
-     //   array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
-     //   args[0] = array;
-     //  }
-     //  break;
+     case SF_VEC3F:
+     case SF_COLOR:
+      {
+       Vector3f* tmp = field_handle<Vector3f>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, 3);
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
+       array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+       array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
+       global->Set(field_name, array);
+      }
+      break;
 
      case SF_ROTATION:
       std::cerr << "Not supported yet!" << std::endl;
@@ -408,7 +425,6 @@ void Script::execute(const Field_info* field_info)
   v8::Handle<v8::String> name = v8::String::NewFromUtf8(isolate, str.c_str());
 
   // Extract the script
-  std::cout << "Extracting" << std::endl;
   size_t pos = m_url.find(':');
   if (std::string::npos == pos) {
     std::cerr << "Invalid script!" << std::endl;
@@ -578,118 +594,116 @@ void Script::execute(const Field_info* field_info)
 
   for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() == RULE_OUT) {
-      v8::Handle<v8::String> field_name =
-        v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
-                                v8::String::kInternalizedString);
-      v8::Handle<v8::Value> value = global->Get(field_name);
+    if ((field_info->get_rule() != RULE_OUT) &&
+        (field_info->get_rule() != RULE_FIELD))
+      continue;
 
-      // Ignore any scalar field that has not been assigned by the script.
-      if (value->IsUndefined()) continue;
+    v8::Handle<v8::String> field_name =
+      v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+                              v8::String::kInternalizedString);
+    v8::Handle<v8::Value> value = global->Get(field_name);
 
-      Field* field = get_field(field_info);
+    // Ignore any scalar field that has not been assigned by the script.
+    if (value->IsUndefined()) continue;
 
-      // Ignore any field that has not been routed out.
-      if (!field) continue;
+    // std::cout << "Out name: " << field_info->get_name() << std::endl;
 
-      switch (field_info->get_type_id()) {
-       case SF_BOOL:
-        {
-         Boolean tmp = value->BooleanValue();
-         Value_holder<Boolean> value_holder(&tmp);
-         (field->get_value_holder())->delegate(value_holder);
-        }
-        break;
-
-       case SF_FLOAT:
-        {
-         Float tmp = static_cast<Float>(value->NumberValue());
-         if (std::isnan(tmp)) continue;         // ignore the field if NaN
-         Value_holder<Float> value_holder(&tmp);
-         (field->get_value_holder())->delegate(value_holder);
-        }
-        break;
-
-       case SF_TIME:
-        {
-         Scene_time tmp = value->NumberValue();
-         if (std::isnan(tmp)) continue;         // ignore the field if NaN
-         Value_holder<Scene_time> value_holder(&tmp);
-         (field->get_value_holder())->delegate(value_holder);
-        }
-        break;
-
-       case SF_INT32:
-        {
-         Int tmp = value->Int32Value();
-         Value_holder<Int> value_holder(&tmp);
-         (field->get_value_holder())->delegate(value_holder);
-        }
-        break;
-
-       case SF_STR:
-        {
-         v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(value);
-         v8::String::Utf8Value utf8(str);
-         std::string tmp(*utf8);
-         Value_holder<std::string> value_holder(&tmp);
-         (field->get_value_holder())->delegate(value_holder);
-        }
-        break;
-
-       case SF_VEC2F:
-        {
-         v8::HandleScope scope(isolate);
-         v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-         Vector2f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
-                      static_cast<Float>(array->Get(1)->NumberValue()));
-
-        // Ignore the field if any one of the values is NaN
-         if (std::isnan(tmp[0]) || std::isnan(tmp[1])) continue;
-
-         Value_holder<Vector2f> value_holder(&tmp);
-         (field->get_value_holder())->delegate(value_holder);
-        }
-        break;
-
-       case SF_VEC3F:
-       case SF_COLOR:
-        {
-         v8::HandleScope scope(isolate);
-         v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-         Vector3f tmp(static_cast<Float>(array->Get(0)->NumberValue()),
-                      static_cast<Float>(array->Get(1)->NumberValue()),
-                      static_cast<Float>(array->Get(2)->NumberValue()));
-
-         // Ignore the field if any one of the values is NaN
-         if (std::isnan(tmp[0]) || std::isnan(tmp[1]) || std::isnan(tmp[0]))
-           continue;
-
-         Value_holder<Vector3f> value_holder(&tmp);
-         (field->get_value_holder())->delegate(value_holder);
-        }
-        break;
-
-       case SF_ROTATION:
-       case SF_SHARED_CONTAINER:
-       case MF_FLOAT:
-       case MF_INT32:
-       case MF_VEC2F:
-       case MF_VEC3F:
-       case MF_ROTATION:
-       case MF_TIME:
-       case MF_STR:
-       case SF_IMAGE:
-       case MF_SHARED_CONTAINER:
-        std::cerr << "Not supported yet!" << std::endl;
-        break;
-
-       default:
-        std::cerr << "Unsupported type!" << std::endl;
-        return;
+    switch (field_info->get_type_id()) {
+     case SF_BOOL:
+      {
+       Uint id = field_info->get_id();
+       Boolean* tmp =
+         (id == DIRECT_OUTPUT) ? direct_output_handle(field_info) :
+         (id == MUST_EVALUATE) ? must_evaluate_handle(field_info) :
+         field_handle<Boolean>(field_info);
+       *tmp = value->BooleanValue();
+       // std::cout << "  value: " << *tmp << std::endl;
       }
-      field->cascade();
+      break;
+
+     case SF_FLOAT:
+      {
+       Float* tmp = field_handle<Float>(field_info);
+       *tmp = static_cast<Float>(value->NumberValue());
+       // std::cout << "  value: " << *tmp << std::endl;
+      }
+      break;
+
+     case SF_TIME:
+      {
+       Scene_time* tmp = field_handle<Scene_time>(field_info);
+       *tmp = static_cast<Scene_time>(value->NumberValue());
+       // std::cout << "  value: " << *tmp << std::endl;
+      }
+      break;
+
+     case SF_INT32:
+      {
+       Int* tmp = field_handle<Int>(field_info);
+       *tmp = value->Int32Value();
+       // std::cout << "  value: " << *tmp << std::endl;
+      }
+      break;
+
+     case SF_STR:
+      {
+       Uint id = field_info->get_id();
+       std::string* tmp = (id == URL) ? url_handle(field_info) :
+         field_handle<std::string>(field_info);
+       v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(value);
+       v8::String::Utf8Value utf8(str);
+       tmp->assign(*utf8);
+      }
+      break;
+
+     case SF_VEC2F:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Vector2f* tmp = field_handle<Vector2f>(field_info);
+       tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
+                static_cast<Float>(array->Get(1)->NumberValue()));
+       SGAL_assertion(!std::isnan((*tmp)[0]));
+       SGAL_assertion(!std::isnan((*tmp)[1]));
+      }
+      break;
+
+     case SF_VEC3F:
+     case SF_COLOR:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Vector3f* tmp = field_handle<Vector3f>(field_info);
+       tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
+                static_cast<Float>(array->Get(1)->NumberValue()),
+                static_cast<Float>(array->Get(2)->NumberValue()));
+       SGAL_assertion(!std::isnan((*tmp)[0]));
+       SGAL_assertion(!std::isnan((*tmp)[1]));
+       SGAL_assertion(!std::isnan((*tmp)[2]));
+      }
+      break;
+
+     case SF_ROTATION:
+     case SF_SHARED_CONTAINER:
+     case MF_FLOAT:
+     case MF_INT32:
+     case MF_VEC2F:
+     case MF_VEC3F:
+     case MF_ROTATION:
+     case MF_TIME:
+     case MF_STR:
+     case SF_IMAGE:
+     case MF_SHARED_CONTAINER:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     default:
+      std::cerr << "Unsupported type!" << std::endl;
+      return;
     }
+    //! \todo must not cascade if the field hasn't been assigned.
+    Field* field = get_field(field_info);
+    if (field) field->cascade();
   }
 }
 

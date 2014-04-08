@@ -33,11 +33,16 @@
 
 SGAL_BEGIN_NAMESPACE
 
+const Boolean Script_base::s_def_direct_output(false);
+const Boolean Script_base::s_def_must_evaluate(false);
+
 Container_proto* Script_base::s_prototype(nullptr);
 
 /*! Constructor */
 Script_base::Script_base(Boolean proto) :
   Node(proto),
+  m_direct_output(s_def_direct_output),
+  m_must_evaluate(s_def_must_evaluate),
   m_protocol(PROTOCOL_INVALID)
 { if (!proto) Tick_event::doregister(this); }
 
@@ -60,14 +65,14 @@ void Script_base::init_prototype()
   Boolean_handle_function direct_output_func =
     static_cast<Boolean_handle_function>(&Script_base::direct_output_handle);
   s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
-                                          RULE_FIELD,
-                                          direct_output_func));
+                                          RULE_FIELD, direct_output_func,
+                                          s_def_direct_output));
 
   Boolean_handle_function must_evaluate_func =
     static_cast<Boolean_handle_function>(&Script_base::must_evaluate_handle);
   s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
-                                          RULE_FIELD,
-                                          must_evaluate_func));
+                                          RULE_FIELD, must_evaluate_func,
+                                          s_def_must_evaluate));
 }
 
 /*! \brief deletes the container prototype. */

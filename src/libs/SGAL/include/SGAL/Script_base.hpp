@@ -120,13 +120,23 @@ public:
    * \return a pointer to the field.
    */
   template <typename T>
-  T* field_handle(const Field_info* field_info)
+  T* field_handle(Uint id)
   {
-    Uint id = field_info->get_id();
     std::list<Variant_field>::iterator it = m_fields.begin();
     std::advance(it, id - LAST);
     T& field = boost::get<T>(*it);
     return &field;
+  }
+
+  /*! Obtain a handle to a dynamically generated field.
+   * \param id (in) the field information record.
+   * \return a pointer to the field.
+   */
+  template <typename T>
+  T* field_handle(const Field_info* field_info)
+  {
+    Uint id = field_info->get_id();
+    return field_handle<T>(id);
   }
   //@}
 
@@ -220,6 +230,10 @@ protected:
 
   /*! The script protocol. */
   Protocol m_protocol;
+
+  /*! Default Values */
+  static const Boolean s_def_direct_output;
+  static const Boolean s_def_must_evaluate;
 };
 
 /*! \brief sets the URL. */
