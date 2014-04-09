@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6746 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_X11_WINDOW_MANAGER_HPP
@@ -49,7 +46,7 @@ private:
 
   /*! The event handler */
   Event_handler m_event_handler;
-  
+
   /* Information about the X server communicated with */
   Display* m_display;
 
@@ -58,7 +55,7 @@ private:
 
   /*! Has any window been created already? */
   Boolean m_created;
-  
+
   /* Original desktop mode saved for future restoration */
   XF86VidModeModeInfo m_desktop_mode;
 
@@ -66,11 +63,11 @@ private:
    * \param event the X event
    */
   void process_xevent(XEvent& event);
-  
+
 public:
   /*! Obtain the window-manager singleton */
-  static X11_window_manager* instance();  
-  
+  static X11_window_manager* instance();
+
   /*! Constructor */
   X11_window_manager();
 
@@ -82,12 +79,12 @@ public:
 
   /*! Clear the window manager */
   void clear();
-  
+
   /*! Destructor */
   virtual ~X11_window_manager();
-  
+
   /*! Create a new window
-   * \param window_item the window item that holds the window to create 
+   * \param window_item the window item that holds the window to create
    */
   virtual void create_window(X11_window_item* window_item);
 

@@ -141,10 +141,7 @@ Attribute_list Script_base::get_attributes()
 
 /*! \brief handles tick events. */
 void Script_base::handle(Tick_event* event)
-{
-  clock_t sim_time = event->get_sim_time();
-  m_time = (Scene_time) sim_time / CLOCKS_PER_SEC;
-}
+{ m_time = event->get_sim_time(); }
 
 /*! \brief prints an identification message. */
 void Script_base::identify()

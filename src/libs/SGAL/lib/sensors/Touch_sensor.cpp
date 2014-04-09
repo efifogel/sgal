@@ -532,10 +532,7 @@ bool Touch_sensor::update_cursor(const Key_event_data& data)
 
 /*! \brief handles tick events. */
 void Touch_sensor::handle(Tick_event* event)
-{
-  clock_t sim_time = event->get_sim_time();
-  m_touch_time = (Scene_time) sim_time / CLOCKS_PER_SEC;
-}
+{ m_touch_time = event->get_sim_time(); }
 
 /*! \brief sets the (normalized) id of the geometry, which the cursor is
  * hoovering above.

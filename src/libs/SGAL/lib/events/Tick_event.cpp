@@ -30,7 +30,7 @@ Uint Tick_event::s_num_ticks = 0;
 
 /*! Constructor */
 Tick_event::Tick_event(void) : Event(), m_est_tick_duration(0), m_sim_time(0)
-{ s_num_ticks++; }
+{ ++s_num_ticks; }
 
 /*! \brief deligates the handling of the current event to the given agent. */
 void Tick_event::handle(Agent* agent) { agent->handle(this); }

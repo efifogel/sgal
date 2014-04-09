@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 4978 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_WINDOW_MANAGER_HPP
@@ -40,7 +37,7 @@ public:
   typedef std::list<Window_item*>                       Windows;
   typedef typename Windows::iterator                    Windows_iter;
   typedef typename Windows::const_iterator              Windows_const_iter;
-  
+
   /*! Constructor */
   Window_manager() {}
 
@@ -48,7 +45,7 @@ public:
   virtual ~Window_manager() {}
 
   /*! Create a new window
-   * \param window_item the window item that holds the window to create 
+   * \param window_item the window item that holds the window to create
    */
   virtual void create_window(Window_item* window_item) = 0;
 
@@ -61,7 +58,7 @@ public:
    * \param simulating indicates whether the application is simulating
    */
   virtual void event_loop(Boolean simulating = false) = 0;
-  
+
 protected:
   /*! Insert a new window item to the container of window items.
    * \param window_item the window item to insert.
@@ -75,19 +72,19 @@ protected:
 
   /*! Obtain the iteator to the window container first element. */
   Windows_iter begin_windows();
-  
+
   /*! Obtain the iterator to the Array past-the-end element. */
   Windows_iter end_windows();
 
   /*! Obtain the iteator to the window container first element. */
   Windows_const_iter begin_windows() const;
-  
+
   /*! Obtain the iterator to the window container past-the-end element. */
   Windows_const_iter end_windows() const;
 
   /*! Obtain the number of windows. */
   Uint size_windows() const;
-  
+
 private:
   /*! The window items */
   Windows m_windows;
@@ -108,7 +105,7 @@ template <typename Window_item>
 inline typename Window_manager<Window_item>::Windows_iter
 Window_manager<Window_item>::begin_windows()
 { return m_windows.begin(); }
-  
+
 /*! \brief obtains the iterator to the Array past-the-end element. */
 template <typename Window_item>
 inline typename Window_manager<Window_item>::Windows_iter
@@ -120,7 +117,7 @@ template <typename Window_item>
 inline typename Window_manager<Window_item>::Windows_const_iter
 Window_manager<Window_item>::begin_windows() const
 { return m_windows.begin(); }
-  
+
 /*! \brief obtains the iterator to the window container past-the-end element. */
 template <typename Window_item>
 inline typename Window_manager<Window_item>::Windows_const_iter

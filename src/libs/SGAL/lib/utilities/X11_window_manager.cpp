@@ -113,6 +113,7 @@ void X11_window_manager::destroy_window(X11_window_item* window_item)
 /*! \brief runs the main event loop */
 void X11_window_manager::event_loop(Boolean simulating)
 {
+  struct timespec gettime_now;
   Boolean done = false;
 
   // Handle events while not done:
@@ -120,9 +121,13 @@ void X11_window_manager::event_loop(Boolean simulating)
     // Chech whether simulation is required:
     if (simulating) {
       // Measure the ellapsed time:
-      clock_t end_tick_time = clock();
-      clock_t tick_duration = end_tick_time - m_start_tick_time;
-      long sleep_time = m_required_tick_duration - tick_duration;
+      clock_gettime(CLOCK_REALTIME, &gettime_now);
+      long int end_tick_time = gettime_now.tv_nsec;
+      long int raw_tick_duration = end_tick_time - m_start_tick_time;
+      if (raw_tick_duration < 0)
+        raw_tick_duration += 1000000000;    // rolls over every 1 second
+      Scene_time tick_duration = raw_tick_duration / 1000000000.;
+      Scene_time sleep_time = m_required_tick_duration - tick_duration;
       // Slow down if necessary:
       if (sleep_time > 0) {
         // Draw all visibile windows:
@@ -147,7 +152,7 @@ void X11_window_manager::event_loop(Boolean simulating)
           // Continue along the time line - issue a tick event:
           m_start_tick_time = end_tick_time;
           m_sim_time += tick_duration;
-          SGAL::Tick_event* event = new SGAL::Tick_event;
+          Tick_event* event = new Tick_event;
           event->set_est_tick_duration(m_est_tick_duration);
           event->set_sim_time(m_sim_time);
           m_event_handler.issue(event);

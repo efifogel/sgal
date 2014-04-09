@@ -571,12 +571,11 @@ void Time_sensor::identify()
 /*! Handle tick events */
 void Time_sensor::handle(Tick_event* event)
 {
-  clock_t sim_time = event->get_sim_time();
-  Scene_time t = (m_frequency) ?
-    m_time + 1.0 / m_frequency : (Scene_time) sim_time / CLOCKS_PER_SEC;
+  Scene_time sim_time = event->get_sim_time();
+  Scene_time t = (m_frequency) ? m_time + 1.0 / m_frequency : sim_time;
   update_time(t);
 
-  if (m_quit_time != 0  && t >= m_quit_time) exit(0);
+  if ((m_quit_time != 0)  && (t >= m_quit_time)) exit(0);
 }
 
 SGAL_END_NAMESPACE

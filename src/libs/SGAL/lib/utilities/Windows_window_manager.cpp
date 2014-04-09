@@ -381,9 +381,10 @@ void Windows_window_manager::event_loop(Boolean simulating)
     // Chech whether simulation is required:
     if (simulating) {
       // Measure the ellapsed time:
-      clock_t end_tick_time = clock();
-      clock_t tick_duration = end_tick_time - m_start_tick_time;
-      long sleep_time = m_required_tick_duration - tick_duration;
+      long int end_tick_time = clock();
+      long int raw_tick_duration = end_tick_time - m_start_tick_time;
+      Scene_time tick_duration = raw_tick_duration / CLOCKS_PER_SEC;
+      Scene_time sleep_time = m_required_tick_duration - tick_duration;
       // Slow down if necessary:
       if (sleep_time > 0) {
         // Draw all visibile windows:
@@ -392,7 +393,8 @@ void Windows_window_manager::event_loop(Boolean simulating)
           Windows_window_item* window_item = *it;
           window_item->set_redraw(true);
         }
-      } else {
+      }
+      else {
         // If any window is being accumulated, do not advance in the time line.
         bool accumulating = false;
         Windows_iter it;
