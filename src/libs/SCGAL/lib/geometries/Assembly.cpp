@@ -73,6 +73,7 @@ Assembly::Assembly(Boolean proto) :
   Group(proto),
   m_dirty(true),
   m_trigger(false),
+  m_interlocked(false),
   m_number_of_parts(0),
   m_aos_graph(NULL),
   m_draw_alternate(false),
@@ -186,6 +187,27 @@ void Assembly::init_prototype()
                                           RULE_EXPOSED_FIELD,
                                           trigger_func,
                                           exec_func));
+
+  // interlocked
+  Boolean_handle_function interlocked_func =
+    static_cast<Boolean_handle_function>(&Assembly::interlocked_handle);
+  s_prototype->add_field_info(new SF_bool(INTERLOCKED, "interlocked",
+                                          RULE_EXPOSED_FIELD,
+                                          interlocked_func));
+
+  // translation
+  Vector3f_handle_function translation_func =
+    static_cast<Vector3f_handle_function>(&Assembly::translation_handle);
+  s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
+                                              RULE_EXPOSED_FIELD,
+                                              translation_func));
+
+  // components
+  Boolean_array_handle_function components_func =
+    static_cast<Boolean_array_handle_function>(&Assembly::components_handle);
+  s_prototype->add_field_info(new MF_bool(COMPONENTS, "components",
+                                          RULE_EXPOSED_FIELD,
+                                          components_func));
 
   // drawAlternate
   exec_func = static_cast<Execution_function>(&Assembly::draw_alt_changed);
@@ -1416,12 +1438,14 @@ void Assembly::process_aos_graph()
             << duration_time << " seconds."
             << std::endl;
 
-  if (m_solutions.size() == 0) {
+  if (m_solutions.empty()) {
     std::cout << "The Assembly is interlocked!" << std::endl;
+    m_interlocked = true;
     return;
   }
 
   Solutions::const_iterator it;
+  Boolean routed(false);
   for (it = m_solutions.begin(); it != m_solutions.end(); ++it) {
     const Solution* solution = *it;
     Cell_const_handle ch = solution->first;
@@ -1457,6 +1481,32 @@ void Assembly::process_aos_graph()
       std::copy(components.begin(), components.end(),
                 std::ostream_iterator<int>(std::cout, " "));
       std::cout << std::endl;
+
+      if (!routed) {
+        // translation
+        Float x = static_cast<float>(CGAL::to_double((*vh)->point().dx()));
+        Float y = static_cast<float>(CGAL::to_double((*vh)->point().dy()));
+        Float z = static_cast<float>(CGAL::to_double((*vh)->point().dz()));
+        m_translation.set(x, y, z);
+        Field* translation_field = get_field(TRANSLATION);
+        if (translation_field) translation_field->cascade();
+
+        // components
+        m_components.resize(components.size());
+        std::transform(components.begin(), components.end(),
+                       m_components.begin(),
+                       [](Uint d) { return d > 0; });
+        Field* components_field = get_field(COMPONENTS);
+        if (components_field) components_field->cascade();
+
+        // interlocked
+        m_interlocked = false;
+        Field* interlocked_field = get_field(INTERLOCKED);
+        if (interlocked_field) interlocked_field->cascade();
+
+        // mark
+        routed = true;
+      }
       continue;
     }
   }

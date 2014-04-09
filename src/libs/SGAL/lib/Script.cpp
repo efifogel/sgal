@@ -196,6 +196,14 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
+   case MF_BOOL:
+    {
+     Boolean_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
+    }
+    break;
+
    case MF_FLOAT:
     std::cerr << "Not supported yet!" << std::endl;
     break;
@@ -246,8 +254,7 @@ void setter(v8::Local<v8::String> property,
             const v8::PropertyCallbackInfo<v8::Value>& info)
 {
   v8::String::Utf8Value utf8_property(property);
-  std::cout << "Intersepted name: " << *utf8_property
-            << std::endl;
+  std::cout << "Intersepted name: " << *utf8_property << std::endl;
 }
 
 // \brief executes the suitable script function according to the event.
@@ -367,6 +374,7 @@ void Script::execute(const Field_info* field_info)
        array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
        array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
        global->Set(field_name, array);
+       // std::cout << "  value: " << *tmp << std::endl;
       }
       break;
 
@@ -376,6 +384,24 @@ void Script::execute(const Field_info* field_info)
 
      case SF_SHARED_CONTAINER:
       std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_BOOL:
+      {
+       Boolean_array* tmp = field_handle<Boolean_array>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       // std::cout << "  ";
+       for (size_t i = 0; i < tmp->size(); ++i) {
+         array->Set(i, v8::Boolean::New(isolate, (*tmp)[i]));
+         // std::cout << (*tmp)[i] << " ";
+       }
+       // std::cout << std::endl;
+       global->Set(field_name, array);
+      }
       break;
 
      case MF_FLOAT:
@@ -480,8 +506,11 @@ void Script::execute(const Field_info* field_info)
 
   v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(value);
   v8::Handle<v8::Value> args[2];
+  // std::cout << field_info->get_name() << std::endl;
   switch (field_info->get_type_id()) {
    case SF_BOOL:
+    // std::cout << "  value: " << *(field_handle<Boolean>(field_info))
+    //           << std::endl;
     args[0] = v8::Boolean::New(isolate, *(field_handle<Boolean>(field_info)));
     break;
 
@@ -515,6 +544,7 @@ void Script::execute(const Field_info* field_info)
    case SF_COLOR:
     {
      const Vector3f* tmp = field_handle<Vector3f>(field_info);
+     // std::cout << "  value: " << *tmp << std::endl;
      v8::Handle<v8::Array> array = v8::Array::New(isolate, 3);
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
@@ -540,6 +570,24 @@ void Script::execute(const Field_info* field_info)
 
    case SF_SHARED_CONTAINER:
     std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_BOOL:
+    {
+     const Boolean_array* tmp = field_handle<Boolean_array>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     // std::cout << "  ";
+     for (size_t i = 0; i < tmp->size(); ++i) {
+       array->Set(i, v8::Boolean::New(isolate, (*tmp)[i]));
+       // std::cout << (*tmp)[i] << " ";
+     }
+     args[0] = array;
+     // std::cout << std::endl;
+    }
     break;
 
    case MF_FLOAT:
@@ -680,11 +728,30 @@ void Script::execute(const Field_info* field_info)
        SGAL_assertion(!std::isnan((*tmp)[0]));
        SGAL_assertion(!std::isnan((*tmp)[1]));
        SGAL_assertion(!std::isnan((*tmp)[2]));
+       // std::cout << "  value: " << *tmp << std::endl;
       }
       break;
 
      case SF_ROTATION:
      case SF_SHARED_CONTAINER:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
+     case MF_BOOL:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Boolean_array* tmp = field_handle<Boolean_array>(field_info);
+       tmp->resize(array->Length());
+       // std::cout << "  ";
+       for (size_t i = 0; i < array->Length(); ++i) {
+         (*tmp)[i] = array->Get(i)->BooleanValue();
+         // std::cout << (*tmp)[i] << " ";
+       }
+       // std::cout << std::endl;
+      }
+      break;
+
      case MF_FLOAT:
      case MF_INT32:
      case MF_VEC2F:

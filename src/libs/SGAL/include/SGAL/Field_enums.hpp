@@ -55,7 +55,7 @@ enum Field_type {
   SF_IMAGE = 12,
   SF_STR = 13,
   SF_SHARED_CONTAINER = 14,
-  MF_BOOLEAN = 21,
+  MF_BOOL = 21,
   MF_FLOAT = 22,
   MF_UINT32 = 23,
   MF_INT32 = 24,
@@ -82,7 +82,7 @@ class Field_types_utils {
 public:
   static Field_type get_field_type(const std::string& type)
   {
-    if (type == "SF_Bool" || type == "Boolean") return SF_BOOL;
+    if (type == "SFBool" || type == "Boolean") return SF_BOOL;
     else if (type == "SFColor" || type == "Color") return SF_COLOR;
     else if (type == "SFFloat" || type == "Float") return SF_FLOAT;
     else if (type == "SFImage" || type == "Image") return SF_IMAGE;
@@ -96,6 +96,7 @@ public:
     else if (type == "SFVec2f" || type == "Vector2Float") return SF_VEC2F;
     else if (type == "SFVec3F" || type == "Vector3Float") return SF_VEC3F;
     else if (type == "SFVec4F" || type == "Vector4Float") return SF_VEC4F;
+    else if (type == "MFBool" || type == "Booleans") return MF_BOOL;
     else if (type == "MFColor" || type == "Colors") return MF_VEC3F;
     else if (type == "MFFloat" || type == "Floats") return MF_FLOAT;
     else if (type == "MFInt32" || type == "Integers") return MF_INT32;

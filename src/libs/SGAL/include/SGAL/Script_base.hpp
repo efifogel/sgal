@@ -35,6 +35,7 @@
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
+#include "SGAL/Array_types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -78,14 +79,14 @@ public:
                          Rotation,
                          std::string,
                          Shared_container,
-                         std::vector<Boolean>,
-                         std::vector<Float>,
-                         std::vector<Int>,
-                         std::vector<Vector2f>,
-                         std::vector<Vector3f>,
-                         std::vector<Rotation>,
-                         std::vector<std::string>,
-                         std::vector<Shared_container> > Variant_field;
+                         Boolean_array,
+                         Float_array,
+                         Int_array,
+                         Vector2f_array,
+                         Vector3f_array,
+                         Rotation_array,
+                         String_array,
+                         Shared_container_array> Variant_field;
 
   /*! Constructor.
    * \param proto (in) determines whether to construct a prototype.

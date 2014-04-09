@@ -192,6 +192,7 @@ public:
   virtual void delegate_impl(Value_holder<Shared_container>&) = 0;
 
   // Multi fields
+  virtual void delegate_impl(Value_holder<Boolean_array>&) = 0;
   virtual void delegate_impl(Value_holder<Float_array>&) = 0;
   virtual void delegate_impl(Value_holder<Uint_array>&) = 0;
   virtual void delegate_impl(Value_holder<Int_array>&) = 0;
@@ -492,8 +493,15 @@ public:
   }
   //@}
 
-  //! \delegator single fields specific implementations
+  //! \delegator multi fields specific implementations
   //@{
+  // Boolean_array
+  void delegate_impl(Value_holder<Boolean_array>& other)
+  {
+    Delegate_dispatcher<Value_type, Boolean_array> dd;
+    dd(m_value, other.get_value());
+  }
+
   // Float_array
   void delegate_impl(Value_holder<Float_array>& other)
   {

@@ -127,6 +127,7 @@ SGAL_END_NAMESPACE
 %type <std::string> Id nodeTypeId fieldId nodeNameId eventInId eventOutId
 %type <std::string> mfValue sfValues sfValue
 %type <std::string> sfstringValue sfstringValues mfstringValue URLList
+%type <std::string> sfboolValues
 %type <std::string> sfint32Values
 %type <std::string> sfboolValue
 %type <std::string> fieldValue
@@ -199,6 +200,7 @@ SGAL_END_NAMESPACE
 
 %token K_SCRIPT
 
+%token MFBool
 %token MFColor
 %token MFFloat
 %token MFInt32
@@ -387,7 +389,7 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                                   std::make_tuple(RULE_OUT, $2, new std::string("")));
                   $$->add_attribute(attr);
                 }
-                | K_FIELD fieldType fieldId sfValue
+                | K_FIELD fieldType fieldId fieldValue
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
@@ -555,7 +557,8 @@ IdRestChars     : Any number of ISO-10646 characters except: 0x0-0x20, 0x22, 0x2
 
 /* Fields: */
 
-fieldType       : MFColor { $$ = MF_COLOR; }
+fieldType       : MFBool { $$ = MF_BOOL; }
+                | MFColor { $$ = MF_COLOR; }
                 | MFFloat { $$ = MF_FLOAT; }
                 | MFInt32 { $$ = MF_INT32; }
                 | MFNode { $$ = MF_SHARED_CONTAINER; }
@@ -597,13 +600,18 @@ sfnodeValue     : nodeStatement { std::swap($$, $1); }
 sfstringValue   : STRING_LITERAL { std::swap($$, $1); }
                 ;
 
+sfboolValues   : sfboolValue { std::swap($$, $1); }
+                | sfboolValues sfboolValue { $1 += " " + $2; std::swap($$, $1); }
+                | sfboolValues "," sfboolValue { $1 += " " + $3; std::swap($$, $1); }
+                ;
+
 sfint32Values   : NUMBER { std::swap($$, $1); }
                 | sfint32Values NUMBER { $1 += " " + $2; std::swap($$, $1); }
                 | sfint32Values "," NUMBER { $1 += " " + $3; std::swap($$, $1); }
                 ;
 
 sfstringValues  : STRING_LITERAL { std::swap($$, $1); }
-| sfstringValues STRING_LITERAL { $1 += $2; std::swap($$, $1); }
+                | sfstringValues STRING_LITERAL { $1 += $2; std::swap($$, $1); }
                 | sfstringValues "," STRING_LITERAL { $1 += $3; std::swap($$, $1); }
                 ;
 
@@ -615,8 +623,9 @@ mfValue         : "[" "]" { ; }
                 | "[" sfValues "]" { std::swap($$, $2); }
                 ;
 
-sfValues        : sfint32Values { std::swap($$, $1); }
+sfValues        : sfboolValues { std::swap($$, $1); }
                 | sfstringValues { std::swap($$, $1); }
+                | sfint32Values { std::swap($$, $1); }
                 ;
 
 %%

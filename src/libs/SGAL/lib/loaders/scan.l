@@ -134,6 +134,7 @@ loc.step();		// reset location
 
 <vrml>"Script"		{ return Vrml_parser::make_K_SCRIPT(loc); }
 
+<vrml>"MFBool"		{ return Vrml_parser::make_MFBool(loc); }
 <vrml>"MFColor"		{ return Vrml_parser::make_MFColor(loc); }
 <vrml>"MFFloat"		{ return Vrml_parser::make_MFFloat(loc); }
 <vrml>"MFInt32"		{ return Vrml_parser::make_MFInt32(loc); }

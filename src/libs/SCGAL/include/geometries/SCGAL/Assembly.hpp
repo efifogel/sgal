@@ -34,6 +34,7 @@
 #include "SGAL/Switch.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Material.hpp"
+#include "SGAL/Array_types.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Assembly_part.hpp"
@@ -57,6 +58,9 @@ public:
   enum {
     FIRST = Group::LAST - 1,
     TRIGGER,
+    INTERLOCKED,
+    TRANSLATION,
+    COMPONENTS,
     DRAW_ALT,
     INC_ALT,
     INC_MINKOWSKI_SUMS,
@@ -88,6 +92,9 @@ public:
   /// \name field handlers
   //@{
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  Boolean* interlocked_handle(const Field_info*) { return &m_interlocked; }
+  Vector3f* translation_handle(const Field_info*) { return &m_translation; }
+  Boolean_array* components_handle(const Field_info*) { return &m_components; }
   Boolean* draw_alternate_handle(const Field_info*) { return &m_draw_alternate; }
   Boolean* inc_alternate_handle(const Field_info*) { return &m_inc_alternate; }
   Boolean* draw_aos_minkowski_sums_handle(const Field_info*)
@@ -239,6 +246,17 @@ private:
 
   /*! When trigerred, the puzzle solves itself. */
   Boolean m_trigger;
+
+  /*! Once solved, indicates whether the puzzle is interlocked. */
+  Boolean m_interlocked;
+
+  /*! A representative translation vector of the solution. */
+  Vector3f m_translation;
+
+  /*! A representative components vector. The ith element indicates whether
+   * the ith part should be translated.
+   */
+  Boolean_array m_components;
 
   /*! The number of parts in the puzzle. */
   Uint m_number_of_parts;

@@ -26,6 +26,19 @@
 
 SGAL_BEGIN_NAMESPACE
 
+//! \brief constrcutor from string
+Vector3f::Vector3f(const std::string& str)
+{
+  if (!str.empty()) {
+    std::istringstream tmp(str, std::istringstream::in);
+    tmp >> m_vector[0];
+    tmp >> m_vector[1];
+    tmp >> m_vector[2];
+    return;
+  }
+  init();
+}
+
 //! \brief
 std::string Vector3f::get_text()
 {

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6515 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_VECTOR3F_HPP
@@ -41,10 +38,20 @@ private:
   Float m_vector[3];
 
 public:
+  /*! Default constructor. */
   Vector3f();
+
+  /*! constructor. */
   Vector3f(Float a, Float b, Float c);
-  Vector3f(const Vector3f& v);
-  Vector3f(const std::string& text);
+
+  /*! Constructor from string. */
+  Vector3f (const std::string& str);
+
+  /*! Copy constructor. */
+  Vector3f(const Vector3f& other);
+
+  /*! Initialize the vector. */
+  void init();
 
   void set(Float a, Float b, Float c);
   void get(Float* a, Float* b, Float* c)  const;
@@ -112,13 +119,13 @@ public:
                            const Vector3f& p3);
 };
 
-/*! \brief */
+//! \brief
 inline Float& Vector3f::operator[](int i) { return m_vector[i]; }
 
-/*! \brief */
+//! \brief
 inline Float Vector3f::operator[](int i) const { return m_vector[i]; }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::set(Float a, Float b, Float c)
 {
   m_vector[0] = a;
@@ -126,7 +133,7 @@ inline void Vector3f::set(Float a, Float b, Float c)
   m_vector[2] = c;
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::get(Float* a, Float* b, Float* c)  const
 {
   *a = m_vector[0];
@@ -134,13 +141,13 @@ inline void Vector3f::get(Float* a, Float* b, Float* c)  const
   *c = m_vector[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::set(int i, Float val) { m_vector[i] = val; }
 
-/*! \brief */
+//! \brief
 inline Float Vector3f::get(int i) const { return m_vector[i]; }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::set(const Vector3f& v)
 {
   m_vector[0] = v.m_vector[0];
@@ -148,7 +155,7 @@ inline void Vector3f::set(const Vector3f& v)
   m_vector[2] = v.m_vector[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::get(Vector3f& v) const
 {
   v.m_vector[0] = m_vector[0];
@@ -156,26 +163,19 @@ inline void Vector3f::get(Vector3f& v) const
   v.m_vector[2] = m_vector[2];
 }
 
-/*! Constrcutor */
-inline Vector3f::Vector3f()
-{ m_vector[0] = m_vector[1] = m_vector[2] = 0.0f; }
+//! \brief sets this vector to be v1 - v2.
+inline void Vector3f::init() { m_vector[0] = m_vector[1] = m_vector[2] = 0.0f; }
 
-/*! Constrcutor */
+//! \brief default constrcutor.
+inline Vector3f::Vector3f() { init(); }
+
+//! \brief constrcutor.
 inline Vector3f::Vector3f(Float a, Float b, Float c) { set(a, b, c); }
 
-/*! Constrcutor */
-inline Vector3f::Vector3f(const Vector3f& v) { set(v); }
+//! \brief copy constrcutor.
+inline Vector3f::Vector3f(const Vector3f& other) { set(other); }
 
-/*! Constrcutor */
-inline Vector3f::Vector3f(const std::string& text)
-{
-  std::istringstream tmp(text, std::istringstream::in);
-  tmp >> m_vector[0];
-  tmp >> m_vector[1];
-  tmp >> m_vector[2];
-}
-
-/*! \brief sets this vector to be v1 - v2 */
+//! \brief sets this vector to be v1 - v2.
 inline void Vector3f::sub(const Vector3f& v1, const Vector3f& v2)
 {
   m_vector[0] = v1[0] - v2[0];
@@ -183,7 +183,7 @@ inline void Vector3f::sub(const Vector3f& v1, const Vector3f& v2)
   m_vector[2] = v1[2] - v2[2];
 }
 
-/*! \brief sets this vector to be v1 - v2 */
+//! \brief sets this vector to be v1 - v2.
 inline void Vector3f::sub(const Vector3sh& v1, const Vector3sh& v2)
 {
   m_vector[0] = (Float) v1[0] - (Float) v2[0];
@@ -191,7 +191,7 @@ inline void Vector3f::sub(const Vector3sh& v1, const Vector3sh& v2)
   m_vector[2] = (Float) v1[2] - (Float) v2[2];
 }
 
-/*! \brief sets this vector to be this - v */
+//! \brief sets this vector to be this - v.
 inline void Vector3f::sub(const Vector3f& v)
 {
   m_vector[0] -= v[0];
@@ -199,21 +199,21 @@ inline void Vector3f::sub(const Vector3f& v)
   m_vector[2] -= v[2];
 }
 
-/*! \brief */
+//! \brief
 inline Boolean Vector3f::equal(const Vector3f& v) const
 {
   return((m_vector[0] == v[0]) && (m_vector[1] == v[1]) &&
          (m_vector[2] == v[2]));
 }
 
-/*! \brief */
+//! \brief
 inline Vector3f& Vector3f::operator=(const Vector3f& v)
 {
   set(v);
   return *this;
 }
 
-/*! \brief */
+//! \brief
 inline Vector3f& Vector3f::operator=(Float v)
 {
   m_vector[0] = v;
@@ -222,13 +222,13 @@ inline Vector3f& Vector3f::operator=(Float v)
   return *this;
 }
 
-/*! \brief */
+//! \brief
 inline Boolean Vector3f::operator==(const Vector3f& v) const { return equal(v); }
 
-/*! \brief */
+//! \brief
 inline Boolean Vector3f::operator!=(const Vector3f& v) const { return !equal(v); }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::scale(Float s, const Vector3f& v)
 {
   m_vector[0] = s * v[0];
@@ -236,7 +236,7 @@ inline void Vector3f::scale(Float s, const Vector3f& v)
   m_vector[2] = s * v[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::scale(Float s)
 {
   m_vector[0] *= s;
@@ -244,7 +244,7 @@ inline void Vector3f::scale(Float s)
   m_vector[2] *= s;
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::add(const Vector3f& v1, const Vector3f& v2)
 {
   m_vector[0] = v1[0] + v2[0];
@@ -252,7 +252,7 @@ inline void Vector3f::add(const Vector3f& v1, const Vector3f& v2)
   m_vector[2] = v1[2] + v2[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::add(const Vector3f& v1)
 {
   m_vector[0] += v1[0] ;
@@ -260,7 +260,7 @@ inline void Vector3f::add(const Vector3f& v1)
   m_vector[2] += v1[2] ;
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::add(const Vector3sh& v1)
 {
   m_vector[0] += v1[0] ;
@@ -268,7 +268,7 @@ inline void Vector3f::add(const Vector3sh& v1)
   m_vector[2] += v1[2] ;
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::negate()
 {
   m_vector[0] = -m_vector[0];
@@ -276,7 +276,7 @@ inline void Vector3f::negate()
   m_vector[2] = -m_vector[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::negate(const Vector3f& v)
 {
   m_vector[0] = -v[0];
@@ -288,7 +288,7 @@ inline void Vector3f::negate(const Vector3f& v)
 inline Float Vector3f::dot(const Vector3f& v) const
 { return(m_vector[0] * v[0] + m_vector[1] * v[1] + m_vector[2] * v[2]); }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::add_scaled(const Vector3f& v1, Float s,
                                  const Vector3f& v2)
 {
@@ -297,7 +297,7 @@ inline void Vector3f::add_scaled(const Vector3f& v1, Float s,
   m_vector[2] = v1[2] + s * v2[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::add_scaled(Float s, const Vector3f& v2)
 {
   m_vector[0] = m_vector[0] + s * v2[0];
@@ -305,7 +305,7 @@ inline void Vector3f::add_scaled(Float s, const Vector3f& v2)
   m_vector[2] = m_vector[2] + s * v2[2];
 }
 
-/*! \brief */
+//! \brief
 inline Float Vector3f::normalize()
 {
   Float my_length = length();
@@ -317,7 +317,7 @@ inline Float Vector3f::normalize()
   return my_length;
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::mul(const Vector3f& v1, const Vector3f& v2)
 {
   m_vector[0] = v1[0] * v2[0];
@@ -325,7 +325,7 @@ inline void Vector3f::mul(const Vector3f& v1, const Vector3f& v2)
   m_vector[2] = v1[2] * v2[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::mul(const Vector3sh& v1, const Vector3f& v2)
 {
   m_vector[0] = v1[0] * v2[0];
@@ -333,7 +333,7 @@ inline void Vector3f::mul(const Vector3sh& v1, const Vector3f& v2)
   m_vector[2] = v1[2] * v2[2];
 }
 
-/*! \brief */
+//! \brief
 inline Float Vector3f::sqr_distance(const Vector3f& v) const
 {
   Float d0, d1, d2;
@@ -343,7 +343,7 @@ inline Float Vector3f::sqr_distance(const Vector3f& v) const
   return d0 * d0 + d1 * d1 + d2 * d2;
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::div(Float c, const Vector3f& v)
 {
   m_vector[0] = c / v[0];
@@ -351,7 +351,7 @@ inline void Vector3f::div(Float c, const Vector3f& v)
   m_vector[2] = c / v[2];
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::round()
 {
   m_vector[0] = (Float) ((int)m_vector[0]);
@@ -359,7 +359,7 @@ inline void Vector3f::round()
   m_vector[2] = (Float) ((int)m_vector[2]);
 }
 
-/*! \brief */
+//! \brief
 inline Boolean Vector3f::less(const Vector3f& v) const
 {
   return ((m_vector[0] < v[0]) ? true :
@@ -369,7 +369,7 @@ inline Boolean Vector3f::less(const Vector3f& v) const
              ((m_vector[2] < v[2]) ? true : false)))));
 }
 
-/*! \brief */
+//! \brief
 inline Boolean Vector3f::almost_equal(const Vector3f& v, Float tol) const
 {
   Float neg_tol = -tol;
@@ -382,7 +382,7 @@ inline Boolean Vector3f::almost_equal(const Vector3f& v, Float tol) const
   return true;
 }
 
-/*! \brief */
+//! \brief
 inline void Vector3f::combine(Float a, const Vector3f& v1, Float b,
                               const Vector3f& v2)
 {
@@ -394,11 +394,11 @@ inline void Vector3f::combine(Float a, const Vector3f& v1, Float b,
 Boolean operator>(const Vector3f& v1, const Vector3f& v2);
 Boolean operator<(const Vector3f& v1, const Vector3f& v2);
 
-/*! \brief */
+//! \brief
 inline Boolean operator<(const Vector3f& v1, const Vector3f& v2)
 { return ((v1[0] < v2[0]) && (v1[1] < v2[1]) && (v1[2] < v2[2])); }
 
-/*! \brief */
+//! \brief
 inline Boolean operator>(const Vector3f& v1, const Vector3f& v2)
 { return ((v1[0] > v2[0]) && (v1[1] > v2[1]) && (v1[2] > v2[2])); }
 
@@ -408,7 +408,7 @@ Vector3f operator+(const Vector3f& v1, const Vector3f& v2);
 Vector3f operator*(const Float f, const Vector3f& v);
 Vector3f operator*(const Vector3f& v, const Float f);
 
-/*! \brief */
+//! \brief
 inline Vector3f operator+(const Vector3f& v1, const Vector3f& v2)
 {
   Vector3f* c = new Vector3f;
@@ -416,7 +416,7 @@ inline Vector3f operator+(const Vector3f& v1, const Vector3f& v2)
   return(*c);
 }
 
-/*! \brief */
+//! \brief
 inline Vector3f operator*(const Vector3f v, const Float f)
 {
   Vector3f* c = new Vector3f;
@@ -424,7 +424,7 @@ inline Vector3f operator*(const Vector3f v, const Float f)
   return(*c);
 }
 
-/*! \brief */
+//! \brief
 inline Vector3f operator*(const Float f, const Vector3f v)
 {
   Vector3f* c = new Vector3f;
@@ -434,14 +434,14 @@ inline Vector3f operator*(const Float f, const Vector3f v)
 
 #endif
 
-/*! Exporter */
+//! \brief exporter.
 inline std::ostream& operator<<(std::ostream& os, const Vector3f& vec)
 {
   os << vec[0] << ", " << vec[1] << ", " << vec[2];
   return os;
 }
 
-/*! Importer */
+//! \brief importer.
 inline std::istream& operator>>(std::istream& in, Vector3f& vec)
 {
   Float x, y, z;
