@@ -11,6 +11,7 @@ if (USE_CGAL)
   add_definitions(-DUSE_CGAL)
   add_definitions(-DSCGAL_NT=${SCGAL_NT})
   add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
+  add_definitions(-DCGAL_IDENTIFICATION_XY=${CGAL_IDENTIFICATION_XY})
 endif()
 
 #Add include dirs

@@ -147,6 +147,7 @@ endif(WIN32)
 #Some hard coded defines - will fix those later
 add_definitions(-DSCGAL_NT=${SCGAL_NT})
 add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
+add_definitions(-DCGAL_IDENTIFICATION_XY=${CGAL_IDENTIFICATION_XY})
 
 #Add library
 if (BUILD_SHARED_LIBS)

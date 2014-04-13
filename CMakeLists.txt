@@ -6,6 +6,7 @@ option(BUILD_SHARED_LIBS "Build shared libs instead of static libs" ON)
 option(USE_CGAL "Use CGAL related stuff" ON)
 set(SCGAL_NT "3" CACHE STRING "CGAL number type")
 set(SCGAL_KERNEL "0" CACHE STRING "CGAL kernel")
+set(CGAL_IDENTIFICATION_XY "CGAL_X_MINUS_11_Y_7" CACHE STRING "CGAL identification location")
 
 # SONAME, SOVERSION
 #
