@@ -61,6 +61,7 @@ public:
     INTERLOCKED,
     TRANSLATION,
     COMPONENTS,
+    SOLUTION_ID,
     DRAW_ALT,
     INC_ALT,
     INC_MINKOWSKI_SUMS,
@@ -95,6 +96,7 @@ public:
   Boolean* interlocked_handle(const Field_info*) { return &m_interlocked; }
   Vector3f* translation_handle(const Field_info*) { return &m_translation; }
   Boolean_array* components_handle(const Field_info*) { return &m_components; }
+  Uint* solution_id_handle(const Field_info*) { return &m_solution_id; }
   Boolean* draw_alternate_handle(const Field_info*) { return &m_draw_alternate; }
   Boolean* inc_alternate_handle(const Field_info*) { return &m_inc_alternate; }
   Boolean* draw_aos_minkowski_sums_handle(const Field_info*)
@@ -257,6 +259,9 @@ private:
    * the ith part should be translated.
    */
   Boolean_array m_components;
+
+  /*! The index of the solution (accounting only solutions at vertices). */
+  Uint m_solution_id;
 
   /*! The number of parts in the puzzle. */
   Uint m_number_of_parts;

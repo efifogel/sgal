@@ -34,6 +34,7 @@
 #include <boost/config.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_spherical_gaussian_map_3.h>
@@ -74,6 +75,7 @@ Assembly::Assembly(Boolean proto) :
   m_dirty(true),
   m_trigger(false),
   m_interlocked(false),
+  m_solution_id(0),
   m_number_of_parts(0),
   m_aos_graph(NULL),
   m_draw_alternate(false),
@@ -209,6 +211,13 @@ void Assembly::init_prototype()
                                           RULE_EXPOSED_FIELD,
                                           components_func));
 
+  // solutionId
+  Uint_handle_function solution_id_func =
+    static_cast<Uint_handle_function>(&Assembly::solution_id_handle);
+  s_prototype->add_field_info(new SF_uint(SOLUTION_ID, "solutionId",
+                                          RULE_EXPOSED_FIELD,
+                                          solution_id_func));
+
   // drawAlternate
   exec_func = static_cast<Execution_function>(&Assembly::draw_alt_changed);
   Boolean_handle_function draw_alternate_func =
@@ -264,7 +273,22 @@ Container_proto* Assembly::get_prototype()
 }
 
 /*! \brief sets the attributes of the object extracted from the input file. */
-void Assembly::set_attributes(Element* elem) { Group::set_attributes(elem); }
+void Assembly::set_attributes(Element* elem)
+{
+  Group::set_attributes(elem);
+
+  typedef Element::Str_attr_iter        Str_attr_iter;
+  Str_attr_iter ai;
+  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const std::string& name = elem->get_name(ai);
+    const std::string& value = elem->get_value(ai);
+
+    if (name == "solutionId") {
+      m_solution_id = boost::lexical_cast<Uint>(value);
+      elem->mark_delete(ai);
+    }
+  }
+}
 
 /*! \brief assigns each part a unique non-negative number. */
 Uint Assembly::assign_id(Node* node, Uint id) const
@@ -1447,7 +1471,7 @@ void Assembly::process_aos_graph()
   }
 
   Solutions::const_iterator it;
-  Boolean routed(false);
+  Uint id = m_solution_id % m_solutions.size();
   for (it = m_solutions.begin(); it != m_solutions.end(); ++it) {
     const Solution* solution = *it;
     Cell_const_handle ch = solution->first;
@@ -1484,7 +1508,7 @@ void Assembly::process_aos_graph()
                 std::ostream_iterator<int>(std::cout, " "));
       std::cout << std::endl;
 
-      if (!routed) {
+      if (id == 0) {
         // translation
         Float x = static_cast<float>(CGAL::to_double((*vh)->point().dx()));
         Float y = static_cast<float>(CGAL::to_double((*vh)->point().dy()));
@@ -1509,8 +1533,8 @@ void Assembly::process_aos_graph()
         if (interlocked_field) interlocked_field->cascade();
 
         // mark
-        routed = true;
       }
+      --id;
       continue;
     }
   }
