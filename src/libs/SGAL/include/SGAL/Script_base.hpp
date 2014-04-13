@@ -47,6 +47,8 @@ class Field_info;
 #if (defined _MSC_VER)
 template class SGAL_SGAL_DECL std::allocator<char>;
 template class SGAL_SGAL_DECL std::basic_string<char>;
+#pragma warning( push )
+#pragma warning( disable: 4251 )
 #endif
 
 /*! \class Script_base Script_base.hpp
@@ -237,6 +239,10 @@ protected:
   static const Boolean s_def_direct_output;
   static const Boolean s_def_must_evaluate;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! \brief sets the URL. */
 inline void Script_base::set_url(const std::string& url) { m_url = url; }
