@@ -35,14 +35,20 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Script::s_tag = "Script";
-Container_proto* Script::s_prototype(nullptr);
+std::vector<Container_proto*> Script::s_prototypes;
 
 REGISTER_TO_FACTORY(Script, "Script");
 
 /*! Constructor */
 Script::Script(Boolean proto) :
   Script_base(proto)
-{ }
+{
+  if (proto) return;
+  size_t id = s_prototypes.size();
+  m_id = id;
+  s_prototypes.resize(id+1);
+  s_prototypes[id] = nullptr;
+}
 
 /*! Destructor */
 Script::~Script() { }
@@ -50,23 +56,23 @@ Script::~Script() { }
 /*! \brief initializes the container prototype. */
 void Script::init_prototype()
 {
-  if (s_prototype) return;
-  s_prototype = new Container_proto(Script_base::get_prototype());
+  if (s_prototypes[m_id]) return;
+  s_prototypes[m_id] = new Container_proto(Script_base::get_prototype());
 }
 
 /*! \brief deletes the container prototype. */
 void Script::delete_prototype()
 {
-  if (!s_prototype) return;
-  delete s_prototype;
-  s_prototype = nullptr;
+  if (!s_prototypes[m_id]) return;
+  delete s_prototypes[m_id];
+  s_prototypes[m_id] = nullptr;
 }
 
 /*! \brief obtains the container prototype. */
 Container_proto* Script::get_prototype()
 {
-  if (!s_prototype) Script::init_prototype();
-  return s_prototype;
+  if (!s_prototypes[m_id]) Script::init_prototype();
+  return s_prototypes[m_id];
 }
 
 /*! \brief sets the attributes of the object extracted from the input file. */
@@ -192,6 +198,10 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     }
     break;
 
+   case SF_IMAGE:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
    case SF_SHARED_CONTAINER:
     std::cerr << "Not supported yet!" << std::endl;
     break;
@@ -205,36 +215,60 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     break;
 
    case MF_FLOAT:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Float_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
+    }
+    break;
+
+   case MF_TIME:
+    {
+     Scene_time_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_TIME>(id, name, rule, initial_value, exec_func, prototype);
+    }
     break;
 
    case MF_INT32:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
+    {
+     Int_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_INT32>(id, name, rule, initial_value, exec_func, prototype);
+    }
+     break;
 
    case MF_VEC2F:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Vector2f_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
+    }
     break;
 
    case MF_VEC3F:
    case MF_COLOR:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Vector3f_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
+    }
     break;
 
    case MF_ROTATION:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
-   case MF_TIME:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Rotation_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
+    }
     break;
 
    case MF_STR:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
-   case SF_IMAGE:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     String_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_STR>(id, name, rule, initial_value, exec_func, prototype);
+    }
     break;
 
    case MF_SHARED_CONTAINER:
@@ -382,6 +416,10 @@ void Script::execute(const Field_info* field_info)
       std::cerr << "Not supported yet!" << std::endl;
       break;
 
+     case SF_IMAGE:
+      std::cerr << "Not supported yet!" << std::endl;
+      break;
+
      case SF_SHARED_CONTAINER:
       std::cerr << "Not supported yet!" << std::endl;
       break;
@@ -394,46 +432,97 @@ void Script::execute(const Field_info* field_info)
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
-       // std::cout << "  ";
-       for (size_t i = 0; i < tmp->size(); ++i) {
+       for (size_t i = 0; i < tmp->size(); ++i)
          array->Set(i, v8::Boolean::New(isolate, (*tmp)[i]));
-         // std::cout << (*tmp)[i] << " ";
-       }
-       // std::cout << std::endl;
        global->Set(field_name, array);
       }
       break;
 
      case MF_FLOAT:
-      std::cerr << "Not supported yet!" << std::endl;
+      {
+       Float_array* tmp = field_handle<Float_array>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       for (size_t i = 0; i < tmp->size(); ++i)
+         array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+       global->Set(field_name, array);
+      }
+      break;
+
+     case MF_TIME:
+      {
+       Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       for (size_t i = 0; i < tmp->size(); ++i)
+         array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+       global->Set(field_name, array);
+      }
       break;
 
      case MF_INT32:
-      std::cerr << "Not supported yet!" << std::endl;
+      {
+       Int_array* tmp = field_handle<Int_array>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       for (size_t i = 0; i < tmp->size(); ++i)
+         array->Set(i, v8::Int32::New(isolate, (*tmp)[i]));
+       global->Set(field_name, array);
+      }
       break;
 
      case MF_VEC2F:
-      std::cerr << "Not supported yet!" << std::endl;
+      {
+       Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       for (size_t i = 0; i < tmp->size(); ++i) {
+         v8::Handle<v8::Array> vec2f = v8::Array::New(isolate, 2);
+         vec2f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
+         vec2f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
+         array->Set(i, vec2f);
+       }
+       global->Set(field_name, array);
+      }
       break;
 
      case MF_VEC3F:
      case MF_COLOR:
-      std::cerr << "Not supported yet!" << std::endl;
+      {
+       Vector3f_array* tmp = field_handle<Vector3f_array>(field_info);
+       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       if (array.IsEmpty()) {
+         std::cerr << "failed to allocate v8 Array!" << std::endl;
+         break;
+       }
+       for (size_t i = 0; i < tmp->size(); ++i) {
+         v8::Handle<v8::Array> vec3f = v8::Array::New(isolate, 3);
+         vec3f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
+         vec3f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
+         vec3f->Set(2, v8::Number::New(isolate, ((*tmp)[i])[2]));
+         array->Set(i, vec3f);
+       }
+       global->Set(field_name, array);
+      }
       break;
 
      case MF_ROTATION:
       std::cerr << "Not supported yet!" << std::endl;
       break;
 
-     case MF_TIME:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
      case MF_STR:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case SF_IMAGE:
       std::cerr << "Not supported yet!" << std::endl;
       break;
 
@@ -572,6 +661,10 @@ void Script::execute(const Field_info* field_info)
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
+   case SF_IMAGE:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
    case MF_BOOL:
     {
      const Boolean_array* tmp = field_handle<Boolean_array>(field_info);
@@ -580,46 +673,97 @@ void Script::execute(const Field_info* field_info)
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
-     // std::cout << "  ";
-     for (size_t i = 0; i < tmp->size(); ++i) {
+     for (size_t i = 0; i < tmp->size(); ++i)
        array->Set(i, v8::Boolean::New(isolate, (*tmp)[i]));
-       // std::cout << (*tmp)[i] << " ";
-     }
      args[0] = array;
-     // std::cout << std::endl;
     }
     break;
 
    case MF_FLOAT:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
-   case MF_INT32:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
-   case MF_VEC2F:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
-   case MF_VEC3F:
-   case MF_COLOR:
-    std::cerr << "Not supported yet!" << std::endl;
-    break;
-
-   case MF_ROTATION:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     const Float_array* tmp = field_handle<Float_array>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     for (size_t i = 0; i < tmp->size(); ++i)
+       array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+     args[0] = array;
+    }
     break;
 
    case MF_TIME:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     const Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     for (size_t i = 0; i < tmp->size(); ++i)
+       array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+     args[0] = array;
+    }
+    break;
+
+   case MF_INT32:
+    {
+     const Int_array* tmp = field_handle<Int_array>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     for (size_t i = 0; i < tmp->size(); ++i)
+       array->Set(i, v8::Int32::New(isolate, (*tmp)[i]));
+     args[0] = array;
+    }
     break;
 
    case MF_STR:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case SF_IMAGE:
+   case MF_VEC2F:
+    {
+     const Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     for (size_t i = 0; i < tmp->size(); ++i) {
+       v8::Handle<v8::Array> vec2f = v8::Array::New(isolate, 2);
+       vec2f->Set(0, v8::Int32::New(isolate, ((*tmp)[i])[0]));
+       vec2f->Set(1, v8::Int32::New(isolate, ((*tmp)[i])[1]));
+       array->Set(i, vec2f);
+     }
+     args[0] = array;
+    }
+    break;
+
+   case MF_VEC3F:
+   case MF_COLOR:
+    {
+     const Vector3f_array* tmp = field_handle<Vector3f_array>(field_info);
+     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     if (array.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+       break;
+     }
+     for (size_t i = 0; i < tmp->size(); ++i) {
+       v8::Handle<v8::Array> vec3f = v8::Array::New(isolate, 3);
+       vec3f->Set(0, v8::Int32::New(isolate, ((*tmp)[i])[0]));
+       vec3f->Set(1, v8::Int32::New(isolate, ((*tmp)[i])[1]));
+       vec3f->Set(2, v8::Int32::New(isolate, ((*tmp)[i])[2]));
+       array->Set(i, vec3f);
+     }
+     args[0] = array;
+    }
+    break;
+
+   case MF_ROTATION:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
@@ -733,6 +877,7 @@ void Script::execute(const Field_info* field_info)
       break;
 
      case SF_ROTATION:
+     case SF_IMAGE:
      case SF_SHARED_CONTAINER:
       std::cerr << "Not supported yet!" << std::endl;
       break;
@@ -743,23 +888,80 @@ void Script::execute(const Field_info* field_info)
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Boolean_array* tmp = field_handle<Boolean_array>(field_info);
        tmp->resize(array->Length());
-       // std::cout << "  ";
-       for (size_t i = 0; i < array->Length(); ++i) {
+       for (size_t i = 0; i < array->Length(); ++i)
          (*tmp)[i] = array->Get(i)->BooleanValue();
-         // std::cout << (*tmp)[i] << " ";
-       }
+       // std::cout << "  ";
+       // std::copy(tmp->begin(), tmp->end(),
+       //           std::ostream_iterator<int>(std::cout, " "));
        // std::cout << std::endl;
       }
       break;
 
      case MF_FLOAT:
-     case MF_INT32:
-     case MF_VEC2F:
-     case MF_VEC3F:
-     case MF_ROTATION:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Float_array* tmp = field_handle<Float_array>(field_info);
+       tmp->resize(array->Length());
+       for (size_t i = 0; i < array->Length(); ++i)
+         (*tmp)[i] = array->Get(i)->NumberValue();
+      }
+      break;
+
      case MF_TIME:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
+       tmp->resize(array->Length());
+       for (size_t i = 0; i < array->Length(); ++i)
+         (*tmp)[i] = array->Get(i)->NumberValue();
+      }
+      break;
+
+     case MF_INT32:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Int_array* tmp = field_handle<Int_array>(field_info);
+       tmp->resize(array->Length());
+       for (size_t i = 0; i < array->Length(); ++i)
+         (*tmp)[i] = array->Get(i)->Int32Value();
+      }
+      break;
+
+     case MF_VEC2F:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
+       tmp->resize(array->Length());
+       for (size_t i = 0; i < array->Length(); ++i) {
+         v8::Local<v8::Array> vec2f = v8::Handle<v8::Array>::Cast(array->Get(i));
+         ((*tmp)[i])[0] = vec2f->Get(0)->NumberValue();
+         ((*tmp)[i])[1] = vec2f->Get(1)->NumberValue();
+       }
+      }
+      break;
+
+     case MF_VEC3F:
+     case MF_COLOR:
+      {
+       v8::HandleScope scope(isolate);
+       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+       Vector3f_array* tmp = field_handle<Vector3f_array>(field_info);
+       tmp->resize(array->Length());
+       for (size_t i = 0; i < array->Length(); ++i) {
+         v8::Local<v8::Array> vec3f = v8::Handle<v8::Array>::Cast(array->Get(i));
+         ((*tmp)[i])[0] = vec3f->Get(0)->NumberValue();
+         ((*tmp)[i])[1] = vec3f->Get(1)->NumberValue();
+         ((*tmp)[i])[2] = vec3f->Get(2)->NumberValue();
+       }
+      }
+      break;
+
      case MF_STR:
-     case SF_IMAGE:
+     case MF_ROTATION:
      case MF_SHARED_CONTAINER:
       std::cerr << "Not supported yet!" << std::endl;
       break;

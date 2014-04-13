@@ -114,9 +114,6 @@
 // #include "SGAL/Comp_rotation_interpolator.hpp"
 
 // #include "SGAL/Prog_indexed_tri_set.hpp"
-#if defined(USE_V8)
-#include "SGAL/Script.hpp"
-#endif
 #include "SGAL/Snapshot.hpp"
 // #include "SGAL/Movie_recorder.hpp"
 // #include "SGAL/Field_def.hpp"
@@ -157,7 +154,13 @@ Shared_container Container_factory::create(const std::string& type)
   return Shared_container();
 }
 
-/*! \brief registers all containers. */
+/*! \brief registers all containers.
+ * When a non-Script node is registered by the factor its container
+ * prototype (Container_proto) is constructed. However, every Script node
+ * has a unique type and in particular a unique container prototype; thus,
+ * the type of the Script node is not registered. A new Script node is
+ * created directly (using the new operator) and not through the factory.
+ */
 void Container_factory::initialize()
 {
   REGISTER_OBJECT(Accumulation);
@@ -244,9 +247,6 @@ void Container_factory::initialize()
   // REGISTER_OBJECT(Comp_color_interpolator);
   // REGISTER_OBJECT(Comp_rotation_interpolator);
   // REGISTER_OBJECT(Prog_indexed_tri_set);
-#if defined(USE_V8)
-  REGISTER_OBJECT(Script);
-#endif
   // REGISTER_OBJECT(Movie_recorder);
   // REGISTER_OBJECT(Field_def);
 }

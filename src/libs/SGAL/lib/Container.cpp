@@ -157,7 +157,7 @@ Field* Container::get_source_field(const std::string& src_field_name)
   //! \todo handle errors properly!
   std::cerr << "Failed to find field " << src_field_name
             << " in source node" << std::endl;
-  return NULL;
+  return nullptr;
 }
 
 //! \brief obtains a destination field with a given name.
@@ -175,7 +175,7 @@ Field* Container::get_destination_field(const std::string& dst_field_name)
   //! \todo handle errors properly!
   std::cerr << "Failed to find field " << dst_field_name
             << " in destination node" << std::endl;
-  return NULL;
+  return nullptr;
 }
 
 //! \brief writes all fields of this container.

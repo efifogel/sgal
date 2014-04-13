@@ -1441,6 +1441,8 @@ void Assembly::process_aos_graph()
   if (m_solutions.empty()) {
     std::cout << "The Assembly is interlocked!" << std::endl;
     m_interlocked = true;
+    Field* interlocked_field = get_field(INTERLOCKED);
+    if (interlocked_field) interlocked_field->cascade();
     return;
   }
 
@@ -1487,7 +1489,9 @@ void Assembly::process_aos_graph()
         Float x = static_cast<float>(CGAL::to_double((*vh)->point().dx()));
         Float y = static_cast<float>(CGAL::to_double((*vh)->point().dy()));
         Float z = static_cast<float>(CGAL::to_double((*vh)->point().dz()));
-        m_translation.set(x, y, z);
+        Vector3f vec(x, y, z);
+        vec.normalize();
+        m_translation.set(vec);
         Field* translation_field = get_field(TRANSLATION);
         if (translation_field) translation_field->cascade();
 

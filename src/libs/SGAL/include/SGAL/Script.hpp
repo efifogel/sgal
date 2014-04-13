@@ -19,7 +19,7 @@
 #ifndef SGAL_SCRIPT_HPP
 #define SGAL_SCRIPT_HPP
 
-#include <list>
+#include <vector>
 #include <string>
 
 #include <v8.h>
@@ -120,14 +120,17 @@ private:
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype. */
-  static Container_proto* s_prototype;
+  /*! The node prototypes. */
+  static std::vector<Container_proto*> s_prototypes;
 
   /*! The script protocol. */
   Protocol m_protocol;
 
   /*! The scene graph */
   Scene_graph* m_scene_graph;
+
+  /*! The unique id of the script. */
+  size_t m_id;
 };
 
 #if (defined _MSC_VER)

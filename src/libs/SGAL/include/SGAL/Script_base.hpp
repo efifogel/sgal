@@ -36,11 +36,11 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Array_types.hpp"
+#include "SGAL/Container_proto.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
-class Container_proto;
 class Tick_event;
 class Field_info;
 
@@ -81,6 +81,7 @@ public:
                          Shared_container,
                          Boolean_array,
                          Float_array,
+                         Scene_time_array,
                          Int_array,
                          Vector2f_array,
                          Vector3f_array,

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 13559 $
-//
 // Author(s)     : Efi Fogel
 
 // %debug
@@ -61,6 +58,7 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
+#include "SGAL/Script.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -453,8 +451,12 @@ node            : nodeTypeId "{" nodeBody "}"
                 }
                 | K_SCRIPT "{" scriptBody "}"
                 {
-                  std::string script("Script");
-                  $$ = Container_factory::get_instance()->create(script);
+                  /* Every Script node has a unique type; thus, the type of the
+                   * Script node is not registered in the container factory.
+                   * Instead every Script node is explicitly created.
+                   */
+                  SGAL::Script* script = new SGAL::Script;
+                  $$ = Shared_container(script);
                   if (!$$) {
                     error(yyla.location,
                           std::string("Unknown node type \"Script\""));
