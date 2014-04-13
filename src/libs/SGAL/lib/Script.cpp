@@ -735,8 +735,8 @@ void Script::execute(const Field_info* field_info)
      }
      for (size_t i = 0; i < tmp->size(); ++i) {
        v8::Handle<v8::Array> vec2f = v8::Array::New(isolate, 2);
-       vec2f->Set(0, v8::Int32::New(isolate, ((*tmp)[i])[0]));
-       vec2f->Set(1, v8::Int32::New(isolate, ((*tmp)[i])[1]));
+       vec2f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
+       vec2f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
        array->Set(i, vec2f);
      }
      args[0] = array;
@@ -754,9 +754,9 @@ void Script::execute(const Field_info* field_info)
      }
      for (size_t i = 0; i < tmp->size(); ++i) {
        v8::Handle<v8::Array> vec3f = v8::Array::New(isolate, 3);
-       vec3f->Set(0, v8::Int32::New(isolate, ((*tmp)[i])[0]));
-       vec3f->Set(1, v8::Int32::New(isolate, ((*tmp)[i])[1]));
-       vec3f->Set(2, v8::Int32::New(isolate, ((*tmp)[i])[2]));
+       vec3f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
+       vec3f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
+       vec3f->Set(2, v8::Number::New(isolate, ((*tmp)[i])[2]));
        array->Set(i, vec3f);
      }
      args[0] = array;
@@ -892,7 +892,7 @@ void Script::execute(const Field_info* field_info)
          (*tmp)[i] = array->Get(i)->BooleanValue();
        // std::cout << "  ";
        // std::copy(tmp->begin(), tmp->end(),
-       //           std::ostream_iterator<int>(std::cout, " "));
+       //           std::ostream_iterator<bool>(std::cout, " "));
        // std::cout << std::endl;
       }
       break;
@@ -904,7 +904,7 @@ void Script::execute(const Field_info* field_info)
        Float_array* tmp = field_handle<Float_array>(field_info);
        tmp->resize(array->Length());
        for (size_t i = 0; i < array->Length(); ++i)
-         (*tmp)[i] = array->Get(i)->NumberValue();
+         (*tmp)[i] = static_cast<Float>(array->Get(i)->NumberValue());
       }
       break;
 
@@ -915,7 +915,7 @@ void Script::execute(const Field_info* field_info)
        Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
        tmp->resize(array->Length());
        for (size_t i = 0; i < array->Length(); ++i)
-         (*tmp)[i] = array->Get(i)->NumberValue();
+         (*tmp)[i] = static_cast<Float>(array->Get(i)->NumberValue());
       }
       break;
 
@@ -937,10 +937,15 @@ void Script::execute(const Field_info* field_info)
        Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
        tmp->resize(array->Length());
        for (size_t i = 0; i < array->Length(); ++i) {
-         v8::Local<v8::Array> vec2f = v8::Handle<v8::Array>::Cast(array->Get(i));
-         ((*tmp)[i])[0] = vec2f->Get(0)->NumberValue();
-         ((*tmp)[i])[1] = vec2f->Get(1)->NumberValue();
+         v8::Local<v8::Array> vec2f =
+           v8::Handle<v8::Array>::Cast(array->Get(i));
+         ((*tmp)[i])[0] = static_cast<Float>(vec2f->Get(0)->NumberValue());
+         ((*tmp)[i])[1] = static_cast<Float>(vec2f->Get(1)->NumberValue());
        }
+       // std::cout << "  ";
+       // std::copy(tmp->begin(), tmp->end(),
+       //           std::ostream_iterator<Vector2f>(std::cout, " "));
+       // std::cout << std::endl;
       }
       break;
 
@@ -953,10 +958,14 @@ void Script::execute(const Field_info* field_info)
        tmp->resize(array->Length());
        for (size_t i = 0; i < array->Length(); ++i) {
          v8::Local<v8::Array> vec3f = v8::Handle<v8::Array>::Cast(array->Get(i));
-         ((*tmp)[i])[0] = vec3f->Get(0)->NumberValue();
-         ((*tmp)[i])[1] = vec3f->Get(1)->NumberValue();
-         ((*tmp)[i])[2] = vec3f->Get(2)->NumberValue();
+         ((*tmp)[i])[0] = static_cast<Float>(vec3f->Get(0)->NumberValue());
+         ((*tmp)[i])[1] = static_cast<Float>(vec3f->Get(1)->NumberValue());
+         ((*tmp)[i])[2] = static_cast<Float>(vec3f->Get(2)->NumberValue());
        }
+       // std::cout << "  ";
+       // std::copy(tmp->begin(), tmp->end(),
+       //           std::ostream_iterator<Vector3f>(std::cout, " "));
+       // std::cout << std::endl;
       }
       break;
 

@@ -383,7 +383,8 @@ void Windows_window_manager::event_loop(Boolean simulating)
       // Measure the ellapsed time:
       long int end_tick_time = clock();
       long int raw_tick_duration = end_tick_time - m_start_tick_time;
-      Scene_time tick_duration = raw_tick_duration / CLOCKS_PER_SEC;
+      Scene_time tick_duration =
+        static_cast<Scene_time>(raw_tick_duration) / CLOCKS_PER_SEC;
       Scene_time sleep_time = m_required_tick_duration - tick_duration;
       // Slow down if necessary:
       if (sleep_time > 0) {
