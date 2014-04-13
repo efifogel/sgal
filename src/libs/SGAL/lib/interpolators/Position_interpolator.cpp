@@ -16,10 +16,6 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*!
- *  Position_interpolator - implementation
- */
-
 #include "SGAL/Position_interpolator.hpp"
 #include "SGAL/Container_factory.hpp"
 
@@ -29,9 +25,12 @@ std::string Position_interpolator::s_tag = "PositionInterpolator";
 
 REGISTER_TO_FACTORY(Position_interpolator, "Position_interpolator");
 
-/*! Constructor */
+//! \brief constructor.
 Position_interpolator::Position_interpolator(Boolean flag, Boolean proto) :
   Vector3f_interpolator(flag, proto)
 {}
+
+//! \brief destructor.
+Position_interpolator::~Position_interpolator() {}
 
 SGAL_END_NAMESPACE

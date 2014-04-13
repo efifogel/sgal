@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7918 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_X11_WINDOW_ITEM_HPP
@@ -44,7 +41,7 @@ private:
 
   /*! The screen identifier. */
   int m_screen;
-  
+
   /* The window instance. */
   Window m_window;
 
@@ -59,7 +56,7 @@ private:
 
   /*! The delete atom. */
   Atom m_wm_delete;
-  
+
   /*! Create the window.
    * \param display.
    * \param screen.
@@ -69,7 +66,7 @@ private:
 
   /*! Destroy the window. */
   void destroy();
-  
+
 public:
   /*! Constructor */
   X11_window_item();
@@ -94,7 +91,7 @@ public:
   virtual void make_current();
 
   void reset_window();
-  
+
   friend class X11_window_manager;
 };
 

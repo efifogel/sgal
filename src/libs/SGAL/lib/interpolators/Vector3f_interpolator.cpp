@@ -16,10 +16,6 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*!
- * Vector3f_interpolator - implementation
- */
-
 #include "SGAL/Vector3f_interpolator.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
@@ -32,27 +28,21 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Vector3f_interpolator::s_tag = "Vector3fInterpolator";
-Container_proto* Vector3f_interpolator::s_prototype(NULL);
+Container_proto* Vector3f_interpolator::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Vector3f_interpolator, "Vector3f_interpolator");
 
-/*! Constructor
- * @param interpolate_flag (in) initialization value for the interpolate flag
- * field
-*/
+//! \brief constructor.
 Vector3f_interpolator::Vector3f_interpolator(Boolean interpolate_flag,
                                              Boolean proto) :
   Interpolator(interpolate_flag, proto),
   m_last_location(0)
 {}
 
-/*! Destructor */
-Vector3f_interpolator::~Vector3f_interpolator()
-{
-  m_values.clear();
-}
+//! \brief destructor.
+Vector3f_interpolator::~Vector3f_interpolator() { m_values.clear(); }
 
-/*! initializes the node prototype */
+//! \brief initializes the node prototype.
 void Vector3f_interpolator::init_prototype()
 {
   if (s_prototype) return;
@@ -61,40 +51,41 @@ void Vector3f_interpolator::init_prototype()
   // value
   Vector3f_handle_function value_func =
     static_cast<Vector3f_handle_function>(&Vector3f_interpolator::value_handle);
-  s_prototype->add_field_info(new SF_vector3f(VALUE,
-                                              "value_changed",
-                                              RULE_EXPOSED_FIELD,
-                                              value_func));
+  s_prototype->add_field_info(new SF_vector3f(VALUE, "value",
+                                              RULE_OUT, value_func));
+
+  // key values
+  Vector3f_array_handle_function values_func =
+    static_cast<Vector3f_array_handle_function>
+    (&Vector3f_interpolator::values_handle);
+  s_prototype->add_field_info(new MF_vector3f(KEY_VALUE, "keyValue",
+                                              RULE_FIELD, values_func));
 }
 
-/*! \brief delete the prototype */
+//! \brief delete the prototype.
 void Vector3f_interpolator::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtain the prototype */
+//! \brief obtain the prototype.
 Container_proto* Vector3f_interpolator::get_prototype()
 {
   if (!s_prototype) Vector3f_interpolator::init_prototype();
   return s_prototype;
 }
 
-/*! The interpolation execution function.
- * Activated through the cascade of the m_fraction field.
- * The function calculates m_value, updates it and activate cascade on it
- * @param pointer (in) to the cascaded field's field info - not used for now
- */
+//! \brief apply the interpolation.
 void Vector3f_interpolator::execute(const Field_info* /* field_info */)
 {
   Field* value = get_field(VALUE);
   // if there is no connection to the value field there is no need to execute
   // the interpolation
-  if (value == NULL) return;
+  if (value == nullptr) return;
 
   // if there are no array set the value to zero and return
-  if ((m_keys.size() == 0) || m_values.size() == 0) {
+  if ((m_keys.size() == 0) || (m_values.size() == 0)) {
     m_value = Vector3f(0.0f, 0.0f, 0.0f);
     value->cascade();
     return;
@@ -156,7 +147,7 @@ void Vector3f_interpolator::execute(const Field_info* /* field_info */)
   value->cascade();
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Vector3f_interpolator::set_attributes(Element* elem)
 {
   Interpolator::set_attributes(elem);
@@ -183,10 +174,8 @@ void Vector3f_interpolator::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get a list of attributes in this object. This method is called only
+/*! \brief get a list of attributes in this object. This method is called only
  * from the Builder side.
- *
- * \return a list of attributes
  */
 Attribute_list Vector3f_interpolator::get_attributes()
 {

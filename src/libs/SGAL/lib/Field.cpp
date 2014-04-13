@@ -24,25 +24,25 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor. */
+//! \brief constructor.
 Field::Field(Container* container, const Field_info* field_info) :
   m_container(container),
   m_field_info(field_info)
 {
-  if (field_info != NULL) {
+  if (field_info) {
     m_value_holder = field_info->create_value_holder(container);
     m_blocked = field_info->is_initially_blocked();
   }
   else {
-    m_value_holder = NULL;
+    m_value_holder = nullptr;
     m_blocked = false;
   }
 };
 
-/*! Destructor. */
+//! \brief destructor.
 Field::~Field() { delete m_value_holder; };
 
-/*! \brief connects this field to a given one. */
+//! \brief connects this field to a given one.
 void Field::connect(Field* field)
 {
   // lock m_connected_fields critical section
@@ -51,7 +51,7 @@ void Field::connect(Field* field)
   m_connected_fields.insert(m_connected_fields.begin(), field);
 }
 
-/*! \brief disconnects this field from the given one. */
+//! \brief disconnects this field from the given one.
 void Field::disconnect(Field* field)
 {
   // lock m_connected_fields critical section
@@ -60,7 +60,9 @@ void Field::disconnect(Field* field)
   m_connected_fields.remove(field);
 }
 
-/*! \brief cascades the execution flow from this field to its connected ones. */
+/*! \brief propages the data from this field to the fields connected to this
+ * field, generating a cascade of events effect.
+ */
 void Field::cascade()
 {
   // Activate execution if the field info has one:

@@ -44,15 +44,15 @@ SGAL_BEGIN_NAMESPACE
 
 // #define GL2PS
 
-Context* Context::s_current_context = NULL;
+Context* Context::s_current_context = nullptr;
 
 // NextId, must start at 1 so we don't clobber GL default targets of 0.
 // Int Context::s_nextId = 1;
 // IntArray* Context::s_freeIdArray = 0;
 
 #if !defined(NO_AUDIO)
-Ref_array* Context::s_sounds_array = NULL;
-Ref_array* Context::s_sound_players_array = NULL;
+Ref_array* Context::s_sounds_array = nullptr;
+Ref_array* Context::s_sound_players_array = nullptr;
 Boolean Context::s_sound_initialized = false;
 #endif
 
@@ -162,7 +162,7 @@ void Context::init()
   // Set local viewer by default
   m_local_viewer = true;
 
-  m_last_app = NULL;
+  m_last_app = nullptr;
 
   m_is_current = false;
   m_made_current = false;

@@ -38,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Time_sensor::s_tag = "TimeSensor";
-Container_proto* Time_sensor::s_prototype(NULL);
+Container_proto* Time_sensor::s_prototype(nullptr);
 
 // Default values:
 Scene_time Time_sensor::s_def_cycle_interval = 1;
@@ -129,11 +129,7 @@ void Time_sensor::init_prototype()
   s_prototype->add_field_info(new SF_time(START_TIME,
                                           "startTime",
                                           RULE_EXPOSED_FIELD,
-                                          start_time_func, NULL, true));
-
-  // startTime is initially blocked until the first UpdateTime. So Animations
-  // won't start in the middle, if the player was not ready to activate them
-  // when activated
+                                          start_time_func));
 
   // stopTime
   Scene_time_handle_function stop_time_func =
@@ -228,7 +224,7 @@ void Time_sensor::init_prototype()
 void Time_sensor::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! */
@@ -244,34 +240,35 @@ Container_proto* Time_sensor::get_prototype()
  */
 void Time_sensor::execute_enabled(const Field_info*)
 {
-  //! \todo Fix the response fumction of the Time_sensor::enabled field
-#if 0
-  // If the sensor was just disabled - enable it for the last time
-  // to send all events before disabling
   if (!m_enabled) {
+    unregister_events();
+#if 0
+    //! \todo is it necessary?
+    // If the sensor was just disabled - enable it for the last time
+    // to send all events before disabling
     set_enabled(true);
     update_time();
     set_enabled(false);
     m_is_active = false;
     Field* is_active_field = get_field(IS_ACTIVE);
-    if (is_active_field != NULL) is_active_field->cascade();
-  }
-  // If the sensor was enabled - zero the time in cycle
-  else {
-    m_time_in_cycle = 0.0;
-  }
+    if (is_active_field != nullptr) is_active_field->cascade();
 #endif
+    return;
+  }
+
+  // If the sensor was enabled, zero the time in cycle
+  register_events();
 };
 
 /*! Start the animation by setting m_start_time = m_time + m_start.
  * Used to start the animation in m_start value in seconds
  * @param pointer (in) to the cascaded field's field info - not used for now
  */
-void Time_sensor::start(const Field_info *)
+void Time_sensor::start(const Field_info * /* field_info */)
 {
   m_start_time = m_time + m_start;
   Field* field = get_field(START_TIME);
-  if (field != NULL) field->cascade();
+  if (field != nullptr) field->cascade();
 }
 
 /*! Stop the animation by setting m_stop_time = m_time + m_stop.
@@ -282,7 +279,7 @@ void Time_sensor::stop(const Field_info *)
 {
   m_stop_time = m_time + m_stop;
   Field* field = get_field(STOP_TIME);
-  if (field != NULL) field->cascade();
+  if (field != nullptr) field->cascade();
 }
 
 /*! Blocks/Unblocks the startTime, start and cycleInterval fields
@@ -291,13 +288,13 @@ void Time_sensor::stop(const Field_info *)
 void Time_sensor::set_blocking_of_fields_for_active(Boolean block)
 {
   Field* field = add_field(START_TIME);
-  if (field != NULL) field->set_blocked(block);
+  if (field != nullptr) field->set_blocked(block);
   field = add_field(START);
-  if (field != NULL) field->set_blocked(block);
+  if (field != nullptr) field->set_blocked(block);
   field = add_field(CYCLE_INTERVAL);
-  if (field != NULL) field->set_blocked(block);
+  if (field != nullptr) field->set_blocked(block);
   field = add_field(FRACTION);
-  if (field != NULL) field->set_blocked(block);
+  if (field != nullptr) field->set_blocked(block);
 }
 
 /*! \brief invoked every tick while the sensor is enabled.
@@ -305,8 +302,9 @@ void Time_sensor::set_blocking_of_fields_for_active(Boolean block)
  */
 bool Time_sensor::update_time(Scene_time current_time)
 {
-  // Unblock the start fields which are initially blocked - if this is the
+  // Unblock the start field which are initially blocked - if this is the
   // first call to UpadteTime
+  //! \todo this is unnecessary as the same effect can be achieved with a script
   if (m_first_update) {
     m_first_update = false;
     set_blocking_of_fields_for_active(false);
@@ -332,7 +330,7 @@ bool Time_sensor::update_time(Scene_time current_time)
 
   // If the new isActive is different than the old get its field
   // (to cascade it later)
-  Field* is_active_field = NULL;
+  Field* is_active_field = nullptr;
 
   if (m_is_active != is_active) {
     m_is_active = is_active;
@@ -347,7 +345,7 @@ bool Time_sensor::update_time(Scene_time current_time)
 
   // if the sensor is not active - return
   if (!is_active) {
-    if (is_active_field != NULL) is_active_field->cascade();
+    if (is_active_field != nullptr) is_active_field->cascade();
     return true;
   }
 
@@ -370,8 +368,8 @@ bool Time_sensor::update_time(Scene_time current_time)
   // If the cycle is over and loop is false return
   if (m_end_of_cycle && !m_loop) return true;
 
-  // Initialize cycle_time_field pointer with NULL
-  Field* cycle_time_field = NULL;
+  // Initialize cycle_time_field pointer with nullptr
+  Field* cycle_time_field = nullptr;
 
   // Check if cycle ended:
   if (m_time_in_cycle > m_cycle_interval) {
@@ -400,15 +398,15 @@ bool Time_sensor::update_time(Scene_time current_time)
   m_true_fraction = true;
 
   // Cascade changed fields
-  if (is_active_field != NULL) is_active_field->cascade();
-  if (cycle_time_field != NULL) cycle_time_field->cascade();
+  if (is_active_field != nullptr) is_active_field->cascade();
+  if (cycle_time_field != nullptr) cycle_time_field->cascade();
 
   Field* fraction_field = get_field(FRACTION);
-  if (fraction_field != NULL) fraction_field->cascade();
+  if (fraction_field != nullptr) fraction_field->cascade();
   Field* true_fraction_field = get_field(TRUE_FRACTION);
-  if (true_fraction_field != NULL) true_fraction_field->cascade();
+  if (true_fraction_field != nullptr) true_fraction_field->cascade();
   Field* time_field = get_field(TIME);
-  if (time_field != NULL) time_field->cascade();
+  if (time_field != nullptr) time_field->cascade();
 
   return true;
 };
