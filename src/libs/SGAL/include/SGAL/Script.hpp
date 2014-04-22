@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <string>
+#include <set>
 
 #include <v8.h>
 
@@ -112,6 +113,8 @@ public:
   /*! Execute the script function according to the event. */
   virtual void execute(const Field_info* field_info);
 
+  void insert_id(Uint id);
+
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -122,6 +125,15 @@ private:
 
   /*! The node prototypes. */
   static std::vector<Container_proto*> s_prototypes;
+
+  /*! Intercept setting.
+   * \param property (in)
+   * \param value (in)
+   * \param info (in)
+   */
+  static void Script::setter(v8::Local<v8::String> property,
+                             v8::Local<v8::Value> value,
+                             const v8::PropertyCallbackInfo<v8::Value>& info);
 
   /*! The script protocol. */
   Protocol m_protocol;
@@ -136,6 +148,117 @@ private:
 
   /*! The isolated instance of the V8 engine. */
   v8::Isolate* m_isolate;
+
+  /*! A set of ids of assigned fields. */
+  std::set<Uint> m_assigned_fields;
+
+  /*! Add an object to the engine for every field and every output field.
+   * \param global (in) the global object associated with the context.
+   */
+  void add_objects(v8::Local<v8::Object> global);
+
+  /*! Reflect changes to every object of the engine in the corresponding field
+   * or output field.
+   * \param global (in) the global object associated with the context.
+   */
+  void reflect_objects(v8::Local<v8::Object> global);
+
+  /*! Obtain the first argument for the call.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value of the first argument.
+   * \return the argument.
+   */
+   v8::Handle<v8::Value> get_argument(const Field_info* field_info);
+
+  /*! Bound the script.
+   */
+  void bound_script();
+
+  /*! Convert a single Boolean field value to a v8 engine Boolean.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_single_boolean(const Field_info* field_info);
+
+  /*! Convert a single float  field value to a v8 engine float.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_single_float(const Field_info* field_info);
+
+  /*! Convert a single time field value to a v8 engine float.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_single_time(const Field_info* field_info);
+
+  /*! Convert a single int32 field value to a v8 engine int32.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_single_int32(const Field_info* field_info);
+
+  /*! Convert a single string field value to a v8 engine string.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_single_string(const Field_info* field_info);
+
+  /*! Convert a single Vector2f field value to a v8 engine array of 2 floats.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_single_vector2f(const Field_info* field_info);
+
+  /*! Convert a single Vector3f field value to a v8 engine array of 3 floats.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_single_vector3f(const Field_info* field_info);
+
+  /*! Convert a multi Boolean field value to a v8 engine array of Booleans.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_boolean(const Field_info* field_info);
+
+  /*! Convert a multi float field value to a v8 engine array of floats.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_float(const Field_info* field_info);
+
+  /*! Convert a multi time field value to a v8 engine array of floats.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_time(const Field_info* field_info);
+
+  /*! Convert a multi int32 field value to a v8 engine array of int32.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_int32(const Field_info* field_info);
+
+  /*! Convert a multi string field value to a v8 engine array of strings.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_string(const Field_info* field_info);
+
+  /*! Convert a multi Vector2f field value to a v8 engine array of arrays of
+   * 2 floats.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_vector2f(const Field_info* field_info);
+
+  /*! Convert a multi Vector3f field value to a v8 engine array of arrays of
+   * 3 floats.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_vector3f(const Field_info* field_info);
 };
 
 #if (defined _MSC_VER)
@@ -150,6 +273,23 @@ inline Container* Script::clone() { return new Script(); }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Script::get_tag() const { return s_tag; }
+
+//! \brief converts a single float field value to a v8 engine float.
+inline v8::Handle<v8::Value>
+Script::get_single_float(const Field_info* field_info)
+{ return v8::Number::New(m_isolate, *(field_handle<Float>(field_info))); }
+
+//! \brief converts a single time field value to a v8 engine float.
+inline v8::Handle<v8::Value>
+Script::get_single_time(const Field_info* field_info)
+{ return v8::Number::New(m_isolate, *(field_handle<Scene_time>(field_info))); }
+
+//! \brief converts a single int32 field value to a v8 engine int32.
+inline v8::Handle<v8::Value>
+Script::get_single_int32(const Field_info* field_info)
+{ return v8::Int32::New(m_isolate, *(field_handle<Int>(field_info))); }
+
+inline void Script::insert_id(Uint id) { m_assigned_fields.insert(id); }
 
 SGAL_END_NAMESPACE
 
