@@ -126,11 +126,16 @@ private:
   /*! The script protocol. */
   Protocol m_protocol;
 
-  /*! The scene graph */
-  Scene_graph* m_scene_graph;
-
   /*! The unique id of the script. */
   size_t m_id;
+
+  /*! The v8 sandboxed execution context. */
+  typedef v8::CopyablePersistentTraits<v8::Context>
+    Copyable_persistent_context_traits;
+  v8::Persistent<v8::Context, Copyable_persistent_context_traits> m_context;
+
+  /*! The isolated instance of the V8 engine. */
+  v8::Isolate* m_isolate;
 };
 
 #if (defined _MSC_VER)

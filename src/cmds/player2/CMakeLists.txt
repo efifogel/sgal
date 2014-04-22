@@ -7,6 +7,9 @@ set(PLAYER2_SOURCE_FILES ${PLAYER2_SOURCE_FILES} Player2_option_parser.cpp)
 
 #Add defines
 add_definitions(-DBOOST_ALL_DYN_LINK )
+if (USE_V8)
+  add_definitions(-DUSE_V8)
+endif()
 
 #Add include dirs
 include_directories(../player)

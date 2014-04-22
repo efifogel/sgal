@@ -27,10 +27,6 @@
 #include <time.h>
 #include <iostream>
 
-#if defined(USE_V8)
-#include <v8.h>
-#endif
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -105,9 +101,6 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_isect_action = new Isect_action();
   m_touch_sensors.clear();
   m_time_sensors.clear();
-#if defined(USE_V8)
-  m_isolate = v8::Isolate::New();
-#endif
 }
 
 /*! Destructor */
@@ -122,10 +115,6 @@ Scene_graph::~Scene_graph()
 
   Navigation_info* nav = get_active_navigation_info();
   if (nav) nav->unregister_events();
-
-#if defined(USE_V8)
-  if (m_isolate) m_isolate->Dispose();
-#endif
 
   destroy_defaults();
 

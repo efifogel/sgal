@@ -41,7 +41,8 @@ REGISTER_TO_FACTORY(Script, "Script");
 
 /*! Constructor */
 Script::Script(Boolean proto) :
-  Script_base(proto)
+  Script_base(proto),
+  m_isolate(nullptr)
 {
   if (proto) return;
   size_t id = s_prototypes.size();
@@ -51,7 +52,10 @@ Script::Script(Boolean proto) :
 }
 
 /*! Destructor */
-Script::~Script() { }
+Script::~Script()
+{
+  m_context.Reset();
+}
 
 /*! \brief initializes the container prototype. */
 void Script::init_prototype()
@@ -110,7 +114,22 @@ Attribute_list Script::get_attributes()
 #endif
 
 /*! \brief records the scene graph. */
-void Script::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }
+void Script::add_to_scene(Scene_graph* scene_graph)
+{
+  // Get the Isolate instance of the V8 engine from the scene graph.
+  m_isolate = scene_graph->get_isolate();
+  v8::Isolate::Scope isolate_scope(m_isolate);
+  v8::HandleScope handle_scope(m_isolate);      // stack-allocated handle scope
+
+  // Create a new ObjectTemplate
+  v8::Handle<v8::ObjectTemplate> global_tmpl =
+    v8::ObjectTemplate::New(m_isolate);
+  // global_tmpl->SetNamedPropertyHandler(0, setter);
+
+  v8::Local<v8::Context> context =
+    v8::Context::New(m_isolate, NULL, global_tmpl);
+  m_context.Reset(m_isolate, context);
+}
 
 /*! \brief adds a field info record to the script node. */
 void Script::add_field_info(Field_rule rule, Field_type type,
@@ -294,21 +313,12 @@ void setter(v8::Local<v8::String> property,
 // \brief executes the suitable script function according to the event.
 void Script::execute(const Field_info* field_info)
 {
-  // Get the Isolate instance of the V8 engine from the scene graph.
-  v8::Isolate* isolate = m_scene_graph->get_isolate();
-  v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);        // stack-allocated handle scope
-
-  // Create a new ObjectTemplate
-  v8::Handle<v8::ObjectTemplate> global_tmpl =
-    v8::ObjectTemplate::New(isolate);
-  // global_tmpl->SetNamedPropertyHandler(0, setter);
-
   Container_proto* proto = get_prototype();
   Container_proto::Id_const_iterator it = proto->ids_begin(proto);
 
-  v8::Handle<v8::Context> context =
-    v8::Context::New(isolate, NULL, global_tmpl);
+  v8::HandleScope handle_scope(m_isolate);      // stack-allocated handle scope
+  v8::Local<v8::Context> context =
+      v8::Local<v8::Context>::New(m_isolate, m_context);
   v8::Context::Scope context_scope(context);    // enter the contex
   v8::Handle<v8::Object> global = context->Global();
 
@@ -320,14 +330,14 @@ void Script::execute(const Field_info* field_info)
       continue;
 
     v8::Handle<v8::String> field_name =
-      v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+      v8::String::NewFromUtf8(m_isolate, field_info->get_name().c_str(),
                               v8::String::kInternalizedString);
 
     // v8::Handle<v8::ObjectTemplate> field_tmpl =
-    //   v8::ObjectTemplate::New(isolate);
+    //   v8::ObjectTemplate::New(m_isolate);
     // field_tmpl->SetInternalFieldCount(1);
     // v8::Handle<v8::Object> field_obj = field_tmpl->NewInstance();
-    // field_obj->SetInternalField(0, v8::Boolean::New(isolate, false));
+    // field_obj->SetInternalField(0, v8::Boolean::New(m_isolate, false));
 
     // std::cout << "In name: " << field_info->get_name() << std::endl;
 
@@ -343,7 +353,7 @@ void Script::execute(const Field_info* field_info)
          (id == DIRECT_OUTPUT) ? direct_output_handle(field_info) :
          (id == MUST_EVALUATE) ? must_evaluate_handle(field_info) :
          field_handle<Boolean>(field_info);
-       global->Set(field_name, v8::Boolean::New(isolate, *tmp));
+       global->Set(field_name, v8::Boolean::New(m_isolate, *tmp));
        // std::cout << "  value: " << *tmp << std::endl;
       }
       break;
@@ -351,7 +361,7 @@ void Script::execute(const Field_info* field_info)
      case SF_FLOAT:
       {
        Float* tmp = field_handle<Float>(field_info);
-       global->Set(field_name, v8::Number::New(isolate, *tmp));
+       global->Set(field_name, v8::Number::New(m_isolate, *tmp));
        // std::cout << "  value: " << *tmp << std::endl;
       }
       break;
@@ -359,7 +369,7 @@ void Script::execute(const Field_info* field_info)
      case SF_TIME:
       {
        Scene_time* tmp = field_handle<Scene_time>(field_info);
-       global->Set(field_name, v8::Number::New(isolate, *tmp));
+       global->Set(field_name, v8::Number::New(m_isolate, *tmp));
        // std::cout << "  value: " << *tmp << std::endl;
       }
       break;
@@ -367,7 +377,7 @@ void Script::execute(const Field_info* field_info)
      case SF_INT32:
       {
        Int* tmp = field_handle<Int>(field_info);
-       global->Set(field_name, v8::Int32::New(isolate, *tmp));
+       global->Set(field_name, v8::Int32::New(m_isolate, *tmp));
        // std::cout << "  value: " << *tmp << std::endl;
       }
       break;
@@ -377,20 +387,20 @@ void Script::execute(const Field_info* field_info)
        Uint id = field_info->get_id();
        std::string* tmp = (id == URL) ? url_handle(field_info) :
          field_handle<std::string>(field_info);
-       global->Set(field_name, v8::String::NewFromUtf8(isolate, tmp->c_str()));
+       global->Set(field_name, v8::String::NewFromUtf8(m_isolate, tmp->c_str()));
       }
       break;
 
      case SF_VEC2F:
       {
        Vector2f* tmp = field_handle<Vector2f>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, 2);
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, 2);
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
-       array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
-       array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+       array->Set(0, v8::Number::New(m_isolate, (*tmp)[0]));
+       array->Set(1, v8::Number::New(m_isolate, (*tmp)[1]));
        global->Set(field_name, array);
       }
       break;
@@ -399,14 +409,14 @@ void Script::execute(const Field_info* field_info)
      case SF_COLOR:
       {
        Vector3f* tmp = field_handle<Vector3f>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, 3);
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, 3);
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
-       array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
-       array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
-       array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
+       array->Set(0, v8::Number::New(m_isolate, (*tmp)[0]));
+       array->Set(1, v8::Number::New(m_isolate, (*tmp)[1]));
+       array->Set(2, v8::Number::New(m_isolate, (*tmp)[2]));
        global->Set(field_name, array);
        // std::cout << "  value: " << *tmp << std::endl;
       }
@@ -427,13 +437,13 @@ void Script::execute(const Field_info* field_info)
      case MF_BOOL:
       {
        Boolean_array* tmp = field_handle<Boolean_array>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
        for (size_t i = 0; i < tmp->size(); ++i)
-         array->Set(i, v8::Boolean::New(isolate, (*tmp)[i]));
+         array->Set(i, v8::Boolean::New(m_isolate, (*tmp)[i]));
        global->Set(field_name, array);
       }
       break;
@@ -441,13 +451,13 @@ void Script::execute(const Field_info* field_info)
      case MF_FLOAT:
       {
        Float_array* tmp = field_handle<Float_array>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
        for (size_t i = 0; i < tmp->size(); ++i)
-         array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+         array->Set(i, v8::Number::New(m_isolate, (*tmp)[i]));
        global->Set(field_name, array);
       }
       break;
@@ -455,13 +465,13 @@ void Script::execute(const Field_info* field_info)
      case MF_TIME:
       {
        Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
        for (size_t i = 0; i < tmp->size(); ++i)
-         array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+         array->Set(i, v8::Number::New(m_isolate, (*tmp)[i]));
        global->Set(field_name, array);
       }
       break;
@@ -469,13 +479,13 @@ void Script::execute(const Field_info* field_info)
      case MF_INT32:
       {
        Int_array* tmp = field_handle<Int_array>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
        for (size_t i = 0; i < tmp->size(); ++i)
-         array->Set(i, v8::Int32::New(isolate, (*tmp)[i]));
+         array->Set(i, v8::Int32::New(m_isolate, (*tmp)[i]));
        global->Set(field_name, array);
       }
       break;
@@ -483,15 +493,15 @@ void Script::execute(const Field_info* field_info)
      case MF_VEC2F:
       {
        Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
        for (size_t i = 0; i < tmp->size(); ++i) {
-         v8::Handle<v8::Array> vec2f = v8::Array::New(isolate, 2);
-         vec2f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
-         vec2f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
+         v8::Handle<v8::Array> vec2f = v8::Array::New(m_isolate, 2);
+         vec2f->Set(0, v8::Number::New(m_isolate, ((*tmp)[i])[0]));
+         vec2f->Set(1, v8::Number::New(m_isolate, ((*tmp)[i])[1]));
          array->Set(i, vec2f);
        }
        global->Set(field_name, array);
@@ -502,16 +512,16 @@ void Script::execute(const Field_info* field_info)
      case MF_COLOR:
       {
        Vector3f_array* tmp = field_handle<Vector3f_array>(field_info);
-       v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+       v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
        if (array.IsEmpty()) {
          std::cerr << "failed to allocate v8 Array!" << std::endl;
          break;
        }
        for (size_t i = 0; i < tmp->size(); ++i) {
-         v8::Handle<v8::Array> vec3f = v8::Array::New(isolate, 3);
-         vec3f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
-         vec3f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
-         vec3f->Set(2, v8::Number::New(isolate, ((*tmp)[i])[2]));
+         v8::Handle<v8::Array> vec3f = v8::Array::New(m_isolate, 3);
+         vec3f->Set(0, v8::Number::New(m_isolate, ((*tmp)[i])[0]));
+         vec3f->Set(1, v8::Number::New(m_isolate, ((*tmp)[i])[1]));
+         vec3f->Set(2, v8::Number::New(m_isolate, ((*tmp)[i])[2]));
          array->Set(i, vec3f);
        }
        global->Set(field_name, array);
@@ -537,7 +547,7 @@ void Script::execute(const Field_info* field_info)
   }
 
   const std::string& str = field_info->get_name();
-  v8::Handle<v8::String> name = v8::String::NewFromUtf8(isolate, str.c_str());
+  v8::Handle<v8::String> name = v8::String::NewFromUtf8(m_isolate, str.c_str());
 
   // Extract the script
   size_t pos = m_url.find(':');
@@ -563,7 +573,7 @@ void Script::execute(const Field_info* field_info)
 
   // Create a string containing the JavaScript source code.
   v8::Handle<v8::String> source =
-    v8::String::NewFromUtf8(isolate, source_str.c_str());
+    v8::String::NewFromUtf8(m_isolate, source_str.c_str());
 
   // set up an error handler to catch any exceptions the script might throw.
   v8::TryCatch try_catch;
@@ -600,31 +610,31 @@ void Script::execute(const Field_info* field_info)
    case SF_BOOL:
     // std::cout << "  value: " << *(field_handle<Boolean>(field_info))
     //           << std::endl;
-    args[0] = v8::Boolean::New(isolate, *(field_handle<Boolean>(field_info)));
+    args[0] = v8::Boolean::New(m_isolate, *(field_handle<Boolean>(field_info)));
     break;
 
    case SF_FLOAT:
-    args[0] = v8::Number::New(isolate, *(field_handle<Float>(field_info)));
+    args[0] = v8::Number::New(m_isolate, *(field_handle<Float>(field_info)));
     break;
 
    case SF_TIME:
-    args[0] = v8::Number::New(isolate, *(field_handle<Scene_time>(field_info)));
+    args[0] = v8::Number::New(m_isolate, *(field_handle<Scene_time>(field_info)));
     break;
 
    case SF_INT32:
-    args[0] = v8::Int32::New(isolate, *(field_handle<Int>(field_info)));
+    args[0] = v8::Int32::New(m_isolate, *(field_handle<Int>(field_info)));
     break;
 
    case SF_VEC2F:
     {
      const Vector2f* tmp = field_handle<Vector2f>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, 2);
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, 2);
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
-     array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
-     array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
+     array->Set(0, v8::Number::New(m_isolate, (*tmp)[0]));
+     array->Set(1, v8::Number::New(m_isolate, (*tmp)[1]));
      args[0] = array;
     }
     break;
@@ -634,14 +644,14 @@ void Script::execute(const Field_info* field_info)
     {
      const Vector3f* tmp = field_handle<Vector3f>(field_info);
      // std::cout << "  value: " << *tmp << std::endl;
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, 3);
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, 3);
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
-     array->Set(0, v8::Number::New(isolate, (*tmp)[0]));
-     array->Set(1, v8::Number::New(isolate, (*tmp)[1]));
-     array->Set(2, v8::Number::New(isolate, (*tmp)[2]));
+     array->Set(0, v8::Number::New(m_isolate, (*tmp)[0]));
+     array->Set(1, v8::Number::New(m_isolate, (*tmp)[1]));
+     array->Set(2, v8::Number::New(m_isolate, (*tmp)[2]));
      args[0] = array;
     }
     break;
@@ -653,7 +663,7 @@ void Script::execute(const Field_info* field_info)
    case SF_STR:
     {
      const std::string* tmp = field_handle<std::string>(field_info);
-     args[0] = v8::String::NewFromUtf8(isolate, tmp->c_str());
+     args[0] = v8::String::NewFromUtf8(m_isolate, tmp->c_str());
     }
     break;
 
@@ -668,13 +678,13 @@ void Script::execute(const Field_info* field_info)
    case MF_BOOL:
     {
      const Boolean_array* tmp = field_handle<Boolean_array>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
      for (size_t i = 0; i < tmp->size(); ++i)
-       array->Set(i, v8::Boolean::New(isolate, (*tmp)[i]));
+       array->Set(i, v8::Boolean::New(m_isolate, (*tmp)[i]));
      args[0] = array;
     }
     break;
@@ -682,13 +692,13 @@ void Script::execute(const Field_info* field_info)
    case MF_FLOAT:
     {
      const Float_array* tmp = field_handle<Float_array>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
      for (size_t i = 0; i < tmp->size(); ++i)
-       array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+       array->Set(i, v8::Number::New(m_isolate, (*tmp)[i]));
      args[0] = array;
     }
     break;
@@ -696,13 +706,13 @@ void Script::execute(const Field_info* field_info)
    case MF_TIME:
     {
      const Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
      for (size_t i = 0; i < tmp->size(); ++i)
-       array->Set(i, v8::Number::New(isolate, (*tmp)[i]));
+       array->Set(i, v8::Number::New(m_isolate, (*tmp)[i]));
      args[0] = array;
     }
     break;
@@ -710,13 +720,13 @@ void Script::execute(const Field_info* field_info)
    case MF_INT32:
     {
      const Int_array* tmp = field_handle<Int_array>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
      for (size_t i = 0; i < tmp->size(); ++i)
-       array->Set(i, v8::Int32::New(isolate, (*tmp)[i]));
+       array->Set(i, v8::Int32::New(m_isolate, (*tmp)[i]));
      args[0] = array;
     }
     break;
@@ -728,15 +738,15 @@ void Script::execute(const Field_info* field_info)
    case MF_VEC2F:
     {
      const Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
      for (size_t i = 0; i < tmp->size(); ++i) {
-       v8::Handle<v8::Array> vec2f = v8::Array::New(isolate, 2);
-       vec2f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
-       vec2f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
+       v8::Handle<v8::Array> vec2f = v8::Array::New(m_isolate, 2);
+       vec2f->Set(0, v8::Number::New(m_isolate, ((*tmp)[i])[0]));
+       vec2f->Set(1, v8::Number::New(m_isolate, ((*tmp)[i])[1]));
        array->Set(i, vec2f);
      }
      args[0] = array;
@@ -747,16 +757,16 @@ void Script::execute(const Field_info* field_info)
    case MF_COLOR:
     {
      const Vector3f_array* tmp = field_handle<Vector3f_array>(field_info);
-     v8::Handle<v8::Array> array = v8::Array::New(isolate, tmp->size());
+     v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
      if (array.IsEmpty()) {
        std::cerr << "failed to allocate v8 Array!" << std::endl;
        break;
      }
      for (size_t i = 0; i < tmp->size(); ++i) {
-       v8::Handle<v8::Array> vec3f = v8::Array::New(isolate, 3);
-       vec3f->Set(0, v8::Number::New(isolate, ((*tmp)[i])[0]));
-       vec3f->Set(1, v8::Number::New(isolate, ((*tmp)[i])[1]));
-       vec3f->Set(2, v8::Number::New(isolate, ((*tmp)[i])[2]));
+       v8::Handle<v8::Array> vec3f = v8::Array::New(m_isolate, 3);
+       vec3f->Set(0, v8::Number::New(m_isolate, ((*tmp)[i])[0]));
+       vec3f->Set(1, v8::Number::New(m_isolate, ((*tmp)[i])[1]));
+       vec3f->Set(2, v8::Number::New(m_isolate, ((*tmp)[i])[2]));
        array->Set(i, vec3f);
      }
      args[0] = array;
@@ -775,7 +785,7 @@ void Script::execute(const Field_info* field_info)
     std::cerr << "Unsupported type!" << std::endl;
     return;
   }
-  args[1] = v8::Number::New(isolate, m_time);
+  args[1] = v8::Number::New(m_isolate, m_time);
 
   v8::Handle<v8::Value> func_result = func->Call(global, 2, args);
   if (func_result.IsEmpty()) {
@@ -791,7 +801,7 @@ void Script::execute(const Field_info* field_info)
       continue;
 
     v8::Handle<v8::String> field_name =
-      v8::String::NewFromUtf8(isolate, field_info->get_name().c_str(),
+      v8::String::NewFromUtf8(m_isolate, field_info->get_name().c_str(),
                               v8::String::kInternalizedString);
     v8::Handle<v8::Value> value = global->Get(field_name);
 
@@ -850,7 +860,7 @@ void Script::execute(const Field_info* field_info)
 
      case SF_VEC2F:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Vector2f* tmp = field_handle<Vector2f>(field_info);
        tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
@@ -863,7 +873,7 @@ void Script::execute(const Field_info* field_info)
      case SF_VEC3F:
      case SF_COLOR:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Vector3f* tmp = field_handle<Vector3f>(field_info);
        tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
@@ -884,7 +894,7 @@ void Script::execute(const Field_info* field_info)
 
      case MF_BOOL:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Boolean_array* tmp = field_handle<Boolean_array>(field_info);
        tmp->resize(array->Length());
@@ -899,7 +909,7 @@ void Script::execute(const Field_info* field_info)
 
      case MF_FLOAT:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Float_array* tmp = field_handle<Float_array>(field_info);
        tmp->resize(array->Length());
@@ -910,7 +920,7 @@ void Script::execute(const Field_info* field_info)
 
      case MF_TIME:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
        tmp->resize(array->Length());
@@ -921,7 +931,7 @@ void Script::execute(const Field_info* field_info)
 
      case MF_INT32:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Int_array* tmp = field_handle<Int_array>(field_info);
        tmp->resize(array->Length());
@@ -932,7 +942,7 @@ void Script::execute(const Field_info* field_info)
 
      case MF_VEC2F:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
        tmp->resize(array->Length());
@@ -952,7 +962,7 @@ void Script::execute(const Field_info* field_info)
      case MF_VEC3F:
      case MF_COLOR:
       {
-       v8::HandleScope scope(isolate);
+       v8::HandleScope scope(m_isolate);
        v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
        Vector3f_array* tmp = field_handle<Vector3f_array>(field_info);
        tmp->resize(array->Length());

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Player_scene.hpp 6745 2008-08-24 12:13:21Z efif $
-// $Revision: 6745 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef PLAYER_SCENE_HPP
@@ -44,9 +41,13 @@
 #include "SGAL/Windows_window_manager.hpp"
 #endif
 
+#include "Player_option_parser.hpp"
+
 namespace fi = boost::filesystem;
 
-#include "Player_option_parser.hpp"
+namespace v8 {
+class Isolate;
+};
 
 SGAL_BEGIN_NAMESPACE
 
@@ -124,8 +125,8 @@ public:
   /*! Initialize the secene. */
   virtual void init_scene();
 
-  /*! Check if the scene is initialized. */
-  virtual bool is_scene_initiated() { return m_window_item != NULL; }
+  /*! Check whether the scene is initialized. */
+  virtual bool is_scene_initiated();
 
   /*! Clear the scene */
   virtual void clear_scene();
@@ -177,11 +178,15 @@ public:
   { m_window_manager = manager; }
 
   /*! Set the option parser. */
-  void set_option_parser(Player_option_parser* option_parser)
-  { m_option_parser = option_parser; }
+  void set_option_parser(Player_option_parser* option_parser);
 
   /*! Obtain the scene scene-graph. */
   SGAL::Scene_graph* get_scene_graph() const;
+
+  /*! Obtain an isolated instance of the V8 engine.
+   * \return an isolated instance of the V8 engine.
+   */
+  v8::Isolate* get_isolate();
 
   /*! Determine whether the scene does simulate something. */
   SGAL::Boolean is_simulating(void) const;
@@ -203,6 +208,9 @@ protected:
 
   /* The height of the window. */
   SGAL::Uint m_win_height;
+
+  /*! An isolated instance of the V8 engine. */
+  v8::Isolate* m_isolate;
 
   /*! Work space scene graph. */
   SGAL::Scene_graph* m_scene_graph;
@@ -275,9 +283,20 @@ private:
   Path_list m_dirs;
 };
 
+//! \brief checks whether the scene is initialized.
+inline bool Player_scene::is_scene_initiated()
+{ return m_window_item != nullptr; }
+
+//! \brief sets the option parser.
+inline void Player_scene::set_option_parser(Player_option_parser* option_parser)
+{ m_option_parser = option_parser; }
+
+
 /*! \brief obtains the scene scene-graph. */
 inline SGAL::Scene_graph* Player_scene::get_scene_graph() const
 { return m_scene_graph; }
 
+//! \brief obtains an isolated instance of the V8 engine.
+inline v8::Isolate* Player_scene::get_isolate() { return m_isolate; }
 
 #endif

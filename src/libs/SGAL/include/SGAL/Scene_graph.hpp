@@ -424,6 +424,11 @@ public:
    */
   v8::Isolate* get_isolate();
 
+  /*! Set an isolated instance of the V8 engine.
+   * \param isolate (in) an isolated instance of the V8 engine.
+   */
+   void set_isolate(v8::Isolate* isolate);
+
 private:
   /*! Binadable stacks */
 
@@ -638,6 +643,10 @@ inline Scene_graph::Shared_transform Scene_graph::get_navigation_root()
 
 //! \brief obtains an isolated instance of the V8 engine.
 inline v8::Isolate* Scene_graph::get_isolate() { return m_isolate; }
+
+//! \brief sets an isolated instance of the V8 engine.
+inline void Scene_graph::set_isolate(v8::Isolate* isolate)
+{ m_isolate = isolate; }
 
 SGAL_END_NAMESPACE
 

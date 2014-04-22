@@ -39,6 +39,10 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/shared_ptr.hpp>
 
+#if defined(USE_V8)
+#include <v8.h>
+#endif
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/errors.hpp"
@@ -119,28 +123,29 @@
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 
-/*! Constructor. */
+//! \brief constructor.
 Player_scene::Player_scene(Player_option_parser* option_parser) :
-  m_window_manager(NULL),
-  m_window_item(NULL),
+  m_window_manager(nullptr),
+  m_window_item(nullptr),
   m_win_width(0), m_win_height(0),
-  m_scene_graph(NULL),
-  m_context(NULL),
+  m_isolate(nullptr),
+  m_scene_graph(nullptr),
+  m_context(nullptr),
   m_option_parser(option_parser),
   m_simulate(false)
 { init(); }
 
-/*! Constructor. */
+//! \brief constructor.
 Player_scene::Player_scene() :
-  m_window_manager(NULL),
-  m_window_item(NULL),
+  m_window_manager(nullptr),
+  m_window_item(nullptr),
   m_win_width(0), m_win_height(0),
-  m_scene_graph(NULL),
-  m_context(NULL),
+  m_scene_graph(nullptr),
+  m_context(nullptr),
   m_simulate(false)
 { init(); }
 
-/*! \brief initializes. */
+//! \brief initializes.
 void Player_scene::init()
 {
   m_dirs.push_front(".");
@@ -175,7 +180,7 @@ void Player_scene::init()
   SGAL::Mouse_event::doregister(this);
 }
 
-/*! Destructor. */
+//! \brief destructor.
 Player_scene::~Player_scene(void)
 {
   SGAL::Reshape_event::unregister(this);
@@ -188,7 +193,7 @@ Player_scene::~Player_scene(void)
   m_fullname.clear();
 }
 
-/*! \brief creates the scene. */
+//! \brief creates the scene.
 void Player_scene::create_scene()
 {
   // Obtain the input file full name.
@@ -243,6 +248,12 @@ void Player_scene::create_scene()
   m_scene_graph = new SGAL::Scene_graph;
   SGAL_assertion(m_scene_graph);
 
+#if defined(USE_V8)
+  m_isolate = v8::Isolate::New();
+  SGAL_assertion(m_isolate);
+  m_scene_graph->set_isolate(m_isolate);
+#endif
+
   update_data_dirs();
 
   // Load the input file.
@@ -256,7 +267,8 @@ void Player_scene::create_scene()
 
   // Save to output files.
   if (m_option_parser->do_save()) {
-    SGAL::File_format::Id input_format_id = m_scene_graph->get_input_format_id();
+    SGAL::File_format::Id input_format_id =
+      m_scene_graph->get_input_format_id();
 
     if (0 == m_option_parser->formats_size()) {
       const std::string& output_filename = m_option_parser->get_output_file();
@@ -308,21 +320,28 @@ void Player_scene::write(const std::string& filename,
   }
 }
 
-/*! \brief destroys the scene. */
+//! \brief destroys the scene.
 void Player_scene::destroy_scene()
 {
   if (m_context) {
     delete m_context;
-    m_context = NULL;
+    m_context = nullptr;
   }
 
   if (m_scene_graph) {
     delete m_scene_graph;
-    m_scene_graph = NULL;
+    m_scene_graph = nullptr;
   }
+
+#if defined(USE_V8)
+  if (m_isolate) {
+    m_isolate->Dispose();
+    m_isolate = nullptr;
+  }
+#endif
 }
 
-/*! \brief initializes the secene. */
+//! \brief initializes the secene.
 void Player_scene::init_scene()
 {
   // Create the missing nodes.
@@ -421,7 +440,7 @@ void Player_scene::init_scene()
   m_window_item->show();
 }
 
-/*! \brief indulges user requests from the command line. */
+//! \brief indulges user requests from the command line.
 void Player_scene::indulge_user()
 {
   // Local options:
@@ -518,13 +537,13 @@ void Player_scene::indulge_user()
 #endif
 }
 
-/*! \brief print geometry information of Box */
+//! \brief print geometry information of Box.
 void Player_scene::print_geometry_info(SGAL::Box* /* box */)
 {
   std::cout << "Geometry: Box" << std::endl;
 }
 
-/*! \brief prints texture information of Index_face_set. */
+//! \brief prints texture information of Index_face_set.
 void Player_scene::print_geometry_info(SGAL::Indexed_face_set* ifs)
 {
   static const char* primitive_types[] = {
@@ -542,7 +561,7 @@ void Player_scene::print_geometry_info(SGAL::Indexed_face_set* ifs)
             << std::endl;
 }
 
-/*! \brief updates directory search. */
+//! \brief updates directory search.
 void Player_scene::update_data_dirs()
 {
   // Add directories to search list
@@ -569,7 +588,7 @@ void Player_scene::update_data_dirs()
   }
 }
 
-/*! \brief prints statistic information. */
+//! \brief prints statistic information.
 void Player_scene::print_stat()
 {
 #if 0
@@ -612,20 +631,20 @@ void Player_scene::print_stat()
 #endif
 }
 
-/*! \brief clears the scene. */
+//! \brief clears the scene.
 void Player_scene::clear_scene()
 {
   m_scene_graph->release_context();
   m_scene_graph->destroy_defaults();
   delete m_window_item;
-  m_window_item = NULL;
+  m_window_item = nullptr;
 }
 
-/*! \brief identifies the agent. */
+//! \brief identifies the agent.
 void Player_scene::identify(void)
 { std::cout << "Agent: Player_scene" << std::endl; }
 
-/*! \brief handles a mouse event. */
+//! \brief handles a mouse event.
 void Player_scene::handle(SGAL::Mouse_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
@@ -635,7 +654,7 @@ void Player_scene::handle(SGAL::Mouse_event* /* event */)
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 }
 
-/*! \brief handles a motion event. */
+//! \brief handles a motion event.
 void Player_scene::handle(SGAL::Motion_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
@@ -645,7 +664,7 @@ void Player_scene::handle(SGAL::Motion_event* /* event */)
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 }
 
-/*! \brief handles a passive motion event. */
+//! \brief handles a passive motion event.
 void Player_scene::handle(SGAL::Passive_motion_event* /* event */)
 {
   SGAL_assertion(m_scene_graph);
@@ -655,7 +674,7 @@ void Player_scene::handle(SGAL::Passive_motion_event* /* event */)
   if (acc && acc->is_enabled() && !acc->is_done()) acc->enactivate();
 }
 
-/*! \brief handless a keyboard event. */
+//! \brief handless a keyboard event.
 void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
 {
   SGAL_assertion(m_scene_graph);
@@ -669,7 +688,7 @@ void Player_scene::handle(SGAL::Keyboard_event* keyboard_event)
   if (key == 0x1b) m_window_manager->destroy_window(m_window_item); // escape
 }
 
-/*! \brief handless a tick event. */
+//! \brief handless a tick event.
 void Player_scene::handle(SGAL::Tick_event* tick_event)
 {
   if (m_option_parser->get_verbosity_level() >= 2)
@@ -678,7 +697,7 @@ void Player_scene::handle(SGAL::Tick_event* tick_event)
               << tick_event->get_sim_time() << std::endl;
 }
 
-/*! \brief handles a reshape event. */
+//! \brief handles a reshape event.
 void Player_scene::handle(SGAL::Reshape_event* event)
 {
   SGAL::Window_item* window_item = event->get_window_item();
@@ -687,7 +706,7 @@ void Player_scene::handle(SGAL::Reshape_event* event)
   reshape_window(window_item, width, height);
 }
 
-/*! \brief handles a draw event */
+//! \brief handles a draw event.
 void Player_scene::handle(SGAL::Draw_event* event)
 {
   SGAL::Window_item* window_item = event->get_window_item();
@@ -695,7 +714,7 @@ void Player_scene::handle(SGAL::Draw_event* event)
   draw_window(window_item, dont_accumulate);
 }
 
-/*! \brief draws into a window of the scene. */
+//! \brief draws into a window of the scene.
 void Player_scene::draw_window(SGAL::Window_item* window_item,
                                SGAL::Boolean dont_accumulate)
 {
@@ -742,7 +761,7 @@ void Player_scene::draw_window(SGAL::Window_item* window_item,
   if (acc->do_show()) window_item->swap_buffers();
 }
 
-/*! \brief draws guides that separate the window into 4x5 rectangles. */
+//! \brief draws guides that separate the window into 4x5 rectangles.
 void Player_scene::draw_grid()
 {
   m_context->draw_light_enable(false);
@@ -771,7 +790,7 @@ void Player_scene::draw_grid()
   m_context->draw_light_enable(true);
 }
 
-/*! \brief reshapes the viewport of a window of the scene. */
+//! \brief reshapes the viewport of a window of the scene.
 void Player_scene::reshape_window(SGAL::Window_item* /* window_item */,
                                   SGAL::Uint width, SGAL::Uint height)
 {
@@ -784,7 +803,7 @@ void Player_scene::reshape_window(SGAL::Window_item* /* window_item */,
   camera->init(context);
 }
 
-/*! Return true iff the scene does simulate something. In other words,
+/*! \brief returns true iff the scene does simulate something. In other words,
  * return true iff tick evenets must be generated to perform the simulation.
  */
 SGAL::Boolean Player_scene::is_simulating(void) const

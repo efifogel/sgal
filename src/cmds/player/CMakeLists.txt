@@ -13,6 +13,9 @@ if (USE_CGAL)
   add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
   add_definitions(-DCGAL_IDENTIFICATION_XY=${CGAL_IDENTIFICATION_XY})
 endif()
+if (USE_V8)
+  add_definitions(-DUSE_V8)
+endif()
 
 #Add include dirs
 include_directories(../player)
