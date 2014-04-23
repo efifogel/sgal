@@ -131,9 +131,9 @@ private:
    * \param value (in)
    * \param info (in)
    */
-  static void Script::setter(v8::Local<v8::String> property,
-                             v8::Local<v8::Value> value,
-                             const v8::PropertyCallbackInfo<v8::Value>& info);
+  static void setter(v8::Local<v8::String> property,
+                     v8::Local<v8::Value> value,
+                     const v8::PropertyCallbackInfo<v8::Value>& info);
 
   /*! The script protocol. */
   Protocol m_protocol;
