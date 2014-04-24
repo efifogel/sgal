@@ -19,7 +19,7 @@ Transform {
       children [
 	TouchSensor {}
 	DEF ORANGE Shape {
-	  appearance sgalAppearance {
+	  appearance Appearance {
 	    material Material {
 	      diffuseColor 1, 0.65, 0
 	    }
@@ -40,7 +40,7 @@ Transform {
       children [
 	TouchSensor {}
 	DEF BLUE Shape {
-	  appearance sgalAppearance {
+	  appearance Appearance {
 	    material Material {
 	      diffuseColor 0, 0, 1
 	    }
@@ -61,7 +61,7 @@ Transform {
       children [
 	TouchSensor {}
 	DEF RED Shape {
-	  appearance sgalAppearance {
+	  appearance Appearance {
 	    material Material {
 	      diffuseColor 1, 0, 0
 	    }
@@ -82,7 +82,7 @@ Transform {
       children [
 	TouchSensor {}
 	DEF YELLOW Shape {
-	  appearance sgalAppearance {
+	  appearance Appearance {
 	    material Material {
 	      diffuseColor 1, 1, 0
 	    }
@@ -103,7 +103,7 @@ Transform {
       children [
 	TouchSensor {}
 	DEF PURPLE Shape {
-	  appearance sgalAppearance {
+	  appearance Appearance {
 	    material Material {
 	      diffuseColor 0.7, 0, 0.7
 	    }
@@ -124,7 +124,7 @@ Transform {
       children [
 	TouchSensor {}
 	DEF GREEN Shape {
-	  appearance sgalAppearance {
+	  appearance Appearance {
 	    material Material {
 	      diffuseColor 0, 1, 0
 	    }
