@@ -77,19 +77,19 @@ public:
   /*! Destructor */
   virtual ~Time_sensor();
 
-  /*! Construct the prototype */
-  static Time_sensor* prototype() { return new Time_sensor(true); }
+  /*! Construct the prototype. */
+  static Time_sensor* prototype();
 
-  /*! Clone */
-  virtual Container* clone() { return new Time_sensor(); }
+  /*! Clone. */
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype */
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -114,7 +114,8 @@ public:
   Scene_time* stop_handle(const Field_info*) { return &m_stop; }
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node.
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
@@ -124,25 +125,27 @@ public:
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
-  // Execution function - executed input events on fields
+  // Execution function - executed input events on fields.
   virtual void execute_enabled(const Field_info*);
 
-  // start function - starts the animation according to m_start
+  // start function - starts the animation according to m_start.
   virtual void start(const Field_info*);
 
-  // stop function - stop the animation accordint to m_stop
+  // stop function - stop the animation accordint to m_stop.
   virtual void stop(const Field_info*);
 
-  /*! Invoke every tick while the sensor is enabled */
+  /*! Invoke every tick while the sensor is enabled.
+   */
   virtual bool update_time(Scene_time current_time);
 
-  /*! Draw the node while traversing the scene graph */
+  /*! Draw the node while traversing the scene graph.
+   */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Register the mouse and mostion events */
+  /*! Register the mouse and mostion events. */
   void register_events();
 
-  /*! Register the mouse and mostion events */
+  /*! Register the mouse and mostion events. */
   void unregister_events();
 
   /*! Print out the name of this agent (for debugging purposes) */
@@ -153,48 +156,64 @@ public:
 
   // virtual void AddToScene(Scene_graph* sg, XML_entity* parent);
 
-  /*! Enable or disables the sensor */
+  /*! Enable or disables the sensor.
+   */
   void set_enabled(Boolean enabled);
 
-  /*! Obtain the sensor status */
-  bool get_enabled() const { return m_enabled; }
+  /*! Obtain the sensor status.
+   */
+  bool get_enabled() const;
 
-  /*! Set the start time of a cycle in seconds */
-  void set_start_time(Scene_time start_time) { m_start_time = start_time; }
+  /*! Set the start time of a cycle in seconds.
+   * Attemps to set the start time while the sensor is active are ignored.
+   */
+  void set_start_time(Scene_time start_time);
 
-  /*! Obtain the start time of a cycle in seconds */
-  Scene_time get_start_time() const { return m_start_time; }
+  /*! Obtain the start time of a cycle in seconds.
+   * Attemps to set the stop time while the sensor is active with
+   * stop time <= start time are ignored.
+   */
+  Scene_time get_start_time() const;
 
-  /*! Set the stop time of a cycle in seconds */
-  void set_stop_time(Scene_time stop_time) { m_stop_time = stop_time; }
+  /*! Set the stop time of a cycle in seconds.
+   */
+  void set_stop_time(Scene_time stop_time);
 
-  /*! Obtain the stop time of a cycle in seconds */
-  Scene_time get_stop_time() const { return m_stop_time; }
+  /*! Obtain the stop time of a cycle in seconds.
+   */
+  Scene_time get_stop_time() const;
 
-  /*! Set the interval time of a cycle in seconds */
-  void set_cycle_interval(Scene_time interval) { m_cycle_interval = interval; }
+  /*! Set the interval time of a cycle in seconds.
+   */
+  void set_cycle_interval(Scene_time interval);
 
-  /*! Obtain the interval time of a cycle in seconds */
-  Scene_time get_cycle_interval() const { return m_cycle_interval; }
+  /*! Obtain the interval time of a cycle in seconds.
+   */
+  Scene_time get_cycle_interval() const;
+
+  /*! Determine whether the sensor is active.
+   * \return true if the sensor is active and false otherwise.
+   */
+  bool is_active() const;
 
 protected :
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! obtains the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  /*! The interval time of a cycle in seconds */
+  /*! The interval time of a cycle in seconds. */
   Scene_time m_cycle_interval;
 
-  /*! If not 0, the frequency of time & fraction events */
+  /*! If not 0, the frequency of time & fraction events. */
   Uint m_frequency;
 
-  /*! Indicates whether the sensor is enabled */
+  /*! Indicates whether the sensor is enabled. */
   Boolean m_enabled;
 
   /*! Indicates whether the sensor is active through cycles generated in a
@@ -245,10 +264,34 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief draws the node while traversing the scene graph
- */
+//! \brief constructs the prototype.
+inline Time_sensor* Time_sensor::prototype() { return new Time_sensor(true); }
+
+//! \brief clones.
+inline Container* Time_sensor::clone() { return new Time_sensor(); }
+
+//! \brief draws the node while traversing the scene graph.
 inline Action::Trav_directive Time_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
+
+//! \brief obtains the sensor status.
+inline bool Time_sensor::get_enabled() const { return m_enabled; }
+
+//! \brief obtains the start time of a cycle in seconds.
+inline Scene_time Time_sensor::get_start_time() const { return m_start_time; }
+
+//! \brief obtains the stop time of a cycle in seconds.
+inline Scene_time Time_sensor::get_stop_time() const { return m_stop_time; }
+
+//! \brief obtains the interval time of a cycle in seconds.
+inline Scene_time Time_sensor::get_cycle_interval() const
+{ return m_cycle_interval; }
+
+//! \brief determines whether the sensor is active.
+inline bool Time_sensor::is_active() const { return m_is_active; }
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Time_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE
 

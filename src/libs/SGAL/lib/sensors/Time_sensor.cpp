@@ -299,6 +299,10 @@ void Time_sensor::set_blocking_of_fields_for_active(Boolean block)
 
 /*! \brief invoked every tick while the sensor is enabled.
  * Calculates and cascades the time sensor time dependent events.
+ *
+ * Any set_start_time events to an active time-sensor node are ignored, so we
+ * can safely assume that the start time does not change while the sensor is
+ * active.
  */
 bool Time_sensor::update_time(Scene_time current_time)
 {
@@ -575,5 +579,23 @@ void Time_sensor::handle(Tick_event* event)
 
   if ((m_quit_time != 0)  && (t >= m_quit_time)) exit(0);
 }
+
+//! \brief sets the start time of a cycle in seconds.
+void Time_sensor::set_start_time(Scene_time start_time)
+{
+  if (m_is_active) return;
+  m_start_time = start_time;
+}
+
+//! \brief set the stop time of a cycle in seconds.
+void Time_sensor::set_stop_time(Scene_time stop_time)
+{
+  if (m_is_active && (stop_time <= m_start_time)) return;
+  m_stop_time = stop_time;
+}
+
+//! \brief set the interval time of a cycle in seconds.
+void Time_sensor::set_cycle_interval(Scene_time interval)
+{ m_cycle_interval = interval; }
 
 SGAL_END_NAMESPACE

@@ -409,6 +409,7 @@ void Knot_scene::create_scene()
               << ", " << interval_secs << " seconds"
               << ", Max. level: " << m_max_level
               << ", No. invocations: " << m_num_invocations
+              << ", size: " << m_solution.size()
               << std::endl;
 
     // Clear:
@@ -951,8 +952,10 @@ void Knot_scene::handle(SGAL::Tick_event* event)
     return;
   }
 
-  SGAL::Scene_time cur_time = event->get_sim_time() / CLOCKS_PER_SEC;
-  if (cur_time > m_time_sensors[0]->get_stop_time()) {
+  SGAL::Scene_time cur_time = event->get_sim_time();
+  if ((cur_time > m_time_sensors[0]->get_stop_time()) &&
+      !m_time_sensors[0]->is_active())
+  {
     Step step = *m_solution_iterator++;
     Uint color1 = step.first % (NUMBER_OF_COLORS+1);
     Uint tmp = step.first / (NUMBER_OF_COLORS+1);
