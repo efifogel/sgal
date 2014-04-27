@@ -25,7 +25,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+//! \brief constructor.
 Bench_option_parser::Bench_option_parser() :
   m_bench_opts("SGAL bench options"),
   m_print_header(true),
@@ -50,12 +50,10 @@ Bench_option_parser::Bench_option_parser() :
     ;
 }
 
-/*! Destructor */
+//! \brief destructor.
 Bench_option_parser::~Bench_option_parser() {}
 
-/*! \brief applies the options
- * \param variable_map
- */
-void Bench_option_parser::apply(po::variables_map& /* variable_map */) {}
+//! \brief applies the options.
+void Bench_option_parser::apply() {}
 
 SGAL_END_NAMESPACE

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <vector>
@@ -52,16 +49,23 @@ public:
   typedef std::vector<File_format::Id>  Formats;
   typedef Formats::const_iterator       Format_const_iter;
 
-  /*! Constructor */
+  typedef std::vector<std::string>      Input_path;
+  typedef Input_path::const_iterator    Input_path_const_iterator;
+
+  /*! Constructor. */
   IO_option_parser();
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~IO_option_parser();
 
-  /*! Apply the options
-   * \param variable_map
+  /*! Obtain the variable map.
+   * \return the variable map.
    */
-  void apply(po::variables_map& variable_map);
+  virtual const po::variables_map& get_variable_map() const = 0;
+
+  /*! Apply the options.
+   */
+  void apply();
 
   /*! Obtain the IO-option description.
    * \return the IO-option description.
@@ -89,7 +93,6 @@ public:
   Boolean do_save() const;
 
   /*! Determine whether the operation is interactive.
-   * \param variable_map
    * \return true if the operation is interactive; false otherwise.
    */
   Boolean is_interactive() const;
@@ -99,8 +102,21 @@ public:
    */
   const std::string& get_output_file() const;
 
+  /*! Obtain the begin iterator of input paths.
+   */
+  Input_path_const_iterator dirs_begin();
+
+  /*! Obtain the pass-the-end iterator of input paths.
+   */
+  Input_path_const_iterator dirs_end();
+
+  /*! Apply a given function object to all input paths.
+   */
+  template <typename UnaryFunction>
+  UnaryFunction for_each_dir(UnaryFunction func);
+
 protected:
-  /*! The options */
+  /*! The options. */
   po::options_description m_io_opts;
 
   /*! The selected formats. */
@@ -158,6 +174,24 @@ inline Boolean IO_option_parser::is_interactive() const
 //! \brief obtains the output-file name.
 inline const std::string& IO_option_parser::get_output_file() const
 { return m_output_file; }
+
+//! \brief obtains the begin iterator of input paths.
+inline IO_option_parser::Input_path_const_iterator
+IO_option_parser::dirs_begin()
+{ return get_variable_map()["input-path"].as<Input_path>().begin(); }
+
+//! \broef obtains the pass-the-end iterator of input paths.
+inline IO_option_parser::Input_path_const_iterator
+IO_option_parser::dirs_end()
+{ return get_variable_map()["input-path"].as<Input_path>().end(); }
+
+//! \brief applies a given function object to all input paths.
+template <typename UnaryFunction>
+inline UnaryFunction IO_option_parser::for_each_dir(UnaryFunction func)
+{
+  if (!get_variable_map().count("input-path")) return func;
+  return std::for_each(dirs_begin(), dirs_end(), func);
+}
 
 SGAL_END_NAMESPACE
 

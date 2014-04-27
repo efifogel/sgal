@@ -20,6 +20,8 @@
 #pragma warning ( disable : 4512 )
 #endif
 
+#include <vector>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Conf_option_parser.hpp"
 #include "SGAL/Configuration.hpp"
@@ -28,7 +30,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+//! \brief constructor.
 Conf_option_parser::Conf_option_parser() :
   m_conf_opts("SGAL configuration options"),
   m_accumulate(false),
@@ -37,12 +39,15 @@ Conf_option_parser::Conf_option_parser() :
   m_map_texture(true),
   m_display_fps(false)
 {
+  typedef std::vector<std::string> vs;
+
   /* If the default of a specific option is set, the counter of that option
    * is set to 1
    * Don't set the default unless you realy want this default to take effect
    */
   m_conf_opts.add_options()
     ("accumulate,A", po::value<Boolean>(&m_accumulate), "accumulate")
+    ("load,L", po::value<vs>()->composing(), "load")
     //("accumulation-delay")
     //("ad")
     //("accumulation-quality")
@@ -62,40 +67,41 @@ Conf_option_parser::Conf_option_parser() :
     ;
 }
 
-/*! Destructor */
+//! \brief destructor.
 Conf_option_parser::~Conf_option_parser() {}
 
-/*! \brief applies the options */
-void Conf_option_parser::apply(po::variables_map& /* variable_map */) {}
+//! \brief applies the options.
+void Conf_option_parser::apply() {}
 
-/*! \brief sets the Configuration node */
-void Conf_option_parser::configure(po::variables_map& variable_map,
-                                   Configuration* conf)
+//! \brief sets the Configuration node.
+void Conf_option_parser::configure(Configuration* conf)
 {
   if (!conf) return;
 
-  if (variable_map.count("accumulate")) {
+  const po::variables_map& var_map = get_variable_map();
+
+  if (var_map.count("accumulate")) {
     Configuration::Shared_accumulation acc = conf->get_accumulation();
-    if (acc) acc->set_enabled(variable_map["accumulate"].as<Boolean>());
+    if (acc) acc->set_enabled(var_map["accumulate"].as<Boolean>());
   }
 
-  if (variable_map.count("map-texture")) {
-    conf->set_texture_map(variable_map["map-texture"].as<Boolean>());
+  if (var_map.count("map-texture")) {
+    conf->set_texture_map(var_map["map-texture"].as<Boolean>());
   }
 
-  if (variable_map.count("use-vertex-array")) {
-    conf->set_display_fps(variable_map["use-vertex-array"].as<Boolean>());
+  if (var_map.count("use-vertex-array")) {
+    conf->set_display_fps(var_map["use-vertex-array"].as<Boolean>());
   }
 
-  if (variable_map.count("use-vertex-buffer-object")) {
+  if (var_map.count("use-vertex-buffer-object")) {
     SGAL::Gfx_conf* gfx_conf = SGAL::Gfx_conf::get_instance();
     SGAL_assertion(gfx_conf);
-    if (!variable_map["use-vertex-buffer-object"].as<Boolean>())
+    if (!var_map["use-vertex-buffer-object"].as<Boolean>())
       gfx_conf->disable_vertex_buffer_object_support();
   }
 
-  if (variable_map.count("fps-display")) {
-    conf->set_display_fps(variable_map["fps-display"].as<Boolean>());
+  if (var_map.count("fps-display")) {
+    conf->set_display_fps(var_map["fps-display"].as<Boolean>());
   }
 }
 

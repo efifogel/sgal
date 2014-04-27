@@ -26,7 +26,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+//! \brief constructor.
 IO_option_parser::IO_option_parser() :
   m_io_opts("SGAL IO options")
 {
@@ -48,11 +48,11 @@ IO_option_parser::IO_option_parser() :
     ;
 }
 
-/*! Destructor */
+//! \brief Destructor.
 IO_option_parser::~IO_option_parser() {}
 
-/*! \brief applies the options */
-void IO_option_parser::apply(po::variables_map& /* variable_map */) {}
+//! \brief applies the options.
+void IO_option_parser::apply() {}
 
 // /*! \brief sets the Configuration node */
 // void IO_option_parser::configure(po::variables_map& /* variable_map */) {}

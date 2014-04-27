@@ -368,6 +368,12 @@ void Player_scene::init_scene()
   boost::shared_ptr<SGAL::Accumulation> acc = conf->get_accumulation();
   boost::shared_ptr<SGAL::Multisample> ms = conf->get_multisample();
 
+  if (!acc && m_option_parser->get_accumulate()) {
+    SGAL::Accumulation* tmp = new SGAL::Accumulation;
+    acc = boost::shared_ptr<SGAL::Accumulation>(tmp);
+    conf->set_accumulation(acc);
+  }
+
   if (acc) {
     SGAL::Uint red_bits, green_bits, blue_bits, alpha_bits;
     acc->get_number_of_bits(red_bits, green_bits, blue_bits, alpha_bits);

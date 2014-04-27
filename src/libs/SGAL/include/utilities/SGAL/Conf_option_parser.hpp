@@ -14,13 +14,14 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONF_OPTION_PARSER_HPP
 #define SGAL_CONF_OPTION_PARSER_HPP
+
+#include <string>
+#include <vector>
+#include <algorithm>
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -42,57 +43,82 @@ class Configuration;
 
 class SGAL_SGAL_DECL Conf_option_parser {
 public:
-  /*! Constructor */
+  typedef std::vector<std::string>      Plugin;
+  typedef Plugin::const_iterator        Plugin_const_iterator;
+
+  /*! Constructor. */
   Conf_option_parser();
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Conf_option_parser();
 
-  /*! Apply the options
-   * \param variable_map
+  /*! Obtain the variable map.
+   * \return the variable map.
    */
-  void apply(po::variables_map& variable_map);
+  virtual const po::variables_map& get_variable_map() const = 0;
 
-  /*! Obtain the conf-option description */
-  const po::options_description& get_conf_opts() const { return m_conf_opts; }
+  /*! Apply the options.
+   */
+  void apply();
 
-  /*! Configure */
-  void configure(po::variables_map& variable_map, Configuration * conf);
+  /*! Obtain the conf-option description.
+   */
+  const po::options_description& get_conf_opts() const;
 
-  /*! Is the accumulate option set? */
-  Boolean get_accumulate() const { return m_accumulate; }
+  /*! Configure. */
+  void configure(Configuration* conf);
 
-  /*! Is the vertex_array option set? */
-  Boolean get_use_vertex_array() const { return m_use_vertex_array; }
+  /*! Determine whether the accumulate option is set.
+   */
+  Boolean get_accumulate() const;
 
-  /*! Is the vertex_buffer_object option set? */
-  Boolean get_use_vertex_buffer_object() const
-  { return m_use_vertex_buffer_object; }
+  /*! Determine whether the vertex_array option set.
+   */
+  Boolean get_use_vertex_array() const;
 
-  /*! Is the map_texture option set? */
-  Boolean get_map_texture() const { return m_map_texture; }
+  /*! Determine whether the vertex_buffer_object option set.
+   */
+  Boolean get_use_vertex_buffer_object() const;
 
-  /*! Is the display_fps option set? */
+  /*! Determine whether the map_texture option set.
+   */
+  Boolean get_map_texture() const;
+
+  /*! Determine whether the display_fps option set.
+   */
   Boolean get_display_fps(Boolean& flag);
 
-protected:
-  /*! The conf options */
+  /*! Obtain the begin iterator of plugins.
+   */
+  Plugin_const_iterator plugins_begin();
+
+  /*! Obtain the pass-the-end iterator of plugins.
+   */
+  Plugin_const_iterator plugins_end();
+
+  /*! Apply a given function object to all plugins.
+   */
+  template <typename UnaryFunction>
+  UnaryFunction for_each_plugin(UnaryFunction func);
+
+ protected:
+  /*! The conf options. */
   po::options_description m_conf_opts;
 
 private:
-  /*! Indicates whether to accumulate */
+  /*! Indicates whether to accumulate. */
   Boolean m_accumulate;
 
-  /*! Indicates whether to use openGl vertex-array */
+  /*! Indicates whether to use openGl vertex-array. */
   Boolean m_use_vertex_array;
 
-  /*! Indicates whether to use openGl vertex-buffer-object */
+  /*! Indicates whether to use openGl vertex-buffer-object. */
   Boolean m_use_vertex_buffer_object;
 
-  /*! Indicates whether to apply texture mapping */
+  /*! Indicates whether to apply texture mapping. */
   Boolean m_map_texture;
 
-  /*! Indicate whether to display Frames-Per-Seconds (FPS) */
+  /*! Indicate whether to display Frames-Per-Seconds (FPS). */
   Boolean m_display_fps;
 
   // The assignment operator cannot be generated (because some of the data
@@ -105,6 +131,44 @@ private:
   // Conf_option_parser& operator=(const Conf_option_parser&) = delete;
   // Conf_option_parser(const Conf_option_parser&) = delete;
 };
+
+//! \brief obtains the conf-option description.
+inline const po::options_description&
+Conf_option_parser::get_conf_opts() const { return m_conf_opts; }
+
+//! \brief determines whether the accumulate option is set.
+inline Boolean Conf_option_parser::get_accumulate() const
+{ return m_accumulate; }
+
+//! \brief determines whether the vertex_array option set.
+inline Boolean Conf_option_parser::get_use_vertex_array() const
+{ return m_use_vertex_array; }
+
+//! \brief determines whether the vertex_buffer_object option set.
+inline Boolean Conf_option_parser::get_use_vertex_buffer_object() const
+{ return m_use_vertex_buffer_object; }
+
+//! \brief determines whether the map_texture option set.
+inline Boolean Conf_option_parser::get_map_texture() const
+{ return m_map_texture; }
+
+//! \brief obtains the begin iterator of input paths.
+inline Conf_option_parser::Plugin_const_iterator
+Conf_option_parser::plugins_begin()
+{ return get_variable_map()["load"].as<Plugin>().begin(); }
+
+//! \broef obtains the pass-the-end iterator of input paths.
+inline Conf_option_parser::Plugin_const_iterator
+Conf_option_parser::plugins_end()
+{ return get_variable_map()["load"].as<Plugin>().end(); }
+
+//! \brief applies a given function object to all input paths.
+template <typename UnaryFunction>
+inline UnaryFunction Conf_option_parser::for_each_plugin(UnaryFunction func)
+{
+  if (!get_variable_map().count("load")) return func;
+  return std::for_each(plugins_begin(), plugins_end(), func);
+}
 
 SGAL_END_NAMESPACE
 

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id $
-// $Revision: 4977 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GENERIC_OPTION_PARSER_HPP
@@ -45,22 +42,26 @@ public:
     Generic_option_id m_option;
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Generic_option_parser();
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Generic_option_parser();
 
-  /*! Apply the options
+  /*! Obtain the variable map.
+   * \return the variable map.
    */
-  void apply(po::variables_map& variable_map);
+  virtual const po::variables_map& get_variable_map() const = 0;
 
-  /*! Obtain the generic-option description */
-  const po::options_description& get_generic_opts() const
-  { return m_generic_opts; }
+  /*! Apply the options.
+   */
+  void apply();
+
+  /*! Obtain the generic-option description. */
+  const po::options_description& get_generic_opts() const;
 
 protected:
-  /*! The generic options */
+  /*! The generic options. */
   po::options_description m_generic_opts;
 
 private:
@@ -76,6 +77,11 @@ private:
   // Generic_option_parser& operator=(const Generic_option_parser&) = delete;
   // Generic_option_parser(const Generic_option_parser&) = delete;
 };
+
+//! \brief obtains the generic-option description.
+inline const po::options_description&
+Generic_option_parser::get_generic_opts() const
+{ return m_generic_opts; }
 
 SGAL_END_NAMESPACE
 

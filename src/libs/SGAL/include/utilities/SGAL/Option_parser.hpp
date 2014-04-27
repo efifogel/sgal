@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_OPTION_PARSER_HPP
@@ -66,12 +63,12 @@ public:
     Input_file_missing_error(std::string& str) : error(str) {}
   };
 
-  /*! Default constructor */
+  /*! Default constructor. */
   Option_parser();
 
-  /*! Parse the options
-   * \param argc
-   * \param argv
+  /*! Parse the options.
+   * \param argc (in)
+   * \param argv (in)
    */
   void operator()(Int argc, Char* argv[]);
 
@@ -117,7 +114,7 @@ public:
   static Boolean compare_trace_opt(Uint i, const Char* opt);
 
   /*! Obtain the variable map */
-  const po::variables_map& get_variable_map() const;
+  virtual const po::variables_map& get_variable_map() const;
 
 protected:
   /*! Command line options */

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Player_option_parser.hpp 6155 2008-04-06 12:37:15Z efif $
-// $Revision: 6155 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef PLAYER_OPTION_PARSER_HPP
@@ -40,18 +37,18 @@ class Player_option_parser : public SGAL::Option_parser,
                              public SGAL::Window_option_parser
 {
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Player_option_parser();
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Player_option_parser() {}
 
-  /*! Initialize */
+  /*! Initialize. */
   void init();
 
-  /*! Parse the options
-   * \param argc
-   * \param argv
+  /*! Parse the options.
+   * \param argc (in)
+   * \param argv (in)
    */
   void operator()(int argc, char* argv[]);
 
@@ -67,43 +64,33 @@ public:
   void configure(Window_manager* window_manage,
                  SGAL::Scene_graph* scene_graph);
 
-  /*! Obtain the base file-name
-   * \param name the returned file name
-   * \return true if a name was specified on the command line, false otherwise
+  /*! Obtain the base file-name.
+   * \param name the returned file name.
+   * \return true if a name was specified on the command line, false otherwise.
    */
   bool get_file_name(std::string& name) const;
 
-  typedef std::vector<std::string>      Input_path;
-  typedef Input_path::const_iterator    Input_path_const_iterator;
-
-  Input_path_const_iterator dirs_begin()
-  { return m_variable_map["input-path"].as<Input_path>().begin(); }
-
-  Input_path_const_iterator dirs_end()
-  { return m_variable_map["input-path"].as<Input_path>().end(); }
-
-  template <class UnaryFunction>
-  UnaryFunction for_each_dir(UnaryFunction func)
-  {
-    if (!m_variable_map.count("input-path")) return func;
-    return std::for_each(dirs_begin(), dirs_end(), func);
-  }
-
-  /*! Display a grid? */
+  /*! Determines whether to display a grid.
+   */
   bool get_draw_grid() const { return m_grid; }
 
-  /*! Do display texture information? */
+  /*! Determines whether to display texture information.
+   */
   SGAL::Boolean get_display_texture_info() const
   { return m_display_texture_info; }
 
-  /*! Do display geometry information? */
+  /*! Determines whether to display geometry information.
+   */
   SGAL::Boolean get_display_geometry_info() const
   { return m_display_geometry_info; }
 
-  /*! Do perform a benchmark? */
+  /*! Determines whether to perform a benchmark.
+   */
   SGAL::Boolean get_bench() const { return m_bench; }
 
-  /*! \brief is the maximum number of vertices in the index array set? */
+  /*! \brief Determines whether the maximum number of vertices in the index
+   * array is set.
+   */
   SGAL::Boolean get_sub_index_buffer_size(SGAL::Uint & size) const;
 
   /*! Determine whether the operation is interactive.
@@ -112,22 +99,22 @@ public:
   SGAL::Boolean is_interactive() const;
 
 protected:
-  /*! The player option description */
+  /*! The player option description. */
   boost::program_options::options_description m_player_opts;
 
-  /*! Indicate whether to draw a grid */
+  /*! Indicate whether to draw a grid. */
   SGAL::Boolean m_grid;
 
-  /*! Indicates whether to display texture information */
+  /*! Indicates whether to display texture information. */
   SGAL::Boolean m_display_texture_info;
 
-  /*! Indicates whether to display geometry information */
+  /*! Indicates whether to display geometry information. */
   SGAL::Boolean m_display_geometry_info;
 
-  /*! Indicate whether to perform a benchmark */
+  /*! Indicate whether to perform a benchmark. */
   SGAL::Boolean m_bench;
 
-  /*! The maximum number of vertices in the index array */
+  /*! The maximum number of vertices in the index array. */
   SGAL::Uint m_sub_index_buffer_size;
 };
 

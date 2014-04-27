@@ -30,7 +30,7 @@ SGAL_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-/*! Constructor */
+//! \brief constructor.
 Generic_option_parser::Generic_option_parser() :
   m_generic_opts("SGAL generic options")
 {
@@ -43,31 +43,31 @@ Generic_option_parser::Generic_option_parser() :
     ;
 }
 
-/*! Destructor */
+//! \brief destructor.
 Generic_option_parser::~Generic_option_parser() {}
 
-/*! \brief applies the options */
-void Generic_option_parser::apply(po::variables_map & variable_map)
+//! \brief applies the options.
+void Generic_option_parser::apply()
 {
-  if (variable_map.count("help")) {
+  if (get_variable_map().count("help")) {
     std::cout << get_visible_opts() << std::endl;
     throw Generic_option_exception(HELP);
     return;
   }
 
-  if (variable_map.count("version")) {
+  if (get_variable_map().count("version")) {
     std::cout << SGAL_LIB_VERSION << std::endl;
     throw Generic_option_exception(VERSION);
     return;
   }
 
-  if (variable_map.count("author")) {
+  if (get_variable_map().count("author")) {
     std::cout << "Efi Fogel         <efifogel@gmail.com>" << std::endl;
     throw Generic_option_exception(AUTHOR);
     return;
   }
 
-  if (variable_map.count("license")) {
+  if (get_variable_map().count("license")) {
     std::cout << "GNU Lesser General Public License (LGPL)"
               << std::endl;
     throw Generic_option_exception(LICENSE);

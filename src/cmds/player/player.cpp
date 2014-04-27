@@ -18,10 +18,12 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
 #include <boost/extension/shared_library.hpp>
 #include <boost/function.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "SGAL/sgal.hpp"
 #if (defined USE_GLUT)
@@ -44,7 +46,7 @@ SGAL_END_NAMESPACE
 namespace fi = boost::filesystem;
 namespace ex = boost::extensions;
 
-/*! \breif */
+//! \breif
 static std::string& error_message(std::string& str)
 {
   str.append(": ");
@@ -75,21 +77,21 @@ struct Shared_library_error : public std::logic_error {
     std::logic_error(error_message(str)) {}
 };
 
-/*! \breif */
+//! \breif
 struct Shared_library_open_error : public Shared_library_error {
   Shared_library_open_error(std::string& library_name) :
     Shared_library_error(std::string("Cannot open library ").
                          append(library_name)) {}
 };
 
-/*! \breif */
+//! \breif
 struct Shared_library_symbol_error : public Shared_library_error {
   Shared_library_symbol_error(std::string& symbol_name) :
     Shared_library_error(std::string("Cannot retrieve symbol ").
                          append(symbol_name)) {}
 };
 
-/*! \breif */
+//! \breif dynamically loads a shared library.
 void load_shared_library(std::string& library_name, std::string& function_name)
 {
   // Create shared_library object with the absolute path to the shared library.
@@ -114,7 +116,7 @@ void load_shared_library(std::string& library_name, std::string& function_name)
   init();
 }
 
-/*! Main entry */
+//! Main entry
 int main(int argc, char* argv[])
 {
   SGAL::initialize(argc, argv);
@@ -131,22 +133,6 @@ int main(int argc, char* argv[])
   SGAL::scgal_init();
 #endif
 
-#if (defined USE_EGO)
-  try {
-#if (defined _MSC_VER)
-    std::string library_name = "SEGO.dll";
-#else
-    std::string library_name = "libSEGO.so";
-#endif
-    std::string function_name = "sego_init";
-    load_shared_library(library_name, function_name);
-  }
-  catch(std::exception& e) {
-    std::cerr << e.what() << std::endl;
-    return -1;
-  }
-#endif
-
   // Parse program options:
   Player_option_parser option_parser;
   option_parser.init();
@@ -161,6 +147,36 @@ int main(int argc, char* argv[])
     std::cerr << e.what() << std::endl;
     return 1;
   }
+
+  // Load plugins
+  auto it = option_parser.plugins_begin();
+  for (; it != option_parser.plugins_end(); ++it) {
+    const std::string& plugin = *it;
+    std::cout << "load " << plugin << std::endl;
+
+    std::vector<std::string> strs;
+    boost::split(strs, plugin, boost::is_any_of(","));
+    if (strs.size() < 2) {
+      std::cerr << "Illegal plugin" << std::endl;
+      return 1;
+    }
+    load_shared_library(strs[0], strs[1]);
+  }
+// #if (defined USE_EGO)
+//   try {
+// #if (defined _MSC_VER)
+//     std::string library_name = "SEGO.dll";
+// #else
+//     std::string library_name = "libSEGO.so";
+// #endif
+//     std::string function_name = "sego_init";
+//     load_shared_library(library_name, function_name);
+//   }
+//   catch(std::exception& e) {
+//     std::cerr << e.what() << std::endl;
+//     return -1;
+//   }
+// #endif
 
   // Create the scene:
   Player_scene scene(&option_parser);

@@ -26,6 +26,7 @@
 #include <string>
 #include <string.h>
 #include <boost/any.hpp>
+#include <boost/filesystem.hpp>
 
 #include <iterator>
 
@@ -48,12 +49,12 @@ const Char* Option_parser::s_trace_opts[] = {
   "cgm"
 };
 
-/*! Obtain number of trace options */
+//! \brief obtains number of trace options.
 Uint Option_parser::number_trace_opts()
 { return sizeof(s_trace_opts) / sizeof(char*); }
 
-/* Overload the 'validate' function for the user-defined class */
-void validate(boost::any& v, const std::vector<std::string> & values,
+//! \brief overloads the 'validate' function for the user-defined class.
+void validate(boost::any& v, const std::vector<std::string>& values,
               Option_parser::Vector_trace_id* /* target_type */, int)
 {
   typedef Option_parser::Trace_id               Trace_id;
@@ -81,7 +82,7 @@ void validate(boost::any& v, const std::vector<std::string> & values,
 #endif
 }
 
-/*! Constructor */
+//! \brief constructor.
 Option_parser::Option_parser() :
   m_config_opts("SGAL configuration options"),
   m_hidden_opts("SGAL hidden options"),
@@ -123,16 +124,38 @@ Option_parser::Option_parser() :
   m_positional_opts.add("input-file", -1);
 }
 
-/*! \brief parses the options */
+//! \brief parses the options.
 void Option_parser::operator()(Int argc, Char* argv[])
 {
+  std::ifstream ifs;
   po::store(po::command_line_parser(argc, argv).
             options(m_cmd_line_opts).positional(m_positional_opts).run(),
             m_variable_map);
 
-  std::ifstream ifs(".sgal.cfg");
-  po::store(po::parse_config_file(ifs, m_config_file_opts), m_variable_map);
-  po::notify(m_variable_map);
+  static std::string config_file_name(".sgal.cfg");
+  if (boost::filesystem::exists(config_file_name))
+    ifs.open(config_file_name);
+  else {
+    const char* home = getenv("HOME");
+    if (home) {
+      std::string home_str(home);
+#if (defined _MSC_VER)
+      // Convert the HOME from cygwin path to windows path, if relevant:
+      std::string cygdrive = home_str.substr(0, 10);
+      if (cygdrive == std::string("/cygdrive/")) {
+        home_str.erase(0, 10);
+        home_str.insert(1, ":");
+      }
+#endif
+      fi::path home_path(home_str);
+      home_path /= config_file_name;
+      ifs.open(home_path.string());
+    }
+  }
+  if (ifs.is_open()) {
+    po::store(po::parse_config_file(ifs, m_config_file_opts), m_variable_map);
+    po::notify(m_variable_map);
+  }
 
   // std::pair<Char*,Char*> Option_parser::s_env_var_option_names[] = {
   // {"SGAL_QUITE", "quite"},
@@ -140,13 +163,13 @@ void Option_parser::operator()(Int argc, Char* argv[])
   // };
 }
 
-/*! \brief applies the options */
+//! \brief applies the options.
 void Option_parser::apply()
 {
-  Generic_option_parser::apply(m_variable_map);
-  Conf_option_parser::apply(m_variable_map);
-  IO_option_parser::apply(m_variable_map);
-  Bench_option_parser::apply(m_variable_map);
+  Generic_option_parser::apply();
+  Conf_option_parser::apply();
+  IO_option_parser::apply();
+  Bench_option_parser::apply();
 
   if (m_variable_map.count("trace")) {
     Vector_trace_id traces = m_variable_map["trace"].as<Vector_trace_id>();
@@ -161,7 +184,7 @@ void Option_parser::configure(Scene_graph* scene_graph)
 {
 if (!scene_graph) return;
   SGAL::Configuration* conf = scene_graph->get_configuration();
-  if (conf) Conf_option_parser::configure(m_variable_map, conf);
+  if (conf) Conf_option_parser::configure(conf);
 }
 
 SGAL_END_NAMESPACE
