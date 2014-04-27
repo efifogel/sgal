@@ -152,8 +152,6 @@ int main(int argc, char* argv[])
   auto it = option_parser.plugins_begin();
   for (; it != option_parser.plugins_end(); ++it) {
     const std::string& plugin = *it;
-    std::cout << "load " << plugin << std::endl;
-
     std::vector<std::string> strs;
     boost::split(strs, plugin, boost::is_any_of(","));
     if (strs.size() < 2) {
@@ -162,21 +160,6 @@ int main(int argc, char* argv[])
     }
     load_shared_library(strs[0], strs[1]);
   }
-// #if (defined USE_EGO)
-//   try {
-// #if (defined _MSC_VER)
-//     std::string library_name = "SEGO.dll";
-// #else
-//     std::string library_name = "libSEGO.so";
-// #endif
-//     std::string function_name = "sego_init";
-//     load_shared_library(library_name, function_name);
-//   }
-//   catch(std::exception& e) {
-//     std::cerr << e.what() << std::endl;
-//     return -1;
-//   }
-// #endif
 
   // Create the scene:
   Player_scene scene(&option_parser);

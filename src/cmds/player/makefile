@@ -77,7 +77,10 @@ ifdef V8_INC_DIR
 LCPPINCS+= -I"$(V8_INC_DIR)"
 endif
 
-LCPPDEFS =
+ifeq ($(USE_V8), 1)
+LCPPDEFS+= -DUSE_V8
+endif
+
 ifeq ($(TRACE), 1)
 LCPPDEFS+= -DSGAL_TRACE
 endif
