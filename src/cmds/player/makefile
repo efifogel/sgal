@@ -199,6 +199,7 @@ endif
 ifdef V8_LIB_DIR
 LLDOPTS+= -libpath:"$(V8_LIB_DIR)"
 endif
+LLDOPTS+= -LTCG  # whole-program optimization
 
 ifeq ($(USE_EGO), 1)
 ifneq ($(USE_DYNAMIC_SEGO), 1)
@@ -243,6 +244,7 @@ LLDLIBS+= mpfr-vc$(VC_NUM)-mt.lib
 LLDLIBS+= gmp-vc$(VC_NUM)-mt.lib
 endif
 # LLDLIBS+= gl2ps.lib
+LLDLIBS+= v8.lib
 LLDLIBS+= glu32.lib opengl32.lib
 LLDLIBS+= $(LDSYSLIBS)
 

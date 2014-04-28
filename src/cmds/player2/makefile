@@ -133,6 +133,7 @@ endif
 ifdef V8_LIB_DIR
 LLDOPTS+= -libpath:"$(V8_LIB_DIR)"
 endif
+LLDOPTS+= -LTCG  # whole-program optimization
 
 LLDLIBS+= SCGAL.lib
 LLDLIBS+= SGAL.lib
