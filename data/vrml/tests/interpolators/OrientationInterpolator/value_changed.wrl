@@ -1,0 +1,112 @@
+#VRML V2.0 utf8
+#
+# Test of an OrientationInterpolator to load the correct "value_changed"
+# eventOut prior to receiving events.
+# Two OrientationInterpolator nodes are associated with two 
+# seperate Box geometry.  The OrientationInterpolator associated 
+# with the Box on the left has a keyValue of 1 0 0 0.785, while the 
+# OrientationInterpolator associated with the right Box has the 
+# default of no keyValues, or [ ]. As a result, the OrientationInterpolator
+# on the left should initialize its "value_changed" eventOut to the 
+# value of its first keyValue, or 0 0 1 0.785. Because no keyValues are 
+# provided to the right OrientationInterpolator, it should initialize 
+# its "value_changed" eventOut to the SFRotation default value of 0 0 1 0.  
+# A Script node reads this value for each OrientationInterpolator, 
+# and will translate the associated Box by a value equal to 
+# its initially read  "value_changed" SFRotation value. 
+# When the pointing device passes over the left Box, it should
+# rotate about the Z axis  by a value of 0 0 1 0.785 ( or rotate 45
+# degrees ) each time it is indicated,then return to its original position. 
+# When the pointing device passes over the right Box, 
+# it should rotate by a value of 0 0 1 0.0 ( ie. it should not rotate at
+# all ).
+
+DEF MOVER1 OrientationInterpolator {
+  key [ 0, 0.5, 1 ]
+  keyValue [ 0 0 1 0.785, 0 0 1 0.785, 0 0 1 0.785  ]
+}
+
+DEF MOVER2 OrientationInterpolator {}
+
+Transform {
+  translation -2 0 0
+  children
+  DEF TRANS1 Transform {
+    translation 0 0 0
+    children [
+      DEF TS1 TouchSensor {} # TouchSensor
+      Shape {
+        appearance Appearance {
+          material Material { diffuseColor 1 0 0 } 
+        }
+        geometry Box {}
+      }
+    ]
+  }
+}
+
+Transform {
+  translation 2 0 0
+  children
+  DEF TRANS2 Transform {
+    translation 0 0 0
+    children [
+      DEF TS2 TouchSensor {} # TouchSensor
+      Shape {
+        appearance Appearance {
+          material Material { diffuseColor 1 0 0}
+        }
+        geometry Box {}
+      }
+    ]
+  }
+}
+
+DEF MOVER Script {
+  
+  field SFNode nodein1 USE MOVER1
+  field SFNode nodein2 USE MOVER2
+  field SFNode nodeout1 USE TRANS1
+  field SFNode nodeout2 USE TRANS2
+  field SFRotation reset 0 0 1 0.0 
+  
+  eventIn SFBool isOver1
+  eventIn SFBool isOver2
+  
+  eventOut SFRotation rotate
+  
+  directOutput TRUE
+  
+  url "javascript:
+  
+  function isOver1 (value) {
+  
+  if (value)
+  {
+  nodeout1.set_rotation = (nodein1.value_changed) ;
+  }
+  else
+  {
+  nodeout1.set_rotation = reset ;
+  }
+  
+  }
+  
+  function isOver2 (value) {
+  
+  
+  if (value)
+  {
+  nodeout2.set_rotation = (nodein2.value_changed) ;
+  }
+  else
+  {
+  nodeout2.set_rotation = reset ;
+  }
+  
+  }"
+}
+
+ROUTE TS1.isOver TO MOVER.isOver1
+ROUTE TS2.isOver TO MOVER.isOver2
+
