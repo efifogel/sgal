@@ -4,7 +4,7 @@ USE_SHARED =1
 
 include $(ROOT)/make/comdef.mak
 
-BASENAME = hello_world
+BASENAME = v8
 TARGET0 = $(BASENAME)$(EXEFILESUFFIX)
 INSTALLDIR0 = "$(BINDIR)"
 
@@ -28,7 +28,7 @@ endif
 endif
 endif
 
-CPPSOURCES = hello_world.cpp
+CPPSOURCES = v8.cpp
 
 LCPPDEFS =
 LCPPOPTS =
@@ -64,17 +64,10 @@ ifeq ($(DE), gnu)
 LCPPOPTS+= -Wall
 ifdef V8_LIB_DIR
 LLDOPTS+= -L$(V8_LIB_DIR)
-endif
-ifdef ICU_LIB_DIR
-LLDOPTS+= -L$(ICU_LIB_DIR)
+LLDOPTS+= -Wl,-rpath,$(V8_LIB_DIR)
 endif
 
-LLDLIBS+= -lv8_base.x64
-LLDLIBS+= -lv8_nosnapshot.x64
-LLDLIBS+= -licui18n
-LLDLIBS+= -licuuc
-LLDLIBS+= -licudata
-LLDLIBS+= -lrt
+LLDLIBS+= -lv8
 endif # gnu
 
 include $(MAKEDIR)/basedir.mak
