@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_sphere_renderers.hpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -48,7 +45,7 @@ class SGAL_SCGAL_DECL Sphere_renderer : public Arrangement_renderer::Renderer {
 public:
   /*! Constrcutor */
   Sphere_renderer();
-    
+
   /*! Drawer operator */
   virtual void operator()(Draw_action* action);
 
@@ -72,7 +69,7 @@ public:
     m_color[1] = color[1];
     m_color[2] = color[2];
   }
-  
+
   /*! Set the transparency
    * \param transparency the transparency
    */
@@ -95,7 +92,7 @@ public:
   /*! Drawer operator */
   virtual void operator()(Draw_action* action);
 };
-  
+
 /*! Draw an arrangement on sphere vertex as a disc
  * \param action
  * \param center the vertex center

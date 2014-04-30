@@ -191,7 +191,8 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
       m_normal_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_normal_indices[i++] = static_cast<Uint>(boost::lexical_cast<int>(*it));
+        m_normal_indices[i++] =
+          static_cast<Uint>(boost::lexical_cast<int>(*it));
       }
       continue;
     }

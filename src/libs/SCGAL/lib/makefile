@@ -82,6 +82,12 @@ CPPSOURCES+= Quadric_geo.cpp
 CPPSOURCES+= Arrangement_on_quadric_geo.cpp
 endif
 
+ifeq ($(USE_AOT), 1)
+CPPSOURCES+= Arrangement_on_torus_base_geo.cpp
+CPPSOURCES+= Arrangement_on_torus_geo.cpp
+CPPSOURCES+= Arrangement_on_torus_renderers.cpp
+endif
+
 CPPSOURCES+= Boolean_operation.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Polyhedron_geo.cpp

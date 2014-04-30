@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_sphere.hpp 6681 2008-07-27 12:01:54Z efif $
-// $Revision: 6681 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_ARRANGEMENT_ON_SPHERE_HPP

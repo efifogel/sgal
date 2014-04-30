@@ -23,6 +23,12 @@ FILES+= Arrangement_on_sphere_renderers.hpp
 FILES+= Arrangement_on_sphere_sim_geo.hpp
 FILES+= Arrangement_on_surface_geo.hpp
 FILES+= Arrangement_on_surface_geo_overlay.hpp
+
+FILES+= Arrangement_on_torus.hpp
+FILES+= Arrangement_on_torus_base_geo.hpp
+FILES+= Arrangement_on_torus_geo.hpp
+FILES+= Arrangement_on_torus_renderers.hpp
+
 FILES+= Arrangement_renderer.hpp
 FILES+= Arrangement_renderers.hpp
 FILES+= Assembly.hpp

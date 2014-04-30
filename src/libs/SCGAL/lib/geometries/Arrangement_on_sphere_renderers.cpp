@@ -44,29 +44,29 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor. */
+//! Constructor.
 Sphere_renderer::Sphere_renderer()
 {
   m_sphere.set_stacks(64);
   m_sphere.set_slices(64);
 }
 
-/*! \brief draws the sphere. */
+//! \brief draws the sphere.
 void Sphere_renderer::operator()(Draw_action* action)
 { m_sphere.draw(action); }
 
-/*! Constructor. */
+//! Constructor.
 Colored_sphere_renderer::
 Colored_sphere_renderer(const Vector4f& color) : m_color(color) {}
 
-/*! \brief draws the sphere. */
+//! \brief draws the sphere.
 void Colored_sphere_renderer::operator()(Draw_action* action)
 {
   glColor4fv((float*)&m_color);
   Sphere_renderer::operator()(action);
 }
 
-/*! \brief draws the sphere. */
+//! \brief draws the sphere.
 void Stencil_sphere_renderer::operator()(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -75,7 +75,7 @@ void Stencil_sphere_renderer::operator()(Draw_action* action)
   context->draw_color_mask(Vector4ub(0xff, 0xff, 0xff, 0xff));
 }
 
-/*! \brief draws an arrangement on sphere vertex as a disc. */
+//! \brief draws an arrangement on sphere vertex as a disc.
 void draw_disc_vertex_on_sphere(Draw_action* action, Vector3f& center,
                                 Float radius, Float delta_angle)
 {
@@ -106,7 +106,7 @@ void draw_disc_vertex_on_sphere(Draw_action* action, Vector3f& center,
   glEnd();
 }
 
-/*! \brief draws an arrangement on sphere vertex. */
+//! \brief draws an arrangement on sphere vertex.
 void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
                            Arrangement_renderer::Vertex_shape::Style style,
                            Float radius, Float delta_angle)
@@ -165,7 +165,7 @@ void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
   }
 }
 
-/*! \brief draws an arrangement on sphere edge as a strip. */
+//! \brief draws an arrangement on sphere edge as a strip.
 void draw_strip_edge_on_sphere(Draw_action* action,
                                Vector3f& source, Vector3f& target,
                                Vector3f& normal,
@@ -298,7 +298,7 @@ void draw_edge_on_sphere(Draw_action* action,
   }
 }
 
-/*! \brief draws an arrangement on sphere edge. */
+//! \brief draws an arrangement on sphere edge.
 void draw_strip_edge_on_sphere(Draw_action* action,
                                Vector3f& source, Vector3f& target,
                                Vector3f& normal,
@@ -362,7 +362,7 @@ void draw_strip_edge_on_sphere(Draw_action* action,
   }
 }
 
-/*! \brief */
+//! \brief
 void draw_triangular_patch(const Vector3f& vec1, const Vector3f& vec2,
                            const Vector3f& vec3, Uint level)
 {
@@ -398,7 +398,7 @@ void draw_triangular_patch(const Vector3f& vec1, const Vector3f& vec2,
   draw_triangular_patch(vec12, vec23, vec31, level);
 }
 
-/*! \brief draws an arrangement on sphere face */
+//! \brief draws an arrangement on sphere face.
 void draw_aos_convex_face(Draw_action* action,
                    std::list<Vector3f>::const_iterator begin,
                    std::list<Vector3f>::const_iterator end,
@@ -418,7 +418,7 @@ void draw_aos_convex_face(Draw_action* action,
   glEnd();
 }
 
-/*! \brief draws an arrangement on sphere face. */
+//! \brief draws an arrangement on sphere face.
 void draw_aos_convex_face(Draw_action* action,
                    std::list<Vector3f>::const_iterator begin,
                    std::list<Vector3f>::const_iterator end)

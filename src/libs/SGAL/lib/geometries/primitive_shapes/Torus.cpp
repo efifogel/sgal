@@ -47,7 +47,7 @@ const Uint Torus::s_def_slices(16);
 
 REGISTER_TO_FACTORY(Torus, "Torus");
 
-/*! Constructor */
+//! \brief constructor.
 Torus::Torus(Boolean proto) :
   Extrusion(proto),
   m_spine_radius(s_def_spine_radius),
@@ -55,10 +55,10 @@ Torus::Torus(Boolean proto) :
   m_stacks(s_def_stacks)
 { m_cross_section_radius = s_def_cross_section_radius; }
 
-/*! Destructor */
+//! \brief destructor.
 Torus::~Torus(){}
 
-/*! Clean the ellipsoid internal representation */
+//! \brief cleans the torus internal representation.
 void Torus::clean()
 {
   Uint i;
@@ -86,7 +86,7 @@ void Torus::clean()
   Extrusion::clean();
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of the torus object.
 void Torus::set_attributes(Element* elem)
 {
   Extrusion::set_attributes(elem);
@@ -117,7 +117,7 @@ void Torus::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/* Initilalize the container prototype */
+//! \brief initilalizes the container prototype.
 void Torus::init_prototype()
 {
   if (s_prototype) return;
@@ -149,35 +149,35 @@ void Torus::init_prototype()
                                           slices_func, exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Torus::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Torus::get_prototype()
 {
   if (!s_prototype) Torus::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the spine radius of the ellipsoid. */
+//! \brief sets the spine radius of the ellipsoid.
 void Torus::set_spine_radius(Float spine_radius)
 {
   m_spine_radius = spine_radius;
   clear();
 }
 
-/*! \brief sets the number of slices (horizontal) longitudes. */
+//! \brief sets the number of slices (horizontal) longitudes.
 void Torus::set_slices(Uint slices)
 {
   m_slices = slices;
   clear();
 }
 
-/*! \brief sets the number of stacks (vertical) latitudes. */
+//! \brief sets the number of stacks (vertical) latitudes.
 void Torus::set_stacks(Uint stacks)
 {
   m_stacks = stacks;
