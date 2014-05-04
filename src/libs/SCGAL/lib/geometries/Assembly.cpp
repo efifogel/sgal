@@ -1156,8 +1156,10 @@ void Assembly::remove_marked_edges(Aos_mark* aos)
   tmp.clear();
 
   // Merge mergable edges:
-  Aos_mark::Vertex_iterator vit;
-  for (vit = aos->vertices_begin(); vit != aos->vertices_end(); ++vit) {
+  Aos_mark::Vertex_iterator vit, next;
+  for (vit = aos->vertices_begin(); vit != aos->vertices_end(); vit = next) {
+    next = vit;
+    ++next;
     if ((vit->degree() == 0) && vit->mark()) {
       // A marked isolated vertex can be the result of overlaying an
       // a non-marked isolated vertex from one arrangement and a marked
