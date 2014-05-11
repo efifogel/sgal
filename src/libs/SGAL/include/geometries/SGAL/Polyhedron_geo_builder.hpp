@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 13467 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_POLYHEDRON_GEO_BUILDER_HPP
@@ -39,7 +36,7 @@ private:
   const Mesh_set* m_mesh_set;
 
 public:
-  /*! */
+  /*! Constructor. */
   Polyhedron_geo_builder() {}
 
   void set_mesh_set(const Mesh_set* mesh_set) { m_mesh_set = mesh_set; }

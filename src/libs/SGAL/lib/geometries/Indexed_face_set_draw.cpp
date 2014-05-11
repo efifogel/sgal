@@ -2771,14 +2771,7 @@ void Indexed_face_set::draw_FAPV_VAYE()
 
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPV_VAYE\n");
 
-  Uint tcoords = 0;
-
-  if (m_tex_coord_array) {
-    if (boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array))
-      tcoords = 2;
-    else if (boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array))
-      tcoords = 3;
-  }
+  Uint tcoords = num_tex_coordinates();
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -2790,64 +2783,64 @@ void Indexed_face_set::draw_FAPV_VAYE()
 
 #if defined(GL_ARB_vertex_buffer_object)
   if ((Gfx_conf::get_instance()->is_vertex_buffer_object_supported()) &&
-      (m_vertex_coord_id != 0))
+      (m_coord_buffer_id != 0))
   {
     if (resolve_fragment_source() == FS_NORMAL) {
-      if (m_vertex_normal_id != 0) {
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
+      if (m_normal_buffer_id != 0) {
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_normal_buffer_id);
         glNormalPointer(GL_FLOAT, 0, BUFFER_OFFSET(0));
         glEnableClientState(GL_NORMAL_ARRAY);
       }
     }
     else {
-      if (m_vertex_color_id != 0) {
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
+      if (m_color_buffer_id != 0) {
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_color_buffer_id);
         glColorPointer(3, GL_FLOAT, 0, BUFFER_OFFSET(0));
         glEnableClientState(GL_COLOR_ARRAY);
       }
     }
     if (tcoords != 0) {
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_tex_coord_buffer_id);
       glTexCoordPointer(tcoords, GL_FLOAT, 0, BUFFER_OFFSET(0));
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_coord_buffer_id);
     glVertexPointer(3, GL_FLOAT, 0, BUFFER_OFFSET(0));
   }
   else {
     if (resolve_fragment_source() == FS_NORMAL) {
-      glNormalPointer(GL_FLOAT, 0, (GLfloat*)(m_normal_array->get_vector()));
+      glNormalPointer(GL_FLOAT, 0, normal_data());
       glEnableClientState(GL_NORMAL_ARRAY);
     }
     else {
-      glColorPointer(3, GL_FLOAT, 0, (GLfloat*)(m_color_array->get_vector()));
+      glColorPointer(3, GL_FLOAT, 0, color_data());
       glEnableClientState(GL_COLOR_ARRAY);
     }
     if (tcoords != 0) {
-      glTexCoordPointer(tcoords, GL_FLOAT, 0, m_tex_coord_array->get_gl_data());
+      glTexCoordPointer(tcoords, GL_FLOAT, 0, tex_coord_data());
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
-    glVertexPointer(3, GL_FLOAT, 0, m_coord_array->get_vector());
+    glVertexPointer(3, GL_FLOAT, 0, coord_data());
   }
 #else
   if (resolve_fragment_source() == FS_NORMAL) {
-    glNormalPointer(GL_FLOAT, 0, (GLfloat*)(m_normal_array->get_vector()));
+    glNormalPointer(GL_FLOAT, 0, normal_data());
     glEnableClientState(GL_NORMAL_ARRAY);
   }
   else {
-    glColorPointer(3, GL_FLOAT, 0, (GLfloat*)(m_color_array->get_vector()));
+    glColorPointer(3, GL_FLOAT, 0, color_data());
     glEnableClientState(GL_COLOR_ARRAY);
   }
   if (tcoords != 0) {
-    glTexCoordPointer(tcoords, GL_FLOAT, 0, tex_coord_array->get_vector());
+    glTexCoordPointer(tcoords, GL_FLOAT, 0, tex_coord_data());
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   }
-  glVertexPointer(3, GL_FLOAT, 0, (GLfloat*)(m_coord_array->get_vector()));
+  glVertexPointer(3, GL_FLOAT, 0, coord_data());
 #endif
 
   glEnableClientState(GL_VERTEX_ARRAY);
 
-  const GLvoid* indices = (GLvoid*) &(*(m_flat_coord_indices.begin()));
+  const GLvoid* indices = indices_data();
   SGAL_assertion(m_primitive_type == PT_TRIANGLES ||
                  m_primitive_type == PT_QUADS);
   Uint count = m_num_primitives * ((m_primitive_type == PT_TRIANGLES) ? 3 : 4);

@@ -97,17 +97,31 @@ public:
   // virtual void FieldChanged(short fieldId);
   //! \todo virtual Attribute_list get_attributes();
 
-  /*! Obtain the array size. */
+  /*! Obtain the array size.
+   * \retun the array size.
+   */
   virtual Uint size() const;
 
   /*! Resize the array capacity. */
   virtual void resize(Uint n);
 
-  /*! Obtain the GL data. */
-  virtual GLfloat* get_gl_data();
-
   /*! Clear the array. */
   virtual void clear();
+
+  /*! Obtain the number of texture coordinates.
+   * \return the number of texture coordinates.
+   */
+  virtual Uint num_coordinates() const;
+
+  /*! Obtain the data size.
+   * \retun the data size.
+   */
+  virtual Uint data_size() const;
+
+  /*! Obtain the data.
+   * \return the data.
+   */
+  virtual const GLfloat* data() const;
 
   /*! Obtain the iterator to the Array first element. */
   std::vector<Vector3f>::iterator begin();
@@ -122,9 +136,6 @@ public:
 
   /*! Obtain the nth element in the array (const). */
   const Vector3f& operator[](Uint n) const;
-
-  /*! Obtain the vector. */
-  Vector3f* get_vector();
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -156,10 +167,6 @@ inline Container* Tex_coord_array_3d::clone()
 //! \brief obtains the array size.
 inline Uint Tex_coord_array_3d::size() const { return m_array.size(); }
 
-//! \brief Obtain the GL data.
-inline GLfloat* Tex_coord_array_3d::get_gl_data()
-{ return (GLfloat*)(get_vector()); }
-
 //! \brief Resize the array capacity.
 inline void Tex_coord_array_3d::resize(Uint n) { m_array.resize(n); }
 
@@ -189,9 +196,16 @@ inline Vector3f& Tex_coord_array_3d::operator[](Uint n) { return m_array[n]; }
 inline const Vector3f& Tex_coord_array_3d::operator[](Uint n) const
 { return m_array[n]; }
 
-//! \brief Obtain the vector.
-inline Vector3f* Tex_coord_array_3d::get_vector()
-{ return &(*(m_array.begin())); }
+//! \brief obtains the number of texture coordinates.
+inline Uint Tex_coord_array_3d::num_coordinates() const { return 3; }
+
+//! \brief obtain the data size.
+inline Uint Tex_coord_array_3d::data_size() const
+{ return m_array.size() * sizeof(Vector3f); }
+
+//! \brief obtains the data.
+inline const GLfloat* Tex_coord_array_3d::data() const
+{ return (GLfloat*)(&(*(m_array.begin()))); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Tex_coord_array_3d::get_tag() const { return s_tag; }

@@ -102,11 +102,23 @@ public:
   /*! Resize the array capacity .*/
   virtual void resize(Uint n);
 
-  /*! Obtain the GL data. */
-  virtual GLfloat* get_gl_data();
-
   /*! Clear the array. */
   virtual void clear();
+
+  /*! Obtain the number of texture coordinates.
+   * \return the number of texture coordinates.
+   */
+  virtual Uint num_coordinates() const;
+
+  /*! Obtain the data size.
+   * \retun the data size.
+   */
+  virtual Uint data_size() const;
+
+  /*! Obtain the data.
+   * \return the data.
+   */
+  virtual const GLfloat* data() const;
 
   /*! Obtain the iterator to the Array first element. */
   std::vector<Vector2f>::iterator begin();
@@ -121,9 +133,6 @@ public:
 
   /*! Obtain the nth element in the array (const). */
   const Vector2f& operator[](Uint n) const;
-
-  /*! Obtain the vector. */
-  Vector2f* get_vector();
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -155,10 +164,6 @@ inline Container* Tex_coord_array_2d::clone()
 //! \brief obtains the array size.
 inline Uint Tex_coord_array_2d::size() const { return m_array.size(); }
 
-//! \brief obtains the GL data.
-inline GLfloat* Tex_coord_array_2d::get_gl_data()
-{ return (GLfloat*)(get_vector()); }
-
 //! \brief resizes the array capacity.
 inline void Tex_coord_array_2d::resize(Uint n) { m_array.resize(n); }
 
@@ -186,9 +191,16 @@ inline Vector2f& Tex_coord_array_2d::operator[](Uint n) { return m_array[n]; }
 inline const Vector2f& Tex_coord_array_2d::operator[](Uint n) const
 { return m_array[n]; }
 
-//! \brief obtains the vector.
-inline Vector2f* Tex_coord_array_2d::get_vector()
-{ return &(*(m_array.begin())); }
+//! \brief obtains the number of texture coordinates.
+inline Uint Tex_coord_array_2d::num_coordinates() const { return 2; }
+
+//! \brief obtain the data size.
+inline Uint Tex_coord_array_2d::data_size() const
+{ return m_array.size() * sizeof(Vector2f); }
+
+//! \brief obtains the data.
+inline const GLfloat* Tex_coord_array_2d::data() const
+{ return (GLfloat*)(&(*(m_array.begin()))); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Tex_coord_array_2d::get_tag() const { return s_tag; }

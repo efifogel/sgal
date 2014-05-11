@@ -14,7 +14,8 @@ MULTITHREAD =1
 USE_SHARED =1
 DEF_SHARED =1
 
-include $(ROOT)/make/comdef.mak
+include $(ROOT)/make/cgaldef.mak
+include $(MAKEDIR)/scgaldef.mak
 
 BASELIBNAME =SGAL
 BASEINSTALLDIR =$(ROOT)
@@ -336,6 +337,8 @@ LLDLIBS+= $(LDSYSLIBS)
 endif
 
 endif
+
+LCPPINCS+= $(CGALCPPINCS)
 
 ifeq ($(DE), gnu)
 LCPPDEFS+= -DGL_GLEXT_PROTOTYPES

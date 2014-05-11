@@ -8,12 +8,8 @@ USE_DYNAMIC_SCGAL =0
 USE_SHARED_SEGO =1
 USE_DYNAMIC_SEGO =1
 
-ifeq ($(USE_CGAL), 1)
 include $(ROOT)/make/cgaldef.mak
 include $(MAKEDIR)/scgaldef.mak
-else
-include $(ROOT)/make/comdef.mak
-endif
 
 BASENAME = player
 TARGET0 = $(BASENAME)$(EXEFILESUFFIX)
@@ -85,7 +81,7 @@ ifeq ($(TRACE), 1)
 LCPPDEFS+= -DSGAL_TRACE
 endif
 
-ifeq ($(USE_CGAL), 1)
+ifeq ($(USE_SCGAL), 1)
 ifeq ($(USE_CGM), 1)
 LCPPDEFS+= -DUSE_CGM
 SGAL_INCLUDE_AOS=1
@@ -142,7 +138,7 @@ LCPPINCS+= $(CGALCPPINCS)
 
 LCPPDEFS+= -DSCGAL_NT=$(SCGAL_NT)
 LCPPDEFS+= -DSCGAL_KERNEL=$(SCGAL_KERNEL)
-LCPPDEFS+= -DUSE_CGAL
+LCPPDEFS+= -DUSE_SCGAL
 endif
 
 ifdef CGAL_ARR_TRACING_TRAITS
@@ -207,7 +203,7 @@ LLDLIBS+= SEGO.lib
 endif
 endif
 
-ifeq ($(USE_CGAL), 1)
+ifeq ($(USE_SCGAL), 1)
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= SCGAL.lib
 endif
@@ -253,7 +249,7 @@ ifneq ($(USE_DYNAMIC_SGAL), 1)
 LIBS+= $(LIBDIR)/SGAL.lib
 endif
 
-ifeq ($(USE_CGAL), 1)
+ifeq ($(USE_SCGAL), 1)
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LIBS+= $(LIBDIR)/SCGAL.lib
 endif
@@ -278,7 +274,7 @@ ifdef V8_LIB_DIR
 LLDOPTS+= -L$(V8_LIB_DIR)
 LLDOPTS+= -Wl,-rpath,$(V8_LIB_DIR)
 endif
-ifeq ($(USE_CGAL), 1)
+ifeq ($(USE_SCGAL), 1)
 ifneq ($(USE_DYNAMIC_SCGAL), 1)
 LLDLIBS+= -lSCGAL
 endif
@@ -294,9 +290,7 @@ ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= -lSGAL
 endif
 
-ifeq ($(USE_CGAL), 1)
 LLDLIBS+= $(CGALLDLIBS)
-endif
 
 ifeq ($(USE_GMP), 1)
 LLDLIBS+= -lgmp -lmpfr -lgmpxx
@@ -321,7 +315,7 @@ LIBS =
 ifneq ($(USE_SHARED_SGAL), 1)
 LIBS+= $(LIBDIR)/libSGAL.a
 endif
-ifeq ($(USE_CGAL), 1)
+ifeq ($(USE_SCGAL), 1)
 ifneq ($(USE_SHARED_SCGAL), 1)
 LIBS+= $(LIBDIR)/libSCGAL.a
 endif

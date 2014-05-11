@@ -19,6 +19,11 @@
 #ifndef SGAL_COLOR_ARRAY_HPP
 #define SGAL_COLOR_ARRAY_HPP
 
+#if (defined _MSC_VER)
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+
 #include <vector>
 
 #include "SGAL/basic.hpp"
@@ -98,7 +103,9 @@ public:
 
   //! \todo virtual Attribute_list get_attributes();
 
-  /*! Obtain the array size. */
+  /*! Obtain the array size.
+   * \return the array size.
+   */
   Uint size() const;
 
   /*! Resize the array capacity. */
@@ -125,8 +132,15 @@ public:
   /*! Array indexing operator. */
   const Vector3f& operator[](Uint n) const;
 
-  /*! Obtain the vector. */
-  Vector3f* get_vector();
+  /*! Obtain the data size.
+   * \return the data size.
+   */
+  Uint data_size() const;
+
+  /*! Obtain the data.
+   * \return the data.
+   */
+  const GLfloat* data() const;
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -194,8 +208,13 @@ inline Vector3f& Color_array::operator[](Uint n) { return m_array[n]; }
 inline const Vector3f& Color_array::operator[](Uint n) const
 { return m_array[n]; }
 
-//! \brief obtains the vector.
-inline Vector3f* Color_array::get_vector() { return &(*(m_array.begin())); }
+//! \brief obtain the data size.
+inline Uint Color_array::data_size() const
+{ return m_array.size() * sizeof(Vector3f); }
+
+//! \brief obtains the data.
+inline const GLfloat* Color_array::data() const
+{ return (GLfloat*)(&(*(m_array.begin()))); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Color_array::get_tag() const { return s_tag; }

@@ -23,6 +23,11 @@
 #pragma warning ( disable : 4786 )
 #endif
 
+#if (defined _MSC_VER)
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+
 #include <vector>
 
 #include "SGAL/basic.hpp"
@@ -127,9 +132,15 @@ public:
   /*! Array indexing operator. */
   const Vector3f& operator[](Uint n) const;
 
-  /*! Obtain the array itself.
+  /*! Obtain the data size.
+    \return the data size.
    */
-  const Vector3f* get_vector() const;
+  Uint data_size() const;
+
+  /*! Obtain the data.
+   * \return the data.
+   */
+  const GLfloat* data() const;
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -155,29 +166,29 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Coord_array* Coord_array::prototype() { return new Coord_array(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Coord_array::clone() { return new Coord_array(); }
 
-/*! \brief obtains the array size. */
+//! \brief obtains the array size.
 inline Uint Coord_array::size() const { return m_array.size(); }
 
-/*! \brief resizes the array capacity. */
+//! \brief resizes the array capacity.
 inline void Coord_array::resize(Uint n) { m_array.resize(n); }
 
-/*! \brief clears the array. */
+//! \brief clears the array.
 inline void Coord_array::clear() { m_array.clear(); }
 
-/*! \brief obtains the iterator to the Array first element. */
+//! \brief obtains the iterator to the Array first element.
 inline std::vector<Vector3f>::iterator Coord_array::begin()
 { return m_array.begin(); }
 
 inline const std::vector<Vector3f>::const_iterator Coord_array::begin() const
 { return m_array.begin(); }
 
-/*! \brief obtains the iterator to the Array past-the-end element */
+//! \brief obtains the iterator to the Array past-the-end element.
 inline std::vector<Vector3f>::iterator Coord_array::end()
 { return m_array.end(); }
 
@@ -188,18 +199,22 @@ inline const std::vector<Vector3f>::const_iterator Coord_array::end() const
 inline void Coord_array::push_back(const Vector3f& val)
 { m_array.push_back(val); }
 
-/*! \brief array indexing operator. */
+//! \brief array indexing operator.
 inline Vector3f& Coord_array::operator[](Uint n) { return m_array[n]; }
 
-/*! \brief array indexing operator. */
+//! \brief array indexing operator.
 inline const Vector3f& Coord_array::operator[](Uint n) const
 { return m_array[n]; }
 
-/*! \brief obtains the vector. */
-inline const Vector3f* Coord_array::get_vector() const
-{ return &(*(m_array.begin())); }
+//! \brief obtain the data size.
+inline Uint Coord_array::data_size() const
+{ return m_array.size() * sizeof(Vector3f); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the data.
+inline const GLfloat* Coord_array::data() const
+{ return (GLfloat*)(&(*(m_array.begin()))); }
+
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Coord_array::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

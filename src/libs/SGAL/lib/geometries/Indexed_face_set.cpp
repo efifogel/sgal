@@ -18,6 +18,8 @@
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include <tuple>
 
 #if (defined _MSC_VER)
 #include <windows.h>
@@ -74,21 +76,24 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_tri_strip_lengths(0),
   m_is_multiple_uv(false),
   m_display_list_id(0),
-  m_vertex_coord_id(0),
-  m_vertex_color_id(0),
-  m_vertex_normal_id(0),
-  m_vertex_tex_coord_id(0),
+  m_coord_buffer_id(0),
+  m_color_buffer_id(0),
+  m_normal_buffer_id(0),
+  m_tex_coord_buffer_id(0),
   m_drawing_mode(Configuration::s_def_geometry_drawing_mode),
   m_bb_is_pre_set(false),
   m_is_progressive(false),
+  m_dirty_polyhedron(true),
+  m_dirty_facets(true),
   m_dirty_normals(true),
   m_normals_cleaned(false),
   m_dirty_tex_coords(true),
   m_tex_coords_cleaned(false),
-  m_dirty_vertex_coord_buffer(true),
-  m_dirty_vertex_normal_buffer(true),
-  m_dirty_vertex_color_buffer(true),
-  m_dirty_vertex_tex_coord_buffer(true)
+  m_dirty_coord_buffer(true),
+  m_dirty_normal_buffer(true),
+  m_dirty_color_buffer(true),
+  m_dirty_tex_coord_buffer(true),
+  m_dirty_local_vertex_buffers(true)
 {
   m_primitive_type = PT_POLYGONS;
 
@@ -673,9 +678,11 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 //! \brief destructor.
 Indexed_face_set::~Indexed_face_set()
 {
+  clear_local_vertex_buffers();
   clear_vertex_arrays();
   destroy_display_list();
-  destroy_vertex_buffer_object();
+  destroy_vertex_buffers();
+  m_dirty_local_vertex_buffers = true;
 }
 
 /* \brief sets the flag that indicates whether normals are bound per vertex or
@@ -704,7 +711,7 @@ void Indexed_face_set::clean_normals()
   else calculate_normal_per_polygon();
   m_dirty_normals = false;
   m_normals_cleaned = true;
-  m_dirty_vertex_normal_buffer = true;
+  m_dirty_normal_buffer = true;
 }
 
 //! \brief computes the normalized normal to a triangle.
@@ -987,13 +994,17 @@ void Indexed_face_set::clean_tex_coords()
 
   m_dirty_tex_coords = false;
   m_tex_coords_cleaned = true;
-  m_dirty_vertex_tex_coord_buffer = true;
+  m_dirty_tex_coord_buffer = true;
 }
 
 //! \brief draws the mesh conditionaly.
 void Indexed_face_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
+//   if (m_crease_angle > 0) {
+//     if (m_dirty_polyhedron) clean_polyhedron();
+//     if (m_dirty_facets) clean_facets();
+//   }
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
   if (is_dirty_flat_color_indices()) clean_flat_color_indices();
@@ -1032,13 +1043,68 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
     if (use_vertex_array() &&
         (Gfx_conf::get_instance()->is_vertex_buffer_object_supported()))
     {
-      //! \todo Add a try() and catch() to catch errors.
-      // If an error is cought, call destroy_vertex_buffer_object()
+      bool color_normal_condition = (resolve_fragment_source() == FS_COLOR) ?
+        (m_flat_color_indices.empty() ||
+         (std::equal(m_flat_coord_indices.begin(),
+                     m_flat_coord_indices.end(),
+                     m_flat_color_indices.begin()))) :
+        (m_flat_normal_indices.empty() ||
+         (std::equal(m_flat_coord_indices.begin(),
+                     m_flat_coord_indices.end(),
+                     m_flat_normal_indices.begin())));
+      bool tex_coord_condition =
+        (m_flat_tex_coord_indices.empty() ||
+         (std::equal(m_flat_coord_indices.begin(),
+                     m_flat_coord_indices.end(),
+                     m_flat_tex_coord_indices.begin())));
 
-      if (m_dirty_vertex_coord_buffer) clean_vertex_coord_buffer();
-      if (m_dirty_vertex_normal_buffer) clean_vertex_normal_buffer();
-      if (m_dirty_vertex_color_buffer) clean_vertex_color_buffer();
-      if (m_dirty_vertex_tex_coord_buffer) clean_vertex_tex_coord_buffer();
+      //! \todo Add a try() and catch() to catch errors.
+      // If an error is cought, call destroy_vertex_buffers()
+      if (color_normal_condition && tex_coord_condition) {
+        /* If each of the normal/color indices and the texture coordinate
+         * indices is either empty or identical to the coordinate indices,
+         * use vertex array with the coordinates, colors/normals, and
+         * texture cooridinates as is.
+         */
+        if (m_dirty_coord_buffer && m_coord_array)
+          clean_vertex_coord_buffer(m_coord_array->data_size(),
+                                    m_coord_array->data());
+        if (m_dirty_normal_buffer && m_normal_array)
+          clean_vertex_normal_buffer(m_normal_array->data_size(),
+                                     m_normal_array->data());
+        if (m_dirty_color_buffer && m_color_array)
+          clean_vertex_color_buffer(m_color_array->data_size(),
+                                    m_color_array->data());
+        if (m_dirty_tex_coord_buffer && m_tex_coord_array)
+          clean_vertex_tex_coord_buffer(m_tex_coord_array->data_size(),
+                                        m_tex_coord_array->data());
+      }
+      else {
+        /* If each of the normal/color indices and the texture coordinate
+         * indices is not empty and not identical to the coordinate indices,
+         * create local coordinate, color/normal, texture coordinate, and
+         * indices buffers that will serve as mirrors to the OpenGL buffers.
+         */
+        if (m_dirty_local_vertex_buffers) clean_local_vertex_buffers();
+
+        // Clean OpenGL vertex array buffers:
+        if (m_dirty_coord_buffer && !m_local_coord_buffer.empty()) {
+          Uint size = m_local_coord_buffer.size() * sizeof(Vector3f);
+          clean_vertex_coord_buffer(size, local_coord_data());
+        }
+        if (m_dirty_normal_buffer && !m_local_normal_buffer.empty()) {
+          Uint size = m_local_normal_buffer.size() * sizeof(Vector3f);
+          clean_vertex_normal_buffer(size, local_normal_data());
+        }
+        if (m_dirty_color_buffer && !m_local_color_buffer.empty()) {
+          Uint size = m_local_color_buffer.size() * sizeof(Vector3f);
+          clean_vertex_color_buffer(size, local_color_data());
+        }
+//         if (m_dirty_tex_coord_buffer && m_tex_coord_array) {
+//           Uint size =
+//           clean_vertex_tex_coord_buffer(size, local_tex_coord_data());
+//         }
+      }
     }
 
    case Configuration::GDM_DIRECT:
@@ -1051,19 +1117,27 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
 void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
 {
    // When using vertex array, the index arrays must be flat:
-  SGAL_assertion_code(Boolean uva = use_vertex_array(););
-  SGAL_assertion(!uva || m_coord_indices_flat);
+  Boolean va = use_vertex_array();
+  SGAL_assertion(!va || m_coord_indices_flat);
 
   Fragment_source fragment_source = resolve_fragment_source();
-  Boolean fragment_indexed = (fragment_source == FS_NORMAL) ?
-    (m_flat_normal_indices.size() ? true : false) :
-    (m_flat_color_indices.size() ? true : false);
+  Boolean fragment_indexed = va ? false :
+    ((fragment_source == FS_NORMAL) ?
+     (m_flat_normal_indices.size() ? true : false) :
+     (m_flat_color_indices.size() ? true : false));
   Attachment fragment_attached = (fragment_source == FS_NORMAL) ?
     ((m_normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE) :
     ((m_color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE);
   Boolean texture_enbaled = m_tex_coord_array ? true : false;
-  Boolean texture_indexed = m_flat_tex_coord_indices.size() ? true : false;
-  Boolean va = use_vertex_array();
+  Boolean texture_indexed = va ? false :
+    (m_flat_tex_coord_indices.size() ? true : false);
+
+//   std::cout << "fragment_source: " << fragment_source << std::endl;
+//   std::cout << "fragment_indexed: " << fragment_indexed << std::endl;
+//   std::cout << "fragment_attached: " << fragment_attached << std::endl;
+//   std::cout << "texture_indexed: " << texture_indexed << std::endl;
+//   std::cout << "m_primitive_type: " << m_primitive_type << std::endl;
+//   std::cout << "va: " << va << std::endl;
 
   Uint mask =
     SET(FRAGMENT_SOURCE,FRAGMENT_SOURCE_,fragment_source,
@@ -1297,33 +1371,33 @@ Container_proto* Indexed_face_set::get_prototype()
 }
 
 //! \brief destroys the data structure of the vertex buffer object.
-void Indexed_face_set::destroy_vertex_buffer_object()
+void Indexed_face_set::destroy_vertex_buffers()
 {
 #if defined(GL_ARB_vertex_buffer_object)
-  if (m_vertex_coord_id || m_vertex_normal_id ||
-      m_vertex_color_id || m_vertex_tex_coord_id)
+  if (m_coord_buffer_id || m_normal_buffer_id ||
+      m_color_buffer_id || m_tex_coord_buffer_id)
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-  if (m_vertex_coord_id) {
-    glDeleteBuffersARB(1, &m_vertex_coord_id);
-    m_vertex_coord_id = 0;
+  if (m_coord_buffer_id) {
+    glDeleteBuffersARB(1, &m_coord_buffer_id);
+    m_coord_buffer_id = 0;
   }
-  if (m_vertex_normal_id) {
-    glDeleteBuffersARB(1, &m_vertex_normal_id);
-    m_vertex_normal_id = 0;
+  if (m_normal_buffer_id) {
+    glDeleteBuffersARB(1, &m_normal_buffer_id);
+    m_normal_buffer_id = 0;
   }
-  if (m_vertex_color_id) {
-    glDeleteBuffersARB(1, &m_vertex_color_id);
-    m_vertex_color_id = 0;
+  if (m_color_buffer_id) {
+    glDeleteBuffersARB(1, &m_color_buffer_id);
+    m_color_buffer_id = 0;
   }
-  if (m_vertex_tex_coord_id) {
-    glDeleteBuffersARB(1, &m_vertex_tex_coord_id);
-    m_vertex_tex_coord_id = 0;
+  if (m_tex_coord_buffer_id) {
+    glDeleteBuffersARB(1, &m_tex_coord_buffer_id);
+    m_tex_coord_buffer_id = 0;
   }
 #endif
-  m_dirty_vertex_coord_buffer = true;
-  m_dirty_vertex_normal_buffer = true;
-  m_dirty_vertex_color_buffer = true;
-  m_dirty_vertex_tex_coord_buffer = true;
+  m_dirty_coord_buffer = true;
+  m_dirty_normal_buffer = true;
+  m_dirty_color_buffer = true;
+  m_dirty_tex_coord_buffer = true;
 }
 
 //! \brief destroys the data structure of the display_list.
@@ -1333,6 +1407,17 @@ void Indexed_face_set::destroy_display_list()
     glDeleteLists(m_display_list_id, 1);
     m_display_list_id = 0;
   }
+}
+
+//! \brief clear the vertex buffers.
+void Indexed_face_set::clear_local_vertex_buffers()
+{
+  m_local_coord_buffer.clear();
+  m_local_normal_buffer.clear();
+  m_local_color_buffer.clear();
+  m_local_tex_coord_buffer_2d.clear();
+  m_local_tex_coord_buffer_3d.clear();
+  m_local_tex_coord_buffer_4d.clear();
 }
 
 //! \brief destroys the vertex arrays.
@@ -1348,7 +1433,8 @@ void Indexed_face_set::clear_vertex_arrays()
 void Indexed_face_set::coord_point_changed()
 {
   destroy_display_list();
-  m_dirty_vertex_coord_buffer = true;
+  m_dirty_coord_buffer = true;
+  m_dirty_local_vertex_buffers = true;
   if (m_normals_cleaned || !m_normal_array) m_dirty_normals = true;
   if (m_tex_coords_cleaned || !m_tex_coord_array) m_dirty_tex_coords = true;
 }
@@ -1361,7 +1447,7 @@ Boolean Indexed_face_set::is_empty() const
 
   if (use_vertex_array()) {
     if (Gfx_conf::get_instance()->is_vertex_buffer_object_supported())
-      return ((m_vertex_coord_id == 0) && Geo_set::is_empty());
+      return ((m_coord_buffer_id == 0) && Geo_set::is_empty());
   }
 
   return Geo_set::is_empty();
@@ -1406,18 +1492,15 @@ calculate_single_normal_per_vertex(Shared_normal_array normals)
 }
 
 //! \brief cleans the data structure of the vertex coordinate buffer object.
-void Indexed_face_set::clean_vertex_coord_buffer()
+void Indexed_face_set::clean_vertex_coord_buffer(Uint size, const GLfloat* data)
 {
-  if (!m_coord_array) return;
 #if defined(GL_ARB_vertex_buffer_object)
-  if (m_vertex_coord_id == 0) glGenBuffersARB(1, &m_vertex_coord_id);
-  SGAL_assertion(m_vertex_coord_id != 0);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_coord_id);
-  Uint size = m_coord_array->size() * sizeof(Vector3f);
-  GLfloat* data = (GLfloat*) m_coord_array->get_vector();
+  if (m_coord_buffer_id == 0) glGenBuffersARB(1, &m_coord_buffer_id);
+  SGAL_assertion(m_coord_buffer_id != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_coord_buffer_id);
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
 
-      // Verify that everything is ok:
+  // Verify that everything is ok:
 #if !defined(NDEBUG)
   int param_array_size = 0;
   glGetBufferParameterivARB(GL_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB,
@@ -1428,19 +1511,17 @@ void Indexed_face_set::clean_vertex_coord_buffer()
   // Leave clean state:
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #endif
-  m_dirty_vertex_coord_buffer = false;
+  m_dirty_coord_buffer = false;
 }
 
 //! \brief cleans the data structure of the vertex normal buffer object.
-void Indexed_face_set::clean_vertex_normal_buffer()
+void Indexed_face_set::clean_vertex_normal_buffer(Uint size,
+                                                  const GLfloat* data)
 {
-  if (!m_normal_array) return;
 #if defined(GL_ARB_vertex_buffer_object)
-  if (m_vertex_normal_id == 0) glGenBuffersARB(1, &m_vertex_normal_id);
-  SGAL_assertion(m_vertex_normal_id != 0);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_normal_id);
-  Uint size = m_normal_array->size() * sizeof(Vector3f);
-  GLfloat* data = (GLfloat*) m_normal_array->get_vector();
+  if (m_normal_buffer_id == 0) glGenBuffersARB(1, &m_normal_buffer_id);
+  SGAL_assertion(m_normal_buffer_id != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_normal_buffer_id);
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
 
 #if !defined(NDEBUG)
@@ -1453,19 +1534,17 @@ void Indexed_face_set::clean_vertex_normal_buffer()
   // Leave clean state:
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #endif
-  m_dirty_vertex_normal_buffer = false;
+  m_dirty_normal_buffer = false;
 }
 
 //! \brief cleans the data structure of the vertex color buffer object.
-void Indexed_face_set::clean_vertex_color_buffer()
+void Indexed_face_set::clean_vertex_color_buffer(Uint size, const GLfloat* data)
 {
   if (!m_color_array) return;
 #if defined(GL_ARB_vertex_buffer_object)
-  if (m_vertex_color_id == 0) glGenBuffersARB(1, &m_vertex_color_id);
-  SGAL_assertion(m_vertex_color_id != 0);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_color_id);
-  Uint size = m_color_array->size() * sizeof(Vector3f);
-  GLfloat* data = (GLfloat*) m_color_array->get_vector();
+  if (m_color_buffer_id == 0) glGenBuffersARB(1, &m_color_buffer_id);
+  SGAL_assertion(m_color_buffer_id != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_color_buffer_id);
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
 
 #if !defined(NDEBUG)
@@ -1478,28 +1557,19 @@ void Indexed_face_set::clean_vertex_color_buffer()
   // Leave clean state:
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #endif
-  m_dirty_vertex_color_buffer = false;
+  m_dirty_color_buffer = false;
 }
 
 /*! \brief cleans the data structure of the vertex texture coordinate buffer
  * object.
  */
-void Indexed_face_set::clean_vertex_tex_coord_buffer()
+void Indexed_face_set::clean_vertex_tex_coord_buffer(Uint size,
+                                                     const GLfloat* data)
 {
-  if (!m_tex_coord_array) return;
 #if defined(GL_ARB_vertex_buffer_object)
-  if (m_vertex_tex_coord_id == 0) glGenBuffersARB(1, &m_vertex_tex_coord_id);
-  SGAL_assertion(m_vertex_tex_coord_id != 0);
-  Uint tcoords = 0;
-  if (boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array))
-    tcoords = sizeof(Vector2f);
-  else
-    if (boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array))
-      tcoords = sizeof(Vector3f);
-  SGAL_assertion(tcoords != 0);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_tex_coord_id);
-  Uint size = m_tex_coord_array->size() * tcoords;
-  GLfloat* data = m_tex_coord_array->get_gl_data();
+  if (m_tex_coord_buffer_id == 0) glGenBuffersARB(1, &m_tex_coord_buffer_id);
+  SGAL_assertion(m_tex_coord_buffer_id != 0);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_tex_coord_buffer_id);
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
 
 #if !defined(NDEBUG)
@@ -1512,7 +1582,7 @@ void Indexed_face_set::clean_vertex_tex_coord_buffer()
   // Leave clean state:
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #endif
-  m_dirty_vertex_tex_coord_buffer = false;
+  m_dirty_tex_coord_buffer = false;
 }
 
 //! \brief sets the coordinate array.
@@ -1527,7 +1597,8 @@ void Indexed_face_set::set_normal_array(Shared_normal_array normal_array)
 {
   Mesh_set::set_normal_array(normal_array);
   destroy_display_list();
-  m_dirty_vertex_normal_buffer = true;
+  m_dirty_normal_buffer = true;
+  m_dirty_local_vertex_buffers = true;
   m_dirty_normals = false;
   m_normals_cleaned = false;
 }
@@ -1537,7 +1608,7 @@ void Indexed_face_set::set_color_array(Shared_color_array color_array)
 {
   Mesh_set::set_color_array(color_array);
   destroy_display_list();
-  m_dirty_vertex_color_buffer = true;
+  m_dirty_color_buffer = true;
 }
 
 //! \brief sets the texture-coordinate array.
@@ -1546,7 +1617,8 @@ Indexed_face_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
 {
   Mesh_set::set_tex_coord_array(tex_coord_array);
   destroy_display_list();
-  m_dirty_vertex_tex_coord_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+  m_dirty_local_vertex_buffers = true;
   m_dirty_tex_coords = false;
   m_tex_coords_cleaned = false;
 }
@@ -1559,19 +1631,22 @@ void Indexed_face_set::field_changed(const Field_info* field_info)
 
    case NORMAL_ARRAY:
     destroy_display_list();
-    m_dirty_vertex_normal_buffer = true;
+    m_dirty_normal_buffer = true;
+    m_dirty_local_vertex_buffers = true;
     m_dirty_normals = false;
     m_normals_cleaned = false;
     break;
 
    case COLOR_ARRAY:
     destroy_display_list();
-    m_dirty_vertex_color_buffer = true;
+    m_dirty_color_buffer = true;
+    m_dirty_local_vertex_buffers = true;
     break;
 
    case TEX_COORD_ARRAY:
     destroy_display_list();
-    m_dirty_vertex_tex_coord_buffer = true;
+    m_dirty_tex_coord_buffer = true;
+    m_dirty_local_vertex_buffers = true;
     m_dirty_tex_coords = false;
     m_tex_coords_cleaned = false;
     break;
@@ -1588,5 +1663,68 @@ inline Boolean Indexed_face_set::are_generated_color()
 //! \brief determines whether texture coordinates are generated by the geometry.
 inline Boolean Indexed_face_set::are_generated_tex_coord()
 { return (m_generated_tex_coord); }
+
+//! \brief cleans the data structure.
+void Indexed_face_set::clean_polyhedron()
+{
+  m_polyhedron.delegate(m_surface);
+#if 0
+  if (!m_polyhedron.normalized_border_is_valid()) {
+    m_polyhedron.normalize_border();
+  }
+#else
+  m_polyhedron.normalize_border();
+#endif
+
+  m_dirty_polyhedron = false;
+  m_dirty_facets = true;
+}
+
+//! \brief cleans the facets.
+void Indexed_face_set::clean_facets()
+{
+  std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+                 m_polyhedron.planes_begin(), Normal_vector());
+  m_dirty_facets = false;
+}
+
+//! \brief cleans the local vertex buffers.
+void Indexed_face_set::clean_local_vertex_buffers()
+{
+  //! \start with coordinates and normals
+  m_local_indices.resize(m_flat_coord_indices.size());
+  Uint tex_coord_id = 0;
+  Uint coord_id = 0;
+  Uint normal_id = 0;
+
+  auto cit = m_flat_coord_indices.begin();
+  auto nit = m_flat_normal_indices.begin();
+  auto tit = m_flat_tex_coord_indices.begin();
+  size_t index = 0;
+  for (; cit != m_flat_coord_indices.end(); ++cit, ++nit) {
+    coord_id = *cit;
+    normal_id = *nit;
+    Id_map::const_iterator got =
+      m_id_map.find(std::make_tuple(coord_id, normal_id, tex_coord_id));
+    if (got != m_id_map.end()) {
+      m_local_indices[++index] = got->second;
+      continue;
+    }
+    /* The combination of coord_id, normal/color_id, and tex_coord_id
+     * hasn't been used yet, introduce it.
+     */
+    size_t new_id = m_local_coord_buffer.size();
+    m_local_coord_buffer.push_back((*m_coord_array)[coord_id]);
+    m_local_normal_buffer.push_back((*m_normal_array)[normal_id]);
+    m_id_map[std::make_tuple(coord_id, normal_id, tex_coord_id)] = index;
+    m_local_indices[++index] = new_id;
+  }
+  m_dirty_coord_buffer = true;
+  m_dirty_normal_buffer = true;
+  m_dirty_color_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+
+  m_dirty_local_vertex_buffers = false;
+}
 
 SGAL_END_NAMESPACE

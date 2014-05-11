@@ -20,12 +20,25 @@
 #define SGAL_INDEXED_FACE_SET_HPP
 
 #include <vector>
+#include <boost/unordered_map.hpp>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_traits_with_normals_3.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_vector.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Normal_array.hpp"
+#include "SGAL/Color_array.hpp"
+#include "SGAL/Tex_coord_array.hpp"
+#include "SGAL/Vector2f.hpp"
+#include "SGAL/Vector3f.hpp"
+#include "SGAL/Vector4f.hpp"
+#include "SGAL/Polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -38,7 +51,63 @@ class Scene_graph;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! This class describes a general mesh made of facets.
+/*! \class Indexed_face_set Indexed_face_set.hpp
+ * Indexed_face_set is a geometry node that represnts a mesh made of facets
+ * with some additional attributes and efficient OpenGL rendering capabilities.
+ *
+ * There are several data structures that compose the input. They can be
+ * divided into sets as follows:
+ *
+ * 1. Vertex arrays (defined in the base class Geo_set).
+ *   a. m_coord_array - a field that comprises a vector of 3D points.
+ *   b. m_normal_array - a field that comprises a vector of 3D normals.
+ *   c. m_color_array - a field that comprises a vector of (3D) colors.
+ *   d. m_tex_coord_array - a field that comprises a vector of 2D, 3D, or 4D
+ *                      texture coordinates.
+ *
+ * 2. Vertex index arrays (defined in the base class Geo_set).
+ *   a. m_coord_indices - a field that comprises a vector of indices into
+ *                      m_coord_array.
+ *   b. m_normal_indices - a field that comprises a vector of indices into
+ *                      m_normal_array.
+ *   c. m_color_indices - a field that comprises a vector of indices into
+ *                      m_color_array.
+ *   d. m_tex_coord_indices - a field that comprises a vector of indices into
+ *                      m_tex_coord_array.
+ *
+ * 3. Vertex flat index arrays (defined in the base class Mesh_set).
+ *   These are not fields but rather utility arrays. These arrays can be used
+ *   only when all facets have the exact same number of vertices. Currently,
+ *   only triangles and quadruples are supported.
+ *   a. m_flat_coord_indices - a vector of indices into m_coord_array.
+ *   b. m_flat_normal_indices - a vector of indices into m_normal_array.
+ *   c. m_flat_color_indices - a vector of indices into m_color_array.
+ *   d. m_flat_tex_coord_indices - a vector of indices into m_tex_coord_array.
+ *
+ * 4. Local vertex buffers (defined here). These arrays are mirros of
+ *    the buffers used as part of the OpenGL VERTEX BUFFER OBBJECT
+ *    mechanism or VERTEX ARRAY mechanism. They are used when the arrays
+ *    from set (1) plus m_flat_coord_indices from set (3) cnnot be used due
+ *    to non-identical index arrays (e.g., the flat coordinate indices array
+ *    is different than the flat coordinate indices array and the latter is
+ *    not empty.
+ *   a. m_local_coord_buffer - a vector of 3D points.
+ *   b. m_local_normal_buffer - a vector of 3D normals.
+ *   c. m_local_color_buffer - a vector of (3D) colors.
+ *   d. m_local_tex_coord_buffer_2d - a vector of 2D texture coordinates.
+ *   e. m_local_tex_coord_buffer_3d - a vector of 2D texture coordinates.
+ *   f. m_local_tex_coord_buffer_4d - a vector of 2D texture coordinates.
+ *   g. m_local_indices - a vector of indices into
+ *     (i) m_local_coord_buffer,
+ *    (ii) either m_local_normal_buffer or m_local_color_buffer, and optionally
+ *   (iii) one of the local texture buffers.
+ *
+ * 5. OpenGL vertex buffer objects.
+ *   a. m_coord_buffer_id
+ *   b. m_normal_buffer_id
+ *   c. m_color_buffer_id
+ *   d. m_tex_coord_buffer_id
+ *
  * A class that derives from this class, typically generates the coordinates
  * and the cordinate indices. In that case the following must be done:
  * 1. init_prototype()
@@ -73,6 +142,18 @@ public:
     NORMAL_PER_VERTEX,
     LAST
   };
+
+  typedef CGAL::Cartesian<Float>                         Kernel;
+  typedef Kernel::Point_3                                Point;
+  typedef Kernel::Vector_3                               Vector;
+  typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Traits;
+  typedef CGAL::Polyhedron_3<Traits>                     Polyhedron;
+  typedef Polyhedron::Facet_iterator                     Facet_iterator;
+  typedef Polyhedron::Vertex_iterator                    Vertex_iterator;
+  typedef Polyhedron::Halfedge_around_facet_circulator   Halfedge_facet_circ;
+  typedef Polyhedron::HalfedgeDS                         HalfedgeDS;
+  typedef Polyhedron::Halfedge_around_facet_circulator
+    Halfedge_facet_circulator;
 
   /*! Constructor */
   Indexed_face_set(Boolean proto = false);
@@ -155,6 +236,12 @@ public:
   /*! Calculate a single normal per polygon for all polygons. */
   void calculate_normal_per_polygon(Normal_array& normals);
 
+  /*! Clean the polyhedron. */
+  virtual void clean_polyhedron();
+
+  /*! Clean the facets. */
+  virtual void clean_facets();
+
   /*! Calculate the normals in case they are invalidated.
    * If the creaseAngle field is greater than 0, a normal is calculated per
    * vertes. Otherwise a normal is calculated per polygon.
@@ -164,7 +251,7 @@ public:
   /*! Determine whether the representation of the normals hasn't been
    * cleaned.
    */
-  Boolean is_dirty_normals() const { return m_dirty_normals; }
+  Boolean is_dirty_normals() const;
 
   /*! Calculate the texture coordinates in case they are invalidated. */
   virtual void clean_tex_coords();
@@ -172,14 +259,17 @@ public:
   /*! Determine whether the representation of the normals hasn't been
    * cleaned.
    */
-  Boolean is_dirty_tex_coords() const { return m_dirty_tex_coords; }
+  Boolean is_dirty_tex_coords() const;
 
   /* Set the flag that indicates whether normals are bound per vertex or per
    * face.
    * \param normal_per_vertex true if normals are bound per vertex
    */
   void set_normal_per_vertex(Boolean normal_per_vertex);
-  Boolean get_normal_per_vertex() { return m_normal_per_vertex; }
+
+  /*! Obtain the normal per vertex mode.
+   */
+  Boolean get_normal_per_vertex() const;
 
   /* Set the flag that indicates whether colors are bound per vertex or per
    * face.
@@ -187,7 +277,9 @@ public:
    */
   void set_color_per_vertex(Boolean color_per_vertex);
 
-  Boolean get_color_per_vertex() { return m_color_per_vertex; }
+  /*! Obtain the color per vertex mode.
+   */
+  Boolean get_color_per_vertex() const;
 
   /*! Draw the polygons for selection. */
   virtual void isect(Isect_action* action);
@@ -477,20 +569,20 @@ protected:
   /*! true if there are multiple uv coordinates per vertex. */
   Boolean m_is_multiple_uv;
 
-  /*! The id of the display list */
+  /*! The id of the display list. */
   Uint m_display_list_id;
 
-  /*! The id of the coord array */
-  Uint m_vertex_coord_id;
+  /*! The id of the coord buffer. */
+  Uint m_coord_buffer_id;
 
-  /*! The id of the color array */
-  Uint m_vertex_color_id;
+  /*! The id of the color buffer. */
+  Uint m_color_buffer_id;
 
-  /*! The id of the normal array */
-  Uint m_vertex_normal_id;
+  /*! The id of the normal buffer. */
+  Uint m_normal_buffer_id;
 
-  /*! The id of the tex. coord array */
-  Uint m_vertex_tex_coord_id;
+  /*! The id of the tex. coord buffer. */
+  Uint m_tex_coord_buffer_id;
 
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Configuration::Geometry_drawing_mode m_drawing_mode;
@@ -506,6 +598,17 @@ protected:
 
   Boolean m_is_progressive;
 
+  /*! The actual polyhedron object. */
+  Polyhedron m_polyhedron;
+
+  /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
+  Boolean m_dirty_polyhedron;
+
+  /*! Indicates whether the polyhedron facets are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_facets;
+
   /*! Indicates that the normals have been invalidated. */
   Boolean m_dirty_normals;
 
@@ -519,37 +622,50 @@ protected:
   Boolean m_tex_coords_cleaned;
 
   /*! Indicates that the vetex coordinate buffer is dirty. */
-  Boolean m_dirty_vertex_coord_buffer;
+  Boolean m_dirty_coord_buffer;
 
   /*! Indicates that the vetex normal buffer is dirty. */
-  Boolean m_dirty_vertex_normal_buffer;
+  Boolean m_dirty_normal_buffer;
 
   /*! Indicates that the vetex color buffer is dirty. */
-  Boolean m_dirty_vertex_color_buffer;
+  Boolean m_dirty_color_buffer;
 
   /*! Indicates that the vetex texture coordinate buffer is dirty. */
-  Boolean m_dirty_vertex_tex_coord_buffer;
+  Boolean m_dirty_tex_coord_buffer;
 
-  /*! Clean the data structure of the vertex coordinate buffer object. */
-  void clean_vertex_coord_buffer();
+  /*! Indicates that the local vetex buffers are dirty */
+  Boolean m_dirty_local_vertex_buffers;
 
-  /*! Clean the data structure of the vertex normal buffer object. */
-  void clean_vertex_normal_buffer();
+  /*! Clean the data structure of the vertex coordinate buffer object.
+   */
+  void clean_vertex_coord_buffer(Uint size, const GLfloat* data);
 
-  /*! Clean the data structure of the vertex color buffer object. */
-  void clean_vertex_color_buffer();
+  /*! Clean the data structure of the vertex normal buffer object.
+   */
+  void clean_vertex_normal_buffer(Uint size, const GLfloat* data);
 
-  /*! Clean the data structure of the vertex texture coordinate buffer object. */
-  void clean_vertex_tex_coord_buffer();
+  /*! Clean the data structure of the vertex color buffer object.
+   */
+  void clean_vertex_color_buffer(Uint size, const GLfloat* data);
+
+  /*! Clean the data structure of the vertex texture coordinate buffer object.
+   */
+  void clean_vertex_tex_coord_buffer(Uint size, const GLfloat* data);
+
+  /*! Clean the local vertex buffers. */
+  void clean_local_vertex_buffers();
 
   /*! Destroy the data structure of the vertex buffer object. */
-  void destroy_vertex_buffer_object();
+  void destroy_vertex_buffers();
 
   /*! Destroy the data structure of the display_list. */
   void destroy_display_list();
 
-  /*! Clear the vertex arrays */
+  /*! Clear the vertex arrays. */
   void clear_vertex_arrays();
+
+  /*! Clear the local vertex buffers. */
+  void clear_local_vertex_buffers();
 
   /*! Isect direct drawing-mode */
   void isect_direct();
@@ -673,7 +789,132 @@ protected:
    */
   void calculate_single_normal_per_vertex(Shared_normal_array normal_array);
 
+  /*! Obtain local coordinate data.
+   * \return local coordinate data.
+   */
+  const GLfloat* local_coord_data() const;
+
+  /*! Obtain local normal data.
+   * \return local normal data.
+   */
+  const GLfloat* local_normal_data() const;
+
+  /*! Obtain local color data.
+   * \return local color data.
+   */
+  const GLfloat* local_color_data() const;
+
+  /*! Obtain local 2d teture coordinate data.
+   * \return local 2d teture coordinate data.
+   */
+  const GLfloat* local_tex_coord_2d_data() const;
+
+  /*! Obtain local 3d teture coordinate data.
+   * \return local 3d teture coordinate data.
+   */
+  const GLfloat* local_tex_coord_3d_data() const;
+
+  /*! Obtain local 4d teture coordinate data.
+   * \return local 3d teture coordinate data.
+   */
+  const GLfloat* local_tex_coord_4d_data() const;
+
+  /*! Obtain the local indices data.
+   * \return the local indices data.
+   */
+  const GLvoid* local_indices_data() const;
+
+  /*! Obtain the flat coordinate indices data.
+   * \return the flat coordinate indices data.
+   */
+  const GLvoid* flat_coord_indicaes_data() const;
+
+  /*! Obtain coordinate data.
+   * \return coordinate data.
+   */
+  const GLfloat* coord_data() const;
+
+  /*! Obtain normal data.
+   * \return normal data.
+   */
+  const GLfloat* normal_data() const;
+
+  /*! Obtain color data.
+   * \return color data.
+   */
+  const GLfloat* color_data() const;
+
+  /*! Obtain teture coordinate data.
+   * \return teture coordinate data.
+   */
+  const GLfloat* tex_coord_data() const;
+
+  /*! Obtain the indices data.
+   * \return the indices data.
+   */
+  const GLvoid* indices_data() const;
+
+  /*! Obtain the number of tex ture coordinates.
+   * \return the number of tex ture coordinates.
+   */
+  Uint num_tex_coordinates() const;
+
 private:
+  /*! The key for the utility map, which maps a tuple of 3 ids, namely,
+   * coordinate id, normal/color id, and texture coordinate id, to a single
+   * id.
+   */
+  typedef std::tuple<Uint, Uint, Uint> Id_key;
+
+  /*! The hash specialized function.
+   * It maps 3 ids to their sum.
+   */
+  struct Id_hash {
+    std::size_t operator()(Id_key const& key) const
+    { return std::get<0>(key) + std::get<1>(key) + std::get<2>(key); }
+  };
+
+  /*! The type Id_map maps from tuples of 3 ids to ids. */
+  typedef boost::unordered_map<Id_key, Uint, Id_hash> Id_map;
+
+  /*! The coordinates vertex array. */
+  std::vector<Vector3f> m_local_coord_buffer;
+
+  /*! The normals vertex array. */
+  std::vector<Vector3f> m_local_normal_buffer;
+
+  /*! The colors vertex array. */
+  std::vector<Vector3f> m_local_color_buffer;
+
+  /*! The texture coordinates vertex array. */
+  std::vector<Vector2f> m_local_tex_coord_buffer_2d;
+  std::vector<Vector3f> m_local_tex_coord_buffer_3d;
+  std::vector<Vector4f> m_local_tex_coord_buffer_4d;
+
+  /*! The index vertex array. */
+  std::vector<Uint> m_local_indices;
+
+  /*! The map from tuples of 3 ids to ids. */
+  Id_map m_id_map;
+
+  /*! A functor that computes the normal of a given facet. */
+  struct Normal_vector {
+    template <typename Facet>
+    typename Facet::Plane_3 operator()(Facet& f) {
+      typename Facet::Halfedge_handle h = f.halfedge();
+      // Facet::Plane_3 is the normal vector type. We assume the
+      // CGAL Kernel here and use its global functions.
+      Vector normal = CGAL::cross_product(h->next()->vertex()->point() -
+                                          h->vertex()->point(),
+                                          h->next()->next()->vertex()->point() -
+                                          h->next()->vertex()->point());
+      return normal / CGAL::sqrt(normal.squared_length());
+    }
+  };
+
+  /*! The builder. */
+  Polyhedron_geo_builder<HalfedgeDS> m_surface;
+
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -705,9 +946,7 @@ inline Container* Indexed_face_set::clone() { return new Indexed_face_set(); }
  * array.
  * Configuration specifies VERTEX_ARRAY, and
  * Primitive types supported so far: QUADS and TRIANGLES, and
- * Attachment or color/normal is PER_VERTEX, and
- * Texture is not indexed, and
- * color/normal is not indexed.
+ * Attachment or color/normal is PER_VERTEX.
  */
 inline Boolean Indexed_face_set::use_vertex_array() const
 {
@@ -717,12 +956,129 @@ inline Boolean Indexed_face_set::use_vertex_array() const
            (m_primitive_type == PT_TRIANGLES)) &&
           ((fragment_source == FS_COLOR) ?
            (m_color_attachment == PER_VERTEX) :
-           (m_normal_attachment == PER_VERTEX)) &&
-          (m_flat_tex_coord_indices.size() == 0) &&
-          ((fragment_source == FS_COLOR) ?
-           (m_flat_color_indices.size() == 0) :
-           (m_flat_normal_indices.size() == 0))
-          );
+           (m_normal_attachment == PER_VERTEX)));
+}
+
+/*! \brief determines whether the representation of the normals hasn't been
+ * cleaned.
+ */
+inline Boolean Indexed_face_set::is_dirty_normals() const
+{ return m_dirty_normals; }
+
+/*! \brief determines whether the representation of the normals hasn't been
+ * cleaned.
+ */
+inline Boolean Indexed_face_set::is_dirty_tex_coords() const
+{ return m_dirty_tex_coords; }
+
+//! \brief obtains the normal per vertex mode.
+inline Boolean Indexed_face_set::get_normal_per_vertex() const
+{ return m_normal_per_vertex; }
+
+//! \brief obtains the color per vertex mode.
+inline Boolean Indexed_face_set::get_color_per_vertex() const
+{ return m_color_per_vertex; }
+
+//! \brief obtains local coordinate data.
+inline const GLfloat* Indexed_face_set::local_coord_data() const
+{
+  SGAL_assertion(! m_local_coord_buffer.empty());
+  return (GLfloat*)(&(*(m_local_coord_buffer.begin())));
+}
+
+//! \brief obtains local normal data.
+inline const GLfloat* Indexed_face_set::local_normal_data() const
+{
+  SGAL_assertion(! m_local_normal_buffer.empty());
+  return (GLfloat*)(&(*(m_local_normal_buffer.begin())));
+}
+
+//! \brief obtains local color data.
+inline const GLfloat* Indexed_face_set::local_color_data() const
+{
+  SGAL_assertion(! m_local_color_buffer.empty());
+  return (GLfloat*)(&(*(m_local_color_buffer.begin())));
+}
+
+//! \brief obtains local 2d teture coordinate data.
+inline const GLfloat* Indexed_face_set::local_tex_coord_2d_data() const
+{
+  SGAL_assertion(! m_local_tex_coord_buffer_2d.empty());
+  return (GLfloat*)(&(*(m_local_tex_coord_buffer_2d.begin())));
+}
+
+//! \brief obtains local 3d teture coordinate data.
+inline const GLfloat* Indexed_face_set::local_tex_coord_3d_data() const
+{
+  SGAL_assertion(! m_local_tex_coord_buffer_3d.empty());
+  return (GLfloat*)(&(*(m_local_tex_coord_buffer_3d.begin())));
+}
+
+//! \brief obtains local 4d teture coordinate data.
+inline const GLfloat* Indexed_face_set::local_tex_coord_4d_data() const
+{
+  SGAL_assertion(! m_local_tex_coord_buffer_4d.empty());
+  return (GLfloat*)(&(*(m_local_tex_coord_buffer_4d.begin())));
+}
+
+//! \brief obtains the local indices data.
+inline const GLvoid* Indexed_face_set::local_indices_data() const
+{
+  SGAL_assertion(! m_local_indices.empty());
+  return (GLvoid*)(&(*(m_local_indices.begin())));
+}
+
+//! Obtain the flat coordinate indices data.
+inline const GLvoid* Indexed_face_set::flat_coord_indicaes_data() const
+{ return (GLvoid*)(&(*(m_flat_coord_indices.begin()))); }
+
+//! \brief obtains coordinate data..
+inline const GLfloat* Indexed_face_set::coord_data() const
+{
+  return m_local_coord_buffer.empty() ? m_coord_array->data() :
+    local_coord_data();
+}
+
+//! \brief obtains normal data.
+inline const GLfloat* Indexed_face_set::normal_data() const
+{
+  return m_local_normal_buffer.empty() ? m_normal_array->data() :
+    local_normal_data();
+}
+
+//! \brief obtains color data.
+inline const GLfloat* Indexed_face_set::color_data() const
+{
+  return m_local_color_buffer.empty() ? m_color_array->data() :
+    local_color_data();
+}
+
+//! \brief obtains teture coordinate data.
+inline const GLfloat* Indexed_face_set::tex_coord_data() const
+{
+  return
+    (! m_local_tex_coord_buffer_2d.empty()) ? local_tex_coord_2d_data() :
+    ((! m_local_tex_coord_buffer_3d.empty()) ? local_tex_coord_3d_data() :
+     ((! m_local_tex_coord_buffer_4d.empty()) ? local_tex_coord_4d_data() :
+      m_tex_coord_array->data()));
+}
+
+//! Obtain the indices.
+inline const GLvoid* Indexed_face_set::indices_data() const
+{
+  return m_local_indices.empty() ? flat_coord_indicaes_data() :
+    local_indices_data();
+}
+
+//! \brief obtains the number of tex ture coordinates.
+inline Uint Indexed_face_set::num_tex_coordinates() const
+{
+  return
+    (! m_local_tex_coord_buffer_2d.empty()) ? 2 :
+    ((! m_local_tex_coord_buffer_3d.empty()) ? 3 :
+     ((! m_local_tex_coord_buffer_4d.empty()) ? 4 :
+      ((m_tex_coord_array != nullptr) ?
+       m_tex_coord_array->num_coordinates() : 0)));
 }
 
 SGAL_END_NAMESPACE

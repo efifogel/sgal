@@ -7,8 +7,8 @@ set(PLAYER_SOURCE_FILES ${PLAYER_SOURCE_FILES} Player_option_parser.cpp)
 if (NOT WIN32)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif (NOT WIN32)
-if (USE_CGAL)
-  add_definitions(-DUSE_CGAL)
+if (USE_SCGAL)
+  add_definitions(-DUSE_SCGAL)
   add_definitions(-DSCGAL_NT=${SCGAL_NT})
   add_definitions(-DSCGAL_KERNEL=${SCGAL_KERNEL})
   add_definitions(-DCGAL_IDENTIFICATION_XY=${CGAL_IDENTIFICATION_XY})
@@ -42,8 +42,8 @@ include_directories(../../libs/SCGAL/include/primitives)
 add_executable(player ${PLAYER_SOURCE_FILES})
 
 target_link_libraries(player SGAL)
-if (USE_CGAL)
-  # No need to add CGAL to the list of linked libraries
+if (USE_SCGAL)
+  # No need to add SCGAL to the list of linked libraries
   target_link_libraries(player SCGAL)
 endif()
 

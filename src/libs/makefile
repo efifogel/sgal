@@ -9,7 +9,7 @@ SUBDIRS+= SGAL
 ifeq ($(USE_GLUT), 1)
 SUBDIRS+= SGLUT
 endif
-ifeq ($(USE_CGAL), 1)
+ifeq ($(USE_SCGAL), 1)
 SUBDIRS+= SCGAL
 endif
 include $(MAKEDIR)/subdirs.mak

@@ -37,7 +37,7 @@
 #include "Player_scene.hpp"
 #include "Player_option_parser.hpp"
 
-#if (defined USE_CGAL)
+#if (defined USE_SCGAL)
 SGAL_BEGIN_NAMESPACE
 extern void scgal_init();
 SGAL_END_NAMESPACE
@@ -120,7 +120,7 @@ void load_shared_library(std::string& library_name, std::string& function_name)
 int main(int argc, char* argv[])
 {
   SGAL::initialize(argc, argv);
-#if (defined USE_CGAL)
+#if (defined USE_SCGAL)
   // try {
   //   std::string library_name = "libSCGAL.so";
   //   std::string function_name = "scgal_init";

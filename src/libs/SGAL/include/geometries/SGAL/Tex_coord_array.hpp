@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TEX_COORD_ARRAY_HPP
@@ -49,13 +46,13 @@ public:
   /*! Destructor */
   virtual ~Tex_coord_array() {}
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
-  /*! Delete the node prototype */
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype */
+  /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -65,7 +62,9 @@ public:
   /*! Sets the attributes of this node */
   virtual void set_attributes(Element* elem);
 
-  /*! Obtain the array size. */
+  /*! Obtain the array size.
+   * \return the array size.
+   */
   virtual Uint size() const = 0;
 
   /*! Resize the array capacity. */
@@ -74,8 +73,20 @@ public:
   /*! Clear the array. */
   virtual void clear() = 0;
 
-  /*! Obtain the GL data. */
-  virtual GLfloat* get_gl_data() = 0;
+  /*! Obtain the number of texture coordinates.
+   * \return the number of texture coordinates.
+   */
+  virtual Uint num_coordinates() const = 0;
+
+  /*! Obtain the data size.
+   * \return the data size.
+   */
+  virtual Uint data_size() const = 0;
+
+  /*! Obtain the data.
+   * \return the data.
+   */
+  virtual const GLfloat* data() const = 0;
 
 private:  /*! The node prototype */
   static Container_proto* s_prototype;

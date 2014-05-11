@@ -98,7 +98,6 @@
 #endif
 
 #if 0
-#if defined(USE_CGAL)
 #include "CGAL/basic.h"
 
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -116,7 +115,6 @@
 #endif
 #if defined(USE_NEF) && defined(USE_NGM)
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
-#endif
 #endif
 #endif
 
@@ -598,7 +596,6 @@ void Player_scene::update_data_dirs()
 void Player_scene::print_stat()
 {
 #if 0
-#if defined(USE_CGAL)
   static const char* names[] =
     {"GEOM", "ROBOT", "OBSTACLE", "MINK", "MINK_CH"};
 
@@ -615,7 +612,6 @@ void Player_scene::print_stat()
       boost::shared_ptr<SGAL::Arrangement_on_sphere_geo> aos =
         boost::dynamic_pointer_cast<SGAL::Arrangement_on_sphere_geo>(cont);
       if (aos) aos->print_stat();
-#endif
 #if defined(USE_SGM)
       boost::shared_ptr<SGAL::Spherical_gaussian_map_geo> sgm =
         boost::dynamic_pointer_cast<SGAL::Spherical_gaussian_map_geo>(cont);
