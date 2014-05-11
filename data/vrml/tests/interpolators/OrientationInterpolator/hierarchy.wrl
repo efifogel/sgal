@@ -1,0 +1,61 @@
+#VRML V2.0 utf8
+#
+# Test an OrientationInterpolators' ability to continue to receive and generate
+# events when it is no longer part of the transformantion hierarchy.  The
+# OrientationInterpolator in this world is "switched"out by setting its parent
+# Switch node's whichChoice value to "-1" . The result should be:  the
+# OrientationInterpolator should continue to rotate the Sphere in this
+# world 360 degrees about the X, Y and Z axis, even though it has been
+# "switched out".
+
+NavigationInfo { type [  "EXAMINE" "WALK" "FLY" "ANY" ] }
+
+DEF TIME TimeSensor { 
+  cycleInterval 5
+  loop TRUE
+}
+
+Switch {
+  whichChoice -1
+  choice [
+    DEF ORIENT OrientationInterpolator {
+      key [0.0, 0.10, 0.18, 0.24, 0.30, 0.36, 0.42, 0.48, 0.54, 0.60,
+	   0.66, 0.72, 0.78, 0.84, 0.90
+	  ]
+      keyValue [1 0 0 0,
+		1 0 0 1.57, 
+		1 0 0 3.14, 
+		1 0 0 4.71
+		1 0 0 6.28
+		0 1 0 0,
+		0 1 0 1.57, 
+		0 1 0 3.14, 
+		0 1 0 4.71
+		0 1 0 6.28
+		0 0 1 0,
+		0 0 1 1.57, 
+		0 0 1 3.14, 
+		0 0 1 4.71
+		0 0 1 6.28          
+	       ]
+    }
+   ]
+}
+
+DEF TRANS Transform {
+  children [
+    Shape {
+      appearance Appearance {
+        material DEF COLOR Material { diffuseColor 1 0 0 }
+      }
+      geometry Box {}
+    }
+  ]
+}
+
+ROUTE TIME.fraction_changed TO ORIENT.set_fraction
+ROUTE ORIENT.value_changed TO TRANS.set_rotation   
+
+
+
+

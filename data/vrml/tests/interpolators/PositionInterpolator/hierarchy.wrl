@@ -1,0 +1,47 @@
+#VRML V2.0 utf8
+#
+# Test of a PositionInterpolator node to continue to generate
+# and receive events when outside the Transform hierarchy.
+# A Switch node is the parent of a PositionInterpolator node that
+# moves a Box along the X, Y and Z axis. The PositionInterpolator has
+# been "switched out" by setting the whichChoice exposedField to
+# -1.  The result should be, the PositionInterpolator should continue 
+# send and receive events, and animate the movement of the Box.
+
+NavigationInfo { type [  "EXAMINE" "WALK" "FLY" "ANY" ] }
+
+DEF TIME TimeSensor { 
+  cycleInterval 5
+  loop TRUE
+}
+
+Switch {
+  whichChoice -1
+  choice [
+    DEF POSITION PositionInterpolator {
+      key [ 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.56, 0.64, 0.72, 0.80, 0.88, 1.0 ]
+      keyValue [ 0 0 0, -2 0 0, 0 0 0, 2 0 0, 
+		 0 0 0, 0 -2 0, 0 0 0, 0 2 0, 0 0 0, 
+		 0 0 -2, 0 0 0, 0 0 2, 0 0 0
+		]
+    }
+   ]
+}
+
+Group {
+  children [
+    DEF TRANS Transform {
+      children [
+	Shape {
+	  appearance Appearance {
+	    material DEF COLOR Material {diffuseColor 1 0 0}
+	  }
+	  geometry Box{}
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE TIME.fraction_changed TO POSITION.set_fraction
+ROUTE POSITION.value_changed TO TRANS.set_translation

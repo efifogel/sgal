@@ -1,0 +1,44 @@
+#VRML V2.0 utf8
+#
+# Test of basic PositionInterpolator functionality.
+#
+# A PositionInterpolator node is used to change the position of a Box
+# geometry.  The fraction_changed eventOut of a TimeSensor node is used
+# to change the position from keyValues of [ 0 0 0, -2 0 0, 0 0 0,
+# 2 0 0, 0 0 0, 0 2 0, 0 -2 0, 0 0 0, 0 0 -2, 0 0 2, 0 0 0 ] for keys of
+# [  [0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.56, 0.64, 0.72, 0.80, 0.88,
+#     0.96]
+# respectively. As a result: the Box geometry will move successively to those
+# 13 positions in a 5 second interval.
+
+NavigationInfo { type [  "EXAMINE" "WALK" "FLY" "ANY" ] }
+
+DEF TIME TimeSensor {
+  cycleInterval 5
+  loop TRUE
+}
+
+DEF POSITION PositionInterpolator {
+  key [ 0.0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.56, 0.64, 0.72, 0.80, 0.88, 0.96 ]
+  keyValue [ 0 0 0, -2 0 0, 0 0 0,  2 0 0,
+	     0 0 0, 0 -2 0, 0 0 0,0 2 0, 0 0 0,
+	     0 0 -2, 0 0 0, 0 0 2, 0 0 0 ]
+}
+
+Group {
+  children [
+    DEF TRANS Transform {
+      children [
+	Shape {
+	  appearance Appearance {
+	    material DEF COLOR Material {diffuseColor 1 0 0}
+	  }
+	  geometry Box{}
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE TIME.fraction_changed TO POSITION.set_fraction
+ROUTE POSITION.value_changed TO TRANS.set_translation
