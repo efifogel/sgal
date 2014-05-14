@@ -1691,6 +1691,7 @@ void Indexed_face_set::clean_facets()
 //! \brief cleans the local vertex buffers.
 void Indexed_face_set::clean_local_vertex_buffers()
 {
+  std::cout << "Indexed_face_set::clean_local_vertex_buffers()" << std::endl;
   //! \start with coordinates and normals
   m_local_indices.resize(m_flat_coord_indices.size());
   Uint tex_coord_id = 0;
@@ -1707,7 +1708,7 @@ void Indexed_face_set::clean_local_vertex_buffers()
     Id_map::const_iterator got =
       m_id_map.find(std::make_tuple(coord_id, normal_id, tex_coord_id));
     if (got != m_id_map.end()) {
-      m_local_indices[++index] = got->second;
+      m_local_indices[index++] = got->second;
       continue;
     }
     /* The combination of coord_id, normal/color_id, and tex_coord_id
@@ -1716,9 +1717,10 @@ void Indexed_face_set::clean_local_vertex_buffers()
     size_t new_id = m_local_coord_buffer.size();
     m_local_coord_buffer.push_back((*m_coord_array)[coord_id]);
     m_local_normal_buffer.push_back((*m_normal_array)[normal_id]);
-    m_id_map[std::make_tuple(coord_id, normal_id, tex_coord_id)] = index;
-    m_local_indices[++index] = new_id;
+    m_id_map[std::make_tuple(coord_id, normal_id, tex_coord_id)] = new_id;
+    m_local_indices[index++] = new_id;
   }
+
   m_dirty_coord_buffer = true;
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
