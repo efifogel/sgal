@@ -235,7 +235,7 @@ endif
 # LLDLIBS+= boost_thread-vc$(VC_NUM)-mt-1_47.lib
 # LLDLIBS+= boost_program_options-vc$(VC_NUM)-mt-1_47.lib
 # LLDLIBS+= boost_filesystem-vc$(VC_NUM)-mt-1_47.lib
-ifeq ($(USE_CGAL), 1)
+ifeq ($(USE_SCGAL), 1)
 LLDLIBS+= mpfr-vc$(VC_NUM)-mt.lib
 LLDLIBS+= gmp-vc$(VC_NUM)-mt.lib
 endif

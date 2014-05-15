@@ -55,7 +55,6 @@ FILES+= Nef_gaussian_map.hpp
 FILES+= Nef_gaussian_map_geo.hpp
 FILES+= Polygon_set_on_sphere_geo.hpp
 FILES+= Polyhedron_geo.hpp
-FILES+= Polyhedron_geo_builder.hpp
 FILES+= Power_diagram_on_sphere_geo.hpp
 FILES+= Quadric_geo.hpp
 FILES+= Sgm_color_overlay_traits.hpp

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14182 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -45,9 +42,9 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
