@@ -2767,8 +2767,6 @@ void Indexed_face_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 // Texture disabled:
 void Indexed_face_set::draw_FAPV_VAYE()
 {
-  std::cout << "FAPV_VAYE" << std::endl;
-
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPV_VAYE\n");
 
   Uint tcoords = num_tex_coordinates();
@@ -2799,7 +2797,7 @@ void Indexed_face_set::draw_FAPV_VAYE()
         glEnableClientState(GL_COLOR_ARRAY);
       }
     }
-    if (tcoords != 0) {
+    if ((m_tex_coord_buffer_id != 0) && (tcoords != 0)) {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_tex_coord_buffer_id);
       glTexCoordPointer(tcoords, GL_FLOAT, 0, BUFFER_OFFSET(0));
       glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -2844,11 +2842,8 @@ void Indexed_face_set::draw_FAPV_VAYE()
   SGAL_assertion(m_primitive_type == PT_TRIANGLES ||
                  m_primitive_type == PT_QUADS);
   Uint count = m_num_primitives * ((m_primitive_type == PT_TRIANGLES) ? 3 : 4);
-  std::cout << "X1 " << count << std::endl;
   glDrawElements(s_gl_modes[m_primitive_type], count, GL_UNSIGNED_INT,
                  indices);
-  std::cout << "X2" << std::endl;
-
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);

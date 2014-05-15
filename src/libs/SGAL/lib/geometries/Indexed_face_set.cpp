@@ -1525,7 +1525,6 @@ void Indexed_face_set::clean_vertex_normal_buffer(Uint size,
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_normal_buffer_id);
   glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, const_cast<GLfloat*>(data),
                   GL_DYNAMIC_DRAW_ARB);
-
 #if !defined(NDEBUG)
   int param_array_size = 0;
   glGetBufferParameterivARB(GL_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB,
@@ -1542,7 +1541,6 @@ void Indexed_face_set::clean_vertex_normal_buffer(Uint size,
 //! \brief cleans the data structure of the vertex color buffer object.
 void Indexed_face_set::clean_vertex_color_buffer(Uint size, const GLfloat* data)
 {
-  if (!m_color_array) return;
 #if defined(GL_ARB_vertex_buffer_object)
   if (m_color_buffer_id == 0) glGenBuffersARB(1, &m_color_buffer_id);
   SGAL_assertion(m_color_buffer_id != 0);
@@ -1695,9 +1693,15 @@ void Indexed_face_set::clean_facets()
 //! \brief cleans the local vertex buffers.
 void Indexed_face_set::clean_local_vertex_buffers()
 {
-  std::cout << "Indexed_face_set::clean_local_vertex_buffers()" << std::endl;
   //! \start with coordinates and normals
   m_local_indices.resize(m_flat_coord_indices.size());
+  m_local_coord_buffer.clear();
+  m_local_normal_buffer.clear();
+  m_local_color_buffer.clear();
+  // m_local_tex_coord_buffer_2d.clear();
+  // m_local_tex_coord_buffer_3d.clear();
+  // m_local_tex_coord_buffer_4d.clear();
+
   Uint tex_coord_id = 0;
   Uint coord_id = 0;
   Uint normal_id = 0;
@@ -1725,12 +1729,13 @@ void Indexed_face_set::clean_local_vertex_buffers()
     m_local_indices[index++] = new_id;
   }
 
+  m_id_map.clear();
+
+  m_dirty_local_vertex_buffers = false;
   m_dirty_coord_buffer = true;
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
-
-  m_dirty_local_vertex_buffers = false;
 }
 
 SGAL_END_NAMESPACE
