@@ -74,13 +74,9 @@ GNU g++ 4.2 or later          | Linux
 MS Visual C++ 10, 11          | MS Windows 95/98/2000/XP/NT4/Vista/7
 
 2.4. SGAL Libraries
-SGAL is split into two libraries, namely SGAL and SCGAL. The former does
-not depend on CGAL (Computational Geometry Algorithm Library, GMP, and
-MPFR . This is going to change in the future. The plan is still to split
-SGAL into two libraries, namely SLGAL and SUGAL, but using a different
-distinction criterion. Both libraries will depend on CGAL. However, SGAL
-will use limited arithmetic precision, while SCGAL will use unlimited
-precision.
+SGAL is split into two libraries, namely SGAL and SCGAL. Both libraries
+depend on CGAL (Computational Geometry Algorithm Library), However, SGAL
+use limited arithmetic precision, while SCGAL uses unlimited precision.
 
 2.5. Essential Third Party Libraries
 The focus of SGAL is on scene graph handling. It relies on other highly
@@ -301,9 +297,10 @@ used to develope relevant CGAL features.
   git merge origin/Aos_2-flatgeodesics_on_torus-tau
 
 2.5.6. GMP and MPFR
-The SGAL library SCGAL requires CGAL, and CGAL in turn requires GMP and
-MPFR, which are libraries for multi precision integers and rational
-numbers, and for multi precision floating point numbers.
+The SGAL library SCGAL requires CGAL with unlimited precision, and
+CGAL with unlimited precision in turn requires GMP and MPFR, which are
+libraries for multi precision integers and rational numbers, and for
+multi precision floating point numbers.
 
 CGAL combines floating point arithmetic with exact arithmetic, in order
 to be efficient and reliable. Cgal has a built-in number type for that,
@@ -348,16 +345,16 @@ requires a corresponding CGAL feature, you must also install an
 appropriate version of CGAL that supports the corresponding CGAL
 feature.
 
-   USE_CGAL=1 # CGAL
-   USE_NGM=1  # Nef Gaussian Map (CGAL)
-   USE_LTS=1  # Lines Through Segments
-   USE_AOS=1  # Arrangement On Surface
-   USE_VOS=1  # Voronoi On Sphere
-   USE_SGM=1  # Spherical Gaussian Map
-   USE_NEF=1  # Nef
-   USE_CGM=1  # Cubical Gaussian Map
-   USE_GMP=1  # Link with GMP & MPFR
-   USE_SSC=1  # Smallest stabbing cube
+   USE_SCGAL=1 # CGAL
+   USE_NGM=1   # Nef Gaussian Map (CGAL)
+   USE_LTS=1   # Lines Through Segments
+   USE_AOS=1   # Arrangement On Surface
+   USE_VOS=1   # Voronoi On Sphere
+   USE_SGM=1   # Spherical Gaussian Map
+   USE_NEF=1   # Nef
+   USE_CGM=1   # Cubical Gaussian Map
+   USE_GMP=1   # Link with GMP & MPFR
+   USE_SSC=1   # Smallest stabbing cube
 
    USE_LTS=1 requires origin/Lines_through_segments-pmoeller
    USE_CGM=1 requires origin/Cubical_gaussian_map-efif
@@ -368,7 +365,7 @@ For example:
 cmake -G"NMake Makefiles" \
   -DCMAKE_VERBOSE_MAKEFILE=ON \
   -DUSE_V8=1 \
-  -DUSE_CGAL=1 \
+  -DUSE_SCGAL=1 \
   -DUSE_NGM=0 \
   -DUSE_LTS=0 \
   -DUSE_AOS=1 \
