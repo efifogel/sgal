@@ -1498,7 +1498,8 @@ void Indexed_face_set::clean_vertex_coord_buffer(Uint size, const GLfloat* data)
   if (m_coord_buffer_id == 0) glGenBuffersARB(1, &m_coord_buffer_id);
   SGAL_assertion(m_coord_buffer_id != 0);
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_coord_buffer_id);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, const_cast<GLfloat*>(data),
+                  GL_DYNAMIC_DRAW_ARB);
 
   // Verify that everything is ok:
 #if !defined(NDEBUG)
@@ -1522,7 +1523,8 @@ void Indexed_face_set::clean_vertex_normal_buffer(Uint size,
   if (m_normal_buffer_id == 0) glGenBuffersARB(1, &m_normal_buffer_id);
   SGAL_assertion(m_normal_buffer_id != 0);
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_normal_buffer_id);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, const_cast<GLfloat*>(data),
+                  GL_DYNAMIC_DRAW_ARB);
 
 #if !defined(NDEBUG)
   int param_array_size = 0;
@@ -1545,7 +1547,8 @@ void Indexed_face_set::clean_vertex_color_buffer(Uint size, const GLfloat* data)
   if (m_color_buffer_id == 0) glGenBuffersARB(1, &m_color_buffer_id);
   SGAL_assertion(m_color_buffer_id != 0);
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_color_buffer_id);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, const_cast<GLfloat*>(data),
+                  GL_DYNAMIC_DRAW_ARB);
 
 #if !defined(NDEBUG)
   int param_array_size = 0;
@@ -1570,7 +1573,8 @@ void Indexed_face_set::clean_vertex_tex_coord_buffer(Uint size,
   if (m_tex_coord_buffer_id == 0) glGenBuffersARB(1, &m_tex_coord_buffer_id);
   SGAL_assertion(m_tex_coord_buffer_id != 0);
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_tex_coord_buffer_id);
-  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, data, GL_DYNAMIC_DRAW_ARB);
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, size, const_cast<GLfloat*>(data),
+                  GL_DYNAMIC_DRAW_ARB);
 
 #if !defined(NDEBUG)
   int param_array_size = 0;
@@ -1700,7 +1704,7 @@ void Indexed_face_set::clean_local_vertex_buffers()
 
   auto cit = m_flat_coord_indices.begin();
   auto nit = m_flat_normal_indices.begin();
-  auto tit = m_flat_tex_coord_indices.begin();
+  // auto tit = m_flat_tex_coord_indices.begin();
   size_t index = 0;
   for (; cit != m_flat_coord_indices.end(); ++cit, ++nit) {
     coord_id = *cit;
