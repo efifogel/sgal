@@ -39,6 +39,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
+#include "SGAL/Sphere.hpp"
 
 #include "SCGAL/Arrangement_on_torus_renderers.hpp"
 
@@ -118,10 +119,10 @@ void draw_vertex_on_torus(Draw_action* action, Vector3f& center,
 
    case Vertex_shape::BALL:                 // draw a ball
     {
-     Torus torus;
-     torus.set_center(center);
-     torus.set_radius(radius);
-     torus.draw(action);
+     Sphere sphere;
+     sphere.set_center(center);
+     sphere.set_radius(radius);
+     sphere.draw(action);
     }
     break;
 

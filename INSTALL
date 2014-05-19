@@ -290,7 +290,7 @@ You need to merge the source of this branch with the sources you use to
 build CGAL. The sequence of commands bellow will merge all CGAL branches
 used to develope relevant CGAL features.
 
-  git checkout -b combined origin/master
+  git checkout -b combined --no-track origin/master
   git merge origin/Cubical_gaussian_map-efif
   git merge origin/Envelope_voronoi_2-ophirset
   git merge origin/Lines_through_segments-pmoeller

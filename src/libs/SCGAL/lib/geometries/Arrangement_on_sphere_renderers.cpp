@@ -39,6 +39,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Extrusion.hpp"
+#include "SGAL/Sphere.hpp"
 
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 

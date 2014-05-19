@@ -32,6 +32,13 @@ if (SCGAL_AOS_BASE)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_renderers.cpp)
 endif()
 
+if (USE_AOT)
+  add_definitions(-DUSE_AOT)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_torus_base_geo.cpp)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_torus_geo.cpp)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_torus_renderers.cpp)
+endif()
+
 if (USE_AOS)
   add_definitions(-DUSE_AOS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_geo.cpp)

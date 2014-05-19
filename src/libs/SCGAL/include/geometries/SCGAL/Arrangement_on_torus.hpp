@@ -21,9 +21,9 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arrangement_on_surface_2.h>
-#include <CGAL/Arr_geodesic_arc_on_torus_traits_2.h>
+#include <CGAL/Arr_flat_torus_traits_2.h>
 #include <CGAL/Arr_tracing_traits_2.h>
-#include <CGAL/Arr_totus_topology_traits_2.h>
+#include <CGAL/Arr_toroidal_topology_traits_2.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -32,15 +32,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Arr_geodesic_arc_on_torus_traits_2<Exact_kernel>
-                                                        Aot_geom_traits_base;
+typedef CGAL::Arr_flat_torus_traits_2<Exact_kernel>     Aot_geom_traits_base;
 #if defined(CGAL_ARR_TRACING_TRAITS)
 typedef CGAL::Arr_tracing_traits_2<Aot_geom_traits_base>
                                                         Aot_geom_traits;
 #else
 typedef Aot_geom_traits_base                            Aot_geom_traits;
 #endif
-typedef CGAL::Arr_torus_topology_traits_2<Aot_geom_traits>
+typedef CGAL::Arr_toroidal_topology_traits_2<Aot_geom_traits>
                                                         Aot_topol_traits;
 typedef CGAL::Arrangement_on_surface_2<Aot_geom_traits, Aot_topol_traits>
                                                         Arrangement_on_torus;
