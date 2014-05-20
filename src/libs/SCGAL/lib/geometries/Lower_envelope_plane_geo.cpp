@@ -90,7 +90,7 @@ void Lower_envelope_plane_geo::clean()
   //}
   My_observer obs(*m_envelope);
 
-  Exact_coord2_array::Exact_point_const_iter it = m_bounding_polygon->begin();
+  Exact_coord_array_2d::Exact_point_const_iter it = m_bounding_polygon->begin();
   const Env_plane_traits_3::Point_2& start_point = *it;
   const Env_plane_traits_3::Point_2* prev_point = &(*it);
   for (++it; it != m_bounding_polygon->end(); ++it) {
@@ -151,8 +151,8 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "boundingPolygon") {
-      Shared_exact_coord2_array bounding_polygon =
-        boost::dynamic_pointer_cast<Exact_coord2_array>(cont);
+      Shared_exact_coord_array_2d bounding_polygon =
+        boost::dynamic_pointer_cast<Exact_coord_array_2d>(cont);
       set_bounding_polygon(bounding_polygon);
       elem->mark_delete(cai);
       continue;

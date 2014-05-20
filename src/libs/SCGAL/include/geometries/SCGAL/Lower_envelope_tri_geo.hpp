@@ -39,7 +39,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Shape.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Lower_envelope_geo.hpp"
@@ -184,7 +184,11 @@ OutputIterator Lower_envelope_tri_geo::get_triangles(OutputIterator oi)
       boost::dynamic_pointer_cast<Indexed_face_set>(geo);
     SGAL_assertion(ifs);
     SGAL_assertion(ifs->get_primitive_type() == Geo_set::PT_TRIANGLES);
-    boost::shared_ptr<Coord_array> coord_array = ifs->get_coord_array();
+
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(ifs->get_coord_array());
+    SGAL_assertion(coord_array);
+
     const std::vector<Uint>& coord_indices = ifs->get_coord_indices();
 
     Uint j = 0;

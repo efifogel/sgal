@@ -44,7 +44,7 @@
 #include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Min_sphere.hpp"
 #include "SCGAL/Exact_plane_array.hpp"
-#include "SCGAL/Exact_coord2_array.hpp"
+#include "SCGAL/Exact_coord_array_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -73,7 +73,7 @@ public:
   };
 
   typedef boost::shared_ptr<Color_array>            Shared_color_array;
-  typedef boost::shared_ptr<Exact_coord2_array>     Shared_exact_coord2_array;
+  typedef boost::shared_ptr<Exact_coord_array_2d>   Shared_exact_coord_array_2d;
   typedef boost::shared_ptr<Exact_plane_array>      Shared_exact_plane_array;
 
   /*! Constructor. */
@@ -173,10 +173,10 @@ protected:
   Shared_color_array get_color_array() const;
 
   /*! Set the bounding polygon. */
-  void set_bounding_polygon(Shared_exact_coord2_array array);
+  void set_bounding_polygon(Shared_exact_coord_array_2d array);
 
   /*! Obtain the bounding polygon. */
-  Shared_exact_coord2_array get_bounding_polygon() const;
+  Shared_exact_coord_array_2d get_bounding_polygon() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -201,7 +201,7 @@ private:
   Shared_color_array m_color_array;
 
   /*! The bounding polygon of the lower envelope */
-  Shared_exact_coord2_array m_bounding_polygon;
+  Shared_exact_coord_array_2d m_bounding_polygon;
 
   /*! Indicates whther the surface patches should be drawn. */
   bool m_draw_patches;
@@ -254,11 +254,11 @@ Lower_envelope_plane_geo::get_color_array() const
 
 /*! \brief sets the bounding polygon. */
 inline void Lower_envelope_plane_geo::
-set_bounding_polygon(Shared_exact_coord2_array array)
+set_bounding_polygon(Shared_exact_coord_array_2d array)
 { m_bounding_polygon = array; }
 
 /*! \brief obtains the bounding polygon. */
-inline Lower_envelope_plane_geo::Shared_exact_coord2_array
+inline Lower_envelope_plane_geo::Shared_exact_coord_array_2d
 Lower_envelope_plane_geo::get_bounding_polygon() const
 { return m_bounding_polygon; }
 
