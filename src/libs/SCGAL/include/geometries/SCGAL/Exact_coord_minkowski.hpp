@@ -23,10 +23,10 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include <vector>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Coord_minkowski.hpp"
+#include "SGAL/Container.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_kernel.hpp"
@@ -36,6 +36,7 @@ SGAL_BEGIN_NAMESPACE
 class Element;
 class Scene_graph;
 class Container_proto;
+class Exact_coord_array;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -43,21 +44,26 @@ class Container_proto;
 #endif
 
 /*! Add two coord arrays. */
-class SGAL_SCGAL_DECL Exact_coord_minkowski : public Coord_minkowski {
+class SGAL_SCGAL_DECL Exact_coord_minkowski : public Container {
 public:
   enum {
-    FIRST = Coord_minkowski::LAST - 1,
+    FIRST = Container::LAST - 1,
+    ENABLED,
     EXACT_EXECUTE,
-    EXACT_COORD1,
-    EXACT_COORD2,
+    CHANGED,
+    COORD1,
+    COORD2,
+    COORD_CHANGED,
     LAST
   };
 
+  typedef boost::shared_ptr<Exact_coord_array>  Shared_exact_coord_array;
+
   /*! Constructor. */
-  Exact_coord_minkowski(Boolean proto = false) : Coord_minkowski(proto) {}
+  Exact_coord_minkowski(Boolean proto = false);
 
   /*! Destructor. */
-  virtual ~Exact_coord_minkowski() {}
+  virtual ~Exact_coord_minkowski();
 
   /* Construct the prototype. */
   static Exact_coord_minkowski* prototype();
@@ -77,10 +83,12 @@ public:
   /// \name field handlers
   //@{
   Boolean* execute_handle(const Field_info*) { return &m_execute; }
-  // shared_container* coord_array1_handle (const Field_info*)
-  // { return &m_coord_array1; }
-  // shared_container* coord_array2_handle (const Field_info*)
-  // { return &m_coord_array2; }
+  Shared_exact_coord_array* coord_array1_handle (const Field_info*)
+  { return &m_coord_array1; }
+  Shared_exact_coord_array* coord_array2_handle (const Field_info*)
+  { return &m_coord_array2; }
+  Shared_exact_coord_array* coord_array_changed_handle(const Field_info*)
+  { return &m_coord_array_changed; }
   //@}
 
   /*! Set the attributes of this node.
@@ -92,9 +100,45 @@ public:
    * vertices.
    * \param field_info the field information record.
    */
-  void execute(const Field_info* field_info = NULL);
+  void execute(const Field_info* field_info = nullptr);
+
+  /*! Set the coordinate-set node. */
+  void set_coord_array1(Shared_exact_coord_array coord);
+
+  /*! Obtain the coordinate-set node. */
+  Shared_exact_coord_array get_coord_array1() const;
+
+  /*! Set the coordinate-set node. */
+  void set_coord_array2(Shared_exact_coord_array coord);
+
+  /*! Obtain the coordinate-set node. */
+  Shared_exact_coord_array get_coord_array2() const;
+
+  /*! Obtain the changed coordinate-set node. */
+  Shared_exact_coord_array get_coord_array_changed() const;
 
 protected:
+  /*! Determines whether the node is enabled. */
+  Boolean m_enabled;
+
+  /*! Indicates that the transformation has been applied. */
+  Boolean m_changed;
+
+  /*! Indicates that the operation should be executed. */
+  Boolean m_execute;
+
+  /*! The input vertices. */
+  Shared_exact_coord_array m_coord_array1;
+
+  /*! The input vertices. */
+  Shared_exact_coord_array m_coord_array2;
+
+  /*! The output vertices. */
+  Shared_exact_coord_array m_coord_array_changed;
+
+  // default values.
+  static const Boolean s_def_enabled;
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
@@ -110,6 +154,9 @@ private:
 #pragma warning( pop )
 #endif
 
+//! \brief destructor.
+inline Exact_coord_minkowski::~Exact_coord_minkowski() {}
+
 //! \brief constructs the prototype.
 inline Exact_coord_minkowski* Exact_coord_minkowski::prototype()
 { return new Exact_coord_minkowski(true); }
@@ -117,6 +164,31 @@ inline Exact_coord_minkowski* Exact_coord_minkowski::prototype()
 //! \brief clones.
 inline Container* Exact_coord_minkowski::clone()
 { return new Exact_coord_minkowski(); }
+
+//! \brief sets the coordinate-set node.
+inline void Exact_coord_minkowski::
+set_coord_array1(Shared_exact_coord_array coord)
+{ m_coord_array1 = coord; }
+
+//! \brief obtains the coordinate-set node.
+inline Exact_coord_minkowski::Shared_exact_coord_array
+Exact_coord_minkowski::get_coord_array1() const
+{ return m_coord_array1; }
+
+//! \brief sets the coordinate-set node.
+inline void Exact_coord_minkowski::
+set_coord_array2(Shared_exact_coord_array coord)
+{ m_coord_array2 = coord; }
+
+//! \brief obtains the coordinate-set node.
+inline Exact_coord_minkowski::Shared_exact_coord_array
+Exact_coord_minkowski::get_coord_array2() const
+{ return m_coord_array2; }
+
+//! \brief obtains the changed coordinate-set node.
+inline Exact_coord_minkowski::Shared_exact_coord_array
+Exact_coord_minkowski::get_coord_array_changed() const
+{ return m_coord_array_changed; }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Exact_coord_minkowski::get_tag() const

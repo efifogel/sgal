@@ -26,7 +26,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -48,8 +48,9 @@ public:
     CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
     typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
       size_type;
-    const Geo_set::Shared_coord_array coord_array =
-      m_mesh_set->get_coord_array();
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(m_mesh_set->get_coord_array());
+    SGAL_assertion(coord_array);
     size_type coord_array_size = coord_array->size();
     unsigned int num_facets = m_mesh_set->get_num_primitives();
     B.begin_surface(coord_array_size, num_facets);

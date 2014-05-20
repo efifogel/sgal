@@ -24,7 +24,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -57,11 +57,15 @@ Ellipsoid::~Ellipsoid(){}
 void Ellipsoid::clean()
 {
   // Clear internal representation:
-  if (!m_coord_array) m_coord_array.reset(new Coord_array);
+  if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
 
   // Generate points:
   Uint size = 2 + m_slices * (m_stacks - 1);
   m_coord_array->resize(size);
+
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
 
   Uint k = 0;
   Uint i;
@@ -70,14 +74,14 @@ void Ellipsoid::clean()
       Float x = m_width;
       Float y = 0;
       Float z = 0;
-      (*m_coord_array)[k++] = Vector3f(x, y, z);
+      (*coord_array)[k++] = Vector3f(x, y, z);
       continue;
     }
     if (i == m_stacks) {
       Float x = -m_width;
       Float y = 0;
       Float z = 0;
-      (*m_coord_array)[k++] = Vector3f(x, y, z);
+      (*coord_array)[k++] = Vector3f(x, y, z);
       continue;
     }
     Float theta = SGAL_PI * i / m_stacks;
@@ -87,7 +91,7 @@ void Ellipsoid::clean()
       Float x = m_width * cosf(theta);
       Float y = m_height * sinf(theta) * cosf(phi);
       Float z = m_depth * sinf(theta) * sinf(phi);
-      (*m_coord_array)[k++] = Vector3f(x, y, z);
+      (*coord_array)[k++] = Vector3f(x, y, z);
     }
   }
 

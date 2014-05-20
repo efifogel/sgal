@@ -41,7 +41,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Indexed_line_set.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Frustum.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Context.hpp"
@@ -159,8 +159,8 @@ void Lines_through_segments_geo::clean()
 //     Exact_coord_array* coord_array =
 //       dynamic_cast<Exact_coord_array *>(m_segments->get_coord_array());
 //     if (!coord_array) return;
-    Indexed_line_set::Shared_coord_array coord_array =
-      m_segments->get_coord_array();
+    const boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(m_segments->get_coord_array());
     if (!coord_array) return;
     const std::vector<Uint>& coord_indices = m_segments->get_coord_indices();
 

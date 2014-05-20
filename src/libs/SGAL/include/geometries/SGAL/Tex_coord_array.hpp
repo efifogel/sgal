@@ -41,25 +41,32 @@ public:
   };
 
   /*! Constructor */
-  Tex_coord_array(Boolean proto = false) : Container(proto) {}
+  Tex_coord_array(Boolean proto = false);
 
   /*! Destructor */
-  virtual ~Tex_coord_array() {}
+  virtual ~Tex_coord_array();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtains the node prototype. */
+  /*! Obtains the container prototype.
+   * \return the container prototype.
+   */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
   //@}
 
-  /*! Sets the attributes of this node */
+  /*! Sets the attributes of this container.
+   * \param elem (in) contains lists of attribute names and values.
+   */
   virtual void set_attributes(Element* elem);
 
   /*! Obtain the array size.
@@ -73,8 +80,8 @@ public:
   /*! Clear the array. */
   virtual void clear() = 0;
 
-  /*! Obtain the number of texture coordinates.
-   * \return the number of texture coordinates.
+  /*! Obtain the number of texture coordinate dimensions.
+   * \return the number of texture coordinate dimensions.
    */
   virtual Uint num_coordinates() const = 0;
 
@@ -91,6 +98,12 @@ public:
 private:  /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+//! \brief constructor.
+inline Tex_coord_array::Tex_coord_array(Boolean proto) : Container(proto) {}
+
+//! \brief destructor.
+inline Tex_coord_array::~Tex_coord_array() {}
 
 SGAL_END_NAMESPACE
 

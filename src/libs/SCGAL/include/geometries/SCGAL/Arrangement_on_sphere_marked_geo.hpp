@@ -534,20 +534,17 @@ private:
   /*! Draw the arrangement vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action* action)
-  { my_draw_aos_vertices(m_aos, action); }
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement isolated vertices.
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action* action)
-  { my_draw_aos_isolated_vertices(m_aos, action); }
+  virtual void draw_aos_isolated_vertices(Draw_action* action);
 
   /*! Draw the arrangement edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action* action)
-  { my_draw_aos_edges(m_aos, action); }
+  virtual void draw_aos_edges(Draw_action* action);
 
   /*! Clean the renderer. */
   virtual void clean_renderer();
@@ -563,14 +560,29 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Arrangement_on_sphere_marked_geo*
 Arrangement_on_sphere_marked_geo::prototype()
 { return new Arrangement_on_sphere_marked_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Arrangement_on_sphere_marked_geo::clone()
 { return new Arrangement_on_sphere_marked_geo(); }
+
+//! \brief draws the arrangement vertices.
+inline void Arrangement_on_sphere_marked_geo::
+draw_aos_vertices(Draw_action* action)
+{ my_draw_aos_vertices(m_aos, action); }
+
+//! \brief draws the arrangement isolated vertices.
+inline void Arrangement_on_sphere_marked_geo::
+draw_aos_isolated_vertices(Draw_action* action)
+{ my_draw_aos_isolated_vertices(m_aos, action); }
+
+//! \brief draws the arrangement edges.
+inline void Arrangement_on_sphere_marked_geo::
+draw_aos_edges(Draw_action* action)
+{ my_draw_aos_edges(m_aos, action); }
 
 SGAL_END_NAMESPACE
 

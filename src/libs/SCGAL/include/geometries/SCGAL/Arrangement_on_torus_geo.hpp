@@ -142,20 +142,17 @@ public:
   /*! Draw the arrangement vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action* action)
-  { my_draw_aos_vertices(m_aos, action); }
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement isolated vertices.
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action* action)
-  { my_draw_aos_isolated_vertices(m_aos, action); }
+  virtual void draw_aos_isolated_vertices(Draw_action* action);
 
   /*! Draw the arrangement edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action* action)
-  { my_draw_aos_edges(m_aos, action); }
+  virtual void draw_aos_edges(Draw_action* action);
 
 protected:
   typedef Vertices_renderer<Self>          Torus_vertices_renderer;
@@ -238,6 +235,19 @@ inline Arrangement_on_torus_geo* Arrangement_on_torus_geo::prototype()
 //! \brief clones.
 inline Container* Arrangement_on_torus_geo::clone()
 { return new Arrangement_on_torus_geo(); }
+
+//! \brief draws the arrangement vertices.
+inline void Arrangement_on_torus_geo::draw_aos_vertices(Draw_action* action)
+{ my_draw_aos_vertices(m_aos, action); }
+
+//! \brief draws the arrangement isolated vertices.
+inline void Arrangement_on_torus_geo::
+draw_aos_isolated_vertices(Draw_action* action)
+{ my_draw_aos_isolated_vertices(m_aos, action); }
+
+//! \brief draws the arrangement edges.
+inline void Arrangement_on_torus_geo::draw_aos_edges(Draw_action* action)
+{ my_draw_aos_edges(m_aos, action); }
 
 SGAL_END_NAMESPACE
 

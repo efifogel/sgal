@@ -102,7 +102,7 @@ public:
  * \param center (in) the vertex center
  * \param radius (in) the vertex radius
  */
-void draw_disc_vertex_on_torus(Draw_action* action, Vector3f& center,
+void draw_disc_vertex_on_torus(Draw_action* action, Vector2f& center,
                                Float radius, Float delta_angle);
 
 /*! Draw an arrangement on torus vertex.
@@ -112,7 +112,7 @@ void draw_disc_vertex_on_torus(Draw_action* action, Vector3f& center,
  * \param radius (in) the vertex radius.
  * \param delta_angle (in).
  */
-void draw_vertex_on_torus(Draw_action* action, Vector3f& center,
+void draw_vertex_on_torus(Draw_action* action, Vector2f& center,
                           Arrangement_renderer::Vertex_shape::Style style,
                           Float radius, Float delta_angle);
 
@@ -124,7 +124,7 @@ void draw_vertex_on_torus(Draw_action* action, Vector3f& center,
  * \param radius (in) the edge radius.
  */
 void draw_strip_edge_on_torus(Draw_action* action,
-                              Vector3f& src, Vector3f& trg, Vector3f& normal,
+                              Vector2f& src, Vector2f& trg,
                               Float radius, Float delta_angle);
 
 /*! Draw an arrangement on torus edge as a strip.
@@ -137,7 +137,7 @@ void draw_strip_edge_on_torus(Draw_action* action,
  * \param radius (in) the edge radius.
  */
 void draw_strip_edge_on_torus(Draw_action* action,
-                              Vector3f& src, Vector3f& trg, Vector3f& normal,
+                              Vector2f& src, Vector2f& trg,
                               Uint count, Boolean directed, Float radius,
                               Float delta_angle,
                               Float src_vertex_radius,
@@ -153,7 +153,7 @@ void draw_strip_edge_on_torus(Draw_action* action,
  * \param delta_angle (in).
  */
 void draw_edge_on_torus(Draw_action* action,
-                        Vector3f& source, Vector3f& target, Vector3f& normal,
+                        Vector2f& source, Vector2f& target,
                         Arrangement_renderer::Edge_shape::Style style,
                         Uint count, Boolean directed, Float radius,
                         Float delta_angle,
@@ -165,8 +165,8 @@ void draw_edge_on_torus(Draw_action* action,
  * \param vec3 (in).
  * \param level (in).
  */
-void draw_triangular_patch(const Vector3f& vec1, const Vector3f& vec2,
-                           const Vector3f& vec3, Uint level);
+void draw_triangular_patch(const Vector2f& vec1, const Vector2f& vec2,
+                           const Vector2f& vec3, Uint level);
 
 /*! Draw an arrangement on torus face.
  * \param action (in).
@@ -175,9 +175,9 @@ void draw_triangular_patch(const Vector3f& vec1, const Vector3f& vec2,
  *        boundary.
  */
 void draw_aos_convex_face(Draw_action* action,
-                          std::list<Vector3f>::const_iterator begin,
-                          std::list<Vector3f>::const_iterator end,
-                          const Vector3f& mid);
+                          std::list<Vector2f>::const_iterator begin,
+                          std::list<Vector2f>::const_iterator end,
+                          const Vector2f& mid);
 
 /*! Draw an arrangement on torus face.
  * \param action (in).
@@ -186,8 +186,8 @@ void draw_aos_convex_face(Draw_action* action,
  *        boundary.
  */
 void draw_aos_convex_face(Draw_action* action,
-                          std::list<Vector3f>::const_iterator begin,
-                          std::list<Vector3f>::const_iterator end);
+                          std::list<Vector2f>::const_iterator begin,
+                          std::list<Vector2f>::const_iterator end);
 
 SGAL_END_NAMESPACE
 

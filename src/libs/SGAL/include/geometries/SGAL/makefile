@@ -2,6 +2,8 @@ include $(ROOT)/make/comdef.mak
 
 FILES = Color_array.hpp
 FILES+= Coord_array.hpp
+FILES+= Coord_array_2d.hpp
+FILES+= Coord_array_3d.hpp
 FILES+= Coord_minkowski.hpp
 FILES+= Coord_transformer.hpp
 FILES+= Extrusion.hpp

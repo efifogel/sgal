@@ -27,7 +27,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Color_array.hpp"
@@ -90,6 +90,10 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
  */
 void Indexed_line_set::draw(Draw_action* action)
 {
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Context* context = action->get_context();
   if (!m_elliminate_hiden) {
     context->draw_depth_mask(false);
@@ -124,8 +128,8 @@ void Indexed_line_set::draw(Draw_action* action)
         }
         ++k;
       }
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j+1));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j+1));
       j += 2;
     }
     glEnd();
@@ -157,7 +161,7 @@ void Indexed_line_set::draw(Draw_action* action)
           }
           ++k;
         }
-        glVertex3fv(get_by_coord_index(*m_coord_array, j));
+        glVertex3fv(get_by_coord_index(*coord_array, j));
       }
       glEnd();
       ++j;
@@ -180,8 +184,12 @@ void Indexed_line_set::isect(Isect_action* /* action */) { }
  */
 bool Indexed_line_set::clean_sphere_bound()
 {
-  if (!m_bb_is_pre_set && m_coord_array)
-    m_sphere_bound.set_around(m_coord_array->begin(), m_coord_array->end());
+  if (!m_bb_is_pre_set && m_coord_array) {
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coord_array);
+    m_sphere_bound.set_around(coord_array->begin(), coord_array->end());
+  }
   m_dirty_sphere_bound = false;
   return true;
 }

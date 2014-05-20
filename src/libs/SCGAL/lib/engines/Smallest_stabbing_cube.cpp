@@ -30,7 +30,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Coord_transformer.hpp"
@@ -245,12 +245,16 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
     std::vector<Point_3> points;
 
     //std::cout << "Adding polyhedron..." << std::endl;
-    if (obj->get_coord_array_changed())
-    {
+    if (obj->get_coord_array_changed()) {
+      Shared_coord_array tmp = obj->get_coord_array_changed();
+      boost::shared_ptr<Coord_array_3d> coord_array_changed =
+        boost::static_pointer_cast<Coord_array_3d>(tmp);
+      SGAL_assertion(coord_array_changed);
+
 #if (_MSC_VER <= 1600)
-      BOOST_FOREACH(auto& point, *(obj->get_coord_array_changed()))
+      BOOST_FOREACH(auto& point, *coord_array_changed)
 #else
-      for(auto& point : *(obj->get_coord_array_changed()))
+      for (auto& point : *coord_array_changed)
 #endif
       {
         auto p = Point_3(point.get(0), point.get(1), point.get(2));
@@ -258,12 +262,16 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
         points.push_back(p);
       }
     }
-    else
-    {
+    else {
+      Shared_coord_array tmp = obj->get_coord_array();
+      boost::shared_ptr<Coord_array_3d> coord_array =
+        boost::static_pointer_cast<Coord_array_3d>(tmp);
+      SGAL_assertion(coord_array);
+
 #if (_MSC_VER <= 1600)
-      BOOST_FOREACH(auto& point, *(obj->get_coord_array()))
+      BOOST_FOREACH(auto& point, *coord_array)
 #else
-      for(auto& point : *(obj->get_coord_array()))
+      for (auto& point : *coord_array)
 #endif
       {
         auto p = Point_3(point.get(0), point.get(1), point.get(2));
@@ -295,31 +303,31 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
   auto dist = CGAL::to_double(*(++p));
   //auto dist = CGAL::to_double(s.objective_value());
 
-  if ((s.status() == CGAL::QP_INFEASIBLE) || (dist <= 0))
-  {
-  m_result = Shared_coord_array(new Coord_array((Uint)4));
-    (*m_result)[0].set(0, 0, 0);
-    (*m_result)[1].set(0.01f, 0, 0);
-    (*m_result)[2].set(0, 0.01f, 0);
-    (*m_result)[3].set(0, 0, 0.01f);
+  if ((s.status() == CGAL::QP_INFEASIBLE) || (dist <= 0)) {
+    Coord_array_3d* coords = new Coord_array_3d((Uint)4);
+    m_result = Shared_coord_array(coords);
+    (*coords)[0].set(0, 0, 0);
+    (*coords)[1].set(0.01f, 0, 0);
+    (*coords)[2].set(0, 0.01f, 0);
+    (*coords)[3].set(0, 0, 0.01f);
   }
-  else
-  {
-    m_result = Shared_coord_array(new Coord_array((Uint)8));
+  else {
+    Coord_array_3d* coords = new Coord_array_3d((Uint)8);
+    m_result = Shared_coord_array(coords);
     Float xplus = static_cast<Float>(x + dist);
     Float xminus = static_cast<Float>(x - dist);
     Float yplus = static_cast<Float>(y + dist);
     Float yminus = static_cast<Float>(y - dist);
     Float zplus = static_cast<Float>(z + dist);
     Float zminus = static_cast<Float>(z - dist);
-    (*m_result)[0].set(xplus, yplus, zplus);
-    (*m_result)[1].set(xplus, yplus, zminus);
-    (*m_result)[2].set(xplus, yminus, zplus);
-    (*m_result)[3].set(xplus, yminus, zminus);
-    (*m_result)[4].set(xminus, yplus, zplus);
-    (*m_result)[5].set(xminus, yplus, zminus);
-    (*m_result)[6].set(xminus, yminus, zplus);
-    (*m_result)[7].set(xminus, yminus, zminus);
+    (*coords)[0].set(xplus, yplus, zplus);
+    (*coords)[1].set(xplus, yplus, zminus);
+    (*coords)[2].set(xplus, yminus, zplus);
+    (*coords)[3].set(xplus, yminus, zminus);
+    (*coords)[4].set(xminus, yplus, zplus);
+    (*coords)[5].set(xminus, yplus, zminus);
+    (*coords)[6].set(xminus, yminus, zplus);
+    (*coords)[7].set(xminus, yminus, zminus);
   }
 
   // std::cout << "Finished stabbing cube." << std::endl;

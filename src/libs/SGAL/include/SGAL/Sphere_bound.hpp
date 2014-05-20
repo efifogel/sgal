@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -49,13 +46,13 @@ typedef std::vector<const Sphere_bound *>       Sphere_bound_vector_const;
 
 class Sphere_bound {
 public:
-  /*! Constructor */
+  /*! Constructor. */
   Sphere_bound();
 
-  /*! Copy constructor */
+  /*! Copy constructor. */
   Sphere_bound(const Sphere_bound& sb);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Sphere_bound();
 
   /*! Obtain the center.
@@ -64,9 +61,16 @@ public:
   const Vector3f& get_center() const;
 
   /*! Set the center.
-   * \param center the center.
+   * \param center (in) the center.
    */
   void set_center(const Vector3f& center);
+
+  /*! Set the center.
+   * \param x (in) the x-coordinate of the center.
+   * \param y (in) the y-coordinate of the center.
+   * \param z (in) the z-coordinate of the center.
+   */
+  void set_center(Float x, Float y, Float z);
 
   /*! Obtain the radius.
    * \return The radius.
@@ -74,7 +78,7 @@ public:
   float get_radius() const;
 
   /*! Set the radius.
-   * \param radius the radius.
+   * \param radius (in) the radius.
    */
   void set_radius(float radius);
 
@@ -149,6 +153,10 @@ inline const Vector3f& Sphere_bound::get_center() const { return m_center; }
 //! \brief sets the center.
 inline void Sphere_bound::set_center(const Vector3f& center)
 { m_center = center; }
+
+//! \brief sets the center.
+inline void Sphere_bound::set_center(Float x, Float y, Float z)
+{ m_center.set(x, y, z); }
 
 //! \brief obtains the radius.
 inline float Sphere_bound::get_radius() const { return m_radius; }

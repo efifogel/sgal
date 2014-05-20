@@ -27,7 +27,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Draw_action.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Color_array.hpp"
@@ -122,6 +122,10 @@ void Indexed_geodesic_set::set_color_array(Shared_color_array color_array)
  */
 void Indexed_geodesic_set::draw(Draw_action* action)
 {
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Context* context = action->get_context();
   if (!m_elliminate_hiden) {
     context->draw_depth_mask(false);
@@ -157,8 +161,8 @@ void Indexed_geodesic_set::draw(Draw_action* action)
         }
         ++k;
       }
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j+1));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j+1));
       j += 2;
     }
     glEnd();
@@ -183,8 +187,8 @@ void Indexed_geodesic_set::draw(Draw_action* action)
 
       // std::cout << m_coord_indices[j] << " * " << m_coord_indices[j+1]
       //           << std::endl;
-      Vector3f first_coord = (*m_coord_array)[m_coord_indices[j]];
-      Vector3f second_coord = (*m_coord_array)[m_coord_indices[j+1]];
+      Vector3f first_coord = (*coord_array)[m_coord_indices[j]];
+      Vector3f second_coord = (*coord_array)[m_coord_indices[j+1]];
       j += 2;
       //std::cout << first_coord <<"  "<<second_coord<<std::endl;
 
@@ -256,8 +260,12 @@ void Indexed_geodesic_set::isect(Isect_action* /* action */) {}
  */
 bool Indexed_geodesic_set::clean_sphere_bound()
 {
-  if (!m_bb_is_pre_set && m_coord_array)
-    m_sphere_bound.set_around(m_coord_array->begin(), m_coord_array->end());
+  if (!m_bb_is_pre_set && m_coord_array) {
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coord_array);
+    m_sphere_bound.set_around(coord_array->begin(), coord_array->end());
+  }
   m_dirty_sphere_bound = false;
   return true;
 }

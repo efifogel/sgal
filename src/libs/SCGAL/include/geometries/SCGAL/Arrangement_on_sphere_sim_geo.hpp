@@ -382,20 +382,17 @@ private:
   /*! Draw the arrangement vertices
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action* action)
-  { my_draw_aos_vertices(m_aos, action); }
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement isolated vertices
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action* action)
-  { my_draw_aos_isolated_vertices(m_aos, action); }
+  virtual void draw_aos_isolated_vertices(Draw_action* action);
 
   /*! Draw the arrangement edges
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action* action)
-  { my_draw_aos_edges(m_aos, action); }
+  virtual void draw_aos_edges(Draw_action* action);
 
   /*! Handle tick events
    * \param event
@@ -448,6 +445,21 @@ private:
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief draws the arrangement vertices
+inline void Arrangement_on_sphere_sim_geo::
+draw_aos_vertices(Draw_action* action)
+{ my_draw_aos_vertices(m_aos, action); }
+
+//! \brief draws the arrangement isolated vertices
+inline void Arrangement_on_sphere_sim_geo::
+draw_aos_isolated_vertices(Draw_action* action)
+{ my_draw_aos_isolated_vertices(m_aos, action); }
+
+//! \brief draws the arrangement edges
+inline void Arrangement_on_sphere_sim_geo::
+draw_aos_edges(Draw_action* action)
+{ my_draw_aos_edges(m_aos, action); }
 
 SGAL_END_NAMESPACE
 

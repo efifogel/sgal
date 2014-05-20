@@ -20,67 +20,35 @@
 #define SGAL_COORD_ARRAY_HPP
 
 #if (defined _MSC_VER)
-#pragma warning ( disable : 4786 )
-#endif
-
-#if (defined _MSC_VER)
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 
-#include <vector>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Container_proto;
 
-#if (defined _MSC_VER)
-template class SGAL_SGAL_DECL std::allocator<Vector3f>;
-template class SGAL_SGAL_DECL std::vector<Vector3f>;
-#pragma warning( push )
-#pragma warning( disable: 4251 )
-#endif
-
 /*! \class Coord_array Coord_array.hpp
- * Coord_array maintains an array of 3D vertex-coordinates of floating point
- * type.
+ * Coord_array maintains an abstract array of vertex coordinates.
  */
 class SGAL_SGAL_DECL Coord_array : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
-    POINT,
     LAST
   };
-
-  typedef std::vector<Vector3f>::iterator       iterator;
-  typedef std::vector<Vector3f>::const_iterator const_iterator;
 
   /*! Constructor.
    * \param proto (in) determines whether to construct a prototype.
    */
   Coord_array(Boolean proto = false);
 
-  /*! Constructor. */
-  Coord_array(Uint n);
-
   /*! Destructor. */
   virtual ~Coord_array();
-
-  /* Construct the prototype.
-   * \return the prototype.
-   */
-  static Coord_array* prototype();
-
-  /*! Clone.
-   * \return the clone.
-   */
-  virtual Container* clone();
 
   /// \name Protoype handling
   //@{
@@ -96,55 +64,36 @@ public:
 
   /// \name field handlers
   //@{
-  std::vector<Vector3f>* array_handle(const Field_info*) { return &m_array; }
   //@}
 
-  /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values.
+  /*! Set the attributes of this container.
+   * \param elem (in) contains lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
-  //! \todo virtual Attribute_list get_attributes();
-
   /*! Obtain the array size. */
-  Uint size() const;
+  virtual Uint size() const = 0;
 
   /*! Resize the array capacity. */
-  void resize(Uint n);
+  virtual void resize(Uint n) = 0;
 
   /*! Clear the array. */
-  void clear();
+  virtual void clear() = 0;
 
-  /*! The iterator to the Array first element. */
-  std::vector<Vector3f>::iterator begin();
-  const std::vector<Vector3f>::const_iterator begin() const;
-
-  /*! The iterator to the Array past-the-end element */
-  std::vector<Vector3f>::iterator end();
-  const std::vector<Vector3f>::const_iterator end() const;
-
-  /*! Push a new element at the back */
-  void push_back(const Vector3f& val);
-
-  /*! Array indexing operator. */
-  Vector3f& operator[](Uint n);
-
-  /*! Array indexing operator. */
-  const Vector3f& operator[](Uint n) const;
+  /*! Obtain the number of coordinate dimensions.
+   * \return the number of coordinate dimensions.
+   */
+  virtual Uint num_coordinates() const = 0;
 
   /*! Obtain the data size.
     \return the data size.
    */
-  Uint data_size() const;
+  virtual Uint data_size() const = 0;
 
   /*! Obtain the data.
    * \return the data.
    */
-  const GLfloat* data() const;
-
-protected:
-  /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const;
+  virtual const GLfloat* data() const = 0;
 
   /*! Process change of points.
    * \param field_info
@@ -152,70 +101,15 @@ protected:
   void point_changed(const Field_info* field_info);
 
 private:
-  /*! The tag that identifies this container type. */
-  static const std::string s_tag;
-
   /*! The node prototype. */
   static Container_proto* s_prototype;
-
-  /*! The coordinate array. */
-  std::vector<Vector3f> m_array;
 };
 
-#if defined(_MSC_VER)
-#pragma warning( pop )
-#endif
+//! \brief constructor.
+inline Coord_array::Coord_array(Boolean proto) : Container(proto) {}
 
-//! \brief constructs the prototype.
-inline Coord_array* Coord_array::prototype() { return new Coord_array(true); }
-
-//! \brief clones.
-inline Container* Coord_array::clone() { return new Coord_array(); }
-
-//! \brief obtains the array size.
-inline Uint Coord_array::size() const { return m_array.size(); }
-
-//! \brief resizes the array capacity.
-inline void Coord_array::resize(Uint n) { m_array.resize(n); }
-
-//! \brief clears the array.
-inline void Coord_array::clear() { m_array.clear(); }
-
-//! \brief obtains the iterator to the Array first element.
-inline std::vector<Vector3f>::iterator Coord_array::begin()
-{ return m_array.begin(); }
-
-inline const std::vector<Vector3f>::const_iterator Coord_array::begin() const
-{ return m_array.begin(); }
-
-//! \brief obtains the iterator to the Array past-the-end element.
-inline std::vector<Vector3f>::iterator Coord_array::end()
-{ return m_array.end(); }
-
-inline const std::vector<Vector3f>::const_iterator Coord_array::end() const
-{ return m_array.end(); }
-
-/*! \brief pushes a new element at the back */
-inline void Coord_array::push_back(const Vector3f& val)
-{ m_array.push_back(val); }
-
-//! \brief array indexing operator.
-inline Vector3f& Coord_array::operator[](Uint n) { return m_array[n]; }
-
-//! \brief array indexing operator.
-inline const Vector3f& Coord_array::operator[](Uint n) const
-{ return m_array[n]; }
-
-//! \brief obtain the data size.
-inline Uint Coord_array::data_size() const
-{ return m_array.size() * sizeof(Vector3f); }
-
-//! \brief obtains the data.
-inline const GLfloat* Coord_array::data() const
-{ return (GLfloat*)(&(*(m_array.begin()))); }
-
-//! \brief obtains the tag (type) of the container.
-inline const std::string& Coord_array::get_tag() const { return s_tag; }
+//! \brief destructor.
+inline Coord_array::~Coord_array() {}
 
 SGAL_END_NAMESPACE
 

@@ -29,13 +29,13 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Coord_minkowski::s_prototype(NULL);
+Container_proto* Coord_minkowski::s_prototype(nullptr);
 const std::string Coord_minkowski::s_tag = "CoordinateMinkowski";
 
 Boolean Coord_minkowski::s_def_enabled(true);
@@ -180,16 +180,28 @@ void Coord_minkowski::execute(const Field_info* /* field_info */)
   unsigned int size2 = m_coord_array2->size();
   unsigned int size = size1 * size2;
 
-  if (!m_coord_array_changed)
-    m_coord_array_changed.reset(new Coord_array(size));
+  if (!m_coord_array_changed) {
+    m_coord_array_changed.reset(new Coord_array_3d(size));
+    SGAL_assertion(m_coord_array_changed);
+  }
   else
     m_coord_array_changed->resize(size);
+
+  boost::shared_ptr<Coord_array_3d> coord_array_changed =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array_changed);
+  SGAL_assertion(coord_array_changed);
+  boost::shared_ptr<Coord_array_3d> coord_array1 =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array1);
+  SGAL_assertion(coord_array1);
+  boost::shared_ptr<Coord_array_3d> coord_array2 =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array2);
+  SGAL_assertion(coord_array2);
 
   Uint k = 0;
   for (Uint i = 0; i < size1; ++i) {
     for (Uint j = 0; j < size2; ++j) {
-      (*m_coord_array_changed)[k++].add((*m_coord_array1)[i],
-                                        (*m_coord_array2)[j]);
+      (*coord_array_changed)[k++].add((*coord_array1)[i],
+                                      (*coord_array2)[j]);
     }
   }
 

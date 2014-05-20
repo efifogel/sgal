@@ -23,7 +23,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Rotation.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -90,7 +89,7 @@ public:
   //@}
 
   /*! Transform the input vertices. */
-  void execute(const Field_info* field_info = NULL);
+  void execute(const Field_info* field_info = nullptr);
 
   /*! Set the coordinate-set node. */
   void set_coord_array1(Shared_coord_array coord);
@@ -144,37 +143,37 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Coord_minkowski* Coord_minkowski::prototype()
 { return new Coord_minkowski(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Coord_minkowski::clone() { return new Coord_minkowski(); }
 
-/*! \brief sets the coordinate-set node. */
+//! \brief sets the coordinate-set node.
 inline void Coord_minkowski::set_coord_array1(Shared_coord_array coord)
 { m_coord_array1 = coord; }
 
-/*! \brief obtains the coordinate-set node. */
-inline Coord_minkowski::Shared_coord_array Coord_minkowski::get_coord_array1()
-  const
+//! \brief obtains the coordinate-set node.
+inline Coord_minkowski::Shared_coord_array
+Coord_minkowski::get_coord_array1() const
 { return m_coord_array1; }
 
-/*! \brief sets the coordinate-set node. */
+//! \brief sets the coordinate-set node.
 inline void Coord_minkowski::set_coord_array2(Shared_coord_array coord)
 { m_coord_array2 = coord; }
 
-/*! \brief obtains the coordinate-set node. */
-inline Coord_minkowski::Shared_coord_array Coord_minkowski::get_coord_array2()
-  const
+//! \brief obtains the coordinate-set node.
+inline Coord_minkowski::Shared_coord_array
+Coord_minkowski::get_coord_array2() const
 { return m_coord_array2; }
 
-/*! \brief obtains the changed coordinate-set node. */
+//! \brief obtains the changed coordinate-set node.
 inline Coord_minkowski::Shared_coord_array
 Coord_minkowski::get_coord_array_changed() const
 { return m_coord_array_changed; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Coord_minkowski::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

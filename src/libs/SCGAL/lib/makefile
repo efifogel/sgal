@@ -87,8 +87,8 @@ endif
 CPPSOURCES+= Boolean_operation.cpp
 CPPSOURCES+= init.cpp
 CPPSOURCES+= Polyhedron_geo.cpp
+CPPSOURCES+= Exact_coord_array_2d.cpp
 CPPSOURCES+= Exact_coord_array.cpp
-CPPSOURCES+= Exact_coord2_array.cpp
 CPPSOURCES+= Exact_coord_minkowski.cpp
 CPPSOURCES+= Exact_normal_array.cpp
 CPPSOURCES+= Exact_plane_array.cpp

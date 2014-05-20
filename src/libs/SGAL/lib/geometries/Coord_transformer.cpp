@@ -40,7 +40,7 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Matrix4f.hpp"
 #include "SGAL/Container_factory.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Field.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Transform.hpp"
@@ -279,19 +279,28 @@ void Coord_transformer::execute(const Field_info* /* field_info */)
 
   Uint size = m_coord_array->size();
 
-  if (!m_coord_array_changed)
-    m_coord_array_changed.reset(new Coord_array(size));
+  if (!m_coord_array_changed) {
+    m_coord_array_changed.reset(new Coord_array_3d(size));
+    SGAL_assertion(m_coord_array_changed);
+  }
   else
     m_coord_array_changed->resize(size);
 
+  boost::shared_ptr<Coord_array_3d> coord_array_changed =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array_changed);
+  SGAL_assertion(coord_array_changed);
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   if (m_reflect) {
     for (Uint i = 0; i < size; ++i)
-      (*m_coord_array_changed)[i].negate((*m_coord_array)[i]);
+      (*coord_array_changed)[i].negate((*coord_array)[i]);
   }
   else {
     const Matrix4f& mat = m_transform.get_matrix();
     for (Uint i = 0; i < size; ++i)
-      (*m_coord_array_changed)[i].xform_pt((*m_coord_array)[i], mat);
+      (*coord_array_changed)[i].xform_pt((*coord_array)[i], mat);
   }
 
   Field* coord_changed_field = get_field(COORD_CHANGED);

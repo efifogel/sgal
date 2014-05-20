@@ -46,7 +46,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Cull_context.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
 
 #include "SCGAL/basic.hpp"
@@ -310,8 +310,13 @@ public:
       CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
       typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
         size_type;
-      const Exact_nef_polyhedron::Shared_coord_array coord_array =
+
+      const boost::shared_ptr<Coord_array> tmp =
         m_nef_polyhedron->get_coord_array();
+      const boost::shared_ptr<Coord_array_3d> coord_array =
+        boost::static_pointer_cast<Coord_array_3d>(tmp);
+      SGAL_assertion(coord_array);
+
       size_type coord_array_size = coord_array->size();
       Uint num_primitives = m_nef_polyhedron->get_num_primitives();
       B.begin_surface(coord_array_size, num_primitives);

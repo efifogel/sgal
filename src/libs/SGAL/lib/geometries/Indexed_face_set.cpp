@@ -29,7 +29,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
@@ -717,9 +717,13 @@ void Indexed_face_set::clean_normals()
 //! \brief computes the normalized normal to a triangle.
 void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& n) const
 {
-  Vector3f& v0 = (*m_coord_array)[m_flat_coord_indices[j]];
-  Vector3f& v1 = (*m_coord_array)[m_flat_coord_indices[j+1]];
-  Vector3f& v2 = (*m_coord_array)[m_flat_coord_indices[j+2]];
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
+  Vector3f& v0 = (*coord_array)[m_flat_coord_indices[j]];
+  Vector3f& v1 = (*coord_array)[m_flat_coord_indices[j+1]];
+  Vector3f& v2 = (*coord_array)[m_flat_coord_indices[j+2]];
   SGAL_assertion(!v0.collinear(v0, v1, v2));
   if (is_ccw()) n.normal(v0, v1, v2);
   else n.normal(v2, v1, v0);
@@ -728,9 +732,12 @@ void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& n) const
 //! \brief computes the center point of a triangle.
 void Indexed_face_set::compute_triangle_center(Uint j, Vector3f& center) const
 {
-  center.add((*m_coord_array)[m_flat_coord_indices[j+0]]);
-  center.add((*m_coord_array)[m_flat_coord_indices[j+1]]);
-  center.add((*m_coord_array)[m_flat_coord_indices[j+2]]);
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+  center.add((*coord_array)[m_flat_coord_indices[j+0]]);
+  center.add((*coord_array)[m_flat_coord_indices[j+1]]);
+  center.add((*coord_array)[m_flat_coord_indices[j+2]]);
   center.scale(1.0f / 3);
 }
 
@@ -759,15 +766,18 @@ compute_triangle_vertex_info(Uint j, Uint facet_index,
  */
 void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& n) const
 {
-  Vector3f& v0 = (*m_coord_array)[m_flat_coord_indices[j]];
-  Vector3f& v1 = (*m_coord_array)[m_flat_coord_indices[j+1]];
-  Vector3f& v2 = (*m_coord_array)[m_flat_coord_indices[j+2]];
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+  Vector3f& v0 = (*coord_array)[m_flat_coord_indices[j]];
+  Vector3f& v1 = (*coord_array)[m_flat_coord_indices[j+1]];
+  Vector3f& v2 = (*coord_array)[m_flat_coord_indices[j+2]];
   if (!v0.collinear(v0, v1, v2)) {
     if (is_ccw()) n.normal(v0, v1, v2);
     else n.normal(v2, v1, v0);
     return;
   }
-  Vector3f& v3 = (*m_coord_array)[m_flat_coord_indices[j+3]];
+  Vector3f& v3 = (*coord_array)[m_flat_coord_indices[j+3]];
   SGAL_assertion(!v0.collinear(v0, v1, v3));
   if (is_ccw()) n.normal(v0, v1, v3);
   else n.normal(v3, v1, v0);
@@ -776,10 +786,13 @@ void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& n) const
 //! \brief computes the center point of a quadrilateral.
 void Indexed_face_set::compute_quad_center(Uint j, Vector3f& center) const
 {
-  center.add((*m_coord_array)[m_flat_coord_indices[j+0]]);
-  center.add((*m_coord_array)[m_flat_coord_indices[j+1]]);
-  center.add((*m_coord_array)[m_flat_coord_indices[j+2]]);
-  center.add((*m_coord_array)[m_flat_coord_indices[j+3]]);
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+  center.add((*coord_array)[m_flat_coord_indices[j+0]]);
+  center.add((*coord_array)[m_flat_coord_indices[j+1]]);
+  center.add((*coord_array)[m_flat_coord_indices[j+2]]);
+  center.add((*coord_array)[m_flat_coord_indices[j+3]]);
   center.scale(1.0f / 4);
 }
 
@@ -810,10 +823,13 @@ Indexed_face_set::compute_quad_vertex_info(Uint j, Uint facet_index,
  */
 void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& n) const
 {
-  Vector3f& v0 = (*m_coord_array)[m_coord_indices[j]];
-  Vector3f& v1 = (*m_coord_array)[m_coord_indices[j+1]];
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+  Vector3f& v0 = (*coord_array)[m_coord_indices[j]];
+  Vector3f& v1 = (*coord_array)[m_coord_indices[j+1]];
   for (Uint k = 2; m_coord_indices[j+k] != (Uint) -1; ++k) {
-    Vector3f& v2 = (*m_coord_array)[m_coord_indices[j+k]];
+    Vector3f& v2 = (*coord_array)[m_coord_indices[j+k]];
     if (v0.collinear(v0, v1, v2)) continue;
     if (is_ccw()) n.normal(v0, v1, v2);
     else n.normal(v2, v1, v0);
@@ -825,9 +841,12 @@ void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& n) const
 //! \brief computes the center point of a polygon.
 Uint Indexed_face_set::compute_polygon_center(Uint j, Vector3f& center) const
 {
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   Uint k;
   for (k = 0; m_coord_indices[j+k] != (Uint) -1; ++k)
-    center.add((*m_coord_array)[m_coord_indices[j+k]]);
+    center.add((*coord_array)[m_coord_indices[j+k]]);
   center.scale(1.0f / k);
   return k;
 }
@@ -1154,6 +1173,9 @@ void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
 //! \brief isects direct drawing-mode.
 void Indexed_face_set::isect_direct()
 {
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   Uint i, j;
   switch (m_primitive_type) {
    case PT_TRIANGLE_STRIP:
@@ -1164,7 +1186,7 @@ void Indexed_face_set::isect_direct()
         int tmp = strip + 1;
         glBegin(GL_TRIANGLE_STRIP);
         for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i) {
-          Vector3f& v = (*m_coord_array)[m_flat_coord_indices[index++]];
+          Vector3f& v = (*coord_array)[m_flat_coord_indices[index++]];
           glVertex3fv((float*)&v);
         }
         glEnd();
@@ -1175,9 +1197,9 @@ void Indexed_face_set::isect_direct()
    case PT_TRIANGLES:
     glBegin(GL_TRIANGLES);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     }
     glEnd();
     return;
@@ -1185,10 +1207,10 @@ void Indexed_face_set::isect_direct()
    case PT_QUADS:
     glBegin(GL_QUADS);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     }
     glEnd();
     return;
@@ -1197,7 +1219,7 @@ void Indexed_face_set::isect_direct()
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
       glBegin(GL_POLYGON);
       for (; m_coord_indices[j] != (Uint) -1; ++j) {
-        glVertex3fv(get_by_coord_index(*m_coord_array, j));
+        glVertex3fv(get_by_coord_index(*coord_array, j));
       }
       glEnd();
       ++j;
@@ -1693,6 +1715,10 @@ void Indexed_face_set::clean_facets()
 //! \brief cleans the local vertex buffers.
 void Indexed_face_set::clean_local_vertex_buffers()
 {
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   //! \start with coordinates and normals
   m_local_indices.resize(m_flat_coord_indices.size());
   m_local_coord_buffer.clear();
@@ -1723,7 +1749,7 @@ void Indexed_face_set::clean_local_vertex_buffers()
      * hasn't been used yet, introduce it.
      */
     size_t new_id = m_local_coord_buffer.size();
-    m_local_coord_buffer.push_back((*m_coord_array)[coord_id]);
+    m_local_coord_buffer.push_back((*coord_array)[coord_id]);
     m_local_normal_buffer.push_back((*m_normal_array)[normal_id]);
     m_id_map[std::make_tuple(coord_id, normal_id, tex_coord_id)] = new_id;
     m_local_indices[index++] = new_id;

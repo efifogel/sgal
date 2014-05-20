@@ -258,22 +258,30 @@ void Cubical_gaussian_map_geo::clean()
         (m_primitive_type == PT_QUADS) ? 4 : 0;
     boost::shared_ptr<Exact_coord_array> exact_coord_array =
       boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
-    if (exact_coord_array && (exact_coord_array->size() > 0)) {
-      // std::cout << "Cubical_gaussian_map_geo::exact" << std::endl;
-      cgm_initializer(exact_coord_array->begin(),
-                      exact_coord_array->end(),
-                      exact_coord_array->size(),
-                      &(*(m_flat_coord_indices.begin())),
-                      &(*(m_flat_coord_indices.end())),
-                      m_num_primitives, num_vertices_per_facet, &visitor);
+    if (exact_coord_array) {
+      if (exact_coord_array->size() > 0) {
+        // std::cout << "Cubical_gaussian_map_geo::exact" << std::endl;
+        cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
+                        exact_coord_array->size(),
+                        &(*(m_flat_coord_indices.begin())),
+                        &(*(m_flat_coord_indices.end())),
+                        m_num_primitives, num_vertices_per_facet, &visitor);
+      }
     }
     else {
-      // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
-      cgm_initializer(m_coord_array->begin(), m_coord_array->end(),
-                      m_coord_array->size(),
-                      &(*(m_flat_coord_indices.begin())),
-                      &(*(m_flat_coord_indices.end())),
-                      m_num_primitives, num_vertices_per_facet, &visitor);
+      boost::shared_ptr<Coord_array_3d> coord_array =
+        boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+      if (coord_array) {
+        if (coord_array->size() > 0) {
+          // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
+          cgm_initializer(coord_array->begin(), coord_array->end(),
+                          coord_array->size(),
+                          &(*(m_flat_coord_indices.begin())),
+                          &(*(m_flat_coord_indices.end())),
+                          m_num_primitives, num_vertices_per_facet, &visitor);
+        }
+      }
+      else SGAL_error();
     }
     clock_t end_time = clock();
     m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;

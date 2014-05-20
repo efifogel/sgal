@@ -195,6 +195,70 @@ protected:
   typedef SGAL::Colored_sphere_renderer    Colored_surface_renderer;
   typedef SGAL::Stencil_sphere_renderer    Stencil_surface_renderer;
 
+  /*! Draw the vertices of a given arrangement on surface.
+   * \param aos the arrangement on surface.
+   * \param action
+   */
+  template <typename Aos>
+  void my_draw_aos_vertices(Aos* aos, Draw_action* action)
+  {
+    typedef typename Aos::Vertex_const_iterator Vertex_const_iterator;
+    typedef typename Aos::Geometry_traits_2     Geom_traits;
+    typedef typename Geom_traits::Point_2       Point;
+
+    Vertex_const_iterator vi;
+    for (vi = aos->vertices_begin(); vi != aos->vertices_end(); ++vi) {
+      if (vi->is_isolated()) continue;
+      Vector3f center = to_vector3f(vi->point());
+      center.normalize();
+      draw_aos_vertex(action, center);
+    }
+  }
+
+  /*! Draw the isolated vertices of a given arrangement on surface.
+   * \param aos the arrangement on surface.
+   * \param action
+   */
+  template <typename Aos>
+  void my_draw_aos_isolated_vertices(Aos* aos, Draw_action* action)
+  {
+    typedef typename Aos::Vertex_const_iterator Vertex_const_iterator;
+    typedef typename Aos::Geometry_traits_2     Geom_traits;
+    typedef typename Geom_traits::Point_2       Point;
+
+    Vertex_const_iterator vi;
+    for (vi = aos->vertices_begin(); vi != aos->vertices_end(); ++vi) {
+      if (!(vi->is_isolated())) continue;
+      Vector3f center = to_vector3f(vi->point());
+      center.normalize();
+      draw_aos_isolated_vertex(action, center);
+    }
+  }
+
+  /*! Draw the edges of a given arrangement on surface.
+   * \param aos the arrangement on surface.
+   * \param action
+   */
+  template <typename Aos>
+  void my_draw_aos_edges(Aos* aos, Draw_action* action)
+  {
+    typedef typename Aos::Edge_const_iterator           Edge_const_iterator;
+    typedef typename Aos::Geometry_traits_2             Geom_traits;
+    typedef typename Geom_traits::Point_2               Point;
+    typedef typename Geom_traits::X_monotone_curve_2    X_monotone_curve;
+
+    Edge_const_iterator hei;
+    for (hei = aos->edges_begin(); hei != aos->edges_end(); ++hei) {
+      const X_monotone_curve& curve = hei->curve();
+      Vector3f src = to_vector3f(curve.source());
+      Vector3f trg = to_vector3f(curve.target());
+      Vector3f normal = to_vector3f(curve.normal());
+      src.normalize();
+      trg.normalize();
+      draw_aos_edge(action, src, trg, normal);
+    }
+  }
+
   /*! An array of coordinates. */
   Shared_coord_array m_coord_array;
 

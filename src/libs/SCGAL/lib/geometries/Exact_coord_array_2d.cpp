@@ -31,41 +31,41 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
 
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-const std::string Exact_coord_array::s_tag = "ExactCoordinate";
+const std::string Exact_coord_array_2d::s_tag = "ExactCoordinate2D";
 
 //! The node prototype.
-Container_proto* Exact_coord_array::s_prototype(nullptr);
+Container_proto* Exact_coord_array_2d::s_prototype(nullptr);
 
 //! Register to the container factory.
-REGISTER_TO_FACTORY(Exact_coord_array, "Exact_coord_array");
+REGISTER_TO_FACTORY(Exact_coord_array_2d, "Exact_coord_array_2d");
 
 //! \brief initializes the node prototype.
-void Exact_coord_array::init_prototype()
+void Exact_coord_array_2d::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Coord_array::get_prototype());
 }
 
 //! \brief deletes the node prototype.
-void Exact_coord_array::delete_prototype()
+void Exact_coord_array_2d::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
 //! Obtain the node prototype.
-Container_proto* Exact_coord_array::get_prototype()
+Container_proto* Exact_coord_array_2d::get_prototype()
 {
-  if (!s_prototype) Exact_coord_array::init_prototype();
+  if (!s_prototype) Exact_coord_array_2d::init_prototype();
   return s_prototype;
 }
 
 //! Sets the attributes of the object extracted from the VRML or X3D file.
-void Exact_coord_array::set_attributes(Element* elem)
+void Exact_coord_array_2d::set_attributes(Element* elem)
 {
   m_array.clear();
 
@@ -89,18 +89,15 @@ void Exact_coord_array::set_attributes(Element* elem)
 #if SCGAL_NT == SCGAL_CGAL_GMPZ_NT
         Exact_number_type ex(((int)(x * 1000)) / 1000);
         Exact_number_type ey(((int)(y * 1000)) / 1000);
-        Exact_number_type ez(((int)(z * 1000)) / 1000);
 #elif SCGAL_NT == SCGAL_DOUBLE_NT
         not implemented
 #else
         Exact_number_type ex((int)(x * 1000), 1000);
         Exact_number_type ey((int)(y * 1000), 1000);
-        Exact_number_type ez((int)(z * 1000), 1000);
 #endif
         Exact_FT fx(ex);
         Exact_FT fy(ey);
-        Exact_FT fz(ez);
-        m_array[old_size + i] = Exact_point_3(fx,fy,fz);
+        m_array[old_size + i] = Exact_point_2(fx,fy);
       }
       //! \todo sg->get_stats().AddNumVertices(size);
       elem->mark_delete(ai);
@@ -123,15 +120,12 @@ void Exact_coord_array::set_attributes(Element* elem)
 #if 0
         float x = cosf(u_rad) * cosf(v_rad);;
         float y = cosf(u_rad) * sinf(v_rad);
-        float z = sinf(u_rad);
 
         Exact_number_type ex(static_cast<int>(x * 1000), 1000);
         Exact_number_type ey(static_cast<int>(y * 1000), 1000);
-        Exact_number_type ez(static_cast<int>(z * 1000), 1000);
 
         Exact_FT fx(ex);
         Exact_FT fy(ey);
-        Exact_FT fz(ez);
 #else
         float utanhalf = tanf(u_rad * 0.5f);
         Exact_number_type eu(static_cast<int>(utanhalf * 1000), 1000);
@@ -149,10 +143,9 @@ void Exact_coord_array::set_attributes(Element* elem)
 
         Exact_FT fx = cosu * cosv;
         Exact_FT fy = cosu * sinv;
-        Exact_FT fz = sinu;
 #endif
 
-        m_array[old_size + i] = Exact_point_3(fx,fy,fz);
+        m_array[old_size + i] = Exact_point_2(fx,fy);
       }
       elem->mark_delete(ai);
     }
@@ -175,35 +168,34 @@ void Exact_coord_array::set_attributes(Element* elem)
 }
 
 //! Obtain the data size.
-Uint Exact_coord_array::data_size() const
-{ return m_array.size() * sizeof(Vector3f); }
+Uint Exact_coord_array_2d::data_size() const
+{ return size() * sizeof(Vector2f); }
 
 // \brief obtains the data.
-const GLfloat* Exact_coord_array::data() const
+const GLfloat* Exact_coord_array_2d::data() const
 {
   if (m_dirty_data) clean_data();
   return (GLfloat*)(&(*(m_data.begin())));
 }
 
-//! \brief cleans the raw data.
-void Exact_coord_array::clean_data() const
+//! \brief clean the raw data.
+void Exact_coord_array_2d::clean_data() const
 {
   m_dirty_data = false;
   m_data.resize(size());
 
   // Convert the exact points to approximate:
-  std::vector<Vector3f>::iterator it = m_data.begin();
+  std::vector<Vector2f>::iterator it = m_data.begin();
   CGAL::To_double<Exact_FT> todouble;
   for (Exact_point_const_iter eit = begin(); eit != end(); ++eit) {
-    const Exact_point_3& p = *eit;
+    const Exact_point_2& p = *eit;
     it->set(static_cast<Float>(todouble(p.x())),
-            static_cast<Float>(todouble(p.y())),
-            static_cast<Float>(todouble(p.z())));
+            static_cast<Float>(todouble(p.y())));
   }
 }
 
 //! \brief clears the array.
-void Exact_coord_array::clear()
+void Exact_coord_array_2d::clear()
 {
   m_array.clear();
   m_data.clear();

@@ -33,10 +33,7 @@
 #include <GL/glu.h>
 #include <vector>
 
-#include "SCGAL/Exact_polyhedron_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
-
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -48,6 +45,9 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
+
+#include "SCGAL/Exact_polyhedron_geo.hpp"
+#include "SCGAL/Exact_coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -76,24 +76,32 @@ void Exact_polyhedron_geo::convex_hull()
 {
   if (!m_coord_array) return;
 
-  boost::shared_ptr<Exact_coord_array>  exact_coord_array =
+  boost::shared_ptr<Exact_coord_array> exact_coord_array =
     boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
-  if (exact_coord_array && (exact_coord_array->size() > 0)) {
-    CGAL::convex_hull_3(exact_coord_array->begin(),
-                        exact_coord_array->end(), m_polyhedron);
+  if (exact_coord_array) {
+    if (exact_coord_array->size() > 0)
+      CGAL::convex_hull_3(exact_coord_array->begin(),
+                          exact_coord_array->end(), m_polyhedron);
   }
   else {
-    std::vector<Point_3> points;
-    points.resize(m_coord_array->size());
-    std::transform(m_coord_array->begin(), m_coord_array->end(),
-                   points.begin(), Vector_to_point());
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    if (coord_array) {
+      if (coord_array->size() > 0) {
+        std::vector<Point_3> points;
+        points.resize(coord_array->size());
+        std::transform(coord_array->begin(), coord_array->end(),
+                     points.begin(), Vector_to_point());
 
 #if 0
-    std::copy(points.begin(), points.end(),
-              std::ostream_iterator<Point_3>(std::cout, "\n"));
+        std::copy(points.begin(), points.end(),
+                  std::ostream_iterator<Point_3>(std::cout, "\n"));
 #endif
 
-    CGAL::convex_hull_3(points.begin(), points.end(), m_polyhedron);
+        CGAL::convex_hull_3(points.begin(), points.end(), m_polyhedron);
+      }
+    }
+    else SGAL_error();
   }
   m_dirty_polyhedron = false;
 }

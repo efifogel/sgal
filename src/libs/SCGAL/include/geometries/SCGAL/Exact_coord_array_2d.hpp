@@ -16,8 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SCGAL_EXACT_COORD_ARRAY_HPP
-#define SCGAL_EXACT_COORD_ARRAY_HPP
+#ifndef SCGAL_EXACT_COORD_ARRAY_2D_HPP
+#define SCGAL_EXACT_COORD_ARRAY_2D_HPP
 
 #if (defined _MSC_VER)
 #pragma warning ( disable : 4786 )
@@ -27,7 +27,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Coord_array.hpp"
-#include "SGAL/Vector3f.hpp"
+#include "SGAL/Vector2f.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_kernel.hpp"
@@ -44,9 +44,9 @@ class Container_proto;
 #endif
 
 /*! Maintains an array of 3D vertex-coordinate */
-class SGAL_SCGAL_DECL Exact_coord_array : public Coord_array {
+class SGAL_SCGAL_DECL Exact_coord_array_2d : public Coord_array {
 public:
-  typedef std::vector<Exact_point_3>                    Exact_point_vector;
+  typedef std::vector<Exact_point_2>                    Exact_point_vector;
   typedef Exact_point_vector::iterator                  Exact_point_iter;
   typedef Exact_point_vector::const_iterator            Exact_point_const_iter;
 
@@ -57,18 +57,18 @@ public:
   };
 
   /*! Constructor. */
-  Exact_coord_array(Boolean proto = false);
+  Exact_coord_array_2d(Boolean proto = false);
 
   /*! Constructor.
    * \param n (in) the initial size of the array.
    */
-  Exact_coord_array(Uint n);
+  Exact_coord_array_2d(Uint n);
 
   /*! Destructor. */
-  virtual ~Exact_coord_array();
+  virtual ~Exact_coord_array_2d();
 
   /* Construct the prototype. */
-  static Exact_coord_array* prototype();
+  static Exact_coord_array_2d* prototype();
 
   /*! Clone. */
   virtual Container* clone();
@@ -126,21 +126,22 @@ public:
 
   /*! Array indexing operator.
    */
-  Exact_point_3& operator[](Uint n);
+  Exact_point_2& operator[](Uint n);
 
   /*! Array indexing operator.
    */
-  const Exact_point_3& operator[](Uint n) const;
+  const Exact_point_2& operator[](Uint n) const;
 
   /*! Inserts a new element at the end.
    */
-  void push_back(const Exact_point_3& p);
+  void push_back(const Exact_point_2& p);
 
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
 private:
+
   /*! Clean the raw data. */
   void clean_data() const;
 
@@ -157,7 +158,7 @@ private:
   mutable bool m_dirty_data;
 
   /*! The data. */
-  mutable std::vector<Vector3f> m_data;
+  mutable std::vector<Vector2f> m_data;
 };
 
 #if defined(_MSC_VER)
@@ -165,64 +166,66 @@ private:
 #endif
 
 //! \brief constructor.
-inline Exact_coord_array::Exact_coord_array(Boolean proto) :
+inline Exact_coord_array_2d::Exact_coord_array_2d(Boolean proto) :
   Coord_array(proto),
   m_dirty_data(true)
 {}
 
 //! \brief constructor.
-inline Exact_coord_array::Exact_coord_array(Uint n) : m_dirty_data(true)
+inline Exact_coord_array_2d::Exact_coord_array_2d(Uint n) : m_dirty_data(true)
 { m_array.resize(n); }
 
 //! \brief destructor.
-inline Exact_coord_array::~Exact_coord_array() { clear(); }
+inline Exact_coord_array_2d::~Exact_coord_array_2d() { clear(); }
 
 //! \brief constructs the prototype.
-inline Exact_coord_array* Exact_coord_array::prototype()
-{ return new Exact_coord_array(true); }
+inline Exact_coord_array_2d* Exact_coord_array_2d::prototype()
+{ return new Exact_coord_array_2d(true); }
 
 //! \brief clones.
-inline Container* Exact_coord_array::clone()
-{ return new Exact_coord_array(); }
+inline Container* Exact_coord_array_2d::clone()
+{ return new Exact_coord_array_2d(); }
 
 //! \brief obtains the size.
-inline Uint  Exact_coord_array::size() const { return m_array.size(); }
+inline Uint  Exact_coord_array_2d::size() const { return m_array.size(); }
 
 //! \brief resizes. */
-inline void  Exact_coord_array::resize(Uint n) { m_array.resize(n); }
+inline void  Exact_coord_array_2d::resize(Uint n) { m_array.resize(n); }
 
 //! \brief obtains the number of coordinate dimensions.
-inline Uint Exact_coord_array::num_coordinates() const { return 3; }
+inline Uint Exact_coord_array_2d::num_coordinates() const { return 2; }
 
 //! \brief obtains the begin iterator.
-inline Exact_coord_array::Exact_point_iter Exact_coord_array::begin()
+inline Exact_coord_array_2d::Exact_point_iter Exact_coord_array_2d::begin()
 { return m_array.begin(); }
 
-inline Exact_coord_array::Exact_point_const_iter
-Exact_coord_array::begin() const
+inline Exact_coord_array_2d::Exact_point_const_iter
+Exact_coord_array_2d::begin() const
 { return m_array.begin(); }
 
 //! \brief obtains the pass-the-end iterator.
-inline Exact_coord_array::Exact_point_iter Exact_coord_array::end()
+inline Exact_coord_array_2d::Exact_point_iter Exact_coord_array_2d::end()
 { return m_array.end(); }
 
-inline Exact_coord_array::Exact_point_const_iter Exact_coord_array::end() const
+inline Exact_coord_array_2d::Exact_point_const_iter
+Exact_coord_array_2d::end() const
 { return m_array.end(); }
 
 //! \brief array indexing operator.
-inline Exact_point_3& Exact_coord_array::operator[](Uint n)
+inline Exact_point_2& Exact_coord_array_2d::operator[](Uint n)
 { return m_array[n]; }
 
 //! \brief array indexing operator.
-inline const Exact_point_3& Exact_coord_array::operator[](Uint n) const
+inline const Exact_point_2& Exact_coord_array_2d::operator[](Uint n) const
 { return m_array[n]; }
 
 //! \brief inserts a new element at the end.
-inline void Exact_coord_array::push_back(const Exact_point_3& p)
+inline void Exact_coord_array_2d::push_back(const Exact_point_2& p)
 { m_array.push_back(p); }
 
 //! \brief obtains the tag (type) of the container.
-inline const std::string& Exact_coord_array::get_tag() const { return s_tag; }
+inline const std::string& Exact_coord_array_2d::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

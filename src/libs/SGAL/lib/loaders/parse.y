@@ -55,7 +55,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Scene_graph_int.hpp"
 #include "SGAL/Route.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Script.hpp"
@@ -87,7 +87,7 @@ typedef boost::shared_ptr<Group>              Shared_group;
 typedef boost::shared_ptr<Transform>          Shared_transform;
 typedef boost::shared_ptr<Route>              Shared_route;
 typedef boost::shared_ptr<Shape>              Shared_shape;
-typedef boost::shared_ptr<Coord_array>        Shared_coord_array;
+typedef boost::shared_ptr<Coord_array_3d>     Shared_coord_array_3d;
 typedef boost::shared_ptr<Indexed_face_set>   Shared_indexed_face_set;
 
 SGAL_END_NAMESPACE
@@ -280,8 +280,8 @@ facets          : /* empty */
                   Shared_indexed_face_set shared_ifs(indexed_face_set);
                   std::vector<Uint>* num_verts = new std::vector<Uint>;
                   $$ = std::make_pair(shared_ifs, num_verts);
-                  Coord_array* coords = new Coord_array;
-                  Shared_coord_array shared_coords(coords);
+                  Coord_array_3d* coords = new Coord_array_3d;
+                  Shared_coord_array_3d shared_coords(coords);
                   indexed_face_set->set_coord_array(shared_coords);
                 }
                 | facets facet
@@ -289,7 +289,8 @@ facets          : /* empty */
                   std::swap($$, $1);
 
                   /* Splice coordinates */
-                  Shared_coord_array coords = $$.first->get_coord_array();
+                  Shared_coord_array_3d coords =
+                    boost::dynamic_pointer_cast<Coord_array_3d>($$.first->get_coord_array());
                   std::vector<Vector3f>& vertices = *$2;
                   Uint size = coords->size();
                   coords->resize(size + vertices.size());

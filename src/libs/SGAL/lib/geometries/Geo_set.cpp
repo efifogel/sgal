@@ -20,7 +20,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "SGAL/Geo_set.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
@@ -197,8 +197,14 @@ Boolean Geo_set::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
 
-  if (!m_bb_is_pre_set && m_coord_array)
-    m_sphere_bound.set_around(m_coord_array->begin(), m_coord_array->end());
+  if (!m_bb_is_pre_set && m_coord_array) {
+    // We assume that m_coord_array points at an object of type
+    // Coord_array_3d type.
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coord_array);
+    m_sphere_bound.set_around(coord_array->begin(), coord_array->end());
+  }
   m_dirty_sphere_bound = false;
   return true;
 }

@@ -304,14 +304,12 @@ private:
   /*! Draw the arrangement vertices.
    * \param action
    */
-  void draw_aos_vertices(Draw_action* action)
-  { my_draw_aos_vertices(m_vos, action); }
+  void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement edges.
    * \param action
    */
-  void draw_aos_edges(Draw_action* action)
-  { my_draw_aos_edges(m_vos, action); }
+  void draw_aos_edges(Draw_action* action);
 
   /*! Create the renderers. */
   void create_renderers();
@@ -324,14 +322,24 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Voronoi_diagram_on_sphere_geo*
 Voronoi_diagram_on_sphere_geo::prototype()
 { return new Voronoi_diagram_on_sphere_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Voronoi_diagram_on_sphere_geo::clone()
 { return new Voronoi_diagram_on_sphere_geo(); }
+
+//! \brief draws the arrangement vertices.
+inline void Voronoi_diagram_on_sphere_geo::
+draw_aos_vertices(Draw_action* action)
+{ my_draw_aos_vertices(m_vos, action); }
+
+//! \brief draws the arrangement edges.
+inline void Voronoi_diagram_on_sphere_geo::
+draw_aos_edges(Draw_action* action)
+{ my_draw_aos_edges(m_vos, action); }
 
 SGAL_END_NAMESPACE
 

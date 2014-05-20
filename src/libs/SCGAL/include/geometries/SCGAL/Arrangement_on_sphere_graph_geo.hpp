@@ -111,10 +111,10 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! */
+  /*! Cull. */
   virtual void cull(Cull_context& /* cull_context */) {}
 
   /*! Clear the internal representation and auxiliary data structures. */
@@ -150,20 +150,17 @@ public:
   /*! Draw the arrangement vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action* action)
-  { my_draw_aos_vertices(m_aos, action); }
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement isolated vertices.
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action* action)
-  { my_draw_aos_isolated_vertices(m_aos, action); }
+  virtual void draw_aos_isolated_vertices(Draw_action* action);
 
   /*! Draw the arrangement edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action* action)
-  { my_draw_aos_edges(m_aos, action); }
+  virtual void draw_aos_edges(Draw_action* action);
 
 protected:
   typedef Vertices_renderer<Self>          Sphere_vertices_renderer;
@@ -239,14 +236,29 @@ protected:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Arrangement_on_sphere_graph_geo*
 Arrangement_on_sphere_graph_geo::prototype()
 { return new Arrangement_on_sphere_graph_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Arrangement_on_sphere_graph_geo::clone()
 { return new Arrangement_on_sphere_graph_geo(); }
+
+//! \brief draws the arrangement vertices.
+inline void Arrangement_on_sphere_graph_geo::
+draw_aos_vertices(Draw_action* action)
+{ my_draw_aos_vertices(m_aos, action); }
+
+//! \brief draws the arrangement isolated vertices.
+inline void Arrangement_on_sphere_graph_geo::
+draw_aos_isolated_vertices(Draw_action* action)
+{ my_draw_aos_isolated_vertices(m_aos, action); }
+
+//! \brief draws the arrangement edges.
+inline void Arrangement_on_sphere_graph_geo::
+draw_aos_edges(Draw_action* action)
+{ my_draw_aos_edges(m_aos, action); }
 
 SGAL_END_NAMESPACE
 

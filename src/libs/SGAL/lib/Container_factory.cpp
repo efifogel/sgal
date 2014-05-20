@@ -56,7 +56,8 @@
 #include "SGAL/Coord_transformer.hpp"
 #include "SGAL/Coord_minkowski.hpp"
 #include "SGAL/Color_array.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_2d.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Exporter.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -172,7 +173,8 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Collision);
   REGISTER_OBJECT(Color_background);
   REGISTER_OBJECT(Color_array);
-  REGISTER_OBJECT(Coord_array);
+  REGISTER_OBJECT(Coord_array_2d);
+  REGISTER_OBJECT(Coord_array_3d);
   REGISTER_OBJECT(Configuration);
   REGISTER_OBJECT(Cone);
   REGISTER_OBJECT(Coord_minkowski);

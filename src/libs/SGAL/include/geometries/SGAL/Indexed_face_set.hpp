@@ -31,7 +31,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Configuration.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
@@ -766,8 +766,12 @@ protected:
                                      const Vector3f& center,
                                      OutputIterator info) const
   {
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coord_array);
+
     // Compute the receiprocal of the square distance from the facet center
-    Vector3f& v = (*m_coord_array)[vertex_index];
+    Vector3f& v = (*coord_array)[vertex_index];
     Float weight = 1.0f / v.sqr_distance(center);
     *info++ = Vertex_facet_info(facet_index, weight);
     return info;

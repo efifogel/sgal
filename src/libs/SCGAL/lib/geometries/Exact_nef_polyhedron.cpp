@@ -37,7 +37,7 @@
 
 #include <vector>
 
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"

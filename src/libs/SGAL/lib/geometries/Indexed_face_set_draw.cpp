@@ -52,12 +52,16 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_coord_index(*m_normal_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -88,12 +92,16 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_normal_index(*m_normal_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -123,12 +131,16 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
     glBegin(GL_POLYGON);
     glNormal3fv(get(*m_normal_array,i));
     for (; m_coord_indices[j] != (Uint) -1; ++j)
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     glEnd();
     ++j;
   }
@@ -157,12 +169,16 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
     glBegin(GL_POLYGON);
     glNormal3fv(get_by_normal_index(*m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -180,12 +196,16 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
     glBegin(GL_POLYGON);
     glColor3fv(get_by_coord_index(*m_color_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -203,11 +223,15 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; i++) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
-      glVertex3fv(get_by_coord_index(*m_coord_array,j));
+      glVertex3fv(get_by_coord_index(*coord_array,j));
     }
     glEnd();
     ++j;
@@ -242,6 +266,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   Uint j = 0;
@@ -250,7 +277,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_coord_index(*m_normal_array, j));
       glTexCoord2fv(get_by_coord_index(*tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -283,6 +310,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -292,7 +322,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_normal_index(*m_normal_array, j));
       glTexCoord2fv(get_by_coord_index(*tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -326,6 +356,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -335,7 +368,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
     glNormal3fv(get(*m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glTexCoord2fv(get_by_coord_index(*tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -370,6 +403,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -379,7 +415,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
     glNormal3fv(get_by_normal_index(*m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glTexCoord2fv(get_by_coord_index(*tex_coord_array, j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -445,6 +481,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -454,7 +493,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_coord_index(*m_normal_array,j));
       glTexCoord2fv(get_by_tex_coord_index(*tex_coord_array,j));
-      glVertex3fv(get_by_coord_index(*m_coord_array, j));
+      glVertex3fv(get_by_coord_index(*coord_array, j));
     }
     glEnd();
     ++j;
@@ -488,6 +527,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -497,7 +539,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_normal_index(*m_normal_array,j));
       glTexCoord2fv(get_by_tex_coord_index(*tex_coord_array,j));
-      glVertex3fv(get_by_coord_index(*m_coord_array,j));
+      glVertex3fv(get_by_coord_index(*coord_array,j));
     }
     glEnd();
     ++j;
@@ -531,6 +573,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -540,7 +585,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
     glNormal3fv(get(*m_normal_array,i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glTexCoord2fv(get_by_tex_coord_index(*tex_coord_array,j));
-      glVertex3fv(get_by_coord_index(*m_coord_array,j));
+      glVertex3fv(get_by_coord_index(*coord_array,j));
     }
     glEnd();
     ++j;
@@ -575,6 +620,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -584,7 +632,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
     glNormal3fv(get_by_normal_index(*m_normal_array,i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glTexCoord2fv(get_by_tex_coord_index(*tex_coord_array,j));
-      glVertex3fv(get_by_coord_index(*m_coord_array,j));
+      glVertex3fv(get_by_coord_index(*coord_array,j));
     }
     glEnd();
     ++j;
@@ -651,15 +699,19 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -689,6 +741,10 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOTR_VANO\n");
   // std::cout << "FSNO_FIYE_FAPV_TENO_MOTR_VANO" << std::endl;
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
@@ -697,11 +753,11 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
     //           << *((Vector3f*)(get_by_normal_index(*m_normal_array, j+2))) << std::endl;
 
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -730,15 +786,19 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   SGAL_assertion(m_normal_array);
 
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get(*m_normal_array, i));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -754,15 +814,19 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   SGAL_assertion(m_color_array);
 
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glColor3fv(get(*m_color_array, i));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -778,13 +842,17 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_normal_index(*m_normal_array,i));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -800,13 +868,17 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glColor3fv(get_by_flat_color_index(*m_color_array,i));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -822,12 +894,16 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_TRIANGLES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -861,6 +937,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -869,13 +948,13 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -908,6 +987,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -916,13 +998,13 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -955,6 +1037,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -964,11 +1049,11 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
     glNormal3fv(get(*m_normal_array, i));
 
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1001,6 +1086,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1010,11 +1098,11 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, i));
 
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1080,6 +1168,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1088,13 +1179,13 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_coord_index(*m_normal_array,j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array,j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array,j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array,j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array,j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array,j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1127,6 +1218,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1135,13 +1229,13 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1174,6 +1268,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1183,11 +1280,11 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
     glNormal3fv(get(*m_normal_array,i));
 
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array,j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array,j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array,j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array,j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array,j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array,j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array,j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array,j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array,j++));
   }
   glEnd();
 }
@@ -1220,6 +1317,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1229,11 +1329,11 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, i));
 
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1299,17 +1399,21 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPV_TENO_MOQU_VANO\n");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_QUADS);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1337,17 +1441,21 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPV_TENO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_QUADS);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1376,15 +1484,19 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPT_TENO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_QUADS);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get(*m_normal_array,i));
 
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1413,15 +1525,19 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TENO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_QUADS);
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_normal_index(*m_normal_array,i));
 
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1450,13 +1566,17 @@ void Indexed_face_set::draw_FSCO_FIYE_FAPT_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint j = 0;
   glBegin(GL_QUADS);
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1490,6 +1610,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1498,16 +1621,16 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1540,6 +1663,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1548,16 +1674,16 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1590,6 +1716,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1599,13 +1728,13 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
     glNormal3fv(get(*m_normal_array,i));
 
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1638,6 +1767,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1647,13 +1779,13 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, i));
 
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1719,6 +1851,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1727,16 +1862,16 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_coord_index(*m_normal_array,j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array,j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array,j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_coord_index(*m_normal_array,j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1768,6 +1903,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1776,16 +1914,16 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
   for (Uint i = 0; i < m_num_primitives; ++i) {
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, j));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1818,6 +1956,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1827,13 +1968,13 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
     glNormal3fv(get(*m_normal_array, i));
 
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1866,6 +2007,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -1875,13 +2019,13 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
     glNormal3fv(get_by_flat_normal_index(*m_normal_array, i));
 
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, j));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, j++));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
   }
   glEnd();
 }
@@ -1951,6 +2095,10 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
       !m_tri_strip_lengths)
     return;
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint num_tri_strips = m_tri_strip_lengths[0];
   Uint index = 0;
 
@@ -1959,7 +2107,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
     glBegin(GL_TRIANGLE_STRIP);
     for (Uint i = 0; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get_by_flat_coord_index(*m_normal_array, index));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();
@@ -1994,6 +2142,10 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
       !m_tri_strip_lengths)
     return;
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint num_tri_strips = m_tri_strip_lengths[0] + 1;
 
   int normalInd = 0;
@@ -2004,30 +2156,30 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
     int numTri = m_tri_strip_lengths[strip] - 2;
     for (int i = 0; i < numTri/2; ++i) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       ++coordInd;
       normalInd += 3;
 
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       ++coordInd;
       normalInd += 3;
     }
     if (numTri % 2) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       ++coordInd;
       normalInd += 3;
     }
@@ -2061,6 +2213,10 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
       !m_tri_strip_lengths)
     return;
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint num_tri_strips = m_tri_strip_lengths[0];
   Uint coordInd = 0;
   int nind=0;
@@ -2070,24 +2226,24 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
     Uint numTri = m_tri_strip_lengths[strip] - 2;
     for (Uint i = 0; i < numTri/2; ++i) {
       glNormal3fv(get(*m_normal_array, nind));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       ++coordInd;
       ++nind;
 
       glNormal3fv(get(*m_normal_array, nind));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       ++coordInd;
       ++nind;
     }
     if (numTri%2) {
       glNormal3fv(get(*m_normal_array, nind));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       ++coordInd;
       ++nind;
     }
@@ -2123,6 +2279,10 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
       !m_tri_strip_lengths)
     return;
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint num_tri_strips = m_tri_strip_lengths[0];
   Uint index = 0;
 
@@ -2135,13 +2295,13 @@ void Indexed_face_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
     if (m_tri_strip_lengths[tmp] < 3) continue;
     glBegin(GL_TRIANGLE_STRIP);
     // draw the first two vertices first
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index+1));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index+1));
     index += 2;
     // loop over the rest of the vertices
     for (Uint i = 2; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array,index - tmp2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();
@@ -2205,6 +2365,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2221,7 +2384,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
     for (Uint i = 0; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get_by_flat_coord_index(*m_normal_array, index));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, index));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();
@@ -2256,6 +2419,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2273,38 +2439,38 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
     for (Uint i = 0; i < numTri/2; ++i) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+1));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+2));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       ++coordInd;
       normalInd += 3;
 
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+1));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+2));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       coordInd++;
       normalInd += 3;
     }
     if (numTri%2) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+1));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, normalInd+2));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       coordInd++;
       normalInd += 3;
     }
@@ -2340,6 +2506,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2359,32 +2528,32 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
     for (Uint i = 0; i < numTri/2; ++i) {
       glNormal3fv(get(*m_normal_array, nind));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       coordInd++;
       nind++;
 
       glNormal3fv(get(*m_normal_array, nind));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       coordInd++;
       nind++;
     }
     if (numTri % 2) {
       glNormal3fv(get(*m_normal_array, nind));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-2));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-2));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-2));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd-1));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd-1));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd-1));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, coordInd));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, coordInd));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, coordInd));
       coordInd++;
       nind++;
     }
@@ -2420,6 +2589,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2439,15 +2611,15 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
     if (m_tri_strip_lengths[tmp] < 3) continue;
     glBegin(GL_TRIANGLE_STRIP);
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, index));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index));
     ++index;
     glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, index));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index));
     ++index;
     for (Uint i = 2; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, index - tmp2));
       glTexCoord2fv(get_by_flat_coord_index(*tex_coord_array, index));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();
@@ -2516,6 +2688,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2532,7 +2707,7 @@ void Indexed_face_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
     for (Uint i = 0; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get_by_flat_coord_index(*m_normal_array, index));
       glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();
@@ -2566,6 +2741,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2582,7 +2760,7 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
     for (Uint i = 0; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, index));
       glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();
@@ -2617,6 +2795,9 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2636,15 +2817,15 @@ void Indexed_face_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
     if (m_tri_strip_lengths[tmp] < 3) continue;
     glBegin(GL_TRIANGLE_STRIP);
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index));
     ++index;
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index));
     ++index;
     for (Uint i = 2; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get(*m_normal_array, index - tmp2));
       glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();
@@ -2679,6 +2860,9 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
 
@@ -2699,15 +2883,15 @@ void Indexed_face_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 
     glBegin(GL_TRIANGLE_STRIP);
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index));
     ++index;
     glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-    glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+    glVertex3fv(get_by_flat_coord_index(*coord_array, index));
     ++index;
     for (Uint i = 2; i < m_tri_strip_lengths[tmp]; ++i) {
       glNormal3fv(get_by_flat_normal_index(*m_normal_array, index - tmp2));
       glTexCoord2fv(get_by_flat_tex_coord_index(*tex_coord_array, index));
-      glVertex3fv(get_by_flat_coord_index(*m_coord_array, index));
+      glVertex3fv(get_by_flat_coord_index(*coord_array, index));
       ++index;
     }
     glEnd();

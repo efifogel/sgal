@@ -125,16 +125,13 @@ public:
   /*! Add a geometry container that represents an arrangement on a
    * sphere to the list of such geometry containers.
    */
-  void add_aos_geo(Shared_arrangement_on_sphere_geo aos_geo)
-  { m_aoses.push_back(aos_geo); }
+  void add_aos_geo(Shared_arrangement_on_sphere_geo aos_geo);
 
   /*! Obtain the overlay traits (const version). */
-  const CGAL::Arr_default_overlay_traits<Aos>& get_overlay_traits() const
-  { return m_overlay_traits; }
+  const CGAL::Arr_default_overlay_traits<Aos>& get_overlay_traits() const;
 
   /*! Obtain the overlay traits (non-const version). */
-  CGAL::Arr_default_overlay_traits<Aos>& get_overlay_traits()
-  { return m_overlay_traits; }
+  CGAL::Arr_default_overlay_traits<Aos>& get_overlay_traits();
 
   /*! Print statistics. */
   void print_stat() { Arrangement_on_surface_geo::print_stat(this); }
@@ -142,20 +139,17 @@ public:
   /*! Draw the arrangement vertices.
    * \param action
    */
-  virtual void draw_aos_vertices(Draw_action* action)
-  { my_draw_aos_vertices(m_aos, action); }
+  virtual void draw_aos_vertices(Draw_action* action);
 
   /*! Draw the arrangement isolated vertices.
    * \param action
    */
-  virtual void draw_aos_isolated_vertices(Draw_action* action)
-  { my_draw_aos_isolated_vertices(m_aos, action); }
+  virtual void draw_aos_isolated_vertices(Draw_action* action);
 
   /*! Draw the arrangement edges.
    * \param action
    */
-  virtual void draw_aos_edges(Draw_action* action)
-  { my_draw_aos_edges(m_aos, action); }
+  virtual void draw_aos_edges(Draw_action* action);
 
 protected:
   typedef Vertices_renderer<Self>          Sphere_vertices_renderer;
@@ -231,13 +225,43 @@ protected:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Arrangement_on_sphere_geo* Arrangement_on_sphere_geo::prototype()
 { return new Arrangement_on_sphere_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Arrangement_on_sphere_geo::clone()
 { return new Arrangement_on_sphere_geo(); }
+
+/*! \brief adds a geometry container that represents an arrangement on a
+ * sphere to the list of such geometry containers.
+ */
+inline void Arrangement_on_sphere_geo::
+add_aos_geo(Shared_arrangement_on_sphere_geo aos_geo)
+{ m_aoses.push_back(aos_geo); }
+
+//! \brief obtains the overlay traits (const version).
+inline const CGAL::Arr_default_overlay_traits<Arrangement_on_sphere_geo::Aos>&
+Arrangement_on_sphere_geo::get_overlay_traits() const
+{ return m_overlay_traits; }
+
+//! \brief obtains the overlay traits (non-const version).
+inline CGAL::Arr_default_overlay_traits<Arrangement_on_sphere_geo::Aos>&
+Arrangement_on_sphere_geo::get_overlay_traits()
+{ return m_overlay_traits; }
+
+//! \brief draws the arrangement vertices.
+inline void Arrangement_on_sphere_geo::draw_aos_vertices(Draw_action* action)
+{ my_draw_aos_vertices(m_aos, action); }
+
+//! \brief draws the arrangement isolated vertices.
+inline void
+Arrangement_on_sphere_geo::draw_aos_isolated_vertices(Draw_action* action)
+{ my_draw_aos_isolated_vertices(m_aos, action); }
+
+//! \brief draws the arrangement edges.
+inline void Arrangement_on_sphere_geo::draw_aos_edges(Draw_action* action)
+{ my_draw_aos_edges(m_aos, action); }
 
 SGAL_END_NAMESPACE
 

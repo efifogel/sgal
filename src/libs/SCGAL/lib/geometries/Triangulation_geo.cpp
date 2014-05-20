@@ -34,7 +34,7 @@
 #include <vector>
 #include <map>
 
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -83,7 +83,10 @@ void Triangulation_geo::clean()
   Point_vector points;
   points.resize(m_coord_array->size());
   Convert_exact_point convert;
-  std::transform(m_coord_array->begin(), m_coord_array->end(),
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+  std::transform(coord_array->begin(), coord_array->end(),
                  points.begin(), convert);
   m_triangulation.insert(points.begin(), points.end());
 

@@ -41,7 +41,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Vector3f.hpp"
+#include "SGAL/Vector2f.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Isect_action.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -51,7 +51,6 @@
 #include "SGAL/Torus.hpp"
 #include "SGAL/Context.hpp"
 #include "SGAL/Coord_array.hpp"
-#include "SGAL/Normal_array.hpp"
 
 #include "SCGAL/Arrangement_on_torus_base_geo.hpp"
 
@@ -184,17 +183,6 @@ void Arrangement_on_torus_base_geo::set_attributes(Element* elem)
       }
       continue;
     }
-
-    if (name == "normalIndex") {
-      tokenizer tokens(value, sep);
-      Uint size = std::distance(tokens.begin(), tokens.end());
-      m_normal_indices.resize(size);
-      Uint i = 0;
-      for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-        m_normal_indices[i++] = static_cast<Uint>(boost::lexical_cast<int>(*it));
-      }
-      continue;
-    }
   }
 
   typedef Element::Cont_attr_iter       Cont_attr_iter;
@@ -206,13 +194,6 @@ void Arrangement_on_torus_base_geo::set_attributes(Element* elem)
       Shared_coord_array coord_array =
         boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array(coord_array);
-      elem->mark_delete(cai);
-      continue;
-    }
-    if (name == "normal") {
-      Shared_normal_array normal_array =
-        boost::dynamic_pointer_cast<Normal_array>(cont);
-      set_normal_array(normal_array);
       elem->mark_delete(cai);
       continue;
     }
@@ -237,7 +218,8 @@ Boolean Arrangement_on_torus_base_geo::clean_sphere_bound()
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
 
-  m_sphere_bound.set_center(Vector3f(0, 0, 0));
+  //! Not implemented yet!
+  m_sphere_bound.set_center(0, 0, 0);
   m_sphere_bound.set_radius(1);
   m_dirty_sphere_bound = false;
   return true;
@@ -250,11 +232,6 @@ set_coord_array(Shared_coord_array coord_array)
   m_coord_array = coord_array;
   m_dirty_sphere_bound = true;
 }
-
-//! \brief sets the coordinate array.
-void Arrangement_on_torus_base_geo::
-set_normal_array(Shared_normal_array normal_array)
-{ m_normal_array = normal_array; }
 
 //! \brief creates the renderers.
 void Arrangement_on_torus_base_geo::create_renderers()
@@ -271,39 +248,38 @@ void Arrangement_on_torus_base_geo::create_renderers()
 
 //! \brief draws an arrangement on surface vertex.
 void Arrangement_on_torus_base_geo::draw_aos_vertex(Draw_action* action,
-                                                     Vector3f& center)
+                                                    Vector2f& center)
 {
- draw_vertex_on_sphere(action, center, m_aos_vertex_style,
-                       m_aos_vertex_radius, m_aos_delta_angle);
+ draw_vertex_on_torus(action, center, m_aos_vertex_style,
+                      m_aos_vertex_radius, m_aos_delta_angle);
 }
 
 //! \brief draws an arrangement on surface isolated vertex.
 void Arrangement_on_torus_base_geo::
-draw_aos_isolated_vertex(Draw_action* action, Vector3f& center)
+draw_aos_isolated_vertex(Draw_action* action, Vector2f& center)
 {
-  draw_vertex_on_sphere(action, center, m_aos_isolated_vertex_style,
-                        m_aos_isolated_vertex_radius, m_aos_delta_angle);
+  draw_vertex_on_torus(action, center, m_aos_isolated_vertex_style,
+                       m_aos_isolated_vertex_radius, m_aos_delta_angle);
 }
 
 //! \brief Draw an arrangement on surface boundary_vertex.
 void Arrangement_on_torus_base_geo::
-draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
+draw_aos_boundary_vertex(Draw_action* action, Vector2f& center)
 {
-  draw_vertex_on_sphere(action, center, m_aos_boundary_vertex_style,
-                        m_aos_boundary_vertex_radius, m_aos_delta_angle);
+  draw_vertex_on_torus(action, center, m_aos_boundary_vertex_style,
+                       m_aos_boundary_vertex_radius, m_aos_delta_angle);
 }
 
 //! \brief draws an arrangement on surface edge.
 void Arrangement_on_torus_base_geo::draw_aos_edge(Draw_action* action,
-                                                  Vector3f& src,
-                                                  Vector3f& trg,
-                                                  Vector3f& normal)
+                                                  Vector2f& src,
+                                                  Vector2f& trg)
 {
-  draw_edge_on_sphere(action, src, trg, normal,
-                      m_aos_edge_style, m_aos_edge_count,
-                      m_aos_edge_directed, m_aos_edge_radius,
-                      m_aos_delta_angle,
-                      m_aos_vertex_radius, m_aos_vertex_radius);
+  draw_edge_on_torus(action, src, trg,
+                     m_aos_edge_style, m_aos_edge_count,
+                     m_aos_edge_directed, m_aos_edge_radius,
+                     m_aos_delta_angle,
+                     m_aos_vertex_radius, m_aos_vertex_radius);
 }
 
 SGAL_END_NAMESPACE

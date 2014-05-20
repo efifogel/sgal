@@ -27,7 +27,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Trace.hpp"
@@ -46,16 +46,16 @@ const Uint Piece::s_def_height(0);
 const Uint Piece::s_def_depth(0);
 const Uint Piece::s_def_unit_size(1);
 
-/*! Constructor */
+//! \brief constructor.
 Piece::Piece(Boolean proto) :
   Indexed_face_set(proto),
   m_unit_size(s_def_unit_size)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Piece::~Piece() { m_composition.clear(); }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Piece::init_prototype()
 {
   if (s_prototype) return;
@@ -73,21 +73,21 @@ void Piece::init_prototype()
                                           exec_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Piece::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Piece::get_prototype()
 {
   if (s_prototype == NULL) Piece::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Piece::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
@@ -133,22 +133,27 @@ void Piece::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! Clean the representation. */
+//! Clean the representation.
 void Piece::clean()
 {
   // Clear internal representation:
-  if (!m_coord_array) m_coord_array.reset(new Coord_array);
+  if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
 
   // Generate points:
   Uint size = (m_width + 1) * (m_height + 1) * (m_depth + 1);
   m_coord_array->resize(size);
+
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   Uint i, j, k, l = 0;
   for (k = 0; k <= m_depth; ++k) {
     for (j = 0; j <= m_height; ++j) {
       for (i = 0; i <= m_width; ++i) {
-        (*m_coord_array)[l++].set(static_cast<float>(i),
-                                  static_cast<float>(j),
-                                  static_cast<float>(k));
+        (*coord_array)[l++].set(static_cast<float>(i),
+                                static_cast<float>(j),
+                                static_cast<float>(k));
       }
     }
   }
@@ -182,7 +187,7 @@ void Piece::clean()
   Indexed_face_set::coord_point_changed();
 }
 
-/*! \brief generates the coordinate index array. */
+//! \brief generates the coordinate index array.
 void Piece::generate_coord_indices()
 {
   //! \todo generate the indices flat to start with.
@@ -249,7 +254,7 @@ void Piece::generate_coord_indices()
   clear_flat_coord_indices();
 }
 
-/*! \brief processes change of structure. */
+//! \brief processes change of structure.
 void Piece::structure_changed(const Field_info* field_info)
 {
   clear();

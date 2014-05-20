@@ -32,7 +32,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -72,7 +72,10 @@ Extrusion::~Extrusion()
 void Extrusion::clean()
 {
   // Clear internal representation:
-  if (!m_coord_array) m_coord_array.reset(new Coord_array);
+  if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
 
   // Generate cross section:
   if (m_cross_section.size() == 0) {
@@ -90,7 +93,7 @@ void Extrusion::clean()
 
   // Generate points:
   Uint size = m_cross_section.size() * m_spine.size();
-  m_coord_array->resize(size);
+  coord_array->resize(size);
 
   Uint j, i, k = 0;
   const Vector3f vert(0, 1, 0);
@@ -157,7 +160,7 @@ void Extrusion::clean()
     }
     point.xform_pt(point, mat);
 
-    (*m_coord_array)[k++].add(m_spine[0], point);
+    (*coord_array)[k++].add(m_spine[0], point);
   }
 
   // Middle:
@@ -194,7 +197,7 @@ void Extrusion::clean()
         point[2] *= m_scale[j][1];
       }
       point.xform_pt(point, mat);
-      (*m_coord_array)[k++].add(m_spine[j], point);
+      (*coord_array)[k++].add(m_spine[j], point);
     }
   }
 
@@ -235,7 +238,7 @@ void Extrusion::clean()
       point[2] *= m_scale[j][1];
     }
     point.xform_pt(point, mat);
-    (*m_coord_array)[k++].add(m_spine[j], point);
+    (*coord_array)[k++].add(m_spine[j], point);
   }
 
   set_solid(m_loop || (m_begin_cap && m_end_cap));

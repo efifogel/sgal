@@ -38,11 +38,10 @@
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
-#include "SCGAL/Arrangement_on_sphere_renderers.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
-#include "SCGAL/Exact_normal_array.hpp"
+#include "SCGAL/Exact_coord_array_2d.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
+#include "SCGAL/Arrangement_on_torus_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -66,10 +65,8 @@ class SGAL_SCGAL_DECL Arrangement_on_torus_base_geo :
 {
 public:
   // Shared pointers
-  typedef boost::shared_ptr<Coord_array>        Shared_coord_array;
-  typedef boost::shared_ptr<Normal_array>       Shared_normal_array;
-  typedef boost::shared_ptr<Exact_coord_array>  Shared_exact_coord_array;
-  typedef boost::shared_ptr<Exact_normal_array> Shared_exact_normal_array;
+  typedef boost::shared_ptr<Coord_array>          Shared_coord_array;
+  typedef boost::shared_ptr<Exact_coord_array_2d> Shared_exact_coord_array_2d;
 
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
@@ -123,20 +120,11 @@ public:
   /*! Obtain the coordinate array. */
   Shared_coord_array get_coord_array() const;
 
-  /*! Set the normal array. */
-  void set_normal_array(Shared_normal_array normal_array);
-
-  /*! Obtain the normal array. */
-  Shared_normal_array get_normal_array() const;
-
   /*! Obtain the x-monotone curve index array. */
   const std::vector<Uint>& get_x_monotone_curve_indices() const;
 
   /*! Obtain the curve index array. */
   const std::vector<Uint>& get_curve_indices() const;
-
-  /*! Obtain the normal index array. */
-  const std::vector<Uint>& get_normal_indices() const;
 
   /*! Obtain the point index array. */
   const std::vector<Uint>& get_point_indices() const;
@@ -146,9 +134,6 @@ public:
 
   /*! Obtain the ith curve index. */
   Uint get_curve_index(Uint i) const;
-
-  /*! Obtain the ith normal index. */
-  Uint get_normal_index(Uint i) const;
 
   /*! Obtain the ith point index. */
   Uint get_point_index(Uint i) const;
@@ -163,21 +148,20 @@ public:
    * \param action
    * \param center the vertex center.
    */
-  virtual void draw_aos_vertex(Draw_action* action, Vector3f& center);
+  virtual void draw_aos_vertex(Draw_action* action, Vector2f& center);
 
   /*! Draw an arrangement on surface isolated vertex.
    * \param action
    * \param center the vertex center.
    */
-  virtual void draw_aos_isolated_vertex(Draw_action* action,
-                                        Vector3f& center);
+  virtual void draw_aos_isolated_vertex(Draw_action* action, Vector2f& center);
 
   /*! Draw an arrangement on surface boundary_vertex.
    * \param action
    * \param center the vertex center.
    */
   virtual void draw_aos_boundary_vertex(Draw_action* action,
-                                        Vector3f& center);
+                                        Vector2f& center);
 
   /*! Draw an arrangement on surface edge.
    * \param action
@@ -186,20 +170,77 @@ public:
    * \param normal the normal to the plane containing the edge.
    */
   virtual void draw_aos_edge(Draw_action* action,
-                             Vector3f& source, Vector3f& target,
-                             Vector3f& normal);
+                             Vector2f& source, Vector2f& target);
 
 
 protected:
-  typedef SGAL::Sphere_renderer            Surface_renderer;
-  typedef SGAL::Colored_sphere_renderer    Colored_surface_renderer;
-  typedef SGAL::Stencil_sphere_renderer    Stencil_surface_renderer;
+  typedef SGAL::Torus_renderer            Surface_renderer;
+  typedef SGAL::Colored_torus_renderer    Colored_surface_renderer;
+  typedef SGAL::Stencil_torus_renderer    Stencil_surface_renderer;
+
+  /*! Draw the vertices of a given arrangement on surface.
+   * \param aos the arrangement on surface.
+   * \param action
+   */
+  template <typename Aos>
+  void my_draw_aos_vertices(Aos* aos, Draw_action* action)
+  {
+    typedef typename Aos::Vertex_const_iterator Vertex_const_iterator;
+    typedef typename Aos::Geometry_traits_2     Geom_traits;
+    typedef typename Geom_traits::Point_2       Point;
+
+    Vertex_const_iterator vi;
+    for (vi = aos->vertices_begin(); vi != aos->vertices_end(); ++vi) {
+      if (vi->is_isolated()) continue;
+      Vector2f center = to_vector2f(vi->point());
+      center.normalize();
+      draw_aos_vertex(action, center);
+    }
+  }
+
+  /*! Draw the isolated vertices of a given arrangement on surface.
+   * \param aos the arrangement on surface.
+   * \param action
+   */
+  template <typename Aos>
+  void my_draw_aos_isolated_vertices(Aos* aos, Draw_action* action)
+  {
+    typedef typename Aos::Vertex_const_iterator Vertex_const_iterator;
+    typedef typename Aos::Geometry_traits_2     Geom_traits;
+    typedef typename Geom_traits::Point_2       Point;
+
+    Vertex_const_iterator vi;
+    for (vi = aos->vertices_begin(); vi != aos->vertices_end(); ++vi) {
+      if (!(vi->is_isolated())) continue;
+      Vector2f center = to_vector2f(vi->point());
+      center.normalize();
+      draw_aos_isolated_vertex(action, center);
+    }
+  }
+
+  /*! Draw the edges of a given arrangement on surface.
+   * \param aos the arrangement on surface.
+   * \param action
+   */
+  template <typename Aot>
+  void my_draw_aos_edges(Aot* aot, Draw_action* action)
+  {
+    typedef typename Aot::Edge_const_iterator           Edge_const_iterator;
+    typedef typename Aot::Geometry_traits_2             Geom_traits;
+    typedef typename Geom_traits::Point_2               Point;
+    typedef typename Geom_traits::X_monotone_curve_2    X_monotone_curve;
+
+    Edge_const_iterator hei;
+    for (hei = aot->edges_begin(); hei != aot->edges_end(); ++hei) {
+      const X_monotone_curve& curve = hei->curve();
+      Vector2f src = to_vector2f(curve.source());
+      Vector2f trg = to_vector2f(curve.target());
+      draw_aos_edge(action, src, trg);
+    }
+  }
 
   /*! An array of coordinates. */
   Shared_coord_array m_coord_array;
-
-  /*! An array of normals. */
-  Shared_normal_array m_normal_array;
 
   /*! An array of indices into the coordinate array for general curves. */
   std::vector<Uint> m_curve_indices;
@@ -213,36 +254,32 @@ protected:
   /*! An array of indices into the coordinate array for point queries. */
   std::vector<Uint> m_point_location_indices;
 
-  /*! An array of indices into the normal array for curves. */
-  std::vector<Uint> m_normal_indices;
-
   /*! Insert the points, curves, and x-monotone curves into the givem
    * representation.
    */
-  template <typename Aos>
-  void insert_all(Aos* aos)
+  template <typename Aot>
+  void insert_all(Aot* aot)
   {
-    typedef typename Aos::Geometry_traits_2             Geom_traits;
+    typedef typename Aot::Geometry_traits_2             Geom_traits;
     typedef typename Geom_traits::Point_2               Point;
     typedef typename Geom_traits::X_monotone_curve_2    X_monotone_curve;
     typedef typename Geom_traits::Curve_2               Curve;
 
     if (!m_coord_array) return;
+    SGAL_assertion(aot != nullptr);
 
-    Shared_exact_coord_array exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
-    Shared_exact_normal_array exact_normal_array =
-      boost::dynamic_pointer_cast<Exact_normal_array>(m_normal_array);
+    const Geom_traits* traits = aot->geometry_traits();
+
+    Shared_exact_coord_array_2d exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array_2d>(m_coord_array);
 
     if (exact_coord_array && (exact_coord_array->size() > 0)) {
       std::vector<Uint>::iterator it;
-      Exact_kernel kernel;
-      Exact_kernel::Construct_direction_3 ctr_direction =
-        kernel.construct_direction_3_object();
-      Exact_kernel::Construct_vector_3 ctr_vector =
-        kernel.construct_vector_3_object();
 
       // Insert the x-monotone curves:
+      typename Geom_traits::Construct_x_monotone_curve_2 ctrx =
+        traits->construct_x_monotone_curve_2_object();
+
       if (m_x_monotone_curve_indices.size() != 0) {
         if (m_insertion_strategy == AGGREGATE) {
           std::vector<X_monotone_curve>
@@ -251,118 +288,69 @@ protected:
           for (it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it)
           {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
-            Point q1(d1);
+            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Point q1(p1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
-            Point q2(d2);
+            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Point q2(p2);
 
-            if (exact_normal_array && (m_normal_indices.size() > i)) {
-              Uint index = m_normal_indices[i];
-              if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
-                vec[i++] = X_monotone_curve(q1, q2, normal);
-                continue;
-              }
-            }
-            vec[i++] = X_monotone_curve(q1, q2);
+            vec[i++] = ctrx(q1, q2);
           }
-          insert(*aos, vec.begin(), vec.end());
+          insert(*aot, vec.begin(), vec.end());
           vec.clear();
-        } else if (m_insertion_strategy == INCREMENT) {
+        }
+        else if (m_insertion_strategy == INCREMENT) {
           unsigned int i = 0;
           for (it = m_x_monotone_curve_indices.begin();
-               it != m_x_monotone_curve_indices.end(); ++it) {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
-            Point q1(d1);
+               it != m_x_monotone_curve_indices.end(); ++it)
+          {
+            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Point q1(p1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
-            Point q2(d2);
+            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Point q2(p2);
 
-            if (exact_normal_array && (m_normal_indices.size() > i)) {
-              Uint index = m_normal_indices[i];
-              if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
-                X_monotone_curve xc(q1, q2, normal);
-                insert(*aos, xc);
-                ++i;
-                continue;
-              }
-            }
-            X_monotone_curve xc(q1, q2);
-            insert(*aos, xc);
+            X_monotone_curve xcv = ctrx(q1, q2);
+            insert(*aot, xcv);
             ++i;
           }
         }
       }
 
       // Insert the general curves:
+      typename Geom_traits::Construct_curve_2 ctr =
+        traits->construct_curve_2_object();
       if (m_curve_indices.size() != 0) {
         if (m_insertion_strategy == AGGREGATE) {
           std::vector<Curve> vec(m_curve_indices.size()/2);
           unsigned int i = 0;
           for (it = m_curve_indices.begin(); it != m_curve_indices.end(); ++it)
           {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
+            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Point q1(p1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
-
-            if (exact_normal_array && (m_normal_indices.size() > i)) {
-              Uint index = m_normal_indices[i];
-              if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
-                vec[i++] = Curve(d1, d2, normal);
-                continue;
-              }
-            }
-            vec[i++] = Curve(d1, d2);
+            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Point q2(p2);
+            vec[i++] = ctr(q1, q2);
           }
-          insert(*aos, vec.begin(), vec.end());
+          insert(*aot, vec.begin(), vec.end());
           vec.clear();
-        } else if (m_insertion_strategy == INCREMENT) {
+        }
+        else if (m_insertion_strategy == INCREMENT) {
           unsigned int i = 0;
           for (it = m_curve_indices.begin(); it != m_curve_indices.end(); ++it)
           {
-            Exact_point_3& p1 = (*exact_coord_array)[*it];
-            Exact_vector_3 v1 = ctr_vector(CGAL::ORIGIN, p1);
-            Exact_direction_3 d1 = ctr_direction(v1);
+            Exact_point_2& p1 = (*exact_coord_array)[*it];
+            Point q1(p1);
             ++it;
 
-            Exact_point_3& p2 = (*exact_coord_array)[*it];
-            Exact_vector_3 v2 = ctr_vector(CGAL::ORIGIN, p2);
-            Exact_direction_3 d2 = ctr_direction(v2);
-
-            if (exact_normal_array && (m_normal_indices.size() > i)) {
-              Uint index = m_normal_indices[i];
-              if (index != static_cast<Uint>(-1)) {
-                Exact_vector_3& v = (*exact_normal_array)[index];
-                Exact_direction_3 normal = ctr_direction(v);
-                Curve cv(d1, d2, normal);
-                insert(*aos, cv);
-                ++i;
-                continue;
-              }
-            }
-            Curve cv(d1, d2);
-            insert(*aos, cv);
+            Exact_point_2& p2 = (*exact_coord_array)[*it];
+            Point q2(p2);
+            Curve cv = ctr(q1, q2);
+            insert(*aot, cv);
             ++i;
           }
         }
@@ -370,10 +358,9 @@ protected:
 
       // Insert the points:
       for (it = m_point_indices.begin(); it != m_point_indices.end(); ++it) {
-        Exact_point_3& p = (*exact_coord_array)[*it];
-        Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-        Exact_direction_3 d = ctr_direction(v);
-        insert_point(*aos, d);
+        Exact_point_2& p = (*exact_coord_array)[*it];
+        Point q(p);
+        insert_point(*aot, q);
       }
     }
   }
@@ -415,11 +402,6 @@ inline const std::vector<Uint>&
 Arrangement_on_torus_base_geo::get_curve_indices() const
 { return m_curve_indices; }
 
-//! \brief obtains the normal index array.
-inline const std::vector<Uint>&
-Arrangement_on_torus_base_geo::get_normal_indices() const
-{ return m_normal_indices; }
-
 //! \brief obtains the point index array.
 inline const std::vector<Uint>&
 Arrangement_on_torus_base_geo::get_point_indices() const
@@ -434,11 +416,6 @@ Arrangement_on_torus_base_geo::get_x_monotone_curve_index(Uint i) const
 inline Uint
 Arrangement_on_torus_base_geo::get_curve_index(Uint i) const
 { return m_curve_indices[i]; }
-
-//! \brief obtains the ith normal index.
-inline Uint
-Arrangement_on_torus_base_geo::get_normal_index(Uint i) const
-{ return m_normal_indices[i]; }
 
 //! \brief obtains the ith point index.
 inline Uint

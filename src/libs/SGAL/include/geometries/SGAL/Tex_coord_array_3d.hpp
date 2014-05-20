@@ -108,8 +108,8 @@ public:
   /*! Clear the array. */
   virtual void clear();
 
-  /*! Obtain the number of texture coordinates.
-   * \return the number of texture coordinates.
+  /*! Obtain the number of texture coordinate dimensions.
+   * \return the number of texture coordinate dimensions.
    */
   virtual Uint num_coordinates() const;
 
@@ -196,7 +196,7 @@ inline Vector3f& Tex_coord_array_3d::operator[](Uint n) { return m_array[n]; }
 inline const Vector3f& Tex_coord_array_3d::operator[](Uint n) const
 { return m_array[n]; }
 
-//! \brief obtains the number of texture coordinates.
+//! \brief obtains the number of texture coordinate dimensions.
 inline Uint Tex_coord_array_3d::num_coordinates() const { return 3; }
 
 //! \brief obtain the data size.

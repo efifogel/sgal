@@ -38,7 +38,7 @@
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Coord_array.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -533,13 +533,14 @@ void Mesh_set::write(Formatter* formatter)
   if (stl_formatter) {
     // Apply the active (top) transform matrix to the coordinates.
     const Matrix4f& matrix = stl_formatter->top_matrix();
-    const Shared_coord_array coords = get_coord_array();
-    if (!coords) return;
-    std::vector<Vector3f> world_coords(coords->size());
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::static_pointer_cast<Coord_array_3d>(get_coord_array());
+    if (!coord_array) return;
+    std::vector<Vector3f> world_coords(coord_array->size());
     std::vector<Vector3f>::iterator it;
     Uint i = 0;
     for (it = world_coords.begin(); it != world_coords.end(); ++it)
-      it->xform_pt((*coords)[i++], matrix);
+      it->xform_pt((*coord_array)[i++], matrix);
 
     // Export the facets.
     if ((PT_TRIANGLES == get_primitive_type()) ||
@@ -633,13 +634,17 @@ void Mesh_set::collapse_identical_coordinates(std::vector<Uint>& indices)
   typedef std::pair<const Vector3f*, Uint>      Coord_index_pair;
   if (indices.empty()) return;
 
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
   // Construct a vector of pairs of item, where each item is a point and the
   // index into the indices array where the point was indexed.
   std::vector<Coord_index_pair> vec(indices.size());
   std::vector<Coord_index_pair>::iterator it;
   Uint i = 0;
   for (it = vec.begin(); it != vec.end(); ++it) {
-    const Vector3f& vecf = (*m_coord_array)[m_flat_coord_indices[i]];
+    const Vector3f& vecf = (*coord_array)[m_flat_coord_indices[i]];
     *it = std::make_pair(&vecf, i++);
   }
 
@@ -663,7 +668,7 @@ void Mesh_set::collapse_identical_coordinates(std::vector<Uint>& indices)
   }
 
   // Allocate a new coords structure
-  Coord_array* coords = new Coord_array(num);
+  Coord_array_3d* coords = new Coord_array_3d(num);
   Shared_coord_array shared_coords(coords);
 
   // Initialize the newly created coords structure and update the indices
