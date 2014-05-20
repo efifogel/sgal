@@ -27,6 +27,7 @@
 #include <string>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 #include "SGAL/Vector3sh.hpp"
 
 SGAL_BEGIN_NAMESPACE
