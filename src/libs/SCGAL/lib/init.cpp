@@ -58,6 +58,9 @@
 #include "SCGAL/Assembly.hpp"
 #include "SCGAL/Assembly_part.hpp"
 #endif
+#if defined(USE_AOT)
+#include "SCGAL/Arrangement_on_torus_geo.hpp"
+#endif
 #if defined(USE_AOS)
 #include "SCGAL/Arrangement_on_sphere_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
@@ -85,6 +88,7 @@
 #if defined(USE_SSC)
 #include "SCGAL/Smallest_stabbing_cube.hpp"
 #endif
+
 SGAL_BEGIN_NAMESPACE
 
 // extern "C" void BOOST_EXTENSION_EXPORT_DECL scgal_init()
@@ -117,6 +121,9 @@ SGAL_SCGAL_DECL void scgal_init()
   Container_factory::get_instance()->doregister(Spherical_gaussian_map_marked_geo::prototype());
   Container_factory::get_instance()->doregister(Assembly::prototype());
   Container_factory::get_instance()->doregister(Assembly_part::prototype());
+#endif
+#if defined(USE_AOT)
+  Container_factory::get_instance()->doregister(Arrangement_on_torus_geo::prototype());
 #endif
 #if defined(USE_AOS)
   Container_factory::get_instance()->doregister(Arrangement_on_sphere_geo::prototype());
