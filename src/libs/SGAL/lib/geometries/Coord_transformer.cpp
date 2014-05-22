@@ -47,10 +47,12 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Coord_transformer::s_prototype(NULL);
 const std::string Coord_transformer::s_tag = "CoordinateTransformer";
 
-Boolean Coord_transformer::s_def_enabled = true;
+//! The node prototype.
+Container_proto* Coord_transformer::s_prototype(nullptr);
+
+const Boolean Coord_transformer::s_def_enabled = true;
 
 /*! Register to the container factory. This will enable automatic creation
  * through the name provided as a parameter.
@@ -62,11 +64,7 @@ Coord_transformer::Coord_transformer(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
   m_reflect(false),
-  m_changed(false),
-  m_execute(false),
-  m_translated(false),
-  m_rotated(false),
-  m_transform(NULL)
+  m_execute(false)
 {}
 
 //! \brief sets the attributes of this object.
@@ -139,26 +137,6 @@ void Coord_transformer::init_prototype()
                                           RULE_EXPOSED_FIELD,
                                           enabled_func));
 
-  // changed
-  Boolean_handle_function changed_func =
-    static_cast<Boolean_handle_function>(&Coord_transformer::changed_handle);
-  s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          RULE_EXPOSED_FIELD,
-                                          changed_func));
-
-  Boolean_handle_function translated_func =
-    static_cast<Boolean_handle_function>(&Coord_transformer::translated_handle);
-  s_prototype->add_field_info(new SF_bool(TRANSLATED, "translated",
-                                          RULE_EXPOSED_FIELD,
-                                          translated_func));
-
-  // rotated
-  Boolean_handle_function rotated_func =
-    static_cast<Boolean_handle_function>(&Coord_transformer::rotated_handle);
-  s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
-                                          RULE_EXPOSED_FIELD,
-                                          rotated_func));
-
   // translation
   exec_func = static_cast<Execution_function>(&Coord_transformer::translate);
   Vector3f_handle_function translation_func =
@@ -207,7 +185,7 @@ void Coord_transformer::init_prototype()
 void Coord_transformer::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.
@@ -219,9 +197,7 @@ Container_proto* Coord_transformer::get_prototype()
 
 //! \brief sets the translation field.
 void Coord_transformer::set_translation(const Vector3f& translation)
-{
-  set_translation(translation[0], translation[1], translation[2]);
-}
+{ set_translation(translation[0], translation[1], translation[2]); }
 
 //! \brief sets the translation field.
 void Coord_transformer::set_translation(Float v0, Float v1, Float v2)
@@ -232,9 +208,7 @@ void Coord_transformer::set_translation(Float v0, Float v1, Float v2)
 
 //! \brief sets the rotation field.
 void Coord_transformer::set_rotation(const Rotation& rotation)
-{
-  set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle());
-}
+{ set_rotation(rotation[0], rotation[1], rotation[2], rotation.get_angle()); }
 
 //! \brief sets the rotation field.
 void Coord_transformer::set_rotation(Float v0, Float v1, Float v2, Float angle)
@@ -250,10 +224,6 @@ void Coord_transformer::translate(const Field_info* field_info)
 {
   m_transform.set_translation(m_translation);
   execute(field_info);
-
-  m_translated = true;
-  Field* changed_field = get_field(TRANSLATED);
-  if (changed_field) changed_field->cascade();
 }
 
 /*! \brief rotates the input vertices and store the results in the output
@@ -263,53 +233,43 @@ void Coord_transformer::rotate(const Field_info* field_info)
 {
   m_transform.set_rotation(m_rotation);
   execute(field_info);
-
-  m_rotated = true;
-  Field* changed_field = get_field(ROTATED);
-  if (changed_field) changed_field->cascade();
 }
 
-/*! \brief transforms the input vertices and store the results in the output
- * vertices.
+//! \brief applies the transformation.
+void Coord_transformer::apply()
+{
+  if (!m_coord_array) return;
+  if (!m_coord_array_changed) return;
+
+  boost::shared_ptr<Coord_array_3d> coords_changed =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array_changed);
+  SGAL_assertion(coords_changed);
+  boost::shared_ptr<Coord_array_3d> coords =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coords);
+
+  if (m_reflect)
+    reflect(coords->begin(), coords->end(), coords_changed->begin());
+  else transform(coords->begin(), coords->end(), coords_changed->begin());
+}
+
+/*! \brief applies the engine.
  */
 void Coord_transformer::execute(const Field_info* /* field_info */)
 {
   if (!m_enabled) return;
-  if (!m_coord_array) return;
 
   Uint size = m_coord_array->size();
-
   if (!m_coord_array_changed) {
     m_coord_array_changed.reset(new Coord_array_3d(size));
     SGAL_assertion(m_coord_array_changed);
   }
-  else
-    m_coord_array_changed->resize(size);
+  else m_coord_array_changed->resize(size);
 
-  boost::shared_ptr<Coord_array_3d> coord_array_changed =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array_changed);
-  SGAL_assertion(coord_array_changed);
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-
-  if (m_reflect) {
-    for (Uint i = 0; i < size; ++i)
-      (*coord_array_changed)[i].negate((*coord_array)[i]);
-  }
-  else {
-    const Matrix4f& mat = m_transform.get_matrix();
-    for (Uint i = 0; i < size; ++i)
-      (*coord_array_changed)[i].xform_pt((*coord_array)[i], mat);
-  }
+  apply();
 
   Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
-
-  m_changed = true;
-  Field* changed_field = get_field(CHANGED);
-  if (changed_field) changed_field->cascade();
-
   m_coord_array_changed->process_content_changed();
 }
 

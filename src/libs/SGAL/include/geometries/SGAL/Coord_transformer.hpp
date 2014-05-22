@@ -19,12 +19,16 @@
 #ifndef SGAL_COORD_TRANSFORMER_HPP
 #define SGAL_COORD_TRANSFORMER_HPP
 
+#include <string>
+
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
+#include "SGAL/Vector3f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Transform.hpp"
+#include "SGAL/Coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -44,7 +48,6 @@ public:
     FIRST = Container::LAST - 1,
     ENABLED,
     EXECUTE,
-    CHANGED,
     COORD,
     COORD_CHANGED,
     TRANSLATION,
@@ -66,7 +69,7 @@ public:
   virtual Container* clone();
 
   /*! Set the attributes of this node.
-   * \param elem contains lists of attribute names and values
+   * \param elem (in) lists of attribute names and values.
    */
   virtual void set_attributes(Element* elem);
 
@@ -84,9 +87,6 @@ public:
   /// \name field handlers
   //@{
   Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
-  Boolean* changed_handle(const Field_info*) { return &m_changed; }
-  Boolean* translated_handle(const Field_info*) { return &m_translated; }
-  Boolean* rotated_handle(const Field_info*) { return &m_rotated; }
   Vector3f* translation_handle(const Field_info*) { return &m_translation; }
   Rotation* rotation_handle(const Field_info*) { return &m_rotation; }
   Boolean* execute_handle(const Field_info*) { return &m_execute; }
@@ -96,17 +96,14 @@ public:
   { return &m_coord_array_changed; }
   //@}
 
-  /*! Apply the current transformation on the coordinates. */
-  void apply();
-
   /*! Translate the input vertices. */
-  void translate(const Field_info* field_info = NULL);
+  void translate(const Field_info* field_info = nullptr);
 
   /*! Rotate the input vertices. */
-  void rotate(const Field_info* field_info = NULL);
+  void rotate(const Field_info* field_info = nullptr);
 
   /*! Transform the input vertices. */
-  void execute(const Field_info* field_info = NULL);
+  void execute(const Field_info* field_info = nullptr);
 
   /*! Set the rotation field. */
   void set_rotation(const Rotation& rotation);
@@ -123,8 +120,8 @@ public:
   /*! Set the reflection indication-flag. */
   void set_reflect(Boolean reflect);
 
-  /*! Obtain the reflection indication-flag. */
-  Boolean get_reflect() const;
+  /*! Determine whether to reflect the coordinates. */
+  Boolean do_reflect() const;
 
   /*! Set the coordinate-set node. */
   void set_coord_array(Shared_coord_array coord);
@@ -136,8 +133,40 @@ public:
   Shared_coord_array get_coord_array_changed() const;
 
 protected:
+  /*! The input vertices */
+  Shared_coord_array m_coord_array;
+
+  /*! The output vertices */
+  Shared_coord_array m_coord_array_changed;
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
+
+  /*! Apply the transformation. */
+  virtual void apply();
+
+  /*! Reflect the coordinates.
+   * \param begin (in) points at the begin iterator of the input range of
+   *        coordinates
+   * \param end (in) points at the pass-the-end iterator of the input range of
+   *        coordinates
+   * \param out (out) points at the begin iterator of the transformed range of
+   *        coordinates
+   */
+  template <typename Input_iterator, typename Output_iterator>
+  void reflect(Input_iterator begin, Input_iterator end,
+               Output_iterator out)
+  { for (auto it = begin; it != end; ++it) out++->negate(*it); }
+
+  /*! Transform the coordinates.
+   */
+  template <typename Input_iterator, typename Output_iterator>
+  void transform(Input_iterator begin, Input_iterator end,
+                 Output_iterator out)
+  {
+    const Matrix4f& mat = m_transform.get_matrix();
+    for (auto it = begin; it != end; ++it) out++->xform_pt(*it, mat);
+  }
 
 private:
   /*! The tag that identifies this container type */
@@ -152,17 +181,8 @@ private:
   /*! Indicates whether reflection should be applied */
   Boolean m_reflect;
 
-  /*! Indicates that the transformation has been applied */
-  Boolean m_changed;
-
   /*! Indicates that the operation should be executed */
   Boolean m_execute;
-
-  /*! Indicates that a translation has been applied */
-  Boolean m_translated;
-
-  /*! Indicates that a rotation has been applied */
-  Boolean m_rotated;
 
   /*! The transformation */
   Transform m_transform;
@@ -173,14 +193,8 @@ private:
   /*! The translation vector */
   Vector3f m_translation;
 
-  /*! The input vertices */
-  Shared_coord_array m_coord_array;
-
-  /*! The output vertices */
-  Shared_coord_array m_coord_array_changed;
-
   // default values
-  static Boolean s_def_enabled;
+  static const Boolean s_def_enabled;
 };
 
 #if defined(_MSC_VER)
@@ -199,8 +213,8 @@ inline Container* Coord_transformer::clone()
 inline void Coord_transformer::set_reflect(Boolean reflect)
 { m_reflect = reflect; }
 
-//! \brief obtains the reflection indication-flag.
-inline Boolean Coord_transformer::get_reflect() const { return m_reflect; }
+//! \brief determines whether to reflect the coordinates.
+inline Boolean Coord_transformer::do_reflect() const { return m_reflect; }
 
 //! \brief sets the coordinate-set node.
 inline void Coord_transformer::set_coord_array(Shared_coord_array coord)

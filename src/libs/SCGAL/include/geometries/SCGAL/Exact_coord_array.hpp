@@ -35,7 +35,6 @@
 SGAL_BEGIN_NAMESPACE
 
 class Element;
-class Scene_graph;
 class Container_proto;
 
 #if defined(_MSC_VER)
@@ -56,7 +55,9 @@ public:
     LAST
   };
 
-  /*! Constructor. */
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Exact_coord_array(Boolean proto = false);
 
   /*! Constructor.
@@ -136,13 +137,18 @@ public:
    */
   void push_back(const Exact_point_3& p);
 
+  /*! Obtain the approximate coordinates.
+   * \return the approximate coordinates.
+   */
+  const std::vector<Vector3f>& get_approximate_coords() const;
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
 private:
   /*! Clean the raw data. */
-  void clean_data() const;
+  void clean_approximate_coords() const;
 
   /*! The tag that identifies this container type */
   static const std::string s_tag;
@@ -154,25 +160,15 @@ private:
   Exact_point_vector m_array;
 
   /*! Indicates whether the data is dirty. */
-  mutable bool m_dirty_data;
+  mutable bool m_dirty_approximate_coords;
 
   /*! The data. */
-  mutable std::vector<Vector3f> m_data;
+  mutable std::vector<Vector3f> m_approximate_coords;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
-
-//! \brief constructor.
-inline Exact_coord_array::Exact_coord_array(Boolean proto) :
-  Coord_array(proto),
-  m_dirty_data(true)
-{}
-
-//! \brief constructor.
-inline Exact_coord_array::Exact_coord_array(Uint n) : m_dirty_data(true)
-{ m_array.resize(n); }
 
 //! \brief destructor.
 inline Exact_coord_array::~Exact_coord_array() { clear(); }

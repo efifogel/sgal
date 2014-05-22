@@ -65,6 +65,7 @@ FILES+= Spherical_gaussian_map_colored.hpp
 FILES+= Spherical_gaussian_map_colored_geo.hpp
 FILES+= Spherical_gaussian_map_marked.hpp
 FILES+= Spherical_gaussian_map_marked_geo.hpp
+FILES+= Transformer_with_exact_coords.hpp
 FILES+= Triangulation_geo.hpp
 FILES+= Voronoi_diagram_on_sphere_geo.hpp
 
