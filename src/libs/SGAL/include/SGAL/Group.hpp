@@ -305,7 +305,7 @@ inline Boolean Group::is_visible() const { return m_is_visible; }
 inline Boolean Group::has_lights() const { return (m_num_lights != 0); }
 
 //! \brief determines whether the group has a touch sensor.
-inline Boolean Group::has_touch_sensor() const { return (m_touch_sensor); }
+inline Boolean Group::has_touch_sensor() const { return bool(m_touch_sensor); }
 
 //! \brief adds the touch sensor to a given scene.
 inline void Group::add_to_scene(Scene_graph* sg) { m_scene_graph = sg; }

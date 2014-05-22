@@ -22,6 +22,13 @@
 
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
+
+#ifdef __APPLE__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
 /* default header and core functionallity */
 #include <X11/Xlib.h>
 /* Functionallity for creating new protocol messages */
@@ -121,7 +128,18 @@ void X11_window_manager::event_loop(Boolean simulating)
     // Chech whether simulation is required:
     if (simulating) {
       // Measure the ellapsed time:
+#ifdef __APPLE__ // OS X does not have clock_gettime, use clock_get_time
+      clock_serv_t cclock;
+      mach_timespec_t mts;
+      host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+      clock_get_time(cclock, &mts);
+      mach_port_deallocate(mach_task_self(), cclock);
+      gettime_now.tv_sec = mts.tv_sec;
+      gettime_now.tv_nsec = mts.tv_nsec;
+
+#else
       clock_gettime(CLOCK_REALTIME, &gettime_now);
+#endif
       long int end_tick_time = gettime_now.tv_nsec;
       long int raw_tick_duration = end_tick_time - m_start_tick_time;
       if (raw_tick_duration < 0)

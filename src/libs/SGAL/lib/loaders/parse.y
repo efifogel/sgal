@@ -58,7 +58,9 @@
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
-#include "SGAL/Script.hpp"
+#ifdef USE_V8
+  #include "SGAL/Script.hpp"
+#endif
 
 SGAL_BEGIN_NAMESPACE
 
@@ -452,6 +454,7 @@ node            : nodeTypeId "{" nodeBody "}"
                 }
                 | K_SCRIPT "{" scriptBody "}"
                 {
+#ifdef USE_V8
                   /* Every Script node has a unique type; thus, the type of the
                    * Script node is not registered in the container factory.
                    * Instead every Script node is explicitly created.
@@ -467,6 +470,7 @@ node            : nodeTypeId "{" nodeBody "}"
                     $$->set_attributes($3);
                     $$->add_to_scene(scene_graph);
                   }
+#endif
                 }
                 ;
 
