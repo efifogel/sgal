@@ -118,7 +118,7 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
   }
   if (m_minkowski_sum) {
     clock_t start_time = clock();
-    Sgm_node_iter  ni = m_sgm_nodes.begin();
+    Sgm_node_iter ni = m_sgm_nodes.begin();
     Shared_spherical_gaussian_map_colored_geo geo1 = *ni++;
     Shared_spherical_gaussian_map_colored_geo geo2 = *ni;
     Sgm_color_overlay_traits<Sgm> sgm_overlay;

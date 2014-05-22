@@ -94,6 +94,7 @@ CPPSOURCES+= Exact_normal_array.cpp
 CPPSOURCES+= Exact_plane_array.cpp
 CPPSOURCES+= Exact_polyhedron_geo.cpp
 CPPSOURCES+= Smallest_stabbing_cube.cpp
+CPPSOURCES+= Transformer_with_exact_coords.cpp
 CPPSOURCES+= Triangulation_geo.cpp
 ifeq ($(USE_ENV), 1)
 CPPSOURCES+= Lower_envelope_geo.cpp

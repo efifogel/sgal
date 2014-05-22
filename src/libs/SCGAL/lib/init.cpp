@@ -39,6 +39,7 @@
 #include "SCGAL/Exact_coord_minkowski.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 #include "SCGAL/Smallest_stabbing_cube.hpp"
+#include "SCGAL/Transformer_with_exact_coords.hpp"
 #include "SCGAL/Triangulation_geo.hpp"
 #if defined(USE_ENV)
 #include "SCGAL/Lower_envelope_tri_geo.hpp"
@@ -103,6 +104,7 @@ SGAL_SCGAL_DECL void scgal_init()
   Container_factory::get_instance()->doregister(Exact_plane_array::prototype());
   Container_factory::get_instance()->doregister(Exact_coord_minkowski::prototype());
   Container_factory::get_instance()->doregister(Exact_polyhedron_geo::prototype());
+  Container_factory::get_instance()->doregister(Transformer_with_exact_coords::prototype());
   Container_factory::get_instance()->doregister(Triangulation_geo::prototype());
 #if defined(USE_ENV)
   Container_factory::get_instance()->doregister(Lower_envelope_tri_geo::prototype());

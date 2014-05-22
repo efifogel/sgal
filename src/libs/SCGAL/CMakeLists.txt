@@ -79,6 +79,7 @@ set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_coord_minkowsk
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_normal_array.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_plane_array.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Exact_polyhedron_geo.cpp)
+set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Transformer_with_exact_coords.cpp)
 set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Triangulation_geo.cpp)
 
 if (USE_ENV)
