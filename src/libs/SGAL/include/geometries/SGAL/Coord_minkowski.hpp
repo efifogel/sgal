@@ -42,7 +42,6 @@ public:
     FIRST = Container::LAST - 1,
     ENABLED,
     EXECUTE,
-    CHANGED,
     COORD1,
     COORD2,
     COORD_CHANGED,
@@ -78,7 +77,6 @@ public:
   /// \name field handlers
   //@{
   Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
-  Boolean* changed_handle(const Field_info*) { return &m_changed; }
   Boolean* execute_handle(const Field_info*) { return &m_execute; }
   Shared_coord_array* coord_array1_handle(const Field_info*)
   { return &m_coord_array1; }
@@ -109,9 +107,6 @@ public:
 protected:
   /*! Determines whether the node is enabled. */
   Boolean m_enabled;
-
-  /*! Indicates that the transformation has been applied. */
-  Boolean m_changed;
 
   /*! Indicates that the operation should be executed. */
   Boolean m_execute;

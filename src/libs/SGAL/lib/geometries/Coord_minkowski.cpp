@@ -49,7 +49,6 @@ REGISTER_TO_FACTORY(Coord_minkowski, "Coord_minkowski");
 Coord_minkowski::Coord_minkowski(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
-  m_changed(false),
   m_execute(false)
 {}
 
@@ -110,13 +109,6 @@ void Coord_minkowski::init_prototype()
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
                                           RULE_EXPOSED_FIELD,
                                           enabled_func));
-
-  // changed
-  Boolean_handle_function changed_func =
-    static_cast<Boolean_handle_function>(&Coord_minkowski::changed_handle);
-  s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          RULE_EXPOSED_FIELD,
-                                          changed_func));
 
   // execute
   exec_func = static_cast<Execution_function>(&Coord_minkowski::execute);
@@ -184,8 +176,7 @@ void Coord_minkowski::execute(const Field_info* /* field_info */)
     m_coord_array_changed.reset(new Coord_array_3d(size));
     SGAL_assertion(m_coord_array_changed);
   }
-  else
-    m_coord_array_changed->resize(size);
+  else m_coord_array_changed->resize(size);
 
   boost::shared_ptr<Coord_array_3d> coord_array_changed =
     boost::static_pointer_cast<Coord_array_3d>(m_coord_array_changed);
@@ -200,18 +191,12 @@ void Coord_minkowski::execute(const Field_info* /* field_info */)
   Uint k = 0;
   for (Uint i = 0; i < size1; ++i) {
     for (Uint j = 0; j < size2; ++j) {
-      (*coord_array_changed)[k++].add((*coord_array1)[i],
-                                      (*coord_array2)[j]);
+      (*coord_array_changed)[k++].add((*coord_array1)[i], (*coord_array2)[j]);
     }
   }
 
   Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
-
-  m_changed = true;
-  Field* changed_field = get_field(CHANGED);
-  if (changed_field) changed_field->cascade();
-
   m_coord_array_changed->process_content_changed();
 }
 

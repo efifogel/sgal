@@ -47,7 +47,6 @@ REGISTER_TO_FACTORY(Exact_coord_minkowski, "Exact_coord_minkowski");
 Exact_coord_minkowski::Exact_coord_minkowski(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
-  m_changed(false),
   m_execute(false)
 {}
 
@@ -64,7 +63,7 @@ void Exact_coord_minkowski::init_prototype()
   Boolean_handle_function execute_func =
     static_cast<Boolean_handle_function>
     (&Exact_coord_minkowski::execute_handle);
-  s_prototype->add_field_info(new SF_bool(EXACT_EXECUTE, "exactExecute",
+  s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
                                           RULE_EXPOSED_FIELD,
                                           execute_func, exec_func));
 
@@ -191,10 +190,6 @@ void Exact_coord_minkowski::execute(const Field_info* field_info)
 
   Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
-
-  m_changed = true;
-  Field* changed_field = get_field(CHANGED);
-  if (changed_field) changed_field->cascade();
 }
 
 SGAL_END_NAMESPACE

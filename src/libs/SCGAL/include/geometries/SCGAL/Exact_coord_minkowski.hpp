@@ -49,8 +49,7 @@ public:
   enum {
     FIRST = Container::LAST - 1,
     ENABLED,
-    EXACT_EXECUTE,
-    CHANGED,
+    EXECUTE,
     COORD1,
     COORD2,
     COORD_CHANGED,
@@ -120,9 +119,6 @@ public:
 protected:
   /*! Determines whether the node is enabled. */
   Boolean m_enabled;
-
-  /*! Indicates that the transformation has been applied. */
-  Boolean m_changed;
 
   /*! Indicates that the operation should be executed. */
   Boolean m_execute;
