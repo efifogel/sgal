@@ -42,12 +42,12 @@
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
+#include "SCGAL/Exact_polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -297,7 +297,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! The builder. */
-  Polyhedron_geo_builder<HalfedgeDS> m_surface;
+  Exact_polyhedron_geo_builder<HalfedgeDS> m_surface;
 
   /*! The resulting polyhedron. */
   Polyhedron m_polyhedron;

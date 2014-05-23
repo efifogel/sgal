@@ -23,7 +23,7 @@
 #pragma warning ( disable : 4800 )
 #endif
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/basic.h>
 
 #if defined(_WIN32)
 #include <windows.h>

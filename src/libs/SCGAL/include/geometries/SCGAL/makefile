@@ -44,6 +44,7 @@ FILES+= gausian_map_to_polyhedron_3.hpp
 FILES+= Geodesic_voronoi_on_sphere_geo.hpp
 FILES+= Exact_nef_polyhedron.hpp
 FILES+= Exact_polyhedron_geo.hpp
+FILES+= Exact_polyhedron_geo_builder.hpp
 FILES+= Lines_through_segments_geo.hpp
 FILES+= Lower_envelope_geo.hpp
 FILES+= Lower_envelope_tri_geo.hpp
