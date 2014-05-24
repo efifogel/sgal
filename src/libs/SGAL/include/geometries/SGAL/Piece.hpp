@@ -59,6 +59,8 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -67,6 +69,7 @@ public:
 
   /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{

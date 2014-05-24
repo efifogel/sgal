@@ -52,7 +52,7 @@ public:
 
   enum {
     FIRST = Coord_array::LAST - 1,
-    EXACT_POINT,
+    POINT,
     LAST
   };
 
@@ -73,6 +73,8 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -81,9 +83,11 @@ public:
 
   /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
+  Exact_point_vector* array_handle(const Field_info*) { return &m_array; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -136,14 +140,19 @@ public:
    */
   void push_back(const Exact_point_2& p);
 
+  /*! Obtain the inexact coordinates.
+   * \return the inexact coordinates.
+   */
+  const std::vector<Vector2f>& get_inexact_coords() const;
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
 private:
 
-  /*! Clean the raw data. */
-  void clean_data() const;
+  /*! Clean the raw inexact coordinates. */
+  void clean_inexact_coords() const;
 
   /*! The tag that identifies this container type */
   static const std::string s_tag;
@@ -154,29 +163,16 @@ private:
   /*! The exact coordinate array */
   Exact_point_vector m_array;
 
-  /*! Indicates whether the data is dirty. */
-  mutable bool m_dirty_data;
+  /*! Indicates whether the inexact coordinates is dirty. */
+  mutable bool m_dirty_inexact_coords;
 
-  /*! The data. */
-  mutable std::vector<Vector2f> m_data;
+  /*! The inexact coordinates. */
+  mutable std::vector<Vector2f> m_inexact_coords;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
-
-//! \brief constructor.
-inline Exact_coord_array_2d::Exact_coord_array_2d(Boolean proto) :
-  Coord_array(proto),
-  m_dirty_data(true)
-{}
-
-//! \brief constructor.
-inline Exact_coord_array_2d::Exact_coord_array_2d(Uint n) : m_dirty_data(true)
-{ m_array.resize(n); }
-
-//! \brief destructor.
-inline Exact_coord_array_2d::~Exact_coord_array_2d() { clear(); }
 
 //! \brief constructs the prototype.
 inline Exact_coord_array_2d* Exact_coord_array_2d::prototype()

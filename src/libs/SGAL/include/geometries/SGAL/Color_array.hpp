@@ -36,8 +36,6 @@ class Element;
 class Container_proto;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL std::allocator<Vector3f>;
-template class SGAL_SGAL_DECL std::vector<Vector3f>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif

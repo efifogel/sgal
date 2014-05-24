@@ -48,8 +48,6 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 
 #if (defined _MSC_VER)
-template class SGAL_SGAL_DECL std::allocator<Rotation>;
-template class SGAL_SGAL_DECL std::vector<Rotation>;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif

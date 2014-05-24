@@ -44,12 +44,13 @@ Container_proto* Exact_coord_array::s_prototype(nullptr);
 REGISTER_TO_FACTORY(Exact_coord_array, "Exact_coord_array");
 
 //! \brief constructor.
-Exact_coord_array::Exact_coord_array(Boolean proto) : Coord_array(proto),
-  m_dirty_approximate_coords(true)
+Exact_coord_array::Exact_coord_array(Boolean proto) :
+  Coord_array(proto),
+  m_dirty_inexact_coords(true)
 {}
 
 //! \brief constructor.
-Exact_coord_array::Exact_coord_array(Uint n) : m_dirty_approximate_coords(true)
+Exact_coord_array::Exact_coord_array(Uint n) : m_dirty_inexact_coords(true)
 { m_array.resize(n); }
 
 //! \brief initializes the node prototype.
@@ -190,25 +191,25 @@ Uint Exact_coord_array::data_size() const
 // \brief obtains the data.
 const GLfloat* Exact_coord_array::data() const
 {
-  if (m_dirty_approximate_coords) clean_approximate_coords();
-  return (GLfloat*)(&(*(m_approximate_coords.begin())));
+  if (m_dirty_inexact_coords) clean_inexact_coords();
+  return (GLfloat*)(&(*(m_inexact_coords.begin())));
 }
 
-//! \brief obtains the approximate coordinates.
-const std::vector<Vector3f>& Exact_coord_array::get_approximate_coords() const
+//! \brief obtains the inexact coordinates.
+const std::vector<Vector3f>& Exact_coord_array::get_inexact_coords() const
 {
-  if (m_dirty_approximate_coords) clean_approximate_coords();
-  return m_approximate_coords;
+  if (m_dirty_inexact_coords) clean_inexact_coords();
+  return m_inexact_coords;
 }
 
 //! \brief cleans the raw data.
-void Exact_coord_array::clean_approximate_coords() const
+void Exact_coord_array::clean_inexact_coords() const
 {
-  m_dirty_approximate_coords = false;
-  m_approximate_coords.resize(size());
+  m_dirty_inexact_coords = false;
+  m_inexact_coords.resize(size());
 
-  // Convert the exact points to approximate:
-  std::vector<Vector3f>::iterator it = m_approximate_coords.begin();
+  // Convert the exact points to inexact points.
+  std::vector<Vector3f>::iterator it = m_inexact_coords.begin();
   CGAL::To_double<Exact_FT> todouble;
   for (Exact_point_const_iter eit = begin(); eit != end(); ++eit) {
     const Exact_point_3& p = *eit;
@@ -222,8 +223,8 @@ void Exact_coord_array::clean_approximate_coords() const
 void Exact_coord_array::clear()
 {
   m_array.clear();
-  m_approximate_coords.clear();
-  m_dirty_approximate_coords = true;
+  m_inexact_coords.clear();
+  m_dirty_inexact_coords = true;
 }
 
 SGAL_END_NAMESPACE

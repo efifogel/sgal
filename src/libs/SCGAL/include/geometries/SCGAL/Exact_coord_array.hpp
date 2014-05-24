@@ -51,7 +51,7 @@ public:
 
   enum {
     FIRST = Coord_array::LAST - 1,
-    EXACT_POINT,
+    POINT,
     LAST
   };
 
@@ -74,6 +74,8 @@ public:
   /*! Clone. */
   virtual Container* clone();
 
+  /// \name Protoype handling
+  //@{
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
@@ -82,9 +84,11 @@ public:
 
   /*! Obtains the node prototype. */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
+  Exact_point_vector* array_handle(const Field_info*) { return &m_array; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -137,18 +141,18 @@ public:
    */
   void push_back(const Exact_point_3& p);
 
-  /*! Obtain the approximate coordinates.
-   * \return the approximate coordinates.
+  /*! Obtain the inexact coordinates.
+   * \return the inexact coordinates.
    */
-  const std::vector<Vector3f>& get_approximate_coords() const;
+  const std::vector<Vector3f>& get_inexact_coords() const;
 
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;
 
 private:
-  /*! Clean the raw data. */
-  void clean_approximate_coords() const;
+  /*! Clean the inexact coordinates. */
+  void clean_inexact_coords() const;
 
   /*! The tag that identifies this container type */
   static const std::string s_tag;
@@ -159,11 +163,11 @@ private:
   /*! The exact coordinate array */
   Exact_point_vector m_array;
 
-  /*! Indicates whether the data is dirty. */
-  mutable bool m_dirty_approximate_coords;
+  /*! Indicates whether the inexact coordinates is dirty. */
+  mutable bool m_dirty_inexact_coords;
 
-  /*! The data. */
-  mutable std::vector<Vector3f> m_approximate_coords;
+  /*! The inexact coordinates. */
+  mutable std::vector<Vector3f> m_inexact_coords;
 };
 
 #if defined(_MSC_VER)

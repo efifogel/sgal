@@ -76,7 +76,7 @@ void Transformer_with_exact_coords::apply()
     boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
 
   if (exact_coords) {
-    const std::vector<Vector3f>& coords = exact_coords->get_approximate_coords();
+    const std::vector<Vector3f>& coords = exact_coords->get_inexact_coords();
     if (do_reflect())
       reflect(coords.begin(), coords.end(), coords_changed->begin());
     else transform(coords.begin(), coords.end(), coords_changed->begin());

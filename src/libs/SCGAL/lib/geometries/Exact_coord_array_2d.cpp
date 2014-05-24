@@ -43,6 +43,20 @@ Container_proto* Exact_coord_array_2d::s_prototype(nullptr);
 //! Register to the container factory.
 REGISTER_TO_FACTORY(Exact_coord_array_2d, "Exact_coord_array_2d");
 
+//! \brief constructor.
+Exact_coord_array_2d::Exact_coord_array_2d(Boolean proto) :
+  Coord_array(proto),
+  m_dirty_inexact_coords(true)
+{}
+
+//! \brief constructor.
+Exact_coord_array_2d::Exact_coord_array_2d(Uint n) :
+  m_dirty_inexact_coords(true)
+{ m_array.resize(n); }
+
+//! \brief destructor.
+Exact_coord_array_2d::~Exact_coord_array_2d() { clear(); }
+
 //! \brief initializes the node prototype.
 void Exact_coord_array_2d::init_prototype()
 {
@@ -174,18 +188,25 @@ Uint Exact_coord_array_2d::data_size() const
 // \brief obtains the data.
 const GLfloat* Exact_coord_array_2d::data() const
 {
-  if (m_dirty_data) clean_data();
-  return (GLfloat*)(&(*(m_data.begin())));
+  if (m_dirty_inexact_coords) clean_inexact_coords();
+  return (GLfloat*)(&(*(m_inexact_coords.begin())));
+}
+
+//! \brief obtains the inexact coordinates.
+const std::vector<Vector2f>& Exact_coord_array_2d::get_inexact_coords() const
+{
+  if (m_dirty_inexact_coords) clean_inexact_coords();
+  return m_inexact_coords;
 }
 
 //! \brief clean the raw data.
-void Exact_coord_array_2d::clean_data() const
+void Exact_coord_array_2d::clean_inexact_coords() const
 {
-  m_dirty_data = false;
-  m_data.resize(size());
+  m_dirty_inexact_coords = false;
+  m_inexact_coords.resize(size());
 
-  // Convert the exact points to approximate:
-  std::vector<Vector2f>::iterator it = m_data.begin();
+  // Convert the exact points to inexact points.
+  std::vector<Vector2f>::iterator it = m_inexact_coords.begin();
   CGAL::To_double<Exact_FT> todouble;
   for (Exact_point_const_iter eit = begin(); eit != end(); ++eit) {
     const Exact_point_2& p = *eit;
@@ -198,8 +219,8 @@ void Exact_coord_array_2d::clean_data() const
 void Exact_coord_array_2d::clear()
 {
   m_array.clear();
-  m_data.clear();
-  m_dirty_data = true;
+  m_inexact_coords.clear();
+  m_dirty_inexact_coords = true;
 }
 
 SGAL_END_NAMESPACE
