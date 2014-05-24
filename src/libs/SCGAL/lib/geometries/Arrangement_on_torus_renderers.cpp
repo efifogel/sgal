@@ -50,6 +50,7 @@ Torus_renderer::Torus_renderer()
 {
   m_torus.set_stacks(64);
   m_torus.set_slices(64);
+  m_torus.set_crease_angle(2.0f);
 }
 
 //! \brief draws the torus.
@@ -112,6 +113,12 @@ void draw_vertex_on_torus(Draw_action* action, Vector2f& center,
                           Arrangement_renderer::Vertex_shape::Style style,
                           Float radius, Float delta_angle)
 {
+  std::cout << "draw_vertex_on_torus: "
+            << "center: " << center
+            << ", style: " << style
+            << ", radius: " << radius
+            << ", delta_angle: " << delta_angle
+            << std::endl;
 //   typedef Arrangement_renderer::Vertex_shape    Vertex_shape;
 
 //   switch (style) {
