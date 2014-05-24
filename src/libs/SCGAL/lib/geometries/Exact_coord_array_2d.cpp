@@ -166,7 +166,7 @@ void Exact_coord_array_2d::set_attributes(Element* elem)
 
     if (name == "ratPoint") {
       Uint num_values = get_num_values<Exact_number_type>(value);
-      Uint size = num_values / 3;
+      Uint size = num_values / 2;
       int old_size = m_array.size();
       m_array.resize(old_size + size);
       std::istringstream svalue(value, std::istringstream::in);
