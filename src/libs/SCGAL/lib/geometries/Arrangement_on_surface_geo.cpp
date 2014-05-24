@@ -25,11 +25,6 @@
 #pragma warning( disable : 4996)
 #endif
 
-/*! \file
- * A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere.
- */
-
 #include <boost/lexical_cast.hpp>
 
 #include <CGAL/Cartesian.h>
@@ -481,10 +476,10 @@ void Arrangement_on_surface_geo::draw(Draw_action* action)
   if (normalize) glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the arrangement on sphere opaque.
+/*! \brief draws the arrangement on surface opaque.
  * 1. Draw the geometry once without updating the depth buffer. Draw only
  * the embedding surface, and the vertices and edges rendered with flat
- * polygons embedded on the sphere, as indicated by their shapes.
+ * polygons embedded on the surface, as indicated by their shapes.
  * 2. Draw the geometry drawn in (1.) again without updating the color buffer.
  * If vertices or edges are drawn as points or lines, use polygon offset when
  * updating the depth buffer.
@@ -499,7 +494,7 @@ void Arrangement_on_surface_geo::draw_opaque(Draw_action* action)
   // Update only the color buffer:
   context->draw_depth_mask(false);
 
-  // Draw the sphere:
+  // Draw the surface:
   if (m_draw_aos_surface) {
     glColor3fv((float*)&m_aos_surface_color);
     (*m_surface_renderer)(action);
