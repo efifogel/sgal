@@ -38,7 +38,6 @@
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
-#include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 #include "SCGAL/Exact_coord_array.hpp"
 #include "SCGAL/Exact_normal_array.hpp"
 #include "SCGAL/Exact_number_type.hpp"
@@ -191,10 +190,6 @@ public:
 
 
 protected:
-  typedef SGAL::Sphere_renderer            Surface_renderer;
-  typedef SGAL::Colored_sphere_renderer    Colored_surface_renderer;
-  typedef SGAL::Stencil_sphere_renderer    Stencil_surface_renderer;
-
   /*! Draw the vertices of a given arrangement on surface.
    * \param aos the arrangement on surface.
    * \param action

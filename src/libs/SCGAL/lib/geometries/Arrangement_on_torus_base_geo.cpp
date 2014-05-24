@@ -53,6 +53,7 @@
 #include "SGAL/Coord_array.hpp"
 
 #include "SCGAL/Arrangement_on_torus_base_geo.hpp"
+#include "SCGAL/Arrangement_on_torus_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -218,9 +219,9 @@ Boolean Arrangement_on_torus_base_geo::clean_sphere_bound()
   if (is_dirty()) clean();
   if (m_bb_is_pre_set) return true;
 
-  //! Not implemented yet!
   m_sphere_bound.set_center(0, 0, 0);
-  m_sphere_bound.set_radius(1);
+  // The default torus spine radius(2) + the default cross-section radius (1).
+  m_sphere_bound.set_radius(3);
   m_dirty_sphere_bound = false;
   return true;
 }
@@ -236,14 +237,14 @@ set_coord_array(Shared_coord_array coord_array)
 //! \brief creates the renderers.
 void Arrangement_on_torus_base_geo::create_renderers()
 {
-  m_surface_renderer = new Surface_renderer();
+  m_surface_renderer = new Torus_renderer();
   Vector4f color;
   color[0] = m_aos_surface_color[0];
   color[1] = m_aos_surface_color[1];
   color[2] = m_aos_surface_color[2];
   color[3] = 0.5f;
-  m_colored_surface_renderer = new Colored_surface_renderer(color);
-  m_stencil_surface_renderer = new Stencil_surface_renderer();
+  m_colored_surface_renderer = new Colored_torus_renderer(color);
+  m_stencil_surface_renderer = new Stencil_torus_renderer();
 }
 
 //! \brief draws an arrangement on surface vertex.

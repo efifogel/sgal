@@ -16,11 +16,6 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*! \file
- * A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere
- */
-
 #ifndef SCGAL_ARRANGEMENT_ON_TORUS_BASE_GEO_HPP
 #define SCGAL_ARRANGEMENT_ON_TORUS_BASE_GEO_HPP
 
@@ -41,7 +36,6 @@
 #include "SCGAL/Exact_coord_array_2d.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
-#include "SCGAL/Arrangement_on_torus_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -57,8 +51,9 @@ class Element;
 #pragma warning( disable: 4251 )
 #endif
 
-/*! A geometry container that represents an arrangement induced by arcs of
- * great circles embeded on a sphere.
+/*! \class Arrangement_on_torus_base_geo Arrangement_on_torus_base_geo.hpp
+ * Arrangement_on_torus_base_geo is a geometry container that represents an
+ * arrangement induced by segments on a flat torus.
  */
 class SGAL_SCGAL_DECL Arrangement_on_torus_base_geo :
   public Arrangement_on_surface_geo
@@ -108,7 +103,7 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! */
+  /*! Clean the sphere bound. */
   virtual Boolean clean_sphere_bound();
 
   /*! Clear the internal representation and auxiliary data structures. */
@@ -174,10 +169,6 @@ public:
 
 
 protected:
-  typedef SGAL::Torus_renderer            Surface_renderer;
-  typedef SGAL::Colored_torus_renderer    Colored_surface_renderer;
-  typedef SGAL::Stencil_torus_renderer    Stencil_surface_renderer;
-
   /*! Draw the vertices of a given arrangement on surface.
    * \param aos the arrangement on surface.
    * \param action
@@ -369,12 +360,12 @@ private:
   /*! The container prototype. */
   static Container_proto* s_prototype;
 
-  /*! Draw the arrangement on sphere vertices.
+  /*! Draw the arrangement on torus vertices.
    * \param action
    */
   virtual void draw_aos_vertices(Draw_action* action) = 0;
 
-  /*! Draw the arrangement on sphere edges.
+  /*! Draw the arrangement on torus edges.
    * \param action
    */
   virtual void draw_aos_edges(Draw_action* action) = 0;

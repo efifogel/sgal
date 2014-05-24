@@ -54,6 +54,7 @@
 #include "SGAL/Normal_array.hpp"
 
 #include "SCGAL/Arrangement_on_sphere_base_geo.hpp"
+#include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -260,14 +261,14 @@ set_normal_array(Shared_normal_array normal_array)
 //! \brief creates the renderers.
 void Arrangement_on_sphere_base_geo::create_renderers()
 {
-  m_surface_renderer = new Surface_renderer();
+  m_surface_renderer = new Sphere_renderer();
   Vector4f color;
   color[0] = m_aos_surface_color[0];
   color[1] = m_aos_surface_color[1];
   color[2] = m_aos_surface_color[2];
   color[3] = 0.5f;
-  m_colored_surface_renderer = new Colored_surface_renderer(color);
-  m_stencil_surface_renderer = new Stencil_surface_renderer();
+  m_colored_surface_renderer = new Colored_sphere_renderer(color);
+  m_stencil_surface_renderer = new Stencil_sphere_renderer();
 }
 
 //! \brief draws an arrangement on surface vertex.

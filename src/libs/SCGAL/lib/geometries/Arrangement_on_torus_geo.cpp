@@ -50,7 +50,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Arrangement_on_torus_geo::s_tag = "ArrangementOnTorus";
-Container_proto* Arrangement_on_torus_geo::s_prototype(NULL);
+Container_proto* Arrangement_on_torus_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Arrangement_on_torus_geo, "Arrangement_on_torus_geo");
 
@@ -58,7 +58,7 @@ REGISTER_TO_FACTORY(Arrangement_on_torus_geo, "Arrangement_on_torus_geo");
 Arrangement_on_torus_geo::Arrangement_on_torus_geo(Boolean proto) :
   Arrangement_on_torus_base_geo(proto),
   m_owned_aos(false),
-  m_aos(NULL)
+  m_aos(nullptr)
 { if (!proto) create_renderers(); }
 
 //! \brief destructor.
@@ -68,7 +68,7 @@ Arrangement_on_torus_geo::~Arrangement_on_torus_geo()
   if (m_owned_aos){
     if (m_aos) {
       delete m_aos;
-      m_aos = NULL;
+      m_aos = nullptr;
     }
     m_owned_aos = false;
   }
@@ -86,7 +86,7 @@ void Arrangement_on_torus_geo::init_prototype()
 void Arrangement_on_torus_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.

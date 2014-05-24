@@ -57,6 +57,7 @@
 
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
 #include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
