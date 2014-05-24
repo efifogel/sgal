@@ -167,6 +167,10 @@ public:
   virtual void draw_aos_edge(Draw_action* action,
                              Vector2f& source, Vector2f& target);
 
+  /*! Draw the arrangement on torus opaque.
+   * \param action
+   */
+  virtual void draw_opaque(Draw_action* action);
 
 protected:
   /*! Draw the vertices of a given arrangement on surface.
