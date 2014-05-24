@@ -283,4 +283,72 @@ void Arrangement_on_torus_base_geo::draw_aos_edge(Draw_action* action,
                      m_aos_vertex_radius, m_aos_vertex_radius);
 }
 
+//! \brief draws the arrangement on torus opaque.
+void Arrangement_on_torus_base_geo::draw_opaque(Draw_action* action)
+{
+  Context* context = action->get_context();
+  context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
+  // Draw the torus:
+  if (m_draw_aos_surface) {
+    glColor3fv((float*)&m_aos_surface_color);
+    (*m_surface_renderer)(action);
+  }
+
+  // Draw the edges:
+  if (m_aos_edge_style == Edge_shape::LINE) {
+    context->draw_light_enable(false);
+    context->draw_line_width(m_aos_edge_line_width);
+  }
+  (*m_colored_edges_renderer)(action);
+  if (m_aos_edge_style == Edge_shape::LINE) {
+    context->draw_line_width(1.0f);
+    context->draw_light_enable(true);
+  }
+
+  // Draw the vertices:
+  if (m_aos_vertex_style == Vertex_shape::POINT) {
+    context->draw_light_enable(false);
+    context->draw_point_size(m_aos_vertex_point_size);
+    glIsEnabled(GL_POINT_SMOOTH);
+  }
+  else if (m_aos_vertex_style == Vertex_shape::RING) {
+    context->draw_light_enable(false);
+    context->draw_line_width(m_aos_vertex_point_size);
+    glIsEnabled(GL_LINE_SMOOTH);
+  }
+  (*m_colored_vertices_renderer)(action);
+  if (m_aos_vertex_style == Vertex_shape::POINT) {
+    context->draw_point_size(1.0f);
+    context->draw_light_enable(true);
+  }
+  else if (m_aos_vertex_style == Vertex_shape::RING) {
+    context->draw_light_enable(true);
+    context->draw_line_width(1.0);
+  }
+
+  // Draw the isolated vertices:
+  if (m_aos_isolated_vertex_style == Vertex_shape::POINT) {
+    context->draw_light_enable(false);
+    context->draw_point_size(m_aos_vertex_point_size);
+    glIsEnabled(GL_POINT_SMOOTH);
+  }
+  else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
+    context->draw_light_enable(false);
+    context->draw_line_width(m_aos_vertex_point_size);
+    glIsEnabled(GL_LINE_SMOOTH);
+  }
+  if (m_colored_isolated_vertices_renderer)
+    (*m_colored_isolated_vertices_renderer)(action);
+  if (m_aos_isolated_vertex_style == Vertex_shape::POINT) {
+    context->draw_point_size(1.0f);
+    context->draw_light_enable(true);
+  }
+  else if (m_aos_isolated_vertex_style == Vertex_shape::RING) {
+    context->draw_light_enable(true);
+    context->draw_line_width(1.0);
+  }
+
+  context->draw_material_mode_enable(Gfx::NO_COLOR_MATERIAL);
+}
+
 SGAL_END_NAMESPACE
