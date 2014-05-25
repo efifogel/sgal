@@ -143,11 +143,45 @@ public:
     LAST
   };
 
+  // A vertex type with an index.
+  template <typename Refs, typename Traits>
+  struct My_vertex :
+    public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true,
+                                        typename Traits::Point_3>
+  {
+    typedef typename Traits::Point_3    Point;
+    Uint m_index;
+    My_vertex() {}
+    My_vertex(const Point& p) :
+      CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p)
+    {}
+  };
+
+  template <typename Refs>
+    struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
+    Vector3f m_normal;
+    My_halfedge() {}
+    My_halfedge(Vector3f normal) : m_normal(normal) {}
+  };
+
+  // An items type using my vertex and edge.
+  struct My_items : public CGAL::Polyhedron_items_3 {
+    template <typename Refs, typename Traits>
+    struct Vertex_wrapper {
+      typedef My_vertex<Refs, Traits> Vertex;
+    };
+
+    template <typename Refs, typename Traits>
+    struct Halfedge_wrapper {
+      typedef My_halfedge<Refs> Halfedge;
+    };
+  };
+
   typedef CGAL::Cartesian<Float>                         Kernel;
   typedef Kernel::Point_3                                Point;
   typedef Kernel::Vector_3                               Vector;
   typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Traits;
-  typedef CGAL::Polyhedron_3<Traits>                     Polyhedron;
+  typedef CGAL::Polyhedron_3<Traits, My_items>           Polyhedron;
   typedef Polyhedron::Facet_iterator                     Facet_iterator;
   typedef Polyhedron::Vertex_iterator                    Vertex_iterator;
   typedef Polyhedron::Halfedge_around_facet_circulator   Halfedge_facet_circ;
@@ -241,9 +275,6 @@ public:
 
   /*! Clean the polyhedron. */
   virtual void clean_polyhedron();
-
-  /*! Clean the facets. */
-  virtual void clean_facets();
 
   /*! Calculate the normals in case they are invalidated.
    * If the creaseAngle field is greater than 0, a normal is calculated per
@@ -606,11 +637,6 @@ protected:
 
   /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
   Boolean m_dirty_polyhedron;
-
-  /*! Indicates whether the polyhedron facets are dirty and thus should be
-   * cleaned.
-   */
-  Boolean m_dirty_facets;
 
   /*! Indicates that the normals have been invalidated. */
   Boolean m_dirty_normals;

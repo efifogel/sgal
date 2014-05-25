@@ -74,26 +74,28 @@ public:
   typedef Kernel::Vector_3                              Vector_3;
 
   /*! An extended vertex */
-  template <class Refs>
+  template <typename Refs, typename Traits>
   struct My_vertex :
-    public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point_3>
+    public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true,
+                                        typename Traits::Point_3>
   {
+    typedef typename Traits::Point_3    Point;
     Vector3f m_vertex;
     My_vertex() {}
-    My_vertex(const Point_3& p) :
-      CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point_3>(p)
+    My_vertex(const Point& p) :
+      CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p)
     {}
   };
 
   /*! An extended halfedge */
-  template <class Refs>
+  template <typename Refs>
   struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
     bool m_flag;
     My_halfedge() : m_flag(false) {}
   };
 
   /*! A face type with the face normal data member */
-  template <class Refs>
+  template <typename Refs>
   struct My_face :
     public CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane_3>
   {
@@ -106,17 +108,17 @@ public:
 
   /*! An items type using extended features */
   struct My_items : public CGAL::Polyhedron_items_3 {
-    template <class Refs, class Traits>
+    template <typename Refs, typename Traits>
     struct Vertex_wrapper {
-      typedef My_vertex<Refs> Vertex;
+      typedef My_vertex<Refs, Traits> Vertex;
     };
 
-    template <class Refs, class Traits>
+    template <typename Refs, typename Traits>
     struct Halfedge_wrapper {
       typedef My_halfedge<Refs> Halfedge;
     };
 
-    template <class Refs, class Traits>
+    template <typename Refs, typename Traits>
     struct Face_wrapper {
       typedef My_face<Refs> Face;
     };

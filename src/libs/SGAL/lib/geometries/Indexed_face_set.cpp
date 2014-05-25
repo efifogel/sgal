@@ -84,7 +84,6 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_bb_is_pre_set(false),
   m_is_progressive(false),
   m_dirty_polyhedron(true),
-  m_dirty_facets(true),
   m_dirty_normals(true),
   m_normals_cleaned(false),
   m_dirty_tex_coords(true),
@@ -1020,14 +1019,14 @@ void Indexed_face_set::clean_tex_coords()
 void Indexed_face_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
-//   if (m_crease_angle > 0) {
-//     if (m_dirty_polyhedron) clean_polyhedron();
-//     if (m_dirty_facets) clean_facets();
-//   }
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
   if (is_dirty_flat_color_indices()) clean_flat_color_indices();
   if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+
+  if (m_crease_angle > 0) {
+    if (m_dirty_polyhedron) clean_polyhedron();
+  }
   if (is_empty()) return;
 
   // Clean the normals:
@@ -1700,16 +1699,20 @@ void Indexed_face_set::clean_polyhedron()
   m_polyhedron.normalize_border();
 #endif
 
-  m_dirty_polyhedron = false;
-  m_dirty_facets = true;
-}
-
-//! \brief cleans the facets.
-void Indexed_face_set::clean_facets()
-{
+  // Clean the facets
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                  m_polyhedron.planes_begin(), Normal_vector());
-  m_dirty_facets = false;
+
+  // Clean the halfedges
+  // clean_polyhedron_halfedges();
+
+  // Clean the vertices
+  // clean_polyhedron_vertices();
+
+  // Generate the coordinates and normals.
+  // clean_polyhedron_geo_set();
+
+  m_dirty_polyhedron = false;
 }
 
 //! \brief cleans the local vertex buffers.
