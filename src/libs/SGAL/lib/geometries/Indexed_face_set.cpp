@@ -1024,9 +1024,9 @@ void Indexed_face_set::draw(Draw_action* action)
   if (is_dirty_flat_color_indices()) clean_flat_color_indices();
   if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
 
-  if (m_crease_angle > 0) {
-    if (m_dirty_polyhedron) clean_polyhedron();
-  }
+  // if (m_crease_angle > 0) {
+  //   if (m_dirty_polyhedron) clean_polyhedron();
+  // }
   if (is_empty()) return;
 
   // Clean the normals:
