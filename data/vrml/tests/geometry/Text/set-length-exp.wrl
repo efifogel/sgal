@@ -1,0 +1,35 @@
+#VRML V2.0 utf8
+#
+# This test sets the value of the length field to 25.  This should cause
+# the string "The VRML Test Suite" to be stretched. Units of measure are 
+# assumed to be in the standard form (linear measured in meters, angles in 
+# radians, and time in seconds)
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"]}
+Transform {
+  translation -3 2 0
+  children [
+    Shape {
+      geometry Text {
+	string ["The VRML Test Suite"]
+	fontStyle NULL
+	length [0] 
+	maxExtent 0.0
+      }
+    }
+   ]
+}
+
+Transform {
+  translation -3 -2 0
+  children [
+    Shape {
+      geometry Text {
+	string ["The VRML Test Suite"]
+	fontStyle NULL
+	length [25]
+	maxExtent 0.0
+      }
+    }
+   ]
+}

@@ -1,0 +1,19 @@
+#VRML V2.0 utf8
+#
+# This test attempts to write a string made of 100 characters, as required
+# by the VRML specifications.  The test should write the letters from A thru 
+# Z (upper case) twice, it should also write the lower case letters a thru v 
+# twice, letters from w thru z should appear only once. 
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"] }
+Shape {
+  appearance Appearance {
+    material Material {}
+  }
+  geometry Text {
+    string ["AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQRRSSTTUUVVWWXXYYZZaabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwxyz"]
+    fontStyle NULL
+    length []
+    maxExtent 0.0
+  }
+}

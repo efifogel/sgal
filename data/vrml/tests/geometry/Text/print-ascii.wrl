@@ -1,0 +1,23 @@
+#VRML V2.0 utf8
+#
+# This test writes the entire ASCII collating sequence using various strings.
+# The ASCII sequence is a subset of the UTF8 character set.  The Minimum 
+# Support Requirements section of the VRML specifications calls for support
+# of the entire UTF8 character set.  For the time being we will only 
+# concentrate on the ASCII sequence.
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"]}
+Shape {
+  appearance Appearance {
+    material Material{}
+  }
+  geometry Text {
+    string ["! \"#$%&'()*+,-./0123456789",
+	    ":;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	    "[\\]^_`abcdefghijklmnopqrstuvwxyz",
+	    "{|}~"]
+    fontStyle NULL
+    length []
+    maxExtent 0.0
+  }
+}

@@ -1,0 +1,42 @@
+#VRML V2.0 utf8
+#
+# This test assign four character strings to the string field.  The
+# strings are "THE", "VRML", "TEST","SUITE".  The maxExtent field
+# is set to 10.  This value is higher than the length of any of the
+# strings in the string field, therefore none of the strings should
+# be altered (compressed or expanded) by this value.      
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"]}
+Transform {
+  translation -3 0 0
+  children [
+    Shape {
+      appearance Appearance {
+	material Material {}
+      }
+      geometry Text {
+	string ["THE","VRML ","TEST","SUITE"]
+	fontStyle NULL
+	length []
+	maxExtent 0.0 
+      }
+    }
+   ]
+}
+
+Transform {
+  translation 3 0 0
+  children [
+    Shape {
+      appearance Appearance {
+	material Material {}
+      }
+      geometry Text {
+	string ["THE","VRML ","TEST","SUITE"]
+	fontStyle NULL
+	length []
+	maxExtent 10.0
+      }
+    }
+   ]
+}

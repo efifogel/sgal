@@ -1,0 +1,20 @@
+#VRML V2.0 utf8
+#
+# This test attempts to write the "The VRML Test Suite" string by using mostly 
+# default values. Only the string field is modified.  The rest of the fields 
+# are assigned their default values (maxExtent = 0, length = 0,and 
+# FontStyle = NULL)
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"] }
+
+Shape {
+  appearance Appearance {
+    material Material {}
+  }
+  geometry Text {
+    string ["The VRML Test Suite"]
+    fontStyle NULL
+    length []
+    maxExtent 0.0
+  }
+}

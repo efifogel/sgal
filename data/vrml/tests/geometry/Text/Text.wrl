@@ -1,0 +1,24 @@
+#VRML V2.0 utf8
+#
+# Map a JPG image to an Text geometry.An ImageTexture is mapped to 
+# Text geometry by aligning
+# the origin of the first text string with the ImageTexture origin,
+# as determined by justification. S increases to the right, T increases upward.
+# The top of the text represents a value of 1 in texture coordinates.The
+# ImageTexture is scaled uniformly in the S and T direction. The result is a
+# red and yellow square checkerboard centered vertically, and repeating
+# horizontally left-to-right, with the word "TEXT" acting as a "cookie-cutter",
+# with the lower left corner of the TEXT corresponding to the lower left corner
+# of the first, repeating texture.
+#                                                                       
+NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
+Shape {
+  appearance Appearance {
+    material Material {}
+    texture ImageTexture {url ["text.jpg"]}
+  }
+  geometry Text {
+    string [ "TEXT" ]
+#     fontStyle FontStyle { size 4.0 } 
+  }
+}

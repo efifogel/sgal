@@ -1,0 +1,42 @@
+#VRML V2.0 utf8
+#
+# This test sets the string field to four character strings ("THE", "VRML",
+# "TEST", "SUITE").  Each string is assigned a different length value in the
+# length field causing the string to be compresed, expanded.  The strings 
+# The strings "THE" and "TEST" should be expanded while the strings
+# "VRML" and "SUITE" should be compressed.
+
+NavigationInfo { type ["EXAMINE","WALK","FLY","ANY"]}
+Transform {
+  translation -3 0 0 
+  children [ 
+    Shape {
+      appearance Appearance {
+	material Material {}
+      }
+      geometry Text {
+	string ["THE","VRML","TEST","SUITE"]
+	fontStyle NULL
+	length [0,0,0,0]
+	maxExtent 0.0
+      }
+    }
+   ]
+}
+
+Transform {
+  translation 3 0 0
+  children [
+    Shape {
+      appearance Appearance {
+	material Material {}
+      }
+      geometry Text {
+	string ["THE","VRML","TEST","SUITE"]
+	fontStyle NULL
+	length [5,2,6,2]
+	maxExtent 0.0
+      }
+    }
+   ]
+}

@@ -1,0 +1,10 @@
+#VRML V2.0 utf8 
+Shape{ appearance Appearance { material Material {} }
+  geometry Extrusion {
+    beginCap FALSE
+    endCap FALSE
+    loop TRUE
+    crossSection [-1 -1, -1 1, 1 1, 1 -1] 
+    spine [2 0 0, 0 0 2, -2 0 0, 0 0 -2]
+  }
+}
