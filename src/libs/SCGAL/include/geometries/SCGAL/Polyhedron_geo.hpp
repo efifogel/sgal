@@ -42,6 +42,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Polyhedron_items.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
@@ -62,26 +63,11 @@ class Scene_graph;
 
 class SGAL_SCGAL_DECL Polyhedron_geo : public Mesh_set {
 public:
-  // A halfedge type with a flag member variable.
-  template <class Refs>
-  struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-    bool flag;
-    My_halfedge() : flag(false) {}
-  };
-
-  // An items type using my halfedge.
-  struct My_items : public CGAL::Polyhedron_items_3 {
-    template <class Refs, class Traits>
-    struct Halfedge_wrapper {
-      typedef My_halfedge<Refs> Halfedge;
-    };
-  };
-
   typedef CGAL::Cartesian<float>                         Kernel;
   typedef Kernel::Point_3                                Point;
   typedef Kernel::Vector_3                               Vector;
   typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Traits;
-  typedef CGAL::Polyhedron_3<Traits,My_items>            Polyhedron;
+  typedef CGAL::Polyhedron_3<Traits, Polyhedron_items>   Polyhedron;
   typedef Polyhedron::Facet_iterator                     Facet_iterator;
   typedef Polyhedron::Vertex_iterator                    Vertex_iterator;
   typedef Polyhedron::Halfedge_around_facet_circulator   Halfedge_facet_circ;

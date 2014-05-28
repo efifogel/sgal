@@ -16,6 +16,7 @@ FILES+= Mesh_set.hpp
 FILES+= Normal_array.hpp
 FILES+= Piece.hpp
 FILES+= Polyhedron_geo_builder.hpp
+FILES+= Polyhedron_items.hpp
 FILES+= Tex_coord_array.hpp
 FILES+= Tex_coord_array_2d.hpp
 FILES+= Tex_coord_array_3d.hpp

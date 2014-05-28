@@ -79,6 +79,7 @@ CPPSOURCES+= Arrangement_on_quadric_geo.cpp
 endif
 
 ifeq ($(USE_AOT), 1)
+LCPPDEFS+= -DUSE_AOT
 CPPSOURCES+= Arrangement_on_torus_base_geo.cpp
 CPPSOURCES+= Arrangement_on_torus_geo.cpp
 CPPSOURCES+= Arrangement_on_torus_renderers.cpp

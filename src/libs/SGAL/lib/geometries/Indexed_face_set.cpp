@@ -954,73 +954,57 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
   Normal_map normal_map;
 
   m_flat_normal_indices.resize(m_flat_coord_indices.size());
-  std::cout << "size: " << m_flat_normal_indices.size() << std::endl;
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array());
     SGAL_assertion(m_normal_array);
-  }
+  } else m_normal_array->resize(0);
 
   auto it = m_polyhedron.facets_begin();
   for (; it != m_polyhedron.facets_end(); ++it) {
     const Facet& facet = *it;
     Halfedge_around_facet_const_circulator start = facet.facet_begin();
     Halfedge_around_facet_const_circulator he = start;
-    size_t k = 0;
     do {
-      ++k;
-      Vertex_const_handle v = he->vertex();
-      Uint index = v->m_index;
+      Uint index = he->m_index;
 
-      // Go backwards around the vertex until a creased edge is
-      // encountered.
-      Halfedge_around_vertex_const_circulator hev =
-        he->vertex_begin();
+      // Go backwards around the vertex until a creased edge is encountered.
+      Halfedge_around_vertex_const_circulator hev = he->vertex_begin();
       Halfedge_around_vertex_const_circulator startv = hev;
       while (!hev->m_creased) {
-        if (hev-- == startv) break;
+        if (--hev == startv) break;
       }
 
       // Go forwards and collect the normals.
-      Vector3f normal_res;
-      size_t cnt = 0;
-      startv = hev;
-      if (k == 0 || k == 1) {
-        std::cout << "coord[" << index << "]: " << v->point()
-                  << std::endl;
-      }
-      do {
+      size_t cnt = 1;
+      Facet_const_handle f = hev->facet();
+      Vector3f prev_normal(f->plane().x(), f->plane().y(), f->plane().z());
+      Vector3f normal_res(prev_normal);
+      startv = hev++;
+      while ((hev != startv) && !hev->m_creased) {
         Facet_const_handle f = hev->facet();
         Vector3f normal(f->plane().x(), f->plane().y(), f->plane().z());
-        normal_res.add(normal);
-        ++cnt;
-        if (k == 0) {
-          std::cout << "normal: " << normal << std::endl;
+        if (normal != prev_normal) {
+          normal_res.add(normal);
+          ++cnt;
         }
+        prev_normal = normal;
         ++hev;
-      } while ((hev != startv) && !hev->m_creased);
+      }
       normal_res.scale(1.0f/static_cast<Float>(cnt));
-//       std::cout << "coord[" << index << "]: " << v->point()
-//                 << ", normal: " << normal_res
-//                 << ", cnt: " << cnt
-//                 << ", degree: " << v->degree()
-//                 << std::endl;
-
       Normal_map::const_iterator got = normal_map.find(normal_res);
       if (got != normal_map.end()) m_flat_normal_indices[index] = got->second;
       else {
         Uint id = m_normal_array->size();
         m_flat_normal_indices[index] = id;
-        m_normal_array->push_back(normal_res);
         normal_map[normal_res] = id;
+        normal_res.normalize();
+        m_normal_array->push_back(normal_res);
       }
 
     } while (++he != start);
   }
   normal_map.clear();
   m_dirty_normal_indices = true;
-
-  std::cout << "normal_array->size(): " << m_normal_array->size()
-            << std::endl;
 }
 
 //! \brief calculates a single normal per polygon for all polygons.
@@ -1800,11 +1784,6 @@ void Indexed_face_set::clean_polyhedron()
   m_smooth = edge_normal_calculator.m_smooth;
   m_creased = edge_normal_calculator.m_creased;
 
-  // Clean the vertices
-  if (!m_smooth && !m_creased)
-    std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
-                  Vertex_index_finder(this));
-
   // Generate the coordinates and normals.
   // clean_polyhedron_geo_set();
 
@@ -1844,7 +1823,7 @@ void Indexed_face_set::clean_local_vertex_buffers()
       m_local_indices[index++] = got->second;
       continue;
     }
-    /* The combination of coord_id, normal/color_id, and tex_coord_id
+    /* \todo The combination of coord_id, normal/color_id, and tex_coord_id
      * hasn't been used yet, introduce it.
      */
     size_t new_id = m_local_coord_buffer.size();

@@ -38,6 +38,7 @@
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
+#include "SGAL/Polyhedron_items.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -143,45 +144,11 @@ public:
     LAST
   };
 
-  // A vertex type with an index.
-  template <typename Refs, typename Traits>
-  struct My_vertex :
-    public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true,
-                                        typename Traits::Point_3>
-  {
-    typedef typename Traits::Point_3    Point;
-    Uint m_index;
-    My_vertex() {}
-    My_vertex(const Point& p) :
-      CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p)
-    {}
-  };
-
-  template <typename Refs>
-    struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-    Boolean m_creased;
-    My_halfedge() {}
-    My_halfedge(Vector3f normal) : m_normal(normal) {}
-  };
-
-  // An items type using my vertex and edge.
-  struct My_items : public CGAL::Polyhedron_items_3 {
-    template <typename Refs, typename Traits>
-    struct Vertex_wrapper {
-      typedef My_vertex<Refs, Traits> Vertex;
-    };
-
-    template <typename Refs, typename Traits>
-    struct Halfedge_wrapper {
-      typedef My_halfedge<Refs> Halfedge;
-    };
-  };
-
   typedef CGAL::Cartesian<Float>                         Kernel;
   typedef Kernel::Point_3                                Point_3;
   typedef Kernel::Vector_3                               Vector_3;
   typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Traits;
-  typedef CGAL::Polyhedron_3<Traits, My_items>           Polyhedron;
+  typedef CGAL::Polyhedron_3<Traits, Polyhedron_items>   Polyhedron;
   typedef Polyhedron::Vertex_iterator                    Vertex_iterator;
   typedef Polyhedron::Halfedge_iterator                  Halfedge_iterator;
   typedef Polyhedron::Facet_iterator                     Facet_iterator;
@@ -997,31 +964,6 @@ private:
       edge.m_creased = false;
       edge.opposite()->m_creased = false;
       m_creased = false;
-    }
-  };
-
-  /*! A functor that finds the index of the point in a given vertex. */
-  struct Vertex_index_finder {
-    const Mesh_set* m_geometry;
-
-    Vertex_index_finder(const Mesh_set* geometry) : m_geometry(geometry) {}
-
-    template <typename Vertex>
-    void operator()(Vertex& vertex)
-    {
-      Float x = vertex.point().x();
-      Float y = vertex.point().y();
-      Float z = vertex.point().z();
-      Vector3f point(x, y, z);
-      boost::shared_ptr<Coord_array_3d> coord_array =
-        boost::dynamic_pointer_cast<Coord_array_3d>(m_geometry->get_coord_array());
-      SGAL_assertion(coord_array);
-      for (size_t i = 0; i != coord_array->size(); ++i) {
-        if ((*coord_array)[i] == point) {
-          vertex.m_index = i;
-          break;
-        }
-      }
     }
   };
 

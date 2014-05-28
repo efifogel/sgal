@@ -19,14 +19,16 @@
 #ifndef SCGAL_POLYHEDRON_GEO_BUILDER_HPP
 #define SCGAL_POLYHEDRON_GEO_BUILDER_HPP
 
-#include <CGAL/Cartesian.h>
+#include <boost/type_traits.hpp>
+
+#include <CGAL/basic.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Polyhedron_3.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/Polyhedron_items.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -36,8 +38,9 @@ protected:
   const Mesh_set* m_mesh_set;
 
   /*! Insert the vertices.
+   * \param B (in) the halfedge data structure.
    */
-  virtual void insert_vertices(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
+  void insert_vertices(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     typedef typename HDS::Vertex Vertex;
     typedef typename Vertex::Point Point;
@@ -52,51 +55,115 @@ protected:
   }
 
   /*! Insert the faces.
+   * \param B (in) the halfedge data structure.
    */
-  virtual void insert_faces(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
+  void insert_faces(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     // Add the faces:
-    unsigned int num_facets = m_mesh_set->get_num_primitives();
     if (m_mesh_set->are_coord_indices_flat()) {
       if (m_mesh_set->get_primitive_type() == Geo_set::PT_TRIANGLES) {
-        Uint j = 0;
-        for (Uint i = 0; i < num_facets; ++i) {
-          B.begin_facet();
-          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
-          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
-          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
-          B.end_facet();
-          j += 3;
-        }
+        insert_triangles(B);
         return;
       }
-
       if (m_mesh_set->get_primitive_type() == Geo_set::PT_QUADS) {
-        Uint j = 0;
-        for (Uint i = 0; i < num_facets; ++i) {
-          B.begin_facet();
-          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
-          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
-          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
-          B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+3));
-          B.end_facet();
-          j += 4;
-        }
+        insert_quads(B);
         return;
       }
-      else SGAL_error();
+      SGAL_error();
+      return;
     }
-    else {
-      Uint j = 0;
-      for (Uint i = 0; i < num_facets; ++i) {
-        B.begin_facet();
-        for (; m_mesh_set->get_coord_index(j) != (Uint) -1; ++j) {
-          B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
-        }
-        ++j;
-        B.end_facet();
-      }
-    }
+    insert_polygons(B);
+  }
+
+  /*! Insert a triangle.
+   * \param B (in) the halfedge data structure.
+   * \param j (in) the index of the index of the first point. In other words,
+   *          the first point is coords[indices[j]].
+   */
+  Uint insert_triangle(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
+  {
+    B.begin_facet();
+    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
+    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
+    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
+    typename HDS::Halfedge_handle he = B.end_facet();
+    he->m_index = j;
+    he->next()->m_index = j+1;
+    he->next()->next()->m_index = j+2;
+    j += 3;
+    return j;
+  }
+
+  /*! Insert triangles.
+   * \param B (in) the halfedge data structure.
+   */
+  void insert_triangles(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
+  {
+    unsigned int num_facets = m_mesh_set->get_num_primitives();
+    Uint j = 0;
+    for (Uint i = 0; i < num_facets; ++i) j = insert_triangle(B, j);
+  }
+
+  /*! Insert a quadrilateral.
+   * \param B (in) the halfedge data structure.
+   * \param j (in) the index of the index of the first point. In other words,
+   *          the first point is coords[indices[j]].
+   */
+  Uint insert_quad(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
+  {
+    B.begin_facet();
+    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
+    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
+    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
+    B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+3));
+    typename HDS::Halfedge_handle he = B.end_facet();
+    he->m_index = j;
+    he->next()->m_index = j+1;
+    he->next()->next()->m_index = j+2;
+    he->next()->next()->next()->m_index = j+3;
+    j += 4;
+    return j;
+  }
+
+  /*! Insert quadrilaterals.
+   * \param B (in) the halfedge data structure.
+   */
+  void insert_quads(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
+  {
+    unsigned int num_facets = m_mesh_set->get_num_primitives();
+    Uint j = 0;
+    for (Uint i = 0; i < num_facets; ++i) j = insert_quad(B, j);
+  }
+
+  /*! Insert a polygon.
+   * \param B (in) the halfedge data structure.
+   * \param j (in) the index of the index of the first point. In other words,
+   *          the first point is coords[indices[j]].
+   */
+  Uint insert_polygon(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
+  {
+    Uint k = j;
+    B.begin_facet();
+    for (; m_mesh_set->get_coord_index(j) != (Uint) -1; ++j)
+      B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
+    ++j;
+    typename HDS::Halfedge_handle he = B.end_facet();
+    typename HDS::Halfedge_handle start_he = he;
+    do {
+      he->m_index = k++;
+      he = he->next();
+    } while (he != start_he);
+    return j;
+  }
+
+  /*! Insert polygons.
+   * \param B (in) the halfedge data structure.
+   */
+  void insert_polygons(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
+  {
+    unsigned int num_facets = m_mesh_set->get_num_primitives();
+    Uint j = 0;
+    for (Uint i = 0; i < num_facets; ++i) j = insert_polygon(B, j);
   }
 
 public:
