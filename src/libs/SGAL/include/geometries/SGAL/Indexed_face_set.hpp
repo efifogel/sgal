@@ -159,7 +159,7 @@ public:
 
   template <typename Refs>
     struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-    Vector3f m_normal;
+    Boolean m_creased;
     My_halfedge() {}
     My_halfedge(Vector3f normal) : m_normal(normal) {}
   };
@@ -178,16 +178,25 @@ public:
   };
 
   typedef CGAL::Cartesian<Float>                         Kernel;
-  typedef Kernel::Point_3                                Point;
-  typedef Kernel::Vector_3                               Vector;
+  typedef Kernel::Point_3                                Point_3;
+  typedef Kernel::Vector_3                               Vector_3;
   typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Traits;
   typedef CGAL::Polyhedron_3<Traits, My_items>           Polyhedron;
-  typedef Polyhedron::Facet_iterator                     Facet_iterator;
   typedef Polyhedron::Vertex_iterator                    Vertex_iterator;
-  typedef Polyhedron::Halfedge_around_facet_circulator   Halfedge_facet_circ;
+  typedef Polyhedron::Halfedge_iterator                  Halfedge_iterator;
+  typedef Polyhedron::Facet_iterator                     Facet_iterator;
+  typedef Polyhedron::Vertex_const_handle                Vertex_const_handle;
+  typedef Polyhedron::Facet_const_handle                 Facet_const_handle;
+  typedef Polyhedron::Vertex                             Vertex;
+  typedef Polyhedron::Halfedge                           Halfedge;
+  typedef Polyhedron::Facet                              Facet;
   typedef Polyhedron::HalfedgeDS                         HalfedgeDS;
   typedef Polyhedron::Halfedge_around_facet_circulator
-    Halfedge_facet_circulator;
+    Halfedge_around_facet_circulator;
+  typedef Polyhedron::Halfedge_around_facet_const_circulator
+    Halfedge_around_facet_const_circulator;
+  typedef Polyhedron::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
 
   /*! Constructor */
   Indexed_face_set(Boolean proto = false);
@@ -796,7 +805,7 @@ protected:
                                      OutputIterator info) const
   {
     boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
     SGAL_assertion(coord_array);
 
     // Compute the receiprocal of the square distance from the facet center
@@ -904,7 +913,13 @@ private:
    */
   struct Id_hash {
     std::size_t operator()(Id_key const& key) const
-    { return std::get<0>(key) + std::get<1>(key) + std::get<2>(key); }
+    {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, std::get<0>(key));
+      boost::hash_combine(seed, std::get<1>(key));
+      boost::hash_combine(seed, std::get<2>(key));
+      return seed;
+    }
   };
 
   /*! The type Id_map maps from tuples of 3 ids to ids. */
@@ -930,23 +945,94 @@ private:
   /*! The map from tuples of 3 ids to ids. */
   Id_map m_id_map;
 
-  /*! A functor that computes the normal of a given facet. */
-  struct Normal_vector {
+  /*! A functor that calculates the normal of a given facet. */
+  struct Facet_normal_calculator {
     template <typename Facet>
     typename Facet::Plane_3 operator()(Facet& f) {
       typename Facet::Halfedge_handle h = f.halfedge();
       // Facet::Plane_3 is the normal vector type. We assume the
       // CGAL Kernel here and use its global functions.
-      Vector normal = CGAL::cross_product(h->next()->vertex()->point() -
-                                          h->vertex()->point(),
-                                          h->next()->next()->vertex()->point() -
-                                          h->next()->vertex()->point());
+      Vector_3 normal =
+        CGAL::cross_product(h->next()->vertex()->point() -
+                            h->vertex()->point(),
+                            h->next()->next()->vertex()->point() -
+                            h->next()->vertex()->point());
       return normal / CGAL::sqrt(normal.squared_length());
+    }
+  };
+
+  /*! A functor that calculates the normal of a given (half)edge. */
+  struct Edge_normal_calculator {
+    /*! The crease angle. */
+    Float m_crease_angle;
+
+    /*! Indicates whether all edges are creased. */
+    Boolean m_creased;
+
+    /*! Indicates whether all edges are smooth. */
+    Boolean m_smooth;
+
+    /*! Constructor. */
+    Edge_normal_calculator(Float crease_angle) :
+      m_crease_angle(crease_angle),
+      m_creased(true),
+      m_smooth(true)
+    {}
+
+    /*! Calculate the normal of a given (half)edge.
+     * \param edge (in) the given (half)edge.
+     */
+    template <typename Halfedge>
+    void operator()(Halfedge& edge)
+    {
+      Vector_3 normal1 = edge.facet()->plane();
+      Vector_3 normal2 = edge.opposite()->facet()->plane();
+      Float angle = arccosf(normal1 * normal2);  // inner product
+      if (angle > m_crease_angle) {
+        edge.m_creased = true;
+        edge.opposite()->m_creased = true;
+        m_smooth = false;
+        return;
+      }
+      edge.m_creased = false;
+      edge.opposite()->m_creased = false;
+      m_creased = false;
+    }
+  };
+
+  /*! A functor that finds the index of the point in a given vertex. */
+  struct Vertex_index_finder {
+    const Mesh_set* m_geometry;
+
+    Vertex_index_finder(const Mesh_set* geometry) : m_geometry(geometry) {}
+
+    template <typename Vertex>
+    void operator()(Vertex& vertex)
+    {
+      Float x = vertex.point().x();
+      Float y = vertex.point().y();
+      Float z = vertex.point().z();
+      Vector3f point(x, y, z);
+      boost::shared_ptr<Coord_array_3d> coord_array =
+        boost::dynamic_pointer_cast<Coord_array_3d>(m_geometry->get_coord_array());
+      SGAL_assertion(coord_array);
+      for (size_t i = 0; i != coord_array->size(); ++i) {
+        if ((*coord_array)[i] == point) {
+          vertex.m_index = i;
+          break;
+        }
+      }
     }
   };
 
   /*! The builder. */
   Polyhedron_geo_builder<HalfedgeDS> m_surface;
+
+  /*! Indicates whether all edges are creased. */
+  Boolean m_creased;
+
+  /*! Indicates whether all edges are smooth. */
+  Boolean m_smooth;
 
   /*! The tag that identifies this container type. */
   static const std::string s_tag;

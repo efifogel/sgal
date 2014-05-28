@@ -194,7 +194,7 @@ inline std::vector<Vector3f>::iterator Coord_array_3d::end()
 inline const std::vector<Vector3f>::const_iterator Coord_array_3d::end() const
 { return m_array.end(); }
 
-/*! \brief pushes a new element at the back */
+//! \brief pushes a new element at the back.
 inline void Coord_array_3d::push_back(const Vector3f& val)
 { m_array.push_back(val); }
 

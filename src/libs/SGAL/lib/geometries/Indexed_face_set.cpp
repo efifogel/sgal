@@ -94,7 +94,10 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
   m_dirty_tex_coord_buffer(true),
   m_dirty_local_vertex_buffers(true)
 {
+  if (proto) return;
+
   m_primitive_type = PT_POLYGONS;
+  m_surface.set_mesh_set(this);
 
   if (m_draws_initialized) return;
   m_draws_initialized = true;
@@ -705,9 +708,15 @@ void Indexed_face_set::set_color_per_vertex(Boolean color_per_vertex)
 //! \brief claculates the normals in case they are invalidated.
 void Indexed_face_set::clean_normals()
 {
-  if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
-  else if (m_crease_angle > 0) calculate_multiple_normals_per_vertex();
-  else calculate_normal_per_polygon();
+  if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
+    if (m_dirty_polyhedron) clean_polyhedron();
+    if (m_smooth) calculate_single_normal_per_vertex();
+    else if (m_creased) calculate_normal_per_polygon();
+    else calculate_multiple_normals_per_vertex();
+  }
+  else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
+  else if (m_crease_angle == 0) calculate_normal_per_polygon();
+  else SGAL_assertion();
   m_dirty_normals = false;
   m_normals_cleaned = true;
   m_dirty_normal_buffer = true;
@@ -717,7 +726,7 @@ void Indexed_face_set::clean_normals()
 void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& n) const
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
 
   Vector3f& v0 = (*coord_array)[m_flat_coord_indices[j]];
@@ -732,7 +741,7 @@ void Indexed_face_set::compute_triangle_normal(Uint j, Vector3f& n) const
 void Indexed_face_set::compute_triangle_center(Uint j, Vector3f& center) const
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
   center.add((*coord_array)[m_flat_coord_indices[j+0]]);
   center.add((*coord_array)[m_flat_coord_indices[j+1]]);
@@ -766,7 +775,7 @@ compute_triangle_vertex_info(Uint j, Uint facet_index,
 void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& n) const
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
   Vector3f& v0 = (*coord_array)[m_flat_coord_indices[j]];
   Vector3f& v1 = (*coord_array)[m_flat_coord_indices[j+1]];
@@ -786,7 +795,7 @@ void Indexed_face_set::compute_quad_normal(Uint j, Vector3f& n) const
 void Indexed_face_set::compute_quad_center(Uint j, Vector3f& center) const
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
   center.add((*coord_array)[m_flat_coord_indices[j+0]]);
   center.add((*coord_array)[m_flat_coord_indices[j+1]]);
@@ -823,7 +832,7 @@ Indexed_face_set::compute_quad_vertex_info(Uint j, Uint facet_index,
 void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& n) const
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
   Vector3f& v0 = (*coord_array)[m_coord_indices[j]];
   Vector3f& v1 = (*coord_array)[m_coord_indices[j+1]];
@@ -841,7 +850,7 @@ void Indexed_face_set::compute_polygon_normal(Uint j, Vector3f& n) const
 Uint Indexed_face_set::compute_polygon_center(Uint j, Vector3f& center) const
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
   Uint k;
   for (k = 0; m_coord_indices[j+k] != (Uint) -1; ++k)
@@ -930,11 +939,92 @@ Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
 
 //! \brief calculates multiple normals per vertex for all vertices.
 void Indexed_face_set::calculate_multiple_normals_per_vertex()
-{ calculate_single_normal_per_vertex(); }
+{
+  struct Normal_hash {
+    std::size_t operator()(Vector3f const& key) const
+    {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, key[0]);
+      boost::hash_combine(seed, key[1]);
+      boost::hash_combine(seed, key[2]);
+      return seed;
+    }
+  };
+  typedef boost::unordered_map<Vector3f, Uint, Normal_hash> Normal_map;
+  Normal_map normal_map;
+
+  m_flat_normal_indices.resize(m_flat_coord_indices.size());
+  std::cout << "size: " << m_flat_normal_indices.size() << std::endl;
+  if (!m_normal_array) {
+    m_normal_array.reset(new Normal_array());
+    SGAL_assertion(m_normal_array);
+  }
+
+  auto it = m_polyhedron.facets_begin();
+  for (; it != m_polyhedron.facets_end(); ++it) {
+    const Facet& facet = *it;
+    Halfedge_around_facet_const_circulator start = facet.facet_begin();
+    Halfedge_around_facet_const_circulator he = start;
+    size_t k = 0;
+    do {
+      ++k;
+      Vertex_const_handle v = he->vertex();
+      Uint index = v->m_index;
+
+      // Go backwards around the vertex until a creased edge is
+      // encountered.
+      Halfedge_around_vertex_const_circulator hev =
+        he->vertex_begin();
+      Halfedge_around_vertex_const_circulator startv = hev;
+      while (!hev->m_creased) {
+        if (hev-- == startv) break;
+      }
+
+      // Go forwards and collect the normals.
+      Vector3f normal_res;
+      size_t cnt = 0;
+      startv = hev;
+      if (k == 0 || k == 1) {
+        std::cout << "coord[" << index << "]: " << v->point()
+                  << std::endl;
+      }
+      do {
+        Facet_const_handle f = hev->facet();
+        Vector3f normal(f->plane().x(), f->plane().y(), f->plane().z());
+        normal_res.add(normal);
+        ++cnt;
+        if (k == 0) {
+          std::cout << "normal: " << normal << std::endl;
+        }
+        ++hev;
+      } while ((hev != startv) && !hev->m_creased);
+      normal_res.scale(1.0f/static_cast<Float>(cnt));
+//       std::cout << "coord[" << index << "]: " << v->point()
+//                 << ", normal: " << normal_res
+//                 << ", cnt: " << cnt
+//                 << ", degree: " << v->degree()
+//                 << std::endl;
+
+      Normal_map::const_iterator got = normal_map.find(normal_res);
+      if (got != normal_map.end()) m_flat_normal_indices[index] = got->second;
+      else {
+        Uint id = m_normal_array->size();
+        m_flat_normal_indices[index] = id;
+        m_normal_array->push_back(normal_res);
+        normal_map[normal_res] = id;
+      }
+
+    } while (++he != start);
+  }
+  normal_map.clear();
+  m_dirty_normal_indices = true;
+
+  std::cout << "normal_array->size(): " << m_normal_array->size()
+            << std::endl;
+}
 
 //! \brief calculates a single normal per polygon for all polygons.
-void Indexed_face_set::
-calculate_normal_per_polygon(Normal_array& normals)
+void Indexed_face_set::calculate_normal_per_polygon(Normal_array& normals)
 {
   SGAL_assertion(normals.size() == m_num_primitives);
   Uint j = 0;
@@ -964,6 +1054,7 @@ calculate_normal_per_polygon(Normal_array& normals)
      default: SGAL_assertion(0); break;
     }
   }
+  clear_flat_normal_indices();
 }
 
 //! \brief calculates a single normal per polygon for all polygons.
@@ -1024,14 +1115,10 @@ void Indexed_face_set::draw(Draw_action* action)
   if (is_dirty_flat_color_indices()) clean_flat_color_indices();
   if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
 
-  // if (m_crease_angle > 0) {
-  //   if (m_dirty_polyhedron) clean_polyhedron();
-  // }
-  if (is_empty()) return;
-
-  // Clean the normals:
+  // We clean the polyhedron si that we can use it to clean the normals
   if ((resolve_fragment_source() == FS_NORMAL) && m_dirty_normals)
     clean_normals();
+  if (is_empty()) return;
 
   // Clean the tex coordinates:
   Context* context = action->get_context();
@@ -1173,7 +1260,7 @@ void Indexed_face_set::draw_dispatch(Draw_action* /* action */)
 void Indexed_face_set::isect_direct()
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
   Uint i, j;
   switch (m_primitive_type) {
@@ -1510,6 +1597,8 @@ calculate_single_normal_per_vertex(Shared_normal_array normals)
 
   for (j = 0; j < vertices_info.size(); j++) vertices_info[j].clear();
   vertices_info.clear();
+
+  clear_flat_normal_indices();
 }
 
 //! \brief cleans the data structure of the vertex coordinate buffer object.
@@ -1690,7 +1779,7 @@ inline Boolean Indexed_face_set::are_generated_tex_coord()
 //! \brief cleans the data structure.
 void Indexed_face_set::clean_polyhedron()
 {
-  m_polyhedron.delegate(m_surface);
+  m_polyhedron.delegate(m_surface);           // create the polyhedral surface
 #if 0
   if (!m_polyhedron.normalized_border_is_valid()) {
     m_polyhedron.normalize_border();
@@ -1701,13 +1790,20 @@ void Indexed_face_set::clean_polyhedron()
 
   // Clean the facets
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-                 m_polyhedron.planes_begin(), Normal_vector());
+                 m_polyhedron.planes_begin(), Facet_normal_calculator());
 
   // Clean the halfedges
-  // clean_polyhedron_halfedges();
+  Edge_normal_calculator edge_normal_calculator(get_crease_angle());
+  edge_normal_calculator =
+    std::for_each(m_polyhedron.edges_begin(), m_polyhedron.edges_end(),
+                  edge_normal_calculator);
+  m_smooth = edge_normal_calculator.m_smooth;
+  m_creased = edge_normal_calculator.m_creased;
 
   // Clean the vertices
-  // clean_polyhedron_vertices();
+  if (!m_smooth && !m_creased)
+    std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
+                  Vertex_index_finder(this));
 
   // Generate the coordinates and normals.
   // clean_polyhedron_geo_set();
@@ -1719,7 +1815,7 @@ void Indexed_face_set::clean_polyhedron()
 void Indexed_face_set::clean_local_vertex_buffers()
 {
   boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
 
   //! \start with coordinates and normals

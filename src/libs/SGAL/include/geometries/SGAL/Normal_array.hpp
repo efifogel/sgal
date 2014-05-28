@@ -131,6 +131,9 @@ public:
 
   const std::vector<Vector3f>::const_iterator end() const;
 
+  /*! Push a new element at the back */
+  void push_back(const Vector3f& val);
+
   /*! Array indexing operator. */
   Vector3f& operator[](Uint n);
 
@@ -204,6 +207,10 @@ inline std::vector<Vector3f>::iterator Normal_array::end()
 
 inline const std::vector<Vector3f>::const_iterator Normal_array::end() const
 { return m_array.end(); }
+
+//! \brief pushes a new element at the back.
+inline void Normal_array::push_back(const Vector3f& val)
+{ m_array.push_back(val); }
 
 //! \brief array indexing operator.
 inline Vector3f& Normal_array::operator[](Uint n) { return m_array[n]; }
