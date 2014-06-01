@@ -1,0 +1,171 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {}
+DEF SIM Simulation {}
+
+ColorBackground { color 0.5 0.5 0.5 1 }
+
+DEF SWITCH_KEY SingleKeySensor {
+  boolean FALSE
+  key "H"
+  numberOfStates 2
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
+
+DEF ROBOT_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+#  translation 3 0 0
+}
+
+DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
+DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
+
+DEF ROBOT_TRANSFORMER TransformerWithExactCoordinates {
+#  translation 3 0 0
+  coord DEF ROBOT_COORD ExactCoordinate {
+    ratPoint [4000/1000 0/1000 0/1000,
+	      3000/1000 0/1000 1000/1000,
+	      2000/1000 0/1000 0/1000,
+	      3000/1000 0/1000 -1000/1000,
+	      3000/1000 -100/1000 0/1000
+	     ]
+  }
+}
+
+DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
+DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
+
+DEF OBSTACLE_NAVIGATION NavigationInfo {
+  type [ "TRANSFORM" ]
+#  translation -2.2 0 0
+#  rotation  0 0 1 1.5707963266
+}
+
+DEF OBSTACLE_TRANSFORMER TransformerWithExactCoordinates {
+#  translation -3 0 0
+#  rotation  0 0 1 1.5707963266
+  coord DEF OBSTACLE_COORD ExactCoordinate {
+    ratPoint [-3000/1000 1000/1000 0/1000,
+	      -3000/1000 0/1000 1000/1000,
+	      -3000/1000 -1000/1000 0/1000,
+	      -3000/1000 0/1000 -1000/1000,
+	      -2900/1000 0/1000 0/1000, 0
+	     ]
+  }
+}
+
+# No point using ExactCoordinateMinkowski, because we route the output
+# coordinates of the transformers as input to this node. The output
+# coordinates of the transformers are inexact; an exact transformer is
+# not implemented yet (requires exact rotation).
+DEF COORD_ADDER CoordinateMinkowski {
+  coord1 USE ROBOT_COORD
+  coord2 USE OBSTACLE_COORD
+}
+
+Transform {
+  children [
+    DEF TRANSFORM_ROBOT Transform {
+      children [
+	DEF SELECT_ROBOT TouchSensor { enabled TRUE }
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.5 0.2 0.1 }
+	  }
+	  geometry DEF ROBOT CubicalGaussianMap {
+	    dualLineColor 0.5 0.2 0.1
+	    drawDual FALSE
+	    coord USE ROBOT_COORD
+	    coordIndex [0,1,4,-1,
+			1,2,4,-1,
+			2,3,4,-1,
+			3,0,4,-1,
+			3,2,1,0,-1
+		       ]
+	  }
+	}
+       ]
+    }
+
+    DEF TRANSFORM_OBSTACLE Transform {
+#      rotation  0 0 1 1.5707963266
+      children [
+	DEF SELECT_OBSTACLE TouchSensor { enabled TRUE }
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.1 0.2 0.5 }
+	  }
+	  geometry DEF OBSTACLE CubicalGaussianMap {
+	    dualLineColor 0.1 0.2 0.5
+	    drawDual FALSE
+	    coord USE OBSTACLE_COORD
+	    coordIndex [0,1,4,-1,
+			1,2,4,-1,
+			2,3,4,-1,
+			3,0,4,-1,
+			3,2,1,0,-1
+		       ]
+	  }
+	}
+       ]
+    }
+    DEF MINK_SWITCH Switch {
+      whichChoice 0
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.4 0.4 0.4 }
+	  }
+	  geometry DEF MINK CubicalGaussianMap {
+	    drawDual FALSE
+	    geometries [
+              USE ROBOT
+              USE OBSTACLE
+	     ]
+	  }
+	}
+       ]
+    }
+    DEF MINK_CH_SWITCH Switch {
+      whichChoice -1
+      children [
+	Shape {
+	  appearance Appearance {
+	    material Material { diffuseColor 0.4 0.4 0.4 }
+	  }
+	  geometry DEF MINK_CH ExactPolyhedron {
+	    convexHull TRUE
+	  }
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE DRAW_DUAL_ROBOT_KEY.state TO ROBOT.drawDual
+ROUTE ROBOT_NAVIGATION.rotation TO ROBOT_TRANSFORMER.rotation
+ROUTE ROBOT_NAVIGATION.translation TO ROBOT_TRANSFORMER.translation
+ROUTE ROBOT_TRANSFORMER.coord_changed TO ROBOT.coord
+ROUTE SELECT_ROBOT.isOver TO ROBOT_NAVIGATION.set_bind
+ROUTE FLATTEN_ROBOT_KEY.press TO ROBOT_NAVIGATION.set_bind
+
+ROUTE DRAW_DUAL_OBSTACLE_KEY.state TO OBSTACLE.drawDual
+ROUTE OBSTACLE_NAVIGATION.rotation TO OBSTACLE_TRANSFORMER.rotation
+ROUTE OBSTACLE_NAVIGATION.translation TO OBSTACLE_TRANSFORMER.translation
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO OBSTACLE.coord
+ROUTE SELECT_OBSTACLE.isOver TO OBSTACLE_NAVIGATION.set_bind
+ROUTE FLATTEN_OBSTACLE_KEY.press TO OBSTACLE_NAVIGATION.set_bind
+
+ROUTE DRAW_DUAL_MINK_KEY.state TO MINK.drawDual
+
+ROUTE SIM.start TO ROBOT_TRANSFORMER.execute
+ROUTE SIM.start TO OBSTACLE_TRANSFORMER.execute
+
+ROUTE ROBOT_TRANSFORMER.coord_changed TO COORD_ADDER.coord1
+ROUTE OBSTACLE_TRANSFORMER.coord_changed TO COORD_ADDER.coord2
+ROUTE COORD_ADDER.coord_changed TO MINK_CH.coord
+
+ROUTE SIM.start TO COORD_ADDER.execute
+
+ROUTE SWITCH_KEY.intState TO MINK_SWITCH.whichChoice

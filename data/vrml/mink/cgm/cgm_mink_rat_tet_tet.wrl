@@ -1,0 +1,100 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {}
+DEF SIM Simulation {}
+
+ColorBackground { color 0.5 0.5 0.5 1 }
+
+DEF SWITCH_KEY SingleKeySensor {
+  boolean FALSE
+  key "H"
+  numberOfStates 2
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF DRAW_DUAL_MINK_KEY SingleKeySensor { key "c" }
+DEF DRAW_DUAL_ROBOT_KEY SingleKeySensor { key "d" }
+DEF DRAW_DUAL_OBSTACLE_KEY SingleKeySensor { key "e" }
+
+Transform {
+  children [
+    DEF TRANSFORM_ROBOT Transform {
+      children [
+        DEF SELECT_ROBOT TouchSensor { enabled TRUE }
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.5 0.2 0.1 }
+          }
+          geometry DEF ROBOT CubicalGaussianMap {
+            drawDual FALSE
+            coord DEF COORD ExactCoordinate {
+              ratPoint [-1/1 -73/100 -73/100,
+                         0/1 -73/100   1/1,
+                         1/1 -73/100 -73/100,
+                         0/1,  1/1,    0/1
+                       ]
+            }
+            coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
+          }
+        }
+       ]
+    }
+
+    DEF TRANSFORM_OBSTACLE Transform {
+      children [
+        DEF SELECT_OBSTACLE TouchSensor { enabled TRUE }
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.1 0.2 0.5 }
+          }
+          geometry DEF OBSTACLE CubicalGaussianMap {
+            drawDual FALSE
+            coord USE COORD
+            coordIndex [2 1 0 -1, 0 1 3 -1, 1 2 3 -1 2 0 3 -1]
+          }
+        }
+       ]
+    }
+
+    DEF MINK_SWITCH Switch {
+      whichChoice 0
+      children [
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.4 0.4 0.4 }
+          }
+          geometry DEF MINK CubicalGaussianMap {
+            drawDual FALSE
+            geometries [
+              USE ROBOT
+              USE OBSTACLE
+             ]
+          }
+        }
+        Shape {
+          appearance Appearance {
+            material Material { diffuseColor 0.4 0.4 0.4 }
+          }
+          geometry DEF MINK_CH ExactPolyhedron {
+            convexHull TRUE
+          }
+        }
+       ]
+    }
+   ]
+}
+
+# No point using ExactCoordinateMinkowski, because we route the output
+# coordinates of the transformers as input to this node. The output
+# coordinates of the transformers are inexact; an exact transformer is
+# not implemented yet (requires exact rotation).
+DEF COORD_ADDER CoordinateMinkowski {
+  coord1 USE COORD
+  coord2 USE COORD
+}
+
+ROUTE DRAW_DUAL_ROBOT_KEY.state TO ROBOT.drawDual
+ROUTE DRAW_DUAL_OBSTACLE_KEY.state TO OBSTACLE.drawDual
+ROUTE DRAW_DUAL_MINK_KEY.state TO MINK.drawDual
+ROUTE SIM.start TO COORD_ADDER.execute
+ROUTE COORD_ADDER.coord_changed TO MINK_CH.coord
+ROUTE SWITCH_KEY.intState TO MINK_SWITCH.whichChoice

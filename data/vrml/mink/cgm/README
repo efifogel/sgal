@@ -1,0 +1,41 @@
+cgm_mink_tet_cube.wrl           - Approximation of the Minkowski sum of a
+				  tetrahedron and a cube.
+
+cgm_mink_icos_icos.wrl          - Approximation of the Minkowski sum of two
+				  relatively translated identical icosahedra.
+				      
+cgm_mink_geo4_rot_geo4.wrl      - Approximation of the Minkowski sum of two
+                                  relatively slightly rotated geodesic
+				  spheres level 4.
+
+cgm_mink_dioct_pyr_ort_dioct_pyr.wrl - Approximation of the Minkowski sum of two
+                                  orthogonal dioctagonal pyramids.
+				      
+cgm_mink_sqs_sqr_pyr_ort_sqs_sqr_pyr.wrl - Approximation of the Minkowski sum of
+                                  two orthogonal squashed square pyramids.
+
+cgm_mink_pent_hex_trun_icosido.wrl - Approximation of the Minkowski sum of
+                                  a pentagonal Hexecontahedron and a truncated
+				  icosidodecahedron.
+
+				      
+cgm_mink_rat_tet_tet.wrl        - The Minkowski sum of two identical
+                                  tetrahedra
+				      
+cgm_mink_rat_tet_cube.wrl       - The Minkowski sum of a terahedron and a cube
+				      
+cgm_mink_rat_icos_icos.wrl      - The Minkowski sum of two relatively translated
+                                  identical icosahedra
+
+cgm_mink_rat_dioct_pyr_ort_dioct_pyr.wrl - The Minkowski sum of two two
+                                  orthogonal dioctagonal pyramids.
+				  
+cgm_mink_rat_sqs_sqr_pyr_ort_sqs_sqr_pyr.wrl - The Minkowski sum of two
+                                   orthogonal squashed square pyramids.
+
+cgm_mink_rat_geo4_rot_geo4.wrl   - The Minkowski sum of a two relatively
+                                   slightly rotated geodesic spheres level 4.
+
+cgm_mink_rat_pent_hex_trun_icosido.wrl - The Minkowski sum of a pentagonal
+                                  hexecontahedron and a truncated
+				  icosidodecahedron.
