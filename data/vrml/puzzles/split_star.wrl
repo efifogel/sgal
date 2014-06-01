@@ -1,0 +1,632 @@
+#VRML V2.0 utf8
+NavigationInfo { type "EXAMINE" }
+Configuration {
+  accumulation Accumulation { enabled TRUE }
+  stencilBits 1
+}
+ColorBackground {
+  color 1 1 1 0
+  clearStencil TRUE
+}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 2.95
+#   position 0 0 10
+# }
+Viewpoint {
+  type "ORTHOGONAL"
+  fieldOfView 3.07
+#  fieldOfView 3.096
+  position 0 0 10
+}
+
+DEF DRAW_AOS_KEY SingleKeySensor { key "c" }
+DEF DRAW_AOS_HALOED_KEY SingleKeySensor { key "h" state TRUE }
+DEF DRAW_ALT_KEY SingleKeySensor { key "m" }
+DEF INC_ALT_KEY SingleKeySensor { key "i" }
+DEF DRAW_AOS_MINK_SUM_KEY SingleKeySensor { key "a" }
+DEF INC_MINK_SUM_KEY SingleKeySensor { key "d" }
+DEF SOLVE_KEY SingleKeySensor { key "s" }
+
+DEF AOS_PIECE_RED_KEY SingleKeySensor { key "r" }
+DEF AOS_PIECE_GREEN_KEY SingleKeySensor { key "g" }
+DEF AOS_PIECE_BLUE_KEY SingleKeySensor { key "b" }
+DEF AOS_PIECE_PURPLE_KEY SingleKeySensor { key "p" }
+DEF AOS_PIECE_YELLOW_KEY SingleKeySensor { key "y" }
+DEF AOS_PIECE_TURQUOISE_KEY SingleKeySensor { key "t" }
+
+DEF AOS_PIECE_0_KEY SingleKeySensor { key "u" }
+DEF AOS_PIECE_1_KEY SingleKeySensor { key "v" }
+DEF AOS_PIECE_2_KEY SingleKeySensor { key "w" }
+
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SNAP_R_KEY SingleKeySensor { key "R" }
+DEF SNAP_G_KEY SingleKeySensor { key "G" }
+DEF SNAP_B_KEY SingleKeySensor { key "B" }
+DEF SNAP_P_KEY SingleKeySensor { key "P" }
+DEF SNAP_Y_KEY SingleKeySensor { key "Y" }
+DEF SNAP_T_KEY SingleKeySensor { key "T" }
+
+DEF INC_SOLUTION_ID_KEY SingleKeySensor { key "I" }
+
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "split_star"
+}
+
+# Singles:
+DEF SNAP_R Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+#  fileName "red"
+  fileName "reflected-red"
+}
+
+DEF SNAP_G Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+#  fileName "green"
+  fileName "reflected-green"
+}
+
+DEF SNAP_B Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+#  fileName "blue"
+  fileName "reflected-blue"
+}
+
+DEF SNAP_P Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+#  fileName "purple"
+  fileName "reflected-purple"
+}
+
+DEF SNAP_Y Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+#  fileName "yellow"
+  fileName "reflected-yellow"
+}
+
+DEF SNAP_T Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+#  fileName "turquoise"
+  fileName "reflected-turquoise"
+}
+
+# Pairs:
+DEF SNAP_BP Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "blue-purple"
+}
+
+DEF SNAP_TY Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "turquoise-yellow"
+}
+
+DEF SNAP_RG Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "red-green"
+}
+
+Transform {
+  bboxCenter 0 0 0
+  bboxSize 1.5 1.5 1.5
+  rotation 1 0 0 .2618
+#  rotation 1 1 0 -.9599 # for david-star view
+  children [
+    Transform {
+      bboxCenter 0 0 0
+      bboxSize 1.5 1.5 1.5
+      rotation 0 -1 0 1.0472
+      children [
+	Transform {
+	  bboxCenter 0 0 0
+	  bboxSize 1.5 1.5 1.5
+	  rotation -1 0 0 1.5707
+	  children [
+	    # The axes
+	    Switch {
+	      whichChoice 0
+	      children [
+		Transform {
+#		  scale 0.7 0.7 0.7
+		  scale 0.3 0.3 0.3
+		  children [
+		    Transform {
+		      translation 2.5 0 0
+		      rotation 1 0 0 1.5708
+		      children [
+			Transform {
+			  translation 0 -0.3 0
+			  children [
+			    Shape {
+			      appearance DEF TEXT_APP Appearance {
+				material Material { diffuseColor 0 0 0 }
+			      }
+			      geometry Text {
+				string "X"
+				fontStyle FontStyle { size 0.5 }
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		    Transform {
+		      translation 0 2.5 0
+		      rotation 1 0 0 1.5708
+		      children [
+			Transform {
+			  translation -0.2 0 0
+			  children [
+			    Shape {
+			      appearance USE TEXT_APP
+			      geometry Text {
+				string "Y"
+				fontStyle FontStyle { size 0.5 }
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		    Transform {
+		      translation 0 0 2.5
+		      rotation 1 0 0 1.5708
+		      children [
+			Transform {
+			  translation -0.2 0 0
+			  children [
+			    Shape {
+			      appearance USE TEXT_APP
+			      geometry Text {
+				string "Z"
+				fontStyle FontStyle { size 0.5 }
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		    Shape {
+		      appearance DEF CS_APP Appearance {
+			material Material { diffuseColor 0.5 0.5 0.5 }
+		      }
+		      geometry Sphere { radius 0.1 }
+		    }
+		    DEF CS_AXIS Transform {
+		      translation 0 1 0
+		      children [
+			Shape {
+			  appearance USE CS_APP
+			  geometry DEF CS_CYLINDER Cylinder {
+			    radius 0.1
+			    set_is_bottom_visible FALSE
+			    set_is_top_visible FALSE
+			  }
+			}
+			Transform {
+			  translation 0 1.2 0
+			  children [
+			    Shape {
+			      appearance USE CS_APP
+			      geometry DEF CS_CONE Cone {
+				bottomRadius 0.2
+				height 0.4
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		    Transform {
+		      rotation 0 0 1 -1.57
+		      children [ USE CS_AXIS ]
+		    }
+		    Transform {
+		      rotation 1 0 0 1.57
+		      children [ USE CS_AXIS ]
+		    }
+		   ]
+		}
+	       ]
+	    }
+
+	    DEF PUZZLE Assembly {
+	      children [
+		# Piece red:
+		DEF SWITCH_RED Switch {
+		  whichChoice 0
+		  children [
+		    DEF TRANSFORM_RED Transform {
+		      children [
+			DEF PIECE_RED AssemblyPart {
+			  children [
+			    Shape {
+			      appearance DEF APP_RED Appearance {
+				material Material {
+				  diffuseColor 1 0 0
+				  # transparency 0.5 0.5 0.5
+				}
+			      }
+			      geometry ExactPolyhedron {
+				coord DEF COORD_RED ExactCoordinate {
+				  ratPoint[-2 0 0, -2 0 2,
+					   -1 -1 1, -1 1 1,
+					   0 0 0, 0 0 2
+					   1 -1 1, 1 1 1,
+					   2 0 0, 2 0 2
+					  ]
+				}
+				coordIndex[2 1 0 -1, 0 1 3 -1,
+					   0 3 2 -1, 6 8 9 -1,
+					   7 9 8 -1, 6 7 8 -1,
+					   2 4 6 -1, 2 3 4 -1,
+					   7 6 4 -1, 7 4 3 -1,
+					   1 2 5 -1, 5 2 6 -1,
+					   5 6 9 -1, 9 7 5 -1,
+					   5 7 3 -1, 5 3 1 -1
+					  ]
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		   ]
+		}
+		# Piece green::
+		DEF SWITCH_GREEN Switch {
+		  whichChoice 0
+		  children [
+		    DEF TRANSFORM_GREEN Transform {
+		      children [
+			DEF PIECE_GREEN AssemblyPart {
+			  children [
+			    Shape {
+			      appearance DEF APP_GREEN Appearance {
+				material Material {
+				  diffuseColor 0 1 0
+				  # transparency 0.5 0.5 0.5
+				}
+			      }
+			      geometry ExactPolyhedron {
+				coord DEF COORD_GREEN ExactCoordinate {
+				  ratPoint[-2 0 0, -2 0 -2,
+					   -1 -1 -1, -1 1 -1,
+					   0 0 0, 0 0 -2
+					   1 -1 -1, 1 1 -1,
+					   2 0 0, 2 0 -2,
+					  ]
+				}
+				coordIndex[2 0 1 -1, 0 3 1 -1,
+					   0 2 3 -1, 6 9 8 -1,
+					   7 8 9 -1, 6 8 7 -1,
+					   2 6 4 -1, 2 4 3 -1,
+					   7 4 6 -1, 7 3 4 -1,
+					   1 5 2 -1, 5 6 2 -1,
+					   5 9 6 -1, 9 5 7 -1,
+					   5 3 7 -1, 5 1 3 -1
+				      ]
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		   ]
+		}
+
+		# Piece blue:
+		DEF SWITCH_BLUE Switch {
+		  whichChoice 0
+		  children [
+		    DEF TRANSFORM_BLUE Transform {
+		      children [
+			DEF PIECE_BLUE AssemblyPart {
+			  children [
+			    Shape {
+			      appearance DEF APP_BLUE Appearance {
+				material Material {
+				  diffuseColor 0 0 1
+				  # transparency 0.5 0.5 0.5
+				}
+			      }
+			      geometry ExactPolyhedron {
+				coord DEF COORD_BLUE ExactCoordinate {
+				  ratPoint[0 -2 0, 2 -2 0,
+					   1 -1 -1, 1 -1 1,
+					   0 0 0, 2 0 0
+					   1 1 -1, 1 1 1,
+					   0 2 0, 2 2 0,
+					  ]
+				}
+				coordIndex[2 1 0 -1, 0 1 3 -1,
+					   0 3 2 -1, 6 8 9 -1,
+					   7 9 8 -1, 6 7 8 -1,
+					   2 4 6 -1, 2 3 4 -1,
+					   7 6 4 -1, 7 4 3 -1,
+					   1 2 5 -1, 5 2 6 -1,
+					   5 6 9 -1, 9 7 5 -1,
+					   5 7 3 -1, 5 3 1 -1
+					  ]
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		   ]
+		}
+		# Piece purple:
+		DEF SWITCH_PURPLE Switch {
+		  whichChoice 0
+		  children [
+		    DEF TRANSFORM_PURPLE Transform {
+		      children [
+			DEF PIECE_PURPLE AssemblyPart {
+			  children [
+			    Shape {
+			      appearance DEF APP_PURPLE Appearance {
+				material Material {
+				  diffuseColor 1 0 1
+				  # transparency 0.5 0.5 0.5
+				}
+			      }
+			      geometry ExactPolyhedron {
+				coord DEF COORD_PURPLE ExactCoordinate {
+				  ratPoint[0 -2 0, -2 -2 0,
+					   -1 -1 -1, -1 -1 1,
+					   0 0 0, -2 0 0
+					   -1 1 -1, -1 1 1,
+					   0 2 0, -2 2 0,
+					  ]
+				}
+				coordIndex[2 0 1 -1, 0 3 1 -1,
+					   0 2 3 -1, 6 9 8 -1,
+					   7 8 9 -1, 6 8 7 -1,
+					   2 6 4 -1, 2 4 3 -1,
+					   7 4 6 -1, 7 3 4 -1,
+					   1 5 2 -1, 5 6 2 -1,
+					   5 9 6 -1, 9 5 7 -1,
+					   5 3 7 -1, 5 1 3 -1
+					  ]
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		   ]
+		}
+
+		# Piece yellow:
+		DEF SWITCH_YELLOW Switch {
+		  whichChoice 0
+		  children [
+		    DEF TRANSFORM_YELLOW Transform {
+		      children [
+			DEF PIECE_YELLOW AssemblyPart {
+			  children [
+			    Shape {
+			      appearance DEF APP_YELLOW Appearance {
+				material Material {
+				  diffuseColor 1 1 0
+				  # transparency 0.5 0.5 0.5
+				}
+			      }
+			      geometry ExactPolyhedron {
+				coord DEF COORD_YELLOW ExactCoordinate {
+				  ratPoint[0 0 -2, 0 2 -2,
+					   -1 1 -1, 1 1 -1,
+					   0 0 0, 0 2 0
+					   -1 1 1, 1 1 1,
+					   0 0 2, 0 2 2,
+					  ]
+				}
+				coordIndex[2 1 0 -1, 0 1 3 -1,
+					   0 3 2 -1, 6 8 9 -1,
+					   7 9 8 -1, 6 7 8 -1,
+					   2 4 6 -1, 2 3 4 -1,
+					   7 6 4 -1, 7 4 3 -1,
+					   1 2 5 -1, 5 2 6 -1,
+					   5 6 9 -1, 9 7 5 -1,
+					   5 7 3 -1, 5 3 1 -1
+					  ]
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		   ]
+		}
+		# Piece turquoise:
+		DEF SWITCH_TURQUOISE Switch {
+		  whichChoice 0
+		  children [
+		    DEF TRANSFORM_TURQUOISE Transform {
+		      children [
+			DEF PIECE_TURQUOISE AssemblyPart {
+			  children [
+			    Shape {
+			      appearance DEF APP_TURQUOISE Appearance {
+				material Material {
+				  diffuseColor 0 1 1
+				  # transparency 0.5 0.5 0.5
+				}
+			      }
+			      geometry ExactPolyhedron {
+				coord DEF COORD_TURQUOISE ExactCoordinate {
+				  ratPoint[0 0 -2, 0 -2 -2,
+					   -1 -1 -1, 1 -1 -1,
+					   0 0 0, 0 -2 0
+					   -1 -1 1, 1 -1 1,
+					   0 0 2, 0 -2 2,
+					  ]
+				}
+				coordIndex[2 0 1 -1, 0 3 1 -1,
+					   0 2 3 -1, 6 9 8 -1,
+					   7 8 9 -1, 6 8 7 -1,
+					   2 6 4 -1, 2 4 3 -1,
+					   7 4 6 -1, 7 3 4 -1,
+					   1 5 2 -1, 5 6 2 -1,
+					   5 9 6 -1, 9 5 7 -1,
+					   5 3 7 -1, 5 1 3 -1
+					  ]
+			      }
+			    }
+			   ]
+			}
+		       ]
+		    }
+		   ]
+		}
+	       ]
+	    }
+	   ]
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE SNAP_KEY.state TO SNAP.trigger
+ROUTE SNAP_R_KEY.state TO SNAP_R.trigger
+ROUTE SNAP_G_KEY.state TO SNAP_G.trigger
+ROUTE SNAP_B_KEY.state TO SNAP_B.trigger
+ROUTE SNAP_P_KEY.state TO SNAP_P.trigger
+ROUTE SNAP_Y_KEY.state TO SNAP_Y.trigger
+ROUTE SNAP_T_KEY.state TO SNAP_T.trigger
+
+ROUTE SOLVE_KEY.state TO PUZZLE.trigger
+
+ROUTE DRAW_ALT_KEY.state TO PUZZLE.drawAlternate
+ROUTE INC_ALT_KEY.state TO PUZZLE.incAlternate
+ROUTE DRAW_AOS_MINK_SUM_KEY.state TO PUZZLE.drawAosMinkowskiSums
+ROUTE INC_MINK_SUM_KEY.state TO PUZZLE.incMinkowskiSums
+
+DEF SELECTOR Script {
+  eventIn MFBool components
+  eventIn SFVec3f translation
+  eventOut SFVec3f red
+  eventOut SFVec3f green
+  eventOut SFVec3f blue
+  eventOut SFVec3f purple
+  eventOut SFVec3f yellow
+  eventOut SFVec3f turquoise
+  field MFBool stored_components [ ]
+  url "javascript:
+    function components(value, timestamp) { stored_components = value; }
+    function translation(value, timestamp) {
+      if (!stored_components[0]) red = value;
+      if (!stored_components[1]) green = value;
+      if (!stored_components[2]) blue = value;
+      if (!stored_components[3]) purple = value;
+      if (!stored_components[4]) yellow = value;
+      if (!stored_components[5]) turquoise = value;
+    }"
+}
+
+DEF KEYVALUE_SETTER Script {
+  eventIn SFVec3f translation
+  eventOut MFVec3f keyValue
+  url "javascript:
+    function translation(value, timestamp) {
+      keyValue[0] = [0,0,0];
+      var scale = 3;
+      var target = [value[0]*scale, value[1]*scale, value[2]*scale];
+      keyValue[1] = target;
+    }"
+}
+
+DEF TIME_ENABLER Script {
+  eventIn SFBool interlocked
+  eventOut SFBool enabled
+  eventOut SFTime startTime
+  url "javascript:
+    function interlocked(value, timestamp) {
+      enabled = ! value;
+      startTime = timestamp;
+    }"
+}
+
+DEF TIME TimeSensor {
+  cycleInterval 5
+  loop FALSE
+  enabled FALSE
+}
+
+DEF INTERPOLATOR PositionInterpolator {
+  key [ 0.0, 1.0 ]
+  keyValue [ 0 0 0, 0 0 0 ]
+}
+
+DEF INCREMENTOR Script {
+  eventIn SFInt32 trigger
+  eventOut SFInt32 id
+  url "javascript:
+    function trigger(value, timestamp) {
+      id++;
+      id %= 6;
+    }"
+}
+
+ROUTE PUZZLE.translation TO KEYVALUE_SETTER.translation
+ROUTE KEYVALUE_SETTER.keyValue TO INTERPOLATOR.keyValue
+
+ROUTE PUZZLE.components TO SELECTOR.components
+
+ROUTE PUZZLE.interlocked TO TIME_ENABLER.interlocked
+ROUTE TIME_ENABLER.startTime TO TIME.startTime
+ROUTE TIME_ENABLER.enabled TO TIME.enabled
+ROUTE TIME.fraction_changed TO INTERPOLATOR.set_fraction
+ROUTE INTERPOLATOR.value_changed TO SELECTOR.translation
+ROUTE SELECTOR.red TO TRANSFORM_RED.translation
+ROUTE SELECTOR.green TO TRANSFORM_GREEN.translation
+ROUTE SELECTOR.blue TO TRANSFORM_BLUE.translation
+ROUTE SELECTOR.purple TO TRANSFORM_PURPLE.translation
+ROUTE SELECTOR.yellow TO TRANSFORM_YELLOW.translation
+ROUTE SELECTOR.turquoise TO TRANSFORM_TURQUOISE.translation
+
+ROUTE INC_SOLUTION_ID_KEY.state TO INCREMENTOR.trigger
+ROUTE INCREMENTOR.id TO PUZZLE.solutionId
