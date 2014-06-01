@@ -251,6 +251,8 @@ void Cubical_gaussian_map_geo::clean()
     cgm_initializer.set_marked_edge_index(m_marked_edge_index);
     cgm_initializer.set_marked_facet_index(m_marked_facet_index);
 
+    std::vector<Uint>& indices = (are_coord_indices_flat()) ?
+      get_flat_coord_indices() : get_coord_indices();
     Uint num_vertices_per_facet = 0;
     if (are_coord_indices_flat())
       num_vertices_per_facet =
@@ -263,8 +265,7 @@ void Cubical_gaussian_map_geo::clean()
         // std::cout << "Cubical_gaussian_map_geo::exact" << std::endl;
         cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
                         exact_coord_array->size(),
-                        &(*(m_flat_coord_indices.begin())),
-                        &(*(m_flat_coord_indices.end())),
+                        &(*(indices.begin())), &(*(indices.end())),
                         m_num_primitives, num_vertices_per_facet, &visitor);
       }
     }
@@ -273,11 +274,9 @@ void Cubical_gaussian_map_geo::clean()
         boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
       if (coord_array) {
         if (coord_array->size() > 0) {
-          // std::cout << "Cubical_gaussian_map_geo::inexact" << std::endl;
           cgm_initializer(coord_array->begin(), coord_array->end(),
                           coord_array->size(),
-                          &(*(m_flat_coord_indices.begin())),
-                          &(*(m_flat_coord_indices.end())),
+                          &(*(indices.begin())), &(*(indices.end())),
                           m_num_primitives, num_vertices_per_facet, &visitor);
         }
       }
