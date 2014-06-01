@@ -1,0 +1,340 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
+  stencilBits 1
+}
+
+DEF BACKGROUND ColorBackground { 
+  color 1 1 1 0 
+  clearStencil TRUE
+}
+
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+DEF DRAW_OPAQUE_KEY SingleKeySensor { key "o" }
+DEF DRAW_HALOED_KEY SingleKeySensor { key "l" }
+DEF DRAW_SURFACE_KEY SingleKeySensor { key "b" state TRUE }
+DEF EXPORT_KEY SingleKeySensor { key "O" }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF VERTEX_SHAPE_KEY SingleKeySensor {
+  key "v"
+  boolean FALSE
+  numberOfStates 5
+  intState 2 # disc
+}
+DEF EDGE_SHAPE_KEY SingleKeySensor {
+  key "e"
+  boolean FALSE
+  numberOfStates 4
+  intState 2 # strip
+}
+DEF HIDE_SINGULARITIES_KEY SingleKeySensor {
+  boolean FALSE
+  key "s"
+}
+DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
+  boolean FALSE
+  key "d"
+}
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "bso2"
+}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 2.95
+#   position 0 0 3
+# }
+
+DEF CHANGE_POLYSET_KEY SingleKeySensor {
+  key "z"
+  boolean FALSE
+  numberOfStates 3
+  intState 0
+}
+
+Transform {
+  rotation 0 0 1 -0.826 
+  children [
+    DEF POLYSET_SWITCH Switch {
+      whichChoice 0
+      children [
+        DEF SHAPE1 Shape {
+          appearance Appearance {
+            material Material { }
+          }
+          geometry DEF GEOM1 PolygonSetOnSphere {
+            lineColor 0 0 0
+            # drawSurface FALSE
+            drawOpaque FALSE
+            # drawHaloed TRUE
+            aosEdgeStyle "tube"
+            aosEdgeRadius 0.003
+            aosEdgeLineWidth 3
+            aosVertexStyle "none"
+            aosVertexRadius 0.01
+            aosVertexPointSize 6
+	    aosVertexColor 0.1 0.3 0.2
+            aosIsolatedVertexStyle "ball"
+            aosIsolatedVertexRadius 0.015
+            aosIsolatedVertexPointSize 3
+	    aosIsolatedVertexColor 1 0 0
+            # insertionStrategy "increment"
+	    aosMarkedVertexStyle "none"
+	    aosMarkedEdgeEnabled TRUE
+            aosMarkedEdgeStyle "tube"
+            aosMarkedEdgeRadius 0.003
+	    aosMarkedFaceColor 1 0 0
+	    aosMarkedFaceTransparency 0.5
+	    # aosMarkedFaceIndex [28 46 47]	    
+            coord DEF COORD ExactCoordinate {
+              ratPoint [
+			-1 -1 -1,
+			1 -1 -1,
+			0 -1 1
+		       ]
+            }
+ 	    pointLocationIndex [1015]
+            polyIndex [
+		       0 1 2
+		      ]
+          }
+        }
+
+	DEF SHAPE2 Shape {
+          appearance Appearance {
+            material Material { }
+          }
+          geometry DEF GEOM2 PolygonSetOnSphere {
+            lineColor 0 0 0
+            # drawSurface FALSE
+            drawOpaque FALSE
+            # drawHaloed TRUE
+            aosEdgeStyle "tube"
+            aosEdgeRadius 0.003
+            aosEdgeLineWidth 3
+            aosVertexStyle "none"
+            aosVertexRadius 0.01
+            aosVertexPointSize 6
+	    aosVertexColor 0.1 0.3 0.2
+            aosIsolatedVertexStyle "ball"
+            aosIsolatedVertexRadius 0.015
+            aosIsolatedVertexPointSize 3
+	    aosIsolatedVertexColor 1 0 0
+            # insertionStrategy "increment"
+	    aosMarkedVertexStyle "none"
+	    aosMarkedEdgeEnabled TRUE
+            aosMarkedEdgeStyle "tube"
+            aosMarkedEdgeRadius 0.003
+	    aosMarkedFaceColor 0 1 0
+	    aosMarkedFaceTransparency 0.5
+            coord DEF COORD ExactCoordinate {
+              ratPoint [
+			-1 -1 1,
+			0 -1 -1
+			1 -1 1,
+		       ]
+            }
+            polyIndex [
+		       0 1 2
+		      ]
+	  }
+        }
+
+	DEF SHAPE3 Shape {
+          appearance Appearance {
+            material Material { }
+          }
+          geometry DEF GEOM3 PolygonSetOnSphere {
+            lineColor 0 0 0
+            # drawSurface FALSE
+            drawOpaque FALSE
+            # drawHaloed TRUE
+            aosEdgeStyle "tube"
+            aosEdgeRadius 0.003
+            aosEdgeLineWidth 3
+            aosVertexStyle "none"
+            aosVertexRadius 0.01
+            aosVertexPointSize 6
+	    aosVertexColor 0.1 0.3 0.2
+            aosIsolatedVertexStyle "ball"
+            aosIsolatedVertexRadius 0.015
+            aosIsolatedVertexPointSize 3
+	    aosIsolatedVertexColor 1 0 0
+            # insertionStrategy "increment"	    
+	    aosMarkedVertexStyle "none"
+	    aosMarkedEdgeEnabled TRUE
+            aosMarkedEdgeStyle "tube"
+            aosMarkedEdgeRadius 0.003
+	    aosMarkedFaceColor 0.5 0.5 0
+	    aosMarkedFaceTransparency 0.5
+
+	    intersection [USE GEOM1
+			  USE GEOM2]
+          }
+        }
+
+       ]
+    }
+    # The singularity points:
+    DEF SINGULARITIES_SWITCH Switch {
+      whichChoice -1
+      children [
+        Group {
+          children [
+            Shape {
+              appearance DEF SING_APP Appearance {
+                material Material { diffuseColor 0.5 0.5 0.5 }
+              }
+              geometry Sphere {
+                center 0 0 1
+                radius 0.05
+              }
+            }
+            Shape {
+              appearance USE AXES_APP
+              geometry Sphere {
+                center 0 0 -1
+                radius 0.05
+              }
+            }
+	   ]
+        }
+       ]    }
+    # The discontinuity arc:
+    DEF DISCONTINUITY_SWITCH Switch {
+      whichChoice 0
+      children [
+        Shape {
+          appearance Appearance {
+            material Material {
+              diffuseColor 0.5 0.5 0.5
+              # transparency 0.25
+            }
+          }
+          geometry Extrusion {
+            creaseAngle 2.0
+            beginCap TRUE
+            endCap TRUE
+            loop FALSE
+            crossSectionRadius 0.025
+            spine [
+		   0 0 1,
+		   -0.0980171 0 0.995185,
+		   -0.19509 0 0.980785,
+		   -0.290285 0 0.95694,
+		   -0.382683 0 0.92388,
+		   -0.471397 0 0.881921,
+		   -0.55557 0 0.83147,
+		   -0.634393 0 0.77301,
+		   -0.707107 0 0.707107,
+		   -0.77301 0 0.634393,
+		   -0.83147 0 0.55557,
+		   -0.881921 0 0.471397,
+		   -0.92388 0 0.382683,
+		   -0.95694 0 0.290285,
+		   -0.980785 0 0.19509,
+		   -0.995185 0 0.0980171,
+		   -1 0 0,
+		   -0.995185 0 -0.0980171,
+		   -0.980785 0 -0.19509,
+		   -0.95694 0 -0.290285,
+		   -0.92388 0 -0.382683,
+		   -0.881921 0 -0.471397,
+		   -0.83147 0 -0.55557,
+		   -0.77301 0 -0.634393,
+		   -0.707107 0 -0.707107,
+		   -0.634393 0 -0.77301,
+		   -0.55557 0 -0.83147,
+		   -0.471397 0 -0.881921,
+		   -0.382683 0 -0.92388,
+		   -0.290285 0 -0.95694,
+		   -0.19509 0 -0.980785,
+		   -0.0980171 0 -0.995185,
+		   0 0 -1,
+		  ]
+          }
+        }
+       ]
+    }
+    # The axes:
+    DEF AXES Transform {
+      scale 0.1 0.1 0.1
+      children [
+        Shape {
+          appearance DEF AXES_APP Appearance {
+            material Material { diffuseColor 0.5 0.5 0.5 }
+          }
+          geometry Sphere { radius 0.1 }
+        }
+        DEF CS_AXIS Transform {
+          translation 0 1.5 0
+          children [
+            Shape {
+              appearance USE AXES_APP
+              geometry Cylinder {
+                radius 0.1
+                height 3
+                set_is_bottom_visible FALSE
+                set_is_top_visible FALSE
+              }
+            }
+            Transform {
+              translation 0 1.7 0
+              children [
+                Shape {
+                  appearance USE AXES_APP
+                  geometry Cone {
+                    bottomRadius 0.2
+                    height 0.4
+                  }
+                }
+	       ]
+            }
+	   ]
+        }
+        Transform {
+          rotation 0 0 -1 1.57
+          children [ USE CS_AXIS ]
+        }
+        Transform {
+          rotation 1 0 0 1.57
+          children [ USE CS_AXIS ]
+        }
+       ]
+    }
+   ]
+}
+
+ROUTE DRAW_OPAQUE_KEY.state TO GEOM1.drawOpaque
+ROUTE DRAW_SURFACE_KEY.state TO GEOM1.drawSurface
+ROUTE DRAW_HALOED_KEY.state TO GEOM1.drawHaloed
+
+ROUTE DRAW_OPAQUE_KEY.state TO GEOM2.drawOpaque
+ROUTE DRAW_SURFACE_KEY.state TO GEOM2.drawSurface
+ROUTE DRAW_HALOED_KEY.state TO GEOM2.drawHaloed
+
+ROUTE DRAW_OPAQUE_KEY.state TO GEOM3.drawOpaque
+ROUTE DRAW_SURFACE_KEY.state TO GEOM3.drawSurface
+ROUTE DRAW_HALOED_KEY.state TO GEOM3.drawHaloed
+
+ROUTE VERTEX_SHAPE_KEY.intState TO GEOM1.aosVertexStyleId
+ROUTE EDGE_SHAPE_KEY.intState TO GEOM1.aosEdgeStyleId
+
+ROUTE VERTEX_SHAPE_KEY.intState TO GEOM2.aosVertexStyleId
+ROUTE EDGE_SHAPE_KEY.intState TO GEOM2.aosEdgeStyleId
+
+ROUTE VERTEX_SHAPE_KEY.intState TO GEOM3.aosVertexStyleId
+ROUTE EDGE_SHAPE_KEY.intState TO GEOM3.aosEdgeStyleId
+
+
+ROUTE SNAP_KEY.state TO SNAP.trigger
+# ROUTE EXPORT_KEY.press TO GEOM1.export
+ROUTE HIDE_DISCONTINUITY_KEY.intState TO DISCONTINUITY_SWITCH.whichChoice
+ROUTE HIDE_SINGULARITIES_KEY.intState TO SINGULARITIES_SWITCH.whichChoice
+ROUTE CHANGE_POLYSET_KEY.intState TO POLYSET_SWITCH.whichChoice
+
