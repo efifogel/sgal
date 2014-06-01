@@ -1,0 +1,189 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
+}
+DEF BACKGROUND ColorBackground {
+  color 1 1 1 0
+  clearStencil TRUE
+}
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF TRANSFORMER_NAV NavigationInfo { type [ "TRANSFORM" ] }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "env_plane1"
+}
+
+Viewpoint {
+  type "ORTHOGONAL"
+  fieldOfView 3.1
+}
+
+Transform {
+  # bboxCenter 0 0 0
+  # bboxSize 1 1 1
+  # rotation -1 0 0 1.5708
+  rotation -1 0 0 .7853
+  children [
+    Transform {
+      rotation 0 0 -1 .7853
+      children [
+	# The envelope
+	Shape {
+	  appearance Appearance {
+	    material Material { }
+	  }
+	  geometry LowerEnvelopePlane {
+	    # drawPatches FALSE
+	    faceTransparency 0.5
+	    edgeRadius 0.075
+	    vertexRadius 0.15
+	    boundingPolygon ExactCoordinate2D {
+	      ratPoint [ -4 -4, 4 -4, 4 4, -4 4]
+	    }
+	    color Color {
+	      color [0.8 0 0,
+		     0 0.8 0,
+		     0 0 0.8,
+		     0.6 0.6 0,
+		     0.6 0 0.6,
+		     0 0.6 0.6,
+		     0.6 0.2 0.2,
+		     0.2 0.6 0.2,
+		     0.2 0.2 0.6,
+		     0.3 0.3 0.4
+		    ]
+	    }
+	    plane ExactPlane {
+	      ratPlane [
+			870 -897 -26 1226,
+			31 -387 -213 438,
+			-838 -591 -691 -1064,
+ 			-115 137 -457 -480,
+			-283 78 19 -254,
+ 			-14 -744 -47 742,
+ 			770 -208 -537 -872,
+ 			783 -249 281 -859,
+ 			470 872 426 -986,
+ 			-650 638 -147 -793
+		       ]
+	    }
+	  }
+	}
+
+	# The axes
+	Switch {
+	  whichChoice 0
+	  children [
+	    Transform {
+	      scale 0.6 0.6 0.6
+	      children [
+		Transform {
+		  translation 2.5 0 0
+		  rotation 1 0 0 1.5708
+		  children [
+		    Transform {
+		      translation 0 -0.3 0
+		      children [
+			Shape {
+			  appearance DEF TEXT_APP Appearance {
+			    material Material { diffuseColor 0 0 0 }
+			  }
+			  geometry Text {
+			    string "X"
+			    fontStyle FontStyle { size 0.5 }
+			  }
+			}
+		       ]
+		    }
+		   ]
+		}
+		Transform {
+		  translation 0 2.5 0
+		  rotation 1 0 0 1.5708
+		  children [
+		    Transform {
+		      translation -0.2 0 0
+		      children [
+			Shape {
+			  appearance USE TEXT_APP
+			  geometry Text {
+			    string "Y"
+			    fontStyle FontStyle { size 0.5 }
+			  }
+			}
+		       ]
+		    }
+		   ]
+		}
+		Transform {
+		  translation 0 0 2.5
+		  rotation 1 0 0 1.5708
+		  children [
+		    Transform {
+		      translation -0.2 0 0
+		      children [
+			Shape {
+			  appearance USE TEXT_APP
+			  geometry Text {
+			    string "Z"
+			    fontStyle FontStyle { size 0.5 }
+			  }
+			}
+		       ]
+		    }
+		   ]
+		}
+		Shape {
+		  appearance DEF CS_APP Appearance {
+		    material Material { diffuseColor 0.5 0.5 0.5 }
+		  }
+		  geometry Sphere { radius 0.1 }
+		}
+		DEF CS_AXIS Transform {
+		  translation 0 1 0
+		  children [
+		    Shape {
+		      appearance USE CS_APP
+		      geometry DEF CS_CYLINDER Cylinder {
+			radius 0.1
+			set_is_bottom_visible FALSE
+			set_is_top_visible FALSE
+		      }
+		    }
+		    Transform {
+		      translation 0 1.2 0
+		      children [
+			Shape {
+			  appearance USE CS_APP
+			  geometry DEF CS_CONE Cone {
+			    bottomRadius 0.2
+			    height 0.4
+			  }
+			}
+		       ]
+		    }
+		   ]
+		}
+		Transform {
+		  rotation 0 0 1 -1.57
+		  children [ USE CS_AXIS ]
+		}
+		Transform {
+		  rotation 1 0 0 1.57
+		  children [ USE CS_AXIS ]
+		}
+	       ]
+	    }
+	   ]
+	}
+       ]
+    }
+   ]
+}
+
+ROUTE SNAP_KEY.state TO SNAP.trigger
