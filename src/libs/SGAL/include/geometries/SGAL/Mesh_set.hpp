@@ -109,16 +109,16 @@ public:
   virtual void write(Formatter* formatter);
 
   /*! Clean the flat coord-index array. */
-  void clean_flat_coord_indices();
+  virtual void clean_flat_coord_indices();
 
   /*! Clean the flat normal-index array. */
-  void clean_flat_normal_indices();
+  virtual void clean_flat_normal_indices();
 
   /*! Clean the flat color-index array. */
-  void clean_flat_color_indices();
+  virtual void clean_flat_color_indices();
 
   /*! Clean the flat texture coord-index array. */
-  void clean_flat_tex_coord_indices();
+  virtual void clean_flat_tex_coord_indices();
 
   /*! Clean the coord-index array. */
   void clean_coord_indices();

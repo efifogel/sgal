@@ -657,8 +657,40 @@ protected:
    */
   void clean_vertex_tex_coord_buffer(Uint size, const GLfloat* data);
 
-  /*! Clean the local vertex buffers. */
-  void clean_local_vertex_buffers();
+  /*! Clean the local coordinates, normals, color, and texture coordinates
+   * vertex buffers.
+   */
+  void clean_local_cnct2_vertex_buffers();
+  void clean_local_cnct3_vertex_buffers();
+  void clean_local_cnct4_vertex_buffers();
+
+  /*! Clean the local coordinates, normals, and color, vertex buffers. */
+  void clean_local_cnc_vertex_buffers();
+
+  /*! Clean the local coordinates, normals, and texture coordinates vertex
+   * buffers.
+   */
+  void clean_local_cnt2_vertex_buffers();
+  void clean_local_cnt3_vertex_buffers();
+  void clean_local_cnt4_vertex_buffers();
+
+  /*! Clean the local coordinates and normals vertex buffers. */
+  void clean_local_cn_vertex_buffers();
+
+  /*! Clean the local coordinates, colors, and texture coordinates vertex
+   * buffers.
+   */
+  void clean_local_cct2_vertex_buffers();
+  void clean_local_cct3_vertex_buffers();
+  void clean_local_cct4_vertex_buffers();
+
+  /*! Clean the local coordinates and colors vertex buffers. */
+  void clean_local_cc_vertex_buffers();
+
+  /*! Clean the local coordinates and texture coordinates vertex buffers. */
+  void clean_local_ct2_vertex_buffers();
+  void clean_local_ct3_vertex_buffers();
+  void clean_local_ct4_vertex_buffers();
 
   /*! Destroy the data structure of the vertex buffer object. */
   void destroy_vertex_buffers();
@@ -863,6 +895,11 @@ protected:
    */
   const GLvoid* indices_data() const;
 
+  /*! Obtain teture coordinate data size.
+   * \return teture coordinate data size.
+   */
+  Uint tex_coord_data_size() const;
+
   /*! Obtain the number of tex ture coordinates.
    * \return the number of tex ture coordinates.
    */
@@ -873,13 +910,25 @@ private:
    * coordinate id, normal/color id, and texture coordinate id, to a single
    * id.
    */
-  typedef std::tuple<Uint, Uint, Uint> Id_key;
+  typedef std::tuple<Uint, Uint>                Id_key_2d;
+  typedef std::tuple<Uint, Uint, Uint>          Id_key_3d;
+  typedef std::tuple<Uint, Uint, Uint, Uint>    Id_key_4d;
 
-  /*! The hash specialized function.
-   * It maps 3 ids to their sum.
+  /*! The hash specialized function, which maps maps 2 ids to a unique value.
    */
-  struct Id_hash {
-    std::size_t operator()(Id_key const& key) const
+  struct Id_hash_2d {
+    std::size_t operator()(Id_key_2d const& key) const
+    {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, std::get<0>(key));
+      boost::hash_combine(seed, std::get<1>(key));
+      return seed;
+    }
+  };
+  /*! The hash specialized function, which maps maps 3 ids to a unique value.
+   */
+  struct Id_hash_3d {
+    std::size_t operator()(Id_key_3d const& key) const
     {
       std::size_t seed = 0;
       boost::hash_combine(seed, std::get<0>(key));
@@ -889,8 +938,24 @@ private:
     }
   };
 
-  /*! The type Id_map maps from tuples of 3 ids to ids. */
-  typedef boost::unordered_map<Id_key, Uint, Id_hash> Id_map;
+  /*! The hash specialized function, which maps maps 4 ids to a unique value.
+   */
+  struct Id_hash_4d {
+    std::size_t operator()(Id_key_4d const& key) const
+    {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, std::get<0>(key));
+      boost::hash_combine(seed, std::get<1>(key));
+      boost::hash_combine(seed, std::get<2>(key));
+      boost::hash_combine(seed, std::get<2>(key));
+      return seed;
+    }
+  };
+
+  /*! The type Id_map maps from tuples of ids to ids. */
+  typedef boost::unordered_map<Id_key_2d, Uint, Id_hash_2d> Id_map_2d;
+  typedef boost::unordered_map<Id_key_3d, Uint, Id_hash_3d> Id_map_3d;
+  typedef boost::unordered_map<Id_key_4d, Uint, Id_hash_4d> Id_map_4d;
 
   /*! The coordinates vertex array. */
   std::vector<Vector3f> m_local_coord_buffer;
@@ -908,9 +973,6 @@ private:
 
   /*! The index vertex array. */
   std::vector<Uint> m_local_indices;
-
-  /*! The map from tuples of 3 ids to ids. */
-  Id_map m_id_map;
 
   /*! A functor that calculates the normal of a given facet. */
   struct Facet_normal_calculator {
@@ -990,6 +1052,154 @@ private:
    * \param vertices_info (out) the container of the resulting information.
    */
   void calculate_vertices_info(Vertices_info& vertices_info);
+
+  /*! Clean the local vertex buffers.
+   */
+  template <typename Array, typename Buffer, typename InputIterator>
+  void clean_local_2d_vertex_buffers(Array array2, Buffer& buffer2,
+                                     InputIterator it2)
+  {
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coord_array);
+
+    m_local_coord_buffer.clear();
+    buffer2.clear();
+
+    m_local_indices.resize(m_flat_coord_indices.size());
+
+    Id_map_2d id_map;
+    Uint id1 = 0;
+    Uint id2 = 0;
+
+    auto it1 = m_flat_coord_indices.begin();
+    size_t index = 0;
+    for (; it1 != m_flat_coord_indices.end(); ++it1, ++it2) {
+      id1 = *it1;
+      id2 = *it2;
+      auto key = std::make_tuple(id1, id2);
+      Id_map_2d::const_iterator got = id_map.find(key);
+      if (got != id_map.end()) {
+        m_local_indices[index++] = got->second;
+        continue;
+      }
+      size_t new_id = m_local_coord_buffer.size();
+      m_local_coord_buffer.push_back((*coord_array)[id1]);
+      buffer2.push_back((*array2)[id2]);
+      id_map[key] = new_id;
+      m_local_indices[index++] = new_id;
+    }
+    id_map.clear();
+
+    m_dirty_local_vertex_buffers = false;
+    m_dirty_coord_buffer = true;
+  }
+
+  /*! Clean the local vertex buffers.
+   */
+  template <typename Array2, typename Buffer2, typename InputIterator2,
+            typename Array3, typename Buffer3, typename InputIterator3>
+  void clean_local_3d_vertex_buffers(Array2 array2, Buffer2& buffer2,
+                                     InputIterator2 it2,
+                                     Array3 array3, Buffer3& buffer3,
+                                     InputIterator3 it3)
+  {
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coord_array);
+
+    m_local_coord_buffer.clear();
+    buffer2.clear();
+    buffer3.clear();
+
+    m_local_indices.resize(m_flat_coord_indices.size());
+
+    Id_map_3d id_map;
+    Uint id1 = 0;
+    Uint id2 = 0;
+    Uint id3 = 0;
+
+    auto it1 = m_flat_coord_indices.begin();
+    size_t index = 0;
+    for (; it1 != m_flat_coord_indices.end(); ++it1, ++it2, ++it3) {
+      id1 = *it1;
+      id2 = *it2;
+      id3 = *it3;
+      auto key = std::make_tuple(id1, id2, id3);
+      Id_map_3d::const_iterator got = id_map.find(key);
+      if (got != id_map.end()) {
+        m_local_indices[index++] = got->second;
+        continue;
+      }
+      size_t new_id = m_local_coord_buffer.size();
+      m_local_coord_buffer.push_back((*coord_array)[id1]);
+      buffer2.push_back((*array2)[id2]);
+      buffer3.push_back((*array3)[id3]);
+      id_map[key] = new_id;
+      m_local_indices[index++] = new_id;
+    }
+    id_map.clear();
+
+    m_dirty_local_vertex_buffers = false;
+    m_dirty_coord_buffer = true;
+  }
+
+  /*! Clean the local vertex buffers.
+   */
+  template <typename Array2, typename Buffer2, typename InputIterator2,
+            typename Array3, typename Buffer3, typename InputIterator3,
+            typename Array4, typename Buffer4, typename InputIterator4>
+  void clean_local_4d_vertex_buffers(Array2 array2, Buffer2& buffer2,
+                                     InputIterator2 it2,
+                                     Array3 array3, Buffer3& buffer3,
+                                     InputIterator3 it3,
+                                     Array4 array4, Buffer4& buffer4,
+                                     InputIterator4 it4)
+  {
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coord_array);
+
+    m_local_coord_buffer.clear();
+    buffer2.clear();
+    buffer3.clear();
+    buffer4.clear();
+
+    m_local_indices.resize(m_flat_coord_indices.size());
+
+    Id_map_4d id_map;
+    Uint id1 = 0;
+    Uint id2 = 0;
+    Uint id3 = 0;
+    Uint id4 = 0;
+
+    auto it1 = m_flat_coord_indices.begin();
+    size_t index = 0;
+    for (; it1 != m_flat_coord_indices.end(); ++it1, ++it2, ++it3, ++it4) {
+      id1 = *it1;
+      id2 = *it2;
+      id3 = *it3;
+      id4 = *it4;
+      auto key = std::make_tuple(id1, id2, id3, id4);
+      Id_map_4d::const_iterator got = id_map.find(key);
+      if (got != id_map.end()) {
+        m_local_indices[index++] = got->second;
+        continue;
+      }
+      size_t new_id = m_local_coord_buffer.size();
+      m_local_coord_buffer.push_back((*coord_array)[id1]);
+      buffer2.push_back((*array2)[id2]);
+      buffer3.push_back((*array3)[id3]);
+      buffer4.push_back((*array4)[id4]);
+      id_map[key] = new_id;
+      m_local_indices[index++] = new_id;
+    }
+    id_map.clear();
+
+    m_dirty_local_vertex_buffers = false;
+    m_dirty_coord_buffer = true;
+  }
+
 };
 
 #if defined(_MSC_VER)
@@ -1122,6 +1332,19 @@ inline const GLfloat* Indexed_face_set::tex_coord_data() const
     ((! m_local_tex_coord_buffer_3d.empty()) ? local_tex_coord_3d_data() :
      ((! m_local_tex_coord_buffer_4d.empty()) ? local_tex_coord_4d_data() :
       m_tex_coord_array->data()));
+}
+
+//! \brief obtains teture coordinate size.
+inline Uint Indexed_face_set::tex_coord_data_size() const
+{
+  return
+    (! m_local_tex_coord_buffer_2d.empty()) ?
+    (m_local_tex_coord_buffer_2d.size() * sizeof(Vector2f)) :
+    ((! m_local_tex_coord_buffer_3d.empty()) ?
+     (m_local_tex_coord_buffer_3d.size() * sizeof(Vector3f)) :
+     ((! m_local_tex_coord_buffer_4d.empty()) ?
+      (m_local_tex_coord_buffer_4d.size() * sizeof(Vector4f)) :
+      m_tex_coord_array->data_size()));
 }
 
 //! Obtain the indices.

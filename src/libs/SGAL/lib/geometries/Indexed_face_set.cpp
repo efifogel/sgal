@@ -1095,20 +1095,26 @@ void Indexed_face_set::draw(Draw_action* action)
 {
   if (is_dirty()) clean();
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
-
-  // We clean the polyhedron si that we can use it to clean the normals
-  if ((resolve_fragment_source() == FS_NORMAL) && m_dirty_normals)
-    clean_normals();
   if (is_empty()) return;
 
-  // Clean the tex coordinates:
+  // Clean the normals or the colors.
+  //! \todo clean the nromals only if lighting is enabled.
+  if (resolve_fragment_source() == FS_NORMAL) {
+    if (m_dirty_normals) clean_normals();
+    if (is_dirty_flat_normal_indices()) {
+      clean_flat_normal_indices();
+    }
+  }
+  else {
+    if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  }
+
+  // Clean the tex coordinates.
   Context* context = action->get_context();
-  if (context->get_tex_enable() && !(context->get_tex_gen_enable()) &&
-      m_dirty_tex_coords)
-    clean_tex_coords();
+  if (context->get_tex_enable() && !(context->get_tex_gen_enable())) {
+    if (m_dirty_tex_coords) clean_tex_coords();
+    if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  }
 
   draw_mesh(action);
 }
@@ -1174,7 +1180,53 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
          * create local coordinate, color/normal, texture coordinate, and
          * indices buffers that will serve as mirrors to the OpenGL buffers.
          */
-        if (m_dirty_local_vertex_buffers) clean_local_vertex_buffers();
+        if (m_dirty_local_vertex_buffers) {
+          if (m_normal_array) {
+            if (m_color_array) {
+              if (!m_tex_coord_array) clean_local_cnc_vertex_buffers();
+              else {
+                Uint num_tex_coords = m_tex_coord_array->num_coordinates();
+                switch (num_tex_coords) {
+                 case 2: clean_local_cnct2_vertex_buffers(); break;
+                 case 3: clean_local_cnct3_vertex_buffers(); break;
+                 case 4: clean_local_cnct4_vertex_buffers(); break;
+                }
+              }
+            }
+            else {
+              if (!m_tex_coord_array) clean_local_cn_vertex_buffers();
+              else {
+                Uint num_tex_coords = m_tex_coord_array->num_coordinates();
+                switch (num_tex_coords) {
+                 case 2: clean_local_cnt2_vertex_buffers(); break;
+                 case 3: clean_local_cnt3_vertex_buffers(); break;
+                 case 4: clean_local_cnt4_vertex_buffers(); break;
+                }
+              }
+            }
+          }
+          else {
+            if (m_color_array) {
+              if (!m_tex_coord_array) clean_local_cc_vertex_buffers();
+              else {
+                Uint num_tex_coords = m_tex_coord_array->num_coordinates();
+                switch (num_tex_coords) {
+                 case 2: clean_local_cct2_vertex_buffers(); break;
+                 case 3: clean_local_cct3_vertex_buffers(); break;
+                 case 4: clean_local_cct4_vertex_buffers(); break;
+                }
+              }
+            }
+            else {
+              Uint num_tex_coords = m_tex_coord_array->num_coordinates();
+              switch (num_tex_coords) {
+               case 2: clean_local_ct2_vertex_buffers(); break;
+               case 3: clean_local_ct3_vertex_buffers(); break;
+               case 4: clean_local_ct4_vertex_buffers(); break;
+              }
+            }
+          }
+        }
 
         // Clean OpenGL vertex array buffers:
         if (m_dirty_coord_buffer && !m_local_coord_buffer.empty()) {
@@ -1189,10 +1241,10 @@ void Indexed_face_set::draw_geometry(Draw_action* action)
           Uint size = m_local_color_buffer.size() * sizeof(Vector3f);
           clean_vertex_color_buffer(size, local_color_data());
         }
-//         if (m_dirty_tex_coord_buffer && m_tex_coord_array) {
-//           Uint size =
-//           clean_vertex_tex_coord_buffer(size, local_tex_coord_data());
-//         }
+        if (m_dirty_tex_coord_buffer && m_tex_coord_array) {
+          Uint size = tex_coord_data_size();
+          clean_vertex_tex_coord_buffer(size, tex_coord_data());
+        }
       }
     }
 
@@ -1790,56 +1842,229 @@ void Indexed_face_set::clean_polyhedron()
   m_dirty_polyhedron = false;
 }
 
-//! \brief cleans the local vertex buffers.
-void Indexed_face_set::clean_local_vertex_buffers()
+/*! \brief cleans the local coordinates, normals, color, and 2d texture
+ * coordinates vertex buffers.
+ */
+void Indexed_face_set::clean_local_cnct2_vertex_buffers()
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-
-  //! \start with coordinates and normals
-  m_local_indices.resize(m_flat_coord_indices.size());
-  m_local_coord_buffer.clear();
-  m_local_normal_buffer.clear();
-  m_local_color_buffer.clear();
-  // m_local_tex_coord_buffer_2d.clear();
-  // m_local_tex_coord_buffer_3d.clear();
-  // m_local_tex_coord_buffer_4d.clear();
-
-  Uint tex_coord_id = 0;
-  Uint coord_id = 0;
-  Uint normal_id = 0;
-
-  auto cit = m_flat_coord_indices.begin();
-  auto nit = m_flat_normal_indices.begin();
-  // auto tit = m_flat_tex_coord_indices.begin();
-  size_t index = 0;
-  for (; cit != m_flat_coord_indices.end(); ++cit, ++nit) {
-    coord_id = *cit;
-    normal_id = *nit;
-    Id_map::const_iterator got =
-      m_id_map.find(std::make_tuple(coord_id, normal_id, tex_coord_id));
-    if (got != m_id_map.end()) {
-      m_local_indices[index++] = got->second;
-      continue;
-    }
-    /* \todo The combination of coord_id, normal/color_id, and tex_coord_id
-     * hasn't been used yet, introduce it.
-     */
-    size_t new_id = m_local_coord_buffer.size();
-    m_local_coord_buffer.push_back((*coord_array)[coord_id]);
-    m_local_normal_buffer.push_back((*m_normal_array)[normal_id]);
-    m_id_map[std::make_tuple(coord_id, normal_id, tex_coord_id)] = new_id;
-    m_local_indices[index++] = new_id;
-  }
-
-  m_id_map.clear();
-
-  m_dirty_local_vertex_buffers = false;
-  m_dirty_coord_buffer = true;
+  SGAL_assertion(m_normal_array);
+  SGAL_assertion(m_color_array);
+  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                m_flat_normal_indices.begin(),
+                                m_color_array, m_local_color_buffer,
+                                m_flat_color_indices.begin(),
+                                tex_coord_array, m_local_tex_coord_buffer_2d,
+                                m_flat_tex_coord_indices.begin());
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
+}
+
+/*! \brief cleans the local coordinates, normals, color, and 3d texture
+ * coordinates vertex buffers.
+ */
+void Indexed_face_set::clean_local_cnct3_vertex_buffers()
+{
+  SGAL_assertion(m_normal_array);
+  SGAL_assertion(m_color_array);
+  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                m_flat_normal_indices.begin(),
+                                m_color_array, m_local_color_buffer,
+                                m_flat_color_indices.begin(),
+                                tex_coord_array, m_local_tex_coord_buffer_3d,
+                                m_flat_tex_coord_indices.begin());
+  m_dirty_normal_buffer = true;
+  m_dirty_color_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+}
+
+/*! \brief cleans the local coordinates, normals, color, and 4d texture
+ * coordinates vertex buffers.
+ */
+void Indexed_face_set::clean_local_cnct4_vertex_buffers()
+{
+  SGAL_error_msg("clean_local_cnct4_vertex_buffers() not implemented yet!");
+//   SGAL_assertion(m_normal_array);
+//   SGAL_assertion(m_color_array);
+//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+//   SGAL_assertion(tex_coord_array);
+//   clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+//                                 m_flat_normal_indices.begin(),
+//                                 m_color_array, m_local_color_buffer,
+//                                 m_flat_color_indices.begin(),
+//                                 tex_coord_array, m_local_tex_coord_buffer_4d,
+//                                 m_flat_tex_coord_indices.begin());
+//   m_dirty_normal_buffer = true;
+//   m_dirty_color_buffer = true;
+//   m_dirty_tex_coord_buffer = true;
+}
+
+//! \brief cleans the local coordinates, normals, and color, vertex buffers.
+void Indexed_face_set::clean_local_cnc_vertex_buffers()
+{
+  SGAL_assertion(m_normal_array);
+  SGAL_assertion(m_color_array);
+  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                m_flat_normal_indices.begin(),
+                                m_color_array, m_local_color_buffer,
+                                m_flat_color_indices.begin());
+  m_dirty_normal_buffer = true;
+  m_dirty_color_buffer = true;
+}
+
+/*! \brief cleans the local coordinates, normals, and 2d texture coordinates
+ * vertex buffers.
+ */
+void Indexed_face_set::clean_local_cnt2_vertex_buffers()
+{
+  SGAL_assertion(m_normal_array);
+  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                m_flat_normal_indices.begin(),
+                                tex_coord_array, m_local_tex_coord_buffer_2d,
+                                m_flat_tex_coord_indices.begin());
+  m_dirty_normal_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+}
+
+/*! \brief cleans the local coordinates, normals, and 3d texture coordinates
+ * vertex buffers.
+ */
+void Indexed_face_set::clean_local_cnt3_vertex_buffers()
+{
+  SGAL_assertion(m_normal_array);
+  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                m_flat_normal_indices.begin(),
+                                tex_coord_array, m_local_tex_coord_buffer_3d,
+                                m_flat_tex_coord_indices.begin());
+  m_dirty_normal_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+}
+
+/*! \brief cleans the local coordinates, normals, and 4d texture coordinates
+ * vertex buffers.
+ */
+void Indexed_face_set::clean_local_cnt4_vertex_buffers()
+{
+  SGAL_error_msg("clean_local_cnt4_vertex_buffers() not implemented yet!");
+//   SGAL_assertion(m_normal_array);
+//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+//   SGAL_assertion(tex_coord_array);
+//   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+//                                 m_flat_normal_indices.begin(),
+//                                 tex_coord_array, m_local_tex_coord_buffer_4d,
+//                                 m_flat_tex_coord_indices.begin());
+//   m_dirty_normal_buffer = true;
+//   m_dirty_tex_coord_buffer = true;
+}
+
+//! \brief cleans the local coordinates and normals vertex buffers.
+void Indexed_face_set::clean_local_cn_vertex_buffers()
+{
+  SGAL_assertion(m_normal_array);
+  clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                m_flat_normal_indices.begin());
+  m_dirty_normal_buffer = true;
+}
+
+/*! \brief cleans the local coordinates, colors, and texture coordinates vertex
+ * buffers.
+ */
+void Indexed_face_set::clean_local_cct2_vertex_buffers()
+{
+  SGAL_assertion(m_color_array);
+  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
+                                m_flat_color_indices.begin(),
+                                tex_coord_array, m_local_tex_coord_buffer_2d,
+                                m_flat_tex_coord_indices.begin());
+  m_dirty_color_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+}
+
+void Indexed_face_set::clean_local_cct3_vertex_buffers()
+{
+  SGAL_assertion(m_color_array);
+  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
+                                m_flat_color_indices.begin(),
+                                tex_coord_array, m_local_tex_coord_buffer_3d,
+                                m_flat_tex_coord_indices.begin());
+  m_dirty_color_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+}
+
+void Indexed_face_set::clean_local_cct4_vertex_buffers()
+{
+  SGAL_error_msg("clean_local_cct4_vertex_buffers() not implemented yet!");
+//   SGAL_assertion(m_color_array);
+//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+//   SGAL_assertion(tex_coord_array);
+//   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
+//                                 m_flat_color_indices.begin(),
+//                                 tex_coord_array, m_local_tex_coord_buffer_4d,
+//                                 m_flat_tex_coord_indices.begin());
+//   m_dirty_color_buffer = true;
+//   m_dirty_tex_coord_buffer = true;
+}
+
+//! \brief cleans the local coordinates and colors vertex buffers.
+void Indexed_face_set::clean_local_cc_vertex_buffers()
+{
+  SGAL_assertion(m_color_array);
+  clean_local_2d_vertex_buffers(m_color_array, m_local_color_buffer,
+                                m_flat_color_indices.begin());
+  m_dirty_color_buffer = true;
+}
+
+//! \brief cleans the local coordinates and texture coordinates vertex buffers.
+void Indexed_face_set::clean_local_ct2_vertex_buffers()
+{
+  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_2d,
+                                m_flat_tex_coord_indices.begin());
+  m_dirty_tex_coord_buffer = true;
+}
+
+void Indexed_face_set::clean_local_ct3_vertex_buffers()
+{
+  boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_3d,
+                                m_flat_tex_coord_indices.begin());
+  m_dirty_tex_coord_buffer = true;
+}
+
+void Indexed_face_set::clean_local_ct4_vertex_buffers()
+{
+  SGAL_error_msg("clean_local_ct4_vertex_buffers() not implemented yet!");
+//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+//   SGAL_assertion(tex_coord_array);
+//   clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_4d,
+//                                 m_flat_tex_coord_indices.begin());
+//   m_dirty_tex_coord_buffer = true;
 }
 
 SGAL_END_NAMESPACE
