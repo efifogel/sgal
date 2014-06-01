@@ -60,7 +60,6 @@
 #include "SGAL/Extrusion.hpp"
 
 #include "SCGAL/Spherical_gaussian_map_base_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

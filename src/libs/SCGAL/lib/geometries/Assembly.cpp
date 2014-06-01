@@ -55,7 +55,7 @@
 #include "SCGAL/Assembly.hpp"
 #include "SCGAL/Assembly_part.hpp"
 #include "SCGAL/Spherical_gaussian_map.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
 #include "SCGAL/Arrangement_on_sphere_graph_geo.hpp"
 #include "SCGAL/Arrangement_marked_overlay_traits.hpp"
@@ -380,16 +380,18 @@ void Assembly::construct_reflected_sgms()
        * from the input coordinate array, or from the input polyhedron with new
        * code that computes it directly from the Sgm.
        */
-      typedef boost::shared_ptr<Exact_coord_array>    Shared_exact_coord_array;
+      typedef boost::shared_ptr<Exact_coord_array_3d>
+        Shared_exact_coord_array_3d;
       Sgm_geo::Shared_coord_array tmp = sgm_geo->get_coord_array();
-      Shared_exact_coord_array coord_array =
-        boost::dynamic_pointer_cast<Exact_coord_array>(tmp);
+      Shared_exact_coord_array_3d coord_array =
+        boost::dynamic_pointer_cast<Exact_coord_array_3d>(tmp);
       if (coord_array) {
         Uint size  = coord_array->size();
-        Shared_exact_coord_array
-          inverse_coord_array(new Exact_coord_array(size));
-        Exact_coord_array::Exact_point_const_iter its;
-        Exact_coord_array::Exact_point_iter itt = inverse_coord_array->begin();
+        Shared_exact_coord_array_3d
+          inverse_coord_array(new Exact_coord_array_3d(size));
+        Exact_coord_array_3d::Exact_point_const_iter its;
+        Exact_coord_array_3d::Exact_point_iter itt =
+          inverse_coord_array->begin();
         for (its = coord_array->begin(); its != coord_array->end(); ++its) {
           const Exact_point_3& point = *its;
           Exact_vector_3 vec = cvec(point, CGAL::ORIGIN);

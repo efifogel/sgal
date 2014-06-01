@@ -50,7 +50,7 @@
 #include "SGAL/Field.hpp"
 
 #include "SCGAL/Polygon_set_on_sphere_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -197,8 +197,8 @@ void Polygon_set_on_sphere_geo::clean()
   this->polygon_set().clear();
 
   if (m_poly_indices.empty() == false) {
-    boost::shared_ptr<Exact_coord_array> exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+    boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
 
     Int_container::const_iterator it = m_poly_indices.begin();
     while (it != m_poly_indices.end()) {

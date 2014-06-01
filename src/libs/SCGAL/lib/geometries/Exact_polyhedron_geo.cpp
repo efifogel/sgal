@@ -47,7 +47,7 @@
 #include "SGAL/Vector3f.hpp"
 
 #include "SCGAL/Exact_polyhedron_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -76,8 +76,8 @@ void Exact_polyhedron_geo::convex_hull()
 {
   if (!m_coord_array) return;
 
-  boost::shared_ptr<Exact_coord_array> exact_coord_array =
-    boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+  boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
+    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
   if (exact_coord_array) {
     if (exact_coord_array->size() > 0)
       CGAL::convex_hull_3(exact_coord_array->begin(),
