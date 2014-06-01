@@ -38,7 +38,7 @@
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/Exact_normal_array.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
@@ -65,10 +65,10 @@ class SGAL_SCGAL_DECL Arrangement_on_sphere_base_geo :
 {
 public:
   // Shared pointers
-  typedef boost::shared_ptr<Coord_array>        Shared_coord_array;
-  typedef boost::shared_ptr<Normal_array>       Shared_normal_array;
-  typedef boost::shared_ptr<Exact_coord_array>  Shared_exact_coord_array;
-  typedef boost::shared_ptr<Exact_normal_array> Shared_exact_normal_array;
+  typedef boost::shared_ptr<Coord_array>          Shared_coord_array;
+  typedef boost::shared_ptr<Normal_array>         Shared_normal_array;
+  typedef boost::shared_ptr<Exact_coord_array_3d> Shared_exact_coord_array_3d;
+  typedef boost::shared_ptr<Exact_normal_array>   Shared_exact_normal_array;
 
   enum {
     FIRST = Arrangement_on_surface_geo::LAST - 1,
@@ -288,8 +288,8 @@ protected:
 
     if (!m_coord_array) return;
 
-    Shared_exact_coord_array exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+    Shared_exact_coord_array_3d exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
     Shared_exact_normal_array exact_normal_array =
       boost::dynamic_pointer_cast<Exact_normal_array>(m_normal_array);
 

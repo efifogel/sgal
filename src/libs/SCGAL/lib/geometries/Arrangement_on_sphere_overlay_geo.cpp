@@ -46,7 +46,6 @@
 
 #include "SCGAL/Arrangement_on_sphere_overlay_geo.hpp"
 #include "SCGAL/Arrangement_on_surface_geo_overlay.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
 
 SGAL_BEGIN_NAMESPACE
 

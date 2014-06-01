@@ -51,7 +51,7 @@
 
 #include "SCGAL/Arrangement_on_sphere_marked_geo.hpp"
 #include "SCGAL/Arrangement_on_surface_geo_overlay.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -380,8 +380,8 @@ void Arrangement_on_sphere_marked_geo::clean()
               std::distance(m_aoses.begin(), m_aoses.end()), this);
 
   // Locate points:
-  boost::shared_ptr<Exact_coord_array> exact_coord_array =
-    boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+  boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
+    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     Aos_point_location_strategy naive_pl(*m_aos);
     std::vector<Uint>::iterator it;
