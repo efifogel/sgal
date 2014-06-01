@@ -28,7 +28,7 @@
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -47,8 +47,8 @@ protected:
 
     boost::shared_ptr<Coord_array> coord_array = m_mesh_set->get_coord_array();
 
-    boost::shared_ptr<Exact_coord_array> exact_coords =
-      boost::dynamic_pointer_cast<Exact_coord_array>(coord_array);
+    boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+      boost::dynamic_pointer_cast<Exact_coord_array_3d>(coord_array);
     if (exact_coords) {
       for (auto it = exact_coords->begin(); it != exact_coords->end(); ++it)
         B.add_vertex(Point(*it));
