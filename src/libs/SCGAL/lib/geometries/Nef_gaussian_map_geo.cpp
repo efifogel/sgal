@@ -107,7 +107,7 @@ Nef_gaussian_map_geo::Nef_gaussian_map_geo(Boolean proto) :
   m_marked_edge_index(0),
   m_marked_facet_index(0)
 {
-  m_surface.set_nef_polyhedron(this);
+  m_surface.set_mesh_set(this);
 
   m_sphere = new Sphere();
   m_sphere->set_stacks(32);

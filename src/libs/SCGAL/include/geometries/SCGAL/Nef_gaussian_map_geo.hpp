@@ -52,6 +52,7 @@
 #include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Nef_gaussian_map.hpp"
 #include "SCGAL/gausian_map_to_polyhedron_3.hpp"
+#include "SCGAL/Exact_polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -308,61 +309,6 @@ public:
   };
 #endif
 
-  /*! */
-  template <class HDS>
-  class Build_surface : public CGAL::Modifier_base<HDS> {
-  public:
-    /*! Constructor. */
-    Build_surface() {}
-
-    /*! Destructor. */
-    virtual ~Build_surface() {}
-
-    /*! builds the polyhedron. */
-    void operator()(HDS& hds) {
-      // Postcondition: `hds' is a valid polyhedral surface.
-      CGAL::Polyhedron_incremental_builder_3<HDS> B(hds, true);
-      typedef typename CGAL::Polyhedron_incremental_builder_3<HDS>::size_type
-        size_type;
-
-      boost::shared_ptr<Coord_array_3d> coord_array =
-        boost::static_pointer_cast<Coord_array_3d>(m_nef_polyhedron->get_coord_array());
-      SGAL_assertion(coord_array);
-
-      size_type coord_array_size = coord_array->size();
-      unsigned int num_facets = m_nef_polyhedron->get_num_primitives();
-      B.begin_surface(coord_array_size, num_facets);
-      typedef typename HDS::Vertex Vertex;
-      typedef typename Vertex::Point Point;
-      // Add the points:
-      Uint i;
-      for (i = 0; i < coord_array_size; i++) {
-        const Vector3f& v = (*coord_array)[i];
-        B.add_vertex(Point(v[0], v[1], v[2]));
-      }
-
-      // Add the faces:
-      Uint j = 0;
-      for (i = 0; i < num_facets; i++) {
-        B.begin_facet();
-        for (; m_nef_polyhedron->get_coord_index(j) != (Uint) -1; j++) {
-          B.add_vertex_to_facet(m_nef_polyhedron->get_coord_index(j));
-        }
-        j++;
-        B.end_facet();
-      }
-      B.end_surface();
-    }
-
-    /*! sets a pointer to the geometry */
-    void set_nef_polyhedron(Nef_gaussian_map_geo* p)
-    { m_nef_polyhedron = p; }
-
-  private:
-    /*! The Geometry node */
-    Nef_gaussian_map_geo* m_nef_polyhedron;
-  };
-
 private:
   /*! Transforms a (planar) facet into a plane. */
   struct Plane_equation {
@@ -407,7 +353,7 @@ private:
   static Container_proto* s_prototype;
 
   /*! The builder. */
-  Build_surface<HalfedgeDS> m_surface;
+  Exact_polyhedron_geo_builder<HalfedgeDS> m_surface;
 
   /*! Indicates whether the intermediate polyhedron has been built. */
   Boolean m_dirty_polyhedron;
