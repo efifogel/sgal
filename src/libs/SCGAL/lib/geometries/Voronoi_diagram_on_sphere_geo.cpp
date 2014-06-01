@@ -56,7 +56,7 @@
 #include "SGAL/Context.hpp"
 
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -191,8 +191,8 @@ void Voronoi_diagram_on_sphere_geo::clean()
     SGAL_assertion(m_vos);
     m_owned_vos = true;
   }
-  Shared_exact_coord_array exact_coord_array =
-    boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+  Shared_exact_coord_array_3d exact_coord_array =
+    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     Exact_kernel kernel;
 
@@ -329,8 +329,8 @@ void Voronoi_diagram_on_sphere_geo::draw_sites(Draw_action* action)
 {
   glColor3fv((float*)&m_site_color[0]);
 
-  Shared_exact_coord_array exact_coord_array =
-    boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+  Shared_exact_coord_array_3d exact_coord_array =
+    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
   if (exact_coord_array && (exact_coord_array->size() > 0)) {
     std::vector<Uint>::iterator it;
     for (it = this->m_site_indices.begin();

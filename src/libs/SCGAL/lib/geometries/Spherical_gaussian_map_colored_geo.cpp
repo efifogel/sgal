@@ -56,7 +56,7 @@
 
 #include "SCGAL/Spherical_gaussian_map_colored_geo.hpp"
 #include "SCGAL/Sgm_color_overlay_traits.hpp"
-#include "SCGAL/Exact_coord_array.hpp"
+#include "SCGAL/Exact_coord_array_3d.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
 #include "SCGAL/compute_planes.hpp"
 
@@ -156,8 +156,8 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
       num_vertices_per_facet =
         (m_primitive_type == PT_TRIANGLES) ? 3 :
         (m_primitive_type == PT_QUADS) ? 4 : 0;
-    boost::shared_ptr<Exact_coord_array> exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array>(m_coord_array);
+    boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
+      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
     if (exact_coord_array) {
       if (exact_coord_array->size() > 0)
         sgm_initializer(exact_coord_array->begin(),
