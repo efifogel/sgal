@@ -142,12 +142,6 @@ protected:
   /*! The output vertices */
   Shared_coord_array m_coord_array_changed;
 
-  /*! Indicates whether output has changed.
-   * This is temporary; it should be eliminated once script nodes fully
-   * support (shared) containers as input.
-   */
-  Boolean m_changed;
-
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
@@ -201,6 +195,12 @@ private:
 
   /*! Determines whether the node is enabled */
   Boolean m_enabled;
+
+  /*! Indicates whether output has changed.
+   * This is temporary; it should be eliminated once script nodes fully
+   * support (shared) containers as input.
+   */
+  Boolean m_changed;
 
   // default values
   static const Boolean s_def_enabled;
