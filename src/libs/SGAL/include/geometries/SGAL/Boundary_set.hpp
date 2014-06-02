@@ -900,22 +900,6 @@ private:
   /*! The index vertex array. */
   std::vector<Uint> m_local_indices;
 
-  /*! A functor that calculates the normal of a given facet. */
-  struct Facet_normal_calculator {
-    template <typename Facet>
-    typename Facet::Plane_3 operator()(Facet& f) {
-      typename Facet::Halfedge_handle h = f.halfedge();
-      // Facet::Plane_3 is the normal vector type. We assume the
-      // CGAL Kernel here and use its global functions.
-      Vector_3 normal =
-        CGAL::cross_product(h->next()->vertex()->point() -
-                            h->vertex()->point(),
-                            h->next()->next()->vertex()->point() -
-                            h->next()->vertex()->point());
-      return normal / CGAL::sqrt(normal.squared_length());
-    }
-  };
-
   /*! The node prototype. */
   static Container_proto* s_prototype;
 
