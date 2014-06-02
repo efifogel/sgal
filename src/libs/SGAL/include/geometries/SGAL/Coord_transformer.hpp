@@ -178,6 +178,9 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 
+  /*! Determines whether the node is enabled */
+  Boolean m_enabled;
+
   /*! Indicates whether reflection should be applied */
   Boolean m_reflect;
 
@@ -192,9 +195,6 @@ private:
 
   /*! The translation vector */
   Vector3f m_translation;
-
-  /*! Determines whether the node is enabled */
-  Boolean m_enabled;
 
   /*! Indicates whether output has changed.
    * This is temporary; it should be eliminated once script nodes fully
