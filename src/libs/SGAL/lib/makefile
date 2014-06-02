@@ -63,6 +63,7 @@ CPPSOURCES+= Arc.cpp
 CPPSOURCES+= Background.cpp
 CPPSOURCES+= Bindable_node.cpp
 CPPSOURCES+= Bindable_stack.cpp
+CPPSOURCES+= Boundary_set.cpp
 CPPSOURCES+= Box.cpp
 CPPSOURCES+= Camera.cpp
 CPPSOURCES+= Collision.cpp

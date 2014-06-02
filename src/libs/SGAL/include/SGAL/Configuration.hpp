@@ -46,9 +46,10 @@ class Multisample;
 #endif
 
 class SGAL_SGAL_DECL Configuration : public Container {
+  friend class Boundary_set;
   friend class Indexed_face_set;
   friend class Shape;
-  //dirty patch for accessing defauly flags
+  //dirty patch for accessing default flags
   //(particullary - using display lists) from Indexed_face_set
 
 public:
