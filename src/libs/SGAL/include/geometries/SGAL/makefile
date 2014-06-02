@@ -1,6 +1,7 @@
 include $(ROOT)/make/comdef.mak
 
-FILES = Color_array.hpp
+FILES = Boundary_set.hpp
+FILES+= Color_array.hpp
 FILES+= Coord_array.hpp
 FILES+= Coord_array_2d.hpp
 FILES+= Coord_array_3d.hpp
