@@ -42,6 +42,9 @@ class Coord_array;
 #pragma warning( disable: 4251 )
 #endif
 
+/*! \class Coord_transformer Coord_transformer.hpp
+ * \todo move to engines.
+ */
 class SGAL_SGAL_DECL Coord_transformer : public Container {
 public:
   enum {
@@ -52,8 +55,7 @@ public:
     COORD_CHANGED,
     TRANSLATION,
     ROTATION,
-    TRANSLATED,
-    ROTATED,
+    CHANGED,
     LAST
   };
 
@@ -94,6 +96,7 @@ public:
   { return &m_coord_array; }
   Shared_coord_array* coord_array_changed_handle(const Field_info*)
   { return &m_coord_array_changed; }
+  Boolean* changed_handle(const Field_info*) { return &m_changed; }
   //@}
 
   /*! Translate the input vertices. */
@@ -139,6 +142,12 @@ protected:
   /*! The output vertices */
   Shared_coord_array m_coord_array_changed;
 
+  /*! Indicates whether output has changed.
+   * This is temporary; it should be eliminated once script nodes fully
+   * support (shared) containers as input.
+   */
+  Boolean m_changed;
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
@@ -175,9 +184,6 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  /*! Determines whether the node is enabled */
-  Boolean m_enabled;
-
   /*! Indicates whether reflection should be applied */
   Boolean m_reflect;
 
@@ -192,6 +198,9 @@ private:
 
   /*! The translation vector */
   Vector3f m_translation;
+
+  /*! Determines whether the node is enabled */
+  Boolean m_enabled;
 
   // default values
   static const Boolean s_def_enabled;

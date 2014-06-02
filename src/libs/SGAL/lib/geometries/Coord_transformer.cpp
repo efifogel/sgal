@@ -64,7 +64,8 @@ Coord_transformer::Coord_transformer(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
   m_reflect(false),
-  m_execute(false)
+  m_execute(false),
+  m_changed(false)
 {}
 
 //! \brief sets the attributes of this object.
@@ -179,6 +180,12 @@ void Coord_transformer::init_prototype()
                                                       "coord_changed",
                                                       RULE_EXPOSED_FIELD,
                                                       coord_changed_func));
+
+  Boolean_handle_function changed_func =
+    static_cast<Boolean_handle_function>(&Coord_transformer::changed_handle);
+  s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
+                                          RULE_EXPOSED_FIELD,
+                                          changed_func));
 }
 
 //! \brief deletes the prototype.
@@ -270,6 +277,11 @@ void Coord_transformer::execute(const Field_info* /* field_info */)
 
   Field* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
+
+  m_changed = true;
+  Field* changed_field = get_field(CHANGED);
+  if (changed_field) changed_field->cascade();
+
   m_coord_array_changed->process_content_changed();
 }
 
