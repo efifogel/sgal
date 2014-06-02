@@ -72,6 +72,8 @@ void Boolean_operation::trigger_changed(const Field_info* /* field_info */)
 //! \brief executes the engine.
 void Boolean_operation::execute()
 {
+  if (!m_operand1 || !m_operand2) return;
+
   typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
   typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
                                                     Nef_polyhedron;
