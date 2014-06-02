@@ -189,7 +189,6 @@ OutputIterator Lower_envelope_tri_geo::get_triangles(OutputIterator oi)
       boost::dynamic_pointer_cast<Coord_array_3d>(ifs->get_coord_array());
     SGAL_assertion(coord_array);
 
-    // const std::vector<Uint>& coord_indices = ifs->get_coord_indices();
     const std::vector<Uint>& coord_indices = ifs->get_flat_coord_indices();
     Uint j = 0;
     for (Uint i = 0; i < ifs->get_num_primitives(); ++i) {
