@@ -22,12 +22,6 @@
 #include <vector>
 #include <boost/unordered_map.hpp>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_traits_with_normals_3.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/HalfedgeDS_vector.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -35,7 +29,7 @@
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Polyhedron_items.hpp"
+#include "SGAL/Polyhedron.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -60,27 +54,6 @@ public:
     FIRST = Boundary_set::LAST - 1,
     LAST
   };
-
-  typedef CGAL::Cartesian<Float>                         Kernel;
-  typedef Kernel::Point_3                                Point_3;
-  typedef Kernel::Vector_3                               Vector_3;
-  typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Traits;
-  typedef CGAL::Polyhedron_3<Traits, Polyhedron_items>   Polyhedron;
-  typedef Polyhedron::Vertex_iterator                    Vertex_iterator;
-  typedef Polyhedron::Halfedge_iterator                  Halfedge_iterator;
-  typedef Polyhedron::Facet_iterator                     Facet_iterator;
-  typedef Polyhedron::Vertex_const_handle                Vertex_const_handle;
-  typedef Polyhedron::Facet_const_handle                 Facet_const_handle;
-  typedef Polyhedron::Vertex                             Vertex;
-  typedef Polyhedron::Halfedge                           Halfedge;
-  typedef Polyhedron::Facet                              Facet;
-  typedef Polyhedron::HalfedgeDS                         HalfedgeDS;
-  typedef Polyhedron::Halfedge_around_facet_circulator
-    Halfedge_around_facet_circulator;
-  typedef Polyhedron::Halfedge_around_facet_const_circulator
-    Halfedge_around_facet_const_circulator;
-  typedef Polyhedron::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
 
   /*! Constructor */
   Indexed_face_set(Boolean proto = false);
@@ -156,7 +129,7 @@ private:
       typename Facet::Halfedge_handle h = f.halfedge();
       // Facet::Plane_3 is the normal vector type. We assume the
       // CGAL Kernel here and use its global functions.
-      Vector_3 normal =
+      Kernel::Vector_3 normal =
         CGAL::cross_product(h->next()->vertex()->point() -
                             h->vertex()->point(),
                             h->next()->next()->vertex()->point() -
@@ -189,8 +162,8 @@ private:
     template <typename Halfedge>
     void operator()(Halfedge& edge)
     {
-      Vector_3 normal1 = edge.facet()->plane();
-      Vector_3 normal2 = edge.opposite()->facet()->plane();
+      Kernel::Vector_3 normal1 = edge.facet()->plane();
+      Kernel::Vector_3 normal2 = edge.opposite()->facet()->plane();
       Float angle = arccosf(normal1 * normal2);  // inner product
       if (angle > m_crease_angle) {
         edge.m_creased = true;
@@ -205,7 +178,7 @@ private:
   };
 
   /*! The builder. */
-  Polyhedron_geo_builder<HalfedgeDS> m_surface;
+  Polyhedron_geo_builder<Polyhedron::HalfedgeDS> m_surface;
 
   /*! Indicates whether all edges are creased. */
   Boolean m_creased;

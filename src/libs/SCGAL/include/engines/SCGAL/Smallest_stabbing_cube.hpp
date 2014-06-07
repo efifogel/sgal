@@ -67,15 +67,16 @@ public:
     LAST
   };
 
-  typedef CGAL::Nef_polyhedron_3<Exact_kernel>          Nef_polyhedron;
-  typedef CGAL::Arr_polyhedral_sgm_traits<Exact_kernel> Sgm_geometry_traits_2;
+  typedef Exact_kernel                                  Kernel;
+
+  typedef CGAL::Nef_polyhedron_3<Kernel>                Nef_polyhedron;
+  typedef CGAL::Arr_polyhedral_sgm_traits<Kernel>       Sgm_geometry_traits_2;
   typedef CGAL::Arr_polyhedral_sgm<Sgm_geometry_traits_2,
                                    CGAL::Arr_polyhedral_sgm_arr_dcel>
     Spherical_gaussian_map_for_ssc;
   typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_for_ssc,
-                                                Exact_kernel>
-                                                        Polyhedron;
-  typedef CGAL::Point_3<Exact_kernel>                   Point_3;
+                                                Kernel> Polyhedron;
+  typedef CGAL::Point_3<Kernel>                         Point_3;
   typedef Polyhedron::Plane_3                           Plane_3;
   typedef CGAL::Arr_polyhedral_sgm_initializer<Spherical_gaussian_map_for_ssc,
                                                Polyhedron> Sgm_initializer_for_ssc;
