@@ -42,7 +42,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
-#include "SGAL/Polyhedron_items.hpp"
+#include "SGAL/Polyhedron.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
 #include "SCGAL/basic.hpp"
@@ -63,20 +63,19 @@ class Scene_graph;
 
 class SGAL_SCGAL_DECL Polyhedron_geo : public Mesh_set {
 public:
-  typedef CGAL::Cartesian<float>                         Kernel;
-  typedef Kernel::Point_3                                Point;
-  typedef Kernel::Vector_3                               Vector;
-  typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Traits;
-  typedef CGAL::Polyhedron_3<Traits, Polyhedron_items>   Polyhedron;
-  typedef Polyhedron::Facet_iterator                     Facet_iterator;
-  typedef Polyhedron::Vertex_iterator                    Vertex_iterator;
-  typedef Polyhedron::Halfedge_around_facet_circulator   Halfedge_facet_circ;
-  typedef Polyhedron::HalfedgeDS                         HalfedgeDS;
+  typedef Kernel                                       Kernel;
+  typedef Kernel::Point_3                              Point;
+  typedef Kernel::Vector_3                             Vector;
+  typedef Polyhedron                                   Polyhedron;
+  typedef Polyhedron::Facet_iterator                   Facet_iterator;
+  typedef Polyhedron::Vertex_iterator                  Vertex_iterator;
+  typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_facet_circ;
+  typedef Polyhedron::HalfedgeDS                       HalfedgeDS;
   typedef Polyhedron::Halfedge_around_facet_circulator
     Halfedge_facet_circulator;
 
-  typedef std::vector<int>                      Coord_index_vector;
-  typedef Coord_index_vector::const_iterator    Coord_index_iter;
+  typedef std::vector<int>                             Coord_index_vector;
+  typedef Coord_index_vector::const_iterator           Coord_index_iter;
 
   // Min sphere stuff:
 #if !defined(USE_MIN_SPHERE)
