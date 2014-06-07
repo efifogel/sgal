@@ -673,7 +673,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 Boundary_set::~Boundary_set()
 {
   clear_local_vertex_buffers();
-  clear_vertex_arrays();
   destroy_display_list();
   destroy_vertex_buffers();
   m_dirty_local_vertex_buffers = true;
@@ -1485,15 +1484,6 @@ void Boundary_set::clear_local_vertex_buffers()
   m_local_tex_coord_buffer_2d.clear();
   m_local_tex_coord_buffer_3d.clear();
   m_local_tex_coord_buffer_4d.clear();
-}
-
-//! \brief destroys the vertex arrays.
-void Boundary_set::clear_vertex_arrays()
-{
-  if (m_coord_array) m_coord_array->clear();
-  if (m_tex_coord_array) m_tex_coord_array->clear();
-  if (m_normal_array) m_normal_array->clear();
-  if (m_color_array) m_color_array->clear();
 }
 
 //! \brief processes change of coordinate points.
