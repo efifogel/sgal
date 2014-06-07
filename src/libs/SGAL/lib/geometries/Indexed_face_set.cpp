@@ -93,6 +93,13 @@ Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
 //! \brief calculates multiple normals per vertex for all vertices.
 void Indexed_face_set::calculate_multiple_normals_per_vertex()
 {
+  typedef Polyhedron::Facet                              Facet;
+  typedef Polyhedron::Facet_const_handle                 Facet_const_handle;
+  typedef Polyhedron::Halfedge_around_facet_const_circulator
+    Halfedge_around_facet_const_circulator;
+  typedef Polyhedron::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+
   struct Normal_hash {
     std::size_t operator()(Vector3f const& key) const
     {
@@ -211,6 +218,7 @@ Container_proto* Indexed_face_set::get_prototype()
 //! \brief cleans the data structure.
 void Indexed_face_set::clean_polyhedron()
 {
+  if (!m_coord_array || m_coord_array->size() == 0) return;
   m_polyhedron.delegate(m_surface);           // create the polyhedral surface
 #if 0
   if (!m_polyhedron.normalized_border_is_valid()) {
