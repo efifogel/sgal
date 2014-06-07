@@ -627,9 +627,6 @@ protected:
   /*! Destroy the data structure of the display_list. */
   void destroy_display_list();
 
-  /*! Clear the vertex arrays. */
-  void clear_vertex_arrays();
-
   /*! Clear the local vertex buffers. */
   void clear_local_vertex_buffers();
 

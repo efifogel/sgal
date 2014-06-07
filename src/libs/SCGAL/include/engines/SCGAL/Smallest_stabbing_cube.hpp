@@ -22,7 +22,6 @@
 #include <boost/shared_ptr.hpp>
 
 //CGAL includes
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
@@ -41,20 +40,9 @@
 #include "SGAL/Rotation.hpp"
 
 #include "SCGAL/basic.hpp"
+#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
-
-typedef CGAL::Cartesian<CGAL::Gmpq> Kernel;
-typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
-typedef CGAL::Arr_polyhedral_sgm_traits<Kernel> Sgm_geometry_traits_2;
-typedef CGAL::Arr_polyhedral_sgm<Sgm_geometry_traits_2,	CGAL::Arr_polyhedral_sgm_arr_dcel> Spherical_gaussian_map_for_ssc;
-typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_for_ssc, Kernel> Polyhedron;
-typedef CGAL::Point_3<Kernel> Point_3;
-typedef Polyhedron::Plane_3 Plane_3;
-typedef CGAL::Arr_polyhedral_sgm_initializer<Spherical_gaussian_map_for_ssc, Polyhedron> Sgm_initializer_for_ssc;
-typedef CGAL::Arr_polyhedral_sgm_overlay<Spherical_gaussian_map_for_ssc> Sgm_overlay_traits_for_ssc;
-typedef CGAL::Quadratic_program<CGAL::Gmpq> Program;
-typedef CGAL::Quadratic_program_solution<CGAL::Gmpq> Solution;
 
 class Draw_action;
 class Element;
@@ -67,9 +55,7 @@ class Coord_transformer;
 #pragma warning( disable: 4251 )
 #endif
 
-class SGAL_SCGAL_DECL Smallest_stabbing_cube : public Container
-{
-
+class SGAL_SCGAL_DECL Smallest_stabbing_cube : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
@@ -81,8 +67,27 @@ public:
     LAST
   };
 
-  typedef boost::shared_ptr<Coord_array> Shared_coord_array;
-  typedef std::vector<boost::shared_ptr<Coord_transformer>> Coord_node_array;
+  typedef Exact_kernel                                  Kernel;
+
+  typedef CGAL::Nef_polyhedron_3<Kernel>                Nef_polyhedron;
+  typedef CGAL::Arr_polyhedral_sgm_traits<Kernel>       Sgm_geometry_traits_2;
+  typedef CGAL::Arr_polyhedral_sgm<Sgm_geometry_traits_2,
+                                   CGAL::Arr_polyhedral_sgm_arr_dcel>
+    Spherical_gaussian_map_for_ssc;
+  typedef CGAL::Arr_polyhedral_sgm_polyhedron_3<Spherical_gaussian_map_for_ssc,
+                                                Kernel> Polyhedron;
+  typedef CGAL::Point_3<Kernel>                         Point_3;
+  typedef Polyhedron::Plane_3                           Plane_3;
+  typedef CGAL::Arr_polyhedral_sgm_initializer<Spherical_gaussian_map_for_ssc,
+                                               Polyhedron> Sgm_initializer_for_ssc;
+  typedef CGAL::Arr_polyhedral_sgm_overlay<Spherical_gaussian_map_for_ssc>
+    Sgm_overlay_traits_for_ssc;
+  typedef CGAL::Quadratic_program<CGAL::Gmpq>           Program;
+  typedef CGAL::Quadratic_program_solution<CGAL::Gmpq>  Solution;
+
+  typedef boost::shared_ptr<Coord_array>              Shared_coord_array;
+  typedef boost::shared_ptr<Coord_transformer>        Shared_Coord_transformer;
+  typedef std::vector<Shared_Coord_transformer>       Coord_node_array;
 
   /*! Constructor. */
   Smallest_stabbing_cube(Boolean proto = false);

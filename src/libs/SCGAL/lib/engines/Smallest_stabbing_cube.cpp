@@ -199,7 +199,7 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
   int count = 0;
 
   //Create a kernel
-  Kernel kernel;
+  Smallest_stabbing_cube::Kernel kernel;
 
   //Build unit cube 1
   Polyhedron cube1;
@@ -348,10 +348,11 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
   m_result->process_content_changed();
 }
 
-Polyhedron Smallest_stabbing_cube::calculateSum(const Polyhedron& p1,
-                                                const Polyhedron& p2) const
+Smallest_stabbing_cube::Polyhedron
+Smallest_stabbing_cube::calculateSum(const Polyhedron& p1,
+                                     const Polyhedron& p2) const
 {
-  Kernel kernel;
+  Exact_kernel kernel;
 
   Polyhedron p1Tmp = p1;
   Spherical_gaussian_map_for_ssc sgm1;

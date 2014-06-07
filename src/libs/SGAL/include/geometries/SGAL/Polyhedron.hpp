@@ -1,4 +1,4 @@
-// Copyright (c) 2004 Israel.
+// Copyright (c) 2014 Israel.
 // All rights reserved.
 //
 // This file is part of SGAL; you can redistribute it and/or modify it
@@ -16,10 +16,29 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_POLYHEDRON_ITEMS_HPP
-#define SGAL_POLYHEDRON_ITEMS_HPP
+/*! \file
+ * Defines the type Polyhedron, which is a polyhedral surface representation
+ * of a polyhedron. It uses CGAL and as such it uses a halfedge data
+ * structure to represent the incidence relations between the cells, namely,
+ * vertices, halfedges, and facets. It uses an inexact Cartesian kernel.
+ * Each facet contains the normal to the facet (and not the equiation of the
+ * underlying plane). This is convenient, as it can directly be used to
+ * render the facet.
+ */
+
+#ifndef SGAL_POLYHEDRON_HPP
+#define SGAL_POLYHEDRON_HPP
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_traits_with_normals_3.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_vector.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include "SGAL/basic.hpp"
+
+#include "SGAL/basic.hpp"
+#include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -37,6 +56,11 @@ struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
     typedef Polyhedron_halfedge<Refs> Halfedge;
   };
 };
+
+typedef CGAL::Cartesian<Float>                         Kernel;
+typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Polyhedron_traits;
+typedef CGAL::Polyhedron_3<Polyhedron_traits, Polyhedron_items>
+                                                       Polyhedron;
 
 SGAL_END_NAMESPACE
 

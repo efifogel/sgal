@@ -39,6 +39,7 @@
 #include "SGAL/Field.hpp"
 #include "SGAL/Stl_formatter.hpp"
 
+#include "SCGAL/Exact_polyhedron.hpp"
 #include "SCGAL/compute_planes.hpp"
 #include "SCGAL/merge_coplanar_facets.hpp"
 #include "SCGAL/Boolean_operation.hpp"
@@ -74,7 +75,6 @@ void Boolean_operation::execute()
 {
   if (!m_operand1 || !m_operand2) return;
 
-  typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
   typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
                                                     Nef_polyhedron;
 
@@ -94,7 +94,7 @@ void Boolean_operation::execute()
   }
   geometry1.set_num_primitives(m_operand1->get_num_primitives());
   geometry1.set_primitive_type(m_operand1->get_primitive_type());
-  Polyhedron& polyhedron1 = geometry1.get_polyhedron();
+  Exact_polyhedron_geo::Polyhedron& polyhedron1 = geometry1.get_polyhedron();
   // geometry1.print_stat();
   Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(polyhedron1);
 
@@ -114,7 +114,7 @@ void Boolean_operation::execute()
   }
   geometry2.set_num_primitives(m_operand2->get_num_primitives());
   geometry2.set_primitive_type(m_operand2->get_primitive_type());
-  Polyhedron& polyhedron2 = geometry2.get_polyhedron();
+  Exact_polyhedron_geo::Polyhedron& polyhedron2 = geometry2.get_polyhedron();
   Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(polyhedron2);
 
   // Compute Boolean operation:
@@ -122,7 +122,7 @@ void Boolean_operation::execute()
 
   m_result.reset(new Exact_polyhedron_geo);
   SGAL_assertion(nef_polyhedron.is_simple());
-  Polyhedron p;
+  Exact_polyhedron p;
   nef_polyhedron.convert_to_polyhedron(p);
   m_result->set_polyhedron(p);
 

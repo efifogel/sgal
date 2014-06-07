@@ -155,13 +155,13 @@ void Assembly_part::clean_sgm_geos(Node* node)
     Shared_exact_polyhedron_geo polyhedron_geo =
       boost::dynamic_pointer_cast<Exact_polyhedron_geo>(shape->get_geometry());
     if (polyhedron_geo) {
-      typedef Exact_polyhedron_geo::Polyhedron          Polyhedron;
       typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
                                                         Nef_polyhedron;
       typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
 
       clock_t start_time = clock();
-      Polyhedron& polyhedron = polyhedron_geo->get_polyhedron();
+      Exact_polyhedron_geo::Polyhedron& polyhedron =
+        polyhedron_geo->get_polyhedron();
       Nef_polyhedron nef_polyhedron = Nef_polyhedron(polyhedron);
       CGAL::convex_decomposition_3(nef_polyhedron);
       clock_t end_time = clock();
@@ -179,7 +179,7 @@ void Assembly_part::clean_sgm_geos(Node* node)
         Sgm_geo::Polyhedron p;
         nef_polyhedron.convert_inner_shell_to_polyhedron(ci->shells_begin(), p);
         // std::cout << p << std::endl;
-        typedef boost::is_same<Polyhedron::Plane_3, Exact_plane_3>
+        typedef boost::is_same<Sgm_geo::Polyhedron::Plane_3, Exact_plane_3>
           Polyhedron_has_plane;
         // TBD: Use an existing kernel.
         Exact_kernel kernel;

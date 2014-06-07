@@ -26,12 +26,6 @@
  * in Vector3f (approximate) representation. The later is used for rendering.
  */
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_3.h>
-
-#if defined(CGAL_USE_LEDA)
-#include <CGAL/leda_rational.h>
-#endif
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/enum.h>
 
@@ -41,12 +35,13 @@
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
-#include "SGAL/Mesh_set.hpp"
+#include "SGAL/Boundary_set.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
+#include "SCGAL/Exact_polyhedron.hpp"
 #include "SCGAL/Exact_polyhedron_geo_builder.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -65,79 +60,16 @@ class Formatter;
 #pragma warning( disable: 4251 )
 #endif
 
-class SGAL_SCGAL_DECL Exact_polyhedron_geo : public Mesh_set {
-public:
-  typedef Exact_number_type                             Number_type;
-  typedef Exact_kernel                                  Kernel;
-  typedef Kernel::Point_3                               Point_3;
-  typedef Kernel::Plane_3                               Plane_3;
-  typedef Kernel::Vector_3                              Vector_3;
-
-  /*! An extended vertex */
-  template <typename Refs, typename Traits>
-  struct My_vertex :
-    public CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true,
-                                        typename Traits::Point_3>
-  {
-    typedef typename Traits::Point_3    Point;
-    Vector3f m_vertex;
-    My_vertex() {}
-    My_vertex(const Point& p) :
-      CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point>(p)
-    {}
-  };
-
-  /*! An extended halfedge */
-  template <typename Refs>
-  struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-    bool m_flag;
-    My_halfedge() : m_flag(false) {}
-  };
-
-  /*! A face type with the face normal data member */
-  template <typename Refs>
-  struct My_face :
-    public CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane_3>
-  {
-    Vector3f m_normal;
-    My_face() {}
-    My_face(const Plane_3& pln) :
-      CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane_3>(pln)
-    {}
-  };
-
-  /*! An items type using extended features */
-  struct My_items : public CGAL::Polyhedron_items_3 {
-    template <typename Refs, typename Traits>
-    struct Vertex_wrapper {
-      typedef My_vertex<Refs, Traits> Vertex;
-    };
-
-    template <typename Refs, typename Traits>
-    struct Halfedge_wrapper {
-      typedef My_halfedge<Refs> Halfedge;
-    };
-
-    template <typename Refs, typename Traits>
-    struct Face_wrapper {
-      typedef My_face<Refs> Face;
-    };
-  };
-
-  typedef Kernel                                        Traits;
-  typedef CGAL::Polyhedron_3<Traits, My_items>          Polyhedron;
-  typedef Polyhedron::Vertex                            Vertex;
-  typedef Polyhedron::Facet                             Facet;
-  typedef Polyhedron::Vertex_iterator                   Vertex_iterator;
-  typedef Polyhedron::Facet_iterator                    Facet_iterator;
-  typedef Polyhedron::HalfedgeDS                        HalfedgeDS;
-
+class SGAL_SCGAL_DECL Exact_polyhedron_geo : public Boundary_set {
 public:
   enum {
-    FIRST = Mesh_set::LAST - 1,
+    FIRST = Boundary_set::LAST - 1,
     INVALIDATE,
     LAST
   };
+
+  typedef Exact_polyhedron              Polyhedron;
+  typedef Exact_kernel                  Kernel;
 
   /*! Constructor.
    * \param proto (in) determines whether to construct a prototype.
@@ -203,13 +135,13 @@ public:
    * is set, while field_changed() is invoked either when a new coordinate
    * field is set or when the content of the current coordinate field changes.
    */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   /*! Set the polyhedron data-structure. */
-  void set_polyhedron(Polyhedron& polyhedron);
+  void set_polyhedron(Exact_polyhedron& polyhedron);
 
   /*! Obtain the polyhedron data-structure. */
-  Polyhedron& get_polyhedron();
+  Exact_polyhedron& get_polyhedron();
 
   /*! Obtain the flag that indicates whether to compute the convex hull
    * of the coordinate set.
@@ -221,8 +153,9 @@ public:
    */
   void set_convex_hull(Boolean flag);
 
-  /*! Computes the orientation of a point relative to the polyhedron. */
-  CGAL::Oriented_side oriented_side(const Point_3& p);
+  /*! Compute the orientation of a point relative to the polyhedron.
+   */
+  CGAL::Oriented_side oriented_side(const Exact_point_3& p);
 
   /*! Prints statistics. */
   void print_stat();
@@ -249,32 +182,30 @@ protected:
 private:
   /*! Extracts the approximate point from a polyhedron vertex. */
   struct Convert_approximate_sphere {
-    Approximate_sphere_3 operator()(const Vertex & vertex) const
+    Approximate_sphere_3
+    operator()(const Exact_polyhedron::Vertex& vertex) const
     { return to_approximate_sphere(vertex.point()); }
   };
 
    /*! Convert a point in approximate number type to exact. */
   struct Vector_to_point {
-    template <class Vector3f>
-    Point_3 operator()(const Vector3f & vec)
-    { return Point_3(vec[0], vec[1], vec[2]); }
+    template <typename Vector3f>
+    Exact_point_3 operator()(const Vector3f& vec)
+    { return Exact_point_3(vec[0], vec[1], vec[2]); }
   };
 
    /*! Convert a point in exact number type to approximate. */
   struct Point_to_vector {
-    void operator()(Vertex& vertex)
+    void operator()(Exact_polyhedron::Vertex& vertex)
     { vertex.m_vertex = to_vector3f(vertex.point()); }
   };
 
   /*! Convert Plane_3 to normal in Vector3f representation. */
   struct Plane_to_normal {
-    void operator()(Facet& facet)
+    void operator()(Exact_polyhedron::Facet& facet)
     {
-      Vector_3 normal = facet.plane().orthogonal_vector();
-      float x = static_cast<float>(CGAL::to_double(normal.x()));
-      float y = static_cast<float>(CGAL::to_double(normal.y()));
-      float z = static_cast<float>(CGAL::to_double(normal.z()));
-      facet.m_normal.set(x,y,z);
+      Vector3f normal = to_vector3f(facet.plane().orthogonal_vector());
+      facet.m_normal.set(normal);
       facet.m_normal.normalize();
     }
   };
@@ -282,13 +213,13 @@ private:
 
   /*! Transform a (planar) facet into a plane. */
   struct Plane_equation {
-    template <class Facet>
-    typename Facet::Plane_3 operator()(Facet & f) {
+    template <typename Facet>
+    typename Facet::Plane_3 operator()(Facet& f) {
       typename Facet::Halfedge_handle h = f.halfedge();
       typedef typename Facet::Plane_3 Plane;
-      return Plane( h->vertex()->point(),
-                    h->next()->vertex()->point(),
-                    h->next()->next()->vertex()->point());
+      return Plane(h->vertex()->point(),
+                   h->next()->vertex()->point(),
+                   h->next()->next()->vertex()->point());
     }
   };
 
@@ -299,10 +230,10 @@ private:
   static Container_proto* s_prototype;
 
   /*! The builder. */
-  Exact_polyhedron_geo_builder<HalfedgeDS> m_surface;
+  Exact_polyhedron_geo_builder<Exact_polyhedron::HalfedgeDS> m_surface;
 
   /*! The resulting polyhedron. */
-  Polyhedron m_polyhedron;
+  Exact_polyhedron m_polyhedron;
 
   /*! Indicates whether to compute the convex hull. */
   bool m_convex_hull;

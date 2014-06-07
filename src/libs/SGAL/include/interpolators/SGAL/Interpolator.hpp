@@ -42,6 +42,11 @@ SGAL_BEGIN_NAMESPACE
 class Container_proto;
 class Element;
 
+#if (defined _MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+
 class SGAL_SGAL_DECL Interpolator : public Node {
 public:
   enum {
@@ -102,6 +107,10 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 };
+
+#if (defined _MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief clones.
 inline Container* Interpolator::clone() { SGAL_error(); return 0; }
