@@ -28,7 +28,6 @@
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
-#include "SGAL/Polyhedron_items.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
