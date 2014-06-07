@@ -17,6 +17,7 @@ include $(ROOT)/make/comdef.mak
 
 FILES  = Exact_number_type.hpp
 FILES += Exact_kernel.hpp
+FILES += Exact_polyhedron.hpp
 FILES += Approximate_kernel.hpp
 FILES += Min_sphere.hpp
 
