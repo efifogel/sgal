@@ -94,7 +94,6 @@ CPPSOURCES+= Exact_coord_minkowski.cpp
 CPPSOURCES+= Exact_normal_array.cpp
 CPPSOURCES+= Exact_plane_array.cpp
 CPPSOURCES+= Exact_polyhedron_geo.cpp
-CPPSOURCES+= Smallest_stabbing_cube.cpp
 CPPSOURCES+= Transformer_with_exact_coords.cpp
 CPPSOURCES+= Triangulation_geo.cpp
 ifeq ($(USE_ENV), 1)
@@ -124,6 +123,11 @@ endif
 
 ifeq ($(USE_LTS), 1)
 CPPSOURCES+= Lines_through_segments_geo.cpp
+endif
+
+ifeq ($(USE_SSC), 1)
+LCPPDEFS+= -DUSE_SSC
+CPPSOURCES+= Smallest_stabbing_cube.cpp
 endif
 
 LCPPDEFS+= -DSGAL_LIB
