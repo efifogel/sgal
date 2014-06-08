@@ -529,6 +529,10 @@ void Mesh_set::clean_tex_coord_indices()
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
+  if (is_dirty()) clean();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_empty()) return;
+
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   if (stl_formatter) {
     // Apply the active (top) transform matrix to the coordinates.
