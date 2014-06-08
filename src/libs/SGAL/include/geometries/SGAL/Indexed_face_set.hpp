@@ -55,6 +55,9 @@ public:
     LAST
   };
 
+  typedef Inexact_kernel                               Kernel;
+  typedef Inexact_polyhedron                           Polyhedron;
+
   /*! Constructor */
   Indexed_face_set(Boolean proto = false);
 

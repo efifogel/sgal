@@ -63,10 +63,10 @@ class Scene_graph;
 
 class SGAL_SCGAL_DECL Polyhedron_geo : public Mesh_set {
 public:
-  typedef Kernel                                       Kernel;
+  typedef Inexact_kernel                               Kernel;
   typedef Kernel::Point_3                              Point;
   typedef Kernel::Vector_3                             Vector;
-  typedef Polyhedron                                   Polyhedron;
+  typedef Inexact_polyhedron                           Polyhedron;
   typedef Polyhedron::Facet_iterator                   Facet_iterator;
   typedef Polyhedron::Vertex_iterator                  Vertex_iterator;
   typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_facet_circ;

@@ -57,10 +57,11 @@ struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
   };
 };
 
-typedef CGAL::Cartesian<Float>                         Kernel;
-typedef CGAL::Polyhedron_traits_with_normals_3<Kernel> Polyhedron_traits;
-typedef CGAL::Polyhedron_3<Polyhedron_traits, Polyhedron_items>
-                                                       Polyhedron;
+typedef CGAL::Cartesian<Float>                         Inexact_kernel;
+typedef CGAL::Polyhedron_traits_with_normals_3<Inexact_kernel>
+                                                       Inexact_polyhedron_traits;
+typedef CGAL::Polyhedron_3<Inexact_polyhedron_traits, Polyhedron_items>
+                                                       Inexact_polyhedron;
 
 SGAL_END_NAMESPACE
 
