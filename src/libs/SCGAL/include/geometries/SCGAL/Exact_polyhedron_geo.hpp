@@ -155,6 +155,12 @@ protected:
   /*! Clean the polyhedron. */
   virtual void clean_polyhedron();
 
+  /*! Calculate the normals in case they are invalidated.
+   * If the creaseAngle field is greater than 0, a normal is calculated per
+   * vertes. Otherwise a normal is calculated per polygon.
+   */
+  virtual void clean_normals();
+
   /*! Clears the internal representation. */
   virtual void clear();
 

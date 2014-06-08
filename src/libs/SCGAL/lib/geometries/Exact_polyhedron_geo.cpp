@@ -316,7 +316,8 @@ void Exact_polyhedron_geo::clean_coord_array()
   if (m_polyhedron.empty()) return;
 
   if (!m_coord_array) {
-    m_coord_array.reset(new Coord_array_3d(m_polyhedron.size_of_vertices()));
+    Uint size = m_polyhedron.size_of_vertices();
+    m_coord_array.reset(new Coord_array_3d(size));
     SGAL_assertion(m_coord_array);
   }
   else m_coord_array->resize(m_polyhedron.size_of_vertices());
@@ -393,6 +394,27 @@ void Exact_polyhedron_geo::clean_coord_indices()
     m_dirty_flat_coord_indices = false;
     m_normal_indices_flat = true;
   }
+}
+
+//! \brief claculates the normals in case they are invalidated.
+void Exact_polyhedron_geo::clean_normals()
+{
+#if 0
+  if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
+    if (m_dirty_polyhedron) clean_polyhedron();
+    if (m_smooth) calculate_single_normal_per_vertex();
+    else if (m_creased) calculate_normal_per_polygon();
+    else calculate_multiple_normals_per_vertex();
+  }
+  else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
+  else if (m_crease_angle == 0) calculate_normal_per_polygon();
+  else SGAL_assertion();
+#else
+  calculate_normal_per_polygon();
+#endif
+  m_dirty_normals = false;
+  m_normals_cleaned = true;
+  m_dirty_normal_buffer = true;
 }
 
 SGAL_END_NAMESPACE
