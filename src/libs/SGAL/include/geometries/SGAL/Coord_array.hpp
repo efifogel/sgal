@@ -95,6 +95,12 @@ public:
    */
   virtual const GLfloat* data() const = 0;
 
+  /*! Obtain the datum at a given index.
+   * \param i (in) the index of the obtained datum.
+   * \return the datum at a given index.
+   */
+  virtual const GLfloat* datum(Uint i) const = 0;
+
   /*! Process change of points.
    * \param field_info
    */

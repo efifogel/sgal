@@ -121,6 +121,12 @@ public:
    */
   virtual const GLfloat* data() const;
 
+  /*! Obtain the datum at a given index.
+   * \param i (in) the index of the obtained datum.
+   * \return the datum at a given index.
+   */
+  virtual const GLfloat* datum(Uint i) const;
+
   /*! Obtain the begin iterator. */
   Exact_point_iter begin();
   Exact_point_const_iter begin() const;
@@ -145,6 +151,12 @@ public:
    * \return the inexact coordinates.
    */
   const std::vector<Vector3f>& get_inexact_coords() const;
+
+  /*! Obtain the ith inexact coordinate.
+   * \param i (in) the index of the inexact coordinate to return.
+   * \return the inexact coordinate.
+   */
+  const Vector3f& get_inexact_coord(Uint i) const;
 
 protected:
   /*! Obtain the tag (type) of the container */

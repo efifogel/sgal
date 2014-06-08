@@ -185,6 +185,13 @@ void Exact_coord_array_2d::set_attributes(Element* elem)
 Uint Exact_coord_array_2d::data_size() const
 { return size() * sizeof(Vector2f); }
 
+//! \brief obtains the data.
+inline const GLfloat* Exact_coord_array_2d::datum(Uint i) const
+{
+  if (m_dirty_inexact_coords) clean_inexact_coords();
+  return (GLfloat*)(&(m_inexact_coords[i]));
+}
+
 // \brief obtains the data.
 const GLfloat* Exact_coord_array_2d::data() const
 {

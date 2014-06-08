@@ -189,6 +189,13 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
 Uint Exact_coord_array_3d::data_size() const
 { return m_array.size() * sizeof(Vector3f); }
 
+//! \brief obtains the data.
+inline const GLfloat* Exact_coord_array_3d::datum(Uint i) const
+{
+  if (m_dirty_inexact_coords) clean_inexact_coords();
+  return (GLfloat*)(&(m_inexact_coords[i]));
+}
+
 // \brief obtains the data.
 const GLfloat* Exact_coord_array_3d::data() const
 {
@@ -201,6 +208,13 @@ const std::vector<Vector3f>& Exact_coord_array_3d::get_inexact_coords() const
 {
   if (m_dirty_inexact_coords) clean_inexact_coords();
   return m_inexact_coords;
+}
+
+//! \brief obtains the ith inexact coordinate.
+const Vector3f& Exact_coord_array_3d::get_inexact_coord(Uint i) const
+{
+  if (m_dirty_inexact_coords) clean_inexact_coords();
+  return m_inexact_coords[i];
 }
 
 //! \brief cleans the raw data.

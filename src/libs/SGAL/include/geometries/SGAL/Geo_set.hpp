@@ -344,6 +344,10 @@ public:
   /*! Determine whether the representation is empty. */
   Boolean is_empty() const;
 
+  /*! Obtain the ith 3D coordinate.
+   */
+  virtual const Vector3f& get_coord_3d(Uint i) const;
+
   /*! Obtain a pointer to an element directly. */
   template <typename T_Vector>
   GLfloat* get(T_Vector& array, Uint i) const;

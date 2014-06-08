@@ -717,12 +717,9 @@ void Boundary_set::clean_normals()
 //! \brief computes the normalized normal to a triangle.
 void Boundary_set::compute_triangle_normal(Uint j, Vector3f& n) const
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-  Vector3f& v0 = (*coord_array)[m_flat_coord_indices[j]];
-  Vector3f& v1 = (*coord_array)[m_flat_coord_indices[j+1]];
-  Vector3f& v2 = (*coord_array)[m_flat_coord_indices[j+2]];
+  const Vector3f& v0 = get_coord_3d(m_flat_coord_indices[j]);
+  const Vector3f& v1 = get_coord_3d(m_flat_coord_indices[j+1]);
+  const Vector3f& v2 = get_coord_3d(m_flat_coord_indices[j+2]);
   SGAL_assertion(!v0.collinear(v0, v1, v2));
   if (is_ccw()) n.normal(v0, v1, v2);
   else n.normal(v2, v1, v0);
@@ -731,12 +728,9 @@ void Boundary_set::compute_triangle_normal(Uint j, Vector3f& n) const
 //! \brief computes the center point of a triangle.
 void Boundary_set::compute_triangle_center(Uint j, Vector3f& center) const
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-  center.add((*coord_array)[m_flat_coord_indices[j+0]]);
-  center.add((*coord_array)[m_flat_coord_indices[j+1]]);
-  center.add((*coord_array)[m_flat_coord_indices[j+2]]);
+  center.add(get_coord_3d(m_flat_coord_indices[j+0]));
+  center.add(get_coord_3d(m_flat_coord_indices[j+1]));
+  center.add(get_coord_3d(m_flat_coord_indices[j+2]));
   center.scale(1.0f / 3);
 }
 
@@ -765,18 +759,15 @@ compute_triangle_vertex_info(Uint j, Uint facet_index,
  */
 void Boundary_set::compute_quad_normal(Uint j, Vector3f& n) const
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-  Vector3f& v0 = (*coord_array)[m_flat_coord_indices[j]];
-  Vector3f& v1 = (*coord_array)[m_flat_coord_indices[j+1]];
-  Vector3f& v2 = (*coord_array)[m_flat_coord_indices[j+2]];
+  const Vector3f& v0 = get_coord_3d(m_flat_coord_indices[j]);
+  const Vector3f& v1 = get_coord_3d(m_flat_coord_indices[j+1]);
+  const Vector3f& v2 = get_coord_3d(m_flat_coord_indices[j+2]);
   if (!v0.collinear(v0, v1, v2)) {
     if (is_ccw()) n.normal(v0, v1, v2);
     else n.normal(v2, v1, v0);
     return;
   }
-  Vector3f& v3 = (*coord_array)[m_flat_coord_indices[j+3]];
+  const Vector3f& v3 = get_coord_3d(m_flat_coord_indices[j+3]);
   SGAL_assertion(!v0.collinear(v0, v1, v3));
   if (is_ccw()) n.normal(v0, v1, v3);
   else n.normal(v3, v1, v0);
@@ -785,13 +776,10 @@ void Boundary_set::compute_quad_normal(Uint j, Vector3f& n) const
 //! \brief computes the center point of a quadrilateral.
 void Boundary_set::compute_quad_center(Uint j, Vector3f& center) const
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-  center.add((*coord_array)[m_flat_coord_indices[j+0]]);
-  center.add((*coord_array)[m_flat_coord_indices[j+1]]);
-  center.add((*coord_array)[m_flat_coord_indices[j+2]]);
-  center.add((*coord_array)[m_flat_coord_indices[j+3]]);
+  center.add(get_coord_3d(m_flat_coord_indices[j+0]));
+  center.add(get_coord_3d(m_flat_coord_indices[j+1]));
+  center.add(get_coord_3d(m_flat_coord_indices[j+2]));
+  center.add(get_coord_3d(m_flat_coord_indices[j+3]));
   center.scale(1.0f / 4);
 }
 
@@ -822,13 +810,10 @@ Boundary_set::compute_quad_vertex_info(Uint j, Uint facet_index,
  */
 void Boundary_set::compute_polygon_normal(Uint j, Vector3f& n) const
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-  Vector3f& v0 = (*coord_array)[m_coord_indices[j]];
-  Vector3f& v1 = (*coord_array)[m_coord_indices[j+1]];
+  const Vector3f& v0 = get_coord_3d(m_coord_indices[j]);
+  const Vector3f& v1 = get_coord_3d(m_coord_indices[j+1]);
   for (Uint k = 2; m_coord_indices[j+k] != (Uint) -1; ++k) {
-    Vector3f& v2 = (*coord_array)[m_coord_indices[j+k]];
+    const Vector3f& v2 = get_coord_3d(m_coord_indices[j+k]);
     if (v0.collinear(v0, v1, v2)) continue;
     if (is_ccw()) n.normal(v0, v1, v2);
     else n.normal(v2, v1, v0);
@@ -840,12 +825,9 @@ void Boundary_set::compute_polygon_normal(Uint j, Vector3f& n) const
 //! \brief computes the center point of a polygon.
 Uint Boundary_set::compute_polygon_center(Uint j, Vector3f& center) const
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
   Uint k;
   for (k = 0; m_coord_indices[j+k] != (Uint) -1; ++k)
-    center.add((*coord_array)[m_coord_indices[j+k]]);
+    center.add(get_coord_3d(m_coord_indices[j+k]));
   center.scale(1.0f / k);
   return k;
 }
@@ -990,7 +972,7 @@ void Boundary_set::clean_tex_coords()
     SGAL_assertion(m_tex_coord_array);
   }
   boost::shared_ptr<Tex_coord_array_2d> shared_tex_coord_array =
-    boost::static_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(shared_tex_coord_array);
   Tex_coord_array_2d* tex_coord_array = &*shared_tex_coord_array;
 
@@ -1213,9 +1195,6 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
 //! \brief isects direct drawing-mode.
 void Boundary_set::isect_direct()
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
   Uint i, j;
   switch (m_primitive_type) {
    case PT_TRIANGLE_STRIP:
@@ -1225,10 +1204,8 @@ void Boundary_set::isect_direct()
       for (int strip = 0; strip < num_tri_strips; ++strip) {
         int tmp = strip + 1;
         glBegin(GL_TRIANGLE_STRIP);
-        for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i) {
-          Vector3f& v = (*coord_array)[m_flat_coord_indices[index++]];
-          glVertex3fv((float*)&v);
-        }
+        for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i)
+          glVertex3fv(m_coord_array->datum(m_flat_coord_indices[index++]));
         glEnd();
       }
     }
@@ -1237,9 +1214,9 @@ void Boundary_set::isect_direct()
    case PT_TRIANGLES:
     glBegin(GL_TRIANGLES);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
     }
     glEnd();
     return;
@@ -1247,10 +1224,10 @@ void Boundary_set::isect_direct()
    case PT_QUADS:
     glBegin(GL_QUADS);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
-      glVertex3fv(get_by_flat_coord_index(*coord_array, j++));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
     }
     glEnd();
     return;
@@ -1258,9 +1235,8 @@ void Boundary_set::isect_direct()
    case PT_POLYGONS:
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
       glBegin(GL_POLYGON);
-      for (; m_coord_indices[j] != (Uint) -1; ++j) {
-        glVertex3fv(get_by_coord_index(*coord_array, j));
-      }
+      for (; m_coord_indices[j] != (Uint) -1; ++j)
+        glVertex3fv(m_coord_array->datum(m_coord_indices[j]));
       glEnd();
       ++j;
     }

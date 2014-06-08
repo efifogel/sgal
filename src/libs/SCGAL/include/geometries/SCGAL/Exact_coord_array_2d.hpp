@@ -120,6 +120,12 @@ public:
    */
   virtual const GLfloat* data() const;
 
+  /*! Obtain the datum at a given index.
+   * \param i (in) the index of the obtained datum.
+   * \return the datum at a given index.
+   */
+  virtual const GLfloat* datum(Uint i) const;
+
   /*! Obtain the begin iterator. */
   Exact_point_iter begin();
   Exact_point_const_iter begin() const;

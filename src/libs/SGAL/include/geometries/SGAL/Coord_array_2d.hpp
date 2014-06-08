@@ -128,6 +128,12 @@ public:
    */
   virtual const GLfloat* data() const;
 
+  /*! Obtain the datum at a given index.
+   * \param i (in) the index of the obtained datum.
+   * \return the datum at a given index.
+   */
+  virtual const GLfloat* datum(Uint i) const;
+
   /*! The iterator to the Array first element. */
   std::vector<Vector2f>::iterator begin();
   const std::vector<Vector2f>::const_iterator begin() const;
@@ -212,6 +218,10 @@ inline Uint Coord_array_2d::num_coordinates() const { return 2; }
 //! \brief obtain the data size.
 inline Uint Coord_array_2d::data_size() const
 { return m_array.size() * sizeof(Vector2f); }
+
+//! \brief obtains the datum at a given index.
+inline const GLfloat* Coord_array_2d::datum(Uint i) const
+{ return (GLfloat*)(&(m_array[i])); }
 
 //! \brief obtains the data.
 inline const GLfloat* Coord_array_2d::data() const

@@ -537,14 +537,12 @@ void Mesh_set::write(Formatter* formatter)
   if (stl_formatter) {
     // Apply the active (top) transform matrix to the coordinates.
     const Matrix4f& matrix = stl_formatter->top_matrix();
-    boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::static_pointer_cast<Coord_array_3d>(get_coord_array());
-    if (!coord_array) return;
-    std::vector<Vector3f> world_coords(coord_array->size());
+    if (!m_coord_array || (m_coord_array->size() == 0)) return;
+    std::vector<Vector3f> world_coords(m_coord_array->size());
     std::vector<Vector3f>::iterator it;
     Uint i = 0;
     for (it = world_coords.begin(); it != world_coords.end(); ++it)
-      it->xform_pt((*coord_array)[i++], matrix);
+      it->xform_pt(get_coord_3d(i++), matrix);
 
     // Export the facets.
     if ((PT_TRIANGLES == get_primitive_type()) ||
@@ -638,17 +636,13 @@ void Mesh_set::collapse_identical_coordinates(std::vector<Uint>& indices)
   typedef std::pair<const Vector3f*, Uint>      Coord_index_pair;
   if (indices.empty()) return;
 
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-
   // Construct a vector of pairs of item, where each item is a point and the
   // index into the indices array where the point was indexed.
   std::vector<Coord_index_pair> vec(indices.size());
   std::vector<Coord_index_pair>::iterator it;
   Uint i = 0;
   for (it = vec.begin(); it != vec.end(); ++it) {
-    const Vector3f& vecf = (*coord_array)[m_flat_coord_indices[i]];
+    const Vector3f& vecf = get_coord_3d(m_flat_coord_indices[i]);
     *it = std::make_pair(&vecf, i++);
   }
 

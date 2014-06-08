@@ -200,10 +200,10 @@ Boolean Geo_set::clean_sphere_bound()
   if (!m_bb_is_pre_set && m_coord_array) {
     // We assume that m_coord_array points at an object of type
     // Coord_array_3d type.
-    boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
-    SGAL_assertion(coord_array);
-    m_sphere_bound.set_around(coord_array->begin(), coord_array->end());
+    boost::shared_ptr<Coord_array_3d> coords =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coords);
+    m_sphere_bound.set_around(coords->begin(), coords->end());
   }
   m_dirty_sphere_bound = false;
   return true;
@@ -417,6 +417,15 @@ void Geo_set::set_reverse_coord_indices(const std::vector<Uint>& indices)
   for (++rit; rit < indices.rend(); ++rit)
     m_coord_indices[i++] = *rit;
   m_coord_indices[i++] = (Uint) -1;
+}
+
+//! \brief obtains the ith coordinate.
+const Vector3f& Geo_set::get_coord_3d(Uint i) const
+{
+  boost::shared_ptr<Coord_array_3d> coords =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coords);
+  return (*coords)[i];
 }
 
 SGAL_END_NAMESPACE

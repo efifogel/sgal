@@ -729,12 +729,8 @@ protected:
                                      const Vector3f& center,
                                      OutputIterator info) const
   {
-    boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    SGAL_assertion(coord_array);
-
     // Compute the receiprocal of the square distance from the facet center
-    Vector3f& v = (*coord_array)[vertex_index];
+    const Vector3f& v = get_coord_3d(vertex_index);
     Float weight = 1.0f / v.sqr_distance(center);
     *info++ = Vertex_facet_info(facet_index, weight);
     return info;
@@ -915,10 +911,6 @@ private:
   void clean_local_2d_vertex_buffers(Array array2, Buffer& buffer2,
                                      InputIterator it2)
   {
-    boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    SGAL_assertion(coord_array);
-
     m_local_coord_buffer.clear();
     buffer2.clear();
 
@@ -940,7 +932,7 @@ private:
         continue;
       }
       size_t new_id = m_local_coord_buffer.size();
-      m_local_coord_buffer.push_back((*coord_array)[id1]);
+      m_local_coord_buffer.push_back(get_coord_3d(id1));
       buffer2.push_back((*array2)[id2]);
       id_map[key] = new_id;
       m_local_indices[index++] = new_id;
@@ -960,10 +952,6 @@ private:
                                      Array3 array3, Buffer3& buffer3,
                                      InputIterator3 it3)
   {
-    boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    SGAL_assertion(coord_array);
-
     m_local_coord_buffer.clear();
     buffer2.clear();
     buffer3.clear();
@@ -988,7 +976,7 @@ private:
         continue;
       }
       size_t new_id = m_local_coord_buffer.size();
-      m_local_coord_buffer.push_back((*coord_array)[id1]);
+      m_local_coord_buffer.push_back(get_coord_3d(id1));
       buffer2.push_back((*array2)[id2]);
       buffer3.push_back((*array3)[id3]);
       id_map[key] = new_id;
@@ -1012,10 +1000,6 @@ private:
                                      Array4 array4, Buffer4& buffer4,
                                      InputIterator4 it4)
   {
-    boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    SGAL_assertion(coord_array);
-
     m_local_coord_buffer.clear();
     buffer2.clear();
     buffer3.clear();
@@ -1043,7 +1027,7 @@ private:
         continue;
       }
       size_t new_id = m_local_coord_buffer.size();
-      m_local_coord_buffer.push_back((*coord_array)[id1]);
+      m_local_coord_buffer.push_back(get_coord_3d(id1));
       buffer2.push_back((*array2)[id2]);
       buffer3.push_back((*array3)[id3]);
       buffer4.push_back((*array4)[id4]);

@@ -417,4 +417,18 @@ void Exact_polyhedron_geo::clean_normals()
   m_dirty_normal_buffer = true;
 }
 
+//! \brief obtains the ith 3D coordinate.
+const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
+{
+  boost::shared_ptr<Coord_array_3d> coords =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (coords) return (*coords)[i];
+
+  boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+    boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+  if (exact_coords) return exact_coords->get_inexact_coord(i);
+
+  SGAL_error();         // should never reach here.
+}
+
 SGAL_END_NAMESPACE

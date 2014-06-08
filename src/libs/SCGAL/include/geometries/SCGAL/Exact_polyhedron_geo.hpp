@@ -164,6 +164,10 @@ protected:
   /*! Clears the internal representation. */
   virtual void clear();
 
+  /*! Obtain the ith 3D coordinate.
+   */
+  virtual const Vector3f& get_coord_3d(Uint i) const;
+
   /*! Clean the coordinate array. */
   void clean_coord_array();
 
