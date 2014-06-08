@@ -114,6 +114,10 @@ public:
   /*! Clean the representation. */
   virtual void clean();
 
+  /*! Calculate the sphere bound.
+   */
+  virtual Boolean clean_sphere_bound();
+
   /*! */
   virtual void cull(Cull_context& cull_context);
 

@@ -426,9 +426,31 @@ const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
 
   boost::shared_ptr<Exact_coord_array_3d> exact_coords =
     boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-  if (exact_coords) return exact_coords->get_inexact_coord(i);
+  SGAL_assertion(exact_coords);
+  return exact_coords->get_inexact_coord(i);
+}
 
-  SGAL_error();         // should never reach here.
+//! \brief calculates the sphere bound.
+Boolean Exact_polyhedron_geo::clean_sphere_bound()
+{
+  if (is_dirty()) clean();
+
+  if (!m_dirty_sphere_bound) return false;
+
+  if (!m_bb_is_pre_set && m_coord_array) {
+    boost::shared_ptr<Coord_array_3d> coords =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    if (coords) m_sphere_bound.set_around(coords->begin(), coords->end());
+    else {
+      boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+        boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+      SGAL_assertion(exact_coords);
+      const std::vector<Vector3f>& vecs = exact_coords->get_inexact_coords();
+      m_sphere_bound.set_around(vecs.begin(), vecs.end());
+    }
+  }
+  m_dirty_sphere_bound = false;
+  return true;
 }
 
 SGAL_END_NAMESPACE
