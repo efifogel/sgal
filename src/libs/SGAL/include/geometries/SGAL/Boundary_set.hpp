@@ -208,8 +208,8 @@ public:
   void calculate_normal_per_polygon(Normal_array& normals);
 
   /*! Calculate the normals in case they are invalidated.
-   * If the creaseAngle field is greater than 0, a normal is calculated per
-   * vertes. Otherwise a normal is calculated per polygon.
+   * A normal is calculated either per vertex or per polygon depending on the
+   * color attachment attributes.
    */
   virtual void clean_normals();
 
@@ -641,8 +641,8 @@ protected:
   Boolean use_vertex_array() const;
 
   /*! Compute the normalized normal to a triangle.
-   * \param j The starting index of the triangular facet in the coord indices
-   *     array.
+   * \param j (in) The starting index of the triangular facet in the coord
+              indices array.
    * \param normal The resulting normal.
    */
   void compute_triangle_normal(Uint j, Vector3f& normal) const;
@@ -666,8 +666,8 @@ protected:
                                     Vertices_info& vertices_info) const;
 
   /*! Compute the normalized normal to a quadrilateral.
-   * \param j The starting index of the quadrilateral facet in the coord
-   *     indices array.
+   * \param j (in) The starting index of the quadrilateral facet in the coord
+   *          indices array.
    * \param normal The resulting normal
    */
   void compute_quad_normal(Uint j, Vector3f& normal) const;
@@ -691,8 +691,8 @@ protected:
                                 Vertices_info& vertices_info) const;
 
   /*! Compute the normalized normal to a polygon.
-   * \param j The starting index of the polygonal facet in the coord indices
-   *     array.
+   * \param j (in) The starting index of the polygonal facet in the coord
+   *          indices array.
    * \param normal The resulting normal
    */
   void compute_polygon_normal(Uint j, Vector3f& normal) const;
