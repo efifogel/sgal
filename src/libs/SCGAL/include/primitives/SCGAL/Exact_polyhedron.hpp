@@ -44,6 +44,7 @@ struct My_vertex :
                                       typename Traits::Point_3>
 {
   typedef typename Traits::Point_3    Point;
+  Uint m_index;
   Vector3f m_vertex;
   My_vertex() {}
   My_vertex(const Point& p) :
@@ -54,6 +55,8 @@ struct My_vertex :
 /*! An extended halfedge */
 template <typename Refs>
 struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
+  Uint m_index;
+  Boolean m_creased;
   bool m_flag;
   My_halfedge() : m_flag(false) {}
 };

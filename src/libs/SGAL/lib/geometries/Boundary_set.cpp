@@ -57,8 +57,8 @@ SGAL_BEGIN_NAMESPACE
 Container_proto* Boundary_set::s_prototype(nullptr);
 
 // Default values:
-const Boolean Boundary_set::s_def_normal_per_vertex(true);
-const Boolean Boundary_set::s_def_color_per_vertex(true);
+const Boolean Boundary_set::s_def_normal_per_vertex(false);
+const Boolean Boundary_set::s_def_color_per_vertex(false);
 
 void (Boundary_set::*Boundary_set::draws[NUM_DRAWS])();
 Boolean Boundary_set::m_draws_initialized(false);
@@ -707,7 +707,7 @@ void Boundary_set::set_color_per_vertex(Boolean color_per_vertex)
 //! \brief claculates the normals in case they are invalidated.
 void Boundary_set::clean_normals()
 {
-  if (m_normal_per_vertex) calculate_single_normal_per_vertex();
+  if (m_normal_attachment == PER_VERTEX) calculate_single_normal_per_vertex();
   else calculate_normal_per_polygon();
   m_dirty_normals = false;
   m_normals_cleaned = true;
@@ -720,7 +720,6 @@ void Boundary_set::compute_triangle_normal(Uint j, Vector3f& n) const
   boost::shared_ptr<Coord_array_3d> coord_array =
     boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coord_array);
-
   Vector3f& v0 = (*coord_array)[m_flat_coord_indices[j]];
   Vector3f& v1 = (*coord_array)[m_flat_coord_indices[j+1]];
   Vector3f& v2 = (*coord_array)[m_flat_coord_indices[j+2]];
@@ -934,7 +933,7 @@ void Boundary_set::calculate_normal_per_polygon(Normal_array& normals)
 {
   SGAL_assertion(normals.size() == m_num_primitives);
   Uint j = 0;
-  for (Uint i = 0 ; i < m_num_primitives; ++i) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     Vector3f normal;
 
     switch (m_primitive_type) {
@@ -1023,9 +1022,7 @@ void Boundary_set::draw(Draw_action* action)
   //! \todo clean the nromals only if lighting is enabled.
   if (resolve_fragment_source() == FS_NORMAL) {
     if (m_dirty_normals) clean_normals();
-    if (is_dirty_flat_normal_indices()) {
-      clean_flat_normal_indices();
-    }
+    if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
   }
   else {
     if (is_dirty_flat_color_indices()) clean_flat_color_indices();
@@ -1189,8 +1186,7 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
      (m_flat_normal_indices.size() ? true : false) :
      (m_flat_color_indices.size() ? true : false));
   Attachment fragment_attached = (fragment_source == FS_NORMAL) ?
-    ((m_normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE) :
-    ((m_color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE);
+    m_normal_attachment  : m_color_attachment;
   Boolean texture_enbaled = m_tex_coord_array ? true : false;
   Boolean texture_indexed = va ? false :
     (m_flat_tex_coord_indices.size() ? true : false);
@@ -1382,7 +1378,7 @@ Attribute_list Boundary_set::get_attributes()
     attrib.second = get_normal_per_vertex() ? "TRUE" : "FALSE";
     attribs.push_back(attrib);
   }
-  if (m_normal_per_vertex != s_def_color_per_vertex) {
+  if (m_color_per_vertex != s_def_color_per_vertex) {
     attrib.first = "colorPerVertex";
     attrib.second = get_color_per_vertex() ? "TRUE" : "FALSE";
     attribs.push_back(attrib);

@@ -62,11 +62,12 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Boundary_set(proto),
   m_convex_hull(false),
   m_dirty_polyhedron(true),
-  m_dirty_facets(true),
+  m_dirty_coord_array(false),
   m_time(0)
 {
   if (proto) return;
   m_surface.set_mesh_set(this);
+  m_dirty = false;
 }
 
 //! \brief destructor.
@@ -75,14 +76,20 @@ Exact_polyhedron_geo::~Exact_polyhedron_geo() {}
 //! \brief computes the convex hull of the coordinate set.
 void Exact_polyhedron_geo::convex_hull()
 {
-  if (!m_coord_array) return;
+  if (!m_coord_array || (m_coord_array->size() == 0)) return;
 
-  boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
+  boost::shared_ptr<Exact_coord_array_3d> exact_coords =
     boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-  if (exact_coord_array) {
-    if (exact_coord_array->size() > 0)
-      CGAL::convex_hull_3(exact_coord_array->begin(),
-                          exact_coord_array->end(), m_polyhedron);
+  if (exact_coords) {
+    if (exact_coords->size() > 0)
+      CGAL::convex_hull_3(exact_coords->begin(), exact_coords->end(),
+                          m_polyhedron);
+
+    /* Compute the index of the vertex into the coordinate array and assign it
+     * to the polyhedron-vertex record.
+     * \todo make more efficient.
+     */
+    clean_vertices(exact_coords->begin(), exact_coords->end());
   }
   else {
     boost::shared_ptr<Coord_array_3d> coord_array =
@@ -92,66 +99,26 @@ void Exact_polyhedron_geo::convex_hull()
         std::vector<Exact_point_3> points;
         points.resize(coord_array->size());
         std::transform(coord_array->begin(), coord_array->end(),
-                     points.begin(), Vector_to_point());
+                       points.begin(), Vector_to_point());
 
         // std::copy(points.begin(), points.end(),
-        //           std::ostream_iterator<Point_3>(std::cout, "\n"));
+        //           std::ostream_iterator<Exact_point_3>(std::cout, "\n"));
 
         CGAL::convex_hull_3(points.begin(), points.end(), m_polyhedron);
+
+        /* Compute the index of the vertex into the coordinate array and assign
+         * it to the polyhedron-vertex record.
+         * \todo make more efficient.
+         */
+        clean_vertices(points.begin(), points.end());
       }
     }
     else SGAL_error();
   }
+
   m_dirty_polyhedron = false;
-}
-
-//! \brief draws the geometry.
-void Exact_polyhedron_geo::draw(Draw_action* action)
-{
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_dirty_facets) clean_facets();
-  if (is_empty()) return;
-
-  draw_mesh(action);
-}
-
-//! \brief writes this container.
-void Exact_polyhedron_geo::write(Formatter* formatter)
-{
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_dirty_facets) clean_facets();
-  if (is_empty()) return;
-
-  Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
-  if (stl_formatter) {
-    const Matrix4f& matrix = stl_formatter->top_matrix();
-    for (auto fit = m_polyhedron.facets_begin();
-         fit != m_polyhedron.facets_end(); ++fit)
-    {
-      Exact_polyhedron::Halfedge_around_facet_circulator j = fit->facet_begin();
-      // Facets in polyhedral surfaces are at least triangles.
-      CGAL_assertion(CGAL::circulator_size(j) >= 3);
-      if (CGAL::circulator_size(j) >= 3) {
-        const Vector3f& local_p1 = j++->vertex()->m_vertex;
-        const Vector3f& local_p2 = j++->vertex()->m_vertex;
-        const Vector3f& local_p3 = j++->vertex()->m_vertex;
-        Vector3f p1, p2, p3;
-        p1.xform_pt(local_p1, matrix);
-        p2.xform_pt(local_p2, matrix);
-        p3.xform_pt(local_p3, matrix);
-        write_facet(p1, p2, p3, stl_formatter);
-      }
-    }
-    return;
-  }
+  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = true;
 }
 
 //! \brief cleans the data structure.
@@ -173,9 +140,9 @@ void Exact_polyhedron_geo::clean_polyhedron()
   }
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
-  m_dirty_facets = true;
 }
 
+#if 0
 //! \brief cleans the facets.
 void Exact_polyhedron_geo::clean_facets()
 {
@@ -203,88 +170,18 @@ void Exact_polyhedron_geo::clean_facets()
 
   m_dirty_facets = false;
 }
+#endif
 
 //! \brief clears the internal representation.
 void Exact_polyhedron_geo::clear()
 {
   m_polyhedron.clear();
   m_dirty_polyhedron = true;
-  m_dirty_facets = true;
+  m_dirty = true;
 }
 
 //! \brief
 void Exact_polyhedron_geo::cull(Cull_context& /* cull_context */) {}
-
-//! \brief draws the internal representation.
-void Exact_polyhedron_geo::draw_geometry(Draw_action* /* action */)
-{
-  for (auto it = m_polyhedron.facets_begin(); it != m_polyhedron.facets_end();
-       ++it)
-  {
-    Exact_polyhedron::Halfedge_around_facet_circulator j = it->facet_begin();
-    // Facets in polyhedral surfaces are at least triangles.
-    CGAL_assertion(CGAL::circulator_size(j) >= 3);
-    glBegin(GL_POLYGON);
-    const Vector3f& normal = it->m_normal;
-    glNormal3fv((float*)&normal);
-    do {
-      const Vector3f& vertex = j->vertex()->m_vertex;
-      glVertex3fv((float*)&vertex);
-    } while (++j != it->facet_begin());
-    glEnd();
-  }
-  SGAL_TRACE_MSG(Trace::POLYHEDRON, "completed\n");
-}
-
-//! \brief
-void Exact_polyhedron_geo::isect(Isect_action* /* action */)
-{
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_dirty_facets) clean_facets();
-  if (is_empty()) return;
-
-  for (auto it = m_polyhedron.facets_begin(); it != m_polyhedron.facets_end();
-       ++it)
-  {
-    Exact_polyhedron::Halfedge_around_facet_circulator j = it->facet_begin();
-    // Facets in polyhedral surfaces are at least triangles.
-    CGAL_assertion(CGAL::circulator_size(j) >= 3);
-    glBegin(GL_POLYGON);
-    do {
-      const Vector3f& vertex = j->vertex()->m_vertex;
-      glVertex3fv((float*)&vertex);
-    } while (++j != it->facet_begin());
-    glEnd();
-  }
-}
-
-//! \brief
-Boolean Exact_polyhedron_geo::clean_sphere_bound()
-{
-  m_dirty_sphere_bound = false;
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_bb_is_pre_set) return true;
-
-  Approximate_sphere_vector spheres;
-  if (!m_polyhedron.empty()) {
-    spheres.resize(m_polyhedron.size_of_vertices());
-    Convert_approximate_sphere convert;
-    std::transform(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
-                   spheres.begin(), convert);
-  }
-  if (!spheres.empty()) {
-    Min_sphere min_sphere(spheres.begin(), spheres.end());
-    Vector3f center_vec;
-    std::copy(min_sphere.center_cartesian_begin(),
-              min_sphere.center_cartesian_end(),
-              &center_vec[0]);
-    m_sphere_bound.set_center(center_vec);
-    m_sphere_bound.set_radius(min_sphere.radius());
-  }
-  return true;
-}
 
 //! \brief sets the attributes of this object.
 void Exact_polyhedron_geo::set_attributes(Element* elem)
@@ -297,7 +194,7 @@ void Exact_polyhedron_geo::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "convexHull") {
-      m_convex_hull = compare_to_true(value);
+      set_convex_hull(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -348,7 +245,6 @@ void Exact_polyhedron_geo::print_stat()
   std::cout << "Information for " << get_name() << ":\n";
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_dirty_facets) clean_facets();
 
   std::cout << "Primal"
             << ", no. vertices: " << m_polyhedron.size_of_vertices()
@@ -371,8 +267,11 @@ Exact_polyhedron& Exact_polyhedron_geo::get_polyhedron()
 //! \brief sets the polyhedron data-structure.
 void Exact_polyhedron_geo::set_polyhedron(Exact_polyhedron& polyhedron)
 {
-  m_dirty_polyhedron = false;
   m_polyhedron = polyhedron;
+  m_dirty_polyhedron = false;
+  if (m_coord_array) m_coord_array->resize(0);
+  m_dirty_coord_array = true;
+  m_dirty = true;
 }
 
 /*! \brief Sets the flag that indicates whether to compute the convex hull
@@ -384,6 +283,7 @@ void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
   m_convex_hull = flag;
   m_polyhedron.clear();
   m_dirty_polyhedron = true;
+  m_dirty = true;
 }
 
 //! \brief processes change of field.
@@ -394,6 +294,105 @@ void Exact_polyhedron_geo::field_changed(const Field_info* field_info)
    default: break;
   }
   Boundary_set::field_changed(field_info);
+}
+
+//! \brief cleans the representation.
+void Exact_polyhedron_geo::clean()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_coord_array) clean_coord_array();
+  if (m_dirty_coord_indices || m_dirty_flat_coord_indices)
+    clean_coord_indices();
+
+  Boundary_set::clean();
+}
+
+//! \brief cleans the coordinates.
+void Exact_polyhedron_geo::clean_coord_array()
+{
+  m_dirty_coord_array = false;
+  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = true;
+  if (m_polyhedron.empty()) return;
+
+  if (!m_coord_array) {
+    m_coord_array.reset(new Coord_array_3d(m_polyhedron.size_of_vertices()));
+    SGAL_assertion(m_coord_array);
+  }
+  else m_coord_array->resize(m_polyhedron.size_of_vertices());
+
+  boost::shared_ptr<Coord_array_3d> coords =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coords);
+
+  /* Generate the coordinate array and assign the index into the coordinate
+   * array of the vertex to the vertex.
+   */
+  Uint index = 0;
+  auto cit = coords->begin();
+  for (auto vit = m_polyhedron.vertices_begin();
+       vit != m_polyhedron.vertices_end(); ++vit)
+  {
+    vit->m_index = index++;
+    *cit++ = to_vector3f(vit->point());
+  }
+}
+
+//! \brief cleans the coordinate indices.
+void Exact_polyhedron_geo::clean_coord_indices()
+{
+  if (m_polyhedron.empty() || !m_coord_array || (m_coord_array->size() == 0)) {
+    m_dirty_coord_indices = false;
+    m_dirty_flat_coord_indices = false;
+    return;
+  }
+
+  set_num_primitives(m_polyhedron.size_of_facets());
+
+  bool triangles(true);
+  bool quads(true);
+  Uint size = 0;
+  for (auto fit = m_polyhedron.facets_begin();
+       fit != m_polyhedron.facets_end(); ++fit)
+  {
+    Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+    size_t circ_size = CGAL::circulator_size(hh);
+    size += circ_size;
+    if (circ_size != 3) triangles = false;
+    if (circ_size != 4) quads = false;
+  }
+  SGAL_assertion(triangles && quads);
+
+  if (!triangles && !quads) {
+    set_primitive_type(PT_POLYGONS);
+    size += m_polyhedron.size_of_facets();
+  }
+  else set_primitive_type(quads ? PT_QUADS : PT_TRIANGLES);
+
+  m_flat_coord_indices.resize(size);
+
+  auto iit = (!triangles && !quads) ?
+    m_coord_indices.begin() : m_flat_coord_indices.begin();
+  for (auto fit = m_polyhedron.facets_begin();
+       fit != m_polyhedron.facets_end(); ++fit)
+  {
+    Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+    do {
+      *iit++ = hh->vertex()->m_index;
+    } while (++hh != fit->facet_begin());
+    if (!triangles && !quads) *iit++ = (Uint) -1;
+  }
+
+  if (!triangles && !quads) {
+    m_dirty_coord_indices = false;
+    m_dirty_flat_coord_indices = true;
+    m_normal_indices_flat = false;
+  }
+  else {
+    m_dirty_coord_indices = true;
+    m_dirty_flat_coord_indices = false;
+    m_normal_indices_flat = true;
+  }
 }
 
 SGAL_END_NAMESPACE

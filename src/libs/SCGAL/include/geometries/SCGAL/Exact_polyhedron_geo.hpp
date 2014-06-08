@@ -48,7 +48,6 @@ SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 class Cull_context;
-class Isect_action;
 class Coord_array;
 class Color_array;
 class Draw_action;
@@ -112,22 +111,11 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Draw the geometry. */
-  virtual void draw(Draw_action* action);
+  /*! Clean the representation. */
+  virtual void clean();
 
   /*! */
   virtual void cull(Cull_context& cull_context);
-
-  /*! */
-  virtual void isect(Isect_action* action);
-
-  /*! */
-  virtual bool clean_sphere_bound();
-
-  /*! Write this container.
-   * \param formatter (in) the formatter to use; e.g., VRML.
-   */
-  virtual void write(Formatter* formatter);
 
   /*! Process change of field.
    * \param field_info The information record of the field that changed.
@@ -164,20 +152,21 @@ protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! Cleans the polyhedron. */
+  /*! Clean the polyhedron. */
   virtual void clean_polyhedron();
-
-  /*! Cleans the facets. */
-  virtual void clean_facets();
 
   /*! Clears the internal representation. */
   virtual void clear();
 
-  /*! Draws the internal representation. */
-  virtual void draw_geometry(Draw_action * action);
+  /*! Clean the coordinate array. */
+  void clean_coord_array();
 
-  /*! Returns true if the internal representation is empty. */
-  virtual bool is_empty() const { return m_polyhedron.empty(); }
+  /*! Clean the coordinate indices. */
+  void clean_coord_indices();
+
+  /*! Determine whether the polyhedron representation is empty.
+   */
+  bool is_polyhedron_empty() const;
 
 private:
   /*! Extracts the approximate point from a polyhedron vertex. */
@@ -223,6 +212,24 @@ private:
     }
   };
 
+  /*! Search each vertex in the polyhedron in the given range, compute its
+   * index in the range, and assign it to polyhedron-vertex record.
+   */
+  template <typename InputIterator>
+  void clean_vertices(InputIterator begin, InputIterator end)
+  {
+    for (auto vit = m_polyhedron.vertices_begin();
+         vit != m_polyhedron.vertices_end(); ++vit)
+    {
+      // find the index
+      Uint index = 0;
+      for (auto cit = begin; cit != end; ++cit, ++index)
+        if (vit->point() == *cit) break;
+      SGAL_assertion(cit != end);
+      vit->m_index = index;
+    }
+  }
+
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -238,11 +245,13 @@ private:
   /*! Indicates whether to compute the convex hull. */
   bool m_convex_hull;
 
-  /*! Indicates whether the geometry is dirty and thus should be cleaned. */
+  /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
   Boolean m_dirty_polyhedron;
 
-  /*! Indicates whether the facets are dirty and thus should be cleaned. */
-  Boolean m_dirty_facets;
+  /*! Indicates whether the coordinate array is dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_coord_array;
 
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;
@@ -272,6 +281,10 @@ inline Boolean Exact_polyhedron_geo::get_convex_hull() const
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Exact_polyhedron_geo::get_tag() const
 { return s_tag; }
+
+//! \brief determines whether the polyhedron representation is empty.
+inline bool Exact_polyhedron_geo::is_polyhedron_empty() const
+{ return m_polyhedron.empty(); }
 
 SGAL_END_NAMESPACE
 
