@@ -60,6 +60,10 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 {
   if (proto) return;
   m_surface.set_mesh_set(this);
+  //! \todo move crease_angle to here.
+  set_crease_angle(0);
+  set_normal_per_vertex(true);
+  set_color_per_vertex(true);
 }
 
 //! \brief destructor.

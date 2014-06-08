@@ -428,10 +428,22 @@ protected:
   /*! The number of primitives in this Geo_set. */
   Uint m_num_primitives;
 
-  /*! Indicates how normals are bound. */
+  /*! Indicates how normals are bound.
+   * By default, normals are bound per primitive (e.g., polygon, triangle,
+   * and auad). Onserve that this is different than the specification of VRML,
+   * where normalPerVertex is TRUE by default. This is rectified in
+   * Indexed_face_set, where colorPerVertex, normalPerVertex, and creaseAngle
+   * are introduced.
+   */
   Attachment m_normal_attachment;
 
-  /*! Indicates how normals are bound. */
+  /*! Indicates how normals are bound.
+   * By default, colors are bound per primitive (e.g., polygon, triangle,
+   * and auad). Onserve that this is different than the specification of VRML,
+   * where colorPerVertex is TRUE by default. This is rectified in
+   * Indexed_face_set, where colorPerVertex, normalPerVertex, and creaseAngle
+   * are introduced.
+   */
   Attachment m_color_attachment;
 
   /*! An array of vertex ccordinates. */

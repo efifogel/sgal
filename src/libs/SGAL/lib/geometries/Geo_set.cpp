@@ -51,8 +51,8 @@ Geo_set::Primitive_type Geo_set::s_def_primitive_type(Geo_set::PT_POLYGONS);
 Geo_set::Geo_set(Boolean proto) :
   Geometry(proto),
   m_num_primitives(0),
-  m_normal_attachment(PER_VERTEX),
-  m_color_attachment(PER_VERTEX),
+  m_normal_attachment(PER_PRIMITIVE),
+  m_color_attachment(PER_PRIMITIVE),
   m_coord_indices(),
   m_normal_indices(),
   m_color_indices(),
