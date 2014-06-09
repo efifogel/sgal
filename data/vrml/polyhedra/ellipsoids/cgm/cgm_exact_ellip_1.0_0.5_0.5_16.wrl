@@ -27,7 +27,7 @@ DEF TRANSFORMER CoordinateTransformer {
   rotation 1 0 0 1.57079632679489661922
   #translation 3 0 0
   coord DEF COORD ExactCoordinate {
-    ratPoint [
+    exactPoint [
       1000/1000 0/1000 0/1000,
       980/1000 97/1000 0/1000,
       980/1000 95/1000 19/1000,

@@ -87,12 +87,11 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
   for (; ai != elem->str_attrs_end(); ai++) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-    if (name == "fltPoint") {
+    if (name == "point") {
       Uint num_values = get_num_tokens(value);
       Uint size = num_values / 3;
       std::istringstream svalue(value, std::istringstream::in);
-      int old_size = m_array.size();
-      m_array.resize(old_size + size);
+      m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       for (Uint i = 0; i < size; i++) {
         float x, y, z;
@@ -111,18 +110,17 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
         Exact_FT fx(ex);
         Exact_FT fy(ey);
         Exact_FT fz(ez);
-        m_array[old_size + i] = Exact_point_3(fx,fy,fz);
+        m_array[i] = Exact_point_3(fx,fy,fz);
       }
       //! \todo sg->get_stats().AddNumVertices(size);
       elem->mark_delete(ai);
     }
 
-    if (name == "fltPolarPoint") {
+    if (name == "polarPoint") {
       Uint num_values = get_num_tokens(value);
       Uint size = num_values / 2;
       std::istringstream svalue(value, std::istringstream::in);
-      int old_size = m_array.size();
-      m_array.resize(old_size + size);
+      m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       for (Uint i = 0; i < size; i++) {
         float u, v;
@@ -163,19 +161,18 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
         Exact_FT fz = sinu;
 #endif
 
-        m_array[old_size + i] = Exact_point_3(fx,fy,fz);
+        m_array[i] = Exact_point_3(fx,fy,fz);
       }
       elem->mark_delete(ai);
     }
 
-    if (name == "ratPoint") {
+    if (name == "exactPoint") {
       Uint num_values = get_num_values<Exact_number_type>(value);
       Uint size = num_values / 3;
-      int old_size = m_array.size();
-      m_array.resize(old_size + size);
+      m_array.resize(size);
       std::istringstream svalue(value, std::istringstream::in);
       //! svalue.seekg(0); why this doesn't work?
-      for (Uint i = 0; i < size; ++i) svalue >> m_array[old_size + i];
+      for (Uint i = 0; i < size; ++i) svalue >> m_array[i];
       //! \todo sg->get_stats().AddNumVertices(size);
       elem->mark_delete(ai);
     }

@@ -23,7 +23,7 @@ DEF ROBOT_NAVIGATION NavigationInfo {
 DEF ROBOT_TRANSFORMER TransformerWithExactCoordinates {
   translation 3 0 0
   coord DEF ROBOT_COORD ExactCoordinate {
-    ratPoint [3000/1000     0/1000  1175/1000,
+    exactPoint [3000/1000     0/1000  1175/1000,
 	      4050/1000     0/1000   525/1000,
 	      3325/1000  1000/1000   525/1000,
 	      2150/1000   618/1000   525/1000,
@@ -50,7 +50,7 @@ DEF FLATTEN_OBSTACLE_KEY SingleKeySensor { key "g" }
 DEF OBSTACLE_TRANSFORMER TransformerWithExactCoordinates {
   translation -3 0 0
   coord DEF OBSTACLE_COORD ExactCoordinate {
-    ratPoint [-3000/1000     0/1000  1175/1000,
+    exactPoint [-3000/1000     0/1000  1175/1000,
 	      -1950/1000     0/1000   525/1000,
 	      -2675/1000  1000/1000   525/1000,
 	      -3850/1000   618/1000   525/1000,

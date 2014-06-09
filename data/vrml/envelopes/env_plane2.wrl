@@ -172,7 +172,7 @@ Transform {
 	    edgeRadius 0.075
 	    vertexRadius 0.15
 	    boundingPolygon ExactCoordinate2D {
-	      ratPoint [ -5 -5, 5 -5, 5 5, -5 5]
+	      exactPoint [ -5 -5, 5 -5, 5 5, -5 5]
 	    }
 	    color Color {
 	      color [

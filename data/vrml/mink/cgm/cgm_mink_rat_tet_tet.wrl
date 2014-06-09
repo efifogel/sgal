@@ -27,7 +27,7 @@ Transform {
           geometry DEF ROBOT CubicalGaussianMap {
             drawDual FALSE
             coord DEF COORD ExactCoordinate {
-              ratPoint [-1/1 -73/100 -73/100,
+              exactPoint [-1/1 -73/100 -73/100,
                          0/1 -73/100   1/1,
                          1/1 -73/100 -73/100,
                          0/1,  1/1,    0/1

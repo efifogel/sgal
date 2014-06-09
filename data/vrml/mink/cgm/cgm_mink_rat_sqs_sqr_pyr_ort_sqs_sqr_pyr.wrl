@@ -24,7 +24,7 @@ DEF FLATTEN_ROBOT_KEY SingleKeySensor { key "f" }
 DEF ROBOT_TRANSFORMER TransformerWithExactCoordinates {
 #  translation 3 0 0
   coord DEF ROBOT_COORD ExactCoordinate {
-    ratPoint [4000/1000 0/1000 0/1000,
+    exactPoint [4000/1000 0/1000 0/1000,
 	      3000/1000 0/1000 1000/1000,
 	      2000/1000 0/1000 0/1000,
 	      3000/1000 0/1000 -1000/1000,
@@ -46,7 +46,7 @@ DEF OBSTACLE_TRANSFORMER TransformerWithExactCoordinates {
 #  translation -3 0 0
 #  rotation  0 0 1 1.5707963266
   coord DEF OBSTACLE_COORD ExactCoordinate {
-    ratPoint [-3000/1000 1000/1000 0/1000,
+    exactPoint [-3000/1000 1000/1000 0/1000,
 	      -3000/1000 0/1000 1000/1000,
 	      -3000/1000 -1000/1000 0/1000,
 	      -3000/1000 0/1000 -1000/1000,

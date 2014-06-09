@@ -292,7 +292,7 @@ Transform {
 				aosVertexStyle "none"
 				aosEdgeColor 1 0 0
 				coord DEF COORD_RED ExactCoordinate {
-				  ratPoint[-2 0 0,
+				  exactPoint[-2 0 0,
 					   -2 0 2,
 					   -1 -1 1,
 					   -1 1 1,
@@ -386,7 +386,7 @@ Transform {
 				aosVertexStyle "none"
 				aosEdgeColor 0 1 0
 				coord DEF COORD_GREEN ExactCoordinate {
-				  ratPoint[-2 0 0,
+				  exactPoint[-2 0 0,
 					   -2 0 -2,
 					   -1 -1 -1,
 					   -1 1 -1,
@@ -481,7 +481,7 @@ Transform {
 				aosVertexStyle "none"
 				aosEdgeColor 0 0 1
 				coord DEF COORD_BLUE ExactCoordinate {
-				  ratPoint[0 -2 0,
+				  exactPoint[0 -2 0,
 					   2 -2 0,
 					   1 -1 -1,
 					   1 -1 1,
@@ -576,7 +576,7 @@ Transform {
 				aosVertexStyle "none"
 				aosEdgeColor 1 0 1
 				coord DEF COORD_PURPLE ExactCoordinate {
-				  ratPoint[0 -2 0,
+				  exactPoint[0 -2 0,
 					   -2 -2 0,
 					   -1 -1 -1,
 					   -1 -1 1,
@@ -672,7 +672,7 @@ Transform {
 				aosVertexStyle "none"
 				aosEdgeColor 1 1 0
 				coord DEF COORD_YELLOW ExactCoordinate {
-				  ratPoint[0 0 -2,
+				  exactPoint[0 0 -2,
 					   0 2 -2,
 					   -1 1 -1,
 					   1 1 -1,
@@ -767,7 +767,7 @@ Transform {
 				aosVertexStyle "none"
 				aosEdgeColor 0 1 1
 				coord DEF COORD_TURQUOISE ExactCoordinate {
-				  ratPoint[0 0 -2,
+				  exactPoint[0 0 -2,
 					   0 -2 -2,
 					   -1 -1 -1,
 					   1 -1 -1,

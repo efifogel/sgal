@@ -94,7 +94,7 @@ Transform {
 	    aosMarkedEdgeColor 0 1 0
 	    # aosMarkedEdgeIndex [0]
 	    coord DEF COORD ExactCoordinate {
-	      ratPoint [-1 0 1, 0 -1 1, 1 0 1, 0 1 1,
+	      exactPoint [-1 0 1, 0 -1 1, 1 0 1, 0 1 1,
 		        -1 0 -1, 0 -1 -1, 1 0 -1, 0 1 -1]
 	    }
 	    # curveIndex [0 1, 1 2, 2 3, 3 0]

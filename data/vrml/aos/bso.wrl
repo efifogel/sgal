@@ -92,7 +92,7 @@ Transform {
 	    aosMarkedFaceTransparency 0.5
 	    # aosMarkedFaceIndex [28 46 47]	    
             coord DEF COORD ExactCoordinate {
-              ratPoint [
+              exactPoint [
 			459420/2679769 81225/2679769 -1612/1637
 			459420/2679769 81225/2679769 1612/1637
 			149568/885617 37449/885617 -1612/1637
