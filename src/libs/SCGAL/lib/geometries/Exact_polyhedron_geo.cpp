@@ -45,6 +45,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 
 #include "SCGAL/Exact_polyhedron.hpp"
 #include "SCGAL/Exact_polyhedron_geo.hpp"
@@ -62,12 +63,17 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Boundary_set(proto),
   m_convex_hull(false),
   m_dirty_polyhedron(true),
+  m_dirty_polyhedron_cells(true),
   m_dirty_coord_array(false),
   m_time(0)
 {
   if (proto) return;
-  m_surface.set_mesh_set(this);
   m_dirty = false;
+  m_surface.set_mesh_set(this);
+  //! \todo move crease_angle to here.
+  set_crease_angle(0);
+  set_normal_per_vertex(true);
+  set_color_per_vertex(true);
 }
 
 //! \brief destructor.
@@ -140,6 +146,38 @@ void Exact_polyhedron_geo::clean_polyhedron()
   }
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
+  m_dirty_polyhedron_cells = true;
+}
+
+//! \brief cleans the polyhedron cells.
+void Exact_polyhedron_geo::clean_polyhedron_cells()
+{
+  m_dirty_polyhedron_cells = false;
+
+  // Compute the normal used only for drawing the polyhedron
+  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+                [](Exact_polyhedron::Facet& facet)
+                {
+                  Exact_polyhedron::Halfedge_const_handle h = facet.halfedge();
+                  const Vector3f& v1 = to_vector3f(h->vertex()->point());
+                  h = h->next();
+                  const Vector3f& v2 = to_vector3f(h->vertex()->point());
+                  h = h->next();
+                  const Vector3f& v3 = to_vector3f(h->vertex()->point());
+                  Vector3f vec1, vec2;
+                  vec1.sub(v2, v1);
+                  vec2.sub(v3, v2);
+                  facet.m_normal.cross(vec1, vec2);
+                  facet.m_normal.normalize();
+                });
+
+  // Clean the halfedges
+  Edge_normal_calculator edge_normal_calculator(get_crease_angle());
+  edge_normal_calculator =
+    std::for_each(m_polyhedron.edges_begin(), m_polyhedron.edges_end(),
+                  edge_normal_calculator);
+  m_smooth = edge_normal_calculator.m_smooth;
+  m_creased = edge_normal_calculator.m_creased;
 }
 
 #if 0
@@ -372,6 +410,7 @@ void Exact_polyhedron_geo::clean_coord_indices()
 
   m_flat_coord_indices.resize(size);
 
+  Uint index = 0;
   auto iit = (!triangles && !quads) ?
     m_coord_indices.begin() : m_flat_coord_indices.begin();
   for (auto fit = m_polyhedron.facets_begin();
@@ -380,8 +419,12 @@ void Exact_polyhedron_geo::clean_coord_indices()
     Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
     do {
       *iit++ = hh->vertex()->m_index;
+      hh->m_index = index++;
     } while (++hh != fit->facet_begin());
-    if (!triangles && !quads) *iit++ = (Uint) -1;
+    if (!triangles && !quads) {
+      *iit++ = (Uint) -1;
+      ++index;
+    }
   }
 
   if (!triangles && !quads) {
@@ -399,9 +442,9 @@ void Exact_polyhedron_geo::clean_coord_indices()
 //! \brief claculates the normals in case they are invalidated.
 void Exact_polyhedron_geo::clean_normals()
 {
-#if 0
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
     if (m_dirty_polyhedron) clean_polyhedron();
+    if (m_dirty_polyhedron_cells) clean_polyhedron_cells();
     if (m_smooth) calculate_single_normal_per_vertex();
     else if (m_creased) calculate_normal_per_polygon();
     else calculate_multiple_normals_per_vertex();
@@ -409,9 +452,6 @@ void Exact_polyhedron_geo::clean_normals()
   else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
   else if (m_crease_angle == 0) calculate_normal_per_polygon();
   else SGAL_assertion();
-#else
-  calculate_normal_per_polygon();
-#endif
   m_dirty_normals = false;
   m_normals_cleaned = true;
   m_dirty_normal_buffer = true;
@@ -451,6 +491,23 @@ Boolean Exact_polyhedron_geo::clean_sphere_bound()
   }
   m_dirty_sphere_bound = false;
   return true;
+}
+
+//! \brief calculates multiple normals per vertex for all vertices.
+void Exact_polyhedron_geo::calculate_multiple_normals_per_vertex()
+{
+  m_flat_normal_indices.resize(m_flat_coord_indices.size());
+  if (!m_normal_array) {
+    m_normal_array.reset(new Normal_array());
+    SGAL_assertion(m_normal_array);
+  }
+  else m_normal_array->clear();
+
+  SGAL::calculate_multiple_normals_per_vertex(m_polyhedron,
+                                              m_normal_array,
+                                              m_flat_normal_indices);
+  m_dirty_normal_indices = true;
+  m_dirty_flat_normal_indices = false;
 }
 
 SGAL_END_NAMESPACE

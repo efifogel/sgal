@@ -44,7 +44,10 @@ struct My_vertex :
                                       typename Traits::Point_3>
 {
   typedef typename Traits::Point_3    Point;
+
+  /*! A uniqe index of vertices. */
   Uint m_index;
+
   Vector3f m_vertex;
   My_vertex() {}
   My_vertex(const Point& p) :
@@ -52,24 +55,29 @@ struct My_vertex :
   {}
 };
 
-/*! An extended halfedge */
+/*! A halfedge type extended with some data fields.
+ */
 template <typename Refs>
 struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
+  /*! The index of the index of the points of the facets. */
   Uint m_index;
+
   Boolean m_creased;
-  bool m_flag;
-  My_halfedge() : m_flag(false) {}
+
+  My_halfedge() : m_creased(false) {}
 };
 
 /*! A face type with the face normal data member */
-template <typename Refs>
+template <typename Refs, typename Traits>
 struct My_face :
-  public CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Exact_plane_3>
+  public CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true,
+                                    typename Traits::Plane_3>
 {
   Vector3f m_normal;
   My_face() {}
-  My_face(const Exact_plane_3& pln) :
-    CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Exact_plane_3>(pln)
+  My_face(const typename Traits::Plane_3& pln) :
+    CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true,
+                               typename Traits::Plane_3>(pln)
   {}
 };
 
@@ -87,7 +95,7 @@ struct Exact_polyhedron_items : public CGAL::Polyhedron_items_3 {
 
   template <typename Refs, typename Traits>
   struct Face_wrapper {
-    typedef My_face<Refs> Face;
+    typedef My_face<Refs, Traits> Face;
   };
 };
 

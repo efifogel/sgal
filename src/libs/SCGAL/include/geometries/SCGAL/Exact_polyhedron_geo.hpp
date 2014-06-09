@@ -121,6 +121,9 @@ public:
   /*! */
   virtual void cull(Cull_context& cull_context);
 
+  /*! Clears the internal representation. */
+  virtual void clear();
+
   /*! Process change of field.
    * \param field_info The information record of the field that changed.
    * Notice that Mesh::coord_changed() is invoked when a new coordinate field
@@ -153,20 +156,59 @@ public:
   void print_stat();
 
 protected:
+  /*! A functor that calculates the normal of a given (half)edge. */
+  struct Edge_normal_calculator {
+    /*! The crease angle. */
+    Float m_crease_angle;
+
+    /*! Indicates whether all edges are creased. */
+    Boolean m_creased;
+
+    /*! Indicates whether all edges are smooth. */
+    Boolean m_smooth;
+
+    /*! Constructor. */
+    Edge_normal_calculator(Float crease_angle) :
+      m_crease_angle(crease_angle),
+      m_creased(true),
+      m_smooth(true)
+    {}
+
+    /*! Calculate the normal of a given (half)edge.
+     * \param edge (in) the given (half)edge.
+     */
+    template <typename Halfedge>
+    void operator()(Halfedge& edge)
+    {
+      Vector3f normal1 = edge.facet()->m_normal;
+      Vector3f normal2 = edge.opposite()->facet()->m_normal;
+      Float angle = arccosf(normal1.dot(normal2));  // inner product
+      if (angle > m_crease_angle) {
+        edge.m_creased = true;
+        edge.opposite()->m_creased = true;
+        m_smooth = false;
+        return;
+      }
+      edge.m_creased = false;
+      edge.opposite()->m_creased = false;
+      m_creased = false;
+    }
+  };
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
   /*! Clean the polyhedron. */
   virtual void clean_polyhedron();
 
+  /*! Clean the polyhedron cells. */
+  virtual void clean_polyhedron_cells();
+
   /*! Calculate the normals in case they are invalidated.
    * If the creaseAngle field is greater than 0, a normal is calculated per
    * vertes. Otherwise a normal is calculated per polygon.
    */
   virtual void clean_normals();
-
-  /*! Clears the internal representation. */
-  virtual void clear();
 
   /*! Obtain the ith 3D coordinate.
    */
@@ -181,6 +223,14 @@ protected:
   /*! Determine whether the polyhedron representation is empty.
    */
   bool is_polyhedron_empty() const;
+
+  /*! Calculate multiple normals per vertex for all vertices.
+   * If the angle between the geometric normals of two adjacent faces is less
+   * than the crease angle, calculate the normals so that the facets are
+   * smooth-shaded across the edge. Otherwise, calculate the normals so that
+   * the facets are faceted.
+   */
+  void calculate_multiple_normals_per_vertex();
 
 private:
   /*! Extracts the approximate point from a polyhedron vertex. */
@@ -203,15 +253,15 @@ private:
     { vertex.m_vertex = to_vector3f(vertex.point()); }
   };
 
-  /*! Convert Plane_3 to normal in Vector3f representation. */
-  struct Plane_to_normal {
-    void operator()(Exact_polyhedron::Facet& facet)
-    {
-      Vector3f normal = to_vector3f(facet.plane().orthogonal_vector());
-      facet.m_normal.set(normal);
-      facet.m_normal.normalize();
-    }
-  };
+//   /*! Convert Plane_3 to normal in Vector3f representation. */
+//   struct Plane_to_normal {
+//     void operator()(Exact_polyhedron::Facet& facet)
+//     {
+//       Vector3f normal = to_vector3f(facet.plane().orthogonal_vector());
+//       facet.m_normal.set(normal);
+//       facet.m_normal.normalize();
+//     }
+//   };
 
 
   /*! Transform a (planar) facet into a plane. */
@@ -245,11 +295,8 @@ private:
     }
   }
 
-  /*! The tag that identifies this container type. */
-  static const std::string s_tag;
-
-  /*! The node prototype. */
-  static Container_proto* s_prototype;
+  /*! Computes the convex hull of the coordinate set. */
+  void convex_hull();
 
   /*! The builder. */
   Exact_polyhedron_geo_builder<Exact_polyhedron::HalfedgeDS> m_surface;
@@ -263,6 +310,11 @@ private:
   /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
   Boolean m_dirty_polyhedron;
 
+  /*! Indicates whether the polyhedron cells are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_polyhedron_cells;
+
   /*! Indicates whether the coordinate array is dirty and thus should be
    * cleaned.
    */
@@ -271,8 +323,17 @@ private:
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;
 
-  /*! Computes the convex hull of the coordinate set. */
-  void convex_hull();
+  /*! Indicates whether all edges are creased. */
+  Boolean m_creased;
+
+  /*! Indicates whether all edges are smooth. */
+  Boolean m_smooth;
+
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
+
+  /*! The node prototype. */
+  static Container_proto* s_prototype;
 };
 
 #if defined(_MSC_VER)
