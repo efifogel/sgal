@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 template <typename K>
 class Nef_gaussian_map :
   public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geometry<K>,
-                                             CGAL::SM_items, 
+                                             CGAL::SM_items,
                                              typename K::Point_3> >
 {
   typedef CGAL::Sphere_geometry<K>                      Kernel;
@@ -48,7 +48,7 @@ class Nef_gaussian_map :
 
 public:
   typedef typename Sphere_map::Sphere_point             Sphere_point;
-  
+
   typedef typename Sphere_map::SVertex_handle           SVertex_handle;
   typedef typename Sphere_map::SHalfedge_handle         SHalfedge_handle;
   typedef typename Sphere_map::SFace_handle             SFace_handle;
@@ -56,7 +56,7 @@ public:
   typedef typename Sphere_map::SVertex_const_handle     SVertex_const_handle;
   typedef typename Sphere_map::SHalfedge_const_handle   SHalfedge_const_handle;
   typedef typename Sphere_map::SFace_const_handle       SFace_const_handle;
-  
+
   typedef typename Sphere_map::SHalfedge_iterator       SHalfedge_iterator;
   typedef typename Sphere_map::SVertex_iterator         SVertex_iterator;
   typedef typename Sphere_map::SFace_iterator           SFace_iterator;
@@ -75,21 +75,21 @@ public:
   typedef typename Sphere_map::SHalfedge_around_sface_const_circulator
     SHalfedge_around_sface_const_circulator;
 
-  struct VECTOR_ADDITION { 
+  struct VECTOR_ADDITION {
     Mark operator()(const Mark& b1, const Mark& b2) const {
-      return b1+(b2-CGAL::ORIGIN); 
-    } 
+      return b1+(b2-CGAL::ORIGIN);
+    }
   };
 
 public:
   Nef_gaussian_map() : Base(new Sphere_map) {}
 
-  template<typename NK, typename Items> 
+  template<typename NK, typename Items>
   Nef_gaussian_map(CGAL::Nef_polyhedron_3<NK, Items>& N3) :
       Base(new Sphere_map)
-  {  
+  {
     typedef CGAL::Nef_polyhedron_3<NK, Items> Nef_polyhedron_3;
-    typedef typename Nef_polyhedron_3::Vertex_const_iterator 
+    typedef typename Nef_polyhedron_3::Vertex_const_iterator
       Vertex_const_iterator;
     typedef typename Nef_polyhedron_3::Halffacet_const_iterator
       Halffacet_const_iterator;
@@ -105,7 +105,7 @@ public:
       Halffacet_const_handle;
     typedef typename Nef_polyhedron_3::SHalfedge_const_handle
       SHalfedge_const_handle;
-    
+
     Unique_hash_map<Halffacet_const_handle, SVertex_handle> Facet2SVertex;
     Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge;
 
@@ -118,7 +118,7 @@ public:
       sv->mark() = Mark(0,0,0);
       Facet2SVertex[f] = sv;
     }
-    
+
     CGAL_forall_halffacets(f,N3) {
       if(f->incident_volume() != c) continue;
       Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
@@ -140,7 +140,7 @@ public:
         ++hc;
       } while(hc != hend);
     }
-    
+
     Vertex_const_iterator v;
     CGAL_forall_vertices(v,N3) {
       typename Nef_polyhedron_3::Nef_polyhedron_S2 SD(N3.get_sphere_map(v));
@@ -151,12 +151,14 @@ public:
       link_as_face_cycle(se,sf);
     }
   }
-  
-  template<typename PK> 
-    Nef_gaussian_map(const CGAL::Polyhedron_3<PK>& P) : Base(new Sphere_map) {
-    
-    typedef CGAL::Polyhedron_3<PK> Polyhedron_3;
-    typedef typename Polyhedron_3::Vertex_const_iterator 
+
+  template<typename PK, typename Items>
+  Nef_gaussian_map(const CGAL::Polyhedron_3<PK, Items>& P) :
+    Base(new Sphere_map)
+  {
+
+    typedef CGAL::Polyhedron_3<PK, Items> Polyhedron_3;
+    typedef typename Polyhedron_3::Vertex_const_iterator
       Vertex_const_iterator;
     typedef typename Polyhedron_3::Facet_const_iterator
       Facet_const_iterator;
@@ -166,7 +168,7 @@ public:
       Halfedge_const_handle;
     typedef typename Polyhedron_3::Facet_const_handle
       Facet_const_handle;
-    
+
     Unique_hash_map<Facet_const_handle, SVertex_handle> Facet2SVertex;
     Unique_hash_map<Halfedge_const_handle, SHalfedge_handle> Edge2SEdge;
 
@@ -195,7 +197,7 @@ public:
 	++hc;
       } while(hc != hend);
     }
-   
+
     Vertex_const_iterator v;
     for(v = P.vertices_begin(); v != P.vertices_end(); ++v) {
       Halfedge_const_handle e(v->halfedge());
@@ -212,15 +214,15 @@ public:
     typedef typename CGAL::Union_find<SFace_handle>::handle Union_find_handle;
     CGAL::Unique_hash_map<SFace_handle, Union_find_handle> Pitem(NULL);
     CGAL::Union_find<SFace_handle> UF;
-  
+
     SFace_iterator f;
     CGAL_forall_sfaces(f,*this) {
       Pitem[f] = UF.make_set(f);
       clear_face_cycle_entries(f);
     }
-      
+
     SHalfedge_iterator e;
-    for(e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) { 
+    for(e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
       if (e->is_twin() ) continue;
       CGAL_NEF_TRACEN("can simplify ? " << PH(e));
       CGAL_NEF_TRACEN(mark(e) << " " << mark(face(e)) << " "
@@ -228,17 +230,17 @@ public:
       if (mark(face(e)) == mark(face(twin(e)))) {
         CGAL_NEF_TRACEN("deleting "<<PH(e));
         if (!UF.same_set(Pitem[face(e)], Pitem[face(twin(e))])) {
-	    
+
           UF.unify_sets(Pitem[face(e)], Pitem[face(twin(e))]);
           CGAL_NEF_TRACEN("unioning disjoint faces");
         }
-	  
-        CGAL_NEF_TRACEN("is_closed_at_source " << is_closed_at_source(e) << 
+
+        CGAL_NEF_TRACEN("is_closed_at_source " << is_closed_at_source(e) <<
                         " " << is_closed_at_source(twin(e)));
         delete_edge_pair(e);
       }
     }
-      
+
     CGAL::Unique_hash_map<SHalfedge_handle,bool> linked(false);
     for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
       if ( linked[e] ) continue;
@@ -247,7 +249,7 @@ public:
       CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
       store_sm_boundary_object(e,f);
     }
-      
+
     SVertex_iterator v;
     for(v = this->svertices_begin(); v != this->svertices_end(); ++v) {
       if ( is_isolated(v) ) {
@@ -255,19 +257,19 @@ public:
         continue;
       }
       if ( has_outdeg_two(v)) {
-        merge_edge_pairs_at_target(previous(first_out_edge(v))); 
-      } 
+        merge_edge_pairs_at_target(previous(first_out_edge(v)));
+      }
     }
-      
-    for (f = this->sfaces_begin(); f != this->sfaces_end(); ++f) { 
+
+    for (f = this->sfaces_begin(); f != this->sfaces_end(); ++f) {
       Union_find_handle pit = Pitem[f];
       if ( UF.find(pit) != pit ) {
         CGAL_NEF_TRACEN("delete face " << &*f);
         delete_face_only(f);
       }
     }
-  }    
-    
+  }
+
   void minkowski_sum(const Nef_gaussian_map& G1, const Nef_gaussian_map& G2) {
     SM_overlayer O(this->sphere_map());
     O.subdivide(G1.sphere_map(), G2.sphere_map());
@@ -290,22 +292,22 @@ std::ostream& operator<<(std::ostream& out,
   out << "OFF" << std::endl;
   out << G.number_of_sfaces() << " " << G.number_of_svertices() << " 0"
       << std::endl;
-  
+
   typedef typename CGAL::Nef_gaussian_map<Kernel>::SFace_const_iterator SFace_const_iterator;
   CGAL::Unique_hash_map<SFace_const_iterator, int> SFace2int;
-  
+
   int i = 0;
   SFace_const_iterator sf;
   CGAL_forall_sfaces(sf, G) {
     SFace2int[sf] = i++;
-    out << CGAL::to_double(sf->mark().x()) << " " 
-	<< CGAL::to_double(sf->mark().y()) << " " 
+    out << CGAL::to_double(sf->mark().x()) << " "
+	<< CGAL::to_double(sf->mark().y()) << " "
 	<< CGAL::to_double(sf->mark().z()) << std::endl;
   }
 
   typename CGAL::Nef_gaussian_map<Kernel>::SVertex_const_iterator sv;
   CGAL_forall_svertices(sv,G) {
-    typename CGAL::Nef_gaussian_map<Kernel>::SHalfedge_around_svertex_const_circulator 
+    typename CGAL::Nef_gaussian_map<Kernel>::SHalfedge_around_svertex_const_circulator
       svc(G.first_out_edge(sv)),
       svc1(svc),
       svend(svc);

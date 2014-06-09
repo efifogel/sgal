@@ -99,29 +99,38 @@ public:
   {
     typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Point_3> Base;
     typedef typename Base::Point                                  Point;
-    Inexact_point_3 m_inexact_point;
     Polyhedron_vertex() : Base() {}
     Polyhedron_vertex(const Point& p) : Base(p) {}
-    Point& point() { return Base::point(); }
-    const Point& point () const { return Base::point(); }
 
-    /*! */
-    void set_inexact_point(const Inexact_point_3& point)
-    { m_inexact_point = point; }
+    /*! A uniqe index of vertices.
+     * Used by the builder.
+     */
+    Uint m_index;
 
-    /*! */
-    const Inexact_point_3& get_inexact_point(void) const
-    { return m_inexact_point; }
+//     Point& point() { return Base::point(); }
+//     const Point& point () const { return Base::point(); }
+
+//     Inexact_point_3 m_inexact_point;
+
+//     /*! */
+//     void set_inexact_point(const Inexact_point_3& point)
+//     { m_inexact_point = point; }
+
+//     /*! */
+//     const Inexact_point_3& get_inexact_point(void) const
+//     { return m_inexact_point; }
   };
 
   /*! Represnts a polyhedron halfedge */
   template <class Refs>
   struct Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-    /*! */
-    bool flag;
+    /*! Constructor. */
+    Polyhedron_halfedge() {}
 
-    /*! */
-    Polyhedron_halfedge() : flag(false) {}
+    /*! The index of the index of the points of the facets.
+     * Used by the builder.
+     */
+    Uint m_index;
   };
 
   /*! Represnts a polyhedron facet */
@@ -159,7 +168,8 @@ public:
   typedef Kernel                                        Polyhedron_traits;
   // typedef CGAL::Polyhedron_3<Polyhedron_traits,Polyhedron_items>
   // Polyhedron;
-  typedef CGAL::Polyhedron_3<Polyhedron_traits>         Polyhedron;
+  typedef CGAL::Polyhedron_3<Polyhedron_traits, Polyhedron_items>
+                                                        Polyhedron;
   typedef Polyhedron::Facet_iterator                    Facet_iterator;
   typedef Polyhedron::Vertex_iterator                   Vertex_iterator;
   typedef Polyhedron::Point_iterator                    Point_iterator;
