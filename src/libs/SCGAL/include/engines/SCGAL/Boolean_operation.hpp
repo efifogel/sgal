@@ -132,14 +132,24 @@ public:
   Shared_mesh_set get_operand1() const;
 
   /*! Set the 2nd operand.
-   * \param operand the operand.
+   * \param operand (in) the operand.
    */
   void set_operand2(Shared_mesh_set operand);
 
   /*! Obtain the 2nd operand.
-   * \result the operand.
+   * \result the (in) operand.
    */
-  Shared_mesh_set set_operand2() const;
+  Shared_mesh_set get_operand2() const;
+
+  /*! Set the resulting geometry.
+   * \param result (in) the resulting geomery.
+   */
+  void set_result(Shared_exact_polyhedron_geo result);
+
+  /*! Obtain the resulting geometry.
+   * \result (in) the resulting geomery.
+   */
+  Shared_exact_polyhedron_geo get_result() const;
 
 protected:
   /*! 1st operand. */
@@ -203,13 +213,22 @@ inline void Boolean_operation::set_operand1(Shared_mesh_set operand)
 { m_operand1 = operand; }
 
 //! \brief obtains the 2nd operand.
-inline Boolean_operation::Shared_mesh_set Boolean_operation::set_operand2()
+inline Boolean_operation::Shared_mesh_set Boolean_operation::get_operand2()
   const
 { return m_operand2; }
 
 //! \brief sets the 2nd operand.
 inline void Boolean_operation::set_operand2(Shared_mesh_set operand)
 { m_operand2 = operand; }
+
+//! \brief sets the resulting geometry.
+inline void Boolean_operation::set_result(Shared_exact_polyhedron_geo result)
+{ m_result = result; }
+
+//! \brief obtains the resulting geometry.
+inline Boolean_operation::Shared_exact_polyhedron_geo
+Boolean_operation::get_result() const
+{ return m_result; }
 
 SGAL_END_NAMESPACE
 
