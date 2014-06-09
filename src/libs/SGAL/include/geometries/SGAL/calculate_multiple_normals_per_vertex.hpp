@@ -107,7 +107,7 @@ void calculate_multiple_normals_per_vertex
         ++hev;
       }
       normal_res.scale(1.0f/static_cast<Float>(cnt));
-      Normal_map::const_iterator got = normal_map.find(normal_res);
+      typename Normal_map::const_iterator got = normal_map.find(normal_res);
       if (got != normal_map.end()) flat_normal_indices[index] = got->second;
       else {
         Uint id = normal_array->size();
