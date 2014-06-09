@@ -237,7 +237,8 @@ private:
     {
       // find the index
       Uint index = 0;
-      for (auto cit = begin; cit != end; ++cit, ++index)
+      InputIterator cit;
+      for (cit = begin; cit != end; ++cit, ++index)
         if (vit->point() == *cit) break;
       SGAL_assertion(cit != end);
       vit->m_index = index;
