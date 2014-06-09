@@ -10,14 +10,22 @@ Shape {
     material Material { }
   }
   geometry ExactPolyhedron {
-    normalPerVertex TRUE
     convexHull TRUE
-    coord Coordinate {
-      point [ 0 0 1.732051,
-	      1.632993   0        -0.5773503,
-	     -0.8164966  1.414214 -0.5773503,
-	     -0.8164966 -1.414214 -0.5773503
-	    ]
+    creaseAngle 1.5
+    coord DEF COORDS Coordinate {
+      point [  1    0     0
+	       0.5  0.866 0
+	      -0.5  0.866 0
+	       -1   0     0
+	      -0.5 -0.866 0
+	       0.5 -0.866 0
+	       1    0     1
+	       0.5  0.866 1
+	      -0.5  0.866 1
+	       -1   0     1
+	      -0.5 -0.866 1
+	       0.5 -0.866 1
+	     ]
     }
   }
 }
