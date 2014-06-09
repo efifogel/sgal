@@ -1,6 +1,7 @@
 include $(ROOT)/make/comdef.mak
 
 FILES = Boundary_set.hpp
+FILES+= calculate_multiple_normals_per_vertex.hpp
 FILES+= Color_array.hpp
 FILES+= Coord_array.hpp
 FILES+= Coord_array_2d.hpp
