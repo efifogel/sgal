@@ -120,7 +120,12 @@ void Boolean_operation::execute()
   // Compute Boolean operation:
   Nef_polyhedron nef_polyhedron(nef_polyhedron1 * nef_polyhedron2);
 
-  m_result.reset(new Exact_polyhedron_geo);
+  if (!m_result) {
+    m_result.reset(new Exact_polyhedron_geo);
+    SGAL_assertion(m_result);
+  }
+  else m_result->clear();
+
   SGAL_assertion(nef_polyhedron.is_simple());
   Exact_polyhedron p;
   nef_polyhedron.convert_to_polyhedron(p);
