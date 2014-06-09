@@ -81,7 +81,7 @@ Transform {
 		aosIsolatedVertexStyle "disc"
 #	        insertionStrategy "increment"
 		coord DEF COORD ExactCoordinate2D {
-		  ratPoint [1/2 1/2]
+		  exactPoint [1/2 1/2]
 		}
 		pointIndex [0]
 	      }
