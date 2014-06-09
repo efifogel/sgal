@@ -20,7 +20,6 @@
 #define SGAL_INDEXED_FACE_SET_HPP
 
 #include <vector>
-#include <boost/unordered_map.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
