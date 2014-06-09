@@ -43,6 +43,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
+#include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -97,77 +98,16 @@ Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
 //! \brief calculates multiple normals per vertex for all vertices.
 void Indexed_face_set::calculate_multiple_normals_per_vertex()
 {
-  typedef Polyhedron::Facet                              Facet;
-  typedef Polyhedron::Facet_const_handle                 Facet_const_handle;
-  typedef Polyhedron::Halfedge_around_facet_const_circulator
-    Halfedge_around_facet_const_circulator;
-  typedef Polyhedron::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
-
-  struct Normal_hash {
-    std::size_t operator()(Vector3f const& key) const
-    {
-      std::size_t seed = 0;
-      boost::hash_combine(seed, key[0]);
-      boost::hash_combine(seed, key[1]);
-      boost::hash_combine(seed, key[2]);
-      return seed;
-    }
-  };
-  typedef boost::unordered_map<Vector3f, Uint, Normal_hash> Normal_map;
-  Normal_map normal_map;
-
   m_flat_normal_indices.resize(m_flat_coord_indices.size());
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array());
     SGAL_assertion(m_normal_array);
-  } else m_normal_array->resize(0);
-
-  auto it = m_polyhedron.facets_begin();
-  for (; it != m_polyhedron.facets_end(); ++it) {
-    const Facet& facet = *it;
-    Halfedge_around_facet_const_circulator start = facet.facet_begin();
-    Halfedge_around_facet_const_circulator he = start;
-    do {
-      Uint index = he->m_index;
-
-      // Go backwards around the vertex until a creased edge is encountered.
-      Halfedge_around_vertex_const_circulator hev = he->vertex_begin();
-      Halfedge_around_vertex_const_circulator startv = hev;
-      while (!hev->m_creased) {
-        if (--hev == startv) break;
-      }
-
-      // Go forwards and collect the normals.
-      size_t cnt = 1;
-      Facet_const_handle f = hev->facet();
-      Vector3f prev_normal(f->plane().x(), f->plane().y(), f->plane().z());
-      Vector3f normal_res(prev_normal);
-      startv = hev++;
-      while ((hev != startv) && !hev->m_creased) {
-        Facet_const_handle f = hev->facet();
-        Vector3f normal(f->plane().x(), f->plane().y(), f->plane().z());
-        if (normal != prev_normal) {
-          normal_res.add(normal);
-          ++cnt;
-        }
-        prev_normal = normal;
-        ++hev;
-      }
-      normal_res.scale(1.0f/static_cast<Float>(cnt));
-      Normal_map::const_iterator got = normal_map.find(normal_res);
-      if (got != normal_map.end()) m_flat_normal_indices[index] = got->second;
-      else {
-        Uint id = m_normal_array->size();
-        m_flat_normal_indices[index] = id;
-        normal_map[normal_res] = id;
-        normal_res.normalize();
-        m_normal_array->push_back(normal_res);
-      }
-
-    } while (++he != start);
   }
-  normal_map.clear();
+  else m_normal_array->clear();
+
+  SGAL::calculate_multiple_normals_per_vertex(m_polyhedron,
+                                              m_normal_array,
+                                              m_flat_normal_indices);
   m_dirty_normal_indices = true;
   m_dirty_flat_normal_indices = false;
 }
