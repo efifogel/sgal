@@ -87,8 +87,9 @@ protected:
 
   /*! Insert a triangle.
    * \param B (in) the halfedge data structure.
-   * \param j (in) the index of the index of the first point. In other words,
-   *          the first point is coords[indices[j]].
+   * \param j (in) the index of the index of the first point of the face in
+   *          the counterclockwise order. In other words, the first point is
+   *          coords[indices[j]].
    */
   Uint insert_triangle(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
   {
@@ -96,7 +97,10 @@ protected:
     B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j));
     B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
     B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
-    B.end_facet();
+    typename HDS::Halfedge_handle he = B.end_facet();
+    he->m_index = j;
+    he->next()->m_index = j+1;
+    he->next()->next()->m_index = j+2;
     j += 3;
     return j;
   }
@@ -113,8 +117,9 @@ protected:
 
   /*! Insert a quadrilateral.
    * \param B (in) the halfedge data structure.
-   * \param j (in) the index of the index of the first point. In other words,
-   *          the first point is coords[indices[j]].
+   * \param j (in) the index of the index of the first pointof the face in
+   *          the counterclockwise order. In other words, the first point is
+   *          coords[indices[j]].
    */
   Uint insert_quad(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
   {
@@ -123,7 +128,11 @@ protected:
     B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+1));
     B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+2));
     B.add_vertex_to_facet(m_mesh_set->get_flat_coord_index(j+3));
-    B.end_facet();
+    typename HDS::Halfedge_handle he = B.end_facet();
+    he->m_index = j;
+    he->next()->m_index = j+1;
+    he->next()->next()->m_index = j+2;
+    he->next()->next()->next()->m_index = j+3;
     j += 4;
     return j;
   }
@@ -140,16 +149,23 @@ protected:
 
   /*! Insert a polygon.
    * \param B (in) the halfedge data structure.
-   * \param j (in) the index of the index of the first point. In other words,
-   *          the first point is coords[indices[j]].
+   * \param j (in) the index of the index of the first point of the face in
+   *          the counterclockwise order. In other words, the first point is
+   *          coords[indices[j]].
    */
   Uint insert_polygon(CGAL::Polyhedron_incremental_builder_3<HDS>& B, Uint j)
   {
+    Uint k = j;
     B.begin_facet();
     for (; m_mesh_set->get_coord_index(j) != (Uint) -1; ++j)
       B.add_vertex_to_facet(m_mesh_set->get_coord_index(j));
-    B.end_facet();
     ++j;
+    typename HDS::Halfedge_handle he = B.end_facet();
+    typename HDS::Halfedge_handle start_he = he;
+    do {
+      he->m_index = k++;
+      he = he->next();
+    } while (he != start_he);
     return j;
   }
 
