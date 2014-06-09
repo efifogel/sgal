@@ -349,24 +349,24 @@ public:
   virtual const Vector3f& get_coord_3d(Uint i) const;
 
   /*! Obtain a pointer to an element directly. */
-  template <typename T_Vector>
-  GLfloat* get(T_Vector& array, Uint i) const;
+  template <typename Array_T>
+  const GLfloat* get(Array_T array, Uint i) const;
 
   /*! Obtain a pointer to an element through the coord indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_coord_index(T_Vector& array, Uint i) const;
+  template <typename Array_T>
+  const GLfloat* get_by_coord_index(Array_T array, Uint i) const;
 
   /*! Obtain apointer to an element through the normal indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_normal_index(T_Vector& array, Uint i) const;
+  template <typename Array_T>
+  const GLfloat* get_by_normal_index(Array_T array, Uint i) const;
 
   /*! Obtain a pointer to an element through the color indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_color_index(T_Vector& array, Uint i) const;
+  template <typename Array_T>
+  const GLfloat* get_by_color_index(Array_T array, Uint i) const;
 
   /*! Obtain a pointer to an element through the tex. coord indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_tex_coord_index(T_Vector & array, Uint i) const;
+  template <typename Array_T>
+  const GLfloat* get_by_tex_coord_index(Array_T array, Uint i) const;
 
   /*! Set the representation mode. */
   void set_primitive_type(Primitive_type type);
@@ -646,35 +646,36 @@ inline Geo_set::Shared_color_array Geo_set::get_color_array()
 { return m_color_array; }
 
 //! \brief obtains a pointer to an element directly.
-template <typename T_Vector>
-inline GLfloat* Geo_set::get(T_Vector& array, Uint i) const
-{ return ((GLfloat *) &(array)[i]); }
+template <typename Array_T>
+inline const GLfloat* Geo_set::get(Array_T array, Uint i) const
+{ return array->datum(i); }
 
 //! \brief obtains a pointer to an element through the coord indices.
-template <typename T_Vector>
-inline GLfloat* Geo_set::get_by_coord_index(T_Vector& array, Uint i) const
-{ return ((GLfloat *) &(array)[m_coord_indices[i]]); }
+template <typename Array_T>
+inline const GLfloat* Geo_set::get_by_coord_index(Array_T array, Uint i) const
+{ return array->datum(m_coord_indices[i]); }
 
 //! \brief obtains a pointer to an element through the normal indices.
-template <typename T_Vector>
-inline GLfloat* Geo_set::get_by_normal_index(T_Vector& array, Uint i) const
-{ return ((GLfloat *) &(array)[m_normal_indices[i]]); }
+template <typename Array_T>
+inline const GLfloat* Geo_set::get_by_normal_index(Array_T array, Uint i) const
+{ return array->datum(m_normal_indices[i]); }
 
 //! \brief obtains a pointer to an element through the color indices.
-template <typename T_Vector>
-inline GLfloat* Geo_set::get_by_color_index(T_Vector& array, Uint i) const
-{ return ((GLfloat *) &(array)[m_color_indices[i]]); }
+template <typename Array_T>
+inline const GLfloat* Geo_set::get_by_color_index(Array_T array, Uint i) const
+{ return array->datum(m_color_indices[i]); }
 
 //! \brief obtains a pointer to an element through the tex. coord indices.
-template <typename T_Vector>
-inline GLfloat* Geo_set::get_by_tex_coord_index(T_Vector & array, Uint i) const
-{ return ((GLfloat *) &(array)[m_tex_coord_indices[i]]); }
+template <typename Array_T>
+inline const GLfloat* Geo_set::get_by_tex_coord_index(Array_T array, Uint i)
+  const
+{ return array->datum(m_tex_coord_indices[i]); }
 
-/*! \brief Set the representation mode. */
+//! \brief sets the representation mode. */
 inline void Geo_set::set_primitive_type(Primitive_type type)
 { m_primitive_type = type; }
 
-//! \brief Obtain the representation mode.
+//! \brief obtains the representation mode.
 inline Geo_set::Primitive_type Geo_set::get_primitive_type() const
 { return m_primitive_type; }
 

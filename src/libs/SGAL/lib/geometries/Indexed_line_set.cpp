@@ -90,10 +90,6 @@ void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
  */
 void Indexed_line_set::draw(Draw_action* action)
 {
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-
   Context* context = action->get_context();
   if (!m_elliminate_hiden) {
     context->draw_depth_mask(false);
@@ -107,7 +103,7 @@ void Indexed_line_set::draw(Draw_action* action)
 
   if (fragment_source == FS_COLOR) {
     context->draw_light_enable(false);
-    if (fragment_attached == PER_MESH) glColor3fv(get(*m_color_array, 0));
+    if (fragment_attached == PER_MESH) glColor3fv(get(m_color_array, 0));
   }
 
   if (m_primitive_type == PT_LINES) {
@@ -120,16 +116,16 @@ void Indexed_line_set::draw(Draw_action* action)
           ((fragment_attached == PER_PRIMITIVE) && ((j & 0x1) == 0x0)))
       {
         if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_coord_index(*m_color_array, k));
+          if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, k));
         }
         else {
           if (m_normal_array)
-            glNormal3fv(get_by_coord_index(*m_normal_array, k));
+            glNormal3fv(get_by_coord_index(m_normal_array, k));
         }
         ++k;
       }
-      glVertex3fv(get_by_coord_index(*coord_array, j));
-      glVertex3fv(get_by_coord_index(*coord_array, j+1));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j+1));
       j += 2;
     }
     glEnd();
@@ -140,11 +136,11 @@ void Indexed_line_set::draw(Draw_action* action)
     for (Uint i = 0; i < m_num_primitives; ++i) {
       if (fragment_attached == PER_PRIMITIVE) {
         if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_coord_index(*m_color_array, k));
+          if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, k));
         }
         else {
           if (m_normal_array)
-            glNormal3fv(get_by_coord_index(*m_normal_array, k));
+            glNormal3fv(get_by_coord_index(m_normal_array, k));
         }
         ++k;
       }
@@ -153,15 +149,15 @@ void Indexed_line_set::draw(Draw_action* action)
         if (fragment_attached == PER_VERTEX) {
           if (fragment_source == FS_COLOR) {
             if (m_color_array)
-              glColor3fv(get_by_coord_index(*m_color_array, k));
+              glColor3fv(get_by_coord_index(m_color_array, k));
           }
           else {
             if (m_normal_array)
-              glNormal3fv(get_by_coord_index(*m_normal_array, k));
+              glNormal3fv(get_by_coord_index(m_normal_array, k));
           }
           ++k;
         }
-        glVertex3fv(get_by_coord_index(*coord_array, j));
+        glVertex3fv(get_by_coord_index(m_coord_array, j));
       }
       glEnd();
       ++j;

@@ -118,6 +118,12 @@ public:
    */
   virtual const GLfloat* data() const;
 
+  /*! Obtain the datum at a given index.
+   * \param i (in) the index of the obtained datum.
+   * \return the datum at a given index.
+   */
+  virtual const GLfloat* datum(Uint i) const;
+
   /*! Obtain the iterator to the Array first element. */
   std::vector<Vector2f>::iterator begin();
   const std::vector<Vector2f>::const_iterator begin() const;
@@ -199,6 +205,10 @@ inline Uint Tex_coord_array_2d::data_size() const
 //! \brief obtains the data.
 inline const GLfloat* Tex_coord_array_2d::data() const
 { return (GLfloat*)(&(*(m_array.begin()))); }
+
+//! \brief obtains the datum at a given index.
+inline const GLfloat* Tex_coord_array_2d::datum(Uint i) const
+{ return (GLfloat*)(&(m_array[i])); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Tex_coord_array_2d::get_tag() const { return s_tag; }

@@ -218,13 +218,13 @@ inline Uint Coord_array_3d::num_coordinates() const { return 3; }
 inline Uint Coord_array_3d::data_size() const
 { return m_array.size() * sizeof(Vector3f); }
 
-//! \brief obtains the datum at a given index.
-inline const GLfloat* Coord_array_3d::datum(Uint i) const
-{ return (GLfloat*)(&(m_array[i])); }
-
 //! \brief obtains the data.
 inline const GLfloat* Coord_array_3d::data() const
 { return (GLfloat*)(&(*(m_array.begin()))); }
+
+//! \brief obtains the datum at a given index.
+inline const GLfloat* Coord_array_3d::datum(Uint i) const
+{ return (GLfloat*)(&(m_array[i])); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Coord_array_3d::get_tag() const { return s_tag; }

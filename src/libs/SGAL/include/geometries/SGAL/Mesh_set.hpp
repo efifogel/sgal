@@ -306,20 +306,20 @@ public:
   void collapse_identical_coordinates();
 
   /*! Obtain a pointer to an element through the coord indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_flat_coord_index(T_Vector& array, Uint i) const;
+  template <typename Vector_T>
+  const GLfloat* get_by_flat_coord_index(Vector_T array, Uint i) const;
 
   /*! Obtain apointer to an element through the normal indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_flat_normal_index(T_Vector& array, Uint i) const;
+  template <typename Vector_T>
+  const GLfloat* get_by_flat_normal_index(Vector_T array, Uint i) const;
 
   /*! Obtain a pointer to an element through the color indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_flat_color_index(T_Vector& array, Uint i) const;
+  template <typename Vector_T>
+  const GLfloat* get_by_flat_color_index(Vector_T array, Uint i) const;
 
   /*! Obtain a pointer to an element through the tex. coord indices. */
-  template <typename T_Vector>
-  GLfloat* get_by_flat_tex_coord_index(T_Vector & array, Uint i) const;
+  template <typename Vector_T>
+  const GLfloat* get_by_flat_tex_coord_index(Vector_T array, Uint i) const;
 
 protected:
   /*! Indicates whether the mesh must be cleaned. */
@@ -599,28 +599,29 @@ inline void Mesh_set::clear_flat_tex_coord_indices()
 }
 
 //! \brief obtains a pointer to an element through the coord indices.
-template <typename T_Vector>
-inline GLfloat* Mesh_set::get_by_flat_coord_index(T_Vector& array, Uint i)
-  const
-{ return ((GLfloat *) &(array)[m_flat_coord_indices[i]]); }
+template <typename Vector_T>
+inline const GLfloat*
+Mesh_set::get_by_flat_coord_index(Vector_T array, Uint i) const
+{ return array->datum(m_flat_coord_indices[i]); }
 
 /*! \brief obtains a pointer to an element through the normal indices. */
-template <typename T_Vector>
-inline GLfloat* Mesh_set::get_by_flat_normal_index(T_Vector& array, Uint i)
+template <typename Vector_T>
+inline const GLfloat*
+Mesh_set::get_by_flat_normal_index(Vector_T array, Uint i)
   const
-{ return ((GLfloat *) &(array)[m_flat_normal_indices[i]]); }
+{ return array->datum(m_flat_normal_indices[i]); }
 
 //! \brief obtains a pointer to an element through the color indices.
-template <typename T_Vector>
-inline GLfloat* Mesh_set::get_by_flat_color_index(T_Vector& array, Uint i)
-  const
-{ return ((GLfloat *) &(array)[m_flat_color_indices[i]]); }
+template <typename Vector_T>
+inline const GLfloat*
+Mesh_set::get_by_flat_color_index(Vector_T array, Uint i) const
+{ return array->datum(m_flat_color_indices[i]); }
 
 //! \brief obtains a pointer to an element through the tex. coord indices.
-template <typename T_Vector>
-inline GLfloat* Mesh_set::get_by_flat_tex_coord_index(T_Vector & array, Uint i)
-  const
-{ return ((GLfloat *) &(array)[m_flat_tex_coord_indices[i]]); }
+template <typename Vector_T>
+inline const GLfloat*
+Mesh_set::get_by_flat_tex_coord_index(Vector_T array, Uint i) const
+{ return array->datum(m_flat_tex_coord_indices[i]); }
 
 //! \brief obtains the ith flat coord index.
 inline Uint Mesh_set::get_flat_coord_index(Uint i) const

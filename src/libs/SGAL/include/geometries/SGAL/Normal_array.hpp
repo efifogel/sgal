@@ -150,6 +150,12 @@ public:
    */
   const GLfloat* data() const;
 
+  /*! Obtain the datum at a given index.
+   * \param i (in) the index of the obtained datum.
+   * \return the datum at a given index.
+   */
+  virtual const GLfloat* datum(Uint i) const;
+
 protected:
   /*! obtains the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -226,6 +232,10 @@ inline Uint Normal_array::data_size() const
 //! \brief obtains the data.
 inline const GLfloat* Normal_array::data() const
 { return (GLfloat*)(&(*(m_array.begin()))); }
+
+//! \brief obtains the datum at a given index.
+inline const GLfloat* Normal_array::datum(Uint i) const
+{ return (GLfloat*)(&(m_array[i])); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Normal_array::get_tag() const { return s_tag; }
