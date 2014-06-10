@@ -19,13 +19,6 @@
 #ifndef SCGAL_EXACT_POLYHEDRON_GEO_HPP
 #define SCGAL_EXACT_POLYHEDRON_GEO_HPP
 
-/*! \file
- * A node in the scene graph that maintains a polyhedron.
- * The the point of each vertex and the plane of each facet is in exact
- * representation. Each facet is extended with the normal of the facet-plane
- * in Vector3f (approximate) representation. The later is used for rendering.
- */
-
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/enum.h>
 
@@ -58,6 +51,27 @@ class Formatter;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
+
+/*! \class Exact_polyhedron_geo Exact_polyhedron_geo.hpp
+ * Exact_polyhedron_geo represents a node in the scene graph that maintains a
+ * polyhedron defined by exact (rational) coordinates. A halfedge data
+ * structure is used by the polyhedron to maintain the incidence relations
+ * between the polyhedron cells. The cells of the polyhedron are extended to
+ * expedite the building of the polyhedron. A polyhedron can be built in
+ * several ways:
+ * 1. Given a coordinate array and a coordinate indices array a polyhedral
+ *    surface builder is applied to construct the polyhedron.
+ * 2. Given a coordinate array the convex hull of the coordinate is computed.
+ * 3. The polyhedron is set by an external agent.
+ *
+ * The Exact_polyhedron_geo derives from the Boundary_set representation. The
+ * later provides the mechanism for efficiently drawing the polyhedron.
+ *
+ * Exact_polyhedron_geo respects the creaseAngle field; it computes the
+ * normals of the vertices based on the creaseAngle value (similar to
+ * IndexedFaceSet, which uses a polyhedron with inexact coordinates). As such
+ * it extends the drawing capabilities of the Boundary_set base class.
+ */
 
 class SGAL_SCGAL_DECL Exact_polyhedron_geo : public Boundary_set {
 public:

@@ -337,6 +337,7 @@ void Exact_polyhedron_geo::field_changed(const Field_info* field_info)
 //! \brief cleans the representation.
 void Exact_polyhedron_geo::clean()
 {
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_dirty_coord_array) clean_coord_array();
   if (m_dirty_coord_indices || m_dirty_flat_coord_indices)
@@ -351,8 +352,10 @@ void Exact_polyhedron_geo::clean_coord_array()
   m_dirty_coord_array = false;
   m_dirty_coord_indices = true;
   m_dirty_flat_coord_indices = true;
+  m_dirty_normals = true;
   if (m_polyhedron.empty()) return;
 
+  //! \todo handle the case of Exact_coord_array_3d
   if (!m_coord_array) {
     Uint size = m_polyhedron.size_of_vertices();
     m_coord_array.reset(new Coord_array_3d(size));
@@ -474,7 +477,6 @@ const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
 Boolean Exact_polyhedron_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
-
   if (!m_dirty_sphere_bound) return false;
 
   if (!m_bb_is_pre_set && m_coord_array) {
