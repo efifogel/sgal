@@ -32,6 +32,7 @@
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Color_array.hpp"
+#include "SGAL/Texture.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/Tex_coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
@@ -957,16 +958,39 @@ void Boundary_set::calculate_normal_per_polygon()
   set_normal_per_vertex(false);
 }
 
-/*! \brief calculates the default texture coordinate mapping in case it is
- * not present, using the shape bounding-box.
+/*! \brief calculates the default texture-mapping oordinates in case they are
+ * dirty using the shape bounding-box.
  */
-void Boundary_set::clean_tex_coords()
+void Boundary_set::clean_tex_coords(Texture::Target target)
+{
+  switch (target) {
+   case Texture::TEXTURE_1D:
+   case Texture::TEXTURE_1D_ARRAY: SGAL_error_msg("Not supported yet!"); break;
+
+   case Texture::TEXTURE_2D:
+   case Texture::TEXTURE_2D_ARRAY:
+   case Texture::TEXTURE_2D_MULTISAMPLE:
+   case Texture::TEXTURE_2D_MULTISAMPLE_ARRAY:
+   case Texture::TEXTURE_RECTANGLE: clean_tex_coords_2d(); break;
+
+   case Texture::TEXTURE_3D:
+   case Texture::TEXTURE_CUBE_MAP:
+   case Texture::TEXTURE_CUBE_MAP_ARRAY: clean_tex_coords_3d(); break;
+
+   case Texture::TEXTURE_BUFFER: SGAL_error_msg("Not supported yet!"); break;
+   default: SGAL_error();
+  }
+  m_dirty_tex_coords = false;
+  m_tex_coords_cleaned = true;
+  m_dirty_tex_coord_buffer = true;
+}
+
+//! \brief calculates the default 2D texture-mapping oordinates.
+void Boundary_set::clean_tex_coords_2d()
 {
   SGAL_assertion(m_coord_array);
   Uint num_coords = m_coord_array->size();
-  if (m_tex_coord_array) {
-    m_tex_coord_array->resize(num_coords);
-  }
+  if (m_tex_coord_array) m_tex_coord_array->resize(num_coords);
   else {
     m_tex_coord_array.reset(new Tex_coord_array_2d(num_coords));
     SGAL_assertion(m_tex_coord_array);
@@ -980,16 +1004,32 @@ void Boundary_set::clean_tex_coords()
   const Vector2f t1(1,0);
   const Vector2f t2(1,1);
   const Vector2f t3(0,1);
-  for (Uint i = 0 ; i < num_coords; ++i) {
+  for (Uint i = 0; i < num_coords; ++i) {
     Uint mask = i & 0x3;
     const Vector2f& t =
       (mask == 0x0) ? t0 : (mask == 0x1) ? t1 : (mask == 0x2) ? t2 : t3;
     (*tex_coord_array)[i] = t;
   }
+}
 
-  m_dirty_tex_coords = false;
-  m_tex_coords_cleaned = true;
-  m_dirty_tex_coord_buffer = true;
+//! \brief calculates the default 2D texture-mapping oordinates.
+void Boundary_set::clean_tex_coords_3d()
+{
+  SGAL_assertion(m_coord_array);
+  Uint num_coords = m_coord_array->size();
+  if (m_tex_coord_array) m_tex_coord_array->resize(num_coords);
+  else {
+    m_tex_coord_array.reset(new Tex_coord_array_3d(num_coords));
+    SGAL_assertion(m_tex_coord_array);
+  }
+  boost::shared_ptr<Tex_coord_array_3d> tex_coords =
+    boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
+  SGAL_assertion(tex_coords);
+
+  for (Uint k = 0; k < tex_coords->size(); ++k) {
+    (*tex_coords)[k].sub(get_coord_3d(k), m_center);
+    (*tex_coords)[k].normalize();
+  }
 }
 
 //! \brief draws the mesh conditionaly.
@@ -1012,7 +1052,13 @@ void Boundary_set::draw(Draw_action* action)
   // Clean the tex coordinates.
   Context* context = action->get_context();
   if (context->get_tex_enable() && !(context->get_tex_gen_enable())) {
-    if (m_dirty_tex_coords) clean_tex_coords();
+    if (m_dirty_tex_coords) {
+      const Context* context = action->get_context();
+      boost::shared_ptr<Texture> texture = context->get_texture();
+      Texture::Target target = Texture::TEXTURE_2D_ARRAY;
+      if (texture) target = texture->get_target();
+      clean_tex_coords(target);
+    }
     if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   }
 

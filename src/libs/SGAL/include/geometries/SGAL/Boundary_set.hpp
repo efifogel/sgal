@@ -32,6 +32,7 @@
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector4f.hpp"
+#include "SGAL/Texture.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -218,8 +219,10 @@ public:
    */
   Boolean is_dirty_normals() const;
 
-  /*! Calculate the texture coordinates in case they are invalidated. */
-  virtual void clean_tex_coords();
+  /*! Calculate the texture coordinates in case they are invalidated.
+   * \param num_components (in) number of texture coordinates (2, 3, or 4).
+   */
+  virtual void clean_tex_coords(Texture::Target target);
 
   /*! Determine whether the representation of the normals hasn't been
    * cleaned.
@@ -502,6 +505,14 @@ public:
   /*! Process change of coordinate points. */
   virtual void coord_point_changed();
 
+  /*! Set the center of the geometric object.
+   */
+  void set_center(Vector3f& center);
+
+  /*! Obtain the center of the geometric object.
+   */
+  Vector3f& get_center();
+
 protected:
   // weight, facet-index
   typedef std::pair<Uint, Float>                Vertex_facet_info;
@@ -569,6 +580,11 @@ protected:
 
   /*! Indicates that the local vetex buffers are dirty */
   Boolean m_dirty_local_vertex_buffers;
+
+  /*! The center of the geometric object. The generated texture coordinate of a
+   * vertex v is the displacement of v relative to m_center (v - m_center).
+   */
+  Vector3f m_center;
 
   /*! Clean the data structure of the vertex coordinate buffer object.
    */
@@ -824,6 +840,14 @@ protected:
    */
   Uint num_tex_coordinates() const;
 
+  /*! Calculate the default 2D texture-mapping oordinates.
+   */
+  void clean_tex_coords_2d();
+
+  /*! Calculate the default 3D texture-mapping oordinates.
+   */
+  void clean_tex_coords_3d();
+
 private:
   /*! The key for the utility map, which maps a tuple of 3 ids, namely,
    * coordinate id, normal/color id, and texture coordinate id, to a single
@@ -1039,7 +1063,6 @@ private:
     m_dirty_local_vertex_buffers = false;
     m_dirty_coord_buffer = true;
   }
-
 };
 
 #if defined(_MSC_VER)
@@ -1197,6 +1220,12 @@ inline Uint Boundary_set::num_tex_coordinates() const
       ((m_tex_coord_array != nullptr) ?
        m_tex_coord_array->num_coordinates() : 0)));
 }
+
+//! \brief sets the center of the geometric object.
+inline void Boundary_set::set_center(Vector3f& center) { m_center = center; }
+
+//! \brief obtains the center of the Ego brick.
+inline Vector3f& Boundary_set::get_center() { return m_center; }
 
 SGAL_END_NAMESPACE
 
