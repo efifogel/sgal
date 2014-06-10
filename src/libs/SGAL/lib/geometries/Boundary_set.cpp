@@ -971,10 +971,9 @@ void Boundary_set::clean_tex_coords()
     m_tex_coord_array.reset(new Tex_coord_array_2d(num_coords));
     SGAL_assertion(m_tex_coord_array);
   }
-  boost::shared_ptr<Tex_coord_array_2d> shared_tex_coord_array =
+  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
-  SGAL_assertion(shared_tex_coord_array);
-  Tex_coord_array_2d* tex_coord_array = &*shared_tex_coord_array;
+  SGAL_assertion(tex_coord_array);
 
   //! \todo do the right thing!
   const Vector2f t0(0,0);
@@ -1171,7 +1170,7 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
     m_normal_attachment  : m_color_attachment;
   Boolean texture_enbaled = m_tex_coord_array ? true : false;
   Boolean texture_indexed = va ? false :
-    (m_flat_tex_coord_indices.size() ? true : false);
+    (!m_flat_tex_coord_indices.empty() || !m_tex_coord_indices.empty());
 
 //   std::cout << "fragment_source: " << fragment_source << std::endl;
 //   std::cout << "fragment_indexed: " << fragment_indexed << std::endl;
@@ -1699,12 +1698,23 @@ void Boundary_set::clean_local_cnct2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion((normal_indices_begin != color_indices_begin) ||
+                 (color_indices_begin != tex_coord_indices_begin));
   clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                m_flat_normal_indices.begin(),
+                                normal_indices_begin,
                                 m_color_array, m_local_color_buffer,
-                                m_flat_color_indices.begin(),
+                                color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_2d,
-                                m_flat_tex_coord_indices.begin());
+                                tex_coord_indices_begin);
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
@@ -1720,12 +1730,23 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion((normal_indices_begin != color_indices_begin) ||
+                 (color_indices_begin != tex_coord_indices_begin));
   clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                m_flat_normal_indices.begin(),
+                                normal_indices_begin,
                                 m_color_array, m_local_color_buffer,
-                                m_flat_color_indices.begin(),
+                                color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_3d,
-                                m_flat_tex_coord_indices.begin());
+                                tex_coord_indices_begin);
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
@@ -1737,20 +1758,33 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
 void Boundary_set::clean_local_cnct4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_cnct4_vertex_buffers() not implemented yet!");
-//   SGAL_assertion(m_normal_array);
-//   SGAL_assertion(m_color_array);
-//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-//   SGAL_assertion(tex_coord_array);
-//   clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-//                                 m_flat_normal_indices.begin(),
-//                                 m_color_array, m_local_color_buffer,
-//                                 m_flat_color_indices.begin(),
-//                                 tex_coord_array, m_local_tex_coord_buffer_4d,
-//                                 m_flat_tex_coord_indices.begin());
-//   m_dirty_normal_buffer = true;
-//   m_dirty_color_buffer = true;
-//   m_dirty_tex_coord_buffer = true;
+#if 0
+  SGAL_assertion(m_normal_array);
+  SGAL_assertion(m_color_array);
+  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion((normal_indices_begin != color_indices_begin) ||
+                 (color_indices_begin != tex_coord_indices_begin));
+  clean_local_4d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                normal_indices_begin,
+                                m_color_array, m_local_color_buffer,
+                                color_indices_begin,
+                                tex_coord_array, m_local_tex_coord_buffer_4d,
+                                tex_coord_indices_begin);
+  m_dirty_normal_buffer = true;
+  m_dirty_color_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+#endif
 }
 
 //! \brief cleans the local coordinates, normals, and color, vertex buffers.
@@ -1758,10 +1792,17 @@ void Boundary_set::clean_local_cnc_vertex_buffers()
 {
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_color_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+  SGAL_assertion(normal_indices_begin != color_indices_begin);
   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                m_flat_normal_indices.begin(),
+                                normal_indices_begin,
                                 m_color_array, m_local_color_buffer,
-                                m_flat_color_indices.begin());
+                                color_indices_begin);
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
 }
@@ -1775,10 +1816,17 @@ void Boundary_set::clean_local_cnt2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                m_flat_normal_indices.begin(),
+                                normal_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_2d,
-                                m_flat_tex_coord_indices.begin());
+                                tex_coord_indices_begin);
   m_dirty_normal_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1792,10 +1840,17 @@ void Boundary_set::clean_local_cnt3_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                m_flat_normal_indices.begin(),
+                                normal_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_3d,
-                                m_flat_tex_coord_indices.begin());
+                                tex_coord_indices_begin);
   m_dirty_normal_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1806,24 +1861,36 @@ void Boundary_set::clean_local_cnt3_vertex_buffers()
 void Boundary_set::clean_local_cnt4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_cnt4_vertex_buffers() not implemented yet!");
-//   SGAL_assertion(m_normal_array);
-//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-//   SGAL_assertion(tex_coord_array);
-//   clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-//                                 m_flat_normal_indices.begin(),
-//                                 tex_coord_array, m_local_tex_coord_buffer_4d,
-//                                 m_flat_tex_coord_indices.begin());
-//   m_dirty_normal_buffer = true;
-//   m_dirty_tex_coord_buffer = true;
+#if 0
+  SGAL_assertion(m_normal_array);
+  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
+  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                normal_indices_begin,
+                                tex_coord_array, m_local_tex_coord_buffer_4d,
+                                tex_coord_indices_begin);
+  m_dirty_normal_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+#endif
 }
 
 //! \brief cleans the local coordinates and normals vertex buffers.
 void Boundary_set::clean_local_cn_vertex_buffers()
 {
   SGAL_assertion(m_normal_array);
+  std::vector<Uint>::const_iterator normal_indices_begin =
+    m_flat_normal_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
   clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                m_flat_normal_indices.begin());
+                                normal_indices_begin);
   m_dirty_normal_buffer = true;
 }
 
@@ -1836,10 +1903,17 @@ void Boundary_set::clean_local_cct2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                m_flat_color_indices.begin(),
+                                color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_2d,
-                                m_flat_tex_coord_indices.begin());
+                                tex_coord_indices_begin);
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1850,10 +1924,17 @@ void Boundary_set::clean_local_cct3_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                m_flat_color_indices.begin(),
+                                color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_3d,
-                                m_flat_tex_coord_indices.begin());
+                                tex_coord_indices_begin);
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1861,24 +1942,36 @@ void Boundary_set::clean_local_cct3_vertex_buffers()
 void Boundary_set::clean_local_cct4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_cct4_vertex_buffers() not implemented yet!");
-//   SGAL_assertion(m_color_array);
-//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-//   SGAL_assertion(tex_coord_array);
-//   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
-//                                 m_flat_color_indices.begin(),
-//                                 tex_coord_array, m_local_tex_coord_buffer_4d,
-//                                 m_flat_tex_coord_indices.begin());
-//   m_dirty_color_buffer = true;
-//   m_dirty_tex_coord_buffer = true;
+#if 0
+  SGAL_assertion(m_color_array);
+  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
+  clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
+                                color_indices_begin,
+                                tex_coord_array, m_local_tex_coord_buffer_4d,
+                                tex_coord_indices_begin);
+  m_dirty_color_buffer = true;
+  m_dirty_tex_coord_buffer = true;
+#endif
 }
 
 //! \brief cleans the local coordinates and colors vertex buffers.
 void Boundary_set::clean_local_cc_vertex_buffers()
 {
   SGAL_assertion(m_color_array);
+  std::vector<Uint>::const_iterator color_indices_begin =
+    m_flat_color_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
   clean_local_2d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                m_flat_color_indices.begin());
+                                color_indices_begin);
   m_dirty_color_buffer = true;
 }
 
@@ -1888,8 +1981,11 @@ void Boundary_set::clean_local_ct2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_2d,
-                                m_flat_tex_coord_indices.begin());
+                                tex_coord_indices_begin);
   m_dirty_tex_coord_buffer = true;
 }
 
@@ -1906,12 +2002,17 @@ void Boundary_set::clean_local_ct3_vertex_buffers()
 void Boundary_set::clean_local_ct4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_ct4_vertex_buffers() not implemented yet!");
-//   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
-//     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
-//   SGAL_assertion(tex_coord_array);
-//   clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_4d,
-//                                 m_flat_tex_coord_indices.begin());
-//   m_dirty_tex_coord_buffer = true;
+#if 0
+  boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+  std::vector<Uint>::const_iterator tex_coord_indices_begin =
+    m_flat_tex_coord_indices.empty() ?
+    m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+  clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_4d,
+                                tex_coord_indices_begin);
+  m_dirty_tex_coord_buffer = true;
+#endif
 }
 
 SGAL_END_NAMESPACE
