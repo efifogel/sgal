@@ -154,6 +154,7 @@ CPPSOURCES+= Switch.cpp
 CPPSOURCES+= Tex_coord_array.cpp
 CPPSOURCES+= Tex_coord_array_2d.cpp
 CPPSOURCES+= Tex_coord_array_3d.cpp
+CPPSOURCES+= Tex_coord_array_4d.cpp
 CPPSOURCES+= Tex_gen.cpp
 # CPPSOURCES+= Text_texture.cpp
 CPPSOURCES+= Text.cpp

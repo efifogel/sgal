@@ -22,6 +22,7 @@ FILES+= Polyhedron_geo_builder.hpp
 FILES+= Tex_coord_array.hpp
 FILES+= Tex_coord_array_2d.hpp
 FILES+= Tex_coord_array_3d.hpp
+FILES+= Tex_coord_array_4d.hpp
 FILES+= Text.hpp
 
 INSTALLDIR =$(INCDIR)/SGAL
