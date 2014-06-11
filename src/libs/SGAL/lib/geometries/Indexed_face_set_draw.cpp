@@ -780,7 +780,7 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTR_VANO\n");
 
-  SGAL_assertion(coord_array);
+  SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
   Uint j = 0;
