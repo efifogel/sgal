@@ -103,6 +103,7 @@ is in the LD_LIBRARY_PATH.
 * libxxf86vm-dev
 * libgmp-dev
 * libv8-dev
+* bison, YACC-compatible parser generator
 
 2.5.1.2. Required items on Windows
 * Boost
@@ -148,13 +149,14 @@ parser employing LALR(1) parser tables. For more information see
 http://www.gnu.org/software/bison/
 
 The code of SGAL is using an advanced feature of bison available in
-bison version 2.7.91 and above. The binaries of this release has not
-made it yet to the standard distrubution channels (e.g., Ubuntu, Red
-Hat, cygwin, and bison for Windows). Thus, it must be built from
-sources. A bison submodule exists in the SGAL git repository for
-convenience. To build bison you need to install apriori the components
-listed in the table below. The table lists the cygwin packages that
-contain the components.
+bison version 2.7.91 and above. Ubuntu versions 14.04 an above include
+Bison version 3.0 or above. However, the binaries of the required bison
+release has not made it yet to the other standard distrubution channels
+(e.g., Red Hat, cygwin, and bison for Windows). Thus, it must be built
+from sources on the corresponding platform. A bison submodule exists in
+the SGAL git repository for convenience. To build bison you need to
+install apriori the components listed in the table below. The table lists
+the cygwin packages that contain the components.
 
   Component  Category Package
   ---------- -------- -------
