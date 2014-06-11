@@ -35,6 +35,7 @@
 #include "SGAL/Texture.hpp"
 #include "SGAL/Tex_coord_array_2d.hpp"
 #include "SGAL/Tex_coord_array_3d.hpp"
+#include "SGAL/Tex_coord_array_4d.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Draw_action.hpp"
@@ -86,7 +87,8 @@ Boundary_set::Boundary_set(Boolean proto) :
   m_dirty_normal_buffer(true),
   m_dirty_color_buffer(true),
   m_dirty_tex_coord_buffer(true),
-  m_dirty_local_vertex_buffers(true)
+  m_dirty_local_vertex_buffers(true),
+  m_dirty_center(true)
 {
   if (proto) return;
 
@@ -1804,7 +1806,6 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
 void Boundary_set::clean_local_cnct4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_cnct4_vertex_buffers() not implemented yet!");
-#if 0
   SGAL_assertion(m_normal_array);
   SGAL_assertion(m_color_array);
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
@@ -1830,7 +1831,6 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
-#endif
 }
 
 //! \brief cleans the local coordinates, normals, and color, vertex buffers.
@@ -1907,7 +1907,6 @@ void Boundary_set::clean_local_cnt3_vertex_buffers()
 void Boundary_set::clean_local_cnt4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_cnt4_vertex_buffers() not implemented yet!");
-#if 0
   SGAL_assertion(m_normal_array);
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
@@ -1925,7 +1924,6 @@ void Boundary_set::clean_local_cnt4_vertex_buffers()
                                 tex_coord_indices_begin);
   m_dirty_normal_buffer = true;
   m_dirty_tex_coord_buffer = true;
-#endif
 }
 
 //! \brief cleans the local coordinates and normals vertex buffers.
@@ -1988,7 +1986,6 @@ void Boundary_set::clean_local_cct3_vertex_buffers()
 void Boundary_set::clean_local_cct4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_cct4_vertex_buffers() not implemented yet!");
-#if 0
   SGAL_assertion(m_color_array);
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
@@ -2006,7 +2003,6 @@ void Boundary_set::clean_local_cct4_vertex_buffers()
                                 tex_coord_indices_begin);
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
-#endif
 }
 
 //! \brief cleans the local coordinates and colors vertex buffers.
@@ -2048,7 +2044,6 @@ void Boundary_set::clean_local_ct3_vertex_buffers()
 void Boundary_set::clean_local_ct4_vertex_buffers()
 {
   SGAL_error_msg("clean_local_ct4_vertex_buffers() not implemented yet!");
-#if 0
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
@@ -2058,7 +2053,27 @@ void Boundary_set::clean_local_ct4_vertex_buffers()
   clean_local_2d_vertex_buffers(tex_coord_array, m_local_tex_coord_buffer_4d,
                                 tex_coord_indices_begin);
   m_dirty_tex_coord_buffer = true;
-#endif
+}
+
+//! \brief cleans the center of the geometric object.
+void Boundary_set::clean_center()
+{
+  m_center.set(0, 0, 0);
+  m_dirty_center = false;
+}
+
+//! \brief sets the center of the geometric object.
+void Boundary_set::set_center(Vector3f& center)
+{
+  m_center = center;
+  m_dirty_center = false;
+}
+
+//! \brief obtains the center of the geometric object.
+Vector3f& Boundary_set::get_center()
+{
+  if (is_dirty()) clean();
+  return m_center;
 }
 
 SGAL_END_NAMESPACE

@@ -229,6 +229,9 @@ public:
    */
   Boolean is_dirty_tex_coords() const;
 
+  /*! Clean the center of the geometric brick. */
+  virtual void clean_center();
+
   /* Set the flag that indicates whether normals are bound per vertex or per
    * face.
    * \param normal_per_vertex true if normals are bound per vertex
@@ -580,6 +583,9 @@ protected:
 
   /*! Indicates that the local vetex buffers are dirty */
   Boolean m_dirty_local_vertex_buffers;
+
+  /*! Indicates whether the center is dirty and thus needs cleaning. */
+  Boolean m_dirty_center;
 
   /*! The center of the geometric object. The generated texture coordinate of a
    * vertex v is the displacement of v relative to m_center (v - m_center).
@@ -1220,12 +1226,6 @@ inline Uint Boundary_set::num_tex_coordinates() const
       ((m_tex_coord_array != nullptr) ?
        m_tex_coord_array->num_coordinates() : 0)));
 }
-
-//! \brief sets the center of the geometric object.
-inline void Boundary_set::set_center(Vector3f& center) { m_center = center; }
-
-//! \brief obtains the center of the Ego brick.
-inline Vector3f& Boundary_set::get_center() { return m_center; }
 
 SGAL_END_NAMESPACE
 
