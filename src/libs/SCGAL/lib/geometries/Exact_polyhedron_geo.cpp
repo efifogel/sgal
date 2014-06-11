@@ -454,7 +454,7 @@ void Exact_polyhedron_geo::clean_normals()
   }
   else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
   else if (m_crease_angle == 0) calculate_normal_per_polygon();
-  else SGAL_assertion();
+  else SGAL_error();
   m_dirty_normals = false;
   m_normals_cleaned = true;
   m_dirty_normal_buffer = true;
