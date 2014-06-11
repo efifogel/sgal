@@ -87,11 +87,12 @@ void Tex_coord_array_3d::set_attributes(Element* elem)
     const std::string& value = elem->get_value(ai);
     if (name == "point") {
       Uint num_values = get_num_tokens(value);
-      Uint size = num_values / 2;
+      Uint size = num_values / 3;
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < size; ++i) svalue >> m_array[i][0] >> m_array[i][1];
+      for (Uint i = 0; i < size; ++i)
+        svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
       elem->mark_delete(ai);
     }
   }
