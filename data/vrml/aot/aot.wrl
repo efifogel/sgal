@@ -41,9 +41,14 @@ DEF HIDE_SINGULARITIES_KEY SingleKeySensor {
   key "s"
 }
 
-DEF HIDE_DISCONTINUITY_KEY SingleKeySensor {
+DEF HIDE_HORIZONTAL_DISCONTINUITY_KEY SingleKeySensor {
   boolean FALSE
-  key "d"
+  key "h"
+}
+
+DEF HIDE_VERTICAL_DISCONTINUITY_KEY SingleKeySensor {
+  boolean FALSE
+  key "v"
 }
 
 DEF SNAP Snapshot {
@@ -83,7 +88,7 @@ Transform {
 		coord DEF COORD ExactCoordinate2D {
 		  exactPoint [1/2 1/2]
 		}
-		pointIndex [0]
+#		pointIndex [0]
 	      }
 	    }
 	   ]
@@ -91,53 +96,41 @@ Transform {
        ]
     }
 
-    # The discontinuity arc:
-    DEF DISCONTINUITY_SWITCH Switch {
-      whichChoice -1
+    # The vertical discontinuity arc:
+    DEF VERTICAL_DISCONTINUITY_SWITCH Switch {
+      whichChoice 0
+      children [
+	Transform {
+	  rotation 1 0 0 1.5708
+	  translation -2 0 0
+	  children [
+	    Shape {
+	      appearance USE BOUNDARY_APP
+	      geometry Torus {
+		creaseAngle 0.6
+		stacks 16
+		slices 64
+		spineRadius 1
+		crossSectionRadius 0.1
+	      }
+	    }
+	   ]
+	}
+       ]
+    }
+
+    # The horizontal discontinuity arc:
+    DEF HORIZONTAL_DISCONTINUITY_SWITCH Switch {
+      whichChoice 0
       children [
         Shape {
 	  appearance USE BOUNDARY_APP
-	  geometry Extrusion {
-	    creaseAngle 2.0
-	    beginCap TRUE
-	    endCap TRUE
-	    loop FALSE
-	    crossSectionRadius 0.025
-	    spine [
-		   0 0 1,
-		   -0.0980171 0 0.995185,
-		   -0.19509 0 0.980785,
-		   -0.290285 0 0.95694,
-		   -0.382683 0 0.92388,
-		   -0.471397 0 0.881921,
-		   -0.55557 0 0.83147,
-		   -0.634393 0 0.77301,
-		   -0.707107 0 0.707107,
-		   -0.77301 0 0.634393,
-		   -0.83147 0 0.55557,
-		   -0.881921 0 0.471397,
-		   -0.92388 0 0.382683,
-		   -0.95694 0 0.290285,
-		   -0.980785 0 0.19509,
-		   -0.995185 0 0.0980171,
-		   -1 0 0,
-		   -0.995185 0 -0.0980171,
-		   -0.980785 0 -0.19509,
-		   -0.95694 0 -0.290285,
-		   -0.92388 0 -0.382683,
-		   -0.881921 0 -0.471397,
-		   -0.83147 0 -0.55557,
-		   -0.77301 0 -0.634393,
-		   -0.707107 0 -0.707107,
-		   -0.634393 0 -0.77301,
-		   -0.55557 0 -0.83147,
-		   -0.471397 0 -0.881921,
-		   -0.382683 0 -0.92388,
-		   -0.290285 0 -0.95694,
-		   -0.19509 0 -0.980785,
-		   -0.0980171 0 -0.995185,
-		   0 0 -1,
-		  ]
+	  geometry Torus {
+	    creaseAngle 0.6
+	    stacks 16
+	    slices 64
+	    spineRadius 3
+	    crossSectionRadius 0.1
 	  }
 	}
        ]
@@ -208,7 +201,8 @@ Transform {
 ROUTE SNAP_KEY.state TO SNAP.trigger
 # ROUTE EXPORT_KEY.press TO GEOM.export
 
-ROUTE HIDE_DISCONTINUITY_KEY.intState TO DISCONTINUITY_SWITCH.whichChoice
+ROUTE HIDE_VERTICAL_DISCONTINUITY_KEY.intState TO VERTICAL_DISCONTINUITY_SWITCH.whichChoice
+ROUTE HIDE_HORIZONTAL_DISCONTINUITY_KEY.intState TO HORIZONTAL_DISCONTINUITY_SWITCH.whichChoice
 
 # ROUTE VERTEX_SHAPE_KEY.intState TO GEOM.aosVertexStyleId
 # ROUTE EDGE_SHAPE_KEY.intState TO GEOM.aosEdgeStyleId
