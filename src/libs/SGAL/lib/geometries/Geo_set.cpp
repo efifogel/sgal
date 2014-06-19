@@ -189,8 +189,7 @@ void Geo_set::set_color_array(Shared_color_array color_array)
 { m_color_array = color_array; }
 
 //! \brief returns true if the representation is empty.
-Boolean Geo_set::is_empty() const
-{ return (!m_coord_array || (m_coord_array->size() == 0) ); }
+Boolean Geo_set::is_empty() const { return m_coord_indices.empty(); }
 
 //! \brief calculates the sphere bound of the geometry set.
 Boolean Geo_set::clean_sphere_bound()
@@ -270,7 +269,8 @@ void Geo_set::set_attributes(Element* elem)
             if (j != 4) quads = false;
             if (j < 3) goto err;
             j = 0;
-          } else j++;
+          }
+          else ++j;
         }
         SGAL_assertion(!tris || !quads);
         m_primitive_type =

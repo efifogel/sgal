@@ -100,8 +100,9 @@ public:
   virtual Boolean is_dirty() const;
 
   /*! Determine whether the representation is empty.
+   * \return true if the representation is empty and false otherwise.
    */
-  virtual Boolean is_empty() const = 0;
+  virtual Boolean is_empty() const;
 
   /*! Write this container.
    * \param formatter The formatter to use for the writing, e.g., VRML.
