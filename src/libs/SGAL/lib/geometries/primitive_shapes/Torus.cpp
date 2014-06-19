@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/Torus.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -37,7 +38,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Torus::s_tag = "Torus";
-Container_proto* Torus::s_prototype(NULL);
+Container_proto* Torus::s_prototype(nullptr);
 
 // Default values:
 const Float Torus::s_def_cross_section_radius(1); // Override Extrusion def.
@@ -97,7 +98,12 @@ void Torus::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "spineRadius") {
-      set_spine_radius(atoff(value.c_str()));
+      set_spine_radius(boost::lexical_cast<Float>(value.c_str()));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "crossSectionRadius") {
+      set_cross_section_radius(boost::lexical_cast<Float>(value.c_str()));
       elem->mark_delete(ai);
       continue;
     }
@@ -128,11 +134,21 @@ void Torus::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Extrusion::structure_changed);
 
+  // spine radius
   Float_handle_function spine_radius_func =
     static_cast<Float_handle_function>(&Torus::spine_radius_handle);
   s_prototype->add_field_info(new SF_float(SPINE_RADIUS, "spineRadius",
                                            RULE_EXPOSED_FIELD,
                                            spine_radius_func, exec_func));
+
+  // cross section radius
+  Float_handle_function cross_section_radius_func =
+    static_cast<Float_handle_function>(&Torus::cross_section_radius_handle);
+  s_prototype->add_field_info(new SF_float(CROSS_SECTION_RADIUS,
+                                           "crossSectionRadius",
+                                           RULE_EXPOSED_FIELD,
+                                           cross_section_radius_func,
+                                           exec_func));
 
   // stacks
   exec_func =
@@ -153,7 +169,7 @@ void Torus::init_prototype()
 void Torus::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.

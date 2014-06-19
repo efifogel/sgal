@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -51,6 +48,7 @@ public:
   enum {
     FIRST = Extrusion::LAST - 1,
     SPINE_RADIUS,
+    CROSS_SECTION_RADIUS,
     STACKS,
     SLICES,
     LAST
@@ -80,6 +78,8 @@ public:
   /// \name field handlers
   //@{
   Float* spine_radius_handle(const Field_info*) { return &m_spine_radius; }
+  Float* cross_section_radius_handle(const Field_info*)
+  { return &m_cross_section_radius; }
   Uint* stacks_handle(const Field_info*) { return &m_stacks; }
   Uint* slices_handle(const Field_info*) { return &m_slices; }
   //@}
