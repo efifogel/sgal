@@ -1515,20 +1515,6 @@ void Boundary_set::coord_point_changed()
   if (m_tex_coords_cleaned || !m_tex_coord_array) m_dirty_tex_coords = true;
 }
 
-//! \brief returns true if the representation is empty.
-Boolean Boundary_set::is_empty() const
-{
-  if (m_drawing_mode == Configuration::GDM_DISPLAY_LIST)
-    return (m_display_list_id == 0);
-
-  if (use_vertex_array()) {
-    if (Gfx_conf::get_instance()->is_vertex_buffer_object_supported())
-      return ((m_coord_buffer_id == 0) && Geo_set::is_empty());
-  }
-
-  return Geo_set::is_empty();
-}
-
 //! \brief Calculate a single normal per vertex for all vertices.
 void Boundary_set::
 calculate_single_normal_per_vertex(Shared_normal_array normals)

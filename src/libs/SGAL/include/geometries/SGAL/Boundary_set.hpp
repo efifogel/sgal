@@ -257,9 +257,6 @@ public:
 
   virtual int create_display_list(Draw_action* action);
 
-  /*! Return true if the representation is empty. */
-  virtual Boolean is_empty() const;
-
   /*! Draw the polygons. */
   virtual void draw(Draw_action* action);
 

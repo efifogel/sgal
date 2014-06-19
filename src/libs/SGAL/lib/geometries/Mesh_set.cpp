@@ -182,6 +182,10 @@ Boolean Mesh_set::clean_sphere_bound()
   return Geo_set::clean_sphere_bound();
 }
 
+//! Determine whether the representation is empty.
+Boolean Mesh_set::is_empty() const
+{ return m_coord_indices.empty() && m_flat_coord_indices.empty(); }
+
 //! \brief sets the attributes of this node.
 void Mesh_set::init_prototype()
 {

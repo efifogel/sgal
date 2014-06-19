@@ -128,6 +128,11 @@ public:
   /*! Clean the representation. */
   virtual void clean();
 
+  /*! Determine whether the representation is empty.
+   * \return true if the representation is empty and false otherwise.
+   */
+  virtual Boolean is_empty() const;
+
   /*! Calculate the sphere bound.
    */
   virtual Boolean clean_sphere_bound();
@@ -197,7 +202,7 @@ protected:
       Vector3f normal1 = edge.facet()->m_normal;
       Vector3f normal2 = edge.opposite()->facet()->m_normal;
       Float angle = arccosf(normal1.dot(normal2));  // inner product
-      if (angle > m_crease_angle) {
+      if (abs(angle) > m_crease_angle) {
         edge.m_creased = true;
         edge.opposite()->m_creased = true;
         m_smooth = false;

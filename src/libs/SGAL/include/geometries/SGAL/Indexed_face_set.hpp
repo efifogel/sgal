@@ -92,6 +92,11 @@ public:
 
   // virtual Attribute_list get_attributes();
 
+  /*! Determine whether the representation is empty.
+   * \return true if the representation is empty and false otherwise.
+   */
+  virtual Boolean is_empty() const;
+
   /*! Calculate multiple normals per vertex for all vertices.
    * If the angle between the geometric normals of two adjacent faces is less
    * than the crease angle, calculate the normals so that the facets are
@@ -167,7 +172,8 @@ private:
       Kernel::Vector_3 normal1 = edge.facet()->plane();
       Kernel::Vector_3 normal2 = edge.opposite()->facet()->plane();
       Float angle = arccosf(normal1 * normal2);  // inner product
-      if (angle > m_crease_angle) {
+      std::cout << "angle: " << angle << std::endl;
+      if (abs(angle) > m_crease_angle) {
         edge.m_creased = true;
         edge.opposite()->m_creased = true;
         m_smooth = false;

@@ -70,6 +70,13 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 //! \brief destructor.
 Indexed_face_set::~Indexed_face_set(){}
 
+//! Determine whether the representation is empty.
+Boolean Indexed_face_set::is_empty() const
+{
+  return m_coord_indices.empty() && m_flat_coord_indices.empty() &&
+    m_polyhedron.empty();
+}
+
 //! \brief claculates the normals in case they are invalidated.
 void Indexed_face_set::clean_normals()
 {

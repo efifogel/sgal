@@ -79,6 +79,13 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
 //! \brief destructor.
 Exact_polyhedron_geo::~Exact_polyhedron_geo() {}
 
+//! Determine whether the representation is empty.
+Boolean Exact_polyhedron_geo::is_empty() const
+{
+  return m_coord_indices.empty() && m_flat_coord_indices.empty() &&
+    m_polyhedron.empty();
+}
+
 //! \brief computes the convex hull of the coordinate set.
 void Exact_polyhedron_geo::convex_hull()
 {
