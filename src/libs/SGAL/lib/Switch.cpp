@@ -114,33 +114,45 @@ void Switch::isect(Isect_action* isect_action)
 }
 
 /*! Calculate the sphere bound of the group based on all child objects.
- * \return true iff the bounding sphere has changed since last call.
+ * Notice that the m_dirty_sphere_bound flag must be set right before the
+ * return statement and not earlier, cause the calls to clean_sphere_bound()
+ * and get_sphere_bound() may reset it.
  */
 Boolean Switch::clean_sphere_bound()
 {
-  m_dirty_sphere_bound = false;
+  if (m_locked_sphere_bound) {
+    m_dirty_sphere_bound = false;
+    return false;
+  }
+
+  bool res = false;
 
   if (!is_visible()) {
-    if (m_sphere_bound.get_radius() == 0) return false;
-    m_sphere_bound.set_radius(0);
-    return true;
+    if (m_sphere_bound.get_radius() != 0) {
+      m_sphere_bound.set_radius(0);
+      res = true;
+    }
+    m_dirty_sphere_bound = false;
+    return res;
   }
 
   Shared_node node = get_choice();
-  if (!node) return false;
-  Sphere_bound_vector_const spheres;
-  Boolean bb_changed = node->clean_sphere_bound();
-  const Sphere_bound& sb = node->get_sphere_bound();
-  if (sb.get_radius() != 0) spheres.push_back(&sb);
+  if (node) {
+    Sphere_bound_vector_const spheres;
+    Boolean bb_changed = node->clean_sphere_bound();
+    const Sphere_bound& sb = node->get_sphere_bound();
+    if (sb.get_radius() != 0) spheres.push_back(&sb);
 
-  // If the bb was changed in the childobjects, or if the radius is 0
-  // (which means that the object was invisible but not anymore)
-  if (bb_changed || (m_sphere_bound.get_radius() == 0)) {
-    m_sphere_bound.set_around(spheres);
-    return true;
+    // If the bb was changed in the childobjects, or if the radius is 0
+    // (which means that the object was invisible but not anymore)
+    if (bb_changed || (m_sphere_bound.get_radius() == 0)) {
+      m_sphere_bound.set_around(spheres);
+      res = true;
+    }
   }
 
-  return false;
+  m_dirty_sphere_bound = false;
+  return res;
 }
 
 /*! Initializes the node prototype */

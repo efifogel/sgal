@@ -486,13 +486,20 @@ void Transform::reset(const Field_info* /* field_info */)
   set_scale_orientation(s_def_scale_orientation);
 }
 
-//! \brief cleans the bounding sphereof the transformation node.
+/*! \brief cleans the bounding sphereof the transformation node.
+ * Notice that the call to clean_matrix() must precede the call to
+ * Group::clean_sphere_bound(), cause the former may reset the flag
+ * m_dirty_sphere_bound.
+ */
 Boolean Transform::clean_sphere_bound()
 {
-  if (m_locked_sphere_bound) return false;
+  if (m_locked_sphere_bound) {
+    m_dirty_sphere_bound = false;
+    return false;
+  }
 
-  Group::clean_sphere_bound();
   if (m_dirty_matrix) clean_matrix();
+  Group::clean_sphere_bound();
 
   // transform the center of the boundng sphere
   Vector3f new_center;
@@ -503,7 +510,7 @@ Boolean Transform::clean_sphere_bound()
   // multiply the radius by the max scaling factor
   float scale_factor = m_scale.get_max_comp();
   m_sphere_bound.set_radius(m_sphere_bound.get_radius() * scale_factor);
-  return true;
+   return true;
 }
 
 //! \brief initializes the node prototype.

@@ -106,6 +106,9 @@ void Shape::set_appearance(Shared_appearance app)
   m_appearance = app;
   m_dirty = true;
   m_dirty_appearance = true;
+
+  const Field_info* field_info = get_field_info(APPEARANCE);
+  field_changed(field_info);
 }
 
 //! \brief adds a geometry to the shape at the end of the list.
@@ -117,6 +120,9 @@ void Shape::set_geometry(Shared_geometry geometry)
   if (m_geometry) m_geometry->register_observer(observer);
   m_dirty = true;
   m_dirty_sphere_bound = true;
+
+  const Field_info* field_info = get_field_info(GEOMETRY);
+  field_changed(field_info);
 
 #if 0
   //! \todo
@@ -133,16 +139,20 @@ void Shape::set_geometry(Shared_geometry geometry)
 //! \brief calculates the bounding sphere of all geometries in the shape.
 Boolean Shape::clean_sphere_bound()
 {
-  m_dirty_sphere_bound = false;
+  bool res = false;
   if (!is_visible()) {
-    if (m_sphere_bound.get_radius() == 0) return false;
-    m_sphere_bound.set_radius(0);
-    return true;
+    if (m_sphere_bound.get_radius() != 0) {
+      m_sphere_bound.set_radius(0);
+      res = true;
+    }
+    m_dirty_sphere_bound = false;
+    return res;
   }
 
   Boolean changed = false;
   if (m_geometry) m_sphere_bound = *m_geometry->get_sphere_bound(changed);
 
+  m_dirty_sphere_bound = false;
   return changed;
 }
 

@@ -209,16 +209,26 @@ void Group::isect(Isect_action* isect_action)
 
 /*! \brief cleans the bounding sphere of the group.
  * Computes the sphere that bounds all bounding spheres of all child nodes.
+ * Notice that the m_dirty_sphere_bound flag must be set right before the
+ * return statement and not earlier, cause the calls to clean_sphere_bound()
+ * and get_sphere_bound() may reset it.
  */
 Boolean Group::clean_sphere_bound()
 {
-  if (m_locked_sphere_bound) return false;
-  m_dirty_sphere_bound = false;
+  if (m_locked_sphere_bound) {
+    m_dirty_sphere_bound = false;
+    return false;
+  }
+
+  bool res = false;
 
   if (!is_visible()) {
-    if (m_sphere_bound.get_radius() == 0) return false;
-    m_sphere_bound.set_radius(0);
-    return true;
+    if (m_sphere_bound.get_radius() != 0) {
+      m_sphere_bound.set_radius(0);
+      res = true;
+    }
+    m_dirty_sphere_bound = false;
+    return res;
   }
 
   Sphere_bound_vector_const spheres;
@@ -237,10 +247,11 @@ Boolean Group::clean_sphere_bound()
   // (which means that the object was invisible but not anymore)
   if (bb_changed || (m_sphere_bound.get_radius() == 0)) {
     m_sphere_bound.set_around(spheres);
-    return true;
+    res = true;
   }
 
-  return false;
+  m_dirty_sphere_bound = false;
+  return res;
 }
 
 //! \brief sets the attributes of the group.
