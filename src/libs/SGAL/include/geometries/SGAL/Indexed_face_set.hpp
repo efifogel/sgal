@@ -172,7 +172,6 @@ private:
       Kernel::Vector_3 normal1 = edge.facet()->plane();
       Kernel::Vector_3 normal2 = edge.opposite()->facet()->plane();
       Float angle = arccosf(normal1 * normal2);  // inner product
-      std::cout << "angle: " << angle << std::endl;
       if (abs(angle) > m_crease_angle) {
         edge.m_creased = true;
         edge.opposite()->m_creased = true;
