@@ -185,7 +185,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
    case SF_BOOL:
     {
      auto initial_value =
-       value.empty() ? false : boost::lexical_cast<Boolean>(value);
+       value.empty() ? false : compare_to_true(value);
      variant_field = initial_value;
      add_fi<SF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
     }
