@@ -4,7 +4,8 @@ USE_SHARED =1
 USE_SHARED_SGAL =1
 USE_DYNAMIC_SGAL =0
 
-include $(ROOT)/make/comdef.mak
+include $(ROOT)/make/cgaldef.mak
+include $(MAKEDIR)/scgaldef.mak
 
 BASENAME = knot
 TARGET0 = $(BASENAME)$(EXEFILESUFFIX)
@@ -118,6 +119,8 @@ endif
 ifneq ($(USE_DYNAMIC_SGAL), 1)
 LLDLIBS+= -lSGAL
 endif
+
+LLDLIBS+= $(CGALLDLIBS)
 
 # V8 engine stuff:
 LLDLIBS+= -lv8
