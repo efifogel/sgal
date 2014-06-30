@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12554 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TRACE_HPP
@@ -45,6 +42,7 @@ public:
     VRML_PARSING,
     WINDOW_MANAGER,
     EVENTS,
+    SCRIPT,
     INDEXED_FACE_SET,
     POLYHEDRON,
     GAUSSIAN_MAP,
@@ -52,42 +50,78 @@ public:
     NUM_CODES
   };
 
-  /*! Obtain the trace singleton */
-  static Trace* get_instance();  
+  /*! Obtain the trace singleton.
+   * \return the trace singleton.
+   */
+  static Trace* get_instance();
 
-  /*! Enable the trace for the given code */
-  void enable(Code code) { enable(signature(code)); }
+  /*! Enable the trace for the given code.
+   * \param code (in) the given code.
+   */
+  void enable(Code code);
 
-  /*! Enable the trace for the given code-signature */
+  /*! Enable the trace for the given code-signature.
+   * \param my_signature (in) the given code-signature.
+   */
   void enable(Uint my_signature);
 
-  /*! Disable the trace for the given code */
-  void disable(Code code) { disable(signature(code)); }
+  /*! Disable the trace for the given code.
+   * \param code (in) the given code.
+   */
+  void disable(Code code);
 
-  /*! Disable the trace for the given code-signature */
-  void disable(Uint my_signature) { m_signature &= !my_signature; }
+  /*! Disable the trace for the given code-signature.
+   * \param my_signature (in) the given code-signature.
+   */
+  void disable(Uint my_signature);
 
-  /*! Is the trace for the given code enabled? */
-  Boolean is_enabled(Code code)
-  { return ((m_signature & signature(code)) != 0x0); }
-  
+  /*! Determine whether the trace for the given code is enabled.
+   * \param code (in) the given code.
+   * \return a flag that indicates whether the trace is enabled.
+   */
+  Boolean is_enabled(Code code) const;
+
 private:
-  /*! Constructor */
-  Trace() : m_signature(0x0) {}
+  /*! Constructor.
+   */
+  Trace();
 
-  /*! The singleton */
-  static Trace* s_instance;
+  /*! Obtain the signature of the given trace-code.
+   */
+  Uint signature(Code code) const;
 
-  /*! return the signature of the given trace-code */
-  Uint signature(Code code) { return 0x1 << code; }
-  
-  /*! The signature */
+  /*! The signature. */
   Uint m_signature;
+
+  /*! The singleton. */
+  static Trace* s_instance;
 };
 
 /*! \brief */
 inline Boolean TRACE(Trace::Code code)
 { return Trace::get_instance()->is_enabled(code); }
+
+//! \brief enables the trace for the given code.
+inline void Trace::enable(Code code) { enable(signature(code)); }
+
+//! \brief enables the trace for the given code-signature.
+inline void Trace::enable(Uint my_signature) { m_signature |= my_signature; }
+
+//! \brief disables the trace for the given code.
+inline void Trace::disable(Code code) { disable(signature(code)); }
+
+//! \brief disables the trace for the given code-signature.
+inline void Trace::disable(Uint my_signature) { m_signature &= !my_signature; }
+
+//! \brief determines whether the trace for the given code is enabled.
+inline Boolean Trace::is_enabled(Code code) const
+{ return ((m_signature & signature(code)) != 0x0); }
+
+//! \brief constructor.
+inline Trace::Trace() : m_signature(0x0) {}
+
+//! \brief obtains the signature of the given trace-code.
+inline Uint Trace::signature(Code code) const { return 0x1 << code; }
 
 #if defined(NDEBUG) && !defined(SGAL_TRACE)
 #define SGAL_TRACE_MSG(key, msg)

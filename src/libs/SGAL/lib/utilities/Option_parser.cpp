@@ -44,6 +44,7 @@ const Char* Option_parser::s_trace_opts[] = {
   "vrml_parsing",
   "sim",
   "event",
+  "script",
   "ifs",
   "polyhedron",
   "cgm"
@@ -103,6 +104,7 @@ Option_parser::Option_parser() :
      "  vrml_parsing\n"
      "  sim\n"
      "  event\n"
+     "  script\n"
      "  ifs\n"
      "  polyhedron\n"
      "  cgm\n"

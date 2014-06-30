@@ -23,15 +23,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Trace * Trace::s_instance = 0;
+//! The trace singleton.
+Trace* Trace::s_instance = nullptr;
 
-/*! Returns a pointer to the factory and makes sure only one instance exits */
-Trace * Trace::get_instance()
+//! \brief obtains a trace singleton.
+Trace* Trace::get_instance()
 {
   if (!s_instance) s_instance = new Trace();
   return s_instance;
 }
-
-void Trace::enable(unsigned int my_signature) { m_signature |= my_signature; }
 
 SGAL_END_NAMESPACE
