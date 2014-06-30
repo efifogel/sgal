@@ -538,6 +538,149 @@ void Script::indexed_getter(uint32_t index,
 {
   SGAL_TRACE_CODE(Trace::SCRIPT,
                   std::cout << "indexed_getter() " << index << std::endl;);
+
+  auto isolate = info.GetIsolate();
+
+  // Obtain the Script node:
+  v8::Handle<v8::Object> obj = info.Holder();
+  SGAL_assertion(obj->InternalFieldCount() == 1);
+  v8::Handle<v8::External> internal_field =
+    v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
+  SGAL_assertion(internal_field->Value() != nullptr);
+  Script* script_node = static_cast<Script*>(internal_field->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+
+  // Obtain the field information record:
+  v8::Local<v8::Value> data = info.Data();
+  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
+  SGAL_assertion(ext->Value() != nullptr);
+  Field_info* field_info = static_cast<Field_info*>(ext->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+
+  // Obtain
+  switch (field_info->get_type_id()) {
+   case SF_BOOL:
+   case SF_FLOAT:
+   case SF_TIME:
+   case SF_INT32:
+   case SF_STR:
+    SGAL_error();
+    break;
+
+   case SF_VEC2F:
+    {
+     v8::HandleScope scope(isolate);
+     SGAL_assertion(index < 2);
+     Vector2f* tmp = script_node->field_handle<Vector2f>(field_info);
+     info.GetReturnValue().Set((*tmp)[index]);
+    }
+    break;
+
+   case SF_VEC3F:
+   case SF_COLOR:
+    {
+     v8::HandleScope scope(isolate);
+     SGAL_assertion(index < 3);
+     Vector3f* tmp = script_node->field_handle<Vector3f>(field_info);
+     info.GetReturnValue().Set((*tmp)[index]);
+    }
+    break;
+
+   case SF_ROTATION:
+   case SF_IMAGE:
+   case SF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_BOOL:
+    {
+     v8::HandleScope scope(isolate);
+     Boolean_array* tmp = script_node->field_handle<Boolean_array>(field_info);
+     SGAL_assertion(index < tmp->size());
+     info.GetReturnValue().Set((*tmp)[index]);
+    }
+    break;
+
+   case MF_FLOAT:
+    {
+     v8::HandleScope scope(isolate);
+     Float_array* tmp = script_node->field_handle<Float_array>(field_info);
+     SGAL_assertion(index < tmp->size());
+     info.GetReturnValue().Set((*tmp)[index]);
+    }
+    break;
+
+   case MF_TIME:
+    {
+     v8::HandleScope scope(isolate);
+     Scene_time_array* tmp =
+       script_node->field_handle<Scene_time_array>(field_info);
+     SGAL_assertion(index < tmp->size());
+     info.GetReturnValue().Set((*tmp)[index]);
+    }
+    break;
+
+   case MF_INT32:
+    {
+     v8::HandleScope scope(isolate);
+     Int_array* tmp = script_node->field_handle<Int_array>(field_info);
+     SGAL_assertion(index < tmp->size());
+     info.GetReturnValue().Set((*tmp)[index]);
+    }
+    break;
+
+   case MF_VEC2F:
+    {
+     v8::HandleScope scope(isolate);
+     Vector2f_array* tmp = script_node->field_handle<Vector2f_array>(field_info);
+     SGAL_assertion(index < tmp->size());
+     v8::Handle<v8::Array> vec2f = v8::Array::New(isolate, 2);
+     if (vec2f.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+     }
+     vec2f->Set(0, v8::Number::New(isolate, ((*tmp)[index])[0]));
+     vec2f->Set(1, v8::Number::New(isolate, ((*tmp)[index])[1]));
+     info.GetReturnValue().Set(vec2f);
+    }
+    break;
+
+   case MF_VEC3F:
+   case MF_COLOR:
+    {
+     v8::HandleScope scope(isolate);
+     Vector2f_array* tmp = script_node->field_handle<Vector2f_array>(field_info);
+     SGAL_assertion(index < tmp->size());
+     v8::Handle<v8::Array> vec3f = v8::Array::New(isolate, 3);
+     if (vec3f.IsEmpty()) {
+       std::cerr << "failed to allocate v8 Array!" << std::endl;
+     }
+     vec3f->Set(0, v8::Number::New(isolate, ((*tmp)[index])[0]));
+     vec3f->Set(1, v8::Number::New(isolate, ((*tmp)[index])[1]));
+     vec3f->Set(2, v8::Number::New(isolate, ((*tmp)[index])[2]));
+     info.GetReturnValue().Set(vec3f);
+    }
+    break;
+
+   case MF_STR:
+    {
+     v8::HandleScope scope(isolate);
+     String_array* tmp = script_node->field_handle<String_array>(field_info);
+     SGAL_assertion(index < tmp->size());
+     v8::Handle<v8::String> str =
+       v8::String::NewFromUtf8(isolate, (*tmp)[index].c_str());
+     info.GetReturnValue().Set(str);
+    }
+    break;
+
+   case MF_ROTATION:
+   case MF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   default:
+    std::cerr << "Unsupported type!" << std::endl;
+    return;
+  }
 }
 
 //! \brief intercepts setting an array element by index.
