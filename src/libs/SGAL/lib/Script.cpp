@@ -271,7 +271,7 @@ void Script::setter(v8::Local<v8::String> property,
     {
      std::string* tmp = (id == URL) ? script_node->url_handle(field_info) :
        script_node->field_handle<std::string>(field_info);
-     v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(value);
+     v8::Local<v8::String> str = value->ToString();
      v8::String::Utf8Value utf8(str);
      tmp->assign(*utf8);
     }
@@ -508,7 +508,7 @@ void Script::array_setter(v8::Local<v8::String> property,
      String_array* tmp = script_node->field_handle<String_array>(field_info);
      tmp->resize(array->Length());
      for (size_t i = 0; i < array->Length(); ++i) {
-       v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(array->Get(i));
+       v8::Local<v8::String> str = array->Get(i)->ToString();
        v8::String::Utf8Value utf8(str);
        (*tmp)[i].assign(*utf8);
      }
