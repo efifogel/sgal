@@ -167,6 +167,12 @@ public:
   /*! Obtain the URL. */
   const std::string get_url() const;
 
+  /*! Determine whether it is possible to send events directly to any node to
+   * which this script node has access, and may dynamically establish or break
+   * routes.
+   */
+  bool is_direct_output() const;
+
   /*! Set the m_direct_output Boolean flag. */
   void set_direct_output();
 
@@ -244,16 +250,19 @@ protected:
 #pragma warning( pop )
 #endif
 
-/*! \brief sets the URL. */
+//! \brief sets the URL.
 inline void Script_base::set_url(const std::string& url) { m_url = url; }
 
-/*! \brief obtains the URL. */
+//! \brief obtains the URL.
 inline const std::string Script_base::get_url() const { return m_url; }
 
-/*! \brief sets the m_direct_output Boolean flag. */
+//! \brief determines whether it is possible to send events directly.
+inline bool Script_base::is_direct_output() const { return m_direct_output; }
+
+//! \brief sets the m_direct_output Boolean flag.
 inline void Script_base::set_direct_output() { m_direct_output = true; }
 
-/*! \brief sets the m_must_evaluate Boolean flag. */
+//! \brief sets the m_must_evaluate Boolean flag.
 inline void Script_base::set_must_evaluate() { m_must_evaluate = true; }
 
 SGAL_END_NAMESPACE

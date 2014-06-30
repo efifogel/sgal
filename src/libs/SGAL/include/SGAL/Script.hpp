@@ -113,8 +113,6 @@ public:
   /*! Execute the script function according to the event. */
   virtual void execute(const Field_info* field_info);
 
-  void insert_id(Uint id);
-
 protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -126,14 +124,69 @@ private:
   /*! The node prototypes. */
   static std::vector<Container_proto*> s_prototypes;
 
-  /*! Intercept setting.
+  /*! Intercept getting scalars.
+   * \param info (in)
+   */
+  static void getter(v8::Local<v8::String> property,
+              const v8::PropertyCallbackInfo<v8::Value>& info);
+
+  /*! Intercept setting scalars.
    * \param property (in)
    * \param value (in)
    * \param info (in)
    */
   static void setter(v8::Local<v8::String> property,
                      v8::Local<v8::Value> value,
-                     const v8::PropertyCallbackInfo<v8::Value>& info);
+                     const v8::PropertyCallbackInfo<void>& info);
+
+  /*! Intercept getting arrays.
+   * \param property (in)
+   * \param info (in)
+   */
+  static void array_getter(v8::Local<v8::String> property,
+                           const v8::PropertyCallbackInfo<v8::Value>& info);
+
+  /*! Intercept setting arrays.
+   * \param property (in)
+   * \param value (in)
+   * \param info (in)
+   */
+  static void array_setter(v8::Local<v8::String> property,
+                           v8::Local<v8::Value> value,
+                           const v8::PropertyCallbackInfo<void>& info);
+
+  /*! Intercept getting an array element by index.
+   * \param property (in)
+   * \param info (in)
+   */
+  static void indexed_getter(uint32_t index,
+                             const v8::PropertyCallbackInfo<v8::Value>& info);
+
+  /*! Intercept setting an array element by index.
+   * \param property (in)
+   * \param value (in)
+   * \param info (in)
+   */
+  static void indexed_setter(uint32_t index,
+                             v8::Local<v8::Value> value,
+                             const v8::PropertyCallbackInfo<v8::Value>& info);
+
+  /*! Clear the set of altered field-information records.
+   */
+  void clear_assigned();
+
+  /*! Insert a field-information into the set of altered field-information
+   * records.
+   */
+  void insert_assigned(const Field_info* field_info);
+
+  /*! Traverse all fields that has been assigned during the execution of the
+   * script, and cascade them.
+   * We use the flag m_direct_output to determine whether the assignment is
+   * applied immediately or deferred until the end of the execution of the
+   * script.
+   */
+  void cascade_assigned();
 
   /*! The script protocol. */
   Protocol m_protocol;
@@ -149,19 +202,14 @@ private:
   /*! The isolated instance of the V8 engine. */
   v8::Isolate* m_isolate;
 
-  /*! A set of ids of assigned fields. */
-  std::set<Uint> m_assigned_fields;
+  /*! A set of altered field-information records. */
+  std::set<const Field_info*> m_assigned;
 
-  /*! Add an object to the engine for every field and every output field.
+  /*! Add setter and getter callbacks to the engine for every field and every
+   * output field.
    * \param global (in) the global object associated with the context.
    */
-  void add_objects(v8::Local<v8::Object> global);
-
-  /*! Reflect changes to every object of the engine in the corresponding field
-   * or output field.
-   * \param global (in) the global object associated with the context.
-   */
-  void reflect_objects(v8::Local<v8::Object> global);
+  void add_callbacks(v8::Local<v8::Object> global);
 
   /*! Obtain the first argument for the call.
    * \param field_info (in) the field information record of the field that
@@ -289,7 +337,14 @@ inline v8::Handle<v8::Value>
 Script::get_single_int32(const Field_info* field_info)
 { return v8::Int32::New(m_isolate, *(field_handle<Int>(field_info))); }
 
-inline void Script::insert_id(Uint id) { m_assigned_fields.insert(id); }
+//! \brief clears the set of altered field-information records.
+inline void Script::clear_assigned() { m_assigned.clear(); }
+
+/*! \brief inserts a field-information into the set of altered field-information
+ * records.
+ */
+inline void Script::insert_assigned(const Field_info* field_info)
+{ m_assigned.insert(field_info); }
 
 SGAL_END_NAMESPACE
 

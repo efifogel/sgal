@@ -31,6 +31,7 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -52,10 +53,7 @@ Script::Script(Boolean proto) :
 }
 
 /*! Destructor */
-Script::~Script()
-{
-  m_context.Reset();
-}
+Script::~Script() { m_context.Reset(); }
 
 /*! \brief initializes the container prototype. */
 void Script::init_prototype()
@@ -113,36 +111,573 @@ Attribute_list Script::get_attributes()
 }
 #endif
 
-//! \brief intercepts indexed setting.
-void indexed_setter(uint32_t index,
-                    v8::Local<v8::Value> value,
+//! \brief intercepts getting scalars.
+void Script::getter(v8::Local<v8::String> property,
                     const v8::PropertyCallbackInfo<v8::Value>& info)
 {
-  std::cout << "Intersepted indexing: " << index << std::endl;
+#if !defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(Trace::SCRIPT)) {
+    v8::String::Utf8Value utf8_property(property);
+    std::cout << "getter() " << *utf8_property << std::endl;
+  }
+#endif
+
+  // Obtain the Script node:
+  v8::Handle<v8::Object> obj = info.Holder();
+  SGAL_assertion(obj->InternalFieldCount() == 1);
+  v8::Handle<v8::External> internal_field =
+    v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
+  SGAL_assertion(internal_field->Value() != nullptr);
+  Script* script_node = static_cast<Script*>(internal_field->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+
+  // Obtain the field information record:
+  v8::Local<v8::Value> data = info.Data();
+  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
+  SGAL_assertion(ext->Value() != nullptr);
+  Field_info* field_info = static_cast<Field_info*>(ext->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+
+  Uint id = field_info->get_type_id();
+  switch (id) {
+   case SF_BOOL:
+    {
+     Boolean* tmp =
+       (id == DIRECT_OUTPUT) ? script_node->direct_output_handle(field_info) :
+       (id == MUST_EVALUATE) ? script_node->must_evaluate_handle(field_info) :
+       script_node->field_handle<Boolean>(field_info);
+     info.GetReturnValue().Set(*tmp);
+    }
+    break;
+
+   case SF_FLOAT:
+    {
+     Float* tmp = script_node->field_handle<Float>(field_info);
+     info.GetReturnValue().Set(*tmp);
+    }
+    break;
+
+   case SF_TIME:
+    {
+     Scene_time* tmp = script_node->field_handle<Scene_time>(field_info);
+     info.GetReturnValue().Set(*tmp);
+    }
+    break;
+
+   case SF_INT32:
+    {
+     Int* tmp = script_node->field_handle<Int>(field_info);
+     info.GetReturnValue().Set(*tmp);
+    }
+    break;
+
+   case SF_STR:
+    {
+     std::string* tmp = (id == URL) ? script_node->url_handle(field_info) :
+       script_node->field_handle<std::string>(field_info);
+     info.GetReturnValue().Set(tmp->c_str());
+    }
+    break;
+
+   case SF_VEC2F:
+   case SF_VEC3F:
+   case SF_COLOR:
+   case SF_ROTATION:
+   case SF_IMAGE:
+   case SF_SHARED_CONTAINER:
+   case MF_BOOL:
+   case MF_FLOAT:
+   case MF_TIME:
+   case MF_INT32:
+   case MF_VEC2F:
+   case MF_VEC3F:
+   case MF_COLOR:
+   case MF_STR:
+   case MF_ROTATION:
+   case MF_SHARED_CONTAINER:
+   default:
+    SGAL_error();
+    return;
+  }
 }
 
-//! \brief intercepts setting.
+//! \brief intercepts setting scalars.
 void Script::setter(v8::Local<v8::String> property,
                     v8::Local<v8::Value> value,
-                    const v8::PropertyCallbackInfo<v8::Value>& info)
+                    const v8::PropertyCallbackInfo<void>& info)
 {
-  v8::String::Utf8Value utf8_property(property);
-  // std::cout << "Intersepted name: " << *utf8_property << std::endl;
+#if !defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(Trace::SCRIPT)) {
+    v8::String::Utf8Value utf8_property(property);
+    std::cout << "setter() " << *utf8_property << std::endl;
+  }
+#endif
+
+  // Obtain the Script node:
   v8::Handle<v8::Object> obj = info.Holder();
-  if (obj->InternalFieldCount() == 0) return;
-
-  v8::Handle<v8::External> field =
+  SGAL_assertion(obj->InternalFieldCount() == 1);
+  v8::Handle<v8::External> internal_field =
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
-  void* tmp = field->Value();
-  if (!tmp) return;
+  SGAL_assertion(internal_field->Value() != nullptr);
+  Script* script_node = static_cast<Script*>(internal_field->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
-  Script* script_node = static_cast<Script*>(tmp);
-  // std::cout << "Script name: " << script_node->get_name() << std::endl;
+  // Obtain the field information record:
+  v8::Local<v8::Value> data = info.Data();
+  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
+  SGAL_assertion(ext->Value() != nullptr);
+  Field_info* field_info = static_cast<Field_info*>(ext->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
-  const std::string field_name(*utf8_property);
-  const Field_info* field_info = script_node->get_field_info(field_name);
-  Uint id = field_info->get_id();
-  script_node->insert_id(id);
+  // Apply the setting
+  Uint id = field_info->get_type_id();
+  switch (id) {
+   case SF_BOOL:
+    {
+     Boolean* tmp =
+       (id == DIRECT_OUTPUT) ? script_node->direct_output_handle(field_info) :
+       (id == MUST_EVALUATE) ? script_node->must_evaluate_handle(field_info) :
+       script_node->field_handle<Boolean>(field_info);
+     *tmp = value->BooleanValue();
+     // std::cout << "  value: " << *tmp << std::endl;
+    }
+    break;
+
+   case SF_FLOAT:
+    {
+     Float* tmp = script_node->field_handle<Float>(field_info);
+     *tmp = static_cast<Float>(value->NumberValue());
+     // std::cout << "  value: " << *tmp << std::endl;
+    }
+    break;
+
+   case SF_TIME:
+    {
+     Scene_time* tmp = script_node->field_handle<Scene_time>(field_info);
+     *tmp = static_cast<Scene_time>(value->NumberValue());
+     // std::cout << "  value: " << *tmp << std::endl;
+    }
+    break;
+
+   case SF_INT32:
+    {
+     Int* tmp = script_node->field_handle<Int>(field_info);
+     *tmp = value->Int32Value();
+     // std::cout << "  value: " << *tmp << std::endl;
+    }
+    break;
+
+   case SF_STR:
+    {
+     std::string* tmp = (id == URL) ? script_node->url_handle(field_info) :
+       script_node->field_handle<std::string>(field_info);
+     v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(value);
+     v8::String::Utf8Value utf8(str);
+     tmp->assign(*utf8);
+    }
+    break;
+
+   case SF_VEC2F:
+   case SF_VEC3F:
+   case SF_COLOR:
+   case SF_ROTATION:
+   case SF_IMAGE:
+   case SF_SHARED_CONTAINER:
+   case MF_BOOL:
+   case MF_FLOAT:
+   case MF_TIME:
+   case MF_INT32:
+   case MF_VEC2F:
+   case MF_VEC3F:
+   case MF_COLOR:
+   case MF_STR:
+   case MF_ROTATION:
+   case MF_SHARED_CONTAINER:
+   default:
+    SGAL_error();
+    return;
+  }
+
+  if (script_node->is_direct_output()) {
+    Field* field = script_node->get_field(field_info);
+    if (field) field->cascade();
+  }
+  else script_node->insert_assigned(field_info);
+}
+
+//! \brief intercepts getting arrays.
+void Script::array_getter(v8::Local<v8::String> property,
+                          const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+#if !defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(Trace::SCRIPT)) {
+    v8::String::Utf8Value utf8_property(property);
+    std::cout << "array_getter() " << *utf8_property << std::endl;
+  }
+#endif
+
+  auto isolate = info.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+
+  // Obtain the Script node:
+  v8::Handle<v8::Object> obj = info.Holder();
+  SGAL_assertion(obj->InternalFieldCount() == 1);
+  v8::Handle<v8::External> internal_field =
+    v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
+  SGAL_assertion(internal_field->Value() != nullptr);
+  Script* script_node = static_cast<Script*>(internal_field->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+
+  // Prepare for indexing
+  v8::Local<v8::Value> data = info.Data();
+  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
+  v8::Handle<v8::ObjectTemplate> tmpl = v8::ObjectTemplate::New(isolate);
+  tmpl->SetInternalFieldCount(1);
+  tmpl->SetIndexedPropertyHandler(indexed_getter, indexed_setter, 0, 0, 0, ext);
+  auto inst = tmpl->NewInstance();
+  inst->SetInternalField(0, v8::External::New(isolate, script_node));
+  info.GetReturnValue().Set(inst);
+}
+
+//! \brief intercepts setting arrays.
+void Script::array_setter(v8::Local<v8::String> property,
+                          v8::Local<v8::Value> value,
+                          const v8::PropertyCallbackInfo<void>& info)
+{
+#if !defined(NDEBUG) || defined(SGAL_TRACE)
+  if (SGAL::TRACE(Trace::SCRIPT)) {
+    v8::String::Utf8Value utf8_property(property);
+    std::cout << "array_setter() " << *utf8_property << std::endl;
+  }
+#endif
+
+  auto isolate = info.GetIsolate();
+
+  // Obtain the Script node:
+  v8::Handle<v8::Object> obj = info.Holder();
+  SGAL_assertion(obj->InternalFieldCount() == 1);
+  v8::Handle<v8::External> internal_field =
+    v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
+  SGAL_assertion(internal_field->Value() != nullptr);
+  Script* script_node = static_cast<Script*>(internal_field->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+
+  // Obtain the field handle and apply the setting:
+  v8::Local<v8::Value> data = info.Data();
+  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
+  SGAL_assertion(ext->Value() != nullptr);
+  Field_info* field_info = static_cast<Field_info*>(ext->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+
+  switch (field_info->get_type_id()) {
+   case SF_BOOL:
+   case SF_FLOAT:
+   case SF_TIME:
+   case SF_INT32:
+   case SF_STR:
+    SGAL_error();
+    break;
+
+   case SF_VEC2F:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Vector2f* tmp = script_node->field_handle<Vector2f>(field_info);
+     tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
+              static_cast<Float>(array->Get(1)->NumberValue()));
+     SGAL_assertion(!std::isnan((*tmp)[0]));
+     SGAL_assertion(!std::isnan((*tmp)[1]));
+    }
+    break;
+
+   case SF_VEC3F:
+   case SF_COLOR:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Vector3f* tmp = script_node->field_handle<Vector3f>(field_info);
+     tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
+              static_cast<Float>(array->Get(1)->NumberValue()),
+              static_cast<Float>(array->Get(2)->NumberValue()));
+     SGAL_assertion(!std::isnan((*tmp)[0]));
+     SGAL_assertion(!std::isnan((*tmp)[1]));
+     SGAL_assertion(!std::isnan((*tmp)[2]));
+     // std::cout << "  value: " << *tmp << std::endl;
+    }
+    break;
+
+   case SF_ROTATION:
+   case SF_IMAGE:
+   case SF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_BOOL:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Boolean_array* tmp = script_node->field_handle<Boolean_array>(field_info);
+     tmp->resize(array->Length());
+     for (size_t i = 0; i < array->Length(); ++i)
+       (*tmp)[i] = array->Get(i)->BooleanValue();
+     // std::cout << "  ";
+     // std::copy(tmp->begin(), tmp->end(),
+     //           std::ostream_iterator<bool>(std::cout, " "));
+     // std::cout << std::endl;
+    }
+    break;
+
+   case MF_FLOAT:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Float_array* tmp = script_node->field_handle<Float_array>(field_info);
+     tmp->resize(array->Length());
+     for (size_t i = 0; i < array->Length(); ++i)
+       (*tmp)[i] = static_cast<Float>(array->Get(i)->NumberValue());
+    }
+    break;
+
+   case MF_TIME:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Scene_time_array* tmp =
+       script_node->field_handle<Scene_time_array>(field_info);
+     tmp->resize(array->Length());
+     for (size_t i = 0; i < array->Length(); ++i)
+       (*tmp)[i] = static_cast<Float>(array->Get(i)->NumberValue());
+    }
+    break;
+
+   case MF_INT32:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Int_array* tmp = script_node->field_handle<Int_array>(field_info);
+     tmp->resize(array->Length());
+     for (size_t i = 0; i < array->Length(); ++i)
+       (*tmp)[i] = array->Get(i)->Int32Value();
+    }
+    break;
+
+   case MF_VEC2F:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Vector2f_array* tmp = script_node->field_handle<Vector2f_array>(field_info);
+     tmp->resize(array->Length());
+     for (size_t i = 0; i < array->Length(); ++i) {
+       v8::Local<v8::Array> vec2f =
+         v8::Handle<v8::Array>::Cast(array->Get(i));
+       ((*tmp)[i])[0] = static_cast<Float>(vec2f->Get(0)->NumberValue());
+       ((*tmp)[i])[1] = static_cast<Float>(vec2f->Get(1)->NumberValue());
+     }
+     // std::cout << "  ";
+     // std::copy(tmp->begin(), tmp->end(),
+     //           std::ostream_iterator<Vector2f>(std::cout, " "));
+     // std::cout << std::endl;
+    }
+    break;
+
+   case MF_VEC3F:
+   case MF_COLOR:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     Vector3f_array* tmp = script_node->field_handle<Vector3f_array>(field_info);
+     tmp->resize(array->Length());
+     for (size_t i = 0; i < array->Length(); ++i) {
+       v8::Local<v8::Array> vec3f =
+         v8::Handle<v8::Array>::Cast(array->Get(i));
+       ((*tmp)[i])[0] = static_cast<Float>(vec3f->Get(0)->NumberValue());
+       ((*tmp)[i])[1] = static_cast<Float>(vec3f->Get(1)->NumberValue());
+       ((*tmp)[i])[2] = static_cast<Float>(vec3f->Get(2)->NumberValue());
+     }
+     // std::cout << "  ";
+     // std::copy(tmp->begin(), tmp->end(),
+     //           std::ostream_iterator<Vector3f>(std::cout, " "));
+     // std::cout << std::endl;
+    }
+    break;
+
+   case MF_STR:
+    {
+     v8::HandleScope scope(isolate);
+     v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
+     String_array* tmp = script_node->field_handle<String_array>(field_info);
+     tmp->resize(array->Length());
+     for (size_t i = 0; i < array->Length(); ++i) {
+       v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(array->Get(i));
+       v8::String::Utf8Value utf8(str);
+       (*tmp)[i].assign(*utf8);
+     }
+    }
+    break;
+
+   case MF_ROTATION:
+   case MF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   default:
+    std::cerr << "Unsupported type!" << std::endl;
+    return;
+  }
+
+  if (script_node->is_direct_output()) {
+    Field* field = script_node->get_field(field_info);
+    if (field) field->cascade();
+  }
+  else script_node->insert_assigned(field_info);
+}
+
+//! \brief intercepts getting an array element by index.
+void Script::indexed_getter(uint32_t index,
+                            const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+  SGAL_TRACE_CODE(Trace::SCRIPT,
+                  std::cout << "indexed_getter() " << index << std::endl;);
+}
+
+//! \brief intercepts setting an array element by index.
+void Script::indexed_setter(uint32_t index,
+                            v8::Local<v8::Value> value,
+                            const v8::PropertyCallbackInfo<v8::Value>& info)
+{
+  SGAL_TRACE_CODE(Trace::SCRIPT,
+                  std::cout << "indexed_setter() " << index << std::endl;);
+
+  auto isolate = info.GetIsolate();
+
+  // Obtain the Script node:
+  v8::Handle<v8::Object> obj = info.Holder();
+  SGAL_assertion(obj->InternalFieldCount() == 1);
+  v8::Handle<v8::External> internal_field =
+    v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
+  SGAL_assertion(internal_field->Value() != nullptr);
+  Script* script_node = static_cast<Script*>(internal_field->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
+
+  // Obtain the field information record:
+  v8::Local<v8::Value> data = info.Data();
+  v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
+  SGAL_assertion(ext->Value() != nullptr);
+  Field_info* field_info = static_cast<Field_info*>(ext->Value());
+  SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
+
+  // Assign
+  switch (field_info->get_type_id()) {
+   case SF_BOOL:
+   case SF_FLOAT:
+   case SF_TIME:
+   case SF_INT32:
+   case SF_STR:
+    SGAL_error();
+    break;
+
+   case SF_VEC2F:
+    {
+     v8::HandleScope scope(isolate);
+     SGAL_assertion(index < 2);
+     Vector2f* tmp = script_node->field_handle<Vector2f>(field_info);
+     (*tmp)[index] = value->NumberValue();
+    }
+    break;
+
+   case SF_VEC3F:
+   case SF_COLOR:
+    {
+     v8::HandleScope scope(isolate);
+     SGAL_assertion(index < 3);
+     Vector3f* tmp = script_node->field_handle<Vector3f>(field_info);
+     (*tmp)[index] = value->NumberValue();
+    }
+    break;
+
+   case SF_ROTATION:
+   case SF_IMAGE:
+   case SF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case MF_BOOL:
+    {
+     v8::HandleScope scope(isolate);
+     Boolean_array* tmp = script_node->field_handle<Boolean_array>(field_info);
+     tmp->resize(index+1);
+     (*tmp)[index] = value->BooleanValue();
+    }
+    break;
+
+   case MF_FLOAT:
+    {
+     v8::HandleScope scope(isolate);
+     Float_array* tmp = script_node->field_handle<Float_array>(field_info);
+     tmp->resize(index+1);
+     (*tmp)[index] = value->NumberValue();
+    }
+    break;
+
+   case MF_TIME:
+    {
+     v8::HandleScope scope(isolate);
+     Scene_time_array* tmp =
+       script_node->field_handle<Scene_time_array>(field_info);
+     tmp->resize(index+1);
+     (*tmp)[index] = value->NumberValue();
+    }
+    break;
+
+   case MF_INT32:
+    {
+     v8::HandleScope scope(isolate);
+     Int_array* tmp = script_node->field_handle<Int_array>(field_info);
+     tmp->resize(index+1);
+     (*tmp)[index] = value->Int32Value();;
+    }
+    break;
+
+   case MF_VEC2F:
+    {
+     v8::HandleScope scope(isolate);
+     Vector2f_array* tmp = script_node->field_handle<Vector2f_array>(field_info);
+     tmp->resize(index+1);
+     v8::Local<v8::Array> vec2f = v8::Handle<v8::Array>::Cast(value);
+     ((*tmp)[index])[0] = static_cast<Float>(vec2f->Get(0)->NumberValue());
+     ((*tmp)[index])[1] = static_cast<Float>(vec2f->Get(1)->NumberValue());
+    }
+    break;
+
+   case MF_VEC3F:
+   case MF_COLOR:
+    {
+     v8::HandleScope scope(isolate);
+     Vector3f_array* tmp = script_node->field_handle<Vector3f_array>(field_info);
+     tmp->resize(index+1);
+     v8::Local<v8::Array> vec3f = v8::Handle<v8::Array>::Cast(value);
+     ((*tmp)[index])[0] = static_cast<Float>(vec3f->Get(0)->NumberValue());
+     ((*tmp)[index])[1] = static_cast<Float>(vec3f->Get(1)->NumberValue());
+     ((*tmp)[index])[2] = static_cast<Float>(vec3f->Get(2)->NumberValue());
+    }
+    break;
+
+   case MF_STR:
+   case MF_ROTATION:
+   case MF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   default:
+    std::cerr << "Unsupported type!" << std::endl;
+    return;
+  }
+
+  if (script_node->is_direct_output()) {
+    Field* field = script_node->get_field(field_info);
+    if (field) field->cascade();
+  }
+  else script_node->insert_assigned(field_info);
 }
 
 //! \brief records the scene graph.
@@ -157,8 +692,6 @@ void Script::add_to_scene(Scene_graph* scene_graph)
   v8::Handle<v8::ObjectTemplate> global_tmpl =
     v8::ObjectTemplate::New(m_isolate);
   global_tmpl->SetInternalFieldCount(1);
-  global_tmpl->SetNamedPropertyHandler(0, setter);
-  // global_tmpl->SetIndexedPropertyHandler(0, indexed_setter);
 
   v8::Local<v8::Context> context =
     v8::Context::New(m_isolate, NULL, global_tmpl);
@@ -166,8 +699,11 @@ void Script::add_to_scene(Scene_graph* scene_graph)
 
   v8::Context::Scope context_scope(context);    // enter the contex
   v8::Handle<v8::Object> global = context->Global();
-  add_objects(global);  // add an object for every field and output field.
-  bound_script();       // bound the script to the context
+  v8::Local<v8::Object> prototype =
+    v8::Local<v8::Object>::Cast(global->GetPrototype());
+  prototype->SetInternalField(0, v8::External::New(m_isolate, this));
+  add_callbacks(global);    // add callbacks for every field and output field.
+  bound_script();           // bound the script to the context
 }
 
 /*! \brief adds a field info record to the script node. */
@@ -507,8 +1043,10 @@ v8::Handle<v8::Value> Script::get_multi_vector3f(const Field_info* field_info)
   return array;
 }
 
-//! \brief adds an object to the engine for every field and every output field.
-void Script::add_objects(v8::Local<v8::Object> global)
+/*! \brief adds setter and getter callbacks to the engine for every field and
+ * every output field.
+ */
+void Script::add_callbacks(v8::Local<v8::Object> global)
 {
   Container_proto* proto = get_prototype();
   Container_proto::Id_const_iterator it = proto->ids_begin(proto);
@@ -522,217 +1060,23 @@ void Script::add_objects(v8::Local<v8::Object> global)
       v8::String::NewFromUtf8(m_isolate, field_info->get_name().c_str(),
                               v8::String::kInternalizedString);
     // std::cout << "In name: " << field_info->get_name() << std::endl;
-    global->Set(field_name, get_argument(field_info));
+    v8::Handle<v8::External> ext =
+      v8::External::New(m_isolate, const_cast<Field_info*>(field_info));
+    if (field_info->is_scalar())
+      global->SetAccessor(field_name, getter, setter, ext);
+    else
+      global->SetAccessor(field_name, array_getter, array_setter, ext);
   }
 }
 
-/*! \brief reflects changes to every object of the engine in the
- * corresponding field or output field.
+/*! \brief cascades all fields that has been altered during the execution of the
+ * script.
  */
-void Script::reflect_objects(v8::Local<v8::Object> global)
+void Script::cascade_assigned()
 {
-  Container_proto* proto = get_prototype();
-  Container_proto::Id_const_iterator it = proto->ids_begin(proto);
-  for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
-    const Field_info* field_info = (*it).second;
-    if ((field_info->get_rule() != RULE_OUT) &&
-        (field_info->get_rule() != RULE_FIELD))
-      continue;
-
-    v8::Handle<v8::String> field_name =
-      v8::String::NewFromUtf8(m_isolate, field_info->get_name().c_str(),
-                              v8::String::kInternalizedString);
-    v8::Handle<v8::Value> value = global->Get(field_name);
-
-    // Ignore any scalar field that has not been assigned by the script.
-    if (value->IsUndefined()) continue;
-
-    // std::cout << "Out name: " << field_info->get_name() << std::endl;
-
-    Uint id = field_info->get_id();
-    // std::set<Uint>::iterator it = m_assigned_fields.find(id);
-    // if (it == m_assigned_fields.end()) continue;
-
-    switch (field_info->get_type_id()) {
-     case SF_BOOL:
-      {
-       Boolean* tmp =
-         (id == DIRECT_OUTPUT) ? direct_output_handle(field_info) :
-         (id == MUST_EVALUATE) ? must_evaluate_handle(field_info) :
-         field_handle<Boolean>(field_info);
-       *tmp = value->BooleanValue();
-       // std::cout << "  value: " << *tmp << std::endl;
-      }
-      break;
-
-     case SF_FLOAT:
-      {
-       Float* tmp = field_handle<Float>(field_info);
-       *tmp = static_cast<Float>(value->NumberValue());
-       // std::cout << "  value: " << *tmp << std::endl;
-      }
-      break;
-
-     case SF_TIME:
-      {
-       Scene_time* tmp = field_handle<Scene_time>(field_info);
-       *tmp = static_cast<Scene_time>(value->NumberValue());
-       // std::cout << "  value: " << *tmp << std::endl;
-      }
-      break;
-
-     case SF_INT32:
-      {
-       Int* tmp = field_handle<Int>(field_info);
-       *tmp = value->Int32Value();
-       // std::cout << "  value: " << *tmp << std::endl;
-      }
-      break;
-
-     case SF_STR:
-      {
-       std::string* tmp = (id == URL) ? url_handle(field_info) :
-         field_handle<std::string>(field_info);
-       v8::Local<v8::String> str = v8::Handle<v8::String>::Cast(value);
-       v8::String::Utf8Value utf8(str);
-       tmp->assign(*utf8);
-      }
-      break;
-
-     case SF_VEC2F:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Vector2f* tmp = field_handle<Vector2f>(field_info);
-       tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
-                static_cast<Float>(array->Get(1)->NumberValue()));
-       SGAL_assertion(!std::isnan((*tmp)[0]));
-       SGAL_assertion(!std::isnan((*tmp)[1]));
-      }
-      break;
-
-     case SF_VEC3F:
-     case SF_COLOR:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Vector3f* tmp = field_handle<Vector3f>(field_info);
-       tmp->set(static_cast<Float>(array->Get(0)->NumberValue()),
-                static_cast<Float>(array->Get(1)->NumberValue()),
-                static_cast<Float>(array->Get(2)->NumberValue()));
-       SGAL_assertion(!std::isnan((*tmp)[0]));
-       SGAL_assertion(!std::isnan((*tmp)[1]));
-       SGAL_assertion(!std::isnan((*tmp)[2]));
-       // std::cout << "  value: " << *tmp << std::endl;
-      }
-      break;
-
-     case SF_ROTATION:
-     case SF_IMAGE:
-     case SF_SHARED_CONTAINER:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     case MF_BOOL:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Boolean_array* tmp = field_handle<Boolean_array>(field_info);
-       tmp->resize(array->Length());
-       for (size_t i = 0; i < array->Length(); ++i)
-         (*tmp)[i] = array->Get(i)->BooleanValue();
-       // std::cout << "  ";
-       // std::copy(tmp->begin(), tmp->end(),
-       //           std::ostream_iterator<bool>(std::cout, " "));
-       // std::cout << std::endl;
-      }
-      break;
-
-     case MF_FLOAT:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Float_array* tmp = field_handle<Float_array>(field_info);
-       tmp->resize(array->Length());
-       for (size_t i = 0; i < array->Length(); ++i)
-         (*tmp)[i] = static_cast<Float>(array->Get(i)->NumberValue());
-      }
-      break;
-
-     case MF_TIME:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Scene_time_array* tmp = field_handle<Scene_time_array>(field_info);
-       tmp->resize(array->Length());
-       for (size_t i = 0; i < array->Length(); ++i)
-         (*tmp)[i] = static_cast<Float>(array->Get(i)->NumberValue());
-      }
-      break;
-
-     case MF_INT32:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Int_array* tmp = field_handle<Int_array>(field_info);
-       tmp->resize(array->Length());
-       for (size_t i = 0; i < array->Length(); ++i)
-         (*tmp)[i] = array->Get(i)->Int32Value();
-      }
-      break;
-
-     case MF_VEC2F:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Vector2f_array* tmp = field_handle<Vector2f_array>(field_info);
-       tmp->resize(array->Length());
-       for (size_t i = 0; i < array->Length(); ++i) {
-         v8::Local<v8::Array> vec2f =
-           v8::Handle<v8::Array>::Cast(array->Get(i));
-         ((*tmp)[i])[0] = static_cast<Float>(vec2f->Get(0)->NumberValue());
-         ((*tmp)[i])[1] = static_cast<Float>(vec2f->Get(1)->NumberValue());
-       }
-       // std::cout << "  ";
-       // std::copy(tmp->begin(), tmp->end(),
-       //           std::ostream_iterator<Vector2f>(std::cout, " "));
-       // std::cout << std::endl;
-      }
-      break;
-
-     case MF_VEC3F:
-     case MF_COLOR:
-      {
-       v8::HandleScope scope(m_isolate);
-       v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-       Vector3f_array* tmp = field_handle<Vector3f_array>(field_info);
-       tmp->resize(array->Length());
-       for (size_t i = 0; i < array->Length(); ++i) {
-         v8::Local<v8::Array> vec3f =
-           v8::Handle<v8::Array>::Cast(array->Get(i));
-         ((*tmp)[i])[0] = static_cast<Float>(vec3f->Get(0)->NumberValue());
-         ((*tmp)[i])[1] = static_cast<Float>(vec3f->Get(1)->NumberValue());
-         ((*tmp)[i])[2] = static_cast<Float>(vec3f->Get(2)->NumberValue());
-       }
-       // std::cout << "  ";
-       // std::copy(tmp->begin(), tmp->end(),
-       //           std::ostream_iterator<Vector3f>(std::cout, " "));
-       // std::cout << std::endl;
-      }
-      break;
-
-     case MF_STR:
-     case MF_ROTATION:
-     case MF_SHARED_CONTAINER:
-      std::cerr << "Not supported yet!" << std::endl;
-      break;
-
-     default:
-      std::cerr << "Unsupported type!" << std::endl;
-      return;
-    }
-    //! \todo must not cascade if the field hasn't been assigned.
-    Field* field = get_field(field_info);
+  if (m_direct_output) return;
+  for (auto it = m_assigned.begin(); it != m_assigned.end(); ++it) {
+    Field* field = get_field(*it);
     if (field) field->cascade();
   }
 }
@@ -833,6 +1177,7 @@ v8::Handle<v8::Value> Script::get_argument(const Field_info* field_info)
 //! \brief executes the suitable script function according to the event.
 void Script::execute(const Field_info* field_info)
 {
+  v8::Isolate::Scope isolate_scope(m_isolate);
   v8::HandleScope handle_scope(m_isolate);      // stack-allocated handle scope
   v8::Local<v8::Context> context =
       v8::Local<v8::Context>::New(m_isolate, m_context);
@@ -858,10 +1203,10 @@ void Script::execute(const Field_info* field_info)
   args[0] = get_argument(field_info);
   args[1] = v8::Number::New(m_isolate, m_time);
 
-  // Clear the set of ids of assigned fields. When an object is assigned,
+  // Clear the set of assigned fields. When an object is assigned,
   // the id of the associate field is inserted into the set. A filed, the
   // id of which is not found in the set is not cascaded.
-  m_assigned_fields.clear();
+  clear_assigned();
   v8::TryCatch try_catch;
   v8::Handle<v8::Value> func_result = func->Call(global, 2, args);
   if (func_result.IsEmpty()) {
@@ -870,7 +1215,7 @@ void Script::execute(const Field_info* field_info)
     return;
   }
 
-  reflect_objects(global);
+  cascade_assigned();
 }
 
 SGAL_END_NAMESPACE
