@@ -122,6 +122,8 @@ void Script::getter(v8::Local<v8::String> property,
   }
 #endif
 
+  auto isolate = info.GetIsolate();
+
   // Obtain the Script node:
   v8::Handle<v8::Object> obj = info.Holder();
   SGAL_assertion(obj->InternalFieldCount() == 1);
@@ -175,7 +177,9 @@ void Script::getter(v8::Local<v8::String> property,
     {
      std::string* tmp = (id == URL) ? script_node->url_handle(field_info) :
        script_node->field_handle<std::string>(field_info);
-     info.GetReturnValue().Set(tmp->c_str());
+     v8::Handle<v8::String> str =
+       v8::String::NewFromUtf8(isolate, tmp->c_str());
+     info.GetReturnValue().Set(str);
     }
     break;
 
@@ -446,7 +450,7 @@ void Script::array_setter(v8::Local<v8::String> property,
        script_node->field_handle<Scene_time_array>(field_info);
      tmp->resize(array->Length());
      for (size_t i = 0; i < array->Length(); ++i)
-       (*tmp)[i] = static_cast<Float>(array->Get(i)->NumberValue());
+       (*tmp)[i] = static_cast<Scene_time>(array->Get(i)->NumberValue());
     }
     break;
 
@@ -724,7 +728,7 @@ void Script::indexed_setter(uint32_t index,
      v8::HandleScope scope(isolate);
      SGAL_assertion(index < 2);
      Vector2f* tmp = script_node->field_handle<Vector2f>(field_info);
-     (*tmp)[index] = value->NumberValue();
+     (*tmp)[index] = static_cast<Float>(value->NumberValue());
     }
     break;
 
@@ -734,7 +738,7 @@ void Script::indexed_setter(uint32_t index,
      v8::HandleScope scope(isolate);
      SGAL_assertion(index < 3);
      Vector3f* tmp = script_node->field_handle<Vector3f>(field_info);
-     (*tmp)[index] = value->NumberValue();
+     (*tmp)[index] = static_cast<Float>(value->NumberValue());
     }
     break;
 
@@ -758,7 +762,7 @@ void Script::indexed_setter(uint32_t index,
      v8::HandleScope scope(isolate);
      Float_array* tmp = script_node->field_handle<Float_array>(field_info);
      tmp->resize(index+1);
-     (*tmp)[index] = value->NumberValue();
+     (*tmp)[index] = static_cast<Float>(value->NumberValue());
     }
     break;
 
@@ -768,7 +772,7 @@ void Script::indexed_setter(uint32_t index,
      Scene_time_array* tmp =
        script_node->field_handle<Scene_time_array>(field_info);
      tmp->resize(index+1);
-     (*tmp)[index] = value->NumberValue();
+     (*tmp)[index] = static_cast<Scene_time>(value->NumberValue());
     }
     break;
 
