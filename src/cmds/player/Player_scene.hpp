@@ -241,12 +241,6 @@ protected:
   /*! \brief print geometry information of Box. */
   void print_geometry_info(SGAL::Box* box);
 
-  /*! Write the scene to a file in a given format.
-   * \param filename The file name.
-   * \param format_id The id of the given format.
-   */
-  void write(const std::string& filename, SGAL::File_format::Id format_id);
-
 private:
   typedef std::list<fi::path>                                   Path_list;
   typedef Path_list::iterator                                   Path_iter;
