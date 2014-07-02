@@ -149,17 +149,17 @@ int main(int argc, char* argv[])
   }
 
   // Load plugins
-  auto it = option_parser.plugins_begin();
-  for (; it != option_parser.plugins_end(); ++it) {
-    const std::string& plugin = *it;
-    std::vector<std::string> strs;
-    boost::split(strs, plugin, boost::is_any_of(","));
-    if (strs.size() < 2) {
-      std::cerr << "Illegal plugin" << std::endl;
-      return 1;
-    }
-    load_shared_library(strs[0], strs[1]);
-  }
+  option_parser.for_each_plugin([](const std::string& plugin)
+                                {
+                                  std::vector<std::string> strs;
+                                  boost::split(strs, plugin,
+                                               boost::is_any_of(","));
+                                  if (strs.size() < 2) {
+                                    std::cerr << "Illegal plugin" << std::endl;
+                                    return;
+                                  }
+                                  load_shared_library(strs[0], strs[1]);
+                                });
 
   // Create the scene:
   Player_scene scene(&option_parser);

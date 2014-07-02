@@ -6,5 +6,5 @@ FILES+= ch_octahedron.wrl
 FILES+= ch_icosahedron.wrl
 FILES+= ch_dodecahedron.wrl
 
-INSTALLDIR =$(DATADIR)/data/vrml
+INSTALLDIR =$(DATADIR)/vrml
 include $(MAKEDIR)/files.mak

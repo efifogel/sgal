@@ -6,5 +6,5 @@ FILES+= ngm_octahedron.wrl
 FILES+= ngm_icosahedron.wrl
 FILES+= ngm_dodecahedron.wrl
 
-INSTALLDIR =$(DATADIR)/data/vrml
+INSTALLDIR =$(DATADIR)/vrml
 include $(MAKEDIR)/files.mak
