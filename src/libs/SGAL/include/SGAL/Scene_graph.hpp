@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_SCENE_GRAPH_HPP
@@ -408,15 +405,27 @@ public:
 
   /// \name Writters
   //@{
-  /*! Write the scene to a file in VRML format.
-   * \param filename The file name.
+  /*! Write the scene to a file in a given format.
+   * \param filename (in) The file name.
+   * \param format_id (in) The id of the given format.
    */
-  void write_vrml(const std::string& filename);
+  void write(const std::string& filename, File_format::Id format_id);
 
-  /*! Write the scene to a file in STL format.
-   * \param filename The file name.
+  /*! Write the scene to an output stream in a given format.
+   * \param os (in) The output stream.
+   * \param format_id (in) The id of the given format.
    */
-  void write_stl(const std::string& filename);
+  void write(std::ostream& os, File_format::Id format_id);
+
+  /*! Write the scene to an output stream in VRML format.
+   * \param os (in) The output stream.
+   */
+  void write_vrml(std::ostream& os);
+
+  /*! Write the scene to an output stream in STL format.
+   * \param os (in) The output stream.
+   */
+  void write_stl(std::ostream& os);
   //@}
 
   /*! Obtain an isolated instance of the V8 engine.
