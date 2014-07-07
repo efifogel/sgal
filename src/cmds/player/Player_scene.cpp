@@ -270,7 +270,8 @@ void Player_scene::create_scene()
 
     if (0 == m_option_parser->formats_size()) {
       const std::string& output_filename = m_option_parser->get_output_file();
-      if (output_filename.empty()) write(filename, input_format_id);
+      if (output_filename.empty())
+        m_scene_graph->write(filename, input_format_id);
       else {
         fi::path output_filename_path(output_filename);
         if (! output_filename_path.has_extension()) {
@@ -278,7 +279,7 @@ void Player_scene::create_scene()
             SGAL::File_format::get_name(input_format_id);
           output_filename_path.replace_extension(new_extension);
         }
-        write(output_filename_path.string(), input_format_id);
+        m_scene_graph->write(output_filename_path.string(), input_format_id);
       }
     }
     else {
@@ -290,31 +291,22 @@ void Player_scene::create_scene()
         SGAL::File_format::Id format_id = *it;
         const std::string& tmp = m_option_parser->get_output_file();
         const std::string& output_filename = (tmp.empty()) ? filename : tmp;
-        fi::path output_filename_path(output_filename);
         const std::string& new_extension =
           SGAL::File_format::get_name(format_id);
+#if BOOST_VERSION <= 104800
+        // Workaround a bug in boost version 1.48 and lower:
+        fi::path tmp_path(output_filename);
+        fi::path output_path = tmp_path.parent_path();
+        output_path /= tmp_path.stem();
+        std::string final = output_path.string() + "." + new_extension;
+        m_scene_graph->write(final, format_id);
+#else
+        fi::path output_filename_path(output_filename);
         output_filename_path.replace_extension(new_extension);
-        write(output_filename_path.string(), format_id);
+        m_scene_graph->write(output_filename_path.string(), format_id);
+#endif
       }
     }
-  }
-}
-
-//! \brief writes the scene to a file in a given format.
-void Player_scene::write(const std::string& filename,
-                         SGAL::File_format::Id format_id)
-{
-  switch (format_id) {
-   case SGAL::File_format::ID_WRL: m_scene_graph->write_vrml(filename); break;
-
-   case SGAL::File_format::ID_X3D: break;
-
-   case SGAL::File_format::ID_STL: m_scene_graph->write_stl(filename); break;
-
-   case SGAL::File_format::ID_OBJ: break;
-
-   case SGAL::File_format::NONE:
-   case SGAL::File_format::NUM_IDS: return;
   }
 }
 

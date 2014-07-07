@@ -34,7 +34,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exporter::s_tag = "Exporter";
-Container_proto* Exporter::s_prototype(NULL);
+Container_proto* Exporter::s_prototype(nullptr);
 
 // Default values
 const std::string Exporter::s_def_file_name = "sgal";
@@ -59,18 +59,7 @@ void Exporter::execute(const Field_info* /* field_info */)
   if (!m_scene_graph) return;
   std::string filename =
     m_file_name + std::string(".") + File_format::get_name(m_file_format);
-  switch (m_file_format) {
-   case File_format::ID_WRL: m_scene_graph->write_vrml(filename); break;
-
-   case File_format::ID_X3D: break;
-
-   case File_format::ID_STL: m_scene_graph->write_stl(filename); break;
-
-   case File_format::ID_OBJ: break;
-
-   case File_format::NONE:
-   case File_format::NUM_IDS: return;
-  }
+  m_scene_graph->write(filename, m_file_format);
 }
 
 //! \brief initializes the container prototype.
@@ -109,7 +98,7 @@ void Exporter::init_prototype()
 void Exporter::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.

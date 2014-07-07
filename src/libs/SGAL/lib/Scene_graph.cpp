@@ -26,6 +26,7 @@
 #include <sstream>
 #include <time.h>
 #include <iostream>
+#include <fstream>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -893,13 +894,38 @@ Background* Scene_graph::get_active_background()
 { return static_cast<Background*>(m_background_stack.top()); }
 
 //! \brief writes the scene to a file in a given format.
-void Scene_graph::write_vrml(const std::string& filename)
+void Scene_graph::write(const std::string& filename, File_format::Id format_id)
+{
+  if (filename.empty()) write(std::cout, format_id);
+  else {
+    std::ofstream os(filename);
+    if (!os.is_open()) return;
+    write(os, format_id);
+    os.close();
+  }
+}
+
+//! \brief writes the scene to an output stream in a given format.
+void Scene_graph::write(std::ostream& os, File_format::Id format_id)
+{
+  switch (format_id) {
+   case File_format::ID_WRL: write_vrml(os); break;
+   case File_format::ID_X3D: break;
+   case File_format::ID_STL: write_stl(os); break;
+   case File_format::ID_OBJ: break;
+   case File_format::NONE:
+   case File_format::NUM_IDS: return;
+  }
+}
+
+//! \brief writes the scene to an output stream in the VRML format.
+void Scene_graph::write_vrml(std::ostream& os)
 {
   typedef boost::shared_ptr<Group>                Shared_group;
   typedef boost::shared_ptr<Node>                 Shared_node;
   typedef boost::shared_ptr<Transform>            Shared_transform;
 
-  Vrml_formatter formatter(std::cout);
+  Vrml_formatter formatter(os);
   Shared_group root = get_root();
   formatter.begin();
   if (root->children_size() > 1) root->write(&formatter);
@@ -915,14 +941,14 @@ void Scene_graph::write_vrml(const std::string& filename)
   formatter.end();
 }
 
-//! \brief writes the scene to a file in a given format.
-void Scene_graph::write_stl(const std::string& filename)
+//! \brief writes the scene to an output stream in the STL format.
+void Scene_graph::write_stl(std::ostream& os)
 {
   typedef boost::shared_ptr<Group>                Shared_group;
   typedef boost::shared_ptr<Node>                 Shared_node;
   typedef boost::shared_ptr<Transform>            Shared_transform;
 
-  Stl_formatter formatter(std::cout);
+  Stl_formatter formatter(os);
   Shared_group root = get_root();
   formatter.begin();
   if (root->children_size() > 1) root->write(&formatter);
