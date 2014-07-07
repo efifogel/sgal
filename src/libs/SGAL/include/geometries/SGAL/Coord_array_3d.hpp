@@ -142,7 +142,9 @@ public:
   std::vector<Vector3f>::iterator end();
   const std::vector<Vector3f>::const_iterator end() const;
 
-  /*! Push a new element at the back */
+  /*! Push a new element at the back.
+   * \param val (in) the new element.
+   */
   void push_back(const Vector3f& val);
 
   /*! Array indexing operator. */

@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Sphere_plane_intersection::s_tag = "SpherePlaneIntersection";
-Container_proto* Sphere_plane_intersection::s_prototype(NULL);
+Container_proto* Sphere_plane_intersection::s_prototype(nullptr);
 
 // Defaults values:
   // Default values:
@@ -44,7 +44,7 @@ const Vector4f Sphere_plane_intersection::s_def_plane(0, 0, 1, 0);
 
 REGISTER_TO_FACTORY(Sphere_plane_intersection, "Sphere_plane_intersection");
 
-/*! \brief constructor */
+//! \brief constructor.
 Sphere_plane_intersection::Sphere_plane_intersection(Boolean proto) :
   Node(proto),
   m_sphere_radius(s_def_sphere_radius),
@@ -52,10 +52,10 @@ Sphere_plane_intersection::Sphere_plane_intersection(Boolean proto) :
   m_trigger(false)
 {}
 
-/*! \brief destructor */
+//! \brief destructor.
 Sphere_plane_intersection::~Sphere_plane_intersection() {}
 
-/*! \brief initializes the container prototype */
+//! \brief initializes the container prototype.
 void Sphere_plane_intersection::init_prototype()
 {
   if (s_prototype) return;
@@ -88,8 +88,7 @@ void Sphere_plane_intersection::init_prototype()
     (&Sphere_plane_intersection::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
                                           RULE_EXPOSED_FIELD,
-                                          trigger_func,
-                                          exec_func));
+                                          trigger_func, exec_func));
 
   // circleTranslation
   Vector3f_handle_function circle_translation_func =
@@ -118,21 +117,21 @@ void Sphere_plane_intersection::init_prototype()
                                            circle_radius_func));
 }
 
-/*! \brief deletes the container prototype */
+//! \brief deletes the container prototype.
 void Sphere_plane_intersection::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype */
+//! \brief obtains the container prototype.
 Container_proto* Sphere_plane_intersection::get_prototype()
 {
   if (!s_prototype) Sphere_plane_intersection::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Sphere_plane_intersection::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter          Str_attr_iter;
@@ -182,7 +181,7 @@ void Sphere_plane_intersection::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief executes the engine */
+//! \brief executes the engine.
 void Sphere_plane_intersection::execute(const Field_info* /*! field_info */)
 {
   Field* circle_trans = get_field(CIRCLE_TRANSLATION);
@@ -208,9 +207,9 @@ void Sphere_plane_intersection::execute(const Field_info* /*! field_info */)
   m_circle_rotation.make(ref, normal);
   m_circle_translation.set(0, -d * length_reciprocal, 0);
 
-  if (circle_trans != NULL) circle_trans->cascade();
-  if (circle_rot != NULL) circle_rot->cascade();
-  if (circle_rad != NULL) circle_rad->cascade();
+  if (circle_trans != nullptr) circle_trans->cascade();
+  if (circle_rot != nullptr) circle_rot->cascade();
+  if (circle_rad != nullptr) circle_rad->cascade();
 }
 
 SGAL_END_NAMESPACE

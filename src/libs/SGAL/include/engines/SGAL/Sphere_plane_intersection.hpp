@@ -37,7 +37,7 @@ class Container_proto;
 class Element;
 class Field_info;
 
-class Sphere_plane_intersection : public Node {
+class SGAL_SGAL_DECL Sphere_plane_intersection : public Node {
 public:
   enum {
     FIRST = Node::LAST-1,
@@ -50,10 +50,10 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Sphere_plane_intersection(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Sphere_plane_intersection();
 
   /*! Construct the prototype. */
@@ -68,7 +68,8 @@ public:
   /*! Delete the container prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the container prototype. */
+  /*! Obtain the container prototype.
+   */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -90,28 +91,36 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! The interpolation execution function. */
+  /*! The interpolation execution function.
+   */
   virtual void execute(const Field_info* field_info);
 
-  /*! Obtain the sphere radius. */
+  /*! Obtain the sphere radius.
+   */
   Float get_sphere_radius() const;
 
-  /*! Set the sphere radius. */
+  /*! Set the sphere radius.
+   */
   void set_sphere_radius(Float radius);
 
-  /*! Obtain the plane coefficients. */
+  /*! Obtain the plane coefficients.
+   */
   const Vector4f& get_plane() const;
 
-  /*! Set the plane coefficients. */
+  /*! Set the plane coefficients.
+   */
   void set_plane(const Vector4f& vec);
 
-  /*! Obtain the circle translation. */
+  /*! Obtain the circle translation.
+   */
   const Vector3f& get_circle_translation() const;
 
-  /*! Obtain the circle rotation. */
+  /*! Obtain the circle rotation.
+   */
   const Rotation& get_circle_rotation() const;
 
-  /*! Obtain the circle radius. */
+  /*! Obtain the circle radius.
+   */
   Float get_circle_radius() const;
 
 protected:
@@ -148,44 +157,44 @@ private:
   static const Vector4f s_def_plane;
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Sphere_plane_intersection* Sphere_plane_intersection::prototype()
 { return new Sphere_plane_intersection(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Sphere_plane_intersection::clone()
 { return new Sphere_plane_intersection(); }
 
-/*! \brief obtains the sphere radius. */
+//! \brief obtains the sphere radius.
 inline Float Sphere_plane_intersection::get_sphere_radius() const
 { return m_sphere_radius; }
 
-/*! \brief sets the sphere radius. */
+//! \brief sets the sphere radius.
 inline void Sphere_plane_intersection::set_sphere_radius(Float radius)
 { m_sphere_radius = radius; }
 
-/*! \brief obtains the plane coefficients. */
+//! \brief obtains the plane coefficients.
 inline const Vector4f& Sphere_plane_intersection::get_plane() const
 { return m_plane; }
 
-/*! \brief sets the plane coefficients. */
+//! \brief sets the plane coefficients.
 inline void Sphere_plane_intersection::set_plane(const Vector4f& vec)
 { m_plane = vec; }
 
-/*! \brief obtains the circle translation. */
+//! \brief obtains the circle translation.
 inline const Vector3f& Sphere_plane_intersection::get_circle_translation()
   const
 { return m_circle_translation; }
 
-/*! \brief obtains the circle rotation. */
+//! \brief obtains the circle rotation.
 inline const Rotation& Sphere_plane_intersection::get_circle_rotation() const
 { return m_circle_rotation; }
 
-/*! \brief obtains the circle radius. */
+//! \brief obtains the circle radius.
 inline Float Sphere_plane_intersection::get_circle_radius() const
 { return m_circle_radius; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Sphere_plane_intersection::get_tag() const
 { return s_tag; }
 

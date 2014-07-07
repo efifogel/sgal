@@ -131,7 +131,9 @@ public:
 
   const std::vector<Vector3f>::const_iterator end() const;
 
-  /*! Push a new element at the back */
+  /*! Push a new normal at the back.
+   * \param val (in) the new normal.
+   */
   void push_back(const Vector3f& val);
 
   /*! Array indexing operator. */

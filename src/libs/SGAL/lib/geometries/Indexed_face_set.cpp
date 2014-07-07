@@ -194,4 +194,18 @@ void Indexed_face_set::clean_polyhedron()
   m_dirty_polyhedron = false;
 }
 
+//! \brief sets the polyhedron data-structure.
+void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
+{
+  m_polyhedron = polyhedron;
+  m_dirty_polyhedron = false;
+}
+
+//! \brief obtains the polyhedron data-structure.
+const Indexed_face_set::Polyhedron& Indexed_face_set::get_polyhedron()
+{
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_polyhedron;
+}
+
 SGAL_END_NAMESPACE

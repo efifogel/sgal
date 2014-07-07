@@ -214,11 +214,9 @@ void Geo_set::set_attributes(Element* elem)
   Geometry::set_attributes(elem);
 
   typedef Element::Str_attr_iter        Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-
     if (name == "colorAttachment") {
       Uint num = sizeof(s_attachment_names) / sizeof(char*);
       const char** found = std::find(s_attachment_names,

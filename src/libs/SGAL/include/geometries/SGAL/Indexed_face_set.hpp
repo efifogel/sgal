@@ -114,6 +114,16 @@ public:
    */
   virtual void clean_normals();
 
+  /*! Set the polyhedron data-structure.
+   * \param polyhedron (in) the polyhedron data-structure.
+   */
+  void set_polyhedron(Polyhedron& polyhedron);
+
+  /*! Obtain the (const) polyhedron data-structure.
+   * \return the polyhedron data-structure.
+   */
+  const Polyhedron& get_polyhedron();
+
 protected:
   /*! The actual polyhedron object. */
   Polyhedron m_polyhedron;

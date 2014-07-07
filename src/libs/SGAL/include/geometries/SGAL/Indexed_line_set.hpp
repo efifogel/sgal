@@ -47,10 +47,10 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Indexed_line_set(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Indexed_line_set();
 
   /* Construct the prototype. */
@@ -97,6 +97,9 @@ public:
    */
   void set_normal_per_vertex(Boolean normal_per_vertex);
 
+  /* Obtain the flag that indicates whether normals are bound per vertex
+   * or per line.
+   */
   Boolean get_normal_per_vertex() const;
 
   /* Set the flag that indicates whether colors are bound per vertex or
@@ -104,6 +107,9 @@ public:
    */
   void set_color_per_vertex(Boolean color_per_vertex);
 
+  /*! Obtain the flag that indicates the colors are bound per vertex
+   * or per line.
+   */
   Boolean get_color_per_vertex() const;
 
   /*! Set the line width.
@@ -161,30 +167,34 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Indexed_line_set* Indexed_line_set::prototype()
 { return new Indexed_line_set(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Indexed_line_set::clone()
 { return new Indexed_line_set(); }
 
-/*! \brief */
+/*! \brief obtains the flag that indicates the normals are bound per vertex
+ * or per line.
+ */
 inline Boolean Indexed_line_set::get_normal_per_vertex() const
 { return m_normal_per_vertex; }
 
-/*! \brief */
+/*! \brief obtains the flag that indicates the colors are bound per vertex
+ * or per line.
+ */
 inline Boolean Indexed_line_set::get_color_per_vertex() const
 { return m_color_per_vertex; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Indexed_line_set::get_tag() const { return s_tag; }
 
-/*! \brief sets the line width. */
+//! \brief sets the line width.
 inline void Indexed_line_set::set_line_width(Float width)
 { m_line_width = width; }
 
-/*! \brief obtains the line width. */
+//! \brief obtains the line width.
 inline Float Indexed_line_set::get_line_width()
 { return m_line_width; }
 
