@@ -175,7 +175,7 @@ void Indexed_line_set::draw(Draw_action* action)
 //! \brief
 void Indexed_line_set::isect(Isect_action* /* action */) { }
 
-/*! \brief calculates the sphere bound of the mesh. Returns true if the BS has
+/*! \brief calculates the sphere bound of the lines. Returns true if the BS has
  * changed since lst time this was called.
  */
 bool Indexed_line_set::clean_sphere_bound()
