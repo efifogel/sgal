@@ -426,4 +426,12 @@ const Vector3f& Geo_set::get_coord_3d(Uint i) const
   return (*coords)[i];
 }
 
+//! \brief processes change of data that causes a change to the sphere bound.
+void Geo_set::sphere_bound_changed(const Field_info* field_info)
+{
+  if (field_info == nullptr) field_info = get_field_info(SPHERE_BOUND);
+  Geometry::sphere_bound_changed(field_info);
+  field_changed(field_info);
+}
+
 SGAL_END_NAMESPACE
