@@ -106,8 +106,8 @@ public:
     return get_sphere_bound(dummy);
   }
 
-  /*! Set the flag that indicates that the sphere bound should be cleaned.*/
-  void sphere_bound_changed(const Field_info* field_info = NULL);
+  /*! Set the flag that indicates that the sphere bound should be cleaned. */
+  virtual void sphere_bound_changed(const Field_info* field_info = nullptr);
 
   /*! Return true if the current matrix contains scaling.
    * \todo has_scale() doesn't belong to Geometry!
