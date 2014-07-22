@@ -259,6 +259,7 @@ You must install python before you start the build, as the build tool uses
 python.
 
 2.5.4.1. Linux
+Install subversion (apt-get install subversion). Then:
 
   make dependencies
   make native # automatically build in release mode for the host architecture
