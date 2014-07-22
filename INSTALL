@@ -262,6 +262,10 @@ Install subversion (apt-get install subversion). Then:
   make dependencies
   make library=shared native # automatically build in release mode for the host architecture
 
+For some reason, the v8 has no "make install". Therefore, if you want the code to work out of the box,
+just copy all files under ./v8/out/native/lib.target/ to /usr/local/lib and copy ./v8/include/v8.h
+./v8/include/v8config.h, and ./v8/include/v8stdint.h to /usr/local/include.
+
 2.5.4.1. Windows
   svn co http://gyp.googlecode.com/svn/trunk build/gyp
   svn co http://src.chromium.org/svn/trunk/deps/third_party/cygwin@231940 third_party/cygwin
