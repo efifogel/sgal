@@ -103,7 +103,7 @@ is in the LD_LIBRARY_PATH.
 * libxxf86vm-dev
 * libgmp-dev
 * libv8-dev
-* bison, YACC-compatible parser generator
+* bison, YACC-compatible parser generator >= 2.7.91
 
 2.5.1.2. Required items on Windows
 * Boost
@@ -114,6 +114,17 @@ is in the LD_LIBRARY_PATH.
 * flex (cygwin)
 * bison (cygwin)
 * v8
+
+2.5.1.3. Required items on Mint 17
+* cmake
+* flex
+* bison
+* libcgal-dev
+* flex
+* libgl1-mesa-dev
+* libglu1-mesa-dev
+* libmagick++-dev
+
 
 In fact, I needed more packages from cygwin to build bison (see
 Section 2.5.2.1.) , but I hope that this is temporary.
