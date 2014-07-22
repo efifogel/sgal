@@ -102,7 +102,6 @@ is in the LD_LIBRARY_PATH.
 * libgl2ps-dev
 * libxxf86vm-dev
 * libgmp-dev
-* libv8-dev
 * bison, YACC-compatible parser generator >= 2.7.91
 
 2.5.1.2. Required items on Windows
@@ -113,7 +112,6 @@ is in the LD_LIBRARY_PATH.
 * MPFR
 * flex (cygwin)
 * bison (cygwin)
-* v8
 
 2.5.1.3. Required items on Mint 17
 * cmake
@@ -262,7 +260,7 @@ python.
 Install subversion (apt-get install subversion). Then:
 
   make dependencies
-  make native # automatically build in release mode for the host architecture
+  make library=shared native # automatically build in release mode for the host architecture
 
 2.5.4.1. Windows
   svn co http://gyp.googlecode.com/svn/trunk build/gyp
@@ -347,8 +345,6 @@ You will get an error message during link if they are not installed.
 
 2.6. Building SGAL
 
-  USE_V8=1
-
 Recall that the environment variable CGAL_DIR points at the directory
 where CGAL is installed. The version of CGAL installed may combine
 several features that are possibly developed in different branches.
@@ -358,6 +354,8 @@ as an input argument to cmake to enable the feature. If the feature
 requires a corresponding CGAL feature, you must also install an
 appropriate version of CGAL that supports the corresponding CGAL
 feature.
+
+   USE_V8=1    # For V8 Support.
 
    USE_SCGAL=1 # CGAL
    USE_NGM=1   # Nef Gaussian Map (CGAL)
