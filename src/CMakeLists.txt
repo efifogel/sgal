@@ -2,6 +2,7 @@
 set(Boost_USE_STATIC_LIBS OFF)
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
 find_package(ImageMagick REQUIRED COMPONENTS Magick++)
+find_package(OpenGL REQUIRED)
 if (USE_V8)
   find_package(V8 REQUIRED)
   link_directories(${V8_LIBRARY_DIR})

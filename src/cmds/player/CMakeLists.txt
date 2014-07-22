@@ -41,7 +41,7 @@ include_directories(../../libs/SCGAL/include/primitives)
 #Add our executable (disabled for now...)
 add_executable(player ${PLAYER_SOURCE_FILES})
 
-target_link_libraries(player SGAL)
+target_link_libraries(player SGAL ${CMAKE_DL_LIBS})
 if (USE_SCGAL)
   # No need to add SCGAL to the list of linked libraries
   target_link_libraries(player SCGAL)
