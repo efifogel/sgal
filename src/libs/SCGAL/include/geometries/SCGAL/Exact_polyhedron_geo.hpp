@@ -154,8 +154,12 @@ public:
   /*! Set the polyhedron data-structure. */
   void set_polyhedron(Exact_polyhedron& polyhedron);
 
-  /*! Obtain the polyhedron data-structure. */
-  Exact_polyhedron& get_polyhedron();
+  /*! Obtain the polyhedron data-structure.
+   * \param with_planes (in) indicates whether to clean the planes (as well
+   *        as the polyhedron itself.
+   * \return the polyhedron data-structure.
+   */
+  const Exact_polyhedron& get_polyhedron(Boolean with_planes = false);
 
   /*! Obtain the flag that indicates whether to compute the convex hull
    * of the coordinate set.
@@ -220,9 +224,6 @@ protected:
   /*! Clean the polyhedron. */
   virtual void clean_polyhedron();
 
-  /*! Clean the polyhedron cells. */
-  virtual void clean_polyhedron_cells();
-
   /*! Calculate the normals in case they are invalidated.
    * If the creaseAngle field is greater than 0, a normal is calculated per
    * vertes. Otherwise a normal is calculated per polygon.
@@ -232,6 +233,14 @@ protected:
   /*! Obtain the ith 3D coordinate.
    */
   virtual const Vector3f& get_coord_3d(Uint i) const;
+
+  /*! Clean the polyhedron edges.
+   */
+  virtual void clean_polyhedron_edges();
+
+  /*! Clean the polyhedron facets.
+   */
+  virtual void clean_polyhedron_facets();
 
   /*! Clean the coordinate array. */
   void clean_coord_array();
@@ -266,22 +275,21 @@ private:
     { return Exact_point_3(vec[0], vec[1], vec[2]); }
   };
 
-   /*! Convert a point in exact number type to approximate. */
-  struct Point_to_vector {
-    void operator()(Exact_polyhedron::Vertex& vertex)
-    { vertex.m_vertex = to_vector3f(vertex.point()); }
+  // /*! Convert a point in exact number type to approximate. */
+  // struct Point_to_vector {
+  //   void operator()(Exact_polyhedron::Vertex& vertex)
+  //   { vertex.m_vertex = to_vector3f(vertex.point()); }
+  // };
+
+  /*! Convert Plane_3 to normal in Vector3f representation. */
+  struct Plane_to_normal {
+    void operator()(Exact_polyhedron::Facet& facet)
+    {
+      Vector3f normal = to_vector3f(facet.plane().orthogonal_vector());
+      facet.m_normal.set(normal);
+      facet.m_normal.normalize();
+    }
   };
-
-//   /*! Convert Plane_3 to normal in Vector3f representation. */
-//   struct Plane_to_normal {
-//     void operator()(Exact_polyhedron::Facet& facet)
-//     {
-//       Vector3f normal = to_vector3f(facet.plane().orthogonal_vector());
-//       facet.m_normal.set(normal);
-//       facet.m_normal.normalize();
-//     }
-//   };
-
 
   /*! Transform a (planar) facet into a plane. */
   struct Plane_equation {
@@ -329,10 +337,15 @@ private:
   /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
   Boolean m_dirty_polyhedron;
 
-  /*! Indicates whether the polyhedron cells are dirty and thus should be
+  /*! Indicates whether the polyhedron edges are dirty and thus should be
    * cleaned.
    */
-  Boolean m_dirty_polyhedron_cells;
+  Boolean m_dirty_polyhedron_edges;
+
+  /*! Indicates whether the polyhedron facets are dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_polyhedron_facets;
 
   /*! Indicates whether the coordinate array is dirty and thus should be
    * cleaned.

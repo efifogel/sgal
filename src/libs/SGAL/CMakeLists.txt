@@ -415,13 +415,13 @@ include_directories(lib/loaders)
 include_directories(lib/primitives)
 include_directories(lib/interpolators)
 
-#Add defines
+# Add defines
 add_definitions(-DSGAL_SGAL_SOURCE)
 add_definitions(-DGL2PSDLL)
 add_definitions(-DSGAL_LIB)
 
 if (WIN32)
-	add_definitions(/wd4251)
+  add_definitions(/wd4251)
 else(WIN32)
   add_definitions(-DGL_GLEXT_PROTOTYPES)
 endif(WIN32)

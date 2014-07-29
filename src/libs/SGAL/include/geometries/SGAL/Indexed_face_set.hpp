@@ -119,10 +119,12 @@ public:
    */
   void set_polyhedron(Polyhedron& polyhedron);
 
-  /*! Obtain the (const) polyhedron data-structure.
+  /*! Obtain the polyhedron data-structure.
+   * \param with_planes (in) indicates whether to clean the planes (as well
+   *        as the polyhedron itself.
    * \return the polyhedron data-structure.
    */
-  const Polyhedron& get_polyhedron();
+  const Polyhedron& get_polyhedron(Boolean with_planes = false);
 
 protected:
   /*! The actual polyhedron object. */

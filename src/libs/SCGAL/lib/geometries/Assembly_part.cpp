@@ -160,9 +160,13 @@ void Assembly_part::clean_sgm_geos(Node* node)
       typedef Nef_polyhedron::Volume_const_iterator     Volume_const_iterator;
 
       clock_t start_time = clock();
-      Exact_polyhedron_geo::Polyhedron& polyhedron =
+      const Exact_polyhedron_geo::Polyhedron& polyhedron =
         polyhedron_geo->get_polyhedron();
-      Nef_polyhedron nef_polyhedron = Nef_polyhedron(polyhedron);
+      /*! \todo Allow passing a const polyhedron to the constructor of
+       * Nef_polyhedron
+       */
+      auto tmp = const_cast<Exact_polyhedron_geo::Polyhedron&>(polyhedron);
+      Nef_polyhedron nef_polyhedron = Nef_polyhedron(tmp);
       CGAL::convex_decomposition_3(nef_polyhedron);
       clock_t end_time = clock();
       float duration_time =

@@ -63,7 +63,8 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Boundary_set(proto),
   m_convex_hull(false),
   m_dirty_polyhedron(true),
-  m_dirty_polyhedron_cells(true),
+  m_dirty_polyhedron_edges(true),
+  m_dirty_polyhedron_facets(true),
   m_dirty_coord_array(false),
   m_time(0)
 {
@@ -153,30 +154,44 @@ void Exact_polyhedron_geo::clean_polyhedron()
   }
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
-  m_dirty_polyhedron_cells = true;
+  m_dirty_polyhedron_edges = true;
+  m_dirty_polyhedron_facets = true;
 }
 
 //! \brief cleans the polyhedron cells.
-void Exact_polyhedron_geo::clean_polyhedron_cells()
+void Exact_polyhedron_geo::clean_polyhedron_edges()
 {
-  m_dirty_polyhedron_cells = false;
+  m_dirty_polyhedron_edges = false;
 
-  // Compute the normal used only for drawing the polyhedron
-  std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
-                [](Exact_polyhedron::Facet& facet)
-                {
-                  Exact_polyhedron::Halfedge_const_handle h = facet.halfedge();
-                  const Vector3f& v1 = to_vector3f(h->vertex()->point());
-                  h = h->next();
-                  const Vector3f& v2 = to_vector3f(h->vertex()->point());
-                  h = h->next();
-                  const Vector3f& v3 = to_vector3f(h->vertex()->point());
-                  Vector3f vec1, vec2;
-                  vec1.sub(v2, v1);
-                  vec2.sub(v3, v2);
-                  facet.m_normal.cross(vec1, vec2);
-                  facet.m_normal.normalize();
-                });
+//   // Compute the normal used only for drawing the polyhedron
+//   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
+//                 [](Exact_polyhedron::Facet& facet)
+//                 {
+//                   Exact_polyhedron::Halfedge_const_handle h = facet.halfedge();
+//                   Kernel kernel;
+//                   auto normal =
+//                     kernel.construct_cross_product_vector_3_object()
+//                     (h->next()->vertex()->point() - h->vertex()->point(),
+//                      h->next()->next()->vertex()->point() -
+//                      h->next()->vertex()->point());
+//                   facet.plane() =
+//                     kernel.construct_plane_3_object()(h->vertex()->point(), normal);
+//                   std::cout << "plane: " << facet.plane() << std::endl;
+
+// //                   const Vector3f& v1 = to_vector3f(h->vertex()->point());
+// //                   h = h->next();
+// //                   const Vector3f& v2 = to_vector3f(h->vertex()->point());
+// //                   h = h->next();
+// //                   const Vector3f& v3 = to_vector3f(h->vertex()->point());
+// //                   Vector3f vec1, vec2;
+// //                   vec1.sub(v2, v1);
+// //                   vec2.sub(v3, v2);
+// //                   facet.m_normal.cross(vec1, vec2);
+//                   facet.m_normal.set(CGAL::to_double(normal.x()),
+//                                      CGAL::to_double(normal.y()),
+//                                      CGAL::to_double(normal.z()));
+//                   facet.m_normal.normalize();
+//                 });
 
   // Clean the halfedges
   Edge_normal_calculator edge_normal_calculator(get_crease_angle());
@@ -187,35 +202,24 @@ void Exact_polyhedron_geo::clean_polyhedron_cells()
   m_creased = edge_normal_calculator.m_creased;
 }
 
-#if 0
-//! \brief cleans the facets.
-void Exact_polyhedron_geo::clean_facets()
+//! \brief cleans the polyhedron facets.
+void Exact_polyhedron_geo::clean_polyhedron_facets()
 {
   // Compute the plane equations:
   std::transform(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                  m_polyhedron.planes_begin(), Plane_equation());
 
-#if 0
-  /* Is there a collision?
-   * \todo this doeasn't belong here
-   */
-  CGAL::Oriented_side side = oriented_side(CGAL::ORIGIN);
-  std::cout << ((side == CGAL::ON_ORIENTED_BOUNDARY) ? "On boundary" :
-                ((side == CGAL::ON_POSITIVE_SIDE) ? "Outside" : "Inside"))
-            << std::endl;
-#endif
-
   // Compute the normal used only for drawing the polyhedron
   std::for_each(m_polyhedron.facets_begin(), m_polyhedron.facets_end(),
                 Plane_to_normal());
 
-  // Convert the exact points to approximate used for drawing the polyhedron
-  std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
-                Point_to_vector());
+  // // Convert the exact points to approximate used for drawing the polyhedron
+  // std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
+  //               Point_to_vector());
 
-  m_dirty_facets = false;
+  m_dirty_polyhedron_facets = false;
+  m_dirty_polyhedron_edges = true;
 }
-#endif
 
 //! \brief clears the internal representation.
 void Exact_polyhedron_geo::clear()
@@ -302,10 +306,14 @@ void Exact_polyhedron_geo::print_stat()
 }
 
 //! \brief obtains the polyhedron data-structure.
-Exact_polyhedron& Exact_polyhedron_geo::get_polyhedron()
+const Exact_polyhedron&
+Exact_polyhedron_geo::get_polyhedron(Boolean with_planes)
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
+  if (with_planes) {
+    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
+  }
   return m_polyhedron;
 }
 
@@ -454,7 +462,8 @@ void Exact_polyhedron_geo::clean_normals()
 {
   if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
     if (m_dirty_polyhedron) clean_polyhedron();
-    if (m_dirty_polyhedron_cells) clean_polyhedron_cells();
+    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
+    if (m_dirty_polyhedron_edges) clean_polyhedron_edges();
     if (m_smooth) calculate_single_normal_per_vertex();
     else if (m_creased) calculate_normal_per_polygon();
     else calculate_multiple_normals_per_vertex();

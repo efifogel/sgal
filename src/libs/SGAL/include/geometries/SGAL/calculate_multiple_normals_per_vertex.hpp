@@ -39,22 +39,22 @@ template <typename FacetHandle>
 Vector3f get_normal_impl(FacetHandle f, boost::false_type)
 { return f->m_normal; }
 
-template <typename Polyhedron_T>
-Vector3f get_normal(typename Polyhedron_T::Facet_const_handle f)
+template <typename Polyhedron_>
+Vector3f get_normal(typename Polyhedron_::Facet_const_handle f)
 {
-  typedef Polyhedron_T                                  Polyhedron;
+  typedef Polyhedron_                                  Polyhedron;
   typedef boost::is_same<typename Polyhedron::Plane_3, Inexact_kernel::Vector_3>
-                                                        Polyhedron_has_plane;
-  return get_normal_impl(f, Polyhedron_has_plane());
+                                                        Polyhedron_has_vector;
+  return get_normal_impl(f, Polyhedron_has_vector());
 }
 
-template <typename Polyhedron_T>
+template <typename Polyhedron_>
 void calculate_multiple_normals_per_vertex
-(Polyhedron_T& polyhedron,
+(Polyhedron_& polyhedron,
  boost::shared_ptr<Normal_array> normal_array,
  std::vector<Uint>& flat_normal_indices)
 {
-  typedef Polyhedron_T                                  Polyhedron;
+  typedef Polyhedron_                                   Polyhedron;
   typedef typename Polyhedron::Facet                    Facet;
   typedef typename Polyhedron::Facet_const_handle       Facet_const_handle;
   typedef typename Polyhedron::Halfedge_around_facet_const_circulator

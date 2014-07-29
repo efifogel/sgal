@@ -202,7 +202,8 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 }
 
 //! \brief obtains the polyhedron data-structure.
-const Indexed_face_set::Polyhedron& Indexed_face_set::get_polyhedron()
+const Indexed_face_set::Polyhedron&
+Indexed_face_set::get_polyhedron(Boolean /* with_planes */)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
   return m_polyhedron;

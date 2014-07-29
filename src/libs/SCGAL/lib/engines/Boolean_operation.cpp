@@ -94,9 +94,13 @@ void Boolean_operation::execute()
   }
   geometry1.set_num_primitives(m_operand1->get_num_primitives());
   geometry1.set_primitive_type(m_operand1->get_primitive_type());
-  Exact_polyhedron_geo::Polyhedron& polyhedron1 = geometry1.get_polyhedron();
-  // geometry1.print_stat();
-  Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(polyhedron1);
+  const Exact_polyhedron_geo::Polyhedron& polyhedron1 =
+    geometry1.get_polyhedron();
+  /*! \todo Allow passing a const polyhedron to the constructor of
+   * Nef_polyhedron
+   */
+  auto tmp1 = const_cast<Exact_polyhedron_geo::Polyhedron&>(polyhedron1);
+  Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(tmp1);
 
   Exact_polyhedron_geo geometry2;
   geometry2.set_coord_array(m_operand2->get_coord_array());
@@ -114,8 +118,13 @@ void Boolean_operation::execute()
   }
   geometry2.set_num_primitives(m_operand2->get_num_primitives());
   geometry2.set_primitive_type(m_operand2->get_primitive_type());
-  Exact_polyhedron_geo::Polyhedron& polyhedron2 = geometry2.get_polyhedron();
-  Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(polyhedron2);
+  const Exact_polyhedron_geo::Polyhedron& polyhedron2 =
+    geometry2.get_polyhedron();
+  /*! \todo Allow passing a const polyhedron to the constructor of
+   * Nef_polyhedron
+   */
+  auto tmp2 = const_cast<Exact_polyhedron_geo::Polyhedron&>(polyhedron2);
+  Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(tmp2);
 
   // Compute Boolean operation:
   Nef_polyhedron nef_polyhedron(nef_polyhedron1 * nef_polyhedron2);
