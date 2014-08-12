@@ -46,7 +46,7 @@ const Boolean  Cylinder::s_def_is_body_visible(true);
 
 REGISTER_TO_FACTORY(Cylinder, "Cylinder");
 
-/*! Constructor */
+//! \brief constructor.
 Cylinder::Cylinder(Boolean proto) :
   Geometry(proto),
   m_dirty(true),
@@ -61,14 +61,14 @@ Cylinder::Cylinder(Boolean proto) :
   m_cylinder_base(NULL)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Cylinder::~Cylinder()
 {
   gluDeleteQuadric(m_cylinder);
   gluDeleteQuadric(m_cylinder_base);
 }
 
-/*! \brief draws the cylinder. */
+//! \brief draws the cylinder.
 void Cylinder::draw(Draw_action* /* action */)
 {
   if (is_dirty()) clean();
@@ -82,7 +82,8 @@ void Cylinder::draw(Draw_action* /* action */)
     // draw the cylinder
     glPushMatrix();
     glTranslatef(0, 0, -m_height / 2);
-    gluQuadricTexture(m_cylinder, (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
+    gluQuadricTexture(m_cylinder,
+                      (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
     gluCylinder(m_cylinder, m_radius, m_radius, m_height, m_slices, m_stacks);
     glPopMatrix();
   }
@@ -92,7 +93,7 @@ void Cylinder::draw(Draw_action* /* action */)
     glPushMatrix();
     glTranslatef(0, 0, m_height/2);
     gluQuadricTexture(m_cylinder_base,
-                      (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
+                      (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
     gluDisk(m_cylinder_base, 0, m_radius, m_slices, 1);
     glPopMatrix();
   }
@@ -103,7 +104,7 @@ void Cylinder::draw(Draw_action* /* action */)
     //glRotatef(180, 1, 0, 0);
     //glRotatef(180, 0, 1, 0);
     gluQuadricTexture(m_cylinder_base,
-                      (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
+                      (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
     gluQuadricOrientation(m_cylinder_base,GLU_INSIDE);
     gluDisk(m_cylinder_base, 0, m_radius, m_slices, 1);
     gluQuadricOrientation(m_cylinder_base,GLU_OUTSIDE);
@@ -115,7 +116,7 @@ void Cylinder::draw(Draw_action* /* action */)
   glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the cylinder in selection mode. */
+//! \brief draws the cylinder in selection mode.
 void Cylinder::isect(Isect_action* /* action */)
 {
   if (m_dirty) clean();
@@ -148,7 +149,7 @@ void Cylinder::isect(Isect_action* /* action */)
   glPopMatrix();
 }
 
-/*! \brief cleans (regenerate the coordinates of) the cylinder. */
+//! \brief cleans (regenerate the coordinates of) the cylinder.
 void Cylinder::clean()
 {
   m_cylinder = gluNewQuadric();
@@ -164,7 +165,7 @@ void Cylinder::clean()
   m_dirty = false;
 }
 
-/*! \brief cleans (recompute) the bounding sphere of the cylinder. */
+//! \brief cleans (recompute) the bounding sphere of the cylinder.
 Boolean Cylinder::clean_sphere_bound()
 {
   float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
@@ -173,7 +174,7 @@ Boolean Cylinder::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of the cylinder. */
+//! \brief sets the attributes of the cylinder.
 void Cylinder::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -288,7 +289,7 @@ Attribute_list Cylinder::get_attributes()
 }
 #endif
 
-/*! initializes the cylinder prototype */
+//! \brief initializes the cylinder prototype.
 void Cylinder::init_prototype()
 {
   if (s_prototype) return;
@@ -360,14 +361,14 @@ void Cylinder::init_prototype()
                                           exec_func));
 }
 
-/*! */
+//! \brief deletes the cylinder prototype.
 void Cylinder::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! */
+//! \brief obtains the cylinder prototype.
 Container_proto* Cylinder::get_prototype()
 {
   if (!s_prototype) Cylinder::init_prototype();

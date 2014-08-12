@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7263 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -114,6 +111,10 @@ public:
 
   /*! Calculare the sphere bound of the arc */
   virtual Boolean clean_sphere_bound();
+
+  /*! Determine whether the geometry has texture coordinates.
+   */
+  virtual Boolean has_tex_coord();
 
   // virtual void FieldChanged(short fieldId);
 
@@ -247,53 +248,56 @@ inline void Arc::set_radius(Float radius)
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the arc radius. */
+//! \brief obtains the arc radius.
 inline Float Arc::get_radius() const { return m_radius; }
 
-/*! \brief sets the number of stacks. */
+//! \brief sets the number of stacks.
 inline void Arc::set_stacks(Uint stacks) { m_stacks = stacks; }
 
-/*! \brief obtains the number of stacks. */
+//! \brief obtains the number of stacks.
 inline Uint Arc::get_stacks() const { return m_stacks; }
 
-/*! \brief sets the number of slices. */
+//! \brief sets the number of slices.
 inline void Arc::set_slices(Uint slices) { m_slices = slices; }
 
-/*! \brief obtains the number of slices */
+//! \brief obtains the number of slices
 inline Uint Arc::get_slices() const { return m_slices; }
 
-/*! \brief sets the lower left corner. */
+//! \brief sets the lower left corner.
 inline void Arc::set_alpha(Float alpha) { m_alpha = alpha; }
 
-/*! \brief obtains */
+//! \brief obtains
 inline Float Arc::get_alpha() const { return m_alpha; }
 
-/*! \brief sets */
+//! \brief sets
 inline void Arc::set_beta(Float beta) { m_beta = beta; }
 
-/*! \brief obtains */
+//! \brief obtains
 inline Float Arc::get_beta() const { return m_beta; }
 
-/*! \brief sets */
+//! \brief sets
 inline void Arc::set_gamma(Float gamma) { m_gamma = gamma; }
 
-/*! \brief obtains */
+//! \brief obtains
 inline Float Arc::get_gamma() const { return m_gamma; }
 
-/*! \brief sets */
+//! \brief sets
 inline void Arc::set_delta(Float delta) { m_delta = delta; }
 
-/*! \brief obtains */
+//! \brief obtains
 inline Float Arc::get_delta() const { return m_delta; }
 
-/*! \brief sets */
+//! \brief sets
 inline void Arc::set_solid(Boolean solid) { m_is_solid = solid; }
 
-/*! \brief obtain */
+//! \brief obtain
 inline Boolean Arc::is_solid() const { return m_is_solid; }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Arc::get_tag() const { return s_tag; }
+
+//! \brief determines whether the geometry has texture coordinate.
+inline Boolean Arc::has_tex_coord() { return do_generate_tex_coord(); }
 
 SGAL_END_NAMESPACE
 

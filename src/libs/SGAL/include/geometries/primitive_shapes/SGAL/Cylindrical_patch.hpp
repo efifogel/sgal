@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -114,6 +111,10 @@ public:
 
   /*! Calculare the sphere bound of the cylindrical patch */
   virtual Boolean clean_sphere_bound();
+
+  /*! Determine whether the geometry has texture coordinates.
+   */
+  virtual Boolean has_tex_coord();
 
   /*! Set the radius of the underlying cylinder
    * \param radius the radius of the underlying cylinder
@@ -238,12 +239,16 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Cylindrical_patch* Cylindrical_patch::prototype()
 { return new Cylindrical_patch(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Cylindrical_patch::clone() { return new Cylindrical_patch(); }
+
+//! \brief determines whether the geometry has texture coordinate.
+inline Boolean Cylindrical_patch::has_tex_coord()
+{ return do_generate_tex_coord(); }
 
 SGAL_END_NAMESPACE
 

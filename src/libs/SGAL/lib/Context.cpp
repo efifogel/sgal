@@ -56,7 +56,7 @@ Ref_array* Context::s_sound_players_array = nullptr;
 Boolean Context::s_sound_initialized = false;
 #endif
 
-/*! Constructor */
+//! \brief constructor.
 Context::Context() :
   //! \todo m_win_handle(0),
   m_active_camera(0)
@@ -83,7 +83,7 @@ Window_handle* Context::get_win_handle() const
 { return m_win_handle; }
 */
 
-/*! \brief */
+//! \brief initializes.
 void Context::init()
 {
   m_mat_stack_depth = 1;
@@ -199,7 +199,7 @@ void Context::init()
   m_viewport[3] = 0;
 }
 
-/*! \brief initializes the context attributes. */
+//! \brief initializes the context attributes.
 void Context::init_context_attributes()
 {
   GLint tmp;
@@ -244,13 +244,13 @@ void Context::init_context_attributes()
                             << std::endl;);
 }
 
-/*! Destructor */
+//! \brief destructor.
 Context::~Context()
 {
   //! \todo delete m_gfx_handle;
 }
 
-/*! \brief sets the viewport. */
+//! \brief sets the viewport.
 void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
 {
   if (static_cast<Uint>(m_viewport[0]) != x ||
@@ -266,7 +266,7 @@ void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
   }
 }
 
-/*! \brief Obtain the viewport. */
+//! \brief Obtain the viewport.
 void Context::get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const
 {
   x = (Uint) m_viewport[0];
@@ -275,7 +275,7 @@ void Context::get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const
   h = (Uint) m_viewport[3];
 }
 
-/*! \brief */
+//! \brief
 void Context::set_normalize_enable(Boolean normalize_enable)
 {
   if (normalize_enable == m_normalize_enable) return;
@@ -284,7 +284,7 @@ void Context::set_normalize_enable(Boolean normalize_enable)
   else glDisable(GL_NORMALIZE);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_local_viewer(Boolean local_viewer)
 {
   if (local_viewer == m_local_viewer) return;
@@ -292,7 +292,7 @@ void Context::set_local_viewer(Boolean local_viewer)
   glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, local_viewer);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_texture(Shared_texture texture)
 {
   m_default_state->m_texture = texture;
@@ -300,7 +300,7 @@ void Context::set_texture(Shared_texture texture)
   // DrawTexture(texture);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_texture(Shared_texture texture)
 {
   if ((m_current_state->m_texture == texture) &&
@@ -311,14 +311,14 @@ void Context::draw_texture(Shared_texture texture)
   if (texture) texture->draw(this);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_halftone(Shared_halftone halftone)
 {
   m_default_state->m_halftone = halftone;
   m_default_state->m_pending.on_bit(Gfx::HALFTONE_PATTERN);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_halftone(Shared_halftone halftone)
 {
   if ((m_current_state->m_halftone == halftone) &&
@@ -329,7 +329,7 @@ void Context::draw_halftone(Shared_halftone halftone)
   if (halftone) halftone->draw(this);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_tex_enable(Boolean tex_enable)
 {
   m_default_state->m_tex_enable = tex_enable;
@@ -337,7 +337,7 @@ void Context::set_tex_enable(Boolean tex_enable)
   // DrawTexEnable(tex_enable);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_tex_enable(Boolean tex_enable)
 {
   typedef boost::shared_ptr<Cube_environment>   Shared_cube_environment;
@@ -357,7 +357,7 @@ void Context::draw_tex_enable(Boolean tex_enable)
   }
 }
 
-/*! \brief */
+//! \brief
 void Context::set_tex_mode(Gfx::Tex_mode tex_mode)
 {
   m_default_state->m_tex_mode = tex_mode;
@@ -365,14 +365,14 @@ void Context::set_tex_mode(Gfx::Tex_mode tex_mode)
   // DrawTex_mode(tex_mode);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_tex_mode(Gfx::Tex_mode tex_mode)
 {
   if (m_current_state->m_tex_mode == tex_mode) return;
   m_current_state->m_tex_mode = tex_mode;
 }
 
-/*! \brief */
+//! \brief
 void Context::set_tex_blend_color(const Vector4f& tex_blend_color)
 {
   m_default_state->m_tex_blend_color = tex_blend_color;
@@ -380,7 +380,7 @@ void Context::set_tex_blend_color(const Vector4f& tex_blend_color)
   // DrawTexBlendColor(tex_blend_color);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_tex_blend_color(const Vector4f& color)
 {
   if (m_current_state->m_tex_blend_color == color) return;
@@ -388,7 +388,7 @@ void Context::draw_tex_blend_color(const Vector4f& color)
   glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, (GLfloat*) &color);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_tex_env(Gfx::Tex_env tex_env)
 {
   m_default_state->m_tex_env = tex_env;
@@ -396,7 +396,7 @@ void Context::set_tex_env(Gfx::Tex_env tex_env)
   // DrawTexEnv(tex_env);
 }
 
-/*! \brief applies texture environment. */
+//! \brief applies texture environment.
 void Context::draw_tex_env(Gfx::Tex_env tex_env)
 {
   if (m_current_state->m_tex_env == tex_env) return;
@@ -411,7 +411,7 @@ void Context::draw_tex_env(Gfx::Tex_env tex_env)
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, s_tex_env_tokens[tex_env]);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_tex_gen(Shared_tex_gen tex_gen)
 {
   m_default_state->m_tex_gen = tex_gen;
@@ -419,7 +419,7 @@ void Context::set_tex_gen(Shared_tex_gen tex_gen)
   // DrawTexGen(tex_gen);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_tex_gen(Shared_tex_gen tex_gen)
 {
   if (m_current_state->m_tex_gen == tex_gen) return;
@@ -427,7 +427,7 @@ void Context::draw_tex_gen(Shared_tex_gen tex_gen)
   if (tex_gen) tex_gen->draw(this);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_tex_gen_enable(Boolean tex_gen_enable)
 {
   m_default_state->m_tex_gen_enable = tex_gen_enable;
@@ -435,7 +435,7 @@ void Context::set_tex_gen_enable(Boolean tex_gen_enable)
   // Drawtex_gen_enable(tex_gen_enable);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_tex_gen_enable(Boolean tex_gen_enable)
 {
   if (m_current_state->m_tex_gen_enable == tex_gen_enable) return;
@@ -458,7 +458,7 @@ void Context::draw_tex_gen_enable(Boolean tex_gen_enable)
   glDisable(GL_TEXTURE_GEN_Q);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_material(Shared_material material)
 {
   m_default_state->m_material = material;
@@ -479,7 +479,7 @@ void Context::draw_material(Shared_material material,
                    this);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_light_enable(Boolean light_enable)
 {
   m_default_state->m_light_enable = light_enable;
@@ -487,7 +487,7 @@ void Context::set_light_enable(Boolean light_enable)
   // DrawLightEnable(light_enable);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_light_enable(Boolean light_enable)
 {
   if (m_current_state->m_light_enable == light_enable) return;
@@ -496,7 +496,7 @@ void Context::draw_light_enable(Boolean light_enable)
   else glDisable(GL_LIGHTING);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_shade_model(Gfx::Shade_model shade_model)
 {
   m_default_state->m_shade_model = shade_model;
@@ -504,7 +504,7 @@ void Context::set_shade_model(Gfx::Shade_model shade_model)
   // DrawShade_model(shade_model);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_shade_model(Gfx::Shade_model shade_model)
 {
   if (m_current_state->m_shade_model == shade_model) return;
@@ -514,7 +514,7 @@ void Context::draw_shade_model(Gfx::Shade_model shade_model)
   glShadeModel(sShade_model_tokens[shade_model]);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_transp_enable(Boolean transp_enable)
 {
   m_default_state->m_transp_enable = transp_enable;
@@ -545,7 +545,7 @@ void Context::set_transp_enable(Boolean transp_enable)
   // DrawTranspEnable(transp_enable);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_transp_enable(Boolean transp_enable)
 {
   if (m_current_state->m_transp_enable == transp_enable) return;
@@ -576,7 +576,7 @@ void Context::draw_transp_enable(Boolean transp_enable)
   }
 }
 
-/*! \brief */
+//! \brief
 void Context::set_transp_mode(Gfx::Transparency_mode transp_mode)
 {
   m_default_state->m_transp_mode = transp_mode;
@@ -596,7 +596,7 @@ void Context::set_transp_mode(Gfx::Transparency_mode transp_mode)
   // DrawTransp_mode(transp_mode);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_transp_mode(Gfx::Transparency_mode transp_mode)
 {
   if (m_current_state->m_transp_mode == transp_mode) return;
@@ -617,14 +617,14 @@ void Context::draw_transp_mode(Gfx::Transparency_mode transp_mode)
   }
 }
 
-/*! \brief */
+//! \brief
 static GLenum s_alpha_func_tokens[] =
 {
   GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL, GL_GREATER,
   GL_NOTEQUAL, GL_GEQUAL, GL_ALWAYS
 };
 
-/*! \brief */
+//! \brief
 void Context::set_alpha_func(Gfx::Alpha_func alpha_func)
 {
   m_default_state->m_alpha_func = alpha_func;
@@ -632,7 +632,7 @@ void Context::set_alpha_func(Gfx::Alpha_func alpha_func)
   // draw_alpha_func(alpha_func);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_alpha_func(Gfx::Alpha_func alpha_func)
 {
   if (m_current_state->m_alpha_func == alpha_func) return;
@@ -644,7 +644,7 @@ void Context::draw_alpha_func(Gfx::Alpha_func alpha_func)
   else glDisable(GL_ALPHA_TEST);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_alpha_ref(float alpha_ref)
 {
     m_default_state->m_alpha_ref = alpha_ref;
@@ -652,7 +652,7 @@ void Context::set_alpha_ref(float alpha_ref)
     // draw_alpha_ref(alpha_ref);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_alpha_ref(float alpha_ref)
 {
   if (m_current_state->m_alpha_ref == alpha_ref) return;
@@ -660,7 +660,7 @@ void Context::draw_alpha_ref(float alpha_ref)
   glAlphaFunc(s_alpha_func_tokens[m_current_state->m_alpha_func], alpha_ref);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_blend_color(const Vector4f& blend_color)
 {
   m_default_state->m_blend_color = blend_color;
@@ -668,14 +668,14 @@ void Context::set_blend_color(const Vector4f& blend_color)
   // DrawBlendColor(blend_color);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_blend_color(const Vector4f& blend_color)
 {
   if (m_current_state->m_blend_color == blend_color) return;
   m_current_state->m_blend_color = blend_color;
 }
 
-/*! \brief */
+//! \brief
 static GLenum s_src_blend_func_tokens[] =
 {
   GL_ZERO, GL_ONE, GL_DST_COLOR,
@@ -684,7 +684,7 @@ static GLenum s_src_blend_func_tokens[] =
   GL_ONE_MINUS_DST_ALPHA,
 };
 
-/*! \brief */
+//! \brief
 static GLenum s_dst_blend_func_tokens[] =
 {
   GL_ZERO, GL_ONE, GL_SRC_COLOR,
@@ -693,7 +693,7 @@ static GLenum s_dst_blend_func_tokens[] =
   GL_ONE_MINUS_DST_ALPHA,
 };
 
-/*! \brief */
+//! \brief
 void Context::set_src_blend_func(Gfx::Src_blend_func src_blend_func)
 {
   m_default_state->m_src_blend_func = src_blend_func;
@@ -701,7 +701,7 @@ void Context::set_src_blend_func(Gfx::Src_blend_func src_blend_func)
   // DrawSrc_blend_func(src_blend_func);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_src_blend_func(Gfx::Src_blend_func src_blend_func)
 {
   if (m_current_state->m_src_blend_func == src_blend_func) return;
@@ -714,7 +714,7 @@ void Context::draw_src_blend_func(Gfx::Src_blend_func src_blend_func)
               s_dst_blend_func_tokens[m_current_state->m_dst_blend_func]);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
 {
   m_default_state->m_dst_blend_func = dst_blend_func;
@@ -722,7 +722,7 @@ void Context::set_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
   // DrawDstBlendFunc(dst_blend_func);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
 {
   if (m_current_state->m_dst_blend_func == dst_blend_func) return;
@@ -735,7 +735,7 @@ void Context::draw_dst_blend_func(Gfx::Dst_blend_func dst_blend_func)
               s_dst_blend_func_tokens[dst_blend_func]);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_color_mask(const Vector4ub& color_mask)
 {
   m_default_state->m_color_mask = color_mask;
@@ -743,7 +743,7 @@ void Context::set_color_mask(const Vector4ub& color_mask)
   // DrawColorMask(color_mask);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_color_mask(const Vector4ub& color_mask)
 {
   if (m_current_state->m_color_mask == color_mask) return;
@@ -752,7 +752,7 @@ void Context::draw_color_mask(const Vector4ub& color_mask)
               color_mask[2] != 0, color_mask[3] != 0);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_depth_enable(Boolean depth_enable)
 {
   m_default_state->m_depth_enable = depth_enable;
@@ -760,7 +760,7 @@ void Context::set_depth_enable(Boolean depth_enable)
   // DrawDepthEnable(depth_enable);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_depth_enable(Boolean depth_enable)
 {
   if (m_current_state->m_depth_enable == depth_enable) return;
@@ -769,7 +769,7 @@ void Context::draw_depth_enable(Boolean depth_enable)
   else glDisable(GL_DEPTH_TEST);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_depth_func(Gfx::Depth_func depth_func)
 {
   m_default_state->m_depth_func = depth_func;
@@ -777,7 +777,7 @@ void Context::set_depth_func(Gfx::Depth_func depth_func)
   // DrawDepthFunc(depth_func);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_depth_func(Gfx::Depth_func depth_func)
 {
   if (m_current_state->m_depth_func == depth_func) return;
@@ -789,7 +789,7 @@ void Context::draw_depth_func(Gfx::Depth_func depth_func)
   glDepthFunc(s_depth_func_tokens[depth_func]);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_depth_mask(Boolean depth_mask)
 {
   m_default_state->m_depth_mask = depth_mask;
@@ -797,7 +797,7 @@ void Context::set_depth_mask(Boolean depth_mask)
   // DrawDepthMask(depth_mask);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_depth_mask(Boolean depth_mask)
 {
   if (m_current_state->m_depth_mask == depth_mask) return;
@@ -805,7 +805,7 @@ void Context::draw_depth_mask(Boolean depth_mask)
   glDepthMask(depth_mask);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_fog_enable(Boolean fog_enable)
 {
   m_default_state->m_fog_enable = fog_enable;
@@ -813,7 +813,7 @@ void Context::set_fog_enable(Boolean fog_enable)
   // DrawFogEnable(fog_enable);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_fog_enable(Boolean /* fog_enable */)
 {
 #if 0
@@ -829,14 +829,14 @@ void Context::draw_fog_enable(Boolean /* fog_enable */)
 #endif
 }
 
-/*! \brief */
+//! \brief
 void Context::set_polygon_stipple_enable(Boolean enable)
 {
   m_default_state->m_polygon_stipple_enable = enable;
   m_default_state->m_pending.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_polygon_stipple_enable(Boolean enable)
 {
   if (m_current_state->m_polygon_stipple_enable == enable) return;
@@ -845,7 +845,7 @@ void Context::draw_polygon_stipple_enable(Boolean enable)
   else glDisable(GL_POLYGON_STIPPLE);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_material_mode_enable(Gfx::Material_mode material_mode_enable)
 {
   m_default_state->m_material_mode_enable = material_mode_enable;
@@ -853,7 +853,7 @@ void Context::set_material_mode_enable(Gfx::Material_mode material_mode_enable)
   // DrawMaterial_mode_enable(material_mode_enable);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_material_mode_enable(Gfx::Material_mode material_mode_enable)
 {
   if (m_current_state->m_material_mode_enable == material_mode_enable) return;
@@ -872,7 +872,7 @@ void Context::draw_material_mode_enable(Gfx::Material_mode material_mode_enable)
   }
 }
 
-/*! \brief */
+//! \brief
 void Context::set_poly_mode(Gfx::Poly_mode poly_mode)
 {
   m_default_state->m_poly_mode = poly_mode;
@@ -880,7 +880,7 @@ void Context::set_poly_mode(Gfx::Poly_mode poly_mode)
   // DrawPoly_mode(poly_mode);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_poly_mode(Gfx::Poly_mode poly_mode)
 {
   if (m_current_state->m_poly_mode == poly_mode) return;
@@ -889,7 +889,7 @@ void Context::draw_poly_mode(Gfx::Poly_mode poly_mode)
   glPolygonMode(GL_FRONT_AND_BACK, sPoly_modeTokens[poly_mode]);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_cull_face(Gfx::Cull_face cull_face)
 {
   m_default_state->m_cull_face = cull_face;
@@ -897,7 +897,7 @@ void Context::set_cull_face(Gfx::Cull_face cull_face)
   // DrawCull_face(cull_face);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_cull_face(Gfx::Cull_face cull_face)
 {
   // Use override value if one has been set
@@ -996,7 +996,7 @@ Context::draw_light_model_color_control(Gfx::Light_model_color_control model)
                 s_light_model_color_control[model]);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_line_width(Float line_width)
 {
   m_default_state->m_line_width = line_width;
@@ -1004,7 +1004,7 @@ void Context::set_line_width(Float line_width)
   // DrawLine_width(line_width);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_line_width(Float line_width)
 {
   // Use override value if one has been set
@@ -1028,7 +1028,7 @@ void Context::draw_line_width(Float line_width)
 #endif
 }
 
-/*! \brief */
+//! \brief
 void Context::set_point_size(Float point_size)
 {
   m_default_state->m_point_size = point_size;
@@ -1036,7 +1036,7 @@ void Context::set_point_size(Float point_size)
   // DrawPointSize(point_size);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_point_size(Float point_size)
 {
   // Use override value if one has been set
@@ -1060,7 +1060,7 @@ void Context::draw_point_size(Float point_size)
 #endif
 }
 
-/*! \brief */
+//! \brief
 void Context::set_line_stipple_pattern(Uint pattern)
 {
   m_default_state->m_line_stipple_pattern = pattern;
@@ -1068,7 +1068,7 @@ void Context::set_line_stipple_pattern(Uint pattern)
   // DrawLineStipplePattern(pattern);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_line_stipple_pattern(Uint pattern)
 {
   if (m_current_state->m_line_stipple_pattern == pattern) return;
@@ -1081,7 +1081,7 @@ void Context::draw_line_stipple_pattern(Uint pattern)
   }
 }
 
-/*! \brief */
+//! \brief
 void Context::set_line_stipple_factor(Uint factor)
 {
   m_default_state->m_line_stipple_factor = factor;
@@ -1089,7 +1089,7 @@ void Context::set_line_stipple_factor(Uint factor)
   // DrawLineStippleFactor(factor);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_line_stipple_factor(Uint factor)
 {
   if (m_current_state->m_line_stipple_factor == factor) return;
@@ -1101,7 +1101,7 @@ void Context::draw_line_stipple_factor(Uint factor)
   }
 }
 
-/*! \brief */
+//! \brief
 void Context::set_tex_transform(const Matrix4f& matrix)
 {
   m_default_state->m_tex_transform = matrix;
@@ -1109,7 +1109,7 @@ void Context::set_tex_transform(const Matrix4f& matrix)
   // DrawTexTransform(matrix);
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_tex_transform(const Matrix4f& matrix)
 {
   if (m_current_state->m_tex_transform == matrix) return;
@@ -1122,7 +1122,7 @@ void Context::draw_tex_transform(const Matrix4f& matrix)
   // operations can continue as before
 }
 
-/*! \brief */
+//! \brief
 void Context::set_back_material(Shared_material material)
 {
   m_default_state->m_back_material = material;
@@ -1144,7 +1144,7 @@ void Context::draw_back_material(Shared_material material,
   }
 }
 
-/*! \brief */
+//! \brief
 void Context::clear(Uint which)
 {
   unsigned int glclear = 0;
@@ -1164,7 +1164,7 @@ void Context::clear(Uint which)
   glClear(glclear);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear(Uint which, Float r, Float g, Float b, Float a,
                     Int stencil)
 {
@@ -1185,7 +1185,7 @@ void Context::clear(Uint which, Float r, Float g, Float b, Float a,
   glClear(glclear);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear(Uint which, Float r, Float g, Float b, Float a)
 {
   unsigned int glclear = 0;
@@ -1205,7 +1205,7 @@ void Context::clear(Uint which, Float r, Float g, Float b, Float a)
   glClear(glclear);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_color_buffer()
 {
   Uint which = 0;
@@ -1213,7 +1213,7 @@ void Context::clear_color_buffer()
   clear(which);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_depth_buffer()
 {
   Uint which = 0;
@@ -1221,7 +1221,7 @@ void Context::clear_depth_buffer()
   clear(which);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_stencil_buffer()
 {
   Uint which = 0;
@@ -1229,7 +1229,7 @@ void Context::clear_stencil_buffer()
   clear(which);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_color_depth_buffer()
 {
   Uint which = 0;
@@ -1238,7 +1238,7 @@ void Context::clear_color_depth_buffer()
   clear(which);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_color_depth_buffer(const Vector4f& color)
 {
   Uint which = 0;
@@ -1247,7 +1247,7 @@ void Context::clear_color_depth_buffer(const Vector4f& color)
   clear(which, color);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_color_depth_stencil_buffer()
 {
   Uint which = 0;
@@ -1257,7 +1257,7 @@ void Context::clear_color_depth_stencil_buffer()
   clear(which);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_color_depth_stencil_buffer(const Vector4f& color)
 {
   Uint which = 0;
@@ -1267,7 +1267,7 @@ void Context::clear_color_depth_stencil_buffer(const Vector4f& color)
   clear(which, color);
 }
 
-/*! \brief */
+//! \brief
 void Context::clear_color_depth_stencil_buffer(const Vector4f& color,
                                                Int stencil)
 {
@@ -1278,7 +1278,7 @@ void Context::clear_color_depth_stencil_buffer(const Vector4f& color,
   clear(which, color, stencil);
 }
 
-/*! \brief */
+//! \brief
 void Context::push_lights()
 {
   Uint s = m_light_stack_depth + 1;
@@ -1300,7 +1300,7 @@ void Context::push_lights()
   m_light_stack_depth = s;
 }
 
-/*! \brief */
+//! \brief
 void Context::push_state()
 {
   Uint s = m_stack_depth + 1;
@@ -1355,7 +1355,7 @@ void Context::pop_state()
   pop_lights();
 }
 
-/*! \brief */
+//! \brief
 void Context::pop_lights()
 {
   // Pop lights - lights are tricky because they can "float" amongst GL light
@@ -1401,7 +1401,7 @@ void Context::pop_lights()
   m_light_stack_depth--;
 }
 
-/*! \brief */
+//! \brief
 void Context::make_current()
 {
   //! \todo if (!m_win_handle) return;
@@ -1426,7 +1426,7 @@ void Context::make_current()
   glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, m_local_viewer);
 }
 
-/*! \brief */
+//! \brief
 /*! \todo Window_handle
 void Context::make_current(Window_handle* win_handle)
 {
@@ -1451,10 +1451,10 @@ void Context::make_current(Window_handle* win_handle)
 }
 */
 
-/*! \brief */
+//! \brief
 void Context::release_current() { s_current_context = 0; }
 
-/*! \brief */
+//! \brief
 void Context::delete_context()
 {
   if (s_current_context == this) {
@@ -1467,14 +1467,14 @@ void Context::delete_context()
   */
 }
 
-/*! \brief */
+//! \brief
 void Context::swap_buffers()
 {
   //! \todo m_gfx_handle->swap_buffers();
   SGAL_TRACE_MSG(Trace::GRAPHICS, "Context::swap_buffers()\n");
 }
 
-/*! \brief */
+//! \brief
 void Context::push_override_appearance(Appearance* app)
 {
   if (m_override_app_stack_top == SGAL_MAX_STACK - 1) {
@@ -1484,7 +1484,7 @@ void Context::push_override_appearance(Appearance* app)
   m_override_app_stack[++m_override_app_stack_top] = app;
 }
 
-/*! \brief */
+//! \brief
 Appearance* Context::pop_override_appearance()
 {
   if (m_override_app_stack_top == -1) {
@@ -1497,7 +1497,7 @@ Appearance* Context::pop_override_appearance()
   return(app);
 }
 
-/*! \brief */
+//! \brief
 void Context::push_override_geo_prop(Override_geo_prop* gprop)
 {
   if (m_override_geo_prop_stack_top == SGAL_MAX_STACK - 1) {
@@ -1531,7 +1531,7 @@ Override_geo_prop* Context::pop_override_geo_prop()
   return(gp);
 }
 
-/*! \brief */
+//! \brief
 void Context::set_blend_funcs(Gfx::Src_blend_func src_blend_func,
                               Gfx::Dst_blend_func dst_blend_func)
 {
@@ -1539,7 +1539,7 @@ void Context::set_blend_funcs(Gfx::Src_blend_func src_blend_func,
   m_default_state->m_dst_blend_func = dst_blend_func;
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_blend_funcs(Gfx::Src_blend_func src_blend_func,
                                Gfx::Dst_blend_func dst_blend_func)
 {
@@ -1565,7 +1565,7 @@ void Context::draw_blend_funcs(Gfx::Src_blend_func src_blend_func,
   }
 }
 
-/*! \brief */
+//! \brief
 void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
                                   const Gfx* gfx)
 {
@@ -1649,7 +1649,7 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
   }
 }
 
-/*! \breif */
+//! \breif
 void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
                                   const Appearance* app)
 {
@@ -1734,7 +1734,7 @@ void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
 
 // inline void* operator new(size_t, void* t) { return t; }
 
-/*! \brief */
+//! \brief
 void Context::draw_app(Appearance* app)
 {
   Appearance* new_app;
@@ -2040,7 +2040,7 @@ void Context::draw_app(Appearance* app)
   m_last_app = (new_app == local_app) ? 0 : new_app;
 }
 
-/*! \brief obtains a light source. */
+//! \brief obtains a light source.
 Light* Context::get_light(const Int i) const
 {
   return (0 <= i && i < SGAL_MAX_LIGHTS) ?
@@ -2115,7 +2115,7 @@ Int Context::get_light_target(Light* light, const Matrix4f& mat,
   return i;
 }
 
-/*! \brief */
+//! \brief
 void Context::disable_light_targets()
 {
   Light_target* lights = m_light_stack[m_light_stack_depth];
@@ -2127,7 +2127,7 @@ void Context::disable_light_targets()
   }
 }
 
-/*! \brief disables a light source. */
+//! \brief disables a light source.
 void Context::disable_light(Light* light)
 {
   Light_target* lights = m_light_stack[m_light_stack_depth];
@@ -2139,44 +2139,44 @@ void Context::disable_light(Light* light)
   }
 }
 
-/*! \brief obtains the aspect ration based on the view port. */
+//! \brief obtains the aspect ration based on the view port.
 float Context::get_aspect_ratio() const
 {
   if (m_viewport[3] == 0) return 1;
   return ((float) m_viewport[2] / (float) m_viewport[3]);
 }
 
-/*! \brief obtains the number of red bits. */
+//! \brief obtains the number of red bits.
 Uint Context::get_red_bits() const { return m_red_bits; }
 
-/*! \brief obtains the number of green bits. */
+//! \brief obtains the number of green bits.
 Uint Context::get_green_bits() const { return m_green_bits; }
 
-/*! \brief obtains the number of blue bits. */
+//! \brief obtains the number of blue bits.
 Uint Context::get_blue_bits() const { return m_blue_bits; }
 
-/*! \brief obtains the number of alpha bits. */
+//! \brief obtains the number of alpha bits.
 Uint Context::get_alpha_bits() const { return m_alpha_bits; }
 
-/*! \brief obtains the number of accumulation red bits. */
+//! \brief obtains the number of accumulation red bits.
 Uint Context::get_accum_red_bits() const { return m_accum_red_bits; }
 
-/*! \brief obtains the number of accumulation green bits. */
+//! \brief obtains the number of accumulation green bits.
 Uint Context::get_accum_green_bits() const { return m_accum_green_bits; }
 
-/*! \brief obtains the number of accumulation blue bits. */
+//! \brief obtains the number of accumulation blue bits.
 Uint Context::get_accum_blue_bits() const { return m_accum_blue_bits; }
 
-/*! \brief obtains the number of accumulation alpha bits. */
+//! \brief obtains the number of accumulation alpha bits.
 Uint Context::get_accum_alpha_bits() const { return m_accum_alpha_bits; }
 
-/*! \brief obtains the number of depth bits. */
+//! \brief obtains the number of depth bits.
 Uint Context::get_depth_bits() const { return m_depth_bits; }
 
-/*! \brief obtains the number of stencil bits. */
+//! \brief obtains the number of stencil bits.
 Uint Context::get_stencil_bits() const { return m_stencil_bits; }
 
-/*! \brief obtains the number of samples. */
+//! \brief obtains the number of samples.
 Uint Context::get_number_of_samples() const { return m_number_of_samples; }
 
 SGAL_END_NAMESPACE

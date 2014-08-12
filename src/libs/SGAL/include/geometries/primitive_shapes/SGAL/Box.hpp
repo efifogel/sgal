@@ -91,6 +91,10 @@ public:
   /*! Clean the bounding sphere. */
   virtual Boolean clean_sphere_bound();
 
+  /*! Determine whether the geometry has texture coordinates.
+   */
+  virtual Boolean has_tex_coord();
+
   /* Set the size of the box. */
   void set_size(const Vector3f& size);
 
@@ -150,6 +154,9 @@ inline Vector3f Box::get_size() const { return m_size; }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Box::get_tag() const { return s_tag; }
+
+//! \brief determines whether the geometry has texture coordinate.
+inline Boolean Box::has_tex_coord() { return do_generate_tex_coord(); }
 
 SGAL_END_NAMESPACE
 

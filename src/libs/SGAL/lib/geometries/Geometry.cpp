@@ -32,18 +32,18 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Geometry::s_prototype(NULL);
+Container_proto* Geometry::s_prototype(nullptr);
 
-const Boolean Geometry::s_def_generated_tex_coord(true);
-const Boolean Geometry::s_def_generated_color(false);
+const Boolean Geometry::s_def_generate_color(false);
+const Boolean Geometry::s_def_generate_tex_coord(true);
 
 //! \brief constructor.
 Geometry::Geometry(Boolean proto) :
   Container(proto),
   m_dirty_sphere_bound(true),
   m_bb_is_pre_set(false),
-  m_generated_color(s_def_generated_color),
-  m_generated_tex_coord(s_def_generated_tex_coord)
+  m_generate_color(s_def_generate_color),
+  m_generate_tex_coord(s_def_generate_tex_coord)
 {}
 
 //! \brief initializes the geometry prototype.
@@ -60,14 +60,14 @@ void Geometry::init_prototype()
                                                   sphere_bound_func));
 
   // generatedTexCoord
-  Boolean_handle_function generated_tex_coord_func =
+  Boolean_handle_function generate_tex_coord_func =
     static_cast<Boolean_handle_function>
-    (&Geometry::generated_tex_coord_handle);
-  s_prototype->add_field_info(new SF_bool(GENERATED_TEX_COORD,
-                                          "generatedTexCoord",
+    (&Geometry::generate_tex_coord_handle);
+  s_prototype->add_field_info(new SF_bool(GENERATE_TEX_COORD,
+                                          "generateTexCoord",
                                           RULE_EXPOSED_FIELD,
-                                          generated_tex_coord_func,
-                                          s_def_generated_tex_coord));
+                                          generate_tex_coord_func,
+                                          s_def_generate_tex_coord));
 }
 
 //! \brief deletes the geometry prototype.
@@ -107,8 +107,8 @@ void Geometry::set_attributes(Element* elem)
       elem->mark_delete(ai);
       continue;
     }
-    if (name == "generatedTexCoord") {
-      set_generated_tex_coord(compare_to_true(value));
+    if (name == "generateTexCoord") {
+      set_generate_tex_coord(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }

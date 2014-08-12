@@ -240,15 +240,15 @@ void Shape::clean()
   if (m_override_light_model) m_appearance->clean_light_model();
 
   // If the geometry has no color coordinates, enabled the light by default.
-  if (m_override_light_enable)
-    if (!m_geometry->are_generated_color())
-      m_appearance->set_light_enable(true);
+  if (m_override_light_enable) {
+    if (!m_geometry->has_color()) m_appearance->set_light_enable(true);
+  }
 
   if (m_override_tex_gen) {
     // Enable texture generation if texture is enabled, and the geometry does
     // not have a texture-coordinate array.
     if (m_appearance->get_tex_enable() &&
-        !m_geometry->are_generated_tex_coord())
+        !m_geometry->do_generate_tex_coord() && !m_geometry->has_tex_coord())
       m_appearance->clean_tex_gen();
   }
 

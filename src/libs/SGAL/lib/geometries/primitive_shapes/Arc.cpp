@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Arc::s_tag = "Arc";
-Container_proto* Arc::s_prototype(NULL);
+Container_proto* Arc::s_prototype(nullptr);
 
 // Default values:
 const Float Arc::s_def_radius(1.0f);
@@ -69,7 +69,7 @@ Ubyte Arc::s_halftone[] = {
 
 REGISTER_TO_FACTORY(Arc, "Arc");
 
-/*! Constructor */
+//! \brief constructor.
 Arc::Arc(Boolean proto) :
   Geometry(proto),
   m_radius(s_def_radius),
@@ -88,10 +88,10 @@ delta 0.01 #thickness
   m_is_solid(s_def_is_solid)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Arc::~Arc() {}
 
-/*! \brief draws the arc */
+//! \brief draws the arc.
 void Arc::draw(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -168,19 +168,19 @@ void Arc::draw(Draw_action* action)
       // Render:
       glBegin(GL_QUADS);
       glNormal3f(vbl[0], cos_beta_bottom, vbl[2]);
-      if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f);
+      if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f);
       glVertex3f(m_radius * vbl[0], bottom, m_radius * vbl[2]);
 
       glNormal3f(vtl[0], cos_beta_top, vtl[2]);
-      if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f);
+      if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f);
       glVertex3f(m_radius * vtl[0], top, m_radius * vtl[2]);
 
       glNormal3f(vtr[0], cos_beta_top, vtr[2]);
-      if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f);
+      if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f);
       glVertex3f(m_radius * vtr[0], top, m_radius * vtr[2]);
 
       glNormal3f(vbr[0], cos_beta_bottom, vbr[2]);
-      if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f);
+      if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f);
       glVertex3f(m_radius * vbr[0], bottom, m_radius * vbr[2]);
 
       glEnd();
@@ -204,7 +204,7 @@ void Arc::draw(Draw_action* action)
   // context->draw_depth_func(Gfx::LESS_DFUNC);
 }
 
-/*! \brief draws the object in selection mode */
+//! \brief draws the object in selection mode.
 void Arc::isect(Isect_action* /* action */)
 {
   // Calculate lower left vertex:
@@ -272,7 +272,7 @@ void Arc::isect(Isect_action* /* action */)
   }
 }
 
-/*! \brief calculares the sphere bound of the sphere */
+//! \brief calculares the sphere bound of the sphere.
 Boolean Arc::clean_sphere_bound()
 {
   m_sphere_bound.set_radius(m_radius);
@@ -280,7 +280,7 @@ Boolean Arc::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Arc::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -403,7 +403,7 @@ Attribute_list Arc::get_attributes()
 }
 #endif
 
-/*! \brief initializes the arc prototype */
+//! \brief initializes the arc prototype.
 void Arc::init_prototype()
 {
   if (s_prototype) return;
@@ -481,14 +481,14 @@ void Arc::init_prototype()
                                            exec_func));
 }
 
-/*! \brief deletes the arc prototype. */
+//! \brief deletes the arc prototype.
 void Arc::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the arc prototype, */
+//! \brief obtains the arc prototype.
 Container_proto* Arc::get_prototype()
 {
   if (!s_prototype) Arc::init_prototype();

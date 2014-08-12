@@ -42,7 +42,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Cylindrical_patch::s_tag = "CylindricalPatch";
-Container_proto* Cylindrical_patch::s_prototype(NULL);
+Container_proto* Cylindrical_patch::s_prototype(nullptr);
 
 // default values:
 const Float Cylindrical_patch::s_def_radius(1);
@@ -53,7 +53,7 @@ const Float  Cylindrical_patch::s_def_beta(SGAL_TWO_PI);
 
 REGISTER_TO_FACTORY(Cylindrical_patch, "Cylindrical_patch");
 
-/*! Constructor */
+//! \brief constructor.
 Cylindrical_patch::Cylindrical_patch(Boolean proto) :
   Geometry(proto),
   m_radius(s_def_radius),
@@ -63,10 +63,10 @@ Cylindrical_patch::Cylindrical_patch(Boolean proto) :
   m_slices(s_def_slices)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Cylindrical_patch::~Cylindrical_patch(){}
 
-/*! \brief draws a single quadrilateral */
+//! \brief draws a single quadrilateral.
 void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
                                   Float cos_right, Float sin_right)
 {
@@ -83,19 +83,19 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
   Float n_right_z = -sin_right;
 
   glNormal3f(n_left_x, 0, n_left_z);
-  if (m_generated_tex_coord) glTexCoord2f(0, 0);
+  if (do_generate_tex_coord()) glTexCoord2f(0, 0);
   glVertex3f(v_left_x, bottom, v_left_z);
 
   glNormal3f(n_right_x, 0, n_right_z);
-  if (m_generated_tex_coord) glTexCoord2f(0, 1);
+  if (do_generate_tex_coord()) glTexCoord2f(0, 1);
   glVertex3f(v_right_x, bottom, v_right_z);
 
   glNormal3f(n_right_x, 0, n_right_z);
-  if (m_generated_tex_coord) glTexCoord2f(1, 1);
+  if (do_generate_tex_coord()) glTexCoord2f(1, 1);
   glVertex3f(v_right_x, top, v_right_z);
 
   glNormal3f(n_left_x, 0, n_left_z);
-  if (m_generated_tex_coord) glTexCoord2f(1, 0);
+  if (do_generate_tex_coord()) glTexCoord2f(1, 0);
   glVertex3f(v_left_x, top, v_left_z);
 }
 
@@ -133,7 +133,7 @@ void Cylindrical_patch::draw(Draw_action* action)
   if (has_scale()) glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the cylindrical patch in selection mode. */
+//! \brief draws the cylindrical patch in selection mode.
 void Cylindrical_patch::isect(Isect_action* /* action */)
 {
   Float top = m_height / 2;
@@ -170,7 +170,7 @@ void Cylindrical_patch::isect(Isect_action* /* action */)
   glEnd();
 }
 
-/* \brief calculares the sphere bound of the cylindrical patch */
+//! \brief calculares the sphere bound of the cylindrical patch.
 Boolean Cylindrical_patch::clean_sphere_bound()
 {
   float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
@@ -179,7 +179,7 @@ Boolean Cylindrical_patch::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the container attributes */
+//! \brief sets the container attributes.
 void Cylindrical_patch::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
@@ -267,7 +267,7 @@ Attribute_list Cylindrical_patch::get_attributes()
 }
 #endif
 
-/*! \brief initializes the cylindrical patch prototype. */
+//! \brief initializes the cylindrical patch prototype.
 void Cylindrical_patch::init_prototype()
 {
   if (s_prototype) return;
@@ -324,14 +324,14 @@ void Cylindrical_patch::init_prototype()
                                            exec_func));
 }
 
-/*! \brief deletes the prototype */
+//! \brief deletes the prototype.
 void Cylindrical_patch::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype */
+//! \brief obtains the prototype.
 Container_proto* Cylindrical_patch::get_prototype()
 {
   if (!s_prototype) Cylindrical_patch::init_prototype();

@@ -100,6 +100,10 @@ public:
   /*! Calculare the sphere bound of the sphere */
   virtual Boolean clean_sphere_bound();
 
+  /*! Determine whether the geometry has texture coordinates.
+   */
+  virtual Boolean has_tex_coord();
+
   /*! Set the sphere center. */
   void set_center(const Vector3f& center);
 
@@ -170,13 +174,13 @@ private:
 #pragma warning( pop )
 #endif
 
-/* C\brief onstructs the prototype. */
+//! \brief constructs the prototype.
 inline Sphere* Sphere::prototype() { return new Sphere(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Sphere::clone() { return new Sphere(); }
 
-/*! \brief sets the sphere center. */
+//! \brief sets the sphere center.
 inline void Sphere::set_center(const Vector3f& center)
 {
   m_center = center;
@@ -186,33 +190,36 @@ inline void Sphere::set_center(const Vector3f& center)
 /*! \brief obtains the sphere center. */
 inline const Vector3f& Sphere::get_center() const { return m_center; }
 
-/*! \brief sets the sphere radius. */
+//! \brief sets the sphere radius.
 inline void Sphere::set_radius(Float radius)
 {
   m_radius = radius;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the sphere radius. */
+//! \brief obtains the sphere radius.
 inline Float Sphere::get_radius() const { return m_radius; }
 
-/*! \brief sets the number of stacks that the sphere is made of. */
+//! \brief sets the number of stacks that the sphere is made of.
 inline void Sphere::set_stacks(Uint stacks) { m_stacks = stacks; }
 
-/*! \brief obtains the number of stacks that the sphere is made of. */
+//! \brief obtains the number of stacks that the sphere is made of.
 inline Uint Sphere::get_stacks() const { return m_stacks; }
 
-/*! \brief sets the number of slices that the sphere is made of. */
+//! \brief sets the number of slices that the sphere is made of.
 inline void Sphere::set_slices(Uint slices) { m_slices = slices; }
 
-/*! \brief obtains the number of slices that the sphere is made of. */
+//! \brief obtains the number of slices that the sphere is made of.
 inline Uint Sphere::get_slices() const { return m_slices; }
 
-/*! \brief determines whether the sphere is dirty. */
+//! \brief determines whether the sphere is dirty.
 inline Boolean Sphere::is_dirty() const { return m_dirty; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Sphere::get_tag() const { return s_tag; }
+
+//! \brief determines whether the geometry has texture coordinate.
+inline Boolean Sphere::has_tex_coord() { return do_generate_tex_coord(); }
 
 SGAL_END_NAMESPACE
 

@@ -66,7 +66,7 @@ void Sphere::draw(Draw_action* /* action */)
   glPushMatrix();
   glTranslatef(m_center[0], m_center[1], m_center[2]);
   // glRotatef(-90, 1, 0, 0);
-  gluQuadricTexture(m_sphere, (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
+  gluQuadricTexture(m_sphere, (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
   gluSphere(m_sphere, m_radius, m_slices, m_stacks);
   glPopMatrix();
 

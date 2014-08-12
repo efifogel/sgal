@@ -110,6 +110,10 @@ public:
 
   virtual Boolean clean_sphere_bound();
 
+  /*! Determine whether the geometry has texture coordinates.
+   */
+  virtual Boolean has_tex_coord();
+
   /*! Set the radius of the cylinder. */
   void set_radius(Float radius);
 
@@ -277,6 +281,9 @@ inline Boolean Cylinder::is_body_visible() const { return m_is_body_visible; }
 
 /*! \brief obtains the tag (type) of the container. */
 inline const std::string& Cylinder::get_tag() const { return s_tag; }
+
+//! \brief determines whether the geometry has texture coordinate.
+inline Boolean Cylinder::has_tex_coord() { return do_generate_tex_coord(); }
 
 SGAL_END_NAMESPACE
 

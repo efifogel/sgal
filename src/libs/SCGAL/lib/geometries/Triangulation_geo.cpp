@@ -67,7 +67,10 @@ Triangulation_geo::Triangulation_geo(Boolean proto) :
   m_draw_haloed(s_def_draw_haloed),
   m_bb_is_pre_set(false),
   m_time(0)
-{ set_generated_tex_coord(false); }
+{
+  // Generate color by default:
+  m_generate_color = true;
+}
 
 //! \brief destructor.
 Triangulation_geo::~Triangulation_geo() {}
@@ -95,7 +98,7 @@ void Triangulation_geo::clean()
   typedef Index_map::const_iterator                     Index_iter;
 
   Index_map point_index;
-  if (are_generated_color()) {
+  if (do_generate_color() && m_color_array && (0 != m_color_array->size())) {
     SGAL_assertion_msg(m_coord_array->size() <= m_color_array->size(),
                        "color size must at least as large as point size!");
     Uint index = 0;
@@ -115,7 +118,7 @@ void Triangulation_geo::clean()
     float z = static_cast<float>(CGAL::to_double(p.z()));
     vd.set_coord(x, y, z);
 
-    if (are_generated_color()) {
+    if (do_generate_color() && m_color_array && (0 != m_color_array->size())) {
       Index_iter ii = point_index.find(&p);
       SGAL_assertion(ii != point_index.end());
       Uint i = (*ii).second;
@@ -173,7 +176,6 @@ void Triangulation_geo::draw(SGAL::Draw_action* action)
 void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 {
   SGAL::Context* context = action->get_context();
-  if (are_generated_color()) context->draw_light_enable(false);
   glBegin(GL_LINES);
   for (Finite_edges_iterator fei = m_triangulation.finite_edges_begin();
        fei != m_triangulation.finite_edges_end(); ++fei)
@@ -189,7 +191,7 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 
     const Vertex_data& vd1 = v1->info();
 
-    if (are_generated_color()) {
+    if (has_color()) {
       const Vector3f& c1 = vd1.get_color();
       glColor3fv((float*)&c1);
     }
@@ -199,7 +201,7 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 
     const Vertex_data& vd2 = v2->info();
 
-    if (are_generated_color()) {
+    if (has_color()) {
       const Vector3f& c2 = vd2.get_color();
       glColor3fv((float*)&c2);
     }
@@ -208,11 +210,6 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
     glVertex3fv((float*)&p2);
   }
   glEnd();
-
-  if (are_generated_color()) {
-    glColor3f(1.0f, 1.0f, 1.0f);
-    context->draw_light_enable(true);
-  }
 }
 
 //! \brief

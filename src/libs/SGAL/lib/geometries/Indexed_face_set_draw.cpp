@@ -701,7 +701,21 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_TRIANGLES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_flat_coord_index(m_color_array, j));
+    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
+    glColor3fv(get_by_flat_coord_index(m_color_array, j));
+    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
+    glColor3fv(get_by_flat_coord_index(m_color_array, j));
+    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
+  }
+  glEnd();
 }
 
 /*!

@@ -99,6 +99,10 @@ public:
 
   virtual Boolean clean_sphere_bound();
 
+  /*! Determine whether the geometry has texture coordinates.
+   */
+  virtual Boolean has_tex_coord();
+
   /*! Set the radius of the bottom disk */
   void set_bottom_radius(Float radius);
 
@@ -186,40 +190,40 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Cone* Cone::prototype() { return new Cone(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Cone::clone() { return new Cone(); }
 
-/*! \brief sets the radius of the bottom disk. */
+//! \brief sets the radius of the bottom disk.
 inline void Cone::set_bottom_radius(Float radius)
 {
   m_bottom_radius = radius;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the radius of the bottom disk. */
+//! \brief obtains the radius of the bottom disk.
 inline Float Cone::get_bottom_radius() const { return m_bottom_radius; }
 
-/*! \brief sets the height. */
+//! \brief sets the height.
 inline void Cone::set_height(Float height)
 {
   m_height = height;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the height. */
+//! \brief obtains the height.
 inline Float Cone::get_height() const { return m_height; }
 
 inline void Cone::set_stacks(Uint stacks) { m_stacks = stacks; }
 
-/*! \brief obtains the stacks. */
+//! \brief obtains the stacks.
 inline Uint Cone::get_stacks() const { return m_stacks; }
 
 inline void Cone::set_slices(Uint slices) { m_slices = slices; }
 
-/*! \brief obtains the slices. */
+//! \brief obtains the slices.
 inline Uint Cone::get_slices() const { return m_slices; }
 
 inline void Cone::set_is_bottom_visible(Boolean flag)
@@ -231,11 +235,14 @@ inline void Cone::set_is_side_visible(Boolean flag) { m_side_visible = flag; }
 
 inline Boolean Cone::is_side_visible() const { return m_side_visible; }
 
-/*! \brief determines whether the geometry is dirty. */
+//! \brief determines whether the geometry is dirty.
 inline Boolean Cone::is_dirty() const { return m_dirty; }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Cone::get_tag() const { return s_tag; }
+
+//! \brief determines whether the geometry has texture coordinate.
+inline Boolean Cone::has_tex_coord() { return do_generate_tex_coord(); }
 
 SGAL_END_NAMESPACE
 

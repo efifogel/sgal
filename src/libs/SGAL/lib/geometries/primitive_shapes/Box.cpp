@@ -34,7 +34,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Box::s_tag = "Box";
-Container_proto* Box::s_prototype(NULL);
+Container_proto* Box::s_prototype(nullptr);
 
 // Default values:
 const Vector3f Box::s_def_size(2, 2, 2);
@@ -107,7 +107,7 @@ void Box::isect(Isect_action* /* action */)
   glEnd();
 }
 
-//! Calculate the bounding sphere of the box.
+//! \brief calculates the bounding sphere of the box.
 Boolean Box::clean_sphere_bound()
 {
   float radius = sqrtf(m_size[0] * m_size[0] * 0.25f +
@@ -131,7 +131,7 @@ void Box::init()
 #endif
 }
 
-//! Draw the box.
+//! \brief draws the box.
 void Box::draw_box()
 {
   float w = m_size[0] * 0.5f;
@@ -154,45 +154,45 @@ void Box::draw_box()
   //! \todo handle different modal combinations
   // front
   glNormal3f(0, 0, -1);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p0);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p1);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p0);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p1);
 
   // right
   glNormal3f(1, 0, 0);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p2);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p2);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
 
   // back
   glNormal3f(0, 0, 1);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p5);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p6);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p7);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p4);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p5);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p6);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p7);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p4);
 
   // left
   glNormal3f(-1, 0, 0);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p3);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p0);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p3);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p0);
 
   //top
   glNormal3f(0, 1,0);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p3);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p2);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p3);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p2);
 
   // bottom
   glNormal3f(0, -1, 0);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-  if (m_generated_tex_coord) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p0);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p1);
-  if (m_generated_tex_coord) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p0);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p1);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
 
   glEnd();
 
@@ -241,7 +241,7 @@ Attribute_list Box::get_attributes()
 }
 #endif
 
-//! initializes the box prototype.
+//! \brief initializes the box prototype.
 void Box::init_prototype()
 {
   if (s_prototype) return;
@@ -259,14 +259,14 @@ void Box::init_prototype()
                                               exec_func));
 }
 
-//! \brief
+//! \brief deletes the prototype.
 void Box::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-//! \brief
+//! \brief obtains the prototype.
 Container_proto* Box::get_prototype()
 {
   if (!s_prototype) init_prototype();

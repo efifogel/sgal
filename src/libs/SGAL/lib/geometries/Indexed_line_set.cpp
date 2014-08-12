@@ -41,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Indexed_line_set::s_tag = "IndexedLineSet";
-Container_proto* Indexed_line_set::s_prototype(NULL);
+Container_proto* Indexed_line_set::s_prototype(nullptr);
 
 // Default values:
 const Boolean Indexed_line_set::m_def_color_per_vertex(true);
@@ -101,10 +101,8 @@ void Indexed_line_set::draw(Draw_action* action)
   Attachment fragment_attached = (fragment_source == FS_NORMAL) ?
     m_normal_attachment : m_color_attachment;
 
-  if (fragment_source == FS_COLOR) {
-    context->draw_light_enable(false);
+  if (fragment_source == FS_COLOR)
     if (fragment_attached == PER_MESH) glColor3fv(get(m_color_array, 0));
-  }
 
   if (m_primitive_type == PT_LINES) {
     Uint j = 0;
@@ -169,7 +167,6 @@ void Indexed_line_set::draw(Draw_action* action)
     context->draw_depth_enable(true);
     context->draw_depth_mask(true);
   }
-  if (fragment_source) context->draw_light_enable(true);
 }
 
 //! \brief
@@ -244,7 +241,7 @@ void Indexed_line_set::init_prototype()
 void Indexed_line_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.

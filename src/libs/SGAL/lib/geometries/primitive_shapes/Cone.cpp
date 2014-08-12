@@ -56,8 +56,7 @@ Cone::Cone(Boolean proto) :
   m_bottom_visible(s_def_bottom_visible),
   m_cone(0),
   m_cone_base(0)
-{
-}
+{}
 
 //! \brief destructor.
 Cone::~Cone()
@@ -80,7 +79,7 @@ void Cone::draw(Draw_action* /* action */)
     // draw the cone. (cylinder with up radius = 0)
     glPushMatrix();
     glTranslatef(0, 0, -m_height/2);
-    gluQuadricTexture(m_cone, (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
+    gluQuadricTexture(m_cone, (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
     gluCylinder(m_cone, 0, m_bottom_radius, m_height, m_slices, m_stacks);
     glPopMatrix();
   }
@@ -88,7 +87,7 @@ void Cone::draw(Draw_action* /* action */)
   if (m_bottom_visible) {
     glTranslatef(0, 0, m_height/2);
     gluQuadricTexture(m_cone_base,
-                      (m_generated_tex_coord) ? GL_TRUE : GL_FALSE);
+                      (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
     gluDisk(m_cone_base, 0, m_bottom_radius, m_slices, 1);
   }
 
