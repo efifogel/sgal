@@ -138,6 +138,24 @@ public:
     LAST
   };
 
+  // Drawing & representation:
+
+#define SGAL_BO_FRAG_SOURCE_        0
+#define SGAL_BO_FRAG_SOURCE         0x00000001
+#define SGAL_BO_FRAG_INDEXED_       1
+#define SGAL_BO_FRAG_INDEXED        0x00000002
+#define SGAL_BO_FRAG_ATTACHMENT_    2
+#define SGAL_BO_FRAG_ATTACHMENT     0x0000000c
+#define SGAL_BO_TEXTURE_ENABLED_    4
+#define SGAL_BO_TEXTURE_ENABLED     0x00000010
+#define SGAL_BO_TEXTURE_INDEXED_    5
+#define SGAL_BO_TEXTURE_INDEXED     0x00000020
+#define SGAL_BO_PRIM_TYPE_          6
+#define SGAL_BO_PRIM_TYPE           0x000001c0
+#define SGAL_BO_VERTEX_ARRAY_       9
+#define SGAL_BO_VERTEX_ARRAY        0x00000200
+#define SGAL_NUM_BO_DRAWS           0x400
+
   /*! Constructor */
   Boundary_set(Boolean proto = false);
 
@@ -146,13 +164,15 @@ public:
 
   /// \name Protoype handling
   //@{
-  /*! Initialize the node prototype. */
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype();
 
   /*! Delete the node prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the node prototype. */
+  /*! Obtain the node prototype.
+   */
   virtual Container_proto* get_prototype();
   //@}
 
@@ -175,24 +195,6 @@ public:
    * \param scene_graph the given scene
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
-
-  // Drawing & representation:
-
-#define FRAGMENT_SOURCE_        0
-#define FRAGMENT_SOURCE         0x00000001
-#define FRAGMENT_INDEXED_       1
-#define FRAGMENT_INDEXED        0x00000002
-#define FRAGMENT_ATTACHMENT_    2
-#define FRAGMENT_ATTACHMENT     0x0000000c
-#define TEXTURE_ENABLED_        4
-#define TEXTURE_ENABLED         0x00000010
-#define TEXTURE_INDEXED_        5
-#define TEXTURE_INDEXED         0x00000020
-#define PRIMITIVE_TYPE_         6
-#define PRIMITIVE_TYPE          0x000001c0
-#define VERTEX_ARRAY_           9
-#define VERTEX_ARRAY            0x00000200
-#define NUM_DRAWS               0x400
 
   /*! Calculate a single normal per vertex for all vertices.
    * For each vertex compute the weighted normal based on the normals of
@@ -470,7 +472,7 @@ public:
   void draw_FAPT_VAYE();
   void draw_FAPM_VAYE();
 
-  static void (Boundary_set::*draws[NUM_DRAWS])();
+  static void (Boundary_set::*m_draws[SGAL_NUM_BO_DRAWS])();
   static Boolean m_draws_initialized;
 
   /*! Set the coordinate array.

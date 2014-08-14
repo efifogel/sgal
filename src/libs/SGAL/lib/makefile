@@ -118,6 +118,7 @@ CPPSOURCES+= Image_texture.cpp
 CPPSOURCES+= Imagemagick_font.cpp
 CPPSOURCES+= Indexed_face_set.cpp
 CPPSOURCES+= Indexed_line_set.cpp
+CPPSOURCES+= Indexed_line_set_draw.cpp
 CPPSOURCES+= Indexed_geodesic_set.cpp
 CPPSOURCES+= Indexed_face_set_draw.cpp
 CPPSOURCES+= initialize.cpp

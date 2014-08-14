@@ -47,13 +47,32 @@ public:
     LAST
   };
 
+  // Drawing & representation:
+
+#define SGAL_LI_FRAG_SOURCE_        0
+#define SGAL_LI_FRAG_SOURCE         0x00000001
+#define SGAL_LI_FRAG_INDEXED_       1
+#define SGAL_LI_FRAG_INDEXED        0x00000002
+#define SGAL_LI_FRAG_ATTACHMENT_    2
+#define SGAL_LI_FRAG_ATTACHMENT     0x0000000c
+#define SGAL_LI_TEXTURE_ENABLED_    4
+#define SGAL_LI_TEXTURE_ENABLED     0x00000010
+#define SGAL_LI_TEXTURE_INDEXED_    5
+#define SGAL_LI_TEXTURE_INDEXED     0x00000020
+#define SGAL_LI_PRIM_TYPE_          6
+#define SGAL_LI_PRIM_TYPE           0x000000c0
+#define SGAL_LI_VERTEX_ARRAY_       8
+#define SGAL_LI_VERTEX_ARRAY        0x00000100
+#define SGAL_NUM_LI_DRAWS           0x200
+
   /*! Constructor. */
   Indexed_line_set(Boolean proto = false);
 
   /*! Destructor. */
   virtual ~Indexed_line_set();
 
-  /* Construct the prototype. */
+  /* Construct the prototype.
+   */
   static Indexed_line_set* prototype();
 
   /*! Clone. */
@@ -64,14 +83,19 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype. */
+  /// \name Protoype handling
+  //@{
+  /*! Initialize the node prototype.
+   */
   virtual void init_prototype();
 
   /*! Delete the prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the prototype. */
+  /*! Obtain the prototype.
+   */
   virtual Container_proto* get_prototype();
+  //@}
 
   /// \name field handlers
   //@{
@@ -123,6 +147,158 @@ public:
   Float get_line_width();
 
 protected:
+  // Draw routines:
+  void draw_invalid();
+
+  // Lines (general):
+  // Texture disabled:
+  void draw_FSNO_FINO_FAPV_TENO_MOLI_VANO();
+  void draw_FSCO_FINO_FAPV_TENO_MOLI_VANO();
+  void draw_FSNO_FIYE_FAPV_TENO_MOLI_VANO();
+  void draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO();
+
+  void draw_FSNO_FINO_FAPT_TENO_MOLI_VANO();
+  void draw_FSCO_FINO_FAPT_TENO_MOLI_VANO();
+  void draw_FSNO_FIYE_FAPT_TENO_MOLI_VANO();
+  void draw_FSCO_FIYE_FAPT_TENO_MOLI_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TENO_MOLI_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TENO_MOLI_VANO();
+  // void draw_FSNO_FIYE_FAPM_TENO_MOLI_VANO(); nvalid
+  void draw_FSCO_FIYE_FAPM_TENO_MOLI_VANO();
+
+  // Texture enabled:
+  void draw_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO();
+  void draw_FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO();
+  void draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO();
+  void draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO();
+
+  void draw_FSNO_FINO_FAPT_TEYE_TINO_MOLI_VANO();
+  void draw_FSCO_FINO_FAPT_TEYE_TINO_MOLI_VANO();
+  void draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLI_VANO();
+  void draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLI_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TEYE_TINO_MOLI_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO();
+  // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLI_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VANO();
+
+  void draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO();
+  void draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO();
+  void draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO();
+  void draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO();
+
+  void draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLI_VANO();
+  void draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLI_VANO();
+  void draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO();
+  void draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TEYE_TIYE_MOLI_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO();
+  // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO();
+
+  // Line strips:
+  // Texture disabled:
+  void draw_FSNO_FINO_FAPV_TENO_MOLS_VANO();
+  void draw_FSCO_FINO_FAPV_TENO_MOLS_VANO();
+  void draw_FSNO_FIYE_FAPV_TENO_MOLS_VANO();
+  void draw_FSCO_FIYE_FAPV_TENO_MOLS_VANO();
+
+  void draw_FSNO_FINO_FAPT_TENO_MOLS_VANO();
+  void draw_FSCO_FINO_FAPT_TENO_MOLS_VANO();
+  void draw_FSNO_FIYE_FAPT_TENO_MOLS_VANO();
+  void draw_FSCO_FIYE_FAPT_TENO_MOLS_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TENO_MOLS_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TENO_MOLS_VANO();
+  // void draw_FSNO_FIYE_FAPM_TENO_MOLS_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TENO_MOLS_VANO();
+
+  // Texture enabled:
+  void draw_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO();
+  void draw_FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO();
+  void draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO();
+  void draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO();
+
+  void draw_FSNO_FINO_FAPT_TEYE_TINO_MOLS_VANO();
+  void draw_FSCO_FINO_FAPT_TEYE_TINO_MOLS_VANO();
+  void draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLS_VANO();
+  void draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLS_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TEYE_TINO_MOLS_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO();
+  // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLS_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VANO();
+
+  void draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO();
+  void draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO();
+  void draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO();
+  void draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO();
+
+  void draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLS_VANO();
+  void draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLS_VANO();
+  void draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO();
+  void draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TEYE_TIYE_MOLS_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO();
+  // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO();
+
+  // Line loops:
+  // Texture disabled:
+  void draw_FSNO_FINO_FAPV_TENO_MOLL_VANO();
+  void draw_FSCO_FINO_FAPV_TENO_MOLL_VANO();
+  void draw_FSNO_FIYE_FAPV_TENO_MOLL_VANO();
+  void draw_FSCO_FIYE_FAPV_TENO_MOLL_VANO();
+
+  void draw_FSNO_FINO_FAPT_TENO_MOLL_VANO();
+  void draw_FSCO_FINO_FAPT_TENO_MOLL_VANO();
+  void draw_FSNO_FIYE_FAPT_TENO_MOLL_VANO();
+  void draw_FSCO_FIYE_FAPT_TENO_MOLL_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TENO_MOLL_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TENO_MOLL_VANO();
+  // void draw_FSNO_FIYE_FAPM_TENO_MOLL_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TENO_MOLL_VANO();
+
+  // Texture enabled:
+  void draw_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO();
+  void draw_FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO();
+  void draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO();
+  void draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO();
+
+  void draw_FSNO_FINO_FAPT_TEYE_TINO_MOLL_VANO();
+  void draw_FSCO_FINO_FAPT_TEYE_TINO_MOLL_VANO();
+  void draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLL_VANO();
+  void draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLL_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TEYE_TINO_MOLL_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO();
+  // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLL_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VANO();
+
+  void draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO();
+  void draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO();
+  void draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO();
+  void draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO();
+
+  void draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLL_VANO();
+  void draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLL_VANO();
+  void draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO();
+  void draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO();
+
+  // void draw_FSNO_FINO_FAPM_TEYE_TIYE_MOLL_VANO(); invalid
+  void draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO();
+  // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO(); invalid
+  void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO();
+
+  // Vertex Buffer:
+  void draw_FAPV_VAYE();
+  void draw_FAPT_VAYE();
+  void draw_FAPM_VAYE();
+
   /*! Indicates whether a single color is specified per vertex. */
   Boolean m_color_per_vertex;
 
@@ -146,6 +322,9 @@ protected:
 
   /*! */
   Int m_display_list_id;
+
+  static void (Indexed_line_set::*m_draws[SGAL_NUM_LI_DRAWS])();
+  static Boolean m_draws_initialized;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
