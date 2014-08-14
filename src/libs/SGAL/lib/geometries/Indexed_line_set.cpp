@@ -130,30 +130,27 @@ void Indexed_line_set::draw(Draw_action* action)
   }
   else if (m_primitive_type == PT_LINE_STRIPS) {
     Uint j = 0;
-    Uint k = 0;
     for (Uint i = 0; i < m_num_primitives; ++i) {
       if (fragment_attached == PER_PRIMITIVE) {
         if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, k));
+          if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, j));
         }
         else {
           if (m_normal_array)
-            glNormal3fv(get_by_coord_index(m_normal_array, k));
+            glNormal3fv(get_by_coord_index(m_normal_array, j));
         }
-        ++k;
       }
       glBegin(GL_LINE_STRIP);
       for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
         if (fragment_attached == PER_VERTEX) {
           if (fragment_source == FS_COLOR) {
             if (m_color_array)
-              glColor3fv(get_by_coord_index(m_color_array, k));
+              glColor3fv(get_by_coord_index(m_color_array, j));
           }
           else {
             if (m_normal_array)
-              glNormal3fv(get_by_coord_index(m_normal_array, k));
+              glNormal3fv(get_by_coord_index(m_normal_array, j));
           }
-          ++k;
         }
         glVertex3fv(get_by_coord_index(m_coord_array, j));
       }
@@ -192,10 +189,8 @@ void Indexed_line_set::set_attributes(Element* elem)
 {
   Geo_set::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
   std::string normal_indices_string;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "colorPerVertex") {

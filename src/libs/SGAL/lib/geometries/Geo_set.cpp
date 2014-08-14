@@ -156,13 +156,13 @@ void Geo_set::init_prototype()
 void Geo_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
 Container_proto* Geo_set::get_prototype()
 {
-  if (s_prototype == NULL) Geo_set::init_prototype();
+  if (s_prototype == nullptr) Geo_set::init_prototype();
   return s_prototype;
 }
 
@@ -280,9 +280,9 @@ void Geo_set::set_attributes(Element* elem)
         m_num_primitives = size >> 1;
       }
       else if (m_primitive_type == PT_LINE_STRIPS) {
-        for (i = 0; i < size; ++i) {
-          if (m_coord_indices[i] == static_cast<Uint>(-1)) m_num_primitives++;
-        }
+        for (auto it = m_coord_indices.begin(); it != m_coord_indices.end();
+             ++it)
+          if (*it == static_cast<Uint>(-1)) ++m_num_primitives;
       }
       if (m_num_primitives == 0) goto err;
       elem->mark_delete(ai);
@@ -293,8 +293,7 @@ void Geo_set::set_attributes(Element* elem)
       Uint num_values = get_num_tokens(value);
       m_color_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < num_values; ++i)
-        svalue >> m_color_indices[i];
+      for (Uint i = 0; i < num_values; ++i) svalue >> m_color_indices[i];
       elem->mark_delete(ai);
       continue;
     }
@@ -302,8 +301,7 @@ void Geo_set::set_attributes(Element* elem)
       Uint num_values = get_num_tokens(value);
       m_normal_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < num_values; ++i)
-        svalue >> m_normal_indices[i];
+      for (Uint i = 0; i < num_values; ++i) svalue >> m_normal_indices[i];
       elem->mark_delete(ai);
       continue;
     }
@@ -311,8 +309,7 @@ void Geo_set::set_attributes(Element* elem)
       Uint num_values = get_num_tokens(value);
       m_tex_coord_indices.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < num_values; ++i)
-        svalue >> m_tex_coord_indices[i];
+      for (Uint i = 0; i < num_values; ++i) svalue >> m_tex_coord_indices[i];
       elem->mark_delete(ai);
       continue;
     }
@@ -322,8 +319,7 @@ void Geo_set::set_attributes(Element* elem)
                                      &s_primitive_type_names[num],
                                      strip_double_quotes(value));
       Uint index = found - s_primitive_type_names;
-      if (index < num)
-        set_primitive_type(static_cast<Primitive_type>(index));
+      if (index < num) set_primitive_type(static_cast<Primitive_type>(index));
       else
         std::cerr << "Illegal primitive type name (" << value << ")!"
                   << std::endl;
@@ -338,29 +334,25 @@ void Geo_set::set_attributes(Element* elem)
     const std::string& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "coord") {
-      Shared_coord_array coord_array =
-        boost::dynamic_pointer_cast<Coord_array>(cont);
+      auto coord_array = boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array(coord_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "normal") {
-      Shared_normal_array normal_array =
-        boost::dynamic_pointer_cast<Normal_array>(cont);
+      auto normal_array = boost::dynamic_pointer_cast<Normal_array>(cont);
       set_normal_array(normal_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "color") {
-      Shared_color_array color_array =
-        boost::dynamic_pointer_cast<Color_array>(cont);
+      auto color_array = boost::dynamic_pointer_cast<Color_array>(cont);
       set_color_array(color_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "texCoord") {
-      Shared_tex_coord_array tex_coord_array =
-        boost::dynamic_pointer_cast<Tex_coord_array>(cont);
+      auto tex_coord_array = boost::dynamic_pointer_cast<Tex_coord_array>(cont);
       set_tex_coord_array(tex_coord_array);
       elem->mark_delete(cai);
       continue;

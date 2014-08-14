@@ -124,6 +124,11 @@ public:
   /*! Obtain the const iterator to the Array past-the-end element. */
   const std::vector<Vector3f>::const_iterator end() const ;
 
+  /*! Push a new element at the back.
+   * \param val (in) the new element.
+   */
+  void push_back(const Vector3f& val);
+
   /*! Array indexing operator. */
   Vector3f& operator[](Uint n);
 
@@ -204,6 +209,10 @@ inline std::vector<Vector3f>::iterator Color_array::end()
 //! \brief obtains the const iterator to the Array first element.
 inline const std::vector<Vector3f>::const_iterator Color_array::end() const
 { return m_array.end(); }
+
+//! \brief pushes a new element at the back.
+inline void Color_array::push_back(const Vector3f& val)
+{ m_array.push_back(val); }
 
 //! \brief Array indexing operator.
 inline Vector3f& Color_array::operator[](Uint n) { return m_array[n]; }

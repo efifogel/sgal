@@ -43,10 +43,20 @@
 SGAL_BEGIN_NAMESPACE
 
 template <typename Refs>
-struct Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
-  Uint m_index;
-  Boolean m_creased;
+class Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
+public:
+  /*! Constructor */
   Polyhedron_halfedge() {}
+
+  /*! Obtain the index of the index of the incident vertex.
+   * \return the index of the incident vertex.
+   */
+  Uint get_index() const { return m_index; }
+
+  /*! The index of the index of the incident vertex. */
+  Uint m_index;
+
+  Boolean m_creased;
 };
 
 // An items type using my vertex and edge.
@@ -57,11 +67,11 @@ struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
   };
 };
 
-typedef CGAL::Cartesian<Float>                         Inexact_kernel;
+typedef CGAL::Cartesian<Float>                     Inexact_kernel;
 typedef CGAL::Polyhedron_traits_with_normals_3<Inexact_kernel>
-                                                       Inexact_polyhedron_traits;
+                                                   Inexact_polyhedron_traits;
 typedef CGAL::Polyhedron_3<Inexact_polyhedron_traits, Polyhedron_items>
-                                                       Inexact_polyhedron;
+                                                   Inexact_polyhedron;
 
 SGAL_END_NAMESPACE
 

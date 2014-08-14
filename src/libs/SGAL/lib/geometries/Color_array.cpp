@@ -49,35 +49,31 @@ void Color_array::init_prototype()
 void Color_array::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.
 Container_proto* Color_array::get_prototype()
 {
-  if (s_prototype == NULL) Color_array::init_prototype();
+  if (s_prototype == nullptr) Color_array::init_prototype();
   return s_prototype;
 }
 
 //! \brief sets the attributes of this container.
 void Color_array::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-
   Container::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "color") {
-      Uint num_values = get_num_tokens(value);
-      unsigned int size = num_values / 3;
+      auto num_values = get_num_tokens(value);
+      auto size = num_values / 3;
       m_array.resize(size);
       //! svalue.seekg(0); why this doesn't work?
       std::istringstream svalue(value, std::istringstream::in);
-      for (unsigned int i = 0 ; i < size ; i++) {
+      for (Uint i = 0; i < size; ++i)
         svalue >> m_array[i][0] >> m_array[i][1] >> m_array[i][2];
-      }
       elem->mark_delete(ai);
     }
   }

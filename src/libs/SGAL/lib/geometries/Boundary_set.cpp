@@ -1600,7 +1600,6 @@ void Boundary_set::clean_vertex_normal_buffer(Uint size,
 //! \brief cleans the data structure of the vertex color buffer object.
 void Boundary_set::clean_vertex_color_buffer(Uint size, const GLfloat* data)
 {
-  std::cout << "clean_vertex_color_buffer: " << size << std::endl;
 #if defined(GL_ARB_vertex_buffer_object)
   if (m_color_buffer_id == 0) glGenBuffersARB(1, &m_color_buffer_id);
   SGAL_assertion(m_color_buffer_id != 0);
