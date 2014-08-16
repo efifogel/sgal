@@ -41,11 +41,11 @@ void Boundary_set::draw_invalid()
 /****************      Polygons      ****************/
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
 {
@@ -67,24 +67,24 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
 {
@@ -106,11 +106,11 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOPO_VANO()
 {
@@ -118,11 +118,11 @@ void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
 {
@@ -143,11 +143,11 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOPO_VANO()
 {
@@ -155,11 +155,11 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
 {
@@ -180,11 +180,11 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
 {
@@ -205,51 +205,36 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
   }
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - polygons
- */
- void Boundary_set::draw_FSNO_FINO_FAPM_TENO_MOPO_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOPO_VANO\n");
-
-  SGAL_assertion(m_coord_array);
-
-  Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
-    glBegin(GL_POLYGON);
-    for (; m_coord_indices[j] != (Uint) -1; ++j)
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
-    glEnd();
-    ++j;
-  }
-}
+// void draw_FSNO_FINO_FAPM_TENO_MOPO_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOPO_VANO\n");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TENO_MOPO_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TENO_MOPO_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TENO_MOPO_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOPO_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPM_TENO_MOPO_VANO\n");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 // Texture enabled:
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
 {
@@ -274,25 +259,26 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FINO_FAPV_TEYE_TINO_MOPO_VANO\n");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
 {
@@ -317,27 +303,27 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
 {
@@ -362,27 +348,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 {
@@ -407,58 +393,52 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
-  Fragment source      - normal
-  Fragment indexed     - true
-  Fragment attach      - per mesh
-  Textute enabled      - true
-  Texture indexed      - false
-*/
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TINO_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TINO_MOPO_VANO(); invalid
 
 /*!
-  Fragment source      - color
-  Fragment indexed     - true
-  Fragment attach      - per mesh
-  Textute enabled      - true
-  Texture indexed      - false
-*/
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - false
+ */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOPO_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOPO_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FICO_FAPM_TEYE_TINO_MOPO_VANO\n");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
 {
@@ -483,26 +463,26 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
 {
@@ -527,26 +507,26 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
 {
@@ -571,27 +551,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 {
@@ -616,60 +596,53 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TIYE_MOPO_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - polygons
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO(); invalid
+
+void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO\n");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /****************    Triangles    ****************/
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
 {
@@ -692,11 +665,11 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
 {
@@ -719,11 +692,11 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
 {
@@ -746,24 +719,24 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO()
 {
@@ -784,11 +757,11 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
 {
@@ -809,11 +782,11 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO()
 {
@@ -834,11 +807,11 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
 {
@@ -858,52 +831,36 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOTR_VANO()
   glEnd();
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - triangles
- */
- void Boundary_set::draw_FSNO_FINO_FAPM_TENO_MOTR_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOTR_VANO\n");
-
-  SGAL_assertion(m_coord_array);
-
-  Uint j = 0;
-  glBegin(GL_TRIANGLES);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
-  }
-  glEnd();
-}
+// void draw_FSNO_FINO_FAPM_TENO_MOTR_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TENO_MOTR_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TENO_MOTR_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TENO_MOTR_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTR_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPM_TENO_MOTR_VANO\n");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
 {
@@ -931,27 +888,27 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
 {
@@ -975,27 +932,27 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
 {
@@ -1018,27 +975,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
 {
@@ -1061,60 +1018,53 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TINO_MOTR_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOTR_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOTR_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO\n");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
 {
@@ -1138,27 +1088,27 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
 {
@@ -1182,27 +1132,27 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
 {
@@ -1225,27 +1175,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
 {
@@ -1268,61 +1218,54 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TIYE_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTR_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - triangles
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - triangles
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO\n");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO\n");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /****************      Quads      ****************/
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOQU_VANO()
 {
@@ -1344,11 +1287,11 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOQU_VANO()
 {
@@ -1356,11 +1299,11 @@ void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOQU_VANO()
 {
@@ -1382,24 +1325,24 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOQU_VANO()
 {
@@ -1419,24 +1362,24 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOQU_VANO()
 {
@@ -1458,63 +1401,48 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - quads
- */
- void Boundary_set::draw_FSNO_FINO_FAPM_TENO_MOQU_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOQU_VANO");
-
-  Uint j = 0;
-  glBegin(GL_QUADS);
-  for (Uint i = 0; i < m_num_primitives; ++i) {
-    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
-    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
-  }
-  glEnd();
-}
+// void draw_FSNO_FINO_FAPM_TENO_MOQU_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TENO_MOQU_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TENO_MOQU_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TENO_MOQU_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOQU_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPM_TENO_MOQU_VANO");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
 {
@@ -1541,27 +1469,27 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
 {
@@ -1588,27 +1516,27 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
 {
@@ -1633,27 +1561,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
 {
@@ -1678,60 +1606,53 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TINO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TINO_MOQU_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOQU_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOQU_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
 {
@@ -1758,26 +1679,26 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TEYE_TIYE_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
 {
@@ -1804,27 +1725,27 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 {
@@ -1849,27 +1770,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
 {
@@ -1894,61 +1815,54 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TIYE_MOQU_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - quads
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - quads
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /**************** Triangle Strips ****************/
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
 {
@@ -1974,24 +1888,24 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TENO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPV_TENO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
 {
@@ -2043,22 +1957,22 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TENO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPV_TENO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
 {
@@ -2103,24 +2017,24 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPT_TENO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - Triangle strips
  */
  void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOTS_VANO()
 {
@@ -2157,55 +2071,50 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPT_TENO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - Triangle strips
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TENO_MOTS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FINO_FAPM_TENO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TENO_MOTS_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FINO_FAPM_TENO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TENO_MOTS_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TENO_MOTS_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TENO_MOTS_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTS_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPM_TENO_MOTS_VANO");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 // Texture enabled:
+
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
 {
@@ -2233,27 +2142,27 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TINO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
 {
@@ -2314,27 +2223,27 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TINO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
 {
@@ -2391,27 +2300,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TINO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
 {
@@ -2451,60 +2360,53 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TINO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TINO_MOTS_VANO(); invalide
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - false
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOTS_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOTS_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
 {
@@ -2532,26 +2434,26 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPV_TEYE_TIYE_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
  */
 void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
 {
@@ -2579,27 +2481,27 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPV_TEYE_TIYE_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
 {
@@ -2639,27 +2541,27 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 {
@@ -2699,51 +2601,45 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per triangle
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per triangle
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FIYE_FAPT_TEYE_TIYE_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-/*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- */
-void Boundary_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
-}
+// void draw_FSNO_FINO_FAPM_TEYE_TIYE_MOTS_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per mesh
- * Textute enabled      - true
- * Texture indexed      - true
- * Mode                 - Triangle strips
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - Triangle strips
  */
 void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
-// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO();         invalid
-// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO();         invalid
+// void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO(); invalid
+
+void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO()
+{
+  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
+                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO");
+  SGAL_error_msg("Not implemented yet!");
+}
 
 // Vertex Array:
 // Triangles or Quads:
@@ -2841,13 +2737,13 @@ void Boundary_set::draw_FAPV_VAYE()
 void Boundary_set::draw_FAPT_VAYE()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPT_VAYE");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 void Boundary_set::draw_FAPM_VAYE()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FAPM_VAYE");
-  SGAL_assertion_msg(0, "Not implemented yet!");
+  SGAL_error_msg("Not implemented yet!");
 }
 
 SGAL_END_NAMESPACE
