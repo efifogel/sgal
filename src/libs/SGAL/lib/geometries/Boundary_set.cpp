@@ -124,8 +124,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOPO_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOPO_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOPO_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VANO] =
@@ -148,8 +146,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO;
@@ -171,8 +167,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO;
 
   // Triangles
   // Texture disabled:
@@ -196,8 +190,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOTR_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOTR_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTR_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VANO] =
@@ -220,8 +212,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO;
@@ -243,8 +233,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO;
 
   // Quads
   // Texture disabled:
@@ -268,8 +256,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOQU_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOQU_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOQU_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VANO] =
@@ -292,8 +278,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO;
@@ -315,8 +299,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO;
 
   // Triangle Strips:
   // Texture disabled:
@@ -340,8 +322,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOTS_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOTS_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTS_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VANO] =
@@ -364,8 +344,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO;
@@ -387,8 +365,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO;
 
   // Vertex array:
   // Polygons:
@@ -413,8 +389,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOPO_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOPO_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOPO_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOPO_VAYE] =
@@ -437,8 +411,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VAYE] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO;
@@ -460,8 +432,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO;
 
   // Triangles:
   // Texture disabled:
@@ -481,8 +451,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOTR_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOTR_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTR_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOTR_VAYE] =
@@ -505,8 +473,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VAYE] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTR_VANO;
@@ -528,8 +494,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO;
 
   // Quads:
   // Texture disabled:
@@ -549,8 +513,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOQU_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOQU_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOQU_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOQU_VAYE] =
@@ -573,8 +535,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VAYE] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOQU_VANO;
@@ -596,8 +556,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO;
 
   // Triangle Strips:
   // Texture disabled:
@@ -621,8 +579,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOTS_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOTS_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTS_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOTS_VAYE] =
@@ -645,8 +601,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VAYE] =
     &Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOTS_VANO;
@@ -668,8 +622,6 @@ Boundary_set::Boundary_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VAYE] =
     &Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VAYE] =
-    &Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO;
 }
 
 //! \brief destructor.

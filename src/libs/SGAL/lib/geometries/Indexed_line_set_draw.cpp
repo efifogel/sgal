@@ -40,15 +40,15 @@ void Indexed_line_set::draw_invalid()
 { SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "invalid\n"); }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - Line
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - lines
  */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -66,15 +66,15 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLI_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - polygons
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - lines
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -92,15 +92,15 @@ void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLI_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - Line
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - lines
  */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
@@ -118,17 +118,15 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLI_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per vertex
- * Textute enabled      - false
- * Mode                 - Line
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - lines
  */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPV_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
@@ -146,24 +144,23 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - false
- * Fragment attach      - per line segment
- * Textute enabled      - false
- * Mode                 - lines
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line segment
+ * Textute enabled  - false
+ * Mode             - lines
  */
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLI_VANO()
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
   Uint j = 0;
-  Uint k = 0;
   glBegin(GL_LINES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, k++));
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
     glVertex3fv(get_by_coord_index(m_coord_array, j));
     glVertex3fv(get_by_coord_index(m_coord_array, j+1));
     j += 2;
@@ -172,24 +169,23 @@ void Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLI_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per line segment
- * Textute enabled      - false
- * Mode                 - lines
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line segment
+ * Textute enabled  - false
+ * Mode             - lines
  */
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLI_VANO()
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
   Uint j = 0;
-  Uint k = 0;
   glBegin(GL_LINES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, k++));
+    glColor3fv(get_by_coord_index(m_color_array, i));
     glVertex3fv(get_by_coord_index(m_coord_array, j));
     glVertex3fv(get_by_coord_index(m_coord_array, j+1));
     j += 2;
@@ -198,24 +194,23 @@ void Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLI_VANO()
 }
 
 /*!
- * Fragment source      - normal
- * Fragment indexed     - true
- * Fragment attach      - per line segment
- * Textute enabled      - false
- * Mode                 - lines
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line segment
+ * Textute enabled  - false
+ * Mode             - lines
  */
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLI_VANO()
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_normal_array);
 
   Uint j = 0;
-  Uint k = 0;
   glBegin(GL_LINES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_normal_index(m_normal_array, k++));
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
     glVertex3fv(get_by_coord_index(m_coord_array, j));
     glVertex3fv(get_by_coord_index(m_coord_array, j+1));
     j += 2;
@@ -224,24 +219,23 @@ void Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLI_VANO()
 }
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - true
- * Fragment attach      - per line segment
- * Textute enabled      - false
- * Mode                 - lines
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line segment
+ * Textute enabled  - false
+ * Mode             - lines
  */
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLI_VANO()
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPL_TENO_MOLI_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
 
   Uint j = 0;
-  Uint k = 0;
   glBegin(GL_LINES);
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_color_index(m_color_array, k++));
+    glColor3fv(get_by_color_index(m_color_array, i));
     glVertex3fv(get_by_coord_index(m_coord_array, j));
     glVertex3fv(get_by_coord_index(m_coord_array, j+1));
     j += 2;
@@ -252,562 +246,2107 @@ void Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLI_VANO()
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TENO_MOLI_VANO(); invalid
 
 /*!
- * Fragment source      - color
- * Fragment indexed     - false
- * Fragment attach      - per mesh
- * Textute enabled      - false
- * Mode                 - lines
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - false
+ * Mode             - lines
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPM_TENO_MOLI_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TENO_MOLI_VANO(); invalid
-
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLI_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLI_VANO(); invalid
 
 // Texture enabled:
+
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_normal_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glNormal3fv(get_by_coord_index(m_normal_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glColor3fv(get_by_coord_index(m_color_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glNormal3fv(get_by_normal_index(m_normal_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glColor3fv(get_by_color_index(m_color_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLI_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLI_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLI_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLI_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOLI_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLI_VANO(); invalid
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VANO(); invalid
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
-
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glNormal3fv(get_by_coord_index(m_normal_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glColor3fv(get_by_coord_index(m_color_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glNormal3fv(get_by_normal_index(m_normal_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glColor3fv(get_by_color_index(m_color_array, j+1));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLI_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLI_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line segment
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOLI_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - lines
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  glBegin(GL_LINES);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glVertex3fv(get_by_coord_index(m_coord_array, j+1));
+    j += 2;
+  }
+  glEnd();
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO(); invalid
-
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO(); invalid
 
 // Line strips:
 // Texture disabled:
+
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPV_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_coord_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Textute enabled  - false
+ * Fragment attach  - per vertex
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLS_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_coord_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPV_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_normal_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPV_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_color_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLS_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line strip
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPL_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLS_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line strip
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPL_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLS_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line strip
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPL_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLS_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line strip
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPL_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TENO_MOLS_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPM_TENO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TENO_MOLS_VANO(); invalid
-
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLS_VANO(); invalid
 
 // Texture enabled:
+
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_coord_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_coord_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_normal_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_color_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLS_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLS_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLS_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLS_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOLS_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLS_VANO(); invalid
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VANO(); invalid
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
-
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_coord_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_coord_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_normal_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_color_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLS_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLS_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line strip
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOLS_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line strips
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_STRIP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO(); invalid
-
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO(); invalid
 
 // Line loops:
 // Texture disabled:
+
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPV_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_coord_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPV_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_coord_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPV_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_normal_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPV_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_color_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLL_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line loop
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FINO_FAPL_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLL_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line loop
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPL_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLL_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line loop
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSNO_FIYE_FAPL_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLL_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line loop
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FIYE_FAPL_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TENO_MOLL_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FSCO_FINO_FAPM_TENO_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TENO_MOLL_VANO(); invalid
-
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLL_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLL_VANO(); invalid
 
 // Texture enabled:
+
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_coord_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_coord_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_normal_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_color_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLL_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLL_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLL_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLL_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TEYE_TINO_MOLL_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - false
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLL_VANO(); invalid
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VANO(); invalid
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
-
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_coord_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_coord_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glNormal3fv(get_by_normal_index(m_normal_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per vertex
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
+      glColor3fv(get_by_color_index(m_color_array, j));
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLL_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - false
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLL_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_coord_index(m_color_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO()
+/*!
+ * Fragment source  - normal
+ * Fragment indexed - true
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_normal_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glNormal3fv(get_by_normal_index(m_normal_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
-void Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO()
+/*!
+ * Fragment source  - color
+ * Fragment indexed - true
+ * Fragment attach  - per line loop
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
+void Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO\n");
   SGAL_error_msg("Not implemented yet!");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get_by_color_index(m_color_array, i));
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
 }
 
 // void Indexed_line_set::draw_FSNO_FINO_FAPM_TEYE_TIYE_MOLL_VANO(); invalid
 
+/*!
+ * Fragment source  - color
+ * Fragment indexed - false
+ * Fragment attach  - per mesh
+ * Textute enabled  - true
+ * Texture indexed  - true
+ * Mode             - line loops
+ */
 void Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO\n");
+
+  SGAL_assertion(m_coord_array);
+  SGAL_assertion(m_color_array);
+
+  glColor3fv(get(m_color_array, 0));
+  Uint j = 0;
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glBegin(GL_LINE_LOOP);
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+      glVertex3fv(get_by_coord_index(m_coord_array, j));
+    glEnd();
+    ++j;
+  }
   SGAL_error_msg("Not implemented yet!");
 }
 
 // void Indexed_line_set::draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO(); invalid
-
-void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO(); invalid
 
 // Vertex Buffer:
+
 void Indexed_line_set::draw_FAPV_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FAPV_VAYE\n");
+
+  SGAL_assertion(m_coord_array);
   SGAL_error_msg("Not implemented yet!");
 }
 
-void Indexed_line_set::draw_FAPT_VAYE()
+void Indexed_line_set::draw_FAPL_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FAPL_VAYE\n");
+
+  SGAL_assertion(m_coord_array);
   SGAL_error_msg("Not implemented yet!");
 }
 
 void Indexed_line_set::draw_FAPM_VAYE()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "FAPM_VAYE\n");
+
+  SGAL_assertion(m_coord_array);
   SGAL_error_msg("Not implemented yet!");
 }
 

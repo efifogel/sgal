@@ -87,19 +87,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TENO_MOLI_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLI_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TENO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TENO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TENO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TENO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TENO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TENO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLI_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOLI_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLI_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO] =
@@ -111,19 +109,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO;
@@ -134,19 +130,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TIYE_MOLI_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TIYE_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO;
 
   // Line strips:
   // Texture disabled:
@@ -159,19 +153,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TENO_MOLS_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLS_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLS_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TENO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TENO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TENO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TENO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TENO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TENO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLS_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOLS_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLS_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO] =
@@ -183,19 +175,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO;
@@ -206,19 +196,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TIYE_MOLS_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TIYE_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO;
 
   // Line loops:
   // Texture disabled:
@@ -231,19 +219,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TENO_MOLL_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLL_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLL_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TENO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TENO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TENO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TENO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TENO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TENO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLL_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOLL_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLL_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO] =
@@ -255,19 +241,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO;
@@ -278,20 +262,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TIYE_MOLL_VANO] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TIYE_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO;
-
 
   // Vertex array:
   // Lines:
@@ -305,19 +286,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TENO_MOLI_VAYE] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TENO_MOLI_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLI_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TENO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TENO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TENO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TENO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TENO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TENO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLI_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOLI_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLI_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VAYE] =
@@ -329,19 +308,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VAYE] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TINO_MOLI_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLI_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLI_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VAYE] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO;
@@ -352,19 +329,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VAYE] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLI_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TIYE_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TIYE_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TIYE_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TIYE_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLI_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLI_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOLI_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLI_VANO;
 
   // Line strips:
   // Texture disabled:
@@ -377,19 +352,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TENO_MOLS_VAYE] =
     &Indexed_line_set::draw_FAPV_VAYE;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLS_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TENO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TENO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TENO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TENO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TENO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TENO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLS_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOLS_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLS_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VAYE] =
@@ -401,19 +374,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TINO_MOLS_VAYE] =
     &Indexed_line_set::draw_FAPV_VAYE;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLS_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLS_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VAYE] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO;
@@ -424,19 +395,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VAYE] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLS_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TIYE_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TIYE_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TIYE_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TIYE_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLS_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLS_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOLS_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLS_VANO;
 
   // Line loops:
   // Texture disabled:
@@ -449,19 +418,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TENO_MOLL_VAYE] =
     &Indexed_line_set::draw_FAPV_VAYE;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TENO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TENO_MOLL_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TENO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TENO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TENO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TENO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TENO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TENO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TENO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TENO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TENO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TENO_MOLL_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TENO_MOLL_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TENO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TENO_MOLL_VANO;
 
   // Texture enabled:
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VAYE] =
@@ -473,19 +440,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TINO_MOLL_VAYE] =
     &Indexed_line_set::draw_FAPV_VAYE;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TINO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TINO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TINO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TINO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TINO_MOLL_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TINO_MOLL_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VAYE] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO;
@@ -496,19 +461,17 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   m_draws[SGAL_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VAYE] =
     &Indexed_line_set::draw_FSCO_FIYE_FAPV_TEYE_TIYE_MOLL_VANO;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TEYE_TIYE_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TEYE_TIYE_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSNO_FIYE_FAPT_TEYE_TIYE_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPT_TEYE_TIYE_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPT_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSNO_FINO_FAPL_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSCO_FINO_FAPL_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSNO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO;
+  m_draws[SGAL_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VAYE] =
+    &Indexed_line_set::draw_FSCO_FIYE_FAPL_TEYE_TIYE_MOLL_VANO;
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VAYE] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOLL_VANO;
-  m_draws[SGAL_FSCO_FIYE_FAPM_TEYE_TIYE_MOLL_VAYE] =
-    &Indexed_line_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOLL_VANO;
 }
 
 //! \brief destructor.

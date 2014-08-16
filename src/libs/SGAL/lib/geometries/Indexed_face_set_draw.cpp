@@ -221,14 +221,10 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOPO_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TENO_MOPO_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOPO_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPM_TENO_MOPO_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TENO_MOPO_VANO(); invalid
 
 // Texture enabled:
+
 /*!
  * Fragment source  - normal
  * Fragment indexed - false
@@ -424,13 +420,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOPO_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOPO_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSCO_FICO_FAPM_TEYE_TINO_MOPO_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOPO_VANO(); invalid
 
 /*!
  * Fragment source  - normal
@@ -628,13 +618,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOPO_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO(); invalid
-
-void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOPO_VANO(); invalid
 
 /****************    Triangles    ****************/
 /*!
@@ -847,12 +831,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTR_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TENO_MOTR_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTR_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPM_TENO_MOTR_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TENO_MOTR_VANO(); invalid
 
 /*!
  * Fragment source  - normal
@@ -1050,13 +1029,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTR_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOTR_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTR_VANO(); invalid
 
 /*!
  * Fragment source  - normal
@@ -1250,13 +1223,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTR_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO\n");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTR_VANO(); invalid
 
 /****************      Quads      ****************/
 
@@ -1429,12 +1396,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOQU_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TENO_MOQU_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOQU_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSCO_FIYE_FAPM_TENO_MOQU_VANO");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TENO_MOQU_VANO(); invalid
 
 /*!
  * Fragment source  - normal
@@ -1638,13 +1600,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOQU_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOQU_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOQU_VANO(); invalid
 
 /*!
  * Fragment source  - normal
@@ -1847,13 +1803,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOQU_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOQU_VANO(); invalid
 
 /**************** Triangle Strips ****************/
 
@@ -2099,12 +2049,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TENO_MOTS_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TENO_MOTS_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TENO_MOTS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET, "FSNO_FIYE_FAPM_TENO_MOTS_VANO");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TENO_MOTS_VANO(); invalid
 
 // Texture enabled:
 
@@ -2392,13 +2337,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOTS_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOTS_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOTS_VANO(); invalid
 
 /*!
  * Fragment source  - normal
@@ -2633,13 +2572,7 @@ void Boundary_set::draw_FSCO_FINO_FAPM_TEYE_TIYE_MOTS_VANO()
 }
 
 // void draw_FSNO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO(); invalid
-
-void Boundary_set::draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO()
-{
-  SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
-                 "FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO");
-  SGAL_error_msg("Not implemented yet!");
-}
+// void draw_FSCO_FIYE_FAPM_TEYE_TIYE_MOTS_VANO(); invalid
 
 // Vertex Array:
 // Triangles or Quads:
