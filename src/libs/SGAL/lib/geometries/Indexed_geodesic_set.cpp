@@ -74,7 +74,7 @@ Indexed_geodesic_set::~Indexed_geodesic_set() {}
 void Indexed_geodesic_set::set_normal_per_vertex(Boolean normal_per_vertex)
 {
   m_normal_per_vertex = normal_per_vertex;
-  m_normal_attachment = (normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
+  m_normal_attachment = (normal_per_vertex) ? AT_PER_VERTEX : AT_PER_PRIMITIVE;
 }
 
 /* \brief sets the flag that indicates whether colors are bound per vertex or
@@ -83,7 +83,7 @@ void Indexed_geodesic_set::set_normal_per_vertex(Boolean normal_per_vertex)
 void Indexed_geodesic_set::set_color_per_vertex(Boolean color_per_vertex)
 {
   m_color_per_vertex = color_per_vertex;
-  m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
+  m_color_attachment = (color_per_vertex) ? AT_PER_VERTEX : AT_PER_PRIMITIVE;
 }
 
 /*! \brief sets the coordinate set. Pass the pointer to the geometry object
@@ -139,7 +139,7 @@ void Indexed_geodesic_set::draw(Draw_action* action)
 
   if (fragment_source == FS_COLOR) {
     context->draw_light_enable(false);
-    if (fragment_attached == PER_MESH) glColor3fv(get(m_color_array, 0));
+    if (fragment_attached == AT_PER_MESH) glColor3fv(get(m_color_array, 0));
   }
 
   if (m_primitive_type == PT_LINES) {
@@ -149,8 +149,8 @@ void Indexed_geodesic_set::draw(Draw_action* action)
     glBegin(GL_LINES);
 
     for (Uint i = 0; i < m_num_primitives; ++i) {
-      if ((fragment_attached == PER_VERTEX) ||
-          ((fragment_attached == PER_PRIMITIVE) && ((j & 0x1) == 0x0)))
+      if ((fragment_attached == AT_PER_VERTEX) ||
+          ((fragment_attached == AT_PER_PRIMITIVE) && ((j & 0x1) == 0x0)))
       {
         if (fragment_source == FS_COLOR) {
           if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, k));
@@ -172,7 +172,7 @@ void Indexed_geodesic_set::draw(Draw_action* action)
     Uint k = 0;
     int m_radius = 1;
     for (Uint i = 0; i < m_num_primitives; ++i) {
-      if (fragment_attached == PER_PRIMITIVE) {
+      if (fragment_attached == AT_PER_PRIMITIVE) {
         if (fragment_source == FS_COLOR) {
           if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, k));
         }

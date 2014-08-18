@@ -132,6 +132,11 @@ public:
   std::vector<Vector2f>::iterator end();
   const std::vector<Vector2f>::const_iterator end() const;
 
+  /*! Push a new element at the back.
+   * \param val (in) the new element.
+   */
+  void push_back(const Vector2f& val);
+
   /*! Obtain the nth element in the array (non-const). */
   Vector2f& operator[](Uint n);
 
@@ -187,6 +192,10 @@ inline std::vector<Vector2f>::iterator Tex_coord_array_2d::end()
 inline const std::vector<Vector2f>::const_iterator Tex_coord_array_2d::end()
   const
 { return m_array.end(); }
+
+//! \brief pushes a new element at the back.
+inline void Tex_coord_array_2d::push_back(const Vector2f& val)
+{ m_array.push_back(val); }
 
 //! \brief obtains the nth element in the array (non-const).
 inline Vector2f& Tex_coord_array_2d::operator[](Uint n) { return m_array[n]; }

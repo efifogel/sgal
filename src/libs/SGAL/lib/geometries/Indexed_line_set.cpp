@@ -78,6 +78,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
   // Standard (no vertex array):
   // Lines:
   // Texture disabled:
+  m_draws[SGAL_FANO_TENO_MOLI_VANO] =
+    &Indexed_line_set::draw_FANO_TENO_MOLI_VANO;
+
   m_draws[SGAL_FSNO_FINO_FAPV_TENO_MOLI_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLI_VANO;
   m_draws[SGAL_FSCO_FINO_FAPV_TENO_MOLI_VANO] =
@@ -100,6 +103,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLI_VANO;
 
   // Texture enabled:
+  m_draws[SGAL_FANO_TEYE_TINO_MOLI_VANO] =
+    &Indexed_line_set::draw_FANO_TEYE_TINO_MOLI_VANO;
+
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO;
   m_draws[SGAL_FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO] =
@@ -120,6 +126,10 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO;
+
+  // Texture indexed
+  m_draws[SGAL_FANO_TEYE_TIYE_MOLI_VANO] =
+    &Indexed_line_set::draw_FANO_TEYE_TIYE_MOLI_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO;
@@ -144,6 +154,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
 
   // Line strips:
   // Texture disabled:
+  m_draws[SGAL_FANO_TENO_MOLS_VANO] =
+    &Indexed_line_set::draw_FANO_TENO_MOLS_VANO;
+
   m_draws[SGAL_FSNO_FINO_FAPV_TENO_MOLS_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLS_VANO;
   m_draws[SGAL_FSCO_FINO_FAPV_TENO_MOLS_VANO] =
@@ -166,6 +179,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLS_VANO;
 
   // Texture enabled:
+  m_draws[SGAL_FANO_TEYE_TINO_MOLS_VANO] =
+    &Indexed_line_set::draw_FANO_TEYE_TINO_MOLS_VANO;
+
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO;
   m_draws[SGAL_FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO] =
@@ -186,6 +202,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO;
+
+  m_draws[SGAL_FANO_TEYE_TIYE_MOLS_VANO] =
+    &Indexed_line_set::draw_FANO_TEYE_TIYE_MOLS_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO;
@@ -210,6 +229,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
 
   // Line loops:
   // Texture disabled:
+  m_draws[SGAL_FANO_TENO_MOLL_VANO] =
+    &Indexed_line_set::draw_FANO_TENO_MOLL_VANO;
+
   m_draws[SGAL_FSNO_FINO_FAPV_TENO_MOLL_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLL_VANO;
   m_draws[SGAL_FSCO_FINO_FAPV_TENO_MOLL_VANO] =
@@ -232,6 +254,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TENO_MOLL_VANO;
 
   // Texture enabled:
+  m_draws[SGAL_FANO_TEYE_TINO_MOLL_VANO] =
+    &Indexed_line_set::draw_FANO_TEYE_TINO_MOLL_VANO;
+
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO;
   m_draws[SGAL_FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO] =
@@ -252,6 +277,9 @@ Indexed_line_set::Indexed_line_set(Boolean proto) :
 
   m_draws[SGAL_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO] =
     &Indexed_line_set::draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO;
+
+  m_draws[SGAL_FANO_TEYE_TIYE_MOLL_VANO] =
+    &Indexed_line_set::draw_FANO_TEYE_TIYE_MOLL_VANO;
 
   m_draws[SGAL_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO] =
     &Indexed_line_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO;
@@ -483,7 +511,7 @@ Indexed_line_set::~Indexed_line_set() {}
 void Indexed_line_set::set_normal_per_vertex(Boolean normal_per_vertex)
 {
   m_normal_per_vertex = normal_per_vertex;
-  m_normal_attachment = (normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
+  m_normal_attachment = (normal_per_vertex) ? AT_PER_VERTEX : AT_PER_PRIMITIVE;
 }
 
 /* \brief sets the flag that indicates whether colors are bound per vertex or
@@ -492,7 +520,7 @@ void Indexed_line_set::set_normal_per_vertex(Boolean normal_per_vertex)
 void Indexed_line_set::set_color_per_vertex(Boolean color_per_vertex)
 {
   m_color_per_vertex = color_per_vertex;
-  m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
+  m_color_attachment = (color_per_vertex) ? AT_PER_VERTEX : AT_PER_PRIMITIVE;
 }
 
 /*! \brief draws the geometry.
@@ -508,67 +536,41 @@ void Indexed_line_set::draw(Draw_action* action)
   }
   context->draw_line_width(m_line_width);
 
+  //! \todo use vertex array
+  // Boolean va = use_vertex_array();
+  auto va = false;
   Fragment_source fragment_source = resolve_fragment_source();
+  Boolean fragment_indexed = va ? false :
+    ((fragment_source == FS_NORMAL) ?
+     (m_normal_indices.empty() ? false : true) :
+     (m_color_indices.empty() ? false : true));
   Attachment fragment_attached = (fragment_source == FS_NORMAL) ?
-    m_normal_attachment : m_color_attachment;
+    (m_normal_array ? m_normal_attachment : AT_NONE) :
+    (m_color_array ? m_color_attachment : AT_NONE);
+  Boolean texture_enbaled = m_tex_coord_array ? true : false;
+  Boolean texture_indexed = va ? false : !m_tex_coord_indices.empty();
 
-  if (fragment_source == FS_COLOR)
-    if (fragment_attached == PER_MESH) glColor3fv(get(m_color_array, 0));
+  // std::cout << "fragment_source: " << fragment_source << std::endl;
+  // std::cout << "fragment_attached: " << fragment_attached << std::endl;
+  // std::cout << "fragment_indexed: " << fragment_indexed << std::endl;
+  // std::cout << "texture_indexed: " << texture_indexed << std::endl;
+  // std::cout << "m_primitive_type: " << m_primitive_type << std::endl;
+  // std::cout << "va: " << va << std::endl;
 
-  if (m_primitive_type == PT_LINES) {
-    Uint j = 0;
-    Uint k = 0;
-    glBegin(GL_LINES);
+  Uint mask =
+    SGAL_SET(SGAL_LI_FRAG_SOURCE,SGAL_LI_FRAG_SOURCE_,fragment_source,
+      SGAL_SET(SGAL_LI_FRAG_INDEXED,SGAL_LI_FRAG_INDEXED_,fragment_indexed,
+        SGAL_SET(SGAL_LI_FRAG_ATTACHMENT,SGAL_LI_FRAG_ATTACHMENT_,
+                 fragment_attached,
+          SGAL_SET(SGAL_LI_TEXTURE_ENABLED,SGAL_LI_TEXTURE_ENABLED_,
+                   texture_enbaled,
+            SGAL_SET(SGAL_LI_TEXTURE_INDEXED,SGAL_LI_TEXTURE_INDEXED_,
+                     texture_indexed,
+              SGAL_SET(SGAL_LI_PRIM_TYPE,SGAL_LI_PRIM_TYPE_,m_primitive_type,
+                SGAL_SET(SGAL_LI_VERTEX_ARRAY,SGAL_LI_VERTEX_ARRAY_,va,
+                         0x0)))))));
 
-    for (Uint i = 0; i < m_num_primitives; ++i) {
-      if ((fragment_attached == PER_VERTEX) ||
-          ((fragment_attached == PER_PRIMITIVE) && ((j & 0x1) == 0x0)))
-      {
-        if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, k));
-        }
-        else {
-          if (m_normal_array)
-            glNormal3fv(get_by_coord_index(m_normal_array, k));
-        }
-        ++k;
-      }
-      glVertex3fv(get_by_coord_index(m_coord_array, j));
-      glVertex3fv(get_by_coord_index(m_coord_array, j+1));
-      j += 2;
-    }
-    glEnd();
-  }
-  else if (m_primitive_type == PT_LINE_STRIPS) {
-    Uint j = 0;
-    for (Uint i = 0; i < m_num_primitives; ++i) {
-      if (fragment_attached == PER_PRIMITIVE) {
-        if (fragment_source == FS_COLOR) {
-          if (m_color_array) glColor3fv(get_by_coord_index(m_color_array, j));
-        }
-        else {
-          if (m_normal_array)
-            glNormal3fv(get_by_coord_index(m_normal_array, j));
-        }
-      }
-      glBegin(GL_LINE_STRIP);
-      for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
-        if (fragment_attached == PER_VERTEX) {
-          if (fragment_source == FS_COLOR) {
-            if (m_color_array)
-              glColor3fv(get_by_coord_index(m_color_array, j));
-          }
-          else {
-            if (m_normal_array)
-              glNormal3fv(get_by_coord_index(m_normal_array, j));
-          }
-        }
-        glVertex3fv(get_by_coord_index(m_coord_array, j));
-      }
-      glEnd();
-      ++j;
-    }
-  }
+  (this->*m_draws[mask])();
 
   context->draw_line_width(1.0f);
   if (!m_elliminate_hiden) {

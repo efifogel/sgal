@@ -320,7 +320,7 @@ void Mesh_set::clean_flat_normal_indices()
 {
   if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
       !m_normal_indices_flat && !m_normal_indices.empty() &&
-      (m_normal_attachment == PER_VERTEX))
+      (m_normal_attachment == AT_PER_VERTEX))
   {
     flatten_indices(m_normal_indices, m_flat_normal_indices);
     m_normal_indices_flat = true;
@@ -362,7 +362,7 @@ void Mesh_set::clean_flat_color_indices()
 {
   if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
       !m_color_indices_flat && !m_color_indices.empty() &&
-      (m_color_attachment == PER_VERTEX))
+      (m_color_attachment == AT_PER_VERTEX))
   {
     flatten_indices(m_color_indices, m_flat_color_indices);
     m_color_indices_flat = true;

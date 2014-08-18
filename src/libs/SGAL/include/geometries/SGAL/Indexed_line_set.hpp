@@ -152,6 +152,8 @@ protected:
 
   // Lines (general):
   // Texture disabled:
+  void draw_FANO_TENO_MOLI_VANO();
+
   void draw_FSNO_FINO_FAPV_TENO_MOLI_VANO();
   void draw_FSCO_FINO_FAPV_TENO_MOLI_VANO();
   void draw_FSNO_FIYE_FAPV_TENO_MOLI_VANO();
@@ -168,6 +170,8 @@ protected:
   // void draw_FSCO_FIYE_FAPM_TENO_MOLI_VANO(); invalid
 
   // Texture enabled:
+  void draw_FANO_TEYE_TINO_MOLI_VANO();
+
   void draw_FSNO_FINO_FAPV_TEYE_TINO_MOLI_VANO();
   void draw_FSCO_FINO_FAPV_TEYE_TINO_MOLI_VANO();
   void draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLI_VANO();
@@ -182,6 +186,8 @@ protected:
   void draw_FSCO_FINO_FAPM_TEYE_TINO_MOLI_VANO();
   // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLI_VANO(); invalid
   // void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLI_VANO(); invalid
+
+  void draw_FANO_TEYE_TIYE_MOLI_VANO();
 
   void draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLI_VANO();
   void draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLI_VANO();
@@ -200,6 +206,8 @@ protected:
 
   // Line strips:
   // Texture disabled:
+  void draw_FANO_TENO_MOLS_VANO();
+
   void draw_FSNO_FINO_FAPV_TENO_MOLS_VANO();
   void draw_FSCO_FINO_FAPV_TENO_MOLS_VANO();
   void draw_FSNO_FIYE_FAPV_TENO_MOLS_VANO();
@@ -216,6 +224,8 @@ protected:
   // void draw_FSCO_FIYE_FAPM_TENO_MOLS_VANO(); invalid
 
   // Texture enabled:
+  void draw_FANO_TEYE_TINO_MOLS_VANO();
+
   void draw_FSNO_FINO_FAPV_TEYE_TINO_MOLS_VANO();
   void draw_FSCO_FINO_FAPV_TEYE_TINO_MOLS_VANO();
   void draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLS_VANO();
@@ -230,6 +240,8 @@ protected:
   void draw_FSCO_FINO_FAPM_TEYE_TINO_MOLS_VANO();
   // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLS_VANO(); invalid
   // void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLS_VANO(); invalid
+
+  void draw_FANO_TEYE_TIYE_MOLS_VANO();
 
   void draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLS_VANO();
   void draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLS_VANO();
@@ -248,6 +260,8 @@ protected:
 
   // Line loops:
   // Texture disabled:
+  void draw_FANO_TENO_MOLL_VANO();
+
   void draw_FSNO_FINO_FAPV_TENO_MOLL_VANO();
   void draw_FSCO_FINO_FAPV_TENO_MOLL_VANO();
   void draw_FSNO_FIYE_FAPV_TENO_MOLL_VANO();
@@ -264,6 +278,8 @@ protected:
   // void draw_FSCO_FIYE_FAPM_TENO_MOLL_VANO(); invalid
 
   // Texture enabled:
+  void draw_FANO_TEYE_TINO_MOLL_VANO();
+
   void draw_FSNO_FINO_FAPV_TEYE_TINO_MOLL_VANO();
   void draw_FSCO_FINO_FAPV_TEYE_TINO_MOLL_VANO();
   void draw_FSNO_FIYE_FAPV_TEYE_TINO_MOLL_VANO();
@@ -278,6 +294,8 @@ protected:
   void draw_FSCO_FINO_FAPM_TEYE_TINO_MOLL_VANO();
   // void draw_FSNO_FIYE_FAPM_TEYE_TINO_MOLL_VANO(); invalid
   // void draw_FSCO_FIYE_FAPM_TEYE_TINO_MOLL_VANO(); invalid
+
+  void draw_FANO_TEYE_TIYE_MOLL_VANO();
 
   void draw_FSNO_FINO_FAPV_TEYE_TIYE_MOLL_VANO();
   void draw_FSCO_FINO_FAPV_TEYE_TIYE_MOLL_VANO();

@@ -41,7 +41,7 @@ const char* Geo_set::s_primitive_type_names[] = {
 };
 
 const Char* Geo_set::s_attachment_names[] =
-  { "perVertex", "perPrimitive", "perMesh" };
+  { "none", "perVertex", "perPrimitive", "perMesh" };
 
 // Default value:
 const
@@ -51,8 +51,8 @@ Geo_set::Primitive_type Geo_set::s_def_primitive_type(Geo_set::PT_POLYGONS);
 Geo_set::Geo_set(Boolean proto) :
   Geometry(proto),
   m_num_primitives(0),
-  m_normal_attachment(PER_PRIMITIVE),
-  m_color_attachment(PER_PRIMITIVE),
+  m_normal_attachment(AT_PER_PRIMITIVE),
+  m_color_attachment(AT_PER_PRIMITIVE),
   m_coord_indices(),
   m_normal_indices(),
   m_color_indices(),

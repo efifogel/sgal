@@ -34,7 +34,11 @@ SGAL_BEGIN_NAMESPACE
 template <typename HDS>
 class Polyhedron_geo_builder : public CGAL::Modifier_base<HDS> {
 protected:
-  const Mesh_set* m_mesh_set;
+  /*! The mesh for which a polyhedron data structure is constructed.
+   * It is defined as const, because the array of indices of the mesh  may
+   * need to be flattened.
+   */
+  Mesh_set* m_mesh_set;
 
   /*! Insert the vertices.
    * \param B (in) the halfedge data structure.
@@ -59,6 +63,7 @@ protected:
   void insert_faces(CGAL::Polyhedron_incremental_builder_3<HDS>& B)
   {
     // Add the faces:
+    m_mesh_set->clean_flat_coord_indices();
     if (m_mesh_set->are_coord_indices_flat()) {
       if (m_mesh_set->get_primitive_type() == Geo_set::PT_TRIANGLES) {
         insert_triangles(B);
@@ -171,7 +176,7 @@ public:
    *                 a. coordinate array, and
    *                 b. coordinate indices
    */
-  void set_mesh_set(const Mesh_set* mesh_set) { m_mesh_set = mesh_set; }
+  void set_mesh_set(Mesh_set* mesh_set) { m_mesh_set = mesh_set; }
 
   /*! Build the polyhedral surface.
    * \param hds (out) the halfedge data structure, which stores the incidence

@@ -639,7 +639,7 @@ Boundary_set::~Boundary_set()
 void Boundary_set::set_normal_per_vertex(Boolean normal_per_vertex)
 {
   m_normal_per_vertex = normal_per_vertex;
-  m_normal_attachment = (normal_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
+  m_normal_attachment = (normal_per_vertex) ? AT_PER_VERTEX : AT_PER_PRIMITIVE;
 }
 
 /* \brief sets the flag that indicates whether colors are bound per vertex or
@@ -648,13 +648,14 @@ void Boundary_set::set_normal_per_vertex(Boolean normal_per_vertex)
 void Boundary_set::set_color_per_vertex(Boolean color_per_vertex)
 {
   m_color_per_vertex = color_per_vertex;
-  m_color_attachment = (color_per_vertex) ? PER_VERTEX : PER_PRIMITIVE;
+  m_color_attachment = (color_per_vertex) ? AT_PER_VERTEX : AT_PER_PRIMITIVE;
 }
 
 //! \brief claculates the normals in case they are invalidated.
 void Boundary_set::clean_normals()
 {
-  if (m_normal_attachment == PER_VERTEX) calculate_single_normal_per_vertex();
+  if (m_normal_attachment == AT_PER_VERTEX)
+    calculate_single_normal_per_vertex();
   else calculate_normal_per_polygon();
   m_dirty_normals = false;
   m_normals_cleaned = true;

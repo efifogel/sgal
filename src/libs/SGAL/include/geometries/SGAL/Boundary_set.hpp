@@ -1081,8 +1081,8 @@ inline Boolean Boundary_set::use_vertex_array() const
           ((m_primitive_type == PT_QUADS) ||
            (m_primitive_type == PT_TRIANGLES)) &&
           ((fragment_source == FS_COLOR) ?
-           (m_color_attachment == PER_VERTEX) :
-           (m_normal_attachment == PER_VERTEX)));
+           (m_color_attachment == AT_PER_VERTEX) :
+           (m_normal_attachment == AT_PER_VERTEX)));
 }
 
 /*! \brief determines whether the representation of the normals hasn't been

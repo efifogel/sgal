@@ -75,9 +75,10 @@ public:
   };
 
   enum Attachment {
-    PER_VERTEX = 0x0,
-    PER_PRIMITIVE = 0x1,
-    PER_MESH = 0x2
+    AT_NONE = 0x0,
+    AT_PER_VERTEX = 0x1,
+    AT_PER_PRIMITIVE = 0x2,
+    AT_PER_MESH = 0x3
   };
 
   enum Primitive_type {
