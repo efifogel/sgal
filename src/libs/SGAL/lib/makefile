@@ -188,7 +188,7 @@ CPPSOURCES+= Vector2f.cpp
 CPPSOURCES+= Vector2u.cpp
 CPPSOURCES+= Vector2sh.cpp
 CPPSOURCES+= Vector3f.cpp
-# CPPSOURCES+= Vector3sh.cpp
+CPPSOURCES+= Vector3sh.cpp
 CPPSOURCES+= Vector4f.cpp
 
 # Utilities:
