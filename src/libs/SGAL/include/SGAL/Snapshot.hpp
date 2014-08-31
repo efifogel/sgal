@@ -48,6 +48,11 @@ class Formatter;
 #pragma warning( disable: 4251 )
 #endif
 
+/*! \class Snapshot Snapshot.hpp
+ * Snapshot is a node in the scene graph that specifies the parameters of the
+ * snapshot operation, which is, recording the content of a graphics window
+ * in an image file.
+ */
 class SGAL_SGAL_DECL Snapshot : public Node {
 public:
   enum {
@@ -219,6 +224,7 @@ private:
   const static std::string s_def_file_name;
   const static File_format s_def_file_format;
   const static Int s_def_quality;
+  const static Boolean s_def_flip;
 
   /*! Allocate space for the image.
    */

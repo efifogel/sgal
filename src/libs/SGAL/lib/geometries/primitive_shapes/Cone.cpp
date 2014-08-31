@@ -32,7 +32,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Cone::s_tag = "Cone";
-Container_proto* Cone::s_prototype(NULL);
+Container_proto* Cone::s_prototype(nullptr);
 
 // Default values:
 const Float Cone::s_def_bottom_radius(1);
@@ -54,8 +54,8 @@ Cone::Cone(Boolean proto) :
   m_slices(s_def_slices),
   m_side_visible(s_def_side_visible),
   m_bottom_visible(s_def_bottom_visible),
-  m_cone(0),
-  m_cone_base(0)
+  m_cone(nullptr),
+  m_cone_base(nullptr)
 {}
 
 //! \brief destructor.
@@ -72,26 +72,25 @@ void Cone::draw(Draw_action* /* action */)
 
   if (has_scale()) glEnable(GL_NORMALIZE);
 
-  glPushMatrix();
-  glRotatef(90, 1, 0, 0);
-
   if (m_side_visible) {
     // draw the cone. (cylinder with up radius = 0)
     glPushMatrix();
+    glRotatef(-90, 1, 0, 0);
     glTranslatef(0, 0, -m_height/2);
     gluQuadricTexture(m_cone, (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
-    gluCylinder(m_cone, 0, m_bottom_radius, m_height, m_slices, m_stacks);
+    gluCylinder(m_cone, m_bottom_radius, 0, m_height, m_slices, m_stacks);
     glPopMatrix();
   }
 
   if (m_bottom_visible) {
+    glPushMatrix();
+    glRotatef(90, 1, 0, 0);
     glTranslatef(0, 0, m_height/2);
     gluQuadricTexture(m_cone_base,
                       (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
     gluDisk(m_cone_base, 0, m_bottom_radius, m_slices, 1);
+    glPopMatrix();
   }
-
-  glPopMatrix();
 
   glDisable(GL_NORMALIZE);
 }
@@ -101,23 +100,22 @@ void Cone::isect(Isect_action* /* action */)
 {
   if (is_dirty()) clean();
 
-  glPushMatrix();
-  glRotatef(90, 1, 0, 0);
-
   if (m_side_visible) {
     // draw the cone. (cylinder with up radius = 0)
     glPushMatrix();
+    glRotatef(-90, 1, 0, 0);
     glTranslatef(0, 0, -m_height/2);
     gluCylinder(m_cone, 0, m_bottom_radius, m_height, m_slices, m_stacks);
     glPopMatrix();
   }
 
   if (m_bottom_visible) {
+    glPushMatrix();
+    glRotatef(90, 1, 0, 0);
     glTranslatef(0, 0, m_height/2);
-    gluDisk(m_cone_base, 0, m_bottom_radius, m_slices, m_slices);
+    gluDisk(m_cone_base, 0, m_bottom_radius, m_slices, 1);
+    glPopMatrix();
   }
-
-  glPopMatrix();
 }
 
 //! \brief calculates the sphere bound of the cone.
@@ -320,7 +318,7 @@ void Cone::init_prototype()
 void Cone::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief

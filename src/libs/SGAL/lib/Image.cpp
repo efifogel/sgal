@@ -59,7 +59,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image::s_prototype(NULL);
+Container_proto* Image::s_prototype(nullptr);
 const std::string Image::s_tag = "Image";
 
 REGISTER_TO_FACTORY(Image, "Image");
@@ -88,7 +88,7 @@ void Image::init_prototype()
 void Image::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_TEXTURE_2D_HPP
@@ -160,40 +157,40 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Texture_2d* Texture_2d::prototype() { return new Texture_2d(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Texture_2d::clone() { return new Texture_2d(); }
 
-/*! \brief obtains the texture image. */
+//! \brief obtains the texture image.
 inline Image* Texture_2d::get_image() const { return m_image; }
 
-/*! \brief sets the texture image. */
+//! \brief sets the texture image.
 inline  void Texture_2d::set_image(Image* image) { m_image = image; }
 
-/*! \brief obtain the texture format. */
+//! \brief obtain the texture format.
 inline  Image::Format Texture_2d::get_format() const
 { return m_image->get_format(); }
 
-/*! \brief obtains the texture width. */
+//! \brief obtains the texture width.
 inline Int Texture_2d::get_width() const { return m_image->get_width(); }
 
-/*! \brief obtains the texture height. */
+//! \brief obtains the texture height.
 inline Int Texture_2d::get_height() const { return m_image->get_height(); }
 
-/*! \brief obtains the texture pixel-data. */
+//! \brief obtains the texture pixel-data.
 inline void* Texture_2d::get_pixels() const { return m_image->get_pixels(); }
 
 #if 0
-/*! \brief */
+//! \brief
 inline void Texture_2d::set_text(Text_texture* text) { m_text = text; }
 
-/*! \brief */
+//! \brief
 inline Text_texture* Texture_2d::get_text() const { return m_text; }
 #endif
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Texture_2d::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

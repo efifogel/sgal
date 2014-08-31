@@ -33,7 +33,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Cylinder::s_tag = "Cylinder";
-Container_proto* Cylinder::s_prototype(NULL);
+Container_proto* Cylinder::s_prototype(nullptr);
 
 // default values:
 const Float Cylinder::s_def_radius(1);
@@ -57,8 +57,8 @@ Cylinder::Cylinder(Boolean proto) :
   m_is_bottom_visible(s_def_is_bottom_visible),
   m_is_top_visible(s_def_is_top_visible),
   m_is_body_visible(s_def_is_body_visible),
-  m_cylinder(NULL),
-  m_cylinder_base(NULL)
+  m_cylinder(nullptr),
+  m_cylinder_base(nullptr)
 {}
 
 //! \brief destructor.
@@ -75,22 +75,21 @@ void Cylinder::draw(Draw_action* /* action */)
 
   if (has_scale()) glEnable(GL_NORMALIZE);
 
-  glPushMatrix();
-  glRotatef(-90, 1, 0, 0);
-
   if (m_is_body_visible) {
     // draw the cylinder
     glPushMatrix();
-    glTranslatef(0, 0, -m_height / 2);
+    glRotatef(-90, 1, 0, 0);
+    glTranslatef(0, 0, -m_height/2);
     gluQuadricTexture(m_cylinder,
                       (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
     gluCylinder(m_cylinder, m_radius, m_radius, m_height, m_slices, m_stacks);
     glPopMatrix();
   }
 
-  // draw the base
+  // draw the top
   if (m_is_top_visible) {
     glPushMatrix();
+    glRotatef(-90, 1, 0, 0);
     glTranslatef(0, 0, m_height/2);
     gluQuadricTexture(m_cylinder_base,
                       (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
@@ -98,20 +97,16 @@ void Cylinder::draw(Draw_action* /* action */)
     glPopMatrix();
   }
 
+  // draw the bottom
   if (m_is_bottom_visible) {
     glPushMatrix();
-    glTranslatef(0, 0, -m_height/2);
-    //glRotatef(180, 1, 0, 0);
-    //glRotatef(180, 0, 1, 0);
+    glRotatef(90, 1, 0, 0);
+    glTranslatef(0, 0, m_height/2);
     gluQuadricTexture(m_cylinder_base,
                       (do_generate_tex_coord()) ? GL_TRUE : GL_FALSE);
-    gluQuadricOrientation(m_cylinder_base,GLU_INSIDE);
     gluDisk(m_cylinder_base, 0, m_radius, m_slices, 1);
-    gluQuadricOrientation(m_cylinder_base,GLU_OUTSIDE);
     glPopMatrix();
   }
-
-  glPopMatrix();
 
   glDisable(GL_NORMALIZE);
 }
@@ -122,31 +117,33 @@ void Cylinder::isect(Isect_action* /* action */)
   if (m_dirty) clean();
 
   glPushMatrix();
-  glRotatef(-90, 1, 0, 0);
 
   if (m_is_body_visible) {
     // draw the cylinder
     glPushMatrix();
-    glTranslatef(0, 0, -m_height / 2);
+    glRotatef(-90, 1, 0, 0);
+    glTranslatef(0, 0, -m_height/2);
     gluCylinder(m_cylinder, m_radius, m_radius, m_height, m_slices, m_stacks);
     glPopMatrix();
   }
 
-  // draw the base
+  // draw the top
   if (m_is_top_visible) {
-    glTranslatef(0, 0, m_height / 2);
+    glPushMatrix();
+    glRotatef(-90, 1, 0, 0);
+    glTranslatef(0, 0, m_height/2);
     gluDisk(m_cylinder_base, 0, m_radius, m_slices, 1);
+    glPopMatrix();
   }
 
+  // draw the bottom
   if (m_is_bottom_visible) {
-    glTranslatef(0, 0, -m_height);
-    //glRotatef(180, 1, 0, 0);
-    gluQuadricOrientation(m_cylinder_base,GLU_INSIDE);
+    glPushMatrix();
+    glRotatef(90, 1, 0, 0);
+    glTranslatef(0, 0, m_height/2);
     gluDisk(m_cylinder_base, 0, m_radius, m_slices, 1);
-    gluQuadricOrientation(m_cylinder_base,GLU_OUTSIDE);
+    glPopMatrix();
   }
-
-  glPopMatrix();
 }
 
 //! \brief cleans (regenerate the coordinates of) the cylinder.
@@ -365,7 +362,7 @@ void Cylinder::init_prototype()
 void Cylinder::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the cylinder prototype.

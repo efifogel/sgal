@@ -14,17 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_IMAGE_TEXTURE_HPP
 #define SGAL_IMAGE_TEXTURE_HPP
-
-/*! \file
- *
- */
 
 #if (defined _MSC_VER)
 #pragma warning( disable : 4786 )
@@ -49,6 +42,11 @@ class Scene_graph;
 #pragma warning( disable: 4251 )
 #endif
 
+/*! \class Image_texture Image_texture.hpp
+ * Image_texture is a container that specifies 2D texture mapping parameters,
+ * namely, an image file, and two additional parameters that specify how the
+ * texture wraps. The mapping is defined from the unit square [0,1]x[0,1].
+ */
 class SGAL_SGAL_DECL Image_texture : public Texture_2d {
 public:
   typedef Image::Path_list                          Path_list;
@@ -136,38 +134,38 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Image_texture* Image_texture::prototype()
 { return new Image_texture(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Image_texture::clone() { return new Image_texture(); }
 
-/*! \brief sets the URL. */
+//! \brief sets the URL.
 inline void Image_texture::set_url(const std::string& url)
 { m_image.set_url(url); }
 
-/*! \brief obtains the URL. */
+//! \brief obtains the URL.
 inline const std::string Image_texture::get_url() const
 { return m_image.get_url(); }
 
-/*! \brief sets the flag that indicates whether to reflect the image. */
+//! \brief sets the flag that indicates whether to reflect the image.
 inline void Image_texture::set_flip(Boolean flag)
 { m_image.set_flip(flag); }
 
-/*! \brief obtains the flag that indicates whether to reflect the image. */
+//! \brief obtains the flag that indicates whether to reflect the image.
 inline Boolean Image_texture::get_flip() const
 { return m_image.get_flip(); }
 
-/*! \brief sets the directory-search structure. */
+//! \brief sets the directory-search structure.
 inline void Image_texture::set_dirs(const Image::Path_list& dirs)
 { m_image.set_dirs(dirs); }
 
-/*! \brief obtains the directory-search structure. */
+//! \brief obtains the directory-search structure.
 inline const Image::Path_list& Image_texture::get_dirs() const
 { return m_image.get_dirs(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Image_texture::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

@@ -49,13 +49,14 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Snapshot::s_tag = "Snapshot";
-Container_proto* Snapshot::s_prototype(NULL);
+Container_proto* Snapshot::s_prototype(nullptr);
 
 // Default values
 const std::string Snapshot::s_def_dir_name = ".";
 const std::string Snapshot::s_def_file_name = "snaphsot";
 const Snapshot::File_format Snapshot::s_def_file_format = Snapshot::FF_ppm;
 const Int Snapshot::s_def_quality = 50;
+const Boolean Snapshot::s_def_flip(true);
 
 REGISTER_TO_FACTORY(Snapshot, "Snapshot");
 
@@ -75,7 +76,7 @@ Snapshot::Snapshot(Boolean proto) :
   m_trigger(false),
   m_use_front_buffer(true),
   m_size(0),
-  m_flip(true)
+  m_flip(s_def_flip)
 {}
 
 //! \brief destructor
@@ -84,7 +85,7 @@ Snapshot::~Snapshot()
   if (m_image) {
     Uchar* pixels = (Uchar *) m_image->get_pixels();
     if (pixels) delete [] pixels;
-    m_image->set_pixels(NULL);
+    m_image->set_pixels(nullptr);
     m_image->set_width(0);
     m_image->set_height(0);
     m_size = 0;
@@ -234,7 +235,7 @@ void Snapshot::init_prototype()
 void Snapshot::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.

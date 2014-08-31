@@ -288,58 +288,58 @@ private:
   static Container_proto* s_prototype;
 };
 
-/*! \brief sets the texture target. */
+//! \brief sets the texture target.
 inline void Texture::set_target(Target target) { m_target = target; }
 
-/*! \brief obtains the texture target. */
+//! \brief obtains the texture target.
 inline Texture::Target Texture::get_target() const { return m_target; }
 
-/*! \brief sets the wrapping factor on the S. */
+//! \brief sets the wrapping factor on the S.
 inline void Texture::set_wrap_s(Texture::Wrap wrap)
 { m_wrap_s = wrap; }
 
-/*! \brief sets the wrapping factor on the S. */
+//! \brief sets the wrapping factor on the S.
 inline void Texture::set_wrap_s(Boolean flag)
 { flag ? set_wrap_s(REPEAT) : set_wrap_s(CLAMP); }
 
-/*! \brief obtains the wrapping factor on the S. */
+//! \brief obtains the wrapping factor on the S.
 inline Texture::Wrap Texture::get_wrap_s() const { return m_wrap_s; }
 
-/*! \brief sets the wrapping factor on the T. */
+//! \brief sets the wrapping factor on the T.
 inline void Texture::set_wrap_t(Texture::Wrap wrap)
 { m_wrap_t = wrap; }
 
-/*! \brief sets the wrapping factor on the T. */
+//! \brief sets the wrapping factor on the T.
 inline void Texture::set_wrap_t(Boolean flag)
 { flag ? set_wrap_t(REPEAT) : set_wrap_t(CLAMP); }
 
-/*! \brief obtains the wrapping factor on the T. */
+//! \brief obtains the wrapping factor on the T.
 inline Texture::Wrap Texture::get_wrap_t() const { return m_wrap_t; }
 
-/*! \brief sets the wrapping factor on the R. */
+//! \brief sets the wrapping factor on the R.
 inline void Texture::set_wrap_r(Texture::Wrap wrap)
 { m_wrap_r = wrap; }
 
-/*! \brief sets the wrapping factor on the R. */
+//! \brief sets the wrapping factor on the R.
 inline void Texture::set_wrap_r(Boolean flag)
 { flag ? set_wrap_r(REPEAT) : set_wrap_r(CLAMP); }
 
-/*! \brief obtains the wrapping factor on the R. */
+//! \brief obtains the wrapping factor on the R.
 inline Texture::Wrap Texture::get_wrap_r() const { return m_wrap_r; }
 
-/*! \brief sets the minimization filter. */
+//! \brief sets the minimization filter.
 inline void Texture::set_min_filter(Texture::Min_filter min_filter)
 { m_min_filter = min_filter; }
 
-/*! \brief obtains the minimization filter. */
+//! \brief obtains the minimization filter.
 inline Texture::Min_filter Texture::get_min_filter() const
 { return m_min_filter; }
 
-/*! \brief sets the manification filter. */
+//! \brief sets the manification filter.
 inline void Texture::set_mag_filter(Texture::Mag_filter mag_filter)
 { m_mag_filter = mag_filter; }
 
-/*! \brief obtains the magnification filter. */
+//! \brief obtains the magnification filter.
 inline Texture::Mag_filter Texture::get_mag_filter() const
 { return m_mag_filter; }
 
@@ -347,7 +347,7 @@ inline Texture::Mag_filter Texture::get_mag_filter() const
 #pragma warning( pop )
 #endif
 
-/*! \brief determines whether the object is dirty, and thus needs cleaning. */
+//! \brief determines whether the object is dirty, and thus needs cleaning.
 inline Boolean Texture::is_dirty() const { return m_dirty; }
 
 SGAL_END_NAMESPACE

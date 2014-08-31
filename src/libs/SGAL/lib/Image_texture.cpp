@@ -23,37 +23,37 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image_texture::s_prototype(NULL);
+Container_proto* Image_texture::s_prototype(nullptr);
 const std::string Image_texture::s_tag = "ImageTexture";
 
 REGISTER_TO_FACTORY(Image_texture, "Image_texture");
 
-/*! Constructor */
+//! Constructor
 Image_texture::Image_texture(Boolean proto) : Texture_2d(proto)
 { Texture_2d::set_image(&m_image); }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Image_texture::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Texture_2d::get_prototype());
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Image_texture::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Image_texture::get_prototype()
 {
   if (!s_prototype) Image_texture::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the image texture. */
+//! \brief sets the attributes of the image texture.
 void Image_texture::set_attributes(Element* elem)
 {
   typedef Element::Str_attr_iter        Str_attr_iter;
@@ -107,7 +107,7 @@ void Image_texture::set_attributes(Element* elem)
 }
 
 #if 0
-/*! \brief */
+//! \brief
 Attribute_list Image_texture::get_attributes()
 {
   Attribute_list attribs;
@@ -123,7 +123,7 @@ Attribute_list Image_texture::get_attributes()
 }
 #endif
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Image_texture::add_to_scene(Scene_graph* scene_graph)
 { Texture_2d::add_to_scene(scene_graph); }
 

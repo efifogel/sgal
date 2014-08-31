@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12384 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_URL_IMAGE_HPP
@@ -133,25 +130,25 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Image* Image::prototype() { return new Image(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Image::clone() { return new Image(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Image::get_tag() const { return s_tag; }
 
-/*! \brief obtains the URL. */
+//! \brief obtains the URL.
 inline const std::string Image::get_url() const { return m_url; }
 
-/*! \brief adds a directory to the directory-search list. */
+//! \brief adds a directory to the directory-search list.
 inline void Image::add_dir(const fi::path& dir) { m_dirs.push_back(dir); }
 
-/*! \brief sets the directory-search structure. */
+//! \brief sets the directory-search structure.
 inline void Image::set_dirs(const Image::Path_list& dirs) { m_dirs = dirs; }
 
-/*! \brief obtains the directory-search structure. */
+//! \brief obtains the directory-search structure.
 inline const Image::Path_list& Image::get_dirs() const { return m_dirs; }
 
 SGAL_END_NAMESPACE

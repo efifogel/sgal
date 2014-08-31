@@ -140,59 +140,59 @@ void Box::draw_box()
 
   float p0[] = { -w, -h, -d };
   float p1[] = {  w, -h, -d };
-  float p2[] = {  w,  h, -d };
-  float p3[] = { -w,  h, -d };
+  float p2[] = { -w,  h, -d };
+  float p3[] = {  w,  h, -d };
   float p4[] = { -w, -h,  d };
   float p5[] = {  w, -h,  d };
-  float p6[] = {  w,  h,  d };
-  float p7[] = { -w,  h,  d };
+  float p6[] = { -w,  h,  d };
+  float p7[] = {  w,  h,  d };
 
   if (has_scale()) glEnable(GL_NORMALIZE);
 
   glBegin(GL_QUADS);
 
   //! \todo handle different modal combinations
-  // front
+  // bottom
   glNormal3f(0, 0, -1);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p0);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
   if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p1);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p0);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p2);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p3);
 
   // right
   glNormal3f(1, 0, 0);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p2);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
   if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p7);
 
   // back
-  glNormal3f(0, 0, 1);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p5);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p6);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p7);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p4);
+  glNormal3f(0, 1, 0);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p6);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p7);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p3);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
 
   // left
   glNormal3f(-1, 0, 0);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p3);
   if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p0);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p6);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p2);
+
+  // front
+  glNormal3f(0, -1, 0);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p0);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p1);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p5);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p4);
 
   //top
-  glNormal3f(0, 1,0);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p3);
+  glNormal3f(0, 0, 1);
+  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p4);
+  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p5);
   if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p7);
   if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p6);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p2);
-
-  // bottom
-  glNormal3f(0, -1, 0);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 0.0f); glVertex3fv(p4);
-  if (do_generate_tex_coord()) glTexCoord2f(1.0f, 1.0f); glVertex3fv(p0);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 1.0f); glVertex3fv(p1);
-  if (do_generate_tex_coord()) glTexCoord2f(0.0f, 0.0f); glVertex3fv(p5);
 
   glEnd();
 

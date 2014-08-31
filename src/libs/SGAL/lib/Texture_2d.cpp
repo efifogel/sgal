@@ -49,7 +49,7 @@ Container_proto* Texture_2d::s_prototype(NULL);
 
 REGISTER_TO_FACTORY(Texture_2d, "Texture_2d");
 
-/*! Constructor */
+//! Constructor
 Texture_2d::Texture_2d(Boolean proto) :
   Texture(proto),
   m_image(NULL)
@@ -58,10 +58,10 @@ Texture_2d::Texture_2d(Boolean proto) :
 #endif
 { set_target(TEXTURE_2D); }
 
-/*! Destructor */
+//! Destructor
 Texture_2d::~Texture_2d() {}
 
-/*! \brief draws the texture. */
+//! \brief draws the texture.
 void Texture_2d::draw(Context* context)
 {
 #if 0
@@ -70,7 +70,7 @@ void Texture_2d::draw(Context* context)
   Texture::draw(context);
 }
 
-/*! \brief cleans the object using the new decoded data. */
+//! \brief cleans the object using the new decoded data.
 void Texture_2d::clean()
 {
   Texture::clean();
@@ -89,7 +89,7 @@ Boolean Texture_2d::empty()
   return m_image->empty();
 }
 
-/*! \brief obtains the texture number of components. */
+//! \brief obtains the texture number of components.
 Uint Texture_2d::get_component_count() const
 {
   if (!m_image) return 0;
@@ -97,36 +97,36 @@ Uint Texture_2d::get_component_count() const
   return m_image->get_component_count();
 }
 
-/*! \brief sets the attributes of the texture. */
+//! \brief sets the attributes of the texture.
 void Texture_2d::set_attributes(Element* elem)
 { Texture::set_attributes(elem); }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Texture_2d::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Texture::get_prototype());
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Texture_2d::delete_prototype()
 {
   delete s_prototype;
   s_prototype = NULL;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Texture_2d::get_prototype()
 {
   if (!s_prototype) Texture_2d::init_prototype();
   return s_prototype;
 }
 
-/*! \brief adds the container to a given scene. */
+//! \brief adds the container to a given scene.
 void Texture_2d::add_to_scene(Scene_graph* scene_graph)
 { m_image->set_dirs(scene_graph->get_data_dirs()); }
 
-/*! \brief prints texture information. */
+//! \brief prints texture information.
 void Texture_2d::print_info()
 {
   int width = get_width();

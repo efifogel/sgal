@@ -29,7 +29,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Ellipsoid::s_tag = "Ellipsoid";
-Container_proto* Ellipsoid::s_prototype(NULL);
+Container_proto* Ellipsoid::s_prototype(nullptr);
 
 // Default values:
 const Float Ellipsoid::s_def_width(1);
@@ -292,7 +292,7 @@ void Ellipsoid::init_prototype()
 void Ellipsoid::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.

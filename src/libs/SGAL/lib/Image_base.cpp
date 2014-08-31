@@ -555,7 +555,7 @@ const char* Image_base::s_format_names[] = {
 const Uint Image_base::s_def_width(0);
 const Uint Image_base::s_def_height(0);
 const Image_base::Format Image_base::s_def_format(Image_base::kRGB8_8_8);
-const Boolean Image_base::s_def_flip(false);
+const Boolean Image_base::s_def_flip(true);
 const Float Image_base::s_def_rotation(0);
 const Boolean Image_base::s_def_alpha(false);
 const Float Image_base::s_def_transparency(1);
