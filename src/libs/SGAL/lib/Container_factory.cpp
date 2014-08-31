@@ -24,6 +24,7 @@
 
 #include "SGAL/Accumulation.hpp"
 #include "SGAL/Appearance.hpp"
+#include "SGAL/Billboard.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Collision.hpp"
 #include "SGAL/Configuration.hpp"
@@ -169,6 +170,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Arc);
   REGISTER_OBJECT(Background);
   REGISTER_OBJECT(Box);
+  REGISTER_OBJECT(Billboard);
   REGISTER_OBJECT(Camera);
   REGISTER_OBJECT(Collision);
   REGISTER_OBJECT(Color_background);

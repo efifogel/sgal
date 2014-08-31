@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_MATRIX4F_HPP
@@ -45,6 +42,9 @@ public:
 
   /*! Copy constructor */
   Matrix4f(const Matrix4f& m);
+
+  /*! Constructor */
+  Matrix4f(const Float matrix[]);
 
   /*! Constructor */
   Matrix4f(float a00, float a01, float a02, float a03,
@@ -143,6 +143,9 @@ private:
   void lu_back_sub_mat(int index[4], float b[4]);
 #endif
 };
+
+//! \brief constructor.
+inline Matrix4f::Matrix4f(const Float matrix[]) { set(matrix); }
 
 //! \brief initializes the matrix.
 inline void Matrix4f::set(const float* m)

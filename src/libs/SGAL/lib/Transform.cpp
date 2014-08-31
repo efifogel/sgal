@@ -40,16 +40,14 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Transform::s_prototype(NULL);
+Container_proto* Transform::s_prototype(nullptr);
 const std::string Transform::s_tag = "Transform";
 
-Vector3f Transform::s_def_translation(0, 0, 0);
-Rotation Transform::s_def_rotation(0, 0, 1, 0);
-Vector3f Transform::s_def_scale(1, 1, 1);
-Rotation Transform::s_def_scale_orientation(0, 0, 1, 0);
-Vector3f Transform::s_def_center(0, 0, 0);
-Vector3f Transform::s_def_bbox_center(0, 0, 0);
-Vector3f Transform::s_def_bbox_size(-1, -1, -1);
+const Vector3f Transform::s_def_translation(0, 0, 0);
+const Rotation Transform::s_def_rotation(0, 0, 1, 0);
+const Vector3f Transform::s_def_scale(1, 1, 1);
+const Rotation Transform::s_def_scale_orientation(0, 0, 1, 0);
+const Vector3f Transform::s_def_center(0, 0, 0);
 
 REGISTER_TO_FACTORY(Transform, "Transform");
 
@@ -147,6 +145,7 @@ void Transform::clean_matrix()
   m_matrix[2][2] *= m_scale[2];
 
   m_dirty_matrix = false;
+  set_transformed(true);
 }
 
 //! \brief extracts the individual Transforms from the matrix.
@@ -460,9 +459,15 @@ void Transform::cull(Cull_context& cull_context)
 {
   if (! is_visible()) return;
   if (m_dirty_matrix) clean_matrix();
+  auto transformed = cull_context.is_transformed();
+  if (is_transformed()) {
+    set_transformed(false);
+    cull_context.set_transformed(true);
+  }
   cull_context.push_matrix(m_matrix);
   Group::cull(cull_context);
   cull_context.pop_matrix();
+  cull_context.set_transformed(transformed);
 }
 
 //! \brief traverses the children for selections.
@@ -486,8 +491,8 @@ void Transform::reset(const Field_info* /* field_info */)
   set_scale_orientation(s_def_scale_orientation);
 }
 
-/*! \brief cleans the bounding sphereof the transformation node.
- * Notice that the call to clean_matrix() must precede the call to
+/*! \brief cleans the bounding sphere of the transformation node.
+ * Notice that the a call to clean_matrix() must precede the call to
  * Group::clean_sphere_bound(), cause the former may reset the flag
  * m_dirty_sphere_bound.
  */
@@ -510,7 +515,7 @@ Boolean Transform::clean_sphere_bound()
   // multiply the radius by the max scaling factor
   float scale_factor = m_scale.get_max_comp();
   m_sphere_bound.set_radius(m_sphere_bound.get_radius() * scale_factor);
-   return true;
+  return true;
 }
 
 //! \brief initializes the node prototype.
@@ -617,22 +622,6 @@ void Transform::set_attributes(Element* elem)
     if (name == "scaleOrientation") {
       Rotation vec(value);
       set_scale_orientation(vec);
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "bboxCenter") {
-      m_sphere_bound.set_center(value);
-      m_dirty_sphere_bound = false;
-      m_locked_sphere_bound = true;
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "bboxSize") {
-      Vector3f vec(value);
-      float radius = vec.length();
-      m_sphere_bound.set_radius(radius);
-      m_dirty_sphere_bound = false;
-      m_locked_sphere_bound = true;
       elem->mark_delete(ai);
       continue;
     }

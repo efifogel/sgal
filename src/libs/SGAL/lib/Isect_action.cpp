@@ -25,10 +25,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+//! \brief constructor.
 Isect_action::Isect_action() : m_current_id(0) {}
 
-/*! Destructor */
+//! \brief destructor.
 Isect_action::~Isect_action() {}
 
 /*! \brief applies the draw action for selection on a given node.
@@ -49,11 +49,11 @@ void Isect_action::set_context(Context* context)
   m_color_map.init(context);
 }
 
-/*! \brief converts the pixel color into an index. */
+//! \brief converts the pixel color into an index.
 Uint Isect_action::get_index(const Uchar* pixel) const
 { return m_color_map.get_index(pixel); }
 
-/*! \brief converts the index into a color. */
+//! \brief converts the index into a color.
 void Isect_action::get_color(Uint index, Uchar* rgb) const
 { m_color_map.get_color(index, rgb); }
 

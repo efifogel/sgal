@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11857 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ISECT_ACTION_HPP
@@ -89,10 +86,10 @@ protected:
   Color_map m_color_map;
 };
 
-/*! \brief obtains the current color id. */
+//! \brief obtains the current color id.
 inline Uint Isect_action::get_id() const { return m_current_id; }
 
-/*! \brief sets the current color id. */
+//! \brief sets the current color id.
 inline void Isect_action::set_id(Uint id) { m_current_id = id; }
 
 SGAL_END_NAMESPACE

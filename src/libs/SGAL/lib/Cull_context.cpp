@@ -38,14 +38,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+//! \brief constructor.
 Cull_context::Cull_context() :
-  m_camera(0),
+  m_camera(nullptr),
   m_current_lod(-1),
-  m_sort(false)
+  m_sort(false),
+  m_transformed(false)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Cull_context::~Cull_context() {}
 
 /*! \brief compares node priority.
@@ -55,7 +56,7 @@ bool compare_render_nodes(const Cull_context::Render_node& n1,
                           const Cull_context::Render_node& n2)
 { return n1.priority > n2.priority; }
 
-/*! \brief adds a shape node. */
+//! \brief adds a shape node.
 void Cull_context::add_shape(Shape* node)
 {
   Render_node rn;
@@ -67,7 +68,7 @@ void Cull_context::add_shape(Shape* node)
   m_nodes.push_back(rn);
 }
 
-/*! \brief adds a light node. */
+//! \brief adds a light node.
 void Cull_context::add_light(Light* light)
 {
   if (!m_head_light || (light != &*m_head_light)) {
@@ -78,7 +79,8 @@ void Cull_context::add_light(Light* light)
   }
 }
 
-/*! \brief traverses node hierarchy and adds each node to the appropriate list.
+/*! \brief traverses the node hierarchy and adds each node to the
+ * appropriate drawing list.
  */
 void Cull_context::cull(Node* node, Camera* camera)
 {
@@ -91,7 +93,7 @@ void Cull_context::cull(Node* node, Camera* camera)
   node->cull(*this);
 }
 
-/*! \brief draws a single node. */
+//! \brief draws a single node.
 void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
 {
   glPushMatrix();
@@ -157,7 +159,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   return (p.length() - radius);
 }
 
-/*! \brief draws. */
+//! \brief draws the collected nodes (after culling).
 void Cull_context::draw(Draw_action* draw_action)
 {
   glMatrixMode(GL_MODELVIEW);
@@ -217,7 +219,7 @@ void Cull_context::draw(Draw_action* draw_action)
   }
 }
 
-/*! \brief pushes the transform matrix. */
+//! \brief pushes the transform matrix.
 void Cull_context::push_matrix(const Matrix4f& mat)
 {
   m_matrix_stack.push_back(m_world_tm);
@@ -229,7 +231,7 @@ void Cull_context::push_matrix(const Matrix4f& mat)
   m_world_tm.mult(wtm, mat);
 }
 
-/*! \brief pops the transform matrix. */
+//! \brief pops the transform matrix.
 void Cull_context::pop_matrix()
 {
   SGAL_assertion((!m_matrix_stack.empty()));
@@ -237,7 +239,7 @@ void Cull_context::pop_matrix()
   m_matrix_stack.pop_back();
 }
 
-/*! \brief sets the head light. */
+//! \brief sets the head light.
 void Cull_context::set_head_light(Shared_light light) { m_head_light = light; }
 
 SGAL_END_NAMESPACE

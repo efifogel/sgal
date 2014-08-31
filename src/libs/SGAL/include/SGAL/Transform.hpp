@@ -152,7 +152,21 @@ public:
   void set_center(Float v0, Float v1, Float v2);
   void get_center(Float* v0, Float* v1, Float* v2);
 
-  void parts_changed(const Field_info* field_info = NULL);
+  /*! Set the flag that indicates whether the transformation took place.
+   * \param transformed (in) indicates whether transformation took place.
+   */
+  void set_transformed(Boolean transformed);
+
+  /*! Determine whether transformation took place.
+   * \return true if transformation took place and false otherwise.
+   */
+  Boolean is_transformed() const;
+
+  /*! Process change of parts.
+   * \param field_info (in) the field information record of the particular
+   *                   part that got changed.
+   */
+  void parts_changed(const Field_info* field_info = nullptr);
 
 protected:
   /*! Obtain the tag (type) of the container. */
@@ -180,10 +194,10 @@ private:
   /*! The center of the transform. */
   Vector3f m_center;
 
-  /*! The matrix representing of the transformation. */
+  /*! The matrix representing the transform. */
   Matrix4f m_matrix;
 
-  /*! The inverse of the matrix representing the transformation. */
+  /*! The inverse of the matrix representing the transform. */
   Matrix4f m_inverse_matrix;
 
   /*! Indicates whether the matrix is not up-to-date. */
@@ -192,18 +206,29 @@ private:
   /*! Indicates whether the transform should be reset. */
   bool m_reset;
 
+  /*! Indicates whether the inverse transform matrix is dirty and thus must
+   * be cleaned.
+   */
   Boolean m_dirty_inverse;
 
+  /*! Indicates whether the individual parts are dirty and thus must be
+   * cleaned. The parts become dirty if the matrix that represents the
+   * transform is set, for example.
+   */
   Boolean m_dirty_parts;
 
+  /*! Indicates weather transformation took place.
+   * This is used, for example, for billboarding. If transformation took place,
+   * then the billboard transform matrix must be recalculated.
+   */
+  Boolean m_transformed;
+
   /*! Default values */
-  static Vector3f s_def_translation;
-  static Rotation s_def_rotation;
-  static Vector3f s_def_scale;
-  static Rotation s_def_scale_orientation;
-  static Vector3f s_def_center;
-  static Vector3f s_def_bbox_center;
-  static Vector3f s_def_bbox_size;
+  static const Vector3f s_def_translation;
+  static const Rotation s_def_rotation;
+  static const Vector3f s_def_scale;
+  static const Rotation s_def_scale_orientation;
+  static const Vector3f s_def_center;
 
   void clean_parts();
 
@@ -226,6 +251,14 @@ inline Container* Transform::clone() { return new Transform(); }
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Transform::get_tag() const { return s_tag; }
+
+//! \brief sets the flag that indicates whether the transformation took place.
+inline void Transform::set_transformed(Boolean transformed)
+{ m_transformed = transformed; }
+
+//! \brief determines whether transformation took place.
+inline Boolean Transform::is_transformed() const
+{ return m_transformed; }
 
 SGAL_END_NAMESPACE
 

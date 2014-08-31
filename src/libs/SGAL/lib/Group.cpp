@@ -38,8 +38,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Group::s_prototype(NULL);
+Container_proto* Group::s_prototype(nullptr);
 const std::string Group::s_tag = "Group";
+
+const Vector3f Group::s_def_bbox_center(0, 0, 0);
+const Vector3f Group::s_def_bbox_size(-1, -1, -1);
 
 REGISTER_TO_FACTORY(Group, "Group");
 
@@ -50,7 +53,9 @@ Group::Group(Boolean proto) :
   m_num_lights(0),
   m_start_selection_id(0),
   m_num_selection_ids(0),
-  m_scene_graph(NULL)
+  m_scene_graph(nullptr),
+  m_bbox_center(s_def_bbox_center),
+  m_bbox_size(s_def_bbox_size)
 {}
 
 //! \brief copy constructor.
@@ -269,6 +274,22 @@ void Group::set_attributes(Element* elem)
         set_invisible();
       elem->mark_delete(ai);
     }
+    if (name == "bboxCenter") {
+      m_sphere_bound.set_center(value);
+      m_dirty_sphere_bound = false;
+      m_locked_sphere_bound = true;
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "bboxSize") {
+      Vector3f vec(value);
+      float radius = vec.length();
+      m_sphere_bound.set_radius(radius);
+      m_dirty_sphere_bound = false;
+      m_locked_sphere_bound = true;
+      elem->mark_delete(ai);
+      continue;
+    }
   }
 
   typedef Element::Cont_attr_iter         Cont_attr_iter;
@@ -356,7 +377,7 @@ void Group::init_prototype()
 void Group::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.

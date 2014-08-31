@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 14220 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CULL_CONTEXT_HPP
@@ -71,35 +68,54 @@ public:
   /*! Destructor */
   virtual ~Cull_context();
 
-  /*! Traverse node hierarchy seacrhing for transform nodes and adding
-   * them to draw list.
-   * \param node a pointer to the node to draw
+  /*! Traverse the node hierarchy and insert each node to the appropriate
+   * drawing list.
+   * \param node (in) a pointer to the node to draw.
    */
   virtual void cull(Node* node, Camera* camera);
 
+  /*! Draw the collected nodes (after culling).
+   */
   virtual void draw(Draw_action* draw_action);
 
+  /*! Add a shape node.
+   */
   void add_shape(Shape* shape);
 
-  /*!
+  /*! Add a light node.
    * \param light a pointer to the Light.
    */
   void add_light(Light* light);
 
-  /*! */
+  /*! Set the head light. */
   void set_head_light(Shared_light light);
 
+  /*! Push the transform matrix. */
   void push_matrix(const Matrix4f& mat);
 
+  /*! Pop the transform matrix. */
   void pop_matrix();
 
-  Camera* get_camera() const { return m_camera; };
+  Camera* get_camera() const;
 
-  const Matrix4f& get_current_wtm() { return m_world_tm; }
+  const Matrix4f& get_current_wtm();
 
-  void set_current_lod(int lod) { m_current_lod = lod; };
+  void set_current_lod(Int lod);
 
-  Int get_current_lod() const { return m_current_lod; };
+  Int get_current_lod() const;
+
+  /*! Set the flag that indicates whether the node hierarchy has been
+   * transformed.
+   * \param transformed (in) indicates whether the node hierarchy has been
+   *                    transformed.
+   */
+  void set_transformed(Boolean transformed);
+
+  /*! Determine whether the node hierarchy has been transformed.
+   * \return true if the node hierarchy has been transformed and false
+   *         otherwise.
+   */
+  Boolean is_transformed() const;
 
 protected:
   void draw_node(Draw_action* draw_action, const Render_node& rn);
@@ -136,13 +152,36 @@ private:
 
   int m_current_lod;
 
-  /*! A flag indicating whether sort is needed */
+  /*! Indicates whether sorting is needed. */
   Boolean m_sort;
+
+  /*! Indicates whether the node hierarchy must be transformed.
+   * This is used, for example, for billboarding. If the node hierarchy has
+   * been transformed, then the billboard transform matrix must be recalculated.
+   */
+  Boolean m_transformed;
 };
 
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
+
+inline Camera* Cull_context::get_camera() const { return m_camera; }
+
+inline const Matrix4f& Cull_context::get_current_wtm() { return m_world_tm; }
+
+inline void Cull_context::set_current_lod(Int lod) { m_current_lod = lod; }
+
+inline Int Cull_context::get_current_lod() const { return m_current_lod; }
+
+/*! \brief sets the flag that indicates whether the node hierarchy has been
+ * transformed.
+ */
+inline void Cull_context::set_transformed(Boolean transformed)
+{ m_transformed = transformed; }
+
+//! \brief determines whether the node hierarchy has been transformed.
+inline Boolean Cull_context::is_transformed() const { return m_transformed; }
 
 SGAL_END_NAMESPACE
 

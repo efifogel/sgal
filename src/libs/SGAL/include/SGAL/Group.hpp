@@ -66,6 +66,8 @@ public:
     FIRST = Node::LAST - 1,
     IS_VISIBLE,
     CHILDREN,
+    BBOX_CENTER,
+    BBOX_SIZE,
     LAST
   };
 
@@ -118,6 +120,8 @@ public:
   //@{
   Boolean* is_visible_handle(const Field_info*) { return &m_is_visible; }
   Node_array* childs_handle(const Field_info*) { return &m_childs; }
+  Vector3f* bbox_center_handle(const Field_info*) { return &m_bbox_center; }
+  Vector3f* bbox_size_handle(const Field_info*) { return &m_bbox_size; }
   //@}
 
   /*! Set the attributes of the group extracted, for example, from a VRML file.
@@ -210,6 +214,30 @@ public:
    */
   void add_child(Shared_node node);
 
+  /*! Set the center of a bounding box that encloses the children of the
+   * group.
+   * \param bbox_center the bounding-box center.
+   */
+  void set_bbox_center(const Vector3f& bbox_center);
+
+  /*! Obtain the center of a bounding box that encloses the children of the
+   * group.
+   * \return the bounding-box center.
+   */
+  const Vector3f& get_bbox_center() const;
+
+  /*! Set the size of a bounding box that encloses the children of the
+   * group.
+   * \param bbox_size the bounding-box size.
+   */
+  void set_bbox_size(const Vector3f& bbox_size);
+
+  /*! Obtain the size of a bounding box that encloses the children of the
+   * group.
+   * \return the bounding-box size.
+   */
+  const Vector3f& get_bbox_size() const;
+
   /* Remove a given child from the sequence of children of the group.
    * \param node (in) the child node to remove.
    */
@@ -277,6 +305,16 @@ private:
 
   /*! The node prototype. */
   static Container_proto* s_prototype;
+
+  /*! The center of a bounding box that encloses the children of the group. */
+  Vector3f m_bbox_center;
+
+  /*! The size of a bounding box that encloses the children of the group. */
+  Vector3f m_bbox_size;
+
+  /*! Default values */
+  static const Vector3f s_def_bbox_center;
+  static const Vector3f s_def_bbox_size;
 };
 
 #if (defined _MSC_VER)

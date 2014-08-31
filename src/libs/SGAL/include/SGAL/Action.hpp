@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ACTION_HPP
@@ -38,23 +35,23 @@ class SGAL_SGAL_DECL Action {
 public:
   typedef enum {TRAV_CONT = 0, TRAV_PRUNE = 1, TRAV_STOP = 2} Trav_directive;
 
-  /*! Constructor */
-  Action() : m_context(NULL) {}
+  /*! Constructor. */
+  Action() : m_context(nullptr) {}
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Action() {}
 
-  /*! Set the context */
+  /*! Set the context. */
   virtual void set_context(Context* context) { m_context = context; }
 
-  /*! Obtain the context */
+  /*! Obtain the context. */
   Context* get_context() { return m_context; }
 
-  /*! Apply node */
+  /*! Apply node. */
   virtual Trav_directive apply(Node* node) = 0;
-   
+
 protected:
-  /*! The current context */
+  /*! The current context. */
   Context* m_context;
 };
 

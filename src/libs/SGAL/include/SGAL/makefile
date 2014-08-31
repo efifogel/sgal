@@ -7,6 +7,7 @@ FILES+= assertions.hpp
 FILES+= Background.hpp
 FILES+= basic.hpp
 FILES+= Bindable_node.hpp
+FILES+= Billboard.hpp
 FILES+= Bindable_stack.hpp
 FILES+= Borland_fixes.hpp
 FILES+= Camera.hpp

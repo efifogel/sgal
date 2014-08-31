@@ -14,13 +14,10 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
- * Isect_action is a class used while traversing the scene graph for 
+ * Isect_action is a class used while traversing the scene graph for
  * frame recording.
  *
  * The frame recording is based on whether any given shape is set to be

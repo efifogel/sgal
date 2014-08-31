@@ -22,12 +22,13 @@
 #include "SGAL/Transform.hpp"
 #include "SGAL/Light.hpp"
 #include "SGAL/Gfx.hpp"
+#include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
-Draw_action::Draw_action(Configuration * config) :
-  Isect_action(),
+//! \brief constructor.
+Draw_action::Draw_action(Configuration* config) :
+  Action(),
   m_pass_no(0),
   m_second_pass_required(false),
   m_current_lod(-1),    // Negative lod force choosing max level.
@@ -36,17 +37,13 @@ Draw_action::Draw_action(Configuration * config) :
   m_snap(true),
   m_apply_camera(true),
   m_configuration(config)
-{
-}
+{}
 
-/*! Destructor */
+//! \brief destructor.
 Draw_action::~Draw_action() {}
 
-/*! Apply the draw action on a given node. For now this means calling
- * the draw method on the Node.
- * @param node a pointer to the node to draw
- */
-Action::Trav_directive Draw_action::apply(Node * node)
+//! \brief applies the draw action to a given node.
+Action::Trav_directive Draw_action::apply(Node* node)
 {
   if (node) {
     // Ignore some nodes:
@@ -59,41 +56,25 @@ Action::Trav_directive Draw_action::apply(Node * node)
   return Action::TRAV_CONT;
 }
 
-/*! Returns true if a second pass is required to render the transparent
- * objects.
- * @return true if a 2nd pass is required.
- */
+//! \brief determines whether a second pass is required.
 Boolean Draw_action::is_second_pass_required()
-{
-  return m_second_pass_required;
-}
+{ return m_second_pass_required; }
 
-/*! Set the flag to indicate whether a second pass is required. This flag
- * should be set when a transparent object is found.
- */
+//! \brief set the flag to indicate whether a second pass is required.
 void Draw_action::set_second_pass_required(Boolean flag)
-{
-  m_second_pass_required = flag;
-}
+{ m_second_pass_required = flag; }
 
-/*! Increment the pass number.
- */
+//! \brief increments the pass number.
 void Draw_action::inc_pass_no()
 {
-  m_pass_no++;
+  ++m_pass_no;
   m_current_lod = -1;
 }
 
-/*! Returns the current pass being rendered, assuming 0 to be the first one.
- * @return the pass number.
- */
-Int Draw_action::get_pass_no()
-{
-  return m_pass_no;
-}
+//! \brief obtains the number of the current pass being rendered.
+Int Draw_action::get_pass_no() { return m_pass_no; }
 
-/*! Resets the pass number to 0.
- */
+//! brief resets the pass number to 0.
 void Draw_action::reset_pass_no()
 {
   m_pass_no = 0;
@@ -101,12 +82,8 @@ void Draw_action::reset_pass_no()
 
 }
 
-/*! Returns true if the current pass is the first one.
- * @return true if it is the first pass.
- */
+//! Determine whether the current pass is the first one.
 Boolean Draw_action::is_first_pass()
-{
-  return (m_pass_no == 0);
-}
+{ return (m_pass_no == 0); }
 
 SGAL_END_NAMESPACE

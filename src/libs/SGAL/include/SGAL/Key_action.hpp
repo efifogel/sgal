@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_KEY_ACTION_HPP
@@ -44,10 +41,10 @@ public:
 
   void Init(int vx,int vy, int vz, int angle);
 
-  inline int get_vX() {return m_vx;};  
-  inline int get_vY() {return m_vy;};  
-  inline int get_vZ() {return m_vz;};  
-  inline int get_angle() {return m_angle;};  
+  inline int get_vX() {return m_vx;};
+  inline int get_vY() {return m_vy;};
+  inline int get_vZ() {return m_vz;};
+  inline int get_angle() {return m_angle;};
 
 private:
   int m_vx;
@@ -64,9 +61,9 @@ public:
 
   void Init(int dx,int dy, int dz);
 
-  inline int get_dX() {return m_dx;};  
-  inline int get_dY() {return m_dy;};  
-  inline int get_dZ() {return m_dz;};  
+  inline int get_dX() {return m_dx;};
+  inline int get_dY() {return m_dy;};
+  inline int get_dZ() {return m_dz;};
 private:
   int m_dx;
   int m_dy;
@@ -81,9 +78,9 @@ public:
 
   void Init(String nodeName, String fieldName, String value);
 
-  inline String get_nodeName() {return m_nodeName;};  
-  inline String get_fieldName() {return m_fieldName;};  
-  inline String get_value() {return m_value;};  
+  inline String get_nodeName() {return m_nodeName;};
+  inline String get_fieldName() {return m_fieldName;};
+  inline String get_value() {return m_value;};
 
 private:
   String m_nodeName;
@@ -100,9 +97,9 @@ public:
 
   void Init(String node1Name,String field1Name,String value1,String node2Name,String field2Name,String value2);
 
-  inline String get_nodeName() {return m_nodeName[m_current];};  
-  inline String get_fieldName() {return m_fieldName[m_current];};  
-  inline String get_value() {return m_value[m_current];};  
+  inline String get_nodeName() {return m_nodeName[m_current];};
+  inline String get_fieldName() {return m_fieldName[m_current];};
+  inline String get_value() {return m_value[m_current];};
 
   inline void SwitchFields() {m_current = (m_current+1)%2;};
 

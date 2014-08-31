@@ -65,6 +65,7 @@ CPPSOURCES+= Bindable_node.cpp
 CPPSOURCES+= Bindable_stack.cpp
 CPPSOURCES+= Boundary_set.cpp
 CPPSOURCES+= Box.cpp
+CPPSOURCES+= Billboard.cpp
 CPPSOURCES+= Camera.cpp
 CPPSOURCES+= Collision.cpp
 CPPSOURCES+= Color_background.cpp
