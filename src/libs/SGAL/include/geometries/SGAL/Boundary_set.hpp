@@ -222,9 +222,18 @@ public:
   Boolean is_dirty_normals() const;
 
   /*! Calculate the texture coordinates in case they are invalidated.
-   * \param num_components (in) number of texture coordinates (2, 3, or 4).
+   * \param target (in) the texture target, which, for example, implies
+   *               the number of texture coordinates (2, 3, or 4).
    */
   virtual void clean_tex_coords(Texture::Target target);
+
+  /*! Calculate the default 2D texture-mapping oordinates.
+   */
+  virtual void clean_tex_coords_2d();
+
+  /*! Calculate the default 3D texture-mapping oordinates.
+   */
+  virtual void clean_tex_coords_3d();
 
   /*! Determine whether the representation of the normals hasn't been
    * cleaned.
@@ -838,14 +847,6 @@ protected:
    * \return the number of tex ture coordinates.
    */
   Uint num_tex_coordinates() const;
-
-  /*! Calculate the default 2D texture-mapping oordinates.
-   */
-  void clean_tex_coords_2d();
-
-  /*! Calculate the default 3D texture-mapping oordinates.
-   */
-  void clean_tex_coords_3d();
 
 private:
   /*! The key for the utility map, which maps a tuple of 3 ids, namely,

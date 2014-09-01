@@ -177,6 +177,10 @@ public:
    */
   virtual void clean();
 
+  /*! Calculate the default 2D texture-mapping oordinates.
+   */
+  virtual void clean_tex_coords_2d();
+
   /*! Process change of structure.
    */
   void structure_changed(const Field_info* field_info);

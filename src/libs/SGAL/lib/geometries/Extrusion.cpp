@@ -34,6 +34,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Tex_coord_array_2d.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -590,6 +591,105 @@ void Extrusion::structure_changed(const Field_info* field_info)
 {
   clear();
   field_changed(field_info);
+}
+
+//! calculates the default 2D texture-mapping oordinates.
+void Extrusion::clean_tex_coords_2d()
+{
+  size_t stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
+  size_t slices = m_cross_section.size();
+
+  // Texture coordinates
+  Uint offset = (slices + 1) * (stacks + 1);
+  Uint num_tex_coords = offset;
+  if (m_begin_cap) num_tex_coords += m_cross_section.size();
+  if (m_end_cap) num_tex_coords += m_cross_section.size();
+
+  if (m_tex_coord_array) m_tex_coord_array->resize(num_tex_coords);
+  else {
+    m_tex_coord_array.reset(new Tex_coord_array_2d(num_tex_coords));
+    SGAL_assertion(m_tex_coord_array);
+  }
+  boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
+    boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
+  SGAL_assertion(tex_coord_array);
+
+  size_t i, j, k = 0;
+  Float delta_s = 1.0f / slices;
+  Float delta_t = 1.0f / stacks;
+  for (i = 0; i <= stacks; ++i) {
+    auto t = delta_t * i;
+    for (j = 0; j <= slices; ++j) {
+      auto s = delta_s * j;
+      (*tex_coord_array)[k++].set(s, t);
+    }
+  }
+
+  if (m_begin_cap || m_end_cap) {
+    // Find ranges:
+    auto s = m_cross_section[0][0];
+    auto t = m_cross_section[0][1];
+    Float s_min = s;
+    Float s_max = s;
+    Float t_min = t;
+    Float t_max = t;
+    for (j = 1; j < slices; ++j) {
+      auto s = m_cross_section[j][0];
+      auto t = m_cross_section[j][1];
+      if (s < s_min) s_min = s;
+      if (s > s_max) s_max = s;
+      if (t < t_min) t_min = t;
+      if (t > t_max) t_max = t;
+    }
+    auto s_range = s_max - s_min;
+    auto t_range = t_max - t_min;
+
+    if (m_begin_cap) {
+      for (j = slices; j != 0; --j) {
+        auto s = (m_cross_section[j-1][0] - s_min) / s_range;
+        auto t = (m_cross_section[j-1][1] - t_min) / t_range;
+        (*tex_coord_array)[k++].set(s, t);
+      }
+    }
+
+    if (m_end_cap) {
+      for (j = 0; j < slices; ++j) {
+        auto s = (m_cross_section[j][0] - s_min) / s_range;
+        auto t = (m_cross_section[j][1] - t_min) / t_range;
+        (*tex_coord_array)[k++].set(s, t);
+      }
+    }
+  }
+
+  // Texture coordinate indices
+  m_tex_coord_indices.resize(m_coord_indices.size());
+  k = 0;
+
+  for (j = 0; j < stacks; ++j) {
+    Uint start = j * (slices + 1);
+    for (i = 0; i < slices; ++i) {
+      Uint ll = start + i;
+      Uint ul = ll + (slices + 1);
+      m_tex_coord_indices[k++] = ll;
+      m_tex_coord_indices[k++] = ll + 1;
+      m_tex_coord_indices[k++] = ul + 1;
+      m_tex_coord_indices[k++] = ul;
+      m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+    }
+  }
+
+  // Generate caps:
+  if (m_begin_cap) {
+    for (i = 0; i < slices; ++i) m_tex_coord_indices[k++] = offset++;
+    m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+  }
+
+  if (m_end_cap) {
+    for (i = 0; i < slices; ++i) m_tex_coord_indices[k++] = offset++;
+    m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+  }
+
+  clear_flat_tex_coord_indices();
 }
 
 SGAL_END_NAMESPACE

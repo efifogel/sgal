@@ -1,0 +1,35 @@
+#VRML V2.0 utf8
+NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
+Shape {
+  appearance Appearance {
+    texture ImageTexture { url "sgal.jpg" }
+    material Material {}
+  }
+  geometry Extrusion {
+    beginCap TRUE
+    endCap TRUE
+    solid TRUE
+    crossSection [ 1 0,
+		   0.932472 -0.361242,
+		   0.739009 -0.673696,
+		   0.445738 -0.895164,
+		   0.0922675 -0.995734,
+		   -0.273664 -0.961825,
+		   -0.602635 -0.798017,
+		   -0.850218 -0.526432,
+		   -0.982973 -0.183749,
+		   -0.982973 0.18375,
+		   -0.850217 0.526433,
+		   -0.602634 0.798018,
+		   -0.273663 0.961826,
+		   0.0922688 0.995734,
+		   0.445739 0.895163,
+		   0.739009 0.673695,
+		   0.932472 0.361241,
+		   1 0
+		  ]
+    orientation [ 0 0 1 0, 0 0 1 0, 0 0 1 0, 0 0 1 0 ]
+    scale [ 1 1, 1 1, 1 1, 1 1 ]
+    spine [ -0.7071 -0.7071 0, 0 0 0, 0 1 0, 0.7071 1.7071 0 ]
+  }
+}
