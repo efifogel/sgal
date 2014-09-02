@@ -363,6 +363,22 @@ void Extrusion::structure_changed(const Field_info* field_info)
   field_changed(field_info);
 }
 
+//! \brief generates the cross section (in case it is not provided).
+void Extrusion::generate_cross_section()
+{
+  m_cross_section.resize(m_cross_section_slices + 1);
+  SGAL_assertion(m_cross_section_slices != 0);
+  Float delta = SGAL_TWO_PI / m_cross_section_slices;
+  Float angle = 0;
+  for (Uint i = 0; i < m_cross_section_slices; ++i) {
+    auto x = m_cross_section_radius * sinf(angle);
+    auto y = m_cross_section_radius * cosf(angle);
+    angle += delta;
+    m_cross_section[i].set(x, y);
+  }
+  m_cross_section[m_cross_section_slices] = m_cross_section[0];
+}
+
 //! Clean the extrusion internal representation.
 void Extrusion::clean()
 {
@@ -373,19 +389,7 @@ void Extrusion::clean()
   SGAL_assertion(coord_array);
 
   // Generate (closed) cross section:
-  if (m_cross_section.empty()) {
-    m_cross_section.resize(m_cross_section_slices + 1);
-    Float delta = SGAL_TWO_PI / m_cross_section_slices;
-    Float angle = 0;
-    Uint i;
-    for (i = 0; i < m_cross_section_slices; ++i) {
-      Float x = m_cross_section_radius * sinf(angle);
-      Float y = m_cross_section_radius * cosf(angle);
-      angle += delta;
-      m_cross_section[i].set(x, y);
-    }
-    m_cross_section[i] = m_cross_section[0];
-  }
+  if (m_cross_section.empty()) generate_cross_section();
 
   // Generate points:
   Boolean cross_section_loop =
@@ -460,7 +464,6 @@ void Extrusion::clean()
       point[2] *= m_scale[0][1];
     }
     point.xform_pt(point, mat);
-
     (*coord_array)[k++].add(m_spine[0], point);
   }
 
@@ -568,8 +571,6 @@ size_t Extrusion::add_triangle_indices(size_t k, std::vector<Uint>& indices,
 //! \brief generates the coordinate indices.
 void Extrusion::generate_coord_indices()
 {
-  //! \todo generate the indices flat to start with.
-
   Boolean cross_section_loop =
     m_cross_section.front() == m_cross_section.back();
   size_t cross_section_size =
@@ -579,24 +580,17 @@ void Extrusion::generate_coord_indices()
   size_t slices = (cross_section_closed) ?
     cross_section_size : cross_section_size + 1;
 
-  // Generate all:
+  // Count:
   Uint stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
-  Uint offset = cross_section_size * (m_spine.size() - 1);
   m_num_primitives = slices * stacks * 2;
+  // Caps are always closed
+  if (m_begin_cap) m_num_primitives += cross_section_size - 2;
+  if (m_end_cap) m_num_primitives += cross_section_size - 2;
   Uint size = m_num_primitives * 4;
-  if (m_begin_cap) {
-    // Caps are always closed
-    size += cross_section_size + 1;
-    ++m_num_primitives;
-  }
-  if (m_end_cap) {
-    // Caps are always closed
-    size += cross_section_size + 1;
-    ++m_num_primitives;
-  }
 
-  size_t j, i, k = 0;
+  // Generate:
   m_coord_indices.resize(size);
+  size_t j, i, k = 0;
   for (j = 0; j < m_spine.size() - 1; ++j) {
     Uint start = j * cross_section_size;
     for (i = 0; i < slices - 1; ++i) {
@@ -645,15 +639,24 @@ void Extrusion::generate_coord_indices()
 
   // Generate caps:
   if (m_begin_cap) {
-    for (i = 0; i < cross_section_size; ++i)
-      m_coord_indices[k++] = cross_section_size - 1 - i;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
+    Uint anchor = 0;
+    for (i = 0; i < cross_section_size-2; ++i) {
+      m_coord_indices[k++] = anchor;
+      m_coord_indices[k++] = anchor + cross_section_size - i - 1;
+      m_coord_indices[k++] = anchor + cross_section_size - i - 2;
+      m_coord_indices[k++] = static_cast<Uint>(-1);
+    }
   }
 
   if (m_end_cap) {
-    for (i = 0; i < cross_section_size; ++i)
-      m_coord_indices[k++] = offset + i;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
+    Uint offset = cross_section_size * (m_spine.size() - 1);
+    Uint anchor = offset;
+    for (i = 0; i < cross_section_size-2; ++i) {
+      m_coord_indices[k++] = anchor;
+      m_coord_indices[k++] = anchor + i + 1;
+      m_coord_indices[k++] = anchor + i + 2;
+      m_coord_indices[k++] = static_cast<Uint>(-1);
+    }
   }
 
   clear_flat_coord_indices();
@@ -674,8 +677,7 @@ void Extrusion::clean_tex_coords_2d()
 
   // Texture coordinates
   Uint num_tex_coords = (slices + 1) * (stacks + 1);
-  if (m_begin_cap) num_tex_coords += slices;
-  if (m_end_cap) num_tex_coords += slices;
+  if (m_begin_cap || m_end_cap) num_tex_coords += cross_section_size;
 
   if (m_tex_coord_array) m_tex_coord_array->resize(num_tex_coords);
   else {
@@ -716,20 +718,10 @@ void Extrusion::clean_tex_coords_2d()
     auto s_range = s_max - s_min;
     auto t_range = t_max - t_min;
 
-    if (m_begin_cap) {
-      for (j = cross_section_size; j != 0; --j) {
-        auto s = (m_cross_section[j-1][0] - s_min) / s_range;
-        auto t = (m_cross_section[j-1][1] - t_min) / t_range;
-        (*tex_coord_array)[k++].set(s, t);
-      }
-    }
-
-    if (m_end_cap) {
-      for (j = 0; j < cross_section_size; ++j) {
-        auto s = (m_cross_section[j][0] - s_min) / s_range;
-        auto t = (m_cross_section[j][1] - t_min) / t_range;
-        (*tex_coord_array)[k++].set(s, t);
-      }
+    for (j = 0; j < cross_section_size; ++j) {
+      auto s = (m_cross_section[j][0] - s_min) / s_range;
+      auto t = (m_cross_section[j][1] - t_min) / t_range;
+      (*tex_coord_array)[k++].set(s, t);
     }
   }
 
@@ -768,15 +760,23 @@ void Extrusion::generate_tex_coord_indices()
   // Generate caps:
   Uint offset = (slices + 1) * (stacks + 1);
   if (m_begin_cap) {
-    for (i = 0; i < cross_section_size; ++i)
-      m_tex_coord_indices[k++] = offset++;
-    m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+    Uint anchor = offset;
+    for (i = 0; i < cross_section_size-2; ++i) {
+      m_tex_coord_indices[k++] = anchor;
+      m_tex_coord_indices[k++] = anchor + cross_section_size - i - 1;
+      m_tex_coord_indices[k++] = anchor + cross_section_size - i - 2;
+      m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+    }
   }
 
   if (m_end_cap) {
-    for (i = 0; i < cross_section_size; ++i)
-      m_tex_coord_indices[k++] = offset++;
-    m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+    Uint anchor = offset;
+    for (i = 0; i < cross_section_size-2; ++i) {
+      m_tex_coord_indices[k++] = anchor;
+      m_tex_coord_indices[k++] = anchor + i + 1;
+      m_tex_coord_indices[k++] = anchor + i + 2;
+      m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+    }
   }
 }
 

@@ -245,6 +245,10 @@ protected:
   /*! The number of slices of the cross-section. */
   Uint m_cross_section_slices;
 
+  /*! Generate the cross section (in case it is not provided).
+   */
+  void generate_cross_section();
+
   /*! Generate the coordinate indices.
    */
   void generate_coord_indices();
