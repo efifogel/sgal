@@ -730,6 +730,21 @@ void Extrusion::clean_tex_coords_2d()
   m_tex_coords_cleaned = true;
 }
 
+//! Add triangle indices given four points that form a quad.
+size_t Extrusion::add_triangle_indices(size_t k,
+                                       Uint ll, Uint lr, Uint ur, Uint ul)
+{
+  m_coord_indices[k++] = ll;
+  m_coord_indices[k++] = lr;
+  m_coord_indices[k++] = ur;
+  m_coord_indices[k++] = static_cast<Uint>(-1);
+  m_coord_indices[k++] = ll;
+  m_coord_indices[k++] = ur;
+  m_coord_indices[k++] = ul;
+  m_coord_indices[k++] = static_cast<Uint>(-1);
+  return k;
+}
+
 //! Generate the texture coordinate indices.
 void Extrusion::generate_tex_coord_indices()
 {
