@@ -53,11 +53,14 @@ public:
     FIRST = Indexed_face_set::LAST - 1,
     BEGIN_CAP,
     END_CAP,
-    LOOP,
     CROSS_SECTION,
     ORIENTATION,
     SCALE,
     SPINE,
+    LOOP,
+    CROSS_SECTION_CLOSED,
+    CROSS_SECTION_RADIUS,
+    CROSS_SECTION_SLICES,
     LAST
   };
 
@@ -93,11 +96,13 @@ public:
    */
   Boolean get_end_cap() const;
 
-  /*! Set the flag that specifies whether the spine is a closed loop. */
+  /*! Set the flag that indicates whether the spine is a closed loop.
+   */
   void set_loop(Boolean loop);
 
-  /*! Obtain the flag that specifies whether the spine is a closed loop. */
-  Boolean get_loop() const;
+  /*! Obtain the flag that indicates whether the spine is a closed loop.
+   */
+  Boolean is_loop() const;
 
   /*! Set the 2-D cross section of the final shape defined in the XZ plane. */
   void set_cross_section(std::vector<Vector2f>& cross_section);
@@ -126,6 +131,14 @@ public:
 
   /*! Obtains the path that the cross section travels to create the shape. */
   std::vector<Vector3f>& get_spine();
+
+  /*! Set the flag that indicates whether the cross section is a closed loop.
+   */
+  void set_cross_section_closed(Boolean cross_section_closed);
+
+  /*! Determine whether the cross section is a closed loop.
+   */
+  Boolean is_cross_section_closed() const;
 
   /*! Set the cross section radius. */
   void set_cross_section_radius(Float radius);
@@ -163,6 +176,13 @@ public:
   { return &m_orientation; }
   std::vector<Vector2f>* scale_handle(const Field_info*) { return &m_scale; }
   std::vector<Vector3f>* spine_handle(const Field_info*) { return &m_spine; }
+
+  Boolean* cross_section_closed_handle(const Field_info*)
+  { return &m_cross_section_closed; }
+  Float* cross_section_radius_handle(const Field_info*)
+  { return &m_cross_section_radius; }
+  Uint* cross_section_slices_handle(const Field_info*)
+  { return &m_cross_section_slices; }
   //@}
 
   /*! Set the attributes of the object extracted from the VRML or X3D file.
@@ -211,6 +231,9 @@ protected:
    */
   virtual const std::string& get_tag() const;
 
+  /*! Indicates whether the cross section is closed. */
+  Boolean m_cross_section_closed;
+
   /*! The cross-section radius. */
   Float m_cross_section_radius;
 
@@ -220,6 +243,10 @@ protected:
   /*! Generate the coordinate indices.
    */
   void generate_coord_indices();
+
+  /*! Generate the texture coordinate indices.
+   */
+  void generate_tex_coord_indices();
 
 private:
   /*! The tag that identifies this container type. */
@@ -232,6 +259,7 @@ private:
   static const Boolean s_def_begin_cap;
   static const Boolean s_def_end_cap;
   static const Boolean s_def_loop;
+  static const Boolean s_def_cross_section_closed;
   static const Float s_def_cross_section_radius;
   static const Uint s_def_cross_section_slices;
 };
@@ -259,7 +287,7 @@ inline Boolean Extrusion::get_end_cap() const { return m_end_cap; }
 /*! \brief obtains the flag that specifies whether the spine is a closed
  * loop.
  */
-inline Boolean Extrusion::get_loop() const { return m_loop; }
+inline Boolean Extrusion::is_loop() const { return m_loop; }
 
 /*! \brief obtains the 2-D cross section of the final shape defined in the
  * XZ plane.
@@ -285,6 +313,10 @@ inline const std::vector<Vector3f>& Extrusion::get_spine() const
  * shape.
  */
 inline std::vector<Vector3f>& Extrusion::get_spine() { return m_spine; }
+
+//! \brief determine whether the cross section is a closed loop.
+inline Boolean Extrusion::is_cross_section_closed() const
+{ return m_cross_section_closed; }
 
 //! \brief obtains the cross section radius.
 inline Float Extrusion::get_cross_section_radius() const

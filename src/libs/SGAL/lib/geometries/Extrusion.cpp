@@ -39,12 +39,13 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Extrusion::s_tag = "Extrusion";
-Container_proto* Extrusion::s_prototype(NULL);
+Container_proto* Extrusion::s_prototype(nullptr);
 
 // Default values:
 const Boolean Extrusion::s_def_begin_cap(true);
 const Boolean Extrusion::s_def_end_cap(true);
 const Boolean Extrusion::s_def_loop(false);
+const Boolean Extrusion::s_def_cross_section_closed(true);
 const Float Extrusion::s_def_cross_section_radius(0.1f);
 const Uint Extrusion::s_def_cross_section_slices(32);
 
@@ -56,6 +57,7 @@ Extrusion::Extrusion(Boolean proto) :
   m_begin_cap(s_def_begin_cap),
   m_end_cap(s_def_end_cap),
   m_loop(s_def_loop),
+  m_cross_section_closed(s_def_cross_section_closed),
   m_cross_section_radius(s_def_cross_section_radius),
   m_cross_section_slices(s_def_cross_section_slices)
 {}
@@ -67,264 +69,6 @@ Extrusion::~Extrusion()
   m_orientation.clear();
   m_scale.clear();
   m_spine.clear();
-}
-
-//! Clean the extrusion internal representation.
-void Extrusion::clean()
-{
-  // Clear internal representation:
-  if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
-
-  // Generate cross section:
-  if (m_cross_section.size() == 0) {
-    m_cross_section.resize(m_cross_section_slices);
-    Float delta = SGAL_TWO_PI / m_cross_section_slices;
-    Float angle = 0;
-    Uint i;
-    for (i = 0; i < m_cross_section_slices; ++i) {
-      Float x = m_cross_section_radius * sinf(angle);
-      Float y = m_cross_section_radius * cosf(angle);
-      angle += delta;
-      m_cross_section[i].set(x, y);
-    }
-  }
-
-  // Generate points:
-  Uint size = m_cross_section.size() * m_spine.size();
-  coord_array->resize(size);
-
-  Uint j, i, k = 0;
-  const Vector3f vert(0, 1, 0);
-  const Vector3f hor(0, 0, 1);
-  Vector3f vec(vert);
-  Rotation rot, prev_rot;
-  Matrix4f mat;
-
-  // First:
-  if (m_loop) {
-    vec.sub(m_spine[0], m_spine[m_spine.size()-1]);
-    vec.normalize();
-    float my_cos = vec.dot(vert);
-    float angle = arccosf(my_cos);
-    if (angle > SGAL_EPSILON) {
-      if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
-        Vector3f axis;
-        axis.cross(vert, vec);
-        axis.normalize();
-        prev_rot.set(axis, angle);
-      }
-      else {
-        prev_rot.set(hor, -SGAL_PI);
-      }
-    }
-    else {
-      prev_rot.set(hor, 0);
-    }
-  }
-  Vector3f prev_vec(vec);
-  vec.sub(m_spine[1], m_spine[0]);
-  vec.normalize();
-  float my_cos = vec.dot(prev_vec);
-  float angle = arccosf(my_cos);
-  Rotation tmp_rot;
-  if (angle > SGAL_EPSILON) {
-    if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
-      Vector3f axis;
-      axis.cross(prev_vec, vec);
-      axis.normalize();
-      tmp_rot.set(axis, angle);
-    }
-    else {
-      tmp_rot.set(hor, -SGAL_PI);
-    }
-  }
-  else {
-    tmp_rot.set(hor, 0);
-  }
-  rot.mult(tmp_rot, prev_rot);
-  if (m_loop) {
-    Rotation applied_rot;
-    applied_rot.slerp(0.5f, prev_rot, rot);
-    mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
-  }
-  else {
-    mat.make_rot(rot.get_axis(), rot.get_angle());
-  }
-  for (i = 0; i < m_cross_section.size(); ++i) {
-    Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
-    if (m_scale.size() > 0) {
-      point[0] *= m_scale[0][0];
-      point[2] *= m_scale[0][1];
-    }
-    point.xform_pt(point, mat);
-
-    (*coord_array)[k++].add(m_spine[0], point);
-  }
-
-  // Middle:
-  for (j = 1; j < m_spine.size() - 1; ++j) {
-    Rotation prev_rot(rot);
-    Vector3f prev_vec(vec);
-    vec.sub(m_spine[j+1], m_spine[j]);
-    vec.normalize();
-    float my_cos = vec.dot(prev_vec);
-    angle = arccosf(my_cos);
-    Rotation tmp_rot;
-    if (angle > SGAL_EPSILON) {
-      if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
-        Vector3f axis;
-        axis.cross(prev_vec, vec);
-        axis.normalize();
-        tmp_rot.set(axis, angle);
-      }
-      else {
-        tmp_rot.set(hor, -SGAL_PI);
-      }
-    }
-    else {
-      tmp_rot.set(hor, 0);
-    }
-    rot.mult(tmp_rot, prev_rot);
-    Rotation applied_rot;
-    applied_rot.slerp(0.5f, prev_rot, rot);
-    mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
-    for (i = 0; i < m_cross_section.size(); ++i) {
-      Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
-      if (m_scale.size() > j) {
-        point[0] *= m_scale[j][0];
-        point[2] *= m_scale[j][1];
-      }
-      point.xform_pt(point, mat);
-      (*coord_array)[k++].add(m_spine[j], point);
-    }
-  }
-
-  // Last:
-  if (m_loop) {
-    Vector3f prev_vec(vec);
-    vec.sub(m_spine[0], m_spine[j]);
-    vec.normalize();
-    float my_cos = vec.dot(prev_vec);
-    angle = arccosf(my_cos);
-    Rotation prev_rot(rot);
-    Rotation tmp_rot;
-    if (angle > SGAL_EPSILON) {
-      if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
-        Vector3f axis;
-        axis.cross(prev_vec, vec);
-        axis.normalize();
-        tmp_rot.set(axis, angle);
-      } else {
-        tmp_rot.set(hor, -SGAL_PI);
-      }
-    }
-    else {
-      tmp_rot.set(hor, 0);
-    }
-    rot.mult(tmp_rot, prev_rot);
-    Rotation applied_rot;
-    applied_rot.slerp(0.5f, prev_rot, rot);
-    mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
-  }
-  else {
-    mat.make_rot(rot.get_axis(), rot.get_angle());
-  }
-  for (i = 0; i < m_cross_section.size(); ++i) {
-    Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
-    if (m_scale.size() > j) {
-      point[0] *= m_scale[j][0];
-      point[2] *= m_scale[j][1];
-    }
-    point.xform_pt(point, mat);
-    (*coord_array)[k++].add(m_spine[j], point);
-  }
-
-  set_solid(m_loop || (m_begin_cap && m_end_cap));
-
-  generate_coord_indices();
-
-  Indexed_face_set::clean();
-  Indexed_face_set::coord_point_changed();
-}
-
-//! \brief generates the coordinate indices.
-void Extrusion::generate_coord_indices()
-{
-  //! \todo generate the indices flat to start with.
-  // Generate all:
-  Uint sections = (m_loop) ? m_spine.size() : m_spine.size() - 1;
-  Uint offset = m_cross_section.size() * (m_spine.size() - 1);
-  m_num_primitives = m_cross_section.size() * sections;
-  Uint size = m_cross_section.size() * m_spine.size();
-  size = m_num_primitives * 5;
-  if (m_begin_cap) {
-    size += m_cross_section.size() + 1;
-    ++m_num_primitives;
-  }
-  if (m_end_cap) {
-    size += m_cross_section.size() + 1;
-    ++m_num_primitives;
-  }
-
-  Uint j, i, k = 0;
-  m_coord_indices.resize(size);
-  for (j = 0; j < m_spine.size() - 1; ++j) {
-    Uint start = j * m_cross_section.size();
-    for (i = 0; i < m_cross_section.size() - 1; ++i) {
-      Uint ll = start + i;
-      Uint ul = ll + m_cross_section.size();
-      m_coord_indices[k++] = ll;
-      m_coord_indices[k++] = ll + 1;
-      m_coord_indices[k++] = ul + 1;
-      m_coord_indices[k++] = ul;
-      m_coord_indices[k++] = static_cast<Uint>(-1);
-    }
-    Uint ll = start + i;
-    Uint ul = ll + m_cross_section.size();
-    m_coord_indices[k++] = ll;
-    m_coord_indices[k++] = ll + 1 - m_cross_section.size();
-    m_coord_indices[k++] = ul + 1 - m_cross_section.size();
-    m_coord_indices[k++] = ul;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
-  }
-
-  if (m_loop) {
-    Uint start = j * m_cross_section.size();
-    for (i = 0; i < m_cross_section.size() - 1; ++i) {
-      Uint ll = start + i;
-      Uint ul = i;
-      m_coord_indices[k++] = ll;
-      m_coord_indices[k++] = ll + 1;
-      m_coord_indices[k++] = ul + 1;
-      m_coord_indices[k++] = ul;
-      m_coord_indices[k++] = static_cast<Uint>(-1);
-    }
-    Uint ll = start + i;
-    Uint ul = i;
-    m_coord_indices[k++] = ll;
-    m_coord_indices[k++] = ll + 1 - m_cross_section.size();
-    m_coord_indices[k++] = ul + 1 - m_cross_section.size();
-    m_coord_indices[k++] = ul;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
-  }
-
-  // Generate caps:
-  if (m_begin_cap) {
-    for (i = 0; i < m_cross_section.size(); ++i)
-      m_coord_indices[k++] = m_cross_section.size() - 1 - i;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
-  }
-
-  if (m_end_cap) {
-    for (i = 0; i < m_cross_section.size(); ++i)
-      m_coord_indices[k++] = offset + i;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
-  }
-
-  clear_flat_coord_indices();
 }
 
 //! \brief sets the ellpsoid attributes.
@@ -361,6 +105,11 @@ void Extrusion::set_attributes(Element* elem)
       for (Uint i = 0 ; i < size ; i++) {
         svalue >> m_cross_section[i][0] >> m_cross_section[i][1];
       }
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "crossSectionClosed") {
+      set_cross_section_closed(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -501,13 +250,25 @@ void Extrusion::init_prototype()
                                               RULE_EXPOSED_FIELD,
                                               spine_func,
                                               exec_func));
+
+  // cross section closed
+  Boolean_handle_function cross_section_closed_func =
+    static_cast<Boolean_handle_function>
+    (&Extrusion::cross_section_closed_handle);
+  s_prototype->add_field_info(new SF_bool(CROSS_SECTION_CLOSED,
+                                          "cross_section_closed",
+                                          RULE_EXPOSED_FIELD,
+                                          cross_section_closed_func,
+                                          s_def_cross_section_closed,
+                                          exec_func));
+
 }
 
 //! \brief deletes the container prototype.
 void Extrusion::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief sets the path that the cross section travels to create the shape.
@@ -530,6 +291,15 @@ void Extrusion::set_loop(Boolean loop)
 void Extrusion::set_cross_section(std::vector<Vector2f>& cross_section)
 {
   m_cross_section = cross_section;
+  clear();
+}
+
+/*! \brief set the flag that indicates whether the cross section is a closed
+ * loop.
+ */
+void Extrusion::set_cross_section_closed(Boolean closed)
+{
+  m_cross_section_closed = closed;
   clear();
 }
 
@@ -593,17 +363,311 @@ void Extrusion::structure_changed(const Field_info* field_info)
   field_changed(field_info);
 }
 
+//! Clean the extrusion internal representation.
+void Extrusion::clean()
+{
+  // Clear internal representation:
+  if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
+  boost::shared_ptr<Coord_array_3d> coord_array =
+    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coord_array);
+
+  // Generate (closed) cross section:
+  if (m_cross_section.empty()) {
+    m_cross_section.resize(m_cross_section_slices + 1);
+    Float delta = SGAL_TWO_PI / m_cross_section_slices;
+    Float angle = 0;
+    Uint i;
+    for (i = 0; i < m_cross_section_slices; ++i) {
+      Float x = m_cross_section_radius * sinf(angle);
+      Float y = m_cross_section_radius * cosf(angle);
+      angle += delta;
+      m_cross_section[i].set(x, y);
+    }
+    m_cross_section[i] = m_cross_section[0];
+  }
+
+  // Generate points:
+  Boolean cross_section_loop =
+    m_cross_section.front() == m_cross_section.back();
+  size_t cross_section_size =
+    (cross_section_loop) ? m_cross_section.size() - 1 : m_cross_section.size();
+
+  Uint size = cross_section_size * m_spine.size();
+  coord_array->resize(size);
+
+  Uint j, i, k = 0;
+  const Vector3f vert(0, 1, 0);
+  const Vector3f hor(0, 0, 1);
+  Vector3f vec(vert);
+  Rotation rot, prev_rot;
+  Matrix4f mat;
+
+  // First:
+  if (m_loop) {
+    vec.sub(m_spine[0], m_spine[m_spine.size()-1]);
+    vec.normalize();
+    float my_cos = vec.dot(vert);
+    float angle = arccosf(my_cos);
+    if (angle > SGAL_EPSILON) {
+      if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
+        Vector3f axis;
+        axis.cross(vert, vec);
+        axis.normalize();
+        prev_rot.set(axis, angle);
+      }
+      else {
+        prev_rot.set(hor, -SGAL_PI);
+      }
+    }
+    else {
+      prev_rot.set(hor, 0);
+    }
+  }
+  Vector3f prev_vec(vec);
+  vec.sub(m_spine[1], m_spine[0]);
+  vec.normalize();
+  float my_cos = vec.dot(prev_vec);
+  float angle = arccosf(my_cos);
+  Rotation tmp_rot;
+  if (angle > SGAL_EPSILON) {
+    if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
+      Vector3f axis;
+      axis.cross(prev_vec, vec);
+      axis.normalize();
+      tmp_rot.set(axis, angle);
+    }
+    else {
+      tmp_rot.set(hor, -SGAL_PI);
+    }
+  }
+  else {
+    tmp_rot.set(hor, 0);
+  }
+  rot.mult(tmp_rot, prev_rot);
+  if (m_loop) {
+    Rotation applied_rot;
+    applied_rot.slerp(0.5f, prev_rot, rot);
+    mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
+  }
+  else {
+    mat.make_rot(rot.get_axis(), rot.get_angle());
+  }
+  for (i = 0; i < cross_section_size; ++i) {
+    Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
+    if (m_scale.size() > 0) {
+      point[0] *= m_scale[0][0];
+      point[2] *= m_scale[0][1];
+    }
+    point.xform_pt(point, mat);
+
+    (*coord_array)[k++].add(m_spine[0], point);
+  }
+
+  // Middle:
+  for (j = 1; j < m_spine.size() - 1; ++j) {
+    Rotation prev_rot(rot);
+    Vector3f prev_vec(vec);
+    vec.sub(m_spine[j+1], m_spine[j]);
+    vec.normalize();
+    float my_cos = vec.dot(prev_vec);
+    angle = arccosf(my_cos);
+    Rotation tmp_rot;
+    if (angle > SGAL_EPSILON) {
+      if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
+        Vector3f axis;
+        axis.cross(prev_vec, vec);
+        axis.normalize();
+        tmp_rot.set(axis, angle);
+      }
+      else {
+        tmp_rot.set(hor, -SGAL_PI);
+      }
+    }
+    else {
+      tmp_rot.set(hor, 0);
+    }
+    rot.mult(tmp_rot, prev_rot);
+    Rotation applied_rot;
+    applied_rot.slerp(0.5f, prev_rot, rot);
+    mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
+    for (i = 0; i < cross_section_size; ++i) {
+      Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
+      if (m_scale.size() > j) {
+        point[0] *= m_scale[j][0];
+        point[2] *= m_scale[j][1];
+      }
+      point.xform_pt(point, mat);
+      (*coord_array)[k++].add(m_spine[j], point);
+    }
+  }
+
+  // Last:
+  if (m_loop) {
+    Vector3f prev_vec(vec);
+    vec.sub(m_spine[0], m_spine[j]);
+    vec.normalize();
+    float my_cos = vec.dot(prev_vec);
+    angle = arccosf(my_cos);
+    Rotation prev_rot(rot);
+    Rotation tmp_rot;
+    if (angle > SGAL_EPSILON) {
+      if (abs_gt((angle - SGAL_PI), SGAL_EPSILON)) {
+        Vector3f axis;
+        axis.cross(prev_vec, vec);
+        axis.normalize();
+        tmp_rot.set(axis, angle);
+      } else {
+        tmp_rot.set(hor, -SGAL_PI);
+      }
+    }
+    else {
+      tmp_rot.set(hor, 0);
+    }
+    rot.mult(tmp_rot, prev_rot);
+    Rotation applied_rot;
+    applied_rot.slerp(0.5f, prev_rot, rot);
+    mat.make_rot(applied_rot.get_axis(), applied_rot.get_angle());
+  }
+  else {
+    mat.make_rot(rot.get_axis(), rot.get_angle());
+  }
+  for (i = 0; i < cross_section_size; ++i) {
+    Vector3f point(m_cross_section[i][0], 0, m_cross_section[i][1]);
+    if (m_scale.size() > j) {
+      point[0] *= m_scale[j][0];
+      point[2] *= m_scale[j][1];
+    }
+    point.xform_pt(point, mat);
+    (*coord_array)[k++].add(m_spine[j], point);
+  }
+
+  set_solid(m_loop || (m_begin_cap && m_end_cap));
+
+  generate_coord_indices();
+
+  Indexed_face_set::clean();
+  Indexed_face_set::coord_point_changed();
+}
+
+//! \brief generates the coordinate indices.
+void Extrusion::generate_coord_indices()
+{
+  //! \todo generate the indices flat to start with.
+
+  Boolean cross_section_loop =
+    m_cross_section.front() == m_cross_section.back();
+  size_t cross_section_size =
+    (cross_section_loop) ? m_cross_section.size() - 1 : m_cross_section.size();
+
+  Boolean cross_section_closed = m_cross_section_closed || cross_section_loop;
+  size_t slices = (cross_section_closed) ?
+    cross_section_size : cross_section_size + 1;
+
+  // Generate all:
+  Uint stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
+  Uint offset = cross_section_size * (m_spine.size() - 1);
+  m_num_primitives = slices * stacks;
+  Uint size = slices * m_spine.size();
+  size = m_num_primitives * 5;
+  if (m_begin_cap) {
+    // Caps are always closed
+    size += cross_section_size + 1;
+    ++m_num_primitives;
+  }
+  if (m_end_cap) {
+    // Caps are always closed
+    size += cross_section_size + 1;
+    ++m_num_primitives;
+  }
+
+  size_t j, i, k = 0;
+  m_coord_indices.resize(size);
+  for (j = 0; j < m_spine.size() - 1; ++j) {
+    Uint start = j * cross_section_size;
+    for (i = 0; i < slices - 1; ++i) {
+      Uint ll = start + i;
+      Uint ul = ll + cross_section_size;
+      m_coord_indices[k++] = ll;
+      m_coord_indices[k++] = ll + 1;
+      m_coord_indices[k++] = ul + 1;
+      m_coord_indices[k++] = ul;
+      m_coord_indices[k++] = static_cast<Uint>(-1);
+    }
+    Uint ll = start + i;
+    Uint ul = ll + cross_section_size;
+    m_coord_indices[k++] = ll;
+    if (cross_section_closed) {
+      m_coord_indices[k++] = ll + 1 - cross_section_size;
+      m_coord_indices[k++] = ul + 1 - cross_section_size;
+    }
+    else {
+      m_coord_indices[k++] = ll + 1;
+      m_coord_indices[k++] = ul + 1;
+    }
+    m_coord_indices[k++] = ul;
+    m_coord_indices[k++] = static_cast<Uint>(-1);
+  }
+
+  if (m_loop) {
+    Uint start = j * cross_section_size;
+    for (i = 0; i < slices - 1; ++i) {
+      Uint ll = start + i;
+      Uint ul = i;
+      m_coord_indices[k++] = ll;
+      m_coord_indices[k++] = ll + 1;
+      m_coord_indices[k++] = ul + 1;
+      m_coord_indices[k++] = ul;
+      m_coord_indices[k++] = static_cast<Uint>(-1);
+    }
+    Uint ll = start + i;
+    Uint ul = i;
+    m_coord_indices[k++] = ll;
+    if (cross_section_closed) {
+      m_coord_indices[k++] = ll + 1 - cross_section_size;
+      m_coord_indices[k++] = ul + 1 - cross_section_size;
+    }
+    else {
+      m_coord_indices[k++] = ll + 1;
+      m_coord_indices[k++] = ul + 1;
+    }
+    m_coord_indices[k++] = ul;
+    m_coord_indices[k++] = static_cast<Uint>(-1);
+  }
+
+  // Generate caps:
+  if (m_begin_cap) {
+    for (i = 0; i < cross_section_size; ++i)
+      m_coord_indices[k++] = cross_section_size - 1 - i;
+    m_coord_indices[k++] = static_cast<Uint>(-1);
+  }
+
+  if (m_end_cap) {
+    for (i = 0; i < cross_section_size; ++i)
+      m_coord_indices[k++] = offset + i;
+    m_coord_indices[k++] = static_cast<Uint>(-1);
+  }
+
+  clear_flat_coord_indices();
+}
+
 //! calculates the default 2D texture-mapping oordinates.
 void Extrusion::clean_tex_coords_2d()
 {
+  Boolean cross_section_loop =
+    m_cross_section.front() == m_cross_section.back();
+  size_t cross_section_size =
+    (cross_section_loop) ? m_cross_section.size() - 1 : m_cross_section.size();
+
+  Boolean cross_section_closed = m_cross_section_closed || cross_section_loop;
+  size_t slices = (cross_section_closed) ?
+    cross_section_size : cross_section_size + 1;
   size_t stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
-  size_t slices = m_cross_section.size();
 
   // Texture coordinates
-  Uint offset = (slices + 1) * (stacks + 1);
-  Uint num_tex_coords = offset;
-  if (m_begin_cap) num_tex_coords += m_cross_section.size();
-  if (m_end_cap) num_tex_coords += m_cross_section.size();
+  Uint num_tex_coords = (slices + 1) * (stacks + 1);
+  if (m_begin_cap) num_tex_coords += slices;
+  if (m_end_cap) num_tex_coords += slices;
 
   if (m_tex_coord_array) m_tex_coord_array->resize(num_tex_coords);
   else {
@@ -633,7 +697,7 @@ void Extrusion::clean_tex_coords_2d()
     Float s_max = s;
     Float t_min = t;
     Float t_max = t;
-    for (j = 1; j < slices; ++j) {
+    for (j = 1; j < cross_section_size; ++j) {
       auto s = m_cross_section[j][0];
       auto t = m_cross_section[j][1];
       if (s < s_min) s_min = s;
@@ -645,7 +709,7 @@ void Extrusion::clean_tex_coords_2d()
     auto t_range = t_max - t_min;
 
     if (m_begin_cap) {
-      for (j = slices; j != 0; --j) {
+      for (j = cross_section_size; j != 0; --j) {
         auto s = (m_cross_section[j-1][0] - s_min) / s_range;
         auto t = (m_cross_section[j-1][1] - t_min) / t_range;
         (*tex_coord_array)[k++].set(s, t);
@@ -653,7 +717,7 @@ void Extrusion::clean_tex_coords_2d()
     }
 
     if (m_end_cap) {
-      for (j = 0; j < slices; ++j) {
+      for (j = 0; j < cross_section_size; ++j) {
         auto s = (m_cross_section[j][0] - s_min) / s_range;
         auto t = (m_cross_section[j][1] - t_min) / t_range;
         (*tex_coord_array)[k++].set(s, t);
@@ -661,9 +725,26 @@ void Extrusion::clean_tex_coords_2d()
     }
   }
 
-  // Texture coordinate indices
+  generate_tex_coord_indices();
+  clear_flat_tex_coord_indices();
+  m_tex_coords_cleaned = true;
+}
+
+//! Generate the texture coordinate indices.
+void Extrusion::generate_tex_coord_indices()
+{
+  Boolean cross_section_loop =
+    m_cross_section.front() == m_cross_section.back();
+  size_t cross_section_size =
+    (cross_section_loop) ? m_cross_section.size() - 1 : m_cross_section.size();
+
+  Boolean cross_section_closed = m_cross_section_closed || cross_section_loop;
+  size_t slices = (cross_section_closed) ?
+    cross_section_size : cross_section_size + 1;
+  size_t stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
+
   m_tex_coord_indices.resize(m_coord_indices.size());
-  k = 0;
+  size_t i, j, k = 0;
 
   for (j = 0; j < stacks; ++j) {
     Uint start = j * (slices + 1);
@@ -679,17 +760,18 @@ void Extrusion::clean_tex_coords_2d()
   }
 
   // Generate caps:
+  Uint offset = (slices + 1) * (stacks + 1);
   if (m_begin_cap) {
-    for (i = 0; i < slices; ++i) m_tex_coord_indices[k++] = offset++;
+    for (i = 0; i < cross_section_size; ++i)
+      m_tex_coord_indices[k++] = offset++;
     m_tex_coord_indices[k++] = static_cast<Uint>(-1);
   }
 
   if (m_end_cap) {
-    for (i = 0; i < slices; ++i) m_tex_coord_indices[k++] = offset++;
+    for (i = 0; i < cross_section_size; ++i)
+      m_tex_coord_indices[k++] = offset++;
     m_tex_coord_indices[k++] = static_cast<Uint>(-1);
   }
-
-  clear_flat_tex_coord_indices();
 }
 
 SGAL_END_NAMESPACE
