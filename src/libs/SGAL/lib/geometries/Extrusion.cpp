@@ -550,6 +550,21 @@ void Extrusion::clean()
   Indexed_face_set::coord_point_changed();
 }
 
+//! Add triangle indices given four points that form a quad.
+size_t Extrusion::add_triangle_indices(size_t k, std::vector<Uint>& indices,
+                                       Uint ll, Uint lr, Uint ur, Uint ul)
+{
+  indices[k++] = ll;
+  indices[k++] = lr;
+  indices[k++] = ur;
+  indices[k++] = static_cast<Uint>(-1);
+  indices[k++] = ll;
+  indices[k++] = ur;
+  indices[k++] = ul;
+  indices[k++] = static_cast<Uint>(-1);
+  return k;
+}
+
 //! \brief generates the coordinate indices.
 void Extrusion::generate_coord_indices()
 {
@@ -567,9 +582,8 @@ void Extrusion::generate_coord_indices()
   // Generate all:
   Uint stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
   Uint offset = cross_section_size * (m_spine.size() - 1);
-  m_num_primitives = slices * stacks;
-  Uint size = slices * m_spine.size();
-  size = m_num_primitives * 5;
+  m_num_primitives = slices * stacks * 2;
+  Uint size = m_num_primitives * 4;
   if (m_begin_cap) {
     // Caps are always closed
     size += cross_section_size + 1;
@@ -588,25 +602,22 @@ void Extrusion::generate_coord_indices()
     for (i = 0; i < slices - 1; ++i) {
       Uint ll = start + i;
       Uint ul = ll + cross_section_size;
-      m_coord_indices[k++] = ll;
-      m_coord_indices[k++] = ll + 1;
-      m_coord_indices[k++] = ul + 1;
-      m_coord_indices[k++] = ul;
-      m_coord_indices[k++] = static_cast<Uint>(-1);
+      Uint lr = ll + 1;
+      Uint ur = ul + 1;
+      k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
     }
     Uint ll = start + i;
     Uint ul = ll + cross_section_size;
-    m_coord_indices[k++] = ll;
+    Uint lr, ur;
     if (cross_section_closed) {
-      m_coord_indices[k++] = ll + 1 - cross_section_size;
-      m_coord_indices[k++] = ul + 1 - cross_section_size;
+      lr = ll + 1 - cross_section_size;
+      ur = ul + 1 - cross_section_size;
     }
     else {
-      m_coord_indices[k++] = ll + 1;
-      m_coord_indices[k++] = ul + 1;
+      lr = ll + 1;
+      ur = ul + 1;
     }
-    m_coord_indices[k++] = ul;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
+    k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
   }
 
   if (m_loop) {
@@ -614,25 +625,22 @@ void Extrusion::generate_coord_indices()
     for (i = 0; i < slices - 1; ++i) {
       Uint ll = start + i;
       Uint ul = i;
-      m_coord_indices[k++] = ll;
-      m_coord_indices[k++] = ll + 1;
-      m_coord_indices[k++] = ul + 1;
-      m_coord_indices[k++] = ul;
-      m_coord_indices[k++] = static_cast<Uint>(-1);
+      Uint lr = ll + 1;
+      Uint ur = ul + 1;
+      k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
     }
     Uint ll = start + i;
     Uint ul = i;
-    m_coord_indices[k++] = ll;
+    Uint lr, ur;
     if (cross_section_closed) {
-      m_coord_indices[k++] = ll + 1 - cross_section_size;
-      m_coord_indices[k++] = ul + 1 - cross_section_size;
+      lr = ll + 1 - cross_section_size;
+      ur = ul + 1 - cross_section_size;
     }
     else {
-      m_coord_indices[k++] = ll + 1;
-      m_coord_indices[k++] = ul + 1;
+      lr = ll + 1;
+      ur = ul + 1;
     }
-    m_coord_indices[k++] = ul;
-    m_coord_indices[k++] = static_cast<Uint>(-1);
+    k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
   }
 
   // Generate caps:
@@ -730,21 +738,6 @@ void Extrusion::clean_tex_coords_2d()
   m_tex_coords_cleaned = true;
 }
 
-//! Add triangle indices given four points that form a quad.
-size_t Extrusion::add_triangle_indices(size_t k,
-                                       Uint ll, Uint lr, Uint ur, Uint ul)
-{
-  m_coord_indices[k++] = ll;
-  m_coord_indices[k++] = lr;
-  m_coord_indices[k++] = ur;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
-  m_coord_indices[k++] = ll;
-  m_coord_indices[k++] = ur;
-  m_coord_indices[k++] = ul;
-  m_coord_indices[k++] = static_cast<Uint>(-1);
-  return k;
-}
-
 //! Generate the texture coordinate indices.
 void Extrusion::generate_tex_coord_indices()
 {
@@ -766,11 +759,9 @@ void Extrusion::generate_tex_coord_indices()
     for (i = 0; i < slices; ++i) {
       Uint ll = start + i;
       Uint ul = ll + (slices + 1);
-      m_tex_coord_indices[k++] = ll;
-      m_tex_coord_indices[k++] = ll + 1;
-      m_tex_coord_indices[k++] = ul + 1;
-      m_tex_coord_indices[k++] = ul;
-      m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+      Uint lr = ll + 1;
+      Uint ur = ul + 1;
+      k = add_triangle_indices(k, m_tex_coord_indices, ll, lr, ur, ul);
     }
   }
 

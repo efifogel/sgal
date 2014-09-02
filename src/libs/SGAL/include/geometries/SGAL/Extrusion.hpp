@@ -16,10 +16,6 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*! \file
- * A geometry container that represents an extrusion
- */
-
 #ifndef SGAL_EXTRUSION_HPP
 #define SGAL_EXTRUSION_HPP
 
@@ -46,6 +42,15 @@ class Element;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
+
+/*! \class Extrusion Extrusion.hpp
+ * Extrusion is a geometry container that specifies geometric shapes based on
+ * a two dimensional cross section extruded along a three dimensional spine.
+ * The cross section can be scaled and rotated at each spine point to produce
+ * a wide variety of shapes.
+ * If a cross section is not directly specified a radius must be specified
+ * instead, and a disk shaped of the given radius is used as the cross section.
+ */
 
 class SGAL_SGAL_DECL Extrusion : public Indexed_face_set {
 public:
@@ -265,13 +270,15 @@ private:
 
   /*! Add triangle indices given four points that form a quad.
    * \param k (in) the index into the coordinate indices array.
+   * \param indices (out) the array of indices.
    * \param ll (in) lower left corner.
    * \param lr (in) lower right corner.
    * \param ur (in) upper right corner.
    * \param ul (in) upper left corner.
    * \return the size of the coordinate indices array after the addition.
    */
-  size_t add_triangle_indices(size_t k, Uint ll, Uint lr, Uint ur, Uint ul);
+  size_t add_triangle_indices(size_t k, std::vector<Uint>& indices,
+                              Uint ll, Uint lr, Uint ur, Uint ul);
 };
 
 #if defined(_MSC_VER)
