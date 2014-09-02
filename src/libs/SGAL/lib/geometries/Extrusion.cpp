@@ -545,6 +545,7 @@ void Extrusion::clean()
     (*coord_array)[k++].add(m_spine[j], point);
   }
 
+  set_primitive_type(PT_TRIANGLES);
   set_solid(m_loop || (m_begin_cap && m_end_cap));
 
   generate_coord_indices();
@@ -560,11 +561,9 @@ size_t Extrusion::add_triangle_indices(size_t k, std::vector<Uint>& indices,
   indices[k++] = ll;
   indices[k++] = lr;
   indices[k++] = ur;
-  indices[k++] = static_cast<Uint>(-1);
   indices[k++] = ll;
   indices[k++] = ur;
   indices[k++] = ul;
-  indices[k++] = static_cast<Uint>(-1);
   return k;
 }
 
@@ -589,7 +588,7 @@ void Extrusion::generate_coord_indices()
   Uint size = m_num_primitives * 4;
 
   // Generate:
-  m_coord_indices.resize(size);
+  m_flat_coord_indices.resize(size);
   size_t j, i, k = 0;
   for (j = 0; j < m_spine.size() - 1; ++j) {
     Uint start = j * cross_section_size;
@@ -598,7 +597,7 @@ void Extrusion::generate_coord_indices()
       Uint ul = ll + cross_section_size;
       Uint lr = ll + 1;
       Uint ur = ul + 1;
-      k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
     }
     Uint ll = start + i;
     Uint ul = ll + cross_section_size;
@@ -611,7 +610,7 @@ void Extrusion::generate_coord_indices()
       lr = ll + 1;
       ur = ul + 1;
     }
-    k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
+    k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
   }
 
   if (m_loop) {
@@ -621,7 +620,7 @@ void Extrusion::generate_coord_indices()
       Uint ul = i;
       Uint lr = ll + 1;
       Uint ur = ul + 1;
-      k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
     }
     Uint ll = start + i;
     Uint ul = i;
@@ -634,17 +633,16 @@ void Extrusion::generate_coord_indices()
       lr = ll + 1;
       ur = ul + 1;
     }
-    k = add_triangle_indices(k, m_coord_indices, ll, lr, ur, ul);
+    k = add_triangle_indices(k, m_flat_coord_indices, ll, lr, ur, ul);
   }
 
   // Generate caps:
   if (m_begin_cap) {
     Uint anchor = 0;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_coord_indices[k++] = anchor;
-      m_coord_indices[k++] = anchor + cross_section_size - i - 1;
-      m_coord_indices[k++] = anchor + cross_section_size - i - 2;
-      m_coord_indices[k++] = static_cast<Uint>(-1);
+      m_flat_coord_indices[k++] = anchor;
+      m_flat_coord_indices[k++] = anchor + cross_section_size - i - 1;
+      m_flat_coord_indices[k++] = anchor + cross_section_size - i - 2;
     }
   }
 
@@ -652,14 +650,15 @@ void Extrusion::generate_coord_indices()
     Uint offset = cross_section_size * (m_spine.size() - 1);
     Uint anchor = offset;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_coord_indices[k++] = anchor;
-      m_coord_indices[k++] = anchor + i + 1;
-      m_coord_indices[k++] = anchor + i + 2;
-      m_coord_indices[k++] = static_cast<Uint>(-1);
+      m_flat_coord_indices[k++] = anchor;
+      m_flat_coord_indices[k++] = anchor + i + 1;
+      m_flat_coord_indices[k++] = anchor + i + 2;
     }
   }
 
-  clear_flat_coord_indices();
+  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = false;
+  m_coord_indices_flat = true;
 }
 
 //! calculates the default 2D texture-mapping oordinates.
@@ -726,8 +725,6 @@ void Extrusion::clean_tex_coords_2d()
   }
 
   generate_tex_coord_indices();
-  clear_flat_tex_coord_indices();
-  m_tex_coords_cleaned = true;
 }
 
 //! Generate the texture coordinate indices.
@@ -743,7 +740,7 @@ void Extrusion::generate_tex_coord_indices()
     cross_section_size : cross_section_size + 1;
   size_t stacks = (m_loop) ? m_spine.size() : m_spine.size() - 1;
 
-  m_tex_coord_indices.resize(m_coord_indices.size());
+  m_flat_tex_coord_indices.resize(m_flat_coord_indices.size());
   size_t i, j, k = 0;
 
   for (j = 0; j < stacks; ++j) {
@@ -753,7 +750,7 @@ void Extrusion::generate_tex_coord_indices()
       Uint ul = ll + (slices + 1);
       Uint lr = ll + 1;
       Uint ur = ul + 1;
-      k = add_triangle_indices(k, m_tex_coord_indices, ll, lr, ur, ul);
+      k = add_triangle_indices(k, m_flat_tex_coord_indices, ll, lr, ur, ul);
     }
   }
 
@@ -762,22 +759,24 @@ void Extrusion::generate_tex_coord_indices()
   if (m_begin_cap) {
     Uint anchor = offset;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_tex_coord_indices[k++] = anchor;
-      m_tex_coord_indices[k++] = anchor + cross_section_size - i - 1;
-      m_tex_coord_indices[k++] = anchor + cross_section_size - i - 2;
-      m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+      m_flat_tex_coord_indices[k++] = anchor;
+      m_flat_tex_coord_indices[k++] = anchor + cross_section_size - i - 1;
+      m_flat_tex_coord_indices[k++] = anchor + cross_section_size - i - 2;
     }
   }
 
   if (m_end_cap) {
     Uint anchor = offset;
     for (i = 0; i < cross_section_size-2; ++i) {
-      m_tex_coord_indices[k++] = anchor;
-      m_tex_coord_indices[k++] = anchor + i + 1;
-      m_tex_coord_indices[k++] = anchor + i + 2;
-      m_tex_coord_indices[k++] = static_cast<Uint>(-1);
+      m_flat_tex_coord_indices[k++] = anchor;
+      m_flat_tex_coord_indices[k++] = anchor + i + 1;
+      m_flat_tex_coord_indices[k++] = anchor + i + 2;
     }
   }
+
+  m_dirty_tex_coord_indices = true;
+  m_dirty_flat_tex_coord_indices = false;
+  m_tex_coord_indices_flat = true;
 }
 
 SGAL_END_NAMESPACE
