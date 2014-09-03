@@ -121,6 +121,10 @@ public:
   /*! Clean the flat texture coord-index array. */
   virtual void clean_flat_tex_coord_indices();
 
+  /*! Obtain the bounding box.
+   */
+  virtual Bounding_box bounding_box();
+
   /*! Clean the coord-index array. */
   void clean_coord_indices();
 

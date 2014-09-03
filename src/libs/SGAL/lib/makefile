@@ -180,6 +180,7 @@ CPPSOURCES+= Time_sensor.cpp
 CPPSOURCES+= Touch_sensor.cpp
 
 # Geometry:
+CPPSOURCES = Bounding_box.cpp
 CPPSOURCES+= Line.cpp
 CPPSOURCES+= Matrix3f.cpp
 CPPSOURCES+= Matrix4f.cpp

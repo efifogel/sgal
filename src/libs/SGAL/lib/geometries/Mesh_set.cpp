@@ -729,4 +729,20 @@ void Mesh_set::write_facet(const Vector3f& p1, const Vector3f& p2,
   }
 }
 
+//! \brief obtains the bounding box.
+Bounding_box Mesh_set::bounding_box()
+{
+  if (!m_coord_indices_flat) return Geo_set::bounding_box();
+
+  auto it = m_flat_coord_indices.begin();
+  const Vector3f& v = get_coord_3d(*it);
+  Bounding_box bbox(v[0], v[1], v[2], v[0], v[1], v[2]);
+  for (; it != m_flat_coord_indices.end(); ++it) {
+    const Vector3f& v = get_coord_3d(*it);
+    Bounding_box tmp(v[0], v[1], v[2], v[0], v[1], v[2]);
+    bbox += tmp;
+  }
+  return bbox;
+}
+
 SGAL_END_NAMESPACE

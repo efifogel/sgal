@@ -37,6 +37,7 @@
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Tex_coord_array.hpp"
+#include "SGAL/Bounding_box.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -176,6 +177,10 @@ public:
    * \param coord_array (in) a pointer to a coordinate array
    */
   virtual void set_coord_array(Shared_coord_array coord_array);
+
+  /*! Obtain the bounding box.
+   */
+  virtual Bounding_box bounding_box();
 
   /*! Obtain the (const) coordinate array.
    * \return the coordinate array.

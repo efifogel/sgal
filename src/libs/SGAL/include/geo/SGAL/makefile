@@ -1,6 +1,7 @@
 include $(ROOT)/make/comdef.mak
 
-FILES = Line.hpp
+FILES = Bounding_box.hpp
+FILES+= Line.hpp
 FILES+= Matrix3f.hpp
 FILES+= Matrix4f.hpp
 FILES+= Plane.hpp

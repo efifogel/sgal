@@ -21,13 +21,14 @@
 #include <algorithm>
 #include <tuple>
 
+#include "SGAL/basic.hpp"
+
 #if (defined _MSC_VER)
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 #include <GL/glext.h>
 
-#include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
@@ -51,6 +52,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
+#include "SGAL/Bounding_box.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -936,26 +938,101 @@ void Boundary_set::clean_tex_coords(Texture::Target target)
 void Boundary_set::clean_tex_coords_2d()
 {
   SGAL_assertion(m_coord_array);
-  Uint num_coords = m_coord_array->size();
-  if (m_tex_coord_array) m_tex_coord_array->resize(num_coords);
+
+  // Compute per polygon normals
+  Normal_array per_polygon_normals(m_num_primitives);
+  calculate_normal_per_polygon(per_polygon_normals);
+
+  // Compute bounding box
+  Bounding_box bbox = bounding_box();;
+  Vector3f vec_min, vec_max;
+  vec_min.set(bbox.xmin(), bbox.ymin(), bbox.zmin());
+  vec_max.set(bbox.xmax(), bbox.ymax(), bbox.zmax());
+
+  // Allocate space for texture coordinates and texture cordinate indices
+  size_t size = (m_coord_indices_flat) ?
+    m_flat_coord_indices.size() : m_coord_indices.size() - m_num_primitives;
+
+  if (m_tex_coord_array) m_tex_coord_array->resize(size);
   else {
-    m_tex_coord_array.reset(new Tex_coord_array_2d(num_coords));
+    m_tex_coord_array.reset(new Tex_coord_array_2d(size));
     SGAL_assertion(m_tex_coord_array);
   }
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
 
-  //! \todo do the right thing!
-  const Vector2f t0(0,0);
-  const Vector2f t1(1,0);
-  const Vector2f t2(1,1);
-  const Vector2f t3(0,1);
-  for (Uint i = 0; i < num_coords; ++i) {
-    Uint mask = i & 0x3;
-    const Vector2f& t =
-      (mask == 0x0) ? t0 : (mask == 0x1) ? t1 : (mask == 0x2) ? t2 : t3;
-    (*tex_coord_array)[i] = t;
+  // Generate indices
+  if (m_coord_indices_flat) {
+    Uint k(0);
+    m_flat_tex_coord_indices.resize(size);
+    auto it = m_flat_tex_coord_indices.begin();
+    for (; it != m_flat_tex_coord_indices.end(); ++it) *it = k++;
+    m_tex_coord_indices_flat = true;
+    m_dirty_flat_tex_coord_indices = false;
+    m_dirty_tex_coord_indices = true;
+  }
+  else {
+    m_tex_coord_indices.resize(size + m_num_primitives);
+    Uint j(0);
+    Uint k(0);
+    for (Uint i = 0; i < m_num_primitives; ++i) m_tex_coord_indices[j++] = k++;
+    m_tex_coord_indices[j++] = (Uint) -1;
+    m_tex_coord_indices_flat = false;
+    m_dirty_flat_tex_coord_indices = true;
+    m_dirty_tex_coord_indices = false;
+  }
+
+  // Generate coordinates
+  Vector3f range;
+  range.sub(vec_max, vec_min);
+  size_t j(0);
+  size_t k(0);
+  switch (m_primitive_type) {
+   case PT_TRIANGLES:
+    for (Uint i = 0; i < m_num_primitives; ++i) {
+      // const Vector3f& normal = per_polygon_normals[i];
+      for (size_t l = 0; l < 3; ++l) {
+        const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
+        auto s = vec_min[0] + v[0] / range[0];
+        auto t = vec_min[1] + v[1] / range[1];
+        Vector2f tex_vec(s, t);
+        (*tex_coord_array)[k++] = tex_vec;
+      }
+    }
+    break;
+
+   case PT_QUADS:
+    for (Uint i = 0; i < m_num_primitives; ++i) {
+      // const Vector3f& normal = per_polygon_normals[i];
+      for (size_t l = 0; l < 4; ++l) {
+        const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
+        auto s = vec_min[0] + v[0] / range[0];
+        auto t = vec_min[1] + v[1] / range[1];
+        Vector2f tex_vec(s, t);
+        (*tex_coord_array)[k++] = tex_vec;
+      }
+    }
+    break;
+
+   case PT_POLYGONS:
+    for (Uint i = 0; i < m_num_primitives; ++i) {
+      // const Vector3f& normal = per_polygon_normals[i];
+      while (m_flat_coord_indices[j] != (Uint) -1) {
+        const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
+        auto s = vec_min[0] + v[0] / range[0];
+        auto t = vec_min[1] + v[1] / range[1];
+        Vector2f tex_vec(s, t);
+        (*tex_coord_array)[k++] = tex_vec;
+      }
+      ++j;
+    }
+    break;
+
+   case PT_TRIANGLE_STRIP:
+   case PT_TRIANGLE_FAN:
+   case PT_QUAD_STRIP:
+   default: SGAL_assertion(0); break;
   }
 }
 

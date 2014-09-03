@@ -426,4 +426,19 @@ void Geo_set::sphere_bound_changed(const Field_info* field_info)
   field_changed(field_info);
 }
 
+//! \brief obtains the bounding box.
+Bounding_box Geo_set::bounding_box()
+{
+  auto it = m_coord_indices.begin();
+  const Vector3f& v = get_coord_3d(*it);
+  Bounding_box bbox(v[0], v[1], v[2], v[0], v[1], v[2]);
+  for (; it != m_coord_indices.end(); ++it) {
+    if (*it = (Uint) -1) continue;
+    const Vector3f& v = get_coord_3d(*it);
+    Bounding_box tmp(v[0], v[1], v[2], v[0], v[1], v[2]);
+    bbox += tmp;
+  }
+  return bbox;
+}
+
 SGAL_END_NAMESPACE
