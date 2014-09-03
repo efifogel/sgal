@@ -153,6 +153,7 @@ void Texture_transform::set_attributes(Element* elem)
 //! \brief sets the center point of the rotation.
 void Texture_transform::set_center(const Vector2f& center)
 {
+  if (m_dirty_parts) clean_parts();
   m_center = center;
   m_dirty_matrix = true;
 }
@@ -160,13 +161,14 @@ void Texture_transform::set_center(const Vector2f& center)
 //! \brief obtains the center point of the rotation.
 const Vector2f& Texture_transform::get_center()
 {
-  return m_center;
   if (m_dirty_parts) clean_parts();
+  return m_center;
 }
 
 //! \brief sets the rotation angle.
 void Texture_transform::set_rotation(Float rotation)
 {
+  if (m_dirty_parts) clean_parts();
   m_rotation = rotation;
   m_dirty_matrix = true;
 }
@@ -174,13 +176,14 @@ void Texture_transform::set_rotation(Float rotation)
 //! \brief obtains the rotation angle.
 Float Texture_transform::get_rotation()
 {
-  return m_rotation;
   if (m_dirty_parts) clean_parts();
+  return m_rotation;
 }
 
 //! \brief sets the a non-uniform scale about an arbitrary center point.
 void Texture_transform::set_scale(const Vector2f& scale)
 {
+  if (m_dirty_parts) clean_parts();
   m_scale = scale;
   m_dirty_matrix = true;
 }
@@ -188,13 +191,14 @@ void Texture_transform::set_scale(const Vector2f& scale)
 //! \brief obtains the non-uniform scale about an arbitrary center point.
 const Vector2f& Texture_transform::get_scale()
 {
-  return m_scale;
   if (m_dirty_parts) clean_parts();
+  return m_scale;
 }
 
 //! \brief sets the translation.
 void Texture_transform::set_translation(const Vector2f& translation)
 {
+  if (m_dirty_parts) clean_parts();
   m_translation = translation;
   m_dirty_matrix = true;
 }
@@ -202,8 +206,8 @@ void Texture_transform::set_translation(const Vector2f& translation)
 //! \brief obtains the translation.
 const Vector2f& Texture_transform::get_translation()
 {
-  return m_translation;
   if (m_dirty_parts) clean_parts();
+  return m_translation;
 }
 
 /*! \brief raises the matrix dirty flag, and sets the flag that indicates that
