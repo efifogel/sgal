@@ -148,7 +148,7 @@ void Transform::clean_matrix()
   set_transformed(true);
 }
 
-//! \brief extracts the individual Transforms from the matrix.
+//! \brief extracts the individual Transformations from the matrix.
 void Transform::clean_parts()
 {
   m_translation.set(m_matrix[3][0], m_matrix[3][1], m_matrix[3][2]);

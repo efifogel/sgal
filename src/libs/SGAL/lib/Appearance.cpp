@@ -22,6 +22,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Appearance.hpp"
 #include "SGAL/Texture.hpp"
+#include "SGAL/Texture_transform.hpp"
 #include "SGAL/Halftone.hpp"
 #include "SGAL/Material.hpp"
 #include "SGAL/Vector4f.hpp"
@@ -108,6 +109,7 @@ void Appearance::set(Appearance* app)
 void Appearance::init()
 {
   m_texture.reset();            // shared pointer
+  m_tex_transform.reset();      // shared pointer
   m_tex_gen.reset();            // shared pointer
   m_material.reset();           // shared pointer
   m_back_material.reset();      // shared pointer
@@ -135,7 +137,6 @@ void Appearance::init()
   m_poly_mode                 = s_def_poly_mode;
   m_line_stipple_factor       = 1;
   m_line_stipple_pattern      = 0xffff;
-  m_tex_transform.make_identity();
   m_polygon_stipple_enable    = false;
   m_light_model_color_control = s_def_light_model_color_control;
 
@@ -143,7 +144,7 @@ void Appearance::init()
   m_override.off();
 }
 
-//! \brief
+//! \brief sets the texture.
 void Appearance::set_texture(Shared_texture texture)
 {
   Observer observer(this, get_field_info(TEXTURE));
@@ -156,6 +157,18 @@ void Appearance::set_texture(Shared_texture texture)
   // this is to indicate that the texture has changed and
   // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::TEX_ENV);
+}
+
+//! \brief sets the texture transformation.
+void Appearance::set_tex_transform(Shared_texture_transform tex_transform)
+{
+  Observer observer(this, get_field_info(TEX_TRANSFORM));
+  if (m_tex_transform) m_tex_transform->unregister_observer(observer);
+  m_tex_transform = tex_transform;
+  if (m_tex_transform) m_tex_transform->register_observer(observer);
+  m_pending.on_bit(Gfx::TEX_TRANSFORM);
+  m_override.on_bit(Gfx::TEX_TRANSFORM);
+  m_tex_transform = tex_transform;
 }
 
 //! \brief
@@ -229,7 +242,7 @@ void Appearance::set_tex_gen_enable(Boolean tex_gen_enable)
   m_tex_gen_enable = tex_gen_enable;
 }
 
-/*! \brief sets the material attribute. */
+//! \brief sets the material attribute.
 void Appearance::set_material(Shared_material material)
 {
   SGAL_assertion(material);
@@ -251,7 +264,7 @@ void Appearance::set_material(Shared_material material)
   m_override.on_bit(Gfx::MATERIAL);
 }
 
-/*! \brief processes change of material. */
+//! \brief processes change of material.
 void Appearance::material_changed(const Field_info* /* field_info */)
 {
   if (m_material->get_transparency() != 0.0f) {
@@ -264,7 +277,7 @@ void Appearance::material_changed(const Field_info* /* field_info */)
   process_content_changed();
 }
 
-/*! \brief notifies that the back material has changed. */
+//! \brief notifies that the back material has changed.
 void Appearance::back_material_changed(const Field_info* /* field_info */)
 {
   //! \todo need to unregister the old back material.
@@ -447,14 +460,6 @@ void Appearance::set_line_stipple_factor(Uint factor)
   m_line_stipple_factor = factor;
 }
 
-/*! \brief sets the texture transformation. */
-void Appearance::set_tex_transform(const Matrix4f& tex_transform)
-{
-  m_pending.on_bit(Gfx::TEX_TRANSFORM);
-  m_override.on_bit(Gfx::TEX_TRANSFORM);
-  m_tex_transform = tex_transform;
-}
-
 /*! \brief sets the attribute that specifies whether a single color should be
  * generated from the lighting computation for a vertex.
  */
@@ -480,14 +485,14 @@ void Appearance::draw(Draw_action* action)
   context->draw_app(this);
 }
 
-/*! \brief determines whether the appearance is translucent. */
+//! \brief determines whether the appearance is translucent.
 Boolean Appearance::is_transparent() const
 {
   return ((m_src_blend_func != Gfx::ONE_SBLEND) ||
           (m_dst_blend_func != Gfx::ZERO_DBLEND));
 }
 
-/*! \brief notifies that the texture has been changed. */
+//! \brief notifies that the texture has been changed.
 void Appearance::texture_changed(const Field_info* /* field_info */)
 {
   m_pending.on_bit(Gfx::TEXTURE);
@@ -499,20 +504,25 @@ void Appearance::texture_changed(const Field_info* /* field_info */)
   process_content_changed();
 }
 
-/*! \brief notifies that halftone has been changed. */
+//! \brief notifies that the texture transform has been changed.
+void Appearance::tex_transform_changed(const Field_info* /* field_info */)
+{
+  m_pending.on_bit(Gfx::TEX_TRANSFORM);
+  m_override.on_bit(Gfx::TEX_TRANSFORM);
+  process_content_changed();
+}
+
+//! \brief notifies that halftone has been changed.
 void Appearance::halftone_changed(const Field_info* /* field_info */)
 {
   m_pending.on_bit(Gfx::HALFTONE_PATTERN);
   m_override.on_bit(Gfx::HALFTONE_PATTERN);
-
-  // this is to indicate that the texture has changed and
-  // the tex blend func has to be re-evaluated
   m_dirty_flags.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
   set_rendering_required();
   process_content_changed();
 }
 
-/*! \brief notifies that the texture generation has changed. */
+//! \brief notifies that the texture generation has changed.
 void Appearance::tex_gen_changed(const Field_info* /* field_info */)
 {
   m_pending.on_bit(Gfx::TEX_GEN);
@@ -538,7 +548,7 @@ Boolean Appearance::detach_context(Context* context)
   return result;
 }
 
-/*! \brief initializes the appearance prototype. */
+//! \brief initializes the appearance prototype.
 void Appearance::init_prototype()
 {
   if (s_prototype) return;
@@ -595,21 +605,21 @@ void Appearance::init_prototype()
                                                       exec_func));
 }
 
-/*! \brief deletes the appearance prototype. */
+//! \brief deletes the appearance prototype.
 void Appearance::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
-/*! \brief obtains the appearance prototype. */
+//! \brief obtains the appearance prototype.
 Container_proto* Appearance::get_prototype()
 {
   if (s_prototype == nullptr) init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the appearance. */
+//! \brief sets the attributes of the appearance.
 void Appearance::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
@@ -674,7 +684,9 @@ void Appearance::set_attributes(Element* elem)
       continue;
     }
     if (name == "textureTransform") {
-      //! todo textureTransform
+      Shared_texture_transform texture_transform =
+        boost::dynamic_pointer_cast<Texture_transform>(cont);
+      set_tex_transform(texture_transform);
       elem->mark_delete(cai);
       continue;
     }
@@ -863,6 +875,11 @@ void Appearance::field_changed(const Field_info* field_info)
    case TEXTURE:
     m_pending.on_bit(Gfx::TEXTURE);
     m_override.on_bit(Gfx::TEXTURE);
+    break;
+
+   case TEX_TRANSFORM:
+    m_pending.on_bit(Gfx::TEX_TRANSFORM);
+    m_override.on_bit(Gfx::TEX_TRANSFORM);
     break;
 
    case TEX_GEN:

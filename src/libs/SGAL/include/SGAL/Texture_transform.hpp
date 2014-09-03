@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -31,75 +28,175 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
+#include "SGAL/Vector2f.hpp"
+#include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
 class Element;
+class Context;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
 
+/*! \class Texture_transform Texture_transform.hpp
+ */
 class SGAL_SGAL_DECL Texture_transform : public Container {
 public:
   enum {
     FIRST = Container::LAST - 1,
+    CENTER,
+    ROTATION,
+    SCALE,
+    TRANSLATION,
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Texture_transform(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Texture_transform();
 
-  /* Construct the prototype. */
+  /* Construct the prototype.
+   * \return the prototype.
+   */
   static Texture_transform* prototype();
 
-  /*! Clone. */
+  /*! Clone.
+   * \return the clone.
+   */
   virtual Container* clone();
 
-  /*! Set the attributes of this node */
+  /// \name Protoype handling
+  //@{
+  /*! Initialize the node prototype. */
+  virtual void init_prototype();
+
+  /*! Delete the node prototype. */
+  virtual void delete_prototype();
+
+  /*! Obtain the node prototype.
+   * \return the node prototype.
+   */
+  virtual Container_proto* get_prototype();
+  //@}
+
+  /// \name field handlers
+  //@{
+  Vector2f* center_handle(const Field_info*) { return &m_center; }
+  Float* rotation_handle(const Field_info*) { return &m_rotation; }
+  Vector2f* scale_handle(const Field_info*) { return &m_scale; }
+  Vector2f* translation_handle(const Field_info*) { return &m_translation; }
+  //@}
+
+  /*! Set the attributes of the transform.
+   * \param elem (in) contains lists of attribute name and value pairs.
+   */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Initialize the node prototype */
-  virtual void init_prototype();
+  /*! Apply the material. */
+  virtual void draw(Context* context);
 
-  /*! Delete the node prototype */
-  virtual void delete_prototype();
+  /*! Set the center point of the rotation.
+   */
+  void set_center(const Vector2f& center);
 
-  /*! Obtains the node prototype */
-  virtual Container_proto* get_prototype();
+  /*! Obtain the center point of the rotation.
+   */
+  const Vector2f& get_center();
+
+  /*! Set the rotation angle.
+   */
+  void set_rotation(Float center);
+
+  /*! Obtain the rotation angle.
+   */
+  Float get_rotation();
+
+  /*! Set the a non-uniform scale about an arbitrary center point.
+   */
+  void set_scale(const Vector2f& scale);
+
+  /*! Obtain the non-uniform scale about an arbitrary center point.
+   */
+  const Vector2f& get_scale();
+
+  /*! Set the translation.
+   */
+  void set_translation(const Vector2f& translation);
+
+  /*! Obtain the translation.
+   */
+  const Vector2f& get_translation();
+
+  /*! Process change of parts.
+   * \param field_info (in) the field information record of the particular
+   *                   part that got changed.
+   */
+  void parts_changed(const Field_info* field_info = nullptr);
 
 protected:
-  /*! obtains the tag (type) of the container */
+  /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
-  /*! The node prototype */
+  /*! The node prototype. */
   static Container_proto* s_prototype;
+
+  Vector2f m_center;
+  Float m_rotation;
+  Vector2f m_scale;
+  Vector2f m_translation;
+
+  /*! The matrix representing the transform. */
+  Matrix4f m_matrix;
+
+  /*! Indicates whether the matrix is not up-to-date. */
+  Boolean m_dirty_matrix;
+
+  /*! Indicates whether the individual parts are dirty and thus must be
+   * cleaned. The parts become dirty if the matrix that represents the
+   * transform is set, for example.
+   */
+  Boolean m_dirty_parts;
+
+  // Default values
+  static const Vector2f s_def_center;
+  static const Float s_def_rotation;
+  static const Vector2f s_def_scale;
+  static const Vector2f s_def_translation;
+
+  /*! Calculate the matrix out of the individual parts. */
+  void clean_matrix();
+
+  /*! Extract the individual Transformations (e.g., scale) from the matrix. */
+  void clean_parts();
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Texture_transform* Texture_transform::prototype()
 { return new Texture_transform(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Texture_transform::clone()
 { return new Texture_transform(); }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Texture_transform::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

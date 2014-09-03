@@ -59,6 +59,7 @@ public:
   };
 
   typedef boost::shared_ptr<Texture>            Shared_texture;
+  typedef boost::shared_ptr<Texture_transform>  Shared_texture_transform;
   typedef boost::shared_ptr<Material>           Shared_material;
   typedef boost::shared_ptr<Halftone>           Shared_halftone;
   typedef boost::shared_ptr<Tex_gen>            Shared_tex_gen;
@@ -88,6 +89,8 @@ public:
   //@{
   Shared_material* material_handle(const Field_info*) { return &m_material; }
   Shared_texture* texture_handle(const Field_info*) { return &m_texture; }
+  Shared_texture_transform* tex_transform_handle(const Field_info*)
+  { return &m_tex_transform; }
   Shared_tex_gen* tex_gen_handle(const Field_info*) { return &m_tex_gen; }
   Shared_halftone* halftone_handle(const Field_info*) { return &m_halftone; }
   Shared_material* back_material_handle(const Field_info*)
@@ -113,6 +116,12 @@ public:
 
   /*! Obtain the texture attribute. */
   Shared_texture get_texture() const;
+
+  /*! Set the texture transformation attribute. */
+  void set_tex_transform(Shared_texture_transform tex_transform);
+
+  /*! Obtain the texture transformation attribute. */
+  Shared_texture_transform get_tex_transform() const;
 
   /*! Set the halftone attribute. */
   void set_halftone(Shared_halftone halftone);
@@ -308,12 +317,6 @@ public:
   /*! Obtain the line stipple factor attribute. */
   Uint get_line_stipple_factor() const;
 
-  /*! Set the texture transformation attribute. */
-  void set_tex_transform(const Matrix4f& tex_transform);
-
-  /*! Obtain the texture transformation attribute. */
-  const Matrix4f& get_tex_transform() const;
-
   /*! Set the attribute that specifies whether a single color should be
    * generated from the lighting computation for a vertex.
    */
@@ -339,19 +342,22 @@ public:
   Boolean is_transparent() const;
 
   /*! Notify that the material has changed. */
-  void material_changed(const Field_info* field_info = NULL);
+  void material_changed(const Field_info* field_info = nullptr);
 
   /*! Notify that the back material has changed. */
-  void back_material_changed(const Field_info* field_info = NULL);
+  void back_material_changed(const Field_info* field_info = nullptr);
 
   /*! Notify that the texture has changed. */
-  void texture_changed(const Field_info* field_info = NULL);
+  void texture_changed(const Field_info* field_info = nullptr);
+
+  /*! Notify that the texture transform has changed. */
+  void tex_transform_changed(const Field_info* field_info = nullptr);
 
   /*! Notify that the halftone has changed. */
-  void halftone_changed(const Field_info* field_info = NULL);
+  void halftone_changed(const Field_info* field_info = nullptr);
 
   /*! Notify that the texture generation has changed. */
-  void tex_gen_changed(const Field_info* field_info = NULL);
+  void tex_gen_changed(const Field_info* field_info = nullptr);
 
   /*! Process change of field. */
   void field_changed(const Field_info* field_info);
@@ -417,145 +423,146 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Appearance* Appearance::prototype() { return new Appearance(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Appearance::clone() { return new Appearance(); }
 
-/*! \brief obtains the texture attribute. */
+//! \brief obtains the texture attribute.
 inline Appearance::Shared_texture Appearance::get_texture() const
 { return m_texture; }
 
-/*! \brief obtains the halftone attribute. */
+//! \brief obtains the texture transformation attribute.
+inline Appearance::Shared_texture_transform
+Appearance::get_tex_transform() const
+{ return m_tex_transform; }
+
+//! \brief obtains the halftone attribute.
 inline Appearance::Shared_halftone Appearance::get_halftone() const
 { return m_halftone; }
 
-/*! \brief obtains the texture-enable attribute. */
+//! \brief obtains the texture-enable attribute.
 inline Boolean Appearance::get_tex_enable() const { return m_tex_enable; }
 
-/*! \brief obtains the texture mode attribute. */
+//! \brief obtains the texture mode attribute.
 inline Gfx::Tex_mode Appearance::get_tex_mode() const { return m_tex_mode; }
 
-/*! \brief obtains the texture blend-color attribute. */
+//! \brief obtains the texture blend-color attribute.
 inline void Appearance::get_tex_blend_color(Vector4f& tex_blend_color) const
 {
   get_tex_blend_color(&tex_blend_color[0], &tex_blend_color[1],
                       &tex_blend_color[2], &tex_blend_color[3]);
 }
 
-/*! \brief obtains the texture blend-color attribute. */
+//! \brief obtains the texture blend-color attribute.
 inline void Appearance::get_tex_blend_color(Float* v0, Float* v1,
                                             Float* v2, Float* v3) const
 { m_tex_blend_color.get(v0, v1, v2, v3); }
 
-/*! \brief obtains the texture environment attribute. */
+//! \brief obtains the texture environment attribute.
 inline Gfx::Tex_env Appearance::get_tex_env() const { return m_tex_env; }
 
-/*! \brief obtains the texture-generation attribute. */
+//! \brief obtains the texture-generation attribute.
 inline Appearance::Shared_tex_gen Appearance::get_tex_gen() const
 { return m_tex_gen; }
 
-/*! \brief obtains  the texture-generation enable flag. */
+//! \brief obtains  the texture-generation enable flag.
 inline Boolean Appearance::get_tex_gen_enable() const
 { return m_tex_gen_enable; }
 
-/*! \brief obtains the material attribute. */
+//! \brief obtains the material attribute.
 inline Appearance::Shared_material Appearance::get_material() const
 { return m_material; }
 
-/*! \brief obtains the back material attribute. */
+//! \brief obtains the back material attribute.
 inline Appearance::Shared_material Appearance::get_back_material() const
 { return m_back_material; }
 
-/*! \brief obtains the light enable flag. */
+//! \brief obtains the light enable flag.
 inline Boolean Appearance::get_light_enable() const { return m_light_enable; }
 
-/*! \brief obtains the shade model attribute. */
+//! \brief obtains the shade model attribute.
 inline Gfx::Shade_model Appearance::get_shade_model() const
 { return m_shade_model; }
 
-/*! \brief obtains the translucency enable flag. */
+//! \brief obtains the translucency enable flag.
 inline Boolean Appearance::get_transp_enable() const { return m_transp_enable; }
 
-/*! \brief obtains the translucency mode attribute. */
+//! \brief obtains the translucency mode attribute.
 inline Gfx::Transparency_mode Appearance::get_transp_mode() const
 { return m_transp_mode; }
 
-/*! \brief obtains the alpha function attribute. */
+//! \brief obtains the alpha function attribute.
 inline Gfx::Alpha_func Appearance::get_alpha_func() const
 { return m_alpha_func; }
 
-/*! \brief obtains the alpha reference attribute. */
+//! \brief obtains the alpha reference attribute.
 inline Float Appearance::get_alpha_ref() const { return m_alpha_ref; }
 
-/*! \brief obtains the blend color attribute. */
+//! \brief obtains the blend color attribute.
 inline void Appearance::get_blend_color(Vector4f& blend_color) const
 {
   get_blend_color(&blend_color[0], &blend_color[1],
                   &blend_color[2], &blend_color[3]);
 }
 
-/*! \brief obtains the blend color attribute. */
+//! \brief obtains the blend color attribute.
 inline void Appearance::get_blend_color(Float* v0, Float* v1,
                                         Float* v2, Float* v3) const
 { m_blend_color.get(v0, v1, v2, v3); }
 
-/*! \brief obtains the source blend function attribute. */
+//! \brief obtains the source blend function attribute.
 inline Gfx::Src_blend_func Appearance::get_src_blend_func() const
 { return m_src_blend_func; }
 
-/*! \brief obtains the destination blend function attribute. */
+//! \brief obtains the destination blend function attribute.
 inline Gfx::Dst_blend_func Appearance::get_dst_blend_func() const
 { return m_dst_blend_func; }
 
-/*! \brief obtains the color mask attribute. */
+//! \brief obtains the color mask attribute.
 inline void Appearance::get_color_mask(Vector4ub& color_mask) const
 {
   get_color_mask(&color_mask[0], &color_mask[1],
                  &color_mask[2], &color_mask[3]);
 }
 
-/*! \brief obtains the color mask attribute. */
+//! \brief obtains the color mask attribute.
 inline void Appearance::get_color_mask(Ubyte* v0, Ubyte* v1,
                                        Ubyte* v2, Ubyte* v3) const
 { m_color_mask.get(v0, v1, v2, v3); }
 
-/*! \brief obtains the depth enable flag. */
+//! \brief obtains the depth enable flag.
 inline Boolean Appearance::get_depth_enable() const { return m_depth_enable; }
 
-/*! \brief obtains the depth function attribute. */
+//! \brief obtains the depth function attribute.
 inline Gfx::Depth_func Appearance::get_depth_func() const
 { return m_depth_func; }
 
-/*! \brief obtains the depth mask attribute. */
+//! \brief obtains the depth mask attribute.
 inline Boolean Appearance::get_depth_mask() const { return m_depth_mask; }
 
-/*! \brief obtains the fog-enable flag. */
+//! \brief obtains the fog-enable flag.
 inline Boolean Appearance::get_fog_enable() const { return m_fog_enable; }
 
-/*! \brief obtains the polygon stipple enable flag. */
+//! \brief obtains the polygon stipple enable flag.
 inline Boolean Appearance::get_polygon_stipple_enable() const
 { return m_polygon_stipple_enable; }
 
-/*! \brief obtains the material-mode enable flag. */
+//! \brief obtains the material-mode enable flag.
 inline Gfx::Material_mode Appearance::get_material_mode_enable() const
 { return m_material_mode_enable; }
 
-/*! \brief obtains the polygon mode attribute. */
+//! \brief obtains the polygon mode attribute.
 inline Gfx::Poly_mode Appearance::get_poly_mode() const { return m_poly_mode; }
 
-/*! \brief obtains the line stipple pattern attribute. */
+//! \brief obtains the line stipple pattern attribute.
 inline Uint Appearance::get_line_stipple_pattern() const
 { return m_line_stipple_pattern; }
 
-/*! \brief obtains the line stipple factor attribute. */
+//! \brief obtains the line stipple factor attribute.
 inline Uint Appearance::get_line_stipple_factor() const
 { return m_line_stipple_factor; }
-
-/*! \brief obtains the texture transformation attribute. */
-inline const Matrix4f& Appearance::get_tex_transform() const
-{ return m_tex_transform; }
 
 /*! \brief obtains the attribute that specifies whether a single color should
  * be generated from the lighting computation for a vertex.
@@ -564,7 +571,7 @@ inline Gfx::Light_model_color_control
 Appearance:: get_light_model_color_control() const
 { return m_light_model_color_control; }
 
-/*! \brief obtain the tag (type) of the container */
+//! \brief obtain the tag (type) of the container.
 inline const std::string& Appearance::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

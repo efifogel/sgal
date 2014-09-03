@@ -139,7 +139,7 @@ public:
   Float get_transparency() const;
 
   /*! The callback invoked when the material chages. */
-  virtual void material_changed(const Field_info* field_info = NULL);
+  virtual void material_changed(const Field_info* field_info = nullptr);
 
   /*! Apply the material. */
   virtual void draw(Face which_face, Context* ctx);
@@ -215,60 +215,60 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief construct the prototype. */
+//! \brief construct the prototype.
 inline Material* Material::prototype() { return new Material(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Material::clone() { return new Material(); }
 
-/*! \brief obtains the ambient intensity. */
+//! \brief obtains the ambient intensity.
 inline Float Material::get_ambient_intensity() const
 { return m_ambient_intensity; }
 
-/*! \brief sets the diffuse color. */
+//! \brief sets the diffuse color.
 inline void Material::set_diffuse_color(const Vector3f& color)
 { set_diffuse_color(color[0], color[1], color[2]); }
 
-/*! \brief obtains the diffuse color. */
+//! \brief obtains the diffuse color.
 inline const Vector3f& Material::get_diffuse_color() const
 { return m_diffuse_color; }
 
-/*! \brief obtains the diffuse color. */
+//! \brief obtains the diffuse color.
 inline void Material::get_diffuse_color(Vector3f& color) const
 { color = m_diffuse_color; }
 
-/*! \brief sets the specular color. */
+//! \brief sets the specular color.
 inline void Material::set_specular_color(const Vector3f& color)
 { set_specular_color(color[0], color[1], color[2]); }
 
-/*! \brief obtains the specular color. */
+//! \brief obtains the specular color.
 inline void Material::get_specular_color(Vector3f& color) const
 { color = m_specular_color; }
 
-/*! \brief obtains the specular color. */
+//! \brief obtains the specular color.
 inline const Vector3f& Material::get_specular_color() const
 { return m_specular_color; }
 
-/*! \brief sets the emissive color */
+//! \brief sets the emissive color.
 inline void Material::set_emissive_color(const Vector3f& color)
 { set_emissive_color(color[0], color[1], color[2]); }
 
-/*! \brief obtains the emissive color */
+//! \brief obtains the emissive color.
 inline const Vector3f& Material::get_emissive_color() const
 { return m_emissive_color; }
 
-/*! \brief gets the emissive color */
+//! \brief gets the emissive color.
 inline void Material::get_emissive_color(Vector3f& color) const
 { color = m_emissive_color; }
 
-/*! \brief obtains the shininess */
+//! \brief obtains the shininess.
 inline Float Material::get_shininess() const
 { return m_shininess; }
 
-/*! \brief obtains the transparency */
+//! \brief obtains the transparency.
 inline Float Material::get_transparency() const { return m_transparency;}
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Material::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

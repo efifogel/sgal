@@ -104,7 +104,7 @@ public:
   //@}
 
   /*! Set the attributes of the transform.
-   * \param elem contains lists of attribute name and value pairs.
+   * \param elem (in) contains lists of attribute name and value pairs.
    */
   virtual void set_attributes(Element* elem);
 
@@ -230,12 +230,13 @@ private:
   static const Rotation s_def_scale_orientation;
   static const Vector3f s_def_center;
 
-  void clean_parts();
-
-  void calc_matrix();
-
+  /*! Calculate the matrix out of the individual parts. */
   void clean_matrix();
 
+  /*! Extract the individual Transformations (e.g., scale) from the matrix. */
+  void clean_parts();
+
+  /*! Reset all field to original values; e.g., set the matrix to identity. */
   void reset(const Field_info* field_info);
 };
 

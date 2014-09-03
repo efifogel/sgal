@@ -300,7 +300,7 @@ inline void Texture::set_wrap_s(Texture::Wrap wrap)
 
 //! \brief sets the wrapping factor on the S.
 inline void Texture::set_wrap_s(Boolean flag)
-{ flag ? set_wrap_s(REPEAT) : set_wrap_s(CLAMP); }
+{ flag ? set_wrap_s(REPEAT) : set_wrap_s(CLAMP_TO_EDGE); }
 
 //! \brief obtains the wrapping factor on the S.
 inline Texture::Wrap Texture::get_wrap_s() const { return m_wrap_s; }
@@ -311,7 +311,7 @@ inline void Texture::set_wrap_t(Texture::Wrap wrap)
 
 //! \brief sets the wrapping factor on the T.
 inline void Texture::set_wrap_t(Boolean flag)
-{ flag ? set_wrap_t(REPEAT) : set_wrap_t(CLAMP); }
+{ flag ? set_wrap_t(REPEAT) : set_wrap_t(CLAMP_TO_EDGE); }
 
 //! \brief obtains the wrapping factor on the T.
 inline Texture::Wrap Texture::get_wrap_t() const { return m_wrap_t; }
@@ -322,7 +322,7 @@ inline void Texture::set_wrap_r(Texture::Wrap wrap)
 
 //! \brief sets the wrapping factor on the R.
 inline void Texture::set_wrap_r(Boolean flag)
-{ flag ? set_wrap_r(REPEAT) : set_wrap_r(CLAMP); }
+{ flag ? set_wrap_r(REPEAT) : set_wrap_r(CLAMP_TO_EDGE); }
 
 //! \brief obtains the wrapping factor on the R.
 inline Texture::Wrap Texture::get_wrap_r() const { return m_wrap_r; }

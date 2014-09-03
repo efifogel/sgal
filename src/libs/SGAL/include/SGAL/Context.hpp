@@ -165,6 +165,7 @@ private:
 
 public:
   typedef boost::shared_ptr<Texture>            Shared_texture;
+  typedef boost::shared_ptr<Texture_transform>  Shared_texture_transform;
   typedef boost::shared_ptr<Material>           Shared_material;
   typedef boost::shared_ptr<Halftone>           Shared_halftone;
   typedef boost::shared_ptr<Tex_gen>            Shared_tex_gen;
@@ -229,6 +230,10 @@ public:
   void set_texture(Shared_texture texture);
 
   Shared_texture get_texture() const;
+
+  void set_tex_transform(Shared_texture_transform tex_transform);
+
+  Shared_texture_transform get_tex_transform() const;
 
   void set_halftone(Shared_halftone halftone);
 
@@ -397,9 +402,6 @@ public:
   void set_line_stipple_factor(Uint factor);
   Uint get_line_stipple_factor() const;
 
-  void set_tex_transform(const Matrix4f& xform);
-  void get_tex_transform(Matrix4f& xform) const;
-
   void set_back_material(Shared_material material);
   Shared_material get_back_material() const;
 
@@ -552,6 +554,7 @@ private:
 
 public:
   void draw_texture(Shared_texture texture);
+  void draw_tex_transform(Shared_texture_transform tex_transform);
   void draw_halftone(Shared_halftone halftone);
   void draw_tex_mode(Gfx::Tex_mode tex_mode);
   void draw_tex_blend_color(const Vector4f& tex_blend_color);
@@ -579,7 +582,6 @@ public:
   void draw_point_size(float point_size);
   void draw_line_stipple_pattern(unsigned int pattern);
   void draw_line_stipple_factor(unsigned int factor);
-  void draw_tex_transform(const Matrix4f& matrix);
   void draw_back_material(Shared_material material,
                           Shared_material back_material);
 
@@ -596,103 +598,107 @@ private:
   static Context* s_current_context;
 };
 
-/*! \brief obtains the texture attribute. */
+//! \brief obtains the texture attribute.
 inline Context::Shared_texture Context::get_texture() const
 { return m_current_state->m_texture; }
 
-/*! \brief obtains the halftone attribute. */
+//! \brief obtains the texture transform attribute.
+inline Context::Shared_texture_transform Context::get_tex_transform() const
+{ return m_current_state->m_tex_transform; }
+
+//! \brief obtains the halftone attribute.
 inline Context::Shared_halftone Context::get_halftone() const
 { return m_current_state->m_halftone; }
 
-/*! \brief obtains the texture enable attribute. */
+//! \brief obtains the texture enable attribute.
 inline Boolean Context::get_tex_enable() const
 { return m_current_state->m_tex_enable; }
 
-/*! \brief obtains the texture mode attribute. */
+//! \brief obtains the texture mode attribute.
 inline Gfx::Tex_mode Context::get_tex_mode() const
 { return m_current_state->m_tex_mode; }
 
-/*! \brief obtains the texture blend color attribute. */
+//! \brief obtains the texture blend color attribute.
 inline void Context::get_tex_blend_color(Vector4f& tex_blend_color) const
 { tex_blend_color = m_current_state->m_tex_blend_color; }
 
-/*! \brief obtains the texture environment attribute. */
+//! \brief obtains the texture environment attribute.
 inline Gfx::Tex_env Context::get_tex_env() const
 { return m_current_state->m_tex_env; }
 
-/*! \brief obtains the texture generation attribute. */
+//! \brief obtains the texture generation attribute.
 inline Context::Shared_tex_gen Context::get_tex_gen() const
 { return m_current_state->m_tex_gen; }
 
-/*! \brief obtains the texture generation enable attribute. */
+//! \brief obtains the texture generation enable attribute.
 inline Boolean Context::get_tex_gen_enable() const
 { return m_current_state->m_tex_gen_enable != 0; }
 
-/*! \brief obtains the material attribute. */
+//! \brief obtains the material attribute.
 inline Context::Shared_material Context::get_material() const
 { return m_current_state->m_material; }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_light_enable() const
 { return m_current_state->m_light_enable != 0; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Shade_model Context::get_shade_model() const
 { return m_current_state->m_shade_model; }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_transp_enable() const
 { return m_current_state->m_transp_enable != 0; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Transparency_mode Context::get_transp_mode() const
 { return m_current_state->m_transp_mode; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Alpha_func Context::get_alpha_func() const
 { return m_current_state->m_alpha_func; }
 
-/*! \brief */
+//! \brief
 inline Float Context::get_alpha_ref() const
 { return m_current_state->m_alpha_ref; }
 
-/*! \brief */
+//! \brief
 inline void Context::get_blend_color(Vector4f& blend_color) const
 { blend_color = m_current_state->m_blend_color; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Src_blend_func Context::get_src_blend_func() const
 { return m_current_state->m_src_blend_func; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Dst_blend_func Context::get_dst_blend_func() const
 { return m_current_state->m_dst_blend_func; }
 
-/*! \brief */
+//! \brief
 inline void Context::get_color_mask(Vector4ub& color_mask) const
 { color_mask = m_current_state->m_color_mask; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Depth_func Context::get_depth_func() const
 { return m_current_state->m_depth_func; }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_depth_mask() const
 { return m_current_state->m_depth_mask; }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_fog_enable() const
 { return m_current_state->m_fog_enable; }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_polygon_stipple_enable() const
 { return m_current_state->m_polygon_stipple_enable; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Poly_mode Context::get_poly_mode() const
 { return m_current_state->m_poly_mode; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Cull_face Context::get_cull_face() const
 { return m_current_state->m_cull_face; }
 
@@ -709,15 +715,15 @@ inline Gfx::Light_model_color_control Context::get_light_model_color_control()
   const
 { return m_current_state->m_light_model_color_control; }
 
-/*! \brief */
+//! \brief
 inline Float Context::get_line_width() const
 { return m_current_state->m_line_width; }
 
-/*! \brief */
+//! \brief
 inline Float Context::get_point_size() const
 { return m_current_state->m_point_size; }
 
-/*! \brief */
+//! \brief
 inline void Context::set_tex_blend_color(Float v0, Float v1, Float v2,
                                          Float v3)
 {
@@ -725,7 +731,7 @@ inline void Context::set_tex_blend_color(Float v0, Float v1, Float v2,
   set_tex_blend_color(tex_blend_color);
 }
 
-/*! \brief */
+//! \brief
 inline void Context::get_tex_blend_color(Float* v0, Float* v1,
                                          Float* v2, Float* v3) const
 {
@@ -734,14 +740,14 @@ inline void Context::get_tex_blend_color(Float* v0, Float* v1,
   tex_blend_color.get(v0, v1, v2, v3);
 }
 
-/*! \brief */
+//! \brief
 inline void Context::set_blend_color(Float v0, Float v1, Float v2, Float v3)
 {
   Vector4f blend_color(v0, v1, v2, v3);
   set_blend_color(blend_color);
 }
 
-/*! \brief */
+//! \brief
 inline void Context::get_blend_color(Float* v0, Float* v1,
                                      Float* v2, Float* v3) const
 {
@@ -750,14 +756,14 @@ inline void Context::get_blend_color(Float* v0, Float* v1,
   blend_color.get(v0, v1, v2, v3);
 }
 
-/*! \brief */
+//! \brief
 inline void Context::set_color_mask(Ubyte v0, Ubyte v1, Ubyte v2, Ubyte v3)
 {
   Vector4ub color_mask(v0, v1, v2, v3);
   set_color_mask(color_mask);
 }
 
-/*! \brief */
+//! \brief
 inline void Context::get_color_mask(Ubyte* v0, Ubyte* v1,
                                     Ubyte* v2, Ubyte* v3) const
 {
@@ -766,21 +772,21 @@ inline void Context::get_color_mask(Ubyte* v0, Ubyte* v1,
   color_mask.get(v0, v1, v2, v3);
 }
 
-/*! \brief */
+//! \brief
 inline void Context::get_matrix(Matrix4f& m) const
 { glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat*) &m); }
 
-/*! \brief */
+//! \brief
 inline Int Context::get_matrix_depth() const { return m_mat_stack_depth; }
 
-/*! \brief */
+//! \brief
 inline void Context::push_matrix()
 {
   glPushMatrix();
   m_mat_stack_depth++;
 }
 
-/*! \brief */
+//! \brief
 inline void Context::push_ident_matrix()
 {
   glPushMatrix();
@@ -788,64 +794,60 @@ inline void Context::push_ident_matrix()
   m_mat_stack_depth++;
 }
 
-/*! \brief */
+//! \brief
 inline void Context::pop_matrix()
 {
   glPopMatrix();
   m_mat_stack_depth--;
 }
 
-/*! \brief */
+//! \brief
 inline void Context::load_matrix(const Matrix4f& m)
 { glLoadMatrixf((const GLfloat*) &m); }
 
-/*! \brief */
+//! \brief
 inline void Context::load_ident_matrix()
 { glLoadIdentity(); }
 
-/*! \brief */
+//! \brief
 inline void Context::mult_matrix(const Matrix4f& m)
 { glMultMatrixf((const GLfloat*) &m); }
 
-/*! \brief */
+//! \brief
 inline void Context::translate(Float x, Float y, Float z)
 { glTranslatef(x, y, z); }
 
-/*! \brief */
+//! \brief
 inline void Context::rotate(Float x, Float y, Float z, Float radians)
 { glRotatef(rad2deg(radians), x, y, z); }
 
-/*! \brief */
+//! \brief
 inline void Context::scale(Float x, Float y, Float z) { glScalef(x, y, z); }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_normalize_enable() const
 { return m_normalize_enable; }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_local_viewer() const { return m_local_viewer; }
 
-/*! \brief */
+//! \brief
 inline Uint Context::get_line_stipple_pattern() const
 { return(m_current_state->m_line_stipple_pattern); }
 
-/*! \brief */
+//! \brief
 inline Uint Context::get_line_stipple_factor() const
 { return(m_current_state->m_line_stipple_factor); }
 
-/*! \brief */
-inline void Context::get_tex_transform(Matrix4f& xform) const
-{ xform = m_current_state->m_tex_transform; }
-
-/*! \brief */
+//! \brief
 inline Context::Shared_material Context::get_back_material() const
 { return m_current_state->m_back_material; }
 
-/*! \brief */
+//! \brief
 inline Boolean Context::get_depth_enable() const
 { return m_current_state->m_depth_enable != 0; }
 
-/*! \brief */
+//! \brief
 inline Gfx::Material_mode Context::get_material_mode_enable() const
 { return m_current_state->m_material_mode_enable; }
 

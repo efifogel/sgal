@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 10984 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_GFX_HPP
@@ -34,11 +31,11 @@
 #include "SGAL/Bit_mask.hpp"
 #include "SGAL/Vector4ub.hpp"
 #include "SGAL/Vector4f.hpp"
-#include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Texture;
+class Texture_transform;
 class Halftone;
 class Tex_gen;
 class Material;
@@ -67,7 +64,7 @@ class Material;
   Gfx::Material_mode m_material_mode_enable; \
   Uint m_line_stipple_pattern; \
   Uint m_line_stipple_factor; \
-  Matrix4f m_tex_transform; \
+  Shared_texture_transform m_tex_transform; \
   Shared_material m_back_material; \
   Float m_line_width; \
   Float m_point_size; \
@@ -251,6 +248,7 @@ public:
   Bit_mask m_override;
 
   typedef boost::shared_ptr<Texture>            Shared_texture;
+  typedef boost::shared_ptr<Texture_transform>  Shared_texture_transform;
   typedef boost::shared_ptr<Material>           Shared_material;
   typedef boost::shared_ptr<Halftone>           Shared_halftone;
   typedef boost::shared_ptr<Tex_gen>            Shared_tex_gen;

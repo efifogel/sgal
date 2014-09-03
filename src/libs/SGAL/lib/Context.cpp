@@ -31,6 +31,7 @@
 #include "SGAL/Override_geo_prop.hpp"
 #include "SGAL/Light.hpp"
 #include "SGAL/Texture.hpp"
+#include "SGAL/Texture_transform.hpp"
 #include "SGAL/Cube_environment.hpp"
 #include "SGAL/Halftone.hpp"
 #include "SGAL/Gfx_conf.hpp"
@@ -117,6 +118,7 @@ void Context::init()
   m_current_state->m_override.off();
 
   m_current_state->m_texture.reset();           // shared pointer
+  m_current_state->m_tex_transform.reset();     // shared pointer
   m_current_state->m_halftone.reset();          // shared pointer
   m_current_state->m_tex_gen.reset();           // shared pointer
   m_current_state->m_material.reset();          // shared pointer
@@ -149,7 +151,6 @@ void Context::init()
   m_current_state->m_point_size            = 1.0f;
   m_current_state->m_line_stipple_factor   = 1;
   m_current_state->m_line_stipple_pattern  = 0xffff;
-  m_current_state->m_tex_transform.make_identity();
   m_current_state->m_polygon_stipple_enable = false;
 
   // Copy TopStack to default_state so they start out the same
@@ -301,6 +302,14 @@ void Context::set_texture(Shared_texture texture)
 }
 
 //! \brief
+void Context::set_tex_transform(Shared_texture_transform tex_transform)
+{
+  m_default_state->m_tex_transform = tex_transform;
+  m_default_state->m_pending.on_bit(Gfx::TEX_TRANSFORM);
+  // DrawTexTransform(tex_transform);
+}
+
+//! \brief
 void Context::draw_texture(Shared_texture texture)
 {
   if ((m_current_state->m_texture == texture) &&
@@ -309,6 +318,13 @@ void Context::draw_texture(Shared_texture texture)
 
   m_current_state->m_texture = texture;
   if (texture) texture->draw(this);
+}
+
+//! \brief
+void Context::draw_tex_transform(Shared_texture_transform tex_transform)
+{
+  m_current_state->m_tex_transform = tex_transform;
+  if (tex_transform) tex_transform->draw(this);
 }
 
 //! \brief
@@ -1099,27 +1115,6 @@ void Context::draw_line_stipple_factor(Uint factor)
                   static_cast<GLushort>
                   (m_current_state->m_line_stipple_pattern));
   }
-}
-
-//! \brief
-void Context::set_tex_transform(const Matrix4f& matrix)
-{
-  m_default_state->m_tex_transform = matrix;
-  m_default_state->m_pending.on_bit(Gfx::TEX_TRANSFORM);
-  // DrawTexTransform(matrix);
-}
-
-//! \brief
-void Context::draw_tex_transform(const Matrix4f& matrix)
-{
-  if (m_current_state->m_tex_transform == matrix) return;
-  m_current_state->m_tex_transform = matrix;
-  GLint matrix_mode;
-  glGetIntegerv(GL_MATRIX_MODE, &matrix_mode);
-  glMatrixMode(GL_TEXTURE);
-  glLoadMatrixf((GLfloat*) &matrix);
-  glMatrixMode(matrix_mode);  // restore matrix mode so modelview
-  // operations can continue as before
 }
 
 //! \brief
