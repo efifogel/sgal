@@ -1,0 +1,67 @@
+#VRML V2.0 utf8 CosmoWorlds V1.0
+NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
+Group {
+  children [
+    Transform {
+      children
+      Shape {
+	appearance Appearance {
+	  material Material { }
+	  texture ImageTexture {
+	    url "sgal.jpg"
+	    repeatS FALSE
+	    repeatT TRUE
+	  }
+	  textureTransform TextureTransform { scale 2 2 }
+	}
+	geometry Box {}
+      }
+      translation 0 0 0
+    }
+    Transform {
+      children Shape {
+	appearance Appearance {
+	  material Material {}
+	  texture ImageTexture {
+	    url "sgal.jpg"
+	    repeatS FALSE
+	    repeatT TRUE
+	  }
+	  textureTransform TextureTransform { scale 2 2 }
+	}
+	geometry Sphere {}
+      }
+      translation 3 0 0
+    }
+    Transform {
+      children Shape {
+	appearance Appearance {
+	  material Material {}
+	  texture ImageTexture {
+	    url "sgal.jpg"
+	    repeatS FALSE
+	    repeatT TRUE
+	  }
+	  textureTransform TextureTransform { scale 2 2 }
+	}
+	geometry Cone {}
+      }
+      translation 6 0 0
+    }
+    Transform {
+      children Shape {
+	appearance Appearance {
+	  material Material {}
+	  texture ImageTexture {
+	    url "sgal.jpg"
+	    repeatS FALSE
+	    repeatT TRUE
+	  }
+	  textureTransform TextureTransform { scale 2 2 }
+	}
+	geometry Cylinder {}
+      }
+      translation 9 0 0
+    }
+   ]
+}
