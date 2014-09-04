@@ -4,6 +4,7 @@ Shape {
   appearance Appearance {
     material Material {}
     texture ImageTexture {url ["sgal.jpg"]}
+    textureTransform TextureTransform { translation 0 0.25 }
   }
   geometry Ellipsoid {
     width 4
