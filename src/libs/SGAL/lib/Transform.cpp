@@ -16,12 +16,14 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <iostream>
+#include <algorithm>
+
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
-#include <iostream>
-#include <algorithm>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Transform.hpp"

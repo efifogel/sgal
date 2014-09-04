@@ -24,19 +24,21 @@
 #pragma warning ( disable : 4996 )
 #endif
 
+#include <vector>
+
 #include <CGAL/basic.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <time.h>
 #include <GL/gl.h>
 
-#include <vector>
-
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"

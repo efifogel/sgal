@@ -16,15 +16,17 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#if defined(_WIN32)
-#include <windows.h>
-#endif
-#include <GL/gl.h>
-
 #include <vector>
 #include <utility>
 #include <boost/lexical_cast.hpp>
 
+#if defined(_WIN32)
+#define NOMINMAX 1
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+
+#include "basic.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -42,7 +44,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Mesh_set::s_prototype(NULL);
+Container_proto* Mesh_set::s_prototype(nullptr);
 
 const Boolean Mesh_set::s_def_is_solid(true);
 const Boolean Mesh_set::s_def_is_convex(true);
@@ -235,7 +237,7 @@ void Mesh_set::init_prototype()
 void Mesh_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
@@ -737,7 +739,7 @@ Bounding_box Mesh_set::bounding_box()
   auto it = m_flat_coord_indices.begin();
   const Vector3f& v = get_coord_3d(*it);
   Bounding_box bbox(v[0], v[1], v[2], v[0], v[1], v[2]);
-  for (; it != m_flat_coord_indices.end(); ++it) {
+  for (++it; it != m_flat_coord_indices.end(); ++it) {
     const Vector3f& v = get_coord_3d(*it);
     Bounding_box tmp(v[0], v[1], v[2], v[0], v[1], v[2]);
     bbox += tmp;

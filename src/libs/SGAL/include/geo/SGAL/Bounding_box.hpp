@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include "boost/tuple/tuple.hpp"
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -54,7 +55,10 @@ public:
   Float ymax() const;
   Float zmax() const;
 
-  /*! Obtain a bounding box of the current bounding box and a given one.
+  Float min(Uint dim) const;
+  Float max(Uint dim) const;
+
+    /*! Obtain a bounding box of the current bounding box and a given one.
    * \param bb (in) the given boundng box.
    */
   Bounding_box operator+(const Bounding_box& bb) const;
@@ -65,6 +69,11 @@ public:
    * \return the current bounding box.
    */
   Bounding_box& operator+=(const Bounding_box& bb);
+
+  /*! Obtain the dimensions in order of their length.
+   * \return a tuple of dimension indicess in order of dimension length.
+   */
+  boost::tuple<Uint, Uint, Uint> get_longest_dimensions() const;
 };
 
 //! \brief constructor.
@@ -92,6 +101,11 @@ inline Float Bounding_box::zmin() const { return m_z_min; }
 inline Float Bounding_box::xmax() const { return m_x_max; }
 inline Float Bounding_box::ymax() const { return m_y_max; }
 inline Float Bounding_box::zmax() const { return m_z_max; }
+
+inline Float Bounding_box::min(Uint dim) const
+{ return (dim == 0) ? xmin() : ((dim == 1) ? ymin() : zmin()); }
+inline Float Bounding_box::max(Uint dim) const
+{ return (dim == 0) ? xmax() : ((dim == 1) ? ymax() : zmax()); }
 
 //! \brief exporter.
 inline std::ostream& operator<<(std::ostream& os, const Bounding_box& bbox)

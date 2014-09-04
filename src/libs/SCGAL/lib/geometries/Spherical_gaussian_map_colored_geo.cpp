@@ -24,15 +24,17 @@
 #pragma warning(disable: 4996)
 #endif
 
-#if defined(_WIN32)
-#include <windows.h>
-#endif
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <time.h>
 #include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits.hpp>
+
+#if defined(_WIN32)
+#define NOMINMAX 1
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

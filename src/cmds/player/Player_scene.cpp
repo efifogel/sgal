@@ -27,14 +27,11 @@
 #pragma warning ( disable : 4503 )
 #endif
 
-#if (defined _MSC_VER)
-#include <windows.h>
-#endif
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <GL/gl.h>
+
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
 #include <boost/shared_ptr.hpp>
@@ -42,6 +39,12 @@
 #if defined(USE_V8)
 #include <v8.h>
 #endif
+
+#if (defined _MSC_VER)
+#define NOMINMAX 1
+#include <windows.h>
+#endif
+#include <GL/gl.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"

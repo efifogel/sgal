@@ -29,11 +29,13 @@
  * Renderers of arrangement on torus
  */
 
-#if (defined _MSC_VER)
-#include <windows.h>
-#endif
 #include <math.h>
 #include <vector>
+
+#if (defined _MSC_VER)
+#define NOMINMAX 1
+#include <windows.h>
+#endif
 #include <GL/gl.h>
 
 #include "SGAL/basic.hpp"

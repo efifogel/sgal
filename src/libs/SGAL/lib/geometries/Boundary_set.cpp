@@ -21,14 +21,14 @@
 #include <algorithm>
 #include <tuple>
 
-#include "SGAL/basic.hpp"
-
 #if (defined _MSC_VER)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 #include <GL/glext.h>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
@@ -934,20 +934,16 @@ void Boundary_set::clean_tex_coords(Texture::Target target)
   m_dirty_tex_coord_buffer = true;
 }
 
+void Boundary_set::compute_flat_tex_coords_2d(size_t num_verts) {}
+void Boundary_set::compute_polygon_tex_coords_2d() {}
+
 //! \brief calculates the default 2D texture-mapping oordinates.
 void Boundary_set::clean_tex_coords_2d()
 {
   SGAL_assertion(m_coord_array);
 
-  // Compute per polygon normals
-  Normal_array per_polygon_normals(m_num_primitives);
-  calculate_normal_per_polygon(per_polygon_normals);
-
   // Compute bounding box
   Bounding_box bbox = bounding_box();;
-  Vector3f vec_min, vec_max;
-  vec_min.set(bbox.xmin(), bbox.ymin(), bbox.zmin());
-  vec_max.set(bbox.xmax(), bbox.ymax(), bbox.zmax());
 
   // Allocate space for texture coordinates and texture cordinate indices
   size_t size = (m_coord_indices_flat) ?
@@ -976,26 +972,32 @@ void Boundary_set::clean_tex_coords_2d()
     m_tex_coord_indices.resize(size + m_num_primitives);
     Uint j(0);
     Uint k(0);
-    for (Uint i = 0; i < m_num_primitives; ++i) m_tex_coord_indices[j++] = k++;
-    m_tex_coord_indices[j++] = (Uint) -1;
+    for (Uint i = 0; i < m_num_primitives; ++i) {
+      while (m_coord_indices[j] != (Uint) -1)
+        m_tex_coord_indices[j++] = k++;
+      m_tex_coord_indices[j++] = (Uint) -1;
+    }
     m_tex_coord_indices_flat = false;
     m_dirty_flat_tex_coord_indices = true;
     m_dirty_tex_coord_indices = false;
   }
 
   // Generate coordinates
-  Vector3f range;
-  range.sub(vec_max, vec_min);
+  auto dims = bbox.get_longest_dimensions();
+  auto d0 = boost::get<0>(dims);
+  auto d1 = boost::get<1>(dims);
+  Vector3f range(bbox.xmax() - bbox.xmin(),
+                 bbox.ymax() - bbox.ymin(),
+                 bbox.zmax() - bbox.zmin());
   size_t j(0);
   size_t k(0);
   switch (m_primitive_type) {
    case PT_TRIANGLES:
     for (Uint i = 0; i < m_num_primitives; ++i) {
-      // const Vector3f& normal = per_polygon_normals[i];
       for (size_t l = 0; l < 3; ++l) {
         const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
-        auto s = vec_min[0] + v[0] / range[0];
-        auto t = vec_min[1] + v[1] / range[1];
+        auto s = (v[d0] - bbox.min(d0)) / range[d0];
+        auto t = (v[d1] - bbox.min(d1)) / range[d0];
         Vector2f tex_vec(s, t);
         (*tex_coord_array)[k++] = tex_vec;
       }
@@ -1004,11 +1006,10 @@ void Boundary_set::clean_tex_coords_2d()
 
    case PT_QUADS:
     for (Uint i = 0; i < m_num_primitives; ++i) {
-      // const Vector3f& normal = per_polygon_normals[i];
       for (size_t l = 0; l < 4; ++l) {
         const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
-        auto s = vec_min[0] + v[0] / range[0];
-        auto t = vec_min[1] + v[1] / range[1];
+        auto s = (v[d0] - bbox.min(d0)) / range[d0];
+        auto t = (v[d1] - bbox.min(d1)) / range[d0];
         Vector2f tex_vec(s, t);
         (*tex_coord_array)[k++] = tex_vec;
       }
@@ -1017,11 +1018,10 @@ void Boundary_set::clean_tex_coords_2d()
 
    case PT_POLYGONS:
     for (Uint i = 0; i < m_num_primitives; ++i) {
-      // const Vector3f& normal = per_polygon_normals[i];
-      while (m_flat_coord_indices[j] != (Uint) -1) {
-        const Vector3f& v = get_coord_3d(m_flat_coord_indices[j++]);
-        auto s = vec_min[0] + v[0] / range[0];
-        auto t = vec_min[1] + v[1] / range[1];
+      while (m_coord_indices[j] != (Uint) -1) {
+        const Vector3f& v = get_coord_3d(m_coord_indices[j++]);
+        auto s = (v[d0] - bbox.min(d0)) / range[d0];
+        auto t = (v[d1] - bbox.min(d1)) / range[d0];
         Vector2f tex_vec(s, t);
         (*tex_coord_array)[k++] = tex_vec;
       }
@@ -1245,12 +1245,12 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
   Boolean texture_indexed = va ? false :
     (!m_flat_tex_coord_indices.empty() || !m_tex_coord_indices.empty());
 
-//   std::cout << "fragment_source: " << fragment_source << std::endl;
-//   std::cout << "fragment_indexed: " << fragment_indexed << std::endl;
-//   std::cout << "fragment_attached: " << fragment_attached << std::endl;
-//   std::cout << "texture_indexed: " << texture_indexed << std::endl;
-//   std::cout << "m_primitive_type: " << m_primitive_type << std::endl;
-//   std::cout << "va: " << va << std::endl;
+  // std::cout << "fragment_source: " << fragment_source << std::endl;
+  // std::cout << "fragment_indexed: " << fragment_indexed << std::endl;
+  // std::cout << "fragment_attached: " << fragment_attached << std::endl;
+  // std::cout << "texture_indexed: " << texture_indexed << std::endl;
+  // std::cout << "m_primitive_type: " << m_primitive_type << std::endl;
+  // std::cout << "va: " << va << std::endl;
 
   Uint mask =
     SGAL_SET(SGAL_BO_FRAG_SOURCE,SGAL_BO_FRAG_SOURCE_,fragment_source,

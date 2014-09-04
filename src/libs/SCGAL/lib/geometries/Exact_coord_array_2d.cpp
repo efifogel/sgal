@@ -16,13 +16,14 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#include <CGAL/basic.h>
-#include <CGAL/number_utils_classes.h>
-
 #include <iostream>
 #include <sstream>
 #include <string>
 
+#include <CGAL/basic.h>
+#include <CGAL/number_utils_classes.h>
+
+#include "SGAL/basic.hpp"
 #include "SGAL/Geo_set.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Container_factory.hpp"

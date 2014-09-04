@@ -16,6 +16,7 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Ellipsoid.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"

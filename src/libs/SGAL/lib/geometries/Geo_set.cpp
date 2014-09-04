@@ -19,6 +19,7 @@
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Geo_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Normal_array.hpp"
@@ -31,7 +32,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Geo_set::s_prototype(NULL);
+Container_proto* Geo_set::s_prototype(nullptr);
 
 const char* Geo_set::s_primitive_type_names[] = {
   "triangleStrip", "triangleFan", "triangles",
@@ -432,8 +433,8 @@ Bounding_box Geo_set::bounding_box()
   auto it = m_coord_indices.begin();
   const Vector3f& v = get_coord_3d(*it);
   Bounding_box bbox(v[0], v[1], v[2], v[0], v[1], v[2]);
-  for (; it != m_coord_indices.end(); ++it) {
-    if (*it = (Uint) -1) continue;
+  for (++it; it != m_coord_indices.end(); ++it) {
+    if (((Uint) -1) == *it) continue;
     const Vector3f& v = get_coord_3d(*it);
     Bounding_box tmp(v[0], v[1], v[2], v[0], v[1], v[2]);
     bbox += tmp;

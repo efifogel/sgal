@@ -19,11 +19,15 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/exception.hpp>
-#include <boost/extension/shared_library.hpp>
 #include <boost/function.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem/exception.hpp>
+#include <boost/filesystem/operations.hpp>
+
+#if (defined _MSC_VER)
+#define NOMINMAX 1
+#endif
+#include <boost/extension/shared_library.hpp>
 
 #include "SGAL/sgal.hpp"
 #if (defined USE_GLUT)
@@ -56,12 +60,12 @@ static std::string& error_message(std::string& str)
   if ((err = ::GetLastError()) != NO_ERROR &&
        ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER |
                         FORMAT_MESSAGE_FROM_SYSTEM,
-                        NULL,
+                        nullptr,
                         err,
                         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                         (LPSTR) &lpMsgBuf,
                         0,
-                        NULL) != 0)
+                        nullptr) != 0)
   {
     str.append((LPSTR) lpMsgBuf);
     ::LocalFree(lpMsgBuf);

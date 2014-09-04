@@ -46,4 +46,40 @@ Bounding_box& Bounding_box::operator+=(const Bounding_box& bb)
   return *this;
 }
 
+//! \brief obtains the dimensions in order of their length.
+boost::tuple<Uint, Uint, Uint> Bounding_box::get_longest_dimensions() const
+{
+  auto x_range = xmax() - xmin();
+  auto y_range = ymax() - ymin();
+  auto z_range = zmax() - zmin();
+  Uint i(0), j(1), k(2);
+  if (x_range >= y_range) {
+    if (y_range >= z_range) {
+      i = 0; j = 1; k = 2;
+    }
+    else {
+      if (x_range >= z_range) {
+        i = 0; j = 2; k = 1;
+      }
+      else {
+        i = 2; j = 0; k = 1;
+      }
+    }
+  }
+  else {
+    if (x_range >= z_range) {
+      i = 1; j = 0; k = 2;
+    }
+    else {
+      if (y_range >= z_range) {
+        i = 1; j = 2; k = 0;
+      }
+      else {
+        i = 2; j = 1; k = 0;
+      }
+    }
+  }
+  return boost::make_tuple(i, j, k);
+}
+
 SGAL_END_NAMESPACE

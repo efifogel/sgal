@@ -19,11 +19,13 @@
 #include <iostream>
 
 #if (defined _MSC_VER)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 #include <GL/glext.h>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Color_array.hpp"
@@ -55,7 +57,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TENO_MOPO_VANO()
   SGAL_assertion(m_normal_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_coord_index(m_normal_array, j));
@@ -94,7 +96,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TENO_MOPO_VANO()
   SGAL_assertion(m_normal_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_normal_index(m_normal_array, j));
@@ -132,7 +134,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOPO_VANO()
   SGAL_assertion(m_normal_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     glNormal3fv(get(m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j)
@@ -169,7 +171,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOPO_VANO()
   SGAL_assertion(m_normal_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     glNormal3fv(get_by_normal_index(m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j)
@@ -194,7 +196,7 @@ void Boundary_set::draw_FSCO_FIYE_FAPT_TENO_MOPO_VANO()
   SGAL_assertion(m_color_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     glColor3fv(get_by_coord_index(m_color_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
@@ -286,7 +288,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TINO_MOPO_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_normal_index(m_normal_array, j));
@@ -331,7 +333,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TINO_MOPO_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     glNormal3fv(get(m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
@@ -376,7 +378,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TINO_MOPO_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     glNormal3fv(get_by_normal_index(m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
@@ -440,7 +442,7 @@ void Boundary_set::draw_FSNO_FINO_FAPV_TEYE_TIYE_MOPO_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_coord_index(m_normal_array, j));
@@ -484,7 +486,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPV_TEYE_TIYE_MOPO_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
       glNormal3fv(get_by_normal_index(m_normal_array, j));
@@ -528,7 +530,7 @@ void Boundary_set::draw_FSNO_FINO_FAPT_TEYE_TIYE_MOPO_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     glNormal3fv(get(m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {
@@ -573,7 +575,7 @@ void Boundary_set::draw_FSNO_FIYE_FAPT_TEYE_TIYE_MOPO_VANO()
   SGAL_assertion(m_tex_coord_array);
 
   Uint j = 0;
-  for (Uint i = 0; i < m_num_primitives; i++) {
+  for (Uint i = 0; i < m_num_primitives; ++i) {
     glBegin(GL_POLYGON);
     glNormal3fv(get_by_normal_index(m_normal_array, i));
     for (; m_coord_indices[j] != (Uint) -1; ++j) {

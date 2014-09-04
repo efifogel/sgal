@@ -25,10 +25,6 @@
 #pragma warning ( disable : 4800 )
 #endif
 
-#if (defined _MSC_VER)
-#include <windows.h>
-#endif
-#include <GL/gl.h>
 #include <string.h>
 #include <iostream>
 #include <fstream>
@@ -36,6 +32,12 @@
 #include <time.h>
 #include <vector>
 #include <limits.h>
+
+#if (defined _MSC_VER)
+#define NOMINMAX 1
+#include <windows.h>
+#endif
+#include <GL/gl.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"

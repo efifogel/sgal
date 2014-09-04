@@ -24,14 +24,16 @@
 #pragma warning(disable: 4996)
 #endif
 
+#include <time.h>
+#include <vector>
+#include <boost/lexical_cast.hpp>
+
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <time.h>
-#include <vector>
-#include <boost/lexical_cast.hpp>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
@@ -64,7 +66,7 @@ SGAL_BEGIN_NAMESPACE
 
 const std::string
 Spherical_gaussian_map_marked_geo::s_tag("SphericalGaussianMapMarked");
-Container_proto* Spherical_gaussian_map_marked_geo::s_prototype(NULL);
+Container_proto* Spherical_gaussian_map_marked_geo::s_prototype(nullptr);
 
 // Default values
 
@@ -118,7 +120,7 @@ Spherical_gaussian_map_marked_geo::
 Spherical_gaussian_map_marked_geo(Boolean proto) :
   Spherical_gaussian_map_base_geo(proto),
   m_owned_sgm(false),
-  m_sgm(NULL),
+  m_sgm(nullptr),
   m_minkowski_sum(false),
   m_aos_marked_vertex_style(s_def_aos_marked_vertex_style),
   m_aos_marked_vertex_radius(s_def_aos_marked_vertex_radius),
@@ -144,18 +146,18 @@ Spherical_gaussian_map_marked_geo(Boolean proto) :
   m_marked_facet_color(s_def_marked_facet_color),
   m_marked_facet_index(0),
 
-  m_vertices_renderer(NULL),
-  m_colored_vertices_renderer(NULL),
-  m_edges_renderer(NULL),
-  m_colored_edges_renderer(NULL),
-  m_inflated_line_edges_renderer(NULL),
-  m_inflated_strip_edges_renderer(NULL),
-  m_inflated_tube_edges_renderer(NULL),
+  m_vertices_renderer(nullptr),
+  m_colored_vertices_renderer(nullptr),
+  m_edges_renderer(nullptr),
+  m_colored_edges_renderer(nullptr),
+  m_inflated_line_edges_renderer(nullptr),
+  m_inflated_strip_edges_renderer(nullptr),
+  m_inflated_tube_edges_renderer(nullptr),
 
-  m_marked_vertices_renderer(NULL),
-  m_colored_marked_vertices_renderer(NULL),
-  m_marked_edges_renderer(NULL),
-  m_colored_marked_edges_renderer(NULL)
+  m_marked_vertices_renderer(nullptr),
+  m_colored_marked_vertices_renderer(nullptr),
+  m_marked_edges_renderer(nullptr),
+  m_colored_marked_edges_renderer(nullptr)
 {
   if (proto) return;
   create_renderers();
@@ -176,7 +178,7 @@ Spherical_gaussian_map_marked_geo::~Spherical_gaussian_map_marked_geo()
   if (m_owned_sgm) {
     if (m_sgm) {
       delete m_sgm;
-      m_sgm = NULL;
+      m_sgm = nullptr;
     }
     m_owned_sgm = false;
   }
@@ -479,7 +481,7 @@ void Spherical_gaussian_map_marked_geo::init_prototype()
 void Spherical_gaussian_map_marked_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief

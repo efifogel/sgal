@@ -25,19 +25,20 @@
 #pragma warning ( disable : 4996 )
 #endif
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <time.h>
+#include <vector>
 
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
-#include <time.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include <vector>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
 
-#include "SGAL/Coord_array_3d.hpp"
+#include "SGAL/basic.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -50,7 +51,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Exact_nef_polyhedron::s_tag = "ExactNefPolyhedron";
-Container_proto* Exact_nef_polyhedron::s_prototype(NULL);
+Container_proto* Exact_nef_polyhedron::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Exact_nef_polyhedron, "Exact_nef_polyhedron");
 
@@ -289,7 +290,7 @@ void Exact_nef_polyhedron::init_prototype()
 void Exact_nef_polyhedron::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! \brief obtains the prototype of this container. */

@@ -25,13 +25,15 @@
  *  Inherits from Geometry.
  */
 
-#if (defined _MSC_VER)
-#include <windows.h>
-#endif
-#include <GL/gl.h>
 #include <sys/types.h>
 #include <vector>
 #include <boost/shared_ptr.hpp>
+
+#if (defined _MSC_VER)
+#define NOMINMAX 1
+#include <windows.h>
+#endif
+#include <GL/gl.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"

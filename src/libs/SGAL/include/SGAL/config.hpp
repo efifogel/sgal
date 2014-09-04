@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Source$
-// $Revision: 1809 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_CONFIG_HPP
@@ -96,18 +93,18 @@ namespace SGAL {
 
 //--------------------------------------------------------------------//
 // This addresses a bug in VC++ 7.0 that (re)defines min(a, b)
-// and max(a, b) in windows.h and windef.h 
+// and max(a, b) in windows.h and windef.h
 //-------------------------------------------------------------------//
 
 #ifdef _MSC_VER
-#  define NOMINMAX 1
+#define NOMINMAX 1
 #endif
 
 //-------------------------------------------------------------------//
-// When the global min and max are no longer defined (as macros) 
-// because of NOMINMAX flag definition, we define our own global 
+// When the global min and max are no longer defined (as macros)
+// because of NOMINMAX flag definition, we define our own global
 // min/max functions to make the Microsoft headers compile. (afxtempl.h)
-// Users that does not want the global min/max 
+// Users that does not want the global min/max
 // should define SGAL_NOMINMAX
 //-------------------------------------------------------------------//
 #include <algorithm>

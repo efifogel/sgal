@@ -26,15 +26,16 @@
 #include <time.h>
 #include <boost/lexical_cast.hpp>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Point_3.h>
-
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Point_3.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"

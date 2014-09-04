@@ -23,17 +23,19 @@
 #pragma warning ( disable : 4800 )
 #endif
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Optimisation_d_traits_3.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/Polyhedron_3.h>
-
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Polyhedron_3.h>
+
+#include "SGAL/basic.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -46,7 +48,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Polyhedron_geo::s_tag = "Polyhedron";
-Container_proto* Polyhedron_geo::m_prototype(NULL);
+Container_proto* Polyhedron_geo::m_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Polyhedron_geo, "Polyhedron_geo");
 
@@ -210,7 +212,7 @@ void Polyhedron_geo::init_prototype()
 void Polyhedron_geo::delete_prototype()
 {
   delete m_prototype;
-  m_prototype = NULL;
+  m_prototype = nullptr;
 }
 
 //! \brief obtaisn the prototype.

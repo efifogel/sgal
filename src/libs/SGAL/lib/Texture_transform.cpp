@@ -17,6 +17,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>

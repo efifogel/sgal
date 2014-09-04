@@ -23,16 +23,19 @@
 #pragma warning ( disable : 4800 )
 #endif
 
-#include <CGAL/basic.h>
-
-#if defined(_WIN32)
-#include <windows.h>
-#endif
 #include <time.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <vector>
 
+#if defined(_WIN32)
+#define NOMINMAX 1
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+#include <CGAL/basic.h>
+
+#include "SGAL/basic.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Color_array.hpp"
 #include "SGAL/Container_factory.hpp"

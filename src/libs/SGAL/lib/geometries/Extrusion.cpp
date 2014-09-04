@@ -24,6 +24,7 @@
 #include <sstream>
 #include <boost/lexical_cast.hpp>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Field_infos.hpp"

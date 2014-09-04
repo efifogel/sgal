@@ -29,12 +29,14 @@
  * Renderers of arrangement on sphere
  */
 
+#include <math.h>
+#include <vector>
+
 #if (defined _MSC_VER)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include "GL/gl.h"
-#include <math.h>
-#include <vector>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Gl_wrapper.hpp"

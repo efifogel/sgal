@@ -19,10 +19,12 @@
 #include <stdlib.h>
 
 #ifdef _WIN32
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -38,7 +40,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Piece::s_tag = "Piece";
-Container_proto* Piece::s_prototype(NULL);
+Container_proto* Piece::s_prototype(nullptr);
 
 // Default values:
 const Uint Piece::s_def_width(0);
@@ -77,13 +79,13 @@ void Piece::init_prototype()
 void Piece::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.
 Container_proto* Piece::get_prototype()
 {
-  if (s_prototype == NULL) Piece::init_prototype();
+  if (s_prototype == nullptr) Piece::init_prototype();
   return s_prototype;
 }
 

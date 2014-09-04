@@ -24,6 +24,7 @@
 #include <sstream>
 #include <boost/lexical_cast.hpp>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Torus.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Container_proto.hpp"

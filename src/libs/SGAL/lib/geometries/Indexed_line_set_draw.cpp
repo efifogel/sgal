@@ -19,6 +19,7 @@
 #include <iostream>
 
 #if (defined _MSC_VER)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>

@@ -848,6 +848,9 @@ protected:
    */
   Uint num_tex_coordinates() const;
 
+  void compute_flat_tex_coords_2d(size_t num_verts);
+  void compute_polygon_tex_coords_2d();
+
 private:
   /*! The key for the utility map, which maps a tuple of 3 ids, namely,
    * coordinate id, normal/color id, and texture coordinate id, to a single
