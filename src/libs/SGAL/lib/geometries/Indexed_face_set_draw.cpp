@@ -1739,7 +1739,22 @@ void Boundary_set::draw_FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO()
 {
   SGAL_TRACE_MSG(Trace::INDEXED_FACE_SET,
                  "FSCO_FINO_FAPT_TEYE_TIYE_MOQU_VANO");
-  SGAL_error_msg("Not implemented yet!");
+
+  Uint j = 0;
+  glBegin(GL_QUADS);
+  for (Uint i = 0; i < m_num_primitives; ++i) {
+    glColor3fv(get(m_color_array, i));
+
+    glTexCoord2fv(get_by_flat_tex_coord_index(m_tex_coord_array, j));
+    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
+    glTexCoord2fv(get_by_flat_tex_coord_index(m_tex_coord_array, j));
+    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
+    glTexCoord2fv(get_by_flat_tex_coord_index(m_tex_coord_array, j));
+    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
+    glTexCoord2fv(get_by_flat_tex_coord_index(m_tex_coord_array, j));
+    glVertex3fv(get_by_flat_coord_index(m_coord_array, j++));
+  }
+  glEnd();
 }
 
 /*!
