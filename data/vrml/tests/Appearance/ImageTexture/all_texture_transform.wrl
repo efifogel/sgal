@@ -7,7 +7,7 @@ Group {
       Shape {
 	appearance Appearance {
 	  material Material {}
-	  texture ImageTexture { url "sgal.jpg" }
+	  texture DEF TEXTURE ImageTexture { url "sgal_rgb.jpg" }
 	  textureTransform TextureTransform { scale 2 2 }
 	}
 	geometry Box {}
@@ -18,7 +18,7 @@ Group {
       children Shape {
 	appearance Appearance {
 	  material Material {}
-	  texture ImageTexture { url "sgal.jpg" }
+	  texture USE TEXTURE
 	  textureTransform TextureTransform { scale 2 2 }
 	}
 	geometry Sphere {}
@@ -29,7 +29,7 @@ Group {
       children Shape {
 	appearance Appearance {
 	  material Material {}
-	  texture ImageTexture { url "sgal.jpg" }
+	  texture USE TEXTURE
 	  textureTransform TextureTransform { scale 2 2 }
 	}
 	geometry Cone {}
@@ -40,7 +40,7 @@ Group {
       children Shape {
 	appearance Appearance {
 	  material Material {}
-	  texture ImageTexture { url "sgal.jpg" }
+	  texture USE TEXTURE
 	  textureTransform TextureTransform { scale 2 2 }
 	}
 	geometry Cylinder {}

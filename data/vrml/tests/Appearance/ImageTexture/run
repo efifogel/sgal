@@ -1,5 +1,5 @@
-player 256_jpg_ifs.wrl
-player 256_png_box.wrl
+player IndexedFaceSet.wrl
+player ifs_sizes.wrl
 player Box.wrl
 player Cone.wrl
 player Cylinder.wrl
@@ -7,3 +7,11 @@ player Ellipsoid.wrl
 player Extrusion.wrl
 player Sphere.wrl
 player Torus.wrl
+player repeats.wrl
+player repeatt.wrl
+player all_texture_transform.wrl
+#
+player Box_png_rgb_256.wrl
+player Box_jpg_rgb_256.wrl
+player Box_png_greyscale_256.wrl
+player Box_jpg_greyscale_256.wrl

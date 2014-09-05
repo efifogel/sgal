@@ -2,8 +2,8 @@
 NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
 Shape {
   appearance Appearance {
-    material Material { }
-    texture ImageTexture {url ["sgal_rgb.jpg"]}
+    material Material {}
+    texture ImageTexture {url ["sgal_rgb.png"]}
   }
-  geometry Sphere { }
+  geometry Box {}
 }

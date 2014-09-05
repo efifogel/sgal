@@ -3,7 +3,7 @@ NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
 Shape {
   appearance Appearance {
     material Material {}
-    texture ImageTexture {url ["sgal.jpg"]}
+    texture ImageTexture {url ["sgal_rgb.jpg"]}
   }
   geometry Torus {}
 }

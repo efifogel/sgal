@@ -6,7 +6,7 @@ Transform {
     Shape {
       appearance Appearance {
 	material Material {}
-	texture ImageTexture { url "sgal.jpg" }
+	texture DEF TEXTURE ImageTexture { url "sgal_rgb.jpg" }
       }
       geometry IndexedFaceSet {
 	coord Coordinate {
@@ -29,7 +29,7 @@ Transform {
     Shape {
       appearance Appearance {
 	material Material {}
-	texture ImageTexture { url "sgal.jpg" }
+	texture USE TEXTURE
       }
       geometry IndexedFaceSet {
 	coord Coordinate {
@@ -52,7 +52,7 @@ Transform {
     Shape {
       appearance Appearance {
 	material Material {}
-	texture ImageTexture { url "sgal.jpg" }
+	texture USE TEXTURE
       }
       geometry IndexedFaceSet {
 	coord Coordinate {

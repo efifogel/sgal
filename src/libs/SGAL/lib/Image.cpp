@@ -205,8 +205,8 @@ void Image::clean()
     Magick::ImageType type = image.type();
     switch (type) {
      case Magick::GrayscaleType:       // Grayscale img
-      format = Image_base::kIntensity8;
-      magick_map = "A";
+      format = Image_base::kLuminance8;
+      magick_map = "R";
       magick_type = Magick::CharPixel;
       break;
 

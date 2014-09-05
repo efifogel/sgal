@@ -2,7 +2,7 @@
 NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
 Shape {
   appearance Appearance {
-    texture ImageTexture { url "sgal.jpg" }
+    texture ImageTexture { url "sgal_rgb.jpg" }
     material Material {}
   }
   geometry Extrusion {
