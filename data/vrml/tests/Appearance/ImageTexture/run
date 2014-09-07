@@ -17,5 +17,6 @@ player Box_png_greyscale_256.wrl
 player Box_jpg_greyscale_256.wrl
 player Box_png_rgba_256.wrl
 #
+# The following is wrong! The texture color should replace the diffuse color.
 player Box_diffuse_color_greyscale.wrl
 player ifs_color_greyscale.wrl
