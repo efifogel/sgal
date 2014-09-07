@@ -188,8 +188,8 @@ void Image::clean()
     image.read(fullname.c_str());
     if (m_flip) image.flip();
     if (m_rotation != 0) image.rotate(rad2deg(m_rotation));
-    image.matte(m_alpha);
     if (m_alpha) {
+      image.matte(true);
       Float quantum_range;
       // Workaround a bug in ImageMagick.
       {
@@ -205,32 +205,63 @@ void Image::clean()
     Magick::ImageType type = image.type();
     switch (type) {
      case Magick::GrayscaleType:       // Grayscale img
+      // std::cout << "GrayscaleType" << std::endl;
       format = Image_base::kLuminance8;
       magick_map = "R";
       magick_type = Magick::CharPixel;
       break;
 
      case Magick::TrueColorType:       // Truecolor img
+      // std::cout << "TrueColorType" << std::endl;
       format = Image_base::kRGB8_8_8;
       magick_map = "RGB";
       magick_type = Magick::CharPixel;
       break;
 
      case Magick::TrueColorMatteType:  // Truecolor img + opacity
+      // std::cout << "TrueColorMatteType" << std::endl;
       format = Image_base::kRGBA8_8_8_8;
       magick_map = "RGBA";
       magick_type = Magick::CharPixel;
       break;
 
-     case Magick::UndefinedType:       // Unset type
-     case Magick::BilevelType:         // Monochrome img
-     case Magick::GrayscaleMatteType:  // Grayscale img + opacity
-     case Magick::PaletteType:         // Indexed color (palette) img
      case Magick::PaletteMatteType:    // Indexed color (palette) img + opacity
+      // std::cout << "PaletteMatteType" << std::endl;
+      format = Image_base::kRGBA8_8_8_8;
+      magick_map = "RGBA";
+      magick_type = Magick::CharPixel;
+      break;
+
+     case Magick::PaletteType:         // Indexed color (palette) img
+      // std::cout << "PaletteType" << std::endl;
+      format = Image_base::kRGB8_8_8;
+      magick_map = "RGB";
+      magick_type = Magick::CharPixel;
+      break;
+
+     case Magick::BilevelType:         // Monochrome img
+      std::cout << "BilevelType" << std::endl;
+      goto err;
+
+     case Magick::GrayscaleMatteType:  // Grayscale img + opacity
+      std::cout << "GrayscaleMatteType" << std::endl;
+      goto err;
+
      case Magick::ColorSeparationType: // Cyan/Yellow/Magenta/Black (CYMK) img
+      std::cout << "ColorSeparationType" << std::endl;
+      goto err;
+
      case Magick::ColorSeparationMatteType:
+      std::cout << "ColorSeparationMatteType" << std::endl;
+      goto err;
+
+     case Magick::UndefinedType:       // Unset type
+      std::cout << "UndefinedType" << std::endl;
+      goto err;
+
      case Magick::OptimizeType:
      default:
+     err:
       std::cerr << "Unsupported image type (" << type
                 << ") in file " << fullname.c_str() << "!" << std::endl;
       break;
@@ -247,6 +278,7 @@ void Image::clean()
     image.write(0, 0, width, height, magick_map, magick_type, m_pixels);
   }
   catch (Magick::Exception &error_) {
+    m_dirty = false;
     std::cerr << "Caught exception: " << error_.what() << std::endl;
     return;
   }

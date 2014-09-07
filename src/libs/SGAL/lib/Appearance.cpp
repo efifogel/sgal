@@ -215,7 +215,7 @@ void Appearance::set_tex_blend_color(Float v0, Float v1, Float v2, Float v3)
   m_tex_blend_color.set(v0, v1, v2, v3);
 }
 
-/*! \brief sets the texture environment attribute. */
+//! \brief sets the texture environment attribute.
 void Appearance::set_tex_env(Gfx::Tex_env tex_env)
 {
   m_pending.on_bit(Gfx::TEX_ENV);
@@ -223,7 +223,7 @@ void Appearance::set_tex_env(Gfx::Tex_env tex_env)
   m_tex_env = tex_env;
 }
 
-/*! \brief sets the texture-generation attribute. */
+//! \brief sets the texture-generation attribute.
 void Appearance::set_tex_gen(Shared_tex_gen tex_gen)
 {
   Observer observer(this, get_field_info(TEX_GEN));
@@ -420,7 +420,7 @@ void Appearance::set_fog_enable(Boolean fog_enable)
   m_fog_enable = fog_enable;
 }
 
-/*! \brief sets the polygon-stipple enable flag. */
+//! \brief sets the polygon-stipple enable flag.
 void Appearance::set_polygon_stipple_enable(Boolean enable)
 {
   m_pending.on_bit(Gfx::POLYGON_STIPPLE_ENABLE);
@@ -477,7 +477,7 @@ void Appearance::set_inherit(const Bit_mask& inherit) { m_pending = inherit; }
 //! \brief
 void Appearance::get_inherit(Bit_mask& inherit) const { inherit = m_pending; }
 
-/*! \brief applies the appearance. */
+//! \brief applies the appearance.
 void Appearance::draw(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -643,16 +643,11 @@ void Appearance::set_attributes(Element* elem)
       continue;
     }
     if (name == "texEnv") {
-      if (value.compare("MODULATE") == 0)
-        set_tex_env(Gfx::MODULATE_TENV);
-      else if (value.compare("DECAL") == 0)
-        set_tex_env(Gfx::DECAL_TENV);
-      //} else if (value.equal("BLEND")) {
-      //  m_tex_env = Gfx::BLEND_TENV;
-      //} else if (value.equal("REPLACE")) {
-      //  m_tex_env = Gfx::REPLACE_TENV;
-      //} else if (value.equal("ADD")) {
-      //  m_tex_env = Gfx::ADD_TENV;
+      if ("MODULATE" == value) set_tex_env(Gfx::MODULATE_TENV);
+      else if ("DECAL" == value) set_tex_env(Gfx::DECAL_TENV);
+      else if ("BLEND" == value) set_tex_env(Gfx::BLEND_TENV);
+      else if ("REPLACE" == value) set_tex_env(Gfx::REPLACE_TENV);
+      else if ("ADD" == value) set_tex_env(Gfx::ADD_TENV);
       elem->mark_delete(ai);
       continue;
     }
@@ -750,11 +745,26 @@ Attribute_list Appearance::get_attributes()
 
 #endif
 
-/*! \brief cleans the texture enable flag. */
+//! \brief cleans the texture enable flag.
 void Appearance::clean_tex_enable()
 { if (m_texture && !m_texture->empty()) set_tex_enable(true); }
 
-/*! \brief cleans the texture environment attribute. */
+/*! \brief cleans the texture environment attribute.
+ * \todo The texture image should modify the diffuse color according to the
+ * number of components as follows:
+ * 1. Diffuse color is multiplied by the greyscale values in the texture image.
+ * 2. Diffuse color is multiplied by the greyscale values in the texture image;
+ *    material transparency is multiplied by transparency values in texture
+ *    image.
+ * 3. RGB colors in the texture image replace the material's diffuse color.
+ * 4. RGB colors in the texture image replace the material's diffuse color;
+ *    transparency values in the texture image replace the material's
+ *    transparency.
+ *
+ * For 1 and 2 components the OpenGL texture environment can be utilized to
+ * apply the specified behavior above. However, in order to replace the
+ * diffuse color by the texture color shaders must be applied.
+ */
 void Appearance::clean_tex_env()
 {
   if (!m_tex_enable) return;
@@ -762,11 +772,16 @@ void Appearance::clean_tex_env()
   SGAL_assertion(m_texture);
   SGAL_assertion(m_material);
   Uint num_compnents = m_texture->get_component_count();
-  const Vector3f& diffuse_color = m_material->get_diffuse_color();
-  if (((diffuse_color[0] == 0) && (diffuse_color[1] == 0) &&
-       (diffuse_color[2] == 0) && (m_material->get_ambient_intensity() == 0)) ||
-      num_compnents == 4)
-    set_tex_env(Gfx::DECAL_TENV);
+  if ((1 == num_compnents) || (2 == num_compnents))
+    set_tex_env(Gfx::MODULATE_TENV);
+  else {
+    const Vector3f& diffuse_color = m_material->get_diffuse_color();
+    if ((diffuse_color[0] == 0) && (diffuse_color[1] == 0) &&
+        (diffuse_color[2] == 0))
+      set_tex_env(Gfx::ADD_TENV);
+    else
+      set_tex_env(Gfx::MODULATE_TENV);
+  }
 }
 
 //! \brief cleans the blend functions.
@@ -780,7 +795,7 @@ void Appearance::clean_blend_func()
   SGAL_assertion(m_texture);
   Uint num_compnents = m_texture->get_component_count();
   if ((num_compnents == 2) || (num_compnents == 4)) {
-    if ((m_tex_env == Gfx::BLEND_TENV) || (m_tex_env == Gfx::MODULATE_TENV)) {
+    if ((Gfx::ADD_TENV == m_tex_env) || (Gfx::MODULATE_TENV == m_tex_env)) {
       set_src_blend_func(Gfx::SRC_ALPHA_SBLEND);
       set_dst_blend_func(Gfx::ONE_MINUS_SRC_ALPHA_DBLEND);
     }

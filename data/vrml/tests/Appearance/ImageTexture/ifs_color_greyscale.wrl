@@ -1,0 +1,28 @@
+#VRML V2.0 utf8
+NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
+Shape {
+  appearance Appearance {
+    material Material {}
+    texture ImageTexture { url "sgal_greyscale.jpg" }
+  }
+  geometry IndexedFaceSet {
+    coord Coordinate {
+      point [ -2 1.5 1,
+	      -2 -1.5 1,
+	      2 1.5 1,
+	      2 -1.5 1,
+	      2 1.5 -1,
+	      2 -1.5 -1,
+	      -2 1.5 -1,
+	      -2 -1.5 -1 ]
+    }
+    color Color {
+      color [ 1 0 0, 1 0 0, 1 0 0, 1 0 0, 1 0 0, 1 0 0 ]
+    }
+    coordIndex [ 0, 1, 3, 2, -1, 4, 5, 7, 6, -1,
+		 6, 7, 1, 0, -1, 2, 3, 5, 4, -1,
+		 6, 0, 2, 4, -1, 1, 7, 5, 3, -1 ]
+    colorPerVertex FALSE
+    creaseAngle 0.5
+  }
+}

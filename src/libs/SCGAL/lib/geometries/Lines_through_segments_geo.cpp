@@ -410,7 +410,7 @@ void Lines_through_segments_geo::draw(Draw_action* action)
   Camera* camera = context->get_active_camera();
 
   const Matrix4f& camera_mat = camera->get_view_mat();
-  const Matrix4f* world_mat = action->get_current_wtm();
+  boost::shared_ptr<Matrix4f> world_mat = action->get_current_wtm();
   Matrix4f view_mat;
   view_mat.mult(camera_mat, *world_mat);
 

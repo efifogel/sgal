@@ -25,10 +25,10 @@
  */
 
 #include <vector>
+#include <stack>
 #include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -38,6 +38,7 @@ class Camera;
 class Shape;
 class Light;
 class Draw_action;
+class Matrix4f;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -46,23 +47,30 @@ class Draw_action;
 
 class SGAL_SGAL_DECL Cull_context {
 public:
+  typedef boost::shared_ptr<Light>            Shared_light;
+  typedef boost::shared_ptr<Matrix4f>         Shared_matrix4f;
+
   class Render_node {
   public:
-    Shape* node;
-    float priority;
-    Matrix4f wtm;       // Object to World space transformation.
-    int lod;            // Level of detail for node.
+    /*! Constructor. */
+    Render_node(Shape* shape, Shared_matrix4f wtm, Int lod, Float priority);
+
+    Shape* m_shape;
+    Shared_matrix4f m_wtm;      // Object to World space transformation.
+    Int m_lod;                  // Level of detail for node.
+    float m_priority;
   };
 
   class Light_node {
   public:
-    Light* light;
-    Matrix4f wtm;       // Object to World space transformation.
+    /*! Constructor. */
+    Light_node(Light* light, Shared_matrix4f wtm);
+
+    Light* m_light;
+    Shared_matrix4f m_wtm;      // Object to World space transformation.
   };
 
-  typedef boost::shared_ptr<Light>            Shared_light;
-
-  /*! Constructor */
+  /*! Default constructor */
   Cull_context();
 
   /*! Destructor */
@@ -74,30 +82,43 @@ public:
    */
   virtual void cull(Node* node, Camera* camera);
 
-  /*! Draw the collected nodes (after culling).
+  /*! Draw the nodes after culling.
+   * \param draw_action (in) specifies the drawing parameters.
    */
   virtual void draw(Draw_action* draw_action);
 
   /*! Add a shape node.
+   * \param shape (in) the new shape node.
    */
   void add_shape(Shape* shape);
 
   /*! Add a light node.
-   * \param light a pointer to the Light.
+   * \param light (in) the new light node.
    */
   void add_light(Light* light);
 
-  /*! Set the head light. */
+  /*! Set the head light.
+   * \param light (in) the head light.
+   */
   void set_head_light(Shared_light light);
 
-  /*! Push the transform matrix. */
+  /*! Push the transformation matrix onto the matrix stack.
+   * \param mat (in) the transformation matrix.
+   */
   void push_matrix(const Matrix4f& mat);
 
-  /*! Pop the transform matrix. */
+  /*! Pop the transform matrix.
+   */
   void pop_matrix();
 
+  /*! Obrain the camera.
+   * \return the camera.
+   */
   Camera* get_camera() const;
 
+  /*! Obtain the current world transformation matrix.
+   * \return the current world transformation matrix.
+   */
   const Matrix4f& get_current_wtm();
 
   void set_current_lod(Int lod);
@@ -121,36 +142,36 @@ protected:
   void draw_node(Draw_action* draw_action, const Render_node& rn);
 
   typedef std::vector<Render_node>      Render_node_vector;
-  typedef Render_node_vector::iterator  Render_node_iter;
-
   typedef std::vector<Light_node>       Light_vector;
-  typedef Light_vector::iterator        Light_iter;
-
-  typedef std::vector<Matrix4f>         Matrix_stack;
+  typedef std::stack<Shared_matrix4f>   Matrix_stack;
 
 private:
   float compute_distance(const Cull_context::Render_node& rn);
 
-  Render_node_vector m_nodes;
+  /*! A container of elements to render. */
+  Render_node_vector m_shapes;
 
+  /*! A container of elements to render in a consequent pass. */
   Render_node_vector m_2ndpass;
 
+  /*! A container of light nodes. */
   Light_vector m_lights;
 
+  /*! The camera. */
   Camera* m_camera;
 
+  /*! The head light. */
   Shared_light m_head_light;
 
-  // Matrix stack (similar to opengl).
+  /*! The matrix stack (similar to OpenGL).
+   * The back top of the matrix is the current world transformation matrix.
+   */
   Matrix_stack m_matrix_stack;
 
   // Current world to view transformation matrix (Camera matrix).
   // Matrix4f m_viewTM;
 
-  // Current object to world transformation matrix.
-  Matrix4f m_world_tm;
-
-  int m_current_lod;
+  Int m_current_lod;
 
   /*! Indicates whether sorting is needed. */
   Boolean m_sort;
@@ -168,7 +189,8 @@ private:
 
 inline Camera* Cull_context::get_camera() const { return m_camera; }
 
-inline const Matrix4f& Cull_context::get_current_wtm() { return m_world_tm; }
+inline const Matrix4f& Cull_context::get_current_wtm()
+{ return *(m_matrix_stack.top()); }
 
 inline void Cull_context::set_current_lod(Int lod) { m_current_lod = lod; }
 
@@ -182,6 +204,10 @@ inline void Cull_context::set_transformed(Boolean transformed)
 
 //! \brief determines whether the node hierarchy has been transformed.
 inline Boolean Cull_context::is_transformed() const { return m_transformed; }
+
+//! \brief sets the head light.
+inline void Cull_context::set_head_light(Shared_light light)
+{ m_head_light = light; }
 
 SGAL_END_NAMESPACE
 

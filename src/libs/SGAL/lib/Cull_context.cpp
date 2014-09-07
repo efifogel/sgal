@@ -35,46 +35,64 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Camera.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Matrix4f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructor.
+//! \brief default constructor.
 Cull_context::Cull_context() :
   m_camera(nullptr),
   m_current_lod(-1),
   m_sort(false),
   m_transformed(false)
-{}
+{
+  Shared_matrix4f mat(new Matrix4f);
+  m_matrix_stack.push(mat);
+}
 
 //! \brief destructor.
-Cull_context::~Cull_context() {}
+Cull_context::~Cull_context()
+{
+  pop_matrix();
+  SGAL_assertion((m_matrix_stack.empty()));
+}
+
+//! \brief constructor.
+Cull_context::Render_node::Render_node(Shape* shape, Shared_matrix4f wtm,
+                                       Int lod, Float priority) :
+  m_shape(shape),
+  m_wtm(wtm),
+  m_lod(lod),
+  m_priority(priority)
+{}
+
+//! \brief constructor.
+Cull_context::Light_node::Light_node(Light* light, Shared_matrix4f wtm) :
+  m_light(light),
+  m_wtm(wtm)
+{}
 
 /*! \brief compares node priority.
  * Used to sort nodes by their distance fromt he camera.
  */
-bool compare_render_nodes(const Cull_context::Render_node& n1,
-                          const Cull_context::Render_node& n2)
-{ return n1.priority > n2.priority; }
+bool compare_render_nodes(const Cull_context::Render_node& rn1,
+                          const Cull_context::Render_node& rn2)
+{ return rn1.m_priority > rn2.m_priority; }
 
 //! \brief adds a shape node.
-void Cull_context::add_shape(Shape* node)
+void Cull_context::add_shape(Shape* shape)
 {
-  Render_node rn;
-  rn.node = node;
-  rn.wtm = m_world_tm;
-  rn.lod = m_current_lod;
-  rn.priority = node->get_priority();
-  if (rn.priority > 0) m_sort = true;
-  m_nodes.push_back(rn);
+  Render_node rn(shape, m_matrix_stack.top(), get_current_lod(),
+                 shape->get_priority());
+  if (rn.m_priority > 0) m_sort = true;
+  m_shapes.push_back(rn);
 }
 
 //! \brief adds a light node.
 void Cull_context::add_light(Light* light)
 {
   if (!m_head_light || (light != &*m_head_light)) {
-    Light_node ln;
-    ln.light = light;
-    ln.wtm = m_world_tm;
+    Light_node ln(light, m_matrix_stack.top());
     m_lights.push_back(ln);
   }
 }
@@ -85,7 +103,7 @@ void Cull_context::add_light(Light* light)
 void Cull_context::cull(Node* node, Camera* camera)
 {
   m_sort = false;
-  m_nodes.clear();
+  m_shapes.clear();
   m_lights.clear();
   m_camera = camera;
   if (!m_camera) return;
@@ -97,10 +115,10 @@ void Cull_context::cull(Node* node, Camera* camera)
 void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
 {
   glPushMatrix();
-  glMultMatrixf((float*)&(rn.wtm));
-  draw_action->set_current_lod(rn.lod);
-  draw_action->set_current_wtm(&(rn.wtm));
-  rn.node->draw(draw_action);
+  glMultMatrixf((float*)(&*(rn.m_wtm)));
+  draw_action->set_current_lod(rn.m_lod);
+  draw_action->set_current_wtm(rn.m_wtm);
+  rn.m_shape->draw(draw_action);
   glPopMatrix();
 }
 
@@ -108,11 +126,11 @@ void Cull_context::draw_node(Draw_action* draw_action, const Render_node& rn)
 float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 {
   // Get world position of node.
-  const Sphere_bound& sphere_bound = rn.node->get_sphere_bound();
+  const Sphere_bound& sphere_bound = rn.m_shape->get_sphere_bound();
 
   // the center of the sphere bound in world coordinate system
   Vector3f w_center;
-  w_center.xform_pt(sphere_bound.get_center(), rn.wtm);
+  w_center.xform_pt(sphere_bound.get_center(), *(rn.m_wtm));
 
   // Extract the scale factor from the matrix:
   //! \todo Elliminate the calculation of the scale, as the scale
@@ -120,7 +138,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   Vector3f scale;
 
   Vector3f ustar;
-  rn.wtm.get_row(0, ustar);
+  rn.m_wtm->get_row(0, ustar);
   scale[0] = ustar.length();
   SGAL_assertion(scale[0]);
 
@@ -128,7 +146,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 
   // v* = (v - (v . u*)u*)/|v - (v . u*)u*|
   Vector3f v;
-  rn.wtm.get_row(1, v);
+  rn.m_wtm->get_row(1, v);
   Vector3f tmp;
   tmp.scale(v.dot(ustar), ustar);
   Vector3f vstar;
@@ -139,7 +157,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
 
   // w* =(w - (w . u*)u* - (w . v*)v*) / |(w - (w . u*)u* - (w . v*)v*)|
   Vector3f w;
-  rn.wtm.get_row(2, w);
+  rn.m_wtm->get_row(2, w);
   Vector3f tmp0;
   tmp0.scale(w.dot(ustar), ustar);
   Vector3f tmp1;
@@ -159,7 +177,7 @@ float Cull_context::compute_distance(const Cull_context::Render_node& rn)
   return (p.length() - radius);
 }
 
-//! \brief draws the collected nodes (after culling).
+//! \brief draws the nodes after culling.
 void Cull_context::draw(Draw_action* draw_action)
 {
   glMatrixMode(GL_MODELVIEW);
@@ -173,11 +191,11 @@ void Cull_context::draw(Draw_action* draw_action)
   }
 
   // Draw lights.
-  for (Light_iter lit = m_lights.begin(); lit != m_lights.end(); ++lit) {
+  for (auto lit = m_lights.begin(); lit != m_lights.end(); ++lit) {
     Light_node& ln = *lit;
     glPushMatrix();
-    glMultMatrixf((GLfloat*)&(ln.wtm));
-    ln.light->draw(draw_action);
+    glMultMatrixf((GLfloat*)(&*(ln.m_wtm)));
+    ln.m_light->draw(draw_action);
     glPopMatrix();
   }
 
@@ -185,34 +203,28 @@ void Cull_context::draw(Draw_action* draw_action)
   draw_action->set_second_pass_required(false);
 
   if (m_sort)
-    std::sort(m_nodes.begin(), m_nodes.end(), compare_render_nodes);
+    std::sort(m_shapes.begin(), m_shapes.end(), compare_render_nodes);
 
   // Draw nodes in first pass.
-  for (Render_node_iter nit = m_nodes.begin(); nit != m_nodes.end(); ++nit) {
+  for (auto nit = m_shapes.begin(); nit != m_shapes.end(); ++nit) {
     Render_node& rn = *nit;
     draw_node(draw_action, rn);
     if (draw_action->is_second_pass_required()) {
       draw_action->set_second_pass_required(false);
-
-      // This node must be rendered in second pass.
+      if (rn.m_priority == 0) rn.m_priority = compute_distance(rn);
       m_2ndpass.push_back(rn);
-
-      //! \todo Should Text nodes be assigned the highest priority?
-      if (rn.priority == 0) rn.priority = compute_distance(rn);
     }
   }
 
   // Draw nodes in 2nd pass
   if (!m_2ndpass.empty()) {
-    // Sort nodes in 2nd path by distance from camera.
+    // Sort nodes in 2nd pass by distance from camera.
     std::sort(m_2ndpass.begin(), m_2ndpass.end(), compare_render_nodes);
 
     draw_action->inc_pass_no();
 
     // Draw nodes in second pass.
-    for (Render_node_iter nit = m_2ndpass.begin();
-         nit != m_2ndpass.end(); ++nit)
-    {
+    for (auto nit = m_2ndpass.begin(); nit != m_2ndpass.end(); ++nit) {
       Render_node& rn = *nit;
       draw_node(draw_action, rn);
     }
@@ -222,24 +234,17 @@ void Cull_context::draw(Draw_action* draw_action)
 //! \brief pushes the transform matrix.
 void Cull_context::push_matrix(const Matrix4f& mat)
 {
-  m_matrix_stack.push_back(m_world_tm);
-
-  Matrix4f wtm;
-  if (!m_matrix_stack.empty()) {
-    wtm = m_matrix_stack.back();
-  }
-  m_world_tm.mult(wtm, mat);
+  SGAL_assertion((!m_matrix_stack.empty()));
+  Shared_matrix4f wtm(new Matrix4f);
+  wtm->mult(get_current_wtm(), mat);
+  m_matrix_stack.push(wtm);
 }
 
 //! \brief pops the transform matrix.
 void Cull_context::pop_matrix()
 {
   SGAL_assertion((!m_matrix_stack.empty()));
-  m_world_tm = m_matrix_stack.back();
-  m_matrix_stack.pop_back();
+  m_matrix_stack.pop();
 }
-
-//! \brief sets the head light.
-void Cull_context::set_head_light(Shared_light light) { m_head_light = light; }
 
 SGAL_END_NAMESPACE

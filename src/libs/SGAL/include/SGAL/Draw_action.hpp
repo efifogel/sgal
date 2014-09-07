@@ -25,6 +25,8 @@
  * whether more passes are required.
  */
 
+#include <boost/shared_ptr.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Action.hpp"
@@ -37,6 +39,8 @@ class Matrix4f;
 
 class SGAL_SGAL_DECL Draw_action : public Action {
 public:
+  typedef boost::shared_ptr<Matrix4f>         Shared_matrix4f;
+
   /*! Constructor */
   Draw_action(Configuration* configuration = nullptr);
 
@@ -81,9 +85,9 @@ public:
 
   Int get_current_lod() const;
 
-  void set_current_wtm(const Matrix4f* wtm);
+  void set_current_wtm(Shared_matrix4f wtm);
 
-  const Matrix4f* get_current_wtm() const;
+  Shared_matrix4f get_current_wtm() const;
 
   void set_snap_from_front(Boolean flag);
 
@@ -118,7 +122,7 @@ private:
   Int m_current_lod;
 
   /*! The world transformation matrix */
-  const Matrix4f* m_current_wtm;
+  Shared_matrix4f m_current_wtm;
 
   /*! indicates for the snapshot from which buffer to take the image from */
   Boolean m_snap_from_front;
@@ -140,10 +144,10 @@ inline void Draw_action::set_current_lod(Int lod) { m_current_lod = lod; }
 
 inline Int Draw_action::get_current_lod() const { return m_current_lod; }
 
-inline void Draw_action::set_current_wtm(const Matrix4f* wtm)
+inline void Draw_action::set_current_wtm(Shared_matrix4f wtm)
 { m_current_wtm = wtm; }
 
-inline const Matrix4f* Draw_action::get_current_wtm() const
+inline Draw_action::Shared_matrix4f Draw_action::get_current_wtm() const
 { return m_current_wtm; }
 
 inline void Draw_action::set_snap_from_front(Boolean flag)

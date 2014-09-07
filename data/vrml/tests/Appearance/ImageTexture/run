@@ -15,6 +15,7 @@ player Box_png_rgb_256.wrl
 player Box_jpg_rgb_256.wrl
 player Box_png_greyscale_256.wrl
 player Box_jpg_greyscale_256.wrl
+player Box_png_rgba_256.wrl
 #
 player Box_diffuse_color_greyscale.wrl
 player ifs_color_greyscale.wrl

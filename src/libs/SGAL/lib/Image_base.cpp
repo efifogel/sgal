@@ -36,7 +36,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Image_base::s_prototype(NULL);
+Container_proto* Image_base::s_prototype(nullptr);
 
 /*! A map from format to number of bits */
 Uint Image_base::s_format_sizes[] = {
@@ -566,7 +566,7 @@ Image_base::Image_base(Boolean proto) :
   m_width(s_def_width),
   m_height(s_def_height),
   m_format(s_def_format),
-  m_pixels(NULL),
+  m_pixels(nullptr),
   m_pack_row_length(0),
   m_dirty(true),
   m_flip(s_def_flip),
@@ -582,7 +582,7 @@ Image_base::~Image_base()
   if (m_owned_pixels) {
     if (m_pixels) {
       delete [] (char*) m_pixels;
-      m_pixels = NULL;
+      m_pixels = nullptr;
     }
     m_owned_pixels = false;
   }
@@ -647,7 +647,7 @@ void Image_base::init_prototype()
 void Image_base::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype.
@@ -761,7 +761,7 @@ void Image_base::set_pixels(void* pixels)
 //! \brief determines whether the image is empty.
 Boolean Image_base::empty()
 {
-  return ((get_width() == 0) || (get_height() == 0) || (get_pixels() == NULL));
+  return ((get_width() == 0) || (get_height() == 0) || (get_pixels() == nullptr));
 }
 
 //! \brief obtain the texture number of components.
