@@ -50,7 +50,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Shape::s_tag = "Shape";
-Container_proto* Shape::s_prototype(NULL);
+Container_proto* Shape::s_prototype(nullptr);
 
 // Default values:
 const Boolean Shape::s_def_is_visible(true);
@@ -176,9 +176,7 @@ Action::Trav_directive Shape::draw(Draw_action* draw_action)
 
 //! \brief culls the node if invisible and prepare for rendering.
 void Shape::cull(Cull_context& cull_context)
-{
-  cull_context.add_shape(this);
-}
+{ cull_context.add_shape(this); }
 
 //! \brief draws the geometry.
 void Shape::draw_geometry(Draw_action* action)
@@ -280,9 +278,7 @@ void Shape::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "cullFace") {
@@ -429,13 +425,13 @@ void Shape::init_prototype()
 void Shape::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.
 Container_proto* Shape::get_prototype()
 {
-  if (s_prototype == NULL) Shape::init_prototype();
+  if (s_prototype == nullptr) Shape::init_prototype();
   return s_prototype;
 }
 

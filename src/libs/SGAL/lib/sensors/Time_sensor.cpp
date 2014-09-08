@@ -24,6 +24,9 @@
  * 3. initiating single occurrence events such as an alarm clock.
  */
 
+#include <boost/lexical_cast.hpp>
+
+#include "SGAL/basic.hpp"
 #include "SGAL/Time_sensor.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
@@ -51,7 +54,7 @@ Float Time_sensor::s_def_fraction_scale = 1.0;
 
 REGISTER_TO_FACTORY(Time_sensor, "Time_sensor");
 
-/*! Constructor */
+//! \brief constructor
 Time_sensor::Time_sensor(Boolean proto) :
   Node(proto),
   m_cycle_interval(s_def_cycle_interval),
@@ -76,10 +79,10 @@ Time_sensor::Time_sensor(Boolean proto) :
   m_quit_time(0)
 { if (!proto && m_enabled) register_events(); }
 
-/*! Destructor */
+//! \brief destructor
 Time_sensor::~Time_sensor() { if (m_enabled) unregister_events(); }
 
-/*! initializes the node prototype */
+//! \brief initializes the node prototype.
 void Time_sensor::init_prototype()
 {
   if (s_prototype) return;
@@ -220,14 +223,14 @@ void Time_sensor::init_prototype()
                                           exec_func));
 }
 
-/*! */
+//! \brief
 void Time_sensor::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
-/*! */
+//! \brief
 Container_proto* Time_sensor::get_prototype()
 {
   if (!s_prototype) init_prototype();
@@ -415,23 +418,21 @@ bool Time_sensor::update_time(Scene_time current_time)
   return true;
 };
 
-/*! \brief sets the attributes of the object extracted from an input file */
+//! \brief sets the attributes of the object extracted from an input file.
 void Time_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "cycleInterval") {
-      m_cycle_interval = atoff(value.c_str());
+      m_cycle_interval = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "frequency") {
-      m_frequency = atoi(value.c_str());
+      m_frequency = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -446,27 +447,27 @@ void Time_sensor::set_attributes(Element* elem)
       continue;
     }
     if (name == "startTime") {
-      m_start_time = atoff(value.c_str());
+      m_start_time = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "stopTime") {
-      m_stop_time = atoff(value.c_str());
+      m_stop_time = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "fractionBias") {
-      m_fraction_bias = atoff(value.c_str());
+      m_fraction_bias = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "fractionScale") {
-      m_fraction_scale = atoff(value.c_str());
+      m_fraction_scale = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "quitTime") {
-      m_quit_time = atoff(value.c_str());
+      m_quit_time = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -475,7 +476,7 @@ void Time_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Time_sensor::add_to_scene(Scene_graph* sg) { sg->add_time_sensor(this); }
 
 #if 0
@@ -548,8 +549,7 @@ void Time_sensor::AddToScene(Scene_graph* sg, XML_entity* parent)
 }
 #endif
 
-/*! Enable or disable the sensor
- */
+//! \brief enables or disables the sensor.
 void Time_sensor::set_enabled(Boolean enabled)
 {
   if (enabled == m_enabled) return;
@@ -557,20 +557,17 @@ void Time_sensor::set_enabled(Boolean enabled)
   (enabled) ? register_events() : unregister_events();
 }
 
-/*! Register the mouse and mostion events
- */
+//! \brief registers the mouse and mostion events.
 void Time_sensor::register_events() { Tick_event::doregister(this); }
 
-/*! Register the mouse and mostion events
- */
+//! \brief registers the mouse and mostion events.
 void Time_sensor::unregister_events() { Tick_event::unregister(this); }
 
-/*! Print out the name of this agent (for debugging purposes)
- */
+//! \brief prints out the name of this agent (for debugging purposes).
 void Time_sensor::identify()
 { std::cout << "Agent: Time_sensor" << std::endl; }
 
-/*! Handle tick events */
+//! \brief handles tick events.
 void Time_sensor::handle(Tick_event* event)
 {
   Scene_time sim_time = event->get_sim_time();

@@ -16,7 +16,10 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #if (defined _MSC_VER)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
@@ -38,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Material::s_tag = "Material";
-Container_proto* Material::s_prototype(NULL);
+Container_proto* Material::s_prototype(nullptr);
 
 // Default values:
 const Float Material::s_def_ambient_intensity = 0.2f;
@@ -50,7 +53,7 @@ const Float Material::s_def_transparency = 0;
 
 REGISTER_TO_FACTORY(Material, "Material");
 
-/*! Constructor */
+//! \brief constructor
 Material::Material(Boolean proto) :
   Container(proto),
   m_ambient_intensity(s_def_ambient_intensity),
@@ -61,10 +64,10 @@ Material::Material(Boolean proto) :
   m_transparency(s_def_transparency)
 {}
 
-/*! Destructor */
+//! \brief Destructor
 Material::~Material() {}
 
-/*! \brief sets the transparency. */
+//! \brief sets the transparency.
 void Material::set_transparency(Float transparency)
 {
   const Field_info* field_info = get_field_info(TRANSPARENCY);
@@ -72,11 +75,11 @@ void Material::set_transparency(Float transparency)
   m_transparency = transparency;
 }
 
-/*! \brief sets the ambient intensity. */
+//! \brief sets the ambient intensity.
 void Material::set_ambient_intensity(Float intensity)
 { m_ambient_intensity = intensity; }
 
-/*! \brief sets the diffuse color. */
+//! \brief sets the diffuse color.
 void Material::set_diffuse_color(Float v0, Float v1, Float v2)
 {
   m_diffuse_color[0] = v0;
@@ -84,7 +87,7 @@ void Material::set_diffuse_color(Float v0, Float v1, Float v2)
   m_diffuse_color[2] = v2;
 }
 
-/*! \brief sets the specular color. */
+//! \brief sets the specular color.
 void Material::set_specular_color(Float v0, Float v1, Float v2)
 {
   m_specular_color[0] = v0;
@@ -92,7 +95,7 @@ void Material::set_specular_color(Float v0, Float v1, Float v2)
   m_specular_color[2] = v2;
 }
 
-/*! \brief sets the amissive color. */
+//! \brief sets the amissive color.
 void Material::set_emissive_color(Float v0, Float v1, Float v2)
 {
   m_emissive_color[0] = v0;
@@ -100,7 +103,7 @@ void Material::set_emissive_color(Float v0, Float v1, Float v2)
   m_emissive_color[2] = v2;
 }
 
-/*! \brief sets the shininess factor. */
+//! \brief sets the shininess factor.
 void Material::set_shininess(Float shininess)
 {
   if (shininess > 1) m_shininess = 1;
@@ -132,14 +135,14 @@ void Material::draw(Face which_face, Context* /* context */)
   glMaterialf(face, GL_SHININESS, 128 * m_shininess);
 }
 
-/*! \brief the callback invoked when the material chages. */
+//! \brief the callback invoked when the material chages.
 void Material::material_changed(const Field_info* field_info)
 {
   set_rendering_required(field_info);
   field_changed(field_info);
 }
 
-/*! \brief initilalizes the prototype of this node. */
+//! \brief initilalizes the prototype of this node.
 void Material::init_prototype()
 {
   if (s_prototype) return;
@@ -209,31 +212,29 @@ void Material::init_prototype()
                                            s_def_transparency, exec_func));
 }
 
-/*! \brief deletes the prototype node. */
+//! \brief deletes the prototype node.
 void Material::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype. Initialize as nessary. */
+//! \brief obtains the prototype. Initialize as nessary.
 Container_proto* Material::get_prototype()
 {
   if (!s_prototype) Material::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Material::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
-  typedef Element::Str_attr_iter                Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "ambientIntensity") {
-      set_ambient_intensity((Float) atof(value.c_str()));
+      set_ambient_intensity(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -256,12 +257,12 @@ void Material::set_attributes(Element* elem)
       continue;
     }
     if (name == "shininess") {
-      set_shininess((Float) atof(value.c_str()));
+      set_shininess(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "transparency") {
-      set_transparency((Float) atof(value.c_str()));
+      set_transparency(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -272,7 +273,7 @@ void Material::set_attributes(Element* elem)
 }
 
 #if 0
-/*! Get the attributes of the box. */
+//! Get the attributes of the box.
 Attribute_list Material::get_attributes()
 {
   Attribute_list attribs;

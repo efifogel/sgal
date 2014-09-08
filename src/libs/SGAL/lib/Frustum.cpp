@@ -20,8 +20,10 @@
 #include <iterator>
 #include <stdio.h>
 #include <assert.h>
+#include <boost/lexical_cast.hpp>
 
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
@@ -40,7 +42,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! The frustum types (prespective, orthogonal, etc) */
 const char* Frustum::s_type_strings[] = {"SIMPLE", "ORTHOGONAL", "PERSPECTIVE"};
 
 //! \brief constructor.
@@ -571,10 +572,7 @@ void Frustum::set_type(Frustum_type type)
 //! \brief sets the attributes of this object.
 void Frustum::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "type") {
@@ -588,37 +586,37 @@ void Frustum::set_attributes(Element* elem)
       continue;
     }
     if (name == "left") {
-      set_left(atoff(value.c_str()));
+      set_left(boost::lexical_cast<Float>(value));
       m_aspect_mode = CALC_NONE;
       elem->mark_delete(ai);
       continue;
     }
     if (name == "right") {
-      set_right(atoff(value.c_str()));
+      set_right(boost::lexical_cast<Float>(value));
       m_aspect_mode = CALC_NONE;
       elem->mark_delete(ai);
       continue;
     }
     if (name == "top") {
-      set_top(atoff(value.c_str()));
+      set_top(boost::lexical_cast<Float>(value));
       m_aspect_mode = CALC_NONE;
       elem->mark_delete(ai);
       continue;
     }
     if (name == "bottom") {
-      set_bottom(atoff(value.c_str()));
+      set_bottom(boost::lexical_cast<Float>(value));
       m_aspect_mode = CALC_NONE;
       elem->mark_delete(ai);
       continue;
     }
     if (name == "near") {
-      set_near(atoff(value.c_str()));
+      set_near(boost::lexical_cast<Float>(value));
       m_aspect_mode = CALC_NONE;
       elem->mark_delete(ai);
       continue;
     }
     if (name == "far") {
-      set_far(atoff(value.c_str()));
+      set_far(boost::lexical_cast<Float>(value));
       m_aspect_mode = CALC_NONE;
       elem->mark_delete(ai);
       continue;

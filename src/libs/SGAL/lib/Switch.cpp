@@ -34,32 +34,29 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Switch::s_tag = "Switch";
-Container_proto* Switch::s_prototype(NULL);
+Container_proto* Switch::s_prototype(nullptr);
 
 const Uint Switch::s_def_which_choice(static_cast<Uint>(-1));
 
 REGISTER_TO_FACTORY(Switch, "Switch");
 
-/*! Constructor */
+//! \brief Constructor.
 Switch::Switch(Boolean proto) :
   Group(proto),
   m_which_choice(s_def_which_choice)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Switch::~Switch() {}
 
-/*! Return the node to traverse */
+//! \brief obtains the node to traverse.
 Switch::Shared_node Switch::get_choice()
 {
   return (m_which_choice < m_childs.size()) ?
     get_child(m_which_choice) : Shared_node();
 }
 
-/*! Cull switch node.
- * If this node should be rendered, it added to Cull_context.
- * @param cull_context
- */
+//! \brief applies culling on the choosen node, ignores the rest.
 void Switch::cull(Cull_context & cull_context)
 {
   if (!is_visible())  return;
@@ -68,9 +65,7 @@ void Switch::cull(Cull_context & cull_context)
   if (node) node->cull(cull_context);
 }
 
-/*! Draw choosen node.
- * @param draw_action
- */
+//! \brief applies drawing on the choosen node, ignores the rest.
 Action::Trav_directive Switch::draw(Draw_action* draw_action)
 {
   if (!is_visible())  return Action::TRAV_CONT;
@@ -79,9 +74,7 @@ Action::Trav_directive Switch::draw(Draw_action* draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! Traverses the choosen node for selections.
- * @param isect_action
- */
+//! \brief applies selection on the choosen node, ignores the rest.
 void Switch::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
@@ -155,7 +148,7 @@ Boolean Switch::clean_sphere_bound()
   return res;
 }
 
-/*! Initializes the node prototype */
+//! \brief initializes the node prototype.
 void Switch::init_prototype()
 {
   if (s_prototype) return;
@@ -174,14 +167,14 @@ void Switch::init_prototype()
                                           exec_func));
 }
 
-/*! */
+//! brief
 void Switch::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! */
+//! brief
 Container_proto* Switch::get_prototype()
 {
   if (!s_prototype) init_prototype();
@@ -189,17 +182,12 @@ Container_proto* Switch::get_prototype()
 }
 
 
-/*! Sets the attributes of the object extracted from the VRML or X3D file.
- * \param elem contains lists of attribute names and values
- * \param sg a pointer to the scene graph
- */
+//! \brief sets the attributes of the object.
 void Switch::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter Str_attr_iter;
-
   Group::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "whichChoice") {
