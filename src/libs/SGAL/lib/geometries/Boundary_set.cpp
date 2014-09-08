@@ -946,7 +946,7 @@ void Boundary_set::clean_tex_coords_2d()
   Bounding_box bbox = bounding_box();;
 
   // Allocate space for texture coordinates and texture cordinate indices
-  size_t size = (m_coord_indices_flat) ?
+  Uint size = (m_coord_indices_flat) ?
     m_flat_coord_indices.size() : m_coord_indices.size() - m_num_primitives;
 
   if (m_tex_coord_array) m_tex_coord_array->resize(size);
