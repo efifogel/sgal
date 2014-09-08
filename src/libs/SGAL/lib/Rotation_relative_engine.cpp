@@ -20,6 +20,8 @@
  * Rotation_relative_engine - implementation
  */
 
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/basic.hpp"
 #include "Scene_graphInt.h"
 #include "Rotation_relative_engine.h"
@@ -108,7 +110,7 @@ virtual Container_proto* Rotation_relative_engine::get_prototype()
  The function calculates m_value, updates it and activate cascade on it.
  @param pointer (in) to the cascaded field's field info - not used for now
 */
-void Rotation_relative_engine::execute(Field_info *)
+void Rotation_relative_engine::execute(Field_info* /* field_info */)
 {
   // check if this is a new cycle - if so - update the current rotation
   if (m_fraction < m_last_fraction) m_rotation[3] += m_angle;
@@ -120,7 +122,7 @@ void Rotation_relative_engine::execute(Field_info *)
   m_value[3] += m_angle * m_fraction;
 
   // Cascade the updated value
-  Field * value = get_field(VALUE);
+  Field* value = get_field(VALUE);
   if (valueL) value->Cascade();
 };
 
@@ -131,17 +133,18 @@ void Rotation_relative_engine::execute(Field_info *)
 void Rotation_relative_engine::set_attributes(Element * elem)
 {
   Node::set_attributes(elem);
-  for (Str_attr_iter ai = elem->str_attrs_begin();
-       ai != elem->str_attrs_end(); ai++)
-  {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string & name = elem->get_name(ai);
     const std::string & value = elem->get_value(ai);
     if (name == "angle") {
-      m_angle = atof(value.c_str());
+      m_angle = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
-    } else if (name == "rotation") {
+      continue;
+    }
+    if (name == "rotation") {
       m_rotation = Rotation(value);
       elem->mark_delete(ai);
+      continue;
     }
   }
   // Remove all the deleted attributes:

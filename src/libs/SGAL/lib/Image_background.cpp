@@ -16,11 +16,12 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <string>
+
 #if defined(_WIN32)
 #include <windows.h>
 #endif
 #include <GL/gl.h>
-#include <string>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -36,27 +37,27 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Image_background::s_tag = "ImageBackground";
-Container_proto* Image_background::s_prototype(NULL);
+Container_proto* Image_background::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Image_background, "Image_background");
 
-/*! Constructor */
+//! \brief constructor.
 Image_background::Image_background(Boolean proto) :
   Background(proto),
   m_is_default_appearance(false)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Image_background::~Image_background() {}
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Image_background::set_attributes(Element* elem)
 {
   Background::set_attributes(elem);
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
     const std::string& name = elem->get_name(cai);
     Element::Shared_container cont = elem->get_value(cai);
     if (name == "appearance") {
@@ -71,24 +72,24 @@ void Image_background::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief */
+//! \brief
 void Image_background::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Background::get_prototype());
 }
 
-/*! \brief */
+//! \brief
 void Image_background::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief */
+//! \brief
 Container_proto* Image_background::get_prototype()
 {
-  if (s_prototype == NULL) Image_background::init_prototype();
+  if (s_prototype == nullptr) Image_background::init_prototype();
   return s_prototype;
 }
 

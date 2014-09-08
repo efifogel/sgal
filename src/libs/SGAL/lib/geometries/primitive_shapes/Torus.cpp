@@ -93,9 +93,7 @@ void Torus::set_attributes(Element* elem)
 {
   Extrusion::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "spineRadius") {
@@ -109,12 +107,12 @@ void Torus::set_attributes(Element* elem)
       continue;
     }
     if (name == "stacks") {
-      set_stacks(atoi(value.c_str()));
+      set_stacks(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "slices") {
-      set_slices(atoi(value.c_str()));
+      set_slices(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }

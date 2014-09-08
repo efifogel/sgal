@@ -16,7 +16,10 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
@@ -149,28 +152,26 @@ void Cone::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "bottomRadius") {
-      set_bottom_radius(atoff(value.c_str()));
+      set_bottom_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "height") {
-      set_height(atoff(value.c_str()));
+      set_height(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "stacks") {
-      set_stacks(atoi(value.c_str()));
+      set_stacks(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }
     else if (name == "slices") {
-      set_slices(atoi(value.c_str()));
+      set_slices(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }

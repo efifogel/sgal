@@ -467,7 +467,7 @@ void Movie_recorder::set_attributes(Element* elem)
       elem->mark_delete(ai);
     }
     else if (name == "totalFrames") {
-      SetTotalFrames(atoi(value.c_str()));
+      SetTotalFrames(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
     }
     else if (name == "mode") {
@@ -490,7 +490,7 @@ void Movie_recorder::set_attributes(Element* elem)
       elem->mark_delete(ai);
     }
     else if (name == "transmitterPort") {
-      m_transmitterPort = atoi(value.c_str());
+      m_transmitterPort = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
     }
     else if (name == "receiverIP") {
@@ -500,7 +500,7 @@ void Movie_recorder::set_attributes(Element* elem)
       elem->mark_delete(ai);
     }
     else if (name == "receiverPort") {
-      m_receiverPort = atoi(value.c_str());
+      m_receiverPort = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
     }
     else if (name == "cif") {

@@ -19,12 +19,14 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#include <boost/lexical_cast.hpp>
 
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4244 )
 #endif
 #include <Magick++.h>
+
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
@@ -250,10 +252,7 @@ void Snapshot::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "dirName") {
@@ -286,10 +285,10 @@ void Snapshot::set_attributes(Element* elem)
       continue;
     }
     if (name == "quality") {
-      m_quality = atoi(value.c_str());
+      m_quality = boost::lexical_cast<Int>(value);
       elem->mark_delete(ai);
       continue;
-     }
+    }
     if (name == "sequence") {
       m_sequence = compare_to_true(value);
       elem->mark_delete(ai);
@@ -297,8 +296,9 @@ void Snapshot::set_attributes(Element* elem)
     }
   }
 
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
     const std::string& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "image") {

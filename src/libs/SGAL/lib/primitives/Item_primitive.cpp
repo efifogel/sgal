@@ -80,28 +80,28 @@ void Item_primitive::get_value(Uint param_id, bool & value) const
   value = (m_attributes[param_id] == "TRUE" ? true : false);
 }
 
-/*! \brief sets a value of a parameter. */
+//! \brief sets a value of a parameter.
 void Item_primitive::set_value(Uint param_id, const std::string & value)
 {
   SGAL_assertion(param_id < m_attributes.size());
   m_attributes[param_id] = value;
 }
 
-/*! \brief sets a value of a parameter. */
+//! \brief sets a value of a parameter.
 void Item_primitive::set_value(Uint param_id, int value)
 {
   SGAL_assertion(param_id < m_attributes.size());
   m_attributes[param_id] = boost::lexical_cast<std::string>(value);
 }
 
-/*! \brief sets a value of a parameter. */
+//! \brief sets a value of a parameter.
 void Item_primitive::set_value(Uint param_id, float value)
 {
   SGAL_assertion(param_id < m_attributes.size());
   m_attributes[param_id] = boost::lexical_cast<std::string>(value);
 }
 
-/*! \brief sets a boolean value of a parameter. */
+//! \brief sets a boolean value of a parameter.
 void Item_primitive::set_value(Uint param_id, bool value)
 {
   SGAL_assertion(param_id < m_attributes.size());
