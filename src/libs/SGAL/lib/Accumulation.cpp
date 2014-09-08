@@ -313,9 +313,7 @@ void Accumulation::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter                Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
@@ -324,7 +322,7 @@ void Accumulation::set_attributes(Element* elem)
       continue;
     }
     if (name == "delay") {
-      set_delay(atoi(value.c_str()));
+      set_delay(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }

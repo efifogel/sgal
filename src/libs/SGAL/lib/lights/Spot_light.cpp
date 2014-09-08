@@ -16,7 +16,10 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
@@ -34,7 +37,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Spot_light::s_prototype(NULL);
+Container_proto* Spot_light::s_prototype(nullptr);
 const std::string Spot_light::s_tag = "SpotLight";
 
 // Default values:
@@ -47,7 +50,7 @@ float Spot_light::s_def_radius(100);
 
 REGISTER_TO_FACTORY(Spot_light, "Spot_light");
 
-/*! Constructor */
+//! \brief constructor
 Spot_light::Spot_light(Boolean proto) :
   Light(proto),
   m_attenuation(s_def_attenuation),
@@ -58,17 +61,17 @@ Spot_light::Spot_light(Boolean proto) :
   m_cutoff_angle(s_def_cutoff_angle)
 {}
 
-/*! Destructor */
+//! \brief destructor
 Spot_light::~Spot_light() {}
 
-/*! set the cutOffAngle (outer cone angle) of the light */
+//! \brief sets the cutOffAngle (outer cone angle) of the light.
 void Spot_light::set_cutoff_angle(const Float & cutoff_angle)
 {
   m_cutoff_angle = cutoff_angle * 180.0f / SGAL_PI;
   if (m_cutoff_angle > 90) m_cutoff_angle = 90;
 }
 
-/*! set the cutOffAngle (outer cone angle) of the light */
+//! set the cutOffAngle (outer cone angle) of the light.
 Float Spot_light::get_cutoff_angle()
 { return m_cutoff_angle / 180.0f * SGAL_PI; }
 
@@ -84,7 +87,7 @@ float Spot_light::get_exponent()
   return exponent;
 }
 
-/*! \brief draws the light */
+//! \brief draws the light.
 Action::Trav_directive Spot_light::draw(Draw_action * draw_action)
 {
   if (!m_is_on) return Action::TRAV_CONT;
@@ -111,7 +114,7 @@ Action::Trav_directive Spot_light::draw(Draw_action * draw_action)
   return Action::TRAV_CONT;
 }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Spot_light::init_prototype()
 {
   if (s_prototype) return;
@@ -174,28 +177,26 @@ void Spot_light::init_prototype()
                                            cutoff_angle_func, exec_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Spot_light::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Spot_light::get_prototype()
 {
   if (!s_prototype) Spot_light::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
+//! \brief sets the attributes of the object extracted from the input file.
 void Spot_light::set_attributes(Element* elem)
 {
   Light::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "direction") {
@@ -205,12 +206,12 @@ void Spot_light::set_attributes(Element* elem)
       continue;
     }
     if (name == "beamWidth") {
-      set_beam_width(atoff(value.c_str()));
+      set_beam_width(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "cutOffAngle") {
-      set_cutoff_angle(atoff(value.c_str()));
+      set_cutoff_angle(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -227,7 +228,7 @@ void Spot_light::set_attributes(Element* elem)
       continue;
     }
     if (name == "radius") {
-      set_radius(atoff(value.c_str()));
+      set_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }

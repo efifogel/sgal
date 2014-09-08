@@ -22,12 +22,12 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string World_info::s_tag("WorldInfo");
-Container_proto* World_info::s_prototype(NULL);
+Container_proto* World_info::s_prototype(nullptr);
 
-/*! \brief constructor. */
+//! \brief constructor.
 World_info::World_info(Boolean proto) : Container(proto) {}
 
-/*! \brief initializes the node prototype */
+//! \brief initializes the node prototype.
 void World_info::init_prototype()
 {
   if (s_prototype) return;
@@ -37,7 +37,7 @@ void World_info::init_prototype()
 void World_info::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 Container_proto* World_info::get_prototype()
@@ -46,7 +46,7 @@ Container_proto* World_info::get_prototype()
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void World_info::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);

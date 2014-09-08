@@ -16,6 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Ellipsoid.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -156,33 +158,31 @@ void Ellipsoid::set_attributes(Element* elem)
 {
   Indexed_face_set::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "width") {
-      set_width(atoff(value.c_str()));
+      set_width(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "height") {
-      set_height(atoff(value.c_str()));
+      set_height(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "depth") {
-      set_depth(atoff(value.c_str()));
+      set_depth(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     else if (name == "slices") {
-      set_slices(atoi(value.c_str()));
+      set_slices(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }
     else if (name == "stacks") {
-      set_stacks(atoi(value.c_str()));
+      set_stacks(boost::lexical_cast<Uint>(value));
       elem->mark_delete(ai);
       continue;
     }

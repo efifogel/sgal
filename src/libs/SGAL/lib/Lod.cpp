@@ -17,39 +17,38 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include "SGAL/basic.hpp"
-#include "Lod.h"
-#include "Field_infos.h"
-#include "Draw_action.h"
-#include "Isect_action.h"
-#include "Cull_context.h"
-#include "Element.h"
-#include "Container_proto.h"
+#include "SGAL/Lod.hpp"
+#include "SGAL/Field_infos.hpp"
+#include "SGAL/Draw_action.hpp"
+#include "SGAL/Isect_action.hpp"
+#include "SGAL/Cull_context.hpp"
+#include "SGAL/Element.hpp"
+#include "SGAL/Container_proto.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 const std::string Lod::s_tag = "LOD";
-Container_proto* Lod::s_prototype(NULL);
+Container_proto* Lod::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Lod, "Lod");
 
-/* Constructor */
-Lod::Lod(Boolean proto) :  Switch(proto), m_choosen_node(0) {}
+//! \brief constructor.
+Lod::Lod(Boolean proto) : Switch(proto), m_choosen_node(0) {}
 
-/* Destructor */
+//! \brief destructor.
 Lod::~Lod() {}
 
-/*! \brief */
-Node*  Lod::get_choosen_node() const
+//! \brief
+Node* Lod::get_choosen_node() const
 {
   Node_list::const_iterator it;
-  for (it = m_child_list.begin(); it != m_child_list.end(); ++it) {
+  for (it = m_child_list.begin(); it != m_child_list.end(); ++it)
     if (*it == m_choosenNode) return *it;
-  }
-  return NULL;
+  return nullptr;
 }
 
 /*! \brief culls the node. */
-void Lod::Cull(Cull_context& cull_context)
+void Lod::cull(Cull_context& cull_context)
 {
   if (!IsVisible())  return;
 
@@ -102,8 +101,8 @@ void Lod::Cull(Cull_context& cull_context)
   }
 }
 
-/*! \brief draw the node. */
-Trav_directive Lod::Draw(Draw_action* draw_action)
+//! \brief draw the node.
+Trav_directive Lod::draw(Draw_action* draw_action)
 {
   if (!IsVisible())  return Trav_cont;
   Node* node = get_choosenNode();
@@ -111,18 +110,18 @@ Trav_directive Lod::Draw(Draw_action* draw_action)
   return Trav_cont;
 }
 
-/*! \brief traverses the choosen node for selections. */
-void Lod::Isect(Isect_action* isect_action)
+//! \brief traverses the choosen node for selections.
+void Lod::isect(Isect_action* isect_action)
 {
-  if (!IsVisible())  return;
+  if (!is_visible()) return;
 
   isect_action->PreVisit(this);
-  Node *node = get_choosenNode();
+  Node* node = get_choosenNode();
   if (node) isect_action->Apply(node);
   isect_action->PostVisit(this);
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Lod::init_prototype()
 {
   if (s_prototype) return;
@@ -135,21 +134,21 @@ void Lod::init_prototype()
   //                       (Execution_func_type)&Node::SetSphereBoundModified));
 }
 
-/*! \brief */
+//! \brief
 void Lod::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief */
+//! \brief
 Container_proto* Lod::get_prototype()
 {
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Lod::set_attributes(Element * elem)
 {
   Group::set_attributes(elem);

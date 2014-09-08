@@ -16,6 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
@@ -35,11 +37,11 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Font_style::s_tag = "FontStyle";
-Container_proto* Font_style::s_prototype(NULL);
+Container_proto* Font_style::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Font_style, "Font_style");
 
-/*! Constructor */
+//! \brief constructor
 Font_style::Font_style(Boolean proto) :
   Node(proto),
   m_family("fixedsys"),
@@ -52,21 +54,21 @@ Font_style::Font_style(Boolean proto) :
   m_style("PLAIN"),
   m_top_to_bottom(true),
   m_dirty(true),
-  m_font(NULL)
+  m_font(nullptr)
 {
   //m_family = "MS Serif"; // SERIF
 }
 
-/*! Destructor */
+//! \brief Destructor
 Font_style::~Font_style()
 {
   if (m_font) {
     delete m_font;
-    m_font = NULL;
+    m_font = nullptr;
   }
 }
 
-/*! \brief sets the flag that indicates whether the font is accentuated */
+//! \brief sets the flag that indicates whether the font is accentuated.
 void Font_style::set_bold(Boolean b)
 {
   m_bold = b;
@@ -82,30 +84,30 @@ void Font_style::set_italic(Boolean i)
   m_dirty = true;
 }
 
-/*! \brief sets the flag that indicates whether the font is antialiased font */
+//! \brief sets the flag that indicates whether the font is antialiased font.
 void Font_style::set_antialias(Boolean a)
 {
   m_antialias = a;
   m_dirty = true;
 }
 
-/*! \breif sets the flag that indicates the horizontal text direction */
+//! \breif sets the flag that indicates the horizontal text direction.
 void Font_style::set_left_to_right(Boolean l2r) { m_left_to_right = l2r; }
 
-/*! \breif sets the flag that indicates the vertical text direction */
+//! \breif sets the flag that indicates the vertical text direction.
 void Font_style::set_top_to_bottom(Boolean t2b) { m_top_to_bottom = t2b; }
 
-/*! \breif */
+//! \breif
 void Font_style::on_field_change(const Field_info* /* field_info */)
 {
   m_dirty = true;
   set_rendering_required();
 }
 
-/*! \breif initializes the prototype. */
+//! \breif initializes the prototype.
 void Font_style::init_prototype()
 {
-  if (s_prototype != NULL) return;
+  if (s_prototype != nullptr) return;
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the object fields to the prototype
@@ -180,28 +182,26 @@ void Font_style::init_prototype()
                                           t2b_func, exec_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Font_style::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Font_style::get_prototype()
 {
   if (!s_prototype)  Font_style::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Font_style::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter                Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "family") {
@@ -221,7 +221,7 @@ void Font_style::set_attributes(Element* elem)
       continue;
     }
     if (name == "size") {
-      m_size = atoff(value.c_str());
+      m_size = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -246,7 +246,7 @@ void Font_style::set_attributes(Element* elem)
       continue;
     }
     if (name == "spacing") {
-      m_spacing = atoff(value.c_str());
+      m_spacing = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -262,8 +262,6 @@ void Font_style::set_attributes(Element* elem)
 }
 
 #if 0
-/*!
- */
 Attribute_list Font_style::get_attributes()
 {
   Attribute_list attribs;
@@ -323,7 +321,7 @@ Attribute_list Font_style::get_attributes()
 }
 #endif
 
-/*! \brief obtains the font */
+//! \brief obtains the font.
 Font* Font_style::get_font()
 {
   if (!m_font || m_dirty) {
@@ -333,7 +331,7 @@ Font* Font_style::get_font()
   return m_font;
 }
 
-/*! obtains constructs and initializes the font */
+//! obtains constructs and initializes the font.
 void Font_style::create_font()
 {
   m_font = new Imagemagick_font(m_font_name, m_antialias,
@@ -342,7 +340,7 @@ void Font_style::create_font()
   m_dirty = false;
 }
 
-/*! Draw one string */
+//! Draw one string.
 void Font_style::draw_string(Context* context, const std::string& str)
 {
   if (!m_font || m_dirty) {
@@ -352,7 +350,7 @@ void Font_style::draw_string(Context* context, const std::string& str)
   m_font->draw_string(context, str, m_size);
 }
 
-/*! Obtain the width and height of the string */
+//! Obtain the width and height of the string.
 void Font_style::get_string_size(const std::string& str,
                                  Float& width, Float& height)
 {

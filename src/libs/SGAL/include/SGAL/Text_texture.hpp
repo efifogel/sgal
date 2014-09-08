@@ -119,7 +119,7 @@ private:
   Image* m_original_image;
   Texture* m_parent;
 
-  void on_field_changed(Field_info* field_info = NULL);
+  void on_field_changed(Field_info* field_info = nullptr);
   //! \todo void draw_text(HDC hdc, const std::string& text, int width, int height);
 };
 

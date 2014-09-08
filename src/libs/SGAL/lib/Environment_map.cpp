@@ -17,6 +17,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <algorithm>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Environment_map.hpp"
@@ -34,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Environment_map::s_tag = "EnvironmentMap";
-Container_proto* Environment_map::s_prototype(NULL);
+Container_proto* Environment_map::s_prototype(nullptr);
 
 // Default values:
 float Environment_map::m_def_alpha(0.5f);
@@ -42,7 +43,7 @@ bool Environment_map::m_def_quality(false);
 
 REGISTER_TO_FACTORY(Environment_map, "Environment_map");
 
-/*! Constructor */
+//! \brief constructor
 Environment_map::Environment_map(Boolean proto) :
   Container(proto),
   m_texture(0),
@@ -50,20 +51,20 @@ Environment_map::Environment_map(Boolean proto) :
   m_quality(m_def_quality)
 {}
 
-/*! Destructor */
+//! \brief destructor
 Environment_map::~Environment_map() {}
 
-/*! \brief */
+//! \brief
 void Environment_map::set_alpha(float alpha) { m_alpha = alpha; }
 
-/*! \brief */
+//! \brief
 float Environment_map::get_alpha() const { return m_alpha; }
 
-/*! \brief */
+//! \brief
 void Environment_map::set_texture(Texture* texture)
 { m_texture = texture; }
 
-/*! \brief */
+//! \brief
 Boolean Environment_map::attach_context(Context* context)
 {
   Boolean result = Container::attach_context (context);
@@ -72,7 +73,7 @@ Boolean Environment_map::attach_context(Context* context)
   return result;
 }
 
-/*! \brief */
+//! \brief
 Boolean Environment_map::detach_context(Context * context)
 {
   Boolean result = Container::detach_context (context);
@@ -88,7 +89,7 @@ Boolean Environment_map::detach_context(Context * context)
 void Environment_map::init_prototype()
 {
   // The prototype shuold be allocated only once for all instances
-  if (s_prototype != NULL) return;
+  if (s_prototype != nullptr) return;
 
   // Allocate a prototype instance
   s_prototype = new Container_proto();
@@ -116,14 +117,14 @@ void Environment_map::init_prototype()
 void Environment_map::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*!
  */
 Container_proto * Environment_map::get_prototype()
 {
-  if (s_prototype == NULL) Environment_map::init_prototype();
+  if (s_prototype == nullptr) Environment_map::init_prototype();
   return s_prototype;
 }
 
@@ -141,7 +142,7 @@ void Environment_map::set_attributes(Element* elem)
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "sgalAlpha") {
-      set_alpha(atoff(value.c_str()));
+      set_alpha(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -191,10 +192,10 @@ Attribute_list Environment_map::get_attributes()
  * In all cases the reflection map is added to the reflection map pool.
  *
  * @param sg a pointer to the scene graph
- * @param parent a pointer to the parent object. NULL if the apperance
+ * @param parent a pointer to the parent object. nullptr if the apperance
  * is defined in the top level.
  */
-void Environment_map::add_to_scene(Scene_graph * sg, XML_entity * parent)
+void Environment_map::add_to_scene(Scene_graph* sg, XML_entity* parent)
 {
   Container::add_to_scene(sg, parent);
   sg->add_container(this);

@@ -335,7 +335,7 @@ void Text_texture::set_attributes(Element* elem)
       continue;
     }
     if (name == "fontSize") {
-      m_font_size = atoi(value.c_str());
+      m_font_size = boost::lexical_cast<Int>(value);
       elem->mark_delete(ai);
       continue;
     }
