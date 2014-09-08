@@ -20,13 +20,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "SGAL/basic.hpp"
-#include "Scene_graphInt.h"
+#include <boost/lexical_cast.hpp>
+
 #include <COMDEF.H>
 
+#include "SGAL/basic.hpp"
+#include "Scene_graphInt.h"
 #include "Remote_controller.h"
-
-
 #include "EnbTypes.h"
 #include "Vector2f.h"
 #include "Vector3f.h"

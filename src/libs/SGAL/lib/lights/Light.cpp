@@ -16,7 +16,10 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/lexical_cast.hpp>
+
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
@@ -37,15 +40,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Light::s_prototype(NULL);
+Container_proto* Light::s_prototype(nullptr);
 
-/*! defaults values for Light's members.*/
+//! defaults values for Light's members.
 const Boolean Light::m_def_is_on(true);
 const Float Light::m_def_intensity(1);
 const Float Light::m_def_ambient_intensity(1);
 const Vector3f Light::m_def_color(1, 1, 1);
 
-/*! constructor */
+//! \brief constructor
 Light::Light(Boolean proto) :
   Node(proto),
   m_id(-1),
@@ -55,36 +58,36 @@ Light::Light(Boolean proto) :
   m_ref(0)
 { m_color = Vector3f(m_def_color); }
 
-/*! Distructor */
+//! \brief distructor
 Light::~Light() {}
 
-/*! \brief turns the light on and off. */
+//! \brief turns the light on and off.
 void Light::set_on(Boolean is_on) { m_is_on = is_on; }
 
-/*! \brief determines whether the light is on. */
+//! \brief determines whether the light is on.
 Boolean Light::get_on() { return m_is_on; }
 
-/*! \brief sets the light intensity. */
+//! \brief sets the light intensity.
 void Light::set_intensity(Float intensity) { m_intensity = intensity; }
 
-/*! \brief obtains the light intensity. */
+//! \brief obtains the light intensity.
 Float Light::get_intensity() { return m_intensity; }
 
-/*! \brief sets the ambient intensity of the light. */
+//! \brief sets the ambient intensity of the light.
 void Light::set_ambient_intensity(Float ambient_intensity)
 { m_ambient_intensity = ambient_intensity; }
 
-/*! \brief obtains the ambient intensity of the light. */
+//! \brief obtains the ambient intensity of the light.
 Float Light::get_ambient_intensity() { return m_ambient_intensity; }
 
 /*! \brief sets the light color. It is used for diffuse and specular components.
  */
 void Light::set_color(const Vector3f& color) { m_color = color; }
 
-/*! \brief obtains the light color. */
+//! \brief obtains the light color.
 void Light::get_color(Vector3f& color) { color = m_color; }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Light::init_prototype()
 {
   if (s_prototype) return;
@@ -131,25 +134,25 @@ void Light::init_prototype()
                                            exec_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Light::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Light::get_prototype()
 {
   if (!s_prototype) Light::init_prototype();
   return s_prototype;
 }
 
-/*! \brief */
+//! \brief
 void Light::cull(Cull_context& cull_context)
 { cull_context.add_light(this); }
 
-/*! \brief draws the light. */
+//! \brief draws the light.
 Action::Trav_directive Light::draw(Draw_action* da)
 {
   if ((da == 0) || (da->get_context() == 0)) return Action::TRAV_STOP;
@@ -171,14 +174,12 @@ Action::Trav_directive Light::draw(Draw_action* da)
   return Action::TRAV_CONT;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Light::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "on") {
@@ -193,12 +194,12 @@ void Light::set_attributes(Element* elem)
       continue;
     }
     if (name == "intensity") {
-      set_intensity(atoff(value.c_str()));
+      set_intensity(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "ambientIntensity") {
-      set_ambient_intensity(atoff(value.c_str()));
+      set_ambient_intensity(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
     }
   }
@@ -206,12 +207,12 @@ void Light::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Light::add_to_scene(Scene_graph* sg)
 { sg->set_have_lights(true); }
 
 #if 0
-/*! get a list of attributes (called in the save process) */
+//! get a list of attributes (called in the save process).
 Attribute_list Light::get_attributes()
 {
   Attribute_list attrs;
@@ -249,9 +250,7 @@ Attribute_list Light::get_attributes()
   return attrs;
 }
 
-/*! Add a child object to the scene
- * @param sg (in) a reference to the scene graph
- */
+//! \brief adds the light node to the scene.
 void Light::add_to_scene(Scene_graph* sg)
 {
   Scene_config* scene_config = sg->get_scene_config();

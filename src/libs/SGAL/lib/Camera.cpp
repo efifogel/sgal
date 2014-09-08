@@ -19,6 +19,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Math_defs.hpp"
@@ -44,7 +45,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Camera::s_tag = "Viewpoint";
-Container_proto* Camera::s_prototype(NULL);
+Container_proto* Camera::s_prototype(nullptr);
 
 // Defaults values:
 const Vector3f Camera::s_def_position(0, 0, 10);
@@ -57,7 +58,7 @@ const Float Camera::s_def_far_plane_scale(64);
 
 REGISTER_TO_FACTORY(Camera, "Camera");
 
-/*! Constructor */
+//! \brief constructor
 Camera::Camera(Boolean proto) :
   Bindable_node(proto),
   m_scene_graph(0),
@@ -75,17 +76,17 @@ Camera::Camera(Boolean proto) :
   m_description("")
 {}
 
-/*! Destructor */
+//! \brief destructor
 Camera::~Camera() {}
 
-/*! \brief sets the camera position. */
+//! \brief sets the camera position.
 void Camera::set_position(const Vector3f& position)
 {
   m_position = position;
   m_dirty_matrix = true;
 }
 
-/*! \brief sets the camera orientation. */
+//! \brief sets the camera orientation.
 void Camera::set_orientation(const Rotation& orientation)
 {
   const Vector3f& axis = orientation.get_axis();
@@ -97,7 +98,7 @@ void Camera::set_orientation(const Rotation& orientation)
   m_dirty_matrix = true;
 }
 
-/*! \brief */
+//! \brief
 void Camera::set_clipping_planes(float near_plane, float far_plane)
 {
   m_frustum.set_near(near_plane);
@@ -260,13 +261,13 @@ void Camera::init_prototype()
 void Camera::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 /*! \brief obtains the camera prototype. */
 Container_proto* Camera::get_prototype()
 {
-  if (s_prototype == NULL) Camera::init_prototype();
+  if (s_prototype == nullptr) Camera::init_prototype();
   return s_prototype;
 }
 
@@ -316,10 +317,10 @@ void Camera::draw(Draw_action* action)
   draw();
 }
 
-/*!  \brief applies the camera. */
+//! \brief applies the camera.
 void Camera::draw(Isect_action* /* action */) { draw(); }
 
-/*!  \brief applies the camera. */
+//! \brief applies the camera.
 void Camera::draw()
 {
   m_frustum.apply();
@@ -339,20 +340,18 @@ void Camera::draw()
   }
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
+//! \brief sets the attributes of the object extracted from the input file.
 void Camera::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
   m_frustum.set_attributes(elem);
 
-  typedef Element::Str_attr_iter                Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "fieldOfView") {
       // m_is_dynamic = false;
-      set_field_of_view(atoff(value.c_str()));
+      set_field_of_view(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -376,7 +375,7 @@ void Camera::set_attributes(Element* elem)
       continue;
     }
     if (name == "radiusScale") {
-      m_radius_scale = atoff(value.c_str());
+      m_radius_scale = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -392,7 +391,7 @@ void Camera::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Camera::add_to_scene(Scene_graph* sg)
 {
   set_scene_graph(sg);
@@ -402,8 +401,6 @@ void Camera::add_to_scene(Scene_graph* sg)
 }
 
 #if 0
-/*!
- */
 Attribute_list Camera::get_attributes()
 {
   Attribute_list attribs;
@@ -440,7 +437,7 @@ Attribute_list Camera::get_attributes()
   return attribs;
 }
 
-/*! \brief */
+//! \brief
 void Camera::add_to_scene(Scene_graph* sg, XML_entity* parent)
 {
   Container::add_to_scene(sg, parent);
@@ -451,11 +448,11 @@ void Camera::add_to_scene(Scene_graph* sg, XML_entity* parent)
 }
 #endif
 
-/*! \brief obtains the bindable stack. */
+//! \brief obtains the bindable stack.
 Bindable_stack* Camera::get_stack()
 { return m_scene_graph->get_camera_stack(); }
 
-/*! \brief enables the camera---called when the camera is bound */
+//! \brief enables the camera---called when the camera is bound.
 void Camera::enable()
 {
   utilize();
@@ -463,7 +460,7 @@ void Camera::enable()
   init(context);
 }
 
-/*! \brief initializes the camera based on the current context. */
+//! \brief initializes the camera based on the current context.
 void Camera::init(const Context* context)
 {
   set_aspect_ratio(context);

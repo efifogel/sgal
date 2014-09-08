@@ -17,6 +17,7 @@
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #include <stdlib.h>
+#include <boost/lexical_cast.hpp>
 
 #ifdef _WIN32
 #define NOMINMAX 1
@@ -96,28 +97,26 @@ void Piece::set_attributes(Element* elem)
 
   //! \todo sg->get_stats().add_num_mesh();
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "size") {
-      m_unit_size = atoi(value.c_str());;
+      m_unit_size = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "width") {
-      m_width = atoi(value.c_str());;
+      m_width = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "height") {
-      m_height = atoi(value.c_str());;
+      m_height = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "depth") {
-      m_depth = atoi(value.c_str());;
+      m_depth = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }

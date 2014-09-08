@@ -31,23 +31,23 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Navigation_info::s_tag = "NavigationInfo";
-Container_proto* Navigation_info::s_prototype(NULL);
+Container_proto* Navigation_info::s_prototype(nullptr);
 const char* Navigation_info::s_type_strings[] =
   {"NONE", "EXAMINE", "FLY", "WALK", "TRANSFORM"};
 
 REGISTER_TO_FACTORY(Navigation_info, "Navigation_info");
 
-/* Constructor */
+//! \brief constructor.
 Navigation_info::Navigation_info(Boolean proto) :
   Navigation_sensor(Vector3f(), Rotation(), proto),
   m_any(false),
   m_type(SGAL::NONE)
 {}
 
-/*! Destructor */
+//! Destructor.
 Navigation_info::~Navigation_info() {}
 
-/*! \brief parses the type string-attribute. */
+//! \brief parses the type string-attribute.
 int Navigation_info::parse_type(const std::string& type)
 {
   Uint i;
@@ -94,14 +94,12 @@ int Navigation_info::parse_type(const std::string& type)
   return 0;
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Navigation_info::set_attributes(Element* elem)
 {
   Navigation_sensor::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "type") {
@@ -115,7 +113,7 @@ void Navigation_info::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Navigation_info::add_to_scene(Scene_graph* sg)
 {
   Navigation_sensor::add_to_scene(sg);
@@ -127,21 +125,21 @@ void Navigation_info::add_to_scene(Scene_graph* sg)
   sg->route_navigation_info(this, m_type);
 }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Navigation_info::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new Container_proto(Navigation_sensor::get_prototype());
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Navigation_info::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief Obtains the prototype. */
+//! \brief Obtains the prototype.
 Container_proto* Navigation_info::get_prototype()
 {
   if (!s_prototype) init_prototype();
