@@ -92,6 +92,7 @@ CPPSOURCES+= Draw_action.cpp
 CPPSOURCES+= Ellipsoid.cpp
 CPPSOURCES+= Environment_background.cpp
 CPPSOURCES+= Exporter.cpp
+CPPSOURCES+= Elevation_grid.cpp
 CPPSOURCES+= Extrusion.cpp
 CPPSOURCES+= Field.cpp
 CPPSOURCES+= Field_info.cpp

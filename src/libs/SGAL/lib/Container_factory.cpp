@@ -60,6 +60,7 @@
 #include "SGAL/Coord_array_2d.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Exporter.hpp"
+#include "SGAL/Elevation_grid.hpp"
 #include "SGAL/Extrusion.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Indexed_line_set.hpp"
@@ -187,6 +188,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Directional_light);
   REGISTER_OBJECT(Ellipsoid);
   REGISTER_OBJECT(Exporter);
+  REGISTER_OBJECT(Elevation_grid);
   REGISTER_OBJECT(Extrusion);
   REGISTER_OBJECT(Environment_background);
   REGISTER_OBJECT(Font_style);

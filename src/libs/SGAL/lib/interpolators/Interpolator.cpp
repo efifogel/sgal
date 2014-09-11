@@ -31,7 +31,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Interpolator::s_prototype(NULL);
+Container_proto* Interpolator::s_prototype(nullptr);
 
 //! \brief constructor.
 Interpolator::Interpolator(Boolean interpolate_flag, Boolean proto) :
@@ -65,7 +65,7 @@ void Interpolator::init_prototype()
 void Interpolator::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
@@ -81,10 +81,7 @@ void Interpolator::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "key") {

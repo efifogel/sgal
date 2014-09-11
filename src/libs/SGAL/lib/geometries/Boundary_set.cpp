@@ -670,7 +670,6 @@ void Boundary_set::compute_triangle_normal(Uint j, Vector3f& n) const
   const Vector3f& v0 = get_coord_3d(m_flat_coord_indices[j]);
   const Vector3f& v1 = get_coord_3d(m_flat_coord_indices[j+1]);
   const Vector3f& v2 = get_coord_3d(m_flat_coord_indices[j+2]);
-  SGAL_assertion(!v0.collinear(v0, v1, v2));
   if (is_ccw()) n.normal(v0, v1, v2);
   else n.normal(v2, v1, v0);
 }

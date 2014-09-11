@@ -9,6 +9,7 @@ FILES+= Coord_array_3d.hpp
 FILES+= Coord_minkowski.hpp
 FILES+= Coord_transformer.hpp
 FILES+= Extrusion.hpp
+FILES+= Elevation_grid.hpp
 FILES+= Geometry.hpp
 FILES+= Geo_set.hpp
 FILES+= Indexed_face_set.hpp

@@ -181,6 +181,7 @@ private:
     template <typename Halfedge>
     void operator()(Halfedge& edge)
     {
+      if (edge.is_border_edge()) return;
       Kernel::Vector_3 normal1 = edge.facet()->plane();
       Kernel::Vector_3 normal2 = edge.opposite()->facet()->plane();
       Float angle = arccosf(normal1 * normal2);  // inner product

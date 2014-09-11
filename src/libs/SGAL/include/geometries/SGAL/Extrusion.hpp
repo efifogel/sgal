@@ -33,8 +33,6 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Draw_action;
-class Isec_action;
 class Container_proto;
 class Element;
 
@@ -69,7 +67,9 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor.
+   * \param proto (in) determines whether to construct a prototype.
+   */
   Extrusion(Boolean proto = false);
 
   /*! Destructor */

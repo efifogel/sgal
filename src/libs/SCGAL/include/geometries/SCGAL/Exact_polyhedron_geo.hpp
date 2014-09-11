@@ -203,6 +203,7 @@ protected:
     template <typename Halfedge>
     void operator()(Halfedge& edge)
     {
+      if (edge.is_border_edge()) return;
       Vector3f normal1 = edge.facet()->m_normal;
       Vector3f normal2 = edge.opposite()->facet()->m_normal;
       Float angle = arccosf(normal1.dot(normal2));  // inner product

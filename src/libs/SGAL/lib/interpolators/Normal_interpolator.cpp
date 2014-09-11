@@ -24,11 +24,11 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Normal_interpolator::s_tag = "sgalNormalInterpolator";
+std::string Normal_interpolator::s_tag = "NormalInterpolator";
 
 REGISTER_TO_FACTORY(Normal_interpolator, "Normal_interpolator");
 
-/*! Constructor */
+//! \brief constructor.
 Normal_interpolator::Normal_interpolator(Boolean interpolate_flag,
                                          Boolean proto) :
   Vector3f_interpolator(interpolate_flag, proto)
