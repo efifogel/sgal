@@ -313,13 +313,13 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype */
+//! \brief constructs the prototype.
 inline Script* Script::prototype() { return new Script(true); }
 
-/*! \brief clones */
+//! \brief clones.
 inline Container* Script::clone() { return new Script(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Script::get_tag() const { return s_tag; }
 
 //! \brief converts a single float field value to a v8 engine float.
@@ -335,7 +335,7 @@ Script::get_single_time(const Field_info* field_info)
 //! \brief converts a single int32 field value to a v8 engine int32.
 inline v8::Handle<v8::Value>
 Script::get_single_int32(const Field_info* field_info)
-{ return v8::Int32::New(m_isolate, *(field_handle<Int>(field_info))); }
+{ return v8::Int32::New(m_isolate, *(field_handle<Int32>(field_info))); }
 
 //! \brief clears the set of altered field-information records.
 inline void Script::clear_assigned() { m_assigned.clear(); }

@@ -45,7 +45,7 @@ SGAL_BEGIN_NAMESPACE
 typedef char            Char;
 typedef char            Byte;
 typedef short           Short;
-typedef int             Int;
+typedef int             Int32;
 typedef long            Long;
 typedef unsigned char   Ubyte;
 typedef unsigned char   Uchar;

@@ -35,15 +35,15 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Incrementor::s_tag = "Incrementor";
-Container_proto* Incrementor::s_prototype(NULL);
+Container_proto* Incrementor::s_prototype(nullptr);
 
 // Default values:
-const Int Incrementor::s_def_min_value(0);
-const Int Incrementor::s_def_max_value(1);
+const Int32 Incrementor::s_def_min_value(0);
+const Int32 Incrementor::s_def_max_value(1);
 
 REGISTER_TO_FACTORY(Incrementor, "Incrementor");
 
-/*! Constructor */
+//! Constructor
 Incrementor::Incrementor(Boolean proto) :
   Node(proto),
   m_min_value(s_def_min_value),
@@ -52,7 +52,7 @@ Incrementor::Incrementor(Boolean proto) :
   m_value(s_def_min_value)
 {}
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Incrementor::init_prototype()
 {
   if (s_prototype) return;
@@ -62,17 +62,17 @@ void Incrementor::init_prototype()
   Execution_function exec_func =
     static_cast<Execution_function>(&Incrementor::execute);
 
-  Int_handle_function min_value_func =
-    static_cast<Int_handle_function>(&Incrementor::min_value_handle);
-  s_prototype->add_field_info(new SF_int(MIN_VALUE, "minValue",
-                                         RULE_EXPOSED_FIELD,
-                                         min_value_func, exec_func));
+  Int32_handle_function min_value_func =
+    static_cast<Int32_handle_function>(&Incrementor::min_value_handle);
+  s_prototype->add_field_info(new SF_int32(MIN_VALUE, "minValue",
+                                           RULE_EXPOSED_FIELD,
+                                           min_value_func, exec_func));
 
-  Int_handle_function max_value_func =
-    static_cast<Int_handle_function>(&Incrementor::max_value_handle);
-  s_prototype->add_field_info(new SF_int(MAX_VALUE, "maxValue",
-                                         RULE_EXPOSED_FIELD,
-                                         max_value_func, exec_func));
+  Int32_handle_function max_value_func =
+    static_cast<Int32_handle_function>(&Incrementor::max_value_handle);
+  s_prototype->add_field_info(new SF_int32(MAX_VALUE, "maxValue",
+                                           RULE_EXPOSED_FIELD,
+                                           max_value_func, exec_func));
 
   Boolean_handle_function trigger_func =
     static_cast<Boolean_handle_function>(&Incrementor::trigger_handle);
@@ -81,50 +81,47 @@ void Incrementor::init_prototype()
                                           trigger_func,
                                           exec_func));
 
-  Int_handle_function value_func =
-    static_cast<Int_handle_function>(&Incrementor::value_handle);
-  s_prototype->add_field_info(new SF_int(VALUE, "value",
-                                         RULE_EXPOSED_FIELD,
-                                         value_func));
+  Int32_handle_function value_func =
+    static_cast<Int32_handle_function>(&Incrementor::value_handle);
+  s_prototype->add_field_info(new SF_int32(VALUE, "value",
+                                           RULE_EXPOSED_FIELD,
+                                           value_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Incrementor::delete_prototype()
 {
   if (!s_prototype) return;
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Incrementor::get_prototype()
 {
   if (!s_prototype) Incrementor::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Incrementor::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-
   Node::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "minValue") {
-      m_min_value = boost::lexical_cast<Int>(value);
+      m_min_value = boost::lexical_cast<Int32>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "maxValue") {
-      m_max_value = boost::lexical_cast<Int>(value);
+      m_max_value = boost::lexical_cast<Int32>(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "value") {
-      m_value = boost::lexical_cast<Int>(value);
+      m_value = boost::lexical_cast<Int32>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -139,13 +136,13 @@ void Incrementor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief executes the engine */
+//! \brief executes the engine.
 void Incrementor::execute(const Field_info* /*! field_info */)
 {
   if (m_value == m_max_value) m_value = m_min_value;
   else ++m_value;
   Field* value_field = get_field(VALUE);
-  if (value_field != NULL) value_field->cascade();
+  if (value_field != nullptr) value_field->cascade();
 }
 
 SGAL_END_NAMESPACE

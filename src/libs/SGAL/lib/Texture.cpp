@@ -142,7 +142,7 @@ void Texture::wrap_r_changed(const Field_info* /* field_info */)
 //! \brief sets the minimization filter.
 void Texture::set_min_filter(const std::string& value)
 {
-  unsigned int i;
+  size_t i;
   for (i = 0; i < sizeof(s_min_filter_names)/sizeof(char *); ++i)
     if (value == s_min_filter_names[i]) break;
   if (i < sizeof(s_min_filter_names)/sizeof(char *))
@@ -160,8 +160,8 @@ void Texture::min_filter_changed(const Field_info* /* field_info */)
 //! \brief sets the magnification filter.
 void Texture::set_mag_filter(const std::string& value)
 {
-  unsigned int i;
-  for ( i = 0; i < sizeof(s_mag_filter_names)/sizeof(char *); ++i)
+  size_t i;
+  for (i = 0; i < sizeof(s_mag_filter_names)/sizeof(char *); ++i)
     if (value == s_mag_filter_names[i]) break;
   if (i < sizeof(s_mag_filter_names)/sizeof(char *))
     set_mag_filter((Mag_filter) i);
@@ -220,11 +220,8 @@ void Texture::clean()
 //! \brief sets the attributes of the texture.
 void Texture::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter        Str_attr_iter;
-
   Container::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "repeatS") {

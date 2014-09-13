@@ -55,7 +55,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Polygon_set_on_sphere_geo::s_tag = "PolygonSetOnSphere";
-Container_proto* Polygon_set_on_sphere_geo::s_prototype(NULL);
+Container_proto* Polygon_set_on_sphere_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Polygon_set_on_sphere_geo, "Polygon_set_on_sphere_geo");
 
@@ -68,7 +68,7 @@ std::string Polygon_set_on_sphere_geo::s_operation_types[] = {
   "symmetric_difference"
 };
 
-/*! Constructor. */
+//! \brief constructor.
 Polygon_set_on_sphere_geo::
 Polygon_set_on_sphere_geo(Boolean proto) :
   Arrangement_on_sphere_marked_geo(proto), m_operation_type(NUM_OF_OPERATIONS)
@@ -77,10 +77,10 @@ Polygon_set_on_sphere_geo(Boolean proto) :
   m_owned_aos = false;
 }
 
-/*! Destructor. */
+//! \brief destructor.
 Polygon_set_on_sphere_geo::~Polygon_set_on_sphere_geo() { clear(); }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Polygon_set_on_sphere_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -88,31 +88,28 @@ void Polygon_set_on_sphere_geo::init_prototype()
     new Container_proto(Arrangement_on_sphere_marked_geo::get_prototype());
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Polygon_set_on_sphere_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Polygon_set_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Polygon_set_on_sphere_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes. */
+//! \brief sets the ellpsoid attributes.
 void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
 {
   Arrangement_on_sphere_marked_geo::set_attributes(elem);
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
 
@@ -129,17 +126,17 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
 
       m_poly_indices.resize(size);
       Uint i = 0;
-      for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
+      for (auto it = tokens.begin(); it != tokens.end(); ++it) {
         m_poly_indices[i++] =
-          static_cast<Int>(boost::lexical_cast<int>(*it));
+          static_cast<Uint>(boost::lexical_cast<Uint>(*it));
       }
       continue;
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
     const std::string& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (is_operation_type_name(name)) {
@@ -152,20 +149,15 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
     }
   }
 
-
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
-       mcai != elem->multi_cont_attrs_end(); mcai++)
+  for (auto mcai = elem->multi_cont_attrs_begin();
+       mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string & name = elem->get_name(mcai);
-    Cont_list & cont_list = elem->get_value(mcai);
+    const std::string& name = elem->get_name(mcai);
+    Element::Cont_list& cont_list = elem->get_value(mcai);
     if (is_operation_type_name(name)) {
       set_operation_type(get_operation_type_by_name(name));
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Shared_container cont = *ci;
         Shared_polygon_set_on_sphere_geo aos_geo =
           boost::dynamic_pointer_cast<Polygon_set_on_sphere_geo>(cont);
@@ -180,7 +172,7 @@ void Polygon_set_on_sphere_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation. */
+//! \brief cleans the representation.
 void Polygon_set_on_sphere_geo::clean()
 {
   // If you, for some reason, want to overlay the arrangements, insert
@@ -191,7 +183,7 @@ void Polygon_set_on_sphere_geo::clean()
   // for nothing.
 
   SGAL_assertion(is_operation_type(m_operation_type));
-  SGAL_assertion(m_aos != NULL);
+  SGAL_assertion(m_aos != nullptr);
 
   m_dirty = false;
   this->polygon_set().clear();
@@ -199,8 +191,7 @@ void Polygon_set_on_sphere_geo::clean()
   if (m_poly_indices.empty() == false) {
     boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
       boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-
-    Int_container::const_iterator it = m_poly_indices.begin();
+    auto it = m_poly_indices.begin();
     while (it != m_poly_indices.end()) {
       // create the polygons according to the indices and add them to the
       // polygon set.
@@ -208,8 +199,8 @@ void Polygon_set_on_sphere_geo::clean()
 
       Curve_cont curves;
       Exact_point_3* first = &(*exact_coord_array)[*it];
-      Exact_point_3* curr = NULL;
-      Exact_point_3* prev = NULL;
+      Exact_point_3* curr = nullptr;
+      Exact_point_3* prev = nullptr;
       while ((it != m_poly_indices.end()) && (*it != -1)) {
         prev = curr;
 
@@ -220,7 +211,7 @@ void Polygon_set_on_sphere_geo::clean()
         }
         curr = &(*exact_coord_array)[*it];
 
-        if (prev != NULL) {
+        if (prev != nullptr) {
           if (*prev == *curr) {
             std::cerr << "Error! Degenerate segment of polygon "
               "polygon_set_on_sphere_geo" << std::endl;
@@ -233,7 +224,7 @@ void Polygon_set_on_sphere_geo::clean()
         ++it;
       }
       // add the geodesic segment between the first and the last points.
-      if (curr != NULL) {
+      if (curr != nullptr) {
         if (*first == *curr) {
           std::cerr << "Error! Degenerate segment of polygon "
             "polygon_set_on_sphere_geo" << std::endl;
@@ -306,7 +297,7 @@ void Polygon_set_on_sphere_geo::clean()
   }
 }
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Polygon_set_on_sphere_geo::clear()
 {
   Base::clear();
@@ -338,8 +329,8 @@ Polygon_set_on_sphere_geo::Curve_cont
 Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1,
                                             Exact_point_3* p2)
 {
-  SGAL_precondition(p1 != NULL);
-  SGAL_precondition(p2 != NULL);
+  SGAL_precondition(p1 != nullptr);
+  SGAL_precondition(p2 != nullptr);
   SGAL_precondition(*p1 != *p2);
 
   typedef Aos_geom_traits::Curve_2 Curve_2;
@@ -362,12 +353,11 @@ Polygon_set_on_sphere_geo::construct_curves(Exact_point_3* p1,
     (new_cv , std::back_inserter(objects));
 
   Curve_cont res;
-  std::list<CGAL::Object>::iterator it;
-  for (it = objects.begin(); it != objects.end(); ++it) {
+  for (auto it = objects.begin(); it != objects.end(); ++it) {
     const X_monotone_curve_2* x_mono_cv =
       CGAL::object_cast<X_monotone_curve_2>(&(*it));
-    SGAL_assertion_msg(x_mono_cv != NULL, "We should receive only x-mono " \
-                       "curves.");
+    SGAL_assertion_msg(x_mono_cv != nullptr,
+                       "We should receive only x-monotone curves.");
     res.push_back(*x_mono_cv);
   }
 

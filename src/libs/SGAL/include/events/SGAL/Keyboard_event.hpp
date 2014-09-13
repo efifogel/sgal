@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7204 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_KEYBOARD_EVENT_HPP
@@ -66,10 +63,10 @@ private:
   Uint m_key;
 
   /*! The x-coordinate of the cursor at the time of the event. */
-  Int m_x;
+  Int32 m_x;
 
   /*! The y-coordinate of the cursor at the time of the event. */
-  Int m_y;
+  Int32 m_y;
 
   /*! Indicates whether the key is pressed or released. */
   Boolean m_pressed;
@@ -118,16 +115,16 @@ public:
   Uint get_key() const;
 
   /*! Set the x-coordinate of the cursor at the time of the event. */
-  void set_x(Int x);
+  void set_x(Int32 x);
 
   /*! Obtain the x-coordinate of the cursor at the time of the event. */
-  Int get_x() const;
+  Int32 get_x() const;
 
   /*! Set the y-coordinate of the cursor at the time of the event. */
-  void set_y(Int y);
+  void set_y(Int32 y);
 
   /*! Obtain the y-coordinate of the cursoor at the time of the event. */
-  Int get_y() const;
+  Int32 get_y() const;
 
   /*! Set the flag that indicates whether the key is pressed or released. */
   void set_pressed(Boolean pressed);
@@ -140,45 +137,44 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief destructor */
+//! \brief destructor.
 inline Keyboard_event::~Keyboard_event(void) {}
 
-/*! \brief obtains set of agents registered to process this type of event. */
+//! \brief obtains set of agents registered to process this type of event.
 inline const std::set<Agent*>& Keyboard_event::get_set(void) const
 { return s_set; }
 
-/*! \brief sets the window where the event took place. */
+//! \brief sets the window where the event took place.
 inline void Keyboard_event::set_window_item(Window_item* item)
 { m_window_item = item; }
 
-/*! \brief obtains the window where the event took place. */
+//! \brief obtains the window where the event took place.
 inline Window_item* Keyboard_event::get_window_item() const
 { return m_window_item; }
 
-/*! \brief sets the key pressed or released. */
+//! \brief sets the key pressed or released.
 inline void Keyboard_event::set_key(Uint key) { m_key = key; }
 
-/*! \brief obtains the key pressed or released. */
+//! \brief obtains the key pressed or released.
 inline Uint Keyboard_event::get_key() const { return m_key; }
 
-/*! \brief sets the x-coordinate of the cursor at the time of the event. */
-inline void Keyboard_event::set_x(Int x) { m_x = x; }
+//! \brief sets the x-coordinate of the cursor at the time of the event.
+inline void Keyboard_event::set_x(Int32 x) { m_x = x; }
 
-/*! \brief obtains the x-coordinate of the cursor at the time of the event. */
-inline Int Keyboard_event::get_x() const { return m_x; }
+//! \brief obtains the x-coordinate of the cursor at the time of the event.
+inline Int32 Keyboard_event::get_x() const { return m_x; }
 
-/*! \brief sets the y-coordinate of the cursor at the time of the event. */
-inline void Keyboard_event::set_y(Int y) { m_y = y; }
+//! \brief sets the y-coordinate of the cursor at the time of the event.
+inline void Keyboard_event::set_y(Int32 y) { m_y = y; }
 
-/*! \brief obtains the y-coordinate of the cursoor at the time of the event. */
-inline Int Keyboard_event::get_y() const { return m_y; }
+//! \brief obtains the y-coordinate of the cursoor at the time of the event.
+inline Int32 Keyboard_event::get_y() const { return m_y; }
 
-/*! \brief sets the flag that indicates whether the key is pressed or released.
- */
+//! \brief sets the flag that indicates whether the key is pressed or released.
 inline void Keyboard_event::set_pressed(Boolean pressed)
 { m_pressed = pressed; }
 
-/*! \brief determines whether the key is pressed or released. */
+//! \brief determines whether the key is pressed or released.
 inline Boolean Keyboard_event::get_pressed() const { return m_pressed; }
 
 SGAL_END_NAMESPACE

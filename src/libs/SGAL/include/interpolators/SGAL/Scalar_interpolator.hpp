@@ -68,18 +68,20 @@ public:
   /*! Destructor */
   virtual ~Scalar_interpolator();
 
-  /* Construct the prototype */
-  static Scalar_interpolator* prototype()
-  { return new Scalar_interpolator(false, true); }
+  /* Construct the prototype.
+   */
+  static Scalar_interpolator* prototype();
 
   /*! Clone */
-  virtual Container* clone() { return new Scalar_interpolator (); }
+  virtual Container* clone();
 
-  /*! Initialize the node prototype */
+  /*! Initialize the node prototype. */
   virtual void init_prototype();
 
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -98,8 +100,8 @@ public:
 protected:
   std::vector<Float> m_values;
 
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container. */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -108,13 +110,25 @@ private:
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  Int m_last_location;
+  Uint m_last_location;
   Float m_value;
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief constructs the prototype
+inline Scalar_interpolator* Scalar_interpolator::prototype()
+{ return new Scalar_interpolator(false, true); }
+
+//! \brief clones.
+inline Container* Scalar_interpolator::clone()
+{ return new Scalar_interpolator (); }
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Scalar_interpolator::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

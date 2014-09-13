@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -70,7 +67,7 @@ public:
   /*! Obtain the width and height of the string. */
   virtual void get_string_size(const std::string& str,
                                Uint& width, Uint& height);
-  
+
   /*! Initialize the font. */
   virtual void init();
 
@@ -83,7 +80,7 @@ public:
 
   /*! Draw a single character */
   void draw_char(float x, float y, int ch) const;
-   
+
   const Char& get_char(int ch);
 
   /*! Obtain the maximum height of all symbols in the font.
@@ -146,7 +143,7 @@ protected:
 
   /*! The average width of all symbols in the font. */
   Uint m_ave_char_width;
-  
+
   //! The width of the font-symbol bitmap.
   Uint m_bitmap_width;
 
@@ -164,7 +161,7 @@ protected:
   Float m_height_reciprocal;
 
   /*! Space between symbols in the rendered string. */
-  Int m_spacing;
+  Uint m_spacing;
 
   /*! A list of symbol information. */
   std::vector<Char> m_chars;

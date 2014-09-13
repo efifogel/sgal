@@ -33,16 +33,16 @@
 
 SGAL_BEGIN_NAMESPACE
 
-static Texture_font* s_default_font = NULL;
+static Texture_font* s_default_font = nullptr;
 
-static const Int FIRST_CHAR = 32;
-static const Int LAST_CHAR = 128;
+static const Int32 FIRST_CHAR = 32;
+static const Int32 LAST_CHAR = 128;
 
-/*! Constructor */
+//! \brief constructor
 Texture_font::Texture_font(const std::string& name, Boolean antialias,
                            Boolean left_to_right, Boolean top_to_bottom) :
   Font(name, antialias, left_to_right, top_to_bottom),
-  m_appearance(NULL)
+  m_appearance(nullptr)
 {
   m_min_char = FIRST_CHAR;
   m_max_char = LAST_CHAR;
@@ -55,14 +55,14 @@ Texture_font::Texture_font(const std::string& name, Boolean antialias,
 
 #if 0
 #if (defined _MSC_VER)
-  m_hfont = NULL;
+  m_hfont = nullptr;
   HWND hwnd = GetDesktopWindow();
   m_hdc = CreateCompatibleDC(GetDC(hwnd));
 #endif
 #endif
 }
 
-/*! Destructor */
+//! \brief destructor.
 Texture_font::~Texture_font()
 {
 #if 0
@@ -73,14 +73,14 @@ Texture_font::~Texture_font()
 #endif
 }
 
-/*! \brief initializes the font. */
+//! \brief initializes the font.
 void Texture_font::init()
 {
   load_font(m_name, m_size);
   create_texture();
 }
 
-/*! \brief loads the texture with the font bitmap. */
+//! \brief loads the texture with the font bitmap.
 void Texture_font::load_font(const std::string& /* name */, Uint /* size */)
 {
 #if 0
@@ -140,14 +140,14 @@ Texture_font* Texture_font::get_default()
   return s_default_font;
 }
 
-/*! \breif obtains the character given by its ascii code. */
+//! \breif obtains the character given by its ascii code.
 const Texture_font::Char& Texture_font::get_char(int c)
 {
   SGAL_assertion(c >= 0 && c < (int) m_chars.size());
   return m_chars[c];
 }
 
-/*! \breif creates the texture. */
+//! \breif creates the texture.
 void Texture_font::create_texture()
 {
   calc_bitmap_size();
@@ -165,7 +165,7 @@ void Texture_font::create_texture()
 #endif
 }
 
-/*! \brief calculates the dimensions of all characters. */
+//! \brief calculates the dimensions of all characters.
 void Texture_font::calc_chars_dimensions()
 {
   Uint x = 0, y = 0;
@@ -186,7 +186,7 @@ void Texture_font::calc_chars_dimensions()
   }
 }
 
-/*! \brief */
+//! \brief
 void Texture_font::draw_chars()
 {
 #if 0
@@ -217,7 +217,7 @@ void Texture_font::draw_chars()
 #endif
 }
 
-/*! \brief obtains the bitmap dimension. */
+//! \brief obtains the bitmap dimension.
 void Texture_font::get_bitmap_size(Uint& x, Uint& y)
 {
   x = m_bitmap_width;
@@ -268,7 +268,7 @@ void  Texture_font::calc_bitmap_size()
   }
 
   // If font is too big recalc bitmap size (with a smaller font)
-  if(m_max_char_height > max_dim || m_max_char_width > max_dim) {
+  if (m_max_char_height > max_dim || m_max_char_width > max_dim) {
     load_font(m_name, m_size-10);
     calc_bitmap_size();
     return;
@@ -362,10 +362,10 @@ void* Texture_font::create_bitmap()
   return data;
 #endif
 #endif
-  return NULL;
+  return nullptr;
 }
 
-/*! \brief */
+//! \brief
 void Texture_font::release_bitmap()
 {
 #if 0
@@ -379,7 +379,7 @@ void Texture_font::release_bitmap()
 #endif
 }
 
-/*! \brief */
+//! \brief
 void Texture_font::create_image_texture(void* pixels)
 {
   if (!m_appearance) return;
@@ -429,7 +429,7 @@ void Texture_font::create_image_texture(void* pixels)
   m_appearance->set_tex_enable(true);
 }
 
-/*! \brief obtains the width and height of the string. */
+//! \brief obtains the width and height of the string.
 void Texture_font::get_string_size(const std::string& /* str */,
                                    Uint& /* width */, Uint& /* height */)
 {
@@ -445,27 +445,27 @@ void Texture_font::get_string_size(const std::string& /* str */,
 #endif
 };
 
-/*! \brief */
+//! \brief
 void Texture_font::set_scale(Float x, Float y)
 {
   m_scalex = x;
   m_scaley = y;
 }
 
-/*! \brief */
+//! \brief
 void Texture_font::get_scale(Float& x, Float& y)
 {
   x = m_scalex;
   y = m_scaley;
 }
 
-/*! \brief */
+//! \brief
 void Texture_font::draw_appearance(Draw_action* draw_action)
 {
   m_appearance->draw(draw_action);
 }
 
-/*! \brief */
+//! \brief
 void Texture_font::draw_char(float x, float y, int ch) const
 {
   x = ceilf(x);
@@ -492,7 +492,7 @@ void Texture_font::draw_char(float x, float y, int ch) const
   glEnd();
 }
 
-/*! \brief draws one string. */
+//! \brief draws one string.
 void Texture_font::draw_string(Context* /* context */,
                                const std::string& text, Float /* size */)
 {
@@ -505,11 +505,11 @@ void Texture_font::draw_string(Context* /* context */,
     GCP_RESULTS gcp;
     gcp.lStructSize = sizeof(GCP_RESULTS);
     gcp.lpOutString = strBuf;
-    gcp.lpDx = NULL;
-    gcp.lpCaretPos = NULL;
-    gcp.lpOrder = NULL;
-    gcp.lpClass = NULL;
-    gcp.lpGlyphs = NULL;
+    gcp.lpDx = nullptr;
+    gcp.lpCaretPos = nullptr;
+    gcp.lpOrder = nullptr;
+    gcp.lpClass = nullptr;
+    gcp.lpGlyphs = nullptr;
     gcp.nGlyphs = 256;
 
     GetCharacterPlacement((HDC)m_hdc, text.c_str(), len, 0, &gcp, GCP_REORDER);

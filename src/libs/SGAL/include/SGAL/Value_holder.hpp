@@ -117,7 +117,7 @@
  * Consider now what happens when the following code is executed:
  *
  * Value_holder<Float> f;
- * Value_holder<Int>   i;
+ * Value_holder<Int32> i;
  * Value_holder_base& theF = a;
  * Value_holder_base& theI = b;
  * theF.delegate(theI);
@@ -128,8 +128,8 @@
  * Value_holder_middle, then
  * Value_holder_middle::delegate_impl(Value_holder<Float>&) is called. Since
  * delegate_impl() is virtual, that means calling
- * Value_holder<Int>::delegate_impl(Value_holder<Float>&), fully resolving our
- * call via multiple polymorphism.
+ * Value_holder<Int32>::delegate_impl(Value_holder<Float>&), fully resolving
+ * our call via multiple polymorphism.
  * To conclude, note the use of virtual inheritance from Value_holder_middle:
  * this is necessary to allow further derivation from a derived class. Without
  * virtual inheritance, a class C, as follows, would have two subobjects of
@@ -181,7 +181,7 @@ public:
   virtual void delegate_impl(Value_holder<Boolean>&) = 0;
   virtual void delegate_impl(Value_holder<Float>&) = 0;
   virtual void delegate_impl(Value_holder<Uint>&) = 0;
-  virtual void delegate_impl(Value_holder<Int>&) = 0;
+  virtual void delegate_impl(Value_holder<Int32>&) = 0;
   virtual void delegate_impl(Value_holder<Scene_time>&) = 0;
   virtual void delegate_impl(Value_holder<Vector2f>&) = 0;
   virtual void delegate_impl(Value_holder<Vector3f>&) = 0;
@@ -195,7 +195,7 @@ public:
   virtual void delegate_impl(Value_holder<Boolean_array>&) = 0;
   virtual void delegate_impl(Value_holder<Float_array>&) = 0;
   virtual void delegate_impl(Value_holder<Uint_array>&) = 0;
-  virtual void delegate_impl(Value_holder<Int_array>&) = 0;
+  virtual void delegate_impl(Value_holder<Int32_array>&) = 0;
   virtual void delegate_impl(Value_holder<Scene_time_array>&) = 0;
   virtual void delegate_impl(Value_holder<Vector2f_array>&) = 0;
   virtual void delegate_impl(Value_holder<Vector3f_array>&) = 0;
@@ -229,48 +229,50 @@ public:
   void operator()(ValueType* value1, ValueType* value2) { *value2 = *value1; }
 };
 
-// Int <- Uint
+// Int32 <- Uint
 template <>
-class Delegate_dispatcher<Uint, Int> {
+class Delegate_dispatcher<Uint, Int32> {
 public:
-  void operator()(Uint* value1, Int* value2) { *value2 = *value1; }
+  void operator()(Uint* value1, Int32* value2) { *value2 = *value1; }
 };
 
-// Uint <- Int
+// Uint <- Int32
 template <>
-class Delegate_dispatcher<Int, Uint> {
+class Delegate_dispatcher<Int32, Uint> {
 public:
-  void operator()(Int* value1, Uint* value2) { *value2 = *value1; }
+  void operator()(Int32* value1, Uint* value2) { *value2 = *value1; }
 };
 
-// Int <- Float
+// Int32 <- Float
 template <>
-class Delegate_dispatcher<Float, Int> {
+class Delegate_dispatcher<Float, Int32> {
 public:
-  void operator()(Float* value1, Int* value2)
-  { *value2 = static_cast<Int>(*value1); }
+  void operator()(Float* value1, Int32* value2)
+  { *value2 = static_cast<Int32>(*value1); }
 };
 
-// Float <- Int
+// Float <- Int32
 template <>
-class Delegate_dispatcher<Int, Float> {
+class Delegate_dispatcher<Int32, Float> {
 public:
-  void operator()(Int* value1, Float* value2)
+  void operator()(Int32* value1, Float* value2)
   { *value2 = static_cast<Float>(*value1); }
 };
 
-// Int <- Boolean
+// Int32 <- Boolean
 template <>
-class Delegate_dispatcher<Boolean, Int> {
+class Delegate_dispatcher<Boolean, Int32> {
 public:
-  void operator()(Boolean* value1, Int* value2) { *value2 = (*value1) ? 0 : 1; }
+  void operator()(Boolean* value1, Int32* value2)
+  { *value2 = (*value1) ? 0 : 1; }
 };
 
-// Boolean <- Int
+// Boolean <- Int32
 template <>
-class Delegate_dispatcher<Int, Boolean> {
+class Delegate_dispatcher<Int32, Boolean> {
 public:
-  void operator()(Int* value1, Boolean* value2) { *value2 = (*value1 != 0); }
+  void operator()(Int32* value1, Boolean* value2)
+  { *value2 = (*value1 != 0); }
 };
 
 // Uint <- Float
@@ -429,10 +431,10 @@ public:
     dd(m_value, other.get_value());
   }
 
-  // Int
-  void delegate_impl(Value_holder<Int>& other)
+  // Int32
+  void delegate_impl(Value_holder<Int32>& other)
   {
-    Delegate_dispatcher<Value_type, Int> dd;
+    Delegate_dispatcher<Value_type, Int32> dd;
     dd(m_value, other.get_value());
   }
 
@@ -516,10 +518,10 @@ public:
     dd(m_value, other.get_value());
   }
 
-  // Int_array
-  void delegate_impl(Value_holder<Int_array>& other)
+  // Int32_array
+  void delegate_impl(Value_holder<Int32_array>& other)
   {
-    Delegate_dispatcher<Value_type, Int_array> dd;
+    Delegate_dispatcher<Value_type, Int32_array> dd;
     dd(m_value, other.get_value());
   }
 

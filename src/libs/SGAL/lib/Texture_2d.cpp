@@ -45,14 +45,14 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Texture_2d::s_tag = "Texture2d";
-Container_proto* Texture_2d::s_prototype(NULL);
+Container_proto* Texture_2d::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Texture_2d, "Texture_2d");
 
 //! Constructor
 Texture_2d::Texture_2d(Boolean proto) :
   Texture(proto),
-  m_image(NULL)
+  m_image(nullptr)
 #if 0
   m_text(0)
 #endif
@@ -81,7 +81,7 @@ void Texture_2d::clean()
 #endif
 }
 
-/* \brief determines whether texture image is empty. */
+//! \brief determines whether texture image is empty.
 Boolean Texture_2d::empty()
 {
   if (!m_image) return true;
@@ -112,7 +112,7 @@ void Texture_2d::init_prototype()
 void Texture_2d::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the node prototype.

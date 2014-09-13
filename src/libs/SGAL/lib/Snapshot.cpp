@@ -57,7 +57,7 @@ Container_proto* Snapshot::s_prototype(nullptr);
 const std::string Snapshot::s_def_dir_name = ".";
 const std::string Snapshot::s_def_file_name = "snaphsot";
 const Snapshot::File_format Snapshot::s_def_file_format = Snapshot::FF_ppm;
-const Int Snapshot::s_def_quality = 50;
+const Uint Snapshot::s_def_quality = 50;
 const Boolean Snapshot::s_def_flip(true);
 
 REGISTER_TO_FACTORY(Snapshot, "Snapshot");
@@ -285,7 +285,7 @@ void Snapshot::set_attributes(Element* elem)
       continue;
     }
     if (name == "quality") {
-      m_quality = boost::lexical_cast<Int>(value);
+      m_quality = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }

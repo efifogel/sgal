@@ -170,7 +170,7 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  void write(Formatter* formatter, Int value, Int default_value) const;
+  void write(Formatter* formatter, Int32 value, Int32 default_value) const;
 
   /*! Write the (single) Boolean field.
    * \param formatter The formatter.
@@ -265,8 +265,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  void write(Formatter* formatter, const Int_array& value,
-             const Int_array& default_value) const;
+  void write(Formatter* formatter, const Int32_array& value,
+             const Int32_array& default_value) const;
 
   /*! Write the multi-scene-time field.
    * \param formatter The formatter.

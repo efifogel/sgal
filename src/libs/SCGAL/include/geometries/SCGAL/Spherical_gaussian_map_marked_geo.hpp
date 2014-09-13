@@ -339,7 +339,7 @@ private:
 
   static const Boolean s_def_aos_marked_edge_enabled;
   static const Edge_style s_def_aos_marked_edge_style;
-  static const Int s_def_aos_marked_edge_count;
+  static const Uint s_def_aos_marked_edge_count;
   static const Boolean s_def_aos_marked_edge_directed;
   static const Float s_def_aos_marked_edge_radius;
   static const Float s_def_aos_marked_edge_line_width;
@@ -392,7 +392,7 @@ private:
   Edge_style m_aos_marked_edge_style;
 
   /*! The marked edge rendering type */
-  Int m_aos_marked_edge_count;
+  Uint m_aos_marked_edge_count;
 
   /*! Determines whether marked edges are rendered directed or not */
   Boolean m_aos_marked_edge_directed;
@@ -633,11 +633,11 @@ public:
   { m_aos_marked_edge_style = style; }
 
   /*! Obtain the marked edge type. */
-  Int get_aos_marked_edge_count() const
+  Uint get_aos_marked_edge_count() const
   { return m_aos_marked_edge_count; }
 
   /*! Set the marked edge type. */
-  void set_aos_marked_edge_count(Int count)
+  void set_aos_marked_edge_count(Uint count)
   { m_aos_marked_edge_count = count; }
 
   /*! Determine whether marked edges are rendered directed. */
@@ -730,53 +730,53 @@ public:
   { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 
   /*! Increase the vertex index. */
-  void increase_vertex_index(const Field_info* field_info = NULL);
+  void increase_vertex_index(const Field_info* field_info = nullptr);
 
   /*! Increase the edge index. */
-  void increase_edge_index(const Field_info* field_info = NULL);
+  void increase_edge_index(const Field_info* field_info = nullptr);
 
   /*! Increase the face index. */
-  void increase_facet_index(const Field_info* field_info = NULL);
+  void increase_facet_index(const Field_info* field_info = nullptr);
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Spherical_gaussian_map_marked_geo*
 Spherical_gaussian_map_marked_geo::prototype()
 { return new Spherical_gaussian_map_marked_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Spherical_gaussian_map_marked_geo::clone()
 { return new Spherical_gaussian_map_marked_geo(); }
 
-/*! \brief obtains the color of the marked vertex. */
+//! \brief obtains the color of the marked vertex.
 inline
 const Vector3f Spherical_gaussian_map_marked_geo::
 get_marked_vertex_color() const
 { return m_marked_vertex_color; }
 
-/*! \brief sets the color of the marked vertex. */
+//! \brief sets the color of the marked vertex.
 inline void
 Spherical_gaussian_map_marked_geo::
 set_marked_vertex_color(const Vector3f& color)
 { m_marked_vertex_color = color; }
 
-/*! \brief sets the color of the marked edge. */
+//! \brief sets the color of the marked edge.
 inline void
 Spherical_gaussian_map_marked_geo::
 set_marked_edge_color(const Vector3f& color)
 { m_marked_edge_color = color; }
 
-/*! \brief sets the color of the marked facet. */
+//! \brief sets the color of the marked facet.
 inline void
 Spherical_gaussian_map_marked_geo::
 set_marked_facet_color(const Vector3f& color)
 { m_marked_facet_color = color; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Spherical_gaussian_map_marked_geo::get_tag() const
 { return s_tag; }
 

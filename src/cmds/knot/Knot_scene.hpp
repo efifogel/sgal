@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Knot_scene.hpp 7205 2009-01-24 22:20:34Z efif $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef KNOT_SCENE_HPP
@@ -82,7 +79,7 @@ public:
 #endif
 
   typedef SGAL::Uint                            Uint;
-  typedef SGAL::Int                             Int;
+  typedef SGAL::Int32                           Int32;
   typedef SGAL::Boolean                         Boolean;
   typedef SGAL::Scene_time                      Scene_time;
 
@@ -384,7 +381,7 @@ private:
                        Uint& min_x, Uint& min_y, Uint& min_z);
 
   /*! Compare lexicographically two states. */
-  static Int compare(const State state1, const State state2);
+  static Int32 compare(const State state1, const State state2);
 
   /*! Initialize the nodes required for animations. */
   void init_animation();

@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*!
@@ -191,7 +188,7 @@ protected:
   File_format m_file_format;
 
   /*! The quality of the (loss) image (applicable to jpeg). */
-  Int m_quality;
+  Uint m_quality;
 
   /*! Indicates whether to generate the file name  as part of a sequence. */
   Boolean m_sequence;
@@ -223,7 +220,7 @@ private:
   const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
   const static File_format s_def_file_format;
-  const static Int s_def_quality;
+  const static Uint s_def_quality;
   const static Boolean s_def_flip;
 
   /*! Allocate space for the image.

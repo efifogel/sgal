@@ -32,7 +32,7 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Coordinate_interpolator::s_tag = "CoordinateInterpolator";
-Container_proto* Coordinate_interpolator::s_prototype(NULL);
+Container_proto* Coordinate_interpolator::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Coordinate_interpolator, "Coordinate_interpolator");
 
@@ -70,7 +70,7 @@ void Coordinate_interpolator::init_prototype()
 void Coordinate_interpolator::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
@@ -91,7 +91,7 @@ void Coordinate_interpolator::execute(const Field_info* /* field_info */)
 
   // if there is no connection to the value field there is no need to execute
   // the interpolation
-  if (value == NULL) return;
+  if (value == nullptr) return;
 
   // if there are no array set the value to zero and return
   if ((m_keys.size() == 0) || (m_values.size() == 0)) {
@@ -164,11 +164,10 @@ void Coordinate_interpolator::execute(const Field_info* /* field_info */)
 //! \brief obtains a copy of the value in a specific location.
 Vector3f_array Coordinate_interpolator::get_value(Uint location)
 {
-  Int size_of_array = m_values.size() / m_keys.size();
-  Vector3f_array ret = Vector3f_array(size_of_array);
-  Int start = location * size_of_array;
-  for (int i = 0; i < size_of_array; ++i)
-    ret[i] = m_values[start + i];
+  auto size_of_array = m_values.size() / m_keys.size();
+  auto ret = Vector3f_array(size_of_array);
+  auto start = location * size_of_array;
+  for (size_t i = 0; i < size_of_array; ++i) ret[i] = m_values[start + i];
   return ret;
 }
 
@@ -177,14 +176,10 @@ Vector3f_array Coordinate_interpolator::get_value(Uint location)
  * \param elem contains lists of attribute names and values
  * \param sg a pointer to the scene graph
  */
-void Coordinate_interpolator::set_attributes(Element * elem)
+void Coordinate_interpolator::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-
   Interpolator::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "keyValue") {

@@ -71,9 +71,6 @@ void Draw_action::inc_pass_no()
   m_current_lod = -1;
 }
 
-//! \brief obtains the number of the current pass being rendered.
-Int Draw_action::get_pass_no() { return m_pass_no; }
-
 //! brief resets the pass number to 0.
 void Draw_action::reset_pass_no()
 {

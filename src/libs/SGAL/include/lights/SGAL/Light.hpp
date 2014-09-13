@@ -60,7 +60,7 @@ public:
   virtual ~Light();
 
   /*! Clone */
-  virtual Container* clone() { SGAL_error(); return 0; }
+  virtual Container* clone();
 
   /*! Initialize the node prototype */
   virtual void init_prototype();
@@ -83,22 +83,26 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  // ---  Get/Set Methods  ---
   void set_on(Boolean is_on);
+
   Boolean get_on();
 
   void set_intensity(Float intensity);
+
   Float get_intensity();
 
   void set_ambient_intensity(Float ambient_intensity);
+
   Float get_ambient_intensity();
 
   void set_color(const Vector3f& color);
+
   void get_color(Vector3f& color);
 
   // void pop(const Matrix4f& mat);
 
   virtual void cull(Cull_context& cull_context);
+
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
   void ref() { m_ref++; }
@@ -111,7 +115,7 @@ public:
 
 protected:
   /*! a uniqu id for a light (0-7) */
-  Int m_id;
+  Int32 m_id;
 
   /*! indicates whether the light is on or off */
   Boolean m_is_on;
@@ -144,14 +148,14 @@ private:
   static Container_proto* s_prototype;
 
   /*! Reference count */
-  Int m_ref;
+  Uint m_ref;
 
   // void init(void);
   // int m_dirty_id, m_dirty_count;
 };
 
-/*! \brief clones. */
-inline Container* Container::clone() { SGAL_error(); return 0; }
+//! \brief clones.
+inline Container* Light::clone() { SGAL_error(); return 0; }
 
 SGAL_END_NAMESPACE
 

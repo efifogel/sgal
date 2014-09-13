@@ -60,13 +60,15 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor
+   */
   Key_sensor(Boolean proto = false);
 
   /*! Destructor */
   virtual ~Key_sensor() {};
 
-  /*! Construct the prototype */
+  /*! Construct the prototype.
+   */
   static Key_sensor* prototype();
 
   /*! Clone */
@@ -76,48 +78,50 @@ public:
   void set_active(Boolean active);
 
   /*! Activate the key sensor. */
-  void activate(const Field_info* field_info = NULL);
+  void activate(const Field_info* field_info = nullptr);
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
 
+  /*! Delete the node prototype. */
   virtual void delete_prototype();
 
+  /*! Obtain the node prototype. */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
   //@{
-  Int* key_handle(const Field_info*) { return &m_key; }
-  Int* action_key_handle(const Field_info*) { return &m_action_key; }
+  Uint* key_handle(const Field_info*) { return &m_key; }
+  Uint* action_key_handle(const Field_info*) { return &m_action_key; }
   Boolean* shift_key_handle(const Field_info*) { return &m_shift_key; }
   Boolean* control_key_handle(const Field_info*) { return &m_control_key; }
   Boolean* alt_key_handle(const Field_info*) { return &m_alt_key; }
   Boolean* active_handle(const Field_info*) { return &m_active; }
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Add the key sensor to a given scene graph
-   * \param scene_graph the given scene
+  /*! Add the key sensor to a given scene graph.
+   * \param scene_graph the given scene.
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
 
   /*! Draw the node (does nothing) */
   virtual Action::Trav_directive draw(Draw_action* draw_action);
 
-  /*! Register the mouse and mostion events */
+  /*! Register the mouse and mostion events. */
   void register_events();
 
-  /*! Register the mouse and mostion events */
+  /*! Register the mouse and mostion events. */
   void unregister_events();
 
-  /*! print out the name of this agent (for debugging purposes) */
+  /*! print out the name of this agent (for debugging purposes). */
   virtual void identify();
 
-  /*! Handle mouse events */
+  /*! Handle a mouse events. */
   virtual void handle(Keyboard_event* event);
 
 protected:
@@ -133,8 +137,9 @@ protected:
   /*! Indicates whether any key is currently pressed */
   Boolean m_pressed;
 
-  Int m_key;
-  Int m_action_key;
+  Uint m_key;
+
+  Uint m_action_key;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -147,17 +152,17 @@ private:
   static Container_proto* s_prototype;
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Key_sensor* Key_sensor::prototype() { return new Key_sensor(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Key_sensor::clone() { return new Key_sensor(); }
 
-/*! \brief drawss the node (does nothing). */
+//! \brief draws the node (does nothing).
 inline Action::Trav_directive Key_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; };
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Key_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

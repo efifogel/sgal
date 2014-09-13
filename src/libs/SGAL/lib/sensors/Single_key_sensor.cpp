@@ -38,15 +38,15 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Single_key_sensor::s_tag = "SingleKeySensor";
-Container_proto* Single_key_sensor::s_prototype(NULL);
+Container_proto* Single_key_sensor::s_prototype(nullptr);
 
-/*! Default Values. */
+//! default values.
 Uint Single_key_sensor::s_def_num_states = 2;
 Boolean Single_key_sensor::s_def_trigger_on_release(true);
 
 REGISTER_TO_FACTORY(Single_key_sensor, "Single_key_sensor");
 
-/*! A parameter-less constructor */
+//! \brief constructor from prototype.
 Single_key_sensor::Single_key_sensor(Boolean proto) :
   Node(proto),
   m_press(false),
@@ -58,11 +58,11 @@ Single_key_sensor::Single_key_sensor(Boolean proto) :
   m_trigger_on_release(s_def_trigger_on_release)
 { if (!proto) register_events(); }
 
-/*! \brief the destructor. */
+//! \brief the destructor.
 Single_key_sensor::~Single_key_sensor()
 { unregister_events(); }
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Single_key_sensor::init_prototype()
 {
   if (s_prototype) return;
@@ -91,11 +91,11 @@ void Single_key_sensor::init_prototype()
                                           state_func));
 
   // intState
-  Int_handle_function int_state_func =
-    static_cast<Int_handle_function>(&Single_key_sensor::int_state_handle);
-  s_prototype->add_field_info(new SF_int(INT_STATE, "intState",
-                                         RULE_EXPOSED_FIELD,
-                                         int_state_func));
+  Int32_handle_function int_state_func =
+    static_cast<Int32_handle_function>(&Single_key_sensor::int_state_handle);
+  s_prototype->add_field_info(new SF_int32(INT_STATE, "intState",
+                                           RULE_EXPOSED_FIELD,
+                                           int_state_func));
 
   // numberOfStates
   Uint_handle_function num_states_func =
@@ -106,33 +106,33 @@ void Single_key_sensor::init_prototype()
                                           num_states_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Single_key_sensor::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Single_key_sensor::get_prototype()
 {
   if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
-/*! \brief registers the keyboard event for this agent. */
+//! \brief registers the keyboard event for this agent.
 void Single_key_sensor::register_events()
 { Keyboard_event::doregister(this); }
 
-/*! \brief unregisters the keyboard event for this agent. */
+//! \brief unregisters the keyboard event for this agent.
 void Single_key_sensor::unregister_events()
 { Keyboard_event::unregister(this); }
 
-/*! \brief prints out the name of this agent (for debugging purposes). */
+//! \brief prints out the name of this agent (for debugging purposes).
 void Single_key_sensor::identify()
 { std::cout << "Agent: Single_key_sensor" << std::endl; }
 
-/*! Handles keyboard events */
+//! \brief handles keyboard events.
 void Single_key_sensor::handle(Keyboard_event* event)
 {
   if (event->get_key() != m_key) return;
@@ -157,14 +157,11 @@ void Single_key_sensor::handle(Keyboard_event* event)
   if (field) field->cascade();
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Single_key_sensor::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-
   Node::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "key") {
@@ -188,7 +185,7 @@ void Single_key_sensor::set_attributes(Element* elem)
       continue;
     }
     if (name == "intState") {
-      m_int_state = boost::lexical_cast<Int>(value.c_str());
+      m_int_state = boost::lexical_cast<Int32>(value.c_str());
       elem->mark_delete(ai);
       continue;
     }

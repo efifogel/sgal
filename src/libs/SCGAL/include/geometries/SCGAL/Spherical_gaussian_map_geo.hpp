@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Spherical_gaussian_map_geo.hpp 9188 2010-05-25 14:40:57Z efif $
-// $Revision: 9188 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_SPHERICAL_GAUSSIAN_MAP_GEO_HPP
@@ -197,7 +194,7 @@ public:
   virtual void clear();
 
   /*! Determine whether the representation is empty. */
-  virtual Boolean is_empty() const { return m_sgm->is_empty(); }
+  virtual Boolean is_empty() const;
 
   /*! Draw the arrangement on sphere vertices.
    * \param action
@@ -225,30 +222,43 @@ public:
   void set_sgm(Sgm* sgm);
 
   /*! Set the flag that indicates whether to compute the minkowski sum. */
-  void set_minkowski_sum(Boolean flag) { m_minkowski_sum = flag; }
+  void set_minkowski_sum(Boolean flag);
 
   /*! Compute the equations of, or the normals to, the planes of the aos
    * facets and store them at the vertices of the planar map.
    */
-  void update_facets()
-  { Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
+  void update_facets();
 };
 
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Spherical_gaussian_map_geo* Spherical_gaussian_map_geo::prototype()
 { return new Spherical_gaussian_map_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Spherical_gaussian_map_geo::clone()
 { return new Spherical_gaussian_map_geo(); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Spherical_gaussian_map_geo::get_tag() const
 { return s_tag; }
+
+//! \brief determines whether the representation is empty.
+inline Boolean Spherical_gaussian_map_geo::is_empty() const
+{ return m_sgm->is_empty(); }
+
+//! \brief sets the flag that indicates whether to compute the minkowski sum.
+inline void Spherical_gaussian_map_geo::set_minkowski_sum(Boolean flag)
+{ m_minkowski_sum = flag; }
+
+/*! \brief computes the equations of, or the normals to, the planes of the aos
+ * facets and store them at the vertices of the planar map.
+ */
+inline void Spherical_gaussian_map_geo::update_facets()
+{ Spherical_gaussian_map_base_geo::update_facets(m_sgm); }
 
 SGAL_END_NAMESPACE
 

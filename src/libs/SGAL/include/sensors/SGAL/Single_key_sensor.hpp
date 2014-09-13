@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 11857 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_SINGLE_KEY_SENSOR_HPP
@@ -90,7 +87,7 @@ public:
   Boolean* press_handle(const Field_info*) { return &m_press; }
   Scene_time* time_handle(const Field_info*) { return &m_time; }
   Boolean* state_handle(const Field_info*) { return &m_state; }
-  Int* int_state_handle(const Field_info*) { return &m_int_state; }
+  Int32* int_state_handle(const Field_info*) { return &m_int_state; }
   Uint* num_states_handle(const Field_info*) { return &m_num_states; }
   //@}
 
@@ -148,7 +145,7 @@ private:
   Boolean m_state;
 
   /*! An integer state increased each press. */
-  Int m_int_state;
+  Int32 m_int_state;
 
   /*! Number of integer states. */
   Uint m_num_states;
@@ -165,15 +162,15 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Single_key_sensor* Single_key_sensor::prototype()
 { return new Single_key_sensor(true); }
 
-/*! \brief constructs a new instance. */
+//! \brief constructs a new instance.
 inline Container* Single_key_sensor::clone()
 { return  new Single_key_sensor(); }
 
-/*! \brief draws the node (does nothing). */
+//! \brief draws the node (does nothing).
 inline
 Action::Trav_directive Single_key_sensor::draw(Draw_action* /* draw_action */)
 { return Action::TRAV_CONT; }
@@ -184,11 +181,11 @@ Action::Trav_directive Single_key_sensor::draw(Draw_action* /* draw_action */)
 inline void Single_key_sensor::set_trigger_on_release(Boolean flag)
 { m_trigger_on_release = flag; }
 
-/*! \brief determines whether the sensor should be triggered on release. */
+//! \brief determines whether the sensor should be triggered on release.
 inline Boolean Single_key_sensor::is_trigger_on_release() const
 { return m_trigger_on_release;}
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Single_key_sensor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

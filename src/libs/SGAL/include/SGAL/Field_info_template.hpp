@@ -47,7 +47,7 @@ template <> struct Is_scalar<Image> : Selector<false> {};
 template <> struct Is_scalar<Shared_container> : Selector<false> {};
 template <> struct Is_scalar<Boolean_array> : Selector<false> {};
 template <> struct Is_scalar<Float_array> : Selector<false> {};
-template <> struct Is_scalar<Int_array> : Selector<false> {};
+template <> struct Is_scalar<Int32_array> : Selector<false> {};
 template <> struct Is_scalar<String_array> : Selector<false> {};
 template <> struct Is_scalar<Vector2f_array> : Selector<false> {};
 template <> struct Is_scalar<Vector3f_array> : Selector<false> {};

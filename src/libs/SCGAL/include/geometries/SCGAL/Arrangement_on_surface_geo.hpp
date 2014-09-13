@@ -253,7 +253,7 @@ public:
   virtual void draw_aos_isolated_vertices(Draw_action* /* action */) {}
 
   /*! Raise the flag that indicates that the renderer changed. */
-  void renderer_changed(const Field_info* field_info = NULL);
+  void renderer_changed(const Field_info* field_info = nullptr);
 
   /*! Obtain the flag that indicates whether to draw the embedding surface. */
   Boolean get_draw_aos_surface() const { return m_draw_aos_surface; }
@@ -401,7 +401,7 @@ public:
   Float get_aos_delta_angle() const { return m_aos_delta_angle; }
 
   /*! Set the stencil reference value. */
-  void set_stencil_ref(Int ref) { m_renderer.set_stencil_ref(ref); }
+  void set_stencil_ref(Int32 ref) { m_renderer.set_stencil_ref(ref); }
 
  protected:
   /*! Insertion strategy names. */

@@ -501,7 +501,7 @@ public:
   virtual void field_changed(const Field_info* field_info);
 
   /*! Raise the flag that indicates that the sphere bound changed. */
-  void draw_changed(const Field_info* field_info = NULL);
+  void draw_changed(const Field_info* field_info = nullptr);
 
   /*! Draw the arrangement on sphere vertices.
    * \param action
@@ -577,10 +577,10 @@ public:
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
 
   /*! Obtain the edge shape type. */
-  Int get_aos_edge_count() const { return m_aos_edge_count; }
+  Uint get_aos_edge_count() const { return m_aos_edge_count; }
 
   /*! Set the edge shape count. */
-  void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
+  void set_aos_edge_count(Uint count) { m_aos_edge_count = count; }
 
   /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
@@ -626,17 +626,17 @@ public:
   Boolean get_draw_aos_haloed() const { return m_draw_aos_haloed; }
 };
 
-/*! brief sets the curve color. */
+//! brief sets the curve color.
 inline void Spherical_gaussian_map_base_geo::
 set_aos_edge_color(const Vector3f& color, Uint id)
 { m_aos_edge_colors[id] = color; }
 
-/*! \brief obtains the curve color. */
+//! \brief obtains the curve color.
 inline const Vector3f& Spherical_gaussian_map_base_geo::
 get_aos_edge_color(Uint id)
 { return m_aos_edge_colors[id]; }
 
-/*! \brief sets the aos sphere color. */
+//! \brief sets the aos sphere color.
 inline void Spherical_gaussian_map_base_geo::
 set_aos_surface_color(const Vector3f& color)
 {
@@ -644,26 +644,26 @@ set_aos_surface_color(const Vector3f& color)
   if (m_colored_surface_renderer) m_colored_surface_renderer->set_color(color);
 }
 
-/*! \brief sets the aos vertex color. */
+//! \brief sets the aos vertex color.
 inline void Spherical_gaussian_map_base_geo::
 set_aos_vertex_color(const Vector3f& color)
 { m_aos_vertex_color = color; }
 
-/*! \brief sets the flag that indicates whether to draw the surface sphere. */
+//! \brief sets the flag that indicates whether to draw the surface sphere.
 inline void Spherical_gaussian_map_base_geo::
 set_draw_aos_surface(Boolean draw_bg)
 { m_draw_aos_surface = draw_bg; }
 
-/*! \brief sets the width of the lines. */
+//! \brief sets the width of the lines.
 inline void
 Spherical_gaussian_map_base_geo::set_aos_edge_line_width(Float width)
 { m_aos_edge_line_width = width; }
 
-/*! \brief obtains the width of the lines. */
+//! \brief obtains the width of the lines.
 inline Float Spherical_gaussian_map_base_geo::get_aos_edge_line_width() const
 { return m_aos_edge_line_width; }
 
-/*! \brief obtains the aos surface color. */
+//! \brief obtains the aos surface color.
 inline const Vector3f&
 Spherical_gaussian_map_base_geo::get_aos_surface_color(void) const
 { return m_aos_surface_color; }

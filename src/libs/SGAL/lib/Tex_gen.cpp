@@ -35,7 +35,7 @@ SGAL_BEGIN_NAMESPACE
 
 std::string Tex_gen::s_tag = "TexGen";
 
-/*! Parameter-less constructor */
+//! \brief constructor from prototype.
 Tex_gen::Tex_gen(Boolean proto) :
   Container(proto),
   m_mode_s(OFF),
@@ -44,10 +44,10 @@ Tex_gen::Tex_gen(Boolean proto) :
   m_mode_q(OFF)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Tex_gen::~Tex_gen() {}
 
-/*! \brief applies the texture generation attribute. */
+//! \brief applies the texture generation attribute.
 void Tex_gen::draw(Context* /* context */)
 {
   GLint params[] = {
@@ -65,31 +65,31 @@ void Tex_gen::draw(Context* /* context */)
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, params[m_mode_r]);
 };
 
-/*! \brief sets the attributes of the texture generation attribute. */
+//! \brief sets the attributes of the texture generation attribute.
 void Tex_gen::set_attributes(Element* /* elem */) { SGAL_assertion(0); }
 
-/*! \brief sets the s-texture coordinate generation function. */
+//! \brief sets the s-texture coordinate generation function.
 void Tex_gen::set_mode_s(Mode mode) { m_mode_s = mode; }
 
-/*! \brief sets the t-texture coordinate generation function. */
+//! \brief sets the t-texture coordinate generation function.
 void Tex_gen::set_mode_t(Mode mode) { m_mode_t = mode; }
 
-/*! \brief sets the r-texture coordinate generation function. */
+//! \brief sets the r-texture coordinate generation function.
 void Tex_gen::set_mode_r(Mode mode) { m_mode_r = mode; }
 
-/*! \brief sets the q-texture coordinate generation function. */
+//! \brief sets the q-texture coordinate generation function.
 void Tex_gen::set_mode_q(Mode mode) { m_mode_q = mode; }
 
-/*! \brief sets the s-texture coordinate generation reference-plane. */
+//! \brief sets the s-texture coordinate generation reference-plane.
 void Tex_gen::set_plane_s(const Plane& plane) { m_plane_s.set(plane); }
 
-/*! \brief sets the t-texture coordinate generation reference-plane. */
+//! \brief sets the t-texture coordinate generation reference-plane.
 void Tex_gen::set_plane_t(const Plane& plane) { m_plane_t.set(plane); }
 
-/*! \brief sets the r-texture coordinate generation reference-plane. */
+//! \brief sets the r-texture coordinate generation reference-plane.
 void Tex_gen::set_plane_r(const Plane& plane) { m_plane_r.set(plane); }
 
-/*! \brief sets the q-texture coordinate generation reference-plane. */
+//! \brief sets the q-texture coordinate generation reference-plane.
 void Tex_gen::set_plane_q(const Plane& plane) { m_plane_q.set(plane); }
 
 SGAL_END_NAMESPACE

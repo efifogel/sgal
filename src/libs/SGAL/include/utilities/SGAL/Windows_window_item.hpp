@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6004 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_Windows_WINDOW_ITEM_HPP
@@ -42,26 +39,27 @@ private:
   bool m_bOwnWnd;
 
   HWND m_hWnd;
-  
+
   HDC m_hDC;
-  
+
   HGLRC m_hRC;
 
   //! The pixel format
-  Int m_pixel_format;
-  
-  Int m_arb_multisample_format;
+  Int32 m_pixel_format;
+
+  Int32 m_arb_multisample_format;
 
   /*! Is it the first window? */
   static Boolean s_first;
-  
+
   /*! Create the window
    * \param hInstance the module instance
    * \param window_class_name the window-class name
    * \param hWnd if we don't want to create a new window, the handle of an
    *        existing window.
    */
-  void create(HINSTANCE& hInstance, char* window_class_name, HWND hWnd = NULL);
+  void create(HINSTANCE& hInstance, char* window_class_name,
+              HWND hWnd = nullptr);
 
   /*! Create the window
    * \param hInstance the module instance
@@ -70,7 +68,7 @@ private:
    *        existing window.
    */
   void create_base(HINSTANCE& hInstance, char* window_class_name,
-                   HWND hWnd = NULL);
+                   HWND hWnd = nullptr);
 
   /*! Destroy the window */
   void destroy();
@@ -98,7 +96,7 @@ public:
    * current window, which has the GL context
    */
   virtual void swap_buffers();
-  
+
   /*! Make the context of the window item the current rendering context of
    * the calling thread
    */

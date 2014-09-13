@@ -605,11 +605,10 @@ void Mesh_set::write(Formatter* formatter)
         const std::vector<Uint>& indices = get_coord_indices();
         Uint size = indices.size();
         std::vector<int> value(size), default_value;
-        std::vector<Uint>::const_iterator it;
-        std::vector<Int>::iterator rit = value.begin();
-        for (it = indices.begin(); it != indices.end(); ++it)
+        std::vector<Int32>::iterator rit = value.begin();
+        for (auto it = indices.begin(); it != indices.end(); ++it)
           *rit++ = *it;
-        formatter->multi_int(field_info->get_name(), value, default_value);
+        formatter->multi_int32(field_info->get_name(), value, default_value);
       }
       else field_info->write(this, formatter);
     }

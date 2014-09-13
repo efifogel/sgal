@@ -53,11 +53,11 @@ public:
   class Render_node {
   public:
     /*! Constructor. */
-    Render_node(Shape* shape, Shared_matrix4f wtm, Int lod, Float priority);
+    Render_node(Shape* shape, Shared_matrix4f wtm, Uint lod, Float priority);
 
     Shape* m_shape;
     Shared_matrix4f m_wtm;      // Object to World space transformation.
-    Int m_lod;                  // Level of detail for node.
+    Uint m_lod;                  // Level of detail for node.
     float m_priority;
   };
 
@@ -121,9 +121,9 @@ public:
    */
   const Matrix4f& get_current_wtm();
 
-  void set_current_lod(Int lod);
+  void set_current_lod(Uint lod);
 
-  Int get_current_lod() const;
+  Uint get_current_lod() const;
 
   /*! Set the flag that indicates whether the node hierarchy has been
    * transformed.
@@ -171,7 +171,7 @@ private:
   // Current world to view transformation matrix (Camera matrix).
   // Matrix4f m_viewTM;
 
-  Int m_current_lod;
+  Uint m_current_lod;
 
   /*! Indicates whether sorting is needed. */
   Boolean m_sort;
@@ -192,9 +192,9 @@ inline Camera* Cull_context::get_camera() const { return m_camera; }
 inline const Matrix4f& Cull_context::get_current_wtm()
 { return *(m_matrix_stack.top()); }
 
-inline void Cull_context::set_current_lod(Int lod) { m_current_lod = lod; }
+inline void Cull_context::set_current_lod(Uint lod) { m_current_lod = lod; }
 
-inline Int Cull_context::get_current_lod() const { return m_current_lod; }
+inline Uint Cull_context::get_current_lod() const { return m_current_lod; }
 
 /*! \brief sets the flag that indicates whether the node hierarchy has been
  * transformed.

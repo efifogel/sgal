@@ -69,10 +69,10 @@ public:
 
   /// \name field handlers
   //@{
-  Int* min_value_handle(const Field_info*) { return &m_min_value; }
-  Int* max_value_handle(const Field_info*) { return &m_max_value; }
+  Int32* min_value_handle(const Field_info*) { return &m_min_value; }
+  Int32* max_value_handle(const Field_info*) { return &m_max_value; }
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
-  Int* value_handle(const Field_info*) { return &m_value; }
+  Int32* value_handle(const Field_info*) { return &m_value; }
   //@}
 
   /*! Set the attributes of the object extracted from the input file.
@@ -86,19 +86,19 @@ public:
   virtual void execute(const Field_info* field_info);
 
   /*! Obtain the minimum value. */
-  Int get_min_value() const;
+  Int32 get_min_value() const;
 
   /*! Set the minimum value. */
-  void set_min_value(Int min_value);
+  void set_min_value(Int32 min_value);
 
   /*! Obtain the maximum value. */
-  Int get_max_value() const;
+  Int32 get_max_value() const;
 
   /*! Set the maximum value. */
-  void set_max_value(Int max_value);
+  void set_max_value(Int32 max_value);
 
   /*! Obtain the range. */
-  std::pair<Int, Int> get_range() const;
+  std::pair<Int32, Int32> get_range() const;
 
   /*! Obtain the size. */
   Uint get_size() const;
@@ -108,16 +108,16 @@ protected:
   virtual const std::string& get_tag() const;
 
   /*! The minimum value */
-  Int m_min_value;
+  Int32 m_min_value;
 
   /*! The maximum value */
-  Int m_max_value;
+  Int32 m_max_value;
 
   /*! Trigger the engine to excute. */
   Boolean m_trigger;
 
   /*! The counter value */
-  Int m_value;
+  Int32 m_value;
 
 private:
   /*! The tag that identifies this container type. */
@@ -127,39 +127,39 @@ private:
   static Container_proto* s_prototype;
 
   // Default values:
-  static const Int s_def_min_value;
-  static const Int s_def_max_value;
+  static const Int32 s_def_min_value;
+  static const Int32 s_def_max_value;
 };
 
-/*! \brief constructs the prototype */
+//! \brief constructs the prototype.
 inline Incrementor* Incrementor::prototype() { return new Incrementor(true); }
 
-/*! \brief clones */
+//! \brief clones.
 inline Container* Incrementor::clone() { return new Incrementor(); }
 
-/*! \brief Obtain the minimum value. */
-inline Int Incrementor::get_min_value() const { return m_min_value; }
+//! \brief obtains the minimum value.
+inline Int32 Incrementor::get_min_value() const { return m_min_value; }
 
-/*! \brief Set the minimum value. */
-inline void Incrementor::set_min_value(Int min_value)
+//! \brief sets the minimum value.
+inline void Incrementor::set_min_value(Int32 min_value)
 { m_min_value = min_value; }
 
-/*! \brief Obtain the maximum value. */
-inline Int Incrementor::get_max_value() const { return m_max_value; }
+//! \brief obtains the maximum value.
+inline Int32 Incrementor::get_max_value() const { return m_max_value; }
 
-/*! \brief Set the maximum value. */
-inline void Incrementor::set_max_value(Int max_value)
+//! \brief sets the maximum value.
+inline void Incrementor::set_max_value(Int32 max_value)
 { m_max_value = max_value; }
 
-/*! \brief Obtain the range. */
-inline std::pair<Int, Int> Incrementor::get_range() const
-{ return std::pair<Int, Int>(m_min_value, m_max_value); }
+//! \brief Obtain the range.
+inline std::pair<Int32, Int32> Incrementor::get_range() const
+{ return std::pair<Int32, Int32>(m_min_value, m_max_value); }
 
-/*! \brief Obtain the size. */
+//! \brief obtains the size.
 inline Uint Incrementor::get_size() const
 { return m_max_value - m_min_value + 1; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Incrementor::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

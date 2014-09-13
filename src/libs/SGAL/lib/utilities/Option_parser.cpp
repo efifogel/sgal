@@ -127,7 +127,7 @@ Option_parser::Option_parser() :
 }
 
 //! \brief parses the options.
-void Option_parser::operator()(Int argc, Char* argv[])
+void Option_parser::operator()(Int32 argc, Char* argv[])
 {
   std::ifstream ifs;
   po::store(po::command_line_parser(argc, argv).
@@ -175,7 +175,7 @@ void Option_parser::apply()
 
   if (m_variable_map.count("trace")) {
     Vector_trace_id traces = m_variable_map["trace"].as<Vector_trace_id>();
-    for (Vector_trace_id_iter it = traces.begin(); it != traces.end(); ++it) {
+    for (auto it = traces.begin(); it != traces.end(); ++it) {
       Trace::get_instance()->enable(static_cast<Trace::Code>((*it).m_id));
     }
   }

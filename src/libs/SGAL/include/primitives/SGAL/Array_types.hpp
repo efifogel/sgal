@@ -39,7 +39,7 @@ typedef boost::shared_ptr<Container>                    Shared_container;
 typedef std::vector<Boolean>                            Boolean_array;
 typedef std::vector<Float>                              Float_array;
 typedef std::vector<Uint>                               Uint_array;
-typedef std::vector<Int>                                Int_array;
+typedef std::vector<Int32>                              Int32_array;
 typedef std::vector<Scene_time>                         Scene_time_array;
 typedef std::vector<Vector2f>                           Vector2f_array;
 typedef std::vector<Vector3f>                           Vector3f_array;

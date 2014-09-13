@@ -54,7 +54,7 @@ typedef boost::shared_ptr<Container>                   Shared_container;
 typedef Field_info_template<Boolean, SF_BOOL>          SF_bool;
 typedef Field_info_template<Float, SF_FLOAT>           SF_float;
 typedef Field_info_template<Uint, SF_INT32>            SF_uint;
-typedef Field_info_template<Int, SF_INT32>             SF_int;
+typedef Field_info_template<Int32, SF_INT32>           SF_int32;
 typedef Field_info_template<Scene_time, SF_TIME>       SF_time;
 typedef Field_info_template<Vector2f, SF_VEC2F>        SF_vector2f;
 typedef Field_info_template<Vector3f, SF_VEC3F>        SF_vector3f;
@@ -70,7 +70,7 @@ typedef Field_info_template<Shared_container, SF_SHARED_CONTAINER>
 typedef Field_info_template<Boolean_array, MF_BOOL>    MF_bool;
 typedef Field_info_template<Float_array, MF_FLOAT>     MF_float;
 typedef Field_info_template<Uint_array, MF_INT32>      MF_uint;
-typedef Field_info_template<Int_array, MF_INT32>       MF_int;
+typedef Field_info_template<Int32_array, MF_INT32>     MF_int32;
 typedef Field_info_template<Scene_time_array, MF_TIME> MF_time;
 typedef Field_info_template<Vector2f_array, MF_VEC2F>  MF_vector2f;
 typedef Field_info_template<Vector3f_array, MF_VEC3F>  MF_vector3f;
@@ -88,7 +88,7 @@ typedef Field_info_template<Shared_container_array, MF_SHARED_CONTAINER>
 typedef Handle_function<Boolean>::type        Boolean_handle_function;
 typedef Handle_function<Float>::type          Float_handle_function;
 typedef Handle_function<Uint>::type           Uint_handle_function;
-typedef Handle_function<Int>::type            Int_handle_function;
+typedef Handle_function<Int32>::type          Int32_handle_function;
 typedef Handle_function<Scene_time>::type     Scene_time_handle_function;
 typedef Handle_function<Vector2f>::type       Vector2f_handle_function;
 typedef Handle_function<Vector3f>::type       Vector3f_handle_function;
@@ -104,7 +104,7 @@ typedef Handle_function<Shared_container>::type
 typedef Handle_function<Boolean_array>::type  Boolean_array_handle_function;
 typedef Handle_function<Float_array>::type    Float_array_handle_function;
 typedef Handle_function<Uint_array>::type     Uint_array_handle_function;
-typedef Handle_function<Int_array>::type      Int_array_handle_function;
+typedef Handle_function<Int32_array>::type    Int32_array_handle_function;
 typedef Handle_function<Scene_time_array>::type
                                               Scene_time_array_handle_function;
 typedef Handle_function<Vector2f_array>::type Vector2f_array_handle_function;
@@ -127,7 +127,7 @@ public:
                                          const std::string& type,
                                          const std::string& value,
                                          Ulong offset,
-                                         Execution_function execution = NULL)
+                                         Execution_function execution = nullptr)
   {
     Field_type_enum type_enum = Field_types_utils::get_field_type(type);
 
@@ -165,8 +165,7 @@ public:
     else if (type_enum == SF_SHARED_CONTAINER)
       return new SF_shared_container(id, name, offset, execution,
                                      false, true, Shared_container());
-    else
-      return NULL;
+    else return nullptr;
   }
 };
 #endif

@@ -80,7 +80,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_context(nullptr),
   m_is_scene_done(!syncronize),
   m_does_have_lights(false),
-  m_current_light_id(0),
+  // m_current_light_id(0),
   m_isect_action(nullptr),
   m_execution_coordinator(nullptr),
   m_default_event_filter(nullptr),
@@ -104,7 +104,7 @@ Scene_graph::Scene_graph(bool syncronize) :
   m_time_sensors.clear();
 }
 
-/*! Destructor */
+//! \brief destructor.
 Scene_graph::~Scene_graph()
 {
   m_containers.clear();
@@ -161,7 +161,7 @@ void Scene_graph::init_context()
 #endif
 }
 
-/*! \brief releases the context. */
+//! \brief releases the context.
 void Scene_graph::release_context()
 {
 #if 0
@@ -171,7 +171,7 @@ void Scene_graph::release_context()
 #endif
 }
 
-/*! \brief renders the scene graph. */
+//! \brief renders the scene graph.
 void Scene_graph::draw(Draw_action* draw_action)
 {
   //! \todo Auto_lock lock(&s_render_CS);
@@ -311,7 +311,7 @@ void Scene_graph::initialize_rendering(Draw_action* draw_action)
   }
 }
 
-/*! \brief renders the scene graph (all passes). */
+//! \brief renders the scene graph (all passes).
 void Scene_graph::render_scene_graph(Draw_action* draw_action)
 {
   /*
@@ -415,7 +415,7 @@ void Scene_graph::isect(Uint x, Uint y)
   }
 }
 
-/*! \brief processes all snapshot nodes. */
+//! \brief processes all snapshot nodes.
 void Scene_graph::process_snapshots(Draw_action* action)
 {
   for (Snapshot_iter i = m_snapshots.begin(); i != m_snapshots.end(); ++i) {
@@ -424,15 +424,14 @@ void Scene_graph::process_snapshots(Draw_action* action)
   }
 }
 
-/*! \brief adds a Simulation node to the list of Simulation nodes. */
+//! \brief adds a Simulation node to the list of Simulation nodes.
 void Scene_graph::add_simulation(Simulation* simulation)
 { m_simulations.push_back(simulation); }
 
-/*! Start simulation */
+//! \brief starts simulation
 void Scene_graph::start_simulation()
 {
-  Simulation_iter i;
-  for (i = m_simulations.begin(); i != m_simulations.end(); ++i) {
+  for (auto i = m_simulations.begin(); i != m_simulations.end(); ++i) {
     Simulation* simulation = *i;
     simulation->start();
   }
@@ -451,14 +450,14 @@ void Scene_graph::create_execution_coordinator()
   */
 }
 
-/*! \brief adds a container to the name-less container-pool. */
+//! \brief adds a container to the name-less container-pool.
 void Scene_graph::add_container(Shared_container container)
 {
   if (!container) return;
   m_containers.push_back(container);
 }
 
-/*! \brief adds a container to the instance container-pool. */
+//! \brief adds a container to the instance container-pool.
 void Scene_graph::add_container(Shared_container container,
                                 const std::string& name)
 {
@@ -549,15 +548,15 @@ void Scene_graph::free_selection_ids(Uint start, Uint num)
   m_free_selection_ids.push_back(new_interval);
 }
 
-/*! \brief adds a time sensor node to the scene graph. */
+//! \brief adds a time sensor node to the scene graph.
 void Scene_graph::add_time_sensor(Time_sensor* time_sensor)
 { m_time_sensors.push_back(time_sensor); }
 
-/*! \brief adds a snapshot node to the list of snapshots nodes. */
+//! \brief adds a snapshot node to the list of snapshots nodes.
 void Scene_graph::add_snaphot(Snapshot* snapshot)
 { m_snapshots.push_back(snapshot); }
 
-/*! \brief routes the Navigation_info node properly. */
+//! \brief routes the Navigation_info node properly.
 void Scene_graph::route_navigation_info(Navigation_info* nav,
                                         Navigation_info_type type)
 {
@@ -595,7 +594,7 @@ void Scene_graph::route_navigation_info(Navigation_info* nav,
   }
 }
 
-/*! \brief sets the scene configuration container. */
+//! \brief sets the scene configuration container.
 void Scene_graph::set_configuration(Configuration* config)
 {
   if (m_owned_configuration) {
@@ -606,7 +605,7 @@ void Scene_graph::set_configuration(Configuration* config)
   //! \todo m_execution_coordinator->set_min_frame_rate(sconfig->get_min_frame_rate());
 }
 
-/*! \brief obtains a container by its instance name. */
+//! \brief obtains a container by its instance name.
 Scene_graph::Shared_container
 Scene_graph::get_container(const std::string& name)
 {
@@ -636,22 +635,18 @@ void Scene_graph::set_have_lights(Boolean flag) { m_does_have_lights = flag; }
  */
 Boolean Scene_graph::does_have_lights() { return m_does_have_lights; }
 
-/*! \brief returns a unique id (0-7) for a light source. We are assuming
- * that there will not be more than 8 light sources in the scene and that light
- * sources can not be reused.
- * @return a uniqu id for light.
- */
-Int Scene_graph::get_unique_light_id()
-{
-  int tmp = m_current_light_id;
-  ++m_current_light_id;
-  return tmp;
-}
+//! \brief obtains a unique id (0-7) for a light source.
+// Uint Scene_graph::get_unique_light_id()
+// {
+//   int tmp = m_current_light_id;
+//   ++m_current_light_id;
+//   return tmp;
+// }
 
-/*! \brief sets the root of the scene graph. */
+//! \brief sets the root of the scene graph.
 void Scene_graph::set_root(Shared_group root) { m_root = root; }
 
-/*! \brief sets the navigation root. */
+//! \brief sets the navigation root.
 void Scene_graph::set_navigation_root(Shared_transform nav_root)
 {
   SGAL_assertion(nav_root);
@@ -662,7 +657,7 @@ void Scene_graph::set_navigation_root(Shared_transform nav_root)
   nav_root->add_field(Transform::ROTATION);
 }
 
-/*! \brief */
+//! \brief
 void Scene_graph::set_head_light(Configuration* config)
 {
   if (!m_head_light || (config && !config->is_fixed_head_light())) return;
@@ -689,7 +684,7 @@ void Scene_graph::set_head_light(Configuration* config)
   */
 }
 
-/* \brief destroys default (owned) nodes. */
+//! \brief destroys default (owned) nodes.
 void Scene_graph::destroy_defaults()
 {
   if (m_owned_configuration) {
@@ -717,7 +712,7 @@ void Scene_graph::destroy_defaults()
   }
 }
 
-/*! \brief creates default nodes and route them appropriately. */
+//! \brief creates default nodes and route them appropriately.
 void Scene_graph::create_defaults()
 {
   // The default Configuration container:
@@ -782,7 +777,7 @@ void Scene_graph::create_defaults()
 #endif
 }
 
-/*! \brief binds the bindable nodes and activate the key_sensor. */
+//! \brief binds the bindable nodes and activate the key_sensor.
 void Scene_graph::bind()
 {
   m_navigation_info_stack.bind_top();
@@ -791,7 +786,7 @@ void Scene_graph::bind()
   if (m_active_key_sensor != nullptr) m_active_key_sensor->activate();
 }
 
-/*! \brief */
+//! \brief
 void Scene_graph::clear_text_screen()
 {
 #if 0
@@ -801,7 +796,7 @@ void Scene_graph::clear_text_screen()
 #endif
 }
 
-/*! \brief */
+//! \brief
 void Scene_graph::put_text_string(int /* line */, const std::string& /* str */)
 {
 #if 0
@@ -815,7 +810,7 @@ void Scene_graph::put_text_string(int /* line */, const std::string& /* str */)
 #endif
 }
 
-/*! \brief */
+//! \brief
 void Scene_graph::add_text_string(const std::string& /* str */)
 {
 #if 0
@@ -825,7 +820,7 @@ void Scene_graph::add_text_string(const std::string& /* str */)
 #endif
 }
 
-/*! \bried computes the speed factor required by the sensors */
+//! \bried computes the speed factor required by the sensors
 float Scene_graph::compute_speed_factor() const
 {
   SGAL_assertion(m_navigation_root);
@@ -835,7 +830,7 @@ float Scene_graph::compute_speed_factor() const
   return (sb.get_radius() / speed_factor);
 }
 
-/*! \brief routes the connection. */
+//! \brief routes the connection.
 bool Scene_graph::route(const std::string& src_node_str,
                         const std::string& src_field_name,
                         const std::string& dst_node_str,
@@ -861,7 +856,7 @@ bool Scene_graph::route(const std::string& src_node_str,
   return true;
 }
 
-/*! \brief routes the connection. */
+//! \brief routes the connection.
 bool Scene_graph::route(Container* src_node, const char* src_field_name,
                         Container* dst_node, const char* dst_field_name,
                         Route* route)
@@ -881,15 +876,15 @@ bool Scene_graph::route(Container* src_node, const char* src_field_name,
   return true;
 }
 
-/*! \brief obtains the active navigation-info node. */
+//! \brief obtains the active navigation-info node.
 Navigation_info* Scene_graph::get_active_navigation_info()
 { return static_cast<Navigation_info*>(m_navigation_info_stack.top()); }
 
-/*! \brief obtains the active camera. */
+//! \brief obtains the active camera.
 Camera* Scene_graph::get_active_camera()
 { return static_cast<Camera*>(m_camera_stack.top()); }
 
-/*! \brief obtains the active background. */
+//! \brief obtains the active background.
 Background* Scene_graph::get_active_background()
 { return static_cast<Background*>(m_background_stack.top()); }
 

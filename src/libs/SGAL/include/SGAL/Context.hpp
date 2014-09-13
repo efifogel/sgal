@@ -277,7 +277,7 @@ public:
 
   Boolean get_light_enable() const;
 
-  Light* get_light(const Int i) const;
+  Light* get_light(Uint i) const;
 
   void set_shade_model(Gfx::Shade_model shade_model);
 
@@ -407,12 +407,12 @@ public:
 
   void clear(Uint which);
   void clear(Uint which, Float r, Float g, Float b, Float a);
-  void clear(Uint which, Float r, Float g, Float b, Float a, Int stencil);
+  void clear(Uint which, Float r, Float g, Float b, Float a, Int32 stencil);
 
   void clear(Uint which, const Vector4f& color)
   { clear(which, color[0], color[1], color[2], color[3]); }
 
-  void clear(Uint which, const Vector4f& color, Int stencil)
+  void clear(Uint which, const Vector4f& color, Int32 stencil)
   { clear(which, color[0], color[1], color[2], color[3], stencil); }
 
   void clear_color_buffer();
@@ -422,10 +422,10 @@ public:
   void clear_color_depth_buffer(const Vector4f& color);
   void clear_color_depth_stencil_buffer();
   void clear_color_depth_stencil_buffer(const Vector4f& color);
-  void clear_color_depth_stencil_buffer(const Vector4f& color, Int stencil);
+  void clear_color_depth_stencil_buffer(const Vector4f& color, Int32 stencil);
 
   void get_matrix(Matrix4f& m) const;
-  Int get_matrix_depth() const;
+  Uint get_matrix_depth() const;
 
   void push_matrix();
   void push_ident_matrix();
@@ -450,7 +450,8 @@ public:
 
   void push_lights();
   void pop_lights();
-  Int get_light_target(Light* l, const Matrix4f& mat, Int& already_defined);
+  Int32 get_light_target(Light* light, const Matrix4f& mat, Int32& id);
+
   void disable_light_targets();
 
 #if 0
@@ -488,7 +489,7 @@ public:
   Uint get_number_of_samples() const;
 
 private:
-  int m_mat_stack_depth;
+  Uint m_mat_stack_depth;
 
   /*! Appearance override stack */
   Appearance* m_override_app_stack[SGAL_MAX_STACK];
@@ -511,7 +512,8 @@ private:
 
   // Stack of accumulated state not effected by Appearances
   Gfx m_default_state_;
-  int m_stack_depth;
+
+  Uint m_stack_depth;
 
   // Misc state not in any stack
   Boolean m_normalize_enable;
@@ -522,7 +524,7 @@ private:
   //! \todo Open_gl_os_init* m_gfx_handle;
 
   Boolean m_made_current;
-  Int m_viewport[4];
+  Int32 m_viewport[4];
 
   /*! Pointer to current Appearance */
   Appearance* m_last_app;
@@ -777,13 +779,13 @@ inline void Context::get_matrix(Matrix4f& m) const
 { glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat*) &m); }
 
 //! \brief
-inline Int Context::get_matrix_depth() const { return m_mat_stack_depth; }
+inline Uint Context::get_matrix_depth() const { return m_mat_stack_depth; }
 
 //! \brief
 inline void Context::push_matrix()
 {
   glPushMatrix();
-  m_mat_stack_depth++;
+  ++m_mat_stack_depth;
 }
 
 //! \brief
@@ -791,14 +793,14 @@ inline void Context::push_ident_matrix()
 {
   glPushMatrix();
   glLoadIdentity();
-  m_mat_stack_depth++;
+  ++m_mat_stack_depth;
 }
 
 //! \brief
 inline void Context::pop_matrix()
 {
   glPopMatrix();
-  m_mat_stack_depth--;
+  --m_mat_stack_depth;
 }
 
 //! \brief

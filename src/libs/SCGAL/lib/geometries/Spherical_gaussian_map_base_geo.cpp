@@ -66,7 +66,7 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Spherical_gaussian_map_base_geo::s_prototype(nullptr);
 
-/*! Default values */
+//! default values
 const Boolean Spherical_gaussian_map_base_geo::s_def_draw_aos(false);
 
 const Boolean Spherical_gaussian_map_base_geo::s_def_draw_aos_opaque(false);
@@ -110,7 +110,7 @@ const Vector3f Spherical_gaussian_map_base_geo::s_def_aos_edge_color(0, 0, .5f);
 // General rendering attributes:
 const Float Spherical_gaussian_map_base_geo::s_def_aos_delta_angle(.1f);
 
-/*! Constructor */
+//! \brief constructor.
 Spherical_gaussian_map_base_geo::
 Spherical_gaussian_map_base_geo(Boolean proto) :
   Mesh_set(proto),
@@ -150,7 +150,7 @@ Spherical_gaussian_map_base_geo(Boolean proto) :
   }
 }
 
-/*! Copy Constructor */
+//! \brief copy constructor.
 Spherical_gaussian_map_base_geo::
 Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& gm)
 {
@@ -158,16 +158,16 @@ Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& gm)
   SGAL_assertion(0);
 }
 
-/*! Destructor. */
+//! \brief destructor.
 Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() {}
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Spherical_gaussian_map_base_geo::clear() {}
 
-/*! \brief */
+//! \brief
 void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
 
-/*! \brief */
+//! \brief
 void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
@@ -181,7 +181,7 @@ void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-/*! \brief calculates the bounding sphere. */
+//! \brief calculates the bounding sphere.
 bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
 {
   if (!m_dirty_sphere_bound) return false;
@@ -210,14 +210,11 @@ bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
   return true;
 }
 
-/*! \brief sets the attributes of the object extracted from an input file */
+//! \brief sets the attributes of the object extracted from an input file.
 void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
 {
   Mesh_set::set_attributes(elem);
-
-  typedef Element::Str_attr_iter                Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "drawAos") {
@@ -327,7 +324,7 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "stencilReference") {
-      Int ref = boost::lexical_cast<Int>(value);
+      Int32 ref = boost::lexical_cast<Int32>(value);
       m_renderer.set_stencil_ref(ref);
       elem->mark_delete(ai);
       continue;
@@ -361,7 +358,7 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \breif initializes the container prototype. */
+//! \breif initializes the container prototype.
 void Spherical_gaussian_map_base_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -416,8 +413,8 @@ void Spherical_gaussian_map_base_geo::init_prototype()
                                            aos_edge_line_width_func));
 
   // translated
-  exec_func =
-    static_cast<Execution_function>(&Spherical_gaussian_map_base_geo::coord_changed);
+  exec_func = static_cast<Execution_function>
+    (&Spherical_gaussian_map_base_geo::coord_changed);
   Boolean_handle_function translated_func =
     static_cast<Boolean_handle_function>
     (&Spherical_gaussian_map_base_geo::translated_handle);
@@ -485,21 +482,21 @@ void Spherical_gaussian_map_base_geo::init_prototype()
                                               aos_edge_colors2_func));
 }
 
-/*! */
+//!
 void Spherical_gaussian_map_base_geo::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
-/*! */
+//!
 Container_proto* Spherical_gaussian_map_base_geo::get_prototype()
 {
   if (!s_prototype) Spherical_gaussian_map_base_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief raises the flag that indicates that the sphere bound changed. */
+//! \brief raises the flag that indicates that the sphere bound changed.
 void Spherical_gaussian_map_base_geo::
 draw_changed(const Field_info* /* field_info */)
 {
@@ -516,7 +513,7 @@ draw_changed(const Field_info* /* field_info */)
   }
 }
 
-/*! \brief drawss the internal representation. */
+//! \brief drawss the internal representation.
 void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action* action)
 {
   if (!m_draw_aos) {
@@ -533,7 +530,7 @@ void Spherical_gaussian_map_base_geo::draw_geometry(Draw_action* action)
   m_renderer(action);
 }
 
-/*! \brief creates the renderers. */
+//! \brief creates the renderers.
 void Spherical_gaussian_map_base_geo::create_renderers()
 {
   m_surface_renderer = new Surface_renderer();
@@ -546,7 +543,7 @@ void Spherical_gaussian_map_base_geo::create_renderers()
   m_stencil_surface_renderer = new Stencil_surface_renderer();
 }
 
-/*! \brief destroys the renderers. */
+//! \brief destroys the renderers.
 void Spherical_gaussian_map_base_geo::destroy_renderers()
 {
   if (m_surface_renderer) delete m_surface_renderer;
@@ -554,7 +551,7 @@ void Spherical_gaussian_map_base_geo::destroy_renderers()
   if (m_stencil_surface_renderer) delete m_stencil_surface_renderer;
 }
 
-/*! \brief cleans the renderer. */
+//! \brief cleans the renderer.
 void Spherical_gaussian_map_base_geo::clean_renderer()
 {
   // Surface and faces:
@@ -571,7 +568,7 @@ void Spherical_gaussian_map_base_geo::clean_renderer()
   m_renderer_dirty = false;
 }
 
-/*! \brief draws an arrangement on sphere vertex. */
+//! \brief draws an arrangement on sphere vertex.
 void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action* action,
                                                       Vector3f& center)
 {
@@ -581,7 +578,7 @@ void Spherical_gaussian_map_base_geo::draw_aos_vertex(Draw_action* action,
                         m_aos_delta_angle);
 }
 
-/*! \brief Draw an arrangement on surface boundary_vertex. */
+//! \brief Draw an arrangement on surface boundary_vertex.
 void Spherical_gaussian_map_base_geo::
 draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
 {
@@ -589,7 +586,7 @@ draw_aos_boundary_vertex(Draw_action* action, Vector3f& center)
                         m_aos_boundary_vertex_radius, m_aos_delta_angle);
 }
 
-/*! \brief draws an arrangement on sphere edge. */
+//! \brief draws an arrangement on sphere edge.
 void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
                                                     Vector3f& source,
                                                     Vector3f& target,
@@ -604,24 +601,26 @@ void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
                       m_aos_vertex_radius, m_aos_vertex_radius);
 }
 
-/*! \brief processes change of coordinate field. */
-void Spherical_gaussian_map_base_geo::coord_changed(const Field_info* field_info)
+//! \brief processes change of coordinate field.
+void
+Spherical_gaussian_map_base_geo::coord_changed(const Field_info* field_info)
 {
   clear();
   Mesh_set::coord_changed(field_info);
 }
 
-/*! \brief processes change of points. */
-void Spherical_gaussian_map_base_geo::field_changed(const Field_info* field_info)
+//! \brief processes change of points.
+void
+Spherical_gaussian_map_base_geo::field_changed(const Field_info* field_info)
 {
   clear();
   Container::field_changed(field_info);
 }
 
-/*! \brief cleans the geometry. */
+//! \brief cleans the geometry.
 void Spherical_gaussian_map_base_geo::clean_sgm() {}
 
-/*! \brief draws the geometry. */
+//! \brief draws the geometry.
 void Spherical_gaussian_map_base_geo::draw(Draw_action* action)
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();

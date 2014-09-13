@@ -61,27 +61,27 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! The single instance of a window manager */
-X11_window_manager* X11_window_manager::s_instance = NULL;
+//! The single instance of a window manager.
+X11_window_manager* X11_window_manager::s_instance = nullptr;
 
-/*! Constructor */
+//! \brief constructor
 X11_window_manager::X11_window_manager() :
-  m_display(NULL),
+  m_display(nullptr),
   m_screen(0),
   m_created(false)
 {}
 
-/*! Destructor */
+//! \brief destructor
 X11_window_manager::~X11_window_manager() { clear(); }
 
-/*! \brief obtains a pointer to the manager */
+//! \brief obtains a pointer to the manager.
 X11_window_manager* X11_window_manager::instance()
 {
   if (!s_instance) s_instance = new X11_window_manager();
   return s_instance;
 }
 
-/*! \brief initializes the window manager */
+//! \brief initializes the window manager.
 void X11_window_manager::init(Uint /* argc */, char* /* argv */[])
 {
   m_display = XOpenDisplay(0);
@@ -91,22 +91,22 @@ void X11_window_manager::init(Uint /* argc */, char* /* argv */[])
                SubstructureNotifyMask);
 }
 
-/*! brief clears the window manager */
+//! brief clears the window manager.
 void X11_window_manager::clear()
 {
   if (!m_display) return;
   XCloseDisplay(m_display);
-  m_display = NULL;
+  m_display = nullptr;
 }
 
-/*! \brief creates a new window */
+//! \brief creates a new window.
 void X11_window_manager::create_window(X11_window_item* window_item)
 {
   window_item->create(m_display, m_screen);
   m_current_window = window_item;
 }
 
-/*! \brief destroys an existing window */
+//! \brief destroys an existing window.
 void X11_window_manager::destroy_window(X11_window_item* window_item)
 {
   window_item->destroy();
@@ -117,7 +117,7 @@ void X11_window_manager::destroy_window(X11_window_item* window_item)
   }
 }
 
-/*! \brief runs the main event loop */
+//! \brief runs the main event loop.
 void X11_window_manager::event_loop(Boolean simulating)
 {
   struct timespec gettime_now;
@@ -149,8 +149,7 @@ void X11_window_manager::event_loop(Boolean simulating)
       // Slow down if necessary:
       if (sleep_time > 0) {
         // Draw all visibile windows:
-        Windows_iter it;
-        for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+        for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
           X11_window_item* window_item = *it;
           window_item->set_redraw(true);
         }
@@ -158,8 +157,8 @@ void X11_window_manager::event_loop(Boolean simulating)
       else {
         // If any window is being accumulated, do not advance in the time line.
         bool accumulating = false;
-        Windows_iter it;
-        for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+        for (auto it = this->begin_windows(); it != this->end_windows(); ++it)
+        {
           X11_window_item* window_item = *it;
           if (window_item->is_accumulating()) {
             accumulating = true;
@@ -179,8 +178,9 @@ void X11_window_manager::event_loop(Boolean simulating)
           /*! \todo Do not force the redraw globally. Instead set the redraw
            * only when really needed.
            */
-          Windows_iter it;
-          for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+          for (auto it = this->begin_windows();
+               it != this->end_windows(); ++it)
+          {
             X11_window_item* window_item = *it;
             window_item->set_redraw(true);
           }
@@ -196,8 +196,7 @@ void X11_window_manager::event_loop(Boolean simulating)
     Boolean wait_for_xevent = false;
     if (m_event_handler.is_empty()) {
       wait_for_xevent = true;
-      Windows_iter it;
-      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+      for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->do_redraw()) {
           wait_for_xevent = false;
@@ -228,8 +227,7 @@ void X11_window_manager::event_loop(Boolean simulating)
     m_event_handler.process();
 
     // Draw all windows that need to be drawn:
-    Windows_iter it;
-    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+    for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
       Window_item* window_item = *it;
       if (window_item->do_redraw() && window_item->is_visible()) {
         // Reset the redraw flag, so that the user can re-set it:
@@ -241,7 +239,7 @@ void X11_window_manager::event_loop(Boolean simulating)
   } while (!done);
 }
 
-/*! \brief processes a single X event */
+//! \brief processes a single X event.
 void X11_window_manager::process_xevent(XEvent& event)
 {
   KeySym keysym;
@@ -454,7 +452,7 @@ void X11_window_manager::process_xevent(XEvent& event)
    case FocusOut:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "FocusOut" << std::endl;);
-    m_current_window = NULL;
+    m_current_window = nullptr;
     kc_values.auto_repeat_mode = 1;
     XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
     break;
@@ -478,7 +476,7 @@ void X11_window_manager::process_xevent(XEvent& event)
       if (window_item->m_window == event.xdestroywindow.window) {
         window_item->reset_window();
         this->remove_window(window_item);
-        m_current_window = NULL;
+        m_current_window = nullptr;
         kc_values.auto_repeat_mode = 1;
         XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
         break;

@@ -42,9 +42,9 @@ void Field_info::write(Formatter* formatter, Uint value,
 { formatter->single_uint(get_name(), value, default_value); }
 
 //! \brief writes the (single) Int field.
-void Field_info::write(Formatter* formatter, Int value,
-                       Int default_value) const
-{ formatter->single_int(get_name(), value, default_value); }
+void Field_info::write(Formatter* formatter, Int32 value,
+                       Int32 default_value) const
+{ formatter->single_int32(get_name(), value, default_value); }
 
 //! \brief writes the (single) Scene-time field.
 void Field_info::write(Formatter* formatter, const Scene_time& value,
@@ -107,9 +107,9 @@ void Field_info::write(Formatter* formatter, const Uint_array& value,
 { formatter->multi_uint(get_name(), value, default_value); }
 
 //! \brief writes the multi-Int field.
-void Field_info::write(Formatter* formatter, const Int_array& value,
-                       const Int_array& default_value) const
-{ formatter->multi_int(get_name(), value, default_value); }
+void Field_info::write(Formatter* formatter, const Int32_array& value,
+                       const Int32_array& default_value) const
+{ formatter->multi_int32(get_name(), value, default_value); }
 
 //! \brief writes the multi-Scene_time field.
 void Field_info::write(Formatter* formatter, const Scene_time_array& value,
@@ -152,8 +152,7 @@ void Field_info::write(Formatter* formatter,
                        const Shared_container_array& default_value) const
 {
   formatter->multi_container_begin(get_name());
-  Shared_container_array::const_iterator it;
-  for (it = value.begin(); it != value.end(); ++it) {
+  for (auto it = value.begin(); it != value.end(); ++it) {
     Shared_container cont = *it;
     formatter->write(&*cont);
   }

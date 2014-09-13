@@ -71,7 +71,7 @@ public:
    * Note that countng starts from zero. (0 is first pass.)
    * \return the pass number.
    */
-  Int get_pass_no();
+  Uint get_pass_no();
 
   /*! Reset the pass number to zero. */
   void reset_pass_no();
@@ -81,9 +81,9 @@ public:
    */
   Boolean is_first_pass();
 
-  void set_current_lod(Int lod);
+  void set_current_lod(Uint lod);
 
-  Int get_current_lod() const;
+  Uint get_current_lod() const;
 
   void set_current_wtm(Shared_matrix4f wtm);
 
@@ -113,13 +113,13 @@ public:
 
 private:
   /*! Indicates which pass is being rendered, 0 being the first pass. */
-  Int m_pass_no;
+  Uint m_pass_no;
 
   /*! Indicates whether a second pass is required for transparent objects */
   Boolean m_second_pass_required;
 
   /*! Indicates current level of detail for shapes. */
-  Int m_current_lod;
+  Uint m_current_lod;
 
   /*! The world transformation matrix */
   Shared_matrix4f m_current_wtm;
@@ -140,9 +140,9 @@ private:
   Configuration* m_configuration;
 };
 
-inline void Draw_action::set_current_lod(Int lod) { m_current_lod = lod; }
+inline void Draw_action::set_current_lod(Uint lod) { m_current_lod = lod; }
 
-inline Int Draw_action::get_current_lod() const { return m_current_lod; }
+inline Uint Draw_action::get_current_lod() const { return m_current_lod; }
 
 inline void Draw_action::set_current_wtm(Shared_matrix4f wtm)
 { m_current_wtm = wtm; }
@@ -177,6 +177,9 @@ inline void Draw_action::set_configuration(Configuration* conf)
 //! \brief obtains the configuration container.
 inline Configuration* Draw_action::get_configuration() const
 { return m_configuration; }
+
+//! \brief obtains the number of the current pass being rendered.
+inline Uint Draw_action::get_pass_no() { return m_pass_no; }
 
 SGAL_END_NAMESPACE
 

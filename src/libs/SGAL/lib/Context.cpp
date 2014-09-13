@@ -184,7 +184,7 @@ void Context::init()
   // Make sure all the lights are initially undefined
   Light_target* lights = m_light_stack[m_light_stack_depth];
 
-  for (int i = 0; i < SGAL_MAX_LIGHTS; ++i) {
+  for (Uint i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     lights[i].m_set = false;
     lights[i].m_enabled = false;
     lights[i].m_defined = 0;
@@ -259,10 +259,10 @@ void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
       static_cast<Uint>(m_viewport[2]) != w ||
       static_cast<Uint>(m_viewport[3]) != h)
   {
-    m_viewport[0] = static_cast<Int>(x);
-    m_viewport[1] = static_cast<Int>(y);
-    m_viewport[2] = static_cast<Int>(w);
-    m_viewport[3] = static_cast<Int>(h);
+    m_viewport[0] = static_cast<Int32>(x);
+    m_viewport[1] = static_cast<Int32>(y);
+    m_viewport[2] = static_cast<Int32>(w);
+    m_viewport[3] = static_cast<Int32>(h);
     glViewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
   }
 }
@@ -270,10 +270,10 @@ void Context::set_viewport(Uint x, Uint y, Uint w, Uint h)
 //! \brief Obtain the viewport.
 void Context::get_viewport(Uint& x, Uint& y, Uint& w, Uint& h) const
 {
-  x = (Uint) m_viewport[0];
-  y = (Uint) m_viewport[1];
-  w = (Uint) m_viewport[2];
-  h = (Uint) m_viewport[3];
+  x = static_cast<Uint>(m_viewport[0]);
+  y = static_cast<Uint>(m_viewport[1]);
+  w = static_cast<Uint>(m_viewport[2]);
+  h = static_cast<Uint>(m_viewport[3]);
 }
 
 //! \brief
@@ -1161,7 +1161,7 @@ void Context::clear(Uint which)
 
 //! \brief
 void Context::clear(Uint which, Float r, Float g, Float b, Float a,
-                    Int stencil)
+                    Int32 stencil)
 {
   unsigned int glclear = 0;
 
@@ -1264,7 +1264,7 @@ void Context::clear_color_depth_stencil_buffer(const Vector4f& color)
 
 //! \brief
 void Context::clear_color_depth_stencil_buffer(const Vector4f& color,
-                                               Int stencil)
+                                               Int32 stencil)
 {
   Uint which = 0;
   which |= Gfx::COLOR_CLEAR;
@@ -1286,7 +1286,7 @@ void Context::push_lights()
   // We've taken a reference to these lights so ref'm
   Light_target* current_lights = m_light_stack[m_light_stack_depth];
 
-  for (int i = 0; i < SGAL_MAX_LIGHTS; i++) {
+  for (Uint i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     if (current_lights[i].m_defined != 0)
       current_lights[i].m_defined->ref();
   }
@@ -1322,7 +1322,7 @@ void Context::push_state()
  */
 void Context::pop_state()
 {
-  Int s = m_stack_depth - 1;
+  Uint s = m_stack_depth - 1;
 
   Gfx* new_gfx = &m_current_state_stack[s];
 
@@ -1357,16 +1357,15 @@ void Context::pop_lights()
   // targets. Also, lights need to be restored with the matrix they were last
   // bound with.
 
-  int i, j;
   Light_target* prev_lights = m_light_stack[m_light_stack_depth];
   Light_target* current_lights = m_light_stack[m_light_stack_depth-1];
 
-  for (i = 0; i < SGAL_MAX_LIGHTS; ++i) {
+  for (Uint i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     if (prev_lights[i].m_defined != 0) {
       if (prev_lights[i].m_enabled) {
         int found = -1;
 
-        for (j = 0; j < SGAL_MAX_LIGHTS && found == -1; ++j) {
+        for (Uint j = 0; j < SGAL_MAX_LIGHTS && found == -1; ++j) {
           if (prev_lights[i].m_defined == current_lights[j].m_defined)
             found = j;
         }
@@ -1561,8 +1560,7 @@ void Context::draw_blend_funcs(Gfx::Src_blend_func src_blend_func,
 }
 
 //! \brief
-void Context::draw_state_elements(const Bit_mask& set_mask_ptr,
-                                  const Gfx* gfx)
+void Context::draw_state_elements(const Bit_mask& set_mask_ptr, const Gfx* gfx)
 {
   Bit_mask tmp_mask(set_mask_ptr);
 
@@ -2036,19 +2034,19 @@ void Context::draw_app(Appearance* app)
 }
 
 //! \brief obtains a light source.
-Light* Context::get_light(const Int i) const
+Light* Context::get_light(Uint i) const
 {
-  return (0 <= i && i < SGAL_MAX_LIGHTS) ?
-    m_light_stack[m_light_stack_depth][i].m_defined : 0;
+  return ((0 <= i) && (i < SGAL_MAX_LIGHTS)) ?
+    m_light_stack[m_light_stack_depth][i].m_defined : nullptr;
 }
 
 /*! \brief obtains the index of the light associated with the given viewing
  * matrix.
  */
-Int Context::get_light_target(Light* light, const Matrix4f& mat,
-                              Int& already_defined)
+Int32 Context::get_light_target(Light* light, const Matrix4f& mat,
+                                Int32& already_defined)
 {
-  int i;
+  Uint i;
   Light_target* lights = m_light_stack[m_light_stack_depth];
 
   // Get the incoming light state
@@ -2058,7 +2056,7 @@ Int Context::get_light_target(Light* light, const Matrix4f& mat,
   already_defined = -1;
 
   // Find the GL target which already has 'l' defined
-  for (i = 0; i < SGAL_MAX_LIGHTS; i++) {
+  for (i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     // If it's defined we want to return it
     if (lights[i].m_defined == light) {
       // If the light has not changed state and it's defined
@@ -2114,7 +2112,7 @@ Int Context::get_light_target(Light* light, const Matrix4f& mat,
 void Context::disable_light_targets()
 {
   Light_target* lights = m_light_stack[m_light_stack_depth];
-  for (int i = 0; i < SGAL_MAX_LIGHTS; ++i) {
+  for (Uint i = 0; i < SGAL_MAX_LIGHTS; ++i) {
     if (lights[i].m_enabled == true) {
       lights[i].m_enabled = false;
       glDisable(GL_LIGHT0 + i);
@@ -2126,7 +2124,7 @@ void Context::disable_light_targets()
 void Context::disable_light(Light* light)
 {
   Light_target* lights = m_light_stack[m_light_stack_depth];
-  for (int j = 0; j < SGAL_MAX_LIGHTS; ++j) {
+  for (Uint j = 0; j < SGAL_MAX_LIGHTS; ++j) {
     if ((lights[j].m_defined == light) && lights[j].m_enabled) {
       lights[j].m_enabled = false;
       glDisable(GL_LIGHT0 + j);

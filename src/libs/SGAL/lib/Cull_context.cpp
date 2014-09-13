@@ -59,7 +59,7 @@ Cull_context::~Cull_context()
 
 //! \brief constructor.
 Cull_context::Render_node::Render_node(Shape* shape, Shared_matrix4f wtm,
-                                       Int lod, Float priority) :
+                                       Uint lod, Float priority) :
   m_shape(shape),
   m_wtm(wtm),
   m_lod(lod),

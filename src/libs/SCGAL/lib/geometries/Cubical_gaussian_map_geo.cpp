@@ -106,7 +106,7 @@ const Vector3f Cubical_gaussian_map_geo::s_def_aos_edge_color(1, 1, 1);
 const Boolean Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_enabled(true);
 const Cubical_gaussian_map_geo::Edge_style
   Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_style(Edge_shape::TUBE);
-const Int Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_count(1);
+const Uint Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_count(1);
 const Boolean Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_directed(false);
 const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_radius(.015f);
 const Float Cubical_gaussian_map_geo::s_def_aos_nonreal_edge_line_width(1);
@@ -320,7 +320,7 @@ void Cubical_gaussian_map_geo::clear()
 //! \brief
 void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& /* cull_context */) {}
 
-/*! \brief */
+//! \brief
 void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
 {
   Context* context = action->get_context();
@@ -390,10 +390,7 @@ bool Cubical_gaussian_map_geo::clean_sphere_bound()
 void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
 {
   Mesh_set::set_attributes(elem);
-
-  typedef SGAL::Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "drawDual") {
@@ -605,19 +602,15 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
     }
   }
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+  for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); mcai++)
   {
     const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    Element::Cont_list& cont_list = elem->get_value(mcai);
     if (name == "geometries") {
       set_minkowski_sum(true);
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Element::Shared_container cont = *ci;
         Shared_cubical_gaussian_map_geo cgm =
           boost::dynamic_pointer_cast<Cubical_gaussian_map_geo>(cont);
@@ -876,9 +869,7 @@ void Cubical_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
   else m_renderer(action);
 }
 
-/*! \brief draws the polyhedron directly from the gaussian map
- * representation.
- */
+//! \brief draws the polyhedron directly from the gaussian map representation.
 void Cubical_gaussian_map_geo::draw_primal(Draw_action* action)
 {
   SGAL_TRACE_MSG(SGAL::Trace::GAUSSIAN_MAP, "draw_primal()\n");
@@ -890,8 +881,7 @@ void Cubical_gaussian_map_geo::draw_primal(Draw_action* action)
 
   for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
     const Arrangement& arr = m_cgm.arrangement(i);
-    Arr_vertex_const_iterator vit;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
       if (!vit->is_real()) continue;
 
       if (m_draw_marked_facet && vit->marked())
@@ -1014,8 +1004,7 @@ void Cubical_gaussian_map_geo::isect_primary()
 {
   for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; i++) {
     const Arrangement& arr = m_cgm.arrangement(i);
-    Arr_vertex_const_iterator vit;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
       if (!vit->is_real()) continue;
 
       glBegin(GL_POLYGON);
@@ -1082,9 +1071,8 @@ void Cubical_gaussian_map_geo::draw_aos_marked_vertex(unsigned int id)
 {
   float radius = m_aos_marked_vertex_radius;
   const Arrangement& arr = m_cgm.arrangement(id);
-  Arr_vertex_const_iterator vi;
   // Skip the unbounded face
-  for (vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi) {
+  for (auto vi = arr.vertices_begin(); vi != arr.vertices_end(); ++vi) {
     if (!vi->marked()) continue;
 
     const Point_2& point = vi->point();
@@ -1176,8 +1164,7 @@ void Cubical_gaussian_map_geo::draw_aos_unfolded(SGAL::Draw_action* action)
     Vector2f src;
     Vector2f trg;
 
-    Arr_edge_const_iterator hei;
-    for (hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
+    for (auto hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
       float line_width = (hei->is_real()) ?
         edge_line_width : m_aos_edge_line_width;
       context->draw_line_width(line_width);
@@ -1290,8 +1277,7 @@ void Cubical_gaussian_map_geo::draw_aos_marked_edge(unsigned int id)
   Vector3f trg;
   src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
   const Arrangement& arr = m_cgm.arrangement(id);
-  Arr_edge_const_iterator ei;
-  for (ei = arr.edges_begin(); ei != arr.edges_end(); ++ei) {
+  for (auto ei = arr.edges_begin(); ei != arr.edges_end(); ++ei) {
     if (!ei->marked()) continue;
 
     Arr_vertex_const_handle source_vertex = ei->source();
@@ -1442,8 +1428,7 @@ void Cubical_gaussian_map_geo::draw_aos_vertices(Draw_action* action)
     center[i] = (id < 3) ? -1.0f : 1.0f;
 
     const Arrangement& arr = m_cgm.arrangement(id);
-    Arr_vertex_const_iterator vit;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
       if (!vit->is_real() || vit->marked()) continue;
 
       const Point_2& point = vit->point();
@@ -1472,8 +1457,7 @@ void Cubical_gaussian_map_geo::draw_aos_nonreal_vertices(Draw_action* action)
     center[i] = (id < 3) ? -1.0f : 1.0f;
 
     const Arrangement& arr = m_cgm.arrangement(id);
-    Arr_vertex_const_iterator vit;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
       if (vit->is_real()) continue;
 
       const Point_2& point = vit->point();
@@ -1502,8 +1486,7 @@ void Cubical_gaussian_map_geo::draw_aos_marked_vertices(Draw_action* action)
     center[i] = (id < 3) ? -1.0f : 1.0f;
 
     const Arrangement& arr = m_cgm.arrangement(id);
-    Arr_vertex_const_iterator vit;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
       if (!vit->marked()) continue;
 
       const Point_2& point = vit->point();
@@ -1528,8 +1511,7 @@ void Cubical_gaussian_map_geo::draw_aos_edges(Draw_action* action)
     Vector3f trg;
     src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
     const Arrangement& arr = m_cgm.arrangement(id);
-    Arr_edge_const_iterator hei;
-    for (hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
+    for (auto hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
       const X_monotone_curve_2& curve = hei->curve();
       const Point_2& source = curve.source();
       const Point_2& target = curve.target();
@@ -1568,9 +1550,7 @@ void Cubical_gaussian_map_geo::draw_projection(SGAL::Draw_action* action,
   Vector3f trg;
   src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
   const Arrangement& arr = m_cgm.arrangement(id);
-  for (Arr_edge_const_iterator hei = arr.edges_begin(); hei != arr.edges_end();
-       ++hei)
-  {
+  for (auto hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
     if (m_draw_marked_edge && hei->marked()) continue;
 
     const X_monotone_curve_2& curve = hei->curve();
@@ -1629,8 +1609,7 @@ void Cubical_gaussian_map_geo::process_facets()
 {
   for (unsigned int i = 0; i < Polyhedral_cgm::NUM_FACES; ++i) {
     Arrangement& arr = m_cgm.arrangement(i);
-    Arr_vertex_iterator vit;
-    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
       if (!vit->is_real()) continue;
       Vector_3 exact_normal = m_cgm.calculate_normal(i, vit->point());
       float x = (float) CGAL::to_double(exact_normal.x());
@@ -1896,8 +1875,7 @@ operator()(Draw_action* action)
     Vector3f trg;
     src[i] = trg[i] = (id < 3) ? -1.0f : 1.0f;
     const Arrangement& arr = m_geo.m_cgm.arrangement(id);
-    Arr_edge_const_iterator hei;
-    for (hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
+    for (auto hei = arr.edges_begin(); hei != arr.edges_end(); ++hei) {
       const X_monotone_curve_2& curve = hei->curve();
       const Point_2& source = curve.source();
       const Point_2& target = curve.target();
@@ -1935,7 +1913,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief renders the marked primal vertex. */
+//! \brief renders the marked primal vertex.
 void Cubical_gaussian_map_geo::Marked_face_renderer::
 operator()(Draw_action* /* action */)
 {
@@ -1945,7 +1923,7 @@ operator()(Draw_action* /* action */)
     m_geo.draw_aos_marked_face(i);
 }
 
-/*! \brief processes change of points. */
+//! \brief processes change of points.
 void Cubical_gaussian_map_geo::field_changed(const Field_info* field_info)
 {
   clear();

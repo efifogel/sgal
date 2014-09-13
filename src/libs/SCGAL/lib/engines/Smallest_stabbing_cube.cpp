@@ -42,7 +42,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Smallest_stabbing_cube::s_prototype(NULL);
+Container_proto* Smallest_stabbing_cube::s_prototype(nullptr);
 const std::string Smallest_stabbing_cube::s_tag = "SmallestStabbingCube";
 
 Boolean Smallest_stabbing_cube::s_def_enabled(true);
@@ -52,7 +52,7 @@ Boolean Smallest_stabbing_cube::s_def_enabled(true);
  */
 REGISTER_TO_FACTORY(Smallest_stabbing_cube, "Smallest_stabbing_cube");
 
-/*! A parameter-less constructor. */
+//! \brief constructor from prototype.
 Smallest_stabbing_cube::Smallest_stabbing_cube(Boolean proto) :
   Container(proto),
   m_enabled(s_def_enabled),
@@ -60,17 +60,15 @@ Smallest_stabbing_cube::Smallest_stabbing_cube(Boolean proto) :
   m_execute(false)
 {}
 
-/*! \brief Sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Smallest_stabbing_cube::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  for(auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai)
-  {
+  for(auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
-    if (name == "enabled")
-    {
+    if (name == "enabled") {
       m_enabled = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
@@ -83,20 +81,13 @@ void Smallest_stabbing_cube::set_attributes(Element* elem)
   {
     const std::string& name = elem->get_name(mcai);
     auto& cont_list = elem->get_value(mcai);
-    if (name == "geometries")
-    {
-      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++)
-      {
+    if (name == "geometries") {
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Element::Shared_container cont = *ci;
         auto coords = boost::dynamic_pointer_cast<Coord_transformer>(cont);
-        if (coords)
-        {
-          m_coord_nodes.push_back(coords);
-        }
+        if (coords) m_coord_nodes.push_back(coords);
         else
-        {
           std::cerr << "Invalid " << s_tag << " geometry nodes!" << std::endl;
-        }
       }
 
       elem->mark_delete(mcai);
@@ -107,7 +98,7 @@ void Smallest_stabbing_cube::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Smallest_stabbing_cube::init_prototype()
 {
   if (s_prototype)
@@ -162,19 +153,17 @@ void Smallest_stabbing_cube::init_prototype()
                                                       coord_changed_func));
 }
 
-/*! \brief deletes the node prototype. */
+//! \brief deletes the node prototype.
 void Smallest_stabbing_cube::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the node prototype. */
+//! \brief obtains the node prototype.
 Container_proto* Smallest_stabbing_cube::get_prototype()
 {
-  if (!s_prototype)
-    init_prototype();
-
+  if (!s_prototype) init_prototype();
   return s_prototype;
 }
 
@@ -183,11 +172,9 @@ Container_proto* Smallest_stabbing_cube::get_prototype()
  */
 void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
 {
-  if (!m_enabled)
-    return;
+  if (!m_enabled) return;
 
-  if (m_coord_nodes.size() == 0)
-    return;
+  if (m_coord_nodes.size() == 0) return;
 
   // const int X = 0;
   // const int Y = 1;
@@ -556,20 +543,14 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
 
 /* \brief constructs the prototype. */
 Smallest_stabbing_cube* Smallest_stabbing_cube::prototype()
-{
-  return new Smallest_stabbing_cube(true);
-}
+{ return new Smallest_stabbing_cube(true); }
 
 /*! \brief clones. */
 Container* Smallest_stabbing_cube::clone()
-{
-  return new Smallest_stabbing_cube();
-}
+{ return new Smallest_stabbing_cube(); }
 
 /*! \brief obtains the tag (type) of the container. */
 const std::string& Smallest_stabbing_cube::get_tag() const
-{
-  return s_tag;
-}
+{ return s_tag; }
 
 SGAL_END_NAMESPACE

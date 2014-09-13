@@ -339,7 +339,7 @@ protected:
   Boolean m_use_display_list;
 
   /*! */
-  Int m_display_list_id;
+  Int32 m_display_list_id;
 
   static void (Indexed_line_set::*m_draws[SGAL_NUM_LI_DRAWS])();
   static Boolean m_draws_initialized;

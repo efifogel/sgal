@@ -26,24 +26,24 @@ SGAL_BEGIN_NAMESPACE
 
 std::set<Agent*> Keyboard_event::s_set;
 
-/*! \brief constructor */
+//! \brief constructor.
 Keyboard_event::Keyboard_event(void) :
   Event(),
-  m_window_item(NULL),
+  m_window_item(nullptr),
   m_key('\0'), m_x(0), m_y(0), m_pressed(false)
 {}
 
-/*! \brief deligates the handling of the current event to the given agent. */
+//! \brief deligates the handling of the current event to the given agent.
 void Keyboard_event::handle(Agent* agent) { agent->handle(this); }
 
-/*! \brief exports an identification message to standard output. */
+//! \brief exports an identification message to standard output.
 void Keyboard_event::identify(void)
 { std::cout << "Event: Keyboard" << std::endl; }
 
-/*! \brief registers this event for a particular agent. */
+//! \brief registers this event for a particular agent.
 void Keyboard_event::doregister(Agent* agent) { s_set.insert(agent); }
 
-/*! \brief unregisters this event for a particular agent. */
+//! \brief unregisters this event for a particular agent.
 void Keyboard_event::unregister(Agent* agent) { s_set.erase(agent); }
 
 SGAL_END_NAMESPACE

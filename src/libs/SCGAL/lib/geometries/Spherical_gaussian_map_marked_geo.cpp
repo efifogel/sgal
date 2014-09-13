@@ -85,7 +85,7 @@ const Boolean Spherical_gaussian_map_marked_geo::
 const Spherical_gaussian_map_marked_geo::Edge_style
   Spherical_gaussian_map_marked_geo::
   s_def_aos_marked_edge_style(Edge_shape::TUBE);
-const Int Spherical_gaussian_map_marked_geo::s_def_aos_marked_edge_count(1);
+const Uint Spherical_gaussian_map_marked_geo::s_def_aos_marked_edge_count(1);
 const Boolean Spherical_gaussian_map_marked_geo::
   s_def_aos_marked_edge_directed(false);
 const Float Spherical_gaussian_map_marked_geo::
@@ -272,10 +272,7 @@ void Spherical_gaussian_map_marked_geo::clear()
 void Spherical_gaussian_map_marked_geo::set_attributes(Element* elem)
 {
   Spherical_gaussian_map_base_geo::set_attributes(elem);
-
-  typedef Element::Str_attr_iter                Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     // AOS marked vertex attributes:
@@ -308,7 +305,7 @@ void Spherical_gaussian_map_marked_geo::set_attributes(Element* elem)
       continue;
     }
     if (name == "aosMarkedEdgeCount") {
-      m_aos_marked_edge_count = boost::lexical_cast<Int>(value);
+      m_aos_marked_edge_count = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -396,19 +393,15 @@ void Spherical_gaussian_map_marked_geo::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+  for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); mcai++)
   {
     const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    Element::Cont_list& cont_list = elem->get_value(mcai);
     if (name == "geometries") {
       set_minkowski_sum(true);
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Element::Shared_container cont = *ci;
         Shared_spherical_gaussian_map_marked_geo sgm =
           boost::dynamic_pointer_cast<Spherical_gaussian_map_marked_geo>(cont);
@@ -499,13 +492,13 @@ void Spherical_gaussian_map_marked_geo::draw_primal(Draw_action* action)
 #if 0
   {
     std::cout << "Faces:" << std::endl;
-    Sgm_face_const_iterator fit;
-    for (fit = m_sgm->faces_begin(); fit != m_sgm->faces_end(); ++fit) {
+    for (auto fit = m_sgm->faces_begin(); fit != m_sgm->faces_end(); ++fit) {
       std::cout << fit->point() << std::endl;
 
       std::cout << "  Outer CCB:" << std::endl;
-      Sgm::Outer_ccb_const_iterator oit;
-      for (oit = fit->outer_ccbs_begin(); oit != fit->outer_ccbs_end(); ++oit) {
+      for (auto oit = fit->outer_ccbs_begin(); oit != fit->outer_ccbs_end();
+           ++oit)
+      {
         Sgm::Halfedge_const_iterator first = *oit;
         Sgm::Halfedge_const_iterator curr = first;
         do {
@@ -515,8 +508,9 @@ void Spherical_gaussian_map_marked_geo::draw_primal(Draw_action* action)
       }
 
       std::cout << "  Inner CCB:" << std::endl;
-      Sgm::Inner_ccb_const_iterator iit;
-      for (iit = fit->inner_ccbs_begin(); iit != fit->inner_ccbs_end(); ++iit) {
+      for (auto iit = fit->inner_ccbs_begin(); iit != fit->inner_ccbs_end();
+           ++iit)
+      {
         Sgm::Halfedge_const_iterator first = *iit;
         Sgm::Halfedge_const_iterator curr = first;
         do {
@@ -534,8 +528,9 @@ void Spherical_gaussian_map_marked_geo::draw_primal(Draw_action* action)
 
   glFrontFace((is_ccw()) ? GL_CW : GL_CCW);
 
-  Sgm_vertex_const_iterator vit;
-  for (vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit) {
+  for (auto vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end();
+       ++vit)
+  {
     // Vertices with boundary conditions may have degree 2. Skip them:
     if (vit->degree() < 3) continue;
 
@@ -574,8 +569,7 @@ draw_primal_marked_vertex(Draw_action* action)
 
   Context* context = action->get_context();
 
-  Sgm_face_const_iterator fi;
-  for (fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
+  for (auto fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
     if (!fi->marked()) continue;
 
     Vector3f vec = to_vector3f(fi->point());
@@ -600,8 +594,8 @@ draw_primal_marked_edge(Draw_action* action)
 
   Context* context = action->get_context();
 
-  Sgm_halfedge_const_iterator hi;
-  for (hi = m_sgm->halfedges_begin(); hi != m_sgm->halfedges_end(); ++hi) {
+  for (auto hi = m_sgm->halfedges_begin(); hi != m_sgm->halfedges_end(); ++hi)
+  {
     if (!hi->marked()) continue;
 
     Sgm_face_const_handle face1 = hi->face();
@@ -643,8 +637,8 @@ draw_primal_marked_edge(Draw_action* action)
 //! \brief
 void Spherical_gaussian_map_marked_geo::isect_primary()
 {
-  Sgm_vertex_const_iterator vit;
-  for (vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit) {
+  for (auto vit = m_sgm->vertices_begin(); vit != m_sgm->vertices_end(); ++vit)
+  {
     // Vertices with boundary conditions may have degree 2. Skip them:
     if (vit->degree() < 3) continue;
 
@@ -781,8 +775,7 @@ void Spherical_gaussian_map_marked_geo::draw_aos_opaque(Draw_action* action)
 void Spherical_gaussian_map_marked_geo::
 draw_aos_marked_face(Draw_action* action)
 {
-  Sgm_face_const_iterator fi;
-  for (fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
+  for (auto fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
     if (!fi->marked()) continue;
 
     // Collect the points on the boundary:
@@ -815,8 +808,7 @@ draw_aos_marked_face(Draw_action* action)
 //! \brief draws the arrangement vertices.
 void Spherical_gaussian_map_marked_geo::draw_aos_vertices(Draw_action* action)
 {
-  Sgm_vertex_const_iterator vi;
-  for (vi = m_sgm->vertices_begin(); vi != m_sgm->vertices_end(); ++vi) {
+  for (auto vi = m_sgm->vertices_begin(); vi != m_sgm->vertices_end(); ++vi) {
     if (m_draw_marked_facet && vi->marked()) continue;
     Vector3f center = to_vector3f(vi->point());
     center.normalize();
@@ -827,8 +819,7 @@ void Spherical_gaussian_map_marked_geo::draw_aos_vertices(Draw_action* action)
 //! \brief draws the arrangement vertices.
 void Spherical_gaussian_map_marked_geo::draw_aos_edges(Draw_action* action)
 {
-  Sgm_edge_const_iterator hei;
-  for (hei = m_sgm->edges_begin(); hei != m_sgm->edges_end(); ++hei) {
+  for (auto hei = m_sgm->edges_begin(); hei != m_sgm->edges_end(); ++hei) {
     if (get_draw_marked_edge() && hei->marked()) continue;
     const X_monotone_curve_2& curve = hei->curve();
     Vector3f src = to_vector3f(curve.source());
@@ -875,9 +866,8 @@ void Spherical_gaussian_map_marked_geo::Marked_vertices_renderer::
 operator()(Draw_action* action)
 {
   glColor3fv((float*)&m_geo.m_marked_facet_color);
-  Sgm_vertex_const_iterator vi;
-  for (vi = m_geo.m_sgm->vertices_begin(); vi != m_geo.m_sgm->vertices_end();
-       ++vi)
+  for (auto vi = m_geo.m_sgm->vertices_begin();
+       vi != m_geo.m_sgm->vertices_end(); ++vi)
   {
     if (!vi->marked()) continue;
     Vector3f center = to_vector3f(vi->point());
@@ -898,8 +888,8 @@ operator()(Draw_action* action)
 void Spherical_gaussian_map_marked_geo::Colored_edges_renderer::
 operator()(Draw_action* action)
 {
-  Sgm_edge_const_iterator hei;
-  for (hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end(); ++hei)
+  for (auto hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end();
+       ++hei)
   {
     if (m_geo.get_draw_marked_edge() && hei->marked()) continue;
 
@@ -931,8 +921,8 @@ operator()(Draw_action* action)
 void Spherical_gaussian_map_marked_geo::Marked_edges_renderer::
 operator()(Draw_action* action)
 {
-  Sgm_edge_const_iterator hei;
-  for (hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end(); ++hei)
+  for (auto hei = m_geo.m_sgm->edges_begin(); hei != m_geo.m_sgm->edges_end();
+       ++hei)
   {
     if (!hei->marked()) continue;
     const X_monotone_curve_2& curve = hei->curve();

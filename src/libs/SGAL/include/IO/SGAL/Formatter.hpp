@@ -128,8 +128,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_int(const std::string& /* name */,
-                          Int /* value */, Int /* default_value */) {}
+  virtual void single_int32(const std::string& /* name */,
+                            Int32 /* value */, Int32 /* default_value */) {}
 
   /*! Write a single Scene_time field.
    * \param name The attribute name.
@@ -235,9 +235,9 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_int(const std::string& /* name */,
-                         const std::vector<Int>& /* value */,
-                         const std::vector<Int>& /* default_value */) {}
+  virtual void multi_int32(const std::string& /* name */,
+                           const std::vector<Int32>& /* value */,
+                           const std::vector<Int32>& /* default_value */) {}
 
   /*! Write a multi-Scene_time field.
    * \param name The attribute name.

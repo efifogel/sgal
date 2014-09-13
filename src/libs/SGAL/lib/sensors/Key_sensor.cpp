@@ -31,20 +31,18 @@
 
 SGAL_BEGIN_NAMESPACE
 
-typedef Element::Str_attr_iter          Str_attr_iter;
-
 std::string Key_sensor::s_tag = "KeySensor";
-Container_proto* Key_sensor::s_prototype(NULL);
+Container_proto* Key_sensor::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Key_sensor, "Key_sensor");
 
 #define SHIFT_CODE 16
 #define CTRL_CODE 17
 
-/*! Constructor */
+//! \brief constructor.
 Key_sensor::Key_sensor(Boolean proto) :
   Node(proto),
-  m_scene_graph(NULL),
+  m_scene_graph(nullptr),
   m_enabled(true),
   m_active(false),
   m_shift_key(false),
@@ -55,7 +53,7 @@ Key_sensor::Key_sensor(Boolean proto) :
   m_action_key(0)
 {}
 
-/*! \brief initializes the node prototype. */
+//! \brief initializes the node prototype.
 void Key_sensor::init_prototype()
 {
   if (s_prototype) return;
@@ -63,34 +61,34 @@ void Key_sensor::init_prototype()
 
   // Add the field-info records to the prototype:
   // keyPress
-  Int_handle_function key_func =
-    static_cast<Int_handle_function>(&Key_sensor::key_handle);
-  s_prototype->add_field_info(new SF_int(KEY_PRESS, "keyPress",
-                                         RULE_EXPOSED_FIELD,
-                                         key_func));
+  Uint_handle_function key_func =
+    static_cast<Uint_handle_function>(&Key_sensor::key_handle);
+  s_prototype->add_field_info(new SF_uint(KEY_PRESS, "keyPress",
+                                          RULE_EXPOSED_FIELD,
+                                          key_func));
 
   // keyRelease
   // Int_handle_function key_func =
   //   static_cast<Int_handle_function>(&Key_sensor::key_handle);
-  s_prototype->add_field_info(new SF_int(KEY_RELEASE, "keyRelease",
-                                         RULE_EXPOSED_FIELD,
-                                         key_func));
+  s_prototype->add_field_info(new SF_uint(KEY_RELEASE, "keyRelease",
+                                          RULE_EXPOSED_FIELD,
+                                          key_func));
 
   // actionKeyPress
-  Int_handle_function action_key_func =
-    static_cast<Int_handle_function>(&Key_sensor::action_key_handle);
-  s_prototype->add_field_info(new SF_int(ACTION_KEY_PRESS,
-                                         "actionKeyPress",
-                                         RULE_EXPOSED_FIELD,
-                                         action_key_func));
+  Uint_handle_function action_key_func =
+    static_cast<Uint_handle_function>(&Key_sensor::action_key_handle);
+  s_prototype->add_field_info(new SF_uint(ACTION_KEY_PRESS,
+                                          "actionKeyPress",
+                                          RULE_EXPOSED_FIELD,
+                                          action_key_func));
 
   // actionKeyRelease
   // Int_handle_function action_key_func =
   //   static_cast<Int_handle_function>(&Key_sensor::action_key_handle);
-  s_prototype->add_field_info(new SF_int(ACTION_KEY_RELEASE,
-                                         "actionKeyRelease",
-                                         RULE_EXPOSED_FIELD,
-                                         action_key_func));
+  s_prototype->add_field_info(new SF_uint(ACTION_KEY_RELEASE,
+                                          "actionKeyRelease",
+                                          RULE_EXPOSED_FIELD,
+                                          action_key_func));
 
   // shiftKey
   Boolean_handle_function shift_key_func =
@@ -124,32 +122,32 @@ void Key_sensor::init_prototype()
                                           exec_func));
 }
 
-/*! */
+//!
 void Key_sensor::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! */
+//!
 Container_proto* Key_sensor::get_prototype()
 {
   if (!s_prototype) Key_sensor::init_prototype();
   return s_prototype;
 }
 
-/*! Registers the mouse and mostion events */
+//! Registers the mouse and mostion events.
 void Key_sensor::register_events() { Keyboard_event::doregister(this); }
 
-/*! Registers the mouse and mostion events */
+//! Registers the mouse and mostion events.
 void Key_sensor::unregister_events() { Keyboard_event::unregister(this); }
 
-/*! Prints out the name of this agent (for debugging purposes) */
+//! Prints out the name of this agent (for debugging purposes).
 void Key_sensor::identify()
 { std::cout << "Agent: Key_sensor" << std::endl; }
 
-/*! Handles keyboard events */
-void Key_sensor::handle(Keyboard_event * event)
+//! Handles keyboard events.
+void Key_sensor::handle(Keyboard_event* event)
 {
   m_key = event->get_key();
   m_pressed = event->get_pressed();
@@ -237,12 +235,11 @@ void Key_sensor::Key_up()
 }
 #endif
 
-/*! \brief sets the attributes of this container. */
+//! \brief sets the attributes of this container.
 void Key_sensor::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "enabled") {
@@ -254,7 +251,7 @@ void Key_sensor::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief adds the container to a given scene */
+//! \brief adds the container to a given scene.
 void Key_sensor::add_to_scene(Scene_graph * sg)
 {
   m_scene_graph = sg;
@@ -281,8 +278,7 @@ Attribute_list Key_sensor::get_attributes()
   return attribs;
 };
 
-/*!
- * Adds this key sensor to the scene graph.
+/*! \brief adds this key sensor to the scene graph.
  * Also set the execution coordinator to point at this one as active if needed.
  * @param parent (in) pointer to the parent node
  */
@@ -293,7 +289,7 @@ void Key_sensor::add_to_scene(Scene_graph* sg)
   // If this key sensor is marked active and there is no active key
   // sensor pointed by the execution coordinator already - set
   // the execution coordinator to point to this:
-  if (m_active && m_execution_coordinator->get_active_key_sensor() == NULL)
+  if (m_active && m_execution_coordinator->get_active_key_sensor() == nullptr)
     // Set this as the active key sensor
     m_execution_coordinator->set_active_key_sensor(this);
   else

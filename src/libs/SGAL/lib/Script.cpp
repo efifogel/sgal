@@ -40,7 +40,7 @@ std::vector<Container_proto*> Script::s_prototypes;
 
 REGISTER_TO_FACTORY(Script, "Script");
 
-/*! Constructor */
+//! \brief constructor from prototype.
 Script::Script(Boolean proto) :
   Script_base(proto),
   m_isolate(nullptr)
@@ -52,17 +52,17 @@ Script::Script(Boolean proto) :
   s_prototypes[id] = nullptr;
 }
 
-/*! Destructor */
+//! \brief destructor.
 Script::~Script() { m_context.Reset(); }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Script::init_prototype()
 {
   if (s_prototypes[m_id]) return;
   s_prototypes[m_id] = new Container_proto(Script_base::get_prototype());
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Script::delete_prototype()
 {
   if (!s_prototypes[m_id]) return;
@@ -70,20 +70,20 @@ void Script::delete_prototype()
   s_prototypes[m_id] = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Script::get_prototype()
 {
   if (!s_prototypes[m_id]) Script::init_prototype();
   return s_prototypes[m_id];
 }
 
-/*! \brief sets the attributes of the object extracted from the input file. */
+//! \brief sets the attributes of the object extracted from the input file.
 void Script::set_attributes(Element* elem)
 {
   Script_base::set_attributes(elem);
-
-  Element::Field_attr_iter fi;
-  for (fi = elem->field_attrs_begin(); fi != elem->field_attrs_end(); ++fi) {
+  for (auto fi = elem->field_attrs_begin(); fi != elem->field_attrs_end();
+       ++fi)
+  {
     Field_rule rule = elem->get_rule(fi);
     Field_type type = elem->get_type(fi);
     const std::string& name = elem->get_name(fi);
@@ -168,7 +168,7 @@ void Script::getter(v8::Local<v8::String> property,
 
    case SF_INT32:
     {
-     Int* tmp = script_node->field_handle<Int>(field_info);
+     Int32* tmp = script_node->field_handle<Int32>(field_info);
      info.GetReturnValue().Set(*tmp);
     }
     break;
@@ -265,7 +265,7 @@ void Script::setter(v8::Local<v8::String> property,
 
    case SF_INT32:
     {
-     Int* tmp = script_node->field_handle<Int>(field_info);
+     Int32* tmp = script_node->field_handle<Int32>(field_info);
      *tmp = value->Int32Value();
      // std::cout << "  value: " << *tmp << std::endl;
     }
@@ -458,7 +458,7 @@ void Script::array_setter(v8::Local<v8::String> property,
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
-     Int_array* tmp = script_node->field_handle<Int_array>(field_info);
+     Int32_array* tmp = script_node->field_handle<Int32_array>(field_info);
      tmp->resize(array->Length());
      for (size_t i = 0; i < array->Length(); ++i)
        (*tmp)[i] = array->Get(i)->Int32Value();
@@ -627,7 +627,7 @@ void Script::indexed_getter(uint32_t index,
    case MF_INT32:
     {
      v8::HandleScope scope(isolate);
-     Int_array* tmp = script_node->field_handle<Int_array>(field_info);
+     Int32_array* tmp = script_node->field_handle<Int32_array>(field_info);
      SGAL_assertion(index < tmp->size());
      info.GetReturnValue().Set((*tmp)[index]);
     }
@@ -779,7 +779,7 @@ void Script::indexed_setter(uint32_t index,
    case MF_INT32:
     {
      v8::HandleScope scope(isolate);
-     Int_array* tmp = script_node->field_handle<Int_array>(field_info);
+     Int32_array* tmp = script_node->field_handle<Int32_array>(field_info);
      tmp->resize(index+1);
      (*tmp)[index] = value->Int32Value();;
     }
@@ -800,7 +800,8 @@ void Script::indexed_setter(uint32_t index,
    case MF_COLOR:
     {
      v8::HandleScope scope(isolate);
-     Vector3f_array* tmp = script_node->field_handle<Vector3f_array>(field_info);
+     Vector3f_array* tmp =
+       script_node->field_handle<Vector3f_array>(field_info);
      tmp->resize(index+1);
      v8::Local<v8::Array> vec3f = v8::Handle<v8::Array>::Cast(value);
      ((*tmp)[index])[0] = static_cast<Float>(vec3f->Get(0)->NumberValue());
@@ -853,7 +854,7 @@ void Script::add_to_scene(Scene_graph* scene_graph)
   bound_script();           // bound the script to the context
 }
 
-/*! \brief adds a field info record to the script node. */
+//! \brief adds a field info record to the script node.
 void Script::add_field_info(Field_rule rule, Field_type type,
                             const std::string& name, const std::string& value)
 {
@@ -893,7 +894,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
 
    case SF_INT32:
     {
-     auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int>(value);
+     auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int32>(value);
      variant_field = initial_value;
      add_fi<SF_INT32>(id, name, rule, initial_value, exec_func, prototype);
     }
@@ -973,7 +974,7 @@ void Script::add_field_info(Field_rule rule, Field_type type,
 
    case MF_INT32:
     {
-     Int_array initial_value;
+     Int32_array initial_value;
      variant_field = initial_value;
      add_fi<MF_INT32>(id, name, rule, initial_value, exec_func, prototype);
     }
@@ -1124,7 +1125,7 @@ v8::Handle<v8::Value> Script::get_multi_time(const Field_info* field_info)
 //! \brief converts a multi int32 field value to a v8 engine array of int32.
 v8::Handle<v8::Value> Script::get_multi_int32(const Field_info* field_info)
 {
-  Int_array* tmp = field_handle<Int_array>(field_info);
+  Int32_array* tmp = field_handle<Int32_array>(field_info);
   v8::Handle<v8::Array> array = v8::Array::New(m_isolate, tmp->size());
   if (array.IsEmpty()) {
     std::cerr << "failed to allocate v8 Array!" << std::endl;
@@ -1196,8 +1197,7 @@ v8::Handle<v8::Value> Script::get_multi_vector3f(const Field_info* field_info)
 void Script::add_callbacks(v8::Local<v8::Object> global)
 {
   Container_proto* proto = get_prototype();
-  Container_proto::Id_const_iterator it = proto->ids_begin(proto);
-  for (it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
     if ((field_info->get_rule() != RULE_FIELD) &&
         (field_info->get_rule() != RULE_OUT))

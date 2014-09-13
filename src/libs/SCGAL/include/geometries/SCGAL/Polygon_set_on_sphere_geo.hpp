@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_sphere_marked_geo.hpp 7205 2009-01-24 22:20:34Z efif $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 //                 Ophir Setter      <ophir.setter@gmail.com>
 
@@ -91,21 +88,20 @@ public:
     LAST
   };
 
-  typedef Fields                                      Operation_type;
+  typedef Fields                                            Operation_type;
 
 protected:
-  typedef Polygon_set_on_sphere_geo                   Self;
-  typedef Arrangement_on_sphere_marked_geo            Base;
+  typedef Polygon_set_on_sphere_geo                         Self;
+  typedef Arrangement_on_sphere_marked_geo                  Base;
 
-  typedef Base::Aos_geom_traits                       Gps_traits_2;
+  typedef Base::Aos_geom_traits                             Gps_traits_2;
   typedef CGAL::General_polygon_set_on_surface_2<
-    Gps_traits_2, Base::Aos_topol_traits>             Polygon_set;
+    Gps_traits_2, Base::Aos_topol_traits>                   Polygon_set;
 
-  typedef Gps_traits_2::Polygon_2                     Polygon_2;
+  typedef Gps_traits_2::Polygon_2                           Polygon_2;
 
-  typedef std::vector<Int>                            Int_container;
-  typedef std::vector<
-    Aos_geom_traits::X_monotone_curve_2>              Curve_cont;
+  typedef std::vector<Uint>                                 Uint_container;
+  typedef std::vector<Aos_geom_traits::X_monotone_curve_2>  Curve_cont;
 
 public:
   /*! Constructor. */
@@ -150,15 +146,15 @@ public:
   //! Returns the type of operation we need to perform (intersection, etc.).
   Operation_type operation_type() const { return m_operation_type; }
 
-  //! Get the polygon set (const version)
+  //! Obtain the polygon set (const version)
   const Polygon_set& polygon_set() const { return m_polygon_set; }
 
-  //! Get the polygon set (non-const version).
+  //! Obtain the polygon set (non-const version).
   Polygon_set& polygon_set() { return m_polygon_set; }
 
 protected:
   /*! Obtain the tag (type) of the container. */
-  virtual const std::string& get_tag() const { return s_tag; }
+  virtual const std::string& get_tag() const;
 
   //! Sets the type of operation we need to perform (intersection etc.)
   void set_operation_type(Operation_type o) { m_operation_type = o; }
@@ -200,7 +196,7 @@ protected:
   Operation_type m_operation_type;
 
   /*! An array of indices into the vertex-coordinate array */
-  Int_container m_poly_indices;
+  Uint_container m_poly_indices;
 
  private:
   /*! The tag that identifies this container type. */
@@ -219,13 +215,17 @@ protected:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Polygon_set_on_sphere_geo* Polygon_set_on_sphere_geo::prototype()
 { return new Polygon_set_on_sphere_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Polygon_set_on_sphere_geo::clone()
 { return new Polygon_set_on_sphere_geo(); }
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Polygon_set_on_sphere_geo::get_tag() const
+{ return s_tag; }
 
 SGAL_END_NAMESPACE
 

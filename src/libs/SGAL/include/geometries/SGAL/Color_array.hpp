@@ -61,7 +61,7 @@ public:
   Color_array(Boolean proto = false);
 
   /*! Constructor. */
-  Color_array(Int n);
+  Color_array(Uint n);
 
   /*! Destructor. */
   virtual ~Color_array();
@@ -174,7 +174,7 @@ private:
 inline Color_array::Color_array(Boolean proto) : Container(proto) {}
 
 //!\brief constructor.
-inline Color_array::Color_array(Int n) { m_array.resize(n); }
+inline Color_array::Color_array(Uint n) { m_array.resize(n); }
 
 //! \brief destructor.
 inline Color_array::~Color_array() {}

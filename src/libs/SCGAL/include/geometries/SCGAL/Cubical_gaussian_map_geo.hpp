@@ -602,7 +602,7 @@ private:
   // Default dual nonreal-edge attributes:
   static const Boolean s_def_aos_nonreal_edge_enabled;
   static const Edge_style s_def_aos_nonreal_edge_style;
-  static const Int s_def_aos_nonreal_edge_count;
+  static const Uint s_def_aos_nonreal_edge_count;
   static const Boolean s_def_aos_nonreal_edge_directed;
   static const Float s_def_aos_nonreal_edge_radius;
   static const Float s_def_aos_nonreal_edge_line_width;
@@ -709,7 +709,7 @@ private:
   Edge_style m_aos_nonreal_edge_style;
 
   /*! The nonreal edge rendering type. */
-  Int m_aos_nonreal_edge_count;
+  Uint m_aos_nonreal_edge_count;
 
   /*! Indicates whether nonreal edges are rendered directed or not. */
   Boolean m_aos_nonreal_edge_directed;
@@ -1139,10 +1139,10 @@ public:
   void set_aos_edge_style(Edge_style style) { m_aos_edge_style = style; }
 
   /*! Obtain the edge shape count. */
-  Int get_aos_edge_count() const { return m_aos_edge_count; }
+  Uint get_aos_edge_count() const { return m_aos_edge_count; }
 
   /*! Set the edge shape count. */
-  void set_aos_edge_count(Int count) { m_aos_edge_count = count; }
+  void set_aos_edge_count(Uint count) { m_aos_edge_count = count; }
 
   /*! Determine whether edges are rendered directed. */
   Boolean get_aos_edge_directed() const { return m_aos_edge_directed; }
@@ -1274,31 +1274,31 @@ public:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Cubical_gaussian_map_geo* Cubical_gaussian_map_geo::prototype()
 { return new Cubical_gaussian_map_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Cubical_gaussian_map_geo::clone()
 { return new Cubical_gaussian_map_geo(); }
 
-/*! \brief set the curve color */
+//! \brief set the curve color.
 inline void
 Cubical_gaussian_map_geo::set_aos_edge_color(const Vector3f& color,
                                              unsigned int id)
 { m_aos_edge_color[id] = color; }
 
-/*! \brief obtains the curve color. */
+//! \brief obtains the curve color.
 inline const SGAL::Vector3f &
 Cubical_gaussian_map_geo::get_aos_edge_color(unsigned int id) const
 { return m_aos_edge_color[id]; }
 
-/*! \brief obtains the dual surface color. */
+//! \brief obtains the dual surface color.
 inline
 const Vector3f& Cubical_gaussian_map_geo::get_aos_surface_color(void) const
 { return m_aos_surface_color; }
 
-/*! \brief sets dual the surface color. */
+//! \brief sets dual the surface color.
 inline
 void Cubical_gaussian_map_geo::
 set_aos_surface_color(const SGAL::Vector3f& color)
@@ -1307,22 +1307,22 @@ set_aos_surface_color(const SGAL::Vector3f& color)
   if (m_colored_surface_renderer) m_colored_surface_renderer->set_color(color);
 }
 
-/*! \brief obtains the color of the marked vertex. */
+//! \brief obtains the color of the marked vertex.
 inline
 const Vector3f& Cubical_gaussian_map_geo::get_marked_vertex_color() const
 { return m_marked_vertex_color; }
 
-/*! \brief sets the color of the marked vertex. */
+//! \brief sets the color of the marked vertex.
 inline void
 Cubical_gaussian_map_geo::set_marked_vertex_color(const Vector3f& color)
 { m_marked_vertex_color = color; }
 
-/*! \brief sets the color of the marked edge. */
+//! \brief sets the color of the marked edge.
 inline void
 Cubical_gaussian_map_geo::set_marked_edge_color(const Vector3f& color)
 { m_marked_edge_color = color; }
 
-/*! \brief sets the color of the marked facet. */
+//! \brief sets the color of the marked facet.
 inline void
 Cubical_gaussian_map_geo::set_marked_facet_color(const Vector3f& color)
 { m_marked_facet_color = color; }

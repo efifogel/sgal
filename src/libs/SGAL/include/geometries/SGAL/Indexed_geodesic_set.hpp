@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 6147 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>; Boris Kozorovitzky <zbzzn@hotmail.com>
 
 #ifndef SGAL_INDEXED_GEODESIC_SET_HPP
@@ -165,7 +162,7 @@ protected:
   Boolean m_use_display_list;
 
   /*! */
-  Int m_display_list_id;
+  Int32 m_display_list_id;
 
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
@@ -187,31 +184,31 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Indexed_geodesic_set* Indexed_geodesic_set::prototype()
 { return new Indexed_geodesic_set(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Indexed_geodesic_set::clone()
 { return new Indexed_geodesic_set(); }
 
-/*! \brief obtains. */
+//! \brief obtains.
 inline Boolean Indexed_geodesic_set::get_normal_per_vertex()
 { return m_normal_per_vertex; }
 
-/*! \brief obtains. */
+//! \brief obtains.
 inline Boolean Indexed_geodesic_set::get_color_per_vertex()
 { return m_color_per_vertex; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Indexed_geodesic_set::get_tag() const
 { return s_tag; }
 
-/*! \brief sets the line width. */
+//! \brief sets the line width.
 inline void Indexed_geodesic_set::set_line_width(Float width)
 { m_line_width = width; }
 
-/*! \brief obtains the line width. */
+//! \brief obtains the line width.
 inline Float Indexed_geodesic_set::get_line_width()
 { return m_line_width; }
 

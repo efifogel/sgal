@@ -146,14 +146,10 @@ protected:
   virtual const std::string& get_tag() const;
 
 private:
+  friend class Context;
+
   /*! The tag that identifies this container type */
   static std::string s_tag;
-
-  Int m_dirty_id;
-
-  Int m_dirty_count;
-
-  friend class Context;
 
   /*! The s-texture coordinate generation function. */
   Mode m_mode_s;
@@ -187,25 +183,25 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Tex_gen* Tex_gen::prototype() { return new Tex_gen(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Tex_gen::clone() { return new Tex_gen(); }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Tex_gen::get_tag() const { return s_tag; }
 
-/*! \brief obtains the s-texture coordinate generation function. */
+//! \brief obtains the s-texture coordinate generation function.
 inline Tex_gen::Mode Tex_gen::get_mode_s() const { return m_mode_s; }
 
-/*! \brief obtains the t-texture coordinate generation function. */
+//! \brief obtains the t-texture coordinate generation function.
 inline Tex_gen::Mode Tex_gen::get_mode_t() const { return m_mode_t; }
 
-/*! \brief obtains the r-texture coordinate generation function. */
+//! \brief obtains the r-texture coordinate generation function.
 inline Tex_gen::Mode Tex_gen::get_mode_r() const { return m_mode_r; }
 
-/*! \brief obtains the q-texture coordinate generation function. */
+//! \brief obtains the q-texture coordinate generation function.
 inline Tex_gen::Mode Tex_gen::get_mode_q() const { return m_mode_q; }
 
 /*! \brief obtains the (non const) s-texture coordinate generation
@@ -213,7 +209,7 @@ inline Tex_gen::Mode Tex_gen::get_mode_q() const { return m_mode_q; }
  */
 inline Plane& Tex_gen::get_plane_s() { return m_plane_s; }
 
-/*! \brief Obtain the (const) s-texture coordinate generation reference-plane. */
+//! \brief Obtain the (const) s-texture coordinate generation reference-plane.
 inline const Plane& Tex_gen::get_plane_s() const { return m_plane_s; }
 
 /*! \brief obtains the (non const) t-texture coordinate generation
@@ -221,7 +217,7 @@ inline const Plane& Tex_gen::get_plane_s() const { return m_plane_s; }
  */
 inline Plane& Tex_gen::get_plane_t() { return m_plane_t; }
 
-/*! \brief Obtain the (const) t-texture coordinate generation reference-plane. */
+//! \brief Obtain the (const) t-texture coordinate generation reference-plane.
 inline const Plane& Tex_gen::get_plane_t() const { return m_plane_t; }
 
 /*! \brief obtains the (non const) r-texture coordinate generation
@@ -229,7 +225,7 @@ inline const Plane& Tex_gen::get_plane_t() const { return m_plane_t; }
  */
 inline Plane& Tex_gen::get_plane_r() { return m_plane_r; }
 
-/*! \brief Obtain the (const) r-texture coordinate generation reference-plane. */
+//! \brief Obtain the (const) r-texture coordinate generation reference-plane.
 inline const Plane& Tex_gen::get_plane_r() const { return m_plane_r; }
 
 /*! \brief obtains the (non const) q-texture coordinate generation
@@ -237,7 +233,7 @@ inline const Plane& Tex_gen::get_plane_r() const { return m_plane_r; }
  */
 inline Plane& Tex_gen::get_plane_q() { return m_plane_q; }
 
-/*! \brief Obtain the (const) s-texture coordinate generation reference-plane. */
+//! \brief Obtain the (const) s-texture coordinate generation reference-plane.
 inline const Plane& Tex_gen::get_plane_q() const { return m_plane_q; }
 
 SGAL_END_NAMESPACE

@@ -28,16 +28,16 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Is it the first window? */
+//! Is it the first window?
 Boolean Windows_window_item::s_first(true);
 
-/*! \brief shows the window. Make the window current if it is not already. */
+//! \brief shows the window. Make the window current if it is not already.
 void Windows_window_item::show() { ShowWindow(m_hWnd, SW_SHOW); }
 
-/*! \brief hides the window. Make the window current if it is not already. */
+//! \brief hides the window. Make the window current if it is not already.
 void Windows_window_item::hide() { ShowWindow(m_hWnd, SW_HIDE); }
 
-/*! \brief swaps the window frame-buffer */
+//! \brief swaps the window frame-buffer.
 void Windows_window_item::swap_buffers()
 { if (m_double_buffer) SwapBuffers(m_hDC); }
 
@@ -47,7 +47,7 @@ void Windows_window_item::swap_buffers()
 void Windows_window_item::make_current()
 { wglMakeCurrent(m_hDC, m_hRC); }
 
-/*! \brief queries the multisample frequencies */
+//! \brief queries the multisample frequencies.
 Boolean Windows_window_item::init_multisample(HINSTANCE& /* hInstance */)
 {
   if (!Gfx_conf::get_instance()->is_multisample_supported()) return false;
@@ -87,7 +87,7 @@ Boolean Windows_window_item::init_multisample(HINSTANCE& /* hInstance */)
   return false;
 }
 
-/*! \brief creates the window (or use an existing window handle). */
+//! \brief creates the window (or use an existing window handle).
 void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
                                       HWND hWnd)
 {
@@ -223,7 +223,7 @@ void Windows_window_item::create_base(HINSTANCE& hInstance, char* wc_name,
   }
 }
 
-/*! \brief creates the window */
+//! \brief creates the window.
 void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
                                  HWND hWnd)
 {
@@ -254,8 +254,8 @@ void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
   m_stencil_bits = pfd.cStencilBits;
 
   if (Gfx_conf::get_instance()->is_multisample_supported()) {
-    Int piAttributes[] = {WGL_SAMPLES_ARB};
-    Int piValues[2];
+    Int32 piAttributes[] = {WGL_SAMPLES_ARB};
+    Int32 piValues[2];
     if (wglGetPixelFormatAttribivARB(m_hDC, m_pixel_format,
                                      0,             // main plane
                                      1, piAttributes, piValues) == FALSE)
@@ -274,7 +274,7 @@ void Windows_window_item::create(HINSTANCE& hInstance, char* wc_name,
    */
 }
 
-/*! \brief destroys the window */
+//! \brief destroys the window.
 void Windows_window_item::destroy()
 {
   if (m_hWnd != NULL) {

@@ -157,12 +157,12 @@ Action::Trav_directive Light::draw(Draw_action* da)
 {
   if ((da == 0) || (da->get_context() == 0)) return Action::TRAV_STOP;
 
-  int already_defined;
+  Int32 already_defined;
   Matrix4f mat;
   m_id = da->get_context()->get_light_target(this, mat, already_defined);
   if (m_id == already_defined) return Action::TRAV_CONT;
 
-  int light_id  = GL_LIGHT0 + m_id;
+  Int32 light_id  = GL_LIGHT0 + m_id;
 
   Vector3f ambient;
   ambient.scale(m_ambient_intensity, m_color);

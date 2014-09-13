@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Power_diagram_on_sphere_geo.hpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -155,7 +152,7 @@ public:
   //@{
   Boolean* site_enabled_handle(const Field_info*) { return &m_site_enabled; }
   Site_style* site_style_handle(const Field_info*) { return &m_site_style; }
-  Int* site_count_handle(const Field_info*) { return &m_site_count; }
+  Uint* site_count_handle(const Field_info*) { return &m_site_count; }
   Boolean* site_directed_handle(const Field_info*) { return &m_site_directed; }
   //@}
 
@@ -207,10 +204,10 @@ public:
   void set_site_style(Site_style style) { m_site_style = style; }
 
   /*! Obtain the edge shape type. */
-  Int get_site_count() const { return m_site_count; }
+  Uint get_site_count() const { return m_site_count; }
 
   /*! Set the edge shape type. */
-  void set_site_count(Int count) { m_site_count = count; }
+  void set_site_count(Uint count) { m_site_count = count; }
 
   /*! Determine whether edges are rendered directed. */
   Boolean get_site_directed() const { return m_site_directed; }
@@ -322,7 +319,7 @@ private:
   Site_style m_site_style;
 
   /*! The edge rendering type. */
-  Int m_site_count;
+  Uint m_site_count;
 
   /*! Indicates whether edges are rendered directed or not. */
   Boolean m_site_directed;
@@ -348,7 +345,7 @@ private:
   /*! Default values. */
   static const Boolean s_def_site_enabled;
   static const Site_style s_def_site_style;
-  static const Int s_def_site_count;
+  static const Uint s_def_site_count;
   static const Boolean s_def_site_directed;
   static const Float s_def_site_radius;
   static const Float s_def_site_line_width;
@@ -391,15 +388,15 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Power_diagram_on_sphere_geo* Power_diagram_on_sphere_geo::prototype()
 { return new Power_diagram_on_sphere_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Power_diagram_on_sphere_geo::clone()
 { return new Power_diagram_on_sphere_geo(); }
 
-/*! \brief obtains the coordinate array. */
+//! \brief obtains the coordinate array.
 inline Power_diagram_on_sphere_geo::Shared_coeff_array
 Power_diagram_on_sphere_geo::get_coeff_array() const { return m_coeff_array; }
 

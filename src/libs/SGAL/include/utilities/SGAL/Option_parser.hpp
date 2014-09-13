@@ -70,7 +70,7 @@ public:
    * \param argc (in)
    * \param argv (in)
    */
-  void operator()(Int argc, Char* argv[]);
+  void operator()(Int32 argc, Char* argv[]);
 
   /*! Apply the options.
    */

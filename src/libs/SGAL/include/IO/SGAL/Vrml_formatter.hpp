@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12347 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_VRML_FORMATTER_HPP
@@ -40,7 +37,8 @@ class Vector4f;
 class Rotation;
 class Sphere_bound;
 
-/*! Exports a scene graph to an output stream in the VRML format */
+/*! Exports a scene graph to an output stream in the VRML format.
+ */
 class SGAL_SGAL_DECL Vrml_formatter : public Text_formatter {
 public:
   /*! Constructor */
@@ -107,8 +105,8 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void single_int(const std::string& name,
-                          Int value, Int default_value);
+  virtual void single_int32(const std::string& name,
+                            Int32 value, Int32 default_value);
 
   /*! Export a single Scene_time field.
    * \param name The attribute name.
@@ -213,9 +211,9 @@ public:
    * \param value The attribute value.
    * \param default_value The attribute default value.
    */
-  virtual void multi_int(const std::string& name,
-                         const std::vector<Int>& value,
-                         const std::vector<Int>& default_value);
+  virtual void multi_int32(const std::string& name,
+                           const std::vector<Int32>& value,
+                           const std::vector<Int32>& default_value);
 
   /*! Export a multi-Scene_time field.
    * \param name The attribute name.
@@ -346,8 +344,8 @@ inline void Vrml_formatter::single_uint(const std::string& name,
 { single_field(name, value, default_value); }
 
 //! \brief writes a single Int field.
-inline void Vrml_formatter::single_int(const std::string& name,
-                                       Int value, Int default_value)
+inline void Vrml_formatter::single_int32(const std::string& name,
+                                         Int32 value, Int32 default_value)
 { single_field(name, value, default_value); }
 
 //! \brief writes a single Scene_time field.
@@ -401,9 +399,9 @@ inline void Vrml_formatter::multi_uint(const std::string& name,
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Int field.
-inline void Vrml_formatter::multi_int(const std::string& name,
-                                      const std::vector<Int>& value,
-                                      const std::vector<Int>& default_value)
+inline void Vrml_formatter::multi_int32(const std::string& name,
+                                        const std::vector<Int32>& value,
+                                        const std::vector<Int32>& default_value)
 { multi_field(name, value, default_value); }
 
 //! \brief writes a single Scene_time field.

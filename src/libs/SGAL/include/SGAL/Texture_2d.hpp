@@ -104,10 +104,10 @@ public:
   Image::Format get_format() const;
 
   /*! Obtain the texture width. */
-  Int get_width() const;
+  Uint get_width() const;
 
   /*! Obtain the texture height. */
-  Int get_height() const;
+  Uint get_height() const;
 
   /*! Obtain the texture pixel-data. */
   void* get_pixels() const;
@@ -174,10 +174,10 @@ inline  Image::Format Texture_2d::get_format() const
 { return m_image->get_format(); }
 
 //! \brief obtains the texture width.
-inline Int Texture_2d::get_width() const { return m_image->get_width(); }
+inline Uint Texture_2d::get_width() const { return m_image->get_width(); }
 
 //! \brief obtains the texture height.
-inline Int Texture_2d::get_height() const { return m_image->get_height(); }
+inline Uint Texture_2d::get_height() const { return m_image->get_height(); }
 
 //! \brief obtains the texture pixel-data.
 inline void* Texture_2d::get_pixels() const { return m_image->get_pixels(); }

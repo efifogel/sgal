@@ -329,7 +329,13 @@ public:
 
   Boolean does_have_lights();
 
-  Int get_unique_light_id();
+  /*! Obtain a unique id (0-7) for a light source. We are assuming that there
+   * will not be more than 8 light sources in the scene and that light sources
+   * can not be reused.
+   * This member function is not in use.
+   * \return a uniqu id for light.
+   */
+  // Uint get_unique_light_id();
 
   Float get_fps() { return m_fps; }
 
@@ -490,7 +496,7 @@ private:
   Boolean m_does_have_lights;
 
   /*! An index for the last used light. Used to generate unique light ids. */
-  Int m_current_light_id;
+  // Uint m_current_light_id;
 
   /*! an action used to intersect the scene graph with a given (x,y) point
    * on the screen.

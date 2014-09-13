@@ -556,8 +556,8 @@ protected:
   /*! The geometry drawing-mode {direct, display list, or vertex array */
   Configuration::Geometry_drawing_mode m_drawing_mode;
 
-  // data structures to hold the low level geometry
-  Int m_tri_strip_lengths_size;
+  /*! data structures to hold the low level geometry. */
+  Uint m_tri_strip_lengths_size;
 
   /*! Indicates that the normals have been invalidated. */
   Boolean m_dirty_normals;

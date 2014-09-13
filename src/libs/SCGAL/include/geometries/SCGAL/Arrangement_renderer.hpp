@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_renderer.hpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -79,7 +76,7 @@ protected:
   Renderer_list m_depth_renderers;
 
   /*! Stencil reference value */
-  Int m_stencil_ref;
+  Int32 m_stencil_ref;
 
   /*! Halftone stipple pattern for backfacing elements */
   static Ubyte s_halftone[];
@@ -147,7 +144,7 @@ public:
   void operator()(Draw_action* action);
 
   /*! Set the stencil reference value */
-  void set_stencil_ref(Int stencil_ref) { m_stencil_ref = stencil_ref; }
+  void set_stencil_ref(Int32 stencil_ref) { m_stencil_ref = stencil_ref; }
 };
 
 #if defined(_MSC_VER)

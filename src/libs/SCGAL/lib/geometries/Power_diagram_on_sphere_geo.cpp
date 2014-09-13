@@ -68,26 +68,26 @@
 SGAL_BEGIN_NAMESPACE
 
 std::string Power_diagram_on_sphere_geo::s_tag = "PowerDiagramOnSphere";
-Container_proto* Power_diagram_on_sphere_geo::s_prototype(NULL);
+Container_proto* Power_diagram_on_sphere_geo::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Power_diagram_on_sphere_geo, "Power_diagram_on_sphere_geo");
 
-/*! Default values */
+//! Default values
 const Boolean Power_diagram_on_sphere_geo::s_def_site_enabled(true);
 const Power_diagram_on_sphere_geo::Site_style
   Power_diagram_on_sphere_geo::s_def_site_style(Edge_shape::LINE);
-const Int Power_diagram_on_sphere_geo::s_def_site_count(1);
+const Uint Power_diagram_on_sphere_geo::s_def_site_count(1);
 const Boolean Power_diagram_on_sphere_geo::s_def_site_directed(false);
 const Float Power_diagram_on_sphere_geo::s_def_site_radius(.06f);
 const Float Power_diagram_on_sphere_geo::s_def_site_line_width(1);
 const Float Power_diagram_on_sphere_geo::s_def_site_delta_angle(.1f);
 
-/*! Constructor. */
+//! \brief constructor.
 Power_diagram_on_sphere_geo::
 Power_diagram_on_sphere_geo(Boolean proto) :
   Geodesic_voronoi_on_sphere_geo(proto),
   m_owned_vos(false),
-  m_vos(NULL),
+  m_vos(nullptr),
   m_site_enabled(s_def_site_enabled),
   m_site_style(s_def_site_style),
   m_site_count(s_def_site_count),
@@ -97,7 +97,7 @@ Power_diagram_on_sphere_geo(Boolean proto) :
   m_site_delta_angle(s_def_site_delta_angle)
 { if (!proto) create_renderers(); }
 
-/*! Destructor. */
+//! \brief destructor.
 Power_diagram_on_sphere_geo::~Power_diagram_on_sphere_geo()
 {
   clear();
@@ -107,13 +107,13 @@ Power_diagram_on_sphere_geo::~Power_diagram_on_sphere_geo()
   if (m_owned_vos) {
     if (m_vos) {
       delete m_vos;
-      m_vos = NULL;
+      m_vos = nullptr;
     }
     m_owned_vos = false;
   }
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Power_diagram_on_sphere_geo::init_prototype()
 {
   if (s_prototype) return;
@@ -140,12 +140,12 @@ void Power_diagram_on_sphere_geo::init_prototype()
                                           site_style_func, exec_func));
 
   // siteCountId
-  Int_handle_function site_count_func =
-    static_cast<Int_handle_function>
+  Uint_handle_function site_count_func =
+    static_cast<Uint_handle_function>
     (&Power_diagram_on_sphere_geo::site_count_handle);
-  s_prototype->add_field_info(new SF_int(SITE_COUNT_ID, "siteCountId",
-                                         RULE_EXPOSED_FIELD,
-                                         site_count_func, exec_func));
+  s_prototype->add_field_info(new SF_uint(SITE_COUNT_ID, "siteCountId",
+                                          RULE_EXPOSED_FIELD,
+                                          site_count_func, exec_func));
 
   // siteDirected
   Boolean_handle_function site_directed_func =
@@ -156,30 +156,28 @@ void Power_diagram_on_sphere_geo::init_prototype()
                                           site_directed_func, exec_func));
 }
 
-/*! \brief deletes the container prototype. */
+//! \brief deletes the container prototype.
 void Power_diagram_on_sphere_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the container prototype. */
+//! \brief obtains the container prototype.
 Container_proto* Power_diagram_on_sphere_geo::get_prototype()
 {
   if (!s_prototype) Power_diagram_on_sphere_geo::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the ellpsoid attributes. */
+//! \brief sets the ellpsoid attributes.
  void Power_diagram_on_sphere_geo::set_attributes(Element* elem)
 {
   Geodesic_voronoi_on_sphere_geo::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "siteEnabled") {
@@ -193,7 +191,7 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
       continue;
     }
     if (name == "siteCount") {
-      m_site_count = boost::lexical_cast<Int>(value);
+      m_site_count = boost::lexical_cast<Uint>(value);
       elem->mark_delete(ai);
       continue;
     }
@@ -214,9 +212,8 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai) {
     const std::string& name = elem->get_name(cai);
     Element::Shared_container cont = elem->get_value(cai);
     if (name == "plane") {
@@ -232,7 +229,7 @@ Container_proto* Power_diagram_on_sphere_geo::get_prototype()
   elem->delete_marked();
 }
 
-/*! \brief cleans the representation. */
+//! \brief cleans the representation.
 void Power_diagram_on_sphere_geo::clean()
 {
   //! \todo Fix it!
@@ -254,11 +251,10 @@ void Power_diagram_on_sphere_geo::clean()
 
     if (this->m_site_indices.size() != 0) {
       // Compute the voronoi:
-      std::vector<Uint>::iterator it;
       std::vector<Site> sites;
       sites.resize(this->m_site_indices.size());
       Uint i = 0;
-      for (it = this->m_site_indices.begin();
+      for (auto it = this->m_site_indices.begin();
            it != this->m_site_indices.end(); ++it)
       {
         Exact_plane_3 plane = (*exact_coeff_array)[*it];
@@ -274,17 +270,17 @@ void Power_diagram_on_sphere_geo::clean()
 #endif
 }
 
-/*! \brief clears the internal representation and auxiliary data structures. */
+//! \brief clears the internal representation and auxiliary data structures.
 void Power_diagram_on_sphere_geo::clear()
 {
   this->m_dirty = true;
   if (m_vos) m_vos->clear();
 }
 
-/*! \brief */
+//! \brief
 void Power_diagram_on_sphere_geo::cull(Cull_context& cull_context) {}
 
-/*! \brief sets the plane coefficients array. */
+//! \brief sets the plane coefficients array.
 inline void
 Power_diagram_on_sphere_geo::set_coeff_array(Shared_coeff_array coeff_array)
 {
@@ -292,14 +288,14 @@ Power_diagram_on_sphere_geo::set_coeff_array(Shared_coeff_array coeff_array)
   // No need to recalculate the sphere bound
 }
 
-/*! \brief draws the arrangement on sphere opaque. */
+//! \brief draws the arrangement on sphere opaque.
 void Power_diagram_on_sphere_geo::draw_opaque(Draw_action* action)
 {
   Arrangement_on_sphere_base_geo::draw_opaque(action);
   if (m_draw_sites) draw_sites(action);
 }
 
-/*! \brief draws a site. */
+//! \brief draws a site.
 void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
                                             Exact_plane_3& plane)
 {
@@ -391,7 +387,7 @@ void Power_diagram_on_sphere_geo::draw_site(Draw_action* action,
   glPopMatrix();
 }
 
-/*! \brief draws the sites */
+//! \brief draws the sites.
 void Power_diagram_on_sphere_geo::draw_sites(Draw_action* action)
 {
   glColor3fv((float*)&m_site_color[0]);
@@ -399,8 +395,7 @@ void Power_diagram_on_sphere_geo::draw_sites(Draw_action* action)
   Shared_exact_plane_array exact_coeff_array =
     boost::dynamic_pointer_cast<Exact_plane_array>(m_coeff_array);
   if (exact_coeff_array && (exact_coeff_array->size() > 0)) {
-    std::vector<Uint>::iterator it;
-    for (it = this->m_site_indices.begin();
+    for (auto it = this->m_site_indices.begin();
          it != this->m_site_indices.end(); ++it)
     {
       Exact_plane_3& plane = (*exact_coeff_array)[*it];
@@ -409,22 +404,20 @@ void Power_diagram_on_sphere_geo::draw_sites(Draw_action* action)
   }
 }
 
-/*! \brief draws the arrangement vertices. */
+//! \brief draws the arrangement vertices.
 void Power_diagram_on_sphere_geo::draw_aos_vertices(Draw_action* action)
 {
-  Vos_vertex_const_iterator vi;
-  for (vi = m_vos->vertices_begin(); vi != m_vos->vertices_end(); ++vi) {
+  for (auto vi = m_vos->vertices_begin(); vi != m_vos->vertices_end(); ++vi) {
     Vector3f center = to_vector3f(vi->point());
     center.normalize();
     draw_aos_vertex(action, center);
   }
 }
 
-/*! \brief draws the arrangement edges. */
+//! \brief draws the arrangement edges.
 void Power_diagram_on_sphere_geo::draw_aos_edges(Draw_action* action)
 {
-  Vos_edge_const_iterator hei;
-  for (hei = m_vos->edges_begin(); hei != m_vos->edges_end(); ++hei) {
+  for (auto hei = m_vos->edges_begin(); hei != m_vos->edges_end(); ++hei) {
     const X_monotone_curve& curve = hei->curve();
     Vector3f src = to_vector3f(curve.source());
     Vector3f trg = to_vector3f(curve.target());
@@ -435,7 +428,7 @@ void Power_diagram_on_sphere_geo::draw_aos_edges(Draw_action* action)
   }
 }
 
-/*! \brief cleans the renderer */
+//! \brief cleans the renderer
 void Power_diagram_on_sphere_geo::clean_renderer()
 {
   if (get_draw_aos_surface())
@@ -507,7 +500,7 @@ void Power_diagram_on_sphere_geo::clean_renderer()
   m_renderer_dirty = false;
 }
 
-/*! \brief draws the sites. */
+//! \brief draws the sites.
 void Power_diagram_on_sphere_geo::Inflated_site_renderer::
 operator()(Draw_action* action)
 {
@@ -534,7 +527,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief draws the sites. */
+//! \brief draws the sites.
 void Power_diagram_on_sphere_geo::Site_other_renderer::
 operator()(Draw_action* action)
 {
@@ -550,7 +543,7 @@ operator()(Draw_action* action)
   }
 }
 
-/*! \brief creates the renderers. */
+//! \brief creates the renderers.
 void Power_diagram_on_sphere_geo::create_renderers()
 {
   m_edges_renderer = new Pd_edges_renderer(*this);
@@ -577,7 +570,7 @@ void Power_diagram_on_sphere_geo::create_renderers()
   m_site_other_renderer = new Site_other_renderer(*this);
 }
 
-/*! \brief destroys the renderers. */
+//! \brief destroys the renderers.
 void Power_diagram_on_sphere_geo::destroy_renderers()
 {
   if (m_edges_renderer) delete m_edges_renderer;
