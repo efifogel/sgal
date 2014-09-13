@@ -51,7 +51,7 @@ private:
   Display* m_display;
 
   /*! The screen */
-  Int m_screen;
+  Int32 m_screen;
 
   /*! Has any window been created already? */
   Boolean m_created;

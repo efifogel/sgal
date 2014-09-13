@@ -62,7 +62,7 @@ private:
    * \param screen.
    * \param full_screen.
    */
-  void create(Display* display, Int screen);
+  void create(Display* display, Int32 screen);
 
   /*! Destroy the window. */
   void destroy();
@@ -95,7 +95,7 @@ public:
   friend class X11_window_manager;
 };
 
-/*! \brief reset the window identifier. */
+//! \brief reset the window identifier.
 inline void X11_window_item::reset_window() { m_window = 0; }
 
 SGAL_END_NAMESPACE

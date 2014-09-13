@@ -157,8 +157,7 @@ void X11_window_manager::event_loop(Boolean simulating)
       else {
         // If any window is being accumulated, do not advance in the time line.
         bool accumulating = false;
-        for (auto it = this->begin_windows(); it != this->end_windows(); ++it)
-        {
+        for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
           X11_window_item* window_item = *it;
           if (window_item->is_accumulating()) {
             accumulating = true;
@@ -178,8 +177,7 @@ void X11_window_manager::event_loop(Boolean simulating)
           /*! \todo Do not force the redraw globally. Instead set the redraw
            * only when really needed.
            */
-          for (auto it = this->begin_windows();
-               it != this->end_windows(); ++it)
+          for (auto it = this->begin_windows(); it != this->end_windows(); ++it)
           {
             X11_window_item* window_item = *it;
             window_item->set_redraw(true);
@@ -253,7 +251,6 @@ void X11_window_manager::process_xevent(XEvent& event)
   XKeyboardControl kc_values;
   Boolean pressed;
   XComposeStatus status_in_out;
-  Windows_iter it;
 
   kc_values.key = -1;         // ALL keys
 
@@ -264,7 +261,7 @@ void X11_window_manager::process_xevent(XEvent& event)
                     std::cout << "Expose" << std::endl;);
     // Draw only if the number of Expose events that are to follow vanishes:
     if (event.xexpose.count != 0) break;
-    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+    for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xexpose.window) {
 #if 0
@@ -282,7 +279,7 @@ void X11_window_manager::process_xevent(XEvent& event)
    case ConfigureNotify:
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "ConfigureNotify" << std::endl;);
-    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+    for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xconfigure.window) {
         // Reshape only if the window-size changed:
@@ -392,7 +389,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "MotionNotify" << std::endl;);
     if (!m_current_window) {
-      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+      for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->m_window == event.xfocus.window) {
           m_current_window = window_item;
@@ -440,7 +437,7 @@ void X11_window_manager::process_xevent(XEvent& event)
                     std::cout << "FocusIn" << std::endl;);
     kc_values.auto_repeat_mode = 0;
     XChangeKeyboardControl(m_display, KBAutoRepeatMode, &kc_values);
-    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+    for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xfocus.window) {
         m_current_window = window_item;
@@ -471,7 +468,7 @@ void X11_window_manager::process_xevent(XEvent& event)
     SGAL_TRACE_CODE(Trace::WINDOW_MANAGER,
                     std::cout << "DestroyNotify" << std::endl;);
     if (event.xdestroywindow.event != event.xdestroywindow.window) break;
-    for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+    for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
       X11_window_item* window_item = *it;
       if (window_item->m_window == event.xdestroywindow.window) {
         window_item->reset_window();
@@ -489,7 +486,7 @@ void X11_window_manager::process_xevent(XEvent& event)
                     std::cout << "MapNotify" << std::endl;);
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
-      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+      for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->m_window == event.xmap.window) {
           m_current_window = window_item;
@@ -506,7 +503,7 @@ void X11_window_manager::process_xevent(XEvent& event)
                     std::cout << "UnmapNotify" << std::endl;);
     if (event.xunmap.event != event.xunmap.window) break;
     if (!m_current_window) {
-      for (it = this->begin_windows(); it != this->end_windows(); ++it) {
+      for (auto it = this->begin_windows(); it != this->end_windows(); ++it) {
         X11_window_item* window_item = *it;
         if (window_item->m_window == event.xunmap.window) {
           m_current_window = window_item;

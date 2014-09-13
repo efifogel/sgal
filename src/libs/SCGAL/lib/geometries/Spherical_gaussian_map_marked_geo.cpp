@@ -594,8 +594,7 @@ draw_primal_marked_edge(Draw_action* action)
 
   Context* context = action->get_context();
 
-  for (auto hi = m_sgm->halfedges_begin(); hi != m_sgm->halfedges_end(); ++hi)
-  {
+  for (auto hi = m_sgm->halfedges_begin(); hi != m_sgm->halfedges_end(); ++hi) {
     if (!hi->marked()) continue;
 
     Sgm_face_const_handle face1 = hi->face();
@@ -784,11 +783,12 @@ draw_aos_marked_face(Draw_action* action)
     // Only one outer ccb or one inner ccb exclusively:
     Sgm_halfedge_const_iterator first;
     if (fi->number_of_outer_ccbs() == 1) {
-      Sgm::Outer_ccb_const_iterator oit = fi->outer_ccbs_begin();
+      auto oit = fi->outer_ccbs_begin();
       first = *oit;
-    } else {
+    }
+    else {
       SGAL_assertion(fi->number_of_inner_ccbs() == 1);
-      Sgm::Inner_ccb_const_iterator iit = fi->inner_ccbs_begin();
+      auto iit = fi->inner_ccbs_begin();
       first = *iit;
     }
 

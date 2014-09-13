@@ -35,15 +35,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! Constructor */
+//! \brief constructor.
 X11_window_item::X11_window_item() :
-  m_display(NULL),
+  m_display(nullptr),
   m_screen(0),
   m_window(0)
 { memset(&m_desk_mode, 0, sizeof(m_desk_mode)); }
 
-/*! \brief creates a window */
-void X11_window_item::create(Display* display, int screen)
+//! \brief creates a window.
+void X11_window_item::create(Display* display, Int32 screen)
 {
   int rc = 0;
   bool brc;
@@ -101,7 +101,7 @@ void X11_window_item::create(Display* display, int screen)
   attributes[index++] = None;
 
   XVisualInfo* vi = glXChooseVisual(display, screen, attributes);
-  if (vi == NULL) {
+  if (vi == nullptr) {
     throw Visual_selection_error();
     return;
   }
@@ -195,8 +195,7 @@ void X11_window_item::create(Display* display, int screen)
       m_desk_mode = *modes[0];
 
       // Look for mode with requested resolution:
-      int i;
-      for (i = 0; i < number_of_modes; ++i) {
+      for (int i = 0; i < number_of_modes; ++i) {
         if ((modes[i]->hdisplay == m_width) && (modes[i]->vdisplay == m_height))
           best_mode = i;
       }
@@ -249,7 +248,7 @@ void X11_window_item::create(Display* display, int screen)
     XSetWMProtocols(display, m_window, &m_wm_delete, 1);
     XSetStandardProperties(display, m_window,
                            m_title.c_str(), m_title.c_str(),
-                           None, NULL, 0, NULL);
+                           None, nullptr, 0, nullptr);
     XMapRaised(display, m_window);
   }
   XSelectInput(display, m_window, m_win_attr.event_mask);
@@ -259,7 +258,7 @@ void X11_window_item::create(Display* display, int screen)
   make_current();           // make the context the current rendering context
 }
 
-/*! \brief destroys the window */
+//! \brief destroys the window.
 void X11_window_item::destroy()
 {
   set_accumulating(false);
@@ -271,11 +270,11 @@ void X11_window_item::destroy()
           XF86VidModeSwitchToMode(m_display, m_screen, &m_desk_mode);
       }
 
-      if (!glXMakeCurrent(m_display, None, NULL)) {
+      if (!glXMakeCurrent(m_display, None, nullptr)) {
         printf("Could not release drawing context.\n");
       }
       glXDestroyContext(m_display, m_context);
-      m_context = NULL;
+      m_context = nullptr;
     }
     XUnmapWindow(m_display, m_window);
     XDestroyWindow(m_display, m_window);
@@ -284,17 +283,17 @@ void X11_window_item::destroy()
   }
 }
 
-/*! \brief swaps the window frame-buffer */
+//! \brief swaps the window frame-buffer.
 void X11_window_item::swap_buffers()
 {
   if (!m_context) return;       // The window is being destroyed
   if (m_double_buffer) glXSwapBuffers(m_display, m_window);
 }
 
-/*! \brief shows the window. Make the window current if it is not already. */
+//! \brief shows the window. Make the window current if it is not already.
 void X11_window_item::show() {}
 
-/*! \brief hides the window. Make the window current if it is not already. */
+//! \brief hides the window. Make the window current if it is not already.
 void X11_window_item::hide() {}
 
 /*! \brief makes the context of the window item the current rendering context of
