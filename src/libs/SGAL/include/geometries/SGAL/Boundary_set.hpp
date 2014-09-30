@@ -918,7 +918,7 @@ private:
   std::vector<Vector4f> m_local_tex_coord_buffer_4d;
 
   /*! The index vertex array. */
-  std::vector<Uint> m_local_indices;
+  Index_array m_local_indices;
 
   /*! The node prototype. */
   static Container_proto* s_prototype;

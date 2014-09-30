@@ -147,38 +147,64 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
     clock_t end_time = clock();
     m_time = static_cast<float>(end_time - start_time) / CLOCKS_PER_SEC;
   }
-  else if (m_coord_array) {
+  else {
     clock_t start_time = clock();
     Sgm_initializer sgm_initializer(*m_sgm);
     Sgm_geo_initializer_visitor visitor;
-    std::vector<Uint>& indices = (are_coord_indices_flat()) ?
-      get_flat_coord_indices() : get_coord_indices();
-    Uint num_vertices_per_facet = 0;
-    if (are_coord_indices_flat())
-      num_vertices_per_facet =
-        (m_primitive_type == PT_TRIANGLES) ? 3 :
-        (m_primitive_type == PT_QUADS) ? 4 : 0;
-    boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
-      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-    if (exact_coord_array) {
-      if (exact_coord_array->size() > 0)
-        sgm_initializer(exact_coord_array->begin(),
-                        exact_coord_array->end(),
-                        exact_coord_array->size(),
-                        &(*(indices.begin())), &(*(indices.end())),
-                        m_num_primitives, num_vertices_per_facet, &visitor);
+    if (are_coord_indices_flat()) {
+      auto& indices = get_flat_coord_indices();
+      Uint num_vertices_per_facet = (m_primitive_type == PT_TRIANGLES) ? 3 : 4;
+      if (m_coord_array) {
+        boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
+          boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+        if (exact_coord_array) {
+          if (exact_coord_array->size() > 0)
+            sgm_initializer(exact_coord_array->begin(),
+                            exact_coord_array->end(),
+                            exact_coord_array->size(),
+                            &(*(indices.begin())), &(*(indices.end())),
+                            m_num_primitives, num_vertices_per_facet, &visitor);
+        }
+        else {
+          boost::shared_ptr<Coord_array_3d> coord_array =
+            boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+          if (coord_array) {
+            if (coord_array->size() > 0)
+              sgm_initializer(coord_array->begin(), coord_array->end(),
+                              coord_array->size(),
+                              &(*(indices.begin())), &(*(indices.end())),
+                              m_num_primitives, num_vertices_per_facet, &visitor);
+          }
+          else SGAL_error();
+        }
+      }
     }
     else {
-      boost::shared_ptr<Coord_array_3d> coord_array =
-        boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-      if (coord_array) {
-        if (coord_array->size() > 0)
-          sgm_initializer(coord_array->begin(), coord_array->end(),
-                          coord_array->size(),
-                          &(*(indices.begin())), &(*(indices.end())),
-                          m_num_primitives, num_vertices_per_facet, &visitor);
+      auto& indices = get_coord_indices();
+      if (m_coord_array) {
+        boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
+          boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+        if (exact_coord_array) {
+          if (exact_coord_array->size() > 0)
+            sgm_initializer(exact_coord_array->begin(),
+                            exact_coord_array->end(),
+                            exact_coord_array->size(),
+                            &(*(indices.begin())), &(*(indices.end())),
+                            m_num_primitives, 0, &visitor);
+        }
+        else {
+          boost::shared_ptr<Coord_array_3d> coord_array =
+            boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+          if (coord_array) {
+            if (coord_array->size() > 0)
+              sgm_initializer(coord_array->begin(), coord_array->end(),
+                              coord_array->size(),
+                              &(*(indices.begin())), &(*(indices.end())),
+                              m_num_primitives, 0, &visitor);
+          }
+          else SGAL_error();
+        }
       }
-      else SGAL_error();
     }
     Sgm_halfedge_iterator hei;
     for (hei = m_sgm->halfedges_begin(); hei != m_sgm->halfedges_end(); ++hei)

@@ -74,6 +74,9 @@ public:
    */
   virtual Uint size() const = 0;
 
+  /*! Determine whether the array is empty. */
+  Boolean empty() const;
+
   /*! Resize the array capacity. */
   virtual void resize(Uint n) = 0;
 
@@ -110,6 +113,9 @@ inline Tex_coord_array::Tex_coord_array(Boolean proto) : Container(proto) {}
 
 //! \brief destructor.
 inline Tex_coord_array::~Tex_coord_array() {}
+
+//! \brief determines whether the array is empty.
+inline Boolean Tex_coord_array::empty() const {return (size() == 0); }
 
 SGAL_END_NAMESPACE
 

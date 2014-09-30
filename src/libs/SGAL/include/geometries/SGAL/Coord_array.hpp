@@ -71,8 +71,13 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Obtain the array size. */
+  /*! Obtain the array size.
+   * \return the array size.
+   */
   virtual Uint size() const = 0;
+
+  /*! Determine whether the array is empty. */
+  Boolean empty() const;
 
   /*! Resize the array capacity. */
   virtual void resize(Uint n) = 0;
@@ -116,6 +121,9 @@ inline Coord_array::Coord_array(Boolean proto) : Container(proto) {}
 
 //! \brief destructor.
 inline Coord_array::~Coord_array() {}
+
+//! \brief determines whether the array is empty.
+inline Boolean Coord_array::empty() const {return (size() == 0); }
 
 SGAL_END_NAMESPACE
 

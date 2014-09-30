@@ -80,7 +80,7 @@ void Boolean_operation::execute()
 
   Exact_polyhedron_geo geometry1;
   geometry1.set_coord_array(m_operand1->get_coord_array());
-  std::vector<Uint>& indices1 = m_operand1->get_flat_coord_indices();
+  auto& indices1 = m_operand1->get_flat_coord_indices();
   /* Observe that the call to get_flat_coord_indices() may trigger the
    * "cleaning" of the coord indices. Thus, the following query must succeed
    * the previous statement.
@@ -88,7 +88,7 @@ void Boolean_operation::execute()
   if (m_operand1->are_coord_indices_flat())
     geometry1.set_flat_coord_indices(indices1);
   else {
-    std::vector<Uint>& indices1 = m_operand1->get_coord_indices();
+    auto& indices1 = m_operand1->get_coord_indices();
     Geo_set& geo_set1 = geometry1;
     geo_set1.set_coord_indices(indices1);
   }
@@ -104,7 +104,7 @@ void Boolean_operation::execute()
 
   Exact_polyhedron_geo geometry2;
   geometry2.set_coord_array(m_operand2->get_coord_array());
-  std::vector<Uint>& indices2 = m_operand2->get_flat_coord_indices();
+  auto& indices2 = m_operand2->get_flat_coord_indices();
   /* Observe that the call to get_flat_coord_indices() may trigger the
    * "cleaning" of the coord indices. Thus, the following query must succeed
    * the previous statement.
@@ -112,7 +112,7 @@ void Boolean_operation::execute()
   if (m_operand2->are_coord_indices_flat())
     geometry2.set_flat_coord_indices(indices2);
   else {
-    std::vector<Uint>& indices2 = m_operand2->get_coord_indices();
+    auto& indices2 = m_operand2->get_coord_indices();
     Geo_set& geo_set2 = geometry2;
     geo_set2.set_coord_indices(indices2);
   }

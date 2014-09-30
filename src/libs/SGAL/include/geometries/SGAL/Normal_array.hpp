@@ -115,6 +115,9 @@ public:
    */
   Uint size() const;
 
+  /*! Determine whether the array is empty. */
+  Boolean empty() const;
+
   /*! Resize the array capacity. */
   void resize(Uint n);
 
@@ -241,6 +244,9 @@ inline const GLfloat* Normal_array::datum(Uint i) const
 
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Normal_array::get_tag() const { return s_tag; }
+
+//! \brief determines whether the array is empty.
+inline Boolean Normal_array::empty() const {return (size() == 0); }
 
 SGAL_END_NAMESPACE
 

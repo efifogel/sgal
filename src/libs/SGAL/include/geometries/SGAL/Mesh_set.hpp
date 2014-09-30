@@ -45,6 +45,13 @@ public:
     LAST
   };
 
+  /* The type Index_array is used to store an array of unsigned int indices.
+   * Arrays of such type are used as arguments in OpenGL calls, where the
+   * type of the index, namely unsigned int, is hard coded.
+   */
+  typedef unsigned int                                  Index_type;
+  typedef std::vector<Index_type>                       Index_array;
+
   /*! Constructor.
    */
   Mesh_set(Boolean proto = false);
@@ -171,19 +178,19 @@ public:
 
   /*! Obtain the coordinate-index array.
    */
-  std::vector<Uint>& get_flat_coord_indices();
+  Index_array& get_flat_coord_indices();
 
   /*! Obtain the normal-index array.
    */
-  std::vector<Uint>& get_flat_normal_indices();
+  Index_array& get_flat_normal_indices();
 
   /*! Obtain the color-index array.
    */
-  std::vector<Uint>& get_flat_color_indices();
+  Index_array& get_flat_color_indices();
 
   /*! Obtain the texture coordinate-index array.
    */
-  std::vector<Uint>& get_flat_tex_coord_indices();
+  Index_array& get_flat_tex_coord_indices();
 
   /*! Set the flag that indicates whether the coordinate-index array is "flat".
    * \param flag indicates whether the coordinate-index array is "flat".
@@ -196,21 +203,21 @@ public:
 
   /*! Set the flat coordinate-index array.
    */
-  void set_flat_coord_indices(std::vector<Uint>& indices);
+  void set_flat_coord_indices(Index_array& indices);
 
   /*! Set the coordinate-index array.
    */
-  void set_coord_indices(std::vector<Uint>& indices);
+  void set_coord_indices(std::vector<Int32>& indices);
 
   /*! Assign the coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_coord_indices(const std::vector<Uint>& indices);
+  void set_reverse_coord_indices(const std::vector<Int32>& indices);
 
   /*! Assign the flat coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
    */
-  void set_reverse_flat_coord_indices(const std::vector<Uint>& indices);
+  void set_reverse_flat_coord_indices(const Index_array& indices);
 
   /*! Set the flag that indicates whether the normal-index array is "flat".
    * \param flag indicates whether the normal-index array is "flat".
@@ -223,11 +230,11 @@ public:
 
   /*! Set the flat normal-index array.
    */
-  void set_flat_normal_indices(std::vector<Uint>& indices);
+  void set_flat_normal_indices(Index_array& indices);
 
   /*! Set the normal-index array.
    */
-  void set_normal_indices(std::vector<Uint>& indices);
+  void set_normal_indices(std::vector<Int32>& indices);
 
   /*! Set the flag that indicates whether the color-index array is "flat".
    * \param flag indicates whether the color-index array is "flat".
@@ -240,11 +247,11 @@ public:
 
   /*! Set the flat color-index array.
    */
-  void set_flat_color_indices(std::vector<Uint>& indices);
+  void set_flat_color_indices(Index_array& indices);
 
   /*! Set the color-index array.
    */
-  void set_color_indices(std::vector<Uint>& indices);
+  void set_color_indices(std::vector<Int32>& indices);
 
   /*! Set the flag that indicates whether the textuture coordinate-index array
    * is "flat".
@@ -258,45 +265,45 @@ public:
 
   /*! Set the flat texture coordinate-index array.
    */
-  void set_flat_tex_coord_indices(std::vector<Uint>& indices);
+  void set_flat_tex_coord_indices(Index_array& indices);
 
   /*! Set the texture coordinate-index array.
    */
-  void set_tex_coord_indices(std::vector<Uint>& indices);
+  void set_tex_coord_indices(std::vector<Int32>& indices);
 
   /*! Convert non-flat indices (VRML style) to flat indices.
    * \param src the non-flat indices.
    * \param dst the flat indices.
    * \pre the primitive type is either triangle or quad.
    */
-  void flatten_indices(const std::vector<Uint>& src, std::vector<Uint>& dst);
+  void flatten_indices(const std::vector<Int32>& src, Index_array& dst);
 
   /*! Convert flat indices to flat non-indices (VRML style).
    * \param dst the non-flat indices.
    * \param src the flat indices.
    * \pre the primitive type is either triangle or quad.
    */
-  void  deflatten_indices(const std::vector<Uint>& src, std::vector<Uint>& dst);
+  void  deflatten_indices(const Index_array& src, std::vector<Int32>& dst);
 
   /*! Obtain the ith flat coord index.
    * \return the ith flat coord index.
    */
-  Uint get_flat_coord_index(Uint i) const;
+  Index_type get_flat_coord_index(Uint i) const;
 
   /*! Obtain the ith flat normal index.
    * \return the ith flat normal index.
    */
-  Uint get_flat_normal_index(Uint i) const;
+  Index_type get_flat_normal_index(Uint i) const;
 
   /*! Obtain the ith flat color index.
    * \return the ith flat color index.
    */
-  Uint get_flat_color_index(Uint i) const;
+  Index_type get_flat_color_index(Uint i) const;
 
   /*! Obtain the ith flat tex-coord index.
    * \return the ith flat tex-coord index.
    */
-  Uint get_flat_tex_coord_index(Uint i) const;
+  Index_type get_flat_tex_coord_index(Uint i) const;
 
   /*! Set the coordinate indices from a range of elements that counts
    * the number of vertices per primitive.
@@ -312,19 +319,19 @@ public:
 
   /*! Obtain a pointer to an element through the coord indices. */
   template <typename Vector_T>
-  const GLfloat* get_by_flat_coord_index(Vector_T array, Uint i) const;
+  const GLfloat* get_by_flat_coord_index(Vector_T array, Index_type i) const;
 
   /*! Obtain apointer to an element through the normal indices. */
   template <typename Vector_T>
-  const GLfloat* get_by_flat_normal_index(Vector_T array, Uint i) const;
+  const GLfloat* get_by_flat_normal_index(Vector_T array, Index_type i) const;
 
   /*! Obtain a pointer to an element through the color indices. */
   template <typename Vector_T>
-  const GLfloat* get_by_flat_color_index(Vector_T array, Uint i) const;
+  const GLfloat* get_by_flat_color_index(Vector_T array, Index_type i) const;
 
   /*! Obtain a pointer to an element through the tex. coord indices. */
   template <typename Vector_T>
-  const GLfloat* get_by_flat_tex_coord_index(Vector_T array, Uint i) const;
+  const GLfloat* get_by_flat_tex_coord_index(Vector_T array, Index_type i) const;
 
 protected:
   /*! Indicates whether the mesh must be cleaned. */
@@ -350,16 +357,16 @@ protected:
   Float m_polygon_offset_factor;
 
   /*! An array of indices into the vertex-coordinate array. */
-  std::vector<Uint> m_flat_coord_indices;
+  Index_array m_flat_coord_indices;
 
   /*! An array of indices into the vertex-texture-coordinate array. */
-  std::vector<Uint> m_flat_normal_indices;
+  Index_array m_flat_normal_indices;
 
   /*! An array of indices into the vertex-color array. */
-  std::vector<Uint> m_flat_color_indices;
+  Index_array m_flat_color_indices;
 
   /*! An array of indices into the vertex-normal array. */
-  std::vector<Uint> m_flat_tex_coord_indices;
+  Index_array m_flat_tex_coord_indices;
 
   /*! Indicates whether the flat coordinate-index array should be cleaned. */
   Boolean m_dirty_flat_coord_indices;
@@ -449,7 +456,11 @@ protected:
 
   /*! Colapse identical coordinates.
    */
-  void collapse_identical_coordinates(std::vector<Uint>& indices);
+  void collapse_identical_coordinates(std::vector<Int32>& indices);
+
+  /*! Colapse identical coordinates.
+   */
+  void collapse_identical_coordinates(Index_array& indices);
 
   /*! Export a triangular facet.
    * \param p1 (in) the point of the first vertex.
@@ -606,42 +617,42 @@ inline void Mesh_set::clear_flat_tex_coord_indices()
 //! \brief obtains a pointer to an element through the coord indices.
 template <typename Vector_T>
 inline const GLfloat*
-Mesh_set::get_by_flat_coord_index(Vector_T array, Uint i) const
+Mesh_set::get_by_flat_coord_index(Vector_T array, Index_type i) const
 { return array->datum(m_flat_coord_indices[i]); }
 
 /*! \brief obtains a pointer to an element through the normal indices. */
 template <typename Vector_T>
 inline const GLfloat*
-Mesh_set::get_by_flat_normal_index(Vector_T array, Uint i)
+Mesh_set::get_by_flat_normal_index(Vector_T array, Index_type i)
   const
 { return array->datum(m_flat_normal_indices[i]); }
 
 //! \brief obtains a pointer to an element through the color indices.
 template <typename Vector_T>
 inline const GLfloat*
-Mesh_set::get_by_flat_color_index(Vector_T array, Uint i) const
+Mesh_set::get_by_flat_color_index(Vector_T array, Index_type i) const
 { return array->datum(m_flat_color_indices[i]); }
 
 //! \brief obtains a pointer to an element through the tex. coord indices.
 template <typename Vector_T>
 inline const GLfloat*
-Mesh_set::get_by_flat_tex_coord_index(Vector_T array, Uint i) const
+Mesh_set::get_by_flat_tex_coord_index(Vector_T array, Index_type i) const
 { return array->datum(m_flat_tex_coord_indices[i]); }
 
 //! \brief obtains the ith flat coord index.
-inline Uint Mesh_set::get_flat_coord_index(Uint i) const
+inline Mesh_set::Index_type Mesh_set::get_flat_coord_index(Uint i) const
 { return m_flat_coord_indices[i]; }
 
 //! \brief obtains the ith flat normal index.
-inline Uint Mesh_set::get_flat_normal_index(Uint i) const
+inline Mesh_set::Index_type Mesh_set::get_flat_normal_index(Uint i) const
 { return m_flat_normal_indices[i]; }
 
 //! \brief obtains the ith flat color index.
-inline Uint Mesh_set::get_flat_color_index(Uint i) const
+inline Mesh_set::Index_type Mesh_set::get_flat_color_index(Uint i) const
 { return m_flat_color_indices[i]; }
 
 //! \brief obtains the ith flat tex-coord index.
-inline Uint Mesh_set::get_flat_tex_coord_index(Uint i) const
+inline Mesh_set::Index_type Mesh_set::get_flat_tex_coord_index(Uint i) const
 { return m_flat_tex_coord_indices[i]; }
 
 /*! \brief set the coordinate indices from a range of elements that counts
@@ -652,10 +663,9 @@ void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
 {
   Boolean tris(true);
   Boolean quads(true);
-  std::vector<Uint>::iterator it;
   Uint size = 0;
   Uint num = 0;
-  for (it = begin; it != end; ++it) {
+  for (auto it = begin; it != end; ++it) {
     ++num;
     size += *it;
     if (*it == 3) quads = false;
@@ -683,7 +693,7 @@ void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
     m_coord_indices.resize(size);
     Uint i = 0;
     Uint index = 0;
-    for (it = begin; it != end; ++it) {
+    for (auto it = begin; it != end; ++it) {
       for (Uint j = 0; j < *it; ++j) m_coord_indices[i++] = index++;
       m_coord_indices[i++] = -1;
     }

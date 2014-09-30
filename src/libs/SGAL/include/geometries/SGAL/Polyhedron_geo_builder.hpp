@@ -22,6 +22,7 @@
 #include <boost/type_traits.hpp>
 
 #include <CGAL/basic.h>
+#include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 #include "SGAL/basic.hpp"

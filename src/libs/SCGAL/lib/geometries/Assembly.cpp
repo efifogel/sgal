@@ -408,7 +408,7 @@ void Assembly::construct_reflected_sgms()
         if (sgm_geo->are_coord_indices_flat())
           reflected_sgm_geo->set_reverse_flat_coord_indices(indices);
         else {
-          const std::vector<Uint>& indices = sgm_geo->get_coord_indices();
+          auto& indices = sgm_geo->get_coord_indices();
           reflected_sgm_geo->set_reverse_coord_indices(indices);
         }
       }

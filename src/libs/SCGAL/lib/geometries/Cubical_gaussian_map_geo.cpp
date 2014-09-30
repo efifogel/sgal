@@ -252,33 +252,51 @@ void Cubical_gaussian_map_geo::clean()
     cgm_initializer.set_marked_edge_index(m_marked_edge_index);
     cgm_initializer.set_marked_facet_index(m_marked_facet_index);
 
-    std::vector<Uint>& indices = (are_coord_indices_flat()) ?
-      get_flat_coord_indices() : get_coord_indices();
     Uint num_vertices_per_facet = 0;
     if (are_coord_indices_flat())
       num_vertices_per_facet =
         (m_primitive_type == PT_TRIANGLES) ? 3 :
         (m_primitive_type == PT_QUADS) ? 4 : 0;
+
     boost::shared_ptr<Exact_coord_array_3d> exact_coord_array =
       boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
     if (exact_coord_array) {
-      if (exact_coord_array->size() > 0) {
-        // std::cout << "Cubical_gaussian_map_geo::exact" << std::endl;
-        cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
-                        exact_coord_array->size(),
-                        &(*(indices.begin())), &(*(indices.end())),
-                        m_num_primitives, num_vertices_per_facet, &visitor);
+      if (!exact_coord_array->empty()) {
+        if (are_coord_indices_flat()) {
+          const std::vector<Uint>& indices = get_flat_coord_indices();
+          cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
+                          exact_coord_array->size(),
+                          &(*(indices.begin())), &(*(indices.end())),
+                          m_num_primitives, num_vertices_per_facet, &visitor);
+        }
+        else {
+          const std::vector<Int32>& indices = get_coord_indices();
+          cgm_initializer(exact_coord_array->begin(), exact_coord_array->end(),
+                          exact_coord_array->size(),
+                          &(*(indices.begin())), &(*(indices.end())),
+                          m_num_primitives, num_vertices_per_facet, &visitor);
+        }
       }
     }
     else {
       boost::shared_ptr<Coord_array_3d> coord_array =
         boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
       if (coord_array) {
-        if (coord_array->size() > 0) {
-          cgm_initializer(coord_array->begin(), coord_array->end(),
-                          coord_array->size(),
-                          &(*(indices.begin())), &(*(indices.end())),
-                          m_num_primitives, num_vertices_per_facet, &visitor);
+        if (!coord_array->empty()) {
+          if (are_coord_indices_flat()) {
+            auto& indices = get_flat_coord_indices();
+            cgm_initializer(coord_array->begin(), coord_array->end(),
+                            coord_array->size(),
+                            &(*(indices.begin())), &(*(indices.end())),
+                            m_num_primitives, num_vertices_per_facet, &visitor);
+          }
+          else {
+            auto& indices = get_coord_indices();
+            cgm_initializer(coord_array->begin(), coord_array->end(),
+                            coord_array->size(),
+                            &(*(indices.begin())), &(*(indices.end())),
+                            m_num_primitives, num_vertices_per_facet, &visitor);
+          }
         }
       }
       else SGAL_error();

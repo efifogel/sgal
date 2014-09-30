@@ -162,8 +162,7 @@ void Lines_through_segments_geo::clean()
     const boost::shared_ptr<Coord_array_3d> coord_array =
       boost::dynamic_pointer_cast<Coord_array_3d>(m_segments->get_coord_array());
     if (!coord_array) return;
-    const std::vector<Uint>& coord_indices = m_segments->get_coord_indices();
-
+    auto& coord_indices = m_segments->get_coord_indices();
     for (Uint i = 0; i < coord_indices.size(); i += 2) {
       const Vector3f& ep1 = (*coord_array)[i];
       const Vector3f& ep2 = (*coord_array)[i+1];

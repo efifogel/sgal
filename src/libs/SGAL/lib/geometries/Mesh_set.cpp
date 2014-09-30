@@ -248,14 +248,14 @@ Container_proto* Mesh_set::get_prototype()
 }
 
 //! \brief obtains the coord-index array.
-std::vector<Uint>& Mesh_set::get_flat_coord_indices()
+Mesh_set::Index_array& Mesh_set::get_flat_coord_indices()
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   return m_flat_coord_indices;
 }
 
 //! \brief sets the flat coordinate-index array.
-void Mesh_set::set_flat_coord_indices(std::vector<Uint>& indices)
+void Mesh_set::set_flat_coord_indices(Index_array& indices)
 {
   m_flat_coord_indices = indices;
   m_coord_indices_flat = true;
@@ -264,7 +264,7 @@ void Mesh_set::set_flat_coord_indices(std::vector<Uint>& indices)
 }
 
 //! \brief sets the coordinate-index array.
-void Mesh_set::set_coord_indices(std::vector<Uint>& indices)
+void Mesh_set::set_coord_indices(std::vector<Int32>& indices)
 {
   Geo_set::set_coord_indices(indices);
   m_coord_indices_flat = false;
@@ -289,7 +289,7 @@ void Mesh_set::clean_flat_coord_indices()
 }
 
 //! \brief sets the flat normal-index array.
-void Mesh_set::set_flat_normal_indices(std::vector<Uint>& indices)
+void Mesh_set::set_flat_normal_indices(Index_array& indices)
 {
   m_flat_normal_indices = indices;
   m_normal_indices_flat = true;
@@ -298,7 +298,7 @@ void Mesh_set::set_flat_normal_indices(std::vector<Uint>& indices)
 }
 
 //! \brief sets the normal-index array.
-void Mesh_set::set_normal_indices(std::vector<Uint>& indices)
+void Mesh_set::set_normal_indices(std::vector<Int32>& indices)
 {
   Geo_set::set_normal_indices(indices);
   m_normal_indices_flat = false;
@@ -307,7 +307,7 @@ void Mesh_set::set_normal_indices(std::vector<Uint>& indices)
 }
 
 //! \brief obtains the normal-index array.
-std::vector<Uint>& Mesh_set::get_flat_normal_indices()
+Mesh_set::Index_array& Mesh_set::get_flat_normal_indices()
 {
   if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
   return m_flat_normal_indices;
@@ -331,7 +331,7 @@ void Mesh_set::clean_flat_normal_indices()
 }
 
 //! \brief sets the flat color-index array.
-void Mesh_set::set_flat_color_indices(std::vector<Uint>& indices)
+void Mesh_set::set_flat_color_indices(Index_array& indices)
 {
   m_flat_color_indices = indices;
   m_color_indices_flat = true;
@@ -340,7 +340,7 @@ void Mesh_set::set_flat_color_indices(std::vector<Uint>& indices)
 }
 
 //! \brief sets the color-index array.
-void Mesh_set::set_color_indices(std::vector<Uint>& indices)
+void Mesh_set::set_color_indices(std::vector<Int32>& indices)
 {
   Geo_set::set_color_indices(indices);
   m_color_indices_flat = false;
@@ -349,7 +349,7 @@ void Mesh_set::set_color_indices(std::vector<Uint>& indices)
 }
 
 /*! \brief obtains the color-index array. */
-std::vector<Uint>& Mesh_set::get_flat_color_indices()
+Mesh_set::Index_array& Mesh_set::get_flat_color_indices()
 {
   if (is_dirty_flat_color_indices()) clean_flat_color_indices();
   return m_flat_color_indices;
@@ -373,7 +373,7 @@ void Mesh_set::clean_flat_color_indices()
 }
 
 //! \brief sets the flat texture coordinate-index array.
-void Mesh_set::set_flat_tex_coord_indices(std::vector<Uint>& indices)
+void Mesh_set::set_flat_tex_coord_indices(Index_array& indices)
 {
   m_flat_tex_coord_indices = indices;
   m_tex_coord_indices_flat = true;
@@ -382,7 +382,7 @@ void Mesh_set::set_flat_tex_coord_indices(std::vector<Uint>& indices)
 }
 
 //! \brief sets the texture coordinate-index array.
-void Mesh_set::set_tex_coord_indices(std::vector<Uint>& indices)
+void Mesh_set::set_tex_coord_indices(std::vector<Int32>& indices)
 {
   Geo_set::set_tex_coord_indices(indices);
   m_tex_coord_indices_flat = false;
@@ -391,7 +391,7 @@ void Mesh_set::set_tex_coord_indices(std::vector<Uint>& indices)
 }
 
 //! \brief obtains the texture coordinate-index array.
-std::vector<Uint>& Mesh_set::get_flat_tex_coord_indices()
+Mesh_set::Index_array& Mesh_set::get_flat_tex_coord_indices()
 {
   if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   return m_flat_tex_coord_indices;
@@ -414,15 +414,15 @@ void Mesh_set::clean_flat_tex_coord_indices()
 }
 
 //! \brief converts non-flat indices (VRML style) to flat indices.
-void  Mesh_set::flatten_indices(const std::vector<Uint>& src,
-                                std::vector<Uint>& dst)
+void  Mesh_set::flatten_indices(const std::vector<Int32>& src,
+                                Index_array& dst)
 {
   Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 3 :
       (m_primitive_type == PT_QUADS) ? m_num_primitives * 4 : 0;
   dst.resize(size);
   if (m_primitive_type == PT_TRIANGLES) {
-    std::vector<Uint>::const_iterator sit = src.begin();
-    std::vector<Uint>::iterator dit = dst.begin();
+    auto sit = src.begin();
+    auto dit = dst.begin();
     for (Uint j = 0; j < m_num_primitives; ++j) {
       *dit++ = *sit++;
       *dit++ = *sit++;
@@ -432,8 +432,8 @@ void  Mesh_set::flatten_indices(const std::vector<Uint>& src,
     return;
   }
   if (m_primitive_type == PT_QUADS) {
-    std::vector<Uint>::const_iterator sit = src.begin();
-    std::vector<Uint>::iterator dit = dst.begin();
+    auto sit = src.begin();
+    auto dit = dst.begin();
     for (Uint j = 0; j < m_num_primitives; ++j) {
       *dit++ = *sit++;
       *dit++ = *sit++;
@@ -446,7 +446,7 @@ void  Mesh_set::flatten_indices(const std::vector<Uint>& src,
 }
 
 //! \brief assigns the coord indices with the reverse of given indices.
-void Mesh_set::set_reverse_coord_indices(const std::vector<Uint>& indices)
+void Mesh_set::set_reverse_coord_indices(const std::vector<Int32>& indices)
 {
   Geo_set::set_reverse_coord_indices(indices);
   m_coord_indices_flat = false;
@@ -455,7 +455,7 @@ void Mesh_set::set_reverse_coord_indices(const std::vector<Uint>& indices)
 }
 
 //! \brief assigns the flat coord indices with the reverse of given indices.
-void Mesh_set::set_reverse_flat_coord_indices(const std::vector<Uint>& indices)
+void Mesh_set::set_reverse_flat_coord_indices(const Index_array& indices)
 {
   m_flat_coord_indices.resize(indices.size());
   Uint i = 0;
@@ -467,8 +467,8 @@ void Mesh_set::set_reverse_flat_coord_indices(const std::vector<Uint>& indices)
 }
 
 //! \brief converts flat indices to flat non-indices (VRML style).
-void  Mesh_set::deflatten_indices(const std::vector<Uint>& src,
-                                  std::vector<Uint>& dst)
+void  Mesh_set::deflatten_indices(const Index_array& src,
+                                  std::vector<Int32>& dst)
 {
   Uint size = (m_primitive_type == PT_TRIANGLES) ? m_num_primitives * 4 :
     (m_primitive_type == PT_QUADS) ? m_num_primitives * 5 : 0;
@@ -476,9 +476,9 @@ void  Mesh_set::deflatten_indices(const std::vector<Uint>& src,
   if (m_primitive_type == PT_TRIANGLES) {
     Uint i, j, k;
     for (j = 0, i = 0, k = 0; j < m_num_primitives; ++j) {
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
+      dst[i++] = static_cast<Index_type>(src[k++]);
+      dst[i++] = static_cast<Index_type>(src[k++]);
+      dst[i++] = static_cast<Index_type>(src[k++]);
       dst[i++] = -1;
     }
     return;
@@ -486,10 +486,10 @@ void  Mesh_set::deflatten_indices(const std::vector<Uint>& src,
   if (m_primitive_type == PT_QUADS) {
     Uint i, j, k;
     for (j = 0, i = 0, k = 0; j < m_num_primitives; ++j) {
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
-      dst[i++] = src[k++];
+      dst[i++] = static_cast<Index_type>(src[k++]);
+      dst[i++] = static_cast<Index_type>(src[k++]);
+      dst[i++] = static_cast<Index_type>(src[k++]);
+      dst[i++] = static_cast<Index_type>(src[k++]);
       dst[i++] = -1;
     }
     return;
@@ -555,7 +555,7 @@ void Mesh_set::write(Formatter* formatter)
         (PT_QUADS == get_primitive_type()))
     {
       Vector3f vert;
-      const std::vector<Uint>& indices = get_flat_coord_indices();
+      const auto& indices = get_flat_coord_indices();
       Uint j = 0;
       for (Uint i = 0; i < get_num_primitives(); ++i) {
         const Vector3f& v1 = world_coords[indices[j++]];
@@ -575,9 +575,9 @@ void Mesh_set::write(Formatter* formatter)
     }
     else {
       //! \todo triangulate and export.
-      const std::vector<Uint>& indices = get_coord_indices();
+      const auto& indices = get_coord_indices();
       std::cout << "size: " << indices.size() << std::endl;
-      const std::vector<Uint>& flat_indices = get_flat_coord_indices();
+      const auto& flat_indices = get_flat_coord_indices();
       std::cout << "flat size: " << flat_indices.size() << std::endl;
       SGAL_error_msg("Not impelmented yet!");
     }
@@ -602,12 +602,11 @@ void Mesh_set::write(Formatter* formatter)
     for (; it != proto->ids_end(proto); ++it) {
       const Field_info* field_info = (*it).second;
       if (COORD_INDEX_ARRAY == field_info->get_id()) {
-        const std::vector<Uint>& indices = get_coord_indices();
+        const auto& indices = get_coord_indices();
         Uint size = indices.size();
         std::vector<int> value(size), default_value;
         std::vector<Int32>::iterator rit = value.begin();
-        for (auto it = indices.begin(); it != indices.end(); ++it)
-          *rit++ = *it;
+        for (auto it = indices.begin(); it != indices.end(); ++it) *rit++ = *it;
         formatter->multi_int32(field_info->get_name(), value, default_value);
       }
       else field_info->write(this, formatter);
@@ -622,13 +621,13 @@ void Mesh_set::write(Formatter* formatter)
 void Mesh_set::collapse_identical_coordinates()
 {
   if (m_coord_indices_flat) {
-    std::vector<Uint>& indices = get_flat_coord_indices();
+    auto& indices = get_flat_coord_indices();
     collapse_identical_coordinates(indices);
     m_dirty_flat_coord_indices = false;
     m_dirty_coord_indices = true;
   }
   else {
-    std::vector<Uint>& indices = get_coord_indices();
+    auto& indices = get_coord_indices();
     collapse_identical_coordinates(indices);
     m_dirty_flat_coord_indices = true;
     m_dirty_coord_indices = false;
@@ -636,7 +635,11 @@ void Mesh_set::collapse_identical_coordinates()
 }
 
 //! \brief colapses identical coordinates.
-void Mesh_set::collapse_identical_coordinates(std::vector<Uint>& indices)
+void Mesh_set::collapse_identical_coordinates(std::vector<Int32>& indices)
+{ SGAL_error_msg("Not implemented yet"); }
+
+//! \brief colapses identical coordinates.
+void Mesh_set::collapse_identical_coordinates(Index_array& indices)
 {
   typedef std::pair<const Vector3f*, Uint>      Coord_index_pair;
   if (indices.empty()) return;
@@ -645,7 +648,7 @@ void Mesh_set::collapse_identical_coordinates(std::vector<Uint>& indices)
   // index into the indices array where the point was indexed.
   std::vector<Coord_index_pair> vec(indices.size());
   std::vector<Coord_index_pair>::iterator it;
-  Uint i = 0;
+  Index_type i(0);
   for (it = vec.begin(); it != vec.end(); ++it) {
     const Vector3f& vecf = get_coord_3d(m_flat_coord_indices[i]);
     *it = std::make_pair(&vecf, i++);

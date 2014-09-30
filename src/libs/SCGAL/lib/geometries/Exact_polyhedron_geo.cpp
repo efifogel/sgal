@@ -422,41 +422,44 @@ void Exact_polyhedron_geo::clean_coord_indices()
     if (circ_size != 4) quads = false;
   }
   SGAL_assertion(triangles && quads);
-
-  if (!triangles && !quads) {
-    set_primitive_type(PT_POLYGONS);
-    size += m_polyhedron.size_of_facets();
-  }
-  else set_primitive_type(quads ? PT_QUADS : PT_TRIANGLES);
+  if (!triangles && !quads) size += m_polyhedron.size_of_facets();
 
   m_flat_coord_indices.resize(size);
 
   Uint index = 0;
-  auto iit = (!triangles && !quads) ?
-    m_coord_indices.begin() : m_flat_coord_indices.begin();
-  for (auto fit = m_polyhedron.facets_begin();
-       fit != m_polyhedron.facets_end(); ++fit)
-  {
-    Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
-    do {
-      *iit++ = hh->vertex()->m_index;
-      hh->m_index = index++;
-    } while (++hh != fit->facet_begin());
-    if (!triangles && !quads) {
-      *iit++ = (Uint) -1;
-      ++index;
+  if (triangles || quads) {
+    set_primitive_type(quads ? PT_QUADS : PT_TRIANGLES);
+    auto iit = m_flat_coord_indices.begin();
+    for (auto fit = m_polyhedron.facets_begin();
+         fit != m_polyhedron.facets_end(); ++fit)
+    {
+      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      do {
+        *iit++ = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
     }
-  }
-
-  if (!triangles && !quads) {
-    m_dirty_coord_indices = false;
-    m_dirty_flat_coord_indices = true;
-    m_normal_indices_flat = false;
-  }
-  else {
     m_dirty_coord_indices = true;
     m_dirty_flat_coord_indices = false;
     m_normal_indices_flat = true;
+  }
+  else {
+    set_primitive_type(PT_POLYGONS);
+    auto iit = m_coord_indices.begin();
+    for (auto fit = m_polyhedron.facets_begin();
+         fit != m_polyhedron.facets_end(); ++fit)
+    {
+      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      do {
+        *iit++ = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
+      *iit++ = (Uint) -1;
+      ++index;
+    }
+    m_dirty_coord_indices = false;
+    m_dirty_flat_coord_indices = true;
+    m_normal_indices_flat = false;
   }
 }
 

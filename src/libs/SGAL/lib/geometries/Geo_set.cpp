@@ -400,14 +400,14 @@ void Geo_set::field_changed(const Field_info* field_info)
 }
 
 //! \brief assigns the coord indices with the reverse of given indices.
-void Geo_set::set_reverse_coord_indices(const std::vector<Uint>& indices)
+void Geo_set::set_reverse_coord_indices(const std::vector<Int32>& indices)
 {
   m_coord_indices.resize(indices.size());
   Uint i = 0;
-  std::vector<Uint>::const_reverse_iterator rit = indices.rbegin();
+  auto rit = indices.rbegin();
   for (++rit; rit < indices.rend(); ++rit)
     m_coord_indices[i++] = *rit;
-  m_coord_indices[i++] = (Uint) -1;
+  m_coord_indices[i++] = static_cast<Uint>(-1);
 }
 
 //! \brief obtains the ith coordinate.
