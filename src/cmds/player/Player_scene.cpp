@@ -46,6 +46,11 @@
 #endif
 #include <GL/gl.h>
 
+////
+// Until the bug is fixed.
+#include <CGAL/boost/graph/iterator.h>
+////
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/errors.hpp"
@@ -100,8 +105,11 @@
 #include "SGAL/X11_window_manager.hpp"
 #endif
 
+#include "Player_scene.hpp"
+#include "Player_option_parser.hpp"
+
 #if 0
-#include "CGAL/basic.h"
+#include "SCGAL/basic.h"
 
 #include "SCGAL/Exact_polyhedron_geo.hpp"
 #if defined(USE_CGM)
@@ -120,9 +128,6 @@
 #include "SCGAL/Nef_gaussian_map_geo.hpp"
 #endif
 #endif
-
-#include "Player_scene.hpp"
-#include "Player_option_parser.hpp"
 
 //! \brief constructor.
 Player_scene::Player_scene(Player_option_parser* option_parser) :

@@ -19,6 +19,11 @@
 #include <iostream>
 #include <fstream>
 
+////
+// Until the bug is fixed.
+#include <CGAL/boost/graph/iterator.h>
+////
+
 #include "SGAL/sgal.hpp"
 #if (defined USE_GLUT)
 #include "SGLUT/Glut_window_manager.hpp"
