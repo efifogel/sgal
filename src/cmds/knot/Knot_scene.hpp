@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <vector>
+
 #include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -31,7 +31,6 @@
 #include "SGAL/Scene.hpp"
 #include "SGAL/Piece.hpp"
 #include "SGAL/Vector3f.hpp"
-
 #include "SGAL/Group.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Time_sensor.hpp"
@@ -98,8 +97,8 @@ public:
 #define NUMBER_OF_DIRECTIONS            6
 
   struct indent {
-    Uint m_depth;
-    indent(Uint depth): m_depth(depth) {};
+    size_t m_depth;
+    indent(size_t depth): m_depth(depth) {};
   };
 
   typedef SGAL::Byte                   Piece_position[3];
@@ -291,7 +290,7 @@ private:
 
   boost::unordered_multiset<Piece_state *, Hasher, Hash_comparer> m_visited;
 
-  typedef std::pair<Uint,Uint>                  Step;
+  typedef std::pair<Uint, Uint>                 Step;
   typedef std::list<Step>                       Solution;
   typedef Solution::iterator                    Solution_iter;
 
@@ -429,7 +428,7 @@ inline std::ostream& operator<<(std::ostream& os,
 /*! \brief indenter. */
 inline std::ostream& operator<<(std::ostream& os, Knot_scene::indent const& in)
 {
-  for (Knot_scene::Uint i = 0; i != in.m_depth; ++i) os << " ";
+  for (size_t i = 0; i != in.m_depth; ++i) os << " ";
   return os;
 }
 
@@ -437,9 +436,7 @@ inline std::ostream& operator<<(std::ostream& os, Knot_scene::indent const& in)
 inline bool Knot_scene::Hash_comparer::operator()(const Piece_state* key1,
                                                   const Piece_state* key2)
   const
-{
-  return (compare(key1, key2) == 0);
-}
+{ return (compare(key1, key2) == 0); }
 
 /*! \brief hashes a given state --- map to size_t. */
 inline size_t Knot_scene::my_hash(const State state)
@@ -448,8 +445,7 @@ inline size_t Knot_scene::my_hash(const State state)
   find_min(state, min_x, min_y, min_z);         // find the min values
 
   size_t hash_val = 0;
-  Uint color;
-  for (color = 0; color < NUMBER_OF_COLORS; ++color) {
+  for (size_t color = 0; color < NUMBER_OF_COLORS; ++color) {
     if (!state[color].m_active) continue;
     hash_val += state[color].m_position[0] + state[color].m_position[1] +
       state[color].m_position[2];

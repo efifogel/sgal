@@ -202,7 +202,7 @@ Knot_scene::Knot_scene(Knot_option_parser& option_parser) :
   m_num_invocations(0),
   m_max_level(0)
 {
-  for (Uint i = 0; i < 3; ++i) {
+  for (size_t i = 0; i < 3; ++i) {
     m_time_routers[i] = nullptr;
     m_pos_interpolator_routers[i] = nullptr;
   }
@@ -229,7 +229,7 @@ void Knot_scene::destroy_scene()
 
   m_solution.clear();
 
-  for (Uint i = 0; i < 3; ++i) {
+  for (size_t i = 0; i < 3; ++i) {
     m_time_sensors[i].reset();
     m_pos_interpolators[i].reset();
     delete m_time_routers[i];
@@ -394,8 +394,7 @@ void Knot_scene::create_scene()
 
     // Initialize the starting state:
     State state;
-    Uint color;
-    for (color = 0; color < NUMBER_OF_COLORS; ++color) {
+    for (size_t color = 0; color < NUMBER_OF_COLORS; ++color) {
       state[color].m_active = 1;                     // mark active
       state[color].m_position[0] = puzzle.m_pieces[color]->m_position[0];
       state[color].m_position[1] = puzzle.m_pieces[color]->m_position[1];
@@ -443,7 +442,7 @@ void Knot_scene::create_scene()
 //! \brief initializes the nodes required for animations.
 void Knot_scene::init_animation()
 {
-  for (Uint i = 0; i < 3; ++i) {
+  for (size_t i = 0; i < 3; ++i) {
     // Construct a rime sensor and add to the scene graph:
     m_time_sensors[i].reset(new SGAL::Time_sensor);
     m_root->add_child(m_time_sensors[i]);
