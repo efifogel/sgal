@@ -114,7 +114,7 @@ public:
     Halffacet_const_iterator f;
     CGAL_forall_halffacets(f,N3) {
       if(f->incident_volume() != c) continue;
-      SVertex_handle sv = new_svertex(f->plane().orthogonal_vector());
+      SVertex_handle sv = this->new_svertex(f->plane().orthogonal_vector());
       sv->mark() = Mark(0,0,0);
       Facet2SVertex[f] = sv;
     }
@@ -128,9 +128,9 @@ public:
         Halfedge_const_handle e = hc->source();
         SHalfedge_handle set = Edge2SEdge[e->twin()];
         if(set == SHalfedge_handle())
-          Edge2SEdge[e] = new_shalfedge_pair_at_source(Facet2SVertex[f],1);
+          Edge2SEdge[e] = this->new_shalfedge_pair_at_source(Facet2SVertex[f],1);
         else {
-          link_as_target_and_append(Facet2SVertex[f], set);
+          this->link_as_target_and_append(Facet2SVertex[f], set);
           set->mark() = set->twin()->mark() = Mark(0,0,0);
           set->circle() = Sphere_circle(set->source()->point(),
                                         set->twin()->source()->point());
@@ -148,7 +148,7 @@ public:
       SHalfedge_handle se = Edge2SEdge[e];
       SFace_handle sf = this->new_sface();
       sf->mark() = v->point();
-      link_as_face_cycle(se,sf);
+      this->link_as_face_cycle(se,sf);
     }
   }
 
@@ -174,7 +174,7 @@ public:
 
     Facet_const_iterator f;
     for(f = P.facets_begin(); f != P.facets_end(); ++f) {
-      SVertex_handle sv = new_svertex(f->plane().orthogonal_vector());
+      SVertex_handle sv = this->new_svertex(f->plane().orthogonal_vector());
       sv->mark() = Mark(0,0,0);
       Facet2SVertex[f] = sv;
     }
@@ -185,9 +185,9 @@ public:
 	Halfedge_const_handle e = hc;
 	SHalfedge_handle set = Edge2SEdge[e->opposite()];
 	if(set == SHalfedge_handle())
-	  Edge2SEdge[e] = new_shalfedge_pair_at_source(Facet2SVertex[f],1);
+	  Edge2SEdge[e] = this->new_shalfedge_pair_at_source(Facet2SVertex[f],1);
 	else {
-	  link_as_target_and_append(Facet2SVertex[f], set,1);
+	  this->link_as_target_and_append(Facet2SVertex[f], set,1);
 	  set->mark() = set->twin()->mark() = Mark(0,0,0);
 	  set->circle() = Sphere_circle(set->source()->point(),
                                     set->twin()->source()->point());
@@ -204,7 +204,7 @@ public:
       SHalfedge_handle se = Edge2SEdge[e];
       SFace_handle sf = this->new_sface();
       sf->mark() = v->point();
-      link_as_face_cycle(se,sf);
+      this->link_as_face_cycle(se,sf);
     }
   }
 
@@ -218,26 +218,26 @@ public:
     SFace_iterator f;
     CGAL_forall_sfaces(f,*this) {
       Pitem[f] = UF.make_set(f);
-      clear_face_cycle_entries(f);
+      this->clear_face_cycle_entries(f);
     }
 
     SHalfedge_iterator e;
     for(e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
       if (e->is_twin() ) continue;
       CGAL_NEF_TRACEN("can simplify ? " << PH(e));
-      CGAL_NEF_TRACEN(mark(e) << " " << mark(face(e)) << " "
-                      << mark(face(twin(e))));
-      if (mark(face(e)) == mark(face(twin(e)))) {
+      CGAL_NEF_TRACEN(this->mark(e) << " " << this->mark(this->face(e)) << " "
+                      << this->mark(this->face(this->twin(e))));
+      if (this->mark(this->face(e)) == this->mark(this->face(this->twin(e)))) {
         CGAL_NEF_TRACEN("deleting "<<PH(e));
-        if (!UF.same_set(Pitem[face(e)], Pitem[face(twin(e))])) {
+        if (!UF.same_set(Pitem[this->face(e)], Pitem[this->face(this->twin(e))])) {
 
-          UF.unify_sets(Pitem[face(e)], Pitem[face(twin(e))]);
+          UF.unify_sets(Pitem[this->face(e)], Pitem[this->face(this->twin(e))]);
           CGAL_NEF_TRACEN("unioning disjoint faces");
         }
 
         CGAL_NEF_TRACEN("is_closed_at_source " << is_closed_at_source(e) <<
-                        " " << is_closed_at_source(twin(e)));
-        delete_edge_pair(e);
+                        " " << is_closed_at_source(this->twin(e)));
+        this->delete_edge_pair(e);
       }
     }
 
@@ -245,19 +245,19 @@ public:
     for (e = this->shalfedges_begin(); e != this->shalfedges_end(); ++e) {
       if ( linked[e] ) continue;
       SHalfedge_around_sface_circulator hfc(e),hend(hfc);
-      SFace_handle f = *(UF.find( Pitem[face(e)]));
-      CGAL_For_all(hfc,hend) {  set_face(hfc,f); linked[hfc]=true; }
-      store_sm_boundary_object(e,f);
+      SFace_handle f = *(UF.find( Pitem[this->face(e)]));
+      CGAL_For_all(hfc,hend) {  this->set_face(hfc,f); linked[hfc]=true; }
+      this->store_sm_boundary_object(e,f);
     }
 
     SVertex_iterator v;
     for(v = this->svertices_begin(); v != this->svertices_end(); ++v) {
-      if ( is_isolated(v) ) {
-        delete_vertex_only(v);
+      if ( this->is_isolated(v) ) {
+        this->delete_vertex_only(v);
         continue;
       }
-      if ( has_outdeg_two(v)) {
-        merge_edge_pairs_at_target(previous(first_out_edge(v)));
+      if ( this->has_outdeg_two(v)) {
+        this->merge_edge_pairs_at_target(this->previous(this->first_out_edge(v)));
       }
     }
 
@@ -265,7 +265,7 @@ public:
       Union_find_handle pit = Pitem[f];
       if ( UF.find(pit) != pit ) {
         CGAL_NEF_TRACEN("delete face " << &*f);
-        delete_face_only(f);
+        this->delete_face_only(f);
       }
     }
   }
