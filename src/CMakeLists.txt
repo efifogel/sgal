@@ -12,10 +12,8 @@ if (NOT WIN32)
   find_package(X11 REQUIRED)
 endif(NOT WIN32)
 
-if (USE_CGAL)
-  find_package(CGAL REQUIRED COMPONENTS Core)
-  include(${CGAL_USE_FILE})
-endif()
+find_package(CGAL REQUIRED COMPONENTS Core)
+include(${CGAL_USE_FILE})
 
 # Add includes and libs
 include_directories(${Boost_INCLUDE_DIR})
