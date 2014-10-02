@@ -41,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Indexed_geodesic_set::s_tag = "IndexedGeodesicSet";
-Container_proto* Indexed_geodesic_set::s_prototype(NULL);
+Container_proto* Indexed_geodesic_set::s_prototype(nullptr);
 
 // Default values:
 const Boolean Indexed_geodesic_set::m_def_color_per_vertex(true);
@@ -50,7 +50,7 @@ const Float Indexed_geodesic_set::s_def_line_width(1);
 
 REGISTER_TO_FACTORY(Indexed_geodesic_set, "Indexed_geodesic_set");
 
-/*! \brief A parameter-less constructor */
+//! \brief A parameter-less constructor.
 Indexed_geodesic_set::Indexed_geodesic_set(Boolean proto) :
   Geo_set(proto),
   m_color_per_vertex(m_def_color_per_vertex),
@@ -65,7 +65,7 @@ Indexed_geodesic_set::Indexed_geodesic_set(Boolean proto) :
   m_primitive_type = PT_LINES;
 }
 
-/*! \brief Destructor */
+//! \brief destructor.
 Indexed_geodesic_set::~Indexed_geodesic_set() {}
 
 /* \brief set the flag that indicates whether normals are bound per vertex or
@@ -252,13 +252,11 @@ void Indexed_geodesic_set::draw(Draw_action* action)
   if (fragment_source) context->draw_light_enable(true);
 }
 
-/*! \brief */
+//! \brief
 void Indexed_geodesic_set::isect(Isect_action* /* action */) {}
 
-/*! \brief calculates the sphere bound of the mesh. Returns true if the BS has
- * changed since lst time this was called.
- */
-bool Indexed_geodesic_set::clean_sphere_bound()
+//! \brief cleans the sphere bound of the geodesic set.
+void Indexed_geodesic_set::clean_sphere_bound()
 {
   if (!m_bb_is_pre_set && m_coord_array) {
     boost::shared_ptr<Coord_array_3d> coord_array =
@@ -267,22 +265,17 @@ bool Indexed_geodesic_set::clean_sphere_bound()
     m_sphere_bound.set_around(coord_array->begin(), coord_array->end());
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
-/*! \brief sets the attributes of the object. */
+//! \brief sets the attributes of the object.
 void Indexed_geodesic_set::set_attributes(Element* elem)
 {
   Geo_set::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  typedef Element::Cont_attr_iter Cont_attr_iter;
-
   std::string normal_indices_string;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "colorPerVertex") {
       set_color_per_vertex(compare_to_true(value));
       elem->mark_delete(ai);
@@ -309,7 +302,7 @@ void Indexed_geodesic_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief initializes the prototype. */
+//! \brief initializes the prototype.
 void Indexed_geodesic_set::init_prototype()
 {
   if (s_prototype) return;
@@ -324,14 +317,14 @@ void Indexed_geodesic_set::init_prototype()
                                            line_width_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Indexed_geodesic_set::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Indexed_geodesic_set::get_prototype()
 {
   if (!s_prototype) Indexed_geodesic_set::init_prototype();

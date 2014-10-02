@@ -146,24 +146,24 @@ void Camera::set_dynamic_clipping_planes()
   set_clipping_planes(sb.get_center(), sb.get_radius());
 }
 
-/*! \brief */
+//! \brief
 void Camera::set_field_of_view(float fov)
 {
   m_field_of_view = fov;
   m_frustum.set_fov(m_field_of_view);
 }
 
-/*! \brief */
+//! \brief
 float Camera::get_field_of_view() { return m_field_of_view; }
 
-/*! \brief */
+//! \brief
 void Camera::update_field_of_view(const Field_info* /* info */)
 {
   m_frustum.set_fov(m_field_of_view);
   set_rendering_required();
 }
 
-/*! \brief */
+//! \brief
 void Camera::get_clipping_planes(float& near_plane, float& far_plane)
 { m_frustum.get_near_far(near_plane, far_plane); }
 
@@ -188,7 +188,7 @@ void Camera::utilize()
   { m_nearest_clipping_plane = 1; }
 }
 
-/*! \brief updates the aspect ratio based on the context. */
+//! \brief updates the aspect ratio based on the context.
 void Camera::set_aspect_ratio(const Context* context)
 {
   if (context) {
@@ -197,7 +197,7 @@ void Camera::set_aspect_ratio(const Context* context)
   }
 }
 
-/*! \brief */
+//! \brief
 void Camera::update_matrix_requiered(const Field_info* /* info */)
 {
 #if 0
@@ -208,7 +208,7 @@ void Camera::update_matrix_requiered(const Field_info* /* info */)
 #endif
 }
 
-/*! \brief initializes the container prototype. */
+//! \brief initializes the container prototype.
 void Camera::init_prototype()
 {
   if (s_prototype) return;
@@ -257,28 +257,28 @@ void Camera::init_prototype()
                                            radius_scale_func));
 }
 
-/*! \brief deletes the camera prototype. */
+//! \brief deletes the camera prototype.
 void Camera::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
-/*! \brief obtains the camera prototype. */
+//! \brief obtains the camera prototype.
 Container_proto* Camera::get_prototype()
 {
   if (s_prototype == nullptr) Camera::init_prototype();
   return s_prototype;
 }
 
-/*! \brief obtain the camera viewing matrix. */
+//! \brief obtain the camera viewing matrix.
 const Matrix4f& Camera::get_view_mat()
 {
   if (m_dirty_matrix) clean_matrix();
   return m_view_mat;
 }
 
-/*! \brief cleans the camera viewing matrix. */
+//! \brief cleans the camera viewing matrix.
 void Camera::clean_matrix()
 {
   m_view_mat.make_identity();
@@ -297,7 +297,7 @@ void Camera::clean_matrix()
   m_dirty_matrix = false;
 }
 
-/*! \brief applies the camera. */
+//! \brief applies the camera.
 void Camera::draw(Draw_action* action)
 {
   Configuration* conf = action->get_configuration();
@@ -347,8 +347,8 @@ void Camera::set_attributes(Element* elem)
   m_frustum.set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "fieldOfView") {
       // m_is_dynamic = false;
       set_field_of_view(boost::lexical_cast<Float>(value));

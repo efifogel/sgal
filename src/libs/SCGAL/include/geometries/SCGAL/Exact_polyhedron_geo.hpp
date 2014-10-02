@@ -133,9 +133,9 @@ public:
    */
   virtual Boolean is_empty() const;
 
-  /*! Calculate the sphere bound.
+  /*! Clean the sphere bound.
    */
-  virtual Boolean clean_sphere_bound();
+  virtual void clean_sphere_bound();
 
   /*! */
   virtual void cull(Cull_context& cull_context);

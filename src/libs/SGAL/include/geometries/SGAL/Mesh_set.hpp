@@ -92,9 +92,8 @@ public:
    */
   virtual void clean();
 
-  /*! Calculate the sphere bound.
-   */
-  virtual Boolean clean_sphere_bound();
+  // /*! Clean the bounding sphere of the mesh set. */
+  virtual void clean_sphere_bound();
 
   /*! Draw the representation. */
   virtual void draw_geometry(Draw_action* action) = 0;

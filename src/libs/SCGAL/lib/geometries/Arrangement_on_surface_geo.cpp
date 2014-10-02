@@ -51,11 +51,11 @@ SGAL_BEGIN_NAMESPACE
 
 Container_proto* Arrangement_on_surface_geo::s_prototype(nullptr);
 
-/*! Insertion strategy names */
+//! Insertion strategy names
 const char* Arrangement_on_surface_geo::s_insertion_strategy_names[] =
   {"aggregate", "increment"};
 
-/*! Default values */
+//! Default values
 const Arrangement_on_surface_geo::Insertion_strategy
   Arrangement_on_surface_geo::s_def_insertion_strategy(AGGREGATE);
 const Boolean Arrangement_on_surface_geo::s_def_draw_opaque(false);
@@ -302,13 +302,11 @@ void Arrangement_on_surface_geo::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
 
     if (name == "insertionStrategy") {
       std::string req_strategy = strip_double_quotes(value);
@@ -459,10 +457,10 @@ void Arrangement_on_surface_geo::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief */
+//! \brief
 void Arrangement_on_surface_geo::cull(Cull_context& /* cull_context */) {}
 
-/*! \brief draws the geometry */
+//! \brief draws the geometry
 void Arrangement_on_surface_geo::draw(Draw_action* action)
 {
   if (is_dirty()) clean();

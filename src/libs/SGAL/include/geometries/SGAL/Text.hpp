@@ -58,11 +58,11 @@ public:
   /*! Destructor */
   virtual ~Text();
 
-  /* Construct the prototype. */
-  static Text* prototype() { return new Text(true); }
+  /*! Construct the prototype. */
+  static Text* prototype();
 
   /*! Clone. */
-  virtual Container* clone() { return new Text(); }
+  virtual Container* clone();
 
   /*! Initialize the node prototype. */
   virtual void init_prototype();
@@ -89,18 +89,18 @@ public:
 
   virtual void isect(Isect_action* /* isect_action */) {}
 
-  /*! Calculate the sphere bound */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the sphere bound */
+  virtual void clean_sphere_bound();
 
   /*! Set the font style */
   void set_font_style(Shared_font_style font_style);
 
   /*! Obtain the font style */
-  Shared_font_style get_font_style() const { return m_font_style; }
+  Shared_font_style get_font_style() const;
 
 protected:
-  /*! obtains the tag (type) of the container */
-  virtual const std::string& get_tag() const { return s_tag; }
+  /*! Obtain the tag (type) of the container */
+  virtual const std::string& get_tag() const;
 
 private:
   /*! The tag that identifies this container type */
@@ -122,6 +122,19 @@ private:
 #if (defined _MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief construct the prototype.
+inline Text* Text::prototype() { return new Text(true); }
+
+//! \brief clones.
+inline Container* Text::clone() { return new Text(); }
+
+//! \brief obtains the tag (type) of the container.
+inline const std::string& Text::get_tag() const { return s_tag; }
+
+//! \brief obtains the font style.
+inline Text::Shared_font_style Text::get_font_style() const
+{ return m_font_style; }
 
 SGAL_END_NAMESPACE
 

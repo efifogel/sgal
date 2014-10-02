@@ -55,17 +55,17 @@ Container_proto* Exact_nef_polyhedron::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Exact_nef_polyhedron, "Exact_nef_polyhedron");
 
-/*! Constructor */
+//! \brief constructor.
 Exact_nef_polyhedron::Exact_nef_polyhedron(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
   m_time(0)
 { m_surface.set_nef_polyhedron(this); }
 
-/*! Destructor */
+//! \brief destructor.
 Exact_nef_polyhedron::~Exact_nef_polyhedron() {}
 
-/*! Update the polyhedron data structure */
+//! \brief updates the polyhedron data structure.
 void Exact_nef_polyhedron::clean_polyhedron()
 {
   // Construct the polyhedron:
@@ -90,7 +90,7 @@ void Exact_nef_polyhedron::clean_polyhedron()
   m_dirty_polyhedron = false;
 }
 
-/*! Clean the data structure */
+//! \brief cleans the data structure.
 void Exact_nef_polyhedron::clean()
 {
   clock_t start_time = clock();
@@ -106,7 +106,7 @@ void Exact_nef_polyhedron::clean()
   if (Mesh_set::is_dirty()) Mesh_set::clean();
 }
 
-/*! Clear the internal representation */
+//! \brief clears the internal representation.
 void Exact_nef_polyhedron::clear()
 {
   m_polyhedron.clear();
@@ -115,10 +115,10 @@ void Exact_nef_polyhedron::clear()
   Mesh_set::clear();
 }
 
-/*! \brief */
+//! \brief
 void Exact_nef_polyhedron::cull(SGAL::Cull_context& cull_context) {}
 
-/*! \brief draws the intermediate polyhedron (for debugging purpose). */
+//! \brief draws the intermediate polyhedron (for debugging purpose).
 void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
@@ -149,7 +149,7 @@ void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
   }
 }
 
-/*! \brief draws the nef polyhedron. */
+//! \brief draws the nef polyhedron.
 void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
 {
   // draw_polyhedron(action);
@@ -217,11 +217,13 @@ void Exact_nef_polyhedron::isect(SGAL::Isect_action* action)
   }
 }
 
-/*! \brief */
-bool Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
+//! \brief cleans the bounding sphere of the nef polyhedron.
+void Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
 {
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_bb_is_pre_set) return true;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
 
   Inexact_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
@@ -240,15 +242,17 @@ bool Exact_nef_polyhedron::clean_sphere_bound_polyhedron()
     m_sphere_bound.set_radius(min_sphere.radius());
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
-/*! \brief */
-bool Exact_nef_polyhedron::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the nef polyhedron.
+void Exact_nef_polyhedron::clean_sphere_bound()
 {
-  if (is_dirty()) clean();
-  if (m_bb_is_pre_set) return true;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
 
+  if (is_dirty()) clean();
   Inexact_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
     spheres.resize(m_polyhedron.size_of_vertices());
@@ -267,10 +271,9 @@ bool Exact_nef_polyhedron::clean_sphere_bound()
     m_sphere_bound.set_radius(min_sphere.radius());
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
-/*! \brief sets the attributes of this node. */
+//! \brief sets the attributes of this node.
 void Exact_nef_polyhedron::set_attributes(SGAL::Element* elem)
 {
   SGAL::Mesh_set::set_attributes(elem);
@@ -279,28 +282,28 @@ void Exact_nef_polyhedron::set_attributes(SGAL::Element* elem)
   elem->delete_marked();
 }
 
-/*! \brief initializes the prototype of this container. */
+//! \brief initializes the prototype of this container.
 void Exact_nef_polyhedron::init_prototype()
 {
   if (s_prototype) return;
   s_prototype = new SGAL::Container_proto(Mesh_set::get_prototype());
 }
 
-/*! \brief deletes the prototype of this container. */
+//! \brief deletes the prototype of this container.
 void Exact_nef_polyhedron::delete_prototype()
 {
   delete s_prototype;
   s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype of this container. */
+//! \brief obtains the prototype of this container.
 SGAL::Container_proto* Exact_nef_polyhedron::get_prototype()
 {
   if (!s_prototype) Exact_nef_polyhedron::init_prototype();
   return s_prototype;
 }
 
-/*! \brief prints statistics. */
+//! \brief prints statistics.
 void Exact_nef_polyhedron::print_stat()
 {
   if (is_dirty()) clean();

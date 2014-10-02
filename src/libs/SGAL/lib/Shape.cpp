@@ -136,24 +136,17 @@ void Shape::set_geometry(Shared_geometry geometry)
 #endif
 }
 
-//! \brief calculates the bounding sphere of all geometries in the shape.
-Boolean Shape::clean_sphere_bound()
+//! \brief cleans the bounding sphere of all geometries in the shape.
+void Shape::clean_sphere_bound()
 {
-  bool res = false;
   if (!is_visible()) {
-    if (m_sphere_bound.get_radius() != 0) {
-      m_sphere_bound.set_radius(0);
-      res = true;
-    }
+    m_sphere_bound.set_radius(0);
     m_dirty_sphere_bound = false;
-    return res;
+    return;
   }
 
-  Boolean changed = false;
-  if (m_geometry) m_sphere_bound = *m_geometry->get_sphere_bound(changed);
-
+  if (m_geometry) m_sphere_bound = *m_geometry->get_sphere_bound();
   m_dirty_sphere_bound = false;
-  return changed;
 }
 
 //! \brief draws the appearance and then all the geometries.
@@ -279,8 +272,8 @@ void Shape::set_attributes(Element* elem)
   Node::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "cullFace") {
       Uint num = sizeof(s_cull_face_names) / sizeof(char*);
       const char** found = std::find(s_cull_face_names,
@@ -340,11 +333,11 @@ void Shape::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "appearance") {
       Shared_appearance app = boost::dynamic_pointer_cast<Appearance>(cont);
       set_appearance(app);

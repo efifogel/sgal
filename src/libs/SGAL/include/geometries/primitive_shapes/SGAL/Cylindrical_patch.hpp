@@ -109,8 +109,8 @@ public:
    */
   virtual void isect(Isect_action* action);
 
-  /*! Calculare the sphere bound of the cylindrical patch */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the cylindrical patch */
+  virtual void clean_sphere_bound();
 
   /*! Determine whether the geometry has texture coordinates.
    */

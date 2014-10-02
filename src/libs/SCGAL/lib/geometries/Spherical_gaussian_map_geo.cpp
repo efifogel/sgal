@@ -193,19 +193,15 @@ void Spherical_gaussian_map_geo::set_attributes(Element* elem)
 {
   Spherical_gaussian_map_base_geo::set_attributes(elem);
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+  for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "geometries") {
       set_minkowski_sum(true);
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Element::Shared_container cont = *ci;
         Shared_spherical_gaussian_map_geo sgm =
           boost::dynamic_pointer_cast<Spherical_gaussian_map_geo>(cont);

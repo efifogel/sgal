@@ -149,12 +149,11 @@ public:
   virtual void set_attributes(Element* elem);
 
   /*! Calculate the sphere bound.
-   * \return true if the BS has changed since lst time this was called.
    * The implementation assumes that m_coord_array points at an object of
    * type Coord_array_3d. If this is not the case, this virtual member
    * function must be overriden!
    */
-  virtual Boolean clean_sphere_bound();
+  virtual void clean_sphere_bound();
 
   /*! Process change of data that causes a change to the sphere bound.
    *  (i) Indicate the change in the current node (through a call to the

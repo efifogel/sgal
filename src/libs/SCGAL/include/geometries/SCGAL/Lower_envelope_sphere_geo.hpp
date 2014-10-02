@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Lower_envelope_sphere_geo.hpp 9188 2010-05-25 14:40:57Z efif $
-// $Revision: 9188 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_LOWER_ENVELOPE_SPHERE_GEO_HPP
@@ -131,8 +128,8 @@ public:
       const Conic_traits_2::Point_2 point = vertex.point();
       Vector2f vec(static_cast<float>(CGAL::to_double(point.x())),
                    static_cast<float>(CGAL::to_double(point.y())));
-      Approximate_point_3 approximate_point(vec[0], vec[1], 0);
-      return Approximate_sphere_3(approximate_point, 0);
+      Approximate_point_3 approximate_point(vec[0], vec[1], 0.0f);
+      return Approximate_sphere_3(approximate_point, 0.0f);
     }
   };
 
@@ -203,23 +200,23 @@ private:
   OutputIterator get_spheres(OutputIterator oi);
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Lower_envelope_sphere_geo* Lower_envelope_sphere_geo::prototype()
 { return new Lower_envelope_sphere_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Lower_envelope_sphere_geo::clone()
 { return new Lower_envelope_sphere_geo(); }
 
-/*! \brief determines whether the envelope is empty. */
+//! \brief determines whether the envelope is empty.
 inline Boolean Lower_envelope_sphere_geo::is_empty() const
 { return m_envelope->is_empty(); }
 
-/*! \brief obtains all spheres. */
+//! \brief obtains all spheres.
 template <typename OutputIterator>
 OutputIterator Lower_envelope_sphere_geo::get_spheres(OutputIterator oi)
 {
-  for (Node_iter it = m_surfaces.begin(); it != m_surfaces.end(); ++it) {
+  for (auto it = m_surfaces.begin(); it != m_surfaces.end(); ++it) {
     Shared_node node = *it;
     boost::shared_ptr<Shape> shape = boost::dynamic_pointer_cast<Shape>(node);
     SGAL_assertion(shape);
@@ -228,7 +225,7 @@ OutputIterator Lower_envelope_sphere_geo::get_spheres(OutputIterator oi)
       boost::dynamic_pointer_cast<Sphere>(geo);
     SGAL_assertion(sphere);
 
-    const Vector3f& center = sphere->get_center();
+    const auto& center = sphere->get_center();
     Rat_point_3 rat_center(center[0], center[1], center[2]);
     float radius = sphere->get_radius();
     Sphere_base_3 rat_sphere(rat_center, Rational(radius* radius));
@@ -237,7 +234,7 @@ OutputIterator Lower_envelope_sphere_geo::get_spheres(OutputIterator oi)
   return oi;
 }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Lower_envelope_sphere_geo::get_tag() const
 { return s_tag; }
 

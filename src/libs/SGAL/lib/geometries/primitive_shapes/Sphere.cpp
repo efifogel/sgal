@@ -35,7 +35,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Sphere::s_tag = "Sphere";
-Container_proto * Sphere::s_prototype(nullptr);
+Container_proto* Sphere::s_prototype(nullptr);
 
 // Default values:
 const Vector3f Sphere::s_def_center(0,0,0);
@@ -98,14 +98,14 @@ void Sphere::init()
   m_dirty = false;
 }
 
-/*! Calculare the sphere bound of the sphere. In this case, the sphere
- * bound is identical to the sphere itself.
+/*! \brief cleans the sphere bound of the sphere.
+ * Note that the sphere bound is identical to the sphere itself.
  */
-Boolean Sphere::clean_sphere_bound()
+void Sphere::clean_sphere_bound()
 {
   m_sphere_bound.set_radius(m_radius);
   m_sphere_bound.set_center(m_center);
-  return true;
+  m_dirty_sphere_bound = false;
 }
 
 //! \brief sets the attributes of this container.
@@ -114,8 +114,8 @@ void Sphere::set_attributes(Element * elem)
   Geometry::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "center") {
       Vector3f center(value);
       set_center(center);

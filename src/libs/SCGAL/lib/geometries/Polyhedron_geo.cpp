@@ -156,13 +156,16 @@ void Polyhedron_geo::isect(Isect_action* /* action */)
   }
 }
 
-//! \brief
-Boolean Polyhedron_geo::clean_sphere_bound()
+//! \brief cleans the sphere bound.
+void Polyhedron_geo::clean_sphere_bound()
 {
-  if (!m_dirty_sphere_bound) return false;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
+
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_bb_is_pre_set) return true;
 
   if (!m_polyhedron.empty()) {
     Vector3f center_vec;
@@ -192,7 +195,6 @@ Boolean Polyhedron_geo::clean_sphere_bound()
     m_sphere_bound.set_center(center_vec);
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief sets the attributes of this object.

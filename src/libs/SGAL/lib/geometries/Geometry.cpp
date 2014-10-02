@@ -89,11 +89,9 @@ void Geometry::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "bboxCenter") {
       m_sphere_bound.set_center(value);
       elem->mark_delete(ai);
@@ -125,16 +123,10 @@ void Geometry::sphere_bound_changed(const Field_info* /* field_info */)
 { m_dirty_sphere_bound = true; }
 
 
-/*! Returns a pointer to the sphere bound.
- * changed is true if the BS has changed since last call.
- */
-const Sphere_bound* Geometry::get_sphere_bound(bool& changed)
+//! \brief obtains bounding sphere of the geometry.
+const Sphere_bound* Geometry::get_sphere_bound()
 {
-  changed = false;
-  if (m_dirty_sphere_bound) {
-    clean_sphere_bound();
-    changed = true;
-  }
+  if (m_dirty_sphere_bound) clean_sphere_bound();
   return &m_sphere_bound;
 }
 

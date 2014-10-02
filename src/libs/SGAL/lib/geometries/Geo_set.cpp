@@ -192,12 +192,15 @@ void Geo_set::set_color_array(Shared_color_array color_array)
 //! \brief returns true if the representation is empty.
 Boolean Geo_set::is_empty() const { return m_coord_indices.empty(); }
 
-//! \brief calculates the sphere bound of the geometry set.
-Boolean Geo_set::clean_sphere_bound()
+//! \brief cleans the sphere bound of the geometry set.
+void Geo_set::clean_sphere_bound()
 {
-  if (!m_dirty_sphere_bound) return false;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
 
-  if (!m_bb_is_pre_set && m_coord_array) {
+  if (m_coord_array) {
     // We assume that m_coord_array points at an object of type
     // Coord_array_3d type.
     boost::shared_ptr<Coord_array_3d> coords =
@@ -206,7 +209,6 @@ Boolean Geo_set::clean_sphere_bound()
     m_sphere_bound.set_around(coords->begin(), coords->end());
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief sets the attributes of the object.
@@ -214,10 +216,9 @@ void Geo_set::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "colorAttachment") {
       Uint num = sizeof(s_attachment_names) / sizeof(char*);
       const char** found = std::find(s_attachment_names,
@@ -329,11 +330,11 @@ void Geo_set::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "coord") {
       auto coord_array = boost::dynamic_pointer_cast<Coord_array>(cont);
       set_coord_array(coord_array);

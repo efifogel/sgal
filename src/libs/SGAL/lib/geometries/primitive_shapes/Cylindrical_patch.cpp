@@ -99,7 +99,7 @@ void Cylindrical_patch::draw_quad(Float cos_left, Float sin_left,
   glVertex3f(v_left_x, top, v_left_z);
 }
 
-/*! \brief draws the cylindrical patch. */
+//! \brief draws the cylindrical patch.
 void Cylindrical_patch::draw(Draw_action* action)
 {
   if (has_scale()) glEnable(GL_NORMALIZE);
@@ -170,13 +170,13 @@ void Cylindrical_patch::isect(Isect_action* /* action */)
   glEnd();
 }
 
-//! \brief calculares the sphere bound of the cylindrical patch.
-Boolean Cylindrical_patch::clean_sphere_bound()
+//! \brief cleans the sphere bound of the cylindrical patch.
+void Cylindrical_patch::clean_sphere_bound()
 {
   float radius = sqrtf(m_height * m_height / 4 + m_radius * m_radius);
   m_sphere_bound.set_radius(radius);
   m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  return true;
+  m_dirty_sphere_bound = false;
 }
 
 //! \brief sets the container attributes.
@@ -184,11 +184,9 @@ void Cylindrical_patch::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);

@@ -91,8 +91,8 @@ void Billboard::set_attributes(Element* elem)
   Group::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "axisOfRotation") {
       Vector3f vec(value);
       set_axis_of_rotation(vec);
@@ -141,8 +141,8 @@ void Billboard::isect(Isect_action* isect_action)
   glPopMatrix();
 }
 
-//! \brief cleans the bounding sphere of the transformation node.
-Boolean Billboard::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the billboard node.
+void Billboard::clean_sphere_bound()
 { return Group::clean_sphere_bound(); }
 
 //! \brief processes change of axis of rotation.

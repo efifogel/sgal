@@ -96,8 +96,8 @@ public:
    */
   virtual void isect(Isect_action* action);
 
-  /*! Calculare the sphere bound of the geodesic */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the geodesic. */
+  virtual void clean_sphere_bound();
 
   // virtual void FieldChanged(short fieldId);
 
@@ -224,13 +224,13 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Geodesic* Geodesic::prototype() {  return new Geodesic(true); }
 
-/*! \brief  clones. */
+//! \brief  clones.
 inline Container* Geodesic::clone() { return new Geodesic(); }
 
-/*! \brief sets the arc radius. */
+//! \brief sets the arc radius.
 inline void Geodesic::set_radius(Float radius)
 {
   m_radius = radius;
@@ -247,48 +247,48 @@ inline void Geodesic::set_start(Vector2f start)
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the start point of the geodesic. */
+//! \brief obtains the start point of the geodesic.
 inline Vector2f Geodesic::get_start() const { return m_start; }
 
-/*! \brief sets the end point. */
+//! \brief sets the end point.
 inline void Geodesic::set_end(Vector2f end)
 {
   m_end = end;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the end point of the geodesic. */
+//! \brief obtains the end point of the geodesic.
 inline Vector2f Geodesic::get_end() const { return m_end; }
 
-/*! \brief sets the number of stacks. */
+//! \brief sets the number of stacks.
 inline void Geodesic::set_stacks(Uint stacks) { m_stacks = stacks; }
 
-/*! \brief obtains the number of stacks. */
+//! \brief obtains the number of stacks.
 inline Uint Geodesic::get_stacks() const { return m_stacks; }
 
-/*! \brief sets the number of breaks. */
+//! \brief sets the number of breaks.
 inline void Geodesic::set_breaks(Uint breaks) { m_breaks = breaks; }
 
-/*! \brief obtains the number of breaks. */
+//! \brief obtains the number of breaks.
 inline Uint Geodesic::get_breaks() const { return m_breaks; }
 
 /*! \brief sets. */
 inline void Geodesic::set_solid(Boolean solid) { m_is_solid = solid; }
 
-/*! \brief obtains. */
+//! \brief obtains.
 inline Boolean Geodesic::is_solid() const { return m_is_solid; }
 
-/*! \brief sets. */
+//! \brief sets.
 inline void Geodesic::set_complement(Boolean complement)
 {
   m_is_complement = complement;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains */
+//! \brief obtains.
 inline Boolean Geodesic::is_complement() const { return m_is_complement; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Geodesic::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

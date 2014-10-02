@@ -99,15 +99,13 @@ public:
   /*! Draw the geometry in selection mode. */
   virtual void isect(Isect_action* action) = 0;
 
-  /*! Calculare the sphere bound of the geometry. */
-  virtual Boolean clean_sphere_bound() = 0;
+  /*! Clean the bounding sphere of the geometry. */
+  virtual void clean_sphere_bound() = 0;
 
-  virtual const Sphere_bound* get_sphere_bound(bool& changed);
-
-  const Sphere_bound* get_sphere_bound() {
-    bool dummy;
-    return get_sphere_bound(dummy);
-  }
+  /*! Obtain the bounding sphere of the geometry.
+   * \return the bounding sphere of the geometry.
+   */
+  virtual const Sphere_bound* get_sphere_bound();
 
   /*! Set the flag that indicates that the sphere bound should be cleaned. */
   virtual void sphere_bound_changed(const Field_info* field_info = nullptr);
@@ -181,7 +179,7 @@ inline Boolean Geometry::has_tex_coord() { return false; }
 
 //! \brief determines whether color should be generated.
 inline Boolean Geometry::do_generate_color()
-{ return m_generate_tex_coord; }
+{ return m_generate_color; }
 
 //! \brief sets the flag that indicates whether color should be generated.
 inline void Geometry::set_generate_color(Boolean flag)

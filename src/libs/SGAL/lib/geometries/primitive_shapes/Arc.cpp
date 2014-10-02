@@ -47,7 +47,7 @@ const Float Arc::s_def_gamma(SGAL_TWO_PI);
 const Float Arc::s_def_delta(SGAL_PI);
 const Boolean Arc::s_def_is_solid(false);
 
-/*! Halftone stipple pattern for backfacing elements */
+//! Halftone stipple pattern for backfacing elements.
 Ubyte Arc::s_halftone[] = {
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
   0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
@@ -272,12 +272,12 @@ void Arc::isect(Isect_action* /* action */)
   }
 }
 
-//! \brief calculares the sphere bound of the sphere.
-Boolean Arc::clean_sphere_bound()
+//! \brief cleans the sphere bound of the arc.
+void Arc::clean_sphere_bound()
 {
   m_sphere_bound.set_radius(m_radius);
   m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  return true;
+  m_dirty_sphere_bound = false;
 }
 
 //! \brief sets the attributes of this container.
@@ -285,11 +285,9 @@ void Arc::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -493,6 +491,13 @@ Container_proto* Arc::get_prototype()
 {
   if (!s_prototype) Arc::init_prototype();
   return s_prototype;
+}
+
+//! \brief sets the arc radius.
+void Arc::set_radius(Float radius)
+{
+  m_radius = radius;
+  m_dirty_sphere_bound = true;
 }
 
 SGAL_END_NAMESPACE

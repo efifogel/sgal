@@ -111,10 +111,8 @@ public:
 
   virtual void isect(Isect_action* action);
 
-  /*! Calculate the sphere bound of the mesh. Returns true if the BS has
-   * changed since lst time this was called.
-   */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the sphere bound of the lines. */
+  virtual void clean_sphere_bound();
 
   /* Set the flag that indicates whether normals are bound per vertex
    * or per line.

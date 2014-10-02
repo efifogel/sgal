@@ -273,7 +273,7 @@ void Nef_gaussian_map_geo::draw_dual_edges()
   glColor3f(1, 1, 1);
 }
 
-/*! \brief draws the dual marked facet, that is, the vertex. */
+//! \brief draws the dual marked facet, that is, the vertex.
 void Nef_gaussian_map_geo::draw_dual_marked_facet()
 {
   glColor3fv((float*)&m_marked_facet_color);
@@ -309,7 +309,7 @@ void Nef_gaussian_map_geo::draw_dual_marked_facet()
   glColor3f(1, 1, 1);
 }
 
-/*! \brief draws the dual marked edge. */
+//! \brief draws the dual marked edge.
 void Nef_gaussian_map_geo::draw_dual_marked_edge(Vector3f& src, Vector3f& trg)
 {
   float radius = m_edge_radius_scale;
@@ -345,7 +345,7 @@ void Nef_gaussian_map_geo::draw_dual_marked_edge(Vector3f& src, Vector3f& trg)
   glEnd();
 }
 
-/*! \brief draws the dual marked vertex, that is a face. */
+//! \brief draws the dual marked vertex, that is a face.
 void Nef_gaussian_map_geo::draw_dual_marked_vertex()
 {
   Uint i = 0;
@@ -403,7 +403,7 @@ void Nef_gaussian_map_geo::draw_dual_marked_vertex()
   }
 }
 
-/*! \brief draws the Gaussian map. */
+//! \brief draws the Gaussian map.
 void Nef_gaussian_map_geo::draw_dual(Draw_action* action)
 {
   if (m_draw_dual_opaque) {
@@ -489,7 +489,7 @@ void Nef_gaussian_map_geo::draw_dual(Draw_action* action)
   context->draw_light_enable(true);
 }
 
-/*! \brief draws the dual representation opaque */
+//! \brief draws the dual representation opaque.
 void Nef_gaussian_map_geo::draw_dual_opaque(Draw_action* action)
 {
   Context* context = action->get_context();
@@ -519,8 +519,7 @@ void Nef_gaussian_map_geo::draw_dual_opaque(Draw_action* action)
   glColor3f(1, 1, 1);
 }
 
-/*! \brief draws the polyhedron directly from the gaussian map representation.
- */
+//! \brief draws the polyhedron directly from the gaussian map representation.
 void Nef_gaussian_map_geo::draw_primal(Draw_action* action)
 {
   // draw_polyhedron(action);
@@ -613,13 +612,15 @@ void Nef_gaussian_map_geo::isect(SGAL::Isect_action* action)
   }
 }
 
-/*! \brief calculates the bounding sphere. */
-Boolean Nef_gaussian_map_geo::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the Nef Gaussian map.
+void Nef_gaussian_map_geo::clean_sphere_bound()
 {
-  if (!m_dirty_sphere_bound) return false;
-  if (is_dirty()) clean();
-  if (m_bb_is_pre_set) return true;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
 
+  if (is_dirty()) clean();
   Inexact_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
     spheres.resize(m_polyhedron.size_of_vertices());
@@ -638,19 +639,16 @@ Boolean Nef_gaussian_map_geo::clean_sphere_bound()
     m_sphere_bound.set_radius(min_sphere.radius());
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Nef_gaussian_map_geo::set_attributes(Element* elem)
 {
   SGAL::Mesh_set::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "drawDual") {
       m_draw_dual = compare_to_true(value);
       m_draw_primal = !m_draw_dual;
@@ -744,18 +742,14 @@ void Nef_gaussian_map_geo::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+  for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "geometries") {
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Element::Shared_container cont = *ci;
         Shared_nef_gaussian_map_geo ngm =
           boost::dynamic_pointer_cast<Nef_gaussian_map_geo>(cont);

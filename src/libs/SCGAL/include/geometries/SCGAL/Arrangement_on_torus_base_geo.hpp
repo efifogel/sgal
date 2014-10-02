@@ -103,8 +103,8 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! Clean the sphere bound. */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the sphere bound of the node. */
+  virtual void clean_sphere_bound();
 
   /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear() = 0;

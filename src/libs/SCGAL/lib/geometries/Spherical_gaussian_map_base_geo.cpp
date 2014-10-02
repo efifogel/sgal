@@ -181,19 +181,22 @@ void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-//! \brief calculates the bounding sphere.
-bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the spherical Gaussian map.
+void Spherical_gaussian_map_base_geo::clean_sphere_bound()
 {
-  if (!m_dirty_sphere_bound) return false;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
+
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_sgm) clean_sgm();
-  if (m_bb_is_pre_set) return true;
 
   if (m_draw_aos) {
     m_sphere_bound.set_center(Vector3f(0, 0, 0));
     m_sphere_bound.set_radius(1);
   }
-  else if (!m_bb_is_pre_set) {
+  else {
     Approximate_sphere_vector spheres;
     transform_coords(spheres);
     if (!spheres.empty()) {
@@ -207,7 +210,6 @@ bool Spherical_gaussian_map_base_geo::clean_sphere_bound()
     }
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief sets the attributes of the object extracted from an input file.
@@ -215,8 +217,8 @@ void Spherical_gaussian_map_base_geo::set_attributes(Element* elem)
 {
   Mesh_set::set_attributes(elem);
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "drawAos") {
       m_draw_aos = compare_to_true(value);
       m_draw_primal = !m_draw_aos;

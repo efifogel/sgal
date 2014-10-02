@@ -88,8 +88,8 @@ public:
   /*! Draw the sphere in selection mode */
   virtual void isect(Isect_action* action);
 
-  /*! Clean the bounding sphere. */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the box. */
+  virtual void clean_sphere_bound();
 
   /*! Determine whether the geometry has texture coordinates.
    */
@@ -133,26 +133,26 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype.. */
+//! \brief constructs the prototype.
 inline Box* Box::prototype() { return new Box(true); }
 
-/*! \brief clones a new instance. */
+//! \brief clones a new instance.
 inline Container* Box::clone() { return new Box(); }
 
-/*! \brief sets the size of the box. */
+//! \brief sets the size of the box.
 inline void Box::set_size(const Vector3f& size)
 {
   m_size = size;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief gets the size of the box. */
+//! \brief gets the size of the box.
 inline void Box::get_size(Vector3f& size) const { size = m_size; }
 
-/*! \brief gets the size of the box. */
+//! \brief gets the size of the box.
 inline Vector3f Box::get_size() const { return m_size; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Box::get_tag() const { return s_tag; }
 
 //! \brief determines whether the geometry has texture coordinate.

@@ -22,10 +22,12 @@
  */
 
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
-#include <time.h>
 #include <GL/gl.h>
+
+#include <time.h>
 #include <list>
 #include <vector>
 #include <boost/lexical_cast.hpp>

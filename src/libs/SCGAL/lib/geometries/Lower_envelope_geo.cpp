@@ -48,7 +48,7 @@
 
 SGAL_BEGIN_NAMESPACE
 
-Container_proto* Lower_envelope_geo::s_prototype(NULL);
+Container_proto* Lower_envelope_geo::s_prototype(nullptr);
 
 // Default Values:
 Float Lower_envelope_geo::s_def_vertex_radius(0.2f);
@@ -84,12 +84,11 @@ void Lower_envelope_geo::draw(Draw_action* action)
   draw_envelope(action);
 }
 
-//! \brief calculates the bounding sphere.
-bool Lower_envelope_geo::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the lower envelope.
+void Lower_envelope_geo::clean_sphere_bound()
 {
-  if (!m_dirty_sphere_bound) return false;
   if (m_dirty) clean();
-  if (is_empty()) return false;
+  if (is_empty()) return;
 
   Approximate_sphere_vector spheres;
   transform_coords(spheres);
@@ -104,7 +103,6 @@ bool Lower_envelope_geo::clean_sphere_bound()
   }
 
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief sets the attributes of the object extracted from an input file.
@@ -112,11 +110,9 @@ void Lower_envelope_geo::set_attributes(SGAL::Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "vertexRadius") {
       m_vertex_radius = boost::lexical_cast<Float>(value);
       elem->mark_delete(ai);
@@ -134,11 +130,11 @@ void Lower_envelope_geo::set_attributes(SGAL::Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string & name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "surfaces") {
       Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
       if (node) add_surface(node);
@@ -209,7 +205,7 @@ void Lower_envelope_geo::init_prototype()
 void Lower_envelope_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype of this container.

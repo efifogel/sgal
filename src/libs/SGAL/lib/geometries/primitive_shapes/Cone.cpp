@@ -121,14 +121,14 @@ void Cone::isect(Isect_action* /* action */)
   }
 }
 
-//! \brief calculates the sphere bound of the cone.
-Boolean Cone::clean_sphere_bound()
+//! \brief cleans the sphere bound of the cone.
+void Cone::clean_sphere_bound()
 {
   float radius = (m_height * m_height + m_bottom_radius * m_bottom_radius) /
     (2 * m_height);
   m_sphere_bound.set_radius(radius);
   m_sphere_bound.set_center(Vector3f(0, m_height / 2 - radius, 0));
-  return true;
+  m_dirty_sphere_bound = false;
 }
 
 //! \brief initializes the quadric object.
@@ -153,8 +153,8 @@ void Cone::set_attributes(Element* elem)
   Geometry::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "bottomRadius") {
       set_bottom_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);

@@ -24,6 +24,7 @@
 #include <CGAL/Cartesian.h>
 
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <time.h>

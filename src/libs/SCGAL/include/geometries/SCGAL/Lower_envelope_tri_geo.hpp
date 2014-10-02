@@ -154,28 +154,28 @@ private:
   OutputIterator get_triangles(OutputIterator oi);
 };
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Lower_envelope_tri_geo* Lower_envelope_tri_geo::prototype()
 { return new Lower_envelope_tri_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Lower_envelope_tri_geo::clone()
 { return new Lower_envelope_tri_geo(); }
 
-/*! \brief transforms the coordinates of the envelope into spheres. */
+//! \brief transforms the coordinates of the envelope into spheres.
 inline void Lower_envelope_tri_geo::
 transform_coords(Approximate_sphere_vector& spheres)
 { transform_coords_impl(m_envelope, spheres); }
 
-/*! \brief determines whether the envelope is empty. */
+//! \brief determines whether the envelope is empty.
 inline Boolean Lower_envelope_tri_geo::is_empty() const
 { return m_envelope->is_empty(); }
 
-/*! \brief obtains all triangles. */
+//! \brief obtains all triangles.
 template <typename OutputIterator>
 OutputIterator Lower_envelope_tri_geo::get_triangles(OutputIterator oi)
 {
-  for (Node_iter it = m_surfaces.begin(); it != m_surfaces.end(); ++it) {
+  for (auto it = m_surfaces.begin(); it != m_surfaces.end(); ++it) {
     Shared_node node = *it;
     boost::shared_ptr<Shape> shape = boost::dynamic_pointer_cast<Shape>(node);
     SGAL_assertion(shape);
@@ -206,7 +206,7 @@ OutputIterator Lower_envelope_tri_geo::get_triangles(OutputIterator oi)
   return oi;
 }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Lower_envelope_tri_geo::get_tag() const
 { return s_tag; }
 

@@ -218,45 +218,29 @@ void Group::isect(Isect_action* isect_action)
  * return statement and not earlier, cause the calls to clean_sphere_bound()
  * and get_sphere_bound() may reset it.
  */
-Boolean Group::clean_sphere_bound()
+void Group::clean_sphere_bound()
 {
   if (m_locked_sphere_bound) {
     m_dirty_sphere_bound = false;
-    return false;
+    return;
   }
 
-  bool res = false;
-
   if (!is_visible()) {
-    if (m_sphere_bound.get_radius() != 0) {
-      m_sphere_bound.set_radius(0);
-      res = true;
-    }
+    m_sphere_bound.set_radius(0);
     m_dirty_sphere_bound = false;
-    return res;
+    return;
   }
 
   Sphere_bound_vector_const spheres;
-  Boolean bb_changed = false;
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it) {
-    Boolean changed = false;
-    if ((*it)->is_dirty_sphere_bound())
-      changed = (*it)->clean_sphere_bound();
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it) {
+    if ((*it)->is_dirty_sphere_bound()) (*it)->clean_sphere_bound();
     const Sphere_bound& sb = (*it)->get_sphere_bound();
     if (sb.get_radius() == 0) continue;
     spheres.push_back(&sb);
-    bb_changed = bb_changed || changed;
   }
 
-  // If the bb was changed in the child objects, or if the radius is 0
-  // (which means that the object was invisible but not anymore)
-  if (bb_changed || (m_sphere_bound.get_radius() == 0)) {
-    m_sphere_bound.set_around(spheres);
-    res = true;
-  }
-
+  m_sphere_bound.set_around(spheres);
   m_dirty_sphere_bound = false;
-  return res;
 }
 
 //! \brief sets the attributes of the group.
@@ -264,11 +248,9 @@ void Group::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "visible") {
       if (!compare_to_true(value))
         set_invisible();
@@ -292,11 +274,11 @@ void Group::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "children") {
       Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
       if (node) add_child(node);
@@ -305,18 +287,14 @@ void Group::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Multi_cont_attr_iter   Multi_cont_attr_iter;
-  typedef Element::Cont_list              Cont_list;
-  typedef Element::Cont_iter              Cont_iter;
-
   // Sets the multi-container attributes of this node:
-  for (Multi_cont_attr_iter mcai = elem->multi_cont_attrs_begin();
+  for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); ++mcai)
   {
-    const std::string& name = elem->get_name(mcai);
-    Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "children") {
-      for (Cont_iter ci = cont_list.begin(); ci != cont_list.end(); ci++) {
+      for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {
         Shared_container cont = *ci;
         Shared_node node = boost::dynamic_pointer_cast<Node>(cont);
         if (node) add_child(node);

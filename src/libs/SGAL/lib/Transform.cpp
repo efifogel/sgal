@@ -498,11 +498,11 @@ void Transform::reset(const Field_info* /* field_info */)
  * Group::clean_sphere_bound(), cause the former may reset the flag
  * m_dirty_sphere_bound.
  */
-Boolean Transform::clean_sphere_bound()
+void Transform::clean_sphere_bound()
 {
   if (m_locked_sphere_bound) {
     m_dirty_sphere_bound = false;
-    return false;
+    return;
   }
 
   if (m_dirty_matrix) clean_matrix();
@@ -517,7 +517,6 @@ Boolean Transform::clean_sphere_bound()
   // multiply the radius by the max scaling factor
   float scale_factor = m_scale.get_max_comp();
   m_sphere_bound.set_radius(m_sphere_bound.get_radius() * scale_factor);
-  return true;
 }
 
 //! \brief initializes the node prototype.
@@ -592,11 +591,9 @@ void Transform::set_attributes(Element* elem)
 {
   Group::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "translation") {
       Vector3f vec(value);
       set_translation(vec);

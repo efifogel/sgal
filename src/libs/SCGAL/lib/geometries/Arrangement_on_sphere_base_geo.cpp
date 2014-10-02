@@ -101,13 +101,11 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
 {
   Arrangement_on_surface_geo::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
   typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
   boost::char_separator<char> sep(", \t\n\r");
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "pointLocationIndex") {
       tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
@@ -199,11 +197,11 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "coord") {
       Shared_coord_array coord_array =
         boost::dynamic_pointer_cast<Coord_array>(cont);
@@ -233,16 +231,15 @@ void Arrangement_on_sphere_base_geo::isect(Isect_action* action)
   //! \todo isect with a sphere
 }
 
-//! \brief
-Boolean Arrangement_on_sphere_base_geo::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the arrangement node.
+void Arrangement_on_sphere_base_geo::clean_sphere_bound()
 {
   if (is_dirty()) clean();
-  if (m_bb_is_pre_set) return true;
+  if (m_bb_is_pre_set) return;
 
   m_sphere_bound.set_center(Vector3f(0, 0, 0));
   m_sphere_bound.set_radius(1);
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief sets the coordinate array.

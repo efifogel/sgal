@@ -100,19 +100,19 @@ public:
   /*! Destructor */
   virtual ~Lines_through_segments_geo();
 
-  /* Construct the prototype */
+  /* Construct the prototype. */
   static Lines_through_segments_geo* prototype();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone();
 
-  /*! Initialize the container prototype */
+  /*! Initialize the container prototype. */
   virtual void init_prototype();
 
-  /*! Delete the container prototype */
+  /*! Delete the container prototype. */
   virtual void delete_prototype();
 
-  /*! Obtain the container prototype */
+  /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
 
   /// \name field handlers
@@ -121,12 +121,12 @@ public:
   { return &m_segments; }
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
+  /*! Clean the representation. */
   virtual void clean();
 
   /*! */
@@ -135,22 +135,19 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the geometry container. */
+  virtual void clean_sphere_bound();
 
   /*! Draw the geometry */
   virtual void draw(Draw_action* action);
 
-  /*! Clear the internal representation and auxiliary data structures
-   */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
 
-  /*! Determine whether the representation hasn't been updated
-   */
+  /*! Determine whether the representation hasn't been updated. */
   virtual Boolean is_dirty() const { return m_dirty; }
 
-  /*! Is the representation empty ?
-   */
+  /*! Determine whether the representation is empty. */
   virtual Boolean is_empty();
 
   /*! Process change of content */

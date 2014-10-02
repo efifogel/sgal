@@ -582,10 +582,8 @@ void Indexed_line_set::draw(Draw_action* action)
 //! \brief
 void Indexed_line_set::isect(Isect_action* /* action */) { }
 
-/*! \brief calculates the sphere bound of the lines. Returns true if the BS has
- * changed since lst time this was called.
- */
-bool Indexed_line_set::clean_sphere_bound()
+//! \brief cleans the sphere bound of the lines.
+void Indexed_line_set::clean_sphere_bound()
 {
   if (!m_bb_is_pre_set && m_coord_array) {
     boost::shared_ptr<Coord_array_3d> coord_array =
@@ -594,7 +592,6 @@ bool Indexed_line_set::clean_sphere_bound()
     m_sphere_bound.set_around(coord_array->begin(), coord_array->end());
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief setss the attributes of the geometry object.
@@ -604,8 +601,8 @@ void Indexed_line_set::set_attributes(Element* elem)
 
   std::string normal_indices_string;
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "colorPerVertex") {
       set_color_per_vertex(compare_to_true(value));
       elem->mark_delete(ai);

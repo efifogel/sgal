@@ -240,11 +240,9 @@ void Exact_polyhedron_geo::set_attributes(Element* elem)
 {
   Boundary_set::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "convexHull") {
       set_convex_hull(compare_to_true(value));
       elem->mark_delete(ai);
@@ -495,13 +493,16 @@ const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
   return exact_coords->get_inexact_coord(i);
 }
 
-//! \brief calculates the sphere bound.
-Boolean Exact_polyhedron_geo::clean_sphere_bound()
+//! \brief cleans the sphere bound.
+void Exact_polyhedron_geo::clean_sphere_bound()
 {
-  if (is_dirty()) clean();
-  if (!m_dirty_sphere_bound) return false;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
 
-  if (!m_bb_is_pre_set && m_coord_array) {
+  if (is_dirty()) clean();
+  if (m_coord_array) {
     boost::shared_ptr<Coord_array_3d> coords =
       boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
     if (coords) m_sphere_bound.set_around(coords->begin(), coords->end());
@@ -514,7 +515,6 @@ Boolean Exact_polyhedron_geo::clean_sphere_bound()
     }
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief calculates multiple normals per vertex for all vertices.

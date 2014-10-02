@@ -349,14 +349,17 @@ void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
   if (!m_is_solid  && context) context->draw_cull_face(Gfx::BACK_CULL);
 }
 
-//! \brief calculates the bounding sphere.
-bool Cubical_gaussian_map_geo::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the cubical Gaussian map.
+void Cubical_gaussian_map_geo::clean_sphere_bound()
 {
 #define SQRT_3          1.732f
 
-  if (is_dirty()) clean();
-  if (m_bb_is_pre_set) return true;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
 
+  if (is_dirty()) clean();
   if (m_draw_aos) {
     if (!m_draw_aos_unfolded) {
       m_sphere_bound.set_center(Vector3f(0, 0, 0));
@@ -367,7 +370,7 @@ bool Cubical_gaussian_map_geo::clean_sphere_bound()
       m_sphere_bound.set_radius(4);
     }
   }
-  else if (!m_bb_is_pre_set) {
+  else {
     Approximate_sphere_vector spheres;
 
     //! \todo this should change with dual-face iterator
@@ -400,8 +403,6 @@ bool Cubical_gaussian_map_geo::clean_sphere_bound()
     }
   }
   m_dirty_sphere_bound = false;
-
-  return true;
 }
 
 //! \brief sets the attributes of this object.
@@ -409,8 +410,8 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
 {
   Mesh_set::set_attributes(elem);
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "drawDual") {
       m_draw_aos = compare_to_true(value);
       m_draw_primal = !m_draw_aos;
@@ -624,8 +625,8 @@ void Cubical_gaussian_map_geo::set_attributes(SGAL::Element* elem)
   for (auto mcai = elem->multi_cont_attrs_begin();
        mcai != elem->multi_cont_attrs_end(); mcai++)
   {
-    const std::string& name = elem->get_name(mcai);
-    Element::Cont_list& cont_list = elem->get_value(mcai);
+    const auto& name = elem->get_name(mcai);
+    auto& cont_list = elem->get_value(mcai);
     if (name == "geometries") {
       set_minkowski_sum(true);
       for (auto ci = cont_list.begin(); ci != cont_list.end(); ci++) {

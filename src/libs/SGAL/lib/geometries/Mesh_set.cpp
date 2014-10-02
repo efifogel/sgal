@@ -92,11 +92,9 @@ void Mesh_set::set_attributes(Element* elem)
 {
   Geo_set::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "ccw") {
       m_is_ccw = compare_to_true(value);
       elem->mark_delete(ai);
@@ -176,12 +174,17 @@ void Mesh_set::draw_mesh(Draw_action* action)
 }
 
 //! \brief calculates the sphere bound.
-Boolean Mesh_set::clean_sphere_bound()
+void Mesh_set::clean_sphere_bound()
 {
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
+
   if (is_dirty()) clean();
   // No need to clean the indices yet, cause the call bellow only uses the
   // coordinates.
-  return Geo_set::clean_sphere_bound();
+  Geo_set::clean_sphere_bound();
 }
 
 //! Determine whether the representation is empty.

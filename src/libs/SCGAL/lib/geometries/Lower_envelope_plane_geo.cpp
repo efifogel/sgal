@@ -22,10 +22,12 @@
  */
 
 #if defined(_WIN32)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
-#include <time.h>
 #include <GL/gl.h>
+
+#include <time.h>
 #include <list>
 #include <vector>
 #include <boost/lexical_cast.hpp>
@@ -51,7 +53,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Lower_envelope_plane_geo::s_tag = "LowerEnvelopePlane";
-Container_proto* Lower_envelope_plane_geo::s_prototype(NULL);
+Container_proto* Lower_envelope_plane_geo::s_prototype(nullptr);
 
 bool Lower_envelope_plane_geo::s_def_draw_patches(true);
 
@@ -61,7 +63,7 @@ REGISTER_TO_FACTORY(Lower_envelope_plane_geo, "Lower_envelope_plane_geo");
 Lower_envelope_plane_geo::Lower_envelope_plane_geo(Boolean proto) :
   Lower_envelope_geo(proto),
   m_owned_envelope(false),
-  m_envelope(NULL),
+  m_envelope(nullptr),
   m_draw_patches(s_def_draw_patches)
 {}
 
@@ -119,11 +121,9 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
 {
   Lower_envelope_geo::set_attributes(elem);
 
-  typedef Element::Str_attr_iter        Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "drawPatches") {
       m_draw_patches = compare_to_true(value);
       elem->mark_delete(ai);
@@ -131,11 +131,11 @@ void Lower_envelope_plane_geo::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter       Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "plane") {
       Shared_exact_plane_array plane_array =
         boost::dynamic_pointer_cast<Exact_plane_array>(cont);
@@ -174,7 +174,7 @@ void Lower_envelope_plane_geo::init_prototype()
 void Lower_envelope_plane_geo::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the prototype of this container.
@@ -246,7 +246,7 @@ void Lower_envelope_plane_geo::draw_envelope_faces(Draw_action* action)
   }
 }
 
-/*! \brief draws the envelope edges. */
+//! \brief draws the envelope edges.
 void Lower_envelope_plane_geo::draw_envelope_edges(Draw_action* action)
 {
   Envelope_diagram_2::Edge_const_iterator eit;
@@ -267,7 +267,7 @@ void Lower_envelope_plane_geo::draw_envelope_edges(Draw_action* action)
   }
 }
 
-/*! \brief draws the envelope vertices. */
+//! \brief draws the envelope vertices.
 void Lower_envelope_plane_geo::draw_envelope_vertices(Draw_action* action)
 {
   Envelope_diagram_2::Vertex_const_iterator vit;

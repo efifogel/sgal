@@ -1016,22 +1016,19 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! Calculate the bounding sphere.
-   * \return a Boolean flag that indicates whether the sphere bound changed.
-   */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the cubical Gaussian map. */
+  virtual void clean_sphere_bound();
 
-  /*! \brief draws the internal representation. */
+  /*! Draw the internal representation. */
   virtual void draw_geometry(Draw_action* action);
 
-  /*! \brief cleans the representation. */
+  /*! Clean the representation. */
   virtual void clean();
 
-  /*! \brief clears the internal representation and auxiliary data structures.
-   */
+  /*! Clear the internal representation and auxiliary data structures. */
   virtual void clear();
 
-  /*! \brief determineswhether the representation is empty. */
+  /*! Determines whether the representation is empty. */
   virtual Boolean is_empty() const { return m_cgm.is_empty(); }
 
   /*! Draw the dual vertices.

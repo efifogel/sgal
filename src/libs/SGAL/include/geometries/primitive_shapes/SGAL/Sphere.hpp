@@ -16,14 +16,6 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-/*!
- * An implementation of the Box geometry.
- *
- * A geometry of type sphere. The sphere is specified by its radius.
- *
- * Inherits from Geometry.
- */
-
 #ifndef SGAL_SPHERE_HPP
 #define SGAL_SPHERE_HPP
 
@@ -45,6 +37,12 @@ class Container_proto;
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
+
+/*! \class Sphere Sphere.hpp
+ * Sphere is a geometry container that represents a sphere.
+ * The sphere is specified by its center, radius, number of staks, and
+ * number of slices.
+ */
 
 class SGAL_SGAL_DECL Sphere : public Geometry {
 public:
@@ -97,11 +95,10 @@ public:
   /*! Draw the sphere in selection mode. */
   virtual void isect(Isect_action* action);
 
-  /*! Calculare the sphere bound of the sphere */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the sphere. */
+  virtual void clean_sphere_bound();
 
-  /*! Determine whether the geometry has texture coordinates.
-   */
+  /*! Determine whether the geometry has texture coordinates. */
   virtual Boolean has_tex_coord();
 
   /*! Set the sphere center. */

@@ -18,13 +18,15 @@
 //                 Boris Kozorovitzky <zbzzn@hotmail.com>
 
 #if (defined _MSC_VER)
+#define NOMINMAX 1
 #include <windows.h>
 #endif
 #include <GL/gl.h>
+
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <list>
-#include "math.h"
+#include <math.h>
 
 #include "SGAL/Geodesic.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -39,7 +41,7 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Geodesic::s_tag = "Geodesic";
-Container_proto* Geodesic::s_prototype(NULL);
+Container_proto* Geodesic::s_prototype(nullptr);
 
 // Default values:
 const Float Geodesic::s_def_radius(1.0f);
@@ -52,7 +54,7 @@ const Boolean Geodesic::s_def_is_complement(false);
 
 REGISTER_TO_FACTORY(Geodesic, "Geodesic");
 
-/*! Constructor */
+//! \brief constructor.
 Geodesic::Geodesic(Boolean proto) :
   Geometry(proto),
   m_radius(s_def_radius),
@@ -64,13 +66,13 @@ Geodesic::Geodesic(Boolean proto) :
   m_is_complement(s_def_is_complement)
 {}
 
-/*! Destructor */
+//! \brief destructor.
 Geodesic::~Geodesic(){}
 
-/*! \brief cleans the geodesic arc internal representation. */
+//! \brief cleans the geodesic arc internal representation.
 void Geodesic::clean() { /* m_dirty = false; */ }
 
-/*! \brief draws the arc. */
+//! \brief draws the arc.
 void Geodesic::draw(Draw_action * action)
 {
   // if (!is_dirty()) clean();
@@ -215,7 +217,7 @@ void Geodesic::draw(Draw_action * action)
   if (has_scale()) glDisable(GL_NORMALIZE);
 }
 
-/*! \brief draws the object in selection mode */
+//! \brief draws the object in selection mode.
 void Geodesic::isect(Isect_action* /* action */)
 {
   // // if (!is_dirty()) clean();
@@ -285,24 +287,22 @@ void Geodesic::isect(Isect_action* /* action */)
   // }
 }
 
-/*! \brief calculares the sphere bound of the sphere */
-Boolean Geodesic::clean_sphere_bound()
+//! \brief cleans the sphere bound of the geodesic.
+void Geodesic::clean_sphere_bound()
 {
   m_sphere_bound.set_radius(m_radius);
   m_sphere_bound.set_center(Vector3f(0, 0, 0));
-  return true;
+  m_dirty_sphere_bound = false;
 }
 
-/*! \brief sets the attributes of the object extracted from the input file */
+//! \brief sets the attributes of the object extracted from the input file.
 void Geodesic::set_attributes(Element * elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "radius") {
       set_radius(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -403,7 +403,7 @@ Attribute_list Geodesic::get_attributes()
 }
 #endif
 
-/*! \brief initializes the geodesic prototype. */
+//! \brief initializes the geodesic prototype.
 void Geodesic::init_prototype()
 {
   if (s_prototype) return;
@@ -422,7 +422,8 @@ void Geodesic::init_prototype()
   // start
   Vector2f_handle_function start_func =
     static_cast<Vector2f_handle_function>(&Geodesic::start_handle);
-  s_prototype->add_field_info(new SF_vector2f(START, "start", RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_vector2f(START, "start",
+                                              RULE_EXPOSED_FIELD,
                                               start_func,
                                               exec_func));
 
@@ -461,14 +462,14 @@ void Geodesic::init_prototype()
                                           is_complement_func, exec_func));
 }
 
-/*! \brief deletes the geodesic prototype */
+//! \brief deletes the geodesic prototype.
 void Geodesic::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the geodesic prototype */
+//! \brief obtains the geodesic prototype.
 Container_proto* Geodesic::get_prototype()
 {
   if (!s_prototype) Geodesic::init_prototype();

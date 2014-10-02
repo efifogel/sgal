@@ -119,10 +119,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the bounding sphere of the shape.
-   * \return true if the bounding sphere has changed since last call.
-   */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the shape. */
+  virtual void clean_sphere_bound();
 
   virtual void cull(Cull_context& cull_context);
 

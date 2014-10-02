@@ -108,7 +108,8 @@ public:
    */
   virtual void isect(Isect_action* action);
 
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the cylinder. */
+  virtual void clean_sphere_bound();
 
   /*! Determine whether the geometry has texture coordinates.
    */
@@ -219,67 +220,67 @@ private:
 #pragma warning( pop )
 #endif
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Cylinder* Cylinder::prototype() { return new Cylinder(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Cylinder::clone() { return new Cylinder(); }
 
-/*! \brief sets the radius of the cylinder. */
+//! \brief sets the radius of the cylinder.
 inline void Cylinder::set_radius(Float radius)
 {
   m_radius = radius;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the radius of the cylinder. */
+//! \brief obtains the radius of the cylinder.
 inline Float Cylinder::get_radius() const { return m_radius; }
 
-/*! \brief sets the height of the cylinder. */
+//! \brief sets the height of the cylinder.
 inline void Cylinder::set_height(Float height)
 {
   m_height = height;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief obtains the height of the cylinder. */
+//! \brief obtains the height of the cylinder.
 inline Float Cylinder::get_height() const { return m_height; }
 
-/*! \brief sets the number of stacks that the cylinder is made of. */
+//! \brief sets the number of stacks that the cylinder is made of.
 inline void Cylinder::set_stacks(Uint stacks) { m_stacks = stacks; }
 
-/*! \brief obtains the number of stacks that the cylinder is made of. */
+//! \brief obtains the number of stacks that the cylinder is made of.
 inline Uint Cylinder::get_stacks() const { return m_stacks; }
 
-/*! \brief sets the number of slices that the cylinder is made of. */
+//! \brief sets the number of slices that the cylinder is made of.
 inline void Cylinder::set_slices(Uint slices) { m_slices = slices; }
 
-/*! \brief obtains the number of slices that the cylinder is made of. */
+//! \brief obtains the number of slices that the cylinder is made of.
 inline Uint Cylinder::get_slices() const { return m_slices; }
 
-/*! \brief Set the flag that determines whether the bottom is visible .*/
+//! \brief Set the flag that determines whether the bottom is visible.
 inline void Cylinder::set_is_bottom_visible(Boolean flag)
 { m_is_bottom_visible = flag; }
 
-/*! \brief obtains the flag that determines whether the bottom is visible. */
+//! \brief obtains the flag that determines whether the bottom is visible.
 inline Boolean Cylinder::is_bottom_visible() const
 { return m_is_bottom_visible; }
 
-/*! \brief sets the flag that determines whether the top is visible. */
+//! \brief sets the flag that determines whether the top is visible.
 inline void Cylinder::set_is_top_visible(Boolean flag)
 { m_is_top_visible = flag; }
 
-/*! \brief obtains the flag that determines whether the top is visible. */
+//! \brief obtains the flag that determines whether the top is visible.
 inline Boolean Cylinder::is_top_visible() const { return m_is_top_visible; }
 
-/*! \brief sets the flag that determines whether the body is visible. */
+//! \brief sets the flag that determines whether the body is visible.
 inline void Cylinder::set_is_body_visible(Boolean flag)
 { m_is_body_visible = flag; }
 
-/*! \brief obtains the flag that determines whether the body is visible. */
+//! \brief obtains the flag that determines whether the body is visible.
 inline Boolean Cylinder::is_body_visible() const { return m_is_body_visible; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Cylinder::get_tag() const { return s_tag; }
 
 //! \brief determines whether the geometry has texture coordinate.

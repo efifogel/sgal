@@ -109,11 +109,10 @@ public:
    */
   virtual void isect(Isect_action* action);
 
-  /*! Calculare the sphere bound of the arc */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the arc */
+  virtual void clean_sphere_bound();
 
-  /*! Determine whether the geometry has texture coordinates.
-   */
+  /*! Determine whether the geometry has texture coordinates. */
   virtual Boolean has_tex_coord();
 
   // virtual void FieldChanged(short fieldId);
@@ -231,22 +230,15 @@ private:
   static const Boolean s_def_is_solid;
 };
 
-/* \brief constructs the prototype. */
-inline Arc* Arc::prototype() { return new Arc(true); }
-
-/*! \brief clones. */
-inline Container* Arc::clone() { return new Arc(); }
-
-/*! \brief sets the arc radius.*/
-inline void Arc::set_radius(Float radius)
-{
-  m_radius = radius;
-  m_dirty_sphere_bound = true;
-}
-
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+//! \brief constructs the prototype.
+inline Arc* Arc::prototype() { return new Arc(true); }
+
+//! \brief clones.
+inline Container* Arc::clone() { return new Arc(); }
 
 //! \brief obtains the arc radius.
 inline Float Arc::get_radius() const { return m_radius; }

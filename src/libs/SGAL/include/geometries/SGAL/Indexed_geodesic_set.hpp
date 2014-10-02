@@ -88,10 +88,8 @@ public:
 
   virtual void isect(Isect_action* action);
 
-  /*! Calculate the sphere bound of the mesh. Returns true if the BS has
-   * changed since lst time this was called.
-   */
-  virtual bool clean_sphere_bound();
+  /*! Clean the sphere bound of the mesh. */
+  virtual void clean_sphere_bound();
 
   virtual void set_color_array(Shared_color_array color_array);
 

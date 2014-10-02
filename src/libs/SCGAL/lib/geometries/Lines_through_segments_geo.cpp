@@ -123,11 +123,11 @@ Container_proto* Lines_through_segments_geo::get_prototype()
 //! \brief sets the attributes of this node.
 void Lines_through_segments_geo::set_attributes(Element* elem)
 {
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
     const std::string & name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+    auto cont = elem->get_value(cai);
     if (name == "segments") {
       Shared_indexed_line_set segments =
         boost::dynamic_pointer_cast<Indexed_line_set>(cont);
@@ -396,7 +396,7 @@ void Lines_through_segments_geo::draw_line(Draw_action* action,
   glEnd();
 }
 
-/*! \brief draws the geometry. */
+//! \brief draws the geometry.
 void Lines_through_segments_geo::draw(Draw_action* action)
 {
   // Draw the input:
@@ -509,25 +509,23 @@ void Lines_through_segments_geo::draw(Draw_action* action)
   // glDepthRange(0, 1);
 }
 
-/*! \brief */
+//! \brief
 void Lines_through_segments_geo::cull(Cull_context& cull_context) {}
 
-/*! \brief */
+//! \brief
 void Lines_through_segments_geo::isect(Isect_action* action)
 {
   //! \todo isect with a sphere
 }
 
-//! \brief
-Boolean Lines_through_segments_geo::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the geometry container.
+void Lines_through_segments_geo::clean_sphere_bound()
 {
-  if (!m_dirty_sphere_bound) return false;
   if (is_dirty()) clean();
 
   // TODO: calculate the sphere bound
 
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \biref sets the segments.

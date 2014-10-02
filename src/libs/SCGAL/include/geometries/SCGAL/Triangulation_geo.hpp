@@ -146,23 +146,23 @@ public:
 
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
-   /*! \brief draws the mesh */
+  /*! Draw the triangulation. */
   virtual void draw(Draw_action* action);
 
   virtual void cull(Cull_context& cull_context);
 
   virtual void isect(Isect_action* action);
 
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the triangulation. */
+  virtual void clean_sphere_bound();
 
  /*! Print statistics */
   void print_stat();
 
-  /*! Determine whether the geometry has color.
-   */
+  /*! Determine whether the geometry has color. */
   virtual Boolean has_color();
 
 private:

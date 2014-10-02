@@ -155,8 +155,8 @@ public:
   /*! */
   virtual void isect(Isect_action* action);
 
-  /*! */
-  virtual bool clean_sphere_bound();
+  /*! Clean the bounding sphere of the polyhedron. */
+  virtual void clean_sphere_bound();
 
   /*! Set the polyhedron data-structure. */
   void set_polyhedron(Polyhedron& polyhedron);

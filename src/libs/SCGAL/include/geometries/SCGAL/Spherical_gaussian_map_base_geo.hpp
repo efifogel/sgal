@@ -474,10 +474,8 @@ public:
   /*! Clean the geometry. */
   virtual void clean_sgm();
 
-  /*! Calculate the bounding sphere.
-   * \return a Boolean flag that indicates whether the sphere bound changed.
-   */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the spherical Gaussian map. */
+  virtual void clean_sphere_bound();
 
   /*! Draw the internal representation. */
   virtual void draw_geometry(Draw_action* action);

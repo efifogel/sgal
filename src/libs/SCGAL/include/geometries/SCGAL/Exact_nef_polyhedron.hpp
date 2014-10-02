@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 13463 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_EXACT_NEF_POLYHEDRON_HPP
@@ -232,7 +229,8 @@ public:
 
   virtual void isect(Isect_action* action);
 
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the bounding sphere of the nef polyhedron. */
+  virtual void clean_sphere_bound();
 
   /*! Obtain the Nef polyhedron */
   Nef_polyhedron_3& get_nef_polyhedron() { return m_nef_polyhedron; }
@@ -413,7 +411,7 @@ protected:
   void clean_polyhedron();
 
   /*! Calculate the polyhedron spere-bound */
-  Boolean clean_sphere_bound_polyhedron();
+  void clean_sphere_bound_polyhedron();
 
   /*! Draw the intermediate polyhedron (for debugging purpose) */
   void draw_polyhedron(Draw_action* action);
@@ -426,11 +424,11 @@ protected:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Exact_nef_polyhedron* Exact_nef_polyhedron::prototype()
 { return new Exact_nef_polyhedron(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Exact_nef_polyhedron::clone()
 { return new Exact_nef_polyhedron(); }
 

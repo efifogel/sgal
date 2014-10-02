@@ -100,9 +100,8 @@ public:
 
   virtual void isect(Isect_action* isect_action);
 
-  /*! Calculate the sphere bound of the group.
-   */
-  virtual bool clean_sphere_bound();
+  /*! Clean the sphere bound of the group. */
+  virtual void clean_sphere_bound();
 
   /*! Write this container.
    * \param formatter (in) the formatter to use; e.g., VRML.

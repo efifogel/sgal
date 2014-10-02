@@ -97,9 +97,8 @@ public:
   virtual void isect(Isect_action* isect_action);
 
   /*! Clean the bounding sphere of the node.
-   * \return true iff the bounding sphere has changed during the clean.
    */
-  virtual Boolean clean_sphere_bound();
+  virtual void clean_sphere_bound();
 
   /*! Determines whether the bounding sphere of the node must be recomputed.
    * \return true iff the bounding sphere must be recomputed.
@@ -146,7 +145,7 @@ inline void Node::cull(Cull_context& /* cull_context */) {}
 inline void Node::isect(Isect_action* /* isect_action */) {}
 
 /*! \brief cleans the bounding sphere. */
-inline Boolean Node::clean_sphere_bound() { return false; }
+inline void Node::clean_sphere_bound() {}
 
 /*! \brief determines whether the bounding sphere of the node must be
  * recomputed.

@@ -215,12 +215,15 @@ void Triangulation_geo::draw_geometry(SGAL::Draw_action* action)
 //! \brief
 void Triangulation_geo::isect(SGAL::Isect_action* /* action */) {}
 
-//! \brief
-Boolean Triangulation_geo::clean_sphere_bound()
+//! \brief cleans the bounding sphere of the triangulation.
+void Triangulation_geo::clean_sphere_bound()
 {
-  if (is_dirty()) clean();
-  if (m_bb_is_pre_set) return true;
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
 
+  if (is_dirty()) clean();
   Approximate_sphere_vector spheres;
   if (m_triangulation.number_of_vertices() > 0) {
     spheres.resize(m_triangulation.number_of_vertices());
@@ -239,20 +242,16 @@ Boolean Triangulation_geo::clean_sphere_bound()
     m_sphere_bound.set_radius(min_sphere.radius());
   }
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 //! \brief sets the attributes of the object.
 void Triangulation_geo::set_attributes(SGAL::Element* elem)
 {
-  SGAL::Geometry::set_attributes(elem);
+  Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
-
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "lineWidth") {
       sscanf(value.c_str(), "%f", &m_line_width);
       elem->mark_delete(ai);
@@ -265,11 +264,11 @@ void Triangulation_geo::set_attributes(SGAL::Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Element::Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "coord") {
       Shared_coord_array coord_array =
         boost::dynamic_pointer_cast<Coord_array>(cont);

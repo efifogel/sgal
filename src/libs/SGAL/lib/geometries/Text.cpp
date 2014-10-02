@@ -36,19 +36,17 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Text::s_tag = "Text";
-Container_proto* Text::s_prototype(NULL);
+Container_proto* Text::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Text, "Text");
 
-/*! Constructor */
+//! \brief constructor.
 Text::Text(Boolean proto) : Geometry(proto) {}
 
-/*! Destructor */
+//! \brief destructor.
 Text::~Text() {}
 
-/*! Draw choosen node
- * \param draw_action
- */
+//! \brief draw the node.
 void Text::draw(Draw_action* draw_action)
 {
   Context* context = draw_action->get_context();
@@ -72,7 +70,7 @@ void Text::draw(Draw_action* draw_action)
   context->draw_cull_face(cull_face);
 }
 
-/*! initializes the node prototype */
+//! \brief initializes the node prototype.
 void Text::init_prototype()
 {
   if (s_prototype) return;
@@ -90,31 +88,28 @@ void Text::init_prototype()
                                             exec_func));
 }
 
-/*! \brief deletes the prototype. */
+//! \brief deletes the prototype.
 void Text::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
-/*! \brief obtains the prototype. */
+//! \brief obtains the prototype.
 Container_proto* Text::get_prototype()
 {
   if (!s_prototype) Text::init_prototype();
   return s_prototype;
 }
 
-/*! \brief sets the attributes of this object. */
+//! \brief sets the attributes of this object.
 void Text::set_attributes(Element* elem)
 {
   Geometry::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "string") {
       m_string = strip_double_quotes(value);
       elem->mark_delete(ai);
@@ -122,10 +117,11 @@ void Text::set_attributes(Element* elem)
     }
   }
 
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "fontStyle") {
       Shared_font_style font_style =
         boost::dynamic_pointer_cast<Font_style>(cont);
@@ -160,17 +156,15 @@ Attribute_list Text::get_attributes()
 }
 #endif
 
-/*! \brief sets the font style. */
+//! \brief sets the font style.
 void Text::set_font_style(Shared_font_style font_style)
 {
   m_font_style = font_style;
   m_dirty_sphere_bound = true;
 }
 
-/*! \brief calculates the sphere bound of the text. Returns true if the BS has
- * changed since lst time this was called.
- */
-Boolean Text::clean_sphere_bound()
+//! \brief cleans the sphere bound of the text.
+void Text::clean_sphere_bound()
 {
   if (!m_font_style) {
     m_default_font_style = Shared_font_style(new Font_style());
@@ -185,7 +179,6 @@ Boolean Text::clean_sphere_bound()
   m_sphere_bound.set_center(center);
   m_sphere_bound.set_radius(radius);
   m_dirty_sphere_bound = false;
-  return true;
 }
 
 SGAL_END_NAMESPACE

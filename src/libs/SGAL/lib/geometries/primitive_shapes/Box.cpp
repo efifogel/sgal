@@ -108,8 +108,8 @@ void Box::isect(Isect_action* /* action */)
   glEnd();
 }
 
-//! \brief calculates the bounding sphere of the box.
-Boolean Box::clean_sphere_bound()
+//! \brief clean the bounding sphere of the box.
+void Box::clean_sphere_bound()
 {
   float radius = sqrtf(m_size[0] * m_size[0] * 0.25f +
                        m_size[1] * m_size[1] * 0.25f +
@@ -117,7 +117,7 @@ Boolean Box::clean_sphere_bound()
   m_sphere_bound.set_radius(radius);
   Vector3f vect(0, 0, 0);
   m_sphere_bound.set_center(vect);
-  return true;
+  m_dirty_sphere_bound = false;
 }
 
 //! \brief initializes the display list that is used to draw the box.
@@ -203,13 +203,10 @@ void Box::draw_box()
 //! \brief sets the attributes of this container.
 void Box::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-
   Geometry::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "size") {
       set_size(Vector3f(value));
       elem->mark_delete(ai);

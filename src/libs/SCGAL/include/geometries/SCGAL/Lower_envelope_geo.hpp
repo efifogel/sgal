@@ -97,8 +97,8 @@ public:
   /* Draw the envelope for selection. */
   virtual void isect(Isect_action* action) {}
 
-  /*! Calculate the sphere bound of this geometry containter */
-  virtual Boolean clean_sphere_bound();
+  /*! Clean the sphere bound of the lower envelope containter */
+  virtual void clean_sphere_bound();
 
   /*! Print statistics */
   void print_stat();
@@ -194,8 +194,8 @@ private:
     operator()(const typename Envelope::Vertex& vertex) const
     {
       Vector2f vec = to_vector2f(vertex.point());
-      Approximate_point_3 approximate_point(vec[0], vec[1], 0);
-      return Approximate_sphere_3(approximate_point, 0);
+      Approximate_point_3 approximate_point(vec[0], vec[1], 0.0f);
+      return Approximate_sphere_3(approximate_point, 0.0f);
     }
   };
 
@@ -214,37 +214,37 @@ private:
   void add_surface(Shared_node node) { m_surfaces.push_back(node); }
 };
 
-/*! \brief obtains the vertex radius. */
+//! \brief obtains the vertex radius.
 inline Float Lower_envelope_geo::get_vertex_radius() const
 { return m_vertex_radius; }
 
-/*! \brief sets the vertex radius. */
+//! \brief sets the vertex radius.
 inline void Lower_envelope_geo::set_vertex_radius(Float radius)
 { m_vertex_radius = radius; }
 
-/*! \brief obtains the edge radius. */
+//! \brief obtains the edge radius.
 inline Float Lower_envelope_geo::get_edge_radius() const
 { return m_edge_radius; }
 
-/*! \brief sets the face radius. */
+//! \brief sets the face radius.
 inline void Lower_envelope_geo::set_edge_radius(Float radius)
 { m_edge_radius = radius; }
 
-/*! \brief obtains the face transparency. */
+//! \brief obtains the face transparency.
 inline Float Lower_envelope_geo::get_face_transparency() const
 { return m_face_transparency; }
 
-/*! \brief sets the face transparency. */
+//! \brief sets the face transparency.
 inline void Lower_envelope_geo::set_face_transparency(Float frac)
 { m_face_transparency = frac; }
 
-/*! \brief cleans the representation. */
+//! \brief cleans the representation.
 inline void Lower_envelope_geo::clean() { m_dirty = false; }
 
-/*! \brief clears the internal representation. */
+//! \brief clears the internal representation.
 inline void Lower_envelope_geo::clear() { m_dirty = true; }
 
-/*! \brief determines whether the envelope is dirty and thus needs cleaning. */
+//! \brief determines whether the envelope is dirty and thus needs cleaning.
 inline Boolean Lower_envelope_geo::is_dirty() const { return m_dirty; }
 
 SGAL_END_NAMESPACE

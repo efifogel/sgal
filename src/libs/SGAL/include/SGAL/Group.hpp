@@ -147,9 +147,8 @@ public:
   virtual void isect(Isect_action* isect_action);
 
   /*! Clean the bounding sphere of the group.
-   * \return true iff the bounding sphere has changed during the clean.
    */
-  virtual Boolean clean_sphere_bound();
+  virtual void clean_sphere_bound();
 
   /*! Associate the group node with a scene graph, so that the touch sensor
    * node, if exists, is registered with the scene graph.

@@ -106,46 +106,32 @@ void Switch::isect(Isect_action* isect_action)
   }
 }
 
-/*! Calculate the sphere bound of the group based on all child objects.
+/*! \brief cleans the sphere bound of the group based on all child objects.
  * Notice that the m_dirty_sphere_bound flag must be set right before the
  * return statement and not earlier, cause the calls to clean_sphere_bound()
  * and get_sphere_bound() may reset it.
  */
-Boolean Switch::clean_sphere_bound()
+void Switch::clean_sphere_bound()
 {
   if (m_locked_sphere_bound) {
     m_dirty_sphere_bound = false;
-    return false;
+    return;
   }
 
-  bool res = false;
-
   if (!is_visible()) {
-    if (m_sphere_bound.get_radius() != 0) {
-      m_sphere_bound.set_radius(0);
-      res = true;
-    }
+    m_sphere_bound.set_radius(0);
     m_dirty_sphere_bound = false;
-    return res;
+    return;
   }
 
   Shared_node node = get_choice();
   if (node) {
-    Sphere_bound_vector_const spheres;
-    Boolean bb_changed = node->clean_sphere_bound();
     const Sphere_bound& sb = node->get_sphere_bound();
-    if (sb.get_radius() != 0) spheres.push_back(&sb);
-
-    // If the bb was changed in the childobjects, or if the radius is 0
-    // (which means that the object was invisible but not anymore)
-    if (bb_changed || (m_sphere_bound.get_radius() == 0)) {
-      m_sphere_bound.set_around(spheres);
-      res = true;
-    }
+    m_sphere_bound.set_center(sb.get_center());
+    m_sphere_bound.set_radius(sb.get_radius());
   }
 
   m_dirty_sphere_bound = false;
-  return res;
 }
 
 //! \brief initializes the node prototype.
@@ -188,8 +174,8 @@ void Switch::set_attributes(Element* elem)
   Group::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "whichChoice") {
       m_which_choice = strtoul(value.c_str(), NULL, 10);
       elem->mark_delete(ai);

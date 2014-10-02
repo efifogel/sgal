@@ -186,8 +186,8 @@ public:
   /*! */
   virtual void isect(Isect_action* /* action */) {}
 
-  /*! */
-  virtual Boolean clean_sphere_bound() { return false; }
+  /*! Clean the bounding sphere of the arrangement node. */
+  virtual void clean_sphere_bound() { return ; }
 
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action);
