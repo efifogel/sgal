@@ -806,12 +806,12 @@ draw_aos_marked_face(Draw_action* action)
     // Only one outer ccb or one inner ccb exclusively:
     Sgm_halfedge_const_iterator first;
     if (fi->number_of_outer_ccbs() == 1) {
-      auto oit = fi->outer_ccbs_begin();
+      Sgm::Outer_ccb_const_iterator oit = fi->outer_ccbs_begin();
       first = *oit;
     }
     else {
       SGAL_assertion(fi->number_of_inner_ccbs() == 1);
-      auto iit = fi->inner_ccbs_begin();
+      Sgm::Inner_ccb_const_iterator iit = fi->inner_ccbs_begin();
       first = *iit;
     }
 
