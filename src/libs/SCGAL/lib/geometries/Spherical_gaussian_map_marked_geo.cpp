@@ -797,7 +797,8 @@ void Spherical_gaussian_map_marked_geo::draw_aos_opaque(Draw_action* action)
 void Spherical_gaussian_map_marked_geo::
 draw_aos_marked_face(Draw_action* action)
 {
-  for (auto fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
+  Sgm_face_const_iterator fi;
+  for (fi = m_sgm->faces_begin(); fi != m_sgm->faces_end(); ++fi) {
     if (!fi->marked()) continue;
 
     // Collect the points on the boundary:
