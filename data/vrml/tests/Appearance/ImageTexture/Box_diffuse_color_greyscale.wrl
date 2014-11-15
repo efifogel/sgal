@@ -1,4 +1,6 @@
 #VRML V2.0 utf8 CosmoWorlds V1.0
+# The image consists of a single coponent. Therefor:
+# Diffuse color is multiplied by the greyscale values in the texture image.
 NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
 Shape {
   appearance Appearance {
