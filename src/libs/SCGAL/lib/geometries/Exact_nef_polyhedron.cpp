@@ -129,7 +129,7 @@ void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
     CGAL_assertion(CGAL::circulator_size(j) >= 3);
     glBegin(GL_POLYGON);
 
-    const Vector_3& normal_3 = i->plane().orthogonal_vector();
+    const Exact_vector_3& normal_3 = i->plane().orthogonal_vector();
     float x = static_cast<float>(CGAL::to_double(normal_3.x()));
     float y = static_cast<float>(CGAL::to_double(normal_3.y()));
     float z = static_cast<float>(CGAL::to_double(normal_3.z()));
@@ -138,7 +138,7 @@ void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
     glNormal3fv((float*)&normal);
 
     do {
-      const Point_3& point = j->vertex()->point();
+      const Exact_point_3& point = j->vertex()->point();
       float x = static_cast<float>(CGAL::to_double(point.x()));
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));
@@ -168,7 +168,7 @@ void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
 
     glBegin(GL_POLYGON);
 
-    Vector_3 normal = f->plane().orthogonal_vector();
+    Exact_vector_3 normal = f->plane().orthogonal_vector();
     float x = static_cast<float>(CGAL::to_double(normal.x()));
     float y = static_cast<float>(CGAL::to_double(normal.y()));
     float z = static_cast<float>(CGAL::to_double(normal.z()));
@@ -177,7 +177,7 @@ void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
     glNormal3fv((float*)&normal3f);
 
     do {
-      const Point_3& point = j->source()->source()->point();
+      const Exact_point_3& point = j->source()->source()->point();
       float x = static_cast<float>(CGAL::to_double(point.x()));
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));
@@ -207,7 +207,7 @@ void Exact_nef_polyhedron::isect(SGAL::Isect_action* action)
 
     glBegin(GL_POLYGON);
     do {
-      const Point_3& point = j->source()->source()->point();
+      const Exact_point_3& point = j->source()->source()->point();
       float x = static_cast<float>(CGAL::to_double(point.x()));
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));

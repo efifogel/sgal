@@ -47,7 +47,7 @@
 #include "SGAL/Vector3f.hpp"
 
 #include "SCGAL/basic.hpp"
-#include "SCGAL/Exact_number_type.hpp"
+#include "SCGAL/Exact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -68,12 +68,6 @@ public:
   typedef CGAL::Tag_true                                Tag_true;
   typedef CGAL::Tag_false                               Tag_false;
 
-  typedef Exact_number_type                             Number_type;
-  typedef CGAL::Cartesian<Number_type>                  Kernel;
-  typedef Kernel::Point_3                               Point_3;
-  typedef Kernel::Plane_3                               Plane_3;
-  typedef Kernel::Vector_3                              Vector_3;
-
   // Inexact types:
   typedef float                                         Inexact_NT;
   typedef CGAL::Cartesian<Inexact_NT>                   Inexact_kernel;
@@ -92,10 +86,10 @@ public:
   // A polyhedron vertex extended with an inexact point.
   template <class Refs>
   struct Polyhedron_vertex :
-    public CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Point_3>
+    public CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Exact_point_3>
   {
-    typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Point_3> Base;
-    typedef typename Base::Point                                  Point;
+    typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag_true, Exact_point_3> Base;
+    typedef typename Base::Point                                        Point;
     Inexact_point_3 m_inexact_point;
     Polyhedron_vertex() : Base() {}
     Polyhedron_vertex(const Point& p) : Base(p) {}
@@ -124,7 +118,7 @@ public:
   /*! The polyhedron facet extended with an inexact normal */
   template <class Refs>
   struct Polyhedron_face :
-    public CGAL::HalfedgeDS_face_base<Refs, Tag_true, Plane_3>
+    public CGAL::HalfedgeDS_face_base<Refs, Tag_true, Exact_plane_3>
   {
     Vector3f m_normal;
 
@@ -132,8 +126,8 @@ public:
     Polyhedron_face() {}
 
     /*! Constructor */
-    Polyhedron_face(const Plane_3& pln) :
-      CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane_3>(pln)
+    Polyhedron_face(const Exact_plane_3& pln) :
+      CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Exact_plane_3>(pln)
     {}
   };
 
@@ -153,7 +147,7 @@ public:
     };
   };
 
-  typedef Kernel                                        Polyhedron_traits;
+  typedef Exact_kernel                                  Polyhedron_traits;
   // typedef CGAL::Polyhedron_3<Polyhedron_traits,Polyhedron_items>
   // Polyhedron;
   typedef CGAL::Polyhedron_3<Polyhedron_traits>         Polyhedron;
@@ -263,7 +257,7 @@ public:
   struct Convert_inexact_point {
     void operator()(Vertex& vertex)
     {
-      const Point_3& point = vertex.point();
+      const Exact_point_3& point = vertex.point();
       float x = static_cast<float>(CGAL::to_double(point.x()));
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));
@@ -281,11 +275,11 @@ public:
       typename Facet::Halfedge_handle h = f.halfedge();
       // Facet::Plane_3 is the normal vector type. We assume the
       // CGAL Kernel here and use its global functions.
-      Vector_3 normal =
+      Exact_vector_3 normal =
         CGAL::cross_product(h->next()->vertex()->point() - h->vertex()->point(),
                             h->next()->next()->vertex()->point() -
                             h->next()->vertex()->point());
-      Number_type sqr_length = normal.squared_length();
+      Exact_FT sqr_length = normal.squared_length();
       double tmp = CGAL::to_double(sqr_length);
       return normal / CGAL::sqrt(tmp);
     }
@@ -366,7 +360,7 @@ private:
   struct Convert_inexact_sphere {
     Inexact_sphere_3 operator()(const Nef_polyhedron_3::Vertex& vertex) const
     {
-      const Point_3& point = vertex.point();
+      const Exact_point_3& point = vertex.point();
       float x = static_cast<float>(CGAL::to_double(point.x()));
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));
@@ -376,7 +370,7 @@ private:
 
     Inexact_sphere_3 operator()(const Polyhedron::Vertex& vertex) const
     {
-      const Point_3& point = vertex.point();
+      const Exact_point_3& point = vertex.point();
       float x = static_cast<float>(CGAL::to_double(point.x()));
       float y = static_cast<float>(CGAL::to_double(point.y()));
       float z = static_cast<float>(CGAL::to_double(point.z()));
