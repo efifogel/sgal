@@ -82,8 +82,8 @@ public:
                                                Polyhedron> Sgm_initializer_for_ssc;
   typedef CGAL::Arr_polyhedral_sgm_overlay<Spherical_gaussian_map_for_ssc>
     Sgm_overlay_traits_for_ssc;
-  typedef CGAL::Quadratic_program<CGAL::Gmpq>           Program;
-  typedef CGAL::Quadratic_program_solution<CGAL::Gmpq>  Solution;
+  typedef CGAL::Quadratic_program<Exact_FT>           Program;
+  typedef CGAL::Quadratic_program_solution<Exact_FT>  Solution;
 
   typedef boost::shared_ptr<Coord_array>              Shared_coord_array;
   typedef boost::shared_ptr<Coord_transformer>        Shared_Coord_transformer;

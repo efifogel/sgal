@@ -280,7 +280,7 @@ void Smallest_stabbing_cube::execute(const Field_info* /* field_info */)
   }
 
   //Now solve the linear programming
-  Solution s = CGAL::solve_linear_program(lp, CGAL::Gmpq());
+  Solution s = CGAL::solve_linear_program(lp, Exact_FT());
 
   //Get solution point
   auto p = s.variable_values_begin();
@@ -423,7 +423,7 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
       auto d2 = sum2Planes[j].d();
 
       //Find first non zero coefficient in each
-      CGAL::Gmpq norm1;
+      Exact_FT norm1;
       if (a1 != 0)
         norm1 = a1;
       else if (b1 != 0)
@@ -431,7 +431,7 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
       else
         norm1 = c1;
 
-      CGAL::Gmpq norm2;
+      Exact_FT norm2;
       if (a2 != 0)
         norm2 = a2;
       else if (b2 != 0)
@@ -454,7 +454,7 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
           c1norm == c2norm)
       {
         //Get a point on first plane
-        CGAL::Gmpq x, y, z;
+        Exact_FT x, y, z;
         if (a1norm != 0)
         {
           y = 0;
@@ -501,7 +501,7 @@ void Smallest_stabbing_cube::addConstraints(const Polyhedron& minkCube1,
     assert((a1 != 0 && a2 != 0) || (b1 != 0 && b2 != 0) ||
            (c1 != 0 && c2 != 0));
 
-    CGAL::Gmpq ratio;
+    Exact_FT ratio;
     if (a1 != 0)
     {
       ratio = a2 / a1;
