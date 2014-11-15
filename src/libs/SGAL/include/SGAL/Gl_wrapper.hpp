@@ -3072,7 +3072,7 @@ inline void glTexGend(GLenum coord, GLenum pname, GLdouble param)
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGend("
                   << Gl_wrapper::find(coord) << ", "
                   << Gl_wrapper::find(pname) << ", "
-                  << Gl_wrapper::find(param) << ");"
+                  << param << ");"
                   << std::endl;);
   ::glTexGend(coord, pname, param);
   SGAL_CHECK_GL();
@@ -3084,7 +3084,7 @@ inline void glTexGendv(GLenum coord, GLenum pname, const GLdouble* params)
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGendv("
                   << Gl_wrapper::find(coord) << ", "
                   << Gl_wrapper::find(pname) << ", "
-                  << Gl_wrapper::find(*params) << ");"
+                  << *params << ");"
                   << std::endl;);
   ::glTexGendv(coord, pname, params);
   SGAL_CHECK_GL();
@@ -3096,7 +3096,7 @@ inline void glTexGenf(GLenum coord, GLenum pname, GLfloat param)
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGenf("
                   << Gl_wrapper::find(coord) << ", "
                   << Gl_wrapper::find(pname) << ", "
-                  << Gl_wrapper::find(param) << ");"
+                  << param << ");"
                   << std::endl;);
   ::glTexGenf(coord, pname, param);
   SGAL_CHECK_GL();
@@ -3108,7 +3108,7 @@ inline void glTexGenfv(GLenum coord, GLenum pname, const GLfloat* params)
   SGAL_TRACE_CODE(Trace::GRAPHICS, std::cout << "glTexGenfv("
                   << Gl_wrapper::find(coord) << ", "
                   << Gl_wrapper::find(pname) << ", "
-                  << Gl_wrapper::find(*params) << ");"
+                  << *params << ");"
                   << std::endl;);
   ::glTexGenfv(coord, pname, params);
   SGAL_CHECK_GL();
