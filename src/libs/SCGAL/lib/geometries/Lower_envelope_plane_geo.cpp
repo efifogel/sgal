@@ -308,10 +308,10 @@ void Lower_envelope_plane_geo::draw_patches(Draw_action* action)
     if (fit->is_unbounded()) continue;
     const Base_plane_3& env_plane = fit->surface();
     const Exact_plane_3& plane = env_plane.plane();
-    const Exact_number_type& a = plane.a();
-    const Exact_number_type& b = plane.b();
-    const Exact_number_type& c = plane.c();
-    const Exact_number_type& d = plane.d();
+    const Exact_FT& a = plane.a();
+    const Exact_FT& b = plane.b();
+    const Exact_FT& c = plane.c();
+    const Exact_FT& d = plane.d();
     if (m_color_array) {
       Vector3f color;
       Envelope_diagram_2::Surface_const_iterator sit;
@@ -331,9 +331,9 @@ void Lower_envelope_plane_geo::draw_patches(Draw_action* action)
       glBegin(GL_POLYGON);
       do {
         const Env_plane_traits_3::Point_2& point2 = curr->source()->point();
-        const Exact_number_type& x = point2.x();
-        const Exact_number_type& y = point2.y();
-        Exact_number_type z = (-a * x - b * y - d) / c;
+        const Exact_FT& x = point2.x();
+        const Exact_FT& y = point2.y();
+        Exact_FT z = (-a * x - b * y - d) / c;
         Exact_point_3 point3(x, y, z);
         Vector3f vec = to_vector3f(point3);
         glVertex3fv((float*)&vec);
@@ -349,9 +349,9 @@ void Lower_envelope_plane_geo::draw_patches(Draw_action* action)
       glBegin(GL_POLYGON);
       do {
         const Env_plane_traits_3::Point_2& point2 = curr->source()->point();
-        const Exact_number_type& x = point2.x();
-        const Exact_number_type& y = point2.y();
-        Exact_number_type z = (-a * x - b * y - d) / c;
+        const Exact_FT& x = point2.x();
+        const Exact_FT& y = point2.y();
+        Exact_FT z = (-a * x - b * y - d) / c;
         Exact_point_3 point3(x, y, z);
         Vector3f vec = to_vector3f(point3);
         glVertex3fv((float*)&vec);
