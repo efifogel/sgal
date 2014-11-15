@@ -19,41 +19,50 @@
 #ifndef SCGAL_EXACT_KERNEL_HPP
 #define SCGAL_EXACT_KERNEL_HPP
 
-#define SCGAL_CARTESIAN_KERNEL                  0
-#define SCGAL_LAZY_SIMPLE_CARTESIAN_KERNEL      1
-#define SCGAL_HOMOGENEOUS_KERNEL                2
+#define SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL 0
+#define SCGAL_CARTESIAN_KERNEL                            1
+#define SCGAL_LAZY_SIMPLE_CARTESIAN_KERNEL                2
+#define SCGAL_HOMOGENEOUS_KERNEL                          3
 
-#if SCGAL_KERNEL == SCGAL_CARTESIAN_KERNEL
+#if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#elif SCGAL_KERNEL == SCGAL_CARTESIAN_KERNEL
 #include <CGAL/Cartesian.h>
+#include "SCGAL/Exact_number_type.hpp"
 
 #elif SCGAL_KERNEL == SCGAL_LAZY_SIMPLE_CARTESIAN_KERNEL
 #include <CGAL/Cartesian.h>
 #include <CGAL/Lazy_kernel.h>
+#include "SCGAL/Exact_number_type.hpp"
 
 #elif SCGAL_KERNEL == SCGAL_HOMOGENEOUS_KERNEL
 #include <CGAL/Homogeneous.h>
+#include "SCGAL/Exact_number_type.hpp"
 
 #else
 #error No Kernel (SCGAL_KERNEL) specified!
 
 #endif
 
-#include "SCGAL/Exact_number_type.hpp"
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector2f.hpp"
 #include "SGAL/Vector3f.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-#if SCGAL_KERNEL == SCGAL_CARTESIAN_KERNEL
-typedef CGAL::Cartesian<Exact_number_type>              Exact_kernel;
+#if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_kernel;
+
+#elif SCGAL_KERNEL == SCGAL_CARTESIAN_KERNEL
+typedef CGAL::Cartesian<Exact_number_type>                Exact_kernel;
 
 #elif SCGAL_KERNEL == SCGAL_LAZY_SIMPLE_CARTESIAN_KERNEL
 typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<Exact_number_type> >
-                                                        Exact_kernel;
+                                                          Exact_kernel;
 
 #elif SCGAL_KERNEL == SCGAL_HOMOGENEOUS_KERNEL
-typedef CGAL::Homogeneous<Exact_number_type>            Exact_kernel;
+typedef CGAL::Homogeneous<Exact_number_type>              Exact_kernel;
 
 #else
 #error Invalid kernel!
