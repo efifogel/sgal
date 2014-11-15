@@ -967,7 +967,10 @@ CGAL::Oriented_side Assembly::compute_side(Sgm::Halfedge_const_handle heh)
     twin_heh->next()->twin()->face()->point() :
     twin_heh->next()->next()->twin()->face()->point();
   Exact_plane_3 plane = construct_plane(point1, point2, point3);
-  return os_op(plane, CGAL::ORIGIN);
+  // For some reason the statement bellow does not compile (at least with VC).
+  // return os_op(plane, CGAL::ORIGIN);
+  Exact_point_3 origin(CGAL::ORIGIN);
+  return os_op(plane, origin);
 }
 
 /*! \brief computes the projection of a convex polyhedron represented by a
@@ -997,11 +1000,14 @@ void Assembly::compute_projection(const Sgm* sgm, Aos_mark* aos)
     Sgm::Halfedge_around_vertex_const_circulator hedge3 = hedge2;
     ++hedge3;
 
-    const Exact_point_3& point1 = hedge1->face()->point();
-    const Exact_point_3& point2 = hedge2->face()->point();
-    const Exact_point_3& point3 = hedge3->face()->point();
+    const auto& point1 = hedge1->face()->point();
+    const auto& point2 = hedge2->face()->point();
+    const auto& point3 = hedge3->face()->point();
 
-    if (coplanar(point1, point2, point3, CGAL::ORIGIN)) {
+    // For some reason the statement bellow does not compile (at least with VC).
+    // if (coplanar(point1, point2, point3, CGAL::ORIGIN)) {
+    Exact_point_3 origin(CGAL::ORIGIN);
+    if (coplanar(point1, point2, point3, origin)) {
       /* The origin is contained in the underlying plane of the primal
        * facet associated with vit. Traverse all adjacent primal facets:
        */
