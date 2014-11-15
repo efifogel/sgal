@@ -42,6 +42,10 @@ endif()
 
 add_definitions(-DBOOST_ALL_DYN_LINK)
 
+if (SGAL_TRACE)
+  add_definitions(-DSGAL_TRACE)
+endif()
+
 # Installation
 if (SGAL_WIN32_CMAKE_ON_CYGWIN)
   exec_program(cygpath ARGS -w "${CMAKE_INSTALL_PREFIX}"
