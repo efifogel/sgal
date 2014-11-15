@@ -89,7 +89,12 @@ void Exact_plane_array::set_attributes(Element* elem)
       for (Uint i = 0; i < size; i++) {
         float a, b, c, d;
         svalue >> a >> b >> c >> d;
-#if SCGAL_NT == SCGAL_CGAL_GMPZ_NT
+#if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+        CGAL::Gmpq ea((int)(a * 1000), 1000);
+        CGAL::Gmpq eb((int)(b * 1000), 1000);
+        CGAL::Gmpq ec((int)(c * 1000), 1000);
+        CGAL::Gmpq ed((int)(d * 1000), 1000);
+#elif SCGAL_NT == SCGAL_CGAL_GMPZ_NT
         Exact_number_type ea(((int)(a * 1000)) / 1000);
         Exact_number_type eb(((int)(b * 1000)) / 1000);
         Exact_number_type ec(((int)(c * 1000)) / 1000);
@@ -112,7 +117,7 @@ void Exact_plane_array::set_attributes(Element* elem)
       elem->mark_delete(ai);
     }
     if (name == "ratPlane") {
-      Uint num_values = get_num_values<Exact_number_type>(value);
+      Uint num_values = get_num_values<Exact_FT>(value);
       Uint size = num_values / 4;
       m_array.resize(size);
       std::istringstream svalue(value, std::istringstream::in);

@@ -97,7 +97,11 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
       for (Uint i = 0; i < size; i++) {
         float x, y, z;
         svalue >> x >> y >> z;
-#if SCGAL_NT == SCGAL_CGAL_GMPZ_NT
+#if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+        CGAL::Gmpq ex((int)(x * 1000), 1000);
+        CGAL::Gmpq ey((int)(y * 1000), 1000);
+        CGAL::Gmpq ez((int)(z * 1000), 1000);
+#elif SCGAL_NT == SCGAL_CGAL_GMPZ_NT
         Exact_number_type ex(((int)(x * 1000)) / 1000);
         Exact_number_type ey(((int)(y * 1000)) / 1000);
         Exact_number_type ez(((int)(z * 1000)) / 1000);
@@ -144,14 +148,14 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
         Exact_FT fz(ez);
 #else
         float utanhalf = tanf(u_rad * 0.5f);
-        Exact_number_type eu(static_cast<int>(utanhalf * 1000), 1000);
+        CGAL::Gmpq eu(static_cast<int>(utanhalf * 1000), 1000);
         Exact_FT ut(eu);
         Exact_FT ut_square = CGAL::square(ut);
         Exact_FT cosu = (1 - ut_square) / (1 + ut_square);
         Exact_FT sinu = 2 * ut / (1 + ut_square);
 
         float vtanhalf = tanf(v_rad * 0.5f);
-        Exact_number_type ev(static_cast<int>(vtanhalf * 1000), 1000);
+        CGAL::Gmpq ev(static_cast<int>(vtanhalf * 1000), 1000);
         Exact_FT vt(ev);
         Exact_FT vt_square = CGAL::square(vt);
         Exact_FT cosv = (1 - vt_square) / (1 + vt_square);
@@ -168,7 +172,7 @@ void Exact_coord_array_3d::set_attributes(Element* elem)
     }
 
     if (name == "exactPoint") {
-      Uint num_values = get_num_values<Exact_number_type>(value);
+      Uint num_values = get_num_values<Exact_FT>(value);
       Uint size = num_values / 3;
       m_array.resize(size);
       std::istringstream svalue(value, std::istringstream::in);

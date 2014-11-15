@@ -88,7 +88,11 @@ void Exact_normal_array::set_attributes(Element* elem)
       for (Uint i = 0; i < size; i++) {
         float x, y, z;
         svalue >> x >> y >> z;
-#if SCGAL_NT == SCGAL_CGAL_GMPZ_NT
+#if SCGAL_KERNEL == SCGAL_EXACT_PREDICATES_EXACT_CONSTRUCTIONS_KERNEL
+        CGAL::Gmpq ex((int)(x * 1000), 1000);
+        CGAL::Gmpq ey((int)(y * 1000), 1000);
+        CGAL::Gmpq ez((int)(z * 1000), 1000);
+#elif SCGAL_NT == SCGAL_CGAL_GMPZ_NT
         Exact_number_type ex(((int)(x * 1000)) / 1000);
         Exact_number_type ey(((int)(y * 1000)) / 1000);
         Exact_number_type ez(((int)(z * 1000)) / 1000);
@@ -109,7 +113,7 @@ void Exact_normal_array::set_attributes(Element* elem)
     }
 
     if (name == "ratVector") {
-      Uint num_values = get_num_values<Exact_number_type>(value);
+      Uint num_values = get_num_values<Exact_FT>(value);
       Uint size = num_values / 3;
       int old_size = m_array.size();
       m_array.resize(old_size + size);
