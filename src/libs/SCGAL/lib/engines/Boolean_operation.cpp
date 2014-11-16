@@ -24,11 +24,19 @@
  * An engine that computes a Boolean operation.
  */
 
+#include <iostream>
+#include <list>
+#include <vector>
 #include <string>
 #include <boost/lexical_cast.hpp>
 
+#if 0
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
+#endif
+#include <CGAL/corefinement_operations.h>
+// #include <CGAL/IO/Polyhedron_iostream.h>
+// #include <CGAL/IO/Polyhedron_VRML_2_ostream.h>
 
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -75,9 +83,6 @@ void Boolean_operation::execute()
 {
   if (!m_operand1 || !m_operand2) return;
 
-  typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
-                                                    Nef_polyhedron;
-
   Exact_polyhedron_geo geometry1;
   geometry1.set_coord_array(m_operand1->get_coord_array());
   auto& indices1 = m_operand1->get_flat_coord_indices();
@@ -94,13 +99,7 @@ void Boolean_operation::execute()
   }
   geometry1.set_num_primitives(m_operand1->get_num_primitives());
   geometry1.set_primitive_type(m_operand1->get_primitive_type());
-  const Exact_polyhedron_geo::Polyhedron& polyhedron1 =
-    geometry1.get_polyhedron();
-  /*! \todo Allow passing a const polyhedron to the constructor of
-   * Nef_polyhedron
-   */
-  auto tmp1 = const_cast<Exact_polyhedron_geo::Polyhedron&>(polyhedron1);
-  Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(tmp1);
+  const Exact_polyhedron& polyhedron1 = geometry1.get_polyhedron();
 
   Exact_polyhedron_geo geometry2;
   geometry2.set_coord_array(m_operand2->get_coord_array());
@@ -118,16 +117,7 @@ void Boolean_operation::execute()
   }
   geometry2.set_num_primitives(m_operand2->get_num_primitives());
   geometry2.set_primitive_type(m_operand2->get_primitive_type());
-  const Exact_polyhedron_geo::Polyhedron& polyhedron2 =
-    geometry2.get_polyhedron();
-  /*! \todo Allow passing a const polyhedron to the constructor of
-   * Nef_polyhedron
-   */
-  auto tmp2 = const_cast<Exact_polyhedron_geo::Polyhedron&>(polyhedron2);
-  Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(tmp2);
-
-  // Compute Boolean operation:
-  Nef_polyhedron nef_polyhedron(nef_polyhedron1 * nef_polyhedron2);
+  const Exact_polyhedron& polyhedron2 = geometry2.get_polyhedron();
 
   if (!m_result) {
     m_result.reset(new Exact_polyhedron_geo);
@@ -135,10 +125,56 @@ void Boolean_operation::execute()
   }
   else m_result->clear();
 
+#if 0
+  typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
+                                                    Nef_polyhedron;
+
+  /*! \todo Allow passing a const polyhedron to the constructor of
+   * Nef_polyhedron
+   */
+  auto tmp1 = const_cast<Exact_polyhedron&>(polyhedron1);
+  auto tmp2 = const_cast<Exact_polyhedron&>(polyhedron2);
+  Nef_polyhedron nef_polyhedron1 = Nef_polyhedron(tmp1);
+  Nef_polyhedron nef_polyhedron2 = Nef_polyhedron(tmp2);
+
+  // Compute Boolean operation:
+  Nef_polyhedron nef_polyhedron(nef_polyhedron1 * nef_polyhedron2);
   SGAL_assertion(nef_polyhedron.is_simple());
+
   Exact_polyhedron p;
   nef_polyhedron.convert_to_polyhedron(p);
   m_result->set_polyhedron(p);
+
+#else
+  //! \todo Allow passing a const polyhedron
+  auto tmp1 = const_cast<Exact_polyhedron&>(polyhedron1);
+  auto tmp2 = const_cast<Exact_polyhedron&>(polyhedron2);
+
+  typedef std::vector<Exact_point_3>          Polyline;
+  std::list<Polyline> polylines;
+  typedef std::pair<Exact_polyhedron*, int>   Polyhedron_ptr_and_type;
+  std::list<Polyhedron_ptr_and_type> polyhedrons;
+  typedef CGAL::Polyhedron_corefinement<Exact_polyhedron, Exact_kernel> Bso;
+  Bso intersection;
+  intersection(tmp1, tmp2, std::back_inserter(polylines),
+               std::back_inserter(polyhedrons), Bso::Intersection_tag);
+  SGAL_assertion(polyhedrons.first().second == Bso::Intersection_tag);
+  SGAL_assertion(!polyhedrons.empty());
+//   if (polyhedrons.empty()) {
+//     CGAL::VRML_2_ostream vrml_out(std::cout);
+//     vrml_out << polyhedron1;
+//     vrml_out << polyhedron2;
+//   }
+  if (!polyhedrons.empty())
+    m_result->set_polyhedron(*(polyhedrons.front().first));
+  for (auto plit = polylines.begin(); plit != polylines.begin(); ++plit)
+    plit->clear();
+  polylines.clear();
+  for (auto pit = polyhedrons.begin(); pit != polyhedrons.begin(); ++pit) {
+    if (it->first) delete it->first;
+  }
+  polyhedrons.clear();
+#endif
 
   // Cascade the result field:
   Field* field = get_field(RESULT);
