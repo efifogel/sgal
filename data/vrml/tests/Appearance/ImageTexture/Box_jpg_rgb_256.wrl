@@ -1,8 +1,12 @@
 #VRML V2.0 utf8 CosmoWorlds V1.0
+# RGB colors in the texture image replace the material's diffuse color.
 NavigationInfo { type [ "EXAMINE" "WALK" "FLY" "ANY" ] }
 Shape {
   appearance Appearance {
-    material Material {}
+    material Material {
+      diffuseColor 0 0 1
+      specularColor 1 0 0
+    }
     texture ImageTexture {url ["sgal_rgb.jpg"]}
   }
   geometry Box {}
