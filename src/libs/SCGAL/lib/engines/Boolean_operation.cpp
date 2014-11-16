@@ -171,7 +171,7 @@ void Boolean_operation::execute()
     plit->clear();
   polylines.clear();
   for (auto pit = polyhedrons.begin(); pit != polyhedrons.begin(); ++pit) {
-    if (it->first) delete it->first;
+    if (pit->first) delete pit->first;
   }
   polyhedrons.clear();
 #endif
