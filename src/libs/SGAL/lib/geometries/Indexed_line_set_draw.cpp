@@ -1052,7 +1052,7 @@ void Indexed_line_set::draw_FSNO_FINO_FAPL_TENO_MOLS_VANO()
 
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glNormal3fv(get_by_coord_index(m_normal_array, i));
+    glNormal3fv(get(m_normal_array, i));
     glBegin(GL_LINE_STRIP);
     for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
       glVertex3fv(get_by_coord_index(m_coord_array, j));
@@ -1078,10 +1078,11 @@ void Indexed_line_set::draw_FSCO_FINO_FAPL_TENO_MOLS_VANO()
 
   Uint j = 0;
   for (Uint i = 0; i < m_num_primitives; ++i) {
-    glColor3fv(get_by_coord_index(m_color_array, i));
+    glColor3fv(get(m_color_array, i));
     glBegin(GL_LINE_STRIP);
-    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j)
+    for (; m_coord_indices[j] != static_cast<Uint>(-1); ++j) {
       glVertex3fv(get_by_coord_index(m_coord_array, j));
+    }
     glEnd();
     ++j;
   }
