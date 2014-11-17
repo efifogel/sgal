@@ -147,7 +147,6 @@ Boolean Lines_through_segments_geo::is_empty() { return true; }
 //! \brief clean the representation.
 void Lines_through_segments_geo::clean()
 {
-  // std::cout << "Lines_through_segments_geo::clean()" << std::endl;
   if (!m_lts) {
     m_lts = new Lines_through_segments_3(m_alg_kernel, m_rat_kernel);
     SGAL_assertion(m_lts);
@@ -163,18 +162,24 @@ void Lines_through_segments_geo::clean()
       boost::dynamic_pointer_cast<Coord_array_3d>(m_segments->get_coord_array());
     if (!coord_array) return;
     auto& coord_indices = m_segments->get_coord_indices();
-    for (Uint i = 0; i < coord_indices.size(); i += 2) {
-      const Vector3f& ep1 = (*coord_array)[i];
-      const Vector3f& ep2 = (*coord_array)[i+1];
+
+    Uint j = 0;
+    for (Uint i = 0; i < m_segments->get_num_primitives(); ++i) {
+      const auto& ep1 = (*coord_array)[coord_indices[j++]];
+      const auto& ep2 = (*coord_array)[coord_indices[j++]];
+      // Ensure that every polyline consists of a single segment
+      SGAL_assertion(m_coord_indices[j] == static_cast<Uint>(-1));
+      ++j;
+
       Rat_point_3 p1(ep1[0], ep1[1], ep1[2]);
       Rat_point_3 p2(ep2[0], ep2[1], ep2[2]);
       m_in_segments.push_back(Rat_segment_3(p1, p2));
     }
     m_in_segments_dirty = false;
-    std::cout << "# input segments: " << m_in_segments.size() << std::endl;
 
-    copy(m_in_segments.begin(), m_in_segments.end(),
-         std::ostream_iterator<Rat_segment_3>(std::cout, "\n"));
+    // std::cout << "# input segments: " << m_in_segments.size() << std::endl;
+    // copy(m_in_segments.begin(), m_in_segments.end(),
+    //      std::ostream_iterator<Rat_segment_3>(std::cout, "\n"));
   }
   (*m_lts)(m_in_segments.begin(), m_in_segments.end(),
            std::back_inserter(m_out_lines));
@@ -183,7 +188,6 @@ void Lines_through_segments_geo::clean()
 
   std::list<Transversal_with_segments>::const_iterator it;
   for (it = m_out_lines.begin(); it != m_out_lines.end(); ++it) {
-
     typedef Lines_through_segments_3::Transversal         Transversal;
 
     typedef Lines_through_segments_3::Line_3              Line_3;
@@ -533,12 +537,13 @@ void Lines_through_segments_geo::set_segments(Shared_indexed_line_set segments)
 {
   clear();
   m_segments = segments;
+  std::cout << "this: " << this << std::endl;
   Observer observer(this, get_field_info(SEGMENTS));
   segments->register_observer(observer);
 }
 
 //! \biref processes change of points.
-void Lines_through_segments_geo::field_changed(Field_info* field_info)
+void Lines_through_segments_geo::field_changed(const Field_info* field_info)
 {
   Container::field_changed(field_info);
   clear();

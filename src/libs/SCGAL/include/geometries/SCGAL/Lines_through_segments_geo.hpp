@@ -151,7 +151,7 @@ public:
   virtual Boolean is_empty();
 
   /*! Process change of content */
-  virtual void field_changed(Field_info* field_info);
+  virtual void field_changed(const Field_info* field_info);
 
   /*! Set the segments.
    * \param segments the segments.
