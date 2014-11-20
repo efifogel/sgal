@@ -33,7 +33,11 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+// #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/basic.h>
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/Triangulation_3.h>
+#include <CGAL/enum.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -289,23 +293,6 @@ CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Exact_point_3& p)
   return CGAL::ON_NEGATIVE_SIDE;
 }
 
-//! \brief prints statistics.
-void Exact_polyhedron_geo::print_stat()
-{
-  std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
-
-  std::cout << "Primal"
-            << ", no. vertices: " << m_polyhedron.size_of_vertices()
-            << ",  no. edges: " << m_polyhedron.size_of_halfedges()/2
-            << ",  no. facets: " << m_polyhedron.size_of_facets()
-            << std::endl;
-
-  std::cout << "Convex hull took " << m_time << " seconds to compute"
-            << std::endl;
-}
-
 //! \brief obtains the polyhedron data-structure.
 const Exact_polyhedron&
 Exact_polyhedron_geo::get_polyhedron(Boolean with_planes)
@@ -532,6 +519,57 @@ void Exact_polyhedron_geo::calculate_multiple_normals_per_vertex()
                                               m_flat_normal_indices);
   m_dirty_normal_indices = true;
   m_dirty_flat_normal_indices = false;
+}
+
+//! \brief determines whether the polyhedron is closed.
+Boolean Exact_polyhedron_geo::is_closed()
+{
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
+  return m_polyhedron.is_closed();
+}
+
+//! \brief computes the volume of the convex hull of the polyhedron.
+Float Exact_polyhedron_geo::volume_of_convex_hull()
+{
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
+
+  // compute convex hull
+  Exact_polyhedron ch;
+  CGAL::convex_hull_3(m_polyhedron.points_begin(), m_polyhedron.points_end(),
+                      ch);
+
+  // typedef CGAL::Exact_predicates_inexact_constructions_kernel   Epic_kernel;
+  typedef CGAL::Triangulation_3<Exact_kernel>                    Triangulation;
+  Triangulation tri(ch.points_begin(), ch.points_end());
+  Float volume = 0.0f;
+  for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it) {
+    auto tetr = tri.tetrahedron(it);
+    volume += CGAL::to_double(tetr.volume());
+  }
+  return volume;
+}
+
+//! \brief prints statistics.
+void Exact_polyhedron_geo::print_stat()
+{
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (m_dirty_polyhedron) clean_polyhedron();
+
+  std::cout << "Container name: " << get_name() << std::endl;
+  std::cout << "Container tag: " << get_tag() << std::endl;
+  std::cout << "Is closed: " << is_closed() << std::endl;
+  std::cout << "# vertices: " << m_polyhedron.size_of_vertices()
+            << ", # edges: " << m_polyhedron.size_of_halfedges() / 2
+            << ", # facets: " << m_polyhedron.size_of_facets()
+            << std::endl;
+  std::cout << "Volume of convex hull: " << volume_of_convex_hull()
+            << std::endl;
+
+  if (m_convex_hull)
+    std::cout << "Convex hull took " << m_time << " seconds to compute"
+              << std::endl;
 }
 
 SGAL_END_NAMESPACE

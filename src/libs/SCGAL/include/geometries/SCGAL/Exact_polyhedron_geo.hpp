@@ -19,9 +19,6 @@
 #ifndef SCGAL_EXACT_POLYHEDRON_GEO_HPP
 #define SCGAL_EXACT_POLYHEDRON_GEO_HPP
 
-#include <CGAL/convex_hull_3.h>
-#include <CGAL/enum.h>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Trace.hpp"
@@ -175,7 +172,16 @@ public:
    */
   CGAL::Oriented_side oriented_side(const Exact_point_3& p);
 
-  /*! Prints statistics. */
+  /*! Determine whether the polyhedron is closed.
+   */
+  Boolean is_closed();
+
+  /*! Computes the volume of the convex hull of the polyhedron.
+   */
+  Float volume_of_convex_hull();
+
+  /*! Print statistics.
+   */
   void print_stat();
 
 protected:
