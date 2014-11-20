@@ -164,6 +164,10 @@ protected:
   /*! The operation. */
   Operation m_operation;
 
+  /*! Obtain an exact polyhedron geometry from an operand geometry container.
+   */
+  Shared_exact_polyhedron_geo get_geometry(Shared_mesh_set operand) const;
+
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 

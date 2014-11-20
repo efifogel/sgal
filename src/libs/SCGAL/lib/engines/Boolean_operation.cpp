@@ -74,50 +74,47 @@ Boolean_operation::Boolean_operation(Boolean proto) :
 //! \brief destructor.
 Boolean_operation::~Boolean_operation() {}
 
-//! \brief .
+/*! \brief triggers the execution of the engine as a response to change in one
+ * of the input fields.
+ */
 void Boolean_operation::trigger_changed(const Field_info* /* field_info */)
 { execute(); }
+
+//! \brief obtains an exact polyhedron from an operand geometry container.
+//! \todo create a new constructor of Exact_polyhedron_geo from any mesh.
+Boolean_operation::Shared_exact_polyhedron_geo
+Boolean_operation::get_geometry(Shared_mesh_set operand) const
+{
+  Shared_exact_polyhedron_geo geometry =
+    boost::dynamic_pointer_cast<Exact_polyhedron_geo>(operand);
+  if (geometry) return geometry;
+  geometry.reset(new Exact_polyhedron_geo);
+  geometry->set_coord_array(operand->get_coord_array());
+  auto& indices = operand->get_flat_coord_indices();
+  /* Observe that the call to get_flat_coord_indices() may trigger the
+   * "cleaning" of the coord indices. Thus, the following query must succeed
+   * the previous statement.
+   */
+  if (operand->are_coord_indices_flat())
+    geometry->set_flat_coord_indices(indices);
+  else {
+    auto& indices = operand->get_coord_indices();
+    geometry->set_coord_indices(indices);
+  }
+  geometry->set_num_primitives(operand->get_num_primitives());
+  geometry->set_primitive_type(operand->get_primitive_type());
+  return geometry;
+}
 
 //! \brief executes the engine.
 void Boolean_operation::execute()
 {
   if (!m_operand1 || !m_operand2) return;
 
-  Exact_polyhedron_geo geometry1;
-  geometry1.set_coord_array(m_operand1->get_coord_array());
-  auto& indices1 = m_operand1->get_flat_coord_indices();
-  /* Observe that the call to get_flat_coord_indices() may trigger the
-   * "cleaning" of the coord indices. Thus, the following query must succeed
-   * the previous statement.
-   */
-  if (m_operand1->are_coord_indices_flat())
-    geometry1.set_flat_coord_indices(indices1);
-  else {
-    auto& indices1 = m_operand1->get_coord_indices();
-    Geo_set& geo_set1 = geometry1;
-    geo_set1.set_coord_indices(indices1);
-  }
-  geometry1.set_num_primitives(m_operand1->get_num_primitives());
-  geometry1.set_primitive_type(m_operand1->get_primitive_type());
-  const Exact_polyhedron& polyhedron1 = geometry1.get_polyhedron();
-
-  Exact_polyhedron_geo geometry2;
-  geometry2.set_coord_array(m_operand2->get_coord_array());
-  auto& indices2 = m_operand2->get_flat_coord_indices();
-  /* Observe that the call to get_flat_coord_indices() may trigger the
-   * "cleaning" of the coord indices. Thus, the following query must succeed
-   * the previous statement.
-   */
-  if (m_operand2->are_coord_indices_flat())
-    geometry2.set_flat_coord_indices(indices2);
-  else {
-    auto& indices2 = m_operand2->get_coord_indices();
-    Geo_set& geo_set2 = geometry2;
-    geo_set2.set_coord_indices(indices2);
-  }
-  geometry2.set_num_primitives(m_operand2->get_num_primitives());
-  geometry2.set_primitive_type(m_operand2->get_primitive_type());
-  const Exact_polyhedron& polyhedron2 = geometry2.get_polyhedron();
+  Shared_exact_polyhedron_geo geometry1 = get_geometry(m_operand1);
+  const Exact_polyhedron& polyhedron1 = geometry1->get_polyhedron();
+  Shared_exact_polyhedron_geo geometry2 = get_geometry(m_operand2);
+  const Exact_polyhedron& polyhedron2 = geometry2->get_polyhedron();
 
   if (!m_result) {
     m_result.reset(new Exact_polyhedron_geo);
@@ -158,8 +155,8 @@ void Boolean_operation::execute()
   Bso intersection;
   intersection(tmp1, tmp2, std::back_inserter(polylines),
                std::back_inserter(polyhedrons), Bso::Intersection_tag);
-  SGAL_assertion(polyhedrons.first().second == Bso::Intersection_tag);
   SGAL_assertion(!polyhedrons.empty());
+  // std::cout << "# polyhedron: " << polyhedrons.size() << std::endl;
 //   if (polyhedrons.empty()) {
 //     CGAL::VRML_2_ostream vrml_out(std::cout);
 //     vrml_out << polyhedron1;
@@ -170,9 +167,8 @@ void Boolean_operation::execute()
   for (auto plit = polylines.begin(); plit != polylines.begin(); ++plit)
     plit->clear();
   polylines.clear();
-  for (auto pit = polyhedrons.begin(); pit != polyhedrons.begin(); ++pit) {
+  for (auto pit = polyhedrons.begin(); pit != polyhedrons.begin(); ++pit)
     if (pit->first) delete pit->first;
-  }
   polyhedrons.clear();
 #endif
 
