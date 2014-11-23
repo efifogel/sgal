@@ -532,8 +532,10 @@ Boolean Exact_polyhedron_geo::is_closed()
 //! \brief computes the volume of the convex hull of the polyhedron.
 Float Exact_polyhedron_geo::volume_of_convex_hull()
 {
+
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
+  if (is_empty()) return 0.0f;
 
   // compute convex hull
   Exact_polyhedron ch;
