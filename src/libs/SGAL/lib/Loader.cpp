@@ -41,7 +41,6 @@ int Loader::load(const char* filename, Scene_graph* sg)
   // Try to determine whether the file is binary or ascii
   std::string file_extension = boost::filesystem::extension(filename);
   if (file_extension == ".stl") {
-    int c;
     std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
     if (!stl_stream.good()) {
       std::cerr << "Error: failed to open " << filename << "!" << std::endl;
@@ -120,7 +119,7 @@ int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph)
 
   Uint index(0);
 
-  for (size_t i = 0; i < num_tris; ++i) {
+  for (Int32 i = 0; i < num_tris; ++i) {
     Float x, y, z;
     // Read normal
     stl_stream.read((char*)&x, sizeof(Float));
