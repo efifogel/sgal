@@ -32,9 +32,14 @@ class SGAL_SGAL_DECL Loader {
 public:
   /*! Constructor */
   Loader() {}
-  
-  /*! Destructor */
+
+  /*! Load a scene graph from a file.
+   */
   int load(const char* filename, Scene_graph* sg);
+
+  /*! Read a scene graph from a file in the STL binary format.
+   */
+  int read_stl(std::ifstream& stl_stream, Scene_graph* sg);
 };
 
 SGAL_END_NAMESPACE
