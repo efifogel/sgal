@@ -848,6 +848,11 @@ protected:
    */
   Uint num_tex_coordinates() const;
 
+  /*! Compute flat indices for the normals or for the colors.
+   * This function is invoked when the attachment is not per-vertex.
+   */
+  void compute_flat_indices(Index_array& in_indices, Index_array& indices);
+
   void compute_flat_tex_coords_2d(size_t num_verts);
   void compute_polygon_tex_coords_2d();
 
@@ -1076,17 +1081,16 @@ private:
  * array.
  * Configuration specifies VERTEX_ARRAY, and
  * Primitive types supported so far: QUADS and TRIANGLES, and
- * Attachment or color/normal is PER_VERTEX.
+ * Notice that when the attachment of the color/normal is not PER_VERTEX (e.g.,
+ * (PER_POLYGON), the vertex data must be properly computed to use vertex array.
+ * This is done by the functions that clean the local vertex buffers.
  */
 inline Boolean Boundary_set::use_vertex_array() const
 {
   Fragment_source fragment_source = resolve_fragment_source();
   return ((m_drawing_mode == Configuration::GDM_VERTEX_ARRAY) &&
           ((m_primitive_type == PT_QUADS) ||
-           (m_primitive_type == PT_TRIANGLES)) &&
-          ((fragment_source == FS_COLOR) ?
-           (m_color_attachment == AT_PER_VERTEX) :
-           (m_normal_attachment == AT_PER_VERTEX)));
+           (m_primitive_type == PT_TRIANGLES)));
 }
 
 /*! \brief determines whether the representation of the normals hasn't been

@@ -442,10 +442,8 @@ Boundary_set::Boundary_set(Boolean proto) :
   m_draws[SGAL_FSNO_FIYE_FAPV_TENO_MOTR_VAYE] = &Boundary_set::draw_FAPV_VAYE;
   m_draws[SGAL_FSCO_FIYE_FAPV_TENO_MOTR_VAYE] = &Boundary_set::draw_FAPV_VAYE;
 
-  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOTR_VAYE] =
-    &Boundary_set::draw_FSNO_FINO_FAPT_TENO_MOTR_VANO;
-  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOTR_VAYE] =
-    &Boundary_set::draw_FSCO_FINO_FAPT_TENO_MOTR_VANO;
+  m_draws[SGAL_FSNO_FINO_FAPT_TENO_MOTR_VAYE] = &Boundary_set::draw_FAPV_VAYE;
+  m_draws[SGAL_FSCO_FINO_FAPT_TENO_MOTR_VAYE] = &Boundary_set::draw_FAPV_VAYE;
   m_draws[SGAL_FSNO_FIYE_FAPT_TENO_MOTR_VAYE] =
     &Boundary_set::draw_FSNO_FIYE_FAPT_TENO_MOTR_VANO;
   m_draws[SGAL_FSCO_FIYE_FAPT_TENO_MOTR_VAYE] =
@@ -1111,14 +1109,16 @@ void Boundary_set::draw_geometry(Draw_action* action)
         (Gfx_conf::get_instance()->is_vertex_buffer_object_supported()))
     {
       bool color_normal_condition = (resolve_fragment_source() == FS_COLOR) ?
-        (m_flat_color_indices.empty() ||
+        ((m_color_attachment == AT_PER_VERTEX) &&
+         (m_flat_color_indices.empty() ||
          (std::equal(m_flat_coord_indices.begin(),
                      m_flat_coord_indices.end(),
-                     m_flat_color_indices.begin()))) :
-        (m_flat_normal_indices.empty() ||
+                     m_flat_color_indices.begin())))) :
+        ((m_normal_attachment == AT_PER_VERTEX) &&
+         (m_flat_normal_indices.empty() ||
          (std::equal(m_flat_coord_indices.begin(),
                      m_flat_coord_indices.end(),
-                     m_flat_normal_indices.begin())));
+                     m_flat_normal_indices.begin()))));
       bool tex_coord_condition =
         (m_flat_tex_coord_indices.empty() ||
          (std::equal(m_flat_coord_indices.begin(),
@@ -1166,7 +1166,9 @@ void Boundary_set::draw_geometry(Draw_action* action)
               }
             }
             else {
-              if (!m_tex_coord_array) clean_local_cn_vertex_buffers();
+              if (!m_tex_coord_array) {
+                clean_local_cn_vertex_buffers();
+              }
               else {
                 Uint num_tex_coords = m_tex_coord_array->num_coordinates();
                 switch (num_tex_coords) {
@@ -1697,6 +1699,7 @@ void Boundary_set::set_color_array(Shared_color_array color_array)
   Mesh_set::set_color_array(color_array);
   destroy_display_list();
   m_dirty_color_buffer = true;
+  m_dirty_local_vertex_buffers = true;
 }
 
 //! \brief sets the texture-coordinate array.
@@ -1744,6 +1747,87 @@ void Boundary_set::field_changed(const Field_info* field_info)
   Mesh_set::field_changed(field_info);
 }
 
+//! \brief computes flat indices for the normals or for the colors.
+void Boundary_set::compute_flat_indices(Index_array& in_indices,
+                                        Index_array& out_indices)
+{
+  if (in_indices.empty()) {
+    if (PT_TRIANGLES == m_primitive_type) {
+      Uint j = 0;
+      for (Uint i = 0; i < get_num_primitives(); ++i) {
+        out_indices[j++] = i;
+        out_indices[j++] = i;
+        out_indices[j++] = i;
+      }
+      return;
+    }
+    SGAL_assertion(PT_QUADS == m_primitive_type);
+    Uint j = 0;
+    for (Uint i = 0; i < get_num_primitives(); ++i) {
+      out_indices[j++] = i;
+      out_indices[j++] = i;
+      out_indices[j++] = i;
+      out_indices[j++] = i;
+    }
+    return;
+  }
+  if (PT_TRIANGLES == m_primitive_type) {
+    Uint j = 0;
+    for (Uint i = 0; i < get_num_primitives(); ++i) {
+      out_indices[j++] = in_indices[i];
+      out_indices[j++] = in_indices[i];
+      out_indices[j++] = in_indices[i];
+    }
+    return;
+  }
+  SGAL_assertion(PT_QUADS == m_primitive_type);
+  Uint j = 0;
+  for (Uint i = 0; i < get_num_primitives(); ++i) {
+    out_indices[j++] = in_indices[i];
+    out_indices[j++] = in_indices[i];
+    out_indices[j++] = in_indices[i];
+    out_indices[j++] = in_indices[i];
+  }
+}
+
+//! \brief cleans the local coordinates, normals, and color, vertex buffers.
+void Boundary_set::clean_local_cnc_vertex_buffers()
+{
+  SGAL_assertion(m_normal_array);
+  SGAL_assertion(m_color_array);
+
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+
+  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    tmp_color_indices.begin() :
+    (m_flat_color_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
+  SGAL_assertion(normal_indices_begin != color_indices_begin);
+  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                normal_indices_begin,
+                                m_color_array, m_local_color_buffer,
+                                color_indices_begin);
+  tmp_normal_indices.clear();
+  tmp_color_indices.clear();
+  m_dirty_normal_buffer = true;
+  m_dirty_color_buffer = true;
+}
+
 /*! \brief cleans the local coordinates, normals, color, and 2d texture
  * coordinates vertex buffers.
  */
@@ -1754,10 +1838,28 @@ void Boundary_set::clean_local_cnct2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+
+  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    tmp_color_indices.begin() :
+    (m_flat_color_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   SGAL_assertion((normal_indices_begin != color_indices_begin) ||
@@ -1768,6 +1870,8 @@ void Boundary_set::clean_local_cnct2_vertex_buffers()
                                 color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_2d,
                                 tex_coord_indices_begin);
+  tmp_normal_indices.clear();
+  tmp_color_indices.clear();
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
@@ -1783,8 +1887,24 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+
+  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
   auto color_indices_begin = m_flat_color_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_color_indices.begin();
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
@@ -1797,6 +1917,9 @@ void Boundary_set::clean_local_cnct3_vertex_buffers()
                                 color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_3d,
                                 tex_coord_indices_begin);
+
+  tmp_normal_indices.clear();
+  tmp_color_indices.clear();
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
@@ -1813,10 +1936,28 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+
+  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    tmp_color_indices.begin() :
+    (m_flat_color_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   SGAL_assertion((normal_indices_begin != color_indices_begin) ||
@@ -1827,27 +1968,32 @@ void Boundary_set::clean_local_cnct4_vertex_buffers()
                                 color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_4d,
                                 tex_coord_indices_begin);
+
+  tmp_normal_indices.clear();
+  tmp_color_indices.clear();
   m_dirty_normal_buffer = true;
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
 
-//! \brief cleans the local coordinates, normals, and color, vertex buffers.
-void Boundary_set::clean_local_cnc_vertex_buffers()
+//! \brief cleans the local coordinates and normals vertex buffers.
+void Boundary_set::clean_local_cn_vertex_buffers()
 {
   SGAL_assertion(m_normal_array);
-  SGAL_assertion(m_color_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
-  SGAL_assertion(normal_indices_begin != color_indices_begin);
-  clean_local_3d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin,
-                                m_color_array, m_local_color_buffer,
-                                color_indices_begin);
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+  auto normal_indices_begin =
+    (m_normal_attachment == AT_PER_PRIMITIVE) ? tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
+  clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer,
+                                  normal_indices_begin);
+  tmp_normal_indices.clear();
   m_dirty_normal_buffer = true;
-  m_dirty_color_buffer = true;
 }
 
 /*! \brief cleans the local coordinates, normals, and 2d texture coordinates
@@ -1859,8 +2005,18 @@ void Boundary_set::clean_local_cnt2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+
+  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
@@ -1868,6 +2024,7 @@ void Boundary_set::clean_local_cnt2_vertex_buffers()
                                 normal_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_2d,
                                 tex_coord_indices_begin);
+  tmp_normal_indices.clear();
   m_dirty_normal_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1881,8 +2038,18 @@ void Boundary_set::clean_local_cnt3_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+
+  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
@@ -1890,6 +2057,7 @@ void Boundary_set::clean_local_cnt3_vertex_buffers()
                                 normal_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_3d,
                                 tex_coord_indices_begin);
+  tmp_normal_indices.clear();
   m_dirty_normal_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1904,8 +2072,18 @@ void Boundary_set::clean_local_cnt4_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
+
+  Index_array tmp_normal_indices;
+  if (m_normal_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_normal_indices.resize(size);
+    compute_flat_indices(m_flat_normal_indices, tmp_normal_indices);
+  }
+
+  auto normal_indices_begin = (m_normal_attachment == AT_PER_PRIMITIVE) ?
+    tmp_normal_indices.begin() :
+    (m_flat_normal_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   SGAL_assertion(normal_indices_begin != tex_coord_indices_begin);
@@ -1913,19 +2091,31 @@ void Boundary_set::clean_local_cnt4_vertex_buffers()
                                 normal_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_4d,
                                 tex_coord_indices_begin);
+  tmp_normal_indices.clear();
   m_dirty_normal_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
 
-//! \brief cleans the local coordinates and normals vertex buffers.
-void Boundary_set::clean_local_cn_vertex_buffers()
+//! \brief cleans the local coordinates and colors vertex buffers.
+void Boundary_set::clean_local_cc_vertex_buffers()
 {
-  SGAL_assertion(m_normal_array);
-  auto normal_indices_begin = m_flat_normal_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_normal_indices.begin();
-  clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                normal_indices_begin);
-  m_dirty_normal_buffer = true;
+  SGAL_assertion(m_color_array);
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    tmp_color_indices.begin() :
+    (m_flat_color_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
+  clean_local_2d_vertex_buffers(m_color_array, m_local_color_buffer,
+                                color_indices_begin);
+
+  tmp_color_indices.clear();
+  m_dirty_color_buffer = true;
 }
 
 /*! \brief cleans the local coordinates, colors, and texture coordinates vertex
@@ -1937,15 +2127,26 @@ void Boundary_set::clean_local_cct2_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_2d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_2d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
+
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    tmp_color_indices.begin() :
+    (m_flat_color_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
   SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
   clean_local_3d_vertex_buffers(m_color_array, m_local_color_buffer,
                                 color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_2d,
                                 tex_coord_indices_begin);
+
+  tmp_color_indices.clear();
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1956,8 +2157,17 @@ void Boundary_set::clean_local_cct3_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_3d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_3d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    tmp_color_indices.begin() :
+    (m_flat_color_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
@@ -1965,6 +2175,8 @@ void Boundary_set::clean_local_cct3_vertex_buffers()
                                 color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_3d,
                                 tex_coord_indices_begin);
+
+  tmp_color_indices.clear();
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
 }
@@ -1976,8 +2188,17 @@ void Boundary_set::clean_local_cct4_vertex_buffers()
   boost::shared_ptr<Tex_coord_array_4d> tex_coord_array =
     boost::dynamic_pointer_cast<Tex_coord_array_4d>(m_tex_coord_array);
   SGAL_assertion(tex_coord_array);
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
+
+  Index_array tmp_color_indices;
+  if (m_color_attachment == AT_PER_PRIMITIVE) {
+    auto size = m_flat_coord_indices.size();
+    tmp_color_indices.resize(size);
+    compute_flat_indices(m_flat_color_indices, tmp_color_indices);
+  }
+  auto color_indices_begin = (m_color_attachment == AT_PER_PRIMITIVE) ?
+    tmp_color_indices.begin() :
+    (m_flat_color_indices.empty() ?
+     m_flat_coord_indices.begin() : m_flat_color_indices.begin());
   auto tex_coord_indices_begin = m_flat_tex_coord_indices.empty() ?
     m_flat_coord_indices.begin() : m_flat_tex_coord_indices.begin();
   SGAL_assertion(color_indices_begin != tex_coord_indices_begin);
@@ -1985,19 +2206,10 @@ void Boundary_set::clean_local_cct4_vertex_buffers()
                                 color_indices_begin,
                                 tex_coord_array, m_local_tex_coord_buffer_4d,
                                 tex_coord_indices_begin);
+
+  tmp_color_indices.clear();
   m_dirty_color_buffer = true;
   m_dirty_tex_coord_buffer = true;
-}
-
-//! \brief cleans the local coordinates and colors vertex buffers.
-void Boundary_set::clean_local_cc_vertex_buffers()
-{
-  SGAL_assertion(m_color_array);
-  auto color_indices_begin = m_flat_color_indices.empty() ?
-    m_flat_coord_indices.begin() : m_flat_color_indices.begin();
-  clean_local_2d_vertex_buffers(m_color_array, m_local_color_buffer,
-                                color_indices_begin);
-  m_dirty_color_buffer = true;
 }
 
 //! \brief cleans the local coordinates and texture coordinates vertex buffers.
