@@ -71,6 +71,7 @@
 #if defined(NDEBUG)
 #include "SCGAL/Polygon_set_on_sphere_geo.hpp"
 #endif
+#include "SCGAL/Arrangement_of_polygeodesics_on_sphere_geo.hpp"
 #endif
 #if defined(USE_VOS)
 #include "SCGAL/Voronoi_diagram_on_sphere_geo.hpp"
@@ -136,6 +137,7 @@ SGAL_SCGAL_DECL void scgal_init()
 #if defined(NDEBUG)
   Container_factory::get_instance()->doregister(Polygon_set_on_sphere_geo::prototype());
 #endif
+  Container_factory::get_instance()->doregister(Arrangement_of_polygeodesics_on_sphere_geo::prototype());
 #endif
 #if defined(USE_VOS)
   Container_factory::get_instance()->doregister(Voronoi_diagram_on_sphere_geo::prototype());

@@ -148,14 +148,6 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     if (name == "curveIndex") {
       tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
-      if ((size == 0) || (size & 0x1)) {
-        m_curve_indices.clear();
-        std::cerr << "Error!" << std::endl;
-        //! todo issue an error
-        elem->mark_delete(ai);
-        continue;               // Advance to next attribute
-      }
-
       m_curve_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
@@ -167,14 +159,6 @@ void Arrangement_on_sphere_base_geo::set_attributes(Element* elem)
     if (name == "xMonotoneCurveIndex") {
       tokenizer tokens(value, sep);
       Uint size = std::distance(tokens.begin(), tokens.end());
-      if (size == 0 || size & 0x1) {
-        m_x_monotone_curve_indices.clear();
-        std::cerr << "Error!" << std::endl;
-        //! todo issue an error
-        elem->mark_delete(ai);
-        continue;               // Advance to next attribute
-      }
-
       m_x_monotone_curve_indices.resize(size);
       Uint i = 0;
       for (tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {

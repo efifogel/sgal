@@ -242,15 +242,38 @@ protected:
     typedef typename Geom_traits::Point_2               Point;
     typedef typename Geom_traits::X_monotone_curve_2    X_monotone_curve;
 
+    const Geom_traits* traits = aos->geometry_traits();
+    auto cmp_endpoints = traits->compare_endpoints_xy_2_object();
+    auto ctr_min_vertex = traits->construct_min_vertex_2_object();
+    auto ctr_max_vertex = traits->construct_max_vertex_2_object();
+    auto ctr_cross_product = traits->construct_cross_product_vector_3_object();
     Edge_const_iterator hei;
     for (hei = aos->edges_begin(); hei != aos->edges_end(); ++hei) {
       const X_monotone_curve& curve = hei->curve();
+      /*! The following code uses member functions of the curve type that are
+       * not in the concept, and thus are not guaranteed to be supported.
+       * However, since there is only one traits that supports geodesics on
+       * the sphere, and the curve type of this traits does support these
+       * member functions, the code uses them after all, as they are more
+       * efficient. For different traits classes use instead:
+       */
+      // auto flag = (cmp_endpoints(curve) == CGAL::SMALLER);
+      // const auto& source =
+      //   (flag) ? ctr_min_vertex(curve) : ctr_max_vertex(curve);
+      // const auto& target =
+      //   (flag) ? ctr_max_vertex(curve) : ctr_min_vertex(curve);
+      // auto normal = ctr_cross_product(source.vector(), target.vector());
+      // Vector3f src = to_vector3f(source);
+      // Vector3f trg = to_vector3f(target);
+      // Vector3f nrm = to_vector3f(normal);
+      // nrm.normalize();
+
       Vector3f src = to_vector3f(curve.source());
       Vector3f trg = to_vector3f(curve.target());
-      Vector3f normal = to_vector3f(curve.normal());
+      Vector3f nrm = to_vector3f(curve.normal());
       src.normalize();
       trg.normalize();
-      draw_aos_edge(action, src, trg, normal);
+      draw_aos_edge(action, src, trg, nrm);
     }
   }
 
@@ -334,7 +357,8 @@ protected:
           }
           insert(*aos, vec.begin(), vec.end());
           vec.clear();
-        } else if (m_insertion_strategy == INCREMENT) {
+        }
+        else if (m_insertion_strategy == INCREMENT) {
           unsigned int i = 0;
           for (it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it) {
@@ -396,7 +420,8 @@ protected:
           }
           insert(*aos, vec.begin(), vec.end());
           vec.clear();
-        } else if (m_insertion_strategy == INCREMENT) {
+        }
+        else if (m_insertion_strategy == INCREMENT) {
           unsigned int i = 0;
           for (it = m_curve_indices.begin(); it != m_curve_indices.end(); ++it)
           {
@@ -437,10 +462,6 @@ protected:
     }
   }
 
-private:
-  /*! The container prototype. */
-  static Container_proto* s_prototype;
-
   /*! Draw the arrangement on sphere vertices.
    * \param action
    */
@@ -453,6 +474,10 @@ private:
 
   /*! Create the renderers. */
   void create_renderers();
+
+private:
+  /*! The container prototype. */
+  static Container_proto* s_prototype;
 };
 
 #if (defined _MSC_VER)
