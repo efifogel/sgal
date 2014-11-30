@@ -29,6 +29,7 @@ endif()
 
 if (SCGAL_AOS_BASE)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_base_geo.cpp)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_base_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_renderers.cpp)
 endif()
 
@@ -48,6 +49,7 @@ if (USE_AOS)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Polygon_set_on_sphere_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_overlay_geo.cpp)
   set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_on_sphere_sim_geo.cpp)
+  set(SCGAL_SOURCE_FILES ${SCGAL_SOURCE_FILES} lib/geometries/Arrangement_of_polygeodesics_on_sphere_geo.cpp)
 endif()
 
 if (USE_VOS)

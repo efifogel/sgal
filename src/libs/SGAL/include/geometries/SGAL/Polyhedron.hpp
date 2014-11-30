@@ -36,8 +36,6 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include "SGAL/basic.hpp"
-
-#include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 
 SGAL_BEGIN_NAMESPACE
