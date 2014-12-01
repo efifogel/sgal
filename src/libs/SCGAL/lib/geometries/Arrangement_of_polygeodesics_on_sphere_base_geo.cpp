@@ -61,10 +61,26 @@ SGAL_BEGIN_NAMESPACE
 Container_proto*
 Arrangement_of_polygeodesics_on_sphere_base_geo::s_prototype(nullptr);
 
+// Polygeodesic vertex:
+const Arrangement_on_surface_geo::Vertex_style
+Arrangement_of_polygeodesics_on_sphere_base_geo::
+s_def_pg_vertex_style(Vertex_shape::BALL);
+const Float Arrangement_of_polygeodesics_on_sphere_base_geo::
+s_def_pg_vertex_radius(.06f);
+const Float Arrangement_of_polygeodesics_on_sphere_base_geo::
+s_def_pg_vertex_point_size(2);
+const Vector3f Arrangement_of_polygeodesics_on_sphere_base_geo::
+s_def_pg_vertex_color(.5f, 0, 0);
+
 //! \brief constructor.
 Arrangement_of_polygeodesics_on_sphere_base_geo::
 Arrangement_of_polygeodesics_on_sphere_base_geo(Boolean proto) :
-  Arrangement_on_sphere_base_geo(proto)
+  Arrangement_on_sphere_base_geo(proto),
+  // Vertex
+  m_pg_vertex_style(s_def_pg_vertex_style),
+  m_pg_vertex_radius(s_def_pg_vertex_radius),
+  m_pg_vertex_point_size(s_def_pg_vertex_point_size),
+  m_pg_vertex_color(s_def_pg_vertex_color)
 { if (!proto) create_renderers(); }
 
 //! \brief destructor.
@@ -77,6 +93,19 @@ void Arrangement_of_polygeodesics_on_sphere_base_geo::init_prototype()
   if (s_prototype) return;
   s_prototype =
     new Container_proto(Arrangement_on_sphere_base_geo::get_prototype());
+
+  Execution_function exec_func =
+    static_cast<Execution_function>(&Arrangement_on_surface_geo::
+                                    renderer_changed);
+  // pgVertexStyleId
+  Uint_handle_function pg_vertex_style_func =
+    reinterpret_cast<Uint_handle_function>
+    (&Arrangement_of_polygeodesics_on_sphere_base_geo::pg_vertex_style_handle);
+  s_prototype->add_field_info(new SF_uint(PG_VERTEX_STYLE_ID,
+                                          "pgVertexStyleId",
+                                          RULE_EXPOSED_FIELD,
+                                          pg_vertex_style_func,
+                                          exec_func));
 }
 
 //! \brief deletes the container prototype.
@@ -98,7 +127,38 @@ Arrangement_of_polygeodesics_on_sphere_base_geo::get_prototype()
 //! \brief sets the ellpsoid attributes.
 void Arrangement_of_polygeodesics_on_sphere_base_geo::
 set_attributes(Element* elem)
-{ Arrangement_on_sphere_base_geo::set_attributes(elem); }
+{
+  Arrangement_on_sphere_base_geo::set_attributes(elem);
+
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
+    if (name == "pgVertexStyle") {
+      set_pg_vertex_style(Vertex_shape::style(strip_double_quotes(value)));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "pgVertexRadius") {
+      set_pg_vertex_radius(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "pgVertexPointSize") {
+      set_pg_vertex_point_size(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "pgVertexColor") {
+      Vector3f col(value);
+      set_pg_vertex_color(col);
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  // Remove all the deleted attributes:
+  elem->delete_marked();
+}
 
 //! \brief
 void Arrangement_of_polygeodesics_on_sphere_base_geo::

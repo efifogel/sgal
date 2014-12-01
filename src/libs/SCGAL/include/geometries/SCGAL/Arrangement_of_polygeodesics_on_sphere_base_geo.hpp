@@ -67,6 +67,11 @@ class SGAL_SCGAL_DECL Arrangement_of_polygeodesics_on_sphere_base_geo :
 public:
   enum {
     FIRST = Arrangement_on_sphere_base_geo::LAST - 1,
+    PG_VERTEX_STYLE,
+    PG_VERTEX_STYLE_ID,
+    PG_VERTEX_RADIUS,
+    PG_VERTEX_POINT_SIZE,
+    PG_VERTEX_COLOR,
     LAST
   };
 
@@ -88,6 +93,12 @@ public:
 
   /*! Obtain the container prototype. */
   virtual Container_proto* get_prototype();
+
+  /// \name field handlers
+  //@{
+  Vertex_style* pg_vertex_style_handle(const Field_info*)
+  { return &m_pg_vertex_style; }
+  //@}
 
   /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
@@ -113,8 +124,50 @@ public:
                              Vector3f& source, Vector3f& target,
                              Vector3f& normal);
 
+  /*! Obtain the vertex-shape style.
+   * \return the vertex-shape style.
+   */
+  Vertex_style get_pg_vertex_style() const { return m_pg_vertex_style; }
+
+  /*! Set the vertex-shape style. */
+  void set_pg_vertex_style(Vertex_style style) { m_pg_vertex_style = style; }
+
+  /*! Obtain the vertex radius.
+   * \return the vertex radius.
+   */
+  Float get_pg_vertex_radius() const { return m_pg_vertex_radius; }
+
+  /*! Set the vertex radius */
+  void set_pg_vertex_radius(Float radius) { m_pg_vertex_radius = radius; }
+
+  /*! Obtain the pg vertex color.
+   * \return the vertex color.
+   */
+  const Vector3f& get_pg_vertex_color() const { return m_pg_vertex_color; }
+
+  /*! Set the pg vertex color.
+   */
+  void set_pg_vertex_color(const Vector3f& color) { m_pg_vertex_color = color; }
+
+  /*! Obtain the vertex point size */
+  Float get_pg_vertex_point_size() const { return m_pg_vertex_point_size; }
+
+  /*! Set the vertex point size */
+  void set_pg_vertex_point_size(Float size) { m_pg_vertex_point_size = size; }
 
 protected:
+  /*! The vertex shape. */
+  Vertex_style m_pg_vertex_style;
+
+  /*! The radius of the disc or ball that represents a vertex. */
+  Float m_pg_vertex_radius;
+
+  /*! The size of the point that represents a vertex. */
+  Float m_pg_vertex_point_size;
+
+  /*! The color of the vertices. */
+  Vector3f m_pg_vertex_color;
+
   /*! Draw the edges of a given arrangement on surface.
    * \param aos the arrangement on surface.
    * \param action
@@ -122,6 +175,10 @@ protected:
   template <typename Aos>
   void my_draw_aos_edges(Aos* aos, Draw_action* action)
   {
+    void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
+                               Vertex_style style,
+                               Float radius, Float delta_angle);
+
     typedef typename Aos::Edge_const_iterator           Edge_const_iterator;
     typedef typename Aos::Geometry_traits_2             Geom_traits;
     typedef typename Geom_traits::Point_2               Point;
@@ -132,27 +189,132 @@ protected:
     auto cmp_endpoints = traits->compare_endpoints_xy_2_object();
     auto ctr_min_vertex = traits->construct_min_vertex_2_object();
     auto ctr_max_vertex = traits->construct_max_vertex_2_object();
-    auto ctr_cross_product = seg_traits->construct_cross_product_vector_3_object();
+    auto ctr_cross_product =
+      seg_traits->construct_cross_product_vector_3_object();
     Edge_const_iterator hei;
     for (hei = aos->edges_begin(); hei != aos->edges_end(); ++hei) {
       const X_monotone_curve& curve = hei->curve();
-      // Vector3f src = to_vector3f(curve.source());
-      // Vector3f trg = to_vector3f(curve.target());
-      // Vector3f normal = to_vector3f(curve.normal());
-      auto flag = (cmp_endpoints(curve) == CGAL::SMALLER);
-      const auto& source =
-        (flag) ? ctr_min_vertex(curve) : ctr_max_vertex(curve);
-      const auto& target =
-        (flag) ? ctr_max_vertex(curve) : ctr_min_vertex(curve);
-      auto normal = ctr_cross_product(source.vector(), target.vector());
-      Vector3f src = to_vector3f(source);
-      Vector3f trg = to_vector3f(target);
-      Vector3f nrm = to_vector3f(normal);
-      src.normalize();
-      trg.normalize();
-      nrm.normalize();
-      draw_aos_edge(action, src, trg, nrm);
+      for (auto it = curve.begin_segments(); it != curve.end_segments(); ++it) {
+        const auto& seg = *it;
+        /*! The following code uses member functions of the curve type that are
+         * not in the concept, and thus are not guaranteed to be supported.
+         * However, since there is only one traits that supports geodesics on
+         * the sphere, and the curve type of this traits does support these
+         * member functions, the code uses them after all, as they are more
+         * efficient. For different traits classes use instead:
+         */
+        // auto flag = (cmp_endpoints(curve) == CGAL::SMALLER);
+        // const auto& source =
+        //   (flag) ? ctr_min_vertex(curve) : ctr_max_vertex(curve);
+        // const auto& target =
+        //   (flag) ? ctr_max_vertex(curve) : ctr_min_vertex(curve);
+        // auto normal = ctr_cross_product(source.vector(), target.vector());
+        // Vector3f src = to_vector3f(source);
+        // Vector3f trg = to_vector3f(target);
+        // Vector3f nrm = to_vector3f(normal);
+        // nrm.normalize();
+
+        Vector3f src = to_vector3f(seg.source());
+        Vector3f trg = to_vector3f(seg.target());
+        Vector3f nrm = to_vector3f(seg.normal());
+        src.normalize();
+        trg.normalize();
+        if (true)
+          draw_vertex_on_sphere(action, trg, get_pg_vertex_style(),
+                                get_pg_vertex_radius(), get_aos_delta_angle());
+        draw_aos_edge(action, src, trg, nrm);
+      }
     }
+  }
+
+  /*! Construct an x-monotone polygeodesic curve.
+   * \param exact_coord_array the coordinate array.
+   * \param exact_normal_array the normal array.
+   * \param i the index of the curve. (Used to access the normal indices.)
+   * \param it (in/out) the iterator of the coord indices array.
+   * \param traits (in) the traits.
+   * \return the newly constructed x-monotone polygeodesic curve.
+   */
+  template <typename InputIterator, typename GeomTraits>
+  typename GeomTraits::X_monotone_curve_2 construct_x_monotone_curve
+    (Shared_exact_coord_array_3d exact_coord_array,
+     Shared_exact_normal_array exact_normal_array,
+     Uint i,
+     InputIterator& it,
+     const GeomTraits* traits)
+  {
+    const auto* seg_traits = traits->segment_traits_2();
+    Exact_kernel::Construct_direction_3 ctr_direction =
+      seg_traits->construct_direction_3_object();
+    Exact_kernel::Construct_vector_3 ctr_vector =
+      seg_traits->construct_vector_3_object();
+
+    std::list<typename GeomTraits::Point_2> points;
+    while (static_cast<Uint>(-1) != *it) {
+      Exact_point_3& p = (*exact_coord_array)[*it];
+      Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
+      Exact_direction_3 d = ctr_direction(v);
+      typename GeomTraits::Point_2 q(d);
+      points.push_back(q);
+      ++it;
+    }
+
+    if (!exact_normal_array || (m_normal_indices.size() <= i))
+      return traits->construct_x_monotone_curve_2_object()(points.begin(),
+                                                           points.end());
+
+    SGAL_assertion(2 = points.size());
+    Uint index = m_normal_indices[i];
+    Exact_vector_3& v = (*exact_normal_array)[index];
+    Exact_direction_3 normal = ctr_direction(v);
+    auto pit = points.begin();
+    typename GeomTraits::Segment_traits_2::X_monotone_curve_2
+      seg(*pit++, *pit, normal);
+    return traits->construct_x_monotone_curve_2_object()(seg);
+  }
+
+  /*! Construct a polygeodesic general curve.
+   * \param exact_coord_array the coordinate array.
+   * \param exact_normal_array the normal array.
+   * \param i the index of the curve. (Used to access the normal indices.)
+   * \param it (in/out) the iterator of the coord indices array.
+   * \param traits (in) the traits.
+   * \return the newly constructed polygeodesic curve.
+   */
+  template <typename InputIterator, typename GeomTraits>
+  typename GeomTraits::Curve_2 construct_curve
+    (Shared_exact_coord_array_3d exact_coord_array,
+     Shared_exact_normal_array exact_normal_array,
+     Uint i,
+     InputIterator& it,
+     const GeomTraits* traits)
+  {
+    const auto* seg_traits = traits->segment_traits_2();
+    Exact_kernel::Construct_direction_3 ctr_direction =
+      seg_traits->construct_direction_3_object();
+    Exact_kernel::Construct_vector_3 ctr_vector =
+      seg_traits->construct_vector_3_object();
+
+    std::list<typename GeomTraits::Point_2> points;
+    while (static_cast<Uint>(-1) != *it) {
+      Exact_point_3& p = (*exact_coord_array)[*it];
+      Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
+      Exact_direction_3 d = ctr_direction(v);
+      typename GeomTraits::Point_2 q(d);
+      points.push_back(q);
+      ++it;
+    }
+
+    if (!exact_normal_array || (m_normal_indices.size() <= i))
+      return traits->construct_curve_2_object()(points.begin(), points.end());
+
+    SGAL_assertion(2 = points.size());
+    Uint index = m_normal_indices[i];
+    Exact_vector_3& v = (*exact_normal_array)[index];
+    Exact_direction_3 normal = ctr_direction(v);
+    auto pit = points.begin();
+    typename GeomTraits::Segment_traits_2::Curve_2 seg(*pit++, *pit, normal);
+    return traits->construct_curve_2_object()(seg);
   }
 
   /*! Insert the points, curves, and x-monotone curves into the givem
@@ -184,137 +346,61 @@ protected:
       // Insert the x-monotone curves:
       if (! m_x_monotone_curve_indices.empty()) {
         if (m_insertion_strategy == AGGREGATE) {
+          Uint i(0);
           std::list<X_monotone_curve> xcurves;
           for (auto it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it)
           {
-            std::list<Point> points;
-            while (static_cast<Uint>(-1) != *it) {
-              Exact_point_3& p = (*exact_coord_array)[*it];
-              Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-              Exact_direction_3 d = ctr_direction(v);
-              Point q(d);
-              points.push_back(q);
-              ++it;
-            }
             X_monotone_curve xcv =
-              traits->construct_x_monotone_curve_2_object()(points.begin(),
-                                                            points.end());
+              construct_x_monotone_curve(exact_coord_array, exact_normal_array,
+                                         i, it, traits);
             xcurves.push_back(xcv);
+            ++i;
           }
 
-//             if (exact_normal_array && (m_normal_indices.size() > i)) {
-//               Uint index = m_normal_indices[i];
-//               if (index != static_cast<Uint>(-1)) {
-//                 Exact_vector_3& v = (*exact_normal_array)[index];
-//                 Exact_direction_3 normal = ctr_direction(v);
-//                 vec[i++] = X_monotone_curve(q1, q2, normal);
-//                 continue;
-//               }
-//             }
-//             vec[i++] = X_monotone_curve(q1, q2);
-//           }
           insert(*aos, xcurves.begin(), xcurves.end());
           xcurves.clear();
         }
         else if (m_insertion_strategy == INCREMENT) {
+          Uint i(0);
           for (auto it = m_x_monotone_curve_indices.begin();
                it != m_x_monotone_curve_indices.end(); ++it)
           {
-            std::list<Point> points;
-            while (static_cast<Uint>(-1) != *it) {
-              Exact_point_3& p = (*exact_coord_array)[*it];
-              Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-              Exact_direction_3 d = ctr_direction(v);
-              Point q(d);
-              points.push_back(q);
-              ++it;
-            }
             X_monotone_curve xcv =
-              traits->construct_x_monotone_curve_2_object()(points.begin(),
-                                                            points.end());
+              construct_x_monotone_curve(exact_coord_array, exact_normal_array,
+                                         i, it, traits);
             insert(*aos, xcv);
-
-//             if (exact_normal_array && (m_normal_indices.size() > i)) {
-//               Uint index = m_normal_indices[i];
-//               if (index != static_cast<Uint>(-1)) {
-//                 Exact_vector_3& v = (*exact_normal_array)[index];
-//                 Exact_direction_3 normal = ctr_direction(v);
-//                 X_monotone_curve xc(q1, q2, normal);
-//                 insert(*aos, xc);
-//                 ++i;
-//                 continue;
-//               }
-//             }
+            ++i;
           }
         }
       }
 
       // Insert the general curves:
-      std::cout << "m_curve_indices.size(): "
-                << m_curve_indices.size() << std::endl;
       if (!m_curve_indices.empty()) {
         if (m_insertion_strategy == AGGREGATE) {
+          Uint i(0);
           std::list<Curve> curves;
           for (auto it = m_curve_indices.begin();
                it != m_curve_indices.end(); ++it)
           {
-            std::list<Point> points;
-            while (static_cast<Uint>(-1) != *it) {
-              Exact_point_3& p = (*exact_coord_array)[*it];
-              Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-              Exact_direction_3 d = ctr_direction(v);
-              Point q(d);
-              points.push_back(q);
-              ++it;
-            }
-            Curve cv =
-              traits->construct_curve_2_object()(points.begin(), points.end());
+            Curve cv = construct_curve(exact_coord_array, exact_normal_array,
+                                       i, it, traits);
             curves.push_back(cv);
+            ++i;
           }
-
-          // if (exact_normal_array && (m_normal_indices.size() > i)) {
-          //   Uint index = m_normal_indices[i];
-          //   if (index != static_cast<Uint>(-1)) {
-          //     Exact_vector_3& v = (*exact_normal_array)[index];
-          //     Exact_direction_3 normal = ctr_direction(v);
-          //     vec[i++] = X_monotone_curve(q1, q2, normal);
-          //     continue;
-          //   }
-          // }
 
           insert(*aos, curves.begin(), curves.end());
           curves.clear();
         }
         else if (m_insertion_strategy == INCREMENT) {
+          Uint i(0);
           for (auto it = m_curve_indices.begin();
                it != m_curve_indices.end(); ++it)
           {
-            std::list<Point> points;
-            while (static_cast<Uint>(-1) != *it) {
-              Exact_point_3& p = (*exact_coord_array)[*it];
-              Exact_vector_3 v = ctr_vector(CGAL::ORIGIN, p);
-              Exact_direction_3 d = ctr_direction(v);
-              Point q(d);
-              points.push_back(q);
-              ++it;
-            }
-            Curve cv =
-              traits->construct_curve_2_object()(points.begin(), points.end());
-
-            // if (exact_normal_array && (m_normal_indices.size() > i)) {
-            //   Uint index = m_normal_indices[i];
-            //   if (index != static_cast<Uint>(-1)) {
-            //     Exact_vector_3& v = (*exact_normal_array)[index];
-            //     Exact_direction_3 normal = ctr_direction(v);
-            //     X_monotone_curve xc(q1, q2, normal);
-            //     insert(*aos, xc);
-            //     ++i;
-            //     continue;
-            //   }
-            // }
-
+            Curve cv = construct_curve(exact_coord_array, exact_normal_array,
+                                       i, it, traits);
             insert(*aos, cv);
+            ++i;
           }
         }
       }
@@ -334,6 +420,11 @@ protected:
 private:
   /*! The container prototype. */
   static Container_proto* s_prototype;
+
+  static const Vertex_style s_def_pg_vertex_style;
+  static const Float s_def_pg_vertex_radius;
+  static const Float s_def_pg_vertex_point_size;
+  static const Vector3f s_def_pg_vertex_color;
 
   /*! Draw the arrangement on sphere vertices.
    * \param action
