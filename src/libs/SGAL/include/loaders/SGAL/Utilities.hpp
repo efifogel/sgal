@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1658 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_UTILITIES_HPP
@@ -35,34 +32,40 @@
 
 SGAL_BEGIN_NAMESPACE
 
-/*! */
-struct SGAL_SGAL_DECL lt_nocase : public std::binary_function<char, char, bool>
-{
-  bool operator()(char x, char y) const
-  {
-    return ::toupper(static_cast<unsigned char>(x)) <
-      ::toupper(static_cast<unsigned char>(y));
-  }
-};
-
-/*! \brief compares the input string to "TRUE" or "FALSE" */
+/*! Compare a string to "TRUE" or "FALSE".
+ * \param str (in) the input string.
+ * \return true if str is equal to "TRUE" and false otherwise.
+ */
 SGAL_SGAL_DECL Boolean compare_to_true(const std::string& str);
 
-/*! \brief obtains the number of tokens in a string */
-SGAL_SGAL_DECL Uint get_num_tokens(const std::string& str);
+/*! Compare a string range to "TRUE" or "FALSE".
+ * \param begin (in) the input string begin iterator.
+ * \param end (in) the input string past-the-end iterator.
+ * \return true if str is equal to "TRUE" and false otherwise.
+ */
+SGAL_SGAL_DECL Boolean compare_to_true(std::string::const_iterator begin,
+                                       std::string::const_iterator end);
+
+/*! Obtain the number of tokens separated by while characters in a string.
+ * \param str (in) the input string.
+ * \return the number of tokens.
+ */
+SGAL_SGAL_DECL size_t get_num_tokens(const std::string& str);
 
 /*! \todo replace this code */
 template <typename T>
-inline Uint get_num_values(const std::string& value)
+inline size_t get_num_values(const std::string& value)
 {
   std::istringstream svalue(value, std::istringstream::in);
-  Uint num_values;
+  size_t num_values;
   T tmp;
   for (num_values = 0; !svalue.eof(); svalue >> tmp, num_values++);
   return num_values;
 }
 
-/*! \brief strips embedding double quotes */
+/*! Strip embedding double quotes.
+ * \param str (in) the input string.
+ */
 SGAL_SGAL_DECL std::string strip_double_quotes(std::string str);
 
 SGAL_END_NAMESPACE
