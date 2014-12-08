@@ -194,6 +194,8 @@ protected:
     Edge_const_iterator hei;
     for (hei = aos->edges_begin(); hei != aos->edges_end(); ++hei) {
       const X_monotone_curve& curve = hei->curve();
+      auto last = curve.end_segments();
+      --last;
       for (auto it = curve.begin_segments(); it != curve.end_segments(); ++it) {
         const auto& seg = *it;
         /*! The following code uses member functions of the curve type that are
@@ -219,7 +221,7 @@ protected:
         Vector3f nrm = to_vector3f(seg.normal());
         src.normalize();
         trg.normalize();
-        if (true)
+        if (it != last)
           draw_vertex_on_sphere(action, trg, get_pg_vertex_style(),
                                 get_pg_vertex_radius(), get_aos_delta_angle());
         draw_aos_edge(action, src, trg, nrm);
