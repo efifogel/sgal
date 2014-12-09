@@ -109,7 +109,9 @@ public:
    */
   virtual void write(Formatter* formatter);
 
-  /*! . */
+  /*! triggers the execution of the engine as a response to change in one
+   * of the input fields.
+   */
   void trigger_changed(const Field_info* field_info);
 
   /*! Execute the engine. */
@@ -164,7 +166,8 @@ protected:
   /*! The operation. */
   Operation m_operation;
 
-  /*! Obtain an exact polyhedron geometry from an operand geometry container.
+  /*! \todo elliminate. Introduce a proper constructor in Exact_polhedron_geo.
+   * Obtain an exact polyhedron geometry from an operand geometry container.
    */
   Shared_exact_polyhedron_geo get_geometry(Shared_mesh_set operand) const;
 
