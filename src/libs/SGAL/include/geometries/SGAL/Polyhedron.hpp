@@ -43,8 +43,8 @@ SGAL_BEGIN_NAMESPACE
 template <typename Refs>
 class Polyhedron_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> {
 public:
-  /*! Constructor */
-  Polyhedron_halfedge() {}
+  /*! Default constructor */
+  Polyhedron_halfedge() : m_creased(false) {}
 
   /*! Obtain the index of the index of the incident vertex.
    * \return the index of the incident vertex.
