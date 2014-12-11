@@ -965,7 +965,8 @@ void Indexed_line_set::draw_FSNO_FINO_FAPV_TENO_MOLS_VANO()
  */
 void Indexed_line_set::draw_FSCO_FINO_FAPV_TENO_MOLS_VANO()
 {
-  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET, "\n");
+  SGAL_TRACE_MSG(Trace::INDEXED_LINE_SET,
+                 "draw_FSCO_FINO_FAPV_TENO_MOLS_VANO\n");
 
   SGAL_assertion(m_coord_array);
   SGAL_assertion(m_color_array);
