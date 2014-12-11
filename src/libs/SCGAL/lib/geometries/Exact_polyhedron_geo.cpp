@@ -297,8 +297,10 @@ CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Exact_point_3& p)
 const Exact_polyhedron&
 Exact_polyhedron_geo::get_polyhedron(Boolean with_planes)
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_dirty_polyhedron) {
+    if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+    clean_polyhedron();
+  }
   if (with_planes) {
     if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
   }
@@ -537,19 +539,31 @@ Float Exact_polyhedron_geo::volume_of_convex_hull()
   if (m_dirty_polyhedron) clean_polyhedron();
   if (is_empty()) return 0.0f;
 
-  // compute convex hull
-  Exact_polyhedron ch;
-  CGAL::convex_hull_3(m_polyhedron.points_begin(), m_polyhedron.points_end(),
-                      ch);
-
   // typedef CGAL::Exact_predicates_inexact_constructions_kernel   Epic_kernel;
-  typedef CGAL::Triangulation_3<Exact_kernel>                    Triangulation;
-  Triangulation tri(ch.points_begin(), ch.points_end());
   Float volume = 0.0f;
-  for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it) {
-    auto tetr = tri.tetrahedron(it);
-    volume += CGAL::to_double(tetr.volume());
+  if (get_convex_hull()) {
+    typedef CGAL::Triangulation_3<Exact_kernel>                Triangulation;
+    Triangulation tri(m_polyhedron.points_begin(), m_polyhedron.points_end());
+    for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
+    {
+      auto tetr = tri.tetrahedron(it);
+      volume += CGAL::to_double(tetr.volume());
+    }
   }
+  else {
+    Exact_polyhedron ch;
+    CGAL::convex_hull_3(m_polyhedron.points_begin(), m_polyhedron.points_end(),
+                        ch);
+
+    typedef CGAL::Triangulation_3<Exact_kernel>                Triangulation;
+    Triangulation tri(ch.points_begin(), ch.points_end());
+    for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
+    {
+      auto tetr = tri.tetrahedron(it);
+      volume += CGAL::to_double(tetr.volume());
+    }
+  }
+  // compute convex hull
   return volume;
 }
 
