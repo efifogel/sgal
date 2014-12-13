@@ -43,6 +43,7 @@
 #include "SCGAL/Exact_number_type.hpp"
 #include "SCGAL/Exact_kernel.hpp"
 #include "SCGAL/Arrangement_on_sphere_base_geo.hpp"
+#include "SCGAL/Arrangement_on_sphere_renderers.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -175,9 +176,9 @@ protected:
   template <typename Aos>
   void my_draw_aos_edges(Aos* aos, Draw_action* action)
   {
-    void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
-                               Vertex_style style,
-                               Float radius, Float delta_angle);
+//     void draw_vertex_on_sphere(Draw_action* action, Vector3f& center,
+//                                Vertex_style style,
+//                                Float radius, Float delta_angle);
 
     typedef typename Aos::Edge_const_iterator           Edge_const_iterator;
     typedef typename Aos::Geometry_traits_2             Geom_traits;
