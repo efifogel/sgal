@@ -59,6 +59,7 @@ REGISTER_TO_FACTORY(Exact_nef_polyhedron, "Exact_nef_polyhedron");
 Exact_nef_polyhedron::Exact_nef_polyhedron(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
+  m_dirty_nef_polyhedron(true),
   m_time(0)
 { m_surface.set_nef_polyhedron(this); }
 
@@ -68,6 +69,8 @@ Exact_nef_polyhedron::~Exact_nef_polyhedron() {}
 //! \brief updates the polyhedron data structure.
 void Exact_nef_polyhedron::clean_polyhedron()
 {
+  m_dirty_polyhedron = false;
+
   // Construct the polyhedron:
   m_polyhedron.delegate(m_surface);
 #if 0
@@ -86,37 +89,34 @@ void Exact_nef_polyhedron::clean_polyhedron()
   std::for_each(m_polyhedron.vertices_begin(), m_polyhedron.vertices_end(),
                 Convert_inexact_point());
 #endif
-
-  m_dirty_polyhedron = false;
-}
-
-//! \brief cleans the data structure.
-void Exact_nef_polyhedron::clean()
-{
-  clock_t start_time = clock();
-
-  if (m_dirty_polyhedron) clean_polyhedron();
-
-  // Construct the nef polyhedron:
-  m_nef_polyhedron = Nef_polyhedron_3(m_polyhedron);
-
-  clock_t end_time = clock();
-  m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
-
-  if (Mesh_set::is_dirty()) Mesh_set::clean();
 }
 
 //! \brief clears the internal representation.
-void Exact_nef_polyhedron::clear()
+void Exact_nef_polyhedron::clear_polyhedron()
 {
-  m_polyhedron.clear();
   m_dirty_polyhedron = true;
-  m_nef_polyhedron.clear();
-  Mesh_set::clear();
+  m_polyhedron.clear();
 }
 
-//! \brief
-void Exact_nef_polyhedron::cull(SGAL::Cull_context& cull_context) {}
+//! \brief cleans the data structure.
+void Exact_nef_polyhedron::clean_nef_polyhedron()
+{
+  m_dirty_nef_polyhedron = false;
+  m_nef_polyhedron = Nef_polyhedron_3(m_polyhedron);
+
+  clock_t start_time = clock();
+  if (m_dirty_polyhedron) clean_polyhedron();
+  clock_t end_time = clock();
+  m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
+}
+
+//! \brief clears the internal representation.
+void Exact_nef_polyhedron::clear_nef_polyhedron()
+{
+  m_dirty_nef_polyhedron = true;
+  m_nef_polyhedron.clear();
+  clear_polyhedron();
+}
 
 //! \brief draws the intermediate polyhedron (for debugging purpose).
 void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
@@ -149,9 +149,24 @@ void Exact_nef_polyhedron::draw_polyhedron(Draw_action * action)
   }
 }
 
-//! \brief draws the nef polyhedron.
-void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
+//! \brief draws the nef polyhedron representation.
+void Exact_nef_polyhedron::draw(Draw_action* action)
 {
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  if (is_dirty_nef_polyhedron()) clean_nef_polyhedron();
+  if (is_nef_polyhedron_empty()) return;
+
+  draw_mesh(action);
+}
+
+//! \brief draws the nef polyhedron geometry.
+void Exact_nef_polyhedron::draw_geometry(Draw_action* action)
+{
+  if (is_nef_polyhedron_empty()) return;
+
   // draw_polyhedron(action);
 
   for (Halffacet_iterator f = m_nef_polyhedron.halffacets_begin();
@@ -190,8 +205,8 @@ void Exact_nef_polyhedron::draw_geometry(SGAL::Draw_action* action)
 /*! \brief */
 void Exact_nef_polyhedron::isect(SGAL::Isect_action* action)
 {
-  if (is_dirty()) clean();
-  if (is_empty()) return;
+  if (is_dirty_nef_polyhedron()) clean_nef_polyhedron();
+  if (is_nef_polyhedron_empty()) return;
 
   for (Halffacet_iterator f = m_nef_polyhedron.halffacets_begin();
        f != m_nef_polyhedron.halffacets_end(); ++f)
@@ -252,7 +267,7 @@ void Exact_nef_polyhedron::clean_sphere_bound()
     return;
   }
 
-  if (is_dirty()) clean();
+  if (is_dirty_nef_polyhedron()) clean_nef_polyhedron();
   Inexact_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
     spheres.resize(m_polyhedron.size_of_vertices());
@@ -306,8 +321,16 @@ SGAL::Container_proto* Exact_nef_polyhedron::get_prototype()
 //! \brief prints statistics.
 void Exact_nef_polyhedron::print_stat()
 {
-  if (is_dirty()) clean();
+  if (is_dirty_nef_polyhedron()) clean_nef_polyhedron();
   std::cout << "No statistics available!" << std::endl;
+}
+
+//! \brief obtains the Nef polyhedron.
+Exact_nef_polyhedron::Nef_polyhedron_3&
+Exact_nef_polyhedron::get_nef_polyhedron()
+{
+  if (is_dirty_nef_polyhedron()) clean_nef_polyhedron();
+  return m_nef_polyhedron;
 }
 
 SGAL_END_NAMESPACE

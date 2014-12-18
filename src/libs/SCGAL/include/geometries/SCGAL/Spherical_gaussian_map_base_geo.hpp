@@ -37,7 +37,6 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Cull_context.hpp"
 #include "SGAL/Sphere.hpp"
 
 #include "SCGAL/basic.hpp"
@@ -50,7 +49,6 @@ SGAL_BEGIN_NAMESPACE
 
 class Field_info;
 class Container_proto;
-class Cull_context;
 class Isect_action;
 class Draw_action;
 class Scene_graph;
@@ -465,23 +463,25 @@ public:
   /*! Draw the geometry. */
   virtual void draw(Draw_action* action);
 
-  /*! Cull the geometry. */
-  virtual void cull(Cull_context& cull_context);
-
-  /*! */
+  /*! Draw the geometry for selection. */
   virtual void isect(Isect_action* action);
-
-  /*! Clean the geometry. */
-  virtual void clean_sgm();
 
   /*! Clean the bounding sphere of the spherical Gaussian map. */
   virtual void clean_sphere_bound();
 
-  /*! Draw the internal representation. */
+  /*! Draw the geometry internal representation.
+   */
   virtual void draw_geometry(Draw_action* action);
 
-  /*! Clear the internal representation and auxiliary data structures. */
-  virtual void clear();
+  /*! Clean the internal representation. */
+  virtual void clean_sgm();
+
+  /*! Clear the internal representation. */
+  virtual void clear_sgm();
+
+  /*! Determine whether the representation is empty.
+   */
+  virtual Boolean is_sgm_empty() const;
 
   /*! Clean the renderer. */
   virtual void clean_renderer();

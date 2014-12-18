@@ -28,6 +28,9 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
+#include <CGAL/basic.h>
+// #include <CGAL/orient_polygon_soup.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -46,6 +49,8 @@
 #include "SGAL/GL_error.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
 
+#include "SGAL/orient_polygon_soup.h"
+
 SGAL_BEGIN_NAMESPACE
 
 //! \todo #include "Model_stats.h"
@@ -58,6 +63,7 @@ REGISTER_TO_FACTORY(Indexed_face_set, "Indexed_face_set");
 //! \brief constructor.
 Indexed_face_set::Indexed_face_set(Boolean proto) :
   Boundary_set(proto),
+  m_dirty_coord_array(true),
   m_dirty_polyhedron(true)
 {
   if (proto) return;
@@ -70,55 +76,6 @@ Indexed_face_set::Indexed_face_set(Boolean proto) :
 
 //! \brief destructor.
 Indexed_face_set::~Indexed_face_set(){}
-
-//! Determine whether the representation is empty.
-Boolean Indexed_face_set::is_empty() const
-{
-  return m_coord_indices.empty() && m_flat_coord_indices.empty() &&
-    m_polyhedron.empty();
-}
-
-//! \brief claculates the normals in case they are invalidated.
-void Indexed_face_set::clean_normals()
-{
-  if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
-    if (m_dirty_polyhedron) clean_polyhedron();
-    if (m_smooth) calculate_single_normal_per_vertex();
-    else if (m_creased) calculate_normal_per_polygon();
-    else calculate_multiple_normals_per_vertex();
-  }
-  else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
-  else if (m_crease_angle == 0) calculate_normal_per_polygon();
-  else SGAL_error();
-  m_dirty_normals = false;
-  m_normals_cleaned = true;
-  m_dirty_normal_buffer = true;
-}
-
-//! \brief determines whether the surface is smooth.
-Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
-                                    const Vector3f& normal2) const
-{
-  float angle = acosf(normal1.dot(normal2));
-  return (angle > m_crease_angle);
-}
-
-//! \brief calculates multiple normals per vertex for all vertices.
-void Indexed_face_set::calculate_multiple_normals_per_vertex()
-{
-  m_flat_normal_indices.resize(m_flat_coord_indices.size());
-  if (!m_normal_array) {
-    m_normal_array.reset(new Normal_array());
-    SGAL_assertion(m_normal_array);
-  }
-  else m_normal_array->clear();
-
-  SGAL::calculate_multiple_normals_per_vertex(m_polyhedron,
-                                              m_normal_array,
-                                              m_flat_normal_indices);
-  m_dirty_normal_indices = true;
-  m_dirty_flat_normal_indices = false;
-}
 
 //! \brief sets the attributes of the object.
 void Indexed_face_set::set_attributes(Element* elem)
@@ -167,10 +124,223 @@ Container_proto* Indexed_face_set::get_prototype()
   return s_prototype;
 }
 
-//! \brief cleans the data structure.
+//! \brief draws the polygons.
+void Indexed_face_set::draw(Draw_action* action)
+{
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+  Boundary_set::draw(action);
+}
+
+//! \brief draws the polygons for selection.
+void Indexed_face_set::isect(Isect_action* action)
+{
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+  Boundary_set::isect(action);
+}
+
+//! \brief cleans the sphere bound.
+void Indexed_face_set::clean_sphere_bound()
+{
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+  Boundary_set::clean_sphere_bound();
+}
+
+//! \brief cleans the coordinate array and coordinate indices.
+void Indexed_face_set::clean_coords()
+{
+  m_dirty_coord_array = false;
+
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_polyhedron.empty()) return;
+
+  if (!m_coord_array) {
+    Uint size = m_polyhedron.size_of_vertices();
+    m_coord_array.reset(new Coord_array_3d(size));
+    SGAL_assertion(m_coord_array);
+  }
+  else m_coord_array->resize(m_polyhedron.size_of_vertices());
+
+  boost::shared_ptr<Coord_array_3d> coords =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coords);
+
+  /* Generate the coordinate array and assign the index into the coordinate
+   * array of the vertex to the vertex.
+   * \todo either remove index from Exact_polyhedron_geo or introduce here.
+   */
+  // Uint index = 0;
+  auto cit = coords->begin();
+  for (auto vit = m_polyhedron.vertices_begin();
+       vit != m_polyhedron.vertices_end(); ++vit)
+  {
+    // vit->m_index = index++;
+    auto& p = vit->point();
+    cit->set(p.x(), p.y(), p.z());
+    ++cit;
+  }
+
+  clean_coord_indices();
+
+  /* Notice that we call the function of the base calss.
+   * In general when the coordinates change, we must invalidate the polyhedron
+   * to force cleaning of the polyhedron, so that the change to the coordinates
+   * is reflected in the polyhedron. However, clean_coords() could have beeen
+   * invoked as a consequence to an update of the polyhedron. Naturally, in this
+   * case we do not want to invalidate the polyhedron.
+   */
+  Boundary_set::coord_content_changed(get_field_info(COORD_ARRAY));
+}
+
+//! \brief clears the coordinates.
+void Indexed_face_set::clear_coord_array()
+{
+  m_dirty_coord_array = true;
+  if (m_coord_array) m_coord_array->clear();
+}
+
+//! \brief obtains the coordinate array.
+Indexed_face_set::Shared_coord_array Indexed_face_set::get_coord_array()
+{
+  if (is_dirty_coord_array()) clean_coords();
+  return m_coord_array;
+}
+
+//! \brief cleans the coordinate indices.
+void Indexed_face_set::clean_coord_indices()
+{
+  if (m_polyhedron.empty()) {
+    m_dirty_coord_indices = false;
+    m_dirty_flat_coord_indices = false;
+    return;
+  }
+
+  set_num_primitives(m_polyhedron.size_of_facets());
+
+  bool triangles(true);
+  bool quads(true);
+  Uint size = 0;
+  for (auto fit = m_polyhedron.facets_begin();
+       fit != m_polyhedron.facets_end(); ++fit)
+  {
+    Polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+    size_t circ_size = CGAL::circulator_size(hh);
+    size += circ_size;
+    if (circ_size != 3) triangles = false;
+    if (circ_size != 4) quads = false;
+  }
+  SGAL_assertion(triangles && quads);
+
+  Uint index = 0;
+  if (triangles || quads) {
+    m_flat_coord_indices.resize(size);
+    set_primitive_type(quads ? PT_QUADS : PT_TRIANGLES);
+    auto iit = m_flat_coord_indices.begin();
+    for (auto fit = m_polyhedron.facets_begin();
+         fit != m_polyhedron.facets_end(); ++fit)
+    {
+      Polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      do {
+        // *iit++ = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
+    }
+    m_dirty_coord_indices = true;
+    m_dirty_flat_coord_indices = false;
+    m_normal_indices_flat = true;
+  }
+  else {
+    size += m_polyhedron.size_of_facets();
+    m_coord_indices.resize(size);
+    set_primitive_type(PT_POLYGONS);
+    auto iit = m_coord_indices.begin();
+    for (auto fit = m_polyhedron.facets_begin();
+         fit != m_polyhedron.facets_end(); ++fit)
+    {
+      Polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      do {
+        // *iit++ = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
+      *iit++ = (Uint) -1;
+      ++index;
+    }
+    m_dirty_coord_indices = false;
+    m_dirty_flat_coord_indices = true;
+    m_normal_indices_flat = false;
+  }
+}
+
+//! \brief cleans the normal array and the normal indices.
+void Indexed_face_set::clean_normals()
+{
+  if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
+    if (m_dirty_polyhedron) clean_polyhedron();
+    if (m_smooth) calculate_single_normal_per_vertex();
+    else if (m_creased) calculate_normal_per_polygon();
+    else calculate_multiple_normals_per_vertex();
+  }
+  else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
+  else if (m_crease_angle == 0) calculate_normal_per_polygon();
+  else SGAL_error();
+  m_dirty_normal_array = false;
+  m_normal_array_cleaned = true;
+  m_dirty_normal_buffer = true;
+}
+
+//! \brief cleans the polyhedron data structure.
 void Indexed_face_set::clean_polyhedron()
 {
-  if (!m_coord_array || m_coord_array->size() == 0) return;
+  m_dirty_polyhedron = false;
+
+  auto coords = get_coord_array();
+  if (!coords || coords->empty()) return;
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+
+  //! \todo temporary solution
+  if (false) {
+    typedef Inexact_kernel::Point_3     Inexact_point_3;
+    boost::shared_ptr<Coord_array_3d> coord_array =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    std::vector<Inexact_point_3> points(coord_array->size());
+    std::transform(coord_array->begin(), coord_array->end(),
+                   points.begin(),
+                   [](const Vector3f& vec)
+                   { return Inexact_point_3(vec[0], vec[1], vec[2]); });
+    std::vector<std::vector<std::size_t> > polygons(get_num_primitives());
+    size_t i = 0;
+    for (auto it = polygons.begin(); it != polygons.end(); ++it) {
+      auto& polygon = *it;
+      polygon.resize(3);
+      polygon[0] = m_flat_coord_indices[i++];
+      polygon[1] = m_flat_coord_indices[i++];
+      polygon[2] = m_flat_coord_indices[i++];
+    }
+
+    bool oriented = CGAL::orient_polygon_soup(points, polygons);
+    std::cout << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
+    std::cout << points.size() << ", " << coord_array->size() << std::endl;
+    std::cout << polygons.size() << ", " << get_num_primitives() << std::endl;
+
+    polygons.clear();
+    i = 0;
+    for (auto it = polygons.begin(); it != polygons.end(); ++it) {
+      auto& polygon = *it;
+      m_flat_coord_indices[i++] = polygon[0];
+      m_flat_coord_indices[i++] = polygon[1];
+      m_flat_coord_indices[i++] = polygon[2];
+    }
+    for (auto it = polygons.begin(); it != polygons.end(); ++it) it->clear();
+    points.clear();
+  }
   m_polyhedron.delegate(m_surface);           // create the polyhedral surface
 #if 0
   if (!m_polyhedron.normalized_border_is_valid()) {
@@ -191,8 +361,13 @@ void Indexed_face_set::clean_polyhedron()
                   edge_normal_calculator);
   m_smooth = edge_normal_calculator.m_smooth;
   m_creased = edge_normal_calculator.m_creased;
+}
 
-  m_dirty_polyhedron = false;
+//! \brief clears the polyhedron.
+void Indexed_face_set::clear_polyhedron()
+{
+  m_dirty_polyhedron = true;
+  m_polyhedron.clear();
 }
 
 //! \brief sets the polyhedron data-structure.
@@ -200,6 +375,9 @@ void Indexed_face_set::set_polyhedron(Polyhedron& polyhedron)
 {
   m_polyhedron = polyhedron;
   m_dirty_polyhedron = false;
+  clear_coord_array();
+  clear_coord_indices();
+  clear_flat_coord_indices();
 }
 
 //! \brief obtains the polyhedron data-structure.
@@ -208,6 +386,38 @@ Indexed_face_set::get_polyhedron(Boolean /* with_planes */)
 {
   if (m_dirty_polyhedron) clean_polyhedron();
   return m_polyhedron;
+}
+
+//! \brief responds to a change in the coordinate array.
+void Indexed_face_set::coord_content_changed(const Field_info* field_info)
+{
+  m_dirty_coord_array = false;
+  clear_polyhedron();
+  Boundary_set::coord_content_changed(field_info);
+}
+
+//! \brief determines whether the surface is smooth.
+Boolean Indexed_face_set::is_smooth(const Vector3f& normal1,
+                                    const Vector3f& normal2) const
+{
+  float angle = acosf(normal1.dot(normal2));
+  return (angle > m_crease_angle);
+}
+
+//! \brief calculates multiple normals per vertex for all vertices.
+void Indexed_face_set::calculate_multiple_normals_per_vertex()
+{
+  m_flat_normal_indices.resize(m_flat_coord_indices.size());
+  if (!m_normal_array) {
+    m_normal_array.reset(new Normal_array());
+    SGAL_assertion(m_normal_array);
+  }
+  else m_normal_array->clear();
+  SGAL::calculate_multiple_normals_per_vertex(m_polyhedron,
+                                              m_normal_array,
+                                              m_flat_normal_indices);
+  m_dirty_normal_indices = true;
+  m_dirty_flat_normal_indices = false;
 }
 
 SGAL_END_NAMESPACE

@@ -58,10 +58,10 @@ Torus::Torus(Boolean proto) :
 { m_cross_section_radius = s_def_cross_section_radius; }
 
 //! \brief destructor.
-Torus::~Torus(){}
+Torus::~Torus() {}
 
-//! \brief cleans the torus internal representation.
-void Torus::clean()
+//! \brief cleans the torus coordinate array.
+void Torus::clean_coords()
 {
   Uint i;
   float angle;
@@ -85,7 +85,7 @@ void Torus::clean()
   m_end_cap = false;
   m_loop = true;
 
-  Extrusion::clean();
+  Extrusion::clean_coords();
 }
 
 //! \brief sets the attributes of the torus object.
@@ -182,21 +182,21 @@ Container_proto* Torus::get_prototype()
 void Torus::set_spine_radius(Float spine_radius)
 {
   m_spine_radius = spine_radius;
-  clear();
+  structure_changed(get_field_info(SPINE_RADIUS));
 }
 
 //! \brief sets the number of slices (horizontal) longitudes.
 void Torus::set_slices(Uint slices)
 {
   m_slices = slices;
-  clear();
+  structure_changed(get_field_info(SLICES));
 }
 
 //! \brief sets the number of stacks (vertical) latitudes.
 void Torus::set_stacks(Uint stacks)
 {
   m_stacks = stacks;
-  clear();
+  structure_changed(get_field_info(STACKS));
 }
 
 SGAL_END_NAMESPACE

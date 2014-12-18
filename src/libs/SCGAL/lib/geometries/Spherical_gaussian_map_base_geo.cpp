@@ -162,12 +162,12 @@ Spherical_gaussian_map_base_geo(const Spherical_gaussian_map_base_geo& gm)
 Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() {}
 
 //! \brief clears the internal representation and auxiliary data structures.
-void Spherical_gaussian_map_base_geo::clear() {}
+void Spherical_gaussian_map_base_geo::clear_sgm() {}
 
-//! \brief
-void Spherical_gaussian_map_base_geo::cull(Cull_context& cull_context) {}
+//! \brief determines whether the representation is empty.
+Boolean Spherical_gaussian_map_base_geo::is_sgm_empty() const {}
 
-//! \brief
+//! \brief draws the geometry for selection.
 void Spherical_gaussian_map_base_geo::isect(Isect_action* action)
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
@@ -607,7 +607,7 @@ void Spherical_gaussian_map_base_geo::draw_aos_edge(Draw_action* action,
 void
 Spherical_gaussian_map_base_geo::coord_changed(const Field_info* field_info)
 {
-  clear();
+  clear_sgm();
   Mesh_set::coord_changed(field_info);
 }
 
@@ -615,7 +615,7 @@ Spherical_gaussian_map_base_geo::coord_changed(const Field_info* field_info)
 void
 Spherical_gaussian_map_base_geo::field_changed(const Field_info* field_info)
 {
-  clear();
+  clear_sgm();
   Container::field_changed(field_info);
 }
 
@@ -630,7 +630,7 @@ void Spherical_gaussian_map_base_geo::draw(Draw_action* action)
   if (is_dirty_flat_color_indices()) clean_flat_color_indices();
   if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
   if (m_dirty_sgm) clean_sgm();
-  if (is_empty()) return;
+  if (is_sgm_empty()) return;
 
   draw_mesh(action);
 }

@@ -81,10 +81,10 @@ Boundary_set::Boundary_set(Boolean proto) :
   m_normal_buffer_id(0),
   m_tex_coord_buffer_id(0),
   m_drawing_mode(Configuration::s_def_geometry_drawing_mode),
-  m_dirty_normals(true),
-  m_normals_cleaned(false),
-  m_dirty_tex_coords(true),
-  m_tex_coords_cleaned(false),
+  m_dirty_normal_array(true),
+  m_normal_array_cleaned(false),
+  m_dirty_tex_coord_array(true),
+  m_tex_coord_array_cleaned(false),
   m_dirty_coord_buffer(true),
   m_dirty_normal_buffer(true),
   m_dirty_color_buffer(true),
@@ -651,15 +651,65 @@ void Boundary_set::set_color_per_vertex(Boolean color_per_vertex)
   m_color_attachment = (color_per_vertex) ? AT_PER_VERTEX : AT_PER_PRIMITIVE;
 }
 
-//! \brief claculates the normals in case they are invalidated.
+//! \brief responds to a change in the coordinate array.
+void Boundary_set::coord_content_changed(const Field_info* field_info)
+{
+  destroy_display_list();
+  m_dirty_coord_buffer = true;
+  m_dirty_local_vertex_buffers = true;
+  if (m_normal_array_cleaned || !m_normal_array) m_dirty_normal_array = true;
+  if (m_tex_coord_array_cleaned || !m_tex_coord_array)
+    m_dirty_tex_coord_array = true;
+  Mesh_set::coord_content_changed(field_info);
+}
+
+//! \brief responds to a change in the normal array.
+void Boundary_set::normal_content_changed(const Field_info* field_info)
+{
+  destroy_display_list();
+  m_dirty_normal_buffer = true;
+  m_dirty_local_vertex_buffers = true;
+  m_dirty_normal_array = false;
+  m_normal_array_cleaned = false;
+  Mesh_set::normal_content_changed(field_info);
+}
+
+//! \brief responds to a change in the color array.
+void Boundary_set::color_content_changed(const Field_info* field_info)
+{
+  destroy_display_list();
+  m_dirty_color_buffer = true;
+  m_dirty_local_vertex_buffers = true;
+  Mesh_set::color_content_changed(field_info);
+}
+
+//! \brief responds to a change in the texture coordinate array.
+void Boundary_set::tex_coord_content_changed(const Field_info* field_info)
+{
+  destroy_display_list();
+  m_dirty_tex_coord_buffer = true;
+  m_dirty_local_vertex_buffers = true;
+  m_dirty_tex_coord_array = false;
+  m_tex_coord_array_cleaned = false;
+  Mesh_set::tex_coord_content_changed(field_info);
+}
+
+//! \brief cleans the normal array and the normal indices.
 void Boundary_set::clean_normals()
 {
   if (m_normal_attachment == AT_PER_VERTEX)
     calculate_single_normal_per_vertex();
   else calculate_normal_per_polygon();
-  m_dirty_normals = false;
-  m_normals_cleaned = true;
+  m_dirty_normal_array = false;
+  m_normal_array_cleaned = true;
   m_dirty_normal_buffer = true;
+}
+
+//! \brief obtains the normal array.
+Boundary_set::Shared_normal_array Boundary_set::get_normal_array()
+{
+  if (m_dirty_normal_array) clean_normals();
+  return m_normal_array;
 }
 
 //! \brief computes the normalized normal to a triangle.
@@ -795,9 +845,9 @@ compute_polygon_vertex_info(Uint j, Uint facet_index, Uint k,
 //! \brief calculates vertex information.
 void Boundary_set::calculate_vertices_info(Vertices_info& vertices_info)
 {
-  SGAL_assertion(m_coord_array);
-
-  vertices_info.resize(m_coord_array->size());
+  auto coords = get_coord_array();
+  SGAL_assertion(coords);
+  vertices_info.resize(coords->size());
 
   Uint i, j = 0;
   // Assume that the facet is planar, and compute its normal:
@@ -839,12 +889,13 @@ void Boundary_set::calculate_vertices_info(Vertices_info& vertices_info)
 //! \brief calculates a single normal per vertex for all vertices.
 void Boundary_set::calculate_single_normal_per_vertex()
 {
-  SGAL_assertion(m_coord_array);
+  auto coords = get_coord_array();
+  SGAL_assertion(coords);
   if (!m_normal_array) {
-    m_normal_array.reset(new Normal_array(m_coord_array->size()));
+    m_normal_array.reset(new Normal_array(coords->size()));
     SGAL_assertion(m_normal_array);
   }
-  else m_normal_array->resize(m_coord_array->size());
+  else m_normal_array->resize(coords->size());
   calculate_single_normal_per_vertex(m_normal_array);
   set_normal_per_vertex(true);
 }
@@ -894,7 +945,8 @@ void Boundary_set::calculate_normal_per_polygon(Normal_array& normals)
 //! \brief calculates a single normal per polygon for all polygons.
 void Boundary_set::calculate_normal_per_polygon()
 {
-  SGAL_assertion(m_coord_array);
+  auto coords = get_coord_array();
+  SGAL_assertion(coords);
   if (!m_normal_array) {
     m_normal_array.reset(new Normal_array(m_num_primitives));
     SGAL_assertion(m_normal_array);
@@ -904,11 +956,22 @@ void Boundary_set::calculate_normal_per_polygon()
   set_normal_per_vertex(false);
 }
 
-/*! \brief calculates the default texture-mapping oordinates in case they are
- * dirty using the shape bounding-box.
+//! \brief obtains the texture-coordinate array.
+Boundary_set::Shared_tex_coord_array Boundary_set::get_tex_coord_array()
+{
+  // We assume 2D texture coordinate, but it is an arbitrary choice.
+  if (m_dirty_tex_coord_array) clean_tex_coords(Texture::TEXTURE_2D_ARRAY);
+  return m_tex_coord_array;
+}
+
+/*! \brief cleans the texture-mapping coordinate array and coordinate indices.
  */
 void Boundary_set::clean_tex_coords(Texture::Target target)
 {
+  m_dirty_tex_coord_array = false;
+  m_tex_coord_array_cleaned = true;
+  m_dirty_tex_coord_buffer = true;
+
   switch (target) {
    case Texture::TEXTURE_1D:
    case Texture::TEXTURE_1D_ARRAY: SGAL_error_msg("Not supported yet!"); break;
@@ -926,18 +989,16 @@ void Boundary_set::clean_tex_coords(Texture::Target target)
    case Texture::TEXTURE_BUFFER: SGAL_error_msg("Not supported yet!"); break;
    default: SGAL_error();
   }
-  m_dirty_tex_coords = false;
-  m_tex_coords_cleaned = true;
-  m_dirty_tex_coord_buffer = true;
 }
 
 void Boundary_set::compute_flat_tex_coords_2d(size_t num_verts) {}
 void Boundary_set::compute_polygon_tex_coords_2d() {}
 
-//! \brief calculates the default 2D texture-mapping oordinates.
+//! \brief cleans the 2D texture-mapping coordinate array and coordinate indices.
 void Boundary_set::clean_tex_coords_2d()
 {
-  SGAL_assertion(m_coord_array);
+  auto coords = get_coord_array();
+  SGAL_assertion(coords);
 
   // Compute bounding box
   Bounding_box bbox = bounding_box();;
@@ -1033,11 +1094,12 @@ void Boundary_set::clean_tex_coords_2d()
   }
 }
 
-//! \brief calculates the default 2D texture-mapping oordinates.
+//! \brief cleans the 3D texture-mapping coordinate array and coordinate indices.
 void Boundary_set::clean_tex_coords_3d()
 {
-  SGAL_assertion(m_coord_array);
-  Uint num_coords = m_coord_array->size();
+  auto coords = get_coord_array();
+  SGAL_assertion(coords);
+  Uint num_coords = coords->size();
   if (m_tex_coord_array) m_tex_coord_array->resize(num_coords);
   else {
     m_tex_coord_array.reset(new Tex_coord_array_3d(num_coords));
@@ -1056,14 +1118,16 @@ void Boundary_set::clean_tex_coords_3d()
 //! \brief draws the mesh conditionaly.
 void Boundary_set::draw(Draw_action* action)
 {
-  if (is_dirty()) clean();
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_empty()) return;
+  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
+
+  // Clean the center
+  if (is_dirty_center()) clean_center();
 
   // Clean the normals or the colors.
   //! \todo clean the nromals only if lighting is enabled.
   if (resolve_fragment_source() == FS_NORMAL) {
-    if (m_dirty_normals) clean_normals();
+    if (m_dirty_normal_array) clean_normals();
     if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
   }
   else {
@@ -1073,7 +1137,7 @@ void Boundary_set::draw(Draw_action* action)
   // Clean the tex coordinates.
   Context* context = action->get_context();
   if (context->get_tex_enable() && !(context->get_tex_gen_enable())) {
-    if (m_dirty_tex_coords) {
+    if (m_dirty_tex_coord_array) {
       const Context* context = action->get_context();
       boost::shared_ptr<Texture> texture = context->get_texture();
       Texture::Target target = Texture::TEXTURE_2D_ARRAY;
@@ -1268,17 +1332,18 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
 //! \brief isects direct drawing-mode.
 void Boundary_set::isect_direct()
 {
+  auto coords = get_coord_array();
   Uint i, j;
   switch (m_primitive_type) {
    case PT_TRIANGLE_STRIP:
-    if (m_coord_array->size()) {
+    if (!coords->empty()) {
       int num_tri_strips = m_tri_strip_lengths[0];
       int index = 0;
       for (int strip = 0; strip < num_tri_strips; ++strip) {
         int tmp = strip + 1;
         glBegin(GL_TRIANGLE_STRIP);
         for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i)
-          glVertex3fv(m_coord_array->datum(m_flat_coord_indices[index++]));
+          glVertex3fv(coords->datum(m_flat_coord_indices[index++]));
         glEnd();
       }
     }
@@ -1287,9 +1352,9 @@ void Boundary_set::isect_direct()
    case PT_TRIANGLES:
     glBegin(GL_TRIANGLES);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
     }
     glEnd();
     return;
@@ -1297,10 +1362,10 @@ void Boundary_set::isect_direct()
    case PT_QUADS:
     glBegin(GL_QUADS);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
     }
     glEnd();
     return;
@@ -1309,7 +1374,7 @@ void Boundary_set::isect_direct()
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
       glBegin(GL_POLYGON);
       for (; m_coord_indices[j] != (Uint) -1; ++j)
-        glVertex3fv(m_coord_array->datum(m_coord_indices[j]));
+        glVertex3fv(coords->datum(m_coord_indices[j]));
       glEnd();
       ++j;
     }
@@ -1327,9 +1392,8 @@ void Boundary_set::isect_direct()
 //! \brief draws the mesh in selection mode.
 void Boundary_set::isect(Isect_action* action)
 {
-  if (is_dirty()) clean();
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_empty()) return;
+  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
 
   Context* context = action->get_context();
   if (!m_is_solid && context) context->draw_cull_face(Gfx::NO_CULL);
@@ -1529,21 +1593,12 @@ void Boundary_set::clear_local_vertex_buffers()
   m_local_tex_coord_buffer_4d.clear();
 }
 
-//! \brief processes change of coordinate points.
-void Boundary_set::coord_point_changed()
-{
-  destroy_display_list();
-  m_dirty_coord_buffer = true;
-  m_dirty_local_vertex_buffers = true;
-  if (m_normals_cleaned || !m_normal_array) m_dirty_normals = true;
-  if (m_tex_coords_cleaned || !m_tex_coord_array) m_dirty_tex_coords = true;
-}
-
 //! \brief Calculate a single normal per vertex for all vertices.
 void Boundary_set::
 calculate_single_normal_per_vertex(Shared_normal_array normals)
 {
-  SGAL_assertion(normals->size() == m_coord_array->size());
+  SGAL_assertion(get_coord_array());
+  SGAL_assertion(normals->size() == get_coord_array()->size());
   // Calculate the normals of all facets.
   Normal_array per_polygon_normals(m_num_primitives);
   calculate_normal_per_polygon(per_polygon_normals);
@@ -1673,78 +1728,6 @@ void Boundary_set::clean_vertex_tex_coord_buffer(Uint size,
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #endif
   m_dirty_tex_coord_buffer = false;
-}
-
-//! \brief sets the coordinate array.
-void Boundary_set::set_coord_array(Shared_coord_array coord_array)
-{
-  Mesh_set::set_coord_array(coord_array);
-  coord_point_changed();
-}
-
-//! \brief sets the normal array.
-void Boundary_set::set_normal_array(Shared_normal_array normal_array)
-{
-  Mesh_set::set_normal_array(normal_array);
-  destroy_display_list();
-  m_dirty_normal_buffer = true;
-  m_dirty_local_vertex_buffers = true;
-  m_dirty_normals = false;
-  m_normals_cleaned = false;
-}
-
-//! \brief sets the color field.
-void Boundary_set::set_color_array(Shared_color_array color_array)
-{
-  Mesh_set::set_color_array(color_array);
-  destroy_display_list();
-  m_dirty_color_buffer = true;
-  m_dirty_local_vertex_buffers = true;
-}
-
-//! \brief sets the texture-coordinate array.
-void
-Boundary_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
-{
-  Mesh_set::set_tex_coord_array(tex_coord_array);
-  destroy_display_list();
-  m_dirty_tex_coord_buffer = true;
-  m_dirty_local_vertex_buffers = true;
-  m_dirty_tex_coords = false;
-  m_tex_coords_cleaned = false;
-}
-
-//! \brief Process change of field.
-void Boundary_set::field_changed(const Field_info* field_info)
-{
-  switch (field_info->get_id()) {
-   case COORD_ARRAY: coord_point_changed(); break;
-
-   case NORMAL_ARRAY:
-    destroy_display_list();
-    m_dirty_normal_buffer = true;
-    m_dirty_local_vertex_buffers = true;
-    m_dirty_normals = false;
-    m_normals_cleaned = false;
-    break;
-
-   case COLOR_ARRAY:
-    destroy_display_list();
-    m_dirty_color_buffer = true;
-    m_dirty_local_vertex_buffers = true;
-    break;
-
-   case TEX_COORD_ARRAY:
-    destroy_display_list();
-    m_dirty_tex_coord_buffer = true;
-    m_dirty_local_vertex_buffers = true;
-    m_dirty_tex_coords = false;
-    m_tex_coords_cleaned = false;
-    break;
-
-   default: break;
-  }
-  Mesh_set::field_changed(field_info);
 }
 
 //! \brief computes flat indices for the normals or for the colors.
@@ -1991,7 +1974,7 @@ void Boundary_set::clean_local_cn_vertex_buffers()
     (m_flat_normal_indices.empty() ?
      m_flat_coord_indices.begin() : m_flat_normal_indices.begin());
   clean_local_2d_vertex_buffers(m_normal_array, m_local_normal_buffer,
-                                  normal_indices_begin);
+                                normal_indices_begin);
   tmp_normal_indices.clear();
   m_dirty_normal_buffer = true;
 }
@@ -2265,7 +2248,7 @@ void Boundary_set::set_center(Vector3f& center)
 //! \brief obtains the center of the geometric object.
 Vector3f& Boundary_set::get_center()
 {
-  if (is_dirty()) clean();
+  if (m_dirty_center) clean_center();
   return m_center;
 }
 

@@ -262,8 +262,8 @@ Start           : VRML vrmlScene
                   Shared_shape shared_shape(shape);
                   transform->add_child(shared_shape);
                   Shared_indexed_face_set shared_ifs = $3.first;
-                  shared_ifs->set_coord_indices($3.second->begin(),
-                                                $3.second->end());
+                  shared_ifs->set_coord_indices_from_range($3.second->begin(),
+                                                           $3.second->end());
                   shared_ifs->collapse_identical_coordinates();
                   shape->set_geometry(shared_ifs);
                   shape->add_to_scene(scene_graph);

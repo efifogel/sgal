@@ -99,7 +99,7 @@ Spherical_gaussian_map_colored_geo(const Spherical_gaussian_map_colored_geo& gm)
 //! \brief Destructor.
 Spherical_gaussian_map_colored_geo::~Spherical_gaussian_map_colored_geo()
 {
-  clear();
+  clear_sgm();
   m_sgm_nodes.clear();
   if (m_owned_sgm) {
     if (m_sgm) {
@@ -218,10 +218,10 @@ void Spherical_gaussian_map_colored_geo::clean_sgm()
 }
 
 //! \brief clears the internal representation and auxiliary data structures.
-void Spherical_gaussian_map_colored_geo::clear()
+void Spherical_gaussian_map_colored_geo::clear_sgm()
 {
-  if (m_sgm) m_sgm->clear();
   m_dirty_sgm = true;
+  if (m_sgm) m_sgm->clear();
 }
 
 //! \brief sets the attributes of this object.
@@ -596,7 +596,7 @@ insert_sgm(Shared_spherical_gaussian_map_colored_geo sgm)
 void Spherical_gaussian_map_colored_geo::set_polyhedron(Polyhedron* polyhedron)
 {
   m_polyhedron = polyhedron;
-  clear();
+  clear_sgm();
 }
 
 //! \brief obrains a reference to the Gaussian map.

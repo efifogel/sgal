@@ -97,6 +97,10 @@ void calculate_multiple_normals_per_vertex
       Vector3f normal_res(prev_normal);
       startv = hev++;
       while ((hev != startv) && !hev->m_creased) {
+        if (hev->is_border()) {
+          ++hev;
+          continue;
+        }
         Facet_const_handle f = hev->facet();
         Vector3f normal = get_normal<Polyhedron>(f);
         if (normal != prev_normal) {

@@ -46,7 +46,6 @@
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Cull_context.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Min_sphere.hpp"
@@ -60,7 +59,6 @@ SGAL_BEGIN_NAMESPACE
 
 class Field_info;
 class Container_proto;
-class Cull_context;
 class Isect_action;
 class Draw_action;
 class Scene_graph;
@@ -432,6 +430,9 @@ protected:
 private:
   /*! The tag that identifies this container type */
   static std::string s_tag;
+
+  /*! Indicates whether the cgm data structure has been invalidated. */
+  Boolean m_dirty_cgm;
 
   /*! \todo The following is not in used and does not compile, cause we use now
    * SGAL::Array (instead of an stl container, for example). Either enhance
@@ -1007,29 +1008,32 @@ public:
   /*! Set the attributes of this node. */
   virtual void set_attributes(Element* elem);
 
-  /*! Draw the geometry. */
+  /*! Draw the CGM geometry.
+   */
   virtual void draw(Draw_action* action);
 
-  /*! */
-  virtual void cull(Cull_context& cull_context);
-
-  /*! */
+  /*! Draw the CGM geometry for selection.
+   */
   virtual void isect(Isect_action* action);
+
+  /*! Draw the CGM internal representation.
+   */
+  virtual void draw_geometry(Draw_action* action);
 
   /*! Clean the bounding sphere of the cubical Gaussian map. */
   virtual void clean_sphere_bound();
 
-  /*! Draw the internal representation. */
-  virtual void draw_geometry(Draw_action* action);
-
   /*! Clean the representation. */
-  virtual void clean();
+  virtual void clean_cgm();
 
   /*! Clear the internal representation and auxiliary data structures. */
-  virtual void clear();
+  virtual void clear_cgm();
+
+  /*! Determines whether the representation has been invalidated. */
+  virtual Boolean is_dirty_cgm() const { return m_dirty_cgm; }
 
   /*! Determines whether the representation is empty. */
-  virtual Boolean is_empty() const { return m_cgm.is_empty(); }
+  virtual Boolean is_cgm_empty() const { return m_cgm.is_empty(); }
 
   /*! Draw the dual vertices.
    * \param action
@@ -1249,7 +1253,10 @@ public:
   Boolean get_draw_aos_haloed() const { return m_draw_aos_haloed; }
 
   /*! Obrain a reference to the cubical Gaussian map. */
-  Polyhedral_cgm* get_cgm() { return &m_cgm; }
+  Polyhedral_cgm* get_cgm();
+
+  /*! Set the cubical Gaussian map. */
+  void set_cgm(const Polyhedral_cgm& cgm);
 
   /*! Process change of geometry. */
   virtual void field_changed(const Field_info* field_info);

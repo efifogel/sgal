@@ -117,7 +117,7 @@ public:
   // virtual Attribute_list get_attributes();
 
   /*! Set the flag that indicates that the sphere bound should be cleaned.*/
-  void sphere_bound_changed(const Field_info* field_info = NULL);
+  void sphere_bound_changed(const Field_info* field_info = nullptr);
 
 protected:
   /*! The sphere bound of the node. */

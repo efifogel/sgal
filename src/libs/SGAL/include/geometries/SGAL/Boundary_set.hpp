@@ -104,30 +104,42 @@ class Scene_graph;
  *   d. m_tex_coord_buffer_id
  *
  * A class that derives from this class, typically generates the coordinates
- * and the cordinate indices. In that case the following must be done:
- * 1. init_prototype()
- *   Recall that the execution function is the call back invoked after a
- *   change to a field.
- *   - For every field, the change of which should trigger the regeneration of
- *     the coordinates, the execution function must call
- *     Boundary_set::clear(), which in turn calls Mesh_set::clear(),
- *     which in turn sets the m_dirty flag on.
- *   - For every field, the change of which should trigger the regeneration of
- *     the coordinate indices, the execution function must call
- *     Boundary_set::clear_indices(), which in turn calls
- *     Mesh_set::clear(), which in turn sets the m_dirty_indices flag on.
- * 2. set_<field>()
- *   If the change of <field> should trigger the regeneration of the
- *   coordinates or coordinate indices, the function must also call
- *   Boundary_set::clear() or Boundary_set::clear_indices(),
- *   respectively.
- * 3. Container fields and field_changed()
- *   - Every field that is a container and the change of which should
- *     trigger the regeneration of the coordinates or coordinate indices must
- *     register the derived class as an observer.
- *   - The field_changed() msut call either Boundary_set::clear() or
- *     Boundary_set::clear_indices() as a response to a change in the
- *     respective field.
+ * and the cordinate indices. A change of a field that should trigger the
+ * regeneration of the coordinates or the coordinate indices must be
+ * accompanied by the clearing of the coordinates or the coordinate
+ * indices. The clearing will, in turn, triger their regeneration.
+ *
+ * Observe that there are three different ways a field, say <field>, may change:
+ * 1. directly through the call to the respective setter (set_<field>()),
+ * 2. indirectly as a result of a change to another field routed to <field>, or
+ * 3. remotely, as a result of a change to another field in a container being
+ * observed by the container that contains <field>.  In particular, if the
+ * change to a field should trigger the regeneration of the coordinates or the
+ * coordinate indices, the following must be applied according to the three
+ * cases above.
+ * 1. set_<field>()
+ *   If the change to <field> should trigger the regeneration of the
+ *   coordinates, the function set_<field>() must call
+ *   Indexed_face_set::clear_coord_array(), which clears the coordinate
+ *   array (sets the m_dirty_coord_array flag on). If the change should also
+ *   trigger the regeneration of the coordinate indices, the function
+ *   set_<field>() must also call Indexed_face_set::clear_coord_indices(),
+ *   which clears the coordinate index array (sets the
+ *   m_dirty_coord_indices flag on) or
+ *   Indexed_face_set::clear_flat_coord_indices(),
+ *   which clears the flat coordinate index array (sets the
+ *   m_dirty_coord_indices flag on) or both.
+ * 2. Init_prototype()
+ *   Denote the callback invoked after a change to a field is made
+ *   <field_changed(). This is set in the Init_prototype() function of the
+ *   container class that contains the field. This function must follow the
+ *   the instruction above.
+ * 3. The entry point for this case is the function field_changed() of the
+ *   container class that contains the field. Let A be the container class
+ *   that contains the field <field>, and let B be a container observed by A.
+ *   Assume that B changes. The function B::field_changed() is invoked().
+ *   As part of the iterations of all observers of B the function
+ *   A::field_changed() is invoked.
  */
 class SGAL_SGAL_DECL Boundary_set : public Mesh_set {
 public:
@@ -182,6 +194,7 @@ public:
   { return &m_normal_per_vertex; }
   Boolean* color_per_vertex_handle(const Field_info*)
   { return &m_color_per_vertex; }
+  Vector3f* center_handle(const Field_info*){ return &m_center; }
   //@}
 
   /*! Sets the attributes of this node extracted from the VRML or X3D file.
@@ -190,6 +203,108 @@ public:
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
+
+  /*! Draw the polygons.
+   */
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the polygons for selection.
+   */
+  virtual void isect(Isect_action* action);
+
+  /// \name Change Recators
+  //@{
+  /*! Respond to a change in the coordinate array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void coord_content_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the normal array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void normal_content_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the color array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void color_content_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the texture coordinate array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void tex_coord_content_changed(const Field_info* field_info);
+  //@}
+
+  /// \name Array Getters
+  //@{
+  /*! Obtain the normal array.
+   * \return the normal array.
+   */
+  virtual Shared_normal_array get_normal_array();
+
+  /*! Obtain the texture-coordinate array.
+   * \return the texture-coordinate array.
+   */
+  virtual Shared_tex_coord_array get_tex_coord_array();
+  //@}
+
+  /// \name Array Cleaners
+  //@{
+  /*! Clean the normal array and the normal indices.
+   * A normal is calculated either per vertex or per polygon depending on the
+   * attachment attributes.
+   */
+  virtual void clean_normals();
+
+  /*! Clean the default texture-mapping coordinate array and coordinate indices
+   * using the shape bounding-box.
+   * \param target (in) the texture target, which, for example, implies
+   *               the number of texture coordinates (2, 3, or 4).
+   */
+  virtual void clean_tex_coords(Texture::Target target);
+
+  /*! Clean the default 2D texture-mapping coordinate array and coordinate
+   * indices.
+   */
+  virtual void clean_tex_coords_2d();
+
+  /*! Calculate the default 3D texture-mapping coordinate array and coordinate
+   * indices.
+   */
+  virtual void clean_tex_coords_3d();
+  //@}
+
+  /// \name Array Predicates
+  //@{
+  /*! Determine whether the have been invalidated, and thus must be cleaned.
+   */
+  Boolean is_dirty_normal_array() const;
+
+  /*! Determine whether the texture-mapping coordinate array has been
+   * invalidated, and thus needs cleaning.
+   */
+  Boolean is_dirty_tex_coord_array() const;
+  //@}
+
+  /*! Clean the center of the geometric brick. */
+  virtual void clean_center();
+
+  /*! Set the center of the geometric object.
+   */
+  void set_center(Vector3f& center);
+
+  /*! Obtain the center of the geometric object.
+   */
+  Vector3f& get_center();
+
+  /*! Determine whether the center has been invalidated, and thus needs
+   * cleaning.
+   */
+  Boolean is_dirty_center() const;
 
   /*! Add the container to a given scene
    * \param scene_graph the given scene
@@ -209,39 +324,6 @@ public:
 
   /*! Calculate a single normal per polygon for all polygons. */
   void calculate_normal_per_polygon(Normal_array& normals);
-
-  /*! Calculate the normals in case they are invalidated.
-   * A normal is calculated either per vertex or per polygon depending on the
-   * color attachment attributes.
-   */
-  virtual void clean_normals();
-
-  /*! Determine whether the representation of the normals hasn't been
-   * cleaned.
-   */
-  Boolean is_dirty_normals() const;
-
-  /*! Calculate the texture coordinates in case they are invalidated.
-   * \param target (in) the texture target, which, for example, implies
-   *               the number of texture coordinates (2, 3, or 4).
-   */
-  virtual void clean_tex_coords(Texture::Target target);
-
-  /*! Calculate the default 2D texture-mapping oordinates.
-   */
-  virtual void clean_tex_coords_2d();
-
-  /*! Calculate the default 3D texture-mapping oordinates.
-   */
-  virtual void clean_tex_coords_3d();
-
-  /*! Determine whether the representation of the normals hasn't been
-   * cleaned.
-   */
-  Boolean is_dirty_tex_coords() const;
-
-  /*! Clean the center of the geometric brick. */
-  virtual void clean_center();
 
   /* Set the flag that indicates whether normals are bound per vertex or per
    * face.
@@ -263,13 +345,7 @@ public:
    */
   Boolean get_color_per_vertex() const;
 
-  /*! Draw the polygons for selection. */
-  virtual void isect(Isect_action* action);
-
   virtual int create_display_list(Draw_action* action);
-
-  /*! Draw the polygons. */
-  virtual void draw(Draw_action* action);
 
   /*! Draw the representation.
    * \param action action.
@@ -484,40 +560,6 @@ public:
   static void (Boundary_set::*m_draws[SGAL_NUM_BO_DRAWS])();
   static Boolean m_draws_initialized;
 
-  /*! Set the coordinate array.
-   * \param coord_array (in) a pointer to a coordinate array
-   */
-  virtual void set_coord_array(Shared_coord_array coord_array);
-
-  /*! Set the normal array.
-   * \param normal_array (in) the normal array.
-   */
-  virtual void set_normal_array(Shared_normal_array normal_array);
-
-  /*! Set the color field.
-   * \param color_array (in) a pointer to a color array
-   */
-  virtual void set_color_array(Shared_color_array color_array);
-
-  /*! Set the texture-coordinate array.
-   * \param tex_coord_array (in) the texture coordinate array.
-   */
-  virtual void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
-
-  /*! Process change of field. */
-  virtual void field_changed(const Field_info* field_info);
-
-  /*! Process change of coordinate points. */
-  virtual void coord_point_changed();
-
-  /*! Set the center of the geometric object.
-   */
-  void set_center(Vector3f& center);
-
-  /*! Obtain the center of the geometric object.
-   */
-  Vector3f& get_center();
-
 protected:
   // weight, facet-index
   typedef std::pair<Uint, Float>                Vertex_facet_info;
@@ -559,17 +601,19 @@ protected:
   /*! data structures to hold the low level geometry. */
   Uint m_tri_strip_lengths_size;
 
-  /*! Indicates that the normals have been invalidated. */
-  Boolean m_dirty_normals;
+  /*! Indicates that the normal array has been invalidated. */
+  Boolean m_dirty_normal_array;
 
-  /*! Indicates that the normals have been cleaned. */
-  Boolean m_normals_cleaned;
+  /*! Indicates that the normals array has been cleaned. */
+  Boolean m_normal_array_cleaned;
 
-  /*! Indicates that the texture coordinatea have been invalidated. */
-  Boolean m_dirty_tex_coords;
+  /*! Indicates that the texture coordinate array has been invalidated.
+   */
+  Boolean m_dirty_tex_coord_array;
 
-  /*! Indicates that the texture coordinatea  have been cleaned. */
-  Boolean m_tex_coords_cleaned;
+  /*! Indicates that the texture coordinatea array has been cleaned.
+   */
+  Boolean m_tex_coord_array_cleaned;
 
   /*! Indicates that the vetex coordinate buffer is dirty. */
   Boolean m_dirty_coord_buffer;
@@ -1093,17 +1137,17 @@ inline Boolean Boundary_set::use_vertex_array() const
            (m_primitive_type == PT_TRIANGLES)));
 }
 
-/*! \brief determines whether the representation of the normals hasn't been
- * cleaned.
+/*! \brief determines whether the normals have been invalidated,
+ * and thus been must be cleaned.
  */
-inline Boolean Boundary_set::is_dirty_normals() const
-{ return m_dirty_normals; }
+inline Boolean Boundary_set::is_dirty_normal_array() const
+{ return m_dirty_normal_array; }
 
-/*! \brief determines whether the representation of the normals hasn't been
- * cleaned.
+/*! \brief determines whether the texture coordinates have been invalidated,
+ * and thus been must be cleaned.
  */
-inline Boolean Boundary_set::is_dirty_tex_coords() const
-{ return m_dirty_tex_coords; }
+inline Boolean Boundary_set::is_dirty_tex_coord_array() const
+{ return m_dirty_tex_coord_array; }
 
 //! \brief obtains the normal per vertex mode.
 inline Boolean Boundary_set::get_normal_per_vertex() const
@@ -1227,6 +1271,9 @@ inline Uint Boundary_set::num_tex_coordinates() const
       ((m_tex_coord_array != nullptr) ?
        m_tex_coord_array->num_coordinates() : 0)));
 }
+
+//! \brief determines whether the center has been invalidated.
+inline Boolean Boundary_set::is_dirty_center() const { return m_dirty_center; }
 
 SGAL_END_NAMESPACE
 

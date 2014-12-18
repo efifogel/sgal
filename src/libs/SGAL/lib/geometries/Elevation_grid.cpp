@@ -181,16 +181,16 @@ void Elevation_grid::set_z_spacing(Float z_spacing)
 }
 
 //! \brief cleans the representation.
-void Elevation_grid::clean()
+void Elevation_grid::clean_coords()
 {
-  // Clear internal representation:
+  m_dirty_coord_array = false;
+
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
-  boost::shared_ptr<Coord_array_3d> coord_array =
-    boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coord_array);
+  auto coords = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coords);
 
   Uint size = m_x_dimension * m_z_dimension;
-  coord_array->resize(size);
+  coords->resize(size);
 
   size_t k(0);
   for (size_t j = 0; j < m_z_dimension; ++j) {
@@ -198,17 +198,19 @@ void Elevation_grid::clean()
       auto x = static_cast<Float>(m_x_spacing * i);
       auto y = m_height[i + j * m_z_dimension];
       auto z = static_cast<Float>(m_z_spacing * j);
-      (*coord_array)[k++].set(x, y, z);
+      (*coords)[k++].set(x, y, z);
     }
   }
-  generate_coord_indices();
-  Indexed_face_set::clean();
-  Indexed_face_set::coord_point_changed();
+  coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
 //! \brief generates the coordinate indices.
-void Elevation_grid::generate_coord_indices()
+void Elevation_grid::clean_flat_coord_indices()
 {
+  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = false;
+  m_coord_indices_flat = true;
+
   m_num_primitives = (m_x_dimension - 1) * (m_z_dimension - 1) * 2;
   Uint size = m_num_primitives * 3;
   m_flat_coord_indices.resize(size);
@@ -231,20 +233,19 @@ void Elevation_grid::generate_coord_indices()
   }
 
   set_primitive_type(PT_TRIANGLES);
-  m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = false;
-  m_coord_indices_flat = true;
 }
 
 //! calculates the default 2D texture-mapping oordinates.
-void Elevation_grid::clean_tex_coords_2d()
+void Elevation_grid::clean_tex_coord_array_2d()
 {
+  std::cout << "Not implemented yet!" << std::endl;
 }
 
 //! \brief processes change of structure.
 void Elevation_grid::structure_changed(const Field_info* field_info)
 {
-  clear();
+  clear_coord_array();
+  clear_flat_coord_indices();
   field_changed(field_info);
 }
 

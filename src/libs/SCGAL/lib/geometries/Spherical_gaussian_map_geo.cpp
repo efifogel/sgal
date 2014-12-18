@@ -182,10 +182,10 @@ void Spherical_gaussian_map_geo::clean_sgm()
 }
 
 //! \brief clears the internal representation and auxiliary data structures.
-void Spherical_gaussian_map_geo::clear()
+void Spherical_gaussian_map_geo::clear_sgm()
 {
-  if (m_sgm) m_sgm->clear();
   m_dirty_sgm = true;
+  if (m_sgm) m_sgm->clear();
 }
 
 //! \brief sets the attributes of the object extracted from an input file.

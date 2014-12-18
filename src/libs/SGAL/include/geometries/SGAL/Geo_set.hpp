@@ -123,7 +123,7 @@ public:
    */
   virtual Container_proto* get_prototype();
 
-  /// \name field handlers
+  /// \name Field Handlers
   //@{
   Shared_coord_array* coord_array_handle(const Field_info*)
   { return &m_coord_array; }
@@ -148,155 +148,96 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Calculate the sphere bound.
-   * The implementation assumes that m_coord_array points at an object of
-   * type Coord_array_3d. If this is not the case, this virtual member
-   * function must be overriden!
-   */
-  virtual void clean_sphere_bound();
-
-  /*! Process change of data that causes a change to the sphere bound.
-   *  (i) Indicate the change in the current node (through a call to the
-   *      corresponding member of the base class).
-   * (ii) Indicate the change in the parent nodes (through a call to
-   *      field_changed(), which in turn appliesthe observers).
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
-   */
-  virtual void sphere_bound_changed(const Field_info* field_info = nullptr);
-
-  /*! Determine whether the geometry has color.
-   */
-  virtual Boolean has_color();
-
-  /*! Determine whether the geometry has texture coordinates.
-   */
-  virtual Boolean has_tex_coord();
-
+  //! \name Array Setters and Getters
+  // A setter calls a virtual function, so it doesn't need to be virtual as well.
+  //@{
   /*! Set the coordinate array.
    * \param coord_array (in) a pointer to a coordinate array
    */
-  virtual void set_coord_array(Shared_coord_array coord_array);
-
-  /*! Obtain the bounding box.
-   */
-  virtual Bounding_box bounding_box();
-
-  /*! Obtain the (const) coordinate array.
-   * \return the coordinate array.
-   */
-  const Shared_coord_array get_coord_array() const;
-
-  /*! Obtain the (non-const) coordinate array.
-   * \return the coordinate array.
-   */
-  virtual Shared_coord_array get_coord_array();
+  void set_coord_array(Shared_coord_array coord_array);
 
   /*! Set the normal array.
    * \param normal_array (in) the normal array.
    */
-  virtual void set_normal_array(Shared_normal_array normal_array);
-
-  /*! Obtain the (const) normal array.
-   * \return the normal array.
-   */
-  const Shared_normal_array get_normal_array() const;
-
-  /*! Obtain the (non-const) normal array.
-   * \return the normal array.
-   */
-  virtual Shared_normal_array get_normal_array();
-
-  /*! Set the texture-coordinate array.
-   * \param tex_coord_array (in) the texture coordinate array.
-   */
-  virtual void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
-
-  /*! Obtain the (const) texture-coordinate array.
-   * \return the texture-coordinate array.
-   */
-  const Shared_tex_coord_array get_tex_coord_array() const;
-
-  /*! Obtain the (non-const) texture-coordinate array.
-   * \return the texture-coordinate array.
-   */
-  virtual Shared_tex_coord_array get_tex_coord_array();
+  void set_normal_array(Shared_normal_array normal_array);
 
   /*! Set the color field.
    * \param color_array (in) a pointer to a color array
    */
-  virtual void set_color_array(Shared_color_array color_array);
+  void set_color_array(Shared_color_array color_array);
 
-  /*! Obtain the (const) normal array.
+  /*! Set the texture-coordinate array.
+   * \param tex_coord_array (in) the texture coordinate array.
+   */
+  void set_tex_coord_array(Shared_tex_coord_array tex_coord_array);
+
+  /*! Obtain the coordinate array.
+   * \return the coordinate array.
+   */
+  virtual Shared_coord_array get_coord_array();
+
+  /*! Obtain the normal array.
+   * \return the normal array.
+   */
+  virtual Shared_normal_array get_normal_array();
+
+  /*! Obtain the color array.
    * \return the color array.
    */
-  const Shared_color_array get_color_array() const;
+  virtual Shared_color_array get_color_array();
 
-  /*! Obtain the (non-const) normal array.
-   * \return the color array.
+  /*! Obtain the texture-coordinate array.
+   * \return the texture-coordinate array.
    */
-  Shared_color_array get_color_array();
+  virtual Shared_tex_coord_array get_tex_coord_array();
+  //@}
 
+  /// \name Index-Array Setters and Getters
+  // A setter calls a virtual function, so it doesn't need to be virtual as well.
+  //@{
   /*! Set the coordinate-index array.
    * \param indices (in)
    */
   void set_coord_indices(const std::vector<Int32>& indices);
-
-  /*! Obtain the (const) coordinate-index array.
-   * \return the coordinate-index array.
-   */
-  const std::vector<Int32>& get_coord_indices() const;
-
-  /*! Obtain the (non-const) coordinate-index array.
-   * \return the coordinate-index array.
-   */
-  std::vector<Int32>& get_coord_indices();
-
-  /*! Set the color-index array.
-   * \param indices (in)
-   */
-  void set_color_indices(const std::vector<Int32>& indices);
-
-  /*! Obtain the (const) color-index array.
-   * \return the color-index array.
-   */
-  const std::vector<Int32>& get_color_indices() const;
-
-  /*! Obtain the (non-const) color-index array.
-   * \return the color-index array.
-   */
-  std::vector<Int32>& get_color_indices();
 
   /*! Set the normal-index array.
    * \param indices (in)
    */
   void set_normal_indices(const std::vector<Int32>& indices);
 
-  /*! Obtain the (const) normal-index array.
-   * \return the normal-index array.
+  /*! Set the color-index array.
+   * \param indices (in)
    */
-  const std::vector<Int32>& get_normal_indices() const;
-
-  /*! Obtain the (non-const) normal-index array.
-   * \return the normal-index array.
-   */
-  std::vector<Int32>& get_normal_indices();
+  void set_color_indices(const std::vector<Int32>& indices);
 
   /*! Set the texture_coordinate-index array.
    * \param indices (in)
    */
   void set_tex_coord_indices(const std::vector<Int32>& indices);
 
-  /*! Obtain the (const) texture-coordinate-index array.
+  /*! Obtain the coordinate-index array.
+   * \return the coordinate-index array.
+   */
+  virtual std::vector<Int32>& get_coord_indices();
+
+  /*! Obtain the normal-index array.
+   * \return the normal-index array.
+   */
+  virtual std::vector<Int32>& get_normal_indices();
+
+  /*! Obtain the color-index array.
+   * \return the color-index array.
+   */
+  virtual std::vector<Int32>& get_color_indices();
+
+  /*! Obtain the texture-coordinate-index array.
    * \return the texture-coordinate-index array.
    */
-  const std::vector<Int32>& get_tex_coord_indices() const;
+  virtual std::vector<Int32>& get_tex_coord_indices();
+  //@}
 
-  /*! Obtain the (non-const) texture-coordinate-index array.
-   * \return the texture-coordinate-index array.
-   */
-  std::vector<Int32>& get_tex_coord_indices();
-
+  /// \name Index-Array Vector Getters
+  //@{
   /*! Obtain the (const) coordinate-index vector.
    * \return the coordinate-index array.
    */
@@ -356,9 +297,91 @@ public:
    * \return the ith tex-coord index.
    */
   Int32 get_tex_coord_index(Uint i) const;
+  //@}
 
-  /*! Determine whether the representation is empty. */
-  Boolean is_empty() const;
+  /// \name Change Recators
+  //@{
+  /*! Respond to a change in the coordinate array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void coord_content_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the normal array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void normal_content_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the color array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void color_content_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the texture coordinate array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void tex_coord_content_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the coordinate-index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void coord_indices_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the normal-index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void normal_indices_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the color-index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void color_indices_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the texture-coordinate index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void tex_coord_indices_changed(const Field_info* field_info = nullptr);
+
+  /*! Respond to a change in the sphere bound.
+   *  (i) Indicate the change in the current node (through a call to the
+   *      corresponding member of the base class).
+   * (ii) Indicate the change in the parent nodes (through a call to
+   *      field_changed(), which in turn applies the observers).
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void sphere_bound_changed(const Field_info* field_info = nullptr);
+  //@}
+
+  /*! Calculate the sphere bound.
+   * The implementation assumes that m_coord_array points at an object of
+   * type Coord_array_3d. If this is not the case, this virtual member
+   * function must be overriden!
+   */
+  virtual void clean_sphere_bound();
+
+  /*! Determine whether the geometry has color.
+   */
+  virtual Boolean has_color();
+
+  /*! Determine whether the geometry has texture coordinates.
+   */
+  virtual Boolean has_tex_coord();
+
+  /*! Obtain the bounding box.
+   */
+  virtual Bounding_box bounding_box();
+
+  /*! Determine whether the coordinate indices container is empty.
+   */
+  Boolean is_coord_indices_empty() const;
 
   /*! Obtain the ith 3D coordinate.
    */
@@ -472,11 +495,11 @@ protected:
   /*! An array of normals. */
   Shared_normal_array m_normal_array;
 
+  /*! An array of vertex colors. */
+  Shared_color_array m_color_array;
+
   /*! An array of vertex texture-ccordinates. */
   Shared_tex_coord_array m_tex_coord_array;
-
-  /*! An array if vertex colors. */
-  Shared_color_array m_color_array;
 
   /*! An array of indices into the vertex-coordinate array. */
   std::vector<Int32> m_coord_indices;
@@ -525,51 +548,23 @@ inline Boolean Geo_set::has_color()
 inline Boolean Geo_set::has_tex_coord()
 { return (m_tex_coord_array && (m_tex_coord_array->size() != 0)); }
 
-//! \brief sets the coordinate-index array.
-inline void Geo_set::set_coord_indices(const std::vector<Int32>& indices)
-{ m_coord_indices = indices; }
-
-//! \brief obtains the (const) coordinate-index array.
-inline const std::vector<Int32>& Geo_set::get_coord_indices() const
-{ return m_coord_indices; }
-
-//! \brief obtains the (non-const) coordinate-index array.
+//! \brief obtains the coordinate-index array.
 inline std::vector<Int32>& Geo_set::get_coord_indices()
 { return m_coord_indices; }
 
-//! \brief sets the color-index array.
-inline void Geo_set::set_color_indices(const std::vector<Int32>& indices)
-{ m_color_indices = indices; }
+//! \brief determines whether the coordinate indices container is empty.
+inline Boolean Geo_set::is_coord_indices_empty() const
+{ return m_coord_indices.empty(); }
 
-//! \brief obtains the (const) color-index array.
-inline const std::vector<Int32>& Geo_set::get_color_indices() const
-{ return m_color_indices; }
-
-//! \brief obtains the (non-const) color-index array.
-inline std::vector<Int32>& Geo_set::get_color_indices()
-{ return m_color_indices; }
-
-//! \brief sets the normal-index array.
-inline void Geo_set::set_normal_indices(const std::vector<Int32>& indices)
-{ m_normal_indices = indices; }
-
-//! \brief obtains the (const) normal-index array.
-inline const std::vector<Int32>& Geo_set::get_normal_indices() const
-{ return m_normal_indices; }
-
-//! \brief obtains the (non-const) normal-index array.
+//! \brief obtains the normal-index array.
 inline std::vector<Int32>& Geo_set::get_normal_indices()
 { return m_normal_indices; }
 
-//! \brief sets the texture-coordinate-index array.
-inline void Geo_set::set_tex_coord_indices(const std::vector<Int32>& indices)
-{ m_tex_coord_indices = indices; }
+//! \brief obtains the color-index array.
+inline std::vector<Int32>& Geo_set::get_color_indices()
+{ return m_color_indices; }
 
-//! \brief obtains the (const) texture-coordinate-index array.
-inline const std::vector<Int32>& Geo_set::get_tex_coord_indices() const
-{ return m_tex_coord_indices; }
-
-//! \brief obtains the (non-const) texture-coordinate-index array.
+//! \brief obtains the texture-coordinate-index array.
 inline std::vector<Int32>& Geo_set::get_tex_coord_indices()
 { return m_tex_coord_indices; }
 
@@ -627,36 +622,19 @@ inline Int32 Geo_set::get_tex_coord_index(Uint i) const
 inline Geo_set::Fragment_source Geo_set::resolve_fragment_source() const
 { return (m_color_array && m_color_array->size()) ? FS_COLOR : FS_NORMAL; }
 
-//! \brief obtains the (const) coordinate array.
-inline const Geo_set::Shared_coord_array Geo_set::get_coord_array() const
-{ return m_coord_array; }
-
-//! \brief obtains the (non-const) coordinate array.
+//! \brief obtains the coordinate array.
 inline Geo_set::Shared_coord_array Geo_set::get_coord_array()
 { return m_coord_array; }
 
-//! \brief obtains the (const) normal array.
-inline const Geo_set::Shared_normal_array Geo_set::get_normal_array() const
-{ return m_normal_array; }
-
-//! \brief obtains the (non-const) normal array.
+//! \brief obtains the normal array.
 inline Geo_set::Shared_normal_array Geo_set::get_normal_array()
 { return m_normal_array; }
 
-//! \brief obtains the (const) texture-coordinate array.
-inline const Geo_set::Shared_tex_coord_array Geo_set::get_tex_coord_array()
-  const
-{ return m_tex_coord_array; }
-
-//! \brief obtains the (non-const) texture-coordinate array.
+//! \brief obtains the texture-coordinate array.
 inline Geo_set::Shared_tex_coord_array Geo_set::get_tex_coord_array()
 { return m_tex_coord_array; }
 
-//! \brief obtains the (const) normal array.
-inline const Geo_set::Shared_color_array Geo_set::get_color_array() const
-{ return m_color_array; }
-
-//! \brief obtains the (non-const) normal array.
+//! \brief obtains the color array.
 inline Geo_set::Shared_color_array Geo_set::get_color_array()
 { return m_color_array; }
 

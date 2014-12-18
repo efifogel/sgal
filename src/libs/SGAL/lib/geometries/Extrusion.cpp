@@ -261,6 +261,25 @@ void Extrusion::init_prototype()
                                           s_def_cross_section_closed,
                                           exec_func));
 
+  // crossSectionRadius
+  Float_handle_function cross_section_radius_func =
+    static_cast<Float_handle_function>(&Extrusion::cross_section_radius_handle);
+  s_prototype->add_field_info(new SF_float(CROSS_SECTION_RADIUS,
+                                          "crossSectionRadius",
+                                           RULE_EXPOSED_FIELD,
+                                           cross_section_radius_func,
+                                           s_def_cross_section_radius,
+                                           exec_func));
+
+  // crossSectionSlices
+  Uint_handle_function cross_section_slices_func =
+    static_cast<Uint_handle_function>(&Extrusion::cross_section_slices_handle);
+  s_prototype->add_field_info(new SF_uint(CROSS_SECTION_SLICES,
+                                          "crossSectionSlices",
+                                           RULE_EXPOSED_FIELD,
+                                           cross_section_slices_func,
+                                           s_def_cross_section_slices,
+                                           exec_func));
 }
 
 //! \brief deletes the container prototype.
@@ -274,14 +293,14 @@ void Extrusion::delete_prototype()
 void Extrusion::set_spine(std::vector<Vector3f>& spine)
 {
   m_spine = spine;
-  clear();
+  structure_changed(get_field_info(SPINE));
 }
 
 //! \brief sets the flag that specifies whether the spine is a closed loop.
 void Extrusion::set_loop(Boolean loop)
 {
   m_loop = loop;
-  clear();
+  structure_changed(get_field_info(LOOP));
 }
 
 /*! \brief sets the 2-D cross section of the final shape defined in the XZ
@@ -290,7 +309,7 @@ void Extrusion::set_loop(Boolean loop)
 void Extrusion::set_cross_section(std::vector<Vector2f>& cross_section)
 {
   m_cross_section = cross_section;
-  clear();
+  structure_changed(get_field_info(CROSS_SECTION));
 }
 
 /*! \brief set the flag that indicates whether the cross section is a closed
@@ -299,35 +318,35 @@ void Extrusion::set_cross_section(std::vector<Vector2f>& cross_section)
 void Extrusion::set_cross_section_closed(Boolean closed)
 {
   m_cross_section_closed = closed;
-  clear();
+  structure_changed(get_field_info(CROSS_SECTION_CLOSED));
 }
 
 //! \brief sets the cross section radius.
 void Extrusion::set_cross_section_radius(Float radius)
 {
   m_cross_section_radius = radius;
-  clear();
+  structure_changed(get_field_info(CROSS_SECTION_RADIUS));
 }
 
 /*! \brief sets the cross section slicess number. */
 void Extrusion::set_cross_section_slices(Uint slices)
 {
   m_cross_section_slices = slices;
-  clear();
+  structure_changed(get_field_info(CROSS_SECTION_SLICES));
 }
 
 //! \brief sets the orientation of the cross section.
 void Extrusion::set_orientation(std::vector<Rotation>& orientation)
 {
   m_orientation = orientation;
-  clear();
+  structure_changed(get_field_info(ORIENTATION));
 }
 
 //! \brief sets the scale of the cross section.
 void Extrusion::set_scale(std::vector<Vector2f>& scale)
 {
   m_scale = scale;
-  clear();
+  structure_changed(get_field_info(SCALE));
 }
 
 /*! \brief sets the flag that specifies whether the extruded shape is open at
@@ -336,7 +355,8 @@ void Extrusion::set_scale(std::vector<Vector2f>& scale)
 void Extrusion::set_begin_cap(Boolean begin_cap)
 {
   m_begin_cap = begin_cap;
-  clear_flat_indices();
+  clear_flat_coord_indices();
+  field_changed(get_field_info(BEGIN_CAP));
 }
 
 /*! \brief sets the flag that specifies whether the extruded shape is open
@@ -345,7 +365,8 @@ void Extrusion::set_begin_cap(Boolean begin_cap)
 void Extrusion::set_end_cap(Boolean end_cap)
 {
   m_end_cap = end_cap;
-  clear_flat_indices();
+  clear_flat_coord_indices();
+  field_changed(get_field_info(END_CAP));
 }
 
 //! \brief obtains the container prototype.
@@ -358,7 +379,8 @@ Container_proto* Extrusion::get_prototype()
 //! \brief processes change of structure.
 void Extrusion::structure_changed(const Field_info* field_info)
 {
-  clear();
+  clear_coord_array();
+  clear_flat_coord_indices();
   field_changed(field_info);
 }
 
@@ -378,10 +400,11 @@ void Extrusion::generate_cross_section()
   m_cross_section[m_cross_section_slices] = m_cross_section[0];
 }
 
-//! Clean the extrusion internal representation.
-void Extrusion::clean()
+//! \brief cleans the coordinate array.
+void Extrusion::clean_coords()
 {
-  // Clear internal representation:
+  m_dirty_coord_array = false;
+
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
   boost::shared_ptr<Coord_array_3d> coord_array =
     boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
@@ -547,13 +570,10 @@ void Extrusion::clean()
   set_primitive_type(PT_TRIANGLES);
   set_solid(m_loop || (m_begin_cap && m_end_cap));
 
-  generate_coord_indices();
-
-  Indexed_face_set::clean();
-  Indexed_face_set::coord_point_changed();
+  coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
-//! Add triangle indices given four points that form a quad.
+//! \brief adds triangle indices given four points that form a quad.
 size_t Extrusion::add_triangle_indices(size_t k, std::vector<Uint>& indices,
                                        Uint ll, Uint lr, Uint ur, Uint ul)
 {
@@ -566,9 +586,13 @@ size_t Extrusion::add_triangle_indices(size_t k, std::vector<Uint>& indices,
   return k;
 }
 
-//! \brief generates the coordinate indices.
-void Extrusion::generate_coord_indices()
+//! \brief cleans the coordinate indices.
+void Extrusion::clean_flat_coord_indices()
 {
+  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = false;
+  m_coord_indices_flat = true;
+
   Boolean cross_section_loop =
     m_cross_section.front() == m_cross_section.back();
   size_t cross_section_size =
@@ -654,15 +678,13 @@ void Extrusion::generate_coord_indices()
       m_flat_coord_indices[k++] = anchor + i + 2;
     }
   }
-
-  m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = false;
-  m_coord_indices_flat = true;
 }
 
 //! calculates the default 2D texture-mapping oordinates.
-void Extrusion::clean_tex_coords_2d()
+void Extrusion::clean_tex_coord_array_2d()
 {
+  m_dirty_tex_coord_array = false;
+
   Boolean cross_section_loop =
     m_cross_section.front() == m_cross_section.back();
   size_t cross_section_size =
@@ -722,13 +744,15 @@ void Extrusion::clean_tex_coords_2d()
       (*tex_coord_array)[k++].set(s, t);
     }
   }
-
-  generate_tex_coord_indices();
 }
 
 //! Generate the texture coordinate indices.
-void Extrusion::generate_tex_coord_indices()
+void Extrusion::clean_flat_tex_coord_indices()
 {
+  m_dirty_tex_coord_indices = true;
+  m_dirty_flat_tex_coord_indices = false;
+  m_tex_coord_indices_flat = true;
+
   Boolean cross_section_loop =
     m_cross_section.front() == m_cross_section.back();
   size_t cross_section_size =
@@ -772,10 +796,6 @@ void Extrusion::generate_tex_coord_indices()
       m_flat_tex_coord_indices[k++] = anchor + i + 2;
     }
   }
-
-  m_dirty_tex_coord_indices = true;
-  m_dirty_flat_tex_coord_indices = false;
-  m_tex_coord_indices_flat = true;
 }
 
 SGAL_END_NAMESPACE

@@ -174,6 +174,7 @@ Spherical_gaussian_map_marked_geo(const Spherical_gaussian_map_marked_geo& gm)
 //! \brief destructor.
 Spherical_gaussian_map_marked_geo::~Spherical_gaussian_map_marked_geo()
 {
+  clear_sgm();
   m_sgm_nodes.clear();
   if (m_owned_sgm) {
     if (m_sgm) {
@@ -285,10 +286,10 @@ void Spherical_gaussian_map_marked_geo::clean_sgm()
 }
 
 //! \brief clears the internal representation and auxiliary data structures.
-void Spherical_gaussian_map_marked_geo::clear()
+void Spherical_gaussian_map_marked_geo::clear_sgm()
 {
-  if (m_sgm) m_sgm->clear();
   m_dirty_sgm = true;
+  if (m_sgm) m_sgm->clear();
 }
 
 //! \brief sets the attributes of the object extracted from an input file.
@@ -862,7 +863,7 @@ increase_vertex_index(const Field_info* /* field_info */)
   m_marked_vertex_index++;
   if (m_marked_vertex_index == m_sgm->number_of_vertices())
     m_marked_vertex_index = 0;
-  clear();
+  clear_sgm();
 }
 
 //! \biref increases the face index.
@@ -872,7 +873,7 @@ increase_edge_index(const Field_info* /* field_info */)
   m_marked_edge_index++;
   if (m_marked_edge_index == m_sgm->number_of_edges())
     m_marked_edge_index = 0;
-  clear();
+  clear_sgm();
 }
 
 //! \biref increases the face index.
@@ -882,7 +883,7 @@ increase_facet_index(const Field_info* field_info)
   m_marked_facet_index++;
   if (m_marked_facet_index == m_sgm->number_of_facets())
     m_marked_facet_index = 0;
-  clear();
+  clear_sgm();
 }
 
 //! \brief renders the marked_vertices with color.

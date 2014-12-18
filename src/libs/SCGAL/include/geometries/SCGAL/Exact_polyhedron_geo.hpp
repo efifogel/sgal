@@ -22,7 +22,6 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Boundary_set.hpp"
@@ -37,10 +36,10 @@
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
-class Cull_context;
 class Coord_array;
 class Color_array;
 class Draw_action;
+class Isect_action;
 class Scene_graph;
 class Formatter;
 
@@ -122,31 +121,41 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Clean the representation. */
-  virtual void clean();
-
-  /*! Determine whether the representation is empty.
-   * \return true if the representation is empty and false otherwise.
+  /*! Draw the polygons.
    */
-  virtual Boolean is_empty() const;
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the polygons for selection.
+   */
+  virtual void isect(Isect_action* action);
 
   /*! Clean the sphere bound.
    */
   virtual void clean_sphere_bound();
 
-  /*! */
-  virtual void cull(Cull_context& cull_context);
-
-  /*! Clears the internal representation. */
-  virtual void clear();
-
-  /*! Process change of field.
-   * \param field_info The information record of the field that changed.
-   * Notice that Mesh::coord_changed() is invoked when a new coordinate field
-   * is set, while field_changed() is invoked either when a new coordinate
-   * field is set or when the content of the current coordinate field changes.
+  /*! Clean the coordinate array and the coordinate indices.
    */
-  virtual void field_changed(const Field_info* field_info);
+  virtual void clean_coords();
+
+  /*! Obtain the coordinate array.
+   * \return the coordinate array.
+   */
+  virtual Shared_coord_array get_coord_array();
+
+  /*! Clear the coordinates.
+   */
+  void clear_coord_array();
+
+  /*! Determine whether the coordinates have been invalidated, and thus been
+   * must be cleaned.
+   */
+  Boolean is_dirty_coord_array() const;
+
+  /*! Clean the normal array and the normal indices.
+   * If the creaseAngle field is greater than 0, a normal is calculated per
+   * vertes. Otherwise a normal is calculated per polygon.
+   */
+  virtual void clean_normals();
 
   /*! Set the polyhedron data-structure. */
   void set_polyhedron(Exact_polyhedron& polyhedron);
@@ -158,10 +167,19 @@ public:
    */
   const Exact_polyhedron& get_polyhedron(Boolean with_planes = false);
 
+  /*! Clears the polyhedron.
+   */
+  virtual void clear_polyhedron();
+
+  /*! Determine whether the polyhedron have been invalidated, and thus been
+   * must be cleaned.
+   */
+  Boolean is_dirty_polyhedron() const;
+
   /*! Obtain the flag that indicates whether to compute the convex hull
    * of the coordinate set.
    */
-  Boolean get_convex_hull() const;
+  Boolean is_convex_hull() const;
 
   /*! Set the flag that indicates whether to compute the convex hull
    * of the coordinate set.
@@ -231,12 +249,6 @@ protected:
   /*! Clean the polyhedron. */
   virtual void clean_polyhedron();
 
-  /*! Calculate the normals in case they are invalidated.
-   * If the creaseAngle field is greater than 0, a normal is calculated per
-   * vertes. Otherwise a normal is calculated per polygon.
-   */
-  virtual void clean_normals();
-
   /*! Obtain the ith 3D coordinate.
    */
   virtual const Vector3f& get_coord_3d(Uint i) const;
@@ -249,15 +261,18 @@ protected:
    */
   virtual void clean_polyhedron_facets();
 
-  /*! Clean the coordinate array. */
-  void clean_coord_array();
-
-  /*! Clean the coordinate indices. */
-  void clean_coord_indices();
-
   /*! Determine whether the polyhedron representation is empty.
    */
   bool is_polyhedron_empty() const;
+
+  /// \name Change Recators
+  //@{
+  /*! Respond to a change in the coordinate array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void coord_content_changed(const Field_info* field_info);
+  //@}
 
   /*! Calculate multiple normals per vertex for all vertices.
    * If the angle between the geometric normals of two adjacent faces is less
@@ -310,6 +325,10 @@ private:
     }
   };
 
+  /*! Clean the coordinate indices.
+   */
+  void clean_coord_indices();
+
   /*! Search each vertex in the polyhedron in the given range, compute its
    * index in the range, and assign it to polyhedron-vertex record.
    */
@@ -341,6 +360,11 @@ private:
   /*! Indicates whether to compute the convex hull. */
   bool m_convex_hull;
 
+  /*! Indicates whether the coordinate array is dirty and thus should be
+   * cleaned.
+   */
+  Boolean m_dirty_coord_array;
+
   /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
   Boolean m_dirty_polyhedron;
 
@@ -353,11 +377,6 @@ private:
    * cleaned.
    */
   Boolean m_dirty_polyhedron_facets;
-
-  /*! Indicates whether the coordinate array is dirty and thus should be
-   * cleaned.
-   */
-  Boolean m_dirty_coord_array;
 
   /*! The time is took to compute the minkowski sum in seconds. */
   float m_time;
@@ -390,12 +409,24 @@ inline Container* Exact_polyhedron_geo::clone()
 /*! \brief obtainss the flag that indicates whether to compute the convex hull
  * of the coordinate set.
  */
-inline Boolean Exact_polyhedron_geo::get_convex_hull() const
+inline Boolean Exact_polyhedron_geo::is_convex_hull() const
 { return m_convex_hull; }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Exact_polyhedron_geo::get_tag() const
 { return s_tag; }
+
+/*! \brief determines whether the coordinates have been invalidated,
+ * and thus been must be cleaned.
+ */
+inline Boolean Exact_polyhedron_geo::is_dirty_coord_array() const
+{ return m_dirty_coord_array; }
+
+/*! \brief determine whether the polyhedron have been invalidated,
+ * and thus been must be cleaned.
+ */
+inline Boolean Exact_polyhedron_geo::is_dirty_polyhedron() const
+{ return m_dirty_polyhedron; }
 
 //! \brief determines whether the polyhedron representation is empty.
 inline bool Exact_polyhedron_geo::is_polyhedron_empty() const

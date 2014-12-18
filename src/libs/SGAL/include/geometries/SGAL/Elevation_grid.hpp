@@ -90,13 +90,17 @@ public:
    */
   virtual void set_attributes(Element* elem);
 
-  /*! Clean the representation.
+  /*! Clean the coordinates of the representation.
    */
-  virtual void clean();
+  virtual void clean_coords();
+
+  /*! Clean the flat coordinate indices.
+   */
+  virtual void clean_flat_coord_indices();
 
   /*! Calculate the default 2D texture-mapping oordinates.
    */
-  virtual void clean_tex_coords_2d();
+  virtual void clean_tex_coord_array_2d();
 
   /*! Process change of structure.
    */
@@ -171,10 +175,6 @@ protected:
 
   /*! The distance between two successive grid points along the z-dimension. */
   Float m_z_spacing;
-
-  /*! Generate the coordinate indices.
-   */
-  void generate_coord_indices();
 
   /*! Obtain the tag (type) of the container.
    */

@@ -88,61 +88,20 @@ public:
    */
   virtual void draw_mesh(Draw_action* action);
 
-  /*! Clean the mesh.
-   */
-  virtual void clean();
-
-  // /*! Clean the bounding sphere of the mesh set. */
-  virtual void clean_sphere_bound();
-
   /*! Draw the representation. */
   virtual void draw_geometry(Draw_action* action) = 0;
-
-  /*! Clear the representation. */
-  virtual void clear();
-
-  /*! Determine whether the is dirty and thus needs cleaning.
-   */
-  virtual Boolean is_dirty() const;
-
-  /*! Determine whether the representation is empty.
-   * \return true if the representation is empty and false otherwise.
-   */
-  virtual Boolean is_empty() const;
 
   /*! Write this container.
    * \param formatter The formatter to use for the writing, e.g., VRML.
    */
   virtual void write(Formatter* formatter);
 
-  /*! Clean the flat coord-index array. */
-  virtual void clean_flat_coord_indices();
-
-  /*! Clean the flat normal-index array. */
-  virtual void clean_flat_normal_indices();
-
-  /*! Clean the flat color-index array. */
-  virtual void clean_flat_color_indices();
-
-  /*! Clean the flat texture coord-index array. */
-  virtual void clean_flat_tex_coord_indices();
-
   /*! Obtain the bounding box.
    */
   virtual Bounding_box bounding_box();
 
-  /*! Clean the coord-index array. */
-  void clean_coord_indices();
-
-  /*! Clean the normal-index array. */
-  void clean_normal_indices();
-
-  /*! Clean the color-index array. */
-  void clean_color_indices();
-
-  /*! Clean the texture coord-index array. */
-  void clean_tex_coord_indices();
-
+  /// \name Field Getters and Setters
+  //@{
   /*! Set the counter-clockwise flag.
    */
   void set_ccw(Boolean ccw);
@@ -152,13 +111,13 @@ public:
   Boolean is_ccw() const;
 
   /*! Set the flag that indicates whether the mesh represents is solid
-   * (water-proof) polytope. In case the mesh represents a solid polytope,
+   * (watertight) polytope. In case the mesh represents a solid polytope,
    * the back faces can be culled out during rendering, and the front faces
    * can be rendered single sided.
    */
   void set_solid(Boolean solid);
 
-  /*! Determines whether the mesh represents a solid (water-proof) polytope. */
+  /*! Determines whether the mesh represents a solid (watertight) polytope. */
   Boolean is_solid() const;
 
   /*! Set the flag that indicates whether the mesh represents a convex
@@ -174,22 +133,225 @@ public:
 
   /*! Obtain the creas_angle. */
   Float get_crease_angle() const;
+  //@}
 
+  /// \name Index-Arrays Getters
+  //@{
   /*! Obtain the coordinate-index array.
+   * \return the coordinate-index array.
+   */
+  virtual std::vector<Int32>& get_coord_indices();
+
+  /*! Obtain the normal-index array.
+   * \return the normal-index array.
+   */
+  virtual std::vector<Int32>& get_normal_indices();
+
+  /*! Obtain the color-index array.
+   * \return the color-index array.
+   */
+  virtual std::vector<Int32>& get_color_indices();
+
+  /*! Obtain the texture-coordinate-index array.
+   * \return the texture-coordinate-index array.
+   */
+  virtual std::vector<Int32>& get_tex_coord_indices();
+  //@}
+
+  /// \name Change Recators
+  //@{
+  /*! Respond to a change in the coordinate-index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void coord_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the normal-index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void normal_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the color-index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void color_indices_changed(const Field_info* field_info);
+
+  /*! Respond to a change in the texture-coordinate index array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void tex_coord_indices_changed(const Field_info* field_info);
+  //@}
+
+  /// \name Cleaners
+  //@{
+  /*! Validate (clean) the coordinate-index array. */
+  void clean_coord_indices();
+
+  /*! Validate (clean) the normal-index array. */
+  void clean_normal_indices();
+
+  /*! Validate (clean) the color-index array. */
+  void clean_color_indices();
+
+  /*! Validate (clean) the texture coordinate-index array. */
+  void clean_tex_coord_indices();
+
+  /*! Clean the bounding sphere of the mesh set. */
+  virtual void clean_sphere_bound();
+  //@}
+
+  /// \name Clearers
+  //@{
+  /*! Invalidate (clear) the coordinate-index array. */
+  void clear_coord_indices();
+
+  /*! Invalidate (clear) the normal-index array. */
+  void clear_normal_indices();
+
+  /*! Invalidate (clear) the color-index array. */
+  void clear_color_indices();
+
+  /*! Invalidate (clear) the texture coordinate-index array. */
+  void clear_tex_coord_indices();
+  //@}
+
+  /// \name Index-Array Predicates
+  //@{
+  /*! Determine whether the coordinate-index array has been invalidated
+   * (is dirty).
+   * \return a Boolean flag that indicates whether the coordinate-index array
+   *         is dirty.
+   */
+  Boolean is_dirty_coord_indices() const;
+
+  /*! Determine whether the normal-index array has been invalidated
+   * (is dirty).
+   * \return a Boolean flag that indicates whether the normal-index array is
+   *         dirty.
+   */
+  Boolean is_dirty_normal_indices() const;
+
+  /*! Determine whether the color-index array has been invalidated
+   * (is dirty).
+   * \return a Boolean flag that indicates whether the color-index array is
+   *         dirty.
+   */
+  Boolean is_dirty_color_indices() const;
+
+  /*! Determine whether the texture coordinate-index array has been
+   * invalidated (is dirty).
+   * \return a Boolean flag that indicates whether the texture coordinate-index
+   *         array is dirty.
+   */
+  Boolean is_dirty_tex_coord_indices() const;
+  //@}
+
+  /// \name Flat Index Arrays
+  //@{
+  /*! Obtain the flat coordinate-index array.
    */
   Index_array& get_flat_coord_indices();
 
-  /*! Obtain the normal-index array.
+  /*! Obtain the flat normal-index array.
    */
   Index_array& get_flat_normal_indices();
 
-  /*! Obtain the color-index array.
+  /*! Obtain the flat color-index array.
    */
   Index_array& get_flat_color_indices();
 
-  /*! Obtain the texture coordinate-index array.
+  /*! Obtain the flat texture coordinate-index array.
    */
   Index_array& get_flat_tex_coord_indices();
+
+  /*! Set the flat coordinate-index array.
+   */
+  void set_flat_coord_indices(const Index_array& indices);
+
+  /*! Set the flat normal-index array.
+   */
+  void set_flat_normal_indices(const Index_array& indices);
+
+  /*! Set the flat color-index array.
+   */
+  void set_flat_color_indices(const Index_array& indices);
+
+  /*! Set the flat texture coordinate-index array.
+   */
+  void set_flat_tex_coord_indices(const Index_array& indices);
+
+   /*! Validate (clean) the flat coordinate-index array.
+   * In case of triangles or quads, remove the '-1' end-of-polygon indication
+   * from the index array. This operation changes the structure of the
+   * index array, and must be reflected in the drawing routines.
+   */
+  virtual void clean_flat_coord_indices();
+
+  /*! Validate (clean) the flat normal-index array.
+   * In case of triangles or quads, remove the '-1' end-of-polygon indication
+   * from the index array. This operation changes the structure of the
+   * index array, and must be reflected in the drawing routines.
+   */
+  virtual void clean_flat_normal_indices();
+
+  /*! Validate (clean) the flat color-index array.
+   * In case of triangles or quads, remove the '-1' end-of-polygon indication
+   * from the index array. This operation changes the structure of the
+   * index array, and must be reflected in the drawing routines.
+   */
+  virtual void clean_flat_color_indices();
+
+  /*! Validate (clean) the flat texture coord-index array.
+   * In case of triangles or quads, remove the '-1' end-of-polygon indication
+   * from the index array. This operation changes the structure of the
+   * index array, and must be reflected in the drawing routines.
+   */
+  virtual void clean_flat_tex_coord_indices();
+
+  /*! Invalidate (clear) the flat index arrays, i.e., coordinate-index array,
+   * normal-index array, color-index array, and texture coordinate index arrays.
+   */
+  void clear_flat_indices();
+
+  /*! Invalidate (clear) the flat cordinate-index array.
+   */
+  void clear_flat_coord_indices();
+
+  /*! Invalidate (clear) the flat normal-index array.
+   */
+  void clear_flat_normal_indices();
+
+  /*! Invalidate (clear) the flat color-index array.
+   */
+  void clear_flat_color_indices();
+
+  /*! Invalidate (clear) the flat texture cordinate-index array.
+   */
+  void clear_flat_tex_coord_indices();
+
+  /*! Determine whether the coordinate-index array has been invalidated
+   * (is dirty) and thus must be cleaned.
+   */
+  Boolean is_dirty_flat_coord_indices() const;
+
+  /*! Determine whether the normal-index array has been invalidated (is dirty)
+   * thus must be cleaned.
+   */
+  Boolean is_dirty_flat_normal_indices() const;
+
+  /*! Determine whether the color-index array has been invalidated (is dirty)
+   * and thus must be cleaned.
+   */
+  Boolean is_dirty_flat_color_indices() const;
+
+  /*! Determine whether the texture coordinate-index array has been
+   * invalidated (is dirty) and thus must be cleaned.
+   */
+  Boolean is_dirty_flat_tex_coord_indices() const;
+  //@}
 
   /*! Set the flag that indicates whether the coordinate-index array is "flat".
    * \param flag indicates whether the coordinate-index array is "flat".
@@ -199,14 +361,6 @@ public:
   /*! Determine whether the coordinate-index array is "flat".
    */
   Boolean are_coord_indices_flat() const;
-
-  /*! Set the flat coordinate-index array.
-   */
-  void set_flat_coord_indices(Index_array& indices);
-
-  /*! Set the coordinate-index array.
-   */
-  void set_coord_indices(std::vector<Int32>& indices);
 
   /*! Assign the coord indices with the reverse of given indices.
    * \param indices the indices to reverse.
@@ -218,22 +372,9 @@ public:
    */
   void set_reverse_flat_coord_indices(const Index_array& indices);
 
-  /*! Set the flag that indicates whether the normal-index array is "flat".
-   * \param flag indicates whether the normal-index array is "flat".
-   */
-  void set_normal_indices_flat(Boolean flag);
-
   /*! Determine whether the normal-index array is "flat".
    */
   Boolean are_normal_indices_flat() const;
-
-  /*! Set the flat normal-index array.
-   */
-  void set_flat_normal_indices(Index_array& indices);
-
-  /*! Set the normal-index array.
-   */
-  void set_normal_indices(std::vector<Int32>& indices);
 
   /*! Set the flag that indicates whether the color-index array is "flat".
    * \param flag indicates whether the color-index array is "flat".
@@ -244,13 +385,10 @@ public:
    */
   Boolean are_color_indices_flat() const;
 
-  /*! Set the flat color-index array.
+  /*! Set the flag that indicates whether the normal-index array is "flat".
+   * \param flag indicates whether the normal-index array is "flat".
    */
-  void set_flat_color_indices(Index_array& indices);
-
-  /*! Set the color-index array.
-   */
-  void set_color_indices(std::vector<Int32>& indices);
+  void set_normal_indices_flat(Boolean flag);
 
   /*! Set the flag that indicates whether the textuture coordinate-index array
    * is "flat".
@@ -261,14 +399,6 @@ public:
   /*! Determine whether the texture coordinate-index array is "flat".
    */
   Boolean are_tex_coord_indices_flat() const;
-
-  /*! Set the flat texture coordinate-index array.
-   */
-  void set_flat_tex_coord_indices(Index_array& indices);
-
-  /*! Set the texture coordinate-index array.
-   */
-  void set_tex_coord_indices(std::vector<Int32>& indices);
 
   /*! Convert non-flat indices (VRML style) to flat indices.
    * \param src the non-flat indices.
@@ -310,7 +440,7 @@ public:
    * \param end The past0the-end iterator of the range of numbers.
    */
   template <typename InputIterator>
-  void set_coord_indices(InputIterator begin, InputIterator end);
+  void set_coord_indices_from_range(InputIterator begin, InputIterator end);
 
   /*! Colapse identical coordinates.
    */
@@ -333,9 +463,6 @@ public:
   const GLfloat* get_by_flat_tex_coord_index(Vector_T array, Index_type i) const;
 
 protected:
-  /*! Indicates whether the mesh must be cleaned. */
-  Boolean m_dirty;
-
   /*! Indicates the direction of the vertices in a face. The default is
    * counter clock wise.
    */
@@ -413,46 +540,6 @@ protected:
   /*! Indicates whether the texture coordinate-index array should be cleaned. */
   Boolean m_dirty_tex_coord_indices;
 
-  /*! Clear the indices arrays, e.g., forces their cleaning.
-   */
-  void clear_flat_indices();
-
-  /*! Clear the cordinate indices, e.g., forces their cleaning.
-   */
-  void clear_flat_coord_indices();
-
-  /*! Clear the normal indices, e.g., forces their cleaning.
-   */
-  void clear_flat_normal_indices();
-
-  /*! Clear the color indices, e.g., forces their cleaning.
-   */
-  void clear_flat_color_indices();
-
-  /*! Clear the texture cordinate indices, e.g., forces their cleaning.
-   */
-  void clear_flat_tex_coord_indices();
-
-  /*! Determine whether the coordinate index array are dirty and thus should
-   * be cleaned.
-   */
-  Boolean is_dirty_flat_coord_indices() const;
-
-  /*! Determine whether the normal index array are dirty and thus should
-   * be cleaned.
-   */
-  Boolean is_dirty_flat_normal_indices() const;
-
-  /*! Determine whether the color index array are dirty and thus should
-   * be cleaned.
-   */
-  Boolean is_dirty_flat_color_indices() const;
-
-  /*! Determine whether the texture coordinate index array are dirty and thus
-   * should be cleaned.
-   */
-  Boolean is_dirty_flat_tex_coord_indices() const;
-
   /*! Colapse identical coordinates.
    */
   void collapse_identical_coordinates(std::vector<Int32>& indices);
@@ -497,31 +584,6 @@ private:
 #pragma warning( pop )
 #endif
 
-//! \brief clears the representation.
-inline void Mesh_set::clear() { m_dirty = true; }
-
-//! \brief cleans the mesh.
-inline void Mesh_set::clean() { m_dirty = false; }
-
-//! \brief determines whether the coordinate-index array hasn't been cleaned.
-inline Boolean Mesh_set::is_dirty_flat_coord_indices() const
-{ return m_dirty_flat_coord_indices; }
-
-//! \brief determines whether the normal-index array hasn't been cleaned.
-inline Boolean Mesh_set::is_dirty_flat_normal_indices() const
-{ return m_dirty_flat_normal_indices; }
-
-//! \brief determines whether the color-index array hasn't been cleaned.
-inline Boolean Mesh_set::is_dirty_flat_color_indices() const
-{ return m_dirty_flat_color_indices; }
-
-//! \brief determines whether the texture coordinate-index hasn't been cleaned.
-inline Boolean Mesh_set::is_dirty_flat_tex_coord_indices() const
-{ return m_dirty_flat_tex_coord_indices; }
-
-//! \brief determines whether the representation hasn't been cleaned.
-inline Boolean Mesh_set::is_dirty() const { return m_dirty; }
-
 //! \brief sets the counter-clockwise flag. */
 inline void Mesh_set::set_ccw(Boolean ccw) { m_is_ccw = ccw; }
 
@@ -546,6 +608,22 @@ inline void Mesh_set::set_crease_angle(Float crease_angle)
 
 //! \brief obtains the creas_angle.
 inline Float Mesh_set::get_crease_angle() const { return m_crease_angle; }
+
+//! \brief determines whether the flat coordinate-index array is dirty.
+inline Boolean Mesh_set::is_dirty_flat_coord_indices() const
+{ return m_dirty_flat_coord_indices; }
+
+//! \brief determines whether the flat normal-index array is dirty.
+inline Boolean Mesh_set::is_dirty_flat_normal_indices() const
+{ return m_dirty_flat_normal_indices; }
+
+//! \brief determines whether the flat color-index array is dirty.
+inline Boolean Mesh_set::is_dirty_flat_color_indices() const
+{ return m_dirty_flat_color_indices; }
+
+//! \brief determines whether the flat texture coordinate-index array is dirty.
+inline Boolean Mesh_set::is_dirty_flat_tex_coord_indices() const
+{ return m_dirty_flat_tex_coord_indices; }
 
 //! \brief determines whether the coordinate index array is "flat".
 inline Boolean Mesh_set::are_coord_indices_flat() const
@@ -584,34 +662,6 @@ inline void Mesh_set::set_color_indices_flat(Boolean flag)
  */
 inline void Mesh_set::set_tex_coord_indices_flat(Boolean flag)
 { m_tex_coord_indices_flat = flag; }
-
-//! \brief clears the cordinate indices, e.g., forces their cleaning.
-inline void Mesh_set::clear_flat_coord_indices()
-{
-  m_coord_indices_flat = false;
-  m_dirty_flat_coord_indices = true;
-}
-
-//! \brief clears the normal indices, e.g., forces their cleaning.
-inline void Mesh_set::clear_flat_normal_indices()
-{
-  m_normal_indices_flat = false;
-  m_dirty_flat_normal_indices = true;
-}
-
-//! \brief clears the color indices, e.g., forces their cleaning.
-inline void Mesh_set::clear_flat_color_indices()
-{
-  m_color_indices_flat = false;
-  m_dirty_flat_color_indices = true;
-}
-
-//! \brief clears the texture cordinate indices, e.g., forces their cleaning.
-inline void Mesh_set::clear_flat_tex_coord_indices()
-{
-  m_tex_coord_indices_flat = false;
-  m_dirty_flat_tex_coord_indices = true;
-}
 
 //! \brief obtains a pointer to an element through the coord indices.
 template <typename Vector_T>
@@ -658,7 +708,8 @@ inline Mesh_set::Index_type Mesh_set::get_flat_tex_coord_index(Uint i) const
  * the number of vertices per primitive.
  */
 template <typename InputIterator>
-void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
+void Mesh_set::set_coord_indices_from_range(InputIterator begin,
+                                            InputIterator end)
 {
   Boolean tris(true);
   Boolean quads(true);
@@ -701,6 +752,22 @@ void Mesh_set::set_coord_indices(InputIterator begin, InputIterator end)
   set_num_primitives(num);
   m_dirty_flat_coord_indices = false;
 }
+
+//! \brief determines whether the coordinate-index array is dirty.
+inline Boolean Mesh_set::is_dirty_coord_indices() const
+{ return m_dirty_coord_indices; }
+
+//! \brief determines whether the normal-index array is dirty.
+inline Boolean Mesh_set::is_dirty_normal_indices() const
+{ return m_dirty_normal_indices; }
+
+//! \brief determines whether the color-index array is dirty.
+inline Boolean Mesh_set::is_dirty_color_indices() const
+{ return m_dirty_color_indices; }
+
+//! \brief determines whether the texture coordinate-index array is dirty.
+inline Boolean Mesh_set::is_dirty_tex_coord_indices() const
+{ return m_dirty_tex_coord_indices; }
 
 SGAL_END_NAMESPACE
 

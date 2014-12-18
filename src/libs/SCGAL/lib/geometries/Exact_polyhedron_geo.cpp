@@ -69,14 +69,13 @@ REGISTER_TO_FACTORY(Exact_polyhedron_geo, "Exact_polyhedron_geo");
 Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
   Boundary_set(proto),
   m_convex_hull(false),
+  m_dirty_coord_array(true),
   m_dirty_polyhedron(true),
   m_dirty_polyhedron_edges(true),
   m_dirty_polyhedron_facets(true),
-  m_dirty_coord_array(false),
   m_time(0)
 {
   if (proto) return;
-  m_dirty = false;
   m_surface.set_mesh_set(this);
   //! \todo move crease_angle to here.
   set_crease_angle(0);
@@ -87,17 +86,50 @@ Exact_polyhedron_geo::Exact_polyhedron_geo(Boolean proto) :
 //! \brief destructor.
 Exact_polyhedron_geo::~Exact_polyhedron_geo() {}
 
-//! Determine whether the representation is empty.
-Boolean Exact_polyhedron_geo::is_empty() const
+//! \brief sets the attributes of this object.
+void Exact_polyhedron_geo::set_attributes(Element* elem)
 {
-  return m_coord_indices.empty() && m_flat_coord_indices.empty() &&
-    m_polyhedron.empty();
+  Boundary_set::set_attributes(elem);
+
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
+    if (name == "convexHull") {
+      set_convex_hull(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  // Remove all the deleted attributes:
+  elem->delete_marked();
+}
+
+//! \brief initializes the container prototype.
+void Exact_polyhedron_geo::init_prototype()
+{
+  if (s_prototype) return;
+  s_prototype = new Container_proto(Boundary_set::get_prototype());
+}
+
+//! \brief deletes the container prototype.
+void Exact_polyhedron_geo::delete_prototype()
+{
+  delete s_prototype;
+  s_prototype = nullptr;
+}
+
+//! \brief obtains the container prototype.
+Container_proto* Exact_polyhedron_geo::get_prototype()
+{
+  if (!s_prototype) Exact_polyhedron_geo::init_prototype();
+  return s_prototype;
 }
 
 //! \brief computes the convex hull of the coordinate set.
 void Exact_polyhedron_geo::convex_hull()
 {
-  if (!m_coord_array || (m_coord_array->size() == 0)) return;
+  if (!m_coord_array || m_coord_array->empty()) return;
 
   boost::shared_ptr<Exact_coord_array_3d> exact_coords =
     boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
@@ -142,14 +174,160 @@ void Exact_polyhedron_geo::convex_hull()
   m_dirty_flat_coord_indices = true;
 }
 
-//! \brief cleans the data structure.
+//! \brief cleans the coordinate array and the coordinate indices.
+void Exact_polyhedron_geo::clean_coords()
+{
+  m_dirty_coord_array = false;
+
+  if (m_dirty_polyhedron) clean_polyhedron();
+  if (m_polyhedron.empty()) return;
+
+  //! \todo handle the case of Exact_coord_array_3d
+  if (!m_coord_array) {
+    Uint size = m_polyhedron.size_of_vertices();
+    m_coord_array.reset(new Coord_array_3d(size));
+    SGAL_assertion(m_coord_array);
+  }
+  else m_coord_array->resize(m_polyhedron.size_of_vertices());
+
+  boost::shared_ptr<Coord_array_3d> coords =
+    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coords);
+
+  /* Generate the coordinate array and assign the index into the coordinate
+   * array of the vertex to the vertex.
+   */
+  Uint index = 0;
+  auto cit = coords->begin();
+  for (auto vit = m_polyhedron.vertices_begin();
+       vit != m_polyhedron.vertices_end(); ++vit)
+  {
+    vit->m_index = index++;
+    *cit++ = to_vector3f(vit->point());
+  }
+
+  clean_coord_indices();
+
+  /* Notice that we call the function of the base calss.
+   * In general when the coordinates change, we must invalidate the polyhedron
+   * to force cleaning of the polyhedron, so that the change to the coordinates
+   * is reflected in the polyhedron. However, clean_coords() could have beeen
+   * invoked as a consequence to an update of the polyhedron. Naturally, in this
+   * case we do not want to invalidate the polyhedron.
+   */
+  Boundary_set::coord_content_changed(get_field_info(COORD_ARRAY));
+}
+
+//! \brief clears the coordinates.
+void Exact_polyhedron_geo::clear_coord_array()
+{
+  m_dirty_coord_array = true;
+  if (m_coord_array) m_coord_array->clear();
+}
+
+//! \brief obtains the coordinate array.
+Exact_polyhedron_geo::Shared_coord_array Exact_polyhedron_geo::get_coord_array()
+{
+  if (is_dirty_coord_array()) clean_coords();
+  return m_coord_array;
+}
+
+//! \brief cleans the coordinate indices.
+void Exact_polyhedron_geo::clean_coord_indices()
+{
+  if (m_polyhedron.empty()) {
+    m_dirty_coord_indices = false;
+    m_dirty_flat_coord_indices = false;
+    return;
+  }
+
+  set_num_primitives(m_polyhedron.size_of_facets());
+
+  bool triangles(true);
+  bool quads(true);
+  Uint size = 0;
+  for (auto fit = m_polyhedron.facets_begin();
+       fit != m_polyhedron.facets_end(); ++fit)
+  {
+    Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+    size_t circ_size = CGAL::circulator_size(hh);
+    size += circ_size;
+    if (circ_size != 3) triangles = false;
+    if (circ_size != 4) quads = false;
+  }
+  SGAL_assertion(triangles && quads);
+
+  Uint index = 0;
+  if (triangles || quads) {
+    m_flat_coord_indices.resize(size);
+    set_primitive_type(quads ? PT_QUADS : PT_TRIANGLES);
+    auto iit = m_flat_coord_indices.begin();
+    for (auto fit = m_polyhedron.facets_begin();
+         fit != m_polyhedron.facets_end(); ++fit)
+    {
+      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      do {
+        *iit++ = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
+    }
+    m_dirty_coord_indices = true;
+    m_dirty_flat_coord_indices = false;
+    m_normal_indices_flat = true;
+  }
+  else {
+    size += m_polyhedron.size_of_facets();
+    m_coord_indices.resize(size);
+    set_primitive_type(PT_POLYGONS);
+    auto iit = m_coord_indices.begin();
+    for (auto fit = m_polyhedron.facets_begin();
+         fit != m_polyhedron.facets_end(); ++fit)
+    {
+      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
+      do {
+        *iit++ = hh->vertex()->m_index;
+        hh->m_index = index++;
+      } while (++hh != fit->facet_begin());
+      *iit++ = (Uint) -1;
+      ++index;
+    }
+    m_dirty_coord_indices = false;
+    m_dirty_flat_coord_indices = true;
+    m_normal_indices_flat = false;
+  }
+}
+
+//! \brief cleans the normal array and the normal indices.
+void Exact_polyhedron_geo::clean_normals()
+{
+  if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
+    if (m_dirty_polyhedron) clean_polyhedron();
+    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
+    if (m_dirty_polyhedron_edges) clean_polyhedron_edges();
+    if (m_smooth) calculate_single_normal_per_vertex();
+    else if (m_creased) calculate_normal_per_polygon();
+    else calculate_multiple_normals_per_vertex();
+  }
+  else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
+  else if (m_crease_angle == 0) calculate_normal_per_polygon();
+  else SGAL_error();
+  m_dirty_normal_array = false;
+  m_normal_array_cleaned = true;
+  m_dirty_normal_buffer = true;
+}
+
+//! \brief cleans the polyhedron data structure.
 void Exact_polyhedron_geo::clean_polyhedron()
 {
-  if (!m_coord_array || m_coord_array->size() == 0) return;
+  m_dirty_polyhedron = false;
+
+  auto coords = get_coord_array();
+  if (!coords || coords->empty()) return;
 
   clock_t start_time = clock();
   if (m_convex_hull) convex_hull();
   else {
+    if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
     m_polyhedron.delegate(m_surface);
 #if 0
     if (!m_polyhedron.normalized_border_is_valid())
@@ -157,7 +335,6 @@ void Exact_polyhedron_geo::clean_polyhedron()
 #else
     m_polyhedron.normalize_border();
 #endif
-    m_dirty_polyhedron = false;
   }
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
@@ -229,54 +406,58 @@ void Exact_polyhedron_geo::clean_polyhedron_facets()
 }
 
 //! \brief clears the internal representation.
-void Exact_polyhedron_geo::clear()
+void Exact_polyhedron_geo::clear_polyhedron()
 {
   m_polyhedron.clear();
   m_dirty_polyhedron = true;
-  m_dirty = true;
 }
 
-//! \brief
-void Exact_polyhedron_geo::cull(Cull_context& /* cull_context */) {}
-
-//! \brief sets the attributes of this object.
-void Exact_polyhedron_geo::set_attributes(Element* elem)
+//! \brief draws the polygons.
+void Exact_polyhedron_geo::draw(Draw_action* action)
 {
-  Boundary_set::set_attributes(elem);
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+  Boundary_set::draw(action);
+}
 
-  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const auto& name = elem->get_name(ai);
-    const auto& value = elem->get_value(ai);
-    if (name == "convexHull") {
-      set_convex_hull(compare_to_true(value));
-      elem->mark_delete(ai);
-      continue;
+//! \brief draws the polygons for selection.
+void Exact_polyhedron_geo::isect(Isect_action* action)
+{
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+  Boundary_set::isect(action);
+}
+
+//! \brief cleans the sphere bound.
+void Exact_polyhedron_geo::clean_sphere_bound()
+{
+  m_dirty_sphere_bound = false;
+  if (m_bb_is_pre_set) return;
+
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
+  if (is_dirty_coord_array()  ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+
+  if (m_coord_array) {
+    boost::shared_ptr<Coord_array_3d> coords =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    if (coords) m_sphere_bound.set_around(coords->begin(), coords->end());
+    else {
+      boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+        boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+      SGAL_assertion(exact_coords);
+      const std::vector<Vector3f>& vecs = exact_coords->get_inexact_coords();
+      m_sphere_bound.set_around(vecs.begin(), vecs.end());
     }
   }
-
-  // Remove all the deleted attributes:
-  elem->delete_marked();
-}
-
-//! \brief initializes the container prototype.
-void Exact_polyhedron_geo::init_prototype()
-{
-  if (s_prototype) return;
-  s_prototype = new Container_proto(Boundary_set::get_prototype());
-}
-
-//! \brief deletes the container prototype.
-void Exact_polyhedron_geo::delete_prototype()
-{
-  delete s_prototype;
-  s_prototype = nullptr;
-}
-
-//! \brief obtains the container prototype.
-Container_proto* Exact_polyhedron_geo::get_prototype()
-{
-  if (!s_prototype) Exact_polyhedron_geo::init_prototype();
-  return s_prototype;
 }
 
 //! \brief computes the orientation of a point relative to the polyhedron.
@@ -297,10 +478,7 @@ CGAL::Oriented_side Exact_polyhedron_geo::oriented_side(const Exact_point_3& p)
 const Exact_polyhedron&
 Exact_polyhedron_geo::get_polyhedron(Boolean with_planes)
 {
-  if (m_dirty_polyhedron) {
-    if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-    clean_polyhedron();
-  }
+  if (m_dirty_polyhedron) clean_polyhedron();
   if (with_planes) {
     if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
   }
@@ -312,9 +490,9 @@ void Exact_polyhedron_geo::set_polyhedron(Exact_polyhedron& polyhedron)
 {
   m_polyhedron = polyhedron;
   m_dirty_polyhedron = false;
-  if (m_coord_array) m_coord_array->resize(0);
-  m_dirty_coord_array = true;
-  m_dirty = true;
+  clear_coord_array();
+  clear_coord_indices();
+  clear_flat_coord_indices();
 }
 
 /*! \brief Sets the flag that indicates whether to compute the convex hull
@@ -324,149 +502,15 @@ void Exact_polyhedron_geo::set_convex_hull(Boolean flag)
 {
   if (m_convex_hull == flag) return;
   m_convex_hull = flag;
-  m_polyhedron.clear();
-  m_dirty_polyhedron = true;
-  m_dirty = true;
+  clear_polyhedron();
 }
 
-//! \brief processes change of field.
-void Exact_polyhedron_geo::field_changed(const Field_info* field_info)
-{
-  switch (field_info->get_id()) {
-   case COORD_ARRAY: clear(); break;
-   default: break;
-  }
-  Boundary_set::field_changed(field_info);
-}
-
-//! \brief cleans the representation.
-void Exact_polyhedron_geo::clean()
-{
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
-  if (m_dirty_coord_array) clean_coord_array();
-  if (m_dirty_coord_indices || m_dirty_flat_coord_indices)
-    clean_coord_indices();
-
-  Boundary_set::clean();
-}
-
-//! \brief cleans the coordinates.
-void Exact_polyhedron_geo::clean_coord_array()
+//! \brief responds to a change in the coordinate array.
+void Exact_polyhedron_geo::coord_content_changed(const Field_info* field_info)
 {
   m_dirty_coord_array = false;
-  m_dirty_coord_indices = true;
-  m_dirty_flat_coord_indices = true;
-  m_dirty_normals = true;
-  if (m_polyhedron.empty()) return;
-
-  //! \todo handle the case of Exact_coord_array_3d
-  if (!m_coord_array) {
-    Uint size = m_polyhedron.size_of_vertices();
-    m_coord_array.reset(new Coord_array_3d(size));
-    SGAL_assertion(m_coord_array);
-  }
-  else m_coord_array->resize(m_polyhedron.size_of_vertices());
-
-  boost::shared_ptr<Coord_array_3d> coords =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coords);
-
-  /* Generate the coordinate array and assign the index into the coordinate
-   * array of the vertex to the vertex.
-   */
-  Uint index = 0;
-  auto cit = coords->begin();
-  for (auto vit = m_polyhedron.vertices_begin();
-       vit != m_polyhedron.vertices_end(); ++vit)
-  {
-    vit->m_index = index++;
-    *cit++ = to_vector3f(vit->point());
-  }
-}
-
-//! \brief cleans the coordinate indices.
-void Exact_polyhedron_geo::clean_coord_indices()
-{
-  if (m_polyhedron.empty() || !m_coord_array || (m_coord_array->size() == 0)) {
-    m_dirty_coord_indices = false;
-    m_dirty_flat_coord_indices = false;
-    return;
-  }
-
-  set_num_primitives(m_polyhedron.size_of_facets());
-
-  bool triangles(true);
-  bool quads(true);
-  Uint size = 0;
-  for (auto fit = m_polyhedron.facets_begin();
-       fit != m_polyhedron.facets_end(); ++fit)
-  {
-    Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
-    size_t circ_size = CGAL::circulator_size(hh);
-    size += circ_size;
-    if (circ_size != 3) triangles = false;
-    if (circ_size != 4) quads = false;
-  }
-  SGAL_assertion(triangles && quads);
-  if (!triangles && !quads) size += m_polyhedron.size_of_facets();
-
-  m_flat_coord_indices.resize(size);
-
-  Uint index = 0;
-  if (triangles || quads) {
-    set_primitive_type(quads ? PT_QUADS : PT_TRIANGLES);
-    auto iit = m_flat_coord_indices.begin();
-    for (auto fit = m_polyhedron.facets_begin();
-         fit != m_polyhedron.facets_end(); ++fit)
-    {
-      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
-      do {
-        *iit++ = hh->vertex()->m_index;
-        hh->m_index = index++;
-      } while (++hh != fit->facet_begin());
-    }
-    m_dirty_coord_indices = true;
-    m_dirty_flat_coord_indices = false;
-    m_normal_indices_flat = true;
-  }
-  else {
-    set_primitive_type(PT_POLYGONS);
-    auto iit = m_coord_indices.begin();
-    for (auto fit = m_polyhedron.facets_begin();
-         fit != m_polyhedron.facets_end(); ++fit)
-    {
-      Exact_polyhedron::Halfedge_around_facet_circulator hh = fit->facet_begin();
-      do {
-        *iit++ = hh->vertex()->m_index;
-        hh->m_index = index++;
-      } while (++hh != fit->facet_begin());
-      *iit++ = (Uint) -1;
-      ++index;
-    }
-    m_dirty_coord_indices = false;
-    m_dirty_flat_coord_indices = true;
-    m_normal_indices_flat = false;
-  }
-}
-
-//! \brief claculates the normals in case they are invalidated.
-void Exact_polyhedron_geo::clean_normals()
-{
-  if ((0 < m_crease_angle) && (m_crease_angle < SGAL_PI)) {
-    if (m_dirty_polyhedron) clean_polyhedron();
-    if (m_dirty_polyhedron_facets) clean_polyhedron_facets();
-    if (m_dirty_polyhedron_edges) clean_polyhedron_edges();
-    if (m_smooth) calculate_single_normal_per_vertex();
-    else if (m_creased) calculate_normal_per_polygon();
-    else calculate_multiple_normals_per_vertex();
-  }
-  else if (m_crease_angle >= SGAL_PI) calculate_single_normal_per_vertex();
-  else if (m_crease_angle == 0) calculate_normal_per_polygon();
-  else SGAL_error();
-  m_dirty_normals = false;
-  m_normals_cleaned = true;
-  m_dirty_normal_buffer = true;
+  clear_polyhedron();
+  Boundary_set::coord_content_changed(field_info);
 }
 
 //! \brief obtains the ith 3D coordinate.
@@ -480,30 +524,6 @@ const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
     boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
   SGAL_assertion(exact_coords);
   return exact_coords->get_inexact_coord(i);
-}
-
-//! \brief cleans the sphere bound.
-void Exact_polyhedron_geo::clean_sphere_bound()
-{
-  if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
-    return;
-  }
-
-  if (is_dirty()) clean();
-  if (m_coord_array) {
-    boost::shared_ptr<Coord_array_3d> coords =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    if (coords) m_sphere_bound.set_around(coords->begin(), coords->end());
-    else {
-      boost::shared_ptr<Exact_coord_array_3d> exact_coords =
-        boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
-      SGAL_assertion(exact_coords);
-      const std::vector<Vector3f>& vecs = exact_coords->get_inexact_coords();
-      m_sphere_bound.set_around(vecs.begin(), vecs.end());
-    }
-  }
-  m_dirty_sphere_bound = false;
 }
 
 //! \brief calculates multiple normals per vertex for all vertices.
@@ -534,14 +554,12 @@ Boolean Exact_polyhedron_geo::is_closed()
 //! \brief computes the volume of the convex hull of the polyhedron.
 Float Exact_polyhedron_geo::volume_of_convex_hull()
 {
-
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_dirty_polyhedron) clean_polyhedron();
-  if (is_empty()) return 0.0f;
+  if (is_polyhedron_empty()) return 0.0f;
 
   // typedef CGAL::Exact_predicates_inexact_constructions_kernel   Epic_kernel;
   Float volume = 0.0f;
-  if (get_convex_hull()) {
+  if (is_convex_hull()) {
     typedef CGAL::Triangulation_3<Exact_kernel>                Triangulation;
     Triangulation tri(m_polyhedron.points_begin(), m_polyhedron.points_end());
     for (auto it = tri.finite_cells_begin(); it != tri.finite_cells_end(); ++it)
@@ -570,8 +588,11 @@ Float Exact_polyhedron_geo::volume_of_convex_hull()
 //! \brief prints statistics.
 void Exact_polyhedron_geo::print_stat()
 {
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (m_dirty_polyhedron) clean_polyhedron();
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
 
   std::cout << "Container name: " << get_name() << std::endl;
   std::cout << "Container tag: " << get_tag() << std::endl;

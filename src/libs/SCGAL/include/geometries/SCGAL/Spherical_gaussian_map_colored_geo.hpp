@@ -311,10 +311,10 @@ public:
   virtual void clean_sgm();
 
   /*! Clear the internal representation and auxiliary data structures. */
-  virtual void clear();
+  virtual void clear_sgm();
 
   /*! Return true if the representation is empty. */
-  virtual Boolean is_empty() const { return m_sgm->is_empty(); }
+  virtual Boolean is_sgm_empty() const { return m_sgm->is_empty(); }
 
   /*! Draw the arrangement on sphere vertices.
    * \param action

@@ -85,39 +85,39 @@ public:
   Uint* stacks_handle(const Field_info*) { return &m_stacks; }
   //@}
 
-  /*! Set the ellpsoid attributes */
+  /*! Set the ellpsoid attributes. */
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation */
-  virtual void clean();
+  /*! Clean the ellipsoid coordinate array and coordinate indices. */
+  virtual void clean_coords();
 
-  /*! Set the width of the ellipsoid */
+  /*! Set the width of the ellipsoid. */
   void set_width(Float width);
 
-  /*! Obtain the width of the ellipsoid */
+  /*! Obtain the width of the ellipsoid. */
   Float get_width() const;
 
-  /*! Set the height of the ellipsoid */
+  /*! Set the height of the ellipsoid. */
   void set_height(Float height);
 
-  /*! Obtain the height of the ellipsoid */
+  /*! Obtain the height of the ellipsoid. */
   Float get_height() const;
 
-  /*! Set the depth of the ellipsoid */
+  /*! Set the depth of the ellipsoid. */
   void set_depth(Float depth);
 
-  /*! Obtain the depth of the ellipsoid */
+  /*! Obtain the depth of the ellipsoid. */
   Float get_depth() const;
 
-  /*! Set the number of slices (horizontal) longitudes */
+  /*! Set the number of slices (horizontal) longitudes. */
   void set_slices(Uint slices);
 
-  /*! Obtain the number of slices (horizontal) longitudes */
+  /*! Obtain the number of slices (horizontal) longitudes. */
   Uint get_slices() const;
 
-  /*! Set the number of stacks (vertical) latitudes */
+  /*! Set the number of stacks (vertical) latitudes. */
   void set_stacks(Uint stacks);
 
   /*! Obtain the number of stacks (vertical) latitudes */
@@ -127,13 +127,13 @@ public:
   void structure_changed(const Field_info* field_info);
 
 protected:
-  /*! The width of the ellipsoid */
+  /*! The width of the ellipsoid. */
   Float m_width;
 
-  /*! The height of the ellipsoid */
+  /*! The height of the ellipsoid. */
   Float m_height;
 
-  /*! The depth of the ellipsoid */
+  /*! The depth of the ellipsoid. */
   Float m_depth;
 
   /*! The number of vertical slices (horizontal) longitudes */

@@ -56,9 +56,12 @@ Ellipsoid::Ellipsoid(Boolean proto) :
 //! \brief destructor.
 Ellipsoid::~Ellipsoid(){}
 
-//! \brief cleans the ellipsoid internal representation.
-void Ellipsoid::clean()
+//! \brief cleans the ellipsoid coordinate array and coordinate indices.
+void Ellipsoid::clean_coords()
 {
+  m_dirty_coord_array = false;
+  m_dirty_coord_indices = false;
+
   // Clear internal representation:
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
 
@@ -147,10 +150,7 @@ void Ellipsoid::clean()
     m_coord_indices[k++] = static_cast<Uint>(-1);
   }
 
-  clear_flat_normal_indices();
-
-  Indexed_face_set::clean();
-  Indexed_face_set::coord_point_changed();
+  coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
 //! \brief sets the attributes of this object.
@@ -308,6 +308,7 @@ void Ellipsoid::set_width(Float width)
 {
   m_width = width;
   m_dirty_sphere_bound = true;
+  structure_changed(get_field_info(WIDTH));
 }
 
 //! \brief sets the height of the ellipsoid.
@@ -315,6 +316,7 @@ void Ellipsoid::set_height(Float height)
 {
   m_height = height;
   m_dirty_sphere_bound = true;
+  structure_changed(get_field_info(HEIGHT));
 }
 
 //! \brief sets the depth of the ellipsoid.
@@ -322,12 +324,14 @@ void Ellipsoid::set_depth(Float depth)
 {
   m_depth = depth;
   m_dirty_sphere_bound = true;
+  structure_changed(get_field_info(DEPTH));
 }
 
 //! \brief processes change of structure.
 void Ellipsoid::structure_changed(const Field_info* field_info)
 {
-  clear();
+  clear_coord_array();
+  clear_coord_indices();
   field_changed(field_info);
 }
 

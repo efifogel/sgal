@@ -35,6 +35,8 @@ SGAL_BEGIN_NAMESPACE
 
 class Element;
 class Container_proto;
+class Draw_action;
+class Isect_action;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -92,27 +94,54 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Determine whether the representation is empty.
-   * \return true if the representation is empty and false otherwise.
+  /*! Draw the polygons.
    */
-  virtual Boolean is_empty() const;
+  virtual void draw(Draw_action* action);
 
-  /*! Calculate multiple normals per vertex for all vertices.
-   * If the angle between the geometric normals of two adjacent faces is less
-   * than the crease angle, calculate the normals so that the facets are
-   * smooth-shaded across the edge. Otherwise, calculate the normals so that
-   * the facets are faceted.
+  /*! Draw the polygons for selection.
    */
-  void calculate_multiple_normals_per_vertex();
+  virtual void isect(Isect_action* action);
 
-  /*! Clean the polyhedron. */
-  virtual void clean_polyhedron();
+  /*! Clean the sphere bound.
+   */
+  virtual void clean_sphere_bound();
 
-  /*! Calculate the normals in case they are invalidated.
+  /*! Clean the coordinate array and coordinate indices.
+   */
+  virtual void clean_coords();
+
+  /*! Obtain the coordinate array.
+   * \return the coordinate array.
+   */
+  virtual Shared_coord_array get_coord_array();
+
+  /*! Clear the coordinate array.
+   */
+  void clear_coord_array();
+
+  /*! Determine whether the coordinate array has been invalidated, and thus
+   * must be cleaned.
+   */
+  Boolean is_dirty_coord_array() const;
+
+  /*! Clean the normal array and the normal indices.
    * If the creaseAngle field is greater than 0, a normal is calculated per
    * vertes. Otherwise a normal is calculated per polygon.
    */
   virtual void clean_normals();
+
+  /*! Clean the polyhedron.
+   */
+  virtual void clean_polyhedron();
+
+  /*! Clear the polyhedron.
+   */
+  void clear_polyhedron();
+
+  /*! Determine whether the polyhedron has been invalidated, and thus been
+   * must be cleaned.
+   */
+  Boolean is_dirty_polyhedron() const;
 
   /*! Set the polyhedron data-structure.
    * \param polyhedron (in) the polyhedron data-structure.
@@ -126,11 +155,37 @@ public:
    */
   const Polyhedron& get_polyhedron(Boolean with_planes = false);
 
+  /*! Determine whether the polyhedron representation is empty.
+   */
+  bool is_polyhedron_empty() const;
+
+  /// \name Change Recators
+  //@{
+  /*! Respond to a change in the coordinate array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void coord_content_changed(const Field_info* field_info);
+  //@}
+
+  /*! Calculate multiple normals per vertex for all vertices.
+   * If the angle between the geometric normals of two adjacent faces is less
+   * than the crease angle, calculate the normals so that the facets are
+   * smooth-shaded across the edge. Otherwise, calculate the normals so that
+   * the facets are faceted.
+   */
+  void calculate_multiple_normals_per_vertex();
+
 protected:
+  /*! Indicates whether the coordinate array has beeen invalidated. */
+  Boolean m_dirty_coord_array;
+
   /*! The actual polyhedron object. */
   Polyhedron m_polyhedron;
 
-  /*! Indicates whether the polyhedron is dirty and thus should be cleaned. */
+  /*! Indicates whether the polyhedron has been invalidated, and thus must be
+   * cleaned.
+   */
   Boolean m_dirty_polyhedron;
 
   /*! Obtain the tag (type) of the container */
@@ -197,6 +252,10 @@ private:
     }
   };
 
+  /*! Clean the coordinate indices.
+   */
+  void clean_coord_indices();
+
   /*! The builder. */
   Polyhedron_geo_builder<Polyhedron::HalfedgeDS> m_surface;
 
@@ -223,6 +282,22 @@ inline Indexed_face_set* Indexed_face_set::prototype()
 
 //! \brief clones.
 inline Container* Indexed_face_set::clone() { return new Indexed_face_set(); }
+
+/*! \brief determines whether the coordinate array has been invalidated,
+ * and thus must be cleaned.
+ */
+inline Boolean Indexed_face_set::is_dirty_coord_array() const
+{ return m_dirty_coord_array; }
+
+/*! \brief determine whether the polyhedron has been invalidated, and thus
+ * must be cleaned.
+ */
+inline Boolean Indexed_face_set::is_dirty_polyhedron() const
+{ return m_dirty_polyhedron; }
+
+//! \brief determines whether the polyhedron representation is empty.
+inline bool Indexed_face_set::is_polyhedron_empty() const
+{ return m_polyhedron.empty(); }
 
 SGAL_END_NAMESPACE
 

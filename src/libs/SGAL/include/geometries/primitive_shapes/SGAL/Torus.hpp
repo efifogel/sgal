@@ -89,8 +89,8 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation. */
-  virtual void clean();
+  /*! Clean the torus coordinate array. */
+  virtual void clean_coords();
 
   /*! Set the spine radius of the ellipsoid. */
   void set_spine_radius(Float spine_radius);

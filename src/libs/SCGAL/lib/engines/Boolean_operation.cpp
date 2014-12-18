@@ -98,7 +98,7 @@ Boolean_operation::get_geometry(Shared_mesh_set operand) const
   if (operand->are_coord_indices_flat())
     geometry->set_flat_coord_indices(indices);
   else {
-    auto& indices = operand->get_coord_indices();
+    const auto& indices = operand->get_coord_indices();
     geometry->set_coord_indices(indices);
   }
   geometry->set_num_primitives(operand->get_num_primitives());
@@ -120,7 +120,7 @@ void Boolean_operation::execute()
     m_result.reset(new Exact_polyhedron_geo);
     SGAL_assertion(m_result);
   }
-  else m_result->clear();
+  else m_result->clear_polyhedron();
 
 #if 0
   typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
@@ -182,9 +182,7 @@ void Boolean_operation::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const std::string& name = elem->get_name(ai);
     const std::string& value = elem->get_value(ai);
     if (name == "operation") {
@@ -199,26 +197,23 @@ void Boolean_operation::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
     const std::string& name = elem->get_name(cai);
     Element::Shared_container cont = elem->get_value(cai);
 
     if (name == "operand1") {
-      boost::shared_ptr<Mesh_set> poly =
+      boost::shared_ptr<Mesh_set> mesh =
         boost::dynamic_pointer_cast<Mesh_set>(cont);
-      if (poly != NULL) {
-        set_operand1(poly);
-        elem->mark_delete(cai);
-        continue;
-      }
+      set_operand1(mesh);
+      elem->mark_delete(cai);
+      continue;
     }
 
     if (name == "operand2") {
       boost::shared_ptr<Mesh_set> mesh =
         boost::dynamic_pointer_cast<Mesh_set>(cont);
-      if (mesh->is_dirty()) mesh->clean();
       set_operand2(mesh);
       elem->mark_delete(cai);
       continue;

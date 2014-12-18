@@ -55,7 +55,6 @@ const Float Mesh_set::s_def_polygon_offset_factor(0);
 //! \brief constructor from prototype.
 Mesh_set::Mesh_set(Boolean proto) :
   Geo_set(proto),
-  m_dirty(true),
   m_is_ccw(s_def_is_ccw),
   m_is_solid(s_def_is_solid),
   m_is_convex(s_def_is_convex),
@@ -77,119 +76,6 @@ Mesh_set::Mesh_set(Boolean proto) :
 
 //! Destructor.
 Mesh_set::~Mesh_set() { clear_flat_indices(); }
-
-//! \brief clears the indices arrays, e.g., forces their cleaning.
-void Mesh_set::clear_flat_indices()
-{
-  clear_flat_coord_indices();
-  clear_flat_normal_indices();
-  clear_flat_color_indices();
-  clear_flat_tex_coord_indices();
-}
-
-//! \brief sets the attributes of this object.
-void Mesh_set::set_attributes(Element* elem)
-{
-  Geo_set::set_attributes(elem);
-
-  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const auto& name = elem->get_name(ai);
-    const auto& value = elem->get_value(ai);
-    if (name == "ccw") {
-      m_is_ccw = compare_to_true(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "solid") {
-      m_is_solid = compare_to_true(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "convex") {
-      m_is_convex = compare_to_true(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "creaseAngle") {
-      m_crease_angle = boost::lexical_cast<Float>(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "polygonOffsetFactor") {
-      m_polygon_offset_factor = boost::lexical_cast<Float>(value);
-      elem->mark_delete(ai);
-      continue;
-    }
-  }
-
-  // Remove all the deleted attributes:
-  elem->delete_marked();
-}
-
-//! \brief draws the mesh conditionaly.
-void Mesh_set::draw(Draw_action* action)
-{
-  if (is_dirty()) clean();
-  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
-  if (is_empty()) return;
-
-  draw_mesh(action);
-}
-
-//! \brief draws the mesh.
-void Mesh_set::draw_mesh(Draw_action* action)
-{
-  Context* context = action->get_context();
-  if (!m_is_solid && context) {
-    context->draw_cull_face(Gfx::NO_CULL);
-    context->draw_light_model_sides(Gfx::TWO_SIDE);
-  }
-
-  if (!m_is_ccw) glFrontFace(GL_CW);
-  if (has_scale()) glEnable(GL_NORMALIZE);
-
-  if (m_polygon_offset_factor != 0) {
-    glPolygonOffset(m_polygon_offset_factor, 1);
-    glEnable(GL_POLYGON_OFFSET_FILL);
-  }
-
-  draw_geometry(action);
-
-  if (m_polygon_offset_factor != 0) {
-    glDisable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(0, 0);
-  }
-
-  if (!m_is_ccw) glFrontFace(GL_CCW);
-
-  if (!m_is_solid && context) {
-    context->draw_cull_face(Gfx::BACK_CULL);
-    context->draw_light_model_sides(Gfx::ONE_SIDE);
-  }
-
-  if (has_scale()) glDisable(GL_NORMALIZE);
-}
-
-//! \brief calculates the sphere bound.
-void Mesh_set::clean_sphere_bound()
-{
-  if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
-    return;
-  }
-
-  if (is_dirty()) clean();
-  // No need to clean the indices yet, cause the call bellow only uses the
-  // coordinates.
-  Geo_set::clean_sphere_bound();
-}
-
-//! Determine whether the representation is empty.
-Boolean Mesh_set::is_empty() const
-{ return m_coord_indices.empty() && m_flat_coord_indices.empty(); }
 
 //! \brief sets the attributes of this node.
 void Mesh_set::init_prototype()
@@ -250,15 +136,198 @@ Container_proto* Mesh_set::get_prototype()
   return s_prototype;
 }
 
-//! \brief obtains the coord-index array.
+//! \brief sets the attributes of this object.
+void Mesh_set::set_attributes(Element* elem)
+{
+  Geo_set::set_attributes(elem);
+
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
+    if (name == "ccw") {
+      m_is_ccw = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "solid") {
+      m_is_solid = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "convex") {
+      m_is_convex = compare_to_true(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "creaseAngle") {
+      m_crease_angle = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "polygonOffsetFactor") {
+      m_polygon_offset_factor = boost::lexical_cast<Float>(value);
+      elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  // Remove all the deleted attributes:
+  elem->delete_marked();
+}
+
+//! \brief draws the mesh conditionaly.
+void Mesh_set::draw(Draw_action* action)
+{
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+
+  draw_mesh(action);
+}
+
+//! \brief draws the mesh.
+void Mesh_set::draw_mesh(Draw_action* action)
+{
+  Context* context = action->get_context();
+  if (!m_is_solid && context) {
+    context->draw_cull_face(Gfx::NO_CULL);
+    context->draw_light_model_sides(Gfx::TWO_SIDE);
+  }
+
+  if (!m_is_ccw) glFrontFace(GL_CW);
+  if (has_scale()) glEnable(GL_NORMALIZE);
+
+  if (m_polygon_offset_factor != 0) {
+    glPolygonOffset(m_polygon_offset_factor, 1);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+  }
+
+  draw_geometry(action);
+
+  if (m_polygon_offset_factor != 0) {
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(0, 0);
+  }
+
+  if (!m_is_ccw) glFrontFace(GL_CCW);
+
+  if (!m_is_solid && context) {
+    context->draw_cull_face(Gfx::BACK_CULL);
+    context->draw_light_model_sides(Gfx::ONE_SIDE);
+  }
+
+  if (has_scale()) glDisable(GL_NORMALIZE);
+}
+
+//! \brief obtains the (const) coordinate-index array.
+std::vector<Int32>& Mesh_set::get_coord_indices()
+{
+  if (is_dirty_coord_indices()) clean_coord_indices();
+  return m_coord_indices;
+}
+
+//! \brief obtains the (const) normal-index array.
+std::vector<Int32>& Mesh_set::get_normal_indices()
+{
+  if (is_dirty_normal_indices()) clean_normal_indices();
+  return m_normal_indices;
+}
+
+//! \brief obtains the (const) color-index array.
+std::vector<Int32>& Mesh_set::get_color_indices()
+{
+  if (is_dirty_color_indices()) clean_color_indices();
+  return m_color_indices;
+}
+
+//! \brief obtains the (const) texture-coordinate-index array.
+std::vector<Int32>& Mesh_set::get_tex_coord_indices()
+{
+  if (is_dirty_tex_coord_indices()) clean_tex_coord_indices();
+  return m_tex_coord_indices;
+}
+
+//! \brief responds to a change in the coordinate-index array.
+void Mesh_set::coord_indices_changed(const Field_info* field_info)
+{
+  m_coord_indices_flat = false;
+  m_dirty_flat_coord_indices = true;
+  m_dirty_coord_indices = false;
+  Geo_set::coord_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the normal-index array.
+void Mesh_set::normal_indices_changed(const Field_info* field_info)
+{
+  m_normal_indices_flat = false;
+  m_dirty_flat_normal_indices = true;
+  m_dirty_normal_indices = false;
+  Geo_set::normal_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the color-index array.
+void Mesh_set::color_indices_changed(const Field_info* field_info)
+{
+  m_color_indices_flat = false;
+  m_dirty_flat_color_indices = true;
+  m_dirty_color_indices = false;
+  Geo_set::color_indices_changed(field_info);
+}
+
+//! \brief responds to a change in the texture-coordinate index array.
+void Mesh_set::tex_coord_indices_changed(const Field_info* field_info)
+{
+  m_tex_coord_indices_flat = false;
+  m_dirty_flat_tex_coord_indices = true;
+  m_dirty_tex_coord_indices = false;
+  Geo_set::tex_coord_indices_changed(field_info);
+}
+
+//! \brief calculates the sphere bound.
+void Mesh_set::clean_sphere_bound()
+{
+  if (m_bb_is_pre_set) {
+    m_dirty_sphere_bound = false;
+    return;
+  }
+
+  // No need to clean the indices yet, cause the call bellow only uses the
+  // coordinates.
+  Geo_set::clean_sphere_bound();
+}
+
+//! \brief obtains the flat coordinate-index array.
 Mesh_set::Index_array& Mesh_set::get_flat_coord_indices()
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   return m_flat_coord_indices;
 }
 
+//! \brief obtains the flat normal-index array.
+Mesh_set::Index_array& Mesh_set::get_flat_normal_indices()
+{
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  return m_flat_normal_indices;
+}
+
+/*! \brief obtains the flat color-index array. */
+Mesh_set::Index_array& Mesh_set::get_flat_color_indices()
+{
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  return m_flat_color_indices;
+}
+
+//! \brief obtains the flat texture coordinate-index array.
+Mesh_set::Index_array& Mesh_set::get_flat_tex_coord_indices()
+{
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  return m_flat_tex_coord_indices;
+}
+
 //! \brief sets the flat coordinate-index array.
-void Mesh_set::set_flat_coord_indices(Index_array& indices)
+void Mesh_set::set_flat_coord_indices(const Index_array& indices)
 {
   m_flat_coord_indices = indices;
   m_coord_indices_flat = true;
@@ -266,20 +335,34 @@ void Mesh_set::set_flat_coord_indices(Index_array& indices)
   m_dirty_coord_indices = true;
 }
 
-//! \brief sets the coordinate-index array.
-void Mesh_set::set_coord_indices(std::vector<Int32>& indices)
+//! \brief sets the flat normal-index array.
+void Mesh_set::set_flat_normal_indices(const Index_array& indices)
 {
-  Geo_set::set_coord_indices(indices);
-  m_coord_indices_flat = false;
-  m_dirty_flat_coord_indices = true;
-  m_dirty_coord_indices = false;
+  m_flat_normal_indices = indices;
+  m_normal_indices_flat = true;
+  m_dirty_flat_normal_indices = false;
+  m_dirty_normal_indices = true;
 }
 
-/*! \brief flatten the coordinate index array.
- * In case of triangles or quads remove the '-1' end-of-polygon indication
- * from the index buffers. This operation changes the structure of the
- * index buffer, and must be reflected in the drawing routines.
- */
+//! \brief sets the flat color-index array.
+void Mesh_set::set_flat_color_indices(const Index_array& indices)
+{
+  m_flat_color_indices = indices;
+  m_color_indices_flat = true;
+  m_dirty_flat_color_indices = false;
+  m_dirty_color_indices = true;
+}
+
+//! \brief sets the flat texture coordinate-index array.
+void Mesh_set::set_flat_tex_coord_indices(const Index_array& indices)
+{
+  m_flat_tex_coord_indices = indices;
+  m_tex_coord_indices_flat = true;
+  m_dirty_flat_tex_coord_indices = false;
+  m_dirty_tex_coord_indices = true;
+}
+
+//! \brief cleans the flat coordinate-index array.
 void Mesh_set::clean_flat_coord_indices()
 {
   if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
@@ -291,36 +374,7 @@ void Mesh_set::clean_flat_coord_indices()
   m_dirty_flat_coord_indices = false;
 }
 
-//! \brief sets the flat normal-index array.
-void Mesh_set::set_flat_normal_indices(Index_array& indices)
-{
-  m_flat_normal_indices = indices;
-  m_normal_indices_flat = true;
-  m_dirty_flat_normal_indices = false;
-  m_dirty_normal_indices = true;
-}
-
-//! \brief sets the normal-index array.
-void Mesh_set::set_normal_indices(std::vector<Int32>& indices)
-{
-  Geo_set::set_normal_indices(indices);
-  m_normal_indices_flat = false;
-  m_dirty_flat_normal_indices = true;
-  m_dirty_normal_indices = false;
-}
-
-//! \brief obtains the normal-index array.
-Mesh_set::Index_array& Mesh_set::get_flat_normal_indices()
-{
-  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
-  return m_flat_normal_indices;
-}
-
-/*! \brief flatten the normal index array.
- * In case of triangles or quads remove the '-1' end-of-polygon indication
- * from the index buffers. This operation changes the structure of the
- * index buffer, and must be reflected in the drawing routines.
- */
+//! \brief cleans the flat normal-index array.
 void Mesh_set::clean_flat_normal_indices()
 {
   if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
@@ -333,36 +387,7 @@ void Mesh_set::clean_flat_normal_indices()
   m_dirty_flat_normal_indices = false;
 }
 
-//! \brief sets the flat color-index array.
-void Mesh_set::set_flat_color_indices(Index_array& indices)
-{
-  m_flat_color_indices = indices;
-  m_color_indices_flat = true;
-  m_dirty_flat_color_indices = false;
-  m_dirty_color_indices = true;
-}
-
-//! \brief sets the color-index array.
-void Mesh_set::set_color_indices(std::vector<Int32>& indices)
-{
-  Geo_set::set_color_indices(indices);
-  m_color_indices_flat = false;
-  m_dirty_flat_color_indices = true;
-  m_dirty_color_indices = false;
-}
-
-/*! \brief obtains the color-index array. */
-Mesh_set::Index_array& Mesh_set::get_flat_color_indices()
-{
-  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
-  return m_flat_color_indices;
-}
-
-/*! \brief flatten the color index array.
- * In case of triangles or quads remove the '-1' end-of-polygon indication
- * from the index buffers. This operation changes the structure of the
- * index buffer, and must be reflected in the drawing routines.
- */
+//! \brief cleans the color-index array.
 void Mesh_set::clean_flat_color_indices()
 {
   if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
@@ -375,36 +400,7 @@ void Mesh_set::clean_flat_color_indices()
   m_dirty_flat_color_indices = false;
 }
 
-//! \brief sets the flat texture coordinate-index array.
-void Mesh_set::set_flat_tex_coord_indices(Index_array& indices)
-{
-  m_flat_tex_coord_indices = indices;
-  m_tex_coord_indices_flat = true;
-  m_dirty_flat_tex_coord_indices = false;
-  m_dirty_tex_coord_indices = true;
-}
-
-//! \brief sets the texture coordinate-index array.
-void Mesh_set::set_tex_coord_indices(std::vector<Int32>& indices)
-{
-  Geo_set::set_tex_coord_indices(indices);
-  m_tex_coord_indices_flat = false;
-  m_dirty_flat_tex_coord_indices = true;
-  m_dirty_tex_coord_indices = false;
-}
-
-//! \brief obtains the texture coordinate-index array.
-Mesh_set::Index_array& Mesh_set::get_flat_tex_coord_indices()
-{
-  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
-  return m_flat_tex_coord_indices;
-}
-
-/*! \brief flatten the texture coordinate index array.
- * In case of triangles or quads remove the '-1' end-of-polygon indication
- * from the index buffers. This operation changes the structure of the
- * index buffer, and must be reflected in the drawing routines.
- */
+//! \brief cleans the texture-mapping coordinate-index array.
 void Mesh_set::clean_flat_tex_coord_indices()
 {
   if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
@@ -414,6 +410,46 @@ void Mesh_set::clean_flat_tex_coord_indices()
     m_tex_coord_indices_flat = true;
   }
   m_dirty_flat_tex_coord_indices = false;
+}
+
+//! \brief clears the flat index arrays.
+void Mesh_set::clear_flat_indices()
+{
+  clear_flat_coord_indices();
+  clear_flat_normal_indices();
+  clear_flat_color_indices();
+  clear_flat_tex_coord_indices();
+}
+
+//! \brief clears the cordinate-index array.
+void Mesh_set::clear_flat_coord_indices()
+{
+  m_flat_coord_indices.clear();
+  m_coord_indices_flat = false;
+  m_dirty_flat_coord_indices = true;
+}
+
+//! \brief clears the normal-index array.
+void Mesh_set::clear_flat_normal_indices()
+{
+  m_flat_normal_indices.clear();
+  m_normal_indices_flat = false;
+  m_dirty_flat_normal_indices = true;
+}
+
+//! \brief clears the color-index array.
+void Mesh_set::clear_flat_color_indices()
+{
+  m_color_indices_flat = false;
+  m_dirty_flat_color_indices = true;
+}
+
+//! \brief clears the texture-mapping cordinate-index array.
+void Mesh_set::clear_flat_tex_coord_indices()
+{
+  m_flat_tex_coord_indices.clear();
+  m_tex_coord_indices_flat = false;
+  m_dirty_flat_tex_coord_indices = true;
 }
 
 //! \brief converts non-flat indices (VRML style) to flat indices.
@@ -499,6 +535,7 @@ void  Mesh_set::deflatten_indices(const Index_array& src,
   }
 }
 
+// Index Array Handling
 //! \brief cleans the coord-index array.
 void Mesh_set::clean_coord_indices()
 {
@@ -517,7 +554,7 @@ void Mesh_set::clean_normal_indices()
   m_dirty_normal_indices = false;
 }
 
-//! \brief cleans the color-index array.
+//! \brief validates (cleans) the color-index array.
 void Mesh_set::clean_color_indices()
 {
   if (((m_primitive_type == PT_TRIANGLES) || (m_primitive_type == PT_QUADS)) &&
@@ -535,12 +572,39 @@ void Mesh_set::clean_tex_coord_indices()
   m_dirty_tex_coord_indices = false;
 }
 
+//! \brief clears the coordinate index array.
+void Mesh_set::clear_coord_indices()
+{
+  m_dirty_coord_indices = true;
+  m_coord_indices.clear();
+}
+
+//! \brief clears the normal-index array.
+void Mesh_set::clear_normal_indices()
+{
+  m_dirty_normal_indices = true;
+  m_normal_indices.clear();
+}
+
+//! \brief Invalidate (clear) the color-index array.
+void Mesh_set::clear_color_indices()
+{
+  m_dirty_color_indices = true;
+  m_color_indices.clear();
+}
+
+//! \brief clears the texture-mapping coordinate-index array.
+void Mesh_set::clear_tex_coord_indices()
+{
+  m_dirty_tex_coord_indices = true;
+  m_tex_coord_indices.clear();
+}
+
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
-  if (is_dirty()) clean();
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_empty()) return;
+  if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
 
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   if (stl_formatter) {

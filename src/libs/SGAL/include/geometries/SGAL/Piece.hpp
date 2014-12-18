@@ -44,6 +44,9 @@ public:
   enum {
     FIRST = Indexed_face_set::LAST - 1,
     UNIT_SIZE,
+    WIDTH,
+    HEIGHT,
+    DEPTH,
     LAST
   };
 
@@ -74,6 +77,9 @@ public:
   /// \name field handlers
   //@{
   Uint* unit_size_handle(const Field_info*) { return &m_unit_size; }
+  Uint* width_handle(const Field_info*) { return &m_width; }
+  Uint* height_handle(const Field_info*) { return &m_height; }
+  Uint* depth_handle(const Field_info*) { return &m_depth; }
   //@}
 
   /*! Set the attributes of this node. */
@@ -81,8 +87,11 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation. */
-  virtual void clean();
+  /*! Clean the coordinate array. */
+  virtual void clean_coords();
+
+  /*! Clean the (flat) coordinate index array. */
+  virtual void clean_flat_coord_indices();
 
   /*! Set the width. */
   void set_width(Uint width);
@@ -131,9 +140,6 @@ protected:
   std::vector<Uint> m_composition;
 
 private:
-  /*! Generate the coordinate index array. */
-  void generate_coord_indices();
-
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
@@ -157,20 +163,11 @@ inline Piece* Piece::prototype() { return new Piece(true); }
 //! \brief clones.
 inline Container* Piece::clone() { return new Piece(); }
 
-//! \brief sets the width.
-inline void Piece::set_width(Uint width) { m_width = width; }
-
 //! \brief obtains the width.
 inline Uint Piece::get_width() const { return m_width; }
 
-//! \brief sets the height.
-inline void Piece::set_height(Uint height) { m_height = height; }
-
 //! \brief obtains the height.
 inline Uint Piece::get_height() const { return m_height; }
-
-//! \brief sets the depth.
-inline void Piece::set_depth(Uint depth) { m_depth = depth; }
 
 //! \brief obtains the depth.
 inline Uint Piece::get_depth() const { return m_depth; }

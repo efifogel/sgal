@@ -198,13 +198,21 @@ public:
 
   // virtual Attribute_list get_attributes();
 
-  /*! Clean the representation.
+  /*! Clean the coordinate array.
    */
-  virtual void clean();
+  virtual void clean_coords();
+
+  /*! Clean the coordinate indices.
+   */
+  virtual void clean_flat_coord_indices();
 
   /*! Calculate the default 2D texture-mapping oordinates.
    */
-  virtual void clean_tex_coords_2d();
+  virtual void clean_tex_coord_array_2d();
+
+  /*! Clean the texture coordinate indices.
+   */
+  void clean_flat_tex_coord_indices();
 
   /*! Process change of structure.
    */
@@ -248,14 +256,6 @@ protected:
   /*! Generate the cross section (in case it is not provided).
    */
   void generate_cross_section();
-
-  /*! Generate the coordinate indices.
-   */
-  void generate_coord_indices();
-
-  /*! Generate the texture coordinate indices.
-   */
-  void generate_tex_coord_indices();
 
 private:
   /*! The tag that identifies this container type. */

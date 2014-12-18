@@ -42,7 +42,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
 
@@ -52,7 +51,6 @@
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
-class Cull_context;
 class Isect_action;
 class Color_array;
 class Draw_action;
@@ -191,9 +189,6 @@ public:
   /*! Clone */
   virtual Container* clone();
 
-  /*! Draw the Nef polyhedron */
-  virtual void draw_geometry(Draw_action * action);
-
   /*! Initialize the node prototype */
   virtual void init_prototype();
 
@@ -207,27 +202,39 @@ public:
   //@{
   //@}
 
-  /*! Set the attributes of this node */
+  /*! Set the attributes of this node. */
   virtual void set_attributes(Element * elem);
 
-  /*! Clean the representation */
-  virtual void clean();
+  /*! Draw the Nef polyhedron geometry. */
+  virtual void draw(Draw_action* action);
 
-  /*! Clear the internal representation */
-  virtual void clear();
-
-  /*! Return true if the representation is empty */
-  virtual Boolean is_empty() const { return m_nef_polyhedron.is_empty(); }
-
-  virtual void cull(Cull_context& cull_context);
-
+  /*! Draw the Nef polyhedron for selection.
+   */
   virtual void isect(Isect_action* action);
+
+  /*! Draw the Nef polyhedron internal representation.
+   */
+  virtual void draw_geometry(Draw_action* action);
 
   /*! Clean the bounding sphere of the nef polyhedron. */
   virtual void clean_sphere_bound();
 
-  /*! Obtain the Nef polyhedron */
-  Nef_polyhedron_3& get_nef_polyhedron() { return m_nef_polyhedron; }
+  /*! Clean the representation. */
+  virtual void clean_nef_polyhedron();
+
+  /*! Clear the internal representation. */
+  virtual void clear_nef_polyhedron();
+
+  /*! Determine whether the representation is empty.
+   */
+  virtual Boolean is_nef_polyhedron_empty() const;
+
+  /*! Determine whether the representation has been nvalidated.
+   */
+  virtual Boolean is_dirty_nef_polyhedron() const;
+
+  /*! Obtain the Nef polyhedron. */
+  Nef_polyhedron_3& get_nef_polyhedron();
 
   /*! Inserts additional facets, such that each bounded marked volume (the
    * outer volume is unbounded) is subdivided into convex pieces.
@@ -391,6 +398,9 @@ private:
   /*! Indicates whether the intermediate polyhedron has been built */
   Boolean m_dirty_polyhedron;
 
+  /*! Indicates whether the Nef polyhedron has been invalidated */
+  Boolean m_dirty_nef_polyhedron;
+
   /*! The resulting polyhedron */
   Polyhedron m_polyhedron;
 
@@ -403,6 +413,9 @@ private:
 protected:
   /*! Clean the polyhedron data structure */
   void clean_polyhedron();
+
+  /*! Clear the polyhedron data structure */
+  void clear_polyhedron();
 
   /*! Calculate the polyhedron spere-bound */
   void clean_sphere_bound_polyhedron();
@@ -425,6 +438,14 @@ inline Exact_nef_polyhedron* Exact_nef_polyhedron::prototype()
 //! \brief clones.
 inline Container* Exact_nef_polyhedron::clone()
 { return new Exact_nef_polyhedron(); }
+
+//! \brief determines whether the representation is empty.
+inline Boolean Exact_nef_polyhedron::is_nef_polyhedron_empty() const
+{ return m_nef_polyhedron.is_empty(); }
+
+//! \brief determines whether the representation has been nvalidated.
+inline Boolean Exact_nef_polyhedron::is_dirty_nef_polyhedron() const
+{ return m_dirty_nef_polyhedron; }
 
 SGAL_END_NAMESPACE
 

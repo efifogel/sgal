@@ -119,7 +119,7 @@ void Geo_set::init_prototype()
                                                       exec_func));
 
   // coordIndex
-  exec_func = static_cast<Execution_function>(&Geo_set::field_changed);
+  exec_func = static_cast<Execution_function>(&Geo_set::coord_indices_changed);
   auto coord_index_func =
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::coord_indices_handle);
@@ -128,6 +128,7 @@ void Geo_set::init_prototype()
                                           coord_index_func, exec_func));
 
   // normalIndex
+  exec_func = static_cast<Execution_function>(&Geo_set::normal_indices_changed);
   auto normal_index_func =
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::normal_indices_handle);
@@ -136,6 +137,7 @@ void Geo_set::init_prototype()
                                           normal_index_func, exec_func));
 
   // colorIndex
+  exec_func = static_cast<Execution_function>(&Geo_set::color_indices_changed);
   auto color_index_func =
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::color_indices_handle);
@@ -144,6 +146,8 @@ void Geo_set::init_prototype()
                                           color_index_func, exec_func));
 
   // texCoordIndex
+  exec_func =
+    static_cast<Execution_function>(&Geo_set::tex_coord_indices_changed);
   auto tex_coord_index_func =
     reinterpret_cast<Uint_array_handle_function>
     (&Geo_set::tex_coord_indices_handle);
@@ -165,50 +169,6 @@ Container_proto* Geo_set::get_prototype()
 {
   if (s_prototype == nullptr) Geo_set::init_prototype();
   return s_prototype;
-}
-
-//! \brief sets the coordinate array.
-void Geo_set::set_coord_array(Shared_coord_array coord_array)
-{
-  Observer observer(this, get_field_info(COORD_ARRAY));
-  if (m_coord_array) m_coord_array->unregister_observer(observer);
-  m_coord_array = coord_array;
-  if (m_coord_array) m_coord_array->register_observer(observer);
-  m_dirty_sphere_bound = true;
-}
-
-//! \brief sets the normal array.
-void Geo_set::set_normal_array(Shared_normal_array normal_array)
-{ m_normal_array = normal_array; }
-
-//! \brief sets the texture-coordinate array.
-void Geo_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
-{ m_tex_coord_array = tex_coord_array; }
-
-//! \brief sets the color array.
-void Geo_set::set_color_array(Shared_color_array color_array)
-{ m_color_array = color_array; }
-
-//! \brief returns true if the representation is empty.
-Boolean Geo_set::is_empty() const { return m_coord_indices.empty(); }
-
-//! \brief cleans the sphere bound of the geometry set.
-void Geo_set::clean_sphere_bound()
-{
-  if (m_bb_is_pre_set) {
-    m_dirty_sphere_bound = false;
-    return;
-  }
-
-  if (m_coord_array) {
-    // We assume that m_coord_array points at an object of type
-    // Coord_array_3d type.
-    boost::shared_ptr<Coord_array_3d> coords =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    SGAL_assertion(coords);
-    m_sphere_bound.set_around(coords->begin(), coords->end());
-  }
-  m_dirty_sphere_bound = false;
 }
 
 //! \brief sets the attributes of the object.
@@ -365,6 +325,105 @@ void Geo_set::set_attributes(Element* elem)
   elem->delete_marked();
 }
 
+//! \brief responds to a change in the coordinate array.
+void Geo_set::coord_content_changed(const Field_info* field_info)
+{
+  if (!field_info) field_info = get_field_info(COORD_ARRAY);
+  sphere_bound_changed(field_info);
+}
+
+//! \brief responds to a change in the normal array.
+void Geo_set::normal_content_changed(const Field_info* /* field_info */) {}
+
+//! \brief responds to a change in the color array.
+void Geo_set::color_content_changed(const Field_info* /* field_info */) {}
+
+//! \brief responds to a change in the texture coordinate array.
+void Geo_set::tex_coord_content_changed(const Field_info* /* field_info */) {}
+
+//! \brief responds to a change in the coordinate-index array.
+void Geo_set::coord_indices_changed(const Field_info* field_info)
+{
+  if (!field_info) field_info = get_field_info(COORD_INDEX_ARRAY);
+  sphere_bound_changed(field_info);
+}
+
+//! \brief responds to a change in the normal-index array.
+void Geo_set::normal_indices_changed(const Field_info* /* field_info */) {}
+
+//! \brief responds to a change in the color-index array.
+void Geo_set::color_indices_changed(const Field_info* /* field_info */) {}
+
+//! \brief responds to a change in the texture-coordinate index array.
+void Geo_set::tex_coord_indices_changed(const Field_info* /* field_info */) {}
+
+//! \brief responds to a change in the sphere bound.
+void Geo_set::sphere_bound_changed(const Field_info* field_info)
+{
+  if (!field_info) field_info = get_field_info(SPHERE_BOUND);
+  Geometry::sphere_bound_changed(field_info);
+  Geometry::field_changed(field_info);
+}
+
+//! \brief sets the coordinate array.
+void Geo_set::set_coord_array(Shared_coord_array coord_array)
+{
+  Observer observer(this, get_field_info(COORD_ARRAY));
+  if (m_coord_array) m_coord_array->unregister_observer(observer);
+  m_coord_array = coord_array;
+  if (m_coord_array) m_coord_array->register_observer(observer);
+  coord_content_changed(get_field_info(COORD_ARRAY));
+}
+
+//! \brief sets the normal array.
+void Geo_set::set_normal_array(Shared_normal_array normal_array)
+{
+  m_normal_array = normal_array;
+  normal_content_changed(get_field_info(NORMAL_ARRAY));
+}
+
+//! \brief sets the color array.
+void Geo_set::set_color_array(Shared_color_array color_array)
+{
+  m_color_array = color_array;
+  color_content_changed(get_field_info(COLOR_ARRAY));
+}
+
+//! \brief sets the texture-coordinate array.
+void Geo_set::set_tex_coord_array(Shared_tex_coord_array tex_coord_array)
+{
+  m_tex_coord_array = tex_coord_array;
+  tex_coord_content_changed(get_field_info(TEX_COORD_ARRAY));
+}
+
+//! \brief sets the coordinate-index array.
+void Geo_set::set_coord_indices(const std::vector<Int32>& indices)
+{
+  m_coord_indices = indices;
+  coord_indices_changed(get_field_info(COORD_INDEX_ARRAY));
+}
+
+//! \brief sets the normal-index array.
+void Geo_set::set_normal_indices(const std::vector<Int32>& indices)
+{
+  m_normal_indices = indices;
+  normal_indices_changed(get_field_info(NORMAL_INDEX_ARRAY));
+}
+
+//! \brief sets the color-index array.
+void Geo_set::set_color_indices(const std::vector<Int32>& indices)
+{
+  m_color_indices = indices;
+  color_indices_changed(get_field_info(COLOR_INDEX_ARRAY));
+}
+
+//! \brief sets the texture-coordinate-index array.
+void Geo_set::set_tex_coord_indices(const std::vector<Int32>& indices)
+{
+  m_tex_coord_indices = indices;
+  tex_coord_indices_changed(get_field_info(TEX_COORD_INDEX_ARRAY));
+}
+
 //! \brief processes change of coordinates.
 void Geo_set::coord_changed(const Field_info* field_info)
 {
@@ -375,29 +434,37 @@ void Geo_set::coord_changed(const Field_info* field_info)
     Observer observer(this, field_info);
     m_coord_array->register_observer(observer);
   }
-  field_changed(field_info);
+  coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
 //! \brief processes change of normals.
 void Geo_set::normal_changed(const Field_info* field_info)
-{ field_changed(field_info); }
+{ normal_content_changed(get_field_info(NORMAL_ARRAY)); }
 
 //! \brief processes change of colors.
 void Geo_set::color_changed(const Field_info* field_info)
-{ field_changed(field_info); }
+{ color_content_changed(get_field_info(COLOR_ARRAY)); }
 
 //! \brief processes change of texture coordinates.
 void Geo_set::tex_coord_changed(const Field_info* field_info)
-{ field_changed(field_info); }
+{ tex_coord_content_changed(get_field_info(TEX_COORD_ARRAY)); }
 
 //! \brief Process change of field.
 void Geo_set::field_changed(const Field_info* field_info)
 {
   switch (field_info->get_id()) {
-   case COORD_ARRAY: m_dirty_sphere_bound = true; break;
+   case COORD_ARRAY: coord_content_changed(field_info); return;
+   case NORMAL_ARRAY: normal_content_changed(field_info); return;
+   case COLOR_ARRAY: color_content_changed(field_info); return;
+   case TEX_COORD_ARRAY: tex_coord_content_changed(field_info); return;
+   case COORD_INDEX_ARRAY: coord_indices_changed(field_info); return;
+   case NORMAL_INDEX_ARRAY: normal_indices_changed(field_info); return;
+   case COLOR_INDEX_ARRAY: color_indices_changed(field_info); return;
+   case TEX_COORD_INDEX_ARRAY: tex_coord_indices_changed(field_info); return;
+
    default: break;
   }
-  Container::field_changed(field_info);
+  Geometry::field_changed(field_info);
 }
 
 //! \brief assigns the coord indices with the reverse of given indices.
@@ -420,12 +487,21 @@ const Vector3f& Geo_set::get_coord_3d(Uint i) const
   return (*coords)[i];
 }
 
-//! \brief processes change of data that causes a change to the sphere bound.
-void Geo_set::sphere_bound_changed(const Field_info* field_info)
+//! \brief cleans the sphere bound of the geometry set.
+void Geo_set::clean_sphere_bound()
 {
-  if (field_info == nullptr) field_info = get_field_info(SPHERE_BOUND);
-  Geometry::sphere_bound_changed(field_info);
-  field_changed(field_info);
+  m_dirty_sphere_bound = false;
+
+  if (m_bb_is_pre_set) return;
+
+  if (m_coord_array) {
+    // We assume that m_coord_array points at an object of type
+    // Coord_array_3d type.
+    boost::shared_ptr<Coord_array_3d> coords =
+      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    SGAL_assertion(coords);
+    m_sphere_bound.set_around(coords->begin(), coords->end());
+  }
 }
 
 //! \brief obtains the bounding box.

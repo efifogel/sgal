@@ -65,15 +65,34 @@ void Piece::init_prototype()
   s_prototype = new Container_proto(Indexed_face_set::get_prototype());
 
   // Add the field-info records to the prototype:
-  // size
   Execution_function exec_func =
     static_cast<Execution_function>(&Piece::structure_changed);
+
+  // size
   Uint_handle_function unit_size_func =
     static_cast<Uint_handle_function>(&Piece::unit_size_handle);
   s_prototype->add_field_info(new SF_uint(UNIT_SIZE, "size",
                                           RULE_EXPOSED_FIELD,
                                           unit_size_func,
                                           exec_func));
+
+  // width
+  Uint_handle_function width_func =
+    static_cast<Uint_handle_function>(&Piece::width_handle);
+  s_prototype->add_field_info(new SF_uint(WIDTH, "width", RULE_EXPOSED_FIELD,
+                                          width_func, exec_func));
+
+  // height
+  Uint_handle_function height_func =
+    static_cast<Uint_handle_function>(&Piece::height_handle);
+  s_prototype->add_field_info(new SF_uint(HEIGHT, "height", RULE_EXPOSED_FIELD,
+                                          height_func, exec_func));
+
+  // depth
+  Uint_handle_function depth_func =
+    static_cast<Uint_handle_function>(&Piece::depth_handle);
+  s_prototype->add_field_info(new SF_uint(DEPTH, "depth", RULE_EXPOSED_FIELD,
+                                          depth_func, exec_func));
 }
 
 //! \brief deletes the node prototype.
@@ -135,8 +154,10 @@ void Piece::set_attributes(Element* elem)
 }
 
 //! Clean the representation.
-void Piece::clean()
+void Piece::clean_coords()
 {
+  m_dirty_coord_array = false;
+
   // Clear internal representation:
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
 
@@ -182,17 +203,19 @@ void Piece::clean()
 
   set_solid(true);
 
-  generate_coord_indices();
-
-  Indexed_face_set::clean();
-  Indexed_face_set::coord_point_changed();
+  coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
-//! \brief generates the coordinate index array.
-void Piece::generate_coord_indices()
+//! \brief cleans the flat coordinate index array.
+void Piece::clean_flat_coord_indices()
 {
-  //! \todo generate the indices flat to start with.
-  m_coord_indices.resize(m_num_primitives * 5);
+  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = false;
+  m_coord_indices_flat = true;
+
+  set_primitive_type(PT_QUADS);
+
+  m_flat_coord_indices.resize(m_num_primitives * 4);
   Uint width = m_width + 1;
   Uint height = m_height + 1;
   Uint offset = height * width;
@@ -204,62 +227,76 @@ void Piece::generate_coord_indices()
         if (m_composition[l]) {
           Uint start = i + width * (j + height * k);
           if ((k == 0) || (!m_composition[l - m_width * m_height])) {
-            m_coord_indices[m++] = start;
-            m_coord_indices[m++] = start + width;
-            m_coord_indices[m++] = start + width + 1;
-            m_coord_indices[m++] = start + 1;
-            m_coord_indices[m++] = static_cast<Uint>(-1);
+            m_flat_coord_indices[m++] = start;
+            m_flat_coord_indices[m++] = start + width;
+            m_flat_coord_indices[m++] = start + width + 1;
+            m_flat_coord_indices[m++] = start + 1;
           }
           if ((k == (m_depth - 1)) || (!m_composition[l + m_width * m_height]))
           {
-            m_coord_indices[m++] = offset + start;
-            m_coord_indices[m++] = offset + start + 1;
-            m_coord_indices[m++] = offset + start + width + 1;
-            m_coord_indices[m++] = offset + start + width;
-            m_coord_indices[m++] = static_cast<Uint>(-1);
+            m_flat_coord_indices[m++] = offset + start;
+            m_flat_coord_indices[m++] = offset + start + 1;
+            m_flat_coord_indices[m++] = offset + start + width + 1;
+            m_flat_coord_indices[m++] = offset + start + width;
           }
           if ((j == 0) || (!m_composition[l - m_width])) {
-            m_coord_indices[m++] = start;
-            m_coord_indices[m++] = start + 1;
-            m_coord_indices[m++] = offset + start + 1;
-            m_coord_indices[m++] = offset + start;
-            m_coord_indices[m++] = static_cast<Uint>(-1);
+            m_flat_coord_indices[m++] = start;
+            m_flat_coord_indices[m++] = start + 1;
+            m_flat_coord_indices[m++] = offset + start + 1;
+            m_flat_coord_indices[m++] = offset + start;
           }
           if ((j == (m_height - 1)) || (!m_composition[l + m_width])) {
-            m_coord_indices[m++] = start + width;
-            m_coord_indices[m++] = offset + start + width;
-            m_coord_indices[m++] = offset + start + width + 1;
-            m_coord_indices[m++] = start + width + 1;
-            m_coord_indices[m++] = static_cast<Uint>(-1);
+            m_flat_coord_indices[m++] = start + width;
+            m_flat_coord_indices[m++] = offset + start + width;
+            m_flat_coord_indices[m++] = offset + start + width + 1;
+            m_flat_coord_indices[m++] = start + width + 1;
           }
           if ((i == 0) || (!m_composition[l - 1])) {
-            m_coord_indices[m++] = start;
-            m_coord_indices[m++] = offset + start;
-            m_coord_indices[m++] = offset + start + width;
-            m_coord_indices[m++] = start + width;
-            m_coord_indices[m++] = static_cast<Uint>(-1);
+            m_flat_coord_indices[m++] = start;
+            m_flat_coord_indices[m++] = offset + start;
+            m_flat_coord_indices[m++] = offset + start + width;
+            m_flat_coord_indices[m++] = start + width;
           }
           if ((i == (m_width - 1)) || (!m_composition[l + 1])) {
-            m_coord_indices[m++] = start + 1;
-            m_coord_indices[m++] = start + 1 + width;
-            m_coord_indices[m++] = offset + start + 1 + width;
-            m_coord_indices[m++] = offset + start + 1;
-            m_coord_indices[m++] = static_cast<Uint>(-1);
+            m_flat_coord_indices[m++] = start + 1;
+            m_flat_coord_indices[m++] = start + 1 + width;
+            m_flat_coord_indices[m++] = offset + start + 1 + width;
+            m_flat_coord_indices[m++] = offset + start + 1;
           }
         }
         ++l;
       }
     }
   }
-
-  clear_flat_coord_indices();
 }
 
 //! \brief processes change of structure.
 void Piece::structure_changed(const Field_info* field_info)
 {
-  clear();
+  clear_coord_array();
+  clear_flat_coord_indices();
   field_changed(field_info);
+}
+
+//! \brief sets the width.
+void Piece::set_width(Uint width)
+{
+  m_width = width;
+  structure_changed(get_field_info(WIDTH));
+}
+
+//! \brief sets the height.
+void Piece::set_height(Uint height)
+{
+  m_height = height;
+  structure_changed(get_field_info(HEIGHT));
+}
+
+//! \brief sets the depth.
+void Piece::set_depth(Uint depth)
+{
+  m_depth = depth;
+  structure_changed(get_field_info(DEPTH));
 }
 
 SGAL_END_NAMESPACE

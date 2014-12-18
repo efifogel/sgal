@@ -191,10 +191,10 @@ public:
   virtual void clean_sgm();
 
   /*! Clear the internal representation and auxiliary data structures. */
-  virtual void clear();
+  virtual void clear_sgm();
 
   /*! Determine whether the representation is empty. */
-  virtual Boolean is_empty() const;
+  virtual Boolean is_sgm_empty() const;
 
   /*! Draw the arrangement on sphere vertices.
    * \param action
@@ -247,7 +247,7 @@ inline const std::string& Spherical_gaussian_map_geo::get_tag() const
 { return s_tag; }
 
 //! \brief determines whether the representation is empty.
-inline Boolean Spherical_gaussian_map_geo::is_empty() const
+inline Boolean Spherical_gaussian_map_geo::is_sgm_empty() const
 { return m_sgm->is_empty(); }
 
 //! \brief sets the flag that indicates whether to compute the minkowski sum.

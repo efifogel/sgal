@@ -136,6 +136,7 @@ REGISTER_TO_FACTORY(Cubical_gaussian_map_geo, "Cubical_gaussian_map_geo");
 //! \brief constructor.
 Cubical_gaussian_map_geo::Cubical_gaussian_map_geo(Boolean proto) :
   Mesh_set(proto),
+  m_dirty_cgm(true),
   m_draw_aos(s_def_draw_aos), m_draw_primal(!s_def_draw_aos),
   m_draw_aos_opaque(s_def_draw_aos_opaque),
   m_draw_aos_haloed(s_def_draw_aos_haloed),
@@ -219,7 +220,7 @@ Cubical_gaussian_map_geo(const Cubical_gaussian_map_geo& gaussian_map)
 Cubical_gaussian_map_geo::~Cubical_gaussian_map_geo()
 {
   m_cgm_nodes.clear();
-  clear();
+  clear_cgm();
   if (m_vertex_geom) {
     delete m_vertex_geom;
     m_vertex_geom = nullptr;
@@ -231,14 +232,16 @@ Cubical_gaussian_map_geo::~Cubical_gaussian_map_geo()
 }
 
 //! \brief cleans the data structure.
-void Cubical_gaussian_map_geo::clean()
+void Cubical_gaussian_map_geo::clean_cgm()
 {
+  m_dirty_cgm = false;
+
   if (m_minkowski_sum) {
     Cgm_node_iter ni = m_cgm_nodes.begin();
     Shared_cubical_gaussian_map_geo geo1 = *ni++;
     Shared_cubical_gaussian_map_geo geo2 = *ni;
-    if (geo1->is_dirty()) geo1->clean();
-    if (geo2->is_dirty()) geo2->clean();
+    if (geo1->is_dirty_cgm()) geo1->clean_cgm();
+    if (geo2->is_dirty_cgm()) geo2->clean_cgm();
     clock_t start_time = clock();
     m_cgm.minkowski_sum(geo1->get_cgm(), geo2->get_cgm());
     clock_t end_time = clock();
@@ -324,21 +327,31 @@ void Cubical_gaussian_map_geo::clean()
     m_marked_vertex_index = num_vertices;
   if (m_marked_edge_index >= num_edges) m_marked_edge_index = num_edges;
   if (m_marked_facet_index >= num_facets) m_marked_facet_index = num_facets;
+}
 
-  Mesh_set::clean();
+//! \brief obrains a reference to the cubical Gaussian map.
+Cubical_gaussian_map_geo::Polyhedral_cgm*
+Cubical_gaussian_map_geo::get_cgm()
+{
+  if (is_dirty_cgm()) clean_cgm();
+  return &m_cgm;
+}
+
+//! \brief sets the cubical Gaussian map.
+void Cubical_gaussian_map_geo::set_cgm(const Polyhedral_cgm& cgm)
+{
+  m_dirty_cgm = false;
+  m_cgm = cgm;
 }
 
 //! \brief clears the internal representation and auxiliary data structures.
-void Cubical_gaussian_map_geo::clear()
+void Cubical_gaussian_map_geo::clear_cgm()
 {
-  Mesh_set::clear();
+  m_dirty_cgm = true;
   m_cgm.clear();
 }
 
-//! \brief
-void Cubical_gaussian_map_geo::cull(SGAL::Cull_context& /* cull_context */) {}
-
-//! \brief
+//! \brief draws the geometry for selection.
 void Cubical_gaussian_map_geo::isect(SGAL::Isect_action* action)
 {
   Context* context = action->get_context();
@@ -359,7 +372,7 @@ void Cubical_gaussian_map_geo::clean_sphere_bound()
     return;
   }
 
-  if (is_dirty()) clean();
+  if (is_dirty_cgm()) clean_cgm();
   if (m_draw_aos) {
     if (!m_draw_aos_unfolded) {
       m_sphere_bound.set_center(Vector3f(0, 0, 0));
@@ -1129,7 +1142,7 @@ void Cubical_gaussian_map_geo::draw_aos_marked_vertex(unsigned int id)
 //! \brief draws the dual representation of the polyhedron in 2D.
 void Cubical_gaussian_map_geo::draw_aos_unfolded(SGAL::Draw_action* action)
 {
-  if (is_dirty()) clean();
+  if (is_dirty_cgm()) clean_cgm();
 
   SGAL::Context* context = action->get_context();
 
@@ -1612,7 +1625,7 @@ void Cubical_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
-  if (is_dirty()) clean();
+  if (is_dirty_cgm()) clean_cgm();
 
   if (m_minkowski_sum)
     std::cout << "Minkowski sum took " << m_time << " seconds.\n";
@@ -1657,7 +1670,7 @@ increase_vertex_index(const Field_info* /* field_info */)
   m_marked_vertex_index++;
   if (m_marked_vertex_index == m_cgm.number_of_vertices())
     m_marked_vertex_index = 0;
-  clear();
+  clear_cgm();
 }
 
 //! \brief increases the face index.
@@ -1667,7 +1680,7 @@ increase_edge_index(const Field_info* /* field_info */)
   m_marked_edge_index++;
   if (m_marked_edge_index == m_cgm.number_of_edges())
     m_marked_edge_index = 0;
-  clear();
+  clear_cgm();
 }
 
 //! \brief increases the face index.
@@ -1677,7 +1690,7 @@ increase_facet_index(const Field_info* /* field_info */)
   m_marked_facet_index++;
   if (m_marked_facet_index == m_cgm.number_of_facets())
     m_marked_facet_index = 0;
-  clear();
+  clear_cgm();
 }
 
 //! \brief creates the renderers.
@@ -1945,14 +1958,14 @@ operator()(Draw_action* /* action */)
 //! \brief processes change of points.
 void Cubical_gaussian_map_geo::field_changed(const Field_info* field_info)
 {
-  clear();
+  clear_cgm();
   Mesh_set::field_changed(field_info);
 }
 
 //! \brief processes change of coordinate field.
 void Cubical_gaussian_map_geo::coord_changed(const Field_info* field_info)
 {
-  clear();
+  clear_cgm();
   Mesh_set::coord_changed(field_info);
 }
 
@@ -1963,8 +1976,8 @@ void Cubical_gaussian_map_geo::draw(Draw_action* action)
   if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
   if (is_dirty_flat_color_indices()) clean_flat_color_indices();
   if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
-  if (is_dirty()) clean();
-  if (is_empty()) return;
+  if (is_dirty_cgm()) clean_cgm();
+  if (is_cgm_empty()) return;
 
   draw_mesh(action);
 }
