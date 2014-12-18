@@ -29,7 +29,6 @@
 #include <GL/glext.h>
 
 #include <CGAL/basic.h>
-// #include <CGAL/orient_polygon_soup.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -48,8 +47,6 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/GL_error.hpp"
 #include "SGAL/calculate_multiple_normals_per_vertex.hpp"
-
-#include "SGAL/orient_polygon_soup.h"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -306,41 +303,41 @@ void Indexed_face_set::clean_polyhedron()
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
 
   //! \todo temporary solution
-  if (false) {
-    typedef Inexact_kernel::Point_3     Inexact_point_3;
-    boost::shared_ptr<Coord_array_3d> coord_array =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    std::vector<Inexact_point_3> points(coord_array->size());
-    std::transform(coord_array->begin(), coord_array->end(),
-                   points.begin(),
-                   [](const Vector3f& vec)
-                   { return Inexact_point_3(vec[0], vec[1], vec[2]); });
-    std::vector<std::vector<std::size_t> > polygons(get_num_primitives());
-    size_t i = 0;
-    for (auto it = polygons.begin(); it != polygons.end(); ++it) {
-      auto& polygon = *it;
-      polygon.resize(3);
-      polygon[0] = m_flat_coord_indices[i++];
-      polygon[1] = m_flat_coord_indices[i++];
-      polygon[2] = m_flat_coord_indices[i++];
-    }
+//   if (false) {
+//     typedef Inexact_kernel::Point_3     Inexact_point_3;
+//     boost::shared_ptr<Coord_array_3d> coord_array =
+//       boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+//     std::vector<Inexact_point_3> points(coord_array->size());
+//     std::transform(coord_array->begin(), coord_array->end(),
+//                    points.begin(),
+//                    [](const Vector3f& vec)
+//                    { return Inexact_point_3(vec[0], vec[1], vec[2]); });
+//     std::vector<std::vector<std::size_t> > polygons(get_num_primitives());
+//     size_t i = 0;
+//     for (auto it = polygons.begin(); it != polygons.end(); ++it) {
+//       auto& polygon = *it;
+//       polygon.resize(3);
+//       polygon[0] = m_flat_coord_indices[i++];
+//       polygon[1] = m_flat_coord_indices[i++];
+//       polygon[2] = m_flat_coord_indices[i++];
+//     }
 
-    bool oriented = CGAL::orient_polygon_soup(points, polygons);
-    std::cout << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
-    std::cout << points.size() << ", " << coord_array->size() << std::endl;
-    std::cout << polygons.size() << ", " << get_num_primitives() << std::endl;
+//     bool oriented = CGAL::orient_polygon_soup(points, polygons);
+//     std::cout << (oriented ? "Oriented." : "Not orientabled.") << std::endl;
+//     std::cout << points.size() << ", " << coord_array->size() << std::endl;
+//     std::cout << polygons.size() << ", " << get_num_primitives() << std::endl;
 
-    polygons.clear();
-    i = 0;
-    for (auto it = polygons.begin(); it != polygons.end(); ++it) {
-      auto& polygon = *it;
-      m_flat_coord_indices[i++] = polygon[0];
-      m_flat_coord_indices[i++] = polygon[1];
-      m_flat_coord_indices[i++] = polygon[2];
-    }
-    for (auto it = polygons.begin(); it != polygons.end(); ++it) it->clear();
-    points.clear();
-  }
+//     polygons.clear();
+//     i = 0;
+//     for (auto it = polygons.begin(); it != polygons.end(); ++it) {
+//       auto& polygon = *it;
+//       m_flat_coord_indices[i++] = polygon[0];
+//       m_flat_coord_indices[i++] = polygon[1];
+//       m_flat_coord_indices[i++] = polygon[2];
+//     }
+//     for (auto it = polygons.begin(); it != polygons.end(); ++it) it->clear();
+//     points.clear();
+//   }
   m_polyhedron.delegate(m_surface);           // create the polyhedral surface
 #if 0
   if (!m_polyhedron.normalized_border_is_valid()) {
