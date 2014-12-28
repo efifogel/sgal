@@ -157,6 +157,18 @@ public:
    */
   virtual void clean_normals();
 
+  /*! Clean the polyhedron. */
+  virtual void clean_polyhedron();
+
+  /*! Clears the polyhedron.
+   */
+  virtual void clear_polyhedron();
+
+  /*! Determine whether the polyhedron have been invalidated, and thus been
+   * must be cleaned.
+   */
+  Boolean is_dirty_polyhedron() const;
+
   /*! Set the polyhedron data-structure. */
   void set_polyhedron(Exact_polyhedron& polyhedron);
 
@@ -167,14 +179,22 @@ public:
    */
   const Exact_polyhedron& get_polyhedron(Boolean with_planes = false);
 
-  /*! Clears the polyhedron.
+  /*! Determine whether the polyhedron is closed.
    */
-  virtual void clear_polyhedron();
+  Boolean is_closed();
 
-  /*! Determine whether the polyhedron have been invalidated, and thus been
-   * must be cleaned.
+  /*! Determine whether the polyhedron representation is empty.
    */
-  Boolean is_dirty_polyhedron() const;
+  bool is_polyhedron_empty() const;
+
+  /// \name Change Recators
+  //@{
+  /*! Respond to a change in the coordinate array.
+   * \param field_info (in) the information record of the field that caused
+   *                   the change.
+   */
+  virtual void coord_content_changed(const Field_info* field_info);
+  //@}
 
   /*! Obtain the flag that indicates whether to compute the convex hull
    * of the coordinate set.
@@ -189,10 +209,6 @@ public:
   /*! Compute the orientation of a point relative to the polyhedron.
    */
   CGAL::Oriented_side oriented_side(const Exact_point_3& p);
-
-  /*! Determine whether the polyhedron is closed.
-   */
-  Boolean is_closed();
 
   /*! Computes the volume of the convex hull of the polyhedron.
    */
@@ -246,9 +262,6 @@ protected:
   /*! Obtain the tag (type) of the container. */
   virtual const std::string& get_tag() const;
 
-  /*! Clean the polyhedron. */
-  virtual void clean_polyhedron();
-
   /*! Obtain the ith 3D coordinate.
    */
   virtual const Vector3f& get_coord_3d(Uint i) const;
@@ -260,19 +273,6 @@ protected:
   /*! Clean the polyhedron facets.
    */
   virtual void clean_polyhedron_facets();
-
-  /*! Determine whether the polyhedron representation is empty.
-   */
-  bool is_polyhedron_empty() const;
-
-  /// \name Change Recators
-  //@{
-  /*! Respond to a change in the coordinate array.
-   * \param field_info (in) the information record of the field that caused
-   *                   the change.
-   */
-  virtual void coord_content_changed(const Field_info* field_info);
-  //@}
 
   /*! Calculate multiple normals per vertex for all vertices.
    * If the angle between the geometric normals of two adjacent faces is less

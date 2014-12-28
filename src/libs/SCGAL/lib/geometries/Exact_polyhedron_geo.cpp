@@ -60,6 +60,15 @@
 
 SGAL_BEGIN_NAMESPACE
 
+/*! \todo one option to construct a polyhedron geo is to compute the convex
+ * hull of a set of input coordinates. Currently, we use the field "coordArray"
+ * as the input. If this option is desired, the polyhedron intermediate
+ * structure is constructed. Then, the "coordArray" field is overriden with
+ * the coordinates of the convex hull. We need to introduce a new filed, say
+ * "coordSet", which should be used as input. This way, the input field is not
+ * overriden.
+ */
+
 const std::string Exact_polyhedron_geo::s_tag = "ExactPolyhedron";
 Container_proto* Exact_polyhedron_geo::s_prototype(nullptr);
 
@@ -182,7 +191,6 @@ void Exact_polyhedron_geo::clean_coords()
   if (m_dirty_polyhedron) clean_polyhedron();
   if (m_polyhedron.empty()) return;
 
-  //! \todo handle the case of Exact_coord_array_3d
   if (!m_coord_array) {
     Uint size = m_polyhedron.size_of_vertices();
     m_coord_array.reset(new Coord_array_3d(size));
@@ -192,21 +200,34 @@ void Exact_polyhedron_geo::clean_coords()
 
   boost::shared_ptr<Coord_array_3d> coords =
     boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-  SGAL_assertion(coords);
-
-  /* Generate the coordinate array and assign the index into the coordinate
-   * array of the vertex to the vertex.
-   */
-  Uint index = 0;
-  auto cit = coords->begin();
-  for (auto vit = m_polyhedron.vertices_begin();
-       vit != m_polyhedron.vertices_end(); ++vit)
-  {
-    vit->m_index = index++;
-    *cit++ = to_vector3f(vit->point());
+  if (coords) {
+    /* Generate the coordinate array and assign the index into the coordinate
+     * array of the vertex to the vertex.
+     */
+    Uint index = 0;
+    auto cit = coords->begin();
+    for (auto vit = m_polyhedron.vertices_begin();
+         vit != m_polyhedron.vertices_end(); ++vit)
+    {
+      vit->m_index = index++;
+      *cit++ = to_vector3f(vit->point());
+    }
   }
-
-  clean_coord_indices();
+  else {
+    boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+      boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
+    if (exact_coords) {
+      Uint index = 0;
+      auto cit = exact_coords->begin();
+      for (auto vit = m_polyhedron.vertices_begin();
+           vit != m_polyhedron.vertices_end(); ++vit)
+      {
+        vit->m_index = index++;
+        *cit++ = vit->point();
+      }
+    }
+    else SGAL_error();
+  }
 
   /* Notice that we call the function of the base calss.
    * In general when the coordinates change, we must invalidate the polyhedron
@@ -216,6 +237,8 @@ void Exact_polyhedron_geo::clean_coords()
    * case we do not want to invalidate the polyhedron.
    */
   Boundary_set::coord_content_changed(get_field_info(COORD_ARRAY));
+
+  clean_coord_indices();
 }
 
 //! \brief clears the coordinates.
