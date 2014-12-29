@@ -43,7 +43,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Mesh_set.hpp"
-#include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
 
@@ -57,7 +56,6 @@
 SGAL_BEGIN_NAMESPACE
 
 class Container_proto;
-class Cull_context;
 class Isect_action;
 class Color_array;
 class Draw_action;
@@ -258,8 +256,17 @@ public:
   Ngm_node_array* ngm_nodes_handle(const Field_info*) { return &m_ngm_nodes; }
   //@}
 
-  virtual void cull(Cull_context& cull_context);
+  /*! Draw the NGM geometry.
+   */
+  virtual void draw(Draw_action* action);
+
+  /*! Draw the CGM geometry for selection.
+   */
   virtual void isect(Isect_action* action);
+
+  /*! Draw the CGM internal representation.
+   */
+  virtual void draw_geometry(Draw_action* action);
 
   /*! Clean the bounding sphere of the Nef Gaussian map. */
   virtual void clean_sphere_bound();
@@ -369,6 +376,9 @@ private:
 
   /*! Indicates whether the intermediate polyhedron has been built. */
   Boolean m_dirty_polyhedron;
+
+  /*! Indicates whether the ngm data structure has been invalidated. */
+  Boolean m_dirty_ngm;
 
   /*! The resulting polyhedron. */
   Polyhedron m_polyhedron;
@@ -481,17 +491,16 @@ protected:
   virtual const std::string& get_tag() const { return s_tag; }
 
   /*! Clean the polyhedron data structure. */
-  virtual void clean();
+  void clean_ngm();
 
   /*! Clear the internal representation. */
-  virtual void clear();
+  void clear_ngm();
+
+  /*! Determines whether the representation has been invalidated. */
+  Boolean is_dirty_ngm() const;
 
   /*! Determine whether the representation is empty. */
-  //! \todo virtual bool is_empty() const { return m_nef_gaussian_map.empty(); }
-  virtual bool is_empty() const { return false; }
-
-  /*! Draw the mesh. */
-  virtual void draw_geometry(Draw_action* action);
+  bool is_ngm_empty() const;
 
   /*! Update the polyhedron data structure. */
   void clean_polyhedron();
@@ -643,6 +652,15 @@ Nef_gaussian_map_geo::set_marked_edge_color(const Vector3f& color)
 inline void
 Nef_gaussian_map_geo::set_marked_facet_color(const Vector3f& color)
 { m_marked_facet_color = color; }
+
+//! \brief determiness whether the representation has been invalidated.
+inline Boolean Nef_gaussian_map_geo::is_dirty_ngm() const
+{ return m_dirty_ngm; }
+
+//! \brief determines whether the representation is empty.
+inline bool Nef_gaussian_map_geo::is_ngm_empty() const
+{ return false; }
+// { return m_nef_gaussian_map.empty(); }
 
 SGAL_END_NAMESPACE
 
