@@ -2239,7 +2239,7 @@ void Boundary_set::clean_center()
 }
 
 //! \brief sets the center of the geometric object.
-void Boundary_set::set_center(Vector3f& center)
+void Boundary_set::set_center(const Vector3f& center)
 {
   m_center = center;
   m_dirty_center = false;

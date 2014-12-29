@@ -295,7 +295,7 @@ public:
 
   /*! Set the center of the geometric object.
    */
-  void set_center(Vector3f& center);
+  void set_center(const Vector3f& center);
 
   /*! Obtain the center of the geometric object.
    */
