@@ -165,7 +165,7 @@ Spherical_gaussian_map_base_geo::~Spherical_gaussian_map_base_geo() {}
 void Spherical_gaussian_map_base_geo::clear_sgm() {}
 
 //! \brief determines whether the representation is empty.
-Boolean Spherical_gaussian_map_base_geo::is_sgm_empty() const {}
+Boolean Spherical_gaussian_map_base_geo::is_sgm_empty() const { return true; }
 
 //! \brief draws the geometry for selection.
 void Spherical_gaussian_map_base_geo::isect(Isect_action* action)

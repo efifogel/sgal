@@ -85,6 +85,7 @@ const Float Nef_gaussian_map_geo::s_def_edge_radius_scale(0.04f);
 Nef_gaussian_map_geo::Nef_gaussian_map_geo(Boolean proto) :
   Mesh_set(proto),
   m_dirty_polyhedron(true),
+  m_dirty_ngm(true),
   m_bb_is_pre_set(false),
   m_time(0),
   m_minkowski_sum(false),
@@ -151,8 +152,10 @@ void Nef_gaussian_map_geo::clean_polyhedron()
 }
 
 //! \brief cleans the nef polyhedron data structure.
-void Nef_gaussian_map_geo::clean()
+void Nef_gaussian_map_geo::clean_ngm()
 {
+  m_dirty_ngm = false;
+
   clock_t start_time = clock();
   if (m_minkowski_sum) {
     Ngm_node_iter ni = m_ngm_nodes.begin();
@@ -176,21 +179,14 @@ void Nef_gaussian_map_geo::clean()
 
   clock_t end_time = clock();
   m_time = (float) (end_time - start_time) / (float) CLOCKS_PER_SEC;
-
-  Mesh_set::clean();
 }
 
 //! \brief clears the internal representation.
-void Nef_gaussian_map_geo::clear()
+void Nef_gaussian_map_geo::clear_ngm()
 {
-  m_polyhedron.clear();
-  m_dirty_polyhedron = true;
+  m_dirty_ngm = true;
   m_nef_gaussian_map.clear();
-  Mesh_set::clear();
 }
-
-//! \brief
-void Nef_gaussian_map_geo::cull(SGAL::Cull_context& cull_context) {}
 
 //! \brief draws the intermediate polyhedron (for debugging purpose).
 void Nef_gaussian_map_geo::draw_polyhedron(Draw_action* action)
@@ -582,18 +578,31 @@ void Nef_gaussian_map_geo::draw_primal(Draw_action* action)
   */
 }
 
+//! \brief draws the geometry.
+void Nef_gaussian_map_geo::draw(Draw_action* action)
+{
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (is_dirty_flat_normal_indices()) clean_flat_normal_indices();
+  if (is_dirty_flat_color_indices()) clean_flat_color_indices();
+  if (is_dirty_flat_tex_coord_indices()) clean_flat_tex_coord_indices();
+  if (is_dirty_ngm()) clean_ngm();
+  if (is_ngm_empty()) return;
+
+  draw_mesh(action);
+}
+
 //! \brief draws the nef polyhedron.
-void Nef_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
+void Nef_gaussian_map_geo::draw_geometry(Draw_action* action)
 {
   if (m_draw_dual) draw_dual(action);
   else draw_primal(action);
 }
 
 //! \brief
-void Nef_gaussian_map_geo::isect(SGAL::Isect_action* action)
+void Nef_gaussian_map_geo::isect(Isect_action* action)
 {
-  if (is_dirty()) clean();
-  if (is_empty()) return;
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (m_dirty_ngm) clean_ngm();
 
   for (Facet_iterator i = m_polyhedron.facets_begin();
        i != m_polyhedron.facets_end(); ++i)
@@ -620,7 +629,9 @@ void Nef_gaussian_map_geo::clean_sphere_bound()
     return;
   }
 
-  if (is_dirty()) clean();
+  if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
+  if (m_dirty_ngm) clean_ngm();
+
   Inexact_sphere_vector spheres;
   if (!m_polyhedron.empty()) {
     spheres.resize(m_polyhedron.size_of_vertices());
@@ -884,7 +895,7 @@ SGAL::Container_proto* Nef_gaussian_map_geo::get_prototype()
 void Nef_gaussian_map_geo::print_stat()
 {
   std::cout << "Information for " << get_name() << ":\n";
-  if (is_dirty()) clean();
+  if (is_dirty_ngm()) clean_ngm();
   std::cout << "Construction took " << m_time << " seconds to compute"
             << std::endl;
 }
@@ -932,7 +943,7 @@ void Nef_gaussian_map_geo::increase_facet_index(const Field_info* field_info)
 //! \brief obtains he Nef_gaussian_map.
 Nef_gaussian_map_geo::Nef_gaussian_map& Nef_gaussian_map_geo::get_ngm()
 {
-  if (m_dirty) clean();
+  if (m_dirty_ngm) clean_ngm();
   return m_nef_gaussian_map;
 }
 
