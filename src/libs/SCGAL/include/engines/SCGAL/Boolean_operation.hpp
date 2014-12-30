@@ -27,6 +27,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <CGAL/corefinement_operations.h>
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Types.hpp"
@@ -61,9 +63,13 @@ public:
   };
 
   enum Operation {
-    OP_NOP,
-    OP_INTERSECTION
+    OP_UNION = 0,
+    OP_INTERSECTION,
+    OP_P_MINUS_Q,
+    OP_Q_MINUS_P
   };
+
+  typedef CGAL::Polyhedron_corefinement<Exact_polyhedron, Exact_kernel> Bso;
 
   typedef boost::shared_ptr<Exact_polyhedron_geo>   Shared_exact_polyhedron_geo;
   typedef boost::shared_ptr<Mesh_set>               Shared_mesh_set;
@@ -117,11 +123,17 @@ public:
   /*! Execute the engine. */
   void execute();
 
-  /*! Obtain the operation. */
+  /*! Obtain the operation.
+   */
   Operation get_operation() const;
 
-  /*! Set the operation. */
+  /*! Set the operation.
+   */
   void set_operation(Operation operation);
+
+  /*! Obtain the operation tag.
+   */
+  Bso::Boolean_operation_tag get_operation_tag() const;
 
   /*! Set the 1st operand.
    * \param operand the operand.
@@ -186,6 +198,9 @@ private:
 
   /*! The array of operation names. */
   static const char* s_operation_names[];
+
+  /*! The array of operation tags. */
+  static const Bso::Boolean_operation_tag s_operation_tags[];
 };
 
 #if defined(_MSC_VER)
@@ -236,6 +251,11 @@ inline void Boolean_operation::set_result(Shared_exact_polyhedron_geo result)
 inline Boolean_operation::Shared_exact_polyhedron_geo
 Boolean_operation::get_result() const
 { return m_result; }
+
+//! \brief obtains the operation tag.
+inline Boolean_operation::Bso::Boolean_operation_tag
+Boolean_operation::get_operation_tag() const
+{ return s_operation_tags[m_operation]; }
 
 SGAL_END_NAMESPACE
 

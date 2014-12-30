@@ -55,11 +55,20 @@
 SGAL_BEGIN_NAMESPACE
 
 const std::string Boolean_operation::s_tag = "BooleanOperation";
-Container_proto* Boolean_operation::s_prototype(NULL);
+Container_proto* Boolean_operation::s_prototype(nullptr);
 
-/*! Operation names */
+//! \brief operation names.
 const char* Boolean_operation::s_operation_names[] =
-  { "nop", "intersection" };
+  { "union", "intersection", "P_minus_Q", "Q_minus_P" };
+
+//! \brief operation tags.
+const Boolean_operation::Bso::Boolean_operation_tag
+Boolean_operation::s_operation_tags[] = {
+  Bso::Join_tag,
+  Bso::Intersection_tag,
+  Bso::P_minus_Q_tag,
+  Bso::Q_minus_P_tag
+};
 
 // Default values:
 REGISTER_TO_FACTORY(Boolean_operation, "Boolean_operation");
@@ -67,7 +76,7 @@ REGISTER_TO_FACTORY(Boolean_operation, "Boolean_operation");
 //! \brief constructor.
 Boolean_operation::Boolean_operation(Boolean proto) :
   Node(proto),
-  m_operation(OP_NOP),
+  m_operation(OP_UNION),
   m_trigger(false)
 {}
 
@@ -151,10 +160,9 @@ void Boolean_operation::execute()
   std::list<Polyline> polylines;
   typedef std::pair<Exact_polyhedron*, int>   Polyhedron_ptr_and_type;
   std::list<Polyhedron_ptr_and_type> polyhedrons;
-  typedef CGAL::Polyhedron_corefinement<Exact_polyhedron, Exact_kernel> Bso;
-  Bso intersection;
-  intersection(tmp1, tmp2, std::back_inserter(polylines),
-               std::back_inserter(polyhedrons), Bso::Intersection_tag);
+  Bso op;
+  op(tmp1, tmp2, std::back_inserter(polylines),
+     std::back_inserter(polyhedrons), get_operation_tag());
   SGAL_assertion(!polyhedrons.empty());
   // std::cout << "# polyhedron: " << polyhedrons.size() << std::endl;
 //   if (polyhedrons.empty()) {
@@ -280,7 +288,7 @@ void Boolean_operation::init_prototype()
 void Boolean_operation::delete_prototype()
 {
   delete s_prototype;
-  s_prototype = NULL;
+  s_prototype = nullptr;
 }
 
 //! \brief obtains the container prototype.
