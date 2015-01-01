@@ -185,6 +185,7 @@ void Container::write_fields(Formatter* formatter)
   Container_proto::Id_const_iterator it = proto->ids_begin(proto);
   for (; it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
+    if (field_info->get_rule() == RULE_IN) continue;
     field_info->write(this, formatter);
   }
 }
@@ -192,6 +193,10 @@ void Container::write_fields(Formatter* formatter)
 //! \brief writes this container.
 void Container::write(Formatter* formatter)
 {
+  SGAL_TRACE_CODE(Trace::WRITING,
+                  std::cout << "Container: " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
   formatter->container_begin(get_tag());
   write_fields(formatter);
   formatter->container_end();

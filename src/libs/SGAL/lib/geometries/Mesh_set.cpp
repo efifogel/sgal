@@ -603,6 +603,10 @@ void Mesh_set::clear_tex_coord_indices()
 //! \brief writes this container.
 void Mesh_set::write(Formatter* formatter)
 {
+  SGAL_TRACE_CODE(Trace::WRITING,
+                  std::cout << "Mesh_set: " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
 

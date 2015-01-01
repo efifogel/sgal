@@ -42,12 +42,15 @@ namespace po = boost::program_options;
 const Char* Option_parser::s_trace_opts[] = {
   "graphics",
   "vrml_parsing",
-  "sim",
+  "window_manager",
   "event",
   "script",
   "ifs",
+  "ils",
   "polyhedron",
-  "cgm"
+  "cgm",
+  "destructor",
+  "writing"
 };
 
 //! \brief obtains number of trace options.
@@ -102,12 +105,15 @@ Option_parser::Option_parser() :
      "trace options\n"
      "  graphics\n"
      "  vrml_parsing\n"
-     "  sim\n"
+     "  window_manager\n"
      "  event\n"
      "  script\n"
      "  ifs\n"
+     "  ils\n"
      "  polyhedron\n"
      "  cgm\n"
+     "  destructor\n"
+     "  writing\n"
      )
     ;
 

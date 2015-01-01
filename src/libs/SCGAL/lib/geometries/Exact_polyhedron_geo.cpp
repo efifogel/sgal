@@ -632,4 +632,15 @@ void Exact_polyhedron_geo::print_stat()
               << std::endl;
 }
 
+//! Write this container.
+void Exact_polyhedron_geo::write(Formatter* formatter)
+{
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_polyhedron() && is_convex_hull()) clean_polyhedron();
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+  Boundary_set::write(formatter);
+}
+
 SGAL_END_NAMESPACE

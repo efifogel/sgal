@@ -35,6 +35,7 @@
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -386,6 +387,10 @@ Boolean Group::detach_context(Context* context)
 //! \brief writes this container.
 void Group::write(Formatter* formatter)
 {
+  SGAL_TRACE_CODE(Trace::WRITING,
+                  std::cout << "Group: " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   if (stl_formatter) {
     if (!is_visible()) return;

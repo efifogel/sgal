@@ -904,7 +904,7 @@ void Cubical_gaussian_map_geo::draw_geometry(SGAL::Draw_action* action)
 //! \brief draws the polyhedron directly from the gaussian map representation.
 void Cubical_gaussian_map_geo::draw_primal(Draw_action* action)
 {
-  SGAL_TRACE_MSG(SGAL::Trace::GAUSSIAN_MAP, "draw_primal()\n");
+  SGAL_TRACE_MSG(SGAL::Trace::CUBICAL_GAUSSIAN_MAP, "draw_primal()\n");
 
   Context* context = action->get_context();
   glColor3fv((float*)&m_marked_facet_color);

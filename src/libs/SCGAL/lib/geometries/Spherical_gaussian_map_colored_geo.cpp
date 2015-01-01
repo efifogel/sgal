@@ -44,7 +44,6 @@
 #include "SGAL/Math_defs.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Coord_array_3d.hpp"
-#include "SGAL/Trace.hpp"
 #include "SGAL/Draw_action.hpp"
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
@@ -293,8 +292,6 @@ Container_proto* Spherical_gaussian_map_colored_geo::get_prototype()
 //! \brief draws the polyhedron directly from the gaussian map representation.
 void Spherical_gaussian_map_colored_geo::draw_primal(Draw_action* action)
 {
-  SGAL_TRACE_MSG(Trace::GAUSSIAN_MAP, "draw_primal()\n");
-
 #if 0
   {
     std::cout << "Faces:" << std::endl;

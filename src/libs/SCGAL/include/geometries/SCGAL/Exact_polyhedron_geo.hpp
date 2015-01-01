@@ -125,6 +125,11 @@ public:
    */
   virtual void draw(Draw_action* action);
 
+  /*! Write this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
+
   /*! Draw the polygons for selection.
    */
   virtual void isect(Isect_action* action);
