@@ -417,4 +417,14 @@ void Indexed_face_set::calculate_multiple_normals_per_vertex()
   m_dirty_flat_normal_indices = false;
 }
 
+//! Write this container.
+void Indexed_face_set::write(Formatter* formatter)
+{
+  SGAL_assertion(is_dirty_polyhedron() && is_dirty_coord_array());
+  if (is_dirty_coord_array() ||
+      (is_dirty_coord_indices() && is_dirty_flat_coord_indices()))
+    clean_coords();
+  Boundary_set::write(formatter);
+}
+
 SGAL_END_NAMESPACE

@@ -23,10 +23,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
-#include "SGAL/Coord_array_3d.hpp"
-#include "SGAL/Normal_array.hpp"
-#include "SGAL/Color_array.hpp"
-#include "SGAL/Tex_coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Polyhedron.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
@@ -37,6 +33,7 @@ class Element;
 class Container_proto;
 class Draw_action;
 class Isect_action;
+class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -97,6 +94,11 @@ public:
   /*! Draw the polygons.
    */
   virtual void draw(Draw_action* action);
+
+  /*! Write this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! Draw the polygons for selection.
    */
