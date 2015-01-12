@@ -20,9 +20,7 @@
 #define SCGAL_EXACT_POLYHEDRON_GEO_HPP
 
 #include "SGAL/basic.hpp"
-#include "SGAL/Geometry.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Coord_array.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Boundary_set.hpp"
 
@@ -35,12 +33,10 @@
 
 SGAL_BEGIN_NAMESPACE
 
+class formatter;
 class Container_proto;
-class Coord_array;
-class Color_array;
 class Draw_action;
 class Isect_action;
-class Scene_graph;
 class Formatter;
 
 #if defined(_MSC_VER)
