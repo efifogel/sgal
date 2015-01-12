@@ -161,9 +161,9 @@ void Boolean_operation::execute()
   typedef std::pair<Exact_polyhedron*, int>   Polyhedron_ptr_and_type;
   std::list<Polyhedron_ptr_and_type> polyhedrons;
   Bso op;
+
   op(tmp1, tmp2, std::back_inserter(polylines),
      std::back_inserter(polyhedrons), get_operation_tag());
-  SGAL_assertion(!polyhedrons.empty());
   // std::cout << "# polyhedron: " << polyhedrons.size() << std::endl;
 //   if (polyhedrons.empty()) {
 //     CGAL::VRML_2_ostream vrml_out(std::cout);
