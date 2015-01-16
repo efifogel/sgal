@@ -1,0 +1,2624 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {
+  accumulation Accumulation { enabled TRUE }
+}
+DEF BACKGROUND ColorBackground {
+  color 1 1 1 0
+  clearStencil TRUE
+}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 3.103
+#   position 0 0 10
+# }
+DEF DRAW_AOS_KEY SingleKeySensor { key "c" }
+DEF SOLVE_KEY SingleKeySensor { key "s" }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "png"
+  sequence FALSE
+  dirName "."
+  fileName "stick_maze"
+}
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+Transform {
+  rotation 1 0 0 -1.5708
+  children [
+            Switch {
+              whichChoice 0
+              children [
+                Transform {
+                  scale 0.7 0.7 0.7
+                  children [
+                    Transform {
+                      translation 2.5 0 0
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation 0 -0.3 0
+                          children [
+                            Shape {
+                              appearance DEF TEXT_APP Appearance {
+                                material Material { diffuseColor 0 0 0 }
+                              }
+                              geometry Text {
+                                string "X"
+                                fontStyle FontStyle { size 0.5 }
+                              }
+                            }
+                           ]
+                        }
+                       ]
+                    }
+                    Transform {
+                      translation 0 2.5 0
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation -0.2 0 0
+                          children [
+                            Shape {
+                              appearance USE TEXT_APP
+                              geometry Text {
+                                string "Y"
+                                fontStyle FontStyle { size 0.5 }
+                              }
+                            }
+                           ]
+                        }
+                       ]
+                    }
+                    Transform {
+                      translation 0 0 2.5
+                      rotation 1 0 0 1.5708
+                      children [
+                        Transform {
+                          translation -0.2 0 0
+                          children [
+                            Shape {
+                              appearance USE TEXT_APP
+                              geometry Text {
+                                string "Z"
+                                fontStyle FontStyle { size 0.5 }
+                              }
+                            }
+                           ]
+                        }
+                       ]
+                    }
+                    Shape {
+                      appearance DEF CS_APP Appearance {
+                        material Material { diffuseColor 0.5 0.5 0.5 }
+                      }
+                      geometry Sphere { radius 0.1 }
+                    }
+                    DEF CS_AXIS Transform {
+                      translation 0 1 0
+                      children [
+                        Shape {
+                          appearance USE CS_APP
+                          geometry DEF CS_CYLINDER Cylinder {
+                            radius 0.1
+                            set_is_bottom_visible FALSE
+                            set_is_top_visible FALSE
+                          }
+                        }
+                        Transform {
+                          translation 0 1.2 0
+                          children [
+                            Shape {
+                              appearance USE CS_APP
+                              geometry DEF CS_CONE Cone {
+                                bottomRadius 0.2
+                                height 0.4
+                              }
+                            }
+                           ]
+                        }
+                       ]
+                    }
+                    Transform {
+                      rotation 0 0 1 -1.57
+                      children [ USE CS_AXIS ]
+                    }
+                    Transform {
+                      rotation 1 0 0 1.57
+                      children [ USE CS_AXIS ]
+                    }
+                   ]
+                }
+               ]
+            }
+    DEF PUZZLE Assembly {
+      children [
+        DEF SWITCH_0 Switch {
+          whichChoice 0
+          children [
+            DEF PART_0 AssemblyPart {
+              children [
+                DEF SWITCH_0_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_0 Appearance {
+                        material Material {
+                          diffuseColor 0.39 0.21 0.21
+                        }
+                      }
+                      geometry DEF PART_0_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.21 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0 1 2,
+                            7 1 2,
+                            7 2 2,
+                            0 2 2,
+                            0 1 3,
+                            7 1 3,
+                            7 2 3,
+                            0 2 3,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_0_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_0
+                      geometry DEF PART_0_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.21 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            6.6 2 2.5,
+                            6.51213203435596 2 2.71213203435596,
+                            6.3 2 2.8,
+                            6.08786796564404 2 2.71213203435596,
+                            6 2 2.5,
+                            6.08786796564404 2 2.28786796564404,
+                            6.3 2 2.2,
+                            6.51213203435596 2 2.28786796564404,
+                            6.6 2.4 2.5,
+                            6.51213203435596 2.4 2.71213203435596,
+                            6.3 2.4 2.8,
+                            6.08786796564404 2.4 2.71213203435596,
+                            6 2.4 2.5,
+                            6.08786796564404 2.4 2.28786796564404,
+                            6.3 2.4 2.2,
+                            6.51213203435596 2.4 2.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_0_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_0
+                      geometry DEF PART_0_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.21 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            1 2 2.5,
+                            0.912132034355964 2 2.71213203435596,
+                            0.7 2 2.8,
+                            0.487867965644036 2 2.71213203435596,
+                            0.4 2 2.5,
+                            0.487867965644036 2 2.28786796564404,
+                            0.7 2 2.2,
+                            0.912132034355964 2 2.28786796564404,
+                            1 2.4 2.5,
+                            0.912132034355964 2.4 2.71213203435596,
+                            0.7 2.4 2.8,
+                            0.487867965644036 2.4 2.71213203435596,
+                            0.4 2.4 2.5,
+                            0.487867965644036 2.4 2.28786796564404,
+                            0.7 2.4 2.2,
+                            0.912132034355964 2.4 2.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_1 Switch {
+          whichChoice 0
+          children [
+            DEF PART_1 AssemblyPart {
+              children [
+                DEF SWITCH_1_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_1 Appearance {
+                        material Material {
+                          diffuseColor 0.75 0.25 0.25
+                        }
+                      }
+                      geometry DEF PART_1_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.25 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0 3 2,
+                            7 3 2,
+                            7 4 2,
+                            0 4 2,
+                            0 3 3,
+                            7 3 3,
+                            7 4 3,
+                            0 4 3,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_1_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_1
+                      geometry DEF PART_1_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.25 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            6 3 2.5,
+                            6.08786796564404 3 2.71213203435596,
+                            6.3 3 2.8,
+                            6.51213203435596 3 2.71213203435596,
+                            6.6 3 2.5,
+                            6.51213203435596 3 2.28786796564404,
+                            6.3 3 2.2,
+                            6.08786796564404 3 2.28786796564404,
+                            6 2.6 2.5,
+                            6.08786796564404 2.6 2.71213203435596,
+                            6.3 2.6 2.8,
+                            6.51213203435596 2.6 2.71213203435596,
+                            6.6 2.6 2.5,
+                            6.51213203435596 2.6 2.28786796564404,
+                            6.3 2.6 2.2,
+                            6.08786796564404 2.6 2.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_1_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_1
+                      geometry DEF PART_1_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.25 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0.4 3 2.5,
+                            0.487867965644036 3 2.71213203435596,
+                            0.7 3 2.8,
+                            0.912132034355964 3 2.71213203435596,
+                            1 3 2.5,
+                            0.912132034355964 3 2.28786796564404,
+                            0.7 3 2.2,
+                            0.487867965644036 3 2.28786796564404,
+                            0.4 2.6 2.5,
+                            0.487867965644036 2.6 2.71213203435596,
+                            0.7 2.6 2.8,
+                            0.912132034355964 2.6 2.71213203435596,
+                            1 2.6 2.5,
+                            0.912132034355964 2.6 2.28786796564404,
+                            0.7 2.6 2.2,
+                            0.487867965644036 2.6 2.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_2 Switch {
+          whichChoice 0
+          children [
+            DEF PART_2 AssemblyPart {
+              children [
+                DEF SWITCH_2_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_2 Appearance {
+                        material Material {
+                          diffuseColor 0.96 0.64 0.64
+                        }
+                      }
+                      geometry DEF PART_2_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.64 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0 5 2,
+                            7 5 2,
+                            7 6 2,
+                            0 6 2,
+                            0 5 3,
+                            7 5 3,
+                            7 6 3,
+                            0 6 3,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_2_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_2
+                      geometry DEF PART_2_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.64 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            6 5 2.5,
+                            6.08786796564404 5 2.71213203435596,
+                            6.3 5 2.8,
+                            6.51213203435596 5 2.71213203435596,
+                            6.6 5 2.5,
+                            6.51213203435596 5 2.28786796564404,
+                            6.3 5 2.2,
+                            6.08786796564404 5 2.28786796564404,
+                            6 4.6 2.5,
+                            6.08786796564404 4.6 2.71213203435596,
+                            6.3 4.6 2.8,
+                            6.51213203435596 4.6 2.71213203435596,
+                            6.6 4.6 2.5,
+                            6.51213203435596 4.6 2.28786796564404,
+                            6.3 4.6 2.2,
+                            6.08786796564404 4.6 2.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_2_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_2
+                      geometry DEF PART_2_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.64 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0.4 5 2.5,
+                            0.487867965644036 5 2.71213203435596,
+                            0.7 5 2.8,
+                            0.912132034355964 5 2.71213203435596,
+                            1 5 2.5,
+                            0.912132034355964 5 2.28786796564404,
+                            0.7 5 2.2,
+                            0.487867965644036 5 2.28786796564404,
+                            0.4 4.6 2.5,
+                            0.487867965644036 4.6 2.71213203435596,
+                            0.7 4.6 2.8,
+                            0.912132034355964 4.6 2.71213203435596,
+                            1 4.6 2.5,
+                            0.912132034355964 4.6 2.28786796564404,
+                            0.7 4.6 2.2,
+                            0.487867965644036 4.6 2.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_3 Switch {
+          whichChoice 0
+          children [
+            DEF PART_3 AssemblyPart {
+              children [
+                DEF SWITCH_3_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_3 Appearance {
+                        material Material {
+                          diffuseColor 0.39 0.39 0.21
+                        }
+                      }
+                      geometry DEF PART_3_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.39 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0 1 4,
+                            7 1 4,
+                            7 2 4,
+                            0 2 4,
+                            0 1 5,
+                            7 1 5,
+                            7 2 5,
+                            0 2 5,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_3_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_3
+                      geometry DEF PART_3_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.39 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            6.6 2 4.5,
+                            6.51213203435596 2 4.71213203435596,
+                            6.3 2 4.8,
+                            6.08786796564404 2 4.71213203435596,
+                            6 2 4.5,
+                            6.08786796564404 2 4.28786796564404,
+                            6.3 2 4.2,
+                            6.51213203435596 2 4.28786796564404,
+                            6.6 2.4 4.5,
+                            6.51213203435596 2.4 4.71213203435596,
+                            6.3 2.4 4.8,
+                            6.08786796564404 2.4 4.71213203435596,
+                            6 2.4 4.5,
+                            6.08786796564404 2.4 4.28786796564404,
+                            6.3 2.4 4.2,
+                            6.51213203435596 2.4 4.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_3_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_3
+                      geometry DEF PART_3_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.39 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            1 2 4.5,
+                            0.912132034355964 2 4.71213203435596,
+                            0.7 2 4.8,
+                            0.487867965644036 2 4.71213203435596,
+                            0.4 2 4.5,
+                            0.487867965644036 2 4.28786796564404,
+                            0.7 2 4.2,
+                            0.912132034355964 2 4.28786796564404,
+                            1 2.4 4.5,
+                            0.912132034355964 2.4 4.71213203435596,
+                            0.7 2.4 4.8,
+                            0.487867965644036 2.4 4.71213203435596,
+                            0.4 2.4 4.5,
+                            0.487867965644036 2.4 4.28786796564404,
+                            0.7 2.4 4.2,
+                            0.912132034355964 2.4 4.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_4 Switch {
+          whichChoice 0
+          children [
+            DEF PART_4 AssemblyPart {
+              children [
+                DEF SWITCH_4_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_4 Appearance {
+                        material Material {
+                          diffuseColor 0.75 0.75 0.25
+                        }
+                      }
+                      geometry DEF PART_4_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.75 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0 3 4,
+                            7 3 4,
+                            7 4 4,
+                            0 4 4,
+                            0 3 5,
+                            7 3 5,
+                            7 4 5,
+                            0 4 5,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_4_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_4
+                      geometry DEF PART_4_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.75 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            6 3 4.5,
+                            6.08786796564404 3 4.71213203435596,
+                            6.3 3 4.8,
+                            6.51213203435596 3 4.71213203435596,
+                            6.6 3 4.5,
+                            6.51213203435596 3 4.28786796564404,
+                            6.3 3 4.2,
+                            6.08786796564404 3 4.28786796564404,
+                            6 2.6 4.5,
+                            6.08786796564404 2.6 4.71213203435596,
+                            6.3 2.6 4.8,
+                            6.51213203435596 2.6 4.71213203435596,
+                            6.6 2.6 4.5,
+                            6.51213203435596 2.6 4.28786796564404,
+                            6.3 2.6 4.2,
+                            6.08786796564404 2.6 4.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_4_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_4
+                      geometry DEF PART_4_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.75 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0.4 3 4.5,
+                            0.487867965644036 3 4.71213203435596,
+                            0.7 3 4.8,
+                            0.912132034355964 3 4.71213203435596,
+                            1 3 4.5,
+                            0.912132034355964 3 4.28786796564404,
+                            0.7 3 4.2,
+                            0.487867965644036 3 4.28786796564404,
+                            0.4 2.6 4.5,
+                            0.487867965644036 2.6 4.71213203435596,
+                            0.7 2.6 4.8,
+                            0.912132034355964 2.6 4.71213203435596,
+                            1 2.6 4.5,
+                            0.912132034355964 2.6 4.28786796564404,
+                            0.7 2.6 4.2,
+                            0.487867965644036 2.6 4.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_5 Switch {
+          whichChoice 0
+          children [
+            DEF PART_5 AssemblyPart {
+              children [
+                DEF SWITCH_5_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_5 Appearance {
+                        material Material {
+                          diffuseColor 0.96 0.96 0.64
+                        }
+                      }
+                      geometry DEF PART_5_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.96 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0 5 4,
+                            7 5 4,
+                            7 6 4,
+                            0 6 4,
+                            0 5 5,
+                            7 5 5,
+                            7 6 5,
+                            0 6 5,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_5_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_5
+                      geometry DEF PART_5_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.96 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            6 5 4.5,
+                            6.08786796564404 5 4.71213203435596,
+                            6.3 5 4.8,
+                            6.51213203435596 5 4.71213203435596,
+                            6.6 5 4.5,
+                            6.51213203435596 5 4.28786796564404,
+                            6.3 5 4.2,
+                            6.08786796564404 5 4.28786796564404,
+                            6 4.6 4.5,
+                            6.08786796564404 4.6 4.71213203435596,
+                            6.3 4.6 4.8,
+                            6.51213203435596 4.6 4.71213203435596,
+                            6.6 4.6 4.5,
+                            6.51213203435596 4.6 4.28786796564404,
+                            6.3 4.6 4.2,
+                            6.08786796564404 4.6 4.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_5_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_5
+                      geometry DEF PART_5_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.96 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            0.4 5 4.5,
+                            0.487867965644036 5 4.71213203435596,
+                            0.7 5 4.8,
+                            0.912132034355964 5 4.71213203435596,
+                            1 5 4.5,
+                            0.912132034355964 5 4.28786796564404,
+                            0.7 5 4.2,
+                            0.487867965644036 5 4.28786796564404,
+                            0.4 4.6 4.5,
+                            0.487867965644036 4.6 4.71213203435596,
+                            0.7 4.6 4.8,
+                            0.912132034355964 4.6 4.71213203435596,
+                            1 4.6 4.5,
+                            0.912132034355964 4.6 4.28786796564404,
+                            0.7 4.6 4.2,
+                            0.487867965644036 4.6 4.28786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_6 Switch {
+          whichChoice 0
+          children [
+            DEF PART_6 AssemblyPart {
+              children [
+                DEF SWITCH_6_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_6 Appearance {
+                        material Material {
+                          diffuseColor 0.21 0.39 0.21
+                        }
+                      }
+                      geometry DEF PART_6_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.39 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            1 2 0,
+                            1 2 7,
+                            2 2 7,
+                            2 2 0,
+                            1 3 0,
+                            1 3 7,
+                            2 3 7,
+                            2 3 0,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_6_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_6
+                      geometry DEF PART_6_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.39 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2 2.5 6.6,
+                            2 2.71213203435596 6.51213203435596,
+                            2 2.8 6.3,
+                            2 2.71213203435596 6.08786796564404,
+                            2 2.5 6,
+                            2 2.28786796564404 6.08786796564404,
+                            2 2.2 6.3,
+                            2 2.28786796564404 6.51213203435596,
+                            2.4 2.5 6.6,
+                            2.4 2.71213203435596 6.51213203435596,
+                            2.4 2.8 6.3,
+                            2.4 2.71213203435596 6.08786796564404,
+                            2.4 2.5 6,
+                            2.4 2.28786796564404 6.08786796564404,
+                            2.4 2.2 6.3,
+                            2.4 2.28786796564404 6.51213203435596,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_6_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_6
+                      geometry DEF PART_6_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.39 0.21
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2 2.5 1,
+                            2 2.71213203435596 0.912132034355964,
+                            2 2.8 0.7,
+                            2 2.71213203435596 0.487867965644036,
+                            2 2.5 0.4,
+                            2 2.28786796564404 0.487867965644036,
+                            2 2.2 0.7,
+                            2 2.28786796564404 0.912132034355964,
+                            2.4 2.5 1,
+                            2.4 2.71213203435596 0.912132034355964,
+                            2.4 2.8 0.7,
+                            2.4 2.71213203435596 0.487867965644036,
+                            2.4 2.5 0.4,
+                            2.4 2.28786796564404 0.487867965644036,
+                            2.4 2.2 0.7,
+                            2.4 2.28786796564404 0.912132034355964,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_7 Switch {
+          whichChoice 0
+          children [
+            DEF PART_7 AssemblyPart {
+              children [
+                DEF SWITCH_7_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_7 Appearance {
+                        material Material {
+                          diffuseColor 0.25 0.75 0.25
+                        }
+                      }
+                      geometry DEF PART_7_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.75 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            3 2 0,
+                            3 2 7,
+                            4 2 7,
+                            4 2 0,
+                            3 3 0,
+                            3 3 7,
+                            4 3 7,
+                            4 3 0,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_7_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_7
+                      geometry DEF PART_7_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.75 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            3 2.5 6,
+                            3 2.71213203435596 6.08786796564404,
+                            3 2.8 6.3,
+                            3 2.71213203435596 6.51213203435596,
+                            3 2.5 6.6,
+                            3 2.28786796564404 6.51213203435596,
+                            3 2.2 6.3,
+                            3 2.28786796564404 6.08786796564404,
+                            2.6 2.5 6,
+                            2.6 2.71213203435596 6.08786796564404,
+                            2.6 2.8 6.3,
+                            2.6 2.71213203435596 6.51213203435596,
+                            2.6 2.5 6.6,
+                            2.6 2.28786796564404 6.51213203435596,
+                            2.6 2.2 6.3,
+                            2.6 2.28786796564404 6.08786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_7_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_7
+                      geometry DEF PART_7_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.75 0.25
+                        coord ExactCoordinate {
+                          exactPoint [
+                            3 2.5 0.4,
+                            3 2.71213203435596 0.487867965644036,
+                            3 2.8 0.7,
+                            3 2.71213203435596 0.912132034355964,
+                            3 2.5 1,
+                            3 2.28786796564404 0.912132034355964,
+                            3 2.2 0.7,
+                            3 2.28786796564404 0.487867965644036,
+                            2.6 2.5 0.4,
+                            2.6 2.71213203435596 0.487867965644036,
+                            2.6 2.8 0.7,
+                            2.6 2.71213203435596 0.912132034355964,
+                            2.6 2.5 1,
+                            2.6 2.28786796564404 0.912132034355964,
+                            2.6 2.2 0.7,
+                            2.6 2.28786796564404 0.487867965644036,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_8 Switch {
+          whichChoice 0
+          children [
+            DEF PART_8 AssemblyPart {
+              children [
+                DEF SWITCH_8_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_8 Appearance {
+                        material Material {
+                          diffuseColor 0.64 0.96 0.64
+                        }
+                      }
+                      geometry DEF PART_8_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.96 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            5 2 0,
+                            5 2 7,
+                            6 2 7,
+                            6 2 0,
+                            5 3 0,
+                            5 3 7,
+                            6 3 7,
+                            6 3 0,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_8_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_8
+                      geometry DEF PART_8_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.96 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            5 2.5 6,
+                            5 2.71213203435596 6.08786796564404,
+                            5 2.8 6.3,
+                            5 2.71213203435596 6.51213203435596,
+                            5 2.5 6.6,
+                            5 2.28786796564404 6.51213203435596,
+                            5 2.2 6.3,
+                            5 2.28786796564404 6.08786796564404,
+                            4.6 2.5 6,
+                            4.6 2.71213203435596 6.08786796564404,
+                            4.6 2.8 6.3,
+                            4.6 2.71213203435596 6.51213203435596,
+                            4.6 2.5 6.6,
+                            4.6 2.28786796564404 6.51213203435596,
+                            4.6 2.2 6.3,
+                            4.6 2.28786796564404 6.08786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_8_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_8
+                      geometry DEF PART_8_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.96 0.64
+                        coord ExactCoordinate {
+                          exactPoint [
+                            5 2.5 0.4,
+                            5 2.71213203435596 0.487867965644036,
+                            5 2.8 0.7,
+                            5 2.71213203435596 0.912132034355964,
+                            5 2.5 1,
+                            5 2.28786796564404 0.912132034355964,
+                            5 2.2 0.7,
+                            5 2.28786796564404 0.487867965644036,
+                            4.6 2.5 0.4,
+                            4.6 2.71213203435596 0.487867965644036,
+                            4.6 2.8 0.7,
+                            4.6 2.71213203435596 0.912132034355964,
+                            4.6 2.5 1,
+                            4.6 2.28786796564404 0.912132034355964,
+                            4.6 2.2 0.7,
+                            4.6 2.28786796564404 0.487867965644036,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_9 Switch {
+          whichChoice 0
+          children [
+            DEF PART_9 AssemblyPart {
+              children [
+                DEF SWITCH_9_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_9 Appearance {
+                        material Material {
+                          diffuseColor 0.21 0.39 0.39
+                        }
+                      }
+                      geometry DEF PART_9_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.39 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            1 4 0,
+                            1 4 7,
+                            2 4 7,
+                            2 4 0,
+                            1 5 0,
+                            1 5 7,
+                            2 5 7,
+                            2 5 0,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_9_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_9
+                      geometry DEF PART_9_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.39 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2 4.5 6.6,
+                            2 4.71213203435596 6.51213203435596,
+                            2 4.8 6.3,
+                            2 4.71213203435596 6.08786796564404,
+                            2 4.5 6,
+                            2 4.28786796564404 6.08786796564404,
+                            2 4.2 6.3,
+                            2 4.28786796564404 6.51213203435596,
+                            2.4 4.5 6.6,
+                            2.4 4.71213203435596 6.51213203435596,
+                            2.4 4.8 6.3,
+                            2.4 4.71213203435596 6.08786796564404,
+                            2.4 4.5 6,
+                            2.4 4.28786796564404 6.08786796564404,
+                            2.4 4.2 6.3,
+                            2.4 4.28786796564404 6.51213203435596,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_9_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_9
+                      geometry DEF PART_9_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.39 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2 4.5 1,
+                            2 4.71213203435596 0.912132034355964,
+                            2 4.8 0.7,
+                            2 4.71213203435596 0.487867965644036,
+                            2 4.5 0.4,
+                            2 4.28786796564404 0.487867965644036,
+                            2 4.2 0.7,
+                            2 4.28786796564404 0.912132034355964,
+                            2.4 4.5 1,
+                            2.4 4.71213203435596 0.912132034355964,
+                            2.4 4.8 0.7,
+                            2.4 4.71213203435596 0.487867965644036,
+                            2.4 4.5 0.4,
+                            2.4 4.28786796564404 0.487867965644036,
+                            2.4 4.2 0.7,
+                            2.4 4.28786796564404 0.912132034355964,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_10 Switch {
+          whichChoice 0
+          children [
+            DEF PART_10 AssemblyPart {
+              children [
+                DEF SWITCH_10_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_10 Appearance {
+                        material Material {
+                          diffuseColor 0.25 0.75 0.75
+                        }
+                      }
+                      geometry DEF PART_10_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.75 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            3 4 0,
+                            3 4 7,
+                            4 4 7,
+                            4 4 0,
+                            3 5 0,
+                            3 5 7,
+                            4 5 7,
+                            4 5 0,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_10_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_10
+                      geometry DEF PART_10_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.75 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            3 4.5 6,
+                            3 4.71213203435596 6.08786796564404,
+                            3 4.8 6.3,
+                            3 4.71213203435596 6.51213203435596,
+                            3 4.5 6.6,
+                            3 4.28786796564404 6.51213203435596,
+                            3 4.2 6.3,
+                            3 4.28786796564404 6.08786796564404,
+                            2.6 4.5 6,
+                            2.6 4.71213203435596 6.08786796564404,
+                            2.6 4.8 6.3,
+                            2.6 4.71213203435596 6.51213203435596,
+                            2.6 4.5 6.6,
+                            2.6 4.28786796564404 6.51213203435596,
+                            2.6 4.2 6.3,
+                            2.6 4.28786796564404 6.08786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_10_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_10
+                      geometry DEF PART_10_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.75 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            3 4.5 0.4,
+                            3 4.71213203435596 0.487867965644036,
+                            3 4.8 0.7,
+                            3 4.71213203435596 0.912132034355964,
+                            3 4.5 1,
+                            3 4.28786796564404 0.912132034355964,
+                            3 4.2 0.7,
+                            3 4.28786796564404 0.487867965644036,
+                            2.6 4.5 0.4,
+                            2.6 4.71213203435596 0.487867965644036,
+                            2.6 4.8 0.7,
+                            2.6 4.71213203435596 0.912132034355964,
+                            2.6 4.5 1,
+                            2.6 4.28786796564404 0.912132034355964,
+                            2.6 4.2 0.7,
+                            2.6 4.28786796564404 0.487867965644036,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_11 Switch {
+          whichChoice 0
+          children [
+            DEF PART_11 AssemblyPart {
+              children [
+                DEF SWITCH_11_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_11 Appearance {
+                        material Material {
+                          diffuseColor 0.64 0.96 0.96
+                        }
+                      }
+                      geometry DEF PART_11_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.96 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            5 4 0,
+                            5 4 7,
+                            6 4 7,
+                            6 4 0,
+                            5 5 0,
+                            5 5 7,
+                            6 5 7,
+                            6 5 0,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_11_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_11
+                      geometry DEF PART_11_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.96 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            5 4.5 6,
+                            5 4.71213203435596 6.08786796564404,
+                            5 4.8 6.3,
+                            5 4.71213203435596 6.51213203435596,
+                            5 4.5 6.6,
+                            5 4.28786796564404 6.51213203435596,
+                            5 4.2 6.3,
+                            5 4.28786796564404 6.08786796564404,
+                            4.6 4.5 6,
+                            4.6 4.71213203435596 6.08786796564404,
+                            4.6 4.8 6.3,
+                            4.6 4.71213203435596 6.51213203435596,
+                            4.6 4.5 6.6,
+                            4.6 4.28786796564404 6.51213203435596,
+                            4.6 4.2 6.3,
+                            4.6 4.28786796564404 6.08786796564404,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_11_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_11
+                      geometry DEF PART_11_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.96 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            5 4.5 0.4,
+                            5 4.71213203435596 0.487867965644036,
+                            5 4.8 0.7,
+                            5 4.71213203435596 0.912132034355964,
+                            5 4.5 1,
+                            5 4.28786796564404 0.912132034355964,
+                            5 4.2 0.7,
+                            5 4.28786796564404 0.487867965644036,
+                            4.6 4.5 0.4,
+                            4.6 4.71213203435596 0.487867965644036,
+                            4.6 4.8 0.7,
+                            4.6 4.71213203435596 0.912132034355964,
+                            4.6 4.5 1,
+                            4.6 4.28786796564404 0.912132034355964,
+                            4.6 4.2 0.7,
+                            4.6 4.28786796564404 0.487867965644036,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_12 Switch {
+          whichChoice 0
+          children [
+            DEF PART_12 AssemblyPart {
+              children [
+                DEF SWITCH_12_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_12 Appearance {
+                        material Material {
+                          diffuseColor 0.21 0.21 0.39
+                        }
+                      }
+                      geometry DEF PART_12_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.21 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2 0 1,
+                            2 7 1,
+                            2 7 2,
+                            2 0 2,
+                            3 0 1,
+                            3 7 1,
+                            3 7 2,
+                            3 0 2,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_12_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_12
+                      geometry DEF PART_12_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.21 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2.5 6.6 2,
+                            2.71213203435596 6.51213203435596 2,
+                            2.8 6.3 2,
+                            2.71213203435596 6.08786796564404 2,
+                            2.5 6 2,
+                            2.28786796564404 6.08786796564404 2,
+                            2.2 6.3 2,
+                            2.28786796564404 6.51213203435596 2,
+                            2.5 6.6 2.4,
+                            2.71213203435596 6.51213203435596 2.4,
+                            2.8 6.3 2.4,
+                            2.71213203435596 6.08786796564404 2.4,
+                            2.5 6 2.4,
+                            2.28786796564404 6.08786796564404 2.4,
+                            2.2 6.3 2.4,
+                            2.28786796564404 6.51213203435596 2.4,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_12_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_12
+                      geometry DEF PART_12_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.21 0.21 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2.5 1 2,
+                            2.71213203435596 0.912132034355964 2,
+                            2.8 0.7 2,
+                            2.71213203435596 0.487867965644036 2,
+                            2.5 0.4 2,
+                            2.28786796564404 0.487867965644036 2,
+                            2.2 0.7 2,
+                            2.28786796564404 0.912132034355964 2,
+                            2.5 1 2.4,
+                            2.71213203435596 0.912132034355964 2.4,
+                            2.8 0.7 2.4,
+                            2.71213203435596 0.487867965644036 2.4,
+                            2.5 0.4 2.4,
+                            2.28786796564404 0.487867965644036 2.4,
+                            2.2 0.7 2.4,
+                            2.28786796564404 0.912132034355964 2.4,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_13 Switch {
+          whichChoice 0
+          children [
+            DEF PART_13 AssemblyPart {
+              children [
+                DEF SWITCH_13_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_13 Appearance {
+                        material Material {
+                          diffuseColor 0.25 0.25 0.75
+                        }
+                      }
+                      geometry DEF PART_13_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.25 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2 0 3,
+                            2 7 3,
+                            2 7 4,
+                            2 0 4,
+                            3 0 3,
+                            3 7 3,
+                            3 7 4,
+                            3 0 4,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_13_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_13
+                      geometry DEF PART_13_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.25 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2.5 6 3,
+                            2.71213203435596 6.08786796564404 3,
+                            2.8 6.3 3,
+                            2.71213203435596 6.51213203435596 3,
+                            2.5 6.6 3,
+                            2.28786796564404 6.51213203435596 3,
+                            2.2 6.3 3,
+                            2.28786796564404 6.08786796564404 3,
+                            2.5 6 2.6,
+                            2.71213203435596 6.08786796564404 2.6,
+                            2.8 6.3 2.6,
+                            2.71213203435596 6.51213203435596 2.6,
+                            2.5 6.6 2.6,
+                            2.28786796564404 6.51213203435596 2.6,
+                            2.2 6.3 2.6,
+                            2.28786796564404 6.08786796564404 2.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_13_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_13
+                      geometry DEF PART_13_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.25 0.25 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2.5 0.4 3,
+                            2.71213203435596 0.487867965644036 3,
+                            2.8 0.7 3,
+                            2.71213203435596 0.912132034355964 3,
+                            2.5 1 3,
+                            2.28786796564404 0.912132034355964 3,
+                            2.2 0.7 3,
+                            2.28786796564404 0.487867965644036 3,
+                            2.5 0.4 2.6,
+                            2.71213203435596 0.487867965644036 2.6,
+                            2.8 0.7 2.6,
+                            2.71213203435596 0.912132034355964 2.6,
+                            2.5 1 2.6,
+                            2.28786796564404 0.912132034355964 2.6,
+                            2.2 0.7 2.6,
+                            2.28786796564404 0.487867965644036 2.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_14 Switch {
+          whichChoice 0
+          children [
+            DEF PART_14 AssemblyPart {
+              children [
+                DEF SWITCH_14_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_14 Appearance {
+                        material Material {
+                          diffuseColor 0.64 0.64 0.96
+                        }
+                      }
+                      geometry DEF PART_14_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.64 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2 0 5,
+                            2 7 5,
+                            2 7 6,
+                            2 0 6,
+                            3 0 5,
+                            3 7 5,
+                            3 7 6,
+                            3 0 6,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_14_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_14
+                      geometry DEF PART_14_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.64 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2.5 6 5,
+                            2.71213203435596 6.08786796564404 5,
+                            2.8 6.3 5,
+                            2.71213203435596 6.51213203435596 5,
+                            2.5 6.6 5,
+                            2.28786796564404 6.51213203435596 5,
+                            2.2 6.3 5,
+                            2.28786796564404 6.08786796564404 5,
+                            2.5 6 4.6,
+                            2.71213203435596 6.08786796564404 4.6,
+                            2.8 6.3 4.6,
+                            2.71213203435596 6.51213203435596 4.6,
+                            2.5 6.6 4.6,
+                            2.28786796564404 6.51213203435596 4.6,
+                            2.2 6.3 4.6,
+                            2.28786796564404 6.08786796564404 4.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_14_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_14
+                      geometry DEF PART_14_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.64 0.64 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            2.5 0.4 5,
+                            2.71213203435596 0.487867965644036 5,
+                            2.8 0.7 5,
+                            2.71213203435596 0.912132034355964 5,
+                            2.5 1 5,
+                            2.28786796564404 0.912132034355964 5,
+                            2.2 0.7 5,
+                            2.28786796564404 0.487867965644036 5,
+                            2.5 0.4 4.6,
+                            2.71213203435596 0.487867965644036 4.6,
+                            2.8 0.7 4.6,
+                            2.71213203435596 0.912132034355964 4.6,
+                            2.5 1 4.6,
+                            2.28786796564404 0.912132034355964 4.6,
+                            2.2 0.7 4.6,
+                            2.28786796564404 0.487867965644036 4.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_15 Switch {
+          whichChoice 0
+          children [
+            DEF PART_15 AssemblyPart {
+              children [
+                DEF SWITCH_15_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_15 Appearance {
+                        material Material {
+                          diffuseColor 0.39 0.21 0.39
+                        }
+                      }
+                      geometry DEF PART_15_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.21 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4 0 1,
+                            4 7 1,
+                            4 7 2,
+                            4 0 2,
+                            5 0 1,
+                            5 7 1,
+                            5 7 2,
+                            5 0 2,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_15_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_15
+                      geometry DEF PART_15_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.21 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4.5 6.6 2,
+                            4.71213203435596 6.51213203435596 2,
+                            4.8 6.3 2,
+                            4.71213203435596 6.08786796564404 2,
+                            4.5 6 2,
+                            4.28786796564404 6.08786796564404 2,
+                            4.2 6.3 2,
+                            4.28786796564404 6.51213203435596 2,
+                            4.5 6.6 2.4,
+                            4.71213203435596 6.51213203435596 2.4,
+                            4.8 6.3 2.4,
+                            4.71213203435596 6.08786796564404 2.4,
+                            4.5 6 2.4,
+                            4.28786796564404 6.08786796564404 2.4,
+                            4.2 6.3 2.4,
+                            4.28786796564404 6.51213203435596 2.4,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_15_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_15
+                      geometry DEF PART_15_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.39 0.21 0.39
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4.5 1 2,
+                            4.71213203435596 0.912132034355964 2,
+                            4.8 0.7 2,
+                            4.71213203435596 0.487867965644036 2,
+                            4.5 0.4 2,
+                            4.28786796564404 0.487867965644036 2,
+                            4.2 0.7 2,
+                            4.28786796564404 0.912132034355964 2,
+                            4.5 1 2.4,
+                            4.71213203435596 0.912132034355964 2.4,
+                            4.8 0.7 2.4,
+                            4.71213203435596 0.487867965644036 2.4,
+                            4.5 0.4 2.4,
+                            4.28786796564404 0.487867965644036 2.4,
+                            4.2 0.7 2.4,
+                            4.28786796564404 0.912132034355964 2.4,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_16 Switch {
+          whichChoice 0
+          children [
+            DEF PART_16 AssemblyPart {
+              children [
+                DEF SWITCH_16_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_16 Appearance {
+                        material Material {
+                          diffuseColor 0.75 0.25 0.75
+                        }
+                      }
+                      geometry DEF PART_16_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.25 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4 0 3,
+                            4 7 3,
+                            4 7 4,
+                            4 0 4,
+                            5 0 3,
+                            5 7 3,
+                            5 7 4,
+                            5 0 4,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_16_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_16
+                      geometry DEF PART_16_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.25 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4.5 6 3,
+                            4.71213203435596 6.08786796564404 3,
+                            4.8 6.3 3,
+                            4.71213203435596 6.51213203435596 3,
+                            4.5 6.6 3,
+                            4.28786796564404 6.51213203435596 3,
+                            4.2 6.3 3,
+                            4.28786796564404 6.08786796564404 3,
+                            4.5 6 2.6,
+                            4.71213203435596 6.08786796564404 2.6,
+                            4.8 6.3 2.6,
+                            4.71213203435596 6.51213203435596 2.6,
+                            4.5 6.6 2.6,
+                            4.28786796564404 6.51213203435596 2.6,
+                            4.2 6.3 2.6,
+                            4.28786796564404 6.08786796564404 2.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_16_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_16
+                      geometry DEF PART_16_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.75 0.25 0.75
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4.5 0.4 3,
+                            4.71213203435596 0.487867965644036 3,
+                            4.8 0.7 3,
+                            4.71213203435596 0.912132034355964 3,
+                            4.5 1 3,
+                            4.28786796564404 0.912132034355964 3,
+                            4.2 0.7 3,
+                            4.28786796564404 0.487867965644036 3,
+                            4.5 0.4 2.6,
+                            4.71213203435596 0.487867965644036 2.6,
+                            4.8 0.7 2.6,
+                            4.71213203435596 0.912132034355964 2.6,
+                            4.5 1 2.6,
+                            4.28786796564404 0.912132034355964 2.6,
+                            4.2 0.7 2.6,
+                            4.28786796564404 0.487867965644036 2.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF SWITCH_17 Switch {
+          whichChoice 0
+          children [
+            DEF PART_17 AssemblyPart {
+              children [
+                DEF SWITCH_17_0 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance DEF APP_17 Appearance {
+                        material Material {
+                          diffuseColor 0.96 0.64 0.96
+                        }
+                      }
+                      geometry DEF PART_17_0 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.64 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4 0 5,
+                            4 7 5,
+                            4 7 6,
+                            4 0 6,
+                            5 0 5,
+                            5 7 5,
+                            5 7 6,
+                            5 0 6,
+                          ]
+                        }
+                        coordIndex [
+                          3 2 1 0 -1, 4 5 6 7 -1, 0 1 5 4 -1,
+                          1 2 6 5 -1, 0 4 7 3 -1, 2 3 7 6 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_17_1 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_17
+                      geometry DEF PART_17_1 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.64 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4.5 6 5,
+                            4.71213203435596 6.08786796564404 5,
+                            4.8 6.3 5,
+                            4.71213203435596 6.51213203435596 5,
+                            4.5 6.6 5,
+                            4.28786796564404 6.51213203435596 5,
+                            4.2 6.3 5,
+                            4.28786796564404 6.08786796564404 5,
+                            4.5 6 4.6,
+                            4.71213203435596 6.08786796564404 4.6,
+                            4.8 6.3 4.6,
+                            4.71213203435596 6.51213203435596 4.6,
+                            4.5 6.6 4.6,
+                            4.28786796564404 6.51213203435596 4.6,
+                            4.2 6.3 4.6,
+                            4.28786796564404 6.08786796564404 4.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+                DEF SWITCH_17_2 Switch {
+                  whichChoice 0
+                  children [
+                    Shape {
+                      appearance USE APP_17
+                      geometry DEF PART_17_2 SphericalGaussianMapColored {
+                        drawAosSphere TRUE
+                        drawAosHaloed TRUE
+                        aosVertexStyle "none"
+                        aosEdgeColor 0.96 0.64 0.96
+                        coord ExactCoordinate {
+                          exactPoint [
+                            4.5 0.4 5,
+                            4.71213203435596 0.487867965644036 5,
+                            4.8 0.7 5,
+                            4.71213203435596 0.912132034355964 5,
+                            4.5 1 5,
+                            4.28786796564404 0.912132034355964 5,
+                            4.2 0.7 5,
+                            4.28786796564404 0.487867965644036 5,
+                            4.5 0.4 4.6,
+                            4.71213203435596 0.487867965644036 4.6,
+                            4.8 0.7 4.6,
+                            4.71213203435596 0.912132034355964 4.6,
+                            4.5 1 4.6,
+                            4.28786796564404 0.912132034355964 4.6,
+                            4.2 0.7 4.6,
+                            4.28786796564404 0.487867965644036 4.6,
+                          ]
+                        }
+                        coordIndex [
+                          1 0 8 9 -1,
+                          2 1 9 10 -1,
+                          3 2 10 11 -1,
+                          4 3 11 12 -1,
+                          5 4 12 13 -1,
+                          6 5 13 14 -1,
+                          7 6 14 15 -1,
+                          0 7 15 8 -1,
+                          0 1 2 3 4 5 6 7 -1,
+                          15 14 13 12 11 10 9 8 -1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+ROUTE SNAP_KEY.state TO SNAP.trigger
+ROUTE SOLVE_KEY.state TO PUZZLE.trigger
+ROUTE DRAW_AOS_KEY.state TO PART_0_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_0_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_0_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_1_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_1_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_1_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_2_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_2_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_2_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_3_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_3_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_3_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_4_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_4_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_4_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_5_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_5_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_5_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_6_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_6_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_6_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_7_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_7_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_7_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_8_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_8_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_8_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_9_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_9_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_9_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_10_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_10_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_10_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_11_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_11_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_11_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_12_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_12_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_12_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_13_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_13_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_13_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_14_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_14_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_14_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_15_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_15_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_15_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_16_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_16_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_16_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_17_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_17_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PART_17_2.drawAos
