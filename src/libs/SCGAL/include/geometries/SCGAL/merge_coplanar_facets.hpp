@@ -27,7 +27,7 @@
  * cooplanar facets.
  */
 
-#include <vector>
+#include <list>
 #include <boost/type_traits.hpp>
 
 #include "SGAL/basic.hpp"
@@ -38,58 +38,36 @@ SGAL_BEGIN_NAMESPACE
 template <typename Polyhedron, typename Equal>
 void merge_coplanar_facets(Polyhedron& polyhedron, Equal& eq)
 {
-  typedef typename Polyhedron::Vertex_handle            Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle          Halfedge_handle;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator
-    Halfedge_around_vertex_circulator;
-  typedef std::vector<Vertex_handle>                    Vertex_container;
+  typedef typename Polyhedron::Halfedge_handle              Halfedge_handle;
+  typedef std::list<Halfedge_handle>                        Edge_container;
 
-  // Copy all vertex handles to a temporary container:
-  Vertex_container vertices(polyhedron.size_of_vertices());
-  typename Vertex_container::iterator vit = vertices.begin();
-  typename Polyhedron::Vertex_iterator it;
-  for (it = polyhedron.vertices_begin(); it != polyhedron.vertices_end();
-       ++it, ++vit)
-    *vit = it;
+  // Insert all edges incident to coplanar faces to the coplanar edge container
+  Edge_container edges;
+  for (auto eit = polyhedron.edges_begin(); eit != polyhedron.edges_end();
+       ++eit)
+  {
+    auto ohe = eit->opposite();
+    if (eq(eit->facet()->plane(), ohe->facet()->plane())) edges.push_back(eit);
+  }
 
-  // Traverse all vertices:
-  for (vit = vertices.begin(); vit != vertices.end(); ++vit) {
-    // Traverse all outgoing halfedges:
-    Halfedge_around_vertex_circulator start_he = (*vit)->vertex_begin();
-    Halfedge_around_vertex_circulator he = start_he;
-    Halfedge_around_vertex_circulator next_he;
-    bool end_vertex = false;
-    for (++he; he != start_he; he = next_he) {
-      next_he = he;
-      ++next_he;
-      Halfedge_handle ohe = he->opposite();
+  // Traverse cooplanar edges and remove them.
+  for (auto it = edges.begin(); it != edges.end(); ++it) {
+    auto he = *it;
+    auto ohe = he->opposite();
+    if ((he->vertex()->degree() > 2) && (ohe->vertex()->degree() > 2))
+      polyhedron.join_facet(he);
+    else if (he->vertex()->degree() == 2) polyhedron.join_vertex(ohe);
+    else polyhedron.join_vertex(he);
+  }
 
-      if ((*vit)->degree() > 2) {
-        if (eq(he->facet()->plane(), ohe->facet()->plane())) {
-          if (ohe->vertex()->degree() > 2) {
-            polyhedron.join_facet(he);
-          }
-        }
-      } else {
-        if (eq(he->facet()->plane(), ohe->facet()->plane())) {
-          polyhedron.erase_center_vertex(he);
-        } else {
-          polyhedron.join_vertex(ohe);
-        }
-        end_vertex = true;
-        break;
-      }
-    }
-
-    if (!end_vertex) {
-      Halfedge_handle ohe = he->opposite();
-      if ((*vit)->degree() > 2) {
-        if (eq(he->facet()->plane(), ohe->facet()->plane())) {
-          if (ohe->vertex()->degree() > 2) {
-            polyhedron.join_facet(he);
-          }
-        }
-      }
+  // Traverse all vertices and remove vertices of degree 2.
+  for (auto vit = polyhedron.vertices_begin(); vit != polyhedron.vertices_end();
+       ++vit)
+  {
+    if (vit->degree() == 2) {
+      auto he = vit->vertex_begin();
+      auto ohe = he->opposite();
+      polyhedron.join_vertex(ohe);
     }
   }
 }
@@ -111,7 +89,7 @@ void merge_coplanar_facets(Kernel& kernel, Polyhedron& polyhedron,
                            boost::false_type)
 {
   Direction_equal<Kernel> eq(kernel);
-  merge_coplanar_facets(polyhedron, eq); 
+  merge_coplanar_facets(polyhedron, eq);
 }
 
 template <typename Kernel, typename Polyhedron>
