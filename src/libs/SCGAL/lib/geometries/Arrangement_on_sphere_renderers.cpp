@@ -182,6 +182,17 @@ void draw_strip_edge_on_sphere(Draw_action* action,
     rot.set(normal, SGAL_PI);
   else
     rot.make(source, target);
+  auto& axis = rot.get_axis();
+
+  if ((CGAL::sign(normal[0]) != CGAL::sign(axis[0])) ||
+      (CGAL::sign(normal[1]) != CGAL::sign(axis[1])) ||
+      (CGAL::sign(normal[2]) != CGAL::sign(axis[2])))
+  {
+    axis.scale(-1.0f);
+    rot.set_axis(axis);
+    auto angle = rot.get_angle();
+    rot.set_angle(SGAL_TWO_PI - angle);
+  }
   float angle = rot.get_angle();
 
   glBegin(GL_QUAD_STRIP);
