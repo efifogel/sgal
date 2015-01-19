@@ -640,11 +640,10 @@ draw_primal_marked_edge(Draw_action* action)
     Transform trans;
     trans.set_translation(translation);
     trans.set_rotation(rot);
-    Matrix4f mat;
-    trans.get_matrix(mat);
+    const auto& mat = trans.get_matrix();
 
     glPushMatrix();
-    glMultMatrixf((float *)&mat);
+    glMultMatrixf((float*)&mat);
     glColor3fv((float*)&m_marked_edge_color);
     context->draw_material_mode_enable(Gfx::COLOR_MATERIAL);
     edge_geom.draw(action);

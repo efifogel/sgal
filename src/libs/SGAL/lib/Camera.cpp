@@ -284,9 +284,8 @@ void Camera::clean_matrix()
   m_view_mat.make_identity();
 
   // rotation:
-  Vector3f newz;
-  m_orientation.get_axis(newz);      // asured normalized
-  float angle = m_orientation.get_angle();
+  const auto& newz = m_orientation.get_axis();      // asured normalized
+  const auto angle = m_orientation.get_angle();
   m_view_mat.post_rot(m_view_mat, newz[0], newz[1], newz[2], -angle);
 
   Vector3f new_pos;

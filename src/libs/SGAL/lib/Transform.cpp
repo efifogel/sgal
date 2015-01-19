@@ -79,13 +79,6 @@ void Transform::set_matrix(const Matrix4f& matrix)
   m_dirty_sphere_bound = true;
 }
 
-//! \brief obtains (a copy of) the matrix.
-void Transform::get_matrix(Matrix4f& matrix)
-{
-  if (m_dirty_matrix) clean_matrix();
-  m_matrix.get(matrix);
-}
-
 //! \brief obtains (a const reference to) the matrix.
 const Matrix4f& Transform::get_matrix()
 {
@@ -341,9 +334,16 @@ void Transform::set_scale(float s0, float s1, float s2)
 void Transform::set_translation(const Vector3f& translation)
 { set_translation(translation[0], translation[1], translation[2]); }
 
-//! \brief sets the translation.
-void Transform::get_translation(Vector3f& translation)
-{ get_translation(&translation[0], &translation[1], &translation[2]); }
+//! \brief obtains the translation.
+const Vector3f& Transform::get_translation()
+{
+  if (m_dirty_parts) {
+    m_translation[0] = m_matrix[3][0];
+    m_translation[1] = m_matrix[3][1];
+    m_translation[2] = m_matrix[3][2];
+  }
+  return m_translation;
+}
 
 //! \brief sets the rotation.
 void Transform::set_rotation(const Rotation& rotation)
@@ -356,11 +356,11 @@ void Transform::get_rotation(float* v0, float* v1, float* v2, float* v3)
   m_rotation.get(v0,v1,v2,v3);
 }
 
-//! \brief obtains the rotation.
-void Transform::get_rotation(Rotation& rotation)
+//! \brief obtains the (non-const) rotation.
+const Rotation& Transform::get_rotation()
 {
   if (m_dirty_parts) clean_parts();
-  m_rotation.get(rotation);
+  return m_rotation;
 }
 
 //! \brief obtains the scale factors.
@@ -372,13 +372,16 @@ void Transform::get_scale(float* v0, float* v1, float* v2)
   *v2 = m_scale[2];
 }
 
-//! \brief sets the scale factors.
+//! \brief sets the scale.
 void Transform::set_scale(const Vector3f& scale)
 { set_scale(scale[0], scale[1], scale[2]); }
 
-//! \brief sets the scale factors.
-void Transform::get_scale(Vector3f& scale)
-{ get_scale(&scale[0], &scale[1], &scale[2]); }
+//! \brief obtains the scale.
+const Vector3f& Transform::get_scale()
+{
+  if (m_dirty_parts) clean_parts();
+  return m_scale;
+}
 
 //! \brief sets the scale-orientation.
 void Transform::set_scale_orientation(float v0, float v1, float v2, float v3)
@@ -408,10 +411,10 @@ void Transform::set_scale_orientation(const Rotation& scale_orientation)
 }
 
 //! \brief obtains the scale-orientation.
-void Transform::get_scale_orientation(Rotation& scale_orientation)
+const Rotation& Transform::get_scale_orientation()
 {
   if (m_dirty_parts) clean_parts();
-  m_scale_orientation.get(scale_orientation);
+  return m_scale_orientation;
 }
 
 //! \brief sets the center of rotation.
@@ -440,8 +443,11 @@ void Transform::set_center(const Vector3f& center)
 { set_center(center[0], center[1], center[2]); }
 
 //! \brief obtains the center of rotation.
-void Transform::get_center(Vector3f& center)
-{ get_center(&center[0], &center[1], &center[2]); }
+const Vector3f& Transform::get_center()
+{
+  if (m_dirty_parts) clean_parts();
+  return m_center;
+}
 
 /*! \brief raises the matrix dirty flag, and sets the flag that indicates that
  * rendering is required.

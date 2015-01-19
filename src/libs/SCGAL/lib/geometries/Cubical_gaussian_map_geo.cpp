@@ -1015,8 +1015,7 @@ void Cubical_gaussian_map_geo::draw_primal_marked_edge(Draw_action* action)
         Transform trans;
         trans.set_translation(translation);
         trans.set_rotation(rot);
-        Matrix4f mat;
-        trans.get_matrix(mat);
+        const auto& mat = trans.get_matrix();
 
         glPushMatrix();
         glMultMatrixf((float*)&mat);

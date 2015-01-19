@@ -117,39 +117,75 @@ public:
   /*! Clean the bounding sphere of the transformation node. */
   virtual void clean_sphere_bound();
 
+  /*! Set the translation.
+   * \param translation (in) the new translation.
+   */
   void set_translation(const Vector3f& translation);
-  void get_translation(Vector3f& translation);
+
+  /*! Obtain the translation.
+   * \return the translation.
+   */
+  const Vector3f& get_translation();
+
+  /*! Set the rotation.
+   * rotation (in) the new rotation.
+   */
   void set_rotation(const Rotation& rotation);
-  void get_rotation(Rotation& rotation);
+
+  /*! Obtain the rotation.
+   * \return the rotation.
+   */
+  const Rotation& get_rotation();
+
   void set_scale(const Vector3f& scale);
-  void get_scale(Vector3f& scale);
+
+  /*! Obtain the scale.
+   * \return the scale.
+   */
+  const Vector3f& get_scale();
+
   void set_scale_orientation(const Rotation& scaleOrientation);
-  void get_scale_orientation(Rotation& scaleOrientation);
+
+  /*! Obtain the scale orientation.
+   * \return the scale orientation.
+   */
+  const Rotation& get_scale_orientation();
+
   void set_center(const Vector3f& center);
-  void get_center(Vector3f& center);
+
+  /*! Obtain the center of rotation.
+   * \return the center of rotation.
+   */
+  const Vector3f& get_center();
 
   /*! Set the affine transformation 4x4 matrix.
    * \param matrix (in) the matrix.
    */
   void set_matrix(const Matrix4f& matrix);
 
-  /*! Obtain (a copy of) the matrix.
-   * \return the matrix.
+  /*! Obtain the matrix.
+   * \return the matrix
    */
-  void get_matrix(Matrix4f& matrix);
-
-  /*! Obtain (a const reference to) the matrix. */
   const Matrix4f& get_matrix();
 
   void set_translation(Float v0, Float v1, Float v2);
+
   void get_translation(Float* v0, Float* v1, Float* v2);
+
   void set_rotation(Float v0, Float v1, Float v2, Float v3);
+
   void get_rotation(Float* v0, Float* v1, Float* v2, Float* v3);
+
   void set_scale(Float v0, Float v1, Float v2);
+
   void get_scale(Float* v0, Float* v1, Float* v2);
+
   void set_scale_orientation(Float v0, Float v1, Float v2, Float v3);
+
   void get_scale_orientation(Float* v0, Float* v1, Float* v2, Float* v3);
+
   void set_center(Float v0, Float v1, Float v2);
+
   void get_center(Float* v0, Float* v1, Float* v2);
 
   /*! Set the flag that indicates whether the transformation took place.
