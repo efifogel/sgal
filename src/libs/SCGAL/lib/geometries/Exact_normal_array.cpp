@@ -112,7 +112,7 @@ void Exact_normal_array::set_attributes(Element* elem)
       elem->mark_delete(ai);
     }
 
-    if (name == "ratVector") {
+    if (name == "exactVector") {
       Uint num_values = get_num_values<Exact_FT>(value);
       Uint size = num_values / 3;
       int old_size = m_array.size();
