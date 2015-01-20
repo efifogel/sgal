@@ -44,7 +44,8 @@ IO_option_parser::IO_option_parser() :
     ("save,S", po::value<Boolean>(&m_save)->default_value(false), "save")
     ("interactive,I", po::value<Boolean>(&m_interactive)->default_value(true),
      "save")
-    ("output-file", po::value<std::string>(), "output file")
+    ("output-file", po::value<std::string>(&m_output_file), "output file")
+    ("output-path", po::value<std::string>(&m_output_path)->default_value("."), "output path")
     ;
 }
 

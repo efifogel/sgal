@@ -241,6 +241,9 @@ protected:
   /*! \brief print geometry information of Box. */
   void print_geometry_info(SGAL::Box* box);
 
+  /*! Save the scene. */
+  void save_scene();
+
 private:
   typedef std::list<fi::path>                                   Path_list;
   typedef Path_list::iterator                                   Path_iter;

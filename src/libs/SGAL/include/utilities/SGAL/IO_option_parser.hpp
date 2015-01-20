@@ -97,10 +97,20 @@ public:
    */
   Boolean is_interactive() const;
 
+  /*! Set the output-file name.
+   * \param filename (in) the output-file name.
+   */
+  void set_output_file(const std::string& filename);
+
   /*! Obtain the output-file name.
    * \return The output-file name.
    */
   const std::string& get_output_file() const;
+
+  /*! Obtain the output-path.
+   * \return The output-path.
+   */
+  const std::string& get_output_path() const;
 
   /*! Obtain the begin iterator of input paths.
    */
@@ -130,6 +140,9 @@ protected:
 
   /*! Output file name. */
   std::string m_output_file;
+
+  /*! Output path name. */
+  std::string m_output_path;
 
 private:
   // The assignment operator cannot be generated (because some of the data
@@ -171,9 +184,17 @@ inline Boolean IO_option_parser::do_save() const { return m_save; }
 inline Boolean IO_option_parser::is_interactive() const
 { return m_interactive; }
 
+//! \brief sets the output-file name.
+inline void IO_option_parser::set_output_file(const std::string& filename)
+{ m_output_file = filename; }
+
 //! \brief obtains the output-file name.
 inline const std::string& IO_option_parser::get_output_file() const
 { return m_output_file; }
+
+//! \brief obtains the output path.
+inline const std::string& IO_option_parser::get_output_path() const
+{ return m_output_path; }
 
 //! \brief obtains the begin iterator of input paths.
 inline IO_option_parser::Input_path_const_iterator
