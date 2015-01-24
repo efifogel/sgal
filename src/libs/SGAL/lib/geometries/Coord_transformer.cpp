@@ -73,15 +73,20 @@ void Coord_transformer::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "translation") {
       Vector3f vec(value);
       m_translation.set(vec);
       m_transform.set_translation(m_translation);
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "scale") {
+      Vector3f scale(value);
+      m_scale.set(scale);
+      m_transform.set_scale(m_scale);
       elem->mark_delete(ai);
       continue;
     }
@@ -104,11 +109,11 @@ void Coord_transformer::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
-    Shared_container cont = elem->get_value(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
     if (name == "coord") {
       Shared_coord_array coord_array =
         boost::dynamic_pointer_cast<Coord_array>(cont);
@@ -154,6 +159,15 @@ void Coord_transformer::init_prototype()
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
                                               RULE_EXPOSED_FIELD,
                                               rotation_func, exec_func));
+
+  // scale
+  exec_func = static_cast<Execution_function>(&Coord_transformer::translate);
+  Vector3f_handle_function scale_func =
+    static_cast<Vector3f_handle_function>
+    (&Coord_transformer::scale_handle);
+  s_prototype->add_field_info(new SF_vector3f(SCALE, "scale",
+                                              RULE_EXPOSED_FIELD,
+                                              scale_func, exec_func));
 
   // execute
   exec_func = static_cast<Execution_function>(&Coord_transformer::execute);
@@ -224,6 +238,17 @@ void Coord_transformer::set_rotation(Float v0, Float v1, Float v2, Float angle)
   rotate();
 }
 
+//! \brief sets the scale field.
+void Coord_transformer::set_scale(const Vector3f& scale)
+{ set_scale(scale[0], scale[1], scale[2]); }
+
+//! \brief sets the scale field.
+void Coord_transformer::set_scale(Float v0, Float v1, Float v2)
+{
+  m_scale.set(v0, v1, v2);
+  scale();
+}
+
 /*! \brief translates the input vertices and store the results in the output
  * vertices.
  */
@@ -239,6 +264,15 @@ void Coord_transformer::translate(const Field_info* field_info)
 void Coord_transformer::rotate(const Field_info* field_info)
 {
   m_transform.set_rotation(m_rotation);
+  execute(field_info);
+}
+
+/*! \brief scales the input vertices and store the results in the output
+ * vertices.
+ */
+void Coord_transformer::scale(const Field_info* field_info)
+{
+  m_transform.set_scale(m_scale);
   execute(field_info);
 }
 

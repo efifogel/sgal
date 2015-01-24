@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 7205 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_NAVIGATION_INFO_HPP
@@ -44,16 +41,16 @@ public:
     LAST
   };
 
-  /*! Constructor */
+  /*! Constructor. */
   Navigation_info(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Navigation_info();
 
-  /*! Construct the prototype */
+  /*! Construct the prototype. */
   static Navigation_info* prototype();
 
-  /*! Clone */
+  /*! Clone. */
   virtual Container* clone();
 
   /*! Initialize the node prototype. */
@@ -109,23 +106,23 @@ private:
 #pragma warning( pop )
 #endif
 
-/*! \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Navigation_info* Navigation_info::prototype()
 { return new Navigation_info(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Navigation_info::clone() { return new Navigation_info(); }
 
-/*! \brief sets the type. */
+//! \brief sets the type.
 inline void Navigation_info::set_type(Navigation_info_type type)
 { m_type = type; }
 
-/*! \brief sets the 'any' Boolean flag that indicates whether the user can
+/*! \brief sets the 'any' Boolean flag, which indicates whether the user can
  * change navigation types.
  */
 inline void Navigation_info::set_any(Boolean any) { m_any = any; }
 
-/*! \brief obtains the tag (type) of the container */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Navigation_info::get_tag() const { return s_tag; }
 
 SGAL_END_NAMESPACE

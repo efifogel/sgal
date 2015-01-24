@@ -161,7 +161,7 @@ Action::Trav_directive Group::draw(Draw_action* draw_action)
 void Group::cull(Cull_context& cull_context)
 {
   if (!is_visible()) return;
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
     (*it)->cull(cull_context);
 }
 

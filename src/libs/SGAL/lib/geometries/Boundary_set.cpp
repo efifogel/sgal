@@ -1120,6 +1120,8 @@ void Boundary_set::draw(Draw_action* action)
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
+  auto coords = get_coord_array();
+  if (!coords || coords->empty()) return;
 
   // Clean the center
   if (is_dirty_center()) clean_center();
@@ -1333,6 +1335,8 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
 void Boundary_set::isect_direct()
 {
   auto coords = get_coord_array();
+  if (!coords || coords->empty()) return;
+
   Uint i, j;
   switch (m_primitive_type) {
    case PT_TRIANGLE_STRIP:

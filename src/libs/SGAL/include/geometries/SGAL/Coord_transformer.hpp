@@ -55,6 +55,7 @@ public:
     COORD_CHANGED,
     TRANSLATION,
     ROTATION,
+    SCALE,
     CHANGED,
     LAST
   };
@@ -91,6 +92,7 @@ public:
   Boolean* enabled_handle(const Field_info*) { return &m_enabled; }
   Vector3f* translation_handle(const Field_info*) { return &m_translation; }
   Rotation* rotation_handle(const Field_info*) { return &m_rotation; }
+  Vector3f* scale_handle(const Field_info*) { return &m_scale; }
   Boolean* execute_handle(const Field_info*) { return &m_execute; }
   Shared_coord_array* coord_array_handle(const Field_info*)
   { return &m_coord_array; }
@@ -104,6 +106,9 @@ public:
 
   /*! Rotate the input vertices. */
   void rotate(const Field_info* field_info = nullptr);
+
+  /*! Scale the input vertices. */
+  void scale(const Field_info* field_info = nullptr);
 
   /*! Transform the input vertices. */
   void execute(const Field_info* field_info = nullptr);
@@ -119,6 +124,12 @@ public:
 
   /*! Set the translation field. */
   void set_translation(float v0, float v1, float v2);
+
+  /*! Set the scale field. */
+  void set_scale(const Vector3f& scale);
+
+  /*! Set the scale field. */
+  void set_scale(float v0, float v1, float v2);
 
   /*! Set the reflection indication-flag. */
   void set_reflect(Boolean reflect);
@@ -172,29 +183,32 @@ protected:
   }
 
 private:
-  /*! The tag that identifies this container type */
+  /*! The tag that identifies this container type. */
   static const std::string s_tag;
 
   /*! The node prototype */
   static Container_proto* s_prototype;
 
-  /*! Determines whether the node is enabled */
+  /*! Determines whether the node is enabled. */
   Boolean m_enabled;
 
-  /*! Indicates whether reflection should be applied */
+  /*! Indicates whether reflection should be applied. */
   Boolean m_reflect;
 
-  /*! Indicates that the operation should be executed */
+  /*! Indicates that the operation should be executed. */
   Boolean m_execute;
 
-  /*! The transformation */
+  /*! The transformation. */
   Transform m_transform;
 
-  /*! The rotation vector */
+  /*! The rotation vector. */
   Rotation m_rotation;
 
-  /*! The translation vector */
+  /*! The translation vector. */
   Vector3f m_translation;
+
+  /*! The scale vector. */
+  Vector3f m_scale;
 
   /*! Indicates whether output has changed.
    * This is temporary; it should be eliminated once script nodes fully
