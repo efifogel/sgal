@@ -198,8 +198,7 @@ void Exact_polyhedron_geo::clean_coords()
   }
   else m_coord_array->resize(m_polyhedron.size_of_vertices());
 
-  boost::shared_ptr<Coord_array_3d> coords =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   if (coords) {
     /* Generate the coordinate array and assign the index into the coordinate
      * array of the vertex to the vertex.
@@ -214,7 +213,7 @@ void Exact_polyhedron_geo::clean_coords()
     }
   }
   else {
-    boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+    auto exact_coords =
       boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
     if (exact_coords) {
       Uint index = 0;
@@ -470,14 +469,13 @@ void Exact_polyhedron_geo::clean_sphere_bound()
     clean_coords();
 
   if (m_coord_array) {
-    boost::shared_ptr<Coord_array_3d> coords =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+    auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
     if (coords) m_sphere_bound.set_around(coords->begin(), coords->end());
     else {
-      boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+      auto exact_coords =
         boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
       SGAL_assertion(exact_coords);
-      const std::vector<Vector3f>& vecs = exact_coords->get_inexact_coords();
+      const auto& vecs = exact_coords->get_inexact_coords();
       m_sphere_bound.set_around(vecs.begin(), vecs.end());
     }
   }
@@ -539,11 +537,10 @@ void Exact_polyhedron_geo::coord_content_changed(const Field_info* field_info)
 //! \brief obtains the ith 3D coordinate.
 const Vector3f& Exact_polyhedron_geo::get_coord_3d(Uint i) const
 {
-  boost::shared_ptr<Coord_array_3d> coords =
-    boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
   if (coords) return (*coords)[i];
 
-  boost::shared_ptr<Exact_coord_array_3d> exact_coords =
+  auto exact_coords =
     boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array);
   SGAL_assertion(exact_coords);
   return exact_coords->get_inexact_coord(i);
