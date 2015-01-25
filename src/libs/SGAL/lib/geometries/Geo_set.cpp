@@ -493,15 +493,10 @@ void Geo_set::clean_sphere_bound()
   m_dirty_sphere_bound = false;
 
   if (m_bb_is_pre_set) return;
-
-  if (m_coord_array) {
-    // We assume that m_coord_array points at an object of type
-    // Coord_array_3d type.
-    boost::shared_ptr<Coord_array_3d> coords =
-      boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
-    SGAL_assertion(coords);
-    m_sphere_bound.set_around(coords->begin(), coords->end());
-  }
+  if (!m_coord_array || m_coord_array->empty()) return;
+  auto coords = boost::dynamic_pointer_cast<Coord_array_3d>(m_coord_array);
+  if (!coords) return;
+  m_sphere_bound.set_around(coords->begin(), coords->end());
 }
 
 //! \brief obtains the bounding box.
