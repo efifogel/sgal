@@ -1120,8 +1120,7 @@ void Boundary_set::draw(Draw_action* action)
 {
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
-  auto coords = get_coord_array();
-  if (!coords || coords->empty()) return;
+  if (!m_coord_array || m_coord_array->empty()) return;
 
   // Clean the center
   if (is_dirty_center()) clean_center();
@@ -1334,20 +1333,19 @@ void Boundary_set::draw_dispatch(Draw_action* /* action */)
 //! \brief isects direct drawing-mode.
 void Boundary_set::isect_direct()
 {
-  auto coords = get_coord_array();
-  if (!coords || coords->empty()) return;
+  if (!m_coord_array || m_coord_array->empty()) return;
 
   Uint i, j;
   switch (m_primitive_type) {
    case PT_TRIANGLE_STRIP:
-    if (!coords->empty()) {
+    {
       int num_tri_strips = m_tri_strip_lengths[0];
       int index = 0;
       for (int strip = 0; strip < num_tri_strips; ++strip) {
         int tmp = strip + 1;
         glBegin(GL_TRIANGLE_STRIP);
         for (Uint i = 0 ; i < m_tri_strip_lengths[tmp]; ++i)
-          glVertex3fv(coords->datum(m_flat_coord_indices[index++]));
+          glVertex3fv(m_coord_array->datum(m_flat_coord_indices[index++]));
         glEnd();
       }
     }
@@ -1356,9 +1354,9 @@ void Boundary_set::isect_direct()
    case PT_TRIANGLES:
     glBegin(GL_TRIANGLES);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
     }
     glEnd();
     return;
@@ -1366,10 +1364,10 @@ void Boundary_set::isect_direct()
    case PT_QUADS:
     glBegin(GL_QUADS);
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
-      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
-      glVertex3fv(coords->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
+      glVertex3fv(m_coord_array->datum(m_flat_coord_indices[j++]));
     }
     glEnd();
     return;
@@ -1378,7 +1376,7 @@ void Boundary_set::isect_direct()
     for (i = 0, j = 0; i < m_num_primitives; ++i) {
       glBegin(GL_POLYGON);
       for (; m_coord_indices[j] != (Uint) -1; ++j)
-        glVertex3fv(coords->datum(m_coord_indices[j]));
+        glVertex3fv(m_coord_array->datum(m_coord_indices[j]));
       glEnd();
       ++j;
     }
