@@ -144,7 +144,7 @@ public:
 
   /*! Obtain the name of the dir where the snapshot is written to.
    */
-  std::string get_dir_name();
+  std::string get_dir_name() const;
 
   /*! Set the name of the file where the snapshot is written to.
    */
@@ -152,7 +152,7 @@ public:
 
   /*! Obtain the name of the file where the snapshot is written to.
    */
-  const std::string& get_file_name();
+  const std::string& get_file_name() const;
 
   /*! Set the file format.
    */
@@ -254,14 +254,15 @@ inline void Snapshot::set_dir_name(std::string dir_name)
 { m_dir_name = dir_name; }
 
 //! \brief obtains the name of the dir where the snapshot is written to.
-inline std::string Snapshot::get_dir_name() { return m_dir_name; }
+inline std::string Snapshot::get_dir_name() const { return m_dir_name; }
 
 //! \brief sets the name of the file where the snapshot is written to.
 inline void Snapshot::set_file_name(std::string& file_name)
 { m_file_name = file_name; }
 
 //! \brief obtains the name of the file where the snapshot is written to.
-inline const std::string& Snapshot::get_file_name() { return m_file_name; }
+inline const std::string& Snapshot::get_file_name() const
+{ return m_file_name; }
 
 //! \brief sets the file format.
 inline void Snapshot::set_file_format(File_format format)

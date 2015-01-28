@@ -253,8 +253,8 @@ void Snapshot::set_attributes(Element* elem)
   Node::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "dirName") {
       m_dir_name = strip_double_quotes(value);
       if (m_dir_name.empty()) m_dir_name = s_def_dir_name;
@@ -299,7 +299,7 @@ void Snapshot::set_attributes(Element* elem)
   for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
        ++cai)
   {
-    const std::string& name = elem->get_name(cai);
+    const auto& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "image") {
       m_image = boost::dynamic_pointer_cast<Image>(cont);
