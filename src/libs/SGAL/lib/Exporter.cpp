@@ -37,6 +37,7 @@ const std::string Exporter::s_tag = "Exporter";
 Container_proto* Exporter::s_prototype(nullptr);
 
 // Default values
+const std::string Exporter::s_def_dir_name = ".";
 const std::string Exporter::s_def_file_name = "sgal";
 const File_format::Id Exporter::s_def_file_format(File_format::ID_WRL);
 
@@ -45,8 +46,11 @@ REGISTER_TO_FACTORY(Exporter, "Exporter");
 //! \brief constructor.
 Exporter::Exporter(Boolean proto) :
   Node(proto),
+  m_dir_name(s_def_dir_name),
   m_file_name(s_def_file_name),
   m_file_format(s_def_file_format),
+  m_separate(false),
+  m_count(0),
   m_trigger(false)
 {}
 
@@ -57,9 +61,14 @@ Exporter::~Exporter() {}
 void Exporter::execute(const Field_info* /* field_info */)
 {
   if (!m_scene_graph) return;
-  std::string filename =
-    m_file_name + std::string(".") + File_format::get_name(m_file_format);
-  m_scene_graph->write(filename, m_file_format);
+  std::string file_name = m_dir_name + "/" + m_file_name;
+  if (m_separate) {
+    std::ostringstream oss;
+    oss << m_count++;
+    file_name += "_" + oss.str();
+  }
+  file_name += std::string(".") + File_format::get_name(m_file_format);
+  m_scene_graph->write(file_name, m_file_format);
 }
 
 //! \brief initializes the container prototype.
@@ -78,6 +87,15 @@ void Exporter::init_prototype()
                                           RULE_EXPOSED_FIELD,
                                           trigger_func,
                                           false, exec_func));
+
+  // dirName
+  String_handle_function dir_name_func =
+    static_cast<String_handle_function>(&Exporter::dir_name_handle);
+  s_prototype->add_field_info(new SF_string(DIR_NAME,
+                                            "dirName",
+                                            RULE_EXPOSED_FIELD,
+                                            dir_name_func,
+                                            s_def_dir_name));
 
   // fileName
   String_handle_function file_name_func =
@@ -113,12 +131,17 @@ void Exporter::set_attributes(Element* elem)
 {
   Node::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
+    if (name == "dirName") {
+      m_dir_name = strip_double_quotes(value);
+      if (m_dir_name.empty()) m_dir_name = s_def_dir_name;
+      Uint n = m_dir_name.size() - 1;
+      if (m_dir_name[n] == '/') m_dir_name.resize(n);
+      elem->mark_delete(ai);
+      continue;
+    }
     if (name == "fileName") {
       m_file_name = strip_double_quotes(value);
       elem->mark_delete(ai);
@@ -137,6 +160,11 @@ void Exporter::set_attributes(Element* elem)
         std::cerr << "Illegal file format (" << value.c_str() << ")!"
                   << std::endl;
       }
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "separate") {
+      m_separate = compare_to_true(value);
       elem->mark_delete(ai);
       continue;
     }

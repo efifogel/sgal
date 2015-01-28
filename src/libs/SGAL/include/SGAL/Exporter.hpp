@@ -42,6 +42,7 @@ public:
   enum {
     FIRST = Node::LAST - 1,
     TRIGGER,
+    DIR_NAME,
     FILE_NAME,
     FILE_FORMAT,
     LAST
@@ -84,6 +85,7 @@ public:
   /// \name field handlers
   //@{
   Boolean* trigger_handle(const Field_info*) { return &m_trigger; }
+  std::string* dir_name_handle(const Field_info*) { return &m_dir_name; }
   std::string* file_name_handle(const Field_info*) { return &m_file_name; }
   File_format::Id* file_format_handle(const Field_info*)
   { return &m_file_format; }
@@ -100,13 +102,21 @@ public:
   /*! Execute the engine---write the content of the scene graph to a file. */
   virtual void execute(const Field_info* field_info);
 
+  /*! Set the name of the dir where the snapshot is written to.
+   */
+  void set_dir_name(std::string dir_name);
+
+  /*! Obtain the name of the dir where the snapshot is written to.
+   */
+  std::string get_dir_name() const;
+
   /*! Set the name of the file where the snapshot is written to.
    */
   void set_file_name(std::string& file_name);
 
   /*! Obtain the name of the file where the snapshot is written to.
    */
-  const std::string& get_file_name();
+  const std::string& get_file_name() const;
 
   /*! Set the file format.
    */
@@ -116,10 +126,19 @@ public:
    */
   File_format::Id get_file_format() const;
 
+  /*! Indicates whether to save different geometries in separate files. */
+  Boolean m_separate;
+
+  /*! The sequence counter. */
+  Uint m_count;
+
 protected:
   /*! Obtain the tag (type) of the container.
    */
   virtual const std::string& get_tag() const;
+
+  /*! The directory to save the model at. */
+  std::string m_dir_name;
 
   /*! The name of the file the image is written to. */
   std::string m_file_name;
@@ -141,6 +160,7 @@ private:
   Boolean m_trigger;
 
   // Default values for fields
+  const static std::string s_def_dir_name;
   const static std::string s_def_file_name;
   const static File_format::Id s_def_file_format;
 };
@@ -155,11 +175,19 @@ inline Exporter* Exporter::prototype() { return new Exporter(true); }
 //! \brief clones.
 inline Container* Exporter::clone() { return new Exporter(); }
 
+//! \brief sets the name of the dir where the snapshot is written to.
+inline void Exporter::set_dir_name(std::string dir_name)
+{ m_dir_name = dir_name; }
+
+//! \brief obtains the name of the dir where the snapshot is written to.
+inline std::string Exporter::get_dir_name() const { return m_dir_name; }
+
 inline void Exporter::set_file_name(std::string& file_name)
 { m_file_name = file_name; }
 
 //! \brief obtains the name of the file where the snapshot is written to.
-inline const std::string& Exporter::get_file_name() { return m_file_name; }
+inline const std::string& Exporter::get_file_name() const
+{ return m_file_name; }
 
 //! \brief sets the file format.
 inline void Exporter::set_file_format(File_format::Id format)
