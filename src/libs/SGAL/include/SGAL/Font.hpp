@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 5647 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FONT_HPP
@@ -41,13 +38,13 @@ public:
   Font(const std::string& name, Boolean antialias = true,
        Boolean left_to_right = true,
        Boolean top_to_bottom = true);
-  
+
   /*! Destructor */
   virtual ~Font() {}
 
   /*! Initialize the representation. */
   virtual void init() = 0;
-  
+
   /*! Clear the font. */
   virtual void clear() {}
 
@@ -76,9 +73,9 @@ public:
    * \return the flag that indicates the text vertical direction.
    */
   Boolean get_top_to_bottom() const { return m_top_to_bottom; }
-  
+
 protected:
-  /*! The font name. */ 
+  /*! The font name. */
   std::string m_name;
 
   /*! Indicates whether the font is antialiased. */

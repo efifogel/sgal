@@ -16,6 +16,7 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <boost/assign/list_of.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
@@ -36,27 +37,48 @@
 
 SGAL_BEGIN_NAMESPACE
 
-std::string Font_style::s_tag = "FontStyle";
+const std::string Font_style::s_tag = "FontStyle";
 Container_proto* Font_style::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Font_style, "Font_style");
 
+// Default values
+const Font_style::Family Font_style::s_def_family(FAMILY_SERIF);
+const Boolean Font_style::s_def_horizontal(true);
+const Uint_array Font_style::s_def_justify =
+  boost::assign::list_of(static_cast<Uint>(JUSTIFY_BEGIN))
+  (static_cast<Uint>(JUSTIFY_FIRST));
+const std::string Font_style::s_def_language("");
+const Boolean Font_style::s_def_left_to_right(true);
+const Float Font_style::s_def_size(1.0f);
+const Float Font_style::s_def_spacing(1.0f);
+const Font_style::Style Font_style::s_def_style(STYLE_PLAIN);
+const Boolean Font_style::s_def_top_to_bottom(true);
+
+const Char* Font_style::s_family_names[] =
+  { "SERIF", "SANS", "TYPEWRITER" };
+
+const Char* Font_style::s_justify_names[] =
+  { "BEGIN", "FIRST", "MIDDLE", "END" };
+
+const Char* Font_style::s_style_names[] =
+  { "PLAIN", "BOLD", "ITALIC", "BOLDITALIC" };
+
 //! \brief constructor
 Font_style::Font_style(Boolean proto) :
   Node(proto),
-  m_family("fixedsys"),
-  m_horizontal(true),
-  m_justify("PLAIN"),
-  m_language(""),
-  m_left_to_right(true),
-  m_size(1),
-  m_spacing(1),
-  m_style("PLAIN"),
-  m_top_to_bottom(true),
+  m_family(s_def_family),
+  m_horizontal(s_def_horizontal),
+  m_justify(s_def_justify),
+  m_language(s_def_language),
+  m_left_to_right(s_def_left_to_right),
+  m_size(s_def_size),
+  m_spacing(s_def_spacing),
+  m_style(s_def_style),
+  m_top_to_bottom(s_def_top_to_bottom),
   m_dirty(true),
   m_font(nullptr)
 {
-  //m_family = "MS Serif"; // SERIF
 }
 
 //! \brief Destructor
@@ -68,6 +90,10 @@ Font_style::~Font_style()
   }
 }
 
+//! \brief draws the node while traversing the scene graph.
+inline Action::Trav_directive Font_style::draw(Draw_action* /* draw_action */)
+{ return Action::TRAV_CONT; }
+
 //! \brief sets the flag that indicates whether the font is accentuated.
 void Font_style::set_bold(Boolean b)
 {
@@ -76,7 +102,7 @@ void Font_style::set_bold(Boolean b)
 }
 
 /*! \brief set the flag that indicates whether the font is italicized
- * (slanted)
+ * (slanted).
  */
 void Font_style::set_italic(Boolean i)
 {
@@ -90,12 +116,6 @@ void Font_style::set_antialias(Boolean a)
   m_antialias = a;
   m_dirty = true;
 }
-
-//! \breif sets the flag that indicates the horizontal text direction.
-void Font_style::set_left_to_right(Boolean l2r) { m_left_to_right = l2r; }
-
-//! \breif sets the flag that indicates the vertical text direction.
-void Font_style::set_top_to_bottom(Boolean t2b) { m_top_to_bottom = t2b; }
 
 //! \breif
 void Font_style::on_field_change(const Field_info* /* field_info */)
@@ -114,20 +134,12 @@ void Font_style::init_prototype()
   // family
   Execution_function exec_func =
     static_cast<Execution_function>(&Font_style::on_field_change);
-  String_handle_function family_func =
-    static_cast<String_handle_function>(&Font_style::family_handle);
-  s_prototype->add_field_info(new SF_string(FAMILY, "family",
-                                            RULE_EXPOSED_FIELD,
-                                            family_func,
-                                            exec_func));
-
-  // style
-  String_handle_function style_func =
-    static_cast<String_handle_function>(&Font_style::style_handle);
-  s_prototype->add_field_info(new SF_string(STYLE, "style",
-                                            RULE_EXPOSED_FIELD,
-                                            style_func,
-                                            exec_func));
+  Uint_handle_function family_func =
+    reinterpret_cast<Uint_handle_function>(&Font_style::family_handle);
+  s_prototype->add_field_info(new SF_uint(FAMILY, "family",
+                                          RULE_EXPOSED_FIELD,
+                                          family_func,
+                                          exec_func));
 
   // horizontal
   Boolean_handle_function horizontal_func =
@@ -137,12 +149,12 @@ void Font_style::init_prototype()
                                           horizontal_func, exec_func));
 
   // justify
-  String_handle_function justify_func =
-    static_cast<String_handle_function>(&Font_style::justify_handle);
-  s_prototype->add_field_info(new SF_string(JUSTIFY, "justify",
-                                            RULE_EXPOSED_FIELD,
-                                            justify_func,
-                                            exec_func));
+  Uint_array_handle_function justify_func =
+    static_cast<Uint_array_handle_function>(&Font_style::justify_handle);
+  s_prototype->add_field_info(new MF_uint(JUSTIFY, "justify",
+                                          RULE_EXPOSED_FIELD,
+                                          justify_func,
+                                          exec_func));
 
   // language
   String_handle_function language_func =
@@ -174,6 +186,14 @@ void Font_style::init_prototype()
                                            spacing_func,
                                            exec_func));
 
+  // style
+  Uint_handle_function style_func =
+    reinterpret_cast<Uint_handle_function>(&Font_style::style_handle);
+  s_prototype->add_field_info(new SF_uint(STYLE, "style",
+                                          RULE_EXPOSED_FIELD,
+                                          style_func,
+                                          exec_func));
+
   // topToBottom
   Boolean_handle_function t2b_func =
     static_cast<Boolean_handle_function>(&Font_style::t2b_handle);
@@ -202,56 +222,61 @@ void Font_style::set_attributes(Element* elem)
   Node::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "family") {
-      m_family = value;
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "style") {
-      m_style = value;
-      if (m_style == "BOLD") m_bold = true;
-      if (m_style == "ITALIC") m_italic = true;
-      if (m_style == "BOLDITALIC") {
-        m_bold = true;
-        m_italic = true;
-      }
-      elem->mark_delete(ai);
-      continue;
-    }
-    if (name == "size") {
-      m_size = boost::lexical_cast<Float>(value);
+      Uint num = sizeof(s_family_names) / sizeof(char*);
+      const char** found = std::find(s_family_names, &s_family_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_family_names;
+      if (index < num) set_family(static_cast<Family>(index));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "horizontal") {
-      m_horizontal = compare_to_true(value);
+      set_horizontal(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "justify") {
-      m_justify = value;
+      Uint num_values = get_num_tokens(value);
+      m_justify.resize(num_values);
+      std::istringstream svalue(value, std::istringstream::in);
+      for (Uint i = 0; i < num_values; ++i) svalue >> m_justify[i];
       elem->mark_delete(ai);
       continue;
     }
     if (name == "language") {
-      m_language = value;
+      set_language(value);
       elem->mark_delete(ai);
       continue;
     }
     if (name == "leftToRight")  {
-      m_left_to_right = compare_to_true(value);
+      set_left_to_right(compare_to_true(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "size") {
+      set_size(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "spacing") {
-      m_spacing = boost::lexical_cast<Float>(value);
+      set_spacing(boost::lexical_cast<Float>(value));
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "style") {
+      Uint num = sizeof(s_style_names) / sizeof(char*);
+      const char** found = std::find(s_style_names, &s_style_names[num],
+                                     strip_double_quotes(value));
+      Uint index = found - s_style_names;
+      if (index < num) set_style(static_cast<Style>(index));
       elem->mark_delete(ai);
       continue;
     }
     if (name == "topToBottom") {
-      m_top_to_bottom = compare_to_true(value);
+      set_top_to_bottom(compare_to_true(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -363,5 +388,42 @@ void Font_style::get_string_size(const std::string& str,
   height = m_size;
   width = height * w / h;
 }
+
+//! \brief sets the font family.
+void Font_style::set_family(Family family) { m_family = family; }
+
+/*! \brief sets the flag that indicates whether the text advances horizontally
+ * in its major direction.
+ */
+void Font_style::set_horizontal(Boolean flag) { m_horizontal = flag; }
+
+/*! \brief sets the alignment of the above text layout relative to the origin
+ * of the object coordinate system.
+ */
+void Font_style::set_justify(const Uint_array& justify)
+{ m_justify = justify; }
+
+//! \brief sets the context of the language for the text string.
+void Font_style::set_language(const std::string& labguage)
+{ m_language = labguage; }
+
+/*! \brief sets the flag that indicates whether the text advances from left to
+ * right.
+ */
+void Font_style::set_left_to_right(Boolean flag) { m_left_to_right = flag; }
+
+//! \brief sets the nominal height (in object space units) of glyphs rendered.
+void Font_style::set_size(Float size) { m_size = size; }
+
+//! \brief sets the line spacing between adjacent lines of text.
+void Font_style::set_spacing(Float spacing) { m_spacing = spacing; }
+
+//! \brief sets the font style, e.g., bold.
+void Font_style::set_style(Style style) {m_style = style; }
+
+/*! \brief sets the flag that indicates whether the text advances from top to
+ * bottom.
+ */
+void Font_style::set_top_to_bottom(Boolean flag) { m_top_to_bottom = flag; }
 
 SGAL_END_NAMESPACE
