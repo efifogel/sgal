@@ -49,6 +49,7 @@
 // #include "SGAL/Lod.hpp"
 #include "SGAL/Tex_gen.hpp"
 #include "SGAL/Text.hpp"
+#include "SGAL/Text_3d.hpp"
 #include "SGAL/Texture_2d.hpp"
 #include "SGAL/Texture_transform.hpp"
 #include "SGAL/Transform.hpp"
@@ -229,6 +230,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Tex_coord_array_3d);
   REGISTER_OBJECT(Tex_gen);
   REGISTER_OBJECT(Text);
+  REGISTER_OBJECT(Text_3d);
   REGISTER_OBJECT(Texture_2d);
   REGISTER_OBJECT(Texture_transform);
   REGISTER_OBJECT(Time_sensor);
