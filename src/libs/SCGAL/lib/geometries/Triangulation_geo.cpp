@@ -224,7 +224,7 @@ void Triangulation_geo::clean_sphere_bound()
   }
 
   if (is_dirty()) clean();
-  Approximate_sphere_vector spheres;
+  Inexact_sphere_vector spheres;
   if (m_triangulation.number_of_vertices() > 0) {
     spheres.resize(m_triangulation.number_of_vertices());
     Convert_approximate_sphere convert;

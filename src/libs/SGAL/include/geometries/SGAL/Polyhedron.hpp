@@ -37,6 +37,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -65,7 +66,6 @@ struct Polyhedron_items : public CGAL::Polyhedron_items_3 {
   };
 };
 
-typedef CGAL::Cartesian<Float>                     Inexact_kernel;
 typedef CGAL::Polyhedron_traits_with_normals_3<Inexact_kernel>
                                                    Inexact_polyhedron_traits;
 typedef CGAL::Polyhedron_3<Inexact_polyhedron_traits, Polyhedron_items>

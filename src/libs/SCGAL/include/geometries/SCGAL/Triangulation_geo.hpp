@@ -168,9 +168,9 @@ public:
 private:
   /*! Extracts the approximate point from a polyhedron vertex. */
   struct Convert_approximate_sphere {
-    Approximate_sphere_3
+    Inexact_sphere_3
     operator()(const Triangulation_3::Vertex::Point& point) const
-    { return to_approximate_sphere(point); }
+    { return to_inexact_sphere(point); }
   };
 
   struct Convert_exact_point {

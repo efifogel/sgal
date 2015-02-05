@@ -384,7 +384,7 @@ void Cubical_gaussian_map_geo::clean_sphere_bound()
     }
   }
   else {
-    Approximate_sphere_vector spheres;
+    Inexact_sphere_vector spheres;
 
     //! \todo this should change with dual-face iterator
     Uint points_size = 0;

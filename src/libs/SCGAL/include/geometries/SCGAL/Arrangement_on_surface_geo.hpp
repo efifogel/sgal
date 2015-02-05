@@ -37,6 +37,7 @@
 #include "SGAL/Geometry.hpp"
 #include "SGAL/Sphere.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_number_type.hpp"
@@ -108,22 +109,18 @@ public:
 protected:
   typedef Arrangement_on_surface_geo                  Self;
 
-  // Approximate types:
-  typedef float                                       Approximate_NT;
-  typedef CGAL::Cartesian<Approximate_NT>             Approximate_kernel;
-
-  typedef CGAL::Min_sphere_of_spheres_d_traits_3<Approximate_kernel,
-                                                 Approximate_NT>
-    Min_sphere_traits;
+  // Inexact types:
+  typedef CGAL::Min_sphere_of_spheres_d_traits_3<Inexact_kernel, Inexact_FT>
+                                                      Min_sphere_traits;
   typedef CGAL::Min_sphere_of_spheres_d<Min_sphere_traits>
-    Min_sphere;
-  typedef Min_sphere_traits::Sphere                   Approximate_sphere_3;
-  typedef Approximate_kernel::Point_3                 Approximate_point_3;
-  typedef Approximate_kernel::Vector_3                Approximate_vector_3;
+                                                      Min_sphere;
+  typedef Min_sphere_traits::Sphere                   Inexact_sphere_3;
+  typedef Inexact_kernel::Point_3                     Inexact_point_3;
+  typedef Inexact_kernel::Vector_3                    Inexact_vector_3;
 
-  typedef std::vector<Approximate_sphere_3>
-    Approximate_sphere_vector;
-  typedef Approximate_sphere_vector::const_iterator   Approximate_sphere_iter;
+  typedef std::vector<Inexact_sphere_3>
+    Inexact_sphere_vector;
+  typedef Inexact_sphere_vector::const_iterator       Inexact_sphere_iter;
 
   typedef Arrangement_renderer::Vertex_shape          Vertex_shape;
   typedef Vertex_shape::Style                         Vertex_style;

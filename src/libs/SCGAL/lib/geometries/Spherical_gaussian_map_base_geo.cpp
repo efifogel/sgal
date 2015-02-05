@@ -197,7 +197,7 @@ void Spherical_gaussian_map_base_geo::clean_sphere_bound()
     m_sphere_bound.set_radius(1);
   }
   else {
-    Approximate_sphere_vector spheres;
+    Inexact_sphere_vector spheres;
     transform_coords(spheres);
     if (!spheres.empty()) {
       Min_sphere min_sphere(spheres.begin(), spheres.end());

@@ -42,6 +42,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Cull_context.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Polyhedron.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 

@@ -1,0 +1,35 @@
+#VRML V2.0 utf8
+NavigationInfo { type "EXAMINE" }
+DEF TRANSFORM Transform {
+  children Shape {
+    geometry Text3D {
+      string ["1"]
+      fontStyle FontStyle {
+	justify ["MIDDLE", "MIDDLE"]
+	family "Times"
+	style "BOLD"
+	size 4
+      }
+      depth 0.5
+    }
+    appearance Appearance {
+      material Material {
+	diffuseColor .28 .42 .6
+	specularColor .32 .4 .4
+	ambientIntensity .05
+	shininess .54
+	emissiveColor .14 .22 .31
+      }
+    }
+  }
+}
+DEF INTERPOLATOR OrientationInterpolator {
+ key [ 0 0.5 1 ]
+ keyValue [0 1 0 0 0 1 0 3.14 0 1 0 6.28]
+}
+DEF TIMER TimeSensor {
+ loop TRUE
+ cycleInterval 5
+}
+ROUTE TIMER.fraction_changed TO INTERPOLATOR.set_fraction
+ROUTE INTERPOLATOR.value_changed TO TRANSFORM.rotation

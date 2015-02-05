@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Arrangement_on_quadric_geo.hpp 7729 2009-06-18 08:47:21Z efif $
-// $Revision: 7729 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 /*! \file
@@ -44,6 +41,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 
 #include "SCGAL/Arrangement_on_surface_geo.hpp"
 #include "SCGAL/Exact_number_type.hpp"
@@ -82,22 +80,18 @@ public:
   typedef Kernel::Point_3                             Point_3;
 
 protected:
-  // Approximate types:
-  typedef float                                       Approximate_NT;
-  typedef CGAL::Cartesian<Approximate_NT>             Approximate_kernel;
-
-  typedef CGAL::Min_sphere_of_spheres_d_traits_3<Approximate_kernel,
-                                                 Approximate_NT>
+  // Inexact types:
+  typedef CGAL::Min_sphere_of_spheres_d_traits_3<Inexact_kernel, Inexact_FT>
                                                       Min_sphere_traits;
   typedef CGAL::Min_sphere_of_spheres_d<Min_sphere_traits>
                                                       Min_sphere;
-  typedef Min_sphere_traits::Sphere                   Approximate_sphere_3;
-  typedef Approximate_kernel::Point_3                 Approximate_point_3;
-  typedef Approximate_kernel::Vector_3                Approximate_vector_3;
+  typedef Min_sphere_traits::Sphere                   Inexact_sphere_3;
+  typedef Inexact_kernel::Point_3                     Inexact_point_3;
+  typedef Inexact_kernel::Vector_3                    Inexact_vector_3;
 
-  typedef std::vector<Approximate_sphere_3>
-    Approximate_sphere_vector;
-  typedef Approximate_sphere_vector::const_iterator   Approximate_sphere_iter;
+  typedef std::vector<Inexact_sphere_3>
+    Inexact_sphere_vector;
+  typedef Inexact_sphere_vector::const_iterator       Inexact_sphere_iter;
 
   // List of pointers to Quadric_geo objects */
   typedef std::list<Quadric_geo *>                    Quadric_node_list;
@@ -261,19 +255,19 @@ private:
 
 };
 
-/* \brief constructs the prototype. */
+//! \brief constructs the prototype.
 inline Arrangement_on_quadric_geo* Arrangement_on_quadric_geo::prototype()
 { return new Arrangement_on_quadric_geo(true); }
 
-/*! \brief clones. */
+//! \brief clones.
 inline Container* Arrangement_on_quadric_geo::clone()
 { return new Arrangement_on_quadric_geo(); }
 
-/*! \brief sets the intersecting quadrics of the arrangement. */
+//! \brief sets the intersecting quadrics of the arrangement.
 inline void Arrangement_on_quadric_geo::insert_quadric(Quadric_geo* quadric)
 { m_quadric_nodes.push_back(quadric); }
 
-/*! \brief obtains the tag (type) of the container. */
+//! \brief obtains the tag (type) of the container.
 inline const std::string& Arrangement_on_quadric_geo::get_tag() const
 { return s_tag; }
 

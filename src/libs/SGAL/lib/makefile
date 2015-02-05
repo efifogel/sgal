@@ -97,6 +97,7 @@ CPPSOURCES+= Extrusion.cpp
 CPPSOURCES+= Field.cpp
 CPPSOURCES+= Field_info.cpp
 CPPSOURCES+= Font.cpp
+CPPSOURCES+= Font_outliner.cpp
 CPPSOURCES+= Font_style.cpp
 CPPSOURCES+= Fragment_shader.cpp
 CPPSOURCES+= Frustum.cpp

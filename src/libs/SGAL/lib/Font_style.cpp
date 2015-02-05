@@ -19,6 +19,19 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/lexical_cast.hpp>
 
+extern "C" {
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_MODULE_H
+#include FT_STROKER_H
+  //#include FT_SYNTHESIS_H
+  //#include FT_LCD_FILTER_H
+  //#include FT_CFF_DRIVER_H
+  //#include FT_TRUETYPE_DRIVER_H
+  //#include FT_INTERNAL_OBJECTS_H
+  //#include FT_INTERNAL_DRIVER_H
+}
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Draw_action.hpp"
@@ -34,6 +47,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Texture_font.hpp"
 #include "SGAL/Imagemagick_font.hpp"
+#include "SGAL/Font_outliner.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -41,6 +55,12 @@ const std::string Font_style::s_tag = "FontStyle";
 Container_proto* Font_style::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Font_style, "Font_style");
+
+//! The freetype root library object.
+FT_Library Font_style::s_ft_library;
+
+//! The truetype driver.
+FT_Driver Font_style::s_ft_driver;
 
 // Default values
 const Font_style::Family Font_style::s_def_family(FAMILY_SERIF);
@@ -77,8 +97,23 @@ Font_style::Font_style(Boolean proto) :
   m_style(s_def_style),
   m_top_to_bottom(s_def_top_to_bottom),
   m_dirty(true),
-  m_font(nullptr)
+  m_font(nullptr),
+  m_dirty_face(true)
 {
+  if (!proto) return;
+
+  FT_Error err = FT_Init_FreeType(&s_ft_library);
+  if (err) {
+    std::cerr << "Failed to initialize FreeType library!" << std::endl;
+    throw;
+  }
+
+  s_ft_driver = (FT_Driver) FT_Get_Module(s_ft_library, "truetype");
+  if (!s_ft_driver) {
+    std::cerr << "Failed to find the TrueType driver in FreeType 2!"
+              << std::endl;
+    throw;
+  }
 }
 
 //! \brief Destructor
@@ -88,6 +123,8 @@ Font_style::~Font_style()
     delete m_font;
     m_font = nullptr;
   }
+  FT_Done_Face(m_face);
+  // FT_Done_FreeType(s_ft_library);
 }
 
 //! \brief draws the node while traversing the scene graph.
@@ -343,6 +380,28 @@ Attribute_list Font_style::get_attributes()
 }
 #endif
 
+//! \brief cleans the face.
+void Font_style::clean_face()
+{
+  std::cout << "Font_style::clean_face()" << std::endl;
+
+  const char* file_name ="/usr/share/fonts/truetype/msttcorefonts/Verdana.ttf";
+  FT_Error err = FT_New_Face(s_ft_library, file_name, 0, &m_face);
+  if (err) {
+    std::cerr << "Failed to open input font file!" << std::endl;
+    throw;
+  }
+
+  // Find driver and check format
+  if (m_face->driver != s_ft_driver) {
+    err = FT_Err_Invalid_File_Format;
+    std::cerr << "is not a TrueType font!" << std::endl;
+    throw;
+  }
+
+  m_dirty_face = false;
+}
+
 //! \brief obtains the font.
 Font* Font_style::get_font()
 {
@@ -422,5 +481,87 @@ void Font_style::set_style(Style style) {m_style = style; }
  * bottom.
  */
 void Font_style::set_top_to_bottom(Boolean flag) { m_top_to_bottom = flag; }
+
+//! \brief processes 'move to' instructions.
+int Font_style::move_to(FT_Vector* to, void* user)
+{
+  auto font_outliner = reinterpret_cast<Font_outliner*>(user);
+  SGAL_assertion(font_outliner);
+  Vector2f b0(to->x, to->y);
+  font_outliner->move_to(b0);
+  return 0;
+}
+
+//! \brief processes 'line to' instructions.
+int Font_style::line_to(FT_Vector* to, void* user)
+{
+  auto font_outliner = reinterpret_cast<Font_outliner*>(user);
+  SGAL_assertion(font_outliner);
+  Vector2f b1(to->x, to->y);
+  font_outliner->line_to(b1);
+  return 0;
+}
+
+//! processes 'conic to' instructions.
+int Font_style::conic_to(FT_Vector* control, FT_Vector* to, void* user)
+{
+  std::cout << "conicTo: (" << control->x << "," << control->y << "), ("
+            << to->x << "," << to->y << ")" << std::endl;
+  auto font_outliner = reinterpret_cast<Font_outliner*>(user);
+  SGAL_assertion(font_outliner);
+  Vector2f b1(control->x, control->y);
+  Vector2f b2(to->x, to->y);
+  font_outliner->conic_to(b1, b2);
+  return 0;
+}
+
+//! processes 'cubic to' instructions.
+int Font_style::cubic_to(FT_Vector* control1, FT_Vector* control2,
+                         FT_Vector* to, void* user)
+{
+  std::cout << "cubicTo: (" << control1->x << "," << control1->y << "), ("
+            << control2->x << "," << control2->y << "), ("
+            << to->x << "," << to->y << ")" << std::endl;
+  return 0;
+}
+
+//! \brief computes the outlines.
+void Font_style::compute_outlines(const std::string& str, Outlines& outlines)
+{
+  std::cout << "Font_style::compute_outlines()" << std::endl;
+  if (m_dirty_face) clean_face();
+
+  // Load glyph
+  std::string chars("Uta \n");
+  char charcode = chars[0];
+  FT_Glyph glyph;
+  FT_Error err =
+    FT_Load_Char(m_face, charcode, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
+  if (err) {
+    std::cout << "FT_Load_Glyph: error!" << std::endl;
+  }
+
+  // FT_Get_Glyph(face->glyph, &glyph);
+  FT_Outline outline = m_face->glyph->outline;
+
+  if (m_face->glyph->format != ft_glyph_format_outline) {
+    std::cout << "Not an outline font!" << std::endl;
+  }
+
+  FT_Outline_Funcs funcs;
+  funcs.shift = 0;
+  funcs.delta = 0;
+  funcs.move_to = (FT_Outline_MoveTo_Func)&move_to;
+  funcs.line_to = (FT_Outline_LineTo_Func)&line_to;
+  funcs.conic_to = (FT_Outline_ConicTo_Func)&conic_to;
+  funcs.cubic_to = (FT_Outline_CubicTo_Func)&cubic_to;
+  // trace outline of the glyph
+  Font_outliner outliner(outlines);
+  err = FT_Outline_Decompose(&outline, &funcs, &outliner);
+  if (err) {
+    std::cerr << "Failed to decompose!" << std::endl;
+    throw;
+  }
+}
 
 SGAL_END_NAMESPACE

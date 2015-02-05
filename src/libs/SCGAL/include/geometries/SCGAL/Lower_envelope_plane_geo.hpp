@@ -104,7 +104,7 @@ public:
   /*! Transform the coordinates of the envelope into spheres.
    * \param spheres (o) the transformed coordinates.
    */
-  virtual void transform_coords(Approximate_sphere_vector& spheres)
+  virtual void transform_coords(Inexact_sphere_vector& spheres)
   { transform_coords_impl(m_envelope, spheres); }
 
   /*! Draw the envelope faces */

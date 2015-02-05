@@ -27,6 +27,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Normal_array.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Polyhedron.hpp"
 
 SGAL_BEGIN_NAMESPACE
@@ -42,7 +43,7 @@ Vector3f get_normal_impl(FacetHandle f, boost::false_type)
 template <typename Polyhedron_>
 Vector3f get_normal(typename Polyhedron_::Facet_const_handle f)
 {
-  typedef Polyhedron_                                  Polyhedron;
+  typedef Polyhedron_                                   Polyhedron;
   typedef boost::is_same<typename Polyhedron::Plane_3, Inexact_kernel::Vector_3>
                                                         Polyhedron_has_vector;
   return get_normal_impl(f, Polyhedron_has_vector());

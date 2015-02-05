@@ -155,7 +155,7 @@ protected:
   /*! Transform the coordinates of the SGM into spheres.
    * \param spheres (o) the transformed coordinates.
    */
-  virtual void transform_coords(Approximate_sphere_vector& spheres) {}
+  virtual void transform_coords(Inexact_sphere_vector& spheres) {}
 
   /*! Draw the envelope faces. */
   virtual void draw_envelope_faces(Draw_action* action) {}
@@ -176,7 +176,7 @@ protected:
    */
   template <typename Envelope>
   void transform_coords_impl(Envelope* envelope,
-                             Approximate_sphere_vector& spheres)
+                             Inexact_sphere_vector& spheres)
   {
     if (!envelope || is_empty()) return;
 
@@ -190,12 +190,12 @@ private:
   /*! Converts an envelope point to a sphere. */
   template <typename Envelope>
   struct Convert_approximate_sphere {
-    Approximate_sphere_3
+    Inexact_sphere_3
     operator()(const typename Envelope::Vertex& vertex) const
     {
       Vector2f vec = to_vector2f(vertex.point());
-      Approximate_point_3 approximate_point(vec[0], vec[1], 0.0f);
-      return Approximate_sphere_3(approximate_point, 0.0f);
+      Inexact_point_3 approximate_point(vec[0], vec[1], 0.0f);
+      return Inexact_sphere_3(approximate_point, 0.0f);
     }
   };
 

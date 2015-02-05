@@ -32,6 +32,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Font_style.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -125,6 +126,27 @@ void Text_3d::set_attributes(Element* elem)
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
+    if (name == "string") {
+      auto start = value.find_first_of('\"');
+      while (start != std::string::npos) {
+        ++start;
+        auto end = value.find_first_of('\"', start);
+        if (end == std::string::npos) break;
+        m_strings.push_back(value.substr(start, end-start));
+        ++end;
+        if (end == value.size()) break;
+        start = value.find_first_of('\"', end);
+      }
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "length") {
+      auto num_values = get_num_tokens(value);
+      m_lengths.resize(num_values);
+      std::istringstream svalue(value, std::istringstream::in);
+      for (Uint i = 0; i < num_values; ++i) svalue >> m_normal_indices[i];
+      elem->mark_delete(ai);
+    }
     if (name == "maxExtent") {
       set_max_extent(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
@@ -133,6 +155,20 @@ void Text_3d::set_attributes(Element* elem)
     if (name == "depth") {
       set_depth(boost::lexical_cast<Float>(value));
       elem->mark_delete(ai);
+      continue;
+    }
+  }
+
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
+    auto cont = elem->get_value(cai);
+    if (name == "fontStyle") {
+      Shared_font_style font_style =
+        boost::dynamic_pointer_cast<Font_style>(cont);
+      set_font_style(font_style);
+      elem->mark_delete(cai);
       continue;
     }
   }
@@ -152,6 +188,14 @@ void Text_3d::structure_changed(const Field_info* field_info)
 //! \brief cleans the coordinate array.
 void Text_3d::clean_coords()
 {
+  std::cout << "Text_3d::clean_coords()" << std::endl;
+  SGAL_assertion(m_font_style);
+  Font_style::Outlines outlines;
+  m_font_style->compute_outlines(m_strings.front(), outlines);
+
+  set_primitive_type(PT_TRIANGLES);
+
+  coord_content_changed(get_field_info(COORD_ARRAY));
 }
 
 //! \brief cleans the coordinate indices.

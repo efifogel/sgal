@@ -90,7 +90,7 @@ void Lower_envelope_geo::clean_sphere_bound()
   if (m_dirty) clean();
   if (is_empty()) return;
 
-  Approximate_sphere_vector spheres;
+  Inexact_sphere_vector spheres;
   transform_coords(spheres);
   if (!spheres.empty()) {
     Min_sphere min_sphere(spheres.begin(), spheres.end());

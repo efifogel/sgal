@@ -44,6 +44,7 @@
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array_3d.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 
 #include "SCGAL/basic.hpp"
 #include "SCGAL/Exact_kernel.hpp"
@@ -67,10 +68,7 @@ public:
   typedef CGAL::Tag_false                               Tag_false;
 
   // Inexact types:
-  typedef float                                         Inexact_NT;
-  typedef CGAL::Cartesian<Inexact_NT>                   Inexact_kernel;
-
-  typedef CGAL::Min_sphere_of_spheres_d_traits_3<Inexact_kernel,Inexact_NT>
+  typedef CGAL::Min_sphere_of_spheres_d_traits_3<Inexact_kernel,Inexact_FT>
     Min_sphere_traits;
   typedef CGAL::Min_sphere_of_spheres_d<Min_sphere_traits>
     Min_sphere;

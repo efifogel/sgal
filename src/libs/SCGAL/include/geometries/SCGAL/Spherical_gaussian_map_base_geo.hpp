@@ -128,10 +128,10 @@ protected:
     typedef typename Sgm::Face                          Sgm_face;
 
     /*! */
-    Approximate_sphere_3 operator()(const Sgm_face& face) const
+    Inexact_sphere_3 operator()(const Sgm_face& face) const
     {
       SGAL_assertion(!face.is_unbounded());
-      return to_approximate_sphere(face.point());
+      return to_inexact_sphere(face.point());
     }
   };
 
@@ -153,7 +153,7 @@ protected:
    * \param spheres (out) the transformed coordinates.
    */
   template <typename Sgm>
-  void transform_primal_coords(Sgm* sgm, Approximate_sphere_vector& spheres)
+  void transform_primal_coords(Sgm* sgm, Inexact_sphere_vector& spheres)
   {
     spheres.resize(sgm->number_of_faces());
     std::transform(sgm->faces_begin(), sgm->faces_end(), &spheres[0],
@@ -374,7 +374,7 @@ protected:
   /*! Transform the coordinates of the SGM into spheres.
    * \param spheres (out) the transformed coordinates.
    */
-  virtual void transform_coords(Approximate_sphere_vector& /* spheres */) {}
+  virtual void transform_coords(Inexact_sphere_vector& /* spheres */) {}
 
   /*! Draw the primal representation of the polyhedron. */
   virtual void draw_primal(Draw_action* /* action */) {}

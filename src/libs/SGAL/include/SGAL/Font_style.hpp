@@ -23,10 +23,18 @@
  * A node in the scene graph that specifies font style for text node.
  */
 
+#include <vector>
+
+extern "C" {
+#include <ft2build.h>
+#include FT_FREETYPE_H
+}
+
 #include "SGAL/basic.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
+#include "SGAL/Font_outliner.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -63,6 +71,9 @@ public:
 
   enum Style {STYLE_PLAIN, STYLE_BOLD, STYLE_ITALIC, STYLE_BOLDITALIC};
 
+  typedef Font_outliner::Outline                        Outline;
+  typedef Font_outliner::Outlines                       Outlines;
+
   /*! Constructor */
   Font_style(Boolean proto = false);
 
@@ -76,12 +87,6 @@ public:
   /*! Clone.
    */
   virtual Container* clone() { return new Font_style(); }
-
-  /*! Set the attributes of this node.
-   */
-  virtual void set_attributes(Element* elem);
-
-  // virtual Attribute_list get_attributes();
 
   /*! Initialize the container prototype.
    */
@@ -107,6 +112,19 @@ public:
   Style* style_handle(const Field_info*) { return &m_style; }
   Boolean* t2b_handle(const Field_info*) { return &m_top_to_bottom; }
   //@}
+
+  /*! Set the attributes of this node.
+   */
+  virtual void set_attributes(Element* elem);
+
+  // virtual Attribute_list get_attributes();
+
+  /*! Clean the face.
+   */
+  void clean_face();
+
+  /*! Compute the outlines. */
+  void compute_outlines(const std::string& str, Outlines& outlines);
 
   /*! Draw the node while traversing the scene graph.
    */
@@ -246,33 +264,6 @@ protected:
    */
   virtual const std::string& get_tag() const { return s_tag; }
 
-  // Default values
-  static const Family s_def_family;
-  static const Boolean s_def_horizontal;
-  static const Uint_array s_def_justify;
-  static const std::string s_def_language;
-  static const Boolean s_def_left_to_right;
-  static const Float s_def_size;
-  static const Float s_def_spacing;
-  static const Style s_def_style;
-  static const Boolean s_def_top_to_bottom;
-
-private:
-  /*! The tag that identifies this container type. */
-  static const std::string s_tag;
-
-  /*! The node prototype */
-  static Container_proto* s_prototype;
-
-  /*! Font family names. */
-  static const Char* s_family_names[];
-
-  /*! Font justify names. */
-  static const Char* s_justify_names[];
-
-  /*! Font style names. */
-  static const Char* s_style_names[];
-
   /*! The font name */
   std::string m_font_name;
 
@@ -329,6 +320,70 @@ private:
   /*! Indicates the vertical direction of the text. */
   Boolean m_top_to_bottom;
 
+  /*! The freetype root library object. */
+  static FT_Library s_ft_library;
+
+  /*! The truetype driver. */
+  static FT_Driver s_ft_driver;
+
+  // Default values
+  static const Family s_def_family;
+  static const Boolean s_def_horizontal;
+  static const Uint_array s_def_justify;
+  static const std::string s_def_language;
+  static const Boolean s_def_left_to_right;
+  static const Float s_def_size;
+  static const Float s_def_spacing;
+  static const Style s_def_style;
+  static const Boolean s_def_top_to_bottom;
+
+private:
+  /*! Process 'move to' instructions.
+   * \param to (in) the target point of the 'move to'.
+   * \param user (out) points to this.
+   */
+  static int move_to(FT_Vector* to, void* user);
+
+  /*! Process 'line to' instructions.
+   * \param to (in) the end point of the line.
+   * \param user (out) points to this.
+   */
+  static int line_to(FT_Vector* to, void* user);
+
+  /*! Process 'conic to' instructions.
+   * A 'conic to' indicate a second-order Bézier arc in the outline.
+   * \param control (in) the intermediate control point between the last
+   *                position and the new target in to.
+   * \param to (in) the target end point of the conic arc.
+   * \param user (out) points to this.
+   */
+  static int conic_to(FT_Vector* control, FT_Vector* to, void* user);
+
+  /*! Process 'cubic to' instructions.
+   * A 'cubic to' indicates a third-order Bézier arc  in the outline.
+   * \param control1 (in) the first Bézier control point.
+   * \param control2 (in) the second Bézier control point.
+   * \param to (in) the target end point of the cubic arc.
+   * \param user (out) points to this.
+   */
+  static int cubic_to(FT_Vector* control1, FT_Vector* control2, FT_Vector* to,
+                      void* user);
+
+  /*! The tag that identifies this container type. */
+  static const std::string s_tag;
+
+  /*! The node prototype */
+  static Container_proto* s_prototype;
+
+  /*! Font family names. */
+  static const Char* s_family_names[];
+
+  /*! Font justify names. */
+  static const Char* s_justify_names[];
+
+  /*! Font style names. */
+  static const Char* s_style_names[];
+
   /*! Indicates whether the font is accentuated. */
   Boolean m_bold;
 
@@ -343,6 +398,14 @@ private:
 
   /*! The font. */
   Font* m_font;
+
+  /*! Indicates that the face is dirty. */
+  Boolean m_dirty_face;
+
+  /*! A handle to a given typographic face object. A face object models a
+   * given typeface, in a given style.
+   */
+  FT_Face m_face;
 
   /*! Construct and initialize the font. */
   void create_font();

@@ -504,10 +504,10 @@ private:
   /*! Extracts the approximate point from a planar-map face */
   struct Extract_dual_approximate_sphere {
     /*! */
-    Approximate_sphere_3 operator()(const Arrangement::Face& face) const
+    Inexact_sphere_3 operator()(const Arrangement::Face& face) const
     {
       SGAL_assertion(!face.is_unbounded());
-      return to_approximate_sphere(face.point());
+      return to_inexact_sphere(face.point());
     }
   };
 

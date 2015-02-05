@@ -286,9 +286,9 @@ protected:
 private:
   /*! Extracts the approximate point from a polyhedron vertex. */
   struct Convert_approximate_sphere {
-    Approximate_sphere_3
+    Inexact_sphere_3
     operator()(const Exact_polyhedron::Vertex& vertex) const
-    { return to_approximate_sphere(vertex.point()); }
+    { return to_inexact_sphere(vertex.point()); }
   };
 
    /*! Convert a point in approximate number type to exact. */

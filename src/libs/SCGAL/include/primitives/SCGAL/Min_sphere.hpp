@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: Min_sphere.hpp 6624 2008-07-18 12:10:26Z efif $
-// $Revision: 6624 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SCGAL_MIN_SPHERE_HPP
@@ -27,26 +24,35 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 
-#include "SCGAL/basic.hpp"
-#include "SCGAL/Approximate_kernel.hpp"
+#include "SGAL/basic.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-typedef CGAL::Min_sphere_of_spheres_d_traits_3<Approximate_kernel,
-                                               Approximate_number_type>
+typedef CGAL::Min_sphere_of_spheres_d_traits_3<Inexact_kernel,
+                                               Inexact_number_type>
                                                          Min_sphere_traits;
 typedef CGAL::Min_sphere_of_spheres_d<Min_sphere_traits> Min_sphere;
-typedef Min_sphere_traits::Sphere                        Approximate_sphere_3;
- 
-typedef std::vector<Approximate_sphere_3>          Approximate_sphere_vector;
-typedef Approximate_sphere_vector::const_iterator  Approximate_sphere_iter;
+typedef Min_sphere_traits::Sphere                        Inexact_sphere_3;
 
-/* Convert an exact point into an approximate sphere */
-template <typename T_Point>
-inline Approximate_sphere_3 to_approximate_sphere(const T_Point& point)
+typedef std::vector<Inexact_sphere_3>          Inexact_sphere_vector;
+typedef Inexact_sphere_vector::const_iterator  Inexact_sphere_iter;
+
+/* Convert an exact point into an approximate point */
+template <typename Point_>
+inline Inexact_point_3 to_inexact_point(const Point_& point)
 {
-  Approximate_point_3 approximate_point = to_approximate_point(point);
-  return Approximate_sphere_3(approximate_point, 0.0f);
+  return Inexact_point_3(static_cast<float>(CGAL::to_double(point.x())),
+                         static_cast<float>(CGAL::to_double(point.y())),
+                         static_cast<float>(CGAL::to_double(point.z())));
+}
+
+/*! Convert an exact point into an approximate sphere. */
+template <typename T_Point>
+inline Inexact_sphere_3 to_inexact_sphere(const T_Point& point)
+{
+  Inexact_point_3 inexact_point = to_inexact_point(point);
+  return Inexact_sphere_3(inexact_point, 0.0f);
 }
 
 SGAL_END_NAMESPACE

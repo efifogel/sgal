@@ -24,6 +24,7 @@
 #include "SGAL/basic.hpp"
 #include "SGAL/Boundary_set.hpp"
 #include "SGAL/Vector3f.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Polyhedron.hpp"
 #include "SGAL/Polyhedron_geo_builder.hpp"
 
