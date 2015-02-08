@@ -25,16 +25,23 @@
 
 #include <vector>
 
+#include <boost/unordered_map.hpp>
+
 extern "C" {
 #include <ft2build.h>
 #include FT_FREETYPE_H
 }
+
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Font_outliner.hpp"
+#include "SGAL/Inexact_kernel.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -74,10 +81,29 @@ public:
   typedef Font_outliner::Outline                        Outline;
   typedef Font_outliner::Outlines                       Outlines;
 
-  /*! Constructor */
+  // Triangulation.
+  struct Face_info {
+    Face_info() {}
+    int nesting_level;
+    bool in_domain() { return nesting_level % 2 == 1; }
+  };
+
+  typedef Inexact_kernel                                                Kernel;
+  typedef CGAL::Triangulation_vertex_base_with_info_2<Uint, Kernel>     VB;
+  typedef CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>  FBI;
+  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
+  typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
+  // typedef CGAL::No_intersection_tag                                     Itag;
+  typedef CGAL::Exact_predicates_tag                                    Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
+    Triangulation;
+
+  /*! Constructor from prototype.
+   * \param proto (in) the prototype.
+   */
   Font_style(Boolean proto = false);
 
-  /*! Destructor */
+  /*! Destructor. */
   virtual ~Font_style();
 
   /*! Construct the prototype.
@@ -123,8 +149,14 @@ public:
    */
   void clean_face();
 
-  /*! Compute the outlines. */
-  void compute_outlines(const std::string& str, Outlines& outlines);
+  /*! Compute the outlines.
+   */
+  void compute_outlines(char c, Outlines& outlines);
+
+  /*! Compute the glyph of a character.
+   * \param c (in) the character.
+   */
+  const Triangulation& compute_glyph(char c);
 
   /*! Draw the node while traversing the scene graph.
    */
@@ -338,6 +370,25 @@ protected:
   static const Boolean s_def_top_to_bottom;
 
 private:
+  /*! Insert an outline into a triangulation.
+   * \param cdt (out) the triangulation.
+   * \param outline (in) the outline.
+   * \param k (in)
+   */
+  Uint insert_outline(Triangulation& cdt, const Outline& outline, Uint k) const;
+
+  /*! Mark facets in a triangulation that are inside the domain bounded by
+   * the polygon.
+   * \param cdt (in/out) the triangulation.
+   */
+  void mark_domains(Triangulation& cdt) const;
+
+  /*! Mark facets in a triangulation that are inside the domain.
+   */
+  void mark_domains(Triangulation& cdt,
+                    typename Triangulation::Face_handle start, int index,
+                    std::list<typename Triangulation::Edge>& border) const;
+
   /*! Process 'move to' instructions.
    * \param to (in) the target point of the 'move to'.
    * \param user (out) points to this.
@@ -383,6 +434,11 @@ private:
 
   /*! Font style names. */
   static const Char* s_style_names[];
+
+  typedef boost::unordered_map<char, Triangulation>     Triangulations;
+
+  /*! A search structure of constrained triangulations. */
+  Triangulations m_triangulations;
 
   /*! Indicates whether the font is accentuated. */
   Boolean m_bold;

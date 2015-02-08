@@ -26,6 +26,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Indexed_face_set.hpp"
+#include "SGAL/Font_style.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -220,6 +221,12 @@ protected:
   Float m_depth;
 
 private:
+  /*! Create a quadrilateral.
+   */
+  size_t create_quad(Uint a, Uint b, Uint c, Uint d, size_t k);
+
+  typedef Font_style::Outline                                   Outline;
+
   /*! The tag that identifies this container type. */
   static const std::string s_tag;
 

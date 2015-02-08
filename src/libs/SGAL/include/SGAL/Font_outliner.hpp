@@ -29,7 +29,7 @@ SGAL_BEGIN_NAMESPACE
 
 class SGAL_SGAL_DECL Font_outliner {
 public:
-  typedef std::list<Vector2f>                         Outline;
+  typedef std::list<Vector2f>                           Outline;
   typedef std::vector<Outline>                          Outlines;
 
   /*! Constructor.

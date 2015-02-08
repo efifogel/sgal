@@ -144,7 +144,7 @@ void Text_3d::set_attributes(Element* elem)
       auto num_values = get_num_tokens(value);
       m_lengths.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
-      for (Uint i = 0; i < num_values; ++i) svalue >> m_normal_indices[i];
+      for (Uint i = 0; i < num_values; ++i) svalue >> m_lengths[i];
       elem->mark_delete(ai);
     }
     if (name == "maxExtent") {
@@ -185,17 +185,104 @@ void Text_3d::structure_changed(const Field_info* field_info)
   field_changed(field_info);
 }
 
+//! \brief create a quadrilateral.
+size_t Text_3d::create_quad(Uint a, Uint b, Uint c, Uint d, size_t k)
+{
+  m_flat_coord_indices[k++] = a;
+  m_flat_coord_indices[k++] = b;
+  m_flat_coord_indices[k++] = c;
+  m_flat_coord_indices[k++] = a;
+  m_flat_coord_indices[k++] = c;
+  m_flat_coord_indices[k++] = d;
+  return k;
+}
+
 //! \brief cleans the coordinate array.
 void Text_3d::clean_coords()
 {
-  std::cout << "Text_3d::clean_coords()" << std::endl;
+  // Compute the outlines
   SGAL_assertion(m_font_style);
-  Font_style::Outlines outlines;
-  m_font_style->compute_outlines(m_strings.front(), outlines);
+  char c = m_strings.front().front();
+  const auto& tri = m_font_style->compute_glyph(c);
+
+  // Extract the coordinates
+  if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
+  auto coords = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
+  SGAL_assertion(coords);
+  Uint size = tri.number_of_vertices();
+  coords->resize(size * 2);
+  Uint k(0);
+  for (auto it = tri.finite_vertices_begin(); it !=  tri.finite_vertices_end();
+       ++it)
+  {
+    (*coords)[k].set(static_cast<Float>(CGAL::to_double(it->point().x())),
+                       static_cast<Float>(CGAL::to_double(it->point().y())), 0);
+    (*coords)[k+size].set(static_cast<Float>(CGAL::to_double(it->point().x())),
+                          static_cast<Float>(CGAL::to_double(it->point().y())),
+                          m_depth);
+    ++k;
+  }
+
+  // Calculate the number of primitives
+  Uint num_primitives = 0;
+  for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end(); ++it)
+    if (it->info().in_domain()) ++num_primitives;
+  num_primitives += num_primitives;
+  for (auto it = tri.finite_edges_begin(); it != tri.finite_edges_end(); ++it) {
+    auto f1 = it->first;
+    auto f2 = f1->neighbor(it->second);
+    if ((f1->info().in_domain() && !f2->info().in_domain()) ||
+        (f2->info().in_domain() && !f1->info().in_domain()))
+      num_primitives += 2;
+  }
+  m_flat_coord_indices.resize(num_primitives * 3);
+
+  // Compute the indices
+  size_t i(0);
+
+  // Set the front indices
+  for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end(); ++it) {
+    if (! it->info().in_domain()) continue;
+    m_flat_coord_indices[i++] = it->vertex(2)->info();
+    m_flat_coord_indices[i++] = it->vertex(1)->info();
+    m_flat_coord_indices[i++] = it->vertex(0)->info();
+  }
+  // Set the back indices
+  for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end(); ++it) {
+    if (! it->info().in_domain()) continue;
+    m_flat_coord_indices[i++] = it->vertex(0)->info() + size;
+    m_flat_coord_indices[i++] = it->vertex(1)->info() + size;
+    m_flat_coord_indices[i++] = it->vertex(2)->info() + size;
+  }
+  // Set the back indices
+  for (auto it = tri.finite_edges_begin(); it != tri.finite_edges_end(); ++it) {
+    auto f1 = it->first;
+    auto f2 = f1->neighbor(it->second);
+    if (f1->info().in_domain() && !f2->info().in_domain()) {
+      auto a = f1->vertex(f1->ccw(it->second))->info();
+      auto b = f1->vertex(f1->cw(it->second))->info();
+      auto c = b + size;
+      auto d = a + size;
+      i = create_quad(a, b, c, d, i);
+    }
+    else if (f2->info().in_domain() && !f1->info().in_domain()) {
+      auto a = f1->vertex(f1->cw(it->second))->info();
+      auto b = f1->vertex(f1->ccw(it->second))->info();
+      auto c = b + size;
+      auto d = a + size;
+      i = create_quad(a, b, c, d, i);
+    }
+  }
 
   set_primitive_type(PT_TRIANGLES);
+  set_num_primitives(num_primitives);
+  set_solid(true);
 
   coord_content_changed(get_field_info(COORD_ARRAY));
+
+  m_dirty_coord_indices = true;
+  m_dirty_flat_coord_indices = false;
+  m_coord_indices_flat = true;
 }
 
 //! \brief cleans the coordinate indices.
@@ -206,11 +293,15 @@ void Text_3d::clean_flat_coord_indices()
 //! calculates the default 2D texture-mapping oordinates.
 void Text_3d::clean_tex_coord_array_2d()
 {
+  m_dirty_tex_coord_array = false;
 }
 
 //! Generate the texture coordinate indices.
 void Text_3d::clean_flat_tex_coord_indices()
 {
+  m_dirty_tex_coord_indices = true;
+  m_dirty_flat_tex_coord_indices = false;
+  m_tex_coord_indices_flat = true;
 }
 
 //! \brief sets the text strings.

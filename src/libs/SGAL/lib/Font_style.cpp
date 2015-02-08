@@ -125,6 +125,8 @@ Font_style::~Font_style()
   }
   FT_Done_Face(m_face);
   // FT_Done_FreeType(s_ft_library);
+
+  m_dirty_face = true;
 }
 
 //! \brief draws the node while traversing the scene graph.
@@ -159,6 +161,9 @@ void Font_style::on_field_change(const Field_info* /* field_info */)
 {
   m_dirty = true;
   set_rendering_required();
+
+  m_dirty_face = true;
+  m_triangulations.clear();
 }
 
 //! \breif initializes the prototype.
@@ -383,8 +388,6 @@ Attribute_list Font_style::get_attributes()
 //! \brief cleans the face.
 void Font_style::clean_face()
 {
-  std::cout << "Font_style::clean_face()" << std::endl;
-
   const char* file_name ="/usr/share/fonts/truetype/msttcorefonts/Verdana.ttf";
   FT_Error err = FT_New_Face(s_ft_library, file_name, 0, &m_face);
   if (err) {
@@ -505,8 +508,6 @@ int Font_style::line_to(FT_Vector* to, void* user)
 //! processes 'conic to' instructions.
 int Font_style::conic_to(FT_Vector* control, FT_Vector* to, void* user)
 {
-  std::cout << "conicTo: (" << control->x << "," << control->y << "), ("
-            << to->x << "," << to->y << ")" << std::endl;
   auto font_outliner = reinterpret_cast<Font_outliner*>(user);
   SGAL_assertion(font_outliner);
   Vector2f b1(control->x, control->y);
@@ -519,33 +520,33 @@ int Font_style::conic_to(FT_Vector* control, FT_Vector* to, void* user)
 int Font_style::cubic_to(FT_Vector* control1, FT_Vector* control2,
                          FT_Vector* to, void* user)
 {
-  std::cout << "cubicTo: (" << control1->x << "," << control1->y << "), ("
-            << control2->x << "," << control2->y << "), ("
-            << to->x << "," << to->y << ")" << std::endl;
+  auto font_outliner = reinterpret_cast<Font_outliner*>(user);
+  SGAL_assertion(font_outliner);
+  Vector2f b1(control1->x, control1->y);
+  Vector2f b2(control2->x, control2->y);
+  Vector2f b3(to->x, to->y);
+  font_outliner->cubic_to(b1, b2, b3);
   return 0;
 }
 
 //! \brief computes the outlines.
-void Font_style::compute_outlines(const std::string& str, Outlines& outlines)
+void Font_style::compute_outlines(char c, Outlines& outlines)
 {
-  std::cout << "Font_style::compute_outlines()" << std::endl;
   if (m_dirty_face) clean_face();
 
   // Load glyph
-  std::string chars("Uta \n");
-  char charcode = chars[0];
   FT_Glyph glyph;
   FT_Error err =
-    FT_Load_Char(m_face, charcode, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
+    FT_Load_Char(m_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
   if (err) {
-    std::cout << "FT_Load_Glyph: error!" << std::endl;
+    std::cerr << "FT_Load_Glyph: error!" << std::endl;
   }
 
   // FT_Get_Glyph(face->glyph, &glyph);
   FT_Outline outline = m_face->glyph->outline;
 
   if (m_face->glyph->format != ft_glyph_format_outline) {
-    std::cout << "Not an outline font!" << std::endl;
+    std::cerr << "Not an outline font!" << std::endl;
   }
 
   FT_Outline_Funcs funcs;
@@ -562,6 +563,102 @@ void Font_style::compute_outlines(const std::string& str, Outlines& outlines)
     std::cerr << "Failed to decompose!" << std::endl;
     throw;
   }
+
+  // Remove last point from every outline, as it is a replicate of the first
+  for (auto oit = outlines.begin(); oit != outlines.end(); ++oit)
+    oit->pop_back();
+}
+
+//! Insert an outline into a triangulation.
+Uint Font_style::insert_outline(Triangulation& tri, const Outline& outline,
+                                Uint k) const
+{
+  auto pit = outline.begin();
+  Triangulation::Point p((*pit)[0], (*pit)[1]);
+  Triangulation::Vertex_handle start = tri.insert(p);
+  start->info() = k++;
+  Triangulation::Vertex_handle prev = start;
+  for (++pit; pit != outline.end(); ++pit) {
+    Triangulation::Point p((*pit)[0], (*pit)[1]);
+    Triangulation::Vertex_handle next = tri.insert(p);
+    next->info() = k++;
+    tri.insert_constraint(prev, next);
+    prev = next;
+  }
+  tri.insert_constraint(prev, start);
+  return k;
+}
+
+//! \brief marks
+void Font_style::mark_domains(Triangulation& tri,
+                              typename Triangulation::Face_handle start,
+                              int index,
+                              std::list<typename Triangulation::Edge>& border)
+  const
+{
+  if (start->info().nesting_level != -1) return;
+  std::list<typename Triangulation::Face_handle> queue;
+  queue.push_back(start);
+  while (! queue.empty()) {
+    typename Triangulation::Face_handle fh = queue.front();
+    queue.pop_front();
+    if (fh->info().nesting_level == -1) {
+      fh->info().nesting_level = index;
+      for (int i = 0; i < 3; i++) {
+        typename Triangulation::Edge e(fh,i);
+        typename Triangulation::Face_handle n = fh->neighbor(i);
+        if (n->info().nesting_level == -1) {
+          if (tri.is_constrained(e)) border.push_back(e);
+          else queue.push_back(n);
+        }
+      }
+    }
+  }
+}
+
+//! \brief marks facets in a triangulation that are inside the domain.
+// Explores set of facets connected with non constrained edges,
+// and attribute to each such set a nesting level.
+// We start from facets incident to the infinite vertex, with a nesting
+// level of 0. Then we recursively consider the non-explored facets incident
+// to constrained edges bounding the former set and increase the nesting
+// level by 1.
+// Facets in the domain are those with an odd nesting level.
+void Font_style::mark_domains(Triangulation& tri) const
+{
+  typename Triangulation::All_faces_iterator it;
+  for (it = tri.all_faces_begin(); it != tri.all_faces_end(); ++it)
+    it->info().nesting_level = -1;
+
+  std::list<typename Triangulation::Edge> border;
+  mark_domains(tri, tri.infinite_face(), 0, border);
+  while (! border.empty()) {
+    typename Triangulation::Edge e = border.front();
+    border.pop_front();
+    typename Triangulation::Face_handle n = e.first->neighbor(e.second);
+    if (n->info().nesting_level == -1)
+      mark_domains(tri, n, e.first->info().nesting_level+1, border);
+  }
+}
+
+//! \brief computes the glyph of a character.
+const Font_style::Triangulation& Font_style::compute_glyph(char c)
+{
+  Outlines outlines;
+  compute_outlines(c, outlines);
+
+  // Compute the triangulations
+  auto it = m_triangulations.find(c);
+  if (it != m_triangulations.end()) return it->second;
+
+  auto& tri = m_triangulations[c];
+  Uint k(0);
+  for (auto oit = outlines.begin(); oit != outlines.end(); ++oit) {
+    const auto& outline = *oit;
+    k = insert_outline(tri, outline, k);
+  }
+  mark_domains(tri);  // mark facets that are inside the domain
+  return tri;
 }
 
 SGAL_END_NAMESPACE
