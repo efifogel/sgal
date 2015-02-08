@@ -1,16 +1,21 @@
 #VRML V2.0 utf8
+Configuration {
+  accumulation Accumulation { enabled TRUE }
+}
 NavigationInfo { type "EXAMINE" }
 DEF TRANSFORM Transform {
   children Shape {
     geometry Text3D {
-      string ["1"]
+      string ["l"]
       fontStyle FontStyle {
 	justify ["MIDDLE", "MIDDLE"]
 	family "Times"
 	style "BOLD"
 	size 4
       }
-      depth 0.5
+      # depth 0.5
+      depth 200
+      creaseAngle 1.5
     }
     appearance Appearance {
       material Material {
