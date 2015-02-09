@@ -48,6 +48,7 @@ extern "C" {
 #include "SGAL/Texture_font.hpp"
 #include "SGAL/Imagemagick_font.hpp"
 #include "SGAL/Font_outliner.hpp"
+#include "SGAL/construct_triangulation.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -568,76 +569,6 @@ void Font_style::compute_outlines(char c, Outlines& outlines)
     oit->pop_back();
 }
 
-//! Insert an outline into a triangulation.
-Uint Font_style::insert_outline(Triangulation& tri, const Outline& outline,
-                                Uint k) const
-{
-  auto pit = outline.begin();
-  Triangulation::Point p((*pit)[0], (*pit)[1]);
-  auto start = tri.insert(p);
-  start->info() = k++;
-  Triangulation::Vertex_handle prev = start;
-  for (++pit; pit != outline.end(); ++pit) {
-    Triangulation::Point p((*pit)[0], (*pit)[1]);
-    auto next = tri.insert(p);
-    next->info() = k++;
-    tri.insert_constraint(prev, next);
-    prev = next;
-  }
-  tri.insert_constraint(prev, start);
-  return k;
-}
-
-//! \brief marks
-void Font_style::mark_domains(Triangulation& tri,
-                              Triangulation::Face_handle start, int index,
-                              std::list<Triangulation::Edge>& border)
-  const
-{
-  if (start->info().nesting_level != -1) return;
-  std::list<Triangulation::Face_handle> queue;
-  queue.push_back(start);
-  while (! queue.empty()) {
-    auto fh = queue.front();
-    queue.pop_front();
-    if (fh->info().nesting_level == -1) {
-      fh->info().nesting_level = index;
-      for (int i = 0; i < 3; i++) {
-        Triangulation::Edge e(fh,i);
-        auto n = fh->neighbor(i);
-        if (n->info().nesting_level == -1) {
-          if (tri.is_constrained(e)) border.push_back(e);
-          else queue.push_back(n);
-        }
-      }
-    }
-  }
-}
-
-//! \brief marks facets in a triangulation that are inside the domain.
-// Explores set of facets connected with non constrained edges,
-// and attribute to each such set a nesting level.
-// We start from facets incident to the infinite vertex, with a nesting
-// level of 0. Then we recursively consider the non-explored facets incident
-// to constrained edges bounding the former set and increase the nesting
-// level by 1.
-// Facets in the domain are those with an odd nesting level.
-void Font_style::mark_domains(Triangulation& tri) const
-{
-  for (auto it = tri.all_faces_begin(); it != tri.all_faces_end(); ++it)
-    it->info().nesting_level = -1;
-
-  std::list<Triangulation::Edge> border;
-  mark_domains(tri, tri.infinite_face(), 0, border);
-  while (! border.empty()) {
-    auto e = border.front();
-    border.pop_front();
-    auto n = e.first->neighbor(e.second);
-    if (n->info().nesting_level == -1)
-      mark_domains(tri, n, e.first->info().nesting_level+1, border);
-  }
-}
-
 //! \brief computes the glyph of a character.
 const Font_style::Triangulation& Font_style::compute_glyph(char c)
 {
@@ -652,7 +583,7 @@ const Font_style::Triangulation& Font_style::compute_glyph(char c)
   Uint k(0);
   for (auto oit = outlines.begin(); oit != outlines.end(); ++oit) {
     const auto& outline = *oit;
-    k = insert_outline(tri, outline, k);
+    k = construct_triangulation(tri, outline.begin(), outline.end(), k);
   }
   mark_domains(tri);  // mark facets that are inside the domain
   return tri;

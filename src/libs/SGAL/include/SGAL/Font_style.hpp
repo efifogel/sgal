@@ -42,6 +42,7 @@ extern "C" {
 #include "SGAL/Action.hpp"
 #include "SGAL/Font_outliner.hpp"
 #include "SGAL/Inexact_kernel.hpp"
+#include "SGAL/Face_nesting_level.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -82,15 +83,10 @@ public:
   typedef Font_outliner::Outlines                       Outlines;
 
   // Triangulation.
-  struct Face_info {
-    Face_info() {}
-    int nesting_level;
-    bool in_domain() { return nesting_level % 2 == 1; }
-  };
-
   typedef Inexact_kernel                                                Kernel;
   typedef CGAL::Triangulation_vertex_base_with_info_2<Uint, Kernel>     VB;
-  typedef CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>  FBI;
+  typedef CGAL::Triangulation_face_base_with_info_2<Face_nesting_level, Kernel>
+                                                                        FBI;
   typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
   typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
   // typedef CGAL::No_intersection_tag                                     Itag;
@@ -370,25 +366,6 @@ protected:
   static const Boolean s_def_top_to_bottom;
 
 private:
-  /*! Insert an outline into a triangulation.
-   * \param tri (out) the triangulation.
-   * \param outline (in) the outline.
-   * \param k (in)
-   */
-  Uint insert_outline(Triangulation& tri, const Outline& outline, Uint k) const;
-
-  /*! Mark facets in a triangulation that are inside the domain bounded by
-   * the polygon.
-   * \param tri (in/out) the triangulation.
-   */
-  void mark_domains(Triangulation& tri) const;
-
-  /*! Mark facets in a triangulation that are inside the domain.
-   */
-  void mark_domains(Triangulation& tri,
-                    Triangulation::Face_handle start, int index,
-                    std::list<Triangulation::Edge>& border) const;
-
   /*! Process 'move to' instructions.
    * \param to (in) the target point of the 'move to'.
    * \param user (out) points to this.
