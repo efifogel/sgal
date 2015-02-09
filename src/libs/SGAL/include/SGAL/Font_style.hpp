@@ -371,23 +371,23 @@ protected:
 
 private:
   /*! Insert an outline into a triangulation.
-   * \param cdt (out) the triangulation.
+   * \param tri (out) the triangulation.
    * \param outline (in) the outline.
    * \param k (in)
    */
-  Uint insert_outline(Triangulation& cdt, const Outline& outline, Uint k) const;
+  Uint insert_outline(Triangulation& tri, const Outline& outline, Uint k) const;
 
   /*! Mark facets in a triangulation that are inside the domain bounded by
    * the polygon.
-   * \param cdt (in/out) the triangulation.
+   * \param tri (in/out) the triangulation.
    */
-  void mark_domains(Triangulation& cdt) const;
+  void mark_domains(Triangulation& tri) const;
 
   /*! Mark facets in a triangulation that are inside the domain.
    */
-  void mark_domains(Triangulation& cdt,
-                    typename Triangulation::Face_handle start, int index,
-                    std::list<typename Triangulation::Edge>& border) const;
+  void mark_domains(Triangulation& tri,
+                    Triangulation::Face_handle start, int index,
+                    std::list<Triangulation::Edge>& border) const;
 
   /*! Process 'move to' instructions.
    * \param to (in) the target point of the 'move to'.

@@ -36,10 +36,11 @@ Ideally, building SGAL amounts to:
   make                                        # build the SGAL libraries
 
 2.1. Prerequisites
+
 Installing SGAL requires a few components to be installed apriori: a
-supported compiler (see Section 2.3.), bison (see Section 2.5.2), flex,
-Boost, gl2ps, Magick++, V8, CGAL, GMP, and MPFR; see Section 2.5. for more
-details on essential third party software.
+supported compiler (see Section 2.3.), bison (see Section 2.5.2),
+flex, Boost, gl2ps, Magick++, V8, freetype, CGAL, GMP, and MPFR; see
+Section 2.5. for more details on essential third party software.
 
 2.2. Downloading
 You can obtain the most up-to-date sources from the git repository
@@ -102,6 +103,8 @@ is in the LD_LIBRARY_PATH.
 * libgl2ps-dev
 * libxxf86vm-dev
 * libgmp-dev
+* v8-dev
+* freetype-dev
 * bison, YACC-compatible parser generator >= 2.7.91
 
 2.5.1.2. Required items on Windows
@@ -110,6 +113,8 @@ is in the LD_LIBRARY_PATH.
 * gl2ps
 * GMP
 * MPFR
+* V8
+* freetype
 * flex (cygwin)
 * bison (cygwin)
 
@@ -122,7 +127,8 @@ is in the LD_LIBRARY_PATH.
 * libgl1-mesa-dev
 * libglu1-mesa-dev
 * libmagick++-dev
-
+* libgmp-dev
+* v8-dev
 
 In fact, I needed more packages from cygwin to build bison (see
 Section 2.5.2.1.) , but I hope that this is temporary.
@@ -279,7 +285,23 @@ just copy all files under ./v8/out/native/lib.target/ to /usr/local/lib and copy
   # Assuming you are using vc10:
   /cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 10.0/Common7/IDE/devenv.com /build Release build/all.sln
 
-2.5.5. CGAL
+2.5.5. freetype
+
+FreeType is a freely available software library to render fonts.
+
+2.5.5.1. Windows
+
+Currently, the CMake find module for freetype on Windows is
+broken. One workaroud is setting FREETYPE_INCLUDE_DIRS and
+FREETYPE_LIBRARY explicitly when running cmake:
+
+  -DFREETYPE_INCLUDE_DIRS="${FREETYPE_DIR}/include" \
+  -DFREETYPE_LIBRARY="${FREETYPE_DIR}/lib/freetype.lib" \
+
+where FREETYPE_DIR is the folder where freetype is installed under,
+which is by default "C:/Program Files (x86)/GnuWin32"
+
+2.5.6. CGAL
 The Computational Geometry Algorithms Library (CGAL) is an open
 source software library that provides industrial and academic users
 with easy access to reliable implementations of efficient geometric
@@ -313,7 +335,7 @@ used to develope relevant CGAL features.
   git merge origin/Aos_2-flatgeodesics_on_torus-tau
   git merge origin/Aos-Polycurve_tests-wkhan
 
-2.5.6. GMP and MPFR
+2.5.7. GMP and MPFR
 The SGAL library SCGAL requires CGAL with unlimited precision, and
 CGAL with unlimited precision in turn requires GMP and MPFR, which are
 libraries for multi precision integers and rational numbers, and for
@@ -331,7 +353,7 @@ As Visual C++ is not properly supported by the GMP and MPFR projects,
 CGAL provides precompiled versions of GMP and MPFR, which can be downloaded
 with the installer of CGAL-4.2-Setup.exe.
 
-2.5.7. OpenGL
+2.5.8. OpenGL
 OpenGL (Open Graphics Library) provides an API for applications that produce
 2D and 3D computer graphics. SGAL depends on OpenGL. There is no alternative.
 That is, SGAL does not use Direct 3D (on Windows) or any other proprietary
@@ -340,11 +362,11 @@ API.
 Typically, OpenGL is preinstalled on systems; if not, it can be downloaded
 from http://www.opengl.org/.
 
-2.5.8. gl2ps
+2.5.9. gl2ps
 GL2PS is a C library providing vector output for any OpenGL application.
 For more information see http://www.geuz.org/gl2ps/.
 
-2.5.9. Some X libraries (forgot the name)
+2.5.10. Some X libraries (forgot the name)
 This applies to Linux only. These libraries are not installed by default.
 You will get an error message during link if they are not installed.
 

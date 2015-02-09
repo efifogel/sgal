@@ -490,7 +490,7 @@ int Font_style::move_to(FT_Vector* to, void* user)
 {
   auto font_outliner = reinterpret_cast<Font_outliner*>(user);
   SGAL_assertion(font_outliner);
-  Vector2f b0(to->x, to->y);
+  Vector2f b0(static_cast<Float>(to->x), static_cast<Float>(to->y));
   font_outliner->move_to(b0);
   return 0;
 }
@@ -500,7 +500,7 @@ int Font_style::line_to(FT_Vector* to, void* user)
 {
   auto font_outliner = reinterpret_cast<Font_outliner*>(user);
   SGAL_assertion(font_outliner);
-  Vector2f b1(to->x, to->y);
+  Vector2f b1(static_cast<Float>(to->x), static_cast<Float>(to->y));
   font_outliner->line_to(b1);
   return 0;
 }
@@ -510,8 +510,8 @@ int Font_style::conic_to(FT_Vector* control, FT_Vector* to, void* user)
 {
   auto font_outliner = reinterpret_cast<Font_outliner*>(user);
   SGAL_assertion(font_outliner);
-  Vector2f b1(control->x, control->y);
-  Vector2f b2(to->x, to->y);
+  Vector2f b1(static_cast<Float>(control->x), static_cast<Float>(control->y));
+  Vector2f b2(static_cast<Float>(to->x), static_cast<Float>(to->y));
   font_outliner->conic_to(b1, b2);
   return 0;
 }
@@ -522,9 +522,9 @@ int Font_style::cubic_to(FT_Vector* control1, FT_Vector* control2,
 {
   auto font_outliner = reinterpret_cast<Font_outliner*>(user);
   SGAL_assertion(font_outliner);
-  Vector2f b1(control1->x, control1->y);
-  Vector2f b2(control2->x, control2->y);
-  Vector2f b3(to->x, to->y);
+  Vector2f b1(static_cast<Float>(control1->x), static_cast<Float>(control1->y));
+  Vector2f b2(static_cast<Float>(control2->x), static_cast<Float>(control2->y));
+  Vector2f b3(static_cast<Float>(to->x), static_cast<Float>(to->y));
   font_outliner->cubic_to(b1, b2, b3);
   return 0;
 }
@@ -535,7 +535,6 @@ void Font_style::compute_outlines(char c, Outlines& outlines)
   if (m_dirty_face) clean_face();
 
   // Load glyph
-  FT_Glyph glyph;
   FT_Error err =
     FT_Load_Char(m_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
   if (err) {
@@ -575,12 +574,12 @@ Uint Font_style::insert_outline(Triangulation& tri, const Outline& outline,
 {
   auto pit = outline.begin();
   Triangulation::Point p((*pit)[0], (*pit)[1]);
-  Triangulation::Vertex_handle start = tri.insert(p);
+  auto start = tri.insert(p);
   start->info() = k++;
   Triangulation::Vertex_handle prev = start;
   for (++pit; pit != outline.end(); ++pit) {
     Triangulation::Point p((*pit)[0], (*pit)[1]);
-    Triangulation::Vertex_handle next = tri.insert(p);
+    auto next = tri.insert(p);
     next->info() = k++;
     tri.insert_constraint(prev, next);
     prev = next;
@@ -591,22 +590,21 @@ Uint Font_style::insert_outline(Triangulation& tri, const Outline& outline,
 
 //! \brief marks
 void Font_style::mark_domains(Triangulation& tri,
-                              typename Triangulation::Face_handle start,
-                              int index,
-                              std::list<typename Triangulation::Edge>& border)
+                              Triangulation::Face_handle start, int index,
+                              std::list<Triangulation::Edge>& border)
   const
 {
   if (start->info().nesting_level != -1) return;
-  std::list<typename Triangulation::Face_handle> queue;
+  std::list<Triangulation::Face_handle> queue;
   queue.push_back(start);
   while (! queue.empty()) {
-    typename Triangulation::Face_handle fh = queue.front();
+    auto fh = queue.front();
     queue.pop_front();
     if (fh->info().nesting_level == -1) {
       fh->info().nesting_level = index;
       for (int i = 0; i < 3; i++) {
-        typename Triangulation::Edge e(fh,i);
-        typename Triangulation::Face_handle n = fh->neighbor(i);
+        Triangulation::Edge e(fh,i);
+        auto n = fh->neighbor(i);
         if (n->info().nesting_level == -1) {
           if (tri.is_constrained(e)) border.push_back(e);
           else queue.push_back(n);
@@ -626,16 +624,15 @@ void Font_style::mark_domains(Triangulation& tri,
 // Facets in the domain are those with an odd nesting level.
 void Font_style::mark_domains(Triangulation& tri) const
 {
-  typename Triangulation::All_faces_iterator it;
-  for (it = tri.all_faces_begin(); it != tri.all_faces_end(); ++it)
+  for (auto it = tri.all_faces_begin(); it != tri.all_faces_end(); ++it)
     it->info().nesting_level = -1;
 
-  std::list<typename Triangulation::Edge> border;
+  std::list<Triangulation::Edge> border;
   mark_domains(tri, tri.infinite_face(), 0, border);
   while (! border.empty()) {
-    typename Triangulation::Edge e = border.front();
+    auto e = border.front();
     border.pop_front();
-    typename Triangulation::Face_handle n = e.first->neighbor(e.second);
+    auto n = e.first->neighbor(e.second);
     if (n->info().nesting_level == -1)
       mark_domains(tri, n, e.first->info().nesting_level+1, border);
   }
