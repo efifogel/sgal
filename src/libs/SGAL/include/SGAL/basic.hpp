@@ -49,4 +49,12 @@
 #  define SGAL_HUGE_INLINE
 #endif
 
+// throw exception specification.
+// ==============================
+#if SGAL_ENABLE_NOTHROW_EXCEPTION_SPECS
+#  define SGAL_NOTHROW throw ()
+#else
+#  define SGAL_NOTHROW
+#endif
+
 #endif

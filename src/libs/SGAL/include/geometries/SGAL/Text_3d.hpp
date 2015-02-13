@@ -140,7 +140,7 @@ public:
   /*! Obtain the text strings.
    * \return the text strings.
    */
-  String_array get_strings() const;
+  const String_array& get_strings() const;
 
   /*! Set the font style.
    * \param font_style (in) the font style.
@@ -245,7 +245,7 @@ inline Text_3d* Text_3d::prototype() { return new Text_3d(true); }
 inline Container* Text_3d::clone() { return new Text_3d(); }
 
 //! \brief obtains the text strings.
-inline String_array Text_3d::get_strings() const { return m_strings; }
+inline const String_array& Text_3d::get_strings() const { return m_strings; }
 
 //! \brief obtains the font style.
 inline Text_3d::Shared_font_style Text_3d::get_font_style() const

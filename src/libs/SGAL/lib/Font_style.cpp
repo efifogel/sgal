@@ -16,14 +16,19 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
+#include <stdexcept>
+
 #include <boost/assign/list_of.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/scope_exit.hpp>
 
 extern "C" {
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_MODULE_H
 #include FT_STROKER_H
+#include FT_GLYPH_H
+#include FT_OUTLINE_H
   //#include FT_SYNTHESIS_H
   //#include FT_LCD_FILTER_H
   //#include FT_CFF_DRIVER_H
@@ -31,6 +36,16 @@ extern "C" {
   //#include FT_INTERNAL_OBJECTS_H
   //#include FT_INTERNAL_DRIVER_H
 }
+
+#if defined(_WIN32)
+#include <windows.h>
+#include <strsafe.h>
+#include <shlobj.h>
+#undef interface
+#else
+#include <fontconfig/fontconfig.h>
+#include <fontconfig/fcfreetype.h>
+#endif
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Field_infos.hpp"
@@ -57,14 +72,9 @@ Container_proto* Font_style::s_prototype(nullptr);
 
 REGISTER_TO_FACTORY(Font_style, "Font_style");
 
-//! The freetype root library object.
-FT_Library Font_style::s_ft_library;
-
-//! The truetype driver.
-FT_Driver Font_style::s_ft_driver;
-
 // Default values
-const Font_style::Family Font_style::s_def_family(FAMILY_SERIF);
+const String_array Font_style::s_def_families =
+  boost::assign::list_of(static_cast<std::string>("SERIF"));
 const Boolean Font_style::s_def_horizontal(true);
 const Uint_array Font_style::s_def_justify =
   boost::assign::list_of(static_cast<Uint>(JUSTIFY_BEGIN))
@@ -73,7 +83,7 @@ const std::string Font_style::s_def_language("");
 const Boolean Font_style::s_def_left_to_right(true);
 const Float Font_style::s_def_size(1.0f);
 const Float Font_style::s_def_spacing(1.0f);
-const Font_style::Style Font_style::s_def_style(STYLE_PLAIN);
+const std::string Font_style::s_def_style("PLAIN");
 const Boolean Font_style::s_def_top_to_bottom(true);
 
 const Char* Font_style::s_family_names[] =
@@ -85,10 +95,56 @@ const Char* Font_style::s_justify_names[] =
 const Char* Font_style::s_style_names[] =
   { "PLAIN", "BOLD", "ITALIC", "BOLDITALIC" };
 
+#if !defined(_WIN32)
+/*! Class thrown when fontconfig initialization fails. */
+class SGAL_SGAL_DECL Fontconfig_initialization_error : public std::runtime_error
+{
+public:
+  Fontconfig_initialization_error() :
+    std::runtime_error(std::string("Failed to initialize fontconfig library!"))
+  {}
+
+  ~Fontconfig_initialization_error() SGAL_NOTHROW {}
+};
+
+/*! Class thrown when fontconfig fails. */
+class SGAL_SGAL_DECL Fontconfig_error : public std::runtime_error {
+public:
+  Fontconfig_error(FcResult result) :
+    std::runtime_error(std::string(s_fc_result_message[result])) {}
+
+  ~Fontconfig_error() SGAL_NOTHROW {}
+
+private:
+  static const Char* s_fc_result_message[];
+};
+
+const Char* Fontconfig_error::s_fc_result_message[] =
+  {"match", "no match", "type mismatch", "no id" };
+#endif
+
+/*! Class thrown when FreeType initialization fails. */
+class SGAL_SGAL_DECL FreeType_initialization_error : public std::runtime_error {
+public:
+  FreeType_initialization_error() :
+    std::runtime_error(std::string("Failed to initialize FreeType library!")) {}
+
+  ~FreeType_initialization_error() SGAL_NOTHROW {}
+};
+
+/*! Class thrown when FreeType termination fails. */
+class SGAL_SGAL_DECL FreeType_termination_error : public std::runtime_error {
+public:
+  FreeType_termination_error() :
+    std::runtime_error(std::string("Failed to terminate FreeType library!")) {}
+
+  ~FreeType_termination_error() SGAL_NOTHROW {}
+};
+
 //! \brief constructor
 Font_style::Font_style(Boolean proto) :
   Node(proto),
-  m_family(s_def_family),
+  m_families(s_def_families),
   m_horizontal(s_def_horizontal),
   m_justify(s_def_justify),
   m_language(s_def_language),
@@ -99,18 +155,21 @@ Font_style::Font_style(Boolean proto) :
   m_top_to_bottom(s_def_top_to_bottom),
   m_dirty(true),
   m_font(nullptr),
-  m_dirty_face(true)
+  m_dirty_face(true),
+  m_ft_face(nullptr)
 {
-  if (!proto) return;
+  if (proto) return;
 
-  FT_Error err = FT_Init_FreeType(&s_ft_library);
-  if (err) {
-    std::cerr << "Failed to initialize FreeType library!" << std::endl;
-    throw;
-  }
+#if defined(_WIN32)
+  auto success = FcInit();
+  if (!success) throw Fontconfig_initialization_error();
+#endif
 
-  s_ft_driver = (FT_Driver) FT_Get_Module(s_ft_library, "truetype");
-  if (!s_ft_driver) {
+  auto failure = FT_Init_FreeType(&m_ft_library);
+  if (failure) throw FreeType_initialization_error();
+
+  m_ft_driver = (FT_Driver) FT_Get_Module(m_ft_library, "truetype");
+  if (!m_ft_driver) {
     std::cerr << "Failed to find the TrueType driver in FreeType 2!"
               << std::endl;
     throw;
@@ -124,8 +183,9 @@ Font_style::~Font_style()
     delete m_font;
     m_font = nullptr;
   }
-  FT_Done_Face(m_face);
-  // FT_Done_FreeType(s_ft_library);
+  FT_Done_Face(m_ft_face);
+  auto failure = FT_Done_FreeType(m_ft_library);
+  if (failure) throw FreeType_termination_error();
 
   m_dirty_face = true;
 }
@@ -177,12 +237,12 @@ void Font_style::init_prototype()
   auto exec_func = static_cast<Execution_function>(&Font_style::on_field_change);
 
   // family
-  auto family_func =
-    reinterpret_cast<Uint_handle_function>(&Font_style::family_handle);
-  s_prototype->add_field_info(new SF_uint(FAMILY, "family",
-                                          RULE_EXPOSED_FIELD,
-                                          family_func,
-                                          exec_func));
+  auto families_func =
+    static_cast<String_array_handle_function>(&Font_style::families_handle);
+  s_prototype->add_field_info(new MF_string(FAMILIES, "family",
+                                            RULE_EXPOSED_FIELD,
+                                            families_func,
+                                            exec_func));
 
   // horizontal
   auto horizontal_func =
@@ -265,11 +325,17 @@ void Font_style::set_attributes(Element* elem)
     const auto& name = elem->get_name(ai);
     const auto& value = elem->get_value(ai);
     if (name == "family") {
-      Uint num = sizeof(s_family_names) / sizeof(char*);
-      const char** found = std::find(s_family_names, &s_family_names[num],
-                                     strip_double_quotes(value));
-      Uint index = found - s_family_names;
-      if (index < num) set_family(static_cast<Family>(index));
+      m_families.clear();
+      auto start = value.find_first_of('\"');
+      while (start != std::string::npos) {
+        ++start;
+        auto end = value.find_first_of('\"', start);
+        if (end == std::string::npos) break;
+        m_families.push_back(value.substr(start, end-start));
+        ++end;
+        if (end == value.size()) break;
+        start = value.find_first_of('\"', end);
+      }
       elem->mark_delete(ai);
       continue;
     }
@@ -307,11 +373,7 @@ void Font_style::set_attributes(Element* elem)
       continue;
     }
     if (name == "style") {
-      Uint num = sizeof(s_style_names) / sizeof(char*);
-      const char** found = std::find(s_style_names, &s_style_names[num],
-                                     strip_double_quotes(value));
-      Uint index = found - s_style_names;
-      if (index < num) set_style(static_cast<Style>(index));
+      set_style(strip_double_quotes(value));
       elem->mark_delete(ai);
       continue;
     }
@@ -389,15 +451,22 @@ Attribute_list Font_style::get_attributes()
 //! \brief cleans the face.
 void Font_style::clean_face()
 {
-  const char* file_name ="/usr/share/fonts/truetype/msttcorefonts/Verdana.ttf";
-  FT_Error err = FT_New_Face(s_ft_library, file_name, 0, &m_face);
+  std::string file_name;
+  FT_Long face_index;
+  get_font_file_name(file_name, face_index);
+
+  if (file_name.empty()) return;
+  SGAL_TRACE_MSG(Trace::FONT, "Font file name: " + file_name + "\n");
+
+  FT_Error err =
+    FT_New_Face(m_ft_library, (Char*)(file_name.c_str()), 0, &m_ft_face);
   if (err) {
     std::cerr << "Failed to open input font file!" << std::endl;
     throw;
   }
 
-  // Find driver and check format
-  if (m_face->driver != s_ft_driver) {
+  // Find driver and check format.
+  if (m_ft_face->driver != m_ft_driver) {
     err = FT_Err_Invalid_File_Format;
     std::cerr << "is not a TrueType font!" << std::endl;
     throw;
@@ -450,7 +519,8 @@ void Font_style::get_string_size(const std::string& str,
 }
 
 //! \brief sets the font family.
-void Font_style::set_family(Family family) { m_family = family; }
+void Font_style::set_families(const String_array& families)
+{ m_families = families; }
 
 /*! \brief sets the flag that indicates whether the text advances horizontally
  * in its major direction.
@@ -479,7 +549,7 @@ void Font_style::set_size(Float size) { m_size = size; }
 void Font_style::set_spacing(Float spacing) { m_spacing = spacing; }
 
 //! \brief sets the font style, e.g., bold.
-void Font_style::set_style(Style style) {m_style = style; }
+void Font_style::set_style(const std::string& style) {m_style = style; }
 
 /*! \brief sets the flag that indicates whether the text advances from top to
  * bottom.
@@ -537,15 +607,15 @@ void Font_style::compute_outlines(char c, Outlines& outlines)
 
   // Load glyph
   FT_Error err =
-    FT_Load_Char(m_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
+    FT_Load_Char(m_ft_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
   if (err) {
     std::cerr << "FT_Load_Glyph: error!" << std::endl;
   }
 
   // FT_Get_Glyph(face->glyph, &glyph);
-  FT_Outline outline = m_face->glyph->outline;
+  FT_Outline outline = m_ft_face->glyph->outline;
 
-  if (m_face->glyph->format != ft_glyph_format_outline) {
+  if (m_ft_face->glyph->format != ft_glyph_format_outline) {
     std::cerr << "Not an outline font!" << std::endl;
   }
 
@@ -587,6 +657,172 @@ const Font_style::Triangulation& Font_style::compute_glyph(char c)
   }
   mark_domains(tri);  // mark facets that are inside the domain
   return tri;
+}
+
+//! \brief obtains the font file name.
+void Font_style::get_font_file_name(std::string& file_name,
+                                    FT_Long & face_index)
+{
+#if defined(_WIN32)
+  LOGFONT lf;
+  lf.lfHeight = 0;
+  lf.lfWidth = 0;
+  lf.lfEscapement = 0;
+  lf.lfOrientation = 0;
+  lf.lfWeight = FW_MEDIUM;
+  lf.lfItalic = FALSE;
+  lf.lfUnderline = FALSE;
+  lf.lfStrikeOut = FALSE;
+  lf.lfCharSet = DEFAULT_CHARSET;
+  lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;
+  lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+  lf.lfQuality = DEFAULT_QUALITY;
+  lf.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
+
+  HDC hdc = CreateCompatibleDC(0);
+  BOOST_SCOPE_EXIT((hdc)) {
+    DeleteDC(hdc);
+  } BOOST_SCOPE_EXIT_END
+  HFONT hfont = CreateFontIndirect(&lf);
+  SelectObject(hdc, hfont);
+  TCHAR face_name[256] = {};
+  GetTextFace(hdc, sizeof face_name / sizeof (TCHAR), face_name);
+  const int face_name_len = lstrlen(face_name);
+
+  // Get the fonts folder.
+  TCHAR fonts_path[MAX_PATH];
+  HRESULT status =
+    SHGetFolderPath(NULL, CSIDL_FONTS, NULL, SHGFP_TYPE_CURRENT, fonts_path);
+  if (FAILED(status)) { /* bail */ }
+
+  // Enumerate the fonts in the registry and pick one that matches.
+  HKEY fonts_key;
+  LONG result =
+    RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+                 "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts",
+                 0,
+                 KEY_READ,
+                 &fonts_key);
+  if (result != ERROR_SUCCESS) { /* bail */ }
+  BOOST_SCOPE_EXIT((fonts_key)) {
+    RegCloseKey(fonts_key);
+  } BOOST_SCOPE_EXIT_END
+
+  DWORD max_value_name_len, max_value_len;
+  result = RegQueryInfoKey(fonts_key,
+                           NULL,  // lpClass
+                           NULL,  // lpcClass
+                           NULL,  // lpReserved
+                           NULL,  // lpcSubKeys
+                           NULL,  // lpcMaxSubKeyLen
+                           NULL,  // lpcMaxClassLen
+                           NULL,  // lpcValues
+                           &max_value_name_len,
+                           &max_value_len,
+                           NULL,  // lpcbSecurityDescriptor
+                           NULL); // lpftLastWriteTime
+
+  DWORD index = 0;
+  vector<TCHAR> value_name(max_value_name_len + 1);
+  DWORD type;
+  vector<BYTE> data(max_value_len);
+  TCHAR font_path[MAX_PATH] = {};
+  result = ERROR_SUCCESS;
+  while (result != ERROR_NO_MORE_ITEMS) {
+    DWORD data_length = DWORD(data.size());
+    DWORD value_name_length = DWORD(value_name.size());
+    result = RegEnumValue(fonts_key,
+                          index,
+                          &value_name.front(),
+                          &value_name_length,
+                          NULL,
+                          &type,
+                          &data.front(),
+                          &data_length);
+    if (result == ERROR_MORE_DATA) {
+      data.resize(data_length);
+      continue;
+    }
+    if (result == ERROR_SUCCESS) {
+      if (DWORD(face_name_len + 1) <= value_name_length &&
+          std::equal(face_name, face_name + face_name_len, value_name.begin()))
+      {
+        HRESULT strcat_result = StringCchCat(font_path, MAX_PATH, fonts_path);
+        assert(SUCCEEDED(strcat_result));
+        strcat_result = StringCchCat(font_path, MAX_PATH, "\\");
+        assert(SUCCEEDED(strcat_result));
+        strcat_result =
+          StringCchCat(font_path, MAX_PATH,
+                       reinterpret_cast<STRSAFE_LPCSTR>(&data.front()));
+        assert(SUCCEEDED(strcat_result));
+        break;
+      }
+      ++index;
+    }
+  }
+
+  const size_t font_path_len = lstrlen(font_path);
+  assert(font_path_len != 0);
+  file_name.assign(font_path, font_path + font_path_len + 1);
+  face_index = 0;
+
+# else
+  std::string font_name;
+
+  // Set the attributes
+  auto add_family = [&](std::vector<std::string>::const_iterator it) {
+    const auto& family = *it;
+    if (family == "SERIF") font_name += "serif";
+    else if (family == "SANS") font_name += "sans";
+    else if (family == "TYPEWRITER") font_name += "monospace";
+    else font_name += family;
+  };
+  auto it = m_families.begin();
+  add_family(it);
+  for (++it; it != m_families.end(); ++it) {
+    font_name += ",";
+    add_family(it);
+  }
+  if (m_style.find("BOLD") != std::string::npos) font_name += ":bold";
+  if (m_style.find("ITALIC") != std::string::npos) font_name += ":italic";
+  SGAL_TRACE_MSG(Trace::FONT, "Font name: " + font_name + "\n");
+
+  FcPattern* initial_pat = FcNameParse((FcChar8*)(font_name.c_str()));
+  if (!initial_pat) { throw std::bad_alloc(); }
+  BOOST_SCOPE_EXIT((initial_pat)) {
+    FcPatternDestroy(initial_pat);
+  } BOOST_SCOPE_EXIT_END
+
+  FcPatternAddBool(initial_pat, FC_OUTLINE, FcTrue);
+  FcPatternAddBool(initial_pat, FC_SCALABLE, FcTrue);
+  FcPatternAddString(initial_pat, FC_FONTFORMAT, (FcChar8*)("TrueType"));
+
+  // Set the language.
+  if (!m_language.empty())
+    FcPatternAddString(initial_pat, FC_LANG, (FcChar8*)(m_language.c_str()));
+  FcPatternAddDouble(initial_pat, FC_PIXEL_SIZE, (double)(get_size()));
+
+  FcConfigSubstitute(0, initial_pat, FcMatchPattern);
+  FcDefaultSubstitute(initial_pat);
+
+  FcResult result = FcResultMatch;
+  FcPattern* const matched_pat = FcFontMatch(0, initial_pat, &result);
+  if (result != FcResultMatch) { throw Fontconfig_error(result); }
+  assert(matched_pat);
+  BOOST_SCOPE_EXIT((matched_pat)) {
+    FcPatternDestroy(matched_pat);
+  } BOOST_SCOPE_EXIT_END
+
+  FcChar8* file_name_str = 0;
+  result = FcPatternGetString(matched_pat, FC_FILE, 0, &file_name_str);
+  if (result != FcResultMatch) { throw Fontconfig_error(result); }
+  file_name.assign((Char*)file_name_str);
+
+  int face_index_int = 0;
+  result = FcPatternGetInteger(matched_pat, FC_INDEX, 0, &face_index_int);
+  if (result != FcResultMatch) { throw Fontconfig_error(result); }
+  face_index = FT_Long(face_index_int);
+# endif
 }
 
 SGAL_END_NAMESPACE

@@ -61,7 +61,7 @@ class SGAL_SGAL_DECL Font_style : public Node {
 public:
   enum {
     FIRST = Node::LAST - 1,
-    FAMILY,
+    FAMILIES,
     HORIZONTAL,
     JUSTIFY,
     LANGUAGE,
@@ -72,8 +72,6 @@ public:
     TOP_TO_BOTTOM,
     LAST
   };
-
-  enum Family {FAMILY_SERIF, FAMILY_SANS, FAMILY_TYPEWRITER};
 
   enum Justify {JUSTIFY_BEGIN, JUSTIFY_FIRST, JUSTIFY_MIDDLE, JUSTIFY_END};
 
@@ -89,8 +87,8 @@ public:
                                                                         FBI;
   typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
   typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
-  // typedef CGAL::No_intersection_tag                                     Itag;
-  typedef CGAL::Exact_predicates_tag                                    Itag;
+  typedef CGAL::No_intersection_tag                                     Itag;
+  // typedef CGAL::Exact_predicates_tag                                    Itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
     Triangulation;
 
@@ -124,14 +122,14 @@ public:
 
   /// \name field handlers
   //@{
-  Family* family_handle(const Field_info*) { return &m_family; }
+  String_array* families_handle(const Field_info*) { return &m_families; }
   Boolean* horizontal_handle(const Field_info*) { return &m_horizontal; }
   Uint_array* justify_handle(const Field_info*) { return &m_justify; }
   std::string* language_handle(const Field_info*) { return &m_language; }
   Boolean* l2r_handle(const Field_info*) { return &m_left_to_right; }
   Float* size_handle(const Field_info*) { return &m_size; }
   Float* spacing_handle(const Field_info*) { return &m_spacing; }
-  Style* style_handle(const Field_info*) { return &m_style; }
+  std::string* style_handle(const Field_info*) { return &m_style; }
   Boolean* t2b_handle(const Field_info*) { return &m_top_to_bottom; }
   //@}
 
@@ -160,15 +158,17 @@ public:
 
   //virtual void Isect(Isect_action* isect_action);
 
-  /*! Set the font family.
-   * \param family (in) the new family.
+  /*! Set the font families. A font family is a font rendering technique,
+   * such as "SERIF", "SANS", or "TYPEWRITER", or a font name, such as
+   * "Times New Roman".
+   * \param family (in) the new families.
    */
-  void set_family(Family family);
+  void set_families(const String_array& families);
 
-  /*! Obtain the font family.
-   * \return the font family.
+  /*! Obtain the font families.
+   * \return the font families.
    */
-  Family get_family() const;
+  const String_array& get_families() const;
 
   /*! Set the flag that indicates whether the text advances horizontally in
    * its major direction.
@@ -237,12 +237,12 @@ public:
 
   /*! Set the font style, e.g., bold.
    */
-  void set_style(Style style);
+  void set_style(const std::string& style);
 
   /*! Obtain the font style.
    * \return the font style.
    */
-  Style get_style() const;
+  const std::string& get_style() const;
 
   /*! Set the flag that indicates whether the text advances from top to bottom
    * either the major (characters within a single string) or minor (successive
@@ -292,11 +292,20 @@ protected:
    */
   virtual const std::string& get_tag() const { return s_tag; }
 
+  /*! Obtain the font file name.
+   * \param file_name (out) the file name of the font.
+   * \param face_index (out) the face index of the font.
+   */
+  void get_font_file_name(std::string& file_name, FT_Long& face_index);
+
   /*! The font name */
   std::string m_font_name;
 
-  /*! The font family: "SERIF", "SANS", or "TYPEWRITER" */
-  Family m_family;
+  /*! A list of font families. A font family is a font rendering technique,
+   * such as "SERIF", "SANS", or "TYPEWRITER", or a font name, such as
+   * "Times New Roman"."SERIF", "SANS", or "TYPEWRITER".
+   */
+  String_array m_families;
 
   /*! Indicates whether the text advances horizontally in its major direction.
    */
@@ -343,26 +352,20 @@ protected:
    * for bold and italic type. A style value of empty quotes, "", is identical
    * to "PLAIN".
    */
-  Style m_style;
+  std::string m_style;
 
   /*! Indicates the vertical direction of the text. */
   Boolean m_top_to_bottom;
 
-  /*! The freetype root library object. */
-  static FT_Library s_ft_library;
-
-  /*! The truetype driver. */
-  static FT_Driver s_ft_driver;
-
   // Default values
-  static const Family s_def_family;
+  static const String_array s_def_families;
   static const Boolean s_def_horizontal;
   static const Uint_array s_def_justify;
   static const std::string s_def_language;
   static const Boolean s_def_left_to_right;
   static const Float s_def_size;
   static const Float s_def_spacing;
-  static const Style s_def_style;
+  static const std::string s_def_style;
   static const Boolean s_def_top_to_bottom;
 
 private:
@@ -432,13 +435,19 @@ private:
   /*! The font. */
   Font* m_font;
 
-  /*! Indicates that the face is dirty. */
-  Boolean m_dirty_face;
+  /*! The freetype root library object. */
+  FT_Library m_ft_library;
+
+  /*! The truetype driver. */
+  FT_Driver m_ft_driver;
 
   /*! A handle to a given typographic face object. A face object models a
    * given typeface, in a given style.
    */
-  FT_Face m_face;
+  FT_Face m_ft_face;
+
+  /*! Indicates that the face is dirty. */
+  Boolean m_dirty_face;
 
   /*! Construct and initialize the font. */
   void create_font();
@@ -449,7 +458,8 @@ private:
 #endif
 
 //! \brief obtains the font family.
-inline Font_style::Family Font_style::get_family() const { return m_family; }
+inline const String_array& Font_style::get_families() const
+{ return m_families; }
 
 /*! \brief determines whether the text advances horizontally in its major
  * direction.
@@ -480,7 +490,7 @@ inline Float Font_style::get_size() const { return m_size; }
 inline Float Font_style::get_spacing() const { return m_spacing; }
 
 //! \brief obtains the font style.
-inline Font_style::Style Font_style::get_style() const { return m_style; }
+inline const std::string& Font_style::get_style() const { return m_style; }
 
 /*! \brief obtains the flag that indicates whether the text advances from top
  * to bottom.

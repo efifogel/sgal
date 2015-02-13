@@ -49,6 +49,7 @@ public:
     CUBICAL_GAUSSIAN_MAP,
     DESTRUCTOR,
     WRITING,
+    FONT,
     NUM_CODES
   };
 

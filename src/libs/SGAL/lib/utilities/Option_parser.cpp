@@ -50,7 +50,8 @@ const Char* Option_parser::s_trace_opts[] = {
   "polyhedron",
   "cgm",
   "destructor",
-  "writing"
+  "writing",
+  "font"
 };
 
 //! \brief obtains number of trace options.
@@ -114,6 +115,7 @@ Option_parser::Option_parser() :
      "  cgm\n"
      "  destructor\n"
      "  writing\n"
+     "  font\n"
      )
     ;
 

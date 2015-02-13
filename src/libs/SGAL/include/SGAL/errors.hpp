@@ -15,9 +15,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 4993 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_ERRORS_HPP
@@ -54,8 +51,7 @@ public:
   File_not_found_error(const std::string& filename) :
     error(std::string("File ").append(filename).append(" not found!")) {}
 
-  // gcc says that throw specification on dtor is loosened without this line
-  ~File_not_found_error() throw() {}
+  ~File_not_found_error() SGAL_NOTHROW {}
 };
 
 /*! Class thrown when a required extension is not supported. */
@@ -65,8 +61,7 @@ public:
     error(std::string("Extension ").append(extension).append(" not supported!"))
   {}
 
-  // gcc says that throw specification on dtor is loosened without this line
-  ~Extension_not_supported_error() throw() {}
+  ~Extension_not_supported_error() SGAL_NOTHROW {}
 };
 
 /*! Class thrown when a required frame buffer is not allocated. */
@@ -76,8 +71,7 @@ public:
     error(std::string("Frame buffer ").append(name).append(" not allocated!"))
   {}
 
-  // gcc says that throw specification on dtor is loosened without this line
-  ~Frame_buffer_not_allocated_error() throw() {}
+  ~Frame_buffer_not_allocated_error() SGAL_NOTHROW {}
 };
 
 /*! Class thrown when a visual cannot be selected. */
@@ -86,8 +80,7 @@ public:
   Visual_selection_error() :
     error(std::string("Failed to choose Visual!")) {}
 
-  // gcc says that throw specification on dtor is loosened without this line
-  ~Visual_selection_error() throw() {}
+  ~Visual_selection_error() SGAL_NOTHROW {}
 };
 
 /*! Class thrown when a visual configuration fails. */
@@ -96,8 +89,7 @@ public:
   Visual_configuration_error() :
     error(std::string("Failed to configure Visual!")) {}
 
-  // gcc says that throw specification on dtor is loosened without this line
-  ~Visual_configuration_error() throw() {}
+  ~Visual_configuration_error() SGAL_NOTHROW {}
 };
 
 SGAL_END_NAMESPACE
