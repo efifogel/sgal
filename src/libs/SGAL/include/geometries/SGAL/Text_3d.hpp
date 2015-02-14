@@ -21,12 +21,12 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <boost/mpl/if.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Indexed_face_set.hpp"
-#include "SGAL/Font_style.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -221,11 +221,27 @@ protected:
   Float m_depth;
 
 private:
+  typedef boost::mpl::if_c<sizeof(wchar_t) == 4, wchar_t, Int32>::type Char32;
+  typedef std::vector<std::vector<Char32> >             Ucs4_string;
+
   /*! Create a quadrilateral.
    */
   size_t create_quad(Uint a, Uint b, Uint c, Uint d, size_t k);
 
-  typedef Font_style::Outline                                   Outline;
+  /*! Clean the fixed-length encodings of the strings. */
+  void clean_ucs4_strings();
+
+  Boolean utf8_len(const unsigned char* utf8_str, size_t len, size_t& chars,
+                   size_t& max_char_width) const;
+
+  std::ptrdiff_t utf8_to_ucs4(const unsigned char* src_orig, Char32& dst,
+                              size_t len) const;
+
+  /*! The fixed-length encodings of the strings. */
+  Ucs4_string m_ucs4_strings;
+
+  /*! Indicates that the fixed-length encoding tring is dirty. */
+  Boolean m_dirty_ucs4_strings;
 
   /*! The tag that identifies this container type. */
   static const std::string s_tag;

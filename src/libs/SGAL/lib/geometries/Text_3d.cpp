@@ -22,6 +22,8 @@
 
 #include <iostream>
 #include <sstream>
+#include <list>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 #include <boost/assign/list_of.hpp>
 
@@ -49,7 +51,8 @@ REGISTER_TO_FACTORY(Text_3d, "Text_3d");
 Text_3d::Text_3d(Boolean proto) :
   Indexed_face_set(proto),
   m_max_extent(s_def_max_extent),
-  m_depth(s_def_depth)
+  m_depth(s_def_depth),
+  m_dirty_ucs4_strings(true)
 {}
 
 //! \brief destructor.
@@ -201,76 +204,176 @@ size_t Text_3d::create_quad(Uint a, Uint b, Uint c, Uint d, size_t k)
 void Text_3d::clean_coords()
 {
   // Compute the outlines
+  if (!m_font_style) m_font_style = Shared_font_style(new Font_style());
   SGAL_assertion(m_font_style);
-  char c = m_strings.front().front();
-  const auto& tri = m_font_style->compute_glyph(c);
 
-  // Extract the coordinates
+  if (m_dirty_ucs4_strings) clean_ucs4_strings();
+
+  // auto c = m_ucs4_strings.front().front();
+  // const auto& tri = m_font_style->compute_glyph_geometry(c);
+
+  ///////////////////////////
+  typedef std::list<const Font_style::Triangulation*>  Line_geometry;
+  std::vector<Line_geometry> line_geometrys(m_ucs4_strings.size());
+
+  auto lgit = line_geometrys.begin();
+  for (auto lit = m_ucs4_strings.begin(); lit != m_ucs4_strings.end(); ++lit) {
+    const auto& line = *lit;
+    auto& line_geometry = *lgit++;
+    auto line_num = std::distance(m_ucs4_strings.begin(), lit);
+    // Vector2f pen_start = get_pen_start_for_line(line_num,
+    //                                             size,
+    //                                             spacing,
+    //                                             horizontal,
+    //                                             leftToRight,
+    //                                             topToBottom);
+
+    // auto_ptr<line_geometry> line_geom(new line_geometry(horizontal,
+    //                                                     leftToRight,
+    //                                                     topToBottom,
+    //                                                     pen_start));
+    for (auto cit = line.begin(); cit != line.end(); ++cit) {
+      auto c = *cit;
+      const auto& tri = m_font_style->compute_glyph_geometry(c);
+      line_geometry.push_back(&tri);
+
+      // const auto* glyphGeometry = 0;
+      // auto pos = this->glyph_geometry_map.find(glyphIndex);
+      // if (pos != this->glyph_geometry_map.end()) glyphGeometry = &pos->second;
+      // else {
+      //   glyph_geometry_map_t::value_type
+      //     value(glyphIndex, glyph_geometry(this->face, glyphIndex, size));
+      //   const auto result = this->glyph_geometry_map.insert(value);
+      //   assert(result.second);
+      //   glyphGeometry = &result.first->second;
+      // }
+      // assert(glyphGeometry);
+      // line_geom->add(*glyphGeometry);
+    }
+
+    // Scale to length.
+    // auto length = (line_num < m_lengths.size()) ? m_lengths[line_num] : 0.0f;
+    // if (length > 0.0f) line_geom->scale(length);
+
+    // lines.push_back(line_geom);
+  }
+
+  // auto max_extent = std::max(get_max_extent(), 0.0f);
+
+  ///////////////////////////
+
+  // Compute the number of coordinates
+  Uint size(0);
+  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+    const auto& line_geometry = *tit;
+    for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
+      const auto* tri = *lit;
+      size += tri->number_of_vertices();
+    }
+  }
+
+  // Resize the coordinate array
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
   auto coords = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coords);
-  Uint size = tri.number_of_vertices();
-  coords->resize(size * 2);
+  coords->resize(size + size);          // back and front
+  std::cout << "# coords: " << coords->size() << std::endl;
+
+  // Assign the coordinate array
+  Float ttt(0.0f);
   Uint k(0);
-  for (auto it = tri.finite_vertices_begin(); it !=  tri.finite_vertices_end();
-       ++it)
-  {
-    (*coords)[k].set(static_cast<Float>(CGAL::to_double(it->point().x())),
-                       static_cast<Float>(CGAL::to_double(it->point().y())), 0);
-    (*coords)[k+size].set(static_cast<Float>(CGAL::to_double(it->point().x())),
-                          static_cast<Float>(CGAL::to_double(it->point().y())),
-                          m_depth);
-    ++k;
+  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+    const auto& line_geometry = *tit;
+    for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
+      const auto* tri = *lit;
+      size = tri->number_of_vertices();
+      for (auto it = tri->finite_vertices_begin();
+           it != tri->finite_vertices_end(); ++it)
+      {
+        auto x = static_cast<Float>(CGAL::to_double(it->point().x()));
+        auto y = static_cast<Float>(CGAL::to_double(it->point().y()));
+        (*coords)[k].set(x+ttt, y, 0);
+        (*coords)[k+size].set(x+ttt, y, m_depth);
+        ++k;
+      }
+      ttt += 1000;
+      k += size;
+    }
   }
 
   // Calculate the number of primitives
   Uint num_primitives = 0;
-  for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end(); ++it)
-    if (it->info().in_domain()) ++num_primitives;
-  num_primitives += num_primitives;
-  for (auto it = tri.finite_edges_begin(); it != tri.finite_edges_end(); ++it) {
-    auto f1 = it->first;
-    auto f2 = f1->neighbor(it->second);
-    if ((f1->info().in_domain() && !f2->info().in_domain()) ||
-        (f2->info().in_domain() && !f1->info().in_domain()))
-      num_primitives += 2;
+  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+    const auto& line_geometry = *tit;
+    for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
+      const auto* tri = *lit;
+      for (auto it = tri->finite_faces_begin();
+           it != tri->finite_faces_end(); ++it)
+        if (it->info().in_domain()) num_primitives += 2;
+
+      for (auto it = tri->finite_edges_begin();
+           it != tri->finite_edges_end(); ++it)
+      {
+        auto f1 = it->first;
+        auto f2 = f1->neighbor(it->second);
+        if ((f1->info().in_domain() && !f2->info().in_domain()) ||
+            (f2->info().in_domain() && !f1->info().in_domain()))
+          num_primitives += 2;
+      }
+    }
   }
-  m_flat_coord_indices.resize(num_primitives * 3);
 
   // Compute the indices
+  m_flat_coord_indices.resize(num_primitives * 3);
+  std::cout << "# indices: " << m_flat_coord_indices.size() << std::endl;
   size_t i(0);
+  Uint base(0);
+  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+    const auto& line_geometry = *tit;
+    for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
+      const auto* tri = *lit;
+      size = tri->number_of_vertices();
+      // Set the front indices
+      for (auto it = tri->finite_faces_begin(); it != tri->finite_faces_end();
+           ++it)
+      {
+        if (! it->info().in_domain()) continue;
+        m_flat_coord_indices[i++] = it->vertex(2)->info() + base;
+        m_flat_coord_indices[i++] = it->vertex(1)->info() + base;
+        m_flat_coord_indices[i++] = it->vertex(0)->info() + base;
+      }
+      // Set the back indices
+      for (auto it = tri->finite_faces_begin(); it != tri->finite_faces_end();
+           ++it)
+      {
+        if (! it->info().in_domain()) continue;
+        m_flat_coord_indices[i++] = it->vertex(0)->info() + base + size;
+        m_flat_coord_indices[i++] = it->vertex(1)->info() + base + size;
+        m_flat_coord_indices[i++] = it->vertex(2)->info() + base + size;
+      }
 
-  // Set the front indices
-  for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end(); ++it) {
-    if (! it->info().in_domain()) continue;
-    m_flat_coord_indices[i++] = it->vertex(2)->info();
-    m_flat_coord_indices[i++] = it->vertex(1)->info();
-    m_flat_coord_indices[i++] = it->vertex(0)->info();
-  }
-  // Set the back indices
-  for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end(); ++it) {
-    if (! it->info().in_domain()) continue;
-    m_flat_coord_indices[i++] = it->vertex(0)->info() + size;
-    m_flat_coord_indices[i++] = it->vertex(1)->info() + size;
-    m_flat_coord_indices[i++] = it->vertex(2)->info() + size;
-  }
-  // Set the back indices
-  for (auto it = tri.finite_edges_begin(); it != tri.finite_edges_end(); ++it) {
-    auto f1 = it->first;
-    auto f2 = f1->neighbor(it->second);
-    if (f1->info().in_domain() && !f2->info().in_domain()) {
-      auto a = f1->vertex(f1->ccw(it->second))->info();
-      auto b = f1->vertex(f1->cw(it->second))->info();
-      auto c = b + size;
-      auto d = a + size;
-      i = create_quad(a, b, c, d, i);
-    }
-    else if (f2->info().in_domain() && !f1->info().in_domain()) {
-      auto a = f1->vertex(f1->cw(it->second))->info();
-      auto b = f1->vertex(f1->ccw(it->second))->info();
-      auto c = b + size;
-      auto d = a + size;
-      i = create_quad(a, b, c, d, i);
+      // Set the side indices
+      for (auto it = tri->finite_edges_begin(); it != tri->finite_edges_end();
+           ++it)
+      {
+        auto f1 = it->first;
+        auto f2 = f1->neighbor(it->second);
+        if (f1->info().in_domain() && !f2->info().in_domain()) {
+          auto a = f1->vertex(f1->ccw(it->second))->info() + base;
+          auto b = f1->vertex(f1->cw(it->second))->info() + base;
+          auto c = b + size;
+          auto d = a + size;
+          i = create_quad(a, b, c, d, i);
+        }
+        else if (f2->info().in_domain() && !f1->info().in_domain()) {
+          auto a = f1->vertex(f1->cw(it->second))->info() + base;
+          auto b = f1->vertex(f1->ccw(it->second))->info() + base;
+          auto c = b + size;
+          auto d = a + size;
+          i = create_quad(a, b, c, d, i);
+        }
+      }
+      base += 2 * size;
     }
   }
 
@@ -309,6 +412,7 @@ void Text_3d::set_strings(const String_array& strings)
 {
   m_strings = strings;
   structure_changed(get_field_info(STRINGS));
+  m_ucs4_strings.clear();
 }
 
 //! \brief sets the font style.
@@ -337,6 +441,110 @@ void Text_3d::set_depth(Float depth)
 {
   m_depth = depth;
   structure_changed(get_field_info(DEPTH));
+}
+
+//! \brief
+std::ptrdiff_t Text_3d::utf8_to_ucs4(const unsigned char* src_orig,
+                                     Char32 & dst, size_t len) const
+{
+  const unsigned char* src = src_orig;
+  if (len == 0) return 0;
+
+  unsigned char s = *src++;
+  --len;
+
+  Char32 result;
+  size_t extra;
+  if (!(s & 0x80)) {
+    result = s;
+    extra = 0;
+  }
+  else if (!(s & 0x40)) return -1;
+  else if (!(s & 0x20)) {
+    result = s & 0x1f;
+    extra = 1;
+  }
+  else if (!(s & 0x10)) {
+    result = s & 0xf;
+    extra = 2;
+  }
+  else if (!(s & 0x08)) {
+    result = s & 0x07;
+    extra = 3;
+  }
+  else if (!(s & 0x04)) {
+    result = s & 0x03;
+    extra = 4;
+  }
+  else if ( ! (s & 0x02)) {
+    result = s & 0x01;
+    extra = 5;
+  }
+  else return -1;
+
+  if (extra > len) return -1;
+
+  while (extra--) {
+    result <<= 6;
+    s = *src++;
+    if ((s & 0xc0) != 0x80) return -1;
+
+    result |= s & 0x3f;
+  }
+  dst = result;
+  return src - src_orig;
+}
+
+//! \brief
+Boolean Text_3d::utf8_len(const unsigned char* utf8_str, size_t len,
+                          size_t& chars, size_t& max_char_width) const
+{
+  int n = 0;
+  Char32 max = 0;
+  while (len) {
+    Char32 c;
+    const std::ptrdiff_t clen = utf8_to_ucs4(utf8_str, c, len);
+    if (clen <= 0) return false;        // malformed UTF8 string
+    if (c > max) max = c;
+    utf8_str += clen;
+    len -= clen;
+    ++n;
+  }
+  chars = n;
+  if (max >= 0x10000) max_char_width = 4;
+  else if (max > 0x100) max_char_width = 2;
+  else max_char_width = 1;
+  return true;
+}
+
+//! \brief cleans the fixed-length encodings of the strings.
+void Text_3d::clean_ucs4_strings()
+{
+  m_ucs4_strings.clear();
+  m_ucs4_strings.resize(m_strings.size());
+  auto tit = m_ucs4_strings.begin();
+  for (auto it = m_strings.begin(); it != m_strings.end(); ++it, ++tit) {
+    const auto& str = *it;
+    auto& ucs4_str = *tit;
+
+    // Convert the characters from UTF-8 to UCS-4.
+    std::vector<unsigned char> utf8_str(str.begin(), str.end());
+    size_t num_chars = 0, max_char_width = 0;
+    const bool well_formed =
+      utf8_len(&utf8_str[0], utf8_str.size(), num_chars, max_char_width);
+    if (well_formed) {
+      ucs4_str.resize(num_chars);
+      auto utf8_it = utf8_str.begin();
+      std::vector<Char32>::iterator ucs4_it = ucs4_str.begin();
+      while (utf8_it != utf8_str.end()) {
+        const std::ptrdiff_t utf8_bytes =
+          utf8_to_ucs4(&*utf8_it, *ucs4_it, utf8_str.end() - utf8_it);
+        utf8_it += utf8_bytes;
+        ++ucs4_it;
+      }
+    }
+  }
+  m_dirty_ucs4_strings = false;
 }
 
 SGAL_END_NAMESPACE

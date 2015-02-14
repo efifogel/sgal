@@ -101,8 +101,7 @@ class SGAL_SGAL_DECL Fontconfig_initialization_error : public std::runtime_error
 {
 public:
   Fontconfig_initialization_error() :
-    std::runtime_error(std::string("Failed to initialize fontconfig library!"))
-  {}
+    std::runtime_error("Failed to initialize fontconfig library!") {}
 
   ~Fontconfig_initialization_error() SGAL_NOTHROW {}
 };
@@ -111,7 +110,7 @@ public:
 class SGAL_SGAL_DECL Fontconfig_error : public std::runtime_error {
 public:
   Fontconfig_error(FcResult result) :
-    std::runtime_error(std::string(s_fc_result_message[result])) {}
+    std::runtime_error(s_fc_result_message[result]) {}
 
   ~Fontconfig_error() SGAL_NOTHROW {}
 
@@ -127,7 +126,7 @@ const Char* Fontconfig_error::s_fc_result_message[] =
 class SGAL_SGAL_DECL FreeType_initialization_error : public std::runtime_error {
 public:
   FreeType_initialization_error() :
-    std::runtime_error(std::string("Failed to initialize FreeType library!")) {}
+    std::runtime_error("Failed to initialize FreeType library!") {}
 
   ~FreeType_initialization_error() SGAL_NOTHROW {}
 };
@@ -136,9 +135,18 @@ public:
 class SGAL_SGAL_DECL FreeType_termination_error : public std::runtime_error {
 public:
   FreeType_termination_error() :
-    std::runtime_error(std::string("Failed to terminate FreeType library!")) {}
+    std::runtime_error("Failed to terminate FreeType library!") {}
 
   ~FreeType_termination_error() SGAL_NOTHROW {}
+};
+
+/*! Class thrown when FreeType fails. */
+class SGAL_SGAL_DECL FreeType_error : public std::runtime_error {
+public:
+  FreeType_error(FT_Error error) :
+    std::runtime_error("FreeType failed to  library!!") {}
+
+  ~FreeType_error() SGAL_NOTHROW {}
 };
 
 //! \brief constructor
@@ -459,18 +467,10 @@ void Font_style::clean_face()
   SGAL_TRACE_MSG(Trace::FONT, "Font file name: " + file_name + "\n");
 
   FT_Error err =
-    FT_New_Face(m_ft_library, (Char*)(file_name.c_str()), 0, &m_ft_face);
-  if (err) {
-    std::cerr << "Failed to open input font file!" << std::endl;
-    throw;
-  }
+    FT_New_Face(m_ft_library, file_name.c_str(), face_index, &m_ft_face);
+  if (err) throw FreeType_error(err);
 
-  // Find driver and check format.
-  if (m_ft_face->driver != m_ft_driver) {
-    err = FT_Err_Invalid_File_Format;
-    std::cerr << "is not a TrueType font!" << std::endl;
-    throw;
-  }
+  SGAL_assertion(m_ft_face->driver == m_ft_driver);     // check format
 
   m_dirty_face = false;
 }
@@ -601,16 +601,13 @@ int Font_style::cubic_to(FT_Vector* control1, FT_Vector* control2,
 }
 
 //! \brief computes the outlines.
-void Font_style::compute_outlines(char c, Outlines& outlines)
+void Font_style::compute_outlines(Char32 c, Outlines& outlines)
 {
   if (m_dirty_face) clean_face();
 
   // Load glyph
-  FT_Error err =
-    FT_Load_Char(m_ft_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
-  if (err) {
-    std::cerr << "FT_Load_Glyph: error!" << std::endl;
-  }
+  auto err = FT_Load_Char(m_ft_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
+  if (err) throw(err);
 
   // FT_Get_Glyph(face->glyph, &glyph);
   FT_Outline outline = m_ft_face->glyph->outline;
@@ -640,16 +637,23 @@ void Font_style::compute_outlines(char c, Outlines& outlines)
 }
 
 //! \brief computes the glyph of a character.
-const Font_style::Triangulation& Font_style::compute_glyph(char c)
+const Font_style::Triangulation& Font_style::compute_glyph_geometry(Char32 c)
 {
   Outlines outlines;
   compute_outlines(c, outlines);
 
+  Uint glyph_index =
+#if defined(_WIN32)
+  FT_Get_Char_Index(m_ft_face, c);
+#else
+  FcFreeTypeCharIndex(m_ft_face, c);
+#endif
+
   // Compute the triangulations
-  auto it = m_triangulations.find(c);
+  auto it = m_triangulations.find(glyph_index);
   if (it != m_triangulations.end()) return it->second;
 
-  auto& tri = m_triangulations[c];
+  auto& tri = m_triangulations[glyph_index];
   Uint k(0);
   for (auto oit = outlines.begin(); oit != outlines.end(); ++oit) {
     const auto& outline = *oit;
@@ -660,8 +664,7 @@ const Font_style::Triangulation& Font_style::compute_glyph(char c)
 }
 
 //! \brief obtains the font file name.
-void Font_style::get_font_file_name(std::string& file_name,
-                                    FT_Long & face_index)
+void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
 {
 #if defined(_WIN32)
   LOGFONT lf;

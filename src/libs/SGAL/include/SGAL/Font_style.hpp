@@ -143,14 +143,20 @@ public:
    */
   void clean_face();
 
+  /*! UTF-32 (or UCS-4) stands for Unicode Transformation Format 32 bits. It is
+   * a protocol to encode Unicode characters that uses exactly 32 bits per
+   * Unicode code point.
+   */
+  typedef boost::mpl::if_c<sizeof(wchar_t) == 4, wchar_t, Int32>::type Char32;
+
   /*! Compute the outlines.
    */
-  void compute_outlines(char c, Outlines& outlines);
+  void compute_outlines(Char32 c, Outlines& outlines);
 
   /*! Compute the glyph of a character.
    * \param c (in) the character.
    */
-  const Triangulation& compute_glyph(char c);
+  const Triangulation& compute_glyph_geometry(Char32 c);
 
   /*! Draw the node while traversing the scene graph.
    */
@@ -415,7 +421,7 @@ private:
   /*! Font style names. */
   static const Char* s_style_names[];
 
-  typedef boost::unordered_map<char, Triangulation>     Triangulations;
+  typedef boost::unordered_map<Uint, Triangulation>     Triangulations;
 
   /*! A search structure of constrained triangulations. */
   Triangulations m_triangulations;
