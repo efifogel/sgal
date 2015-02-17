@@ -32,17 +32,13 @@ extern "C" {
 #include FT_FREETYPE_H
 }
 
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-
 #include "SGAL/basic.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Node.hpp"
 #include "SGAL/Action.hpp"
 #include "SGAL/Font_outliner.hpp"
-#include "SGAL/Inexact_kernel.hpp"
-#include "SGAL/Face_nesting_level.hpp"
+#include "SGAL/Vector2f.hpp"
+#include "SGAL/Text_geometry.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -79,18 +75,6 @@ public:
 
   typedef Font_outliner::Outline                        Outline;
   typedef Font_outliner::Outlines                       Outlines;
-
-  // Triangulation.
-  typedef Inexact_kernel                                                Kernel;
-  typedef CGAL::Triangulation_vertex_base_with_info_2<Uint, Kernel>     VB;
-  typedef CGAL::Triangulation_face_base_with_info_2<Face_nesting_level, Kernel>
-                                                                        FBI;
-  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, FBI>      FB;
-  typedef CGAL::Triangulation_data_structure_2<VB, FB>                  TDS;
-  typedef CGAL::No_intersection_tag                                     Itag;
-  // typedef CGAL::Exact_predicates_tag                                    Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
-    Triangulation;
 
   /*! Constructor from prototype.
    * \param proto (in) the prototype.
@@ -156,7 +140,7 @@ public:
   /*! Compute the glyph of a character.
    * \param c (in) the character.
    */
-  const Triangulation& compute_glyph_geometry(Char32 c);
+  const Glyph_geometry& compute_glyph_geometry(Char32 c);
 
   /*! Draw the node while traversing the scene graph.
    */
@@ -293,16 +277,19 @@ public:
    */
   void set_antialias(Boolean a);
 
-protected:
-  /*! Obtain the tag (type) of the container.
-   */
-  virtual const std::string& get_tag() const { return s_tag; }
-
   /*! Obtain the font file name.
    * \param file_name (out) the file name of the font.
    * \param face_index (out) the face index of the font.
    */
   void get_font_file_name(std::string& file_name, FT_Long& face_index);
+
+  /*! Calculate the line position. */
+  void calculate_line_position(std::size_t line_num, Vector2f& position) const;
+
+protected:
+  /*! Obtain the tag (type) of the container.
+   */
+  virtual const std::string& get_tag() const { return s_tag; }
 
   /*! The font name */
   std::string m_font_name;
@@ -421,10 +408,10 @@ private:
   /*! Font style names. */
   static const Char* s_style_names[];
 
-  typedef boost::unordered_map<Uint, Triangulation>     Triangulations;
+  typedef boost::unordered_map<Uint, Glyph_geometry>     Glyph_geometries;
 
   /*! A search structure of constrained triangulations. */
-  Triangulations m_triangulations;
+  Glyph_geometries m_glyph_geometries;
 
   /*! Indicates whether the font is accentuated. */
   Boolean m_bold;
@@ -450,7 +437,7 @@ private:
   /*! A handle to a given typographic face object. A face object models a
    * given typeface, in a given style.
    */
-  FT_Face m_ft_face;
+  FT_Face m_face;
 
   /*! Indicates that the face is dirty. */
   Boolean m_dirty_face;

@@ -35,6 +35,8 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Font_style.hpp"
+#include "SGAL/Trace.hpp"
+#include "SGAL/Bounding_box.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -52,7 +54,8 @@ Text_3d::Text_3d(Boolean proto) :
   Indexed_face_set(proto),
   m_max_extent(s_def_max_extent),
   m_depth(s_def_depth),
-  m_dirty_ucs4_strings(true)
+  m_dirty_ucs4_strings(true),
+  m_dirty_text_geometry(true)
 {}
 
 //! \brief destructor.
@@ -200,119 +203,130 @@ size_t Text_3d::create_quad(Uint a, Uint b, Uint c, Uint d, size_t k)
   return k;
 }
 
+//! \brief cleans the text geometry.
+void Text_3d::clean_text_geometry()
+{
+  size_t line_num(0);
+  m_text_geometry.resize(m_ucs4_strings.size());
+  auto lgit = m_text_geometry.begin();
+  for (auto lit = m_ucs4_strings.begin(); lit != m_ucs4_strings.end(); ++lit) {
+    const auto& line = *lit;
+    auto& line_geometry = *lgit++;
+    Vector2f position;
+    m_font_style->calculate_line_position(line_num, position);
+    line_geometry.set_line_position(position);
+    for (auto cit = line.begin(); cit != line.end(); ++cit) {
+      auto c = *cit;
+      SGAL_TRACE_MSG(Trace::FONT,
+                     "Character: " + std::string((const char*)(&c)) + "\n");
+      const auto& glyph_geom = m_font_style->compute_glyph_geometry(c);
+
+      line_geometry.push_back(&glyph_geom);
+      const auto& tri = glyph_geom.get_triangulation();
+      auto scale = glyph_geom.get_scale();
+      const auto& advance = glyph_geom.get_advance();
+      for (auto it = tri.finite_vertices_begin();
+           it != tri.finite_vertices_end(); ++it)
+      {
+        auto x = position[0] + static_cast<Float>(it->point().x()) * scale;
+        auto y = position[1] + static_cast<Float>(it->point().y()) * scale;
+        Bounding_box bbox(x, y, 0.0f, x, y, get_depth());
+        line_geometry.add_bbox(bbox);
+      }
+      position.add(advance);
+    }
+
+    Float scale = 1.0f;
+    Float length = (line_num < m_lengths.size()) ? m_lengths[line_num] : 0.0f;
+    if (0.0f < length) {
+      auto current_length = line_geometry.xmax() - line_geometry.xmin();
+      scale = length / current_length;
+    }
+    line_geometry.set_scale(scale);
+    m_text_geometry.add_bbox(line_geometry.get_bbox());
+    ++line_num;
+  }
+
+  Float scale = 1.0f;
+  auto max_extent = std::max(get_max_extent(), 0.0f);
+  if (0.0f < max_extent) {
+    auto current_max_extent = m_text_geometry.xmax() - m_text_geometry.xmin();
+    if (current_max_extent > max_extent) scale = max_extent / current_max_extent;
+  }
+  m_text_geometry.set_scale(scale);
+  m_dirty_text_geometry = false;
+}
+
 //! \brief cleans the coordinate array.
 void Text_3d::clean_coords()
 {
   // Compute the outlines
   if (!m_font_style) m_font_style = Shared_font_style(new Font_style());
   SGAL_assertion(m_font_style);
-
   if (m_dirty_ucs4_strings) clean_ucs4_strings();
+  if (m_dirty_text_geometry) clean_text_geometry();
 
-  // auto c = m_ucs4_strings.front().front();
-  // const auto& tri = m_font_style->compute_glyph_geometry(c);
-
-  ///////////////////////////
-  typedef std::list<const Font_style::Triangulation*>  Line_geometry;
-  std::vector<Line_geometry> line_geometrys(m_ucs4_strings.size());
-
-  auto lgit = line_geometrys.begin();
-  for (auto lit = m_ucs4_strings.begin(); lit != m_ucs4_strings.end(); ++lit) {
-    const auto& line = *lit;
-    auto& line_geometry = *lgit++;
-    auto line_num = std::distance(m_ucs4_strings.begin(), lit);
-    // Vector2f pen_start = get_pen_start_for_line(line_num,
-    //                                             size,
-    //                                             spacing,
-    //                                             horizontal,
-    //                                             leftToRight,
-    //                                             topToBottom);
-
-    // auto_ptr<line_geometry> line_geom(new line_geometry(horizontal,
-    //                                                     leftToRight,
-    //                                                     topToBottom,
-    //                                                     pen_start));
-    for (auto cit = line.begin(); cit != line.end(); ++cit) {
-      auto c = *cit;
-      const auto& tri = m_font_style->compute_glyph_geometry(c);
-      line_geometry.push_back(&tri);
-
-      // const auto* glyphGeometry = 0;
-      // auto pos = this->glyph_geometry_map.find(glyphIndex);
-      // if (pos != this->glyph_geometry_map.end()) glyphGeometry = &pos->second;
-      // else {
-      //   glyph_geometry_map_t::value_type
-      //     value(glyphIndex, glyph_geometry(this->face, glyphIndex, size));
-      //   const auto result = this->glyph_geometry_map.insert(value);
-      //   assert(result.second);
-      //   glyphGeometry = &result.first->second;
-      // }
-      // assert(glyphGeometry);
-      // line_geom->add(*glyphGeometry);
-    }
-
-    // Scale to length.
-    // auto length = (line_num < m_lengths.size()) ? m_lengths[line_num] : 0.0f;
-    // if (length > 0.0f) line_geom->scale(length);
-
-    // lines.push_back(line_geom);
-  }
-
-  // auto max_extent = std::max(get_max_extent(), 0.0f);
-
-  ///////////////////////////
-
-  // Compute the number of coordinates
+  // Compute the number of coordinates and the bounding box
   Uint size(0);
-  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+  for (auto tit = m_text_geometry.begin(); tit != m_text_geometry.end(); ++tit) {
     const auto& line_geometry = *tit;
     for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
-      const auto* tri = *lit;
-      size += tri->number_of_vertices();
+      const auto* glyph_geom = *lit;
+      const auto& tri = glyph_geom->get_triangulation();
+      size += tri.number_of_vertices();
     }
   }
+  // SGAL_TRACE_MSG(Trace::FONT,
+  //                "Glyph scale: " + std::to_string(glyph_scale) + "\n");
 
   // Resize the coordinate array
   if (!m_coord_array) m_coord_array.reset(new Coord_array_3d);
   auto coords = boost::static_pointer_cast<Coord_array_3d>(m_coord_array);
   SGAL_assertion(coords);
   coords->resize(size + size);          // back and front
-  std::cout << "# coords: " << coords->size() << std::endl;
 
   // Assign the coordinate array
-  Float ttt(0.0f);
   Uint k(0);
-  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+  auto text_scale = m_text_geometry.get_scale();
+  for (auto tit = m_text_geometry.begin(); tit != m_text_geometry.end(); ++tit)
+  {
     const auto& line_geometry = *tit;
+    auto position = line_geometry.get_line_position();
+    auto line_scale = line_geometry.get_scale();
     for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
-      const auto* tri = *lit;
-      size = tri->number_of_vertices();
-      for (auto it = tri->finite_vertices_begin();
-           it != tri->finite_vertices_end(); ++it)
+      const auto* glyph_geom = *lit;
+      const auto& tri = glyph_geom->get_triangulation();
+      auto scale = glyph_geom->get_scale() * line_scale * text_scale;
+      const auto& advance = glyph_geom->get_advance();
+      size = tri.number_of_vertices();
+      for (auto it = tri.finite_vertices_begin();
+           it != tri.finite_vertices_end(); ++it)
       {
-        auto x = static_cast<Float>(CGAL::to_double(it->point().x()));
-        auto y = static_cast<Float>(CGAL::to_double(it->point().y()));
-        (*coords)[k].set(x+ttt, y, 0);
-        (*coords)[k+size].set(x+ttt, y, m_depth);
+        auto x = static_cast<Float>(it->point().x()) * scale;
+        auto y = static_cast<Float>(it->point().y()) * scale;
+        (*coords)[k].set(position[0]+x, position[1]+y, 0);
+        (*coords)[k+size].set(position[0]+x, position[1]+y, m_depth);
         ++k;
       }
-      ttt += 1000;
+      position.add(advance);
       k += size;
     }
   }
 
   // Calculate the number of primitives
   Uint num_primitives = 0;
-  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+  for (auto tit = m_text_geometry.begin(); tit != m_text_geometry.end(); ++tit)
+  {
     const auto& line_geometry = *tit;
     for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
-      const auto* tri = *lit;
-      for (auto it = tri->finite_faces_begin();
-           it != tri->finite_faces_end(); ++it)
+      const auto* glyph_geom = *lit;
+      const auto& tri = glyph_geom->get_triangulation();
+      for (auto it = tri.finite_faces_begin();
+           it != tri.finite_faces_end(); ++it)
         if (it->info().in_domain()) num_primitives += 2;
 
-      for (auto it = tri->finite_edges_begin();
-           it != tri->finite_edges_end(); ++it)
+      for (auto it = tri.finite_edges_begin(); it != tri.finite_edges_end();
+           ++it)
       {
         auto f1 = it->first;
         auto f2 = f1->neighbor(it->second);
@@ -325,16 +339,17 @@ void Text_3d::clean_coords()
 
   // Compute the indices
   m_flat_coord_indices.resize(num_primitives * 3);
-  std::cout << "# indices: " << m_flat_coord_indices.size() << std::endl;
   size_t i(0);
   Uint base(0);
-  for (auto tit = line_geometrys.begin(); tit != line_geometrys.end(); ++tit) {
+  for (auto tit = m_text_geometry.begin(); tit != m_text_geometry.end(); ++tit)
+  {
     const auto& line_geometry = *tit;
     for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
-      const auto* tri = *lit;
-      size = tri->number_of_vertices();
+      const auto* glyph_geom = *lit;
+      const auto& tri = glyph_geom->get_triangulation();
+      size = tri.number_of_vertices();
       // Set the front indices
-      for (auto it = tri->finite_faces_begin(); it != tri->finite_faces_end();
+      for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end();
            ++it)
       {
         if (! it->info().in_domain()) continue;
@@ -343,7 +358,7 @@ void Text_3d::clean_coords()
         m_flat_coord_indices[i++] = it->vertex(0)->info() + base;
       }
       // Set the back indices
-      for (auto it = tri->finite_faces_begin(); it != tri->finite_faces_end();
+      for (auto it = tri.finite_faces_begin(); it != tri.finite_faces_end();
            ++it)
       {
         if (! it->info().in_domain()) continue;
@@ -353,7 +368,7 @@ void Text_3d::clean_coords()
       }
 
       // Set the side indices
-      for (auto it = tri->finite_edges_begin(); it != tri->finite_edges_end();
+      for (auto it = tri.finite_edges_begin(); it != tri.finite_edges_end();
            ++it)
       {
         auto f1 = it->first;

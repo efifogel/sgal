@@ -27,6 +27,7 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Indexed_face_set.hpp"
+#include "SGAL/Text_geometry.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -231,6 +232,9 @@ private:
   /*! Clean the fixed-length encodings of the strings. */
   void clean_ucs4_strings();
 
+  /*! Clean the text geometry. */
+  void clean_text_geometry();
+
   Boolean utf8_len(const unsigned char* utf8_str, size_t len, size_t& chars,
                    size_t& max_char_width) const;
 
@@ -240,8 +244,14 @@ private:
   /*! The fixed-length encodings of the strings. */
   Ucs4_string m_ucs4_strings;
 
-  /*! Indicates that the fixed-length encoding tring is dirty. */
+  /*! Indicates that the fixed-length encoding string is dirty. */
   Boolean m_dirty_ucs4_strings;
+
+  /*! The text geometry. */
+  Text_geometry m_text_geometry;
+
+  /*! Indicates that the geometry of the text is dirty. */
+  Boolean m_dirty_text_geometry;
 
   /*! The tag that identifies this container type. */
   static const std::string s_tag;

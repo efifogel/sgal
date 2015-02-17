@@ -63,7 +63,6 @@ extern "C" {
 #include "SGAL/Texture_font.hpp"
 #include "SGAL/Imagemagick_font.hpp"
 #include "SGAL/Font_outliner.hpp"
-#include "SGAL/construct_triangulation.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -164,7 +163,7 @@ Font_style::Font_style(Boolean proto) :
   m_dirty(true),
   m_font(nullptr),
   m_dirty_face(true),
-  m_ft_face(nullptr)
+  m_face(nullptr)
 {
   if (proto) return;
 
@@ -191,7 +190,7 @@ Font_style::~Font_style()
     delete m_font;
     m_font = nullptr;
   }
-  FT_Done_Face(m_ft_face);
+  FT_Done_Face(m_face);
   auto failure = FT_Done_FreeType(m_ft_library);
   if (failure) throw FreeType_termination_error();
 
@@ -232,7 +231,7 @@ void Font_style::on_field_change(const Field_info* /* field_info */)
   set_rendering_required();
 
   m_dirty_face = true;
-  m_triangulations.clear();
+  m_glyph_geometries.clear();
 }
 
 //! \breif initializes the prototype.
@@ -466,11 +465,10 @@ void Font_style::clean_face()
   if (file_name.empty()) return;
   SGAL_TRACE_MSG(Trace::FONT, "Font file name: " + file_name + "\n");
 
-  FT_Error err =
-    FT_New_Face(m_ft_library, file_name.c_str(), face_index, &m_ft_face);
+  auto err = FT_New_Face(m_ft_library, file_name.c_str(), face_index, &m_face);
   if (err) throw FreeType_error(err);
 
-  SGAL_assertion(m_ft_face->driver == m_ft_driver);     // check format
+  SGAL_assertion(m_face->driver == m_ft_driver);     // check format
 
   m_dirty_face = false;
 }
@@ -603,16 +601,10 @@ int Font_style::cubic_to(FT_Vector* control1, FT_Vector* control2,
 //! \brief computes the outlines.
 void Font_style::compute_outlines(Char32 c, Outlines& outlines)
 {
-  if (m_dirty_face) clean_face();
-
-  // Load glyph
-  auto err = FT_Load_Char(m_ft_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
-  if (err) throw(err);
-
   // FT_Get_Glyph(face->glyph, &glyph);
-  FT_Outline outline = m_ft_face->glyph->outline;
+  FT_Outline outline = m_face->glyph->outline;
 
-  if (m_ft_face->glyph->format != ft_glyph_format_outline) {
+  if (m_face->glyph->format != ft_glyph_format_outline) {
     std::cerr << "Not an outline font!" << std::endl;
   }
 
@@ -625,7 +617,7 @@ void Font_style::compute_outlines(Char32 c, Outlines& outlines)
   funcs.cubic_to = (FT_Outline_CubicTo_Func)&cubic_to;
   // trace outline of the glyph
   Font_outliner outliner(outlines);
-  err = FT_Outline_Decompose(&outline, &funcs, &outliner);
+  auto err = FT_Outline_Decompose(&outline, &funcs, &outliner);
   if (err) {
     std::cerr << "Failed to decompose!" << std::endl;
     throw;
@@ -637,30 +629,48 @@ void Font_style::compute_outlines(Char32 c, Outlines& outlines)
 }
 
 //! \brief computes the glyph of a character.
-const Font_style::Triangulation& Font_style::compute_glyph_geometry(Char32 c)
+const Glyph_geometry& Font_style::compute_glyph_geometry(Char32 c)
 {
-  Outlines outlines;
-  compute_outlines(c, outlines);
+  if (m_dirty_face) clean_face();
 
   Uint glyph_index =
 #if defined(_WIN32)
-  FT_Get_Char_Index(m_ft_face, c);
+    FT_Get_Char_Index(m_face, c);
 #else
-  FcFreeTypeCharIndex(m_ft_face, c);
+    FcFreeTypeCharIndex(m_face, c);
 #endif
 
-  // Compute the triangulations
-  auto it = m_triangulations.find(glyph_index);
-  if (it != m_triangulations.end()) return it->second;
+  // Load glyph
+  auto err = FT_Load_Char(m_face, c, FT_LOAD_NO_BITMAP | FT_LOAD_NO_SCALE);
+  if (err) throw(err);
 
-  auto& tri = m_triangulations[glyph_index];
+  Float glyph_scale =
+    (m_face->bbox.yMax > 0.0) ? get_size() / m_face->bbox.yMax : get_size();
+
+  Float x = FT_HAS_HORIZONTAL(m_face) ?
+    m_face->glyph->metrics.horiAdvance * glyph_scale : 0.0f;
+  Float y = FT_HAS_VERTICAL(m_face) ?
+    m_face->glyph->metrics.vertAdvance * glyph_scale : 0.0f;
+
+  Outlines outlines;
+  compute_outlines(c, outlines);
+
+  // Compute the triangulations
+  auto it = m_glyph_geometries.find(glyph_index);
+  if (it != m_glyph_geometries.end()) return it->second;
+
+  auto& glyph_geom = m_glyph_geometries[glyph_index];
   Uint k(0);
   for (auto oit = outlines.begin(); oit != outlines.end(); ++oit) {
     const auto& outline = *oit;
-    k = construct_triangulation(tri, outline.begin(), outline.end(), k);
+    auto& tri = glyph_geom.get_triangulation();
+    k = glyph_geom.construct_triangulation(outline.begin(), outline.end(), k);
   }
-  mark_domains(tri);  // mark facets that are inside the domain
-  return tri;
+  // Mark facets that are inside the domain
+  glyph_geom.mark_domains();
+  glyph_geom.set_scale(glyph_scale);
+  glyph_geom.set_advance(x, y);
+  return glyph_geom;
 }
 
 //! \brief obtains the font file name.
@@ -826,6 +836,16 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
   if (result != FcResultMatch) { throw Fontconfig_error(result); }
   face_index = FT_Long(face_index_int);
 # endif
+}
+
+//! \brief calculates the line position.
+void Font_style::calculate_line_position(std::size_t line_num,
+                                         Vector2f& position) const
+{
+  Float line_advance = m_size * m_spacing * line_num;
+  if (m_horizontal)
+    position[1] = (m_top_to_bottom) ? -line_advance : line_advance;
+  else position[0] = (m_left_to_right) ? line_advance : -line_advance;
 }
 
 SGAL_END_NAMESPACE
