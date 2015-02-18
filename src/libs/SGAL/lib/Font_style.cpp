@@ -78,6 +78,8 @@ const Boolean Font_style::s_def_horizontal(true);
 const Uint_array Font_style::s_def_justify =
   boost::assign::list_of(static_cast<Uint>(JUSTIFY_BEGIN))
   (static_cast<Uint>(JUSTIFY_FIRST));
+const String_array Font_style::s_def_justify_str =
+  boost::assign::list_of("BEGIN")("FIRST");
 const std::string Font_style::s_def_language("");
 const Boolean Font_style::s_def_left_to_right(true);
 const Float Font_style::s_def_size(1.0f);
@@ -154,6 +156,7 @@ Font_style::Font_style(Boolean proto) :
   m_families(s_def_families),
   m_horizontal(s_def_horizontal),
   m_justify(s_def_justify),
+  m_justify_str(s_def_justify_str),
   m_language(s_def_language),
   m_left_to_right(s_def_left_to_right),
   m_size(s_def_size),
@@ -261,10 +264,18 @@ void Font_style::init_prototype()
   // justify
   auto justify_func =
     static_cast<Uint_array_handle_function>(&Font_style::justify_handle);
-  s_prototype->add_field_info(new MF_uint(JUSTIFY, "justify",
+  s_prototype->add_field_info(new MF_uint(JUSTIFY, "justifyCode",
                                           RULE_EXPOSED_FIELD,
                                           justify_func,
                                           exec_func));
+
+  // justify string
+  auto justify_str_func =
+    static_cast<String_array_handle_function>(&Font_style::justify_str_handle);
+  s_prototype->add_field_info(new MF_string(JUSTIFY_STR, "justify",
+                                            RULE_EXPOSED_FIELD,
+                                            justify_str_func,
+                                            exec_func));
 
   // language
   auto language_func =
@@ -352,10 +363,45 @@ void Font_style::set_attributes(Element* elem)
       continue;
     }
     if (name == "justify") {
+      m_justify_str.clear();
+      auto start = value.find_first_of('\"');
+      while (start != std::string::npos) {
+        ++start;
+        auto end = value.find_first_of('\"', start);
+        if (end == std::string::npos) break;
+        m_justify_str.push_back(value.substr(start, end-start));
+        ++end;
+        if (end == value.size()) break;
+        start = value.find_first_of('\"', end);
+      }
+      // Reflect in the code
+      m_justify.clear();
+      for (auto it = m_justify_str.begin(); it != m_justify_str.end(); ++it) {
+        if (*it == "BEGIN") m_justify.push_back(JUSTIFY_BEGIN);
+        else if (*it == "FIRST") m_justify.push_back(JUSTIFY_FIRST);
+        else if (*it == "MIDDLE") m_justify.push_back(JUSTIFY_MIDDLE);
+        else if (*it == "END") m_justify.push_back(JUSTIFY_END);
+        else SGAL_error(); //! \todo throw---user error
+      }
+      elem->mark_delete(ai);
+      continue;
+    }
+    if (name == "justifyCode") {
       Uint num_values = get_num_tokens(value);
       m_justify.resize(num_values);
       std::istringstream svalue(value, std::istringstream::in);
       for (Uint i = 0; i < num_values; ++i) svalue >> m_justify[i];
+      // Reflect in the strings
+      m_justify_str.clear();
+      for (auto it = m_justify.begin(); it != m_justify.end(); ++it) {
+        switch (m_justify[*it]) {
+         case JUSTIFY_BEGIN: m_justify_str.push_back("BEGIN"); break;
+         case JUSTIFY_FIRST: m_justify_str.push_back("FIRST"); break;
+         case JUSTIFY_MIDDLE: m_justify_str.push_back("MIDDLE"); break;
+         case JUSTIFY_END: m_justify_str.push_back("END"); break;
+         default: SGAL_error(); break;
+        }
+      }
       elem->mark_delete(ai);
       continue;
     }
@@ -647,11 +693,6 @@ const Glyph_geometry& Font_style::compute_glyph_geometry(Char32 c)
   Float glyph_scale =
     (m_face->bbox.yMax > 0.0) ? get_size() / m_face->bbox.yMax : get_size();
 
-  Float x = FT_HAS_HORIZONTAL(m_face) ?
-    m_face->glyph->metrics.horiAdvance * glyph_scale : 0.0f;
-  Float y = FT_HAS_VERTICAL(m_face) ?
-    m_face->glyph->metrics.vertAdvance * glyph_scale : 0.0f;
-
   Outlines outlines;
   compute_outlines(c, outlines);
 
@@ -669,6 +710,8 @@ const Glyph_geometry& Font_style::compute_glyph_geometry(Char32 c)
   // Mark facets that are inside the domain
   glyph_geom.mark_domains();
   glyph_geom.set_scale(glyph_scale);
+  Float x = m_face->glyph->metrics.horiAdvance;
+  Float y = m_face->glyph->metrics.vertAdvance;
   glyph_geom.set_advance(x, y);
   return glyph_geom;
 }
@@ -836,16 +879,6 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
   if (result != FcResultMatch) { throw Fontconfig_error(result); }
   face_index = FT_Long(face_index_int);
 # endif
-}
-
-//! \brief calculates the line position.
-void Font_style::calculate_line_position(std::size_t line_num,
-                                         Vector2f& position) const
-{
-  Float line_advance = m_size * m_spacing * line_num;
-  if (m_horizontal)
-    position[1] = (m_top_to_bottom) ? -line_advance : line_advance;
-  else position[0] = (m_left_to_right) ? line_advance : -line_advance;
 }
 
 SGAL_END_NAMESPACE

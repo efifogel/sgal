@@ -36,7 +36,6 @@
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Font_style.hpp"
 #include "SGAL/Trace.hpp"
-#include "SGAL/Bounding_box.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -206,51 +205,63 @@ size_t Text_3d::create_quad(Uint a, Uint b, Uint c, Uint d, size_t k)
 //! \brief cleans the text geometry.
 void Text_3d::clean_text_geometry()
 {
+  auto horizontal = m_font_style->is_horizontal();
+  auto left_to_right = m_font_style->is_left_to_right();
+  auto top_to_bottom = m_font_style->is_top_to_bottom();
+  auto minor_advance = m_font_style->get_size() * m_font_style->get_spacing();
+
+  Float text_width = 0.0f;
+  Float text_height = 0.0f;
+
   size_t line_num(0);
   m_text_geometry.resize(m_ucs4_strings.size());
   auto lgit = m_text_geometry.begin();
   for (auto lit = m_ucs4_strings.begin(); lit != m_ucs4_strings.end(); ++lit) {
     const auto& line = *lit;
     auto& line_geometry = *lgit++;
-    Vector2f position;
-    m_font_style->calculate_line_position(line_num, position);
-    line_geometry.set_line_position(position);
+
+    Float line_width = 0.0f;
+    Float line_height = 0.0f;
+    if (horizontal) line_height = minor_advance;
+    else line_width = minor_advance;
+
     for (auto cit = line.begin(); cit != line.end(); ++cit) {
       auto c = *cit;
       SGAL_TRACE_MSG(Trace::FONT,
                      "Character: " + std::string((const char*)(&c)) + "\n");
       const auto& glyph_geom = m_font_style->compute_glyph_geometry(c);
-
       line_geometry.push_back(&glyph_geom);
       const auto& tri = glyph_geom.get_triangulation();
       auto scale = glyph_geom.get_scale();
-      const auto& advance = glyph_geom.get_advance();
-      for (auto it = tri.finite_vertices_begin();
-           it != tri.finite_vertices_end(); ++it)
-      {
-        auto x = position[0] + static_cast<Float>(it->point().x()) * scale;
-        auto y = position[1] + static_cast<Float>(it->point().y()) * scale;
-        Bounding_box bbox(x, y, 0.0f, x, y, get_depth());
-        line_geometry.add_bbox(bbox);
-      }
-      position.add(advance);
+      auto advance = glyph_geom.get_advance();
+      advance.scale(scale);
+      if (horizontal) line_width += advance[0];
+      else line_height += advance[1];
     }
+    line_geometry.set_width(line_width);
+    line_geometry.set_height(line_height);
 
     Float scale = 1.0f;
     Float length = (line_num < m_lengths.size()) ? m_lengths[line_num] : 0.0f;
     if (0.0f < length) {
-      auto current_length = line_geometry.xmax() - line_geometry.xmin();
+      auto current_length = (horizontal) ? line_width : line_height;
       scale = length / current_length;
     }
     line_geometry.set_scale(scale);
-    m_text_geometry.add_bbox(line_geometry.get_bbox());
+    if (horizontal) text_width += line_width;
+    else text_height += line_height;
     ++line_num;
   }
+  auto num_lines = m_text_geometry.size();
+  if (horizontal) text_height = minor_advance * num_lines;
+  else text_width = minor_advance * num_lines;
+  m_text_geometry.set_width(text_width);
+  m_text_geometry.set_height(text_height);
 
   Float scale = 1.0f;
   auto max_extent = std::max(get_max_extent(), 0.0f);
   if (0.0f < max_extent) {
-    auto current_max_extent = m_text_geometry.xmax() - m_text_geometry.xmin();
+    auto current_max_extent = (horizontal) ? text_width : text_height;
     if (current_max_extent > max_extent) scale = max_extent / current_max_extent;
   }
   m_text_geometry.set_scale(scale);
@@ -286,31 +297,98 @@ void Text_3d::clean_coords()
   coords->resize(size + size);          // back and front
 
   // Assign the coordinate array
+  // There are 3 scale factors, namely text_scale, line_scale, and glyph_scale,
+  // where text_scale scales line_scale, and line_scale scales glyph_scale.
+
+  auto justify = m_font_style->get_justify();
+  auto horizontal = m_font_style->is_horizontal();
+  auto left_to_right = m_font_style->is_left_to_right();
+  auto top_to_bottom = m_font_style->is_top_to_bottom();
+  auto minor_advance = m_font_style->get_size() * m_font_style->get_spacing();
+  auto num_lines = m_text_geometry.size();
+
+  size_t line_num(0);
   Uint k(0);
   auto text_scale = m_text_geometry.get_scale();
+  auto text_width = m_text_geometry.get_width();
+  auto text_height = m_text_geometry.get_height();
   for (auto tit = m_text_geometry.begin(); tit != m_text_geometry.end(); ++tit)
   {
     const auto& line_geometry = *tit;
-    auto position = line_geometry.get_line_position();
-    auto line_scale = line_geometry.get_scale();
+    auto scale = line_geometry.get_scale() * text_scale;
+    Float line_advance = minor_advance * line_num;
+
+    auto line_width = line_geometry.get_width();
+    auto line_height = line_geometry.get_height();
+
+    Vector2f line_position;
+    if (horizontal) {
+      if (justify[0] == Font_style::JUSTIFY_MIDDLE)
+        line_position[0] =
+          (left_to_right) ? -line_width * 0.5f : line_width * 0.5f;
+      else if (justify[0] == Font_style::JUSTIFY_END)
+        line_position[0] = (left_to_right) ? -line_width : line_width;
+
+      line_position[1] = (top_to_bottom) ? -line_advance : line_advance;
+      if (justify[1] == Font_style::JUSTIFY_BEGIN)
+        line_position[1] += (top_to_bottom) ?
+          -minor_advance : 0.0f;
+      else if (justify[1] == Font_style::JUSTIFY_MIDDLE)
+        line_position[1] += (top_to_bottom) ?
+          text_height * 0.5f - minor_advance : -text_height * 0.5f ;
+      else if (justify[1] == Font_style::JUSTIFY_END)
+        line_position[1] += (top_to_bottom) ?
+          text_height - minor_advance: -text_height;
+    }
+    else {
+      line_position[0] =
+        (left_to_right) ? line_advance : -line_advance - minor_advance;
+      if (justify[1] == Font_style::JUSTIFY_MIDDLE)
+        line_position[0] -=
+          (left_to_right) ? text_width * 0.5f : -text_width * 0.5f;
+      else if (justify[1] == Font_style::JUSTIFY_END)
+        line_position[0] -= (left_to_right) ? text_width : -text_width;
+
+      if (justify[0] == Font_style::JUSTIFY_MIDDLE)
+        line_position[1] =
+          (top_to_bottom) ? line_height * 0.5f : -line_height * 0.5f ;
+      else if (justify[0] == Font_style::JUSTIFY_END)
+        line_position[1] = (top_to_bottom) ? line_height : -line_height;
+    }
     for (auto lit = line_geometry.begin(); lit != line_geometry.end(); ++lit) {
       const auto* glyph_geom = *lit;
       const auto& tri = glyph_geom->get_triangulation();
-      auto scale = glyph_geom->get_scale() * line_scale * text_scale;
-      const auto& advance = glyph_geom->get_advance();
+      auto glyph_scale = glyph_geom->get_scale();
+      auto advance = glyph_geom->get_advance();
+      advance.scale(glyph_scale);
+      if (horizontal) {
+        if (!left_to_right) line_position[0] -= advance[0];
+      }
+      else {
+        if (top_to_bottom) line_position[1] -= advance[1];
+      }
       size = tri.number_of_vertices();
       for (auto it = tri.finite_vertices_begin();
            it != tri.finite_vertices_end(); ++it)
       {
-        auto x = static_cast<Float>(it->point().x()) * scale;
-        auto y = static_cast<Float>(it->point().y()) * scale;
-        (*coords)[k].set(position[0]+x, position[1]+y, 0);
-        (*coords)[k+size].set(position[0]+x, position[1]+y, m_depth);
+        auto x_glyph = static_cast<Float>(it->point().x()) * glyph_scale;
+        auto y_glyph = static_cast<Float>(it->point().y()) * glyph_scale;
+        auto x = (line_position[0] + x_glyph) * scale;
+        auto y = (line_position[1] + y_glyph) * scale;
+        (*coords)[k].set(x, y, 0);
+        (*coords)[k+size].set(x, y, m_depth);
         ++k;
       }
-      position.add(advance);
+      if (horizontal) {
+        if (left_to_right) line_position[0] += advance[0];
+      }
+      else {
+        if (!top_to_bottom) line_position[1] += advance[1];
+      }
       k += size;
     }
+
+    ++line_num;
   }
 
   // Calculate the number of primitives

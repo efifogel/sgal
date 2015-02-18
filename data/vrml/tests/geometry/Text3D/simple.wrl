@@ -3,17 +3,49 @@ Configuration {
   accumulation Accumulation { enabled TRUE }
 }
 ColorBackground {
-  color 0.5 0.5 0.5 0
+  color 1 1 1 0
+}
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "text3d"
 }
 NavigationInfo { type "EXAMINE" }
 DEF TRANSFORM Transform {
   children [
     Shape {
       geometry Text3D {
-	string ["Doron" "Efi"]
+	string ["Read" "some text" "today!"]
 	fontStyle FontStyle {
-	  justify ["MIDDLE", "MIDDLE"]
-	  family "Verdana"
+	  horizontal FALSE
+	  leftToRight FALSE
+	  # topToBottom FALSE
+
+	  # justify ["BEGIN" "BEGIN"]
+	  # justify ["FIRST" "BEGIN"]
+	  # justify ["MIDDLE" "BEGIN"]
+	  # justify ["END" "BEGIN"]
+
+	  # justify ["BEGIN" "FIRST"]
+	  # justify ["FIRST" "FIRST"]
+	  # justify ["MIDDLE" "FIRST"]
+	  # justify ["END" "FIRST"]
+
+	  # justify ["BEGIN" "MIDDLE"]
+	  # justify ["FIRST" "MIDDLE"]
+	  justify ["MIDDLE" "MIDDLE"]
+	  # justify ["END" "MIDDLE"]
+
+	  # justify ["BEGIN" "END"]
+	  # justify ["FIRST" "END"]
+	  # justify ["MIDDLE" "END"]
+	  # justify ["END" "END"]
+
+	  family "Arial"
 	  # family "Verdana"
 	  # style "BOLD"
 	  size 4
@@ -95,3 +127,4 @@ DEF TIMER TimeSensor {
 }
 # ROUTE TIMER.fraction_changed TO INTERPOLATOR.set_fraction
 # ROUTE INTERPOLATOR.value_changed TO TRANSFORM.rotation
+ROUTE SNAP_KEY.state TO SNAP.trigger

@@ -28,7 +28,6 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Vector2f.hpp"
-#include "SGAL/Bounding_box.hpp"
 #include "SGAL/Inexact_kernel.hpp"
 #include "SGAL/Face_nesting_level.hpp"
 #include "SGAL/construct_triangulation.hpp"
@@ -52,34 +51,62 @@ public:
   typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>
     Triangulation;
 
-  void set_triangulation(const Triangulation& triangulation)
-  { m_triangulation = triangulation; }
+  /*! Set the triangulation of the glyph geometry.
+   * \param[in] triangulation the new triangulation.
+   */
+  void set_triangulation(const Triangulation& triangulation);
 
-  const Triangulation& get_triangulation() const { return m_triangulation; }
+  /*! Obtain the (const) triangulation of the glyph geometry.
+   * \param[in] triangulation the new triangulation.
+   */
+  const Triangulation& get_triangulation() const;
 
-  Triangulation& get_triangulation() { return m_triangulation; }
+  /*! Obtain the (non-const) triangulation of the glyph geometry.
+   * \return the triangulation.
+   */
+  Triangulation& get_triangulation();
 
   template <typename InputIterator>
-  Uint construct_triangulation(InputIterator begin, InputIterator end, Uint k)
-  { return SGAL::construct_triangulation(m_triangulation, begin, end, k); }
+  Uint construct_triangulation(InputIterator begin, InputIterator end, Uint k);
 
-  void mark_domains() { SGAL::mark_domains(m_triangulation); }
+  void mark_domains();
 
-  void set_scale(Float scale) { m_scale = scale; }
+  /*! Set the scale factor of the glyph geometry.
+   * \param[in] scale the new scale factor.
+   */
+  void set_scale(Float scale);
 
-  Float get_scale() const { return m_scale; }
+  /*! Obtain the scale factor of the glyph geometry.
+   * \return the new scale factor.
+   */
+  Float get_scale() const;
 
-  void set_advance(const Vector2f& advance) { m_advance = advance; }
+  /*! Set the 2D vector used to advance the glyph geometry.
+   * \param[in] advance the new 2D used to advance the glyph geometry.
+   */
+  void set_advance(const Vector2f& advance);
 
-  void set_advance(Float x, Float y) { m_advance.set(x, y); }
+  /*! Set the x- and y-coordinates used to advance the glyph geometry.
+   * \param[in] x the new x-coordinate used to advance the glyph geometry
+   *              along the x-axis.
+   * \param[in] y the new y-coordinate used to advance the glyph geometry
+   *              along the y-axis.
+   */
+  void set_advance(Float x, Float y);
 
-  const Vector2f& get_advance() const { return m_advance; }
+  /*! Obtain the 2D vector used to advance the glyph geometry.
+   * \return the 2D vector used to advance the glyph geometry.
+   */
+  const Vector2f& get_advance() const;
 
 private:
+  /*! The triangulation of the glyph geometry. */
   Triangulation m_triangulation;
 
+  /*! The scale factor of the glyph geometry. */
   Float m_scale;
 
+  /*! The 2D vector used to advance the glyph geometry. */
   Vector2f m_advance;
 };
 
@@ -88,54 +115,88 @@ public:
   /*! Construct default. */
   Line_geometry();
 
-  std::list<const Glyph_geometry*>::iterator begin()
-  { return m_glyph_geometries.begin(); }
+  /*! Obtain the begin (non-const) iterator of the glyph geometries.
+   * \return the begin (non-const) iterator of the glyph geometries.
+   */
+  std::list<const Glyph_geometry*>::iterator begin();
 
-  std::list<const Glyph_geometry*>::iterator end()
-  { return m_glyph_geometries.end(); }
+  /*! Obtain the pass-the-end (non-const) iterator of the glyph geometries.
+   * \return the pass-the-end (non-const) iterator of the glyph geometries.
+   */
+  std::list<const Glyph_geometry*>::iterator end();
 
-  std::list<const Glyph_geometry*>::const_iterator begin() const
-  { return m_glyph_geometries.begin(); }
+  /*! Obtain the begin (const) iterator of the glyph geometries.
+   * \return the begin (const) iterator of the glyph geometries.
+   */
+  std::list<const Glyph_geometry*>::const_iterator begin() const;
 
-  std::list<const Glyph_geometry*>::const_iterator end() const
-  { return m_glyph_geometries.end(); }
+  /*! Obtain the pass-the-end (const) iterator of the glyph geometries.
+   * \return the pass-the-end (const) iterator of the glyph geometries.
+   */
+  std::list<const Glyph_geometry*>::const_iterator end() const;
 
-  void push_back(const Glyph_geometry* glyph_geometry)
-  { m_glyph_geometries.push_back(glyph_geometry); }
+  /*! Push a glyph geometry to the glyph geometries at the back.
+   * \param[in] glyph_geometry the glyph geometry to push.
+   */
+  void push_back(const Glyph_geometry* glyph_geometry);
 
-  void set_line_position(const Vector2f& position)
-  {  m_line_position = position; }
+  /*! Set the scale factor of the line geometry.
+   * \param[in] scale the new scale factor.
+   */
+  void set_scale(Float scale);
 
-  const Vector2f& get_line_position() const { return m_line_position; }
+  /*! Obtain the scale factor of the line geometry.
+   * \return the new scale factor.
+   */
+  Float get_scale() const;
 
-  void add_bbox(const Bounding_box& bbox) { m_bbox += bbox; }
+  /*! Set the width of the line geometry.
+   * \param[in] width the new width.
+   */
+  void set_width(Float width);
 
-  const Bounding_box& get_bbox() const { return m_bbox; }
+  /*! Obtain the width of the line geometry.
+   * \return the current width.
+   */
+  Float get_width() const;
 
-  Float xmin() const;
-  Float ymin() const;
-  Float xmax() const;
-  Float ymax() const;
+  /*! Set height of the line geometry.
+   * \param[i] height the new height.
+   */
+  void set_height(Float height);
 
-  void set_scale(Float scale) { m_scale = scale; }
-
-  Float get_scale() const { return m_scale; }
+  /*! Obtain the height of the line geometry.
+   * \return the current height.
+   */
+  Float get_height() const;
 
 private:
   std::list<const Glyph_geometry*> m_glyph_geometries;
 
-  Vector2f m_line_position;
-
-  Bounding_box m_bbox;
-
+  /*! The scale factor if the line geometry. */
   Float m_scale;
+
+  /*! The width of the line geometry. */
+  Float m_width;
+
+  /*! The height of the line geometry. */
+  Float m_height;
 };
 
 class SGAL_SGAL_DECL Text_geometry {
 public:
-  /*! Constructor. */
-  void resize(size_t num_line_geometries)
-  { m_line_geometries.resize(num_line_geometries); }
+  /*! Construct default. */
+  Text_geometry();
+
+  /*! Resize the line geometry container.
+   * \param[in] the new size.
+   */
+  void resize(size_t size) { m_line_geometries.resize(size); }
+
+  /*! Obtain the number of line geometries.
+   * \return the number of line geometries.
+   */
+  size_t size() const { return m_line_geometries.size(); }
 
   std::vector<Line_geometry>::iterator begin()
   { return m_line_geometries.begin(); }
@@ -151,40 +212,161 @@ public:
 
   std::vector<Line_geometry> m_line_geometries;
 
-  void add_bbox(const Bounding_box& bbox) { m_bbox += bbox; }
+  /*! Set the scale factor of the text geometry.
+   * \param[in] scale the new scale factor.
+   */
+  void set_scale(Float scale);
 
-  const Bounding_box& get_bbox() const { return m_bbox; }
+  /*! Obtain the scale factor of the text geometry.
+   * \return the new scale factor.
+   */
+  Float get_scale() const;
 
-  Float xmin() const;
-  Float ymin() const;
-  Float xmax() const;
-  Float ymax() const;
+  /*! Set the width of the text geometry.
+   * \param[in] width the new width.
+   */
+  void set_width(Float width);
 
-  void set_scale(Float scale) { m_scale = scale; }
+  /*! Obtain the width of the text geometry.
+   * \return the current width.
+   */
+  Float get_width() const;
 
-  Float get_scale() const { return m_scale; }
+  /*! Set height of the text geometry.
+   * \param[i] height the new height.
+   */
+  void set_height(Float height);
+
+  /*! Obtain the height of the text geometry.
+   * \return the current height.
+   */
+  Float get_height() const;
 
 private:
-  Bounding_box m_bbox;
-
+  /*! The scale factor if the text geometry. */
   Float m_scale;
+
+  /*! The width of the text geometry. */
+  Float m_width;
+
+  /*! The height of the text geometry. */
+  Float m_height;
 };
 
 //! \brief construct default.
 inline Glyph_geometry::Glyph_geometry() : m_scale(1.0f) {}
 
+//! \brief sets the triangulation of the glyph geometry.
+inline void
+Glyph_geometry::set_triangulation(const Triangulation& triangulation)
+{ m_triangulation = triangulation; }
+
+//! \brief obtains the (const) triangulation of the glyph geometry.
+inline const Glyph_geometry::Triangulation&
+Glyph_geometry::get_triangulation() const
+{ return m_triangulation; }
+
+//! \brief obtains the (non-const) triangulation of the glyph geometry.
+inline Glyph_geometry::Triangulation& Glyph_geometry::get_triangulation()
+{ return m_triangulation; }
+
+template <typename InputIterator>
+inline Uint Glyph_geometry::construct_triangulation(InputIterator begin,
+                                                    InputIterator end,
+                                                    Uint k)
+{ return SGAL::construct_triangulation(m_triangulation, begin, end, k); }
+
+inline void Glyph_geometry::mark_domains()
+{ SGAL::mark_domains(m_triangulation); }
+
+//! \brief sets the scale factor of the glyph geometry.
+inline void Glyph_geometry::set_scale(Float scale) { m_scale = scale; }
+
+//! \brief obtains the scale factor of the glyph geometry.
+inline Float Glyph_geometry::get_scale() const { return m_scale; }
+
+//! \brief sets the 2D vector used to advance the glyph geometry.
+inline void Glyph_geometry::set_advance(const Vector2f& advance)
+{ m_advance = advance; }
+
+//! \brief sets the x- and y-coordinates used to advance the glyph geometry.
+inline void Glyph_geometry::set_advance(Float x, Float y)
+{ m_advance.set(x, y); }
+
+//! \brief obtains the 2D vector used to advance the glyph geometry.
+inline const Vector2f& Glyph_geometry::get_advance() const { return m_advance; }
+
 //! \brief construct default.
-inline Line_geometry::Line_geometry() : m_scale(1.0f) {}
+inline Line_geometry::Line_geometry() :
+  m_scale(1.0f),
+  m_width(0.0f),
+  m_height(0.0f)
+{}
 
-inline Float Line_geometry::xmin() const { return m_bbox.xmin(); }
-inline Float Line_geometry::ymin() const { return m_bbox.ymin(); }
-inline Float Line_geometry::xmax() const { return m_bbox.xmax(); }
-inline Float Line_geometry::ymax() const { return m_bbox.ymax(); }
+//! \brief obtains the begin (non-const) iterator of the glyph geometries.
+inline std::list<const Glyph_geometry*>::iterator Line_geometry::begin()
+{ return m_glyph_geometries.begin(); }
 
-inline Float Text_geometry::xmin() const { return m_bbox.xmin(); }
-inline Float Text_geometry::ymin() const { return m_bbox.ymin(); }
-inline Float Text_geometry::xmax() const { return m_bbox.xmax(); }
-inline Float Text_geometry::ymax() const { return m_bbox.ymax(); }
+//! \brief obtains the pass-the-end (non-const) iterator of the glyph geometries.
+inline std::list<const Glyph_geometry*>::iterator Line_geometry::end()
+{ return m_glyph_geometries.end(); }
+
+//! \brief obtains the begin (const) iterator of the glyph geometries.
+inline std::list<const Glyph_geometry*>::const_iterator Line_geometry::begin()
+  const
+{ return m_glyph_geometries.begin(); }
+
+//! \brief obtains the pass-the-end (const) iterator of the glyph geometries.
+inline std::list<const Glyph_geometry*>::const_iterator Line_geometry::end()
+  const
+{ return m_glyph_geometries.end(); }
+
+//! \brief pushes a glyph geometry to the glyph geometries at the back.
+inline void Line_geometry::push_back(const Glyph_geometry* glyph_geometry)
+{ m_glyph_geometries.push_back(glyph_geometry); }
+
+//! Set the width of the line geometry.
+inline void Line_geometry::set_width(Float width) { m_width = width; }
+
+//! Obtain the width of the line geometry.
+inline Float Line_geometry::get_width() const { return m_width; }
+
+//! Set height of the line geometry.
+inline void Line_geometry::set_height(Float height) { m_height = height; }
+
+//! Obtain the height of the line in the local coordinate system.
+inline Float Line_geometry::get_height() const { return m_height; }
+
+//! \brief sets the scale factor of the line geometry.
+inline void Line_geometry::set_scale(Float scale) { m_scale = scale; }
+
+//! Obtain the scale factor of the line geometry.
+inline Float Line_geometry::get_scale() const { return m_scale; }
+
+//! \brief construct default.
+inline Text_geometry::Text_geometry() :
+  m_scale(1.0f),
+  m_width(0.0f),
+  m_height(0.0f)
+{}
+
+//! Set the width of the text geometry.
+inline void Text_geometry::set_width(Float width) { m_width = width; }
+
+//! Obtain the width of the text geometry.
+inline Float Text_geometry::get_width() const { return m_width; }
+
+//! Set height of the text geometry.
+inline void Text_geometry::set_height(Float height) { m_height = height; }
+
+//! Obtain the height of the text in the local coordinate system.
+inline Float Text_geometry::get_height() const { return m_height; }
+
+//! \brief sets the scale factor of the text geometry.
+inline void Text_geometry::set_scale(Float scale) { m_scale = scale; }
+
+//! Obtain the scale factor of the text geometry.
+inline Float Text_geometry::get_scale() const { return m_scale; }
 
 SGAL_END_NAMESPACE
 

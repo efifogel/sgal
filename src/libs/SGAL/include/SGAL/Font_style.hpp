@@ -59,6 +59,7 @@ public:
     FIRST = Node::LAST - 1,
     FAMILIES,
     HORIZONTAL,
+    JUSTIFY_STR,
     JUSTIFY,
     LANGUAGE,
     LEFT_TO_RIGHT,
@@ -108,6 +109,7 @@ public:
   //@{
   String_array* families_handle(const Field_info*) { return &m_families; }
   Boolean* horizontal_handle(const Field_info*) { return &m_horizontal; }
+  String_array* justify_str_handle(const Field_info*) { return &m_justify_str; }
   Uint_array* justify_handle(const Field_info*) { return &m_justify; }
   std::string* language_handle(const Field_info*) { return &m_language; }
   Boolean* l2r_handle(const Field_info*) { return &m_left_to_right; }
@@ -171,15 +173,25 @@ public:
    */
   Boolean is_horizontal() const;
 
-  /*! Set the alignment of the above text layout relative to the origin
+  /*! Set the alignment of the text layout relative to the origin
    * of the object coordinate system.
    */
   void set_justify(const Uint_array& justify);
 
-  /*! Obtain the alignment of the above text layout relative to the origin
+  /*! Obtain the alignment of the text layout relative to the origin
    * of the object coordinate system.
    */
   const Uint_array& get_justify() const;
+
+  /*! Set the alignment of the text layout relative to the origin
+   * of the object coordinate system.
+   */
+  void set_justify_str(const String_array& justify);
+
+  /*! Obtain the alignment of the text layout relative to the origin
+   * of the object coordinate system.
+   */
+  const String_array& get_justify_str() const;
 
   /*! Set the context of the language for the text string.
    * \param labguage (in) the context of the language for the text string.
@@ -283,9 +295,6 @@ public:
    */
   void get_font_file_name(std::string& file_name, FT_Long& face_index);
 
-  /*! Calculate the line position. */
-  void calculate_line_position(std::size_t line_num, Vector2f& position) const;
-
 protected:
   /*! Obtain the tag (type) of the container.
    */
@@ -314,6 +323,8 @@ protected:
    * ["BEGIN" "FIRST"] are equivalent.
    */
   Uint_array m_justify;
+
+  String_array m_justify_str;
 
   /*! Specify the context of the language for the text string. Due to the
    * multilingual nature of the ISO 10646-1:1993, the language field is needed
@@ -354,6 +365,7 @@ protected:
   static const String_array s_def_families;
   static const Boolean s_def_horizontal;
   static const Uint_array s_def_justify;
+  static const String_array s_def_justify_str;
   static const std::string s_def_language;
   static const Boolean s_def_left_to_right;
   static const Float s_def_size;
@@ -459,11 +471,17 @@ inline const String_array& Font_style::get_families() const
  */
 inline Boolean Font_style::is_horizontal() const { return m_horizontal; }
 
-/*! \brief obtains the alignment of the above text layout relative to the
+/*! \brief obtains the alignment of the text layout relative to the
  * origin of the object coordinate system.
  */
 inline const Uint_array& Font_style::get_justify() const
 { return m_justify; }
+
+/*! \brief obtains the alignment of the text layout relative to the
+ * origin of the object coordinate system.
+ */
+inline const String_array& Font_style::get_justify_str() const
+{ return m_justify_str; }
 
 //! \brief obtaints the context of the language for the text string.
 inline const std::string& Font_style::get_language() const
