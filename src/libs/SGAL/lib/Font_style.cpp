@@ -125,6 +125,11 @@ const Char* Fontconfig_error::s_fc_result_message[] =
   {"match", "no match", "type mismatch", "no id" };
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4275 )
+#endif
+
 /*! Class thrown when FreeType initialization fails. */
 class SGAL_SGAL_DECL FreeType_initialization_error : public std::runtime_error {
 public:
@@ -133,6 +138,10 @@ public:
 
   ~FreeType_initialization_error() SGAL_NOTHROW {}
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 /*! FreeType error code and message. */
 struct FreeType_error_data {
@@ -175,6 +184,11 @@ const Char* FreeType_error_formatter::find() const
   return s_unknown_error_message;
 }
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable: 4275 )
+#endif
+
 /*! Class thrown when FreeType fails. */
 class SGAL_SGAL_DECL FreeType_error : public std::runtime_error {
 public:
@@ -184,6 +198,10 @@ public:
 
   ~FreeType_error() SGAL_NOTHROW {}
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 //! \brief constructor
 Font_style::Font_style(Boolean proto) :
@@ -205,7 +223,7 @@ Font_style::Font_style(Boolean proto) :
 {
   if (proto) return;
 
-#if defined(_WIN32)
+#if !defined(_WIN32)
   auto success = FcInit();
   if (!success) throw Fontconfig_initialization_error();
 #endif
@@ -745,9 +763,9 @@ const Glyph_geometry& Font_style::compute_glyph_geometry(Char32 c)
   // Mark facets that are inside the domain
   glyph_geom.mark_domains();
   glyph_geom.set_scale(glyph_scale);
-  Float x = m_face->glyph->metrics.horiAdvance;
-  Float y = m_face->glyph->metrics.vertAdvance;
-  glyph_geom.set_advance(x, y);
+  auto x = m_face->glyph->metrics.horiAdvance;
+  auto y = m_face->glyph->metrics.vertAdvance;
+  glyph_geom.set_advance(static_cast<Float>(x), static_cast<Float>(y));
   return glyph_geom;
 }
 
@@ -755,30 +773,43 @@ const Glyph_geometry& Font_style::compute_glyph_geometry(Char32 c)
 void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
 {
 #if defined(_WIN32)
+  HDC hdc = CreateCompatibleDC(0);
+  BOOST_SCOPE_EXIT((hdc)) {
+    DeleteDC(hdc);
+  } BOOST_SCOPE_EXIT_END
+
+  unsigned char font_pitch = VARIABLE_PITCH;
+  unsigned char font_family = FF_ROMAN;
+
   LOGFONT lf;
+  memset(&lf, 0, sizeof(LOGFONT));
   lf.lfHeight = 0;
   lf.lfWidth = 0;
   lf.lfEscapement = 0;
   lf.lfOrientation = 0;
-  lf.lfWeight = FW_MEDIUM;
-  lf.lfItalic = FALSE;
+  lf.lfWeight =
+    (m_style.find("BOLD") != std::string::npos) ? FW_BOLD : FW_MEDIUM;
+  lf.lfItalic = (m_style.find("ITALIC") != std::string::npos) ? TRUE : FALSE;
   lf.lfUnderline = FALSE;
   lf.lfStrikeOut = FALSE;
   lf.lfCharSet = DEFAULT_CHARSET;
   lf.lfOutPrecision = OUT_TT_ONLY_PRECIS;
   lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
   lf.lfQuality = DEFAULT_QUALITY;
-  lf.lfPitchAndFamily = VARIABLE_PITCH | FF_ROMAN;
-
-  HDC hdc = CreateCompatibleDC(0);
-  BOOST_SCOPE_EXIT((hdc)) {
-    DeleteDC(hdc);
-  } BOOST_SCOPE_EXIT_END
-  HFONT hfont = CreateFontIndirect(&lf);
+  for (auto it = m_families.begin(); it != m_families.end(); ++it) {
+    const auto& family = *it;
+    if (family == "SERIF") font_family = FF_ROMAN;
+    else if (family == "SANS") font_family = FF_SWISS;
+    else if (family == "TYPEWRITER") font_pitch = FIXED_PITCH;
+    else strcpy_s(lf.lfFaceName, family.c_str());
+  }
+  lf.lfPitchAndFamily = font_pitch | font_family;
+  auto hfont = CreateFontIndirect(&lf);
   SelectObject(hdc, hfont);
   TCHAR face_name[256] = {};
-  GetTextFace(hdc, sizeof face_name / sizeof (TCHAR), face_name);
-  const int face_name_len = lstrlen(face_name);
+  GetTextFace(hdc, sizeof(face_name) / sizeof(TCHAR), face_name);
+  SGAL_TRACE_MSG(Trace::FONT, std::string("Face name: ").append(face_name).append("\n"));
+  auto face_name_len = lstrlen(face_name);
 
   // Get the fonts folder.
   TCHAR fonts_path[MAX_PATH];
@@ -814,9 +845,9 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
                            NULL); // lpftLastWriteTime
 
   DWORD index = 0;
-  vector<TCHAR> value_name(max_value_name_len + 1);
+  std::vector<TCHAR> value_name(max_value_name_len + 1);
   DWORD type;
-  vector<BYTE> data(max_value_len);
+  std::vector<BYTE> data(max_value_len);
   TCHAR font_path[MAX_PATH] = {};
   result = ERROR_SUCCESS;
   while (result != ERROR_NO_MORE_ITEMS) {
@@ -852,7 +883,7 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
     }
   }
 
-  const size_t font_path_len = lstrlen(font_path);
+  auto font_path_len = lstrlen(font_path);
   assert(font_path_len != 0);
   file_name.assign(font_path, font_path + font_path_len + 1);
   face_index = 0;
