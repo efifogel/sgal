@@ -102,7 +102,7 @@ class SGAL_SGAL_DECL Fontconfig_initialization_error : public std::runtime_error
 {
 public:
   Fontconfig_initialization_error() :
-    std::runtime_error("Failed to initialize fontconfig library!") {}
+    std::runtime_error("Fontconfig Error: Failed to initialize library!") {}
 
   ~Fontconfig_initialization_error() SGAL_NOTHROW {}
 };
@@ -111,7 +111,9 @@ public:
 class SGAL_SGAL_DECL Fontconfig_error : public std::runtime_error {
 public:
   Fontconfig_error(FcResult result) :
-    std::runtime_error(s_fc_result_message[result]) {}
+    std::runtime_error(std::string("Fontconfig Error: ").
+                       append(s_fc_result_message[result]))
+  {}
 
   ~Fontconfig_error() SGAL_NOTHROW {}
 
@@ -127,25 +129,58 @@ const Char* Fontconfig_error::s_fc_result_message[] =
 class SGAL_SGAL_DECL FreeType_initialization_error : public std::runtime_error {
 public:
   FreeType_initialization_error() :
-    std::runtime_error("Failed to initialize FreeType library!") {}
+    std::runtime_error("FreeType Error: Failed to initialize library") {}
 
   ~FreeType_initialization_error() SGAL_NOTHROW {}
 };
 
-/*! Class thrown when FreeType termination fails. */
-class SGAL_SGAL_DECL FreeType_termination_error : public std::runtime_error {
-public:
-  FreeType_termination_error() :
-    std::runtime_error("Failed to terminate FreeType library!") {}
-
-  ~FreeType_termination_error() SGAL_NOTHROW {}
+/*! FreeType error code and message. */
+struct FreeType_error_data {
+  FT_Error m_code;
+  const Char* m_message;
 };
+
+struct FreeType_error_formatter {
+public:
+  FreeType_error_formatter(FT_Error code) : m_code(code) {}
+
+  operator std::string () const { return find(); }
+
+private:
+  const Char* find() const;
+
+  FT_Error m_code;
+
+  static const FreeType_error_data s_ft_errors[];
+  static const Char* s_unknown_error_message;
+
+  FreeType_error_formatter(const FreeType_error_formatter&);
+  FreeType_error_formatter& operator=(FreeType_error_formatter&);
+};
+
+#undef __FTERRORS_H__
+#define FT_ERRORDEF( e, v, s )   { e, s },
+#define FT_ERROR_START_LIST      {
+#define FT_ERROR_END_LIST        { 0, 0 } };
+const FreeType_error_data FreeType_error_formatter::s_ft_errors[] =
+#include FT_ERRORS_H
+
+const Char* FreeType_error_formatter::s_unknown_error_message =
+  "Unknown error!";
+
+const Char* FreeType_error_formatter::find() const
+{
+  for (auto i = 0; i < sizeof(s_ft_errors)/sizeof(FreeType_error_data); ++i)
+    if (s_ft_errors[i].m_code == m_code) return s_ft_errors[i].m_message;
+  return s_unknown_error_message;
+}
 
 /*! Class thrown when FreeType fails. */
 class SGAL_SGAL_DECL FreeType_error : public std::runtime_error {
 public:
-  FreeType_error(FT_Error error) :
-    std::runtime_error("FreeType failed to  library!!") {}
+  FreeType_error(FT_Error code) :
+    std::runtime_error(std::string("FreeType Error: ").
+                       append(FreeType_error_formatter(code))) {}
 
   ~FreeType_error() SGAL_NOTHROW {}
 };
@@ -194,8 +229,8 @@ Font_style::~Font_style()
     m_font = nullptr;
   }
   FT_Done_Face(m_face);
-  auto failure = FT_Done_FreeType(m_ft_library);
-  if (failure) throw FreeType_termination_error();
+  auto err = FT_Done_FreeType(m_ft_library);
+  if (err) throw FreeType_error(err);
 
   m_dirty_face = true;
 }
