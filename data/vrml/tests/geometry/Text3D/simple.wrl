@@ -21,8 +21,8 @@ DEF TRANSFORM Transform {
       geometry Text3D {
 	string ["Read" "some text" "today!"]
 	fontStyle FontStyle {
-	  horizontal FALSE
-	  leftToRight FALSE
+	  # horizontal FALSE
+	  # leftToRight FALSE
 	  # topToBottom FALSE
 
 	  # justify ["BEGIN" "BEGIN"]
