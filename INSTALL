@@ -155,6 +155,9 @@ http://www.boostpro.com/download/.) However, the procedure is faily easy:
   ./bootstrap
   ./b2 link=static,shared threading=single,multi variant=debug,release
 
+If you build for a 64 bit target architecture use:
+  ./b2 link=static,shared threading=single,multi variant=debug,release address-model=64
+
 2.5.2. bison and flex
 
 2.5.2.1. bison
@@ -274,9 +277,11 @@ just copy all files under ./v8/out/native/lib.target/ to /usr/local/lib and copy
 
 2.5.4.1. Windows
   svn co http://gyp.googlecode.com/svn/trunk build/gyp
-  svn co http://src.chromium.org/svn/trunk/deps/third_party/cygwin@231940 third_party/cygwin
+  svn co https://src.chromium.org/chrome/trunk/deps/third_party/cygwin@231940 third_party/cygwin
   svn co https://src.chromium.org/chrome/trunk/deps/third_party/icu46 third_party/icu
   build/gyp_v8 -Dtarget_arch=ia32 -Dcomponent=shared_library
+    or
+  build/gyp_v8 -Dtarget_arch=x64 -Dcomponent=shared_library
 
   # The following 2 command are a required workaround!
   unset TEMP
