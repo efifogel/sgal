@@ -107,20 +107,13 @@ ROUTE SIM.start TO TETRAHEDRON_TRANSFORMER.execute
 
 ROUTE BO.result TO INTERSECTION.geometry
 
-# Unfortunately the following is not supported yet. Instead we use a
-# temporary workaround: we added a Boolean field to the CoordTransformer
-# node, and use it to trigger the engine.
+DEF SCRIPT Script {
+  eventIn SFNode coord
+  eventOut SFBool out
+  url "javascript:
+    function coord(value, timestamp) { out = 1; }"
+}
 
-# DEF SCRIPT Script {
-#   eventIn SFNode coord
-#   eventOut SFBool out
-#   url "javascript:
-#     function coord(value, timestamp) { out = 1; }"
-# }
-
-# ROUTE TETRAHEDRON.coord TO SCRIPT.coord
-# ROUTE CUBE.coord TO SCRIPT.coord
-# ROUTE SCRIPT.out TO BO.trigger
-
-ROUTE CUBE_TRANSFORMER.changed TO BO.trigger
-ROUTE TETRAHEDRON_TRANSFORMER.changed TO BO.trigger
+ROUTE TETRAHEDRON.coord TO SCRIPT.coord
+ROUTE CUBE.coord TO SCRIPT.coord
+ROUTE SCRIPT.out TO BO.trigger

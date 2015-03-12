@@ -58,8 +58,10 @@ const std::string Boolean_operation::s_tag = "BooleanOperation";
 Container_proto* Boolean_operation::s_prototype(nullptr);
 
 //! \brief operation names.
-const char* Boolean_operation::s_operation_names[] =
-  { "union", "intersection", "P_minus_Q", "Q_minus_P" };
+const char* Boolean_operation::s_operation_names[] = {
+  "union", "intersection", "P_minus_Q", "Q_minus_P",
+  "partsOfP", "partsOfQ", "Decomposition"
+};
 
 //! \brief operation tags.
 const Boolean_operation::Bso::Boolean_operation_tag
@@ -67,7 +69,10 @@ Boolean_operation::s_operation_tags[] = {
   Bso::Join_tag,
   Bso::Intersection_tag,
   Bso::P_minus_Q_tag,
-  Bso::Q_minus_P_tag
+  Bso::Q_minus_P_tag,
+  Bso::Parts_of_P_tag,
+  Bso::Parts_of_Q_tag,
+  Bso::Decomposition_tag
 };
 
 // Default values:

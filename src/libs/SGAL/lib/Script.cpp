@@ -183,12 +183,19 @@ void Script::getter(v8::Local<v8::String> property,
     }
     break;
 
+   case SF_SHARED_CONTAINER:
+    {
+     // Set (in the GetReturnValue) a pointer to the Shared_container object.
+     auto* tmp = script_node->field_handle<Shared_container>(field_info);
+     info.GetReturnValue().Set((void*)(tmp));
+    }
+    break;
+
    case SF_VEC2F:
    case SF_VEC3F:
    case SF_COLOR:
    case SF_ROTATION:
    case SF_IMAGE:
-   case SF_SHARED_CONTAINER:
    case MF_BOOL:
    case MF_FLOAT:
    case MF_TIME:
@@ -281,12 +288,21 @@ void Script::setter(v8::Local<v8::String> property,
     }
     break;
 
+   case SF_SHARED_CONTAINER:
+    {
+     // The value is an V8::External that holds a void*, which actually points
+     // at a Shared_container.
+     auto external(v8::External::Cast(*value));
+     auto* tmp = script_node->field_handle<Shared_container>(field_info);
+     *tmp = *((Shared_container*)(external->Value()));
+    }
+    break;
+
    case SF_VEC2F:
    case SF_VEC3F:
    case SF_COLOR:
    case SF_ROTATION:
    case SF_IMAGE:
-   case SF_SHARED_CONTAINER:
    case MF_BOOL:
    case MF_FLOAT:
    case MF_TIME:
@@ -412,8 +428,11 @@ void Script::array_setter(v8::Local<v8::String> property,
 
    case SF_ROTATION:
    case SF_IMAGE:
-   case SF_SHARED_CONTAINER:
     std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_SHARED_CONTAINER:
+    SGAL_error();
     break;
 
    case MF_BOOL:
@@ -592,8 +611,11 @@ void Script::indexed_getter(uint32_t index,
 
    case SF_ROTATION:
    case SF_IMAGE:
-   case SF_SHARED_CONTAINER:
     std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_SHARED_CONTAINER:
+    SGAL_error();
     break;
 
    case MF_BOOL:
@@ -744,8 +766,11 @@ void Script::indexed_setter(uint32_t index,
 
    case SF_ROTATION:
    case SF_IMAGE:
-   case SF_SHARED_CONTAINER:
     std::cerr << "Not supported yet!" << std::endl;
+    break;
+
+   case SF_SHARED_CONTAINER:
+    SGAL_error();
     break;
 
    case MF_BOOL:
@@ -945,7 +970,11 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     break;
 
    case SF_SHARED_CONTAINER:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Shared_container initial_value;
+     variant_field = initial_value;
+     add_fi<SF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func, prototype);
+    }
     break;
 
    case MF_BOOL:
@@ -1014,7 +1043,12 @@ void Script::add_field_info(Field_rule rule, Field_type type,
     break;
 
    case MF_SHARED_CONTAINER:
-    std::cerr << "Not supported yet!" << std::endl;
+    {
+     Shared_container_array initial_value;
+     variant_field = initial_value;
+     add_fi<MF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func, prototype);
+    }
+    std::cout << "MF_SHARED_CONTAINER 1" << std::endl;
     break;
 
    default:
@@ -1076,6 +1110,14 @@ v8::Handle<v8::Value> Script::get_single_vector3f(const Field_info* field_info)
   array->Set(1, v8::Number::New(m_isolate, (*tmp)[1]));
   array->Set(2, v8::Number::New(m_isolate, (*tmp)[2]));
   return array;
+}
+
+/*! \brief converts a single shared container field value to a v8 engine
+ * external.
+ */
+v8::Handle<v8::Value> Script::get_single_external(const Field_info* field_info)
+{
+  return v8::External::New(m_isolate, (void*)(field_handle<Shared_container>(field_info)));
 }
 
 /*! \brief converts a multi Boolean field value to a v8 engine array of
@@ -1293,10 +1335,14 @@ v8::Handle<v8::Value> Script::get_argument(const Field_info* field_info)
    case SF_COLOR: return get_single_vector3f(field_info);
 
    case SF_ROTATION:
-   case SF_SHARED_CONTAINER:
+    std::cerr << "Not supported yet!" << std::endl;
+    return v8::Null(m_isolate);
+
    case SF_IMAGE:
     std::cerr << "Not supported yet!" << std::endl;
     return v8::Null(m_isolate);
+
+   case SF_SHARED_CONTAINER: return get_single_external(field_info);
 
    case MF_BOOL: return get_multi_boolean(field_info); break;
    case MF_FLOAT: return get_multi_float(field_info); break;
