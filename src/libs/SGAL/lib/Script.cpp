@@ -1112,12 +1112,14 @@ v8::Handle<v8::Value> Script::get_single_vector3f(const Field_info* field_info)
   return array;
 }
 
-/*! \brief converts a single shared container field value to a v8 engine
- * external.
+/*! \brief converts a single Shared_container field value to a v8 engine
+ * external (which holds a void* that actually points at a Shared_container
+ * object).
  */
 v8::Handle<v8::Value> Script::get_single_external(const Field_info* field_info)
 {
-  return v8::External::New(m_isolate, (void*)(field_handle<Shared_container>(field_info)));
+  return v8::External::New(m_isolate,
+                           (void*)(field_handle<Shared_container>(field_info)));
 }
 
 /*! \brief converts a multi Boolean field value to a v8 engine array of
