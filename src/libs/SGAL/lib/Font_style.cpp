@@ -808,7 +808,8 @@ void Font_style::get_font_file_name(std::string& file_name, FT_Long& face_index)
   SelectObject(hdc, hfont);
   TCHAR face_name[256] = {};
   GetTextFace(hdc, sizeof(face_name) / sizeof(TCHAR), face_name);
-  SGAL_TRACE_MSG(Trace::FONT, std::string("Face name: ").append(face_name).append("\n"));
+  SGAL_TRACE_MSG(Trace::FONT,
+                 std::string("Face name: ").append(face_name).append("\n"));
   auto face_name_len = lstrlen(face_name);
 
   // Get the fonts folder.
