@@ -313,6 +313,13 @@ private:
    *        stores the value.
    */
   v8::Handle<v8::Value> get_multi_vector3f(const Field_info* field_info);
+
+  /*! Convert a multi shared-container field value to a v8 engine array of
+   * exernals.
+   * \param field_info (in) the field information record of the field that
+   *        stores the value.
+   */
+  v8::Handle<v8::Value> get_multi_external(const Field_info* field_info);
 };
 
 #if (defined _MSC_VER)
