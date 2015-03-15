@@ -1,0 +1,1756 @@
+#VRML V2.0 utf8
+NavigationInfo { type "EXAMINE" }
+Configuration {
+  accumulation Accumulation { enabled TRUE }
+}
+ColorBackground {
+  color 1 1 1 0
+  clearStencil TRUE
+}
+# Viewpoint {
+#   type "ORTHOGONAL"
+#   fieldOfView 3.1
+# }
+
+DEF AOS_PIECE_0_KEY SingleKeySensor { key "a" } # aquamarine rgb(31%, 47%, 63%)
+DEF AOS_PIECE_1_KEY SingleKeySensor { key "g" } # grape rgb(33%, 22%, 28%)
+DEF AOS_PIECE_2_KEY SingleKeySensor { key "s" } # salmon rgb(98%, 50%, 45%)
+DEF AOS_PIECE_3_KEY SingleKeySensor { key "k" } # kiwi rgb(0.50 0.60 0.40)
+DEF AOS_PIECE_4_KEY SingleKeySensor { key "t" } # tan rgb(86%, 58%, 44%)
+DEF AOS_PIECE_5_KEY SingleKeySensor { key "p" } # papaya rgb(100%, 100%, 49%)
+DEF AOS_PIECE_6_KEY SingleKeySensor { key "l" } # lichen rgb(75%, 85%, 69%)
+DEF AOS_PIECE_7_KEY SingleKeySensor { key "e" } # espresso rgb(91%, 78%, 65%)
+DEF AOS_PIECE_8_KEY SingleKeySensor { key "c" } # cherry rgb(92%, 37%, 40%)
+DEF AOS_PIECE_9_KEY SingleKeySensor { key "m" } # melon rgb(89%, 66%, 41%)
+DEF AOS_PIECE_10_KEY SingleKeySensor { key "b" } # broccoli rgb(0.35 0.41 0.29)
+
+DEF AOS_SUBPIECE_0_KEY SingleKeySensor { key "0" }
+DEF AOS_SUBPIECE_1_KEY SingleKeySensor { key "1" }
+DEF AOS_SUBPIECE_2_KEY SingleKeySensor { key "2" }
+DEF AOS_SUBPIECE_3_KEY SingleKeySensor { key "3" }
+DEF AOS_SUBPIECE_4_KEY SingleKeySensor { key "4" }
+DEF AOS_SUBPIECE_5_KEY SingleKeySensor { key "5" }
+DEF AOS_SUBPIECE_6_KEY SingleKeySensor { key "6" }
+
+DEF DRAW_AOS_KEY SingleKeySensor { key "C" }
+DEF DRAW_AOS_HALOED_KEY SingleKeySensor { key "H" state TRUE }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SOLVE_KEY SingleKeySensor { key "P" }
+DEF DRAW_ALT_KEY SingleKeySensor { key "M" }
+DEF INC_ALT_KEY SingleKeySensor { key "I" }
+DEF DRAW_AOS_MINK_SUM_KEY SingleKeySensor { key "A" }
+DEF INC_MINK_SUM_KEY SingleKeySensor { key "D" }
+
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "jpg"
+  quality 98
+  sequence FALSE
+  dirName "."
+  fileName "cage"
+}
+
+# olive rgb(50%, 50%, 0%)
+# delft rgb(13%, 19%, 42%)
+# coral rgb(100%, 50%, 31%)
+# corn rgb(98%, 93%, 36%)
+# carrot rgb(93%, 57%, 13%)
+# tongue rgb(91%, 62%, 66%)
+# pear rgb(82%, 89%, 19%)
+# chili rgb(83%, 29%, 26%)
+# celery rgb(81%, 84%, 52%)
+# brass rgb(71%, 65%, 26%)
+# khaki(SVG) rgb(94%, 90%, 55%)
+# plum(SVG) rgb(87%, 63%, 87%)
+# spinach rgb(26%, 36%, 21%)
+# peacock rgb(20%, 63%, 79%)
+
+Transform {
+  # bboxCenter 0 0 0
+  # bboxSize 1.5 1.5 1.5
+  rotation -1 0 0 1.5707
+  children [
+    DEF PUZZLE Assembly {
+      children [
+	# Piece 0:
+	DEF SWITCH_0 Switch {
+	  whichChoice 0
+	  children [
+	    DEF PIECE_0 AssemblyPart {
+	      children [
+		DEF SWITCH_0_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_0 Appearance {
+			material Material {
+			  diffuseColor 0.31 0.47 0.63
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_0_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.31 0.47 0.63
+			coord DEF COORD_0_0 ExactCoordinate {
+			  exactPoint[-1 -4 -4, 1 -4 -4, 1 -2 -4, -1 -2 -4,
+				   -1 -4 -1, 1 -4 -1, 1 -2 -1, -1 -2 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+		DEF SWITCH_0_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_0
+		      geometry DEF PIECE_0_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.31 0.47 0.63
+			coord DEF COORD_0_1 ExactCoordinate {
+			  exactPoint[-1 -4 1, 1 -4 1, 1 -2 1, -1 -2 1,
+				   -1 -4 4, 1 -4 4, 1 -2 4, -1 -2 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_0_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_0
+		      geometry DEF PIECE_0_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.31 0.47 0.63
+			coord DEF COORD_0_2 ExactCoordinate {
+			  exactPoint[0 -4 -1, 2 -4 -1, 2 4 -1, 0 4 -1,
+				   0 -4  1, 2 -4  1, 2 4  1, 0 4  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 1:
+	DEF SWITCH_1 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_1 AssemblyPart {
+	      children [
+                DEF SWITCH_1_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_1 Appearance {
+			material Material {
+			  diffuseColor 0.33 0.22 0.28
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_1_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.33 0.22 0.28
+			coord DEF COORD_1_0 ExactCoordinate {
+			  exactPoint[2 -4 -1, 4 -4 -1, 4 -1 -1, 2 -1 -1,
+				   2 -4  1, 4 -4  1, 4 -1  1, 2 -1  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_1_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_1
+		      geometry DEF PIECE_1_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.33 0.22 0.28
+			coord DEF COORD_1_1 ExactCoordinate {
+			  exactPoint[2 -1 -1, 3 -1 -1, 3 1 -1, 2 1 -1,
+				   2 -1  1, 3 -1  1, 3 1  1, 2 1  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_1_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_1
+		      geometry DEF PIECE_1_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.33 0.22 0.28
+			coord DEF COORD_1_2 ExactCoordinate {
+			  exactPoint[2 1 -1, 4 1 -1, 4 4 -1, 2 4 -1,
+				   2 1  1, 4 1  1, 4 4  1, 2 4  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 2:
+	DEF SWITCH_2 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_2 AssemblyPart {
+	      children [
+                DEF SWITCH_2_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_2 Appearance {
+			material Material {
+			  diffuseColor 0.98 0.50 0.45
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_2_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.98 0.50 0.45
+			coord DEF COORD_2_0 ExactCoordinate {
+			  exactPoint[-4 -4 -1, -2 -4 -1, -2 -1 -1, -4 -1 -1,
+				   -4 -4  1, -2 -4  1, -2 -1  1, -4 -1  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_2_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_2
+		      geometry DEF PIECE_2_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.98, 0.50 0.45
+			coord DEF COORD_2_1 ExactCoordinate {
+			  exactPoint[-3 -1 -1, -2 -1 -1, -2 1 -1, -3 1 -1,
+				   -3 -1  1, -2 -1  1, -2 1  1, -3 1  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_2_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_2
+		      geometry DEF PIECE_2_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.98, 0.50 0.45
+			coord DEF COORD_2_2 ExactCoordinate {
+			  exactPoint[-4 1 -1, -2 1 -1, -2 4 -1, -4 4 -1,
+				   -4 1  1, -2 1  1, -2 4  1, -4 4  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 3:
+	DEF SWITCH_3 Switch {
+	  whichChoice 0
+	  children [
+	    DEF PIECE_3 AssemblyPart {
+	      children [
+                DEF SWITCH_3_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_3 Appearance {
+			material Material {
+			  diffuseColor 0.50 0.60 0.40
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_3_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.50 0.60 0.40
+			coord DEF COORD_3_0 ExactCoordinate {
+			  exactPoint[-2 -4 -1, 0 -4 -1, 0 -2 -1, -2 -2 -1,
+				   -2 -4  1, 0 -4  1, 0 -2  1, -2 -2  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_3_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_3
+		      geometry DEF PIECE_3_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.50 0.60 0.40
+			coord DEF COORD_3_1 ExactCoordinate {
+			  exactPoint[-2 -2 -1, -1 -2 -1, -1 3 -1, -2 3 -1,
+				   -2 -2  1, -1 -2  1, -1 3  1, -2 3  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_3_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_3
+		      geometry DEF PIECE_3_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.50 0.60 0.40
+			coord DEF COORD_3_2 ExactCoordinate {
+			  exactPoint[-2 3 -1, 0 3 -1, 0 4 -1, -2 4 -1,
+				   -2 3  1, 0 3  1, 0 4  1, -2 4  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 4:
+	DEF SWITCH_4 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_4 AssemblyPart {
+	      children [
+                DEF SWITCH_4_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_4 Appearance {
+			material Material {
+			  diffuseColor 0.86 0.58 0.44
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_4_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.86 0.58 0.44
+			coord DEF COORD_4_0 ExactCoordinate {
+			  exactPoint[-1 2 -4, 1 2 -4, 1 4 -4, -1 4 -4,
+				   -1 2 -1, 1 2 -1, 1 4 -1, -1 4 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_4_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_4
+		      geometry DEF PIECE_4_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.86 0.58 0.44
+			coord DEF COORD_4_1 ExactCoordinate {
+			  exactPoint[-1 2 -1, 0 2 -1, 0 3 -1, -1 3 -1,
+				   -1 2  1, 0 2  1, 0 3  1, -1 3  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_4_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_4
+		      geometry DEF PIECE_4_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.86 0.58 0.44
+			coord DEF COORD_4_2 ExactCoordinate {
+			  exactPoint[-1 2 1, 1 2 1, 1 4 1, -1 4 1,
+				   -1 2 4, 1 2 4, 1 4 4, -1 4 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 5:
+	DEF SWITCH_5 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_5 AssemblyPart {
+	      children [
+                DEF SWITCH_5_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_5 Appearance {
+			material Material {
+			  diffuseColor 1 1 0.49
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_5_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 1 1 0.49
+			coord DEF COORD_5_0 ExactCoordinate {
+			  exactPoint[-1 0 -4, 1 0 -4, 1 2 -4, -1 2 -4,
+				   -1 0 -3, 1 0 -3, 1 2 -3, -1 2 -3
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_5_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_5
+		      geometry DEF PIECE_5_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 1 1 0.49
+			coord DEF COORD_5_1 ExactCoordinate {
+			  exactPoint[-1 1 -3, 1 1 -3, 1 2 -3, -1 2 -3,
+				   -1 1 -1, 1 1 -1, 1 2 -1, -1 2 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_5_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_5
+		      geometry DEF PIECE_5_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 1 1 0.49
+			coord DEF COORD_5_2 ExactCoordinate {
+			  exactPoint[-1 0 -1, 0 0 -1, 0 2 -1, -1 2 -1,
+				   -1 0  1, 0 0  1, 0 2  1, -1 2  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_5_3 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_5
+		      geometry DEF PIECE_5_3 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 1 1 0.49
+			coord DEF COORD_5_3 ExactCoordinate {
+			  exactPoint[-1 1 1, 1 1 1, 1 2 1, -1 2 1,
+				   -1 1 3, 1 1 3, 1 2 3, -1 2 3
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_5_4 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_5
+		      geometry DEF PIECE_5_4 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 1 1 0.49
+			coord DEF COORD_5_4 ExactCoordinate {
+			  exactPoint[-1 0 3, 1 0 3, 1 2 3, -1 2 3,
+				   -1 0 4, 1 0 4, 1 2 4, -1 2 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 6:
+	DEF SWITCH_6 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_6 AssemblyPart {
+	      children [
+                DEF SWITCH_6_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_6 Appearance {
+			material Material {
+			  diffuseColor 0.75 0.85 0.69
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_6_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.75 0.85 0.69
+			coord DEF COORD_6_0 ExactCoordinate {
+			  exactPoint[-1 -2 -4, 1 -2 -4, 1 0 -4, -1 0 -4,
+				   -1 -2 -3, 1 -2 -3, 1 0 -3, -1 0 -3
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_6_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_6
+		      geometry DEF PIECE_6_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.75 0.85 0.69
+			coord DEF COORD_6_1 ExactCoordinate {
+			  exactPoint[-1 -2 -3, 1 -2 -3, 1 -1 -3, -1 -1 -3,
+				   -1 -2 -1, 1 -2 -1, 1 -1 -1, -1 -1 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_6_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_6
+		      geometry DEF PIECE_6_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.75 0.85 0.69
+			coord DEF COORD_6_2 ExactCoordinate {
+			  exactPoint[-1 -2 -1, 0 -2 -1, 0 0 -1, -1 0 -1,
+				   -1 -2  1, 0 -2  1, 0 0  1, -1 0  1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_6_3 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_6
+		      geometry DEF PIECE_6_3 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.75 0.85 0.69
+			coord DEF COORD_6_3 ExactCoordinate {
+			  exactPoint[-1 -2 1, 1 -2 1, 1 -1 1, -1 -1 1,
+				   -1 -2 3, 1 -2 3, 1 -1 3, -1 -1 3
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_6_4 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_6
+		      geometry DEF PIECE_6_4 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.75 0.85 0.69
+			coord DEF COORD_6_4 ExactCoordinate {
+			  exactPoint[-1 -2 3, 1 -2 3, 1 0 3, -1 0 3,
+				   -1 -2 4, 1 -2 4, 1 0 4, -1 0 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 7:
+	DEF SWITCH_7 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_7 AssemblyPart {
+	      children [
+                DEF SWITCH_7_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_7 Appearance {
+			material Material {
+			  diffuseColor 0.91 0.78 0.65
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_7_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.91 0.78 0.65
+			coord DEF COORD_7_0 ExactCoordinate {
+			  exactPoint[-4 -1 0, -3 -1 0, -3 1 0, -4 1 0,
+				   -4 -1 2, -3 -1 2, -3 1 2, -4 1 2
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_7_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_7
+		      geometry DEF PIECE_7_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.91 0.78 0.65
+			coord DEF COORD_7_1 ExactCoordinate {
+			  exactPoint[-3 -1 1, 3 -1 1, 3 1 1, -3 1 1,
+				   -3 -1 2, 3 -1 2, 3 1 2, -3 1 2
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_7_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_7
+		      geometry DEF PIECE_7_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.91 0.78 0.65
+			coord DEF COORD_7_2 ExactCoordinate {
+			  exactPoint[3 -1 0, 4 -1 0, 4 1 0, 3 1 0,
+				   3 -1 2, 4 -1 2, 4 1 2, 3 1 2
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 8:
+	DEF SWITCH_8 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_8 AssemblyPart {
+	      children [
+                DEF SWITCH_8_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_8 Appearance {
+			material Material {
+			  diffuseColor 0.92 0.37 0.40
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_8_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.92 0.37 0.40
+			coord DEF COORD_8_0 ExactCoordinate {
+			  exactPoint[-4 -1 -2, -3 -1 -2, -3 1 -2, -4 1 -2,
+				   -4 -1  0, -3 -1  0, -3 1  0, -4 1  0
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_8_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_8
+		      geometry DEF PIECE_8_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.92 0.37 0.40
+			coord DEF COORD_8_1 ExactCoordinate {
+			  exactPoint[-3 -1 -2, 3 -1 -2, 3 1 -2, -3 1 -2,
+				   -3 -1 -1, 3 -1 -1, 3 1 -1, -3 1 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_8_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_8
+		      geometry DEF PIECE_8_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.92 0.37 0.40
+			coord DEF COORD_8_2 ExactCoordinate {
+			  exactPoint[3 -1 -2, 4 -1 -2, 4 1 -2, 3 1 -2,
+				   3 -1  0, 4 -1  0, 4 1  0, 3 1  0
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 9:
+	DEF SWITCH_9 Switch {
+	  whichChoice 0
+	  children [
+	    DEF PIECE_9 AssemblyPart {
+	      children [
+                DEF SWITCH_9_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_9 Appearance {
+			material Material {
+			  diffuseColor 0.89 0.66 0.41
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_9_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.89 0.66 0.41
+			coord DEF COORD_9_0 ExactCoordinate {
+			  exactPoint[-4 -4 -4, -1 -4 -4, -1 -1 -4, -4 -1 -4,
+				   -4 -4 -1, -1 -4 -1, -1 -1 -1, -4 -1 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_9_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_9
+		      geometry DEF PIECE_9_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.89 0.66 0.41
+			coord DEF COORD_9_1 ExactCoordinate {
+			  exactPoint[-4 1 -4, -1 1 -4, -1 4 -4, -4 4 -4,
+				   -4 1 -1, -1 1 -1, -1 4 -1, -4 4 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_9_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_9
+		      geometry DEF PIECE_9_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.89 0.66 0.41
+			coord DEF COORD_9_2 ExactCoordinate {
+			  exactPoint[1 1 -4, 4 1 -4, 4 4 -4, 1 4 -4,
+				   1 1 -1, 4 1 -1, 4 4 -1, 1 4 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_9_3 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_9
+		      geometry DEF PIECE_9_3 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.89 0.66 0.41
+			coord DEF COORD_9_3 ExactCoordinate {
+			  exactPoint[1 -4 -4, 4 -4 -4, 4 -1 -4, 1 -1 -4,
+				   1 -4 -1, 4 -4 -1, 4 -1 -1, 1 -1 -1
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_9_4 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_9
+		      geometry DEF PIECE_9_4 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.89 0.66 0.41
+			coord DEF COORD_9_4 ExactCoordinate {
+			  exactPoint[-4 -1 -4, -1 -1 -4, -1 1 -4, -4 1 -4,
+				   -4 -1 -2, -1 -1 -2, -1 1 -2, -4 1 -2
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_9_5 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_9
+		      geometry DEF PIECE_9_5 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.89 0.66 0.41
+			coord DEF COORD_9_5 ExactCoordinate {
+			  exactPoint[-1 -1 -3, 1 -1 -3, 1 1 -3, -1 1 -3,
+				   -1 -1 -2, 1 -1 -2, 1 1 -2, -1 1 -2
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_9_6 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_9
+		      geometry DEF PIECE_9_6 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.89 0.66 0.41
+			coord DEF COORD_9_6 ExactCoordinate {
+			  exactPoint[1 -1 -4, 4 -1 -4, 4 1 -4, 1 1 -4,
+				   1 -1 -2, 4 -1 -2, 4 1 -2, 1 1 -2
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+
+	       ]
+	    }
+	   ]
+	}
+
+	# Piece 10:
+	DEF SWITCH_10 Switch {
+	  whichChoice -1
+	  children [
+	    DEF PIECE_10 AssemblyPart {
+	      children [
+                DEF SWITCH_10_0 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance DEF APP_10 Appearance {
+			material Material {
+			  diffuseColor 0.35 0.41 0.29
+			  transparency 0.001
+			}
+		      }
+		      geometry DEF PIECE_10_0 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.35 0.41 0.29
+			coord DEF COORD_10_0 ExactCoordinate {
+			  exactPoint[-4 -4 1, -1 -4 1, -1 -1 1, -4 -1 1,
+				   -4 -4 4, -1 -4 4, -1 -1 4, -4 -1 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_10_1 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_10
+		      geometry DEF PIECE_10_1 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.35 0.41 0.29
+			coord DEF COORD_10_1 ExactCoordinate {
+			  exactPoint[-4 1 1, -1 1 1, -1 4 1, -4 4 1,
+				   -4 1 4, -1 1 4, -1 4 4, -4 4 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_10_2 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_10
+		      geometry DEF PIECE_10_2 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.35 0.41 0.29
+			coord DEF COORD_10_2 ExactCoordinate {
+			  exactPoint[1 1 1, 4 1 1, 4 4 1, 1 4 1,
+				   1 1 4, 4 1 4, 4 4 4, 1 4 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_10_3 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_10
+		      geometry DEF PIECE_10_3 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.35 0.41 0.29
+			coord DEF COORD_10_3 ExactCoordinate {
+			  exactPoint[1 -4 1, 4 -4 1, 4 -1 1, 1 -1 1,
+				   1 -4 4, 4 -4 4, 4 -1 4, 1 -1 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_10_4 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_10
+		      geometry DEF PIECE_10_4 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.35 0.41 0.29
+			coord DEF COORD_10_4 ExactCoordinate {
+			  exactPoint[-4 -1 2, -1 -1 2, -1 1 2, -4 1 2,
+				   -4 -1 4, -1 -1 4, -1 1 4, -4 1 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_10_5 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_10
+		      geometry DEF PIECE_10_5 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.35 0.41 0.29
+			coord DEF COORD_10_5 ExactCoordinate {
+			  exactPoint[-1 -1 2, 1 -1 2, 1 1 2, -1 1 2,
+				   -1 -1 3, 1 -1 3, 1 1 3, -1 1 3
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+                DEF SWITCH_10_6 Switch {
+		  whichChoice 0
+		  children [
+		    Shape {
+		      appearance USE APP_10
+		      geometry DEF PIECE_10_6 SphericalGaussianMapColored {
+			drawAosSphere TRUE
+			drawAosHaloed TRUE
+			aosVertexStyle "none"
+			aosEdgeColor 0.35 0.41 0.29
+			coord DEF COORD_10_6 ExactCoordinate {
+			  exactPoint[1 -1 2, 4 -1 2, 4 1 2, 1 1 2,
+				   1 -1 4, 4 -1 4, 4 1 4, 1 1 4
+				  ]
+			}
+			coordIndex[0,3,2,1,-1,
+				   4,5,6,7,-1,
+				   0,1,5,4,-1,
+				   1,2,6,5,-1,
+				   2,3,7,6,-1,
+				   3,0,4,7,-1
+				  ]
+		      }
+		    }
+		   ]
+		}
+
+
+	       ]
+	    }
+	   ]
+	}
+
+       ]
+    }
+   ]
+}
+
+# Piece 0
+DEF INC_0 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_0_KEY.state TO INC_0.trigger
+ROUTE INC_0.value TO SWITCH_0.whichChoice
+
+# Piece 1:
+DEF INC_1 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_1_KEY.state TO INC_1.trigger
+ROUTE INC_1.value TO SWITCH_1.whichChoice
+
+# Piece 2:
+DEF INC_2 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_2_KEY.state TO INC_2.trigger
+ROUTE INC_2.value TO SWITCH_2.whichChoice
+
+# Piece 3:
+DEF INC_3 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_3_KEY.state TO INC_3.trigger
+ROUTE INC_3.value TO SWITCH_3.whichChoice
+
+# Piece 4:
+DEF INC_4 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_4_KEY.state TO INC_4.trigger
+ROUTE INC_4.value TO SWITCH_4.whichChoice
+
+# Piece 5:
+DEF INC_5 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_5_KEY.state TO INC_5.trigger
+ROUTE INC_5.value TO SWITCH_5.whichChoice
+
+# Piece 6:
+DEF INC_6 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_6_KEY.state TO INC_6.trigger
+ROUTE INC_6.value TO SWITCH_6.whichChoice
+
+# Piece 7:
+DEF INC_7 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_7_KEY.state TO INC_7.trigger
+ROUTE INC_7.value TO SWITCH_7.whichChoice
+
+# Piece 8:
+DEF INC_8 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_8_KEY.state TO INC_8.trigger
+ROUTE INC_8.value TO SWITCH_8.whichChoice
+
+# Piece 9:
+DEF INC_9 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_9_KEY.state TO INC_9.trigger
+ROUTE INC_9.value TO SWITCH_9.whichChoice
+
+# Piece 10:
+DEF INC_10 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_PIECE_10_KEY.state TO INC_10.trigger
+ROUTE INC_10.value TO SWITCH_10.whichChoice
+
+# Sub-part 0
+DEF INC_0 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_SUBPIECE_0_KEY.state TO INC_0.trigger
+ROUTE INC_0.value TO SWITCH_0_0.whichChoice
+ROUTE INC_0.value TO SWITCH_1_0.whichChoice
+ROUTE INC_0.value TO SWITCH_2_0.whichChoice
+ROUTE INC_0.value TO SWITCH_3_0.whichChoice
+ROUTE INC_0.value TO SWITCH_4_0.whichChoice
+ROUTE INC_0.value TO SWITCH_5_0.whichChoice
+ROUTE INC_0.value TO SWITCH_6_0.whichChoice
+ROUTE INC_0.value TO SWITCH_7_0.whichChoice
+ROUTE INC_0.value TO SWITCH_8_0.whichChoice
+ROUTE INC_0.value TO SWITCH_9_0.whichChoice
+ROUTE INC_0.value TO SWITCH_10_0.whichChoice
+
+# Sub-part 1
+DEF INC_1 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_SUBPIECE_1_KEY.state TO INC_1.trigger
+ROUTE INC_1.value TO SWITCH_0_1.whichChoice
+ROUTE INC_1.value TO SWITCH_1_1.whichChoice
+ROUTE INC_1.value TO SWITCH_2_1.whichChoice
+ROUTE INC_1.value TO SWITCH_3_1.whichChoice
+ROUTE INC_1.value TO SWITCH_4_1.whichChoice
+ROUTE INC_1.value TO SWITCH_5_1.whichChoice
+ROUTE INC_1.value TO SWITCH_6_1.whichChoice
+ROUTE INC_1.value TO SWITCH_7_1.whichChoice
+ROUTE INC_1.value TO SWITCH_8_1.whichChoice
+ROUTE INC_1.value TO SWITCH_9_1.whichChoice
+ROUTE INC_1.value TO SWITCH_10_1.whichChoice
+
+# Sub-part 2
+DEF INC_2 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_SUBPIECE_2_KEY.state TO INC_2.trigger
+ROUTE INC_2.value TO SWITCH_0_2.whichChoice
+ROUTE INC_2.value TO SWITCH_1_2.whichChoice
+ROUTE INC_2.value TO SWITCH_2_2.whichChoice
+ROUTE INC_2.value TO SWITCH_3_2.whichChoice
+ROUTE INC_2.value TO SWITCH_4_2.whichChoice
+ROUTE INC_2.value TO SWITCH_5_2.whichChoice
+ROUTE INC_2.value TO SWITCH_6_2.whichChoice
+ROUTE INC_2.value TO SWITCH_7_2.whichChoice
+ROUTE INC_2.value TO SWITCH_8_2.whichChoice
+ROUTE INC_2.value TO SWITCH_9_2.whichChoice
+ROUTE INC_2.value TO SWITCH_10_2.whichChoice
+
+# Sub-part 3
+DEF INC_3 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_SUBPIECE_3_KEY.state TO INC_3.trigger
+ROUTE INC_3.value TO SWITCH_5_3.whichChoice
+ROUTE INC_3.value TO SWITCH_6_3.whichChoice
+ROUTE INC_3.value TO SWITCH_9_3.whichChoice
+ROUTE INC_3.value TO SWITCH_10_3.whichChoice
+
+# Sub-part 4
+DEF INC_4 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_SUBPIECE_4_KEY.state TO INC_4.trigger
+ROUTE INC_4.value TO SWITCH_5_4.whichChoice
+ROUTE INC_4.value TO SWITCH_6_4.whichChoice
+ROUTE INC_4.value TO SWITCH_9_4.whichChoice
+ROUTE INC_4.value TO SWITCH_10_4.whichChoice
+
+# Sub-part 5
+DEF INC_5 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_SUBPIECE_5_KEY.state TO INC_5.trigger
+ROUTE INC_5.value TO SWITCH_9_5.whichChoice
+ROUTE INC_5.value TO SWITCH_10_5.whichChoice
+
+# Sub-part 6
+DEF INC_6 Incrementor {
+  minValue -1
+  maxValue 0
+  value 0
+}
+
+ROUTE AOS_SUBPIECE_6_KEY.state TO INC_6.trigger
+ROUTE INC_6.value TO SWITCH_9_6.whichChoice
+ROUTE INC_6.value TO SWITCH_10_6.whichChoice
+
+#
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_0_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_0_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_0_2.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_1_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_1_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_1_2.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_2_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_2_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_2_2.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_3_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_3_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_3_2.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_4_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_4_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_4_2.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_5_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_5_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_5_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_5_3.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_5_4.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_6_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_6_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_6_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_6_3.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_6_4.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_7_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_7_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_7_2.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_8_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_8_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_8_2.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_9_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_9_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_9_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_9_3.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_9_4.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_9_5.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_9_6.drawAos
+
+ROUTE DRAW_AOS_KEY.state TO PIECE_10_0.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_10_1.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_10_2.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_10_3.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_10_4.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_10_5.drawAos
+ROUTE DRAW_AOS_KEY.state TO PIECE_10_6.drawAos
+
+ROUTE DRAW_ALT_KEY.state TO PUZZLE.drawAlternate
+ROUTE INC_ALT_KEY.state TO PUZZLE.incAlternate
+ROUTE DRAW_AOS_MINK_SUM_KEY.state TO PUZZLE.drawAosMinkowskiSums
+ROUTE INC_MINK_SUM_KEY.state TO PUZZLE.incMinkowskiSums
+ROUTE SOLVE_KEY.state TO PUZZLE.trigger
+ROUTE SNAP_KEY.state TO SNAP.trigger
