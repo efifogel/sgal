@@ -129,14 +129,14 @@ void Script::getter(v8::Local<v8::String> property,
   v8::Handle<v8::External> internal_field =
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
-  Script* script_node = static_cast<Script*>(internal_field->Value());
+  auto* script_node = static_cast<Script*>(internal_field->Value());
   SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Obtain the field information record:
   v8::Local<v8::Value> data = info.Data();
   v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
   SGAL_assertion(ext->Value() != nullptr);
-  Field_info* field_info = static_cast<Field_info*>(ext->Value());
+  auto* field_info = static_cast<Field_info*>(ext->Value());
   SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   Uint id = field_info->get_type_id();
@@ -229,14 +229,14 @@ void Script::setter(v8::Local<v8::String> property,
   v8::Handle<v8::External> internal_field =
     v8::Handle<v8::External>::Cast(obj->GetInternalField(0));
   SGAL_assertion(internal_field->Value() != nullptr);
-  Script* script_node = static_cast<Script*>(internal_field->Value());
+  auto* script_node = static_cast<Script*>(internal_field->Value());
   SGAL_TRACE_MSG(Trace::SCRIPT, "  script: " + script_node->get_name() + "\n");
 
   // Obtain the field information record:
   v8::Local<v8::Value> data = info.Data();
   v8::Handle<v8::External> ext = v8::Handle<v8::External>::Cast(data);
   SGAL_assertion(ext->Value() != nullptr);
-  Field_info* field_info = static_cast<Field_info*>(ext->Value());
+  auto* field_info = static_cast<Field_info*>(ext->Value());
   SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   // Apply the setting
@@ -1448,7 +1448,7 @@ void Script::execute(const Field_info* field_info)
   args[1] = v8::Number::New(m_isolate, m_time);
 
   // Clear the set of assigned fields. When an object is assigned,
-  // the id of the associate field is inserted into the set. A filed, the
+  // the id of the associate field is inserted into the set. A field, the
   // id of which is not found in the set is not cascaded.
   clear_assigned();
   v8::TryCatch try_catch;

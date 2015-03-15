@@ -105,7 +105,15 @@ ROUTE SIM.start TO CUBE_TRANSFORMER.execute
 ROUTE SIM.start TO TETRAHEDRON_TRANSFORMER.execute
 # ROUTE SIM.start TO BO.trigger
 
-ROUTE BO.result TO INTERSECTION.geometry
+DEF EXTRACT_GEOM Script {
+  eventIn MFNode modes
+  eventOut SFNode out
+  url "javascript:
+    function modes(value, timestamp) { out = value[0]; }"
+}
+
+ROUTE BO.result TO EXTRACT_GEOM.modes
+ROUTE EXTRACT_GEOM.out TO INTERSECTION.geometry
 
 DEF SCRIPT Script {
   eventIn SFNode coord
@@ -117,3 +125,4 @@ DEF SCRIPT Script {
 ROUTE TETRAHEDRON.coord TO SCRIPT.coord
 ROUTE CUBE.coord TO SCRIPT.coord
 ROUTE SCRIPT.out TO BO.trigger
+

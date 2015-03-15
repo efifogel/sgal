@@ -44,7 +44,11 @@ template <> struct Is_scalar<Vector2f> : Selector<false> {};
 template <> struct Is_scalar<Vector3f> : Selector<false> {};
 template <> struct Is_scalar<Rotation> : Selector<false> {};
 template <> struct Is_scalar<Image> : Selector<false> {};
-template <> struct Is_scalar<Shared_container> : Selector<false> {};
+// Currently, a shared container is considered a scalar. This implies that
+// getting or setting a specific field of a shared container is not allowed.
+// Indeed, it is not supported yet.
+//! \todo support getting or setting individual fields of a container.
+// template <> struct Is_scalar<Shared_container> : Selector<false> {};
 template <> struct Is_scalar<Boolean_array> : Selector<false> {};
 template <> struct Is_scalar<Float_array> : Selector<false> {};
 template <> struct Is_scalar<Int32_array> : Selector<false> {};

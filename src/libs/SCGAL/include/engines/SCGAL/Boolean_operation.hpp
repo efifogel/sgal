@@ -25,6 +25,7 @@
  * Inherits from Node
  */
 
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 #include <CGAL/corefinement_operations.h>
@@ -101,7 +102,7 @@ public:
   Operation* operation_handle(const Field_info*) { return &m_operation; }
   Shared_mesh_set* operand1_handle(const Field_info*) { return &m_operand1; }
   Shared_mesh_set* operand2_handle(const Field_info*) { return &m_operand2; }
-  Shared_exact_polyhedron_geo* result_handle(const Field_info*)
+  std::vector<Shared_exact_polyhedron_geo>* result_handle(const Field_info*)
   { return &m_result; }
   //@}
 
@@ -158,12 +159,12 @@ public:
   /*! Set the resulting geometry.
    * \param result (in) the resulting geomery.
    */
-  void set_result(Shared_exact_polyhedron_geo result);
+  void set_result(const std::vector<Shared_exact_polyhedron_geo>& result);
 
   /*! Obtain the resulting geometry.
    * \result (in) the resulting geomery.
    */
-  Shared_exact_polyhedron_geo get_result() const;
+  const std::vector<Shared_exact_polyhedron_geo>& get_result() const;
 
 protected:
   /*! 1st operand. */
@@ -173,7 +174,7 @@ protected:
   Shared_mesh_set m_operand2;
 
   /*! Result. */
-  Shared_exact_polyhedron_geo m_result;
+  std::vector<Shared_exact_polyhedron_geo> m_result;
 
   /*! The operation. */
   Operation m_operation;
@@ -244,11 +245,12 @@ inline void Boolean_operation::set_operand2(Shared_mesh_set operand)
 { m_operand2 = operand; }
 
 //! \brief sets the resulting geometry.
-inline void Boolean_operation::set_result(Shared_exact_polyhedron_geo result)
+inline void Boolean_operation::
+set_result(const std::vector<Shared_exact_polyhedron_geo>& result)
 { m_result = result; }
 
 //! \brief obtains the resulting geometry.
-inline Boolean_operation::Shared_exact_polyhedron_geo
+inline const std::vector<Boolean_operation::Shared_exact_polyhedron_geo>&
 Boolean_operation::get_result() const
 { return m_result; }
 

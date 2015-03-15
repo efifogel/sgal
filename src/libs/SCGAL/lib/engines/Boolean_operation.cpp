@@ -29,6 +29,7 @@
 #include <vector>
 #include <string>
 #include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
 
 #if 0
 #include <CGAL/Nef_polyhedron_3.h>
@@ -130,11 +131,7 @@ void Boolean_operation::execute()
   Shared_exact_polyhedron_geo geometry2 = get_geometry(m_operand2);
   const Exact_polyhedron& polyhedron2 = geometry2->get_polyhedron();
 
-  if (!m_result) {
-    m_result.reset(new Exact_polyhedron_geo);
-    SGAL_assertion(m_result);
-  }
-  else m_result->clear_polyhedron();
+  m_result.clear();
 
 #if 0
   typedef CGAL::Nef_polyhedron_3<Exact_kernel, CGAL::SNC_indexed_items>
@@ -154,7 +151,9 @@ void Boolean_operation::execute()
 
   Exact_polyhedron p;
   nef_polyhedron.convert_to_polyhedron(p);
-  m_result->set_polyhedron(p);
+  auto geometry = Shared_exact_polyhedron_geo(new Exact_polyhedron_geo);
+  geometry->set_polyhedron(p);
+  m_result.push_back(geometry);
 
 #else
   //! \todo Allow passing a const polyhedron
@@ -170,13 +169,23 @@ void Boolean_operation::execute()
   op(tmp1, tmp2, std::back_inserter(polylines),
      std::back_inserter(polyhedrons), get_operation_tag());
   // std::cout << "# polyhedron: " << polyhedrons.size() << std::endl;
-//   if (polyhedrons.empty()) {
-//     CGAL::VRML_2_ostream vrml_out(std::cout);
-//     vrml_out << polyhedron1;
-//     vrml_out << polyhedron2;
-//   }
-  if (!polyhedrons.empty())
-    m_result->set_polyhedron(*(polyhedrons.front().first));
+  // if (polyhedrons.empty()) {
+  //   CGAL::VRML_2_ostream vrml_out(std::cout);
+  //   vrml_out << polyhedron1;
+  //   vrml_out << polyhedron2;
+  // }
+  m_result.resize(polyhedrons.size());
+  auto it = m_result.begin();
+#if (_MSC_VER <= 1600)
+  BOOST_FOREACH(auto& pp, polyhedrons)
+#else
+  for (auto& pp : polyhedrons)
+#endif
+  {
+    auto geometry = Shared_exact_polyhedron_geo(new Exact_polyhedron_geo);
+    geometry->set_polyhedron(*(pp.first));
+    *it++ = geometry;
+  }
   for (auto plit = polylines.begin(); plit != polylines.begin(); ++plit)
     plit->clear();
   polylines.clear();
@@ -281,10 +290,10 @@ void Boolean_operation::init_prototype()
                                                       exec_func));
 
   // result
-  Shared_container_handle_function result_func =
-    reinterpret_cast<Shared_container_handle_function>
+  Shared_container_array_handle_function result_func =
+    reinterpret_cast<Shared_container_array_handle_function>
     (&Boolean_operation::result_handle);
-  s_prototype->add_field_info(new SF_shared_container(RESULT, "result",
+  s_prototype->add_field_info(new MF_shared_container(RESULT, "result",
                                                       RULE_EXPOSED_FIELD,
                                                       result_func));
 }
