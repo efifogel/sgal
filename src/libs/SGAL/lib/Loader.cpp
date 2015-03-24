@@ -21,13 +21,13 @@
 #include <fstream>
 #include <vector>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
 #include "SGAL/Loader.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Group.hpp"
-#include "SGAL/Scene_graph.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Shape.hpp"
 #include "SGAL/Indexed_face_set.hpp"
@@ -36,36 +36,44 @@
 
 SGAL_BEGIN_NAMESPACE
 
+//! \brief loads a scene graph from an stl file.
+int Loader::load_stl(const char* filename, Scene_graph* sg, bool force)
+{
+  std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
+  if (!stl_stream.good()) {
+    std::cerr << "Error: failed to open " << filename << "!" << std::endl;
+    return -1;
+  }
+  char str[81];
+  stl_stream.read(str, 80);
+  std::string title(str);
+  if (!stl_stream) {
+    std::cout << "Error: only " << stl_stream.gcount() << " could be read!"
+              << std::endl;
+    stl_stream.close();
+    return -1;
+  }
+  if (force || (0 != title.compare(0, 5, "solid"))) {
+    int rc = read_stl(stl_stream, sg);
+    stl_stream.close();
+    if (rc < 0) {
+      std::cerr << "Error: Failed to read " << filename << "!" << std::endl;
+      return -1;
+    }
+    return 0;
+  }
+  stl_stream.close();
+  return 1;
+}
+
+//! \brief loads a scene graph from a file.
 int Loader::load(const char* filename, Scene_graph* sg)
 {
   // Try to determine whether the file is binary or ascii
   std::string file_extension = boost::filesystem::extension(filename);
-  if (file_extension == ".stl") {
-    std::ifstream stl_stream(filename, std::ios::in|std::ios::binary);
-    if (!stl_stream.good()) {
-      std::cerr << "Error: failed to open " << filename << "!" << std::endl;
-      return -1;
-    }
-    char str[81];
-    stl_stream.read(str, 80);
-    std::string title(str);
-    if (!stl_stream) {
-      std::cout << "Error: only " << stl_stream.gcount() << " could be read!"
-                << std::endl;
-      stl_stream.close();
-      return -1;
-    }
-
-    if (0 != title.compare(0, 5, "solid")) {
-      int rc = read_stl(stl_stream, sg);
-      stl_stream.close();
-      if (rc < 0) {
-        std::cerr << "Error: Failed to read " << filename << "!" << std::endl;
-        return -1;
-      }
-      return 0;
-    }
-    stl_stream.close();
+  if (boost::iequals(file_extension, ".stl")) {
+    int rc = load_stl(filename, sg);
+    if (rc <= 0) return rc;
   }
 
   // Open source file:
@@ -75,14 +83,20 @@ int Loader::load(const char* filename, Scene_graph* sg)
   // scanner.set_debug(1);
 
   // Parse & export:
-  Vrml_parser parser(scanner, sg);
+  bool maybe_binary_stl(false);
+  Vrml_parser parser(scanner, sg, maybe_binary_stl);
   if (parser.parse()) {
+    if (maybe_binary_stl) {
+      int rc = load_stl(filename, sg, true);
+      if (rc == 0) return rc;
+    }
     std::cerr << "Error: failed to parse " << filename << "!" << std::endl;
     return -1;
   }
   return 0;
 }
 
+//! \brief reads a scene graph from a file in the STL binary format.
 int Loader::read_stl(std::ifstream& stl_stream, Scene_graph* scene_graph)
 {
   scene_graph->set_input_format_id(File_format::ID_STL);

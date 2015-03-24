@@ -98,6 +98,7 @@ SGAL_END_NAMESPACE
 %lex-param { Vrml_scanner& scanner }
 %parse-param { Vrml_scanner& scanner }
 %parse-param { Scene_graph* scene_graph }
+%parse-param { bool& maybe_binary_stl }
 
 %code // *.cc
 {
@@ -274,6 +275,11 @@ Start           : VRML vrmlScene
                   delete $3.second;
                   $3.second = NULL;
                 }
+                | K_SOLID error
+                  /* It is possible that even though the file starts with the
+                   * token "solid", the file is in the binary stl format.
+                   */
+                {  maybe_binary_stl = true; }
                 ;
 
 facets          : /* empty */

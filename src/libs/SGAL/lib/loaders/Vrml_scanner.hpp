@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1310 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_WRL_FLEXLEXER_HPP
@@ -39,13 +36,13 @@ public:
 
   /*! */
   Vrml_parser::symbol_type mylex();
-  
+
   /*! */
   void yyerror(const char* message, int cur_token);
 
 private:
   Vrml_parser::location_type loc;
-  
+
   /*! */
   void comment_to_eol(void);
 

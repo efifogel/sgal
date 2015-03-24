@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_LOADER_HPP
@@ -36,6 +33,15 @@ public:
   /*! Load a scene graph from a file.
    */
   int load(const char* filename, Scene_graph* sg);
+
+  /*! Load a scene graph from an stl file.
+   * \param[in] filename the file name to parse
+   * \param[in] sg the scene graph
+   * \param[in] force indicates whether to force reading, assuming that the
+   *            file is in the STL binary format. (Do not check whether the
+   *            file starts with the token "solid".)
+   */
+  int load_stl(const char* filename, Scene_graph* sg, bool force = false);
 
   /*! Read a scene graph from a file in the STL binary format.
    */
