@@ -334,9 +334,10 @@ void Group::init_prototype()
   s_prototype = new Container_proto(Node::get_prototype());
 
   // Add the object fields to the prototype
-  // visible
   Execution_function exec_func =
     static_cast<Execution_function>(&Node::sphere_bound_changed);
+
+  // visible
   Boolean_handle_function is_visible_func =
     static_cast<Boolean_handle_function>(&Group::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(IS_VISIBLE, "visible",
