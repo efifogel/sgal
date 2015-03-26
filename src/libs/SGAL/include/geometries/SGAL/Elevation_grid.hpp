@@ -111,10 +111,15 @@ public:
    */
   void set_height(Float_array& height);
 
-  /*! Obtain the 2D array that represents the height above a grid.
+  /*! Obtain the (const) 2D array that represents the height above a grid.
    * \return the 2D array.
    */
   const Float_array& get_height() const;
+
+  /*! Obtain the (non const) 2D array that represents the height above a grid.
+   * \return the 2D array.
+   */
+  Float_array& get_height();
 
   /*! Set the number of grid points along the x-dimension.
    * \param x_dimension (in) the number of grid points along the x-dimension.
@@ -204,9 +209,14 @@ inline Container* Elevation_grid::clone() { return new Elevation_grid(); }
 //! \brief obtains the tag (type) of the container.
 inline const std::string& Elevation_grid::get_tag() const { return s_tag; }
 
-//! \brief obtain the 2D array that represents the height above a grid.
+//! \brief obtain the (const) 2D array that represents the height above a grid.
 inline const Float_array& Elevation_grid::get_height() const
 { return m_height; }
+
+/*! \brief obtain the (non const) 2D array that represents the height above a
+ * grid.
+ */
+inline Float_array& Elevation_grid::get_height() { return m_height; }
 
 //! \brief obtains the number of grid points along the x-dimension.
 inline Uint Elevation_grid::get_x_dimension() const { return m_x_dimension; }
