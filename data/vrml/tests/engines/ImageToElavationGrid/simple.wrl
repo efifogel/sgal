@@ -1,0 +1,37 @@
+#VRML V2.0 utf8
+DEF CONFIG Configuration {}
+DEF SIM Simulation {}
+ColorBackground {
+  color 1 1 1 1
+}
+DEF EXAMINE_NAV NavigationInfo { type [ "EXAMINE" "ANY" ] }
+DEF SNAP_KEY SingleKeySensor { key "S" }
+DEF SNAP Snapshot {
+  image Image { }
+  fileFormat "png"
+  sequence FALSE
+  dirName "."
+  fileName "simple"
+}
+Transform {
+  rotation 1 -1 0 0.3
+  children [
+    DEF SHAPE Shape {
+      appearance Appearance {
+	material Material {
+	  diffuseColor 0.8 0.8 0.8
+	  specularColor 0.2 0.2 0.2
+	}
+      }
+    }
+   ]
+}
+
+DEF IMAGE_TO_ELEVATION_GRID ImageToElavationGrid {
+  image Image { url ["logo.png"] }
+}
+
+ROUTE SIM.start TO IMAGE_TO_ELEVATION_GRID.trigger
+ROUTE IMAGE_TO_ELEVATION_GRID.elevationGrid TO SHAPE.geometry
+
+ROUTE SNAP_KEY.state TO SNAP.trigger

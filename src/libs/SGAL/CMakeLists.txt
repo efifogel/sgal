@@ -49,9 +49,11 @@ include_directories(${GENERATED_DIR})
 #file(GLOB_RECURSE SGAL_SOURCE_FILES *.cpp)
 
 #Engines
+set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Image_to_elevation_grid.cpp)
 set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Sphere_plane_intersection.cpp)
 set(SGAL_ENGINES_SOURCE_FILES ${SGAL_ENGINES_SOURCE_FILES} lib/engines/Incrementor.cpp)
 set(SGAL_ENGINES_HEADER_FILES ${SGAL_ENGINES_HEADER_FILES} include/engines/SGAL/Incrementor.hpp)
+set(SGAL_ENGINES_HEADER_FILES ${SGAL_ENGINES_HEADER_FILES} include/engines/SGAL/Image_to_elevation_grid.hpp)
 set(SGAL_ENGINES_HEADER_FILES ${SGAL_ENGINES_HEADER_FILES} include/engines/SGAL/Sphere_plane_intersection.hpp)
 set(SGAL_SOURCE_FILES ${SGAL_SOURCE_FILES} ${SGAL_ENGINES_SOURCE_FILES} ${SGAL_ENGINES_HEADER_FILES})
 source_group(src\\engines FILES ${SGAL_ENGINES_SOURCE_FILES} ${SGAL_ENGINES_HEADER_FILES})

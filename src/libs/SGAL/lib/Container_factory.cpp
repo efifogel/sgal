@@ -33,8 +33,9 @@
 #include "SGAL/Font_style.hpp"
 #include "SGAL/Halftone.hpp"
 #include "SGAL/Image.hpp"
-#include "SGAL/Image_texture.hpp"
+#include "SGAL/Image_to_elevation_grid.hpp"
 #include "SGAL/Image_sphere_environment.hpp"
+#include "SGAL/Image_texture.hpp"
 // #include "SGAL/Image_texture_WT.hpp"
 #include "SGAL/Incrementor.hpp"
 #include "SGAL/Navigation_info.hpp"
@@ -197,6 +198,7 @@ void Container_factory::initialize()
   REGISTER_OBJECT(Geodesic);
   REGISTER_OBJECT(Halftone);
   REGISTER_OBJECT(Image);
+  REGISTER_OBJECT(Image_to_elevation_grid);
   REGISTER_OBJECT(Image_background);
   REGISTER_OBJECT(Image_sphere_environment);
   REGISTER_OBJECT(Image_texture);

@@ -75,11 +75,18 @@ Transform {
 	}
        ]
     }
-    DEF INTERSECTION Shape {
+    DEF INTERSECTION1 Shape {
       appearance Appearance {
-    	material Material { diffuseColor 0.4 0.4 0.4 }
+    	material Material { diffuseColor 0.4 0.7 0.4 }
       }
     }
+    DEF INTERSECTION2 Shape {
+      appearance Appearance {
+    	material Material { diffuseColor 0.7 0.4 0.4 }
+      }
+    }
+    # DEF INTERSECTION Group {
+    # }
   ]
 }
 
@@ -104,14 +111,20 @@ ROUTE SIM.start TO TETRAHEDRON_TRANSFORMER.execute
 # ROUTE SIM.start TO BO.trigger
 
 DEF EXTRACT_GEOM Script {
-  eventIn MFNode modes
-  eventOut SFNode out
+  eventIn MFNode nodes
+  eventOut SFNode out1
+  eventOut SFNode out2
   url "javascript:
-    function modes(value, timestamp) { out = value[0]; }"
+    function nodes(value, timestamp) {
+      out1 = value[0];
+      out2 = value[1];
+    }"
 }
 
-ROUTE BO.result TO EXTRACT_GEOM.modes
-ROUTE EXTRACT_GEOM.out TO INTERSECTION.geometry
+ROUTE BO.result TO EXTRACT_GEOM.nodes
+ROUTE EXTRACT_GEOM.out1 TO INTERSECTION1.geometry
+ROUTE EXTRACT_GEOM.out2 TO INTERSECTION2.geometry
+# ROUTE BO.result TO INTERSECTION.children
 
 DEF SCRIPT Script {
   eventIn SFNode coord
