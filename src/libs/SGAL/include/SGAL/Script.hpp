@@ -36,6 +36,7 @@ class Container_proto;
 class Scene_graph;
 class Field;
 class Field_info;
+class Formatter;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -101,6 +102,11 @@ public:
    * \param scene_graph the given scene
    */
   virtual void add_to_scene(Scene_graph* scene_graph);
+
+  /*! Write this container.
+   * \param[in] formatter the formatter to use; e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! Add a field information record to the script node.
    * \param type (in) the type of the field.
