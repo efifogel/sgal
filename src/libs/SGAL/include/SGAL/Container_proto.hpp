@@ -70,13 +70,13 @@ public:
     typedef Iterator::reference                 reference;
 
   public:
-    /*! Constructor. */
+    /*! Construct from prototype. */
     Id_const_iterator(const Container_proto* prototype) :
       m_prototype(prototype),
       m_it()
     {}
 
-    /*! Constructor. */
+    /*! Construct from prototype and iterator. */
     Id_const_iterator(const Container_proto* prototype, Iterator it) :
       m_prototype(prototype),
       m_it(it)
@@ -91,12 +91,11 @@ public:
     Id_const_iterator& operator++()
     {
       ++m_it;
-      if (m_it == m_prototype->field_info_ids_end()) {
+      while (m_it == m_prototype->field_info_ids_end()) {
         const Container_proto* ancestor = m_prototype->get_ancestor();
-        if (ancestor) {
-          m_prototype = ancestor;
-          m_it = m_prototype->field_info_ids_begin();
-        }
+        if (!ancestor) break;
+        m_prototype = ancestor;
+        m_it = m_prototype->field_info_ids_begin();
       }
       return *this;
     }
