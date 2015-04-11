@@ -16,8 +16,8 @@
 //
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
-#ifndef SGAL_STL_FORMATTER_HPP
-#define SGAL_STL_FORMATTER_HPP
+#ifndef SGAL_OBJ_FORMATTER_HPP
+#define SGAL_OBJ_FORMATTER_HPP
 
 /*! \file
  */
@@ -41,23 +41,23 @@ class Container;
 #endif
 
 /*! Writes a scene graph to an output stream in the VRML format */
-class SGAL_SGAL_DECL Stl_formatter : public Text_formatter {
+class SGAL_SGAL_DECL Obj_formatter : public Text_formatter {
 public:
   /*! Constructor */
-  Stl_formatter();
+  Obj_formatter();
 
   /*! Construct an output formatter from an output stream.
    * \param os the output stream.
    */
-  Stl_formatter(std::ostream& os);
+  Obj_formatter(std::ostream& os);
 
   /*! Construct an input formatter from an input stream.
    * \param is the input stream.
    */
-  Stl_formatter(std::istream& is);
+  Obj_formatter(std::istream& is);
 
   /*! Destructor */
-  virtual ~Stl_formatter();
+  virtual ~Obj_formatter();
 
   /// \name Export functions
   //@{
@@ -74,15 +74,25 @@ public:
    */
   virtual void write(Container* container);
 
-  /*! Export a triangular facet.
-   * \param p1 (in) the point (in world coordinate system) of the first vertex.
-   * \param p2 (in) the point (in world coordinate system) of the second vertex.
-   * \param p3 (in) the point (in world coordinate system) of the third vertex.
-   * \param normal (in) the facet normal.
+  /*! Export a vertex.
+   * \param[in] vertex vertex (in world coordinate system).
    */
-  virtual void facet(const Vector3f& local_p1, const Vector3f& local_p2,
-                     const Vector3f& local_p3, const Vector3f& normal);
+  virtual void vertex(const Vector3f& vertex);
 
+  /*! Export a triangular facet.
+   * \param[in] i0 the index of the first vertex.
+   * \param[in] i1 the index of the second vertex.
+   * \param[in] i2 the index of the third vertex.
+   */
+  virtual void triangle(Uint i0, Uint i1, Uint i2);
+
+  /*! Export a triangular facet.
+   * \param[in] i0 the index of the first vertex.
+   * \param[in] i1 the index of the second vertex.
+   * \param[in] i2 the index of the third vertex.
+   * \param[in] i3 the index of the fourth vertex.
+   */
+  virtual void quad(Uint i0, Uint i1, Uint i2, Uint i3);
   //@}
 
   /*! Obtain the viewing matrix at the top of the stack.
@@ -90,23 +100,17 @@ public:
    */
   const Matrix4f& top_matrix() const;
 
+  /*! Add a given size to the last recorded index.
+   * \param[in] size the number to add to the last recorded index.
+   */
+  void add_index(Uint size);
+
 private:
   //! The stack of viewing matrices.
   std::stack<Matrix4f> m_matrices;
 
-  /*! Export a vertex.
-   * \param p the vertex point.
-   */
-  void vertex(const Vector3f& p);
-
-  /*! Export a facet header.
-   * \param normal (in) the facet normal.
-   */
-  void facet_begin(const Vector3f& normal);
-
-  /*! Export a facet trailer.
-   */
-  void facet_end();
+  //! The last coordinate index.
+  Uint m_index;
 };
 
 #if defined(_MSC_VER)
@@ -114,8 +118,11 @@ private:
 #endif
 
 //! \brief obtains the viewing matrix at the top of the stack.
-inline const Matrix4f& Stl_formatter::top_matrix() const
+inline const Matrix4f& Obj_formatter::top_matrix() const
 { return m_matrices.top(); }
+
+//! \brief adds a given size to the last recorded index.
+inline void Obj_formatter::add_index(Uint size) { m_index += size; }
 
 SGAL_END_NAMESPACE
 

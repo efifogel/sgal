@@ -60,6 +60,7 @@
 #include "SGAL/Multisample.hpp"
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Vrml_formatter.hpp"
+#include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Node.hpp"
@@ -907,7 +908,7 @@ void Scene_graph::write(std::ostream& os, File_format::Id format_id)
    case File_format::ID_WRL: write_vrml(os); break;
    case File_format::ID_X3D: break;
    case File_format::ID_STL: write_stl(os); break;
-   case File_format::ID_OBJ: break;
+   case File_format::ID_OBJ: write_obj(os);break;
    case File_format::NONE:
    case File_format::NUM_IDS: return;
   }
@@ -953,6 +954,24 @@ void Scene_graph::write_stl(std::ostream& os)
     Transform::Node_iterator it = transform->children_begin();
     for (; it != transform->children_end(); ++it) {
       Shared_node node = *it;
+      formatter.write(&*node);
+    }
+  }
+  formatter.end();
+}
+
+//! \brief writes the scene to an output stream in the OBJ format.
+void Scene_graph::write_obj(std::ostream& os)
+{
+  Obj_formatter formatter(os);
+  Shared_group root = get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    auto transform = boost::dynamic_pointer_cast<Transform>(root->get_child(0));
+    auto it = transform->children_begin();
+    for (; it != transform->children_end(); ++it) {
+      auto node = *it;
       formatter.write(&*node);
     }
   }

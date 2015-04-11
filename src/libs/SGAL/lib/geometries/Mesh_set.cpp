@@ -38,6 +38,7 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Formatter.hpp"
 #include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Obj_formatter.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/Vector3f.hpp"
 #include "SGAL/Coord_array_3d.hpp"
@@ -609,6 +610,56 @@ void Mesh_set::write(Formatter* formatter)
                   << std::endl;);
   if (is_dirty_flat_coord_indices()) clean_flat_coord_indices();
   if (m_coord_indices.empty() && m_flat_coord_indices.empty()) return;
+  if (m_dirty_coord_indices) clean_coord_indices();
+
+  auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
+  if (obj_formatter) {
+    if (m_dirty_color_indices) clean_color_indices();
+    if (m_dirty_normal_indices) clean_normal_indices();
+    if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
+    // Apply the active (top) transform matrix to the coordinates.
+    const Matrix4f& matrix = obj_formatter->top_matrix();
+    if (!m_coord_array || (m_coord_array->size() == 0)) return;
+    std::vector<Vector3f> world_coords(m_coord_array->size());
+    Uint i = 0;
+    for (auto it = world_coords.begin(); it != world_coords.end(); ++it)
+      it->xform_pt(get_coord_3d(i++), matrix);
+    for (auto it = world_coords.begin(); it != world_coords.end(); ++it)
+      obj_formatter->vertex(*it);
+    // Export the facets.
+    if ((PT_TRIANGLES == get_primitive_type()) ||
+        (PT_QUADS == get_primitive_type()))
+    {
+      const auto& indices = get_flat_coord_indices();
+      Uint j = 0;
+      for (Uint i = 0; i < get_num_primitives(); ++i) {
+        if (PT_TRIANGLES == get_primitive_type()) {
+          if (is_ccw())
+            obj_formatter->triangle(indices[j], indices[j+1], indices[j+2]);
+          else obj_formatter->triangle(indices[j+2], indices[j+1], indices[j]);
+          j += 3;
+        }
+        else {
+          if (is_ccw())
+            obj_formatter->quad(indices[j], indices[j+1], indices[j+2],
+                                indices[j+3]);
+          else
+            obj_formatter->quad(indices[j+3], indices[j+2], indices[j+1],
+                                indices[j]);
+          j += 4;
+        }
+      }
+    }
+    else {
+      //! \todo triangulate and export.
+      const auto& indices = get_coord_indices();
+      std::cout << "size: " << indices.size() << std::endl;
+      const auto& flat_indices = get_flat_coord_indices();
+      std::cout << "flat size: " << flat_indices.size() << std::endl;
+      SGAL_error_msg("Not impelmented yet!");
+    }
+    obj_formatter->add_index(world_coords.size());
+  }
 
   Stl_formatter* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
   if (stl_formatter) {
@@ -657,7 +708,6 @@ void Mesh_set::write(Formatter* formatter)
 
   Vrml_formatter* vrml_formatter = dynamic_cast<Vrml_formatter*>(formatter);
   if (vrml_formatter) {
-    if (m_dirty_coord_indices) clean_coord_indices();
     if (m_dirty_color_indices) clean_color_indices();
     if (m_dirty_normal_indices) clean_normal_indices();
     if (m_dirty_tex_coord_indices) clean_tex_coord_indices();
@@ -668,9 +718,8 @@ void Mesh_set::write(Formatter* formatter)
      */
     formatter->container_begin(get_tag());
     // Travese prototype field-info records
-    Container_proto* proto = get_prototype();
-    Container_proto::Id_const_iterator it = proto->ids_begin(proto);
-    for (; it != proto->ids_end(proto); ++it) {
+    auto* proto = get_prototype();
+    for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
       const Field_info* field_info = (*it).second;
       if (COORD_INDEX_ARRAY == field_info->get_id()) {
         const auto& indices = get_coord_indices();

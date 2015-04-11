@@ -432,6 +432,11 @@ public:
    * \param os (in) The output stream.
    */
   void write_stl(std::ostream& os);
+
+  /*! Write the scene to an output stream in OBJ format.
+   * \param[i] os The output stream.
+   */
+  void write_obj(std::ostream& os);
   //@}
 
   /*! Obtain an isolated instance of the V8 engine.
