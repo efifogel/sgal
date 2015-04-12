@@ -28,6 +28,8 @@
 #include "SGAL/Container.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Mesh_set.hpp"
+#include "SGAL/Appearance.hpp"
+#include "SGAL/Material.hpp"
 #include "SGAL/Coord_array.hpp"
 #include "SGAL/version.hpp"
 
@@ -36,27 +38,30 @@ SGAL_BEGIN_NAMESPACE
 //! \brief constructs default.
 Obj_formatter::Obj_formatter(const std::string& filename) :
   Text_formatter(filename),
-  m_index(1)
+  m_index(1),
+  m_num_appearances(0),
+  m_is_visible(false)
 { m_matrices.emplace(Matrix4f()); }
 
 //! \brief constructs an output formatter from an output stream.
 Obj_formatter::Obj_formatter(const std::string& filename, std::ostream& os) :
   Text_formatter(filename, os),
-  m_index(1)
+  m_index(1),
+  m_num_appearances(0),
+  m_is_visible(false)
 { m_matrices.emplace(Matrix4f()); }
 
 //! \brief constructs an input formatter.
 Obj_formatter::Obj_formatter(const std::string& filename, std::istream& is) :
   Text_formatter(filename, is),
-  m_index(1)
+  m_index(1),
+  m_num_appearances(0),
+  m_is_visible(false)
 {}
 
 //! \brief destructor
 Obj_formatter::~Obj_formatter()
-{
-  m_matrices.pop();
-  m_materials.clear();
-}
+{ m_matrices.pop(); }
 
 //! \brief writes the headers of the scene graph.
 void Obj_formatter::begin()
@@ -73,12 +78,16 @@ void Obj_formatter::begin()
   indent();
   out() << "mtllib " << material_path.filename().string();
   new_line();
+
+  // Open the material output stream
+  m_material_out.open(material_path.string());
   // m_old_out_mode = get_mode(*m_out);
   // set_ascii_mode(*m_out);
 }
 
 //! \brief writes the routing statements.
-void Obj_formatter::end() {}
+void Obj_formatter::end()
+{ m_material_out.close(); }
 
 //! \brief exports a vertex.
 void Obj_formatter::vertex(const Vector3f& p)
@@ -121,6 +130,43 @@ void Obj_formatter::write(Shared_container container)
     m_matrices.pop();
     return;
   }
+
+  auto appearance = boost::dynamic_pointer_cast<Appearance>(container);
+  if (appearance) {
+    auto name = appearance->get_name();
+    if (!name.empty()) {
+      if (0 == name.compare(0, 3, "MAT")) name.append("_");
+      material_out() << "newmtl " << name << std::endl;
+      out() << "usemtl " << name << std::endl;
+    }
+    else {
+      name.append("MAT").append(std::to_string(m_num_appearances));
+      material_out() << "newmtl " << name << std::endl;
+      out() << "usemtl " << name << std::endl;
+    }
+    ++m_num_appearances;
+    auto material = appearance->get_material();
+    auto ambient = material->get_ambient_intensity();
+    const auto& emissive = material->get_emissive_color();
+    material_out() << "Ka " << emissive[0] * ambient << " "
+                                  << emissive[1] * ambient << " "
+                                  << emissive[2] * ambient << std::endl;
+    const auto& diffuse = material->get_diffuse_color();
+    material_out() << "Kd " << diffuse[0] << " "
+                                  << diffuse[1] << " "
+                                  << diffuse[2] << std::endl;
+    const auto& specular = material->get_specular_color();
+    material_out() << "Ks " << specular[0]
+                                  << " " << specular[1]
+                                  << " " << specular[2]
+                                  << std::endl;
+    auto shininess = material->get_shininess() * 1000.;
+    material_out() << "Ns " << shininess << std::endl;
+    auto transparency = material->get_transparency();
+    material_out() << "d " << 1.0 - transparency << std::endl;
+    return;
+  }
+
   container->write(this);
 }
 

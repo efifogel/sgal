@@ -41,6 +41,7 @@ class Element;
 class Geometry;
 class Formatter;
 class Scene_graph;
+class Formatter;
 
 #if (defined _MSC_VER)
 #pragma warning( push )
@@ -140,6 +141,11 @@ public:
 
   /*! Add the container to the given scene. */
   void add_to_scene(Scene_graph* sg);
+
+  /*! Write this container.
+   * \param formatter (in) The formatter to use, e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
 
   /*! Obtain the (const) appearance.
    * \return the appearance.

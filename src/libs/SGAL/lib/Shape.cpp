@@ -46,6 +46,8 @@
 #include "SGAL/Gl_wrapper.hpp"
 #include "SGAL/Configuration.hpp"
 #include "SGAL/Scene_graph.hpp"
+#include "SGAL/Stl_formatter.hpp"
+#include "SGAL/Obj_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -520,6 +522,24 @@ void Shape::field_changed(const Field_info* field_info)
    default: break;
   }
   Node::field_changed(field_info);
+}
+
+//! \brief writes this container.
+void Shape::write(Formatter* formatter)
+{
+  SGAL_TRACE_CODE(Trace::WRITING,
+                  std::cout << "Sjape: " << "Tag: " << get_tag()
+                  << ", name: " << get_name()
+                  << std::endl;);
+  if (m_dirty) clean();
+  auto* stl_formatter = dynamic_cast<Stl_formatter*>(formatter);
+  auto* obj_formatter = dynamic_cast<Obj_formatter*>(formatter);
+  if (stl_formatter || obj_formatter) {
+    if (!is_visible()) return;
+    if (obj_formatter) obj_formatter->set_visible(true);
+  }
+
+  Container::write(formatter);
 }
 
 SGAL_END_NAMESPACE

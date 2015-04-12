@@ -45,7 +45,6 @@ SGAL_BEGIN_NAMESPACE
 class Context;
 class Container_proto;
 class Element;
-class Formatter;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -170,11 +169,6 @@ public:
   virtual void set_attributes(Element* elem);
 
   // virtual Attribute_list get_attributes();
-
-  /*! Write this container.
-   * \param formatter The formatter to use for the writing, e.g., VRML.
-   */
-  virtual void write(Formatter* formatter);
 
 protected:
   /*! Obtain the tag (type) of the container */

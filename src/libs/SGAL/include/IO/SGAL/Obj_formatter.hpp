@@ -23,6 +23,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <stack>
 #include <set>
@@ -36,7 +37,6 @@ SGAL_BEGIN_NAMESPACE
 
 class Vector3f;
 class Container;
-class Material;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -46,8 +46,6 @@ class Material;
 /*! Writes a scene graph to an output stream in the VRML format */
 class SGAL_SGAL_DECL Obj_formatter : public Text_formatter {
 public:
-  typedef boost::shared_ptr<Material>          Shared_material;
-
   /*! Construct default. */
   Obj_formatter(const std::string& filename);
 
@@ -110,18 +108,36 @@ public:
    */
   void add_index(Uint size);
 
+  /*! Set the flag that indicates whether the shape is visible.
+   * \param[in] flag The input flag.
+   */
+  void set_visible(Boolean flag);
+
+  /*! Determine whether the shape is visible.
+   * \return a Boolean flag that indicates whether the shape is visible.
+   */
+  Boolean is_visible() const;
+
+  /*! Obtain the output material stream.
+   * \return the output material stream.
+   */
+  inline std::ostream& material_out();
+
 private:
   //! The stack of viewing matrices.
   std::stack<Matrix4f> m_matrices;
 
   /*! The output material stream. */
-  std::ostream* m_material_out;
-
-  //! The set of materials.
-  std::set<Shared_material> m_materials;
+  std::ofstream m_material_out;
 
   //! The last coordinate index.
   Uint m_index;
+
+  //! The number of appearances.
+  size_t m_num_appearances;
+
+  /*! Indicates whether the shape is visible. */
+  Boolean m_is_visible;
 };
 
 #if defined(_MSC_VER)
@@ -134,6 +150,17 @@ inline const Matrix4f& Obj_formatter::top_matrix() const
 
 //! \brief adds a given size to the last recorded index.
 inline void Obj_formatter::add_index(Uint size) { m_index += size; }
+
+//! \brief Obtain the output stream. */
+inline std::ostream& Obj_formatter::material_out()
+{ return m_material_out; }
+
+//! \brief determines whether the shape is visible.
+inline Boolean Obj_formatter::is_visible() const { return m_is_visible; }
+
+//! \brief set the flag that indicates whether the shape is visible.
+inline void Obj_formatter::set_visible(Boolean flag)
+{ m_is_visible = flag; }
 
 SGAL_END_NAMESPACE
 
