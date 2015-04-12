@@ -33,19 +33,22 @@ SGAL_BEGIN_NAMESPACE
  */
 class SGAL_SGAL_DECL Text_formatter : public Formatter {
 public:
-  /*! Constructor
+  /*! Construct from file name
+   * \param[in] filename The file name.
    */
-  Text_formatter();
+  Text_formatter(const std::string& filename);
 
-  /*! Construct an output formatter from an output stream.
+  /*! Construct an output formatter.
+   * \param[in] filename The file name.
    * \param os the output stream.
    */
-  Text_formatter(std::ostream& os);
+  Text_formatter(const std::string& filename, std::ostream& os);
 
   /*! Construct an input formatter from an input stream.
+   * \param[in] filename The file name.
    * \param is the input stream.
    */
-  Text_formatter(std::istream& is);
+  Text_formatter(const std::string& filename, std::istream& is);
 
   /*! Destructor */
   virtual ~Text_formatter();

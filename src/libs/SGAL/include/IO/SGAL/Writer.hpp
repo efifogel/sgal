@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 1308 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_WRITTER_HPP
@@ -49,7 +46,7 @@ private:
 public:
   /*! Constructor */
   Writer(Scene_graph* scene_graph) : m_scene_graph(scene_graph) {}
-  
+
   /*! Destructor */
   virtual ~Writer() {}
 
@@ -66,11 +63,11 @@ public:
     for (i = 0; i < root->children_size(); ++i) {
       boost::shared_ptr<Node> node = root->get_child(i);
       if ((node != navigation_root) && (node != head_light))
-        formatter.write(&*node);
+        formatter.write(node);
     }
     for (i = 0; i < navigation_root->children_size(); ++i) {
       boost::shared_ptr<Node> node = navigation_root->get_child(i);
-      formatter.write(&*node);
+      formatter.write(node);
     }
     formatter.end();
   }

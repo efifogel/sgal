@@ -22,19 +22,23 @@
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructor.
-Text_formatter::Text_formatter() : m_indent(0), m_indented(false) {}
-
-//! \brief constructs an output formatter from an output stream.
-Text_formatter::Text_formatter(std::ostream& os) :
-  Formatter(os),
+//! \brief constructs.
+Text_formatter::Text_formatter(const std::string& filename) :
+  Formatter(filename),
   m_indent(0),
   m_indented(false)
 {}
 
-//! \brief constructs an input formatter from an input stream.
-Text_formatter::Text_formatter(std::istream& is) :
-  Formatter(is),
+//! \brief constructs an output formatter.
+Text_formatter::Text_formatter(const std::string& filename, std::ostream& os) :
+  Formatter(filename, os),
+  m_indent(0),
+  m_indented(false)
+{}
+
+//! \brief constructs an input formatter.
+Text_formatter::Text_formatter(const std::string& filename, std::istream& is) :
+  Formatter(filename, is),
   m_indent(0),
   m_indented(false)
 {}

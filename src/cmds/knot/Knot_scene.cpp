@@ -751,7 +751,7 @@ void Knot_scene::init_scene()
 
   if (m_option_parser.export_vrml()) {
     SGAL::Writer writer(m_scene_graph);
-    SGAL::Vrml_formatter formatter(std::cout);
+    SGAL::Vrml_formatter formatter("", std::cout);
     writer(formatter);
   }
 

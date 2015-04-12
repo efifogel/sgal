@@ -41,18 +41,22 @@ class Sphere_bound;
  */
 class SGAL_SGAL_DECL Vrml_formatter : public Text_formatter {
 public:
-  /*! Constructor */
-  Vrml_formatter();
-
-  /*! Construct an output formatter from an output stream.
-   * \param os the output stream.
+  /*! Construct from filename.
+   * \param[in] filename The file name.
    */
-  Vrml_formatter(std::ostream& os);
+  Vrml_formatter(const std::string& filename);
 
-  /*! Construct an input formatter from an input stream.
-   * \param is the input stream.
+  /*! Construct an output formatter.
+   * \param[in] filename The file name.
+   * \param[in] os the output stream.
    */
-  Vrml_formatter(std::istream& is);
+  Vrml_formatter(const std::string& filename, std::ostream& os);
+
+  /*! Construct an input formatter.
+   * \param[in] filename The file name.
+   * \param[in] is the input stream.
+   */
+  Vrml_formatter(const std::string& filename, std::istream& is);
 
   /*! Destructor */
   virtual ~Vrml_formatter();

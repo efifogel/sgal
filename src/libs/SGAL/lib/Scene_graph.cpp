@@ -892,88 +892,70 @@ Background* Scene_graph::get_active_background()
 //! \brief writes the scene to a file in a given format.
 void Scene_graph::write(const std::string& filename, File_format::Id format_id)
 {
-  if (filename.empty()) write(std::cout, format_id);
+  if (filename.empty()) write(filename, std::cout, format_id);
   else {
     std::ofstream os(filename);
     if (!os.is_open()) return;
-    write(os, format_id);
+    write(filename, os, format_id);
     os.close();
   }
 }
 
 //! \brief writes the scene to an output stream in a given format.
-void Scene_graph::write(std::ostream& os, File_format::Id format_id)
+void Scene_graph::write(const std::string& filename, std::ostream& os,
+                        File_format::Id format_id)
 {
   switch (format_id) {
-   case File_format::ID_WRL: write_vrml(os); break;
+   case File_format::ID_WRL: write_vrml(filename, os); break;
    case File_format::ID_X3D: break;
-   case File_format::ID_STL: write_stl(os); break;
-   case File_format::ID_OBJ: write_obj(os);break;
+   case File_format::ID_STL: write_stl(filename, os); break;
+   case File_format::ID_OBJ: write_obj(filename, os);break;
    case File_format::NONE:
    case File_format::NUM_IDS: return;
   }
 }
 
 //! \brief writes the scene to an output stream in the VRML format.
-void Scene_graph::write_vrml(std::ostream& os)
+void Scene_graph::write_vrml(const std::string& filename, std::ostream& os)
 {
-  typedef boost::shared_ptr<Group>                Shared_group;
-  typedef boost::shared_ptr<Node>                 Shared_node;
-  typedef boost::shared_ptr<Transform>            Shared_transform;
-
-  Vrml_formatter formatter(os);
-  Shared_group root = get_root();
-  formatter.begin();
-  if (root->children_size() > 1) root->write(&formatter);
-  else {
-    Shared_node node = root->get_child(0);
-    Shared_transform transform = boost::dynamic_pointer_cast<Transform>(node);
-    Transform::Node_iterator it = transform->children_begin();
-    for (; it != transform->children_end(); ++it) {
-      Shared_node node = *it;
-      formatter.write(&*node);
-    }
-  }
-  formatter.end();
-}
-
-//! \brief writes the scene to an output stream in the STL format.
-void Scene_graph::write_stl(std::ostream& os)
-{
-  typedef boost::shared_ptr<Group>                Shared_group;
-  typedef boost::shared_ptr<Node>                 Shared_node;
-  typedef boost::shared_ptr<Transform>            Shared_transform;
-
-  Stl_formatter formatter(os);
-  Shared_group root = get_root();
-  formatter.begin();
-  if (root->children_size() > 1) root->write(&formatter);
-  else {
-    Shared_node node = root->get_child(0);
-    Shared_transform transform = boost::dynamic_pointer_cast<Transform>(node);
-    Transform::Node_iterator it = transform->children_begin();
-    for (; it != transform->children_end(); ++it) {
-      Shared_node node = *it;
-      formatter.write(&*node);
-    }
-  }
-  formatter.end();
-}
-
-//! \brief writes the scene to an output stream in the OBJ format.
-void Scene_graph::write_obj(std::ostream& os)
-{
-  Obj_formatter formatter(os);
-  Shared_group root = get_root();
+  Vrml_formatter formatter(filename, os);
+  auto root = get_root();
   formatter.begin();
   if (root->children_size() > 1) root->write(&formatter);
   else {
     auto transform = boost::dynamic_pointer_cast<Transform>(root->get_child(0));
     auto it = transform->children_begin();
-    for (; it != transform->children_end(); ++it) {
-      auto node = *it;
-      formatter.write(&*node);
-    }
+    for (; it != transform->children_end(); ++it) formatter.write(*it);
+  }
+  formatter.end();
+}
+
+//! \brief writes the scene to an output stream in the STL format.
+void Scene_graph::write_stl(const std::string& filename, std::ostream& os)
+{
+  Stl_formatter formatter(filename, os);
+  auto root = get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    auto transform = boost::dynamic_pointer_cast<Transform>(root->get_child(0));
+    auto it = transform->children_begin();
+    for (; it != transform->children_end(); ++it) formatter.write(*it);
+  }
+  formatter.end();
+}
+
+//! \brief writes the scene to an output stream in the OBJ format.
+void Scene_graph::write_obj(const std::string& filename, std::ostream& os)
+{
+  Obj_formatter formatter(filename, os);
+  auto root = get_root();
+  formatter.begin();
+  if (root->children_size() > 1) root->write(&formatter);
+  else {
+    auto transform = boost::dynamic_pointer_cast<Transform>(root->get_child(0));
+    auto it = transform->children_begin();
+    for (; it != transform->children_end(); ++it) formatter.write(*it);
   }
   formatter.end();
 }

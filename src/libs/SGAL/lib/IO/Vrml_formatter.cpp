@@ -18,20 +18,27 @@
 
 #include <iterator>
 
+#include "SGAL/basic.hpp"
 #include "SGAL/Vrml_formatter.hpp"
 #include "SGAL/version.hpp"
 #include "SGAL/Container.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
-//! \brief constructor.
-Vrml_formatter::Vrml_formatter() {}
+//! \brief constructs.
+Vrml_formatter::Vrml_formatter(const std::string& filename) :
+  Text_formatter(filename)
+{}
 
 //! \brief constructs an output formatter.
-Vrml_formatter::Vrml_formatter(std::ostream& os) : Text_formatter(os) {}
+Vrml_formatter::Vrml_formatter(const std::string& filename, std::ostream& os) :
+  Text_formatter(filename, os)
+{}
 
 //! \brief constructs an input formatter.
-Vrml_formatter::Vrml_formatter(std::istream& is) : Text_formatter(is) {}
+Vrml_formatter::Vrml_formatter(const std::string& filename, std::istream& is) :
+  Text_formatter(filename, is)
+{}
 
 //! \brief destructor
 Vrml_formatter::~Vrml_formatter() {}

@@ -405,38 +405,42 @@ public:
   File_format::Id get_input_format_id() const;
 
   /*! Set the input file format.
-   * \param format The input file format.
+   * \param[in] format The input file format.
    */
   void set_input_format_id(File_format::Id format_id);
 
   /// \name Writters
   //@{
   /*! Write the scene to a file in a given format.
-   * \param filename (in) The file name.
-   * \param format_id (in) The id of the given format.
+   * \param[in] filename The file name.
+   * \param[in] format_id The id of the given format.
    */
   void write(const std::string& filename, File_format::Id format_id);
 
   /*! Write the scene to an output stream in a given format.
-   * \param os (in) The output stream.
-   * \param format_id (in) The id of the given format.
+   * \param[in] filename The file name.
+   * \param[in] os (in) The output stream.
+   * \param[in] format_id The id of the given format.
    */
-  void write(std::ostream& os, File_format::Id format_id);
+  void write(const std::string& filename, std::ostream& os, File_format::Id format_id);
 
   /*! Write the scene to an output stream in VRML format.
-   * \param os (in) The output stream.
+   * \param[in] filename The file name.
+   * \param[in] os The output stream.
    */
-  void write_vrml(std::ostream& os);
+  void write_vrml(const std::string& filename, std::ostream& os);
 
   /*! Write the scene to an output stream in STL format.
-   * \param os (in) The output stream.
+   * \param[in] filename The file name.
+   * \param[in] os The output stream.
    */
-  void write_stl(std::ostream& os);
+  void write_stl(const std::string& filename, std::ostream& os);
 
   /*! Write the scene to an output stream in OBJ format.
-   * \param[i] os The output stream.
+   * \param[in] filename The file name.
+   * \param[in] os The output stream.
    */
-  void write_obj(std::ostream& os);
+  void write_obj(const std::string& filename, std::ostream& os);
   //@}
 
   /*! Obtain an isolated instance of the V8 engine.

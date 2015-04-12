@@ -14,9 +14,6 @@
 // THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
 // PARTICULAR PURPOSE.
 //
-// $Id: $
-// $Revision: 12348 $
-//
 // Author(s)     : Efi Fogel         <efifogel@gmail.com>
 
 #ifndef SGAL_FORMATTER_HPP
@@ -28,6 +25,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Types.hpp"
@@ -40,24 +38,27 @@
 
 SGAL_BEGIN_NAMESPACE
 
-class Container;
-
 /*! A pure class that can be the base of specific formatter that exports a
  * scene graph to an output stream.
  */
 class SGAL_SGAL_DECL Formatter {
 public:
-  /*! Constructor
+  typedef boost::shared_ptr<Container>          Shared_container;
+
+  /*! Construct from file name.
+   * \param[in] filename The file name.
    */
-  Formatter();
+  Formatter(const std::string& filename);
 
   /*! Construct an output formatter.
+   * \param[in] filename The file name.
    */
-  Formatter(std::ostream& os);
+  Formatter(const std::string& filename, std::ostream& os);
 
   /*! Construct an input formatter.
+   * \param[in] filename The file name.
    */
-  Formatter(std::istream& is);
+  Formatter(const std::string& filename, std::istream& is);
 
   /*! Destructor
    */
@@ -90,7 +91,7 @@ public:
 
   /*! Write a scene-graph container.
    */
-  virtual void write(Container* container);
+  virtual void write(Shared_container container);
 
   /*! Write the container beginning section */
   virtual void container_begin(const std::string& /* tag */) {}
@@ -323,6 +324,9 @@ public:
   //@}
 
 protected:
+  /*! The file name. */
+  const std::string& m_filename;
+
   /*! The output stream */
   std::ostream* m_out;
 
@@ -330,14 +334,26 @@ protected:
   std::istream* m_in;
 };
 
-//! \brief constructs
-inline Formatter::Formatter() : m_out(NULL), m_in(NULL) {}
+//! \brief constructs from file name.
+inline Formatter::Formatter(const std::string& filename) :
+  m_filename(filename),
+  m_out(nullptr),
+  m_in(nullptr)
+{}
 
 //! \brief Construct an output formatter.
-inline Formatter::Formatter(std::ostream& os) : m_out(&os), m_in(NULL) {}
+inline Formatter::Formatter(const std::string& filename, std::ostream& os) :
+  m_filename(filename),
+  m_out(&os),
+  m_in(nullptr)
+{}
 
 //! \brief Construct an input formatter.
-inline Formatter::Formatter(std::istream& is) : m_out(NULL), m_in(&is) {}
+inline Formatter::Formatter(const std::string& filename, std::istream& is) :
+  m_filename(filename),
+  m_out(nullptr),
+  m_in(&is)
+{}
 
 //! \brief Destructor
 inline Formatter::~Formatter() {}
@@ -363,7 +379,8 @@ inline std::istream& Formatter::in()
 }
 
 //! \brief exports a scene-graph node.
-inline void Formatter::write(Container* container) { container->write(this); }
+inline void Formatter::write(Shared_container container)
+{ container->write(this); }
 
 SGAL_END_NAMESPACE
 

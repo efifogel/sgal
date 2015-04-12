@@ -171,6 +171,11 @@ public:
 
   // virtual Attribute_list get_attributes();
 
+  /*! Write this container.
+   * \param formatter The formatter to use for the writing, e.g., VRML.
+   */
+  virtual void write(Formatter* formatter);
+
 protected:
   /*! Obtain the tag (type) of the container */
   virtual const std::string& get_tag() const;

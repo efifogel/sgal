@@ -25,6 +25,8 @@
 #include <iostream>
 #include <string>
 #include <stack>
+#include <set>
+#include <boost/shared_ptr.hpp>
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Text_formatter.hpp"
@@ -34,6 +36,7 @@ SGAL_BEGIN_NAMESPACE
 
 class Vector3f;
 class Container;
+class Material;
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -43,18 +46,20 @@ class Container;
 /*! Writes a scene graph to an output stream in the VRML format */
 class SGAL_SGAL_DECL Obj_formatter : public Text_formatter {
 public:
-  /*! Constructor */
-  Obj_formatter();
+  typedef boost::shared_ptr<Material>          Shared_material;
+
+  /*! Construct default. */
+  Obj_formatter(const std::string& filename);
 
   /*! Construct an output formatter from an output stream.
-   * \param os the output stream.
+   * \param[in] os the output stream.
    */
-  Obj_formatter(std::ostream& os);
+  Obj_formatter(const std::string& filename, std::ostream& os);
 
   /*! Construct an input formatter from an input stream.
    * \param is the input stream.
    */
-  Obj_formatter(std::istream& is);
+  Obj_formatter(const std::string& filename, std::istream& is);
 
   /*! Destructor */
   virtual ~Obj_formatter();
@@ -72,7 +77,7 @@ public:
 
   /*! Export a scene-graph container.
    */
-  virtual void write(Container* container);
+  virtual void write(Shared_container container);
 
   /*! Export a vertex.
    * \param[in] vertex vertex (in world coordinate system).
@@ -108,6 +113,12 @@ public:
 private:
   //! The stack of viewing matrices.
   std::stack<Matrix4f> m_matrices;
+
+  /*! The output material stream. */
+  std::ostream* m_material_out;
+
+  //! The set of materials.
+  std::set<Shared_material> m_materials;
 
   //! The last coordinate index.
   Uint m_index;

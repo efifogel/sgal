@@ -87,7 +87,7 @@ void Field_info::write(Formatter* formatter, Shared_container value,
 {
   if (!value) return;
   formatter->single_container_begin(get_name());
-  formatter->write(&*value);
+  formatter->write(value);
   formatter->single_container_end();
 }
 
@@ -154,7 +154,7 @@ void Field_info::write(Formatter* formatter,
   formatter->multi_container_begin(get_name());
   for (auto it = value.begin(); it != value.end(); ++it) {
     Shared_container cont = *it;
-    formatter->write(&*cont);
+    formatter->write(cont);
   }
   formatter->multi_container_end();
 }

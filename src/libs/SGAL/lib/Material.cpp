@@ -37,6 +37,7 @@
 #include "SGAL/Trace.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Gl_wrapper.hpp"
+#include "SGAL/Obj_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -270,6 +271,14 @@ void Material::set_attributes(Element* elem)
 
   // Remove all the deleted attributes:
   elem->delete_marked();
+}
+
+//! \breif writes this container.
+void Material::write(Formatter* formatter)
+{
+  auto* obj_formatter = static_cast<Obj_formatter*>(formatter);
+  if (obj_formatter) {
+  }
 }
 
 #if 0

@@ -43,18 +43,22 @@ class Container;
 /*! Writes a scene graph to an output stream in the VRML format */
 class SGAL_SGAL_DECL Stl_formatter : public Text_formatter {
 public:
-  /*! Constructor */
-  Stl_formatter();
+  /*! Construct from file name.
+   * \param[in] filename The file name.
+   */
+  Stl_formatter(const std::string& filename);
 
   /*! Construct an output formatter from an output stream.
-   * \param os the output stream.
+   * \param[in] filename The file name.
+   * \param[in] os the output stream.
    */
-  Stl_formatter(std::ostream& os);
+  Stl_formatter(const std::string& filename, std::ostream& os);
 
   /*! Construct an input formatter from an input stream.
-   * \param is the input stream.
+   * \param[in] filename The file name.
+   * \param[in] is the input stream.
    */
-  Stl_formatter(std::istream& is);
+  Stl_formatter(const std::string& filename, std::istream& is);
 
   /*! Destructor */
   virtual ~Stl_formatter();
@@ -72,7 +76,7 @@ public:
 
   /*! Export a scene-graph container.
    */
-  virtual void write(Container* container);
+  virtual void write(Shared_container container);
 
   /*! Export a triangular facet.
    * \param p1 (in) the point (in world coordinate system) of the first vertex.

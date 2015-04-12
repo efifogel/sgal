@@ -21,25 +21,30 @@
 
 #include <iterator>
 
-#include "SGAL/Stl_formatter.hpp"
+#include "SGAL/basic.hpp"
 #include "SGAL/version.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Mesh_set.hpp"
 #include "SGAL/Coord_array.hpp"
+#include "SGAL/Stl_formatter.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 //! \brief constructor.
-Stl_formatter::Stl_formatter()
+Stl_formatter::Stl_formatter(const std::string& filename) :
+  Text_formatter(filename)
 { m_matrices.emplace(Matrix4f()); }
 
 //! \brief constructs an output formatter.
-Stl_formatter::Stl_formatter(std::ostream& os) : Text_formatter(os)
+Stl_formatter::Stl_formatter(const std::string& filename, std::ostream& os) :
+  Text_formatter(filename, os)
 { m_matrices.emplace(Matrix4f()); }
 
 //! \brief constructs an input formatter.
-Stl_formatter::Stl_formatter(std::istream& is) : Text_formatter(is) {}
+Stl_formatter::Stl_formatter(const std::string& filename, std::istream& is) :
+  Text_formatter(filename, is)
+{}
 
 //! \brief destructor
 Stl_formatter::~Stl_formatter() { m_matrices.pop(); }
@@ -108,9 +113,9 @@ void Stl_formatter::facet(const Vector3f& p1, const Vector3f& p2,
 }
 
 //! \brief writes a scene-graph container.
-void Stl_formatter::write(Container* container)
+void Stl_formatter::write(Shared_container container)
 {
-  Transform* transform = dynamic_cast<Transform*>(container);
+  auto transform = boost::dynamic_pointer_cast<Transform>(container);
   if (transform) {
     // Push the transform matrix
     const Matrix4f& new_matrix = transform->get_matrix();
