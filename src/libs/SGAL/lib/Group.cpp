@@ -76,7 +76,7 @@ Group::~Group()
 {
   // Unregister observers
   Observer observer(this, get_field_info(SPHERE_BOUND));
-  for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+  for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
     (*it)->unregister_observer(observer);
 
   // Clear children
@@ -101,15 +101,16 @@ Group::Shared_node Group::get_child(Uint index)
 //! \brief adds a child to the sequence of children of the group.
 void Group::add_child(Shared_node node)
 {
+  std::cout << "Group::add_child: " << node->get_tag() << std::endl;
+
   // Lights are inserted at the begining of the sequence, the engines, and
   // then all the rest.
-  Shared_light light = boost::dynamic_pointer_cast<Light>(node);
+  auto light = boost::dynamic_pointer_cast<Light>(node);
   if (light) {
     add_light(light);
     return;
   }
-  Shared_touch_sensor touch_sensor =
-    boost::dynamic_pointer_cast<Touch_sensor>(node);
+  auto touch_sensor = boost::dynamic_pointer_cast<Touch_sensor>(node);
   if (touch_sensor) {
     add_touch_sensor(touch_sensor);
     return;
@@ -117,20 +118,23 @@ void Group::add_child(Shared_node node)
 
   m_childs.push_back(node);
   m_dirty_sphere_bound = true;
-  Observer observer(this, get_field_info(SPHERE_BOUND));
+  const auto* field_info = get_field_info(SPHERE_BOUND);
+  Observer observer(this, field_info);
   node->register_observer(observer);
+
+  field_changed(field_info);
 }
 
 //! \brief removes a given child from the sequence of children of the group.
 void Group::remove_child(Shared_node node)
 {
-  Shared_light light = boost::dynamic_pointer_cast<Light>(node);
+  auto light = boost::dynamic_pointer_cast<Light>(node);
   if (light) {
     remove_light(light);
     return;
   }
 
-  Shared_touch_sensor touch_sensor =
+  auto touch_sensor =
     boost::dynamic_pointer_cast<Touch_sensor>(node);
   if (touch_sensor) {
     remove_touch_sensor(touch_sensor);
@@ -200,7 +204,7 @@ void Group::isect(Isect_action* isect_action)
   // reserved for this Group. A start selection id that is equal to zero
   // indicates that no selection ids have been reserved.
   if (m_start_selection_id == 0) {
-    for (Node_iterator it = m_childs.begin(); it != m_childs.end(); ++it)
+    for (auto it = m_childs.begin(); it != m_childs.end(); ++it)
       isect_action->apply(&*(*it));
   }
   else {
