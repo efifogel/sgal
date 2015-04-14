@@ -101,8 +101,6 @@ Group::Shared_node Group::get_child(Uint index)
 //! \brief adds a child to the sequence of children of the group.
 void Group::add_child(Shared_node node)
 {
-  std::cout << "Group::add_child: " << node->get_tag() << std::endl;
-
   // Lights are inserted at the begining of the sequence, the engines, and
   // then all the rest.
   auto light = boost::dynamic_pointer_cast<Light>(node);
