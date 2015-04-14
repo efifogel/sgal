@@ -58,11 +58,11 @@ Switch::Shared_node Switch::get_choice()
 }
 
 //! \brief applies culling on the choosen node, ignores the rest.
-void Switch::cull(Cull_context & cull_context)
+void Switch::cull(Cull_context& cull_context)
 {
   if (!is_visible())  return;
 
-  Shared_node node = get_choice();
+  auto node = get_choice();
   if (node) node->cull(cull_context);
 }
 
@@ -70,7 +70,7 @@ void Switch::cull(Cull_context & cull_context)
 Action::Trav_directive Switch::draw(Draw_action* draw_action)
 {
   if (!is_visible())  return Action::TRAV_CONT;
-  Shared_node node = get_choice();
+  auto node = get_choice();
   if (node) draw_action->apply(&*node);
   return Action::TRAV_CONT;
 }
@@ -79,7 +79,7 @@ Action::Trav_directive Switch::draw(Draw_action* draw_action)
 void Switch::isect(Isect_action* isect_action)
 {
   if (!is_visible()) return;
-  Shared_node node = get_choice();
+  auto node = get_choice();
   if (!node) return;
 
   if (m_touch_sensor && m_touch_sensor->is_enabled()) {
@@ -125,9 +125,9 @@ void Switch::clean_sphere_bound()
     return;
   }
 
-  Shared_node node = get_choice();
-  if (node) {
-    const Sphere_bound& sb = node->get_sphere_bound();
+  auto node = get_choice();
+  if (node && node->is_dirty_sphere_bound()) {
+    const auto& sb = node->get_sphere_bound();
     m_sphere_bound.set_center(sb.get_center());
     m_sphere_bound.set_radius(sb.get_radius());
   }
