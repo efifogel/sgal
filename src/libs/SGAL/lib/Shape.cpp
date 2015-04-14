@@ -109,7 +109,7 @@ void Shape::set_appearance(Shared_appearance app)
   m_dirty = true;
   m_dirty_appearance = true;
 
-  const Field_info* field_info = get_field_info(APPEARANCE);
+  const auto* field_info = get_field_info(APPEARANCE);
   field_changed(field_info);
 }
 
@@ -433,7 +433,7 @@ Container_proto* Shape::get_prototype()
 //! \brief adds the container to the given scene.
 void Shape::add_to_scene(Scene_graph* sg)
 {
-  Configuration* config = sg->get_configuration();
+  auto* config = sg->get_configuration();
   if (config) m_texture_map = config->is_texture_map();
 }
 
@@ -450,7 +450,7 @@ Boolean Shape::attach_context(Context* context)
 Boolean Shape::detach_context(Context* context)
 {
   Boolean result = Node::detach_context(context);
-  Shared_appearance app = get_appearance();
+  auto app = get_appearance();
   if (app) result &= app->detach_context(context);
   return result;
 }
@@ -528,7 +528,7 @@ void Shape::field_changed(const Field_info* field_info)
 void Shape::write(Formatter* formatter)
 {
   SGAL_TRACE_CODE(Trace::WRITING,
-                  std::cout << "Sjape: " << "Tag: " << get_tag()
+                  std::cout << "Shape: " << "Tag: " << get_tag()
                   << ", name: " << get_name()
                   << std::endl;);
   if (m_dirty) clean();
