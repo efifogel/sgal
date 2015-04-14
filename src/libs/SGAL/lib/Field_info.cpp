@@ -23,6 +23,7 @@
 #include "SGAL/Field_info.hpp"
 #include "SGAL/Array_types.hpp"
 #include "SGAL/Formatter.hpp"
+#include "SGAL/Trace.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -151,11 +152,12 @@ void Field_info::write(Formatter* formatter,
                        const Shared_container_array& value,
                        const Shared_container_array& default_value) const
 {
+  SGAL_TRACE_CODE(Trace::WRITING,
+                  std::cout << "Field_info: " << ", name: " << get_name()
+                  << ": " << value.size()
+                  << std::endl;);
   formatter->multi_container_begin(get_name());
-  for (auto it = value.begin(); it != value.end(); ++it) {
-    Shared_container cont = *it;
-    formatter->write(cont);
-  }
+  for (auto it = value.begin(); it != value.end(); ++it) formatter->write(*it);
   formatter->multi_container_end();
 }
 
