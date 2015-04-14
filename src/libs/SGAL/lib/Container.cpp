@@ -41,7 +41,7 @@ Container::Container(Boolean /* proto */) :
 //! \brief destructor.
 Container::~Container()
 {
-  for (Field_iter fi = m_fields.begin(); fi != m_fields.end(); ++fi)
+  for (auto fi = m_fields.begin(); fi != m_fields.end(); ++fi)
     delete (*fi).second;
   m_fields.clear();
   m_name.clear();
@@ -51,28 +51,28 @@ Container::~Container()
 //! \brief adds a field with the given id.
 Field* Container::add_field(Uint id)
 {
-  const Field_info* field_info = get_field_info(id);
+  const auto* field_info = get_field_info(id);
   return add_field(field_info);
 }
 
 //! \brief adds a field with the given name.
 Field* Container::add_field(const std::string& name)
 {
-  const Field_info* field_info = get_field_info(name);
+  const auto* field_info = get_field_info(name);
   return add_field(field_info);
 }
 
 //! \brief obtains the field with the given id.
 Field* Container::get_field(Uint id)
 {
-  const Field_info* field_info = get_field_info(id);
+  const auto* field_info = get_field_info(id);
   return get_field(field_info);
 }
 
 //! \brief obtains the field with the given name.
 Field* Container::get_field(const std::string& name)
 {
-  const Field_info* field_info = get_field_info(name);
+  const auto* field_info = get_field_info(name);
   return get_field(field_info);
 }
 
@@ -83,7 +83,7 @@ Field* Container::get_field(const Field_info* field_info)
   // function
   //! \todo Auto_lock auto_lock(&m_fields_cs);
 
-  Field_const_iter fi = m_fields.find(field_info);
+  auto fi = m_fields.find(field_info);
   if (!(fi == m_fields.end())) return (*fi).second;
   return NULL;
 }
@@ -94,7 +94,7 @@ Field* Container::add_field(const Field_info* field_info)
   if (!field_info) return NULL;
 
   // Check if the field already exists -> dont add it again
-  Field* field = get_field(field_info);
+  auto* field = get_field(field_info);
   if (field) return field;
 
   // If the field does not exist - create a new one and add it
@@ -143,7 +143,7 @@ void Container::add_to_scene(Scene_graph* sg, XML_entity* parent)
 //! \brief obtains a source field with a given name.
 Field* Container::get_source_field(const std::string& src_field_name)
 {
-  Field* src_field = add_field(src_field_name);
+  auto* src_field = add_field(src_field_name);
   if (src_field) return src_field;
 
   Uint start = src_field_name.size() - 8;
@@ -163,7 +163,7 @@ Field* Container::get_source_field(const std::string& src_field_name)
 //! \brief obtains a destination field with a given name.
 Field* Container::get_destination_field(const std::string& dst_field_name)
 {
-  Field* dst_field = add_field(dst_field_name);
+  auto* dst_field = add_field(dst_field_name);
   if (dst_field) return dst_field;
   if (dst_field_name.compare(0, 4, "set_") == 0) {
     std::string tmp = dst_field_name;
@@ -181,9 +181,8 @@ Field* Container::get_destination_field(const std::string& dst_field_name)
 //! \brief writes all fields of this container.
 void Container::write_fields(Formatter* formatter)
 {
-  Container_proto* proto = get_prototype();
-  Container_proto::Id_const_iterator it = proto->ids_begin(proto);
-  for (; it != proto->ids_end(proto); ++it) {
+  auto* proto = get_prototype();
+  for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
     if (field_info->get_rule() == RULE_IN) continue;
     field_info->write(this, formatter);
@@ -205,10 +204,9 @@ void Container::write(Formatter* formatter)
 //! \breif processes change of content.
 void Container::process_content_changed()
 {
-  Observer_iter it;
-  for (it = m_observers.begin(); it != m_observers.end(); ++it) {
-    Container_observer* observer = (*it).first;
-    const Field_info* field_info = (*it).second;
+  for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
+    auto* observer = (*it).first;
+    const auto* field_info = (*it).second;
     observer->field_changed(field_info);
   }
 }
