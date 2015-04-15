@@ -71,7 +71,7 @@ void Rotation_relative_engine::init_prototype()
     static_cast<Float_handle_function>
     (&Rotation_relative_engine::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION, "fraction",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            fraction_func,
                                            exec_func));
 
@@ -79,14 +79,14 @@ void Rotation_relative_engine::init_prototype()
     static_cast<Rotation_handle_function>
     (&Rotation_relative_engine::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(VALUE, "value",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               rotation_func));
 
   Float_handle_function angle_func =
     static_cast<Float_handle_function>
     (&Rotation_relative_engine::angle_handle);
   s_prototype->add_field_info(new SF_float(ANGLE, "angle",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            angle_func));
 }
 

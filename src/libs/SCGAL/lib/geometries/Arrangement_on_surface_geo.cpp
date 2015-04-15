@@ -179,7 +179,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::draw_opaque_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_OPAQUE,
                                           "drawOpaque",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_opaque_func,
                                           exec_func));
 
@@ -189,7 +189,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::draw_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_HALOED,
                                           "drawHaloed",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_haloed_func,
                                           exec_func));
 
@@ -199,7 +199,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::draw_halftone_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_HALFTONE,
                                           "drawHalftone",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_halftone_func,
                                           exec_func));
 
@@ -209,7 +209,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::draw_aos_surface_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS_SURFACE,
                                           "drawSurface",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_surface_func,
                                           exec_func));
 
@@ -219,7 +219,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_vertex_style_handle);
   s_prototype->add_field_info(new SF_uint(AOS_VERTEX_STYLE_ID,
                                           "aosVertexStyleId",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           aos_vertex_style_func,
                                           exec_func));
 
@@ -229,7 +229,7 @@ void Arrangement_on_surface_geo::init_prototype()
   // aosIsolatedVertexStyleId
   s_prototype->add_field_info(new SF_uint(AOS_ISOLATED_VERTEX_STYLE_ID,
                                           "aosIsolatedVertexStyleId",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           aos_isolated_vertex_style_func,
                                           exec_func));
 
@@ -239,7 +239,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_isolated_vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_ISOLATED_VERTEX_RADIUS,
                                            "aosIsolatedVertexRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            aos_isolated_vertex_radius_func));
 
   // aosEdgeEnabled
@@ -248,7 +248,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_edge_enabled_handle);
   s_prototype->add_field_info(new SF_bool(AOS_EDGE_ENABLED,
                                           "aosEdgeEnabled",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           aos_edge_enabled_func,
                                           exec_func));
 
@@ -258,7 +258,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_edge_style_handle);
   s_prototype->add_field_info(new SF_uint(AOS_EDGE_STYLE_ID,
                                           "aosEdgeStyleId",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           aos_edge_style_func,
                                           exec_func));
 
@@ -268,7 +268,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_edge_count_handle);
   s_prototype->add_field_info(new SF_uint(AOS_EDGE_COUNT_ID,
                                           "aosEdgeCountId",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           aos_edge_count_func,
                                           exec_func));
 
@@ -278,7 +278,7 @@ void Arrangement_on_surface_geo::init_prototype()
     (&Arrangement_on_surface_geo::aos_edge_directed_handle);
   s_prototype->add_field_info(new SF_bool(AOS_EDGE_DIRECTED,
                                           "aosEdgeDirected",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           aos_edge_directed_func,
                                           exec_func));
 }

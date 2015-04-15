@@ -70,7 +70,7 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Float_handle_function>
     (&Sphere_plane_intersection::sphere_radius_handle);
   s_prototype->add_field_info(new SF_float(SPHERE_RADIUS, "sphereRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            sphere_radius_func, exec_func));
 
   // plane
@@ -78,7 +78,7 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Vector4f_handle_function>
     (&Sphere_plane_intersection::plane_handle);
   s_prototype->add_field_info(new SF_vector4f(PLANE, "plane",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               plane_func,
                                               exec_func));
 
@@ -87,7 +87,7 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Boolean_handle_function>
     (&Sphere_plane_intersection::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          RULE_IN,
+                                          Field_info::RULE_IN,
                                           trigger_func, exec_func));
 
   // circleTranslation
@@ -96,7 +96,7 @@ void Sphere_plane_intersection::init_prototype()
     (&Sphere_plane_intersection::circle_translation_handle);
   s_prototype->add_field_info(new SF_vector3f(CIRCLE_TRANSLATION,
                                               "circleTranslation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               circle_translation_func));
 
   // circleRotation
@@ -105,7 +105,7 @@ void Sphere_plane_intersection::init_prototype()
     (&Sphere_plane_intersection::circle_rotation_handle);
   s_prototype->add_field_info(new SF_rotation(CIRCLE_ROTATION,
                                               "circleRotation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               circle_rotation_func));
 
   // circleRadius
@@ -113,7 +113,7 @@ void Sphere_plane_intersection::init_prototype()
     static_cast<Float_handle_function>
     (&Sphere_plane_intersection::circle_radius_handle);
   s_prototype->add_field_info(new SF_float(CIRCLE_RADIUS, "circleRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            circle_radius_func));
 }
 

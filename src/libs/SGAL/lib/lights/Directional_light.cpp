@@ -79,7 +79,7 @@ void Directional_light::init_prototype()
     (&Directional_light::direction_handle);
   s_prototype->add_field_info(new SF_vector3f(DIRECTION,
                                               "direction",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               direction_func,
                                               exec_func));
 }

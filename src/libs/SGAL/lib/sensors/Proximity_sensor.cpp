@@ -62,14 +62,14 @@ void Proximity_sensor::init_prototype()
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Proximity_sensor::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           enabled_func));
 
   // position
   Vector3f_handle_function position_func =
     static_cast<Vector3f_handle_function>(&Proximity_sensor::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               position_func));
 
   // orientation
@@ -77,7 +77,7 @@ void Proximity_sensor::init_prototype()
     static_cast<Rotation_handle_function>
     (&Proximity_sensor::orientation_handle);
   s_prototype->add_field_info(new SF_rotation(ORIENTATION, "orientation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               orientation_func));
 }
 

@@ -30,7 +30,7 @@
 
 #include "SGAL/basic.hpp"
 #include "SGAL/Container.hpp"
-#include "SGAL/Field_enums.hpp"
+#include "SGAL/Field_info.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -59,8 +59,9 @@ public:
 
   // <name, <rule, type, value> >
   typedef std::pair<const std::string*,
-                    std::tuple<Field_rule, Field_type, std::string*> >
-                                                          Field_attr;
+                    std::tuple<Field_info::Field_rule,
+                               Field_info::Field_type,
+                               std::string*> >            Field_attr;
 
   typedef std::list<Field_attr>                           Field_attr_list;
   typedef Field_attr_list::iterator                       Field_attr_iter;
@@ -183,12 +184,12 @@ public:
   /*! Obtain the rule of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  Field_rule get_rule(Field_attr_iter ai) const;
+  Field_info::Field_rule get_rule(Field_attr_iter ai) const;
 
   /*! Obtain the type of a field-attribute pointed by a given iterator.
    * \param ai the field-attribute iterator.
    */
-  Field_type get_type(Field_attr_iter ai) const;
+  Field_info::Field_type get_type(Field_attr_iter ai) const;
 
   /*! Delete all attributes. */
   void delete_marked();
@@ -211,43 +212,40 @@ protected:
 #pragma warning( pop )
 #endif
 
-/*! \brief obtains the name of an attribute pointed by a given iterator.
- */
+//! \brief obtains the name of an attribute pointed by a given iterator.
 template <typename Iterator>
 inline const std::string& Element::get_name(Iterator ai) const
 { return *(ai->first); }
 
-/*! \brief obtains the string-attribute list. */
+//! \brief obtains the string-attribute list.
 inline Element::Str_attr_list& Element::get_str_attributes()
 { return m_str_attrs; }
 
-/*! \brief obtains the container-attribute list. */
+//! \brief obtains the container-attribute list.
 inline Element::Cont_attr_list& Element::get_cont_attributes()
 { return m_cont_attrs; }
 
-/*! \brief obtains the multi-container-attribute list. */
+//! \brief obtains the multi-container-attribute list.
 inline Element::Multi_cont_attr_list& Element::get_multi_cont_attributes()
 { return m_multi_cont_attrs; }
 
-/*! \brief obtains the field-attribute list. */
+//! \brief obtains the field-attribute list.
 inline Element::Field_attr_list& Element::get_field_attributes()
 { return m_field_attrs; }
 
-/*! \brief obtains the begin iterator of the string-attribute container. */
+//! \brief obtains the begin iterator of the string-attribute container.
 inline Element::Str_attr_iter Element::str_attrs_begin()
 { return m_str_attrs.begin(); }
 
-/*! \brief obtains the past-the-end iterator of the string-attribute container.
- */
+//! \brief obtains the past-the-end iterator of the string-attribute container.
 inline Element::Str_attr_iter Element::str_attrs_end()
 { return m_str_attrs.end(); }
 
-/*! \brief obtains the value of a string-attribute pointed by a given iterator.
- */
+//! \brief obtains the value of a string-attribute pointed by a given iterator.
 inline const std::string& Element::get_value(Str_attr_iter ai) const
 { return *(ai->second); }
 
-/*! \brief obtains the begin iterator of the container-attribute container. */
+//! \brief obtains the begin iterator of the container-attribute container.
 inline Element::Cont_attr_iter Element::cont_attrs_begin()
 { return m_cont_attrs.begin(); }
 
@@ -281,27 +279,23 @@ inline Element::Multi_cont_attr_iter Element::multi_cont_attrs_end()
 inline Element::Cont_list& Element::get_value(Multi_cont_attr_iter ai) const
 { return *(ai->second); }
 
-/*! \brief obtains the begin iterator of the field-attribute container. */
+//! \brief obtains the begin iterator of the field-attribute container.
 inline Element::Field_attr_iter Element::field_attrs_begin()
 { return m_field_attrs.begin(); }
 
-/*! \brief obtains the past-the-end iterator of the field-attribute container.
- */
+//! \brief obtains the past-the-end iterator of the field-attribute container.
 inline Element::Field_attr_iter Element::field_attrs_end()
 { return m_field_attrs.end(); }
 
-/*! \brief obtains the rule of a field-attribute pointed by a given iterator.
- */
-inline Field_rule Element::get_rule(Field_attr_iter ai) const
+//! \brief obtains the rule of a field-attribute pointed by a given iterator.
+inline Field_info::Field_rule Element::get_rule(Field_attr_iter ai) const
 { return std::get<0>(ai->second); }
 
-/*! \brief obtains the type of a field-attribute pointed by a given iterator.
- */
-inline Field_type Element::get_type(Field_attr_iter ai) const
+//! \brief obtains the type of a field-attribute pointed by a given iterator.
+inline Field_info::Field_type Element::get_type(Field_attr_iter ai) const
 { return std::get<1>(ai->second); }
 
-/*! \brief obtains the value of a field-attribute pointed by a given iterator.
- */
+//! \brief obtains the value of a field-attribute pointed by a given iterator.
 inline const std::string& Element::get_value(Field_attr_iter ai) const
 { return *(std::get<2>(ai->second)); }
 

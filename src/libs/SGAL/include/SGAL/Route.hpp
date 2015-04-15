@@ -154,7 +154,8 @@ inline Container* Route::clone() { return new Route(); }
 inline Route::Shared_container Route::get_source_node() { return m_src_node; }
 
 //! \brief obtains the destination node.
-inline Route::Shared_container Route::get_destination_node() { return m_dst_node; }
+inline Route::Shared_container Route::get_destination_node()
+{ return m_dst_node; }
 
 //! \brief obtains the source field within the source node.
 inline Field* Route::get_source_field() { return m_src_field; }

@@ -65,7 +65,7 @@ void Tex_coord_array_2d::delete_prototype()
     static_cast<Vector2f_array_handle_function>
     (&Tex_coord_array_2d::array_handle);
   s_prototype->add_field_info(new MF_vector2f(POINT, "point",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               array_func));
 }
 

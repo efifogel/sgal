@@ -97,7 +97,7 @@ void Time_sensor::init_prototype()
     (&Time_sensor::cycle_interval_handle);
   s_prototype->add_field_info(new SF_time(CYCLE_INTERVAL,
                                           "cycleInterval",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           cycle_interval_func));
 
   // frequency
@@ -105,7 +105,7 @@ void Time_sensor::init_prototype()
     static_cast<Uint_handle_function>(&Time_sensor::frequency_handle);
   s_prototype->add_field_info(new SF_uint(FREQUENCY,
                                           "frequency",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           frequency_func));
 
   // enabled
@@ -114,7 +114,7 @@ void Time_sensor::init_prototype()
     static_cast<Boolean_handle_function>(&Time_sensor::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED,
                                           "enabled",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           enabled_func,
                                           exec_func));
 
@@ -123,7 +123,7 @@ void Time_sensor::init_prototype()
     static_cast<Boolean_handle_function>(&Time_sensor::loop_handle);
   s_prototype->add_field_info(new SF_bool(LOOP,
                                           "loop",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           loop_func));
 
   // startTime
@@ -131,7 +131,7 @@ void Time_sensor::init_prototype()
     static_cast<Scene_time_handle_function>(&Time_sensor::start_time_handle);
   s_prototype->add_field_info(new SF_time(START_TIME,
                                           "startTime",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           start_time_func));
 
   // stopTime
@@ -139,7 +139,7 @@ void Time_sensor::init_prototype()
     static_cast<Scene_time_handle_function>(&Time_sensor::stop_time_handle);
   s_prototype->add_field_info(new SF_time(STOP_TIME,
                                           "stopTime",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           stop_time_func));
 
   // cycleTime
@@ -147,7 +147,7 @@ void Time_sensor::init_prototype()
     static_cast<Scene_time_handle_function>(&Time_sensor::cycle_time_handle);
   s_prototype->add_field_info(new SF_time(CYCLE_TIME,
                                           "cycleTime",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           cycle_time_func));
 
   // fraction
@@ -155,7 +155,7 @@ void Time_sensor::init_prototype()
     static_cast<Float_handle_function>(&Time_sensor::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION,
                                            "fraction_changed",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            fraction_func));
 
   // trueFractionChanged
@@ -163,7 +163,7 @@ void Time_sensor::init_prototype()
     static_cast<Boolean_handle_function>(&Time_sensor::true_fraction_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_FRACTION,
                                           "trueFractionChanged",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           true_fraction_func));
 
   // FractionBias
@@ -171,7 +171,7 @@ void Time_sensor::init_prototype()
     static_cast<Float_handle_function>(&Time_sensor::fraction_bias_handle);
   s_prototype->add_field_info(new SF_float(FRACTION_BIAS,
                                            "fractionBias",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            fraction_bias_func));
 
   // FractionScale
@@ -179,7 +179,7 @@ void Time_sensor::init_prototype()
     static_cast<Float_handle_function>(&Time_sensor::fraction_scale_handle);
   s_prototype->add_field_info(new SF_float(FRACTION_SCALE,
                                            "fractionScale",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            fraction_scale_func));
 
   // isActive
@@ -187,7 +187,7 @@ void Time_sensor::init_prototype()
     static_cast<Boolean_handle_function>(&Time_sensor::is_active_handle);
   s_prototype->add_field_info(new SF_bool(IS_ACTIVE,
                                           "isActive",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_active_func));
 
   // time
@@ -195,7 +195,7 @@ void Time_sensor::init_prototype()
     static_cast<Scene_time_handle_function>(&Time_sensor::time_handle);
   s_prototype->add_field_info(new SF_time(TIME,
                                           "time",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           time_func));
 
   // start
@@ -204,7 +204,7 @@ void Time_sensor::init_prototype()
   exec_func = static_cast<Execution_function>(&Time_sensor::start);
   s_prototype->add_field_info(new SF_time(START,
                                           "start",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           start_func,
                                           exec_func, true));
 
@@ -218,7 +218,7 @@ void Time_sensor::init_prototype()
   exec_func = static_cast<Execution_function>(&Time_sensor::stop);
   s_prototype->add_field_info(new SF_time(STOP,
                                           "stop",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           stop_func,
                                           exec_func));
 }

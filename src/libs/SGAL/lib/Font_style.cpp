@@ -303,7 +303,7 @@ void Font_style::init_prototype()
   auto families_func =
     static_cast<String_array_handle_function>(&Font_style::families_handle);
   s_prototype->add_field_info(new MF_string(FAMILIES, "family",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             families_func,
                                             exec_func));
 
@@ -311,14 +311,14 @@ void Font_style::init_prototype()
   auto horizontal_func =
     static_cast<Boolean_handle_function>(&Font_style::horizontal_handle);
   s_prototype->add_field_info(new SF_bool(HORIZONTAL, "horizontal",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           horizontal_func, exec_func));
 
   // justify
   auto justify_func =
     static_cast<Uint_array_handle_function>(&Font_style::justify_handle);
   s_prototype->add_field_info(new MF_uint(JUSTIFY, "justifyCode",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           justify_func,
                                           exec_func));
 
@@ -326,7 +326,7 @@ void Font_style::init_prototype()
   auto justify_str_func =
     static_cast<String_array_handle_function>(&Font_style::justify_str_handle);
   s_prototype->add_field_info(new MF_string(JUSTIFY_STR, "justify",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             justify_str_func,
                                             exec_func));
 
@@ -334,19 +334,19 @@ void Font_style::init_prototype()
   auto language_func =
     static_cast<String_handle_function>(&Font_style::language_handle);
   s_prototype->add_field_info(new SF_string(LANGUAGE, "language",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             language_func, exec_func));
 
   // leftToRight
   auto l2r_func = static_cast<Boolean_handle_function>(&Font_style::l2r_handle);
   s_prototype->add_field_info(new SF_bool(LEFT_TO_RIGHT, "leftToRight",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           l2r_func, exec_func));
 
   // size
   auto size_func = static_cast<Float_handle_function>(&Font_style::size_handle);
   s_prototype->add_field_info(new SF_float(SIZE, "size",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            size_func,
                                            exec_func));
 
@@ -354,7 +354,7 @@ void Font_style::init_prototype()
   auto spacing_func =
     static_cast<Float_handle_function>(&Font_style::spacing_handle);
   s_prototype->add_field_info(new SF_float(SPACING, "spacing",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            spacing_func,
                                            exec_func));
 
@@ -362,14 +362,14 @@ void Font_style::init_prototype()
   auto style_func =
     reinterpret_cast<Uint_handle_function>(&Font_style::style_handle);
   s_prototype->add_field_info(new SF_uint(STYLE, "style",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           style_func,
                                           exec_func));
 
   // topToBottom
   auto t2b_func = static_cast<Boolean_handle_function>(&Font_style::t2b_handle);
   s_prototype->add_field_info(new SF_bool(TOP_TO_BOTTOM, "topToBottom",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           t2b_func, exec_func));
 }
 

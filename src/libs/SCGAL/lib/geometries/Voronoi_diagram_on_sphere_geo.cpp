@@ -115,7 +115,7 @@ void Voronoi_diagram_on_sphere_geo::init_prototype()
     reinterpret_cast<Uint_handle_function>
     (&Voronoi_diagram_on_sphere_geo::site_style_handle);
   s_prototype->add_field_info(new SF_uint(SITE_STYLE_ID, "siteStyleId",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           site_style_func, exec_func));
 }
 

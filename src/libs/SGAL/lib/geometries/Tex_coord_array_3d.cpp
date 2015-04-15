@@ -57,7 +57,7 @@ void Tex_coord_array_3d::init_prototype()
     static_cast<Vector3f_array_handle_function>
     (&Tex_coord_array_3d::array_handle);
   s_prototype->add_field_info(new MF_vector3f(POINT, "point",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               array_func));
 }
 

@@ -29,6 +29,7 @@
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Field.hpp"
+#include "SGAL/Element.hpp"
 #include "SGAL/Utilities.hpp"
 
 #include "SCGAL/Exact_coord_minkowski.hpp"
@@ -64,14 +65,14 @@ void Exact_coord_minkowski::init_prototype()
     static_cast<Boolean_handle_function>
     (&Exact_coord_minkowski::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           execute_func, exec_func));
 
   Shared_container_handle_function coord1_func =
     reinterpret_cast<Shared_container_handle_function>
     (&Exact_coord_minkowski::coord_array1_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD1, "coord1",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       coord1_func, exec_func));
 
   // coord2
@@ -79,7 +80,7 @@ void Exact_coord_minkowski::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Exact_coord_minkowski::coord_array2_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD2, "coord2",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       coord2_func, exec_func));
 
   // coord
@@ -88,7 +89,7 @@ void Exact_coord_minkowski::init_prototype()
     (&Exact_coord_minkowski::coord_array_changed_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       coord_changed_func));
 }
 
@@ -111,11 +112,9 @@ void Exact_coord_minkowski::set_attributes(Element* elem)
 {
   Container::set_attributes(elem);
 
-  typedef Element::Str_attr_iter          Str_attr_iter;
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "enabled") {
       m_enabled = compare_to_true(value);
       elem->mark_delete(ai);
@@ -123,21 +122,19 @@ void Exact_coord_minkowski::set_attributes(Element* elem)
     }
   }
 
-  typedef Element::Cont_attr_iter         Cont_attr_iter;
-  Cont_attr_iter cai;
-  for (cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end(); ++cai) {
-    const std::string& name = elem->get_name(cai);
+  for (auto cai = elem->cont_attrs_begin(); cai != elem->cont_attrs_end();
+       ++cai)
+  {
+    const auto& name = elem->get_name(cai);
     Shared_container cont = elem->get_value(cai);
     if (name == "coord1") {
-      Shared_exact_coord_array_3d coord_array =
-        boost::dynamic_pointer_cast<Exact_coord_array_3d>(cont);
+      auto coord_array = boost::dynamic_pointer_cast<Exact_coord_array_3d>(cont);
       set_coord_array1(coord_array);
       elem->mark_delete(cai);
       continue;
     }
     if (name == "coord2") {
-      Shared_exact_coord_array_3d coord_array =
-        boost::dynamic_pointer_cast<Exact_coord_array_3d>(cont);
+      auto coord_array = boost::dynamic_pointer_cast<Exact_coord_array_3d>(cont);
       set_coord_array2(coord_array);
       elem->mark_delete(cai);
       continue;
@@ -173,22 +170,22 @@ void Exact_coord_minkowski::execute(const Field_info* field_info)
   else
     m_coord_array_changed->resize(size);
 
-  boost::shared_ptr<Exact_coord_array_3d> coord_array_changed =
+  auto coord_array_changed =
     boost::dynamic_pointer_cast<Exact_coord_array_3d>(m_coord_array_changed);
   SGAL_assertion(coord_array_changed);
 
-  Exact_coord_array_3d::Exact_point_iter pi1 = exact_coord_array1->begin();
+  auto pi1 = exact_coord_array1->begin();
   for (; pi1 != exact_coord_array1->end(); ++pi1) {
     const Exact_point_3& p1 = *pi1;
     Exact_vector_3 v(CGAL::ORIGIN, p1);
-    Exact_coord_array_3d::Exact_point_iter pi2 = exact_coord_array2->begin();
+    auto pi2 = exact_coord_array2->begin();
     for (; pi2 != exact_coord_array2->end(); ++pi2) {
       const Exact_point_3& p2 = *pi2;
       coord_array_changed->push_back(p2 + v);
     }
   }
 
-  Field* coord_changed_field = get_field(COORD_CHANGED);
+  auto* coord_changed_field = get_field(COORD_CHANGED);
   if (coord_changed_field) coord_changed_field->cascade();
 }
 

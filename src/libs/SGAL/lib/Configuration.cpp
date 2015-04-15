@@ -136,7 +136,7 @@ void Configuration::init_prototype()
   Uint_handle_function poly_mode_func =
     reinterpret_cast<Uint_handle_function>(&Configuration::poly_mode_handle);
   s_prototype->add_field_info(new SF_uint(POLY_MODE, "polyMode",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           poly_mode_func,
                                           s_def_poly_mode, exec_func));
 
@@ -144,7 +144,7 @@ void Configuration::init_prototype()
   Boolean_handle_function display_fps_func =
     static_cast<Boolean_handle_function>(&Configuration::display_fps_handle);
   s_prototype->add_field_info(new SF_bool(DISPLAY_FPS, "displayFPS",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           display_fps_func,
                                           s_def_display_fps, exec_func));
 
@@ -153,7 +153,7 @@ void Configuration::init_prototype()
     static_cast<Boolean_handle_function>
     (&Configuration::is_fixed_head_light_handle);
   s_prototype->add_field_info(new SF_bool(FIXED_HEADLIGHT, "fixedHeadLight",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_fixed_head_light_func,
                                           s_def_is_fixed_head_light,
                                           exec_func));
@@ -162,7 +162,7 @@ void Configuration::init_prototype()
   Uint_handle_function stencil_bits_func =
     static_cast<Uint_handle_function>(&Configuration::stencil_bits_handle);
   s_prototype->add_field_info(new SF_uint(STENCIL_BITS, "stencilBits",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           stencil_bits_func,
                                           s_def_stencil_bits));
 
@@ -170,14 +170,14 @@ void Configuration::init_prototype()
   Uint_handle_function depth_bits_func =
     static_cast<Uint_handle_function>(&Configuration::depth_bits_handle);
   s_prototype->add_field_info(new SF_uint(DEPTH_BITS, "depthBits",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           depth_bits_func, s_def_depth_bits));
 
   // minFrameRate
   Float_handle_function min_frame_rate_func =
     static_cast<Float_handle_function>(&Configuration::min_frame_rate_handle);
   s_prototype->add_field_info(new SF_float(MIN_FRAME_RATE, "minFrameRate",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            min_frame_rate_func,
                                            s_def_min_frame_rate));
 
@@ -187,7 +187,7 @@ void Configuration::init_prototype()
     (&Configuration::min_zoom_distance_handle);
   s_prototype->add_field_info(new SF_float(MIN_ZOOM_DISTANCE,
                                            "minZoomDistance",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            min_zoom_distance_func,
                                            s_def_min_zoom_distance));
 
@@ -195,7 +195,7 @@ void Configuration::init_prototype()
   Float_handle_function speed_factor_func =
     static_cast<Float_handle_function>(&Configuration::speed_factor_handle);
   s_prototype->add_field_info(new SF_float(SPEED_FACTOR, "speedFacotor",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            speed_factor_func,
                                            s_def_speed_factor));
 
@@ -203,7 +203,7 @@ void Configuration::init_prototype()
   Boolean_handle_function texture_map_func =
     static_cast<Boolean_handle_function>(&Configuration::texture_map_handle);
   s_prototype->add_field_info(new SF_bool(TEXTURE_MAP, "textureMap",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           texture_map_func,
                                           s_def_texture_map));
 
@@ -211,7 +211,7 @@ void Configuration::init_prototype()
   Uint_handle_function verbosity_level_func =
     static_cast<Uint_handle_function>(&Configuration::verbosity_level_handle);
   s_prototype->add_field_info(new SF_uint(VERBOSITY_LEVEL, "verbosityLevel",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           verbosity_level_func,
                                           s_def_verbose_level));
 
@@ -220,7 +220,7 @@ void Configuration::init_prototype()
     static_cast<Boolean_handle_function>
     (&Configuration::seamless_cube_map_handle);
   s_prototype->add_field_info(new SF_bool(SEAMLESS_CUBE_MAP, "seamlessCubeMap",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           seamless_cube_map_func,
                                           s_def_seamless_cube_map));
 
@@ -230,7 +230,7 @@ void Configuration::init_prototype()
     (&Configuration::accumulation_handle);
   s_prototype->add_field_info(new SF_shared_container(ACCUMULATION,
                                                       "accumulation",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       accumulation_func,
                                                       exec_func));
 }

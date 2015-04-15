@@ -45,7 +45,7 @@ void Node::init_prototype()
   Sphere_bound_handle_function sphere_bound_func =
     static_cast<Sphere_bound_handle_function>(&Node::sphere_bound_handle);
   s_prototype->add_field_info(new SF_sphere_bound(SPHERE_BOUND, "sphereBound",
-                                                  RULE_OUT,
+                                                  Field_info::RULE_OUT,
                                                   sphere_bound_func));
 }
 

@@ -41,7 +41,7 @@ void Color_array::init_prototype()
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>(&Color_array::array_handle);
   s_prototype->add_field_info(new MF_vector3f(COLOR, "color",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               array_func));
 }
 

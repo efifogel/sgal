@@ -149,7 +149,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     (&Arrangement_on_sphere_marked_geo::aos_marked_vertex_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_VERTEX_RADIUS,
                                            "aosMarkedVertexRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            aos_marked_vertex_radius_func));
 
   // aosMarkedEdgeRadius
@@ -158,7 +158,7 @@ void Arrangement_on_sphere_marked_geo::init_prototype()
     (&Arrangement_on_sphere_marked_geo::aos_marked_edge_radius_handle);
   s_prototype->add_field_info(new SF_float(AOS_MARKED_EDGE_RADIUS,
                                            "aosMarkedEdgeRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            aos_marked_edge_radius_func));
 }
 

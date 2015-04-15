@@ -676,7 +676,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL,
                                           "drawDual",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_func, exec_func));
 
   // drawDualUnfolded
@@ -685,7 +685,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::draw_aos_unfolded_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_UNFOLDED,
                                           "drawDualUnfolded",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_unfolded_func, exec_func));
 
   // drawDualOpaque
@@ -694,7 +694,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::draw_aos_opaque_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_OPAQUE,
                                           "drawDualOpaque",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_opaque_func));
 
   // drawDualHaloed
@@ -703,7 +703,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::draw_aos_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_HALOED,
                                           "drawDualHaloed",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_haloed_func));
 
   // drawDualCube
@@ -712,7 +712,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::draw_aos_surface_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_DUAL_CUBE,
                                           "drawDualCube",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_surface_func));
 
   // dualLineWidth
@@ -721,7 +721,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::aos_edge_line_width_handle);
   s_prototype->add_field_info(new SF_float(DUAL_EDGE_LINE_WIDTH,
                                            "dualLineWidth",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            aos_edge_line_width_func));
 
   // translated
@@ -732,7 +732,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::translated_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATED,
                                           "translated",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           translated_func, exec_func));
 
   // rotated
@@ -740,7 +740,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::rotated_handle);
   s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           rotated_func, exec_func));
 
   // trueDrawPrimal
@@ -749,7 +749,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL,
                                           "trueDrawPrimal",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_primal_func));
 
   // trueDrawDual
@@ -758,7 +758,7 @@ void Cubical_gaussian_map_geo::init_prototype()
 //     (&Cubical_gaussian_map_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL,
                                           "trueDrawDual",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_func));
 
   // trueDrawDualUnfolded
@@ -767,7 +767,7 @@ void Cubical_gaussian_map_geo::init_prototype()
 //     (&Cubical_gaussian_map_geo::draw_aos_unfolded_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_DUAL_UNFOLDED,
                                           "trueDrawDualUnfolded",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                            draw_aos_unfolded_func));
 
   // export
@@ -777,7 +777,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Cubical_gaussian_map_geo::export_handle);
   s_prototype->add_field_info(new SF_bool(EXPORT, "export",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           export_func,
                                           exec_func));
 
@@ -790,7 +790,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::increase_vertex_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_INDEX,
                                           "increaseVertexIndex",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           increase_vertex_index_func,
                                           exec_func));
 
@@ -803,7 +803,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::increase_edge_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_INDEX,
                                           "increaseEdgeIndex",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           increase_edge_index_func,
                                           exec_func));
 
@@ -816,7 +816,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::increase_facet_index_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACET_INDEX,
                                           "increaseFacetIndex",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           increase_facet_index_func,
                                           exec_func));
 
@@ -826,7 +826,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::aos_edge_color1_handle);
   s_prototype->add_field_info(new SF_vector3f(DUAL_EDGE_COLOR1,
                                               "dualLineColor1",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               aos_edge_color0_func));
 
   // dualLineColor2
@@ -835,7 +835,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::aos_edge_color2_handle);
   s_prototype->add_field_info(new SF_vector3f(DUAL_EDGE_COLOR2,
                                               "dualLineColor2",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               aos_edge_color1_func));
 
   // geometries
@@ -844,7 +844,7 @@ void Cubical_gaussian_map_geo::init_prototype()
     (&Cubical_gaussian_map_geo::cgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES,
                                                       "geometries",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       cgm_nodes_func));
 }
 

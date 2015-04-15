@@ -65,7 +65,7 @@ void Sphere_environment::init_prototype()
     static_cast<Float_handle_function>(&Sphere_environment::alpha_handle);
   s_prototype->add_field_info(new SF_float(ALPHA,
                                            "alpha",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            alpha_func,
                                            exec_func));
 }

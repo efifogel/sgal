@@ -77,7 +77,7 @@ void Text_3d::init_prototype()
   auto strings_func =
     static_cast<String_array_handle_function>(&Text_3d::strings_handle);
   s_prototype->add_field_info(new MF_string(STRINGS, "string",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             strings_func, exec_func));
 
   // fontStyle
@@ -85,7 +85,7 @@ void Text_3d::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Text_3d::font_style_handle);
   s_prototype->add_field_info(new SF_shared_container(FONT_STYLE, "fontStyle",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       font_style_func,
                                                       exec_func));
 
@@ -93,19 +93,19 @@ void Text_3d::init_prototype()
   auto lengths_func =
     static_cast<Float_array_handle_function>(&Text_3d::lengths_handle);
   s_prototype->add_field_info(new MF_float(LENGTHS, "length",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            lengths_func, exec_func));
 
   // maxExtent
   auto max_extent_func =
     static_cast<Float_handle_function>(&Text_3d::max_extent_handle);
   s_prototype->add_field_info(new SF_float(MAX_EXTENT, "maxExtent",
-                                           RULE_EXPOSED_FIELD, max_extent_func,
+                                           Field_info::RULE_EXPOSED_FIELD, max_extent_func,
                                            s_def_max_extent, exec_func));
 
   // depth
   auto depth_func = static_cast<Float_handle_function>(&Text_3d::depth_handle);
-  s_prototype->add_field_info(new SF_float(DEPTH, "depth", RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_float(DEPTH, "depth", Field_info::RULE_EXPOSED_FIELD,
                                            depth_func, s_def_depth, exec_func));
 }
 

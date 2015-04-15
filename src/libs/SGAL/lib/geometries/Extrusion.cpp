@@ -199,7 +199,7 @@ void Extrusion::init_prototype()
   auto begin_cap_func =
     static_cast<Boolean_handle_function>(&Extrusion::begin_cap_handle);
   s_prototype->add_field_info(new SF_bool(BEGIN_CAP, "beginCap",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           begin_cap_func,
                                           s_def_begin_cap, exec_func));
 
@@ -207,14 +207,14 @@ void Extrusion::init_prototype()
   auto end_cap_func =
     static_cast<Boolean_handle_function>(&Extrusion::end_cap_handle);
   s_prototype->add_field_info(new SF_bool(END_CAP, "endCap",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           end_cap_func,
                                           s_def_end_cap, exec_func));
 
   // loop
   auto loop_func = static_cast<Boolean_handle_function>(&Extrusion::loop_handle);
   s_prototype->add_field_info(new SF_bool(LOOP, "loop",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           loop_func,
                                           s_def_loop, exec_func));
 
@@ -223,7 +223,7 @@ void Extrusion::init_prototype()
     static_cast<Vector2f_array_handle_function>
     (&Extrusion::cross_section_handle);
   s_prototype->add_field_info(new MF_vector2f(CROSS_SECTION, "crossSection",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               cross_section_func, exec_func));
 
   // orientation
@@ -231,14 +231,14 @@ void Extrusion::init_prototype()
     static_cast<Rotation_array_handle_function>
     (&Extrusion::orientation_handle);
   s_prototype->add_field_info(new MF_rotation(ORIENTATION, "orientation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               orientation_func, exec_func));
 
   // scale
   auto scale_func =
     static_cast<Vector2f_array_handle_function>(&Extrusion::scale_handle);
   s_prototype->add_field_info(new MF_vector2f(SCALE, "scale",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               scale_func,
                                               exec_func));
 
@@ -246,7 +246,7 @@ void Extrusion::init_prototype()
   auto spine_func =
     static_cast<Vector3f_array_handle_function>(&Extrusion::spine_handle);
   s_prototype->add_field_info(new MF_vector3f(SPINE, "spine",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               spine_func,
                                               exec_func));
 
@@ -256,7 +256,7 @@ void Extrusion::init_prototype()
     (&Extrusion::cross_section_closed_handle);
   s_prototype->add_field_info(new SF_bool(CROSS_SECTION_CLOSED,
                                           "cross_section_closed",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           cross_section_closed_func,
                                           s_def_cross_section_closed,
                                           exec_func));
@@ -266,7 +266,7 @@ void Extrusion::init_prototype()
     static_cast<Float_handle_function>(&Extrusion::cross_section_radius_handle);
   s_prototype->add_field_info(new SF_float(CROSS_SECTION_RADIUS,
                                           "crossSectionRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            cross_section_radius_func,
                                            s_def_cross_section_radius,
                                            exec_func));
@@ -276,7 +276,7 @@ void Extrusion::init_prototype()
     static_cast<Uint_handle_function>(&Extrusion::cross_section_slices_handle);
   s_prototype->add_field_info(new SF_uint(CROSS_SECTION_SLICES,
                                           "crossSectionSlices",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            cross_section_slices_func,
                                            s_def_cross_section_slices,
                                            exec_func));

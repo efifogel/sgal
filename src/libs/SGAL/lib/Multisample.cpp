@@ -70,7 +70,7 @@ void Multisample::init_prototype()
   Boolean_handle_function enabled_handle =
     static_cast<Boolean_handle_function>(&Multisample::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           enabled_handle,
                                           exec_func));
 
@@ -79,7 +79,7 @@ void Multisample::init_prototype()
     static_cast<Uint_handle_function>(&Multisample::number_of_samples_handle);
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_SAMPLES,
                                           "numberOfSamples",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           number_of_samples_handle));
 
 }

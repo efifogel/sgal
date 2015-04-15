@@ -265,7 +265,7 @@ void Accumulation::init_prototype()
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Accumulation::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           enabled_func, s_def_enabled,
                                           exec_func));
 
@@ -273,7 +273,7 @@ void Accumulation::init_prototype()
   Uint_handle_function quality_func =
     reinterpret_cast<Uint_handle_function>(&Accumulation::quality_handle);
   s_prototype->add_field_info(new SF_uint(QUALITY, "quality",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           quality_func, s_def_quality,
                                           exec_func));
 
@@ -281,7 +281,7 @@ void Accumulation::init_prototype()
   Uint_handle_function delay_func =
     static_cast<Uint_handle_function>(&Accumulation::delay_handle);
   s_prototype->add_field_info(new SF_uint(DELAY, "delay",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           delay_func, s_def_delay));
 }
 

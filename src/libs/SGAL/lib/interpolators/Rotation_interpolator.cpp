@@ -63,7 +63,7 @@ void Rotation_interpolator::init_prototype()
     static_cast<Rotation_handle_function>
     (&Rotation_interpolator::value_handle);
   s_prototype->add_field_info(new SF_rotation(VALUE, "value_changed",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               value_func));
 }
 

@@ -28,6 +28,7 @@
 #include "SGAL/Container_factory.hpp"
 #include "SGAL/Container_proto.hpp"
 #include "SGAL/Field_infos.hpp"
+#include "SGAL/Element.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
@@ -70,7 +71,7 @@ void Texture_transform::init_prototype()
   Vector2f_handle_function center_func =
     static_cast<Vector2f_handle_function>(&Texture_transform::center_handle);
   s_prototype->add_field_info(new SF_vector2f(CENTER, "center",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               center_func,
                                               s_def_center, exec_func));
 
@@ -78,7 +79,7 @@ void Texture_transform::init_prototype()
   Float_handle_function rotation_func =
     static_cast<Float_handle_function>(&Texture_transform::rotation_handle);
   s_prototype->add_field_info(new SF_float(ROTATION, "rotation",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            rotation_func,
                                            s_def_rotation, exec_func));
 
@@ -86,7 +87,7 @@ void Texture_transform::init_prototype()
   Vector2f_handle_function scale_func =
     static_cast<Vector2f_handle_function>(&Texture_transform::scale_handle);
   s_prototype->add_field_info(new SF_vector2f(SCALE, "scale",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               scale_func,
                                               s_def_scale, exec_func));
 
@@ -95,7 +96,7 @@ void Texture_transform::init_prototype()
     static_cast<Vector2f_handle_function>
     (&Texture_transform::translation_handle);
   s_prototype->add_field_info(new SF_vector2f(TRANSLATION, "translation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               translation_func,
                                               s_def_translation, exec_func));
 }
@@ -120,8 +121,8 @@ void Texture_transform::set_attributes(Element* elem)
   Container::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ai++) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "center") {
       Vector2f vec(value);
       set_center(vec);

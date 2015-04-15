@@ -252,7 +252,7 @@ void Box::init_prototype()
   Vector3f_handle_function size_func =
     static_cast<Vector3f_handle_function>(&Box::size_handle);
   s_prototype->add_field_info(new SF_vector3f(SIZE, "size",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               size_func,
                                               exec_func));
 }

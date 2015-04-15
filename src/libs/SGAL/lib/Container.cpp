@@ -184,7 +184,7 @@ void Container::write_fields(Formatter* formatter)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() == RULE_EXPOSED_FIELD)
+    if (field_info->get_rule() == Field_info::RULE_EXPOSED_FIELD)
       field_info->write(this, formatter);
   }
 }

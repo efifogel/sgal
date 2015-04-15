@@ -330,7 +330,7 @@ void Texture::init_prototype()
   Uint_handle_function min_filter_func =
     reinterpret_cast<Uint_handle_function>(&Texture::min_filter_handle);
   s_prototype->add_field_info(new SF_uint(MIN_FILTER, "minFilter",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           min_filter_func,
                                           exec_func));
 
@@ -338,7 +338,7 @@ void Texture::init_prototype()
   Uint_handle_function mag_filter_func =
     reinterpret_cast<Uint_handle_function>(&Texture::mag_filter_handle);
   s_prototype->add_field_info(new SF_uint(MAG_FILTER, "magFilter",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           mag_filter_func,
                                           exec_func));
 
@@ -346,7 +346,7 @@ void Texture::init_prototype()
   Boolean_handle_function repeat_s_func =
     static_cast<Boolean_handle_function>(&Texture::repeat_s_handle);
   s_prototype->add_field_info(new SF_bool(REPEAT_S, "repeatS",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           repeat_s_func,
                                           exec_func));
 
@@ -354,7 +354,7 @@ void Texture::init_prototype()
   Boolean_handle_function repeat_t_func =
     static_cast<Boolean_handle_function>(&Texture::repeat_t_handle);
   s_prototype->add_field_info(new SF_bool(REPEAT_T, "repeatT",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           repeat_t_func,
                                           exec_func));
 }

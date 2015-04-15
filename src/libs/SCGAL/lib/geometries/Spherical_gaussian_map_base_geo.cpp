@@ -375,7 +375,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Spherical_gaussian_map_base_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS, "drawAos",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_func,
                                           exec_func));
 
@@ -384,7 +384,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Spherical_gaussian_map_base_geo::draw_aos_opaque_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS_OPAQUE, "drawAosOpaque",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_opaque_func));
 
   // drawAosHaloed
@@ -393,7 +393,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::draw_aos_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS_HALOED,
                                           "drawAosHaloed",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_haloed_func));
 
   // drawAosSphere
@@ -402,7 +402,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::draw_aos_surface_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_AOS_SPHERE,
                                           "drawAosSphere",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_surface_func));
 
   // aosLineWidth
@@ -411,7 +411,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::aos_edge_line_width_handle);
   s_prototype->add_field_info(new SF_float(AOS_EDGE_LINE_WIDTH,
                                            "aosLineWidth",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            aos_edge_line_width_func));
 
   // translated
@@ -422,7 +422,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::translated_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATED,
                                           "translated",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           translated_func,
                                           exec_func));
 
@@ -431,7 +431,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Spherical_gaussian_map_base_geo::rotated_handle);
   s_prototype->add_field_info(new SF_bool(ROTATED, "rotated",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           rotated_func,
                                           exec_func));
 
@@ -441,7 +441,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::draw_primal_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_PRIMAL,
                                           "trueDrawPrimal",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_primal_func));
 
   // trueDrawAos
@@ -450,7 +450,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
 //     (&Spherical_gaussian_map_base_geo::draw_aos_handle);
   s_prototype->add_field_info(new SF_bool(TRUE_DRAW_AOS,
                                           "trueDrawAos",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_aos_func));
 
   // export
@@ -461,7 +461,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::export_handle);
   s_prototype->add_field_info(new SF_bool(EXPORT,
                                           "export",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           export_func,
                                           exec_func));
 
@@ -471,7 +471,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::aos_edge_colors1_handle);
   s_prototype->add_field_info(new SF_vector3f(AOS_EDGE_COLOR1,
                                               "aosEdgeColor1",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               aos_edge_colors1_func));
 
   // aosEdgeColor2
@@ -480,7 +480,7 @@ void Spherical_gaussian_map_base_geo::init_prototype()
     (&Spherical_gaussian_map_base_geo::aos_edge_colors2_handle);
   s_prototype->add_field_info(new SF_vector3f(AOS_EDGE_COLOR2,
                                               "aosEdgeColor2",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               aos_edge_colors2_func));
 }
 

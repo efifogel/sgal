@@ -62,7 +62,7 @@ void Coordinate_interpolator::init_prototype()
     (&Coordinate_interpolator::value_handle);
   s_prototype->add_field_info(new MF_vector3f(VALUE,
                                               "value_changed",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               value_func));
 }
 

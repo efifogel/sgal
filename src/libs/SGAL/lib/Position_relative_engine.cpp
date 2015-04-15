@@ -64,32 +64,32 @@ void Position_relative_engine::init_prototype()
   Float_handle_function fraction_func =
     static_cast<Float_handle_function>(&Texture::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION, "fraction",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            fraction_func,
                                            exec_func));
 
   Vector3f_handle_function value_func =
     static_cast<Vector3f_handle_function>(&Texture::value_handle);
   s_prototype->add_field_info(new SF_vector3f(VALUE, "value",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               value_func));
 
   Vector3f_handle_function position_func =
     static_cast<Vector3f_handle_function>(&Texture::position_handle);
   s_prototype->add_field_info(new SF_vector3f(POSITION, "position",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               position_func));
 
   Vector3f_handle_function delta_func =
     static_cast<Vector3f_handle_function>(&Texture::delta_handle);
   s_prototype->add_field_info(new SF_vector3f(DELTA, "delta",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               delta_func));
 
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>(&Texture::rotation_handle);
   s_prototype->add_field_info(new Rotation(ROTATION, "rotation",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            rotation_func));
 }
 

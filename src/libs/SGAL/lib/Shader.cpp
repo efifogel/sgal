@@ -100,7 +100,7 @@ void Shader::delete_prototype()
   String_handle_function url_func =
     static_cast<String_handle_function>(&Shader::url_handle);
   s_prototype->add_field_info(new SF_string(URL, "url",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             url_func));
 }
 

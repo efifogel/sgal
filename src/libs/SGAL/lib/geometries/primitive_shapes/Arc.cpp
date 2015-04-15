@@ -414,7 +414,7 @@ void Arc::init_prototype()
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Arc::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            radius_func,
                                            exec_func));
 
@@ -424,7 +424,7 @@ void Arc::init_prototype()
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Arc::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           stacks_func,
                                           exec_func));
 
@@ -434,7 +434,7 @@ void Arc::init_prototype()
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Arc::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           slices_func,
                                           exec_func));
 
@@ -444,7 +444,7 @@ void Arc::init_prototype()
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Arc::alpha_handle);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            alpha_func,
                                            exec_func));
 
@@ -454,7 +454,7 @@ void Arc::init_prototype()
   Float_handle_function beta_func =
     static_cast<Float_handle_function>(&Arc::beta_handle);
   s_prototype->add_field_info(new SF_float(BETA, "beta",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            beta_func,
                                            exec_func));
 
@@ -464,7 +464,7 @@ void Arc::init_prototype()
   Float_handle_function gamma_func =
     static_cast<Float_handle_function>(&Arc::gamma_handle);
   s_prototype->add_field_info(new SF_float(GAMMA, "gamma",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            gamma_func,
                                            exec_func));
 
@@ -474,7 +474,7 @@ void Arc::init_prototype()
   Float_handle_function delta_func =
     static_cast<Float_handle_function>(&Arc::delta_handle);
   s_prototype->add_field_info(new SF_float(DELTA, "delta",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            delta_func,
                                            exec_func));
 }

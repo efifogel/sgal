@@ -60,7 +60,7 @@ void Scalar_interpolator::init_prototype()
     static_cast<Float_handle_function>(&Scalar_interpolator::value_handle);
   s_prototype->add_field_info(new SF_float(VALUE,
                                            "value_changed",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            value_func));
 }
 

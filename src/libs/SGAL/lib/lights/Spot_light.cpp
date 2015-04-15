@@ -127,7 +127,7 @@ void Spot_light::init_prototype()
   Vector3f_handle_function location_func =
     static_cast<Vector3f_handle_function>(&Spot_light::location_handle);
   s_prototype->add_field_info(new SF_vector3f(LOCATION, "location",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               location_func, exec_func));
 
   // direction
@@ -136,7 +136,7 @@ void Spot_light::init_prototype()
   Vector3f_handle_function direction_func =
     static_cast<Vector3f_handle_function>(&Spot_light::direction_handle);
   s_prototype->add_field_info(new SF_vector3f(DIRECTION, "direction",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               direction_func, exec_func));
 
   // attenuation
@@ -145,7 +145,7 @@ void Spot_light::init_prototype()
   Vector3f_handle_function attenuation_func =
     static_cast<Vector3f_handle_function>(&Spot_light::attenuation_handle);
   s_prototype->add_field_info(new SF_vector3f(ATTENUATION, "attenuation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               attenuation_func, exec_func));
 
   // radius
@@ -154,7 +154,7 @@ void Spot_light::init_prototype()
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Spot_light::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            radius_func,
                                            exec_func));
 
@@ -164,7 +164,7 @@ void Spot_light::init_prototype()
   Float_handle_function beam_width_func =
     static_cast<Float_handle_function>(&Spot_light::beam_width_handle);
   s_prototype->add_field_info(new SF_float(BEAMWIDTH, "beamwidth",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            beam_width_func, exec_func));
 
   // cutoffangle
@@ -173,7 +173,7 @@ void Spot_light::init_prototype()
   Float_handle_function cutoff_angle_func =
     static_cast<Float_handle_function>(&Spot_light::cutoff_angle_handle);
   s_prototype->add_field_info(new SF_float(CUTOFFANGLE, "cutoffangle",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            cutoff_angle_func, exec_func));
 }
 

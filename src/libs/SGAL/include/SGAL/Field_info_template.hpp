@@ -115,7 +115,8 @@ private:
 public:
   /*! Constructor. */
   Field_info_template(Uint id, const std::string& name,
-                      Field_rule rule, Handle handle, T initial_value,
+                      Field_info::Field_rule rule, Handle handle,
+                      T initial_value,
                       Execution_function execution = nullptr,
                       bool initially_blocked = false,
                       bool use_initial_value = false) :
@@ -128,7 +129,8 @@ public:
   /*! Temporary constructor.
    * \todo remove this constructor when no longer needed.
    */
-  Field_info_template(Uint id, const std::string& name, Field_rule rule,
+  Field_info_template(Uint id, const std::string& name,
+                      Field_info::Field_rule rule,
                       Handle handle,
                       Execution_function execution = nullptr,
                       bool initially_blocked = false,
@@ -184,17 +186,6 @@ public:
     const T* handle = (container->*m_handle)(this);
     Field_info::write(formatter, *handle, m_initial_value, declaration);
   }
-
-  /*! \todo
-  // Creates an SAI_field of the same type id and name
-  // as this field info.
-  // The function also create a new SAI_field_info of the same type
-  // and initializes the new SAI_field with it.
-  virtual SAI_field_services * create_sai_field()
-  {
-    return new SAI_field_template<T,type_id>;
-  }
-  */
 };
 
 SGAL_END_NAMESPACE

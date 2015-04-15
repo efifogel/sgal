@@ -199,7 +199,7 @@ void Sphere::init_prototype()
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Sphere::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            radius_func,
                                            exec_func));
 
@@ -209,13 +209,13 @@ void Sphere::init_prototype()
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Sphere::stacks_handle);
   s_prototype->add_field_info(new SF_uint(STACKS, "stacks",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           stacks_func));
 
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Sphere::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           slices_func));
 }
 

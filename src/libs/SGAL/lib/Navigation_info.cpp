@@ -146,7 +146,7 @@ void Navigation_info::init_prototype()
   auto types_func =
     static_cast<String_array_handle_function>(&Navigation_info::types_handle);
   s_prototype->add_field_info(new MF_string(TYPES, "type",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             types_func,
                                             s_def_types));
 }

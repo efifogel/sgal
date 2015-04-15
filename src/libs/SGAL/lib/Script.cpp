@@ -28,6 +28,7 @@
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Element.hpp"
 #include "SGAL/Script.hpp"
+#include "SGAL/Field_info.hpp"
 #include "SGAL/Field_infos.hpp"
 #include "SGAL/Scene_graph.hpp"
 #include "SGAL/Field.hpp"
@@ -142,7 +143,7 @@ void Script::getter(v8::Local<v8::String> property,
 
   Uint id = field_info->get_type_id();
   switch (id) {
-   case SF_BOOL:
+   case Field_info::SF_BOOL:
     {
      Boolean* tmp =
        (id == DIRECT_OUTPUT) ? script_node->direct_output_handle(field_info) :
@@ -152,28 +153,28 @@ void Script::getter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_FLOAT:
+   case Field_info::SF_FLOAT:
     {
      auto* tmp = script_node->field_handle<Float>(field_info);
      info.GetReturnValue().Set(*tmp);
     }
     break;
 
-   case SF_TIME:
+   case Field_info::SF_TIME:
     {
      auto* tmp = script_node->field_handle<Scene_time>(field_info);
      info.GetReturnValue().Set(*tmp);
     }
     break;
 
-   case SF_INT32:
+   case Field_info::SF_INT32:
     {
      auto* tmp = script_node->field_handle<Int32>(field_info);
      info.GetReturnValue().Set(*tmp);
     }
     break;
 
-   case SF_STR:
+   case Field_info::SF_STR:
     {
      auto* tmp = (id == URL) ? script_node->url_handle(field_info) :
        script_node->field_handle<std::string>(field_info);
@@ -183,7 +184,7 @@ void Script::getter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_SHARED_CONTAINER:
+   case Field_info::SF_SHARED_CONTAINER:
     {
      // Set (the GetReturnValue) a pointer to the Shared_container object.
      auto* tmp = script_node->field_handle<Shared_container>(field_info);
@@ -191,21 +192,21 @@ void Script::getter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_VEC2F:
-   case SF_VEC3F:
-   case SF_COLOR:
-   case SF_ROTATION:
-   case SF_IMAGE:
-   case MF_BOOL:
-   case MF_FLOAT:
-   case MF_TIME:
-   case MF_INT32:
-   case MF_VEC2F:
-   case MF_VEC3F:
-   case MF_COLOR:
-   case MF_STR:
-   case MF_ROTATION:
-   case MF_SHARED_CONTAINER:
+   case Field_info::SF_VEC2F:
+   case Field_info::SF_VEC3F:
+   case Field_info::SF_COLOR:
+   case Field_info::SF_ROTATION:
+   case Field_info::SF_IMAGE:
+   case Field_info::MF_BOOL:
+   case Field_info::MF_FLOAT:
+   case Field_info::MF_TIME:
+   case Field_info::MF_INT32:
+   case Field_info::MF_VEC2F:
+   case Field_info::MF_VEC3F:
+   case Field_info::MF_COLOR:
+   case Field_info::MF_STR:
+   case Field_info::MF_ROTATION:
+   case Field_info::MF_SHARED_CONTAINER:
    default:
     SGAL_error();
     return;
@@ -243,7 +244,7 @@ void Script::setter(v8::Local<v8::String> property,
   // Apply the setting
   Uint id = field_info->get_type_id();
   switch (id) {
-   case SF_BOOL:
+   case Field_info::SF_BOOL:
     {
      Boolean* tmp =
        (id == DIRECT_OUTPUT) ? script_node->direct_output_handle(field_info) :
@@ -254,7 +255,7 @@ void Script::setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_FLOAT:
+   case Field_info::SF_FLOAT:
     {
      auto* tmp = script_node->field_handle<Float>(field_info);
      *tmp = static_cast<Float>(value->NumberValue());
@@ -262,7 +263,7 @@ void Script::setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_TIME:
+   case Field_info::SF_TIME:
     {
      auto* tmp = script_node->field_handle<Scene_time>(field_info);
      *tmp = static_cast<Scene_time>(value->NumberValue());
@@ -270,7 +271,7 @@ void Script::setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_INT32:
+   case Field_info::SF_INT32:
     {
      auto* tmp = script_node->field_handle<Int32>(field_info);
      *tmp = value->Int32Value();
@@ -278,7 +279,7 @@ void Script::setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_STR:
+   case Field_info::SF_STR:
     {
      auto* tmp = (id == URL) ? script_node->url_handle(field_info) :
        script_node->field_handle<std::string>(field_info);
@@ -288,7 +289,7 @@ void Script::setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_SHARED_CONTAINER:
+   case Field_info::SF_SHARED_CONTAINER:
     {
      // The value is an V8::External that holds a void*, which actually points
      // at a Shared_container.
@@ -298,21 +299,21 @@ void Script::setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_VEC2F:
-   case SF_VEC3F:
-   case SF_COLOR:
-   case SF_ROTATION:
-   case SF_IMAGE:
-   case MF_BOOL:
-   case MF_FLOAT:
-   case MF_TIME:
-   case MF_INT32:
-   case MF_VEC2F:
-   case MF_VEC3F:
-   case MF_COLOR:
-   case MF_STR:
-   case MF_ROTATION:
-   case MF_SHARED_CONTAINER:
+   case Field_info::SF_VEC2F:
+   case Field_info::SF_VEC3F:
+   case Field_info::SF_COLOR:
+   case Field_info::SF_ROTATION:
+   case Field_info::SF_IMAGE:
+   case Field_info::MF_BOOL:
+   case Field_info::MF_FLOAT:
+   case Field_info::MF_TIME:
+   case Field_info::MF_INT32:
+   case Field_info::MF_VEC2F:
+   case Field_info::MF_VEC3F:
+   case Field_info::MF_COLOR:
+   case Field_info::MF_STR:
+   case Field_info::MF_ROTATION:
+   case Field_info::MF_SHARED_CONTAINER:
    default:
     SGAL_error();
     return;
@@ -390,15 +391,15 @@ void Script::array_setter(v8::Local<v8::String> property,
   SGAL_TRACE_MSG(Trace::SCRIPT, "  field: " + field_info->get_name() + "\n");
 
   switch (field_info->get_type_id()) {
-   case SF_BOOL:
-   case SF_FLOAT:
-   case SF_TIME:
-   case SF_INT32:
-   case SF_STR:
+   case Field_info::SF_BOOL:
+   case Field_info::SF_FLOAT:
+   case Field_info::SF_TIME:
+   case Field_info::SF_INT32:
+   case Field_info::SF_STR:
     SGAL_error();
     break;
 
-   case SF_VEC2F:
+   case Field_info::SF_VEC2F:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -410,8 +411,8 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_VEC3F:
-   case SF_COLOR:
+   case Field_info::SF_VEC3F:
+   case Field_info::SF_COLOR:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -426,16 +427,16 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case SF_ROTATION:
-   case SF_IMAGE:
+   case Field_info::SF_ROTATION:
+   case Field_info::SF_IMAGE:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case SF_SHARED_CONTAINER:
+   case Field_info::SF_SHARED_CONTAINER:
     SGAL_error();
     break;
 
-   case MF_BOOL:
+   case Field_info::MF_BOOL:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -450,7 +451,7 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case MF_FLOAT:
+   case Field_info::MF_FLOAT:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -461,7 +462,7 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case MF_TIME:
+   case Field_info::MF_TIME:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -472,7 +473,7 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case MF_INT32:
+   case Field_info::MF_INT32:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -483,7 +484,7 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case MF_VEC2F:
+   case Field_info::MF_VEC2F:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -502,8 +503,8 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case MF_VEC3F:
-   case MF_COLOR:
+   case Field_info::MF_VEC3F:
+   case Field_info::MF_COLOR:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -523,7 +524,7 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case MF_STR:
+   case Field_info::MF_STR:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -537,11 +538,11 @@ void Script::array_setter(v8::Local<v8::String> property,
     }
     break;
 
-   case MF_ROTATION:
+   case Field_info::MF_ROTATION:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case MF_SHARED_CONTAINER:
+   case Field_info::MF_SHARED_CONTAINER:
     {
      v8::HandleScope scope(isolate);
      v8::Local<v8::Array> array = v8::Handle<v8::Array>::Cast(value);
@@ -596,15 +597,15 @@ void Script::indexed_getter(uint32_t index,
 
   // Obtain
   switch (field_info->get_type_id()) {
-   case SF_BOOL:
-   case SF_FLOAT:
-   case SF_TIME:
-   case SF_INT32:
-   case SF_STR:
+   case Field_info::SF_BOOL:
+   case Field_info::SF_FLOAT:
+   case Field_info::SF_TIME:
+   case Field_info::SF_INT32:
+   case Field_info::SF_STR:
     SGAL_error();
     break;
 
-   case SF_VEC2F:
+   case Field_info::SF_VEC2F:
     {
      v8::HandleScope scope(isolate);
      SGAL_assertion(index < 2);
@@ -613,8 +614,8 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case SF_VEC3F:
-   case SF_COLOR:
+   case Field_info::SF_VEC3F:
+   case Field_info::SF_COLOR:
     {
      v8::HandleScope scope(isolate);
      SGAL_assertion(index < 3);
@@ -623,16 +624,16 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case SF_ROTATION:
-   case SF_IMAGE:
+   case Field_info::SF_ROTATION:
+   case Field_info::SF_IMAGE:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case SF_SHARED_CONTAINER:
+   case Field_info::SF_SHARED_CONTAINER:
     SGAL_error();
     break;
 
-   case MF_BOOL:
+   case Field_info::MF_BOOL:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Boolean_array>(field_info);
@@ -641,7 +642,7 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case MF_FLOAT:
+   case Field_info::MF_FLOAT:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Float_array>(field_info);
@@ -650,7 +651,7 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case MF_TIME:
+   case Field_info::MF_TIME:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Scene_time_array>(field_info);
@@ -659,7 +660,7 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case MF_INT32:
+   case Field_info::MF_INT32:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Int32_array>(field_info);
@@ -668,7 +669,7 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case MF_VEC2F:
+   case Field_info::MF_VEC2F:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Vector2f_array>(field_info);
@@ -683,8 +684,8 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case MF_VEC3F:
-   case MF_COLOR:
+   case Field_info::MF_VEC3F:
+   case Field_info::MF_COLOR:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Vector2f_array>(field_info);
@@ -700,7 +701,7 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case MF_STR:
+   case Field_info::MF_STR:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<String_array>(field_info);
@@ -711,11 +712,11 @@ void Script::indexed_getter(uint32_t index,
     }
     break;
 
-   case MF_ROTATION:
+   case Field_info::MF_ROTATION:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case MF_SHARED_CONTAINER:
+   case Field_info::MF_SHARED_CONTAINER:
     {
      // Set (in GetReturnValue) a pointer to the Shared_container object
      // indexed by 'index'.
@@ -760,15 +761,15 @@ void Script::indexed_setter(uint32_t index,
 
   // Assign
   switch (field_info->get_type_id()) {
-   case SF_BOOL:
-   case SF_FLOAT:
-   case SF_TIME:
-   case SF_INT32:
-   case SF_STR:
+   case Field_info::SF_BOOL:
+   case Field_info::SF_FLOAT:
+   case Field_info::SF_TIME:
+   case Field_info::SF_INT32:
+   case Field_info::SF_STR:
     SGAL_error();
     break;
 
-   case SF_VEC2F:
+   case Field_info::SF_VEC2F:
     {
      v8::HandleScope scope(isolate);
      SGAL_assertion(index < 2);
@@ -777,8 +778,8 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case SF_VEC3F:
-   case SF_COLOR:
+   case Field_info::SF_VEC3F:
+   case Field_info::SF_COLOR:
     {
      v8::HandleScope scope(isolate);
      SGAL_assertion(index < 3);
@@ -787,16 +788,16 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case SF_ROTATION:
-   case SF_IMAGE:
+   case Field_info::SF_ROTATION:
+   case Field_info::SF_IMAGE:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case SF_SHARED_CONTAINER:
+   case Field_info::SF_SHARED_CONTAINER:
     SGAL_error();
     break;
 
-   case MF_BOOL:
+   case Field_info::MF_BOOL:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Boolean_array>(field_info);
@@ -805,7 +806,7 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case MF_FLOAT:
+   case Field_info::MF_FLOAT:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Float_array>(field_info);
@@ -814,7 +815,7 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case MF_TIME:
+   case Field_info::MF_TIME:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Scene_time_array>(field_info);
@@ -823,7 +824,7 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case MF_INT32:
+   case Field_info::MF_INT32:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Int32_array>(field_info);
@@ -832,7 +833,7 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case MF_VEC2F:
+   case Field_info::MF_VEC2F:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Vector2f_array>(field_info);
@@ -843,8 +844,8 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case MF_VEC3F:
-   case MF_COLOR:
+   case Field_info::MF_VEC3F:
+   case Field_info::MF_COLOR:
     {
      v8::HandleScope scope(isolate);
      auto* tmp = script_node->field_handle<Vector3f_array>(field_info);
@@ -856,12 +857,12 @@ void Script::indexed_setter(uint32_t index,
     }
     break;
 
-   case MF_STR:
-   case MF_ROTATION:
+   case Field_info::MF_STR:
+   case Field_info::MF_ROTATION:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case MF_SHARED_CONTAINER:
+   case Field_info::MF_SHARED_CONTAINER:
     {
      // Observe that the value of the external object stores a pointer to
      // a shared-container. Set the shared-container item indexed by 'index'
@@ -913,173 +914,173 @@ void Script::add_to_scene(Scene_graph* scene_graph)
 }
 
 //! \brief adds a field info record to the script node.
-void Script::add_field_info(Field_rule rule, Field_type type,
+void Script::add_field_info(Field_info::Field_rule rule, Field_info::Field_type type,
                             const std::string& name, const std::string& value)
 {
   auto* prototype = get_prototype();
 
-  Execution_function exec_func =  (rule == RULE_IN) ?
+  Execution_function exec_func =  (rule == Field_info::RULE_IN) ?
     static_cast<Execution_function>(&Script::execute) : nullptr;
 
   Variant_field variant_field;
   Uint id = LAST + m_fields.size();
   switch (type) {
-   case SF_BOOL:
+   case Field_info::SF_BOOL:
     {
      auto initial_value = value.empty() ? false : compare_to_true(value);
      variant_field = initial_value;
-     add_fi<SF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_FLOAT:
+   case Field_info::SF_FLOAT:
     {
      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Float>(value);
      variant_field = initial_value;
-     add_fi<SF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_TIME:
+   case Field_info::SF_TIME:
     {
      auto initial_value =
        value.empty() ? 0 : boost::lexical_cast<Scene_time>(value);
      variant_field = initial_value;
-     add_fi<SF_TIME>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_TIME>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_INT32:
+   case Field_info::SF_INT32:
     {
      auto initial_value = value.empty() ? 0 : boost::lexical_cast<Int32>(value);
      variant_field = initial_value;
-     add_fi<SF_INT32>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_INT32>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_VEC2F:
+   case Field_info::SF_VEC2F:
     {
      Vector2f initial_value(value);
      variant_field = initial_value;
-     add_fi<SF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_VEC3F:
+   case Field_info::SF_VEC3F:
     {
      Vector3f initial_value(value);
      variant_field = initial_value;
-     add_fi<SF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_COLOR:
+   case Field_info::SF_COLOR:
     {
      Vector3f initial_value(value);
      variant_field = initial_value;
-     add_fi<SF_COLOR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_COLOR>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_ROTATION:
+   case Field_info::SF_ROTATION:
     {
      Rotation initial_value(value);
      variant_field = initial_value;
-     add_fi<SF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_STR:
+   case Field_info::SF_STR:
     {
      std::string initial_value(value);
      variant_field = initial_value;
-     add_fi<SF_STR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::SF_STR>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case SF_IMAGE:
+   case Field_info::SF_IMAGE:
     std::cerr << "Not supported yet!" << std::endl;
     break;
 
-   case SF_SHARED_CONTAINER:
+   case Field_info::SF_SHARED_CONTAINER:
     {
      Shared_container initial_value;
      variant_field = initial_value;
-     add_fi<SF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func,
+     add_fi<Field_info::SF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func,
                                  prototype);
     }
     break;
 
-   case MF_BOOL:
+   case Field_info::MF_BOOL:
     {
      Boolean_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_BOOL>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case MF_FLOAT:
+   case Field_info::MF_FLOAT:
     {
      Float_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_FLOAT>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case MF_TIME:
+   case Field_info::MF_TIME:
     {
      Scene_time_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_TIME>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_TIME>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case MF_INT32:
+   case Field_info::MF_INT32:
     {
      Int32_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_INT32>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_INT32>(id, name, rule, initial_value, exec_func, prototype);
     }
      break;
 
-   case MF_VEC2F:
+   case Field_info::MF_VEC2F:
     {
      Vector2f_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_VEC2F>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case MF_VEC3F:
-   case MF_COLOR:
+   case Field_info::MF_VEC3F:
+   case Field_info::MF_COLOR:
     {
      Vector3f_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_VEC3F>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case MF_ROTATION:
+   case Field_info::MF_ROTATION:
     {
      Rotation_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_ROTATION>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case MF_STR:
+   case Field_info::MF_STR:
     {
      String_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_STR>(id, name, rule, initial_value, exec_func, prototype);
+     add_fi<Field_info::MF_STR>(id, name, rule, initial_value, exec_func, prototype);
     }
     break;
 
-   case MF_SHARED_CONTAINER:
+   case Field_info::MF_SHARED_CONTAINER:
     {
      Shared_container_array initial_value;
      variant_field = initial_value;
-     add_fi<MF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func,
+     add_fi<Field_info::MF_SHARED_CONTAINER>(id, name, rule, initial_value, exec_func,
                                  prototype);
     }
     break;
@@ -1292,8 +1293,8 @@ void Script::add_callbacks(v8::Local<v8::Object> global)
   Container_proto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if ((field_info->get_rule() != RULE_FIELD) &&
-        (field_info->get_rule() != RULE_OUT))
+    if ((field_info->get_rule() != Field_info::RULE_FIELD) &&
+        (field_info->get_rule() != Field_info::RULE_OUT))
       continue;
 
     v8::Handle<v8::String> field_name =
@@ -1375,41 +1376,41 @@ v8::Handle<v8::Value> Script::get_argument(const Field_info* field_info)
 {
   // std::cout << field_info->get_name() << std::endl;
   switch (field_info->get_type_id()) {
-   case SF_BOOL: return get_single_boolean(field_info);
-   case SF_FLOAT: return get_single_float(field_info);
-   case SF_TIME: return get_single_time(field_info);
-   case SF_INT32: return get_single_int32(field_info);
-   case SF_STR: return get_single_string(field_info);
-   case SF_VEC2F: return get_single_vector2f(field_info);
+   case Field_info::SF_BOOL: return get_single_boolean(field_info);
+   case Field_info::SF_FLOAT: return get_single_float(field_info);
+   case Field_info::SF_TIME: return get_single_time(field_info);
+   case Field_info::SF_INT32: return get_single_int32(field_info);
+   case Field_info::SF_STR: return get_single_string(field_info);
+   case Field_info::SF_VEC2F: return get_single_vector2f(field_info);
 
-   case SF_VEC3F:
-   case SF_COLOR: return get_single_vector3f(field_info);
+   case Field_info::SF_VEC3F:
+   case Field_info::SF_COLOR: return get_single_vector3f(field_info);
 
-   case SF_ROTATION:
+   case Field_info::SF_ROTATION:
     std::cerr << "Not supported yet!" << std::endl;
     return v8::Null(m_isolate);
 
-   case SF_IMAGE:
+   case Field_info::SF_IMAGE:
     std::cerr << "Not supported yet!" << std::endl;
     return v8::Null(m_isolate);
 
-   case SF_SHARED_CONTAINER: return get_single_external(field_info);
+   case Field_info::SF_SHARED_CONTAINER: return get_single_external(field_info);
 
-   case MF_BOOL: return get_multi_boolean(field_info); break;
-   case MF_FLOAT: return get_multi_float(field_info); break;
-   case MF_TIME: return get_multi_time(field_info); break;
-   case MF_INT32: return get_multi_int32(field_info); break;
-   case MF_STR: return get_multi_string(field_info); break;
-   case MF_VEC2F: return get_multi_vector2f(field_info); break;
+   case Field_info::MF_BOOL: return get_multi_boolean(field_info); break;
+   case Field_info::MF_FLOAT: return get_multi_float(field_info); break;
+   case Field_info::MF_TIME: return get_multi_time(field_info); break;
+   case Field_info::MF_INT32: return get_multi_int32(field_info); break;
+   case Field_info::MF_STR: return get_multi_string(field_info); break;
+   case Field_info::MF_VEC2F: return get_multi_vector2f(field_info); break;
 
-   case MF_VEC3F:
-   case MF_COLOR: return get_multi_vector3f(field_info); break;
+   case Field_info::MF_VEC3F:
+   case Field_info::MF_COLOR: return get_multi_vector3f(field_info); break;
 
-   case MF_ROTATION:
+   case Field_info::MF_ROTATION:
     SGAL_error_msg("Not supported yet!");
     return v8::Null(m_isolate);
 
-   case MF_SHARED_CONTAINER: return get_multi_external(field_info); break;
+   case Field_info::MF_SHARED_CONTAINER: return get_multi_external(field_info); break;
 
    default:
     SGAL_error_msg("Unsupported type!");
@@ -1472,7 +1473,11 @@ void Script::write_fields(Formatter* formatter)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    field_info->write(this, formatter, true);
+    if ((URL == field_info->get_id()) ||
+        (DIRECT_OUTPUT == field_info->get_id()) ||
+        (MUST_EVALUATE == field_info->get_id()))
+      field_info->write(this, formatter, false);
+    else field_info->write(this, formatter, true);
   }
 }
 

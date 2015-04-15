@@ -68,7 +68,7 @@ void Image_to_elevation_grid::init_prototype()
     static_cast<Boolean_handle_function>
     (&Image_to_elevation_grid::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER, "trigger",
-                                          RULE_IN,
+                                          Field_info::RULE_IN,
                                           trigger_func, exec_func));
 
   // elevationGrid
@@ -79,7 +79,7 @@ void Image_to_elevation_grid::init_prototype()
     (&Image_to_elevation_grid::elevation_grid_handle);
   s_prototype->add_field_info(new SF_shared_container(ELEVATION_GRID,
                                                       "elevationGrid",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       elevation_grid_func,
                                                       exec_func));
 
@@ -89,7 +89,7 @@ void Image_to_elevation_grid::init_prototype()
     (&Image_to_elevation_grid::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       image_func));
 }
 

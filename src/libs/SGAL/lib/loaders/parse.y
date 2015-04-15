@@ -49,6 +49,7 @@
 #include "SGAL/Element.hpp"
 #include "SGAL/Container.hpp"
 #include "SGAL/Node.hpp"
+#include "SGAL/Field_info.hpp"
 #include "SGAL/Group.hpp"
 #include "SGAL/Transform.hpp"
 #include "SGAL/Scene_graph.hpp"
@@ -132,7 +133,7 @@ SGAL_END_NAMESPACE
 %type <std::string> sfint32Values
 %type <std::string> sfboolValue
 %type <std::string> fieldValue
-%type <Field_type> fieldType
+%type <Field_info::Field_type> fieldType
 %type <Cont_list*> nodeStatements
 %type <Element*> nodeBody
 %type <Element*> scriptBody
@@ -386,21 +387,21 @@ restrictedInterfaceDeclaration : K_EVENTIN fieldType eventInId
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_tuple(RULE_IN, $2, new std::string("")));
+                                  std::make_tuple(Field_info::RULE_IN, $2, new std::string("")));
                   $$->add_attribute(attr);
                 }
                 | K_EVENTOUT fieldType eventOutId
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_tuple(RULE_OUT, $2, new std::string("")));
+                                  std::make_tuple(Field_info::RULE_OUT, $2, new std::string("")));
                   $$->add_attribute(attr);
                 }
                 | K_FIELD fieldType fieldId fieldValue
                 {
                   $$ = new Element;
                   Field_attr attr(new std::string($3),
-                                  std::make_tuple(RULE_FIELD, $2, new std::string($4)));
+                                  std::make_tuple(Field_info::RULE_FIELD, $2, new std::string($4)));
                   $$->add_attribute(attr);
                 }
                 ;
@@ -570,27 +571,27 @@ IdRestChars     : Any number of ISO-10646 characters except: 0x0-0x20, 0x22, 0x2
 
 /* Fields: */
 
-fieldType       : MFBool { $$ = MF_BOOL; }
-                | MFColor { $$ = MF_COLOR; }
-                | MFFloat { $$ = MF_FLOAT; }
-                | MFInt32 { $$ = MF_INT32; }
-                | MFNode { $$ = MF_SHARED_CONTAINER; }
-                | MFRotation { $$ = MF_ROTATION; }
-                | MFString { $$ = MF_STR; }
-                | MFTime { $$ = MF_TIME; }
-                | MFVec2f { $$ = MF_VEC2F; }
-                | MFVec3f { $$ = MF_VEC3F; }
-                | SFBool { $$ = SF_BOOL; }
-                | SFColor { $$ = SF_COLOR; }
-                | SFFloat { $$ = SF_FLOAT; }
-                | SFImage { $$ = SF_IMAGE; }
-                | SFInt32 { $$ = SF_INT32; }
-                | SFNode { $$ = SF_SHARED_CONTAINER; }
-                | SFRotation { $$ = SF_ROTATION; }
-                | SFString { $$ = SF_STR; }
-                | SFTime { $$ = SF_TIME; }
-                | SFVec2f { $$ = SF_VEC2F; }
-                | SFVec3f { $$ = SF_VEC3F; }
+fieldType       : MFBool { $$ = Field_info::MF_BOOL; }
+                | MFColor { $$ = Field_info::MF_COLOR; }
+                | MFFloat { $$ = Field_info::MF_FLOAT; }
+                | MFInt32 { $$ = Field_info::MF_INT32; }
+                | MFNode { $$ = Field_info::MF_SHARED_CONTAINER; }
+                | MFRotation { $$ = Field_info::MF_ROTATION; }
+                | MFString { $$ = Field_info::MF_STR; }
+                | MFTime { $$ = Field_info::MF_TIME; }
+                | MFVec2f { $$ = Field_info::MF_VEC2F; }
+                | MFVec3f { $$ = Field_info::MF_VEC3F; }
+                | SFBool { $$ = Field_info::SF_BOOL; }
+                | SFColor { $$ = Field_info::SF_COLOR; }
+                | SFFloat { $$ = Field_info::SF_FLOAT; }
+                | SFImage { $$ = Field_info::SF_IMAGE; }
+                | SFInt32 { $$ = Field_info::SF_INT32; }
+                | SFNode { $$ = Field_info::SF_SHARED_CONTAINER; }
+                | SFRotation { $$ = Field_info::SF_ROTATION; }
+                | SFString { $$ = Field_info::SF_STR; }
+                | SFTime { $$ = Field_info::SF_TIME; }
+                | SFVec2f { $$ = Field_info::SF_VEC2F; }
+                | SFVec3f { $$ = Field_info::SF_VEC3F; }
                 ;
 
 fieldValue      : sfValue { std::swap($$, $1); }

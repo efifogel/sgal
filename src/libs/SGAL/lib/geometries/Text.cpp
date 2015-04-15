@@ -83,7 +83,7 @@ void Text::init_prototype()
   String_handle_function string_func =
     static_cast<String_handle_function>(&Text::string_handle);
   s_prototype->add_field_info(new SF_string(STRING, "string",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             string_func,
                                             exec_func));
 }

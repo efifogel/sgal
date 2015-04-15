@@ -59,19 +59,21 @@ void Script_base::init_prototype()
   String_handle_function url_func =
     static_cast<String_handle_function>(&Script_base::url_handle);
   s_prototype->add_field_info(new SF_string(URL, "url",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             url_func));
 
   Boolean_handle_function direct_output_func =
     static_cast<Boolean_handle_function>(&Script_base::direct_output_handle);
   s_prototype->add_field_info(new SF_bool(DIRECT_OUTPUT, "directOutput",
-                                          RULE_FIELD, direct_output_func,
+                                          Field_info::RULE_FIELD,
+                                          direct_output_func,
                                           s_def_direct_output));
 
   Boolean_handle_function must_evaluate_func =
     static_cast<Boolean_handle_function>(&Script_base::must_evaluate_handle);
   s_prototype->add_field_info(new SF_bool(MUST_EVALUATE, "mustEvaluate",
-                                          RULE_FIELD, must_evaluate_func,
+                                          Field_info::RULE_FIELD,
+                                          must_evaluate_func,
                                           s_def_must_evaluate));
 }
 
@@ -93,13 +95,10 @@ Container_proto* Script_base::get_prototype()
 /*! \brief sets the attributes of the object extracted from the input file. */
 void Script_base::set_attributes(Element* elem)
 {
-  typedef Element::Str_attr_iter          Str_attr_iter;
-
   Node::set_attributes(elem);
-  Str_attr_iter ai;
-  for (ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+  for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "url") {
       std::string url = strip_double_quotes(value);
       set_url(url);

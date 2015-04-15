@@ -77,7 +77,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION,
                                               "translation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               translation_func));
 
   // rotation
@@ -85,7 +85,7 @@ void Navigation_sensor::init_prototype()
     static_cast<Rotation_handle_function>(&Navigation_sensor::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION,
                                               "rotation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               rotation_func));
 
   // minZoomDistance
@@ -94,7 +94,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::min_zoom_distance_handle);
   s_prototype->add_field_info(new SF_float(MIN_ZOOM_DISTANCE,
                                            "minZoomDistance",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            min_zoom_distance_func));
 
   // translationDone
@@ -103,7 +103,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::translation_done_handle);
   s_prototype->add_field_info(new SF_bool(TRANSLATION_DONE,
                                           "translationDone",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           translation_done_func));
 
   // rotationDone
@@ -112,7 +112,7 @@ void Navigation_sensor::init_prototype()
     (&Navigation_sensor::rotation_done_handle);
   s_prototype->add_field_info(new SF_bool(ROTATION_DONE,
                                           "rotationDone",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           rotation_done_func));
 }
 

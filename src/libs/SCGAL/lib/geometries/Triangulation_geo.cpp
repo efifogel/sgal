@@ -307,7 +307,7 @@ void Triangulation_geo::init_prototype()
     (&Triangulation_geo::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD,
                                                       "coord",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       coord_array_func,
                                                       exec_func));
 
@@ -316,7 +316,7 @@ void Triangulation_geo::init_prototype()
     static_cast<Float_handle_function>(&Triangulation_geo::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH,
                                            "lineWidth",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            line_width_func));
 
   // drawHaloed
@@ -325,7 +325,7 @@ void Triangulation_geo::init_prototype()
     (&Triangulation_geo::draw_haloed_handle);
   s_prototype->add_field_info(new SF_bool(DRAW_HALOED,
                                           "drawHaloed",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           draw_haloed_func));
 
 }

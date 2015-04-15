@@ -192,7 +192,7 @@ void Snapshot::init_prototype()
     static_cast<Boolean_handle_function>(&Snapshot::trigger_handle);
   s_prototype->add_field_info(new SF_bool(TRIGGER,
                                           "trigger",
-                                          RULE_IN,
+                                          Field_info::RULE_IN,
                                           trigger_func,
                                           false));
 
@@ -201,7 +201,7 @@ void Snapshot::init_prototype()
     static_cast<String_handle_function>(&Snapshot::dir_name_handle);
   s_prototype->add_field_info(new SF_string(DIR_NAME,
                                             "dirName",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             dir_name_func,
                                             s_def_dir_name));
 
@@ -210,7 +210,7 @@ void Snapshot::init_prototype()
     static_cast<String_handle_function>(&Snapshot::file_name_handle);
   s_prototype->add_field_info(new SF_string(FILE_NAME,
                                             "fileName",
-                                            RULE_EXPOSED_FIELD,
+                                            Field_info::RULE_EXPOSED_FIELD,
                                             file_name_func,
                                             s_def_file_name));
 
@@ -219,7 +219,7 @@ void Snapshot::init_prototype()
     reinterpret_cast<Uint_handle_function>(&Snapshot::file_format_handle);
   s_prototype->add_field_info(new SF_uint(FILE_FORMAT,
                                           "fileFormat",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           file_format_func,
                                           s_def_file_format));
 
@@ -229,7 +229,7 @@ void Snapshot::init_prototype()
     (&Snapshot::image_handle);
   s_prototype->add_field_info(new SF_shared_container(IMAGE,
                                                       "image",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       image_func));
 }
 
@@ -344,7 +344,7 @@ void Snapshot::write_fields(Formatter* formatter)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const auto* field_info = (*it).second;
-    if (field_info->get_rule() != RULE_EXPOSED_FIELD) continue;
+    if (field_info->get_rule() != Field_info::RULE_EXPOSED_FIELD) continue;
     if (FILE_FORMAT == field_info->get_id())
       vrml_formatter->single_string(field_info->get_name(),
                                     s_file_format_names[m_file_format],

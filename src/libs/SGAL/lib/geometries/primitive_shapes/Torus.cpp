@@ -137,7 +137,7 @@ void Torus::init_prototype()
   Float_handle_function spine_radius_func =
     static_cast<Float_handle_function>(&Torus::spine_radius_handle);
   s_prototype->add_field_info(new SF_float(SPINE_RADIUS, "spineRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            spine_radius_func, exec_func));
 
   // cross section radius
@@ -145,7 +145,7 @@ void Torus::init_prototype()
     static_cast<Float_handle_function>(&Torus::cross_section_radius_handle);
   s_prototype->add_field_info(new SF_float(CROSS_SECTION_RADIUS,
                                            "crossSectionRadius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            cross_section_radius_func,
                                            exec_func));
 
@@ -154,13 +154,13 @@ void Torus::init_prototype()
     static_cast<Execution_function>(&Container::set_rendering_required);
   Uint_handle_function stacks_func =
     static_cast<Uint_handle_function>(&Torus::stacks_handle);
-  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(STACKS, "stacks", Field_info::RULE_EXPOSED_FIELD,
                                           stacks_func, exec_func));
 
   // slices
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Torus::slices_handle);
-  s_prototype->add_field_info(new SF_uint(SLICES, "slices", RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(SLICES, "slices", Field_info::RULE_EXPOSED_FIELD,
                                           slices_func, exec_func));
 }
 

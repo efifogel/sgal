@@ -140,7 +140,7 @@ void Coord_transformer::init_prototype()
   Boolean_handle_function enabled_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::enabled_handle);
   s_prototype->add_field_info(new SF_bool(ENABLED, "enabled",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           enabled_func));
 
   // translation
@@ -149,7 +149,7 @@ void Coord_transformer::init_prototype()
     static_cast<Vector3f_handle_function>
     (&Coord_transformer::translation_handle);
   s_prototype->add_field_info(new SF_vector3f(TRANSLATION, "translation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               translation_func, exec_func));
 
   // rotation
@@ -157,7 +157,7 @@ void Coord_transformer::init_prototype()
   Rotation_handle_function rotation_func =
     static_cast<Rotation_handle_function>(&Coord_transformer::rotation_handle);
   s_prototype->add_field_info(new SF_rotation(ROTATION, "rotation",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               rotation_func, exec_func));
 
   // scale
@@ -166,7 +166,7 @@ void Coord_transformer::init_prototype()
     static_cast<Vector3f_handle_function>
     (&Coord_transformer::scale_handle);
   s_prototype->add_field_info(new SF_vector3f(SCALE, "scale",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               scale_func, exec_func));
 
   // execute
@@ -174,7 +174,7 @@ void Coord_transformer::init_prototype()
   Boolean_handle_function execute_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::execute_handle);
   s_prototype->add_field_info(new SF_bool(EXECUTE, "execute",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           execute_func,
                                           exec_func));
 
@@ -183,7 +183,7 @@ void Coord_transformer::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Coord_transformer::coord_array_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD, "coord",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       coord_func, exec_func));
 
   // coord_changed
@@ -192,13 +192,13 @@ void Coord_transformer::init_prototype()
     (&Coord_transformer::coord_array_changed_handle);
   s_prototype->add_field_info(new SF_shared_container(COORD_CHANGED,
                                                       "coord_changed",
-                                                      RULE_OUT,
+                                                      Field_info::RULE_OUT,
                                                       coord_changed_func));
 
   Boolean_handle_function changed_func =
     static_cast<Boolean_handle_function>(&Coord_transformer::changed_handle);
   s_prototype->add_field_info(new SF_bool(CHANGED, "changed",
-                                          RULE_OUT,
+                                          Field_info::RULE_OUT,
                                           changed_func));
 }
 

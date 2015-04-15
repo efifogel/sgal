@@ -42,7 +42,7 @@ void Normal_array::init_prototype()
   Vector3f_array_handle_function array_func =
     static_cast<Vector3f_array_handle_function>(&Normal_array::array_handle);
   s_prototype->add_field_info(new MF_vector3f(VECTOR, "vector",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               array_func));
 }
 

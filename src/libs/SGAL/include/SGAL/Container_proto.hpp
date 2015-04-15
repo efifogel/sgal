@@ -152,7 +152,7 @@ public:
    * \param name (in) the name of the field info
    * \return A pointer to the requested field info
    */
-  Field_info * get_field_info(const std::string& name) const;
+  Field_info* get_field_info(const std::string& name) const;
 
   /*! Obtain the size of the filed info ids container.
    * \return size of the filed info ids container.

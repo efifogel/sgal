@@ -218,8 +218,8 @@ protected:
    * \param exec_func (in)
    * \param prototype (in)
    */
-  template <Field_type type, typename ValueType_>
-  void add_fi(Uint id, const std::string& name, Field_rule rule,
+  template <Field_info::Field_type type, typename ValueType_>
+  void add_fi(Uint id, const std::string& name, Field_info::Field_rule rule,
               const ValueType_& initial_value,
               Execution_function exec_func, Container_proto* prototype)
   {

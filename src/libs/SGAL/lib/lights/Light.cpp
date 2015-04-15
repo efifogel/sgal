@@ -100,7 +100,7 @@ void Light::init_prototype()
   Boolean_handle_function is_on_func =
     static_cast<Boolean_handle_function>(&Light::is_on_handle);
   s_prototype->add_field_info(new SF_bool(ON, "on",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_on_func, exec_func));
 
   // color
@@ -109,7 +109,7 @@ void Light::init_prototype()
   Vector3f_handle_function color_func =
     static_cast<Vector3f_handle_function>(&Light::color_handle);
   s_prototype->add_field_info(new SF_vector3f(COLOR, "color",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               color_func,
                                               exec_func));
 
@@ -119,7 +119,7 @@ void Light::init_prototype()
   Float_handle_function intensity_func =
     static_cast<Float_handle_function>(&Light::intensity_handle);
   s_prototype->add_field_info(new SF_float(INTENSITY, "intensity",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            intensity_func, exec_func));
 
   // ambientIntensity
@@ -129,7 +129,7 @@ void Light::init_prototype()
     static_cast<Float_handle_function>(&Light::ambient_intensity_handle);
   s_prototype->add_field_info(new SF_float(AMBIENT_INTENSITY,
                                            "ambientIntensity",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            ambient_intensity_func,
                                            exec_func));
 }

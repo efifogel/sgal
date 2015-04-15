@@ -357,7 +357,7 @@ void Group::init_prototype()
   Boolean_handle_function is_visible_func =
     static_cast<Boolean_handle_function>(&Group::is_visible_handle);
   s_prototype->add_field_info(new SF_bool(IS_VISIBLE, "visible",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           is_visible_func, true, exec_func));
 
   // children
@@ -365,7 +365,7 @@ void Group::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Group::childs_handle);
   s_prototype->add_field_info(new MF_shared_container(CHILDREN, "children",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       childs_func, exec_func));
 }
 

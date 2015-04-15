@@ -156,7 +156,7 @@ void Material::init_prototype()
     static_cast<Float_handle_function>(&Material::ambient_intensity_handle);
   s_prototype->add_field_info(new SF_float(AMBIENT_INTENSITY,
                                            "ambientIntensity",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            ambient_intensity_func,
                                            s_def_ambient_intensity,
                                            exec_func));
@@ -167,7 +167,7 @@ void Material::init_prototype()
     static_cast<Vector3f_handle_function>(&Material::diffuse_color_handle);
   s_prototype->add_field_info(new SF_vector3f(DIFFUSE_COLOR,
                                               "diffuseColor",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               diffuse_color_func,
                                               s_def_diffuse_color, exec_func));
 
@@ -177,7 +177,7 @@ void Material::init_prototype()
     static_cast<Vector3f_handle_function>(&Material::specular_color_handle);
   s_prototype->add_field_info(new SF_vector3f(SPECULAR_COLOR,
                                               "specularColor",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               specular_color_func,
                                               s_def_specular_color, exec_func));
 
@@ -187,7 +187,7 @@ void Material::init_prototype()
     static_cast<Vector3f_handle_function>(&Material::emissive_color_handle);
   s_prototype->add_field_info(new SF_vector3f(EMISSIVE_COLOR,
                                               "emissiveColor",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               emissive_color_func,
                                               s_def_emissive_color, exec_func));
 
@@ -197,7 +197,7 @@ void Material::init_prototype()
     static_cast<Float_handle_function>(&Material::shininess_handle);
   s_prototype->add_field_info(new SF_float(SHININESS,
                                            "shininess",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            shininess_func,
                                            s_def_shininess, exec_func));
 
@@ -207,7 +207,7 @@ void Material::init_prototype()
     static_cast<Float_handle_function>(&Material::transparency_handle);
   s_prototype->add_field_info(new SF_float(TRANSPARENCY,
                                            "transparency",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            transparency_func,
                                            s_def_transparency, exec_func));
 }

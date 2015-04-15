@@ -62,7 +62,7 @@ void Coord_array_2d::init_prototype()
   Vector2f_array_handle_function array_func =
     static_cast<Vector2f_array_handle_function>(&Coord_array_2d::array_handle);
   s_prototype->add_field_info(new MF_vector2f(POINT, "point",
-                                              RULE_EXPOSED_FIELD,
+                                              Field_info::RULE_EXPOSED_FIELD,
                                               array_func, exec_func));
 }
 

@@ -19,6 +19,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "SGAL/basic.hpp"
+#include "SGAL/Element.hpp"
 #include "SGAL/Elevation_grid.hpp"
 #include "SGAL/Utilities.hpp"
 #include "SGAL/Container_proto.hpp"
@@ -54,8 +55,8 @@ void Elevation_grid::set_attributes(Element* elem)
   Indexed_face_set::set_attributes(elem);
 
   for (auto ai = elem->str_attrs_begin(); ai != elem->str_attrs_end(); ++ai) {
-    const std::string& name = elem->get_name(ai);
-    const std::string& value = elem->get_value(ai);
+    const auto& name = elem->get_name(ai);
+    const auto& value = elem->get_value(ai);
     if (name == "height") {
       auto size = get_num_tokens(value);
       m_height.resize(size);
@@ -102,32 +103,37 @@ void Elevation_grid::init_prototype()
   auto height_func =
     reinterpret_cast<Float_array_handle_function>
     (&Elevation_grid::height_handle);
-  s_prototype->add_field_info(new MF_float(HEIGHT, "height", RULE_FIELD,
+  s_prototype->add_field_info(new MF_float(HEIGHT, "height",
+                                           Field_info::RULE_FIELD,
                                            height_func, exec_func));
 
   // xDimension
   Uint_handle_function x_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::x_dimension_handle);
-  s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension", RULE_FIELD,
+  s_prototype->add_field_info(new SF_uint(X_DIMENSION, "xDimension",
+                                          Field_info::RULE_FIELD,
                                           x_dimension_func, exec_func));
 
 
   // xSpacing
   Float_handle_function x_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::x_spacing_handle);
-  s_prototype->add_field_info(new SF_float(X_SPACING, "xSpacing", RULE_FIELD,
+  s_prototype->add_field_info(new SF_float(X_SPACING, "xSpacing",
+                                           Field_info::RULE_FIELD,
                                            x_spacing_func, exec_func));
 
   // zDimension
   Uint_handle_function z_dimension_func =
     static_cast<Uint_handle_function>(&Elevation_grid::z_dimension_handle);
-  s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension", RULE_FIELD,
+  s_prototype->add_field_info(new SF_uint(Z_DIMENSION, "zDimension",
+                                          Field_info::RULE_FIELD,
                                           z_dimension_func, exec_func));
 
   // zSpacing
   Float_handle_function z_spacing_func =
     static_cast<Float_handle_function>(&Elevation_grid::z_spacing_handle);
-  s_prototype->add_field_info(new SF_float(Z_SPACING, "zSpacing", RULE_FIELD,
+  s_prototype->add_field_info(new SF_float(Z_SPACING, "zSpacing",
+                                           Field_info::RULE_FIELD,
                                            z_spacing_func, exec_func));
 }
 

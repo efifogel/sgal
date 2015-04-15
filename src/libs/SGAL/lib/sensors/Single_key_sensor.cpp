@@ -75,35 +75,35 @@ void Single_key_sensor::init_prototype()
   // key
   Uint_handle_function key_func =
     static_cast<Uint_handle_function>(&Single_key_sensor::key_handle);
-  s_prototype->add_field_info(new SF_uint(KEY, "key", RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_uint(KEY, "key", Field_info::RULE_EXPOSED_FIELD,
                                           key_func));
 
   // press
   Boolean_handle_function press_func =
     static_cast<Boolean_handle_function>(&Single_key_sensor::press_handle);
   s_prototype->add_field_info(new SF_bool(PRESS, "press",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           press_func));
 
   // pressTime
   Scene_time_handle_function time_func =
     static_cast<Scene_time_handle_function>(&Single_key_sensor::time_handle);
   s_prototype->add_field_info(new SF_time(TIME, "pressTime",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           time_func));
 
   // state
   Boolean_handle_function state_func =
     static_cast<Boolean_handle_function>(&Single_key_sensor::state_handle);
   s_prototype->add_field_info(new SF_bool(STATE, "state",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           state_func, s_def_state));
 
   // intState
   Int32_handle_function int_state_func =
     static_cast<Int32_handle_function>(&Single_key_sensor::int_state_handle);
   s_prototype->add_field_info(new SF_int32(INT_STATE, "intState",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            int_state_func));
 
   // numberOfStates
@@ -111,7 +111,7 @@ void Single_key_sensor::init_prototype()
     static_cast<Uint_handle_function>(&Single_key_sensor::num_states_handle);
   s_prototype->add_field_info(new SF_uint(NUMBER_OF_STATES,
                                           "numberOfStates",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           num_states_func, s_def_num_states));
 }
 
@@ -212,7 +212,7 @@ void Single_key_sensor::write_fields(Formatter* formatter)
   auto* proto = get_prototype();
   for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
     const Field_info* field_info = (*it).second;
-    if (field_info->get_rule() != RULE_EXPOSED_FIELD) continue;
+    if (field_info->get_rule() != Field_info::RULE_EXPOSED_FIELD) continue;
     if (KEY == field_info->get_id()) {
       std::string key(1, static_cast<char>(m_key));
       vrml_formatter->single_string(field_info->get_name(), key, std::string());

@@ -279,7 +279,7 @@ void Cylindrical_patch::init_prototype()
   Float_handle_function radius_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::radius_handle);
   s_prototype->add_field_info(new SF_float(RADIUS, "radius",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            radius_func,
                                            exec_func));
 
@@ -287,7 +287,7 @@ void Cylindrical_patch::init_prototype()
   Float_handle_function height_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::height_handle);
   s_prototype->add_field_info(new SF_float(HEIGHT, "height",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            height_func,
                                            exec_func));
 
@@ -297,7 +297,7 @@ void Cylindrical_patch::init_prototype()
   Uint_handle_function slices_func =
     static_cast<Uint_handle_function>(&Cylindrical_patch::slices_handle);
   s_prototype->add_field_info(new SF_uint(SLICES, "slices",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           slices_func,
                                           exec_func));
 
@@ -307,7 +307,7 @@ void Cylindrical_patch::init_prototype()
   Float_handle_function alpha_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::alpha_handle);
   s_prototype->add_field_info(new SF_float(ALPHA, "alpha",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            alpha_func,
                                            exec_func));
 
@@ -317,7 +317,7 @@ void Cylindrical_patch::init_prototype()
   Float_handle_function beta_func =
     static_cast<Float_handle_function>(&Cylindrical_patch::beta_handle);
   s_prototype->add_field_info(new SF_float(BETA, "beta",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            beta_func,
                                            exec_func));
 }

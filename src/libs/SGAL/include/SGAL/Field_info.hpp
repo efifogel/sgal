@@ -45,14 +45,10 @@
 #include "SGAL/Types.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Array_types.hpp"
-#include "SGAL/Element.hpp"
 
 SGAL_BEGIN_NAMESPACE
 
 class Container;
-class Element;
-class Field_info;
-class SAI_field_services;
 class Value_holder_base;
 class Field;
 
@@ -396,14 +392,6 @@ public:
   void write(Formatter* formatter, const Shared_container_array& value,
              const Shared_container_array& default_value,
              Boolean declaration = false) const;
-
-  /*! \todo
-  // Creates an SAI_field of the same type id and name
-  // as this field info.
-  // The function also create a new SAI_field_info of the same type
-  // and initializes the new SAI_field with it.
-  virtual SAI_field_services * create_sai_field() = 0;
-  */
 };
 
 #if defined(_MSC_VER)

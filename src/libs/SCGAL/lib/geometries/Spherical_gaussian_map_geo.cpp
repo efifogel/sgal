@@ -231,7 +231,7 @@ void Spherical_gaussian_map_geo::init_prototype()
     reinterpret_cast<Shared_container_array_handle_function>
     (&Spherical_gaussian_map_geo::sgm_nodes_handle);
   s_prototype->add_field_info(new MF_shared_container(GEOMETRIES, "geometries",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       sgm_nodes_func));
 }
 

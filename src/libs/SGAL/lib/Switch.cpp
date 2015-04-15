@@ -148,7 +148,7 @@ void Switch::init_prototype()
   Uint_handle_function which_choice_func =
     static_cast<Uint_handle_function>(&Switch::which_choice_handle);
   s_prototype->add_field_info(new SF_uint(WHICH_CHOICE, "whichChoice",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           which_choice_func,
                                           s_def_which_choice,
                                           exec_func));

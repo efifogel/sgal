@@ -57,7 +57,7 @@ void Interpolator::init_prototype()
     static_cast<Float_handle_function>(&Interpolator::fraction_handle);
   s_prototype->add_field_info(new SF_float(FRACTION,
                                            "set_fraction",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            fraction_func, exec_func));
 }
 

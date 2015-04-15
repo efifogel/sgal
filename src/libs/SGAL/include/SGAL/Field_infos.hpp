@@ -38,7 +38,6 @@
 #include "SGAL/Vector4f.hpp"
 #include "SGAL/Rotation.hpp"
 #include "SGAL/Sphere_bound.hpp"
-#include "SGAL/Field_enums.hpp"
 #include "SGAL/Field_info_template.hpp"
 #include "SGAL/Execution_function.hpp"
 #include "SGAL/Array_types.hpp"
@@ -51,36 +50,36 @@ typedef boost::shared_ptr<Container>                   Shared_container;
 
 // Field information records
 // Single field
-typedef Field_info_template<Boolean, SF_BOOL>          SF_bool;
-typedef Field_info_template<Float, SF_FLOAT>           SF_float;
-typedef Field_info_template<Uint, SF_INT32>            SF_uint;
-typedef Field_info_template<Int32, SF_INT32>           SF_int32;
-typedef Field_info_template<Scene_time, SF_TIME>       SF_time;
-typedef Field_info_template<Vector2f, SF_VEC2F>        SF_vector2f;
-typedef Field_info_template<Vector3f, SF_VEC3F>        SF_vector3f;
-typedef Field_info_template<Vector3f, SF_COLOR>        SF_color;
-typedef Field_info_template<Vector4f, SF_VEC4F>        SF_vector4f;
-typedef Field_info_template<Rotation, SF_ROTATION>     SF_rotation;
-typedef Field_info_template<Sphere_bound, SF_SB>       SF_sphere_bound;
-typedef Field_info_template<std::string, SF_STR>       SF_string;
-typedef Field_info_template<Shared_container, SF_SHARED_CONTAINER>
+typedef Field_info_template<Boolean, Field_info::SF_BOOL>          SF_bool;
+typedef Field_info_template<Float, Field_info::SF_FLOAT>           SF_float;
+typedef Field_info_template<Uint, Field_info::SF_INT32>            SF_uint;
+typedef Field_info_template<Int32, Field_info::SF_INT32>           SF_int32;
+typedef Field_info_template<Scene_time, Field_info::SF_TIME>       SF_time;
+typedef Field_info_template<Vector2f, Field_info::SF_VEC2F>        SF_vector2f;
+typedef Field_info_template<Vector3f, Field_info::SF_VEC3F>        SF_vector3f;
+typedef Field_info_template<Vector3f, Field_info::SF_COLOR>        SF_color;
+typedef Field_info_template<Vector4f, Field_info::SF_VEC4F>        SF_vector4f;
+typedef Field_info_template<Rotation, Field_info::SF_ROTATION>     SF_rotation;
+typedef Field_info_template<Sphere_bound, Field_info::SF_SB>       SF_sphere_bound;
+typedef Field_info_template<std::string, Field_info::SF_STR>       SF_string;
+typedef Field_info_template<Shared_container, Field_info::SF_SHARED_CONTAINER>
                                                        SF_shared_container;
 
 // Multi field
-typedef Field_info_template<Boolean_array, MF_BOOL>    MF_bool;
-typedef Field_info_template<Float_array, MF_FLOAT>     MF_float;
-typedef Field_info_template<Uint_array, MF_INT32>      MF_uint;
-typedef Field_info_template<Int32_array, MF_INT32>     MF_int32;
-typedef Field_info_template<Scene_time_array, MF_TIME> MF_time;
-typedef Field_info_template<Vector2f_array, MF_VEC2F>  MF_vector2f;
-typedef Field_info_template<Vector3f_array, MF_VEC3F>  MF_vector3f;
-typedef Field_info_template<Vector3f_array, MF_COLOR>  MF_color;
-typedef Field_info_template<Vector4f_array, MF_VEC4F>  MF_vector4f;
-typedef Field_info_template<Rotation_array, MF_ROTATION>
-                                                       MF_rotation;
-typedef Field_info_template<Sphere_bound_array, MF_SB> MF_sphere_bound;
-typedef Field_info_template<String_array, MF_STR>      MF_string;
-typedef Field_info_template<Shared_container_array, MF_SHARED_CONTAINER>
+typedef Field_info_template<Boolean_array, Field_info::MF_BOOL>    MF_bool;
+typedef Field_info_template<Float_array, Field_info::MF_FLOAT>     MF_float;
+typedef Field_info_template<Uint_array, Field_info::MF_INT32>      MF_uint;
+typedef Field_info_template<Int32_array, Field_info::MF_INT32>     MF_int32;
+typedef Field_info_template<Scene_time_array, Field_info::MF_TIME> MF_time;
+typedef Field_info_template<Vector2f_array, Field_info::MF_VEC2F>  MF_vector2f;
+typedef Field_info_template<Vector3f_array, Field_info::MF_VEC3F>  MF_vector3f;
+typedef Field_info_template<Vector3f_array, Field_info::MF_COLOR>  MF_color;
+typedef Field_info_template<Vector4f_array, Field_info::MF_VEC4F>  MF_vector4f;
+typedef Field_info_template<Rotation_array, Field_info::MF_ROTATION>
+                                                                   MF_rotation;
+typedef Field_info_template<Sphere_bound_array, Field_info::MF_SB> MF_sphere_bound;
+typedef Field_info_template<String_array, Field_info::MF_STR>      MF_string;
+typedef Field_info_template<Shared_container_array, Field_info::MF_SHARED_CONTAINER>
                                                        MF_shared_container;
 
 // Field handle functions
@@ -117,58 +116,6 @@ typedef Handle_function<Sphere_bound_array>::type
 typedef Handle_function<String_array>::type   String_array_handle_function;
 typedef Handle_function<Shared_container_array>::type
   Shared_container_array_handle_function;
-
-#if 0
-class Field_info_utils {
-public:
-  /*! */
-  static Field_info* allocate_field_info(Uint id,
-                                         const std::string& name,
-                                         const std::string& type,
-                                         const std::string& value,
-                                         Ulong offset,
-                                         Execution_function execution = nullptr)
-  {
-    Field_type_enum type_enum = Field_types_utils::get_field_type(type);
-
-    if (type_enum == SF_BOOL) {
-      Boolean flag = false;
-      if (value == "true" || value == "false") flag = true;
-      return new SF_bool(id, name, offset, execution, false, true, flag);
-    }
-    else if (type_enum == SF_FLOAT)
-      return new SF_float(id, name, offset, execution, false, true,
-                          atoff(value.c_str()));
-    else if (type_enum == SF_TIME)
-      return new SF_time(id, name, offset, execution, false, true,
-                         ::strtod(value.c_str(),0));
-    else if (type_enum == SF_INT32)
-      return new SF_int(id, name, offset, execution, false, true,
-                        ::atoi(value.c_str()));
-    else if (type_enum == SF_VEC2F)
-      return new SF_vector2f(id, name, offset, execution, false, true,
-                             Vector2f(value));
-    else if (type_enum == SF_VEC3F)
-      return new SF_vector3f(id, name, offset, execution, false, true,
-                             Vector3f(value));
-    else if (type_enum == SF_ROTATION)
-      return new SF_rotation(id, name, offset, execution, false, true,
-                             Rotation(value));
-    else if (type_enum == SF_SB)
-      return new SF_sphere_bound(id, name, offset, execution, false, true,
-                                 Sphere_bound(value));
-    else if (type_enum == SF_VEC4F)
-      return new SF_vector4f(id, name, offset, execution, false, true,
-                             Vector4f(value));
-    else if (type_enum == SF_STRING)
-      return new SF_string(id, name, offset, execution, false, true, value);
-    else if (type_enum == SF_SHARED_CONTAINER)
-      return new SF_shared_container(id, name, offset, execution,
-                                     false, true, Shared_container());
-    else return nullptr;
-  }
-};
-#endif
 
 SGAL_END_NAMESPACE
 

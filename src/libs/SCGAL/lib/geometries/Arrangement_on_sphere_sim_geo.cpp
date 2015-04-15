@@ -123,7 +123,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
   Float_handle_function time_func =
     static_cast<Float_handle_function>
     (&Arrangement_on_sphere_sim_geo::time_handle);
-  s_prototype->add_field_info(new SF_float(TIME, "time", RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_float(TIME, "time", Field_info::RULE_EXPOSED_FIELD,
                                            time_func, exec_func));
 
   // resume
@@ -132,7 +132,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
   Boolean_handle_function resume_func =
     static_cast<Boolean_handle_function>
     (&Arrangement_on_sphere_sim_geo::resume_handle);
-  s_prototype->add_field_info(new SF_bool(RESUME, "resume", RULE_EXPOSED_FIELD,
+  s_prototype->add_field_info(new SF_bool(RESUME, "resume", Field_info::RULE_EXPOSED_FIELD,
                                           resume_func, exec_func));
 
   // suspend
@@ -142,7 +142,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
     static_cast<Boolean_handle_function>
     (&Arrangement_on_sphere_sim_geo::suspend_handle);
   s_prototype->add_field_info(new SF_bool(SUSPEND, "suspend",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           suspend_func, exec_func));
 
   // increaseVertexLabel
@@ -153,7 +153,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
     (&Arrangement_on_sphere_sim_geo::increase_vertex_label_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_VERTEX_LABEL,
                                           "increaseVertexLabel",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           increase_vertex_label_func,
                                           exec_func));
 
@@ -165,7 +165,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
     (&Arrangement_on_sphere_sim_geo::increase_edge_label_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_EDGE_LABEL,
                                           "increaseEdgeLabel",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           increase_edge_label_func,
                                           exec_func));
 
@@ -177,7 +177,7 @@ void Arrangement_on_sphere_sim_geo::init_prototype()
     (&Arrangement_on_sphere_sim_geo::increase_face_label_handle);
   s_prototype->add_field_info(new SF_bool(INCREASE_FACE_LABEL,
                                           "increaseFaceLabel",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           increase_face_label_func,
                                           exec_func));
 }

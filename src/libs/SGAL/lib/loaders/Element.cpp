@@ -88,8 +88,8 @@ void Element::mark_delete(Field_attr_iter ai)
   ai->first = nullptr;
   std::string* value = std::get<2>(ai->second);
   if (value) delete value;
-  ai->second = std::make_tuple(static_cast<Field_rule>(0),
-                               static_cast<Field_type>(0),
+  ai->second = std::make_tuple(static_cast<Field_info::Field_rule>(0),
+                               static_cast<Field_info::Field_type>(0),
                                nullptr);
 }
 

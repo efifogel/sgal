@@ -313,7 +313,7 @@ void Indexed_geodesic_set::init_prototype()
     static_cast<Float_handle_function>
     (&Indexed_geodesic_set::line_width_handle);
   s_prototype->add_field_info(new SF_float(LINE_WIDTH, "lineWidth",
-                                           RULE_EXPOSED_FIELD,
+                                           Field_info::RULE_EXPOSED_FIELD,
                                            line_width_func));
 }
 

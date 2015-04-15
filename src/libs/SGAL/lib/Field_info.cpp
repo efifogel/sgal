@@ -58,7 +58,7 @@ Field_info::Field_type Field_info::get_field_type(const std::string& type)
   else if (type == "MFVec4F" || type == "Vector4Floats") return MF_VEC4F;
 
   assert(false);
-  return (Field_type)0;
+  return NUM_FIELD_TYPES;
 }
 
 //! \brief writes the (single) Boolean field.

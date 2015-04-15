@@ -563,7 +563,7 @@ void Appearance::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Appearance::material_handle);
   s_prototype->add_field_info(new SF_shared_container(MATERIAL, "material",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       material_func,
                                                       exec_func));
 
@@ -572,7 +572,7 @@ void Appearance::init_prototype()
     reinterpret_cast<Shared_container_handle_function>
     (&Appearance::texture_handle);
   s_prototype->add_field_info(new SF_shared_container(TEXTURE, "texture",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       texture_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::tex_gen_changed);
@@ -581,7 +581,7 @@ void Appearance::init_prototype()
     (&Appearance::tex_gen_handle);
   s_prototype->add_field_info(new SF_shared_container(TEX_GEN,
                                                       "textureGeneration",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       tex_gen_func, exec_func));
 
   exec_func = static_cast<Execution_function>(&Appearance::halftone_changed);
@@ -590,7 +590,7 @@ void Appearance::init_prototype()
     (&Appearance::halftone_handle);
   s_prototype->add_field_info(new SF_shared_container(HALFTONE_PATTERN,
                                                       "halftone",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       halftone_func,
                                                       exec_func));
 
@@ -601,7 +601,7 @@ void Appearance::init_prototype()
     (&Appearance::back_material_handle);
   s_prototype->add_field_info(new SF_shared_container(BACK_MATERIAL,
                                                       "backMaterial",
-                                                      RULE_EXPOSED_FIELD,
+                                                      Field_info::RULE_EXPOSED_FIELD,
                                                       back_material_func,
                                                       exec_func));
 }
@@ -921,7 +921,7 @@ void Appearance::write_fields(Formatter* formatter)
     auto* proto = get_prototype();
     for (auto it = proto->ids_begin(proto); it != proto->ids_end(proto); ++it) {
       const Field_info* field_info = (*it).second;
-      if (field_info->get_rule() == RULE_IN) continue;
+      if (field_info->get_rule() == Field_info::RULE_IN) continue;
       if (BACK_MATERIAL == field_info->get_id()) {
         if (get_material() == get_back_material()) continue;
       }

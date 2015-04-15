@@ -48,7 +48,7 @@ void Simulation::init_prototype()
     static_cast<Boolean_handle_function>(&Simulation::start_handle);
   s_prototype->add_field_info(new SF_bool(START,
                                           "start",
-                                          RULE_EXPOSED_FIELD,
+                                          Field_info::RULE_EXPOSED_FIELD,
                                           start_func));
 }
 
